@@ -8,7 +8,6 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>bot</module>
     <module>game</module>
     <module>protocol</module>
     <module>poker-logic</module>
