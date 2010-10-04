@@ -15,9 +15,20 @@
     <module>poker-tournament</module>
     <module>poker-persistence</module>
     <module>poker-uar</module>
-    
   </modules>
 
+    <organization>
+		<name>Cubeia Ltd</name>
+		<url>http://www.cubeia.com/</url>
+	</organization>
+
+	<licenses>
+		<license>
+			<name>GNU AFFERO GENERAL PUBLIC LICENSE v3</name>
+			<url>http://www.fsf.org/licensing/licenses/agpl-3.0.html</url>
+		</license>
+	</licenses>
+	
   <properties>
     <firebase.version>1.7.0-CE</firebase.version>
   </properties>
@@ -187,7 +198,53 @@
           <source>1.6</source>
           <target>1.6</target>
         </configuration>
-      </plugin>      
+      </plugin>     
+      
+      <plugin>
+        	<groupId>com.mycila.maven-license-plugin</groupId>
+        	<artifactId>maven-license-plugin</artifactId>
+        	<version>1.8.0</version>
+        	<configuration>
+        		<header>src/etc/header.txt</header>
+        		<strictChecking>true</strictChecking>
+        		<failIfMissing>true</failIfMissing>
+        		<aggregate>true</aggregate>
+        		<includes>
+        			<include>src/**/*.java</include>
+        		</includes>
+        		<properties>
+        			<owner>Cubeia Ltd</owner>
+        			<year>2010</year>
+        			<email>info@cubeia.com</email>
+        		</properties>
+        	</configuration>
+        	<executions>
+        		<execution>
+        			<id>check-headers</id>
+        			<phase>deploy</phase>
+        			<goals>
+        				<goal>check</goal>
+        			</goals>
+        		</execution>
+        	</executions>
+        </plugin>
+        <plugin>
+        	<artifactId>maven-remote-resources-plugin</artifactId>
+        	<version>1.1</version>
+        	<executions>
+        		<execution>
+        			<goals>
+        				<goal>process</goal>
+        			</goals>
+        			<configuration>
+        				<resourceBundles>
+        					<resourceBundle>com.cubeia.license:agpl:1.0-SNAPSHOT
+        					</resourceBundle>
+        				</resourceBundles>
+        			</configuration>
+        		</execution>
+        	</executions>
+        </plugin> 
     </plugins>
   </build>
 
