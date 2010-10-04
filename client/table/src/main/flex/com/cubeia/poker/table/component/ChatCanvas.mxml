@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:fx="http://ns.adobe.com/mxml/2009" 
+ 
+		   xmlns:mx="library://ns.adobe.com/flex/mx" width="290" height="104">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import com.cubeia.poker.table.model.Table;
+			import mx.events.FlexEvent;
+			
+			[Bindable]
+			private var table:Table;
+			
+			public function setTableModel(table:Table):void {
+				this.table = table;
+			}
+			
+			private function enableAutoScroll():void {
+				chatOutput.addEventListener( FlexEvent.VALUE_COMMIT, autoScrollToBottom );
+			}
+			
+			
+			private function autoScrollToBottom( event:FlexEvent ):void {
+				// Auto-scroll to the bottom anytime the text changes
+				event.target.validateNow();
+				event.target.verticalScrollPosition = event.target.maxVerticalScrollPosition;
+			}
+			
+		]]>
+	</fx:Script>
+	<mx:TextArea x="10" y="10" width="271" height="84" editable="false" id="chatOutput" text="{table.chatOutput}" creationComplete="enableAutoScroll()"/>
+</mx:Canvas>
