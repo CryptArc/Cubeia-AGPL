@@ -1,24 +1,18 @@
 /**
- * MD2
- * 
- * An ActionScript 3 implementation of the RSA Data Security, Inc MD2 Message
- * Digest Algorithm, as defined in RFC 1319
- * Copyright (c) 2007 Henri Torgemane
- * 
- * See LICENSE.txt for full license information.
- * 
- * Excerpt from http://en.wikipedia.org/wiki/MD2:
- * > 
- * > Rogier and Chauvaud (1997) described collisions of MD2's compression function,
- * > although they were unable to extend the attack to the full MD2.
- * > 
- * > In 2004, MD2 was shown to be vulnerable to a preimage attack with time 
- * > complexity equivalent to 2104 applications of the compression function 
- * > (Muller, 2004). 
- * > The author concludes, "MD2 can no longer be considered a secure one-way 
- * > hash function".
- * 
- * also, this implementaton is quite slow.
+ * Copyright (C) 2010 Cubeia Ltd <info@cubeia.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.hurlant.crypto.hash
