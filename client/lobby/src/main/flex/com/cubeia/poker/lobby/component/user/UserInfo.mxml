@@ -22,7 +22,7 @@
 			
 			private function onLogin(event:PokerLobbyEvent):void {
 				playerInfo = PokerLobby.playerInfo;
-				imageUrl = PlayerRegistry.instance.getRandomImage();
+				imageUrl = PlayerRegistry.instance.getPlayer(playerInfo.pid).imageUrl;
 			}
           ]]>
     </mx:Script>

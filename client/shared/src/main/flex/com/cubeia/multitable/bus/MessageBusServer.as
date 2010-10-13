@@ -1,20 +1,3 @@
-/**
- * Copyright (C) 2010 Cubeia Ltd <info@cubeia.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 package com.cubeia.multitable.bus
 {
 	import com.cubeia.firebase.connector.FirebaseClient;
@@ -27,27 +10,17 @@ package com.cubeia.multitable.bus
 	import com.cubeia.firebase.model.PlayerInfo;
 	import com.cubeia.multitable.clients.TableRegistry;
 	import com.cubeia.multitable.events.SendFailedEvent;
-	import com.cubeia.multitable.queue.Queue;
 	import com.cubeia.poker.event.PokerEvent;
 	import com.cubeia.poker.event.PokerEventDispatcher;
 	import com.cubeia.poker.event.PokerEventWrapper;
-	import com.cubeia.util.LogDate;
 	
 	import flash.events.AsyncErrorEvent;
-	import flash.events.Event;
 	import flash.events.SecurityErrorEvent;
 	import flash.events.StatusEvent;
-	import flash.events.TimerEvent;
 	import flash.net.LocalConnection;
-	import flash.system.System;
 	import flash.utils.ByteArray;
-	import flash.utils.Dictionary;
-	import flash.utils.Timer;
 	
-	import mx.collections.ArrayCollection;
 	import mx.controls.Alert;
-	
-	import org.osmf.events.TimeEvent;
 	
 	public class MessageBusServer
 	{
@@ -63,10 +36,6 @@ package com.cubeia.multitable.bus
 
 		// saved login information
 		private var playerInfo:PlayerInfo;
-		
-		private var timer:Timer = new Timer(10);
-		private var packetQueue:Dictionary = new Dictionary();
-		private var gamePacketQueue:Dictionary = new Dictionary();
 		
 		public function MessageBusServer()
 		{
@@ -88,15 +57,13 @@ package com.cubeia.multitable.bus
 		 */		
 		public function start(_busName:String, _firebaseClient:FirebaseClient):void
 		{
-			//timer.addEventListener(TimerEvent.TIMER, onSendTimer);
-			//timer.start();
+			trace("Start MessageBusServer: "+_busName);
 			busName = _busName;
 			firebaseClient = _firebaseClient;
 			setupConnector();			
 			setupSendQueue();
 			setupPacketListener();
 			PokerEventDispatcher.instance.addEventListener(PokerEventWrapper.POKER_EVENT_WRAPPER, onWrappedEvent);
-			
 		}
 		
 		
@@ -136,9 +103,9 @@ package com.cubeia.multitable.bus
 
 			// start listening for local connection events
 			try {
-				trace(LogDate.getLogDate()+" Server connect bus["+busName+"]"); 
 				connector.connect(busName);
 			} catch (error:ArgumentError) {
+				trace("MessageBusServer error: "+error);
 				Alert.show("Can't create MessageBusServer -- name already in use: " + busName);
 			}
 
@@ -191,7 +158,6 @@ package com.cubeia.multitable.bus
 			if ( isTable ) {
 				var tableid:int = Object(protocolObject)["tableid"];
 				var buffer:ByteArray = styxSerializer.pack(protocolObject);
-				trace(LogDate.getLogDate()+" Server PUT["+tableid+"] Packet["+protocolObject+"]");
 				sendQueue.put(tableid, "packetReceived", buffer);
 			}
 		}
@@ -207,25 +173,7 @@ package com.cubeia.multitable.bus
 		 
 		private function onGamePacketReceived(event:GamePacketEvent):void
 		{
-			trace(LogDate.getLogDate()+" Server PUT["+event.tableid+"] GamePacket["+event.getPacketData()+"]");
 			sendQueue.put(event.tableid, "gamePacketReceived", event.getPacketData());
-		}
-		
-		private function onSendTimer(event:Event):void
-		{
-			for (var key:Object in packetQueue)
-			{
-				var arr:ArrayCollection = packetQueue[key];
-				sendQueue.put(key as int, "packetReceived", arr.toArray());
-			}
-			packetQueue = new Dictionary();
-			
-			for (var key:Object in gamePacketQueue)
-			{
-				var arr:ArrayCollection = gamePacketQueue[key];
-				sendQueue.put(key as int, "gamePacketReceived", arr.toArray());
-			}
-			gamePacketQueue = new Dictionary();
 		}
 
 		private function onWrappedEvent(event:PokerEventWrapper):void
@@ -238,7 +186,6 @@ package com.cubeia.multitable.bus
 		{
 			for each ( var tableid:int in tableRegistry.getTableList() ) {
 				if ( event.pokerEvent.tableid == -1 || event.pokerEvent.tableid == tableid ) {
-					trace(LogDate.getLogDate()+" Server SEND["+tableid+"] Event["+event.pokerEvent+"]");
 					connector.send(tableid.toString(), "pokerEvent", event.pokerEvent);
 				} 
 			}

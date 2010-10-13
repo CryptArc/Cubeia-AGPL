@@ -65,6 +65,8 @@ package com.cubeia.poker.table.handler
 	
 	import flashx.textLayout.events.UpdateCompleteEvent;
 	
+	import mx.controls.Alert;
+	
 	
 	/**
 	 * The GamePacketHandler is responsible for applying incoming game packets
@@ -293,6 +295,7 @@ package com.cubeia.poker.table.handler
 		private function handlePlayerStatusChanged(status:PlayerPokerStatus):void {
 			// trace("Player status changed: Player["+status.player+"] -> Status["+status.status+"]");
 			var player:Player = table.getPlayer(status.player);
+			
 			switch (status.status) {
 				case PlayerTableStatusEnum.SITOUT :
 					player.status = Player.STATUS_SITOUT;

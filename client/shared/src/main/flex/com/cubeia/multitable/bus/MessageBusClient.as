@@ -1,20 +1,3 @@
-/**
- * Copyright (C) 2010 Cubeia Ltd <info@cubeia.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 package com.cubeia.multitable.bus
 {
 	import com.cubeia.firebase.events.GamePacketEvent;
@@ -27,7 +10,6 @@ package com.cubeia.multitable.bus
 	import com.cubeia.poker.event.PokerEvent;
 	import com.cubeia.poker.event.PokerEventDispatcher;
 	import com.cubeia.poker.event.PokerEventWrapper;
-	import com.cubeia.util.LogDate;
 	
 	import flash.net.LocalConnection;
 	import flash.utils.ByteArray;
@@ -59,6 +41,7 @@ package com.cubeia.multitable.bus
 		
 		private function setupConnector():void
 		{
+			trace("Setting up MessageBusClient for Receiver: "+tableid);
 			connector = new LocalConnection();
 			connector.client = this;
 			connector.allowInsecureDomain("*");
@@ -73,8 +56,7 @@ package com.cubeia.multitable.bus
 		
 		private function onWrappedEvent(event:PokerEventWrapper):void
 		{
-			//trace("global event received. Will send over bus to server: "+event.pokerEvent); 
-			trace(LogDate.getLogDate()+" Client SEND["+busName+"] GlobalEvent["+event.pokerEvent+"]");
+			trace("global event received. Will send over bus to server: "+event.pokerEvent); 
 			connector.send(busName, "pokerEvent", event.pokerEvent);
 		}
 		
@@ -92,19 +74,16 @@ package com.cubeia.multitable.bus
 		 public function packetReceived(args:Array):void
 		 {
 			var protocolObject:ProtocolObject = styxSerializer.unpack(args[0]);
-			trace(LogDate.getLogDate()+" Client RECEIVE["+busName+"] Packets["+args.length+"]");
 			PokerEventDispatcher.instance.dispatchEvent(new PacketEvent(protocolObject));
 		 }
 		 
 		 public function gamePacketReceived(args:Array):void {
-			 trace(LogDate.getLogDate()+" Client RECEIVE["+busName+"] GamePackets["+args.length+"]");
 			 PokerEventDispatcher.instance.dispatchEvent(new GamePacketDataEvent(args[0]));
 		 }
 		
 		 
 		 public function send(protocolObject:ProtocolObject):void
 		 {
-			trace(LogDate.getLogDate()+" Client SEND["+busName+"] Packet["+protocolObject+"]");
 		 	var buffer:ByteArray = styxSerializer.pack(protocolObject);
 		 	connector.send(busName, "sendPacket" , buffer);
 		 } 
@@ -117,7 +96,6 @@ package com.cubeia.multitable.bus
 			 gameTransportPacket.tableid = tableid;
 			 gameTransportPacket.gamedata = packet;
 			 var buffer:ByteArray = styxSerializer.pack(gameTransportPacket);
-			 trace(LogDate.getLogDate()+" Client SEND["+busName+"] GamePacket["+gameTransportPacket+"]");
 			 connector.send(busName, "sendPacket" , buffer);
 		 }
 	}

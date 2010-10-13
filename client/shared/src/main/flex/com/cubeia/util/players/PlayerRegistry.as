@@ -1,24 +1,8 @@
-/**
- * Copyright (C) 2010 Cubeia Ltd <info@cubeia.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 package com.cubeia.util.players
 {
 	import com.cubeia.firebase.io.protocol.NotifyJoinPacket;
 	import com.cubeia.firebase.io.protocol.PlayerInfoPacket;
+	import com.cubeia.firebase.model.PlayerInfo;
 	import com.cubeia.model.PokerPlayerInfo;
 	import com.cubeia.poker.event.PlayerUpdatedEvent;
 	import com.cubeia.poker.event.PokerEventDispatcher;
@@ -37,7 +21,11 @@ package com.cubeia.util.players
 		
 		private var registry:Dictionary = new Dictionary(true);
 		
-		public static var BOT_AVATAR:String = "http://www.iconarchive.com/icons/daniel-loxton/skeptic/48/Alien-Abduction-icon.png";
+		//public static var BOT_AVATAR:String = "http://www.iconarchive.com/icons/daniel-loxton/skeptic/48/Alien-Abduction-icon.png";
+		//public static var GENERIC_PLAYER_AVATAR:String = "http://www.iconarchive.com/icons/eric-merced/u2/48/Bono-icon.png";
+		
+		public static var BOT_AVATAR:String = "assets/avatar/bot.png";
+		public static var GENERIC_PLAYER_AVATAR:String = "assets/avatar/player.png";
 		
 		[Bindable]
 		public static var names:Array = [
@@ -69,7 +57,7 @@ package com.cubeia.util.players
 			if (player != null) {
 				return player;
 			} else {
-				//trace("PlayerRegistry cache miss. Looking up remote player: "+playerId);
+				trace("PlayerRegistry cache miss. Looking up remote player: "+playerId);
 				return lookupPlayer(playerId);
 			}
 		}
@@ -87,8 +75,36 @@ package com.cubeia.util.players
 				if (player.name.substr(0, 4) == "Bot_") {
 					player.imageUrl = BOT_AVATAR;
 				} else {
-					var index:int = Math.round(Math.random() * (pics.length-1));
-					player.imageUrl = pics[index];
+					player.imageUrl = GENERIC_PLAYER_AVATAR;
+					//var index:int = Math.round(Math.random() * (pics.length-1));
+					//player.imageUrl = pics[index];
+				}
+				
+				registry[player.id] = player;
+				
+				// Dispatch updated event
+				PokerEventDispatcher.dispatch(new PlayerUpdatedEvent(player));
+			}
+			
+			return player;
+		}
+		
+		/**
+		 * Create and add a player object from a seat info packet
+		 */
+		public function addPlayerFromInfo(info:PlayerInfo):PokerPlayerInfo {
+			var player:PokerPlayerInfo = registry[info.pid];
+			if (player == null) {
+				player = new PokerPlayerInfo();
+				player.id = info.pid;
+				player.name = info.screenname;
+				
+				if (player.name.substr(0, 4) == "Bot_") {
+					player.imageUrl = BOT_AVATAR;
+				} else {
+					player.imageUrl = GENERIC_PLAYER_AVATAR;
+					//var index:int = Math.round(Math.random() * (pics.length-1));
+					//player.imageUrl = pics[index];
 				}
 				
 				registry[player.id] = player;
@@ -113,8 +129,9 @@ package com.cubeia.util.players
 				if (player.name.substr(0, 4) == "Bot_") {
 					player.imageUrl = BOT_AVATAR;
 				} else {
-					var index:int = Math.round(Math.random() * (pics.length-1));
-					player.imageUrl = pics[index];
+					player.imageUrl = GENERIC_PLAYER_AVATAR;
+					//var index:int = Math.round(Math.random() * (pics.length-1));
+					//player.imageUrl = pics[index];
 				}
 				
 				registry[player.id] = player;
@@ -141,14 +158,17 @@ package com.cubeia.util.players
 			var player:PokerPlayerInfo = new PokerPlayerInfo();
 			player.id = playerId;
 			player.name = names[index];
-			player.imageUrl = pics[index];
+			// player.imageUrl = pics[index];
+			player.imageUrl = GENERIC_PLAYER_AVATAR;
 			registry[player.id] = player;
 			return player;
 		}
 		
+		/*
 		public function getRandomImage():String {
 			var index:int = Math.round(Math.random() * (pics.length-1));
 			return pics[index];
 		}
+		*/
 	}
 }
