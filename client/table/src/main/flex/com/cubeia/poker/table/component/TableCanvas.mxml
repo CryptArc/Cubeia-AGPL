@@ -85,7 +85,7 @@
 			}
 		]]>
 	</mx:Script>
-	<mx:SWFLoader x="20" y="20" width="100%" height="100%" source="assets/table.swf" scaleContent="true" id="tableLoader"/>
+	<mx:SWFLoader x="54" y="50" width="84%" height="88%" source="assets/table.swf" scaleContent="true" id="tableLoader"/>
 	<mx:Label x="20" y="369" text="My Player ID: {table.myPlayerId}"/>
 	<ns1:TexasHoldemCommunityCards id="communityCards" horizontalCenter="0" verticalCenter="0" />
 	<ns1:DealerButtonCanvas id="dealerButton" x="295" y="175" />

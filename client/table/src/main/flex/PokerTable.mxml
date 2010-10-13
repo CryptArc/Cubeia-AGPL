@@ -26,6 +26,7 @@
 			
 			import flash.utils.getDefinitionByName;
 			
+			import mx.controls.Alert;
 			import mx.controls.SWFLoader;
 			import mx.core.Application;
 			import mx.core.FlexGlobals;
@@ -39,16 +40,15 @@
 			[Bindable]
 			public var table:Table;
 			
-			private var pid:int = 12345;
+			private var pid:int = 222;
 			private var seatid:int = -1;
-			private var tableid:int = 22;
+			private var tableid:int = 1;
 			private var tableSize:int = 10;
 			private var autoJoin:Boolean = false;
 			private var busName:String = "_poker_lobby";
 			
 			private var tableHandler:TableHandler;
 			//file:///C:/PokerWorkspace/poker-bin/PokerTable.html?tableid=114&tableSize=10&busName=_poker_lobby&pid=23222&seatid=-1&autoJoin=false
-			
 			
 			public function init():void
 			{
@@ -60,8 +60,6 @@
  
 //				busName = mx.core.Application.application.parameters["busName"];
  	
-				trace("tableid = " + tableid+", size: "+tableSize);
-				
 				table = new Table(tableid, tableSize);
 				table.myPlayerId = pid;
 				tableCanvas.setTableModel(table);
@@ -84,8 +82,8 @@
 	<ns2:TableCanvas id="tableCanvas" x="0" y="0"/>
 	<ns2:PokerActionCanvas x="308" y="406" id="actionCanvas"/>
 	<ns2:ChatCanvas x="10" y="408" id="chatCanvas" height="104" width="290"/>
-	<mx:Text x="278" y="133" text="{Number(table.mainPot/100).toFixed(2)}" width="100"/>
-	<mx:Label x="220" y="133" text="Main pot:"/>
+	<mx:Text x="278" y="133" text="{Number(table.mainPot/100).toFixed(2)}" width="100" visible="{table.mainPot}"/>
+	<mx:Label x="220" y="133" text="Main pot:" visible="{table.mainPot}"/>
 	<mx:Button x="570" y="491" label="Leave" click="PokerEventDispatcher.dispatch(new TableEvent(TableEvent.LEAVE_TABLE_REQUEST, tableid))"/>
 	
 </pokerLib:StyledApplication>

@@ -23,6 +23,7 @@ package com.cubeia.poker.table.model
 	import flash.utils.Dictionary;
 	
 	import mx.collections.ArrayCollection;
+	import mx.controls.Alert;
 	
 	
 	public class Table
@@ -143,7 +144,11 @@ package com.cubeia.poker.table.model
 		 * if the player was not found.
 		 */
 		public function getPlayer(playerId:int):Player {
-			return players[playerId];
+			var player:Player = players[playerId];
+			if (!player) {
+				// Alert.show("Player["+playerId+"] not found at Table["+id+"]. PlayerList: "+players);
+			}
+			return player;
 		}
 		
 		public function getNumberOfPlayers():uint {
