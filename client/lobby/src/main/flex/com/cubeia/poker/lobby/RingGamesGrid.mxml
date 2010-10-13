@@ -3,11 +3,13 @@
 	
 	<mx:Script>
 		<![CDATA[
-
-			import com.cubeia.poker.lobby.component.table.OpenTableEvent;
 			import com.cubeia.model.TableInfo;
-			import com.cubeia.poker.event.PokerEventDispatcher;
 			import com.cubeia.poker.event.LobbyTableEvent;
+			import com.cubeia.poker.event.PokerEventDispatcher;
+			import com.cubeia.poker.lobby.component.table.OpenTableEvent;
+			
+			import flash.net.navigateToURL;
+			
 			import mx.collections.ArrayCollection;
 			
 			[Bindable]
@@ -30,18 +32,23 @@
 			{
 				PokerEventDispatcher.instance.addEventListener(OpenTableEvent.OPEN_TABLE_EVENT, openTable);
 			}
-			
 			private function openTable(event:OpenTableEvent):void
 			{
-				if ( dg.selectedItem != null ) {
+				 if ( dg.selectedItem != null ) {
 					var table:Object = dg.selectedItem;
-	 				if (ExternalInterface.available) { 
+					if (ExternalInterface.available) { 
 	 					var path:String = "PokerTable.html"
  						var pid:String = PokerLobby.playerInfo.pid.toString();
-						trace(path + "?tableId="+table.tableId+"&tableSize="+table.Capacity + "&pid=" + pid + "&seatid=-1&autoJoin=false&mttId=0");
-						ExternalInterface.call("window.open", path + "?tableid="+table.tableId+ "&tableSize=" + table.Capacity + "&busName=" + PokerLobby.busName + "&pid=" + pid + "&seatid=-1&autoJoin=false", "Cubeia Poker Table " + table.tableId, "height=576,width=720,toolbar=no,scrollbars=no");
+						var resource:String = path + "?tableid="+table.tableId+ "&tableSize=" + table.Capacity + "&busName=" + PokerLobby.busName + "&pid=" + pid + "&seatid=-1&autoJoin=false";
+						trace("Open Table with path: "+resource);
+						
+						// This opens a new small window without controls, but only works in FireFox
+						ExternalInterface.call("window.open", resource, "Cubeia Poker Table " + table.tableId, "height=576,width=720,toolbar=no,scrollbars=no");
+						
+						// This open the table in a new tab only, but works in FireFox and Chrome
+						// navigateToURL(new URLRequest(resource),"Cubeia Poker Table " + table.tableId);
 					}
-				}
+				} 
 			}
 			
 		]]>
@@ -49,7 +56,8 @@
 	
 	
 	<mx:DataGrid id="dg" dataProvider="{lobbyData}" enabled="true" width="100%" height="100%" 
-		x="0" y="0" alpha="1.0" change="selectedItemChanged()" creationComplete="setupOpenTableListener()">
+		x="0" y="0" alpha="1.0" change="selectedItemChanged()" creationComplete="setupOpenTableListener()"
+		doubleClickEnabled="true" itemDoubleClick="openTable(null)" >
 		<mx:columns>
 			<mx:DataGridColumn headerText="Id" dataField="tableId" width="20" />
 			<mx:DataGridColumn headerText="Table" dataField="Name" width="100" />
