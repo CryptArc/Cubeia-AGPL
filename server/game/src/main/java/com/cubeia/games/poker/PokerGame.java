@@ -20,6 +20,7 @@ package com.cubeia.games.poker;
 import java.util.Collections;
 import java.util.List;
 
+import com.cubeia.backoffice.users.api.dto.User;
 import com.cubeia.firebase.api.game.context.GameContext;
 import com.cubeia.firebase.api.game.table.ExtendedDetailsProvider;
 import com.cubeia.firebase.api.game.table.Table;
@@ -29,16 +30,20 @@ import com.cubeia.firebase.api.util.ParameterUtil;
 import com.cubeia.firebase.guice.game.Configuration;
 import com.cubeia.firebase.guice.game.GuiceGame;
 import com.cubeia.firebase.io.protocol.Param;
-import com.cubeia.game.server.service.user.UserServiceContract;
-import com.cubeia.game.server.service.user.domain.User;
 import com.cubeia.games.poker.jmx.PokerStats;
+import com.cubeia.network.users.firebase.api.UserServiceContract;
 import com.google.inject.Module;
 
 public class PokerGame extends GuiceGame implements ExtendedDetailsProvider {
     	
     public final static int POKER_GAME_ID = 7;
     
+    // FIXME: Hardcoded licensee id
     public static final int LICENSEE_ID = "Cubeia".hashCode();
+
+	// FIXME: Hardcoded currency code here, this will vary depending on game type and deployment of course
+	public static String CURRENCY_CODE = "EUR";
+	public static final int CURRENCY_FRACTIONAL_DIGITS = 2;
     
     private ServiceRegistry services;
 
@@ -98,8 +103,8 @@ public class PokerGame extends GuiceGame implements ExtendedDetailsProvider {
 		}
 		
 		UserServiceContract serv = services.getServiceInstance(UserServiceContract.class);
-		User user = serv.getUser(playerId);
-		String externalId = user.getDetails().getExternalId();
+		User user = serv.getUserById(playerId);
+		String externalId = user.getExternalUserId();
 		if(externalId != null) {
 			Param param = ParameterUtil.createParam("externalId", externalId);
 			return Collections.singletonList(param);

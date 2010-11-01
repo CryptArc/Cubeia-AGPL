@@ -151,15 +151,6 @@
         <version>1.0-SNAPSHOT</version>
         <type>jar</type>
     </dependency>
-
-	<!-- The wallet service is not a Firebase service yet.     
-    <dependency>
-      <groupId>com.cubeia.backoffice.firebase</groupId>
-      <artifactId>generic-wallet-service</artifactId>
-      <version>1.0-SNAPSHOT</version>
-      <type>firebase-sar</type>
-    </dependency>
-     -->    
     
     <dependency>
       <groupId>org.codehaus.groovy</groupId>

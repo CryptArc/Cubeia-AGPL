@@ -18,11 +18,13 @@
 package com.cubeia.games.poker;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.cubeia.backoffice.accounting.api.Money;
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.action.UnseatPlayersMttAction.Reason;
@@ -164,14 +166,17 @@ public class PokerTableListener implements TournamentTableListener {
     
 	private Long startWalletSession(Table table, GenericPlayer player) {
 		Long sessionId = walletService.startSession(
+			PokerGame.CURRENCY_CODE,
 			PokerGame.LICENSEE_ID,
 			player.getPlayerId(), 
 			table.getId(), 
 			PokerGame.POKER_GAME_ID, 
 			player.getName());
 		
-		log.debug("Get session ID for player["+player+"]: "+sessionId);
-		
+			if (log.isDebugEnabled()) {
+				log.debug("Created session account: sessionId["+sessionId+"], tableId["+table.getId()+"], playerId["+player.getPlayerId()+":"+player.getName()+"]");
+			}
+			
 		if (sessionId == null) {
 			log.error("error opening wallet session. Table["+table.getId()+"] player["+player+"]");
 			return null;
@@ -181,22 +186,34 @@ public class PokerTableListener implements TournamentTableListener {
 	}
 
 	private boolean endWalletSession(Table table, GenericPlayer player, long sessionId) {
-		log.debug("RMV CLOSE SESSION: "+sessionId);
+		if (log.isDebugEnabled()) {
+			log.debug("Close player table session account: sessionId["+sessionId+"], tableId["+table.getId()+"], playerId["+player.getPlayerId()+":"+player.getName()+"]");
+		}
 		walletService.endSession(sessionId);
 		return true;
 	}
 	
 	private void withdraw(int amount, long sessionId, int tableId) {
-		walletService.withdraw(amountConverter.convertToWalletAmount(amount), PokerGame.LICENSEE_ID, sessionId, "To poker table["+tableId+"]");
+		if (log.isDebugEnabled()) {
+			log.debug("Withdraw from player, sessionId["+sessionId+"], tableId["+tableId+"], amount["+amount+"]");
+		}
+		walletService.withdraw(convertToMoney(amount), PokerGame.LICENSEE_ID, sessionId, "To poker table["+tableId+"]");
 	}
 	
 	private void deposit(int amount, long sessionId, int tableId) {
-		log.debug("RMV DEPOSIT BACK: "+amount+", "+sessionId+", "+tableId);
-		walletService.deposit(amountConverter.convertToWalletAmount(amount), PokerGame.LICENSEE_ID, sessionId, "From poker table["+tableId+"]");
+		if (log.isDebugEnabled()) {
+			log.debug("Deposit back to player, sessionId["+sessionId+"], tableId["+tableId+"], amount["+amount+"]");
+		}
+		walletService.deposit(convertToMoney(amount), PokerGame.LICENSEE_ID, sessionId, "From poker table["+tableId+"]");
+	}
+	
+	private Money convertToMoney(int amount) {
+		BigDecimal walletAmount = amountConverter.convertToWalletAmount(amount);
+		Money money = new Money(PokerGame.CURRENCY_CODE, PokerGame.CURRENCY_FRACTIONAL_DIGITS, walletAmount);
+		return money;
 	}
 
 	private void removePlayer(Table table, int playerId, boolean tournamentPlayer) {
-		log.debug("RMV Remove Player: "+playerId);
         if (!tournamentPlayer) {
         	PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) state.getPokerPlayer(playerId);
             if (pokerPlayer != null) { // Check if player was removed already
@@ -210,7 +227,7 @@ public class PokerTableListener implements TournamentTableListener {
     private void handleSessionEnd(Table table, int playerId, PokerPlayerImpl pokerPlayer) {
         Long sessionId = pokerPlayer.getSessionId();
         
-        log.debug("RMV Handle Session end for player["+playerId+"] with sessionid["+sessionId+"]");
+        log.debug("Handle session end for player["+playerId+"], sessionid["+sessionId+"]");
         if (sessionId != null) {
         	long balance = pokerPlayer.getBalance();
         	deposit((int) balance, sessionId, table.getId());

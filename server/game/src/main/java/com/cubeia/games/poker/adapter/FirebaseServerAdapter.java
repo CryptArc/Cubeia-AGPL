@@ -69,7 +69,7 @@ import com.cubeia.games.poker.util.ProtocolFactory;
 import com.cubeia.games.poker.util.WalletAmountConverter;
 import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
 import com.cubeia.network.wallet.firebase.domain.ResultEntry;
-import com.cubeia.network.wallet.firebase.domain.RoundResultRes;
+import com.cubeia.network.wallet.firebase.domain.RoundResultResponse;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
@@ -91,7 +91,7 @@ import com.google.inject.Inject;
  */
 public class FirebaseServerAdapter implements ServerAdapter {
 
-    private transient static Logger log = Logger.getLogger(FirebaseServerAdapter.class);
+	private transient static Logger log = Logger.getLogger(FirebaseServerAdapter.class);
 
     private WalletAmountConverter amountConverter = new WalletAmountConverter();
     
@@ -211,7 +211,8 @@ public class FirebaseServerAdapter implements ServerAdapter {
 					
 					long sessionId = ((PokerPlayerImpl) p).getSessionId();
 					Result result = results.get(p);
-					ResultEntry entry = new ResultEntry(sessionId, amountConverter.convertToWalletAmount(result.getNetResult()));
+					// FIXME: Hardcoded currency code
+					ResultEntry entry = new ResultEntry(sessionId, amountConverter.convertToWalletAmount(result.getNetResult()), PokerGame.CURRENCY_CODE);
 					resultEntries.add(entry);
 					
 					// TODO: Move the event reporting to a separate method
@@ -222,7 +223,8 @@ public class FirebaseServerAdapter implements ServerAdapter {
 				
 				WalletServiceContract walletService = getServices().getServiceInstance(WalletServiceContract.class);
 				
-				RoundResultRes roundResult = walletService.roundResult(
+				// TODO: Change to use doTransaction(...) instead of deprecated method roundResult(...)
+				RoundResultResponse roundResult = walletService.roundResult(
 				     -1l, (long) PokerGame.POKER_GAME_ID, (long) table.getId(), resultEntries, 
 				     createRoundReportDescription(handEndStatus));
 				validateWalletBalances(roundResult);
@@ -281,7 +283,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	}
 	
 	
-    private void validateWalletBalances(RoundResultRes roundResult) {
+    private void validateWalletBalances(RoundResultResponse roundResult) {
 		// TODO Auto-generated method stub
 		
 	}
