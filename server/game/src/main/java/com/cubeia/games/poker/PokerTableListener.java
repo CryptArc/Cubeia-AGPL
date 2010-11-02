@@ -187,7 +187,7 @@ public class PokerTableListener implements TournamentTableListener {
 
 	private boolean endWalletSession(Table table, GenericPlayer player, long sessionId) {
 		if (log.isDebugEnabled()) {
-			log.debug("Close player table session account: sessionId["+sessionId+"], tableId["+table.getId()+"], playerId["+player.getPlayerId()+":"+player.getName()+"]");
+			log.debug("Close player table session account: sessionId["+sessionId+"], tableId["+table.getId()+"]");
 		}
 		walletService.endSession(sessionId);
 		return true;
