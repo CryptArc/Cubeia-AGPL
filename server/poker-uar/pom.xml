@@ -39,6 +39,15 @@
       <type>firebase-par</type>
     </dependency>
     
+    <dependency>
+      <groupId>com.cubeia.network.users</groupId>
+      <artifactId>fb-user-service</artifactId>
+      <version>1.2.2-SNAPSHOT</version>
+      <type>firebase-sar</type>
+      <scope>provided</scope>
+    </dependency>    
+    
+    
     <!-- The Poker CEP Service, needed for event processing -->
     <!-- dependency>
       <groupId>com.cubeia.games</groupId>
@@ -55,5 +64,28 @@
     </dependency>
     -->
   </dependencies>
+  
+  <build>
+    <plugins>
+      <plugin>
+          <groupId>com.cubeia.tools</groupId>
+          <artifactId>firebase-maven-plugin</artifactId>
+          <version>1.7.1-CE</version>
+          <configuration>
+            <!-- enable copy of overlay files -->
+            <overlaysEnabled>false</overlaysEnabled>
+        
+            <!-- copy overlay files from this directory to the firebase root -->
+            <overlaySourceDirectory>${basedir}/src/test/resources/firebase</overlaySourceDirectory>
+        
+            <!-- included Firebase archives with scope provided -->
+            <includeProvidedArchives>true</includeProvidedArchives>
+            
+            <!-- delete temp firebase instance on exit, set to false for faster startup -->
+            <deleteOnExit>false</deleteOnExit>
+          </configuration>
+        </plugin>
+    </plugins>
+  </build>
    
 </project>
