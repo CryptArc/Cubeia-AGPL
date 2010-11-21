@@ -11,7 +11,7 @@
     <module>game</module>
     <module>protocol</module>
     <module>poker-logic</module>
-    <module>poker-cep-service</module>
+    <!--module>poker-cep-service</module--> <!-- depends on stuff not in public repo (yet) -->
     <module>poker-tournament</module>
     <module>poker-persistence</module>
     <module>poker-uar</module>
@@ -243,7 +243,7 @@
     <repository>
           <id>cubeia-nexus</id>
           <name>Public Cubeia Nexus</name>
-          <url>http://m2.cubeia.com/nexus/content/groups/internal-development/</url>
+          <url>http://m2.cubeia.com/nexus/content/groups/public/</url>
           <releases>
         <enabled>true</enabled>
       </releases>
@@ -252,7 +252,7 @@
       </snapshots>
     </repository>
     
-    <repository>
+    <!--repository>
           <id>cubeia-maven-repo</id>
           <name>Old Cubeia Archiva</name>
           <url>https://secure.cubeia.com/repo/maventest/</url>
@@ -262,14 +262,14 @@
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
-    </repository>
+    </repository-->
   </repositories>
 
   <pluginRepositories>
     <pluginRepository>
           <id>cubeia-nexus</id>
           <name>Public Cubeia Nexus</name>
-          <url>http://m2.cubeia.com/nexus/content/groups/internal-development/</url>
+          <url>http://m2.cubeia.com/nexus/content/groups/public/</url>
           <releases>
         <enabled>true</enabled>
       </releases>
