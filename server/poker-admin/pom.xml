@@ -21,7 +21,7 @@
     <dependency>
       <groupId>com.cubeia.firebase</groupId>
       <artifactId>firebase-jmx</artifactId>
-      <version>1.5.1</version>
+      <version>${firebase.version}</version>
     </dependency>
    
     <dependency>
@@ -138,11 +138,11 @@
       <artifactId>hsqldb</artifactId>
       <version>1.8.0.7</version>
     </dependency>
-    <dependency>
+    <!--dependency>
     	<groupId>com.cubeia.backoffice.cem</groupId>
     	<artifactId>cep-api</artifactId>
     	<version>1.0-SNAPSHOT</version>
-    </dependency>
+    </dependency-->
     
     <!--  MANAGER ONLY -->
     <dependency>
