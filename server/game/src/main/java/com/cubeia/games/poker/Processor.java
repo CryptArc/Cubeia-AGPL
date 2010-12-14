@@ -157,6 +157,7 @@ public class Processor implements GameProcessor, TournamentProcessor {
 
 	
     public void startRound(Table table) {
+    	stateInjector.injectAdapter(table);
         if (actionCache != null) {
             actionCache.clear(table.getId());
         }
@@ -165,7 +166,7 @@ public class Processor implements GameProcessor, TournamentProcessor {
     }
 
     public void stopRound(Table table) {
-        
+    	stateInjector.injectAdapter(table);
     }
     
     private void clearRequestSequence(Table table) {
