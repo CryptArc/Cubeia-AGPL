@@ -251,18 +251,6 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
-    
-    <!--repository>
-          <id>cubeia-maven-repo</id>
-          <name>Old Cubeia Archiva</name>
-          <url>https://secure.cubeia.com/repo/maventest/</url>
-          <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository-->
   </repositories>
 
   <pluginRepositories>

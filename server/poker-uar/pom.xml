@@ -38,39 +38,27 @@
       <artifactId>poker-persistence</artifactId>
       <type>firebase-par</type>
     </dependency>
+        
+        
+		<!-- Services needed to Firebase:Run plugin -->
     
     <dependency>
-      <groupId>com.cubeia.network.users</groupId>
-      <artifactId>fb-user-service</artifactId>
-      <version>1.2.2-SNAPSHOT</version>
+      <groupId>com.cubeia.network.wallet.firebase</groupId>
+      <artifactId>mock-wallet-service</artifactId>
+      <version>1.2.2</version>
       <type>firebase-sar</type>
       <scope>provided</scope>
-    </dependency>    
-    
-    
-    <!-- The Poker CEP Service, needed for event processing -->
-    <!-- dependency>
-      <groupId>com.cubeia.games</groupId>
-      <artifactId>poker-cep-service</artifactId>
-      <type>firebase-sar</type>
-    </dependency-->
-
-
-    <!-- The login service should not be bundled!
-    <dependency>
-      <groupId>com.cubeia.games</groupId>
-      <artifactId>poker-login-service</artifactId>
-      <type>firebase-sar</type>
-    </dependency>
-    -->
+    </dependency>   
+     
   </dependencies>
+
   
   <build>
     <plugins>
       <plugin>
           <groupId>com.cubeia.tools</groupId>
           <artifactId>firebase-maven-plugin</artifactId>
-          <version>1.7.1-CE</version>
+          <version>1.7.0-CE</version>
           <configuration>
             <!-- enable copy of overlay files -->
             <overlaysEnabled>false</overlaysEnabled>

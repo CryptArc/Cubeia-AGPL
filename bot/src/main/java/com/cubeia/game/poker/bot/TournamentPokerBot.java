@@ -12,6 +12,7 @@ public class TournamentPokerBot extends MttAI {
     public TournamentPokerBot(Bot bot) {
         super(bot);
         handler = new GameHandler(this);
+        bot.logDebug("Tournament Poker Bot created");
     }
     
     @Override
