@@ -17,6 +17,8 @@
 
 package com.cubeia.games.poker;
 
+import com.cubeia.firebase.api.game.TournamentProcessor;
+import com.cubeia.firebase.api.game.table.TournamentTableListener;
 import com.cubeia.firebase.guice.game.EventScoped;
 import com.cubeia.games.poker.adapter.FirebaseServerAdapter;
 import com.cubeia.games.poker.cache.ActionCache;
@@ -31,6 +33,8 @@ public class IntegrationGuiceModule extends AbstractModule {
 		 bind(StateInjector.class);
 		 bind(FirebaseServerAdapter.class).in(EventScoped.class);
 		 bind(PokerHandler.class).in(EventScoped.class);
+		 bind(TournamentProcessor.class).to(Processor.class);
+		 bind(TournamentTableListener.class).to(PokerTableListener.class);
 	}
 
 }

@@ -109,13 +109,18 @@ public class PotHolder implements Serializable {
 		PokerPlayer biggestBetter = getBiggestBetter(players);
 		PokerPlayer secondBiggestBetter = getBiggestBetter(players, biggestBetter);
 
-		if (biggestBetter.getBetStack() > secondBiggestBetter.getBetStack()) {
-			long returnedChips = biggestBetter.getBetStack() - secondBiggestBetter.getBetStack();
-			biggestBetter.addReturnedChips(returnedChips);
-			
-//			if (logger.isDebugEnabled()) {
-				log.debug("returning " + returnedChips + " uncalled chips to " + biggestBetter);
-//			}
+		try {
+			if (biggestBetter.getBetStack() > secondBiggestBetter.getBetStack()) {
+				long returnedChips = biggestBetter.getBetStack() - secondBiggestBetter.getBetStack();
+				biggestBetter.addReturnedChips(returnedChips);
+				
+	//			if (logger.isDebugEnabled()) {
+					log.debug("returning " + returnedChips + " uncalled chips to " + biggestBetter);
+	//			}
+			}
+		} catch (NullPointerException ne) {
+			// FIXME: Tournaments get this exception
+			log.warn("FIXME: Should not be nullpointer here! -> PotHolder.returnUnCalledChips()");
 		}
 	}
 
