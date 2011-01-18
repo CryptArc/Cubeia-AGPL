@@ -3,22 +3,26 @@
 
 	<mx:Script>
 		<![CDATA[
-			import mx.controls.Alert;
-			import com.cubeia.poker.event.PokerEventDispatcher;
-			import com.cubeia.firebase.events.LoginResponseEvent;
-			import com.cubeia.poker.login.LoginEvent;
-			import com.cubeia.poker.event.PokerLobbyEvent;
-			import mx.events.ListEvent;
-			import com.cubeia.model.TableInfo;
-			import com.cubeia.poker.event.LobbyTableEvent;
-			import mx.events.IndexChangedEvent;
-			import mx.collections.ArrayCollection;
-			import com.cubeia.poker.ui.StyledApplication;
-			import com.cubeia.firebase.model.LobbyDataItem;
-			import com.cubeia.firebase.events.TournamentEvent;
-			import com.cubeia.firebase.events.LobbyEvent;
 			import com.cubeia.firebase.events.ConnectEvent;
+			import com.cubeia.firebase.events.LobbyEvent;
+			import com.cubeia.firebase.events.LoginResponseEvent;
+			import com.cubeia.firebase.events.TournamentEvent;
+			import com.cubeia.firebase.model.LobbyDataItem;
+			import com.cubeia.firebase.model.TournamentDataItem;
+			import com.cubeia.model.TableInfo;
 			import com.cubeia.poker.config.PokerConfig;
+			import com.cubeia.poker.event.LobbyTableEvent;
+			import com.cubeia.poker.event.PokerEventDispatcher;
+			import com.cubeia.poker.event.PokerLobbyEvent;
+			import com.cubeia.poker.login.LoginEvent;
+			import com.cubeia.poker.ui.StyledApplication;
+			
+			import flash.trace.Trace;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.IndexChangedEvent;
+			import mx.events.ListEvent;
 			
 			private var _filters:Array = new Array();
 		
@@ -38,6 +42,10 @@
 				PokerLobby.firebaseClient.addEventListener(LobbyEvent.TABLE_REMOVED, onLobbyUpdate);
 				PokerLobby.firebaseClient.addEventListener(LobbyEvent.TABLE_UPDATED, onLobbyUpdate);
 				PokerLobby.firebaseClient.addEventListener(LoginResponseEvent.LOGIN, onLoginResponse);	
+				
+				PokerLobby.firebaseClient.addEventListener(TournamentEvent.TOURNAMENT_ADDED, onLobbyTournamentUpdate);
+				PokerLobby.firebaseClient.addEventListener(TournamentEvent.TOURNAMENT_REMOVED, onLobbyTournamentUpdate);
+				PokerLobby.firebaseClient.addEventListener(TournamentEvent.TOURNAMENT_UPDATED, onLobbyTournamentUpdate);
 								
 			}
 			
@@ -45,7 +53,7 @@
 			{	
 				// If we have a successfull login, subscribe to the lobby
 				if ( event.getPlayerInfo().code == 0 ) {
-					subscribe(lobbyPaths[0]);
+					lobbyView.selectedIndex = 0;
 				}	
 			}
 			
@@ -106,7 +114,6 @@
 			public function onLobbyUpdate(lobbyEvent:LobbyEvent):void
 			{
 				var lobbyDataItem:LobbyDataItem = lobbyEvent.lobbyDataItem;
-				
 				switch ( lobbyEvent.type )
 				{
 					case LobbyEvent.TABLE_ADDED :
@@ -162,6 +169,58 @@
 				}
 				ringGames.lobbyData.refresh();
 			}
+			
+			public function onLobbyTournamentUpdate(lobbyEvent:TournamentEvent):void
+			{
+				var lobbyDataItem:TournamentDataItem = lobbyEvent.tournamentDataItem;
+				switch ( lobbyEvent.type )
+				{
+					case TournamentEvent.TOURNAMENT_ADDED :
+						var item:Object = new Object();
+						item.mttId = lobbyDataItem.mttId;
+						item.address = lobbyDataItem.address;
+						item.name = lobbyDataItem.getValue("NAME");
+						item.capacity = lobbyDataItem.getValue("CAPACITY");
+						item.registered = lobbyDataItem.getValue("REGISTERED");
+						item.status = lobbyDataItem.getValue("STATUS");
+												
+						// TODO: remove this once the server bug has been fixed
+						// ignore duplicates
+						var found:Boolean = false; 
+						for each ( var searchItem:Object in sitAndGos.lobbyData ) {
+							if ( searchItem.mttId == item.mttId ) {
+								found = true;
+							}
+						}	
+						if ( !found ) {
+							sitAndGos.lobbyData.addItem(item);
+						}
+						break;
+					
+					
+					case TournamentEvent.TOURNAMENT_UPDATED :	
+						for each ( item in sitAndGos.lobbyData ) {
+						if ( item.mttId == lobbyEvent.mttId ) {
+							item.registered = lobbyDataItem.getValue("REGISTERED");
+							item.status = lobbyDataItem.getValue("STATUS");
+							break;
+						} 
+					}
+						break;
+					
+					case TournamentEvent.TOURNAMENT_REMOVED :
+						for each ( item in sitAndGos.lobbyData) {
+						if ( item.mttId == lobbyEvent.mttId ) {	
+							sitAndGos.lobbyData.removeItemAt(sitAndGos.lobbyData.getItemIndex(item));
+							break;
+						} 
+					}
+						
+					break;
+				}
+				sitAndGos.lobbyData.refresh();
+			}
+			
 			private function onFilterClicked(event:LobbyFilterEvent):void
 			{
 				if ( event.lobbyFilterItem.selected == false ) {
@@ -206,7 +265,7 @@
 	
 	<mx:Array id="lobbyPaths">
 		<mx:Object label="Texas Holdem" gameId="7" lobbyPath="holdem/real" isMTT="false"/>
-		<mx:Object label="STT" gameId="77" lobbyPath="/" isMTT="true"/>
+		<mx:Object label="STT" gameId="77" lobbyPath="/sitandgo" isMTT="true"/>
 		<mx:Object label="MTT" gameId="77" lobbyPath="/" isMTT="true"/>
 	</mx:Array>
 	
@@ -218,6 +277,7 @@
 			<ns1:RingGamesGrid x="0" y="56" id="ringGames" height="100%" width="100%"/>
 		</mx:Canvas>
 		<mx:Canvas label="Sit &amp; Go" width="100%" height="100%">
+			<ns1:SitAndGoGrid x="0" y="56" id="sitAndGos" height="100%" width="100%"/>
 		</mx:Canvas>
 		<mx:Canvas label="Tournaments" width="100%" height="100%">
 		</mx:Canvas>

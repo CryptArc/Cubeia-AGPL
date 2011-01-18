@@ -45,7 +45,7 @@
 			private var tableid:int = 1;
 			private var tableSize:int = 10;
 			private var autoJoin:Boolean = false;
-			private var busName:String = "_poker_lobby";
+			private var busName:String = "_poker_lobby_";
 			
 			private var tableHandler:TableHandler;
 			//file:///C:/PokerWorkspace/poker-bin/PokerTable.html?tableid=114&tableSize=10&busName=_poker_lobby&pid=23222&seatid=-1&autoJoin=false
@@ -58,8 +58,10 @@
 				tableSize = FlexGlobals.topLevelApplication.parameters["tableSize"];
 				autoJoin = FlexGlobals.topLevelApplication.parameters["autoJoin"];
  
-//				busName = mx.core.Application.application.parameters["busName"];
- 	
+				// busName = busName+pid;
+				busName = mx.core.Application.application.parameters["busName"];
+				Alert.show("Bus Name: "+busName); 	
+				
 				table = new Table(tableid, tableSize);
 				table.myPlayerId = pid;
 				tableCanvas.setTableModel(table);
