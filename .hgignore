@@ -7,3 +7,7 @@ target
 .settings
 *.log
 *.log.*
+glob:client/lobby/.actionScriptProperties
+glob:*.flexProperties
+glob:*.actionScriptProperties
+glob:*.flexLibProperties
