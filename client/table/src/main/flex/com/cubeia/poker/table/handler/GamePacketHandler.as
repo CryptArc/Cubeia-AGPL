@@ -122,7 +122,11 @@ package com.cubeia.poker.table.handler
 				
 			} else if ( protocolObject.classId() == LeaveResponsePacket.CLASSID ) {
 				if (ExternalInterface.available) { 
-					ExternalInterface.call("window.close");
+					if (PokerTable.qtDemo) {
+						ExternalInterface.call("actionHandler.closeWindow", "Cubeia Poker Table " + table.id + "("+table.myPlayerId+")");
+					} else {
+						ExternalInterface.call("window.close");
+					}
 				}
 			}
 		}

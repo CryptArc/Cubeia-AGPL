@@ -52,6 +52,9 @@
 			private var tableHandler:TableHandler;
 			//file:///C:/PokerWorkspace/poker-bin/PokerTable.html?tableid=114&tableSize=10&busName=_poker_lobby&pid=23222&seatid=-1&autoJoin=false
 			
+			// Flag if the client is executed within a QT Wrapper
+			public static var qtDemo:Boolean = true;
+			
 			public function init():void
 			{
   				pid = FlexGlobals.topLevelApplication.parameters["pid"];
