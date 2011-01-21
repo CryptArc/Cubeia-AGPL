@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<pokerLib:StyledApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" xmlns:pokerLib="com.cubeia.poker.ui.*" xmlns:ns1="com.cubeia.poker.lobby.*" width="100%" height="100%" currentState="login">
+<pokerLib:StyledApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" xmlns:pokerLib="com.cubeia.poker.ui.*" 
+							xmlns:ns1="com.cubeia.poker.lobby.*" width="100%" height="100%" currentState="login">
 	
 	<mx:Script>
 		<![CDATA[
@@ -37,6 +38,7 @@
 			
 			private var usr:String;
 			private var pwd:String;
+			private var operatorId:int;
 			
 			private var isConnected:Boolean = false;
 			
@@ -63,6 +65,7 @@
 				var loginRequestPacket:LoginRequestPacket = new LoginRequestPacket();
 				loginRequestPacket.user = usr;
 				loginRequestPacket.password = pwd;
+				loginRequestPacket.operatorid = operatorId;
 				firebaseClient.send(loginRequestPacket);
 
 			}
@@ -86,6 +89,7 @@
 			{
 				usr = loginEvent.username;
 				pwd = loginEvent.password;
+				operatorId = loginEvent.operatorId;
 				
 				if (!isConnected) {
 					var args:Array = loginEvent.host.split(":");

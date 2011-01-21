@@ -44,10 +44,10 @@
 						
 						if (PokerLobby.qtDemo) {
 							// For QT Demo
-							ExternalInterface.call("actionHandler.open", resource, "Cubeia Poker Table " + table.tableId + "("+pid+")", 576,720);
+							ExternalInterface.call("actionHandler.open", resource, "Cubeia Poker Table " + table.tableId + "("+pid+")", 700,576);
 						} else {
 							// This opens a new small window without controls
-							ExternalInterface.call("window.open", resource, "Cubeia Poker Table " + table.tableId + "("+pid+")", "height=576,width=720,toolbar=no,scrollbars=no");
+							ExternalInterface.call("window.open", resource, "Cubeia Poker Table " + table.tableId + "("+pid+")", "height=576,width=700,toolbar=no,scrollbars=no");
 						}
 					}
 				} 
