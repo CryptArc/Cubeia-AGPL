@@ -49,6 +49,7 @@ package com.cubeia.poker.ui
 		{
 			// Wait for configuration to load
 			if ( PokerConfig.getInstance().configLoaded == false ) {
+				trace("Call Later for style invoked");
 				callLater(loadDefaultStyle);
 				return;
 			}
@@ -65,7 +66,7 @@ package com.cubeia.poker.ui
 			}
 			_currentStyle = "styles/" + event.styleName +"/poker.swf";
 			styleManager.loadStyleDeclarations2(_currentStyle, true);
-
+			trace("Style Manager loaded style: "+_currentStyle);
 		}
 
 	}

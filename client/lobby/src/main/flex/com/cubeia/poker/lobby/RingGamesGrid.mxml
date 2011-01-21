@@ -15,7 +15,6 @@
 			[Bindable]
 			public var lobbyData:ArrayCollection = new ArrayCollection();		
 			
-			
 			private function selectedItemChanged():void {
 				var event:LobbyTableEvent = new LobbyTableEvent(LobbyTableEvent.SELECTED);
 				var table:TableInfo = new TableInfo();
@@ -39,17 +38,22 @@
 					if (ExternalInterface.available) { 
 	 					var path:String = "PokerTable.html"
  						var pid:String = PokerLobby.playerInfo.pid.toString();
-						var resource:String = path + "?tableid="+table.tableId+ "&tableSize=" + table.Capacity + "&busName=" + PokerLobby.busName + "&pid=" + pid + "&seatid=-1&autoJoin=false";
+						var screenname:String = PokerLobby.playerInfo.screenname;
+						var resource:String = path + "?tableid="+table.tableId+ "&tableSize=" + table.Capacity + "&busName=" + PokerLobby.busName + "&pid=" + pid + "&screenname=" + screenname + "&seatid=-1&autoJoin=false";
 						trace("Open Table with path: "+resource);
 						
-						// This opens a new small window without controls, but only works in FireFox
-						ExternalInterface.call("window.open", resource, "Cubeia Poker Table " + table.tableId, "height=576,width=720,toolbar=no,scrollbars=no");
-						
-						// This open the table in a new tab only, but works in FireFox and Chrome
-						// navigateToURL(new URLRequest(resource),"Cubeia Poker Table " + table.tableId);
+						if (PokerLobby.qtDemo) {
+							// For QT Demo
+							ExternalInterface.call("actionHandler.open", resource, "Cubeia Poker Table " + table.tableId + "("+pid+")", 576,720);
+						} else {
+							// This opens a new small window without controls
+							ExternalInterface.call("window.open", resource, "Cubeia Poker Table " + table.tableId + "("+pid+")", "height=576,width=720,toolbar=no,scrollbars=no");
+						}
 					}
 				} 
 			}
+			
+			
 			
 		]]>
 	</mx:Script>

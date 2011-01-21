@@ -22,16 +22,16 @@
 	
 
 	<Table seats="10">
-		<Seat index="0" x="4"   y="140"  buttonPosX="645" buttonPosY="109" csPosX="96" csPosY="20"/>
-		<Seat index="1" x="4"   y="4"    buttonPosX="803" buttonPosY="149" csPosX="96" csPosY="76"/>
-		<Seat index="2" x="180" y="4"    buttonPosX="840" buttonPosY="269" csPosX="50" csPosY="76"/>
-		<Seat index="3" x="340" y="4"    buttonPosX="803" buttonPosY="366" csPosX="40" csPosY="76"/>
-		<Seat index="4" x="500" y="4"    buttonPosX="645" buttonPosY="400" csPosX="30" csPosY="76"/>
-		<Seat index="5" x="500" y="140"  buttonPosX="366" buttonPosY="400" csPosX="30" csPosY="20"/>
-		<Seat index="6" x="500" y="280"  buttonPosX="238" buttonPosY="366" csPosX="30" csPosY="-40"/>
-		<Seat index="7" x="340" y="280"  buttonPosX="191" buttonPosY="269" csPosX="40" csPosY="-40"/>
-		<Seat index="8" x="180" y="280"  buttonPosX="238" buttonPosY="149" csPosX="50" csPosY="-40"/>
-		<Seat index="9" x="4"   y="280"  buttonPosX="366" buttonPosY="109" csPosX="96" csPosY="280"/>
+		<Seat index="0" x="4"   y="140"  buttonPosX="130" buttonPosY="150" csPosX="120" csPosY="20"/>
+		<Seat index="1" x="4"   y="4"    buttonPosX="90" buttonPosY="96" csPosX="120" csPosY="66"/>
+		<Seat index="2" x="180" y="4"    buttonPosX="270" buttonPosY="80" csPosX="50" csPosY="66"/>
+		<Seat index="3" x="340" y="4"    buttonPosX="420" buttonPosY="80" csPosX="50" csPosY="66"/>
+		<Seat index="4" x="500" y="4"    buttonPosX="516" buttonPosY="96" csPosX="-24" csPosY="66"/>
+		<Seat index="5" x="500" y="140"  buttonPosX="470" buttonPosY="150" csPosX="-24" csPosY="20"/>
+		<Seat index="6" x="500" y="280"  buttonPosX="520" buttonPosY="244" csPosX="-24" csPosY="-40"/>
+		<Seat index="7" x="340" y="280"  buttonPosX="406" buttonPosY="264" csPosX="40" csPosY="-40"/>
+		<Seat index="8" x="180" y="280"  buttonPosX="260" buttonPosY="264" csPosX="50" csPosY="-40"/>
+		<Seat index="9" x="4"   y="280"  buttonPosX="90" buttonPosY="244" csPosX="120" csPosY="-40"/>
 	</Table>
 
 	<Table seats="2">

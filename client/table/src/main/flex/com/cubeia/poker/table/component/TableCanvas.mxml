@@ -59,7 +59,7 @@
 					container.x = seatConfig.position.x;
 					container.y = seatConfig.position.y;
 					container.chipStackX = seatConfig.chipstackPosition.x;
-					container.chipStackY = seatConfig.chipstackPosition.x;
+					container.chipStackY = seatConfig.chipstackPosition.y;
 				   
 				   seats[i] = container;
 				   this.addChild(container);

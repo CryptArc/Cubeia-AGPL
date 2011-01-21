@@ -17,6 +17,8 @@
 
 package com.cubeia.poker.table.model
 {
+	import mx.controls.Alert;
+
 	/**
 	 * This is a seat at the table.
 	 * A table can have many seats, a seat can only have one player.

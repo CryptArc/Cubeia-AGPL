@@ -92,6 +92,17 @@
 				}
 			}
 			
+			private function placeBetStacks():void {
+				var i:int;
+				for (i = 0; i < 10; i++) {
+					// Create cards
+					var player:Player = table.seats[i].player as Player;
+					if (player != null) {
+						player.betStack = 15;
+					}
+				}
+			}
+			
 			private function removeAllCards():void {
 				for (var i:int = 0; i < 10; i++) {
 					// Create cards
@@ -130,15 +141,20 @@
 				if (++newDealer >= table.getNumberOfSeats()) {
 					newDealer = 0;
 				}
+				trace("Dealer button position: "+newDealer);
 				table.dealerButtonPosition = newDealer;
 			}
-
+			
+			private function setMouseCoords(event:MouseEvent):void {
+				mouseCoords.text = Math.round(event.localX)+","+Math.round(event.localY);
+			}
+			
 		]]>
 	</mx:Script>
 	
 	<mx:Button x="310" y="418" label="Change balances" width="166" click="flexify(event)"/>
 	
-	<ns1:TableCanvas id="tableCanvas" x="10" y="10" borderStyle="solid"/>
+	<ns1:TableCanvas id="tableCanvas" x="10" y="10" borderStyle="solid" mouseMove="setMouseCoords(event)"/>
 	
 	<mx:NumericStepper x="79" y="418" id="playerId"/>
 	<mx:Label x="10" y="420" text="Player ID:"/>
@@ -148,11 +164,13 @@
 	<mx:Button x="145" y="446" id="unseatPlayerButton" label="Eject Player" width="120" click="unseatPlayer()"/>
 	<mx:Button x="145" y="476" id="seatPlayerButton" label="Seat Player" width="120" click="seatPlayer()" enabled="false"/>
 	<mx:Button x="310" y="448" label="New cards for everyone!" width="166" click="dealNewCards()"/>
-	<mx:Button x="489" y="508" label="Remove cards from everyone!" width="166" click="removeAllCards()"/>
+	<mx:Button x="483" y="506" label="Remove cards from everyone!" width="166" click="removeAllCards()"/>
 	<mx:Button x="484" y="418" label="Deal Flop" width="166" click="dealFlop()"/>
 	<mx:Button x="483" y="448" label="Deal Turn" width="166" click="dealTurn()"/>
-	<mx:Button x="483" y="481" label="Deal River" width="166" click="dealRiver()"/>
-	<mx:Button x="308" y="481" label="Move dealer button" width="166" click="moveDealerButton()"/>
-	<mx:Button x="308" y="506" label="New hidden cards for everyone!" width="166" click="dealNewCards(true)"/>
+	<mx:Button x="482" y="477" label="Deal River" width="166" click="dealRiver()"/>
+	<mx:Button x="309" y="475" label="Move dealer button" width="166" click="moveDealerButton()"/>
+	<mx:Button x="308" y="505" label="New hidden cards for everyone!" width="166" click="dealNewCards(true)"/>
+	<mx:Button x="308" y="534" label="Add betstacks" width="166" click="placeBetStacks()"/>
+	<mx:Label x="144" y="418" id="mouseCoords" width="121"/>
 	
 </mx:Application>

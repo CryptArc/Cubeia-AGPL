@@ -64,7 +64,7 @@ package com.cubeia.multitable.bus
 			connector.allowInsecureDomain("*");
 			connector.allowDomain("*");
 			try {
-				connector.connect(tableid.toString());
+				connector.connect(busName+"-"+tableid.toString());
 			} catch (error:ArgumentError) {
 				Alert.show("table is already open");
 			}

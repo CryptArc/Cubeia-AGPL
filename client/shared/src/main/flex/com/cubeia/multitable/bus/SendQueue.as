@@ -33,10 +33,12 @@ package com.cubeia.multitable.bus
 		private var _queue:Queue = new Queue();
 		private var _isActive:Boolean = false;
 		private var _lc:LocalConnection;
+		private var _busName:String;
 		
-		public function SendQueue(lc:LocalConnection)
+		public function SendQueue(lc:LocalConnection, busName:String)
 		{
 			_lc = lc;
+			_busName = busName;
 		}
 		
 		public function put(tableid:int, functionName:String, ... args):void
@@ -83,7 +85,7 @@ package com.cubeia.multitable.bus
 			}
 
 			_currentItem = _queue.dequeue() as SendQueueItem;
-			_lc.send(_currentItem.tableid.toString(), _currentItem.functionName, _currentItem.args);
+			_lc.send(_busName+"-"+_currentItem.tableid.toString(), _currentItem.functionName, _currentItem.args);
 		}
 
 		private function onAsyncError(event:AsyncErrorEvent):void

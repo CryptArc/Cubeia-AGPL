@@ -11,14 +11,17 @@
 	<fx:Script>
 		<![CDATA[
 			import com.cubeia.games.poker.io.protocol.DealerButton;
+			import com.cubeia.poker.config.PokerConfig;
+			import com.cubeia.poker.config.TableConfig;
 			import com.cubeia.poker.event.PokerEventDispatcher;
-
 			import com.cubeia.poker.table.model.Table;
 			
 			import mx.binding.utils.ChangeWatcher;
 			import mx.events.PropertyChangeEvent;
 			
 			private var currentSeat:int;
+			
+			private var tableConfig:TableConfig;
 			
 			[Bindable]
 			private var table:Table;
@@ -30,31 +33,16 @@
 			public function setTableModel(table:Table):void {
 				this.table = table;
 				tableWatcher = ChangeWatcher.watch(table,["dealerButtonPosition"], onDealerButtonMoved);
+				tableConfig = PokerConfig.getInstance().getTableConfig(table.getNumberOfSeats());
 			}
 			
 			private function onDealerButtonMoved(event:PropertyChangeEvent):void {
 				moveToSeat(table.dealerButtonPosition);
 			}
-					
-			// FIXME: Fix layout in some smart way!
-			private var positions:Array = [ 
-				new Point(20, 160), 
-				new Point(24, 160),
-				new Point(24, 24),
-				new Point(200, 24),
-				new Point(360, 24),
-				new Point(400, 24),
-				new Point(400, 160),
-				new Point(400, 220),
-				new Point(360, 220),
-				new Point(200, 220),
-				new Point(24, 220) 
-			];
-			// FIXME:
 
 			private function moveToSeat(seatid:int):void {
-				changeDealer.xTo = Point(positions[seatid]).x;
-				changeDealer.yTo = Point(positions[seatid]).y;
+				changeDealer.xTo = tableConfig.getSeatConfig(seatid).buttonPosition.x;
+				changeDealer.yTo = tableConfig.getSeatConfig(seatid).buttonPosition.y;
 				changeDealer.target = this;
 				currentSeat = seatid;
 				changeDealer.play();
@@ -64,6 +52,6 @@
 	</fx:Script>
 	
 	
-	<mx:Image x="0" y="0" source="assets/button.png" id="buttonImage"/>
+	<mx:Image x="0" y="0" width="32" height="32" source="assets/button.png" id="buttonImage" scaleContent="true"/>
 	
 </mx:Canvas>

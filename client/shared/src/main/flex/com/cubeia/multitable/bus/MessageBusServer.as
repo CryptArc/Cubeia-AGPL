@@ -97,7 +97,7 @@ package com.cubeia.multitable.bus
 		
 		private function setupSendQueue():void
 		{
-			 sendQueue = new SendQueue(connector);
+			 sendQueue = new SendQueue(connector, busName);
 			 sendQueue.addEventListener(SendFailedEvent.SEND_FAILED_EVENT, onSendFailed);
 			 sendQueue.addEventListener(AsyncErrorEvent.ASYNC_ERROR, onQueueAsyncErrorEvent); 
 			 sendQueue.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onQueueSecurityErrorEvent); 
@@ -203,7 +203,7 @@ package com.cubeia.multitable.bus
 		{
 			for each ( var tableid:int in tableRegistry.getTableList() ) {
 				if ( event.pokerEvent.tableid == -1 || event.pokerEvent.tableid == tableid ) {
-					connector.send(tableid.toString(), "pokerEvent", event.pokerEvent);
+					connector.send(busName+"-"+tableid.toString(), "pokerEvent", event.pokerEvent);
 				} 
 			}
 		}

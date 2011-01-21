@@ -7,6 +7,7 @@
 			import com.cubeia.firebase.events.LobbyEvent;
 			import com.cubeia.firebase.events.LoginResponseEvent;
 			import com.cubeia.firebase.events.TournamentEvent;
+			import com.cubeia.firebase.io.protocol.ResponseStatusEnum;
 			import com.cubeia.firebase.model.LobbyDataItem;
 			import com.cubeia.firebase.model.TournamentDataItem;
 			import com.cubeia.model.TableInfo;
@@ -14,6 +15,7 @@
 			import com.cubeia.poker.event.LobbyTableEvent;
 			import com.cubeia.poker.event.PokerEventDispatcher;
 			import com.cubeia.poker.event.PokerLobbyEvent;
+			import com.cubeia.poker.event.StyleChangedEvent;
 			import com.cubeia.poker.login.LoginEvent;
 			import com.cubeia.poker.ui.StyledApplication;
 			
@@ -28,6 +30,7 @@
 		
 			private function init():void
 			{
+				trace("Creation Complete on LobbyCanvas");
 			
 				// retry later if config has not been loaded yet
 				if ( PokerConfig.getInstance().configLoaded == false ) {
@@ -52,8 +55,9 @@
 			private function onLoginResponse(event:LoginResponseEvent):void
 			{	
 				// If we have a successfull login, subscribe to the lobby
-				if ( event.getPlayerInfo().code == 0 ) {
+				if ( event.getPlayerInfo().code == ResponseStatusEnum.OK ) {
 					lobbyView.selectedIndex = 0;
+					subscribe(lobbyPaths[0]);
 				}	
 			}
 			
@@ -298,7 +302,7 @@
 -->
 	
 	<!--ns1:FilterCanvas id="filterCanvasXXX" x="0" y="21" height="46" width="500" lobby_filter_event="onFilterClicked(event)" styleName="emphasisCanvas"/-->
-	<mx:ComboBox id="cb" x="575" y="1" visible="{PokerConfig.allowChangeStyle}" dataProvider="{PokerConfig.styles}" change="{StyledApplication.changeStyle(String(cb.selectedItem))}" height="20" fontSize="10" width="100" selectedIndex="0"/>
+	<!--mx:ComboBox id="cb" x="575" y="1" visible="{PokerConfig.allowChangeStyle}" dataProvider="{PokerConfig.styles}" change="{StyledApplication.changeStyle(String(cb.selectedItem))}" height="20" fontSize="10" width="100" selectedIndex="0"/-->
 	
 	
 	

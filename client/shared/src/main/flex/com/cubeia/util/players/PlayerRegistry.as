@@ -26,6 +26,8 @@ package com.cubeia.util.players
 	
 	import flash.utils.Dictionary;
 	
+	import mx.controls.Alert;
+	
 	/**
 	 * The Player Registry uses weak references. This means that if no
 	 * one else holds a reference to the object in the Dictionary, then 
@@ -46,22 +48,22 @@ package com.cubeia.util.players
 		
 		[Bindable]
 		public static var names:Array = [
-				"Peter Lundh", 
-				"Johnny Ooh",
+				"Player" 
+				/* "Johnny Ooh",
 				"Victorious!",
 				"Fretardo",
 				"Playboyy",
-				"HairyD00d"
+				"HairyD00d" */
 				];
 		
 		[Bindable]
 		public static var pics:Array = [
-				"http://profile.ak.fbcdn.net/v229/1617/54/q100000345965848_9310.jpg", 
-				"http://profile.ak.fbcdn.net/profile6/1359/75/q652186730_5813.jpg",
+				"http://profile.ak.fbcdn.net/v229/1617/54/q100000345965848_9310.jpg" 
+				/* "http://profile.ak.fbcdn.net/profile6/1359/75/q652186730_5813.jpg",
 				"http://profile.ak.fbcdn.net/profile6/1912/24/q683803227_8393.jpg",
 				"http://profile.ak.fbcdn.net/v227/1953/92/q100000238333476_2563.jpg",
 				"http://www.iconarchive.com/icons/th3-prophetman/gta/48/Playboy-X-icon.png",
-				"http://www.iconarchive.com/icons/daniel-loxton/skeptic/48/Yeti-icon.png"
+				"http://www.iconarchive.com/icons/daniel-loxton/skeptic/48/Yeti-icon.png" */
 				];
 		
 		
@@ -110,6 +112,7 @@ package com.cubeia.util.players
 		 * Create and add a player object from a seat info packet
 		 */
 		public function addPlayerFromInfo(info:PlayerInfo):PokerPlayerInfo {
+			trace("Add player from infor: "+info.pid+", "+info.screenname);
 			var player:PokerPlayerInfo = registry[info.pid];
 			if (player == null) {
 				player = new PokerPlayerInfo();

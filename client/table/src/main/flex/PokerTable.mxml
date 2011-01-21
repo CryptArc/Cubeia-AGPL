@@ -14,6 +14,7 @@
 			import com.cubeia.firebase.io.ProtocolObject;
 			import com.cubeia.firebase.io.protocol.SeatInfoPacket;
 			import com.cubeia.firebase.io.protocol.WatchRequestPacket;
+			import com.cubeia.firebase.model.PlayerInfo;
 			import com.cubeia.model.PokerPlayerInfo;
 			import com.cubeia.multitable.bus.MessageBusClient;
 			import com.cubeia.poker.event.PokerEvent;
@@ -40,7 +41,8 @@
 			[Bindable]
 			public var table:Table;
 			
-			private var pid:int = 222;
+			private var pid:int = -1;
+			private var screenname:String = "N/A";
 			private var seatid:int = -1;
 			private var tableid:int = 1;
 			private var tableSize:int = 10;
@@ -53,14 +55,14 @@
 			public function init():void
 			{
   				pid = FlexGlobals.topLevelApplication.parameters["pid"];
+				screenname = FlexGlobals.topLevelApplication.parameters["screenname"];
 				seatid = FlexGlobals.topLevelApplication.parameters["seatid"];
 				tableid = FlexGlobals.topLevelApplication.parameters["tableid"];
 				tableSize = FlexGlobals.topLevelApplication.parameters["tableSize"];
 				autoJoin = FlexGlobals.topLevelApplication.parameters["autoJoin"];
  
 				// busName = busName+pid;
-				busName = mx.core.Application.application.parameters["busName"];
-				Alert.show("Bus Name: "+busName); 	
+				busName = FlexGlobals.topLevelApplication.parameters["busName"];
 				
 				table = new Table(tableid, tableSize);
 				table.myPlayerId = pid;
@@ -74,6 +76,13 @@
 				messageBusClient.send(wrp);
 				
 				tableHandler = new TableHandler(table);
+				
+				trace("Table Created. PID="+pid+", screenname="+screenname, "busName:"+busName);
+				
+				var pi:PlayerInfo = new PlayerInfo();
+				pi.pid = pid;
+				pi.screenname = screenname;
+				PlayerRegistry.instance.addPlayerFromInfo(pi);
 			}		
 			
 			
