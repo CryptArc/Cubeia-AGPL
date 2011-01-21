@@ -56,6 +56,11 @@ package com.cubeia.multitable.bus
 			PokerEventDispatcher.instance.addEventListener(PokerEventWrapper.POKER_EVENT_WRAPPER, onWrappedEvent);
 		}
 		
+		public function stop():void
+		{
+			connector.close();
+		}
+		
 		private function setupConnector():void
 		{
 			trace("Setting up MessageBusClient for Receiver: "+tableid);

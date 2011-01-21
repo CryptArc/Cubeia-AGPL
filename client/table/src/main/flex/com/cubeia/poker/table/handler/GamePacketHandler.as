@@ -128,6 +128,7 @@ package com.cubeia.poker.table.handler
 						ExternalInterface.call("window.close");
 					}
 				}
+				PokerTable.messageBusClient.stop();
 			}
 		}
 
