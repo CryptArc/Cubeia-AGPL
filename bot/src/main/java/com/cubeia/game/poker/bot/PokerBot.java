@@ -2,10 +2,10 @@ package com.cubeia.game.poker.bot;
 
 import org.apache.log4j.Logger;
 
+import com.cubeia.firebase.bot.Bot;
+import com.cubeia.firebase.bot.ai.BasicAI;
 import com.cubeia.firebase.io.protocol.GameTransportPacket;
 import com.cubeia.firebase.io.protocol.ProbePacket;
-import com.game.bot.Bot;
-import com.game.bot.ai.BasicAI;
 
 /**
  * Poker Bot.
