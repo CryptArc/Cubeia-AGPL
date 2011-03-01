@@ -36,10 +36,10 @@ import com.cubeia.games.poker.io.protocol.StartNewHand;
 import com.cubeia.games.poker.io.protocol.StopHandHistory;
 import com.cubeia.games.poker.io.protocol.TournamentOut;
 import com.cubeia.games.poker.io.protocol.Enums.PlayerTableStatus;
-import com.game.bot.BotState;
-import com.game.bot.action.Action;
-import com.game.bot.ai.AbstractAI;
-import com.game.bot.ai.MttAI;
+import com.cubeia.firebase.bot.BotState;
+import com.cubeia.firebase.bot.action.Action;
+import com.cubeia.firebase.bot.ai.AbstractAI;
+import com.cubeia.firebase.bot.ai.MttAI;
 
 public class GameHandler implements PacketVisitor {
     

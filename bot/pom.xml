@@ -28,7 +28,7 @@
     <dependency>
       <groupId>com.cubeia.tools</groupId>
       <artifactId>bots</artifactId>
-      <version>1.6-SNAPSHOT</version>
+      <version>1.7.2-SNAPSHOT</version>
     </dependency>
 
   </dependencies>

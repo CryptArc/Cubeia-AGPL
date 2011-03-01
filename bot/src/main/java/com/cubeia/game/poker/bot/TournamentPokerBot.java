@@ -2,8 +2,8 @@ package com.cubeia.game.poker.bot;
 
 import com.cubeia.firebase.io.protocol.GameTransportPacket;
 import com.cubeia.firebase.io.protocol.MttTransportPacket;
-import com.game.bot.Bot;
-import com.game.bot.ai.MttAI;
+import com.cubeia.firebase.bot.Bot;
+import com.cubeia.firebase.bot.ai.MttAI;
 
 public class TournamentPokerBot extends MttAI {
 
