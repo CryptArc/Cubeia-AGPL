@@ -8,6 +8,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 
+import com.cubeia.firebase.bot.BotState;
+import com.cubeia.firebase.bot.action.Action;
+import com.cubeia.firebase.bot.ai.AbstractAI;
+import com.cubeia.firebase.bot.ai.MttAI;
 import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.firebase.io.protocol.GameTransportPacket;
@@ -18,6 +22,7 @@ import com.cubeia.games.poker.io.protocol.DealHiddenCards;
 import com.cubeia.games.poker.io.protocol.DealPrivateCards;
 import com.cubeia.games.poker.io.protocol.DealPublicCards;
 import com.cubeia.games.poker.io.protocol.DealerButton;
+import com.cubeia.games.poker.io.protocol.Enums.PlayerTableStatus;
 import com.cubeia.games.poker.io.protocol.ExposePrivateCards;
 import com.cubeia.games.poker.io.protocol.GameCard;
 import com.cubeia.games.poker.io.protocol.HandEnd;
@@ -35,7 +40,6 @@ import com.cubeia.games.poker.io.protocol.StartHandHistory;
 import com.cubeia.games.poker.io.protocol.StartNewHand;
 import com.cubeia.games.poker.io.protocol.StopHandHistory;
 import com.cubeia.games.poker.io.protocol.TournamentOut;
-import com.cubeia.games.poker.io.protocol.Enums.PlayerTableStatus;
 import com.cubeia.firebase.bot.BotState;
 import com.cubeia.firebase.bot.action.Action;
 import com.cubeia.firebase.bot.ai.AbstractAI;
