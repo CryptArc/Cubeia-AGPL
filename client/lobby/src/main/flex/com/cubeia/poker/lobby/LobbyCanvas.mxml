@@ -187,6 +187,7 @@
 						item.capacity = lobbyDataItem.getValue("CAPACITY");
 						item.registered = lobbyDataItem.getValue("REGISTERED");
 						item.status = lobbyDataItem.getValue("STATUS");
+						item.active = lobbyDataItem.getValue("ACTIVE_PLAYERS");
 												
 						// TODO: remove this once the server bug has been fixed
 						// ignore duplicates
@@ -205,8 +206,15 @@
 					case TournamentEvent.TOURNAMENT_UPDATED :	
 						for each ( item in sitAndGos.lobbyData ) {
 						if ( item.mttId == lobbyEvent.mttId ) {
-							item.registered = lobbyDataItem.getValue("REGISTERED");
-							item.status = lobbyDataItem.getValue("STATUS");
+							if (lobbyDataItem.getValue("REGISTERED")) {
+								item.registered = lobbyDataItem.getValue("REGISTERED");
+							}
+							if (lobbyDataItem.getValue("STATUS")) {
+								item.status = lobbyDataItem.getValue("STATUS");
+							}
+							if (lobbyDataItem.getValue("ACTIVE_PLAYERS")) {
+								item.active = lobbyDataItem.getValue("ACTIVE_PLAYERS");
+							}
 							break;
 						} 
 					}

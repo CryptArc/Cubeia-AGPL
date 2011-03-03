@@ -42,6 +42,7 @@
 			<mx:DataGridColumn headerText="Status" dataField="status" width="50" />
 			<mx:DataGridColumn headerText="Capacity" dataField="capacity" width="30"/>
 			<mx:DataGridColumn headerText="Registered" dataField="registered" width="30"/>
+			<mx:DataGridColumn headerText="Active" dataField="active" width="30"/>
 		</mx:columns>
 	</mx:DataGrid>
 </mx:Canvas>
