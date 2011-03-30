@@ -53,7 +53,7 @@
 			//file:///C:/PokerWorkspace/poker-bin/PokerTable.html?tableid=114&tableSize=10&busName=_poker_lobby&pid=23222&seatid=-1&autoJoin=false
 			
 			// Flag if the client is executed within a QT Wrapper
-			public static var qtDemo:Boolean = true;
+			public static var qtDemo:Boolean = false;
 			
 			public function init():void
 			{

@@ -86,7 +86,7 @@
 						sendAction(type, int(betSlider.value * 100));
 						break;
 					case ActionTypeEnum.CALL :
-						sendAction(type, int(betSlider.value * 100));
+						sendAction(type, int(callAmount * 100));
 						break;
 					case ActionTypeEnum.CHECK :
 						sendAction(type, int(betSlider.value * 100));
