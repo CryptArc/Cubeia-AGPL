@@ -206,7 +206,8 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		WalletServiceContract walletService = getServices().getServiceInstance(WalletServiceContract.class);
 		long sessionId = ((PokerPlayerImpl) player).getSessionId();
 		Money amount = new Money(Currency.getInstance(PokerGame.CURRENCY_CODE),amountConverter.convertToWalletAmount(player.getBalance()));
-		walletService.deposit(amount, -1, sessionId, createPlayerBalanceResetDescription(player.getId()));
+		walletService.withdraw(amount, -1, sessionId, createPlayerBalanceResetDescription(player.getId()));
+		notifyPlayerBalance(player);
 	}
 
 	public void notifyHandEnd(HandResult handResult, HandEndStatus handEndStatus) {

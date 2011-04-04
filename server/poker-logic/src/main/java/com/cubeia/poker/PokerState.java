@@ -37,6 +37,7 @@ import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.gametypes.TexasHoldemGame;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
+import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
@@ -193,18 +194,7 @@ public class PokerState implements Serializable {
 		return sitIn;
 	}
 	
-	/**
-	 * FIXME: Remove this method
-	 * @return
-	 */
-	public void sitInAllPlayers() {
-		for (PokerPlayer player : playerMap.values()) {
-			if (player.isSittingOut()) {
-				log.debug("Auto-sitting in player: "+player);
-				player.sitIn();
-			}
-		}
-	}
+	
 
 	public void startHand() {
 		if (countSittingInPlayers() > 1) {
@@ -351,7 +341,7 @@ public class PokerState implements Serializable {
 	 * @param playerId
 	 */
 	public void playerIsSittingOut(int playerId) {
-		// TODO Auto-generated method stub
+		playerMap.get(playerId).setSitOutStatus(SitOutStatus.SITTING_OUT);
 	}
 	
 	/**
@@ -360,7 +350,7 @@ public class PokerState implements Serializable {
 	 * @param playerId
 	 */
 	public void playerIsSittingIn(int playerId) {
-		// TODO Auto-generated method stub
+		playerMap.get(playerId).sitIn();
 	}
 	
 	/*------------------------------------------------

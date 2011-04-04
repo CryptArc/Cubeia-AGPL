@@ -39,18 +39,16 @@ public class WaitingToStartState extends AbstractPokerGameState {
 		if (!context.isTournamentTable()) {
 			context.setHandFinished(false);
 			
-			// FIXME: Don't automatically sit in all players
-			context.sitInAllPlayers();
-			
 			if (context.countSittingInPlayers() > 1) {
 				
 				// FIXME: Resetting all low to zero balances since we have no wallet yet
 				for (PokerPlayer pp : context.getSeatedPlayers()) {
-					if (pp.getBalance() < context.getAnteLevel()) {
-						log.debug("Resetting player balance. Player["+pp.getId()+"] -> 10000");
-						((DefaultPokerPlayer)pp).setBalance(10000);
-						context.notifyPlayerBalanceReset(pp);
-					}
+					 if (pp.getBalance() < context.getAnteLevel()) {
+                         log.debug("Resetting player balance. Player["+pp.getId()+"] -> " + context.getAnteLevel()* 100);
+                         ((DefaultPokerPlayer)pp).setBalance(context.getAnteLevel()* 100);
+                         context.notifyPlayerBalanceReset(pp);
+					 }
+
 				}
 				
 				context.startHand();

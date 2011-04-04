@@ -197,6 +197,9 @@
     
     <!-- A player has requested to sit in again (Client -> Server) -->
     <struct name="player_sitin_request" />
+    
+     <!-- A player has requested to sit out (Client -> Server) -->
+    <struct name="player_sitout_request" />
 
 </protocol>
 
