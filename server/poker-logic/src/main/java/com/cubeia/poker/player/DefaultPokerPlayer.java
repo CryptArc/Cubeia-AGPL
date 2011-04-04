@@ -47,6 +47,8 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	protected boolean hasFolded;
 	
 	protected boolean hasOption;
+	
+	protected boolean isSitOutNextRound = false;
 
 	protected SitOutStatus sitOutStatus;
 
@@ -222,6 +224,17 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	@Override
 	public long getReturnedChips() {
 		return returnedChips;
+	}
+
+	@Override
+	public boolean getSitOutNextRound() {
+		return isSitOutNextRound;
+	}
+
+	@Override
+	public void setSitOutNextRound(boolean b) {
+		isSitOutNextRound = b;
+		
 	}
 
 }

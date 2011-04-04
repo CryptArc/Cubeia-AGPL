@@ -151,10 +151,17 @@ public class PokerState implements Serializable {
 		playerMap.put(player.getId(), player);
 		seatingMap.put(player.getSeatId(), player);
 		if (!isTournamentTable()) {
-			if (currentState.getClass() == NOT_STARTED.getClass() && playerMap.size() > 1) {
-				serverAdapter.scheduleTimeout(timing.getTime(Periods.START_NEW_HAND));
-				currentState = WAITING_TO_START;
-			}
+			startGame();
+		}
+	}
+
+	/**
+	 * Starts the game if all criterias are met
+	 */
+	private void startGame() {
+		if (currentState.getClass() == NOT_STARTED.getClass() && playerMap.size() > 1) {
+			serverAdapter.scheduleTimeout(timing.getTime(Periods.START_NEW_HAND));
+			currentState = WAITING_TO_START;
 		}
 	}
 
@@ -187,6 +194,9 @@ public class PokerState implements Serializable {
 	public int countSittingInPlayers() {
 		int sitIn = 0;
 		for (PokerPlayer player : playerMap.values()) {
+			if ( player.getSitOutNextRound() ) {
+				player.setSitOutStatus(SitOutStatus.SITTING_OUT);
+			}
 			if (!player.isSittingOut()) {
 				sitIn++;
 			}
@@ -341,7 +351,7 @@ public class PokerState implements Serializable {
 	 * @param playerId
 	 */
 	public void playerIsSittingOut(int playerId) {
-		playerMap.get(playerId).setSitOutStatus(SitOutStatus.SITTING_OUT);
+		playerMap.get(playerId).setSitOutNextRound(true);
 	}
 	
 	/**
@@ -351,6 +361,9 @@ public class PokerState implements Serializable {
 	 */
 	public void playerIsSittingIn(int playerId) {
 		playerMap.get(playerId).sitIn();
+		playerMap.get(playerId).setSitOutNextRound(false);
+		notifyPlayerSittingIn(playerId);
+		startGame();
 	}
 	
 	/*------------------------------------------------

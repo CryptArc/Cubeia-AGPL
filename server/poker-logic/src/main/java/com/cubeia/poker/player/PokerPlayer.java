@@ -37,6 +37,10 @@ public interface PokerPlayer extends Serializable {
 	
 	public void clearHand();
 	
+	public boolean getSitOutNextRound();
+	
+	public void setSitOutNextRound(boolean b);
+	
 	/**
 	 * Gets the player's id.
 	 * @return
