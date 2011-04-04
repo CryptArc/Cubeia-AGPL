@@ -49,7 +49,7 @@ public class WaitingToStartState extends AbstractPokerGameState {
 					if (pp.getBalance() < context.getAnteLevel()) {
 						log.debug("Resetting player balance. Player["+pp.getId()+"] -> 10000");
 						((DefaultPokerPlayer)pp).setBalance(10000);
-						context.notifyPlayerBalance(pp.getId());
+						context.notifyPlayerBalanceReset(pp);
 					}
 				}
 				

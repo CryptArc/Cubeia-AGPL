@@ -129,4 +129,12 @@ public class MockServerAdapter implements ServerAdapter {
 		// TODO Auto-generated method stub
 		
 	}
+
+	
+
+	@Override
+	public void notifyPlayerBalanceReset(PokerPlayer player) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -514,4 +514,9 @@ public class PokerState implements Serializable {
 			log.warn("SEATING MAP SIZE WARNING. Size="+seatingMap.size()+", Values: "+seatingMap);
 		}
 	}
+
+	public void notifyPlayerBalanceReset(PokerPlayer player) {
+		serverAdapter.notifyPlayerBalanceReset(player);
+		
+	}
 }

@@ -70,6 +70,9 @@ import com.cubeia.games.poker.util.WalletAmountConverter;
 import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
 import com.cubeia.network.wallet.firebase.domain.ResultEntry;
 import com.cubeia.network.wallet.firebase.domain.RoundResultResponse;
+import com.cubeia.backoffice.wallet.api.dto.Currency;
+import com.cubeia.backoffice.accounting.api.Money;
+
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
@@ -198,6 +201,12 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		sendPublicPacket(action, playerId);
 	}
 
+	public void notifyPlayerBalanceReset(PokerPlayer player) {
+		WalletServiceContract walletService = getServices().getServiceInstance(WalletServiceContract.class);
+		long sessionId = ((PokerPlayerImpl) p).getSessionId();
+		Money amount = new Money(amountConverter.convertToWalletAmount(player.getBalance()), Currency.getInstance(PokerGame.CURRENCY_CODE));
+		walletService.deposit(amount, -1, sessionId, createPlayerBalanceResetDescription(player.getId());
+	}
 
 	public void notifyHandEnd(HandResult handResult, HandEndStatus handEndStatus) {
 		if (handEndStatus.equals(HandEndStatus.NORMAL) && handResult != null) {
@@ -275,6 +284,10 @@ public class FirebaseServerAdapter implements ServerAdapter {
         return "Pokerhand, table[" + table.getId() + "]";
     }
 	
+    private String createPlayerBalanceResetDescription(int playerId) {
+    	return "Resetting balance for pid["+playerId+"]");
+    }
+    
 	public void notifyPlayerBalance(PokerPlayer p) {
 		if (p == null) return;
 		

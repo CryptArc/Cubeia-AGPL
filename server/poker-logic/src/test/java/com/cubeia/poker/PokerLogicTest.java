@@ -417,6 +417,12 @@ public class PokerLogicTest extends GuiceTest {
 
 			@Override
 			public void updatePots(Iterable<Pot> iterable) {}
+
+			@Override
+			public void notifyPlayerBalanceReset(PokerPlayer player) {
+				// TODO Auto-generated method stub
+				
+			}
 			
 		});
 		game.timeout();

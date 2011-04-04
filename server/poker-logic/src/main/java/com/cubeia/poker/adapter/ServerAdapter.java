@@ -76,6 +76,7 @@ public interface ServerAdapter {
 	 */
 	public void notifyPlayerBalance(PokerPlayer player);
 	
+	
 	/**
 	 * Called after an action from the player has been successfully
 	 * dealt with.
@@ -99,4 +100,11 @@ public interface ServerAdapter {
     public void updatePots(Iterable<Pot> iterable);
 
     public void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status);
+
+    /**
+	 * Notify players about updated player balance.
+	 * 
+	 * @param player
+	 */
+    public void notifyPlayerBalanceReset(PokerPlayer player);
 }
