@@ -30,7 +30,7 @@
 			public static var playerInfo:PlayerInfo;
 			
 			// Flag if the client is executed within a QT Wrapper
-			public static var qtDemo:Boolean = true;
+			public static var qtDemo:Boolean = false;
 			
 			private var pokerEventListener:PokerEventListener;
 			

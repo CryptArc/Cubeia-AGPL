@@ -68,7 +68,7 @@
 	
 	
 	<!-- REMOVE ME WHEN WE HAVE CHIP STACKS -->
-	<mx:Label x="0" y="90" text="€{(seatInfo.seat.player.betStack/100).toFixed(2)}" width="70" height="20" color="#53C253" visible="{seatInfo.seat.player.betStack}"/>
+	<mx:Label x="0" y="90" text="€{(seatInfo.seat.player.betStack/100).toFixed(2)}" width="70" height="20" color="#53C253" visible="{seatInfo.seat.player.betStack > 0}"/>
 	
 	<mx:Image x="{chipStackX}" y="{chipStackY}" id="chipStack"/>
 	

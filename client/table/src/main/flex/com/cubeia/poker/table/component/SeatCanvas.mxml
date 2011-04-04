@@ -141,7 +141,7 @@
 				autoCenterTransform="true" />
 	
 	<mx:Label x="2" y="0" text="{seat.player.screenname}" width="100%" styleName="seatPlayerName" height="16"/>
-	<mx:Label x="2" y="62" text="€{(seat.player.balance/100).toFixed(2)}" width="70" height="20" visible="{seat.player.balance}"/>
+	<mx:Label x="2" y="62" text="€{(seat.player.balance/100).toFixed(2)}" width="70" height="20" visible="{seat.player.balance > 0}"/>
 	
 	<mx:Image id="playerImage" x="4" y="18" width="48" height="48" source="{seat.player.imageUrl}" useHandCursor="true" buttonMode="true"
 			  rollOver="glow.play();" rollOut="unglow.play();" mouseDown="rotate3DY.play();"/>

@@ -6,7 +6,10 @@
 			import com.cubeia.games.poker.io.protocol.ActionTypeEnum;
 			import com.cubeia.games.poker.io.protocol.PerformAction;
 			import com.cubeia.games.poker.io.protocol.PlayerAction;
+			import com.cubeia.games.poker.io.protocol.PlayerSitinRequest;
+			import com.cubeia.games.poker.io.protocol.PlayerSitoutRequest;
 			import com.cubeia.poker.table.handler.GamePacketHandler;
+			import com.cubeia.poker.table.model.Player;
 			import com.cubeia.poker.table.model.Table;
 			
 			import mx.binding.utils.ChangeWatcher;
@@ -34,15 +37,11 @@
 				hideControls();
 				for each ( var playerAction:PlayerAction in table.requestAction.allowedActions ) {
 					// FIXME: auto blinds for now
-					if ( playerAction.type == ActionTypeEnum.BIG_BLIND ) {
+					if ( playerAction.type == ActionTypeEnum.BIG_BLIND || playerAction.type == ActionTypeEnum.SMALL_BLIND) {
 						sendAction(playerAction.type, playerAction.minAmount);
 						return;
 					}
-					if ( playerAction.type == ActionTypeEnum.SMALL_BLIND ) {
-						sendAction(playerAction.type, playerAction.minAmount);
-						return;
-					}
-
+				
 					enableAction(playerAction);
 				}
 			}
@@ -149,6 +148,8 @@
 			}
 			
 			
+		
+			
 		]]>
 	</mx:Script>
 
@@ -158,6 +159,7 @@
 	<mx:Button x="186" y="10" label="Bet" id="betButton" width="136"  enabled="{table.betControlsEnabled}" visible="false" click="action(ActionTypeEnum.BET)"/>
 	<mx:Button x="186" y="10" label="Raise" id="raiseButton" width="136" enabled="{table.betControlsEnabled}" visible="false" click="action(ActionTypeEnum.RAISE)"/>
 	<mx:Button x="98" y="10"  label="Check" id="checkButton" width="80" enabled="{table.betControlsEnabled}" visible="false" click="action(ActionTypeEnum.CHECK)"/>
+		
 	<mx:HSlider y="61" id="betSlider" styleName="tableBetSlider" snapInterval="1" x="10" enabled="{table.betControlsEnabled}" visible="false" change="onBetChange()" liveDragging="true"/> 
 	<mx:Label x="178" y="55" text="€ {betSlider.value}" id="label1" visible="false"/>
 	
