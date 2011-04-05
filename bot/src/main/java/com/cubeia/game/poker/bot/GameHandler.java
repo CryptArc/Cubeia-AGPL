@@ -32,6 +32,7 @@ import com.cubeia.games.poker.io.protocol.PlayerAction;
 import com.cubeia.games.poker.io.protocol.PlayerBalance;
 import com.cubeia.games.poker.io.protocol.PlayerPokerStatus;
 import com.cubeia.games.poker.io.protocol.PlayerSitinRequest;
+import com.cubeia.games.poker.io.protocol.PlayerSitoutRequest;
 import com.cubeia.games.poker.io.protocol.PlayerState;
 import com.cubeia.games.poker.io.protocol.Pot;
 import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
@@ -218,5 +219,7 @@ public class GameHandler implements PacketVisitor {
     public void visit(PlayerBalance packet) {}
     public void visit(Pot packet) {}
 	public void visit(PlayerSitinRequest packet) {}
+	public void visit(PlayerSitoutRequest arg0) {}
+	
     
 }
