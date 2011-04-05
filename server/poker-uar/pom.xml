@@ -58,7 +58,7 @@
       <plugin>
           <groupId>com.cubeia.tools</groupId>
           <artifactId>firebase-maven-plugin</artifactId>
-          <version>1.7.0-CE</version>
+          <version>1.8-CE-SNAPSHOT</version>
           <configuration>
             <!-- enable copy of overlay files -->
             <overlaysEnabled>false</overlaysEnabled>
