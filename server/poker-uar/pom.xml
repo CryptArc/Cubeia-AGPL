@@ -71,6 +71,7 @@
             
             <!-- delete temp firebase instance on exit, set to false for faster startup -->
             <deleteOnExit>false</deleteOnExit>
+            <deleteOnStart>false</deleteOnStart>
           </configuration>
         </plugin>
     </plugins>
