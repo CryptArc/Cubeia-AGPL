@@ -118,7 +118,10 @@ package com.cubeia.poker.table.handler
 					seatPlayer(table.myPlayerId, joinResponsePacket.seat);
 				}
 			}  else if (protocolObject.classId() == TableChatPacket.CLASSID ) {
-				table.chatOutput += table.getPlayer(TableChatPacket(protocolObject).pid).screenname + ": " + TableChatPacket(protocolObject).message + "\n";
+				var player:Player = table.getPlayer(TableChatPacket(protocolObject).pid);
+				if ( player != null ) {
+					table.chatOutput += player.screenname + ": " + TableChatPacket(protocolObject).message + "\n";
+				}
 				
 			} else if ( protocolObject.classId() == LeaveResponsePacket.CLASSID ) {
 				if (ExternalInterface.available) { 
@@ -298,7 +301,7 @@ package com.cubeia.poker.table.handler
 		}
 		
 		private function handlePlayerStatusChanged(status:PlayerPokerStatus):void {
-			// trace("Player status changed: Player["+status.player+"] -> Status["+status.status+"]");
+			trace("Player status changed: Player["+status.player+"] -> Status["+status.status+"]");
 			var player:Player = table.getPlayer(status.player);
 			
 			switch (status.status) {

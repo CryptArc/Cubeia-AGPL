@@ -96,11 +96,11 @@
 	
 	<ns2:TableCanvas id="tableCanvas" x="0" y="0"/>
 	<ns2:PokerActionCanvas x="308" y="406" id="actionCanvas"/>
-	<ns2:ChatCanvas x="10" y="408" id="chatCanvas" height="104" width="290"/>
+	<ns2:ChatCanvas x="10" y="408" id="chatCanvas" height="134" width="290"/>
 	<mx:Text x="278" y="133" text="{Number(table.mainPot/100).toFixed(2)}" width="100" visible="{table.mainPot > 0}"/>
 	<mx:Label x="220" y="133" text="Main pot:" visible="{table.mainPot > 0}"/>
 	<mx:Button x="570" y="491" label="Leave" click="PokerEventDispatcher.dispatch(new TableEvent(TableEvent.LEAVE_TABLE_REQUEST, tableid))"/>
-	<ns2:StatusCanvas id="statusCanvas" x="10" y="520" height="24"/>
+	<ns2:StatusCanvas id="statusCanvas" x="10" y="544" height="24"/>
 	
 	
 </pokerLib:StyledApplication>
