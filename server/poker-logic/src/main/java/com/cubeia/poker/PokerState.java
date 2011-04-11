@@ -351,7 +351,10 @@ public class PokerState implements Serializable {
 	 * @param playerId
 	 */
 	public void playerIsSittingOut(int playerId) {
-		playerMap.get(playerId).setSitOutNextRound(true);
+		PokerPlayer player = playerMap.get(playerId);
+		if ( player != null ) {
+			player.setSitOutNextRound(true);
+		}
 	}
 	
 	/**
@@ -360,10 +363,13 @@ public class PokerState implements Serializable {
 	 * @param playerId
 	 */
 	public void playerIsSittingIn(int playerId) {
-		playerMap.get(playerId).sitIn();
-		playerMap.get(playerId).setSitOutNextRound(false);
-		notifyPlayerSittingIn(playerId);
-		startGame();
+		PokerPlayer player = playerMap.get(playerId);
+		if ( player != null ) {
+			player.sitIn();
+			player.setSitOutNextRound(false);
+			notifyPlayerSittingIn(playerId);
+			startGame();
+		}
 	}
 	
 	/*------------------------------------------------
