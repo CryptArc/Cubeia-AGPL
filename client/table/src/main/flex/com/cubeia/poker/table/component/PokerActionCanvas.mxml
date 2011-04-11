@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="332" height="106">
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="332" height="106" xmlns:component="com.cubeia.poker.table.component.*">
 	
 	<mx:Script>
 		<![CDATA[
@@ -80,6 +80,9 @@
 			}
 			
 			private function action(type:int):void {
+				
+				sounds.playAction(type);
+				
 				switch ( type ) {
 					case ActionTypeEnum.BET :
 						sendAction(type, int(betSlider.value * 100));
@@ -97,6 +100,7 @@
 						sendAction(type, int(betSlider.value * 100));
 						break;
 				}
+				
 				
 			}
 
@@ -162,5 +166,5 @@
 		
 	<mx:HSlider y="61" id="betSlider" styleName="tableBetSlider" snapInterval="1" x="10" enabled="{table.betControlsEnabled}" visible="false" change="onBetChange()" liveDragging="true"/> 
 	<mx:Label x="178" y="55" text="€ {betSlider.value}" id="label1" visible="false"/>
-	
+	<component:SoundManager id="sounds" visible="false"/>
 </mx:Canvas>

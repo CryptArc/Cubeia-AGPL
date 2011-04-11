@@ -61,7 +61,7 @@
           <version>1.8-CE-SNAPSHOT</version>
           <configuration>
             <!-- enable copy of overlay files -->
-            <overlaysEnabled>false</overlaysEnabled>
+            <overlaysEnabled>true</overlaysEnabled>
         
             <!-- copy overlay files from this directory to the firebase root -->
             <overlaySourceDirectory>${basedir}/src/test/resources/firebase</overlaySourceDirectory>
