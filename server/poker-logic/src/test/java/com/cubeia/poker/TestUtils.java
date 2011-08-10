@@ -17,10 +17,13 @@
 
 package com.cubeia.poker;
 
+import org.junit.Ignore;
+
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.player.PokerPlayer;
 
+@Ignore("not a test")
 public class TestUtils {
 	
 	public MockPlayer[] createMockPlayers(int n) {
