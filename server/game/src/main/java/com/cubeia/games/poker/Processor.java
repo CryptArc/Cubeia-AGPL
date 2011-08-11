@@ -20,7 +20,6 @@ package com.cubeia.games.poker;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.MDC;
 
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.GameDataAction;
@@ -46,9 +45,6 @@ import com.google.inject.Inject;
  * @author Fredrik Johansson, Cubeia Ltd
  */
 public class Processor implements GameProcessor, TournamentProcessor {
-	
-    // Use %X{pokerid} in the layout pattern to include this information.
-	private static final String MDC_TAG = "pokerid";
 
 	/** Serializer for poker packets */
 	private static StyxSerializer serializer = new StyxSerializer(new ProtocolObjectFactory());
@@ -76,7 +72,6 @@ public class Processor implements GameProcessor, TournamentProcessor {
 		stateInjector.injectAdapter(table);
 	    ProtocolObject packet = null;
 		try {
-			MDC.put(MDC_TAG, "Table["+table.getId()+"]");
 			packet = serializer.unpack(action.getData());
 			// log.debug("Handle Poker Action (tid:"+table.getId()+") from player("+action.getPlayerId()+"): "+packet);
 			pokerHandler.setPlayerId(action.getPlayerId());
@@ -86,9 +81,7 @@ public class Processor implements GameProcessor, TournamentProcessor {
 		    printActionsToErrorLog(e, "Pokerlogic could not handle action: "+action+" Table: "+table.getId()+" Packet: "+packet, table);
 			throw new RuntimeException("Could not handle poker game data", e);
 			
-		} finally {
-	    	MDC.remove(MDC_TAG);
-	    }
+		}
 	}
     
 
@@ -101,7 +94,6 @@ public class Processor implements GameProcessor, TournamentProcessor {
 	public void handle(GameObjectAction action, Table table) {
 		stateInjector.injectAdapter(table);
 	    try {
-	    	MDC.put(MDC_TAG, "Table["+table.getId()+"]");
     		if (action.getAttachment() instanceof Trigger) {
     			Trigger command = (Trigger) action.getAttachment();
     			handleCommand(table, command);
@@ -110,8 +102,6 @@ public class Processor implements GameProcessor, TournamentProcessor {
 	    	log.error("Failed handling game object action.", e);
 	        printActionsToErrorLog(e, "Could not handle command action: "+action+" on table: "+table, table);
 	        
-	    } finally {
-	    	MDC.remove(MDC_TAG);
 	    }
 	}
 	
