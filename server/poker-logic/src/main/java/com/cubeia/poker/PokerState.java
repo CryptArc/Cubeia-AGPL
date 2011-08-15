@@ -282,10 +282,6 @@ public class PokerState implements Serializable {
 		return currentState;
 	}
 
-	public void setServerAdapter(ServerAdapter serverAdapter) {
-		this.serverAdapter = serverAdapter;
-	}
-
 	/**
 	 * TODO: Should not be here. (The user of PokerGame has no interest in calling or seeing this method)
 	 * Also: This should encapsulated so it cannot be tinkered with.
@@ -434,20 +430,6 @@ public class PokerState implements Serializable {
 		serverAdapter.notifyDealerButton(dealerButtonSeatId);
 	}
 
-	public ServerAdapter getServerAdapter() {
-		return serverAdapter;
-	}
-
-	// TODO: Refactor. The holder of this instance can create a new class which holds this instance together with other data.
-	public Object getAdapterState() {
-		return adapterState;
-	}
-
-	// TODO: Refactor. The holder of this instance can create a new class which holds this instance together with other data.	
-	public void setAdapterState(Object adapterState) {
-		this.adapterState = adapterState;
-	}
-	
 //	public void notifyPlayerAllIn(int playerId) {
 //		serverAdapter.notifyPlayerStatusChanged(playerId, PokerPlayerStatus.ALLIN);
 //	}
@@ -460,6 +442,29 @@ public class PokerState implements Serializable {
 		serverAdapter.notifyPlayerStatusChanged(playerId, PokerPlayerStatus.NORMAL);
 	}
 	
+	public ServerAdapter getServerAdapter() {
+		return serverAdapter;
+	}
+	
+	public void setServerAdapter(ServerAdapter serverAdapter) {
+		this.serverAdapter = serverAdapter;
+	}
+	
+	// TODO: Refactor. The holder of this instance can create a new class which holds this instance together with other data.
+	public Object getAdapterState() {
+		return adapterState;
+	}
+	
+	// TODO: Refactor. The holder of this instance can create a new class which holds this instance together with other data.	
+	public void setAdapterState(Object adapterState) {
+		this.adapterState = adapterState;
+	}
+	
+	/*------------------------------------------------
+	 
+		END OF SERVER ADAPTER METHODS
+
+ 	------------------------------------------------*/
 	
 
 	// TODO: Refactor. The holder of this instance can create a new class which holds this instance together with other data.	
