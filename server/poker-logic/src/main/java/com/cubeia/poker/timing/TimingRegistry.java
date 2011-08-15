@@ -20,7 +20,7 @@ package com.cubeia.poker.timing;
 /**
  * A registry for returning timing definitions.
  * 
- * A Timing is a set of predefeined pause/waiting times between 
+ * A Timing is a set of predefined pause/waiting times between 
  * events in the game. E.g. waitperiod between last call to new cards are 
  * dealt.
  * 

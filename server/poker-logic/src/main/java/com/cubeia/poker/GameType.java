@@ -71,7 +71,7 @@ public interface GameType extends Serializable {
 
 	public boolean isPlayerInHand(int playerId);
 
-	public PokerState getState();
+	public IPokerState getState();
 
 	public int getAnteLevel();
 	

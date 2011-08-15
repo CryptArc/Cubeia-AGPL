@@ -18,6 +18,7 @@
 package mock;
 
 import com.cubeia.poker.MockGame;
+import com.cubeia.poker.PokerSettings;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.Timings;
@@ -26,9 +27,13 @@ public class MockTableFactory {
 
 	public static MockTable create() {
 		MockTable table = new MockTable();
+		
+		PokerSettings settings = new PokerSettings();
+		settings.timing = TimingFactory.getRegistry().getTimingProfile(Timings.MINIMUM_DELAY);
+		
 		PokerState pokerState = new PokerState();
+		pokerState.init(settings);
 		pokerState.setGameType(new MockGame());
-		pokerState.setTimingProfile(TimingFactory.getRegistry().getTimingProfile(Timings.MINIMUM_DELAY));
 		table.getGameState().setState(pokerState);
 		return table;
 	}

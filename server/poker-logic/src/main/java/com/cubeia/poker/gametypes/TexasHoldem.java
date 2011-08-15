@@ -32,6 +32,7 @@ import ca.ualberta.cs.poker.Deck;
 import ca.ualberta.cs.poker.Hand;
 
 import com.cubeia.poker.GameType;
+import com.cubeia.poker.IPokerState;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
@@ -318,7 +319,7 @@ public class TexasHoldem implements GameType, RoundVisitor {
 		checkFinishedRound();
 	}
 
-	public PokerState getState() {
+	public IPokerState getState() {
 		return game;
 	}
 

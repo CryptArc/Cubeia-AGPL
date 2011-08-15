@@ -149,7 +149,7 @@ public class MockGame implements GameType {
 	}
 
 	@Override
-	public PokerState getState() {
+	public IPokerState getState() {
 		return null;
 	}
 

@@ -37,8 +37,8 @@ import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.games.poker.FirebaseState;
 import com.cubeia.games.poker.tournament.activator.TournamentTableSettings;
 import com.cubeia.poker.PokerGuiceModule;
+import com.cubeia.poker.PokerSettings;
 import com.cubeia.poker.PokerState;
-import com.cubeia.poker.gametypes.TexasHoldem;
 import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.timing.Timings;
@@ -205,10 +205,10 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
         PokerState pokerState = injector.getInstance(PokerState.class);
         pokerState.setId(table.getId());
         
-        // PokerState pokerState = new PokerState();
-        // pokerState.setGameType(new TexasHoldem(pokerState));
+        PokerSettings settings = new PokerSettings();
+        settings.timing = timing;
         
-        pokerState.setTimingProfile(timing);
+        pokerState.init(settings);
         pokerState.setTournamentTable(true);
         pokerState.setTournamentId(mttId);
         pokerState.setAdapterState(new FirebaseState());

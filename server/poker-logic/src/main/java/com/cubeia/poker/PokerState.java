@@ -64,7 +64,7 @@ import com.google.inject.Inject;
  * TODO: Are we breaking SRP with having these two responsibilities? How can this be fixed?
  *
  */
-public class PokerState implements Serializable {
+public class PokerState implements Serializable, IPokerState {
 
 	private static final Logger log = Logger.getLogger(PokerState.class);
 
@@ -133,13 +133,18 @@ public class PokerState implements Serializable {
 	
 	private PotHolder potHolder = new PotHolder();
 
-	public PokerState() {
-	}
+	public PokerState() {}
 
 	public String toString() {
 		return "PokerState - state[" + currentState + "] type[" + gameType + "]";
 	}
 
+	@Override
+	public void init(PokerSettings settings) {
+		anteLevel = settings.anteLevel;
+		timing = settings.timing;
+	}
+	
 	/**
 	 * Adds a player.
 	 * 
@@ -308,11 +313,6 @@ public class PokerState implements Serializable {
 	// TODO: Should not be possible to call like this. The game type should only be possible to change between hands.
 	public void setGameType(GameType gameType) {
 		this.gameType = gameType;
-	}
-
-	// TODO: Should be part of configuration and probably final.
-	public void setTimingProfile(TimingProfile timingProfile) {
-		this.timing = timingProfile;
 	}
 
 	// TODO: Should not be public.
@@ -511,14 +511,13 @@ public class PokerState implements Serializable {
 		return potHolder;
 	}
 	
-	public void setAnteLevel(int anteLevel) {
-		this.anteLevel = anteLevel;
-	}
-	
 	public int getAnteLevel() {
 		return anteLevel;
 	}
 
+	public void setAnteLevel(int anteLevel) {
+		this.anteLevel = anteLevel;
+	}
 	
 	private void checkWarnings() {
 		if (playerMap.size() > 20) {
@@ -533,4 +532,7 @@ public class PokerState implements Serializable {
 		serverAdapter.notifyPlayerBalanceReset(player);
 		
 	}
+
+	
+	
 }
