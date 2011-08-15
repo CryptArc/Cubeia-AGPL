@@ -24,11 +24,11 @@ import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
 
-public class WaitingToStartState extends AbstractPokerGameState {
+public class WaitingToStartSTM extends AbstractPokerGameSTM {
 
 	private static final long serialVersionUID = -4837159720440582936L;
 	
-	private static transient Logger log = Logger.getLogger(WaitingToStartState.class);
+	private static transient Logger log = Logger.getLogger(WaitingToStartSTM.class);
 
 	public String toString() {
 	    return "WaitingToStartState";

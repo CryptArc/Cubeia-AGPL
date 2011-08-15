@@ -20,7 +20,7 @@ package com.cubeia.poker.states;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.PokerAction;
 
-public class PlayingState extends AbstractPokerGameState {
+public class PlayingSTM extends AbstractPokerGameSTM {
 
 	private static final long serialVersionUID = 7076228045164551068L;
 

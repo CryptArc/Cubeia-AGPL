@@ -42,10 +42,10 @@ import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
 import com.cubeia.poker.rounds.blinds.BlindsInfo;
-import com.cubeia.poker.states.NotStartedState;
-import com.cubeia.poker.states.PlayingState;
-import com.cubeia.poker.states.PokerGameState;
-import com.cubeia.poker.states.WaitingToStartState;
+import com.cubeia.poker.states.NotStartedSTM;
+import com.cubeia.poker.states.PlayingSTM;
+import com.cubeia.poker.states.PokerGameSTM;
+import com.cubeia.poker.states.WaitingToStartSTM;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
@@ -71,11 +71,11 @@ public class PokerState implements Serializable {
 	private static final long serialVersionUID = -7208084698542289729L;
 
 	// TODO: The internal states should preferably not be public. 
-	public static final PokerGameState NOT_STARTED = new NotStartedState();
+	public static final PokerGameSTM NOT_STARTED = new NotStartedSTM();
 
-	public static final PokerGameState WAITING_TO_START = new WaitingToStartState();
+	public static final PokerGameSTM WAITING_TO_START = new WaitingToStartSTM();
 
-	public static final PokerGameState PLAYING = new PlayingState();
+	public static final PokerGameSTM PLAYING = new PlayingSTM();
 
 	/* -------- Dependency Injection Members, initialization needed -------- */
 
@@ -125,7 +125,7 @@ public class PokerState implements Serializable {
 
 	private SortedMap<Integer, PokerPlayer> seatingMap = new TreeMap<Integer, PokerPlayer>();
 
-	private PokerGameState currentState = NOT_STARTED;
+	private PokerGameSTM currentState = NOT_STARTED;
 
 	private boolean handFinished = false;
 
@@ -278,7 +278,7 @@ public class PokerState implements Serializable {
 		serverAdapter.reportTournamentRound(report);
 	}
 
-	public PokerGameState getGameState() {
+	public PokerGameSTM getGameState() {
 		return currentState;
 	}
 
@@ -286,7 +286,7 @@ public class PokerState implements Serializable {
 	 * TODO: Should not be here. (The user of PokerGame has no interest in calling or seeing this method)
 	 * Also: This should encapsulated so it cannot be tinkered with.
 	 */
-	public void setState(PokerGameState state) {
+	public void setState(PokerGameSTM state) {
 		this.currentState = state;
 	}
 

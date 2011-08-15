@@ -20,7 +20,7 @@ package com.cubeia.poker.states;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.PokerAction;
 
-public abstract class AbstractPokerGameState implements PokerGameState {
+public abstract class AbstractPokerGameSTM implements PokerGameSTM {
 
 	private static final long serialVersionUID = 1L;
 

@@ -17,11 +17,17 @@
 
 package com.cubeia.poker.states;
 
-public class NotStartedState extends AbstractPokerGameState {
+import java.io.Serializable;
 
-	private static final long serialVersionUID = -1675095508189680830L;
+import com.cubeia.poker.PokerState;
+import com.cubeia.poker.action.PokerAction;
 
-	public String toString() {
-	    return "NotStartedState";
-	}
+public interface PokerGameSTM extends Serializable {
+
+	public void timeout(PokerState context);
+
+	public void act(PokerAction action, PokerState pokerGame);
+
+	public String getStateDescription();
+
 }
