@@ -64,10 +64,10 @@ public class MockGame implements GameType {
 		return blindsInfo;
 	}
 
-	@Override
-	public PokerPlayer getPlayer(int playerId) {
-		return playerMap.get(playerId);
-	}
+//	@Override
+//	public PokerPlayer getPlayer(int playerId) {
+//		return playerMap.get(playerId);
+//	}
 
 	@Override
 	public Iterable<PokerPlayer> getPlayers() {
@@ -170,6 +170,11 @@ public class MockGame implements GameType {
 			@Override
 			public int getAnteLevel() {
 				return 0;
+			}
+
+			@Override
+			public PokerPlayer getPlayerInCurrentHand(Integer playerId) {
+				return playerMap.get(playerId);
 			}
 		};
 	}

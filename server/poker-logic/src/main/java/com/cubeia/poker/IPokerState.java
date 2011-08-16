@@ -17,4 +17,6 @@ public interface IPokerState {
 
 	SortedMap<Integer, PokerPlayer> getCurrentHandSeatingMap();
 
+	PokerPlayer getPlayerInCurrentHand(Integer playerId);
+
 }

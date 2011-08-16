@@ -161,7 +161,7 @@ public class BlindsRound implements Round {
 	}
 
 	private void handleDeadSmallBlind() {
-		PokerPlayer player = game.getPlayer(previousBlindsInfo.getBigBlindPlayerId());
+		PokerPlayer player = game.getState().getPlayerInCurrentHand(previousBlindsInfo.getBigBlindPlayerId());
 
 		if (player != null) {
 			if (isSittingOut(player)) {
@@ -326,7 +326,7 @@ public class BlindsRound implements Round {
 		default:
 			throw new IllegalArgumentException(action.getActionType() + " is not legal here");
 		}
-		getGame().getPlayer(action.getPlayerId()).clearActionRequest();
+		getGame().getState().getPlayerInCurrentHand(action.getPlayerId()).clearActionRequest();
 		game.getServerAdapter().notifyActionPerformed(action);
 	}
 
@@ -336,7 +336,7 @@ public class BlindsRound implements Round {
 
 	public void smallBlindPosted() {
 		this.currentState = WAITING_FOR_BIG_BLIND_STATE;
-		PokerPlayer bigBlind = game.getPlayer(blindsInfo.getBigBlindPlayerId());
+		PokerPlayer bigBlind = game.getState().getPlayerInCurrentHand(blindsInfo.getBigBlindPlayerId());
 		requestBigBlind(bigBlind);
 	}
 
@@ -344,7 +344,7 @@ public class BlindsRound implements Round {
 		sittingInPlayers.remove(player.getSeatId());
 		notifyPlayerSittingOut(player.getId());
 		if (numberPlayersSittingIn() >= 2) {
-			PokerPlayer bigBlind = game.getPlayer(blindsInfo.getBigBlindPlayerId());
+			PokerPlayer bigBlind = game.getState().getPlayerInCurrentHand(blindsInfo.getBigBlindPlayerId());
 			requestBigBlind(bigBlind);
 			currentState = WAITING_FOR_BIG_BLIND_STATE;
 		} else {

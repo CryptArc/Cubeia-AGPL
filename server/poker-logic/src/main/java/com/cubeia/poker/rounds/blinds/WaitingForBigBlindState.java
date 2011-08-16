@@ -33,7 +33,7 @@ public class WaitingForBigBlindState extends AbstractBlindsState {
 	@Override
 	public void bigBlind(int playerId, BlindsRound blindsRound) {
 		BlindsInfo blindsInfo = blindsRound.getBlindsInfo();
-		PokerPlayer player = blindsRound.getGame().getPlayer(playerId);
+		PokerPlayer player = blindsRound.getGame().getState().getPlayerInCurrentHand(playerId);
 		if (player.getActionRequest().isOptionEnabled(PokerActionType.BIG_BLIND)) {
 			blindsInfo.setBigBlind(player);
 			player.addBet(blindsRound.getBlindsInfo().getBigBlindLevel());
@@ -47,7 +47,7 @@ public class WaitingForBigBlindState extends AbstractBlindsState {
 	
 	@Override
 	public void declineEntryBet(Integer playerId, BlindsRound blindsRound) {
-		PokerPlayer player = blindsRound.getGame().getPlayer(playerId);
+		PokerPlayer player = blindsRound.getGame().getState().getPlayerInCurrentHand(playerId);
 		if (player.getActionRequest().isOptionEnabled(PokerActionType.DECLINE_ENTRY_BET)) {
 			player.setSitOutStatus(SitOutStatus.MISSED_BIG_BLIND);
 			blindsRound.bigBlindDeclined(player);
@@ -62,7 +62,7 @@ public class WaitingForBigBlindState extends AbstractBlindsState {
 			bigBlind(context.getBlindsInfo().getBigBlindPlayerId(), context);
 		} else {
 			int bigBlind = context.getBlindsInfo().getBigBlindPlayerId();
-			PokerPlayer player = context.getGame().getPlayer(bigBlind);
+			PokerPlayer player = context.getGame().getState().getPlayerInCurrentHand(bigBlind);
 			player.setSitOutStatus(SitOutStatus.MISSED_BIG_BLIND);
 			// context.getBlindsInfo().setHasDeadSmallBlind(true);
 			context.bigBlindDeclined(player);

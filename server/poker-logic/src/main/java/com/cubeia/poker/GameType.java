@@ -40,10 +40,7 @@ public interface GameType extends Serializable {
 	public void act(PokerAction action);
 
 //	// TODO: #AH2 move to state
-//	public SortedMap<Integer, PokerPlayer> getSeatingMap();
-
-	// TODO: #AH2 move to state
-	public PokerPlayer getPlayer(int playerId);
+//	public PokerPlayer getPlayer(int playerId);
 
 	// TODO: #AH2 remove
 	public void scheduleRoundTimeout();

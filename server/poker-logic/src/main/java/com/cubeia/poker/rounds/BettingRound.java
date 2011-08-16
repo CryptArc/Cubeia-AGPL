@@ -87,7 +87,7 @@ public class BettingRound implements Round, BettingRoundContext {
 
 	public void act(PokerAction action) {
 		log.debug("Act : "+action);
-		PokerPlayer player = gameType.getPlayer(action.getPlayerId());
+		PokerPlayer player = gameType.getState().getPlayerInCurrentHand(action.getPlayerId());
 
 		verifyValidAction(action, player);
 		handleAction(action, player);
@@ -245,7 +245,7 @@ public class BettingRound implements Round, BettingRoundContext {
 	}
 
 	public void timeout() {
-		PokerPlayer player = gameType.getPlayer(playerToAct);
+		PokerPlayer player = gameType.getState().getPlayerInCurrentHand(playerToAct);
 		if (player == null) {
 			// throw new IllegalStateException("Expected " + playerToAct + " to act, but that player can not be found at the table!");
 			log.debug("Expected " + playerToAct + " to act, but that player can not be found at the table! I will assume everyone is all in");

@@ -134,11 +134,11 @@ public class TexasHoldem implements GameType, RoundVisitor {
 		game.notifyCommunityCards(dealt);
 	}
 
-	@Override
-	public PokerPlayer getPlayer(int playerId) {
-		PokerPlayer pokerPlayer = game.getCurrentHandPlayerMap().get(playerId);
-		return pokerPlayer;
-	}
+//	@Override
+//	public PokerPlayer getPlayer(int playerId) {
+//		PokerPlayer pokerPlayer = game.getCurrentHandPlayerMap().get(playerId);
+//		return pokerPlayer;
+//	}
 
 	@Override
 	public Iterable<PokerPlayer> getPlayers() {

@@ -211,6 +211,11 @@ public class PokerState implements Serializable, IPokerState {
 	}
 	
 	@Override
+	public PokerPlayer getPlayerInCurrentHand(Integer playerId) {
+		return getCurrentHandPlayerMap().get(playerId);
+	}
+	
+	@Override
 	public SortedMap<Integer, PokerPlayer> getCurrentHandSeatingMap() {
 		return currentHandSeatingMap;
 	}
