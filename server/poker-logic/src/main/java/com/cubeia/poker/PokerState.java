@@ -18,6 +18,7 @@
 package com.cubeia.poker;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -132,6 +133,8 @@ public class PokerState implements Serializable, IPokerState {
 	private HandResult handResult;	
 	
 	private PotHolder potHolder = new PotHolder();
+	
+	private List<Card> communityCards = new ArrayList<Card>();
 
 	public PokerState() {}
 
@@ -177,7 +180,7 @@ public class PokerState implements Serializable, IPokerState {
 	}
 
 	public List<Card> getCommunityCards() {
-		return gameType.getCommunityCards();
+		return communityCards;
 	}
 
 	public boolean isFinished() {

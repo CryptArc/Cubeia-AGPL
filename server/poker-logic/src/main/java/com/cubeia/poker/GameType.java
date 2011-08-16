@@ -18,11 +18,8 @@
 package com.cubeia.poker;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
-
-import ca.ualberta.cs.poker.Card;
 
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
@@ -42,8 +39,8 @@ public interface GameType extends Serializable {
 
 	public void act(PokerAction action);
 
-	// TODO: #AH2 move to state
-	public List<Card> getCommunityCards();
+//	// TODO: #AH2 move to state
+//	public List<Card> getCommunityCards();
 
 	// TODO: #AH2 move to state
 	public SortedMap<Integer, PokerPlayer> getSeatingMap();

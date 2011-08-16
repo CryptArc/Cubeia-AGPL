@@ -17,7 +17,6 @@
 
 package com.cubeia.poker.gametypes;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -65,7 +64,7 @@ public class TexasHoldem implements GameType, RoundVisitor {
 
 	private Deck deck;
 
-	private List<Card> communityCards = new ArrayList<Card>();
+//	private List<Card> communityCards = new ArrayList<Card>();
 
 	private Map<Integer, PokerPlayer> playerMap = new HashMap<Integer, PokerPlayer>();
 
@@ -138,12 +137,8 @@ public class TexasHoldem implements GameType, RoundVisitor {
 		for (int i = 0; i < n; i++) {
 			dealt.add(deck.dealCard());
 		}
-		communityCards.addAll(dealt);
+		game.getCommunityCards().addAll(dealt);
 		game.notifyCommunityCards(dealt);
-	}
-
-	public List<Card> getCommunityCards() {
-		return communityCards;
 	}
 
 	public PokerPlayer getPlayer(int playerId) {
@@ -241,7 +236,7 @@ public class TexasHoldem implements GameType, RoundVisitor {
 			if (!player.hasFolded()) {
 				Hand h = new Hand();
 				h.addCards(player.getPocketCards().getCards());
-				h.addCards(getCommunityCards());
+				h.addCards(game.getCommunityCards());
 				holder.addHand(player.getId(), h);
 			}
 		}
@@ -298,7 +293,7 @@ public class TexasHoldem implements GameType, RoundVisitor {
 	}
 
 	public void prepareNewHand() {
-		communityCards.clear();
+		game.getCommunityCards().clear();
 		for (PokerPlayer player : playerMap.values()) {
 			player.clearHand();
 			player.setHasFolded(false);
