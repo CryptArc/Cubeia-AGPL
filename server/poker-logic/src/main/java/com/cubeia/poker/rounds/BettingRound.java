@@ -65,7 +65,7 @@ public class BettingRound implements Round, BettingRoundContext {
 	
 	private void initBettingRound(int dealerSeatId) {
 		log.debug("Init new betting round - dealer: "+dealerSeatId);
-		SortedMap<Integer, PokerPlayer> seatingMap = gameType.getSeatingMap();
+		SortedMap<Integer, PokerPlayer> seatingMap = gameType.getState().getCurrentHandSeatingMap();
 		for (PokerPlayer p : seatingMap.values()) {
 			if (p.getBetStack() > highBet) {
 				highBet = p.getBetStack();
@@ -87,7 +87,7 @@ public class BettingRound implements Round, BettingRoundContext {
 
 	public void act(PokerAction action) {
 		log.debug("Act : "+action);
-		PokerPlayer player = gameType.getPlayer(action.getPlayerId());
+		PokerPlayer player = gameType.getState().getPlayerInCurrentHand(action.getPlayerId());
 
 		verifyValidAction(action, player);
 		handleAction(action, player);
@@ -127,7 +127,7 @@ public class BettingRound implements Round, BettingRoundContext {
 	private PokerPlayer getNextPlayerToAct(int lastActedSeatId) {
 		PokerPlayer next = null;
 
-		List<PokerPlayer> players = PokerUtils.unwrapList(gameType.getSeatingMap(), lastActedSeatId + 1);
+		List<PokerPlayer> players = PokerUtils.unwrapList(gameType.getState().getCurrentHandSeatingMap(), lastActedSeatId + 1);
 		for (PokerPlayer player : players) {
 			if (!player.hasFolded() && !player.hasActed() && !player.isSittingOut() && !player.isAllIn()) {
 				next = player;
@@ -146,7 +146,7 @@ public class BettingRound implements Round, BettingRoundContext {
 			return true;
 		}
 
-		for (PokerPlayer p : gameType.getSeatingMap().values()) {
+		for (PokerPlayer p : gameType.getState().getCurrentHandSeatingMap().values()) {
 			if (!p.hasFolded() && !p.hasActed() &&!p.isSittingOut()) {
 				return false;
 			}
@@ -221,7 +221,7 @@ public class BettingRound implements Round, BettingRoundContext {
 	}
 
 	private void resetHasActed() {
-		for (PokerPlayer p : gameType.getSeatingMap().values()) {
+		for (PokerPlayer p : gameType.getState().getCurrentHandSeatingMap().values()) {
 			if (!p.hasFolded()) {
 				p.setHasActed(false);
 			}
@@ -245,7 +245,7 @@ public class BettingRound implements Round, BettingRoundContext {
 	}
 
 	public void timeout() {
-		PokerPlayer player = gameType.getPlayer(playerToAct);
+		PokerPlayer player = gameType.getState().getPlayerInCurrentHand(playerToAct);
 		if (player == null) {
 			// throw new IllegalStateException("Expected " + playerToAct + " to act, but that player can not be found at the table!");
 			log.debug("Expected " + playerToAct + " to act, but that player can not be found at the table! I will assume everyone is all in");
@@ -271,7 +271,7 @@ public class BettingRound implements Round, BettingRoundContext {
 	}
 
 	public boolean allOtherPlayersAreAllIn(PokerPlayer thisPlayer) {
-		for (PokerPlayer player : gameType.getSeatingMap().values()) {
+		for (PokerPlayer player : gameType.getState().getCurrentHandSeatingMap().values()) {
 			if (!player.isSittingOut() && !player.hasFolded() && !player.equals(thisPlayer) && !player.isAllIn()) {
 				return false;
 			}

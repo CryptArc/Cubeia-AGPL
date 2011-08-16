@@ -23,8 +23,6 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import ca.ualberta.cs.poker.Card;
-
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.ServerAdapter;
@@ -57,50 +55,43 @@ public class MockGame implements GameType {
 		return 100;
 	}
 	
+	@Override
 	public void act(PokerAction action) {
 	}
 
+	@Override
 	public BlindsInfo getBlindsInfo() {
 		return blindsInfo;
 	}
 
-	public List<Card> getCommunityCards() {
-		return null;
-	}
+//	@Override
+//	public PokerPlayer getPlayer(int playerId) {
+//		return playerMap.get(playerId);
+//	}
 
-	public PokerPlayer getPlayer(int playerId) {
-		return playerMap.get(playerId);
-	}
-
+	@Override
 	public Iterable<PokerPlayer> getPlayers() {
 		return seatingMap.values();
 	}
 
-	public SortedMap<Integer, PokerPlayer> getSeatingMap() {
-		return seatingMap;
-	}
-
+	@Override
 	public void requestAction(ActionRequest r) {
 		for (TestListener l : listeners) {
 			l.notifyActionRequested(r);
 		}
 	}
 
-//	public void requestAction(PokerPlayer player, PossibleAction... options) {
-//		ActionRequest a = new ActionRequest();
-//		for (PossibleAction option : options) {
-//			a.enable(option);
-//		}
-//		a.setPlayerId(player.getId());
-//		player.setActionRequest(a);
-//		requestAction(a);
-//	}
-
 	public void roundFinished() {
 		roundFinished = true;
 	}
 
-	public void startHand(SortedMap<Integer, PokerPlayer> seatingMap, Map<Integer, PokerPlayer> playerMap) {
+	@Override
+	public void startHand() {
+	}
+	
+	public void initMockState(SortedMap<Integer, PokerPlayer> seatingMap, SortedMap<Integer, PokerPlayer> playerMap) {
+		this.seatingMap = seatingMap;
+		this.playerMap = playerMap;
 	}
 
 	public void addPlayers(MockPlayer[] p) {
@@ -110,9 +101,10 @@ public class MockGame implements GameType {
 		}
 	}
 
+	@Override
 	public int countNonFoldedPlayers() {
 		int nonFolded = 0;
-		for (PokerPlayer p : getSeatingMap().values()) {
+		for (PokerPlayer p : seatingMap.values()) {
 			if (!p.hasFolded()) {
 				nonFolded++;
 			}
@@ -121,26 +113,32 @@ public class MockGame implements GameType {
 		return nonFolded;
 	}
 
+	@Override
 	public void prepareNewHand() {
 		// YEAH YEAH.
 	}
 
+	@Override
 	public void notifyDealerButton(int dealerButtonSeatId) {
 		System.out.println("Dealer button is on seat: " + dealerButtonSeatId);
 		// WAEVVA, I'll do what i want, I'm a mock!
 	}
 
+	@Override
 	public ServerAdapter getServerAdapter() {
 		return mockServerAdapter;
 	}
 
+	@Override
 	public void timeout() {
 	}
 
+	@Override
 	public String getStateDescription() {
 		return null;
 	}
 
+	@Override
 	public boolean isPlayerInHand(int playerId) {
 		return false;
 	}
@@ -150,7 +148,35 @@ public class MockGame implements GameType {
 
 	@Override
 	public IPokerState getState() {
-		return null;
+		return new IPokerState() {
+			@Override
+			public void notifyPlayerSittingOut(int playerId) {
+			}
+			
+			@Override
+			public void init(PokerSettings settings) {
+			}
+			
+			@Override
+			public SortedMap<Integer, PokerPlayer> getCurrentHandSeatingMap() {
+				return seatingMap;
+			}
+			
+			@Override
+			public Map<Integer, PokerPlayer> getCurrentHandPlayerMap() {
+				return playerMap;
+			}
+			
+			@Override
+			public int getAnteLevel() {
+				return 0;
+			}
+
+			@Override
+			public PokerPlayer getPlayerInCurrentHand(Integer playerId) {
+				return playerMap.get(playerId);
+			}
+		};
 	}
 
 	@Override

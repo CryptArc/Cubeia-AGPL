@@ -72,7 +72,7 @@ public class TournamentTablePokerLogicTest extends GuiceTest {
 		game.addPlayer(p5);
 		
 		// Check that we still only have 4 players.
-		assertEquals(4, game.getGameType().getSeatingMap().size());
+		assertEquals(4, game.getCurrentHandPlayerMap().size());
 		
 		// Flop round
 		act(PokerActionType.BET);
@@ -123,7 +123,7 @@ public class TournamentTablePokerLogicTest extends GuiceTest {
 		
 		// Still 5 players.
 		assertEquals(5, game.getSeatedPlayers().size());
-		assertEquals(5, game.getGameType().getSeatingMap().size());
+		assertEquals(5, game.getCurrentHandSeatingMap().size());
 	}
 	
 	public void testSitAndLeave() {
@@ -168,7 +168,7 @@ public class TournamentTablePokerLogicTest extends GuiceTest {
 		
 		// Check that we still only have 4 players.
 		assertEquals(5, game.getSeatedPlayers().size());
-		assertEquals(4, game.getGameType().getSeatingMap().size());
+		assertEquals(4, game.getCurrentHandSeatingMap().size());
 		
 		game.removePlayer(p5.getId());
 		assertEquals(4, game.getSeatedPlayers().size());

@@ -18,11 +18,8 @@
 package com.cubeia.poker;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
-
-import ca.ualberta.cs.poker.Card;
 
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
@@ -38,18 +35,12 @@ import com.cubeia.poker.rounds.blinds.BlindsInfo;
  */
 public interface GameType extends Serializable {
 
-	public void startHand(SortedMap<Integer, PokerPlayer> seatingMap, Map<Integer, PokerPlayer> playerMap);
+	public void startHand();
 
 	public void act(PokerAction action);
 
-	// TODO: #AH2 move to state
-	public List<Card> getCommunityCards();
-
-	// TODO: #AH2 move to state
-	public SortedMap<Integer, PokerPlayer> getSeatingMap();
-
-	// TODO: #AH2 move to state
-	public PokerPlayer getPlayer(int playerId);
+//	// TODO: #AH2 move to state
+//	public PokerPlayer getPlayer(int playerId);
 
 	// TODO: #AH2 remove
 	public void scheduleRoundTimeout();
@@ -83,6 +74,7 @@ public interface GameType extends Serializable {
 	public boolean isPlayerInHand(int playerId);
 
 	// TODO: #AH2 move from here. We need to pass the IPokerState to BettingRound and BlindsRound.
+	// NOTE: keeping this method for a while to ease the refactoring
 	public IPokerState getState();
 
 	// TODO: #AH2 move from here
