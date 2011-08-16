@@ -27,7 +27,8 @@ Copyright (c) 2000:
  ***************************************************************************/
 
 import java.io.Serializable;
-import java.util.Random;
+
+import com.cubeia.poker.rng.MersenneTwisterFast;
 
 /**
  *  A Deck of 52 Cards which can be dealt and shuffled
@@ -44,7 +45,7 @@ public class Deck implements Serializable {
 	public static final int NUM_CARDS = 52;
 	private Card[] gCards = new Card[NUM_CARDS];
 	private char position; // top of deck
-	private Random r = new Random();
+	private MersenneTwisterFast r = new MersenneTwisterFast();
 
 	/**
 	 * Constructor.
