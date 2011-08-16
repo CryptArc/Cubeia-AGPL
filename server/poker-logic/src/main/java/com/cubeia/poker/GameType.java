@@ -34,6 +34,7 @@ import com.cubeia.poker.rounds.blinds.BlindsInfo;
  * Each game type, such as Texas Hold'em or Omaha should implement this interface.
  *
  * TODO: *SERIOUS* cleanup and probably major refactoring.
+ * INFO: #AH2 refers to refactorings in point 2 in Andreas Holmens mail with the goal to only have event handling methods here.
  */
 public interface GameType extends Serializable {
 
@@ -41,39 +42,52 @@ public interface GameType extends Serializable {
 
 	public void act(PokerAction action);
 
+	// TODO: #AH2 move to state
 	public List<Card> getCommunityCards();
 
+	// TODO: #AH2 move to state
 	public SortedMap<Integer, PokerPlayer> getSeatingMap();
 
+	// TODO: #AH2 move to state
 	public PokerPlayer getPlayer(int playerId);
 
+	// TODO: #AH2 remove
 	public void scheduleRoundTimeout();
 	
+	// TODO: #AH2 remove
 	public void requestAction(ActionRequest r);
 
-//	public void requestAction(PokerPlayer player, PossibleAction... option);
-
+	// TODO: #AH2 move to state
 	public BlindsInfo getBlindsInfo();
 
+	// TODO: #AH2 move to state
 	public Iterable<PokerPlayer> getPlayers();
 	
+	// TODO: #AH2 move to state
 	public int countNonFoldedPlayers();
 
 	public void prepareNewHand();
 
+	// TODO: #AH2 move from here
 	public void notifyDealerButton(int dealerButtonSeatId);
 
+	// TODO: #AH2 move from here? Then we need to pass the server adapter to BettingRound and BlindsRound.
 	public ServerAdapter getServerAdapter();
 
 	public void timeout();
 
+	// TODO: #AH2 move from here
 	public String getStateDescription();
 
+	// TODO: #AH2 move from here
 	public boolean isPlayerInHand(int playerId);
 
+	// TODO: #AH2 move from here. We need to pass the IPokerState to BettingRound and BlindsRound.
 	public IPokerState getState();
 
+	// TODO: #AH2 move from here
 	public int getAnteLevel();
 	
+	// TODO: #AH2 move from here
 	public void dealCommunityCards();
 }
