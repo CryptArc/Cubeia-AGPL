@@ -67,7 +67,7 @@ public class BlindsRound implements Round {
 		log.debug("Init new Blinds round");
 		this.isTournamentBlinds = isTournament;
 		this.game = game;
-		this.sittingInPlayers = getSittingInPlayers(game.getSeatingMap());
+		this.sittingInPlayers = getSittingInPlayers(game.getState().getCurrentHandSeatingMap());
 		this.previousBlindsInfo = game.getBlindsInfo();
 		blindsInfo.setAnteLevel(game.getAnteLevel());
 		clearPlayerActionOptions();
@@ -80,7 +80,7 @@ public class BlindsRound implements Round {
 	}
 
 	private void clearPlayerActionOptions() {
-		SortedMap<Integer, PokerPlayer> seatingMap = game.getSeatingMap();
+		SortedMap<Integer, PokerPlayer> seatingMap = game.getState().getCurrentHandSeatingMap();
 		for (PokerPlayer p : seatingMap.values()) {
 			p.clearActionRequest();
 		}
@@ -225,7 +225,7 @@ public class BlindsRound implements Round {
 	}
 
 	private void requestBigBlind(PokerPlayer bigBlind) {
-		for (PokerPlayer p : game.getSeatingMap().values()) {
+		for (PokerPlayer p : game.getState().getCurrentHandSeatingMap().values()) {
 			p.clearActionRequest();
 		}
 		
@@ -286,7 +286,7 @@ public class BlindsRound implements Round {
 	}
 
 	private void markPlayersWhoMissedBlinds(int buttonFromSeatId, int buttonToSeatId) {
-		for (PokerPlayer p : game.getSeatingMap().values()) {
+		for (PokerPlayer p : game.getState().getCurrentHandSeatingMap().values()) {
 			if (PokerUtils.isBetween(p.getSeatId(), buttonFromSeatId, buttonToSeatId)
 					&& !p.hasPostedEntryBet()
 					&& p.getSitOutStatus() != SitOutStatus.NOT_ENTERED_YET) {
@@ -305,7 +305,7 @@ public class BlindsRound implements Round {
 	}
 
 	private PokerPlayer getPlayerInSeat(int seatId) {
-		return game.getSeatingMap().get(seatId);
+		return game.getState().getCurrentHandSeatingMap().get(seatId);
 	}
 
 	private int numberPlayersSittingIn() {

@@ -124,8 +124,14 @@ public class PokerState implements Serializable, IPokerState {
 	/** Maps playerId to player */
 	private Map<Integer, PokerPlayer> playerMap = new HashMap<Integer, PokerPlayer>();
 
+	/** Maps playerId to player during the current hand */
+	private Map<Integer, PokerPlayer> currentHandPlayerMap = new HashMap<Integer, PokerPlayer>();
+	
 	private SortedMap<Integer, PokerPlayer> seatingMap = new TreeMap<Integer, PokerPlayer>();
 
+	/** Seatings during the current round */
+	private SortedMap<Integer, PokerPlayer> currentHandSeatingMap = new TreeMap<Integer, PokerPlayer>();
+	
 	private PokerGameSTM currentState = NOT_STARTED;
 
 	private boolean handFinished = false;
@@ -198,7 +204,17 @@ public class PokerState implements Serializable, IPokerState {
 	public Collection<PokerPlayer> getSeatedPlayers() {
 		return playerMap.values();
 	}
-
+	
+	@Override
+	public Map<Integer, PokerPlayer> getCurrentHandPlayerMap() {
+		return currentHandPlayerMap;
+	}
+	
+	@Override
+	public SortedMap<Integer, PokerPlayer> getCurrentHandSeatingMap() {
+		return currentHandSeatingMap;
+	}
+	
 	public int countSittingInPlayers() {
 		int sitIn = 0;
 		for (PokerPlayer player : playerMap.values()) {
@@ -219,7 +235,11 @@ public class PokerState implements Serializable, IPokerState {
 			currentState = PLAYING;
 			notifyNewHand();
 			resetValuesAtStartOfHand();
-			gameType.startHand(createCopy(seatingMap), createCopy(playerMap));
+			
+			currentHandSeatingMap = createCopy(seatingMap);
+			currentHandPlayerMap = createCopy(playerMap);
+			
+			gameType.startHand();
 		} else {
 			throw new IllegalStateException("Not enough players to start hand. Was: " + countSittingInPlayers() + ", expected > 1. Players: "
 					+ playerMap);
