@@ -46,8 +46,8 @@ public interface GameType extends Serializable {
 	// TODO: #AH2 move to state
 	public BlindsInfo getBlindsInfo();
 
-	// TODO: #AH2 move to state
-	public int countNonFoldedPlayers();
+//	// TODO: #AH2 move to state
+//	public int countNonFoldedPlayers();
 
 	public void prepareNewHand();
 

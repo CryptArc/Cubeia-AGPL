@@ -233,6 +233,19 @@ public class PokerState implements Serializable, IPokerState {
 		return sitIn;
 	}
 	
+	@Override
+	public int countNonFoldedPlayers() {
+		int nonFolded = 0;
+		for (PokerPlayer p : getCurrentHandSeatingMap().values()) {
+			if (!p.hasFolded() && !p.isSittingOut()) {
+				nonFolded++;
+			}
+		}
+
+		return nonFolded;
+	}
+	
+	
 	
 
 	public void startHand() {

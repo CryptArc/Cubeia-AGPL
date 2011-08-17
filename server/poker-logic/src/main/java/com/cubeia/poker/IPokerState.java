@@ -19,4 +19,6 @@ public interface IPokerState {
 
 	PokerPlayer getPlayerInCurrentHand(Integer playerId);
 
+	int countNonFoldedPlayers();
+
 }

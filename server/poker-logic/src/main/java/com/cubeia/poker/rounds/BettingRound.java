@@ -142,7 +142,7 @@ public class BettingRound implements Round, BettingRoundContext {
 		 * If there's only one non folded player left, the round (and hand) is
 		 * finished.
 		 */
-		if (gameType.countNonFoldedPlayers() < 2) {
+		if (gameType.getState().countNonFoldedPlayers() < 2) {
 			return true;
 		}
 

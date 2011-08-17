@@ -154,7 +154,7 @@ public class TexasHoldem implements GameType, RoundVisitor {
 	 * i.e. not folded.
 	 */
 	private void exposeShowdownCards() {
-        if (countNonFoldedPlayers() > 1) {
+        if (game.countNonFoldedPlayers() > 1) {
             for (PokerPlayer p : game.getCurrentHandSeatingMap().values()) {
                 if (!p.hasFolded()) {
                     game.exposePrivateCards(p.getId(), p.getPocketCards().getCards());
@@ -170,20 +170,9 @@ public class TexasHoldem implements GameType, RoundVisitor {
 	}
     
 	private boolean isHandFinished() {
-		return (roundId >= 3 || countNonFoldedPlayers() <= 1);
+		return (roundId >= 3 || game.countNonFoldedPlayers() <= 1);
 	}
 
-	public int countNonFoldedPlayers() {
-		int nonFolded = 0;
-		for (PokerPlayer p : game.getCurrentHandSeatingMap().values()) {
-			if (!p.hasFolded() && !p.isSittingOut()) {
-				nonFolded++;
-			}
-		}
-
-		return nonFolded;
-	}
-	
 	public int countPlayersSittingIn() {
 		int sittingIn = 0;
 		for (PokerPlayer p : game.getCurrentHandSeatingMap().values()) {

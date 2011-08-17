@@ -101,17 +101,17 @@ public class MockGame implements GameType {
 		}
 	}
 
-	@Override
-	public int countNonFoldedPlayers() {
-		int nonFolded = 0;
-		for (PokerPlayer p : seatingMap.values()) {
-			if (!p.hasFolded()) {
-				nonFolded++;
-			}
-		}
-
-		return nonFolded;
-	}
+//	@Override
+//	public int countNonFoldedPlayers() {
+//		int nonFolded = 0;
+//		for (PokerPlayer p : seatingMap.values()) {
+//			if (!p.hasFolded()) {
+//				nonFolded++;
+//			}
+//		}
+//
+//		return nonFolded;
+//	}
 
 	@Override
 	public void prepareNewHand() {
@@ -175,6 +175,11 @@ public class MockGame implements GameType {
 			@Override
 			public PokerPlayer getPlayerInCurrentHand(Integer playerId) {
 				return playerMap.get(playerId);
+			}
+
+			@Override
+			public int countNonFoldedPlayers() {
+				return 4;
 			}
 		};
 	}
