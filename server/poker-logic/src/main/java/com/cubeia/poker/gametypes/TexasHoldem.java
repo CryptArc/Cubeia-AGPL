@@ -17,13 +17,10 @@
 
 package com.cubeia.poker.gametypes;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.SortedMap;
 
 import org.apache.log4j.Logger;
 
@@ -59,15 +56,9 @@ public class TexasHoldem implements GameType, RoundVisitor {
 
     private static transient Logger log = Logger.getLogger(TexasHoldem.class);
 
-	private SortedMap<Integer, PokerPlayer> seatingMap;
-
 	private Round currentRound;
 
 	private Deck deck;
-
-	private List<Card> communityCards = new ArrayList<Card>();
-
-	private Map<Integer, PokerPlayer> playerMap = new HashMap<Integer, PokerPlayer>();
 
 	/**
 	 * 0 = pre flop 1 = flop 2 = turn 3 = river
@@ -79,23 +70,18 @@ public class TexasHoldem implements GameType, RoundVisitor {
 	@Inject
 	PokerState game;
 	
+	// TODO: random should be injected
 	private Random random = new Random();
 	
 	private HandResultCalculator handResultCalculator = new HandResultCalculator();
 
+	@Override
 	public String toString() {
 	    return "TexasHoldem, current round["+currentRound+"] roundId["+roundId+"] ";
 	}
 	
 	@Override
-	public int getAnteLevel() {
-		return game.getAnteLevel();
-	}
-	
-	public void startHand(SortedMap<Integer, PokerPlayer> seatingMap,
-			Map<Integer, PokerPlayer> playerMap) {
-		this.seatingMap = seatingMap;
-		this.playerMap = playerMap;
+	public void startHand() {
 		initHand();
 	}
 
@@ -111,10 +97,12 @@ public class TexasHoldem implements GameType, RoundVisitor {
 		return random;
 	}
 
-	public SortedMap<Integer, PokerPlayer> getSeatingMap() {
-		return seatingMap;
-	}
+//	@Override
+//	public SortedMap<Integer, PokerPlayer> getSeatingMap() {
+//		return seatingMap;
+//	}
 
+	@Override
 	public void act(PokerAction action) {
 		currentRound.act(action);
 		checkFinishedRound();
@@ -138,22 +126,20 @@ public class TexasHoldem implements GameType, RoundVisitor {
 		for (int i = 0; i < n; i++) {
 			dealt.add(deck.dealCard());
 		}
-		communityCards.addAll(dealt);
+		game.getCommunityCards().addAll(dealt);
 		game.notifyCommunityCards(dealt);
 	}
 
-	public List<Card> getCommunityCards() {
-		return communityCards;
-	}
+//	@Override
+//	public PokerPlayer getPlayer(int playerId) {
+//		PokerPlayer pokerPlayer = game.getCurrentHandPlayerMap().get(playerId);
+//		return pokerPlayer;
+//	}
 
-	public PokerPlayer getPlayer(int playerId) {
-		PokerPlayer pokerPlayer = playerMap.get(playerId);
-		return pokerPlayer;
-	}
-
-	public Iterable<PokerPlayer> getPlayers() {
-		return playerMap.values();
-	}
+//	@Override
+//	public Iterable<PokerPlayer> getPlayers() {
+//		return game.getCurrentHandPlayerMap().values();
+//	}
 
 	public void handleFinishedRound() {
 		currentRound.visit(this);
@@ -168,8 +154,8 @@ public class TexasHoldem implements GameType, RoundVisitor {
 	 * i.e. not folded.
 	 */
 	private void exposeShowdownCards() {
-        if (countNonFoldedPlayers() > 1) {
-            for (PokerPlayer p : getSeatingMap().values()) {
+        if (game.countNonFoldedPlayers() > 1) {
+            for (PokerPlayer p : game.getCurrentHandSeatingMap().values()) {
                 if (!p.hasFolded()) {
                     game.exposePrivateCards(p.getId(), p.getPocketCards().getCards());
                 }
@@ -184,23 +170,12 @@ public class TexasHoldem implements GameType, RoundVisitor {
 	}
     
 	private boolean isHandFinished() {
-		return (roundId >= 3 || countNonFoldedPlayers() <= 1);
+		return (roundId >= 3 || game.countNonFoldedPlayers() <= 1);
 	}
 
-	public int countNonFoldedPlayers() {
-		int nonFolded = 0;
-		for (PokerPlayer p : getSeatingMap().values()) {
-			if (!p.hasFolded() && !p.isSittingOut()) {
-				nonFolded++;
-			}
-		}
-
-		return nonFolded;
-	}
-	
 	public int countPlayersSittingIn() {
 		int sittingIn = 0;
-		for (PokerPlayer p : getSeatingMap().values()) {
+		for (PokerPlayer p : game.getCurrentHandSeatingMap().values()) {
 			if (!p.isSittingOut()) {
 				sittingIn++;
 			}
@@ -230,18 +205,19 @@ public class TexasHoldem implements GameType, RoundVisitor {
 		HandResult result = new HandResult();
 		PlayerHands playerHands = createHandHolder();
 		result.setPlayerHands(playerHands);
-		Map<PokerPlayer, Result> playerResults = handResultCalculator.getPlayerResults(result.getPlayerHands(), game.getPotHolder(), playerMap);
+		Map<PokerPlayer, Result> playerResults = handResultCalculator.getPlayerResults(result.getPlayerHands(), game.getPotHolder(), 
+				game.getCurrentHandPlayerMap());
 		result.setResults(playerResults);
 		return result;
 	}
 
 	private PlayerHands createHandHolder() {
 		PlayerHands holder = new PlayerHands();
-		for (PokerPlayer player : playerMap.values()) {
+		for (PokerPlayer player : game.getCurrentHandPlayerMap().values()) {
 			if (!player.hasFolded()) {
 				Hand h = new Hand();
 				h.addCards(player.getPocketCards().getCards());
-				h.addCards(getCommunityCards());
+				h.addCards(game.getCommunityCards());
 				holder.addHand(player.getId(), h);
 			}
 		}
@@ -251,15 +227,16 @@ public class TexasHoldem implements GameType, RoundVisitor {
 
 	private void moveChipsToPot() {
 		
-		game.getPotHolder().moveChipsToPot(seatingMap.values());
+		game.getPotHolder().moveChipsToPot(game.getCurrentHandSeatingMap().values());
 		
-		for (PokerPlayer p : seatingMap.values()) {
+		for (PokerPlayer p : game.getCurrentHandSeatingMap().values()) {
 			p.setHasActed(false);
 			p.clearActionRequest();
 			p.commitBetStack();
 		}
 	}
 
+	@Override
 	public void requestAction(ActionRequest r) {
 		if (blindRequested(r) && game.isTournamentTable()) {
 			game.getServerAdapter().scheduleTimeout(game.getTimingProfile().getTime(Periods.AUTO_POST_BLIND_DELAY));
@@ -268,6 +245,7 @@ public class TexasHoldem implements GameType, RoundVisitor {
 		}
 	}
 	
+	@Override
 	public void scheduleRoundTimeout() {
 		log.debug("scheduleRoundTimeout in: "+ game.getTimingProfile().getTime(Periods.RIVER));
 		game.getServerAdapter().scheduleTimeout(game.getTimingProfile().getTime(Periods.RIVER));
@@ -293,44 +271,43 @@ public class TexasHoldem implements GameType, RoundVisitor {
 //		game.requestAction(actionRequest);
 //	}
 
+	@Override
 	public BlindsInfo getBlindsInfo() {
 		return blindsInfo;
 	}
 
+	@Override
 	public void prepareNewHand() {
-		communityCards.clear();
-		for (PokerPlayer player : playerMap.values()) {
+		game.getCommunityCards().clear();
+		for (PokerPlayer player : game.getCurrentHandPlayerMap().values()) {
 			player.clearHand();
 			player.setHasFolded(false);
 		}		
 	}
 
-	public void notifyDealerButton(int dealerButtonSeatId) {
-		game.notifyDealerButton(dealerButtonSeatId);
-	}
-
+	@Override
 	public ServerAdapter getServerAdapter() {
 		return game.getServerAdapter();
 	}
 
+	@Override
 	public void timeout() {
 		log.debug("Timeout");
 		currentRound.timeout();
 		checkFinishedRound();
 	}
 
+	@Override
 	public IPokerState getState() {
 		return game;
 	}
 
+	@Override
 	public String getStateDescription() {
 		return currentRound == null ? "th-round=null" : currentRound.getClass() + "_" + currentRound.getStateDescription();
 	}
 
-	public boolean isPlayerInHand(int playerId) {
-		return playerMap.get(playerId) == null ? false : playerMap.get(playerId).isInHand();
-	}
-
+	@Override
 	public void visit(BettingRound bettingRound) {
 		moveChipsToPot();
 		reportPotUpdate();
@@ -350,6 +327,7 @@ public class TexasHoldem implements GameType, RoundVisitor {
 		}		
 	}
 
+	@Override
 	public void visit(BlindsRound blindsRound) {
 		if (blindsRound.isCanceled()) {
 			handleCanceledHand();
@@ -360,6 +338,7 @@ public class TexasHoldem implements GameType, RoundVisitor {
 		}
 	}
 	
+	@Override
 	public void visit(DealCommunityCardsRound round) {
 		startBettingRound();
 	}
@@ -374,7 +353,7 @@ public class TexasHoldem implements GameType, RoundVisitor {
 	}
 
 	private void dealPocketCards() {
-		for (PokerPlayer p : seatingMap.values()) {
+		for (PokerPlayer p : game.getCurrentHandSeatingMap().values()) {
 			if (!p.isSittingOut()) {
 				dealPocketCards(p, 2);
 			}

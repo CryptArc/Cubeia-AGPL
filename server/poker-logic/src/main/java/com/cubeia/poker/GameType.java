@@ -18,11 +18,6 @@
 package com.cubeia.poker;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
-
-import ca.ualberta.cs.poker.Card;
 
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
@@ -33,25 +28,20 @@ import com.cubeia.poker.rounds.blinds.BlindsInfo;
 /**
  * Each game type, such as Texas Hold'em or Omaha should implement this interface.
  *
+ * This interface should define a minimal set of methods needed to implement the differences of all
+ * major types of poker. Common functionality, such as player handling etc., goes into
+ * the poker state.
+ *
  * TODO: *SERIOUS* cleanup and probably major refactoring.
  * INFO: #AH2 refers to refactorings in point 2 in Andreas Holmens mail with the goal to only have event handling methods here.
  */
 public interface GameType extends Serializable {
 
-	public void startHand(SortedMap<Integer, PokerPlayer> seatingMap, Map<Integer, PokerPlayer> playerMap);
+	public void startHand();
 
 	public void act(PokerAction action);
 
-	// TODO: #AH2 move to state
-	public List<Card> getCommunityCards();
-
-	// TODO: #AH2 move to state
-	public SortedMap<Integer, PokerPlayer> getSeatingMap();
-
-	// TODO: #AH2 move to state
-	public PokerPlayer getPlayer(int playerId);
-
-	// TODO: #AH2 remove
+	// TODO: #AH2 remove???
 	public void scheduleRoundTimeout();
 	
 	// TODO: #AH2 remove
@@ -60,34 +50,20 @@ public interface GameType extends Serializable {
 	// TODO: #AH2 move to state
 	public BlindsInfo getBlindsInfo();
 
-	// TODO: #AH2 move to state
-	public Iterable<PokerPlayer> getPlayers();
-	
-	// TODO: #AH2 move to state
-	public int countNonFoldedPlayers();
-
 	public void prepareNewHand();
-
-	// TODO: #AH2 move from here
-	public void notifyDealerButton(int dealerButtonSeatId);
 
 	// TODO: #AH2 move from here? Then we need to pass the server adapter to BettingRound and BlindsRound.
 	public ServerAdapter getServerAdapter();
 
+	// TODO: #AH2 move to state
 	public void timeout();
 
-	// TODO: #AH2 move from here
+	// TODO: #AH2 move from here? Or?
 	public String getStateDescription();
 
-	// TODO: #AH2 move from here
-	public boolean isPlayerInHand(int playerId);
-
 	// TODO: #AH2 move from here. We need to pass the IPokerState to BettingRound and BlindsRound.
+	// NOTE: keeping this method for a while to ease the refactoring
 	public IPokerState getState();
 
-	// TODO: #AH2 move from here
-	public int getAnteLevel();
-	
-	// TODO: #AH2 move from here
 	public void dealCommunityCards();
 }

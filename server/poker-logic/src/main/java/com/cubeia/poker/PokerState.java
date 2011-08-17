@@ -18,6 +18,7 @@
 package com.cubeia.poker;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -123,8 +124,14 @@ public class PokerState implements Serializable, IPokerState {
 	/** Maps playerId to player */
 	private Map<Integer, PokerPlayer> playerMap = new HashMap<Integer, PokerPlayer>();
 
+	/** Maps playerId to player during the current hand */
+	private Map<Integer, PokerPlayer> currentHandPlayerMap = new HashMap<Integer, PokerPlayer>();
+	
 	private SortedMap<Integer, PokerPlayer> seatingMap = new TreeMap<Integer, PokerPlayer>();
 
+	/** Seatings during the current round */
+	private SortedMap<Integer, PokerPlayer> currentHandSeatingMap = new TreeMap<Integer, PokerPlayer>();
+	
 	private PokerGameSTM currentState = NOT_STARTED;
 
 	private boolean handFinished = false;
@@ -132,6 +139,8 @@ public class PokerState implements Serializable, IPokerState {
 	private HandResult handResult;	
 	
 	private PotHolder potHolder = new PotHolder();
+	
+	private List<Card> communityCards = new ArrayList<Card>();
 
 	public PokerState() {}
 
@@ -177,7 +186,7 @@ public class PokerState implements Serializable, IPokerState {
 	}
 
 	public List<Card> getCommunityCards() {
-		return gameType.getCommunityCards();
+		return communityCards;
 	}
 
 	public boolean isFinished() {
@@ -195,7 +204,22 @@ public class PokerState implements Serializable, IPokerState {
 	public Collection<PokerPlayer> getSeatedPlayers() {
 		return playerMap.values();
 	}
-
+	
+	@Override
+	public Map<Integer, PokerPlayer> getCurrentHandPlayerMap() {
+		return currentHandPlayerMap;
+	}
+	
+	@Override
+	public PokerPlayer getPlayerInCurrentHand(Integer playerId) {
+		return getCurrentHandPlayerMap().get(playerId);
+	}
+	
+	@Override
+	public SortedMap<Integer, PokerPlayer> getCurrentHandSeatingMap() {
+		return currentHandSeatingMap;
+	}
+	
 	public int countSittingInPlayers() {
 		int sitIn = 0;
 		for (PokerPlayer player : playerMap.values()) {
@@ -209,14 +233,33 @@ public class PokerState implements Serializable, IPokerState {
 		return sitIn;
 	}
 	
+	@Override
+	public int countNonFoldedPlayers() {
+		int nonFolded = 0;
+		for (PokerPlayer p : getCurrentHandSeatingMap().values()) {
+			if (!p.hasFolded() && !p.isSittingOut()) {
+				nonFolded++;
+			}
+		}
+
+		return nonFolded;
+	}
 	
+	@Override
+	public boolean isPlayerInHand(int playerId) {
+		return getCurrentHandPlayerMap().get(playerId) == null ? false : getCurrentHandPlayerMap().get(playerId).isInHand();
+	}
 
 	public void startHand() {
 		if (countSittingInPlayers() > 1) {
 			currentState = PLAYING;
 			notifyNewHand();
 			resetValuesAtStartOfHand();
-			gameType.startHand(createCopy(seatingMap), createCopy(playerMap));
+			
+			currentHandSeatingMap = createCopy(seatingMap);
+			currentHandPlayerMap = createCopy(playerMap);
+			
+			gameType.startHand();
 		} else {
 			throw new IllegalStateException("Not enough players to start hand. Was: " + countSittingInPlayers() + ", expected > 1. Players: "
 					+ playerMap);
@@ -309,7 +352,7 @@ public class PokerState implements Serializable, IPokerState {
 	public PokerPlayer getPokerPlayer(int playerId) {
 		return playerMap.get(playerId);
 	}
-
+	
 	// TODO: Should not be possible to call like this. The game type should only be possible to change between hands.
 	public void setGameType(GameType gameType) {
 		this.gameType = gameType;
@@ -496,7 +539,7 @@ public class PokerState implements Serializable, IPokerState {
 			throw new IllegalArgumentException("Player " + playerId + " tried to add chips, but was not seated.");
 		}
 		
-		if (gameType.isPlayerInHand(playerId)) {
+		if (isPlayerInHand(playerId)) {
 			// Add pending chips request.
 		} else {
 			playerMap.get(playerId).addChips(chips);
