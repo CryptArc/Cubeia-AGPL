@@ -18,8 +18,6 @@
 package com.cubeia.poker;
 
 import java.io.Serializable;
-import java.util.Map;
-import java.util.SortedMap;
 
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
@@ -39,10 +37,7 @@ public interface GameType extends Serializable {
 
 	public void act(PokerAction action);
 
-//	// TODO: #AH2 move to state
-//	public PokerPlayer getPlayer(int playerId);
-
-	// TODO: #AH2 remove
+	// TODO: #AH2 remove???
 	public void scheduleRoundTimeout();
 	
 	// TODO: #AH2 remove
@@ -51,9 +46,6 @@ public interface GameType extends Serializable {
 	// TODO: #AH2 move to state
 	public BlindsInfo getBlindsInfo();
 
-	// TODO: #AH2 move to state
-	public Iterable<PokerPlayer> getPlayers();
-	
 	// TODO: #AH2 move to state
 	public int countNonFoldedPlayers();
 
@@ -67,7 +59,7 @@ public interface GameType extends Serializable {
 
 	public void timeout();
 
-	// TODO: #AH2 move from here
+	// TODO: #AH2 move from here? Or?
 	public String getStateDescription();
 
 	// TODO: #AH2 move from here
@@ -77,9 +69,5 @@ public interface GameType extends Serializable {
 	// NOTE: keeping this method for a while to ease the refactoring
 	public IPokerState getState();
 
-	// TODO: #AH2 move from here
-	public int getAnteLevel();
-	
-	// TODO: #AH2 move from here
 	public void dealCommunityCards();
 }

@@ -70,6 +70,7 @@ public class TexasHoldem implements GameType, RoundVisitor {
 	@Inject
 	PokerState game;
 	
+	// TODO: random should be injected
 	private Random random = new Random();
 	
 	private HandResultCalculator handResultCalculator = new HandResultCalculator();
@@ -77,11 +78,6 @@ public class TexasHoldem implements GameType, RoundVisitor {
 	@Override
 	public String toString() {
 	    return "TexasHoldem, current round["+currentRound+"] roundId["+roundId+"] ";
-	}
-	
-	@Override
-	public int getAnteLevel() {
-		return game.getAnteLevel();
 	}
 	
 	@Override
@@ -140,10 +136,10 @@ public class TexasHoldem implements GameType, RoundVisitor {
 //		return pokerPlayer;
 //	}
 
-	@Override
-	public Iterable<PokerPlayer> getPlayers() {
-		return game.getCurrentHandPlayerMap().values();
-	}
+//	@Override
+//	public Iterable<PokerPlayer> getPlayers() {
+//		return game.getCurrentHandPlayerMap().values();
+//	}
 
 	public void handleFinishedRound() {
 		currentRound.visit(this);

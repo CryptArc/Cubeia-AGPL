@@ -337,7 +337,7 @@ public class PokerState implements Serializable, IPokerState {
 	public PokerPlayer getPokerPlayer(int playerId) {
 		return playerMap.get(playerId);
 	}
-
+	
 	// TODO: Should not be possible to call like this. The game type should only be possible to change between hands.
 	public void setGameType(GameType gameType) {
 		this.gameType = gameType;

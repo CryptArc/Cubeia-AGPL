@@ -50,10 +50,10 @@ public class MockGame implements GameType {
 	public MockGame() {
 	}
 	
-	@Override
-	public int getAnteLevel() {
-		return 100;
-	}
+//	@Override
+//	public int getAnteLevel() {
+//		return 100;
+//	}
 	
 	@Override
 	public void act(PokerAction action) {
@@ -69,10 +69,10 @@ public class MockGame implements GameType {
 //		return playerMap.get(playerId);
 //	}
 
-	@Override
-	public Iterable<PokerPlayer> getPlayers() {
-		return seatingMap.values();
-	}
+//	@Override
+//	public Iterable<PokerPlayer> getPlayers() {
+//		return seatingMap.values();
+//	}
 
 	@Override
 	public void requestAction(ActionRequest r) {

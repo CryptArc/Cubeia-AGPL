@@ -284,7 +284,7 @@ public class BettingRound implements Round, BettingRoundContext {
 	}
 
 	public long getMinBet() {
-		return gameType.getAnteLevel();
+		return gameType.getState().getAnteLevel();
 	}
 
 	public long getSizeOfLastBetOrRaise() {

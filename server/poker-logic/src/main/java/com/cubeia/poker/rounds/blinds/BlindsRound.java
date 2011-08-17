@@ -69,7 +69,7 @@ public class BlindsRound implements Round {
 		this.game = game;
 		this.sittingInPlayers = getSittingInPlayers(game.getState().getCurrentHandSeatingMap());
 		this.previousBlindsInfo = game.getBlindsInfo();
-		blindsInfo.setAnteLevel(game.getAnteLevel());
+		blindsInfo.setAnteLevel(game.getState().getAnteLevel());
 		clearPlayerActionOptions();
 		initBlinds();
 		if (blindsInfo.hasDeadSmallBlind()) {
@@ -247,7 +247,7 @@ public class BlindsRound implements Round {
 	}
 
 	private void setAllPlayersToNoMissedBlinds() {
-		for (PokerPlayer p : game.getPlayers()) {
+		for (PokerPlayer p : game.getState().getCurrentHandPlayerMap().values()) {
 			p.setHasPostedEntryBet(true);
 		}
 	}
