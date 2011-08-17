@@ -28,7 +28,7 @@ public class WaitingForSmallBlindState extends AbstractBlindsState {
 	public void smallBlind(int playerId, BlindsRound context) {
 		int smallBlind = context.getBlindsInfo().getSmallBlindPlayerId();
 		if (smallBlind == playerId) {
-			PokerPlayer player = context.getGame().getPlayer(playerId);
+			PokerPlayer player = context.getGame().getState().getPlayerInCurrentHand(playerId);
 			player.addBet(context.getBlindsInfo().getSmallBlindLevel());
 			context.smallBlindPosted();
 		} else {
@@ -41,7 +41,7 @@ public class WaitingForSmallBlindState extends AbstractBlindsState {
 	public void declineEntryBet(Integer playerId, BlindsRound context) {
 		int smallBlind = context.getBlindsInfo().getSmallBlindPlayerId();
 		if (smallBlind == playerId) {
-			PokerPlayer player = context.getGame().getPlayer(playerId);
+			PokerPlayer player = context.getGame().getState().getPlayerInCurrentHand(playerId);
 			player.setSitOutStatus(SitOutStatus.MISSED_SMALL_BLIND);
 			context.getBlindsInfo().setHasDeadSmallBlind(true);
 			context.smallBlindDeclined(player);
@@ -56,7 +56,7 @@ public class WaitingForSmallBlindState extends AbstractBlindsState {
 			smallBlind(context.getBlindsInfo().getSmallBlindPlayerId(), context);
 		} else {
 			int smallBlind = context.getBlindsInfo().getSmallBlindPlayerId();
-			PokerPlayer player = context.getGame().getPlayer(smallBlind);
+			PokerPlayer player = context.getGame().getState().getPlayerInCurrentHand(smallBlind);
 			player.setSitOutStatus(SitOutStatus.MISSED_SMALL_BLIND);
 			context.getBlindsInfo().setHasDeadSmallBlind(true);
 			context.smallBlindDeclined(player);

@@ -25,7 +25,7 @@ public class WaitingForEntryBetState extends AbstractBlindsState {
 	private static final long serialVersionUID = 1L;
 
 	public void bigBlind(int playerId, BlindsRound blindsRound) {
-		PokerPlayer player = blindsRound.getGame().getPlayer(playerId);
+		PokerPlayer player = blindsRound.getGame().getState().getPlayerInCurrentHand(playerId);
 		if (player.getActionRequest().isOptionEnabled(PokerActionType.BIG_BLIND)) {
 			player.setHasPostedEntryBet(true);
 			player.addBet(100);
@@ -36,7 +36,7 @@ public class WaitingForEntryBetState extends AbstractBlindsState {
 	}
 
 	public void declineEntryBet(Integer playerId, BlindsRound blindsRound) {
-		PokerPlayer player = blindsRound.getGame().getPlayer(playerId);
+		PokerPlayer player = blindsRound.getGame().getState().getPlayerInCurrentHand(playerId);
 		if (player.getActionRequest().isOptionEnabled(PokerActionType.DECLINE_ENTRY_BET)) {
 			blindsRound.entryBetDeclined(player);
 		} else {
