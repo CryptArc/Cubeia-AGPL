@@ -21,4 +21,6 @@ public interface IPokerState {
 
 	int countNonFoldedPlayers();
 
+	boolean isPlayerInHand(int playerId);
+
 }

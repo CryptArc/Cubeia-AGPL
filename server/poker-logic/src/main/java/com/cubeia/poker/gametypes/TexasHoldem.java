@@ -313,11 +313,6 @@ public class TexasHoldem implements GameType, RoundVisitor {
 	}
 
 	@Override
-	public boolean isPlayerInHand(int playerId) {
-		return game.getCurrentHandPlayerMap().get(playerId) == null ? false : game.getCurrentHandPlayerMap().get(playerId).isInHand();
-	}
-
-	@Override
 	public void visit(BettingRound bettingRound) {
 		moveChipsToPot();
 		reportPotUpdate();

@@ -138,11 +138,6 @@ public class MockGame implements GameType {
 		return null;
 	}
 
-	@Override
-	public boolean isPlayerInHand(int playerId) {
-		return false;
-	}
-
 	public void logDebug(String string) {
 	}
 
@@ -180,6 +175,11 @@ public class MockGame implements GameType {
 			@Override
 			public int countNonFoldedPlayers() {
 				return 4;
+			}
+			
+			@Override
+			public boolean isPlayerInHand(int playerId) {
+				return false;
 			}
 		};
 	}

@@ -46,9 +46,6 @@ public interface GameType extends Serializable {
 	// TODO: #AH2 move to state
 	public BlindsInfo getBlindsInfo();
 
-//	// TODO: #AH2 move to state
-//	public int countNonFoldedPlayers();
-
 	public void prepareNewHand();
 
 	// TODO: #AH2 move from here
@@ -62,8 +59,8 @@ public interface GameType extends Serializable {
 	// TODO: #AH2 move from here? Or?
 	public String getStateDescription();
 
-	// TODO: #AH2 move from here
-	public boolean isPlayerInHand(int playerId);
+//	// TODO: #AH2 move from here
+//	public boolean isPlayerInHand(int playerId);
 
 	// TODO: #AH2 move from here. We need to pass the IPokerState to BettingRound and BlindsRound.
 	// NOTE: keeping this method for a while to ease the refactoring

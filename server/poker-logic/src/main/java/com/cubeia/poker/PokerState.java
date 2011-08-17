@@ -245,8 +245,10 @@ public class PokerState implements Serializable, IPokerState {
 		return nonFolded;
 	}
 	
-	
-	
+	@Override
+	public boolean isPlayerInHand(int playerId) {
+		return getCurrentHandPlayerMap().get(playerId) == null ? false : getCurrentHandPlayerMap().get(playerId).isInHand();
+	}
 
 	public void startHand() {
 		if (countSittingInPlayers() > 1) {
@@ -537,7 +539,7 @@ public class PokerState implements Serializable, IPokerState {
 			throw new IllegalArgumentException("Player " + playerId + " tried to add chips, but was not seated.");
 		}
 		
-		if (gameType.isPlayerInHand(playerId)) {
+		if (isPlayerInHand(playerId)) {
 			// Add pending chips request.
 		} else {
 			playerMap.get(playerId).addChips(chips);
