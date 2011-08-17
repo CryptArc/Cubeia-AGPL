@@ -130,7 +130,7 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
     	// participants.add(new PokerParticipant(10, "holdem/real/nolimit/low", 10, Timings.DEFAULT));
     	// participants.add(new PokerParticipant(10, "holdem/real/nolimit/high", 100, Timings.SUPER_EXPRESS));
     	// participants.add(new PokerParticipant(10, "holdem/real/nolimit/low", 10, Timings.DEFAULT));
-    	participants.add(new PokerParticipant(10, "ITALIAN/cashgame/REAL_MONEY", 10, Timings.DEFAULT));
+    	participants.add(new PokerParticipant(10, "ITALIAN/cashgame/REAL_MONEY", 6, Timings.DEFAULT));
     	
     	for (PokerParticipant part : participants) {
     		part.setInjector(injector);
