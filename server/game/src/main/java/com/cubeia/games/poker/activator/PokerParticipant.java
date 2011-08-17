@@ -101,6 +101,9 @@ public class PokerParticipant extends DefaultCreationParticipant {
 
 		acc.setStringAttribute("SPEED", timing.name());
 		acc.setIntAttribute("ANTE", anteLevel);
+		acc.setStringAttribute("MONETARY_TYPE", "REAL_MONEY");
+		acc.setIntAttribute("VISIBLE_IN_LOBBY", 1);
+		
 	}
 
 	@Override
