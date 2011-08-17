@@ -23,4 +23,6 @@ public interface IPokerState {
 
 	boolean isPlayerInHand(int playerId);
 
+	void notifyDealerButton(int dealerButtonSeatId);
+
 }

@@ -119,12 +119,6 @@ public class MockGame implements GameType {
 	}
 
 	@Override
-	public void notifyDealerButton(int dealerButtonSeatId) {
-		System.out.println("Dealer button is on seat: " + dealerButtonSeatId);
-		// WAEVVA, I'll do what i want, I'm a mock!
-	}
-
-	@Override
 	public ServerAdapter getServerAdapter() {
 		return mockServerAdapter;
 	}
@@ -180,6 +174,12 @@ public class MockGame implements GameType {
 			@Override
 			public boolean isPlayerInHand(int playerId) {
 				return false;
+			}
+			
+			@Override
+			public void notifyDealerButton(int dealerButtonSeatId) {
+				System.out.println("Dealer button is on seat: " + dealerButtonSeatId);
+				// WAEVVA, I'll do what i want, I'm a mock!
 			}
 		};
 	}

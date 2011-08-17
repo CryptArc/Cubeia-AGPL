@@ -28,6 +28,10 @@ import com.cubeia.poker.rounds.blinds.BlindsInfo;
 /**
  * Each game type, such as Texas Hold'em or Omaha should implement this interface.
  *
+ * This interface should define a minimal set of methods needed to implement the differences of all
+ * major types of poker. Common functionality, such as player handling etc., goes into
+ * the poker state.
+ *
  * TODO: *SERIOUS* cleanup and probably major refactoring.
  * INFO: #AH2 refers to refactorings in point 2 in Andreas Holmens mail with the goal to only have event handling methods here.
  */
@@ -48,19 +52,14 @@ public interface GameType extends Serializable {
 
 	public void prepareNewHand();
 
-	// TODO: #AH2 move from here
-	public void notifyDealerButton(int dealerButtonSeatId);
-
 	// TODO: #AH2 move from here? Then we need to pass the server adapter to BettingRound and BlindsRound.
 	public ServerAdapter getServerAdapter();
 
+	// TODO: #AH2 move to state
 	public void timeout();
 
 	// TODO: #AH2 move from here? Or?
 	public String getStateDescription();
-
-//	// TODO: #AH2 move from here
-//	public boolean isPlayerInHand(int playerId);
 
 	// TODO: #AH2 move from here. We need to pass the IPokerState to BettingRound and BlindsRound.
 	// NOTE: keeping this method for a while to ease the refactoring

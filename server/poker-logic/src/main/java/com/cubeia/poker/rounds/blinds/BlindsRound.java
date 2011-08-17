@@ -282,7 +282,7 @@ public class BlindsRound implements Round {
 		if (!isTournamentBlinds) {
 			markPlayersWhoMissedBlinds(previousBlindsInfo.getDealerButtonSeatId(), blindsInfo.getDealerButtonSeatId());
 		}
-		game.notifyDealerButton(blindsInfo.getDealerButtonSeatId());
+		game.getState().notifyDealerButton(blindsInfo.getDealerButtonSeatId());
 	}
 
 	private void markPlayersWhoMissedBlinds(int buttonFromSeatId, int buttonToSeatId) {

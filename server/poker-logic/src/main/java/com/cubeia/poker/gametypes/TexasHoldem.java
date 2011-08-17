@@ -286,11 +286,6 @@ public class TexasHoldem implements GameType, RoundVisitor {
 	}
 
 	@Override
-	public void notifyDealerButton(int dealerButtonSeatId) {
-		game.notifyDealerButton(dealerButtonSeatId);
-	}
-
-	@Override
 	public ServerAdapter getServerAdapter() {
 		return game.getServerAdapter();
 	}
