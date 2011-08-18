@@ -137,7 +137,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		DealerButton packet = new DealerButton();
 		packet.seat = (byte)seat;
 		GameDataAction action = ProtocolFactory.createGameAction(packet, 0, table.getId());
-		log.debug("Send DealerButton["+packet+"] to everyone");
+		log.debug("--> Send DealerButton["+packet+"] to everyone");
 		sendPublicPacket(action, -1);
 		
 		addEventToHandHistory(seat, EventType.DEALER_BUTTON, null);
@@ -146,7 +146,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	public void requestAction(ActionRequest request) {
 		RequestAction packet = ActionTransformer.transform(request);
 		GameDataAction action = ProtocolFactory.createGameAction(packet, request.getPlayerId(), table.getId());
-		log.debug("Send RequestAction["+packet+"] to everyone");
+		log.debug("--> Send RequestAction["+packet+"] to everyone");
 		sendPublicPacket(action, -1);
 		setRequestSequence(packet.seq, packet.player);
 		
@@ -170,7 +170,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		PokerPlayer pokerPlayer = state.getPokerPlayer(pokerAction.getPlayerId());
 		PerformAction packet = ActionTransformer.transform(pokerAction, pokerPlayer);
 		GameDataAction action = ProtocolFactory.createGameAction(packet, pokerAction.getPlayerId(), table.getId());
-		log.debug("Send PerformAction["+packet+"] to everyone");
+		log.debug("--> Send PerformAction["+packet+"] to everyone");
 		sendPublicPacket(action, -1);
 		addEventToHandHistory(pokerAction);
 	}
@@ -179,7 +179,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
     public void notifyCommunityCards(List<Card> cards) {
 		DealPublicCards packet = ActionTransformer.createPublicCardsPacket(cards);
 		GameDataAction action = ProtocolFactory.createGameAction(packet, 0, table.getId());
-		log.debug("Send DealPublicCards["+packet+"] to everyone");
+		log.debug("--> Send DealPublicCards["+packet+"] to everyone");
 		sendPublicPacket(action, -1);
 	}
 
@@ -188,13 +188,13 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		// Send the cards to the owner with proper rank & suit information
 		DealPrivateCards packet = ActionTransformer.createPrivateCardsPacket(playerId, cards, false);
 		GameDataAction action = ProtocolFactory.createGameAction(packet, playerId, table.getId());
-		log.debug("Send DealPrivateCards["+packet+"] to player["+playerId+"]");
+		log.debug("--> Send DealPrivateCards["+packet+"] to player["+playerId+"]");
 		table.getNotifier().notifyPlayer(playerId, action);
 		
 		// Send the cards as hidden to the other players
 		DealPrivateCards hiddenCardsPacket = ActionTransformer.createPrivateCardsPacket(playerId, cards, true);
 		GameDataAction ntfyAction = ProtocolFactory.createGameAction(hiddenCardsPacket, playerId, table.getId());
-		log.debug("Send DealPrivateCards(hidden)["+packet+"] to everyone");
+		log.debug("--> Send DealPrivateCards(hidden)["+hiddenCardsPacket+"] to everyone");
 		sendPublicPacket(ntfyAction, playerId);
 	}
 	
@@ -202,7 +202,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	public void exposePrivateCards(int playerId, List<Card> cards) {
 		ExposePrivateCards packet = ActionTransformer.createExposeCardsPacket(playerId, cards);
 		GameDataAction action = ProtocolFactory.createGameAction(packet, playerId, table.getId());
-		log.debug("Send ExposePrivateCards["+packet+"] to everyone");
+		log.debug("--> Send ExposePrivateCards["+packet+"] to everyone");
 		sendPublicPacket(action, playerId);
 	}
 
@@ -249,7 +249,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 				PlayerHands hands = handResult.getPlayerHands();
 				HandEnd packet = ActionTransformer.createHandEndPacket(hands);
 				GameDataAction action = ProtocolFactory.createGameAction(packet, 0, table.getId());
-				log.debug("Send HandEnd["+packet+"] to everyone");
+				log.debug("--> Send HandEnd["+packet+"] to everyone");
 				sendPublicPacket(action, -1);
 				
 				PokerStats.getInstance().reportHandEnd();
