@@ -35,6 +35,7 @@ import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
+import com.cubeia.poker.gametypes.PokerVariant;
 import com.cubeia.poker.gametypes.Telesina;
 import com.cubeia.poker.gametypes.TexasHoldem;
 import com.cubeia.poker.player.PokerPlayer;
@@ -143,6 +144,8 @@ public class PokerState implements Serializable, IPokerState {
 	
 	private List<Card> communityCards = new ArrayList<Card>();
 
+	private PokerVariant variant;
+
 	public PokerState() {}
 
 	public String toString() {
@@ -153,8 +156,17 @@ public class PokerState implements Serializable, IPokerState {
 	public void init(PokerSettings settings) {
 		anteLevel = settings.getAnteLevel();
 		timing = settings.getTiming();
+		variant = settings.getVariant();
 		
-		switch (settings.getVariant()) {
+		gameType = createGameTypeByVariant(variant);
+		
+		log.debug("poker state initialized with logic: " + gameType);
+	}
+
+	protected GameType createGameTypeByVariant(PokerVariant variant) {
+		GameType gameType;
+		
+		switch (variant) {
 		case TEXAS_HOLDEM:
 			gameType = new TexasHoldem(this);
 			break;
@@ -162,10 +174,10 @@ public class PokerState implements Serializable, IPokerState {
 			gameType = new Telesina(this);
 			break;
 		default:
-			throw new UnsupportedOperationException("unsupported poker variant: " + settings.getVariant());
+			throw new UnsupportedOperationException("unsupported poker variant: " + variant);
 		}
 		
-		log.debug("poker state initialized with logic: " + gameType);
+		return gameType;
 	}
 	
 	/**
@@ -382,6 +394,10 @@ public class PokerState implements Serializable, IPokerState {
 		return timing;
 	}
 
+	public PokerVariant getVariant() {
+		return variant;
+	}
+	
 	public boolean isTournamentTable() {
 		return tournamentTable;
 	}
