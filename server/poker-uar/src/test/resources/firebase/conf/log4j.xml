@@ -24,17 +24,10 @@
 		<param name="File"   value="logs/server.log" />
 		<param name="Append" value="false" />	    	
 		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%d %-5p %t %c{4} - %X{pokerid} %m%n"/>
+			<param name="ConversionPattern" value="%d %-5p %t %c - %X{pokerid} %m%n"/>
 		</layout>	    
 	</appender>
 	
-	<!--
-		  Asynchronous appender for the server log. This is important in
-		  order not to lock execution threads to the file system.
-	-->
-	<appender name="ASYNC_SERVER_LOG" class="org.apache.log4j.AsyncAppender"> 
-		<appender-ref ref="SERVER_LOG"/> 
-	</appender> 	
 	
 	<!-- 
 		The error log. Should be used by all categories. The cluster manager 
@@ -48,15 +41,7 @@
 			<param name="ConversionPattern" value="%d %-5p %t %c{4} - %m%n"/>
 		</layout>	    
 	</appender>
-	
-	<!--
-		  Asynchronous appender for the error log. This is important in
-		  order not to lock execution threads to the file system.
-	-->
-	<appender name="ASYNC_ERROR_LOG" class="org.apache.log4j.AsyncAppender"> 
-		<appender-ref ref="ERROR_LOG"/> 
-	</appender> 	
-	
+		
 	<!-- 
 		  System out, minimize the use of this.
 	-->
@@ -79,7 +64,7 @@
 	<category name="SYSLOG" additivity="false">
 		<priority value="info"/>
 		<appender-ref ref="SYSTEM_LOG"/>
-		<appender-ref ref="ASYNC_SERVER_LOG"/>
+		<appender-ref ref="SERVER_LOG"/>
 		<appender-ref ref="STDOUT"/>
 	</category>
 
@@ -87,78 +72,81 @@
 		Base package for all cubeia sub-packages
 	-->
 	<category name="com.cubeia" additivity="false">
-		<priority value="info"/>
-		<!--appender-ref ref="STDOUT"/-->
-		<appender-ref ref="ASYNC_SERVER_LOG"/>
-		<appender-ref ref="ASYNC_ERROR_LOG" />
-	</category>
-	
-	<category name="com.cubeia.games" additivity="false">
 		<priority value="debug"/>
 		<appender-ref ref="STDOUT"/>
-		<appender-ref ref="ASYNC_SERVER_LOG"/>
-		<appender-ref ref="ASYNC_ERROR_LOG" />
+		<appender-ref ref="SERVER_LOG"/>
+		<appender-ref ref="ERROR_LOG" />
 	</category>
+	
 	
 	<category name="com.cubeia.poker" additivity="false">
 		<priority value="debug"/>
 		<appender-ref ref="STDOUT"/>
-		<appender-ref ref="ASYNC_SERVER_LOG"/>
-		<appender-ref ref="ASYNC_ERROR_LOG" />
+		<appender-ref ref="SERVER_LOG"/>
+		<appender-ref ref="ERROR_LOG" />
 	</category>
 	
-	
-	<category name="com.cubeia.game.server.service.wallet" additivity="false">
-		<priority value="debug"/>
-		<appender-ref ref="STDOUT"/>
-		<appender-ref ref="ASYNC_SERVER_LOG"/>
-		<appender-ref ref="ASYNC_ERROR_LOG" />
+	<!--
+		Categories not of interest to game developers
+	-->
+	<category name="com.cubeia.firebase.server.service" additivity="false">
+		<priority value="info"/>
+		<appender-ref ref="SERVER_LOG"/>
+		<appender-ref ref="ERROR_LOG" />
 	</category>
 	
-	<category name="com.cubeia.firebase.service.clientreg" additivity="false">
-		<priority value="debug"/>
-		<appender-ref ref="STDOUT"/>
-		<appender-ref ref="ASYNC_SERVER_LOG"/>
-		<appender-ref ref="ASYNC_ERROR_LOG" />
+	<category name="com.cubeia.firebase.server.mtt" additivity="false">
+		<priority value="info"/>
+		<appender-ref ref="SERVER_LOG"/>
+		<appender-ref ref="ERROR_LOG" />
 	</category>
-	
 
+	<category name="com.cubeia.server.mtt" additivity="false">
+		<priority value="info"/>
+		<appender-ref ref="SERVER_LOG"/>
+		<appender-ref ref="ERROR_LOG" />
+	</category>
+	
+	<category name="com.cubeia.firebase.server.game" additivity="false">
+		<priority value="info"/>
+		<appender-ref ref="SERVER_LOG"/>
+		<appender-ref ref="ERROR_LOG" />
+	</category>
+	
+	<category name="com.cubeia.firebase.server.lobby" additivity="false">
+		<priority value="info"/>
+		<appender-ref ref="SERVER_LOG"/>
+		<appender-ref ref="ERROR_LOG" />
+	</category>
+	
+	<category name="com.cubeia.firebase.server.instance" additivity="false">
+		<priority value="info"/>
+		<appender-ref ref="SERVER_LOG"/>
+		<appender-ref ref="ERROR_LOG" />
+	</category>
+	
+		<category name="com.cubeia.game.server.service.wallet" additivity="false">
+		<priority value="info"/>
+		<appender-ref ref="SERVER_LOG"/>
+		<appender-ref ref="ERROR_LOG" />
+	</category>
+	
+	
 	
 	<!-- ****** LIBRARY CATEGORIES ****** -->
 
 	<category name="org.jboss" additivity="false">
 		<priority value="warn"/>
-		<appender-ref ref="ASYNC_ERROR_LOG" />
-		<appender-ref ref="ASYNC_SERVER_LOG" />
+		<appender-ref ref="ERROR_LOG" />
+		<appender-ref ref="SERVER_LOG" />
 		<!-- appender-ref ref="STDOUT" -->
 	</category>
 	
 	<category name="org.hibernate" additivity="false">
 		<priority value="warn"/>
-		<appender-ref ref="ASYNC_ERROR_LOG" />
-		<appender-ref ref="ASYNC_SERVER_LOG" />
+		<appender-ref ref="SERVER_LOG" />
+		<appender-ref ref="ERROR_LOG" />
 		<!-- appender-ref ref="STDOUT" -->
-	</category>
-	
-	<category name="com.google" additivity="false">
-		<priority value="trace"/>
-		<appender-ref ref="STDOUT"/>
-		<appender-ref ref="ASYNC_SERVER_LOG"/>
-		<appender-ref ref="ASYNC_ERROR_LOG" />
-	</category>
-	
-	<category name="org.apache.mina" additivity="false">
-		<priority value="trace"/>
-		<!--appender-ref ref="STDOUT"/-->
-		<appender-ref ref="ASYNC_SERVER_LOG"/>
-		<appender-ref ref="ASYNC_ERROR_LOG" />
-	</category>
-	
-	<category name="org.apache.mina.filter.executor" additivity="false">
-		<priority value="info"/>
-		<!--appender-ref ref="STDOUT"/-->
-		<appender-ref ref="ASYNC_SERVER_LOG"/>
-		<appender-ref ref="ASYNC_ERROR_LOG" />
 	</category>
 	
 	
@@ -167,8 +155,8 @@
 	<root>
 	  <priority value="error"/>
 	  <appender-ref ref="STDOUT"/>
-	  <appender-ref ref="ASYNC_SERVER_LOG"/>
-	  <appender-ref ref="ASYNC_ERROR_LOG" />
+	  <appender-ref ref="SERVER_LOG"/>
+	  <appender-ref ref="ERROR_LOG" />
 	</root>
 	
 </log4j:configuration>
