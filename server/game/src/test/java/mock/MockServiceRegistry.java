@@ -26,7 +26,7 @@ import com.cubeia.firebase.api.service.ServiceRegistry;
 
 public class MockServiceRegistry implements ServiceRegistry {
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	private Map<Class, Object> serviceMap = new HashMap<Class, Object>();
 	
 	public <T extends Contract> void addService(Class<T> contract, T service) {

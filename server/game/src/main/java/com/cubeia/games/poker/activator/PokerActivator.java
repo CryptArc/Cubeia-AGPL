@@ -134,7 +134,7 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
     	// participants.add(new PokerParticipant(10, "holdem/real/nolimit/high", 100, Timings.SUPER_EXPRESS));
     	// participants.add(new PokerParticipant(10, "holdem/real/nolimit/low", 10, Timings.DEFAULT));
     	participants.add(new PokerParticipant(10, "ITALIAN/cashgame/REAL_MONEY", 10, Timings.DEFAULT, TEXAS_HOLDEM));
-    	participants.add(new PokerParticipant(10, "TELESINA/cashgame/REAL_MONEY", 10, Timings.DEFAULT, TELESINA));
+    	participants.add(new PokerParticipant(10, "ITALIAN/cashgame/REAL_MONEY", 10, Timings.DEFAULT, TELESINA));
     	
     	for (PokerParticipant part : participants) {
     		part.setInjector(injector);
@@ -148,7 +148,7 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
     @Override
     protected void initTables() {
         DefaultActivatorConfig configuration = getConfiguration();
-
+        
         for (PokerParticipant part : participants) {
             // Get all tables for given FQN
             LobbyTable[] tables = tableRegistry.listTables(part.getLobbyPath());
@@ -211,8 +211,8 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
         PokerState pokerState = injector.getInstance(PokerState.class);
         pokerState.setId(table.getId());
         
-        PokerSettings settings = new PokerSettings();
-        settings.timing = timing;
+        // TODO: must check with variant of poker this is
+        PokerSettings settings = new PokerSettings(-1, timing, PokerVariant.TEXAS_HOLDEM);
         
         pokerState.init(settings);
         pokerState.setTournamentTable(true);

@@ -67,17 +67,21 @@ public class Telesina implements GameType, RoundVisitor {
 
 	private BlindsInfo blindsInfo = new BlindsInfo();
 
-	@Inject
-	PokerState game;
+//	@Inject
+	private final PokerState state;
 	
 	// TODO: random should be injected
 	private Random random = new Random();
 	
 	private HandResultCalculator handResultCalculator = new HandResultCalculator();
 
+	public Telesina(PokerState state) {
+		this.state = state;
+	}
+	
 	@Override
 	public String toString() {
-	    return "TexasHoldem, current round["+currentRound+"] roundId["+roundId+"] ";
+	    return "Telesina, current round["+currentRound+"] roundId["+roundId+"] ";
 	}
 	
 	@Override
@@ -89,7 +93,7 @@ public class Telesina implements GameType, RoundVisitor {
 		deck = new Deck(getRandom().nextInt());
 		// FIXME: Use better seed for the shuffle
 		deck.shuffle();
-		currentRound = new BlindsRound(this, game.isTournamentTable());
+		currentRound = new BlindsRound(this, state.isTournamentTable());
 		roundId = 0;
 	}
 
@@ -113,7 +117,7 @@ public class Telesina implements GameType, RoundVisitor {
 		for (int i = 0; i < n; i++) {
 			p.getPocketCards().addCard(deck.dealCard());
 		}
-		game.notifyPrivateCards(p.getId(), p.getPocketCards().getCards());
+		state.notifyPrivateCards(p.getId(), p.getPocketCards().getCards());
 	}
 
 	private void dealCommunityCards(int n) {
@@ -121,8 +125,8 @@ public class Telesina implements GameType, RoundVisitor {
 		for (int i = 0; i < n; i++) {
 			dealt.add(deck.dealCard());
 		}
-		game.getCommunityCards().addAll(dealt);
-		game.notifyCommunityCards(dealt);
+		state.getCommunityCards().addAll(dealt);
+		state.notifyCommunityCards(dealt);
 	}
 
 	public void handleFinishedRound() {
@@ -130,7 +134,7 @@ public class Telesina implements GameType, RoundVisitor {
 	}
 	
 	private void reportPotUpdate() {
-        game.updatePot();
+        state.updatePot();
     }
 
     /**
@@ -138,10 +142,10 @@ public class Telesina implements GameType, RoundVisitor {
 	 * i.e. not folded.
 	 */
 	private void exposeShowdownCards() {
-        if (game.countNonFoldedPlayers() > 1) {
-            for (PokerPlayer p : game.getCurrentHandSeatingMap().values()) {
+        if (state.countNonFoldedPlayers() > 1) {
+            for (PokerPlayer p : state.getCurrentHandSeatingMap().values()) {
                 if (!p.hasFolded()) {
-                    game.exposePrivateCards(p.getId(), p.getPocketCards().getCards());
+                    state.exposePrivateCards(p.getId(), p.getPocketCards().getCards());
                 }
             }
         }
@@ -154,12 +158,12 @@ public class Telesina implements GameType, RoundVisitor {
 	}
     
 	private boolean isHandFinished() {
-		return (roundId >= 3 || game.countNonFoldedPlayers() <= 1);
+		return (roundId >= 3 || state.countNonFoldedPlayers() <= 1);
 	}
 
 	public int countPlayersSittingIn() {
 		int sittingIn = 0;
-		for (PokerPlayer p : game.getCurrentHandSeatingMap().values()) {
+		for (PokerPlayer p : state.getCurrentHandSeatingMap().values()) {
 			if (!p.isSittingOut()) {
 				sittingIn++;
 			}
@@ -178,30 +182,30 @@ public class Telesina implements GameType, RoundVisitor {
 
 	private void handleFinishedHand(HandResult handResult) {	
 		log.debug("Hand over. Result: "+handResult.getPlayerHands());
-		game.notifyHandFinished(handResult, HandEndStatus.NORMAL);
+		state.notifyHandFinished(handResult, HandEndStatus.NORMAL);
 	}
 	
 	private void handleCanceledHand() {
-		game.notifyHandFinished(new HandResult(), HandEndStatus.CANCELED_TOO_FEW_PLAYERS);
+		state.notifyHandFinished(new HandResult(), HandEndStatus.CANCELED_TOO_FEW_PLAYERS);
 	}	
 
 	private HandResult createHandResult() {
 		HandResult result = new HandResult();
 		PlayerHands playerHands = createHandHolder();
 		result.setPlayerHands(playerHands);
-		Map<PokerPlayer, Result> playerResults = handResultCalculator.getPlayerResults(result.getPlayerHands(), game.getPotHolder(), 
-				game.getCurrentHandPlayerMap());
+		Map<PokerPlayer, Result> playerResults = handResultCalculator.getPlayerResults(result.getPlayerHands(), state.getPotHolder(), 
+				state.getCurrentHandPlayerMap());
 		result.setResults(playerResults);
 		return result;
 	}
 
 	private PlayerHands createHandHolder() {
 		PlayerHands holder = new PlayerHands();
-		for (PokerPlayer player : game.getCurrentHandPlayerMap().values()) {
+		for (PokerPlayer player : state.getCurrentHandPlayerMap().values()) {
 			if (!player.hasFolded()) {
 				Hand h = new Hand();
 				h.addCards(player.getPocketCards().getCards());
-				h.addCards(game.getCommunityCards());
+				h.addCards(state.getCommunityCards());
 				holder.addHand(player.getId(), h);
 			}
 		}
@@ -211,9 +215,9 @@ public class Telesina implements GameType, RoundVisitor {
 
 	private void moveChipsToPot() {
 		
-		game.getPotHolder().moveChipsToPot(game.getCurrentHandSeatingMap().values());
+		state.getPotHolder().moveChipsToPot(state.getCurrentHandSeatingMap().values());
 		
-		for (PokerPlayer p : game.getCurrentHandSeatingMap().values()) {
+		for (PokerPlayer p : state.getCurrentHandSeatingMap().values()) {
 			p.setHasActed(false);
 			p.clearActionRequest();
 			p.commitBetStack();
@@ -222,17 +226,17 @@ public class Telesina implements GameType, RoundVisitor {
 
 	@Override
 	public void requestAction(ActionRequest r) {
-		if (blindRequested(r) && game.isTournamentTable()) {
-			game.getServerAdapter().scheduleTimeout(game.getTimingProfile().getTime(Periods.AUTO_POST_BLIND_DELAY));
+		if (blindRequested(r) && state.isTournamentTable()) {
+			state.getServerAdapter().scheduleTimeout(state.getTimingProfile().getTime(Periods.AUTO_POST_BLIND_DELAY));
 		} else {
-			game.requestAction(r);
+			state.requestAction(r);
 		}
 	}
 	
 	@Override
 	public void scheduleRoundTimeout() {
-		log.debug("scheduleRoundTimeout in: "+ game.getTimingProfile().getTime(Periods.RIVER));
-		game.getServerAdapter().scheduleTimeout(game.getTimingProfile().getTime(Periods.RIVER));
+		log.debug("scheduleRoundTimeout in: "+ state.getTimingProfile().getTime(Periods.RIVER));
+		state.getServerAdapter().scheduleTimeout(state.getTimingProfile().getTime(Periods.RIVER));
 	}
 
 	private boolean blindRequested(ActionRequest r) {
@@ -246,8 +250,8 @@ public class Telesina implements GameType, RoundVisitor {
 
 	@Override
 	public void prepareNewHand() {
-		game.getCommunityCards().clear();
-		for (PokerPlayer player : game.getCurrentHandPlayerMap().values()) {
+		state.getCommunityCards().clear();
+		for (PokerPlayer player : state.getCurrentHandPlayerMap().values()) {
 			player.clearHand();
 			player.setHasFolded(false);
 		}		
@@ -255,7 +259,7 @@ public class Telesina implements GameType, RoundVisitor {
 
 	@Override
 	public ServerAdapter getServerAdapter() {
-		return game.getServerAdapter();
+		return state.getServerAdapter();
 	}
 
 	@Override
@@ -267,7 +271,7 @@ public class Telesina implements GameType, RoundVisitor {
 
 	@Override
 	public IPokerState getState() {
-		return game;
+		return state;
 	}
 
 	@Override
@@ -283,7 +287,7 @@ public class Telesina implements GameType, RoundVisitor {
 		if (isHandFinished()) {
 		    exposeShowdownCards();
 			handleFinishedHand(createHandResult());
-			game.getPotHolder().clearPots();
+			state.getPotHolder().clearPots();
 		} else {
 			// Start deal community cards round
 			currentRound = new DealCommunityCardsRound(this);
@@ -318,7 +322,7 @@ public class Telesina implements GameType, RoundVisitor {
 	}
 
 	private void dealPocketCards() {
-		for (PokerPlayer p : game.getCurrentHandSeatingMap().values()) {
+		for (PokerPlayer p : state.getCurrentHandSeatingMap().values()) {
 			if (!p.isSittingOut()) {
 				dealPocketCards(p, 2);
 			}

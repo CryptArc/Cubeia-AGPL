@@ -23,9 +23,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
@@ -35,7 +35,8 @@ import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
-import com.cubeia.poker.gametypes.TexasHoldemGame;
+import com.cubeia.poker.gametypes.Telesina;
+import com.cubeia.poker.gametypes.TexasHoldem;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.player.SitOutStatus;
@@ -51,7 +52,6 @@ import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.tournament.RoundReport;
-import com.google.inject.Inject;
 
 /**
  * This is the class that users of the poker api will interface with.
@@ -80,9 +80,10 @@ public class PokerState implements Serializable, IPokerState {
 
 	/* -------- Dependency Injection Members, initialization needed -------- */
 
-	@Inject
-	@TexasHoldemGame
+//	@Inject
+//	@TexasHoldemGame
 	GameType gameType;
+	
 
 	/**
 	 * The server adapter is the layer between the server and the game logic.
@@ -150,8 +151,21 @@ public class PokerState implements Serializable, IPokerState {
 
 	@Override
 	public void init(PokerSettings settings) {
-		anteLevel = settings.anteLevel;
-		timing = settings.timing;
+		anteLevel = settings.getAnteLevel();
+		timing = settings.getTiming();
+		
+		switch (settings.getVariant()) {
+		case TEXAS_HOLDEM:
+			gameType = new TexasHoldem(this);
+			break;
+		case TELESINA:
+			gameType = new Telesina(this);
+			break;
+		default:
+			throw new UnsupportedOperationException("unsupported poker variant: " + settings.getVariant());
+		}
+		
+		log.debug("poker state initialized with logic: " + gameType);
 	}
 	
 	/**
@@ -355,6 +369,7 @@ public class PokerState implements Serializable, IPokerState {
 	
 	// TODO: Should not be possible to call like this. The game type should only be possible to change between hands.
 	public void setGameType(GameType gameType) {
+		log.debug("setting gametype = " + gameType + " to state: " + this);
 		this.gameType = gameType;
 	}
 

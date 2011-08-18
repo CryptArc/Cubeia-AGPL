@@ -17,19 +17,20 @@
 
 package mock;
 
+import static com.cubeia.poker.gametypes.PokerVariant.TELESINA;
+import static com.cubeia.poker.timing.Timings.MINIMUM_DELAY;
+
 import com.cubeia.poker.MockGame;
 import com.cubeia.poker.PokerSettings;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.timing.TimingFactory;
-import com.cubeia.poker.timing.Timings;
 
 public class MockTableFactory {
 
 	public static MockTable create() {
 		MockTable table = new MockTable();
 		
-		PokerSettings settings = new PokerSettings();
-		settings.timing = TimingFactory.getRegistry().getTimingProfile(Timings.MINIMUM_DELAY);
+		PokerSettings settings = new PokerSettings(-1, TimingFactory.getRegistry().getTimingProfile(MINIMUM_DELAY), TELESINA);
 		
 		PokerState pokerState = new PokerState();
 		pokerState.init(settings);

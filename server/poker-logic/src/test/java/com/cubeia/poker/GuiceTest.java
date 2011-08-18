@@ -17,16 +17,18 @@
 
 package com.cubeia.poker;
 
+import static com.cubeia.poker.gametypes.PokerVariant.TEXAS_HOLDEM;
+import static com.cubeia.poker.timing.Timings.MINIMUM_DELAY;
+
 import java.util.LinkedList;
 import java.util.List;
 
+import junit.framework.TestCase;
+
 import com.cubeia.poker.timing.TimingFactory;
-import com.cubeia.poker.timing.Timings;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-
-import junit.framework.TestCase;
 
 public abstract class GuiceTest extends TestCase {
 
@@ -49,10 +51,7 @@ public abstract class GuiceTest extends TestCase {
 	protected void setupDefaultGame() {
 		mockServerAdapter = new MockServerAdapter();
 		
-		PokerSettings settings = new PokerSettings();
-		settings.anteLevel = 100;
-		settings.timing = TimingFactory.getRegistry().getTimingProfile(Timings.MINIMUM_DELAY);
-		
+		PokerSettings settings = new PokerSettings(100, TimingFactory.getRegistry().getTimingProfile(MINIMUM_DELAY), TEXAS_HOLDEM);
 		game = injector.getInstance(PokerState.class);
 		game.setServerAdapter(mockServerAdapter);
 		game.init(settings);

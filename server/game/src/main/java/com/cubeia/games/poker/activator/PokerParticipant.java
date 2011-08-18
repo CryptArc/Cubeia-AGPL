@@ -74,7 +74,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
 
 
 	public LobbyPath getLobbyPath() {
-		LobbyPath path = new LobbyPath(GAME_ID, domain);
+		LobbyPath path = new LobbyPath(GAME_ID, domain + "/" + variant.name());
 		return path;
 	}
 
@@ -97,10 +97,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
 		super.tableCreated(table, acc);
 		PokerState pokerState = injector.getInstance(PokerState.class);
 
-		PokerSettings settings = new PokerSettings();
-		settings.timing = timingProfile;
-		settings.anteLevel = anteLevel;
-
+		PokerSettings settings = new PokerSettings(anteLevel, timingProfile, variant);
 		pokerState.init(settings);
 		pokerState.setAdapterState(new FirebaseState());
 		pokerState.setId(table.getId());
@@ -117,7 +114,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
 
 	@Override
 	public String getTableName(GameDefinition def, Table t) {
-		return "Poker<"+t.getId()+">";
+		return variant.name() + "<"+t.getId()+">";
 	}
 
 	public int getSeats() {
