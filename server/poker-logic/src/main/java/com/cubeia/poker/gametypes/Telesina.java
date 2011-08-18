@@ -17,6 +17,7 @@
 
 package com.cubeia.poker.gametypes;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +49,6 @@ import com.cubeia.poker.rounds.blinds.BlindsInfo;
 import com.cubeia.poker.rounds.blinds.BlindsRound;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.util.HandResultCalculator;
-import com.google.inject.Inject;
 
 public class Telesina implements GameType, RoundVisitor {
 
@@ -67,7 +67,6 @@ public class Telesina implements GameType, RoundVisitor {
 
 	private BlindsInfo blindsInfo = new BlindsInfo();
 
-//	@Inject
 	private final PokerState state;
 	
 	// TODO: random should be injected
@@ -89,11 +88,16 @@ public class Telesina implements GameType, RoundVisitor {
 		initHand();
 	}
 
-	private void initHand() {				
+	private void initHand() {	
+		// TODO: use Telesina deck here, size of deck is determined by table size (or players in hand)
 		deck = new Deck(getRandom().nextInt());
 		// FIXME: Use better seed for the shuffle
 		deck.shuffle();
-		currentRound = new BlindsRound(this, state.isTournamentTable());
+		
+		dealPocketCards();
+		dealExposedCards();
+		
+		currentRound = new BettingRound(this, 0);
 		roundId = 0;
 	}
 
@@ -118,6 +122,18 @@ public class Telesina implements GameType, RoundVisitor {
 			p.getPocketCards().addCard(deck.dealCard());
 		}
 		state.notifyPrivateCards(p.getId(), p.getPocketCards().getCards());
+	}
+	
+	private void dealExposedCards(PokerPlayer p, int n) {
+		ArrayList<Card> cardsDealt = new ArrayList<Card>();
+		for (int i = 0; i < n; i++) {
+			Card card = deck.dealCard();
+			cardsDealt.add(card);
+			p.getPocketCards().addCard(card);
+		}
+		
+		state.notifyPrivateCards(p.getId(), cardsDealt);
+		state.exposePrivateCards(p.getId(), cardsDealt);
 	}
 
 	private void dealCommunityCards(int n) {
@@ -324,9 +340,16 @@ public class Telesina implements GameType, RoundVisitor {
 	private void dealPocketCards() {
 		for (PokerPlayer p : state.getCurrentHandSeatingMap().values()) {
 			if (!p.isSittingOut()) {
-				dealPocketCards(p, 2);
+				dealPocketCards(p, 1);
 			}
 		}
 	}
 
+	private void dealExposedCards() {
+		for (PokerPlayer p : state.getCurrentHandSeatingMap().values()) {
+			if (!p.isSittingOut()) {
+				dealExposedCards(p, 1);
+			}
+		}
+	}
 }
