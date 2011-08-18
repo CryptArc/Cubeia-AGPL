@@ -68,6 +68,18 @@
 		<appender-ref ref="STDOUT"/>
 	</category>
 
+
+	<!--
+		Base package for all Jadestone sub-packages
+	-->
+	<category name="se.jadestone" additivity="false">
+		<priority value="debug"/>
+		<appender-ref ref="STDOUT"/>
+		<appender-ref ref="SERVER_LOG"/>
+		<appender-ref ref="ERROR_LOG" />
+	</category>
+	
+	
 	<!--
 		Base package for all cubeia sub-packages
 	-->

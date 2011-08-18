@@ -16,6 +16,7 @@
     <module>poker-tournament</module>
     <module>poker-persistence</module>
     <module>poker-uar</module>
+    <module>jg-mock-login-handler</module>
   </modules>
 
     <organization>
