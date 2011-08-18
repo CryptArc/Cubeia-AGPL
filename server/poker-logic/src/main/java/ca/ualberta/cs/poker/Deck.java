@@ -106,8 +106,13 @@ public class Deck implements Serializable {
 	 * If no cards remain, a null card is returned
 	 * @return the card dealt
 	 */
+	// FIXME: Remove burn cards, Telesina-specific
 	public synchronized Card dealCard() {
-		return extractRandomCard();
+		 Card card = extractRandomCard();
+		 while (card.getIndex() >= 32) {
+			 card = extractRandomCard();
+		 }
+		 return card;
 	}
 
 	/**
