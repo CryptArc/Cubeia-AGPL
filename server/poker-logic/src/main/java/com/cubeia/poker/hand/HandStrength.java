@@ -3,8 +3,12 @@ package com.cubeia.poker.hand;
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class HandStrength {
+/**
+ * <p>Holds the type of hand, highest & second ranking card and kickers.</p>
+ *
+ * @author Fredrik Johansson, Cubeia Ltd
+ */
+public class HandStrength implements Comparable<HandStrength> {
 	
 	private final HandType type;
 	
@@ -50,5 +54,38 @@ public class HandStrength {
 	
 	public void setKickerCards(List<Card> kickerCards) {
 		this.kickerCards = kickerCards;
+	}
+
+	/**
+	 * <p>Compare to another hand strength with hand ranking in mind,
+	 * i.e. the strongest hand should come first.</p>
+	 * 
+	 */
+	@Override
+	public int compareTo(HandStrength other) {
+		if (!other.getHandType().equals(type)) {
+			// Different hand types so only compare type
+			return other.getHandType().ordinal() - type.ordinal();
+			
+		} else {
+			// Check highest card etc.
+			if (other.getHighestRank() != highestRank) {
+				return other.getHighestRank().ordinal() - highestRank.ordinal();
+				
+			} else if (other.getSecondRank() != secondRank) {
+				return other.getSecondRank().ordinal() - secondRank.ordinal();
+				
+			} else {
+				// Check kickers in descending order
+				for (int i = 0; i < kickerCards.size(); i++) {
+					if (other.getKickerCards().get(i).getRank() != kickerCards.get(i).getRank()) {
+						return other.getKickerCards().get(i).getRank().ordinal() - kickerCards.get(i).getRank().ordinal();
+					}
+				}
+			}
+		}
+		
+		// Same strength
+		return 0;
 	}
 }

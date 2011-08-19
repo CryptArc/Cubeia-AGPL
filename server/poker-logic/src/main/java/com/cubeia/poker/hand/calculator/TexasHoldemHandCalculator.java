@@ -1,4 +1,4 @@
-package com.cubeia.poker.hand;
+package com.cubeia.poker.hand.calculator;
 
 import static com.cubeia.poker.hand.HandType.FLUSH;
 import static com.cubeia.poker.hand.HandType.FULL_HOUSE;
@@ -11,12 +11,21 @@ import static com.cubeia.poker.hand.HandType.TWO_PAIRS;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.Hand;
+import com.cubeia.poker.hand.HandStrength;
+import com.cubeia.poker.hand.HandType;
+import com.cubeia.poker.hand.Rank;
+import com.cubeia.poker.hand.Suit;
+
 /**
- * <p>Inspect and calculate what poker hands are implemented in a Hand.</p>
+ * <p>Texas Holdem implementation of a Hand Calculator. This is probably
+ * the common calculations for most poker games, but variations do exists.</p>
+ * 
  * 
  * @author Fredrik Johansson, Cubeia Ltd
  */
-public class HandCalculator {
+public class TexasHoldemHandCalculator implements HandCalculator {
 
 	/* ----------------------------------------------------
 	 * 	
@@ -24,6 +33,10 @@ public class HandCalculator {
 	 *  
 	 *  ---------------------------------------------------- */
 	
+	/* (non-Javadoc)
+	 * @see com.cubeia.poker.hand.calculator.HandCalculator#getHandStrength(com.cubeia.poker.hand.Hand)
+	 */
+	@Override
 	public HandStrength getHandStrength(Hand hand) {
 		HandStrength strength = null;
 		
@@ -38,6 +51,9 @@ public class HandCalculator {
 		}
 		
 		// FULL_HOUSE
+		if (strength == null) {
+			strength = checkFullHouse(hand);
+		}
 		
 		// FLUSH
 		if (strength == null) {
@@ -196,7 +212,7 @@ public class HandCalculator {
 	 */
 	private HandStrength checkDoubleManyCards(Hand hand, int number) {
 		HandStrength strength = null;
-		HandStrength firstPair = checkManyOfAKind(hand, 2);
+		HandStrength firstPair = checkManyOfAKind(hand, number);
 		if (firstPair != null) {
 				
 			List<Card> cards = removeAllRanks(firstPair.getHighestRank(), hand.getCards());
@@ -221,9 +237,10 @@ public class HandCalculator {
 	
 	protected HandStrength checkHighCard(Hand hand) {
 		HandStrength strength = new HandStrength(HIGH_CARD);
-		Hand cards = hand.sort();
-		strength.setHighestRank(cards.getCardAt(0).getRank());
-		strength.setSecondRank(cards.getCardAt(1).getRank());
+		Hand sorted = hand.sort();
+		strength.setHighestRank(sorted.getCardAt(0).getRank());
+		strength.setSecondRank(sorted.getCardAt(1).getRank());
+		strength.setKickerCards(sorted.getCards());
 		return strength;
 	}
 	

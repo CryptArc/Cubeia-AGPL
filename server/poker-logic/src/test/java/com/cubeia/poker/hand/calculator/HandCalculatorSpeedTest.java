@@ -1,11 +1,14 @@
-package com.cubeia.poker.hand;
+package com.cubeia.poker.hand.calculator;
 
 import org.junit.Test;
+
+import com.cubeia.poker.hand.Hand;
+import com.cubeia.poker.hand.calculator.TexasHoldemHandCalculator;
 
 
 public class HandCalculatorSpeedTest {
 
-	HandCalculator calc = new HandCalculator();
+	HandCalculator calc = new TexasHoldemHandCalculator();
 	
 	@Test
 	public void testRankHand_1() throws Exception {

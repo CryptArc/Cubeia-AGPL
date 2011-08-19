@@ -1,16 +1,22 @@
 package com.cubeia.poker.hand;
 
+import com.cubeia.poker.hand.calculator.HandCalculator;
+import com.cubeia.poker.hand.calculator.TexasHoldemHandCalculator;
+
 
 /**
  * <p>Compares poker hands.</p>
  * 
+ * <p>This is a 'naive' implementation of a poker evaluator (and hand calculator),
+ * it is not built for speed but with usability in mind. If you need a faster 
+ * implementation I suggest looking at the University of Alberta implementation.</p>
  *  
  *
  * @author Fredrik Johansson, Cubeia Ltd
  */
 public class PokerEvaluator  {
 	
-	HandCalculator calc = new HandCalculator();
+	HandCalculator calc = new TexasHoldemHandCalculator();
 	
 	/**
 	 * 

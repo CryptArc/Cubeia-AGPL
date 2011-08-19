@@ -1,4 +1,4 @@
-package com.cubeia.poker.hand;
+package com.cubeia.poker.hand.calculator;
 
 import static com.cubeia.poker.hand.HandType.FLUSH;
 import static com.cubeia.poker.hand.HandType.FOUR_OF_A_KIND;
@@ -13,6 +13,7 @@ import static com.cubeia.poker.hand.Rank.ACE;
 import static com.cubeia.poker.hand.Rank.FIVE;
 import static com.cubeia.poker.hand.Rank.FOUR;
 import static com.cubeia.poker.hand.Rank.JACK;
+import static com.cubeia.poker.hand.Rank.TEN;
 import static com.cubeia.poker.hand.Rank.THREE;
 import static com.cubeia.poker.hand.Rank.TWO;
 import static org.junit.Assert.assertEquals;
@@ -21,10 +22,15 @@ import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 
+import com.cubeia.poker.hand.Hand;
+import com.cubeia.poker.hand.HandStrength;
+import com.cubeia.poker.hand.Rank;
+import com.cubeia.poker.hand.calculator.TexasHoldemHandCalculator;
 
-public class HandCalculatorTest {
 
-	HandCalculator calc = new HandCalculator();
+public class TexasCalculatorTest {
+
+	TexasHoldemHandCalculator calc = new TexasHoldemHandCalculator();
 	
 	@Test
 	public void testIsFlush() throws Exception {
@@ -147,6 +153,12 @@ public class HandCalculatorTest {
 		assertEquals(HIGH_CARD, strength.getHandType());
 		assertEquals(ACE, strength.getHighestRank());
 		assertEquals(JACK, strength.getSecondRank());
+		assertEquals(5, strength.getKickerCards().size());
+		assertEquals(ACE, strength.getKickerCards().get(0).getRank());
+		assertEquals(JACK, strength.getKickerCards().get(1).getRank());
+		assertEquals(TEN, strength.getKickerCards().get(2).getRank());
+		assertEquals(FOUR, strength.getKickerCards().get(3).getRank());
+		assertEquals(TWO, strength.getKickerCards().get(4).getRank());
 	}
 	
 	
