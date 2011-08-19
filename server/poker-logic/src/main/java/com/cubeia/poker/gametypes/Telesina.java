@@ -41,6 +41,7 @@ import com.cubeia.poker.model.PlayerHands;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
+import com.cubeia.poker.rounds.AnteRound;
 import com.cubeia.poker.rounds.BettingRound;
 import com.cubeia.poker.rounds.DealCommunityCardsRound;
 import com.cubeia.poker.rounds.Round;
@@ -94,10 +95,14 @@ public class Telesina implements GameType, RoundVisitor {
 		// FIXME: Use better seed for the shuffle
 		deck.shuffle();
 		
-		dealPocketCards();
-		dealExposedCards();
+		blindsInfo.setAnteLevel(state.getAnteLevel());
 		
-		currentRound = new BettingRound(this, 0);
+		currentRound = new AnteRound(this);
+		
+//		// TODO: put last in ante round (see below)
+//		dealPocketCards();
+//		dealExposedCards();
+		
 		roundId = 0;
 	}
 
@@ -242,11 +247,11 @@ public class Telesina implements GameType, RoundVisitor {
 
 	@Override
 	public void requestAction(ActionRequest r) {
-		if (blindRequested(r) && state.isTournamentTable()) {
-			state.getServerAdapter().scheduleTimeout(state.getTimingProfile().getTime(Periods.AUTO_POST_BLIND_DELAY));
-		} else {
-			state.requestAction(r);
-		}
+//		if (blindRequested(r)  &&  state.isTournamentTable()) {
+//			state.getServerAdapter().scheduleTimeout(state.getTimingProfile().getTime(Periods.AUTO_POST_BLIND_DELAY));
+//		} else {
+		state.requestAction(r);
+//		}
 	}
 	
 	@Override
@@ -255,9 +260,9 @@ public class Telesina implements GameType, RoundVisitor {
 		state.getServerAdapter().scheduleTimeout(state.getTimingProfile().getTime(Periods.RIVER));
 	}
 
-	private boolean blindRequested(ActionRequest r) {
-		return r.isOptionEnabled(PokerActionType.SMALL_BLIND) || r.isOptionEnabled(PokerActionType.BIG_BLIND);
-	}
+//	private boolean blindRequested(ActionRequest r) {
+//		return r.isOptionEnabled(PokerActionType.SMALL_BLIND) || r.isOptionEnabled(PokerActionType.BIG_BLIND);
+//	}
 
 	@Override
 	public BlindsInfo getBlindsInfo() {
@@ -295,6 +300,11 @@ public class Telesina implements GameType, RoundVisitor {
 		return currentRound == null ? "th-round=null" : currentRound.getClass() + "_" + currentRound.getStateDescription();
 	}
 
+	@Override
+	public void visit(AnteRound anteRound) {
+		
+	}
+	
 	@Override
 	public void visit(BettingRound bettingRound) {
 		moveChipsToPot();

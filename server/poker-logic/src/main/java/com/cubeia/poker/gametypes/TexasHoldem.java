@@ -40,6 +40,7 @@ import com.cubeia.poker.model.PlayerHands;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
+import com.cubeia.poker.rounds.AnteRound;
 import com.cubeia.poker.rounds.BettingRound;
 import com.cubeia.poker.rounds.DealCommunityCardsRound;
 import com.cubeia.poker.rounds.Round;
@@ -330,6 +331,12 @@ public class TexasHoldem implements GameType, RoundVisitor {
 		}		
 	}
 
+	@Override
+	public void visit(AnteRound anteRound) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+	
+	
 	@Override
 	public void visit(BlindsRound blindsRound) {
 		if (blindsRound.isCanceled()) {

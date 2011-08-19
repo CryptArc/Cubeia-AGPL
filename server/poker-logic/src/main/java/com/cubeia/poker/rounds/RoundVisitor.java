@@ -21,6 +21,8 @@ import com.cubeia.poker.rounds.blinds.BlindsRound;
 
 public interface RoundVisitor {
 
+	void visit(AnteRound anteRound);
+	
 	void visit(BettingRound bettingRound);
 
 	void visit(BlindsRound blindsRound);
