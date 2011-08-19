@@ -10,7 +10,10 @@ import static com.cubeia.poker.hand.HandType.STRAIGHT_FLUSH;
 import static com.cubeia.poker.hand.HandType.THREE_OF_A_KIND;
 import static com.cubeia.poker.hand.HandType.TWO_PAIRS;
 import static com.cubeia.poker.hand.Rank.ACE;
+import static com.cubeia.poker.hand.Rank.FIVE;
+import static com.cubeia.poker.hand.Rank.FOUR;
 import static com.cubeia.poker.hand.Rank.JACK;
+import static com.cubeia.poker.hand.Rank.THREE;
 import static com.cubeia.poker.hand.Rank.TWO;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -74,8 +77,12 @@ public class HandCalculatorTest {
 		assertNull(calc.checkManyOfAKind(hand, 3));
 		
 		hand = new Hand("2C 3C 2H 5C 2S");
-		assertEquals(THREE_OF_A_KIND, calc.checkManyOfAKind(hand, 3).getHandType());
+		HandStrength strength = calc.checkManyOfAKind(hand, 3);
+		assertEquals(THREE_OF_A_KIND, strength.getHandType());
 		assertEquals(Rank.TWO, calc.checkManyOfAKind(hand, 3).getHighestRank());
+		assertEquals(2, strength.getKickerCards().size());
+		assertEquals(FIVE, strength.getKickerCards().get(0).getRank());
+		assertEquals(THREE, strength.getKickerCards().get(1).getRank());
 		
 		hand = new Hand("2C 2C 2H 5C 2S");
 		assertEquals(THREE_OF_A_KIND, calc.checkManyOfAKind(hand, 3).getHandType());
@@ -88,7 +95,6 @@ public class HandCalculatorTest {
 		hand = new Hand("2C 2C 2H AC AS AH");
 		assertEquals(THREE_OF_A_KIND, calc.checkManyOfAKind(hand, 3).getHandType());
 		assertEquals(Rank.ACE, calc.checkManyOfAKind(hand, 3).getHighestRank());
-		
 	}
 	
 	@Test
@@ -106,6 +112,12 @@ public class HandCalculatorTest {
 		assertEquals(ONE_PAIR, strength.getHandType());
 		assertEquals(TWO, strength.getHighestRank());
 		assertNull(strength.getSecondRank());
+		
+		// Verify kicker cards
+		assertEquals(3, strength.getKickerCards().size());
+		assertEquals(JACK, strength.getKickerCards().get(0).getRank());
+		assertEquals(FIVE, strength.getKickerCards().get(1).getRank());
+		assertEquals(FOUR, strength.getKickerCards().get(2).getRank());
 	}
 	
 	@Test
@@ -115,6 +127,8 @@ public class HandCalculatorTest {
 		assertEquals(TWO_PAIRS, strength.getHandType());
 		assertEquals(JACK, strength.getHighestRank());
 		assertEquals(Rank.TEN, strength.getSecondRank());
+		assertEquals(1, strength.getKickerCards().size());
+		assertEquals(FIVE, strength.getKickerCards().get(0).getRank());
 	}
 	
 	@Test
@@ -134,5 +148,6 @@ public class HandCalculatorTest {
 		assertEquals(ACE, strength.getHighestRank());
 		assertEquals(JACK, strength.getSecondRank());
 	}
+	
 	
 }

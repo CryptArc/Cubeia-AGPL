@@ -1,5 +1,8 @@
 package com.cubeia.poker.hand;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class HandStrength {
 	
@@ -8,6 +11,9 @@ public class HandStrength {
 	private Rank highestRank;
 	
 	private Rank secondRank;
+	
+	/** Ordered list of kicker cards, highest first */
+	private List<Card> kickerCards = new ArrayList<Card>();
 	
 	public HandStrength(HandType type) {
 		this.type = type;
@@ -38,4 +44,11 @@ public class HandStrength {
 		this.secondRank = secondRank;
 	}
 
+	public List<Card> getKickerCards() {
+		return kickerCards;
+	}
+	
+	public void setKickerCards(List<Card> kickerCards) {
+		this.kickerCards = kickerCards;
+	}
 }

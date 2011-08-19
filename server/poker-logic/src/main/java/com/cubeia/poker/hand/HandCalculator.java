@@ -164,6 +164,9 @@ public class HandCalculator {
 					if (count == number) {
 						strength = new HandStrength(getType(number));
 						strength.setHighestRank(card.getRank());
+						// Get kicker cards
+						List<Card> kickers = removeAllRanks(card.getRank(), cards);
+						strength.setKickerCards(kickers);
 						
 						break; // Break since we are starting with highest rank
 					}
@@ -196,8 +199,7 @@ public class HandCalculator {
 		HandStrength firstPair = checkManyOfAKind(hand, 2);
 		if (firstPair != null) {
 				
-			List<Card> cards = new ArrayList<Card>(hand.getCards());
-			removeAllRanks(firstPair.getHighestRank(), cards);
+			List<Card> cards = removeAllRanks(firstPair.getHighestRank(), hand.getCards());
 			
 			Hand secondPairHand = new Hand(cards);
 			HandStrength secondPair = checkManyOfAKind(secondPairHand, 2);
@@ -210,8 +212,9 @@ public class HandCalculator {
 				}
 				strength.setHighestRank(firstPair.getHighestRank());
 				strength.setSecondRank(secondPair.getHighestRank());
+				List<Card> kickers = removeAllRanks(secondPair.getHighestRank(), secondPairHand.getCards());
+				strength.setKickerCards(kickers);
 			}
-			
 		}
 		return strength;
 	}
@@ -231,14 +234,14 @@ public class HandCalculator {
 	 *  
 	 *  ---------------------------------------------------- */
 	
-	private void removeAllRanks(Rank rank, List<Card> cards) {
-		List<Card> remove = new ArrayList<Card>();
+	private List<Card> removeAllRanks(Rank rank, List<Card> cards) {
+		List<Card> result = new ArrayList<Card>();
 		for (Card card : cards) {
-			if (card.getRank().equals(rank)) {
-				remove.add(card);
+			if (!card.getRank().equals(rank)) {
+				result.add(card);
 			}
 		}
-		cards.removeAll(remove);
+		return result;
 	}
 
 
