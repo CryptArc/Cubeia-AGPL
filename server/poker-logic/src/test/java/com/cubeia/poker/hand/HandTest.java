@@ -24,12 +24,10 @@ public class HandTest {
 		
 		hand = new Hand("2C 2H 2D 2S 3C 3H");
 		hand = hand.sort();
-		System.out.println("Hand: "+hand);
 		Assert.assertEquals("3H 3C 2S 2H 2D 2C ", hand.toString());
 		
 		hand = new Hand("KC KH");
 		hand = hand.sort();
-		System.out.println("Hand: "+hand);
 		Assert.assertEquals("KH KC ", hand.toString());
 	}
 	
