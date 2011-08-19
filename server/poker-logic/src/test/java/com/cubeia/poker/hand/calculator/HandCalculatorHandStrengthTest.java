@@ -2,6 +2,7 @@ package com.cubeia.poker.hand.calculator;
 
 import static com.cubeia.poker.hand.HandType.FLUSH;
 import static com.cubeia.poker.hand.HandType.FULL_HOUSE;
+import static com.cubeia.poker.hand.HandType.HIGH_CARD;
 import static com.cubeia.poker.hand.HandType.STRAIGHT_FLUSH;
 import static com.cubeia.poker.hand.HandType.THREE_OF_A_KIND;
 import static com.cubeia.poker.hand.HandType.TWO_PAIRS;
@@ -70,6 +71,17 @@ public class HandCalculatorHandStrengthTest {
 		assertEquals(Rank.QUEEN, strength.getHighestRank());
 		assertEquals(Rank.EIGHT, strength.getSecondRank());
 		assertEquals(1, strength.getKickerCards().size());
+		assertEquals(KING, strength.getKickerCards().get(0).getRank());
+	}
+	
+	@Test
+	public void testHandStrength_6() throws Exception {
+		Hand hand = new Hand("2C 4H 6D 8C KS");
+		HandStrength strength = calc.getHandStrength(hand);
+		assertEquals(HIGH_CARD, strength.getHandType());
+		assertEquals(Rank.KING, strength.getHighestRank());
+		assertEquals(Rank.EIGHT, strength.getSecondRank());
+		assertEquals(5, strength.getKickerCards().size());
 		assertEquals(KING, strength.getKickerCards().get(0).getRank());
 	}
 }

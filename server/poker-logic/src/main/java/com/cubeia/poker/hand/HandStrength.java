@@ -16,7 +16,12 @@ public class HandStrength implements Comparable<HandStrength> {
 	
 	private Rank secondRank;
 	
-	/** Ordered list of kicker cards, highest first */
+	/** 
+	 * Ordered list of kicker cards, highest first.
+	 * If the hand type is HIGH_CARD then all cards
+	 * from the hand will be held here as well as 
+	 * highest rank and second rank.
+	 */
 	private List<Card> kickerCards = new ArrayList<Card>();
 	
 	public HandStrength(HandType type) {

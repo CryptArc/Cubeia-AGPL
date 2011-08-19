@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Hand {
+public class Hand implements Comparable<Hand> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -14,8 +14,6 @@ public class Hand {
 	private List<Card> cards = new ArrayList<Card>();
 	
 	private HandStrength handStrength = new HandStrength(HandType.NOT_RANKED);
-	
-	public Hand() {}
 	
 	public Hand(String cs) {
 		StringTokenizer t = new StringTokenizer(cs," -");
@@ -69,4 +67,15 @@ public class Hand {
 		return handStrength;
 	}
 	
+	public void setHandStrength(HandStrength handStrength) {
+		this.handStrength = handStrength;
+	}
+
+	/**
+	 * Delegate this to compare hand strengths.
+	 */
+	@Override
+	public int compareTo(Hand other) {
+		return handStrength.compareTo(other.getHandStrength());
+	}
 }

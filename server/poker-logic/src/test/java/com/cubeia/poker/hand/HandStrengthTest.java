@@ -1,10 +1,22 @@
 package com.cubeia.poker.hand;
 
-import static com.cubeia.poker.hand.HandType.*;
-import static com.cubeia.poker.hand.Rank.*;
+import static com.cubeia.poker.hand.HandType.FULL_HOUSE;
+import static com.cubeia.poker.hand.HandType.HIGH_CARD;
+import static com.cubeia.poker.hand.HandType.ONE_PAIR;
+import static com.cubeia.poker.hand.HandType.STRAIGHT;
+import static com.cubeia.poker.hand.HandType.STRAIGHT_FLUSH;
+import static com.cubeia.poker.hand.HandType.THREE_OF_A_KIND;
+import static com.cubeia.poker.hand.HandType.TWO_PAIRS;
+import static com.cubeia.poker.hand.Rank.ACE;
+import static com.cubeia.poker.hand.Rank.EIGHT;
+import static com.cubeia.poker.hand.Rank.FOUR;
+import static com.cubeia.poker.hand.Rank.JACK;
+import static com.cubeia.poker.hand.Rank.KING;
+import static com.cubeia.poker.hand.Rank.QUEEN;
+import static com.cubeia.poker.hand.Rank.TEN;
+import static com.cubeia.poker.hand.Rank.TWO;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -164,6 +176,96 @@ public class HandStrengthTest {
 		Assert.assertEquals(strength3, list.get(0));
 		Assert.assertEquals(strength2, list.get(1));
 		Assert.assertEquals(strength1, list.get(2));
+	}
+	
+	@Test
+	public void testHighCard() throws Exception {
+		List<HandStrength> list = new ArrayList<HandStrength>();
+		
+		HandStrength strength1 = new HandStrength(HIGH_CARD);
+		strength1.setHighestRank(ACE);
+		strength1.setSecondRank(KING);
+		List<Card> kickers = new ArrayList<Card>();
+		kickers.add(new Card("Qd"));
+		kickers.add(new Card("JD"));
+		kickers.add(new Card("2D"));
+		kickers.add(new Card("Kh"));
+		kickers.add(new Card("Ah"));
+		strength1.setKickerCards(kickers);
+		
+		HandStrength strength2 = new HandStrength(HIGH_CARD);
+		strength2.setHighestRank(ACE);
+		strength2.setSecondRank(KING);
+		kickers = new ArrayList<Card>();
+		kickers.add(new Card("qs"));
+		kickers.add(new Card("jH"));
+		kickers.add(new Card("9H"));
+		kickers.add(new Card("Kh"));
+		kickers.add(new Card("Ah"));
+		strength2.setKickerCards(kickers);
+		
+		HandStrength strength3 = new HandStrength(HIGH_CARD);
+		strength3.setHighestRank(ACE);
+		strength3.setSecondRank(KING);
+		kickers = new ArrayList<Card>();
+		kickers.add(new Card("Qh"));
+		kickers.add(new Card("JS"));
+		kickers.add(new Card("5S"));
+		kickers.add(new Card("Kh"));
+		kickers.add(new Card("Ah"));
+		strength3.setKickerCards(kickers);
+		
+		list.add(strength1);
+		list.add(strength2);
+		list.add(strength3);
+		
+		Collections.sort(list);
+		
+		strength1.toString();
+		
+		Assert.assertEquals(QUEEN, list.get(0).getKickerCards().get(0).getRank());
+		
+		Assert.assertEquals(strength2, list.get(0));
+		Assert.assertEquals(strength3, list.get(1));
+		Assert.assertEquals(strength1, list.get(2));
+	}
+	
+	
+	@Test
+	public void testSameStrength() throws Exception {
+		List<HandStrength> list = new ArrayList<HandStrength>();
+		
+		HandStrength strength1 = new HandStrength(TWO_PAIRS);
+		strength1.setHighestRank(ACE);
+		strength1.setSecondRank(JACK);
+		List<Card> kickers = new ArrayList<Card>();
+		kickers.add(new Card("4D"));
+		strength1.setKickerCards(kickers);
+		
+		HandStrength strength2 = new HandStrength(TWO_PAIRS);
+		strength2.setHighestRank(ACE);
+		strength2.setSecondRank(JACK);
+		kickers = new ArrayList<Card>();
+		kickers.add(new Card("4H"));
+		strength2.setKickerCards(kickers);
+		
+		HandStrength strength3 = new HandStrength(TWO_PAIRS);
+		strength3.setHighestRank(ACE);
+		strength3.setSecondRank(JACK);
+		kickers = new ArrayList<Card>();
+		kickers.add(new Card("4S"));
+		strength3.setKickerCards(kickers);
+		
+		list.add(strength1);
+		list.add(strength2);
+		list.add(strength3);
+		
+		Collections.sort(list);
+		
+		// Collection should not be touched since all are the same
+		Assert.assertEquals(strength1, list.get(0));
+		Assert.assertEquals(strength2, list.get(1));
+		Assert.assertEquals(strength3, list.get(2));
 	}
 	
 }

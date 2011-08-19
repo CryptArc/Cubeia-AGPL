@@ -31,4 +31,13 @@ public class HandTest {
 		Assert.assertEquals("KH KC ", hand.toString());
 	}
 	
+	@Test(expected=IllegalArgumentException.class)
+	public void testHandFailFromString1() {
+		new Hand("BS 5c kh");
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testHandFailFromString2() {
+		new Hand("AX 5c kh");
+	}
 }
