@@ -58,6 +58,7 @@ import com.cubeia.games.poker.io.protocol.PerformAction;
 import com.cubeia.games.poker.io.protocol.PlayerPokerStatus;
 import com.cubeia.games.poker.io.protocol.Pot;
 import com.cubeia.games.poker.io.protocol.RequestAction;
+import com.cubeia.games.poker.io.protocol.StartNewHand;
 import com.cubeia.games.poker.jmx.PokerStats;
 import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
@@ -129,6 +130,11 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	    playedHand.setEvents(new HashSet<PlayedHandEvent>());
 	    getFirebaseState().setPlayerHand(playedHand);
         
+	    StartNewHand packet = new StartNewHand();
+	    GameDataAction action = ProtocolFactory.createGameAction(packet, 0, table.getId());
+	    log.debug("--> Send StartNewHand["+packet+"] to everyone");
+		sendPublicPacket(action, -1);
+		
         log.debug("Starting new hand. FBPlayers: "+table.getPlayerSet().getPlayerCount()+", PokerPlayers: "+state.getSeatedPlayers().size());
     }
 
