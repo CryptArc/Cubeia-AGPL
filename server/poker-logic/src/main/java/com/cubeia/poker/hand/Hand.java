@@ -13,7 +13,7 @@ public class Hand {
 	
 	private List<Card> cards = new ArrayList<Card>();
 	
-	private HandStrength handStrength = new HandStrength();
+	private HandStrength handStrength = new HandStrength(HandType.NOT_RANKED);
 	
 	public Hand() {}
 	

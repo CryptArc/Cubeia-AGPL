@@ -1,16 +1,22 @@
 package com.cubeia.poker.hand;
 
+import com.cubeia.poker.hand.calculator.HandCalculator;
+import com.cubeia.poker.hand.calculator.TexasHoldemHandCalculator;
+
 
 /**
  * <p>Compares poker hands.</p>
  * 
+ * <p>This is a 'naive' implementation of a poker evaluator (and hand calculator),
+ * it is not built for speed but with usability in mind. If you need a faster 
+ * implementation I suggest looking at the University of Alberta implementation.</p>
  *  
  *
  * @author Fredrik Johansson, Cubeia Ltd
  */
 public class PokerEvaluator  {
 	
-	HandCalculator calc = new HandCalculator();
+	HandCalculator calc = new TexasHoldemHandCalculator();
 	
 	/**
 	 * 
@@ -23,12 +29,15 @@ public class PokerEvaluator  {
 		Hand hand1 = h1.sort();
 		Hand hand2 = h2.sort();
 		
-		HandType type1 = getHandStrength(hand1);
-		HandType type2 = getHandStrength(hand2);
+		HandStrength strength1 = calc.getHandStrength(hand1);
+		HandStrength strength2 = calc.getHandStrength(hand2);
 		
-		if (type1.ordinal() > type2.ordinal()) {
+		HandType handType1 = strength1.getHandType();
+		HandType handType2 = strength2.getHandType();
+		
+		if (handType1.ordinal() > handType2.ordinal()) {
 			return 1;
-		} else if (type1.ordinal() < type2.ordinal()) {
+		} else if (handType1.ordinal() < handType2.ordinal()) {
 			return 1;
 		} else {
 			return 0;
@@ -36,36 +45,6 @@ public class PokerEvaluator  {
 	}
 
 	
-	
-	public HandType getHandStrength(Hand hand) {
-		if (calc.isStraightFlush(hand)) {
-			return HandType.STRAIGHT_FLUSH;
-			
-		} else if (calc.isManyOfAKind(hand, 4) != null) {
-			return HandType.FOUR_OF_A_KIND;
-			
-		} else if (calc.isFullHouse(hand)) {
-			return HandType.FULL_HOUSE;
-			
-		} else if (calc.isFlush(hand)) {
-			return HandType.FLUSH;
-			
-		} else if (calc.isStraight(hand)) {
-			return HandType.STRAIGHT;
-			
-		} else if (calc.isManyOfAKind(hand, 3) != null) {
-			return HandType.THREE_OF_A_KIND;
-			
-		} else if (calc.isTwoPairs(hand)) {
-			return HandType.TWO_PAIRS;
-			
-		} else if (calc.isOnePair(hand)) {
-			return HandType.ONE_PAIR;
-			
-		} else {
-			return HandType.HIGH_CARD;
-		}
-	}
 
 	/**
 	 * 

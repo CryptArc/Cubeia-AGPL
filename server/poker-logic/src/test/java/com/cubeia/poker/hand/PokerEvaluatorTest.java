@@ -32,18 +32,4 @@ public class PokerEvaluatorTest {
 		int comp = eval.compareEmptyHands(hand1, hand2);
 		Assert.assertTrue(comp < 0);
 	}
-	
-	@Test
-	public void testGetHandStrength_1() throws Exception {
-		Hand hand = new Hand("2C 3C 4C 6C 5C");
-		HandType handType = eval.getHandStrength(hand);
-		Assert.assertEquals(HandType.STRAIGHT_FLUSH, handType);
-	}
-	
-	@Test
-	public void testGetHandStrength_2() throws Exception {
-		Hand hand = new Hand("3C 3D 3H 6C 5C");
-		HandType handType = eval.getHandStrength(hand);
-		Assert.assertEquals(HandType.THREE_OF_A_KIND, handType);
-	}
 }
