@@ -18,6 +18,7 @@
 package com.cubeia.poker.rounds;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.SortedMap;
 
 import org.apache.log4j.Logger;
@@ -25,7 +26,10 @@ import org.apache.log4j.Logger;
 import com.cubeia.poker.GameType;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
+import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.rounds.blinds.BlindsInfo;
+import com.cubeia.poker.util.PokerUtils;
 
 public class AnteRound implements Round {
 
@@ -37,35 +41,67 @@ public class AnteRound implements Round {
 
 	private boolean finished = false;
 
+	private int playerToAct = 0;
+	
 	public AnteRound(GameType game) {
 		this.game = game;
 		
 		clearPlayerActionOptions();
 		
 		Collection<PokerPlayer> players = game.getState().getCurrentHandSeatingMap().values();
-		allPlayersAnteBet(players, game.getBlindsInfo().getAnteLevel());
 		
-		// TODO: dealer button should change between hands
-		game.getServerAdapter().notifyDealerButton(0);
+		// TODO: how do we decide dealer? for now always use first player...
+		moveDealerButtonToSeatId(players.iterator().next().getSeatId());
 		
-		finished = true;
+		
+//		allPlayersAnteBet(players, game.getBlindsInfo().getAnteLevel());
+		
+		
+//		PokerPlayer player = getNextPlayerToAct(dealerSeatId);
+		requestNextAction(game.getBlindsInfo().getDealerButtonSeatId());
 	}
 	
-	private void allPlayersAnteBet(Collection<PokerPlayer> players, int anteLevel) {
-		log.debug("ante for all players, ante = " + anteLevel + ", players = " + players);
-		
+	private PokerPlayer getNextPlayerToAct(int lastActedSeatId) {
+		PokerPlayer next = null;
+
+		List<PokerPlayer> players = PokerUtils.unwrapList(game.getState().getCurrentHandSeatingMap(), lastActedSeatId + 1);
 		for (PokerPlayer player : players) {
-			log.debug("player " + player.getId() + " bets ante of: " + anteLevel);
-			
-			placeAnteBet(player, anteLevel);
-			PokerAction action = new PokerAction(player.getId(), PokerActionType.SMALL_BLIND);
-			action.setBetAmount(anteLevel);
-			game.getServerAdapter().notifyActionPerformed(action);
+			if (!player.hasFolded() && !player.hasActed() && !player.isSittingOut() && !player.isAllIn()) {
+				next = player;
+				break;
+			}
+		}
+		return next;
+	}
+	
+	private void moveDealerButtonToSeatId(int newDealerSeatId) {
+		BlindsInfo blindsInfo = game.getBlindsInfo();
+		blindsInfo.setDealerButtonSeatId(newDealerSeatId);
+		game.getState().notifyDealerButton(blindsInfo.getDealerButtonSeatId());
+	}
+	
+	private void requestNextAction(int lastSeatId) {
+		PokerPlayer p = getNextPlayerToAct(lastSeatId);
+
+		if (p == null) {
+			finished = true;
+		} else {
+			requestAnte(p, game.getBlindsInfo().getAnteLevel());
+			playerToAct = p.getId();
 		}
 	}
 	
 	
-	private void placeAnteBet(PokerPlayer player, int anteLevel) {
+	private void requestAnte(PokerPlayer player, int anteLevel) {
+//		getBlindsInfo().setSmallBlind(smallBlind);
+		
+		player.enableOption(new PossibleAction(PokerActionType.SMALL_BLIND, anteLevel));
+		player.enableOption(new PossibleAction(PokerActionType.DECLINE_ENTRY_BET));
+		game.requestAction(player.getActionRequest());
+	}
+	
+	
+	private void addAnteBet(PokerPlayer player, int anteLevel) {
 		player.addBet(anteLevel);
 	}
 	
@@ -79,10 +115,11 @@ public class AnteRound implements Round {
 	
 	public void act(PokerAction action) {
 		switch (action.getActionType()) {
-//		case SMALL_BLIND:
-//			addAnteBet(action.getPlayerId());
-//			currentState.smallBlind(action.getPlayerId(), this);
-//			break;
+		case SMALL_BLIND:
+			PokerPlayer player = game.getState().getPlayerInCurrentHand(action.getPlayerId());
+			addAnteBet(player, game.getBlindsInfo().getAnteLevel());
+			player.setHasActed(true);
+			break;
 		default:
 			throw new IllegalArgumentException(action.getActionType() + " is not legal here");
 		}
