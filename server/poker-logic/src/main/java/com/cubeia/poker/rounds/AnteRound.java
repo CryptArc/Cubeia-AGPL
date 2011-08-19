@@ -116,20 +116,32 @@ public class AnteRound implements Round {
 	public void act(PokerAction action) {
 		
 		log.debug("act on: " + action);
+		PokerPlayer player = game.getState().getPlayerInCurrentHand(action.getPlayerId());
 		
 		switch (action.getActionType()) {
 		case SMALL_BLIND:
-			PokerPlayer player = game.getState().getPlayerInCurrentHand(action.getPlayerId());
 			addAnteBet(player, game.getBlindsInfo().getAnteLevel());
 			player.setHasActed(true);
 			break;
 		default:
 			throw new IllegalArgumentException(action.getActionType() + " is not legal here");
 		}
-//		getGame().getState().getPlayerInCurrentHand(action.getPlayerId()).clearActionRequest();
-//		game.getServerAdapter().notifyActionPerformed(action);
+		
+		if (hasAllPlayersActed()) {
+			finished = true;
+		} else {
+			requestNextAction(player.getSeatId());
+		}
 	}
-	
+
+	private boolean hasAllPlayersActed() {
+		boolean allActed = true;
+		for (PokerPlayer player : game.getState().getCurrentHandPlayerMap().values()) {
+			allActed = allActed || player.hasActed();
+		}
+		
+		return allActed;
+	}
 
 	public void timeout() {
 //		currentState.timeout(this);
