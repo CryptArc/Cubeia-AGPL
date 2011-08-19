@@ -12,8 +12,8 @@
 	<Tables>
 
 	<Table seats="2">
-		<Seat index="2" x="4" y="140"    buttonPosX="420" buttonPosY="80" csPosX="50" csPosY="66"/>
-		<Seat index="3" x="500" y="140"  buttonPosX="470" buttonPosY="150" csPosX="-24" csPosY="20"/>
+		<Seat index="0" x="4" y="140"    buttonPosX="420" buttonPosY="80" csPosX="50" csPosY="66"/>
+		<Seat index="1" x="500" y="140"  buttonPosX="470" buttonPosY="150" csPosX="-24" csPosY="20"/>
 	</Table>
 		
 	<Table seats="4">
