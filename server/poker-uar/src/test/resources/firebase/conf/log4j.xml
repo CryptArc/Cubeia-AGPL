@@ -47,7 +47,7 @@
 	-->
 	<appender name="STDOUT" class="org.apache.log4j.ConsoleAppender">
 		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%-5p %C{1} - %m%n"/>
+			<param name="ConversionPattern" value="%d{yy-dd-MM HH:mm:ss.SSS} %-5p %C{1} - %m%n"/>
 			<!--param name="ConversionPattern" value="%d %-5p [%t] %C{1} (%F:%L) - %m%n"/-->
 		</layout>		
 	</appender>
