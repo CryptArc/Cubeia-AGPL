@@ -43,6 +43,7 @@ import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TableType;
 import com.cubeia.firebase.api.service.ServiceRegistry;
 import com.cubeia.firebase.api.util.UnmodifiableSet;
+import com.cubeia.firebase.io.protocol.NotifyRegisteredPacket;
 import com.cubeia.games.poker.FirebaseState;
 import com.cubeia.games.poker.PokerGame;
 import com.cubeia.games.poker.cache.ActionCache;
@@ -54,6 +55,7 @@ import com.cubeia.games.poker.io.protocol.DealerButton;
 import com.cubeia.games.poker.io.protocol.Enums;
 import com.cubeia.games.poker.io.protocol.ExposePrivateCards;
 import com.cubeia.games.poker.io.protocol.HandEnd;
+import com.cubeia.games.poker.io.protocol.InformRoundEnded;
 import com.cubeia.games.poker.io.protocol.PerformAction;
 import com.cubeia.games.poker.io.protocol.PlayerPokerStatus;
 import com.cubeia.games.poker.io.protocol.Pot;
@@ -130,6 +132,13 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	    playedHand.setEvents(new HashSet<PlayedHandEvent>());
 	    getFirebaseState().setPlayerHand(playedHand);
         
+	    // FIXME: This should not be sent here, but rather between HandEnd and this method
+	    // FIXME: Is InformRoundEnded really the end of a hand??
+	    InformRoundEnded roundEnd = new InformRoundEnded();
+	    GameDataAction endAction = ProtocolFactory.createGameAction(roundEnd, 0, table.getId());
+	    log.debug("--> Send InformRoundEnded["+roundEnd+"] to everyone");
+		sendPublicPacket(endAction, -1);
+	    
 	    StartNewHand packet = new StartNewHand();
 	    GameDataAction action = ProtocolFactory.createGameAction(packet, 0, table.getId());
 	    log.debug("--> Send StartNewHand["+packet+"] to everyone");
