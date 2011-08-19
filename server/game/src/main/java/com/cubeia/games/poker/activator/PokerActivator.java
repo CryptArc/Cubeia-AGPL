@@ -138,6 +138,7 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
     	participants.add(new PokerParticipant(2, "ITALIAN/cashgame/REAL_MONEY/2", 10, Timings.DEFAULT, TELESINA));
     	participants.add(new PokerParticipant(4, "ITALIAN/cashgame/REAL_MONEY/4", 10, Timings.DEFAULT, TELESINA));
     	participants.add(new PokerParticipant(6, "ITALIAN/cashgame/REAL_MONEY/6", 10, Timings.DEFAULT, TELESINA));
+    	participants.add(new PokerParticipant(10, "ITALIAN/cashgame/REAL_MONEY/10", 10, Timings.DEFAULT, TELESINA));
     	
     	for (PokerParticipant part : participants) {
     		part.setInjector(injector);
@@ -151,6 +152,7 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
     @Override
     protected void initTables() {
         DefaultActivatorConfig configuration = getConfiguration();
+        configuration.setIncrementSize(2);
         
         for (PokerParticipant part : participants) {
             // Get all tables for given FQN

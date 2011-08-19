@@ -114,6 +114,9 @@ public class AnteRound implements Round {
 	
 	
 	public void act(PokerAction action) {
+		
+		log.debug("act on: " + action);
+		
 		switch (action.getActionType()) {
 		case SMALL_BLIND:
 			PokerPlayer player = game.getState().getPlayerInCurrentHand(action.getPlayerId());
