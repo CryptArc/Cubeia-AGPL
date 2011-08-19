@@ -86,10 +86,13 @@ public class Telesina implements GameType, RoundVisitor {
 	
 	@Override
 	public void startHand() {
+		log.debug("start hand");
 		initHand();
 	}
 
 	private void initHand() {	
+		log.debug("init hand");
+		
 		// TODO: use Telesina deck here, size of deck is determined by table size (or players in hand)
 		deck = new Deck(getRandom().nextInt());
 		// FIXME: Use better seed for the shuffle
@@ -151,6 +154,7 @@ public class Telesina implements GameType, RoundVisitor {
 	}
 
 	public void handleFinishedRound() {
+		log.debug("handle finished round");
 		currentRound.visit(this);
 	}
 	
@@ -302,7 +306,14 @@ public class Telesina implements GameType, RoundVisitor {
 
 	@Override
 	public void visit(AnteRound anteRound) {
+		log.debug("visit ante round");
+		moveChipsToPot();
+		reportPotUpdate();
 		
+		dealPocketCards();
+		dealExposedCards();
+		
+		prepareBettingRound();
 	}
 	
 	@Override
@@ -324,13 +335,14 @@ public class Telesina implements GameType, RoundVisitor {
 
 	@Override
 	public void visit(BlindsRound blindsRound) {
-		if (blindsRound.isCanceled()) {
-			handleCanceledHand();
-		} else {
-			updateBlindsInfo(blindsRound);
-			dealPocketCards();
-			prepareBettingRound();
-		}
+		throw new UnsupportedOperationException("blinds round not supported in telesina");
+//		if (blindsRound.isCanceled()) {
+//			handleCanceledHand();
+//		} else {
+//			updateBlindsInfo(blindsRound);
+//			dealPocketCards();
+//			prepareBettingRound();
+//		}
 	}
 	
 	@Override
@@ -339,8 +351,7 @@ public class Telesina implements GameType, RoundVisitor {
 	}
 
 	private void prepareBettingRound() {
-		int bbSeatId = blindsInfo.getBigBlindSeatId();
-		currentRound = new BettingRound(this, bbSeatId);
+		currentRound = new BettingRound(this, getBlindsInfo().getDealerButtonSeatId());
 	}
 
 	private void updateBlindsInfo(BlindsRound blindsRound) {

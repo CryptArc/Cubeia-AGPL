@@ -17,29 +17,15 @@
 
 package com.cubeia.poker.rounds;
 
-import static com.cubeia.poker.action.PokerActionType.SMALL_BLIND;
-
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 
 import com.cubeia.poker.GameType;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
-import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.player.SitOutStatus;
-import com.cubeia.poker.rounds.blinds.BlindsInfo;
-import com.cubeia.poker.rounds.blinds.BlindsState;
-import com.cubeia.poker.rounds.blinds.CanceledState;
-import com.cubeia.poker.rounds.blinds.FinishedState;
-import com.cubeia.poker.rounds.blinds.WaitingForBigBlindState;
-import com.cubeia.poker.rounds.blinds.WaitingForEntryBetState;
-import com.cubeia.poker.rounds.blinds.WaitingForSmallBlindState;
-import com.cubeia.poker.util.PokerUtils;
 
 public class AnteRound implements Round {
 
@@ -49,6 +35,8 @@ public class AnteRound implements Round {
 
 	private final GameType game;
 
+	private boolean finished = false;
+
 	public AnteRound(GameType game) {
 		this.game = game;
 		
@@ -57,15 +45,19 @@ public class AnteRound implements Round {
 		Collection<PokerPlayer> players = game.getState().getCurrentHandSeatingMap().values();
 		allPlayersAnteBet(players, game.getBlindsInfo().getAnteLevel());
 		
+		// TODO: dealer button should change between hands
+		game.getServerAdapter().notifyDealerButton(0);
 		
+		finished = true;
 	}
 	
 	private void allPlayersAnteBet(Collection<PokerPlayer> players, int anteLevel) {
-		log.debug("requesting ante " + anteLevel + " from players: " + players);
+		log.debug("ante for all players, ante = " + anteLevel + ", players = " + players);
 		
 		for (PokerPlayer player : players) {
-			placeAnteBet(player, anteLevel);
+			log.debug("player " + player.getId() + " bets ante of: " + anteLevel);
 			
+			placeAnteBet(player, anteLevel);
 			PokerAction action = new PokerAction(player.getId(), PokerActionType.SMALL_BLIND);
 			action.setBetAmount(anteLevel);
 			game.getServerAdapter().notifyActionPerformed(action);
@@ -104,17 +96,14 @@ public class AnteRound implements Round {
 	}
 
 	public String getStateDescription() {
-//		return currentState != null ? currentState.getClass().getName() : "currentState=null";
-		return null;
+		return "currentState=null";
 	}
 
 	public boolean isFinished() {
-//		return currentState.isFinished();
-		return false;
+		return finished;
 	}
 	
 	public void visit(RoundVisitor visitor) {
-//		visitor.visit(this);
-		
+		visitor.visit(this);
 	}
 }
