@@ -35,6 +35,7 @@ public class AnteRoundTest {
     private ActionRequest actionRequest2;
     private int dealerButtonSeatId = 1;
     private BlindsInfo blindsInfo;
+    private SortedMap<Integer, PokerPlayer> playerMap;
     
     @Before
     public void setUp() {
@@ -47,7 +48,7 @@ public class AnteRoundTest {
         when(player2.getActionRequest()).thenReturn(actionRequest2);
         
         
-        SortedMap<Integer, PokerPlayer> playerMap = new TreeMap<Integer, PokerPlayer>();
+        playerMap = new TreeMap<Integer, PokerPlayer>();
         playerMap.put(0, player1);
         playerMap.put(1, player2);
         when(state.getCurrentHandSeatingMap()).thenReturn(playerMap);
@@ -142,6 +143,43 @@ public class AnteRoundTest {
         when(player2.hasActed()).thenReturn(true);
         when(player2.hasPostedEntryBet()).thenReturn(false);
         assertThat(anteRound.isFinished(), is(true));
+    }
+    
+    @Test
+    public void testIsCanceled() {
+        AnteRound anteRound = new AnteRound(game, anteRoundHelper);
+        
+        // both declined: canceled
+        when(player1.hasActed()).thenReturn(true);
+        when(player1.hasPostedEntryBet()).thenReturn(false);
+        when(player2.hasActed()).thenReturn(true);
+        when(player2.hasPostedEntryBet()).thenReturn(false);
+        assertThat(anteRound.isCanceled(), is(true));
+        
+        // one declined: canceled
+        when(player1.hasActed()).thenReturn(true);
+        when(player1.hasPostedEntryBet()).thenReturn(true);
+        when(player2.hasActed()).thenReturn(true);
+        when(player2.hasPostedEntryBet()).thenReturn(false);
+        assertThat(anteRound.isCanceled(), is(true));
+        
+        // both accepted: not canceled
+        when(player1.hasActed()).thenReturn(true);
+        when(player1.hasPostedEntryBet()).thenReturn(true);
+        when(player2.hasActed()).thenReturn(true);
+        when(player2.hasPostedEntryBet()).thenReturn(true);
+        assertThat(anteRound.isCanceled(), is(true));
+        
+        // two accepted one declined: not canceled
+        PokerPlayer player3 = mock(PokerPlayer.class);
+        playerMap.put(2, player3);
+        when(player1.hasActed()).thenReturn(true);
+        when(player1.hasPostedEntryBet()).thenReturn(true);
+        when(player2.hasActed()).thenReturn(true);
+        when(player2.hasPostedEntryBet()).thenReturn(true);
+        when(player3.hasActed()).thenReturn(true);
+        when(player3.hasPostedEntryBet()).thenReturn(false);
+        assertThat(anteRound.isCanceled(), is(true));
     }
     
 

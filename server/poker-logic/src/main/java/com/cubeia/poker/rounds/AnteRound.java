@@ -26,6 +26,8 @@ import com.cubeia.poker.GameType;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.rounds.blinds.BlindsInfo;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 
 public class AnteRound implements Round {
 
@@ -123,4 +125,17 @@ public class AnteRound implements Round {
 	public void visit(RoundVisitor visitor) {
 		visitor.visit(this);
 	}
+
+    public boolean isCanceled() {
+        if (!isFinished()) {
+            return false;
+        } else {
+            Collection<PokerPlayer> hasPostedEntryBet = Collections2.filter(game.getState().getCurrentHandPlayerMap().values(), new Predicate<PokerPlayer>() {
+                @Override
+                public boolean apply(PokerPlayer player) { return player.hasPostedEntryBet(); }
+            });
+            return hasPostedEntryBet.size() < 2;
+        }
+        
+    }
 }

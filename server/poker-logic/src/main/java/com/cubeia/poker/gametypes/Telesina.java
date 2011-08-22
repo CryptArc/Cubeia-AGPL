@@ -308,13 +308,18 @@ public class Telesina implements GameType, RoundVisitor {
 	@Override
 	public void visit(AnteRound anteRound) {
 		log.debug("visit ante round");
-		moveChipsToPot();
-		reportPotUpdate();
 		
-		dealPocketCards();
-		dealExposedCards();
-		
-		prepareBettingRound();
+		if (anteRound.isCanceled()) {
+		    handleCanceledHand();
+		} else {
+		    moveChipsToPot();
+		    reportPotUpdate();
+		    
+		    dealPocketCards();
+		    dealExposedCards();
+		    
+		    prepareBettingRound();
+		}
 	}
 	
 	@Override
