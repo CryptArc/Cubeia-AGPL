@@ -42,6 +42,7 @@ import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
 import com.cubeia.poker.rounds.AnteRound;
+import com.cubeia.poker.rounds.AnteRoundHelper;
 import com.cubeia.poker.rounds.BettingRound;
 import com.cubeia.poker.rounds.DealCommunityCardsRound;
 import com.cubeia.poker.rounds.Round;
@@ -100,7 +101,7 @@ public class Telesina implements GameType, RoundVisitor {
 		
 		blindsInfo.setAnteLevel(state.getAnteLevel());
 		
-		currentRound = new AnteRound(this);
+		currentRound = new AnteRound(this, new AnteRoundHelper());
 		
 //		// TODO: put last in ante round (see below)
 //		dealPocketCards();

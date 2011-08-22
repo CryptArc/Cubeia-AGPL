@@ -18,18 +18,14 @@
 package com.cubeia.poker.rounds;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.SortedMap;
 
 import org.apache.log4j.Logger;
 
 import com.cubeia.poker.GameType;
 import com.cubeia.poker.action.PokerAction;
-import com.cubeia.poker.action.PokerActionType;
-import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.rounds.blinds.BlindsInfo;
-import com.cubeia.poker.util.PokerUtils;
 
 public class AnteRound implements Round {
 
@@ -39,12 +35,15 @@ public class AnteRound implements Round {
 
 	private final GameType game;
 
-	private boolean finished = false;
+//	private boolean finished = false;
 
-	private int playerToAct = 0;
+//	private int playerToAct = 0;
 	
-	public AnteRound(GameType game) {
+	private AnteRoundHelper anteRoundHelper;
+	
+	public AnteRound(GameType game, AnteRoundHelper anteRoundHelper) {
 		this.game = game;
+        this.anteRoundHelper = anteRoundHelper;
 		
 		clearPlayerActionOptions();
 		
@@ -54,24 +53,7 @@ public class AnteRound implements Round {
 		moveDealerButtonToSeatId(players.iterator().next().getSeatId());
 		
 		
-//		allPlayersAnteBet(players, game.getBlindsInfo().getAnteLevel());
-		
-		
-//		PokerPlayer player = getNextPlayerToAct(dealerSeatId);
 		requestNextAction(game.getBlindsInfo().getDealerButtonSeatId());
-	}
-	
-	private PokerPlayer getNextPlayerToAct(int lastActedSeatId) {
-		PokerPlayer next = null;
-
-		List<PokerPlayer> players = PokerUtils.unwrapList(game.getState().getCurrentHandSeatingMap(), lastActedSeatId + 1);
-		for (PokerPlayer player : players) {
-			if (!player.hasFolded() && !player.hasActed() && !player.isSittingOut() && !player.isAllIn()) {
-				next = player;
-				break;
-			}
-		}
-		return next;
 	}
 	
 	private void moveDealerButtonToSeatId(int newDealerSeatId) {
@@ -81,29 +63,14 @@ public class AnteRound implements Round {
 	}
 	
 	private void requestNextAction(int lastSeatId) {
-		PokerPlayer p = getNextPlayerToAct(lastSeatId);
+		PokerPlayer p = anteRoundHelper.getNextPlayerToAct(lastSeatId, game.getState().getCurrentHandSeatingMap());
 
-		if (p == null) {
-			finished = true;
-		} else {
-			requestAnte(p, game.getBlindsInfo().getAnteLevel());
-			playerToAct = p.getId();
+		if (p != null) {
+			anteRoundHelper.requestAnte(p, game.getBlindsInfo().getAnteLevel(), game);
+//			playerToAct = p.getId();
 		}
 	}
 	
-	
-	private void requestAnte(PokerPlayer player, int anteLevel) {
-//		getBlindsInfo().setSmallBlind(smallBlind);
-		
-		player.enableOption(new PossibleAction(PokerActionType.SMALL_BLIND, anteLevel));
-		player.enableOption(new PossibleAction(PokerActionType.DECLINE_ENTRY_BET));
-		game.requestAction(player.getActionRequest());
-	}
-	
-	
-	private void addAnteBet(PokerPlayer player, int anteLevel) {
-		player.addBet(anteLevel);
-	}
 	
 	private void clearPlayerActionOptions() {
 		SortedMap<Integer, PokerPlayer> seatingMap = game.getState().getCurrentHandSeatingMap();
@@ -112,7 +79,6 @@ public class AnteRound implements Round {
 		}
 	}
 	
-	
 	public void act(PokerAction action) {
 		
 		log.debug("act on: " + action);
@@ -120,27 +86,21 @@ public class AnteRound implements Round {
 		
 		switch (action.getActionType()) {
 		case SMALL_BLIND:
-			addAnteBet(player, game.getBlindsInfo().getAnteLevel());
+			player.addBet(game.getBlindsInfo().getAnteLevel());
 			player.setHasActed(true);
+			player.setHasPostedEntryBet(true);
 			break;
+		case DECLINE_ENTRY_BET:
+            player.setHasActed(true);
+            player.setHasPostedEntryBet(false);
+            break;
 		default:
 			throw new IllegalArgumentException(action.getActionType() + " is not legal here");
 		}
 		
-		if (hasAllPlayersActed()) {
-			finished = true;
-		} else {
+		if (!anteRoundHelper.hasAllPlayersActed(game.getState().getCurrentHandPlayerMap().values())) {
 			requestNextAction(player.getSeatId());
 		}
-	}
-
-	private boolean hasAllPlayersActed() {
-		boolean allActed = true;
-		for (PokerPlayer player : game.getState().getCurrentHandPlayerMap().values()) {
-			allActed = allActed || player.hasActed();
-		}
-		
-		return allActed;
 	}
 
 	public void timeout() {
@@ -152,7 +112,12 @@ public class AnteRound implements Round {
 	}
 
 	public boolean isFinished() {
-		return finished;
+	    for (PokerPlayer player : game.getState().getCurrentHandSeatingMap().values()) {
+	        if (!player.hasActed()) {
+	            return false;
+	        }
+	    }
+		return true;
 	}
 	
 	public void visit(RoundVisitor visitor) {

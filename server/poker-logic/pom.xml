@@ -4,6 +4,7 @@
 		<artifactId>poker</artifactId>
 		<groupId>com.cubeia.games</groupId>
 		<version>1.0-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.cubeia.games</groupId>
@@ -29,6 +30,18 @@
 	        <artifactId>aopalliance</artifactId>
 	        <version>1.0</version>
 	    </dependency>
+    
+    
+    	<dependency>
+    		<groupId>org.slf4j</groupId>
+    		<artifactId>slf4j-api</artifactId>
+    	</dependency>
+    
+    	<dependency>
+    		<groupId>org.slf4j</groupId>
+    		<artifactId>slf4j-log4j12</artifactId>
+    	</dependency>
+    
     
 	</dependencies>
 	
