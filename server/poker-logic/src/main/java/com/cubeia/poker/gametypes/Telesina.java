@@ -23,7 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.ualberta.cs.poker.Card;
 import ca.ualberta.cs.poker.Deck;
@@ -34,7 +35,6 @@ import com.cubeia.poker.IPokerState;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
-import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.model.PlayerHands;
@@ -56,7 +56,7 @@ public class Telesina implements GameType, RoundVisitor {
 
 	private static final long serialVersionUID = -1523110440727681601L;
 
-    private static transient Logger log = Logger.getLogger(Telesina.class);
+	private static transient Logger log = LoggerFactory.getLogger(Telesina.class);
 
 	private Round currentRound;
 
@@ -82,7 +82,7 @@ public class Telesina implements GameType, RoundVisitor {
 	
 	@Override
 	public String toString() {
-	    return "Telesina, current round["+currentRound+"] roundId["+roundId+"] ";
+	    return "Telesina, current round["+getCurrentRound()+"] roundId["+roundId+"] ";
 	}
 	
 	@Override
@@ -101,7 +101,7 @@ public class Telesina implements GameType, RoundVisitor {
 		
 		blindsInfo.setAnteLevel(state.getAnteLevel());
 		
-		currentRound = new AnteRound(this, new AnteRoundHelper());
+		setCurrentRound(new AnteRound(this, new AnteRoundHelper()));
 		
 //		// TODO: put last in ante round (see below)
 //		dealPocketCards();
@@ -116,12 +116,12 @@ public class Telesina implements GameType, RoundVisitor {
 
 	@Override
 	public void act(PokerAction action) {
-		currentRound.act(action);
+		getCurrentRound().act(action);
 		checkFinishedRound();
 	}
 
 	private void checkFinishedRound() {
-		if (currentRound.isFinished()) {
+		if (getCurrentRound().isFinished()) {
 			handleFinishedRound();
 		}
 	}
@@ -156,7 +156,7 @@ public class Telesina implements GameType, RoundVisitor {
 
 	public void handleFinishedRound() {
 		log.debug("handle finished round");
-		currentRound.visit(this);
+		getCurrentRound().visit(this);
 	}
 	
 	private void reportPotUpdate() {
@@ -179,7 +179,7 @@ public class Telesina implements GameType, RoundVisitor {
 
     private void startBettingRound() {
     	log.trace("Starting new betting round. Round ID: "+(roundId+1));
-		currentRound = new BettingRound(this, blindsInfo.getDealerButtonSeatId());
+		setCurrentRound(new BettingRound(this, blindsInfo.getDealerButtonSeatId()));
 		roundId++;
 	}
     
@@ -212,6 +212,7 @@ public class Telesina implements GameType, RoundVisitor {
 	}
 	
 	private void handleCanceledHand() {
+	    log.debug("hand canceled in round {}: {}", getCurrentRound(), HandEndStatus.CANCELED_TOO_FEW_PLAYERS);
 		state.notifyHandFinished(new HandResult(), HandEndStatus.CANCELED_TOO_FEW_PLAYERS);
 	}	
 
@@ -291,7 +292,7 @@ public class Telesina implements GameType, RoundVisitor {
 	@Override
 	public void timeout() {
 		log.debug("Timeout");
-		currentRound.timeout();
+		getCurrentRound().timeout();
 		checkFinishedRound();
 	}
 
@@ -302,16 +303,18 @@ public class Telesina implements GameType, RoundVisitor {
 
 	@Override
 	public String getStateDescription() {
-		return currentRound == null ? "th-round=null" : currentRound.getClass() + "_" + currentRound.getStateDescription();
+		return getCurrentRound() == null ? "th-round=null" : getCurrentRound().getClass() + "_" + getCurrentRound().getStateDescription();
 	}
 
 	@Override
 	public void visit(AnteRound anteRound) {
-		log.debug("visit ante round");
+		log.debug("visit ante round, cancled = {}", anteRound.isCanceled());
 		
 		if (anteRound.isCanceled()) {
 		    handleCanceledHand();
 		} else {
+		    log.debug("ante round finished");
+		    
 		    moveChipsToPot();
 		    reportPotUpdate();
 		    
@@ -333,7 +336,7 @@ public class Telesina implements GameType, RoundVisitor {
 			state.getPotHolder().clearPots();
 		} else {
 			// Start deal community cards round
-			currentRound = new DealCommunityCardsRound(this);
+			setCurrentRound(new DealCommunityCardsRound(this));
 			// Schedule timeout for the community cards round
 			scheduleRoundTimeout();
 		}		
@@ -357,12 +360,12 @@ public class Telesina implements GameType, RoundVisitor {
 	}
 
 	private void prepareBettingRound() {
-		currentRound = new BettingRound(this, getBlindsInfo().getDealerButtonSeatId());
+		setCurrentRound(new BettingRound(this, getBlindsInfo().getDealerButtonSeatId()));
 	}
 
-	private void updateBlindsInfo(BlindsRound blindsRound) {
-		this.blindsInfo = blindsRound.getBlindsInfo();
-	}
+//	private void updateBlindsInfo(BlindsRound blindsRound) {
+//		this.blindsInfo = blindsRound.getBlindsInfo();
+//	}
 
 	private void dealPocketCards() {
 		for (PokerPlayer p : state.getCurrentHandSeatingMap().values()) {
@@ -379,4 +382,13 @@ public class Telesina implements GameType, RoundVisitor {
 			}
 		}
 	}
+
+    private Round getCurrentRound() {
+        return currentRound;
+    }
+
+    private void setCurrentRound(Round newRound) {
+        log.debug("moving to new round: {}", newRound);
+        this.currentRound = newRound;
+    }
 }
