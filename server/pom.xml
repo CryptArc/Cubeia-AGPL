@@ -8,8 +8,8 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>game</module>
-    <module>protocol</module>
+    <module>poker-game</module>
+    <module>poker-protocol</module>
     <module>poker-logic</module>
     <module>poker-logic-blinds</module>
     <!--module>poker-cep-service</module--> <!-- depends on stuff not in public repo (yet) -->
