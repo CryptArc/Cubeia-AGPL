@@ -26,7 +26,7 @@ public class HandTest {
 		hand = hand.sort();
 		Assert.assertEquals("3H 3C 2S 2H 2D 2C ", hand.toString());
 		
-		hand = new Hand("KC KH");
+		hand = new Hand("KH KC");
 		hand = hand.sort();
 		Assert.assertEquals("KH KC ", hand.toString());
 	}

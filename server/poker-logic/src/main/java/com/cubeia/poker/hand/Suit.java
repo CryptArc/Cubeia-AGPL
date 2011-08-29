@@ -1,11 +1,16 @@
 package com.cubeia.poker.hand;
 
+/**
+ * Suits.
+ * The order of the enums are ascending rank according to: http://www.pagat.com/poker/rules/ranking.html#suit
+ * @author w
+ */
 public enum Suit {
 
-	CLUBS, 
-	DIAMONDS, 
-	HEARTS, 
-	SPADES;
+    CLUBS,
+    DIAMONDS, 
+    HEARTS, 
+    SPADES;
 
 	public String toShortString() {
 		return name().substring(0, 1);

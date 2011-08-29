@@ -45,7 +45,7 @@ public class Card implements Comparable<Card> {
 
 	@Override
 	public int compareTo(Card other) {
-		int comp = other.getRank().ordinal()*1000- rank.ordinal()*1000;
+		int comp = other.getRank().ordinal()*1000 - rank.ordinal()*1000;
 		comp += other.getSuit().ordinal() - suit.ordinal();
 		return comp;
 	}
