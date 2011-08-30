@@ -19,9 +19,9 @@ package com.cubeia.games.poker.handler;
 
 import org.apache.log4j.Logger;
 
-import se.jadestone.dicearena.game.telesina.network.protocol.PerformAction;
-import se.jadestone.dicearena.game.telesina.network.protocol.PlayerSitinRequest;
-import se.jadestone.dicearena.game.telesina.network.protocol.PlayerSitoutRequest;
+import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
+import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitinRequest;
+import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitoutRequest;
 
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.games.poker.FirebaseState;

@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import se.jadestone.dicearena.game.telesina.network.protocol.ProtocolObjectFactory;
+import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
 
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.GameDataAction;

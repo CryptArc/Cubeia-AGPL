@@ -82,7 +82,7 @@
       <version>${project.version}</version>
       -->
       <groupId>se.jadestone.dicearena</groupId>
-      <artifactId>telesina-protocol</artifactId>
+      <artifactId>poker-protocol</artifactId>
       <version>1-TRUNK-SNAPSHOT</version>
     </dependency>
     

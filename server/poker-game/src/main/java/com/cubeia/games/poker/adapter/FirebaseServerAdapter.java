@@ -27,18 +27,18 @@ import java.util.UUID;
 
 import org.apache.log4j.Logger;
 
-import se.jadestone.dicearena.game.telesina.network.protocol.DealPrivateCards;
-import se.jadestone.dicearena.game.telesina.network.protocol.DealPublicCards;
-import se.jadestone.dicearena.game.telesina.network.protocol.DealerButton;
-import se.jadestone.dicearena.game.telesina.network.protocol.Enums;
-import se.jadestone.dicearena.game.telesina.network.protocol.ExposePrivateCards;
-import se.jadestone.dicearena.game.telesina.network.protocol.HandEnd;
-import se.jadestone.dicearena.game.telesina.network.protocol.InformRoundEnded;
-import se.jadestone.dicearena.game.telesina.network.protocol.PerformAction;
-import se.jadestone.dicearena.game.telesina.network.protocol.PlayerPokerStatus;
-import se.jadestone.dicearena.game.telesina.network.protocol.Pot;
-import se.jadestone.dicearena.game.telesina.network.protocol.RequestAction;
-import se.jadestone.dicearena.game.telesina.network.protocol.StartNewHand;
+import se.jadestone.dicearena.game.poker.network.protocol.DealPrivateCards;
+import se.jadestone.dicearena.game.poker.network.protocol.DealPublicCards;
+import se.jadestone.dicearena.game.poker.network.protocol.DealerButton;
+import se.jadestone.dicearena.game.poker.network.protocol.Enums;
+import se.jadestone.dicearena.game.poker.network.protocol.ExposePrivateCards;
+import se.jadestone.dicearena.game.poker.network.protocol.HandEnd;
+import se.jadestone.dicearena.game.poker.network.protocol.InformRoundEnded;
+import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
+import se.jadestone.dicearena.game.poker.network.protocol.PlayerPokerStatus;
+import se.jadestone.dicearena.game.poker.network.protocol.Pot;
+import se.jadestone.dicearena.game.poker.network.protocol.RequestAction;
+import se.jadestone.dicearena.game.poker.network.protocol.StartNewHand;
 import ca.ualberta.cs.poker.Card;
 
 import com.cubeia.backoffice.accounting.api.Money;

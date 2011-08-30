@@ -29,7 +29,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.apache.log4j.MDC;
 
-import se.jadestone.dicearena.game.telesina.network.protocol.TournamentOut;
+import se.jadestone.dicearena.game.poker.network.protocol.TournamentOut;
 
 import com.cubeia.firebase.api.action.UnseatPlayersMttAction.Reason;
 import com.cubeia.firebase.api.action.mtt.MttDataAction;

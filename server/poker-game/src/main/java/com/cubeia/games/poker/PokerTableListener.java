@@ -24,8 +24,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import se.jadestone.dicearena.game.telesina.network.protocol.StartHandHistory;
-import se.jadestone.dicearena.game.telesina.network.protocol.StopHandHistory;
+import se.jadestone.dicearena.game.poker.network.protocol.StartHandHistory;
+import se.jadestone.dicearena.game.poker.network.protocol.StopHandHistory;
 
 import com.cubeia.backoffice.accounting.api.Money;
 import com.cubeia.firebase.api.action.GameAction;

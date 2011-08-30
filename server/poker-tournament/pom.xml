@@ -27,7 +27,7 @@
       <artifactId>poker-protocol</artifactId>
       -->
       <groupId>se.jadestone.dicearena</groupId>
-      <artifactId>telesina-protocol</artifactId>
+      <artifactId>poker-protocol</artifactId>
     </dependency>
     <dependency>
       <groupId>com.cubeia.games</groupId>
