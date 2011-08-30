@@ -38,10 +38,7 @@ public class HandResultCalculator implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	@SuppressWarnings("unused")
 	private static Logger log = Logger.getLogger(HandResultCalculator.class);
-	
-
 	
 	/**
 	 * Gets a map mapping the results of each player.

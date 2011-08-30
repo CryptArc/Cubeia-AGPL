@@ -15,7 +15,6 @@ import static com.cubeia.poker.hand.Rank.THREE;
 import static com.cubeia.poker.hand.Rank.TWO;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 import org.junit.Test;
 

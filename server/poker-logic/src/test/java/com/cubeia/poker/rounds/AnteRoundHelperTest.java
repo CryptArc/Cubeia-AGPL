@@ -3,8 +3,6 @@ package com.cubeia.poker.rounds;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -22,7 +20,6 @@ import org.mockito.Mockito;
 
 import com.cubeia.poker.GameType;
 import com.cubeia.poker.action.ActionRequest;
-import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.player.PokerPlayer;

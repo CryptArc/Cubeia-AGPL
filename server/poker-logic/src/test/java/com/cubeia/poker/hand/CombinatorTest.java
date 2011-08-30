@@ -18,10 +18,6 @@ public class CombinatorTest {
 		Combinator<Card> combinator = new Combinator<Card>(set, 2);
 		List<List<Card>> combinations = combinator.getAsList();
 
-//		for (List<Card> cards : combinations) {
-//			System.out.println(cards);
-//		}
-
 		assertEquals(3, combinations.size());
 
 		assertTrue( findInCombination(combinations, new Hand("2s 3s")) );
@@ -36,10 +32,6 @@ public class CombinatorTest {
 		List<Card> set = new Hand("2s 3s 4s 5s 6s 7s 8s").getCards();
 		Combinator<Card> combinator = new Combinator<Card>(set, 5);
 		List<List<Card>> combinations = combinator.getAsList();
-
-//		for (List<Card> cards : combinations) {
-//			System.out.println(cards);
-//		}
 
 		assertEquals(21, combinations.size());
 		assertTrue( findInCombination(combinations, new Hand("2s 3s 6s 7s 8s")) );

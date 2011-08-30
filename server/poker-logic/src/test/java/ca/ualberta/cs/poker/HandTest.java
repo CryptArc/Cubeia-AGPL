@@ -19,7 +19,7 @@ public class HandTest {
 		
 		hand.addCard(card1);
 		
-		Card card = hand.getCard(1);
+//		Card card = hand.getCard(1);
 		// FIXME: Fix test with proper deck ID:s
 		// Assert.assertEquals(1, card.getDeckId());
 	}
