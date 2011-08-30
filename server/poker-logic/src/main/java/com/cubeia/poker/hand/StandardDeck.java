@@ -14,7 +14,8 @@ import java.util.List;
  * @author w
  */
 public class StandardDeck implements Deck {
-
+    private static final long serialVersionUID = -3518540450503808264L;
+    
     private List<Card> cards;
     private int currentCardIndex = 0;
 
@@ -49,4 +50,8 @@ public class StandardDeck implements Deck {
         return currentCardIndex >= cards.size();
     }
 
+    @Override
+    public List<Card> getAllCards() {
+        return new ArrayList<Card>(cards);
+    }
 }

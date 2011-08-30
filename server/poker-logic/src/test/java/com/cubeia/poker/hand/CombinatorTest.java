@@ -18,9 +18,9 @@ public class CombinatorTest {
 		Combinator<Card> combinator = new Combinator<Card>(set, 2);
 		List<List<Card>> combinations = combinator.getAsList();
 
-		for (List<Card> cards : combinations) {
-			System.out.println(cards);
-		}
+//		for (List<Card> cards : combinations) {
+//			System.out.println(cards);
+//		}
 
 		assertEquals(3, combinations.size());
 
@@ -37,9 +37,9 @@ public class CombinatorTest {
 		Combinator<Card> combinator = new Combinator<Card>(set, 5);
 		List<List<Card>> combinations = combinator.getAsList();
 
-		for (List<Card> cards : combinations) {
-			System.out.println(cards);
-		}
+//		for (List<Card> cards : combinations) {
+//			System.out.println(cards);
+//		}
 
 		assertEquals(21, combinations.size());
 		assertTrue( findInCombination(combinations, new Hand("2s 3s 6s 7s 8s")) );

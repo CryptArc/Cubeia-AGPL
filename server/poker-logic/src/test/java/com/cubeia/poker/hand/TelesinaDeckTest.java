@@ -20,26 +20,67 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-public class StandardDeckTest {
+public class TelesinaDeckTest {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Test
     public void testConstruction() {
         Shuffler<Card> shuffler = mock(Shuffler.class);
-        new StandardDeck(shuffler);
+        new TelesinaDeck(shuffler, 6);
         
         ArgumentCaptor<List> listCaptor = ArgumentCaptor.forClass(List.class);
         verify(shuffler).shuffle(listCaptor.capture());
-        assertThat(listCaptor.getValue().size(), is(52));
+        assertThat(listCaptor.getValue().size(), is(40));
     }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void calculateRanksToUse() {
+        Shuffler<Card> shuffler = mock(Shuffler.class);
+        TelesinaDeck deck = new TelesinaDeck(shuffler, 10);
+        
+        List<Rank> ranks = deck.calculateRanksToUse(2);
+        assertThat(ranks.get(0), is(Rank.NINE));
+        assertThat(ranks.size(), is(6));
+
+        ranks = deck.calculateRanksToUse(3);
+        assertThat(ranks.get(0), is(Rank.EIGHT));
+        assertThat(ranks.size(), is(7));
+        
+        ranks = deck.calculateRanksToUse(4);
+        assertThat(ranks.get(0), is(Rank.SEVEN));
+        assertThat(ranks.size(), is(8));
+        
+        ranks = deck.calculateRanksToUse(5);
+        assertThat(ranks.get(0), is(Rank.SIX));
+        assertThat(ranks.size(), is(9));
+        
+        ranks = deck.calculateRanksToUse(6);
+        assertThat(ranks.get(0), is(Rank.FIVE));
+        assertThat(ranks.size(), is(10));
+        
+        ranks = deck.calculateRanksToUse(7);
+        assertThat(ranks.get(0), is(Rank.FOUR));
+        assertThat(ranks.size(), is(11));
+        
+        ranks = deck.calculateRanksToUse(10);
+        assertThat(ranks.get(0), is(Rank.TWO));
+        assertThat(ranks.size(), is(Rank.values().length));
+    }
+    
     
     @SuppressWarnings("unchecked")
     @Test
     public void testCreateDeck() {
         Shuffler<Card> shuffler = mock(Shuffler.class);
-        StandardDeck deck = new StandardDeck(shuffler);
+        TelesinaDeck deck = new TelesinaDeck(shuffler, 4);
         
-        List<Card> cards = deck.createDeck();
+        List<Card> cards = deck.createDeck(4);
+        assertThat(cards, notNullValue());
+        assertThat(cards.size(), is(32));
+        assertThat(new HashSet<Card>(cards).size(), is(32));
+        
+        cards = deck.createDeck(10);
         assertThat(cards, notNullValue());
         assertThat(cards.size(), is(52));
         assertThat(new HashSet<Card>(cards).size(), is(52));
@@ -53,7 +94,7 @@ public class StandardDeckTest {
         Card card2 = new Card(QUEEN, DIAMONDS);
         when(shuffler.shuffle(Mockito.anyList())).thenReturn(Arrays.asList(card1, card2));
         
-        StandardDeck deck = new StandardDeck(shuffler);
+        TelesinaDeck deck = new TelesinaDeck(shuffler, 4);
         assertThat(deck.isEmpty(), is(false));
         assertThat(deck.deal(), is(card1));
         assertThat(deck.isEmpty(), is(false));
@@ -67,7 +108,7 @@ public class StandardDeckTest {
         Shuffler<Card> shuffler = mock(Shuffler.class);
         when(shuffler.shuffle(Mockito.anyList())).thenReturn(Collections.<Card>emptyList());
         
-        StandardDeck deck = new StandardDeck(shuffler);
+        TelesinaDeck deck = new TelesinaDeck(shuffler, 4);
         assertThat(deck.isEmpty(), is(true));
         deck.deal();
     }
@@ -79,7 +120,7 @@ public class StandardDeckTest {
         Card card1 = new Card(KING, CLUBS);
         Card card2 = new Card(QUEEN, DIAMONDS);
         when(shuffler.shuffle(Mockito.anyList())).thenReturn(Arrays.asList(card1, card2));
-        StandardDeck deck = new StandardDeck(shuffler);
+        TelesinaDeck deck = new TelesinaDeck(shuffler, 4);
         
         assertThat(deck.getAllCards().size(), is(2));
         deck.deal();
