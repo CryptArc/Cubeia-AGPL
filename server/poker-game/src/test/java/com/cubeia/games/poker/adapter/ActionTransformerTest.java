@@ -23,13 +23,13 @@ import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
+import se.jadestone.dicearena.game.telesina.network.protocol.CardToDeal;
+import se.jadestone.dicearena.game.telesina.network.protocol.DealPrivateCards;
+import se.jadestone.dicearena.game.telesina.network.protocol.Enums;
+import se.jadestone.dicearena.game.telesina.network.protocol.HandEnd;
 import ca.ualberta.cs.poker.Card;
 import ca.ualberta.cs.poker.Hand;
 
-import com.cubeia.games.poker.io.protocol.CardToDeal;
-import com.cubeia.games.poker.io.protocol.DealPrivateCards;
-import com.cubeia.games.poker.io.protocol.Enums;
-import com.cubeia.games.poker.io.protocol.HandEnd;
 import com.cubeia.poker.model.PlayerHands;
 
 public class ActionTransformerTest extends TestCase {

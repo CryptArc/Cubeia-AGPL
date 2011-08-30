@@ -17,30 +17,30 @@
 
 package com.cubeia.games.poker.handler;
 
-import com.cubeia.games.poker.io.protocol.AamsSessionInfoPacket;
-import com.cubeia.games.poker.io.protocol.BestHand;
-import com.cubeia.games.poker.io.protocol.CardToDeal;
-import com.cubeia.games.poker.io.protocol.DealPrivateCards;
-import com.cubeia.games.poker.io.protocol.DealPublicCards;
-import com.cubeia.games.poker.io.protocol.DealerButton;
-import com.cubeia.games.poker.io.protocol.ExposePrivateCards;
-import com.cubeia.games.poker.io.protocol.GameCard;
-import com.cubeia.games.poker.io.protocol.HandEnd;
-import com.cubeia.games.poker.io.protocol.InformRoundEnded;
-import com.cubeia.games.poker.io.protocol.PacketVisitor;
-import com.cubeia.games.poker.io.protocol.PerformAction;
-import com.cubeia.games.poker.io.protocol.PlayerAction;
-import com.cubeia.games.poker.io.protocol.PlayerBalance;
-import com.cubeia.games.poker.io.protocol.PlayerPokerStatus;
-import com.cubeia.games.poker.io.protocol.PlayerSitinRequest;
-import com.cubeia.games.poker.io.protocol.PlayerSitoutRequest;
-import com.cubeia.games.poker.io.protocol.PlayerState;
-import com.cubeia.games.poker.io.protocol.Pot;
-import com.cubeia.games.poker.io.protocol.RequestAction;
-import com.cubeia.games.poker.io.protocol.StartHandHistory;
-import com.cubeia.games.poker.io.protocol.StartNewHand;
-import com.cubeia.games.poker.io.protocol.StopHandHistory;
-import com.cubeia.games.poker.io.protocol.TournamentOut;
+import se.jadestone.dicearena.game.telesina.network.protocol.AamsSessionInfoPacket;
+import se.jadestone.dicearena.game.telesina.network.protocol.BestHand;
+import se.jadestone.dicearena.game.telesina.network.protocol.CardToDeal;
+import se.jadestone.dicearena.game.telesina.network.protocol.DealPrivateCards;
+import se.jadestone.dicearena.game.telesina.network.protocol.DealPublicCards;
+import se.jadestone.dicearena.game.telesina.network.protocol.DealerButton;
+import se.jadestone.dicearena.game.telesina.network.protocol.ExposePrivateCards;
+import se.jadestone.dicearena.game.telesina.network.protocol.GameCard;
+import se.jadestone.dicearena.game.telesina.network.protocol.HandEnd;
+import se.jadestone.dicearena.game.telesina.network.protocol.InformRoundEnded;
+import se.jadestone.dicearena.game.telesina.network.protocol.PacketVisitor;
+import se.jadestone.dicearena.game.telesina.network.protocol.PerformAction;
+import se.jadestone.dicearena.game.telesina.network.protocol.PlayerAction;
+import se.jadestone.dicearena.game.telesina.network.protocol.PlayerBalance;
+import se.jadestone.dicearena.game.telesina.network.protocol.PlayerPokerStatus;
+import se.jadestone.dicearena.game.telesina.network.protocol.PlayerSitinRequest;
+import se.jadestone.dicearena.game.telesina.network.protocol.PlayerSitoutRequest;
+import se.jadestone.dicearena.game.telesina.network.protocol.PlayerState;
+import se.jadestone.dicearena.game.telesina.network.protocol.Pot;
+import se.jadestone.dicearena.game.telesina.network.protocol.RequestAction;
+import se.jadestone.dicearena.game.telesina.network.protocol.StartHandHistory;
+import se.jadestone.dicearena.game.telesina.network.protocol.StartNewHand;
+import se.jadestone.dicearena.game.telesina.network.protocol.StopHandHistory;
+import se.jadestone.dicearena.game.telesina.network.protocol.TournamentOut;
 
 public class DefaultPokerHandler implements PacketVisitor {
 	

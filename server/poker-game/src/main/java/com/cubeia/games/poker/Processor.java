@@ -21,6 +21,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import se.jadestone.dicearena.game.telesina.network.protocol.ProtocolObjectFactory;
+
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.action.GameObjectAction;
@@ -32,7 +34,6 @@ import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.cache.ActionCache;
 import com.cubeia.games.poker.handler.PokerHandler;
 import com.cubeia.games.poker.handler.Trigger;
-import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
 import com.cubeia.games.poker.jmx.PokerStats;
 import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.poker.PokerState;

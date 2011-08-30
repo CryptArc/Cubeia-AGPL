@@ -19,12 +19,13 @@ package com.cubeia.games.poker.handler;
 
 import org.apache.log4j.Logger;
 
+import se.jadestone.dicearena.game.telesina.network.protocol.PerformAction;
+import se.jadestone.dicearena.game.telesina.network.protocol.PlayerSitinRequest;
+import se.jadestone.dicearena.game.telesina.network.protocol.PlayerSitoutRequest;
+
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.games.poker.FirebaseState;
 import com.cubeia.games.poker.adapter.ActionTransformer;
-import com.cubeia.games.poker.io.protocol.PerformAction;
-import com.cubeia.games.poker.io.protocol.PlayerSitinRequest;
-import com.cubeia.games.poker.io.protocol.PlayerSitoutRequest;
 import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.PokerAction;

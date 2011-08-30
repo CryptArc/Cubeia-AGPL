@@ -22,8 +22,12 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <!--
       <groupId>com.cubeia.games</groupId>
       <artifactId>poker-protocol</artifactId>
+      -->
+      <groupId>se.jadestone.dicearena</groupId>
+      <artifactId>telesina-protocol</artifactId>
     </dependency>
     <dependency>
       <groupId>com.cubeia.games</groupId>

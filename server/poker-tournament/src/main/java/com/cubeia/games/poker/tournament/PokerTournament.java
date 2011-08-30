@@ -23,11 +23,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.MDC;
+
+import se.jadestone.dicearena.game.telesina.network.protocol.TournamentOut;
 
 import com.cubeia.firebase.api.action.UnseatPlayersMttAction.Reason;
 import com.cubeia.firebase.api.action.mtt.MttDataAction;
@@ -45,7 +47,6 @@ import com.cubeia.firebase.api.mtt.support.registry.PlayerInterceptor;
 import com.cubeia.firebase.api.mtt.support.registry.PlayerListener;
 import com.cubeia.firebase.api.mtt.support.tables.Move;
 import com.cubeia.firebase.api.mtt.support.tables.TableBalancer;
-import com.cubeia.games.poker.io.protocol.TournamentOut;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.state.PokerTournamentStatus;
 import com.cubeia.games.poker.tournament.util.ProtocolFactory;

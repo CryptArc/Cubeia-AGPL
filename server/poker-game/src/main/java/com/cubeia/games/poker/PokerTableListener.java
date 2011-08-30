@@ -24,6 +24,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import se.jadestone.dicearena.game.telesina.network.protocol.StartHandHistory;
+import se.jadestone.dicearena.game.telesina.network.protocol.StopHandHistory;
+
 import com.cubeia.backoffice.accounting.api.Money;
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.GameDataAction;
@@ -35,8 +38,6 @@ import com.cubeia.firebase.api.game.table.TournamentTableListener;
 import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.games.poker.adapter.ActionTransformer;
 import com.cubeia.games.poker.cache.ActionCache;
-import com.cubeia.games.poker.io.protocol.StartHandHistory;
-import com.cubeia.games.poker.io.protocol.StopHandHistory;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.games.poker.util.ProtocolFactory;
 import com.cubeia.games.poker.util.WalletAmountConverter;

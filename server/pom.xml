@@ -76,9 +76,14 @@
     </dependency>
 
     <dependency>
+      <!--
       <groupId>com.cubeia.games</groupId>
       <artifactId>poker-protocol</artifactId>
       <version>${project.version}</version>
+      -->
+      <groupId>se.jadestone.dicearena</groupId>
+      <artifactId>telesina-protocol</artifactId>
+      <version>1-TRUNK-SNAPSHOT</version>
     </dependency>
     
     <dependency>
