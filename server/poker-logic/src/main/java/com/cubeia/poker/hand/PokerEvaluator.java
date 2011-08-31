@@ -45,7 +45,7 @@ public class PokerEvaluator  {
 				handStrength = getBestCombinationHandStrength(hand);
 				
 			} else {
-				throw new IllegalArgumentException("The hand[] has less than 5 cards and is invalid for evaluation");
+			    handStrength = new HandStrength(HandType.NOT_RANKED);
 			}
 			
 			hand.setHandStrength(handStrength);

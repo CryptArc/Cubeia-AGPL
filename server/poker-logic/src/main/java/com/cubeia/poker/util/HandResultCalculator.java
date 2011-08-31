@@ -186,6 +186,8 @@ public class HandResultCalculator implements Serializable {
 		        // split pot
 		        winners.add(pid);
 		    }
+		    
+		    previousHand = hand;
 		}
 		
 		return winners;
