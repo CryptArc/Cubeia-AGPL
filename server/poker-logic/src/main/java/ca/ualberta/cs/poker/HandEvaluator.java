@@ -31,6 +31,7 @@ package ca.ualberta.cs.poker;
  * @author Aaron Davidson, Darse Billings, Denis Papp
  */
 
+@Deprecated
 public class HandEvaluator {
 
 	private final static int unknown = -1;

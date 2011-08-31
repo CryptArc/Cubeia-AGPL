@@ -38,6 +38,7 @@ import com.cubeia.poker.rng.MersenneTwisterFast;
  *  @author  Aaron Davidson
  */
 
+@Deprecated
 public class Deck implements Serializable {
 
 	private static final long serialVersionUID = 1L;

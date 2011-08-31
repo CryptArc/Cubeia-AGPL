@@ -39,6 +39,7 @@ import java.util.StringTokenizer;
  * @author  Aaron Davidson
  */
 
+@Deprecated
 public class Hand implements Serializable {
 
 	private static final long serialVersionUID = 1L;

@@ -57,7 +57,7 @@ Ac = 12    Ad = 25    Ah = 38    As = 51
 
  */
 
-
+@Deprecated
 public class Card implements Serializable {
 
 	private static final long serialVersionUID = 1L;
