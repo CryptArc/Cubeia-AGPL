@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ca.ualberta.cs.poker.Hand;
+import com.cubeia.poker.hand.Hand;
 
 /**
  * DTO for sending all hands to the server layer.

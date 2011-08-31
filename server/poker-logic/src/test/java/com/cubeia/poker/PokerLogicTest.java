@@ -19,13 +19,12 @@ package com.cubeia.poker;
 
 import java.util.List;
 
-import ca.ualberta.cs.poker.Card;
-
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
+import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.pot.Pot;
@@ -170,9 +169,9 @@ public class PokerLogicTest extends GuiceTest {
 		act(p[1], PokerActionType.DECLINE_ENTRY_BET);
 		act(p[2], PokerActionType.BIG_BLIND);
 
-		assertEquals(2, mp[0].getPocketCards().size());
+		assertEquals(2, mp[0].getPocketCards().getCards().size());
 		assertTrue(mp[1].isSittingOut());
-		assertEquals(0, mp[1].getPocketCards().size());
+		assertEquals(0, mp[1].getPocketCards().getCards().size());
 		
 		act(p[0], PokerActionType.FOLD);
 		assertTrue(game.isFinished());		
@@ -500,7 +499,7 @@ public class PokerLogicTest extends GuiceTest {
 	private void assertAllPlayersHaveCards(PokerPlayer[] p,
 			int expectedNumberOfCards) {
 		for (PokerPlayer pl : p) {
-			assertEquals(expectedNumberOfCards, pl.getPocketCards().size());
+			assertEquals(expectedNumberOfCards, pl.getPocketCards().getCards().size());
 		}
 	}
 

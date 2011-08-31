@@ -29,8 +29,6 @@ import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 
-import ca.ualberta.cs.poker.Card;
-
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
@@ -38,6 +36,7 @@ import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.gametypes.PokerVariant;
 import com.cubeia.poker.gametypes.Telesina;
 import com.cubeia.poker.gametypes.TexasHoldem;
+import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.player.SitOutStatus;
@@ -146,6 +145,8 @@ public class PokerState implements Serializable, IPokerState {
 
 	private PokerVariant variant;
 
+    private int tableSize;
+
 	public PokerState() {}
 
 	public String toString() {
@@ -157,6 +158,7 @@ public class PokerState implements Serializable, IPokerState {
 		anteLevel = settings.getAnteLevel();
 		timing = settings.getTiming();
 		variant = settings.getVariant();
+		tableSize = settings.getTableSize();
 		
 		gameType = createGameTypeByVariant(variant);
 		
@@ -397,6 +399,10 @@ public class PokerState implements Serializable, IPokerState {
 	public PokerVariant getVariant() {
 		return variant;
 	}
+	
+	public int getTableSize() {
+        return tableSize;
+    }
 	
 	public boolean isTournamentTable() {
 		return tournamentTable;

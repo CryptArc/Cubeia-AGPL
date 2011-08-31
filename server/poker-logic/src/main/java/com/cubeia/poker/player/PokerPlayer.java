@@ -19,11 +19,10 @@ package com.cubeia.poker.player;
 
 import java.io.Serializable;
 
-import ca.ualberta.cs.poker.Card;
-import ca.ualberta.cs.poker.Hand;
-
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PossibleAction;
+import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.Hand;
 
 public interface PokerPlayer extends Serializable {
 

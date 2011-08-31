@@ -51,7 +51,7 @@ public abstract class GuiceTest extends TestCase {
 	protected void setupDefaultGame() {
 		mockServerAdapter = new MockServerAdapter();
 		
-		PokerSettings settings = new PokerSettings(100, TimingFactory.getRegistry().getTimingProfile(MINIMUM_DELAY), TEXAS_HOLDEM);
+		PokerSettings settings = new PokerSettings(100, TimingFactory.getRegistry().getTimingProfile(MINIMUM_DELAY), TEXAS_HOLDEM, 6);
 		game = injector.getInstance(PokerState.class);
 		game.setServerAdapter(mockServerAdapter);
 		game.init(settings);

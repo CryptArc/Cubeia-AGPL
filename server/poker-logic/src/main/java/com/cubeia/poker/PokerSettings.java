@@ -7,25 +7,29 @@ import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
 
 public class PokerSettings {
-	private int anteLevel = -1;
-	private TimingProfile timing = TimingFactory.getRegistry().getDefaultTimingProfile();
-	private PokerVariant variant = PokerVariant.TEXAS_HOLDEM;
+	private final int anteLevel;
+	private final TimingProfile timing;
+	private final PokerVariant variant;
+    private final int tableSize;
 	
-	private PokerSettings() {}
+//	private PokerSettings() {
+//	    this(-1, TimingFactory.getRegistry().getDefaultTimingProfile(), PokerVariant.TEXAS_HOLDEM, 6);
+//	}
 	
-	public PokerSettings(int anteLevel, TimingProfile timing, PokerVariant variant) {
+	public PokerSettings(int anteLevel, TimingProfile timing, PokerVariant variant, int tableSize) {
 		this.anteLevel = anteLevel;
 		this.timing = timing;
 		this.variant = variant;
+        this.tableSize = tableSize;
 	}
 	
-	public static PokerSettings createDefaultTexasHoldemSettings() {
-		return new PokerSettings();
-	}
+//	public static PokerSettings createDefaultTexasHoldemSettings() {
+//		return new PokerSettings();
+//	}
 	
-	public static PokerSettings createDefaultTelesinaSettings() {
-		return new PokerSettings(-1, TimingFactory.getRegistry().getDefaultTimingProfile(), TELESINA);
-	}
+//	public static PokerSettings createDefaultTelesinaSettings() {
+//		return new PokerSettings(-1, TimingFactory.getRegistry().getDefaultTimingProfile(), TELESINA);
+//	}
 
 	public int getAnteLevel() {
 		return anteLevel;
@@ -38,4 +42,8 @@ public class PokerSettings {
 	public PokerVariant getVariant() {
 		return variant;
 	}
+	
+	public int getTableSize() {
+        return tableSize;
+    }
 }

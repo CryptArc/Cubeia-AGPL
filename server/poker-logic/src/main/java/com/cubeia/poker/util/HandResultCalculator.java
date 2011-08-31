@@ -25,14 +25,14 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import ca.ualberta.cs.poker.Hand;
-import ca.ualberta.cs.poker.HandEvaluator;
-
+import com.cubeia.poker.hand.Hand;
+import com.cubeia.poker.hand.PokerEvaluator;
 import com.cubeia.poker.model.PlayerHands;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.result.Result;
+import com.google.common.collect.ImmutableBiMap;
 
 public class HandResultCalculator implements Serializable {
 
@@ -159,20 +159,35 @@ public class HandResultCalculator implements Serializable {
 	private List<Integer> getWinners(PlayerHands hands) {
 		List<Integer> winners = new ArrayList<Integer>();
 		
-		int highestRank = -1;
+//		int highestRank = -1;
+//		
+//		for (Integer pid : hands.getHands().keySet()) {
+//			Hand hand = hands.getHands().get(pid);
+//			int rank = HandEvaluator.rankHand(hand);
+//			if (rank > highestRank) {
+//				winners.clear();
+//				highestRank = rank;
+//				winners.add(pid);
+//			} else if (rank == highestRank) {
+//				// Split pot
+//				winners.add(pid);
+//			}
+//		}
+//		
 		
-		for (Integer pid : hands.getHands().keySet()) {
-			Hand hand = hands.getHands().get(pid);
-			int rank = HandEvaluator.rankHand(hand);
-			if (rank > highestRank) {
-				winners.clear();
-				highestRank = rank;
-				winners.add(pid);
-			} else if (rank == highestRank) {
-				// Split pot
-				winners.add(pid);
-			}
+		ImmutableBiMap<Integer, Hand> pidToHand = ImmutableBiMap.copyOf(hands.getHands());
+		List<Hand> rankedHands = new PokerEvaluator().rankHands(new ArrayList<Hand>(pidToHand.values()));
+		Hand previousHand = null;
+		
+		for (Hand hand : rankedHands) {
+		    Integer pid = pidToHand.inverse().get(hand);
+		    
+		    if (previousHand == null  ||  hand.compareTo(previousHand) == 0) {
+		        // split pot
+		        winners.add(pid);
+		    }
 		}
+		
 		return winners;
 	}
 }

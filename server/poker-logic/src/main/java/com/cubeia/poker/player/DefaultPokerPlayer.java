@@ -19,11 +19,10 @@ package com.cubeia.poker.player;
 
 import org.apache.log4j.Logger;
 
-import ca.ualberta.cs.poker.Card;
-import ca.ualberta.cs.poker.Hand;
-
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PossibleAction;
+import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.Hand;
 
 public class DefaultPokerPlayer implements PokerPlayer {
 
@@ -141,7 +140,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	}
 
 	public void clearHand() {
-		pocketCards.makeEmpty();
+		pocketCards.clear();
 	}
 
 	public void enableOption(PossibleAction option) {

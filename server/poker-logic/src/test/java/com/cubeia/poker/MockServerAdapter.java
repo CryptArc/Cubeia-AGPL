@@ -23,12 +23,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import ca.ualberta.cs.poker.Card;
-
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
+import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.model.PlayerHands;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;

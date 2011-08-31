@@ -2,6 +2,7 @@ package com.cubeia.poker.hand;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -15,6 +16,8 @@ public class Hand implements Comparable<Hand>, Serializable {
 	private List<Card> cards = new ArrayList<Card>();
 	
 	private HandStrength handStrength = new HandStrength(HandType.NOT_RANKED);
+	
+	public Hand() {}
 	
 	public Hand(String cs) {
 		StringTokenizer t = new StringTokenizer(cs," -");
@@ -48,6 +51,10 @@ public class Hand implements Comparable<Hand>, Serializable {
 		cards.add(card);
 	}
 	
+    public void addCards(Collection<Card> cardsToAdd) {
+        cards.addAll(cardsToAdd);
+    }
+	
 	/**
 	 * Sort all cards in an descending order.
 	 * 
@@ -79,4 +86,9 @@ public class Hand implements Comparable<Hand>, Serializable {
 	public int compareTo(Hand other) {
 		return handStrength.compareTo(other.getHandStrength());
 	}
+
+    public void clear() {
+        cards.clear();
+    }
+
 }

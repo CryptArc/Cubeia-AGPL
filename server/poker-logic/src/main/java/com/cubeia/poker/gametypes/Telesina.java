@@ -26,10 +26,6 @@ import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.ualberta.cs.poker.Card;
-import ca.ualberta.cs.poker.Deck;
-import ca.ualberta.cs.poker.Hand;
-
 import com.cubeia.poker.GameType;
 import com.cubeia.poker.IPokerState;
 import com.cubeia.poker.PokerState;
@@ -37,6 +33,11 @@ import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
+import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.Deck;
+import com.cubeia.poker.hand.Hand;
+import com.cubeia.poker.hand.Shuffler;
+import com.cubeia.poker.hand.TelesinaDeck;
 import com.cubeia.poker.model.PlayerHands;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.result.HandResult;
@@ -94,10 +95,7 @@ public class Telesina implements GameType, RoundVisitor {
 	private void initHand() {	
 		log.debug("init hand");
 		
-		// TODO: use Telesina deck here, size of deck is determined by table size (or players in hand)
-		deck = new Deck(getRandom().nextInt());
-		// FIXME: Use better seed for the shuffle
-		deck.shuffle();
+		deck = new TelesinaDeck(new Shuffler<Card>(getRandom()), state.getTableSize());
 		
 		blindsInfo.setAnteLevel(state.getAnteLevel());
 		
@@ -128,7 +126,7 @@ public class Telesina implements GameType, RoundVisitor {
 
 	private void dealPocketCards(PokerPlayer p, int n) {
 		for (int i = 0; i < n; i++) {
-			p.getPocketCards().addCard(deck.dealCard());
+			p.getPocketCards().addCard(deck.deal());
 		}
 		state.notifyPrivateCards(p.getId(), p.getPocketCards().getCards());
 	}
@@ -136,7 +134,7 @@ public class Telesina implements GameType, RoundVisitor {
 	private void dealExposedCards(PokerPlayer p, int n) {
 		ArrayList<Card> cardsDealt = new ArrayList<Card>();
 		for (int i = 0; i < n; i++) {
-			Card card = deck.dealCard();
+			Card card = deck.deal();
 			cardsDealt.add(card);
 			p.getPocketCards().addCard(card);
 		}
@@ -148,7 +146,7 @@ public class Telesina implements GameType, RoundVisitor {
 	private void dealCommunityCards(int n) {
 		List<Card> dealt = new LinkedList<Card>();
 		for (int i = 0; i < n; i++) {
-			dealt.add(deck.dealCard());
+			dealt.add(deck.deal());
 		}
 		state.getCommunityCards().addAll(dealt);
 		state.notifyCommunityCards(dealt);

@@ -27,9 +27,9 @@ import se.jadestone.dicearena.game.poker.network.protocol.CardToDeal;
 import se.jadestone.dicearena.game.poker.network.protocol.DealPrivateCards;
 import se.jadestone.dicearena.game.poker.network.protocol.Enums;
 import se.jadestone.dicearena.game.poker.network.protocol.HandEnd;
-import ca.ualberta.cs.poker.Card;
-import ca.ualberta.cs.poker.Hand;
 
+import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.model.PlayerHands;
 
 public class ActionTransformerTest extends TestCase {

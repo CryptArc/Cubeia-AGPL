@@ -6,7 +6,7 @@ package com.cubeia.poker.hand;
  * <p>This class implements Comparable which will sort the cards according
  * to rank first and suit secondly. The suits are sorted according to the
  * ordinals of the suits as defined in the Suit enum class.</p> 
- *
+ * 
  * @author Fredrik Johansson, Cubeia Ltd
  */
 public class Card implements Comparable<Card> {
@@ -15,10 +15,30 @@ public class Card implements Comparable<Card> {
 	
 	private final Rank rank;
 	
+	private final Integer id;
+	
+	/**
+	 * Creates an anonymous card.
+	 * @param rank the rank
+	 * @param suit the suid
+	 */
 	public Card(Rank rank, Suit suit) {
 		this.rank = rank;
 		this.suit = suit;
+		this.id = null;
 	}
+	
+	/**
+	 * Creates an identifiable card.
+	 * @param id id of the card
+	 * @param rank the rank
+	 * @param suit the suit
+	 */
+    public Card(Integer id, Rank rank, Suit suit) {
+        this.rank = rank;
+        this.suit = suit;
+        this.id = id;
+    }
 	
 	/**
 	 * Shorthand value, 
@@ -29,6 +49,7 @@ public class Card implements Comparable<Card> {
 	public Card(String s) {
 		 rank = Rank.fromShortString(s.charAt(0));
 		 suit = Suit.fromShortString(s.charAt(1));
+		 id = null;
 	}
 	
 	public String toString() {
@@ -42,6 +63,10 @@ public class Card implements Comparable<Card> {
 	public Suit getSuit() {
 		return suit;
 	}
+	
+	public Integer getId() {
+        return id;
+    }
 
 	@Override
 	public int compareTo(Card other) {

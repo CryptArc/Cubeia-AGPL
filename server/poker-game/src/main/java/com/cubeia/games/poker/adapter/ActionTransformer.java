@@ -38,9 +38,6 @@ import se.jadestone.dicearena.game.poker.network.protocol.PlayerAction;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerBalance;
 import se.jadestone.dicearena.game.poker.network.protocol.Pot;
 import se.jadestone.dicearena.game.poker.network.protocol.RequestAction;
-import ca.ualberta.cs.poker.Card;
-import ca.ualberta.cs.poker.Hand;
-import ca.ualberta.cs.poker.HandEvaluator;
 
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.games.poker.util.ProtocolFactory;
@@ -48,6 +45,8 @@ import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
+import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.model.PlayerHands;
 import com.cubeia.poker.player.PokerPlayer;
 
@@ -192,11 +191,11 @@ public class ActionTransformer {
 		for (Card card : cards) {
 			GameCard gCard = new GameCard();
 			// gCard.cardId = card.getDeckId();
-			gCard.cardId = card.getIndex(); // FIXME - wrong ID
+			gCard.cardId = card.getId(); // FIXME - wrong ID
 			
 			if (!hidden) {
-				gCard.rank = Enums.Rank.values()[card.getRank()];
-				gCard.suit = Enums.Suit.values()[card.getSuit()];
+				gCard.rank = Enums.Rank.values()[card.getRank().ordinal()];
+				gCard.suit = Enums.Suit.values()[card.getSuit().ordinal()];
 			} else {
 				gCard.rank = Enums.Rank.HIDDEN;
 				gCard.suit = Enums.Suit.HIDDEN;
@@ -216,10 +215,10 @@ public class ActionTransformer {
 		for (Card card : cards) {
 			GameCard gCard = new GameCard();
 			
-			gCard.rank = Enums.Rank.values()[card.getRank()];
-			gCard.suit = Enums.Suit.values()[card.getSuit()];
+			gCard.rank = Enums.Rank.values()[card.getRank().ordinal()];
+			gCard.suit = Enums.Suit.values()[card.getSuit().ordinal()];
 			// gCard.cardId = card.getDeckId();
-			gCard.cardId = card.getIndex(); // FIXME - wrong ID
+			gCard.cardId = card.getId(); // FIXME - wrong ID
 			
 			packet.cards.add(gCard);
 		}
@@ -231,10 +230,10 @@ public class ActionTransformer {
 		packet.cards = new LinkedList<CardToDeal>();
 		for (Card card : cards) {
 			GameCard gCard = new GameCard();
-			gCard.rank = Enums.Rank.values()[card.getRank()];
-			gCard.suit = Enums.Suit.values()[card.getSuit()];
+			gCard.rank = Enums.Rank.values()[card.getRank().ordinal()];
+			gCard.suit = Enums.Suit.values()[card.getSuit().ordinal()];
 			// gCard.cardId = card.getDeckId();
-			gCard.cardId = card.getIndex(); // FIXME - wrong ID
+			gCard.cardId = card.getId(); // FIXME - wrong ID
 			
 			CardToDeal deal = new CardToDeal(playerId, gCard);
 			packet.cards.add( deal);
@@ -250,8 +249,11 @@ public class ActionTransformer {
 			BestHand best = new BestHand();
 			best.player = pid;
 			Hand hand = hands.getHands().get(pid);
-			best.rank = HandEvaluator.rankHand(hand);
-			best.name = HandEvaluator.nameHand(hand);
+//			best.rank = HandEvaluator.rankHand(hand);
+//			best.name = HandEvaluator.nameHand(hand);
+			
+			best.rank = -1;
+			best.name = hand.getHandStrength().getHandType().name();
 			
 			packet.hands.add(best);
 		}

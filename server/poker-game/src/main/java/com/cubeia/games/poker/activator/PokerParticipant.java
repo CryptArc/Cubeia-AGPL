@@ -97,7 +97,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
 		super.tableCreated(table, acc);
 		PokerState pokerState = injector.getInstance(PokerState.class);
 
-		PokerSettings settings = new PokerSettings(anteLevel, timingProfile, variant);
+		PokerSettings settings = new PokerSettings(anteLevel, timingProfile, variant, table.getPlayerSet().getSeatingMap().getNumberOfSeats());
 		pokerState.init(settings);
 		pokerState.setAdapterState(new FirebaseState());
 		pokerState.setId(table.getId());

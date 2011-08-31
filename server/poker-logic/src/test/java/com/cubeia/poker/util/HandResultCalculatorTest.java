@@ -21,8 +21,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.TestCase;
-import ca.ualberta.cs.poker.Hand;
 
+import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.model.PlayerHands;
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;

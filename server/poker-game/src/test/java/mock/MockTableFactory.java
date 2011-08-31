@@ -30,7 +30,7 @@ public class MockTableFactory {
 	public static MockTable create() {
 		MockTable table = new MockTable();
 		
-		PokerSettings settings = new PokerSettings(-1, TimingFactory.getRegistry().getTimingProfile(MINIMUM_DELAY), TELESINA);
+		PokerSettings settings = new PokerSettings(-1, TimingFactory.getRegistry().getTimingProfile(MINIMUM_DELAY), TELESINA, 6);
 		
 		PokerState pokerState = new PokerState();
 		pokerState.init(settings);

@@ -103,7 +103,7 @@ public class PokerTournamentTest extends GuiceTest {
 	
 	public void assertAllPlayersHaveCards(PokerPlayer[] p, int expectedNumberOfCards) {
 		for (PokerPlayer pl : p) {
-			assertEquals(expectedNumberOfCards, pl.getPocketCards().size());
+			assertEquals(expectedNumberOfCards, pl.getPocketCards().getCards().size());
 		}
 	}	
 }

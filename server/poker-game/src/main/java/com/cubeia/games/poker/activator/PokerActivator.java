@@ -217,7 +217,7 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
         pokerState.setId(table.getId());
         
         // TODO: must check with variant of poker this is
-        PokerSettings settings = new PokerSettings(-1, timing, PokerVariant.TEXAS_HOLDEM);
+        PokerSettings settings = new PokerSettings(-1, timing, PokerVariant.TEXAS_HOLDEM, table.getPlayerSet().getSeatingMap().getNumberOfSeats());
         
         pokerState.init(settings);
         pokerState.setTournamentTable(true);

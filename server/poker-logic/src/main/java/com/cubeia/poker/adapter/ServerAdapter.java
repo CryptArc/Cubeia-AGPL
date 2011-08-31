@@ -19,10 +19,9 @@ package com.cubeia.poker.adapter;
 
 import java.util.List;
 
-import ca.ualberta.cs.poker.Card;
-
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
+import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.pot.Pot;

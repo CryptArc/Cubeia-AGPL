@@ -191,7 +191,7 @@ public class TournamentTablePokerLogicTest extends GuiceTest {
 	
 	private void assertAllPlayersHaveCards(PokerPlayer[] p, int expectedNumberOfCards, int count) {
 	    for (int i = 0; i < count; i++) {
-			assertEquals(expectedNumberOfCards, p[i].getPocketCards().size());
+			assertEquals(expectedNumberOfCards, p[i].getPocketCards().getCards().size());
 		}
 	}
 

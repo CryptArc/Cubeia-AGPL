@@ -28,7 +28,7 @@ public class GameStateInitialization {
 	public void init() {
 		TimingProfile timing = Mockito.mock(TimingProfile.class);
 		int anteLevel = 1234;
-		PokerSettings settings = new PokerSettings(anteLevel, timing , TELESINA);
+		PokerSettings settings = new PokerSettings(anteLevel, timing , TELESINA, 6);
 		
 		PokerState state = new PokerState();
 		state.init(settings);
@@ -36,6 +36,7 @@ public class GameStateInitialization {
 		assertThat(state.getAnteLevel(), is(anteLevel));
 		assertThat(state.getTimingProfile(), is(timing));
 		assertThat(state.getVariant(), is(TELESINA));
+		assertThat(state.getTableSize(), is(6));
 	}
 	
 }
