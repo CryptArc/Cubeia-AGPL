@@ -58,8 +58,8 @@ public class ActionTransformerTest extends TestCase {
 
 	public void testCreatePrivateVisibleCards() {
 		List<Card> cards = new ArrayList<Card>();
-		cards.add(new Card("AS"));
-		cards.add(new Card("AS"));
+		cards.add(new Card(0, "AS"));
+		cards.add(new Card(1, "AS"));
 		DealPrivateCards privateCards = ActionTransformer.createPrivateCardsPacket(1, cards, false);
 		assertEquals(2, privateCards.cards.size());
 		CardToDeal dealtCard = privateCards.cards.get(0);
@@ -70,8 +70,8 @@ public class ActionTransformerTest extends TestCase {
 	
 	public void testCreatePrivateHiddenCards() {
 		List<Card> cards = new ArrayList<Card>();
-		cards.add(new Card("AS"));
-		cards.add(new Card("AH"));
+		cards.add(new Card(0, "AS"));
+		cards.add(new Card(1, "AH"));
 		DealPrivateCards privateCards = ActionTransformer.createPrivateCardsPacket(1, cards, true);
 		assertEquals(2, privateCards.cards.size());
 		CardToDeal dealtCard = privateCards.cards.get(0);

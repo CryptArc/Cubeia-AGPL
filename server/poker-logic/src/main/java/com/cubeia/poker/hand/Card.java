@@ -47,12 +47,16 @@ public class Card implements Comparable<Card> {
 	 * @param s
 	 */
 	public Card(String s) {
-		 rank = Rank.fromShortString(s.charAt(0));
-		 suit = Suit.fromShortString(s.charAt(1));
-		 id = null;
+	    this(null, s);
 	}
 	
-	public String toString() {
+	public Card(Integer id, String s) {
+        this.rank = Rank.fromShortString(s.charAt(0));
+        this.suit = Suit.fromShortString(s.charAt(1));
+        this.id = id;
+    }
+
+    public String toString() {
 		return rank.toShortString()+suit.toShortString();
 	}
 	
