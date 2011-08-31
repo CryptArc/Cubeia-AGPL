@@ -35,6 +35,7 @@ import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Deck;
 import com.cubeia.poker.hand.Hand;
+import com.cubeia.poker.hand.IndexCardIdGenerator;
 import com.cubeia.poker.hand.Shuffler;
 import com.cubeia.poker.hand.StandardDeck;
 import com.cubeia.poker.model.PlayerHands;
@@ -91,7 +92,7 @@ public class TexasHoldem implements GameType, RoundVisitor {
 	}
 
 	private void initHand() {				
-		deck = new StandardDeck(new Shuffler<Card>(getRandom()));
+		deck = new StandardDeck(new Shuffler<Card>(getRandom()), new IndexCardIdGenerator());
 		
 		currentRound = new BlindsRound(this, state.isTournamentTable());
 		roundId = 0;

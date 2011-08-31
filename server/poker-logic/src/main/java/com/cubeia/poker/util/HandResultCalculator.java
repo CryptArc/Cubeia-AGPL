@@ -26,6 +26,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import com.cubeia.poker.hand.Hand;
+import com.cubeia.poker.hand.HandComparator;
 import com.cubeia.poker.hand.PokerEvaluator;
 import com.cubeia.poker.model.PlayerHands;
 import com.cubeia.poker.player.PokerPlayer;
@@ -159,30 +160,15 @@ public class HandResultCalculator implements Serializable {
 	private List<Integer> getWinners(PlayerHands hands) {
 		List<Integer> winners = new ArrayList<Integer>();
 		
-//		int highestRank = -1;
-//		
-//		for (Integer pid : hands.getHands().keySet()) {
-//			Hand hand = hands.getHands().get(pid);
-//			int rank = HandEvaluator.rankHand(hand);
-//			if (rank > highestRank) {
-//				winners.clear();
-//				highestRank = rank;
-//				winners.add(pid);
-//			} else if (rank == highestRank) {
-//				// Split pot
-//				winners.add(pid);
-//			}
-//		}
-//		
-		
 		ImmutableBiMap<Integer, Hand> pidToHand = ImmutableBiMap.copyOf(hands.getHands());
 		List<Hand> rankedHands = new PokerEvaluator().rankHands(new ArrayList<Hand>(pidToHand.values()));
+		HandComparator handComparator = new HandComparator();
 		Hand previousHand = null;
 		
 		for (Hand hand : rankedHands) {
 		    Integer pid = pidToHand.inverse().get(hand);
 		    
-		    if (previousHand == null  ||  hand.compareTo(previousHand) == 0) {
+		    if (previousHand == null  ||  handComparator.compare(hand, previousHand) == 0) {
 		        // split pot
 		        winners.add(pid);
 		    }

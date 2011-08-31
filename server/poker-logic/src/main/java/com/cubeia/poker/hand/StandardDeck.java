@@ -19,8 +19,10 @@ public class StandardDeck implements Deck {
     private List<Card> cards;
     private int currentCardIndex = 0;
 
-    public StandardDeck(Shuffler<Card> shuffler) {
-        this.cards = shuffler.shuffle(createDeck());
+    public StandardDeck(Shuffler<Card> shuffler, CardIdGenerator idGenerator) {
+        List<Card> vanillaDeck = createDeck();
+        List<Card> shuffledDeck = shuffler.shuffle(vanillaDeck);
+        this.cards = idGenerator.copyAndAssignIds(shuffledDeck);
     }
     
     @SuppressWarnings("unchecked")

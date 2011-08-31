@@ -24,7 +24,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 
-public class HandStrengthTest {
+public class HandStrengthComparatorTest {
 	
 	@Test
 	public void testTrivial() throws Exception {
@@ -40,7 +40,7 @@ public class HandStrengthTest {
 		list.add(strength3);
 		list.add(strength4);
 		
-		Collections.sort(list);
+		Collections.sort(list, new HandStrengthComparator());
 		
 		Assert.assertEquals(STRAIGHT_FLUSH, list.get(0).getHandType());
 		Assert.assertEquals(FULL_HOUSE, list.get(1).getHandType());
@@ -65,7 +65,7 @@ public class HandStrengthTest {
 		list.add(strength2);
 		list.add(strength3);
 		
-		Collections.sort(list);
+		Collections.sort(list, new HandStrengthComparator());
 		
 		Assert.assertEquals(ACE, list.get(0).getHighestRank());
 		Assert.assertEquals(KING, list.get(1).getHighestRank());
@@ -92,7 +92,7 @@ public class HandStrengthTest {
 		list.add(strength2);
 		list.add(strength3);
 		
-		Collections.sort(list);
+		Collections.sort(list, new HandStrengthComparator());
 		
 		Assert.assertEquals(KING, list.get(0).getSecondRank());
 		Assert.assertEquals(JACK, list.get(1).getSecondRank());
@@ -128,7 +128,7 @@ public class HandStrengthTest {
 		list.add(strength2);
 		list.add(strength3);
 		
-		Collections.sort(list);
+		Collections.sort(list, new HandStrengthComparator());
 		
 		Assert.assertEquals(JACK, list.get(0).getKickerCards().get(0).getRank());
 		Assert.assertEquals(TEN, list.get(1).getKickerCards().get(0).getRank());
@@ -167,7 +167,7 @@ public class HandStrengthTest {
 		list.add(strength2);
 		list.add(strength3);
 		
-		Collections.sort(list);
+		Collections.sort(list, new HandStrengthComparator());
 		
 		Assert.assertEquals(TEN, list.get(0).getKickerCards().get(2).getRank());
 		Assert.assertEquals(EIGHT, list.get(1).getKickerCards().get(2).getRank());
@@ -219,7 +219,7 @@ public class HandStrengthTest {
 		list.add(strength2);
 		list.add(strength3);
 		
-		Collections.sort(list);
+		Collections.sort(list, new HandStrengthComparator());
 		
 		strength1.toString();
 		
@@ -260,7 +260,7 @@ public class HandStrengthTest {
 		list.add(strength2);
 		list.add(strength3);
 		
-		Collections.sort(list);
+		Collections.sort(list, new HandStrengthComparator());
 		
 		// Collection should not be touched since all are the same
 		Assert.assertEquals(strength1, list.get(0));

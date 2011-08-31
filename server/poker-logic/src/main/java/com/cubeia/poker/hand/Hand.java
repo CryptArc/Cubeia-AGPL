@@ -1,5 +1,7 @@
 package com.cubeia.poker.hand;
 
+import static java.util.Collections.reverseOrder;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Hand implements Comparable<Hand>, Serializable {
+public class Hand implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -63,7 +65,7 @@ public class Hand implements Comparable<Hand>, Serializable {
 	 */
 	public Hand sort() {
 		List<Card> sortedCards = new ArrayList<Card>(cards);
-		Collections.sort(sortedCards);
+		Collections.sort(sortedCards, reverseOrder(new CardComparator()));
 		return new Hand(sortedCards);
 	}
 
@@ -79,13 +81,13 @@ public class Hand implements Comparable<Hand>, Serializable {
 		this.handStrength = handStrength;
 	}
 
-	/**
-	 * Delegate this to compare hand strengths.
-	 */
-	@Override
-	public int compareTo(Hand other) {
-		return handStrength.compareTo(other.getHandStrength());
-	}
+//	/**
+//	 * Delegate this to compare hand strengths.
+//	 */
+//	@Override
+//	public int compareTo(Hand other) {
+//		return handStrength.compareTo(other.getHandStrength());
+//	}
 
     public void clear() {
         cards.clear();

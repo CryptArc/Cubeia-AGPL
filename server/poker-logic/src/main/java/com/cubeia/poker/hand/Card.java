@@ -9,7 +9,7 @@ package com.cubeia.poker.hand;
  * 
  * @author Fredrik Johansson, Cubeia Ltd
  */
-public class Card implements Comparable<Card> {
+public class Card {
 	
 	private final Suit suit;
 	
@@ -75,13 +75,6 @@ public class Card implements Comparable<Card> {
 	public Integer getId() {
         return id;
     }
-
-	@Override
-	public int compareTo(Card other) {
-		int comp = other.getRank().ordinal()*1000 - rank.ordinal()*1000;
-		comp += other.getSuit().ordinal() - suit.ordinal();
-		return comp;
-	}
 
     @Override
     public int hashCode() {

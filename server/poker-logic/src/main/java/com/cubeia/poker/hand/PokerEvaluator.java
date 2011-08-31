@@ -51,7 +51,7 @@ public class PokerEvaluator  {
 			hand.setHandStrength(handStrength);
 		}
 		
-		Collections.sort(result);
+		Collections.sort(result, new HandComparator());
 		return result;
 	}
 
@@ -68,7 +68,7 @@ public class PokerEvaluator  {
 			HandStrength handStrength = calc.getHandStrength(new Hand(cards));
 			allPossibleHands.add(handStrength);
 		}
-		Collections.sort(allPossibleHands);
+		Collections.sort(allPossibleHands, new HandStrengthComparator());
 		return allPossibleHands.get(0);
 	}
 }
