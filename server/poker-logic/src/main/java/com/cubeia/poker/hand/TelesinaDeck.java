@@ -24,8 +24,10 @@ public class TelesinaDeck implements Deck {
      * The lowest card in the deck will be 11 - <number of participants>.
      * @param numberOfParticipants
      */
-    public TelesinaDeck(Shuffler<Card> shuffler, int numberOfParticipants) {
-        cards = shuffler.shuffle(createDeck(numberOfParticipants));
+    public TelesinaDeck(Shuffler<Card> shuffler, CardIdGenerator idGenerator, int numberOfParticipants) {
+        List<Card> vanillaCards = createDeck(numberOfParticipants);
+        List<Card> shuffledCards = shuffler.shuffle(vanillaCards);
+        cards = idGenerator.copyAndAssignIds(shuffledCards);
     }
     
     @SuppressWarnings("unchecked")

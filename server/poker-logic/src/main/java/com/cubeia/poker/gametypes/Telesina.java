@@ -36,6 +36,7 @@ import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Deck;
 import com.cubeia.poker.hand.Hand;
+import com.cubeia.poker.hand.IndexCardIdGenerator;
 import com.cubeia.poker.hand.Shuffler;
 import com.cubeia.poker.hand.TelesinaDeck;
 import com.cubeia.poker.model.PlayerHands;
@@ -95,7 +96,7 @@ public class Telesina implements GameType, RoundVisitor {
 	private void initHand() {	
 		log.debug("init hand");
 		
-		deck = new TelesinaDeck(new Shuffler<Card>(getRandom()), state.getTableSize());
+		deck = new TelesinaDeck(new Shuffler<Card>(getRandom()), new IndexCardIdGenerator(), state.getTableSize());
 		
 		blindsInfo.setAnteLevel(state.getAnteLevel());
 		

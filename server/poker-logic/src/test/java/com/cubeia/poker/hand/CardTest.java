@@ -1,5 +1,8 @@
 package com.cubeia.poker.hand;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -31,5 +34,14 @@ public class CardTest {
 		Card card1 = new Card(Rank.ACE, Suit.SPADES);
 		Card card2 = new Card(Rank.ACE, Suit.SPADES);
 		Assert.assertEquals(card1, card2);
+	}
+	
+	@Test
+	public void testMakeCopyWithId() {
+        Card card = new Card(Rank.ACE, Suit.SPADES);
+        Card card2 = card.makeCopyWithId(434);
+        assertThat(card2.getId(), is(434));
+        assertThat(card2.getSuit(), is(card.getSuit()));
+        assertThat(card2.getRank(), is(card.getRank()));
 	}
 }
