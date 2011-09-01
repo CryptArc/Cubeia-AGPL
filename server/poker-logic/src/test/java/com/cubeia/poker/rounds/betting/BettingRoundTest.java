@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.poker.rounds;
+package com.cubeia.poker.rounds.betting;
 
 import junit.framework.TestCase;
 
@@ -27,6 +27,7 @@ import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
+import com.cubeia.poker.rounds.betting.BettingRound;
 
 public class BettingRoundTest extends TestCase implements TestListener {
 
@@ -50,7 +51,7 @@ public class BettingRoundTest extends TestCase implements TestListener {
 		MockPlayer[] p = testUtils.createMockPlayers(2);
 
 		game.addPlayers(p);
-		round = new BettingRound(game, 0);
+		round = new BettingRound(game, 0, new DefaultPlayerToActCalculator());
 
 		assertFalse(game.roundFinished);
 
@@ -64,7 +65,7 @@ public class BettingRoundTest extends TestCase implements TestListener {
 		MockPlayer[] p = testUtils.createMockPlayers(2, 100);
 
 		game.addPlayers(p);
-		round = new BettingRound(game, 0);
+		round = new BettingRound(game, 0, new DefaultPlayerToActCalculator());
 
 		assertFalse(game.roundFinished);
 		act(p[1], PokerActionType.BET, 70);
@@ -77,7 +78,7 @@ public class BettingRoundTest extends TestCase implements TestListener {
 		MockPlayer[] p = testUtils.createMockPlayers(2);
 
 		game.addPlayers(p);
-		round = new BettingRound(game, 0);
+		round = new BettingRound(game, 0, new DefaultPlayerToActCalculator());
 
 		assertFalse(game.roundFinished);
 
@@ -90,7 +91,7 @@ public class BettingRoundTest extends TestCase implements TestListener {
 		MockPlayer[] p = testUtils.createMockPlayers(2);
 
 		game.addPlayers(p);
-		round = new BettingRound(game, 0);
+		round = new BettingRound(game, 0, new DefaultPlayerToActCalculator());
 
 		assertFalse(game.roundFinished);
 
@@ -108,7 +109,7 @@ public class BettingRoundTest extends TestCase implements TestListener {
 		MockPlayer[] p = testUtils.createMockPlayers(2);
 
 		game.addPlayers(p);
-		round = new BettingRound(game, 0);
+		round = new BettingRound(game, 0, new DefaultPlayerToActCalculator());
 
 		assertFalse(game.roundFinished);
 
@@ -122,7 +123,7 @@ public class BettingRoundTest extends TestCase implements TestListener {
 		MockPlayer[] p = testUtils.createMockPlayers(2);
 
 		game.addPlayers(p);
-		round = new BettingRound(game, 0);
+		round = new BettingRound(game, 0, new DefaultPlayerToActCalculator());
 
 		assertFalse(game.roundFinished);
 
@@ -135,7 +136,7 @@ public class BettingRoundTest extends TestCase implements TestListener {
 		MockPlayer[] p = testUtils.createMockPlayers(2);
 
 		game.addPlayers(p);
-		round = new BettingRound(game, 3);
+		round = new BettingRound(game, 3, new DefaultPlayerToActCalculator());
 
 		assertFalse(game.roundFinished);
 

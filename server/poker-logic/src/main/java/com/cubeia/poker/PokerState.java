@@ -396,7 +396,8 @@ public class PokerState implements Serializable, IPokerState {
 		return timing;
 	}
 
-	public PokerVariant getVariant() {
+	@Override
+	public PokerVariant getPokerVariant() {
 		return variant;
 	}
 	

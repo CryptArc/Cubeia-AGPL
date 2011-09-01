@@ -15,9 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.poker.rounds;
+package com.cubeia.poker.rounds.betting;
 
-import java.util.List;
 import java.util.SortedMap;
 
 import org.apache.log4j.Logger;
@@ -28,7 +27,8 @@ import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
-import com.cubeia.poker.util.PokerUtils;
+import com.cubeia.poker.rounds.Round;
+import com.cubeia.poker.rounds.RoundVisitor;
 
 public class BettingRound implements Round, BettingRoundContext {
 
@@ -48,9 +48,12 @@ public class BettingRound implements Round, BettingRoundContext {
 
 	/** Last highest bet that any raise must match */
 	private long lastBetSize = 0;
+
+    private final PlayerToActCalculator playerToActCalculator;
 	
-	public BettingRound(GameType gameType, int dealerSeatId) {
+	public BettingRound(GameType gameType, int dealerSeatId, PlayerToActCalculator playerToActCalculator) {
 		this.gameType = gameType;
+        this.playerToActCalculator = playerToActCalculator;
 		actionRequestFactory = new ActionRequestFactory(new NoLimitBetStrategy(this));
 		if (gameType != null && gameType.getState() != null) { // can be null in unit tests
 			lastBetSize = gameType.getState().getAnteLevel();
@@ -74,7 +77,8 @@ public class BettingRound implements Round, BettingRoundContext {
 		}
 
 		// Check if we should request actions at all
-		PokerPlayer p = getNextPlayerToAct(dealerSeatId);
+		PokerPlayer p = playerToActCalculator.getFirstPlayerToAct(dealerSeatId, gameType.getState().getCurrentHandSeatingMap());
+		
 		if (p == null || allOtherPlayersAreAllIn(p)) {
 			// No or only one player can act. We are currently in an all-in show down scenario
 			log.debug("Schedule all in timeout from initBettingRound");
@@ -85,7 +89,28 @@ public class BettingRound implements Round, BettingRoundContext {
 		}
 	}
 
-	public void act(PokerAction action) {
+//	private PokerPlayer getPlayerWithBestPublicHand() {
+//	    Collection<PokerPlayer> players = gameType.getState().getCurrentHandPlayerMap().values();
+//	    
+//	    List<Hand> publicHands;
+//	    for (PokerPlayer player : players) {
+//	        
+//	        
+//	        player.getPocketCards()
+//	        
+//	        
+//	        
+//	    }
+//	    
+//	    
+//	    PokerEvaluator pokerEvaluator = new PokerEvaluator();
+//        pokerEvaluator.rankHands(publicHands);
+//	    
+//	    
+//        return null;
+//    }
+
+    public void act(PokerAction action) {
 		log.debug("Act : "+action);
 		PokerPlayer player = gameType.getState().getPlayerInCurrentHand(action.getPlayerId());
 
@@ -105,7 +130,7 @@ public class BettingRound implements Round, BettingRoundContext {
 	}
 
 	private void requestNextAction(int lastSeatId) {
-		PokerPlayer p = getNextPlayerToAct(lastSeatId);
+		PokerPlayer p = playerToActCalculator.getNextPlayerToAct(lastSeatId, gameType.getState().getCurrentHandSeatingMap());
 
 		if (p == null) {
 			isFinished = true;
@@ -122,19 +147,6 @@ public class BettingRound implements Round, BettingRoundContext {
 			}
 			playerToAct = p.getId();
 		}
-	}
-
-	private PokerPlayer getNextPlayerToAct(int lastActedSeatId) {
-		PokerPlayer next = null;
-
-		List<PokerPlayer> players = PokerUtils.unwrapList(gameType.getState().getCurrentHandSeatingMap(), lastActedSeatId + 1);
-		for (PokerPlayer player : players) {
-			if (!player.hasFolded() && !player.hasActed() && !player.isSittingOut() && !player.isAllIn()) {
-				next = player;
-				break;
-			}
-		}
-		return next;
 	}
 
 	private boolean roundFinished() {

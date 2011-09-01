@@ -20,6 +20,7 @@ import com.cubeia.poker.hand.calculator.TexasHoldemHandCalculator;
  */
 public class PokerEvaluator  {
 	
+    // TODO: should be injected
 	HandCalculator calc = new TexasHoldemHandCalculator();
 	
 	/**

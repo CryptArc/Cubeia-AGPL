@@ -15,11 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.poker.rounds;
+package com.cubeia.poker.rounds.betting;
 
 import static org.mockito.Mockito.*;
 
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.rounds.betting.BettingRoundContext;
+import com.cubeia.poker.rounds.betting.NoLimitBetStrategy;
 
 import junit.framework.TestCase;
 

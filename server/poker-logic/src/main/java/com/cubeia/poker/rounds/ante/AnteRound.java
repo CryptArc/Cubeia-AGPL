@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.poker.rounds;
+package com.cubeia.poker.rounds.ante;
 
 import java.util.Collection;
 import java.util.SortedMap;
@@ -25,6 +25,8 @@ import org.apache.log4j.Logger;
 import com.cubeia.poker.GameType;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.rounds.Round;
+import com.cubeia.poker.rounds.RoundVisitor;
 import com.cubeia.poker.rounds.blinds.BlindsInfo;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;

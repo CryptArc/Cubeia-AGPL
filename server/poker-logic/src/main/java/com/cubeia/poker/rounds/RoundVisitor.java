@@ -17,6 +17,8 @@
 
 package com.cubeia.poker.rounds;
 
+import com.cubeia.poker.rounds.ante.AnteRound;
+import com.cubeia.poker.rounds.betting.BettingRound;
 import com.cubeia.poker.rounds.blinds.BlindsRound;
 
 public interface RoundVisitor {

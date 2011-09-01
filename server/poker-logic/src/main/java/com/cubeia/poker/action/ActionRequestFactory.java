@@ -21,7 +21,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.rounds.BetStrategy;
+import com.cubeia.poker.rounds.betting.BetStrategy;
 
 public class ActionRequestFactory implements Serializable {
 
