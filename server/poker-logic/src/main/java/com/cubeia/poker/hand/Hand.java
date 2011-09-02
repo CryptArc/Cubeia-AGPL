@@ -37,7 +37,7 @@ public class Hand implements Serializable {
 		}     
 	}
 	
-	public Hand(List<Card> cards) {
+	public Hand(Collection<Card> cards) {
 		this.cards.addAll(cards);
 	}
 

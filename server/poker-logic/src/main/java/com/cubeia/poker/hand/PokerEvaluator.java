@@ -25,6 +25,8 @@ public class PokerEvaluator  {
 	
     // TODO: should be injected
 	private HandCalculator calc = new TexasHoldemHandCalculator();
+	
+    // TODO: should be injected
     private HandComparator handComparator;
 	
 	/**

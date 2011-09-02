@@ -35,6 +35,7 @@ import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Deck;
 import com.cubeia.poker.hand.IndexCardIdGenerator;
+import com.cubeia.poker.hand.PokerEvaluator;
 import com.cubeia.poker.hand.Shuffler;
 import com.cubeia.poker.hand.TelesinaDeck;
 import com.cubeia.poker.player.PokerPlayer;
@@ -174,7 +175,7 @@ public class Telesina implements GameType, RoundVisitor {
 
     private void startBettingRound() {
     	log.trace("Starting new betting round. Round ID: "+(roundId+1));
-		setCurrentRound(new BettingRound(this, blindsInfo.getDealerButtonSeatId(), new TelesinaPlayerToActCalculator()));
+		setCurrentRound(new BettingRound(this, blindsInfo.getDealerButtonSeatId(), new TelesinaPlayerToActCalculator(new PokerEvaluator())));
 		roundId++;
 	}
     
@@ -329,7 +330,7 @@ public class Telesina implements GameType, RoundVisitor {
 	}
 
 	private void prepareBettingRound() {
-		setCurrentRound(new BettingRound(this, getBlindsInfo().getDealerButtonSeatId(), new TelesinaPlayerToActCalculator()));
+		setCurrentRound(new BettingRound(this, getBlindsInfo().getDealerButtonSeatId(), new TelesinaPlayerToActCalculator(new PokerEvaluator())));
 	}
 
 //	private void updateBlindsInfo(BlindsRound blindsRound) {

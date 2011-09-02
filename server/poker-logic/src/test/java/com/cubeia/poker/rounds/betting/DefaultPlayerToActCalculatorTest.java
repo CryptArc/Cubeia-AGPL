@@ -15,7 +15,7 @@ public class DefaultPlayerToActCalculatorTest {
 
     @Test
     public void testFirstPlayerToAct() {
-        TelesinaPlayerToActCalculator pac = new TelesinaPlayerToActCalculator();
+        DefaultPlayerToActCalculator pac = new DefaultPlayerToActCalculator();
         SortedMap<Integer, PokerPlayer> seatingMap = new TreeMap<Integer, PokerPlayer>();
         PokerPlayer player1 = mock(PokerPlayer.class);
         PokerPlayer player2 = mock(PokerPlayer.class);
@@ -24,6 +24,7 @@ public class DefaultPlayerToActCalculatorTest {
         seatingMap.put(0, player1);
         seatingMap.put(1, player2);
         seatingMap.put(2, player3);
+        
         
         PokerPlayer playerToAct = pac.getFirstPlayerToAct(1, seatingMap);
         assertThat(playerToAct, is(player3));
@@ -34,7 +35,7 @@ public class DefaultPlayerToActCalculatorTest {
 
     @Test
     public void testNextPlayerToAct() {
-        TelesinaPlayerToActCalculator pac = new TelesinaPlayerToActCalculator();
+        DefaultPlayerToActCalculator pac = new DefaultPlayerToActCalculator();
         SortedMap<Integer, PokerPlayer> seatingMap = new TreeMap<Integer, PokerPlayer>();
         PokerPlayer player1 = mock(PokerPlayer.class);
         PokerPlayer player2 = mock(PokerPlayer.class);
