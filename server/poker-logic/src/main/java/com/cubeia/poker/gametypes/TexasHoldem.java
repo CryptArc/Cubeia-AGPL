@@ -42,11 +42,12 @@ import com.cubeia.poker.model.PlayerHands;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
-import com.cubeia.poker.rounds.AnteRound;
-import com.cubeia.poker.rounds.BettingRound;
 import com.cubeia.poker.rounds.DealCommunityCardsRound;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
+import com.cubeia.poker.rounds.ante.AnteRound;
+import com.cubeia.poker.rounds.betting.BettingRound;
+import com.cubeia.poker.rounds.betting.DefaultPlayerToActCalculator;
 import com.cubeia.poker.rounds.blinds.BlindsInfo;
 import com.cubeia.poker.rounds.blinds.BlindsRound;
 import com.cubeia.poker.timing.Periods;
@@ -170,7 +171,7 @@ public class TexasHoldem implements GameType, RoundVisitor {
 
     private void startBettingRound() {
     	log.trace("Starting new betting round. Round ID: "+(roundId+1));
-		currentRound = new BettingRound(this, blindsInfo.getDealerButtonSeatId());
+		currentRound = new BettingRound(this, blindsInfo.getDealerButtonSeatId(), new DefaultPlayerToActCalculator());
 		roundId++;
 	}
     
@@ -356,7 +357,7 @@ public class TexasHoldem implements GameType, RoundVisitor {
 
 	private void prepareBettingRound() {
 		int bbSeatId = blindsInfo.getBigBlindSeatId();
-		currentRound = new BettingRound(this, bbSeatId);
+		currentRound = new BettingRound(this, bbSeatId, new DefaultPlayerToActCalculator());
 	}
 
 	private void updateBlindsInfo(BlindsRound blindsRound) {

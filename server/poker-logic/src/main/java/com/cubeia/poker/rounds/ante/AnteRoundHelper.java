@@ -1,4 +1,4 @@
-package com.cubeia.poker.rounds;
+package com.cubeia.poker.rounds.ante;
 
 import java.util.Collection;
 import java.util.List;

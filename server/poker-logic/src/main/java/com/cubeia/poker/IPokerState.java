@@ -3,6 +3,7 @@ package com.cubeia.poker;
 import java.util.Map;
 import java.util.SortedMap;
 
+import com.cubeia.poker.gametypes.PokerVariant;
 import com.cubeia.poker.player.PokerPlayer;
 
 public interface IPokerState {
@@ -25,4 +26,5 @@ public interface IPokerState {
 
 	void notifyDealerButton(int dealerButtonSeatId);
 
+	PokerVariant getPokerVariant();
 }

@@ -10,7 +10,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.cubeia.poker.PokerState;
-import com.cubeia.poker.rounds.AnteRound;
+import com.cubeia.poker.rounds.ante.AnteRound;
 
 
 public class TelesinaRoundsTest {

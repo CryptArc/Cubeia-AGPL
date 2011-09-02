@@ -27,7 +27,6 @@ import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
-import com.cubeia.poker.rounds.BettingRound;
 
 public class AllInTest extends TestCase implements TestListener {
 
@@ -52,7 +51,7 @@ public class AllInTest extends TestCase implements TestListener {
 		MockPlayer[] p = testUtils.createMockPlayers(2, 500);
 
 		game.addPlayers(p);
-		round = new BettingRound(game, 0);
+		round = new BettingRound(game, 0, new DefaultPlayerToActCalculator());
 
 		PossibleAction bet = requestedAction.getOption(PokerActionType.BET);
 		assertEquals(500, bet.getMaxAmount());

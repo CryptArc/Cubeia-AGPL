@@ -17,6 +17,9 @@
 
 package com.cubeia.poker.player;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 
 import com.cubeia.poker.action.ActionRequest;
@@ -40,6 +43,8 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	protected int seatId;
 	
 	protected Hand pocketCards = new Hand();
+	
+	protected Set<Card> publicPocketCards = new HashSet<Card>();
 	
 	protected boolean hasActed;
 	
@@ -95,9 +100,15 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	}
 
 	public Hand getPocketCards() {
+	    // TODO: we should make a defensive copy here!
 		return pocketCards;
 	}
 
+	@Override
+	public Set<Card> getPublicPocketCards() {
+	    return new HashSet<Card>(publicPocketCards);
+	}
+	
 	public ActionRequest getActionRequest() {
 		return actionRequest;
 	}
@@ -135,8 +146,11 @@ public class DefaultPokerPlayer implements PokerPlayer {
 		return hasOption;
 	}
 
-	public void addPocketCard(Card card) {
+	public void addPocketCard(Card card, boolean publicCard) {
 		pocketCards.addCard(card);
+		if (publicCard) {
+		    publicPocketCards.add(card);
+		}
 	}
 
 	public void clearHand() {

@@ -18,6 +18,7 @@
 package com.cubeia.poker.player;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PossibleAction;
@@ -32,7 +33,13 @@ public interface PokerPlayer extends Serializable {
 	 */
 	public Hand getPocketCards();
 	
-	public void addPocketCard(Card card);
+	/**
+	 * Get the players pocket cards that are public (visible to all).
+	 * @return set of visible pocket cards
+	 */
+	public Set<Card> getPublicPocketCards();
+	
+	public void addPocketCard(Card card, boolean publicCard);
 	
 	public void clearHand();
 	

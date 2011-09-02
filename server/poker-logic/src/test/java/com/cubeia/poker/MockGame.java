@@ -26,6 +26,7 @@ import java.util.TreeMap;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.ServerAdapter;
+import com.cubeia.poker.gametypes.PokerVariant;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.rounds.blinds.BlindsInfo;
 
@@ -174,6 +175,11 @@ public class MockGame implements GameType {
 			@Override
 			public boolean isPlayerInHand(int playerId) {
 				return false;
+			}
+			
+			@Override
+			public PokerVariant getPokerVariant() {
+			    return PokerVariant.TEXAS_HOLDEM;
 			}
 			
 			@Override

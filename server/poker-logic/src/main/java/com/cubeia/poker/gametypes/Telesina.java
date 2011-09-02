@@ -43,16 +43,18 @@ import com.cubeia.poker.model.PlayerHands;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
-import com.cubeia.poker.rounds.AnteRound;
-import com.cubeia.poker.rounds.AnteRoundHelper;
-import com.cubeia.poker.rounds.BettingRound;
 import com.cubeia.poker.rounds.DealCommunityCardsRound;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
+import com.cubeia.poker.rounds.ante.AnteRound;
+import com.cubeia.poker.rounds.ante.AnteRoundHelper;
+import com.cubeia.poker.rounds.betting.BettingRound;
+import com.cubeia.poker.rounds.betting.TelesinaPlayerToActCalculator;
 import com.cubeia.poker.rounds.blinds.BlindsInfo;
 import com.cubeia.poker.rounds.blinds.BlindsRound;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.util.HandResultCalculator;
+import com.google.common.collect.HashMultimap;
 
 public class Telesina implements GameType, RoundVisitor {
 
@@ -64,6 +66,8 @@ public class Telesina implements GameType, RoundVisitor {
 
 	private Deck deck;
 
+//    private HashMultimap<Integer, Card> playerPublicCards;
+	
 	/**
 	 * 0 = pre flop 1 = flop 2 = turn 3 = river
 	 */
@@ -97,14 +101,10 @@ public class Telesina implements GameType, RoundVisitor {
 		log.debug("init hand");
 		
 		deck = new TelesinaDeck(new Shuffler<Card>(getRandom()), new IndexCardIdGenerator(), state.getTableSize());
-		
+//        playerPublicCards = HashMultimap.<Integer, Card>create();
 		blindsInfo.setAnteLevel(state.getAnteLevel());
 		
 		setCurrentRound(new AnteRound(this, new AnteRoundHelper()));
-		
-//		// TODO: put last in ante round (see below)
-//		dealPocketCards();
-//		dealExposedCards();
 		
 		roundId = 0;
 	}
@@ -132,16 +132,17 @@ public class Telesina implements GameType, RoundVisitor {
 		state.notifyPrivateCards(p.getId(), p.getPocketCards().getCards());
 	}
 	
-	private void dealExposedCards(PokerPlayer p, int n) {
+	private void dealExposedCards(PokerPlayer player, int n) {
 		ArrayList<Card> cardsDealt = new ArrayList<Card>();
 		for (int i = 0; i < n; i++) {
 			Card card = deck.deal();
 			cardsDealt.add(card);
-			p.getPocketCards().addCard(card);
+			player.getPocketCards().addCard(card);
+//			playerPublicCards.put(player.getId(), card);
 		}
 		
-		state.notifyPrivateCards(p.getId(), cardsDealt);
-		state.exposePrivateCards(p.getId(), cardsDealt);
+		state.notifyPrivateCards(player.getId(), cardsDealt);
+		state.exposePrivateCards(player.getId(), cardsDealt);
 	}
 
 	private void dealCommunityCards(int n) {
@@ -178,7 +179,7 @@ public class Telesina implements GameType, RoundVisitor {
 
     private void startBettingRound() {
     	log.trace("Starting new betting round. Round ID: "+(roundId+1));
-		setCurrentRound(new BettingRound(this, blindsInfo.getDealerButtonSeatId()));
+		setCurrentRound(new BettingRound(this, blindsInfo.getDealerButtonSeatId(), new TelesinaPlayerToActCalculator()));
 		roundId++;
 	}
     
@@ -198,11 +199,7 @@ public class Telesina implements GameType, RoundVisitor {
 	}	
 
 	public void dealCommunityCards() {
-		if (roundId == 0) {
-			dealCommunityCards(3);
-		} else {
-			dealCommunityCards(1);
-		}
+	    dealCommunityCards(1);
 	}
 
 	private void handleFinishedHand(HandResult handResult) {	
@@ -359,7 +356,7 @@ public class Telesina implements GameType, RoundVisitor {
 	}
 
 	private void prepareBettingRound() {
-		setCurrentRound(new BettingRound(this, getBlindsInfo().getDealerButtonSeatId()));
+		setCurrentRound(new BettingRound(this, getBlindsInfo().getDealerButtonSeatId(), new TelesinaPlayerToActCalculator()));
 	}
 
 //	private void updateBlindsInfo(BlindsRound blindsRound) {

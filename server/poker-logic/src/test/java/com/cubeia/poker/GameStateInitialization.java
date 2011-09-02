@@ -35,7 +35,7 @@ public class GameStateInitialization {
 		
 		assertThat(state.getAnteLevel(), is(anteLevel));
 		assertThat(state.getTimingProfile(), is(timing));
-		assertThat(state.getVariant(), is(TELESINA));
+		assertThat(state.getPokerVariant(), is(TELESINA));
 		assertThat(state.getTableSize(), is(6));
 	}
 	

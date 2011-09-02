@@ -1,4 +1,4 @@
-package com.cubeia.poker.rounds;
+package com.cubeia.poker.rounds.ante;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -22,6 +22,8 @@ import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.rounds.ante.AnteRound;
+import com.cubeia.poker.rounds.ante.AnteRoundHelper;
 import com.cubeia.poker.rounds.blinds.BlindsInfo;
 
 public class AnteRoundTest {

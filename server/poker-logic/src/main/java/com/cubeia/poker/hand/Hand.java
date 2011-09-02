@@ -6,7 +6,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 public class Hand implements Serializable {
@@ -16,6 +18,9 @@ public class Hand implements Serializable {
 	public final static int MAX_CARDS = 7;
 	
 	private List<Card> cards = new ArrayList<Card>();
+	
+//	/* cards that are public is also stored here (as well as in the cards list) */
+//	private Set<Card> publicCards = new HashSet<Card>();
 	
 	private HandStrength handStrength = new HandStrength(HandType.NOT_RANKED);
 	
@@ -49,13 +54,32 @@ public class Hand implements Serializable {
 		return cards;
 	}
 
+	/**
+	 * Add a card to the hand.
+	 * @param card card to add
+	 */
 	public void addCard(Card card) {
 		cards.add(card);
 	}
 	
+//	/**
+//	 * Add a card to the hand with the option to 
+//	 * indicated that it is public (shown to all).
+//	 * @param card card to add
+//	 * @param publicCard true if the card is open (public)
+//	 */
+//	public void addCard(Card card, boolean publicCard) {
+//	    cards.add(card);
+//	    publicCards.add(card);
+//	}
+	
     public void addCards(Collection<Card> cardsToAdd) {
         cards.addAll(cardsToAdd);
     }
+    
+//    public boolean isCardPublic(Card card) {
+//        return publicCards.contains(card);
+//    }
 	
 	/**
 	 * Sort all cards in an descending order.
