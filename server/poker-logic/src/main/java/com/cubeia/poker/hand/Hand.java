@@ -6,11 +6,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.StringTokenizer;
 
+/**
+ * TODO: we should consider making hand immutable
+ * @author w
+ *
+ */
 public class Hand implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -18,9 +21,6 @@ public class Hand implements Serializable {
 	public final static int MAX_CARDS = 7;
 	
 	private List<Card> cards = new ArrayList<Card>();
-	
-//	/* cards that are public is also stored here (as well as in the cards list) */
-//	private Set<Card> publicCards = new HashSet<Card>();
 	
 	private HandStrength handStrength = new HandStrength(HandType.NOT_RANKED);
 	

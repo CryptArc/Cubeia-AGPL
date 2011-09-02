@@ -17,6 +17,7 @@
 
 package com.cubeia.games.poker.adapter;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -47,7 +48,7 @@ import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Hand;
-import com.cubeia.poker.model.PlayerHands;
+import com.cubeia.poker.model.PlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 
 /**
@@ -241,16 +242,14 @@ public class ActionTransformer {
 		return packet;
 	}
 
-	public static HandEnd createHandEndPacket(PlayerHands hands) {
+	public static HandEnd createHandEndPacket(Collection<PlayerHand> hands) {
 		HandEnd packet = new HandEnd();
 		packet.hands = new LinkedList<BestHand>();
 		
-		for (Integer pid : hands.getHands().keySet()) {
+		for (PlayerHand playerHand : hands) {
 			BestHand best = new BestHand();
-			best.player = pid;
-			Hand hand = hands.getHands().get(pid);
-//			best.rank = HandEvaluator.rankHand(hand);
-//			best.name = HandEvaluator.nameHand(hand);
+			best.player = playerHand.getPlayerId();
+			Hand hand = playerHand.getHand();
 			
 			best.rank = -1;
 			best.name = hand.getHandStrength().getHandType().name();

@@ -1,11 +1,14 @@
 package com.cubeia.poker.hand;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.cubeia.poker.hand.calculator.HandCalculator;
 import com.cubeia.poker.hand.calculator.TexasHoldemHandCalculator;
+import com.cubeia.poker.model.PlayerHand;
 
 
 /**
@@ -21,7 +24,8 @@ import com.cubeia.poker.hand.calculator.TexasHoldemHandCalculator;
 public class PokerEvaluator  {
 	
     // TODO: should be injected
-	HandCalculator calc = new TexasHoldemHandCalculator();
+	private HandCalculator calc = new TexasHoldemHandCalculator();
+    private HandComparator handComparator;
 	
 	/**
 	 * <p>Rank the hands with the best hand strength at the first position.</p>
@@ -32,19 +36,18 @@ public class PokerEvaluator  {
 	 * @param hands
 	 * @return
 	 */
-	public List<Hand> rankHands(List<Hand> hands) {
-		List<Hand> result = new ArrayList<Hand>(hands);
-		for (Hand hand : result) {
+	public List<PlayerHand> rankHands(Collection<PlayerHand> hands) {
+		List<PlayerHand> rankedHands = new ArrayList<PlayerHand>(hands);
+		for (PlayerHand playerHand : rankedHands) {
 			HandStrength handStrength;
+			Hand hand = playerHand.getHand();
 			
 			// Check if we have a 5 card hand
 			if (hand.getCards().size() == 5) {
 				handStrength = calc.getHandStrength(hand);
-				
 			} else if (hand.getCards().size() > 5) {
 				// More than 5 cards, we need to check all combinations
 				handStrength = getBestCombinationHandStrength(hand);
-				
 			} else {
 			    handStrength = new HandStrength(HandType.NOT_RANKED);
 			}
@@ -52,8 +55,15 @@ public class PokerEvaluator  {
 			hand.setHandStrength(handStrength);
 		}
 		
-		Collections.sort(result, new HandComparator());
-		return result;
+		handComparator = new HandComparator();
+		Collections.sort(rankedHands, new Comparator<PlayerHand>() {
+		    @Override
+		    public int compare(PlayerHand o1, PlayerHand o2) {
+		        return handComparator.compare(o1.getHand(), o2.getHand());
+		    }
+		});
+		
+		return rankedHands;
 	}
 
 	/**

@@ -18,9 +18,7 @@
 package com.cubeia.games.poker.adapter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import junit.framework.TestCase;
 import se.jadestone.dicearena.game.poker.network.protocol.CardToDeal;
@@ -30,7 +28,7 @@ import se.jadestone.dicearena.game.poker.network.protocol.HandEnd;
 
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Hand;
-import com.cubeia.poker.model.PlayerHands;
+import com.cubeia.poker.model.PlayerHand;
 
 public class ActionTransformerTest extends TestCase {
 
@@ -42,14 +40,11 @@ public class ActionTransformerTest extends TestCase {
 		hand1.addCards(community.getCards());
 		hand2.addCards(community.getCards());
 		
-		Map<Integer, Hand> hands = new HashMap<Integer, Hand>();
-		hands.put(11, hand1);
-		hands.put(22, hand2);
+		List<PlayerHand> hands = new ArrayList<PlayerHand>();
+		hands.add(new PlayerHand(11, hand1));
+		hands.add(new PlayerHand(22, hand2));
 		
-		
-		PlayerHands playerHands = new PlayerHands(hands);
-		
-		HandEnd end = ActionTransformer.createHandEndPacket(playerHands);
+		HandEnd end = ActionTransformer.createHandEndPacket(hands);
 		
 		assertEquals(2, end.hands.size());
 		assertNotSame("Two High", end.hands.get(0).name);

@@ -20,7 +20,6 @@ package com.cubeia.poker.gametypes;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import org.slf4j.Logger;
@@ -35,14 +34,11 @@ import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Deck;
-import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.hand.IndexCardIdGenerator;
 import com.cubeia.poker.hand.Shuffler;
 import com.cubeia.poker.hand.TelesinaDeck;
-import com.cubeia.poker.model.PlayerHands;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.result.HandResult;
-import com.cubeia.poker.result.Result;
 import com.cubeia.poker.rounds.DealCommunityCardsRound;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
@@ -54,7 +50,6 @@ import com.cubeia.poker.rounds.blinds.BlindsInfo;
 import com.cubeia.poker.rounds.blinds.BlindsRound;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.util.HandResultCalculator;
-import com.google.common.collect.HashMultimap;
 
 public class Telesina implements GameType, RoundVisitor {
 
@@ -212,29 +207,6 @@ public class Telesina implements GameType, RoundVisitor {
 		state.notifyHandFinished(new HandResult(), HandEndStatus.CANCELED_TOO_FEW_PLAYERS);
 	}	
 
-	private HandResult createHandResult() {
-		HandResult result = new HandResult();
-		PlayerHands playerHands = createHandHolder();
-		result.setPlayerHands(playerHands);
-		Map<PokerPlayer, Result> playerResults = handResultCalculator.getPlayerResults(result.getPlayerHands(), state.getPotHolder(), 
-				state.getCurrentHandPlayerMap());
-		result.setResults(playerResults);
-		return result;
-	}
-
-	private PlayerHands createHandHolder() {
-		PlayerHands holder = new PlayerHands();
-		for (PokerPlayer player : state.getCurrentHandPlayerMap().values()) {
-			if (!player.hasFolded()) {
-				Hand h = new Hand();
-				h.addCards(player.getPocketCards().getCards());
-				h.addCards(state.getCommunityCards());
-				holder.addHand(player.getId(), h);
-			}
-		}
-
-		return holder;
-	}
 
 	private void moveChipsToPot() {
 		
@@ -328,7 +300,8 @@ public class Telesina implements GameType, RoundVisitor {
 		
 		if (isHandFinished()) {
 		    exposeShowdownCards();
-			handleFinishedHand(createHandResult());
+			HandResult handResult = new HandResultCreator().createHandResult(state.getCommunityCards(), handResultCalculator, state.getPotHolder(), state.getCurrentHandPlayerMap());
+            handleFinishedHand(handResult);
 			state.getPotHolder().clearPots();
 		} else {
 			// Start deal community cards round

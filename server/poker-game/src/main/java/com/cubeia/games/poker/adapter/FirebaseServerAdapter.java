@@ -78,7 +78,7 @@ import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
-import com.cubeia.poker.model.PlayerHands;
+import com.cubeia.poker.model.PlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.result.HandResult;
@@ -260,7 +260,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 				
 				// TODO: The following logic should be moved to poker-logic
 				// I.e. ranking hands etc do not belong in the game-layer
-				PlayerHands hands = handResult.getPlayerHands();
+				Collection<PlayerHand> hands = handResult.getPlayerHands();
 				HandEnd packet = ActionTransformer.createHandEndPacket(hands);
 				GameDataAction action = ProtocolFactory.createGameAction(packet, 0, table.getId());
 				log.debug("--> Send HandEnd["+packet+"] to everyone");
@@ -456,7 +456,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
      * @param hands
      * @param handEndStatus
      */
-    private void writeHandHistory(PlayerHands hands, HandEndStatus handEndStatus) {
+    private void writeHandHistory(Collection<PlayerHand> hands, HandEndStatus handEndStatus) {
         if (getServices() != null) {
         	try {
 	            HandHistoryDAO dao = new HandHistoryDAO(getServices());
