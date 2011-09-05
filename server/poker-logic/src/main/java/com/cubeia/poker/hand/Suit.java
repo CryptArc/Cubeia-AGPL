@@ -7,10 +7,16 @@ package com.cubeia.poker.hand;
  */
 public enum Suit {
 
-    CLUBS,
-    DIAMONDS, 
-    HEARTS, 
-    SPADES;
+    CLUBS(1),
+    DIAMONDS(2), 
+    HEARTS(3), 
+    SPADES(0);
+
+    public final int telesinaSuitValue;
+
+	private Suit(int telesinaSuitValue) {
+		this.telesinaSuitValue = telesinaSuitValue;
+	}
 
 	public String toShortString() {
 		return name().substring(0, 1);
