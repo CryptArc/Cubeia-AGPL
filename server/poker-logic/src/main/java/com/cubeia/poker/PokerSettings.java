@@ -1,7 +1,7 @@
 package com.cubeia.poker;
 
-import com.cubeia.poker.gametypes.PokerVariant;
 import com.cubeia.poker.timing.TimingProfile;
+import com.cubeia.poker.variant.PokerVariant;
 
 public class PokerSettings {
 	private final int anteLevel;

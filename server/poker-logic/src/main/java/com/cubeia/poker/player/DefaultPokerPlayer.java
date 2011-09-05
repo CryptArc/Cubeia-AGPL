@@ -100,8 +100,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	}
 
 	public Hand getPocketCards() {
-	    // TODO: we should make a defensive copy here!
-		return pocketCards;
+	    return new Hand(pocketCards);
 	}
 
 	@Override

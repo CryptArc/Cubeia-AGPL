@@ -18,13 +18,11 @@
 package com.cubeia.poker.pot;
 
 import java.util.Arrays;
-import java.util.SortedSet;
-import java.util.TreeSet;
+
+import junit.framework.TestCase;
 
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
-
-import junit.framework.TestCase;
 
 public class PotTest extends TestCase {
 	private static int counter = 0;
@@ -74,8 +72,6 @@ public class PotTest extends TestCase {
 		PokerPlayer p3 = createPokerPlayer(10, true);
 
 		PotHolder potHolder = new PotHolder();
-		SortedSet<PokerPlayer> allIns = new TreeSet<PokerPlayer>();
-		allIns.add(p3);
 		potHolder.moveChipsToPot(Arrays.asList(p1, p2, p3));
 		assertEquals(2, potHolder.getNumberOfPots());
 		assertEquals(50, potHolder.getTotalPotSize());

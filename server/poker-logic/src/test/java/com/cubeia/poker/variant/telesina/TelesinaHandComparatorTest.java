@@ -1,12 +1,12 @@
-package com.cubeia.poker.gametypes;
+package com.cubeia.poker.variant.telesina;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import com.cubeia.poker.gametypes.telesina.TelesinaHandComparator;
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.hand.Rank;
+import com.cubeia.poker.variant.telesina.telesina.TelesinaHandComparator;
 
 public class TelesinaHandComparatorTest {
 

@@ -18,6 +18,7 @@
 package com.cubeia.poker;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,7 @@ import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
-import com.cubeia.poker.model.PlayerHands;
+import com.cubeia.poker.model.PlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.pot.Pot;
@@ -40,7 +41,7 @@ public class MockServerAdapter implements ServerAdapter {
 
 	private int timeoutCounter = 0;
 	private ActionRequest request;
-	public PlayerHands hands;
+	public Collection<PlayerHand> hands;
 	public PokerAction actionPerformed;
 	public HandEndStatus handEndStatus;
 	public Map<Integer, List<Card>> exposedCards = new HashMap<Integer, List<Card>>();

@@ -27,10 +27,10 @@ import com.cubeia.firebase.api.lobby.LobbyPath;
 import com.cubeia.games.poker.FirebaseState;
 import com.cubeia.poker.PokerSettings;
 import com.cubeia.poker.PokerState;
-import com.cubeia.poker.gametypes.PokerVariant;
 import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.timing.Timings;
+import com.cubeia.poker.variant.PokerVariant;
 import com.google.inject.Injector;
 
 

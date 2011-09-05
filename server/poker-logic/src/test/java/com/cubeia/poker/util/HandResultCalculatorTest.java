@@ -17,13 +17,14 @@
 
 package com.cubeia.poker.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.TestCase;
 
 import com.cubeia.poker.hand.Hand;
-import com.cubeia.poker.model.PlayerHands;
+import com.cubeia.poker.model.PlayerHand;
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.PotHolder;
@@ -34,12 +35,11 @@ import com.cubeia.poker.result.Result;
 public class HandResultCalculatorTest extends TestCase {
 
 	private Map<Integer, PokerPlayer> players;
-	private PlayerHands hands;
 	HandResultCalculator calc = new HandResultCalculator();
+	private ArrayList<PlayerHand> hands;
 	
 	@Override
 	protected void setUp() throws Exception {
-		
 		// All players has 100 and bets 10, 20 and 40 respectively
 		players = new HashMap<Integer, PokerPlayer>();
 		PokerPlayer p1 = new DefaultPokerPlayer(1);
@@ -56,13 +56,12 @@ public class HandResultCalculatorTest extends TestCase {
 		players.put(2, p2);
 		players.put(3, p3);
 		
-		hands = new PlayerHands();
-		String community = " Ac Kc Qd 6h Th";
-		hands.addHand(1, new Hand("As Ad"+community)); // Best Hand - 3 Aces
-		hands.addHand(2, new Hand("2s 7d"+community));
-		hands.addHand(3, new Hand("3s 8d"+community));
+	    hands = new ArrayList<PlayerHand>();
 		
-		//potHolder = new PotHolder();
+		String community = "Ac Kc Qd 6h Th";
+		hands.add(new PlayerHand(1, new Hand("As Ad "+community))); // Best Hand - 3 Aces
+		hands.add(new PlayerHand(2, new Hand("2s 7d "+community)));
+		hands.add(new PlayerHand(3, new Hand("3s 8d "+community)));
 	}
 	
 	
@@ -92,11 +91,11 @@ public class HandResultCalculatorTest extends TestCase {
 	
 	
 	public void testGetWinners() {
-		hands = new PlayerHands();
-		String community = " Ac Kc Qd 6h Th";
-		hands.addHand(1, new Hand("As Ad"+community)); // SPLIT HAND - 3 Aces
-		hands.addHand(2, new Hand("As Ad"+community)); // SPLIT HAND - 3 Aces
-		hands.addHand(3, new Hand("3s 8d"+community));
+		hands = new ArrayList<PlayerHand>();
+		String community = "Ac Kc Qd 6h Th";
+		hands.add(new PlayerHand(1, new Hand("As Ad " + community))); // SPLIT HAND - 3 Aces
+		hands.add(new PlayerHand(2, new Hand("As Ad " + community))); // SPLIT HAND - 3 Aces
+		hands.add(new PlayerHand(3, new Hand("3s 8d " + community)));
 		
 		PotHolder potHolder = new PotHolder();
 		potHolder.moveChipsToPot(players.values());
@@ -154,11 +153,11 @@ public class HandResultCalculatorTest extends TestCase {
 		
 		assertEquals(2, potHolder.getNumberOfPots());
 		
-		hands = new PlayerHands();
+		hands = new ArrayList<PlayerHand>();
 		String community = " Ac Kc Qd 6h Th";
-		hands.addHand(1, new Hand("Ks 8d"+community)); // Second best hand - 2 Kings
-		hands.addHand(2, new Hand("2s 7d"+community));
-		hands.addHand(3, new Hand("As Ad"+community)); // Best Hand - 3 Aces
+		hands.add(new PlayerHand(1, new Hand("Ks 8d"+community))); // Second best hand - 2 Kings
+		hands.add(new PlayerHand(2, new Hand("2s 7d"+community)));
+		hands.add(new PlayerHand(3, new Hand("As Ad"+community))); // Best Hand - 3 Aces
 		
 		Map<PokerPlayer, Result> playerResults = calc.getPlayerResults(hands, potHolder, players);
 		
@@ -197,11 +196,11 @@ public class HandResultCalculatorTest extends TestCase {
 		players.put(2, p2);
 		players.put(3, p3);
 		
-		hands = new PlayerHands();
+		hands = new ArrayList<PlayerHand>();
 		String community = " Ac Kc Qd 6h Th";
-		hands.addHand(1, new Hand("As Ad"+community)); // Best Hand - 3 Aces
-		hands.addHand(2, new Hand("2s 7d"+community));
-		hands.addHand(3, new Hand("3s 8d"+community));
+		hands.add(new PlayerHand(1, new Hand("As Ad"+community))); // Best Hand - 3 Aces
+		hands.add(new PlayerHand(2, new Hand("2s 7d"+community)));
+		hands.add(new PlayerHand(3, new Hand("3s 8d"+community)));
 		
 		PotHolder potHolder = new PotHolder();
 		potHolder.moveChipsToPot(players.values());
@@ -217,7 +216,6 @@ public class HandResultCalculatorTest extends TestCase {
 		assertEquals(40, p2stake);
 		long p3stake = potHolder.getActivePot().getPotContributors().get(players.get(3));
 		assertEquals(80, p3stake);
-		
 		
 		Map<PokerPlayer, Result> playerResults = calc.getPlayerResults(hands, potHolder, players);
 		

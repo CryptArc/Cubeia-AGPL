@@ -17,6 +17,7 @@
 
 package com.cubeia.poker;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.cubeia.poker.action.ActionRequest;
@@ -25,6 +26,7 @@ import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.model.PlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.pot.Pot;
@@ -356,9 +358,18 @@ public class PokerLogicTest extends GuiceTest {
 		act(p[1], PokerActionType.CHECK);
 		act(p[0], PokerActionType.CHECK);
 		
-		assertEquals(7, mockServerAdapter.hands.getHands().get(p[0]).getCards().size());
+		assertEquals(7, findByPlayerId(p[0], mockServerAdapter.hands).getHand().getCards().size());
 	}
 
+	private PlayerHand findByPlayerId(int playerId, Collection<PlayerHand> hands) {
+	    for (PlayerHand ph : hands) {
+	        if (playerId == ph.getPlayerId()) {
+	            return ph;
+	        }
+	    }
+	    return null;
+	}
+	
 	public void testRequestAction() {
 		createGame(3);
 		// Trigger timeout that should start the game

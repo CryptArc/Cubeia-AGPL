@@ -8,12 +8,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.cubeia.poker.gametypes.telesina.TelesinaHandStrength;
 import com.cubeia.poker.hand.Card;
-import com.cubeia.poker.hand.HandStrength;
 import com.cubeia.poker.hand.HandType;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.hand.Suit;
+import com.cubeia.poker.variant.telesina.telesina.TelesinaHandStrength;
 
 public class TelesinaHandStrengthEvaluator {
 

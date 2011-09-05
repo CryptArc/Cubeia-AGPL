@@ -8,16 +8,14 @@ import java.util.Comparator;
  * @author w
  */
 public class HandComparator implements Comparator<Hand> {
-    
-    private Comparator<HandStrength> handStrengthComparator;
+    private HandStrengthComparator hsc;
 
-    public HandComparator(Comparator<HandStrength> handStrengthComparator) {
-    	this.handStrengthComparator = handStrengthComparator;
+    public HandComparator() {
+        hsc = new HandStrengthComparator();
     }
 
     @Override
     public int compare(Hand h1, Hand h2) {
-        return handStrengthComparator.compare(h1.getHandStrength(), h2.getHandStrength());
+        return hsc.compare(h1.getHandStrength(), h2.getHandStrength());
     }
-    
 }

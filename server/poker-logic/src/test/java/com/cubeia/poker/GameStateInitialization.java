@@ -1,7 +1,7 @@
 package com.cubeia.poker;
 
-import static com.cubeia.poker.gametypes.PokerVariant.TELESINA;
-import static com.cubeia.poker.gametypes.PokerVariant.TEXAS_HOLDEM;
+import static com.cubeia.poker.variant.PokerVariant.TELESINA;
+import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -9,9 +9,9 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.cubeia.poker.gametypes.Telesina;
-import com.cubeia.poker.gametypes.TexasHoldem;
 import com.cubeia.poker.timing.TimingProfile;
+import com.cubeia.poker.variant.telesina.Telesina;
+import com.cubeia.poker.variant.texasholdem.TexasHoldem;
 
 public class GameStateInitialization {
 

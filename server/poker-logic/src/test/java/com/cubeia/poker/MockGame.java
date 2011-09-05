@@ -26,9 +26,9 @@ import java.util.TreeMap;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.ServerAdapter;
-import com.cubeia.poker.gametypes.PokerVariant;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.rounds.blinds.BlindsInfo;
+import com.cubeia.poker.variant.PokerVariant;
 
 public class MockGame implements GameType {
 

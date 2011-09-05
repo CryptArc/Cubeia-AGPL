@@ -19,6 +19,7 @@ package com.cubeia.poker.util;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,14 +28,14 @@ import org.apache.log4j.Logger;
 
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.hand.HandComparator;
-import com.cubeia.poker.hand.HandStrengthComparator;
 import com.cubeia.poker.hand.PokerEvaluator;
-import com.cubeia.poker.model.PlayerHands;
+import com.cubeia.poker.model.PlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.result.Result;
-import com.google.common.collect.ImmutableBiMap;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 
 public class HandResultCalculator implements Serializable {
 
@@ -54,7 +55,7 @@ public class HandResultCalculator implements Serializable {
 	 * @param potHolder
 	 * @return
 	 */
-	public Map<PokerPlayer, Result> getPlayerResults(PlayerHands hands, PotHolder potHolder, Map<Integer, PokerPlayer> playerMap) {
+	public Map<PokerPlayer, Result> getPlayerResults(Collection<PlayerHand> hands, PotHolder potHolder, Map<Integer, PokerPlayer> playerMap) {
 		Map<PokerPlayer, Result> results = new HashMap<PokerPlayer, Result>();
 		
 		// Player ID to Net result (including own bets)
@@ -90,10 +91,10 @@ public class HandResultCalculator implements Serializable {
 			log.debug("participants in this Pot: "+participantIds);
 			
 			// We need to remove all non-participants first
-			PlayerHands filteredHands = hands.filter(participantIds);
+			Collection<PlayerHand> filteredHands = filter(hands, participantIds);
 			
 			// Check if we have participant hands first, if the hand was canceled this may be empty
-			if (filteredHands.getHands().size() > 0) {
+			if (filteredHands.size() > 0) {
 			
 				// --- WINNERS --- 
 				List<Integer> winners = getWinners(filteredHands);
@@ -140,6 +141,14 @@ public class HandResultCalculator implements Serializable {
 		return results;
 	}
 
+    protected Collection<PlayerHand> filter(Collection<PlayerHand> hands, final Collection<Integer> players) {
+        return Collections2.filter(hands, new Predicate<PlayerHand>() {
+            @Override
+            public boolean apply(PlayerHand hand) {
+                return players.contains(hand.getPlayerId());
+            }
+        });
+    }
 	
 	private void addResultBalance(Map<Integer, Long> netResults, Map<Integer, Long> netStakes, Integer playerId, Long winnings, Long stake) {
 		Long balance = netResults.get(playerId);
@@ -158,23 +167,22 @@ public class HandResultCalculator implements Serializable {
 	}
 	
 	
-	private List<Integer> getWinners(PlayerHands hands) {
+	private List<Integer> getWinners(Collection<PlayerHand> hands) {
 		List<Integer> winners = new ArrayList<Integer>();
 		
-		ImmutableBiMap<Integer, Hand> pidToHand = ImmutableBiMap.copyOf(hands.getHands());
-		List<Hand> rankedHands = new PokerEvaluator().rankHands(new ArrayList<Hand>(pidToHand.values()));
-		HandComparator handComparator = new HandComparator(new HandStrengthComparator());
+		List<PlayerHand> rankedHands = new PokerEvaluator().rankHands(hands);
+		HandComparator handComparator = new HandComparator();
 		Hand previousHand = null;
 		
-		for (Hand hand : rankedHands) {
-		    Integer pid = pidToHand.inverse().get(hand);
+		for (PlayerHand hand : rankedHands) {
+		    Integer pid = hand.getPlayerId();
 		    
-		    if (previousHand == null  ||  handComparator.compare(hand, previousHand) == 0) {
+		    if (previousHand == null  ||  handComparator.compare(hand.getHand(), previousHand) == 0) {
 		        // split pot
 		        winners.add(pid);
 		    }
 		    
-		    previousHand = hand;
+		    previousHand = hand.getHand();
 		}
 		
 		return winners;

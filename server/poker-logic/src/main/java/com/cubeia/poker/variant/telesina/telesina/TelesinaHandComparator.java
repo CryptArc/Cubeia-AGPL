@@ -1,4 +1,4 @@
-package com.cubeia.poker.gametypes.telesina;
+package com.cubeia.poker.variant.telesina.telesina;
 
 import java.util.Collections;
 import java.util.Comparator;

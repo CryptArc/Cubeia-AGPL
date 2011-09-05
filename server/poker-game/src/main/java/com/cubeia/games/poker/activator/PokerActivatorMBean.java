@@ -17,7 +17,7 @@
 
 package com.cubeia.games.poker.activator;
 
-import com.cubeia.poker.gametypes.PokerVariant;
+import com.cubeia.poker.variant.PokerVariant;
 
 public interface PokerActivatorMBean {
 

@@ -18,10 +18,11 @@
 package com.cubeia.poker.result;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
-import com.cubeia.poker.model.PlayerHands;
+import com.cubeia.poker.model.PlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 
 /**
@@ -31,26 +32,28 @@ public class HandResult implements Serializable {
 
 	private static final long serialVersionUID = -7802386310901901021L;
 
-	private Map<PokerPlayer, Result> results = new HashMap<PokerPlayer, Result>();
+	private final Map<PokerPlayer, Result> results;
+
+	private final Collection<PlayerHand> playerHands;
+
+	public HandResult() {
+	    results = Collections.emptyMap();
+	    playerHands = Collections.emptyList();
+	}
 	
-	private PlayerHands playerHands;
+	public HandResult(Map<PokerPlayer, Result> results, Collection<PlayerHand> playerHands) {
+	    this.results = results;
+	    this.playerHands = playerHands;
+	}
 	
-	public PlayerHands getPlayerHands() {
-		return playerHands;
+	public Collection<PlayerHand> getPlayerHands() {
+	    return playerHands;
 	}
 
-	public void setPlayerHands(PlayerHands playerHands) {
-		this.playerHands = playerHands;
-	}
-	
-	public Map<PokerPlayer, Result> getResults() {
+    public Map<PokerPlayer, Result> getResults() {
 		return results;
 	}
 
-	public void setResults(Map<PokerPlayer, Result> results) {
-		this.results = results;
-	}
-	
 	public String toString() {
 		return "HandResult results["+results+"] playerHands["+playerHands+"]";
 	}

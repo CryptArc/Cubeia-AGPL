@@ -17,8 +17,8 @@
 
 package mock;
 
-import static com.cubeia.poker.gametypes.PokerVariant.TELESINA;
 import static com.cubeia.poker.timing.Timings.MINIMUM_DELAY;
+import static com.cubeia.poker.variant.PokerVariant.TELESINA;
 
 import com.cubeia.poker.MockGame;
 import com.cubeia.poker.PokerSettings;
