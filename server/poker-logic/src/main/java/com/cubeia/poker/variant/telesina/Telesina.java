@@ -203,8 +203,9 @@ public class Telesina implements GameType, RoundVisitor {
 		log.debug("started new betting round, betting round id = {}", getBettingRoundId());
 	}
 
-    private boolean isHandFinished() {
-		return (getBettingRoundId() >= 3 || state.countNonFoldedPlayers() <= 1);
+    @VisibleForTesting
+    protected boolean isHandFinished() {
+		return (getBettingRoundId() >= 5 || state.countNonFoldedPlayers() <= 1);
 	}
 
 	public int countPlayersSittingIn() {
@@ -330,9 +331,7 @@ public class Telesina implements GameType, RoundVisitor {
             handleFinishedHand(handResult);
 			state.getPotHolder().clearPots();
 		} else {
-			// Start deal community cards round
-		    // TODO: change to DealPocketCardRound()
-			setCurrentRound(new DealCommunityCardsRound(this));
+		    setCurrentRound(roundFactory.createDealPocketCardsRound(this));
 			// Schedule timeout for the community cards round
 			scheduleRoundTimeout();
 		}		
