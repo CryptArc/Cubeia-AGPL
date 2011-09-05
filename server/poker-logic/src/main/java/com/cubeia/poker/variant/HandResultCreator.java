@@ -1,4 +1,4 @@
-package com.cubeia.poker.gametypes;
+package com.cubeia.poker.variant;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,14 +16,12 @@ import com.cubeia.poker.util.HandResultCalculator;
 
 public class HandResultCreator {
 
-    // TODO: copy paste!
     public HandResult createHandResult(List<Card> communityCards, HandResultCalculator handResultCalculator, PotHolder potHolder, Map<Integer, PokerPlayer> currentHandPlayerMap) {
         Collection<PlayerHand> playerHands = createHandHolder(communityCards, currentHandPlayerMap.values());
         Map<PokerPlayer, Result> playerResults = handResultCalculator.getPlayerResults(playerHands, potHolder, currentHandPlayerMap);
         return new HandResult(playerResults, playerHands);
     }
 
-    // TODO: copy paste!
     private Collection<PlayerHand> createHandHolder(List<Card> communityCards, Collection<PokerPlayer> players) {
         ArrayList<PlayerHand> playerHands = new ArrayList<PlayerHand>();
         

@@ -41,7 +41,16 @@ public class Hand implements Serializable {
 		this.cards.addAll(cards);
 	}
 
-	@Override
+	/**
+	 * Copy constructor.
+	 * @param pocketCards
+	 */
+	public Hand(Hand otherHand) {
+	    this.cards = new ArrayList<Card>(otherHand.getCards());
+	    this.handStrength = new HandStrength(otherHand.handStrength);
+    }
+
+    @Override
 	public String toString() {
 		String s = new String();
 		for (Card card : cards) {

@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.poker.gametypes;
+package com.cubeia.poker.variant.texasholdem;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -39,6 +39,7 @@ import com.cubeia.poker.hand.StandardDeck;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.rounds.DealCommunityCardsRound;
+import com.cubeia.poker.rounds.DealPocketCardsRound;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
 import com.cubeia.poker.rounds.ante.AnteRound;
@@ -48,6 +49,7 @@ import com.cubeia.poker.rounds.blinds.BlindsInfo;
 import com.cubeia.poker.rounds.blinds.BlindsRound;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.util.HandResultCalculator;
+import com.cubeia.poker.variant.HandResultCreator;
 
 public class TexasHoldem implements GameType, RoundVisitor {
 
@@ -118,7 +120,7 @@ public class TexasHoldem implements GameType, RoundVisitor {
 
 	private void dealPocketCards(PokerPlayer p, int n) {
 		for (int i = 0; i < n; i++) {
-			p.getPocketCards().addCard(deck.deal());
+		    p.addPocketCard(deck.deal(), false);
 		}
 		state.notifyPrivateCards(p.getId(), p.getPocketCards().getCards());
 	}
@@ -328,6 +330,10 @@ public class TexasHoldem implements GameType, RoundVisitor {
 		startBettingRound();
 	}
 
+	public void visit(DealPocketCardsRound round) {
+	    throw new UnsupportedOperationException(round.getClass().getSimpleName() + " round not allowed in Texas Holdem");
+	};
+	
 	private void prepareBettingRound() {
 		int bbSeatId = blindsInfo.getBigBlindSeatId();
 		currentRound = new BettingRound(this, bbSeatId, new DefaultPlayerToActCalculator());

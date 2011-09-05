@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.poker.gametypes;
+package com.cubeia.poker.variant.texasholdem;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -27,4 +27,4 @@ import com.google.inject.BindingAnnotation;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @BindingAnnotation
-public @interface TelesinaGame {}
+public @interface TexasHoldemGame {}

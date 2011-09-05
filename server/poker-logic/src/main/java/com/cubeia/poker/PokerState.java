@@ -33,9 +33,6 @@ import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
-import com.cubeia.poker.gametypes.PokerVariant;
-import com.cubeia.poker.gametypes.Telesina;
-import com.cubeia.poker.gametypes.TexasHoldem;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
@@ -52,6 +49,11 @@ import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.tournament.RoundReport;
+import com.cubeia.poker.variant.PokerVariant;
+import com.cubeia.poker.variant.telesina.Telesina;
+import com.cubeia.poker.variant.telesina.TelesinaDeckFactory;
+import com.cubeia.poker.variant.telesina.TelesinaRoundFactory;
+import com.cubeia.poker.variant.texasholdem.TexasHoldem;
 
 /**
  * This is the class that users of the poker api will interface with.
@@ -173,7 +175,7 @@ public class PokerState implements Serializable, IPokerState {
 			gameType = new TexasHoldem(this);
 			break;
 		case TELESINA:
-			gameType = new Telesina(this);
+			gameType = new Telesina(this, new TelesinaDeckFactory(), new TelesinaRoundFactory());
 			break;
 		default:
 			throw new UnsupportedOperationException("unsupported poker variant: " + variant);

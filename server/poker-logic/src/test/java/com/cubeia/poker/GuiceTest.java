@@ -17,8 +17,8 @@
 
 package com.cubeia.poker;
 
-import static com.cubeia.poker.gametypes.PokerVariant.TEXAS_HOLDEM;
 import static com.cubeia.poker.timing.Timings.MINIMUM_DELAY;
+import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
 
 import java.util.LinkedList;
 import java.util.List;

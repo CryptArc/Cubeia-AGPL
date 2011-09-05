@@ -17,8 +17,8 @@
 
 package com.cubeia.games.poker.activator;
 
-import static com.cubeia.poker.gametypes.PokerVariant.TELESINA;
-import static com.cubeia.poker.gametypes.PokerVariant.TEXAS_HOLDEM;
+import static com.cubeia.poker.variant.PokerVariant.TELESINA;
+import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
 
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
@@ -42,10 +42,10 @@ import com.cubeia.games.poker.tournament.activator.TournamentTableSettings;
 import com.cubeia.poker.PokerGuiceModule;
 import com.cubeia.poker.PokerSettings;
 import com.cubeia.poker.PokerState;
-import com.cubeia.poker.gametypes.PokerVariant;
 import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.timing.Timings;
+import com.cubeia.poker.variant.PokerVariant;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 

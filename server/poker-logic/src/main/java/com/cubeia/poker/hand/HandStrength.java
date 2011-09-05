@@ -28,6 +28,12 @@ public class HandStrength {
 		this.type = type;
 	}
 
+	public HandStrength(HandStrength other) {
+	    this.type = other.type;
+	    this.highestRank = other.highestRank;
+	    this.secondRank = other.secondRank;
+	}
+	
 	public HandType getHandType() {
 		return type;
 	}

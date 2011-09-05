@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.poker.gametypes;
+package com.cubeia.poker.variant.telesina;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -34,24 +34,37 @@ import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Deck;
-import com.cubeia.poker.hand.IndexCardIdGenerator;
-import com.cubeia.poker.hand.PokerEvaluator;
-import com.cubeia.poker.hand.Shuffler;
-import com.cubeia.poker.hand.TelesinaDeck;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.rounds.DealCommunityCardsRound;
+import com.cubeia.poker.rounds.DealPocketCardsRound;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
 import com.cubeia.poker.rounds.ante.AnteRound;
-import com.cubeia.poker.rounds.ante.AnteRoundHelper;
 import com.cubeia.poker.rounds.betting.BettingRound;
-import com.cubeia.poker.rounds.betting.TelesinaPlayerToActCalculator;
 import com.cubeia.poker.rounds.blinds.BlindsInfo;
 import com.cubeia.poker.rounds.blinds.BlindsRound;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.util.HandResultCalculator;
+import com.cubeia.poker.variant.HandResultCreator;
+import com.google.common.annotations.VisibleForTesting;
 
+/**
+ * Telesina game.
+ * 
+ * Game rounds:
+ *  1  AnteRound, 1 private + 1 public pocket cards
+ *  2  BettingRound 
+ *  3  DealPocketCardsRound, 1 + 2
+ *  4  BettingRound
+ *  5  DealPocketCardsRound, 1 + 3
+ *  6  BettingRound 
+ *  7  DealPocketCardsRound, 1 + 4
+ *  8  BettingRound 
+ *  9  DealVelaCard, 1 + 4 & 1 community (vela)
+ * 10  Betting round
+ * 
+ */
 public class Telesina implements GameType, RoundVisitor {
 
 	private static final long serialVersionUID = -1523110440727681601L;
@@ -65,26 +78,39 @@ public class Telesina implements GameType, RoundVisitor {
 //    private HashMultimap<Integer, Card> playerPublicCards;
 	
 	/**
-	 * 0 = pre flop 1 = flop 2 = turn 3 = river
+	 * Betting round sequence id:
+	 * 0 -> ante (1 private + 1 public pocket cards)
+	 * 1 -> betting round 1 (1 + 2)
+	 * 2 -> betting round 2 (1 + 3)
+	 * 3 -> betting round 3 (1 + 4)
+	 * 4 -> vela betting round (1 + 4 + vela)
+	 * 
 	 */
-	private int roundId;
+	private int bettingRoundId;
 
-	private BlindsInfo blindsInfo = new BlindsInfo();
+	@VisibleForTesting
+	BlindsInfo blindsInfo = new BlindsInfo();
 
-	private final PokerState state;
+	final PokerState state;
 	
 	// TODO: random should be injected
 	private Random random = new Random();
 	
 	private HandResultCalculator handResultCalculator = new HandResultCalculator();
 
-	public Telesina(PokerState state) {
+    private final TelesinaDeckFactory deckFactory;
+
+    private final TelesinaRoundFactory roundFactory;
+
+	public Telesina(PokerState state, TelesinaDeckFactory deckFactory, TelesinaRoundFactory roundFactory) {
 		this.state = state;
+        this.deckFactory = deckFactory;
+        this.roundFactory = roundFactory;
 	}
 	
 	@Override
 	public String toString() {
-	    return "Telesina, current round["+getCurrentRound()+"] roundId["+roundId+"] ";
+	    return "Telesina, current round["+getCurrentRound()+"] roundId["+getBettingRoundId()+"] ";
 	}
 	
 	@Override
@@ -96,16 +122,15 @@ public class Telesina implements GameType, RoundVisitor {
 	private void initHand() {	
 		log.debug("init hand");
 		
-		deck = new TelesinaDeck(new Shuffler<Card>(getRandom()), new IndexCardIdGenerator(), state.getTableSize());
-//        playerPublicCards = HashMultimap.<Integer, Card>create();
+		deck = deckFactory.createNewDeck(getRandom(), state.getTableSize());
 		blindsInfo.setAnteLevel(state.getAnteLevel());
 		
-		setCurrentRound(new AnteRound(this, new AnteRoundHelper()));
+		setCurrentRound(roundFactory.createAnteRound(this));
 		
-		roundId = 0;
+		setBettingRoundId(0);
 	}
 
-	private Random getRandom() {
+    private Random getRandom() {
 		return random;
 	}
 
@@ -121,20 +146,19 @@ public class Telesina implements GameType, RoundVisitor {
 		}
 	}
 
-	private void dealPocketCards(PokerPlayer p, int n) {
+	private void dealHiddenPocketCards(PokerPlayer p, int n) {
 		for (int i = 0; i < n; i++) {
-			p.getPocketCards().addCard(deck.deal());
+		    p.addPocketCard(deck.deal(), false);
 		}
 		state.notifyPrivateCards(p.getId(), p.getPocketCards().getCards());
 	}
 	
-	private void dealExposedCards(PokerPlayer player, int n) {
+	private void dealExposedPocketCards(PokerPlayer player, int n) {
 		ArrayList<Card> cardsDealt = new ArrayList<Card>();
 		for (int i = 0; i < n; i++) {
 			Card card = deck.deal();
 			cardsDealt.add(card);
-			player.getPocketCards().addCard(card);
-//			playerPublicCards.put(player.getId(), card);
+			player.addPocketCard(card, true);
 		}
 		
 		state.notifyPrivateCards(player.getId(), cardsDealt);
@@ -174,13 +198,13 @@ public class Telesina implements GameType, RoundVisitor {
     }
 
     private void startBettingRound() {
-    	log.trace("Starting new betting round. Round ID: "+(roundId+1));
-		setCurrentRound(new BettingRound(this, blindsInfo.getDealerButtonSeatId(), new TelesinaPlayerToActCalculator(new PokerEvaluator())));
-		roundId++;
+		setCurrentRound(roundFactory.createBettingRound(this, blindsInfo.getDealerButtonSeatId()));
+		setBettingRoundId(getBettingRoundId() + 1);
+		log.debug("started new betting round, betting round id = {}", getBettingRoundId());
 	}
-    
-	private boolean isHandFinished() {
-		return (roundId >= 3 || state.countNonFoldedPlayers() <= 1);
+
+    private boolean isHandFinished() {
+		return (getBettingRoundId() >= 3 || state.countNonFoldedPlayers() <= 1);
 	}
 
 	public int countPlayersSittingIn() {
@@ -290,7 +314,8 @@ public class Telesina implements GameType, RoundVisitor {
 		    dealPocketCards();
 		    dealExposedCards();
 		    
-		    prepareBettingRound();
+		    startBettingRound();
+//		    prepareBettingRound();
 		}
 	}
 	
@@ -306,6 +331,7 @@ public class Telesina implements GameType, RoundVisitor {
 			state.getPotHolder().clearPots();
 		} else {
 			// Start deal community cards round
+		    // TODO: change to DealPocketCardRound()
 			setCurrentRound(new DealCommunityCardsRound(this));
 			// Schedule timeout for the community cards round
 			scheduleRoundTimeout();
@@ -315,32 +341,22 @@ public class Telesina implements GameType, RoundVisitor {
 	@Override
 	public void visit(BlindsRound blindsRound) {
 		throw new UnsupportedOperationException("blinds round not supported in telesina");
-//		if (blindsRound.isCanceled()) {
-//			handleCanceledHand();
-//		} else {
-//			updateBlindsInfo(blindsRound);
-//			dealPocketCards();
-//			prepareBettingRound();
-//		}
 	}
 	
 	@Override
 	public void visit(DealCommunityCardsRound round) {
-		startBettingRound();
+	    throw new UnsupportedOperationException(round.getClass().getSimpleName() + " round not allowed in Telesina");
 	}
 
-	private void prepareBettingRound() {
-		setCurrentRound(new BettingRound(this, getBlindsInfo().getDealerButtonSeatId(), new TelesinaPlayerToActCalculator(new PokerEvaluator())));
+	@Override
+	public void visit(DealPocketCardsRound round) {
+	    startBettingRound();
 	}
-
-//	private void updateBlindsInfo(BlindsRound blindsRound) {
-//		this.blindsInfo = blindsRound.getBlindsInfo();
-//	}
-
-	private void dealPocketCards() {
+	
+	public void dealPocketCards() {
 		for (PokerPlayer p : state.getCurrentHandSeatingMap().values()) {
 			if (!p.isSittingOut()) {
-				dealPocketCards(p, 1);
+				dealHiddenPocketCards(p, 1);
 			}
 		}
 	}
@@ -348,17 +364,27 @@ public class Telesina implements GameType, RoundVisitor {
 	private void dealExposedCards() {
 		for (PokerPlayer p : state.getCurrentHandSeatingMap().values()) {
 			if (!p.isSittingOut()) {
-				dealExposedCards(p, 1);
+				dealExposedPocketCards(p, 1);
 			}
 		}
 	}
 
-    private Round getCurrentRound() {
+	@VisibleForTesting
+    protected Round getCurrentRound() {
         return currentRound;
     }
 
     private void setCurrentRound(Round newRound) {
         log.debug("moving to new round: {}", newRound);
         this.currentRound = newRound;
+    }
+
+    @VisibleForTesting
+    protected int getBettingRoundId() {
+        return bettingRoundId;
+    }
+
+    private void setBettingRoundId(int bettingRoundId) {
+        this.bettingRoundId = bettingRoundId;
     }
 }

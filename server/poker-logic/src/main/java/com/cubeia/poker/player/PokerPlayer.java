@@ -28,8 +28,10 @@ import com.cubeia.poker.hand.Hand;
 public interface PokerPlayer extends Serializable {
 
 	/**
-	 * 
-	 * @return a list of cards, never <code>null</code>.
+	 * Returns the players pocket cards. Note that this might
+	 * be a defensive copy and should NOT be modified.
+	 * Use {@link #addPocketCard(Card, boolean)} to add a card to the player's hand.
+	 * @return the player's hand, never null.
 	 */
 	public Hand getPocketCards();
 	
