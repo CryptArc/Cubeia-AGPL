@@ -20,6 +20,7 @@ package com.cubeia.games.poker.handler;
 import se.jadestone.dicearena.game.poker.network.protocol.AamsSessionInfoPacket;
 import se.jadestone.dicearena.game.poker.network.protocol.BestHand;
 import se.jadestone.dicearena.game.poker.network.protocol.CardToDeal;
+import se.jadestone.dicearena.game.poker.network.protocol.CollectMoney;
 import se.jadestone.dicearena.game.poker.network.protocol.DealPrivateCards;
 import se.jadestone.dicearena.game.poker.network.protocol.DealPublicCards;
 import se.jadestone.dicearena.game.poker.network.protocol.DealerButton;
@@ -28,10 +29,10 @@ import se.jadestone.dicearena.game.poker.network.protocol.ExposePrivateCards;
 import se.jadestone.dicearena.game.poker.network.protocol.GameCard;
 import se.jadestone.dicearena.game.poker.network.protocol.HandEnd;
 import se.jadestone.dicearena.game.poker.network.protocol.InformRoundEnded;
+import se.jadestone.dicearena.game.poker.network.protocol.MoneyWithdrawal;
 import se.jadestone.dicearena.game.poker.network.protocol.PacketVisitor;
 import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerAction;
-import se.jadestone.dicearena.game.poker.network.protocol.PlayerAndPotTransfer;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerBalance;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerPokerStatus;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitinRequest;
@@ -95,10 +96,8 @@ public class DefaultPokerHandler implements PacketVisitor {
 	public void visit(AamsSessionInfoPacket packet) {}
 	@Override
 	public void visit(DeckInfo packet) {}
-
-	@Override
-	public void visit(PlayerAndPotTransfer packet) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void visit(MoneyWithdrawal packet) {}
+    @Override
+    public void visit(CollectMoney packet) {}
 }

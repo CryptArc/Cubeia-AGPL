@@ -108,7 +108,7 @@ public class AnteRoundHelperTest {
         
         verify(player1, times(2)).enableOption(possibleActionCaptor.capture());
         
-        assertThat(possibleActionCaptor.getAllValues().get(0).getActionType(), is(PokerActionType.SMALL_BLIND));
+        assertThat(possibleActionCaptor.getAllValues().get(0).getActionType(), is(PokerActionType.ANTE));
         assertThat(possibleActionCaptor.getAllValues().get(0).getMinAmount(), is((long) anteLevel));
         assertThat(possibleActionCaptor.getAllValues().get(1).getActionType(), is(PokerActionType.DECLINE_ENTRY_BET));
     }

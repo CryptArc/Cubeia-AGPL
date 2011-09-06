@@ -31,6 +31,6 @@ package com.cubeia.poker.action;
  * @author Fredrik Johansson, Cubeia Ltd
  */
 public enum PokerActionType {
-	SMALL_BLIND, BIG_BLIND, CALL, CHECK, BET, RAISE, FOLD, DECLINE_ENTRY_BET
+	SMALL_BLIND, BIG_BLIND, CALL, CHECK, BET, RAISE, FOLD, DECLINE_ENTRY_BET, ANTE;
 
 }

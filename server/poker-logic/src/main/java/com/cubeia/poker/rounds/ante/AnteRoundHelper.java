@@ -69,7 +69,7 @@ public class AnteRoundHelper {
      * @param game the game
      */
     void requestAnte(PokerPlayer player, int anteLevel, GameType game) {
-    	player.enableOption(new PossibleAction(PokerActionType.SMALL_BLIND, anteLevel));
+    	player.enableOption(new PossibleAction(PokerActionType.ANTE, anteLevel));
     	player.enableOption(new PossibleAction(PokerActionType.DECLINE_ENTRY_BET));
     	game.requestAction(player.getActionRequest());
     }
