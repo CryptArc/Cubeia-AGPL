@@ -1,5 +1,7 @@
 package com.cubeia.poker.hand;
 
+import java.io.Serializable;
+
 /**
  * <p>Simple playing card.</p>
  * 
@@ -9,13 +11,24 @@ package com.cubeia.poker.hand;
  * 
  * @author Fredrik Johansson, Cubeia Ltd
  */
-public class Card {
-	
-	private final Suit suit;
+public class Card implements Serializable {
+    private static final long serialVersionUID = 9039935616385887536L;
+
+    private final Suit suit;
 	
 	private final Rank rank;
 	
 	private final Integer id;
+	
+	/**
+	 * Needed by Jboss serialization
+	 */
+	@SuppressWarnings("unused")
+    private Card() {
+	    this.rank = null;
+	    this.suit = null;
+	    this.id = null;
+	}
 	
 	/**
 	 * Creates an anonymous card.
