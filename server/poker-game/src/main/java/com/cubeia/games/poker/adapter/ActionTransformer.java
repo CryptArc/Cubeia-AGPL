@@ -174,7 +174,11 @@ public class ActionTransformer {
 			case RAISE:
 				action.type = ActionType.RAISE;
 				break;
-				
+			
+			case DECLINE_ENTRY_BET:
+			    action.type = ActionType.DECLINE_ENTRY_BET;
+				break;
+			    
 			case ANTE:
 			    action.type = ActionType.ANTE;
 			    break;

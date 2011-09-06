@@ -95,6 +95,11 @@ public class ActionTransformerTest extends TestCase {
         assertThat(ActionTransformer.transform(ActionType.RAISE), is(PokerActionType.RAISE));
         assertThat(ActionTransformer.transform(ActionType.DECLINE_ENTRY_BET), is(PokerActionType.DECLINE_ENTRY_BET));
         assertThat(ActionTransformer.transform(ActionType.ANTE), is(PokerActionType.ANTE));
+        
+        // sanity check
+        for (ActionType at : ActionType.values()) {
+            ActionTransformer.transform(at);
+        }
 	}
 	
     public void testCreatePlayerAction() {
@@ -106,6 +111,12 @@ public class ActionTransformerTest extends TestCase {
         assertThat(ActionTransformer.createPlayerAction(PokerActionType.BIG_BLIND).type, is(ActionType.BIG_BLIND));
         assertThat(ActionTransformer.createPlayerAction(PokerActionType.SMALL_BLIND).type, is(ActionType.SMALL_BLIND));
         assertThat(ActionTransformer.createPlayerAction(PokerActionType.RAISE).type, is(ActionType.RAISE));
+        assertThat(ActionTransformer.createPlayerAction(PokerActionType.DECLINE_ENTRY_BET).type, is(ActionType.DECLINE_ENTRY_BET));
         assertThat(ActionTransformer.createPlayerAction(PokerActionType.ANTE).type, is(ActionType.ANTE));
+
+        // sanity check
+        for (PokerActionType pat : PokerActionType.values()) {
+            ActionTransformer.createPlayerAction(pat);
+        }
     }	
 }
