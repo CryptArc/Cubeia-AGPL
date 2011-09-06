@@ -50,6 +50,7 @@ import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.model.PlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
+import com.google.common.annotations.VisibleForTesting;
 
 /**
  * Translates poker-logic internal actions to the styx wire-protocol
@@ -142,8 +143,8 @@ public class ActionTransformer {
 		return type;
 	}
 	
-	
-	private static PlayerAction createPlayerAction(PokerActionType actionType) {
+	@VisibleForTesting
+	protected static PlayerAction createPlayerAction(PokerActionType actionType) {
 		PlayerAction action = new PlayerAction();
 		switch(actionType) {
 			case FOLD:
@@ -173,6 +174,10 @@ public class ActionTransformer {
 			case RAISE:
 				action.type = ActionType.RAISE;
 				break;
+				
+			case ANTE:
+			    action.type = ActionType.ANTE;
+			    break;
 				
 			default:
                 throw new UnsupportedOperationException("unsupported action type: " + actionType.name());

@@ -97,4 +97,15 @@ public class ActionTransformerTest extends TestCase {
         assertThat(ActionTransformer.transform(ActionType.ANTE), is(PokerActionType.ANTE));
 	}
 	
+    public void testCreatePlayerAction() {
+        assertThat("wrong number of poker action types, something broken?", PokerActionType.values().length, is(9));
+        assertThat(ActionTransformer.createPlayerAction(PokerActionType.FOLD).type, is(ActionType.FOLD));
+        assertThat(ActionTransformer.createPlayerAction(PokerActionType.CHECK).type, is(ActionType.CHECK));
+        assertThat(ActionTransformer.createPlayerAction(PokerActionType.CALL).type, is(ActionType.CALL));
+        assertThat(ActionTransformer.createPlayerAction(PokerActionType.BET).type, is(ActionType.BET));
+        assertThat(ActionTransformer.createPlayerAction(PokerActionType.BIG_BLIND).type, is(ActionType.BIG_BLIND));
+        assertThat(ActionTransformer.createPlayerAction(PokerActionType.SMALL_BLIND).type, is(ActionType.SMALL_BLIND));
+        assertThat(ActionTransformer.createPlayerAction(PokerActionType.RAISE).type, is(ActionType.RAISE));
+        assertThat(ActionTransformer.createPlayerAction(PokerActionType.ANTE).type, is(ActionType.ANTE));
+    }	
 }
