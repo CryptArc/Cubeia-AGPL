@@ -316,7 +316,6 @@ public class Telesina implements GameType, RoundVisitor {
 		    dealExposedCards();
 		    
 		    startBettingRound();
-//		    prepareBettingRound();
 		}
 	}
 	
@@ -349,7 +348,9 @@ public class Telesina implements GameType, RoundVisitor {
 
 	@Override
 	public void visit(DealPocketCardsRound round) {
-	    startBettingRound();
+        log.debug("deal pocked cards round finished (betting round {})", getBettingRoundId());
+        dealExposedCards();
+        startBettingRound();
 	}
 	
 	public void dealPocketCards() {
