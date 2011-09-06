@@ -132,9 +132,12 @@ public class ActionTransformer {
 				type = PokerActionType.DECLINE_ENTRY_BET;
 				break;
 				
-			default:
-				type = PokerActionType.FOLD;
+			case ANTE:
+			    type = PokerActionType.ANTE;
 				break;
+				
+			default:
+			    throw new UnsupportedOperationException("unsupported action type: " + protocol.name());
 		}
 		return type;
 	}
@@ -172,8 +175,7 @@ public class ActionTransformer {
 				break;
 				
 			default:
-				action.type = ActionType.FOLD;
-				break;
+                throw new UnsupportedOperationException("unsupported action type: " + actionType.name());
 		}
 		
 		return action;

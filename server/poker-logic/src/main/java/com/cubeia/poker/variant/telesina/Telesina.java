@@ -375,7 +375,7 @@ public class Telesina implements GameType, RoundVisitor {
     }
 
     private void setCurrentRound(Round newRound) {
-        log.debug("moving to new round: {}", newRound);
+        log.debug("moved to new round: {}", newRound);
         this.currentRound = newRound;
     }
 

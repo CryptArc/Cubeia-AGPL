@@ -17,6 +17,9 @@
 
 package com.cubeia.games.poker.adapter;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,8 +27,10 @@ import junit.framework.TestCase;
 import se.jadestone.dicearena.game.poker.network.protocol.CardToDeal;
 import se.jadestone.dicearena.game.poker.network.protocol.DealPrivateCards;
 import se.jadestone.dicearena.game.poker.network.protocol.Enums;
+import se.jadestone.dicearena.game.poker.network.protocol.Enums.ActionType;
 import se.jadestone.dicearena.game.poker.network.protocol.HandEnd;
 
+import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.model.PlayerHand;
@@ -78,4 +83,18 @@ public class ActionTransformerTest extends TestCase {
 		assertEquals(Enums.Rank.HIDDEN, dealtCard.card.rank);
 		assertEquals(Enums.Suit.HIDDEN, dealtCard.card.suit);
 	}
+	
+	public void testTransformActionTypeToPokerActionType() {
+	    assertThat("wrong number of action types, something broken?", ActionType.values().length, is(9));
+        assertThat(ActionTransformer.transform(ActionType.FOLD), is(PokerActionType.FOLD));
+        assertThat(ActionTransformer.transform(ActionType.CHECK), is(PokerActionType.CHECK));
+        assertThat(ActionTransformer.transform(ActionType.CALL), is(PokerActionType.CALL));
+        assertThat(ActionTransformer.transform(ActionType.BET), is(PokerActionType.BET));
+        assertThat(ActionTransformer.transform(ActionType.BIG_BLIND), is(PokerActionType.BIG_BLIND));
+        assertThat(ActionTransformer.transform(ActionType.SMALL_BLIND), is(PokerActionType.SMALL_BLIND));
+        assertThat(ActionTransformer.transform(ActionType.RAISE), is(PokerActionType.RAISE));
+        assertThat(ActionTransformer.transform(ActionType.DECLINE_ENTRY_BET), is(PokerActionType.DECLINE_ENTRY_BET));
+        assertThat(ActionTransformer.transform(ActionType.ANTE), is(PokerActionType.ANTE));
+	}
+	
 }
