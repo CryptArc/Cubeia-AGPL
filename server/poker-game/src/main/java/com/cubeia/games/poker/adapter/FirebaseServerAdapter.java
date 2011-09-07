@@ -223,7 +223,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
         DealPrivateCards hiddenCardsPacket = ActionTransformer.createPrivateCardsPacket(playerId, cards, false);
         GameDataAction ntfyAction = ProtocolFactory.createGameAction(hiddenCardsPacket, playerId, table.getId());
         log.debug("--> Send DealPrivateCards(exposed)["+hiddenCardsPacket+"] to everyone");
-        sendPublicPacket(ntfyAction, playerId);
+        sendPublicPacket(ntfyAction, -1);
 	}
 	
     @Override

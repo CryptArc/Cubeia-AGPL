@@ -32,4 +32,6 @@ public interface RoundVisitor {
 	void visit(DealCommunityCardsRound round);
 
 	void visit(DealPocketCardsRound round);
+	
+	void visit(DealVelaCardRound round);
 }
