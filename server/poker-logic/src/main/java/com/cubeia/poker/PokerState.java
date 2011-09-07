@@ -483,6 +483,10 @@ public class PokerState implements Serializable, IPokerState {
 		serverAdapter.notifyPrivateCards(playerId, cards);
 	}
 
+	public void notifyPrivateExposedCards(int playerId, List<Card> cards) {
+	    serverAdapter.notifyPrivateExposedCards(playerId, cards);
+	}
+	
 	public void exposePrivateCards(int playerId, List<Card> cards) {
 		serverAdapter.exposePrivateCards(playerId, cards);
 	}

@@ -202,8 +202,7 @@ public class ActionTransformer {
 		packet.cards = new LinkedList<CardToDeal>();
 		for (Card card : cards) {
 			GameCard gCard = new GameCard();
-			// gCard.cardId = card.getDeckId();
-			gCard.cardId = card.getId(); // FIXME - wrong ID
+			gCard.cardId = card.getId(); 
 			
 			if (!hidden) {
 				gCard.rank = Enums.Rank.values()[card.getRank().ordinal()];
@@ -229,8 +228,7 @@ public class ActionTransformer {
 			
 			gCard.rank = Enums.Rank.values()[card.getRank().ordinal()];
 			gCard.suit = Enums.Suit.values()[card.getSuit().ordinal()];
-			// gCard.cardId = card.getDeckId();
-			gCard.cardId = card.getId(); // FIXME - wrong ID
+			gCard.cardId = card.getId();
 			
 			packet.cards.add(gCard);
 		}
@@ -244,8 +242,7 @@ public class ActionTransformer {
 			GameCard gCard = new GameCard();
 			gCard.rank = Enums.Rank.values()[card.getRank().ordinal()];
 			gCard.suit = Enums.Suit.values()[card.getSuit().ordinal()];
-			// gCard.cardId = card.getDeckId();
-			gCard.cardId = card.getId(); // FIXME - wrong ID
+			gCard.cardId = card.getId();
 			
 			CardToDeal deal = new CardToDeal(playerId, gCard);
 			packet.cards.add( deal);

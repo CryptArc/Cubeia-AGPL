@@ -147,10 +147,14 @@ public class Telesina implements GameType, RoundVisitor {
 	}
 
 	private void dealHiddenPocketCards(PokerPlayer p, int n) {
+        ArrayList<Card> cardsDealt = new ArrayList<Card>();
 		for (int i = 0; i < n; i++) {
-		    p.addPocketCard(deck.deal(), false);
+		    Card card = deck.deal();
+		    cardsDealt.add(card);
+            p.addPocketCard(card, false);
 		}
-		state.notifyPrivateCards(p.getId(), p.getPocketCards().getCards());
+		log.debug("notifying user {} of private cards: {}", p.getId(), cardsDealt);
+		state.notifyPrivateCards(p.getId(), cardsDealt);
 	}
 	
 	private void dealExposedPocketCards(PokerPlayer player, int n) {
@@ -160,9 +164,8 @@ public class Telesina implements GameType, RoundVisitor {
 			cardsDealt.add(card);
 			player.addPocketCard(card, true);
 		}
-		
-		state.notifyPrivateCards(player.getId(), cardsDealt);
-		state.exposePrivateCards(player.getId(), cardsDealt);
+        log.debug("notifying all users of private exposed cards to {}: {}", player.getId(), cardsDealt);
+		state.notifyPrivateExposedCards(player.getId(), cardsDealt);
 	}
 
 	private void dealCommunityCards(int n) {
