@@ -22,6 +22,7 @@ import java.util.List;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.pot.Pot;
@@ -114,5 +115,13 @@ public interface ServerAdapter {
 	 * @param player
 	 */
     void notifyPlayerBalanceReset(PokerPlayer player);
+
+    /**
+     * Send information if the deck in use.
+     * @param size total number of cards in deck
+     * @param rankLow lowest used rank in deck, this is normally TWO, but if the deck is stripped 
+     * it might be different.
+     */
+    void notifyDeckInfo(int size, Rank rankLow);
 
 }

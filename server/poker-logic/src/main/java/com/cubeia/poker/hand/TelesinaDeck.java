@@ -16,8 +16,10 @@ import java.util.List;
  */
 public class TelesinaDeck implements Deck {
     private static final long serialVersionUID = -5030565526818602010L;
-    private List<Card> cards;
+    private final List<Card> cards;
     private int currentCardIndex;
+    private final Rank lowestRank;
+    private final int deckSize;
     
     /**
      * Constructs a deck with a size calculated by the number of participants given.
@@ -26,8 +28,10 @@ public class TelesinaDeck implements Deck {
      */
     public TelesinaDeck(Shuffler<Card> shuffler, CardIdGenerator idGenerator, int numberOfParticipants) {
         List<Card> vanillaCards = createDeck(numberOfParticipants);
+        deckSize = vanillaCards.size();
         List<Card> shuffledCards = shuffler.shuffle(vanillaCards);
         cards = idGenerator.copyAndAssignIds(shuffledCards);
+        lowestRank = calculateLowestRankToUse(numberOfParticipants);
     }
     
     @SuppressWarnings("unchecked")
@@ -50,6 +54,18 @@ public class TelesinaDeck implements Deck {
     protected List<Rank> calculateRanksToUse(int numberOfParticipants) {
         int firstRankIndex = Math.max(0, 11 - numberOfParticipants - 2);
         return asList(Rank.values()).subList(firstRankIndex, Rank.values().length);
+    }
+    
+    protected Rank calculateLowestRankToUse(int numberOfParticipants) {
+        return calculateRanksToUse(numberOfParticipants).get(0);
+    }
+    
+    public Rank getLowestRank() {
+        return lowestRank;
+    }
+    
+    public int getTotalNumberOfCardsInDeck() {
+        return deckSize;
     }
     
     @Override

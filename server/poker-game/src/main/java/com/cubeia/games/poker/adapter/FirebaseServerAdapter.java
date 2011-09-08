@@ -30,7 +30,9 @@ import org.apache.log4j.Logger;
 import se.jadestone.dicearena.game.poker.network.protocol.DealPrivateCards;
 import se.jadestone.dicearena.game.poker.network.protocol.DealPublicCards;
 import se.jadestone.dicearena.game.poker.network.protocol.DealerButton;
+import se.jadestone.dicearena.game.poker.network.protocol.DeckInfo;
 import se.jadestone.dicearena.game.poker.network.protocol.Enums;
+import se.jadestone.dicearena.game.poker.network.protocol.Enums.Rank;
 import se.jadestone.dicearena.game.poker.network.protocol.ExposePrivateCards;
 import se.jadestone.dicearena.game.poker.network.protocol.HandEnd;
 import se.jadestone.dicearena.game.poker.network.protocol.InformRoundEnded;
@@ -538,4 +540,10 @@ public class FirebaseServerAdapter implements ServerAdapter {
 //    	}
     }
     
+    @Override
+    public void notifyDeckInfo(int size, com.cubeia.poker.hand.Rank rankLow) {
+        DeckInfo deckInfoPacket = new DeckInfo(size, ActionTransformer.convertRankToProtocolEnum(rankLow));
+        GameDataAction action = ProtocolFactory.createGameAction(deckInfoPacket, 0, table.getId());
+        sendPublicPacket(action, -1);
+    }
 }

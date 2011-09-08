@@ -34,6 +34,7 @@ import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Deck;
+import com.cubeia.poker.hand.TelesinaDeck;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.rounds.DealCommunityCardsRound;
@@ -74,7 +75,7 @@ public class Telesina implements GameType, RoundVisitor {
 
 	private Round currentRound;
 
-	private Deck deck;
+	private TelesinaDeck deck;
 
 //    private HashMultimap<Integer, Card> playerPublicCards;
 	
@@ -124,6 +125,7 @@ public class Telesina implements GameType, RoundVisitor {
 		log.debug("init hand");
 		
 		deck = deckFactory.createNewDeck(getRandom(), state.getTableSize());
+		state.notifyDeckInfo(deck.getTotalNumberOfCardsInDeck(), deck.getLowestRank());
 		blindsInfo.setAnteLevel(state.getAnteLevel());
 		
 		setCurrentRound(roundFactory.createAnteRound(this));

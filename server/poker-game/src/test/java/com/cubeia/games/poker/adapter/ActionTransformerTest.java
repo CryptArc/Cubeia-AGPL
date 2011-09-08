@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010 Cubeia Ltd <info@cubeia.com>
+ * Copyright (Cnu) 2010 Cubeia Ltd <info@cubeia.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,6 +17,7 @@
 
 package com.cubeia.games.poker.adapter;
 
+import static com.cubeia.games.poker.adapter.ActionTransformer.convertRankToProtocolEnum;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -33,6 +34,8 @@ import se.jadestone.dicearena.game.poker.network.protocol.HandEnd;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Hand;
+import com.cubeia.poker.hand.Rank;
+import com.cubeia.poker.hand.Suit;
 import com.cubeia.poker.model.PlayerHand;
 
 public class ActionTransformerTest extends TestCase {
@@ -101,6 +104,35 @@ public class ActionTransformerTest extends TestCase {
             ActionTransformer.transform(at);
         }
 	}
+	
+	public void testRankConversion() {
+        assertThat(Enums.Rank.values().length, is(14));
+        assertThat(Rank.values().length, is(13));
+        
+	    assertThat(Enums.Rank.ACE,    is(convertRankToProtocolEnum(Rank.ACE  )));
+        assertThat(Enums.Rank.TWO,    is(convertRankToProtocolEnum(Rank.TWO  )));
+        assertThat(Enums.Rank.THREE,  is(convertRankToProtocolEnum(Rank.THREE)));
+        assertThat(Enums.Rank.FOUR,   is(convertRankToProtocolEnum(Rank.FOUR )));
+        assertThat(Enums.Rank.FIVE,   is(convertRankToProtocolEnum(Rank.FIVE )));
+        assertThat(Enums.Rank.SIX,    is(convertRankToProtocolEnum(Rank.SIX  )));
+        assertThat(Enums.Rank.SEVEN,  is(convertRankToProtocolEnum(Rank.SEVEN)));
+        assertThat(Enums.Rank.EIGHT,  is(convertRankToProtocolEnum(Rank.EIGHT)));
+        assertThat(Enums.Rank.NINE,   is(convertRankToProtocolEnum(Rank.NINE )));
+        assertThat(Enums.Rank.TEN,    is(convertRankToProtocolEnum(Rank.TEN  )));
+        assertThat(Enums.Rank.JACK,   is(convertRankToProtocolEnum(Rank.JACK )));
+        assertThat(Enums.Rank.QUEEN,  is(convertRankToProtocolEnum(Rank.QUEEN)));
+        assertThat(Enums.Rank.KING,   is(convertRankToProtocolEnum(Rank.KING )));
+	}
+	
+    public void testSuitConversion() {
+        assertThat(Enums.Suit.values().length, is(4 + 1));
+        assertThat(Suit.values().length, is(4));
+        
+        assertThat(Enums.Suit.CLUBS, is(ActionTransformer.convertSuitToProtocolEnum(Suit.CLUBS)));
+        assertThat(Enums.Suit.DIAMONDS, is(ActionTransformer.convertSuitToProtocolEnum(Suit.DIAMONDS)));
+        assertThat(Enums.Suit.HEARTS, is(ActionTransformer.convertSuitToProtocolEnum(Suit.HEARTS)));
+        assertThat(Enums.Suit.SPADES, is(ActionTransformer.convertSuitToProtocolEnum(Suit.SPADES)));
+    }
 	
     public void testCreatePlayerAction() {
         assertThat("wrong number of poker action types, something broken?", PokerActionType.values().length, is(9));

@@ -31,6 +31,8 @@ import se.jadestone.dicearena.game.poker.network.protocol.DealPublicCards;
 import se.jadestone.dicearena.game.poker.network.protocol.Enums;
 import se.jadestone.dicearena.game.poker.network.protocol.Enums.ActionType;
 import se.jadestone.dicearena.game.poker.network.protocol.Enums.PotType;
+import se.jadestone.dicearena.game.poker.network.protocol.Enums.Rank;
+import se.jadestone.dicearena.game.poker.network.protocol.Enums.Suit;
 import se.jadestone.dicearena.game.poker.network.protocol.ExposePrivateCards;
 import se.jadestone.dicearena.game.poker.network.protocol.GameCard;
 import se.jadestone.dicearena.game.poker.network.protocol.HandEnd;
@@ -205,8 +207,8 @@ public class ActionTransformer {
 			gCard.cardId = card.getId(); 
 			
 			if (!hidden) {
-				gCard.rank = Enums.Rank.values()[card.getRank().ordinal()];
-				gCard.suit = Enums.Suit.values()[card.getSuit().ordinal()];
+				gCard.rank = convertRankToProtocolEnum(card.getRank());    
+				gCard.suit = convertSuitToProtocolEnum(card.getSuit());    
 			} else {
 				gCard.rank = Enums.Rank.HIDDEN;
 				gCard.suit = Enums.Suit.HIDDEN;
@@ -219,6 +221,14 @@ public class ActionTransformer {
 		}
 		return packet;
 	}
+	
+	public static Rank convertRankToProtocolEnum(com.cubeia.poker.hand.Rank rank) {
+	    return Enums.Rank.values()[rank.ordinal()];
+	}
+	
+    public static Suit convertSuitToProtocolEnum(com.cubeia.poker.hand.Suit suit) {
+        return Enums.Suit.values()[suit.ordinal()];
+    }
 	
 	public static DealPublicCards createPublicCardsPacket(List<Card> cards) {
 		DealPublicCards packet = new DealPublicCards();
