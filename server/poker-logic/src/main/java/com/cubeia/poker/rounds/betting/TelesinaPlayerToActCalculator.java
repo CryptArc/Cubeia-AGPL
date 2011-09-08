@@ -5,6 +5,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.SortedMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.hand.PokerEvaluator;
 import com.cubeia.poker.model.PlayerHand;
@@ -21,7 +24,8 @@ import com.cubeia.poker.util.PokerUtils;
  * @author w
  */
 public class TelesinaPlayerToActCalculator implements PlayerToActCalculator {
-
+    private Logger log = LoggerFactory.getLogger(getClass());
+    
     private final PokerEvaluator evaluator;
 
     /**
@@ -40,7 +44,10 @@ public class TelesinaPlayerToActCalculator implements PlayerToActCalculator {
             publicHands.add(new PlayerHand(player.getId(), new Hand(player.getPublicPocketCards())));
         }
         
-        Integer firstPlayerId = evaluator.rankHands(publicHands).get(0).getPlayerId();
+        PlayerHand bestHand = evaluator.rankHands(publicHands).get(0);
+        log.debug("first player to act is {} with hand {}: {}", 
+            new Object[] {bestHand.getPlayerId(), bestHand.getHand(), bestHand.getHand().getHandStrength()});
+        Integer firstPlayerId = bestHand.getPlayerId();
         return findPlayerById(firstPlayerId, seatingMap.values());
     }
 

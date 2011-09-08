@@ -88,28 +88,7 @@ public class BettingRound implements Round, BettingRoundContext {
 			requestNextAction(dealerSeatId);
 		}
 	}
-
-//	private PokerPlayer getPlayerWithBestPublicHand() {
-//	    Collection<PokerPlayer> players = gameType.getState().getCurrentHandPlayerMap().values();
-//	    
-//	    List<Hand> publicHands;
-//	    for (PokerPlayer player : players) {
-//	        
-//	        
-//	        player.getPocketCards()
-//	        
-//	        
-//	        
-//	    }
-//	    
-//	    
-//	    PokerEvaluator pokerEvaluator = new PokerEvaluator();
-//        pokerEvaluator.rankHands(publicHands);
-//	    
-//	    
-//        return null;
-//    }
-
+	
     public void act(PokerAction action) {
 		log.debug("Act : "+action);
 		PokerPlayer player = gameType.getState().getPlayerInCurrentHand(action.getPlayerId());

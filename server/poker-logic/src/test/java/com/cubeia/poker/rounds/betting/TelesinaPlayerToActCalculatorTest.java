@@ -14,6 +14,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.hand.PokerEvaluator;
 import com.cubeia.poker.model.PlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
@@ -38,7 +39,8 @@ public class TelesinaPlayerToActCalculatorTest {
         seatingMap.put(1, player2);  // best hand
         seatingMap.put(2, player3);
         
-        when(pokerEvaluator.rankHands(Mockito.anyCollection())).thenReturn(Arrays.asList(new PlayerHand(1337, null)));
+        Hand hand = mock(Hand.class);
+        when(pokerEvaluator.rankHands(Mockito.anyCollection())).thenReturn(Arrays.asList(new PlayerHand(1337, hand)));
         
         PokerPlayer playerToAct = pac.getFirstPlayerToAct(1, seatingMap);
         assertThat(playerToAct, is(player2));
