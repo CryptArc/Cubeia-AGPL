@@ -33,8 +33,10 @@ import se.jadestone.dicearena.game.poker.network.protocol.HandEnd;
 
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.CardIdGenerator;
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.hand.HandType;
+import com.cubeia.poker.hand.IndexCardIdGenerator;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.hand.Suit;
 import com.cubeia.poker.model.PlayerHand;
@@ -50,6 +52,9 @@ public class ActionTransformerTest extends TestCase {
 		hand1.addCards(community.getCards());
 		hand2.addCards(community.getCards());
 		
+        addIdsToCards(hand1);
+        addIdsToCards(hand2);
+		
 		List<RatedPlayerHand> hands = new ArrayList<RatedPlayerHand>();
 		hands.add(new RatedPlayerHand(new PlayerHand(11, hand1), HandType.HIGH_CARD));
 		hands.add(new RatedPlayerHand(new PlayerHand(22, hand2), HandType.HIGH_CARD));
@@ -61,7 +66,14 @@ public class ActionTransformerTest extends TestCase {
 		assertNotSame("Two High", end.hands.get(1).name);
 	}
 
-	public void testCreatePrivateVisibleCards() {
+	private void addIdsToCards(Hand hand) {
+	    CardIdGenerator idGen = new IndexCardIdGenerator();
+	    List<Card> oldCards = hand.getCards();
+	    hand.clear();
+	    hand.addCards(idGen.copyAndAssignIds(oldCards));
+    }
+
+    public void testCreatePrivateVisibleCards() {
 		List<Card> cards = new ArrayList<Card>();
 		cards.add(new Card(0, "AS"));
 		cards.add(new Card(1, "AS"));
