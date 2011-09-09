@@ -109,6 +109,7 @@ public class PokerTableListener implements TournamentTableListener {
 	 * Send current game state to the watching player
 	 */
 	public void watcherJoined(Table table, int playerId) {
+        log.debug("Player["+playerId+"] watching Table["+table.getId()+":"+table.getMetaData().getName()+"]");
 		stateInjector.injectAdapter(table);
 		sendGameState(table, playerId);
 	}
