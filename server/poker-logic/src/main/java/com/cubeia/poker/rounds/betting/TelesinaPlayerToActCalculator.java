@@ -24,6 +24,12 @@ public class TelesinaPlayerToActCalculator implements PlayerToActCalculator {
 
 	private TelesinaHandComparator thc;
 
+	/**
+	 * Needed for serialization.
+	 */
+	@SuppressWarnings("unused")
+    private TelesinaPlayerToActCalculator() {}
+	
 	public TelesinaPlayerToActCalculator(Rank deckLowestRank) {
 		this.thc = new TelesinaHandComparator(deckLowestRank);
 	}
