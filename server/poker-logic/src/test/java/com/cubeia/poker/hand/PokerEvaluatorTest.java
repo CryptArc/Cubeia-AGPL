@@ -9,7 +9,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-import java.security.SecureRandom;
 import java.util.List;
 
 import org.junit.Test;
@@ -100,31 +99,4 @@ public class PokerEvaluatorTest {
 		assertEquals(ACE, strength.getSecondRank());
 	}
 	
-	/*
-	@Test
-	public void testBetCombinationHandStrength() {
-	    Shuffler<Card> shuffler = new Shuffler<Card>(new SecureRandom());
-	    CardIdGenerator idGenerator = new IndexCardIdGenerator();
-	    
-	    int max = 10000000;
-        for (int i = 0; i < max; i++) {
-	        
-	        if (i % 10000 == 0) {
-	            System.err.println(i + "(" + max + ")");
-	        }
-	        
-            StandardDeck deck = new StandardDeck(shuffler , idGenerator);
-    	    
-            Hand hand = new Hand();
-    	    
-            hand.addCard(deck.deal());
-            hand.addCard(deck.deal());
-            hand.addCard(deck.deal());
-            hand.addCard(deck.deal());
-            hand.addCard(deck.deal());
-            hand.addCard(deck.deal());
-    	    eval.getBestCombinationHandStrength(hand);
-	    }	    
-	}
-	*/
 }
