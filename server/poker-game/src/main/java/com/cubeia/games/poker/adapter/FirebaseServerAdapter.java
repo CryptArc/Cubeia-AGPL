@@ -260,11 +260,6 @@ public class FirebaseServerAdapter implements ServerAdapter {
 					// FIXME: Hardcoded currency code
 					ResultEntry entry = new ResultEntry(sessionId, amountConverter.convertToWalletAmount(result.getNetResult()), PokerGame.CURRENCY_CODE);
 					resultEntries.add(entry);
-					
-					// TODO: Move the event reporting to a separate method
-	//				if (pokerCepService != null) {
-	//	                pokerCepService.reportHandResult(table.getId(), p, result.getNetResult());
-	//	            }
 				}
 				
 				WalletServiceContract walletService = getServices().getServiceInstance(WalletServiceContract.class);
