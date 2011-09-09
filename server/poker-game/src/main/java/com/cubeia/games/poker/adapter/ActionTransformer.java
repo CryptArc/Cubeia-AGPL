@@ -17,6 +17,7 @@
 
 package com.cubeia.games.poker.adapter;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,8 +50,6 @@ import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.hand.Card;
-import com.cubeia.poker.hand.Hand;
-import com.cubeia.poker.model.PlayerHand;
 import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 import com.google.common.annotations.VisibleForTesting;
@@ -266,12 +265,16 @@ public class ActionTransformer {
 		packet.hands = new LinkedList<BestHand>();
 		
 		for (RatedPlayerHand ratedHand : hands) {
-			BestHand best = new BestHand();
-			best.player = ratedHand.getPlayerId();
-
-			best.rank = -1;
-			best.name = ratedHand.getBestHandType().name();
+			List<GameCard> cards = new ArrayList<GameCard>();
 			
+			// TODO: only show cards of the best hand
+			for (Card card : ratedHand.getHand().getCards()) {
+			    cards.add(new GameCard(card.getId(), 
+			        convertSuitToProtocolEnum(card.getSuit()), 
+			        convertRankToProtocolEnum(card.getRank())));
+			}
+			
+            BestHand best = new BestHand(ratedHand.getPlayerId(), -1, ratedHand.getBestHandType().name(), cards);
 			packet.hands.add(best);
 		}
 		
