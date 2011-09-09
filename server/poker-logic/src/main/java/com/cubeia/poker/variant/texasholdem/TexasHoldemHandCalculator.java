@@ -1,4 +1,4 @@
-package com.cubeia.poker.hand.calculator;
+package com.cubeia.poker.variant.texasholdem;
 
 import static com.cubeia.poker.hand.HandType.*;
 
@@ -12,6 +12,7 @@ import com.cubeia.poker.hand.HandType;
 import com.cubeia.poker.hand.HandTypeEvaluator;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.hand.Suit;
+import com.cubeia.poker.hand.calculator.HandCalculator;
 
 /**
  * <p>Texas Holdem implementation of a Hand Calculator. This is probably
@@ -103,7 +104,7 @@ public class TexasHoldemHandCalculator implements HandCalculator, HandTypeEvalua
 	 *  ---------------------------------------------------- */
 	
 
-	protected HandStrength checkStraightFlush(Hand hand) {
+	public HandStrength checkStraightFlush(Hand hand) {
 		HandStrength strength = null;
 		if (checkFlush(hand) != null && checkStraight(hand) != null) {
 			strength = new HandStrength(HandType.STRAIGHT_FLUSH);
@@ -115,7 +116,7 @@ public class TexasHoldemHandCalculator implements HandCalculator, HandTypeEvalua
 	/**
 	 * Checks if all cards are the same suit, regardless of the number of cards.
 	 */
-	protected HandStrength checkFlush(Hand hand) {
+	public HandStrength checkFlush(Hand hand) {
 		if (hand.getCards().isEmpty()) {
 			return null;
 		}
@@ -142,7 +143,7 @@ public class TexasHoldemHandCalculator implements HandCalculator, HandTypeEvalua
 	 * Checks if all cards are a straight, regardless of the number of cards.
 	 * Assumes that you have executed a sort (Hand.sortAscending) on the hand first!
 	 */
-	protected HandStrength checkStraight(Hand hand) {
+	public HandStrength checkStraight(Hand hand) {
 		
 		if (hand.getCards().isEmpty()) {
 			return null;
@@ -178,7 +179,7 @@ public class TexasHoldemHandCalculator implements HandCalculator, HandTypeEvalua
 	 * @param number, number of same rank to look for, i.e. 3 = three of a kind
 	 * @return the highest match found or null if not found
 	 */
-	protected HandStrength checkManyOfAKind(Hand hand, int number) {
+	public HandStrength checkManyOfAKind(Hand hand, int number) {
 		List<Card> cards = hand.sort().getCards();
 		
 		HandStrength strength = null;
@@ -209,11 +210,11 @@ public class TexasHoldemHandCalculator implements HandCalculator, HandTypeEvalua
 		return strength;
 	}
 
-	protected HandStrength checkFullHouse(Hand hand) {
+	public HandStrength checkFullHouse(Hand hand) {
 		return checkDoubleManyCards(hand, 3);
 	}
 
-	protected HandStrength checkTwoPairs(Hand hand) {
+	public HandStrength checkTwoPairs(Hand hand) {
 		return checkDoubleManyCards(hand, 2);
 	}
 
@@ -248,7 +249,7 @@ public class TexasHoldemHandCalculator implements HandCalculator, HandTypeEvalua
 		return strength;
 	}
 	
-	protected HandStrength checkHighCard(Hand hand) {
+	public HandStrength checkHighCard(Hand hand) {
 		
 		if (hand.getCards().isEmpty()) {
 			return null;
