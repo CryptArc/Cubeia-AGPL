@@ -29,6 +29,7 @@ import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.model.PlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
@@ -97,6 +98,7 @@ public class MockServerAdapter implements ServerAdapter {
 
 	public void notifyCommunityCards(List<Card> cards) {}
 	public void notifyPrivateCards(int playerId, List<Card> cards) {}
+	public void notifyPrivateExposedCards(int playerId, List<Card> cards) {}
 	public void exposePrivateCards(int playerId, List<Card> cards) {}
 	public void notifyDealerButton(int playerId) {}
     public void reportTournamentRound(RoundReport report) {}
@@ -104,7 +106,8 @@ public class MockServerAdapter implements ServerAdapter {
     public void updatePot(Integer sum) {}
     public void notifyPlayerBalance(PokerPlayer p) {}
     public void notifyNewHand() {}
-
+    public void notifyDeckInfo(int size, Rank rankLow) {}
+    
     @Override
 	public void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status) {
 		playerStatus.put(playerId, status);

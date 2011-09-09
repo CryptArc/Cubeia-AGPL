@@ -31,6 +31,8 @@ import se.jadestone.dicearena.game.poker.network.protocol.DealPublicCards;
 import se.jadestone.dicearena.game.poker.network.protocol.Enums;
 import se.jadestone.dicearena.game.poker.network.protocol.Enums.ActionType;
 import se.jadestone.dicearena.game.poker.network.protocol.Enums.PotType;
+import se.jadestone.dicearena.game.poker.network.protocol.Enums.Rank;
+import se.jadestone.dicearena.game.poker.network.protocol.Enums.Suit;
 import se.jadestone.dicearena.game.poker.network.protocol.ExposePrivateCards;
 import se.jadestone.dicearena.game.poker.network.protocol.GameCard;
 import se.jadestone.dicearena.game.poker.network.protocol.HandEnd;
@@ -50,6 +52,7 @@ import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.model.PlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
+import com.google.common.annotations.VisibleForTesting;
 
 /**
  * Translates poker-logic internal actions to the styx wire-protocol
@@ -132,15 +135,18 @@ public class ActionTransformer {
 				type = PokerActionType.DECLINE_ENTRY_BET;
 				break;
 				
-			default:
-				type = PokerActionType.FOLD;
+			case ANTE:
+			    type = PokerActionType.ANTE;
 				break;
+				
+			default:
+			    throw new UnsupportedOperationException("unsupported action type: " + protocol.name());
 		}
 		return type;
 	}
 	
-	
-	private static PlayerAction createPlayerAction(PokerActionType actionType) {
+	@VisibleForTesting
+	protected static PlayerAction createPlayerAction(PokerActionType actionType) {
 		PlayerAction action = new PlayerAction();
 		switch(actionType) {
 			case FOLD:
@@ -170,10 +176,17 @@ public class ActionTransformer {
 			case RAISE:
 				action.type = ActionType.RAISE;
 				break;
+			
+			case DECLINE_ENTRY_BET:
+			    action.type = ActionType.DECLINE_ENTRY_BET;
+				break;
+			    
+			case ANTE:
+			    action.type = ActionType.ANTE;
+			    break;
 				
 			default:
-				action.type = ActionType.FOLD;
-				break;
+                throw new UnsupportedOperationException("unsupported action type: " + actionType.name());
 		}
 		
 		return action;
@@ -191,12 +204,11 @@ public class ActionTransformer {
 		packet.cards = new LinkedList<CardToDeal>();
 		for (Card card : cards) {
 			GameCard gCard = new GameCard();
-			// gCard.cardId = card.getDeckId();
-			gCard.cardId = card.getId(); // FIXME - wrong ID
+			gCard.cardId = card.getId(); 
 			
 			if (!hidden) {
-				gCard.rank = Enums.Rank.values()[card.getRank().ordinal()];
-				gCard.suit = Enums.Suit.values()[card.getSuit().ordinal()];
+				gCard.rank = convertRankToProtocolEnum(card.getRank());    
+				gCard.suit = convertSuitToProtocolEnum(card.getSuit());    
 			} else {
 				gCard.rank = Enums.Rank.HIDDEN;
 				gCard.suit = Enums.Suit.HIDDEN;
@@ -210,6 +222,14 @@ public class ActionTransformer {
 		return packet;
 	}
 	
+	public static Rank convertRankToProtocolEnum(com.cubeia.poker.hand.Rank rank) {
+	    return Enums.Rank.values()[rank.ordinal()];
+	}
+	
+    public static Suit convertSuitToProtocolEnum(com.cubeia.poker.hand.Suit suit) {
+        return Enums.Suit.values()[suit.ordinal()];
+    }
+	
 	public static DealPublicCards createPublicCardsPacket(List<Card> cards) {
 		DealPublicCards packet = new DealPublicCards();
 		packet.cards = new LinkedList<GameCard>();
@@ -218,8 +238,7 @@ public class ActionTransformer {
 			
 			gCard.rank = Enums.Rank.values()[card.getRank().ordinal()];
 			gCard.suit = Enums.Suit.values()[card.getSuit().ordinal()];
-			// gCard.cardId = card.getDeckId();
-			gCard.cardId = card.getId(); // FIXME - wrong ID
+			gCard.cardId = card.getId();
 			
 			packet.cards.add(gCard);
 		}
@@ -233,8 +252,7 @@ public class ActionTransformer {
 			GameCard gCard = new GameCard();
 			gCard.rank = Enums.Rank.values()[card.getRank().ordinal()];
 			gCard.suit = Enums.Suit.values()[card.getSuit().ordinal()];
-			// gCard.cardId = card.getDeckId();
-			gCard.cardId = card.getId(); // FIXME - wrong ID
+			gCard.cardId = card.getId();
 			
 			CardToDeal deal = new CardToDeal(playerId, gCard);
 			packet.cards.add( deal);

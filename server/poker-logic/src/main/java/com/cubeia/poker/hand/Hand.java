@@ -71,24 +71,9 @@ public class Hand implements Serializable {
 		cards.add(card);
 	}
 	
-//	/**
-//	 * Add a card to the hand with the option to 
-//	 * indicated that it is public (shown to all).
-//	 * @param card card to add
-//	 * @param publicCard true if the card is open (public)
-//	 */
-//	public void addCard(Card card, boolean publicCard) {
-//	    cards.add(card);
-//	    publicCards.add(card);
-//	}
-	
     public void addCards(Collection<Card> cardsToAdd) {
         cards.addAll(cardsToAdd);
     }
-    
-//    public boolean isCardPublic(Card card) {
-//        return publicCards.contains(card);
-//    }
 	
 	/**
 	 * Sort all cards in an descending order.
@@ -113,14 +98,6 @@ public class Hand implements Serializable {
 	public void setHandStrength(HandStrength handStrength) {
 		this.handStrength = handStrength;
 	}
-
-//	/**
-//	 * Delegate this to compare hand strengths.
-//	 */
-//	@Override
-//	public int compareTo(Hand other) {
-//		return handStrength.compareTo(other.getHandStrength());
-//	}
 
     public void clear() {
         cards.clear();

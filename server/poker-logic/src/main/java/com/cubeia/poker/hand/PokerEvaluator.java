@@ -79,6 +79,11 @@ public class PokerEvaluator  {
 			HandStrength handStrength = calc.getHandStrength(new Hand(cards));
 			allPossibleHands.add(handStrength);
 		}
+		
+		if (allPossibleHands.isEmpty()) {
+		    throw new IllegalStateException("calculated 0 possible hands from cards: " + hand.toString());
+		}
+		
 		Collections.sort(allPossibleHands, new HandStrengthComparator());
 		return allPossibleHands.get(0);
 	}

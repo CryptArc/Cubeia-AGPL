@@ -40,6 +40,7 @@ import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.rounds.DealCommunityCardsRound;
 import com.cubeia.poker.rounds.DealPocketCardsRound;
+import com.cubeia.poker.rounds.DealVelaCardRound;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
 import com.cubeia.poker.rounds.ante.AnteRound;
@@ -313,6 +314,10 @@ public class TexasHoldem implements GameType, RoundVisitor {
 		throw new UnsupportedOperationException("not implemented");
 	}
 	
+	@Override
+	public void visit(DealVelaCardRound round) {
+        throw new UnsupportedOperationException("round not supported: " + round.getClass().getSimpleName());
+	}
 	
 	@Override
 	public void visit(BlindsRound blindsRound) {

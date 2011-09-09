@@ -30,7 +30,9 @@ import org.apache.log4j.Logger;
 import se.jadestone.dicearena.game.poker.network.protocol.DealPrivateCards;
 import se.jadestone.dicearena.game.poker.network.protocol.DealPublicCards;
 import se.jadestone.dicearena.game.poker.network.protocol.DealerButton;
+import se.jadestone.dicearena.game.poker.network.protocol.DeckInfo;
 import se.jadestone.dicearena.game.poker.network.protocol.Enums;
+import se.jadestone.dicearena.game.poker.network.protocol.Enums.Rank;
 import se.jadestone.dicearena.game.poker.network.protocol.ExposePrivateCards;
 import se.jadestone.dicearena.game.poker.network.protocol.HandEnd;
 import se.jadestone.dicearena.game.poker.network.protocol.InformRoundEnded;
@@ -125,6 +127,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
 	 ------------------------------------------------*/
 	
+    @Override
 	public void notifyNewHand() {
 	    PlayedHand playedHand = new PlayedHand();
 	    playedHand.setTableId(table.getId());
@@ -146,7 +149,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
         log.debug("Starting new hand. FBPlayers: "+table.getPlayerSet().getPlayerCount()+", PokerPlayers: "+state.getSeatedPlayers().size());
     }
 
-	
+    @Override
 	public void notifyDealerButton(int seat) {
 		DealerButton packet = new DealerButton();
 		packet.seat = (byte)seat;
@@ -157,6 +160,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		addEventToHandHistory(seat, EventType.DEALER_BUTTON, null);
 	}
 	
+    @Override
 	public void requestAction(ActionRequest request) {
 		RequestAction packet = ActionTransformer.transform(request);
 		GameDataAction action = ProtocolFactory.createGameAction(packet, request.getPlayerId(), table.getId());
@@ -169,7 +173,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		schedulePlayerTimeout(request.getTimeToAct()+latency, request.getPlayerId(), packet.seq);
 	}
 
-
+    @Override
     public void scheduleTimeout(long millis) {
 		GameObjectAction action = new GameObjectAction(table.getId());
 		TriggerType type = TriggerType.TIMEOUT;
@@ -180,6 +184,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		setRequestSequence(-1, 0);
 	}
 	
+    @Override
 	public void notifyActionPerformed(PokerAction pokerAction) {
 		PokerPlayer pokerPlayer = state.getPokerPlayer(pokerAction.getPlayerId());
 		PerformAction packet = ActionTransformer.transform(pokerAction, pokerPlayer);
@@ -190,6 +195,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	}
 
 
+    @Override
     public void notifyCommunityCards(List<Card> cards) {
 		DealPublicCards packet = ActionTransformer.createPublicCardsPacket(cards);
 		GameDataAction action = ProtocolFactory.createGameAction(packet, 0, table.getId());
@@ -198,6 +204,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	}
 
 	
+    @Override
 	public void notifyPrivateCards(int playerId, List<Card> cards) {
 		// Send the cards to the owner with proper rank & suit information
 		DealPrivateCards packet = ActionTransformer.createPrivateCardsPacket(playerId, cards, false);
@@ -211,8 +218,17 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		log.debug("--> Send DealPrivateCards(hidden)["+hiddenCardsPacket+"] to everyone");
 		sendPublicPacket(ntfyAction, playerId);
 	}
+
+	@Override
+	public void notifyPrivateExposedCards(int playerId, List<Card> cards) {
+        // Send the cards as public to the other players
+        DealPrivateCards hiddenCardsPacket = ActionTransformer.createPrivateCardsPacket(playerId, cards, false);
+        GameDataAction ntfyAction = ProtocolFactory.createGameAction(hiddenCardsPacket, playerId, table.getId());
+        log.debug("--> Send DealPrivateCards(exposed)["+hiddenCardsPacket+"] to everyone");
+        sendPublicPacket(ntfyAction, -1);
+	}
 	
-	
+    @Override
 	public void exposePrivateCards(int playerId, List<Card> cards) {
 		ExposePrivateCards packet = ActionTransformer.createExposeCardsPacket(playerId, cards);
 		GameDataAction action = ProtocolFactory.createGameAction(packet, playerId, table.getId());
@@ -220,6 +236,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		sendPublicPacket(action, playerId);
 	}
 
+    @Override
 	public void notifyPlayerBalanceReset(PokerPlayer player) {
 		WalletServiceContract walletService = getServices().getServiceInstance(WalletServiceContract.class);
 		long sessionId = ((PokerPlayerImpl) player).getSessionId();
@@ -228,6 +245,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		notifyPlayerBalance(player);
 	}
 
+    @Override
 	public void notifyHandEnd(HandResult handResult, HandEndStatus handEndStatus) {
 		if (handEndStatus.equals(HandEndStatus.NORMAL) && handResult != null) {
 			try {
@@ -309,6 +327,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
     	return "Resetting balance for pid["+playerId+"]";
     }
     
+    @Override
 	public void notifyPlayerBalance(PokerPlayer p) {
 		if (p == null) return;
 		
@@ -521,4 +540,10 @@ public class FirebaseServerAdapter implements ServerAdapter {
 //    	}
     }
     
+    @Override
+    public void notifyDeckInfo(int size, com.cubeia.poker.hand.Rank rankLow) {
+        DeckInfo deckInfoPacket = new DeckInfo(size, ActionTransformer.convertRankToProtocolEnum(rankLow));
+        GameDataAction action = ProtocolFactory.createGameAction(deckInfoPacket, 0, table.getId());
+        sendPublicPacket(action, -1);
+    }
 }

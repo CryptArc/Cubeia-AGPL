@@ -154,6 +154,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
 
 	public void clearHand() {
 		pocketCards.clear();
+		publicPocketCards.clear();
 	}
 
 	public void enableOption(PossibleAction option) {

@@ -1,16 +1,11 @@
 package com.cubeia.poker.hand;
 
-import static com.cubeia.poker.hand.Rank.KING;
-import static com.cubeia.poker.hand.Rank.QUEEN;
-import static com.cubeia.poker.hand.Suit.CLUBS;
-import static com.cubeia.poker.hand.Suit.DIAMONDS;
-import static java.util.Arrays.asList;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static com.cubeia.poker.hand.Rank.*;
+import static com.cubeia.poker.hand.Suit.*;
+import static java.util.Arrays.*;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -74,6 +69,44 @@ public class TelesinaDeckTest {
         assertThat(deck.createDeck().size(), is(Rank.values().length * 4));
     }
 
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testGetLowestRank() {
+        Shuffler<Card> shuffler = mock(Shuffler.class);
+        CardIdGenerator idGenerator = mock(CardIdGenerator.class);
+        
+        TelesinaDeck deck = new TelesinaDeck(shuffler, idGenerator, 2);
+        assertThat(deck.getDeckLowestRank(), is(Rank.NINE));
+        
+        deck = new TelesinaDeck(shuffler, idGenerator, 4);
+        assertThat(deck.getDeckLowestRank(), is(Rank.SEVEN));
+        
+        deck = new TelesinaDeck(shuffler, idGenerator, 8);
+        assertThat(deck.getDeckLowestRank(), is(Rank.THREE));
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testGetTotalNumberOfCardsInDeck() {
+        Shuffler<Card> shuffler = mock(Shuffler.class);
+        CardIdGenerator idGenerator = mock(CardIdGenerator.class);
+        
+        TelesinaDeck deck = new TelesinaDeck(shuffler, idGenerator, 2);
+        assertThat(deck.getTotalNumberOfCardsInDeck(), is(6 * 4));
+        
+        deck = new TelesinaDeck(shuffler, idGenerator, 4);
+        assertThat(deck.getTotalNumberOfCardsInDeck(), is(8 * 4));
+        
+        deck = new TelesinaDeck(shuffler, idGenerator, 9);
+        assertThat(deck.getTotalNumberOfCardsInDeck(), is(13 * 4));
+        
+        deck = new TelesinaDeck(shuffler, idGenerator, 10);
+        assertThat(deck.getTotalNumberOfCardsInDeck(), is(13 * 4));
+    }
+    
+    
+    
     @SuppressWarnings("unchecked")
     @Test
     public void testCreateDeck() {

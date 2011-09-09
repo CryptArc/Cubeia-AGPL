@@ -26,6 +26,7 @@ import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.model.PlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
@@ -404,11 +405,9 @@ public class PokerLogicTest extends GuiceTest {
 				}
 			}
 
-			public void notifyCommunityCards(List<Card> cards) {
-			}
+			public void notifyCommunityCards(List<Card> cards) {}
 
-			public void notifyDealerButton(int seatId) {
-			}
+			public void notifyDealerButton(int seatId) {}
 
 			public void notifyHandEnd(HandResult result, HandEndStatus status) {
 				if (!foldActionReceived) {
@@ -417,6 +416,7 @@ public class PokerLogicTest extends GuiceTest {
 			}
 
 			public void notifyPrivateCards(int playerId, List<Card> cards) {}
+            public void notifyPrivateExposedCards(int playerId, List<Card> cards) {}
 			public void requestAction(ActionRequest request) {}
 			public void scheduleTimeout(long millis) {}
             public void reportTournamentRound(RoundReport report) {}
@@ -424,15 +424,9 @@ public class PokerLogicTest extends GuiceTest {
             public void notifyPlayerBalance(PokerPlayer p) {}
             public void notifyNewHand() {}
 			public void notifyPlayerStatusChanged(int playerId,PokerPlayerStatus status) {}
-
-			@Override
+			public void notifyDeckInfo(int size, Rank rankLow) {}
 			public void updatePots(Iterable<Pot> iterable) {}
-
-			@Override
-			public void notifyPlayerBalanceReset(PokerPlayer player) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void notifyPlayerBalanceReset(PokerPlayer player) {}
 			
 		});
 		game.timeout();

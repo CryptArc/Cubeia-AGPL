@@ -90,7 +90,7 @@ public class AnteRoundTest {
         when(anteRoundHelper.hasAllPlayersActed(Mockito.anyCollection())).thenReturn(false);
         when(anteRoundHelper.getNextPlayerToAct(Mockito.eq(0), Mockito.any(SortedMap.class))).thenReturn(player2);
         
-        anteRound.act(new PokerAction(player1Id, PokerActionType.SMALL_BLIND));
+        anteRound.act(new PokerAction(player1Id, PokerActionType.ANTE));
         
         verify(player1).addBet(anteLevel);
         verify(player1).setHasActed(true);

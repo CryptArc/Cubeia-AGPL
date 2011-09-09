@@ -96,17 +96,8 @@ public class DefaultPokerHandler implements PacketVisitor {
 	public void visit(AamsSessionInfoPacket packet) {}
 	@Override
 	public void visit(DeckInfo packet) {}
-
-	@Override
-	public void visit(MoneyWithdrawal packet) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visit(CollectMoney packet) {
-		// TODO Auto-generated method stub
-		
-	}
-
+    @Override
+    public void visit(MoneyWithdrawal packet) {}
+    @Override
+    public void visit(CollectMoney packet) {}
 }

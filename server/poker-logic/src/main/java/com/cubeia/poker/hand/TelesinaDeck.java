@@ -1,9 +1,9 @@
 package com.cubeia.poker.hand;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.collect.ImmutableSet.copyOf;
-import static com.google.common.collect.Sets.cartesianProduct;
-import static java.util.Arrays.asList;
+import static com.google.common.base.Preconditions.*;
+import static com.google.common.collect.ImmutableSet.*;
+import static com.google.common.collect.Sets.*;
+import static java.util.Arrays.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +16,9 @@ import java.util.List;
  */
 public class TelesinaDeck implements Deck {
     private static final long serialVersionUID = -5030565526818602010L;
-    private List<Card> cards;
+    private final List<Card> cards;
     private int currentCardIndex;
+    private final int deckSize;
     
     private final Rank deckLowestRank;
     
@@ -35,6 +36,7 @@ public class TelesinaDeck implements Deck {
     	deckLowestRank = Rank.values()[firstRankIndex];
     	
         List<Card> vanillaCards = createDeck();
+        deckSize = vanillaCards.size();
         List<Card> shuffledCards = shuffler.shuffle(vanillaCards);
         cards = idGenerator.copyAndAssignIds(shuffledCards);
     }
@@ -52,6 +54,11 @@ public class TelesinaDeck implements Deck {
         }
         
         return cards;
+    }
+    
+    
+    public int getTotalNumberOfCardsInDeck() {
+        return deckSize;
     }
     
     @Override

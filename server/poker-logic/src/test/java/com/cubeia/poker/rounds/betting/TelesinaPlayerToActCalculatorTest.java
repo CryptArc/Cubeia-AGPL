@@ -23,7 +23,6 @@ public class TelesinaPlayerToActCalculatorTest {
 	@Test
 	public void testFirstPlayerToActTwoCards1() {
 		TelesinaPlayerToActCalculator ptac = new TelesinaPlayerToActCalculator(Rank.SEVEN);
-
 		SortedMap<Integer, PokerPlayer> seating = new TreeMap<Integer, PokerPlayer>();
 
 		PokerPlayer p1 = playerWithHand(1, "7C", "7D");

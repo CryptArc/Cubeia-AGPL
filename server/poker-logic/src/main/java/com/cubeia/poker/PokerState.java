@@ -34,6 +34,7 @@ import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.player.SitOutStatus;
@@ -483,6 +484,10 @@ public class PokerState implements Serializable, IPokerState {
 		serverAdapter.notifyPrivateCards(playerId, cards);
 	}
 
+	public void notifyPrivateExposedCards(int playerId, List<Card> cards) {
+	    serverAdapter.notifyPrivateExposedCards(playerId, cards);
+	}
+	
 	public void exposePrivateCards(int playerId, List<Card> cards) {
 		serverAdapter.exposePrivateCards(playerId, cards);
 	}
@@ -615,6 +620,11 @@ public class PokerState implements Serializable, IPokerState {
 		serverAdapter.notifyPlayerBalanceReset(player);
 		
 	}
+
+    public void notifyDeckInfo(int size, Rank rankLow) {
+        // TODO Auto-generated method stub
+        serverAdapter.notifyDeckInfo(size, rankLow);
+    }
 
 	
 	

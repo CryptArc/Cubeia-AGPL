@@ -89,7 +89,7 @@ public class AnteRound implements Round {
 		PokerPlayer player = game.getState().getPlayerInCurrentHand(action.getPlayerId());
 		
 		switch (action.getActionType()) {
-		case SMALL_BLIND:
+		case ANTE:
 			player.addBet(game.getBlindsInfo().getAnteLevel());
 			player.setHasActed(true);
 			player.setHasPostedEntryBet(true);
