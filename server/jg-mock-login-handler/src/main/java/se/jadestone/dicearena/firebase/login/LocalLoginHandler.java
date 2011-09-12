@@ -58,13 +58,16 @@ public class LocalLoginHandler implements LoginLocator, LoginHandler, Service {
         LoginRequestPayloadStruct requestPayloadStruct = (LoginRequestPayloadStruct) object;
 
         
+        log.debug("login request: " + requestPayloadStruct);
+        
+        
         // TODO: check credentials here!
 		
 		// TODO: mocked login response
         LoginResponsePayloadStruct responsePayloadStruct = new LoginResponsePayloadStruct(
             requestPayloadStruct.requestIdentifier, 
             LoginStatus.ACCEPTED, 
-            UUID.randomUUID().toString());  
+            UUID.randomUUID().toString()); 
         byte[] responsePayload;
         try {
             responsePayload = serializer.packArray(responsePayloadStruct);
@@ -73,7 +76,7 @@ public class LocalLoginHandler implements LoginLocator, LoginHandler, Service {
             responsePayload = null;
         }
 
-        LoginResponseAction response = new LoginResponseAction(true, request.getUser(), counter.getAndIncrement());
+        LoginResponseAction response = new LoginResponseAction(true, requestPayloadStruct.partnerAccountId, counter.getAndIncrement());
         response.setData(responsePayload);
         
 		log.debug("Login user["+request.getUser()+"@"+request.getRemoteAddress()+"] with id["+response.getPlayerid()+"]");
