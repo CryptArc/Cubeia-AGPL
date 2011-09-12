@@ -104,41 +104,15 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
      * 
      */
     private void initParticipants() {	
-    	/*
-    	participants.add(new PokerParticipant(10,"holdem/real/nolimit/micro", 2, Timings.DEFAULT));
-    	
-    	participants.add(new PokerParticipant(10, "holdem/real/nolimit/medium", 50, Timings.DEFAULT));
-    	participants.add(new PokerParticipant(6,  "holdem/real/nolimit/medium", 50, Timings.DEFAULT));
-    	participants.add(new PokerParticipant(10, "holdem/real/nolimit/medium", 75, Timings.DEFAULT));
-    	
-    	participants.add(new PokerParticipant(10, "holdem/real/nolimit/high", 100, Timings.DEFAULT));
-    	participants.add(new PokerParticipant(6,  "holdem/real/nolimit/high", 100, Timings.DEFAULT));
-    	participants.add(new PokerParticipant(2,  "holdem/real/nolimit/high", 100, Timings.DEFAULT));
-    	participants.add(new PokerParticipant(10, "holdem/real/nolimit/high", 1000, Timings.DEFAULT));
-    	
-    	participants.add(new PokerParticipant(10, "holdem/real/nolimit/micro", 2, Timings.EXPRESS));
-    	participants.add(new PokerParticipant(10, "holdem/real/nolimit/low", 100, Timings.EXPRESS));
-    	
-    	participants.add(new PokerParticipant(10, "holdem/points/nolimit/micro", 2, Timings.DEFAULT));
-    	participants.add(new PokerParticipant(10, "holdem/points/nolimit/low", 10, Timings.DEFAULT));
-    	
-    	participants.add(new PokerParticipant(10, "holdem/points/nolimit/medium", 50, Timings.DEFAULT));
-    	participants.add(new PokerParticipant(6,  "holdem/points/nolimit/medium", 50, Timings.DEFAULT));
-    	
-    	participants.add(new PokerParticipant(10, "holdem/points/nolimit/high", 200, Timings.DEFAULT));
-    	participants.add(new PokerParticipant(6,  "holdem/points/nolimit/high", 200, Timings.DEFAULT));
-    	participants.add(new PokerParticipant(2,  "holdem/points/nolimit/high", 500, Timings.DEFAULT));
-    	 */
     	
     	// participants.add(new PokerParticipant(10, "holdem/real/nolimit/low", 10, Timings.DEFAULT));
     	// participants.add(new PokerParticipant(10, "holdem/real/nolimit/high", 100, Timings.SUPER_EXPRESS));
     	// participants.add(new PokerParticipant(10, "holdem/real/nolimit/low", 10, Timings.DEFAULT));
     	participants.add(new PokerParticipant(10, "ITALIAN/cashgame/REAL_MONEY", 10, Timings.DEFAULT, TEXAS_HOLDEM));
 
-    	participants.add(new PokerParticipant(2, "ITALIAN/cashgame/REAL_MONEY/2", 10, Timings.DEFAULT, TELESINA));
-    	participants.add(new PokerParticipant(4, "ITALIAN/cashgame/REAL_MONEY/4", 10, Timings.DEFAULT, TELESINA));
-    	participants.add(new PokerParticipant(6, "ITALIAN/cashgame/REAL_MONEY/6", 10, Timings.DEFAULT, TELESINA));
-    	participants.add(new PokerParticipant(10, "ITALIAN/cashgame/REAL_MONEY/10", 10, Timings.DEFAULT, TELESINA));
+//    	participants.add(new PokerParticipant(2, "ITALIAN/cashgame/REAL_MONEY/2", 10, Timings.DEFAULT, TELESINA));
+    	participants.add(new PokerParticipant(4, "ITALIAN/cashgame/REAL_MONEY/4", 10, Timings.SLOW, TELESINA));
+    	participants.add(new PokerParticipant(6, "ITALIAN/cashgame/REAL_MONEY/6", 10, Timings.SLOW, TELESINA));
     	
     	for (PokerParticipant part : participants) {
     		part.setInjector(injector);

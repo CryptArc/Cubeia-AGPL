@@ -11,6 +11,10 @@ import com.cubeia.poker.variant.texasholdem.TexasHoldemHandCalculator;
 /**
  * Compares hands. The most valued hand is greater than a lesser one.
  * This implementation delegates to {@link HandStrengthComparator}.
+ * 
+ * NOTE this impl sorts hands in the "wrong" order according to
+ * behavior specified by Comparator interface. In some parts of the
+ * code base Collections.reverseOrder must be used 
  * @author w
  */
 public class TexasHoldemHandComparator implements Comparator<Hand> {

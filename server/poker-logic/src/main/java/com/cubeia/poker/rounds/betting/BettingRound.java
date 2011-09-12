@@ -19,7 +19,9 @@ package com.cubeia.poker.rounds.betting;
 
 import java.util.SortedMap;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import com.cubeia.poker.GameType;
 import com.cubeia.poker.action.ActionRequestFactory;
@@ -34,7 +36,7 @@ public class BettingRound implements Round, BettingRoundContext {
 
 	private static final long serialVersionUID = -8666356150075950974L;
 
-	private static transient Logger log = Logger.getLogger(BettingRound.class);
+	private static transient Logger log = LoggerFactory.getLogger(BettingRound.class);
 
 	private final GameType gameType;
 
@@ -211,8 +213,12 @@ public class BettingRound implements Round, BettingRoundContext {
 
 
 	private void bet(PokerPlayer player, long amount) {
+	    log.debug("bet amount: {}, high bet {} -> {}",
+	        new Object[] {amount, highBet, highBet + amount});
+	        
 		lastBetSize = amount;
 		highBet = highBet + amount;
+		
 		player.addBet(highBet - player.getBetStack());
 		resetHasActed();
 	}

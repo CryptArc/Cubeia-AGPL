@@ -93,10 +93,12 @@ public class AnteRound implements Round {
 			player.addBet(game.getBlindsInfo().getAnteLevel());
 			player.setHasActed(true);
 			player.setHasPostedEntryBet(true);
+			game.getServerAdapter().notifyActionPerformed(action);
 			break;
 		case DECLINE_ENTRY_BET:
             player.setHasActed(true);
             player.setHasPostedEntryBet(false);
+            game.getServerAdapter().notifyActionPerformed(action);
             break;
 		default:
 			throw new IllegalArgumentException(action.getActionType() + " is not legal here");

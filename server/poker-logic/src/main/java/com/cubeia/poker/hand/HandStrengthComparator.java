@@ -6,6 +6,8 @@ import java.util.Comparator;
  * <p>Compare to another hand strength with hand ranking in mind,
  * i.e. the strongest hand should come first (is greater than a lesser hand).</p>
  * 
+ * This ordering is contrary to the contract specified by Comparator so take care!
+ * 
  */
 public class HandStrengthComparator implements Comparator<HandStrength> {
 

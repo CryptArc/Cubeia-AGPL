@@ -21,6 +21,7 @@ import com.cubeia.poker.IPokerState;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
+import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.rounds.ante.AnteRound;
 import com.cubeia.poker.rounds.ante.AnteRoundHelper;
@@ -89,12 +90,16 @@ public class AnteRoundTest {
         
         when(anteRoundHelper.hasAllPlayersActed(Mockito.anyCollection())).thenReturn(false);
         when(anteRoundHelper.getNextPlayerToAct(Mockito.eq(0), Mockito.any(SortedMap.class))).thenReturn(player2);
+        ServerAdapter serverAdapter = mock(ServerAdapter.class);
+        when(game.getServerAdapter()).thenReturn(serverAdapter);
         
-        anteRound.act(new PokerAction(player1Id, PokerActionType.ANTE));
+        PokerAction action = new PokerAction(player1Id, PokerActionType.ANTE);
+        anteRound.act(action);
         
         verify(player1).addBet(anteLevel);
         verify(player1).setHasActed(true);
         verify(player1).setHasPostedEntryBet(true);
+        verify(serverAdapter).notifyActionPerformed(action);
         
         verify(anteRoundHelper).requestAnte(player2, anteLevel, game);
     }
@@ -110,12 +115,16 @@ public class AnteRoundTest {
         
         when(anteRoundHelper.hasAllPlayersActed(Mockito.anyCollection())).thenReturn(false);
         when(anteRoundHelper.getNextPlayerToAct(Mockito.eq(0), Mockito.any(SortedMap.class))).thenReturn(player2);
+        ServerAdapter serverAdapter = mock(ServerAdapter.class);
+        when(game.getServerAdapter()).thenReturn(serverAdapter);
         
-        anteRound.act(new PokerAction(player1Id, PokerActionType.DECLINE_ENTRY_BET));
+        PokerAction action = new PokerAction(player1Id, PokerActionType.DECLINE_ENTRY_BET);
+        anteRound.act(action);
         
         verify(player1, never()).addBet(anteLevel);
         verify(player1).setHasActed(true);
         verify(player1).setHasPostedEntryBet(false);
+        verify(serverAdapter).notifyActionPerformed(action);
         
         verify(anteRoundHelper).requestAnte(player2, anteLevel, game);
     }    

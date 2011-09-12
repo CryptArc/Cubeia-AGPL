@@ -18,6 +18,7 @@
 package com.cubeia.poker.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +37,7 @@ import com.cubeia.poker.result.Result;
 public class HandResultCalculatorTest extends TestCase {
 
 	private Map<Integer, PokerPlayer> players;
-	HandResultCalculator calc = new HandResultCalculator(new TexasHoldemHandComparator());
+	HandResultCalculator calc = new HandResultCalculator(Collections.reverseOrder(new TexasHoldemHandComparator()));
 	private ArrayList<PlayerHand> hands;
 	
 	@Override
