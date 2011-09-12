@@ -17,39 +17,43 @@
 
 package com.cubeia.poker.timing.impl;
 
+import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.timing.TimingProfile;
-import com.cubeia.poker.timing.TimingRegistry;
-import com.cubeia.poker.timing.Timings;
 
 /**
- * Simple implementation of the TimingRegistry
+ * Not the most pimp profile on the block, but rather just a simple
+ * default implementation of a timing profile.
  *
  * @author Fredrik Johansson, Cubeia Ltd
  */
-public class TimingRegistryImpl implements TimingRegistry {
+public class SlowTimingProfile implements TimingProfile {
 
-	private TimingProfile defaultProfile = new DefaultTimingProfile();
-	
-	public TimingProfile getDefaultTimingProfile() {
-		return defaultProfile;
-	}
+	private static final long serialVersionUID = -3621659377668490319L;
 
-	public TimingProfile getTimingProfile(Timings profile) {
-		switch (profile) {
-		    case SLOW:
-		        return new SlowTimingProfile();
-		
-			case MINIMUM_DELAY:
-				return new MinDelayTimingProfile();
-				
-			case EXPRESS:
-                return new ExpressTimingProfile();
-                
-			case SUPER_EXPRESS:
-                return new SuperExpressTimingProfile();
-			
+	public String toString() {
+        return "SlowTimingProfile";
+    }
+    
+	public long getTime(Periods period) {
+		switch (period) {
+			case POCKET_CARDS:
+				return 2 * 3000;
+			case FLOP:
+				return 2 * 3000;
+			case TURN:
+				return 2 * 3000;
+			case RIVER:
+				return 2 * 3000;
+			case START_NEW_HAND:
+				return 2 * 8000;
+			case ACTION_TIMEOUT:
+				return 2 * 15000;
+			case AUTO_POST_BLIND_DELAY:
+				return 2 * 300;
+			case LATENCY_GRACE_PERIOD:
+				return 2 * 1000;
 			default:
-				return getDefaultTimingProfile();
+				return 2 * 5000;
 		}
 	}
 
