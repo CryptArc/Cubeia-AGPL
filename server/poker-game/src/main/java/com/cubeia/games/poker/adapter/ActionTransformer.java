@@ -267,8 +267,7 @@ public class ActionTransformer {
 		for (RatedPlayerHand ratedHand : hands) {
 			List<GameCard> cards = new ArrayList<GameCard>();
 			
-			// TODO: only show cards of the best hand
-			for (Card card : ratedHand.getHand().getCards()) {
+			for (Card card : ratedHand.getBestHandCards()) {
 			    cards.add(new GameCard(card.getId(), 
 			        convertSuitToProtocolEnum(card.getSuit()), 
 			        convertRankToProtocolEnum(card.getRank())));
