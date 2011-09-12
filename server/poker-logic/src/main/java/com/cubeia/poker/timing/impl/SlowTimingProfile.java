@@ -37,23 +37,23 @@ public class SlowTimingProfile implements TimingProfile {
 	public long getTime(Periods period) {
 		switch (period) {
 			case POCKET_CARDS:
-				return 2 * 3000;
+				return 3000;
 			case FLOP:
-				return 2 * 3000;
+				return 3000;
 			case TURN:
-				return 2 * 3000;
+				return 3000;
 			case RIVER:
-				return 2 * 3000;
+				return 3000;
 			case START_NEW_HAND:
-				return 2 * 8000;
+				return 8000;
 			case ACTION_TIMEOUT:
-				return 2 * 15000;
+				return 4 * 15000;
 			case AUTO_POST_BLIND_DELAY:
-				return 2 * 300;
+				return 300;
 			case LATENCY_GRACE_PERIOD:
-				return 2 * 1000;
+				return 1000;
 			default:
-				return 2 * 5000;
+				return 5000;
 		}
 	}
 
