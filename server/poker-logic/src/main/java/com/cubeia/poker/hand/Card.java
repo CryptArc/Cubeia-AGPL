@@ -72,6 +72,12 @@ public class Card implements Serializable {
     }
 
 
+	/**
+	 * Convenience method to create a list of cards.
+	 * 
+	 * @param str whitespace separated list of 2 character card descriptors.
+	 * @return
+	 */
 	public static List<Card> list(String str) {
 		List<Card> result = new LinkedList<Card>();
 		for (String s : str.split(" ")) {

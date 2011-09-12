@@ -5,7 +5,6 @@ import java.util.Random;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.IndexCardIdGenerator;
 import com.cubeia.poker.hand.Shuffler;
-import com.cubeia.poker.hand.TelesinaDeck;
 
 public class TelesinaDeckFactory {
 

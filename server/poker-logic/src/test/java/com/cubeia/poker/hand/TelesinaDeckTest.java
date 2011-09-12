@@ -15,6 +15,8 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import com.cubeia.poker.variant.telesina.TelesinaDeck;
+
 public class TelesinaDeckTest {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })

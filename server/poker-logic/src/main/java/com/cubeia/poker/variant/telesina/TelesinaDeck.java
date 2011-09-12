@@ -1,4 +1,4 @@
-package com.cubeia.poker.hand;
+package com.cubeia.poker.variant.telesina;
 
 import static com.google.common.base.Preconditions.*;
 import static com.google.common.collect.ImmutableSet.*;
@@ -7,6 +7,13 @@ import static java.util.Arrays.*;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.CardIdGenerator;
+import com.cubeia.poker.hand.Deck;
+import com.cubeia.poker.hand.Rank;
+import com.cubeia.poker.hand.Shuffler;
+import com.cubeia.poker.hand.Suit;
 
 /**
  * Telesina deck. The size of the deck will vary depending on the
@@ -42,7 +49,7 @@ public class TelesinaDeck implements Deck {
     }
     
     @SuppressWarnings("unchecked")
-    protected List<Card> createDeck() {
+    public List<Card> createDeck() {
 
         ArrayList<Card> cards = new ArrayList<Card>();
         

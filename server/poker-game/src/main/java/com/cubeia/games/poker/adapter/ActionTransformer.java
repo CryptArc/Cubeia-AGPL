@@ -263,20 +263,21 @@ public class ActionTransformer {
 	public static HandEnd createHandEndPacket(Collection<RatedPlayerHand> hands) {
 		HandEnd packet = new HandEnd();
 		packet.hands = new LinkedList<BestHand>();
-		
+
 		for (RatedPlayerHand ratedHand : hands) {
 			List<GameCard> cards = new ArrayList<GameCard>();
-			
+
 			for (Card card : ratedHand.getBestHandCards()) {
-			    cards.add(new GameCard(card.getId(), 
-			        convertSuitToProtocolEnum(card.getSuit()), 
-			        convertRankToProtocolEnum(card.getRank())));
+				cards.add(new GameCard(
+						card.getId() == null ? -1 : card.getId(), 
+						convertSuitToProtocolEnum(card.getSuit()), 
+						convertRankToProtocolEnum(card.getRank())));
 			}
-			
-            BestHand best = new BestHand(ratedHand.getPlayerId(), -1, ratedHand.getBestHandType().name(), cards);
+
+			BestHand best = new BestHand(ratedHand.getPlayerId(), -1, ratedHand.getBestHandType().name(), cards);
 			packet.hands.add(best);
 		}
-		
+
 		return packet;
 	}
 	
