@@ -27,7 +27,8 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
@@ -70,7 +71,7 @@ import com.cubeia.poker.variant.texasholdem.TexasHoldem;
  */
 public class PokerState implements Serializable, IPokerState {
 
-	private static final Logger log = Logger.getLogger(PokerState.class);
+	private static final Logger log = LoggerFactory.getLogger(PokerState.class);
 
 	private static final long serialVersionUID = -7208084698542289729L;
 
@@ -334,6 +335,9 @@ public class PokerState implements Serializable, IPokerState {
 		} else {
 			// TODO: Handle pending add chips requests.
 			log.debug("Notify Hand Finished schedule timeout");
+			
+			log.debug("hand finished, result:\n{}", result);
+			
 			serverAdapter.notifyHandEnd(handResult, status);
 			log.debug("Schedule hand over timeout in: "+timing.getTime(Periods.START_NEW_HAND));
 			serverAdapter.scheduleTimeout(timing.getTime(Periods.START_NEW_HAND));

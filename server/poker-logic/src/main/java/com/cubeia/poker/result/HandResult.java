@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 
@@ -55,6 +56,23 @@ public class HandResult implements Serializable {
 	}
 
 	public String toString() {
-		return "HandResult results["+results+"] playerHands["+playerHands+"]";
+	    StringBuilder sb = new StringBuilder();
+	    for (RatedPlayerHand rph : playerHands) {
+	        sb.append("Player ");
+	        sb.append(rph.getPlayerId());
+	        sb.append(" best hand: ");
+	        sb.append(cardsToString(rph.getBestHandCards()));
+	        sb.append(". ");
+	    }
+		return "HandResult results["+results+"] Hands: " + sb.toString();
 	}
+
+    private String cardsToString(List<Card> bestHandCards) {
+        StringBuilder sb = new StringBuilder();
+        for (Card card : bestHandCards) {
+            sb.append(card.toString());
+            sb.append(" ");
+        }
+        return sb.toString();
+    }
 }
