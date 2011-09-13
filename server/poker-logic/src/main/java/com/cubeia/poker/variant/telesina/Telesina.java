@@ -322,8 +322,9 @@ public class Telesina implements GameType, RoundVisitor {
 		
 		if (isHandFinished()) {
 		    exposeShowdownCards();
-		    HandResultCalculator hrc = new HandResultCalculator(new TelesinaHandComparator(deck.getDeckLowestRank()));
-			HandResult handResult = new HandResultCreator(new TelesinaHandStrengthEvaluator(getDeckLowestRank())).createHandResult(state.getCommunityCards(), hrc, state.getPotHolder(), state.getCurrentHandPlayerMap());
+			HandResultCreator resultCreator = new HandResultCreator(new TelesinaHandStrengthEvaluator(getDeckLowestRank()));
+		    HandResultCalculator resultCalculator = new HandResultCalculator(new TelesinaHandComparator(deck.getDeckLowestRank()));
+			HandResult handResult = resultCreator.createHandResult(state.getCommunityCards(), resultCalculator, state.getPotHolder(), state.getCurrentHandPlayerMap());
             handleFinishedHand(handResult);
 			state.getPotHolder().clearPots();
 		} else if (getBettingRoundId() == 4) {

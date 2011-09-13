@@ -178,7 +178,7 @@ public class HandResultCalculator implements Serializable {
 		List<Integer> winners = new ArrayList<Integer>();
 		
 		List<PlayerHand> copy = new LinkedList<PlayerHand>(hands);
-		Comparator<PlayerHand> phComparator = new PlayerHandComparator(comparator);
+		Comparator<PlayerHand> phComparator = Collections.reverseOrder(new PlayerHandComparator(comparator));
 		Collections.sort(copy, phComparator);
 		
 		PlayerHand previousHand = null;

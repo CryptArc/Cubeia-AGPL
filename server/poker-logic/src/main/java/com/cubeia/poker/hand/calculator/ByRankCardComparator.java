@@ -1,5 +1,6 @@
 package com.cubeia.poker.hand.calculator;
 
+import java.util.Collections;
 import java.util.Comparator;
 
 import com.cubeia.poker.hand.Card;
@@ -7,18 +8,16 @@ import com.cubeia.poker.hand.Rank;
 
 public class ByRankCardComparator implements Comparator<Card> {
 
-	public static final Comparator<Card> ACES_HIGH_ASC =  new ByRankCardComparator(true, false);
-	public static final Comparator<Card> ACES_LOW_ASC =  new ByRankCardComparator(false, false);
+	public static final Comparator<Card> ACES_HIGH_ASC = new ByRankCardComparator(true);
+	public static final Comparator<Card> ACES_LOW_ASC = new ByRankCardComparator(false);
 	
-	public static final Comparator<Card> ACES_HIGH_DESC =  new ByRankCardComparator(true, true);
-	public static final Comparator<Card> ACES_LOW_DESC =  new ByRankCardComparator(false, true);
+	public static final Comparator<Card> ACES_HIGH_DESC = Collections.reverseOrder(ACES_HIGH_ASC);
+	public static final Comparator<Card> ACES_LOW_DESC =  Collections.reverseOrder(ACES_LOW_ASC);
 	
 	private boolean acesHigh;
-	private int reverse;
 
-	private ByRankCardComparator(boolean acesHigh, boolean reverse) {
+	public ByRankCardComparator(boolean acesHigh) {
 		this.acesHigh = acesHigh;
-		this.reverse = reverse ? -1 : 1;
 	}
 
 	@Override
@@ -41,10 +40,10 @@ public class ByRankCardComparator implements Comparator<Card> {
 			c2Rank = -1;
 		}
 		
-		return reverse * (c1Rank - c2Rank);
+		return c1Rank - c2Rank;
 	}
 
 	public int compareAcesHigh(Card c1, Card c2) {
-		return reverse * (c1.getRank().ordinal() - c2.getRank().ordinal());
+		return c1.getRank().ordinal() - c2.getRank().ordinal();
 	}
 }

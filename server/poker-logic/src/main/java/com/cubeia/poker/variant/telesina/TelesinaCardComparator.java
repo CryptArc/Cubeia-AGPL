@@ -1,5 +1,6 @@
 package com.cubeia.poker.variant.telesina;
 
+import java.util.Collections;
 import java.util.Comparator;
 
 import com.cubeia.poker.hand.Card;
@@ -10,25 +11,17 @@ import com.cubeia.poker.hand.Card;
  * if compared to another card.
  */
 public class TelesinaCardComparator implements Comparator<Card> {
-	public static final TelesinaCardComparator ASC = new TelesinaCardComparator();
-	public static final TelesinaCardComparator DESC = new TelesinaCardComparator(true);
+	public static final Comparator<Card> ASC = new TelesinaCardComparator();
+	public static final Comparator<Card> DESC = Collections.reverseOrder(ASC);
 
-	private int reverse = 1;
-	
 	public TelesinaCardComparator() {}
-	
-	public TelesinaCardComparator(boolean reverseOrder) {
-		if (reverseOrder) {
-			reverse = -1;
-		} 
-	}
 	
 	@Override
 	public int compare(Card c1, Card c2) {
 		if (c1.getRank() != c2.getRank()) {
-			return reverse * (c1.getRank().ordinal() - c2.getRank().ordinal());
+			return c1.getRank().ordinal() - c2.getRank().ordinal();
 		}
 
-		return reverse * (c1.getSuit().telesinaSuitValue - c2.getSuit().telesinaSuitValue);
+		return c1.getSuit().telesinaSuitValue - c2.getSuit().telesinaSuitValue;
 	}
 }

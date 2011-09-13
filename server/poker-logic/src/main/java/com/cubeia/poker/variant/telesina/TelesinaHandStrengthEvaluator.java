@@ -400,7 +400,9 @@ public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Seriali
 		// arbitrarily refuse to recognise one card straights
 		if (cards.size() < 2) {
 			return null;
+
 		}
+
 		
 		List<Card> cc = new LinkedList<Card>(cards);
 		Collections.sort(cc, ByRankCardComparator.ACES_LOW_ASC);
@@ -410,6 +412,7 @@ public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Seriali
 		while (iter.hasNext()) {
 			Rank next = iter.next().getRank();
 
+			
 			// if cards not in order 
 			if (next.ordinal() != last.ordinal() + 1) {
 				
@@ -419,6 +422,7 @@ public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Seriali
 				}
 			}
 			last = next;
+			
 		}
 
 		List<Card> firstKicker = Arrays.asList(cc.get(cc.size() - 1));

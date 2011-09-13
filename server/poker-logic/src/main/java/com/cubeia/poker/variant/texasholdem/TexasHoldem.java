@@ -17,6 +17,7 @@
 
 package com.cubeia.poker.variant.texasholdem;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -76,7 +77,7 @@ public class TexasHoldem implements GameType, RoundVisitor {
 	// TODO: random should be injected
 	private Random random = new Random();
 	
-	private HandResultCalculator handResultCalculator = new HandResultCalculator(new TexasHoldemHandComparator());
+	private HandResultCalculator handResultCalculator = new HandResultCalculator(Collections.reverseOrder(new TexasHoldemHandComparator()));
 
 	public TexasHoldem(PokerState state) {
 		this.state = state;
