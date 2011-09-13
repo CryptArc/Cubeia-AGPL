@@ -1,0 +1,41 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.cubeia.games</groupId>
+  <artifactId>jg-mock-login</artifactId>
+  <name>Jadestone Mock Login</name>
+  <packaging>firebase-sar</packaging> 
+  
+  <parent>
+		<artifactId>poker</artifactId>
+		<groupId>com.cubeia.games</groupId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+	
+  <dependencies>
+  
+    <dependency>
+      <groupId>com.cubeia.firebase</groupId>
+      <artifactId>firebase-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+	  <groupId>se.jadestone.dicearena</groupId>
+	  <artifactId>service-protocol</artifactId>
+	  <version>1-TRUNK-SNAPSHOT</version>
+    </dependency>
+    
+  </dependencies>
+  
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.cubeia.tools</groupId>
+        <artifactId>archive-plugin</artifactId>
+        <extensions>true</extensions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
