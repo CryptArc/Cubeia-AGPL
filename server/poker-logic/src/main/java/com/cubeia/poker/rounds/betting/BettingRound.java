@@ -165,6 +165,10 @@ public class BettingRound implements Round, BettingRoundContext {
 			fold(player);
 			break;
 		case RAISE:
+		    
+		    log.debug("raise action: player = {}, betAmount = {}, raiseAmount = {}, action = {}", 
+		        new Object[] {player.getId(), action.getBetAmount(), action.getRaiseAmount(), action.toString()});
+		    
 			setRaiseByAmount(player, action);
 			raise(player, action.getBetAmount());
 			break;
