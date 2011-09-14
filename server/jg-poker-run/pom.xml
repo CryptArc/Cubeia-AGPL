@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.cubeia.com</groupId>
+  <version>1.0-SNAPSHOT</version>
+  <artifactId>poker-deploy</artifactId>
+  <name>Local Firebase Instance</name>
+  <packaging>pom</packaging>
+
+
+	<build>
+		<plugins>
+		<plugin>
+        <groupId>com.cubeia.tools</groupId>
+        <artifactId>archive-plugin</artifactId>
+        <version>1.7.0</version>
+        <extensions>true</extensions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.3</version>
+        <executions>
+          <execution>
+            <id>unpack</id>
+            <phase>package</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+            <artifactItem>
+              <groupId>com.cubeia.firebase</groupId>
+							<artifactId>firebase-dist</artifactId>
+							<version>1.7.3.2-CE</version>
+							<classifier>release</classifier>
+							<type>zip</type>
+              <overWrite>false</overWrite>
+              <outputDirectory>deploy</outputDirectory>
+            </artifactItem>
+          </artifactItems>
+            </configuration>
+          </execution>
+					
+					<execution>
+            <id>copy</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>com.cubeia.games</groupId>
+									<artifactId>poker-uar</artifactId>
+									<version>1.0-SNAPSHOT</version>
+									<type>firebase-uar</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>deploy/firebase-1.7.3.2-CE/game/deploy</outputDirectory>
+                </artifactItem>
+								<artifactItem>
+									<groupId>com.cubeia.games</groupId>
+									<artifactId>jg-mock-login</artifactId>
+									<version>1.0-SNAPSHOT</version>
+									<type>firebase-sar</type> 
+                  <overWrite>true</overWrite>
+                  <outputDirectory>deploy/firebase-1.7.3.2-CE/game/deploy</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.cubeia.network.wallet.firebase</groupId>
+									<artifactId>mock-wallet-service</artifactId>
+									<version>1.2.3</version>
+									<type>firebase-sar</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>deploy/firebase-1.7.3.2-CE/game/deploy</outputDirectory>
+								</artifactItem>
+              </artifactItems>
+              
+            </configuration>
+          </execution>
+					
+        </executions>
+      </plugin>
+    </plugins>
+	</build>
+
+	<repositories>
+		<repository>
+			<id>cubeia-nexus</id>
+			<name>Public Cubeia Nexus</name>
+			<url>http://m2.cubeia.com/nexus/content/groups/public</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+  
+	<pluginRepositories>
+		<pluginRepository>
+			<id>cubeia-nexus</id>
+			<name>Public Cubeia Nexus</name>
+			<url>http://m2.cubeia.com/nexus/content/groups/public</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
+</project>
