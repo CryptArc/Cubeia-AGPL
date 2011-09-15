@@ -95,7 +95,8 @@ public class PokerGame extends GuiceGame implements ExtendedDetailsProvider {
 	
     
 	
-	@Override
+	@SuppressWarnings("unused")
+    @Override
 	public List<Param> getExtendedDetails(Table table, int playerId, boolean fromLobby) {
 		if (true) {
 			// FIXME: Getting classnotfound on UserService

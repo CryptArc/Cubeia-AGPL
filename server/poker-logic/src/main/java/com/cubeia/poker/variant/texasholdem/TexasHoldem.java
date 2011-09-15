@@ -74,12 +74,12 @@ public class TexasHoldem implements GameType, RoundVisitor {
 //	@Inject
 	private final PokerState state;
 	
-	// TODO: random should be injected
-	private Random random = new Random();
+	private final Random rng;
 	
 	private HandResultCalculator handResultCalculator = new HandResultCalculator(Collections.reverseOrder(new TexasHoldemHandComparator()));
 
-	public TexasHoldem(PokerState state) {
+	public TexasHoldem(Random rng, PokerState state) {
+	    this.rng = rng;
 		this.state = state;
 	}
 	
@@ -101,7 +101,7 @@ public class TexasHoldem implements GameType, RoundVisitor {
 	}
 
 	private Random getRandom() {
-		return random;
+		return rng;
 	}
 
 //	@Override

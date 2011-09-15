@@ -16,6 +16,7 @@ public class FeedableSeatProvider implements RandomSeatProvider {
 	/** The next "random" seat id to return. */ 
 	int nextSeatId = -1;	
 	
+	// TODO: break out RNG, or remove this method
 	public FeedableSeatProvider() {
 		this(new Random());
 	}

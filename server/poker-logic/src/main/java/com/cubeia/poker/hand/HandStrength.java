@@ -73,7 +73,8 @@ public class HandStrength implements HandInfo {
 		return type;
 	}
 
-	public List<Card> getCards() {
+	@SuppressWarnings("unchecked")
+    public List<Card> getCards() {
 		// Not used in texas hold'em implementation as of 2011-09-12 so
 		// I just left it for now. / dreas
 		return Collections.EMPTY_LIST;

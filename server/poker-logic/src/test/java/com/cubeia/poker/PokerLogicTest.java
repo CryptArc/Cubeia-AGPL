@@ -27,7 +27,6 @@ import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Rank;
-import com.cubeia.poker.model.PlayerHand;
 import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;

@@ -18,9 +18,10 @@ import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.player.PokerPlayer;
 
+@SuppressWarnings("unchecked")
 public class TelesinaPlayerToActCalculatorTest {
 
-	@Test
+    @Test
 	public void testFirstPlayerToActTwoCards1() {
 		TelesinaPlayerToActCalculator ptac = new TelesinaPlayerToActCalculator(Rank.SEVEN);
 		SortedMap<Integer, PokerPlayer> seating = new TreeMap<Integer, PokerPlayer>();
@@ -35,7 +36,7 @@ public class TelesinaPlayerToActCalculatorTest {
 		assertEquals(2, first.getId());
 	}
 	
-	@Test
+    @Test
 	public void testFirstPlayerToActTwoCards2() {
 		TelesinaPlayerToActCalculator ptac = new TelesinaPlayerToActCalculator(Rank.SEVEN);
 

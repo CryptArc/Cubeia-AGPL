@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -158,26 +159,26 @@ public class PokerState implements Serializable, IPokerState {
 	}
 
 	@Override
-	public void init(PokerSettings settings) {
+	public void init(Random rng, PokerSettings settings) {
 		anteLevel = settings.getAnteLevel();
 		timing = settings.getTiming();
 		variant = settings.getVariant();
 		tableSize = settings.getTableSize();
 		
-		gameType = createGameTypeByVariant(variant);
+		gameType = createGameTypeByVariant(rng, variant);
 		
 		log.debug("poker state initialized with logic: " + gameType);
 	}
 
-	protected GameType createGameTypeByVariant(PokerVariant variant) {
+	protected GameType createGameTypeByVariant(Random rng, PokerVariant variant) {
 		GameType gameType;
 		
 		switch (variant) {
 		case TEXAS_HOLDEM:
-			gameType = new TexasHoldem(this);
+			gameType = new TexasHoldem(rng, this);
 			break;
 		case TELESINA:
-			gameType = new Telesina(this, new TelesinaDeckFactory(), new TelesinaRoundFactory());
+			gameType = new Telesina(rng, this, new TelesinaDeckFactory(), new TelesinaRoundFactory());
 			break;
 		default:
 			throw new UnsupportedOperationException("unsupported poker variant: " + variant);

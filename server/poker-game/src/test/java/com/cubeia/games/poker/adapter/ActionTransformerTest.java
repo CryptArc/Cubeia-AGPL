@@ -17,12 +17,11 @@
 
 package com.cubeia.games.poker.adapter;
 
-import static com.cubeia.games.poker.adapter.ActionTransformer.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static com.cubeia.games.poker.adapter.ActionTransformer.convertRankToProtocolEnum;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import junit.framework.TestCase;

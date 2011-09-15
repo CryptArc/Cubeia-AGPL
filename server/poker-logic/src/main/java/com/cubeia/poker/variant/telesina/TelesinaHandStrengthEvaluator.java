@@ -19,6 +19,7 @@ import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.hand.Suit;
 import com.cubeia.poker.hand.calculator.ByRankCardComparator;
 
+@SuppressWarnings("unchecked")
 public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -115,7 +116,7 @@ public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Seriali
 	 * @param cards
 	 * @return
 	 */
-	public TelesinaHandStrength checkHighCard(List<Card> cards) {
+    public TelesinaHandStrength checkHighCard(List<Card> cards) {
 		if (cards.isEmpty()) {
 			return null;
 		}

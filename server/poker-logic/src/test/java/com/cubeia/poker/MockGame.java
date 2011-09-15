@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -146,7 +147,7 @@ public class MockGame implements GameType {
 			}
 			
 			@Override
-			public void init(PokerSettings settings) {
+			public void init(Random rng, PokerSettings settings) {
 			}
 			
 			@Override
@@ -164,7 +165,8 @@ public class MockGame implements GameType {
 				return 0;
 			}
 			
-			@Override
+			@SuppressWarnings("unchecked")
+            @Override
 			public List<Card> getCommunityCards() {
 				return Collections.EMPTY_LIST;
 			}

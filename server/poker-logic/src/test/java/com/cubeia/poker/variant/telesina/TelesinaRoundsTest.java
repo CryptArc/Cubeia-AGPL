@@ -85,7 +85,7 @@ public class TelesinaRoundsTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testRoundSequence() {
-        Telesina telesina = new Telesina(state, deckFactory, roundFactory);
+        Telesina telesina = new Telesina(new Random(), state, deckFactory, roundFactory);
 
         // ante round
         AnteRound anteRound = mock(AnteRound.class);

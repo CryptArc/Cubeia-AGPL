@@ -17,6 +17,8 @@
 
 package com.cubeia.games.poker.activator;
 
+import java.util.Random;
+
 import org.apache.log4j.Logger;
 
 import com.cubeia.firebase.api.game.GameDefinition;
@@ -56,13 +58,15 @@ public class PokerParticipant extends DefaultCreationParticipant {
 	private Timings timing = Timings.DEFAULT;
 
 	private final int anteLevel;
+	
+	private final Random rng;
 
 	// FIXME: This is not good IoC practice *cough*
 	private Injector injector;
 
 	private final PokerVariant variant;
 
-	public PokerParticipant(int seats, String domain, int anteLevel, Timings timing, PokerVariant variant) {
+	public PokerParticipant(int seats, String domain, int anteLevel, Timings timing, PokerVariant variant, Random rng) {
 		super();
 		this.seats = seats;
 		this.domain = domain;
@@ -70,6 +74,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
 		this.anteLevel = anteLevel;
 		this.variant = variant;
 		this.timingProfile  = TimingFactory.getRegistry().getTimingProfile(timing);
+		this.rng = rng;
 	}
 
 
@@ -98,7 +103,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
 		PokerState pokerState = injector.getInstance(PokerState.class);
 
 		PokerSettings settings = new PokerSettings(anteLevel, timingProfile, variant, table.getPlayerSet().getSeatingMap().getNumberOfSeats());
-		pokerState.init(settings);
+		pokerState.init(rng, settings);
 		pokerState.setAdapterState(new FirebaseState());
 		pokerState.setId(table.getId());
 		table.getGameState().setState(pokerState);

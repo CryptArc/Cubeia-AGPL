@@ -14,6 +14,7 @@ import com.cubeia.poker.player.PokerPlayer;
 
 public class DefaultPlayerToActCalculatorTest {
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testFirstPlayerToAct() {
         DefaultPlayerToActCalculator pac = new DefaultPlayerToActCalculator();
@@ -34,6 +35,7 @@ public class DefaultPlayerToActCalculatorTest {
         assertThat(playerToAct, is(player1));
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testNextPlayerToAct() {
         DefaultPlayerToActCalculator pac = new DefaultPlayerToActCalculator();

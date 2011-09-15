@@ -5,6 +5,9 @@ import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+
+import java.util.Random;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -18,9 +21,10 @@ public class GameStateInitialization {
 	@Test
 	public void createGameTypeByVariant() {
 		PokerState state = new PokerState();
-		GameType gt = state.createGameTypeByVariant(TELESINA);
+		Random rng = mock(Random.class);
+		GameType gt = state.createGameTypeByVariant(rng, TELESINA);
 		assertThat(gt, instanceOf(Telesina.class));
-		gt = state.createGameTypeByVariant(TEXAS_HOLDEM);
+		gt = state.createGameTypeByVariant(rng, TEXAS_HOLDEM);
 		assertThat(gt, instanceOf(TexasHoldem.class));
 	}
 	
@@ -30,8 +34,9 @@ public class GameStateInitialization {
 		int anteLevel = 1234;
 		PokerSettings settings = new PokerSettings(anteLevel, timing , TELESINA, 6);
 		
+        Random rng = mock(Random.class);
 		PokerState state = new PokerState();
-		state.init(settings);
+		state.init(rng, settings);
 		
 		assertThat(state.getAnteLevel(), is(anteLevel));
 		assertThat(state.getTimingProfile(), is(timing));

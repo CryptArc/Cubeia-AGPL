@@ -94,15 +94,15 @@ public class Telesina implements GameType, RoundVisitor {
 
 	final PokerState state;
 	
-	// TODO: random should be injected
-	private Random random = new Random();
+	private final Random rng;
 	
     private final TelesinaDeckFactory deckFactory;
 
     private final TelesinaRoundFactory roundFactory;
 
-	public Telesina(PokerState state, TelesinaDeckFactory deckFactory, TelesinaRoundFactory roundFactory) {
-		this.state = state;
+	public Telesina(Random rng, PokerState state, TelesinaDeckFactory deckFactory, TelesinaRoundFactory roundFactory) {
+		this.rng = rng;
+        this.state = state;
         this.deckFactory = deckFactory;
         this.roundFactory = roundFactory;
 
@@ -132,7 +132,7 @@ public class Telesina implements GameType, RoundVisitor {
 	}
 
     private Random getRandom() {
-		return random;
+		return rng;
 	}
 
 	@Override
