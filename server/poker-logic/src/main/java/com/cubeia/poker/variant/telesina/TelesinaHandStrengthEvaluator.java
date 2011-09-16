@@ -67,7 +67,7 @@ public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Seriali
 			cards = findBestHand(cards);
 		}
 		
-		TelesinaHandStrength strength = checkStraightFlush(cards, 5, true);
+		TelesinaHandStrength strength = checkStraightFlush(cards, 5);
 		if (strength != null) {
 			return strength;
 		}
@@ -87,7 +87,7 @@ public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Seriali
 			return strength;
 		}
 		
-		strength = checkStraight(cards, 5, true);
+		strength = checkStraight(cards, 5);
 		if (strength != null) {
 			return strength;
 		}
@@ -248,23 +248,14 @@ public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Seriali
 	}
 	
 	/**
-	 * Duplicate default behavior of checkStraight in texas holdem impl.
-	 * No cards stripped from deck, aces may NOT be low, straight length not bound (ie one card is a straight).
-	 */
-	public TelesinaHandStrength checkStraight(List<Card> cards) {
-		return checkStraight(cards, 1, false);
-	}
-	
-	/**
-	 * Checks to see if ALL cards (any number) supplied form a straight.
-	 * Deck may be stripped and aces may or may not be used as low card.
+	 * Checks to see if ALL cards (any number) supplied form a straight, aces low allowed.
+	 * Deck may be stripped.
 	 * 
 	 * @param cards The cards to check
-	 * @param minimumLength The minimum length required for a set of card to count as a straight (NOTE a one card straight is never recognized)
-	 * @param allowLowAces 
+	 * @param minimumLength The minimum length required for a set of card to count as a straight (NOTE a one card straight is never recognized) 
 	 * @return
 	 */
-	public TelesinaHandStrength checkStraight(List<Card> cards, int minimumLength, boolean allowLowAces) {
+	public TelesinaHandStrength checkStraight(List<Card> cards, int minimumLength) {
 		
 		if (cards.size() < minimumLength) {
 			return null;
@@ -274,10 +265,7 @@ public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Seriali
 		if (checkStraightAcesHigh != null) {
 			return checkStraightAcesHigh;
 		}
-		if (!allowLowAces) {
-			return null;
-		}
-		
+
 		return checkStraightAcesLow(cards);
 	}
 	
@@ -310,29 +298,20 @@ public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Seriali
 	}
 	
 	/**
-	 * Check that ALL cards in a set for a straight flush.
-	 * No cards stripped from deck, aces may NOT be low, straight length
-	 * not bound (ie one card is a straight). 
-	 */
-	public TelesinaHandStrength checkStraightFlush(List<Card> cards) {
-		return checkStraightFlush(cards, 1, false);
-	}
-	
-	/**
 	 * Checks to see if ALL cards (any number) supplied form a straight flush.
-	 * Deck may be stripped and aces may or may not be used as low card.
+	 * Deck may be stripped.
 	 * 
 	 * @param cards The cards to check
 	 * @param minimumLength The minimum length required for a set of card to count as a straight
 	 * @param allowLowAces 
 	 * @return
 	 */
-	public TelesinaHandStrength checkStraightFlush(List<Card> cards, int minimumLength, boolean allowLowAces) {
+	public TelesinaHandStrength checkStraightFlush(List<Card> cards, int minimumLength) {
 		if (checkFlush(cards) == null) {
 			return null;
 		}
 		
-		TelesinaHandStrength checkStraight = checkStraight(cards, minimumLength, allowLowAces);
+		TelesinaHandStrength checkStraight = checkStraight(cards, minimumLength);
 		
 		if (checkStraight == null) {
 			return null;
