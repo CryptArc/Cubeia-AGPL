@@ -20,7 +20,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import com.cubeia.poker.PokerState;
-import com.cubeia.poker.TestRNGProvider;
+import com.cubeia.poker.DummyRNGProvider;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.DefaultPokerPlayer;
@@ -86,7 +86,7 @@ public class TelesinaRoundsTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testRoundSequence() {
-        Telesina telesina = new Telesina(new TestRNGProvider(), state, deckFactory, roundFactory);
+        Telesina telesina = new Telesina(new DummyRNGProvider(), state, deckFactory, roundFactory);
 
         // ante round
         AnteRound anteRound = mock(AnteRound.class);

@@ -2,18 +2,20 @@ package com.cubeia.poker;
 
 import java.util.Random;
 
+import org.junit.Ignore;
+
 import com.cubeia.poker.rng.RNGProvider;
 
 @SuppressWarnings("serial")
-public class TestRNGProvider implements RNGProvider {
+public class DummyRNGProvider implements RNGProvider {
 
     private final Random rng;
     
-    public TestRNGProvider() {
+    public DummyRNGProvider() {
         this.rng = new Random();
     }
     
-    public TestRNGProvider(Random rng) {
+    public DummyRNGProvider(Random rng) {
         this.rng = rng;
     }
     

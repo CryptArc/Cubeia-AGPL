@@ -94,6 +94,9 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
         // TODO: get RNG from service in provider
         final Random rng = new Random();
         rngProvider = new RNGProvider() {
+            // TODO: This provider should get the rng from a service and store it in a transient field
+            //   to avoid serializing it.
+            
             @Override
             public Random getRNG() {
                 return rng;
