@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -30,6 +29,7 @@ import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.rounds.blinds.BlindsInfo;
 import com.cubeia.poker.variant.PokerVariant;
 
@@ -147,7 +147,7 @@ public class MockGame implements GameType {
 			}
 			
 			@Override
-			public void init(Random rng, PokerSettings settings) {
+			public void init(RNGProvider rng, PokerSettings settings) {
 			}
 			
 			@Override

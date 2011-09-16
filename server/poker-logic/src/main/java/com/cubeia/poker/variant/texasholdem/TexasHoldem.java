@@ -20,7 +20,6 @@ package com.cubeia.poker.variant.texasholdem;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 import org.apache.log4j.Logger;
 
@@ -40,6 +39,7 @@ import com.cubeia.poker.hand.StandardDeck;
 import com.cubeia.poker.hand.TexasHoldemHandComparator;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.result.HandResult;
+import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.rounds.DealCommunityCardsRound;
 import com.cubeia.poker.rounds.DealPocketCardsRound;
 import com.cubeia.poker.rounds.DealVelaCardRound;
@@ -74,12 +74,12 @@ public class TexasHoldem implements GameType, RoundVisitor {
 //	@Inject
 	private final PokerState state;
 	
-	private final Random rng;
+	private final RNGProvider rngProvider;
 	
 	private HandResultCalculator handResultCalculator = new HandResultCalculator(Collections.reverseOrder(new TexasHoldemHandComparator()));
 
-	public TexasHoldem(Random rng, PokerState state) {
-	    this.rng = rng;
+	public TexasHoldem(RNGProvider rngProvider, PokerState state) {
+	    this.rngProvider = rngProvider;
 		this.state = state;
 	}
 	
@@ -94,14 +94,10 @@ public class TexasHoldem implements GameType, RoundVisitor {
 	}
 
 	private void initHand() {				
-		deck = new StandardDeck(new Shuffler<Card>(getRandom()), new IndexCardIdGenerator());
+		deck = new StandardDeck(new Shuffler<Card>(rngProvider.getRNG()), new IndexCardIdGenerator());
 		
 		currentRound = new BlindsRound(this, state.isTournamentTable());
 		roundId = 0;
-	}
-
-	private Random getRandom() {
-		return rng;
 	}
 
 //	@Override

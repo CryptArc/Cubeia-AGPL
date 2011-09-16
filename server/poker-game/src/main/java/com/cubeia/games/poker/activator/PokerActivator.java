@@ -43,6 +43,7 @@ import com.cubeia.games.poker.tournament.activator.TournamentTableSettings;
 import com.cubeia.poker.PokerGuiceModule;
 import com.cubeia.poker.PokerSettings;
 import com.cubeia.poker.PokerState;
+import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.timing.Timings;
@@ -62,7 +63,7 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
     
     private transient Logger log = Logger.getLogger(this.getClass());
 
-    private Random rng;
+    private RNGProvider rngProvider;
 
     private int multiplier = 1;
     
@@ -85,19 +86,26 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
         log.info("Created Game Activator for Poker");
     }
 
+    @SuppressWarnings("serial")
     @Override
     public void init(ActivatorContext context) throws SystemException {
         super.init(context);
         
-        // TODO: get RNG from service
-        rng = new Random();
+        // TODO: get RNG from service in provider
+        final Random rng = new Random();
+        rngProvider = new RNGProvider() {
+            @Override
+            public Random getRNG() {
+                return rng;
+            }
+        };
         
         initJmx();
         injector = Guice.createInjector(
         		new ActivatorGuiceModule(context),
         		new PokerGuiceModule());
         
-        initParticipants(rng);
+        initParticipants(rngProvider);
     }
     
     @Override
@@ -109,10 +117,10 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
     /** 
      * Create a number of participants, i.e. lobby branches 
      */
-    private void initParticipants(Random rng) {	
-    	participants.add(new PokerParticipant(10, "ITALIAN/cashgame/REAL_MONEY", 10, Timings.DEFAULT, TEXAS_HOLDEM, rng));
-    	participants.add(new PokerParticipant(4, "ITALIAN/cashgame/REAL_MONEY/4", 10, Timings.SLOW, TELESINA, rng));
-    	participants.add(new PokerParticipant(6, "ITALIAN/cashgame/REAL_MONEY/6", 10, Timings.SLOW, TELESINA, rng));
+    private void initParticipants(RNGProvider rngProvider) {	
+    	participants.add(new PokerParticipant(10, "ITALIAN/cashgame/REAL_MONEY", 10, Timings.DEFAULT, TEXAS_HOLDEM, rngProvider));
+    	participants.add(new PokerParticipant(4, "ITALIAN/cashgame/REAL_MONEY/4", 10, Timings.SLOW, TELESINA, rngProvider));
+    	participants.add(new PokerParticipant(6, "ITALIAN/cashgame/REAL_MONEY/6", 10, Timings.SLOW, TELESINA, rngProvider));
     	
     	for (PokerParticipant part : participants) {
     		part.setInjector(injector);
@@ -139,7 +147,7 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
     }
     
     public void createTable(String domain, int seats, int level, PokerVariant variant) {
-    	this.tableRegistry.createTable(seats, new PokerParticipant(seats, domain, level, Timings.DEFAULT, variant, rng));
+    	this.tableRegistry.createTable(seats, new PokerParticipant(seats, domain, level, Timings.DEFAULT, variant, rngProvider));
     }
 
     /** 
@@ -193,7 +201,7 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
         // TODO: must check with variant of poker this is
         PokerSettings settings = new PokerSettings(-1, timing, PokerVariant.TEXAS_HOLDEM, table.getPlayerSet().getSeatingMap().getNumberOfSeats());
         
-        pokerState.init(rng, settings);
+        pokerState.init(rngProvider, settings);
         pokerState.setTournamentTable(true);
         pokerState.setTournamentId(mttId);
         pokerState.setAdapterState(new FirebaseState());

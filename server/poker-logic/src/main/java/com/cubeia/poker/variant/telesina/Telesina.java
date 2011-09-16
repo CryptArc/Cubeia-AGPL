@@ -20,7 +20,6 @@ package com.cubeia.poker.variant.telesina;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +35,7 @@ import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.result.HandResult;
+import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.rounds.DealCommunityCardsRound;
 import com.cubeia.poker.rounds.DealPocketCardsRound;
 import com.cubeia.poker.rounds.DealVelaCardRound;
@@ -94,14 +94,14 @@ public class Telesina implements GameType, RoundVisitor {
 
 	final PokerState state;
 	
-	private final Random rng;
+	private final RNGProvider rngProvider;
 	
     private final TelesinaDeckFactory deckFactory;
 
     private final TelesinaRoundFactory roundFactory;
 
-	public Telesina(Random rng, PokerState state, TelesinaDeckFactory deckFactory, TelesinaRoundFactory roundFactory) {
-		this.rng = rng;
+	public Telesina(RNGProvider rng, PokerState state, TelesinaDeckFactory deckFactory, TelesinaRoundFactory roundFactory) {
+		this.rngProvider = rng;
         this.state = state;
         this.deckFactory = deckFactory;
         this.roundFactory = roundFactory;
@@ -122,17 +122,13 @@ public class Telesina implements GameType, RoundVisitor {
 	private void initHand() {	
 		log.debug("init hand");
 		
-		deck = deckFactory.createNewDeck(getRandom(), state.getTableSize());
+		deck = deckFactory.createNewDeck(rngProvider.getRNG(), state.getTableSize());
 		state.notifyDeckInfo(deck.getTotalNumberOfCardsInDeck(), deck.getDeckLowestRank());
 		blindsInfo.setAnteLevel(state.getAnteLevel());
 		
 		setCurrentRound(roundFactory.createAnteRound(this));
 		
 		setBettingRoundId(0);
-	}
-
-    private Random getRandom() {
-		return rng;
 	}
 
 	@Override

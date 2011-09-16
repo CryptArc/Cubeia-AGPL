@@ -29,6 +29,7 @@ import com.cubeia.firebase.api.lobby.LobbyPath;
 import com.cubeia.games.poker.FirebaseState;
 import com.cubeia.poker.PokerSettings;
 import com.cubeia.poker.PokerState;
+import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.timing.Timings;
@@ -59,14 +60,14 @@ public class PokerParticipant extends DefaultCreationParticipant {
 
 	private final int anteLevel;
 	
-	private final Random rng;
+	private final RNGProvider rngProvider;
 
 	// FIXME: This is not good IoC practice *cough*
 	private Injector injector;
 
 	private final PokerVariant variant;
 
-	public PokerParticipant(int seats, String domain, int anteLevel, Timings timing, PokerVariant variant, Random rng) {
+	public PokerParticipant(int seats, String domain, int anteLevel, Timings timing, PokerVariant variant, RNGProvider rngProvider) {
 		super();
 		this.seats = seats;
 		this.domain = domain;
@@ -74,7 +75,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
 		this.anteLevel = anteLevel;
 		this.variant = variant;
 		this.timingProfile  = TimingFactory.getRegistry().getTimingProfile(timing);
-		this.rng = rng;
+		this.rngProvider = rngProvider;
 	}
 
 
@@ -103,7 +104,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
 		PokerState pokerState = injector.getInstance(PokerState.class);
 
 		PokerSettings settings = new PokerSettings(anteLevel, timingProfile, variant, table.getPlayerSet().getSeatingMap().getNumberOfSeats());
-		pokerState.init(rng, settings);
+		pokerState.init(rngProvider, settings);
 		pokerState.setAdapterState(new FirebaseState());
 		pokerState.setId(table.getId());
 		table.getGameState().setState(pokerState);

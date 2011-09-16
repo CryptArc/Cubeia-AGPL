@@ -22,7 +22,6 @@ import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 import junit.framework.TestCase;
 
@@ -55,6 +54,6 @@ public abstract class GuiceTest extends TestCase {
 		PokerSettings settings = new PokerSettings(100, TimingFactory.getRegistry().getTimingProfile(MINIMUM_DELAY), TEXAS_HOLDEM, 6);
 		game = injector.getInstance(PokerState.class);
 		game.setServerAdapter(mockServerAdapter);
-		game.init(new Random(), settings);
+		game.init(new TestRNGProvider(), settings);
 	}
 }

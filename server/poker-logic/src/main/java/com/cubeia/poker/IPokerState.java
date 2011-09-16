@@ -2,16 +2,16 @@ package com.cubeia.poker;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.SortedMap;
 
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.variant.PokerVariant;
 
 public interface IPokerState {
 
-	void init(Random rng, PokerSettings settings);
+	void init(RNGProvider rngProvider, PokerSettings settings);
 	
 	void notifyPlayerSittingOut(int playerId);
 

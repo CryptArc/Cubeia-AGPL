@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Random;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -43,6 +42,7 @@ import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
+import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.rounds.blinds.BlindsInfo;
 import com.cubeia.poker.states.NotStartedSTM;
 import com.cubeia.poker.states.PlayingSTM;
@@ -159,26 +159,26 @@ public class PokerState implements Serializable, IPokerState {
 	}
 
 	@Override
-	public void init(Random rng, PokerSettings settings) {
+	public void init(RNGProvider rngProvider, PokerSettings settings) {
 		anteLevel = settings.getAnteLevel();
 		timing = settings.getTiming();
 		variant = settings.getVariant();
 		tableSize = settings.getTableSize();
 		
-		gameType = createGameTypeByVariant(rng, variant);
+		gameType = createGameTypeByVariant(rngProvider, variant);
 		
 		log.debug("poker state initialized with logic: " + gameType);
 	}
 
-	protected GameType createGameTypeByVariant(Random rng, PokerVariant variant) {
+	protected GameType createGameTypeByVariant(RNGProvider rngProvider, PokerVariant variant) {
 		GameType gameType;
 		
 		switch (variant) {
 		case TEXAS_HOLDEM:
-			gameType = new TexasHoldem(rng, this);
+			gameType = new TexasHoldem(rngProvider, this);
 			break;
 		case TELESINA:
-			gameType = new Telesina(rng, this, new TelesinaDeckFactory(), new TelesinaRoundFactory());
+			gameType = new Telesina(rngProvider, this, new TelesinaDeckFactory(), new TelesinaRoundFactory());
 			break;
 		default:
 			throw new UnsupportedOperationException("unsupported poker variant: " + variant);

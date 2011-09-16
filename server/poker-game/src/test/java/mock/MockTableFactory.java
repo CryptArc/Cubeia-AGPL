@@ -25,6 +25,7 @@ import java.util.Random;
 import com.cubeia.poker.MockGame;
 import com.cubeia.poker.PokerSettings;
 import com.cubeia.poker.PokerState;
+import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.timing.TimingFactory;
 
 public class MockTableFactory {
@@ -33,9 +34,15 @@ public class MockTableFactory {
 		MockTable table = new MockTable();
 		
 		PokerSettings settings = new PokerSettings(-1, TimingFactory.getRegistry().getTimingProfile(MINIMUM_DELAY), TELESINA, 6);
-		
+
+		final Random rng = new Random();
 		PokerState pokerState = new PokerState();
-		pokerState.init(new Random(0), settings);
+		pokerState.init(new RNGProvider() {
+            @Override
+            public Random getRNG() {
+                return rng;
+            }
+        }, settings);
 		pokerState.setGameType(new MockGame());
 		table.getGameState().setState(pokerState);
 		return table;
