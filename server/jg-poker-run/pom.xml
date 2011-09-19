@@ -10,13 +10,17 @@
   <name>Local Firebase Instance</name>
   <packaging>pom</packaging>
 
+	<properties>
+		<firebase.version>1.7.3.2-CE</firebase.version>
+		<firebase.tools.version>1.7.0</firebase.tools.version>
+	</properties>
 
 	<build>
 		<plugins>
 		<plugin>
         <groupId>com.cubeia.tools</groupId>
         <artifactId>archive-plugin</artifactId>
-        <version>1.7.0</version>
+				<version>${firebase.tools.version}</version>
         <extensions>true</extensions>
       </plugin>
       <plugin>
@@ -35,10 +39,10 @@
             <artifactItem>
               <groupId>com.cubeia.firebase</groupId>
 							<artifactId>firebase-dist</artifactId>
-							<version>1.7.3.2-CE</version>
+							<version>${firebase.version}</version>
 							<classifier>release</classifier>
 							<type>zip</type>
-              <overWrite>false</overWrite>
+              <overWrite>true</overWrite>
               <outputDirectory>deploy</outputDirectory>
             </artifactItem>
           </artifactItems>
@@ -59,7 +63,7 @@
 									<version>1.0-SNAPSHOT</version>
 									<type>firebase-uar</type>
                   <overWrite>true</overWrite>
-                  <outputDirectory>deploy/firebase-1.7.3.2-CE/game/deploy</outputDirectory>
+									<outputDirectory>deploy/firebase-${firebase.version}/game/deploy</outputDirectory>
                 </artifactItem>
 								<artifactItem>
 									<groupId>com.cubeia.games</groupId>
@@ -67,7 +71,7 @@
 									<version>1.0-SNAPSHOT</version>
 									<type>firebase-sar</type> 
                   <overWrite>true</overWrite>
-                  <outputDirectory>deploy/firebase-1.7.3.2-CE/game/deploy</outputDirectory>
+									<outputDirectory>deploy/firebase-${firebase.version}/game/deploy</outputDirectory>
 								</artifactItem>
 								<artifactItem>
 									<groupId>com.cubeia.network.wallet.firebase</groupId>
@@ -75,7 +79,7 @@
 									<version>1.2.3</version>
 									<type>firebase-sar</type>
                   <overWrite>true</overWrite>
-                  <outputDirectory>deploy/firebase-1.7.3.2-CE/game/deploy</outputDirectory>
+									<outputDirectory>deploy/firebase-${firebase.version}/game/deploy</outputDirectory>
 								</artifactItem>
               </artifactItems>
               
