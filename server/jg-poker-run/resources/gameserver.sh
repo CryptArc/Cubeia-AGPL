@@ -14,6 +14,7 @@ fi
 
 export PATH=${JAVA_HOME}/bin:$PATH
 
+export DISABLE_EPOLL="YES"
 
 ##### STARTS VARIABLES BELOW
 ###########################
@@ -33,6 +34,12 @@ fi
 if [ "${SILENT}" != "YES" ]; then
 	echo "Using FIREBASE_HOME: ${FIREBASE_HOME}"
 fi
+if [ $OSTYPE == "cygwin" ]; then 
+	FIREBASE_HOME=`echo $FIREBASE_HOME | sed 's/\/cygdrive\/c/c:/'`
+	FIREBASE_HOME=`echo $FIREBASE_HOME | sed 's/\/cygdrive\/d/d:/'`
+	FIREBASE_HOME=`echo $FIREBASE_HOME | sed 's/\/cygdrive\/e/e:/'`
+fi
+
 export FIREBASE_HOME
 cd $FIREBASE_HOME
 
@@ -131,15 +138,26 @@ if [ "${SILENT}" != "YES" ]; then
 	echo "Using JMX arguments: $JMXARGS"
 fi
 
-# Classpath
-CLASSPATH="${FIREBASE_HOME}/conf/:${FIREBASE_HOME}/bin/:${FIREBASE_HOME}/bin/${JAR}:${JAVA_HOME}/lib/tools.jar"
-# Append libs to CLASSPATH
-for jarfile in ${FIREBASE_HOME}/lib/common/*.jar; do
-	CLASSPATH=$CLASSPATH:$jarfile
-done
-if [ "${SILENT}" != "YES" ]; then
-	echo "Using classpath: ${CLASSPATH}"
+if [ $OSTYPE == "cygwin" ]; then 
+	# Classpath
+	CP="${FIREBASE_HOME}/conf/;${FIREBASE_HOME}/bin/;${FIREBASE_HOME}/bin/${JAR};${JAVA_HOME}/lib/tools.jar"
+	# Append libs to CLASSPATH
+	for jarfile in ${FIREBASE_HOME}/lib/common/*.jar; do
+		CP="$CP;$jarfile"
+	done
+else 
+	# Classpath
+	CP="${FIREBASE_HOME}/conf/:${FIREBASE_HOME}/bin/:${FIREBASE_HOME}/bin/${JAR}:${JAVA_HOME}/lib/tools.jar"
+	# Append libs to CLASSPATH
+	for jarfile in ${FIREBASE_HOME}/lib/common/*.jar; do
+		CP="$CP:$jarfile"
+	done
 fi
+
+if [ "${SILENT}" != "YES" ]; then
+	echo "Using classpath: ${CP}"
+fi
+CLASSPATH=${CP}
 export CLASSPATH
 
 ##### ENDS VARIABLES BELOW
@@ -412,7 +430,7 @@ startserver()
 	if [ "${SILENT}" != "YES" ]; then	
 		echo "Starting ${SERVERDISPLAYNAME}"
 	fi
-	java -server ${JPROFILER} ${GCARGS} ${SYSARGS} ${JDK_EPOLL} ${JMXARGS} -Xmx${MEMORY} -Xms${MEMORY} -classpath ${CLASSPATH} com.game.server.bootstrap.Server -i ${MYHOST} ${CMDLINE} >> "logs/stdout.txt" 2>> "logs/stderr.txt" &
+	java -server ${JPROFILER} ${GCARGS} ${SYSARGS} ${JDK_EPOLL} ${JMXARGS} -Xmx${MEMORY} -Xms${MEMORY} -classpath "${CLASSPATH}" com.game.server.bootstrap.Server -i ${MYHOST} ${CMDLINE} >> "logs/stdout.txt" 2>> "logs/stderr.txt" &
 	SERVERPID=$!
 	echo $SERVERPID>bin/server.pid
 	waitforstartup $SERVERPID
