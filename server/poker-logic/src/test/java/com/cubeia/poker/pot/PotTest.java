@@ -187,8 +187,15 @@ public class PotTest extends TestCase {
 		PokerPlayer p2 = createPokerPlayer(10);
 
 		PotHolder potHolder = new PotHolder();
-		potHolder.moveChipsToPot(Arrays.asList(p1, p2));
+		Collection<PotTransition> potTransitions = potHolder.moveChipsToPot(Arrays.asList(p1, p2));
 		assertEquals(5, p2.getReturnedChips());
+		
+		assertThat(potTransitions.size(), is(2));
+        Pot mainPot = potHolder.getPot(0);
+        assertThat(mainPot.getType(), is(MAIN));
+        assertThat(potTransitions, hasItems(
+            new PotTransition(p1, mainPot,  5),
+            new PotTransition(p2, mainPot, 10)));
 	}
 
 	public void testReturnUnCalledChipsAfterFold() {

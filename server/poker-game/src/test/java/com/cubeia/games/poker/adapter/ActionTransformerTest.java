@@ -62,8 +62,8 @@ public class ActionTransformerTest extends TestCase {
 		HandEnd end = ActionTransformer.createHandEndPacket(hands);
 		
 		assertEquals(2, end.hands.size());
-		assertNotSame("Two High", end.hands.get(0).name);
-		assertNotSame("Two High", end.hands.get(1).name);
+		assertNotSame("Two High", end.hands.get(0).handType.name());
+		assertNotSame("Two High", end.hands.get(1).handType.name());
 	}
 
 	private void addIdsToCards(Hand hand) {
