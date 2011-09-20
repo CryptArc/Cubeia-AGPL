@@ -147,6 +147,24 @@ public class ActionTransformerTest extends TestCase {
         assertThat(Enums.Suit.HEARTS, is(ActionTransformer.convertSuitToProtocolEnum(Suit.HEARTS)));
         assertThat(Enums.Suit.SPADES, is(ActionTransformer.convertSuitToProtocolEnum(Suit.SPADES)));
     }
+    
+    public void testHandTypeConvertaion() {
+        assertThat(Enums.HandType.values().length, is(11));
+        assertThat(HandType.values().length, is(11));
+        
+        assertThat(Enums.HandType.FLUSH, is(ActionTransformer.convertHandTypeToEnum(HandType.FLUSH)));
+        assertThat(Enums.HandType.FOUR_OF_A_KIND, is(ActionTransformer.convertHandTypeToEnum(HandType.FOUR_OF_A_KIND)));
+        assertThat(Enums.HandType.FULL_HOUSE, is(ActionTransformer.convertHandTypeToEnum(HandType.FULL_HOUSE)));
+        assertThat(Enums.HandType.HIGH_CARD, is(ActionTransformer.convertHandTypeToEnum(HandType.HIGH_CARD)));
+        assertThat(Enums.HandType.PAIR, is(ActionTransformer.convertHandTypeToEnum(HandType.PAIR)));
+        assertThat(Enums.HandType.STRAIGHT, is(ActionTransformer.convertHandTypeToEnum(HandType.STRAIGHT)));
+        assertThat(Enums.HandType.STRAIGHT_FLUSH, is(ActionTransformer.convertHandTypeToEnum(HandType.STRAIGHT_FLUSH)));
+        assertThat(Enums.HandType.THREE_OF_A_KIND, is(ActionTransformer.convertHandTypeToEnum(HandType.THREE_OF_A_KIND)));
+        assertThat(Enums.HandType.TWO_PAIR, is(ActionTransformer.convertHandTypeToEnum(HandType.TWO_PAIRS)));
+        assertThat(Enums.HandType.ROYAL_STRAIGHT_FLUSH, is(ActionTransformer.convertHandTypeToEnum(HandType.ROYAL_STRAIGHT_FLUSH)));
+        assertThat(Enums.HandType.UNKNOWN, is(ActionTransformer.convertHandTypeToEnum(HandType.NOT_RANKED)));
+        
+    }
 	
     public void testCreatePlayerAction() {
         assertThat("wrong number of poker action types, something broken?", PokerActionType.values().length, is(9));
