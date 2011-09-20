@@ -60,7 +60,10 @@ public class PotHolder implements Serializable {
 	 *
 	 * @param players a collection of players
 	 */
-	public void moveChipsToPot(Collection<PokerPlayer> players) {
+	public Collection<PotTransition> moveChipsToPot(Collection<PokerPlayer> players) {
+	    
+	    Collection<PotTransition> potTransitions = new ArrayList<PotTransition>();
+	    
 		// Maps player's to the bet they made.
 		Map<PokerPlayer, Long> playerToBetMap = new HashMap<PokerPlayer, Long>();
 
@@ -74,7 +77,7 @@ public class PotHolder implements Serializable {
 		for (PokerPlayer player : players) {
 			
 				// Exclude players who are already all-in.
-				if ( player.isAllIn() && !allInPlayers.contains(player.getId())) {
+				if (player.isAllIn() && !allInPlayers.contains(player.getId())) {
 					allInLevels.add(player.getBetStack());
 					allInPlayers.add(player.getId());
 				}
@@ -88,16 +91,19 @@ public class PotHolder implements Serializable {
 
 		if (!allInLevels.isEmpty()) {
 			// There are all-ins, split them up into side pots.
-			handleAllIns(playerToBetMap, allInLevels);
+			handleAllIns(playerToBetMap, allInLevels, potTransitions);
 		}
 
 		// The remaining chips are placed in the active pot.
 		for (PokerPlayer player : playerToBetMap.keySet()) {
 			long stack = playerToBetMap.get(player);
 			if (stack > 0) {
-				getActivePot().bet(player, playerToBetMap.get(player));
+			    potTransitions.add(new PotTransition(player, getActivePot(), stack));
+				getActivePot().bet(player, stack);
 			}
 		}
+		
+		return potTransitions;
 	}
 
 	/**
@@ -114,9 +120,7 @@ public class PotHolder implements Serializable {
 				long returnedChips = biggestBetter.getBetStack() - secondBiggestBetter.getBetStack();
 				biggestBetter.addReturnedChips(returnedChips);
 				
-	//			if (logger.isDebugEnabled()) {
-					log.debug("returning " + returnedChips + " uncalled chips to " + biggestBetter);
-	//			}
+				log.debug("returning " + returnedChips + " uncalled chips to " + biggestBetter);
 			}
 		} catch (NullPointerException ne) {
 			// FIXME: Tournaments get this exception
@@ -161,8 +165,9 @@ public class PotHolder implements Serializable {
 	 *
 	 * @param betMap	  a map of all bets, mapping the player to the amount bet
 	 * @param allInLevels sorted set of the different levels where players went all-in
+	 * @param potTransitions TODO
 	 */
-	private void handleAllIns(Map<PokerPlayer, Long> betMap, SortedSet<Long> allInLevels) {
+	private void handleAllIns(Map<PokerPlayer, Long> betMap, SortedSet<Long> allInLevels, Collection<PotTransition> potTransitions) {
 		long currentLevel = 0;
 
 		/*
@@ -172,22 +177,25 @@ public class PotHolder implements Serializable {
 		for (Long allInLevel : allInLevels) {
 			long diff = allInLevel - currentLevel;
 
-			for (PokerPlayer player : betMap.keySet()) {
+			Pot activePot = getActivePot();
+            for (PokerPlayer player : betMap.keySet()) {
 				long stack = betMap.get(player);
 				if (stack >= diff) {
-					getActivePot().bet(player, diff);
+				    potTransitions.add(new PotTransition(player, activePot, diff));
+					activePot.bet(player, diff);
 					betMap.put(player, (stack - diff));
 				} else if (stack > 0) {
 					/* 
 					 * If a player has folded, he might not have enough chips, 
 					 * add the remaining chips in this pot.
 					 */
-					getActivePot().bet(player, stack);
+                    potTransitions.add(new PotTransition(player, activePot, stack));
+					activePot.bet(player, stack);
 					betMap.put(player, new Long(0));
 				}
 			}
 			// Close the pot, so no more bets can be placed in the pot.
-			getActivePot().close();
+			activePot.close();
 
 			// Update the current level.
 			currentLevel = allInLevel;

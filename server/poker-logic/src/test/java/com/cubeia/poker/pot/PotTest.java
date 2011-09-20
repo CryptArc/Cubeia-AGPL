@@ -17,7 +17,15 @@
 
 package com.cubeia.poker.pot;
 
+import static com.cubeia.poker.pot.Pot.PotType.MAIN;
+import static com.cubeia.poker.pot.Pot.PotType.SIDE;
+import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.hasItems;
+
 import java.util.Arrays;
+import java.util.Collection;
 
 import junit.framework.TestCase;
 
@@ -60,10 +68,17 @@ public class PotTest extends TestCase {
 		p3.setHasFolded(true);
 
 		PotHolder potHolder = new PotHolder();
-		potHolder.moveChipsToPot(Arrays.asList(p1, p2, p3));
+		Collection<PotTransition> potTransitions = potHolder.moveChipsToPot(asList(p1, p2, p3));
 		assertEquals(1, potHolder.getNumberOfPots());
 		assertEquals(50, potHolder.getTotalPotSize());
 		assertEquals(50, potHolder.getPotSize(0));
+		
+		assertThat(potTransitions.size(), is(3));
+		Pot pot = potHolder.getPot(0);
+        assertThat(potTransitions, hasItems(
+            new PotTransition(p1, pot, 20),
+            new PotTransition(p2, pot, 20),
+            new PotTransition(p3, pot, 10)));
 	}
 
 	public void testOneSidePot() {
@@ -72,13 +87,30 @@ public class PotTest extends TestCase {
 		PokerPlayer p3 = createPokerPlayer(10, true);
 
 		PotHolder potHolder = new PotHolder();
-		potHolder.moveChipsToPot(Arrays.asList(p1, p2, p3));
+		Collection<PotTransition> potTransitions = potHolder.moveChipsToPot(Arrays.asList(p1, p2, p3));
 		assertEquals(2, potHolder.getNumberOfPots());
 		assertEquals(50, potHolder.getTotalPotSize());
 		assertEquals(30, potHolder.getPotSize(0));
 		assertEquals(20, potHolder.getPotSize(1));
 		assertEquals(3, potHolder.getPot(0).getPotContributors().size());
 		assertEquals(2, potHolder.getPot(1).getPotContributors().size());
+		
+		// Transitions:
+		// p1: 10 -> main pot, 10 -> side pot
+		// p2: 10 -> main pot, 10 -> side pot
+		// p3: 10 -> main pot
+        assertThat(potTransitions.size(), is(5));
+        Pot mainPot = potHolder.getPot(0);
+        Pot sidePot = potHolder.getPot(1);
+        
+        assertThat(mainPot.getType(), is(MAIN));
+        assertThat(sidePot.getType(), is(SIDE));
+        assertThat(potTransitions, hasItems(
+            new PotTransition(p1, mainPot, 10),
+            new PotTransition(p2, mainPot, 10),
+            new PotTransition(p3, mainPot, 10),
+            new PotTransition(p1, sidePot, 10),
+            new PotTransition(p2, sidePot, 10)));
 	}
 
 	public void testTwoSidePots() {
@@ -98,12 +130,38 @@ public class PotTest extends TestCase {
 		PokerPlayer p5 = createPokerPlayer(2);
 
 		PotHolder potHolder = new PotHolder();
-		potHolder.moveChipsToPot(Arrays.asList(p1, p2, p3, p4, p5));
+		Collection<PotTransition> potTransitions = potHolder.moveChipsToPot(Arrays.asList(p1, p2, p3, p4, p5));
 		assertEquals(3, potHolder.getNumberOfPots());
 		assertEquals(35, potHolder.getTotalPotSize());
 		assertEquals(22, potHolder.getPotSize(0));
 		assertEquals(9, potHolder.getPotSize(1));
 		assertEquals(4, potHolder.getPotSize(2));
+		
+        // Transitions:
+        // p1:  5 -> main pot
+        // p2:  5 -> main pot, 3 -> side pot 1, 2 -> side pot 2
+        // p3:  5 -> main pot, 3 -> side pot 1
+        // p4:  5 -> main pot, 3 -> side pot 1, 2 -> side pot 2
+        // p5:  2 -> main pot
+        assertThat(potTransitions.size(), is(10));
+        Pot mainPot = potHolder.getPot(0);
+        Pot sidePot1 = potHolder.getPot(1);
+        Pot sidePot2 = potHolder.getPot(2);
+        
+        assertThat(mainPot.getType(), is(MAIN));
+        assertThat(sidePot1.getType(), is(SIDE));
+        assertThat(sidePot2.getType(), is(SIDE));
+        assertThat(potTransitions, hasItems(
+            new PotTransition(p1, mainPot,  5),
+            new PotTransition(p2, mainPot,  5),
+            new PotTransition(p2, sidePot1, 3),
+            new PotTransition(p2, sidePot2, 2),
+            new PotTransition(p3, mainPot,  5),
+            new PotTransition(p3, sidePot1, 3),
+            new PotTransition(p4, mainPot,  5),
+            new PotTransition(p4, sidePot1, 3),
+            new PotTransition(p4, sidePot2, 2),
+            new PotTransition(p5, mainPot,  2)));
 	}
 
 

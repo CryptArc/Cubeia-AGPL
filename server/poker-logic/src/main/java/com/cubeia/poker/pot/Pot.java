@@ -140,5 +140,44 @@ public class Pot implements Serializable {
 	public int getId() {
 		return potId;
 	}
-	
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((isOpen == null) ? 0 : isOpen.hashCode());
+        result = prime * result + ((playerToBetMap == null) ? 0 : playerToBetMap.hashCode());
+        result = prime * result + potId;
+        result = prime * result + (int) (potSize ^ (potSize >>> 32));
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Pot other = (Pot) obj;
+        if (isOpen == null) {
+            if (other.isOpen != null)
+                return false;
+        } else if (!isOpen.equals(other.isOpen))
+            return false;
+        if (playerToBetMap == null) {
+            if (other.playerToBetMap != null)
+                return false;
+        } else if (!playerToBetMap.equals(other.playerToBetMap))
+            return false;
+        if (potId != other.potId)
+            return false;
+        if (potSize != other.potSize)
+            return false;
+        if (type != other.type)
+            return false;
+        return true;
+    }
 }

@@ -91,9 +91,10 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
     public void init(ActivatorContext context) throws SystemException {
         super.init(context);
         
-        // TODO: get RNG from service in provider
-        final Random rng = new Random();
         rngProvider = new RNGProvider() {
+            // TODO: get RNG from service in provider
+            // TODO: field should be transient to avoid serialization in state
+            final Random rng = new Random();
             // TODO: This provider should get the rng from a service and store it in a transient field
             //   to avoid serializing it.
             

@@ -27,6 +27,7 @@ import java.util.UUID;
 
 import org.apache.log4j.Logger;
 
+import se.jadestone.dicearena.game.poker.network.protocol.CollectMoney;
 import se.jadestone.dicearena.game.poker.network.protocol.DealPrivateCards;
 import se.jadestone.dicearena.game.poker.network.protocol.DealPublicCards;
 import se.jadestone.dicearena.game.poker.network.protocol.DealerButton;
@@ -357,6 +358,19 @@ public class FirebaseServerAdapter implements ServerAdapter {
 			Pot packet = ActionTransformer.createPotUpdatePacket(pot.getId(), pot.getPotSize());
 			GameDataAction action = ProtocolFactory.createGameAction(packet, 0, table.getId());
 			sendPublicPacket(action, -1);
+			
+			
+			
+			
+			
+//			new CollectMoney(moneyWithdrawalList, finalAmount, toId)
+			
+			
+			
+			
+			
+			
+			
 		}
     }
 	

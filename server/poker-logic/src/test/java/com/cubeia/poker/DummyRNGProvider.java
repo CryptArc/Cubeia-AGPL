@@ -2,8 +2,6 @@ package com.cubeia.poker;
 
 import java.util.Random;
 
-import org.junit.Ignore;
-
 import com.cubeia.poker.rng.RNGProvider;
 
 @SuppressWarnings("serial")
