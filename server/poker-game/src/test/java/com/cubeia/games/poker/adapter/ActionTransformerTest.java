@@ -20,9 +20,14 @@ package com.cubeia.games.poker.adapter;
 import static com.cubeia.games.poker.adapter.ActionTransformer.convertRankToProtocolEnum;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.junit.Assert;
+import org.mockito.Mockito;
 
 import junit.framework.TestCase;
 import se.jadestone.dicearena.game.poker.network.protocol.CardToDeal;
@@ -30,6 +35,7 @@ import se.jadestone.dicearena.game.poker.network.protocol.DealPrivateCards;
 import se.jadestone.dicearena.game.poker.network.protocol.Enums;
 import se.jadestone.dicearena.game.poker.network.protocol.Enums.ActionType;
 import se.jadestone.dicearena.game.poker.network.protocol.HandEnd;
+import se.jadestone.dicearena.game.poker.network.protocol.PotTransfer;
 
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.hand.Card;
@@ -41,6 +47,9 @@ import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.hand.Suit;
 import com.cubeia.poker.model.PlayerHand;
 import com.cubeia.poker.model.RatedPlayerHand;
+import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.pot.Pot;
+import com.cubeia.poker.pot.PotTransition;
 
 public class ActionTransformerTest extends TestCase {
 
@@ -183,4 +192,21 @@ public class ActionTransformerTest extends TestCase {
             ActionTransformer.createPlayerAction(pat);
         }
     }	
+    
+    public void testCreatePotTransferPacket() {
+        PokerPlayer player = mock(PokerPlayer.class);
+        int playerId = 333;
+        when(player.getId()).thenReturn(playerId);
+        Pot pot = mock(Pot.class);
+        int potId = 23;
+        when(pot.getId()).thenReturn(potId);
+        long amount = 3434;
+        
+        PotTransition potTransition = new PotTransition(player, pot, amount );
+        PotTransfer potTransferPacket = ActionTransformer.createPotTransferPacket(potTransition);
+        assertThat(potTransferPacket.amount, is((int) amount));
+        assertThat(potTransferPacket.playerId, is(playerId));
+        assertThat(potTransferPacket.potId, is((byte) potId));
+    }
+    
 }

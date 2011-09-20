@@ -40,6 +40,7 @@ import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.pot.PotHolder;
+import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
 import com.cubeia.poker.rng.RNGProvider;
@@ -512,8 +513,8 @@ public class PokerState implements Serializable, IPokerState {
 	    serverAdapter.cleanupPlayers();
 	}
 
-	public void updatePot() {
-        serverAdapter.updatePots(potHolder.getPots());
+	public void updatePot(Collection<PotTransition> potTransitions) {
+        serverAdapter.updatePots(potHolder.getPots(), potTransitions);
     }	
 
 	/**

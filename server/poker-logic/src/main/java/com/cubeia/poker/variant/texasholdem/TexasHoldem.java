@@ -38,6 +38,7 @@ import com.cubeia.poker.hand.Shuffler;
 import com.cubeia.poker.hand.StandardDeck;
 import com.cubeia.poker.hand.TexasHoldemHandComparator;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.rounds.DealCommunityCardsRound;
@@ -149,7 +150,7 @@ public class TexasHoldem implements GameType, RoundVisitor {
 	}
 	
 	private void reportPotUpdate() {
-        state.updatePot();
+        state.updatePot(Collections.<PotTransition>emptyList());
     }
 
     /**

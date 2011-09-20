@@ -34,6 +34,7 @@ import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.pot.Pot;
+import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
 import com.cubeia.poker.tournament.RoundReport;
@@ -128,9 +129,7 @@ public class MockServerAdapter implements ServerAdapter {
 	}
 
 	@Override
-	public void updatePots(Iterable<Pot> iterable) {
-		// TODO Auto-generated method stub
-		
+	public void updatePots(Collection<Pot> iterable, Collection<PotTransition> potTransitions) {
 	}
 
 	

@@ -4,6 +4,11 @@ import java.io.Serializable;
 
 import com.cubeia.poker.player.PokerPlayer;
 
+/**
+ * Transition of money from a player to a pot.
+ * If the amount is negative the direction is from pot to player.
+ * @author w
+ */
 @SuppressWarnings("serial")
 public class PotTransition implements Serializable {
 
@@ -25,6 +30,22 @@ public class PotTransition implements Serializable {
         this.player = player;
         this.pot = pot;
         this.amount = amount;
+    }
+
+    public boolean isFromPlayerToPot() {
+        return getAmount() > 0;
+    }
+    
+    public PokerPlayer getPlayer() {
+        return player;
+    }
+
+    public Pot getPot() {
+        return pot;
+    }
+
+    public long getAmount() {
+        return amount;
     }
 
     @Override

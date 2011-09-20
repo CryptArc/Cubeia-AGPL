@@ -269,7 +269,7 @@ public class PotHolder implements Serializable {
 	 *
 	 * @return
 	 */
-	public Iterable<Pot> getPots() {
+	public Collection<Pot> getPots() {
 		return pots;
 	}
 

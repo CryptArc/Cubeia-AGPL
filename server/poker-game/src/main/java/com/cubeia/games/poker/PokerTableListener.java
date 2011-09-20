@@ -122,10 +122,13 @@ public class PokerTableListener implements TournamentTableListener {
 	public void watcherLeft(Table table, int playerId) {}
 	
 	private void sendGameState(Table table, int playerId) {
+	    ProtocolFactory protocolFactory = new ProtocolFactory();
+	    
+	    
 	    List<GameAction> actions = new LinkedList<GameAction>();
-	    actions.add(ProtocolFactory.createGameAction(new StartHandHistory(), playerId, table.getId()));
+	    actions.add(protocolFactory.createGameAction(new StartHandHistory(), playerId, table.getId()));
 		actions.addAll(actionCache.getActions(table.getId()));
-		actions.add(ProtocolFactory.createGameAction(new StopHandHistory(), playerId, table.getId()));
+		actions.add(protocolFactory.createGameAction(new StopHandHistory(), playerId, table.getId()));
 		table.getNotifier().notifyPlayer(playerId, actions);
 	}
 
