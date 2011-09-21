@@ -371,7 +371,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	
 	
 	public void updatePots(Collection<com.cubeia.poker.pot.Pot> pots, Collection<PotTransition> potTransitions) {
-	    boolean fromPlayerToPot = potTransitions.iterator().next().isFromPlayerToPot();
+	    boolean fromPlayerToPot = !potTransitions.isEmpty()  &&  potTransitions.iterator().next().isFromPlayerToPot();
 	    List<PlayerBalance> balances = new ArrayList<PlayerBalance>();
 	    List<Pot> clientPots = new ArrayList<Pot>();
 	    List<PotTransfer> transfers = new ArrayList<PotTransfer>();
