@@ -19,6 +19,10 @@ package com.cubeia.games.poker.handler;
 
 import se.jadestone.dicearena.game.poker.network.protocol.AamsSessionInfoPacket;
 import se.jadestone.dicearena.game.poker.network.protocol.BestHand;
+import se.jadestone.dicearena.game.poker.network.protocol.BuyInInfoRequest;
+import se.jadestone.dicearena.game.poker.network.protocol.BuyInInfoResponse;
+import se.jadestone.dicearena.game.poker.network.protocol.BuyInRequest;
+import se.jadestone.dicearena.game.poker.network.protocol.BuyInResponse;
 import se.jadestone.dicearena.game.poker.network.protocol.CardToDeal;
 import se.jadestone.dicearena.game.poker.network.protocol.DealPrivateCards;
 import se.jadestone.dicearena.game.poker.network.protocol.DealPublicCards;
@@ -100,4 +104,12 @@ public class DefaultPokerHandler implements PacketVisitor {
     public void visit(PotTransfer packet) {}
     @Override
     public void visit(PotTransfers packet) {}
+    @Override
+    public void visit(BuyInInfoRequest packet) {}
+    @Override
+    public void visit(BuyInInfoResponse packet) {}
+    @Override
+    public void visit(BuyInRequest packet) {}
+    @Override
+    public void visit(BuyInResponse packet) {}
 }
