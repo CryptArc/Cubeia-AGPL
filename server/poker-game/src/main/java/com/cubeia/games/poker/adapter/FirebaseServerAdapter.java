@@ -27,6 +27,7 @@ import java.util.UUID;
 
 import org.apache.log4j.Logger;
 
+import se.jadestone.dicearena.game.poker.network.protocol.BestHand;
 import se.jadestone.dicearena.game.poker.network.protocol.DealPrivateCards;
 import se.jadestone.dicearena.game.poker.network.protocol.DealPublicCards;
 import se.jadestone.dicearena.game.poker.network.protocol.DealerButton;
@@ -82,6 +83,7 @@ import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.HandType;
 import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
@@ -225,6 +227,14 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		log.debug("--> Send DealPrivateCards(hidden)["+hiddenCardsPacket+"] to everyone");
 		sendPublicPacket(ntfyAction, playerId);
 	}
+    
+    @Override
+    public void notifyBestHand(int playerId, HandType handType, List<Card> cardsInHand) {
+        BestHand bestHandPacket = ActionTransformer.createBestHandPacket(playerId, handType, cardsInHand);
+        GameDataAction bestHandAction = protocolFactory.createGameAction(bestHandPacket, playerId, table.getId());
+        log.debug("--> Send BestHandPacket["+bestHandPacket+"] to player["+playerId+"]");
+        table.getNotifier().notifyPlayer(playerId, bestHandAction);
+    }
 
 	@Override
 	public void notifyPrivateExposedCards(int playerId, List<Card> cards) {

@@ -175,6 +175,12 @@ public class Telesina implements GameType, RoundVisitor {
 		}
 		state.getCommunityCards().addAll(dealt);
 		state.notifyCommunityCards(dealt);
+		
+        TelesinaHandStrengthEvaluator handStrengthEvaluator = new TelesinaHandStrengthEvaluator(getDeckLowestRank());       
+		
+		for (PokerPlayer player : state.getCurrentHandPlayerMap().values()) {
+		    calculateAndSendBestHandToPlayer(handStrengthEvaluator, player);
+		}
 	}
 
 	public void handleFinishedRound() {
@@ -368,13 +374,30 @@ public class Telesina implements GameType, RoundVisitor {
 		}
 	}
 
-	private void dealExposedCards() {
+	@VisibleForTesting
+	protected void dealExposedCards() {
+	    TelesinaHandStrengthEvaluator handStrengthEvaluator = new TelesinaHandStrengthEvaluator(getDeckLowestRank());	    
+	    
 		for (PokerPlayer p : state.getCurrentHandSeatingMap().values()) {
 			if (!p.isSittingOut()) {
 				dealExposedPocketCards(p, 1);
+				
+				calculateAndSendBestHandToPlayer(handStrengthEvaluator, p);
 			}
 		}
 	}
+
+	/**
+	 * Calculate the best hand for the player and send it.
+	 * @param handStrengthEvaluator hand calculator
+	 * @param player player
+	 */
+    protected void calculateAndSendBestHandToPlayer(TelesinaHandStrengthEvaluator handStrengthEvaluator, PokerPlayer player) {
+        List<Card> playerCards = new ArrayList<Card>(player.getPocketCards().getCards());
+        playerCards.addAll(state.getCommunityCards());
+        TelesinaHandStrength bestHandStrength = handStrengthEvaluator.getBestHandStrength(playerCards);
+        state.getServerAdapter().notifyBestHand(player.getId(), bestHandStrength.getType(), bestHandStrength.getCards());
+    }
 
 	@VisibleForTesting
     protected Round getCurrentRound() {

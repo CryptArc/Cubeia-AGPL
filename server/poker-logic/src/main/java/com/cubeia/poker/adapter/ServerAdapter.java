@@ -23,6 +23,7 @@ import java.util.List;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.HandType;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
@@ -54,6 +55,14 @@ public interface ServerAdapter {
 	 * @param cards
 	 */
 	void notifyPrivateCards(int playerId, List<Card> cards);
+	
+	/**
+	 * Notify the user of his best possible hand using both pocket (hidden and exposted) and community cards.
+	 * @param playerId player id
+	 * @param handType hand type classification
+	 * @param cardsInHand cards used in best hand
+	 */
+	void notifyBestHand(int playerId, HandType handType, List<Card> cardsInHand);
 	
 	/**
 	 * Sends the private cards to the given player and notify

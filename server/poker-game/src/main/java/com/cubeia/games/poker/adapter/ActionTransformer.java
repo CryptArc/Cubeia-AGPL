@@ -232,7 +232,7 @@ public class ActionTransformer {
     public static Suit convertSuitToProtocolEnum(com.cubeia.poker.hand.Suit suit) {
         return Enums.Suit.values()[suit.ordinal()];
     }
-	
+    
     public static Enums.HandType convertHandTypeToEnum(HandType handType) {
         return Enums.HandType.values()[handType.ordinal()];
     }
@@ -266,6 +266,22 @@ public class ActionTransformer {
 		}
 		return packet;
 	}
+
+    public static BestHand createBestHandPacket(int playerId, HandType handType, List<Card> cardsInHand) {
+        List<GameCard> gameCards = convertCards(cardsInHand);
+        
+        BestHand bestHand = new BestHand(playerId, convertHandTypeToEnum(handType), gameCards);
+        return bestHand;
+    }
+
+    @VisibleForTesting
+    protected static List<GameCard> convertCards(List<Card> cardsInHand) {
+        List<GameCard> gameCards = new ArrayList<GameCard>();
+        for (Card c : cardsInHand) {
+            gameCards.add(new GameCard(c.getId(), convertSuitToProtocolEnum(c.getSuit()), convertRankToProtocolEnum(c.getRank())));
+        }
+        return gameCards;
+    }
 
 	public static HandEnd createHandEndPacket(Collection<RatedPlayerHand> hands) {
 		HandEnd packet = new HandEnd();
@@ -321,6 +337,4 @@ public class ActionTransformer {
             (int) potTransition.getAmount());
         return potTransfer;
     }
-
-
 }	

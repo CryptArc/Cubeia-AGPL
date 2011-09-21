@@ -26,6 +26,7 @@ import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.HandType;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
@@ -428,7 +429,7 @@ public class PokerLogicTest extends GuiceTest {
 			public void notifyDeckInfo(int size, Rank rankLow) {}
 			public void updatePots(Collection<Pot> pots, Collection<PotTransition> potTransitions) {}
 			public void notifyPlayerBalanceReset(PokerPlayer player) {}
-			
+			public void notifyBestHand(int playerId, HandType handType, List<Card> cardsInHand) {}
 		});
 		game.timeout();
 		act(p[0], PokerActionType.SMALL_BLIND, 10);

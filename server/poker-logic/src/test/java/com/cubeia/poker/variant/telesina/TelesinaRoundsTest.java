@@ -1,8 +1,10 @@
 package com.cubeia.poker.variant.telesina;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,11 +18,9 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
-import com.cubeia.poker.PokerState;
 import com.cubeia.poker.DummyRNGProvider;
+import com.cubeia.poker.PokerState;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.DefaultPokerPlayer;
@@ -42,9 +42,6 @@ public class TelesinaRoundsTest {
     @Mock private TelesinaDeckFactory deckFactory;
     @Mock private TelesinaDeck deck;
     @Mock private TelesinaRoundFactory roundFactory;
-//    @Mock private Hand player1Hand;
-//    @Mock private Hand player2Hand;
-//    @Mock private Hand player3Hand;
     private PokerPlayer player1 = new DefaultPokerPlayer(1001);
     private PokerPlayer player2 = new DefaultPokerPlayer(1002);
     private PokerPlayer player3 = new DefaultPokerPlayer(1003);
@@ -72,12 +69,13 @@ public class TelesinaRoundsTest {
         when(state.getServerAdapter()).thenReturn(serverAdapter);
         when(state.getPotHolder()).thenReturn(potHolder);
         when(deckFactory.createNewDeck(Mockito.any(Random.class), Mockito.anyInt())).thenReturn(deck);
-        when(deck.deal()).thenAnswer(new Answer<Card>() {
-            @Override
-            public Card answer(InvocationOnMock invocation) throws Throwable {
-                return Mockito.mock(Card.class);
-            }
-        });
+        
+        // just return enough cards to make tests happy...
+        when(deck.deal()).thenReturn(
+            new Card(1, "2H"), new Card(2, "3H"), new Card(3, "4H"), new Card(4, "5H"), new Card(5, "6H"), new Card(6, "7H"), 
+            new Card(7, "8H"), new Card(7, "9H"), new Card(7, "JH"), new Card(7, "QH"), new Card(7, "KH"), new Card(7, "AH"),
+            new Card(1, "2D"), new Card(2, "3D"), new Card(3, "4D"), new Card(4, "5D"), new Card(5, "6D"), new Card(6, "7D"), 
+            new Card(7, "8D"), new Card(7, "9D"), new Card(7, "JD"), new Card(7, "QD"), new Card(7, "KD"), new Card(7, "AD"));
     }
     
     /**
@@ -194,7 +192,5 @@ public class TelesinaRoundsTest {
             assertThat(player.getPublicPocketCards().size(), is(exposedCards));
         }
     }
-    
-    
 
 }

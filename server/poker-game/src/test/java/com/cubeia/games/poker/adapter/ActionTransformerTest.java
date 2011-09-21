@@ -18,22 +18,29 @@
 package com.cubeia.games.poker.adapter;
 
 import static com.cubeia.games.poker.adapter.ActionTransformer.convertRankToProtocolEnum;
+import static com.cubeia.poker.hand.HandType.ROYAL_STRAIGHT_FLUSH;
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.matchers.JUnitMatchers;
 import org.mockito.Mockito;
 
 import junit.framework.TestCase;
+import se.jadestone.dicearena.game.poker.network.protocol.BestHand;
 import se.jadestone.dicearena.game.poker.network.protocol.CardToDeal;
 import se.jadestone.dicearena.game.poker.network.protocol.DealPrivateCards;
 import se.jadestone.dicearena.game.poker.network.protocol.Enums;
 import se.jadestone.dicearena.game.poker.network.protocol.Enums.ActionType;
+import se.jadestone.dicearena.game.poker.network.protocol.GameCard;
 import se.jadestone.dicearena.game.poker.network.protocol.HandEnd;
 import se.jadestone.dicearena.game.poker.network.protocol.PotTransfer;
 
@@ -207,6 +214,30 @@ public class ActionTransformerTest extends TestCase {
         assertThat(potTransferPacket.amount, is((int) amount));
         assertThat(potTransferPacket.playerId, is(playerId));
         assertThat(potTransferPacket.potId, is((byte) potId));
+    }
+    
+    public void testCreateBestHandPacket() {
+        List<Card> cardsInHand = asList(new Card(1, "5H"), new Card(2, "JC"));
+        BestHand createBestHandPacket = ActionTransformer.createBestHandPacket(234, ROYAL_STRAIGHT_FLUSH, cardsInHand);
+        assertThat(createBestHandPacket.handType, is(Enums.HandType.ROYAL_STRAIGHT_FLUSH));
+        assertThat(createBestHandPacket.cards.size(), is(2));
+        assertThat(createBestHandPacket.player, is(234));
+    }
+    
+    public void testConvertCards() {
+        List<Card> cardsInHand = asList(new Card(1, "5H"), new Card(2, "JC"));
+        List<GameCard> cards = ActionTransformer.convertCards(cardsInHand);
+        assertThat(cards.size(), is(2));
+        
+        GameCard card1 = cards.get(0);
+        assertThat(card1.cardId, is(1));
+        assertThat(card1.rank, is(Enums.Rank.FIVE));
+        assertThat(card1.suit, is(Enums.Suit.HEARTS));
+
+        GameCard card2 = cards.get(1);
+        assertThat(card2.cardId, is(2));
+        assertThat(card2.rank, is(Enums.Rank.JACK));
+        assertThat(card2.suit, is(Enums.Suit.CLUBS));
     }
     
 }

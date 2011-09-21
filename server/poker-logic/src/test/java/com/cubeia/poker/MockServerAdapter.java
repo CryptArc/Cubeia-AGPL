@@ -29,6 +29,7 @@ import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.HandType;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
@@ -108,6 +109,7 @@ public class MockServerAdapter implements ServerAdapter {
     public void notifyPlayerBalance(PokerPlayer p) {}
     public void notifyNewHand() {}
     public void notifyDeckInfo(int size, Rank rankLow) {}
+    public void notifyBestHand(int playerId, HandType handType, List<Card> cardsInHand) {}
     
     @Override
 	public void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status) {
