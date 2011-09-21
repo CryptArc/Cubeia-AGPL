@@ -29,7 +29,7 @@ public class TelesinaHandEvaluatorTest {
 		
 		HandInfo best = eval.getBestHandInfo(new Hand("AS QD TD 9H 7D 9C"));
 		
-		assertEquals(HandType.ONE_PAIR, best.getType());
+		assertEquals(HandType.PAIR, best.getType());
 		assertEquals(4, best.getCards().size());
 		assertTrue(best.getCards().containsAll(Card.list("AS QD 9H 9C")));
 	}
@@ -128,7 +128,7 @@ public class TelesinaHandEvaluatorTest {
 		
 		HandInfo best = eval.getBestHandInfo(new Hand("JS KS KD"));
 		
-		assertEquals(HandType.ONE_PAIR, best.getType());
+		assertEquals(HandType.PAIR, best.getType());
 		assertEquals(3, best.getCards().size());
 		assertTrue(best.getCards().containsAll(Card.list("JS KS KD")));
 	}

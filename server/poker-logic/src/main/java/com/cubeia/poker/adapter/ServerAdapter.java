@@ -17,6 +17,7 @@
 
 package com.cubeia.poker.adapter;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.cubeia.poker.action.ActionRequest;
@@ -26,6 +27,7 @@ import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.pot.Pot;
+import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.tournament.RoundReport;
 
@@ -105,7 +107,7 @@ public interface ServerAdapter {
      */
     void cleanupPlayers();
     
-    void updatePots(Iterable<Pot> iterable);
+    void updatePots(Collection<Pot> iterable, Collection<PotTransition> potTransitions);
 
     void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status);
 

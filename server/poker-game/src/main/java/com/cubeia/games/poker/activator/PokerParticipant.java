@@ -17,8 +17,6 @@
 
 package com.cubeia.games.poker.activator;
 
-import java.util.Random;
-
 import org.apache.log4j.Logger;
 
 import com.cubeia.firebase.api.game.GameDefinition;

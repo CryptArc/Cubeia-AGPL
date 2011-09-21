@@ -2,7 +2,7 @@ package com.cubeia.poker.hand;
 
 import static com.cubeia.poker.hand.HandType.FULL_HOUSE;
 import static com.cubeia.poker.hand.HandType.HIGH_CARD;
-import static com.cubeia.poker.hand.HandType.ONE_PAIR;
+import static com.cubeia.poker.hand.HandType.PAIR;
 import static com.cubeia.poker.hand.HandType.STRAIGHT;
 import static com.cubeia.poker.hand.HandType.STRAIGHT_FLUSH;
 import static com.cubeia.poker.hand.HandType.THREE_OF_A_KIND;
@@ -52,13 +52,13 @@ public class HandStrengthComparatorTest {
 	public void testDifferentPairs() throws Exception {
 		List<HandStrength> list = new ArrayList<HandStrength>();
 		
-		HandStrength strength1 = new HandStrength(ONE_PAIR);
+		HandStrength strength1 = new HandStrength(PAIR);
 		strength1.setHighestRank(TEN);
 		
-		HandStrength strength2 = new HandStrength(ONE_PAIR);
+		HandStrength strength2 = new HandStrength(PAIR);
 		strength2.setHighestRank(KING);
 		
-		HandStrength strength3 = new HandStrength(ONE_PAIR);
+		HandStrength strength3 = new HandStrength(PAIR);
 		strength3.setHighestRank(ACE);
 		
 		list.add(strength1);
@@ -139,7 +139,7 @@ public class HandStrengthComparatorTest {
 	public void testSinglePairKicker() throws Exception {
 		List<HandStrength> list = new ArrayList<HandStrength>();
 		
-		HandStrength strength1 = new HandStrength(ONE_PAIR);
+		HandStrength strength1 = new HandStrength(PAIR);
 		strength1.setHighestRank(ACE);
 		List<Card> kickers = new ArrayList<Card>();
 		kickers.add(new Card("AD"));
@@ -147,7 +147,7 @@ public class HandStrengthComparatorTest {
 		kickers.add(new Card("2D"));
 		strength1.setKickerCards(kickers);
 		
-		HandStrength strength2 = new HandStrength(ONE_PAIR);
+		HandStrength strength2 = new HandStrength(PAIR);
 		strength2.setHighestRank(ACE);
 		kickers = new ArrayList<Card>();
 		kickers.add(new Card("AH"));
@@ -155,7 +155,7 @@ public class HandStrengthComparatorTest {
 		kickers.add(new Card("8H"));
 		strength2.setKickerCards(kickers);
 		
-		HandStrength strength3 = new HandStrength(ONE_PAIR);
+		HandStrength strength3 = new HandStrength(PAIR);
 		strength3.setHighestRank(ACE);
 		kickers = new ArrayList<Card>();
 		kickers.add(new Card("AS"));

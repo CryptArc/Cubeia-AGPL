@@ -18,6 +18,8 @@
 package com.cubeia.poker.variant.telesina;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -34,6 +36,7 @@ import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.rounds.DealCommunityCardsRound;
@@ -179,8 +182,8 @@ public class Telesina implements GameType, RoundVisitor {
 		getCurrentRound().visit(this);
 	}
 	
-	private void reportPotUpdate() {
-        state.updatePot();
+	private void reportPotUpdate(Collection<PotTransition> potTransitions) {
+        state.updatePot(potTransitions);
     }
 
     /**
@@ -234,15 +237,17 @@ public class Telesina implements GameType, RoundVisitor {
 	}	
 
 
-	private void moveChipsToPot() {
-		
-		state.getPotHolder().moveChipsToPot(state.getCurrentHandSeatingMap().values());
+	private Collection<PotTransition> moveChipsToPot() {
+		Collection<PotTransition> potTransitions = state.getPotHolder().moveChipsToPot(state.getCurrentHandSeatingMap().values());
+//		state.getServerAdapter().notify
 		
 		for (PokerPlayer p : state.getCurrentHandSeatingMap().values()) {
 			p.setHasActed(false);
 			p.clearActionRequest();
 			p.commitBetStack();
 		}
+		
+		return potTransitions;
 	}
 
 	@Override
@@ -302,7 +307,7 @@ public class Telesina implements GameType, RoundVisitor {
 		    log.debug("ante round finished");
 		    
 		    moveChipsToPot();
-		    reportPotUpdate();
+		    reportPotUpdate(Collections.<PotTransition>emptyList());
 		    
 		    dealPocketCards();
 		    dealExposedCards();
@@ -313,8 +318,8 @@ public class Telesina implements GameType, RoundVisitor {
 	
 	@Override
 	public void visit(BettingRound bettingRound) {
-		moveChipsToPot();
-		reportPotUpdate();
+		Collection<PotTransition> potTransitions = moveChipsToPot();
+		reportPotUpdate(potTransitions);
 		
 		if (isHandFinished()) {
 		    exposeShowdownCards();

@@ -41,6 +41,7 @@ import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerAction;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerBalance;
 import se.jadestone.dicearena.game.poker.network.protocol.Pot;
+import se.jadestone.dicearena.game.poker.network.protocol.PotTransfer;
 import se.jadestone.dicearena.game.poker.network.protocol.RequestAction;
 
 import com.cubeia.firebase.api.action.GameDataAction;
@@ -50,8 +51,10 @@ import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.HandType;
 import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.pot.PotTransition;
 import com.google.common.annotations.VisibleForTesting;
 
 /**
@@ -230,6 +233,10 @@ public class ActionTransformer {
         return Enums.Suit.values()[suit.ordinal()];
     }
 	
+    public static Enums.HandType convertHandTypeToEnum(HandType handType) {
+        return Enums.HandType.values()[handType.ordinal()];
+    }
+    
 	public static DealPublicCards createPublicCardsPacket(List<Card> cards) {
 		DealPublicCards packet = new DealPublicCards();
 		packet.cards = new LinkedList<GameCard>();
@@ -274,7 +281,8 @@ public class ActionTransformer {
 						convertRankToProtocolEnum(card.getRank())));
 			}
 
-			BestHand best = new BestHand(ratedHand.getPlayerId(), -1, ratedHand.getBestHandType().name(), cards);
+			BestHand best = new BestHand(ratedHand.getPlayerId(), convertHandTypeToEnum(ratedHand.getBestHandType()), cards);
+			
 			packet.hands.add(best);
 		}
 
@@ -291,7 +299,7 @@ public class ActionTransformer {
 	
 	
 	public static GameDataAction createPlayerBalanceAction(int balance, int playerId, int tableId) {
-		return ProtocolFactory.createGameAction(new PlayerBalance(balance, playerId), playerId, tableId);
+		return new ProtocolFactory().createGameAction(new PlayerBalance(balance, playerId), playerId, tableId);
 	}
 	
 	private static int getNextSequence() {
@@ -305,6 +313,14 @@ public class ActionTransformer {
 	    }
 	    return seq;
 	}
+
+    public static PotTransfer createPotTransferPacket(PotTransition potTransition) {
+        PotTransfer potTransfer = new PotTransfer(
+            (byte) potTransition.getPot().getId(),
+            potTransition.getPlayer().getId(), 
+            (int) potTransition.getAmount());
+        return potTransfer;
+    }
 
 
 }	

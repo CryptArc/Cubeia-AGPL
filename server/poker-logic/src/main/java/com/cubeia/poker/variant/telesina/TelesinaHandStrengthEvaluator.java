@@ -154,7 +154,7 @@ public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Seriali
 		//  1) pair rank (unsuited so hard code HEART)
 		//  2) kickers
 		//  3) suit of pair cards
-		return new TelesinaHandStrength(HandType.ONE_PAIR, usedCards, 0,
+		return new TelesinaHandStrength(HandType.PAIR, usedCards, 0,
 				Arrays.asList(new Card(setCards.get(0).getRank(), Suit.HEARTS)),
 				cc,
 				setCards);

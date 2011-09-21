@@ -27,9 +27,9 @@ import com.cubeia.firebase.io.StyxSerializer;
 public class ProtocolFactory {
     
     /** We only need writing so no injected factory is needed */
-    private static StyxSerializer serializer = new StyxSerializer(null);
+    private StyxSerializer serializer = new StyxSerializer(null);
     
-    public static GameDataAction createGameAction(ProtocolObject packet, int playerId, int tableId) {
+    public GameDataAction createGameAction(ProtocolObject packet, int playerId, int tableId) {
         try {
             GameDataAction action = new GameDataAction(playerId, tableId);
             ByteBuffer buffer;

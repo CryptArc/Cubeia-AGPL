@@ -284,7 +284,7 @@ public class TexasHoldemHandCalculator implements HandCalculator, HandTypeEvalua
 
 	private HandType getType(int number) {
 		switch (number) {
-			case 2: return ONE_PAIR;
+			case 2: return PAIR;
 			case 3: return THREE_OF_A_KIND;
 			case 4: return HandType.FOUR_OF_A_KIND;
 			default: throw new IllegalArgumentException("Invalid number of cards for hand type");

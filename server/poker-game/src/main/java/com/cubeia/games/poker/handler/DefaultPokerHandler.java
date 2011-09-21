@@ -20,7 +20,6 @@ package com.cubeia.games.poker.handler;
 import se.jadestone.dicearena.game.poker.network.protocol.AamsSessionInfoPacket;
 import se.jadestone.dicearena.game.poker.network.protocol.BestHand;
 import se.jadestone.dicearena.game.poker.network.protocol.CardToDeal;
-import se.jadestone.dicearena.game.poker.network.protocol.CollectMoney;
 import se.jadestone.dicearena.game.poker.network.protocol.DealPrivateCards;
 import se.jadestone.dicearena.game.poker.network.protocol.DealPublicCards;
 import se.jadestone.dicearena.game.poker.network.protocol.DealerButton;
@@ -29,7 +28,6 @@ import se.jadestone.dicearena.game.poker.network.protocol.ExposePrivateCards;
 import se.jadestone.dicearena.game.poker.network.protocol.GameCard;
 import se.jadestone.dicearena.game.poker.network.protocol.HandEnd;
 import se.jadestone.dicearena.game.poker.network.protocol.InformRoundEnded;
-import se.jadestone.dicearena.game.poker.network.protocol.MoneyWithdrawal;
 import se.jadestone.dicearena.game.poker.network.protocol.PacketVisitor;
 import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerAction;
@@ -39,6 +37,8 @@ import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitinRequest;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitoutRequest;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerState;
 import se.jadestone.dicearena.game.poker.network.protocol.Pot;
+import se.jadestone.dicearena.game.poker.network.protocol.PotTransfer;
+import se.jadestone.dicearena.game.poker.network.protocol.PotTransfers;
 import se.jadestone.dicearena.game.poker.network.protocol.RequestAction;
 import se.jadestone.dicearena.game.poker.network.protocol.StartHandHistory;
 import se.jadestone.dicearena.game.poker.network.protocol.StartNewHand;
@@ -97,7 +97,7 @@ public class DefaultPokerHandler implements PacketVisitor {
 	@Override
 	public void visit(DeckInfo packet) {}
     @Override
-    public void visit(MoneyWithdrawal packet) {}
+    public void visit(PotTransfer packet) {}
     @Override
-    public void visit(CollectMoney packet) {}
+    public void visit(PotTransfers packet) {}
 }

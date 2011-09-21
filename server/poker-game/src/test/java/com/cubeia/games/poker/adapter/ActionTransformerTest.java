@@ -20,9 +20,14 @@ package com.cubeia.games.poker.adapter;
 import static com.cubeia.games.poker.adapter.ActionTransformer.convertRankToProtocolEnum;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.junit.Assert;
+import org.mockito.Mockito;
 
 import junit.framework.TestCase;
 import se.jadestone.dicearena.game.poker.network.protocol.CardToDeal;
@@ -30,6 +35,7 @@ import se.jadestone.dicearena.game.poker.network.protocol.DealPrivateCards;
 import se.jadestone.dicearena.game.poker.network.protocol.Enums;
 import se.jadestone.dicearena.game.poker.network.protocol.Enums.ActionType;
 import se.jadestone.dicearena.game.poker.network.protocol.HandEnd;
+import se.jadestone.dicearena.game.poker.network.protocol.PotTransfer;
 
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.hand.Card;
@@ -41,6 +47,9 @@ import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.hand.Suit;
 import com.cubeia.poker.model.PlayerHand;
 import com.cubeia.poker.model.RatedPlayerHand;
+import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.pot.Pot;
+import com.cubeia.poker.pot.PotTransition;
 
 public class ActionTransformerTest extends TestCase {
 
@@ -62,8 +71,8 @@ public class ActionTransformerTest extends TestCase {
 		HandEnd end = ActionTransformer.createHandEndPacket(hands);
 		
 		assertEquals(2, end.hands.size());
-		assertNotSame("Two High", end.hands.get(0).name);
-		assertNotSame("Two High", end.hands.get(1).name);
+		assertNotSame("Two High", end.hands.get(0).handType.name());
+		assertNotSame("Two High", end.hands.get(1).handType.name());
 	}
 
 	private void addIdsToCards(Hand hand) {
@@ -147,6 +156,24 @@ public class ActionTransformerTest extends TestCase {
         assertThat(Enums.Suit.HEARTS, is(ActionTransformer.convertSuitToProtocolEnum(Suit.HEARTS)));
         assertThat(Enums.Suit.SPADES, is(ActionTransformer.convertSuitToProtocolEnum(Suit.SPADES)));
     }
+    
+    public void testHandTypeConvertaion() {
+        assertThat(Enums.HandType.values().length, is(11));
+        assertThat(HandType.values().length, is(11));
+        
+        assertThat(Enums.HandType.FLUSH, is(ActionTransformer.convertHandTypeToEnum(HandType.FLUSH)));
+        assertThat(Enums.HandType.FOUR_OF_A_KIND, is(ActionTransformer.convertHandTypeToEnum(HandType.FOUR_OF_A_KIND)));
+        assertThat(Enums.HandType.FULL_HOUSE, is(ActionTransformer.convertHandTypeToEnum(HandType.FULL_HOUSE)));
+        assertThat(Enums.HandType.HIGH_CARD, is(ActionTransformer.convertHandTypeToEnum(HandType.HIGH_CARD)));
+        assertThat(Enums.HandType.PAIR, is(ActionTransformer.convertHandTypeToEnum(HandType.PAIR)));
+        assertThat(Enums.HandType.STRAIGHT, is(ActionTransformer.convertHandTypeToEnum(HandType.STRAIGHT)));
+        assertThat(Enums.HandType.STRAIGHT_FLUSH, is(ActionTransformer.convertHandTypeToEnum(HandType.STRAIGHT_FLUSH)));
+        assertThat(Enums.HandType.THREE_OF_A_KIND, is(ActionTransformer.convertHandTypeToEnum(HandType.THREE_OF_A_KIND)));
+        assertThat(Enums.HandType.TWO_PAIR, is(ActionTransformer.convertHandTypeToEnum(HandType.TWO_PAIRS)));
+        assertThat(Enums.HandType.ROYAL_STRAIGHT_FLUSH, is(ActionTransformer.convertHandTypeToEnum(HandType.ROYAL_STRAIGHT_FLUSH)));
+        assertThat(Enums.HandType.UNKNOWN, is(ActionTransformer.convertHandTypeToEnum(HandType.NOT_RANKED)));
+        
+    }
 	
     public void testCreatePlayerAction() {
         assertThat("wrong number of poker action types, something broken?", PokerActionType.values().length, is(9));
@@ -165,4 +192,21 @@ public class ActionTransformerTest extends TestCase {
             ActionTransformer.createPlayerAction(pat);
         }
     }	
+    
+    public void testCreatePotTransferPacket() {
+        PokerPlayer player = mock(PokerPlayer.class);
+        int playerId = 333;
+        when(player.getId()).thenReturn(playerId);
+        Pot pot = mock(Pot.class);
+        int potId = 23;
+        when(pot.getId()).thenReturn(potId);
+        long amount = 3434;
+        
+        PotTransition potTransition = new PotTransition(player, pot, amount );
+        PotTransfer potTransferPacket = ActionTransformer.createPotTransferPacket(potTransition);
+        assertThat(potTransferPacket.amount, is((int) amount));
+        assertThat(potTransferPacket.playerId, is(playerId));
+        assertThat(potTransferPacket.potId, is((byte) potId));
+    }
+    
 }

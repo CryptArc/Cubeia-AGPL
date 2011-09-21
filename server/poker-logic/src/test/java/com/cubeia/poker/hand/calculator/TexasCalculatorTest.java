@@ -99,7 +99,7 @@ public class TexasCalculatorTest {
 	public void testOnePair() throws Exception {
 		Hand hand = new Hand("2C 2H 5D JH 4C");
 		HandStrength strength = calc.checkManyOfAKind(hand, 2);
-		assertEquals(ONE_PAIR, strength.getHandType());
+		assertEquals(PAIR, strength.getHandType());
 		assertEquals(TWO, strength.getHighestRank());
 		assertNull(strength.getSecondRank());
 		

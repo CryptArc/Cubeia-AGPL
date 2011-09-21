@@ -88,21 +88,22 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
     }
 
     @SuppressWarnings("serial")
+    private static class DummyRNGProvider implements RNGProvider {
+        // TODO: This provider should get the rng from a service and store it in a transient field
+        //   to avoid serializing it.
+        final Random rng = new Random();
+        
+        // TODO: This provider should get the rng from a service and store it in a transient field
+        //   to avoid serializing it.
+        @Override
+        public Random getRNG() { return rng; }
+    };
+    
     @Override
     public void init(ActivatorContext context) throws SystemException {
         super.init(context);
         
-        // TODO: get RNG from service in provider
-        final Random rng = new Random();
-        rngProvider = new RNGProvider() {
-            // TODO: This provider should get the rng from a service and store it in a transient field
-            //   to avoid serializing it.
-            
-            @Override
-            public Random getRNG() {
-                return rng;
-            }
-        };
+        rngProvider = new DummyRNGProvider();
         
         initJmx();
         injector = Guice.createInjector(
