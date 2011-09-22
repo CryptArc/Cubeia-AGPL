@@ -31,7 +31,6 @@ import se.jadestone.dicearena.game.poker.network.protocol.DeckInfo;
 import se.jadestone.dicearena.game.poker.network.protocol.ExposePrivateCards;
 import se.jadestone.dicearena.game.poker.network.protocol.GameCard;
 import se.jadestone.dicearena.game.poker.network.protocol.HandEnd;
-import se.jadestone.dicearena.game.poker.network.protocol.InformRoundEnded;
 import se.jadestone.dicearena.game.poker.network.protocol.PacketVisitor;
 import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerAction;
@@ -94,8 +93,6 @@ public class DefaultPokerHandler implements PacketVisitor {
 	public void visit(PlayerSitoutRequest packet) {}
 	@Override
 	public void visit(CardToDeal packet) {}
-	@Override
-	public void visit(InformRoundEnded packet) {}
 	@Override
 	public void visit(AamsSessionInfoPacket packet) {}
 	@Override

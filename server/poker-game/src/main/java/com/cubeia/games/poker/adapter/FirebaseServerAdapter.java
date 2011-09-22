@@ -35,7 +35,6 @@ import se.jadestone.dicearena.game.poker.network.protocol.DeckInfo;
 import se.jadestone.dicearena.game.poker.network.protocol.Enums;
 import se.jadestone.dicearena.game.poker.network.protocol.ExposePrivateCards;
 import se.jadestone.dicearena.game.poker.network.protocol.HandEnd;
-import se.jadestone.dicearena.game.poker.network.protocol.InformRoundEnded;
 import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerBalance;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerPokerStatus;
@@ -143,13 +142,6 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	    playedHand.setEvents(new HashSet<PlayedHandEvent>());
 	    getFirebaseState().setPlayerHand(playedHand);
         
-	    // FIXME: This should not be sent here, but rather between HandEnd and this method
-	    // FIXME: Is InformRoundEnded really the end of a hand??
-	    InformRoundEnded roundEnd = new InformRoundEnded();
-	    GameDataAction endAction = protocolFactory.createGameAction(roundEnd, 0, table.getId());
-	    log.debug("--> Send InformRoundEnded["+roundEnd+"] to everyone");
-		sendPublicPacket(endAction, -1);
-	    
 	    StartNewHand packet = new StartNewHand();
 	    GameDataAction action = protocolFactory.createGameAction(packet, 0, table.getId());
 	    log.debug("--> Send StartNewHand["+packet+"] to everyone");
