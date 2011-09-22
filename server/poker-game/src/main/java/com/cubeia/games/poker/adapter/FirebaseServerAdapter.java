@@ -258,12 +258,16 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	public void notifyHandEnd(HandResult handResult, HandEndStatus handEndStatus) {
 		if (handEndStatus.equals(HandEndStatus.NORMAL) && handResult != null) {
 			try {
+			    List<PlayerBalance> balances = new ArrayList<PlayerBalance>();
+			    
 				// Handle wins and losses. Talk to wallet.
 				Collection<ResultEntry> resultEntries = new ArrayList<ResultEntry>();
 				Map<PokerPlayer, Result> results = handResult.getResults();
 				for (PokerPlayer p : results.keySet()) {
-					GameDataAction action = ActionTransformer.createPlayerBalanceAction((int)p.getBalance(), p.getId(), table.getId());
-					table.getNotifier().notifyAllPlayers(action);
+//					GameDataAction action = ActionTransformer.createPlayerBalanceAction((int)p.getBalance(), p.getId(), table.getId());
+//					table.getNotifier().notifyAllPlayers(action);
+					
+				    balances.add(new PlayerBalance((int) p.getBalance(), p.getId()));
 					
 					long sessionId = ((PokerPlayerImpl) p).getSessionId();
 					Result result = results.get(p);
@@ -271,6 +275,12 @@ public class FirebaseServerAdapter implements ServerAdapter {
 					ResultEntry entry = new ResultEntry(sessionId, amountConverter.convertToWalletAmount(result.getNetResult()), PokerGame.CURRENCY_CODE);
 					resultEntries.add(entry);
 				}
+				
+				List<PotTransfer> transfers = new ArrayList<PotTransfer>();
+				for (PotTransition pt : handResult.getPotTransitions()) {
+				    transfers.add(ActionTransformer.createPotTransferPacket(pt));
+				}
+                PotTransfers potTransfers = new PotTransfers(false, transfers, null, balances);
 				
 				WalletServiceContract walletService = getServices().getServiceInstance(WalletServiceContract.class);
 				
@@ -283,7 +293,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 				// TODO: The following logic should be moved to poker-logic
 				// I.e. ranking hands etc do not belong in the game-layer
 				Collection<RatedPlayerHand> hands = handResult.getPlayerHands();
-				HandEnd packet = ActionTransformer.createHandEndPacket(hands);
+                HandEnd packet = ActionTransformer.createHandEndPacket(hands, potTransfers);
 				GameDataAction action = protocolFactory.createGameAction(packet, 0, table.getId());
 				log.debug("--> Send HandEnd["+packet+"] to everyone");
 				sendPublicPacket(action, -1);
@@ -294,10 +304,6 @@ public class FirebaseServerAdapter implements ServerAdapter {
 				cleanupPlayers();
 				writeHandHistory(hands, handEndStatus);
 				updateLobby();
-				
-	//			if (pokerCepService != null) {
-	//                pokerCepService.reportHandEnd(table.getId(), EventMontaryType.REAL_MONEY);
-	//            } 
 				
 			} catch (Throwable e) {
 				log.error("FAIL when reporting hand results", e);

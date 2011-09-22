@@ -1,14 +1,17 @@
-package com.cubeia.poker;
+package com.cubeia.poker.variant;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.junit.Test;
+import org.junit.matchers.JUnitMatchers;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -16,7 +19,9 @@ import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotHolder;
+import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
 import com.cubeia.poker.util.HandResultCalculator;
@@ -64,6 +69,37 @@ public class HandResultCreatorTest {
 		
 		assertEquals(-50L, (long) resultsSimplified.get(1));
 		assertEquals(50L, (long) resultsSimplified.get(2));
+	}
+	
+	@Test
+	public void testCreatePotTransitionsByResults() {
+        HandResultCreator creator = new HandResultCreator(null);
+	    
+	    Map<PokerPlayer, Result> playerResults = new HashMap<PokerPlayer, Result>();
+	    
+        Pot pot0 = mock(Pot.class);
+        Pot pot1 = mock(Pot.class);
+        Pot pot2 = mock(Pot.class);
+	    
+	    PokerPlayer player1 = mock(PokerPlayer.class);
+	    Map<Pot, Long> winningsByPot1 = new HashMap<Pot, Long>();
+        winningsByPot1.put(pot0, 20L);
+        winningsByPot1.put(pot1, 30L);
+        winningsByPot1.put(pot2, 50L);
+        Result result1 = new Result(100L, 10L, winningsByPot1);
+	    
+        PokerPlayer player2 = mock(PokerPlayer.class);
+        Result result2 = new Result(0L, 10L, new HashMap<Pot, Long>());
+	    
+        playerResults.put(player1, result1);
+        playerResults.put(player2, result2);
+	    
+        Collection<PotTransition> potTrans = creator.createPotTransitionsByResults(playerResults);
+        
+        assertThat(potTrans.size(), is(3));
+        assertThat(potTrans, JUnitMatchers.hasItem(new PotTransition(player1, pot0, 20)));
+        assertThat(potTrans, JUnitMatchers.hasItem(new PotTransition(player1, pot1, 30)));
+        assertThat(potTrans, JUnitMatchers.hasItem(new PotTransition(player1, pot2, 50)));
 	}
 	
 	private PokerPlayer mockPlayer(int playerId, long betStack, boolean allIn, boolean folded, Hand pocketCards) {

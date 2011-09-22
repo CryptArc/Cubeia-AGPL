@@ -27,7 +27,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.model.PlayerHand;
@@ -42,7 +43,7 @@ public class HandResultCalculator implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	private static Logger log = Logger.getLogger(HandResultCalculator.class);
+	private static Logger log = LoggerFactory.getLogger(HandResultCalculator.class);
 
 	private Comparator<Hand> comparator;
 
@@ -68,6 +69,7 @@ public class HandResultCalculator implements Serializable {
 		// Player ID to Net result (including own bets)
 		Map<Integer, Long> netResults = new HashMap<Integer, Long>();
 		Map<Integer, Long> netStakes = new HashMap<Integer, Long>();
+		Map<PokerPlayer, Map<Pot, Long>> playerPotWinningsShares = new HashMap<PokerPlayer, Map<Pot,Long>>();
 		
 		/*
 		 * For each pot we need to figure out:
@@ -115,6 +117,8 @@ public class HandResultCalculator implements Serializable {
 					Long stake = potContributors.get(player);
 					addResultBalance(netResults, netStakes, winnerId, potShare, stake);
 					log.debug(" --- Add winner pot result: "+winnerId+" : "+potShare+" - "+stake+" = "+(potShare-stake));
+					
+					addPotWinningShare(player, pot, potShare, playerPotWinningsShares);
 				}
 	
 				
@@ -141,12 +145,33 @@ public class HandResultCalculator implements Serializable {
 			long netResultSafe = netResult == null ? 0 : netResult;
 			long playerStakeSafe = playerStake == null ? 0 : playerStake;
 			
-			Result result = new Result(netResultSafe, playerStakeSafe);
+            Map<Pot, Long> potShares = playerPotWinningsShares.get(player);
+            Result result = new Result(netResultSafe, playerStakeSafe, potShares == null ? Collections.<Pot, Long>emptyMap() : potShares);
 			results.put(player, result);
 		}
 		
 		return results;
 	}
+
+	/**
+	 * Add the given players winning share of the given pot to the holding data structure (nested maps).
+	 * @param player player
+	 * @param pot the pot
+	 * @param potShare the player's share of the pot
+	 * @param playerPotWinningsShares data holder
+	 */
+    private void addPotWinningShare(PokerPlayer player, Pot pot,
+        long potShare, Map<PokerPlayer, Map<Pot, Long>> playerPotWinningsShares) {
+        
+        log.debug("adding player pot share: playerId = {}, potId = {}, share = {}", 
+            new Object[] {player.getId(), pot.getId(), potShare});
+        
+        if (!playerPotWinningsShares.containsKey(player)) {
+            playerPotWinningsShares.put(player, new HashMap<Pot, Long>());
+        }
+        
+        playerPotWinningsShares.get(player).put(pot,  potShare);
+    }
 
     protected Collection<PlayerHand> filter(Collection<PlayerHand> hands, final Collection<Integer> players) {
         return Collections2.filter(hands, new Predicate<PlayerHand>() {

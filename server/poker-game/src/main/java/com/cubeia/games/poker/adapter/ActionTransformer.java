@@ -17,6 +17,8 @@
 
 package com.cubeia.games.poker.adapter;
 
+import static com.cubeia.games.poker.adapter.ActionTransformer.createPotTransferPacket;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -42,6 +44,7 @@ import se.jadestone.dicearena.game.poker.network.protocol.PlayerAction;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerBalance;
 import se.jadestone.dicearena.game.poker.network.protocol.Pot;
 import se.jadestone.dicearena.game.poker.network.protocol.PotTransfer;
+import se.jadestone.dicearena.game.poker.network.protocol.PotTransfers;
 import se.jadestone.dicearena.game.poker.network.protocol.RequestAction;
 
 import com.cubeia.firebase.api.action.GameDataAction;
@@ -283,7 +286,7 @@ public class ActionTransformer {
         return gameCards;
     }
 
-	public static HandEnd createHandEndPacket(Collection<RatedPlayerHand> hands) {
+	public static HandEnd createHandEndPacket(Collection<RatedPlayerHand> hands, PotTransfers potTransfers) {
 		HandEnd packet = new HandEnd();
 		packet.hands = new LinkedList<BestHand>();
 
@@ -301,6 +304,8 @@ public class ActionTransformer {
 			
 			packet.hands.add(best);
 		}
+		
+        packet.potTransfers = potTransfers;
 
 		return packet;
 	}

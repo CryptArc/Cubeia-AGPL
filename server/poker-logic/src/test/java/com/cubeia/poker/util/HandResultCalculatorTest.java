@@ -17,6 +17,9 @@
 
 package com.cubeia.poker.util;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -86,9 +89,15 @@ public class HandResultCalculatorTest extends TestCase {
 		Result result1 = playerResults.get(players.get(1));
 		assertEquals(60, result1.getNetResult());
 		assertEquals(70, result1.getWinningsIncludingOwnBets());
+        assertThat(result1.getWinningsByPot().size(), is(1));
+        assertThat(result1.getWinningsByPot().get(potHolder.getActivePot()), is(70L));
 		
 		assertEquals(3, playerResults.size());
 		
+		Result result2 = playerResults.get(players.get(2));
+        assertThat(result2.getWinningsByPot().isEmpty(), is(true));
+        Result result3 = playerResults.get(players.get(3));
+        assertThat(result3.getWinningsByPot().isEmpty(), is(true));
 	}
 	
 	
@@ -118,14 +127,19 @@ public class HandResultCalculatorTest extends TestCase {
 		Result result1 = playerResults.get(players.get(1));
 		assertEquals(25, result1.getNetResult());
 		assertEquals(35, result1.getWinningsIncludingOwnBets());
+		assertThat(result1.getWinningsByPot().size(), is(1));
+        assertThat(result1.getWinningsByPot().get(potHolder.getActivePot()), is(35L));
 		
 		Result result2 = playerResults.get(players.get(2));
 		assertEquals(15, result2.getNetResult());
 		assertEquals(35, result2.getWinningsIncludingOwnBets());
+        assertThat(result2.getWinningsByPot().size(), is(1));
+        assertThat(result2.getWinningsByPot().get(potHolder.getActivePot()), is(35L));
 		
 		Result result3 = playerResults.get(players.get(3));
 		assertEquals(-40, result3.getNetResult());
 		assertEquals(0, result3.getWinningsIncludingOwnBets());
+        assertThat(result3.getWinningsByPot().size(), is(0));
 		
 		assertEquals(0, result1.getNetResult()+result2.getNetResult()+result3.getNetResult());
 		
@@ -168,14 +182,21 @@ public class HandResultCalculatorTest extends TestCase {
 		Result result1 = playerResults.get(players.get(1));
 		assertEquals(0, result1.getNetResult());
 		assertEquals(80, result1.getWinningsIncludingOwnBets());
+        assertThat(result1.getWinningsByPot().size(), is(1));
+        assertThat(result1.getWinningsByPot().get(potHolder.getPot(1)), is(80L));
+		
 		
 		Result result2 = playerResults.get(players.get(2));
 		assertEquals(-80, result2.getNetResult());
 		assertEquals(0, result2.getWinningsIncludingOwnBets());
+        assertThat(result2.getWinningsByPot().isEmpty(), is(true));
+		
 		
 		Result result3 = playerResults.get(players.get(3));
 		assertEquals(80, result3.getNetResult());
 		assertEquals(120, result3.getWinningsIncludingOwnBets());
+        assertThat(result3.getWinningsByPot().size(), is(1));
+        assertThat(result3.getWinningsByPot().get(potHolder.getPot(0)), is(120L));
 		
 		assertEquals(0, result1.getNetResult()+result2.getNetResult()+result3.getNetResult());
 		
@@ -224,6 +245,8 @@ public class HandResultCalculatorTest extends TestCase {
 		Result result1 = playerResults.get(players.get(1));
 		assertEquals(120, result1.getNetResult());
 		assertEquals(140, result1.getWinningsIncludingOwnBets());
+        assertThat(result1.getWinningsByPot().size(), is(1));
+        assertThat(result1.getWinningsByPot().get(potHolder.getPot(0)), is(140L));
 		
 		assertEquals(3, playerResults.size());
 		

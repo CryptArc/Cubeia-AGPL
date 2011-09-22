@@ -85,6 +85,7 @@ public interface ServerAdapter {
 	 * 
 	 * @param handResult Summary of the results or null if hand was cancelled
 	 * @param handEndStatus the way the hand ended, for example normal or canceled
+	 * @param potTransitions collection of pot transitions (money from pots to players)
 	 */
 	void notifyHandEnd(HandResult handResult, HandEndStatus handEndStatus);
 

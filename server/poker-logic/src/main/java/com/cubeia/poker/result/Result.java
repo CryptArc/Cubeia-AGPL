@@ -18,6 +18,9 @@
 package com.cubeia.poker.result;
 
 import java.io.Serializable;
+import java.util.Map;
+
+import com.cubeia.poker.pot.Pot;
 
 public class Result implements Serializable {
 
@@ -27,8 +30,12 @@ public class Result implements Serializable {
 	
 	private final long winningsIncludingOwnBets;
 
-	public Result(long netResult, long ownBets) {
+	/** winning share by pot for this player */
+	private final Map<Pot, Long> winningsByPot;
+	
+	public Result(long netResult, long ownBets, Map<Pot, Long> winningsByPot) {
 		this.netResult = netResult;
+        this.winningsByPot = winningsByPot;
 		this.winningsIncludingOwnBets = netResult + ownBets;
 	}
 
@@ -39,6 +46,10 @@ public class Result implements Serializable {
 	public long getWinningsIncludingOwnBets() {
 		return winningsIncludingOwnBets;
 	}
+	
+	public Map<Pot, Long> getWinningsByPot() {
+        return winningsByPot;
+    }
 	
 	public String toString() {
 		return "Result net["+netResult+"] winningsIncOwnBet["+winningsIncludingOwnBets+"]";

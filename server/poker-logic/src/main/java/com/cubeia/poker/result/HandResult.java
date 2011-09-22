@@ -18,6 +18,7 @@
 package com.cubeia.poker.result;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ import java.util.Map;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.pot.PotTransition;
 
 /**
  * The result of a hand. This class maps the player to the resulting win/lose amount of the hand.
@@ -36,15 +38,19 @@ public class HandResult implements Serializable {
 	private final Map<PokerPlayer, Result> results;
 
 	private final List<RatedPlayerHand> playerHands;
+	
+	private final Collection<PotTransition> potTransitions;
 
 	public HandResult() {
 	    results = Collections.emptyMap();
 	    playerHands = Collections.emptyList();
+	    potTransitions = Collections.emptyList();
 	}
 	
-	public HandResult(Map<PokerPlayer, Result> results, List<RatedPlayerHand> playerHands) {
+	public HandResult(Map<PokerPlayer, Result> results, List<RatedPlayerHand> playerHands, Collection<PotTransition> potTransitions) {
 	    this.results = results;
 	    this.playerHands = playerHands;
+        this.potTransitions = potTransitions;
 	}
 	
 	public List<RatedPlayerHand> getPlayerHands() {
@@ -54,6 +60,10 @@ public class HandResult implements Serializable {
     public Map<PokerPlayer, Result> getResults() {
 		return results;
 	}
+    
+    public Collection<PotTransition> getPotTransitions() {
+        return potTransitions;
+    }
 
 	public String toString() {
 	    StringBuilder sb = new StringBuilder();

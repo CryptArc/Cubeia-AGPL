@@ -22,17 +22,11 @@ import static com.cubeia.poker.hand.HandType.ROYAL_STRAIGHT_FLUSH;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import org.junit.Assert;
-import org.junit.matchers.JUnitMatchers;
-import org.mockito.Mockito;
 
 import junit.framework.TestCase;
 import se.jadestone.dicearena.game.poker.network.protocol.BestHand;
@@ -43,6 +37,7 @@ import se.jadestone.dicearena.game.poker.network.protocol.Enums.ActionType;
 import se.jadestone.dicearena.game.poker.network.protocol.GameCard;
 import se.jadestone.dicearena.game.poker.network.protocol.HandEnd;
 import se.jadestone.dicearena.game.poker.network.protocol.PotTransfer;
+import se.jadestone.dicearena.game.poker.network.protocol.PotTransfers;
 
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.hand.Card;
@@ -75,11 +70,14 @@ public class ActionTransformerTest extends TestCase {
 		hands.add(new RatedPlayerHand(new PlayerHand(11, hand1), HandType.HIGH_CARD, Card.list("As Ks Qs Js Ts")));
 		hands.add(new RatedPlayerHand(new PlayerHand(22, hand2), HandType.HIGH_CARD, Card.list("Qs Js Ts Td Tc")));
 		
-		HandEnd end = ActionTransformer.createHandEndPacket(hands);
+		PotTransfers potTransfers = new PotTransfers();
+        HandEnd end = ActionTransformer.createHandEndPacket(hands, potTransfers);
 		
 		assertEquals(2, end.hands.size());
 		assertNotSame("Two High", end.hands.get(0).handType.name());
 		assertNotSame("Two High", end.hands.get(1).handType.name());
+		
+		assertThat(end.potTransfers, is(potTransfers));
 	}
 
 	private void addIdsToCards(Hand hand) {
