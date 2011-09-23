@@ -130,8 +130,8 @@ public class PokerTableListener implements TournamentTableListener {
 	    actions.add(protocolFactory.createGameAction(new StartHandHistory(), playerId, table.getId()));
 		actions.addAll(actionCache.getActions(table.getId()));
 		actions.add(protocolFactory.createGameAction(new StopHandHistory(), playerId, table.getId()));
+		log.debug("done sending {} stored game actions, player id = {}", actions.size() - 2, playerId);
 		table.getNotifier().notifyPlayer(playerId, actions);
-        log.debug("done sending {} stored game actions, player id = {}", actions.size() - 2, playerId);
 	}
 
 	private void sendTableBalance(PokerState state, Table table, int playerId) {

@@ -52,7 +52,6 @@ public class ActionCache {
      * @param action
      */
     public void addAction(int tableId, GameAction action) {
-	    log.trace("adding action to cache, tableId = {}, action type = {}", tableId, action.getClass().getSimpleName());
 	    
 		List<GameAction> list = cache.get(tableId);
 		// Since we are guaranteed one event at a time per table
@@ -62,6 +61,8 @@ public class ActionCache {
 			cache.put(tableId, list);
 		}
 		list.add(action);
+		log.debug("added action to cache, tableId = {}, action type = {}, new cache size = {}", 
+		    new Object[] {tableId, action.getClass().getSimpleName(), list.size()});
 	}
 
     /**
@@ -79,6 +80,7 @@ public class ActionCache {
     }
 
     public void clear(int tableId) {
+        log.debug("clearing action cache for tableId = {}", tableId);
         cache.remove(tableId);
     }
 

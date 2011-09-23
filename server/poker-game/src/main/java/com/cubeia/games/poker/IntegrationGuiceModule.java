@@ -24,13 +24,13 @@ import com.cubeia.games.poker.adapter.FirebaseServerAdapter;
 import com.cubeia.games.poker.cache.ActionCache;
 import com.cubeia.games.poker.handler.PokerHandler;
 import com.google.inject.AbstractModule;
+import com.google.inject.Singleton;
 
 public class IntegrationGuiceModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
-		// FIXME: should be singleton? 
-		bind(ActionCache.class).in(EventScoped.class);
+		bind(ActionCache.class).in(Singleton.class);
 		bind(StateInjector.class);
 		bind(FirebaseServerAdapter.class).in(EventScoped.class);
 		bind(PokerHandler.class).in(EventScoped.class);
