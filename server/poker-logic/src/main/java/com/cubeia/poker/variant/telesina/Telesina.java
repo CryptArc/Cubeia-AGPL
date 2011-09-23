@@ -251,10 +251,8 @@ public class Telesina implements GameType, RoundVisitor {
 		state.notifyHandFinished(new HandResult(), HandEndStatus.CANCELED_TOO_FEW_PLAYERS);
 	}	
 
-
 	private Collection<PotTransition> moveChipsToPot() {
 		Collection<PotTransition> potTransitions = state.getPotHolder().moveChipsToPot(state.getCurrentHandSeatingMap().values());
-//		state.getServerAdapter().notify
 		
 		for (PokerPlayer p : state.getCurrentHandSeatingMap().values()) {
 			p.setHasActed(false);

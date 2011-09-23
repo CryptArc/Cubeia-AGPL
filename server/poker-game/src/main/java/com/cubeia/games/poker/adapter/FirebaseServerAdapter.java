@@ -25,7 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import se.jadestone.dicearena.game.poker.network.protocol.BestHand;
 import se.jadestone.dicearena.game.poker.network.protocol.DealPrivateCards;
@@ -101,7 +102,7 @@ import com.google.inject.Inject;
  */
 public class FirebaseServerAdapter implements ServerAdapter {
 
-	private transient static Logger log = Logger.getLogger(FirebaseServerAdapter.class);
+	private static Logger log = LoggerFactory.getLogger(FirebaseServerAdapter.class);
 
     private WalletAmountConverter amountConverter = new WalletAmountConverter();
     
@@ -379,6 +380,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		}
 		
 		for (PotTransition potTransition : potTransitions) {
+		    log.debug("sending pot update to client: {}", potTransition);
 		    transfers.add(ActionTransformer.createPotTransferPacket(potTransition));
 		}
 		

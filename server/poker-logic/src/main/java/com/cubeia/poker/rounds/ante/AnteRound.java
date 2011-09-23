@@ -39,10 +39,6 @@ public class AnteRound implements Round {
 
 	private final GameType game;
 
-//	private boolean finished = false;
-
-//	private int playerToAct = 0;
-	
 	private AnteRoundHelper anteRoundHelper;
 	
 	public AnteRound(GameType game, AnteRoundHelper anteRoundHelper) {
@@ -55,7 +51,6 @@ public class AnteRound implements Round {
 		
 		// TODO: how do we decide dealer? for now always use first player...
 		moveDealerButtonToSeatId(players.iterator().next().getSeatId());
-		
 		
 		requestNextAction(game.getBlindsInfo().getDealerButtonSeatId());
 	}
@@ -71,7 +66,6 @@ public class AnteRound implements Round {
 
 		if (p != null) {
 			anteRoundHelper.requestAnte(p, game.getBlindsInfo().getAnteLevel(), game);
-//			playerToAct = p.getId();
 		}
 	}
 	
@@ -110,7 +104,7 @@ public class AnteRound implements Round {
 	}
 
 	public void timeout() {
-//		currentState.timeout(this);
+	    // TODO: must handle timeout
 	}
 
 	public String getStateDescription() {
