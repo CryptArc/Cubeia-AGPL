@@ -321,8 +321,8 @@ public class Telesina implements GameType, RoundVisitor {
 		} else {
 		    log.debug("ante round finished");
 		    
-		    moveChipsToPot();
-		    reportPotUpdate(Collections.<PotTransition>emptyList());
+		    Collection<PotTransition> potTransitions = moveChipsToPot();
+		    reportPotUpdate(potTransitions);
 		    
 		    dealPocketCards();
 		    dealExposedCards();
