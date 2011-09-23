@@ -22,7 +22,8 @@ import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import se.jadestone.dicearena.game.poker.network.protocol.StartHandHistory;
 import se.jadestone.dicearena.game.poker.network.protocol.StopHandHistory;
@@ -48,7 +49,7 @@ import com.google.inject.Inject;
 
 public class PokerTableListener implements TournamentTableListener {
 
-	private static transient Logger log = Logger.getLogger(PokerTableListener.class);
+	private static Logger log = LoggerFactory.getLogger(PokerTableListener.class);
 	
 	@Inject
 	ActionCache actionCache;
@@ -124,12 +125,13 @@ public class PokerTableListener implements TournamentTableListener {
 	private void sendGameState(Table table, int playerId) {
 	    ProtocolFactory protocolFactory = new ProtocolFactory();
 	    
-	    
+	    log.debug("sending stored game actions to client, player id = {}", playerId);
 	    List<GameAction> actions = new LinkedList<GameAction>();
 	    actions.add(protocolFactory.createGameAction(new StartHandHistory(), playerId, table.getId()));
 		actions.addAll(actionCache.getActions(table.getId()));
 		actions.add(protocolFactory.createGameAction(new StopHandHistory(), playerId, table.getId()));
 		table.getNotifier().notifyPlayer(playerId, actions);
+        log.debug("done sending {} stored game actions, player id = {}", actions.size() - 2, playerId);
 	}
 
 	private void sendTableBalance(PokerState state, Table table, int playerId) {
