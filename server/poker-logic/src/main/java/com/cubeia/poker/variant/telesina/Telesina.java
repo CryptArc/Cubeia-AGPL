@@ -125,6 +125,8 @@ public class Telesina implements GameType, RoundVisitor {
 	private void initHand() {	
 		log.debug("init hand");
 		
+		resetPlayerStatesBeforeHand();
+		
 		deck = deckFactory.createNewDeck(rngProvider.getRNG(), state.getTableSize());
 		state.notifyDeckInfo(deck.getTotalNumberOfCardsInDeck(), deck.getDeckLowestRank());
 		blindsInfo.setAnteLevel(state.getAnteLevel());
@@ -132,6 +134,13 @@ public class Telesina implements GameType, RoundVisitor {
 		setCurrentRound(roundFactory.createAnteRound(this));
 		
 		setBettingRoundId(0);
+	}
+
+	protected void resetPlayerStatesBeforeHand() {
+        for (PokerPlayer p : getState().getCurrentHandSeatingMap().values()) {
+            p.setHasActed(false);
+            p.setHasFolded(false);
+        }
 	}
 
 	@Override

@@ -19,6 +19,8 @@ package com.cubeia.games.poker.handler;
 
 import org.apache.log4j.Logger;
 
+import se.jadestone.dicearena.game.poker.network.protocol.BuyInInfoRequest;
+import se.jadestone.dicearena.game.poker.network.protocol.BuyInRequest;
 import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitinRequest;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitoutRequest;
@@ -47,6 +49,7 @@ public class PokerHandler extends DefaultPokerHandler {
 		this.playerId = playerId;
 	}
 	
+	@Override
 	public void visit(PerformAction packet) {
 	    if (verifySequence(packet)) {
 	    	TimeoutCache.getInstance().removeTimeout(table.getId(), playerId, table.getScheduler());
@@ -57,14 +60,30 @@ public class PokerHandler extends DefaultPokerHandler {
 	}
 	
 	// player wants to sit out next hand
+    @Override
 	public void visit(PlayerSitoutRequest packet) {
 		state.playerIsSittingOut(playerId);
 	}
 
 	// player wants to sit in again
+    @Override
 	public void visit(PlayerSitinRequest packet) {
 		state.playerIsSittingIn(playerId);
 	}
+	
+	@Override
+	public void visit(BuyInInfoRequest packet) {
+	    // TODO: implement!
+	    super.visit(packet);
+	}
+	
+	@Override
+	public void visit(BuyInRequest packet) {
+        // TODO: implement!
+	    super.visit(packet);
+	}
+	
+	
 
     private boolean verifySequence(PerformAction packet) {
         FirebaseState fbState = (FirebaseState)state.getAdapterState();
