@@ -128,7 +128,7 @@ public class PokerTableListener implements TournamentTableListener {
 	    log.debug("sending stored game actions to client, player id = {}", playerId);
 	    List<GameAction> actions = new LinkedList<GameAction>();
 	    actions.add(protocolFactory.createGameAction(new StartHandHistory(), playerId, table.getId()));
-		actions.addAll(actionCache.getActions(table.getId()));
+		actions.addAll(actionCache.getPublicActions(table.getId()));
 		actions.add(protocolFactory.createGameAction(new StopHandHistory(), playerId, table.getId()));
 		log.debug("done sending {} stored game actions, player id = {}", actions.size() - 2, playerId);
 		table.getNotifier().notifyPlayer(playerId, actions);

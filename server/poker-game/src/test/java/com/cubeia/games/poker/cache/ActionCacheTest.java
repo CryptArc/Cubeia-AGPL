@@ -17,43 +17,79 @@
 
 package com.cubeia.games.poker.cache;
 
+import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.GameDataAction;
 
-public class ActionCacheTest extends TestCase {
+public class ActionCacheTest {
 	
 	private ActionCache cache = new ActionCache();
 	
-	public void testAddAction() throws Exception {
+	@Test
+	public void testPublicActions() throws Exception {
 		GameAction action = new GameDataAction(11, 1);
-		cache.addAction(1, action);
+		cache.addPublicAction(1, action);
 		
-		assertEquals(1, cache.cache.size());
-		List<GameAction> state = cache.getActions(1);
-		assertEquals(1, state.size());
+		List<GameAction> state = cache.getPublicActions(1);
+		assertThat(state.size(), is(1));
 		
 		GameAction action2 = new GameDataAction(22, 1);
-		cache.addAction(1, action2);
+		cache.addPublicAction(1, action2);
 		GameAction action3 = new GameDataAction(33, 1);
-		cache.addAction(1, action3);
+		cache.addPublicAction(1, action3);
 		
-		assertEquals(1, cache.cache.size());
-		state = cache.getActions(1);
-		assertEquals(3, state.size());
+		state = cache.getPublicActions(1);
+		assertThat(state.size(), is(3));
 		
-		assertEquals(11, ((GameDataAction)state.get(0)).getPlayerId());
-		assertEquals(22, ((GameDataAction)state.get(1)).getPlayerId());
-		assertEquals(33, ((GameDataAction)state.get(2)).getPlayerId());
+		assertThat(((GameDataAction)state.get(0)).getPlayerId(), is(11));
+		assertThat(((GameDataAction)state.get(1)).getPlayerId(), is(22));
+		assertThat(((GameDataAction)state.get(2)).getPlayerId(), is(33));
 		
 		cache.clear(1);
 		
-		assertEquals(0, cache.cache.size());
-		state = cache.getActions(1);
-		assertEquals(0, state.size());
+		state = cache.getPublicActions(1);
+		assertThat(state.size(), is(0));
 	}
+	
+	@Test
+	public void testPrivateAndPublicActions() {
+        int playerId1 = 11;
+        int tableId = 1;
+        GameAction actionPublic1 = new GameDataAction(playerId1, tableId);
+        cache.addPublicAction(tableId, actionPublic1);
+        int playerId2 = 1337;
+        GameAction actionPrivate1 = new GameDataAction(playerId2, tableId);
+        cache.addPrivateAction(tableId, playerId2, actionPrivate1);
+        
+        assertThat(cache.getPublicActions(tableId).size(), is(1));
+        assertThat(cache.getPublicActions(tableId), is(asList(actionPublic1)));
+        
+        assertThat(cache.getPrivateAndPublicActions(tableId, playerId1).size(), is(1));
+        assertThat(cache.getPublicActions(tableId), is(asList(actionPublic1)));
+        
+        assertThat(cache.getPrivateAndPublicActions(tableId, playerId2).size(), is(2));
+	}
+	
+    @Test
+    public void testClearActionsForTable() {
+        int playerId1 = 11;
+        int tableId = 1;
+        GameAction actionPublic1 = new GameDataAction(playerId1, tableId);
+        cache.addPublicAction(tableId, actionPublic1);
+        int playerId2 = 1337;
+        GameAction actionPrivate1 = new GameDataAction(playerId2, tableId);
+        cache.addPrivateAction(tableId, playerId2, actionPrivate1);
+        
+        assertThat(cache.getPrivateAndPublicActions(tableId, playerId2).size(), is(2));
+        cache.clear(tableId);
+        assertThat(cache.getPrivateAndPublicActions(tableId, playerId2).size(), is(0));
+    }
 	
 }

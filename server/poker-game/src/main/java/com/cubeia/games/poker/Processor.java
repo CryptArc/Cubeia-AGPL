@@ -167,7 +167,7 @@ public class Processor implements GameProcessor, TournamentProcessor {
 
     private void printActionsToErrorLog(Exception e, String description, Table table) {
         // Log error with all actions on the table leading to this problem
-        List<GameAction> actions = actionCache.getActions(table.getId());
+        List<GameAction> actions = actionCache.getPublicActions(table.getId());
         StringBuffer error = new StringBuffer(description);
         error.append("\nState: "+state);
         for (GameAction history : actions) {

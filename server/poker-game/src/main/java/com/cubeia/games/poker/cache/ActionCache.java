@@ -17,82 +17,133 @@
 
 package com.cubeia.games.poker.cache;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cubeia.firebase.api.action.GameAction;
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 
 /**
  * A simple cache for holding actions that composes the game state of the current round.
+ * Maps actions to tables. It is important that this cache is properly cleared since there is no inherent
+ * house-keeping in this implementation.
+ * 
+ * NOTE: this cache is not replicated: fail over won't work
  * 
  * @author Fredrik Johansson, Cubeia Ltd
+ * 
  */
 public class ActionCache {
     private static Logger log = LoggerFactory.getLogger(ActionCache.class);
 
+    private final Multimap<Integer, ActionContainer> cache;
+    
+    
+    public ActionCache() {
+        LinkedListMultimap<Integer, ActionContainer> linkedListMultimap = LinkedListMultimap.<Integer, ActionContainer>create();
+        // TODO: this map is fully synchronized but we only need to synchronize on table id (events on the same table are never concurrent)
+        cache = Multimaps.<Integer, ActionContainer>synchronizedListMultimap(linkedListMultimap);
+    }
+    
     /**
-     * Maps actions to tables. It is important that this cache is properly cleared since there is no inherent
-     * house-keeping in this implementation.
-     * 
-     * I.e., we rely on YOU to clean up after yourself.
-     * 
-     * This cache is not replicated!
-     */
-    protected ConcurrentMap<Integer, List<GameAction>> cache = new ConcurrentHashMap<Integer, List<GameAction>>();
-
-    /**
-     * Add action to a table state cache.
+     * Add public action to a table state cache.
      * 
      * @param tableId
      * @param action
      */
-    public void addAction(int tableId, GameAction action) {
-	    
-		List<GameAction> list = cache.get(tableId);
-		// Since we are guaranteed one event at a time per table
-		// We can safely inspect the list and recreate if necessary
-		if (list == null) {
-			list = new LinkedList<GameAction>();
-			cache.put(tableId, list);
-		}
-		list.add(action);
-		log.debug("added action to cache, tableId = {}, action type = {}, new cache size = {}", 
-		    new Object[] {tableId, action.getClass().getSimpleName(), list.size()});
+    public void addPublicAction(int tableId, GameAction action) {
+        cache.put(tableId, ActionContainer.createPublic(action));
+		log.debug("added public action to cache, tableId = {}, action type = {}, new cache size = {}", 
+		    new Object[] {tableId, action.getClass().getSimpleName(), cache.get(tableId).size()});
 	}
+    
+    /**
+     * Add a private action to the cache.
+     * @param tableId
+     * @param playerId
+     * @param action
+     */
+    public void addPrivateAction(int tableId, int playerId, GameAction action) {
+        cache.put(tableId, ActionContainer.createPrivate(playerId, action));
+        log.debug("added private action to cache, tableId = {}, playerId = {}, action type = {}, new cache size = {}", 
+            new Object[] {tableId, playerId, action.getClass().getSimpleName(), cache.get(tableId).size()});
+    }
 
     /**
-     * Retreive state from a table.
-     * 
-     * @param i
-     * @return
+     * Retrieve public state from a table. Use this for new players.
+     * @param tableId table id
+     * @return list of public actions
      */
-    public List<GameAction> getActions(int tableId) {
-        List<GameAction> list = cache.get(tableId);
-        if (list == null) {
-            list = new LinkedList<GameAction>();
+    public List<GameAction> getPublicActions(int tableId) {
+        List<GameAction> publicActions = new LinkedList<GameAction>();
+        for (ActionContainer ac : cache.get(tableId)) {
+            if (ac.isPublic()) {
+                publicActions.add(ac.getGameAction());
+            }
         }
-        return list;
+        
+        return publicActions;
+    }
+    
+    /**
+     * Retrieve all actions, public and private, for the given table and user.
+     * This method should be used when reconnecting a seated player to a table.
+     * @param tableId table id
+     * @param playerId player id
+     * @return list of both private and public actions
+     */
+    public List<GameAction> getPrivateAndPublicActions(int tableId, int playerId) {
+        List<GameAction> actions = new LinkedList<GameAction>();
+        for (ActionContainer ac : cache.get(tableId)) {
+            if (ac.isPublic()  ||  ac.getPlayerId() == playerId) {
+                actions.add(ac.getGameAction());
+            }
+        }
+        
+        return actions;
     }
 
     public void clear(int tableId) {
         log.debug("clearing action cache for tableId = {}", tableId);
-        cache.remove(tableId);
+        cache.removeAll(tableId);
     }
 
-    public String printDetails() {
-        String details = "Action Cache: \n";
-        for (Integer id : cache.keySet()) {
-            details += id + " {\n";
-            for (GameAction action : cache.get(id)) {
-                details += "\t" + action;
-            }
-            details += id + "}\n\n";
+    /**
+     * Container for game actions.
+     * @author w
+     *
+     */
+    @SuppressWarnings("serial")
+    private static class ActionContainer implements Serializable {
+        private final Integer playerId;
+        private final GameAction gameAction;
+        
+        private ActionContainer(Integer playerId, GameAction gameAction) {
+            this.playerId = playerId;
+            this.gameAction = gameAction;
         }
-        return details;
+        
+        public static ActionContainer createPublic(GameAction gameAction) {
+            return new ActionContainer(null, gameAction);
+        }
+        
+        public static ActionContainer createPrivate(int playerId, GameAction gameAction) {
+            return new ActionContainer(playerId, gameAction);
+        }
+        
+        public int getPlayerId() { return playerId; }
+        
+        public GameAction getGameAction() { return gameAction; }
+        
+        public boolean isPublic() {
+            return playerId == null;
+        }
     }
+
 }
