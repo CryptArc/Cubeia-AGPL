@@ -212,7 +212,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		DealPrivateCards packet = ActionTransformer.createPrivateCardsPacket(playerId, cards, false);
 		GameDataAction action = protocolFactory.createGameAction(packet, playerId, table.getId());
 		log.debug("--> Send DealPrivateCards["+packet+"] to player["+playerId+"]");
-		table.getNotifier().notifyPlayer(playerId, action);
+		sendPrivatePacket(playerId, action);
 		
 		// Send the cards as hidden to the other players
 		DealPrivateCards hiddenCardsPacket = ActionTransformer.createPrivateCardsPacket(playerId, cards, true);
@@ -444,27 +444,11 @@ public class FirebaseServerAdapter implements ServerAdapter {
                 	log.debug("Cleanup - unseat player["+p.getPlayerId()+"] from table["+table.getId()+"]");
                 	table.getPlayerSet().unseatPlayer(p.getPlayerId());
                 	table.getListener().playerLeft(table, p.getPlayerId());
-//                    sendPlayerLeftTable(table, p);
-//                    table.getPlayerSet().removePlayer(p.getPlayerId());
                 }
             }
 	    }
     }
 
-	
-//	private void sendPlayerLeftTable(Table table, GenericPlayer p) {
-//	    LeaveAction leaveAction = new LeaveAction(p.getPlayerId(), table.getId());
-//        sendPublicPacket(leaveAction, p.getPlayerId());
-//        table.getListener().playerLeft(table, p.getPlayerId());
-//        
-//        // Unregister from client registry
-//        PublicClientRegistryService clientRegistry = services.getServiceInstance(PublicClientRegistryService.class);
-//        clientRegistry.registerPlayerToTable(table.getId(), p.getPlayerId(), -1, table.getMetaData().getMttId(), true);
-//        
-//    }
-	
-	
-	
     /**
 	 * This action will be cached and used for sending current state to 
 	 * joining players.
@@ -485,6 +469,21 @@ public class FirebaseServerAdapter implements ServerAdapter {
 			cache.addPublicAction(table.getId(), action);
 		}
 	}
+	
+    /**
+     * Send private packet to player and cache it as private. The cached action
+     * will be sent to the player when rejoining.
+     * 
+     * @param playerId player id
+     * @param action action
+     */
+    private void sendPrivatePacket(int playerId, GameAction action) {
+        table.getNotifier().notifyPlayer(playerId, action);
+            
+        if (cache != null) {
+            cache.addPrivateAction(table.getId(), playerId, action);
+        }
+    }
 
 
 	private FirebaseState getFirebaseState() {

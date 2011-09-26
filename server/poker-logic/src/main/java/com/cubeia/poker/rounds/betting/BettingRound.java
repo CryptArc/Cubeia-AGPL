@@ -125,12 +125,10 @@ public class BettingRound implements Round, BettingRoundContext {
 		if (p.getBetStack() < highBet) {
 			// gameType.requestAction(p, PokerActionType.FOLD,
 			// PokerActionType.CALL, PokerActionType.RAISE);
-			p.setActionRequest(actionRequestFactory
-					.createFoldCallRaiseActionRequest(p));
+			p.setActionRequest(actionRequestFactory.createFoldCallRaiseActionRequest(p));
 			gameType.requestAction(p.getActionRequest());
 		} else {
-			p.setActionRequest(actionRequestFactory
-					.createFoldCheckBetActionRequest(p));
+			p.setActionRequest(actionRequestFactory.createFoldCheckBetActionRequest(p));
 			gameType.requestAction(p.getActionRequest());
 		}
 		playerToAct = p.getId();

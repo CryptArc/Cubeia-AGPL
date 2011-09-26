@@ -17,18 +17,23 @@
 
 package com.cubeia.games.poker;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
+import se.jadestone.dicearena.game.poker.network.protocol.RequestAction;
 import se.jadestone.dicearena.game.poker.network.protocol.StartHandHistory;
 import se.jadestone.dicearena.game.poker.network.protocol.StopHandHistory;
 
 import com.cubeia.backoffice.accounting.api.Money;
+import com.cubeia.firebase.api.action.ActionRequest;
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.action.UnseatPlayersMttAction.Reason;
@@ -37,6 +42,8 @@ import com.cubeia.firebase.api.game.player.PlayerStatus;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TournamentTableListener;
 import com.cubeia.firebase.guice.inject.Service;
+import com.cubeia.firebase.io.ProtocolObject;
+import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.adapter.ActionTransformer;
 import com.cubeia.games.poker.cache.ActionCache;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
@@ -45,6 +52,7 @@ import com.cubeia.games.poker.util.WalletAmountConverter;
 import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.player.PokerPlayer;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 
 public class PokerTableListener implements TournamentTableListener {
@@ -122,19 +130,55 @@ public class PokerTableListener implements TournamentTableListener {
 	
 	public void watcherLeft(Table table, int playerId) {}
 	
-	private void sendGameState(Table table, int playerId) {
+	@VisibleForTesting
+	protected void sendGameState(Table table, int playerId) {
 	    ProtocolFactory protocolFactory = new ProtocolFactory();
 	    
 	    log.debug("sending stored game actions to client, player id = {}", playerId);
 	    List<GameAction> actions = new LinkedList<GameAction>();
 	    actions.add(protocolFactory.createGameAction(new StartHandHistory(), playerId, table.getId()));
-		actions.addAll(actionCache.getPublicActions(table.getId()));
+		
+	    List<GameAction> actionsFromCache = actionCache.getPrivateAndPublicActions(table.getId(), playerId);
+        actionsFromCache = filterRequestActions(actionsFromCache);
+        actions.addAll(actionsFromCache);
+		
 		actions.add(protocolFactory.createGameAction(new StopHandHistory(), playerId, table.getId()));
 		log.debug("done sending {} stored game actions, player id = {}", actions.size() - 2, playerId);
 		table.getNotifier().notifyPlayer(playerId, actions);
 	}
 
-	private void sendTableBalance(PokerState state, Table table, int playerId) {
+	/**
+	 * Filter the game actions list by removing all GameDataActions containing RequestAction packets.
+	 * @param actions actions to filter
+	 * @return new filtered list
+	 */
+	@VisibleForTesting
+	protected List<GameAction> filterRequestActions(List<GameAction> actions) {
+	    LinkedList<GameAction> filteredActions = new LinkedList<GameAction>();
+	    
+	    StyxSerializer styxalizer = new StyxSerializer(new ProtocolObjectFactory());
+	    
+	    for (GameAction ga : actions) {
+	        if (ga instanceof GameDataAction) {
+	            GameDataAction gda = (GameDataAction) ga;
+	            ProtocolObject packet;
+                try {
+                    packet = styxalizer.unpack(gda.getData());
+                    if (!(packet instanceof RequestAction)) {
+                        filteredActions.add(ga);
+                    }
+                } catch (IOException e) {
+                    log.error("error unpacking cached packet", e);
+                }
+	        } else {
+	            filteredActions.add(ga);
+	        }
+	    }
+	    
+        return filteredActions;
+    }
+
+    private void sendTableBalance(PokerState state, Table table, int playerId) {
         int balance = state.getBalance(playerId);
 		GameDataAction balanceAction = ActionTransformer.createPlayerBalanceAction(balance, playerId, table.getId());
 		table.getNotifier().notifyAllPlayers(balanceAction);
