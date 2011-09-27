@@ -17,24 +17,15 @@
 
 package com.cubeia.games.poker;
 
-import java.io.IOException;
+import static com.cubeia.poker.player.SitOutStatus.NOT_ENTERED_YET;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.nio.ByteBuffer;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
-import se.jadestone.dicearena.game.poker.network.protocol.RequestAction;
-import se.jadestone.dicearena.game.poker.network.protocol.StartHandHistory;
-import se.jadestone.dicearena.game.poker.network.protocol.StopHandHistory;
-
 import com.cubeia.backoffice.accounting.api.Money;
-import com.cubeia.firebase.api.action.ActionRequest;
-import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.action.UnseatPlayersMttAction.Reason;
 import com.cubeia.firebase.api.game.player.GenericPlayer;
@@ -42,16 +33,14 @@ import com.cubeia.firebase.api.game.player.PlayerStatus;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TournamentTableListener;
 import com.cubeia.firebase.guice.inject.Service;
-import com.cubeia.firebase.io.ProtocolObject;
-import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.adapter.ActionTransformer;
 import com.cubeia.games.poker.cache.ActionCache;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
-import com.cubeia.games.poker.util.ProtocolFactory;
 import com.cubeia.games.poker.util.WalletAmountConverter;
 import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.player.SitOutStatus;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 
@@ -62,6 +51,9 @@ public class PokerTableListener implements TournamentTableListener {
 	@Inject
 	ActionCache actionCache;
 
+	@Inject
+	GameStateSender gameStateSender;
+	
 	@Service
 	WalletServiceContract walletService;
 	
@@ -71,6 +63,7 @@ public class PokerTableListener implements TournamentTableListener {
     @Inject 
     PokerState state;
     
+    
 	private WalletAmountConverter amountConverter = new WalletAmountConverter();
 	
 	/**
@@ -79,8 +72,9 @@ public class PokerTableListener implements TournamentTableListener {
 	 */
 	public void playerJoined(Table table, GenericPlayer player) {
 		stateInjector.injectAdapter(table);
-		log.debug("Player["+player.getPlayerId()+":"+player.getName()+"] joined Table["+table.getId()+":"+table.getMetaData().getName()+"]");
+        log.debug("Player["+player.getPlayerId()+":"+player.getName()+"] joined Table["+table.getId()+":"+table.getMetaData().getName()+"]");
 	    if (state.isPlayerSeated(player.getPlayerId())) {
+	        // rejoin
 	        sitInPlayer(table, player);
 	    } else {
 	        addPlayer(table, player, false);
@@ -92,7 +86,7 @@ public class PokerTableListener implements TournamentTableListener {
 	 * 
 	 */
 	public void playerLeft(Table table, int playerId) {
-		log.debug("RMV Player left: "+playerId);
+		log.debug("Player left: "+playerId);
 		stateInjector.injectAdapter(table);
 		removePlayer(table, playerId, false);
 	}
@@ -120,63 +114,15 @@ public class PokerTableListener implements TournamentTableListener {
 	public void watcherJoined(Table table, int playerId) {
         log.debug("Player["+playerId+"] watching Table["+table.getId()+":"+table.getMetaData().getName()+"]");
 		stateInjector.injectAdapter(table);
-		sendGameState(table, playerId);
+		gameStateSender.sendGameState(table, playerId);
 	}
 
-	
 	public void playerStatusChanged(Table table, int playerId, PlayerStatus status) {}
 
 	public void seatReserved(Table table, GenericPlayer player) {}
 	
 	public void watcherLeft(Table table, int playerId) {}
 	
-	@VisibleForTesting
-	protected void sendGameState(Table table, int playerId) {
-	    ProtocolFactory protocolFactory = new ProtocolFactory();
-	    
-	    log.debug("sending stored game actions to client, player id = {}", playerId);
-	    List<GameAction> actions = new LinkedList<GameAction>();
-	    actions.add(protocolFactory.createGameAction(new StartHandHistory(), playerId, table.getId()));
-		
-	    List<GameAction> actionsFromCache = actionCache.getPrivateAndPublicActions(table.getId(), playerId);
-        actionsFromCache = filterRequestActions(actionsFromCache);
-        actions.addAll(actionsFromCache);
-		
-		actions.add(protocolFactory.createGameAction(new StopHandHistory(), playerId, table.getId()));
-		log.debug("done sending {} stored game actions, player id = {}", actions.size() - 2, playerId);
-		table.getNotifier().notifyPlayer(playerId, actions);
-	}
-
-	/**
-	 * Filter the game actions list by removing all GameDataActions containing RequestAction packets.
-	 * @param actions actions to filter
-	 * @return new filtered list
-	 */
-	@VisibleForTesting
-	protected List<GameAction> filterRequestActions(List<GameAction> actions) {
-	    LinkedList<GameAction> filteredActions = new LinkedList<GameAction>();
-	    
-	    StyxSerializer styxalizer = new StyxSerializer(new ProtocolObjectFactory());
-	    
-	    for (GameAction ga : actions) {
-	        if (ga instanceof GameDataAction) {
-	            GameDataAction gda = (GameDataAction) ga;
-	            ProtocolObject packet;
-                try {
-                    packet = styxalizer.unpack(gda.getData());
-                    if (!(packet instanceof RequestAction)) {
-                        filteredActions.add(ga);
-                    }
-                } catch (IOException e) {
-                    log.error("error unpacking cached packet", e);
-                }
-	        } else {
-	            filteredActions.add(ga);
-	        }
-	    }
-	    
-        return filteredActions;
-    }
 
     private void sendTableBalance(PokerState state, Table table, int playerId) {
         int balance = state.getBalance(playerId);
@@ -185,18 +131,22 @@ public class PokerTableListener implements TournamentTableListener {
 	}
 	
 	private void sitInPlayer(Table table, GenericPlayer player) {
-	    sendGameState(table, player.getPlayerId());
+	    gameStateSender.sendGameState(table, player.getPlayerId());
 	    state.playerIsSittingIn(player.getPlayerId());
 	    
     }
     
-    private PokerPlayer addPlayer(Table table, GenericPlayer player, boolean tournamentPlayer) {
-        sendGameState(table, player.getPlayerId());
+	@VisibleForTesting
+    protected PokerPlayer addPlayer(Table table, GenericPlayer player, boolean tournamentPlayer) {
+	    gameStateSender.sendGameState(table, player.getPlayerId());
 
         PokerPlayer pokerPlayer = new PokerPlayerImpl(player);
+        pokerPlayer.setSitOutStatus(NOT_ENTERED_YET);
         state.addPlayer(pokerPlayer);
         
         if (!tournamentPlayer) {
+            // TODO: wallet session should not be created here but on buy in request
+            
         	log.debug("Start wallet session for player: "+player);
 	        Long sessionId = startWalletSession(table, player);
 	        ((PokerPlayerImpl) pokerPlayer).setSessionId(sessionId);

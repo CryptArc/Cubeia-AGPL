@@ -33,6 +33,7 @@ public class IntegrationGuiceModule extends AbstractModule {
 		bind(ActionCache.class).in(Singleton.class);
 		bind(StateInjector.class);
 		bind(FirebaseServerAdapter.class).in(EventScoped.class);
+		bind(GameStateSender.class).in(Singleton.class);
 		bind(PokerHandler.class).in(EventScoped.class);
 		bind(TournamentProcessor.class).to(Processor.class);
 		bind(TournamentTableListener.class).to(PokerTableListener.class);

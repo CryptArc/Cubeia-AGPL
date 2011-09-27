@@ -17,8 +17,6 @@
 
 package com.cubeia.games.poker.adapter;
 
-import static com.cubeia.games.poker.adapter.ActionTransformer.createPotTransferPacket;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;

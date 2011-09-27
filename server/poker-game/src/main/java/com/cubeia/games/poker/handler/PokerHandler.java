@@ -17,15 +17,24 @@
 
 package com.cubeia.games.poker.handler;
 
-import org.apache.log4j.Logger;
+import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import se.jadestone.dicearena.game.poker.network.protocol.BuyInInfoRequest;
+import se.jadestone.dicearena.game.poker.network.protocol.BuyInInfoResponse;
 import se.jadestone.dicearena.game.poker.network.protocol.BuyInRequest;
+import se.jadestone.dicearena.game.poker.network.protocol.BuyInResponse;
+import se.jadestone.dicearena.game.poker.network.protocol.Enums;
 import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitinRequest;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitoutRequest;
 
+import com.cubeia.firebase.api.action.GameDataAction;
+import com.cubeia.firebase.api.game.player.GenericPlayer;
 import com.cubeia.firebase.api.game.table.Table;
+import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.FirebaseState;
 import com.cubeia.games.poker.adapter.ActionTransformer;
 import com.cubeia.games.poker.logic.TimeoutCache;
@@ -35,7 +44,7 @@ import com.google.inject.Inject;
 
 public class PokerHandler extends DefaultPokerHandler {
 
-    private static transient Logger log = Logger.getLogger(PokerHandler.class);
+    private static Logger log = LoggerFactory.getLogger(PokerHandler.class);
     
 	int playerId;
 	
@@ -74,13 +83,50 @@ public class PokerHandler extends DefaultPokerHandler {
 	@Override
 	public void visit(BuyInInfoRequest packet) {
 	    // TODO: implement!
-	    super.visit(packet);
+	    
+	    log.warn("SENDING MOCKED BUY IN INFO RESPONSE!!!");
+	    
+	    BuyInInfoResponse resp = new BuyInInfoResponse();
+	    resp.balanceInWallet = 500000;
+	    resp.balanceOnTable = 0;
+	    resp.maxAmount = 330000;
+	    resp.minAmount = 500;
+	    
+	    GameDataAction gda = new GameDataAction(playerId, table.getId());
+	    
+	    StyxSerializer styx = new StyxSerializer(null);
+	    try {
+            gda.setData(styx.pack(resp));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+	    
+	    table.getNotifier().notifyPlayer(playerId, gda);
 	}
 	
 	@Override
 	public void visit(BuyInRequest packet) {
-        // TODO: implement!
-	    super.visit(packet);
+        log.warn("SENDING MOCKED BUY IN RESPONSE!!!");
+	    
+        BuyInResponse resp = new BuyInResponse();
+        resp.balance = packet.amount;
+        resp.resultCode = Enums.BuyInResultCode.OK;
+        
+        GameDataAction gda = new GameDataAction(playerId, table.getId());
+        
+        StyxSerializer styx = new StyxSerializer(null);
+        try {
+            gda.setData(styx.pack(resp));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        if (packet.sitInIfSuccessful) {
+            state.playerIsSittingIn(playerId);
+        }
+        
+        GenericPlayer player = table.getPlayerSet().getPlayer(playerId);
+        log.debug("player id: {}, player: {}", playerId, player);
 	}
 	
 	
