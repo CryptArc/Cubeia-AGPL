@@ -40,7 +40,6 @@ import com.cubeia.games.poker.util.WalletAmountConverter;
 import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.player.SitOutStatus;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 

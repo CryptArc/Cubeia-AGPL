@@ -17,6 +17,7 @@
     <module>poker-persistence</module>
     <module>poker-uar</module>
     <module>jg-mock-login-handler</module>
+    <module>backend</module>
   </modules>
 
     <organization>
