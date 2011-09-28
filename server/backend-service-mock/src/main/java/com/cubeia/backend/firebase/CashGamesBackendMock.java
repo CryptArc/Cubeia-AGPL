@@ -17,9 +17,9 @@ import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.firebase.api.service.Service;
 import com.cubeia.firebase.api.service.ServiceContext;
 
-public class CashGameBackendMock implements CashGameBackendContract, Service {
+public class CashGamesBackendMock implements CashGamesBackendContract, Service {
     
-    private static Logger log = LoggerFactory.getLogger(CashGameBackendMock.class);
+    private Logger log = LoggerFactory.getLogger(CashGamesBackendMock.class);
 
     @Override
     public void announceTable(AnnounceTableRequest request, AnnounceTableCallback callback) {

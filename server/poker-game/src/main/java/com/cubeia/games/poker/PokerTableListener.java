@@ -25,7 +25,7 @@ import java.math.BigDecimal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.cubeia.backend.firebase.CashGameBackendContract;
+import com.cubeia.backend.firebase.CashGamesBackendContract;
 import com.cubeia.backoffice.accounting.api.Money;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.action.UnseatPlayersMttAction.Reason;
@@ -59,7 +59,7 @@ public class PokerTableListener implements TournamentTableListener {
 	WalletServiceContract walletService;
 	
 	@Service
-	CashGameBackendContract backendService;
+	CashGamesBackendContract backendService;
 	
     @Inject
     StateInjector stateInjector;
