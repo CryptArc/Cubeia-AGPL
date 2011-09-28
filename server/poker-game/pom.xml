@@ -20,10 +20,6 @@
     </dependency>
     
     <dependency>
-      <!--
-      <groupId>com.cubeia.games</groupId>
-      <artifactId>poker-protocol</artifactId>
-      -->
       <groupId>se.jadestone.dicearena</groupId>
       <artifactId>poker-protocol</artifactId>
      
@@ -62,11 +58,19 @@
     	<classifier>tests</classifier>
     </dependency>
     
-    <!-- dependency>
-      <groupId>com.cubeia.games</groupId>
-      <artifactId>poker-cep-service</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency-->
+    
+    <dependency>
+	  <groupId>com.cubeia.games</groupId>
+	  <artifactId>backend-service-contract</artifactId>
+    </dependency>
+    
+    <dependency>
+	  <groupId>com.cubeia.games</groupId>
+	  <artifactId>backend-service-mock</artifactId>
+	  <type>firebase-sar</type>
+      <scope>provided</scope>
+    </dependency>
+    
     
     <dependency>
       <groupId>com.cubeia.network.wallet.firebase</groupId>

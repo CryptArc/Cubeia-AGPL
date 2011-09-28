@@ -18,6 +18,8 @@
     <module>poker-uar</module>
     <module>jg-mock-login-handler</module>
     <module>backend</module>
+    <module>backend-service-contract</module>
+    <module>backend-service-mock</module>
   </modules>
 
     <organization>
@@ -34,6 +36,7 @@
 	
   <properties>
     <firebase.version>1.7.0-CE</firebase.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
   <dependencies>
@@ -125,6 +128,25 @@
         <version>${project.version}</version>
         <type>firebase-par</type>
     </dependency>
+
+    <dependency>
+        <groupId>com.cubeia.games</groupId>
+        <artifactId>backend</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+    
+    <dependency>
+        <groupId>com.cubeia.games</groupId>
+        <artifactId>backend-service-contract</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+    
+    <dependency>
+        <groupId>com.cubeia.games</groupId>
+        <artifactId>backend-service-mock</artifactId>
+        <version>${project.version}</version>
+        <type>firebase-sar</type>
+    </dependency>
     
     <dependency>
         <groupId>com.cubeia.games</groupId>
@@ -211,6 +233,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.3.2</version>
         <configuration>
           <source>1.6</source>
           <target>1.6</target>
