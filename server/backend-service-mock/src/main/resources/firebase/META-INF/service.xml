@@ -7,5 +7,6 @@
     <exported>
         <package>com.cubeia.backend.-</package>
         <package>org.slf4j.-</package>
+        <package>com.google.common.-</package>
     </exported>
 </service>

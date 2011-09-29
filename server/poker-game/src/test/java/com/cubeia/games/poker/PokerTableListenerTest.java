@@ -10,16 +10,15 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import se.jadestone.dicearena.game.poker.network.protocol.PlayerBalance;
 import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
 
+import com.cubeia.backend.cashgame.callback.OpenSessionCallback;
 import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
+import com.cubeia.backend.firebase.FirebaseCallbackFactory;
 import com.cubeia.firebase.api.action.GameAction;
-import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.game.GameNotifier;
 import com.cubeia.firebase.api.game.player.GenericPlayer;
 import com.cubeia.firebase.api.game.table.Table;
@@ -43,6 +42,8 @@ public class PokerTableListenerTest {
         ptl.gameStateSender = mock(GameStateSender.class);
         ptl.walletService = mock(WalletServiceContract.class);
         ptl.backendService = mock(CashGamesBackendContract.class);
+        FirebaseCallbackFactory callbackFactory = mock(FirebaseCallbackFactory.class);
+        when(ptl.backendService.getCallbackFactory()).thenReturn(callbackFactory);
         
         Table table = mock(Table.class);
         when(table.getId()).thenReturn(tableId);
@@ -66,7 +67,8 @@ public class PokerTableListenerTest {
         verify(ptl.state).addPlayer(pokerPlayer);
 //        verify(ptl.walletService).startSession(PokerGame.CURRENCY_CODE, PokerGame.LICENSEE_ID, playerId, 
 //            tableId, PokerGame.POKER_GAME_ID, player.getName());
-        verify(ptl.backendService).openSession(Mockito.anyInt(), Mockito.any(OpenSessionRequest.class));
+        verify(ptl.backendService).openSession(Mockito.any(OpenSessionRequest.class), Mockito.any(OpenSessionCallback.class));
+        verify(callbackFactory).createOpenSessionCallback(table);
         
 //        ArgumentCaptor<GameDataAction> balanceActionCaptor = ArgumentCaptor.forClass(GameDataAction.class);
             

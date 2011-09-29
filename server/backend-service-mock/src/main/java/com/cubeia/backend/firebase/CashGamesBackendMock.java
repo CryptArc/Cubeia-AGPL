@@ -8,6 +8,9 @@ import org.slf4j.LoggerFactory;
 
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.TableId;
+import com.cubeia.backend.cashgame.callback.AnnounceTableCallback;
+import com.cubeia.backend.cashgame.callback.OpenSessionCallback;
+import com.cubeia.backend.cashgame.callback.ReserveCallback;
 import com.cubeia.backend.cashgame.dto.AnnounceTableRequest;
 import com.cubeia.backend.cashgame.dto.AnnounceTableResponse;
 import com.cubeia.backend.cashgame.dto.BalanceUpdate;
@@ -20,7 +23,6 @@ import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
 import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;
 import com.cubeia.backend.cashgame.dto.ReserveRequest;
 import com.cubeia.backend.cashgame.dto.ReserveResponse;
-import com.cubeia.firebase.api.action.GameObjectAction;
 import com.cubeia.firebase.api.action.service.ServiceAction;
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.firebase.api.service.RoutableService;
@@ -47,10 +49,15 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
     }
     
     @Override
-    public void announceTable(int gameId, int tableId, AnnounceTableRequest request) {
+    public FirebaseCallbackFactory getCallbackFactory() {
+        return new FirebaseCallbackFactoryImpl(router);
+    }
+    
+    @Override
+    public void announceTable(AnnounceTableRequest request, AnnounceTableCallback callback) {
         AnnounceTableResponse response = new AnnounceTableResponse(new TableId(nextId()));
         log.debug("new table approved, tId = {}", response.tableId.id);
-        sendToTable(gameId, tableId, response);
+        callback.requestSucceded(response);
     }
 
     @Override
@@ -59,7 +66,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
     }
 
     @Override
-    public void openSession(int gameId, OpenSessionRequest request) {
+    public void openSession(OpenSessionRequest request, OpenSessionCallback callback) {
         long sid = nextId();
         
         sessionTransactions.put(sid, 0);
@@ -68,7 +75,9 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
             Collections.<String, String>emptyMap());
         log.debug("new session opened, tId = {}, pId = {}, sId = {}", 
             new Object[] {request.tableId.id, request.playerId, response.sessionId.getSessionId()});
-        sendToTable(gameId, request.tableId.id, response);
+        log.debug("currently open sessions: {}", sessionTransactions.size());
+        callback.requestSucceded(response);
+//        sendToTable(gameId, request.tableId.id, response);
     }
 
     @Override
@@ -85,7 +94,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
     }
 
     @Override
-    public void reserve(int gameId, int tableId, ReserveRequest request) {
+    public void reserve(ReserveRequest request, ReserveCallback callback) {
         int amount = request.amount;
         long sid = request.playerSessionId.getSessionId();
         
@@ -93,14 +102,14 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
             log.error("reserve failed, session not found: sId = " + sid);
             ReserveFailedResponse failResponse = new ReserveFailedResponse(request.playerSessionId, 
                 ReserveFailedResponse.ErrorCode.A, "session " + sid + " not open");
-            sendToTable(gameId, tableId, failResponse);
+            callback.requestFailed(failResponse);
         } else {
             sessionTransactions.put(sid, amount);
             int newBalance = getBalance(sid);
             BalanceUpdate balanceUpdate = new BalanceUpdate(request.playerSessionId, newBalance, nextId());
             ReserveResponse response = new ReserveResponse(balanceUpdate, amount);
             log.debug("reserve successful: sId = {}, amount = {}, new balance = {}" + sid, amount, newBalance);
-            sendToTable(gameId, tableId, response);
+            callback.requestSucceded(response);
         }
     }
 
@@ -121,14 +130,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
         for (Integer tx : sessionTransactions.get(sid)) {
             balance += tx;
         }
-        
         return balance;
-    }
-    
-    private void sendToTable(int gameId, int tableId, Object object) {
-        GameObjectAction action = new GameObjectAction(tableId);
-        action.setAttachment(object);
-        router.dispatchToGame(gameId, action);
     }
     
     @Override

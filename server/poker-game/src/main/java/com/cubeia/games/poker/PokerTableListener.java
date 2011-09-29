@@ -26,7 +26,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cubeia.backend.cashgame.TableId;
+import com.cubeia.backend.cashgame.callback.OpenSessionCallback;
 import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
+import com.cubeia.backend.firebase.FirebaseCallbackFactory;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
 import com.cubeia.backoffice.accounting.api.Money;
 import com.cubeia.firebase.api.action.GameDataAction;
@@ -187,8 +189,11 @@ public class PokerTableListener implements TournamentTableListener {
 //		}
 			
 		OpenSessionRequest openSessionRequest = new OpenSessionRequest(player.getPlayerId(), new TableId(table.getId()), -1);
-        backendService.openSession(table.getMetaData().getGameId(), openSessionRequest );
 		
+        backendService.openSession(openSessionRequest, backendService.getCallbackFactory().createOpenSessionCallback(table));
+		
+        
+        
 			
 //		if (sessionId == null) {
 //			log.error("error opening wallet session. Table["+table.getId()+"] player["+player+"]");
