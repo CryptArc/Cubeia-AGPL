@@ -17,12 +17,15 @@
 
 package com.cubeia.games.poker.util;
 
+import static org.junit.Assert.assertEquals;
+
 import java.math.BigDecimal;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class WalletAmountConverterTest extends TestCase {
+public class WalletAmountConverterTest {
 
+    @Test
     public void testConvertToWalletAmount() {
         WalletAmountConverter wac = new WalletAmountConverter(2);
         
@@ -31,6 +34,7 @@ public class WalletAmountConverterTest extends TestCase {
         assertEquals(2, a.scale());
     }
 
+    @Test
     public void testConvertToInternalScaledAmount() {
         WalletAmountConverter wac = new WalletAmountConverter(2);
         int a = wac.convertToInternalScaledAmount(new BigDecimal("-123"));

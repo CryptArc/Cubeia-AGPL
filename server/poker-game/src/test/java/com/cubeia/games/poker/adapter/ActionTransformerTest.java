@@ -28,7 +28,9 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
+
 import se.jadestone.dicearena.game.poker.network.protocol.BestHand;
 import se.jadestone.dicearena.game.poker.network.protocol.CardToDeal;
 import se.jadestone.dicearena.game.poker.network.protocol.DealPrivateCards;
@@ -53,8 +55,9 @@ import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotTransition;
 
-public class ActionTransformerTest extends TestCase {
+public class ActionTransformerTest {
 
+    @Test
 	public void testCreateHandEndPacket() {
 		Hand hand1 = new Hand("As Ks");
 		Hand hand2 = new Hand("Td Tc");
@@ -73,9 +76,9 @@ public class ActionTransformerTest extends TestCase {
 		PotTransfers potTransfers = new PotTransfers();
         HandEnd end = ActionTransformer.createHandEndPacket(hands, potTransfers);
 		
-		assertEquals(2, end.hands.size());
-		assertNotSame("Two High", end.hands.get(0).handType.name());
-		assertNotSame("Two High", end.hands.get(1).handType.name());
+		Assert.assertEquals(2, end.hands.size());
+		Assert.assertNotSame("Two High", end.hands.get(0).handType.name());
+		Assert.assertNotSame("Two High", end.hands.get(1).handType.name());
 		
 		assertThat(end.potTransfers, is(potTransfers));
 	}
@@ -87,34 +90,37 @@ public class ActionTransformerTest extends TestCase {
 	    hand.addCards(idGen.copyAndAssignIds(oldCards));
     }
 
+    @Test
     public void testCreatePrivateVisibleCards() {
 		List<Card> cards = new ArrayList<Card>();
 		cards.add(new Card(0, "AS"));
 		cards.add(new Card(1, "AS"));
 		DealPrivateCards privateCards = ActionTransformer.createPrivateCardsPacket(1, cards, false);
-		assertEquals(2, privateCards.cards.size());
+		Assert.assertEquals(2, privateCards.cards.size());
 		CardToDeal dealtCard = privateCards.cards.get(0);
-		assertEquals(1, dealtCard.player);
-		assertEquals(Enums.Rank.ACE, dealtCard.card.rank);
-		assertEquals(Enums.Suit.SPADES, dealtCard.card.suit);
+		Assert.assertEquals(1, dealtCard.player);
+		Assert.assertEquals(Enums.Rank.ACE, dealtCard.card.rank);
+		Assert.assertEquals(Enums.Suit.SPADES, dealtCard.card.suit);
 	}
 	
+    @Test
 	public void testCreatePrivateHiddenCards() {
 		List<Card> cards = new ArrayList<Card>();
 		cards.add(new Card(0, "AS"));
 		cards.add(new Card(1, "AH"));
 		DealPrivateCards privateCards = ActionTransformer.createPrivateCardsPacket(1, cards, true);
-		assertEquals(2, privateCards.cards.size());
+		Assert.assertEquals(2, privateCards.cards.size());
 		CardToDeal dealtCard = privateCards.cards.get(0);
-		assertEquals(1, dealtCard.player);
-		assertEquals(Enums.Rank.HIDDEN, dealtCard.card.rank);
-		assertEquals(Enums.Suit.HIDDEN, dealtCard.card.suit);
+		Assert.assertEquals(1, dealtCard.player);
+		Assert.assertEquals(Enums.Rank.HIDDEN, dealtCard.card.rank);
+		Assert.assertEquals(Enums.Suit.HIDDEN, dealtCard.card.suit);
 		dealtCard = privateCards.cards.get(1);
-		assertEquals(1, dealtCard.player);
-		assertEquals(Enums.Rank.HIDDEN, dealtCard.card.rank);
-		assertEquals(Enums.Suit.HIDDEN, dealtCard.card.suit);
+		Assert.assertEquals(1, dealtCard.player);
+		Assert.assertEquals(Enums.Rank.HIDDEN, dealtCard.card.rank);
+		Assert.assertEquals(Enums.Suit.HIDDEN, dealtCard.card.suit);
 	}
 	
+    @Test
 	public void testTransformActionTypeToPokerActionType() {
 	    assertThat("wrong number of action types, something broken?", ActionType.values().length, is(9));
         assertThat(ActionTransformer.transform(ActionType.FOLD), is(PokerActionType.FOLD));
@@ -133,6 +139,7 @@ public class ActionTransformerTest extends TestCase {
         }
 	}
 	
+    @Test
 	public void testRankConversion() {
         assertThat(Enums.Rank.values().length, is(14));
         assertThat(Rank.values().length, is(13));
@@ -152,6 +159,7 @@ public class ActionTransformerTest extends TestCase {
         assertThat(Enums.Rank.KING,   is(convertRankToProtocolEnum(Rank.KING )));
 	}
 	
+    @Test
     public void testSuitConversion() {
         assertThat(Enums.Suit.values().length, is(4 + 1));
         assertThat(Suit.values().length, is(4));
@@ -162,6 +170,7 @@ public class ActionTransformerTest extends TestCase {
         assertThat(Enums.Suit.SPADES, is(ActionTransformer.convertSuitToProtocolEnum(Suit.SPADES)));
     }
     
+    @Test
     public void testHandTypeConvertaion() {
         assertThat(Enums.HandType.values().length, is(11));
         assertThat(HandType.values().length, is(11));
@@ -180,6 +189,7 @@ public class ActionTransformerTest extends TestCase {
         
     }
 	
+    @Test
     public void testCreatePlayerAction() {
         assertThat("wrong number of poker action types, something broken?", PokerActionType.values().length, is(9));
         assertThat(ActionTransformer.createPlayerAction(PokerActionType.FOLD).type, is(ActionType.FOLD));
@@ -198,6 +208,7 @@ public class ActionTransformerTest extends TestCase {
         }
     }	
     
+    @Test
     public void testCreatePotTransferPacket() {
         PokerPlayer player = mock(PokerPlayer.class);
         int playerId = 333;
@@ -214,6 +225,7 @@ public class ActionTransformerTest extends TestCase {
         assertThat(potTransferPacket.potId, is((byte) potId));
     }
     
+    @Test
     public void testCreateBestHandPacket() {
         List<Card> cardsInHand = asList(new Card(1, "5H"), new Card(2, "JC"));
         BestHand createBestHandPacket = ActionTransformer.createBestHandPacket(234, ROYAL_STRAIGHT_FLUSH, cardsInHand);
@@ -222,6 +234,7 @@ public class ActionTransformerTest extends TestCase {
         assertThat(createBestHandPacket.player, is(234));
     }
     
+    @Test
     public void testConvertCards() {
         List<Card> cardsInHand = asList(new Card(1, "5H"), new Card(2, "JC"));
         List<GameCard> cards = ActionTransformer.convertCards(cardsInHand);

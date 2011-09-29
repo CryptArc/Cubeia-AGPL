@@ -19,9 +19,10 @@ package com.cubeia.games.poker.gameplay;
 
 import java.math.BigDecimal;
 
-import junit.framework.TestCase;
 import mock.MockServiceRegistry;
 import mock.MockWalletService;
+
+import org.junit.Test;
 
 import com.cubeia.firebase.api.game.context.GameContext;
 import com.cubeia.firebase.api.service.ServiceRegistry;
@@ -29,7 +30,7 @@ import com.cubeia.firebase.api.util.ResourceLocator;
 import com.cubeia.games.poker.PokerGame;
 import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
 
-public class BasicGameTest extends TestCase {
+public class BasicGameTest {
 
 	private MockWalletService mockWalletService = new MockWalletService() {
 		@Override
@@ -41,6 +42,7 @@ public class BasicGameTest extends TestCase {
 		public void withdraw(BigDecimal amount, int licenseeId, long sessionId, String comment) {}
 	};
 	
+	@Test
 	public void testBasic() throws Exception {
 		PokerGame game = new PokerGame();
 		

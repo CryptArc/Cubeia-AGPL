@@ -17,13 +17,16 @@
 
 package com.cubeia.games.poker.logic;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.UUID;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class TimeoutCacheTest extends TestCase {
+public class TimeoutCacheTest {
 
     
+    @Test
     public void testBasicUsage() throws Exception {
         TimeoutCache cache = TimeoutCache.getInstance();
         UUID u1 = UUID.randomUUID();
