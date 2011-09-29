@@ -17,6 +17,12 @@ import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
 
 public interface CashGamesBackend {
 
+    /**
+     * Async call to announce table. 
+     * The table will recieve a 
+     * @param request
+     * @param callback
+     */
 	void announceTable(AnnounceTableRequest request, AnnounceTableCallback callback);
 
 	void closeTable(CloseTableRequest request) throws CloseTableFailedException;

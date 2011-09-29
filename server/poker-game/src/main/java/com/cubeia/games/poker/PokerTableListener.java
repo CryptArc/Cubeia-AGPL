@@ -178,9 +178,15 @@ public class PokerTableListener implements TournamentTableListener {
 			PokerGame.POKER_GAME_ID, 
 			player.getName());
 		
-			if (log.isDebugEnabled()) {
-				log.debug("Created session account: sessionId["+sessionId+"], tableId["+table.getId()+"], playerId["+player.getPlayerId()+":"+player.getName()+"]");
-			}
+		if (log.isDebugEnabled()) {
+			log.debug("Created session account: sessionId["+sessionId+"], tableId["+table.getId()+"], playerId["+player.getPlayerId()+":"+player.getName()+"]");
+		}
+			
+//		backendService.openSession(gameId, tableId, request)
+		
+//		backendService.openSession(table.getGameState().getState(), callback);
+		
+		
 			
 		if (sessionId == null) {
 			log.error("error opening wallet session. Table["+table.getId()+"] player["+player+"]");

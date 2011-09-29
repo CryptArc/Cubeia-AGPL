@@ -111,11 +111,11 @@ public class AsynchronousCashGamesBackend implements CashGamesBackend {
 		} catch (ReserveFailedException e) {
 			ReserveFailedResponse.ErrorCode errorCode = e.getErrorCode();
 			String message = e.getMessage();
-			callback.requestFailed(new ReserveFailedResponse(errorCode, message));
+			callback.requestFailed(new ReserveFailedResponse(request.playerSessionId, errorCode, message));
 		} catch (Throwable t) {
 			ReserveFailedResponse.ErrorCode errorCode = null;
 			String message = t.getMessage();
-			callback.requestFailed(new ReserveFailedResponse(errorCode, message));
+			callback.requestFailed(new ReserveFailedResponse(request.playerSessionId, errorCode, message));
 		}
 	}
 	

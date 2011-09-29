@@ -76,7 +76,7 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
     private List<PokerParticipant> participants = new ArrayList<PokerParticipant>();
 
 	private Injector injector;
-	
+
     /**
      * Create the activator for Poker.
      * Set the Creation Participant as participant.

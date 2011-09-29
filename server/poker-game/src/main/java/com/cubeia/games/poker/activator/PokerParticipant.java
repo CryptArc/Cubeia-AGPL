@@ -53,7 +53,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
 	/** Number of seats at the table */
 	private int seats = 10;
 
-	/** Dummy domain for tesing lobby tree */
+	/** Dummy domain for testing lobby tree */
 	private String domain = "A";
 
 	private TimingProfile timingProfile = TimingFactory.getRegistry().getDefaultTimingProfile();
