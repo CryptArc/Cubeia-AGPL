@@ -25,6 +25,8 @@ import java.math.BigDecimal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.cubeia.backend.cashgame.TableId;
+import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
 import com.cubeia.backoffice.accounting.api.Money;
 import com.cubeia.firebase.api.action.GameDataAction;
@@ -152,48 +154,48 @@ public class PokerTableListener implements TournamentTableListener {
             // TODO: wallet session should not be created here but on buy in request
             
         	log.debug("Start wallet session for player: "+player);
-	        Long sessionId = startWalletSession(table, player);
-	        ((PokerPlayerImpl) pokerPlayer).setSessionId(sessionId);
+        	startWalletSession(table, player);
+        	
+        	// TODO: session should be set on player when we get the async response
+//	        Long sessionId = startWalletSession(table, player);
+//	        ((PokerPlayerImpl) pokerPlayer).setSessionId(sessionId);
 	        
-	        // TODO: handle wallet error!
-	        
-	        if (sessionId != null) {
-	        	// TODO: amount is hardcoded, user should give the amount
-	        	int amount = 1000;
-	        	 withdraw(amount, sessionId, table.getId());
-	        	state.addChips(player.getPlayerId(), amount);
-	        }
+        	// TODO: add chips should be done after session is created and on buy in 
+//	        if (sessionId != null) {
+//	        	// TODO: amount is hardcoded, user should give the amount
+//	        	int amount = 1000;
+//	        	withdraw(amount, sessionId, table.getId());
+//	        	state.addChips(player.getPlayerId(), amount);
+//	        }
         }
         
-        sendTableBalance(state, table, player.getPlayerId());
+//        sendTableBalance(state, table, player.getPlayerId());
         return pokerPlayer;
     }
     
-	private Long startWalletSession(Table table, GenericPlayer player) {
-		Long sessionId = walletService.startSession(
-			PokerGame.CURRENCY_CODE,
-			PokerGame.LICENSEE_ID,
-			player.getPlayerId(), 
-			table.getId(), 
-			PokerGame.POKER_GAME_ID, 
-			player.getName());
-		
-		if (log.isDebugEnabled()) {
-			log.debug("Created session account: sessionId["+sessionId+"], tableId["+table.getId()+"], playerId["+player.getPlayerId()+":"+player.getName()+"]");
-		}
+	private void startWalletSession(Table table, GenericPlayer player) {
+//		Long sessionId = walletService.startSession(
+//			PokerGame.CURRENCY_CODE,
+//			PokerGame.LICENSEE_ID,
+//			player.getPlayerId(), 
+//			table.getId(), 
+//			PokerGame.POKER_GAME_ID, 
+//			player.getName());
+//		
+//		if (log.isDebugEnabled()) {
+//			log.debug("Created session account: sessionId["+sessionId+"], tableId["+table.getId()+"], playerId["+player.getPlayerId()+":"+player.getName()+"]");
+//		}
 			
-//		backendService.openSession(gameId, tableId, request)
-		
-//		backendService.openSession(table.getGameState().getState(), callback);
-		
+		OpenSessionRequest openSessionRequest = new OpenSessionRequest(player.getPlayerId(), new TableId(table.getId()), -1);
+        backendService.openSession(table.getMetaData().getGameId(), openSessionRequest );
 		
 			
-		if (sessionId == null) {
-			log.error("error opening wallet session. Table["+table.getId()+"] player["+player+"]");
-			return null;
-		} else {
-			return sessionId;
-		}
+//		if (sessionId == null) {
+//			log.error("error opening wallet session. Table["+table.getId()+"] player["+player+"]");
+//			return null;
+//		} else {
+//			return sessionId;
+//		}
 	}
 
 	private boolean endWalletSession(Table table, GenericPlayer player, long sessionId) {

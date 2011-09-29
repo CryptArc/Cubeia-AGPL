@@ -42,11 +42,10 @@ public interface CashGamesBackendContract extends Contract {
      * containing a {@link OpenSessionResponse} or {@link OpenSessionFailedResponse} to the table 
      * when done.
      * @param gameId game id
-     * @param tableId table id
      * @param request request
      */
     @Async
-    void openSession(int gameId, int tableId, OpenSessionRequest request);
+    void openSession(int gameId, OpenSessionRequest request);
 
     void closeSession(CloseSessionRequest request) throws CloseSessionFailedException;
 

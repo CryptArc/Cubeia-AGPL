@@ -59,7 +59,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
     }
 
     @Override
-    public void openSession(int gameId, int tableId, OpenSessionRequest request) {
+    public void openSession(int gameId, OpenSessionRequest request) {
         long sid = nextId();
         
         sessionTransactions.put(sid, 0);
@@ -68,7 +68,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
             Collections.<String, String>emptyMap());
         log.debug("new session opened, tId = {}, pId = {}, sId = {}", 
             new Object[] {request.tableId.id, request.playerId, response.sessionId.getSessionId()});
-        sendToTable(gameId, tableId, response);
+        sendToTable(gameId, request.tableId.id, response);
     }
 
     @Override
