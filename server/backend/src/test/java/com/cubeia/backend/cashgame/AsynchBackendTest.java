@@ -103,7 +103,8 @@ public class AsynchBackendTest {
 
 		OpenSessionRequest request = new OpenSessionRequest(123, new TableId(123), 123);
 
-		PlayerSessionId playerSessionId = new PlayerSessionId(1025);
+		int playerId = 42;
+        PlayerSessionId playerSessionId = new PlayerSessionId(1025, playerId);
 		Map<String, String> propertiesMap = new HashMap<String, String>();
 		propertiesMap.put("MAGIC_KEY", "MAGIC_VALUE");
 
@@ -142,7 +143,8 @@ public class AsynchBackendTest {
 
 	@Test
 	public void testReserve() throws Exception {
-		PlayerSessionId playerSessionId = new PlayerSessionId(12345);
+		int playerId = 42;
+        PlayerSessionId playerSessionId = new PlayerSessionId(12345, playerId);
 		int amountReserved = 1000;
 		int roundNumber = 2;
 		long balanceVersionNumber = 102030;
@@ -168,7 +170,8 @@ public class AsynchBackendTest {
 
 	@Test
 	public void testReserveFail() throws Exception {
-		PlayerSessionId playerSessionId = new PlayerSessionId(12345);
+		int playerId = 42;
+        PlayerSessionId playerSessionId = new PlayerSessionId(12345, playerId);
 		int amountReserved = 1000;
 		int roundNumber = 2;
 
