@@ -1,4 +1,4 @@
-package com.cubeia.backend.firebase;
+package com.cubeia.backend.cashgame;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;

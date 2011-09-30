@@ -5,13 +5,13 @@ import com.cubeia.backend.cashgame.PlayerSessionId;
 public class BalanceUpdate {
 
 	public final PlayerSessionId playerSessionId;
-	public final long newBalance;
+	public final long balance;
 	public final long balanceVersionNumber;
 
-	public BalanceUpdate(PlayerSessionId playerSessionId, long newBalance,
+	public BalanceUpdate(PlayerSessionId playerSessionId, long balance,
 			long balanceVersionNumber) {
 		this.playerSessionId = playerSessionId;
-		this.newBalance = newBalance;
+		this.balance = balance;
 		this.balanceVersionNumber = balanceVersionNumber;
 	}
 }

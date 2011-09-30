@@ -4,6 +4,7 @@ import com.cubeia.backend.cashgame.callback.AnnounceTableCallback;
 import com.cubeia.backend.cashgame.callback.OpenSessionCallback;
 import com.cubeia.backend.cashgame.callback.ReserveCallback;
 import com.cubeia.backend.cashgame.dto.AnnounceTableRequest;
+import com.cubeia.backend.cashgame.dto.BalanceUpdate;
 import com.cubeia.backend.cashgame.dto.BatchHandRequest;
 import com.cubeia.backend.cashgame.dto.BatchHandResponse;
 import com.cubeia.backend.cashgame.dto.CloseSessionRequest;
@@ -23,17 +24,22 @@ public interface CashGamesBackend {
      * @param request
      * @param callback
      */
+	@Async
 	void announceTable(AnnounceTableRequest request, AnnounceTableCallback callback);
 
 	void closeTable(CloseTableRequest request) throws CloseTableFailedException;
 
+	@Async
 	void openSession(OpenSessionRequest request, OpenSessionCallback callback);
 
 	void closeSession(CloseSessionRequest request) throws CloseSessionFailedException;
 
+	@Async
 	void reserve(ReserveRequest request, ReserveCallback callback);
 
 	BatchHandResponse batchHand(BatchHandRequest request) throws BatchHandFailedException;
 
 	long getMainAccountBalance(int playerId) throws GetBalanceFailedException;
+	
+	BalanceUpdate getSessionBalance(PlayerSessionId sessionId) throws GetBalanceFailedException;
 }

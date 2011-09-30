@@ -17,7 +17,7 @@
 
 package com.cubeia.games.poker;
 
-import static com.cubeia.poker.player.SitOutStatus.NOT_ENTERED_YET;
+import static com.cubeia.poker.player.SitOutStatus.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -25,10 +25,8 @@ import java.math.BigDecimal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.cubeia.backend.cashgame.TableId;
-import com.cubeia.backend.cashgame.callback.OpenSessionCallback;
+import com.cubeia.backend.cashgame.TableIdImpl;
 import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
-import com.cubeia.backend.firebase.FirebaseCallbackFactory;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
 import com.cubeia.backoffice.accounting.api.Money;
 import com.cubeia.firebase.api.action.GameDataAction;
@@ -188,7 +186,8 @@ public class PokerTableListener implements TournamentTableListener {
 //			log.debug("Created session account: sessionId["+sessionId+"], tableId["+table.getId()+"], playerId["+player.getPlayerId()+":"+player.getName()+"]");
 //		}
 			
-		OpenSessionRequest openSessionRequest = new OpenSessionRequest(player.getPlayerId(), new TableId(table.getId()), -1);
+		// TODO: TableId must be obtained from announceTable call, may not be instantiated here.
+		OpenSessionRequest openSessionRequest = new OpenSessionRequest(player.getPlayerId(), new TableIdImpl(), -1);
 		
         backendService.openSession(openSessionRequest, backendService.getCallbackFactory().createOpenSessionCallback(table));
 		

@@ -3,12 +3,16 @@ package com.cubeia.backend.cashgame;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
+import com.cubeia.backend.cashgame.CashGamesBackend;
+import com.cubeia.backend.cashgame.PlayerSessionId;
+import com.cubeia.backend.cashgame.SynchronousCashGamesBackend;
 import com.cubeia.backend.cashgame.callback.AnnounceTableCallback;
 import com.cubeia.backend.cashgame.callback.OpenSessionCallback;
 import com.cubeia.backend.cashgame.callback.ReserveCallback;
 import com.cubeia.backend.cashgame.dto.AnnounceTableFailedResponse;
 import com.cubeia.backend.cashgame.dto.AnnounceTableRequest;
 import com.cubeia.backend.cashgame.dto.AnnounceTableResponse;
+import com.cubeia.backend.cashgame.dto.BalanceUpdate;
 import com.cubeia.backend.cashgame.dto.BatchHandRequest;
 import com.cubeia.backend.cashgame.dto.BatchHandResponse;
 import com.cubeia.backend.cashgame.dto.CloseSessionRequest;
@@ -31,8 +35,8 @@ public class AsynchronousCashGamesBackend implements CashGamesBackend {
 
 	private static final long serialVersionUID = 1L;
 
-	private final SynchronousCashGamesBackend backingImpl;
-	private final ExecutorService executor;
+	private SynchronousCashGamesBackend backingImpl;
+	private ExecutorService executor;
 
 	public AsynchronousCashGamesBackend(SynchronousCashGamesBackend backingImpl, ExecutorService executor) {
 		this.backingImpl = backingImpl;
@@ -127,4 +131,7 @@ public class AsynchronousCashGamesBackend implements CashGamesBackend {
 		return backingImpl.getMainAccountBalance(playerId);
 	}
 
+	public BalanceUpdate getSessionBalance(PlayerSessionId sessionId) throws GetBalanceFailedException {
+		return backingImpl.getSessionBalance(sessionId);
+	}
 }

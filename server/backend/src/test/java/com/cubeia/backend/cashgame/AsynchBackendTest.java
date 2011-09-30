@@ -45,20 +45,11 @@ public class AsynchBackendTest {
 	@Test
 	public void testAnnounceTable() throws Exception {
 		AnnounceTableRequest request = new AnnounceTableRequest(
-				4,
-				"desc",
-				BetStrategy.NO_LIMIT, 
-				new Currency("Euro", "EUR", 2),
-				10,
-				10,
-				20,
-				new BigDecimal("100.00"),
-				50,
-				5000);
+				1234);
 
 		AnnounceTableCallbackHandler callback = new AnnounceTableCallbackHandler();
 
-		TableId tableId = new TableId(1024);
+		TableId tableId = new TableIdImpl();
 		when(backingMock.announceTable(any(AnnounceTableRequest.class))).thenReturn(new AnnounceTableResponse(tableId));
 
 		backend.announceTable(request, callback);
@@ -72,20 +63,11 @@ public class AsynchBackendTest {
 	@Test
 	public void testAnnounceTableFail() throws Exception {
 		AnnounceTableRequest request = new AnnounceTableRequest(
-				4,
-				"desc",
-				BetStrategy.NO_LIMIT, 
-				new Currency("Euro", "EUR", 2),
-				10,
-				10,
-				20,
-				new BigDecimal("100.00"),
-				50,
-				5000);
+				1234);
 
 		AnnounceTableCallbackHandler callback = new AnnounceTableCallbackHandler();
 
-		when(backingMock.announceTable(any(AnnounceTableRequest.class))).thenThrow(new AnnounceTableFailedException("no fun", AnnounceTableFailedResponse.ErrorCode.A));
+		when(backingMock.announceTable(any(AnnounceTableRequest.class))).thenThrow(new AnnounceTableFailedException("no fun", AnnounceTableFailedResponse.ErrorCode.UNKOWN_PLATFORM_TABLE_ID));
 
 		backend.announceTable(request, callback);
 
@@ -94,17 +76,18 @@ public class AsynchBackendTest {
 		assertTrue(response instanceof AnnounceTableFailedResponse);
 		AnnounceTableFailedResponse announceTableFailedResponse = (AnnounceTableFailedResponse) response;
 		assertEquals("no fun", announceTableFailedResponse.message);
-		assertEquals(AnnounceTableFailedResponse.ErrorCode.A, announceTableFailedResponse.errorCode);
+		assertEquals(AnnounceTableFailedResponse.ErrorCode.UNKOWN_PLATFORM_TABLE_ID, announceTableFailedResponse.errorCode);
 	}
 
 
 	@Test
 	public void testOpenSession() throws Exception {
 
-		OpenSessionRequest request = new OpenSessionRequest(123, new TableId(123), 123);
+		OpenSessionRequest request = new OpenSessionRequest(123, new TableIdImpl(), 123);
 
 		int playerId = 42;
-        PlayerSessionId playerSessionId = new PlayerSessionId(1025, playerId);
+        PlayerSessionId playerSessionId = new PlayerSessionIdImpl(playerId);
+
 		Map<String, String> propertiesMap = new HashMap<String, String>();
 		propertiesMap.put("MAGIC_KEY", "MAGIC_VALUE");
 
@@ -125,7 +108,7 @@ public class AsynchBackendTest {
 	@Test
 	public void testOpenSessionFail() throws Exception {
 
-		OpenSessionRequest request = new OpenSessionRequest(123, new TableId(123), 123);
+		OpenSessionRequest request = new OpenSessionRequest(123, new TableIdImpl(), 123);
 
 		OpenSessionCallbackHandler callback = new OpenSessionCallbackHandler();
 
@@ -144,7 +127,8 @@ public class AsynchBackendTest {
 	@Test
 	public void testReserve() throws Exception {
 		int playerId = 42;
-        PlayerSessionId playerSessionId = new PlayerSessionId(12345, playerId);
+        PlayerSessionId playerSessionId = new PlayerSessionIdImpl(playerId);
+
 		int amountReserved = 1000;
 		int roundNumber = 2;
 		long balanceVersionNumber = 102030;
@@ -165,13 +149,14 @@ public class AsynchBackendTest {
 
 		assertEquals(amountReserved, reserveResponse.amountReserved);
 		assertEquals(balanceVersionNumber, reserveResponse.balanceUpdate.balanceVersionNumber);
-		assertEquals(newBalance, reserveResponse.balanceUpdate.newBalance);
+		assertEquals(newBalance, reserveResponse.balanceUpdate.balance);
 	}
 
 	@Test
 	public void testReserveFail() throws Exception {
+
 		int playerId = 42;
-        PlayerSessionId playerSessionId = new PlayerSessionId(12345, playerId);
+        PlayerSessionId playerSessionId = new PlayerSessionIdImpl(playerId);
 		int amountReserved = 1000;
 		int roundNumber = 2;
 

@@ -2,6 +2,7 @@ package com.cubeia.backend.cashgame;
 
 import com.cubeia.backend.cashgame.dto.AnnounceTableRequest;
 import com.cubeia.backend.cashgame.dto.AnnounceTableResponse;
+import com.cubeia.backend.cashgame.dto.BalanceUpdate;
 import com.cubeia.backend.cashgame.dto.BatchHandRequest;
 import com.cubeia.backend.cashgame.dto.BatchHandResponse;
 import com.cubeia.backend.cashgame.dto.CloseSessionRequest;
@@ -33,4 +34,6 @@ public interface SynchronousCashGamesBackend {
 	BatchHandResponse batchHand(BatchHandRequest request) throws BatchHandFailedException;
 
 	long getMainAccountBalance(int playerId) throws GetBalanceFailedException;
+
+	BalanceUpdate getSessionBalance(PlayerSessionId sessionId) throws GetBalanceFailedException;
 }

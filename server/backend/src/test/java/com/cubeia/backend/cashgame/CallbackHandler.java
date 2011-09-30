@@ -1,5 +1,7 @@
 package com.cubeia.backend.cashgame;
 
+
+
 class CallbackHandler {
 	boolean called = false;
 	final Pointer<Object> responsePtr = new Pointer<Object>();

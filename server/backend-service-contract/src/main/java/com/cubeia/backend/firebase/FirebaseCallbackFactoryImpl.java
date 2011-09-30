@@ -11,7 +11,7 @@ public class FirebaseCallbackFactoryImpl implements FirebaseCallbackFactory {
 
     private final ServiceRouter router;
 
-    protected FirebaseCallbackFactoryImpl(ServiceRouter router) {
+    public FirebaseCallbackFactoryImpl(ServiceRouter router) {
         this.router = router;
     }
     

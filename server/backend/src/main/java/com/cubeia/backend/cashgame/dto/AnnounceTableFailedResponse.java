@@ -10,6 +10,6 @@ public class AnnounceTableFailedResponse {
 	}
 
 	public enum ErrorCode {
-		A, B, C;
+		EXTERNAL_CALL_FAILED, UNKOWN_PLATFORM_TABLE_ID;
 	}
 }
