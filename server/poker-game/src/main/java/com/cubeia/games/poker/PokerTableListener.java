@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cubeia.backend.cashgame.CashGamesBackend;
+import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.TableIdImpl;
 import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
@@ -156,18 +157,6 @@ public class PokerTableListener implements TournamentTableListener {
             
         	log.debug("Start wallet session for player: "+player);
         	startWalletSession(table, player);
-        	
-        	// TODO: session should be set on player when we get the async response
-//	        Long sessionId = startWalletSession(table, player);
-//	        ((PokerPlayerImpl) pokerPlayer).setSessionId(sessionId);
-	        
-        	// TODO: add chips should be done after session is created and on buy in 
-//	        if (sessionId != null) {
-//	        	// TODO: amount is hardcoded, user should give the amount
-//	        	int amount = 1000;
-//	        	withdraw(amount, sessionId, table.getId());
-//	        	state.addChips(player.getPlayerId(), amount);
-//	        }
         }
         
 //        sendTableBalance(state, table, player.getPlayerId());
@@ -175,17 +164,6 @@ public class PokerTableListener implements TournamentTableListener {
     }
     
 	private void startWalletSession(Table table, GenericPlayer player) {
-//		Long sessionId = walletService.startSession(
-//			PokerGame.CURRENCY_CODE,
-//			PokerGame.LICENSEE_ID,
-//			player.getPlayerId(), 
-//			table.getId(), 
-//			PokerGame.POKER_GAME_ID, 
-//			player.getName());
-//		
-//		if (log.isDebugEnabled()) {
-//			log.debug("Created session account: sessionId["+sessionId+"], tableId["+table.getId()+"], playerId["+player.getPlayerId()+":"+player.getName()+"]");
-//		}
 	    
 	    log.debug("starting wallet session: tId = {}, pId = {}", table.getId(), player.getPlayerId());
 			
@@ -245,19 +223,27 @@ public class PokerTableListener implements TournamentTableListener {
     }
 	
     private void handleSessionEnd(Table table, int playerId, PokerPlayerImpl pokerPlayer) {
-        Long sessionId = pokerPlayer.getSessionId();
+        
+        
+        PlayerSessionId sessionId = ((PokerPlayerImpl) pokerPlayer).getPlayerSessionId();
         
         log.debug("Handle session end for player["+playerId+"], sessionid["+sessionId+"]");
         if (sessionId != null) {
         	long balance = pokerPlayer.getBalance();
-        	deposit((int) balance, sessionId, table.getId());
+        	
+        	// TODO: make call to new wallet!
+        	log.warn("TODO: ADD DEPOSIT CALL TO REAL WALLET!");
+//        	deposit((int) balance, sessionId, table.getId());
         	// TODO: Add check that depositedAmount-balance is 0
         	pokerPlayer.clearBalance();
         	
-        	GenericPlayer player = table.getPlayerSet().getPlayer(playerId);
-        	boolean endSessionOk = endWalletSession(table, player, sessionId);
+//        	GenericPlayer player = table.getPlayerSet().getPlayer(playerId);
+            // TODO: make call to new wallet!
+//        	boolean endSessionOk = endWalletSession(table, player, sessionId);
+        	boolean endSessionOk = true;
+        	
         	if (endSessionOk) {
-        		pokerPlayer.setSessionId(null);
+        		((PokerPlayerImpl) pokerPlayer).setPlayerSessionId(null);
         	} else {
         		// TODO: how do we handle this???
         		log.error("error ending wallet session");

@@ -55,7 +55,7 @@ public class PokerTableListenerTest {
         PokerPlayer pokerPlayer = ptl.addPlayer(table, player, false);
         
         assertThat(pokerPlayer.getId(), is(playerId));
-        assertThat(((PokerPlayerImpl) pokerPlayer).getSessionId(), nullValue());
+        assertThat(((PokerPlayerImpl) pokerPlayer).getPlayerSessionId(), nullValue());
         verify(ptl.gameStateSender).sendGameState(table, playerId);
         verify(ptl.state).addPlayer(pokerPlayer);
         verify(ptl.cashGameBackend).openSession(Mockito.any(OpenSessionRequest.class), Mockito.any(OpenSessionCallback.class));

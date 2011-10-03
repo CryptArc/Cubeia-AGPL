@@ -246,12 +246,9 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		sendPublicPacket(action, playerId);
 	}
 
+    @Deprecated
     @Override
 	public void notifyPlayerBalanceReset(PokerPlayer player) {
-		WalletServiceContract walletService = getServices().getServiceInstance(WalletServiceContract.class);
-		long sessionId = ((PokerPlayerImpl) player).getSessionId();
-		Money amount = new Money(Currency.getInstance(PokerGame.CURRENCY_CODE),amountConverter.convertToWalletAmount(player.getBalance()));
-		walletService.withdraw(amount, -1, sessionId, createPlayerBalanceResetDescription(player.getId()));
 		notifyPlayerBalance(player);
 	}
 
@@ -262,20 +259,20 @@ public class FirebaseServerAdapter implements ServerAdapter {
 			    List<PlayerBalance> balances = new ArrayList<PlayerBalance>();
 			    
 				// Handle wins and losses. Talk to wallet.
-				Collection<ResultEntry> resultEntries = new ArrayList<ResultEntry>();
-				Map<PokerPlayer, Result> results = handResult.getResults();
-				for (PokerPlayer p : results.keySet()) {
-//					GameDataAction action = ActionTransformer.createPlayerBalanceAction((int)p.getBalance(), p.getId(), table.getId());
-//					table.getNotifier().notifyAllPlayers(action);
-					
-				    balances.add(new PlayerBalance((int) p.getBalance(), p.getId()));
-					
-					long sessionId = ((PokerPlayerImpl) p).getSessionId();
-					Result result = results.get(p);
-					// FIXME: Hardcoded currency code
-					ResultEntry entry = new ResultEntry(sessionId, amountConverter.convertToWalletAmount(result.getNetResult()), PokerGame.CURRENCY_CODE);
-					resultEntries.add(entry);
-				}
+//				Collection<ResultEntry> resultEntries = new ArrayList<ResultEntry>();
+//				Map<PokerPlayer, Result> results = handResult.getResults();
+//				for (PokerPlayer p : results.keySet()) {
+////					GameDataAction action = ActionTransformer.createPlayerBalanceAction((int)p.getBalance(), p.getId(), table.getId());
+////					table.getNotifier().notifyAllPlayers(action);
+//					
+//				    balances.add(new PlayerBalance((int) p.getBalance(), p.getId()));
+//					
+////					long sessionId = ((PokerPlayerImpl) p).getSessionId();
+//					Result result = results.get(p);
+//					// FIXME: Hardcoded currency code
+//					ResultEntry entry = new ResultEntry(sessionId, amountConverter.convertToWalletAmount(result.getNetResult()), PokerGame.CURRENCY_CODE);
+//					resultEntries.add(entry);
+//				}
 				
 				List<PotTransfer> transfers = new ArrayList<PotTransfer>();
 				for (PotTransition pt : handResult.getPotTransitions()) {
@@ -283,13 +280,13 @@ public class FirebaseServerAdapter implements ServerAdapter {
 				}
                 PotTransfers potTransfers = new PotTransfers(false, transfers, null, balances);
 				
-				WalletServiceContract walletService = getServices().getServiceInstance(WalletServiceContract.class);
+//				WalletServiceContract walletService = getServices().getServiceInstance(WalletServiceContract.class);
 				
 				// TODO: Change to use doTransaction(...) instead of deprecated method roundResult(...)
-				RoundResultResponse roundResult = walletService.roundResult(
-				     -1l, (long) PokerGame.POKER_GAME_ID, (long) table.getId(), resultEntries, 
-				     createRoundReportDescription(handEndStatus));
-				validateWalletBalances(roundResult);
+//				RoundResultResponse roundResult = walletService.roundResult(
+//				     -1l, (long) PokerGame.POKER_GAME_ID, (long) table.getId(), resultEntries, 
+//				     createRoundReportDescription(handEndStatus));
+//				validateWalletBalances(roundResult);
 				
 				// TODO: The following logic should be moved to poker-logic
 				// I.e. ranking hands etc do not belong in the game-layer

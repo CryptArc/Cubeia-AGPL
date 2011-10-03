@@ -104,7 +104,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
         int amount = request.amount;
         PlayerSessionId sid = request.playerSessionId;
         
-        if (sessionTransactions.containsKey(sid)) {
+        if (!sessionTransactions.containsKey(sid)) {
             log.error("reserve failed, session not found: sId = " + sid);
             ReserveFailedResponse failResponse = new ReserveFailedResponse(request.playerSessionId, 
                 ReserveFailedResponse.ErrorCode.A, "session " + sid + " not open");
@@ -114,7 +114,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
             int newBalance = getBalance(sid);
             BalanceUpdate balanceUpdate = new BalanceUpdate(request.playerSessionId, newBalance, nextId());
             ReserveResponse response = new ReserveResponse(balanceUpdate, amount);
-            log.debug("reserve successful: sId = {}, amount = {}, new balance = {}" + sid, amount, newBalance);
+            log.debug("reserve successful: sId = {}, amount = {}, new balance = {}", new Object[] {sid, amount, newBalance});
             callback.requestSucceded(response);
         }
     }

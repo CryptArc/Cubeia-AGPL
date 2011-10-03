@@ -34,17 +34,27 @@ import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitinRequest;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitoutRequest;
 
+import com.cubeia.backend.cashgame.PlayerSessionId;
+import com.cubeia.backend.cashgame.PlayerSessionIdImpl;
+import com.cubeia.backend.cashgame.callback.OpenSessionCallback;
+import com.cubeia.backend.cashgame.callback.ReserveCallback;
 import com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse;
 import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
+import com.cubeia.backend.cashgame.dto.ReserveRequest;
+import com.cubeia.backend.cashgame.dto.ReserveResponse;
+import com.cubeia.backend.firebase.CashGamesBackendContract;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.game.player.GenericPlayer;
 import com.cubeia.firebase.api.game.table.Table;
+import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.FirebaseState;
 import com.cubeia.games.poker.adapter.ActionTransformer;
 import com.cubeia.games.poker.logic.TimeoutCache;
+import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.PokerAction;
+import com.cubeia.poker.player.PokerPlayer;
 import com.google.inject.Inject;
 
 public class PokerHandler extends DefaultPokerHandler {
@@ -58,6 +68,9 @@ public class PokerHandler extends DefaultPokerHandler {
 	
 	@Inject
 	PokerState state;
+	
+	@Service
+	CashGamesBackendContract cashGameBackend;
 	
 	public void setPlayerId(int playerId) {
 		this.playerId = playerId;
@@ -113,25 +126,13 @@ public class PokerHandler extends DefaultPokerHandler {
 	public void visit(BuyInRequest packet) {
         log.warn("SENDING MOCKED BUY IN RESPONSE!!!");
 	    
-        BuyInResponse resp = new BuyInResponse();
-        resp.balance = packet.amount;
-        resp.resultCode = Enums.BuyInResultCode.OK;
+        PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) state.getPokerPlayer(playerId);
+        ReserveRequest reserveRequest = new ReserveRequest(pokerPlayer.getPlayerSessionId(), -1, packet.amount);
+        ReserveCallback callback = cashGameBackend.getCallbackFactory().createReserveCallback(table);
+        cashGameBackend.reserve(reserveRequest, callback);
         
-        GameDataAction gda = new GameDataAction(playerId, table.getId());
-        
-        StyxSerializer styx = new StyxSerializer(null);
-        try {
-            gda.setData(styx.pack(resp));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        
-        if (packet.sitInIfSuccessful) {
-            state.playerIsSittingIn(playerId);
-        }
-        
-        GenericPlayer player = table.getPlayerSet().getPlayer(playerId);
-        log.debug("player id: {}, player: {}", playerId, player);
+        // TODO: store the sit in flag somewhere when we get the BuyInRequest packet
+        // pokerPlayer.newFlag = packet.sitInIfSuccessful
 	}
 	
 	@Override
@@ -146,26 +147,56 @@ public class PokerHandler extends DefaultPokerHandler {
         } 
 	    
 	    if (object instanceof OpenSessionResponse) {
-	        log.debug("got open session response: {}", object);
-	        
-//          else if (attachment instanceof OpenSessionResponse) {
-//          // TODO: not handled here!
-//          OpenSessionResponse openSessionResponse = (OpenSessionResponse) attachment;
-//          long sessionId = ((PlayerSessionIdImpl) openSessionResponse.sessionId).getSessionId();
-//          log.debug("got open session success response: sId = {}", sessionId);
-//            int playerId = openSessionResponse.sessionId.getPlayerId();
-//            
-//            PokerPlayer pokerPlayer = ((PokerState) table.getGameState()).getPokerPlayer(playerId);
-//            pokerPlayer.setSessionId(sessionId);
-//      }
-	        
+	        handleOpenSessionSuccessfulResponse((OpenSessionResponse) object);
 	    } else if (object instanceof OpenSessionFailedResponse) {
             log.debug("got open session failed response: {}", object);
+	    } else if (object instanceof ReserveResponse) {
+	        log.debug("got reserver response: {}", object);
+	        handleReserveSuccessfulResponse((ReserveResponse) object);
 	    } else {
 	        log.warn("unhandled object: " + object.getClass().getName());
 	    }
 	    
 	}
+
+    private void handleReserveSuccessfulResponse(ReserveResponse reserveResponse) {
+        PokerPlayer pokerPlayer = state.getPokerPlayer(playerId);
+        log.debug("handle reserve response: session = {}, amount = {}, pId = {}", 
+            new Object[] {reserveResponse.getPlayerSessionId(), reserveResponse.amountReserved, pokerPlayer.getId()});
+        pokerPlayer.addChips(reserveResponse.amountReserved);
+        
+        
+        // TODO: response should move to PokerHandler.handleReserveResponse
+        BuyInResponse resp = new BuyInResponse();
+        resp.balance = (int) pokerPlayer.getBalance();
+        resp.resultCode = Enums.BuyInResultCode.OK;
+        
+        GameDataAction gda = new GameDataAction(playerId, table.getId());
+        StyxSerializer styx = new StyxSerializer(null);
+        try {
+            gda.setData(styx.pack(resp));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+  
+        // TODO: must store the sit in flag somewhere when we get the BuyInRequest packet
+//        if (packet.sitInIfSuccessful) {
+            state.playerIsSittingIn(playerId);
+//        }
+        
+        GenericPlayer player = table.getPlayerSet().getPlayer(playerId);
+        log.debug("player id: {}, player: {}", playerId, player);
+        
+    }
+
+    private void handleOpenSessionSuccessfulResponse(OpenSessionResponse openSessionResponse) {
+        PlayerSessionId playerSessionId = openSessionResponse.sessionId;
+        int playerId = playerSessionId.getPlayerId();
+        log.debug("handle open session response: session = {}, pId = {}", playerSessionId, playerId);
+        
+        PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) state.getPokerPlayer(playerId);
+        pokerPlayer.setPlayerSessionId(playerSessionId);
+    }
 
     private boolean verifySequence(PerformAction packet) {
         FirebaseState fbState = (FirebaseState)state.getAdapterState();

@@ -1,7 +1,6 @@
 package com.cubeia.backend.firebase;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
 
@@ -11,8 +10,11 @@ import org.slf4j.LoggerFactory;
 import se.jadestone.dicearena.game.poker.network.protocol.InternalSerializedObject;
 
 import com.cubeia.backend.cashgame.callback.OpenSessionCallback;
+import com.cubeia.backend.cashgame.callback.ReserveCallback;
 import com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse;
 import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
+import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;
+import com.cubeia.backend.cashgame.dto.ReserveResponse;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.service.ServiceRouter;
@@ -43,6 +45,26 @@ public class FirebaseCallbackFactoryImpl implements FirebaseCallbackFactory {
                 log.debug("open session failed: gId = {}, tId = {}, error = {}, msg = {}", 
                     new Object[] {table.getMetaData().getGameId(), table.getId(), response.errorCode, response.message});
                 sendGameDataActionToTable(-1, table.getMetaData().getGameId(), table.getId(), response);
+            }
+        };
+        return callback;
+    }
+    
+    @Override
+    public ReserveCallback createReserveCallback(final Table table) {
+        ReserveCallback callback = new ReserveCallback() {
+            @Override
+            public void requestSucceded(ReserveResponse response) {
+                log.debug("reserve succeded: gId = {}, tId = {}, sId = {}", 
+                    new Object[] {table.getMetaData().getGameId(), table.getId(), response.getPlayerSessionId()});
+                sendGameDataActionToTable(response.getPlayerSessionId().getPlayerId(), table.getMetaData().getGameId(), table.getId(), response);
+            }
+            
+            @Override
+            public void requestFailed(ReserveFailedResponse response) {
+                log.debug("reserve failed: gId = {}, tId = {}, error = {}, msg = {}", 
+                    new Object[] {table.getMetaData().getGameId(), table.getId(), response.errorCode, response.message});
+                sendGameDataActionToTable(response.sessionId.getPlayerId(), table.getMetaData().getGameId(), table.getId(), response);
             }
         };
         return callback;

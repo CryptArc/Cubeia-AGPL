@@ -19,6 +19,7 @@ package com.cubeia.games.poker.model;
 
 import java.io.Serializable;
 
+import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.firebase.api.game.player.GenericPlayer;
 import com.cubeia.poker.player.DefaultPokerPlayer;
 
@@ -35,7 +36,7 @@ public class PokerPlayerImpl extends DefaultPokerPlayer implements Serializable 
 
 	private GenericPlayer placeholder;
 
-	private Long sessionId;
+	private PlayerSessionId playerSessionId;
 		
 	public PokerPlayerImpl (GenericPlayer placeholder) {
 		super(placeholder.getPlayerId());
@@ -51,16 +52,16 @@ public class PokerPlayerImpl extends DefaultPokerPlayer implements Serializable 
 	 * Sets a session id for this player. 
 	 * @param sessionId the session id, or null to leave the session
 	 */
-	public void setSessionId(Long sessionId) {
-		this.sessionId = sessionId;
+	public void setPlayerSessionId(PlayerSessionId playerSessionId) {
+		this.playerSessionId = playerSessionId;
 	}	
 
 	/**
 	 * Returns the session id for this player.
 	 * @return the session id, null if not in a session
 	 */
-	public Long getSessionId() {
-		return sessionId;
+	public PlayerSessionId getPlayerSessionId() {
+		return playerSessionId;
 	}
 	
 	@Override

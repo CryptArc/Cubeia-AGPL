@@ -66,8 +66,6 @@ public class DefaultPokerPlayer implements PokerPlayer {
 
 	private long returnedChips = 0;
 	
-	private Long sessionId;
-
 	public DefaultPokerPlayer(int id) {
 		playerId = id;
 	}
@@ -252,14 +250,14 @@ public class DefaultPokerPlayer implements PokerPlayer {
 		
 	}
 
-	@Override
-	public Long getSessionId() {
-	    return sessionId;
-	}
-	
-	@Override
-	public void setSessionId(Long sessionId) {
-	    this.sessionId = sessionId;
-	}
+//	@Override
+//	public Long getSessionId() {
+//	    return sessionId;
+//	}
+//	
+//	@Override
+//	public void setSessionId(Long sessionId) {
+//	    this.sessionId = sessionId;
+//	}
 	
 }
