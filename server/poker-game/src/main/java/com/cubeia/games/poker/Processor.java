@@ -110,16 +110,6 @@ public class Processor implements GameProcessor, TournamentProcessor {
     			Trigger command = (Trigger) attachment;
     			handleCommand(table, command);
     		} 
-//            else if (attachment instanceof OpenSessionResponse) {
-//    		    // TODO: not handled here!
-//    		    OpenSessionResponse openSessionResponse = (OpenSessionResponse) attachment;
-//    		    long sessionId = ((PlayerSessionIdImpl) openSessionResponse.sessionId).getSessionId();
-//    		    log.debug("got open session success response: sId = {}", sessionId);
-//                int playerId = openSessionResponse.sessionId.getPlayerId();
-//                
-//                PokerPlayer pokerPlayer = ((PokerState) table.getGameState()).getPokerPlayer(playerId);
-//                pokerPlayer.setSessionId(sessionId);
-//    		}
 	    } catch (RuntimeException e) {
 	    	log.error("Failed handling game object action.", e);
 	        printActionsToErrorLog(e, "Could not handle command action: "+action+" on table: "+table, table);

@@ -17,7 +17,9 @@
 
 package com.cubeia.games.poker.handler;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +29,13 @@ import se.jadestone.dicearena.game.poker.network.protocol.BuyInInfoResponse;
 import se.jadestone.dicearena.game.poker.network.protocol.BuyInRequest;
 import se.jadestone.dicearena.game.poker.network.protocol.BuyInResponse;
 import se.jadestone.dicearena.game.poker.network.protocol.Enums;
+import se.jadestone.dicearena.game.poker.network.protocol.InternalSerializedObject;
 import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitinRequest;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitoutRequest;
 
+import com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse;
+import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.game.player.GenericPlayer;
 import com.cubeia.firebase.api.game.table.Table;
@@ -129,7 +134,38 @@ public class PokerHandler extends DefaultPokerHandler {
         log.debug("player id: {}, player: {}", playerId, player);
 	}
 	
-	
+	@Override
+	public void visit(InternalSerializedObject packet) {
+	    ObjectInputStream objectIn;
+	    Object object;
+        try {
+            objectIn = new ObjectInputStream(new ByteArrayInputStream(packet.bytes));
+            object = objectIn.readObject();
+        } catch (Exception e) {
+            throw new RuntimeException("error deserializing object payload", e);
+        } 
+	    
+	    if (object instanceof OpenSessionResponse) {
+	        log.debug("got open session response: {}", object);
+	        
+//          else if (attachment instanceof OpenSessionResponse) {
+//          // TODO: not handled here!
+//          OpenSessionResponse openSessionResponse = (OpenSessionResponse) attachment;
+//          long sessionId = ((PlayerSessionIdImpl) openSessionResponse.sessionId).getSessionId();
+//          log.debug("got open session success response: sId = {}", sessionId);
+//            int playerId = openSessionResponse.sessionId.getPlayerId();
+//            
+//            PokerPlayer pokerPlayer = ((PokerState) table.getGameState()).getPokerPlayer(playerId);
+//            pokerPlayer.setSessionId(sessionId);
+//      }
+	        
+	    } else if (object instanceof OpenSessionFailedResponse) {
+            log.debug("got open session failed response: {}", object);
+	    } else {
+	        log.warn("unhandled object: " + object.getClass().getName());
+	    }
+	    
+	}
 
     private boolean verifySequence(PerformAction packet) {
         FirebaseState fbState = (FirebaseState)state.getAdapterState();
@@ -156,7 +192,4 @@ public class PokerHandler extends DefaultPokerHandler {
         }
     }
 
-
-	
-	
 }
