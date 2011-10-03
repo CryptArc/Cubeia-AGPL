@@ -1,8 +1,11 @@
 package com.cubeia.backend.cashgame.dto;
 
+import java.io.Serializable;
+
 import com.cubeia.backend.cashgame.TableId;
 
-public class OpenSessionRequest {
+@SuppressWarnings("serial")
+public class OpenSessionRequest implements Serializable {
 
 	public final int playerId;
 	public final TableId tableId;

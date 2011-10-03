@@ -1,8 +1,11 @@
 package com.cubeia.backend.cashgame.dto;
 
+import java.io.Serializable;
+
 import com.cubeia.backend.cashgame.PlayerSessionId;
 
-public class HandResult {
+@SuppressWarnings("serial")
+public class HandResult implements Serializable {
 	public final PlayerSessionId playerSession;
 	public final long aggregatedBet;
 	public final long win;

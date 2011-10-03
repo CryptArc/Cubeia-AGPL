@@ -1,8 +1,11 @@
 package com.cubeia.backend.cashgame.dto;
 
+import java.io.Serializable;
+
 import com.cubeia.backend.cashgame.PlayerSessionId;
 
-public class ReserveRequest {
+@SuppressWarnings("serial")
+public class ReserveRequest implements Serializable {
 
 	public final PlayerSessionId playerSessionId;
 	public final int roundNumber;

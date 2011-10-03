@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.cubeia.backend.cashgame.CashGamesBackend;
 import com.cubeia.backend.cashgame.TableIdImpl;
 import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
@@ -61,7 +62,7 @@ public class PokerTableListener implements TournamentTableListener {
 	WalletServiceContract walletService;
 	
 	@Service
-	CashGamesBackendContract backendService;
+	CashGamesBackendContract cashGameBackend;
 	
     @Inject
     StateInjector stateInjector;
@@ -185,11 +186,13 @@ public class PokerTableListener implements TournamentTableListener {
 //		if (log.isDebugEnabled()) {
 //			log.debug("Created session account: sessionId["+sessionId+"], tableId["+table.getId()+"], playerId["+player.getPlayerId()+":"+player.getName()+"]");
 //		}
+	    
+	    log.debug("starting wallet session: tId = {}, pId = {}", table.getId(), player.getPlayerId());
 			
 		// TODO: TableId must be obtained from announceTable call, may not be instantiated here.
 		OpenSessionRequest openSessionRequest = new OpenSessionRequest(player.getPlayerId(), new TableIdImpl(), -1);
 		
-        backendService.openSession(openSessionRequest, backendService.getCallbackFactory().createOpenSessionCallback(table));
+        cashGameBackend.openSession(openSessionRequest, cashGameBackend.getCallbackFactory().createOpenSessionCallback(table));
 		
         
         

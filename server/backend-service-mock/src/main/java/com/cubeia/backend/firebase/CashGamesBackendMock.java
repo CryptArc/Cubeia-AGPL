@@ -1,5 +1,9 @@
 package com.cubeia.backend.firebase;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -25,7 +29,7 @@ import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;
 import com.cubeia.backend.cashgame.dto.ReserveRequest;
 import com.cubeia.backend.cashgame.dto.ReserveResponse;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
-import com.cubeia.firebase.api.action.GameObjectAction;
+import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.action.service.ServiceAction;
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.firebase.api.service.RoutableService;
@@ -139,12 +143,6 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
     public BalanceUpdate getSessionBalance(PlayerSessionId sessionId)
     		throws GetBalanceFailedException {
     	return new BalanceUpdate(sessionId, getBalance(sessionId), nextId());
-    }
-    
-    private void sendToTable(int gameId, int tableId, Object object) {
-        GameObjectAction action = new GameObjectAction(tableId);
-        action.setAttachment(object);
-        router.dispatchToGame(gameId, action);
     }
     
     @Override

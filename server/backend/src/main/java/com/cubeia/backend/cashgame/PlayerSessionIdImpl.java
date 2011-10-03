@@ -1,9 +1,11 @@
 package com.cubeia.backend.cashgame;
 
+import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicLong;
 
 
-public class PlayerSessionIdImpl implements PlayerSessionId {
+@SuppressWarnings("serial")
+public class PlayerSessionIdImpl implements PlayerSessionId, Serializable {
 
 	private static final AtomicLong idGenerator = new AtomicLong(0);
 	
@@ -15,6 +17,10 @@ public class PlayerSessionIdImpl implements PlayerSessionId {
 		this.id = idGenerator.incrementAndGet();
 	}
 
+	public long getSessionId() {
+	    return id;
+	}
+	
 	@Override
 	public int getPlayerId() {
 		return playerId;

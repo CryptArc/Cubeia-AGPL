@@ -1,6 +1,9 @@
 package com.cubeia.backend.cashgame.dto;
 
-public class AnnounceTableRequest {
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class AnnounceTableRequest implements Serializable {
 
 	public final int platformTableId;
 

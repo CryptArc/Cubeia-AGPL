@@ -1,11 +1,13 @@
 package com.cubeia.backend.cashgame.dto;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.cubeia.backend.cashgame.TableId;
 
-public class AnnounceTableResponse {
+@SuppressWarnings("serial")
+public class AnnounceTableResponse implements Serializable {
 
 	public final Map<String, String> tableProperties;
 	public final TableId tableId;

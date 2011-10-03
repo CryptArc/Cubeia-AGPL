@@ -1,9 +1,12 @@
 package com.cubeia.backend.cashgame.dto;
 
+import java.io.Serializable;
+
 import com.cubeia.backend.cashgame.PlayerSessionId;
 
 
-public class ReserveFailedResponse {
+@SuppressWarnings("serial")
+public class ReserveFailedResponse implements Serializable {
     
 	public final ErrorCode errorCode;
 	public final String message;

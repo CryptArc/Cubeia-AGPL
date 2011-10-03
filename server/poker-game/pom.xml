@@ -77,7 +77,6 @@
       <scope>provided</scope>
     </dependency>
     
-    
     <dependency>
       <groupId>com.cubeia.network.wallet.firebase</groupId>
       <artifactId>generic-wallet-service</artifactId>

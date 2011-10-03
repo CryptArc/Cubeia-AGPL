@@ -1,8 +1,11 @@
 package com.cubeia.backend.cashgame.dto;
 
+import java.io.Serializable;
+
 import com.cubeia.backend.cashgame.PlayerSessionId;
 
-public class BalanceUpdate {
+@SuppressWarnings("serial")
+public class BalanceUpdate implements Serializable {
 
 	public final PlayerSessionId playerSessionId;
 	public final long balance;

@@ -97,6 +97,10 @@ public interface PokerPlayer extends Serializable {
 	
 	public long getBalance();
 	
+	public Long getSessionId();
+	
+	public void setSessionId(Long sessionId);
+	
 	/**
 	 * Sets this player as being in a hand or not.
 	 * 

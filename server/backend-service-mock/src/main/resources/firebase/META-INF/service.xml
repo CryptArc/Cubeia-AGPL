@@ -6,6 +6,7 @@
     <description/>
     <exported>
         <package>com.cubeia.backend.-</package>
+        <package>se.jadestone.dicearena.game.poker.network.protocol.-</package>
         <package>org.slf4j.-</package>
         <package>com.google.common.-</package>
     </exported>

@@ -12,8 +12,6 @@ import java.io.IOException;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
-
 import com.cubeia.backend.cashgame.callback.OpenSessionCallback;
 import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
@@ -23,7 +21,6 @@ import com.cubeia.firebase.api.game.GameNotifier;
 import com.cubeia.firebase.api.game.player.GenericPlayer;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TableMetaData;
-import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
 import com.cubeia.poker.PokerState;
@@ -41,9 +38,9 @@ public class PokerTableListenerTest {
         ptl.state = mock(PokerState.class);
         ptl.gameStateSender = mock(GameStateSender.class);
         ptl.walletService = mock(WalletServiceContract.class);
-        ptl.backendService = mock(CashGamesBackendContract.class);
+        ptl.cashGameBackend = mock(CashGamesBackendContract.class);
         FirebaseCallbackFactory callbackFactory = mock(FirebaseCallbackFactory.class);
-        when(ptl.backendService.getCallbackFactory()).thenReturn(callbackFactory);
+        when(ptl.cashGameBackend.getCallbackFactory()).thenReturn(callbackFactory);
         
         Table table = mock(Table.class);
         when(table.getId()).thenReturn(tableId);
@@ -55,30 +52,17 @@ public class PokerTableListenerTest {
         int balance = 40000;
         when(ptl.state.getBalance(playerId)).thenReturn(balance);
 
-        Long sessionId = 5355104L;
-//        when(ptl.walletService.startSession(PokerGame.CURRENCY_CODE, PokerGame.LICENSEE_ID, playerId, 
-//            tableId, PokerGame.POKER_GAME_ID, player.getName())).thenReturn(sessionId);
-        
         PokerPlayer pokerPlayer = ptl.addPlayer(table, player, false);
         
         assertThat(pokerPlayer.getId(), is(playerId));
         assertThat(((PokerPlayerImpl) pokerPlayer).getSessionId(), nullValue());
         verify(ptl.gameStateSender).sendGameState(table, playerId);
         verify(ptl.state).addPlayer(pokerPlayer);
-//        verify(ptl.walletService).startSession(PokerGame.CURRENCY_CODE, PokerGame.LICENSEE_ID, playerId, 
-//            tableId, PokerGame.POKER_GAME_ID, player.getName());
-        verify(ptl.backendService).openSession(Mockito.any(OpenSessionRequest.class), Mockito.any(OpenSessionCallback.class));
+        verify(ptl.cashGameBackend).openSession(Mockito.any(OpenSessionRequest.class), Mockito.any(OpenSessionCallback.class));
         verify(callbackFactory).createOpenSessionCallback(table);
         
-//        ArgumentCaptor<GameDataAction> balanceActionCaptor = ArgumentCaptor.forClass(GameDataAction.class);
-            
         verify(gameNotifier, Mockito.never()).notifyAllPlayers(Mockito.any(GameAction.class));
-//        GameDataAction gda = balanceActionCaptor.getValue();
         
-        StyxSerializer styx = new StyxSerializer(new ProtocolObjectFactory());
-//        PlayerBalance balanceAction = (PlayerBalance) styx.unpack(gda.getData());
-//        assertThat(balanceAction.player, is(playerId));
-//        assertThat(balanceAction.balance, is(balance));
         assertThat(pokerPlayer.isSittingOut(), is(true));
         assertThat(pokerPlayer.getSitOutStatus(), is(SitOutStatus.NOT_ENTERED_YET));
     }

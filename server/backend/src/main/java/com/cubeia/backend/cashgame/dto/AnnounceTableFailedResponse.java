@@ -1,6 +1,9 @@
 package com.cubeia.backend.cashgame.dto;
 
-public class AnnounceTableFailedResponse {
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class AnnounceTableFailedResponse implements Serializable {
 	public final ErrorCode errorCode;
 	public final String message;
 

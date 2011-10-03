@@ -1,8 +1,11 @@
 package com.cubeia.backend.cashgame.dto;
 
+import java.io.Serializable;
+
 import com.cubeia.backend.cashgame.TableId;
 
-public class CloseTableRequest {
+@SuppressWarnings("serial")
+public class CloseTableRequest implements Serializable {
 
 	public final TableId tableId;
 

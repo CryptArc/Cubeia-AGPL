@@ -1,12 +1,13 @@
 package com.cubeia.backend.cashgame.dto;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import com.cubeia.backend.cashgame.PlayerSessionId;
 
-public class OpenSessionResponse {
-
-	public final PlayerSessionId sessionId;
+@SuppressWarnings("serial")
+public class OpenSessionResponse implements Serializable {
+    public final PlayerSessionId sessionId;
 	public final Map<String, String> sessionProperties;
 	
 	public OpenSessionResponse(PlayerSessionId sessionId, Map<String, String> sessionProperties) {

@@ -19,10 +19,13 @@ package com.cubeia.games.poker;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
 
+import com.cubeia.backend.cashgame.PlayerSessionIdImpl;
+import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.action.GameObjectAction;
@@ -37,6 +40,7 @@ import com.cubeia.games.poker.handler.Trigger;
 import com.cubeia.games.poker.jmx.PokerStats;
 import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.poker.PokerState;
+import com.cubeia.poker.player.PokerPlayer;
 import com.google.inject.Inject;
 
 
@@ -50,7 +54,7 @@ public class Processor implements GameProcessor, TournamentProcessor {
 	/** Serializer for poker packets */
 	private static StyxSerializer serializer = new StyxSerializer(new ProtocolObjectFactory());
 
-    private static transient Logger log = Logger.getLogger(Processor.class);
+    private static Logger log = LoggerFactory.getLogger(Processor.class);
 
     @Inject
     ActionCache actionCache;
@@ -72,9 +76,12 @@ public class Processor implements GameProcessor, TournamentProcessor {
 	public void handle(GameDataAction action, Table table) {
 		stateInjector.injectAdapter(table);
 	    ProtocolObject packet = null;
+	    
 		try {
+            log.debug("handling data object, actionId = {}, tableId = {}", 
+                new Object[] {action.getActionId(), action.getTableId()});
 			packet = serializer.unpack(action.getData());
-			// log.debug("Handle Poker Action (tid:"+table.getId()+") from player("+action.getPlayerId()+"): "+packet);
+			log.debug("payload packet type: {}", packet.getClass().getSimpleName());
 			pokerHandler.setPlayerId(action.getPlayerId());
 			packet.accept(pokerHandler);
 			PokerStats.getInstance().setState(table.getId(), state.getStateDescription());			
@@ -95,14 +102,27 @@ public class Processor implements GameProcessor, TournamentProcessor {
 	public void handle(GameObjectAction action, Table table) {
 		stateInjector.injectAdapter(table);
 	    try {
-    		if (action.getAttachment() instanceof Trigger) {
-    			Trigger command = (Trigger) action.getAttachment();
+    		Object attachment = action.getAttachment();
+    		
+    		log.debug("handling game object: {}", attachment.getClass().getSimpleName());
+    		
+            if (attachment instanceof Trigger) {
+    			Trigger command = (Trigger) attachment;
     			handleCommand(table, command);
-    		}    		
+    		} 
+//            else if (attachment instanceof OpenSessionResponse) {
+//    		    // TODO: not handled here!
+//    		    OpenSessionResponse openSessionResponse = (OpenSessionResponse) attachment;
+//    		    long sessionId = ((PlayerSessionIdImpl) openSessionResponse.sessionId).getSessionId();
+//    		    log.debug("got open session success response: sId = {}", sessionId);
+//                int playerId = openSessionResponse.sessionId.getPlayerId();
+//                
+//                PokerPlayer pokerPlayer = ((PokerState) table.getGameState()).getPokerPlayer(playerId);
+//                pokerPlayer.setSessionId(sessionId);
+//    		}
 	    } catch (RuntimeException e) {
 	    	log.error("Failed handling game object action.", e);
 	        printActionsToErrorLog(e, "Could not handle command action: "+action+" on table: "+table, table);
-	        
 	    }
 	}
 	

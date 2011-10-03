@@ -1,6 +1,9 @@
 package com.cubeia.backend.cashgame.dto;
 
-public class Currency {
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class Currency implements Serializable {
 
 	public final String name;
 	public final String code;

@@ -1,9 +1,11 @@
 package com.cubeia.backend.cashgame.dto;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-public class BatchHandResponse {
+@SuppressWarnings("serial")
+public class BatchHandResponse implements Serializable {
 
 	public final List<BalanceUpdate> resultingBalances;
 

@@ -52,5 +52,16 @@
     	<artifactId>guava</artifactId>
     	<version>r09</version>
     </dependency>
+
+	<dependency>
+	  <groupId>se.jadestone.dicearena</groupId>
+	  <artifactId>poker-protocol</artifactId>
+	</dependency>    
+    
+    <dependency>
+    	<groupId>com.cubeia.firebase</groupId>
+    	<artifactId>styx</artifactId>
+    </dependency>
+
   </dependencies>  
 </project>

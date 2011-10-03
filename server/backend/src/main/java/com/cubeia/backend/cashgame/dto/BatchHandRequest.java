@@ -1,11 +1,13 @@
 package com.cubeia.backend.cashgame.dto;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
 import com.cubeia.backend.cashgame.TableId;
 
-public class BatchHandRequest {
+@SuppressWarnings("serial")
+public class BatchHandRequest implements Serializable {
 
 	public final long handId;
 	public final TableId tableId;
