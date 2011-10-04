@@ -78,8 +78,6 @@ public class Telesina implements GameType, RoundVisitor {
 
 	private TelesinaDeck deck;
 
-//    private HashMultimap<Integer, Card> playerPublicCards;
-	
 	/**
 	 * Betting round sequence id:
 	 * 0 -> ante (1 private + 1 public pocket cards)

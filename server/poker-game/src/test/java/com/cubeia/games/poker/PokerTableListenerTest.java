@@ -1,26 +1,33 @@
 package com.cubeia.games.poker;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+
+import se.jadestone.dicearena.game.poker.network.protocol.PlayerBalance;
+import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
 
 import com.cubeia.backend.cashgame.callback.OpenSessionCallback;
 import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
 import com.cubeia.backend.firebase.FirebaseCallbackFactory;
-import com.cubeia.firebase.api.action.GameAction;
+import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.game.GameNotifier;
 import com.cubeia.firebase.api.game.player.GenericPlayer;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TableMetaData;
+import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
 import com.cubeia.poker.PokerState;
@@ -61,7 +68,7 @@ public class PokerTableListenerTest {
         verify(ptl.cashGameBackend).openSession(Mockito.any(OpenSessionRequest.class), Mockito.any(OpenSessionCallback.class));
         verify(callbackFactory).createOpenSessionCallback(table);
         
-        verify(gameNotifier, Mockito.never()).notifyAllPlayers(Mockito.any(GameAction.class));
+        verify(ptl.state, never()).getBalance(playerId);
         
         assertThat(pokerPlayer.isSittingOut(), is(true));
         assertThat(pokerPlayer.getSitOutStatus(), is(SitOutStatus.NOT_ENTERED_YET));
