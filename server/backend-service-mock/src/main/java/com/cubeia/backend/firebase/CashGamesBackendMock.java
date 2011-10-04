@@ -1,9 +1,5 @@
 package com.cubeia.backend.firebase;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -29,7 +25,6 @@ import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;
 import com.cubeia.backend.cashgame.dto.ReserveRequest;
 import com.cubeia.backend.cashgame.dto.ReserveResponse;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
-import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.action.service.ServiceAction;
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.firebase.api.service.RoutableService;
@@ -84,6 +79,8 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
         log.debug("currently open sessions: {}", sessionTransactions.size());
         callback.requestSucceded(response);
 //        sendToTable(gameId, request.tableId.id, response);
+        
+        printDiagnostics();        
     }
 
     @Override
@@ -97,6 +94,9 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
         } else {
             sessionTransactions.removeAll(sid);
         }
+        
+        printDiagnostics();
+        
     }
 
     @Override
@@ -117,6 +117,8 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
             log.debug("reserve successful: sId = {}, amount = {}, new balance = {}", new Object[] {sid, amount, newBalance});
             callback.requestSucceded(response);
         }
+        
+        printDiagnostics();
     }
 
     @Override
@@ -142,7 +144,16 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
     @Override
     public BalanceUpdate getSessionBalance(PlayerSessionId sessionId)
     		throws GetBalanceFailedException {
+        printDiagnostics();        
     	return new BalanceUpdate(sessionId, getBalance(sessionId), nextId());
+    }
+    
+    private void printDiagnostics() {
+        log.debug("wallet session transactions: ");
+        for (PlayerSessionId session : sessionTransactions.keys()) {
+            log.debug("{} (balance: {}) -> {}", 
+                new Object[] {session, getBalance(session), sessionTransactions.get(session)});
+        }
     }
     
     @Override
