@@ -17,7 +17,7 @@
 
 package com.cubeia.games.poker;
 
-import static com.cubeia.poker.player.SitOutStatus.*;
+import static com.cubeia.poker.player.SitOutStatus.NOT_ENTERED_YET;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -25,7 +25,6 @@ import java.math.BigDecimal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.cubeia.backend.cashgame.CashGamesBackend;
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.TableIdImpl;
 import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
@@ -132,12 +131,6 @@ public class PokerTableListener implements TournamentTableListener {
 	public void watcherLeft(Table table, int playerId) {}
 	
 
-    private void sendTableBalance(PokerState state, Table table, int playerId) {
-        int balance = state.getBalance(playerId);
-		GameDataAction balanceAction = ActionTransformer.createPlayerBalanceAction(balance, playerId, table.getId());
-		table.getNotifier().notifyAllPlayers(balanceAction);
-	}
-	
 	private void sitInPlayer(Table table, GenericPlayer player) {
 	    gameStateSender.sendGameState(table, player.getPlayerId());
 	    state.playerIsSittingIn(player.getPlayerId());
@@ -159,7 +152,6 @@ public class PokerTableListener implements TournamentTableListener {
         	startWalletSession(table, player);
         }
         
-//        sendTableBalance(state, table, player.getPlayerId());
         return pokerPlayer;
     }
     

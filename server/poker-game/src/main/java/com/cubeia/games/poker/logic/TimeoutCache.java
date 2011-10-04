@@ -23,6 +23,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import com.cubeia.firebase.api.game.table.TableScheduler;
 import com.cubeia.games.poker.util.TablePlayerKey;
+import com.google.common.annotations.VisibleForTesting;
 
 
 /**
@@ -30,11 +31,14 @@ import com.cubeia.games.poker.util.TablePlayerKey;
  * 
  * The actions needs to be stored in the game state.
  * 
+ * TODO: this class should not be a singleton!
+ * 
  * @author Fredrik Johansson, Cubeia Ltd
  */
 public class TimeoutCache {
     
-    private static TimeoutCache instance = new TimeoutCache();
+    @VisibleForTesting
+    public static TimeoutCache instance = new TimeoutCache();
     
     protected ConcurrentMap<TablePlayerKey,UUID> actions = new ConcurrentHashMap<TablePlayerKey, UUID>();
     

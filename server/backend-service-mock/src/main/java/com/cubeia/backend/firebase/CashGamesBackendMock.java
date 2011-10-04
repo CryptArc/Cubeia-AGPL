@@ -154,6 +154,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
             log.debug("{} (balance: {}) -> {}", 
                 new Object[] {session, getBalance(session), sessionTransactions.get(session)});
         }
+        log.debug("---");
     }
     
     @Override
