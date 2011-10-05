@@ -356,6 +356,7 @@ public class PokerState implements Serializable, IPokerState {
 			log.debug("Schedule hand over timeout in: "+timing.getTime(Periods.START_NEW_HAND));
 			serverAdapter.scheduleTimeout(timing.getTime(Periods.START_NEW_HAND));
 		}
+		
 		currentState = WAITING_TO_START;
 	}
 

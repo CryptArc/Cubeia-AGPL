@@ -327,6 +327,9 @@ public class BlindsRound implements Round {
 		}
 		getGame().getState().getPlayerInCurrentHand(action.getPlayerId()).clearActionRequest();
 		game.getServerAdapter().notifyActionPerformed(action);
+		
+		PokerPlayer player = game.getState().getPlayerInCurrentHand(action.getPlayerId());	
+        game.getServerAdapter().notifyPlayerBalance(player);
 	}
 
 	public BlindsInfo getBlindsInfo() {

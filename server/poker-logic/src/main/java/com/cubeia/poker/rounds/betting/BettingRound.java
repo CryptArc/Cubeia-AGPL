@@ -102,6 +102,7 @@ public class BettingRound implements Round, BettingRoundContext {
 		if (player.getBalance() <= 0) {
 			gameType.getServerAdapter().notifyPlayerStatusChanged(player.getId(), PokerPlayerStatus.ALLIN);
 		}
+        gameType.getServerAdapter().notifyPlayerBalance(player);
 		
 		if (roundFinished()) {
 			isFinished = true;

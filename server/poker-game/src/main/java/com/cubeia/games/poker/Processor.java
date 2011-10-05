@@ -24,8 +24,6 @@ import org.slf4j.LoggerFactory;
 
 import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
 
-import com.cubeia.backend.cashgame.PlayerSessionIdImpl;
-import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.action.GameObjectAction;
@@ -40,7 +38,6 @@ import com.cubeia.games.poker.handler.Trigger;
 import com.cubeia.games.poker.jmx.PokerStats;
 import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.poker.PokerState;
-import com.cubeia.poker.player.PokerPlayer;
 import com.google.inject.Inject;
 
 

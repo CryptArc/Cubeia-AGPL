@@ -99,6 +99,7 @@ public class AnteRound implements Round {
 		default:
 			throw new IllegalArgumentException(action.getActionType() + " is not legal here");
 		}
+        game.getServerAdapter().notifyPlayerBalance(player);
 		
 		game.getState().getPlayerInCurrentHand(action.getPlayerId()).clearActionRequest();
 		

@@ -86,7 +86,7 @@ public class AnteRoundTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testActOnSmallBlind() {
+    public void testActOnAnte() {
         AnteRound anteRound = new AnteRound(game, anteRoundHelper);
         int player1Id = 1337;
         when(state.getPlayerInCurrentHand(player1Id)).thenReturn(player1);
@@ -105,13 +105,14 @@ public class AnteRoundTest {
         verify(player1).setHasActed(true);
         verify(player1).setHasPostedEntryBet(true);
         verify(serverAdapter).notifyActionPerformed(action);
+        verify(serverAdapter).notifyPlayerBalance(player1);
         
         verify(anteRoundHelper).requestAnte(player2, anteLevel, game);
     }
     
     @SuppressWarnings("unchecked")
     @Test
-    public void testActOnDeclineSmallBlind() {
+    public void testActOnDeclineAnte() {
         AnteRound anteRound = new AnteRound(game, anteRoundHelper);
         int player1Id = 1337;
         when(state.getPlayerInCurrentHand(player1Id)).thenReturn(player1);
@@ -130,6 +131,7 @@ public class AnteRoundTest {
         verify(player1).setHasActed(true);
         verify(player1).setHasPostedEntryBet(false);
         verify(serverAdapter).notifyActionPerformed(action);
+        verify(serverAdapter).notifyPlayerBalance(player1);
         
         verify(anteRoundHelper).requestAnte(player2, anteLevel, game);
     }    
