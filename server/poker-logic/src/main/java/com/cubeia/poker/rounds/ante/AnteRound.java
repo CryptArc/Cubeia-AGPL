@@ -24,6 +24,8 @@ import org.apache.log4j.Logger;
 
 import com.cubeia.poker.GameType;
 import com.cubeia.poker.action.PokerAction;
+import com.cubeia.poker.action.PokerActionType;
+import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
@@ -78,9 +80,9 @@ public class AnteRound implements Round {
 	}
 	
 	public void act(PokerAction action) {
-		
 		log.debug("act on: " + action);
 		PokerPlayer player = game.getState().getPlayerInCurrentHand(action.getPlayerId());
+		verifyValidAnte(player);
 		
 		switch (action.getActionType()) {
 		case ANTE:
@@ -98,10 +100,19 @@ public class AnteRound implements Round {
 			throw new IllegalArgumentException(action.getActionType() + " is not legal here");
 		}
 		
+		game.getState().getPlayerInCurrentHand(action.getPlayerId()).clearActionRequest();
+		
 		if (!anteRoundHelper.hasAllPlayersActed(game.getState().getCurrentHandPlayerMap().values())) {
 			requestNextAction(player.getSeatId());
 		}
 	}
+
+	private void verifyValidAnte(PokerPlayer player) {
+		PossibleAction option = player.getActionRequest().getOption(PokerActionType.ANTE);
+		if (option == null) {
+			throw new IllegalArgumentException("Illegal ante request from player ["+player+"]");
+		}
+	} 
 
 	public void timeout() {
 	    // TODO: must handle timeout

@@ -5,11 +5,8 @@ import org.junit.Test;
 import com.cubeia.poker.AbstractTexasHandTester;
 import com.cubeia.poker.MockPlayer;
 import com.cubeia.poker.NonRandomRNGProvider;
-import com.cubeia.poker.PokerState;
-import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
-import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.variant.PokerVariant;
 
 public class TelesinaAllinTest extends AbstractTexasHandTester {
@@ -22,21 +19,6 @@ public class TelesinaAllinTest extends AbstractTexasHandTester {
 		game.setAnteLevel(500);
 	}
 	
-	protected void act(int playerId, PokerActionType actionType) {
-		act(playerId, actionType, mockServerAdapter.getActionRequest().getOption(actionType).getMinAmount());
-	}
-	
-	protected void act(int playerId, PokerActionType actionType, long amount) {
-		PokerAction action = new PokerAction(playerId, actionType);
-		action.setBetAmount(amount);
-		game.act(action);
-	}	
-
-	protected void addPlayers(PokerState game, PokerPlayer[] p) {
-		for (PokerPlayer pl : p) {
-			game.addPlayer(pl);
-		}
-	}
 	
 	/**
 	 * Mock Game is staked at 20/10'
