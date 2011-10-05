@@ -19,10 +19,8 @@ package com.cubeia.games.poker.adapter;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Currency;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -35,6 +33,7 @@ import se.jadestone.dicearena.game.poker.network.protocol.DealerButton;
 import se.jadestone.dicearena.game.poker.network.protocol.DeckInfo;
 import se.jadestone.dicearena.game.poker.network.protocol.Enums;
 import se.jadestone.dicearena.game.poker.network.protocol.ExposePrivateCards;
+import se.jadestone.dicearena.game.poker.network.protocol.HandCanceled;
 import se.jadestone.dicearena.game.poker.network.protocol.HandEnd;
 import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerBalance;
@@ -45,7 +44,6 @@ import se.jadestone.dicearena.game.poker.network.protocol.PotTransfers;
 import se.jadestone.dicearena.game.poker.network.protocol.RequestAction;
 import se.jadestone.dicearena.game.poker.network.protocol.StartNewHand;
 
-import com.cubeia.backoffice.accounting.api.Money;
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.action.GameObjectAction;
@@ -60,13 +58,11 @@ import com.cubeia.firebase.api.game.table.TableType;
 import com.cubeia.firebase.api.service.ServiceRegistry;
 import com.cubeia.firebase.api.util.UnmodifiableSet;
 import com.cubeia.games.poker.FirebaseState;
-import com.cubeia.games.poker.PokerGame;
 import com.cubeia.games.poker.cache.ActionCache;
 import com.cubeia.games.poker.handler.Trigger;
 import com.cubeia.games.poker.handler.TriggerType;
 import com.cubeia.games.poker.jmx.PokerStats;
 import com.cubeia.games.poker.logic.TimeoutCache;
-import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.games.poker.persistence.history.HandHistoryDAO;
 import com.cubeia.games.poker.persistence.history.model.EventType;
 import com.cubeia.games.poker.persistence.history.model.PlayedHand;
@@ -74,8 +70,6 @@ import com.cubeia.games.poker.persistence.history.model.PlayedHandEvent;
 import com.cubeia.games.poker.tournament.PokerTournamentRoundReport;
 import com.cubeia.games.poker.util.ProtocolFactory;
 import com.cubeia.games.poker.util.WalletAmountConverter;
-import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
-import com.cubeia.network.wallet.firebase.domain.ResultEntry;
 import com.cubeia.network.wallet.firebase.domain.RoundResultResponse;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.ActionRequest;
@@ -89,7 +83,6 @@ import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.result.HandResult;
-import com.cubeia.poker.result.Result;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.tournament.RoundReport;
 import com.google.common.annotations.VisibleForTesting;
@@ -236,6 +229,14 @@ public class FirebaseServerAdapter implements ServerAdapter {
         GameDataAction ntfyAction = protocolFactory.createGameAction(hiddenCardsPacket, playerId, table.getId());
         log.debug("--> Send DealPrivateCards(exposed)["+hiddenCardsPacket+"] to everyone");
         sendPublicPacket(ntfyAction, -1);
+	}
+	
+	@Override
+	public void notifyHandCanceled() {
+	    HandCanceled handCanceledPacket = new HandCanceled();
+	    GameDataAction action = protocolFactory.createGameAction(handCanceledPacket, -1, table.getId());
+        log.debug("--> Send HandCanceled["+handCanceledPacket+"] to everyone");
+        sendPublicPacket(action, -1);
 	}
 	
     @Override

@@ -30,6 +30,7 @@ import se.jadestone.dicearena.game.poker.network.protocol.DealerButton;
 import se.jadestone.dicearena.game.poker.network.protocol.DeckInfo;
 import se.jadestone.dicearena.game.poker.network.protocol.ExposePrivateCards;
 import se.jadestone.dicearena.game.poker.network.protocol.GameCard;
+import se.jadestone.dicearena.game.poker.network.protocol.HandCanceled;
 import se.jadestone.dicearena.game.poker.network.protocol.HandEnd;
 import se.jadestone.dicearena.game.poker.network.protocol.InternalSerializedObject;
 import se.jadestone.dicearena.game.poker.network.protocol.PacketVisitor;
@@ -112,4 +113,6 @@ public class DefaultPokerHandler implements PacketVisitor {
     public void visit(BuyInResponse packet) {}
     @Override
     public void visit(InternalSerializedObject packet) {}
+    @Override
+    public void visit(HandCanceled packet) {}
 }

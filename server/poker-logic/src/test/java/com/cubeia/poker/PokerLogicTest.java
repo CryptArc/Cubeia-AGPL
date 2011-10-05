@@ -417,6 +417,7 @@ public class PokerLogicTest extends GuiceTest {
 				}
 			}
 
+			public void notifyHandCanceled() {}
 			public void notifyPrivateCards(int playerId, List<Card> cards) {}
             public void notifyPrivateExposedCards(int playerId, List<Card> cards) {}
 			public void requestAction(ActionRequest request) {}

@@ -100,6 +100,7 @@ public class MockServerAdapter implements ServerAdapter {
 
 	public void notifyCommunityCards(List<Card> cards) {}
 	public void notifyPrivateCards(int playerId, List<Card> cards) {}
+	public void notifyHandCanceled() {}
 	public void notifyPrivateExposedCards(int playerId, List<Card> cards) {}
 	public void exposePrivateCards(int playerId, List<Card> cards) {}
 	public void notifyDealerButton(int playerId) {}
