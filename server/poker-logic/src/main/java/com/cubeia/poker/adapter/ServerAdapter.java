@@ -90,11 +90,6 @@ public interface ServerAdapter {
 	void notifyHandEnd(HandResult handResult, HandEndStatus handEndStatus);
 
 	/**
-	 * Notifies the client that the hand was canceled. 
-	 */
-	void notifyHandCanceled();
-	
-	/**
 	 * Notify players about updated player balance.
 	 * 
 	 * @param player

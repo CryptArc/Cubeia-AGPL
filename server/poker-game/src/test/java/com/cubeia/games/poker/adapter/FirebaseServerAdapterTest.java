@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -55,6 +56,12 @@ public class FirebaseServerAdapterTest {
         
         fsa.updatePots(pots, potTransitions);
         verify(notifier).notifyAllPlayers(potAction);
+    }
+
+    @Ignore
+    @Test
+    public void validateAndUpdateBalances() {
+        // TODO: implement!!!
     }
 
 }

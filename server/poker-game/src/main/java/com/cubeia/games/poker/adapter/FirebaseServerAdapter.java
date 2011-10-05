@@ -44,6 +44,11 @@ import se.jadestone.dicearena.game.poker.network.protocol.PotTransfers;
 import se.jadestone.dicearena.game.poker.network.protocol.RequestAction;
 import se.jadestone.dicearena.game.poker.network.protocol.StartNewHand;
 
+import com.cubeia.backend.cashgame.TableId;
+import com.cubeia.backend.cashgame.dto.BalanceUpdate;
+import com.cubeia.backend.cashgame.dto.BatchHandRequest;
+import com.cubeia.backend.cashgame.dto.BatchHandResponse;
+import com.cubeia.backend.firebase.CashGamesBackendContract;
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.action.GameObjectAction;
@@ -57,12 +62,14 @@ import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TableType;
 import com.cubeia.firebase.api.service.ServiceRegistry;
 import com.cubeia.firebase.api.util.UnmodifiableSet;
+import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.games.poker.FirebaseState;
 import com.cubeia.games.poker.cache.ActionCache;
 import com.cubeia.games.poker.handler.Trigger;
 import com.cubeia.games.poker.handler.TriggerType;
 import com.cubeia.games.poker.jmx.PokerStats;
 import com.cubeia.games.poker.logic.TimeoutCache;
+import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.games.poker.persistence.history.HandHistoryDAO;
 import com.cubeia.games.poker.persistence.history.model.EventType;
 import com.cubeia.games.poker.persistence.history.model.PlayedHand;
@@ -105,6 +112,9 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	@Inject
 	GameContext gameContext;
 
+	@Service
+	CashGamesBackendContract backend;
+	
 	@Inject
 	Table table;
 	
@@ -115,6 +125,9 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	protected ProtocolFactory protocolFactory = new ProtocolFactory();
 	
     int handCount;
+
+    @Inject
+    private HandResultBatchFactory handResultBatchCreator;
 
 //    @Inject
 //    private PokerCEPService pokerCepService;
@@ -231,14 +244,6 @@ public class FirebaseServerAdapter implements ServerAdapter {
         sendPublicPacket(ntfyAction, -1);
 	}
 	
-	@Override
-	public void notifyHandCanceled() {
-	    HandCanceled handCanceledPacket = new HandCanceled();
-	    GameDataAction action = protocolFactory.createGameAction(handCanceledPacket, -1, table.getId());
-        log.debug("--> Send HandCanceled["+handCanceledPacket+"] to everyone");
-        sendPublicPacket(action, -1);
-	}
-	
     @Override
 	public void exposePrivateCards(int playerId, List<Card> cards) {
 		ExposePrivateCards packet = ActionTransformer.createExposeCardsPacket(playerId, cards);
@@ -289,6 +294,15 @@ public class FirebaseServerAdapter implements ServerAdapter {
 //				     createRoundReportDescription(handEndStatus));
 //				validateWalletBalances(roundResult);
 				
+                
+                int handId = -1;                    // TODO: implement this!
+                TableId externalTableId = null;     // TODO: table should get this from activator
+                BatchHandRequest batchHandRequest = handResultBatchCreator.createBatchHandRequest(handResult, handId, externalTableId);
+                BatchHandResponse batchHandResult = backend.batchHand(batchHandRequest);
+                
+                validateAndUpdateBalances(batchHandResult);
+                
+                
 				// TODO: The following logic should be moved to poker-logic
 				// I.e. ranking hands etc do not belong in the game-layer
 				Collection<RatedPlayerHand> hands = handResult.getPlayerHands();
@@ -312,10 +326,39 @@ public class FirebaseServerAdapter implements ServerAdapter {
 			log.info("The hand was cancelled on table: " + table.getId() + " - " + table.getMetaData().getName());
 			// TODO: The hand was cancelled... do something!
 			cleanupPlayers();
+			HandCanceled handCanceledPacket = new HandCanceled();
+            GameDataAction action = protocolFactory.createGameAction(handCanceledPacket, -1, table.getId());
+            log.debug("--> Send HandCanceled["+handCanceledPacket+"] to everyone");
+            sendPublicPacket(action, -1);
 		}
 		
         clearActionCache();
 	}
+
+    @VisibleForTesting
+    protected void validateAndUpdateBalances(BatchHandResponse batchHandResult) {
+        for (BalanceUpdate bup : batchHandResult.resultingBalances) {
+            PokerPlayerImpl pokerPlayer = null;
+            for (PokerPlayer pp : state.getCurrentHandPlayerMap().values()) {
+                if (((PokerPlayerImpl) pp).getPlayerSessionId().equals(bup.playerSessionId)) {
+                    pokerPlayer = (PokerPlayerImpl) pp;
+                }
+            }
+            
+            if (pokerPlayer == null) {
+                log.error("error updating balance: unable to find player with session = {}", bup.playerSessionId);
+            } else {
+                long gameBalance = pokerPlayer.getBalance();
+                long backendBalance = bup.balance;
+                
+                if (gameBalance != backendBalance) {
+                    log.error("backend balance: {} not equal to game balance: {}, will reset to backend value", 
+                        backendBalance, gameBalance);
+                    pokerPlayer.setBalance(backendBalance);
+                }
+            }
+        }
+    }
 
     private void clearActionCache() {
         if (cache != null) {
