@@ -47,8 +47,8 @@ public class MoneyRelatedPokerTests extends GuiceTest {
 		act(PokerActionType.BIG_BLIND);
 		assertEquals(balance - 100, mp[2].getBalance());
 		
-		System.out.println(mp[1].getBalance());
-		System.out.println(mp[3].getBalance());
+//		System.out.println(mp[1].getBalance());
+//		System.out.println(mp[3].getBalance());
 
 		// Everyone folds and bb wins
 		act(PokerActionType.FOLD);

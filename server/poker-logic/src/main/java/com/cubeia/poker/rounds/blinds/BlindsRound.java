@@ -64,7 +64,6 @@ public class BlindsRound implements Round {
 	private SortedMap<Integer, PokerPlayer> sittingInPlayers;
 	
 	public BlindsRound(GameType game, boolean isTournament) {
-		log.debug("Init new Blinds round");
 		this.isTournamentBlinds = isTournament;
 		this.game = game;
 		this.sittingInPlayers = getSittingInPlayers(game.getState().getCurrentHandSeatingMap());

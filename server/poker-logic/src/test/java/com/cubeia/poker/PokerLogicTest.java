@@ -131,8 +131,8 @@ public class PokerLogicTest extends GuiceTest {
 	}
 	
 	private void act(int playerId, PokerActionType actionType) {
-		System.out.println("Options: "+mockServerAdapter.getActionRequest().getOptions());
-		System.out.println("Option["+actionType+"]: "+mockServerAdapter.getActionRequest().getOption(actionType));
+//		System.out.println("Options: "+mockServerAdapter.getActionRequest().getOptions());
+//		System.out.println("Option["+actionType+"]: "+mockServerAdapter.getActionRequest().getOption(actionType));
 		act(playerId, actionType, mockServerAdapter.getActionRequest().getOption(actionType).getMinAmount());
 	}
 	

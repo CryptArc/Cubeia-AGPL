@@ -21,6 +21,7 @@ import com.cubeia.poker.IPokerState;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
+import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.rounds.ante.AnteRound;
@@ -46,7 +47,11 @@ public class AnteRoundTest {
         when(game.getState()).thenReturn(state);
         
         actionRequest1 = new ActionRequest();
+        actionRequest1.enable(new PossibleAction(PokerActionType.ANTE, 10));
+        
         actionRequest2 = new ActionRequest();
+        actionRequest2.enable(new PossibleAction(PokerActionType.ANTE, 10));
+        
         when(player1.getActionRequest()).thenReturn(actionRequest1);
         when(player2.getActionRequest()).thenReturn(actionRequest2);
         

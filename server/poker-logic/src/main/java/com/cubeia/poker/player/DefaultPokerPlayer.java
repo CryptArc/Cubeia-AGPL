@@ -82,6 +82,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	}
 
 	public void clearActionRequest() {
+		// log.trace("Clear Action for player "+playerId);
 		actionRequest = new ActionRequest();
 		actionRequest.setPlayerId(playerId);
 	}

@@ -21,8 +21,21 @@ import java.io.Serializable;
 
 import com.cubeia.poker.action.PokerAction;
 
+/**
+ * A round is a specific part of a poker hand, e.g. deal initial
+ * cards or betting. It does not concern the entire hand flow.
+ *
+ * @author Fredrik Johansson, Cubeia Ltd
+ */
 public interface Round extends Serializable {
 
+	/**
+	 * A player request to act. The action should
+	 * be checked before executed so it is valid
+	 * given the current state.
+	 * 
+	 * @param action
+	 */
 	public void act(PokerAction action);
 
 	public void timeout();

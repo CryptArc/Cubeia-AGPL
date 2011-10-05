@@ -80,7 +80,7 @@ public class AnteRound implements Round {
 	}
 	
 	public void act(PokerAction action) {
-		log.debug("act on: " + action);
+		log.debug("Act: "+action);
 		PokerPlayer player = game.getState().getPlayerInCurrentHand(action.getPlayerId());
 		verifyValidAnte(player);
 		
@@ -106,7 +106,13 @@ public class AnteRound implements Round {
 			requestNextAction(player.getSeatId());
 		}
 	}
-
+	
+	/**
+	 * Verify that this player is allowed to place ante.
+	 * 
+	 * @param player
+	 * @throws IllegalArgumentException if the player was not allowed to place ANTE
+	 */
 	private void verifyValidAnte(PokerPlayer player) {
 		PossibleAction option = player.getActionRequest().getOption(PokerActionType.ANTE);
 		if (option == null) {
