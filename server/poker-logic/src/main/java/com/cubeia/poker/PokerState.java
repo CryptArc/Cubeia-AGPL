@@ -358,6 +358,9 @@ public class PokerState implements Serializable, IPokerState {
 			log.debug("hand finished, result:\n{}", result);
 			
 			serverAdapter.notifyHandEnd(handResult, status);
+			
+			setPlayersWithoutMoneyAsSittingOut(handResult);
+			
 			log.debug("Schedule hand over timeout in: "+timing.getTime(Periods.START_NEW_HAND));
 			serverAdapter.scheduleTimeout(timing.getTime(Periods.START_NEW_HAND));
 		}
@@ -365,6 +368,21 @@ public class PokerState implements Serializable, IPokerState {
 		currentState = WAITING_TO_START;
 	}
 
+	/**
+	 * If a player has no money left he should be set as sitting out to 
+	 * prevent him to be included in new games. 
+	 * 
+	 * @param handResult
+	 */
+	private void setPlayersWithoutMoneyAsSittingOut(HandResult handResult) {
+		for (PokerPlayer player : handResult.getResults().keySet()) {
+			if (player.getBalance() <= 0) {
+				player.setSitOutStatus(SitOutStatus.SITTING_OUT);
+				notifyPlayerSittingOut(player.getId());
+			}
+		}
+	}
+	
 	private void awardWinners(Map<PokerPlayer, Result> results) {
 		for (Entry<PokerPlayer, Result> entry : results.entrySet()) {
 			PokerPlayer player = entry.getKey();

@@ -1,7 +1,10 @@
 package com.cubeia.poker.variant.telesina;
 
 import static com.cubeia.poker.action.PokerActionType.ANTE;
+import static com.cubeia.poker.action.PokerActionType.BET;
+import static com.cubeia.poker.action.PokerActionType.CALL;
 import static com.cubeia.poker.action.PokerActionType.CHECK;
+import static com.cubeia.poker.action.PokerActionType.DECLINE_ENTRY_BET;
 
 import org.junit.Test;
 
@@ -102,4 +105,61 @@ public class TelesinaTimeoutTest extends AbstractTexasHandTester {
 		assertTrue(game.getPlayerInCurrentHand(p[0]).isSittingOut());
 	}
 
+	@Test
+	public void testPlayerOutOfMoney() {
+		MockPlayer[] mp = testUtils.createMockPlayers(2);
+		int[] p = testUtils.createPlayerIdArray(mp);
+		addPlayers(game, mp);
+		
+		// Set initial balances
+		mp[0].setBalance(100);
+		mp[1].setBalance(100);
+		
+		// Force start
+		game.timeout();
+		act(p[1], ANTE);
+		act(p[0], ANTE);
+		act(p[1], BET, 90);
+		act(p[0], CALL);
+		// Progress until hand is complete
+		game.timeout();
+		game.timeout();
+		game.timeout();
+		game.timeout();
+		game.timeout();
+		game.timeout();
+		game.timeout();
+		game.timeout();
+		// End of hand
+		
+		assertTrue(mp[0].isSittingOut());
+	}
+	
+	@Test
+	public void testPlayerDeclinesAnte() {
+		MockPlayer[] mp = testUtils.createMockPlayers(3);
+		int[] p = testUtils.createPlayerIdArray(mp);
+		addPlayers(game, mp);
+		
+		// Set initial balances
+		mp[0].setBalance(100);
+		mp[1].setBalance(100);
+		mp[2].setBalance(100);
+		
+		// Force start
+		game.timeout();
+		
+		// ANTE
+		act(p[1], ANTE);
+		act(p[2], DECLINE_ENTRY_BET);
+		act(p[0], ANTE);
+		
+		assertEquals(PokerPlayerStatus.SITOUT, mockServerAdapter.getPokerPlayerStatus(p[2]));
+		
+		assertTrue(mp[1].isActionPossible(CHECK));
+		act(p[1], PokerActionType.CHECK);
+		act(p[0], PokerActionType.CHECK);
+		
+		assertTrue(game.getPlayerInCurrentHand(p[2]).isSittingOut());
+	}
 }
