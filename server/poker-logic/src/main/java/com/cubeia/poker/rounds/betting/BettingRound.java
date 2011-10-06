@@ -111,8 +111,7 @@ public class BettingRound implements Round, BettingRoundContext {
 	}
 
 	private void requestNextAction(int lastSeatId) {
-		PokerPlayer p = playerToActCalculator.getNextPlayerToAct(lastSeatId,
-				gameType.getState().getCurrentHandSeatingMap());
+		PokerPlayer p = playerToActCalculator.getNextPlayerToAct(lastSeatId, gameType.getState().getCurrentHandSeatingMap());
 
 		if (p == null) {
 			isFinished = true;

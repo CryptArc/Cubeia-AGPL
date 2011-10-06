@@ -177,8 +177,8 @@ public class PokerState implements Serializable, IPokerState {
 		timing = settings.getTiming();
 		variant = settings.getVariant();
 		tableSize = settings.getTableSize();
-		
 		minBuyIn = settings.getMinBuyIn();
+		maxBuyIn = settings.getMaxBuyIn();
 		betStrategyName = settings.getBetStrategy();
 		
 		gameType = createGameTypeByVariant(rngProvider, variant);

@@ -27,6 +27,7 @@ import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
 import com.cubeia.poker.rounds.blinds.BlindsInfo;
@@ -42,6 +43,8 @@ public class AnteRound implements Round {
 	private final GameType game;
 
 	private AnteRoundHelper anteRoundHelper;
+
+	private Integer playerToAct;
 	
 	public AnteRound(GameType game, AnteRoundHelper anteRoundHelper) {
 		this.game = game;
@@ -68,6 +71,7 @@ public class AnteRound implements Round {
 
 		if (p != null) {
 			anteRoundHelper.requestAnte(p, game.getBlindsInfo().getAnteLevel(), game);
+			playerToAct = p.getId();
 		}
 	}
 	
@@ -77,6 +81,7 @@ public class AnteRound implements Round {
 		for (PokerPlayer p : seatingMap.values()) {
 			p.clearActionRequest();
 		}
+		playerToAct = null;
 	}
 	
 	public void act(PokerAction action) {
@@ -121,7 +126,12 @@ public class AnteRound implements Round {
 	} 
 
 	public void timeout() {
-	    // TODO: must handle timeout
+		log.debug("Player["+playerToAct+"] ante timed out. Will decline entry bet.");
+		PokerPlayer player = game.getState().getPlayerInCurrentHand(playerToAct);
+		player.setSitOutStatus(SitOutStatus.MISSSED_ANTE);
+		act(new PokerAction(playerToAct, PokerActionType.DECLINE_ENTRY_BET, true));
+		// Ordering here is important to the client, we must send the sit out last.
+		game.getState().notifyPlayerSittingOut(player.getId());
 	}
 
 	public String getStateDescription() {

@@ -118,7 +118,18 @@ public class PokerHandlerTest {
 
     @Test
     public void testVisitBuyInInfoRequest() throws IOException {
+        
+        int minBuyIn = 100;
+        when(state.getMinBuyIn()).thenReturn(minBuyIn);
+        
+        int maxBuyIn = 45000;
+        when(state.getMaxBuyIn()).thenReturn(maxBuyIn);
+        
+        int playerBalanceOnTable = 100;
+        when(pokerPlayer.getBalance()).thenReturn((long) playerBalanceOnTable);
+        
         BuyInInfoRequest buyInInfoRequest = new BuyInInfoRequest();
+
         pokerHandler.visit(buyInInfoRequest);
         
         ArgumentCaptor<GameDataAction> captor = ArgumentCaptor.forClass(GameDataAction.class);
@@ -127,9 +138,9 @@ public class PokerHandlerTest {
         
         BuyInInfoResponse buyInInfoRespPacket = (BuyInInfoResponse) new StyxSerializer(new ProtocolObjectFactory()).unpack(gda.getData());
         assertThat(buyInInfoRespPacket.balanceInWallet, is(500000));
-        assertThat(buyInInfoRespPacket.balanceOnTable, is(0));
-        assertThat(buyInInfoRespPacket.maxAmount, is(330000));
-        assertThat(buyInInfoRespPacket.minAmount, is(500));
+        assertThat(buyInInfoRespPacket.balanceOnTable, is(playerBalanceOnTable));
+        assertThat(buyInInfoRespPacket.maxAmount, is(maxBuyIn - playerBalanceOnTable));
+        assertThat(buyInInfoRespPacket.minAmount, is(minBuyIn));
     }
 
     @Test

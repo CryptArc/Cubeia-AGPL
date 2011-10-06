@@ -353,8 +353,11 @@ public class BlindsRound implements Round {
 	}
 
 	private void notifyPlayerSittingOut(int playerId) {
+		log.debug("Notify player sitout: "+playerId);
 		if (game.getState() != null) {
 			game.getState().notifyPlayerSittingOut(playerId);
+		} else {
+			log.warn("Trying to notify sit out pid["+playerId+"] on NULL state!");
 		}
 	}
 

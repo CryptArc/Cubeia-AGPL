@@ -5,14 +5,14 @@
     <service>com.cubeia.backend.firebase.CashGamesBackendMock</service>
     <description/>
     <exported>
-        <!-- package>com.cubeia.backend.-</package -->
+        <package>com.cubeia.backend.-</package>
 
         <package>com.cubeia.backend.cashgame.-</package>
         <class>com.cubeia.backend.firebase.FirebaseCallbackFactory</class>
         <package>se.jadestone.dicearena.game.poker.network.protocol.-</package>
 
-        <!-- package>org.slf4j.-</package>
-        <package>com.google.common.-</package -->
+        <package>org.slf4j.-</package>
+        <package>com.google.common.-</package>
 
     </exported>
 </service>

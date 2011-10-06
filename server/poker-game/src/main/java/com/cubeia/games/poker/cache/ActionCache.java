@@ -59,7 +59,7 @@ public class ActionCache {
      */
     public void addPublicAction(int tableId, GameAction action) {
         cache.put(tableId, ActionContainer.createPublic(action));
-		log.debug("added public action to cache, tableId = {}, action type = {}, new cache size = {}", 
+		log.trace("added public action to cache, tableId = {}, action type = {}, new cache size = {}", 
 		    new Object[] {tableId, action.getClass().getSimpleName(), cache.get(tableId).size()});
 	}
     
@@ -71,7 +71,7 @@ public class ActionCache {
      */
     public void addPrivateAction(int tableId, int playerId, GameAction action) {
         cache.put(tableId, ActionContainer.createPrivate(playerId, action));
-        log.debug("added private action to cache, tableId = {}, playerId = {}, action type = {}, new cache size = {}", 
+        log.trace("added private action to cache, tableId = {}, playerId = {}, action type = {}, new cache size = {}", 
             new Object[] {tableId, playerId, action.getClass().getSimpleName(), cache.get(tableId).size()});
     }
 
@@ -110,7 +110,7 @@ public class ActionCache {
     }
 
     public void clear(int tableId) {
-        log.debug("clearing action cache for tableId = {}", tableId);
+        log.trace("clearing action cache for tableId = {}", tableId);
         cache.removeAll(tableId);
     }
 

@@ -48,6 +48,7 @@ import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.PokerAction;
+import com.cubeia.poker.player.PokerPlayer;
 import com.google.inject.Inject;
 
 public class PokerHandler extends DefaultPokerHandler {
@@ -96,15 +97,16 @@ public class PokerHandler extends DefaultPokerHandler {
 	
 	@Override
 	public void visit(BuyInInfoRequest packet) {
-	    // TODO: implement!
-	    
-	    log.warn("SENDING MOCKED BUY IN INFO RESPONSE!!!");
+	    PokerPlayer player = state.getPokerPlayer(playerId);
 	    
 	    BuyInInfoResponse resp = new BuyInInfoResponse();
-	    resp.balanceInWallet = 500000;
-	    resp.balanceOnTable = 0;
-	    resp.maxAmount = 330000;
-	    resp.minAmount = 500;
+	    
+	    int balanceOnTable = player == null ? 0 : (int) player.getBalance();
+	    
+	    resp.balanceInWallet = 500000;     // TODO: mocked value!
+	    resp.balanceOnTable = balanceOnTable;
+	    resp.maxAmount = state.getMaxBuyIn() - balanceOnTable;
+	    resp.minAmount = state.getMinBuyIn();
 	    
 	    GameDataAction gda = new GameDataAction(playerId, table.getId());
 	    
