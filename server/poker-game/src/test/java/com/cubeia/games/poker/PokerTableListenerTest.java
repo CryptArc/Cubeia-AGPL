@@ -1,6 +1,5 @@
 package com.cubeia.games.poker;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
@@ -12,22 +11,16 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-
-import se.jadestone.dicearena.game.poker.network.protocol.PlayerBalance;
-import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
 
 import com.cubeia.backend.cashgame.callback.OpenSessionCallback;
 import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
 import com.cubeia.backend.firebase.FirebaseCallbackFactory;
-import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.game.GameNotifier;
 import com.cubeia.firebase.api.game.player.GenericPlayer;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TableMetaData;
-import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
 import com.cubeia.poker.PokerState;
