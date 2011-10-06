@@ -45,6 +45,14 @@ import com.cubeia.poker.player.PokerPlayer;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 
+/**
+ * <p>In this class we are modifying a stored watcher list in the poker state object.
+ * The reason for this is that we want to detect if a player that joins the 
+ * game was previously a watcher. If the player was a watcher then we don't need to 
+ * send the game state again.</p>
+ *
+ * @author Fredrik Johansson, Cubeia Ltd
+ */
 public class PokerTableListener implements TournamentTableListener {
 
 	private static Logger log = LoggerFactory.getLogger(PokerTableListener.class);
@@ -85,6 +93,13 @@ public class PokerTableListener implements TournamentTableListener {
 	        addPlayer(table, player, false);
 	    }
 	}
+
+	/** Check if joined from watching state, only send if not a previous watcher */
+	private void checkSendGameState(Table table, GenericPlayer player) {
+        if (!state.removeAsWatcher(player.getPlayerId())) {
+        	gameStateSender.sendGameState(table, player.getPlayerId());
+        }
+	}
 	
     /**
 	 * A Player has left our table. =(
@@ -119,6 +134,7 @@ public class PokerTableListener implements TournamentTableListener {
 	public void watcherJoined(Table table, int playerId) {
         log.debug("Player["+playerId+"] watching Table["+table.getId()+":"+table.getMetaData().getName()+"]");
 		stateInjector.injectAdapter(table);
+		state.addWatcher(playerId);
 		gameStateSender.sendGameState(table, playerId);
 	}
 
@@ -126,19 +142,19 @@ public class PokerTableListener implements TournamentTableListener {
 
 	public void seatReserved(Table table, GenericPlayer player) {}
 	
-	public void watcherLeft(Table table, int playerId) {}
+	public void watcherLeft(Table table, int playerId) {
+		state.removeAsWatcher(playerId);
+	}
 	
 
 	private void sitInPlayer(Table table, GenericPlayer player) {
-	    gameStateSender.sendGameState(table, player.getPlayerId());
+		 checkSendGameState(table, player);
 	    state.playerIsSittingIn(player.getPlayerId());
-	    
     }
     
 	@VisibleForTesting
     protected PokerPlayer addPlayer(Table table, GenericPlayer player, boolean tournamentPlayer) {
-	    gameStateSender.sendGameState(table, player.getPlayerId());
-
+		checkSendGameState(table, player);
         PokerPlayer pokerPlayer = new PokerPlayerImpl(player);
         pokerPlayer.setSitOutStatus(NOT_ENTERED_YET);
         state.addPlayer(pokerPlayer);
