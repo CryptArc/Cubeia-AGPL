@@ -21,9 +21,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -145,6 +147,9 @@ public class PokerState implements Serializable, IPokerState {
 
 	/** Seatings during the current round */
 	private SortedMap<Integer, PokerPlayer> currentHandSeatingMap = new TreeMap<Integer, PokerPlayer>();
+
+	/** We need to keep track of watchers outside of the Firebase kept state */
+	private Set<Integer> watchers = new HashSet<Integer>();
 	
 	private PokerGameSTM currentState = NOT_STARTED;
 
@@ -663,6 +668,12 @@ public class PokerState implements Serializable, IPokerState {
         serverAdapter.notifyDeckInfo(size, rankLow);
     }
 
-	
+	public boolean removeAsWatcher(int playerId) {
+		return watchers.remove(playerId);
+	}
+
+	public void addWatcher(int playerId) {
+		watchers.add(playerId);
+	}
 	
 }

@@ -1,6 +1,8 @@
 package com.cubeia.backend.firebase;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
@@ -19,6 +21,7 @@ import com.cubeia.backend.cashgame.dto.BatchHandRequest;
 import com.cubeia.backend.cashgame.dto.BatchHandResponse;
 import com.cubeia.backend.cashgame.dto.CloseSessionRequest;
 import com.cubeia.backend.cashgame.dto.CloseTableRequest;
+import com.cubeia.backend.cashgame.dto.HandResult;
 import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
 import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
 import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;
@@ -123,8 +126,18 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
 
     @Override
     public BatchHandResponse batchHand(BatchHandRequest request) {
-        log.warn("not implemented!");
-        return new BatchHandResponse();
+        
+        List<BalanceUpdate> resultingBalances = new ArrayList<BalanceUpdate>();
+        for (HandResult hr : request.handResults) {
+            log.debug("recording hand result: handId = {}, sessionId = {}, bets = {}, wins = {}, rake = {}", 
+                new Object[] {request.handId, hr.playerSession, hr.aggregatedBet, hr.win, hr.rake});
+            long amount = hr.win - hr.rake - hr.aggregatedBet;
+            sessionTransactions.put(hr.playerSession, (int) amount);
+            resultingBalances.add(new BalanceUpdate(hr.playerSession, getBalance(hr.playerSession), -1));
+        }
+        
+        printDiagnostics();
+        return new BatchHandResponse(resultingBalances);
     }
 
     @Override
