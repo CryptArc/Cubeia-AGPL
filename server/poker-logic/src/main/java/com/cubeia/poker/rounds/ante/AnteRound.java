@@ -100,6 +100,7 @@ public class AnteRound implements Round {
             player.setHasActed(true);
             player.setHasPostedEntryBet(false);
             game.getServerAdapter().notifyActionPerformed(action);
+            setPlayerSitOut(player);
             break;
 		default:
 			throw new IllegalArgumentException(action.getActionType() + " is not legal here");
@@ -113,6 +114,11 @@ public class AnteRound implements Round {
 		}
 	}
 	
+	private void setPlayerSitOut(PokerPlayer player) {
+		player.setSitOutStatus(SitOutStatus.MISSSED_ANTE);
+		game.getState().notifyPlayerSittingOut(player.getId());
+	}
+
 	/**
 	 * Verify that this player is allowed to place ante.
 	 * 
@@ -128,11 +134,7 @@ public class AnteRound implements Round {
 
 	public void timeout() {
 		log.debug("Player["+playerToAct+"] ante timed out. Will decline entry bet.");
-		PokerPlayer player = game.getState().getPlayerInCurrentHand(playerToAct);
-		player.setSitOutStatus(SitOutStatus.MISSSED_ANTE);
 		act(new PokerAction(playerToAct, PokerActionType.DECLINE_ENTRY_BET, true));
-		// Ordering here is important to the client, we must send the sit out last.
-		game.getState().notifyPlayerSittingOut(player.getId());
 	}
 
 	public String getStateDescription() {
