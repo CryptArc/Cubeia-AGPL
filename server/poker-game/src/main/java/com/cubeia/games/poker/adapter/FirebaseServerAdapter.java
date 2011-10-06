@@ -392,6 +392,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
     @Override
 	public void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status) {
+    	log.debug("Notify player status changed: "+playerId+" -> "+status);
 		PlayerPokerStatus packet = new PlayerPokerStatus();
 		packet.player = playerId;
 		switch (status) {

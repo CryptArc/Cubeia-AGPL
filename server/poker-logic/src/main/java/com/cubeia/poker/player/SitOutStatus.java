@@ -22,5 +22,6 @@ package com.cubeia.poker.player;
 		NO_MISSED_BLINDS,
 		MISSED_SMALL_BLIND,
 		MISSED_BIG_BLIND,
+		MISSSED_ANTE,
 		SITTING_OUT
 	}

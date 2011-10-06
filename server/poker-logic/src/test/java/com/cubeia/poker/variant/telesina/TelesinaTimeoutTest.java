@@ -1,0 +1,105 @@
+package com.cubeia.poker.variant.telesina;
+
+import static com.cubeia.poker.action.PokerActionType.ANTE;
+import static com.cubeia.poker.action.PokerActionType.CHECK;
+
+import org.junit.Test;
+
+import com.cubeia.poker.AbstractTexasHandTester;
+import com.cubeia.poker.MockPlayer;
+import com.cubeia.poker.NonRandomRNGProvider;
+import com.cubeia.poker.action.PokerActionType;
+import com.cubeia.poker.player.PokerPlayerStatus;
+import com.cubeia.poker.variant.PokerVariant;
+
+public class TelesinaTimeoutTest extends AbstractTexasHandTester {
+
+	@Override
+	protected void setUp() throws Exception {
+		variant = PokerVariant.TELESINA;
+		rng = new NonRandomRNGProvider();
+		super.setUp();
+		game.setAnteLevel(10);
+	}
+	
+	
+	/**
+	 * Verify that table does not hang on a timeout during ante round
+	 */
+	@Test
+	public void testAnteTimeout() {
+		MockPlayer[] mp = testUtils.createMockPlayers(3);
+		int[] p = testUtils.createPlayerIdArray(mp);
+		addPlayers(game, mp);
+		
+		// Set initial balances
+		mp[0].setBalance(100);
+		mp[1].setBalance(100);
+		mp[2].setBalance(100);
+		
+		// Force start
+		game.timeout();
+		
+		// ANTE
+		act(p[1], ANTE);
+		assertTrue(mp[2].isActionPossible(ANTE));
+		// Timeout player 2
+		game.timeout();
+		// Assert that player 0 has received an action request
+		assertTrue(mp[0].isActionPossible(ANTE));
+	}
+	
+	/**
+	 * Verify timeout will exclude player from table
+	 */
+	@Test
+	public void testAnteTimeoutHand() {
+		MockPlayer[] mp = testUtils.createMockPlayers(3);
+		int[] p = testUtils.createPlayerIdArray(mp);
+		addPlayers(game, mp);
+		
+		// Set initial balances
+		mp[0].setBalance(100);
+		mp[1].setBalance(100);
+		mp[2].setBalance(100);
+		
+		// Force start
+		game.timeout();
+		
+		// ANTE
+		act(p[1], ANTE);
+		// Timeout player 2
+		game.timeout();
+		act(p[0], ANTE);
+	}
+	
+	@Test
+	public void testAnteTimeoutHand2() {
+		MockPlayer[] mp = testUtils.createMockPlayers(3);
+		int[] p = testUtils.createPlayerIdArray(mp);
+		addPlayers(game, mp);
+		
+		// Set initial balances
+		mp[0].setBalance(100);
+		mp[1].setBalance(100);
+		mp[2].setBalance(100);
+		
+		// Force start
+		game.timeout();
+		
+		// ANTE
+		act(p[1], ANTE);
+		act(p[2], ANTE);
+		// Timeout player 0
+		game.timeout();
+		
+		assertEquals(PokerPlayerStatus.SITOUT, mockServerAdapter.getPokerPlayerStatus(p[0]));
+		
+		assertTrue(mp[2].isActionPossible(CHECK));
+		act(p[2], PokerActionType.CHECK);
+		act(p[1], PokerActionType.CHECK);
+		
+		assertTrue(game.getPlayerInCurrentHand(p[0]).isSittingOut());
+	}
+
+}
