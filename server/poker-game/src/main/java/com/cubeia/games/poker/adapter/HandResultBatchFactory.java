@@ -19,9 +19,10 @@ public class HandResultBatchFactory {
             Result result = resultEntry.getValue();
             
             long bets = result.getWinningsIncludingOwnBets() - result.getNetResult();
+            long wins = result.getWinningsIncludingOwnBets();
             long rake = 0; // TODO: unsupported, must add to HandResult
             com.cubeia.backend.cashgame.dto.HandResult hr = new com.cubeia.backend.cashgame.dto.HandResult(
-                player.getPlayerSessionId(), bets, result.getNetResult(), rake);
+                player.getPlayerSessionId(), bets, wins, rake);
             bhr.addHandResult(hr);
         }
         

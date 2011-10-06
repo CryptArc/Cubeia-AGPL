@@ -81,25 +81,23 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
             new Object[] {request.tableId, request.playerId, response.sessionId});
         log.debug("currently open sessions: {}", sessionTransactions.size());
         callback.requestSucceded(response);
-//        sendToTable(gameId, request.tableId.id, response);
         
         printDiagnostics();        
     }
 
     @Override
     public void closeSession(CloseSessionRequest request) {
-        log.warn("not implemented!");
-        
         PlayerSessionId sid = request.playerSessionId;
         
         if (!sessionTransactions.containsKey(sid)) {
             log.error("error closing session {}: not found", sid);
         } else {
+            int closingBalance = getBalance(sid);
             sessionTransactions.removeAll(sid);
+            log.debug("closed session {} with balance: {}", sid, closingBalance);
         }
         
         printDiagnostics();
-        
     }
 
     @Override

@@ -76,8 +76,6 @@ import com.cubeia.games.poker.persistence.history.model.PlayedHand;
 import com.cubeia.games.poker.persistence.history.model.PlayedHandEvent;
 import com.cubeia.games.poker.tournament.PokerTournamentRoundReport;
 import com.cubeia.games.poker.util.ProtocolFactory;
-import com.cubeia.games.poker.util.WalletAmountConverter;
-import com.cubeia.network.wallet.firebase.domain.RoundResultResponse;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
@@ -104,8 +102,6 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
 	private static Logger log = LoggerFactory.getLogger(FirebaseServerAdapter.class);
 
-    private WalletAmountConverter amountConverter = new WalletAmountConverter();
-    
 	@Inject
 	ActionCache cache;
 	
@@ -262,38 +258,11 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	public void notifyHandEnd(HandResult handResult, HandEndStatus handEndStatus) {
 		if (handEndStatus.equals(HandEndStatus.NORMAL) && handResult != null) {
 			try {
-			    List<PlayerBalance> balances = new ArrayList<PlayerBalance>();
 			    
-				// Handle wins and losses. Talk to wallet.
-//				Collection<ResultEntry> resultEntries = new ArrayList<ResultEntry>();
-//				Map<PokerPlayer, Result> results = handResult.getResults();
-//				for (PokerPlayer p : results.keySet()) {
-////					GameDataAction action = ActionTransformer.createPlayerBalanceAction((int)p.getBalance(), p.getId(), table.getId());
-////					table.getNotifier().notifyAllPlayers(action);
-//					
-//				    balances.add(new PlayerBalance((int) p.getBalance(), p.getId()));
-//					
-////					long sessionId = ((PokerPlayerImpl) p).getSessionId();
-//					Result result = results.get(p);
-//					// FIXME: Hardcoded currency code
-//					ResultEntry entry = new ResultEntry(sessionId, amountConverter.convertToWalletAmount(result.getNetResult()), PokerGame.CURRENCY_CODE);
-//					resultEntries.add(entry);
-//				}
-				
 				List<PotTransfer> transfers = new ArrayList<PotTransfer>();
 				for (PotTransition pt : handResult.getPotTransitions()) {
 				    transfers.add(ActionTransformer.createPotTransferPacket(pt));
 				}
-                PotTransfers potTransfers = new PotTransfers(false, transfers, null, balances);
-				
-//				WalletServiceContract walletService = getServices().getServiceInstance(WalletServiceContract.class);
-				
-				// TODO: Change to use doTransaction(...) instead of deprecated method roundResult(...)
-//				RoundResultResponse roundResult = walletService.roundResult(
-//				     -1l, (long) PokerGame.POKER_GAME_ID, (long) table.getId(), resultEntries, 
-//				     createRoundReportDescription(handEndStatus));
-//				validateWalletBalances(roundResult);
-				
                 
                 int handId = -1;                    // TODO: implement this!
                 TableId externalTableId = null;     // TODO: table should get this from activator
@@ -302,6 +271,12 @@ public class FirebaseServerAdapter implements ServerAdapter {
                 
                 validateAndUpdateBalances(batchHandResult);
                 
+                List<PlayerBalance> balances = new ArrayList<PlayerBalance>();
+                for (PokerPlayer player : state.getCurrentHandPlayerMap().values()) {
+                    balances.add(new PlayerBalance((int) player.getBalance(), player.getId()));
+                }
+                
+                PotTransfers potTransfers = new PotTransfers(false, transfers, null, balances);
                 
 				// TODO: The following logic should be moved to poker-logic
 				// I.e. ranking hands etc do not belong in the game-layer
@@ -366,19 +341,6 @@ public class FirebaseServerAdapter implements ServerAdapter {
         }
     }
 
-	/**
-	 * Creates a simple textual description of the hand to be used in the round report.
-	 * @param handEndStatus status of the hand
-	 * @return the description
-	 */
-    private String createRoundReportDescription(HandEndStatus handEndStatus) {
-        return "Pokerhand, table[" + table.getId() + "]";
-    }
-	
-    private String createPlayerBalanceResetDescription(int playerId) {
-    	return "Resetting balance for pid["+playerId+"]";
-    }
-    
     @Override
 	public void notifyPlayerBalance(PokerPlayer p) {
 		if (p == null) return;
@@ -387,12 +349,6 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	    sendPublicPacket(action, 0);
 	}
 	
-	
-    private void validateWalletBalances(RoundResultResponse roundResult) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	/**
 	 * Sends a poker tournament round report to the tournament as set in the table meta-data.
 	 * 

@@ -2,7 +2,6 @@ package com.cubeia.games.poker.adapter;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -11,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hamcrest.Matcher;
 import org.junit.Test;
 
 import com.cubeia.backend.cashgame.PlayerSessionId;
@@ -27,7 +25,7 @@ import com.cubeia.poker.result.Result;
 public class HandResultBatchFactoryTest {
 
     @Test
-    public void test() {
+    public void testCreateBatchHandRequest() {
         HandResultBatchFactory handResultFactory = new HandResultBatchFactory();
         long handId = 55555;
         
@@ -62,8 +60,8 @@ public class HandResultBatchFactoryTest {
         assertThat(batchHandRequest.handResults.size(), is(2));
         
         com.cubeia.backend.cashgame.dto.HandResult hr1 = findByPlayerSessionId(playerSessionId1, batchHandRequest.handResults);
-        assertThat(hr1.aggregatedBet, is(1000L));
-        assertThat(hr1.win, is(2000L));
+        assertThat(hr1.aggregatedBet, is(result1.getWinningsIncludingOwnBets() - result1.getNetResult()));
+        assertThat(hr1.win, is(result1.getWinningsIncludingOwnBets()));
         assertThat(hr1.rake, is(0L));
         assertThat(hr1.playerSession, is(playerSessionId1));
     }
