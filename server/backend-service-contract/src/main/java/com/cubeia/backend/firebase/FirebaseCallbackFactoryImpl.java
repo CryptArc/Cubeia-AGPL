@@ -9,8 +9,11 @@ import org.slf4j.LoggerFactory;
 
 import se.jadestone.dicearena.game.poker.network.protocol.InternalSerializedObject;
 
+import com.cubeia.backend.cashgame.callback.AnnounceTableCallback;
 import com.cubeia.backend.cashgame.callback.OpenSessionCallback;
 import com.cubeia.backend.cashgame.callback.ReserveCallback;
+import com.cubeia.backend.cashgame.dto.AnnounceTableFailedResponse;
+import com.cubeia.backend.cashgame.dto.AnnounceTableResponse;
 import com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse;
 import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
 import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;
@@ -65,6 +68,27 @@ public class FirebaseCallbackFactoryImpl implements FirebaseCallbackFactory {
                 log.debug("reserve failed: gId = {}, tId = {}, error = {}, msg = {}", 
                     new Object[] {table.getMetaData().getGameId(), table.getId(), response.errorCode, response.message});
                 sendGameDataActionToTable(response.sessionId.getPlayerId(), table.getMetaData().getGameId(), table.getId(), response);
+            }
+        };
+        return callback;
+    }
+    
+    @Override
+    public AnnounceTableCallback createAnnounceTableCallback(final Table table) {
+    	AnnounceTableCallback callback = new AnnounceTableCallback() {
+            @Override
+            public void requestSucceded(AnnounceTableResponse response) {
+                log.debug("announce succeded: gId = {}, tId = {}",
+                    new Object[] {table.getMetaData().getGameId(), table.getId()});
+                
+                sendGameDataActionToTable(-1, table.getMetaData().getGameId(), table.getId(), response);
+            }
+            
+            @Override
+            public void requestFailed(AnnounceTableFailedResponse response) {
+                log.debug("reserve failed: gId = {}, tId = {}, error = {}, msg = {}", 
+                    new Object[] {table.getMetaData().getGameId(), table.getId(), response.errorCode, response.message});
+                sendGameDataActionToTable(-1, table.getMetaData().getGameId(), table.getId(), response);
             }
         };
         return callback;
