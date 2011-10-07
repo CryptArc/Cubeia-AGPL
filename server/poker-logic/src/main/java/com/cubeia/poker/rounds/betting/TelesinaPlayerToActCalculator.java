@@ -40,8 +40,9 @@ public class TelesinaPlayerToActCalculator implements PlayerToActCalculator {
 		Hand currentBestHand = null;
 		
 		for (PokerPlayer p : seatingMap.values()) {
-			if (p.isSittingOut()) {
-				continue; // Don't include sitting out players
+			if (p.isSittingOut() || p.hasFolded()) {
+				System.out.println(" ----- >>> SKIP sitout/folded player: "+p);
+				continue; // Don't include sitting out or folded players
 			}
 			List<Card> cards = new LinkedList<Card>(p.getPublicPocketCards());
 			cards.addAll(communityCards);
