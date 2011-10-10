@@ -182,9 +182,6 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
      * @param config
      */
     private void incrementTables(DefaultActivatorConfig config, PokerParticipant participant) {
-    	
-    	log.debug("creating tables for participant: " + participant);
-    	
         tableRegistry.createTables(config.getIncrementSize() * multiplier, participant.getSeats(), participant);
     }
 
