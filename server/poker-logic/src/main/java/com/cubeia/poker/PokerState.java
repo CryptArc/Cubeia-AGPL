@@ -186,8 +186,6 @@ public class PokerState implements Serializable, IPokerState {
 		betStrategyName = settings.getBetStrategy();
 		
 		gameType = createGameTypeByVariant(rngProvider, variant);
-		
-		log.debug("poker state initialized with logic: " + gameType);
 	}
 
 	protected GameType createGameTypeByVariant(RNGProvider rngProvider, PokerVariant variant) {
