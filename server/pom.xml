@@ -20,6 +20,7 @@
     <module>backend</module>
     <module>backend-service-contract</module>
     <module>backend-service-mock</module>
+    <module>hand-debugger-service</module>
   </modules>
 
     <organization>
@@ -228,7 +229,7 @@
       <plugin>
         <groupId>com.cubeia.tools</groupId>
         <artifactId>archive-plugin</artifactId>
-        <version>1.7.0</version>
+        <version>1.8.0</version>
         <extensions>true</extensions>
       </plugin>
       <plugin>

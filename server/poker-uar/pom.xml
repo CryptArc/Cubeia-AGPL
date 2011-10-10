@@ -69,6 +69,14 @@
       <type>firebase-sar</type>
       <scope>provided</scope>
     </dependency>   
+    
+    <dependency>
+      <groupId>com.cubeia.games.poker</groupId>
+			<artifactId>hand-debugger-service</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <type>firebase-sar</type>
+      <scope>provided</scope>
+    </dependency>   
      
   </dependencies>
 
@@ -78,7 +86,7 @@
       <plugin>
           <groupId>com.cubeia.tools</groupId>
           <artifactId>firebase-maven-plugin</artifactId>
-          <version>1.8-CE-SNAPSHOT</version>
+          <version>1.7.3.1-CE</version>
           <configuration>
             <!-- enable copy of overlay files -->
             <overlaysEnabled>true</overlaysEnabled>
