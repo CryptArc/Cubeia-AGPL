@@ -8,6 +8,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.cubeia.games.poker.debugger.json.Bean;
+
 @Path("/")
 @Consumes({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.TEXT_HTML })

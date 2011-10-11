@@ -25,6 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cubeia.firebase.api.action.GameAction;
+import com.cubeia.firebase.guice.inject.Service;
+import com.cubeia.games.poker.services.HandDebuggerContract;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
@@ -44,6 +46,7 @@ public class ActionCache {
 
     private final Multimap<Integer, ActionContainer> cache;
     
+    @Service HandDebuggerContract handDebugger;
     
     public ActionCache() {
         LinkedListMultimap<Integer, ActionContainer> linkedListMultimap = LinkedListMultimap.<Integer, ActionContainer>create();
@@ -61,9 +64,13 @@ public class ActionCache {
         cache.put(tableId, ActionContainer.createPublic(action));
 		log.trace("added public action to cache, tableId = {}, action type = {}, new cache size = {}", 
 		    new Object[] {tableId, action.getClass().getSimpleName(), cache.get(tableId).size()});
+		
+		if (handDebugger != null) {
+			handDebugger.addPublicAction(tableId, action);
+		}
 	}
-    
-    /**
+
+	/**
      * Add a private action to the cache.
      * @param tableId
      * @param playerId
@@ -73,6 +80,10 @@ public class ActionCache {
         cache.put(tableId, ActionContainer.createPrivate(playerId, action));
         log.trace("added private action to cache, tableId = {}, playerId = {}, action type = {}, new cache size = {}", 
             new Object[] {tableId, playerId, action.getClass().getSimpleName(), cache.get(tableId).size()});
+        
+        if (handDebugger != null) {
+			handDebugger.addPrivateAction(tableId, playerId, action);
+		}
     }
 
     /**
@@ -112,6 +123,9 @@ public class ActionCache {
     public void clear(int tableId) {
         log.trace("clearing action cache for tableId = {}", tableId);
         cache.removeAll(tableId);
+        if (handDebugger != null) {
+        	handDebugger.clearTable(tableId);
+        }
     }
 
     /**

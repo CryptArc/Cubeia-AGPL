@@ -16,12 +16,12 @@
 
 
 	<category name="org.eclipse" additivity="false">
-		<priority value="debug" />
+		<priority value="info" />
 		<appender-ref ref="STDOUT" />
 	</category>
 	
 	<category name="com.sun.jersey" additivity="false">
-		<priority value="debug" />
+		<priority value="info" />
 		<appender-ref ref="STDOUT" />
 	</category>
 

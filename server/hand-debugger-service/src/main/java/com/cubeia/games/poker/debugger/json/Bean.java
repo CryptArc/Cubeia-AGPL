@@ -1,4 +1,4 @@
-package com.cubeia.games.poker.debugger.web;
+package com.cubeia.games.poker.debugger.json;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
