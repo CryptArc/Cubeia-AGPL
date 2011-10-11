@@ -46,7 +46,7 @@ public class HandDebuggerImpl implements HandDebuggerContract {
 	public void sendHttpLink(int tableId, int playerId) {
 		if (router != null) {
 			String myAddress = getLocalIP();
-			String url = "http://"+myAddress+":9091/table.html?tableId="+tableId;
+			String url = "http://"+myAddress+":9091/table.html?tableid="+tableId;
 			String message = "You can check the hand history at: <a href='event:"+url+"' target='_blank'>"+url+"</a>";
 			TableChatAction chat = new TableChatAction(playerId, tableId, message);
 	        router.dispatchToPlayer(playerId, chat);
