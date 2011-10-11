@@ -15,4 +15,6 @@ public interface TableEventCache<T> {
 
 	public abstract List<T> getEvents(int tableId);
 
+	public abstract List<T> getPreviousEvents(int tableId);
+
 }

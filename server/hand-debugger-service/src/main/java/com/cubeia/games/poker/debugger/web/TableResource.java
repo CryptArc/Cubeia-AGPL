@@ -38,4 +38,23 @@ public class TableResource {
     	}
     }
     
+    @GET
+    @Path("previous/id/{tableId}")
+    public HandHistory getPreviousHandHistory(@PathParam("tableId")int tableId) {
+    	List<String> events = cache.getPreviousEvents(tableId);
+    	HandHistory handHistory = new HandHistory();
+    	
+    	if (events != null) {
+	    	for (String entry : events) {
+	    		HandEvent event = new HandEvent();
+	    		event.description = entry;
+	    		handHistory.events.add(event);
+	    	}
+	    	return handHistory;
+	    	
+    	} else {
+    		return new HandHistory();
+    	}
+    }
+    
 }

@@ -20,12 +20,22 @@ import com.cubeia.games.poker.services.HandDebuggerContract;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+/**
+ * This class will leak memory if used in production. Previous events are never
+ * cleared from lists so if many tables are created (over time) then this map
+ * will grow unbounded.
+ *
+ * @author Fredrik Johansson, Cubeia Ltd
+ */
 @Singleton
 public class TableStringCache implements TableEventCache<String> {
 
 	StyxSerializer serializer = new StyxSerializer(new ProtocolObjectFactory());
 	
 	ConcurrentMap<Integer, List<String>> events = new ConcurrentHashMap<Integer, List<String>>();
+	
+	/** Caches last hand */
+	ConcurrentMap<Integer, List<String>> previousEvents = new ConcurrentHashMap<Integer, List<String>>();
 	
 	SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 	
@@ -43,12 +53,18 @@ public class TableStringCache implements TableEventCache<String> {
 
 	@Override
 	public void clearTable(int tableId) {
-		events.remove(tableId);
+		List<String> removed = events.remove(tableId);
+		previousEvents.put(tableId, removed);
 	}
 
 	@Override
 	public List<String> getEvents(int tableId) {
 		return events.get(tableId);
+	}
+	
+	@Override
+	public List<String> getPreviousEvents(int tableId) {
+		return previousEvents.get(tableId);
 	}
 	
 	private void addToCache(int tableId, GameAction action) {

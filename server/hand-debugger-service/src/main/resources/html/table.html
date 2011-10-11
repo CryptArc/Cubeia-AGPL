@@ -13,32 +13,41 @@
 		    // Get table id from URL parameters   
 		   	var tableId = $.urlParam("tableId");
 		   	
-			// Get Table information from server in JSON format  
-			$.getJSON('/api/table/id/'+tableId, function(data) {
-			
-			
-				$("#tableHeader").html("Poker Table "+tableId);
-			   
-			    
-			    var items = [];
-				
-				  $.each(data.events, function(key, val) {
+		   	
+		   	function addEvents(events, element) {
+		   		var items = [];
+				  $.each(events, function(key, val) {
 				    items.push('<div class="tableEvent">' + val.description + '</div>');
 				  });
-				
+				  
 				  $('<div/>', {
 				    'class': 'handHistory',
 				    html: items.join('')
-				  }).appendTo('body');
-			    
-			    
+				  }).appendTo(element);
+				  
+		   	}
+		   	
+			// Get current hand history in JSON format and add to page
+			$.getJSON('/api/table/id/'+tableId, function(data) {
+				$("#tableHeader").html("Poker Table "+tableId);
+			    $('#current').append('<h3>Current Hand</h3>');
+			    addEvents(data.events, '#current');
+			});
+			
+			
+			// Get previous hand history in JSON format and add to page
+			$.getJSON('/api/table/previous/id/'+tableId, function(data) {
+				$('<h3>Previous Hand</h3>').appendTo('#previous');				
+			    addEvents(data.events, '#previous');
 			});
 			
 		 </script>  
 		
 	</head>
-
-	<h2 id="tableHeader">...</h2>	
-
 	
+	<body>
+		<div class="header"><h1 id="tableHeader"></h1></div>	
+		<div id="current" ></div>
+		<div id="previous" ></div>
+	</body>
 </html>
