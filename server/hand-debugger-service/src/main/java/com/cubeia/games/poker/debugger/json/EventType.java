@@ -5,5 +5,6 @@ public enum EventType {
 	status,
 	request,
 	action,
-	table
+	table, 
+	hidden
 }

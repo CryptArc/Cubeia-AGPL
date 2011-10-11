@@ -81,6 +81,10 @@ a:hover {
 	color: #2883c8;
 }
 
+.hidden {
+	color: #980b0b;
+}
+
 .table {
 	color: #444444;
 }

@@ -9,9 +9,13 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import se.jadestone.dicearena.game.poker.network.protocol.DealPrivateCards;
+import se.jadestone.dicearena.game.poker.network.protocol.DealerButton;
 import se.jadestone.dicearena.game.poker.network.protocol.Enums.ActionType;
+import se.jadestone.dicearena.game.poker.network.protocol.Enums.PlayerTableStatus;
 import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerAction;
+import se.jadestone.dicearena.game.poker.network.protocol.PlayerPokerStatus;
 import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
 import se.jadestone.dicearena.game.poker.network.protocol.RequestAction;
 
@@ -66,18 +70,29 @@ public class WebserverRunner {
 		
 		Thread.sleep(1000);
 		
+		// Add some events
+		addEvent(facade, new PlayerPokerStatus(111, PlayerTableStatus.NORMAL));
+		addEvent(facade, new DealerButton(Byte.valueOf("1")));
+		
 		PlayerAction data = new PlayerAction(ActionType.BET, 10, 10);
 		List<PlayerAction> actionsAllowed = new ArrayList<PlayerAction>();
 		actionsAllowed.add(data);
-		RequestAction request = new RequestAction(1, 111, actionsAllowed, 100);
-		GameDataAction action1 = addGameEvent(request);
-		facade.addPublicAction(1, action1);
+		addEvent(facade, new RequestAction(1, 111, actionsAllowed, 100));
 		
-		PerformAction playerActed = new PerformAction(2, 111, data, 0, 0, 100, false, 123);
-		GameDataAction action2 = addGameEvent(playerActed);
-		facade.addPublicAction(1, action2);
+		addEvent(facade, new PerformAction(2, 111, data, 0, 0, 100, false, 123));
+		addPrivateEvent(facade, new DealPrivateCards());
 		
 		Thread.sleep(100000);
+	}
+
+	private void addEvent(HandDebuggerFacade facade, ProtocolObject request) throws IOException {
+		GameDataAction action = addGameEvent(request);
+		facade.addPublicAction(1, action);
+	}
+	
+	private void addPrivateEvent(HandDebuggerFacade facade, ProtocolObject request) throws IOException {
+		GameDataAction action = addGameEvent(request);
+		facade.addPrivateAction(1, 111, action);
 	}
 
 	private GameDataAction addGameEvent(ProtocolObject data) throws IOException {

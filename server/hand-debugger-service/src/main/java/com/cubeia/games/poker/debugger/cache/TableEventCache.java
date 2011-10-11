@@ -46,11 +46,11 @@ public class TableEventCache {
 	@Inject HandDebuggerContract handDebugger;
 	
 	public void addPublicAction(int tableId, GameAction action) {
-		addToCache(tableId, action);
+		addToCache(tableId, action, false);
 	}
 
 	public void addPrivateAction(int tableId, int playerId, GameAction action) {
-		addToCache(tableId, action);
+		addToCache(tableId, action, true);
 	}
 
 	public void clearTable(int tableId) {
@@ -66,18 +66,21 @@ public class TableEventCache {
 		return previousEvents.get(tableId);
 	}
 	
-	private void addToCache(int tableId, GameAction action) {
+	private void addToCache(int tableId, GameAction action, boolean privateAction) {
 		if (action instanceof GameDataAction) {
 			GameDataAction gameDataAction = (GameDataAction) action;
-			addGameDataAction(tableId, gameDataAction);
+			addGameDataAction(tableId, gameDataAction, privateAction);
 		}
 	}
 
-	private void addGameDataAction(int tableId, GameDataAction action) {
+	private void addGameDataAction(int tableId, GameDataAction action, boolean privateAction) {
 		ProtocolObject protocol = unpack(action);
 		events.putIfAbsent(tableId, new ArrayList<Event>());
 		
 		EventType type = getEventType(protocol);
+		if (privateAction) {
+			type = EventType.hidden;
+		}
 		Event event = new Event(type, protocol.toString(), sdf.format(new Date()));
 		events.get(tableId).add(event);
 		
