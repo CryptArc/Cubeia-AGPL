@@ -1,5 +1,8 @@
 package com.cubeia.games.poker.debugger;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.TableChatAction;
 import com.cubeia.firebase.api.action.service.ServiceAction;
@@ -16,7 +19,7 @@ public class HandDebuggerImpl implements HandDebuggerContract {
 	
 	@Inject WebServer server;
 	
-	@Inject TableEventCache<String> cache;
+	@Inject TableEventCache cache;
 
 	private ServiceRouter router;
 	
@@ -42,11 +45,21 @@ public class HandDebuggerImpl implements HandDebuggerContract {
 	@Override
 	public void sendHttpLink(int tableId, int playerId) {
 		if (router != null) {
-			String url = "http://localhost:9091/table.html?tableId="+tableId;
-			TableChatAction chat = new TableChatAction(playerId, tableId, 
-					"You can check the hand history at: <a href='event:"+url+"' target='_blank'>"+url+"</a>");
+			String myAddress = getLocalIP();
+			String url = "http://"+myAddress+":9091/table.html?tableId="+tableId;
+			String message = "You can check the hand history at: <a href='event:"+url+"' target='_blank'>"+url+"</a>";
+			TableChatAction chat = new TableChatAction(playerId, tableId, message);
 	        router.dispatchToPlayer(playerId, chat);
 		}
+	}
+
+	private String getLocalIP() {
+		String address = null;
+		try {
+			InetAddress ownIp = InetAddress.getLocalHost();
+			address = ownIp.getHostAddress();
+		} catch (UnknownHostException e) {}
+		return address == null ? "localhost" : address;
 	}
 
 	@Override

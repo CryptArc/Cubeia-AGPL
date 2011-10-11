@@ -9,6 +9,8 @@ import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 @JsonSerialize(include = Inclusion.NON_NULL)
 public class HandEvent {
 	
+	public EventType type = EventType.unknown;
+	
 	public String description;
 	
 }

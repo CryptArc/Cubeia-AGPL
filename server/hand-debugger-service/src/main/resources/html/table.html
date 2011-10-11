@@ -17,7 +17,7 @@
 		   	function addEvents(events, element) {
 		   		var items = [];
 				  $.each(events, function(key, val) {
-				    items.push('<div class="tableEvent">' + val.description + '</div>');
+				    items.push('<div class="tableEvent"><div class="'+val.type+'">' + val.description + '</div></div>');
 				  });
 				  
 				  $('<div/>', {
@@ -47,7 +47,9 @@
 	
 	<body>
 		<div class="header"><h1 id="tableHeader"></h1></div>	
+		<br/>
 		<div id="current" ></div>
+		<br/>
 		<div id="previous" ></div>
 	</body>
 </html>
