@@ -144,7 +144,7 @@ public class PokerTableListener implements TournamentTableListener {
 	
 
 	private void sitInPlayer(Table table, GenericPlayer player) {
-		 checkSendGameState(table, player);
+		checkSendGameState(table, player);
 	    state.playerIsSittingIn(player.getPlayerId());
     }
     

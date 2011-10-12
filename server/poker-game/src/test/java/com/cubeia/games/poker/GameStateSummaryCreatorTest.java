@@ -14,12 +14,15 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import se.jadestone.dicearena.game.poker.network.protocol.DealPublicCards;
 import se.jadestone.dicearena.game.poker.network.protocol.GameCard;
+import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
+import se.jadestone.dicearena.game.poker.network.protocol.PlayerAction;
 import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
 import se.jadestone.dicearena.game.poker.network.protocol.RequestAction;
 import se.jadestone.dicearena.game.poker.network.protocol.StartHandHistory;
@@ -33,6 +36,7 @@ import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.cache.ActionCache;
+import com.cubeia.games.poker.cache.ActionContainer;
 
 public class GameStateSummaryCreatorTest {
 
@@ -44,8 +48,10 @@ public class GameStateSummaryCreatorTest {
         
         ActionCache actionCache = mock(ActionCache.class);
         GameStateSender gameStateSender = new GameStateSender(actionCache);
-        List<GameAction> cachedActions = Arrays.<GameAction>asList(new JoinRequestAction(playerId, 1, 0, "snubbe"));
-        when(actionCache.getPrivateAndPublicActions(tableId, playerId)).thenReturn(cachedActions);
+        JoinRequestAction gameAction = new JoinRequestAction(playerId, 1, 0, "snubbe");
+		Collection<ActionContainer> containers = Arrays.<ActionContainer>asList(ActionContainer.createPrivate(1, gameAction));
+        
+        when(actionCache.getPrivateAndPublicActions(tableId, playerId)).thenReturn(containers);
         
         Table table = mock(Table.class);
         GameNotifier gameNotifier = mock(GameNotifier.class);
@@ -71,21 +77,100 @@ public class GameStateSummaryCreatorTest {
         GameStateSender gameStateSummaryCreator = new GameStateSender(null);
         StyxSerializer styx = new StyxSerializer(new ProtocolObjectFactory());
         
-        List<GameAction> actions = new ArrayList<GameAction>();
+        List<ActionContainer> actions = new ArrayList<ActionContainer>();
         JoinRequestAction act0 = new JoinRequestAction(111, 1, 0, "snubbe");
-        actions.add(act0);
+        actions.add(ActionContainer.createPrivate(111, act0));
         GameDataAction gda0 = new GameDataAction(333, 1);
         gda0.setData(styx.pack(new RequestAction()));
-        actions.add(gda0);
-        GameDataAction gda1 = new GameDataAction(222, 1);
-        gda1.setData(styx.pack(new DealPublicCards(new ArrayList<GameCard>())));
-        actions.add(gda1);
+        actions.add(ActionContainer.createPrivate(111, gda0));
+        GameDataAction gda1 = new GameDataAction(333, 1);
+        gda1.setData(styx.pack(new PerformAction(1, 222, new PlayerAction(), 10, 10, 10, false, 100)));
+        actions.add(ActionContainer.createPrivate(111, gda1));
+        GameDataAction gda2 = new GameDataAction(222, 1);
+        gda2.setData(styx.pack(new DealPublicCards(new ArrayList<GameCard>())));
+        actions.add(ActionContainer.createPrivate(111, gda2));
 
-        assertThat(actions.size(), is(3));
+        assertThat(actions.size(), is(4));
         
         List<GameAction> filteredActions = gameStateSummaryCreator.filterRequestActions(actions);
-        assertThat(filteredActions.size(), is(2));
-        assertThat(filteredActions, is(Arrays.<GameAction>asList(act0, gda1)));
+        assertThat(filteredActions.size(), is(3));
+        assertThat(filteredActions, is(Arrays.<GameAction>asList(act0, gda1, gda2)));
+    }
+    
+    @Test
+    public void testFilterAllButLastRequestActions() throws IOException {
+        GameStateSender gameStateSummaryCreator = new GameStateSender(null);
+        StyxSerializer styx = new StyxSerializer(new ProtocolObjectFactory());
+        
+        List<ActionContainer> actions = new ArrayList<ActionContainer>();
+        JoinRequestAction act0 = new JoinRequestAction(111, 1, 0, "snubbe");
+        actions.add(ActionContainer.createPrivate(111, act0));
+        
+        // Request perform pair
+        GameDataAction gda0 = new GameDataAction(222, 1);
+        gda0.setData(styx.pack(new RequestAction()));
+        actions.add(ActionContainer.createPrivate(222, gda0));
+        
+        GameDataAction gda1 = new GameDataAction(222, 1);
+        gda1.setData(styx.pack(new PerformAction(1, 222, new PlayerAction(), 10, 10, 10, false, 100)));
+        actions.add(ActionContainer.createPrivate(222, gda1));
+        
+        // Request without perform - this should not be filtered.
+        GameDataAction lastRequest = new GameDataAction(333, 1);
+        lastRequest.setData(styx.pack(new RequestAction()));
+        actions.add(ActionContainer.createPrivate(333, lastRequest));
+        
+        assertThat(actions.size(), is(4));
+        
+        List<GameAction> filteredActions = gameStateSummaryCreator.filterRequestActions(actions);
+        assertThat(filteredActions.size(), is(3));
+        assertThat(filteredActions, is(Arrays.<GameAction>asList(act0, gda1, lastRequest)));
+    }
+    
+    @Test
+    public void testAdjustTimeout() throws Exception {
+        GameStateSender gameStateSummaryCreator = new GameStateSender(null);
+        StyxSerializer styx = new StyxSerializer(new ProtocolObjectFactory());
+        
+        List<ActionContainer> actions = new ArrayList<ActionContainer>();
+        
+        // Request without perform - this should not be filtered.
+        GameDataAction lastRequest = new GameDataAction(333, 1);
+        lastRequest.setData(styx.pack(new RequestAction(1, 111, new ArrayList<PlayerAction>(), 100)));
+        actions.add(ActionContainer.createPrivate(333, lastRequest));
+        
+        Thread.sleep(20); // Wait so we can check adjustment
+        
+        List<GameAction> filteredActions = gameStateSummaryCreator.filterRequestActions(actions);
+        
+        GameDataAction gameAction = (GameDataAction)filteredActions.get(0);
+        Assert.assertEquals(gameAction, lastRequest);
+        RequestAction request = (RequestAction)styx.unpack(gameAction.getData());
+        
+        Assert.assertTrue(request.timeToAct <= 80);
+    }
+    
+    @Test
+    public void testAdjustTimeoutNegative() throws Exception {
+        GameStateSender gameStateSummaryCreator = new GameStateSender(null);
+        StyxSerializer styx = new StyxSerializer(new ProtocolObjectFactory());
+        
+        List<ActionContainer> actions = new ArrayList<ActionContainer>();
+        
+        // Request without perform - this should not be filtered.
+        GameDataAction lastRequest = new GameDataAction(333, 1);
+        lastRequest.setData(styx.pack(new RequestAction(1, 111, new ArrayList<PlayerAction>(), 10)));
+        actions.add(ActionContainer.createPrivate(333, lastRequest));
+        
+        Thread.sleep(20); // Wait so we can check adjustment
+        
+        List<GameAction> filteredActions = gameStateSummaryCreator.filterRequestActions(actions);
+        
+        GameDataAction gameAction = (GameDataAction)filteredActions.get(0);
+        Assert.assertEquals(gameAction, lastRequest);
+        RequestAction request = (RequestAction)styx.unpack(gameAction.getData());
+        
+        Assert.assertEquals(0, request.timeToAct);
     }
     
     private ProtocolObject extractProtocolObject(GameDataAction gda) throws IOException {

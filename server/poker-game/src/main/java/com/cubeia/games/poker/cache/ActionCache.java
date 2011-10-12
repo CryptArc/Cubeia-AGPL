@@ -17,7 +17,7 @@
 
 package com.cubeia.games.poker.cache;
 
-import java.io.Serializable;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -109,54 +109,32 @@ public class ActionCache {
      * @param playerId player id
      * @return list of both private and public actions
      */
-    public List<GameAction> getPrivateAndPublicActions(int tableId, int playerId) {
-        List<GameAction> actions = new LinkedList<GameAction>();
-        for (ActionContainer ac : cache.get(tableId)) {
-            if (ac.isPublic()  ||  ac.getPlayerId() == playerId) {
-                actions.add(ac.getGameAction());
-            }
-        }
-        
-        return actions;
+    public Collection<ActionContainer> getPrivateAndPublicActions(int tableId, int playerId) {
+    	List<ActionContainer> actions = new LinkedList<ActionContainer>();
+	      for (ActionContainer ac : cache.get(tableId)) {
+	          if (ac.isPublic()  ||  ac.getPlayerId() == playerId) {
+	              actions.add(ac);
+	          }
+	      }
+	      return actions;
     }
+    
+//    public List<GameAction> getPrivateAndPublicActions(int tableId, int playerId) {
+//        List<GameAction> actions = new LinkedList<GameAction>();
+//        for (ActionContainer ac : cache.get(tableId)) {
+//            if (ac.isPublic()  ||  ac.getPlayerId() == playerId) {
+//                actions.add(ac.getGameAction());
+//            }
+//        }
+//        
+//        return actions;
+//    }
 
     public void clear(int tableId) {
         log.trace("clearing action cache for tableId = {}", tableId);
         cache.removeAll(tableId);
         if (handDebugger != null) {
         	handDebugger.clearTable(tableId);
-        }
-    }
-
-    /**
-     * Container for game actions.
-     * @author w
-     *
-     */
-    @SuppressWarnings("serial")
-    private static class ActionContainer implements Serializable {
-        private final Integer playerId;
-        private final GameAction gameAction;
-        
-        private ActionContainer(Integer playerId, GameAction gameAction) {
-            this.playerId = playerId;
-            this.gameAction = gameAction;
-        }
-        
-        public static ActionContainer createPublic(GameAction gameAction) {
-            return new ActionContainer(null, gameAction);
-        }
-        
-        public static ActionContainer createPrivate(int playerId, GameAction gameAction) {
-            return new ActionContainer(playerId, gameAction);
-        }
-        
-        public int getPlayerId() { return playerId; }
-        
-        public GameAction getGameAction() { return gameAction; }
-        
-        public boolean isPublic() {
-            return playerId == null;
         }
     }
 
