@@ -26,6 +26,7 @@ public abstract class AbstractTexasHandTester extends GuiceTest {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+		
 		game.setAnteLevel(500);
 	}
 	

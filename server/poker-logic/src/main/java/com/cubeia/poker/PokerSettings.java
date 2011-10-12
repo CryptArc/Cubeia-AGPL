@@ -12,7 +12,7 @@ public class PokerSettings {
 	private final PokerVariant variant;
     private final int tableSize;
     private final BetStrategyName betStrategy;
-	
+		
 	public PokerSettings(
 			int anteLevel,
 			int minBuyIn,
@@ -30,6 +30,7 @@ public class PokerSettings {
 		this.tableSize = tableSize;
 		this.betStrategy = betStrategy;
 	}
+	
 
 	public int getAnteLevel() {
 		return anteLevel;
@@ -57,5 +58,15 @@ public class PokerSettings {
 	
 	public int getMinBuyIn() {
 		return minBuyIn;
+	}
+
+	public int getEntryBetLevel() {
+		switch (variant)
+		{
+			case TELESINA:
+				return anteLevel*2;
+			default:
+				return anteLevel;
+		}
 	}
 }

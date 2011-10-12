@@ -5,8 +5,13 @@ import org.junit.Test;
 import com.cubeia.poker.AbstractTexasHandTester;
 import com.cubeia.poker.MockPlayer;
 import com.cubeia.poker.NonRandomRNGProvider;
+import com.cubeia.poker.PokerSettings;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
+import com.cubeia.poker.rounds.betting.BetStrategyName;
+import com.cubeia.poker.timing.TimingFactory;
+import com.cubeia.poker.timing.TimingProfile;
+import com.cubeia.poker.timing.Timings;
 import com.cubeia.poker.variant.PokerVariant;
 
 public class TelesinaAllinTest extends AbstractTexasHandTester {
@@ -17,6 +22,11 @@ public class TelesinaAllinTest extends AbstractTexasHandTester {
 		rng = new NonRandomRNGProvider();
 		super.setUp();
 		game.setAnteLevel(500);
+		
+		TimingProfile timing = TimingFactory.getRegistry().getTimingProfile(Timings.MINIMUM_DELAY);
+		BetStrategyName betStrategy = BetStrategyName.NO_LIMIT;
+		PokerSettings settings = new PokerSettings(20, 1, 1000, timing, variant, 6, betStrategy);
+		game.init(rng, settings);
 	}
 	
 	
@@ -25,14 +35,14 @@ public class TelesinaAllinTest extends AbstractTexasHandTester {
 	 */
 	@Test
 	public void testAllInTelesinaHand() {
-		game.setAnteLevel(20);
+		
 		MockPlayer[] mp = testUtils.createMockPlayers(2);
 		int[] p = testUtils.createPlayerIdArray(mp);
 		addPlayers(game, mp);
 		
 		// Set initial balances
-		mp[0].setBalance(63);
-		mp[1].setBalance(43);
+		mp[0].setBalance(83);
+		mp[1].setBalance(63);
 		
 		// Force start
 		game.timeout();
@@ -47,18 +57,20 @@ public class TelesinaAllinTest extends AbstractTexasHandTester {
 		
 		game.timeout();
 		
+		
 		PossibleAction betRequest = mp[1].getActionRequest().getOption(PokerActionType.BET);
-		assertEquals(20, betRequest.getMinAmount());
-		assertEquals(23, betRequest.getMaxAmount());
-		act(p[1], PokerActionType.BET, 20);
+		assertEquals(40, betRequest.getMinAmount());
+		assertEquals(43, betRequest.getMaxAmount());
+		act(p[1], PokerActionType.BET, 40);
 		
 		PossibleAction callRequest = mp[0].getActionRequest().getOption(PokerActionType.CALL);
-		assertEquals(20, callRequest.getMinAmount());
-		assertEquals(20, callRequest.getMaxAmount());
+		assertEquals(40, callRequest.getMinAmount());
+		assertEquals(40, callRequest.getMaxAmount());
 		
 		PossibleAction raiseRequest = mp[0].getActionRequest().getOption(PokerActionType.RAISE);
-		assertEquals(40, raiseRequest.getMinAmount());
-		assertEquals(43, raiseRequest.getMaxAmount());
+		assertEquals(63, raiseRequest.getMinAmount());
+		assertEquals(63, raiseRequest.getMaxAmount());
+
 		
 	}
 

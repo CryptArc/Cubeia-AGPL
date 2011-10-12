@@ -196,6 +196,12 @@ public class MockGame implements GameType {
 				// System.out.println("Dealer button is on seat: " + dealerButtonSeatId);
 				// WAEVVA, I'll do what i want, I'm a mock!
 			}
+
+			@Override
+			public int getEntryBetLevel() {
+				// TODO Auto-generated method stub
+				return 0;
+			}
 		};
 	}
 
