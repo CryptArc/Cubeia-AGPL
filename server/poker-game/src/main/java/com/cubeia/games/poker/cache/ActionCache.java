@@ -119,6 +119,17 @@ public class ActionCache {
         
         return actions;
     }
+    
+//    public List<GameAction> getPrivateAndPublicActions(int tableId, int playerId) {
+//        List<GameAction> actions = new LinkedList<GameAction>();
+//        for (ActionContainer ac : cache.get(tableId)) {
+//            if (ac.isPublic()  ||  ac.getPlayerId() == playerId) {
+//                actions.add(ac.getGameAction());
+//            }
+//        }
+//        
+//        return actions;
+//    }
 
     public void clear(int tableId) {
         log.trace("clearing action cache for tableId = {}", tableId);

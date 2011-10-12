@@ -509,6 +509,11 @@ public class PokerState implements Serializable, IPokerState {
 			player.setSitOutNextRound(false);
 			player.setSitInAfterSuccessfulBuyIn(false);
 			notifyPlayerSittingIn(playerId);
+			
+			// Check if we are waiting for this player (could be a reconnect)
+			// if so then re-send the action request
+			
+			
 			startGame();
 		}
 	}

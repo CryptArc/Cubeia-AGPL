@@ -7,6 +7,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
 import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
 import se.jadestone.dicearena.game.poker.network.protocol.RequestAction;
 import se.jadestone.dicearena.game.poker.network.protocol.StartHandHistory;
@@ -35,10 +36,6 @@ public class GameStateSender {
         this.actionCache = actionCache;
     }
     
-//    public void sendGameState(Table table, int playerId) {
-//        List<GameAction> recordedGameState = gameStateSummaryCreator.createGameState(table.getId(), playerId);
-//    }
-    
     public void sendGameState(Table table, int playerId) {
         ProtocolFactory protocolFactory = new ProtocolFactory();
         int tableId = table.getId();
@@ -58,15 +55,18 @@ public class GameStateSender {
     }
 
     /**
-     * Filter the game actions list by removing all GameDataActions containing RequestAction packets.
+     * Filter the game actions list by removing all GameDataActions containing RequestAction packets
+     * that have been answered by a PerformAction.
+     * 
      * @param actions actions to filter
      * @return new filtered list
      */
     @VisibleForTesting
     protected List<GameAction> filterRequestActions(List<GameAction> actions) {
         LinkedList<GameAction> filteredActions = new LinkedList<GameAction>();
-        
         StyxSerializer styxalizer = new StyxSerializer(new ProtocolObjectFactory());
+        
+        GameAction lastRequest = null;
         
         for (GameAction ga : actions) {
             if (ga instanceof GameDataAction) {
@@ -74,15 +74,28 @@ public class GameStateSender {
                 ProtocolObject packet;
                 try {
                     packet = styxalizer.unpack(gda.getData());
-                    if (!(packet instanceof RequestAction)) {
-                        filteredActions.add(ga);
-                    }
+                    
+                    if (packet instanceof RequestAction) {
+                    	lastRequest = ga;
+						 
+					} else if (packet instanceof PerformAction) {
+						lastRequest = null;
+						filteredActions.add(ga);
+						
+					} else {
+						filteredActions.add(ga);
+					}
                 } catch (IOException e) {
                     log.error("error unpacking cached packet", e);
                 }
             } else {
                 filteredActions.add(ga);
             }
+        }
+        
+        // If we have an unanswered request then add it last
+        if (lastRequest != null) {
+        	filteredActions.add(lastRequest);
         }
         
         return filteredActions;
