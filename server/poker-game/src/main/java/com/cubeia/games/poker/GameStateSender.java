@@ -1,6 +1,7 @@
 package com.cubeia.games.poker;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,6 +20,7 @@ import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.cache.ActionCache;
+import com.cubeia.games.poker.cache.ActionContainer;
 import com.cubeia.games.poker.util.ProtocolFactory;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
@@ -37,38 +39,47 @@ public class GameStateSender {
     }
     
     public void sendGameState(Table table, int playerId) {
-        ProtocolFactory protocolFactory = new ProtocolFactory();
-        int tableId = table.getId();
-        
-        log.debug("sending stored game actions to client, player id = {}", playerId);
-        List<GameAction> actions = new LinkedList<GameAction>();
-        actions.add(protocolFactory.createGameAction(new StartHandHistory(), playerId, tableId));
-        
-        List<GameAction> actionsFromCache = actionCache.getPrivateAndPublicActions(tableId, playerId);
-        actionsFromCache = filterRequestActions(actionsFromCache);
-        actions.addAll(actionsFromCache);
-        
-        actions.add(protocolFactory.createGameAction(new StopHandHistory(), playerId, tableId));
-        log.debug("done sending {} stored game actions, player id = {}", actions.size() - 2, playerId);
-        
-        table.getNotifier().notifyPlayer(playerId, actions);
+    	try {
+	        ProtocolFactory protocolFactory = new ProtocolFactory();
+	        int tableId = table.getId();
+	        
+	        log.debug("sending stored game actions to client, player id = {}", playerId);
+	        List<GameAction> actions = new LinkedList<GameAction>();
+	        actions.add(protocolFactory.createGameAction(new StartHandHistory(), playerId, tableId));
+	        
+	        Collection<ActionContainer> containers = actionCache.getPrivateAndPublicActions(tableId, playerId);
+	        Collection<GameAction> actionsFromCache = filterRequestActions(containers);
+	        actions.addAll(actionsFromCache);
+	        
+	        actions.add(protocolFactory.createGameAction(new StopHandHistory(), playerId, tableId));
+	        log.debug("done sending {} stored game actions, player id = {}", actions.size() - 2, playerId);
+	        
+	        table.getNotifier().notifyPlayer(playerId, actions);
+    	} catch (Exception e) {
+    		log.error("Failed to create and send game state to player "+playerId, e);
+    	}
     }
 
+    
+    
     /**
      * Filter the game actions list by removing all GameDataActions containing RequestAction packets
      * that have been answered by a PerformAction.
      * 
      * @param actions actions to filter
      * @return new filtered list
+     * @throws IOException 
      */
     @VisibleForTesting
-    protected List<GameAction> filterRequestActions(List<GameAction> actions) {
+    protected List<GameAction> filterRequestActions(Collection<ActionContainer> actions) throws IOException {
         LinkedList<GameAction> filteredActions = new LinkedList<GameAction>();
         StyxSerializer styxalizer = new StyxSerializer(new ProtocolObjectFactory());
         
-        GameAction lastRequest = null;
+        ActionContainer lastContainer = null; 
+        RequestAction lastRequest = null;
         
-        for (GameAction ga : actions) {
+        for (ActionContainer container : actions) {
+        	GameAction ga = container.getGameAction();
             if (ga instanceof GameDataAction) {
                 GameDataAction gda = (GameDataAction) ga;
                 ProtocolObject packet;
@@ -76,10 +87,12 @@ public class GameStateSender {
                     packet = styxalizer.unpack(gda.getData());
                     
                     if (packet instanceof RequestAction) {
-                    	lastRequest = ga;
+                    	lastRequest = (RequestAction)packet;
+                    	lastContainer = container;
 						 
 					} else if (packet instanceof PerformAction) {
 						lastRequest = null;
+						lastContainer = null;
 						filteredActions.add(ga);
 						
 					} else {
@@ -93,12 +106,25 @@ public class GameStateSender {
             }
         }
         
-        // If we have an unanswered request then add it last
+        // If we have an unanswered request then adjust the time left to act and add it last
         if (lastRequest != null) {
-        	filteredActions.add(lastRequest);
+        	GameDataAction requestAction = adjustTimeToAct(styxalizer, lastContainer, lastRequest);
+        	filteredActions.add(requestAction);
         }
         
         return filteredActions;
     }
+
+	private GameDataAction adjustTimeToAct(StyxSerializer styxalizer, ActionContainer lastContainer, RequestAction lastRequest) throws IOException {
+		long elapsed = System.currentTimeMillis() - lastContainer.getTimestamp();
+		int timeToAct = lastRequest.timeToAct - (int)elapsed;
+		if (timeToAct < 0) {
+			timeToAct = 0;
+		}
+		lastRequest.timeToAct = timeToAct;
+		GameDataAction requestAction = (GameDataAction)lastContainer.getGameAction();
+		requestAction.setData(styxalizer.pack(lastRequest));
+		return requestAction;
+	}
     
 }
