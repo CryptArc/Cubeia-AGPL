@@ -376,9 +376,16 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	public void notifyPlayerBalance(PokerPlayer p) {
 		if (p == null) return;
 		
-	    GameDataAction action = ActionTransformer.createPlayerBalanceAction(
-	        (int) p.getBalance(), (int) p.getPendingBalance(), p.getId(), table.getId());
-	    sendPublicPacket(action, 0);
+		// first send private packet to the player
+	    GameDataAction publicAction = ActionTransformer.createPlayerBalanceAction(
+	        (int) p.getBalance(), 0, p.getId(), table.getId());
+	    sendPublicPacket(publicAction, p.getId());
+	    
+//	    // then send public packet to all the other players but exclude the pending balance
+	    GameDataAction privateAction = ActionTransformer.createPlayerBalanceAction(
+		        (int) p.getBalance(), (int) p.getPendingBalance(), p.getId(), table.getId());
+		    sendPrivatePacket(p.getId(),privateAction);
+	    
 	}
 	
 	/**
