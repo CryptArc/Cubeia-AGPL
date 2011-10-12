@@ -6,6 +6,7 @@ import com.cubeia.poker.AbstractTexasHandTester;
 import com.cubeia.poker.MockPlayer;
 import com.cubeia.poker.NonRandomRNGProvider;
 import com.cubeia.poker.action.PokerActionType;
+import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.variant.PokerVariant;
 
 public class TelesinaAnteSitInTest extends AbstractTexasHandTester {
@@ -24,14 +25,10 @@ public class TelesinaAnteSitInTest extends AbstractTexasHandTester {
 	 */
 	@Test
 	public void testAnteSitIns() {
-		MockPlayer[] mp = testUtils.createMockPlayers(6);
+		MockPlayer[] mp = testUtils.createMockPlayers(6, 100);
 		MockPlayer[] startingPlayers = new MockPlayer[]{ mp[0], mp[1] };
 		int[] p = testUtils.createPlayerIdArray(mp);
 		addPlayers(game, startingPlayers);
-
-		// Set initial balances
-		mp[0].setBalance(100);
-		mp[1].setBalance(100);
 
 		// Force start
 		game.timeout();
@@ -72,13 +69,9 @@ public class TelesinaAnteSitInTest extends AbstractTexasHandTester {
 
 	@Test
 	public void testDoubleAnte() {
-		MockPlayer[] mp = testUtils.createMockPlayers(2);
+		MockPlayer[] mp = testUtils.createMockPlayers(2, 100);
 		int[] p = testUtils.createPlayerIdArray(mp);
 		addPlayers(game, mp);
-
-		// Set initial balances
-		mp[0].setBalance(100);
-		mp[1].setBalance(100);
 
 		// Force start
 		game.timeout();
@@ -91,6 +84,36 @@ public class TelesinaAnteSitInTest extends AbstractTexasHandTester {
 			// Expected
 		}
 
+	}
+	
+	@Test
+	public void testAnteSitOutThenSitIt() {
+		MockPlayer[] mp = testUtils.createMockPlayers(3, 100);
+		int[] p = testUtils.createPlayerIdArray(mp);
+		addPlayers(game, mp);
+
+		// Force start
+		game.timeout();
+
+		// Blinds
+		act(p[1], PokerActionType.ANTE);	
+		act(p[2], PokerActionType.DECLINE_ENTRY_BET);
+		
+		// Assert that player 2 is now in a sit out state
+		assertTrue(game.getPlayerInCurrentHand(p[2]).isSittingOut());
+		// Player 2 now says sit-in again
+		game.playerIsSittingIn(p[2]);
+		assertFalse(game.getPlayerInCurrentHand(p[2]).isSittingOut());
+		
+		act(p[0], PokerActionType.ANTE); 
+		
+		// Now player 2 should not be in the hard nor be awarded cards
+		assertEquals(2, game.getPlayerInCurrentHand(p[1]).getPocketCards().getCards().size());
+		assertEquals(2, game.getPlayerInCurrentHand(p[0]).getPocketCards().getCards().size());
+		assertEquals(0, game.getPlayerInCurrentHand(p[2]).getPocketCards().getCards().size());
+		
+		act(p[1], PokerActionType.CHECK);
+		act(p[0], PokerActionType.CHECK); 	
 	}
 
 }

@@ -98,6 +98,7 @@ public class AnteRound implements Round {
 			break;
 		case DECLINE_ENTRY_BET:
             player.setHasActed(true);
+            player.setHasFolded(true);
             player.setHasPostedEntryBet(false);
             game.getServerAdapter().notifyActionPerformed(action, player.getBalance());
             setPlayerSitOut(player);
