@@ -110,7 +110,7 @@ public class BetLevelTest extends AbstractTexasHandTester {
 	 * Mock Game is staked at 10/5'
 	 */
 	public void testAllInHoldemHand() {
-		game.setAnteLevel(10);
+		setAnteLevel(10);
 		MockPlayer[] mp = testUtils.createMockPlayers(8);
 		int[] p = testUtils.createPlayerIdArray(mp);
 		addPlayers(game, mp);
@@ -146,7 +146,7 @@ public class BetLevelTest extends AbstractTexasHandTester {
 	 * Mock Game is staked at 10/5'
 	 */
 	public void testMultipleBlinds() {
-		game.setAnteLevel(10);
+		setAnteLevel(10);
 		MockPlayer[] mp = testUtils.createMockPlayers(8);
 		int[] p = testUtils.createPlayerIdArray(mp);
 		addPlayers(game, mp);

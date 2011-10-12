@@ -42,7 +42,7 @@ public class Ticket55_TimeoutOOB extends AbstractTexasHandTester {
 	 * Player default balance: 5000
 	 */
 	public void testAllInHoldemHand() {
-		game.setAnteLevel(10);
+		setAnteLevel(10);
 		MockPlayer[] mp = testUtils.createMockPlayers(4);
 		int[] p = testUtils.createPlayerIdArray(mp);
 		addPlayers(game, mp);

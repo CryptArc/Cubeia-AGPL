@@ -27,7 +27,7 @@ import com.cubeia.poker.action.PokerActionType;
 public class BlindsLevelTest extends AbstractTexasHandTester {
 	
 	public void testSimpleHoldemHand() {
-		game.setAnteLevel(100);
+		setAnteLevel(100);
 		MockPlayer[] mp = testUtils.createMockPlayers(4);
 		int[] p = testUtils.createPlayerIdArray(mp);
 		assertEquals(4, p.length);

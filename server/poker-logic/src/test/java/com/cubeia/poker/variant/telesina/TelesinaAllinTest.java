@@ -21,7 +21,7 @@ public class TelesinaAllinTest extends AbstractTexasHandTester {
 		variant = PokerVariant.TELESINA;
 		rng = new NonRandomRNGProvider();
 		super.setUp();
-		game.setAnteLevel(500);
+		setAnteLevel(500);
 		
 		TimingProfile timing = TimingFactory.getRegistry().getTimingProfile(Timings.MINIMUM_DELAY);
 		BetStrategyName betStrategy = BetStrategyName.NO_LIMIT;

@@ -15,7 +15,7 @@ public class TelesinaAnteSitInTest extends AbstractTexasHandTester {
 		variant = PokerVariant.TELESINA;
 		rng = new NonRandomRNGProvider();
 		super.setUp();
-		game.setAnteLevel(20);
+		setAnteLevel(20);
 	}
 
 

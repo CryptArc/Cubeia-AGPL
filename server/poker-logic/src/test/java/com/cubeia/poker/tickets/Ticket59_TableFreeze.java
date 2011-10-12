@@ -32,7 +32,7 @@ public class Ticket59_TableFreeze extends AbstractTexasHandTester {
 	 * Player default balance: 5000
 	 */
 	public void testBothPlayerActs() {
-		game.setAnteLevel(10);
+		setAnteLevel(10);
 		MockPlayer[] mp = testUtils.createMockPlayers(4);
 		int[] p = testUtils.createPlayerIdArray(mp);
 		addPlayers(game, mp);
@@ -58,7 +58,7 @@ public class Ticket59_TableFreeze extends AbstractTexasHandTester {
 	 * the next player to post big blind. If this player is timing out then it will never go further.
 	 */
 	public void testBigBlindTimesOut() {
-		game.setAnteLevel(10);
+		setAnteLevel(10);
 		MockPlayer[] mp = testUtils.createMockPlayers(4);
 		addPlayers(game, mp);
 		

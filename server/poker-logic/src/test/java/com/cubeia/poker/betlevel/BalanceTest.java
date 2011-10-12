@@ -33,7 +33,7 @@ public class BalanceTest extends AbstractTexasHandTester {
 	 * This test relies on that no rake is deducted from the winnings
 	 */
 	public void testSimpleHoldemHand() {
-		game.setAnteLevel(100);
+		setAnteLevel(100);
 		MockPlayer[] mp = testUtils.createMockPlayers(4);
 		int[] p = testUtils.createPlayerIdArray(mp);
 		assertEquals(4, p.length);
@@ -117,7 +117,7 @@ public class BalanceTest extends AbstractTexasHandTester {
 	 * This test relies on that no rake is deducted from the winnings
 	 */
 	public void testBetAmounts1() {
-		game.setAnteLevel(100);
+		setAnteLevel(100);
 		MockPlayer[] mp = testUtils.createMockPlayers(4);
 		int[] p = testUtils.createPlayerIdArray(mp);
 		assertEquals(4, p.length);
@@ -186,7 +186,7 @@ public class BalanceTest extends AbstractTexasHandTester {
 	 * This test relies on that no rake is deducted from the winnings
 	 */
 	public void testBetAmounts2() {
-		game.setAnteLevel(100);
+		setAnteLevel(100);
 		MockPlayer[] mp = testUtils.createMockPlayers(4);
 		int[] p = testUtils.createPlayerIdArray(mp);
 		assertEquals(4, p.length);
@@ -262,7 +262,7 @@ public class BalanceTest extends AbstractTexasHandTester {
 	 * This test relies on that no rake is deducted from the winnings
 	 */
 	public void testAllIn() {
-		game.setAnteLevel(100);
+		setAnteLevel(100);
 		MockPlayer[] mp = testUtils.createMockPlayers(4);
 		int[] p = testUtils.createPlayerIdArray(mp);
 		assertEquals(4, p.length);
@@ -352,7 +352,7 @@ public class BalanceTest extends AbstractTexasHandTester {
 	 * This test relies on that no rake is deducted from the winnings
 	 */
 	public void testAllInShowDown() {
-		game.setAnteLevel(100);
+		setAnteLevel(100);
 		MockPlayer[] mp = testUtils.createMockPlayers(4);
 		int[] p = testUtils.createPlayerIdArray(mp);
 		assertEquals(4, p.length);
