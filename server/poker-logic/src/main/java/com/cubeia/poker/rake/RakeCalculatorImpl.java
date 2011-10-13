@@ -1,9 +1,14 @@
 package com.cubeia.poker.rake;
 
+import static java.lang.Math.max;
+
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotTransition;
@@ -11,18 +16,45 @@ import com.cubeia.poker.pot.PotTransition;
 public class RakeCalculatorImpl implements RakeCalculator {
 
     private final BigDecimal rakeFraction;
+    private final long rakeLimit;
 
+    
+    /**
+     * Rake calculator with no limit.
+     * @param rakeFraction fraction (0.01 gives 1%)
+     */
     public RakeCalculatorImpl(BigDecimal rakeFraction) {
+        this(rakeFraction, Long.MAX_VALUE);
+    }
+    
+    /**
+     * Rake calculator with limit.
+     * @param rakeFraction fraction (0.01 gives 1%)
+     * @param rakeLimit rake limit
+     */
+    public RakeCalculatorImpl(BigDecimal rakeFraction, long rakeLimit) {
         this.rakeFraction = rakeFraction;
+        this.rakeLimit = rakeLimit;
     }
     
     @Override
-    public Map<Pot, Integer> calculateRakes(Collection<PotTransition> potTransitions) {
+    public Map<Pot, Integer> calculateRakes(long totalCurrentRake, Collection<PotTransition> potTransitions) {
         Map<Pot, Integer> potRakes = new HashMap<Pot, Integer>();
 
-        for (Map.Entry<Pot, Integer> entry : aggregateBetsPerPot(potTransitions).entrySet()) {
-            int rake = rakeFraction.multiply(BigDecimal.valueOf(entry.getValue())).intValue();
-            potRakes.put(entry.getKey(), rake);
+        SortedMap<Pot, Integer> sortedPotBetSums = sortInPotIdOrder(aggregateBetsPerPot(potTransitions));
+        
+        for (Map.Entry<Pot, Integer> entry : sortedPotBetSums.entrySet()) {
+            Pot pot = entry.getKey();
+            Integer bets = entry.getValue();
+
+            long rake = rakeFraction.multiply(BigDecimal.valueOf(bets)).intValue();
+            
+            if (rake + totalCurrentRake > rakeLimit) {
+                rake = Math.max(0, rakeLimit - totalCurrentRake); 
+            }
+            
+            potRakes.put(pot, (int) rake);
+            totalCurrentRake += rake;
         }
         
         return potRakes;
@@ -41,18 +73,17 @@ public class RakeCalculatorImpl implements RakeCalculator {
         return potBetSums;
     }
     
-//    public RakeInfoContainer calculateRake(Collection<Pot> pots) {
-//
-//        int totalPot = 0;
-//        
-//        for (Pot pot : pots) {
-//            totalPot += pot.getPotSize();
-//        }
-//        
-//        
-//        
-//        int totalRake;
-//        return new RakeInfoContainer(totalPot, -1);
-//    }
-
+    private SortedMap<Pot, Integer> sortInPotIdOrder(Map<Pot, Integer> potsToRake) {
+        TreeMap<Pot, Integer> sortedMap = new TreeMap<Pot, Integer>(new Comparator<Pot>() {
+            @Override
+            public int compare(Pot p1, Pot p2) {
+                return p1.getId() - p2.getId();
+            }
+        });
+        sortedMap.putAll(potsToRake);
+        return sortedMap;
+    }
+    
+    
+    
 }

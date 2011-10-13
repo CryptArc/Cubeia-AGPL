@@ -10,9 +10,10 @@ public interface RakeCalculator {
 
     /**
      * Calculates the added rakes by the given pot transitions.
-     * @param potTransitions 
-     * @return pot to rake map
+     * @param totalCurrentRake total rake before appending the given pot transitions
+     * @param potTransitions pot transitions to calculate rake contribution for
+     * @return pot to rake map 
      */
-    Map<Pot, Integer> calculateRakes(Collection<PotTransition> potTransitions);
+    Map<Pot, Integer> calculateRakes(long totalCurrentRake, Collection<PotTransition> potTransitions);
 
 }
