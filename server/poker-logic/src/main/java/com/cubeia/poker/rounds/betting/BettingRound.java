@@ -58,7 +58,7 @@ public class BettingRound implements Round, BettingRoundContext {
         this.playerToActCalculator = playerToActCalculator;
 		actionRequestFactory = new ActionRequestFactory(new NoLimitBetStrategy(this));
 		if (gameType != null && gameType.getState() != null) { // can be null in unit tests
-			lastBetSize = gameType.getState().getAnteLevel();
+			lastBetSize = gameType.getState().getEntryBetLevel();
 		}
 		initBettingRound(dealerSeatId);
 	}
@@ -288,7 +288,7 @@ public class BettingRound implements Round, BettingRoundContext {
 	}
 
 	public long getMinBet() {
-		return gameType.getState().getAnteLevel();
+		return gameType.getState().getEntryBetLevel();
 	}
 
 	public long getSizeOfLastBetOrRaise() {

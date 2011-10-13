@@ -18,6 +18,7 @@ import org.mockito.Mockito;
 
 import se.jadestone.dicearena.game.poker.network.protocol.BuyInInfoRequest;
 import se.jadestone.dicearena.game.poker.network.protocol.BuyInInfoResponse;
+import se.jadestone.dicearena.game.poker.network.protocol.PlayerBalance;
 import se.jadestone.dicearena.game.poker.network.protocol.PotTransfers;
 import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
 
@@ -106,6 +107,60 @@ public class FirebaseServerAdapterTest {
 		assertThat(buyInInfoRespPacket.minAmount, is(minBuyIn));
 		assertThat(buyInInfoRespPacket.mandatoryBuyin, is(true));
 
+	}
+	
+	@Test
+	public void testNotifyPlayerBalance() throws IOException
+	{
+		FirebaseServerAdapter fsa = new FirebaseServerAdapter();
+		fsa.table = mock(Table.class);
+		GameNotifier tableNotifier = mock(GameNotifier.class);
+		when(fsa.table.getNotifier()).thenReturn(tableNotifier);
+		
+		int playerId0 = 1337;
+		PokerPlayer pokerPlayer0 = mock(PokerPlayer.class);
+		when(pokerPlayer0.getId()).thenReturn(playerId0);
+		when(pokerPlayer0.getBalance()).thenReturn(1000L);
+		when(pokerPlayer0.getPendingBalance()).thenReturn(1001L);
+		
+		int playerId1 = 666;
+		PokerPlayer pokerPlayer1 = mock(PokerPlayer.class);
+		when(pokerPlayer1.getId()).thenReturn(playerId1);
+		
+		int playerId2 = 112358;
+		PokerPlayer pokerPlayer2 = mock(PokerPlayer.class);
+		when(pokerPlayer2.getId()).thenReturn(playerId2);
+		
+		fsa.state = mock(PokerState.class);
+		when(fsa.state.getPokerPlayer(playerId0)).thenReturn(pokerPlayer0);
+		when(fsa.state.getPokerPlayer(playerId1)).thenReturn(pokerPlayer1);
+		when(fsa.state.getPokerPlayer(playerId2)).thenReturn(pokerPlayer2);
+		
+		fsa.notifyPlayerBalance(pokerPlayer0);
+		
+		// check that the public message is ok
+		ArgumentCaptor<GameDataAction> captor = ArgumentCaptor.forClass(GameDataAction.class);
+		verify(tableNotifier).notifyAllPlayersExceptOne(captor.capture(),Mockito.eq(playerId0));
+		GameDataAction gda = captor.getValue();
+		PlayerBalance playerBalanceAction = (PlayerBalance) new StyxSerializer(new ProtocolObjectFactory()).unpack(gda.getData());
+		
+		assertThat(playerBalanceAction.balance, is(1000));
+		assertThat(playerBalanceAction.pendingBalance, is(0));
+		assertThat(playerBalanceAction.player, is(playerId0));
+		
+		// check that the private message is ok
+		captor = ArgumentCaptor.forClass(GameDataAction.class);
+		verify(tableNotifier).notifyPlayer(Mockito.eq(playerId0),captor.capture());
+		gda = captor.getValue();
+		playerBalanceAction = (PlayerBalance) new StyxSerializer(new ProtocolObjectFactory()).unpack(gda.getData());
+		
+		assertThat(playerBalanceAction.balance, is(1000));
+		assertThat(playerBalanceAction.pendingBalance, is(1001));
+		assertThat(playerBalanceAction.player, is(playerId0));
+		
+		
+		
+		//verify(tableNotifier).notifyAllPlayersExceptOne(arg0, arg1)
 	}
 
 	@Ignore

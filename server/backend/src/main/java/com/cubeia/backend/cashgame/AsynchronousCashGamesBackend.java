@@ -33,8 +33,6 @@ import com.cubeia.backend.cashgame.exceptions.ReserveFailedException;
 
 public class AsynchronousCashGamesBackend implements CashGamesBackend {
 
-	private static final long serialVersionUID = 1L;
-
 	private SynchronousCashGamesBackend backingImpl;
 	private ExecutorService executor;
 

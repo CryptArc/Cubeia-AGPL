@@ -22,7 +22,7 @@ public class TelesinaTimeoutTest extends AbstractTexasHandTester {
 		variant = PokerVariant.TELESINA;
 		rng = new NonRandomRNGProvider();
 		super.setUp();
-		game.setAnteLevel(10);
+		setAnteLevel(10);
 	}
 	
 	

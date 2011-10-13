@@ -136,6 +136,8 @@ public class PokerState implements Serializable, IPokerState {
 	
 	private int maxBuyIn;
 	
+	private int entryBetLevel;
+	
 	private BetStrategyName betStrategyName;
 
 	/* ------------------------- Internal Members -------------------------- */
@@ -169,6 +171,8 @@ public class PokerState implements Serializable, IPokerState {
 	private PokerVariant variant;
 
     private int tableSize;
+
+	
     
 	public PokerState() {}
 
@@ -185,7 +189,7 @@ public class PokerState implements Serializable, IPokerState {
 		minBuyIn = settings.getMinBuyIn();
 		maxBuyIn = settings.getMaxBuyIn();
 		betStrategyName = settings.getBetStrategy();
-		
+		entryBetLevel = settings.getEntryBetLevel(); 
 		gameType = createGameTypeByVariant(rngProvider, variant);
 	}
 
@@ -677,9 +681,13 @@ public class PokerState implements Serializable, IPokerState {
 	public int getAnteLevel() {
 		return anteLevel;
 	}
-
+	
 	public void setAnteLevel(int anteLevel) {
 		this.anteLevel = anteLevel;
+	}
+	
+	public int getEntryBetLevel() {
+		return entryBetLevel;
 	}
 	
 	public int getMinBuyIn() {

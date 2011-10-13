@@ -420,7 +420,6 @@ public class PokerLogicTest extends GuiceTest {
 			@Override
 			public void notifyNewRound() { }
 			public void notifyBuyInInfo(int playerId, boolean mandatoryBuyin) {}
-			public void notifyHandCanceled() {}
 			public void notifyPrivateCards(int playerId, List<Card> cards) {}
             public void notifyPrivateExposedCards(int playerId, List<Card> cards) {}
 			public void requestAction(ActionRequest request) {}

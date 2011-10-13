@@ -6,7 +6,6 @@ import com.cubeia.poker.AbstractTexasHandTester;
 import com.cubeia.poker.MockPlayer;
 import com.cubeia.poker.NonRandomRNGProvider;
 import com.cubeia.poker.action.PokerActionType;
-import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.variant.PokerVariant;
 
 public class TelesinaAnteSitInTest extends AbstractTexasHandTester {
@@ -16,7 +15,7 @@ public class TelesinaAnteSitInTest extends AbstractTexasHandTester {
 		variant = PokerVariant.TELESINA;
 		rng = new NonRandomRNGProvider();
 		super.setUp();
-		game.setAnteLevel(20);
+		setAnteLevel(20);
 	}
 
 

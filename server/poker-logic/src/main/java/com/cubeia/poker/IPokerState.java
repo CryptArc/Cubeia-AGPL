@@ -32,4 +32,6 @@ public interface IPokerState {
 	PokerVariant getPokerVariant();
 	
 	List<Card> getCommunityCards();
+
+	int getEntryBetLevel();
 }
