@@ -94,6 +94,8 @@ public class AnteRound implements Round {
 			player.addBet(game.getBlindsInfo().getAnteLevel());
 			player.setHasActed(true);
 			player.setHasPostedEntryBet(true);
+			// TODO Check why the client is sending 0 as amount...
+			action.setBetAmount(game.getBlindsInfo().getAnteLevel());
 			game.getServerAdapter().notifyActionPerformed(action, player.getBalance());
 			break;
 		case DECLINE_ENTRY_BET:

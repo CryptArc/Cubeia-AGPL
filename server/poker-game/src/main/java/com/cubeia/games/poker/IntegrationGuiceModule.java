@@ -32,7 +32,7 @@ public class IntegrationGuiceModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
-		bind(StateInjector.class);
+		bind(StateInjector.class).in(EventScoped.class);
 		bind(ActionCache.class).in(Singleton.class);
 		bind(HandHistoryReportAdapter.class).in(EventScoped.class);
 		bind(FirebaseServerAdapter.class).in(EventScoped.class);

@@ -1,0 +1,64 @@
+package com.cubeia.poker.handhistory.impl;
+
+import java.util.List;
+
+import com.cubeia.firebase.guice.service.Configuration;
+import com.cubeia.firebase.guice.service.ContractsConfig;
+import com.cubeia.firebase.guice.service.GuiceService;
+import com.cubeia.games.poker.handhistory.HandHistoryPersistenceService;
+import com.cubeia.poker.handhistory.api.DeckInfo;
+import com.cubeia.poker.handhistory.api.HandHistoryEvent;
+import com.cubeia.poker.handhistory.api.Player;
+import com.cubeia.poker.handhistory.api.Results;
+
+public class PersistanceServiceFacade extends GuiceService implements HandHistoryPersistenceService {
+
+	@Override
+	public Configuration getConfigurationHelp() {
+		return new Configuration() {
+			
+			@Override
+			public ContractsConfig getServiceContract() {
+				return new ContractsConfig(PersistanceServiceImpl.class, HandHistoryPersistenceService.class);
+			}
+		};
+	}
+	
+	
+	@Override
+	public void reportEvent(int tableId, HandHistoryEvent event) {
+		g().reportEvent(tableId, event);
+	}
+	
+	@Override
+	public void startHand(int tableId, String handId, List<Player> seats) {
+		g().startHand(tableId, handId, seats);
+	}
+	
+	@Override
+	public void stopHand(int tableId) {
+		g().stopHand(tableId);
+	}
+	
+	@Override
+	public void cancelHand(int tableId) {
+		g().cancelHand(tableId);
+	}
+	
+	@Override
+	public void reportDeckInfo(int tableId, DeckInfo deckInfo) {
+		g().reportDeckInfo(tableId, deckInfo);
+	}
+	
+	@Override
+	public void reportResults(int tableId, Results res) {
+		g().reportResults(tableId, res);
+	}
+	
+	
+	// --- PRIVATE METHODS --- //
+	
+	private HandHistoryPersistenceService g() {
+		return guice(HandHistoryPersistenceService.class);
+	}
+}

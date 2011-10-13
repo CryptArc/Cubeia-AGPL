@@ -125,7 +125,11 @@ public class Telesina implements GameType, RoundVisitor {
 		resetPlayerStatesBeforeHand();
 		
 		deck = deckFactory.createNewDeck(rngProvider.getRNG(), state.getTableSize());
+		try {
 		state.notifyDeckInfo(deck.getTotalNumberOfCardsInDeck(), deck.getDeckLowestRank());
+		} catch(Throwable th) {
+			th.printStackTrace();
+		}
 		blindsInfo.setAnteLevel(state.getAnteLevel());
 		
 		state.notifyNewHand();
