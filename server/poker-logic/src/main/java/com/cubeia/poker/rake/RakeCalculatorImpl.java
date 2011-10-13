@@ -1,7 +1,5 @@
 package com.cubeia.poker.rake;
 
-import static java.lang.Math.max;
-
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Comparator;
@@ -13,6 +11,10 @@ import java.util.TreeMap;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotTransition;
 
+/**
+ * @author w
+ *
+ */
 public class RakeCalculatorImpl implements RakeCalculator {
 
     private final BigDecimal rakeFraction;
@@ -84,6 +86,8 @@ public class RakeCalculatorImpl implements RakeCalculator {
         return sortedMap;
     }
     
-    
-    
+    @Override
+    public String toString() {
+        return "rake fraction = " + rakeFraction + ", rake limit = " + rakeLimit;
+    }
 }

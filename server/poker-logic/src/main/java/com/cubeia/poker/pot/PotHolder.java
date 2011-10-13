@@ -34,6 +34,8 @@ import org.slf4j.LoggerFactory;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.rake.RakeCalculator;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 
 /**
  * holds all the active pots for a table  
@@ -130,10 +132,16 @@ public class PotHolder implements Serializable {
     }
 
 	private void printDiagnostics() {
-        log.debug("pots:");
+        log.debug("pots: ");
         for (Pot p : pots) {
-            log.debug("  pot: {}", p);
+            Collection<Integer> playerIds = Collections2.transform(p.getPotContributors().keySet(), new Function<PokerPlayer, Integer>() {
+                public Integer apply(PokerPlayer pp) { return pp.getId(); };
+            });
+            log.debug("  pot {}: bets = {}, rake = {}, open = {}, players: {}", 
+                new Object[] {p.getId(), p.getPotSize(), p.getRake(), p.isOpen(), playerIds});
         }
+        log.debug("{}, total pot size = {}, total rake = {}", 
+            new Object[] {rakeCalculator, getTotalPotSize(), getTotalRake()});
     }
 
     /**
