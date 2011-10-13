@@ -12,7 +12,7 @@ import java.util.SortedMap;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TablePlayerSet;
 import com.cubeia.firebase.guice.inject.Service;
-import com.cubeia.games.poker.handhistory.HandHistoryPersistenceService;
+import com.cubeia.games.poker.handhistory.HandHistoryCollectorService;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
@@ -42,7 +42,7 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
 	private FirebaseServerAdapter next;
 	
 	@Service 
-	private HandHistoryPersistenceService service;
+	private HandHistoryCollectorService service;
 	
 	@Inject
 	private Table table;

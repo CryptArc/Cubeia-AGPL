@@ -5,13 +5,13 @@ import java.util.List;
 import com.cubeia.firebase.guice.service.Configuration;
 import com.cubeia.firebase.guice.service.ContractsConfig;
 import com.cubeia.firebase.guice.service.GuiceService;
-import com.cubeia.games.poker.handhistory.HandHistoryPersistenceService;
+import com.cubeia.games.poker.handhistory.HandHistoryCollectorService;
 import com.cubeia.poker.handhistory.api.DeckInfo;
 import com.cubeia.poker.handhistory.api.HandHistoryEvent;
 import com.cubeia.poker.handhistory.api.Player;
 import com.cubeia.poker.handhistory.api.Results;
 
-public class PersistanceServiceFacade extends GuiceService implements HandHistoryPersistenceService {
+public class CollectorServiceFacade extends GuiceService implements HandHistoryCollectorService {
 
 	@Override
 	public Configuration getConfigurationHelp() {
@@ -19,7 +19,7 @@ public class PersistanceServiceFacade extends GuiceService implements HandHistor
 			
 			@Override
 			public ContractsConfig getServiceContract() {
-				return new ContractsConfig(PersistanceServiceImpl.class, HandHistoryPersistenceService.class);
+				return new ContractsConfig(CollectorServiceImpl.class, HandHistoryCollectorService.class);
 			}
 		};
 	}
@@ -58,7 +58,7 @@ public class PersistanceServiceFacade extends GuiceService implements HandHistor
 	
 	// --- PRIVATE METHODS --- //
 	
-	private HandHistoryPersistenceService g() {
-		return guice(HandHistoryPersistenceService.class);
+	private HandHistoryCollectorService g() {
+		return guice(HandHistoryCollectorService.class);
 	}
 }

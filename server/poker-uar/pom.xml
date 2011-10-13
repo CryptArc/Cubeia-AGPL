@@ -69,7 +69,7 @@
 
 		<dependency>
 			<groupId>com.cubeia.games.handhistory</groupId>
-			<artifactId>hh-persist</artifactId>
+			<artifactId>hh-collect</artifactId>
 			<version>${project.version}</version>
 			<type>firebase-sar</type>
 			<scope>provided</scope>
@@ -79,14 +79,6 @@
 			<groupId>com.cubeia.games.poker</groupId>
 			<artifactId>hand-debugger-service</artifactId>
 			<version>1.0-SNAPSHOT</version>
-			<type>firebase-sar</type>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.cubeia.games.handhistory</groupId>
-			<artifactId>hh-persist</artifactId>
-			<version>${project.version}</version>
 			<type>firebase-sar</type>
 			<scope>provided</scope>
 		</dependency>

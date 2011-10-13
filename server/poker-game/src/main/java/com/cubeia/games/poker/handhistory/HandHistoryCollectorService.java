@@ -8,7 +8,7 @@ import com.cubeia.poker.handhistory.api.HandHistoryEvent;
 import com.cubeia.poker.handhistory.api.Player;
 import com.cubeia.poker.handhistory.api.Results;
 
-public interface HandHistoryPersistenceService extends Contract {
+public interface HandHistoryCollectorService extends Contract {
 
 	public void startHand(int tableId, String handId, List<Player> seats);
 	

@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 
 import com.cubeia.firebase.guice.inject.Log4j;
-import com.cubeia.games.poker.handhistory.HandHistoryPersistenceService;
+import com.cubeia.games.poker.handhistory.HandHistoryCollectorService;
 import com.cubeia.poker.handhistory.api.DeckInfo;
 import com.cubeia.poker.handhistory.api.HandHistoryEvent;
 import com.cubeia.poker.handhistory.api.HistoricHand;
@@ -22,7 +22,7 @@ import com.google.gson.JsonSerializer;
 
 // TODO Persist on each event to support fail-over
 // TODO Real hand from database to support fail-over
-public class PersistanceServiceImpl implements HandHistoryPersistenceService {
+public class CollectorServiceImpl implements HandHistoryCollectorService {
 
 	@Log4j
 	private Logger log;

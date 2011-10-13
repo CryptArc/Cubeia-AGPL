@@ -48,7 +48,7 @@
 		</dependencies>
 	</dependencyManagement>
 	<modules>
-		<module>hh-persist</module>
+		<module>hh-collect</module>
 		<module>hh-api</module>
 	</modules>
 </project>
