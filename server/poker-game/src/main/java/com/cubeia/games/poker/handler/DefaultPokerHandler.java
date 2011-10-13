@@ -44,6 +44,7 @@ import se.jadestone.dicearena.game.poker.network.protocol.PlayerState;
 import se.jadestone.dicearena.game.poker.network.protocol.Pot;
 import se.jadestone.dicearena.game.poker.network.protocol.PotTransfer;
 import se.jadestone.dicearena.game.poker.network.protocol.PotTransfers;
+import se.jadestone.dicearena.game.poker.network.protocol.RakeInfo;
 import se.jadestone.dicearena.game.poker.network.protocol.RequestAction;
 import se.jadestone.dicearena.game.poker.network.protocol.StartHandHistory;
 import se.jadestone.dicearena.game.poker.network.protocol.StartNewHand;
@@ -115,4 +116,6 @@ public class DefaultPokerHandler implements PacketVisitor {
     public void visit(InternalSerializedObject packet) {}
     @Override
     public void visit(HandCanceled packet) {}
+    @Override
+    public void visit(RakeInfo packet) {}
 }

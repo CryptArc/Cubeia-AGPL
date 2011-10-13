@@ -1,5 +1,7 @@
 package com.cubeia.poker.variant.telesina;
 
+import static java.math.BigDecimal.ZERO;
+
 import org.junit.Test;
 
 import com.cubeia.poker.AbstractTexasHandTester;
@@ -25,7 +27,7 @@ public class TelesinaAllinTest extends AbstractTexasHandTester {
 		
 		TimingProfile timing = TimingFactory.getRegistry().getTimingProfile(Timings.MINIMUM_DELAY);
 		BetStrategyName betStrategy = BetStrategyName.NO_LIMIT;
-		PokerSettings settings = new PokerSettings(20, 1, 1000, timing, variant, 6, betStrategy);
+		PokerSettings settings = new PokerSettings(20, 1, 1000, timing, variant, 6, betStrategy, ZERO);
 		game.init(rng, settings);
 	}
 	

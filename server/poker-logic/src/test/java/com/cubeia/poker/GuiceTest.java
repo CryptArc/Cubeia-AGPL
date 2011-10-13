@@ -19,6 +19,7 @@ package com.cubeia.poker;
 
 import static com.cubeia.poker.timing.Timings.MINIMUM_DELAY;
 
+import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -62,6 +63,7 @@ public abstract class GuiceTest extends TestCase {
 	}
 	
 	protected PokerSettings createPokerSettings(int anteLevel) {
-		return new PokerSettings(anteLevel, 1000, 10000, TimingFactory.getRegistry().getTimingProfile(MINIMUM_DELAY), variant, 6, BetStrategyName.NO_LIMIT);
+		return new PokerSettings(anteLevel, 1000, 10000, TimingFactory.getRegistry().getTimingProfile(MINIMUM_DELAY), variant, 6, 
+		    BetStrategyName.NO_LIMIT, new BigDecimal("0"));
 	}
 }

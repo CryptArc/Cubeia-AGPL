@@ -33,6 +33,7 @@ import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotTransition;
+import com.cubeia.poker.rake.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.tournament.RoundReport;
 
@@ -398,41 +399,42 @@ public class PokerLogicTest extends GuiceTest {
 
 		game.setServerAdapter(new ServerAdapter() {
 			boolean foldActionReceived = false;
-			public void exposePrivateCards(int playerId, List<Card> cards) {
-			}
+			
+			@Override 
+			public void exposePrivateCards(int playerId, List<Card> cards) {}
 
+			@Override 
 			public void notifyActionPerformed(PokerAction action, long resultingBalance) {
 				if (action.getActionType() == PokerActionType.FOLD) {
 					foldActionReceived = true;
 				}
 			}
 
-			public void notifyCommunityCards(List<Card> cards) {}
-
-			public void notifyDealerButton(int seatId) {}
-
+			@Override 
 			public void notifyHandEnd(HandResult result, HandEndStatus status) {
 				if (!foldActionReceived) {
 					fail();
 				}
 			}
-
-			@Override
-			public void notifyNewRound() { }
-			public void notifyBuyInInfo(int playerId, boolean mandatoryBuyin) {}
-			public void notifyPrivateCards(int playerId, List<Card> cards) {}
-            public void notifyPrivateExposedCards(int playerId, List<Card> cards) {}
-			public void requestAction(ActionRequest request) {}
-			public void scheduleTimeout(long millis) {}
-            public void reportTournamentRound(RoundReport report) {}
-            public void cleanupPlayers() {}
-            public void notifyPlayerBalance(PokerPlayer p) {}
-            public void notifyNewHand() {}
-			public void notifyPlayerStatusChanged(int playerId,PokerPlayerStatus status) {}
-			public void notifyDeckInfo(int size, Rank rankLow) {}
-			public void updatePots(Collection<Pot> pots, Collection<PotTransition> potTransitions) {}
-			public void notifyPlayerBalanceReset(PokerPlayer player) {}
-			public void notifyBestHand(int playerId, HandType handType, List<Card> cardsInHand) {}
+			
+			@Override public void notifyNewRound() {}
+			@Override public void notifyCommunityCards(List<Card> cards) {}
+			@Override public void notifyDealerButton(int seatId) {}
+			@Override public void notifyBuyInInfo(int playerId, boolean mandatoryBuyin) {}
+			@Override public void notifyPrivateCards(int playerId, List<Card> cards) {}
+            @Override public void notifyPrivateExposedCards(int playerId, List<Card> cards) {}
+			@Override public void requestAction(ActionRequest request) {}
+			@Override public void scheduleTimeout(long millis) {}
+            @Override public void reportTournamentRound(RoundReport report) {}
+            @Override public void cleanupPlayers() {}
+            @Override public void notifyPlayerBalance(PokerPlayer p) {}
+            @Override public void notifyNewHand() {}
+			@Override public void notifyPlayerStatusChanged(int playerId,PokerPlayerStatus status) {}
+			@Override public void notifyDeckInfo(int size, Rank rankLow) {}
+			@Override public void notifyPotUpdates(Collection<Pot> pots, Collection<PotTransition> potTransitions) {}
+			@Override public void notifyPlayerBalanceReset(PokerPlayer player) {}
+			@Override public void notifyBestHand(int playerId, HandType handType, List<Card> cardsInHand) {}
+			@Override public void notifyRakeInfo(RakeInfoContainer rakeInfoContainer) {}
 		});
 		game.timeout();
 		act(p[0], PokerActionType.SMALL_BLIND, 10);

@@ -32,6 +32,7 @@ import com.cubeia.poker.handhistory.api.TableCardsDealt;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotTransition;
+import com.cubeia.poker.rake.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
 import com.google.inject.Inject;
@@ -55,9 +56,14 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
 		return next;
 	}
 	
+
+    @Override
+    public void notifyRakeInfo(RakeInfoContainer rakeInfoContainer) {
+    }
+    
 	@Override
-	public void updatePots(Collection<Pot> iterable, Collection<PotTransition> potTransitions) {
-		super.updatePots(iterable, potTransitions);
+	public void notifyPotUpdates(Collection<Pot> iterable, Collection<PotTransition> potTransitions) {
+		super.notifyPotUpdates(iterable, potTransitions);
 		PotUpdate ev = new PotUpdate();
 		ev.getPots().addAll(translate(iterable));
 		post(ev);

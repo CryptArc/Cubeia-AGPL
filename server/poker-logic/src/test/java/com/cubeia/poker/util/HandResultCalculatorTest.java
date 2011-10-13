@@ -20,6 +20,7 @@ package com.cubeia.poker.util;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ import com.cubeia.poker.model.PlayerHand;
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.PotHolder;
+import com.cubeia.poker.rake.RakeCalculatorImpl;
 import com.cubeia.poker.result.Result;
 
 
@@ -42,6 +44,7 @@ public class HandResultCalculatorTest extends TestCase {
 	private Map<Integer, PokerPlayer> players;
 	HandResultCalculator calc = new HandResultCalculator(Collections.reverseOrder(new TexasHoldemHandComparator()));
 	private ArrayList<PlayerHand> hands;
+    private RakeCalculatorImpl rakeCalculator;
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -67,11 +70,13 @@ public class HandResultCalculatorTest extends TestCase {
 		hands.add(new PlayerHand(1, new Hand("As Ad "+community))); // Best Hand - 3 Aces
 		hands.add(new PlayerHand(2, new Hand("2s 7d "+community)));
 		hands.add(new PlayerHand(3, new Hand("3s 8d "+community)));
+		
+		rakeCalculator = new RakeCalculatorImpl(BigDecimal.ZERO);
 	}
 	
 	
 	public void testSimpleCase() {
-		PotHolder potHolder = new PotHolder();
+		PotHolder potHolder = new PotHolder(rakeCalculator);
 		potHolder.moveChipsToPot(players.values());
 		
 		assertEquals(1, potHolder.getNumberOfPots());
@@ -108,7 +113,7 @@ public class HandResultCalculatorTest extends TestCase {
 		hands.add(new PlayerHand(2, new Hand("As Ad " + community))); // SPLIT HAND - 3 Aces
 		hands.add(new PlayerHand(3, new Hand("3s 8d " + community)));
 		
-		PotHolder potHolder = new PotHolder();
+		PotHolder potHolder = new PotHolder(rakeCalculator);
 		potHolder.moveChipsToPot(players.values());
 		
 		assertEquals(1, potHolder.getNumberOfPots());
@@ -164,7 +169,7 @@ public class HandResultCalculatorTest extends TestCase {
 		players.put(2, p2);
 		players.put(3, p3);
 		
-		PotHolder potHolder = new PotHolder();
+		PotHolder potHolder = new PotHolder(rakeCalculator);
 		potHolder.moveChipsToPot(players.values());
 		
 		assertEquals(2, potHolder.getNumberOfPots());
@@ -225,7 +230,7 @@ public class HandResultCalculatorTest extends TestCase {
 		hands.add(new PlayerHand(2, new Hand("2s 7d"+community)));
 		hands.add(new PlayerHand(3, new Hand("3s 8d"+community)));
 		
-		PotHolder potHolder = new PotHolder();
+		PotHolder potHolder = new PotHolder(rakeCalculator);
 		potHolder.moveChipsToPot(players.values());
 		
 		// Exactly the same bets again

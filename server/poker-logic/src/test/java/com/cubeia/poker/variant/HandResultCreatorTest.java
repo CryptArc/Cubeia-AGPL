@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +23,7 @@ import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.pot.PotTransition;
+import com.cubeia.poker.rake.RakeCalculatorImpl;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
 import com.cubeia.poker.util.HandResultCalculator;
@@ -53,7 +55,7 @@ public class HandResultCreatorTest {
 		playerMap.put(1, pp1);
 		playerMap.put(2, pp2);
 
-		PotHolder potHolder = new PotHolder();
+		PotHolder potHolder = new PotHolder(new RakeCalculatorImpl(BigDecimal.ZERO));
 		potHolder.moveChipsToPot(playerMap.values());
 
 		List<Card> communityCards = Card.list("TS");

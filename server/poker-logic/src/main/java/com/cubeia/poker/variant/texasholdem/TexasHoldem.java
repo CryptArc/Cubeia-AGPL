@@ -82,6 +82,7 @@ public class TexasHoldem implements GameType, RoundVisitor {
 	public TexasHoldem(RNGProvider rngProvider, PokerState state) {
 	    this.rngProvider = rngProvider;
 		this.state = state;
+		
 	}
 	
 	@Override
@@ -150,7 +151,7 @@ public class TexasHoldem implements GameType, RoundVisitor {
 	}
 	
 	private void reportPotUpdate() {
-        state.updatePot(Collections.<PotTransition>emptyList());
+        state.notifyPotAndRakeUpdates(Collections.<PotTransition>emptyList());
     }
 
     /**

@@ -20,6 +20,7 @@ package mock;
 import static com.cubeia.poker.timing.Timings.MINIMUM_DELAY;
 import static com.cubeia.poker.variant.PokerVariant.TELESINA;
 
+import java.math.BigDecimal;
 import java.util.Random;
 
 import com.cubeia.poker.MockGame;
@@ -31,10 +32,12 @@ import com.cubeia.poker.timing.TimingFactory;
 
 public class MockTableFactory {
 
-	public static MockTable create() {
+	@SuppressWarnings("serial")
+    public static MockTable create() {
 		MockTable table = new MockTable();
 		
-		PokerSettings settings = new PokerSettings(-1, -1, -1, TimingFactory.getRegistry().getTimingProfile(MINIMUM_DELAY), TELESINA, 6, BetStrategyName.NO_LIMIT);
+		PokerSettings settings = new PokerSettings(-1, -1, -1, TimingFactory.getRegistry().getTimingProfile(MINIMUM_DELAY), TELESINA, 6, 
+		    BetStrategyName.NO_LIMIT, new BigDecimal("0.01"));
 
 		final Random rng = new Random();
 		PokerState pokerState = new PokerState();

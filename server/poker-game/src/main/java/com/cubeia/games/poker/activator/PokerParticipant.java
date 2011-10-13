@@ -17,6 +17,8 @@
 
 package com.cubeia.games.poker.activator;
 
+import java.math.BigDecimal;
+
 import org.apache.log4j.Logger;
 
 import com.cubeia.firebase.api.game.GameDefinition;
@@ -43,6 +45,7 @@ import com.google.inject.Injector;
  * @author Fredrik Johansson, Cubeia Ltd
  */
 public class PokerParticipant extends DefaultCreationParticipant {
+    @SuppressWarnings("unused")
     private transient Logger log = Logger.getLogger(this.getClass());
 
 	private static final int GAME_ID = 4718;
@@ -68,6 +71,9 @@ public class PokerParticipant extends DefaultCreationParticipant {
 	private Injector injector;
 
 	private final PokerVariant variant;
+
+	// TODO: get rake fraction from property/db
+    public static final BigDecimal RAKE_FRACTION = new BigDecimal("0.01");
 
 	public PokerParticipant(int seats, String domain, int anteLevel, Timings timing, PokerVariant variant, RNGProvider rngProvider) {
 		super();
@@ -105,7 +111,8 @@ public class PokerParticipant extends DefaultCreationParticipant {
 		super.tableCreated(table, acc);
 		PokerState pokerState = injector.getInstance(PokerState.class);
 
-		PokerSettings settings = new PokerSettings(anteLevel, anteLevel * MIN_BUY_IN, Integer.MAX_VALUE, timingProfile, variant, table.getPlayerSet().getSeatingMap().getNumberOfSeats(), BetStrategyName.NO_LIMIT);
+        PokerSettings settings = new PokerSettings(anteLevel, anteLevel * MIN_BUY_IN, Integer.MAX_VALUE, timingProfile, variant, 
+		    table.getPlayerSet().getSeatingMap().getNumberOfSeats(), BetStrategyName.NO_LIMIT, RAKE_FRACTION);
 		pokerState.init(rngProvider, settings);
 		pokerState.setAdapterState(new FirebaseState());
 		pokerState.setId(table.getId());

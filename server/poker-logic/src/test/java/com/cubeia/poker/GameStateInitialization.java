@@ -6,6 +6,8 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.math.BigDecimal;
+
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -31,7 +33,8 @@ public class GameStateInitialization {
 	public void init() {
 		TimingProfile timing = Mockito.mock(TimingProfile.class);
 		int anteLevel = 1234;
-		PokerSettings settings = new PokerSettings(anteLevel, 100, 1000, timing , TELESINA, 6, BetStrategyName.NO_LIMIT);
+		PokerSettings settings = new PokerSettings(anteLevel, 100, 1000, timing , TELESINA, 6, BetStrategyName.NO_LIMIT,
+		    new BigDecimal("0.234"));
 		
         RNGProvider rngProvider = Mockito.mock(RNGProvider.class);
 		PokerState state = new PokerState();

@@ -21,25 +21,43 @@ import static com.cubeia.poker.pot.Pot.PotType.MAIN;
 import static com.cubeia.poker.pot.Pot.PotType.SIDE;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.hasItems;
+import static org.mockito.Mockito.mock;
 
 import java.util.Arrays;
 import java.util.Collection;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import junit.framework.TestCase;
 
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.rake.RakeCalculator;
 
-public class PotTest extends TestCase {
+public class PotTest {
 	private static int counter = 0;
 
+	@Mock private RakeCalculator rakeCalculator;
+	
+	@Before
+	public void setUp() {
+	    MockitoAnnotations.initMocks(this);
+	}
+	
+	@Test
 	public void testSimpleCase() {
 		PokerPlayer p1 = createPokerPlayer(20);
 		PokerPlayer p2 = createPokerPlayer(20);
 
-		PotHolder potHolder = new PotHolder();
+		PotHolder potHolder = new PotHolder(rakeCalculator);
 		potHolder.moveChipsToPot(Arrays.asList(p1, p2));
 		assertEquals(1, potHolder.getNumberOfPots());
 		assertEquals(40, potHolder.getTotalPotSize());
@@ -61,13 +79,14 @@ public class PotTest extends TestCase {
 		return p;
 	}
 
+    @Test
 	public void testSimpleCaseWithFold() {
 		PokerPlayer p1 = createPokerPlayer(20);
 		PokerPlayer p2 = createPokerPlayer(20);
 		PokerPlayer p3 = createPokerPlayer(10);
 		p3.setHasFolded(true);
 
-		PotHolder potHolder = new PotHolder();
+		PotHolder potHolder = new PotHolder(rakeCalculator);
 		Collection<PotTransition> potTransitions = potHolder.moveChipsToPot(asList(p1, p2, p3));
 		assertEquals(1, potHolder.getNumberOfPots());
 		assertEquals(50, potHolder.getTotalPotSize());
@@ -81,12 +100,13 @@ public class PotTest extends TestCase {
             new PotTransition(p3, pot, 10)));
 	}
 
+    @Test
 	public void testOneSidePot() {
 		PokerPlayer p1 = createPokerPlayer(20);
 		PokerPlayer p2 = createPokerPlayer(20);
 		PokerPlayer p3 = createPokerPlayer(10, true);
 
-		PotHolder potHolder = new PotHolder();
+		PotHolder potHolder = new PotHolder(rakeCalculator);
 		Collection<PotTransition> potTransitions = potHolder.moveChipsToPot(Arrays.asList(p1, p2, p3));
 		assertEquals(2, potHolder.getNumberOfPots());
 		assertEquals(50, potHolder.getTotalPotSize());
@@ -113,6 +133,7 @@ public class PotTest extends TestCase {
             new PotTransition(p2, sidePot, 10)));
 	}
 
+    @Test
 	public void testTwoSidePots() {
 		PotHolder potHolder = createPotWithSidePots();
 		assertEquals(3, potHolder.getNumberOfPots());
@@ -122,6 +143,7 @@ public class PotTest extends TestCase {
 		assertEquals(10, potHolder.getPotSize(2));
 	}
 	
+    @Test
 	public void testTwoSidePots2() {
 		PokerPlayer p1 = createPokerPlayer(5, true);
 		PokerPlayer p2 = createPokerPlayer(10);
@@ -129,7 +151,7 @@ public class PotTest extends TestCase {
 		PokerPlayer p4 = createPokerPlayer(10);
 		PokerPlayer p5 = createPokerPlayer(2);
 
-		PotHolder potHolder = new PotHolder();
+		PotHolder potHolder = new PotHolder(rakeCalculator);
 		Collection<PotTransition> potTransitions = potHolder.moveChipsToPot(Arrays.asList(p1, p2, p3, p4, p5));
 		assertEquals(3, potHolder.getNumberOfPots());
 		assertEquals(35, potHolder.getTotalPotSize());
@@ -165,6 +187,7 @@ public class PotTest extends TestCase {
 	}
 
 
+    @Test
 	public void testConsecutiveMoves() {
 		PotHolder potHolder = createPotWithSidePots();
 		assertEquals(3, potHolder.getNumberOfPots());
@@ -182,11 +205,12 @@ public class PotTest extends TestCase {
 		assertEquals(50, potHolder.getPotSize(2));
 	}
 
+    @Test
 	public void testReturnUnCalledChips() {
 		PokerPlayer p1 = createPokerPlayer(5);
 		PokerPlayer p2 = createPokerPlayer(10);
 
-		PotHolder potHolder = new PotHolder();
+		PotHolder potHolder = new PotHolder(rakeCalculator);
 		Collection<PotTransition> potTransitions = potHolder.moveChipsToPot(Arrays.asList(p1, p2));
 		assertEquals(5, p2.getReturnedChips());
 		
@@ -198,15 +222,18 @@ public class PotTest extends TestCase {
             new PotTransition(p2, mainPot, 10)));
 	}
 
+    @Test
 	public void testReturnUnCalledChipsAfterFold() {
 		PokerPlayer p1 = createPokerPlayer(0);
 		PokerPlayer p2 = createPokerPlayer(10);
 
-		PotHolder potHolder = new PotHolder();
+		PotHolder potHolder = new PotHolder(rakeCalculator);
 		potHolder.moveChipsToPot(Arrays.asList(p1, p2));
 		assertEquals(10, p2.getReturnedChips());
 	}
 
+	
+	/**
 	public void testRake() {
 		PotHolder p = new PotHolder();
 		p.addPot(5L);
@@ -222,7 +249,9 @@ public class PotTest extends TestCase {
 		PotHolder p = new PotHolder();
 		p.rake(0);
 	}
+	*/
 	
+    @Test
 	public void testPotId() {
 		PotHolder potHolder = createPotWithSidePots();
 		int i = 0;
@@ -237,7 +266,7 @@ public class PotTest extends TestCase {
 		PokerPlayer p3 = createPokerPlayer(15, true);
 		PokerPlayer p4 = createPokerPlayer(5, true);
 
-		PotHolder potHolder = new PotHolder();
+		PotHolder potHolder = new PotHolder(rakeCalculator);
 		potHolder.moveChipsToPot(Arrays.asList(p1, p2, p3, p4));
 		return potHolder;
 	}

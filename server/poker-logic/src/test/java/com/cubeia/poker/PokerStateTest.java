@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +19,11 @@ import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
+import com.cubeia.poker.pot.Pot;
+import com.cubeia.poker.pot.PotHolder;
+import com.cubeia.poker.pot.PotTransition;
+import com.cubeia.poker.rake.RakeCalculatorImpl;
+import com.cubeia.poker.rake.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
 import com.cubeia.poker.timing.TimingProfile;
@@ -99,4 +105,24 @@ public class PokerStateTest {
         verify(player2).commitPendingBalance();
     }
 
+    @Test 
+    public void testNotifyPotUpdated() {
+        PokerState state = new PokerState();
+//        state.rakeCalculator = mock(RakeCalculatorImpl.class);
+        state.potHolder = mock(PotHolder.class);
+        state.serverAdapter = mock(ServerAdapter.class);
+        
+        Collection<Pot> pots = new ArrayList<Pot>();
+        when(state.potHolder.getPots()).thenReturn(pots);
+        
+//        RakeInfoContainer rakeInfoContainer = new RakeInfoContainer();
+//        when(state.rakeCalculator.calculateRake(pots)).thenReturn(rakeInfoContainer);
+        
+        Collection<PotTransition> potTransitions = new ArrayList<PotTransition>();
+        state.notifyPotAndRakeUpdates(potTransitions);
+        
+//        verify(state.rakeCalculator).calculateRake(pots);
+        verify(state.serverAdapter).notifyPotUpdates(pots, potTransitions);
+    }
+    
 }

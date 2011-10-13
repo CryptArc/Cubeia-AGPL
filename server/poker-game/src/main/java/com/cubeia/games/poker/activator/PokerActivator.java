@@ -17,6 +17,7 @@
 
 package com.cubeia.games.poker.activator;
 
+import static com.cubeia.games.poker.activator.PokerParticipant.RAKE_FRACTION;
 import static com.cubeia.poker.variant.PokerVariant.TELESINA;
 import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
 
@@ -200,8 +201,8 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
         PokerState pokerState = injector.getInstance(PokerState.class);
         pokerState.setId(table.getId());
         
-        // TODO: must check with variant of poker this is
-        PokerSettings settings = new PokerSettings(-1, -1, -1, timing, PokerVariant.TEXAS_HOLDEM, table.getPlayerSet().getSeatingMap().getNumberOfSeats(), BetStrategyName.NO_LIMIT);
+        PokerSettings settings = new PokerSettings(-1, -1, -1, timing, PokerVariant.TEXAS_HOLDEM, 
+            table.getPlayerSet().getSeatingMap().getNumberOfSeats(), BetStrategyName.NO_LIMIT, RAKE_FRACTION);
         
         pokerState.init(rngProvider, settings);
         pokerState.setTournamentTable(true);

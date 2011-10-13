@@ -36,6 +36,7 @@ import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotTransition;
+import com.cubeia.poker.rake.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
 import com.cubeia.poker.tournament.RoundReport;
@@ -115,7 +116,8 @@ public class MockServerAdapter implements ServerAdapter {
     public void notifyDeckInfo(int size, Rank rankLow) {}
     public void notifyBestHand(int playerId, HandType handType, List<Card> cardsInHand) {}
     public void notifyBuyInInfo(int playerId, boolean mandatoryBuyin) {}
-        
+    public void notifyRakeInfo(RakeInfoContainer rakeInfoContainer) {}    
+    
     @Override
 	public void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status) {
 		playerStatus.put(playerId, status);
@@ -136,7 +138,7 @@ public class MockServerAdapter implements ServerAdapter {
 	}
 
 	@Override
-	public void updatePots(Collection<Pot> iterable, Collection<PotTransition> potTransitions) {
+	public void notifyPotUpdates(Collection<Pot> iterable, Collection<PotTransition> potTransitions) {
 	}
 
 	

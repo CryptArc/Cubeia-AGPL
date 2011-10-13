@@ -51,6 +51,8 @@ public class Pot implements Serializable {
 	
 	/** is pot open? */
 	private Boolean isOpen = true;
+
+    private long rake;
 	
 	public Pot(int potId) {
 		this.potId = potId;
@@ -61,11 +63,17 @@ public class Pot implements Serializable {
 		}
 	}
 	
-	public String toString() {
-		return "id["+potId+"] size["+potSize+"] betMap:"+playerToBetMap;
-	}
 	
-	public PotType getType() {
+	
+	@Override
+    public String toString() {
+        return "Pot [potId=" + potId + ", type=" + type + ", isOpen=" + isOpen + ", potSize=" + potSize + ", rake="
+            + rake + ", playerToBetMap=" + playerToBetMap + "]";
+    }
+
+
+
+    public PotType getType() {
 		return type;
 	}
 
@@ -99,9 +107,25 @@ public class Pot implements Serializable {
 	 * @return the size of this pot
 	 */
 	public long getPotSize() {
-		 return potSize;
+	    return potSize;
 	}
 
+	public long getPotSizeWithoutRake() {
+	    return getPotSize() - getRake();
+	}
+	
+	/**
+	 * Returns the accumulated rake of this pot.
+	 * @return the rake
+	 */
+	public long getRake() {
+        return rake;
+    }
+	
+    public void addRake(int rake) {
+        this.rake += rake;
+    }
+    
 	/**
 	 * Closes this pot.
 	 */
@@ -180,4 +204,5 @@ public class Pot implements Serializable {
             return false;
         return true;
     }
+
 }

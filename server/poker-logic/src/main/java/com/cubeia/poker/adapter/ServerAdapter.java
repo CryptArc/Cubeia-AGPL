@@ -29,6 +29,7 @@ import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotTransition;
+import com.cubeia.poker.rake.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.tournament.RoundReport;
 
@@ -117,7 +118,12 @@ public interface ServerAdapter {
      */
     void cleanupPlayers();
     
-    void updatePots(Collection<Pot> iterable, Collection<PotTransition> potTransitions);
+    /**
+     * Notifies the client about pot updates by sending the post and pot transitions.
+     * @param pots updated post
+     * @param potTransitions pot transitions
+     */
+    void notifyPotUpdates(Collection<Pot> pots, Collection<PotTransition> potTransitions);
 
     void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status);
 
@@ -145,5 +151,11 @@ public interface ServerAdapter {
      */
 
 	void notifyBuyInInfo(int playerId, boolean mandatoryBuyin);
+
+	/**
+	 * Notify the client of the current total rake ant pot sizes.
+	 * @param rakeInfoContainer rake info
+	 */
+    void notifyRakeInfo(RakeInfoContainer rakeInfoContainer);
 
 }

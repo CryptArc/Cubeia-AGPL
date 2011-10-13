@@ -28,10 +28,12 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.rake.RakeCalculator;
+import com.google.common.annotations.VisibleForTesting;
 
 /**
  * holds all the active pots for a table  
@@ -40,7 +42,7 @@ public class PotHolder implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger log = Logger.getLogger(PotHolder.class);
+	private static final Logger log = LoggerFactory.getLogger(PotHolder.class);
 	/**
 	 * Holds all pots.
 	 */
@@ -53,6 +55,12 @@ public class PotHolder implements Serializable {
 
 	private Set<Integer> allInPlayers = new HashSet<Integer>();
 
+    private final RakeCalculator rakeCalculator;
+
+	public PotHolder(RakeCalculator rakeCalculator) {
+        this.rakeCalculator = rakeCalculator;
+    }
+	
 	/**
 	 * Moves chips to the pot.
 	 * split the chips into side pots if we have all-ins
@@ -76,16 +84,16 @@ public class PotHolder implements Serializable {
 		// Add all bets to the map and check if we have all-ins.
 		for (PokerPlayer player : players) {
 			
-				// Exclude players who are already all-in.
-				if (player.isAllIn() && !allInPlayers.contains(player.getId())) {
-					allInLevels.add(player.getBetStack());
-					allInPlayers.add(player.getId());
-				}
-	
-				// Exclude players who did not bet.
-				if (player.getBetStack() > 0) {
-					playerToBetMap.put(player, player.getBetStack());
-				}
+            // Exclude players who are already all-in.
+            if (player.isAllIn() && !allInPlayers.contains(player.getId())) {
+            	allInLevels.add(player.getBetStack());
+            	allInPlayers.add(player.getId());
+            }
+            
+            // Exclude players who did not bet.
+            if (player.getBetStack() > 0) {
+            	playerToBetMap.put(player, player.getBetStack());
+            }
 			
 		}
 
@@ -103,10 +111,36 @@ public class PotHolder implements Serializable {
 			}
 		}
 		
+//		rake(rakeAmount);
+		Map<Pot, Integer> potRakes = rakeCalculator.calculateRakes(potTransitions);
+		
+		for (Map.Entry<Pot, Integer> entry : potRakes.entrySet()) {
+		    Integer rake = entry.getValue();
+            Pot pot = entry.getKey();
+            pot.addRake(rake);
+		}
+		
+//		
+//		// apply rake
+//		for (Map.Entry<Pot, Integer> potRake : potRakes.entrySet()) {
+//		    Pot pot = potRake.getKey();
+//		    Integer rake = potRake.getValue();
+//		    pot.addRake(rake);
+//		}
+		
+		printDiagnostics();
+		
 		return potTransitions;
 	}
 
-	/**
+	private void printDiagnostics() {
+        log.debug("pots:");
+        for (Pot p : pots) {
+            log.debug("  pot: {}", p);
+        }
+    }
+
+    /**
 	 * Returns uncalled chips.
 	 *
 	 * @param betters
@@ -165,7 +199,7 @@ public class PotHolder implements Serializable {
 	 *
 	 * @param betMap	  a map of all bets, mapping the player to the amount bet
 	 * @param allInLevels sorted set of the different levels where players went all-in
-	 * @param potTransitions TODO
+	 * @param potTransitions 
 	 */
 	private void handleAllIns(Map<PokerPlayer, Long> betMap, SortedSet<Long> allInLevels, Collection<PotTransition> potTransitions) {
 		long currentLevel = 0;
@@ -210,7 +244,7 @@ public class PotHolder implements Serializable {
 	 * @return the active pot, or a newly created pot if there were no pots
 	 */
 	public Pot getActivePot() {
-		if (pots.size() == 0 || pots.get(pots.size() - 1).isOpen() == false ) {
+		if (pots.size() == 0 || !pots.get(pots.size() - 1).isOpen() ) {
 			Pot pot = new Pot(pots.size());
 			pots.add(pot);
 		}
@@ -238,7 +272,7 @@ public class PotHolder implements Serializable {
 			total += pot.getPotSize();
 		}
 
-		return total + rakeAmount;
+		return total;
 	}
 
 	/**
@@ -278,10 +312,8 @@ public class PotHolder implements Serializable {
 	 *
 	 * @param potSize
 	 */
-	public void addPot(Long potSize) {
-		Pot pot = new Pot(pots.size());
-		DefaultPokerPlayer player = new DefaultPokerPlayer(1);
-		pot.bet(player, potSize);
+	@VisibleForTesting
+	protected void addPot(Pot pot) {
 		pots.add(pot);
 	}
 

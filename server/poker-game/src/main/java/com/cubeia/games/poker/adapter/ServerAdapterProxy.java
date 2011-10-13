@@ -134,9 +134,9 @@ public abstract class ServerAdapterProxy implements ServerAdapter {
 	}
 
 	@Override
-	public void updatePots(Collection<Pot> iterable, Collection<PotTransition> potTransitions) {
+	public void notifyPotUpdates(Collection<Pot> iterable, Collection<PotTransition> potTransitions) {
 		if(getAdaptee() != null) {
-			getAdaptee().updatePots(iterable, potTransitions);
+			getAdaptee().notifyPotUpdates(iterable, potTransitions);
 		}
 	}
 

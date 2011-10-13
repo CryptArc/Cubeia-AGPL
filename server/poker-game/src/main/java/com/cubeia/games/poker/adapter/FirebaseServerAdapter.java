@@ -43,6 +43,7 @@ import se.jadestone.dicearena.game.poker.network.protocol.PlayerPokerStatus;
 import se.jadestone.dicearena.game.poker.network.protocol.Pot;
 import se.jadestone.dicearena.game.poker.network.protocol.PotTransfer;
 import se.jadestone.dicearena.game.poker.network.protocol.PotTransfers;
+import se.jadestone.dicearena.game.poker.network.protocol.RakeInfo;
 import se.jadestone.dicearena.game.poker.network.protocol.RequestAction;
 import se.jadestone.dicearena.game.poker.network.protocol.StartNewHand;
 
@@ -89,6 +90,7 @@ import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.pot.PotTransition;
+import com.cubeia.poker.rake.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.tournament.RoundReport;
@@ -125,7 +127,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
     int handCount;
 
     @Inject
-    private HandResultBatchFactory handResultBatchCreator;
+    private HandResultBatchFactory handResultBatchFactory;
 
 //    @Inject
 //    private PokerCEPService pokerCepService;
@@ -299,7 +301,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
                 
                 int handId = -1;                    // TODO: implement this!
                 TableId externalTableId = null;     // TODO: table should get this from activator
-                BatchHandRequest batchHandRequest = handResultBatchCreator.createBatchHandRequest(handResult, handId, externalTableId);
+                BatchHandRequest batchHandRequest = handResultBatchFactory.createBatchHandRequest(handResult, handId, externalTableId);
                 BatchHandResponse batchHandResult = backend.batchHand(batchHandRequest);
                 
                 validateAndUpdateBalances(batchHandResult);
@@ -408,7 +410,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
     }
 	
 	
-	public void updatePots(Collection<com.cubeia.poker.pot.Pot> pots, Collection<PotTransition> potTransitions) {
+	public void notifyPotUpdates(Collection<com.cubeia.poker.pot.Pot> pots, Collection<PotTransition> potTransitions) {
 	    boolean fromPlayerToPot = !potTransitions.isEmpty()  &&  potTransitions.iterator().next().isFromPlayerToPot();
 	    List<PlayerBalance> balances = new ArrayList<PlayerBalance>();
 	    List<Pot> clientPots = new ArrayList<Pot>();
@@ -431,6 +433,13 @@ public class FirebaseServerAdapter implements ServerAdapter {
         GameDataAction action = protocolFactory.createGameAction(potTransfers, 0, table.getId());
         sendPublicPacket(action, -1);
     }
+	
+	@Override
+	public void notifyRakeInfo(RakeInfoContainer rakeInfoContainer) {
+	    RakeInfo rakeInfo = new RakeInfo(rakeInfoContainer.getTotalPot(), rakeInfoContainer.getTotalRake());
+	    GameDataAction action = protocolFactory.createGameAction(rakeInfo, 0, table.getId());
+	    sendPublicPacket(action, -1);
+	}
 
     @Override
 	public void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status) {

@@ -201,7 +201,7 @@ public class Telesina implements GameType, RoundVisitor {
 	}
 	
 	private void reportPotUpdate(Collection<PotTransition> potTransitions) {
-        state.updatePot(potTransitions);
+        state.notifyPotAndRakeUpdates(potTransitions);
     }
 
     /**

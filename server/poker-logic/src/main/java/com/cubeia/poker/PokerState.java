@@ -17,7 +17,6 @@
 
 package com.cubeia.poker;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,6 +43,8 @@ import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.pot.PotTransition;
+import com.cubeia.poker.rake.RakeCalculatorImpl;
+import com.cubeia.poker.rake.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
 import com.cubeia.poker.rng.RNGProvider;
@@ -164,7 +165,8 @@ public class PokerState implements Serializable, IPokerState {
 
 	private HandResult handResult;	
 	
-	private PotHolder potHolder = new PotHolder();
+	@VisibleForTesting
+	protected PotHolder potHolder;
 	
 	private List<Card> communityCards = new ArrayList<Card>();
 
@@ -172,8 +174,6 @@ public class PokerState implements Serializable, IPokerState {
 
     private int tableSize;
 
-	
-    
 	public PokerState() {}
 
 	public String toString() {
@@ -191,6 +191,8 @@ public class PokerState implements Serializable, IPokerState {
 		betStrategyName = settings.getBetStrategy();
 		entryBetLevel = settings.getEntryBetLevel(); 
 		gameType = createGameTypeByVariant(rngProvider, variant);
+
+		potHolder = new PotHolder(new RakeCalculatorImpl(settings.getRakeFraction()));
 	}
 
 	protected GameType createGameTypeByVariant(RNGProvider rngProvider, PokerVariant variant) {
@@ -586,8 +588,11 @@ public class PokerState implements Serializable, IPokerState {
 	    serverAdapter.cleanupPlayers();
 	}
 
-	public void updatePot(Collection<PotTransition> potTransitions) {
-        serverAdapter.updatePots(potHolder.getPots(), potTransitions);
+	public void notifyPotAndRakeUpdates(Collection<PotTransition> potTransitions) {
+//	    RakeInfoContainer rakeInfoContainer = rakeCalculator.calculateRake(potHolder.getPots());
+	    
+        serverAdapter.notifyPotUpdates(potHolder.getPots(), potTransitions);
+//        serverAdapter.notifyRakeInfo(rakeInfoContainer);
     }	
 
 	/**
@@ -597,10 +602,6 @@ public class PokerState implements Serializable, IPokerState {
 		serverAdapter.notifyDealerButton(dealerButtonSeatId);
 	}
 
-//	public void notifyPlayerAllIn(int playerId) {
-//		serverAdapter.notifyPlayerStatusChanged(playerId, PokerPlayerStatus.ALLIN);
-//	}
-	
 	public void notifyPlayerSittingOut(int playerId) {
 		serverAdapter.notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITOUT);
 	}
@@ -681,7 +682,7 @@ public class PokerState implements Serializable, IPokerState {
 	public int getAnteLevel() {
 		return anteLevel;
 	}
-	
+
 	public void setAnteLevel(int anteLevel) {
 		this.anteLevel = anteLevel;
 	}
