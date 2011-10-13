@@ -74,7 +74,9 @@ public class PokerParticipant extends DefaultCreationParticipant {
 
 	// TODO: get rake fraction from property/db
     public static final BigDecimal RAKE_FRACTION = new BigDecimal("0.01");
+    public static final int RAKE_LIMIT = 1000;
 
+    
 	public PokerParticipant(int seats, String domain, int anteLevel, Timings timing, PokerVariant variant, RNGProvider rngProvider) {
 		super();
 		this.seats = seats;
@@ -112,7 +114,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
 		PokerState pokerState = injector.getInstance(PokerState.class);
 
         PokerSettings settings = new PokerSettings(anteLevel, anteLevel * MIN_BUY_IN, Integer.MAX_VALUE, timingProfile, variant, 
-		    table.getPlayerSet().getSeatingMap().getNumberOfSeats(), BetStrategyName.NO_LIMIT, RAKE_FRACTION);
+		    table.getPlayerSet().getSeatingMap().getNumberOfSeats(), BetStrategyName.NO_LIMIT, RAKE_FRACTION, RAKE_LIMIT);
 		pokerState.init(rngProvider, settings);
 		pokerState.setAdapterState(new FirebaseState());
 		pokerState.setId(table.getId());

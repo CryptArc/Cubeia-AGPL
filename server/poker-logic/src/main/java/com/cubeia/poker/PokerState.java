@@ -192,7 +192,7 @@ public class PokerState implements Serializable, IPokerState {
 		entryBetLevel = settings.getEntryBetLevel(); 
 		gameType = createGameTypeByVariant(rngProvider, variant);
 
-		potHolder = new PotHolder(new RakeCalculatorImpl(settings.getRakeFraction()));
+		potHolder = new PotHolder(new RakeCalculatorImpl(settings.getRakeFraction(), settings.getRakeLimit()));
 	}
 
 	protected GameType createGameTypeByVariant(RNGProvider rngProvider, PokerVariant variant) {

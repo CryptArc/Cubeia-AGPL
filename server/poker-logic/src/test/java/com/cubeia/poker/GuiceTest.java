@@ -64,6 +64,6 @@ public abstract class GuiceTest extends TestCase {
 	
 	protected PokerSettings createPokerSettings(int anteLevel) {
 		return new PokerSettings(anteLevel, 1000, 10000, TimingFactory.getRegistry().getTimingProfile(MINIMUM_DELAY), variant, 6, 
-		    BetStrategyName.NO_LIMIT, new BigDecimal("0"));
+		    BetStrategyName.NO_LIMIT, new BigDecimal("0"), 10000000);
 	}
 }

@@ -15,6 +15,7 @@ public class PokerSettings {
     private final int tableSize;
     private final BetStrategyName betStrategy;
     private final BigDecimal rakeFraction;
+    private final int rakeLimit;
 	
 	public PokerSettings(
 			int anteLevel,
@@ -24,7 +25,8 @@ public class PokerSettings {
 			PokerVariant variant,
 			int tableSize,
 			BetStrategyName betStrategy, 
-			BigDecimal rakeFraction) {
+			BigDecimal rakeFraction,
+			int rakeLimit) {
 		
 		this.anteLevel = anteLevel;
 		this.minBuyIn = minBuyIn;
@@ -34,6 +36,7 @@ public class PokerSettings {
 		this.tableSize = tableSize;
 		this.betStrategy = betStrategy;
 		this.rakeFraction = rakeFraction;
+		this.rakeLimit = rakeLimit;
 	}
 
 	public int getAnteLevel() {
@@ -77,4 +80,8 @@ public class PokerSettings {
 				return anteLevel;
 		}
 	}
+
+    public long getRakeLimit() {
+        return rakeLimit;
+    }
 }
