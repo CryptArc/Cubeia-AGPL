@@ -32,7 +32,7 @@ public class GameStateInitialization {
 		TimingProfile timing = Mockito.mock(TimingProfile.class);
 		int anteLevel = 1234;
 		PokerSettings settings = new PokerSettings(anteLevel, 100, 1000, timing , TELESINA, 6, BetStrategyName.NO_LIMIT,
-		    TestUtils.createDummyRakeSettings());
+		    TestUtils.createOnePercentRakeSettings());
 		
         RNGProvider rngProvider = Mockito.mock(RNGProvider.class);
 		PokerState state = new PokerState();

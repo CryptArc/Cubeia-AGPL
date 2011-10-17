@@ -56,6 +56,8 @@ public class HandResultCalculator implements Serializable {
 	 * 
 	 * The results are the winnings or losses in the hand.
 	 * 
+	 * Rake is taken before calculating the result.
+	 * 
 	 * For example, if player A, B and C bet $10 each and player C won, the results will be:
 	 * A->-$10, B->-$10, C->$20
 	 * 
@@ -85,7 +87,7 @@ public class HandResultCalculator implements Serializable {
 		 * as a map.
 		 */
 		
-		for ( Pot pot : potHolder.getPots() ) {
+		for (Pot pot : potHolder.getPots()) {
 			// Get participating players
 			Map<PokerPlayer, Long> participants = pot.getPotContributors();
 			Map<PokerPlayer, Long> potContributors = pot.getPotContributors();
@@ -108,14 +110,15 @@ public class HandResultCalculator implements Serializable {
 				// --- WINNERS --- 
 				List<Integer> winners = getWinners(filteredHands);
 				
-				long potSize = pot.getPotSize();
-				long potShare = potSize / winners.size();
+				long potSizeWithRakeRemoved = pot.getPotSizeWithRakeRemoved();
+				long potShare = potSizeWithRakeRemoved / winners.size();
+				long rakeShare = pot.getRake().intValue() / winners.size();
 				
 				// Report winner shares
 				for (Integer winnerId : winners) {
 					PokerPlayer player = playerMap.get(winnerId);
 					Long stake = potContributors.get(player);
-					addResultBalance(netResults, netStakes, winnerId, potShare, stake);
+					addResultBalance(netResults, netStakes, winnerId, potShare, stake, rakeShare);
 					log.debug(" --- Add winner pot result: "+winnerId+" : "+potShare+" - "+stake+" = "+(potShare-stake));
 					
 					addPotWinningShare(player, pot, potShare, playerPotWinningsShares);
@@ -128,7 +131,7 @@ public class HandResultCalculator implements Serializable {
 				for (Integer loserId : participantIds) {
 					PokerPlayer player = playerMap.get(loserId);
 					Long stake = pot.getPotContributors().get(player);
-					addResultBalance(netResults, netStakes, loserId, 0l, stake);
+					addResultBalance(netResults, netStakes, loserId, 0l, stake, 0l);
 					log.debug(" --- Add loser pot result: "+loserId+" : -"+stake);
 				}
 			}
@@ -146,7 +149,11 @@ public class HandResultCalculator implements Serializable {
 			long playerStakeSafe = playerStake == null ? 0 : playerStake;
 			
             Map<Pot, Long> potShares = playerPotWinningsShares.get(player);
-            Result result = new Result(netResultSafe, playerStakeSafe, potShares == null ? Collections.<Pot, Long>emptyMap() : potShares);
+            if (potShares == null) {
+                potShares = Collections.<Pot, Long>emptyMap();
+            }
+            
+            Result result = new Result(netResultSafe, playerStakeSafe, potShares);
 			results.put(player, result);
 		}
 		
@@ -182,7 +189,9 @@ public class HandResultCalculator implements Serializable {
         });
     }
 	
-	private void addResultBalance(Map<Integer, Long> netResults, Map<Integer, Long> netStakes, Integer playerId, Long winnings, Long stake) {
+	private void addResultBalance(Map<Integer, Long> netResults, Map<Integer, Long> netStakes, Integer playerId,
+	    Long winnings, Long stake, Long rake) {
+	    
 		Long balance = netResults.get(playerId);
 		if (balance == null) {
 			netResults.put(playerId, winnings - stake);

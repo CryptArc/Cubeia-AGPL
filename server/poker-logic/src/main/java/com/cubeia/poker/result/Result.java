@@ -42,10 +42,18 @@ public class Result implements Serializable {
 		this.winningsIncludingOwnBets = netResult + ownBets;
 	}
 
+	/**
+	 * The net result for this player. This value might be negative.
+	 * @return net result
+	 */
 	public long getNetResult() {
 		return netResult;
 	}
 
+	/**
+	 * Returns the winnings including own bets. 
+	 * @return 
+	 */
 	public long getWinningsIncludingOwnBets() {
 		return winningsIncludingOwnBets;
 	}

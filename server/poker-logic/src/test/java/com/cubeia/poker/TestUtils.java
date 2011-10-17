@@ -71,8 +71,11 @@ public class TestUtils {
 		game.act(new PokerAction(playerId, actionType));
 	}
 
-	public static RakeSettings createDummyRakeSettings() {
+	public static RakeSettings createOnePercentRakeSettings() {
 	    return new RakeSettings(new BigDecimal("0.1"), Long.MAX_VALUE);
 	}
 
+    public static RakeSettings createZeroRakeSettings() {
+        return new RakeSettings(BigDecimal.ZERO, Long.MAX_VALUE);
+    }
 }

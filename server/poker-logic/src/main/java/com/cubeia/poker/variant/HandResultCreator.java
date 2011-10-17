@@ -34,7 +34,6 @@ public class HandResultCreator {
 		List<PlayerHand> playerHands = createHandHolder(communityCards, currentHandPlayerMap.values());
 		Map<PokerPlayer, Result> playerResults = handResultCalculator.getPlayerResults(playerHands, potHolder, currentHandPlayerMap);
 		
-		
 		Collection<PotTransition> potTransitions = createPotTransitionsByResults(playerResults);
 		
 		return new HandResult(playerResults, rateHands(playerHands), potTransitions);

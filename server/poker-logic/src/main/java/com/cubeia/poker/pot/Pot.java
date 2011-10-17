@@ -105,15 +105,17 @@ public class Pot implements Serializable {
 	}
 
 	/**
-	 * Gets the size of this pot.
+	 * Gets the size of this pot. Note that the returned size includes the
+	 * rake that should be taken. To get the actual amount that will be shared
+	 * by the winners use {@link #getPotSizeWithRakeRemoved()}.
 	 *
-	 * @return the size of this pot
+	 * @return the size of this pot (including rake)
 	 */
 	public long getPotSize() {
 	    return potSize;
 	}
 
-	public long getPotSizeWithoutRake() {
+	public long getPotSizeWithRakeRemoved() {
 	    return getPotSize() - getRake().setScale(0, HALF_UP).longValue();
 	}
 	

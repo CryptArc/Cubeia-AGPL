@@ -36,7 +36,7 @@ public class PotRakeTest {
         Pot pot0 = ph.getPot(0);
         assertThat(pot0.getPotSize(), is(bet + bet));
         assertThat(pot0.getRake(), is(BigDecimal.valueOf(2 * bet).multiply(rakeFraction)));
-        assertThat(pot0.getPotSizeWithoutRake(), is(2 * bet - pot0.getRake().intValue()));
+        assertThat(pot0.getPotSizeWithRakeRemoved(), is(2 * bet - pot0.getRake().intValue()));
     }
     
     @Test
@@ -69,14 +69,14 @@ public class PotRakeTest {
         assertThat(pot0.getPotContributors().keySet(), hasItems(player1, player2, player3));
         assertThat(pot0.getPotSize(), is(betPot0 * 3));
         assertThat(pot0.getRake(), is(BigDecimal.valueOf(3 * betPot0).multiply(rakeFraction)));
-        assertThat(pot0.getPotSizeWithoutRake(), is(3 * betPot0 - pot0.getRake().intValue()));
+        assertThat(pot0.getPotSizeWithRakeRemoved(), is(3 * betPot0 - pot0.getRake().intValue()));
 
         Pot pot1 = ph.getPot(1);
         assertThat(pot1.getPotContributors().keySet().size(), is(2));
         assertThat(pot1.getPotContributors().keySet(), hasItems(player2, player3));
         assertThat(pot1.getPotSize(), is(betPot1 * 2));
         assertThat(pot1.getRake(), is(BigDecimal.valueOf(2 * betPot1).multiply(rakeFraction)));
-        assertThat(pot1.getPotSizeWithoutRake(), is(2 * betPot1 - pot1.getRake().intValue()));
+        assertThat(pot1.getPotSizeWithRakeRemoved(), is(2 * betPot1 - pot1.getRake().intValue()));
     }
 
     @Test

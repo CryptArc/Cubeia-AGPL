@@ -35,7 +35,7 @@ public class PokerStateTest {
         PokerState state = new PokerState();
         int anteLevel = 100;
         PokerSettings settings = mock(PokerSettings.class);
-        when(settings.getRakeSettins()).thenReturn(TestUtils.createDummyRakeSettings());
+        when(settings.getRakeSettins()).thenReturn(TestUtils.createOnePercentRakeSettings());
         when(settings.getAnteLevel()).thenReturn(anteLevel);
         when(settings.getVariant()).thenReturn(PokerVariant.TELESINA);
         TimingProfile timingProfile = mock(TimingProfile.class);

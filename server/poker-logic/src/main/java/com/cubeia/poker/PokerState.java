@@ -162,8 +162,6 @@ public class PokerState implements Serializable, IPokerState {
 
 	private boolean handFinished = false;
 
-	private HandResult handResult;	
-	
 	@VisibleForTesting
 	protected PotHolder potHolder;
 	
@@ -376,9 +374,8 @@ public class PokerState implements Serializable, IPokerState {
 	 */
 	public void notifyHandFinished(HandResult result, HandEndStatus status) {
 		handFinished = true;
-		handResult = result;
 
-		awardWinners(handResult.getResults());
+		awardWinners(result.getResults());
 		commitPendingBalances();
 		
 		if (tournamentTable) {
@@ -390,9 +387,9 @@ public class PokerState implements Serializable, IPokerState {
 			
 			log.debug("hand finished, result:\n{}", result);
 			
-			serverAdapter.notifyHandEnd(handResult, status);
+			serverAdapter.notifyHandEnd(result, status);
 			
-			setPlayersWithoutMoneyAsSittingOut(handResult);
+			setPlayersWithoutMoneyAsSittingOut(result);
 			
 			log.debug("Schedule hand over timeout in: {}", timing != null ? timing.getTime(Periods.START_NEW_HAND) : 0);
 			serverAdapter.scheduleTimeout(timing.getTime(Periods.START_NEW_HAND));

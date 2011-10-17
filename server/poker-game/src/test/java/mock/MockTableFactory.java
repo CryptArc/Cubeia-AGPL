@@ -37,7 +37,7 @@ public class MockTableFactory {
 		MockTable table = new MockTable();
 		
 		PokerSettings settings = new PokerSettings(-1, -1, -1, TimingFactory.getRegistry().getTimingProfile(MINIMUM_DELAY), TELESINA, 6, 
-		    BetStrategyName.NO_LIMIT, TestUtils.createDummyRakeSettings());
+		    BetStrategyName.NO_LIMIT, TestUtils.createOnePercentRakeSettings());
 
 		final Random rng = new Random();
 		PokerState pokerState = new PokerState();
