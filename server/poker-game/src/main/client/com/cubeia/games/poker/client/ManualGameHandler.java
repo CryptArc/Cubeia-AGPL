@@ -17,31 +17,41 @@
 
 package com.cubeia.games.poker.client;
 
+import se.jadestone.dicearena.game.poker.network.protocol.AamsSessionInfoPacket;
+import se.jadestone.dicearena.game.poker.network.protocol.BestHand;
+import se.jadestone.dicearena.game.poker.network.protocol.BuyInInfoRequest;
+import se.jadestone.dicearena.game.poker.network.protocol.BuyInInfoResponse;
+import se.jadestone.dicearena.game.poker.network.protocol.BuyInRequest;
+import se.jadestone.dicearena.game.poker.network.protocol.BuyInResponse;
+import se.jadestone.dicearena.game.poker.network.protocol.CardToDeal;
+import se.jadestone.dicearena.game.poker.network.protocol.DealPrivateCards;
+import se.jadestone.dicearena.game.poker.network.protocol.DealPublicCards;
+import se.jadestone.dicearena.game.poker.network.protocol.DealerButton;
+import se.jadestone.dicearena.game.poker.network.protocol.DeckInfo;
+import se.jadestone.dicearena.game.poker.network.protocol.ExposePrivateCards;
+import se.jadestone.dicearena.game.poker.network.protocol.GameCard;
+import se.jadestone.dicearena.game.poker.network.protocol.HandCanceled;
+import se.jadestone.dicearena.game.poker.network.protocol.HandEnd;
+import se.jadestone.dicearena.game.poker.network.protocol.InternalSerializedObject;
+import se.jadestone.dicearena.game.poker.network.protocol.PacketVisitor;
+import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
+import se.jadestone.dicearena.game.poker.network.protocol.PlayerAction;
+import se.jadestone.dicearena.game.poker.network.protocol.PlayerBalance;
+import se.jadestone.dicearena.game.poker.network.protocol.PlayerPokerStatus;
+import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitinRequest;
+import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitoutRequest;
+import se.jadestone.dicearena.game.poker.network.protocol.PlayerState;
+import se.jadestone.dicearena.game.poker.network.protocol.Pot;
+import se.jadestone.dicearena.game.poker.network.protocol.PotTransfer;
+import se.jadestone.dicearena.game.poker.network.protocol.PotTransfers;
+import se.jadestone.dicearena.game.poker.network.protocol.RakeInfo;
+import se.jadestone.dicearena.game.poker.network.protocol.RequestAction;
+import se.jadestone.dicearena.game.poker.network.protocol.StartHandHistory;
+import se.jadestone.dicearena.game.poker.network.protocol.StartNewHand;
+import se.jadestone.dicearena.game.poker.network.protocol.StopHandHistory;
+import se.jadestone.dicearena.game.poker.network.protocol.TournamentOut;
+
 import com.cubeia.firebase.clients.java.connector.text.IOContext;
-import com.cubeia.games.poker.io.protocol.AamsSessionInfoPacket;
-import com.cubeia.games.poker.io.protocol.BestHand;
-import com.cubeia.games.poker.io.protocol.CardToDeal;
-import com.cubeia.games.poker.io.protocol.DealPrivateCards;
-import com.cubeia.games.poker.io.protocol.DealPublicCards;
-import com.cubeia.games.poker.io.protocol.DealerButton;
-import com.cubeia.games.poker.io.protocol.ExposePrivateCards;
-import com.cubeia.games.poker.io.protocol.GameCard;
-import com.cubeia.games.poker.io.protocol.HandEnd;
-import com.cubeia.games.poker.io.protocol.InformRoundEnded;
-import com.cubeia.games.poker.io.protocol.PacketVisitor;
-import com.cubeia.games.poker.io.protocol.PerformAction;
-import com.cubeia.games.poker.io.protocol.PlayerAction;
-import com.cubeia.games.poker.io.protocol.PlayerBalance;
-import com.cubeia.games.poker.io.protocol.PlayerPokerStatus;
-import com.cubeia.games.poker.io.protocol.PlayerSitinRequest;
-import com.cubeia.games.poker.io.protocol.PlayerSitoutRequest;
-import com.cubeia.games.poker.io.protocol.PlayerState;
-import com.cubeia.games.poker.io.protocol.Pot;
-import com.cubeia.games.poker.io.protocol.RequestAction;
-import com.cubeia.games.poker.io.protocol.StartHandHistory;
-import com.cubeia.games.poker.io.protocol.StartNewHand;
-import com.cubeia.games.poker.io.protocol.StopHandHistory;
-import com.cubeia.games.poker.io.protocol.TournamentOut;
 
 public class ManualGameHandler implements PacketVisitor {
 
@@ -78,7 +88,7 @@ public class ManualGameHandler implements PacketVisitor {
 	public void visit(HandEnd packet) {
 		String out = "\nHand over. Hands:\n";
 		for (BestHand hand : packet.hands) {
-			out += "\t"+hand.player +" - "+hand.name+" ("+hand.rank+")\n";
+			out += "\t"+hand.player +" - "+hand+" ("+hand.handType+")\n";
 		}
 		System.out.println(out);
 	}
@@ -125,11 +135,6 @@ public class ManualGameHandler implements PacketVisitor {
     	}
 	}
 
-	@Override
-	public void visit(InformRoundEnded packet) {
-		System.out.println("Round ended");
-	}
-    
 	public void visit(GameCard packet) {}
 	public void visit(BestHand packet) {}
 	public void visit(PlayerState packet) {}
@@ -149,6 +154,66 @@ public class ManualGameHandler implements PacketVisitor {
 		} else {
 			System.out.println("Player["+packet.player+"]'s status has changed to: "+packet.status);
 		}
+	}
+
+	@Override
+	public void visit(HandCanceled packet) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(BuyInInfoRequest packet) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(BuyInInfoResponse packet) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(BuyInRequest packet) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(BuyInResponse packet) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(PotTransfer packet) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(PotTransfers packet) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(RakeInfo packet) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(DeckInfo packet) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(InternalSerializedObject packet) {
+		// TODO Auto-generated method stub
+		
 	}
     
 }
