@@ -67,13 +67,19 @@ public class DefaultPokerPlayer implements PokerPlayer {
     private long pendingBalance;
 
     private boolean sitInAfterSuccessfulBuyIn;
+    
+    private Long sitOutTimestamp;
 	
 	public DefaultPokerPlayer(int id) {
 		playerId = id;
 	}
 	
 	public String toString() {
-	    return "pid["+playerId+"] seat["+seatId+"] balance["+balance+"] sitout["+isSittingOut+"] sitoutstatus["+sitOutStatus+"] folded["+hasFolded+"] hasActed["+hasActed+"]";
+		String sitOutSince = sitOutTimestamp == null ? "" : ":"+(System.currentTimeMillis()-sitOutTimestamp+"ms");
+	    String value = "pid["+playerId+"] seat["+seatId+"] balance["+balance+"] " +
+	    		"sitout["+isSittingOut+sitOutSince+"] " +
+	    		"sitoutstatus["+sitOutStatus+"] folded["+hasFolded+"] hasActed["+hasActed+"]";
+	    return value;
 	}
 	
 	public void addBet(long bet) {
@@ -180,6 +186,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	public void setSitOutStatus(SitOutStatus status) {
 		this.isSittingOut = true;
 		this.sitOutStatus = status;
+		sitOutTimestamp = System.currentTimeMillis();
 	}
 
 	public void setHasPostedEntryBet(boolean status) {
@@ -192,6 +199,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	
 	public void sitIn() {
 		this.isSittingOut = false;
+		sitOutTimestamp = null;
 	}
 
 	public void clearBalance() {
@@ -272,4 +280,9 @@ public class DefaultPokerPlayer implements PokerPlayer {
     public void setSitInAfterSuccessfulBuyIn(boolean sitIn) {
         this.sitInAfterSuccessfulBuyIn = sitIn;
     }
+
+	@Override
+	public Long getSitOutTimestamp() {
+		return sitOutTimestamp;
+	}
 }

@@ -173,6 +173,8 @@ public class PokerState implements Serializable, IPokerState {
 
 	private String tableIntegrationId;
 
+	private PokerSettings settings;
+
 	public PokerState() {}
 
 	public String toString() {
@@ -181,6 +183,7 @@ public class PokerState implements Serializable, IPokerState {
 
 	@Override
 	public void init(RNGProvider rngProvider, PokerSettings settings) {
+		this.settings = settings;
 		anteLevel = settings.getAnteLevel();
 		timing = settings.getTiming();
 		variant = settings.getVariant();
@@ -420,7 +423,7 @@ public class PokerState implements Serializable, IPokerState {
 	@VisibleForTesting
 	protected void commitPendingBalances() {
 	    for (PokerPlayer player : playerMap.values()) {
-	    	log.debug(" --- Commit Player "+player);
+	    	log.debug("Commit Player "+player);
 	        player.commitPendingBalance();
 	    }
 	}
@@ -606,6 +609,7 @@ public class PokerState implements Serializable, IPokerState {
 	 * Removes all disconnected players from the table
 	 */
 	public void cleanupPlayers() {
+		// Clean up players in states not accessible to the poker logic
 	    serverAdapter.cleanupPlayers();
 	}
 
@@ -761,5 +765,9 @@ public class PokerState implements Serializable, IPokerState {
 
 	public String getIntegrationId() {
 		return tableIntegrationId;
+	}
+
+	public PokerSettings getSettings() {
+		return settings;
 	}
 }

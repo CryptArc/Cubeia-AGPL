@@ -15,6 +15,9 @@ public class PokerSettings {
     private final BetStrategyName betStrategy;
     private final RakeSettings rakeSettins;
     private final String tableIntegrationId;
+    
+    /** Default is 1 minute */
+    private long sitoutTimeLimitMilliseconds = 1 * 60 * 1000;
 	
 	public PokerSettings(
 			int anteLevel,
@@ -73,6 +76,14 @@ public class PokerSettings {
 	public RakeSettings getRakeSettins() {
         return rakeSettins;
     }
+	
+	public long getSitoutTimeLimitMilliseconds() {
+		return sitoutTimeLimitMilliseconds;
+	}
+	
+	public void setSitoutTimeLimitMilliseconds(long sitoutTimeLimitMilliseconds) {
+		this.sitoutTimeLimitMilliseconds = sitoutTimeLimitMilliseconds;
+	}
 	
 	public int getEntryBetLevel() {
 		switch (variant)

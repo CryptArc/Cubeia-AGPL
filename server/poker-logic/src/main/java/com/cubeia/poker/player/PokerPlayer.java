@@ -139,4 +139,12 @@ public interface PokerPlayer extends Serializable {
 
     public void setSitInAfterSuccessfulBuyIn(boolean sitIn);
     
+    /** 
+     * Get the timestamp for when the player was set as sitting out.
+     * Will be null if the player is currently not in a sit out state.
+     * 
+     * @return UTC milliseconds or null 
+     */
+    public Long getSitOutTimestamp();
+    
 }

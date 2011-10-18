@@ -41,11 +41,6 @@ public class MockPlayer extends DefaultPokerPlayer implements PokerPlayer  {
 		return seatId;
 	}
 	
-	@Override
-	public String toString() {
-		return String.format("<playerId[%d] seatId[%d] hasFolded[%b] hasActed[%b] isSittingOut[%b]>", playerId, seatId, hasFolded, hasActed, isSittingOut);
-	}
-
 	public void setSeatId(int i) {
 		seatId = i;
 	}
