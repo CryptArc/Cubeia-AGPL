@@ -44,6 +44,7 @@ import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.PokerAction;
+import com.cubeia.poker.player.SitOutStatus;
 import com.google.inject.Inject;
 
 public class PokerHandler extends DefaultPokerHandler {
@@ -76,6 +77,7 @@ public class PokerHandler extends DefaultPokerHandler {
 	    	TimeoutCache.getInstance().removeTimeout(table.getId(), playerId, table.getScheduler());
 	        PokerAction action = new PokerAction(playerId, ActionTransformer.transform(packet.action.type));
 	        action.setBetAmount(packet.betAmount);
+	        log.debug("Do Act: "+action);
 	        state.act(action);
 	    } 
 	}
@@ -83,7 +85,7 @@ public class PokerHandler extends DefaultPokerHandler {
 	// player wants to sit out next hand
     @Override
 	public void visit(PlayerSitoutRequest packet) {
-		state.playerIsSittingOut(playerId);
+		state.playerIsSittingOut(playerId, SitOutStatus.SITTING_OUT);
 	}
 
 	// player wants to sit in again

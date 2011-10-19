@@ -24,6 +24,7 @@ import com.cubeia.firebase.api.game.table.SeatRequest;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TableInterceptor;
 import com.cubeia.poker.PokerState;
+import com.cubeia.poker.player.SitOutStatus;
 import com.google.inject.Inject;
 
 public class PokerTableInterceptor implements TableInterceptor {
@@ -54,7 +55,7 @@ public class PokerTableInterceptor implements TableInterceptor {
 			return new InterceptionResponse(true, -1);
 		} else {
 			// Hand running, set to disconnected only
-		    state.playerIsSittingOut(playerId);
+		    state.playerIsSittingOut(playerId, SitOutStatus.SITTING_OUT);
 			return new InterceptionResponse(false, -1);
 		}
 	}

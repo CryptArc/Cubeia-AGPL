@@ -29,6 +29,7 @@ import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.rounds.blinds.BlindsInfo;
 import com.cubeia.poker.variant.PokerVariant;
@@ -201,6 +202,12 @@ public class MockGame implements GameType {
 			public int getEntryBetLevel() {
 				// TODO Auto-generated method stub
 				return 0;
+			}
+
+			@Override
+			public void playerIsSittingOut(int playerId, SitOutStatus misssedAnte) {
+				// TODO Auto-generated method stub
+				
 			}
 		};
 	}

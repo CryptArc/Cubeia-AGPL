@@ -6,6 +6,7 @@ import java.util.SortedMap;
 
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.variant.PokerVariant;
 
@@ -14,6 +15,8 @@ public interface IPokerState {
 	void init(RNGProvider rngProvider, PokerSettings settings);
 	
 	void notifyPlayerSittingOut(int playerId);
+	
+	void playerIsSittingOut(int playerId, SitOutStatus misssedAnte);
 
 	int getAnteLevel();
 

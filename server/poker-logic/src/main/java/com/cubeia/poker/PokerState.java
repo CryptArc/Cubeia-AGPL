@@ -413,9 +413,9 @@ public class PokerState implements Serializable, IPokerState {
 	private void setPlayersWithoutMoneyAsSittingOut(HandResult handResult) {
 		for (PokerPlayer player : handResult.getResults().keySet()) {
 			if (player.getBalance() < anteLevel) {
-				player.setSitOutStatus(SitOutStatus.SITTING_OUT);
-				notifyPlayerSittingOut(player.getId());
-				
+				playerIsSittingOut(player.getId(), SitOutStatus.SITTING_OUT);
+//				player.setSitOutStatus(SitOutStatus.SITTING_OUT);
+//				notifyPlayerSittingOut(player.getId());
 				notifyBuyinInfo(player.getId(), true);
 			}
 		}
@@ -518,13 +518,15 @@ public class PokerState implements Serializable, IPokerState {
 	 * 
 	 * @param playerId
 	 */
-	public void playerIsSittingOut(int playerId) {
+	public void playerIsSittingOut(int playerId, SitOutStatus status) {
 	    
-        log.debug("player {} is sitting out next round", playerId);
+        log.debug("player {} is sitting out", playerId);
 	    
 		PokerPlayer player = playerMap.get(playerId);
 		if ( player != null ) {
+			player.setSitOutStatus(status);
 			player.setSitOutNextRound(true);
+			notifyPlayerSittingOut(playerId);
 		}
 	}
 	
@@ -631,6 +633,10 @@ public class PokerState implements Serializable, IPokerState {
 		serverAdapter.notifyDealerButton(dealerButtonSeatId);
 	}
 
+	/**
+	 * TODO: Make this method private and change calls to this method from the BlindsRound
+	 * to use playerIsSittingOut instead to have one common way to set a player as sitout.
+	 */
 	public void notifyPlayerSittingOut(int playerId) {
 		serverAdapter.notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITOUT);
 	}

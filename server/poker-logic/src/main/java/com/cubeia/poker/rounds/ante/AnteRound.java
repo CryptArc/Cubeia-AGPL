@@ -165,8 +165,7 @@ public class AnteRound implements Round {
 	}
 
 	private void setPlayerSitOut(PokerPlayer player) {
-		player.setSitOutStatus(SitOutStatus.MISSSED_ANTE);
-		game.getState().notifyPlayerSittingOut(player.getId());
+		game.getState().playerIsSittingOut(player.getId(), SitOutStatus.MISSSED_ANTE);
 	}
 
 	/**

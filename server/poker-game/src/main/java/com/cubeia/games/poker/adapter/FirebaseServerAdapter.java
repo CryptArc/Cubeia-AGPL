@@ -278,7 +278,9 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		resp.maxAmount = state.getMaxBuyIn() - balanceOnTable;
 		resp.minAmount = state.getMinBuyIn();
 		resp.mandatoryBuyin = mandatoryBuyin;
-
+		
+		log.debug("Sending buyin information to player["+playerId+"]: "+resp);
+		
 		GameDataAction gda = new GameDataAction(playerId, table.getId());
 
 		StyxSerializer styx = new StyxSerializer(null);

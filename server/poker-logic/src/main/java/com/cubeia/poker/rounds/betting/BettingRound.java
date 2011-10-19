@@ -111,26 +111,33 @@ public class BettingRound implements Round, BettingRoundContext {
 	}
 
 	private void requestNextAction(int lastSeatId) {
-		PokerPlayer p = playerToActCalculator.getNextPlayerToAct(lastSeatId, gameType.getState().getCurrentHandSeatingMap());
-
-		if (p == null) {
+		PokerPlayer player = playerToActCalculator.getNextPlayerToAct(lastSeatId, gameType.getState().getCurrentHandSeatingMap());
+		if (player == null) {
 			isFinished = true;
 		} else {
-			requestAction(p);
+			requestAction(player);
 		}
 	}
 
+	/**
+	 * Get the player's available actions and send a request to the client
+	 * or perform default action if the player is sitting out.
+	 * 
+	 * @param p
+	 */
 	private void requestAction(PokerPlayer p) {
+		playerToAct = p.getId();
 		if (p.getBetStack() < highBet) {
-			// gameType.requestAction(p, PokerActionType.FOLD,
-			// PokerActionType.CALL, PokerActionType.RAISE);
 			p.setActionRequest(actionRequestFactory.createFoldCallRaiseActionRequest(p));
-			gameType.requestAction(p.getActionRequest());
 		} else {
 			p.setActionRequest(actionRequestFactory.createFoldCheckBetActionRequest(p));
+		}
+		
+		if (p.isSittingOut()){
+			performDefaultActionForPlayer(p);
+		} else {
 			gameType.requestAction(p.getActionRequest());
 		}
-		playerToAct = p.getId();
 	}
 
 	private boolean roundFinished() {
@@ -143,7 +150,7 @@ public class BettingRound implements Round, BettingRoundContext {
 		}
 
 		for (PokerPlayer p : gameType.getState().getCurrentHandSeatingMap().values()) {
-			if (!p.hasFolded() && !p.hasActed() &&!p.isSittingOut()) {
+			if (!p.hasFolded() && !p.hasActed()) {
 				return false;
 			}
 		}
@@ -214,9 +221,6 @@ public class BettingRound implements Round, BettingRoundContext {
 
 
 	private void bet(PokerPlayer player, long amount) {
-	    log.debug("bet amount: {}, high bet {} -> {}",
-	        new Object[] {amount, highBet, highBet + amount});
-	        
 		lastBetSize = amount;
 		highBet = highBet + amount;
 		
@@ -255,10 +259,15 @@ public class BettingRound implements Round, BettingRoundContext {
 			log.debug("Expected " + playerToAct + " to act, but that player can not be found at the table! I will assume everyone is all in");
 			return; // Are we allin?
 		}
+		performDefaultActionForPlayer(player);
+	}
+
+	private void performDefaultActionForPlayer(PokerPlayer player) {
+		log.debug("Perform default action for player sitting out: "+player);
 		if (player.getActionRequest().isOptionEnabled(PokerActionType.CHECK)) {
-			act(new PokerAction(playerToAct, PokerActionType.CHECK, true));
+			act(new PokerAction(player.getId(), PokerActionType.CHECK, true));
 		} else {
-			act(new PokerAction(playerToAct, PokerActionType.FOLD, true));
+			act(new PokerAction(player.getId(), PokerActionType.FOLD, true));
 		}
 	}
 

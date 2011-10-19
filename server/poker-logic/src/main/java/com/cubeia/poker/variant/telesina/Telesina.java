@@ -399,9 +399,8 @@ public class Telesina implements GameType, RoundVisitor {
 	    TelesinaHandStrengthEvaluator handStrengthEvaluator = new TelesinaHandStrengthEvaluator(getDeckLowestRank());	    
 	    
 		for (PokerPlayer p : state.getCurrentHandSeatingMap().values()) {
-			if (!p.isSittingOut() && !p.hasFolded()) {
+			if (!p.hasFolded()) {
 				dealExposedPocketCards(p, 1);
-				
 				calculateAndSendBestHandToPlayer(handStrengthEvaluator, p);
 			}
 		}

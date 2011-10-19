@@ -46,6 +46,7 @@ import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.PokerAction;
+import com.cubeia.poker.player.SitOutStatus;
 
 public class PokerHandlerTest {
 
@@ -113,7 +114,7 @@ public class PokerHandlerTest {
     public void testVisitPlayerSitoutRequest() {
         PlayerSitoutRequest sitOutRequest = new PlayerSitoutRequest();
         pokerHandler.visit(sitOutRequest);
-        verify(pokerHandler.state).playerIsSittingOut(playerId);
+        verify(pokerHandler.state).playerIsSittingOut(playerId, SitOutStatus.SITTING_OUT);
     }
 
     @Test

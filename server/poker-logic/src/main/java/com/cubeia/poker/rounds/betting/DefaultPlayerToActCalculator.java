@@ -20,7 +20,7 @@ public class DefaultPlayerToActCalculator implements PlayerToActCalculator {
 
         List<PokerPlayer> players = PokerUtils.unwrapList(seatingMap, lastActedSeatId + 1);
         for (PokerPlayer player : players) {
-            if (!player.hasFolded() && !player.hasActed() && !player.isSittingOut() && !player.isAllIn()) {
+            if (!player.hasFolded() && !player.hasActed() && !player.isAllIn()) {
                 next = player;
                 break;
             }

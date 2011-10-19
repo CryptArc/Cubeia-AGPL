@@ -17,6 +17,10 @@
 
 package com.cubeia.games.poker;
 
+import static com.cubeia.firebase.api.game.player.PlayerStatus.CONNECTED;
+import static com.cubeia.firebase.api.game.player.PlayerStatus.DISCONNECTED;
+import static com.cubeia.firebase.api.game.player.PlayerStatus.LEAVING;
+import static com.cubeia.firebase.api.game.player.PlayerStatus.WAITING_REJOIN;
 import static com.cubeia.poker.player.SitOutStatus.NOT_ENTERED_YET;
 
 import java.io.Serializable;
@@ -41,6 +45,7 @@ import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.player.SitOutStatus;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 
@@ -136,7 +141,16 @@ public class PokerTableListener implements TournamentTableListener {
 	}
 
 	public void playerStatusChanged(Table table, int playerId, PlayerStatus status) {
-		// TODO On disconnect, add event to action cache?
+		stateInjector.injectAdapter(table);
+		if (status.equals(DISCONNECTED) || status.equals(LEAVING) || status.equals(WAITING_REJOIN)) {
+			log.debug("Player status changed will be set as sit out, tid["+table.getId()+"] pid["+playerId+"] status["+status+"]");
+			state.playerIsSittingOut(playerId, SitOutStatus.SITTING_OUT);
+		} else if (status.equals(CONNECTED)) {
+			log.debug("Player status changed will be set as sit in, tid["+table.getId()+"] pid["+playerId+"] status["+status+"]");
+			state.playerIsSittingIn(playerId);
+		} else {
+			log.debug("Player status changed but we don't care, tid["+table.getId()+"] pid["+playerId+"] status["+status+"]");
+		}
 	}
 
 	public void seatReserved(Table table, GenericPlayer player) {}

@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.log4j.Logger;
+
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
@@ -43,6 +45,8 @@ import com.cubeia.poker.tournament.RoundReport;
 
 public class MockServerAdapter implements ServerAdapter {
 
+	Logger log = Logger.getLogger(this.getClass());
+	
 	private int timeoutCounter = 0;
 	private ActionRequest request;
 	public Collection<RatedPlayerHand> hands;
@@ -74,6 +78,10 @@ public class MockServerAdapter implements ServerAdapter {
 	
 	public int decrementScheduledTimeouts() {
 		return timeoutCounter--;
+	}
+	
+	public PokerAction getLatestActionPerformed() {
+		return actionPerformed;
 	}
 
 	public ActionRequest getActionRequest() {

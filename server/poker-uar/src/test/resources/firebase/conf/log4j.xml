@@ -28,6 +28,15 @@
 		</layout>	    
 	</appender>
 	
+	<!-- Log-based hand history -->
+	<appender name="HAND_HISTORY_LOG" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File"   value="logs/handhistory.log" />
+		<param name="Append" value="false" />	    	
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %-5p %t %c - %X{pokerid} %m%n"/>
+		</layout>	    
+	</appender>
+	
 	
 	<!-- 
 		The error log. Should be used by all categories. The cluster manager 
@@ -96,6 +105,12 @@
 		<appender-ref ref="STDOUT"/>
 		<appender-ref ref="SERVER_LOG"/>
 		<appender-ref ref="ERROR_LOG" />
+	</category>
+	
+	<!-- Enable debug to get the hand history written to the logs in JSON format -->
+	<category name="com.cubeia.poker.handhistory.impl.JsonHandHistoryLogger" additivity="false">
+		<priority value="debug"/>
+		<appender-ref ref="HAND_HISTORY_LOG"/>
 	</category>
 	
 	<!--
