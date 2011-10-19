@@ -129,7 +129,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
         for (HandResult hr : request.handResults) {
             log.debug("recording hand result: handId = {}, sessionId = {}, bets = {}, wins = {}, rake = {}", 
                 new Object[] {request.handId, hr.playerSession, hr.aggregatedBet, hr.win, hr.rake});
-            long amount = hr.win - hr.rake - hr.aggregatedBet;
+            long amount = hr.win - hr.aggregatedBet;
             sessionTransactions.put(hr.playerSession, (int) amount);
             resultingBalances.add(new BalanceUpdate(hr.playerSession, getBalance(hr.playerSession), -1));
         }

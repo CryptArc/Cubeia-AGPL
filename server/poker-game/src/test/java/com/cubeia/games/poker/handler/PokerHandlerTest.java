@@ -19,14 +19,12 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import se.jadestone.dicearena.game.poker.network.protocol.BuyInInfoRequest;
-import se.jadestone.dicearena.game.poker.network.protocol.BuyInInfoResponse;
 import se.jadestone.dicearena.game.poker.network.protocol.BuyInRequest;
 import se.jadestone.dicearena.game.poker.network.protocol.InternalSerializedObject;
 import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerAction;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitinRequest;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitoutRequest;
-import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
 
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.PlayerSessionIdImpl;
@@ -36,11 +34,9 @@ import com.cubeia.backend.cashgame.dto.ReserveRequest;
 import com.cubeia.backend.cashgame.dto.ReserveResponse;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
 import com.cubeia.backend.firebase.FirebaseCallbackFactory;
-import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.game.GameNotifier;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TableScheduler;
-import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.FirebaseState;
 import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.games.poker.model.PokerPlayerImpl;

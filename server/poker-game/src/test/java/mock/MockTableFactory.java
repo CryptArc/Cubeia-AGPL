@@ -32,7 +32,6 @@ import com.cubeia.poker.timing.TimingFactory;
 
 public class MockTableFactory {
 
-	@SuppressWarnings("serial")
     public static MockTable create() {
 		MockTable table = new MockTable();
 		

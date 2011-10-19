@@ -35,7 +35,7 @@ public class LinearSingleLimitRakeCalculator implements RakeCalculator {
     }
     
     @Override
-    public Map<Pot, BigDecimal> calculateRakes(BigDecimal totalCurrentRake, Collection<PotTransition> potTransitions) {
+    public Map<Pot, BigDecimal> calculateRakeAddition(BigDecimal totalCurrentRake, Collection<PotTransition> potTransitions) {
         Map<Pot, BigDecimal> potRakes = new HashMap<Pot, BigDecimal>();
 
         SortedMap<Pot, Integer> sortedPotBetSums = sortInPotIdOrder(aggregateBetsPerPot(potTransitions));
@@ -80,6 +80,13 @@ public class LinearSingleLimitRakeCalculator implements RakeCalculator {
         sortedMap.putAll(potsToRake);
         return sortedMap;
     }
+    
+    @Override
+    public Map<Pot, BigDecimal> calculateRakes(Collection<Pot> pots) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
     
     @Override
     public String toString() {
