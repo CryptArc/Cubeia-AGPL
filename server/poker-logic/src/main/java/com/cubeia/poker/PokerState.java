@@ -43,7 +43,7 @@ import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.pot.PotTransition;
-import com.cubeia.poker.rake.RakeCalculatorImpl;
+import com.cubeia.poker.rake.LinearSingleLimitRakeCalculator;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
 import com.cubeia.poker.rng.RNGProvider;
@@ -194,7 +194,7 @@ public class PokerState implements Serializable, IPokerState {
 		entryBetLevel = settings.getEntryBetLevel(); 
 		gameType = createGameTypeByVariant(rngProvider, variant);
                 tableIntegrationId = settings.getTableIntegrationId();
-		potHolder = new PotHolder(new RakeCalculatorImpl(settings.getRakeSettins()));
+		potHolder = new PotHolder(new LinearSingleLimitRakeCalculator(settings.getRakeSettins()));
 	}
 
 	protected GameType createGameTypeByVariant(RNGProvider rngProvider, PokerVariant variant) {

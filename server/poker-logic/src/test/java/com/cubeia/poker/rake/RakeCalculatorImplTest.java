@@ -21,7 +21,7 @@ public class RakeCalculatorImplTest {
     @Test
     public void testCalculateRakeNoLimit() {
         BigDecimal rakeFraction = new BigDecimal("0.1");
-        RakeCalculatorImpl rc = new RakeCalculatorImpl(new RakeSettings(rakeFraction));
+        LinearSingleLimitRakeCalculator rc = new LinearSingleLimitRakeCalculator(new RakeSettings(rakeFraction));
         
         PokerPlayer player1 = Mockito.mock(PokerPlayer.class);
         PokerPlayer player2 = Mockito.mock(PokerPlayer.class);
@@ -46,7 +46,7 @@ public class RakeCalculatorImplTest {
     @Test
     public void testCalculateRakeWithLimit() {
         BigDecimal rakeFraction = new BigDecimal("0.1");
-        RakeCalculatorImpl rc = new RakeCalculatorImpl(new RakeSettings(rakeFraction, 4000L));
+        LinearSingleLimitRakeCalculator rc = new LinearSingleLimitRakeCalculator(new RakeSettings(rakeFraction, 4000L));
         
         PokerPlayer player1 = Mockito.mock(PokerPlayer.class);
         PokerPlayer player2 = Mockito.mock(PokerPlayer.class);
