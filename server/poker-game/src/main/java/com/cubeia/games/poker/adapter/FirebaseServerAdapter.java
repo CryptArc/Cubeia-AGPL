@@ -272,12 +272,16 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
 		int balanceOnTable = player == null ? 0 : (int) player.getBalance();
 
+		// TODO: Check pending too
+		// int pendingBalance = (int)player.getPendingBalance();
+		
 		resp.balanceInWallet = 500000;     // TODO: mocked value!
 		resp.balanceOnTable = balanceOnTable;
 		resp.maxAmount = state.getMaxBuyIn() - balanceOnTable;
 		resp.minAmount = state.getMinBuyIn();
 		resp.mandatoryBuyin = mandatoryBuyin;
 		
+		log.debug("Creating buyin information minBuyIn["+state.getMinBuyIn()+"] maxBuyIn["+state.getMaxBuyIn()+"] balanceOnTable["+balanceOnTable+"]" );
 		log.debug("Sending buyin information to player["+playerId+"]: "+resp);
 		
 		GameDataAction gda = new GameDataAction(playerId, table.getId());
