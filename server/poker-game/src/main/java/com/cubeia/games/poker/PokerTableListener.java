@@ -67,10 +67,6 @@ public class PokerTableListener implements TournamentTableListener {
 	@Inject
 	GameStateSender gameStateSender;
 	
-	@Deprecated
-	@Service
-	WalletServiceContract walletService;
-	
 	@Service
 	CashGamesBackendContract cashGameBackend;
 	

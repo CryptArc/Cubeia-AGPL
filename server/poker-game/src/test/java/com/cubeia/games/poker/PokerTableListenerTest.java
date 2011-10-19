@@ -37,7 +37,6 @@ public class PokerTableListenerTest {
       
         ptl.state = mock(PokerState.class);
         ptl.gameStateSender = mock(GameStateSender.class);
-        ptl.walletService = mock(WalletServiceContract.class);
         ptl.cashGameBackend = mock(CashGamesBackendContract.class);
         FirebaseCallbackFactory callbackFactory = mock(FirebaseCallbackFactory.class);
         when(ptl.cashGameBackend.getCallbackFactory()).thenReturn(callbackFactory);
