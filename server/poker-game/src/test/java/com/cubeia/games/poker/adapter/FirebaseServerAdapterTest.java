@@ -16,7 +16,6 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import se.jadestone.dicearena.game.poker.network.protocol.BuyInInfoRequest;
 import se.jadestone.dicearena.game.poker.network.protocol.BuyInInfoResponse;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerBalance;
 import se.jadestone.dicearena.game.poker.network.protocol.PotTransfers;
@@ -31,7 +30,6 @@ import com.cubeia.poker.PokerState;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotTransition;
-import com.cubeia.poker.rake.RakeInfoContainer;
 
 public class FirebaseServerAdapterTest {
 

@@ -22,7 +22,6 @@ import com.cubeia.firebase.api.game.player.GenericPlayer;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TableMetaData;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
-import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
