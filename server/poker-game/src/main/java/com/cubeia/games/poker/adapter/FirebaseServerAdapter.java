@@ -430,7 +430,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		}
 
 		for (PotTransition potTransition : potTransitions) {
-			log.debug("sending pot update to client: {}", potTransition);
+			log.debug("--> sending pot update to client: {}", potTransition);
 			transfers.add(ActionTransformer.createPotTransferPacket(potTransition));
 		}
 
@@ -445,7 +445,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
 	@Override
 	public void notifyRakeInfo(RakeInfoContainer rakeInfoContainer) {
-	    log.debug("sending rake info to client: {}", rakeInfoContainer);
+	    log.debug("--> sending rake info to client: {}", rakeInfoContainer);
 		RakeInfo rakeInfo = new RakeInfo(rakeInfoContainer.getTotalPot(), rakeInfoContainer.getTotalRake());
 		GameDataAction action = protocolFactory.createGameAction(rakeInfo, 0, table.getId());
 		sendPublicPacket(action, -1);

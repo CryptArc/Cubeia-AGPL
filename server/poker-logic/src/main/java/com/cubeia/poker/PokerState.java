@@ -174,7 +174,8 @@ public class PokerState implements Serializable, IPokerState {
 
 	private String tableIntegrationId;
 
-	private PokerSettings settings;
+	@VisibleForTesting
+	protected PokerSettings settings;
 
 	public PokerState() {}
 
@@ -195,7 +196,6 @@ public class PokerState implements Serializable, IPokerState {
 		entryBetLevel = settings.getEntryBetLevel(); 
 		gameType = createGameTypeByVariant(rngProvider, variant);
                 tableIntegrationId = settings.getTableIntegrationId();
-		potHolder = new PotHolder(new LinearSingleLimitRakeCalculator(settings.getRakeSettins()));
 	}
 
 	protected GameType createGameTypeByVariant(RNGProvider rngProvider, PokerVariant variant) {
@@ -361,6 +361,7 @@ public class PokerState implements Serializable, IPokerState {
 	}
 
 	private void resetValuesAtStartOfHand() {
+        potHolder = new PotHolder(new LinearSingleLimitRakeCalculator(settings.getRakeSettins()));
 		gameType.prepareNewHand();
 	}
 
@@ -622,7 +623,6 @@ public class PokerState implements Serializable, IPokerState {
         int totalPotSize = (int) potHolder.getTotalPotSize();
         int totalRake = potHolder.getTotalRake().intValue();
         RakeInfoContainer rakeInfoContainer = new RakeInfoContainer(totalPotSize, totalRake);
-        
         serverAdapter.notifyRakeInfo(rakeInfoContainer);
     }	
 

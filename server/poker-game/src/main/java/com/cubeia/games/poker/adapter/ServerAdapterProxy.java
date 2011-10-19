@@ -14,6 +14,7 @@ import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotTransition;
+import com.cubeia.poker.rake.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.tournament.RoundReport;
 
@@ -89,6 +90,13 @@ public abstract class ServerAdapterProxy implements ServerAdapter {
 		if(getAdaptee() != null) {
 			getAdaptee().notifyNewHand();
 		}
+	}
+	
+	@Override
+	public void notifyRakeInfo(RakeInfoContainer rakeInfoContainer) {
+        if(getAdaptee() != null) {
+            getAdaptee().notifyRakeInfo(rakeInfoContainer);
+        }
 	}
 
 	@Override

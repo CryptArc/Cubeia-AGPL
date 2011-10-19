@@ -133,7 +133,7 @@ public class Telesina implements GameType, RoundVisitor {
 		}
 		blindsInfo.setAnteLevel(state.getAnteLevel());
 		
-		state.notifyNewHand();
+//		state.notifyNewHand();
 		
 		setCurrentRound(roundFactory.createAnteRound(this));
 		
@@ -201,7 +201,7 @@ public class Telesina implements GameType, RoundVisitor {
 		getCurrentRound().visit(this);
 	}
 	
-	private void reportPotUpdate(Collection<PotTransition> potTransitions) {
+	private void reportPotAndRakeUpdates(Collection<PotTransition> potTransitions) {
         state.notifyPotAndRakeUpdates(potTransitions);
     }
 
@@ -329,7 +329,7 @@ public class Telesina implements GameType, RoundVisitor {
 		    log.debug("ante round finished");
 		    
 		    Collection<PotTransition> potTransitions = moveChipsToPot();
-		    reportPotUpdate(potTransitions);
+		    reportPotAndRakeUpdates(potTransitions);
 		    
 		    dealPocketCards();
 		    dealExposedCards();
@@ -342,7 +342,7 @@ public class Telesina implements GameType, RoundVisitor {
 	public void visit(BettingRound bettingRound) {
 	    if (!isHandFinished()) {
     		Collection<PotTransition> potTransitions = moveChipsToPot();
-    		reportPotUpdate(potTransitions);
+    		reportPotAndRakeUpdates(potTransitions);
 	    }
 		
 		if (isHandFinished()) {
