@@ -51,11 +51,6 @@ public class PotHolder implements Serializable {
 	 */
 	private List<Pot> pots = new ArrayList<Pot>();
 
-//	/**
-//	 * The amount of rake for this pot holder.
-//	 */
-//	private long rakeAmount;
-
 	private Set<Integer> allInPlayers = new HashSet<Integer>();
 
     private final RakeCalculator rakeCalculator;
@@ -123,7 +118,7 @@ public class PotHolder implements Serializable {
 
     private void calculateAndTakeRake(Collection<PotTransition> potTransitions) {
         BigDecimal rakeBefore = getTotalRake();
-        Map<Pot, BigDecimal> potRakes = rakeCalculator.calculateRakes(rakeBefore, potTransitions);
+        Map<Pot, BigDecimal> potRakes = rakeCalculator.calculateRakeAddition(rakeBefore, potTransitions);
 		
 		for (Map.Entry<Pot, BigDecimal> entry : potRakes.entrySet()) {
 		    BigDecimal rake = entry.getValue();
@@ -321,35 +316,6 @@ public class PotHolder implements Serializable {
 	protected void addPot(Pot pot) {
 		pots.add(pot);
 	}
-
-//	/**
-//	 * Rakes the pot by making sure there is rakeAmount in the rake pot. Rake will be
-//	 * taken from the first pot. If the first pot contains less than the rakeAmount,
-//	 * all chips in the first pot will be taken, but not more.
-//	 * <p/>
-//	 * NOTE: The rake amount should be the _total_ rake to take for this hand.
-//	 * This means that if first 5 chips are moved to the rake pot, and after
-//	 * the next betting round, the total rake is 7, the argument to this
-//	 * method should be 7, not 2.
-//	 *
-//	 * @param rakeAmount the rake that should be taken for this hand at this moment
-//	 * @return the total amount actually raked
-//	 * @throws IllegalArgumentException if the rakeAmount is smaller than the current rakeAmount
-//	 */
-//	public long rake(long rakeAmount) {
-//		if (rakeAmount < this.rakeAmount) {
-//			throw new IllegalArgumentException("New rake cannot be less than current rake");
-//		}
-//
-//		if (rakeAmount > 0) {
-//			long additionalRake = rakeAmount - this.rakeAmount;
-//			Pot firstPot = pots.get(0);
-//			long amountToTake = Math.min(firstPot.getPotSize(), additionalRake);
-//			firstPot.reduce(amountToTake);
-//			this.rakeAmount += amountToTake;
-//		}
-//		return this.rakeAmount;
-//	}
 
 	/**
 	 * Gets the amount raked in this hand.

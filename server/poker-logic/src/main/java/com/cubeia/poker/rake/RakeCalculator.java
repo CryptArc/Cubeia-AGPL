@@ -15,6 +15,10 @@ public interface RakeCalculator {
      * @param potTransitions pot transitions to calculate rake contribution for
      * @return pot to rake map 
      */
-    Map<Pot, BigDecimal> calculateRakes(BigDecimal totalCurrentRake, Collection<PotTransition> potTransitions);
+    Map<Pot, BigDecimal> calculateRakeAddition(BigDecimal totalCurrentRake, Collection<PotTransition> potTransitions);
 
+    
+    Map<Pot, BigDecimal> calculateRakes(Collection<Pot> pots);
+    
+    
 }
