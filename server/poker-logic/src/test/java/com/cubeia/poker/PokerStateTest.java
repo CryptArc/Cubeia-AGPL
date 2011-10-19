@@ -1,6 +1,8 @@
 package com.cubeia.poker;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -131,6 +133,27 @@ public class PokerStateTest {
         RakeInfoContainer rakeInfoContainer = rakeInfoCaptor.getValue();
         assertThat(rakeInfoContainer.getTotalPot(), is((int) totalPot));
         assertThat(rakeInfoContainer.getTotalRake(), is(totalRake.intValue()));
+    }
+    
+    @Test
+    public void testPotsClearedAtStartOfHand() {
+        PokerState state = new PokerState();
+        state.gameType = mock(GameType.class);
+        state.serverAdapter = mock(ServerAdapter.class);
+        state.playerMap = new HashMap<Integer, PokerPlayer>();
+        RakeSettings rakeSettings = TestUtils.createOnePercentRakeSettings();
+        PokerSettings settings = new PokerSettings(0, 0, 0, null, null, 4, null, rakeSettings, "1");
+        state.settings = settings;
+        PokerPlayer player1 = mock(PokerPlayer.class);
+        PokerPlayer player2 = mock(PokerPlayer.class);
+        state.playerMap.put(1, player1);
+        state.playerMap.put(2, player2);
+        when(player1.isSittingOut()).thenReturn(false);
+        when(player2.isSittingOut()).thenReturn(false);
+        
+        assertThat(state.potHolder, nullValue());
+        state.startHand();
+        assertThat(state.potHolder, notNullValue());
     }
     
 }
