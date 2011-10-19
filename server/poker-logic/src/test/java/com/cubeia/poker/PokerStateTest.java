@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -13,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import com.cubeia.poker.adapter.HandEndStatus;
@@ -23,6 +25,7 @@ import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.pot.PotTransition;
+import com.cubeia.poker.rake.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
 import com.cubeia.poker.timing.TimingProfile;
@@ -108,21 +111,26 @@ public class PokerStateTest {
     @Test 
     public void testNotifyPotUpdated() {
         PokerState state = new PokerState();
-//        state.rakeCalculator = mock(RakeCalculatorImpl.class);
         state.potHolder = mock(PotHolder.class);
         state.serverAdapter = mock(ServerAdapter.class);
         
         Collection<Pot> pots = new ArrayList<Pot>();
         when(state.potHolder.getPots()).thenReturn(pots);
-        
-//        RakeInfoContainer rakeInfoContainer = new RakeInfoContainer();
-//        when(state.rakeCalculator.calculateRake(pots)).thenReturn(rakeInfoContainer);
+        long totalPot = 3434L;
+        when(state.potHolder.getTotalPotSize()).thenReturn(totalPot);
+        BigDecimal totalRake = new BigDecimal("4444");
+        when(state.potHolder.getTotalRake()).thenReturn(totalRake );
         
         Collection<PotTransition> potTransitions = new ArrayList<PotTransition>();
         state.notifyPotAndRakeUpdates(potTransitions);
         
-//        verify(state.rakeCalculator).calculateRake(pots);
         verify(state.serverAdapter).notifyPotUpdates(pots, potTransitions);
+        
+        ArgumentCaptor<RakeInfoContainer> rakeInfoCaptor = ArgumentCaptor.forClass(RakeInfoContainer.class);
+        verify(state.serverAdapter).notifyRakeInfo(rakeInfoCaptor.capture());
+        RakeInfoContainer rakeInfoContainer = rakeInfoCaptor.getValue();
+        assertThat(rakeInfoContainer.getTotalPot(), is((int) totalPot));
+        assertThat(rakeInfoContainer.getTotalRake(), is(totalRake.intValue()));
     }
     
 }
