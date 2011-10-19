@@ -43,7 +43,8 @@ import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.pot.PotTransition;
-import com.cubeia.poker.rake.RakeCalculatorImpl;
+import com.cubeia.poker.rake.LinearSingleLimitRakeCalculator;
+import com.cubeia.poker.rake.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
 import com.cubeia.poker.rng.RNGProvider;
@@ -173,6 +174,8 @@ public class PokerState implements Serializable, IPokerState {
 
 	private String tableIntegrationId;
 
+	private PokerSettings settings;
+
 	public PokerState() {}
 
 	public String toString() {
@@ -181,6 +184,7 @@ public class PokerState implements Serializable, IPokerState {
 
 	@Override
 	public void init(RNGProvider rngProvider, PokerSettings settings) {
+		this.settings = settings;
 		anteLevel = settings.getAnteLevel();
 		timing = settings.getTiming();
 		variant = settings.getVariant();
@@ -191,7 +195,7 @@ public class PokerState implements Serializable, IPokerState {
 		entryBetLevel = settings.getEntryBetLevel(); 
 		gameType = createGameTypeByVariant(rngProvider, variant);
                 tableIntegrationId = settings.getTableIntegrationId();
-		potHolder = new PotHolder(new RakeCalculatorImpl(settings.getRakeSettins()));
+		potHolder = new PotHolder(new LinearSingleLimitRakeCalculator(settings.getRakeSettins()));
 	}
 
 	protected GameType createGameTypeByVariant(RNGProvider rngProvider, PokerVariant variant) {
@@ -420,7 +424,7 @@ public class PokerState implements Serializable, IPokerState {
 	@VisibleForTesting
 	protected void commitPendingBalances() {
 	    for (PokerPlayer player : playerMap.values()) {
-	    	log.debug(" --- Commit Player "+player);
+	    	log.debug("Commit Player "+player);
 	        player.commitPendingBalance();
 	    }
 	}
@@ -606,14 +610,18 @@ public class PokerState implements Serializable, IPokerState {
 	 * Removes all disconnected players from the table
 	 */
 	public void cleanupPlayers() {
+		// Clean up players in states not accessible to the poker logic
 	    serverAdapter.cleanupPlayers();
 	}
 
 	public void notifyPotAndRakeUpdates(Collection<PotTransition> potTransitions) {
-//	    RakeInfoContainer rakeInfoContainer = rakeCalculator.calculateRake(potHolder.getPots());
-	    
         serverAdapter.notifyPotUpdates(potHolder.getPots(), potTransitions);
-//        serverAdapter.notifyRakeInfo(rakeInfoContainer);
+        
+        int totalPotSize = (int) potHolder.getTotalPotSize();
+        int totalRake = potHolder.getTotalRake().intValue();
+        RakeInfoContainer rakeInfoContainer = new RakeInfoContainer(totalPotSize, totalRake);
+        
+        serverAdapter.notifyRakeInfo(rakeInfoContainer);
     }	
 
 	/**
@@ -761,5 +769,9 @@ public class PokerState implements Serializable, IPokerState {
 
 	public String getIntegrationId() {
 		return tableIntegrationId;
+	}
+
+	public PokerSettings getSettings() {
+		return settings;
 	}
 }

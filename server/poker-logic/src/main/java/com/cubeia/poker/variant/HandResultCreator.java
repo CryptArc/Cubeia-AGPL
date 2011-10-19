@@ -70,7 +70,6 @@ public class HandResultCreator {
 		List<RatedPlayerHand> result = new LinkedList<RatedPlayerHand>();
 		
 		for (PlayerHand hand : hands) {
-			System.out.println(" **** RATE HAND: "+hand);
 			HandInfo bestHandInfo = hte.getBestHandInfo(hand.getHand());
 			result.add(new RatedPlayerHand(hand, bestHandInfo.getType(), bestHandInfo.getCards()));
 		}

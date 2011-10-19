@@ -43,44 +43,52 @@ public class LocalLoginHandler implements LoginLocator, LoginHandler, Service {
         
         byte[] requestPayloadData = request.getData();
         
-        ProtocolObject object;
-        try {
-            object = serializer.unpack(ByteBuffer.wrap(requestPayloadData));
-        } catch (IOException e) {
-            String msg = "bad incoming login request data";
-            log.error(msg, e);
-            throw new RuntimeException(msg, e);
+        if (requestPayloadData.length > 0) {
+	        ProtocolObject object;
+	        try {
+	            object = serializer.unpack(ByteBuffer.wrap(requestPayloadData));
+	        } catch (IOException e) {
+	            String msg = "bad incoming login request data";
+	            log.error(msg, e);
+	            throw new RuntimeException(msg, e);
+	        }
+	        
+	        if (!(object instanceof LoginRequestPayloadStruct)) {
+	            throw new RuntimeException("Illegal request payload type: " + object.getClass().getName());
+	        }
+	        LoginRequestPayloadStruct requestPayloadStruct = (LoginRequestPayloadStruct) object;
+	
+	        
+	        log.debug("login request: " + requestPayloadStruct);
+	        
+	        
+	        // TODO: check credentials here!
+			
+			// TODO: mocked login response
+	        LoginResponsePayloadStruct responsePayloadStruct = new LoginResponsePayloadStruct(
+	            requestPayloadStruct.requestIdentifier, 
+	            LoginStatus.ACCEPTED, 
+	            UUID.randomUUID().toString()); 
+	        byte[] responsePayload;
+	        try {
+	            responsePayload = serializer.packArray(responsePayloadStruct);
+	        } catch (IOException ee) {
+	            log.error("Error packing response payload for failed login.", ee);
+	            responsePayload = null;
+	        }
+	        
+	        LoginResponseAction response = new LoginResponseAction(true, requestPayloadStruct.partnerAccountId, counter.getAndIncrement());
+	        response.setData(responsePayload);
+	        
+	        log.debug("Login user["+request.getUser()+"@"+request.getRemoteAddress()+"] with id["+response.getPlayerid()+"]");
+	        return response;
+	        
+        } else {
+        	// We also want to support logins without Jadestone specific payload data plz
+        	log.warn("Using login without JG Payload");
+        	LoginResponseAction response = new LoginResponseAction(true, request.getUser(), counter.getAndIncrement());
+        	return response;
         }
-        
-        if (!(object instanceof LoginRequestPayloadStruct)) {
-            throw new RuntimeException("Illegal request payload type: " + object.getClass().getName());
-        }
-        LoginRequestPayloadStruct requestPayloadStruct = (LoginRequestPayloadStruct) object;
-
-        
-        log.debug("login request: " + requestPayloadStruct);
-        
-        
-        // TODO: check credentials here!
-		
-		// TODO: mocked login response
-        LoginResponsePayloadStruct responsePayloadStruct = new LoginResponsePayloadStruct(
-            requestPayloadStruct.requestIdentifier, 
-            LoginStatus.ACCEPTED, 
-            UUID.randomUUID().toString()); 
-        byte[] responsePayload;
-        try {
-            responsePayload = serializer.packArray(responsePayloadStruct);
-        } catch (IOException ee) {
-            log.error("Error packing response payload for failed login.", ee);
-            responsePayload = null;
-        }
-
-        LoginResponseAction response = new LoginResponseAction(true, requestPayloadStruct.partnerAccountId, counter.getAndIncrement());
-        response.setData(responsePayload);
-        
-		log.debug("Login user["+request.getUser()+"@"+request.getRemoteAddress()+"] with id["+response.getPlayerid()+"]");
-		return response;
 	}
 	
 	// ---- UNUSED SERVICE METHODS ----

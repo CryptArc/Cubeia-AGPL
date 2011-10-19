@@ -44,6 +44,9 @@ public abstract class GuiceTest extends TestCase {
 	
 	protected RNGProvider rng = new DummyRNGProvider();
 	
+	/** Defaults to 10 seconds */
+	protected long sitoutTimeLimitMilliseconds = 10000; 
+	
 	@Override
 	protected void setUp() throws Exception {
 		List<Module> list = new LinkedList<Module>();
@@ -60,7 +63,11 @@ public abstract class GuiceTest extends TestCase {
 	}
 	
 	protected PokerSettings createPokerSettings(int anteLevel) {
-		return new PokerSettings(anteLevel, 1000, 10000, TimingFactory.getRegistry().getTimingProfile(MINIMUM_DELAY), variant, 6, 
-		    BetStrategyName.NO_LIMIT, TestUtils.createZeroRakeSettings(), null);
+		PokerSettings settings = new PokerSettings(anteLevel, 1000, 10000, 
+				TimingFactory.getRegistry().getTimingProfile(MINIMUM_DELAY), variant, 6, 
+				BetStrategyName.NO_LIMIT, TestUtils.createZeroRakeSettings(), null);
+		
+		settings.setSitoutTimeLimitMilliseconds(sitoutTimeLimitMilliseconds);
+		return settings;
 	}
 }

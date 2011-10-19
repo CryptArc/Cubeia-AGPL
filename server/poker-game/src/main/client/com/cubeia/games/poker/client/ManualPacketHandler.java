@@ -22,6 +22,8 @@ import java.nio.ByteBuffer;
 
 import org.apache.log4j.Logger;
 
+import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
+
 import com.cubeia.firebase.clients.java.connector.text.AbstractClientPacketHandler;
 import com.cubeia.firebase.clients.java.connector.text.IOContext;
 import com.cubeia.firebase.io.ProtocolObject;
@@ -73,7 +75,6 @@ import com.cubeia.firebase.io.protocol.TournamentUpdatePacket;
 import com.cubeia.firebase.io.protocol.UnwatchResponsePacket;
 import com.cubeia.firebase.io.protocol.VersionPacket;
 import com.cubeia.firebase.io.protocol.WatchResponsePacket;
-import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
 
 /**
  * 

@@ -13,10 +13,12 @@ import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotTransition;
 
 /**
+ * Rake calculator where rake is linear (defined by a fraction) up to a limit after which
+ * no more rake is taken.
  * @author w
  *
  */
-public class RakeCalculatorImpl implements RakeCalculator {
+public class LinearSingleLimitRakeCalculator implements RakeCalculator {
 
     private final BigDecimal rakeFraction;
     private final BigDecimal rakeLimit;
@@ -27,7 +29,7 @@ public class RakeCalculatorImpl implements RakeCalculator {
      * @param rakeFraction fraction (0.01 gives 1%)
      * @param rakeLimit rake limit
      */
-    public RakeCalculatorImpl(RakeSettings rakeSettings) {
+    public LinearSingleLimitRakeCalculator(RakeSettings rakeSettings) {
         this.rakeFraction = rakeSettings.getRakeFraction();
         this.rakeLimit = new BigDecimal(rakeSettings.getRakeLimit());
     }

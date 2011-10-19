@@ -13,7 +13,7 @@ import org.junit.Test;
 
 import com.cubeia.poker.RakeSettings;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.rake.RakeCalculatorImpl;
+import com.cubeia.poker.rake.LinearSingleLimitRakeCalculator;
 
 public class PotRakeTest {
     
@@ -25,7 +25,7 @@ public class PotRakeTest {
         when(player1.getBetStack()).thenReturn(bet);
         when(player2.getBetStack()).thenReturn(bet);
         BigDecimal rakeFraction = new BigDecimal("0.1");
-        PotHolder ph = new PotHolder(new RakeCalculatorImpl(new RakeSettings(rakeFraction)));
+        PotHolder ph = new PotHolder(new LinearSingleLimitRakeCalculator(new RakeSettings(rakeFraction)));
         
         ph.moveChipsToPot(asList(player1, player2));
         
@@ -56,7 +56,7 @@ public class PotRakeTest {
         when(player3.getBetStack()).thenReturn(betPot0 + betPot1);
         
         BigDecimal rakeFraction = new BigDecimal("0.1");
-        PotHolder ph = new PotHolder(new RakeCalculatorImpl(new RakeSettings(rakeFraction )));
+        PotHolder ph = new PotHolder(new LinearSingleLimitRakeCalculator(new RakeSettings(rakeFraction )));
         
         ph.moveChipsToPot(asList(player1, player2, player3));
         
@@ -98,7 +98,7 @@ public class PotRakeTest {
         // Rake limit 300: pot 0 rake = 150, pot 1 rake = 150
         long rakeLimit = 300L;
         BigDecimal rakeFraction = new BigDecimal("0.1");
-        PotHolder ph = new PotHolder(new RakeCalculatorImpl(new RakeSettings(rakeFraction, rakeLimit)));
+        PotHolder ph = new PotHolder(new LinearSingleLimitRakeCalculator(new RakeSettings(rakeFraction, rakeLimit)));
         
         ph.moveChipsToPot(asList(player1, player2, player3));
         

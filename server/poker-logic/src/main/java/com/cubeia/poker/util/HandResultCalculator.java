@@ -119,7 +119,7 @@ public class HandResultCalculator implements Serializable {
 					PokerPlayer player = playerMap.get(winnerId);
 					Long stake = potContributors.get(player);
 					addResultBalance(netResults, netStakes, winnerId, potShare, stake, rakeShare);
-					log.debug(" --- Add winner pot result: "+winnerId+" : "+potShare+" - "+stake+" = "+(potShare-stake));
+					log.debug("Add winner pot result: "+winnerId+" : "+potShare+" - "+stake+" = "+(potShare-stake));
 					
 					addPotWinningShare(player, pot, potShare, playerPotWinningsShares);
 				}
@@ -132,7 +132,7 @@ public class HandResultCalculator implements Serializable {
 					PokerPlayer player = playerMap.get(loserId);
 					Long stake = pot.getPotContributors().get(player);
 					addResultBalance(netResults, netStakes, loserId, 0l, stake, 0l);
-					log.debug(" --- Add loser pot result: "+loserId+" : -"+stake);
+					log.debug("Add loser pot result: "+loserId+" : -"+stake);
 				}
 			}
 		}

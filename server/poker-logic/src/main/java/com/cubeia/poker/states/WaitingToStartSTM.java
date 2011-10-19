@@ -38,24 +38,14 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
 			context.setHandFinished(false);
 			
 			if (context.countSittingInPlayers() > 1) {
-				
-//				// FIXME: Resetting all low to zero balances since we have no wallet yet
-//				for (PokerPlayer pp : context.getSeatedPlayers()) {
-//					 if (pp.getBalance() < context.getAnteLevel()) {
-//                         log.debug("Resetting player balance. Player["+pp.getId()+"] -> " + context.getAnteLevel()* 100);
-//                         ((DefaultPokerPlayer)pp).setBalance(context.getAnteLevel()* 100);
-//                         context.notifyPlayerBalanceReset(pp);
-//					 }
-//
-//				}
-//				
 				context.startHand();
+				
 			} else {
 				context.setHandFinished(true);
 				context.setState(PokerState.NOT_STARTED);
 				log.info("WILL NOT START NEW HAND, TOO FEW PLAYERS SEATED: " + context.countSittingInPlayers() + " sitting in of " + context.getSeatedPlayers().size());
-				context.cleanupPlayers(); // Will remove disconnected and leaving players
 			}
+			context.cleanupPlayers(); // Will remove disconnected and leaving players
 		} else {
 			log.debug("Ignoring timeout in waiting to start state, since tournament hands are started by the tournament manager.");
 		}
