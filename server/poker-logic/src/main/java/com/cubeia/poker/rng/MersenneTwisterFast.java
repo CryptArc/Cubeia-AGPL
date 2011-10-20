@@ -16,8 +16,11 @@
  */
 
 package com.cubeia.poker.rng;
-import java.io.*;
-import java.util.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Random;
 
 /** 
  * <h3>MersenneTwister and MersenneTwisterFast</h3>

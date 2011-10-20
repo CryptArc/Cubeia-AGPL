@@ -45,7 +45,6 @@ public class HandResultBatchFactoryTest {
         when(pokerPlayer2.getId()).thenReturn(playerId2);
         when(pokerPlayer2.getPlayerSessionId()).thenReturn(playerSessionId2);
         
-        
         TableId tableId = new TableIdImpl();
         
         Map<PokerPlayer, Result> results = new HashMap<PokerPlayer, Result>();

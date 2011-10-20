@@ -1,8 +1,24 @@
 package com.cubeia.poker.hand.calculator;
 
-import static com.cubeia.poker.hand.HandType.*;
-import static com.cubeia.poker.hand.Rank.*;
-import static org.junit.Assert.*;
+import static com.cubeia.poker.hand.HandType.FLUSH;
+import static com.cubeia.poker.hand.HandType.FOUR_OF_A_KIND;
+import static com.cubeia.poker.hand.HandType.FULL_HOUSE;
+import static com.cubeia.poker.hand.HandType.HIGH_CARD;
+import static com.cubeia.poker.hand.HandType.PAIR;
+import static com.cubeia.poker.hand.HandType.STRAIGHT;
+import static com.cubeia.poker.hand.HandType.STRAIGHT_FLUSH;
+import static com.cubeia.poker.hand.HandType.THREE_OF_A_KIND;
+import static com.cubeia.poker.hand.HandType.TWO_PAIRS;
+import static com.cubeia.poker.hand.Rank.ACE;
+import static com.cubeia.poker.hand.Rank.FIVE;
+import static com.cubeia.poker.hand.Rank.FOUR;
+import static com.cubeia.poker.hand.Rank.JACK;
+import static com.cubeia.poker.hand.Rank.TEN;
+import static com.cubeia.poker.hand.Rank.THREE;
+import static com.cubeia.poker.hand.Rank.TWO;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 

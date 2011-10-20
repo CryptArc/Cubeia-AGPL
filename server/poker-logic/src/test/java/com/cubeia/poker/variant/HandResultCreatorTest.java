@@ -1,8 +1,11 @@
 package com.cubeia.poker.variant;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -28,7 +31,6 @@ import com.cubeia.poker.rake.LinearSingleLimitRakeCalculator;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
 import com.cubeia.poker.util.HandResultCalculator;
-import com.cubeia.poker.variant.HandResultCreator;
 import com.cubeia.poker.variant.telesina.TelesinaHandComparator;
 import com.cubeia.poker.variant.telesina.TelesinaHandStrengthEvaluator;
 

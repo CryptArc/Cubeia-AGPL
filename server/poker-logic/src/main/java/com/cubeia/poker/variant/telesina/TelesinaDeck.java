@@ -1,9 +1,9 @@
 package com.cubeia.poker.variant.telesina;
 
-import static com.google.common.base.Preconditions.*;
-import static com.google.common.collect.ImmutableSet.*;
-import static com.google.common.collect.Sets.*;
-import static java.util.Arrays.*;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.collect.ImmutableSet.copyOf;
+import static com.google.common.collect.Sets.cartesianProduct;
+import static java.util.Arrays.asList;
 
 import java.util.ArrayList;
 import java.util.List;

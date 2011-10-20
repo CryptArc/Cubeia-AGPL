@@ -21,10 +21,10 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import junit.framework.TestCase;
+
 import com.cubeia.poker.MockPlayer;
 import com.cubeia.poker.player.PokerPlayer;
-
-import junit.framework.TestCase;
 
 public class PokerUtilsTest extends TestCase {
 

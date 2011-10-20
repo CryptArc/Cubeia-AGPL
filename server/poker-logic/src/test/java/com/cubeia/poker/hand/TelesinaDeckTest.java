@@ -1,11 +1,16 @@
 package com.cubeia.poker.hand;
 
-import static com.cubeia.poker.hand.Rank.*;
-import static com.cubeia.poker.hand.Suit.*;
-import static java.util.Arrays.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static com.cubeia.poker.hand.Rank.KING;
+import static com.cubeia.poker.hand.Rank.QUEEN;
+import static com.cubeia.poker.hand.Suit.CLUBS;
+import static com.cubeia.poker.hand.Suit.DIAMONDS;
+import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.HashSet;
