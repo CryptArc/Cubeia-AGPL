@@ -382,6 +382,9 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
 	@Override
 	public void notifyPlayerBalance(PokerPlayer p) {
+		
+		log.debug(" ******** NOTIFY BALANCE Player["+p+"]");
+		
 		if (p == null) return;
 
 		// first send private packet to the player
@@ -392,6 +395,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		//	    // then send public packet to all the other players but exclude the pending balance
 		GameDataAction privateAction = ActionTransformer.createPlayerBalanceAction(
 				(int) p.getBalance(), (int) p.getPendingBalance(), p.getId(), table.getId());
+		log.debug("Send private PBA: "+privateAction);
 		sendPrivatePacket(p.getId(),privateAction);
 
 	}

@@ -64,8 +64,4 @@ public class PokerPlayerImpl extends DefaultPokerPlayer implements Serializable 
 		return playerSessionId;
 	}
 	
-	@Override
-	public String toString() {
-		return String.format("<playerId[%d] seatId[%d] hasFolded[%b] hasActed[%b] isSittingOut[%b]>", playerId, seatId, hasFolded, hasActed, isSittingOut);
-	}
 }

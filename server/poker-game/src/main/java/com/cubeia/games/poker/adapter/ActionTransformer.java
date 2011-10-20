@@ -322,7 +322,9 @@ public class ActionTransformer {
 	
 	
 	public static GameDataAction createPlayerBalanceAction(int balance, int pendingBalance, int playerId, int tableId) {
-		return new ProtocolFactory().createGameAction(new PlayerBalance(balance, pendingBalance, playerId), playerId, tableId);
+		PlayerBalance packet = new PlayerBalance(balance, pendingBalance, playerId);
+		log.debug("Player balance packet created: "+packet);
+		return new ProtocolFactory().createGameAction(packet, playerId, tableId);
 	}
 	
 	private static int getNextSequence() {

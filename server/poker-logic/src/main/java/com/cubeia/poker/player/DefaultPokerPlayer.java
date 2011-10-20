@@ -76,9 +76,10 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	
 	public String toString() {
 		String sitOutSince = sitOutTimestamp == null ? "" : ":"+(System.currentTimeMillis()-sitOutTimestamp+"ms");
-	    String value = "pid["+playerId+"] seat["+seatId+"] balance["+balance+"] " +
-	    		"sitout["+isSittingOut+sitOutSince+"] " +
-	    		"sitoutstatus["+sitOutStatus+"] folded["+hasFolded+"] hasActed["+hasActed+"]";
+	    String value = "pid["+playerId+"] seat["+seatId+"] " +
+	    		"balance["+balance+"] pendingBalance["+pendingBalance+"] " +
+	    		"sitout["+isSittingOut+sitOutSince+"] sitoutstatus["+sitOutStatus+"] " +
+				"folded["+hasFolded+"] hasActed["+hasActed+"]";
 	    return value;
 	}
 	
