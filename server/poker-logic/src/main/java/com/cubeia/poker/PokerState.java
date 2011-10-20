@@ -44,7 +44,6 @@ import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.rake.LinearSingleLimitRakeCalculator;
-import com.cubeia.poker.rake.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
 import com.cubeia.poker.rng.RNGProvider;
@@ -619,11 +618,7 @@ public class PokerState implements Serializable, IPokerState {
 
 	public void notifyPotAndRakeUpdates(Collection<PotTransition> potTransitions) {
         serverAdapter.notifyPotUpdates(potHolder.getPots(), potTransitions);
-        
-        int totalPotSize = (int) potHolder.getTotalPotSize();
-        int totalRake = potHolder.getTotalRake().intValue();
-        RakeInfoContainer rakeInfoContainer = new RakeInfoContainer(totalPotSize, totalRake);
-        serverAdapter.notifyRakeInfo(rakeInfoContainer);
+        serverAdapter.notifyRakeInfo(potHolder.calculateRake());
     }	
 
 	/**

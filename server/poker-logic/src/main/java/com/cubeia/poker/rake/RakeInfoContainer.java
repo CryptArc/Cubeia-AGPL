@@ -1,14 +1,21 @@
 package com.cubeia.poker.rake;
 
+import java.math.BigDecimal;
+import java.util.Map;
+
+import com.cubeia.poker.pot.Pot;
+
 public class RakeInfoContainer {
     
     private final int totalPot;
     private final int totalRake;
+    private final Map<Pot, BigDecimal> potRakes;
     
-    public RakeInfoContainer(int totalPot, int totalRake) {
+    public RakeInfoContainer(int totalPot, int totalRake, Map<Pot, BigDecimal> potRakes) {
         super();
         this.totalPot = totalPot;
         this.totalRake = totalRake;
+        this.potRakes = potRakes;
     }
 
     public int getTotalPot() {
@@ -17,6 +24,10 @@ public class RakeInfoContainer {
 
     public int getTotalRake() {
         return totalRake;
+    }
+    
+    public Map<Pot, BigDecimal> getPotRakes() {
+        return potRakes;
     }
 
     @Override

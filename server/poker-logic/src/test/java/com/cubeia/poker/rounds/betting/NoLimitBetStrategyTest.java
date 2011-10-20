@@ -17,13 +17,11 @@
 
 package com.cubeia.poker.rounds.betting;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import junit.framework.TestCase;
 
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.rounds.betting.BettingRoundContext;
-import com.cubeia.poker.rounds.betting.NoLimitBetStrategy;
-
-import junit.framework.TestCase;
 
 public class NoLimitBetStrategyTest extends TestCase {
 

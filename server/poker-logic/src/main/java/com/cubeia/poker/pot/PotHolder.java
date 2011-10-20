@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.rake.RakeCalculator;
+import com.cubeia.poker.rake.RakeInfoContainer;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
@@ -109,13 +110,14 @@ public class PotHolder implements Serializable {
 			}
 		}
 		
-		calculateAndTakeRake(potTransitions);
+//		calculateAndTakeRake(potTransitions);
 		
 		printDiagnostics();
 		
 		return potTransitions;
 	}
 
+	/*
     private void calculateAndTakeRake(Collection<PotTransition> potTransitions) {
         BigDecimal rakeBefore = getTotalRake();
         Map<Pot, BigDecimal> potRakes = rakeCalculator.calculateRakeAddition(rakeBefore, potTransitions);
@@ -126,18 +128,33 @@ public class PotHolder implements Serializable {
             pot.addRake(rake);
 		}
     }
+    */
+	
+	public RakeInfoContainer calculateRake() {
+	    return rakeCalculator.calculateRakes(getPots());
+	}
+	
 
 	private void printDiagnostics() {
         log.debug("pots: ");
-        for (Pot p : pots) {
-            Collection<Integer> playerIds = Collections2.transform(p.getPotContributors().keySet(), new Function<PokerPlayer, Integer>() {
-                public Integer apply(PokerPlayer pp) { return pp.getId(); };
-            });
-            log.debug("  pot {}: bets = {}, rake = {}, open = {}, players: {}", 
-                new Object[] {p.getId(), p.getPotSize(), p.getRake(), p.isOpen(), playerIds});
+        
+        RakeInfoContainer rakeInfoContainer = rakeCalculator.calculateRakes(getPots());
+        
+        if (rakeInfoContainer != null) {
+            for (Map.Entry<Pot, BigDecimal> entry : rakeInfoContainer.getPotRakes().entrySet()) {
+                Pot pot = entry.getKey();
+                BigDecimal rake = entry.getValue();
+                
+                Collection<Integer> playerIds = Collections2.transform(pot.getPotContributors().keySet(), new Function<PokerPlayer, Integer>() {
+                    public Integer apply(PokerPlayer pp) { return pp.getId(); };
+                });
+                log.debug("  pot {}: bets = {}, rake = {}, open = {}, players: {}", 
+                    new Object[] {pot.getId(), pot.getPotSize(), rake, pot.isOpen(), playerIds});
+            }
+            
+            log.debug("{}, total pot size = {}, total rake = {}", 
+                new Object[] {rakeCalculator, rakeInfoContainer.getTotalPot(), rakeInfoContainer.getTotalRake()});
         }
-        log.debug("{}, total pot size = {}, total rake = {}", 
-            new Object[] {rakeCalculator, getTotalPotSize(), getTotalRake()});
     }
 
     /**
@@ -317,18 +334,18 @@ public class PotHolder implements Serializable {
 		pots.add(pot);
 	}
 
-	/**
-	 * Gets the amount raked in this hand.
-	 *
-	 * @return
-	 */
-	public BigDecimal getTotalRake() {
-	    BigDecimal totalRake = BigDecimal.ZERO;
-	    for (Pot p : pots) {
-	        totalRake = totalRake.add(p.getRake());
-	    }
-		return totalRake;
-	}
+//	/**
+//	 * Gets the amount raked in this hand.
+//	 *
+//	 * @return
+//	 */
+//	public BigDecimal getTotalRake() {
+//	    BigDecimal totalRake = BigDecimal.ZERO;
+//	    for (Pot p : pots) {
+//	        totalRake = totalRake.add(p.getRake());
+//	    }
+//		return totalRake;
+//	}
 
 	@Override
 	public String toString() {

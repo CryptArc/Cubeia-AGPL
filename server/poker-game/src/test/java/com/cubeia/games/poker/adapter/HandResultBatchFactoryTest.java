@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +24,7 @@ import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotTransition;
+import com.cubeia.poker.rake.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
 
@@ -45,7 +47,6 @@ public class HandResultBatchFactoryTest {
         when(pokerPlayer2.getId()).thenReturn(playerId2);
         when(pokerPlayer2.getPlayerSessionId()).thenReturn(playerSessionId2);
         
-        
         TableId tableId = new TableIdImpl();
         
         Map<PokerPlayer, Result> results = new HashMap<PokerPlayer, Result>();
@@ -54,7 +55,8 @@ public class HandResultBatchFactoryTest {
         results.put(pokerPlayer1, result1);
         results.put(pokerPlayer2, result2);
         
-        HandResult handResult = new HandResult(results, Collections.<RatedPlayerHand>emptyList(), Collections.<PotTransition>emptyList());
+        RakeInfoContainer rakeInfoContainer = new RakeInfoContainer(1000 * 2, (1000 * 2) / 100, new HashMap<Pot, BigDecimal>());
+        HandResult handResult = new HandResult(results, Collections.<RatedPlayerHand>emptyList(), Collections.<PotTransition>emptyList(), rakeInfoContainer );
         
         BatchHandRequest batchHandRequest = handResultFactory.createBatchHandRequest(handResult, handId, tableId);
         
@@ -66,20 +68,17 @@ public class HandResultBatchFactoryTest {
         com.cubeia.backend.cashgame.dto.HandResult hr1 = findByPlayerSessionId(playerSessionId1, batchHandRequest.handResults);
         assertThat(hr1.aggregatedBet, is(result1.getWinningsIncludingOwnBets() - result1.getNetResult()));
         assertThat(hr1.win, is(result1.getWinningsIncludingOwnBets()));
-        assertThat(hr1.rake, is(0L));
+        assertThat(hr1.rake, is(1000L / 100));
         assertThat(hr1.playerSession, is(playerSessionId1));
     }
 
     private com.cubeia.backend.cashgame.dto.HandResult findByPlayerSessionId(PlayerSessionId playerSessionId,
         List<com.cubeia.backend.cashgame.dto.HandResult> handResults) {
-        
         for (com.cubeia.backend.cashgame.dto.HandResult hr : handResults) {
             if (hr.playerSession.equals(playerSessionId)) {
                 return hr;
             }
         }
-        
-        
         return null;
     }
 

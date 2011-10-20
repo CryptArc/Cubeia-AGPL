@@ -69,7 +69,7 @@ public class PokerStateTest {
         results.put(player1, result1);
         results.put(player2, result2);
         
-        HandResult result = new HandResult(results, new ArrayList<RatedPlayerHand>(), Collections.<PotTransition>emptyList());
+        HandResult result = new HandResult(results, new ArrayList<RatedPlayerHand>(), Collections.<PotTransition>emptyList(), null);
         state.playerMap = new HashMap<Integer, PokerPlayer>();
         
 		state.playerMap.put(player1Id, player1);
@@ -121,7 +121,9 @@ public class PokerStateTest {
         long totalPot = 3434L;
         when(state.potHolder.getTotalPotSize()).thenReturn(totalPot);
         BigDecimal totalRake = new BigDecimal("4444");
-        when(state.potHolder.getTotalRake()).thenReturn(totalRake );
+        
+        when(state.potHolder.calculateRake()).thenReturn(new RakeInfoContainer((int) totalPot, totalRake.intValue(), null));
+//        when(state.potHolder.getTotalRake()).thenReturn(totalRake);
         
         Collection<PotTransition> potTransitions = new ArrayList<PotTransition>();
         state.notifyPotAndRakeUpdates(potTransitions);

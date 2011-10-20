@@ -35,6 +35,7 @@ import com.cubeia.poker.model.PlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotHolder;
+import com.cubeia.poker.rake.RakeInfoContainer;
 import com.cubeia.poker.result.Result;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
@@ -73,6 +74,8 @@ public class HandResultCalculator implements Serializable {
 		Map<Integer, Long> netStakes = new HashMap<Integer, Long>();
 		Map<PokerPlayer, Map<Pot, Long>> playerPotWinningsShares = new HashMap<PokerPlayer, Map<Pot,Long>>();
 		
+		RakeInfoContainer rakeInfoContainer = potHolder.calculateRake();
+		
 		/*
 		 * For each pot we need to figure out:
 		 * 
@@ -110,9 +113,10 @@ public class HandResultCalculator implements Serializable {
 				// --- WINNERS --- 
 				List<Integer> winners = getWinners(filteredHands);
 				
-				long potSizeWithRakeRemoved = pot.getPotSizeWithRakeRemoved();
+				long potRake = rakeInfoContainer.getPotRakes().get(pot).longValue();
+                long potSizeWithRakeRemoved = pot.getPotSize() - potRake;
 				long potShare = potSizeWithRakeRemoved / winners.size();
-				long rakeShare = pot.getRake().intValue() / winners.size();
+				long rakeShare = potRake / winners.size();
 				
 				// Report winner shares
 				for (Integer winnerId : winners) {

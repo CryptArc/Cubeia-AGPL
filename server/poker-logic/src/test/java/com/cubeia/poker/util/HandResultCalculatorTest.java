@@ -95,8 +95,6 @@ public class HandResultCalculatorTest extends TestCase {
 		assertEquals(70, potHolder.getPotSize(0));
 		Pot pot0 = potHolder.getPot(0);
 		int pot0Rake = (int) (70 * 0.1);
-        assertThat(pot0.getRake().intValueExact(), is(pot0Rake));
-		assertThat(pot0.getPotSizeWithRakeRemoved(), is((long) 70 - pot0Rake));
 		
 		long p1stake = pot0.getPotContributors().get(players.get(1));
 		assertEquals(10, p1stake);
@@ -140,8 +138,6 @@ public class HandResultCalculatorTest extends TestCase {
         assertThat(pot0Size, is(70L));
         Pot pot0 = potHolder.getPot(0);
         int pot0Rake = (int) (pot0Size * 0.1);
-        assertThat(pot0.getRake().intValueExact(), is(pot0Rake));
-        assertThat(pot0.getPotSizeWithRakeRemoved(), is((long) pot0Size - pot0Rake));
         
 		long p1stake = pot0.getPotContributors().get(players.get(1));
 		assertEquals(10, p1stake);
@@ -218,8 +214,6 @@ public class HandResultCalculatorTest extends TestCase {
         
         Pot pot0 = potHolder.getPot(0);
         assertThat(pot0.getPotSize(), is(120L));
-        assertThat(pot0.getRake().intValue(), is(12));
-        assertThat(pot0.getPotSizeWithRakeRemoved(), is(120L - 12L));
         
         
         Result result1 = playerResults.get(players.get(1));

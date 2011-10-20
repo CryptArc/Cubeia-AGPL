@@ -23,7 +23,6 @@ import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.rounds.ante.AnteRoundHelper;
 
 public class AnteRoundHelperTest {
 

@@ -36,7 +36,7 @@ public class HandResultCreator {
 		
 		Collection<PotTransition> potTransitions = createPotTransitionsByResults(playerResults);
 		
-		return new HandResult(playerResults, rateHands(playerHands), potTransitions);
+		return new HandResult(playerResults, rateHands(playerHands), potTransitions, potHolder.calculateRake());
 	}
 
 	@VisibleForTesting

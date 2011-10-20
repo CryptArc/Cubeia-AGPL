@@ -4,10 +4,9 @@ import static com.cubeia.poker.action.PokerActionType.ANTE;
 import static com.cubeia.poker.action.PokerActionType.BET;
 import static com.cubeia.poker.action.PokerActionType.CALL;
 import static com.cubeia.poker.action.PokerActionType.CHECK;
+import junit.framework.Assert;
 
 import org.apache.log4j.Logger;
-
-import junit.framework.Assert;
 
 import com.cubeia.poker.AbstractTexasHandTester;
 import com.cubeia.poker.MockPlayer;

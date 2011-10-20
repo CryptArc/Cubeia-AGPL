@@ -26,17 +26,14 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotTransition;
-import com.google.common.annotations.VisibleForTesting;
+import com.cubeia.poker.rake.RakeInfoContainer;
 
 /**
  * The result of a hand. This class maps the player to the resulting win/lose amount of the hand.
@@ -57,14 +54,20 @@ public class HandResult implements Serializable {
 
 	public HandResult() {
 	    this(Collections.<PokerPlayer, Result>emptyMap(), Collections.<RatedPlayerHand>emptyList(), 
-	        Collections.<PotTransition>emptyList());
+	        Collections.<PotTransition>emptyList(), null);
 	}
 	
-	public HandResult(Map<PokerPlayer, Result> results, List<RatedPlayerHand> playerHands, Collection<PotTransition> potTransitions) {
+	public HandResult(
+	    Map<PokerPlayer, Result> results, 
+	    List<RatedPlayerHand> playerHands, 
+	    Collection<PotTransition> potTransitions, RakeInfoContainer rakeInfoContainer) {
+	    
 	    this.results = unmodifiableMap(results);
 	    this.playerHands = unmodifiableList(playerHands);
         this.potTransitions = Collections.unmodifiableCollection(potTransitions);
-        this.rakeContributions = calculateRakeContributions(results);
+        this.rakeContributions = rakeInfoContainer == null 
+            ? Collections.<PokerPlayer, Long>emptyMap() 
+            : calculateRakeContributions(rakeInfoContainer, results);
 	}
 	
 	public List<RatedPlayerHand> getPlayerHands() {
@@ -75,18 +78,18 @@ public class HandResult implements Serializable {
 		return results;
 	}
     
-    /**
-     * Fetch all pots in this hand by the result map.
-     * @return all pots in this hand
-     */
-    @VisibleForTesting
-    private Set<Pot> extractPots(Collection<Result> results) {
-        HashSet<Pot> pots = new HashSet<Pot>();
-        for (Result result : results) {
-            pots.addAll(result.getWinningsByPot().keySet());
-        }
-        return pots;
-    }
+//    /**
+//     * Fetch all pots in this hand by the result map.
+//     * @return all pots in this hand
+//     */
+//    @VisibleForTesting
+//    private Set<Pot> extractPots(Collection<Result> results) {
+//        HashSet<Pot> pots = new HashSet<Pot>();
+//        for (Result result : results) {
+//            pots.addAll(result.getWinningsByPot().keySet());
+//        }
+//        return pots;
+//    }
     
     /**
      * Calculate the rake contribution by player.
@@ -97,25 +100,18 @@ public class HandResult implements Serializable {
      * </code>
      * @return player to rake contribution map
      */
-    private Map<PokerPlayer, Long> calculateRakeContributions(Map<PokerPlayer, Result> results) {
+    private Map<PokerPlayer, Long> calculateRakeContributions(RakeInfoContainer rakeInfoContainer, Map<PokerPlayer, Result> results) {
         Map<PokerPlayer, Long> rakeContribs = new HashMap<PokerPlayer, Long>();
         
-        BigDecimal totalRake = BigDecimal.ZERO;
-        int totalBets = 0;
-        
-        Set<Pot> pots = extractPots(results.values());
-        for (Pot pot : pots) {
-            totalRake = totalRake.add(pot.getRake());
-            totalBets += pot.getPotSize();
-        }
-        BigDecimal totalBetsBD = new BigDecimal(totalBets);
+        BigDecimal totalBetsBD = new BigDecimal(rakeInfoContainer.getTotalPot());
         
         for (Map.Entry<PokerPlayer, Result> e : results.entrySet()) {
             PokerPlayer player = e.getKey();
             Result result = e.getValue();
             BigDecimal playerBets = new BigDecimal(result.getBets());
-            BigDecimal rakeContrib = totalBetsBD.signum() == 0 ? 
-                BigDecimal.ZERO : totalRake.multiply(playerBets).divide(totalBetsBD, SCALE, HALF_UP);
+            BigDecimal rakeContrib = totalBetsBD.signum() == 0 
+                ? BigDecimal.ZERO 
+                : BigDecimal.valueOf(rakeInfoContainer.getTotalRake()).multiply(playerBets).divide(totalBetsBD, SCALE, HALF_UP);
             rakeContribs.put(player, rakeContrib.longValue());
         }
         
