@@ -47,7 +47,7 @@ public class HandDebuggerImpl implements HandDebuggerContract {
 		if (router != null) {
 			String myAddress = getLocalIP();
 			String url = "http://"+myAddress+":9091/table.html?tableid="+tableId;
-			String message = "Hand debugger is available at: <a href='event:"+url+"' target='_blank'>"+url+"</a>";
+			String message = "Hand debugger is available at: <a href='"+url+"' target='_blank'>"+url+"</a>";
 			TableChatAction chat = new TableChatAction(playerId, tableId, message);
 	        router.dispatchToPlayer(playerId, chat);
 		}
