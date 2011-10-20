@@ -106,13 +106,17 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
 			Map<PokerPlayer, Result> map = handResult.getResults();
 			Results res = new Results();
 			for (PokerPlayer pl : map.keySet()) {
+				// translate results
 				res.getResults().put(pl.getId(), translate(map.get(pl)));
+				// get player rake and add
+				long playerRake = handResult.getRakeContributionByPlayer(pl);
+				res.getResults().get(pl.getId()).setRake(playerRake);
 			}
-			service.reportResults(table.getId(), res);
+			service.reportResults(table.getId(), handResult.getTotalRake(), res);
 			service.stopHand(table.getId());
 		}
 	}
-	
+
 	@Override
 	public void notifyNewHand() {
 		super.notifyNewHand();

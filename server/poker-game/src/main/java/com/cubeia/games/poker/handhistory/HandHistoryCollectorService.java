@@ -17,7 +17,7 @@ public interface HandHistoryCollectorService extends Contract {
 	
 	public void reportDeckInfo(int tableId, DeckInfo deckInfo);
 
-	public void reportResults(int tableId, Results res);
+	public void reportResults(int tableId, long totalRake, Results res);
 	
 	public void stopHand(int tableId);
 

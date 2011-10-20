@@ -62,9 +62,10 @@ public class CollectorServiceImpl implements HandHistoryCollectorService {
 	}
 
 	@Override
-	public void reportResults(int tableId, Results res) {
+	public void reportResults(int tableId, long totalRake, Results res) {
 		log.debug("Result on table " + tableId + " resported");
 		HistoricHand hand = getCurrent(tableId);
+		hand.setTotalRake(totalRake);
 		hand.setResults(res);
 	}
 

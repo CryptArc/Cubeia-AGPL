@@ -51,6 +51,8 @@ public class HandResult implements Serializable {
 	private final Collection<PotTransition> potTransitions;
 
     private Map<PokerPlayer, Long> rakeContributions;
+    
+    private final long totalRake;
 
 	public HandResult() {
 	    this(Collections.<PokerPlayer, Result>emptyMap(), Collections.<RatedPlayerHand>emptyList(), 
@@ -62,6 +64,7 @@ public class HandResult implements Serializable {
 	    List<RatedPlayerHand> playerHands, 
 	    Collection<PotTransition> potTransitions, RakeInfoContainer rakeInfoContainer) {
 	    
+		this.totalRake = (rakeInfoContainer == null ? -1 : rakeInfoContainer.getTotalRake());
 	    this.results = unmodifiableMap(results);
 	    this.playerHands = unmodifiableList(playerHands);
         this.potTransitions = Collections.unmodifiableCollection(potTransitions);
@@ -76,6 +79,10 @@ public class HandResult implements Serializable {
 
     public Map<PokerPlayer, Result> getResults() {
 		return results;
+	}
+    
+    public long getTotalRake() {
+		return totalRake;
 	}
     
 //    /**
