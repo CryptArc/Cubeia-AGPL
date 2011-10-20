@@ -8,12 +8,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import com.cubeia.poker.RakeSettings;
 import com.cubeia.poker.pot.Pot;
-import com.cubeia.poker.pot.PotTransition;
 
 /**
  * Rake calculator where rake is linear (defined by a fraction) up to a limit after which
@@ -38,60 +35,10 @@ public class LinearSingleLimitRakeCalculator implements RakeCalculator {
     }
     
     @Override
-    public Map<Pot, BigDecimal> calculateRakeAddition(BigDecimal totalCurrentRake, Collection<PotTransition> potTransitions) {
-        Map<Pot, BigDecimal> potRakes = new HashMap<Pot, BigDecimal>();
-
-        SortedMap<Pot, Integer> sortedPotBetSums = sortInPotIdOrder(aggregateBetsPerPot(potTransitions));
-        
-        for (Map.Entry<Pot, Integer> entry : sortedPotBetSums.entrySet()) {
-            Pot pot = entry.getKey();
-            int bets = entry.getValue();
-
-            BigDecimal rake = rakeFraction.multiply(BigDecimal.valueOf(bets));
-            
-            if (willRakeAdditionBreakLimit(rake, totalCurrentRake)) {
-                rake = BigDecimal.ZERO.max(rakeLimit.subtract(totalCurrentRake));
-            }
-            
-            potRakes.put(pot, rake);
-            totalCurrentRake = totalCurrentRake.add(rake);
-        }
-        
-        return potRakes;
-    }
-
-    private Map<Pot, Integer> aggregateBetsPerPot(Collection<PotTransition> potTransitions) {
-        Map<Pot, Integer> potBetSums = new HashMap<Pot, Integer>();
-        for (PotTransition trans : potTransitions) {
-            Pot pot = trans.getPot();
-            if (!potBetSums.containsKey(pot)) {
-                potBetSums.put(pot, 0);
-            }
-            potBetSums.put(pot, potBetSums.get(pot) + (int) trans.getAmount());
-        }
-        
-        return potBetSums;
-    }
-    
-    private SortedMap<Pot, Integer> sortInPotIdOrder(Map<Pot, Integer> potsToRake) {
-        TreeMap<Pot, Integer> sortedMap = new TreeMap<Pot, Integer>(new Comparator<Pot>() {
-            @Override
-            public int compare(Pot p1, Pot p2) {
-                return p1.getId() - p2.getId();
-            }
-        });
-        sortedMap.putAll(potsToRake);
-        return sortedMap;
-    }
-    
-    @Override
     public RakeInfoContainer calculateRakes(Collection<Pot> pots) {
         Map<Pot, BigDecimal> potRake = new HashMap<Pot, BigDecimal>();
         
-        List<Pot> potsSortedById = new ArrayList<Pot>(pots);
-        Collections.sort(potsSortedById, new Comparator<Pot>() {
-            @Override public int compare(Pot p1, Pot p2) { return p1.getId() - p2.getId(); }
-        });
+        List<Pot> potsSortedById = sortPotsInIdOrder(pots);
         
         BigDecimal totalRake = BigDecimal.ZERO;
         int totalPot = 0;
@@ -106,11 +53,23 @@ public class LinearSingleLimitRakeCalculator implements RakeCalculator {
             }
             
             totalRake = totalRake.add(rake);
-            
             potRake.put(pot, rake);
         }
         
         return new RakeInfoContainer(totalPot, totalRake.intValue(), potRake);
+    }
+
+    /**
+     * Returns a new list where the pots are ordered by ascending pot id.
+     * @param pots pots to sort
+     * @return new sorted list
+     */
+    private List<Pot> sortPotsInIdOrder(Collection<Pot> pots) {
+        List<Pot> potsSortedById = new ArrayList<Pot>(pots);
+        Collections.sort(potsSortedById, new Comparator<Pot>() {
+            @Override public int compare(Pot p1, Pot p2) { return p1.getId() - p2.getId(); }
+        });
+        return potsSortedById;
     }
 
     private boolean willRakeAdditionBreakLimit(BigDecimal totalRake, BigDecimal rakeAddition) {

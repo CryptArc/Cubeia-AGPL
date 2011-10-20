@@ -1,6 +1,12 @@
 package com.cubeia.poker.variant.texasholdem;
 
-import static com.cubeia.poker.hand.HandType.*;
+import static com.cubeia.poker.hand.HandType.FLUSH;
+import static com.cubeia.poker.hand.HandType.FULL_HOUSE;
+import static com.cubeia.poker.hand.HandType.HIGH_CARD;
+import static com.cubeia.poker.hand.HandType.PAIR;
+import static com.cubeia.poker.hand.HandType.STRAIGHT;
+import static com.cubeia.poker.hand.HandType.THREE_OF_A_KIND;
+import static com.cubeia.poker.hand.HandType.TWO_PAIRS;
 
 import java.util.ArrayList;
 import java.util.List;

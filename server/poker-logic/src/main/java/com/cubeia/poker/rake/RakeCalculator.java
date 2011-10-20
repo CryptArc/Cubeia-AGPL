@@ -1,24 +1,16 @@
 package com.cubeia.poker.rake;
 
-import java.math.BigDecimal;
 import java.util.Collection;
-import java.util.Map;
 
 import com.cubeia.poker.pot.Pot;
-import com.cubeia.poker.pot.PotTransition;
 
 public interface RakeCalculator {
-
-    /**
-     * Calculates the added rakes by the given pot transitions.
-     * @param totalCurrentRake total rake before appending the given pot transitions
-     * @param potTransitions pot transitions to calculate rake contribution for
-     * @return pot to rake map 
-     */
-    @Deprecated
-    Map<Pot, BigDecimal> calculateRakeAddition(BigDecimal totalCurrentRake, Collection<PotTransition> potTransitions);
-
     
+    /**
+     * Calculates the rakes for the given pots.
+     * @param pots pots to calculate rake for
+     * @return the calculated rakes per pot, total rake and total bets (pot sizes)
+     */
     RakeInfoContainer calculateRakes(Collection<Pot> pots);
     
     

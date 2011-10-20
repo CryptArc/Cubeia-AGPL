@@ -27,7 +27,6 @@ import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
-import com.cubeia.poker.rounds.betting.BettingRound;
 
 public class BettingRoundTest extends TestCase implements TestListener {
 

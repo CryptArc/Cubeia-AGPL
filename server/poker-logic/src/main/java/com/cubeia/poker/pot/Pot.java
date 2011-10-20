@@ -17,10 +17,7 @@
 
 package com.cubeia.poker.pot;
 
-import static java.math.RoundingMode.HALF_UP;
-
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,8 +52,6 @@ public class Pot implements Serializable {
 	/** is pot open? */
 	private Boolean isOpen = true;
 
-    private BigDecimal rake = BigDecimal.ZERO;
-	
 	public Pot(int potId) {
 		this.potId = potId;
 		if ( potId == 0 ) {
@@ -70,8 +65,8 @@ public class Pot implements Serializable {
 	
 	@Override
     public String toString() {
-        return "Pot [potId=" + potId + ", type=" + type + ", isOpen=" + isOpen + ", potSize=" + potSize + ", rake="
-            + rake + ", playerToBetMap=" + playerToBetMap + "]";
+        return "Pot [potId=" + potId + ", type=" + type + ", isOpen=" + isOpen + ", potSize=" + potSize + 
+            ", playerToBetMap=" + playerToBetMap + "]";
     }
 
 
@@ -115,22 +110,6 @@ public class Pot implements Serializable {
 	    return potSize;
 	}
 
-//	public long getPotSizeWithRakeRemoved() {
-//	    return getPotSize() - getRake().setScale(0, HALF_UP).longValue();
-//	}
-	
-//	/**
-//	 * Returns the accumulated rake of this pot.
-//	 * @return the rake
-//	 */
-//	public BigDecimal getRake() {
-//        return rake;
-//    }
-	
-//    public void addRake(BigDecimal additionalRake) {
-//        rake = rake.add(additionalRake);
-//    }
-    
 	/**
 	 * Closes this pot.
 	 */
@@ -152,18 +131,6 @@ public class Pot implements Serializable {
 	public Boolean isOpen() {
 		return isOpen;
 	}
-	
-//	/**
-//	 * reduce the amount
-//	 * 
-//	 * @param amount to reduce the pot size with
-//	 */
-//	public void reduce(long amount) {
-//		if ( amount > potSize ) {
-//			throw new IllegalArgumentException("Tried to reduce the pot by " + amount + ", but there is only " + potSize);
-//		}
-//		potSize -= amount;
-//	}
 	
 	/** return the id of this pot */
 	public int getId() {
