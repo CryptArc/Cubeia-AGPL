@@ -42,7 +42,7 @@ public class DefaultPokerPlayerTest {
         long balance = 10000;
         player.setBalance(balance);
 
-        boolean hadPendingBalance = player.commitPendingBalance();
+        boolean hadPendingBalance = player.commitPendingBalance(1000);
         assertThat(hadPendingBalance, is(false));
         
         long pendingBalance = 333;
@@ -51,10 +51,58 @@ public class DefaultPokerPlayerTest {
         assertThat(player.getPendingBalance(), is(pendingBalance));
         assertThat(player.getBalance(), is(balance));
     
-        hadPendingBalance = player.commitPendingBalance();
+        hadPendingBalance = player.commitPendingBalance(10000000);
         assertThat(hadPendingBalance, is(true));
         assertThat(player.getPendingBalance(), is(0L));
         assertThat(player.getBalance(), is(balance + pendingBalance));
+    }
+    
+    @Test
+    public void testCommitPendingAmountWithMaxLevel1() {
+    	long balance = 100l;
+    	long pending = 200l;
+    	long maxBuyIn = 1000l;
+    	
+        DefaultPokerPlayer player = new DefaultPokerPlayer(1337);
+        player.setBalance(balance);
+        player.addPendingAmount(pending);
+        boolean hadPending = player.commitPendingBalance(maxBuyIn);
+        
+        assertThat(hadPending, is(true));
+        assertThat(player.getPendingBalance(), is(0L));
+        assertThat(player.getBalance(), is(balance + pending));
+    }
+    
+    @Test
+    public void testCommitPendingAmountWithMaxLevel2() {
+    	long balance = 100l;
+    	long pending = 200l;
+    	long maxBuyIn = 120l;
+    	
+        DefaultPokerPlayer player = new DefaultPokerPlayer(1337);
+        player.setBalance(balance);
+        player.addPendingAmount(pending);
+        boolean hadPending = player.commitPendingBalance(maxBuyIn);
+        
+        assertThat(hadPending, is(true));
+        assertThat(player.getPendingBalance(), is(balance + pending - maxBuyIn));
+        assertThat(player.getBalance(), is(maxBuyIn));
+    }
+    
+    @Test
+    public void testCommitPendingAmountWithMaxLevel3() {
+    	long balance = 100l;
+    	long pending = 200l;
+    	long maxBuyIn = 50l;
+    	
+        DefaultPokerPlayer player = new DefaultPokerPlayer(1337);
+        player.setBalance(balance);
+        player.addPendingAmount(pending);
+        boolean hadPending = player.commitPendingBalance(maxBuyIn);
+        
+        assertThat(hadPending, is(true));
+        assertThat(player.getPendingBalance(), is(pending));
+        assertThat(player.getBalance(), is(balance));
     }
     
     @Test

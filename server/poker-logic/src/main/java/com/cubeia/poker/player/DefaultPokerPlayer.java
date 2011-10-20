@@ -264,11 +264,19 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	}
 	
     @Override
-    public boolean commitPendingBalance() {
-        boolean hadPending = pendingBalance > 0;
-        balance += pendingBalance;
-        pendingBalance = 0;
-        return hadPending;
+    public boolean commitPendingBalance(long maxBuyIn) {
+    	boolean hasPending = pendingBalance > 0;
+    	if (hasPending && balance < maxBuyIn) {
+    		long allowedAmount = maxBuyIn - balance;
+    		if (pendingBalance > allowedAmount) {
+    			balance += allowedAmount;
+    			pendingBalance -= allowedAmount;
+    		} else {
+    			balance += pendingBalance;
+    			pendingBalance = 0;
+    		}
+    	}
+    	return hasPending;
     }
 
     @Override

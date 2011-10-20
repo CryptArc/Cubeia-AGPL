@@ -425,7 +425,7 @@ public class PokerState implements Serializable, IPokerState {
 	protected void commitPendingBalances() {
 	    for (PokerPlayer player : playerMap.values()) {
 	    	log.debug("Commit Player "+player);
-	        player.commitPendingBalance();
+	        player.commitPendingBalance(getMaxBuyIn());
 	    }
 	}
 	
@@ -745,11 +745,6 @@ public class PokerState implements Serializable, IPokerState {
 		if (seatingMap.size() > 20) {
 			log.warn("SEATING MAP SIZE WARNING. Size="+seatingMap.size()+", Values: "+seatingMap);
 		}
-	}
-
-	public void notifyPlayerBalanceReset(PokerPlayer player) {
-		serverAdapter.notifyPlayerBalanceReset(player);
-		
 	}
 
     public void notifyDeckInfo(int size, Rank rankLow) {

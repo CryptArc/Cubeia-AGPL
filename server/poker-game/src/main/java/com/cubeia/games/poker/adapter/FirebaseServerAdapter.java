@@ -259,12 +259,6 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		sendPublicPacket(action, playerId);
 	}
 
-	@Deprecated
-	@Override
-	public void notifyPlayerBalanceReset(PokerPlayer player) {
-		notifyPlayerBalance(player);
-	}
-
 	@Override
 	public void notifyBuyInInfo(int playerId, boolean mandatoryBuyin) {
 		PokerPlayer player = state.getPokerPlayer(playerId);

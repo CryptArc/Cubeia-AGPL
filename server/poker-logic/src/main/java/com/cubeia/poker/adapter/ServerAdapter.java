@@ -128,13 +128,6 @@ public interface ServerAdapter {
     void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status);
 
     /**
-	 * Notify players about updated player balance.
-	 * 
-	 * @param player
-	 */
-    void notifyPlayerBalanceReset(PokerPlayer player);
-
-    /**
      * Send information if the deck in use.
      * @param size total number of cards in deck
      * @param rankLow lowest used rank in deck, this is normally TWO, but if the deck is stripped 

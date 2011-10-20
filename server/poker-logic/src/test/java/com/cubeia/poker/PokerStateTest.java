@@ -22,6 +22,7 @@ import org.mockito.Mockito;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.model.RatedPlayerHand;
+import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.pot.Pot;
@@ -45,6 +46,7 @@ public class PokerStateTest {
         when(settings.getVariant()).thenReturn(PokerVariant.TELESINA);
         TimingProfile timingProfile = mock(TimingProfile.class);
 		when(settings.getTiming()).thenReturn(timingProfile);
+		when(settings.getMaxBuyIn()).thenReturn(10000);
         
 		state.init(null, settings);
         state.serverAdapter = mock(ServerAdapter.class);
@@ -83,7 +85,7 @@ public class PokerStateTest {
         
         verify(player1).addChips(winningsIncludingOwnBets);
         verify(state.serverAdapter).notifyHandEnd(result, HandEndStatus.NORMAL);
-        verify(player1).commitPendingBalance();
+        verify(player1).commitPendingBalance(state.getMaxBuyIn());
         verify(player1).setSitOutStatus(SitOutStatus.SITTING_OUT);
         verify(state.serverAdapter).scheduleTimeout(Mockito.anyLong());
         assertThat(state.isFinished(), is(true));
@@ -92,6 +94,41 @@ public class PokerStateTest {
         verify(state.serverAdapter).notifyBuyInInfo(player1Id,true);
         
         verify(player2, Mockito.never()).setSitOutStatus(SitOutStatus.SITTING_OUT);
+    }
+    
+    @Test
+    public void testNotifyHandFinishedPendingBalanceTooHigh() {
+        PokerState state = new PokerState();
+        int anteLevel = 10;
+        PokerSettings settings = mock(PokerSettings.class);
+        when(settings.getRakeSettins()).thenReturn(TestUtils.createOnePercentRakeSettings());
+        when(settings.getAnteLevel()).thenReturn(anteLevel);
+        when(settings.getVariant()).thenReturn(PokerVariant.TELESINA);
+        TimingProfile timingProfile = mock(TimingProfile.class);
+		when(settings.getTiming()).thenReturn(timingProfile);
+		when(settings.getMaxBuyIn()).thenReturn(100);
+        
+		state.init(null, settings);
+        
+        DefaultPokerPlayer player1 = new DefaultPokerPlayer(1);
+        player1.setBalance(40L);
+        player1.addPendingAmount(90L);
+        
+        DefaultPokerPlayer player2 = new DefaultPokerPlayer(2);
+        player2.setBalance(220L);
+        player2.addPendingAmount(120L);
+        
+        state.playerMap.put(player1.getId(), player1);
+		state.playerMap.put(player2.getId(), player2);
+		
+        state.commitPendingBalances();
+        
+        assertThat(player1.getBalance(), is(100L));
+        assertThat(player1.getPendingBalance(), is(30L));
+        
+        assertThat(player2.getBalance(), is(220L));
+        assertThat(player2.getPendingBalance(), is(120L));
+        
     }
 
     @Test
@@ -106,6 +143,12 @@ public class PokerStateTest {
     @Test
     public void testCommitPendingBalances() {
         PokerState state = new PokerState();
+        PokerSettings settings = mock(PokerSettings.class);
+		when(settings.getMaxBuyIn()).thenReturn(10000);
+		when(settings.getVariant()).thenReturn(PokerVariant.TELESINA);
+        
+		state.init(null, settings);
+		
         PokerPlayer player1 = Mockito.mock(PokerPlayer.class);
         PokerPlayer player2 = Mockito.mock(PokerPlayer.class);
         Map<Integer, PokerPlayer> playerMap = new HashMap<Integer, PokerPlayer>();
@@ -115,10 +158,11 @@ public class PokerStateTest {
         
         state.commitPendingBalances();
         
-        verify(player1).commitPendingBalance();
-        verify(player2).commitPendingBalance();
+        // Verify interaction and max buyin level
+        verify(player1).commitPendingBalance(10000);
+        verify(player2).commitPendingBalance(10000);
     }
-
+    
     @Test 
     public void testNotifyPotUpdated() {
         PokerState state = new PokerState();

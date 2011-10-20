@@ -149,11 +149,4 @@ public class MockServerAdapter implements ServerAdapter {
 	public void notifyPotUpdates(Collection<Pot> iterable, Collection<PotTransition> potTransitions) {
 	}
 
-	
-
-	@Override
-	public void notifyPlayerBalanceReset(PokerPlayer player) {
-		// TODO Auto-generated method stub
-		
-	}
 }

@@ -131,9 +131,10 @@ public interface PokerPlayer extends Serializable {
     
     /**
      * Adds the pending balance to the ordinary balance.
+     * @param maxBuyIn, the total resulting balance should not be higher than this
      * @return returns true if there was a pending balance committed
      */
-    public boolean commitPendingBalance();
+    public boolean commitPendingBalance(long maxBuyIn);
 
     public boolean isSitInAfterSuccessfulBuyIn();
 

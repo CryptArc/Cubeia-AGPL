@@ -432,7 +432,6 @@ public class PokerLogicTest extends GuiceTest {
 			@Override public void notifyPlayerStatusChanged(int playerId,PokerPlayerStatus status) {}
 			@Override public void notifyDeckInfo(int size, Rank rankLow) {}
 			@Override public void notifyPotUpdates(Collection<Pot> pots, Collection<PotTransition> potTransitions) {}
-			@Override public void notifyPlayerBalanceReset(PokerPlayer player) {}
 			@Override public void notifyBestHand(int playerId, HandType handType, List<Card> cardsInHand) {}
 			@Override public void notifyRakeInfo(RakeInfoContainer rakeInfoContainer) {}
 		});

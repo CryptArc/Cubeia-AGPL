@@ -156,13 +156,6 @@ public abstract class ServerAdapterProxy implements ServerAdapter {
 	}
 
 	@Override
-	public void notifyPlayerBalanceReset(PokerPlayer player) {
-		if(getAdaptee() != null) {
-			getAdaptee().notifyPlayerBalanceReset(player);
-		}
-	}
-
-	@Override
 	public void notifyDeckInfo(int size, Rank rankLow) {
 		if(getAdaptee() != null) {
 			getAdaptee().notifyDeckInfo(size, rankLow);
