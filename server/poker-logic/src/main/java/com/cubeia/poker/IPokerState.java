@@ -37,4 +37,9 @@ public interface IPokerState {
 	List<Card> getCommunityCards();
 
 	int getEntryBetLevel();
+	
+	/**
+	 * Must be invoked when the first call in the hand has been made.
+	 */
+	void call();
 }

@@ -35,7 +35,7 @@ public class LinearSingleLimitRakeCalculator implements RakeCalculator {
     }
     
     @Override
-    public RakeInfoContainer calculateRakes(Collection<Pot> pots) {
+    public RakeInfoContainer calculateRakes(Collection<Pot> pots, boolean tableHasSeenAction) {
         Map<Pot, BigDecimal> potRake = new HashMap<Pot, BigDecimal>();
         
         List<Pot> potsSortedById = sortPotsInIdOrder(pots);
@@ -45,14 +45,17 @@ public class LinearSingleLimitRakeCalculator implements RakeCalculator {
         
         for (Pot pot : potsSortedById) {
             long potSize = pot.getPotSize();
-            BigDecimal rake = rakeFraction.multiply(new BigDecimal(potSize));
-            totalPot += potSize;
             
-            if (willRakeAdditionBreakLimit(totalRake, rake)) {
-                rake = rakeLimit.subtract(totalRake);
+            BigDecimal rake = BigDecimal.ZERO;
+            if (tableHasSeenAction) {
+                rake = rakeFraction.multiply(new BigDecimal(potSize));
+                if (willRakeAdditionBreakLimit(totalRake, rake)) {
+                    rake = rakeLimit.subtract(totalRake);
+                }
+                totalRake = totalRake.add(rake);
             }
             
-            totalRake = totalRake.add(rake);
+            totalPot += potSize;
             potRake.put(pot, rake);
         }
         

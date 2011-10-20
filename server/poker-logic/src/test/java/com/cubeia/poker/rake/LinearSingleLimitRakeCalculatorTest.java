@@ -35,7 +35,7 @@ public class LinearSingleLimitRakeCalculatorTest {
         pot2.bet(player2, 2000L);
         pot3.bet(player1, 1000L);
         
-        RakeInfoContainer rakeInfoContainer = rc.calculateRakes(asList(pot1, pot2, pot3));
+        RakeInfoContainer rakeInfoContainer = rc.calculateRakes(asList(pot1, pot2, pot3), true);
         assertThat(rakeInfoContainer.getTotalPot(), is(26000));
         assertThat(rakeInfoContainer.getTotalRake(), is(2600));
         
@@ -67,7 +67,7 @@ public class LinearSingleLimitRakeCalculatorTest {
         
         Collection<Pot> pots = Arrays.asList(pot1, pot2, pot3, pot4);
 
-        RakeInfoContainer rakeInfoContainer = rc.calculateRakes(pots);
+        RakeInfoContainer rakeInfoContainer = rc.calculateRakes(pots, true);
         assertThat(rakeInfoContainer.getTotalPot(), is(59000));
         assertThat(rakeInfoContainer.getTotalRake(), is(4000));
         
@@ -79,4 +79,24 @@ public class LinearSingleLimitRakeCalculatorTest {
         assertThat(rakes.get(pot4), is(new BigDecimal("0.0")));   // 100 (limited)
     }
 
+    @Test
+    public void testCalculateRakeNoRakeBeforeFirstCall() {
+        BigDecimal rakeFraction = new BigDecimal("0.1");
+        LinearSingleLimitRakeCalculator rc = new LinearSingleLimitRakeCalculator(new RakeSettings(rakeFraction));
+        
+        PokerPlayer player1 = Mockito.mock(PokerPlayer.class);
+        PokerPlayer player2 = Mockito.mock(PokerPlayer.class);
+        Pot pot1 = new Pot(0);
+
+        pot1.bet(player1, 10000L);
+        pot1.bet(player2, 10000L);
+        
+        RakeInfoContainer rakeInfoContainer = rc.calculateRakes(asList(pot1), false);
+        assertThat(rakeInfoContainer.getTotalPot(), is(20000));
+        assertThat(rakeInfoContainer.getTotalRake(), is(0));
+        
+        Map<Pot, BigDecimal> rakes = rakeInfoContainer.getPotRakes();
+        assertThat(rakes.get(pot1), is(BigDecimal.ZERO));
+    }
+    
 }

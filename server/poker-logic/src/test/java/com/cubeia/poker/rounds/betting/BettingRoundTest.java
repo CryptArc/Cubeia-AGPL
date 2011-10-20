@@ -17,8 +17,17 @@
 
 package com.cubeia.poker.rounds.betting;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import org.junit.Test;
+import org.mockito.Mockito;
+
 import junit.framework.TestCase;
 
+import com.cubeia.poker.GameType;
+import com.cubeia.poker.IPokerState;
 import com.cubeia.poker.MockGame;
 import com.cubeia.poker.MockPlayer;
 import com.cubeia.poker.TestListener;
@@ -27,6 +36,7 @@ import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
+import com.cubeia.poker.player.PokerPlayer;
 
 public class BettingRoundTest extends TestCase implements TestListener {
 
@@ -44,6 +54,7 @@ public class BettingRoundTest extends TestCase implements TestListener {
 		
 	}
 
+    @Test
 	public void testHeadsUpBetting() {
 		MockPlayer[] p = TestUtils.createMockPlayers(2);
 
@@ -58,6 +69,7 @@ public class BettingRoundTest extends TestCase implements TestListener {
 		assertTrue(round.isFinished());
 	}
 
+    @Test
 	public void testCallAmount() {
 		MockPlayer[] p = TestUtils.createMockPlayers(2, 100);
 
@@ -71,6 +83,20 @@ public class BettingRoundTest extends TestCase implements TestListener {
 		assertEquals(70, bet.getMaxAmount());
 	}	
 	
+	@Test
+    public void testCallTellsState() {
+        GameType game = mock(GameType.class);
+        IPokerState state = mock(IPokerState.class);
+        when(game.getState()).thenReturn(state );
+        PokerPlayer player = Mockito.mock(PokerPlayer.class);
+        
+        round = new BettingRound(game, 0, new DefaultPlayerToActCalculator());
+        round.call(player);
+        
+        verify(state).call();
+    }   
+	
+    @Test
 	public void testRaise() {
 		MockPlayer[] p = TestUtils.createMockPlayers(2);
 
@@ -84,6 +110,7 @@ public class BettingRoundTest extends TestCase implements TestListener {
 		verifyAndAct(p[0], PokerActionType.RAISE, 200);
 	}
 	
+    @Test
 	public void testNoRaiseAllowedWhenAllOtherPlayersAreAllIn() {
 		MockPlayer[] p = TestUtils.createMockPlayers(2);
 
@@ -102,6 +129,7 @@ public class BettingRoundTest extends TestCase implements TestListener {
 		round.act(a);		
 	}
 
+    @Test
 	public void testTimeoutTwice() {
 		MockPlayer[] p = TestUtils.createMockPlayers(2);
 
@@ -116,6 +144,7 @@ public class BettingRoundTest extends TestCase implements TestListener {
 		assertTrue(round.isFinished());
 	}	
 	
+    @Test
 	public void testTimeout() {
 		MockPlayer[] p = TestUtils.createMockPlayers(2);
 
@@ -129,6 +158,7 @@ public class BettingRoundTest extends TestCase implements TestListener {
 		assertTrue(round.isFinished());
 	}	
 
+    @Test
 	public void testDealerLeft() {
 		MockPlayer[] p = TestUtils.createMockPlayers(2);
 

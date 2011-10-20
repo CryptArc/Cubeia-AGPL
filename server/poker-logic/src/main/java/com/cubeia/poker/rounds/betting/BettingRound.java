@@ -30,6 +30,7 @@ import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
+import com.google.common.annotations.VisibleForTesting;
 
 public class BettingRound implements Round, BettingRoundContext {
 
@@ -243,8 +244,10 @@ public class BettingRound implements Round, BettingRoundContext {
 		// Nothing to do.
 	}
 
-	private void call(PokerPlayer player) {
+	@VisibleForTesting
+	protected void call(PokerPlayer player) {
 		player.addBet(getAmountToCall(player));
+		gameType.getState().call();
 	}
 
 	private long getAmountToCall(PokerPlayer player) {
@@ -300,6 +303,6 @@ public class BettingRound implements Round, BettingRoundContext {
 	}
 
 	public long getSizeOfLastBetOrRaise() {
-		return lastBetSize ;
+		return lastBetSize;
 	}
 }

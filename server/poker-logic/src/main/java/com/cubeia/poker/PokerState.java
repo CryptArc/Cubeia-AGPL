@@ -194,7 +194,7 @@ public class PokerState implements Serializable, IPokerState {
 		betStrategyName = settings.getBetStrategy();
 		entryBetLevel = settings.getEntryBetLevel(); 
 		gameType = createGameTypeByVariant(rngProvider, variant);
-                tableIntegrationId = settings.getTableIntegrationId();
+		tableIntegrationId = settings.getTableIntegrationId();
 	}
 
 	protected GameType createGameTypeByVariant(RNGProvider rngProvider, PokerVariant variant) {
@@ -495,6 +495,11 @@ public class PokerState implements Serializable, IPokerState {
 	public int getTableSize() {
         return tableSize;
     }
+	
+	@Override
+	public void call() {
+	    potHolder.call();
+	}
 	
 	public boolean isTournamentTable() {
 		return tournamentTable;

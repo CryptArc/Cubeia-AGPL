@@ -89,7 +89,7 @@ public class MockGame implements GameType {
 	public void roundFinished() {
 		roundFinished = true;
 	}
-
+	
 	@Override
 	public void startHand() {
 	}
@@ -209,6 +209,9 @@ public class MockGame implements GameType {
 				// TODO Auto-generated method stub
 				
 			}
+			
+			@Override
+			public void call() {}
 		};
 	}
 

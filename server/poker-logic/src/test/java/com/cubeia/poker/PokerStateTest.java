@@ -95,6 +95,15 @@ public class PokerStateTest {
     }
 
     @Test
+    public void testCall() {
+        PokerState state = new PokerState();
+        state.potHolder = mock(PotHolder.class);
+        state.call();
+        verify(state.potHolder).call();
+    }
+    
+    
+    @Test
     public void testCommitPendingBalances() {
         PokerState state = new PokerState();
         PokerPlayer player1 = Mockito.mock(PokerPlayer.class);

@@ -54,6 +54,8 @@ public class PotHolder implements Serializable {
 
 	private Set<Integer> allInPlayers = new HashSet<Integer>();
 
+	private boolean callHasBeenMadeInHand = false;
+	
     private final RakeCalculator rakeCalculator;
 
 	public PotHolder(RakeCalculator rakeCalculator) {
@@ -110,35 +112,20 @@ public class PotHolder implements Serializable {
 			}
 		}
 		
-//		calculateAndTakeRake(potTransitions);
-		
 		printDiagnostics();
 		
 		return potTransitions;
 	}
 
-	/*
-    private void calculateAndTakeRake(Collection<PotTransition> potTransitions) {
-        BigDecimal rakeBefore = getTotalRake();
-        Map<Pot, BigDecimal> potRakes = rakeCalculator.calculateRakeAddition(rakeBefore, potTransitions);
-		
-		for (Map.Entry<Pot, BigDecimal> entry : potRakes.entrySet()) {
-		    BigDecimal rake = entry.getValue();
-            Pot pot = entry.getKey();
-            pot.addRake(rake);
-		}
-    }
-    */
-	
 	public RakeInfoContainer calculateRake() {
-	    return rakeCalculator.calculateRakes(getPots());
+	    return rakeCalculator.calculateRakes(getPots(), callHasBeenMadeInHand);
 	}
 	
 
 	private void printDiagnostics() {
         log.debug("pots: ");
         
-        RakeInfoContainer rakeInfoContainer = rakeCalculator.calculateRakes(getPots());
+        RakeInfoContainer rakeInfoContainer = calculateRake();
         
         if (rakeInfoContainer != null) {
             for (Map.Entry<Pot, BigDecimal> entry : rakeInfoContainer.getPotRakes().entrySet()) {
@@ -324,6 +311,14 @@ public class PotHolder implements Serializable {
 		return pots;
 	}
 
+	/**
+	 * Indicate that a call has been made by some player in this hand. This method must be
+	 * invoked at least when the first call is made in a hand for the rake calculation to be correct.
+	 */
+	public void call() {
+	    callHasBeenMadeInHand = true;
+	}
+	
 	/**
 	 * Adds a pot of size potSize.
 	 *
