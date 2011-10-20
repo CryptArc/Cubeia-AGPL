@@ -24,6 +24,8 @@ import org.slf4j.LoggerFactory;
 
 import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
 
+import com.cubeia.backend.cashgame.dto.AnnounceTableFailedResponse;
+import com.cubeia.backend.cashgame.dto.AnnounceTableResponse;
 import com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse;
 import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
 import com.cubeia.backend.cashgame.dto.ReserveResponse;
@@ -117,9 +119,16 @@ public class Processor implements GameProcessor, TournamentProcessor {
     	        backendHandler.handleOpenSessionSuccessfulResponse((OpenSessionResponse) attachment);
     	    } else if (attachment instanceof OpenSessionFailedResponse) {
                 log.debug("got open session failed response: {}", attachment);
+                backendHandler.handleOpenSessionFailedResponse((OpenSessionFailedResponse) attachment);
     	    } else if (attachment instanceof ReserveResponse) {
     	        log.debug("got reserver response: {}", attachment);
     	        backendHandler.handleReserveSuccessfulResponse((ReserveResponse) attachment);
+    	    } else if (attachment instanceof AnnounceTableResponse) {
+    	        log.debug("got announce table response: {}", attachment);
+    	        backendHandler.handleAnnounceTableSuccessfulResponse((AnnounceTableResponse) attachment);
+            } else if (attachment instanceof AnnounceTableFailedResponse) {
+                log.debug("got announce table failed response: {}", attachment);
+                backendHandler.handleAnnounceTableFailedResponse((AnnounceTableFailedResponse) attachment);
     	    } else {
     	        log.warn("Unhandled object: " + attachment.getClass().getName());
     	    }

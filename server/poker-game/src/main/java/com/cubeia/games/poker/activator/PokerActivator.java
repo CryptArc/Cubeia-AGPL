@@ -32,6 +32,7 @@ import javax.management.ObjectName;
 
 import org.apache.log4j.Logger;
 
+import com.cubeia.backend.firebase.CashGamesBackendContract;
 import com.cubeia.firebase.api.game.activator.ActivatorContext;
 import com.cubeia.firebase.api.game.activator.DefaultActivator;
 import com.cubeia.firebase.api.game.activator.DefaultActivatorConfig;
@@ -113,7 +114,7 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
         		new ActivatorGuiceModule(context),
         		new PokerGuiceModule());
         
-        initParticipants(rngProvider);
+        initParticipants(rngProvider, context);
     }
     
     @Override
@@ -125,10 +126,13 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
     /** 
      * Create a number of participants, i.e. lobby branches 
      */
-    private void initParticipants(RNGProvider rngProvider) {	
-    	participants.add(new PokerParticipant(10, "ITALIAN/cashgame/REAL_MONEY", 10, Timings.DEFAULT, TEXAS_HOLDEM, rngProvider));
-    	participants.add(new PokerParticipant(4, "ITALIAN/cashgame/REAL_MONEY/4", 10, Timings.SLOW, TELESINA, rngProvider));
-    	participants.add(new PokerParticipant(6, "ITALIAN/cashgame/REAL_MONEY/6", 10, Timings.SLOW, TELESINA, rngProvider));
+    private void initParticipants(RNGProvider rngProvider, ActivatorContext context) {	
+        
+        CashGamesBackendContract cashGameBackendService = context.getServices().getServiceInstance(CashGamesBackendContract.class);
+        
+//    	participants.add(new PokerParticipant(10, "ITALIAN/cashgame/REAL_MONEY", 10, Timings.DEFAULT, TEXAS_HOLDEM, rngProvider, cashGameBackendService));
+    	participants.add(new PokerParticipant(4, "ITALIAN/cashgame/REAL_MONEY/4", 2, Timings.SLOW, TELESINA, rngProvider, cashGameBackendService));
+    	participants.add(new PokerParticipant(6, "ITALIAN/cashgame/REAL_MONEY/6", 2, Timings.SLOW, TELESINA, rngProvider, cashGameBackendService));
     	
     	for (PokerParticipant part : participants) {
     		part.setInjector(injector);
@@ -155,7 +159,7 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
     }
     
     public void createTable(String domain, int seats, int level, PokerVariant variant) {
-    	this.tableRegistry.createTable(seats, new PokerParticipant(seats, domain, level, Timings.DEFAULT, variant, rngProvider));
+    	this.tableRegistry.createTable(seats, new PokerParticipant(seats, domain, level, Timings.DEFAULT, variant, rngProvider, null));
     }
 
     /** 

@@ -1,6 +1,8 @@
 package com.cubeia.games.poker.handler;
 
 import java.io.IOException;
+import java.io.Serializable;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +11,9 @@ import se.jadestone.dicearena.game.poker.network.protocol.BuyInResponse;
 import se.jadestone.dicearena.game.poker.network.protocol.Enums;
 
 import com.cubeia.backend.cashgame.PlayerSessionId;
+import com.cubeia.backend.cashgame.dto.AnnounceTableFailedResponse;
+import com.cubeia.backend.cashgame.dto.AnnounceTableResponse;
+import com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse;
 import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
 import com.cubeia.backend.cashgame.dto.ReserveResponse;
 import com.cubeia.firebase.api.action.GameDataAction;
@@ -20,6 +25,8 @@ import com.cubeia.poker.player.PokerPlayer;
 import com.google.inject.Inject;
 
 public class BackendCallHandler {
+    private static final String EXT_PROP_KEY_TABLE_ID = "tableId";
+
     private static Logger log = LoggerFactory.getLogger(BackendCallHandler.class);
     
     @Inject
@@ -79,6 +86,21 @@ public class BackendCallHandler {
         
         PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) state.getPokerPlayer(playerId);
         pokerPlayer.setPlayerSessionId(playerSessionId);
+    }
+
+    public void handleAnnounceTableSuccessfulResponse(AnnounceTableResponse attachment) {
+        log.debug("handle announce table success, tableId = {}, tableProperties = {}", attachment.tableId, attachment.tableProperties);
+        Map<String, Serializable> extProps = state.getExternalTableProperties();
+        extProps.put(EXT_PROP_KEY_TABLE_ID, attachment.tableId);
+        extProps.putAll(attachment.tableProperties);
+    }
+
+    public void handleAnnounceTableFailedResponse(AnnounceTableFailedResponse attachment) {
+        throw new UnsupportedOperationException("handling of failed announce table requests not implemented");
+    }
+
+    public void handleOpenSessionFailedResponse(OpenSessionFailedResponse attachment) {
+        throw new UnsupportedOperationException("handling of failed session requests not implemented");
     }
     
 }

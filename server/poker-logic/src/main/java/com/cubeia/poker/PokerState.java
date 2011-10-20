@@ -171,7 +171,14 @@ public class PokerState implements Serializable, IPokerState {
 
     private int tableSize;
 
+    // TODO: this property should be moved into the externalTablePropertiesMap
 	private String tableIntegrationId;
+	
+	/**
+	 * Map of external table properties. External properties are optional stuff that might be needed
+	 * when integrating to external systems. Session/table/tournament id's for example.
+	 */
+	private Map<String, Serializable> externalTableProperties = new HashMap<String, Serializable>();
 
 	@VisibleForTesting
 	protected PokerSettings settings;
@@ -269,6 +276,14 @@ public class PokerState implements Serializable, IPokerState {
 	public Map<Integer, PokerPlayer> getCurrentHandPlayerMap() {
 		return currentHandPlayerMap;
 	}
+	
+	/**
+	 * Returns the map of external table properties. 
+	 * @return
+	 */
+	public Map<String, Serializable> getExternalTableProperties() {
+        return externalTableProperties;
+    }
 	
 	@Override
 	public PokerPlayer getPlayerInCurrentHand(Integer playerId) {

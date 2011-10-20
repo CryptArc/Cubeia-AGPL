@@ -19,8 +19,12 @@ package com.cubeia.games.poker.activator;
 
 import java.math.BigDecimal;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.cubeia.backend.cashgame.dto.AnnounceTableRequest;
+import com.cubeia.backend.firebase.CashGamesBackendContract;
+import com.cubeia.backend.firebase.FirebaseCallbackFactory;
 import com.cubeia.firebase.api.game.GameDefinition;
 import com.cubeia.firebase.api.game.activator.DefaultCreationParticipant;
 import com.cubeia.firebase.api.game.lobby.LobbyTableAttributeAccessor;
@@ -47,8 +51,7 @@ import com.google.inject.Injector;
  */
 public class PokerParticipant extends DefaultCreationParticipant {
     
-	@SuppressWarnings("unused")
-	private transient Logger log = Logger.getLogger(this.getClass());
+	private static Logger log = LoggerFactory.getLogger(PokerParticipant.class);
 
 	private static final int GAME_ID = 4718;
 	
@@ -78,14 +81,19 @@ public class PokerParticipant extends DefaultCreationParticipant {
     public static final BigDecimal RAKE_FRACTION = new BigDecimal("0.01");
     public static final int RAKE_LIMIT = 500;
 
+    private final CashGamesBackendContract cashGameBackendService;
+
     
-	public PokerParticipant(int seats, String domain, int anteLevel, Timings timing, PokerVariant variant, RNGProvider rngProvider) {
+	public PokerParticipant(int seats, String domain, int anteLevel, Timings timing, PokerVariant variant, 
+	    RNGProvider rngProvider, CashGamesBackendContract cashGameBackendService) {
+	    
 		super();
 		this.seats = seats;
 		this.domain = domain;
 		this.timing = timing;
 		this.anteLevel = anteLevel;
 		this.variant = variant;
+        this.cashGameBackendService = cashGameBackendService;
 		this.timingProfile  = TimingFactory.getRegistry().getTimingProfile(timing);
 		this.rngProvider = rngProvider;
 	}
@@ -128,6 +136,11 @@ public class PokerParticipant extends DefaultCreationParticipant {
 		acc.setStringAttribute("MONETARY_TYPE", "REAL_MONEY");
 		acc.setIntAttribute("VISIBLE_IN_LOBBY", 1);
 		acc.setStringAttribute("VARIANT", variant.name());
+		
+		log.debug("sending announce table request for firebase table id: {}", table.getId());
+		FirebaseCallbackFactory callbackFactory = cashGameBackendService.getCallbackFactory();
+		AnnounceTableRequest announceRequest = new AnnounceTableRequest(table.getId());   // TODO: this should be the id from the table record
+        cashGameBackendService.announceTable(announceRequest, callbackFactory.createAnnounceTableCallback(table));
 	}
 
 	@Override

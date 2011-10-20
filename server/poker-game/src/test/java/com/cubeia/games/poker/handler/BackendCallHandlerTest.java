@@ -7,7 +7,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +25,8 @@ import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
 
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.PlayerSessionIdImpl;
+import com.cubeia.backend.cashgame.TableId;
+import com.cubeia.backend.cashgame.dto.AnnounceTableResponse;
 import com.cubeia.backend.cashgame.dto.BalanceUpdate;
 import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
 import com.cubeia.backend.cashgame.dto.ReserveResponse;
@@ -143,6 +148,20 @@ public class BackendCallHandlerTest {
         OpenSessionResponse openSessionResponse = new OpenSessionResponse(playerSessionId, Collections.<String, String>emptyMap());
         callHandler.handleOpenSessionSuccessfulResponse(openSessionResponse);
         verify(pokerPlayer).setPlayerSessionId(playerSessionId);
+    }
+    
+    @SuppressWarnings({ "serial", "unchecked" })
+    @Test
+    public void testHandleAnnounceTableSuccessfulResponse() {
+        Map<String, Serializable> extProps = Mockito.mock(Map.class);
+        when(state.getExternalTableProperties()).thenReturn(extProps);
+        
+        TableId tableId = new TableId() {};
+        AnnounceTableResponse announceTableResponse = new AnnounceTableResponse(tableId);
+        announceTableResponse.setProperty("test", "klyka");
+        callHandler.handleAnnounceTableSuccessfulResponse(announceTableResponse);
+        verify(extProps).put("tableId", tableId);
+        verify(extProps).putAll(announceTableResponse.tableProperties);
     }
     
 }

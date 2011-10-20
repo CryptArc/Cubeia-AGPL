@@ -1,8 +1,10 @@
 package com.cubeia.backend.cashgame;
 
+import java.io.Serializable;
+
 /**
  * A strongly typed identifier for a backend table identifier.
  * 
- * All implementations should have reliable hashCode and equals methods.
+ * All implementations must be Serializable and should have reliable hashCode and equals methods.
  */
-public interface TableId {}
+public interface TableId extends Serializable {}

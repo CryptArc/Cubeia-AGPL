@@ -32,7 +32,7 @@ public class FirebaseCallbackFactoryImpl implements FirebaseCallbackFactory {
         OpenSessionCallback callback = new OpenSessionCallback() {
             @Override
             public void requestSucceded(OpenSessionResponse response) {
-                log.debug("open session succeded: gId = {}, tId = {}, sId = {}", 
+                log.debug("open session succeeded: gId = {}, tId = {}, sId = {}", 
                     new Object[] {table.getMetaData().getGameId(), table.getId(), response.sessionId});
                 sendGameObjectActionToTable(response.sessionId.getPlayerId(), table.getMetaData().getGameId(), table.getId(), response);
             }
@@ -52,7 +52,7 @@ public class FirebaseCallbackFactoryImpl implements FirebaseCallbackFactory {
         ReserveCallback callback = new ReserveCallback() {
             @Override
             public void requestSucceded(ReserveResponse response) {
-                log.debug("reserve succeded: gId = {}, tId = {}, sId = {}", 
+                log.debug("reserve succeeded: gId = {}, tId = {}, sId = {}", 
                     new Object[] {table.getMetaData().getGameId(), table.getId(), response.getPlayerSessionId()});
                 sendGameObjectActionToTable(response.getPlayerSessionId().getPlayerId(), table.getMetaData().getGameId(), table.getId(), response);
             }
@@ -71,11 +71,22 @@ public class FirebaseCallbackFactoryImpl implements FirebaseCallbackFactory {
     public AnnounceTableCallback createAnnounceTableCallback(final Table table) {
     	AnnounceTableCallback callback = new AnnounceTableCallback() {
             @Override
-            public void requestSucceded(AnnounceTableResponse response) {
-                log.debug("announce succeded: gId = {}, tId = {}",
+            public void requestSucceded(final AnnounceTableResponse response) {
+                log.debug("announce suceeded: gId = {}, tId = {}",
                     new Object[] {table.getMetaData().getGameId(), table.getId()});
                 
-                sendGameObjectActionToTable(-1, table.getMetaData().getGameId(), table.getId(), response);
+                // Dirty fix as we cannot run this in the same thread as the participant runs in
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(100L);
+                            sendGameObjectActionToTable(-1, table.getMetaData().getGameId(), table.getId(), response);
+                        } catch (Throwable t) {
+                            t.printStackTrace();
+                        }
+                    }
+                }).start();
             }
             
             @Override

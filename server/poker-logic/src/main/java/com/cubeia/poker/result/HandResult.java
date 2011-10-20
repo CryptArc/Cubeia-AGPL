@@ -62,7 +62,8 @@ public class HandResult implements Serializable {
 	public HandResult(
 	    Map<PokerPlayer, Result> results, 
 	    List<RatedPlayerHand> playerHands, 
-	    Collection<PotTransition> potTransitions, RakeInfoContainer rakeInfoContainer) {
+	    Collection<PotTransition> potTransitions, 
+	    RakeInfoContainer rakeInfoContainer) {
 	    
 		this.totalRake = (rakeInfoContainer == null ? -1 : rakeInfoContainer.getTotalRake());
 	    this.results = unmodifiableMap(results);
