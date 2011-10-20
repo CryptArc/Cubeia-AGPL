@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 
+import org.apache.log4j.Logger;
+
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TablePlayerSet;
 import com.cubeia.firebase.guice.inject.Service;
@@ -90,12 +92,14 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
 	@Override
 	public void notifyDeckInfo(int size, Rank rankLow) {
 		super.notifyDeckInfo(size, rankLow);
+		if(!checkHasService()) return; // SANITY CHECK
 		service.reportDeckInfo(table.getId(), new DeckInfo(size, translate(rankLow)));
 	}
 	
 	@Override
 	public void notifyHandEnd(HandResult handResult, HandEndStatus handEndStatus) {
 		super.notifyHandEnd(handResult, handEndStatus);
+		if(!checkHasService()) return; // SANITY CHECK
 		if(handEndStatus == CANCELED_TOO_FEW_PLAYERS) {
 			service.cancelHand(table.getId());
 		} else {
@@ -112,6 +116,7 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
 	@Override
 	public void notifyNewHand() {
 		super.notifyNewHand();
+		if(!checkHasService()) return; // SANITY CHECK
 		List<Player> seats = getSeatsFromState();
 		String tableExtId = getIntegrationTableId();
 		String handId = null; // TODO Add hand id...
@@ -149,9 +154,19 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
 	}
 
 	private void post(HandHistoryEvent ev) {
+		if(!checkHasService()) return; // SANITY CHECK
 		service.reportEvent(table.getId(), ev);
 	}
 	
+	private boolean checkHasService() {
+		if(this.service == null) {
+			Logger.getLogger(getClass()).warn("No hand history collector service deployed!");
+			return false;
+		} else {
+			return true;
+		}
+	}
+
 	private List<Player> getSeatsFromState() {
 		List<Player> list = new ArrayList<Player>(6);
 		SortedMap<Integer, PokerPlayer> plyrs = state.getCurrentHandSeatingMap();
