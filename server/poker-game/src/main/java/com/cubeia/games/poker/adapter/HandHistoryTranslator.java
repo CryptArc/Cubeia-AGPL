@@ -61,8 +61,8 @@ public class HandHistoryTranslator {
 		return list;
 	}
 	
-	public static HandResult translate(Result result) {
-		return new HandResult(result.getNetResult(), result.getWinningsIncludingOwnBets(), -1, calculateTotalBet(result)); // TODO Add rake...
+	public static HandResult translate( Result result) {
+		return new HandResult(result.getNetResult(), result.getWinningsIncludingOwnBets(), -1, calculateTotalBet(result)); // NB: Rake is set outside this method
 	}
 
 	public static PlayerAction.Type translate(PokerActionType type) {
