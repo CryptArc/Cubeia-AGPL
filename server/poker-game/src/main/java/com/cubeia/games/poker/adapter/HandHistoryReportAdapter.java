@@ -39,6 +39,13 @@ import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
 import com.google.inject.Inject;
 
+/**
+ * Adapter between login and game which captures significant events
+ * to the hand history collector. This is a proxy adapter and will first
+ * forward the event to it's proxied member before executing itself.
+ * 
+ * @author Lars J. Nilsson
+ */
 public class HandHistoryReportAdapter extends ServerAdapterProxy {
 
 	@Inject 
@@ -107,12 +114,13 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
 			Results res = new Results();
 			for (PokerPlayer pl : map.keySet()) {
 				// translate results
-				res.getResults().put(pl.getId(), translate(map.get(pl)));
+				res.getResults().put(pl.getId(), translate(pl.getId(), map.get(pl)));
 				// get player rake and add
 				long playerRake = handResult.getRakeContributionByPlayer(pl);
 				res.getResults().get(pl.getId()).setRake(playerRake);
 			}
-			service.reportResults(table.getId(), handResult.getTotalRake(), res);
+			res.setTotalRake(handResult.getTotalRake());
+			service.reportResults(table.getId(), res);
 			service.stopHand(table.getId());
 		}
 	}

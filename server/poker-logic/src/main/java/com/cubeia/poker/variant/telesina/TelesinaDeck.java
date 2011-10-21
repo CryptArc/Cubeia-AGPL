@@ -1,9 +1,8 @@
 package com.cubeia.poker.variant.telesina;
 
+import static com.cubeia.poker.variant.telesina.TelesinaDeckUtil.calculateLowestRank;
+import static com.cubeia.poker.variant.telesina.TelesinaDeckUtil.createDeckCards;
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.collect.ImmutableSet.copyOf;
-import static com.google.common.collect.Sets.cartesianProduct;
-import static java.util.Arrays.asList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +12,6 @@ import com.cubeia.poker.hand.CardIdGenerator;
 import com.cubeia.poker.hand.Deck;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.hand.Shuffler;
-import com.cubeia.poker.hand.Suit;
 
 /**
  * Telesina deck. The size of the deck will vary depending on the
@@ -22,6 +20,7 @@ import com.cubeia.poker.hand.Suit;
  * @author w
  */
 public class TelesinaDeck implements Deck {
+
     private static final long serialVersionUID = -5030565526818602010L;
     private final List<Card> cards;
     private int currentCardIndex;
@@ -38,31 +37,12 @@ public class TelesinaDeck implements Deck {
     public TelesinaDeck(Shuffler<Card> shuffler, CardIdGenerator idGenerator, int numberOfParticipants) {
         checkArgument(numberOfParticipants >= 2, "participants must be >= 2");
         checkArgument(numberOfParticipants <= 10, "participants must be <= 10");
-        
-    	int firstRankIndex = Math.max(0, 11 - numberOfParticipants - 2);
-    	deckLowestRank = Rank.values()[firstRankIndex];
-    	
-        List<Card> vanillaCards = createDeck();
+    	deckLowestRank = calculateLowestRank(numberOfParticipants);
+        List<Card> vanillaCards = createDeckCards(deckLowestRank);
         deckSize = vanillaCards.size();
         List<Card> shuffledCards = shuffler.shuffle(vanillaCards);
         cards = idGenerator.copyAndAssignIds(shuffledCards);
     }
-    
-    @SuppressWarnings("unchecked")
-    public List<Card> createDeck() {
-
-        ArrayList<Card> cards = new ArrayList<Card>();
-        
-        List<Rank> ranks = asList(Rank.values()).subList(deckLowestRank.ordinal(), Rank.values().length);
-        for (List<Enum<?>> cardContainer : cartesianProduct(copyOf(Suit.values()), copyOf(ranks))) {
-            Suit suit = (Suit) cardContainer.get(0);
-            Rank rank = (Rank) cardContainer.get(1);
-            cards.add(new Card(rank, suit));
-        }
-        
-        return cards;
-    }
-    
     
     public int getTotalNumberOfCardsInDeck() {
         return deckSize;

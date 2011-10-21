@@ -6,19 +6,20 @@ import static com.cubeia.poker.hand.Suit.CLUBS;
 import static com.cubeia.poker.hand.Suit.DIAMONDS;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.anyList;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import com.cubeia.poker.variant.telesina.TelesinaDeck;
 
@@ -40,40 +41,49 @@ public class TelesinaDeckTest {
     @SuppressWarnings("unchecked")
     @Test
     public void calculateRanksToUse() {
+    	Answer<?> answer = new Answer<List<Card>>() {
+        	
+        	@Override
+        	public List<Card> answer(InvocationOnMock invocation) throws Throwable {
+        		return (List<Card>) invocation.getArguments()[0];
+        	}
+		};
         Shuffler<Card> shuffler = mock(Shuffler.class);
+        when(shuffler.shuffle(anyList())).thenAnswer(answer);
         CardIdGenerator idGenerator = mock(CardIdGenerator.class);
+        when(idGenerator.copyAndAssignIds(anyList())).thenAnswer(answer);
         
         TelesinaDeck deck = new TelesinaDeck(shuffler, idGenerator, 2);
         assertThat(deck.getDeckLowestRank(), is(Rank.NINE));
-        assertThat(deck.createDeck().size(), is(6 * 4));
+        assertThat(deck.getAllCards().size(), is(6 * 4));
 
         deck = new TelesinaDeck(shuffler, idGenerator, 3);
         assertThat(deck.getDeckLowestRank(), is(Rank.EIGHT));
-        assertThat(deck.createDeck().size(), is(7 * 4));
+        assertThat(deck.getAllCards().size(), is(7 * 4));
         
         deck = new TelesinaDeck(shuffler, idGenerator, 4);
         assertThat(deck.getDeckLowestRank(), is(Rank.SEVEN));
-        assertThat(deck.createDeck().size(), is(8 * 4));
+        assertThat(deck.getAllCards().size(), is(8 * 4));
         
         deck = new TelesinaDeck(shuffler, idGenerator, 5);
         assertThat(deck.getDeckLowestRank(), is(Rank.SIX));
-        assertThat(deck.createDeck().size(), is(9 * 4));
+        assertThat(deck.getAllCards().size(), is(9 * 4));
         
         deck = new TelesinaDeck(shuffler, idGenerator, 6);
         assertThat(deck.getDeckLowestRank(), is(Rank.FIVE));
-        assertThat(deck.createDeck().size(), is(10 * 4));
+        assertThat(deck.getAllCards().size(), is(10 * 4));
         
         deck = new TelesinaDeck(shuffler, idGenerator, 7);
         assertThat(deck.getDeckLowestRank(), is(Rank.FOUR));
-        assertThat(deck.createDeck().size(), is(11 * 4));
+        assertThat(deck.getAllCards().size(), is(11 * 4));
         
         deck = new TelesinaDeck(shuffler, idGenerator, 9);
         assertThat(deck.getDeckLowestRank(), is(Rank.TWO));
-        assertThat(deck.createDeck().size(), is(Rank.values().length * 4));
+        assertThat(deck.getAllCards().size(), is(Rank.values().length * 4));
         
         deck = new TelesinaDeck(shuffler, idGenerator, 10);
         assertThat(deck.getDeckLowestRank(), is(Rank.TWO));
-        assertThat(deck.createDeck().size(), is(Rank.values().length * 4));
+        assertThat(deck.getAllCards().size(), is(Rank.values().length * 4));
     }
 
     
@@ -110,27 +120,6 @@ public class TelesinaDeckTest {
         
         deck = new TelesinaDeck(shuffler, idGenerator, 10);
         assertThat(deck.getTotalNumberOfCardsInDeck(), is(13 * 4));
-    }
-    
-    
-    
-    @SuppressWarnings("unchecked")
-    @Test
-    public void testCreateDeck() {
-        Shuffler<Card> shuffler = mock(Shuffler.class);
-        CardIdGenerator idGenerator = mock(CardIdGenerator.class);
-        TelesinaDeck deck = new TelesinaDeck(shuffler, idGenerator, 4);
-        
-        List<Card> cards = deck.createDeck();
-        assertThat(cards, notNullValue());
-        assertThat(cards.size(), is(32));
-        assertThat(new HashSet<Card>(cards).size(), is(32));
-        
-        deck = new TelesinaDeck(shuffler, idGenerator, 10);
-        cards = deck.createDeck();
-        assertThat(cards, notNullValue());
-        assertThat(cards.size(), is(52));
-        assertThat(new HashSet<Card>(cards).size(), is(52));
     }
     
     @SuppressWarnings("unchecked")

@@ -24,8 +24,6 @@ import com.cubeia.firebase.api.game.context.GameContext;
 import com.cubeia.firebase.api.game.table.ExtendedDetailsProvider;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.server.SystemException;
-import com.cubeia.firebase.api.service.ServiceRegistry;
-import com.cubeia.firebase.api.util.ParameterUtil;
 import com.cubeia.firebase.guice.game.Configuration;
 import com.cubeia.firebase.guice.game.GuiceGame;
 import com.cubeia.firebase.io.protocol.Param;
@@ -43,7 +41,7 @@ public class PokerGame extends GuiceGame implements ExtendedDetailsProvider {
 	public static String CURRENCY_CODE = "EUR";
 	public static final int CURRENCY_FRACTIONAL_DIGITS = 2;
     
-    private ServiceRegistry services;
+    // private ServiceRegistry services;
 
 	/*------------------------------------------------
 	 
@@ -61,7 +59,7 @@ public class PokerGame extends GuiceGame implements ExtendedDetailsProvider {
 	
 	public void init(GameContext con) throws SystemException {
     	super.init(con);
-        services = con.getServices();
+        // services = con.getServices();
     }
 	
 	 public void destroy() {}

@@ -66,7 +66,6 @@ import com.google.common.annotations.VisibleForTesting;
  */
 public class ActionTransformer {
     
-    @SuppressWarnings("unused")
     private static transient Logger log = Logger.getLogger(ActionTransformer.class);
     
     private static AtomicInteger sequenceCounter = new AtomicInteger();

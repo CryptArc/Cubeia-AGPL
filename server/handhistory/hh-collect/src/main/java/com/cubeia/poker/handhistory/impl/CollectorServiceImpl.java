@@ -20,8 +20,20 @@ import com.cubeia.poker.handhistory.api.Player;
 import com.cubeia.poker.handhistory.api.Results;
 import com.google.inject.Inject;
 
-// TODO Persist on each event to support fail-over
-// TODO Real hand from database to support fail-over
+/**
+ * This is the collector implementation. It caches hands in a map
+ * and will use an optional hand history persister service to
+ * persist the result when the hand is ended. If no persister service
+ * is deployed it will write the hand to the logs in JSON format on
+ * DEBUG level.
+ * 
+ * @author Lars J. Nilsson
+ */
+
+// TODO Reap dead hands?
+// TODO Persist on each event to support fail-over?
+// TODO Read hand from database (if not found) to support fail-over
+
 public class CollectorServiceImpl implements HandHistoryCollectorService {
 
 	@Log4j
@@ -62,10 +74,9 @@ public class CollectorServiceImpl implements HandHistoryCollectorService {
 	}
 
 	@Override
-	public void reportResults(int tableId, long totalRake, Results res) {
+	public void reportResults(int tableId, Results res) {
 		log.debug("Result on table " + tableId + " resported");
 		HistoricHand hand = getCurrent(tableId);
-		hand.setTotalRake(totalRake);
 		hand.setResults(res);
 	}
 

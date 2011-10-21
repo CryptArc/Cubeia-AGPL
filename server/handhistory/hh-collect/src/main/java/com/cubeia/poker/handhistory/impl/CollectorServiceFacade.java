@@ -52,8 +52,8 @@ public class CollectorServiceFacade extends GuiceService implements HandHistoryC
 	}
 	
 	@Override
-	public void reportResults(int tableId, long totalRake, Results res) {
-		g().reportResults(tableId, totalRake, res);
+	public void reportResults(int tableId, Results res) {
+		g().reportResults(tableId, res);
 	}
 	
 	
