@@ -5,10 +5,26 @@ import java.util.Map;
 
 public class Results {
 
+	private long totalRake;
+	
 	private final Map<Integer, HandResult> results = new HashMap<Integer, HandResult>();
+	
+	public Results(long totalRake) {
+		this.totalRake = totalRake;
+	}
+	
+	public Results() { }
 	
 	public Map<Integer, HandResult> getResults() {
 		return results;
+	}
+	
+	public void setTotalRake(long totalRake) {
+		this.totalRake = totalRake;
+	}
+	
+	public long getTotalRake() {
+		return totalRake;
 	}
 
 	@Override

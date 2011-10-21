@@ -10,27 +10,16 @@ public class HistoricHand {
 	private long startTime;
 	private long endTime;
 	
-	private long totalRake = -1;
-	
 	private DeckInfo deckInfo;
+	private Results results;
 	
 	private final List<HandHistoryEvent> events = new ArrayList<HandHistoryEvent>();
 	private final List<Player> seats = new ArrayList<Player>(6);
-	
-	private Results results;
 
 	public HistoricHand(HandIdentification id) {
 		this.handId = id;
 	}
 	
-	public long getTotalRake() {
-		return totalRake;
-	}
-	
-	public void setTotalRake(long totalRake) {
-		this.totalRake = totalRake;
-	}
-
 	public Results getResults() {
 		return results;
 	}
@@ -87,7 +76,6 @@ public class HistoricHand {
 		result = prime * result + ((results == null) ? 0 : results.hashCode());
 		result = prime * result + ((seats == null) ? 0 : seats.hashCode());
 		result = prime * result + (int) (startTime ^ (startTime >>> 32));
-		result = prime * result + (int) (totalRake ^ (totalRake >>> 32));
 		return result;
 	}
 
@@ -129,16 +117,14 @@ public class HistoricHand {
 			return false;
 		if (startTime != other.startTime)
 			return false;
-		if (totalRake != other.totalRake)
-			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
 		return "HistoricHand [handId=" + handId + ", startTime=" + startTime
-				+ ", endTime=" + endTime + ", totalRake=" + totalRake
-				+ ", deckInfo=" + deckInfo + ", events=" + events + ", seats="
-				+ seats + ", results=" + results + "]";
+				+ ", endTime=" + endTime + ", deckInfo=" + deckInfo
+				+ ", events=" + events + ", seats=" + seats + ", results="
+				+ results + "]";
 	}
 }
