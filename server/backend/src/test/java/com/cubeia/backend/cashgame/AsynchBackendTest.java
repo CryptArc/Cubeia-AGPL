@@ -1,10 +1,11 @@
 package com.cubeia.backend.cashgame;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -17,8 +18,6 @@ import com.cubeia.backend.cashgame.dto.AnnounceTableFailedResponse;
 import com.cubeia.backend.cashgame.dto.AnnounceTableRequest;
 import com.cubeia.backend.cashgame.dto.AnnounceTableResponse;
 import com.cubeia.backend.cashgame.dto.BalanceUpdate;
-import com.cubeia.backend.cashgame.dto.BetStrategy;
-import com.cubeia.backend.cashgame.dto.Currency;
 import com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse;
 import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
 import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
@@ -112,7 +111,7 @@ public class AsynchBackendTest {
 
 		OpenSessionCallbackHandler callback = new OpenSessionCallbackHandler();
 
-		when(backingMock.openSession(any(OpenSessionRequest.class))).thenThrow(new OpenSessionFailedException("fail fail fail", OpenSessionFailedResponse.ErrorCode.B));
+		when(backingMock.openSession(any(OpenSessionRequest.class))).thenThrow(new OpenSessionFailedException("fail fail fail", OpenSessionFailedResponse.ErrorCode.UNKOWN_PLATFORM_TABLE_ID));
 
 		backend.openSession(request, callback);
 
@@ -120,7 +119,7 @@ public class AsynchBackendTest {
 		assertTrue(response instanceof OpenSessionFailedResponse);
 		OpenSessionFailedResponse openSessionFailedResponse = (OpenSessionFailedResponse) response;
 		assertEquals("fail fail fail", openSessionFailedResponse.message);
-		assertEquals(OpenSessionFailedResponse.ErrorCode.B, openSessionFailedResponse.errorCode);
+		assertEquals(OpenSessionFailedResponse.ErrorCode.UNKOWN_PLATFORM_TABLE_ID, openSessionFailedResponse.errorCode);
 
 	}
 
