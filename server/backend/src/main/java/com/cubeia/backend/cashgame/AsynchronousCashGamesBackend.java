@@ -41,6 +41,11 @@ public class AsynchronousCashGamesBackend implements CashGamesBackend {
 		this.executor = executor;
 	}
 
+	@Override
+	public String generateHandId() {
+		return backingImpl.generateHandId();
+	}
+	
 	public void announceTable(final AnnounceTableRequest request, final AnnounceTableCallback callback) {
 		executor.submit(new Callable<Void>() {
 			public Void call() {

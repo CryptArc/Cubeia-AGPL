@@ -27,7 +27,6 @@ public class FirebaseState implements Serializable {
     private static final long serialVersionUID = 1L;
     
     private int currentRequestSequence = -1;
-    
     private int handCount = 0;
     
     /* FIXME: Why do we have an JPA Entity in this distributed stateful object? */

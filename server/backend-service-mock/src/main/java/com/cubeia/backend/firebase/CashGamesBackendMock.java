@@ -3,6 +3,7 @@ package com.cubeia.backend.firebase;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
@@ -49,6 +50,11 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
         Multimaps.<PlayerSessionId, Integer>synchronizedListMultimap(ArrayListMultimap.<PlayerSessionId, Integer>create());
 
     private ServiceRouter router;
+    
+    @Override
+    public String generateHandId() {
+    	return UUID.randomUUID().toString();
+    }
     
     private int nextId() {
         return idSequence.incrementAndGet();

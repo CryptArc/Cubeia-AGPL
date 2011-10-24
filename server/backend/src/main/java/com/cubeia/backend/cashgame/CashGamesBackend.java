@@ -17,6 +17,15 @@ import com.cubeia.backend.cashgame.exceptions.CloseTableFailedException;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
 
 public interface CashGamesBackend {
+	
+	/**
+	 * Generate a new hand ID. This method is synchronous and
+	 * should be implemented to return as swiftly as possible as it
+	 * will be called between all hands. 
+	 * 
+	 * @return A new hand ID, never null
+	 */
+	String generateHandId();
 
     /**
      * Async call to announce table. 

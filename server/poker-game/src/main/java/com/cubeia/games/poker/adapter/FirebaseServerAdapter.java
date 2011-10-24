@@ -147,17 +147,20 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
 	@Override
 	public void notifyNewHand() {
+		String handId = backend.generateHandId();
 		PlayedHand playedHand = new PlayedHand();
 		playedHand.setTableId(table.getId());
+		playedHand.setIntegrationId(handId);
 		playedHand.setEvents(new HashSet<PlayedHandEvent>());
 		getFirebaseState().setPlayerHand(playedHand);
-
+		
 		StartNewHand packet = new StartNewHand();
+		packet.handId = handId;
 		GameDataAction action = protocolFactory.createGameAction(packet, 0, table.getId());
 		log.debug("--> Send StartNewHand["+packet+"] to everyone");
 		sendPublicPacket(action, -1);
 
-		log.debug("Starting new hand. FBPlayers: "+table.getPlayerSet().getPlayerCount()+", PokerPlayers: "+state.getSeatedPlayers().size());
+		log.debug("Starting new hand with ID '" + handId + "'. FBPlayers: "+table.getPlayerSet().getPlayerCount()+", PokerPlayers: "+state.getSeatedPlayers().size());
 	}
 
 	@Override

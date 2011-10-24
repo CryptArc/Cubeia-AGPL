@@ -40,11 +40,20 @@ public class PlayedHand implements Serializable {
 	private Integer id;
 
     private int tableId = -1;
+    private String integrationId;
     
     private Date date = new Date();
     
     private Set<PlayedHandEvent> events;
 
+    public String getIntegrationId() {
+		return integrationId;
+	}
+    
+    public void setIntegrationId(String integrationId) {
+		this.integrationId = integrationId;
+	}
+    
     @Id @GeneratedValue(strategy=GenerationType.AUTO)
     public Integer getId() {
         return id;

@@ -21,6 +21,8 @@ import com.cubeia.backend.cashgame.exceptions.ReserveFailedException;
 
 public interface SynchronousCashGamesBackend {
 	
+	String generateHandId();
+	
 	AnnounceTableResponse announceTable(AnnounceTableRequest request) throws AnnounceTableFailedException;
 
 	void closeTable(CloseTableRequest request) throws CloseTableFailedException;

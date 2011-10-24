@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TablePlayerSet;
 import com.cubeia.firebase.guice.inject.Service;
+import com.cubeia.games.poker.FirebaseState;
 import com.cubeia.games.poker.handhistory.HandHistoryCollectorService;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.PokerAction;
@@ -131,8 +132,8 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
 		if(!checkHasService()) return; // SANITY CHECK
 		List<Player> seats = getSeatsFromState();
 		String tableExtId = getIntegrationTableId();
-		String handId = null; // TODO Add hand id...
-		HandIdentification id = new HandIdentification(table.getId(), tableExtId, handId);
+		String handExtId = getIntegrationHandId();
+		HandIdentification id = new HandIdentification(table.getId(), tableExtId, handExtId);
 		this.service.startHand(id, seats); 
 	}
 
@@ -160,6 +161,14 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
 	
 	
 	// --- PRIVATE METHODS --- //
+	
+	private FirebaseState getFirebaseState() {
+		return (FirebaseState)state.getAdapterState();
+	}
+	
+	public String getIntegrationHandId() {
+		return getFirebaseState().getPlayerHand().getIntegrationId();
+	}
 	
 	private String getIntegrationTableId() {
 		return state.getIntegrationId();
