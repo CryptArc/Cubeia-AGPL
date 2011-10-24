@@ -287,7 +287,7 @@ public class ActionTransformer {
         return gameCards;
     }
 
-	public static HandEnd createHandEndPacket(Collection<RatedPlayerHand> hands, PotTransfers potTransfers) {
+	public static HandEnd createHandEndPacket(Collection<RatedPlayerHand> hands, PotTransfers potTransfers, List<Integer> playerIdRevealOrder) {
 		HandEnd packet = new HandEnd();
 		packet.hands = new LinkedList<BestHand>();
 
@@ -307,6 +307,13 @@ public class ActionTransformer {
 		}
 		
         packet.potTransfers = potTransfers;
+        
+        int[] playerIdRevealOrderArray = new int[playerIdRevealOrder.size()]; 
+        int index = 0;
+        for (Integer playerId : playerIdRevealOrder) {
+        	playerIdRevealOrderArray[index++] = playerId;
+        }
+        packet.playerIdRevealOrder = playerIdRevealOrderArray;
 
 		return packet;
 	}

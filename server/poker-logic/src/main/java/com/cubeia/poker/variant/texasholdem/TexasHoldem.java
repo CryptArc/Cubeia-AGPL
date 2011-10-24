@@ -40,6 +40,7 @@ import com.cubeia.poker.hand.TexasHoldemHandComparator;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.result.HandResult;
+import com.cubeia.poker.result.RevealOrderCalculator;
 import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.rounds.DealCommunityCardsRound;
 import com.cubeia.poker.rounds.DealPocketCardsRound;
@@ -295,7 +296,9 @@ public class TexasHoldem implements GameType, RoundVisitor {
 		
 		if (isHandFinished()) {
 		    exposeShowdownCards();
-            HandResult handResult = new HandResultCreator(new TexasHoldemHandCalculator()).createHandResult(state.getCommunityCards(), handResultCalculator, state.getPotHolder(), state.getCurrentHandPlayerMap());
+		    PokerPlayer playerAtDealerButton = state.getPlayerAtDealerButton();
+		    List<Integer> playerRevealOrder = new RevealOrderCalculator().calculateRevealOrder(state.getCurrentHandSeatingMap(), state.getLastPlayerToBeCalled(), playerAtDealerButton);
+            HandResult handResult = new HandResultCreator(new TexasHoldemHandCalculator()).createHandResult(state.getCommunityCards(), handResultCalculator, state.getPotHolder(), state.getCurrentHandPlayerMap(), playerRevealOrder );
             handleFinishedHand(handResult);
 			state.getPotHolder().clearPots();
 		} else {

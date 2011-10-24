@@ -26,6 +26,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
@@ -74,13 +75,14 @@ public class ActionTransformerTest {
 		hands.add(new RatedPlayerHand(new PlayerHand(22, hand2), HandType.HIGH_CARD, Card.list("Qs Js Ts Td Tc")));
 		
 		PotTransfers potTransfers = new PotTransfers();
-        HandEnd end = ActionTransformer.createHandEndPacket(hands, potTransfers);
+        HandEnd end = ActionTransformer.createHandEndPacket(hands, potTransfers, Arrays.asList(1, 2, 10));
 		
 		Assert.assertEquals(2, end.hands.size());
 		Assert.assertNotSame("Two High", end.hands.get(0).handType.name());
 		Assert.assertNotSame("Two High", end.hands.get(1).handType.name());
 		
 		assertThat(end.potTransfers, is(potTransfers));
+		assertThat(end.playerIdRevealOrder, is(new int[] {1, 2, 10}));
 	}
 
 	private void addIdsToCards(Hand hand) {

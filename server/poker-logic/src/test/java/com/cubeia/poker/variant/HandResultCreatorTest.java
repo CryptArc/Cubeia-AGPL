@@ -8,6 +8,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -63,7 +64,7 @@ public class HandResultCreatorTest {
 
 		List<Card> communityCards = Card.list("TS");
 		
-		HandResult result = creator.createHandResult(communityCards, resultCalculator, potHolder, playerMap);
+		HandResult result = creator.createHandResult(communityCards, resultCalculator, potHolder, playerMap, new ArrayList<Integer>());
 
 		assertNotNull(result);
 		

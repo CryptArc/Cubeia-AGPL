@@ -182,6 +182,8 @@ public class PokerState implements Serializable, IPokerState {
 
 	@VisibleForTesting
 	protected PokerSettings settings;
+	
+	private PokerPlayer lastPlayerToBeCalled;
 
 	public PokerState() {}
 
@@ -790,4 +792,20 @@ public class PokerState implements Serializable, IPokerState {
 	public PokerSettings getSettings() {
 		return settings;
 	}
+
+	public PokerPlayer getLastPlayerToBeCalled() {
+		return lastPlayerToBeCalled;
+	}
+
+	public void setLastPlayerToBeCalled(PokerPlayer lastPlayerToBeCalled) {
+		this.lastPlayerToBeCalled = lastPlayerToBeCalled;
+	}
+
+	public PokerPlayer getPlayerAtDealerButton() {
+		if (getCurrentHandSeatingMap() == null  ||  getCurrentHandSeatingMap().isEmpty()) {
+			throw new IllegalStateException("no current hand seating map when getting player at dealer button");
+		}
+		return getCurrentHandSeatingMap().get(getBlindsInfo().getDealerButtonSeatId());
+	}
+
 }

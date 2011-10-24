@@ -48,6 +48,8 @@ public class HandResult implements Serializable {
 
 	private final List<RatedPlayerHand> playerHands;
 	
+	private final List<Integer> playerRevealOrder;
+	
 	private final Collection<PotTransition> potTransitions;
 
     private Map<PokerPlayer, Long> rakeContributions;
@@ -56,22 +58,32 @@ public class HandResult implements Serializable {
 
 	public HandResult() {
 	    this(Collections.<PokerPlayer, Result>emptyMap(), Collections.<RatedPlayerHand>emptyList(), 
-	        Collections.<PotTransition>emptyList(), null);
+	        Collections.<PotTransition>emptyList(), null, Collections.<Integer>emptyList());
 	}
 	
 	public HandResult(
 	    Map<PokerPlayer, Result> results, 
 	    List<RatedPlayerHand> playerHands, 
 	    Collection<PotTransition> potTransitions, 
-	    RakeInfoContainer rakeInfoContainer) {
+	    RakeInfoContainer rakeInfoContainer,
+	    List<Integer> playerRevealOrder) {
 	    
 		this.totalRake = (rakeInfoContainer == null ? -1 : rakeInfoContainer.getTotalRake());
 	    this.results = unmodifiableMap(results);
 	    this.playerHands = unmodifiableList(playerHands);
+	    this.playerRevealOrder = unmodifiableList(playerRevealOrder);
         this.potTransitions = Collections.unmodifiableCollection(potTransitions);
         this.rakeContributions = rakeInfoContainer == null 
             ? Collections.<PokerPlayer, Long>emptyMap() 
             : calculateRakeContributions(rakeInfoContainer, results);
+	}
+	
+	/**
+	 * Returns the order the players should reveal their hidden cards in.
+	 * @return list of player id:s, never null
+	 */
+	public List<Integer> getPlayerRevealOrder() {
+		return playerRevealOrder;
 	}
 	
 	public List<RatedPlayerHand> getPlayerHands() {
@@ -85,19 +97,6 @@ public class HandResult implements Serializable {
     public long getTotalRake() {
 		return totalRake;
 	}
-    
-//    /**
-//     * Fetch all pots in this hand by the result map.
-//     * @return all pots in this hand
-//     */
-//    @VisibleForTesting
-//    private Set<Pot> extractPots(Collection<Result> results) {
-//        HashSet<Pot> pots = new HashSet<Pot>();
-//        for (Result result : results) {
-//            pots.addAll(result.getWinningsByPot().keySet());
-//        }
-//        return pots;
-//    }
     
     /**
      * Calculate the rake contribution by player.

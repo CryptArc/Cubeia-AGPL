@@ -52,6 +52,10 @@ public class BettingRound implements Round, BettingRoundContext {
 	private long lastBetSize = 0;
 
     private final PlayerToActCalculator playerToActCalculator;
+    
+    private PokerPlayer lastPlayerToPlaceABet; 
+    
+    private PokerPlayer lastPlayerToBeCalled;
 	
 	public BettingRound(GameType gameType, int dealerSeatId, PlayerToActCalculator playerToActCalculator) {
 		this.gameType = gameType;
@@ -211,6 +215,7 @@ public class BettingRound implements Round, BettingRoundContext {
 		}
 		
 		highBet = amount;
+		lastPlayerToPlaceABet = player;
 		player.addBet(highBet - player.getBetStack());
 		resetHasActed();
 	}
@@ -223,7 +228,7 @@ public class BettingRound implements Round, BettingRoundContext {
 	private void bet(PokerPlayer player, long amount) {
 		lastBetSize = amount;
 		highBet = highBet + amount;
-		
+		lastPlayerToPlaceABet = player;
 		player.addBet(highBet - player.getBetStack());
 		resetHasActed();
 	}
@@ -247,6 +252,7 @@ public class BettingRound implements Round, BettingRoundContext {
 	@VisibleForTesting
 	protected void call(PokerPlayer player) {
 		player.addBet(getAmountToCall(player));
+		lastPlayerToBeCalled = lastPlayerToPlaceABet;
 		gameType.getState().call();
 	}
 
@@ -304,5 +310,9 @@ public class BettingRound implements Round, BettingRoundContext {
 
 	public long getSizeOfLastBetOrRaise() {
 		return lastBetSize;
+	}
+
+	public PokerPlayer getLastPlayerToBeCalled() {
+		return lastPlayerToBeCalled;
 	}
 }

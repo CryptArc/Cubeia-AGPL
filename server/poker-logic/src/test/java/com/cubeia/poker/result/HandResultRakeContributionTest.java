@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,8 +37,7 @@ public class HandResultRakeContributionTest {
         
         int totalPot = 500 * 3 + 1000 * 2;
         RakeInfoContainer rakeInfoContainer = new RakeInfoContainer(totalPot, totalPot / 10, null);
-        HandResult result = new HandResult(results, Collections.<RatedPlayerHand>emptyList(), 
-            Collections.<PotTransition>emptyList(), rakeInfoContainer);
+        HandResult result = new HandResult(results, Collections.<RatedPlayerHand>emptyList(),Collections.<PotTransition>emptyList(), rakeInfoContainer, new ArrayList<Integer>());
         
         assertThat(result.getRakeContributionByPlayer(player1), is(50L));
         assertThat(result.getRakeContributionByPlayer(player2), is(150L));

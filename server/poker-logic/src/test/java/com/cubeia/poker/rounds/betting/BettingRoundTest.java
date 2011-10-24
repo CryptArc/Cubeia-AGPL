@@ -17,14 +17,15 @@
 
 package com.cubeia.poker.rounds.betting;
 
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import junit.framework.TestCase;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.mockito.Mockito;
-
-import junit.framework.TestCase;
 
 import com.cubeia.poker.GameType;
 import com.cubeia.poker.IPokerState;
@@ -106,8 +107,9 @@ public class BettingRoundTest extends TestCase implements TestListener {
 		assertFalse(game.roundFinished);
 
 		verifyAndAct(p[1], PokerActionType.BET, 100);
+			
 		assertTrue(requestedAction.isOptionEnabled(PokerActionType.RAISE));
-		verifyAndAct(p[0], PokerActionType.RAISE, 200);
+		verifyAndAct(p[0], PokerActionType.RAISE, 200);		
 	}
 	
     @Test
@@ -121,7 +123,21 @@ public class BettingRoundTest extends TestCase implements TestListener {
 
 		actMax(PokerActionType.BET);
 		assertFalse(requestedAction.isOptionEnabled(PokerActionType.RAISE));
-	}	
+	}
+    
+    @Test
+	public void testCallSetsLastPlayerToBeCalled() {
+		MockPlayer[] p = TestUtils.createMockPlayers(2);
+
+		game.addPlayers(p);
+		round = new BettingRound(game, 0, new DefaultPlayerToActCalculator());
+		
+		act(p[1], PokerActionType.BET, 100);
+		act(p[0], PokerActionType.CALL, 100);
+		
+		PokerPlayer player = p[1];
+		assertThat(round.getLastPlayerToBeCalled(), CoreMatchers.is(player));
+	}
 	
 	private void actMax(PokerActionType action) {
 		PossibleAction option = requestedAction.getOption(action);

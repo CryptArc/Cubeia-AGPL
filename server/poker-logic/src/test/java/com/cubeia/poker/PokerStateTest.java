@@ -71,7 +71,7 @@ public class PokerStateTest {
         results.put(player1, result1);
         results.put(player2, result2);
         
-        HandResult result = new HandResult(results, new ArrayList<RatedPlayerHand>(), Collections.<PotTransition>emptyList(), null);
+        HandResult result = new HandResult(results, new ArrayList<RatedPlayerHand>(), Collections.<PotTransition>emptyList(), null, new ArrayList<Integer>());
         state.playerMap = new HashMap<Integer, PokerPlayer>();
         
 		state.playerMap.put(player1Id, player1);

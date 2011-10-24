@@ -30,13 +30,14 @@ public class HandResultCreator {
 		this.hte = hte;
 	}
 
-	public HandResult createHandResult(List<Card> communityCards, HandResultCalculator handResultCalculator, PotHolder potHolder, Map<Integer, PokerPlayer> currentHandPlayerMap) {
-		List<PlayerHand> playerHands = createHandHolder(communityCards, currentHandPlayerMap.values());
-		Map<PokerPlayer, Result> playerResults = handResultCalculator.getPlayerResults(playerHands, potHolder, currentHandPlayerMap);
+	public HandResult createHandResult(List<Card> communityCards, HandResultCalculator handResultCalculator, PotHolder potHolder, 
+			Map<Integer, PokerPlayer> currentHandPlayerMap, List<Integer> playerRevealOrder) {
 		
+		List<PlayerHand> playerHands = createHandsList(communityCards, currentHandPlayerMap.values());
+		Map<PokerPlayer, Result> playerResults = handResultCalculator.getPlayerResults(playerHands, potHolder, currentHandPlayerMap);
 		Collection<PotTransition> potTransitions = createPotTransitionsByResults(playerResults);
 		
-		return new HandResult(playerResults, rateHands(playerHands), potTransitions, potHolder.calculateRake());
+		return new HandResult(playerResults, rateHands(playerHands), potTransitions, potHolder.calculateRake(), playerRevealOrder);
 	}
 
 	@VisibleForTesting
@@ -51,7 +52,7 @@ public class HandResultCreator {
         return potTransitions;
     }
 
-	private List<PlayerHand> createHandHolder(List<Card> communityCards, Collection<PokerPlayer> players) {
+	private List<PlayerHand> createHandsList(List<Card> communityCards, Collection<PokerPlayer> players) {
 		ArrayList<PlayerHand> playerHands = new ArrayList<PlayerHand>();
 
 		for (PokerPlayer player : players) {

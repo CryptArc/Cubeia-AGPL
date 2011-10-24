@@ -38,6 +38,7 @@ import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.result.HandResult;
+import com.cubeia.poker.result.RevealOrderCalculator;
 import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.rounds.DealCommunityCardsRound;
 import com.cubeia.poker.rounds.DealPocketCardsRound;
@@ -340,6 +341,8 @@ public class Telesina implements GameType, RoundVisitor {
 	
 	@Override
 	public void visit(BettingRound bettingRound) {
+		state.setLastPlayerToBeCalled(bettingRound.getLastPlayerToBeCalled());
+		
 	    if (!isHandFinished()) {
     		Collection<PotTransition> potTransitions = moveChipsToPot();
     		reportPotAndRakeUpdates(potTransitions);
@@ -350,10 +353,15 @@ public class Telesina implements GameType, RoundVisitor {
 			HandResultCreator resultCreator = new HandResultCreator(new TelesinaHandStrengthEvaluator(getDeckLowestRank()));
 		    HandResultCalculator resultCalculator = new HandResultCalculator(new TelesinaHandComparator(deck.getDeckLowestRank()));
 			Map<Integer, PokerPlayer> players = state.getCurrentHandPlayerMap();
-			HandResult handResult = resultCreator.createHandResult(state.getCommunityCards(), resultCalculator, state.getPotHolder(), players);
+
+			PokerPlayer playerAtDealerButton = state.getPlayerAtDealerButton();
+			
+			List<Integer> playerRevealOrder = new RevealOrderCalculator().calculateRevealOrder(state.getCurrentHandSeatingMap(), state.getLastPlayerToBeCalled(), playerAtDealerButton);
+			HandResult handResult = resultCreator.createHandResult(state.getCommunityCards(), resultCalculator, state.getPotHolder(), players, playerRevealOrder);
 			
             handleFinishedHand(handResult);
 			state.getPotHolder().clearPots();
+			
 		} else if (getBettingRoundId() == 4) {
 		    setCurrentRound(roundFactory.createDealVelaCardRound());
 			scheduleRoundTimeout();

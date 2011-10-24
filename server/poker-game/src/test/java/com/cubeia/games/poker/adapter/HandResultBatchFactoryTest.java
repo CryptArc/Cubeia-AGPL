@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -56,7 +57,7 @@ public class HandResultBatchFactoryTest {
         results.put(pokerPlayer2, result2);
         
         RakeInfoContainer rakeInfoContainer = new RakeInfoContainer(1000 * 2, (1000 * 2) / 100, new HashMap<Pot, BigDecimal>());
-        HandResult handResult = new HandResult(results, Collections.<RatedPlayerHand>emptyList(), Collections.<PotTransition>emptyList(), rakeInfoContainer );
+        HandResult handResult = new HandResult(results, Collections.<RatedPlayerHand>emptyList(), Collections.<PotTransition>emptyList(), rakeInfoContainer, new ArrayList<Integer>() );
         
         BatchHandRequest batchHandRequest = handResultFactory.createBatchHandRequest(handResult, handId, tableId);
         
