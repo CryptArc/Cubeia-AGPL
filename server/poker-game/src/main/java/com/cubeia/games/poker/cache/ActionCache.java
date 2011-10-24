@@ -61,7 +61,17 @@ public class ActionCache {
      * @param action
      */
     public void addPublicAction(int tableId, GameAction action) {
-        cache.put(tableId, ActionContainer.createPublic(action));
+    	addPublicActionWithExclusion(tableId, action, -1);
+	}
+    
+    /**
+     * Add public action to a table state cache.
+     * 
+     * @param tableId
+     * @param action
+     */
+    public void addPublicActionWithExclusion(int tableId, GameAction action, int excludedPlayerId) {
+        cache.put(tableId, ActionContainer.createPublic(action, excludedPlayerId));
 		log.trace("added public action to cache, tableId = {}, action type = {}, new cache size = {}", 
 		    new Object[] {tableId, action.getClass().getSimpleName(), cache.get(tableId).size()});
 		

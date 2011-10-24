@@ -545,7 +545,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		}
 		// Add to state cache
 		if (cache != null) {
-			cache.addPublicAction(table.getId(), action);
+			cache.addPublicActionWithExclusion(table.getId(), action, skipPlayerId);
 		}
 	}
 

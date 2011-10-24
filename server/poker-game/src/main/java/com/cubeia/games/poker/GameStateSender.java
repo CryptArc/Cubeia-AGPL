@@ -48,7 +48,7 @@ public class GameStateSender {
 	        actions.add(protocolFactory.createGameAction(new StartHandHistory(), playerId, tableId));
 	        
 	        Collection<ActionContainer> containers = actionCache.getPrivateAndPublicActions(tableId, playerId);
-	        Collection<GameAction> actionsFromCache = filterRequestActions(containers);
+	        Collection<GameAction> actionsFromCache = filterRequestActions(containers, playerId);
 	        actions.addAll(actionsFromCache);
 	        
 	        actions.add(protocolFactory.createGameAction(new StopHandHistory(), playerId, tableId));
@@ -63,15 +63,18 @@ public class GameStateSender {
     
     
     /**
-     * Filter the game actions list by removing all GameDataActions containing RequestAction packets
+     * 1. Filter the game actions list by removing all GameDataActions containing RequestAction packets
      * that have been answered by a PerformAction.
      * 
+     * 2. Remove all actions that are marked as excluded for this player id to avoid duplicates.
+     * 
      * @param actions actions to filter
+     * @param playerId, player id to check for exclusion.
      * @return new filtered list
      * @throws IOException 
      */
     @VisibleForTesting
-    protected List<GameAction> filterRequestActions(Collection<ActionContainer> actions) throws IOException {
+    protected List<GameAction> filterRequestActions(Collection<ActionContainer> actions, int playerId) throws IOException {
         LinkedList<GameAction> filteredActions = new LinkedList<GameAction>();
         StyxSerializer styxalizer = new StyxSerializer(new ProtocolObjectFactory());
         
@@ -79,6 +82,10 @@ public class GameStateSender {
         RequestAction lastRequest = null;
         
         for (ActionContainer container : actions) {
+        	if (container.getExcludedPlayerId() != null && container.getExcludedPlayerId() == playerId) {
+        		continue; // Exclude this action from the list
+        	}
+        	
         	GameAction ga = container.getGameAction();
             if (ga instanceof GameDataAction) {
                 GameDataAction gda = (GameDataAction) ga;
