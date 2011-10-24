@@ -17,6 +17,8 @@
 
 package com.cubeia.games.poker.activator;
 
+import static com.cubeia.poker.variant.telesina.TelesinaDeckUtil.createDeckCards;
+
 import java.math.BigDecimal;
 
 import org.slf4j.Logger;
@@ -133,10 +135,16 @@ public class PokerParticipant extends DefaultCreationParticipant {
 
 		acc.setIntAttribute("VISIBLE_IN_LOBBY", 0);
 		acc.setStringAttribute("SPEED", timing.name());
-		acc.setIntAttribute("ANTE", anteLevel);
+		// acc.setIntAttribute("ANTE", anteLevel);
+		acc.setIntAttribute("BETTING_GAME_ANTE", anteLevel);
+		acc.setStringAttribute("BETTING_GAME_BETTING_MODEL", "NO_LIMIT");
 		acc.setStringAttribute("MONETARY_TYPE", "REAL_MONEY");
 		acc.setIntAttribute("VISIBLE_IN_LOBBY", 1);
 		acc.setStringAttribute("VARIANT", variant.name());
+		acc.setIntAttribute("MIN_BUY_IN", pokerState.getMinBuyIn());
+		acc.setIntAttribute("MAX_BUY_IN", pokerState.getMaxBuyIn());
+		int deckSize = createDeckCards(pokerState.getTableSize()).size();
+		acc.setIntAttribute("DECK_SIZE", deckSize);
 		
 		log.debug("sending announce table request for firebase table id: {}", table.getId());
 		FirebaseCallbackFactory callbackFactory = cashGameBackendService.getCallbackFactory();
