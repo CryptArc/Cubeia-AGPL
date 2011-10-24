@@ -59,6 +59,8 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	protected boolean hasPostedEntryBet;
 
 	protected boolean isSittingOut;
+	
+	protected boolean exposingPocketCards;
 
 	private long balance = 0;
 
@@ -165,6 +167,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	public void clearHand() {
 		pocketCards.clear();
 		publicPocketCards.clear();
+		exposingPocketCards = false;
 	}
 
 	public void enableOption(PossibleAction option) {
@@ -293,5 +296,14 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	@Override
 	public Long getSitOutTimestamp() {
 		return sitOutTimestamp;
+	}
+
+	@Override
+	public boolean isExposingPocketCards() {
+		return exposingPocketCards;
+	}
+	
+	public void setExposingPocketCards(boolean exposingPocketCards) {
+		this.exposingPocketCards = exposingPocketCards;
 	}
 }

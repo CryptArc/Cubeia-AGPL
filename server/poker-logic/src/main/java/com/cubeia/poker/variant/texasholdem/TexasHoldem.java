@@ -155,20 +155,6 @@ public class TexasHoldem implements GameType, RoundVisitor {
         state.notifyPotAndRakeUpdates(Collections.<PotTransition>emptyList());
     }
 
-    /**
-	 * Expose all pocket cards for players still in the hand
-	 * i.e. not folded.
-	 */
-	private void exposeShowdownCards() {
-        if (state.countNonFoldedPlayers() > 1) {
-            for (PokerPlayer p : state.getCurrentHandSeatingMap().values()) {
-                if (!p.hasFolded()) {
-                    state.exposePrivateCards(p.getId(), p.getPocketCards().getCards());
-                }
-            }
-        }
-    }
-
     private void startBettingRound() {
     	log.trace("Starting new betting round. Round ID: "+(roundId+1));
 		currentRound = new BettingRound(this, blindsInfo.getDealerButtonSeatId(), new DefaultPlayerToActCalculator());
@@ -295,7 +281,7 @@ public class TexasHoldem implements GameType, RoundVisitor {
 		reportPotUpdate();
 		
 		if (isHandFinished()) {
-		    exposeShowdownCards();
+		    state.exposeShowdownCards();
 		    PokerPlayer playerAtDealerButton = state.getPlayerAtDealerButton();
 		    List<Integer> playerRevealOrder = new RevealOrderCalculator().calculateRevealOrder(state.getCurrentHandSeatingMap(), state.getLastPlayerToBeCalled(), playerAtDealerButton);
             HandResult handResult = new HandResultCreator(new TexasHoldemHandCalculator()).createHandResult(state.getCommunityCards(), handResultCalculator, state.getPotHolder(), state.getCurrentHandPlayerMap(), playerRevealOrder );

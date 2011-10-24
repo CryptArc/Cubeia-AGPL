@@ -576,6 +576,22 @@ public class PokerState implements Serializable, IPokerState {
 		}
 	}
 	
+	/**
+	 * Expose all pocket cards for players still in the hand
+	 * i.e. not folded. Will set a flag so that sequential calls
+	 * will not generate any outgoing packets.
+	 */
+	public void exposeShowdownCards() {
+        if (countNonFoldedPlayers() > 1) {
+            for (PokerPlayer p : getCurrentHandSeatingMap().values()) {
+                if (!p.hasFolded() && !p.isExposingPocketCards()) {
+                    exposePrivateCards(p.getId(), p.getPocketCards().getCards());
+                    p.setExposingPocketCards(true);
+                }
+            }
+        }
+    }
+	
 	/*------------------------------------------------
 	 
 		SERVER ADAPTER METHODS

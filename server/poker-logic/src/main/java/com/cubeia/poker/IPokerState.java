@@ -42,4 +42,6 @@ public interface IPokerState {
 	 * Must be invoked when the first call in the hand has been made.
 	 */
 	void call();
+
+	void exposeShowdownCards();
 }

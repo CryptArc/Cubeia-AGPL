@@ -212,6 +212,12 @@ public class MockGame implements GameType {
 			
 			@Override
 			public void call() {}
+
+			@Override
+			public void exposeShowdownCards() {
+				// TODO Auto-generated method stub
+				
+			}
 		};
 	}
 

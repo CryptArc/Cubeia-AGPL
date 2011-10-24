@@ -303,6 +303,8 @@ public class ActionTransformer {
 
 			BestHand best = new BestHand(ratedHand.getPlayerId(), convertHandTypeToEnum(ratedHand.getBestHandType()), cards);
 			
+			log.debug(" ::::::::: BEST HAND for player["+ratedHand.getPlayerId()+"]: "+best);
+			
 			packet.hands.add(best);
 		}
 		

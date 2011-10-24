@@ -86,6 +86,7 @@ public class BettingRound implements Round, BettingRoundContext {
 		PokerPlayer p = playerToActCalculator.getFirstPlayerToAct(dealerSeatId, gameType.getState().getCurrentHandSeatingMap(), gameType.getState().getCommunityCards());
 		
 		if (p == null || allOtherPlayersAreAllIn(p)) {
+			gameType.getState().exposeShowdownCards(); 
 			// No or only one player can act. We are currently in an all-in show down scenario
 			log.debug("Schedule all in timeout from initBettingRound");
 			isFinished = true;

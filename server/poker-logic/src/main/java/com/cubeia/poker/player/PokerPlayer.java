@@ -147,5 +147,9 @@ public interface PokerPlayer extends Serializable {
      * @return UTC milliseconds or null 
      */
     public Long getSitOutTimestamp();
+
+	public boolean isExposingPocketCards();
+
+	public void setExposingPocketCards(boolean b);
     
 }

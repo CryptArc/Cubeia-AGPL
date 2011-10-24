@@ -206,20 +206,6 @@ public class Telesina implements GameType, RoundVisitor {
         state.notifyPotAndRakeUpdates(potTransitions);
     }
 
-    /**
-	 * Expose all pocket cards for players still in the hand
-	 * i.e. not folded.
-	 */
-	private void exposeShowdownCards() {
-        if (state.countNonFoldedPlayers() > 1) {
-            for (PokerPlayer p : state.getCurrentHandSeatingMap().values()) {
-                if (!p.hasFolded()) {
-                    state.exposePrivateCards(p.getId(), p.getPocketCards().getCards());
-                }
-            }
-        }
-    }
-
     private void startBettingRound() {
 		setCurrentRound(roundFactory.createBettingRound(this, blindsInfo.getDealerButtonSeatId()));
 		setBettingRoundId(getBettingRoundId() + 1);
@@ -349,7 +335,7 @@ public class Telesina implements GameType, RoundVisitor {
 	    }
 		
 		if (isHandFinished()) {
-		    exposeShowdownCards();
+		    state.exposeShowdownCards();
 			HandResultCreator resultCreator = new HandResultCreator(new TelesinaHandStrengthEvaluator(getDeckLowestRank()));
 		    HandResultCalculator resultCalculator = new HandResultCalculator(new TelesinaHandComparator(deck.getDeckLowestRank()));
 			Map<Integer, PokerPlayer> players = state.getCurrentHandPlayerMap();
