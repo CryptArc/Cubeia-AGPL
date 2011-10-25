@@ -115,12 +115,9 @@ public class AnteRound implements Round {
 		boolean hasAllPlayersActed = anteRoundHelper.hasAllPlayersActed(game.getState().getCurrentHandPlayerMap().values());
 		boolean allPlayersButOneIsOut = (numberOfPlayersPayedAnte() + numberOfPendingPlayers()) <= 1;
 		
-		if (!hasAllPlayersActed && !allPlayersButOneIsOut) 
-		{
+		if (!hasAllPlayersActed  &&  !allPlayersButOneIsOut) {
 			requestNextAction(player.getSeatId());
-		}
-		else
-		{
+		} else {
 			setAllPlayersToDeclineEntryBet();
 		}
 	}
