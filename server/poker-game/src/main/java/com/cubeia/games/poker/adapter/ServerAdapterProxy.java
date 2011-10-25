@@ -79,7 +79,7 @@ public abstract class ServerAdapterProxy implements ServerAdapter {
 	}
 
 	@Override
-	public void exposePrivateCards(int playerId, List<Card> cards) {
+	public void exposePrivateCards(int playerId, Collection<Card> cards) {
 		if(getAdaptee() != null) {
 			getAdaptee().exposePrivateCards(playerId, cards);
 		}

@@ -46,6 +46,8 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	
 	protected Set<Card> publicPocketCards = new HashSet<Card>();
 	
+	protected Set<Card> privatePocketCards = new HashSet<Card>();
+	
 	protected boolean hasActed;
 	
 	protected boolean hasFolded;
@@ -120,6 +122,10 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	    return new HashSet<Card>(publicPocketCards);
 	}
 	
+	public Set<Card> getPrivatePocketCards() {
+		return privatePocketCards;
+	}
+	
 	public ActionRequest getActionRequest() {
 		return actionRequest;
 	}
@@ -161,12 +167,15 @@ public class DefaultPokerPlayer implements PokerPlayer {
 		pocketCards.addCard(card);
 		if (publicCard) {
 		    publicPocketCards.add(card);
+		} else {
+			privatePocketCards.add(card);
 		}
 	}
 
 	public void clearHand() {
 		pocketCards.clear();
 		publicPocketCards.clear();
+		privatePocketCards.clear();
 		exposingPocketCards = false;
 	}
 

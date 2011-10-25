@@ -114,7 +114,7 @@ public class MockServerAdapter implements ServerAdapter {
 	public void notifyPrivateCards(int playerId, List<Card> cards) {}
 	public void notifyHandCanceled() {}
 	public void notifyPrivateExposedCards(int playerId, List<Card> cards) {}
-	public void exposePrivateCards(int playerId, List<Card> cards) {}
+	public void exposePrivateCards(int playerId, Collection<Card> cards) {}
 	public void notifyDealerButton(int playerId) {}
     public void reportTournamentRound(RoundReport report) {}
     public void cleanupPlayers() {}

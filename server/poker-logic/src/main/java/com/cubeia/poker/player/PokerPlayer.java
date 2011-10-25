@@ -37,9 +37,15 @@ public interface PokerPlayer extends Serializable {
 	
 	/**
 	 * Get the players pocket cards that are public (visible to all).
-	 * @return set of visible pocket cards
+	 * @return set of visible pocket cards, never null
 	 */
 	public Set<Card> getPublicPocketCards();
+	
+	/**
+	 * Get the players pocket cards that are private (only visible to player).
+	 * @return set of visible pocket cards, never null
+	 */
+	public Set<Card> getPrivatePocketCards();
 	
 	public void addPocketCard(Card card, boolean publicCard);
 	

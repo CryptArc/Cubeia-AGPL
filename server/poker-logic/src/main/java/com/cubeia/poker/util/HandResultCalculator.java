@@ -27,9 +27,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.model.PlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
@@ -44,8 +41,6 @@ public class HandResultCalculator implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	private static Logger log = LoggerFactory.getLogger(HandResultCalculator.class);
-
 	private Comparator<Hand> comparator;
 
 	public HandResultCalculator(Comparator<Hand> comparator) {
@@ -100,10 +95,6 @@ public class HandResultCalculator implements Serializable {
 				participantIds.add(player.getId());
 			}
 			
-			
-			log.debug("Calculate winnings for Pot: "+pot);
-			log.debug("participants in this Pot: "+participantIds);
-			
 			// We need to remove all non-participants first
 			Collection<PlayerHand> filteredHands = filter(hands, participantIds);
 			
@@ -123,8 +114,6 @@ public class HandResultCalculator implements Serializable {
 					PokerPlayer player = playerMap.get(winnerId);
 					Long stake = potContributors.get(player);
 					addResultBalance(netResults, netStakes, winnerId, potShare, stake, rakeShare);
-					log.debug("Add winner pot result: "+winnerId+" : "+potShare+" - "+stake+" = "+(potShare-stake));
-					
 					addPotWinningShare(player, pot, potShare, playerPotWinningsShares);
 				}
 	
@@ -136,7 +125,6 @@ public class HandResultCalculator implements Serializable {
 					PokerPlayer player = playerMap.get(loserId);
 					Long stake = pot.getPotContributors().get(player);
 					addResultBalance(netResults, netStakes, loserId, 0l, stake, 0l);
-					log.debug("Add loser pot result: "+loserId+" : -"+stake);
 				}
 			}
 		}
@@ -173,10 +161,6 @@ public class HandResultCalculator implements Serializable {
 	 */
     private void addPotWinningShare(PokerPlayer player, Pot pot,
         long potShare, Map<PokerPlayer, Map<Pot, Long>> playerPotWinningsShares) {
-        
-        log.debug("adding player pot share: playerId = {}, potId = {}, share = {}", 
-            new Object[] {player.getId(), pot.getId(), potShare});
-        
         if (!playerPotWinningsShares.containsKey(player)) {
             playerPotWinningsShares.put(player, new HashMap<Pot, Long>());
         }

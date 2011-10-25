@@ -255,7 +255,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	}
 
 	@Override
-	public void exposePrivateCards(int playerId, List<Card> cards) {
+	public void exposePrivateCards(int playerId, Collection<Card> cards) {
 		ExposePrivateCards packet = ActionTransformer.createExposeCardsPacket(playerId, cards);
 		GameDataAction action = protocolFactory.createGameAction(packet, playerId, table.getId());
 		log.debug("--> Send ExposePrivateCards["+packet+"] to everyone");

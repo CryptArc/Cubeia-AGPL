@@ -585,7 +585,7 @@ public class PokerState implements Serializable, IPokerState {
         if (countNonFoldedPlayers() > 1) {
             for (PokerPlayer p : getCurrentHandSeatingMap().values()) {
                 if (!p.hasFolded() && !p.isExposingPocketCards()) {
-                    exposePrivateCards(p.getId(), p.getPocketCards().getCards());
+                    exposePrivateCards(p.getId(), p.getPrivatePocketCards());
                     p.setExposingPocketCards(true);
                 }
             }
@@ -628,7 +628,7 @@ public class PokerState implements Serializable, IPokerState {
 	    serverAdapter.notifyPrivateExposedCards(playerId, cards);
 	}
 	
-	public void exposePrivateCards(int playerId, List<Card> cards) {
+	public void exposePrivateCards(int playerId, Collection<Card> cards) {
 		serverAdapter.exposePrivateCards(playerId, cards);
 	}
 

@@ -67,7 +67,6 @@ public class PokerHandler extends DefaultPokerHandler {
 	    	TimeoutCache.getInstance().removeTimeout(table.getId(), playerId, table.getScheduler());
 	        PokerAction action = new PokerAction(playerId, ActionTransformer.transform(packet.action.type));
 	        action.setBetAmount(packet.betAmount);
-	        log.debug("Do Act: "+action);
 	        state.act(action);
 	    } 
 	}

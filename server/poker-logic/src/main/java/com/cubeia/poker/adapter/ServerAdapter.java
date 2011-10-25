@@ -73,7 +73,7 @@ public interface ServerAdapter {
 	 */
     void notifyPrivateExposedCards(int playerId, List<Card> cards);
 	
-	void exposePrivateCards(int playerId, List<Card> cards);
+	void exposePrivateCards(int playerId, Collection<Card> cards);
 	
     /**
      * A new hand is about to start.

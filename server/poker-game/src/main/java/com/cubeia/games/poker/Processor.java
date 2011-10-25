@@ -84,10 +84,7 @@ public class Processor implements GameProcessor, TournamentProcessor {
 	    ProtocolObject packet = null;
 	    
 		try {
-            log.debug("handling data object, actionId = {}, tableId = {}", 
-                new Object[] {action.getActionId(), action.getTableId()});
 			packet = serializer.unpack(action.getData());
-			log.debug("payload packet type: {}", packet.getClass().getSimpleName());
 			pokerHandler.setPlayerId(action.getPlayerId());
 			packet.accept(pokerHandler);
 			PokerStats.getInstance().setState(table.getId(), state.getStateDescription());			
@@ -109,9 +106,6 @@ public class Processor implements GameProcessor, TournamentProcessor {
 		stateInjector.injectAdapter(table);
 	    try {
     		Object attachment = action.getAttachment();
-    		
-    		log.debug("handling game object: {}", attachment.getClass().getSimpleName());
-    		
             if (attachment instanceof Trigger) {
     			Trigger command = (Trigger) attachment;
     			handleCommand(table, command);

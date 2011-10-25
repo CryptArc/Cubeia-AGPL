@@ -53,7 +53,7 @@ public class HandHistoryTranslator {
 		return p;
 	}
 
-	public static List<GameCard> translate(List<Card> cards) {
+	public static List<GameCard> translateCards(Collection<Card> cards) {
 		List<GameCard> list = new ArrayList<GameCard>(cards.size());
 		for (Card c : cards) {
 			list.add(translate(c));

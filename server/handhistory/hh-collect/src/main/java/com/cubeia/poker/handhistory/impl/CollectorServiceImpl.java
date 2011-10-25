@@ -61,21 +61,18 @@ public class CollectorServiceImpl implements HandHistoryCollectorService {
 
 	@Override
 	public void reportEvent(int tableId, HandHistoryEvent event) {
-		log.debug("Event on table " + tableId + ": " + event.getType());
 		HistoricHand hand = getCurrent(tableId);
 		hand.getEvents().add(event);
 	}
 
 	@Override
 	public void reportDeckInfo(int tableId, DeckInfo deckInfo) {
-		log.debug("Deck info on table " + tableId + ": " + deckInfo);
 		HistoricHand hand = getCurrent(tableId);
 		hand.setDeckInfo(deckInfo);
 	}
 
 	@Override
 	public void reportResults(int tableId, Results res) {
-		log.debug("Result on table " + tableId + " resported");
 		HistoricHand hand = getCurrent(tableId);
 		hand.setResults(res);
 	}
@@ -91,7 +88,6 @@ public class CollectorServiceImpl implements HandHistoryCollectorService {
 	@Override
 	public void cancelHand(int tableId) {
 		// TODO Report this?
-		log.debug("Hand cancelled on table: " + tableId);
 		cache.remove(tableId);
 	}
 

@@ -256,7 +256,7 @@ public class ActionTransformer {
 		return new Card(c.cardId, com.cubeia.poker.hand.Rank.values()[c.rank.ordinal()], com.cubeia.poker.hand.Suit.values()[c.suit.ordinal()]);
 	}
 	
-	public static ExposePrivateCards createExposeCardsPacket(int playerId, List<Card> cards) {
+	public static ExposePrivateCards createExposeCardsPacket(int playerId, Collection<Card> cards) {
 		ExposePrivateCards packet = new ExposePrivateCards();
 		packet.cards = new LinkedList<CardToDeal>();
 		for (Card card : cards) {

@@ -401,7 +401,7 @@ public class PokerLogicTest extends GuiceTest {
 			boolean foldActionReceived = false;
 			
 			@Override 
-			public void exposePrivateCards(int playerId, List<Card> cards) {}
+			public void exposePrivateCards(int playerId, Collection<Card> cards) {}
 
 			@Override 
 			public void notifyActionPerformed(PokerAction action, long resultingBalance) {

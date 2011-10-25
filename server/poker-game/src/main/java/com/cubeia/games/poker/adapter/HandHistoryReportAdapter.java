@@ -1,6 +1,7 @@
 package com.cubeia.games.poker.adapter;
 
 import static com.cubeia.games.poker.adapter.HandHistoryTranslator.translate;
+import static com.cubeia.games.poker.adapter.HandHistoryTranslator.translateCards;
 import static com.cubeia.poker.adapter.HandEndStatus.CANCELED_TOO_FEW_PLAYERS;
 
 import java.util.ArrayList;
@@ -82,10 +83,10 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
 	}
 	
 	@Override
-	public void exposePrivateCards(int playerId, List<Card> cards) {
+	public void exposePrivateCards(int playerId, Collection<Card> cards) {
 		super.exposePrivateCards(playerId, cards);
 		PlayerCardsExposed ev = new PlayerCardsExposed(playerId);
-		ev.getCards().addAll(translate(cards));
+		ev.getCards().addAll(translateCards(cards));
 		post(ev);
 	}
 	
@@ -93,7 +94,7 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
 	public void notifyCommunityCards(List<Card> cards) {
 		super.notifyCommunityCards(cards);
 		TableCardsDealt ev = new TableCardsDealt();
-		ev.getCards().addAll(translate(cards));
+		ev.getCards().addAll(translateCards(cards));
 		post(ev);
 	}
 	
@@ -147,7 +148,7 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
 	public void notifyPrivateCards(int playerId, List<Card> cards) {
 		super.notifyPrivateCards(playerId, cards);
 		PlayerCardsDealt ev = new PlayerCardsDealt(playerId, false);
-		ev.getCards().addAll(translate(cards));
+		ev.getCards().addAll(translateCards(cards));
 		post(ev);
 	}
 	
@@ -155,7 +156,7 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
 	public void notifyPrivateExposedCards(int playerId, List<Card> cards) {
 		super.notifyPrivateExposedCards(playerId, cards);
 		PlayerCardsDealt ev = new PlayerCardsDealt(playerId, true);
-		ev.getCards().addAll(translate(cards));
+		ev.getCards().addAll(translateCards(cards));
 		post(ev);
 	}
 	
