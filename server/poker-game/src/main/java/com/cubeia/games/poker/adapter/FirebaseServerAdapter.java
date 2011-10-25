@@ -322,6 +322,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 				// TODO: The following logic should be moved to poker-logic
 				// I.e. ranking hands etc do not belong in the game-layer
 				Collection<RatedPlayerHand> hands = handResult.getPlayerHands();
+				log.debug("--> handResult.getPlayerRevealOrder: {}", handResult.getPlayerRevealOrder());
 				HandEnd packet = ActionTransformer.createHandEndPacket(hands, potTransfers, handResult.getPlayerRevealOrder());
 				GameDataAction action = protocolFactory.createGameAction(packet, 0, table.getId());
 

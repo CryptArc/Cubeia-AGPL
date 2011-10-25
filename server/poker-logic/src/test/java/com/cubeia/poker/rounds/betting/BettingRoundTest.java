@@ -125,12 +125,17 @@ public class BettingRoundTest extends TestCase implements TestListener {
 		assertFalse(requestedAction.isOptionEnabled(PokerActionType.RAISE));
 	}
     
-    @Test
-	public void testCallSetsLastPlayerToBeCalled() {
-		MockPlayer[] p = TestUtils.createMockPlayers(2);
-
+    
+    private MockPlayer[] createAndGetPlayersAddThemToTheGameAndCreateABettingRound(int numberOfPlayers){
+		MockPlayer[] p = TestUtils.createMockPlayers(numberOfPlayers);
 		game.addPlayers(p);
 		round = new BettingRound(game, 0, new DefaultPlayerToActCalculator());
+		return p;
+    }
+    
+    @Test
+	public void testCallSetsLastPlayerToBeCalled() {
+    	MockPlayer[] p = createAndGetPlayersAddThemToTheGameAndCreateABettingRound(2);
 		
 		act(p[1], PokerActionType.BET, 100);
 		act(p[0], PokerActionType.CALL, 100);
@@ -138,6 +143,15 @@ public class BettingRoundTest extends TestCase implements TestListener {
 		PokerPlayer player = p[1];
 		assertThat(round.getLastPlayerToBeCalled(), CoreMatchers.is(player));
 	}
+    
+    @Test
+    public void testRaiseAnAllInBetSetsLastCallerToAllInPlayer(){
+    	MockPlayer[] p = createAndGetPlayersAddThemToTheGameAndCreateABettingRound(2);
+    	act(p[1], PokerActionType.BET, 100);
+    	act(p[0], PokerActionType.RAISE, 200);
+    	PokerPlayer player = p[1];
+		assertThat(round.getLastPlayerToBeCalled(), CoreMatchers.is(player));
+    }
 	
 	private void actMax(PokerActionType action) {
 		PossibleAction option = requestedAction.getOption(action);

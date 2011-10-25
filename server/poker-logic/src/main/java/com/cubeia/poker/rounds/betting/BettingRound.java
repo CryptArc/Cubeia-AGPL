@@ -216,6 +216,7 @@ public class BettingRound implements Round, BettingRoundContext {
 		}
 		
 		highBet = amount;
+		lastPlayerToBeCalled = lastPlayerToPlaceABet;
 		lastPlayerToPlaceABet = player;
 		player.addBet(highBet - player.getBetStack());
 		resetHasActed();
