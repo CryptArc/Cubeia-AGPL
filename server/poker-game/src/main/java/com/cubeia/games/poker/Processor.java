@@ -178,7 +178,7 @@ public class Processor implements GameProcessor, TournamentProcessor {
         if (actionCache != null) {
             actionCache.clear(table.getId());
         }
-        log.debug("Start Round on table: "+table+" ("+table.getPlayerSet().getPlayerCount()+":"+state.getSeatedPlayers().size()+")");
+        log.debug("Start Hand on table: "+table+" ("+table.getPlayerSet().getPlayerCount()+":"+state.getSeatedPlayers().size()+")");
         state.startHand();
     }
 

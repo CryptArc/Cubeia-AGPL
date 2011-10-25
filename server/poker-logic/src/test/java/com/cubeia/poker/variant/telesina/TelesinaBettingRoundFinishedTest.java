@@ -1,12 +1,9 @@
 package com.cubeia.poker.variant.telesina;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -21,17 +18,10 @@ import org.mockito.MockitoAnnotations;
 
 import com.cubeia.poker.DummyRNGProvider;
 import com.cubeia.poker.PokerState;
-import com.cubeia.poker.adapter.ServerAdapter;
-import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotHolder;
-import com.cubeia.poker.rounds.DealPocketCardsRound;
-import com.cubeia.poker.rounds.DealVelaCardRound;
-import com.cubeia.poker.rounds.ante.AnteRound;
 import com.cubeia.poker.rounds.betting.BettingRound;
-import com.cubeia.poker.timing.impl.DefaultTimingProfile;
 
 
 public class TelesinaBettingRoundFinishedTest {
@@ -54,15 +44,14 @@ public class TelesinaBettingRoundFinishedTest {
         seatingMap = new TreeMap<Integer, PokerPlayer>();
         seatingMap.put(0, player1);
         seatingMap.put(1, player2);
-        
         when(state.getCurrentHandSeatingMap()).thenReturn(seatingMap);
         
         Map<Integer, PokerPlayer> playerMap = new HashMap<Integer, PokerPlayer>();
         playerMap.put(player1.getId(), player1);
         playerMap.put(player2.getId(), player2);
-        
         when(state.getPotHolder()).thenReturn(potHolder);
         when(deckFactory.createNewDeck(Mockito.any(Random.class), Mockito.anyInt())).thenReturn(deck);
+        
     }
     
     @Test

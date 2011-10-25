@@ -57,10 +57,10 @@ public class TelesinaStartHandTest {
         verify(deckFactory).createNewDeck(rng, 4);
         verify(state).notifyDeckInfo(40, Rank.FIVE);
         verify(telesina.blindsInfo).setAnteLevel(1000);
-        verify(player1).setHasActed(false);
-        verify(player2).setHasActed(false);
-        verify(player1).setHasFolded(false);
-        verify(player2).setHasFolded(false);
+//        verify(player1).setHasActed(false);
+//        verify(player2).setHasActed(false);
+//        verify(player1).setHasFolded(false);
+//        verify(player2).setHasFolded(false);
     }
 
 }

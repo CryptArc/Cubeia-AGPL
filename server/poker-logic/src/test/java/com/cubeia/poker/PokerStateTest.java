@@ -1,8 +1,10 @@
 package com.cubeia.poker;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -28,11 +30,13 @@ import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.pot.PotTransition;
+import com.cubeia.poker.rake.LinearSingleLimitRakeCalculator;
 import com.cubeia.poker.rake.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.variant.PokerVariant;
+import com.google.common.annotations.VisibleForTesting;
 
 public class PokerStateTest {
 
@@ -210,5 +214,30 @@ public class PokerStateTest {
         state.startHand();
         assertThat(state.potHolder, notNullValue());
     }
+    
+    @Test
+    public void testResetValuesAtStartOfHand() {
+        PokerState state = new PokerState();
+        PotHolder oldPotHolder = new PotHolder(null);
+        state.potHolder = oldPotHolder;
+        state.gameType = mock(GameType.class);
+        RakeSettings rakeSettings = TestUtils.createOnePercentRakeSettings();
+        PokerSettings settings = new PokerSettings(0, 0, 0, null, null, 4, null, rakeSettings, "1");
+        state.settings = settings;
+        
+        state.playerMap = new HashMap<Integer, PokerPlayer>();
+        PokerPlayer player1 = mock(PokerPlayer.class);
+        PokerPlayer player2 = mock(PokerPlayer.class);
+        state.playerMap.put(1, player1);
+        state.playerMap.put(2, player2);
+        
+        state.resetValuesAtStartOfHand();
+        
+        verify(player1).resetBeforeNewHand();
+        verify(player2).resetBeforeNewHand();
+        assertThat(state.potHolder, not(sameInstance(oldPotHolder)));
+        verify(state.gameType).prepareNewHand();
+    }
+
     
 }

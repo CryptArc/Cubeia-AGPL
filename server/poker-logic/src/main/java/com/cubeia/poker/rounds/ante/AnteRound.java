@@ -153,7 +153,7 @@ public class AnteRound implements Round {
 		Collection<PokerPlayer> players = getAllSeatedPlayers();
 		int counter = 0;
 		for (PokerPlayer pokerPlayer : players) {
-			if(pokerPlayer.hasPostedEntryBet()){
+			if (pokerPlayer.hasPostedEntryBet()){
 				++counter;
 			}
 				

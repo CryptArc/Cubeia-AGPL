@@ -315,4 +315,12 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	public void setExposingPocketCards(boolean exposingPocketCards) {
 		this.exposingPocketCards = exposingPocketCards;
 	}
+	
+	@Override
+	public void resetBeforeNewHand() {
+	    clearActionRequest();
+	    clearHand();
+        setHasActed(false);
+        setHasFolded(false);
+	}
 }

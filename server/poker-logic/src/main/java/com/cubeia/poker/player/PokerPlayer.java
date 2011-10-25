@@ -157,5 +157,10 @@ public interface PokerPlayer extends Serializable {
 	public boolean isExposingPocketCards();
 
 	public void setExposingPocketCards(boolean b);
+
+	/**
+	 * Reset all hand/round specific flags to prepare player for a new hand.
+	 */
+    public void resetBeforeNewHand();
     
 }

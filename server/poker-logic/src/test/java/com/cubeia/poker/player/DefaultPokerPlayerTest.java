@@ -1,11 +1,19 @@
 package com.cubeia.poker.player;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
+import java.util.Set;
 
 import org.junit.Test;
 
+import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.hand.Suit;
 
@@ -117,5 +125,32 @@ public class DefaultPokerPlayerTest {
         
         player.addPendingAmount(pendingAmount);
         assertThat(player.getPendingBalance(), is(pendingAmount * 2));
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testResetPlayerBeforeNewHand() {
+        DefaultPokerPlayer player = new DefaultPokerPlayer(3434);
+        ActionRequest oldActionRequest = new ActionRequest();
+        player.setActionRequest(oldActionRequest);
+        
+        player.pocketCards = mock(Hand.class);
+        player.publicPocketCards = mock(Set.class);
+        player.privatePocketCards = mock(Set.class);
+
+        player.setExposingPocketCards(true);
+        player.setHasFolded(true);
+        player.setHasActed(true);
+        
+        player.resetBeforeNewHand();
+
+        assertThat(player.hasActed(), is(false));
+        assertThat(player.hasFolded(), is(false));
+        assertThat(player.isExposingPocketCards(), is(false));
+        assertThat(player.getActionRequest(), not(sameInstance(oldActionRequest)));
+        
+        verify(player.pocketCards).clear();
+        verify(player.publicPocketCards).clear();
+        verify(player.privatePocketCards).clear();
     }
 }

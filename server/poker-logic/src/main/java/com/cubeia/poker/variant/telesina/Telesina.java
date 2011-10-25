@@ -124,7 +124,7 @@ public class Telesina implements GameType, RoundVisitor {
 	private void initHand() {	
 		log.debug("init hand");
 		
-		resetPlayerStatesBeforeHand();
+		resetPlayerPostedEntryBets();
 		
 		deck = deckFactory.createNewDeck(rngProvider.getRNG(), state.getTableSize());
 		try {
@@ -134,20 +134,19 @@ public class Telesina implements GameType, RoundVisitor {
 		}
 		blindsInfo.setAnteLevel(state.getAnteLevel());
 		
-//		state.notifyNewHand();
-		
 		setCurrentRound(roundFactory.createAnteRound(this));
 		
 		setBettingRoundId(0);
 	}
 
-	protected void resetPlayerStatesBeforeHand() {
+    protected void resetPlayerPostedEntryBets() {
         for (PokerPlayer p : getState().getCurrentHandSeatingMap().values()) {
-            p.setHasActed(false);
-            p.setHasFolded(false);
+            p.setHasPostedEntryBet(false);
         }
-	}
+    }
 
+	
+	
 	@Override
 	public void act(PokerAction action) {
 		getCurrentRound().act(action);
@@ -280,10 +279,6 @@ public class Telesina implements GameType, RoundVisitor {
 	@Override
 	public void prepareNewHand() {
 		state.getCommunityCards().clear();
-		for (PokerPlayer player : state.getCurrentHandPlayerMap().values()) {
-			player.clearHand();
-			player.setHasFolded(false);
-		}		
 	}
 
 	@Override

@@ -376,7 +376,12 @@ public class PokerState implements Serializable, IPokerState {
 		return treeMap;
 	}
 
-	private void resetValuesAtStartOfHand() {
+	@VisibleForTesting
+	protected void resetValuesAtStartOfHand() {
+	    for (PokerPlayer player : playerMap.values()) {
+	        player.resetBeforeNewHand();
+	    }
+	    
         potHolder = new PotHolder(new LinearSingleLimitRakeCalculator(settings.getRakeSettins()));
 		gameType.prepareNewHand();
 	}

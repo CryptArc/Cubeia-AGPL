@@ -78,6 +78,8 @@ public class PokerTournamentTest extends GuiceTest {
 		assertEquals(4, p.length);
 		TestUtils.addPlayers(game, mp);
 
+		
+		
 		// Force start
 		game.startHand();
 
