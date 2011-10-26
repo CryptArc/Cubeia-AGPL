@@ -30,13 +30,11 @@ import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.pot.PotTransition;
-import com.cubeia.poker.rake.LinearSingleLimitRakeCalculator;
 import com.cubeia.poker.rake.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.variant.PokerVariant;
-import com.google.common.annotations.VisibleForTesting;
 
 public class PokerStateTest {
 
