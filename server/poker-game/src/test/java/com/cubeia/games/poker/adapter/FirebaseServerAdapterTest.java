@@ -4,18 +4,22 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import se.jadestone.dicearena.game.poker.network.protocol.BestHand;
 import se.jadestone.dicearena.game.poker.network.protocol.BuyInInfoResponse;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerBalance;
 import se.jadestone.dicearena.game.poker.network.protocol.PotTransfers;
@@ -27,6 +31,8 @@ import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.util.ProtocolFactory;
 import com.cubeia.poker.PokerState;
+import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.HandType;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotTransition;
@@ -108,6 +114,50 @@ public class FirebaseServerAdapterTest {
 		assertThat(buyInInfoRespPacket.minAmount, is(minBuyIn));
 		assertThat(buyInInfoRespPacket.mandatoryBuyin, is(true));
 
+	}
+	
+	@Test
+	public void testNotifyBestHand() throws IOException
+	{
+		FirebaseServerAdapter fsa = new FirebaseServerAdapter();
+		fsa.table = mock(Table.class);
+		GameNotifier tableNotifier = mock(GameNotifier.class);
+		when(fsa.table.getNotifier()).thenReturn(tableNotifier);
+		
+		int playerId0 = 1337;
+		PokerPlayer pokerPlayer0 = mock(PokerPlayer.class);
+		when(pokerPlayer0.getId()).thenReturn(playerId0);
+		
+		int playerId1 = 666;
+		PokerPlayer pokerPlayer1 = mock(PokerPlayer.class);
+		when(pokerPlayer1.getId()).thenReturn(playerId1);
+		
+		int playerId2 = 6987;
+		PokerPlayer pokerPlayer2 = mock(PokerPlayer.class);
+		when(pokerPlayer2.getId()).thenReturn(playerId2);
+		
+		HandType handType = HandType.HIGH_CARD;
+		
+		Card pocketCard1 = new Card(0,"AS");
+		
+        Card pocketCard2 = new Card(1,"5C");
+        
+        // test if hand is not exposed
+		fsa.notifyBestHand(playerId0, handType, asList(pocketCard1, pocketCard2), false);
+		verify(tableNotifier, times(1)).notifyPlayer(Mockito.eq(playerId0), Mockito.any(GameDataAction.class));
+		verify(tableNotifier, never()).notifyPlayer(Mockito.eq(playerId1), Mockito.any(GameDataAction.class));
+		verify(tableNotifier, never()).notifyPlayer(Mockito.eq(playerId2), Mockito.any(GameDataAction.class));
+		
+		verify(tableNotifier, never()).notifyAllPlayers(Mockito.any(GameDataAction.class));
+			
+		// test if hand is exposed
+		fsa.notifyBestHand(playerId0, handType, asList(pocketCard1, pocketCard2), true);
+		verify(tableNotifier, times(1)).notifyPlayer(Mockito.eq(playerId0), Mockito.any(GameDataAction.class));
+		verify(tableNotifier, never()).notifyPlayer(Mockito.eq(playerId1), Mockito.any(GameDataAction.class));
+		verify(tableNotifier, never()).notifyPlayer(Mockito.eq(playerId2), Mockito.any(GameDataAction.class));
+		
+		verify(tableNotifier, times(1)).notifyAllPlayers(Mockito.any(GameDataAction.class));
+		
 	}
 	
 	@Test

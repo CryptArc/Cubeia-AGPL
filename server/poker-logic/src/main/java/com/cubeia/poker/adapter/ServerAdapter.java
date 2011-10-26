@@ -63,8 +63,9 @@ public interface ServerAdapter {
 	 * @param playerId player id
 	 * @param handType hand type classification
 	 * @param cardsInHand cards used in best hand
+	 * @param publicHand if the bestHand should be broadcasted to all players or just the owner
 	 */
-	void notifyBestHand(int playerId, HandType handType, List<Card> cardsInHand);
+	void notifyBestHand(int playerId, HandType handType, List<Card> cardsInHand, boolean publicHand);
 	
 	/**
 	 * Sends the private cards to the given player and notify

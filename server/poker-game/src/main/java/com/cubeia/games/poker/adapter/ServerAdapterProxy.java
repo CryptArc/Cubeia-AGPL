@@ -66,9 +66,9 @@ public abstract class ServerAdapterProxy implements ServerAdapter {
 	}
 
 	@Override
-	public void notifyBestHand(int playerId, HandType handType, List<Card> cardsInHand) {
+	public void notifyBestHand(int playerId, HandType handType, List<Card> cardsInHand, boolean publicHand) {
 		if(getAdaptee() != null) {
-			getAdaptee().notifyBestHand(playerId, handType, cardsInHand);
+			getAdaptee().notifyBestHand(playerId, handType, cardsInHand, publicHand);
 		}
 	}
 

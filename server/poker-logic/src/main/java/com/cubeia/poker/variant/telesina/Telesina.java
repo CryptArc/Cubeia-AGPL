@@ -404,7 +404,7 @@ public class Telesina implements GameType, RoundVisitor {
         List<Card> playerCards = new ArrayList<Card>(player.getPocketCards().getCards());
         playerCards.addAll(state.getCommunityCards());
         TelesinaHandStrength bestHandStrength = handStrengthEvaluator.getBestHandStrength(playerCards);
-        state.getServerAdapter().notifyBestHand(player.getId(), bestHandStrength.getType(), bestHandStrength.getCards());
+        state.getServerAdapter().notifyBestHand(player.getId(), bestHandStrength.getType(), bestHandStrength.getCards(), player.isExposingPocketCards());
     }
 
 	@VisibleForTesting

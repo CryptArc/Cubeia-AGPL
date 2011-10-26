@@ -70,6 +70,32 @@ public class TelesinaSendBestHandTest {
         Hand hand = mock(Hand.class);
         PokerPlayer player = mock(PokerPlayer.class);
         when(player.getPocketCards()).thenReturn(hand);
+        when(player.isExposingPocketCards()).thenReturn(false);
+        Card pocketCard1 = new Card("AS");
+        Card pocketCard2 = new Card("5C");
+        when(hand.getCards()).thenReturn(asList(pocketCard1, pocketCard2));
+        Card velaCard = new Card("2H");
+        when(state.getCommunityCards()).thenReturn(asList(velaCard));
+        TelesinaHandStrength handStrength = mock(TelesinaHandStrength.class);
+        when(handStrength.getCards()).thenReturn(Arrays.asList(pocketCard1));
+        when(handStrength.getType()).thenReturn(HandType.FOUR_OF_A_KIND);
+        when(evaluator.getBestHandStrength(Mockito.eq(asList(pocketCard1, pocketCard2, velaCard)))).thenReturn(handStrength);
+        
+        
+        
+        telesina.calculateAndSendBestHandToPlayer(evaluator, player);
+        verify(serverAdapter).notifyBestHand(player.getId(), HandType.FOUR_OF_A_KIND, asList(pocketCard1), false);
+    }
+    
+    @Test
+    public void testCalculateAndSendBestHandToPlayersWhenExposingHand() {
+        Telesina telesina = new Telesina(new DummyRNGProvider(), state, deckFactory, roundFactory);
+        
+        TelesinaHandStrengthEvaluator evaluator = Mockito.mock(TelesinaHandStrengthEvaluator.class);
+        Hand hand = mock(Hand.class);
+        PokerPlayer player = mock(PokerPlayer.class);
+        when(player.getPocketCards()).thenReturn(hand);
+        when(player.isExposingPocketCards()).thenReturn(true);
         Card pocketCard1 = new Card("AS");
         Card pocketCard2 = new Card("5C");
         when(hand.getCards()).thenReturn(asList(pocketCard1, pocketCard2));
@@ -81,8 +107,12 @@ public class TelesinaSendBestHandTest {
         when(evaluator.getBestHandStrength(Mockito.eq(asList(pocketCard1, pocketCard2, velaCard)))).thenReturn(handStrength);
         
         telesina.calculateAndSendBestHandToPlayer(evaluator, player);
-        verify(serverAdapter).notifyBestHand(player.getId(), HandType.FOUR_OF_A_KIND, asList(pocketCard1));
+        verify(serverAdapter).notifyBestHand(player.getId(), HandType.FOUR_OF_A_KIND, asList(pocketCard1), true);
+        
+        
+        
     }
+    
     
     @Ignore
     @Test

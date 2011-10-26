@@ -239,11 +239,16 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	}
 
 	@Override
-	public void notifyBestHand(int playerId, HandType handType, List<Card> cardsInHand) {
+	public void notifyBestHand(int playerId, HandType handType, List<Card> cardsInHand, boolean publicHand) {
 		BestHand bestHandPacket = ActionTransformer.createBestHandPacket(playerId, handType, cardsInHand);
 		GameDataAction bestHandAction = protocolFactory.createGameAction(bestHandPacket, playerId, table.getId());
 		log.debug("--> Send BestHandPacket["+bestHandPacket+"] to player["+playerId+"]");
-		table.getNotifier().notifyPlayer(playerId, bestHandAction);
+		
+		if (publicHand){
+			sendPublicPacket(bestHandAction,-1);
+		}else{
+			sendPrivatePacket(playerId, bestHandAction);
+		}
 	}
 
 	@Override

@@ -123,7 +123,7 @@ public class MockServerAdapter implements ServerAdapter {
     public void notifyPlayerBalance(PokerPlayer p) {}
     public void notifyNewHand() {}
     public void notifyDeckInfo(int size, Rank rankLow) {}
-    public void notifyBestHand(int playerId, HandType handType, List<Card> cardsInHand) {}
+    public void notifyBestHand(int playerId, HandType handType, List<Card> cardsInHand, boolean publicHand) {}
     public void notifyBuyInInfo(int playerId, boolean mandatoryBuyin) {}
     public void notifyRakeInfo(RakeInfoContainer rakeInfoContainer) {}    
     
