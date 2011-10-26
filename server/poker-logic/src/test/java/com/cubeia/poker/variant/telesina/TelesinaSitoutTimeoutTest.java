@@ -45,7 +45,7 @@ public class TelesinaSitoutTimeoutTest extends AbstractTexasHandTester {
 		act(p[0], ANTE);
 		
 		// Make sure we are timing out the sit out timeout
-		Thread.sleep(2);
+		Thread.sleep(100);
 		assertTrue(mp[2].getSitOutTimestamp()+sitoutTimeLimitMilliseconds < System.currentTimeMillis());
 		
 		SitoutCalculator calculator = new SitoutCalculator();
