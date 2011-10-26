@@ -52,6 +52,7 @@ import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.ExposeCardsHolder;
 import com.cubeia.poker.hand.HandType;
 import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
@@ -256,17 +257,20 @@ public class ActionTransformer {
 		return new Card(c.cardId, com.cubeia.poker.hand.Rank.values()[c.rank.ordinal()], com.cubeia.poker.hand.Suit.values()[c.suit.ordinal()]);
 	}
 	
-	public static ExposePrivateCards createExposeCardsPacket(int playerId, Collection<Card> cards) {
+	public static ExposePrivateCards createExposeCardsPacket(ExposeCardsHolder holder) {
 		ExposePrivateCards packet = new ExposePrivateCards();
 		packet.cards = new LinkedList<CardToDeal>();
-		for (Card card : cards) {
-			GameCard gCard = new GameCard();
-			gCard.rank = Enums.Rank.values()[card.getRank().ordinal()];
-			gCard.suit = Enums.Suit.values()[card.getSuit().ordinal()];
-			gCard.cardId = card.getId();
-			
-			CardToDeal deal = new CardToDeal(playerId, gCard);
-			packet.cards.add( deal);
+		for (Integer playerId : holder.getPlayerIdSet()) {
+			Collection<Card> cards = holder.getCardsForPlayer(playerId); 
+			for (Card card : cards) {
+				GameCard gCard = new GameCard();
+				gCard.rank = Enums.Rank.values()[card.getRank().ordinal()];
+				gCard.suit = Enums.Suit.values()[card.getSuit().ordinal()];
+				gCard.cardId = card.getId();
+				
+				CardToDeal deal = new CardToDeal(playerId, gCard);
+				packet.cards.add( deal);
+			}
 		}
 		return packet;
 	}

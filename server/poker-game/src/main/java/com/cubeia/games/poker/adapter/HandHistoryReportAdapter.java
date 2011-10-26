@@ -22,6 +22,7 @@ import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.ExposeCardsHolder;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.handhistory.api.DeckInfo;
 import com.cubeia.poker.handhistory.api.HandHistoryEvent;
@@ -83,11 +84,13 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
 	}
 	
 	@Override
-	public void exposePrivateCards(int playerId, Collection<Card> cards) {
-		super.exposePrivateCards(playerId, cards);
-		PlayerCardsExposed ev = new PlayerCardsExposed(playerId);
-		ev.getCards().addAll(translateCards(cards));
-		post(ev);
+	public void exposePrivateCards(ExposeCardsHolder holder) {
+		super.exposePrivateCards(holder);
+		for (Integer playerId : holder.getPlayerIdSet()) {
+			PlayerCardsExposed ev = new PlayerCardsExposed(playerId);
+			ev.getCards().addAll(translateCards(holder.getCardsForPlayer(playerId)));
+			post(ev);
+		}
 	}
 	
 	@Override

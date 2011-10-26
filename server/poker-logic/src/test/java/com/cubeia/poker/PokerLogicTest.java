@@ -26,6 +26,7 @@ import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.ExposeCardsHolder;
 import com.cubeia.poker.hand.HandType;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.model.RatedPlayerHand;
@@ -401,7 +402,7 @@ public class PokerLogicTest extends GuiceTest {
 			boolean foldActionReceived = false;
 			
 			@Override 
-			public void exposePrivateCards(int playerId, Collection<Card> cards) {}
+			public void exposePrivateCards(ExposeCardsHolder holder) {}
 
 			@Override 
 			public void notifyActionPerformed(PokerAction action, long resultingBalance) {

@@ -37,6 +37,7 @@ import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.ExposeCardsHolder;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
@@ -410,15 +411,8 @@ public class PokerState implements Serializable, IPokerState {
 			// Report round to tournament coordinator and wait for notification
 			tournamentRoundReport();
 		} else {
-			// TODO: Handle pending add chips requests.
-			log.debug("Notify Hand Finished schedule timeout");
-			
-			log.debug("hand finished, result:\n{}", result);
-			
 			serverAdapter.notifyHandEnd(result, status);
-			
 			setPlayersWithoutMoneyAsSittingOut(result);
-			
 			log.debug("Schedule hand over timeout in: {}", timing != null ? timing.getTime(Periods.START_NEW_HAND) : 0);
 			serverAdapter.scheduleTimeout(timing.getTime(Periods.START_NEW_HAND));
 		}
@@ -446,7 +440,6 @@ public class PokerState implements Serializable, IPokerState {
 	@VisibleForTesting
 	protected void commitPendingBalances() {
 	    for (PokerPlayer player : playerMap.values()) {
-	    	log.debug("Commit Player "+player);
 	        player.commitPendingBalance(getMaxBuyIn());
 	    }
 	}
@@ -588,11 +581,17 @@ public class PokerState implements Serializable, IPokerState {
 	 */
 	public void exposeShowdownCards() {
         if (countNonFoldedPlayers() > 1) {
+        	ExposeCardsHolder holder = new ExposeCardsHolder();
             for (PokerPlayer p : getCurrentHandSeatingMap().values()) {
                 if (!p.hasFolded() && !p.isExposingPocketCards()) {
-                    exposePrivateCards(p.getId(), p.getPrivatePocketCards());
+                    // exposePrivateCards(p.getId(), p.getPrivatePocketCards());
+                	holder.setExposedCards(p.getId(), p.getPrivatePocketCards());
                     p.setExposingPocketCards(true);
                 }
+            }
+            
+            if (holder.hasCards()) {
+            	exposePrivateCards(holder);
             }
         }
     }
@@ -610,7 +609,7 @@ public class PokerState implements Serializable, IPokerState {
 
 	 ------------------------------------------------*/
 
-	
+
 	public void notifyNewHand() {
 	    serverAdapter.notifyNewHand();
 	}
@@ -633,8 +632,12 @@ public class PokerState implements Serializable, IPokerState {
 	    serverAdapter.notifyPrivateExposedCards(playerId, cards);
 	}
 	
-	public void exposePrivateCards(int playerId, Collection<Card> cards) {
-		serverAdapter.exposePrivateCards(playerId, cards);
+//	public void exposePrivateCards(int playerId, Collection<Card> cards) {
+//		serverAdapter.exposePrivateCards(playerId, cards);
+//	}
+	
+	private void exposePrivateCards(ExposeCardsHolder holder) {
+		serverAdapter.exposePrivateCards(holder);
 	}
 
 	public void notifyPlayerBalance(int playerId) {

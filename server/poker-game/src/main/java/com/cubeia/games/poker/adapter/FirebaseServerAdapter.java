@@ -87,6 +87,7 @@ import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.ExposeCardsHolder;
 import com.cubeia.poker.hand.HandType;
 import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
@@ -255,11 +256,11 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	}
 
 	@Override
-	public void exposePrivateCards(int playerId, Collection<Card> cards) {
-		ExposePrivateCards packet = ActionTransformer.createExposeCardsPacket(playerId, cards);
-		GameDataAction action = protocolFactory.createGameAction(packet, playerId, table.getId());
+	public void exposePrivateCards(ExposeCardsHolder holder) {
+		ExposePrivateCards packet = ActionTransformer.createExposeCardsPacket(holder);
+		GameDataAction action = protocolFactory.createGameAction(packet, 0, table.getId());
 		log.debug("--> Send ExposePrivateCards["+packet+"] to everyone");
-		sendPublicPacket(action, playerId);
+		sendPublicPacket(action, -1);
 	}
 
 	@Override

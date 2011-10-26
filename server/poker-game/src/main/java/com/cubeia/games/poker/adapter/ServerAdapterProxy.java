@@ -8,6 +8,7 @@ import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.ExposeCardsHolder;
 import com.cubeia.poker.hand.HandType;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.player.PokerPlayer;
@@ -79,9 +80,9 @@ public abstract class ServerAdapterProxy implements ServerAdapter {
 	}
 
 	@Override
-	public void exposePrivateCards(int playerId, Collection<Card> cards) {
+	public void exposePrivateCards(ExposeCardsHolder holder) {
 		if(getAdaptee() != null) {
-			getAdaptee().exposePrivateCards(playerId, cards);
+			getAdaptee().exposePrivateCards(holder);
 		}
 	}
 

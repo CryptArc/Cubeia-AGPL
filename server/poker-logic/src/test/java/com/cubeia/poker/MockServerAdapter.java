@@ -31,6 +31,7 @@ import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.ExposeCardsHolder;
 import com.cubeia.poker.hand.HandType;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.model.RatedPlayerHand;
@@ -114,7 +115,7 @@ public class MockServerAdapter implements ServerAdapter {
 	public void notifyPrivateCards(int playerId, List<Card> cards) {}
 	public void notifyHandCanceled() {}
 	public void notifyPrivateExposedCards(int playerId, List<Card> cards) {}
-	public void exposePrivateCards(int playerId, Collection<Card> cards) {}
+	public void exposePrivateCards(ExposeCardsHolder holder) {}
 	public void notifyDealerButton(int playerId) {}
     public void reportTournamentRound(RoundReport report) {}
     public void cleanupPlayers() {}

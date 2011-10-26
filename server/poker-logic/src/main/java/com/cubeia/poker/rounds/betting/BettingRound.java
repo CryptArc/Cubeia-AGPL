@@ -73,7 +73,6 @@ public class BettingRound implements Round, BettingRoundContext {
 	}
 	
 	private void initBettingRound(int dealerSeatId) {
-		log.debug("Init new betting round - dealer: "+dealerSeatId);
 		SortedMap<Integer, PokerPlayer> seatingMap = gameType.getState().getCurrentHandSeatingMap();
 		for (PokerPlayer p : seatingMap.values()) {
 			if (p.getBetStack() > highBet) {
@@ -88,7 +87,6 @@ public class BettingRound implements Round, BettingRoundContext {
 		if (p == null || allOtherPlayersAreAllIn(p)) {
 			gameType.getState().exposeShowdownCards(); 
 			// No or only one player can act. We are currently in an all-in show down scenario
-			log.debug("Schedule all in timeout from initBettingRound");
 			isFinished = true;
 			gameType.scheduleRoundTimeout();
 		} else {
@@ -174,10 +172,6 @@ public class BettingRound implements Round, BettingRoundContext {
 			fold(player);
 			break;
 		case RAISE:
-		    
-		    log.debug("raise action: player = {}, betAmount = {}, raiseAmount = {}, action = {}", 
-		        new Object[] {player.getId(), action.getBetAmount(), action.getRaiseAmount(), action.toString()});
-		    
 			setRaiseByAmount(player, action);
 			raise(player, action.getBetAmount());
 			break;

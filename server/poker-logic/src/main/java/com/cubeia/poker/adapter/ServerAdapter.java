@@ -23,6 +23,7 @@ import java.util.List;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.ExposeCardsHolder;
 import com.cubeia.poker.hand.HandType;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.player.PokerPlayer;
@@ -73,14 +74,14 @@ public interface ServerAdapter {
 	 */
     void notifyPrivateExposedCards(int playerId, List<Card> cards);
 	
-	void exposePrivateCards(int playerId, Collection<Card> cards);
 	
     /**
      * A new hand is about to start.
      */
     void notifyNewHand();
     
-    
+    void exposePrivateCards(ExposeCardsHolder holder);
+
 	/**
 	 * Notifies that the hand has ended.
 	 * 
@@ -151,4 +152,5 @@ public interface ServerAdapter {
 	 */
     void notifyRakeInfo(RakeInfoContainer rakeInfoContainer);
 
+	
 }
