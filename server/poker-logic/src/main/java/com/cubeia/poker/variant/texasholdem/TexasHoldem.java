@@ -36,7 +36,6 @@ import com.cubeia.poker.hand.Deck;
 import com.cubeia.poker.hand.IndexCardIdGenerator;
 import com.cubeia.poker.hand.Shuffler;
 import com.cubeia.poker.hand.StandardDeck;
-import com.cubeia.poker.hand.TexasHoldemHandComparator;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.result.HandResult;

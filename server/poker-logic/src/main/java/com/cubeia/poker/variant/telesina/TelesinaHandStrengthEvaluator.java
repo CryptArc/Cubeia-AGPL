@@ -1,6 +1,7 @@
 package com.cubeia.poker.variant.telesina;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -123,10 +124,7 @@ public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Seriali
 		
 		List<Card> cc = new LinkedList<Card>(cards);
 		Collections.sort(cc, ByRankCardComparator.ACES_HIGH_DESC);
-		
-		// a telesina high card hand is unique at two cards first kicker may be vela, two card guarantee unique winner.
-		List<Card> usedCards = cc.subList(0, Math.min(2, cc.size()));
-		return new TelesinaHandStrength(HandType.HIGH_CARD, usedCards, 0, cc);
+		return new TelesinaHandStrength(HandType.HIGH_CARD, cc, 0, cc);
 	}
 
 	/**
@@ -144,10 +142,10 @@ public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Seriali
 		
 		cc.removeAll(setCards);
 		
-		// telesina pair hand is unique at four cards, the pair followed by two kickers
+		// Make a list of the used cards in an ordered fashion
 		List<Card> usedCards = new LinkedList<Card>(setCards);
 		Collections.sort(cc, ByRankCardComparator.ACES_HIGH_DESC);
-		usedCards.addAll(cc.subList(0, Math.min(2, cc.size())));
+		usedCards.addAll(cc);
 		
 
 		// pairs are compared by
@@ -228,7 +226,14 @@ public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Seriali
 			return null;
 		}
 		
-		return new TelesinaHandStrength(HandType.THREE_OF_A_KIND, threeSet, 0, threeSet);
+		cc.removeAll(threeSet);
+		
+		// Make a list of the used cards in an ordered fashion
+		List<Card> usedCards = new LinkedList<Card>(threeSet);
+		Collections.sort(cc, ByRankCardComparator.ACES_HIGH_DESC);
+		usedCards.addAll(cc);
+		
+		return new TelesinaHandStrength(HandType.THREE_OF_A_KIND, usedCards, 0, threeSet, cc);
 	}
 	
 	
@@ -245,7 +250,13 @@ public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Seriali
 			return null;
 		}
 		
-		return new TelesinaHandStrength(HandType.FOUR_OF_A_KIND, fourSet, 0, fourSet);
+		List<Card> kickers = new ArrayList<Card>(cards);
+		kickers.removeAll(fourSet);
+		
+		List<Card> usedCards = new ArrayList<Card>(fourSet);
+		usedCards.addAll(kickers);
+		
+		return new TelesinaHandStrength(HandType.FOUR_OF_A_KIND, usedCards, 0, fourSet, kickers);
 	}
 	
 	/**

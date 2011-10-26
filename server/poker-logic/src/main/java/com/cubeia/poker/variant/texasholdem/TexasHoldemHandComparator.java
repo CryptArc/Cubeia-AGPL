@@ -1,12 +1,16 @@
-package com.cubeia.poker.hand;
+package com.cubeia.poker.variant.texasholdem;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.Combinator;
+import com.cubeia.poker.hand.Hand;
+import com.cubeia.poker.hand.HandStrength;
+import com.cubeia.poker.hand.HandStrengthComparator;
 import com.cubeia.poker.hand.calculator.HandCalculator;
-import com.cubeia.poker.variant.texasholdem.TexasHoldemHandCalculator;
 
 /**
  * Compares hands. The most valued hand is greater than a lesser one.

@@ -40,4 +40,9 @@ public class RatedPlayerHand implements Serializable {
 	public List<Card> getBestHandCards() {
 		return bestHandCards;
 	}
+	
+	@Override
+	public String toString() {
+		return "RatedPlayerHand playerHand["+playerHand+"] bestHandType["+bestHandType+"] bestHandCards["+bestHandCards+"]";
+	}
 }

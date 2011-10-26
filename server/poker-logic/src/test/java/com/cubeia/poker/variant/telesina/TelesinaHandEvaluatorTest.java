@@ -20,8 +20,8 @@ public class TelesinaHandEvaluatorTest {
 		HandInfo best = eval.getBestHandInfo(new Hand("KS QD TD 9H 7D 8C"));
 		
 		assertEquals(HandType.HIGH_CARD, best.getType());
-		assertEquals(2, best.getCards().size());
-		assertTrue(best.getCards().containsAll(Card.list("KS QD")));
+		assertEquals(5, best.getCards().size());
+		assertTrue(best.getCards().containsAll(Card.list("KS QD TD 9H 8C")));
 	}
 	
 	@Test
@@ -30,9 +30,11 @@ public class TelesinaHandEvaluatorTest {
 		
 		HandInfo best = eval.getBestHandInfo(new Hand("AS QD TD 9H 7D 9C"));
 		
+		System.out.println("Cards: "+best.getCards());
+		
 		assertEquals(HandType.PAIR, best.getType());
-		assertEquals(4, best.getCards().size());
-		assertTrue(best.getCards().containsAll(Card.list("AS QD 9H 9C")));
+		assertEquals(5, best.getCards().size());
+		assertTrue(best.getCards().containsAll(Card.list("TD AS QD 9H 9C")));
 	}
 	
 	@Test
@@ -50,11 +52,12 @@ public class TelesinaHandEvaluatorTest {
 	public void testEvaluatorIncludesHandThreeOfAKind() {
 		TelesinaHandStrengthEvaluator eval = new TelesinaHandStrengthEvaluator(Rank.SEVEN);
 		
-		HandInfo best = eval.getBestHandInfo(new Hand("AS QD QS QC 7D 9C"));
+		HandInfo best = eval.getBestHandInfo(new Hand("7D 9C AS QD QS QC"));
 		
 		assertEquals(HandType.THREE_OF_A_KIND, best.getType());
-		assertEquals(3, best.getCards().size());
-		assertTrue(best.getCards().containsAll(Card.list("QD QS QC")));
+		assertEquals(5, best.getCards().size());
+		System.out.println(": "+best.getCards());
+		assertTrue(best.getCards().containsAll(Card.list("QD QS QC AS 9C")));
 	}
 	
 	@Test
@@ -108,8 +111,8 @@ public class TelesinaHandEvaluatorTest {
 		HandInfo best = eval.getBestHandInfo(new Hand("8S 9S 9H 9C JS 9D AS"));
 		
 		assertEquals(HandType.FOUR_OF_A_KIND, best.getType());
-		assertEquals(4, best.getCards().size());
-		assertTrue(best.getCards().containsAll(Card.list("9S 9H 9C 9D")));
+		assertEquals(5, best.getCards().size());
+		assertTrue(best.getCards().containsAll(Card.list("9S 9H 9C 9D AS")));
 	}
 	
 	@Test
@@ -119,8 +122,8 @@ public class TelesinaHandEvaluatorTest {
 		HandInfo best = eval.getBestHandInfo(new Hand("JS KS AS"));
 		
 		assertEquals(HandType.HIGH_CARD, best.getType());
-		assertEquals(2, best.getCards().size());
-		assertTrue(best.getCards().containsAll(Card.list("AS KS")));
+		assertEquals(3, best.getCards().size());
+		assertTrue(best.getCards().containsAll(Card.list("AS KS JS")));
 	}
 	
 	@Test

@@ -77,6 +77,42 @@ public class HandResultCreatorTest {
 		assertEquals(50L, (long) resultsSimplified.get(2));
 	}
 	
+	
+	@Test
+	public void testCreateHandResultPairs() {
+		
+		TelesinaHandStrengthEvaluator hte = new TelesinaHandStrengthEvaluator(Rank.SEVEN);
+		HandResultCreator creator = new HandResultCreator(hte);
+		HandResultCalculator resultCalculator = new HandResultCalculator(new TelesinaHandComparator(hte));
+		
+		Map<Integer, PokerPlayer> playerMap = new HashMap<Integer, PokerPlayer>();
+
+		PokerPlayer pp1 = mockPlayer(1, 50, false, false, new Hand("8S 8C JC TD QH"));
+		PokerPlayer pp2 = mockPlayer(2, 50, false, false, new Hand("TH TD QD 9S JH")); // pp2 wins with higher pair
+		
+		playerMap.put(1, pp1);
+		playerMap.put(2, pp2);
+
+		PotHolder potHolder = new PotHolder(new LinearSingleLimitRakeCalculator(new RakeSettings(BigDecimal.ZERO)));
+		potHolder.moveChipsToPot(playerMap.values());
+
+		List<Card> communityCards = Card.list("7S"); // Will not be used
+		
+		HandResult result = creator.createHandResult(communityCards, resultCalculator, potHolder, playerMap, new ArrayList<Integer>());
+
+		System.out.println("HANDS: "+result.getPlayerHands());
+		
+		assertNotNull(result);
+		
+		Map<Integer, Long> resultsSimplified = new HashMap<Integer, Long>();
+		for (Entry<PokerPlayer, Result> entry : result.getResults().entrySet()) {
+			resultsSimplified.put(entry.getKey().getId(), entry.getValue().getNetResult());
+		}
+		
+		assertEquals(-50L, (long) resultsSimplified.get(1));
+		assertEquals(50L, (long) resultsSimplified.get(2));
+	}
+	
 	@Test
 	public void testCreatePotTransitionsByResults() {
         HandResultCreator creator = new HandResultCreator(null);
