@@ -82,12 +82,4 @@ public class RevealOrderCalculatorTest {
 		assertThat(revealOrder.size(), is(2));		
 	}
 	
-	@Test
-	public void testRevealOrderOneSitsOut(){
-		setup();
-		when(player2.isSittingOut()).thenReturn(true);
-		revealOrder = roc.calculateRevealOrder(seatingMap, null, player1);
-		assertThat(revealOrder.size(), is(2));		
-	}
-	
 }

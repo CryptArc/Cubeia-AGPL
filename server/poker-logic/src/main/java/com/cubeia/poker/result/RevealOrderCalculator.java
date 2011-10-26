@@ -36,7 +36,7 @@ public class RevealOrderCalculator {
 
 		List<Integer> playerIdList = new ArrayList<Integer>();
 		for (PokerPlayer player : sortedPlayerList) {
-			if(!player.hasFolded() && !player.isSittingOut()){
+			if(!player.hasFolded()){
 				playerIdList.add(player.getId());
 			}
 		}
