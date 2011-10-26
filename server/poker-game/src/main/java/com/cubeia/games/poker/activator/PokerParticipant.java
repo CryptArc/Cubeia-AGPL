@@ -58,7 +58,10 @@ public class PokerParticipant extends DefaultCreationParticipant {
 	private static final int GAME_ID = 4718;
 	
 	// the minimum buy in as a multiple of ante.
-	private static final int MIN_BUY_IN = 10;
+	private static final int MIN_BUY_IN_ANTE_MULTIPLIER = 10;
+	
+	// max buy in as a multiple of ante
+	private static final int MAX_BUY_IN_ANTE_MULTIPLIER = 100;
 
 	/** Number of seats at the table */
 	private int seats = 10;
@@ -125,7 +128,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
 		super.tableCreated(table, acc);
 		PokerState pokerState = injector.getInstance(PokerState.class);
 
-        PokerSettings settings = new PokerSettings(anteLevel, anteLevel * MIN_BUY_IN, Integer.MAX_VALUE, timingProfile, variant, 
+        PokerSettings settings = new PokerSettings(anteLevel, anteLevel * MIN_BUY_IN_ANTE_MULTIPLIER, anteLevel * MAX_BUY_IN_ANTE_MULTIPLIER, timingProfile, variant, 
 		    table.getPlayerSet().getSeatingMap().getNumberOfSeats(), BetStrategyName.NO_LIMIT, 
 		    new RakeSettings(RAKE_FRACTION, (long) RAKE_LIMIT), null);
 		pokerState.init(rngProvider, settings);
