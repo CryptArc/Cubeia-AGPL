@@ -19,8 +19,8 @@ package com.cubeia.games.poker.activator;
 
 import static com.cubeia.games.poker.activator.PokerParticipant.RAKE_FRACTION;
 import static com.cubeia.games.poker.activator.PokerParticipant.RAKE_LIMIT;
+import static com.cubeia.games.poker.activator.PokerParticipant.RAKE_LIMIT_HEADS_UP;
 import static com.cubeia.poker.variant.PokerVariant.TELESINA;
-import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
 
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
@@ -209,7 +209,7 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
         
         PokerSettings settings = new PokerSettings(-1, -1, -1, timing, PokerVariant.TEXAS_HOLDEM, 
             table.getPlayerSet().getSeatingMap().getNumberOfSeats(), BetStrategyName.NO_LIMIT, 
-            new RakeSettings(RAKE_FRACTION, (long) RAKE_LIMIT), null);
+            new RakeSettings(RAKE_FRACTION, RAKE_LIMIT, RAKE_LIMIT_HEADS_UP), "MOCK_TRN::" + table.getId());
         
         pokerState.init(rngProvider, settings);
         pokerState.setTournamentTable(true);

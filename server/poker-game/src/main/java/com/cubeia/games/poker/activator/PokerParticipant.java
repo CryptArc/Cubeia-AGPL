@@ -82,9 +82,10 @@ public class PokerParticipant extends DefaultCreationParticipant {
 
 	private final PokerVariant variant;
 
-	// TODO: get rake fraction from property/db
+	// TODO: get rake settings from property/db
     public static final BigDecimal RAKE_FRACTION = new BigDecimal("0.01");
-    public static final int RAKE_LIMIT = 500;
+    public static final long RAKE_LIMIT = 500;
+    public static final long RAKE_LIMIT_HEADS_UP = 150;
 
     private final CashGamesBackendContract cashGameBackendService;
 
@@ -130,7 +131,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
 
         PokerSettings settings = new PokerSettings(anteLevel, anteLevel * MIN_BUY_IN_ANTE_MULTIPLIER, anteLevel * MAX_BUY_IN_ANTE_MULTIPLIER, timingProfile, variant, 
 		    table.getPlayerSet().getSeatingMap().getNumberOfSeats(), BetStrategyName.NO_LIMIT, 
-		    new RakeSettings(RAKE_FRACTION, (long) RAKE_LIMIT), null);
+		    new RakeSettings(RAKE_FRACTION, RAKE_LIMIT, RAKE_LIMIT_HEADS_UP), "MOCK::" + table.getId());
 		pokerState.init(rngProvider, settings);
 		pokerState.setAdapterState(new FirebaseState());
 		pokerState.setId(table.getId());

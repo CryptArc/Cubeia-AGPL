@@ -17,6 +17,7 @@
 
 package com.cubeia.poker.util;
 
+import static java.math.BigDecimal.ZERO;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -83,7 +84,7 @@ public class HandResultCalculatorTest extends TestCase {
 		hands.add(new PlayerHand(3, new Hand("3s 8d "+community)));
 		
 		rakeFraction = new BigDecimal("0.1");
-        rakeCalculator = new LinearSingleLimitRakeCalculator(new RakeSettings(rakeFraction));
+        rakeCalculator = new LinearSingleLimitRakeCalculator(RakeSettings.createNoLimitRakeSettings(rakeFraction));
 	}
 	
 	
@@ -262,7 +263,7 @@ public class HandResultCalculatorTest extends TestCase {
 		players.put(2, p2);
 		players.put(3, p3);
 		
-		PotHolder potHolder = new PotHolder(new LinearSingleLimitRakeCalculator(new RakeSettings(BigDecimal.ZERO)));
+		PotHolder potHolder = new PotHolder(new LinearSingleLimitRakeCalculator(RakeSettings.createNoLimitRakeSettings(ZERO)));
 		potHolder.moveChipsToPot(players.values());
 		
 		assertEquals(2, potHolder.getNumberOfPots());
@@ -322,7 +323,7 @@ public class HandResultCalculatorTest extends TestCase {
 		hands.add(new PlayerHand(2, new Hand("2s 7d"+community)));
 		hands.add(new PlayerHand(3, new Hand("3s 8d"+community)));
 		
-        PotHolder potHolder = new PotHolder(new LinearSingleLimitRakeCalculator(new RakeSettings(BigDecimal.ZERO)));
+        PotHolder potHolder = new PotHolder(new LinearSingleLimitRakeCalculator(RakeSettings.createNoLimitRakeSettings(ZERO)));
 		potHolder.moveChipsToPot(players.values());
 		
 		// Exactly the same bets again

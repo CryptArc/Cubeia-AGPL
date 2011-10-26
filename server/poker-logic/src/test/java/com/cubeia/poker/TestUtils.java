@@ -72,10 +72,10 @@ public class TestUtils {
 	}
 
 	public static RakeSettings createOnePercentRakeSettings() {
-	    return new RakeSettings(new BigDecimal("0.1"), Long.MAX_VALUE);
+	    return new RakeSettings(new BigDecimal("0.1"), Long.MAX_VALUE, Long.MAX_VALUE);
 	}
 
     public static RakeSettings createZeroRakeSettings() {
-        return new RakeSettings(BigDecimal.ZERO, Long.MAX_VALUE);
+        return new RakeSettings(BigDecimal.ZERO, Long.MAX_VALUE, Long.MAX_VALUE);
     }
 }

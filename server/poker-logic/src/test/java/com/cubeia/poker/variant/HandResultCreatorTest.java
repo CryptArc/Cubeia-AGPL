@@ -1,5 +1,6 @@
 package com.cubeia.poker.variant;
 
+import static java.math.BigDecimal.ZERO;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -7,7 +8,6 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -59,7 +59,7 @@ public class HandResultCreatorTest {
 		playerMap.put(1, pp1);
 		playerMap.put(2, pp2);
 
-		PotHolder potHolder = new PotHolder(new LinearSingleLimitRakeCalculator(new RakeSettings(BigDecimal.ZERO)));
+		PotHolder potHolder = new PotHolder(new LinearSingleLimitRakeCalculator(RakeSettings.createNoLimitRakeSettings(ZERO)));
 		potHolder.moveChipsToPot(playerMap.values());
 
 		List<Card> communityCards = Card.list("TS");
@@ -93,7 +93,7 @@ public class HandResultCreatorTest {
 		playerMap.put(1, pp1);
 		playerMap.put(2, pp2);
 
-		PotHolder potHolder = new PotHolder(new LinearSingleLimitRakeCalculator(new RakeSettings(BigDecimal.ZERO)));
+		PotHolder potHolder = new PotHolder(new LinearSingleLimitRakeCalculator(RakeSettings.createNoLimitRakeSettings(ZERO)));
 		potHolder.moveChipsToPot(playerMap.values());
 
 		List<Card> communityCards = Card.list("7S"); // Will not be used
