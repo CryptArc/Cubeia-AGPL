@@ -6,10 +6,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 import com.cubeia.poker.RakeSettings;
+import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.Pot;
 
 /**
@@ -18,25 +20,28 @@ import com.cubeia.poker.pot.Pot;
  * @author w
  *
  */
-public class LinearSingleLimitRakeCalculator implements RakeCalculator {
+public class LinearRakeWithLimitCalculator implements RakeCalculator {
 
     private final BigDecimal rakeFraction;
     private final BigDecimal rakeLimit;
-
+    private final BigDecimal rakeLimitHeadsUp;
     
     /**
      * Rake calculator with limit.
      * @param rakeFraction fraction (0.01 gives 1%)
      * @param rakeLimit rake limit
      */
-    public LinearSingleLimitRakeCalculator(RakeSettings rakeSettings) {
+    public LinearRakeWithLimitCalculator(RakeSettings rakeSettings) {
         this.rakeFraction = rakeSettings.getRakeFraction();
         this.rakeLimit = new BigDecimal(rakeSettings.getRakeLimit());
+        this.rakeLimitHeadsUp = new BigDecimal(rakeSettings.getRakeLimitHeadsUp());
     }
     
     @Override
     public RakeInfoContainer calculateRakes(Collection<Pot> pots, boolean tableHasSeenAction) {
         Map<Pot, BigDecimal> potRake = new HashMap<Pot, BigDecimal>();
+
+        BigDecimal limit = countPlayers(pots) == 2 ? rakeLimitHeadsUp : rakeLimit;
         
         List<Pot> potsSortedById = sortPotsInIdOrder(pots);
         
@@ -50,7 +55,7 @@ public class LinearSingleLimitRakeCalculator implements RakeCalculator {
             if (tableHasSeenAction) {
                 rake = rakeFraction.multiply(new BigDecimal(potSize));
                 if (willRakeAdditionBreakLimit(totalRake, rake)) {
-                    rake = rakeLimit.subtract(totalRake);
+                    rake = limit.subtract(totalRake);
                 }
                 totalRake = totalRake.add(rake);
             }
@@ -60,6 +65,14 @@ public class LinearSingleLimitRakeCalculator implements RakeCalculator {
         }
         
         return new RakeInfoContainer(totalPot, totalRake.intValue(), potRake);
+    }
+
+    private int countPlayers(Collection<Pot> pots) {
+        HashSet<PokerPlayer> players = new HashSet<PokerPlayer>();
+        for (Pot pot : pots) {
+            players.addAll(pot.getPotContributors().keySet());
+        }
+        return players.size();
     }
 
     /**

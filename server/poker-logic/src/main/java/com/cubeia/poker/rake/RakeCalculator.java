@@ -8,7 +8,7 @@ public interface RakeCalculator {
     
     /**
      * Calculates the rakes for the given pots.
-     * @param pots pots to calculate rake for
+     * @param pots Pots to calculate rake for. This should be all pots in the current hand.
      * @param firstCallHasBeenMade set to true if the hand has seen a call, false if no one has called yet
      * @return the calculated rakes per pot, total rake and total bets (pot sizes)
      */

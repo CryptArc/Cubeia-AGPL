@@ -36,7 +36,7 @@ import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotHolder;
-import com.cubeia.poker.rake.LinearSingleLimitRakeCalculator;
+import com.cubeia.poker.rake.LinearRakeWithLimitCalculator;
 import com.cubeia.poker.result.Result;
 import com.cubeia.poker.variant.texasholdem.TexasHoldemHandComparator;
 
@@ -49,7 +49,7 @@ public class HandResultCalculatorTest extends TestCase {
 	HandResultCalculator calc = new HandResultCalculator(Collections.reverseOrder(new TexasHoldemHandComparator()));
 	
 	private ArrayList<PlayerHand> hands;
-    private LinearSingleLimitRakeCalculator rakeCalculator;
+    private LinearRakeWithLimitCalculator rakeCalculator;
 
     private BigDecimal rakeFraction;
     
@@ -84,7 +84,7 @@ public class HandResultCalculatorTest extends TestCase {
 		hands.add(new PlayerHand(3, new Hand("3s 8d "+community)));
 		
 		rakeFraction = new BigDecimal("0.1");
-        rakeCalculator = new LinearSingleLimitRakeCalculator(RakeSettings.createNoLimitRakeSettings(rakeFraction));
+        rakeCalculator = new LinearRakeWithLimitCalculator(RakeSettings.createNoLimitRakeSettings(rakeFraction));
 	}
 	
 	
@@ -263,7 +263,7 @@ public class HandResultCalculatorTest extends TestCase {
 		players.put(2, p2);
 		players.put(3, p3);
 		
-		PotHolder potHolder = new PotHolder(new LinearSingleLimitRakeCalculator(RakeSettings.createNoLimitRakeSettings(ZERO)));
+		PotHolder potHolder = new PotHolder(new LinearRakeWithLimitCalculator(RakeSettings.createNoLimitRakeSettings(ZERO)));
 		potHolder.moveChipsToPot(players.values());
 		
 		assertEquals(2, potHolder.getNumberOfPots());
@@ -323,7 +323,7 @@ public class HandResultCalculatorTest extends TestCase {
 		hands.add(new PlayerHand(2, new Hand("2s 7d"+community)));
 		hands.add(new PlayerHand(3, new Hand("3s 8d"+community)));
 		
-        PotHolder potHolder = new PotHolder(new LinearSingleLimitRakeCalculator(RakeSettings.createNoLimitRakeSettings(ZERO)));
+        PotHolder potHolder = new PotHolder(new LinearRakeWithLimitCalculator(RakeSettings.createNoLimitRakeSettings(ZERO)));
 		potHolder.moveChipsToPot(players.values());
 		
 		// Exactly the same bets again

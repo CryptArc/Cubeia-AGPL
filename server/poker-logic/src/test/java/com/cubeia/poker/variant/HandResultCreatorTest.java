@@ -28,7 +28,7 @@ import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.pot.PotTransition;
-import com.cubeia.poker.rake.LinearSingleLimitRakeCalculator;
+import com.cubeia.poker.rake.LinearRakeWithLimitCalculator;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
 import com.cubeia.poker.util.HandResultCalculator;
@@ -59,7 +59,7 @@ public class HandResultCreatorTest {
 		playerMap.put(1, pp1);
 		playerMap.put(2, pp2);
 
-		PotHolder potHolder = new PotHolder(new LinearSingleLimitRakeCalculator(RakeSettings.createNoLimitRakeSettings(ZERO)));
+		PotHolder potHolder = new PotHolder(new LinearRakeWithLimitCalculator(RakeSettings.createNoLimitRakeSettings(ZERO)));
 		potHolder.moveChipsToPot(playerMap.values());
 
 		List<Card> communityCards = Card.list("TS");
@@ -93,7 +93,7 @@ public class HandResultCreatorTest {
 		playerMap.put(1, pp1);
 		playerMap.put(2, pp2);
 
-		PotHolder potHolder = new PotHolder(new LinearSingleLimitRakeCalculator(RakeSettings.createNoLimitRakeSettings(ZERO)));
+		PotHolder potHolder = new PotHolder(new LinearRakeWithLimitCalculator(RakeSettings.createNoLimitRakeSettings(ZERO)));
 		potHolder.moveChipsToPot(playerMap.values());
 
 		List<Card> communityCards = Card.list("7S"); // Will not be used
