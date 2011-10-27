@@ -87,10 +87,21 @@ public class TelesinaDisconnectTest extends AbstractTexasHandTester {
 		// 2. Verify that a reconnect lets player 0 act again
 		game.playerIsSittingIn(p[0]);
 		assertEquals(PokerPlayerStatus.NORMAL, mockServerAdapter.getPokerPlayerStatus(p[0]));
+		act(p[1], CHECK);
+		act(p[2], CHECK);
+		
+		game.timeout();
+		
+		act(p[1], CHECK);
+		act(p[2], CHECK);
+		act(p[0], CHECK);
+		
+		game.timeout();
 		
 		act(p[2], CHECK);
-		act(p[0], BET);
-		act(p[1], CALL);
+		act(p[0], CHECK);
+		act(p[1], CHECK);
+		
 	}
 	
 	

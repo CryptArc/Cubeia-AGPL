@@ -317,7 +317,7 @@ public class PokerState implements Serializable, IPokerState {
 	public int countNonFoldedPlayers() {
 		int nonFolded = 0;
 		for (PokerPlayer p : getCurrentHandSeatingMap().values()) {
-			if (!p.hasFolded() && !p.isSittingOut()) {
+			if (!p.hasFolded()) {
 				nonFolded++;
 			}
 		}
@@ -342,8 +342,8 @@ public class PokerState implements Serializable, IPokerState {
 			notifyAllPlayerBalances();
 			resetValuesAtStartOfHand();
 			
-			currentHandSeatingMap = createCopy(seatingMap);
-			currentHandPlayerMap = createCopy(playerMap);
+			currentHandSeatingMap = createCopyWithSitOutPlayersExcluded(seatingMap);
+			currentHandPlayerMap = createCopyWithSitOutPlayersExcluded(playerMap);
 			
 			gameType.startHand();
 		} else {
@@ -352,24 +352,16 @@ public class PokerState implements Serializable, IPokerState {
 		}
 	}
 
-	private Map<Integer, PokerPlayer> createCopy(Map<Integer, PokerPlayer> map) {
-		// return new HashMap<Integer, PokerPlayer>(map);
+	/**
+	 * Take a copy of the supplied map where all players that are sitting out are removed.
+	 * 
+	 * @param map
+	 * @return
+	 */
+	private SortedMap<Integer, PokerPlayer> createCopyWithSitOutPlayersExcluded(Map<Integer, PokerPlayer> map) {
 		TreeMap<Integer, PokerPlayer> treeMap = new TreeMap<Integer, PokerPlayer>();
 		for (Integer pid : map.keySet()) {
 			PokerPlayer pokerPlayer = map.get(pid);
-			if (!pokerPlayer.isSittingOut()) {
-				treeMap.put(pid, pokerPlayer);
-			}
-		}
-		return treeMap;
-	}
-
-	private SortedMap<Integer, PokerPlayer> createCopy(SortedMap<Integer, PokerPlayer> sortedMap) {
-		//return new TreeMap<Integer, PokerPlayer>(sortedMap);
-		// Exclude sit-out players
-		TreeMap<Integer, PokerPlayer> treeMap = new TreeMap<Integer, PokerPlayer>();
-		for (Integer pid : sortedMap.keySet()) {
-			PokerPlayer pokerPlayer = sortedMap.get(pid);
 			if (!pokerPlayer.isSittingOut()) {
 				treeMap.put(pid, pokerPlayer);
 			}
@@ -430,8 +422,6 @@ public class PokerState implements Serializable, IPokerState {
 		for (PokerPlayer player : handResult.getResults().keySet()) {
 			if (player.getBalance() < anteLevel) {
 				playerIsSittingOut(player.getId(), SitOutStatus.SITTING_OUT);
-//				player.setSitOutStatus(SitOutStatus.SITTING_OUT);
-//				notifyPlayerSittingOut(player.getId());
 				notifyBuyinInfo(player.getId(), true);
 			}
 		}
@@ -789,7 +779,6 @@ public class PokerState implements Serializable, IPokerState {
 	}
 
     public void notifyDeckInfo(int size, Rank rankLow) {
-        // TODO Auto-generated method stub
         serverAdapter.notifyDeckInfo(size, rankLow);
     }
 

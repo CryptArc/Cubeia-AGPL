@@ -73,6 +73,7 @@ public class BettingRound implements Round, BettingRoundContext {
 	}
 	
 	private void initBettingRound(int dealerSeatId) {
+		log.debug("Init new betting round");
 		SortedMap<Integer, PokerPlayer> seatingMap = gameType.getState().getCurrentHandSeatingMap();
 		for (PokerPlayer p : seatingMap.values()) {
 			if (p.getBetStack() > highBet) {
@@ -87,6 +88,7 @@ public class BettingRound implements Round, BettingRoundContext {
 		if (p == null || allOtherPlayersAreAllIn(p)) {
 			gameType.getState().exposeShowdownCards(); 
 			// No or only one player can act. We are currently in an all-in show down scenario
+			log.debug("No players left to act. We are in an all-in show down scenario");
 			isFinished = true;
 			gameType.scheduleRoundTimeout();
 		} else {
@@ -115,7 +117,9 @@ public class BettingRound implements Round, BettingRoundContext {
 
 	private void requestNextAction(int lastSeatId) {
 		PokerPlayer player = playerToActCalculator.getNextPlayerToAct(lastSeatId, gameType.getState().getCurrentHandSeatingMap());
+		log.debug("Next player to act is: "+playerToAct);
 		if (player == null) {
+			log.debug("Setting betting round is finished because there is no player left to act");
 			isFinished = true;
 		} else {
 			requestAction(player);
