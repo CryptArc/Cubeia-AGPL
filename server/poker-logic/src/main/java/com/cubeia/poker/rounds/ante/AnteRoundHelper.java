@@ -1,5 +1,6 @@
 package com.cubeia.poker.rounds.ante;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.SortedMap;
@@ -9,6 +10,8 @@ import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.util.PokerUtils;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 
 /**
  * Testable helper class for the ante round.
@@ -30,24 +33,24 @@ public class AnteRoundHelper {
     	return allActed;
     }
 
-    /**
-     * Returns the next player to act.
-     * @param lastActedSeatId seat id of last acted player
-     * @param seatingMap seating map
-     * @return next player to act or null if all players has acted
-     */
-    PokerPlayer getNextPlayerToAct(int lastActedSeatId, SortedMap<Integer, PokerPlayer> seatingMap) {
-    	PokerPlayer next = null;
-    
-    	List<PokerPlayer> players = PokerUtils.unwrapList(seatingMap, lastActedSeatId + 1);
-    	for (PokerPlayer player : players) {
-    		if (canPlayerAct(player)) {
-    			next = player;
-    			break;
-    		}
-    	}
-    	return next;
-    }
+//    /**
+//     * Returns the next player to act.
+//     * @param lastActedSeatId seat id of last acted player
+//     * @param seatingMap seating map
+//     * @return next player to act or null if all players has acted
+//     */
+//    PokerPlayer getNextPlayerToAct(int lastActedSeatId, SortedMap<Integer, PokerPlayer> seatingMap) {
+//    	PokerPlayer next = null;
+//    
+//    	List<PokerPlayer> players = PokerUtils.unwrapList(seatingMap, lastActedSeatId + 1);
+//    	for (PokerPlayer player : players) {
+//    		if (canPlayerAct(player)) {
+//    			next = player;
+//    			break;
+//    		}
+//    	}
+//    	return next;
+//    }
 
     /**
      * Test if a placer can act. A player can act if all of the following are true:
@@ -74,4 +77,50 @@ public class AnteRoundHelper {
     	game.requestAction(player.getActionRequest());
     }
 
+    /**
+     * Returns true if it is impossible to start the round. 
+     * If all players but one has declined ante the round can't be started.
+     * @param playersInHand
+     * @return true if round is impossible to start
+     */
+    boolean isImpossibleToStartRound(Collection<PokerPlayer> playersInHand) {
+        boolean allPlayersButOneIsOut = (numberOfPlayersPayedAnte(playersInHand) + numberOfPendingPlayers(playersInHand)) <= 1;
+        return allPlayersButOneIsOut;
+    }
+    
+    int numberOfPendingPlayers(Collection<PokerPlayer> players) {
+        Collection<PokerPlayer> hasActed = Collections2.filter(players, new Predicate<PokerPlayer>() {
+            @Override
+            public boolean apply(PokerPlayer player) { return !player.hasActed(); }
+        });
+        return hasActed.size();
+    }
+
+    int numberOfPlayersPayedAnte(Collection<PokerPlayer> players) {
+        Collection<PokerPlayer> hasPostedEntryBet = Collections2.filter(players, new Predicate<PokerPlayer>() {
+            @Override
+            public boolean apply(PokerPlayer player) { return player.hasPostedEntryBet(); }
+        });
+        return hasPostedEntryBet.size();
+    }
+
+    /**
+     * Set all pending players to decline entry bet and return the list of modified players.
+     * @param players all players in hand
+     * @return players that were modified
+     */
+    Collection<PokerPlayer> setAllPendingPlayersToDeclineEntryBet(Collection<PokerPlayer> players) {
+        ArrayList<PokerPlayer> pendingPlayers = new ArrayList<PokerPlayer>();
+        for (PokerPlayer pokerPlayer : players) {
+            if(!pokerPlayer.hasActed()){                
+                pokerPlayer.setHasPostedEntryBet(false);
+                pokerPlayer.setHasActed(true);
+                pendingPlayers.add(pokerPlayer);
+            }
+        }       
+        return pendingPlayers;
+    }
+
+    
+    
 }

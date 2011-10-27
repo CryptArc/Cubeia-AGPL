@@ -1,5 +1,8 @@
 package com.cubeia.poker.variant.telesina;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import org.junit.Test;
 
 import com.cubeia.poker.AbstractTexasHandTester;
@@ -35,10 +38,9 @@ public class TelesinaAnteSitInTest extends AbstractTexasHandTester {
 
 		// Blinds
 
-		assertTrue(mp[1].isActionPossible(PokerActionType.ANTE));
-		assertFalse(mp[0].isActionPossible(PokerActionType.ANTE));
+		assertThat(mp[1].isActionPossible(PokerActionType.ANTE), is(true));
+		assertThat(mp[0].isActionPossible(PokerActionType.ANTE), is(true));
 		act(p[1], PokerActionType.ANTE);	
-
 
 		assertEquals(2, game.countSittingInPlayers());
 		assertEquals(2, game.getSeatedPlayers().size());

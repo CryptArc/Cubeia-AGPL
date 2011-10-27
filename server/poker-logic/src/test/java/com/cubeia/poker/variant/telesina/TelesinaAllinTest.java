@@ -1,5 +1,9 @@
 package com.cubeia.poker.variant.telesina;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
+
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -40,8 +44,8 @@ public class TelesinaAllinTest extends AbstractTexasHandTester {
 		game.timeout();
 		
 		// Blinds
-		assertTrue(mp[1].isActionPossible(PokerActionType.ANTE));
-		assertFalse(mp[0].isActionPossible(PokerActionType.ANTE));
+		assertThat(mp[1].isActionPossible(PokerActionType.ANTE), is(true));
+		assertThat(mp[0].isActionPossible(PokerActionType.ANTE), is(true));
 		act(p[1], PokerActionType.ANTE);	
 		act(p[0], PokerActionType.ANTE); 	
 		act(p[1], PokerActionType.CHECK);
@@ -49,21 +53,18 @@ public class TelesinaAllinTest extends AbstractTexasHandTester {
 		
 		game.timeout();
 		
-		
 		PossibleAction betRequest = mp[1].getActionRequest().getOption(PokerActionType.BET);
-		assertEquals(40, betRequest.getMinAmount());
-		assertEquals(43, betRequest.getMaxAmount());
+		assertThat(betRequest.getMinAmount(), is(40L));
+		assertThat(betRequest.getMaxAmount(), is(43L));
 		act(p[1], PokerActionType.BET, 40);
 		
 		PossibleAction callRequest = mp[0].getActionRequest().getOption(PokerActionType.CALL);
-		assertEquals(40, callRequest.getMinAmount());
-		assertEquals(40, callRequest.getMaxAmount());
+		assertThat(callRequest.getMinAmount(), is(40L));
+		assertThat(callRequest.getMaxAmount(), is(40L));
 		
 		PossibleAction raiseRequest = mp[0].getActionRequest().getOption(PokerActionType.RAISE);
-		assertEquals(63, raiseRequest.getMinAmount());
-		assertEquals(63, raiseRequest.getMaxAmount());
-
-		
+		assertThat(raiseRequest.getMinAmount(), is(63L));
+		assertThat(raiseRequest.getMaxAmount(), is(63L));
 	}
 	
 	
@@ -83,8 +84,8 @@ public class TelesinaAllinTest extends AbstractTexasHandTester {
 		game.timeout();
 		
 		// Blinds
-		assertTrue(mp[1].isActionPossible(PokerActionType.ANTE));
-		assertFalse(mp[0].isActionPossible(PokerActionType.ANTE));
+		assertThat(mp[1].isActionPossible(PokerActionType.ANTE), is(true));
+		assertThat(mp[0].isActionPossible(PokerActionType.ANTE), is(true));
 		act(p[1], PokerActionType.ANTE);	
 		act(p[0], PokerActionType.ANTE); 	
 		act(p[1], PokerActionType.BET, 80); // ALL IN
@@ -95,13 +96,13 @@ public class TelesinaAllinTest extends AbstractTexasHandTester {
 		// TODO: Verify that player 0 is all in
 		// verify that no further betting is allowed or requested
 		
-		assertTrue(mp[1].isAllIn());
+		assertThat(mp[1].isAllIn(), is(true));
 		
 		PossibleAction option = mp[1].getActionRequest().getOption(PokerActionType.BET);
-		assertNull(option);
+		assertThat(option, nullValue());
 		
 		option = mp[0].getActionRequest().getOption(PokerActionType.BET);
-		assertNull(option);
+		assertThat(option, nullValue());
 
 		
 	}
