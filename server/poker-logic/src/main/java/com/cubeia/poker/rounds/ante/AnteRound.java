@@ -31,8 +31,6 @@ import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
 import com.cubeia.poker.rounds.blinds.BlindsInfo;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 
 public class AnteRound implements Round {
 
@@ -44,7 +42,7 @@ public class AnteRound implements Round {
 
 	private AnteRoundHelper anteRoundHelper;
 
-	private Integer playerToAct;
+//	private Integer playerToAct;
 	
 	public AnteRound(GameType game, AnteRoundHelper anteRoundHelper) {
 		this.game = game;
@@ -57,23 +55,30 @@ public class AnteRound implements Round {
 		// TODO: how do we decide dealer? for now always use first player...
 		moveDealerButtonToSeatId(players.iterator().next().getSeatId());
 		
-		requestNextAction(game.getBlindsInfo().getDealerButtonSeatId());
+//		requestNextAction(game.getBlindsInfo().getDealerButtonSeatId());
+		requestAnteFromAllPlayersInHand(players);
 	}
 	
-	private void moveDealerButtonToSeatId(int newDealerSeatId) {
+	private void requestAnteFromAllPlayersInHand(Collection<PokerPlayer> players) {
+	    for (PokerPlayer p : players) {
+            anteRoundHelper.requestAnte(p, game.getBlindsInfo().getAnteLevel(), game);
+	    }
+    }
+
+    private void moveDealerButtonToSeatId(int newDealerSeatId) {
 		BlindsInfo blindsInfo = game.getBlindsInfo();
 		blindsInfo.setDealerButtonSeatId(newDealerSeatId);
 		game.getState().notifyDealerButton(blindsInfo.getDealerButtonSeatId());
 	}
 	
-	private void requestNextAction(int lastSeatId) {
-		PokerPlayer p = anteRoundHelper.getNextPlayerToAct(lastSeatId, game.getState().getCurrentHandSeatingMap());
-
-		if (p != null) {
-			anteRoundHelper.requestAnte(p, game.getBlindsInfo().getAnteLevel(), game);
-			playerToAct = p.getId();
-		}
-	}
+//	private void requestNextAction(int lastSeatId) {
+//		PokerPlayer p = anteRoundHelper.getNextPlayerToAct(lastSeatId, game.getState().getCurrentHandSeatingMap());
+//
+//		if (p != null) {
+//			anteRoundHelper.requestAnte(p, game.getBlindsInfo().getAnteLevel(), game);
+////			playerToAct = p.getId();
+//		}
+//	}
 	
 	
 	private void clearPlayerActionOptions() {
@@ -81,7 +86,7 @@ public class AnteRound implements Round {
 		for (PokerPlayer p : seatingMap.values()) {
 			p.clearActionRequest();
 		}
-		playerToAct = null;
+//		playerToAct = null;
 	}
 	
 	public void act(PokerAction action) {
@@ -111,54 +116,20 @@ public class AnteRound implements Round {
 		
 		game.getState().getPlayerInCurrentHand(action.getPlayerId()).clearActionRequest();
 		
+        Collection<PokerPlayer> playersInHand = game.getState().getCurrentHandSeatingMap().values();
 		
-		boolean hasAllPlayersActed = anteRoundHelper.hasAllPlayersActed(game.getState().getCurrentHandPlayerMap().values());
-		boolean allPlayersButOneIsOut = (numberOfPlayersPayedAnte() + numberOfPendingPlayers()) <= 1;
-		
-		if (!hasAllPlayersActed  &&  !allPlayersButOneIsOut) {
-			requestNextAction(player.getSeatId());
-		} else {
-			setAllPlayersToDeclineEntryBet();
+		if (anteRoundHelper.isImpossibleToStartRound(playersInHand)) {
+		    log.debug("impossible to start hand, too few players payed ante, will cancel");
+			Collection<PokerPlayer> declinedPlayers = anteRoundHelper.setAllPendingPlayersToDeclineEntryBet(playersInHand);
+			for (PokerPlayer declinedPlayer : declinedPlayers) {
+		        PokerAction declineAction = new PokerAction(declinedPlayer.getId(), PokerActionType.DECLINE_ENTRY_BET);
+	            game.getServerAdapter().notifyActionPerformed(declineAction, declinedPlayer.getBalance());
+			}
 		}
 	}
 	
-	
-	private void setAllPlayersToDeclineEntryBet() {
-		Collection<PokerPlayer> players = getAllSeatedPlayers();
-		for (PokerPlayer pokerPlayer : players) {
-			if(!pokerPlayer.hasActed()){				
-				pokerPlayer.setHasPostedEntryBet(false);
-				pokerPlayer.setHasActed(true);
-			}
-		}		
-	}
-
-	private int numberOfPendingPlayers() {
-		Collection<PokerPlayer> players = getAllSeatedPlayers();
-		int counter = 0;
-		for (PokerPlayer pokerPlayer : players) {
-			if(!pokerPlayer.hasActed()){
-				++counter;
-			}
-				
-		}
-		return counter;
-	}
-
 	private Collection<PokerPlayer> getAllSeatedPlayers() {
 		return game.getState().getCurrentHandSeatingMap().values();
-	}
-
-	private int numberOfPlayersPayedAnte() {
-		Collection<PokerPlayer> players = getAllSeatedPlayers();
-		int counter = 0;
-		for (PokerPlayer pokerPlayer : players) {
-			if (pokerPlayer.hasPostedEntryBet()){
-				++counter;
-			}
-				
-		}
-		return counter;
 	}
 
 	private void setPlayerSitOut(PokerPlayer player) {
@@ -179,8 +150,19 @@ public class AnteRound implements Round {
 	} 
 
 	public void timeout() {
-		log.debug("Player["+playerToAct+"] ante timed out. Will decline entry bet.");
-		act(new PokerAction(playerToAct, PokerActionType.DECLINE_ENTRY_BET, true));
+	    for (PokerPlayer player : getAllSeatedPlayers()) {
+	        if (!player.hasActed()) {
+	            log.debug("Player["+player+"] ante timed out. Will decline entry bet.");
+	            PokerAction action = new PokerAction(player.getId(), PokerActionType.DECLINE_ENTRY_BET);
+	            
+	            player.setHasActed(true);
+	            player.setHasFolded(true);
+	            player.setHasPostedEntryBet(false);
+	            player.clearActionRequest();
+	            game.getServerAdapter().notifyActionPerformed(action, player.getBalance());
+	            setPlayerSitOut(player);
+	        }
+	    }
 	}
 
 	public String getStateDescription() {
@@ -201,15 +183,7 @@ public class AnteRound implements Round {
 	}
 
     public boolean isCanceled() {
-        if (!isFinished()) {
-            return false;
-        } else {
-            Collection<PokerPlayer> hasPostedEntryBet = Collections2.filter(game.getState().getCurrentHandPlayerMap().values(), new Predicate<PokerPlayer>() {
-                @Override
-                public boolean apply(PokerPlayer player) { return player.hasPostedEntryBet(); }
-            });
-            return hasPostedEntryBet.size() < 2;
-        }
-        
+        Collection<PokerPlayer> players = game.getState().getCurrentHandSeatingMap().values();
+        return anteRoundHelper.hasAllPlayersActed(players)  &&  anteRoundHelper.numberOfPlayersPayedAnte(players) < 2;
     }
 }

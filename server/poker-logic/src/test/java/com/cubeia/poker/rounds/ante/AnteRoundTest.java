@@ -2,6 +2,7 @@ package com.cubeia.poker.rounds.ante;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -14,6 +15,7 @@ import java.util.TreeMap;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -66,13 +68,11 @@ public class AnteRoundTest {
         when(game.getBlindsInfo()).thenReturn(blindsInfo);
     }
 
-    @SuppressWarnings("unchecked")
     @Test
-    public void testAnteRoundCreation() {
+    public void testCreationAndAnteRequestBroadcast() {
         
         int anteLevel = 1000;
         when(blindsInfo.getAnteLevel()).thenReturn(anteLevel);
-        when(anteRoundHelper.getNextPlayerToAct(Mockito.eq(dealerButtonSeatId), Mockito.any(SortedMap.class))).thenReturn(player1);
         
         AnteRound anteRound = new AnteRound(game, anteRoundHelper);
         
@@ -80,6 +80,7 @@ public class AnteRoundTest {
         verify(player2).clearActionRequest();
         verify(state).notifyDealerButton(dealerButtonSeatId);
         verify(anteRoundHelper).requestAnte(player1, anteLevel, game);
+        verify(anteRoundHelper).requestAnte(player2, anteLevel, game);
         
         assertThat(anteRound.isFinished(), is(false));
     }
@@ -94,7 +95,7 @@ public class AnteRoundTest {
         when(blindsInfo.getAnteLevel()).thenReturn(anteLevel);
         
         when(anteRoundHelper.hasAllPlayersActed(Mockito.anyCollection())).thenReturn(false);
-        when(anteRoundHelper.getNextPlayerToAct(Mockito.eq(0), Mockito.any(SortedMap.class))).thenReturn(player2);
+//        when(anteRoundHelper.getNextPlayerToAct(Mockito.eq(0), Mockito.any(SortedMap.class))).thenReturn(player2);
         ServerAdapter serverAdapter = mock(ServerAdapter.class);
         when(game.getServerAdapter()).thenReturn(serverAdapter);
         
@@ -108,9 +109,48 @@ public class AnteRoundTest {
         verify(player1).setHasActed(true);
         verify(player1).setHasPostedEntryBet(true);
         verify(serverAdapter).notifyActionPerformed(action, resultingBalance);
-        
-        verify(anteRoundHelper).requestAnte(player2, anteLevel, game);
     }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testActOnAnteImpossibleToStartHandWillAutoDecline() {
+        AnteRound anteRound = new AnteRound(game, anteRoundHelper);
+        int player1Id = 1337;
+        int player2Id = 3378;
+        when(player2.getId()).thenReturn(player2Id);
+        when(state.getPlayerInCurrentHand(player1Id)).thenReturn(player1);
+        when(state.getPlayerInCurrentHand(player2Id)).thenReturn(player2);
+        int anteLevel = 1000;
+        when(blindsInfo.getAnteLevel()).thenReturn(anteLevel);
+        
+        when(anteRoundHelper.hasAllPlayersActed(Mockito.anyCollection())).thenReturn(false);
+        ServerAdapter serverAdapter = mock(ServerAdapter.class);
+        when(game.getServerAdapter()).thenReturn(serverAdapter);
+        
+        long resultingBalance1 = 23434L;
+        when(player1.getBalance()).thenReturn(resultingBalance1);
+        long resultingBalance2 = 349834L;
+        when(player2.getBalance()).thenReturn(resultingBalance2);
+        when(anteRoundHelper.isImpossibleToStartRound(Mockito.anyCollection())).thenReturn(true);
+        
+        when(anteRoundHelper.setAllPendingPlayersToDeclineEntryBet(Mockito.anyCollection())).thenReturn(Arrays.asList(player2));
+        
+        PokerAction action1 = new PokerAction(player1Id, PokerActionType.DECLINE_ENTRY_BET);
+        anteRound.act(action1);
+
+        verify(serverAdapter).notifyActionPerformed(Mockito.eq(action1), Mockito.eq(resultingBalance1));
+        
+        ArgumentCaptor<PokerAction> captor = ArgumentCaptor.forClass(PokerAction.class);
+        verify(serverAdapter, Mockito.times(2)).notifyActionPerformed(captor.capture(), Mockito.anyLong());
+        
+        PokerAction declineAction = captor.getAllValues().get(0);
+        assertThat(declineAction, is(action1));
+        
+        PokerAction declineAction2 = captor.getAllValues().get(1);
+        assertThat(declineAction2.getActionType(), is(PokerActionType.DECLINE_ENTRY_BET));
+        assertThat(declineAction2.getPlayerId(), is(player2Id));
+    }
+    
     
     @SuppressWarnings("unchecked")
     @Test
@@ -122,7 +162,7 @@ public class AnteRoundTest {
         when(blindsInfo.getAnteLevel()).thenReturn(anteLevel);
         
         when(anteRoundHelper.hasAllPlayersActed(Mockito.anyCollection())).thenReturn(false);
-        when(anteRoundHelper.getNextPlayerToAct(Mockito.eq(0), Mockito.any(SortedMap.class))).thenReturn(player2);
+//        when(anteRoundHelper.getNextPlayerToAct(Mockito.eq(0), Mockito.any(SortedMap.class))).thenReturn(player2);
         ServerAdapter serverAdapter = mock(ServerAdapter.class);
         when(game.getServerAdapter()).thenReturn(serverAdapter);
         long resultingBalance = 343L;
@@ -135,12 +175,11 @@ public class AnteRoundTest {
         verify(player1).setHasActed(true);
         verify(player1).setHasPostedEntryBet(false);
         verify(serverAdapter).notifyActionPerformed(action, resultingBalance );
-        verify(anteRoundHelper).requestAnte(player2, anteLevel, game);
     }    
     
     @Test
     public void testCancelHandWhenAllButOneRejectedAnte(){   	
-    	AnteRound anteRound = new AnteRound(game, anteRoundHelper);
+    	AnteRound anteRound = new AnteRound(game, new AnteRoundHelper());
 
     	int player1Id = 1;
     	DefaultPokerPlayer player1 = createPlayer(player1Id, 1000L);
@@ -154,6 +193,7 @@ public class AnteRoundTest {
         addAnteActionRequestToPlayer(player1);
         
         when(game.getState().getPlayerInCurrentHand(player1Id)).thenReturn(player1);
+        when(game.getState().getPlayerInCurrentHand(player2Id)).thenReturn(player2);
         when(state.getCurrentHandSeatingMap()).thenReturn(playerMap);
         PokerAction action = new PokerAction(player1Id, PokerActionType.DECLINE_ENTRY_BET);
         
@@ -163,12 +203,12 @@ public class AnteRoundTest {
 		when(game.getServerAdapter()).thenReturn(serverAdapter);
 		anteRound.act(action);
 		
-		assertThat(anteRound.isCanceled(),is(true));
+		assertThat(anteRound.isCanceled(), is(true));
     }
 
     @Test
     public void testCancelHandWhenAllButOneRejectedAnte3Players(){   	
-    	AnteRound anteRound = new AnteRound(game, anteRoundHelper);
+    	AnteRound anteRound = new AnteRound(game, new AnteRoundHelper());
 
     	int player1Id = 1;
     	DefaultPokerPlayer player1 = createPlayer(player1Id, 1000L);
@@ -186,7 +226,10 @@ public class AnteRoundTest {
         addAnteActionRequestToPlayer(player2);
         
         when(game.getState().getPlayerInCurrentHand(player1Id)).thenReturn(player1);
+        when(game.getState().getPlayerInCurrentHand(player2Id)).thenReturn(player2);
+        when(game.getState().getPlayerInCurrentHand(player3Id)).thenReturn(player3);
         when(state.getCurrentHandSeatingMap()).thenReturn(playerMap);
+        
         
         ActionRequest actionRequest = new ActionRequest();
         actionRequest.setOptions(Arrays.asList(new PossibleAction(PokerActionType.ANTE)));
@@ -199,7 +242,7 @@ public class AnteRoundTest {
 		
         PokerAction action2 = new PokerAction(player2Id, PokerActionType.DECLINE_ENTRY_BET);
 		anteRound.act(action2);
-		assertThat(anteRound.isCanceled(),is(true));
+		assertThat(anteRound.isCanceled(), is(true));
     }
 
 	private void addAnteActionRequestToPlayer(DefaultPokerPlayer player) {
@@ -242,42 +285,63 @@ public class AnteRoundTest {
         assertThat(anteRound.isFinished(), is(true));
     }
     
+    @SuppressWarnings("unchecked")
     @Test
     public void testIsCanceled() {
         AnteRound anteRound = new AnteRound(game, anteRoundHelper);
         
         // both declined: canceled
-        when(player1.hasActed()).thenReturn(true);
-        when(player1.hasPostedEntryBet()).thenReturn(false);
-        when(player2.hasActed()).thenReturn(true);
-        when(player2.hasPostedEntryBet()).thenReturn(false);
+        when(anteRoundHelper.hasAllPlayersActed(Mockito.anyCollection())).thenReturn(true);
+        when(anteRoundHelper.numberOfPlayersPayedAnte(Mockito.anyCollection())).thenReturn(0);
         assertThat(anteRound.isCanceled(), is(true));
         
         // one declined: canceled
-        when(player1.hasActed()).thenReturn(true);
-        when(player1.hasPostedEntryBet()).thenReturn(true);
-        when(player2.hasActed()).thenReturn(true);
-        when(player2.hasPostedEntryBet()).thenReturn(false);
+        when(anteRoundHelper.hasAllPlayersActed(Mockito.anyCollection())).thenReturn(true);
+        when(anteRoundHelper.numberOfPlayersPayedAnte(Mockito.anyCollection())).thenReturn(1);
         assertThat(anteRound.isCanceled(), is(true));
         
         // both accepted: not canceled
-        when(player1.hasActed()).thenReturn(true);
-        when(player1.hasPostedEntryBet()).thenReturn(true);
-        when(player2.hasActed()).thenReturn(true);
-        when(player2.hasPostedEntryBet()).thenReturn(true);
-        assertThat(anteRound.isCanceled(), is(true));
-        
-        // two accepted one declined: not canceled
-        PokerPlayer player3 = mock(PokerPlayer.class);
-        playerMap.put(2, player3);
-        when(player1.hasActed()).thenReturn(true);
-        when(player1.hasPostedEntryBet()).thenReturn(true);
-        when(player2.hasActed()).thenReturn(true);
-        when(player2.hasPostedEntryBet()).thenReturn(true);
-        when(player3.hasActed()).thenReturn(true);
-        when(player3.hasPostedEntryBet()).thenReturn(false);
-        assertThat(anteRound.isCanceled(), is(true));
+        when(anteRoundHelper.hasAllPlayersActed(Mockito.anyCollection())).thenReturn(true);
+        when(anteRoundHelper.numberOfPlayersPayedAnte(Mockito.anyCollection())).thenReturn(2);
+        assertThat(anteRound.isCanceled(), is(false));
     }
     
+    @Test
+    public void testTimeoutDeclinesAllOutstandingAntes() {
+//        for (PokerPlayer player : getAllSeatedPlayers()) {
+//            if (!player.hasActed()) {
+//                log.debug("Player["+player+"] ante timed out. Will decline entry bet.");
+//                act(new PokerAction(player.getId(), PokerActionType.DECLINE_ENTRY_BET, true));
+//            }
+//        }
+        
+        AnteRound anteRound = new AnteRound(game, anteRoundHelper);
+        
+        SortedMap<Integer, PokerPlayer> playerMap = new TreeMap<Integer, PokerPlayer>();
+        playerMap.put(1, player1);
+        playerMap.put(2, player2);
+        when(player1.hasActed()).thenReturn(true);
+        when(player2.hasActed()).thenReturn(false);
+        
+        ServerAdapter serverAdapter = mock(ServerAdapter.class);
+        when(game.getServerAdapter()).thenReturn(serverAdapter);
+        
+        when(state.getCurrentHandSeatingMap()).thenReturn(playerMap);
 
+        anteRound.timeout();
+        
+        verify(player1, never()).setHasActed(true);
+        verify(player2).setHasActed(true);
+        verify(player2).setHasFolded(true);
+        verify(player2).setHasPostedEntryBet(false);
+        verify(serverAdapter).notifyActionPerformed(Mockito.any(PokerAction.class), Mockito.anyLong());
+        
+//        player.setHasActed(true);
+//        player.setHasFolded(true);
+//        player.setHasPostedEntryBet(false);
+//        game.getServerAdapter().notifyActionPerformed(action, player.getBalance());
+        
+        
+    }
+    
 }
