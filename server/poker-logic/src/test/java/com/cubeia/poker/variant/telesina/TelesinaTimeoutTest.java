@@ -5,6 +5,8 @@ import static com.cubeia.poker.action.PokerActionType.BET;
 import static com.cubeia.poker.action.PokerActionType.CALL;
 import static com.cubeia.poker.action.PokerActionType.CHECK;
 import static com.cubeia.poker.action.PokerActionType.DECLINE_ENTRY_BET;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
@@ -32,25 +34,18 @@ public class TelesinaTimeoutTest extends AbstractTexasHandTester {
 	 */
 	@Test
 	public void testAnteTimeout() {
-		MockPlayer[] mp = TestUtils.createMockPlayers(3);
-		int[] p = TestUtils.createPlayerIdArray(mp);
+		MockPlayer[] mp = TestUtils.createMockPlayers(2);
 		addPlayers(game, mp);
 		
 		// Set initial balances
-		mp[0].setBalance(100);
-		mp[1].setBalance(100);
-		mp[2].setBalance(100);
+        mp[0].setBalance(100);
+        mp[1].setBalance(100);
 		
 		// Force start
 		game.timeout();
 		
-		// ANTE
-		act(p[1], ANTE);
-		assertTrue(mp[2].isActionPossible(ANTE));
-		// Timeout player 2
-		game.timeout();
-		// Assert that player 0 has received an action request
-		assertTrue(mp[0].isActionPossible(ANTE));
+        assertThat(mp[0].isActionPossible(ANTE), is(true));
+        assertThat(mp[1].isActionPossible(ANTE), is(true));
 	}
 	
 	/**
