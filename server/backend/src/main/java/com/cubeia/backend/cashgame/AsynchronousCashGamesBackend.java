@@ -3,9 +3,8 @@ package com.cubeia.backend.cashgame;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
-import com.cubeia.backend.cashgame.CashGamesBackend;
-import com.cubeia.backend.cashgame.PlayerSessionId;
-import com.cubeia.backend.cashgame.SynchronousCashGamesBackend;
+import org.apache.log4j.Logger;
+
 import com.cubeia.backend.cashgame.callback.AnnounceTableCallback;
 import com.cubeia.backend.cashgame.callback.OpenSessionCallback;
 import com.cubeia.backend.cashgame.callback.ReserveCallback;
@@ -35,6 +34,8 @@ public class AsynchronousCashGamesBackend implements CashGamesBackend {
 
 	private SynchronousCashGamesBackend backingImpl;
 	private ExecutorService executor;
+	
+	private final Logger log = Logger.getLogger(getClass());
 
 	public AsynchronousCashGamesBackend(SynchronousCashGamesBackend backingImpl, ExecutorService executor) {
 		this.backingImpl = backingImpl;
@@ -60,10 +61,12 @@ public class AsynchronousCashGamesBackend implements CashGamesBackend {
 			AnnounceTableResponse response = backingImpl.announceTable(request);
 			callback.requestSucceded(response);
 		} catch (AnnounceTableFailedException e) {
+			log.error("failed to announce table", e);
 			AnnounceTableFailedResponse.ErrorCode errorCode = e.getErrorCode();
 			String message = e.getMessage();
 			callback.requestFailed(new AnnounceTableFailedResponse(errorCode, message));
 		} catch (Throwable t) {
+			log.error("failed to announce table", t);
 			AnnounceTableFailedResponse.ErrorCode errorCode = null;
 			String message = t.getMessage();
 			callback.requestFailed(new AnnounceTableFailedResponse(errorCode, message));
@@ -88,10 +91,12 @@ public class AsynchronousCashGamesBackend implements CashGamesBackend {
 			OpenSessionResponse response = backingImpl.openSession(request);
 			callback.requestSucceded(response);
 		} catch (OpenSessionFailedException e) {
+			log.error("failed to open session", e);
 			OpenSessionFailedResponse.ErrorCode errorCode = e.getErrorCode();
 			String message = e.getMessage();
 			callback.requestFailed(new OpenSessionFailedResponse(errorCode, message));
 		} catch (Throwable t) {
+			log.error("failed to open session", t);
 			OpenSessionFailedResponse.ErrorCode errorCode = null;
 			String message = t.getMessage();
 			callback.requestFailed(new OpenSessionFailedResponse(errorCode, message));
@@ -116,10 +121,12 @@ public class AsynchronousCashGamesBackend implements CashGamesBackend {
 			ReserveResponse response = backingImpl.reserve(request);
 			callback.requestSucceded(response);
 		} catch (ReserveFailedException e) {
+			log.error("failed to reserve", e);
 			ReserveFailedResponse.ErrorCode errorCode = e.getErrorCode();
 			String message = e.getMessage();
 			callback.requestFailed(new ReserveFailedResponse(request.playerSessionId, errorCode, message));
 		} catch (Throwable t) {
+			log.error("failed to reserve", t);
 			ReserveFailedResponse.ErrorCode errorCode = null;
 			String message = t.getMessage();
 			callback.requestFailed(new ReserveFailedResponse(request.playerSessionId, errorCode, message));

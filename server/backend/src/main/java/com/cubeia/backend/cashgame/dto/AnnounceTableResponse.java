@@ -25,4 +25,10 @@ public class AnnounceTableResponse implements Serializable {
 	public void setProperty(String key, String value) {
 		tableProperties.put(key, value);
 	}
+
+	@Override
+	public String toString() {
+		return "AnnounceTableResponse [tableProperties=" + tableProperties
+				+ ", tableId=" + tableId + "]";
+	}
 }

@@ -21,6 +21,7 @@ import static com.cubeia.firebase.api.game.player.PlayerStatus.CONNECTED;
 import static com.cubeia.firebase.api.game.player.PlayerStatus.DISCONNECTED;
 import static com.cubeia.firebase.api.game.player.PlayerStatus.LEAVING;
 import static com.cubeia.firebase.api.game.player.PlayerStatus.WAITING_REJOIN;
+import static com.cubeia.games.poker.handler.BackendCallHandler.EXT_PROP_KEY_TABLE_ID;
 import static com.cubeia.poker.player.SitOutStatus.NOT_ENTERED_YET;
 
 import java.io.Serializable;
@@ -29,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cubeia.backend.cashgame.PlayerSessionId;
-import com.cubeia.backend.cashgame.TableIdImpl;
+import com.cubeia.backend.cashgame.TableId;
 import com.cubeia.backend.cashgame.dto.CloseSessionRequest;
 import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
 import com.cubeia.backend.cashgame.exceptions.CloseSessionFailedException;
@@ -179,9 +180,11 @@ public class PokerTableListener implements TournamentTableListener {
     
 	private void startWalletSession(Table table, GenericPlayer player) {
 	    log.debug("starting wallet session: tId = {}, pId = {}", table.getId(), player.getPlayerId());
-			
-		// TODO: TableId must be obtained from announceTable call, may not be instantiated here.
-		OpenSessionRequest openSessionRequest = new OpenSessionRequest(player.getPlayerId(), new TableIdImpl(), -1);
+		TableId tableId = (TableId) state.getExternalTableProperties().get(EXT_PROP_KEY_TABLE_ID);
+		if(tableId == null) {
+			log.warn("No table ID found in external properties; Table must be anounced first!");
+		}
+		OpenSessionRequest openSessionRequest = new OpenSessionRequest(player.getPlayerId(), tableId, -1);
         cashGameBackend.openSession(openSessionRequest, cashGameBackend.getCallbackFactory().createOpenSessionCallback(table));
 	}
 

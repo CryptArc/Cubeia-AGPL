@@ -25,7 +25,7 @@ import com.cubeia.poker.player.PokerPlayer;
 import com.google.inject.Inject;
 
 public class BackendCallHandler {
-    private static final String EXT_PROP_KEY_TABLE_ID = "tableId";
+    public static final String EXT_PROP_KEY_TABLE_ID = "tableId";
 
     private static Logger log = LoggerFactory.getLogger(BackendCallHandler.class);
     
