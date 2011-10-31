@@ -202,15 +202,21 @@ public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Seriali
 		if (threeSet == null) {
 			return null;
 		}
-		
 		cc.removeAll(threeSet);
 		
 		List<Card> twoSet = checkManyOfAKind(cc, 2);
 		if (twoSet == null) {
 			return null;
 		}
+		cc.removeAll(twoSet);
+		
+		// Make a list of the used cards in an ordered fashion
+		List<Card> usedCards = new LinkedList<Card>(threeSet);
+		usedCards.addAll(twoSet);
+		Collections.sort(cc, ByRankCardComparator.ACES_HIGH_DESC);
+		usedCards.addAll(cc);
 
-		return new TelesinaHandStrength(HandType.FULL_HOUSE, cards, 0, threeSet);
+		return new TelesinaHandStrength(HandType.FULL_HOUSE, usedCards, 0, threeSet);
 	}
 	
 	/**
@@ -305,8 +311,10 @@ public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Seriali
 			}
 			lastSuit = card.getSuit();
 		}
-
-		return new TelesinaHandStrength(HandType.FLUSH, cards, 0, cards);
+		
+		List<Card> sorted = new ArrayList<Card>(cards);
+		Collections.sort(sorted, ByRankCardComparator.ACES_HIGH_DESC);
+		return new TelesinaHandStrength(HandType.FLUSH, sorted, 0, cards);
 	}
 	
 	/**
@@ -329,7 +337,9 @@ public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Seriali
 			return null;
 		}
 		
-		return new TelesinaHandStrength(HandType.STRAIGHT_FLUSH, cards, 0, cards);
+		List<Card> sorted = new ArrayList<Card>(cards);
+		Collections.sort(sorted, ByRankCardComparator.ACES_LOW_ASC);
+		return new TelesinaHandStrength(HandType.STRAIGHT_FLUSH, sorted, 0, cards);
 	}
 
 	/**
@@ -384,7 +394,7 @@ public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Seriali
 		
 		List<Card> firstKicker = Arrays.asList(cc.get(cc.size() - 1));
 		List<Card> secondKicker = Arrays.asList(cc.get(cc.size() - 2));
-		return new TelesinaHandStrength(HandType.STRAIGHT, cards, 0, firstKicker, secondKicker);
+		return new TelesinaHandStrength(HandType.STRAIGHT, cc, 0, firstKicker, secondKicker);
 	}
 
 	private TelesinaHandStrength checkStraightAcesLow(List<Card> cards) {
@@ -418,7 +428,7 @@ public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Seriali
 
 		List<Card> firstKicker = Arrays.asList(cc.get(cc.size() - 1));
 		List<Card> secondKicker = Arrays.asList(cc.get(cc.size() - 2));
-		return new TelesinaHandStrength(HandType.STRAIGHT, cards, 0, firstKicker, secondKicker);
+		return new TelesinaHandStrength(HandType.STRAIGHT, cc, 0, firstKicker, secondKicker);
 	}
 	
 }
