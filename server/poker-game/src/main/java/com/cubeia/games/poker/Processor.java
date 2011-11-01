@@ -28,6 +28,7 @@ import com.cubeia.backend.cashgame.dto.AnnounceTableFailedResponse;
 import com.cubeia.backend.cashgame.dto.AnnounceTableResponse;
 import com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse;
 import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
+import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;
 import com.cubeia.backend.cashgame.dto.ReserveResponse;
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.GameDataAction;
@@ -120,18 +121,27 @@ public class Processor implements GameProcessor, TournamentProcessor {
     			handleCommand(table, command);
     		} else if (attachment instanceof OpenSessionResponse) {
     	        backendHandler.handleOpenSessionSuccessfulResponse((OpenSessionResponse) attachment);
+    	        
     	    } else if (attachment instanceof OpenSessionFailedResponse) {
                 log.debug("got open session failed response: {}", attachment);
                 backendHandler.handleOpenSessionFailedResponse((OpenSessionFailedResponse) attachment);
+                
     	    } else if (attachment instanceof ReserveResponse) {
-    	        log.debug("got reserver response: {}", attachment);
+    	        log.debug("got reserve response: {}", attachment);
     	        backendHandler.handleReserveSuccessfulResponse((ReserveResponse) attachment);
+    	        
+    	    } else if (attachment instanceof ReserveFailedResponse) {
+    	    	log.debug("got reserve failed response: {}", attachment);
+    	    	backendHandler.handleReserveFailedResponse((ReserveFailedResponse) attachment);
+    	    	
     	    } else if (attachment instanceof AnnounceTableResponse) {
     	        log.debug("got announce table response: {}", attachment);
     	        backendHandler.handleAnnounceTableSuccessfulResponse((AnnounceTableResponse) attachment);
+    	        
             } else if (attachment instanceof AnnounceTableFailedResponse) {
                 log.debug("got announce table failed response: {}", attachment);
                 backendHandler.handleAnnounceTableFailedResponse((AnnounceTableFailedResponse) attachment);
+                
     	    } else {
     	        log.warn("Unhandled object: " + attachment.getClass().getName());
     	    }
