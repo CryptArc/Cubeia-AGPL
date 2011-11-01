@@ -86,7 +86,18 @@ public class BackendCallHandler {
     	int playerId = response.sessionId.getPlayerId();
     	
     	BuyInResponse resp = new BuyInResponse();
-        resp.resultCode = Enums.BuyInResultCode.MAX_LIMIT_REACHED; // FIXME Should be valid error code(s)
+    	
+    	// FIXME Should be valid error code(s)
+    	// Adding switch below to get the defined error codes, the A,B,C ones seems
+    	// arbitrary and not sure if used(?)
+        resp.resultCode = Enums.BuyInResultCode.MAX_LIMIT_REACHED; 
+        
+        switch (response.errorCode) {
+	        case AMOUNT_TOO_HIGH: 
+	        	resp.resultCode = Enums.BuyInResultCode.MAX_LIMIT_REACHED;
+	        	break;
+        }
+        
     	
 		GameDataAction action = new GameDataAction(playerId, table.getId());
 		StyxSerializer styx = new StyxSerializer(null);

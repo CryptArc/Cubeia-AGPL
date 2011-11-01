@@ -26,6 +26,7 @@ import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitoutRequest;
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.PlayerSessionIdImpl;
 import com.cubeia.backend.cashgame.callback.ReserveCallback;
+import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;
 import com.cubeia.backend.cashgame.dto.ReserveRequest;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
 import com.cubeia.backend.firebase.FirebaseCallbackFactory;
@@ -65,6 +66,7 @@ public class PokerHandlerTest {
         
         when(pokerHandler.table.getNotifier()).thenReturn(notifier);
         when(pokerHandler.state.getPokerPlayer(playerId)).thenReturn(pokerPlayer);
+        when(pokerHandler.state.getMaxBuyIn()).thenReturn(6000);
         when(backend.getCallbackFactory()).thenReturn(callbackFactory);
     }
     
@@ -127,6 +129,8 @@ public class PokerHandlerTest {
         
         pokerHandler.visit(buyInRequest);
         
+        verify(backend, Mockito.times(1)).reserve(Mockito.any(ReserveRequest.class), Mockito.any(ReserveCallback.class));
+        
         ArgumentCaptor<ReserveRequest> reqCaptor = ArgumentCaptor.forClass(ReserveRequest.class);
         verify(pokerPlayer).setSitInAfterSuccessfulBuyIn(true);
         verify(backend).reserve(reqCaptor.capture(), Mockito.eq(reserveCallback));
@@ -134,6 +138,45 @@ public class PokerHandlerTest {
         assertThat(reserveReq.amount, is(buyInRequest.amount));
         assertThat(reserveReq.playerSessionId, is(playerSessionId));
         assertThat(reserveReq.roundNumber, is(-1));
+    }
+    
+    
+    @Test
+    public void testVisitBuyInRequestAmountTooHigh() {
+        PlayerSessionId playerSessionId = new PlayerSessionIdImpl(playerId);
+        when(pokerPlayer.getPlayerSessionId()).thenReturn(playerSessionId);
+        when(pokerPlayer.getBalance()).thenReturn(0L);
+        
+        // Request more money than max buy in
+        BuyInRequest buyInRequest = new BuyInRequest(14000, true);
+        
+        ReserveCallback reserveCallback = mock(ReserveCallback.class);
+        when(callbackFactory.createReserveCallback(table)).thenReturn(reserveCallback);
+        
+        pokerHandler.visit(buyInRequest);
+        
+        // since amount is higher than max allowed we should never get a call to the backend
+        verify(backend, Mockito.never()).reserve(Mockito.any(ReserveRequest.class), Mockito.any(ReserveCallback.class));
+        verify(reserveCallback).requestFailed(Mockito.any(ReserveFailedResponse.class));
+    }
+    
+    @Test
+    public void testVisitBuyInRequestAmountTooHighForCurrentBalance() {
+        PlayerSessionId playerSessionId = new PlayerSessionIdImpl(playerId);
+        when(pokerPlayer.getPlayerSessionId()).thenReturn(playerSessionId);
+        when(pokerPlayer.getBalance()).thenReturn(4000L);
+        
+        // Request more money than allowed, balance + buyin <= max buyin
+        BuyInRequest buyInRequest = new BuyInRequest(3000, true);
+        
+        ReserveCallback reserveCallback = mock(ReserveCallback.class);
+        when(callbackFactory.createReserveCallback(table)).thenReturn(reserveCallback);
+        
+        pokerHandler.visit(buyInRequest);
+        
+        // since amount is higher than max allowed we should never get a call to the backend
+        verify(backend, Mockito.never()).reserve(Mockito.any(ReserveRequest.class), Mockito.any(ReserveCallback.class));
+        verify(reserveCallback).requestFailed(Mockito.any(ReserveFailedResponse.class));
     }
 
     /*@Test
