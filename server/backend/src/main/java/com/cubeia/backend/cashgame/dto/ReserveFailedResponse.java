@@ -19,6 +19,7 @@ public class ReserveFailedResponse implements Serializable {
 	}
 
 	public enum ErrorCode {
-		A, B, C;
+		A, B, C,
+		AMOUNT_TOO_HIGH;
 	}
 }

@@ -15,6 +15,7 @@ import com.cubeia.backend.cashgame.dto.AnnounceTableFailedResponse;
 import com.cubeia.backend.cashgame.dto.AnnounceTableResponse;
 import com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse;
 import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
+import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;
 import com.cubeia.backend.cashgame.dto.ReserveResponse;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.game.table.Table;
@@ -75,6 +76,34 @@ public class BackendCallHandler {
         
         state.notifyPlayerBalance(playerId);
     }
+    
+    public void handleReserveFailedResponse(ReserveFailedResponse response) {
+    	int playerId = response.sessionId.getPlayerId();
+    	
+    	BuyInResponse resp = new BuyInResponse();
+    	
+    	// FIXME Should be valid error code(s)
+    	// Adding switch below to get the defined error codes, the A,B,C ones seems
+    	// arbitrary and not sure if used(?)
+        resp.resultCode = Enums.BuyInResultCode.MAX_LIMIT_REACHED; 
+        
+        switch (response.errorCode) {
+	        case AMOUNT_TOO_HIGH: 
+	        	resp.resultCode = Enums.BuyInResultCode.MAX_LIMIT_REACHED;
+	        	break;
+        }
+        
+    	
+		GameDataAction action = new GameDataAction(playerId, table.getId());
+		StyxSerializer styx = new StyxSerializer(null);
+        try {
+			action.setData(styx.pack(resp));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+		table.getNotifier().notifyPlayer(playerId, action );
+	}
 
     public void handleOpenSessionSuccessfulResponse(OpenSessionResponse openSessionResponse) {
         PlayerSessionId playerSessionId = openSessionResponse.sessionId;
@@ -107,5 +136,7 @@ public class BackendCallHandler {
     public void handleOpenSessionFailedResponse(OpenSessionFailedResponse attachment) {
         throw new UnsupportedOperationException("handling of failed session requests not implemented");
     }
+
+	
     
 }

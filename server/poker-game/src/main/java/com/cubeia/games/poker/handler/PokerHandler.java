@@ -27,6 +27,8 @@ import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitinRequest;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitoutRequest;
 
 import com.cubeia.backend.cashgame.callback.ReserveCallback;
+import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;
+import com.cubeia.backend.cashgame.dto.ReserveFailedResponse.ErrorCode;
 import com.cubeia.backend.cashgame.dto.ReserveRequest;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
 import com.cubeia.firebase.api.game.table.Table;
@@ -93,7 +95,15 @@ public class PokerHandler extends DefaultPokerHandler {
         PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) state.getPokerPlayer(playerId);
         ReserveRequest reserveRequest = new ReserveRequest(pokerPlayer.getPlayerSessionId(), -1, packet.amount);
         ReserveCallback callback = cashGameBackend.getCallbackFactory().createReserveCallback(table);
-        cashGameBackend.reserve(reserveRequest, callback);
+        
+        // Check if the amount is allowed by the table
+        long sum = reserveRequest.amount + pokerPlayer.getBalance();
+		if (sum <= state.getMaxBuyIn()) {
+        	cashGameBackend.reserve(reserveRequest, callback);
+        } else {
+        	ReserveFailedResponse failResponse = new ReserveFailedResponse(reserveRequest.playerSessionId, ErrorCode.AMOUNT_TOO_HIGH, "Requested buy in plus balance cannot be more than max buy in");
+			callback.requestFailed(failResponse);
+        }
         
         // pokerPlayer.setSitInAfterSuccessfulBuyIn(packet.sitInIfSuccessful);
         pokerPlayer.setSitInAfterSuccessfulBuyIn(true);
