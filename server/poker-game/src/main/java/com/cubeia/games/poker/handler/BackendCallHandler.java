@@ -81,15 +81,23 @@ public class BackendCallHandler {
     	int playerId = response.sessionId.getPlayerId();
     	
     	BuyInResponse resp = new BuyInResponse();
-    	
-    	// FIXME Should be valid error code(s)
-    	// Adding switch below to get the defined error codes, the A,B,C ones seems
-    	// arbitrary and not sure if used(?)
-        resp.resultCode = Enums.BuyInResultCode.MAX_LIMIT_REACHED; 
+        resp.resultCode = Enums.BuyInResultCode.UNSPECIFIED_ERROR; 
         
         switch (response.errorCode) {
 	        case AMOUNT_TOO_HIGH: 
+	        	resp.resultCode = Enums.BuyInResultCode.AMOUNT_TOO_HIGH;
+	        	break;
+	        	
+	        case MAX_LIMIT_REACHED: 
 	        	resp.resultCode = Enums.BuyInResultCode.MAX_LIMIT_REACHED;
+	        	break;
+	        	
+	        case SESSION_NOT_OPEN: 
+	        	resp.resultCode = Enums.BuyInResultCode.SESSION_NOT_OPEN;
+	        	break;
+	        	
+	        case UNSPECIFIED_FAILURE: 
+	        	resp.resultCode = Enums.BuyInResultCode.UNSPECIFIED_ERROR;
 	        	break;
         }
         
