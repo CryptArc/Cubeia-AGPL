@@ -397,7 +397,6 @@ public class PokerState implements Serializable, IPokerState {
 		handFinished = true;
 
 		awardWinners(result.getResults());
-		commitPendingBalances();
 		
 		if (tournamentTable) {
 			// Report round to tournament coordinator and wait for notification
@@ -420,7 +419,8 @@ public class PokerState implements Serializable, IPokerState {
 	 */
 	private void setPlayersWithoutMoneyAsSittingOut(HandResult handResult) {
 		for (PokerPlayer player : handResult.getResults().keySet()) {
-			if (player.getBalance() < anteLevel) {
+			long totalBalance = player.getBalance() + player.getPendingBalance();
+			if (totalBalance < anteLevel) {
 				playerIsSittingOut(player.getId(), SitOutStatus.SITTING_OUT);
 				notifyBuyinInfo(player.getId(), true);
 			}
@@ -428,7 +428,7 @@ public class PokerState implements Serializable, IPokerState {
 	}
 	
 	@VisibleForTesting
-	protected void commitPendingBalances() {
+	public void commitPendingBalances() {
 	    for (PokerPlayer player : playerMap.values()) {
 	        player.commitPendingBalance(getMaxBuyIn());
 	    }

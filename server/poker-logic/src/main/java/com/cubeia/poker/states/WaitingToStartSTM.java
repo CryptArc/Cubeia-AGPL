@@ -36,6 +36,7 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
 	public void timeout(PokerState context) {
 		if (!context.isTournamentTable()) {
 			context.setHandFinished(false);
+			context.commitPendingBalances();
 			
 			if (context.countSittingInPlayers() > 1) {
 				context.startHand();

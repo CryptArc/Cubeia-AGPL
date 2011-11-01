@@ -60,88 +60,48 @@ public class BackendCallHandlerTest {
         when(backend.getCallbackFactory()).thenReturn(callbackFactory);
     }
     
-    @Test
-    public void testHandleReserveSuccessfulResponse() throws IOException {
-        PlayerSessionId playerSessionId = new PlayerSessionIdImpl(playerId);
+    
+    PlayerSessionId playerSessionId;
+    ReserveResponse reserveResponse;
+    int amount;
+    BuyInResponse buyInRespPacket;
+    
+    private void setupForHandleReserveSuccessfulResponse(boolean isSitInAfterBuyIn) throws IOException{
+    	amount = 500;
+        playerSessionId = new PlayerSessionIdImpl(playerId);
         int balanceOnRemoteWallet = 10000;
         BalanceUpdate balanceUpdate = new BalanceUpdate(playerSessionId , balanceOnRemoteWallet, -1);
-        int amount = 500;
-        ReserveResponse reserveResponse = new ReserveResponse(balanceUpdate , amount);
-        when(pokerPlayer.getBalance()).thenReturn((long) amount);
-        when(state.isPlayerInHand(playerId)).thenReturn(false);
+        reserveResponse = new ReserveResponse(balanceUpdate , amount);
         
+		when(pokerPlayer.getPendingBalance()).thenReturn((long)amount);
+        when(pokerPlayer.isSitInAfterSuccessfulBuyIn()).thenReturn(isSitInAfterBuyIn);
         callHandler.handleReserveSuccessfulResponse(reserveResponse);
+        verify(pokerPlayer).addPendingAmount(amount);
         
-        verify(pokerPlayer).addChips(amount);
-        verify(pokerPlayer, Mockito.never()).addPendingAmount(Mockito.anyLong());
         ArgumentCaptor<GameDataAction> buyInResponseCaptor = ArgumentCaptor.forClass(GameDataAction.class);
         verify(notifier).notifyPlayer(Mockito.eq(playerId), buyInResponseCaptor.capture());
         GameDataAction buyInDataAction = buyInResponseCaptor.getValue();
-        BuyInResponse buyInRespPacket = (BuyInResponse) new StyxSerializer(new ProtocolObjectFactory()).unpack(buyInDataAction.getData());
-        assertThat(buyInRespPacket.balance, is(amount));
-        assertThat(buyInRespPacket.pendingBalance, is(0));
-        assertThat(buyInRespPacket.resultCode, is(Enums.BuyInResultCode.OK));
+        buyInRespPacket = (BuyInResponse) new StyxSerializer(new ProtocolObjectFactory()).unpack(buyInDataAction.getData());
         
-        verify(state, never()).playerIsSittingIn(playerId);
+        assertThat(buyInRespPacket.balance, is(0));
+        assertThat(buyInRespPacket.pendingBalance, is(amount));
+        assertThat(buyInRespPacket.resultCode, is(Enums.BuyInResultCode.OK));
         verify(state).notifyPlayerBalance(playerId);
+    }
+    
+
+    
+    @Test
+    public void testHandleReserveSuccessfulResponse() throws IOException {
+    	setupForHandleReserveSuccessfulResponse(false);
+        verify(state, never()).playerIsSittingIn(playerId);
     }
     
     @Test
     public void testHandleReserveSuccessfulResponseSitInIfSuccessful() throws IOException {
-        PlayerSessionId playerSessionId = new PlayerSessionIdImpl(playerId);
-        int balanceOnRemoteWallet = 10000;
-        BalanceUpdate balanceUpdate = new BalanceUpdate(playerSessionId , balanceOnRemoteWallet, -1);
-        int amount = 500;
-        ReserveResponse reserveResponse = new ReserveResponse(balanceUpdate , amount);
-        when(pokerPlayer.getBalance()).thenReturn((long) amount);
-        when(pokerPlayer.isSitInAfterSuccessfulBuyIn()).thenReturn(true);
-        when(state.isPlayerInHand(playerId)).thenReturn(false);
-        
-        callHandler.handleReserveSuccessfulResponse(reserveResponse);
-        
-        verify(pokerPlayer).addChips(amount);
-        verify(pokerPlayer, Mockito.never()).addPendingAmount(Mockito.anyLong());
-        ArgumentCaptor<GameDataAction> buyInResponseCaptor = ArgumentCaptor.forClass(GameDataAction.class);
-        verify(notifier).notifyPlayer(Mockito.eq(playerId), buyInResponseCaptor.capture());
-        GameDataAction buyInDataAction = buyInResponseCaptor.getValue();
-        BuyInResponse buyInRespPacket = (BuyInResponse) new StyxSerializer(new ProtocolObjectFactory()).unpack(buyInDataAction.getData());
-        assertThat(buyInRespPacket.balance, is(amount));
-        assertThat(buyInRespPacket.pendingBalance, is(0));
-        assertThat(buyInRespPacket.resultCode, is(Enums.BuyInResultCode.OK));
-        
+    	setupForHandleReserveSuccessfulResponse(true);
         verify(state).playerIsSittingIn(playerId);
-        verify(state).notifyPlayerBalance(playerId);
     }
-    
-    @Test
-    public void testHandleReserveSuccessfulResponseWhenInHand() throws IOException {
-        PlayerSessionId playerSessionId = new PlayerSessionIdImpl(playerId);
-        int balanceOnRemoteWallet = 10000;
-        BalanceUpdate balanceUpdate = new BalanceUpdate(playerSessionId , balanceOnRemoteWallet, -1);
-        int amount = 500;
-        ReserveResponse reserveResponse = new ReserveResponse(balanceUpdate , amount);
-        when(pokerPlayer.getBalance()).thenReturn(0L);
-        when(pokerPlayer.getPendingBalance()).thenReturn((long) amount);
-        when(state.isPlayerInHand(playerId)).thenReturn(true);
-
-        callHandler.handleReserveSuccessfulResponse(reserveResponse);
-        
-        verify(pokerPlayer, Mockito.never()).addChips(Mockito.anyLong());
-        verify(pokerPlayer).addPendingAmount(amount);
-        
-        ArgumentCaptor<GameDataAction> buyInResponseCaptor = ArgumentCaptor.forClass(GameDataAction.class);
-        
-        verify(notifier).notifyPlayer(Mockito.eq(playerId), buyInResponseCaptor.capture());
-        GameDataAction buyInDataAction = buyInResponseCaptor.getValue();
-        BuyInResponse buyInRespPacket = (BuyInResponse) new StyxSerializer(new ProtocolObjectFactory()).unpack(buyInDataAction.getData());
-        assertThat(buyInRespPacket.balance, is(0));
-        assertThat(buyInRespPacket.pendingBalance, is(amount));
-        assertThat(buyInRespPacket.resultCode, is(Enums.BuyInResultCode.OK));
-        
-        verify(state, never()).playerIsSittingIn(playerId);
-        verify(state).notifyPlayerBalance(playerId);
-    }
-    
 
     @Test
     public void testHandleOpenSessionSuccessfulResponse() {

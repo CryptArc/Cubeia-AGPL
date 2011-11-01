@@ -58,13 +58,14 @@ public class TelesinaBringInMoneyTest extends AbstractTexasHandTester {
 
 		assertEquals(0, mp[0].getBalance());
 		assertEquals(300, mp[1].getBalance());
-		assertEquals(50, mp[2].getBalance());
+		assertEquals(50, mp[2].getPendingBalance());
 
 		assertTrue(mp[0].isSittingOut());
 		assertFalse(mp[2].isSittingOut());
 		
 		game.timeout();
 		
+		assertEquals(50, mp[2].getBalance());
 		act(p[2], ANTE);
 		act(p[1], ANTE);
 		
@@ -149,15 +150,22 @@ public class TelesinaBringInMoneyTest extends AbstractTexasHandTester {
 		game.timeout();
 		game.timeout();
 		bringInMoney(mp, p);
+		
+		assertEquals(50, mp[2].getPendingBalance());
+		
 		game.timeout();
 		// End of hand
 		
+		assertFalse(mp[2].isSittingOut());
 		assertEquals(0, mp[0].getBalance());
 		assertEquals(300, mp[1].getBalance());
-		assertEquals(50, mp[2].getBalance());
+		assertEquals(50, mp[2].getPendingBalance());
 		assertTrue(mp[0].isSittingOut());
-		
+
+		// Start new hand
 		game.timeout();
+		// PLayer 2 should now have the pending balance committed
+		assertEquals(50, mp[2].getBalance());
 		
 		act(p[2], ANTE);
 		act(p[1], ANTE);

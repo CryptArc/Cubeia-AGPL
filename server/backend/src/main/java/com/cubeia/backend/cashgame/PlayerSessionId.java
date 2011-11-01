@@ -1,5 +1,7 @@
 package com.cubeia.backend.cashgame;
 
+import java.io.Serializable;
+
 /**
  * A strongly types backend player session identifier.
  * 
@@ -7,7 +9,7 @@ package com.cubeia.backend.cashgame;
  * 
  * All implementations should have reliable hashCode and equals methods.
  */
-public interface PlayerSessionId {
+public interface PlayerSessionId extends Serializable {
 
 	int getPlayerId();
 

@@ -25,7 +25,7 @@ import com.cubeia.poker.player.PokerPlayer;
 import com.google.inject.Inject;
 
 public class BackendCallHandler {
-    private static final String EXT_PROP_KEY_TABLE_ID = "tableId";
+    public static final String EXT_PROP_KEY_TABLE_ID = "tableId";
 
     private static Logger log = LoggerFactory.getLogger(BackendCallHandler.class);
     
@@ -50,13 +50,8 @@ public class BackendCallHandler {
 		log.debug("handle reserve response: session = {}, amount = {}, pId = {}", 
             new Object[] {reserveResponse.getPlayerSessionId(), amountReserved, pokerPlayer.getId()});
         
-        if (state.isPlayerInHand(playerId)) {
-            log.debug("player is in hand, adding reserved amount {} as pending", amountReserved);
-            pokerPlayer.addPendingAmount(amountReserved);
-        } else {
-            log.debug("player is not in hand, adding reserved amount {} to balance", amountReserved);
-            pokerPlayer.addChips(amountReserved);
-        }
+        log.debug("player is in hand, adding reserved amount {} as pending", amountReserved);
+        pokerPlayer.addPendingAmount(amountReserved);
         
         // TODO: response should move to PokerHandler.handleReserveResponse
         BuyInResponse resp = new BuyInResponse();
