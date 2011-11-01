@@ -130,13 +130,13 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
         if (!sessionTransactions.containsKey(sid)) {
             log.error("reserve failed, session not found: sId = " + sid);
             ReserveFailedResponse failResponse = new ReserveFailedResponse(request.playerSessionId, 
-                ReserveFailedResponse.ErrorCode.A, "session " + sid + " not open");
+                ReserveFailedResponse.ErrorCode.SESSION_NOT_OPEN, "session " + sid + " not open");
             callback.requestFailed(failResponse);
             
         } else if (amount == 66){ // MAGIC FAIL FOR 66 cents BUY-IN 
         	log.error("Failing reserve for magic amount 66 cents (hardcoded for debug reasons). sId={}", sid);
             ReserveFailedResponse failResponse = new ReserveFailedResponse(request.playerSessionId, 
-                ReserveFailedResponse.ErrorCode.C, "Buy in limit reached");
+                ReserveFailedResponse.ErrorCode.MAX_LIMIT_REACHED, "Buy in limit reached");
             callback.requestFailed(failResponse);
             
         } else {
