@@ -25,6 +25,7 @@ import com.cubeia.poker.PokerState;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Hand;
+import com.cubeia.poker.hand.HandStrength;
 import com.cubeia.poker.hand.HandType;
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
@@ -76,9 +77,9 @@ public class TelesinaSendBestHandTest {
         when(hand.getCards()).thenReturn(asList(pocketCard1, pocketCard2));
         Card velaCard = new Card("2H");
         when(state.getCommunityCards()).thenReturn(asList(velaCard));
-        TelesinaHandStrength handStrength = mock(TelesinaHandStrength.class);
+        HandStrength handStrength = mock(HandStrength.class);
         when(handStrength.getCards()).thenReturn(Arrays.asList(pocketCard1));
-        when(handStrength.getType()).thenReturn(HandType.FOUR_OF_A_KIND);
+        when(handStrength.getHandType()).thenReturn(HandType.FOUR_OF_A_KIND);
         when(evaluator.getBestHandStrength(Mockito.eq(asList(pocketCard1, pocketCard2, velaCard)))).thenReturn(handStrength);
         
         
@@ -101,9 +102,9 @@ public class TelesinaSendBestHandTest {
         when(hand.getCards()).thenReturn(asList(pocketCard1, pocketCard2));
         Card velaCard = new Card("2H");
         when(state.getCommunityCards()).thenReturn(asList(velaCard));
-        TelesinaHandStrength handStrength = mock(TelesinaHandStrength.class);
+        HandStrength handStrength = mock(HandStrength.class);
         when(handStrength.getCards()).thenReturn(Arrays.asList(pocketCard1));
-        when(handStrength.getType()).thenReturn(HandType.FOUR_OF_A_KIND);
+        when(handStrength.getHandType()).thenReturn(HandType.FOUR_OF_A_KIND);
         when(evaluator.getBestHandStrength(Mockito.eq(asList(pocketCard1, pocketCard2, velaCard)))).thenReturn(handStrength);
         
         telesina.calculateAndSendBestHandToPlayer(evaluator, player);

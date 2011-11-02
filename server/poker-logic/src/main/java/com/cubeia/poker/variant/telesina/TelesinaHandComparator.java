@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Hand;
+import com.cubeia.poker.hand.HandStrength;
 import com.cubeia.poker.hand.HandType;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.hand.Suit;
@@ -43,14 +44,14 @@ public class TelesinaHandComparator implements Comparator<Hand> {
 	}
 	
 	public int compare(List<Card> c1, List<Card> c2) {
-		TelesinaHandStrength c1Strength = evaluator.getBestHandStrength(c1);
-		TelesinaHandStrength c2Strength = evaluator.getBestHandStrength(c2);
+		HandStrength c1Strength = evaluator.getBestHandStrength(c1);
+		HandStrength c2Strength = evaluator.getBestHandStrength(c2);
 		
-		if (c1Strength.handType != c2Strength.handType) {
-			return c1Strength.handType.telesinaHandTypeValue - c2Strength.handType.telesinaHandTypeValue;
+		if (c1Strength.getHandType() != c2Strength.getHandType()) {
+			return c1Strength.getHandType().telesinaHandTypeValue - c2Strength.getHandType().telesinaHandTypeValue;
 		}
 		
-		if (c1Strength.handType == HandType.FLUSH) {
+		if (c1Strength.getHandType() == HandType.FLUSH) {
 			Suit c1Suit = c1Strength.groups[0].get(0).getSuit();
 			Suit c2Suit = c2Strength.groups[0].get(0).getSuit();
 			
@@ -60,7 +61,7 @@ public class TelesinaHandComparator implements Comparator<Hand> {
 		}
 		
 		if (c1Strength.groups.length != c2Strength.groups.length) {
-			throw new IllegalStateException("Comparison groups in strength not of same size for two hands of type " + c1Strength.handType);
+			throw new IllegalStateException("Comparison groups in strength not of same size for two hands of type " + c1Strength.getHandType());
 		}
 		
 		for (int i = 0; i < c1Strength.groups.length; i++) {

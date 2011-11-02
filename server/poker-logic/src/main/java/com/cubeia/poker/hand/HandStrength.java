@@ -1,7 +1,6 @@
 package com.cubeia.poker.hand;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -13,8 +12,14 @@ public class HandStrength implements HandInfo {
 	
 	private final HandType type;
 	
+	/**
+	 * The highest rank of the cards that forms this hand type
+	 */
 	private Rank highestRank;
 	
+	/**
+	 * The second highest rank of the cards that forms this hand type
+	 */
 	private Rank secondRank;
 	
 	/** 
@@ -25,23 +30,53 @@ public class HandStrength implements HandInfo {
 	 */
 	private List<Card> kickerCards = new ArrayList<Card>();
 	
+	/**
+	 * Groups of cards used to form the hand.
+	 * 
+	 * E.g. for full house:
+	 * groups[0] = KS KD KH
+	 * groups[1] = 8H 8D 
+	 */
+	public List<Card>[] groups;
+	
+	/**
+	 * All cards used in this hand
+	 */
+	public List<Card> cardsUsedInHand;
+	
+	
+	
+	/* ----------------------------------------------------
+	 * 
+	 * 	CONSTRUCTORS 
+	 * 
+	 * ---------------------------------------------------- */
+	
 	public HandStrength(HandType type) {
 		this.type = type;
 	}
-
-	public HandStrength(HandStrength other) {
-	    this.type = other.type;
-	    this.highestRank = other.highestRank;
-	    this.secondRank = other.secondRank;
+	
+	public HandStrength(HandType handType, List<Card> cardsUsedInHand, int i, List<Card>... groups) {
+		this.type = handType;
+		this.cardsUsedInHand = cardsUsedInHand;
+		this.groups = groups;
 	}
 	
-	public HandType getHandType() {
-		return type;
-	}
+	
+	/* ----------------------------------------------------
+	 * 
+	 * 	PUBLIC METHODS 
+	 * 
+	 * ---------------------------------------------------- */
 	
 	@Override
 	public String toString() {
-		return "type["+type+"]";
+		return "HandStrength type["+type+"] highestRank["+highestRank+"] secondRank["+secondRank+"] kickers["+kickerCards+"] cardsUsed["+cardsUsedInHand+"] groups["+groups+"]";
+	}
+	
+	@Override
+	public HandType getHandType() {
+		return type;
 	}
 
 	public Rank getHighestRank() {
@@ -67,49 +102,9 @@ public class HandStrength implements HandInfo {
 	public void setKickerCards(List<Card> kickerCards) {
 		this.kickerCards = kickerCards;
 	}
-	
-	@Override
-	public HandType getType() {
-		return type;
-	}
 
-	@SuppressWarnings("unchecked")
     public List<Card> getCards() {
-		// Not used in texas hold'em implementation as of 2011-09-12 so
-		// I just left it for now. / dreas
-		return Collections.EMPTY_LIST;
+		return cardsUsedInHand;
 	}
 	
-//	/**
-//	 * <p>Compare to another hand strength with hand ranking in mind,
-//	 * i.e. the strongest hand should come first.</p>
-//	 * 
-//	 */
-//	@Override
-//	public int compareTo(HandStrength other) {
-//		if (!other.getHandType().equals(type)) {
-//			// Different hand types so only compare type
-//			return other.getHandType().ordinal() - type.ordinal();
-//			
-//		} else {
-//			// Check highest card etc.
-//			if (other.getHighestRank() != highestRank) {
-//				return other.getHighestRank().ordinal() - highestRank.ordinal();
-//				
-//			} else if (other.getSecondRank() != secondRank) {
-//				return other.getSecondRank().ordinal() - secondRank.ordinal();
-//				
-//			} else {
-//				// Check kickers in descending order
-//				for (int i = 0; i < kickerCards.size(); i++) {
-//					if (other.getKickerCards().get(i).getRank() != kickerCards.get(i).getRank()) {
-//						return other.getKickerCards().get(i).getRank().ordinal() - kickerCards.get(i).getRank().ordinal();
-//					}
-//				}
-//			}
-//		}
-//		
-//		// Same strength
-//		return 0;
-//	}
 }
