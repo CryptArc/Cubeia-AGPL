@@ -37,12 +37,12 @@ public class HandStrength implements HandInfo {
 	 * groups[0] = KS KD KH
 	 * groups[1] = 8H 8D 
 	 */
-	public List<Card>[] groups;
+	private List<Card>[] groups;
 	
 	/**
 	 * All cards used in this hand
 	 */
-	public List<Card> cardsUsedInHand;
+	private List<Card> cardsUsedInHand;
 	
 	
 	
@@ -105,6 +105,22 @@ public class HandStrength implements HandInfo {
 
     public List<Card> getCards() {
 		return cardsUsedInHand;
+	}
+    
+    /**
+     * Get a copy of the list of cards contained in the groups with given index
+     * Changes to the returned list will not be reflected in the list contained
+     * in the groups.
+     * 
+     * @param index
+     * @return List of card 
+     */
+    public List<Card> getGroup(int index) {
+    	return new ArrayList<Card>(groups[index]);
+    }
+
+	public int getGroupSize() {
+		return groups.length;
 	}
 	
 }

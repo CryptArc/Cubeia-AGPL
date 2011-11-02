@@ -52,20 +52,20 @@ public class TelesinaHandComparator implements Comparator<Hand> {
 		}
 		
 		if (c1Strength.getHandType() == HandType.FLUSH) {
-			Suit c1Suit = c1Strength.groups[0].get(0).getSuit();
-			Suit c2Suit = c2Strength.groups[0].get(0).getSuit();
+			Suit c1Suit = c1Strength.getGroup(0).get(0).getSuit();
+			Suit c2Suit = c2Strength.getGroup(0).get(0).getSuit();
 			
 			if (c1Suit != c2Suit) {
 				return c1Suit.telesinaSuitValue - c2Suit.telesinaSuitValue;
 			}
 		}
 		
-		if (c1Strength.groups.length != c2Strength.groups.length) {
+		if (c1Strength.getGroupSize() != c2Strength.getGroupSize()) {
 			throw new IllegalStateException("Comparison groups in strength not of same size for two hands of type " + c1Strength.getHandType());
 		}
 		
-		for (int i = 0; i < c1Strength.groups.length; i++) {
-			int compare = compareKickers(c1Strength.groups[i], c2Strength.groups[i]);
+		for (int i = 0; i < c1Strength.getGroupSize(); i++) {
+			int compare = compareKickers(c1Strength.getGroup(i), c2Strength.getGroup(i));
 			if (compare != 0) {
 				return compare;
 			}
