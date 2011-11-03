@@ -22,6 +22,7 @@ import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 
+import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.hand.HandStrength;
 import com.cubeia.poker.hand.Rank;
@@ -89,6 +90,7 @@ public class TexasCalculatorTest {
 		assertEquals(2, strength.getKickerCards().size());
 		assertEquals(FIVE, strength.getKickerCards().get(0).getRank());
 		assertEquals(THREE, strength.getKickerCards().get(1).getRank());
+		assertEquals(5, strength.getCards().size());
 		
 		hand = new Hand("2C 2C 2H 5C 2S");
 		assertEquals(THREE_OF_A_KIND, calc.checkManyOfAKind(hand, 3).getHandType());
@@ -101,6 +103,18 @@ public class TexasCalculatorTest {
 		hand = new Hand("2C 2C 2H AC AS AH");
 		assertEquals(THREE_OF_A_KIND, calc.checkManyOfAKind(hand, 3).getHandType());
 		assertEquals(Rank.ACE, calc.checkManyOfAKind(hand, 3).getHighestRank());
+	}
+	
+	@Test
+	public void testHasManyOfAKindOrder() throws Exception {
+		Hand hand = new Hand("2C 3C 2C JC AS");
+		HandStrength strength = calc.checkManyOfAKind(hand, 2);
+		assertEquals(PAIR, strength.getHandType());
+		assertEquals(new Card("2C"), strength.getCards().get(0));
+		assertEquals(new Card("2C"), strength.getCards().get(1));
+		assertEquals(new Card("AS"), strength.getCards().get(2));
+		assertEquals(new Card("JC"), strength.getCards().get(3));
+		assertEquals(new Card("3C"), strength.getCards().get(4));
 	}
 	
 	@Test
@@ -144,6 +158,21 @@ public class TexasCalculatorTest {
 		assertEquals(FULL_HOUSE, strength.getHandType());
 		assertEquals(JACK, strength.getHighestRank());
 		assertEquals(Rank.TEN, strength.getSecondRank());
+	}
+	
+	@Test
+	public void testFullHouseOrder() throws Exception {
+		Hand hand = new Hand("JC JH TD TH TC");
+		HandStrength strength = calc.checkFullHouse(hand);
+		assertEquals(FULL_HOUSE, strength.getHandType());
+		assertEquals(TEN, strength.getHighestRank());
+		assertEquals(JACK, strength.getSecondRank());
+		assertEquals(Rank.TEN, strength.getCards().get(0).getRank());
+		assertEquals(Rank.TEN, strength.getCards().get(1).getRank());
+		assertEquals(Rank.TEN, strength.getCards().get(2).getRank());
+		assertEquals(Rank.JACK, strength.getCards().get(3).getRank());
+		assertEquals(Rank.JACK, strength.getCards().get(4).getRank());
+		assertEquals(Rank.TEN, strength.getGroup(0).get(0).getRank());
 	}
 	
 	@Test

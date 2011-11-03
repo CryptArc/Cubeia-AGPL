@@ -68,47 +68,58 @@ public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Seriali
 			hand = new Hand(cards);
 		}
 		
-		HandStrength strength = checkStraightFlush(hand, 5);
-		if (strength != null) {
-			return strength;
+		HandStrength strength = null;
+		
+		// STRAIGHT_FLUSH
+		if (strength == null) {
+			strength = checkStraightFlush(hand, 5);
 		}
 		
-		strength = typeCalculator.checkManyOfAKind(hand, 4);
-		if (strength != null) {
-			return strength;
+		// FOUR_OF_A_KIND
+		if (strength == null) {
+			strength = typeCalculator.checkManyOfAKind(hand, 4);
 		}
 		
-		strength = checkFlush(hand, 5);
-		if (strength != null) {
-			return strength;
+		// FLUSH
+		if (strength == null) {
+			strength = checkFlush(hand, 5);
 		}
 		
-		strength = typeCalculator.checkFullHouse(hand);
-		if (strength != null) {
-			return strength;
+		// FULL_HOUSE
+		if (strength == null) {
+			strength = typeCalculator.checkFullHouse(hand);
 		}
 		
-		strength = checkStraight(hand, 5);
-		if (strength != null) {
-			return strength;
+		// STRAIGHT
+		if (strength == null) {
+			strength = checkStraight(hand, 5);
+		}
+
+		// THREE_OF_A_KIND
+		if (strength == null) {
+			strength = typeCalculator.checkManyOfAKind(hand, 3);
 		}
 		
-		strength = typeCalculator.checkManyOfAKind(hand, 3);
-		if (strength != null) {
-			return strength;
+		// TWO_PAIRS
+		if (strength == null) {
+			strength = typeCalculator.checkTwoPairs(hand);
 		}
 		
-		strength = typeCalculator.checkTwoPairs(hand);
-		if (strength != null) {
-			return strength;
+		// ONE_PAIR
+		if (strength == null) {
+			strength = typeCalculator.checkManyOfAKind(hand, 2);
 		}
 		
-		strength = typeCalculator.checkManyOfAKind(hand, 2);
-		if (strength != null) {
-			return strength;
+		// HIGH_CARD
+		if (strength == null) {
+			strength = checkHighCard(cards);
 		}
 		
-		return checkHighCard(cards);
+		if (strength == null) {
+			strength = new HandStrength(HandType.NOT_RANKED);
+		}
+		
+		return strength;
 	}
 	
 	/**
