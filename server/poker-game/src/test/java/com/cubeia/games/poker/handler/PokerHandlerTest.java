@@ -145,6 +145,7 @@ public class PokerHandlerTest {
         PlayerSessionId playerSessionId = new PlayerSessionIdImpl(playerId);
         when(pokerPlayer.getPlayerSessionId()).thenReturn(playerSessionId);
         when(pokerPlayer.getBalance()).thenReturn(0L);
+        when(pokerPlayer.getPendingBalance()).thenReturn(0L);
         
         // Request more money than max buy in
         BuyInRequest buyInRequest = new BuyInRequest(14000, true);
@@ -164,6 +165,7 @@ public class PokerHandlerTest {
         PlayerSessionId playerSessionId = new PlayerSessionIdImpl(playerId);
         when(pokerPlayer.getPlayerSessionId()).thenReturn(playerSessionId);
         when(pokerPlayer.getBalance()).thenReturn(4000L);
+        when(pokerPlayer.getPendingBalance()).thenReturn(0L);
         
         // Request more money than allowed, balance + buyin <= max buyin
         BuyInRequest buyInRequest = new BuyInRequest(3000, true);
@@ -177,6 +179,48 @@ public class PokerHandlerTest {
         verify(backend, Mockito.never()).reserve(Mockito.any(ReserveRequest.class), Mockito.any(ReserveCallback.class));
         verify(reserveCallback).requestFailed(Mockito.any(ReserveFailedResponse.class));
     }
+    
+    @Test
+    public void testVisitBuyInRequestAmountTooHighForCurrentBalanceIncludingPendingBalance() {
+        PlayerSessionId playerSessionId = new PlayerSessionIdImpl(playerId);
+        when(pokerPlayer.getPlayerSessionId()).thenReturn(playerSessionId);
+        when(pokerPlayer.getBalance()).thenReturn(2000L); // balance is ok
+        when(pokerPlayer.getPendingBalance()).thenReturn(4000L); // pending will make it fail
+        
+        // Request more money than allowed, pendingBalance + balance + buyin <= max buyin
+        BuyInRequest buyInRequest = new BuyInRequest(3000, true);
+        
+        ReserveCallback reserveCallback = mock(ReserveCallback.class);
+        when(callbackFactory.createReserveCallback(table)).thenReturn(reserveCallback);
+        
+        pokerHandler.visit(buyInRequest);
+        
+        // since amount is higher than max allowed we should never get a call to the backend
+        verify(backend, Mockito.never()).reserve(Mockito.any(ReserveRequest.class), Mockito.any(ReserveCallback.class));
+        verify(reserveCallback).requestFailed(Mockito.any(ReserveFailedResponse.class));
+    }
+    
+    @Test
+    public void testVisitBuyInRequestAmountTooHighForCurrentBalanceIncludingPendingBalanceButJustSlightly() {
+        PlayerSessionId playerSessionId = new PlayerSessionIdImpl(playerId);
+        when(pokerPlayer.getPlayerSessionId()).thenReturn(playerSessionId);
+        when(pokerPlayer.getBalance()).thenReturn(3000L); // balance is ok
+        when(pokerPlayer.getPendingBalance()).thenReturn(2000L); // pending will make it fail
+        
+        // Request more money than allowed, pendingBalance + balance + buyin <= max buyin
+        // the player can actually buy in 1000 but requests 2000
+        BuyInRequest buyInRequest = new BuyInRequest(2000, true);
+        
+        ReserveCallback reserveCallback = mock(ReserveCallback.class);
+        when(callbackFactory.createReserveCallback(table)).thenReturn(reserveCallback);
+        
+        pokerHandler.visit(buyInRequest);
+        
+        // since amount is higher than max allowed we should never get a call to the backend
+        verify(backend, Mockito.never()).reserve(Mockito.any(ReserveRequest.class), Mockito.any(ReserveCallback.class));
+        verify(reserveCallback).requestFailed(Mockito.any(ReserveFailedResponse.class));
+    }
+   
 
     /*@Test
     public void testVisitInternalSerializedObject() throws IOException {

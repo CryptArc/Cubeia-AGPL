@@ -102,7 +102,7 @@ public class PokerHandler extends DefaultPokerHandler {
         ReserveCallback callback = cashGameBackend.getCallbackFactory().createReserveCallback(table);
         
         // Check if the amount is allowed by the table
-        long sum = reserveRequest.amount + pokerPlayer.getBalance();
+        long sum = reserveRequest.amount + pokerPlayer.getBalance() + pokerPlayer.getPendingBalance();
 		if (sum <= state.getMaxBuyIn()) {
         	cashGameBackend.reserve(reserveRequest, callback);
         } else {

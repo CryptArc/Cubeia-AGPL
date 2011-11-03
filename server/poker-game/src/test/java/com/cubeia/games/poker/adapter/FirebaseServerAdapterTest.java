@@ -23,6 +23,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import se.jadestone.dicearena.game.poker.network.protocol.BuyInInfoResponse;
+import se.jadestone.dicearena.game.poker.network.protocol.Enums.BuyInInfoResultCode;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerBalance;
 import se.jadestone.dicearena.game.poker.network.protocol.PotTransfers;
 import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
@@ -111,7 +112,11 @@ public class FirebaseServerAdapterTest {
 		when(fsa.state.getMaxBuyIn()).thenReturn(maxBuyIn);
 
 		int playerBalanceOnTable = 100;
+		int playerPendingBalanceOnTable = 100;
+		int playerTotalBalanceOnTable = playerBalanceOnTable+playerPendingBalanceOnTable;
+		
 		when(pokerPlayer.getBalance()).thenReturn((long) playerBalanceOnTable);
+		when(pokerPlayer.getPendingBalance()).thenReturn((long) playerPendingBalanceOnTable);
 
 		fsa.notifyBuyInInfo(pokerPlayer.getId(), true);
 
@@ -121,10 +126,110 @@ public class FirebaseServerAdapterTest {
 
 		BuyInInfoResponse buyInInfoRespPacket = (BuyInInfoResponse) new StyxSerializer(new ProtocolObjectFactory()).unpack(gda.getData());
 		assertThat(buyInInfoRespPacket.balanceInWallet, is(500000));
-		assertThat(buyInInfoRespPacket.balanceOnTable, is(playerBalanceOnTable));
-		assertThat(buyInInfoRespPacket.maxAmount, is(maxBuyIn - playerBalanceOnTable));
+		
+		assertThat(buyInInfoRespPacket.balanceOnTable, is(playerTotalBalanceOnTable));
+		assertThat(buyInInfoRespPacket.maxAmount, is(maxBuyIn - playerTotalBalanceOnTable));
 		assertThat(buyInInfoRespPacket.minAmount, is(minBuyIn));
 		assertThat(buyInInfoRespPacket.mandatoryBuyin, is(true));
+		assertThat(buyInInfoRespPacket.resultCode, is(BuyInInfoResultCode.OK));
+
+	}
+	
+	@Test
+	public void testNotifyBuyInInfoBalanceToHigh() throws IOException {
+
+		FirebaseServerAdapter fsa = new FirebaseServerAdapter();
+		fsa.table = mock(Table.class);
+		GameNotifier tableNotifier = mock(GameNotifier.class);
+		when(fsa.table.getNotifier()).thenReturn(tableNotifier);
+
+		PokerPlayer pokerPlayer = mock(PokerPlayer.class);
+		int playerId = 1337;
+		when(pokerPlayer.getId()).thenReturn(playerId);
+		
+		// fsa.protocolFactory = mock(ProtocolFactory.class);
+		fsa.state = mock(PokerState.class);
+		when(fsa.state.getPokerPlayer(playerId)).thenReturn(pokerPlayer);
+		
+
+		int minBuyIn = 100;
+		when(fsa.state.getMinBuyIn()).thenReturn(minBuyIn);
+
+		int maxBuyIn = 150;
+		when(fsa.state.getMaxBuyIn()).thenReturn(maxBuyIn);
+
+		int playerBalanceOnTable = 100;
+		int playerPendingBalanceOnTable = 100;
+		int playerTotalBalanceOnTable = playerBalanceOnTable+playerPendingBalanceOnTable;
+		
+		when(pokerPlayer.getBalance()).thenReturn((long) playerBalanceOnTable);
+		when(pokerPlayer.getPendingBalance()).thenReturn((long) playerPendingBalanceOnTable);
+
+		fsa.notifyBuyInInfo(pokerPlayer.getId(), true);
+
+		
+		
+		ArgumentCaptor<GameDataAction> captor = ArgumentCaptor.forClass(GameDataAction.class);
+		verify(tableNotifier).notifyPlayer(Mockito.eq(playerId), captor.capture());
+		GameDataAction gda = captor.getValue();
+
+		BuyInInfoResponse buyInInfoRespPacket = (BuyInInfoResponse) new StyxSerializer(new ProtocolObjectFactory()).unpack(gda.getData());
+		assertThat(buyInInfoRespPacket.balanceInWallet, is(500000));
+		
+		assertThat(buyInInfoRespPacket.balanceOnTable, is(playerTotalBalanceOnTable));
+		assertThat(buyInInfoRespPacket.maxAmount, is(0));
+		assertThat(buyInInfoRespPacket.minAmount, is(0));
+		assertThat(buyInInfoRespPacket.mandatoryBuyin, is(true));
+		assertThat(buyInInfoRespPacket.resultCode, is(BuyInInfoResultCode.MAX_LIMIT_REACHED));
+
+	}
+	
+	@Test
+	public void testNotifyBuyInInfoMaxBuyinIsLessThanMinBuyIn() throws IOException {
+
+		FirebaseServerAdapter fsa = new FirebaseServerAdapter();
+		fsa.table = mock(Table.class);
+		GameNotifier tableNotifier = mock(GameNotifier.class);
+		when(fsa.table.getNotifier()).thenReturn(tableNotifier);
+
+		PokerPlayer pokerPlayer = mock(PokerPlayer.class);
+		int playerId = 1337;
+		when(pokerPlayer.getId()).thenReturn(playerId);
+		
+		// fsa.protocolFactory = mock(ProtocolFactory.class);
+		fsa.state = mock(PokerState.class);
+		when(fsa.state.getPokerPlayer(playerId)).thenReturn(pokerPlayer);
+		
+
+		int minBuyIn = 200;
+		when(fsa.state.getMinBuyIn()).thenReturn(minBuyIn);
+
+		int maxBuyIn = 300;
+		when(fsa.state.getMaxBuyIn()).thenReturn(maxBuyIn);
+
+		int playerBalanceOnTable = 250;
+		int playerPendingBalanceOnTable = 0;
+		int playerTotalBalanceOnTable = playerBalanceOnTable+playerPendingBalanceOnTable;
+		
+		when(pokerPlayer.getBalance()).thenReturn((long) playerBalanceOnTable);
+		when(pokerPlayer.getPendingBalance()).thenReturn((long) playerPendingBalanceOnTable);
+
+		fsa.notifyBuyInInfo(pokerPlayer.getId(), true);
+
+		
+		
+		ArgumentCaptor<GameDataAction> captor = ArgumentCaptor.forClass(GameDataAction.class);
+		verify(tableNotifier).notifyPlayer(Mockito.eq(playerId), captor.capture());
+		GameDataAction gda = captor.getValue();
+
+		BuyInInfoResponse buyInInfoRespPacket = (BuyInInfoResponse) new StyxSerializer(new ProtocolObjectFactory()).unpack(gda.getData());
+		assertThat(buyInInfoRespPacket.balanceInWallet, is(500000));
+		
+		assertThat(buyInInfoRespPacket.balanceOnTable, is(playerTotalBalanceOnTable));
+		assertThat(buyInInfoRespPacket.maxAmount, is(0));
+		assertThat(buyInInfoRespPacket.minAmount, is(0));
+		assertThat(buyInInfoRespPacket.mandatoryBuyin, is(true));
+		assertThat(buyInInfoRespPacket.resultCode, is(BuyInInfoResultCode.MAX_LIMIT_REACHED));
 
 	}
 	
