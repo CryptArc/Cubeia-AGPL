@@ -34,6 +34,8 @@ import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.Hand;
+import com.cubeia.poker.hand.HandStrength;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.PotTransition;
@@ -420,8 +422,9 @@ public class Telesina implements GameType, RoundVisitor {
     protected void calculateAndSendBestHandToPlayer(TelesinaHandStrengthEvaluator handStrengthEvaluator, PokerPlayer player) {
         List<Card> playerCards = new ArrayList<Card>(player.getPocketCards().getCards());
         playerCards.addAll(state.getCommunityCards());
-        TelesinaHandStrength bestHandStrength = handStrengthEvaluator.getBestHandStrength(playerCards);
-        state.getServerAdapter().notifyBestHand(player.getId(), bestHandStrength.getType(), bestHandStrength.getCards(), player.isExposingPocketCards());
+        Hand playerHand = new Hand(playerCards);
+        HandStrength bestHandStrength = handStrengthEvaluator.getBestHandStrength(playerHand);
+        state.getServerAdapter().notifyBestHand(player.getId(), bestHandStrength.getHandType(), bestHandStrength.getCards(), player.isExposingPocketCards());
     }
 
 	@VisibleForTesting

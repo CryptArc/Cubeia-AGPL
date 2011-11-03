@@ -6,19 +6,23 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 
 import com.cubeia.poker.hand.Hand;
+import com.cubeia.poker.hand.HandStrength;
 import com.cubeia.poker.hand.HandType;
 import com.cubeia.poker.hand.Rank;
+import com.cubeia.poker.hand.eval.HandTypeCheckCalculator;
 
 
 public class TelesinaHandStrengthEvaluatorTest {
 	
 	TelesinaHandStrengthEvaluator eval = new TelesinaHandStrengthEvaluator(Rank.SEVEN);
 	
+	HandTypeCheckCalculator typeCalculator = new HandTypeCheckCalculator(Rank.SEVEN);
+	
 	@Test
 	public void testCheckStraight() {
 		Hand hand = new Hand("TH 7S 9D JS 8C");
-		TelesinaHandStrength straight = eval.checkStraight(hand.getCards(), 5);
-		assertThat(straight.handType, is(HandType.STRAIGHT));
+		HandStrength straight = eval.checkStraight(hand, 5);
+		assertThat(straight.getHandType(), is(HandType.STRAIGHT));
 		assertThat(straight.getCards().size(), is(5));
 		
 		assertThat(straight.getCards().get(0).getRank(), is(Rank.SEVEN));
@@ -31,8 +35,8 @@ public class TelesinaHandStrengthEvaluatorTest {
 	@Test
 	public void testCheckStraightAceLow() {
 		Hand hand = new Hand("TH 7S 9D AC 8C");
-		TelesinaHandStrength straight = eval.checkStraight(hand.getCards(), 5);
-		assertThat(straight.handType, is(HandType.STRAIGHT));
+		HandStrength straight = eval.checkStraight(hand, 5);
+		assertThat(straight.getHandType(), is(HandType.STRAIGHT));
 		assertThat(straight.getCards().size(), is(5));
 		
 		assertThat(straight.getCards().get(0).getRank(), is(Rank.ACE));
@@ -45,8 +49,8 @@ public class TelesinaHandStrengthEvaluatorTest {
 	@Test
 	public void testCheckStraightAceHigh() {
 		Hand hand = new Hand("QH JS TD AC KC");
-		TelesinaHandStrength straight = eval.checkStraight(hand.getCards(), 5);
-		assertThat(straight.handType, is(HandType.STRAIGHT));
+		HandStrength straight = eval.checkStraight(hand, 5);
+		assertThat(straight.getHandType(), is(HandType.STRAIGHT));
 		assertThat(straight.getCards().size(), is(5));
 		
 		assertThat(straight.getCards().get(0).getRank(), is(Rank.TEN));
@@ -59,8 +63,8 @@ public class TelesinaHandStrengthEvaluatorTest {
 	@Test
 	public void testCheckStraightFlush() {
 		Hand hand = new Hand("TS 7S 9S JS 8S");
-		TelesinaHandStrength straight = eval.checkStraightFlush(hand.getCards(), 5);
-		assertThat(straight.handType, is(HandType.STRAIGHT_FLUSH));
+		HandStrength straight = eval.checkStraightFlush(hand, 5);
+		assertThat(straight.getHandType(), is(HandType.STRAIGHT_FLUSH));
 		assertThat(straight.getCards().size(), is(5));
 		
 		assertThat(straight.getCards().get(0).getRank(), is(Rank.SEVEN));
@@ -73,8 +77,8 @@ public class TelesinaHandStrengthEvaluatorTest {
 	@Test
 	public void testCheckFullHouse() {
 		Hand hand = new Hand("7S 8S 8C 7D 8H");
-		TelesinaHandStrength strength = eval.checkFullHouse(hand.getCards());
-		assertThat(strength.handType, is(HandType.FULL_HOUSE));
+		HandStrength strength = typeCalculator.checkFullHouse(hand);
+		assertThat(strength.getHandType(), is(HandType.FULL_HOUSE));
 		assertThat(strength.getCards().size(), is(5));
 		
 		assertThat(strength.getCards().get(0).getRank(), is(Rank.EIGHT));
@@ -88,8 +92,8 @@ public class TelesinaHandStrengthEvaluatorTest {
 	@Test
 	public void testFlush() {
 		Hand hand = new Hand("7S KS 9S AS JS");
-		TelesinaHandStrength strength = eval.checkFlush(hand.getCards());
-		assertThat(strength.handType, is(HandType.FLUSH));
+		HandStrength strength = eval.checkFlush(hand, 5);
+		assertThat(strength.getHandType(), is(HandType.FLUSH));
 		
 		assertThat(strength.getCards().get(0).getRank(), is(Rank.ACE));
 		assertThat(strength.getCards().get(1).getRank(), is(Rank.KING));
