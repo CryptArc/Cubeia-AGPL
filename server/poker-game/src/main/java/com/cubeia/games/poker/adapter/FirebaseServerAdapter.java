@@ -38,6 +38,7 @@ import se.jadestone.dicearena.game.poker.network.protocol.DealPublicCards;
 import se.jadestone.dicearena.game.poker.network.protocol.DealerButton;
 import se.jadestone.dicearena.game.poker.network.protocol.DeckInfo;
 import se.jadestone.dicearena.game.poker.network.protocol.Enums;
+import se.jadestone.dicearena.game.poker.network.protocol.Enums.BuyInInfoResultCode;
 import se.jadestone.dicearena.game.poker.network.protocol.ExposePrivateCards;
 import se.jadestone.dicearena.game.poker.network.protocol.HandCanceled;
 import se.jadestone.dicearena.game.poker.network.protocol.HandEnd;
@@ -305,18 +306,27 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
 		BuyInInfoResponse resp = new BuyInInfoResponse();
 
-		int balanceOnTable = player == null ? 0 : (int) player.getBalance();
+		int balanceOnTable = player == null ? 0 : (int) player.getBalance() + (int) player.getPendingBalance();
 
-		// TODO: Check pending too
-		// int pendingBalance = (int)player.getPendingBalance();
+		int correctedMaxBuyIn = state.getMaxBuyIn() - balanceOnTable;
+		int correctedMinBuyIn = state.getMinBuyIn();
 		
 		resp.balanceInWallet = 500000;     // TODO: mocked value!
 		resp.balanceOnTable = balanceOnTable;
-		resp.maxAmount = state.getMaxBuyIn() - balanceOnTable;
-		resp.minAmount = state.getMinBuyIn();
+		
+		if (correctedMaxBuyIn <= correctedMinBuyIn){
+			resp.maxAmount = 0;
+			resp.minAmount = 0;
+			resp.resultCode = BuyInInfoResultCode.MAX_LIMIT_REACHED;
+		}else{
+			resp.maxAmount = correctedMaxBuyIn;
+			resp.minAmount = correctedMinBuyIn;
+			resp.resultCode = BuyInInfoResultCode.OK;
+		}
+
 		resp.mandatoryBuyin = mandatoryBuyin;
 		
-		log.debug("Creating buyin information minBuyIn["+state.getMinBuyIn()+"] maxBuyIn["+state.getMaxBuyIn()+"] balanceOnTable["+balanceOnTable+"]" );
+		log.debug("Creating buyin information minBuyIn["+state.getMinBuyIn()+"] maxBuyIn["+state.getMaxBuyIn()+"] balanceOnTable["+balanceOnTable+"] correctedMaxBuyIn["+correctedMaxBuyIn+"]" );
 		log.debug("Sending buyin information to player["+playerId+"]: "+resp);
 		
 		GameDataAction gda = new GameDataAction(playerId, table.getId());
