@@ -17,6 +17,8 @@
 
 package com.cubeia.games.poker.adapter;
 
+import static com.cubeia.games.poker.handler.BackendCallHandler.EXT_PROP_KEY_TABLE_ID;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -76,7 +78,6 @@ import com.cubeia.games.poker.handler.TriggerType;
 import com.cubeia.games.poker.jmx.PokerStats;
 import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
-import com.cubeia.games.poker.persistence.history.model.EventType;
 import com.cubeia.games.poker.persistence.history.model.PlayedHand;
 import com.cubeia.games.poker.persistence.history.model.PlayedHandEvent;
 import com.cubeia.games.poker.tournament.PokerTournamentRoundReport;
@@ -171,8 +172,6 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		GameDataAction action = protocolFactory.createGameAction(packet, 0, table.getId());
 		log.debug("--> Send DealerButton["+packet+"] to everyone");
 		sendPublicPacket(action, -1);
-
-		addEventToHandHistory(seat, EventType.DEALER_BUTTON, null);
 	}
 
 	@Override
@@ -210,7 +209,6 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		GameDataAction action = protocolFactory.createGameAction(packet, pokerAction.getPlayerId(), table.getId());
 		log.debug("--> Send PerformAction["+packet+"] to everyone");
 		sendPublicPacket(action, -1);
-		addEventToHandHistory(pokerAction);
 	}
 
 
@@ -311,8 +309,8 @@ public class FirebaseServerAdapter implements ServerAdapter {
 					transfers.add(ActionTransformer.createPotTransferPacket(pt));
 				}
 
-				int handId = -1;                    // TODO: implement this!
-				TableId externalTableId = null;     // TODO: table should get this from activator
+				long handId = getIntegrationHandId();
+				TableId externalTableId = getIntegrationTableId();
 				BatchHandRequest batchHandRequest = handResultBatchFactory.createBatchHandRequest(handResult, handId, externalTableId);
 				BatchHandResponse batchHandResult = backend.batchHand(batchHandRequest);
 
@@ -339,7 +337,6 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
 				// Remove all idling players
 				cleanupPlayers();
-				writeHandHistory(hands, handEndStatus);
 				updateLobby();
 
 			} catch (Throwable e) {
@@ -357,6 +354,14 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		}
 
 		clearActionCache();
+	}
+	
+	public long getIntegrationHandId() {
+		return Long.valueOf(getFirebaseState().getPlayerHand().getIntegrationId());
+	}
+	
+	private TableId getIntegrationTableId() {
+		return (TableId) state.getExternalTableProperties().get(EXT_PROP_KEY_TABLE_ID);
 	}
 
 	@VisibleForTesting
@@ -581,50 +586,6 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	}
 
 
-	/**
-	 * FIXME: No real implementation below!
-	 * 
-	 * @param hands
-	 * @param handEndStatus
-	 */
-	private void writeHandHistory(Collection<RatedPlayerHand> hands, HandEndStatus handEndStatus) {
-
-		/*try {
-
-	    	List<ActionContainer> actions = this.cache.getPrivateAndPublicActions(table.getId());
-	    	ByteArrayOutputStream baout = new ByteArrayOutputStream();
-	    	ObjectOutputStream oout = new ObjectOutputStream(baout);
-	    	oout.writeObject(cache.getPrivateAndPublicActions(table.getId()));
-
-	    	String data = new String(Base64.decodeBase64(baout.toByteArray()));
-
-	    	log.debug("!!! ACTION CACHE: " + data);
-
-    	} catch(IOException e) {
-    		log.error("Failed to persist hand history", e);
-    	}*/
-
-
-		/*if (getServices() != null) {
-        	try {
-	            HandHistoryDAO dao = new HandHistoryDAO(getServices());
-	            dao.persist(getFirebaseState().getPlayerHand());
-        	} catch (Exception e) {
-        		log.error("Failed to persist hand history", e);
-        	}
-        } else {
-            log.warn("Services is null when trying to persist");
-        }*/
-	}
-
-
-	/*private ServiceRegistry getServices() {
-		return gameContext.getServices();
-	}*/
-
-
-
-
 	private void updateLobby() {
 		FirebaseState fbState = (FirebaseState)state.getAdapterState();
 		handCount = fbState.getHandCount();
@@ -632,41 +593,6 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		LobbyTableAttributeAccessor lobbyTable = table.getAttributeAccessor();
 		lobbyTable.setAttribute("handcount", new AttributeValue(handCount));
 		fbState.setHandCount(handCount);
-	}
-
-	/**
-	 * FIXME: PlayerHand has been removed. We need a new approach to hand history
-	 * 
-	 * @param pid
-	 * @param type
-	 * @param bet
-	 */
-	private void addEventToHandHistory(int pid, EventType type, Long bet) {
-		//    	try {
-		//	        PlayedHandEvent event = new PlayedHandEvent();
-		//	        event.setPlayerId(pid);
-		//	        event.setType(type);
-		//	        event.setBet(bet);
-		//	        fbState.getPlayerHand().getEvents().add(event);
-		//    	} catch (Exception e) {
-		//    		log.error("Failed to add event to hand history pid["+pid+"], type["+type+"], bet["+bet+"], fbstate.playerhand["+fbState.getPlayerHand()+"]", e);
-		//    	}
-	}
-
-	/**
-	 * FIXME: PlayerHand has been removed. We need a new approach to hand history
-	 * 
-	 */
-	private void addEventToHandHistory(PokerAction action) {
-		//    	try {
-		//	        PlayedHandEvent event = new PlayedHandEvent();
-		//	        event.setPlayerId(action.getPlayerId());
-		//	        event.setType(EventTypeTransformer.transform(action.getActionType()));
-		//	        event.setBet(action.getBetAmount());
-		//	        fbState.getPlayerHand().getEvents().add(event);
-		//    	} catch (Exception e) {
-		//    		log.error("Failed to add event to hand history action["+action+"], fbstate.playerhand["+fbState.getPlayerHand()+"]", e);
-		//    	}
 	}
 
 	@Override

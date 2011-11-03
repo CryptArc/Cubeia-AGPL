@@ -182,7 +182,7 @@ public class PokerTableListener implements TournamentTableListener {
 	    log.debug("starting wallet session: tId = {}, pId = {}", table.getId(), player.getPlayerId());
 		TableId tableId = (TableId) state.getExternalTableProperties().get(EXT_PROP_KEY_TABLE_ID);
 		if(tableId == null) {
-			log.warn("No table ID found in external properties; Table must be anounced first!");
+			log.warn("No table ID found in external properties; Table must be anounced first; tId = {}", table.getId());
 		}
 		OpenSessionRequest openSessionRequest = new OpenSessionRequest(player.getPlayerId(), tableId, -1);
         cashGameBackend.openSession(openSessionRequest, cashGameBackend.getCallbackFactory().createOpenSessionCallback(table));
