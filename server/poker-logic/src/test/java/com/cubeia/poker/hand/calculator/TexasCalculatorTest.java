@@ -25,12 +25,12 @@ import org.junit.Test;
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.hand.HandStrength;
 import com.cubeia.poker.hand.Rank;
-import com.cubeia.poker.variant.texasholdem.TexasHoldemHandCalculator;
+import com.cubeia.poker.hand.eval.HandTypeCheckCalculator;
 
 
 public class TexasCalculatorTest {
 
-	TexasHoldemHandCalculator calc = new TexasHoldemHandCalculator();
+	HandTypeCheckCalculator calc = new HandTypeCheckCalculator();
 	
 	@Test
 	public void testIsFlush() throws Exception {

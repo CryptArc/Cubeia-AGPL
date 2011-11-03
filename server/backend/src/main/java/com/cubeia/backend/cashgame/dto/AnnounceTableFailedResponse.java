@@ -15,4 +15,10 @@ public class AnnounceTableFailedResponse implements Serializable {
 	public enum ErrorCode {
 		EXTERNAL_CALL_FAILED, UNKOWN_PLATFORM_TABLE_ID, WALLET_CALL_FAILED;
 	}
+
+	@Override
+	public String toString() {
+		return "AnnounceTableFailedResponse [errorCode=" + errorCode
+				+ ", message=" + message + "]";
+	}
 }

@@ -72,7 +72,7 @@ public class HandResultCreator {
 		
 		for (PlayerHand hand : hands) {
 			HandInfo bestHandInfo = hte.getBestHandInfo(hand.getHand());
-			result.add(new RatedPlayerHand(hand, bestHandInfo.getType(), bestHandInfo.getCards()));
+			result.add(new RatedPlayerHand(hand, bestHandInfo.getHandType(), bestHandInfo.getCards()));
 		}
 		
 		return result;

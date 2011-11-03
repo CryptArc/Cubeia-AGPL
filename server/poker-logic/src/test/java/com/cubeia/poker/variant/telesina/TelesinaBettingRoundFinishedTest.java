@@ -18,7 +18,6 @@ import org.mockito.MockitoAnnotations;
 
 import com.cubeia.poker.DummyRNGProvider;
 import com.cubeia.poker.PokerState;
-import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.PotHolder;

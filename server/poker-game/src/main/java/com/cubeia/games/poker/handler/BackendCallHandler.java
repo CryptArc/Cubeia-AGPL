@@ -117,17 +117,15 @@ public class BackendCallHandler {
         PlayerSessionId playerSessionId = openSessionResponse.sessionId;
         int playerId = playerSessionId.getPlayerId();
         log.debug("handle open session response: session = {}, pId = {}", playerSessionId, playerId);
-        
         PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) state.getPokerPlayer(playerId);
         pokerPlayer.setPlayerSessionId(playerSessionId);
     }
 
     public void handleAnnounceTableSuccessfulResponse(AnnounceTableResponse attachment) {
-        log.debug("handle announce table success, tableId = {}, tableProperties = {}", attachment.tableId, attachment.tableProperties);
+        log.debug("handle announce table success, tId = {}, intTableId = {}, tableProperties = {}", new Object[] { Integer.valueOf(table.getId()), attachment.tableId, attachment.tableProperties });
         Map<String, Serializable> extProps = state.getExternalTableProperties();
         extProps.put(EXT_PROP_KEY_TABLE_ID, attachment.tableId);
         extProps.putAll(attachment.tableProperties);
-        
         makeTableVisibleInLobby(table);
     }
 
