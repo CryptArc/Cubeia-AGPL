@@ -13,6 +13,11 @@ import com.cubeia.poker.hand.HandType;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.hand.Suit;
 
+/**
+ * This class is a specialization of HandStrengthComparator for Telesina rules
+ * which differs from the vanilla poker rules.
+ *
+ */
 public class TelesinaHandComparator implements Comparator<Hand> {
 
 	private TelesinaHandStrengthEvaluator evaluator;
@@ -35,17 +40,20 @@ public class TelesinaHandComparator implements Comparator<Hand> {
 		this.evaluator = evaluator;
 	}
 	
-	@Override
-	public int compare(Hand h1, Hand h2) {
-		List<Card> c1 = h1.getCards();
-		List<Card> c2 = h2.getCards();
-
-		return compare(c1, c2);
-	}
+//	@Override
+//	public int compare(Hand h1, Hand h2) {
+//		List<Card> c1 = h1.getCards();
+//		List<Card> c2 = h2.getCards();
+//
+//		return compare(c1, c2);
+//	}
 	
-	public int compare(List<Card> c1, List<Card> c2) {
-		HandStrength c1Strength = evaluator.getBestHandStrength(c1);
-		HandStrength c2Strength = evaluator.getBestHandStrength(c2);
+	public int compare(Hand h1, Hand h2) {
+		HandStrength c1Strength = evaluator.getBestHandStrength(h1);
+		HandStrength c2Strength = evaluator.getBestHandStrength(h2);
+		
+		System.out.println("C1: "+c1Strength);
+		System.out.println("C2: "+c2Strength);
 		
 		if (c1Strength.getHandType() != c2Strength.getHandType()) {
 			return c1Strength.getHandType().telesinaHandTypeValue - c2Strength.getHandType().telesinaHandTypeValue;

@@ -56,7 +56,7 @@ public class HandStrength implements HandInfo {
 		this.type = type;
 	}
 	
-	public HandStrength(HandType handType, List<Card> cardsUsedInHand, int i, List<Card>... groups) {
+	public HandStrength(HandType handType, List<Card> cardsUsedInHand, List<Card>... groups) {
 		this.type = handType;
 		this.cardsUsedInHand = cardsUsedInHand;
 		this.groups = groups;
@@ -71,7 +71,14 @@ public class HandStrength implements HandInfo {
 	
 	@Override
 	public String toString() {
-		return "HandStrength type["+type+"] highestRank["+highestRank+"] secondRank["+secondRank+"] kickers["+kickerCards+"] cardsUsed["+cardsUsedInHand+"] groups["+groups+"]";
+		String groupString = "";
+		if (groups != null) {
+			for (List<Card> group : groups) {
+				groupString += "Group:"+group;
+			}
+		}
+		return "HandStrength type["+type+"] highestRank["+highestRank+"] secondRank["+secondRank+"] kickers["+kickerCards+"] cardsUsed["+cardsUsedInHand+"] groups["+groupString+"]";
+		
 	}
 	
 	@Override
@@ -107,6 +114,10 @@ public class HandStrength implements HandInfo {
 		return cardsUsedInHand;
 	}
     
+    public void setCardsUsedInHand(List<Card> cardsUsedInHand) {
+		this.cardsUsedInHand = cardsUsedInHand;
+	}
+    
     /**
      * Get a copy of the list of cards contained in the groups with given index
      * Changes to the returned list will not be reflected in the list contained
@@ -118,6 +129,10 @@ public class HandStrength implements HandInfo {
     public List<Card> getGroup(int index) {
     	return new ArrayList<Card>(groups[index]);
     }
+    
+    public void setGroups(List<Card>... groups) {
+		this.groups = groups;
+	}
 
 	public int getGroupSize() {
 		return groups.length;

@@ -103,4 +103,8 @@ public class Hand implements Serializable {
         cards.clear();
     }
 
+	public int getNumberOfCards() {
+		return cards.size();
+	}
+
 }

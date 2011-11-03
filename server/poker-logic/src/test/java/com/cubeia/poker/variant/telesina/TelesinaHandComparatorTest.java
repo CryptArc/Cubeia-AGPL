@@ -151,6 +151,16 @@ public class TelesinaHandComparatorTest {
 	}
 	
 	@Test
+	public void testPairs2() {
+		TelesinaHandComparator comp = new TelesinaHandComparator(Rank.SEVEN);
+		
+		// kicker decides
+		assertTrue(comp.compare(new Hand("AS AC KS 8H 7S"), new Hand("AD AH QS 8H 7S")) > 0);
+		
+	}
+	
+	
+	@Test
 	public void testTwoPairs() {
 		TelesinaHandComparator comp = new TelesinaHandComparator(Rank.SEVEN);
 		
@@ -190,6 +200,12 @@ public class TelesinaHandComparatorTest {
 		
 		// best two pairs with best kicker
 		assertTrue(comp.compare(new Hand("8H 8S 9C 9D KC KD"), new Hand("8D 9C 9D KC KD")) > 0);
+	}
+	
+	@Test
+	public void testTwoPair2() {
+		TelesinaHandComparator comp = new TelesinaHandComparator(Rank.SEVEN);
+		assertTrue(comp.compare(new Hand("AH AD KS KC JD"), new Hand("AS AC KH KD JD")) > 0);
 	}
 	
 	@Test
