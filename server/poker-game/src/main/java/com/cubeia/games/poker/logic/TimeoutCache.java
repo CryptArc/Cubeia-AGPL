@@ -36,14 +36,7 @@ import com.cubeia.games.poker.util.TablePlayerKey;
  */
 public class TimeoutCache {
     
-//    @VisibleForTesting
-//    public static TimeoutCache instance = new TimeoutCache();
-    
     protected ConcurrentMap<TablePlayerKey,UUID> actions = new ConcurrentHashMap<TablePlayerKey, UUID>();
-    
-//    public static TimeoutCache getInstance() {
-//        return instance;
-//    }
     
     /**
      * Adds a reference to a timeout for an action request.

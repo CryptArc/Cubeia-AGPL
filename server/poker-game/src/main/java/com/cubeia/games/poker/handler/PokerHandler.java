@@ -146,7 +146,7 @@ public class PokerHandler extends DefaultPokerHandler {
             return true;
             
         } else {
-            log.debug("Ignoring action. current-seq["+current+"] packet-seq["+packet.seq+"] - packet["+packet+"]");
+            log.warn("Ignoring action. current-seq["+current+"] packet-seq["+packet.seq+"] - packet["+packet+"]");
             return false;
         }
         
