@@ -59,8 +59,15 @@ public class Hand implements Serializable {
 		return s;
 	}
 	
+    /**
+     * Will return a defensive copy of the cards. 
+     * Changes to the returned list are not reflected in the list 
+     * contained in this hand object.
+     * 
+     * @return List of cards, never null.
+     */
 	public List<Card> getCards() {
-		return cards;
+		return new ArrayList<Card>(cards);
 	}
 
 	/**

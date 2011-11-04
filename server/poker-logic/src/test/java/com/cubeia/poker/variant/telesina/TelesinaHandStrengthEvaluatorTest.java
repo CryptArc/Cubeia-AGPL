@@ -92,7 +92,7 @@ public class TelesinaHandStrengthEvaluatorTest {
 	@Test
 	public void testFlush() {
 		Hand hand = new Hand("7S KS 9S AS JS");
-		HandStrength strength = eval.checkFlush(hand, 5);
+		HandStrength strength = typeCalculator.checkFlush(hand, 5);
 		assertThat(strength.getHandType(), is(HandType.FLUSH));
 		
 		assertThat(strength.getCards().get(0).getRank(), is(Rank.ACE));

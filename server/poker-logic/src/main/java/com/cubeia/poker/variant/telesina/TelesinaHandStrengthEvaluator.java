@@ -3,7 +3,6 @@ package com.cubeia.poker.variant.telesina;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.cubeia.poker.hand.Card;
@@ -68,65 +67,59 @@ public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Seriali
 			hand = new Hand(cards);
 		}
 		
-		HandStrength strength = checkStraightFlush(hand, 5);
-		if (strength != null) {
-			return strength;
+		HandStrength strength = null;
+		
+		// STRAIGHT_FLUSH
+		if (strength == null) {
+			strength = checkStraightFlush(hand, 5);
 		}
 		
-		strength = typeCalculator.checkManyOfAKind(hand, 4);
-		if (strength != null) {
-			return strength;
+		// FOUR_OF_A_KIND
+		if (strength == null) {
+			strength = typeCalculator.checkManyOfAKind(hand, 4);
 		}
 		
-		strength = checkFlush(hand, 5);
-		if (strength != null) {
-			return strength;
+		// FLUSH
+		if (strength == null) {
+			strength = typeCalculator.checkFlush(hand, 5);
 		}
 		
-		strength = typeCalculator.checkFullHouse(hand);
-		if (strength != null) {
-			return strength;
+		// FULL_HOUSE
+		if (strength == null) {
+			strength = typeCalculator.checkFullHouse(hand);
 		}
 		
-		strength = checkStraight(hand, 5);
-		if (strength != null) {
-			return strength;
+		// STRAIGHT
+		if (strength == null) {
+			strength = checkStraight(hand, 5);
 		}
-		
-		strength = typeCalculator.checkManyOfAKind(hand, 3);
-		if (strength != null) {
-			return strength;
-		}
-		
-		strength = typeCalculator.checkTwoPairs(hand);
-		if (strength != null) {
-			return strength;
-		}
-		
-		strength = typeCalculator.checkManyOfAKind(hand, 2);
-		if (strength != null) {
-			return strength;
-		}
-		
-		return checkHighCard(cards);
-	}
-	
-	/**
-	 * Check if a given set of cards constitutes a high card hand.
-	 * @param cards
-	 * @return
-	 */
-    public HandStrength checkHighCard(List<Card> cards) {
-		if (cards.isEmpty()) {
-			return null;
-		}
-		
-		List<Card> cc = new LinkedList<Card>(cards);
-		Collections.sort(cc, ByRankCardComparator.ACES_HIGH_DESC);
-		return new HandStrength(HandType.HIGH_CARD, cc, cc);
-	}
 
-
+		// THREE_OF_A_KIND
+		if (strength == null) {
+			strength = typeCalculator.checkManyOfAKind(hand, 3);
+		}
+		
+		// TWO_PAIRS
+		if (strength == null) {
+			strength = typeCalculator.checkTwoPairs(hand);
+		}
+		
+		// ONE_PAIR
+		if (strength == null) {
+			strength = typeCalculator.checkManyOfAKind(hand, 2);
+		}
+		
+		// HIGH_CARD
+		if (strength == null) {
+			strength = typeCalculator.checkHighCard(hand);
+		}
+		
+		if (strength == null) {
+			strength = new HandStrength(HandType.NOT_RANKED);
+		}
+		
+		return strength;
+	}
 	
 	/**
 	 * Checks to see if ALL cards (any number) supplied form a straight, aces low allowed.
@@ -137,7 +130,6 @@ public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Seriali
 	 * @return
 	 */
 	public HandStrength checkStraight(Hand hand, int minimumLength) {
-		
 		if (hand.getNumberOfCards() < minimumLength) {
 			return null;
 		}
@@ -150,30 +142,6 @@ public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Seriali
 		return typeCalculator.checkStraight(hand, true);
 	}
 	
-
-	
-	
-	/**
-	 * <p>Check if all cards in a set are of the same suit</p>
-	 * 
-	 * @param Hand, the hand to check
-	 * @param, minimumLength, minimum amount of cards for a flush
-	 * 
-	 * @return HandStrength, null if no valid flush
-	 *  
-	 * FIXME: See if we can break out the minimum length to the type calculator instead.
-	 */
-	public HandStrength checkFlush(Hand hand, int minimumLength) {
-		if (hand.getNumberOfCards() < minimumLength) {
-			return null;
-		}
-		
-		HandStrength checkFlush = typeCalculator.checkFlush(hand);
-		return checkFlush;
-	}
-	
-	
-	
 	/**
 	 * Checks to see if ALL cards (any number) supplied form a straight flush.
 	 * Deck may be stripped.
@@ -184,7 +152,7 @@ public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Seriali
 	 * @return
 	 */
 	public HandStrength checkStraightFlush(Hand hand, int minimumLength) {
-		if (checkFlush(hand, minimumLength) == null) {
+		if (typeCalculator.checkFlush(hand, minimumLength) == null) {
 			return null;
 		}
 		
@@ -199,6 +167,39 @@ public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Seriali
 		return new HandStrength(HandType.STRAIGHT_FLUSH, sorted, hand.getCards());
 	}
 	
+//	/**
+//	 * Check if a given set of cards constitutes a high card hand.
+//	 * @param cards
+//	 * @return
+//	 */
+//   public HandStrength checkHighCard(List<Card> cards) {
+//		if (cards.isEmpty()) {
+//			return null;
+//		}
+//		
+//		List<Card> cc = new LinkedList<Card>(cards);
+//		Collections.sort(cc, ByRankCardComparator.ACES_HIGH_DESC);
+//		return new HandStrength(HandType.HIGH_CARD, cc, cc);
+//	}
+	
+//	/**
+//	 * <p>Check if all cards in a set are of the same suit</p>
+//	 * 
+//	 * @param Hand, the hand to check
+//	 * @param, minimumLength, minimum amount of cards for a flush
+//	 * 
+//	 * @return HandStrength, null if no valid flush
+//	 *  
+//	 * FIXME: See if we can break out the minimum length to the type calculator instead.
+//	 */
+//	public HandStrength checkFlush(Hand hand, int minimumLength) {
+//		if (hand.getNumberOfCards() < minimumLength) {
+//			return null;
+//		}
+//		
+//		HandStrength checkFlush = typeCalculator.checkFlush(hand);
+//		return checkFlush;
+//	}
 	
 //	public HandStrength checkFlush(Hand hand) {
 //		return checkFlush(hand, 1);

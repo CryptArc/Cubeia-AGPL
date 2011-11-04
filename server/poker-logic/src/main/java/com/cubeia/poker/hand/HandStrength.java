@@ -4,7 +4,80 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <p>Holds the type of hand, highest & second ranking card and kickers.</p>
+ * <p>Holds information about the hand strength of a hand.</p>
+ *
+ * <p>
+ * <h3>Groups</h3>
+ * Groups are a bit magic in the sense that they will contain different values 
+ * depending on the hand type. The groups are ordered information as needed
+ * by the hand comparator. The groups have been designed when implementing the
+ * Telesina variant so they probably a bit Telesina specific at this time. 
+ * </p>
+ * 
+ * <p>Below are the various hand types and what are contained in the groups
+ * for the corresponding position (i.e. index+1) where it is of interest.</p>
+ * 
+ * <p>
+ * <strong>Pair</strong>
+ * <ol>
+ *   <li>pair rank (unsuited so hard code HEART)</li>
+ *   <li>kickers</li>
+ *   <li>suit of pair cards</li>
+ * </ol> 
+ * </p>
+ * 
+ * <p>
+ * <strong>Two Pairs</strong>
+ * <ol>
+ *   <li>high pair rank (unsuited so hard code HEART)</li>
+ *   <li>low pair rank (unsuited so hard code HEART)</li>
+ *   <li>kicker</li>
+ *   <li>suit of high pair</li>
+ * </ol> 
+ * </p>
+ * 
+ * <p>
+ * <strong>Three of a kind</strong>
+ * <ol>
+ *   <li>paired rank (unsuited so hard code HEART)</li>
+ *   <li>kickers</li>
+ *   <li>suit of paired cards</li>
+ * </ol> 
+ * </p>
+ * 
+ * <p>
+ * <strong>Four of a kind</strong>
+ * <ol>
+ *   <li>paired rank (unsuited so hard code HEART)</li>
+ *   <li>kickers</li>
+ *   <li>suited paired cards</li>
+ * </ol> 
+ * </p>
+ * 
+ * <p>
+ * <strong>Straight</strong>
+ * <ol>
+ *   <li>Highest card in the straight</li>
+ *   <li>Second highest card</li>
+ * </ol> 
+ * </p>
+ * 
+ * <p>
+ * <strong>Flush</strong>
+ * <ol>
+ *   <li>Highest ranking card</li>
+ * </ol> 
+ * </p>
+ * 
+ * <p>
+ * <strong>Full House</strong>
+ * <ol>
+ *   <li>three of a kind rank (unsuited so hard code HEART)</li>
+ *   <li>pair rank (unsuited so hard code HEART)</li>
+ *   <li>kicker</li>
+ *   <li>three of a kind with suits</li>
+ * </ol> 
+ * </p>
  *
  * @author Fredrik Johansson, Cubeia Ltd
  */

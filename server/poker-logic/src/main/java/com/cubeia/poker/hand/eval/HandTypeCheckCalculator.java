@@ -11,6 +11,7 @@ import static com.cubeia.poker.hand.HandType.TWO_PAIRS;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.cubeia.poker.hand.Card;
@@ -26,14 +27,30 @@ import com.cubeia.poker.hand.calculator.ByRankCardComparator;
  * 
  * <p>The idea is that this component shall be portable over different variants of poker
  * since most hand checks will be the same even if the type ranking differs.</p>
+ * 
+ * <p><em>Design Note: If you are extending or copy-pasting from this class you are
+ * probably not doing it correctly.</em></p>
+ *
+ * <p><em>Design Note 2: Try to keep as litle state as possible in this class.</em></p>
  *
  * @author Fredrik Johansson, Cubeia Ltd
  */
 public class HandTypeCheckCalculator {
 	
+	/**
+	 * Some poker variants (e.g. Telesina) allows for different deck sizes.
+	 * In the case of a cut deck we need to know the lower rank for the cases
+	 * where Aces are allowed as high or low card in straights.
+	 */
 	private Rank deckLowestRank = Rank.TWO;
 
 	
+	
+	/* ----------------------------------------------------
+	 * 	
+	 * 	CONSTRUCTORS
+	 *  
+	 *  ---------------------------------------------------- */
 	
 	public HandTypeCheckCalculator() {}
 	
@@ -61,15 +78,23 @@ public class HandTypeCheckCalculator {
 		return strength;
 	}
 	
-	
 	/**
 	 * <p>Checks if all cards are the same suit, regardless of the number of cards.</p>
 	 * 
 	 * @return HandStrenght, null if not flush.
 	 */
-	@SuppressWarnings("unchecked")
 	public HandStrength checkFlush(Hand hand) {
-		if (hand.getCards().isEmpty()) {
+		return checkFlush(hand, 1);
+	}
+	
+	/**
+	 * <p>Checks if all cards are the same suit and the number of cards are enough</p>
+	 * 
+	 * @return HandStrenght, null if not flush.
+	 */
+	@SuppressWarnings("unchecked")
+	public HandStrength checkFlush(Hand hand, int minimumNumberOfCards) {
+		if (hand.getCards().isEmpty() || hand.getNumberOfCards() < minimumNumberOfCards) {
 			return null;
 		}
 		
@@ -108,7 +133,15 @@ public class HandTypeCheckCalculator {
 		return checkStraight(hand, false);
 	}
 	
-	
+	/**
+	 * Check for straights. Hands with only cards will never be reported 
+	 * as a straight.
+	 * 
+	 * @param hand
+	 * @param acesAreLow
+	 * 
+	 * @return HandStrength, null if not a straight
+	 */
 	// FIXME: Refactor this to be more *nice*
 	@SuppressWarnings("unchecked")
 	public HandStrength checkStraight(Hand hand, boolean acesAreLow) {
@@ -121,7 +154,7 @@ public class HandTypeCheckCalculator {
 		if (acesAreLow) {
 			Collections.sort(cards, ByRankCardComparator.ACES_LOW_DESC);
 		} else {
-			cards = hand.sort().getCards();
+			Collections.sort(cards, ByRankCardComparator.ACES_HIGH_DESC);
 		}
 		
 		HandStrength strength = null;
@@ -179,6 +212,7 @@ public class HandTypeCheckCalculator {
 	 * @param number, number of same rank to look for, i.e. 3 = three of a kind
 	 * @return the highest match found or null if not found
 	 */
+	@SuppressWarnings("unchecked")
 	public HandStrength checkManyOfAKind(Hand hand, int number) {
 		List<Card> cards = hand.sort().getCards();
 		
@@ -194,18 +228,21 @@ public class HandTypeCheckCalculator {
 					if (count == number) {
 						strength = new HandStrength(getType(number));
 						strength.setHighestRank(card.getRank());
-						// Get kicker cards
+
+						// Get kicker cards, remove them from main card list,
+						// sort them and then add them to main card list again.
+						// The idea is that we want the pair cards first and
+						// then the kickers in an ordered fashion.
 						List<Card> kickers = removeAllRanks(card.getRank(), cards);
-						Collections.sort(kickers, ByRankCardComparator.ACES_HIGH_DESC);
-						strength.setKickerCards(kickers);
+						cards.removeAll(kickers);
 						
+						Collections.sort(kickers, ByRankCardComparator.ACES_HIGH_DESC);
+						cards.addAll(kickers);
+						
+						strength.setKickerCards(kickers);
 						strength.setCardsUsedInHand(cards);
 						
-						// FIXME: Document this in HandStrength instead
-						// pairs are group for comparison by
-						//  1) pair rank (unsuited so hard code HEART)
-						//  2) kickers
-						//  3) suit of pair cards
+						// See javadoc in HandStrength for group values
 						List<Card> unsuitedPair = Arrays.asList(new Card(card.getRank(), Suit.HEARTS));
 						List<Card> cardSet = getAllWithRank(card.getRank(), cards);
 						
@@ -220,8 +257,6 @@ public class HandTypeCheckCalculator {
 			}
 			lastRank = card.getRank();
 		}
-		
-		
 		
 		return strength;
 	}
@@ -240,6 +275,7 @@ public class HandTypeCheckCalculator {
 	 * @param number, the number to check highest multiple. I.e. 2 = two pair, 3 = full house
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	private HandStrength checkDoubleManyCards(Hand hand, int number) {
 		HandStrength strength = null;
 		HandStrength firstPair = checkManyOfAKind(hand, number);
@@ -256,8 +292,10 @@ public class HandTypeCheckCalculator {
 				} else if (number == 3) {
 					strength = new HandStrength(FULL_HOUSE);
 				}
+				
 				strength.setHighestRank(firstPair.getHighestRank());
 				strength.setSecondRank(secondPair.getHighestRank());
+				
 				List<Card> kickers = removeAllRanks(secondPair.getHighestRank(), secondPairHand.getCards());
 				strength.setKickerCards(kickers);
 				
@@ -267,12 +305,7 @@ public class HandTypeCheckCalculator {
 				usedCards.addAll(kickers);
 				strength.setCardsUsedInHand(usedCards);
 			
-				// FIXME: Document this in HandStrength instead
-				// pairs are grouped by
-				//  1) high pair rank (unsuited so hard code HEART)
-				//  2) low pair rank (unsuited so hard code HEART)
-				//  3) kicker
-				//  4) suit of high pair 
+				// See Javadoc in HandStrength for the proper group values for PAIR
 				List<Card> unsuitedPair = Arrays.asList(new Card(strength.getHighestRank(), Suit.HEARTS));
 				List<Card> unsuitedSecondPair = Arrays.asList(new Card(strength.getSecondRank(), Suit.HEARTS));
 				List<Card> cardSet = getAllWithRank(strength.getHighestRank(), hand.getCards());
@@ -284,6 +317,7 @@ public class HandTypeCheckCalculator {
 		return strength;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public HandStrength checkHighCard(Hand hand) {
 		
 		if (hand.getCards().isEmpty()) {
@@ -291,10 +325,18 @@ public class HandTypeCheckCalculator {
 		}
 		
 		HandStrength strength = new HandStrength(HIGH_CARD);
-		Hand sorted = hand.sort();
-		strength.setHighestRank(sorted.getCardAt(0).getRank());
-		strength.setSecondRank(sorted.getCardAt(1).getRank());
-		strength.setKickerCards(sorted.getCards());
+		
+		List<Card> sorted = new LinkedList<Card>(hand.getCards());
+		Collections.sort(sorted, ByRankCardComparator.ACES_HIGH_DESC);
+		
+		strength.setHighestRank(sorted.get(0).getRank());
+		if (sorted.size() >= 2) {
+			strength.setSecondRank(sorted.get(1).getRank());
+		}
+		strength.setKickerCards(sorted);
+		
+		strength.setCardsUsedInHand(sorted);
+		strength.setGroups(sorted);
 		return strength;
 	}
 	
@@ -333,6 +375,7 @@ public class HandTypeCheckCalculator {
 			default: throw new IllegalArgumentException("Invalid number of cards for hand type");
 		}
 	}
+
 
 	
 }
