@@ -52,6 +52,9 @@ public class TexasCalculatorTest {
 		
 		hand = new Hand("2C 3C 4H");
 		assertNull(calc.checkFlush(hand));
+		
+		hand = new Hand("2C 3C");
+		assertNull(calc.checkFlush(hand, 3));
 	}
 	
 	@Test
@@ -190,5 +193,11 @@ public class TexasCalculatorTest {
 		assertEquals(TWO, strength.getKickerCards().get(4).getRank());
 	}
 	
+	@Test
+	public void testHighCard2() throws Exception {
+		Hand hand = new Hand("2C");
+		HandStrength strength = calc.checkHighCard(hand);
+		//assertEquals(HIGH_CARD, strength.getHandType());
+	}
 	
 }

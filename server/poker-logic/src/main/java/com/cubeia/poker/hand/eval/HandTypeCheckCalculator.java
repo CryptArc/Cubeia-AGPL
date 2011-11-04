@@ -11,6 +11,7 @@ import static com.cubeia.poker.hand.HandType.TWO_PAIRS;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.cubeia.poker.hand.Card;
@@ -77,15 +78,23 @@ public class HandTypeCheckCalculator {
 		return strength;
 	}
 	
-	
 	/**
 	 * <p>Checks if all cards are the same suit, regardless of the number of cards.</p>
 	 * 
 	 * @return HandStrenght, null if not flush.
 	 */
-	@SuppressWarnings("unchecked")
 	public HandStrength checkFlush(Hand hand) {
-		if (hand.getCards().isEmpty()) {
+		return checkFlush(hand, 1);
+	}
+	
+	/**
+	 * <p>Checks if all cards are the same suit and the number of cards are enough</p>
+	 * 
+	 * @return HandStrenght, null if not flush.
+	 */
+	@SuppressWarnings("unchecked")
+	public HandStrength checkFlush(Hand hand, int minimumNumberOfCards) {
+		if (hand.getCards().isEmpty() || hand.getNumberOfCards() < minimumNumberOfCards) {
 			return null;
 		}
 		
@@ -308,6 +317,7 @@ public class HandTypeCheckCalculator {
 		return strength;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public HandStrength checkHighCard(Hand hand) {
 		
 		if (hand.getCards().isEmpty()) {
@@ -315,10 +325,18 @@ public class HandTypeCheckCalculator {
 		}
 		
 		HandStrength strength = new HandStrength(HIGH_CARD);
-		Hand sorted = hand.sort();
-		strength.setHighestRank(sorted.getCardAt(0).getRank());
-		strength.setSecondRank(sorted.getCardAt(1).getRank());
-		strength.setKickerCards(sorted.getCards());
+		
+		List<Card> sorted = new LinkedList<Card>(hand.getCards());
+		Collections.sort(sorted, ByRankCardComparator.ACES_HIGH_DESC);
+		
+		strength.setHighestRank(sorted.get(0).getRank());
+		if (sorted.size() >= 2) {
+			strength.setSecondRank(sorted.get(1).getRank());
+		}
+		strength.setKickerCards(sorted);
+		
+		strength.setCardsUsedInHand(sorted);
+		strength.setGroups(sorted);
 		return strength;
 	}
 	
@@ -357,6 +375,7 @@ public class HandTypeCheckCalculator {
 			default: throw new IllegalArgumentException("Invalid number of cards for hand type");
 		}
 	}
+
 
 	
 }
