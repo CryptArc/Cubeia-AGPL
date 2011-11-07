@@ -29,6 +29,8 @@ import se.jadestone.dicearena.game.poker.network.protocol.PotTransfers;
 import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
 import se.jadestone.dicearena.game.poker.network.protocol.RequestAction;
 
+import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
+import com.cubeia.backend.firebase.CashGamesBackendContract;
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.action.GameObjectAction;
@@ -89,10 +91,11 @@ public class FirebaseServerAdapterTest {
 	}
 
 	@Test
-	public void testNotifyBuyInInfo() throws IOException {
+	public void testNotifyBuyInInfo() throws IOException, GetBalanceFailedException {
 		FirebaseServerAdapter fsa = new FirebaseServerAdapter();
 		fsa.actionTransformer = new ActionTransformer();
 		fsa.table = mock(Table.class);
+        fsa.backend = mock(CashGamesBackendContract.class);
 		GameNotifier tableNotifier = mock(GameNotifier.class);
 		when(fsa.table.getNotifier()).thenReturn(tableNotifier);
 
@@ -117,7 +120,9 @@ public class FirebaseServerAdapterTest {
 		
 		when(pokerPlayer.getBalance()).thenReturn((long) playerBalanceOnTable);
 		when(pokerPlayer.getPendingBalance()).thenReturn((long) playerPendingBalanceOnTable);
-
+		long mainAccountBalance = 500000L;
+        when(fsa.backend.getMainAccountBalance(playerId)).thenReturn(mainAccountBalance);
+		
 		fsa.notifyBuyInInfo(pokerPlayer.getId(), true);
 
 		ArgumentCaptor<GameDataAction> captor = ArgumentCaptor.forClass(GameDataAction.class);
@@ -125,7 +130,7 @@ public class FirebaseServerAdapterTest {
 		GameDataAction gda = captor.getValue();
 
 		BuyInInfoResponse buyInInfoRespPacket = (BuyInInfoResponse) new StyxSerializer(new ProtocolObjectFactory()).unpack(gda.getData());
-		assertThat(buyInInfoRespPacket.balanceInWallet, is(500000));
+		assertThat(buyInInfoRespPacket.balanceInWallet, is((int) mainAccountBalance));
 		
 		assertThat(buyInInfoRespPacket.balanceOnTable, is(playerTotalBalanceOnTable));
 		assertThat(buyInInfoRespPacket.maxAmount, is(maxBuyIn - playerTotalBalanceOnTable));
@@ -136,10 +141,11 @@ public class FirebaseServerAdapterTest {
 	}
 	
 	@Test
-	public void testNotifyBuyInInfoBalanceToHigh() throws IOException {
+	public void testNotifyBuyInInfoBalanceToHigh() throws IOException, GetBalanceFailedException {
 
 		FirebaseServerAdapter fsa = new FirebaseServerAdapter();
 		fsa.table = mock(Table.class);
+		fsa.backend = mock(CashGamesBackendContract.class);
 		GameNotifier tableNotifier = mock(GameNotifier.class);
 		when(fsa.table.getNotifier()).thenReturn(tableNotifier);
 
@@ -151,7 +157,6 @@ public class FirebaseServerAdapterTest {
 		fsa.state = mock(PokerState.class);
 		when(fsa.state.getPokerPlayer(playerId)).thenReturn(pokerPlayer);
 		
-
 		int minBuyIn = 100;
 		when(fsa.state.getMinBuyIn()).thenReturn(minBuyIn);
 
@@ -164,17 +169,17 @@ public class FirebaseServerAdapterTest {
 		
 		when(pokerPlayer.getBalance()).thenReturn((long) playerBalanceOnTable);
 		when(pokerPlayer.getPendingBalance()).thenReturn((long) playerPendingBalanceOnTable);
+		long mainAccountBalance = 500000L;
+        when(fsa.backend.getMainAccountBalance(playerId)).thenReturn(mainAccountBalance);
 
 		fsa.notifyBuyInInfo(pokerPlayer.getId(), true);
-
-		
 		
 		ArgumentCaptor<GameDataAction> captor = ArgumentCaptor.forClass(GameDataAction.class);
 		verify(tableNotifier).notifyPlayer(Mockito.eq(playerId), captor.capture());
 		GameDataAction gda = captor.getValue();
 
 		BuyInInfoResponse buyInInfoRespPacket = (BuyInInfoResponse) new StyxSerializer(new ProtocolObjectFactory()).unpack(gda.getData());
-		assertThat(buyInInfoRespPacket.balanceInWallet, is(500000));
+		assertThat(buyInInfoRespPacket.balanceInWallet, is((int) mainAccountBalance));
 		
 		assertThat(buyInInfoRespPacket.balanceOnTable, is(playerTotalBalanceOnTable));
 		assertThat(buyInInfoRespPacket.maxAmount, is(0));
@@ -184,11 +189,53 @@ public class FirebaseServerAdapterTest {
 
 	}
 	
+    @Test
+    public void testNotifyBuyInInfoErrorGettingWalletBalance() throws IOException, GetBalanceFailedException {
+        FirebaseServerAdapter fsa = new FirebaseServerAdapter();
+        fsa.table = mock(Table.class);
+        fsa.backend = mock(CashGamesBackendContract.class);
+        GameNotifier tableNotifier = mock(GameNotifier.class);
+        when(fsa.table.getNotifier()).thenReturn(tableNotifier);
+
+        PokerPlayer pokerPlayer = mock(PokerPlayer.class);
+        int playerId = 1337;
+        when(pokerPlayer.getId()).thenReturn(playerId);
+        
+        fsa.state = mock(PokerState.class);
+        when(fsa.state.getPokerPlayer(playerId)).thenReturn(pokerPlayer);
+
+        int minBuyIn = 100;
+        when(fsa.state.getMinBuyIn()).thenReturn(minBuyIn);
+
+        int maxBuyIn = 150;
+        when(fsa.state.getMaxBuyIn()).thenReturn(maxBuyIn);
+
+        int playerBalanceOnTable = 100;
+        int playerPendingBalanceOnTable = 100;
+        
+        when(pokerPlayer.getBalance()).thenReturn((long) playerBalanceOnTable);
+        when(pokerPlayer.getPendingBalance()).thenReturn((long) playerPendingBalanceOnTable);
+        when(fsa.backend.getMainAccountBalance(playerId)).thenThrow(new GetBalanceFailedException("error"));
+
+        fsa.notifyBuyInInfo(pokerPlayer.getId(), true);
+        
+        ArgumentCaptor<GameDataAction> captor = ArgumentCaptor.forClass(GameDataAction.class);
+        verify(tableNotifier).notifyPlayer(Mockito.eq(playerId), captor.capture());
+        GameDataAction gda = captor.getValue();
+
+        BuyInInfoResponse buyInInfoRespPacket = (BuyInInfoResponse) new StyxSerializer(new ProtocolObjectFactory()).unpack(gda.getData());
+        assertThat(buyInInfoRespPacket.balanceInWallet, is(-1));
+        assertThat(buyInInfoRespPacket.maxAmount, is(-1));
+        assertThat(buyInInfoRespPacket.minAmount, is(-1));
+        assertThat(buyInInfoRespPacket.resultCode, is(BuyInInfoResultCode.UNSPECIFIED_ERROR));
+    }
+	
 	@Test
-	public void testNotifyBuyInInfoMaxBuyinIsLessThanMinBuyIn() throws IOException {
+	public void testNotifyBuyInInfoMaxBuyinIsLessThanMinBuyIn() throws IOException, GetBalanceFailedException {
 
 		FirebaseServerAdapter fsa = new FirebaseServerAdapter();
 		fsa.table = mock(Table.class);
+		fsa.backend = mock(CashGamesBackendContract.class);
 		GameNotifier tableNotifier = mock(GameNotifier.class);
 		when(fsa.table.getNotifier()).thenReturn(tableNotifier);
 
@@ -213,18 +260,17 @@ public class FirebaseServerAdapterTest {
 		
 		when(pokerPlayer.getBalance()).thenReturn((long) playerBalanceOnTable);
 		when(pokerPlayer.getPendingBalance()).thenReturn((long) playerPendingBalanceOnTable);
-
+		long mainAccountBalance = 500000L;
+        when(fsa.backend.getMainAccountBalance(playerId)).thenReturn(mainAccountBalance);
+		
 		fsa.notifyBuyInInfo(pokerPlayer.getId(), true);
 
-		
-		
 		ArgumentCaptor<GameDataAction> captor = ArgumentCaptor.forClass(GameDataAction.class);
 		verify(tableNotifier).notifyPlayer(Mockito.eq(playerId), captor.capture());
 		GameDataAction gda = captor.getValue();
 
 		BuyInInfoResponse buyInInfoRespPacket = (BuyInInfoResponse) new StyxSerializer(new ProtocolObjectFactory()).unpack(gda.getData());
-		assertThat(buyInInfoRespPacket.balanceInWallet, is(500000));
-		
+		assertThat(buyInInfoRespPacket.balanceInWallet, is((int) mainAccountBalance));
 		assertThat(buyInInfoRespPacket.balanceOnTable, is(playerTotalBalanceOnTable));
 		assertThat(buyInInfoRespPacket.maxAmount, is(0));
 		assertThat(buyInInfoRespPacket.minAmount, is(0));

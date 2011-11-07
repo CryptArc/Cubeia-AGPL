@@ -169,7 +169,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
     @Override
     public long getMainAccountBalance(int playerId) {
         log.warn("not implemented!");
-        return 500000;
+        return 133700;
     }
 
     private int getBalance(PlayerSessionId sid) {
