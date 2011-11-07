@@ -56,6 +56,7 @@ import com.cubeia.backend.cashgame.TableId;
 import com.cubeia.backend.cashgame.dto.BalanceUpdate;
 import com.cubeia.backend.cashgame.dto.BatchHandRequest;
 import com.cubeia.backend.cashgame.dto.BatchHandResponse;
+import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.GameDataAction;
@@ -311,20 +312,28 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		int correctedMaxBuyIn = state.getMaxBuyIn() - balanceOnTable;
 		int correctedMinBuyIn = state.getMinBuyIn();
 		
-		resp.balanceInWallet = 500000;     // TODO: mocked value!
-		resp.balanceOnTable = balanceOnTable;
-		
-		if (correctedMaxBuyIn <= correctedMinBuyIn){
-			resp.maxAmount = 0;
-			resp.minAmount = 0;
-			resp.resultCode = BuyInInfoResultCode.MAX_LIMIT_REACHED;
-		}else{
-			resp.maxAmount = correctedMaxBuyIn;
-			resp.minAmount = correctedMinBuyIn;
-			resp.resultCode = BuyInInfoResultCode.OK;
-		}
-
-		resp.mandatoryBuyin = mandatoryBuyin;
+		try {
+		    resp.balanceInWallet = (int) backend.getMainAccountBalance(playerId);
+		    resp.balanceOnTable = balanceOnTable;
+		    
+		    if (correctedMaxBuyIn <= correctedMinBuyIn){
+		        resp.maxAmount = 0;
+		        resp.minAmount = 0;
+		        resp.resultCode = BuyInInfoResultCode.MAX_LIMIT_REACHED;
+		    } else {
+		        resp.maxAmount = correctedMaxBuyIn;
+		        resp.minAmount = correctedMinBuyIn;
+		        resp.resultCode = BuyInInfoResultCode.OK;
+		    }
+		    
+		    resp.mandatoryBuyin = mandatoryBuyin;
+		} catch (GetBalanceFailedException e) {
+		    log.error("error getting balance", e);
+		    resp.resultCode = BuyInInfoResultCode.UNSPECIFIED_ERROR;
+            resp.maxAmount = -1;
+            resp.minAmount = -1;
+            resp.balanceInWallet = -1;
+        }
 		
 		log.debug("Creating buyin information minBuyIn["+state.getMinBuyIn()+"] maxBuyIn["+state.getMaxBuyIn()+"] balanceOnTable["+balanceOnTable+"] correctedMaxBuyIn["+correctedMaxBuyIn+"]" );
 		log.debug("Sending buyin information to player["+playerId+"]: "+resp);
