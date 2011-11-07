@@ -34,8 +34,8 @@
     
     <dependency>
       <groupId>com.cubeia.tools</groupId>
-      <artifactId>bots</artifactId>
-      <version>1.7.2-SNAPSHOT</version>
+	  <artifactId>firebase-bots</artifactId>
+      <version>1.7.2</version>
     </dependency>
 
   </dependencies>
