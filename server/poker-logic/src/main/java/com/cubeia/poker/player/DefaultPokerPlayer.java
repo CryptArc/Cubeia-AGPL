@@ -284,9 +284,12 @@ public class DefaultPokerPlayer implements PokerPlayer {
     		if (pendingBalance > allowedAmount) {
     			balance += allowedAmount;
     			pendingBalance -= allowedAmount;
+    			log.debug("commiting pending balance for player: " + playerId + " committedValue: " + allowedAmount + " new balance: " + balance + " new pending balance: " + pendingBalance);
     		} else {
     			balance += pendingBalance;
+    			log.debug("commiting all pending balance for player: " + playerId + " committedValue: " + pendingBalance + " new balance: " + balance + " new pending balance: " + 0);
     			pendingBalance = 0;
+    			
     		}
     	}
     	return hasPending;
