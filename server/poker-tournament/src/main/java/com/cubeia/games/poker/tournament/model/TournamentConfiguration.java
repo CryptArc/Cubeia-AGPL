@@ -15,29 +15,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.persistence.tournament.model;
+package com.cubeia.games.poker.tournament.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
-
-@Entity
+/**
+ * This used to be an entity class in the now discarded
+ * poker-persistence module.
+ *
+ * @author Fredrik Johansson, Cubeia Ltd
+ */
 public class TournamentConfiguration implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Id @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id;
     
     private String name;
     
-    @Enumerated(value=EnumType.STRING)
     private TournamentStartType startType = TournamentStartType.SIT_AND_GO;
     
     private int seatsPerTable = 10;

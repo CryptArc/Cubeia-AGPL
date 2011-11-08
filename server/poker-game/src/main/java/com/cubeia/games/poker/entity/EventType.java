@@ -15,9 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.persistence.tournament.model;
+package com.cubeia.games.poker.entity;
 
-public enum TournamentStartType {
-    SIT_AND_GO,
-    SCHEDULED
+public enum EventType {
+    SMALL_BLIND,
+    BIG_BLIND,
+    FOLD,
+    CALL,
+    BET,
+    RAISE, 
+    DEALER_BUTTON, 
+    CHECK, 
+    DENY_ENTRY_BET
 }

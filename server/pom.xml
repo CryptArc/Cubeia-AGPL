@@ -14,7 +14,6 @@
     <module>poker-logic-blinds</module>
     <!--module>poker-cep-service</module--> <!-- depends on stuff not in public repo (yet) -->
     <module>poker-tournament</module>
-    <module>poker-persistence</module>
     <module>poker-uar</module>
     <module>jg-mock-login-handler</module>
     <module>backend</module>
@@ -119,19 +118,6 @@
         <version>${project.version}</version>
         <type>firebase-tar</type>
     </dependency>     
-    
-    <dependency>
-        <groupId>com.cubeia.games</groupId>
-        <artifactId>poker-persistence</artifactId>
-        <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-        <groupId>com.cubeia.games</groupId>
-        <artifactId>poker-persistence</artifactId>
-        <version>${project.version}</version>
-        <type>firebase-par</type>
-    </dependency>
 
     <dependency>
         <groupId>com.cubeia.games</groupId>

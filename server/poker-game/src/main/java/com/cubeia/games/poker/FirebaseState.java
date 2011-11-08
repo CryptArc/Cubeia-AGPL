@@ -19,7 +19,7 @@ package com.cubeia.games.poker;
 
 import java.io.Serializable;
 
-import com.cubeia.games.poker.persistence.history.model.PlayedHand;
+import com.cubeia.games.poker.entity.PlayedHand;
 
 public class FirebaseState implements Serializable {
 

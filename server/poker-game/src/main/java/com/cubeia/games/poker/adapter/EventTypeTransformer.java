@@ -17,7 +17,7 @@
 
 package com.cubeia.games.poker.adapter;
 
-import com.cubeia.games.poker.persistence.history.model.EventType;
+import com.cubeia.games.poker.entity.EventType;
 import com.cubeia.poker.action.PokerActionType;
 
 public class EventTypeTransformer {
