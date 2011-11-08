@@ -83,8 +83,8 @@ public class TelesinaBettingRoundFinishedTest {
         
         telesina.visit(bettingRound);
         
-        verify(player1).clearBetStack();
-        verify(player2).clearBetStack();
+        verify(player1).returnAllBets();
+        verify(player2).returnAllBets();
     }
     
 

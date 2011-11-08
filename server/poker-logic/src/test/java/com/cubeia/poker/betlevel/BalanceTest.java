@@ -372,22 +372,26 @@ public class BalanceTest extends AbstractTexasHandTester {
 		assertEquals(200, mp[3].getBalance());
 
 		// Blinds
-		act(p[1], PokerActionType.SMALL_BLIND);
-		act(p[2], PokerActionType.BIG_BLIND); // 
-		act(p[3], PokerActionType.CALL); 
-		act(p[0], PokerActionType.CALL);
+		act(p[1], PokerActionType.SMALL_BLIND); // 100
+		act(p[2], PokerActionType.BIG_BLIND); //  200
+		act(p[3], PokerActionType.CALL); // 200
+		act(p[0], PokerActionType.CALL); // 200
+		
+		// tot 700
 		
 		assertTrue(mp[1].isActionPossible(PokerActionType.RAISE));
 		
-		act(p[1], PokerActionType.RAISE, 1000);
-		act(p[2], PokerActionType.CALL); // ALL IN
-		act(p[3], PokerActionType.CALL); // ALL IN
-		act(p[0], PokerActionType.CALL); // ALL IN
+		act(p[1], PokerActionType.RAISE, 1000); // 100 will be added. The rest is a overbet and will be returned to balance
+		act(p[2], PokerActionType.CALL); // ALL IN = 0
+		act(p[3], PokerActionType.CALL); // ALL IN = 0
+		act(p[0], PokerActionType.CALL); // ALL IN = 0
+		
+		// tot 800
 		
 		// Family pot, everyone is all in
-		assertEquals(1600, game.getPotHolder().getTotalPotSize());
+		assertEquals(800, game.getPotHolder().getTotalPotSize()); // each of the four players payed 200.
 		assertEquals(0, mp[0].getBalance());
-		assertEquals(1000, mp[1].getBalance());
+		assertEquals(1800, mp[1].getBalance()); // remember that this gut betted 1100 (smallblind 100 + raise 1000) but it was a overbet and only 200 was used of the initial 2000
 		assertEquals(0, mp[2].getBalance());
 		assertEquals(0, mp[3].getBalance());
 

@@ -243,7 +243,7 @@ public class Telesina implements GameType, RoundVisitor {
 		
 		// return antes
 		for (PokerPlayer p : state.getCurrentHandPlayerMap().values()) {
-		    p.clearBetStack();
+		    p.returnAllBets();
 		    state.notifyPlayerBalance(p.getId());
 		}
 	}
@@ -254,7 +254,6 @@ public class Telesina implements GameType, RoundVisitor {
 		for (PokerPlayer p : state.getCurrentHandSeatingMap().values()) {
 			p.setHasActed(false);
 			p.clearActionRequest();
-			p.commitBetStack();
 		}
 		
 		return potTransitions;
@@ -336,7 +335,7 @@ public class Telesina implements GameType, RoundVisitor {
 		
 		if (isHandFinished()) {
 		    
-		    clearBetStacks();
+		    returnAllBets();
 		    
 		    state.exposeShowdownCards();
 			HandResultCreator resultCreator = new HandResultCreator(new TelesinaHandStrengthEvaluator(getDeckLowestRank()));
@@ -360,9 +359,9 @@ public class Telesina implements GameType, RoundVisitor {
 		}
 	}
 
-	private void clearBetStacks() {
+	private void returnAllBets() {
 	    for (PokerPlayer player : state.getCurrentHandSeatingMap().values()) {
-	        player.clearBetStack();
+	        player.returnAllBets();
 	    }
     }
 

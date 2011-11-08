@@ -89,6 +89,7 @@ public class Pot implements Serializable {
 		}
 		
 		potSize += amount;
+		player.removeFromBetStack(amount);
 		
 		Long current = playerToBetMap.get(player);
 		if (current == null) {
@@ -96,6 +97,8 @@ public class Pot implements Serializable {
 		} else {
 			playerToBetMap.put(player, current + amount);
 		}
+		
+		
 		
 	}
 

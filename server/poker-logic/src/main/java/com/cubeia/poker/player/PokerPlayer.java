@@ -64,8 +64,14 @@ public interface PokerPlayer extends Serializable {
 	public int getSeatId();
 
 	public long getBetStack();
+	
+	public void removeFromBetStack(long amount);
 
-	public void addBet(long i);
+	/**
+	 * Move amount from balance to betstack
+	 * @param amount the amount to move
+	 */
+	public void addBet(long amount);
 
 	public void clearActionRequest();
 
@@ -84,8 +90,6 @@ public interface PokerPlayer extends Serializable {
 	public void setHasOption(boolean b);
 	
 	public boolean hasOption();
-
-	public void clearBetStack();
 
 	public void enableOption(PossibleAction option);
 
@@ -110,16 +114,10 @@ public interface PokerPlayer extends Serializable {
 	 * @param chips chips to add (positive) or remove (negative)
 	 */
 	public void addChips(long chips);
-
-	public void commitBetStack();
 	
 	public boolean isAllIn();
 	
 	public void sitIn();
-	
-	public void addReturnedChips(long chips);
-
-	public long getReturnedChips();
 
     /**
      * Returns the amount of currency that is not currently available 
@@ -134,6 +132,16 @@ public interface PokerPlayer extends Serializable {
      * @param amount amount to add
      */
     public void addPendingAmount(long amount);
+    
+    /**
+     * move the full amount in betstack to returnedChips
+     */
+    public void returnAllBets();
+    
+    /**
+     * move the amount from betstack to returnedChips
+     */
+    public void returnBetAmount(long amount);
     
     /**
      * Adds the pending balance to the ordinary balance.

@@ -36,8 +36,8 @@ public class TelesinaCancelHandTest {
         telesina.handleCanceledHand();
         
         verify(state).notifyHandFinished(Mockito.any(HandResult.class), Mockito.eq(HandEndStatus.CANCELED_TOO_FEW_PLAYERS));
-        verify(player1).clearBetStack();
-        verify(player2).clearBetStack();
+        verify(player1).returnAllBets();
+        verify(player2).returnAllBets();
         verify(state).notifyPlayerBalance(player1Id);
         verify(state).notifyPlayerBalance(player2Id);
     }
