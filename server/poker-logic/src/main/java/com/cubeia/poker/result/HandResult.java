@@ -34,11 +34,15 @@ import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.rake.RakeInfoContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The result of a hand. This class maps the player to the resulting win/lose amount of the hand.
  */
 public class HandResult implements Serializable {
+    
+    private static transient Logger log = LoggerFactory.getLogger(HandResult.class);
 
 	private static final int SCALE = 10;
 
@@ -112,14 +116,32 @@ public class HandResult implements Serializable {
         
         BigDecimal totalBetsBD = new BigDecimal(rakeInfoContainer.getTotalPot());
         
+        int totalContribution = 0;
+        
         for (Map.Entry<PokerPlayer, Result> e : results.entrySet()) {
             PokerPlayer player = e.getKey();
             Result result = e.getValue();
             BigDecimal playerBets = new BigDecimal(result.getBets());
             BigDecimal rakeContrib = totalBetsBD.signum() == 0 
                 ? BigDecimal.ZERO 
-                : BigDecimal.valueOf(rakeInfoContainer.getTotalRake()).multiply(playerBets).divide(totalBetsBD, SCALE, HALF_UP);
+                : BigDecimal.valueOf(rakeInfoContainer.getTotalRake()).multiply(playerBets).divide(totalBetsBD);
+            totalContribution += rakeContrib.intValue();
+            //note: Here we floor the rake contribution
             rakeContribs.put(player, rakeContrib.longValue());
+        }
+     
+        //Sanity check on the rake
+        if (totalContribution < rakeInfoContainer.getTotalRake()) {
+            if(log.isDebugEnabled()) log.debug("totalContribution is "+totalContribution+" and totalRake is "+rakeInfoContainer.getTotalRake());
+            for (Map.Entry<PokerPlayer, Result> e : results.entrySet()) {
+                PokerPlayer player = e.getKey();
+                if(log.isDebugEnabled()) log.debug("\t-> adding rake to player "+player.getId());
+                rakeContribs.put(player, rakeContribs.get(player) + 1);
+                totalContribution++;
+                if (totalContribution == rakeInfoContainer.getTotalRake()) {
+                    break;
+                }
+            }
         }
         
         return rakeContribs;

@@ -27,6 +27,7 @@ import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
 import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;
 import com.cubeia.backend.cashgame.dto.ReserveRequest;
 import com.cubeia.backend.cashgame.dto.ReserveResponse;
+import com.cubeia.backend.cashgame.exceptions.BatchHandFailedException;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
 import com.cubeia.backend.firebase.impl.FirebaseCallbackFactoryImpl;
 import com.cubeia.firebase.api.action.service.ServiceAction;
@@ -153,8 +154,10 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
     }
 
     @Override
-    public BatchHandResponse batchHand(BatchHandRequest request) {
-        
+    public BatchHandResponse batchHand(BatchHandRequest request) throws BatchHandFailedException{
+        int totalBets = 0;
+        int totalWins = 0;
+        int totalRakes = 0;
         List<BalanceUpdate> resultingBalances = new ArrayList<BalanceUpdate>();
         for (HandResult hr : request.handResults) {
             log.debug("recording hand result: handId = {}, sessionId = {}, bets = {}, wins = {}, rake = {}", 
@@ -162,6 +165,20 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
             long amount = hr.win - hr.aggregatedBet;
             sessionTransactions.put(hr.playerSession, (int) amount);
             resultingBalances.add(new BalanceUpdate(hr.playerSession, getBalance(hr.playerSession), -1));
+            
+            totalBets += hr.aggregatedBet;
+            totalWins += hr.win;
+            totalRakes += hr.rake;
+        }
+        
+        //Sanity check on the sum
+        int sum = totalBets - (totalWins + totalRakes);
+        if(sum != 0){
+          throw new BatchHandFailedException("sanity check failed on batchHand, totalBets: "+totalBets+" "
+                  + "totalWins: "+totalWins+" totalRakes: "+totalRakes+" sum:" +sum);
+        }else{
+          log.debug("sanity check successful on batchHand, totalBets: "+totalBets+" "
+                  + "totalWins: "+totalWins+" totalRakes: "+totalRakes+" sum:" +sum);
         }
         
         printDiagnostics();
