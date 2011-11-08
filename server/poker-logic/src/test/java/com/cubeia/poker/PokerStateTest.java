@@ -248,6 +248,53 @@ public class PokerStateTest {
         assertThat(state.potHolder, not(sameInstance(oldPotHolder)));
         verify(state.gameType).prepareNewHand();
     }
+    
+    @Test
+    public void testNotifyBalancesAsStartOfHand() {
+    	PokerState state = new PokerState();
+        PotHolder oldPotHolder = new PotHolder(null);
+        state.potHolder = oldPotHolder;
+        state.gameType = mock(GameType.class);
+        RakeSettings rakeSettings = TestUtils.createOnePercentRakeSettings();
+        PokerSettings settings = new PokerSettings(0, 0, 0, null, null, 4, null, rakeSettings, "1");
+        state.settings = settings;
+        
+        ServerAdapter serverAdapter = mock(ServerAdapter.class);
+		state.serverAdapter = serverAdapter;
+        
+        state.playerMap = new HashMap<Integer, PokerPlayer>();
+        PokerPlayer player1 = mock(PokerPlayer.class);
+        PokerPlayer player2 = mock(PokerPlayer.class);
+        
+        int player1Id = 1337;
+        int player2Id = 666;
+        
+        when(player1.getPendingBalance()).thenReturn(100L);
+        when(player2.getPendingBalance()).thenReturn(100L);
+        
+        when(player1.getBalance()).thenReturn(10L);
+        when(player2.getBalance()).thenReturn(10L);
+        
+        when(player1.getId()).thenReturn(player1Id);
+        when(player2.getId()).thenReturn(player2Id);
+        
+        state.playerMap.put(player1Id, player1);
+        state.playerMap.put(player2Id, player2);
+        
+        state.startHand();
+        
+        verify(state.serverAdapter).notifyPlayerBalance(player1);
+        verify(state.serverAdapter).notifyPlayerBalance(player2);
+        
+        // serverAdapter.notifyPlayerBalance(playerMap.get(playerId));
+        
+//        state.resetValuesAtStartOfHand();
+//        
+//        verify(player1).resetBeforeNewHand();
+//        verify(player2).resetBeforeNewHand();
+//        assertThat(state.potHolder, not(sameInstance(oldPotHolder)));
+//        verify(state.gameType).prepareNewHand();
+    }
 
     @Test
     public void requestAction() {

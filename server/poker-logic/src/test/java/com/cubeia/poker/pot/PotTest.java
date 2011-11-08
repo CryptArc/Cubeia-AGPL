@@ -207,14 +207,18 @@ public class PotTest {
 
 		PotHolder potHolder = new PotHolder(rakeCalculator);
 		Collection<PotTransition> potTransitions = potHolder.moveChipsToPot(Arrays.asList(p1, p2));
-		assertEquals(5, p2.getReturnedChips());
-		
+				
 		assertThat(potTransitions.size(), is(2));
         Pot mainPot = potHolder.getPot(0);
         assertThat(mainPot.getType(), is(MAIN));
         assertThat(potTransitions, hasItems(
             new PotTransition(p1, mainPot,  5),
-            new PotTransition(p2, mainPot, 10)));
+            new PotTransition(p2, mainPot, 5)
+            ));
+        
+        assertThat(p1.getBalance(), is(5L*5L-5L)); // player has 5 times initial bet and bet was 5
+        assertThat(p2.getBalance(), is(5L*10L-5L));// player has 5 times initial bet and bet was 5
+        
 	}
 
     @Test
@@ -224,7 +228,7 @@ public class PotTest {
 
 		PotHolder potHolder = new PotHolder(rakeCalculator);
 		potHolder.moveChipsToPot(Arrays.asList(p1, p2));
-		assertEquals(10, p2.getReturnedChips());
+		
 	}
 
 	

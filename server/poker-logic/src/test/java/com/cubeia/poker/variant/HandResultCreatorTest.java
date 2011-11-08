@@ -55,7 +55,7 @@ public class HandResultCreatorTest {
 
 		PokerPlayer pp1 = mockPlayer(1, 50, false, false, new Hand("7S 8S JC QC QH"));
 		PokerPlayer pp2 = mockPlayer(2, 50, false, false, new Hand("7H 8D JD QS 9H")); // pp2 wins using vela card
-		
+				
 		playerMap.put(1, pp1);
 		playerMap.put(2, pp2);
 
@@ -145,12 +145,13 @@ public class HandResultCreatorTest {
 	}
 	
 	private PokerPlayer mockPlayer(int playerId, long betStack, boolean allIn, boolean folded, Hand pocketCards) {
-		PokerPlayer pp = mock(PokerPlayer.class, THROW_EXCEPTION);
+		PokerPlayer pp = mock(PokerPlayer.class);
 		doReturn(playerId).when(pp).getId();
 		doReturn(betStack).when(pp).getBetStack();
 		doReturn(allIn).when(pp).isAllIn();
 		doReturn(folded).when(pp).hasFolded();
 		doReturn(pocketCards).when(pp).getPocketCards();
+			
 		
 		doReturn("Player" + playerId).when(pp).toString();
 		

@@ -33,8 +33,6 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	private static final Logger log = Logger.getLogger(DefaultPokerPlayer.class);
 	
 	protected static final long serialVersionUID = 74353817602536715L;
-
-	protected int betStack = 0;
 	
 	protected ActionRequest actionRequest;
 	
@@ -64,11 +62,21 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	
 	protected boolean exposingPocketCards;
 
+	/**
+	 * the unused amount of chips kept by the player
+	 */
 	private long balance = 0;
 
-	private long returnedChips = 0;
-
+	/**
+	 * the money reserved in wallet but not yet available to the player 
+	 */
     private long pendingBalance;
+    	
+	/**
+	 * the amount reserved for a bettingaction
+	 */
+	protected long betStack = 0;
+
 
     private boolean sitInAfterSuccessfulBuyIn;
     
@@ -86,27 +94,11 @@ public class DefaultPokerPlayer implements PokerPlayer {
 				"folded["+hasFolded+"] hasActed["+hasActed+"]";
 	    return value;
 	}
-	
-	public void addBet(long bet) {
-		betStack += bet;
-		if (betStack > balance) {
-			throw new IllegalArgumentException("PokerPlayer["+playerId+"] - "+String.format("Bet (%d) is bigger than balance (%d)", bet, balance));
-		}
-	}
 
 	public void clearActionRequest() {
 		// log.trace("Clear Action for player "+playerId);
 		actionRequest = new ActionRequest();
 		actionRequest.setPlayerId(playerId);
-	}
-
-	public void clearBetStack() {
-		betStack = 0;
-		returnedChips = 0;
-	}
-
-	public long getBetStack() {
-		return betStack;
 	}
 
 	public int getId() {
@@ -217,23 +209,51 @@ public class DefaultPokerPlayer implements PokerPlayer {
 
 	public void clearBalance() {
 		this.balance = 0;
-		this.returnedChips = 0;
 	}
 
 	public long getBalance() {
-		return balance - betStack + returnedChips;
+		return balance;
 	}
 
 	public void addChips(long chips) {
 		this.balance += chips;
 	}
-
-	public void commitBetStack() {
-		this.balance -= betStack;
+	
+	public void addBet(long bet) {
 		
-		
-		clearBetStack();
+		if (bet > balance) {
+			throw new IllegalArgumentException("PokerPlayer["+playerId+"] - "+String.format("Bet (%d) is bigger than balance (%d)", bet, balance));
+		}
+		balance -= bet;
+		betStack += bet;
 	}
+	
+	public long getBetStack() {
+		return betStack;
+	}
+	
+	public void removeFromBetStack(long amount) {
+		if (amount > betStack)
+		{
+			throw new IllegalArgumentException("PokerPlayer["+playerId+"] - "+String.format("Amount to remove from bet (%d) is bigger than betstack (%d)", amount, betStack));
+		}
+		betStack -= amount;
+	}
+	
+	
+	public void returnAllBets() {
+		balance += betStack;
+		betStack = 0;
+	}
+	
+	public void returnBetAmount(long amount) {
+		if (amount > betStack) {
+			throw new IllegalArgumentException("PokerPlayer["+playerId+"] - "+String.format("Amount to return from bet (%d) is bigger than betstack (%d)", amount, betStack));
+		}
+		balance += amount;
+		betStack -= amount;
+	}
+	
 	
 	public void setBalance(long balance) {
 		this.balance = balance;
@@ -243,17 +263,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	public boolean isAllIn() {
 		return getBalance() == 0;
 	}
-
-	@Override
-	public void addReturnedChips(long chips) {
-		returnedChips = chips;
-		
-	}
-
-	@Override
-	public long getReturnedChips() {
-		return returnedChips;
-	}
+	
 
 	@Override
 	public boolean getSitOutNextRound() {
@@ -284,9 +294,12 @@ public class DefaultPokerPlayer implements PokerPlayer {
     		if (pendingBalance > allowedAmount) {
     			balance += allowedAmount;
     			pendingBalance -= allowedAmount;
+    			log.debug("commiting pending balance for player: " + playerId + " committedValue: " + allowedAmount + " new balance: " + balance + " new pending balance: " + pendingBalance);
     		} else {
     			balance += pendingBalance;
+    			log.debug("commiting all pending balance for player: " + playerId + " committedValue: " + pendingBalance + " new balance: " + balance + " new pending balance: " + 0);
     			pendingBalance = 0;
+    			
     		}
     	}
     	return hasPending;

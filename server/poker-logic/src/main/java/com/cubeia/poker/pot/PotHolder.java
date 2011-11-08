@@ -156,7 +156,7 @@ public class PotHolder implements Serializable {
 		try {
 			if (biggestBetter.getBetStack() > secondBiggestBetter.getBetStack()) {
 				long returnedChips = biggestBetter.getBetStack() - secondBiggestBetter.getBetStack();
-				biggestBetter.addReturnedChips(returnedChips);
+				biggestBetter.returnBetAmount(returnedChips);
 				
 				log.debug("returning " + returnedChips + " uncalled chips to " + biggestBetter);
 			}

@@ -200,7 +200,6 @@ public class TexasHoldem implements GameType, RoundVisitor {
 		for (PokerPlayer p : state.getCurrentHandSeatingMap().values()) {
 			p.setHasActed(false);
 			p.clearActionRequest();
-			p.commitBetStack();
 		}
 	}
 
