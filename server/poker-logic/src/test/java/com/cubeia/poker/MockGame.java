@@ -236,7 +236,6 @@ public class MockGame implements GameType {
 
 	@Override
 	public void sendAllNonFoldedPlayersBestHand() {
-		throw new RuntimeException("Not implemented");
 	}
 	
 }

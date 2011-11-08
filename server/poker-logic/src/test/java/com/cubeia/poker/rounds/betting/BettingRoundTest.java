@@ -17,6 +17,7 @@
 
 package com.cubeia.poker.rounds.betting;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -97,6 +98,50 @@ public class BettingRoundTest extends TestCase implements TestListener {
         verify(state).call();
     }   
 	
+    @Test
+    public void testCall() {
+        GameType game = mock(GameType.class);
+        IPokerState state = mock(IPokerState.class);
+        when(game.getState()).thenReturn(state);
+        PokerPlayer player = Mockito.mock(PokerPlayer.class);
+        long betStack = 75L;
+        when(player.getBetStack()).thenReturn(betStack);
+        when(player.getBalance()).thenReturn(betStack * 10);
+        
+        BettingRound round = new BettingRound(game, 0, new DefaultPlayerToActCalculator());
+        round.highBet = 100;
+        
+        round = new BettingRound(game, 0, new DefaultPlayerToActCalculator());
+        
+        long amountCalled = round.call(player);
+        
+        verify(state).call();
+        assertThat(amountCalled, is(round.highBet - betStack));
+    }
+    
+    @Test 
+    public void testHandleActionOnCallSetsAmountOnResponse() {
+        GameType game = mock(GameType.class);
+        IPokerState state = mock(IPokerState.class);
+        when(game.getState()).thenReturn(state);
+
+        PokerPlayer player = Mockito.mock(PokerPlayer.class);
+        
+        BettingRound round = new BettingRound(game, 0, new DefaultPlayerToActCalculator());
+        round.highBet = 100;
+        long betStack = 75L;
+        when(player.getBetStack()).thenReturn(betStack);
+        when(player.getBalance()).thenReturn(betStack * 10);
+        
+        PokerAction action = new PokerAction(1337, PokerActionType.CALL);
+        
+        round.handleAction(action, player);
+        
+        assertThat(action.getBetAmount(), is(round.highBet - betStack));
+        verify(player).setHasActed(true);
+        
+    }
+    
     @Test
 	public void testRaise() {
 		MockPlayer[] p = TestUtils.createMockPlayers(2);

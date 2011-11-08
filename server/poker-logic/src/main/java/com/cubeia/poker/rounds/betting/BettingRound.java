@@ -40,9 +40,11 @@ public class BettingRound implements Round, BettingRoundContext {
 
 	private final GameType gameType;
 
-	private long highBet = 0;
+	@VisibleForTesting
+	protected long highBet = 0;
 
-	private int playerToAct = 0;
+	@VisibleForTesting
+	protected int playerToAct = 0;
 	
 	private final ActionRequestFactory actionRequestFactory;
 
@@ -165,10 +167,12 @@ public class BettingRound implements Round, BettingRoundContext {
 		return true;
 	}
 
-	private void handleAction(PokerAction action, PokerPlayer player) {
+	@VisibleForTesting
+	protected void handleAction(PokerAction action, PokerPlayer player) {
 		switch (action.getActionType()) {
 		case CALL:
-			call(player);
+			long calledAmount = call(player);
+			action.setBetAmount(calledAmount);
 			break;
 		case CHECK:
 			check(player);
@@ -251,12 +255,18 @@ public class BettingRound implements Round, BettingRoundContext {
 	}
 
 	@VisibleForTesting
-	protected void call(PokerPlayer player) {
-		player.addBet(getAmountToCall(player));
+	protected long call(PokerPlayer player) {
+		long amountToCall = getAmountToCall(player);
+        player.addBet(amountToCall);
 		lastPlayerToBeCalled = lastPlayerToPlaceABet;
 		gameType.getState().call();
+		
+		return amountToCall;
 	}
 
+	/**
+	 * Returns the amount with which the player has to increase his current bet when doing a call.
+	 */
 	private long getAmountToCall(PokerPlayer player) {
 		return Math.min(highBet - player.getBetStack(), player.getBalance());
 	}
