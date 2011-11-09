@@ -23,6 +23,7 @@ import static java.util.Collections.unmodifiableMap;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -124,7 +125,7 @@ public class HandResult implements Serializable {
             BigDecimal playerBets = new BigDecimal(result.getBets());
             BigDecimal rakeContrib = totalBetsBD.signum() == 0 
                 ? BigDecimal.ZERO 
-                : BigDecimal.valueOf(rakeInfoContainer.getTotalRake()).multiply(playerBets).divide(totalBetsBD);
+                : BigDecimal.valueOf(rakeInfoContainer.getTotalRake()).multiply(playerBets).divide(totalBetsBD, SCALE, RoundingMode.HALF_UP);
             totalContribution += rakeContrib.intValue();
             //note: Here we floor the rake contribution
             rakeContribs.put(player, rakeContrib.longValue());
