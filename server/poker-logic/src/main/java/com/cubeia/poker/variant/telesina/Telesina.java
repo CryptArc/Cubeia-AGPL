@@ -19,9 +19,11 @@ package com.cubeia.poker.variant.telesina;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -325,6 +327,15 @@ public class Telesina implements GameType, RoundVisitor {
 		}
 	}
 	
+	
+	private Set<PokerPlayer> getMuckingPlayers(){
+		boolean allButOneHasFolded = state.countNonFoldedPlayers() <= 1;
+		if(allButOneHasFolded){
+			return new HashSet<PokerPlayer>( state.getCurrentHandSeatingMap().values());
+		}
+		return new HashSet<PokerPlayer>( );
+	}
+	
 	@Override
 	public void visit(BettingRound bettingRound) {
 		state.setLastPlayerToBeCalled(bettingRound.getLastPlayerToBeCalled());
@@ -339,15 +350,16 @@ public class Telesina implements GameType, RoundVisitor {
 		    returnAllBets();
 		    
 		    state.exposeShowdownCards();
-			HandResultCreator resultCreator = new HandResultCreator(new TelesinaHandStrengthEvaluator(getDeckLowestRank()));
-		    HandResultCalculator resultCalculator = new HandResultCalculator(new TelesinaHandComparator(deck.getDeckLowestRank()));
-			Map<Integer, PokerPlayer> players = state.getCurrentHandPlayerMap();
 
 			PokerPlayer playerAtDealerButton = state.getPlayerAtDealerButton();
-			
 			List<Integer> playerRevealOrder = new RevealOrderCalculator().calculateRevealOrder(state.getCurrentHandSeatingMap(), state.getLastPlayerToBeCalled(), playerAtDealerButton);
-			HandResult handResult = resultCreator.createHandResult(state.getCommunityCards(), resultCalculator, state.getPotHolder(), players, playerRevealOrder);
+			HandResultCreator resultCreator = new HandResultCreator(new TelesinaHandStrengthEvaluator(getDeckLowestRank()));
+		    HandResultCalculator resultCalculator = new HandResultCalculator(new TelesinaHandComparator(deck.getDeckLowestRank()));			
+			Map<Integer, PokerPlayer> players = state.getCurrentHandPlayerMap();
+			Set<PokerPlayer> muckingPlayers = getMuckingPlayers();
 			
+			HandResult handResult = resultCreator.createHandResult(state.getCommunityCards(), resultCalculator, state.getPotHolder(), players, playerRevealOrder, muckingPlayers);
+						
             handleFinishedHand(handResult);
 			state.getPotHolder().clearPots();
 			

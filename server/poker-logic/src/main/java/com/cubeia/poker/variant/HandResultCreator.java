@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Hand;
@@ -31,15 +32,36 @@ public class HandResultCreator {
 	}
 
 	public HandResult createHandResult(List<Card> communityCards, HandResultCalculator handResultCalculator, PotHolder potHolder, 
-			Map<Integer, PokerPlayer> currentHandPlayerMap, List<Integer> playerRevealOrder) {
+			Map<Integer, PokerPlayer> currentHandPlayerMap, List<Integer> playerRevealOrder, Set<PokerPlayer> muckingPlayers) {
+		
 		
 		List<PlayerHand> playerHands = createHandsList(communityCards, currentHandPlayerMap.values());
 		Map<PokerPlayer, Result> playerResults = handResultCalculator.getPlayerResults(playerHands, potHolder, currentHandPlayerMap);
 		Collection<PotTransition> potTransitions = createPotTransitionsByResults(playerResults);
+				
+		playerHands = filterOutMuckedPlayerHands(playerHands, muckingPlayers);
 		
 		return new HandResult(playerResults, rateHands(playerHands), potTransitions, potHolder.calculateRake(), playerRevealOrder);
 	}
+	
+	protected List<PlayerHand> filterOutMuckedPlayerHands(List<PlayerHand> playerHands, Set<PokerPlayer> muckingPlayers){
+		List<PlayerHand> filteredList = new ArrayList<PlayerHand>();
+		for (PlayerHand playerHand : playerHands) {
+			boolean shouldShowHand = true;
+			for (PokerPlayer player : muckingPlayers) {
+				if(playerHand.getPlayerId() == player.getId()){
+					shouldShowHand = false;
+					break;
+				}
+			}
+			if(shouldShowHand){
+				filteredList.add(playerHand);
+			}
+		}
 
+		return filteredList;
+	}
+	
 	@VisibleForTesting
     protected Collection<PotTransition> createPotTransitionsByResults(Map<PokerPlayer, Result> playerResults) {
         Collection<PotTransition> potTransitions = new ArrayList<PotTransition>();

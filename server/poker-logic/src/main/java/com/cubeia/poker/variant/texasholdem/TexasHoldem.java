@@ -19,8 +19,10 @@ package com.cubeia.poker.variant.texasholdem;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -289,13 +291,12 @@ public class TexasHoldem implements GameType, RoundVisitor {
 		    state.exposeShowdownCards();
 		    PokerPlayer playerAtDealerButton = state.getPlayerAtDealerButton();
 		    List<Integer> playerRevealOrder = new RevealOrderCalculator().calculateRevealOrder(state.getCurrentHandSeatingMap(), state.getLastPlayerToBeCalled(), playerAtDealerButton);
-            HandResult handResult = new HandResultCreator(new TexasHoldemHandCalculator()).createHandResult(state.getCommunityCards(), handResultCalculator, state.getPotHolder(), state.getCurrentHandPlayerMap(), playerRevealOrder );
+		    Set<PokerPlayer> muckingPlayers = new HashSet<PokerPlayer>();
+            HandResult handResult = new HandResultCreator(new TexasHoldemHandCalculator()).createHandResult(state.getCommunityCards(), handResultCalculator, state.getPotHolder(), state.getCurrentHandPlayerMap(), playerRevealOrder, muckingPlayers);
+            
             handleFinishedHand(handResult);
 			state.getPotHolder().clearPots();
-		} else {
-//			dealCommunityCards();
-//			startBettingRound();
-			
+		} else {		
 			// Start deal community cards round
 			currentRound = new DealCommunityCardsRound(this);
 			// Schedule timeout for the community cards round

@@ -11,9 +11,11 @@ import static org.mockito.Mockito.mock;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.junit.Test;
 import org.junit.matchers.JUnitMatchers;
@@ -24,6 +26,7 @@ import com.cubeia.poker.RakeSettings;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.hand.Rank;
+import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotHolder;
@@ -36,6 +39,13 @@ import com.cubeia.poker.variant.telesina.TelesinaHandComparator;
 import com.cubeia.poker.variant.telesina.TelesinaHandStrengthEvaluator;
 
 public class HandResultCreatorTest {
+	
+	TelesinaHandStrengthEvaluator hte;
+	HandResultCalculator resultCalculator;
+	Map<Integer, PokerPlayer> playerMap;
+	HandResultCreator creator;
+	List<Card> communityCards;
+	PotHolder potHolder;
 
 	private Answer<Object> THROW_EXCEPTION = new Answer<Object>() {
 		@Override
@@ -44,27 +54,47 @@ public class HandResultCreatorTest {
 		}
 	}; 
 	
+	
+	private void setupStuff(String velaCard){
+		hte = new TelesinaHandStrengthEvaluator(Rank.SEVEN);
+		resultCalculator = new HandResultCalculator(new TelesinaHandComparator(hte));
+		creator = new HandResultCreator(hte);
+		playerMap = new HashMap<Integer, PokerPlayer>();
+		communityCards = Card.list(velaCard);
+		potHolder = new PotHolder(new LinearRakeWithLimitCalculator(RakeSettings.createNoLimitRakeSettings(ZERO)));
+	}
+	
 	@Test
-	public void testCreateHandResultTelesinaStyle() {
-		
-		TelesinaHandStrengthEvaluator hte = new TelesinaHandStrengthEvaluator(Rank.SEVEN);
-		HandResultCreator creator = new HandResultCreator(hte);
-		HandResultCalculator resultCalculator = new HandResultCalculator(new TelesinaHandComparator(hte));
-		
-		Map<Integer, PokerPlayer> playerMap = new HashMap<Integer, PokerPlayer>();
-
+	public void testFilterMuckingPlayers(){
+		setupStuff("7S");
 		PokerPlayer pp1 = mockPlayer(1, 50, false, false, new Hand("7S 8S JC QC QH"));
-		PokerPlayer pp2 = mockPlayer(2, 50, false, false, new Hand("7H 8D JD QS 9H")); // pp2 wins using vela card
-				
+		String player2Hand = "7H 8D JD QS 9H";
+		PokerPlayer pp2 = mockPlayer(2, 50, false, false, new Hand(player2Hand)); // pp2 wins using vela card
 		playerMap.put(1, pp1);
 		playerMap.put(2, pp2);
-
-		PotHolder potHolder = new PotHolder(new LinearRakeWithLimitCalculator(RakeSettings.createNoLimitRakeSettings(ZERO)));
-		potHolder.moveChipsToPot(playerMap.values());
-
-		List<Card> communityCards = Card.list("TS");
 		
-		HandResult result = creator.createHandResult(communityCards, resultCalculator, potHolder, playerMap, new ArrayList<Integer>());
+		potHolder.moveChipsToPot(playerMap.values());
+		
+		Set<PokerPlayer> muckingPlayers = new HashSet<PokerPlayer>();
+		muckingPlayers.add(pp2);
+		HandResult result = creator.createHandResult(communityCards, resultCalculator, potHolder, playerMap, new ArrayList<Integer>(), muckingPlayers);
+		List<RatedPlayerHand> ratedPlayerHands = result.getPlayerHands();
+		assertEquals(1, ratedPlayerHands.size());
+	}
+	
+	
+	@Test
+	public void testCreateHandResultTelesinaStyle() {
+		setupStuff("TS");
+		PokerPlayer pp1 = mockPlayer(1, 50, false, false, new Hand("7S 8S JC QC QH"));
+		PokerPlayer pp2 = mockPlayer(2, 50, false, false, new Hand("7H 8D JD QS 9H")); // pp2 wins using vela card
+		playerMap.put(1, pp1);
+		playerMap.put(2, pp2);
+		potHolder.moveChipsToPot(playerMap.values());
+		
+		Set<PokerPlayer> muckingPlayers = new HashSet<PokerPlayer>(playerMap.values());
+		
+		HandResult result = creator.createHandResult(communityCards, resultCalculator, potHolder, playerMap, new ArrayList<Integer>(), muckingPlayers);
 
 		assertNotNull(result);
 		
@@ -80,25 +110,16 @@ public class HandResultCreatorTest {
 	
 	@Test
 	public void testCreateHandResultPairs() {
-		
-		TelesinaHandStrengthEvaluator hte = new TelesinaHandStrengthEvaluator(Rank.SEVEN);
-		HandResultCreator creator = new HandResultCreator(hte);
-		HandResultCalculator resultCalculator = new HandResultCalculator(new TelesinaHandComparator(hte));
-		
-		Map<Integer, PokerPlayer> playerMap = new HashMap<Integer, PokerPlayer>();
-
+		setupStuff("7S");
 		PokerPlayer pp1 = mockPlayer(1, 50, false, false, new Hand("8S 8C JC TD QH"));
 		PokerPlayer pp2 = mockPlayer(2, 50, false, false, new Hand("TH TD QD 9S JH")); // pp2 wins with higher pair
-		
 		playerMap.put(1, pp1);
 		playerMap.put(2, pp2);
-
-		PotHolder potHolder = new PotHolder(new LinearRakeWithLimitCalculator(RakeSettings.createNoLimitRakeSettings(ZERO)));
 		potHolder.moveChipsToPot(playerMap.values());
-
-		List<Card> communityCards = Card.list("7S"); // Will not be used
 		
-		HandResult result = creator.createHandResult(communityCards, resultCalculator, potHolder, playerMap, new ArrayList<Integer>());
+		Set<PokerPlayer> muckingPlayers = new HashSet<PokerPlayer>(playerMap.values());
+		
+		HandResult result = creator.createHandResult(communityCards, resultCalculator, potHolder, playerMap, new ArrayList<Integer>(), muckingPlayers);
 
 		System.out.println("HANDS: "+result.getPlayerHands());
 		
