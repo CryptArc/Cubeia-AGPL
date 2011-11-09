@@ -104,14 +104,18 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
 	@Override
 	public void notifyDeckInfo(int size, Rank rankLow) {
 		super.notifyDeckInfo(size, rankLow);
-		if(!checkHasService()) return; // SANITY CHECK
+		if(!checkHasService()){
+			return; // SANITY CHECK
+		}
 		service.reportDeckInfo(table.getId(), new DeckInfo(size, translate(rankLow)));
 	}
 	
 	@Override
 	public void notifyHandEnd(HandResult handResult, HandEndStatus handEndStatus) {
 		super.notifyHandEnd(handResult, handEndStatus);
-		if(!checkHasService()) return; // SANITY CHECK
+		if(!checkHasService()){
+			return; // SANITY CHECK
+		}
 		if(handEndStatus == CANCELED_TOO_FEW_PLAYERS) {
 			service.cancelHand(table.getId());
 		} else {
@@ -133,7 +137,9 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
 	@Override
 	public void notifyNewHand() {
 		super.notifyNewHand();
-		if(!checkHasService()) return; // SANITY CHECK
+		if(!checkHasService()){
+			return; // SANITY CHECK
+		}
 		List<Player> seats = getSeatsFromState();
 		String tableExtId = getIntegrationTableId();
 		String handExtId = getIntegrationHandId();

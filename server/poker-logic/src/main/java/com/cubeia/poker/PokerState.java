@@ -339,13 +339,13 @@ public class PokerState implements Serializable, IPokerState {
 	public void startHand() {
 		if (countSittingInPlayers() > 1) {
 			currentState = PLAYING;
-			notifyNewHand();
 			
 			resetValuesAtStartOfHand();
 			
 			currentHandSeatingMap = createCopyWithSitOutPlayersExcluded(seatingMap);
 			currentHandPlayerMap = createCopyWithSitOutPlayersExcluded(playerMap);
 			
+			notifyNewHand();
 			notifyAllPlayerBalances();
 			
 			gameType.startHand();
