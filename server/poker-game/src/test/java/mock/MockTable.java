@@ -49,55 +49,40 @@ public class MockTable implements Table {
 	public TableScheduler getScheduler() {
 		return scheduler;
 	}
-
-	
-	
 	
 	public ExtendedDetailsProvider getExtendedDetailsProvider() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
 	public TableInterceptor getInterceptor() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public TableListener getListener() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public TableMetaData getMetaData() {
-		// TODO Auto-generated method stub
 		return null;
 	}
-
-	
 
 	public TablePlayerSet getPlayerSet() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	
 	public TournamentNotifier getTournamentNotifier() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public TableWatcherSet getWatcherSet() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public int getId() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
     public LobbyTableAttributeAccessor getAttributeAccessor() {
-        // TODO Auto-generated method stub
         return null;
     }
 

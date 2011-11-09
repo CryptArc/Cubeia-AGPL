@@ -28,8 +28,7 @@ public class FirebaseState implements Serializable {
     
     private int currentRequestSequence = -1;
     private int handCount = 0;
-    
-    /* FIXME: Why do we have an JPA Entity in this distributed stateful object? */
+
     private transient PlayedHand playerHand;
 
     public int getCurrentRequestSequence() {

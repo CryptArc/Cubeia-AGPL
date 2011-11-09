@@ -133,6 +133,15 @@ public class ManualGameHandler implements PacketVisitor {
     		System.out.println("Player["+packet.player+"] was dealt: "+packet.card);
     	}
 	}
+    
+    @Override
+	public void visit(PlayerPokerStatus packet) {
+		if (packet.player == context.getPlayerId()) {
+			System.out.println("My status has changed to: "+packet.status);
+		} else {
+			System.out.println("Player["+packet.player+"]'s status has changed to: "+packet.status);
+		}
+	}
 
 	public void visit(GameCard packet) {}
 	public void visit(BestHand packet) {}
@@ -145,68 +154,23 @@ public class ManualGameHandler implements PacketVisitor {
 	public void visit(PlayerSitoutRequest packet) {}
 	@Override
 	public void visit(AamsSessionInfoPacket packet) {}
-	
 	@Override
-	public void visit(PlayerPokerStatus packet) {
-		if (packet.player == context.getPlayerId()) {
-			System.out.println("My status has changed to: "+packet.status);
-		} else {
-			System.out.println("Player["+packet.player+"]'s status has changed to: "+packet.status);
-		}
-	}
-
+	public void visit(HandCanceled packet) {}
 	@Override
-	public void visit(HandCanceled packet) {
-		// TODO Auto-generated method stub
-		
-	}
-
+	public void visit(BuyInInfoRequest packet) {}
 	@Override
-	public void visit(BuyInInfoRequest packet) {
-		// TODO Auto-generated method stub
-		
-	}
-
+	public void visit(BuyInInfoResponse packet) {}
 	@Override
-	public void visit(BuyInInfoResponse packet) {
-		// TODO Auto-generated method stub
-		
-	}
-
+	public void visit(BuyInRequest packet) {}
 	@Override
-	public void visit(BuyInRequest packet) {
-		// TODO Auto-generated method stub
-		
-	}
-
+	public void visit(BuyInResponse packet) {}
 	@Override
-	public void visit(BuyInResponse packet) {
-		// TODO Auto-generated method stub
-		
-	}
-
+	public void visit(PotTransfer packet) {}
 	@Override
-	public void visit(PotTransfer packet) {
-		// TODO Auto-generated method stub
-		
-	}
-
+	public void visit(PotTransfers packet) {}
 	@Override
-	public void visit(PotTransfers packet) {
-		// TODO Auto-generated method stub
-		
-	}
-
+	public void visit(RakeInfo packet) {}
 	@Override
-	public void visit(RakeInfo packet) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visit(DeckInfo packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(DeckInfo packet) {}
     
 }

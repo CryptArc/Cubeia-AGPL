@@ -24,7 +24,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -78,7 +77,6 @@ import com.cubeia.firebase.io.protocol.Enums.WatchResponseStatus;
 import com.cubeia.games.poker.FirebaseState;
 import com.cubeia.games.poker.cache.ActionCache;
 import com.cubeia.games.poker.entity.PlayedHand;
-import com.cubeia.games.poker.entity.PlayedHandEvent;
 import com.cubeia.games.poker.handler.Trigger;
 import com.cubeia.games.poker.handler.TriggerType;
 import com.cubeia.games.poker.jmx.PokerStats;
@@ -161,9 +159,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	public void notifyNewHand() {
 		String handId = backend.generateHandId();
 		PlayedHand playedHand = new PlayedHand();
-		playedHand.setTableId(table.getId());
 		playedHand.setIntegrationId(handId);
-		playedHand.setEvents(new HashSet<PlayedHandEvent>());
 		getFirebaseState().setPlayerHand(playedHand);
 		
 		StartNewHand packet = new StartNewHand();

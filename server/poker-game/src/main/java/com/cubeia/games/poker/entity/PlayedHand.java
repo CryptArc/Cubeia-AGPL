@@ -18,61 +18,12 @@
 package com.cubeia.games.poker.entity;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
 
 public class PlayedHand implements Serializable {
 	
     private static final long serialVersionUID = 1L;
     
-    private static Logger log = Logger.getLogger(PlayedHand.class);
-    
-	private Integer id;
-	
 	private String integrationId;
-
-    private int tableId = -1;
-    
-    private Date date = new Date();
-    
-    private Set<PlayedHandEvent> events;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Set<PlayedHandEvent> getEvents() {
-    	if (events.size() > 150) {
-    		log.warn("LARGE HAND HISTORY WARNING: Events="+events.size());
-    	}
-        return events;
-    }
-
-    public void setEvents(Set<PlayedHandEvent> events) {
-        this.events = events;
-    }
-
-    public int getTableId() {
-        return tableId;
-    }
-
-    public void setTableId(int tableId) {
-        this.tableId = tableId;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
     
     public String getIntegrationId() {
 		return integrationId;

@@ -31,33 +31,23 @@ public class MockScheduler implements TableScheduler {
 	@SuppressWarnings("unused")
 	private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 	
-	public void cancelScheduledAction(UUID arg0) {
-		// TODO Auto-generated method stub
-
-	}
+	public void cancelScheduledAction(UUID arg0) {}
 	
-	public void cancelAllScheduledActions() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void cancelAllScheduledActions() {}
 
 	public UnmodifiableSet<UUID> getAllScheduledGameActions() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public Action getScheduledGameAction(UUID arg0) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public long getScheduledGameActionDelay(UUID arg0) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	public boolean hasScheduledGameAction(UUID arg0) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

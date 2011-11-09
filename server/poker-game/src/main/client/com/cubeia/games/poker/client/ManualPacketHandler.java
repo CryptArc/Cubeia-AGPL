@@ -134,280 +134,142 @@ public class ManualPacketHandler extends AbstractClientPacketHandler {
 	}
 
 	@Override
-	public void visit(VersionPacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(VersionPacket packet) {}
 
 	@Override
-	public void visit(GameVersionPacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(GameVersionPacket packet) {}
 
 	@Override
-	public void visit(SystemMessagePacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(SystemMessagePacket packet) {}
 
 	@Override
-	public void visit(PingPacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(PingPacket packet) {}
 
 	@Override
-	public void visit(LoginResponsePacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(LoginResponsePacket packet) {}
 
 	@Override
-	public void visit(ForcedLogoutPacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(ForcedLogoutPacket packet) {}
 
 	@Override
-	public void visit(SeatInfoPacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(SeatInfoPacket packet) {}
 
 	@Override
-	public void visit(PlayerQueryResponsePacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(PlayerQueryResponsePacket packet) {}
 
 	@Override
-	public void visit(SystemInfoResponsePacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(SystemInfoResponsePacket packet) {}
 
 	@Override
-	public void visit(JoinResponsePacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(JoinResponsePacket packet) {}
 
 	@Override
-	public void visit(WatchResponsePacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(WatchResponsePacket packet) {}
 
 	@Override
-	public void visit(UnwatchResponsePacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(UnwatchResponsePacket packet) {}
 
 	@Override
-	public void visit(LeaveResponsePacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(LeaveResponsePacket packet) {}
 
 	@Override
-	public void visit(TableQueryResponsePacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(TableQueryResponsePacket packet) {}
 
 	@Override
-	public void visit(CreateTableResponsePacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(CreateTableResponsePacket packet) {}
 
 	@Override
-	public void visit(NotifyInvitedPacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(NotifyInvitedPacket packet) {}
 
 	@Override
-	public void visit(NotifyJoinPacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(NotifyJoinPacket packet) {}
 
 	@Override
-	public void visit(NotifyLeavePacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(NotifyLeavePacket packet) {}
 
 	@Override
-	public void visit(NotifyRegisteredPacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(NotifyRegisteredPacket packet) {}
 
 	@Override
-	public void visit(NotifyWatchingPacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(NotifyWatchingPacket packet) {}
 
 	@Override
-	public void visit(KickPlayerPacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(KickPlayerPacket packet) {}
 
 	@Override
-	public void visit(ServiceTransportPacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(ServiceTransportPacket packet) {}
 
 	@Override
-	public void visit(LocalServiceTransportPacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(LocalServiceTransportPacket packet) {}
 
 	@Override
-	public void visit(MttTransportPacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(MttTransportPacket packet) {}
 
 	@Override
-	public void visit(EncryptedTransportPacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(EncryptedTransportPacket packet) {}
 
 	@Override
-	public void visit(JoinChatChannelResponsePacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(JoinChatChannelResponsePacket packet) {}
 
 	@Override
-	public void visit(NotifyChannelChatPacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(NotifyChannelChatPacket packet) {}
 
 	@Override
-	public void visit(TableSnapshotPacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(TableSnapshotPacket packet) {}
 
 	@Override
-	public void visit(TableUpdatePacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(TableUpdatePacket packet) {}
 
 	@Override
-	public void visit(TableRemovedPacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(TableRemovedPacket packet) {}
 
 	@Override
-	public void visit(TournamentSnapshotPacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(TournamentSnapshotPacket packet) {}
 
 	@Override
-	public void visit(TournamentUpdatePacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(TournamentUpdatePacket packet) {}
 
 	@Override
-	public void visit(TournamentRemovedPacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(TournamentRemovedPacket packet) {}
 
 	@Override
-	public void visit(TableSnapshotListPacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(TableSnapshotListPacket packet) {}
 
 	@Override
-	public void visit(TableUpdateListPacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(TableUpdateListPacket packet) {}
 
 	@Override
-	public void visit(TournamentSnapshotListPacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(TournamentSnapshotListPacket packet) {}
 
 	@Override
-	public void visit(TournamentUpdateListPacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(TournamentUpdateListPacket packet) {}
 
 	@Override
-	public void visit(FilteredJoinTableResponsePacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(FilteredJoinTableResponsePacket packet) {}
 
 	@Override
-	public void visit(FilteredJoinCancelResponsePacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(FilteredJoinCancelResponsePacket packet) {}
 
 	@Override
-	public void visit(FilteredJoinTableAvailablePacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(FilteredJoinTableAvailablePacket packet) {}
 
 	@Override
-	public void visit(ProbePacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(ProbePacket packet) {}
 
 	@Override
-	public void visit(MttRegisterResponsePacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(MttRegisterResponsePacket packet) {}
 
 	@Override
-	public void visit(MttUnregisterResponsePacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(MttUnregisterResponsePacket packet) {}
 
 	@Override
-	public void visit(MttSeatedPacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(MttSeatedPacket packet) {}
 
 	@Override
-	public void visit(MttPickedUpPacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(MttPickedUpPacket packet) {}
 
 	@Override
-	public void visit(NotifySeatedPacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(NotifySeatedPacket packet) {}
 	
 }
 
