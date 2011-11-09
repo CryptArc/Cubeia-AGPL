@@ -36,11 +36,6 @@
     </dependency> 
     
     <dependency>
-        <groupId>com.cubeia.games</groupId>
-        <artifactId>poker-persistence</artifactId>
-    </dependency> 
-    
-    <dependency>
         <groupId>com.cubeia.firebase.client</groupId>
         <artifactId>firebase-java-textclient</artifactId>
         <version>1.7.0-CE</version>

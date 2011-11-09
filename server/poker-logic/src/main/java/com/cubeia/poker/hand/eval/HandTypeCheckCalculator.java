@@ -142,7 +142,6 @@ public class HandTypeCheckCalculator {
 	 * 
 	 * @return HandStrength, null if not a straight
 	 */
-	// FIXME: Refactor this to be more *nice*
 	@SuppressWarnings("unchecked")
 	public HandStrength checkStraight(Hand hand, boolean acesAreLow) {
 		

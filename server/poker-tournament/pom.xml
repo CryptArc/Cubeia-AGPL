@@ -33,9 +33,5 @@
       <groupId>com.cubeia.games</groupId>
       <artifactId>poker-logic</artifactId>
     </dependency>
-     <dependency>
-        <groupId>com.cubeia.games</groupId>
-        <artifactId>poker-persistence</artifactId>
-    </dependency> 
   </dependencies>
 </project>

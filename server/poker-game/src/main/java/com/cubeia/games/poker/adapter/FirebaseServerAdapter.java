@@ -77,14 +77,13 @@ import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.firebase.io.protocol.Enums.WatchResponseStatus;
 import com.cubeia.games.poker.FirebaseState;
 import com.cubeia.games.poker.cache.ActionCache;
+import com.cubeia.games.poker.entity.PlayedHand;
+import com.cubeia.games.poker.entity.PlayedHandEvent;
 import com.cubeia.games.poker.handler.Trigger;
 import com.cubeia.games.poker.handler.TriggerType;
 import com.cubeia.games.poker.jmx.PokerStats;
 import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
-import com.cubeia.games.poker.persistence.history.model.EventType;
-import com.cubeia.games.poker.persistence.history.model.PlayedHand;
-import com.cubeia.games.poker.persistence.history.model.PlayedHandEvent;
 import com.cubeia.games.poker.tournament.PokerTournamentRoundReport;
 import com.cubeia.games.poker.util.ProtocolFactory;
 import com.cubeia.poker.PokerState;
@@ -105,7 +104,6 @@ import com.cubeia.poker.sitout.SitoutCalculator;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.tournament.RoundReport;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 
 /**

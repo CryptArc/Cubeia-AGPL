@@ -15,22 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.persistence.history.model;
+package com.cubeia.games.poker.entity;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-
 import org.apache.log4j.Logger;
 
-@Entity
 public class PlayedHand implements Serializable {
 	
     private static final long serialVersionUID = 1L;
@@ -38,23 +30,15 @@ public class PlayedHand implements Serializable {
     private static Logger log = Logger.getLogger(PlayedHand.class);
     
 	private Integer id;
+	
+	private String integrationId;
 
     private int tableId = -1;
-    private String integrationId;
     
     private Date date = new Date();
     
     private Set<PlayedHandEvent> events;
 
-    public String getIntegrationId() {
-		return integrationId;
-	}
-    
-    public void setIntegrationId(String integrationId) {
-		this.integrationId = integrationId;
-	}
-    
-    @Id @GeneratedValue(strategy=GenerationType.AUTO)
     public Integer getId() {
         return id;
     }
@@ -63,7 +47,6 @@ public class PlayedHand implements Serializable {
         this.id = id;
     }
 
-    @OneToMany(mappedBy="hand", cascade={CascadeType.ALL})
     public Set<PlayedHandEvent> getEvents() {
     	if (events.size() > 150) {
     		log.warn("LARGE HAND HISTORY WARNING: Events="+events.size());
@@ -91,4 +74,11 @@ public class PlayedHand implements Serializable {
         this.date = date;
     }
     
+    public String getIntegrationId() {
+		return integrationId;
+	}
+    
+    public void setIntegrationId(String integrationId) {
+		this.integrationId = integrationId;
+	}
 }

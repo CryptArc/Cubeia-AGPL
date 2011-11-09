@@ -94,25 +94,25 @@ public class HandResultCalculatorTest extends TestCase {
 		potHolder.moveChipsToPot(players.values());
 		
 		assertEquals(1, potHolder.getNumberOfPots());
-		assertEquals(70, potHolder.getPotSize(0));
+		assertEquals(50, potHolder.getPotSize(0));
 		Pot pot0 = potHolder.getPot(0);
-		int pot0Rake = (int) (70 * 0.1);
+		int pot0Rake = (int) (50 * 0.1); // remember that one of the players overbet the others and took back some of the bets
 		
 		long p1stake = pot0.getPotContributors().get(players.get(1));
 		assertEquals(10, p1stake);
 		long p2stake = pot0.getPotContributors().get(players.get(2));
 		assertEquals(20, p2stake);
 		long p3stake = pot0.getPotContributors().get(players.get(3));
-		assertEquals(40, p3stake);
+		assertEquals(20, p3stake);
 		
 		Map<PokerPlayer, Result> playerResults = calc.getPlayerResults(hands, potHolder, players);
 		
 		Result result1 = playerResults.get(players.get(1));
-		assertThat(result1.getNetResult(), is(70L - player1Bets - pot0Rake));
-		assertThat(result1.getWinningsIncludingOwnBets(), is(70L - pot0Rake));
+		assertThat(result1.getNetResult(), is(50L - player1Bets - pot0Rake));
+		assertThat(result1.getWinningsIncludingOwnBets(), is(50L - pot0Rake));
 		
         assertThat(result1.getWinningsByPot().size(), is(1));
-        assertThat(result1.getWinningsByPot().get(potHolder.getActivePot()), is(70L - pot0Rake));
+        assertThat(result1.getWinningsByPot().get(potHolder.getActivePot()), is(50L - pot0Rake));
 		
 		assertEquals(3, playerResults.size());
 		
@@ -120,7 +120,7 @@ public class HandResultCalculatorTest extends TestCase {
 		assertThat(result2.getNetResult(), is((long) -player2Bets));
         assertThat(result2.getWinningsByPot().isEmpty(), is(true));
         Result result3 = playerResults.get(players.get(3));
-        assertThat(result3.getNetResult(), is((long) -player3Bets));
+        assertThat(result3.getNetResult(), is((long) -player2Bets)); // remember that player 3 only betted player 2's bet in the end since he took some back
         assertThat(result3.getWinningsByPot().isEmpty(), is(true));
 	}
 	
@@ -138,7 +138,7 @@ public class HandResultCalculatorTest extends TestCase {
 		
 		assertThat(potHolder.getNumberOfPots(), is(1));
 		long pot0Size = potHolder.getPotSize(0);
-        assertThat(pot0Size, is(70L));
+        assertThat(pot0Size, is(50L)); // one of the players had a overbet so player 3 actually only bet whan player 2 did.
         Pot pot0 = potHolder.getPot(0);
         int pot0Rake = (int) (pot0Size * 0.1);
         
@@ -147,14 +147,14 @@ public class HandResultCalculatorTest extends TestCase {
 		long p2stake = pot0.getPotContributors().get(players.get(2));
 		assertEquals(20, p2stake);
 		long p3stake = pot0.getPotContributors().get(players.get(3));
-		assertEquals(40, p3stake);
+		assertEquals(20, p3stake);
 		
 		assertEquals(1, potHolder.getNumberOfPots());
 		
 		Map<PokerPlayer, Result> playerResults = calc.getPlayerResults(hands, potHolder, players);
 		
 		Result result1 = playerResults.get(players.get(1));
-        long pot0WinningShare = (long) (70 - pot0Rake) / 2;
+        long pot0WinningShare = (long) (50 - pot0Rake) / 2;
         assertThat(result1.getNetResult(), is(pot0WinningShare - player1Bets));
         assertThat(result1.getWinningsIncludingOwnBets(), is(pot0WinningShare));
 		
@@ -169,7 +169,7 @@ public class HandResultCalculatorTest extends TestCase {
         assertThat(result2.getWinningsByPot().get(pot0), is(pot0WinningShare));
 		
 		Result result3 = playerResults.get(players.get(3));
-		assertEquals(-40, result3.getNetResult());
+		assertEquals(-20, result3.getNetResult());
 		assertEquals(0, result3.getWinningsIncludingOwnBets());
         assertThat(result3.getWinningsByPot().size(), is(0));
 		
@@ -311,7 +311,7 @@ public class HandResultCalculatorTest extends TestCase {
 		p2.addBet(20);
 		PokerPlayer p3 = new DefaultPokerPlayer(3);
 		p3.addChips(100);
-		p3.addBet(40);
+		p3.addBet(40); // this is a overbet. This player will be returned the difference between p3 and p2's bet 
 		
 		players.put(1, p1);
 		players.put(2, p2);
@@ -326,25 +326,31 @@ public class HandResultCalculatorTest extends TestCase {
         PotHolder potHolder = new PotHolder(new LinearRakeWithLimitCalculator(RakeSettings.createNoLimitRakeSettings(ZERO)));
 		potHolder.moveChipsToPot(players.values());
 		
-		// Exactly the same bets again
+		assertEquals(1, potHolder.getNumberOfPots());
+		assertEquals(50, potHolder.getPotSize(0)); // remember the overbet
+		
+		// do another bet. This time without overbets
+		p1.addBet(10);
+		p2.addBet(20);
+		p3.addBet(20);
 		potHolder.moveChipsToPot(players.values());
 		
 		assertEquals(1, potHolder.getNumberOfPots());
-		assertEquals(140, potHolder.getPotSize(0));
+		assertEquals(100, potHolder.getPotSize(0)); // the total is 100 
 		long p1stake = potHolder.getActivePot().getPotContributors().get(players.get(1));
 		assertEquals(20, p1stake);
 		long p2stake = potHolder.getActivePot().getPotContributors().get(players.get(2));
 		assertEquals(40, p2stake);
 		long p3stake = potHolder.getActivePot().getPotContributors().get(players.get(3));
-		assertEquals(80, p3stake);
+		assertEquals(40, p3stake);
 		
 		Map<PokerPlayer, Result> playerResults = calc.getPlayerResults(hands, potHolder, players);
 		
 		Result result1 = playerResults.get(players.get(1));
-		assertEquals(120, result1.getNetResult());
-		assertEquals(140, result1.getWinningsIncludingOwnBets());
+		assertEquals(80, result1.getNetResult()); // the two other players betted 20+20 each
+		assertEquals(100, result1.getWinningsIncludingOwnBets()); // the other players betted 20+20 each and player 1 only bet 10+10
         assertThat(result1.getWinningsByPot().size(), is(1));
-        assertThat(result1.getWinningsByPot().get(potHolder.getPot(0)), is(140L));
+        assertThat(result1.getWinningsByPot().get(potHolder.getPot(0)), is(100L));
 		
 		assertEquals(3, playerResults.size());
 		

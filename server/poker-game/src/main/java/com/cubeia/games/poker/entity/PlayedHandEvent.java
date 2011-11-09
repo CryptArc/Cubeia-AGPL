@@ -15,19 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.persistence.history.model;
+package com.cubeia.games.poker.entity;
 
 import java.io.Serializable;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-
-@Entity
 public class PlayedHandEvent implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -42,7 +33,6 @@ public class PlayedHandEvent implements Serializable {
     
     private PlayedHand hand;
 
-    @Id @GeneratedValue(strategy=GenerationType.AUTO)
     public Integer getId() {
         return id;
     }
@@ -67,7 +57,6 @@ public class PlayedHandEvent implements Serializable {
         this.bet = bet;
     }
 
-    @Enumerated(EnumType.STRING)
     public EventType getType() {   
         return type;
     }
@@ -76,7 +65,6 @@ public class PlayedHandEvent implements Serializable {
         this.type = type;
     }
 
-    @ManyToOne
     public PlayedHand getHand() {
         return hand;
     }

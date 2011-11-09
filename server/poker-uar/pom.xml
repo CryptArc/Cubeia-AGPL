@@ -34,12 +34,6 @@
 			<type>firebase-tar</type>
 		</dependency>
 
-		<dependency>
-			<groupId>com.cubeia.games</groupId>
-			<artifactId>poker-persistence</artifactId>
-			<type>firebase-par</type>
-		</dependency>
-
 
 
 		<!-- Services needed to Firebase:Run plugin -->

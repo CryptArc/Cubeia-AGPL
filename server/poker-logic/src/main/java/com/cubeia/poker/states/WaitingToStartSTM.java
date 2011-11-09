@@ -37,7 +37,7 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
 		if (!context.isTournamentTable()) {
 			context.setHandFinished(false);
 			context.commitPendingBalances();
-			
+						
 			if (context.countSittingInPlayers() > 1) {
 				context.startHand();
 				

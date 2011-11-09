@@ -24,10 +24,7 @@ import com.cubeia.firebase.api.mtt.activator.ActivatorContext;
 import com.cubeia.firebase.api.mtt.activator.MttActivator;
 import com.cubeia.firebase.api.server.Startable;
 import com.cubeia.firebase.api.server.SystemException;
-import com.cubeia.firebase.api.service.ServiceRegistry;
-import com.cubeia.games.poker.persistence.Persist;
 import com.cubeia.games.poker.tournament.activator.external.jmx.JMXActivator;
-import com.cubeia.games.poker.tournament.activator.scanner.db.DBTournamentScanner;
 import com.cubeia.games.poker.tournament.activator.scanner.mock.MockTournamentScanner;
 
 /**
@@ -47,8 +44,6 @@ public class PokerTournamentActivatorImpl implements MttActivator, Startable, Po
     private static transient Logger log = Logger.getLogger(PokerTournamentActivatorImpl.class);
     
     private PokerActivator activator;
-
-    private ServiceRegistry services;
 
     private MttFactory factory;
 
@@ -115,7 +110,6 @@ public class PokerTournamentActivatorImpl implements MttActivator, Startable, Po
 
 
     public void init(ActivatorContext context) throws SystemException {
-        services = context.getServices();
         createActivator();
         activator.init(context);
         
@@ -141,20 +135,7 @@ public class PokerTournamentActivatorImpl implements MttActivator, Startable, Po
      ------------------------------------------------*/
 
     private void createActivator() {
-        Persist.checkDatabaseAvailable(services);
-        if (services != null) {
-            if (Persist.available) {
-                createDBActivator();
-                return; 
-            }
-        }
         createMockActivator();
-    }
-
-    private void createDBActivator() {
-        log.warn("Create DB Activator called.");
-        activator = new DBTournamentScanner();
-        activator.setMttFactory(factory);
     }
 
     private void createMockActivator() {

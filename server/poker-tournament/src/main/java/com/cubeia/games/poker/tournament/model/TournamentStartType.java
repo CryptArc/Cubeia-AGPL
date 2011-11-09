@@ -15,15 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.persistence.history;
+package com.cubeia.games.poker.tournament.model;
 
-import com.cubeia.firebase.api.service.ServiceRegistry;
-import com.cubeia.games.poker.persistence.AbstractDAO;
-
-public class HandHistoryDAO extends AbstractDAO {
-
-    public HandHistoryDAO(ServiceRegistry registry) {
-        super(registry);
-    }
-
+public enum TournamentStartType {
+    SIT_AND_GO,
+    SCHEDULED
 }
