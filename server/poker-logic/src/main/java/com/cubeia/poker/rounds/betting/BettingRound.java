@@ -106,6 +106,7 @@ public class BettingRound implements Round, BettingRoundContext {
 		verifyValidAction(action, player);
 		handleAction(action, player);
 		gameType.getServerAdapter().notifyActionPerformed(action, player.getBalance());
+				
 		// FIXME: Perhaps the new status information could be included in the action performed packet?
 		if (player.getBalance() <= 0) {
 			gameType.getServerAdapter().notifyPlayerStatusChanged(player.getId(), PokerPlayerStatus.ALLIN);
@@ -191,6 +192,8 @@ public class BettingRound implements Round, BettingRoundContext {
 			throw new IllegalArgumentException();
 		}
 		player.setHasActed(true);
+		
+		
 	}
 
 	
@@ -205,7 +208,8 @@ public class BettingRound implements Round, BettingRoundContext {
 		}
 	}
 
-	private void raise(PokerPlayer player, long amount) {
+	@VisibleForTesting
+	void raise(PokerPlayer player, long amount) {
 		if (amount <= highBet) {
 			throw new IllegalArgumentException("PokerPlayer["+player.getId()+"] incorrect raise amount. Highbet["+highBet+"] amount["+amount+"]. " +
 					"Amounts must be larger than current highest bet");
@@ -223,19 +227,23 @@ public class BettingRound implements Round, BettingRoundContext {
 		lastPlayerToPlaceABet = player;
 		player.addBet(highBet - player.getBetStack());
 		resetHasActed();
+		
+		notifyBetStacksUpdated();
 	}
 	
 	private void setRaiseByAmount(PokerPlayer player, PokerAction action) {
 		action.setRaiseAmount(action.getBetAmount() - highBet);
 	}
 
-
-	private void bet(PokerPlayer player, long amount) {
+	@VisibleForTesting
+	void bet(PokerPlayer player, long amount) {
 		lastBetSize = amount;
 		highBet = highBet + amount;
 		lastPlayerToPlaceABet = player;
 		player.addBet(highBet - player.getBetStack());
 		resetHasActed();
+		
+		notifyBetStacksUpdated();
 	}
 
 	private void resetHasActed() {
@@ -260,8 +268,12 @@ public class BettingRound implements Round, BettingRoundContext {
         player.addBet(amountToCall);
 		lastPlayerToBeCalled = lastPlayerToPlaceABet;
 		gameType.getState().call();
-		
+		notifyBetStacksUpdated();
 		return amountToCall;
+	}
+
+	private void notifyBetStacksUpdated() {
+		gameType.getState().notifyBetStacksUpdated();
 	}
 
 	/**

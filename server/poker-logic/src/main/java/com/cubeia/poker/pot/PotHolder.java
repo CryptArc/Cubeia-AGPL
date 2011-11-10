@@ -109,6 +109,7 @@ public class PotHolder implements Serializable {
 			if (stack > 0) {
 			    potTransitions.add(new PotTransition(player, getActivePot(), stack));
 				getActivePot().bet(player, stack);
+				player.removeFromBetStack(stack);
 			}
 		}
 		
@@ -119,6 +120,29 @@ public class PotHolder implements Serializable {
 
 	public RakeInfoContainer calculateRake() {
 	    return rakeCalculator.calculateRakes(getPots(), callHasBeenMadeInHand);
+	}
+	
+	/**
+	 * Calculate the rake info including all the bet stacks of the players
+	 * @param players
+	 * @return
+	 */
+	public RakeInfoContainer calculateRakeIncludingBetStacks( Collection<PokerPlayer> players ) {
+		
+		
+		Collection<Pot> allPots = new ArrayList<Pot>(getPots());
+		
+		Pot betPot = new Pot(Integer.MAX_VALUE);
+						
+		for (PokerPlayer player:players) {
+			betPot.bet(player, player.getBetStack());
+		}
+		
+		allPots.add(betPot);
+			
+		return rakeCalculator.calculateRakes(allPots, callHasBeenMadeInHand);
+		
+		
 	}
 	
 
@@ -221,6 +245,7 @@ public class PotHolder implements Serializable {
 				if (stack >= diff) {
 				    potTransitions.add(new PotTransition(player, activePot, diff));
 					activePot.bet(player, diff);
+					player.removeFromBetStack(diff);
 					betMap.put(player, (stack - diff));
 				} else if (stack > 0) {
 					/* 
@@ -229,6 +254,7 @@ public class PotHolder implements Serializable {
 					 */
                     potTransitions.add(new PotTransition(player, activePot, stack));
 					activePot.bet(player, stack);
+					player.removeFromBetStack(stack);
 					betMap.put(player, new Long(0));
 				}
 			}

@@ -344,7 +344,7 @@ public class Telesina implements GameType, RoundVisitor {
     		Collection<PotTransition> potTransitions = moveChipsToPot();
     		reportPotAndRakeUpdates(potTransitions);
 	    }
-		
+	    
 		if (isHandFinished()) {
 		    
 		    returnAllBets();

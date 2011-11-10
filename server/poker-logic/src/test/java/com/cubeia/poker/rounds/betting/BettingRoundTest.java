@@ -83,6 +83,8 @@ public class BettingRoundTest extends TestCase implements TestListener {
 		
 		PossibleAction bet = requestedAction.getOption(PokerActionType.CALL);
 		assertEquals(70, bet.getMaxAmount());
+		
+		
 	}	
 	
 	@Test
@@ -96,6 +98,7 @@ public class BettingRoundTest extends TestCase implements TestListener {
         round.call(player);
         
         verify(state).call();
+        
     }   
 	
     @Test
@@ -117,6 +120,23 @@ public class BettingRoundTest extends TestCase implements TestListener {
         
         verify(state).call();
         assertThat(amountCalled, is(round.highBet - betStack));
+
+    }
+    
+    @Test
+    public void testCallNotifiesBetStackUpdates() {
+        GameType game = mock(GameType.class);
+        IPokerState state = mock(IPokerState.class);
+        when(game.getState()).thenReturn(state);
+        PokerPlayer player = Mockito.mock(PokerPlayer.class);
+        
+        BettingRound round = new BettingRound(game, 0, new DefaultPlayerToActCalculator());
+        
+        round = new BettingRound(game, 0, new DefaultPlayerToActCalculator());
+        
+        round.call(player);
+                
+        verify(state).notifyBetStacksUpdated();
     }
     
     @Test 
@@ -154,8 +174,26 @@ public class BettingRoundTest extends TestCase implements TestListener {
 		verifyAndAct(p[1], PokerActionType.BET, 100);
 			
 		assertTrue(requestedAction.isOptionEnabled(PokerActionType.RAISE));
-		verifyAndAct(p[0], PokerActionType.RAISE, 200);		
+		verifyAndAct(p[0], PokerActionType.RAISE, 200);
+		
+		
 	}
+    
+    @Test
+    public void testRaiseNotifiesBetStackUpdates() {
+        GameType game = mock(GameType.class);
+        IPokerState state = mock(IPokerState.class);
+        when(game.getState()).thenReturn(state);
+        PokerPlayer player = Mockito.mock(PokerPlayer.class);
+        
+        BettingRound round = new BettingRound(game, 0, new DefaultPlayerToActCalculator());
+        
+        round = new BettingRound(game, 0, new DefaultPlayerToActCalculator());
+        
+        round.raise(player, 10L);
+                
+        verify(state).notifyBetStacksUpdated();
+    }
 	
     @Test
 	public void testNoRaiseAllowedWhenAllOtherPlayersAreAllIn() {
@@ -196,6 +234,22 @@ public class BettingRoundTest extends TestCase implements TestListener {
     	act(p[0], PokerActionType.RAISE, 200);
     	PokerPlayer player = p[1];
 		assertThat(round.getLastPlayerToBeCalled(), CoreMatchers.is(player));
+    }
+    
+    @Test
+    public void testBetNotifiesBetStackUpdates() {
+        GameType game = mock(GameType.class);
+        IPokerState state = mock(IPokerState.class);
+        when(game.getState()).thenReturn(state);
+        PokerPlayer player = Mockito.mock(PokerPlayer.class);
+        
+        BettingRound round = new BettingRound(game, 0, new DefaultPlayerToActCalculator());
+        
+        round = new BettingRound(game, 0, new DefaultPlayerToActCalculator());
+        
+        round.bet(player, 10L);
+                
+        verify(state).notifyBetStacksUpdated();
     }
 	
 	private void actMax(PokerActionType action) {

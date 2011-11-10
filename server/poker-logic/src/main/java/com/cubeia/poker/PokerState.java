@@ -668,11 +668,20 @@ public class PokerState implements Serializable, IPokerState {
 		// Clean up players in states not accessible to the poker logic
 	    serverAdapter.cleanupPlayers();
 	}
+	
+	@Override
+	public void notifyBetStacksUpdated() {
+		notifyRakeInfo();	
+	}
 
 	public void notifyPotAndRakeUpdates(Collection<PotTransition> potTransitions) {
         serverAdapter.notifyPotUpdates(potHolder.getPots(), potTransitions);
-        serverAdapter.notifyRakeInfo(potHolder.calculateRake());
+        notifyRakeInfo();
     }	
+	
+	public void notifyRakeInfo() {
+		serverAdapter.notifyRakeInfo(potHolder.calculateRakeIncludingBetStacks(getCurrentHandSeatingMap().values()));
+	}
 
 	/**
 	 * TODO: Should not be here. (The user of PokerGame has no interest in calling or seeing this method)

@@ -223,6 +223,12 @@ public class MockGame implements GameType {
 				// TODO Auto-generated method stub
 				
 			}
+			
+			@Override
+			public void notifyBetStacksUpdated() {
+				// TODO Auto-generated method stub
+				
+			}
 		};
 	}
 
