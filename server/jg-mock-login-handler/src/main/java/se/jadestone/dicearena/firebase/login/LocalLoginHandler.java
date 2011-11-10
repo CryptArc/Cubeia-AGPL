@@ -91,7 +91,7 @@ public class LocalLoginHandler implements LoginLocator, LoginHandler, Service {
 	// ---- UNUSED SERVICE METHODS ----
 	
 	private int createUserIdFromUsernameHash(LoginRequestAction request) {
-		return request.getUser().hashCode();
+		return Math.abs(request.getUser().hashCode());
 	}
 
 	@Override
