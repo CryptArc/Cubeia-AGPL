@@ -69,7 +69,6 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
     @Override
     public void announceTable(AnnounceTableRequest request, final AnnounceTableCallback callback) {
         final AnnounceTableResponse response = new AnnounceTableResponse(new TableIdImpl());
-        log.debug("new table approved, tId = {}", response.tableId);
         
         // Dirty mokkie fix as we cannot run this in the same thread as the participant runs in
         new Thread(new Runnable() {
@@ -79,6 +78,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
                     long mockDelay = (long) (Math.random() * 2000);
                     log.debug("mocked announce table delay for: {}ms", mockDelay);
                     Thread.sleep(mockDelay);
+                    log.debug("new table approved, tId = {}", response.tableId);
                     callback.requestSucceded(response);
                 } catch (Throwable t) {
                     t.printStackTrace();
