@@ -33,6 +33,7 @@ import javax.management.ObjectName;
 import org.apache.log4j.Logger;
 
 import com.cubeia.backend.firebase.CashGamesBackendContract;
+import com.cubeia.firebase.api.common.AttributeValue;
 import com.cubeia.firebase.api.game.activator.ActivatorContext;
 import com.cubeia.firebase.api.game.activator.DefaultActivator;
 import com.cubeia.firebase.api.game.activator.DefaultActivatorConfig;
@@ -40,8 +41,10 @@ import com.cubeia.firebase.api.game.activator.MttAwareActivator;
 import com.cubeia.firebase.api.game.lobby.LobbyTable;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.lobby.LobbyAttributeAccessor;
+import com.cubeia.firebase.api.lobby.LobbyPath;
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.games.poker.FirebaseState;
+import com.cubeia.games.poker.lobby.PokerLobbyAttributes;
 import com.cubeia.games.poker.tournament.activator.TournamentTableSettings;
 import com.cubeia.poker.PokerGuiceModule;
 import com.cubeia.poker.PokerSettings;
@@ -169,11 +172,15 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
      */
     @Override
     protected void checkTables() {
+    	checkAndRemoveFlaggedTables();
+    	
         for (PokerParticipant part : participants) {
             LobbyTable[] tables = tableRegistry.listTables(part.getLobbyPath());
             List<LobbyTable> empty = findEmpty(tables);
             DefaultActivatorConfig config = getConfiguration();
 
+            log.info("Check config["+config+"] empty["+empty.size()+"] ");
+            
             if(empty.size() < config.getMinAvailTables()) {
                 incrementTables(config, part);
             } else {
@@ -182,7 +189,19 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
         }
     }
 
-    /**
+    private void checkAndRemoveFlaggedTables() {
+    	LobbyPath path = new LobbyPath(PokerParticipant.GAME_ID, "/");
+    	LobbyTable[] tables = tableRegistry.listTables(path);
+    	for (LobbyTable table : tables) {
+    		AttributeValue attributeValue = table.getAttributes().get(PokerLobbyAttributes.REMOVE.name());
+    		if (attributeValue != null && attributeValue.getIntValue() > 0) {
+    			log.info("Remove lobby attribute is set for table["+table.getTableId()+"] so it will be destroyed.");
+    			tableRegistry.destroyTable(table, true);
+    		}
+    	}
+	}
+
+	/**
      * Create a new batch of fresh tables.
      * The actual count is set trought the configuration.
      * 

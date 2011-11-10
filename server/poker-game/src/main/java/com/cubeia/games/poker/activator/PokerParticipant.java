@@ -55,7 +55,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
     
 	private static Logger log = LoggerFactory.getLogger(PokerParticipant.class);
 
-	private static final int GAME_ID = 4718;
+	public static final int GAME_ID = 4718;
 	
 	// the minimum buy in as a multiple of ante.
 	private static final int MIN_BUY_IN_ANTE_MULTIPLIER = 10;
@@ -137,6 +137,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
 		pokerState.setId(table.getId());
 		table.getGameState().setState(pokerState);
 
+		// FIXME: Refactor these attributes to the PokerLobbyAttributes enum instead
 		acc.setIntAttribute("VISIBLE_IN_LOBBY", 0);
 		acc.setStringAttribute("SPEED", timing.name());
 		// acc.setIntAttribute("ANTE", anteLevel);

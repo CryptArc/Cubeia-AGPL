@@ -18,8 +18,10 @@ import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
 import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;
 import com.cubeia.backend.cashgame.dto.ReserveResponse;
 import com.cubeia.firebase.api.action.GameDataAction;
+import com.cubeia.firebase.api.game.lobby.LobbyTableAttributeAccessor;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.io.StyxSerializer;
+import com.cubeia.games.poker.lobby.PokerLobbyAttributes;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.player.PokerPlayer;
@@ -134,9 +136,16 @@ public class BackendCallHandler {
         table.getAttributeAccessor().setIntAttribute("VISIBLE_IN_LOBBY", 1);
     }
 
+    /**
+	 * This table has not been approved by 3rd party (e.g. Italian government). 
+	 * We need to close it asap.
+	 * 
+	 * @param attachment
+	 */
     public void handleAnnounceTableFailedResponse(AnnounceTableFailedResponse attachment) {
-        // TODO: we should remove the table here...
-        throw new UnsupportedOperationException("handling of failed announce table requests not implemented");
+		log.info("Handle Announce Table Failed for table["+table.getId()+"], will flag for removal");
+		LobbyTableAttributeAccessor attributeAccessor = table.getAttributeAccessor();
+		attributeAccessor.setIntAttribute(PokerLobbyAttributes.REMOVE.name(), 1);
     }
 
     public void handleOpenSessionFailedResponse(OpenSessionFailedResponse attachment) {

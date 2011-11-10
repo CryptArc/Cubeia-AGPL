@@ -143,7 +143,7 @@ public class Processor implements GameProcessor, TournamentProcessor {
     	        
             } else if (attachment instanceof AnnounceTableFailedResponse) {
                 log.debug("got announce table failed response: {}", attachment);
-                backendHandler.handleAnnounceTableFailedResponse((AnnounceTableFailedResponse) attachment);
+                backendHandler.handleAnnounceTableFailedResponse((AnnounceTableFailedResponse)attachment);
                 
     	    } else {
     	        log.warn("Unhandled object: " + attachment.getClass().getName());
@@ -155,7 +155,7 @@ public class Processor implements GameProcessor, TournamentProcessor {
 	    
         updatePlayerDebugInfo(table);
 	}
-	
+
     private void updatePlayerDebugInfo(Table table) {
         if (handDebugger != null) {
             for (PokerPlayer player : state.getSeatedPlayers()) {
