@@ -143,6 +143,17 @@ public class HandResult implements Serializable {
                     break;
                 }
             }
+        }else if (totalContribution > rakeInfoContainer.getTotalRake()) {
+            if(log.isDebugEnabled()) log.debug("totalContribution is "+totalContribution+" and totalRake is "+rakeInfoContainer.getTotalRake());
+            for (Map.Entry<PokerPlayer, Result> e : results.entrySet()) {
+                PokerPlayer player = e.getKey();
+                if(log.isDebugEnabled()) log.debug("\t-> removing rake to player "+player.getId());
+                rakeContribs.put(player, rakeContribs.get(player) - 1);
+                totalContribution--;
+                if (totalContribution == rakeInfoContainer.getTotalRake()) {
+                    break;
+                }
+            }
         }
         
         return rakeContribs;
