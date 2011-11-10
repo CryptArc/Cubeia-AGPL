@@ -76,7 +76,7 @@ public class Pot implements Serializable {
 	}
 
 	/**
-	 * Add amount to the pot, add the player to the set of contributors 
+	 * Add amount to the pot, add the player to the set of contributors.
 	 * @param player the player who put the bet
 	 * @param amount the betting amount
 	 */
@@ -89,8 +89,7 @@ public class Pot implements Serializable {
 		}
 		
 		potSize += amount;
-		player.removeFromBetStack(amount);
-		
+				
 		Long current = playerToBetMap.get(player);
 		if (current == null) {
 			playerToBetMap.put(player, amount);

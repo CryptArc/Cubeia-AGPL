@@ -177,7 +177,8 @@ public class PokerStateTest {
         verify(player2).commitPendingBalance(10000);
     }
     
-    @Test 
+    @SuppressWarnings("unchecked")
+	@Test 
     public void testNotifyPotUpdated() {
         PokerState state = new PokerState();
         state.potHolder = mock(PotHolder.class);
@@ -190,7 +191,9 @@ public class PokerStateTest {
         BigDecimal totalRake = new BigDecimal("4444");
         
         when(state.potHolder.calculateRake()).thenReturn(new RakeInfoContainer((int) totalPot, totalRake.intValue(), null));
-//        when(state.potHolder.getTotalRake()).thenReturn(totalRake);
+        RakeInfoContainer rakeInfoContainer = mock(RakeInfoContainer.class);
+        
+		when(state.potHolder.calculateRakeIncludingBetStacks(Mockito.anyCollection() )).thenReturn(rakeInfoContainer);
         
         Collection<PotTransition> potTransitions = new ArrayList<PotTransition>();
         state.notifyPotAndRakeUpdates(potTransitions);
@@ -199,9 +202,9 @@ public class PokerStateTest {
         
         ArgumentCaptor<RakeInfoContainer> rakeInfoCaptor = ArgumentCaptor.forClass(RakeInfoContainer.class);
         verify(state.serverAdapter).notifyRakeInfo(rakeInfoCaptor.capture());
-        RakeInfoContainer rakeInfoContainer = rakeInfoCaptor.getValue();
-        assertThat(rakeInfoContainer.getTotalPot(), is((int) totalPot));
-        assertThat(rakeInfoContainer.getTotalRake(), is(totalRake.intValue()));
+        RakeInfoContainer rakeInfoContainer1 = rakeInfoCaptor.getValue();
+        assertThat(rakeInfoContainer1, is(rakeInfoContainer));
+        
     }
     
     @Test

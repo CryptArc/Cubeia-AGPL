@@ -108,6 +108,8 @@ public class AnteRoundTest {
         verify(player1).setHasActed(true);
         verify(player1).setHasPostedEntryBet(true);
         verify(serverAdapter).notifyActionPerformed(action, resultingBalance);
+        
+        verify(state).notifyBetStacksUpdated();
     }
     
     @SuppressWarnings("unchecked")
