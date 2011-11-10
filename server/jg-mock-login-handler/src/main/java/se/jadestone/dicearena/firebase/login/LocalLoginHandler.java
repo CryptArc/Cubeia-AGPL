@@ -3,14 +3,13 @@ package se.jadestone.dicearena.firebase.login;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
 
+import se.jadestone.dicearena.service.network.protocol.Enums.LoginStatus;
 import se.jadestone.dicearena.service.network.protocol.LoginRequestPayloadStruct;
 import se.jadestone.dicearena.service.network.protocol.LoginResponsePayloadStruct;
 import se.jadestone.dicearena.service.network.protocol.ProtocolObjectFactory;
-import se.jadestone.dicearena.service.network.protocol.Enums.LoginStatus;
 
 import com.cubeia.firebase.api.action.local.LoginRequestAction;
 import com.cubeia.firebase.api.action.local.LoginResponseAction;
@@ -26,8 +25,6 @@ import com.cubeia.firebase.io.StyxSerializer;
 public class LocalLoginHandler implements LoginLocator, LoginHandler, Service {
 
 	Logger log = Logger.getLogger(this.getClass());
-	
-	AtomicInteger counter = new AtomicInteger(1);
 	
 	@Override
 	public LoginHandler locateLoginHandler(LoginRequestAction request) {
@@ -77,7 +74,7 @@ public class LocalLoginHandler implements LoginLocator, LoginHandler, Service {
 	            responsePayload = null;
 	        }
 	        
-	        LoginResponseAction response = new LoginResponseAction(true, requestPayloadStruct.partnerAccountId, counter.getAndIncrement());
+	        LoginResponseAction response = new LoginResponseAction(true, requestPayloadStruct.partnerAccountId, createUserIdFromUsernameHash(request));
 	        response.setData(responsePayload);
 	        
 	        log.debug("Login user["+request.getUser()+"@"+request.getRemoteAddress()+"] with id["+response.getPlayerid()+"]");
@@ -86,13 +83,17 @@ public class LocalLoginHandler implements LoginLocator, LoginHandler, Service {
         } else {
         	// We also want to support logins without Jadestone specific payload data plz
         	log.warn("Using login without JG Payload");
-        	LoginResponseAction response = new LoginResponseAction(true, request.getUser(), counter.getAndIncrement());
+        	LoginResponseAction response = new LoginResponseAction(true, request.getUser(), createUserIdFromUsernameHash(request));
         	return response;
         }
 	}
 	
 	// ---- UNUSED SERVICE METHODS ----
 	
+	private int createUserIdFromUsernameHash(LoginRequestAction request) {
+		return request.getUser().hashCode();
+	}
+
 	@Override
 	public void init(ServiceContext con) throws SystemException {}
 
