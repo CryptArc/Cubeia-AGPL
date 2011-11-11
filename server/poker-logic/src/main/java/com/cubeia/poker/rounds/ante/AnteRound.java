@@ -141,7 +141,7 @@ public class AnteRound implements Round {
 	    for (PokerPlayer player : getAllSeatedPlayers()) {
 	        if (!player.hasActed()) {
 	            log.debug("Player["+player+"] ante timed out. Will decline entry bet.");
-	            PokerAction action = new PokerAction(player.getId(), PokerActionType.DECLINE_ENTRY_BET);
+	            PokerAction action = new PokerAction(player.getId(), PokerActionType.DECLINE_ENTRY_BET, true);
 	            
 	            player.setHasActed(true);
 	            player.setHasFolded(true);

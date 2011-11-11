@@ -116,4 +116,5 @@ public class PokerAction implements Serializable {
 		this.stackAmount = stackAmount;
 	}
 
+
 }
