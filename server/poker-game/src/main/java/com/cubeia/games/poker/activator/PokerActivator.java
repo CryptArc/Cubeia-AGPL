@@ -21,6 +21,7 @@ import static com.cubeia.games.poker.activator.PokerParticipant.RAKE_FRACTION;
 import static com.cubeia.games.poker.activator.PokerParticipant.RAKE_LIMIT;
 import static com.cubeia.games.poker.activator.PokerParticipant.RAKE_LIMIT_HEADS_UP;
 import static com.cubeia.poker.variant.PokerVariant.TELESINA;
+import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
 
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
@@ -133,7 +134,7 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
         
         CashGamesBackendContract cashGameBackendService = context.getServices().getServiceInstance(CashGamesBackendContract.class);
         
-//    	participants.add(new PokerParticipant(10, "ITALIAN/cashgame/REAL_MONEY", 10, Timings.DEFAULT, TEXAS_HOLDEM, rngProvider, cashGameBackendService));
+    	participants.add(new PokerParticipant(10, "ITALIAN/cashgame/REAL_MONEY", 10, Timings.DEFAULT, TEXAS_HOLDEM, rngProvider, cashGameBackendService));
     	participants.add(new PokerParticipant(4, "ITALIAN/cashgame/REAL_MONEY/4", 2, Timings.SLOW, TELESINA, rngProvider, cashGameBackendService));
     	participants.add(new PokerParticipant(6, "ITALIAN/cashgame/REAL_MONEY/6", 2, Timings.SLOW, TELESINA, rngProvider, cashGameBackendService));
     	
@@ -179,8 +180,6 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
             List<LobbyTable> empty = findEmpty(tables);
             DefaultActivatorConfig config = getConfiguration();
 
-            log.info("Check config["+config+"] empty["+empty.size()+"] ");
-            
             if(empty.size() < config.getMinAvailTables()) {
                 incrementTables(config, part);
             } else {

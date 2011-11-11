@@ -138,7 +138,6 @@ public class Processor implements GameProcessor, TournamentProcessor {
     	    	backendHandler.handleReserveFailedResponse((ReserveFailedResponse) attachment);
     	    	
     	    } else if (attachment instanceof AnnounceTableResponse) {
-    	        log.debug("got announce table response: {}", attachment);
     	        backendHandler.handleAnnounceTableSuccessfulResponse((AnnounceTableResponse) attachment);
     	        
             } else if (attachment instanceof AnnounceTableFailedResponse) {

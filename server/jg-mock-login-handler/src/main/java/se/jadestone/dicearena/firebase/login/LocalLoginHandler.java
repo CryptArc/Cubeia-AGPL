@@ -33,9 +33,6 @@ public class LocalLoginHandler implements LoginLocator, LoginHandler, Service {
 
 	@Override
 	public LoginResponseAction handle(LoginRequestAction request) {
-	    log.debug("handle login request");
-	    log.warn("login mocked!");
-	    
         StyxSerializer serializer = new StyxSerializer(new ProtocolObjectFactory());
         
         byte[] requestPayloadData = request.getData();
@@ -55,9 +52,6 @@ public class LocalLoginHandler implements LoginLocator, LoginHandler, Service {
 	        }
 	        LoginRequestPayloadStruct requestPayloadStruct = (LoginRequestPayloadStruct) object;
 	
-	        
-	        log.debug("login request: " + requestPayloadStruct);
-	        
 	        
 	        // TODO: check credentials here!
 			

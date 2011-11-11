@@ -124,7 +124,7 @@ public class BackendCallHandler {
     }
 
     public void handleAnnounceTableSuccessfulResponse(AnnounceTableResponse attachment) {
-        log.debug("handle announce table success, tId = {}, intTableId = {}, tableProperties = {}", new Object[] { Integer.valueOf(table.getId()), attachment.tableId, attachment.tableProperties });
+        //log.debug("handle announce table success, tId = {}, intTableId = {}, tableProperties = {}", new Object[] { Integer.valueOf(table.getId()), attachment.tableId, attachment.tableProperties });
         Map<String, Serializable> extProps = state.getExternalTableProperties();
         extProps.put(EXT_PROP_KEY_TABLE_ID, attachment.tableId);
         extProps.putAll(attachment.tableProperties);
@@ -132,7 +132,7 @@ public class BackendCallHandler {
     }
 
     private void makeTableVisibleInLobby(Table table) {
-        log.debug("setting table {} as visible in lobby", table.getId());
+        //log.debug("setting table {} as visible in lobby", table.getId());
         table.getAttributeAccessor().setIntAttribute("VISIBLE_IN_LOBBY", 1);
     }
 

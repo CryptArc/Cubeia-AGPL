@@ -24,7 +24,7 @@
 		<param name="File"   value="logs/server.log" />
 		<param name="Append" value="false" />	    	
 		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%d %-5p %t %c - %X{pokerid} %m%n"/>
+			<param name="ConversionPattern" value="%d %-5p %t %c - T[%X{tableid}] P[%X{playerid}] M[%X{tournid}] %X{pokerid} %m%n"/>
 		</layout>	    
 	</appender>
 	

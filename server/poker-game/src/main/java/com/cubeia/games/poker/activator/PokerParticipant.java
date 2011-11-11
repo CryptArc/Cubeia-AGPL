@@ -53,6 +53,7 @@ import com.google.inject.Injector;
  */
 public class PokerParticipant extends DefaultCreationParticipant {
     
+	@SuppressWarnings("unused")
 	private static Logger log = LoggerFactory.getLogger(PokerParticipant.class);
 
 	public static final int GAME_ID = 4718;
@@ -151,7 +152,6 @@ public class PokerParticipant extends DefaultCreationParticipant {
 		int deckSize = createDeckCards(pokerState.getTableSize()).size();
 		acc.setIntAttribute("DECK_SIZE", deckSize);
 		
-		log.debug("sending announce table request for firebase table id: {}", table.getId());
 		FirebaseCallbackFactory callbackFactory = cashGameBackendService.getCallbackFactory();
 		AnnounceTableRequest announceRequest = new AnnounceTableRequest(table.getId());   // TODO: this should be the id from the table record
         cashGameBackendService.announceTable(announceRequest, callbackFactory.createAnnounceTableCallback(table));
