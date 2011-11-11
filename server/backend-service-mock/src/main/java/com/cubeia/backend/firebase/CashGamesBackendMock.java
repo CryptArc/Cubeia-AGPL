@@ -75,9 +75,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
             public void run() {
                 try {
                     long mockDelay = (long) (Math.random() * 2000);
-                    log.debug("mocked announce table delay for: {}ms", mockDelay);
                     Thread.sleep(mockDelay);
-                    log.debug("new table approved, tId = {}", response.tableId);
                     callback.requestSucceded(response);
                 } catch (Throwable t) {
                     t.printStackTrace();
@@ -205,12 +203,12 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
     }
     
     private void printDiagnostics() {
-        log.debug("wallet session transactions: ");
+//        log.debug("wallet session transactions: ");
 //        for (PlayerSessionId session : sessionTransactions.keys()) {
 //            log.debug("{} (balance: {}) -> {}", 
 //                new Object[] {session, getBalance(session), sessionTransactions.get(session)});
 //        }
-        log.debug("---");
+//        log.debug("---");
     }
     
     @Override

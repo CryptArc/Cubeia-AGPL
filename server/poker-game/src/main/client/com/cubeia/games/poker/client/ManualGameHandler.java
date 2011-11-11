@@ -122,7 +122,7 @@ public class ManualGameHandler implements PacketVisitor {
     }
     
     public void visit(PlayerBalance packet) {
-        System.out.println("I got balance: "+packet.balance);
+        System.out.println("I got balance: "+packet.balance+", pending: "+packet.pendingBalance);
     }
     
     @Override
@@ -142,6 +142,11 @@ public class ManualGameHandler implements PacketVisitor {
 			System.out.println("Player["+packet.player+"]'s status has changed to: "+packet.status);
 		}
 	}
+    
+    @Override
+	public void visit(BuyInInfoResponse packet) {
+    	System.out.println("Buy in info - min["+packet.minAmount+"] max["+packet.maxAmount+"] mandatory["+packet.mandatoryBuyin+"]");
+    }
 
 	public void visit(GameCard packet) {}
 	public void visit(BestHand packet) {}
@@ -158,8 +163,6 @@ public class ManualGameHandler implements PacketVisitor {
 	public void visit(HandCanceled packet) {}
 	@Override
 	public void visit(BuyInInfoRequest packet) {}
-	@Override
-	public void visit(BuyInInfoResponse packet) {}
 	@Override
 	public void visit(BuyInRequest packet) {}
 	@Override

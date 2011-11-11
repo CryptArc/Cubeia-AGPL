@@ -22,10 +22,12 @@ import java.nio.ByteBuffer;
 import java.util.regex.Pattern;
 
 import se.jadestone.dicearena.game.poker.network.protocol.Enums.ActionType;
+import se.jadestone.dicearena.game.poker.network.protocol.BuyInRequest;
 import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerAction;
 
 import com.cubeia.firebase.clients.java.connector.text.SimpleTextClient;
+import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
 
 public class PokerTextClient extends SimpleTextClient {
@@ -63,7 +65,10 @@ public class PokerTextClient extends SimpleTextClient {
 			if (args[0].equalsIgnoreCase("help")) {
 				printHelp();
 			} else {
-				handlePokerCommand(args);
+				
+				if (!handleGenericPokerCommand(args)) {
+					handlePokerCommand(args);
+				}
 			}
 			
 			
@@ -71,8 +76,22 @@ public class PokerTextClient extends SimpleTextClient {
 			reportBadCommand(e.toString());
 		}
 	}
-    
-	
+
+	private boolean handleGenericPokerCommand(String[] args) {
+		int tableid = Integer.parseInt(args[1]);
+		
+		if (args[0].equals("buyin")) {
+			BuyInRequest packet = new BuyInRequest();
+			packet.amount = Integer.parseInt(args[2]);
+			packet.sitInIfSuccessful = true;
+			send(tableid, packet);
+    		
+		} else {
+			return false;
+		}
+		
+		return true;
+	}
 
 	private void handlePokerCommand(String[] args) {
 		PerformAction packet = new PerformAction();
@@ -126,13 +145,21 @@ public class PokerTextClient extends SimpleTextClient {
 			
 		}
 
-		
+		int tableid = Integer.parseInt(args[1]);
+		send(tableid, packet);
+	}
+
+	/**
+	 * Sends data wrapped in a GameTransportPacket
+	 * the context attribute is supplied by the super class
+	 * 
+	 * @param tableid
+	 * @param packet
+	 */
+	private void send(int tableid, ProtocolObject packet) {
 		ByteBuffer buffer;
 		try {
 			buffer = styxEncoder.pack(packet);
-			int tableid = Integer.parseInt(args[1]);
-			// Sends data wrapped in a GameTransportPacket
-			// the context attribute is supplied by the super class
 			context.getConnector().sendDataPacket(tableid, context.getPlayerId(), buffer);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -180,6 +207,7 @@ public class PokerTextClient extends SimpleTextClient {
 	private void printHelp() {
 		System.out.println("Available Poker Commands:");
 		System.out.println("\t help             \t : print help");
+		System.out.println("\t buyin TID amount \t : Buy in at table");
 		System.out.println("\t small TID        \t : post small blind");
 		System.out.println("\t big TID          \t : post big blind");
 		
