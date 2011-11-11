@@ -65,6 +65,7 @@ public class TelesinaAllinTest extends AbstractTexasHandTester {
 		PossibleAction raiseRequest = mp[0].getActionRequest().getOption(PokerActionType.RAISE);
 		assertThat(raiseRequest.getMinAmount(), is(63L));
 		assertThat(raiseRequest.getMaxAmount(), is(63L));
+		
 	}
 	
 	

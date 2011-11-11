@@ -449,9 +449,9 @@ public class PokerLogicTest extends GuiceTest {
 		addPlayers(game, mp);
 
 		game.timeout();
-		mockServerAdapter.actionPerformed = null;
+		
 		act(p[0], PokerActionType.SMALL_BLIND);
-		assertNotNull(mockServerAdapter.actionPerformed);
+		assertNotNull(mockServerAdapter.getLatestActionPerformed());
 	}
 	
 	public void testDenySmallBlind() {
