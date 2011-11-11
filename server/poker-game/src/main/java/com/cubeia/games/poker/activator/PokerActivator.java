@@ -193,8 +193,8 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
     	LobbyPath path = new LobbyPath(PokerParticipant.GAME_ID, "/");
     	LobbyTable[] tables = tableRegistry.listTables(path);
     	for (LobbyTable table : tables) {
-    		AttributeValue attributeValue = table.getAttributes().get(PokerLobbyAttributes.REMOVE.name());
-    		if (attributeValue != null && attributeValue.getIntValue() > 0) {
+    		AttributeValue attributeValue = table.getAttributes().get(PokerLobbyAttributes.TABLE_READY_FOR_CLOSE.name());
+    		if (attributeValue != null && attributeValue.getIntValue() == 1) {
     			log.info("Remove lobby attribute is set for table["+table.getTableId()+"] so it will be destroyed.");
     			tableRegistry.destroyTable(table, true);
     		}

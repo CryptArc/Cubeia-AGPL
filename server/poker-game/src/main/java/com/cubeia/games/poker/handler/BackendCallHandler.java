@@ -145,7 +145,7 @@ public class BackendCallHandler {
     public void handleAnnounceTableFailedResponse(AnnounceTableFailedResponse attachment) {
 		log.info("Handle Announce Table Failed for table["+table.getId()+"], will flag for removal");
 		LobbyTableAttributeAccessor attributeAccessor = table.getAttributeAccessor();
-		attributeAccessor.setIntAttribute(PokerLobbyAttributes.REMOVE.name(), 1);
+		attributeAccessor.setIntAttribute(PokerLobbyAttributes.TABLE_READY_FOR_CLOSE.name(), 1);
     }
 
     public void handleOpenSessionFailedResponse(OpenSessionFailedResponse attachment) {
