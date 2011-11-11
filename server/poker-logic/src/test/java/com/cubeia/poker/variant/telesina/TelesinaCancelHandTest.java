@@ -40,5 +40,7 @@ public class TelesinaCancelHandTest {
         verify(player2).returnAllBets();
         verify(state).notifyPlayerBalance(player1Id);
         verify(state).notifyPlayerBalance(player2Id);
+        
+        verify(state).notifyRakeInfo();
     }
 }

@@ -249,6 +249,9 @@ public class Telesina implements GameType, RoundVisitor {
 		    p.returnAllBets();
 		    state.notifyPlayerBalance(p.getId());
 		}
+		
+		state.notifyRakeInfo();
+		
 	}
 
 	private Collection<PotTransition> moveChipsToPot() {
