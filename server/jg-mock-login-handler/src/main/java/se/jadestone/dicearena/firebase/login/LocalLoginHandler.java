@@ -68,7 +68,17 @@ public class LocalLoginHandler implements LoginLocator, LoginHandler, Service {
 	            responsePayload = null;
 	        }
 	        
-	        LoginResponseAction response = new LoginResponseAction(true, requestPayloadStruct.partnerAccountId, createUserIdFromUsernameHash(request));
+//	        System.out.println(" --- LOGIN PARAMETERS ---");
+//	        System.out.println("User: "+request.getUser());
+//	        System.out.println("Password: "+request.getPassword());
+//	        System.out.println("Credentials "+requestPayloadStruct.credential);
+//	        System.out.println("partnerAccountId "+requestPayloadStruct.partnerAccountId);
+//	        System.out.println("desiredNickName "+requestPayloadStruct.desiredNickName);
+//	        System.out.println("partnerCode "+requestPayloadStruct.partnerCode);
+//	        System.out.println("arenaPopulationId "+requestPayloadStruct.arenaPopulationId);
+//	        System.out.println("-------------------");
+	        
+	        LoginResponseAction response = new LoginResponseAction(true, requestPayloadStruct.partnerAccountId, createUserIdFromString(requestPayloadStruct.partnerAccountId));
 	        response.setData(responsePayload);
 	        
 	        log.debug("Login user["+request.getUser()+"@"+request.getRemoteAddress()+"] with id["+response.getPlayerid()+"]");
@@ -77,15 +87,15 @@ public class LocalLoginHandler implements LoginLocator, LoginHandler, Service {
         } else {
         	// We also want to support logins without Jadestone specific payload data plz
         	log.warn("Using login without JG Payload");
-        	LoginResponseAction response = new LoginResponseAction(true, request.getUser(), createUserIdFromUsernameHash(request));
+        	LoginResponseAction response = new LoginResponseAction(true, request.getUser(), createUserIdFromString(request.getUser()));
         	return response;
         }
 	}
 	
 	// ---- UNUSED SERVICE METHODS ----
 	
-	private int createUserIdFromUsernameHash(LoginRequestAction request) {
-		return Math.abs(request.getUser().hashCode());
+	private int createUserIdFromString(String credential) {
+		return Math.abs(credential.hashCode());
 	}
 
 	@Override
