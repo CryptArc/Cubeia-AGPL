@@ -94,12 +94,12 @@ public class AsynchronousCashGamesBackend implements CashGamesBackend {
 			log.error("failed to open session", e);
 			OpenSessionFailedResponse.ErrorCode errorCode = e.getErrorCode();
 			String message = e.getMessage();
-			callback.requestFailed(new OpenSessionFailedResponse(errorCode, message));
+			callback.requestFailed(new OpenSessionFailedResponse(errorCode, message, request.playerId));
 		} catch (Throwable t) {
 			log.error("failed to open session", t);
 			OpenSessionFailedResponse.ErrorCode errorCode = null;
 			String message = t.getMessage();
-			callback.requestFailed(new OpenSessionFailedResponse(errorCode, message));
+			callback.requestFailed(new OpenSessionFailedResponse(errorCode, message, request.playerId));
 		}
 	}
 	

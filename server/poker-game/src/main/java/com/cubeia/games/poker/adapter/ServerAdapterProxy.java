@@ -169,4 +169,12 @@ public abstract class ServerAdapterProxy implements ServerAdapter {
 			getAdaptee().notifyDeckInfo(size, rankLow);
 		}
 	}
+	
+	@Override
+	public void unseatPlayer(int playerId, boolean setAsWatcher) {
+		if(getAdaptee() != null) {
+			getAdaptee().unseatPlayer(playerId, setAsWatcher);
+		}
+	}
+
 }

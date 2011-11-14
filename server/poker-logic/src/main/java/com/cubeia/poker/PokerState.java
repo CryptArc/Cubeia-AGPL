@@ -720,6 +720,10 @@ public class PokerState implements Serializable, IPokerState {
 		this.adapterState = adapterState;
 	}
 	
+	public void unseatPlayer(int playerId, boolean setAsWatcher) {
+		serverAdapter.unseatPlayer(playerId, setAsWatcher);
+	}
+	
 	/*------------------------------------------------
 	 
 		END OF SERVER ADAPTER METHODS

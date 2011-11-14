@@ -98,20 +98,24 @@ public class PokerHandler extends DefaultPokerHandler {
 	@Override
 	public void visit(BuyInRequest packet) {
         PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) state.getPokerPlayer(playerId);
-        ReserveRequest reserveRequest = new ReserveRequest(pokerPlayer.getPlayerSessionId(), -1, packet.amount);
-        ReserveCallback callback = cashGameBackend.getCallbackFactory().createReserveCallback(table);
-        
-        // Check if the amount is allowed by the table
-        long sum = reserveRequest.amount + pokerPlayer.getBalance() + pokerPlayer.getPendingBalance();
-		if (sum <= state.getMaxBuyIn()) {
-        	cashGameBackend.reserve(reserveRequest, callback);
+        if (pokerPlayer != null) {
+	        ReserveRequest reserveRequest = new ReserveRequest(pokerPlayer.getPlayerSessionId(), -1, packet.amount);
+	        ReserveCallback callback = cashGameBackend.getCallbackFactory().createReserveCallback(table);
+	        
+	        // Check if the amount is allowed by the table
+	        long sum = reserveRequest.amount + pokerPlayer.getBalance() + pokerPlayer.getPendingBalance();
+			if (sum <= state.getMaxBuyIn()) {
+	        	cashGameBackend.reserve(reserveRequest, callback);
+	        } else {
+	        	ReserveFailedResponse failResponse = new ReserveFailedResponse(reserveRequest.playerSessionId, ErrorCode.AMOUNT_TOO_HIGH, "Requested buy in plus balance cannot be more than max buy in");
+				callback.requestFailed(failResponse);
+	        }
+	        
+	        // pokerPlayer.setSitInAfterSuccessfulBuyIn(packet.sitInIfSuccessful);
+	        pokerPlayer.setSitInAfterSuccessfulBuyIn(true);
         } else {
-        	ReserveFailedResponse failResponse = new ReserveFailedResponse(reserveRequest.playerSessionId, ErrorCode.AMOUNT_TOO_HIGH, "Requested buy in plus balance cannot be more than max buy in");
-			callback.requestFailed(failResponse);
+        	log.warn("Poker Player that was not found at table tried to buy in. Table["+table.getId()+"], Request["+packet+"]");
         }
-        
-        // pokerPlayer.setSitInAfterSuccessfulBuyIn(packet.sitInIfSuccessful);
-        pokerPlayer.setSitInAfterSuccessfulBuyIn(true);
 	}
 	
 	/*@Override

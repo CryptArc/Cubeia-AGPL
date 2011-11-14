@@ -95,8 +95,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
         PlayerSessionId sessionId = new PlayerSessionIdImpl(request.playerId);
         sessionTransactions.put(sessionId, 0);
         
-        OpenSessionResponse response = new OpenSessionResponse(sessionId, 
-            Collections.<String, String>emptyMap());
+        OpenSessionResponse response = new OpenSessionResponse(sessionId, Collections.<String, String>emptyMap());
         log.debug("new session opened, tId = {}, pId = {}, sId = {}", 
             new Object[] {request.tableId, request.playerId, response.sessionId});
         log.debug("currently open sessions: {}", sessionTransactions.size());
