@@ -58,11 +58,11 @@ public class TableCrashHandler {
         // 3. send error message to clients, must include hand id
         sendErrorMessageToClient(table);
         
-        // 4. remove players from table
-        Collection<PokerPlayer> removedPokerPlayers = removePlayersFromTable(table, players);
-        
-        // 5. close player sessions
-        closePlayerSessions(table, removedPokerPlayers);
+//        // 4. remove players from table
+//        Collection<PokerPlayer> removedPokerPlayers = removePlayersFromTable(table, players);
+//        
+//        // 5. close player sessions
+//        closePlayerSessions(table, removedPokerPlayers);
         
         // 5. close table session
         // TODO!
@@ -106,6 +106,7 @@ public class TableCrashHandler {
 
 
     private void printToErrorLog(AbstractGameAction action, Table table, Throwable throwable) {
+        /*
         if (action instanceof GameDataAction) {
             GameDataAction gda = (GameDataAction) action;
             ProtocolObject packet = null;
@@ -120,6 +121,7 @@ public class TableCrashHandler {
         } else {
             printActionsToErrorLog(throwable, "error handling action (" + action.getClass().getSimpleName() + "): "+action+" on table: "+table, table);
         }
+        */
     }
 
 
