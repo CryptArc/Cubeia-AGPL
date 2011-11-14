@@ -85,6 +85,6 @@ public class HandHistoryTranslator {
 	// --- PRIVATE METHODS --- //
 	
 	private static long calculateTotalBet(Result result) {
-		return result.getWinningsIncludingOwnBets() - result.getNetResult(); // TODO Correct?!
+		return result.getWinningsIncludingOwnBets() - result.getNetResult(); 
 	}
 }

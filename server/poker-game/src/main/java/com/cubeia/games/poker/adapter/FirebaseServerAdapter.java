@@ -392,7 +392,6 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
 		} else {
 			log.info("The hand was cancelled on table: " + table.getId() + " - " + table.getMetaData().getName());
-			// TODO: The hand was cancelled... do something!
 			cleanupPlayers();
 			HandCanceled handCanceledPacket = new HandCanceled();
 			GameDataAction action = protocolFactory.createGameAction(handCanceledPacket, -1, table.getId());

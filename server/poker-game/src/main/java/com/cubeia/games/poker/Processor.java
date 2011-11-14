@@ -102,6 +102,7 @@ public class Processor implements GameProcessor, TournamentProcessor {
 			packet.accept(pokerHandler);
 			PokerStats.getInstance().setState(table.getId(), state.getStateDescription());			
 		} catch (Throwable t) {
+			log.error("Unhandled error on table", t);
 //		    printActionsToErrorLog(e, "Pokerlogic could not handle action: "+action+" Table: "+table.getId()+" Packet: "+packet, table);
 		    tableCrashHandler.handleCrashOnTable(action, table, t);
 			throw new RuntimeException("Could not handle poker game data", t);

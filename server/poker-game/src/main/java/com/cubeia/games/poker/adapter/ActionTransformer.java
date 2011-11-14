@@ -62,19 +62,11 @@ import com.google.common.annotations.VisibleForTesting;
  * Translates poker-logic internal actions to the styx wire-protocol
  * as defined in poker-protocol.
  *
- * FIXME: this class should not be responsible for assigning sequence id:s to actions
- *
  * @author Fredrik Johansson, Cubeia Ltd
  */
 public class ActionTransformer {
     
     private static transient Logger log = Logger.getLogger(ActionTransformer.class);
-    
-//    private final ActionSequenceGenerator sequenceGenerator;
-//    
-//    public ActionTransformer(ActionSequenceGenerator sequenceGenerator) {
-//        this.sequenceGenerator = sequenceGenerator;
-//    }
     
 	public RequestAction transform(ActionRequest request, int sequenceNumber) {
 		RequestAction packet = new RequestAction();
