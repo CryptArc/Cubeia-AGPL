@@ -21,7 +21,6 @@ import static com.cubeia.firebase.api.game.player.PlayerStatus.CONNECTED;
 import static com.cubeia.firebase.api.game.player.PlayerStatus.DISCONNECTED;
 import static com.cubeia.firebase.api.game.player.PlayerStatus.LEAVING;
 import static com.cubeia.firebase.api.game.player.PlayerStatus.WAITING_REJOIN;
-import static com.cubeia.games.poker.handler.BackendCallHandler.EXT_PROP_KEY_TABLE_ID;
 import static com.cubeia.poker.player.SitOutStatus.NOT_ENTERED_YET;
 
 import java.io.Serializable;
@@ -29,18 +28,11 @@ import java.io.Serializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.cubeia.backend.cashgame.PlayerSessionId;
-import com.cubeia.backend.cashgame.TableId;
-import com.cubeia.backend.cashgame.dto.CloseSessionRequest;
-import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
-import com.cubeia.backend.cashgame.exceptions.CloseSessionFailedException;
-import com.cubeia.backend.firebase.CashGamesBackendContract;
 import com.cubeia.firebase.api.action.UnseatPlayersMttAction.Reason;
 import com.cubeia.firebase.api.game.player.GenericPlayer;
 import com.cubeia.firebase.api.game.player.PlayerStatus;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TournamentTableListener;
-import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.games.poker.cache.ActionCache;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.poker.PokerState;
@@ -61,19 +53,22 @@ public class PokerTableListener implements TournamentTableListener {
 
 	private static Logger log = LoggerFactory.getLogger(PokerTableListener.class);
 	
-	@Inject
+	@Inject @VisibleForTesting
 	ActionCache actionCache;
 
-	@Inject
+	@Inject @VisibleForTesting
 	GameStateSender gameStateSender;
 	
-	@Service
-	CashGamesBackendContract cashGameBackend;
+//	@Service
+//	CashGamesBackendContract cashGameBackend;
 	
-    @Inject
+	@Inject @VisibleForTesting
+	BackendPlayerSessionHandler backendPlayerSessionHandler;
+	
+    @Inject @VisibleForTesting
     StateInjector stateInjector;
 	
-    @Inject 
+    @Inject @VisibleForTesting
     PokerState state;
     
 	/**
@@ -169,47 +164,24 @@ public class PokerTableListener implements TournamentTableListener {
         state.addPlayer(pokerPlayer);
         
         if (!tournamentPlayer) {
-        	startWalletSession(table, player);
+            // TODO: wallet session should not be created here but on buy in request
+            
+        	log.debug("Start wallet session for player: " + player);
+        	backendPlayerSessionHandler.startWalletSession(state, table, player.getPlayerId());
         }
         
         return pokerPlayer;
     }
     
-	private void startWalletSession(Table table, GenericPlayer player) {
-	    log.debug("starting wallet session: tId = {}, pId = {}", table.getId(), player.getPlayerId());
-		TableId tableId = (TableId) state.getExternalTableProperties().get(EXT_PROP_KEY_TABLE_ID);
-		if(tableId == null) {
-			log.warn("No table ID found in external properties; Table must be anounced first; tId = {}", table.getId());
-		}
-		OpenSessionRequest openSessionRequest = new OpenSessionRequest(player.getPlayerId(), tableId, -1);
-        cashGameBackend.openSession(openSessionRequest, cashGameBackend.getCallbackFactory().createOpenSessionCallback(table));
-	}
-
 	private void removePlayer(Table table, int playerId, boolean tournamentPlayer) {
         if (!tournamentPlayer) {
         	PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) state.getPokerPlayer(playerId);
             if (pokerPlayer != null) { // Check if player was removed already
-            	handleSessionEnd(table, playerId, pokerPlayer);
+            	backendPlayerSessionHandler.endPlayerSessionInBackend(table, pokerPlayer);
         	}
         }
         
         state.removePlayer(playerId);
     }
 	
-    private void handleSessionEnd(Table table, int playerId, PokerPlayerImpl pokerPlayer) {
-        PlayerSessionId sessionId = pokerPlayer.getPlayerSessionId();
-        
-        log.debug("Handle session end for player["+playerId+"], sessionid["+sessionId+"]");
-        if (sessionId != null) {
-        	CloseSessionRequest closeSessionRequest = new CloseSessionRequest(sessionId, -1);
-            try {
-                cashGameBackend.closeSession(closeSessionRequest);
-            } catch (CloseSessionFailedException e) {
-                log.error("error ending wallet session: " + sessionId, e);
-            } finally {
-                pokerPlayer.clearBalance();
-                pokerPlayer.setPlayerSessionId(null);
-            }
-        }
-    }
 }

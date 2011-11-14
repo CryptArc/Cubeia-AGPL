@@ -53,7 +53,7 @@ public class MockServerAdapter implements ServerAdapter {
 	private int timeoutCounter = 0;
 	private Deque<ActionRequest> requests = new LinkedList<ActionRequest>();
 	public Collection<RatedPlayerHand> hands;
-	public PokerAction actionPerformed;
+	protected List<PokerAction> allActions = new ArrayList<PokerAction>(); 
 	public HandEndStatus handEndStatus;
 	public Map<Integer, List<Card>> exposedCards = new HashMap<Integer, List<Card>>();
 	public HandResult result;
@@ -61,7 +61,7 @@ public class MockServerAdapter implements ServerAdapter {
 	
 	public void clear() {
 	    handEndStatus = null;
-	    actionPerformed = null;
+	    allActions.clear();
 	    exposedCards.clear();
 	    hands = null;
 	    playerStatus.clear();
@@ -84,7 +84,15 @@ public class MockServerAdapter implements ServerAdapter {
 	}
 	
 	public PokerAction getLatestActionPerformed() {
-		return actionPerformed;
+		if (allActions.isEmpty()) {
+			return null;
+		}else{
+			return allActions.get(allActions.size()-1);
+		}
+	}
+	
+	public PokerAction getNthAction(int n) {
+		return allActions.get(n);
 	}
 
 	public ActionRequest getLastActionRequest() {
@@ -115,7 +123,7 @@ public class MockServerAdapter implements ServerAdapter {
     }
     
     public void notifyActionPerformed(PokerAction action, long resultingBalance) {
-        actionPerformed = action;
+        allActions.add(action);
     }
 
 	public void notifyCommunityCards(List<Card> cards) {}

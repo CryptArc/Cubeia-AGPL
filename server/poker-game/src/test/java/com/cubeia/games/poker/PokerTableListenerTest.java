@@ -11,12 +11,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 
 import org.junit.Test;
-import org.mockito.Mockito;
 
-import com.cubeia.backend.cashgame.callback.OpenSessionCallback;
-import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
-import com.cubeia.backend.firebase.CashGamesBackendContract;
-import com.cubeia.backend.firebase.FirebaseCallbackFactory;
 import com.cubeia.firebase.api.game.GameNotifier;
 import com.cubeia.firebase.api.game.player.GenericPlayer;
 import com.cubeia.firebase.api.game.table.Table;
@@ -36,9 +31,7 @@ public class PokerTableListenerTest {
       
         ptl.state = mock(PokerState.class);
         ptl.gameStateSender = mock(GameStateSender.class);
-        ptl.cashGameBackend = mock(CashGamesBackendContract.class);
-        FirebaseCallbackFactory callbackFactory = mock(FirebaseCallbackFactory.class);
-        when(ptl.cashGameBackend.getCallbackFactory()).thenReturn(callbackFactory);
+        ptl.backendPlayerSessionHandler = mock(BackendPlayerSessionHandler.class);
         
         Table table = mock(Table.class);
         when(table.getId()).thenReturn(tableId);
@@ -56,9 +49,7 @@ public class PokerTableListenerTest {
         assertThat(((PokerPlayerImpl) pokerPlayer).getPlayerSessionId(), nullValue());
         verify(ptl.gameStateSender).sendGameState(table, playerId);
         verify(ptl.state).addPlayer(pokerPlayer);
-        verify(ptl.cashGameBackend).openSession(Mockito.any(OpenSessionRequest.class), Mockito.any(OpenSessionCallback.class));
-        verify(callbackFactory).createOpenSessionCallback(table);
-        
+        verify(ptl.backendPlayerSessionHandler).startWalletSession(ptl.state, table, playerId);
         verify(ptl.state, never()).getBalance(playerId);
         
         assertThat(pokerPlayer.isSittingOut(), is(true));

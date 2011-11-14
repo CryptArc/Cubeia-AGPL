@@ -8,6 +8,7 @@ import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.rng.RNGProvider;
+import com.cubeia.poker.states.PlayingSTM;
 import com.cubeia.poker.variant.PokerVariant;
 
 public interface IPokerState {
@@ -49,4 +50,11 @@ public interface IPokerState {
 	void notifyBetStacksUpdated();
 
 	void exposeShowdownCards();
+	
+	/**
+	 * Shutdown this table. After calling this method the table cannot be started again.
+	 * The game will move to the {@link ShutdownSTM} state.
+	 */
+	void shutdown();
+	
 }

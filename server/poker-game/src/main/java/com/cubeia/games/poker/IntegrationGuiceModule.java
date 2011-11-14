@@ -46,6 +46,8 @@ public class IntegrationGuiceModule extends AbstractModule {
 		bind(TournamentTableListener.class).to(PokerTableListener.class);
 		bind(ActionTransformer.class).in(Singleton.class);
 		bind(ActionSequenceGenerator.class).in(Singleton.class);
-		bind(TimeoutCache.class).in(Singleton.class);
+        bind(TimeoutCache.class).in(Singleton.class);
+        bind(BackendPlayerSessionHandler.class).in(Singleton.class);
+		bind(TableCrashHandler.class).in(EventScoped.class);
 	}
 }

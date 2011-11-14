@@ -104,6 +104,7 @@ public class BettingRound implements Round, BettingRoundContext {
 		PokerPlayer player = gameType.getState().getPlayerInCurrentHand(action.getPlayerId());
 
 		verifyValidAction(action, player);
+				
 		handleAction(action, player);
 		gameType.getServerAdapter().notifyActionPerformed(action, player.getBalance());
 				

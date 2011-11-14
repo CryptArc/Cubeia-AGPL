@@ -6,7 +6,6 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -107,7 +106,7 @@ public class PokerStateTest {
         verify(player1).setSitOutStatus(SitOutStatus.SITTING_OUT);
         verify(state.serverAdapter).scheduleTimeout(Mockito.anyLong());
         assertThat(state.isFinished(), is(true));
-        assertThat(state.currentState, is(PokerState.WAITING_TO_START));
+        assertThat(state.getCurrentState(), is(PokerState.WAITING_TO_START));
         verify(player3, Mockito.never()).setSitOutStatus(SitOutStatus.SITTING_OUT);
 
         verify(state.serverAdapter).notifyBuyInInfo(player1.getId(),true);
@@ -327,4 +326,17 @@ public class PokerStateTest {
         verify(state.serverAdapter).requestMultipleActions(requests);
     }
     
+    @Test
+    public void shutdown() {
+        PokerState state = new PokerState();
+        state.shutdown();
+        assertThat(state.getCurrentState(), is(PokerState.SHUTDOWN));
+    }
+    
+    @Test(expected = UnsupportedOperationException.class)
+    public void illegalToMoveFromShutdownState() {
+        PokerState state = new PokerState();
+        state.setCurrentState(PokerState.SHUTDOWN);
+        state.setCurrentState(PokerState.PLAYING);
+    }
 }

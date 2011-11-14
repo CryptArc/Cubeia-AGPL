@@ -17,8 +17,6 @@
 
 package com.cubeia.games.poker;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +28,6 @@ import com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse;
 import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
 import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;
 import com.cubeia.backend.cashgame.dto.ReserveResponse;
-import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.action.GameObjectAction;
 import com.cubeia.firebase.api.game.GameProcessor;
@@ -49,6 +46,7 @@ import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.games.poker.services.HandDebuggerContract;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.player.PokerPlayer;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 
 
@@ -64,25 +62,28 @@ public class Processor implements GameProcessor, TournamentProcessor {
 
     private static Logger log = LoggerFactory.getLogger(Processor.class);
 
-    @Inject
+    @Inject @VisibleForTesting
     ActionCache actionCache;
 
-    @Inject
+    @Inject @VisibleForTesting
     StateInjector stateInjector;
     
-    @Inject 
+    @Inject @VisibleForTesting
     PokerState state;
 
-    @Inject
+    @Inject @VisibleForTesting
 	PokerHandler pokerHandler;
     
-    @Inject
+    @Inject @VisibleForTesting
 	BackendCallHandler backendHandler;
     
-    @Inject
+    @Inject @VisibleForTesting
     TimeoutCache timeoutCache;
     
-    @Service
+    @Inject @VisibleForTesting
+    TableCrashHandler tableCrashHandler;
+    
+    @Service @VisibleForTesting
     HandDebuggerContract handDebugger;
     
     
@@ -101,7 +102,8 @@ public class Processor implements GameProcessor, TournamentProcessor {
 			packet.accept(pokerHandler);
 			PokerStats.getInstance().setState(table.getId(), state.getStateDescription());			
 		} catch (Exception e) {
-		    printActionsToErrorLog(e, "Pokerlogic could not handle action: "+action+" Table: "+table.getId()+" Packet: "+packet, table);
+//		    printActionsToErrorLog(e, "Pokerlogic could not handle action: "+action+" Table: "+table.getId()+" Packet: "+packet, table);
+		    tableCrashHandler.handleCrashOnTable(action, table, e);
 			throw new RuntimeException("Could not handle poker game data", e);
 		}
 		
@@ -149,7 +151,8 @@ public class Processor implements GameProcessor, TournamentProcessor {
     	    }
 	    } catch (RuntimeException e) {
 	    	log.error("Failed handling game object action.", e);
-	        printActionsToErrorLog(e, "Could not handle command action: "+action+" on table: "+table, table);
+//	        printActionsToErrorLog(e, "Could not handle command action: "+action+" on table: "+table, table);
+            tableCrashHandler.handleCrashOnTable(action, table, e);
 	    }
 	    
         updatePlayerDebugInfo(table);
@@ -179,7 +182,7 @@ public class Processor implements GameProcessor, TournamentProcessor {
 					state.timeout();
 				} else {
 					log.warn("Invalid sequence detected");
-					printActionsToErrorLog(new RuntimeException(), "Timeout command OOB: "+command+" on table: "+table, table);
+					tableCrashHandler.printActionsToErrorLog(null, "Timeout command OOB: "+command+" on table: "+table, table);
 				}
 				break;
 			case PLAYER_TIMEOUT:
@@ -224,25 +227,6 @@ public class Processor implements GameProcessor, TournamentProcessor {
     private void clearRequestSequence(Table table) {
         FirebaseState fbState = (FirebaseState)state.getAdapterState();
         fbState.setCurrentRequestSequence(-1);
-    }
-
-    private void printActionsToErrorLog(Exception e, String description, Table table) {
-        // Log error with all actions on the table leading to this problem
-        List<GameAction> actions = actionCache.getPublicActions(table.getId());
-        StringBuffer error = new StringBuffer(description);
-        error.append("\nState: "+state);
-        for (GameAction history : actions) {
-            ProtocolObject packet = null;
-            try {
-                if (history instanceof GameDataAction) {
-                    GameDataAction dataAction = (GameDataAction) history;
-                    packet = serializer.unpack(dataAction.getData());
-                }
-            } catch (Exception e2) {};
-            error.append("\n\t"+packet);
-        }
-        error.append("\nStackTrace: ");
-        log.error(error.toString(), e);
     }
 
 }

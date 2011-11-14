@@ -205,30 +205,23 @@ public class MockGame implements GameType {
 
 			@Override
 			public int getEntryBetLevel() {
-				// TODO Auto-generated method stub
 				return 0;
 			}
 
 			@Override
-			public void playerIsSittingOut(int playerId, SitOutStatus misssedAnte) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void playerIsSittingOut(int playerId, SitOutStatus misssedAnte) {}
 			
 			@Override
 			public void call() {}
 
 			@Override
-			public void exposeShowdownCards() {
-				// TODO Auto-generated method stub
-				
-			}
+			public void exposeShowdownCards() {}
 			
 			@Override
-			public void notifyBetStacksUpdated() {
-				// TODO Auto-generated method stub
-				
-			}
+			public void notifyBetStacksUpdated() {}
+			
+			@Override
+			public void shutdown() {}
 		};
 	}
 

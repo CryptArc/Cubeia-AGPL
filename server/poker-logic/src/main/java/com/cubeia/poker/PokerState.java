@@ -53,6 +53,7 @@ import com.cubeia.poker.rounds.blinds.BlindsInfo;
 import com.cubeia.poker.states.NotStartedSTM;
 import com.cubeia.poker.states.PlayingSTM;
 import com.cubeia.poker.states.PokerGameSTM;
+import com.cubeia.poker.states.ShutdownSTM;
 import com.cubeia.poker.states.WaitingToStartSTM;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.timing.TimingFactory;
@@ -90,6 +91,8 @@ public class PokerState implements Serializable, IPokerState {
 
 	public static final PokerGameSTM PLAYING = new PlayingSTM();
 
+	public static final PokerGameSTM SHUTDOWN = new ShutdownSTM();
+	
 	/* -------- Dependency Injection Members, initialization needed -------- */
 
 //	@Inject
@@ -160,7 +163,7 @@ public class PokerState implements Serializable, IPokerState {
 	private Set<Integer> watchers = new HashSet<Integer>();
 	
 	@VisibleForTesting
-	protected PokerGameSTM currentState = NOT_STARTED;
+    private PokerGameSTM currentState = NOT_STARTED;
 
 	private boolean handFinished = false;
 
@@ -190,7 +193,7 @@ public class PokerState implements Serializable, IPokerState {
 	public PokerState() {}
 
 	public String toString() {
-		return "PokerState - state[" + currentState + "] type[" + gameType + "]";
+		return "PokerState - state[" + getCurrentState() + "] type[" + gameType + "]";
 	}
 
 	@Override
@@ -244,16 +247,16 @@ public class PokerState implements Serializable, IPokerState {
 	 * Starts the game if all criterias are met
 	 */
 	private void startGame() {
-		if (currentState.getClass() == NOT_STARTED.getClass() && playerMap.size() > 1) {
+		if (getCurrentState().getClass() == NOT_STARTED.getClass() && playerMap.size() > 1) {
 			serverAdapter.scheduleTimeout(timing.getTime(Periods.START_NEW_HAND));
-			currentState = WAITING_TO_START;
+			setCurrentState(WAITING_TO_START);
 		}
 	}
 
 	public void act(PokerAction action) {
 		// Check sizes of caches and log warnings
 		checkWarnings();
-		currentState.act(action, this);
+		getCurrentState().act(action, this);
 	}
 
 	public List<Card> getCommunityCards() {
@@ -265,7 +268,7 @@ public class PokerState implements Serializable, IPokerState {
 	}
 
 	public void timeout() {
-		currentState.timeout(this);
+		getCurrentState().timeout(this);
 	}
 
 	public boolean isPlayerSeated(int playerId) {
@@ -333,12 +336,12 @@ public class PokerState implements Serializable, IPokerState {
 	 */
 	@Override
 	public boolean isPlayerInHand(int playerId) {
-		return getCurrentHandPlayerMap().containsKey(playerId) && currentState.equals(PLAYING);
+		return getCurrentHandPlayerMap().containsKey(playerId) && getCurrentState().equals(PLAYING);
 	}
 
 	public void startHand() {
 		if (countSittingInPlayers() > 1) {
-			currentState = PLAYING;
+			setCurrentState(PLAYING);
 			
 			resetValuesAtStartOfHand();
 			
@@ -411,7 +414,7 @@ public class PokerState implements Serializable, IPokerState {
 			serverAdapter.scheduleTimeout(timing.getTime(Periods.START_NEW_HAND));
 		}
 		
-		currentState = WAITING_TO_START;
+		setCurrentState(WAITING_TO_START);
 	}
 
 	/**
@@ -454,7 +457,7 @@ public class PokerState implements Serializable, IPokerState {
 	}
 
 	public PokerGameSTM getGameState() {
-		return currentState;
+		return getCurrentState();
 	}
 
 	/**
@@ -462,7 +465,7 @@ public class PokerState implements Serializable, IPokerState {
 	 * Also: This should encapsulated so it cannot be tinkered with.
 	 */
 	public void setState(PokerGameSTM state) {
-		this.currentState = state;
+		this.setCurrentState(state);
 	}
 
 	public void removePlayer(PokerPlayer player) {
@@ -742,7 +745,7 @@ public class PokerState implements Serializable, IPokerState {
 	}
 
 	public String getStateDescription() {
-		return currentState.getClass().getName() + "_" + gameType.getStateDescription();
+		return getCurrentState().getClass().getName() + "_" + gameType.getStateDescription();
 	}
 
 	/**
@@ -851,4 +854,21 @@ public class PokerState implements Serializable, IPokerState {
 		return getCurrentHandSeatingMap().get(getBlindsInfo().getDealerButtonSeatId());
 	}
 
+	@Override
+	public void shutdown() {
+	    log.debug("shutting down table {}", getId());
+	    setCurrentState(SHUTDOWN);
+	}
+
+    protected PokerGameSTM getCurrentState() {
+        return currentState;
+    }
+
+    protected void setCurrentState(PokerGameSTM newState) {
+        if (SHUTDOWN.equals(getCurrentState())) {
+            throw new UnsupportedOperationException("attempted illegal state change from SHUTDOWN -> " + newState);
+        }
+        this.currentState = newState;
+    }
+	
 }
