@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -35,7 +36,9 @@ import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.rake.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
+import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.timing.Periods;
+import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.variant.PokerVariant;
 
@@ -45,13 +48,15 @@ public class PokerStateTest {
 	PokerSettings settings;
 	int anteLevel;
 	
-	private void setup(){
+	@Before
+	public void setup() {
 		state = new PokerState();
         settings = mock(PokerSettings.class);
         anteLevel = 100;
         when(settings.getRakeSettins()).thenReturn(TestUtils.createOnePercentRakeSettings());
         when(settings.getAnteLevel()).thenReturn(anteLevel);
         when(settings.getVariant()).thenReturn(PokerVariant.TELESINA);
+        when(settings.getTiming()).thenReturn(TimingFactory.getRegistry().getDefaultTimingProfile());
         state.serverAdapter = mock(ServerAdapter.class);
         
 	}
@@ -65,7 +70,6 @@ public class PokerStateTest {
 	
     @Test
     public void testNotifyHandFinished() {
-    	setup();
         TimingProfile timingProfile = mock(TimingProfile.class);
 		when(settings.getTiming()).thenReturn(timingProfile);
 		when(settings.getMaxBuyIn()).thenReturn(10000);
@@ -116,7 +120,6 @@ public class PokerStateTest {
     
     @Test
     public void testNotifyHandFinishedPendingBalanceTooHigh() {
-    	setup();
         TimingProfile timingProfile = mock(TimingProfile.class);
 		when(settings.getTiming()).thenReturn(timingProfile);
 		when(settings.getMaxBuyIn()).thenReturn(100);
@@ -301,18 +304,22 @@ public class PokerStateTest {
     @Test
     public void requestAction() {
         PokerState state = new PokerState();
+        state.init(mock(RNGProvider.class), settings);
+        
+        
         state.serverAdapter = mock(ServerAdapter.class);
         
         ActionRequest actionRequest = mock(ActionRequest.class);
         state.requestAction(actionRequest);
         
-        verify(actionRequest).setTimeToAct(state.timing.getTime(Periods.ACTION_TIMEOUT));
+        verify(actionRequest).setTimeToAct(state.getTimingProfile().getTime(Periods.ACTION_TIMEOUT));
         verify(state.serverAdapter).requestAction(actionRequest);
     }
     
     @Test
     public void requestMultipleActions() {
         PokerState state = new PokerState();
+        state.init(mock(RNGProvider.class), settings);
         state.serverAdapter = mock(ServerAdapter.class);
 
         ActionRequest actionRequest1 = mock(ActionRequest.class);
@@ -321,8 +328,8 @@ public class PokerStateTest {
         Collection<ActionRequest> requests = Arrays.asList(actionRequest1, actionRequest2);
         state.requestMultipleActions(requests);
         
-        verify(actionRequest1).setTimeToAct(state.timing.getTime(Periods.ACTION_TIMEOUT));
-        verify(actionRequest2).setTimeToAct(state.timing.getTime(Periods.ACTION_TIMEOUT));
+        verify(actionRequest1).setTimeToAct(state.getTimingProfile().getTime(Periods.ACTION_TIMEOUT));
+        verify(actionRequest2).setTimeToAct(state.getTimingProfile().getTime(Periods.ACTION_TIMEOUT));
         verify(state.serverAdapter).requestMultipleActions(requests);
     }
     
