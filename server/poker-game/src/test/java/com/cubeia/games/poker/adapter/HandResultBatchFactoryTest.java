@@ -51,7 +51,7 @@ public class HandResultBatchFactoryTest {
         TableId tableId = new TableIdImpl();
         
         Map<PokerPlayer, Result> results = new HashMap<PokerPlayer, Result>();
-        Result result1 = new Result(2000, 1000, Collections.<Pot, Long>emptyMap());
+        Result result1 = new Result(1980, 1000, Collections.<Pot, Long>emptyMap());
         Result result2 = new Result(-1000, 1000, Collections.<Pot, Long>emptyMap());
         results.put(pokerPlayer1, result1);
         results.put(pokerPlayer2, result2);
@@ -71,6 +71,37 @@ public class HandResultBatchFactoryTest {
         assertThat(hr1.win, is(result1.getWinningsIncludingOwnBets()));
         assertThat(hr1.rake, is(1000L / 100));
         assertThat(hr1.playerSession, is(playerSessionId1));
+    }
+    
+    @Test(expected=IllegalStateException.class)
+    public void testCreateUnbalancedBatchHandRequest() {
+        HandResultBatchFactory handResultFactory = new HandResultBatchFactory();
+        long handId = 55555;
+        
+        int playerId1 = 22;
+        PlayerSessionId playerSessionId1 = new PlayerSessionIdImpl(playerId1);
+        PokerPlayerImpl pokerPlayer1 = mock(PokerPlayerImpl.class);
+        when(pokerPlayer1.getId()).thenReturn(playerId1);
+        when(pokerPlayer1.getPlayerSessionId()).thenReturn(playerSessionId1);
+        
+        int playerId2 = 33;
+        PlayerSessionId playerSessionId2 = new PlayerSessionIdImpl(playerId2);
+        PokerPlayerImpl pokerPlayer2 = mock(PokerPlayerImpl.class);
+        when(pokerPlayer2.getId()).thenReturn(playerId2);
+        when(pokerPlayer2.getPlayerSessionId()).thenReturn(playerSessionId2);
+        
+        TableId tableId = new TableIdImpl();
+        
+        Map<PokerPlayer, Result> results = new HashMap<PokerPlayer, Result>();
+        Result result1 = new Result(2000, 1000, Collections.<Pot, Long>emptyMap());
+        Result result2 = new Result(-1000, 1000, Collections.<Pot, Long>emptyMap());
+        results.put(pokerPlayer1, result1);
+        results.put(pokerPlayer2, result2);
+        
+        RakeInfoContainer rakeInfoContainer = new RakeInfoContainer(1000 * 2, (1000 * 2) / 100, new HashMap<Pot, BigDecimal>());
+        HandResult handResult = new HandResult(results, Collections.<RatedPlayerHand>emptyList(), Collections.<PotTransition>emptyList(), rakeInfoContainer, new ArrayList<Integer>() );
+        
+        handResultFactory.createBatchHandRequest(handResult, handId, tableId);
     }
 
     private com.cubeia.backend.cashgame.dto.HandResult findByPlayerSessionId(PlayerSessionId playerSessionId,
