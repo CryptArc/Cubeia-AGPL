@@ -59,7 +59,7 @@ public class HandResultBatchFactoryTest {
         RakeInfoContainer rakeInfoContainer = new RakeInfoContainer(1000 * 2, (1000 * 2) / 100, new HashMap<Pot, BigDecimal>());
         HandResult handResult = new HandResult(results, Collections.<RatedPlayerHand>emptyList(), Collections.<PotTransition>emptyList(), rakeInfoContainer, new ArrayList<Integer>() );
         
-        BatchHandRequest batchHandRequest = handResultFactory.createBatchHandRequest(handResult, handId, tableId);
+        BatchHandRequest batchHandRequest = handResultFactory.createAndValidateBatchHandRequest(handResult, handId, tableId);
         
         assertThat(batchHandRequest, notNullValue());
         assertThat(batchHandRequest.handId, is(handId));        
@@ -101,7 +101,7 @@ public class HandResultBatchFactoryTest {
         RakeInfoContainer rakeInfoContainer = new RakeInfoContainer(1000 * 2, (1000 * 2) / 100, new HashMap<Pot, BigDecimal>());
         HandResult handResult = new HandResult(results, Collections.<RatedPlayerHand>emptyList(), Collections.<PotTransition>emptyList(), rakeInfoContainer, new ArrayList<Integer>() );
         
-        handResultFactory.createBatchHandRequest(handResult, handId, tableId);
+        handResultFactory.createAndValidateBatchHandRequest(handResult, handId, tableId);
     }
 
     private com.cubeia.backend.cashgame.dto.HandResult findByPlayerSessionId(PlayerSessionId playerSessionId,

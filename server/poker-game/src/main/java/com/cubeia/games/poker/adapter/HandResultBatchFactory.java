@@ -11,7 +11,7 @@ import com.cubeia.poker.result.Result;
 
 public class HandResultBatchFactory {
 
-    public BatchHandRequest createBatchHandRequest(HandResult handResult, long handId, TableId tableId) {
+    public BatchHandRequest createAndValidateBatchHandRequest(HandResult handResult, long handId, TableId tableId) {
     	long totalBet = 0;
     	long totalWin = 0;
     	long totalRake = 0;

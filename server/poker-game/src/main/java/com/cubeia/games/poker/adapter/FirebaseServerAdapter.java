@@ -358,7 +358,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
 				long handId = getIntegrationHandId();
 				TableId externalTableId = getIntegrationTableId();
-				BatchHandRequest batchHandRequest = handResultBatchFactory.createBatchHandRequest(handResult, handId, externalTableId);
+				BatchHandRequest batchHandRequest = handResultBatchFactory.createAndValidateBatchHandRequest(handResult, handId, externalTableId);
 				BatchHandResponse batchHandResult = backend.batchHand(batchHandRequest);
 
 				validateAndUpdateBalances(batchHandResult);
