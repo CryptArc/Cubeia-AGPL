@@ -29,7 +29,6 @@ import com.cubeia.poker.hand.Hand;
 
 public class DefaultPokerPlayer implements PokerPlayer {
 
-	@SuppressWarnings("unused")
 	private static final Logger log = Logger.getLogger(DefaultPokerPlayer.class);
 	
 	protected static final long serialVersionUID = 74353817602536715L;

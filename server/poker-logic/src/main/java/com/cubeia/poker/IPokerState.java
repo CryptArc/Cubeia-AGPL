@@ -8,7 +8,7 @@ import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.rng.RNGProvider;
-import com.cubeia.poker.states.PlayingSTM;
+import com.cubeia.poker.states.ShutdownSTM;
 import com.cubeia.poker.variant.PokerVariant;
 
 public interface IPokerState {

@@ -52,9 +52,6 @@ public class TelesinaHandComparator implements Comparator<Hand> {
 		HandStrength c1Strength = evaluator.getBestHandStrength(h1);
 		HandStrength c2Strength = evaluator.getBestHandStrength(h2);
 		
-		System.out.println("C1: "+c1Strength);
-		System.out.println("C2: "+c2Strength);
-		
 		if (c1Strength.getHandType() != c2Strength.getHandType()) {
 			return c1Strength.getHandType().telesinaHandTypeValue - c2Strength.getHandType().telesinaHandTypeValue;
 		}
