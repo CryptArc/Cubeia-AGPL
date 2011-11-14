@@ -107,12 +107,7 @@ public class BettingRound implements Round, BettingRoundContext {
 				
 		handleAction(action, player);
 		gameType.getServerAdapter().notifyActionPerformed(action, player.getBalance());
-				
-		// FIXME: Perhaps the new status information could be included in the action performed packet?
-		if (player.getBalance() <= 0) {
-			gameType.getServerAdapter().notifyPlayerStatusChanged(player.getId(), PokerPlayerStatus.ALLIN);
-		}
-		
+			
 		if (roundFinished()) {
 			isFinished = true;
 		} else {

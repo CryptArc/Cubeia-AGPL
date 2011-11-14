@@ -513,12 +513,10 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		log.debug("Notify player status changed: "+playerId+" -> "+status);
 		PlayerPokerStatus packet = new PlayerPokerStatus();
 		packet.player = playerId;
+		packet.inCurrentHand = state.isPlayerInHand(playerId);
 		switch (status) {
-		case ALLIN:
-			packet.status = Enums.PlayerTableStatus.ALLIN;
-			break;
-		case NORMAL:
-			packet.status = Enums.PlayerTableStatus.NORMAL;
+		case SITIN:
+			packet.status = Enums.PlayerTableStatus.SITIN;
 			break;
 		case SITOUT:
 			packet.status = Enums.PlayerTableStatus.SITOUT;

@@ -92,7 +92,7 @@ public class TableEventCache {
 	private void checkJoinedPlayer(int playerId, int tableId, ProtocolObject protocol) {
 		if (protocol instanceof PlayerPokerStatus) {
 			PlayerPokerStatus playerStatus = (PlayerPokerStatus) protocol;
-			if (playerStatus.status.equals(PlayerTableStatus.NORMAL)) {
+			if (playerStatus.status.equals(PlayerTableStatus.SITIN)) {
 				// New/Reconnected player - send HTTP link
 				handDebugger.sendHttpLink(tableId, playerId);
 			}

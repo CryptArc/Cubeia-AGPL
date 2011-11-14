@@ -140,7 +140,8 @@ public class PokerState implements Serializable, IPokerState {
 	/** Maps playerId to player during the current hand */
 	private Map<Integer, PokerPlayer> currentHandPlayerMap = new HashMap<Integer, PokerPlayer>();
 	
-	private SortedMap<Integer, PokerPlayer> seatingMap = new TreeMap<Integer, PokerPlayer>();
+	@VisibleForTesting
+	protected SortedMap<Integer, PokerPlayer> seatingMap = new TreeMap<Integer, PokerPlayer>();
 
 	/** Seatings during the current round */
 	private SortedMap<Integer, PokerPlayer> currentHandSeatingMap = new TreeMap<Integer, PokerPlayer>();
@@ -325,6 +326,7 @@ public class PokerState implements Serializable, IPokerState {
 			
 			notifyNewHand();
 			notifyAllPlayerBalances();
+			notifyAllPlayerStatuses();
 			
 			gameType.startHand();
 		} else {
@@ -630,9 +632,21 @@ public class PokerState implements Serializable, IPokerState {
 	    serverAdapter.notifyPlayerBalance(playerMap.get(playerId));
 	}
 	
+	public void notifyPlayerStatus(int playerId) {
+	    PokerPlayer pokerPlayer = playerMap.get(playerId);
+		PokerPlayerStatus status = pokerPlayer.isSittingOut() ? PokerPlayerStatus.SITOUT : PokerPlayerStatus.SITIN;
+		serverAdapter.notifyPlayerStatusChanged(playerId, status);
+	}
+	
 	public void notifyAllPlayerBalances() {
-	    for (PokerPlayer player : currentHandPlayerMap.values()) {
+	    for (PokerPlayer player : seatingMap.values()) {
 	        notifyPlayerBalance(player.getId());
+	    }
+	}
+	
+	public void notifyAllPlayerStatuses() {
+	    for (PokerPlayer player : seatingMap.values()) {
+	        notifyPlayerStatus(player.getId());
 	    }
 	}
 	
@@ -678,7 +692,7 @@ public class PokerState implements Serializable, IPokerState {
 	}
 	
 	public void notifyPlayerSittingIn(int playerId) {
-		serverAdapter.notifyPlayerStatusChanged(playerId, PokerPlayerStatus.NORMAL);
+		serverAdapter.notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITIN);
 	}
 	
 	public ServerAdapter getServerAdapter() {
