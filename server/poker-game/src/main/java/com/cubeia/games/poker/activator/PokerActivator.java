@@ -134,7 +134,7 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
         
         CashGamesBackendContract cashGameBackendService = context.getServices().getServiceInstance(CashGamesBackendContract.class);
         
-    	participants.add(new PokerParticipant(10, "ITALIAN/cashgame/REAL_MONEY", 10, Timings.DEFAULT, TEXAS_HOLDEM, rngProvider, cashGameBackendService));
+    	// participants.add(new PokerParticipant(10, "ITALIAN/cashgame/REAL_MONEY", 10, Timings.DEFAULT, TEXAS_HOLDEM, rngProvider, cashGameBackendService));
     	participants.add(new PokerParticipant(4, "ITALIAN/cashgame/REAL_MONEY/4", 2, Timings.SLOW, TELESINA, rngProvider, cashGameBackendService));
     	participants.add(new PokerParticipant(6, "ITALIAN/cashgame/REAL_MONEY/6", 2, Timings.SLOW, TELESINA, rngProvider, cashGameBackendService));
     	

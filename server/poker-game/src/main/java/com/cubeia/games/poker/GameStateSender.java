@@ -52,7 +52,6 @@ public class GameStateSender {
 	        actions.addAll(actionsFromCache);
 	        
 	        actions.add(protocolFactory.createGameAction(new StopHandHistory(), playerId, tableId));
-	        log.debug("done sending {} stored game actions, player id = {}", actions.size() - 2, playerId);
 	        
 	        table.getNotifier().notifyPlayer(playerId, actions);
     	} catch (Exception e) {

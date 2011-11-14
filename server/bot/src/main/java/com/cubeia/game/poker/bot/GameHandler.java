@@ -20,6 +20,7 @@ import se.jadestone.dicearena.game.poker.network.protocol.DealPublicCards;
 import se.jadestone.dicearena.game.poker.network.protocol.DealerButton;
 import se.jadestone.dicearena.game.poker.network.protocol.DeckInfo;
 import se.jadestone.dicearena.game.poker.network.protocol.Enums.PlayerTableStatus;
+import se.jadestone.dicearena.game.poker.network.protocol.ErrorPacket;
 import se.jadestone.dicearena.game.poker.network.protocol.ExposePrivateCards;
 import se.jadestone.dicearena.game.poker.network.protocol.GameCard;
 import se.jadestone.dicearena.game.poker.network.protocol.HandCanceled;
@@ -255,5 +256,7 @@ public class GameHandler implements PacketVisitor {
 	public void visit(RakeInfo packet) {}
 
 	public void visit(DeckInfo packet) {}
+
+	public void visit(ErrorPacket packet) {}
     
 }

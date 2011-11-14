@@ -165,7 +165,6 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		StartNewHand packet = new StartNewHand();
 		packet.handId = handId;
 		GameDataAction action = protocolFactory.createGameAction(packet, 0, table.getId());
-		log.debug("--> Send StartNewHand["+packet+"] to everyone");
 		sendPublicPacket(action, -1);
 
 		log.debug("Starting new hand with ID '" + handId + "'. FBPlayers: "+table.getPlayerSet().getPlayerCount()+", PokerPlayers: "+state.getSeatedPlayers().size());
@@ -297,52 +296,54 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
 	@Override
 	public void notifyBuyInInfo(int playerId, boolean mandatoryBuyin) {
-		PokerPlayer player = state.getPokerPlayer(playerId);
-
-		BuyInInfoResponse resp = new BuyInInfoResponse();
-
-		int balanceOnTable = player == null ? 0 : (int) player.getBalance() + (int) player.getPendingBalance();
-
-		int correctedMaxBuyIn = state.getMaxBuyIn() - balanceOnTable;
-		int correctedMinBuyIn = state.getMinBuyIn();
-		
 		try {
-		    resp.balanceInWallet = (int) backend.getMainAccountBalance(playerId);
-		    resp.balanceOnTable = balanceOnTable;
-		    
-		    if (correctedMaxBuyIn <= correctedMinBuyIn){
-		        resp.maxAmount = 0;
-		        resp.minAmount = 0;
-		        resp.resultCode = BuyInInfoResultCode.MAX_LIMIT_REACHED;
-		    } else {
-		        resp.maxAmount = correctedMaxBuyIn;
-		        resp.minAmount = correctedMinBuyIn;
-		        resp.resultCode = BuyInInfoResultCode.OK;
-		    }
-		    
-		    resp.mandatoryBuyin = mandatoryBuyin;
-		} catch (GetBalanceFailedException e) {
-		    log.error("error getting balance", e);
-		    resp.resultCode = BuyInInfoResultCode.UNSPECIFIED_ERROR;
-            resp.maxAmount = -1;
-            resp.minAmount = -1;
-            resp.balanceInWallet = -1;
-        }
-		
-		log.debug("Creating buyin information minBuyIn["+state.getMinBuyIn()+"] maxBuyIn["+state.getMaxBuyIn()+"] balanceOnTable["+balanceOnTable+"] correctedMaxBuyIn["+correctedMaxBuyIn+"]" );
-		log.debug("Sending buyin information to player["+playerId+"]: "+resp);
-		
-		GameDataAction gda = new GameDataAction(playerId, table.getId());
-
-		StyxSerializer styx = new StyxSerializer(null);
-		try {
-			gda.setData(styx.pack(resp));
-		} catch (IOException e) {
-			e.printStackTrace();
+			PokerPlayer player = state.getPokerPlayer(playerId);
+	
+			BuyInInfoResponse resp = new BuyInInfoResponse();
+	
+			int balanceOnTable = player == null ? 0 : (int) player.getBalance() + (int) player.getPendingBalance();
+	
+			int correctedMaxBuyIn = state.getMaxBuyIn() - balanceOnTable;
+			int correctedMinBuyIn = state.getMinBuyIn();
+			
+			try {
+			    resp.balanceInWallet = (int) backend.getMainAccountBalance(playerId);
+			    resp.balanceOnTable = balanceOnTable;
+			    
+			    if (correctedMaxBuyIn <= correctedMinBuyIn){
+			        resp.maxAmount = 0;
+			        resp.minAmount = 0;
+			        resp.resultCode = BuyInInfoResultCode.MAX_LIMIT_REACHED;
+			    } else {
+			        resp.maxAmount = correctedMaxBuyIn;
+			        resp.minAmount = correctedMinBuyIn;
+			        resp.resultCode = BuyInInfoResultCode.OK;
+			    }
+			    
+			    resp.mandatoryBuyin = mandatoryBuyin;
+			} catch (GetBalanceFailedException e) {
+			    log.error("error getting balance", e);
+			    resp.resultCode = BuyInInfoResultCode.UNSPECIFIED_ERROR;
+	            resp.maxAmount = -1;
+	            resp.minAmount = -1;
+	            resp.balanceInWallet = -1;
+	        }
+			
+			log.debug("Sending buyin information to player["+playerId+"]: "+resp);
+			
+			GameDataAction gda = new GameDataAction(playerId, table.getId());
+	
+			StyxSerializer styx = new StyxSerializer(null);
+			try {
+				gda.setData(styx.pack(resp));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	
+			table.getNotifier().notifyPlayer(playerId, gda);
+		} catch (Exception e) {
+			log.error("Failed to create buy in info response for player["+playerId+"], mandatory["+mandatoryBuyin+"]", e);
 		}
-
-		table.getNotifier().notifyPlayer(playerId, gda);
-
 	}
 
 	@Override
@@ -443,9 +444,6 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
 	@Override
 	public void notifyPlayerBalance(PokerPlayer p) {
-		
-		log.debug(" ******** NOTIFY BALANCE Player["+p+"]");
-		
 		if (p == null) return;
 
 		// first send private packet to the player
@@ -573,7 +571,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		}
 	}
 
-	private void unseatPlayer(int playerId, boolean setAsWatcher) {
+	public void unseatPlayer(int playerId, boolean setAsWatcher) {
 		table.getPlayerSet().unseatPlayer(playerId);
 		table.getListener().playerLeft(table, playerId);
 		if (setAsWatcher) {

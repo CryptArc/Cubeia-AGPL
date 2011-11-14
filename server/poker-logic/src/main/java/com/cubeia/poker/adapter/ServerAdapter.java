@@ -160,6 +160,8 @@ public interface ServerAdapter {
 	 * @param rakeInfoContainer rake info
 	 */
     void notifyRakeInfo(RakeInfoContainer rakeInfoContainer);
+    
+    public void unseatPlayer(int playerId, boolean setAsWatcher);
 
 	
 }

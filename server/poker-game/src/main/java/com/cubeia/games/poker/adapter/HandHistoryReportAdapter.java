@@ -219,4 +219,9 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
 		TablePlayerSet set = table.getPlayerSet();
 		return set.getPlayer(id).getName();
 	}
+
+	@Override
+	public void unseatPlayer(int playerId, boolean setAsWatcher) {
+		super.unseatPlayer(playerId, setAsWatcher);
+	}
 }

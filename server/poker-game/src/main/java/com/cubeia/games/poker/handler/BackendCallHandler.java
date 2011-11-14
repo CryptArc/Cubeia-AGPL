@@ -20,6 +20,7 @@ import com.cubeia.backend.cashgame.dto.ReserveResponse;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.game.lobby.LobbyTableAttributeAccessor;
 import com.cubeia.firebase.api.game.table.Table;
+import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.lobby.PokerLobbyAttributes;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
@@ -38,7 +39,7 @@ public class BackendCallHandler {
     @Inject
     private final Table table;
 
-    
+    private StyxSerializer styx = new StyxSerializer(null);
     
     @Inject
     public BackendCallHandler(PokerState state, Table table) {
@@ -62,15 +63,7 @@ public class BackendCallHandler {
         resp.pendingBalance = (int) pokerPlayer.getPendingBalance();
         resp.resultCode = Enums.BuyInResultCode.OK;
         
-        GameDataAction gda = new GameDataAction(playerId, table.getId());
-        StyxSerializer styx = new StyxSerializer(null);
-        try {
-            gda.setData(styx.pack(resp));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-  
-        table.getNotifier().notifyPlayer(playerId, gda);
+        sendGameData(playerId, resp);
         
         if (pokerPlayer.isSitInAfterSuccessfulBuyIn()) {
             state.playerIsSittingIn(playerId);
@@ -104,21 +97,13 @@ public class BackendCallHandler {
         }
         
     	
-		GameDataAction action = new GameDataAction(playerId, table.getId());
-		StyxSerializer styx = new StyxSerializer(null);
-        try {
-			action.setData(styx.pack(resp));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        
-		table.getNotifier().notifyPlayer(playerId, action );
+		sendGameData(playerId, resp);
 	}
 
     public void handleOpenSessionSuccessfulResponse(OpenSessionResponse openSessionResponse) {
         PlayerSessionId playerSessionId = openSessionResponse.sessionId;
         int playerId = playerSessionId.getPlayerId();
-        log.debug("handle open session response: session = {}, pId = {}", playerSessionId, playerId);
+        // log.debug("handle open session response: session = {}, pId = {}", playerSessionId, playerId);
         PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) state.getPokerPlayer(playerId);
         pokerPlayer.setPlayerSessionId(playerSessionId);
     }
@@ -148,10 +133,28 @@ public class BackendCallHandler {
 		attributeAccessor.setIntAttribute(PokerLobbyAttributes.TABLE_READY_FOR_CLOSE.name(), 1);
     }
 
-    public void handleOpenSessionFailedResponse(OpenSessionFailedResponse attachment) {
-        throw new UnsupportedOperationException("handling of failed session requests not implemented");
+    public void handleOpenSessionFailedResponse(OpenSessionFailedResponse response) {
+    	log.info("Handle Open Session Failed on table["+table.getId()+"]: "+response);
+        
+    	// Send message to player
+    	BuyInResponse resp = new BuyInResponse();
+        resp.resultCode = Enums.BuyInResultCode.SESSION_NOT_OPEN;
+        sendGameData(response.playerId, resp);
+    	
+    	// Unseat player & set as watcher
+    	state.unseatPlayer(response.playerId, true);
+    	
     }
 
-	
+    private void sendGameData(int playerId, ProtocolObject resp) {
+		GameDataAction action = new GameDataAction(playerId, table.getId());
+        try {
+			action.setData(styx.pack(resp));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+		table.getNotifier().notifyPlayer(playerId, action );
+	}
     
 }
