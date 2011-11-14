@@ -56,7 +56,6 @@ import com.cubeia.poker.states.PokerGameSTM;
 import com.cubeia.poker.states.ShutdownSTM;
 import com.cubeia.poker.states.WaitingToStartSTM;
 import com.cubeia.poker.timing.Periods;
-import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.tournament.RoundReport;
 import com.cubeia.poker.variant.PokerVariant;
@@ -109,8 +108,8 @@ public class PokerState implements Serializable, IPokerState {
 	@VisibleForTesting
 	protected transient ServerAdapter serverAdapter;
 
-	@VisibleForTesting
-	protected TimingProfile timing = TimingFactory.getRegistry().getDefaultTimingProfile();
+//	@VisibleForTesting
+//	protected TimingProfile timing = TimingFactory.getRegistry().getDefaultTimingProfile();
 
 	/**
 	 * Identifier. May be used as seem fit.
@@ -132,19 +131,6 @@ public class PokerState implements Serializable, IPokerState {
 	 */
 	private Object adapterState;
 	
-	/**
-	 * Ante level (blinds etc) in cents.
-	 */
-	private int anteLevel = -1;
-	
-	private int minBuyIn;
-	
-	private int maxBuyIn;
-	
-	private int entryBetLevel;
-	
-	private BetStrategyName betStrategyName;
-
 	/* ------------------------- Internal Members -------------------------- */
 
 	/** Maps playerId to player */
@@ -172,10 +158,6 @@ public class PokerState implements Serializable, IPokerState {
 	
 	private List<Card> communityCards = new ArrayList<Card>();
 
-	private PokerVariant variant;
-
-    private int tableSize;
-
     // TODO: this property should be moved into the externalTablePropertiesMap
 	private String tableIntegrationId;
 	
@@ -199,15 +181,8 @@ public class PokerState implements Serializable, IPokerState {
 	@Override
 	public void init(RNGProvider rngProvider, PokerSettings settings) {
 		this.settings = settings;
-		anteLevel = settings.getAnteLevel();
-		timing = settings.getTiming();
-		variant = settings.getVariant();
-		tableSize = settings.getTableSize();
-		minBuyIn = settings.getMinBuyIn();
-		maxBuyIn = settings.getMaxBuyIn();
-		betStrategyName = settings.getBetStrategy();
-		entryBetLevel = settings.getEntryBetLevel(); 
-		gameType = createGameTypeByVariant(rngProvider, variant);
+		
+		gameType = createGameTypeByVariant(rngProvider, settings.getVariant());
 		tableIntegrationId = settings.getTableIntegrationId();
 	}
 
@@ -248,7 +223,7 @@ public class PokerState implements Serializable, IPokerState {
 	 */
 	private void startGame() {
 		if (getCurrentState().getClass() == NOT_STARTED.getClass() && playerMap.size() > 1) {
-			serverAdapter.scheduleTimeout(timing.getTime(Periods.START_NEW_HAND));
+			serverAdapter.scheduleTimeout(settings.getTiming().getTime(Periods.START_NEW_HAND));
 			setCurrentState(WAITING_TO_START);
 		}
 	}
@@ -410,6 +385,7 @@ public class PokerState implements Serializable, IPokerState {
 		} else {
 			serverAdapter.notifyHandEnd(result, status);
 			setPlayersWithoutMoneyAsSittingOut(result);
+			TimingProfile timing = settings.getTiming();
 			log.debug("Schedule hand over timeout in: {}", timing != null ? timing.getTime(Periods.START_NEW_HAND) : 0);
 			serverAdapter.scheduleTimeout(timing.getTime(Periods.START_NEW_HAND));
 		}
@@ -426,7 +402,7 @@ public class PokerState implements Serializable, IPokerState {
 	private void setPlayersWithoutMoneyAsSittingOut(HandResult handResult) {
 		for (PokerPlayer player : handResult.getResults().keySet()) {
 			long totalBalance = player.getBalance() + player.getPendingBalance();
-			if (totalBalance < anteLevel) {
+			if (totalBalance < settings.getAnteLevel()) {
 				playerIsSittingOut(player.getId(), SitOutStatus.SITTING_OUT);
 				notifyBuyinInfo(player.getId(), true);
 			}
@@ -495,16 +471,16 @@ public class PokerState implements Serializable, IPokerState {
 	}
 
 	public TimingProfile getTimingProfile() {
-		return timing;
+		return settings.getTiming();
 	}
 
 	@Override
 	public PokerVariant getPokerVariant() {
-		return variant;
+		return settings.getVariant();
 	}
 	
 	public int getTableSize() {
-        return tableSize;
+        return settings.getTableSize();
     }
 	
 	@Override
@@ -618,14 +594,14 @@ public class PokerState implements Serializable, IPokerState {
 	}
 	
 	public void requestAction(ActionRequest r) {
-		r.setTimeToAct(timing.getTime(Periods.ACTION_TIMEOUT));
+		r.setTimeToAct(getTimingProfile().getTime(Periods.ACTION_TIMEOUT));
 		log.debug("Send player action request ["+r+"]");
 		serverAdapter.requestAction(r);
 	}
 	
     public void requestMultipleActions(Collection<ActionRequest> requests) {
         for (ActionRequest request : requests) {
-            request.setTimeToAct(timing.getTime(Periods.ACTION_TIMEOUT));
+            request.setTimeToAct(getTimingProfile().getTime(Periods.ACTION_TIMEOUT));
         }
         serverAdapter.requestMultipleActions(requests);
     }
@@ -779,27 +755,27 @@ public class PokerState implements Serializable, IPokerState {
 	}
 	
 	public int getAnteLevel() {
-		return anteLevel;
+		return settings.getAnteLevel();
 	}
 
-	public void setAnteLevel(int anteLevel) {
-		this.anteLevel = anteLevel;
-	}
+//	public void setAnteLevel(int anteLevel) {
+//		this.anteLevel = anteLevel;
+//	}
 	
 	public int getEntryBetLevel() {
-		return entryBetLevel;
+		return settings.getEntryBetLevel();
 	}
 	
 	public int getMinBuyIn() {
-		return minBuyIn;
+		return settings.getMinBuyIn();
 	}
 	
 	public int getMaxBuyIn() {
-		return maxBuyIn;
+		return settings.getMaxBuyIn();
 	}
 	
 	public BetStrategyName getBetStrategyName() {
-		return betStrategyName;
+		return settings.getBetStrategy();
 	}
 	
 	private void checkWarnings() {
