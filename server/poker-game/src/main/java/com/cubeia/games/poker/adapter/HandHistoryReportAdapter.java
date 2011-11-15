@@ -177,7 +177,7 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
 	}
 	
 	public String getIntegrationHandId() {
-		return getFirebaseState().getPlayerHand().getIntegrationId();
+		return getFirebaseState().getCurrentHandIdentifier().getIntegrationId();
 	}
 	
 	private String getIntegrationTableId() {

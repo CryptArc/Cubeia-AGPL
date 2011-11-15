@@ -22,6 +22,7 @@ import com.cubeia.firebase.api.game.player.GenericPlayer;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
+import com.cubeia.games.poker.adapter.FirebaseServerAdapter;
 import com.cubeia.games.poker.cache.ActionCache;
 import com.cubeia.games.poker.lobby.PokerLobbyAttributes;
 import com.cubeia.poker.PokerState;
@@ -37,17 +38,21 @@ public class TableCrashHandler {
     private final PokerState state;
     private final ActionCache actionCache;
     private final BackendPlayerSessionHandler backendPlayerSessionHandler;
+    private final FirebaseServerAdapter serverAdapter;
     
     @Inject
-    public TableCrashHandler(PokerState state, ActionCache actionCache, BackendPlayerSessionHandler backendPlayerSessionHandler) {
+    public TableCrashHandler(PokerState state, ActionCache actionCache, BackendPlayerSessionHandler backendPlayerSessionHandler,
+        FirebaseServerAdapter serverAdapter) {
         this.state = state;
         this.actionCache = actionCache;
         this.backendPlayerSessionHandler = backendPlayerSessionHandler;
+        this.serverAdapter = serverAdapter;
     }
     
     
     public void handleCrashOnTable(AbstractGameAction action, Table table, Throwable throwable) {
-        log.info("handling crashed table {}", table.getId());
+        Long integrationHandId = safeGetHandId();
+        log.info("handling crashed table id = {}, hand id = {}", table.getId(), integrationHandId);
         
         printToErrorLog(action, table, throwable);
         
@@ -61,7 +66,7 @@ public class TableCrashHandler {
         makeTableInvisibleInLobby(table);
         
         // 3. send error message to clients, must include hand id
-        sendErrorMessageToClient(table);
+        sendErrorMessageToClient(table, integrationHandId);
         
         // 4. remove players from table
         Collection<PokerPlayer> removedPokerPlayers = removePlayersFromTable(table, players);
@@ -77,10 +82,11 @@ public class TableCrashHandler {
         table.getAttributeAccessor().setAttribute(PokerLobbyAttributes.TABLE_READY_FOR_CLOSE.name(), new AttributeValue(1));
     }
 
-    private void sendErrorMessageToClient(Table table) {
+    private void sendErrorMessageToClient(Table table, Long integrationHandId) {
+        
         for (GenericPlayer player : table.getPlayerSet().getPlayers()) {
             Enums.ErrorCode errorCode = Enums.ErrorCode.UNSPECIFIED_ERROR;
-            ErrorPacket errorPacket = new ErrorPacket(errorCode,"knark");
+            ErrorPacket errorPacket = new ErrorPacket(errorCode, integrationHandId == null ? null : "" + integrationHandId);
             
             log.debug("sending error message to player: {}", player.getPlayerId());
             
@@ -94,6 +100,17 @@ public class TableCrashHandler {
                 log.error("failed to send error message to client", e);
             }
         }
+    }
+
+
+    private Long safeGetHandId() {
+        Long integrationHandId = null;
+        try {
+            integrationHandId = serverAdapter.getIntegrationHandId();
+        } catch (Exception e) {
+            log.error("error getting hand id", e);
+        }
+        return integrationHandId;
     }
 
     @VisibleForTesting

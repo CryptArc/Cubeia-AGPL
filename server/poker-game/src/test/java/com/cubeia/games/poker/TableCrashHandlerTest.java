@@ -35,6 +35,7 @@ import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TablePlayerSet;
 import com.cubeia.firebase.api.util.UnmodifiableSet;
 import com.cubeia.firebase.io.StyxSerializer;
+import com.cubeia.games.poker.adapter.FirebaseServerAdapter;
 import com.cubeia.games.poker.cache.ActionCache;
 import com.cubeia.games.poker.lobby.PokerLobbyAttributes;
 import com.cubeia.poker.PokerState;
@@ -49,13 +50,14 @@ public class TableCrashHandlerTest {
     @Mock private Table table;
     @Mock private LobbyTableAttributeAccessor attributeAccessor;
     @Mock private BackendPlayerSessionHandler backendPlayerSessionHandler;
+    @Mock private FirebaseServerAdapter serverAdapter;
     private TableCrashHandler tableCrashHandler;
     private int tableId = 1343;
 
     @Before
     public void setup() {
         initMocks(this);
-        tableCrashHandler = new TableCrashHandler(state, actionCache, backendPlayerSessionHandler);
+        tableCrashHandler = new TableCrashHandler(state, actionCache, backendPlayerSessionHandler, serverAdapter);
         when(table.getAttributeAccessor()).thenReturn(attributeAccessor);
         when(table.getId()).thenReturn(tableId);
     }
@@ -82,6 +84,8 @@ public class TableCrashHandlerTest {
         PokerPlayer pokerPlayer2 = mock(PokerPlayer.class);
         when(state.getPokerPlayer(player1Id)).thenReturn(pokerPlayer1);
         when(state.getPokerPlayer(player2Id)).thenReturn(pokerPlayer2);
+        long handId = 4435L;
+        when(serverAdapter.getIntegrationHandId()).thenReturn(handId);
         
         tableCrashHandler.handleCrashOnTable(action, table, new RuntimeException("shit happens"));
         
@@ -100,7 +104,7 @@ public class TableCrashHandlerTest {
         GameDataAction errorMessageAction = actionCaptor.getValue();
         ErrorPacket errorPacket = (ErrorPacket) serializer.unpack(errorMessageAction.getData());
         assertThat(errorPacket.code, is(ErrorCode.UNSPECIFIED_ERROR));
-        assertThat(errorPacket.referenceId, is("knark"));
+        assertThat(errorPacket.referenceId, is("" + handId));
     }
     
     @Test

@@ -19,7 +19,7 @@ package com.cubeia.games.poker.entity;
 
 import java.io.Serializable;
 
-public class PlayedHand implements Serializable {
+public class HandIdentifier implements Serializable {
 	
     private static final long serialVersionUID = 1L;
     

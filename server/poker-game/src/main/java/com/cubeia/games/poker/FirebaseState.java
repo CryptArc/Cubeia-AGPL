@@ -19,7 +19,7 @@ package com.cubeia.games.poker;
 
 import java.io.Serializable;
 
-import com.cubeia.games.poker.entity.PlayedHand;
+import com.cubeia.games.poker.entity.HandIdentifier;
 
 public class FirebaseState implements Serializable {
 
@@ -29,7 +29,7 @@ public class FirebaseState implements Serializable {
     private int currentRequestSequence = -1;
     private int handCount = 0;
 
-    private transient PlayedHand playerHand;
+    private HandIdentifier currentHandIdentifier;
 
     public int getCurrentRequestSequence() {
         return currentRequestSequence;
@@ -47,12 +47,12 @@ public class FirebaseState implements Serializable {
         this.handCount = handCount;
     }
 
-    public PlayedHand getPlayerHand() {
-        return playerHand;
+    public HandIdentifier getCurrentHandIdentifier() {
+        return currentHandIdentifier;
     }
 
-    public void setPlayerHand(PlayedHand playerHand) {
-        this.playerHand = playerHand;
+    public void setCurrentHandIdentifier(HandIdentifier playerHand) {
+        this.currentHandIdentifier = playerHand;
     }
 
 }
