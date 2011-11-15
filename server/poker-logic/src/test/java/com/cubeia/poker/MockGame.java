@@ -222,6 +222,10 @@ public class MockGame implements GameType {
 			
 			@Override
 			public void shutdown() {}
+			
+			@Override
+			public boolean isShutdown() { return false; }
+			
 		};
 	}
 

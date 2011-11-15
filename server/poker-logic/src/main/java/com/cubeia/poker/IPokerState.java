@@ -56,5 +56,11 @@ public interface IPokerState {
 	 * The game will move to the {@link ShutdownSTM} state.
 	 */
 	void shutdown();
+
+	/**
+	 * Returns true if the state/table is shut down.
+	 * @return true if shut down, false otherwise
+	 */
+    boolean isShutdown();
 	
 }

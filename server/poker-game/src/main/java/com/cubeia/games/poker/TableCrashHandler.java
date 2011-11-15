@@ -1,6 +1,7 @@
 package com.cubeia.games.poker;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -8,13 +9,14 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import se.jadestone.dicearena.game.poker.network.protocol.Enums;
+import se.jadestone.dicearena.game.poker.network.protocol.ErrorPacket;
 import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
 
 import com.cubeia.firebase.api.action.AbstractGameAction;
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.action.GameObjectAction;
-import com.cubeia.firebase.api.action.TableChatAction;
 import com.cubeia.firebase.api.game.player.GenericPlayer;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.io.ProtocolObject;
@@ -22,6 +24,7 @@ import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.cache.ActionCache;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.player.PokerPlayer;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
@@ -58,31 +61,45 @@ public class TableCrashHandler {
         // 3. send error message to clients, must include hand id
         sendErrorMessageToClient(table);
         
-//        // 4. remove players from table
-//        Collection<PokerPlayer> removedPokerPlayers = removePlayersFromTable(table, players);
-//        
-//        // 5. close player sessions
-//        closePlayerSessions(table, removedPokerPlayers);
+        // 4. remove players from table
+        Collection<PokerPlayer> removedPokerPlayers = removePlayersFromTable(table, players);
         
-        // 5. close table session
+        // 5. close player sessions
+        closePlayerSessions(table, removedPokerPlayers);
+        
+        // 5. mark table as closed and let the activator take care of destroying it
         // TODO!
         
         
     }
 
     private void sendErrorMessageToClient(Table table) {
-        // TODO: should send dialog message and not a chat message
-        
-        String msg = "Unexpected table state. Table has been stopped.";
-
-        TableChatAction chat = new TableChatAction(-1, table.getId(), msg);
-        table.getNotifier().notifyAllPlayers(chat);
-        
+        for (GenericPlayer player : table.getPlayerSet().getPlayers()) {
+            Enums.ErrorCode errorCode = Enums.ErrorCode.UNSPECIFIED_ERROR;
+            ErrorPacket errorPacket = new ErrorPacket(errorCode);
+            
+            log.debug("sending error message to player: {}", player.getPlayerId());
+            
+            GameDataAction errorAction = new GameDataAction(player.getPlayerId(), table.getId());
+            ByteBuffer packetBuffer;
+            try {
+                packetBuffer = serializer.pack(errorPacket);
+                errorAction.setData(packetBuffer);
+                table.getNotifier().notifyPlayer(player.getPlayerId(), errorAction);
+            } catch (IOException e) {
+                log.error("failed to send error message to client", e);
+            }
+        }
     }
 
-    private void closePlayerSessions(Table table, Collection<PokerPlayer> pokerPlayers) {
+    @VisibleForTesting
+    protected void closePlayerSessions(Table table, Collection<PokerPlayer> pokerPlayers) {
         for (PokerPlayer pokerPlayer : pokerPlayers) {
-            backendPlayerSessionHandler.endPlayerSessionInBackend(table, pokerPlayer);
+            try {
+                backendPlayerSessionHandler.endPlayerSessionInBackend(table, pokerPlayer);
+            } catch (Exception e) {
+                log.error("error closing player session for player = " + pokerPlayer.getId(), e);
+            }
         }
     }
 
@@ -106,7 +123,6 @@ public class TableCrashHandler {
 
 
     private void printToErrorLog(AbstractGameAction action, Table table, Throwable throwable) {
-        /*
         if (action instanceof GameDataAction) {
             GameDataAction gda = (GameDataAction) action;
             ProtocolObject packet = null;
@@ -121,7 +137,6 @@ public class TableCrashHandler {
         } else {
             printActionsToErrorLog(throwable, "error handling action (" + action.getClass().getSimpleName() + "): "+action+" on table: "+table, table);
         }
-        */
     }
 
 

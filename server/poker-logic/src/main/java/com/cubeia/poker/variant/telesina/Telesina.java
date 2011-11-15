@@ -316,11 +316,10 @@ public class Telesina implements GameType, RoundVisitor {
 	@Override
 	public void visit(AnteRound anteRound) {
 	    
-	    /*
-	    if (true) {
+	    // TODO: remove this stuff when done testing crashes!!!
+	    if (System.getProperty("crash") != null) {
 	        throw new RuntimeException("Panic! Omg!");
 	    }
-	    */
 	    
 		if (anteRound.isCanceled()) {
 		    handleCanceledHand();

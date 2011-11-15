@@ -96,6 +96,11 @@ public class Processor implements GameProcessor, TournamentProcessor {
 		stateInjector.injectAdapter(table);
 	    ProtocolObject packet = null;
 	    
+	    if (state.isShutdown()) {
+	        log.warn("dropping action for shut down table: {}", table.getId());
+	        return;
+	    }
+	    
 		try {
 			packet = serializer.unpack(action.getData());
 			pokerHandler.setPlayerId(action.getPlayerId());
@@ -103,9 +108,7 @@ public class Processor implements GameProcessor, TournamentProcessor {
 			PokerStats.getInstance().setState(table.getId(), state.getStateDescription());			
 		} catch (Throwable t) {
 			log.error("Unhandled error on table", t);
-//		    printActionsToErrorLog(e, "Pokerlogic could not handle action: "+action+" Table: "+table.getId()+" Packet: "+packet, table);
 		    tableCrashHandler.handleCrashOnTable(action, table, t);
-			throw new RuntimeException("Could not handle poker game data", t);
 		}
 		
 		updatePlayerDebugInfo(table);
@@ -152,7 +155,6 @@ public class Processor implements GameProcessor, TournamentProcessor {
     	    }
 	    } catch (Throwable t) {
 	    	log.error("Failed handling game object action.", t);
-//	        printActionsToErrorLog(e, "Could not handle command action: "+action+" on table: "+table, table);
             tableCrashHandler.handleCrashOnTable(action, table, t);
 	    }
 	    
@@ -176,6 +178,12 @@ public class Processor implements GameProcessor, TournamentProcessor {
 	 * @param command
 	 */
 	private void handleCommand(Table table, Trigger command) {
+	    
+	    if (state.isShutdown()) {
+	        log.warn("dropping scheduled {} command for shut down table: {}", command.getType(), table.getId());
+	        return;
+	    }
+	    
 		switch (command.getType()) {
 			case TIMEOUT:
 				boolean verified = pokerHandler.verifySequence(command);

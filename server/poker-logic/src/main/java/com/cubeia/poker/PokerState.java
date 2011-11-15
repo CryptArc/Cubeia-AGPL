@@ -850,6 +850,11 @@ public class PokerState implements Serializable, IPokerState {
 	    setCurrentState(SHUTDOWN);
 	}
 
+	@Override
+	public boolean isShutdown() {
+	    return getCurrentState().equals(SHUTDOWN);
+	}
+	
     protected PokerGameSTM getCurrentState() {
         return currentState;
     }
