@@ -63,11 +63,11 @@ public class TableCrashHandler {
         // 3. send error message to clients, must include hand id
         sendErrorMessageToClient(table);
         
-        // 4. remove players from table
-        Collection<PokerPlayer> removedPokerPlayers = removePlayersFromTable(table, players);
+//        // 4. remove players from table
+//        Collection<PokerPlayer> removedPokerPlayers = removePlayersFromTable(table, players);
         
-        // 5. close player sessions
-        closePlayerSessions(table, removedPokerPlayers);
+//        // 5. close player sessions
+//        closePlayerSessions(table, removedPokerPlayers);
         
         // 5. mark table as closed and let the activator take care of destroying it
         markTableReadyForClose(table);
