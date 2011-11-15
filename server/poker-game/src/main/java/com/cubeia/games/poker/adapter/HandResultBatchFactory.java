@@ -22,14 +22,17 @@ public class HandResultBatchFactory {
             long bets = result.getWinningsIncludingOwnBets() - result.getNetResult();
             long wins = result.getWinningsIncludingOwnBets();
             long rake = handResult.getRakeContributionByPlayer(player);
+            
             com.cubeia.backend.cashgame.dto.HandResult hr = new com.cubeia.backend.cashgame.dto.HandResult(player.getPlayerSessionId(), bets, wins, rake, player.getSeatId(), -1); // TODO Add initial balance?
             bhr.addHandResult(hr);
             totalBet += bets;
             long net = result.getNetResult();
             if(net >= 0) {
-            	totalWin += net;
+            	totalWin += wins;
             }
             totalRake += rake;
+            
+            // System.out.println("Player["+player.getId()+"] bets["+bets+"] wins["+wins+"] net["+net+"] : totalBet["+totalBet+"] totalWin["+totalWin+"]");
         }
         if((totalBet - totalRake) != totalWin) {
         	throw new IllegalStateException("Unbalanced hand result ((" + totalBet + " - " + totalRake + ") != " + totalWin + "); " + handResult);

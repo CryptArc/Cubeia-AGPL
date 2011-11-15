@@ -51,7 +51,7 @@ public class HandResultBatchFactoryTest {
         TableId tableId = new TableIdImpl();
         
         Map<PokerPlayer, Result> results = new HashMap<PokerPlayer, Result>();
-        Result result1 = new Result(1980, 1000, Collections.<Pot, Long>emptyMap());
+        Result result1 = new Result(980, 1000, Collections.<Pot, Long>emptyMap());
         Result result2 = new Result(-1000, 1000, Collections.<Pot, Long>emptyMap());
         results.put(pokerPlayer1, result1);
         results.put(pokerPlayer2, result2);
@@ -104,6 +104,60 @@ public class HandResultBatchFactoryTest {
         handResultFactory.createAndValidateBatchHandRequest(handResult, handId, tableId);
     }
 
+    
+    @Test
+    public void testCreateHandBatch() {
+        HandResultBatchFactory handResultFactory = new HandResultBatchFactory();
+        long handId = 12345;
+        
+        PokerPlayerImpl pokerPlayer8 = createMockPlayer(8);
+        PokerPlayerImpl pokerPlayer2 = createMockPlayer(2);
+        PokerPlayerImpl pokerPlayer0 = createMockPlayer(0);
+        PokerPlayerImpl pokerPlayer5 = createMockPlayer(5);
+        PokerPlayerImpl pokerPlayer9 = createMockPlayer(9);
+        
+        TableId tableId = new TableIdImpl();
+        
+        Map<PokerPlayer, Result> results = new HashMap<PokerPlayer, Result>();
+        Result result8 = new Result(-26, 26, Collections.<Pot, Long>emptyMap());
+        
+        Pot pot = new Pot(0);
+        pot.bet(pokerPlayer8, 26L);
+        pot.bet(pokerPlayer2, 146L);
+        pot.bet(pokerPlayer0, 14L);
+        pot.bet(pokerPlayer5, 2L);
+        pot.bet(pokerPlayer9, 331L);
+        Map<Pot, Long> pots = new HashMap<Pot, Long>();
+        pots.put(pot, 331L);
+        Result result2 = new Result(185, 146, pots);
+        
+        Result result0 = new Result(-14, 14, Collections.<Pot, Long>emptyMap());
+        Result result5 = new Result(-2, 2, Collections.<Pot, Long>emptyMap());
+        Result result9 = new Result(-146, 146, Collections.<Pot, Long>emptyMap());
+        
+        results.put(pokerPlayer8, result8);
+        results.put(pokerPlayer2, result2);
+        results.put(pokerPlayer0, result0);
+        results.put(pokerPlayer5, result5);
+        results.put(pokerPlayer9, result9);
+        
+        HashMap<Pot, BigDecimal> potRakes = new HashMap<Pot, BigDecimal>();
+        potRakes.put(pot, new BigDecimal(3));
+		RakeInfoContainer rakeInfoContainer = new RakeInfoContainer(334, 3, potRakes);
+        HandResult handResult = new HandResult(results, Collections.<RatedPlayerHand>emptyList(), Collections.<PotTransition>emptyList(), rakeInfoContainer, new ArrayList<Integer>() );
+        
+        BatchHandRequest batchHandRequest = handResultFactory.createAndValidateBatchHandRequest(handResult, handId, tableId);
+    }
+    
+    private PokerPlayerImpl createMockPlayer(int playerId) {
+		PlayerSessionId playerSessionId = new PlayerSessionIdImpl(playerId);
+		PokerPlayerImpl pokerPlayer1 = mock(PokerPlayerImpl.class);
+        when(pokerPlayer1.getId()).thenReturn(playerId);
+        when(pokerPlayer1.getPlayerSessionId()).thenReturn(playerSessionId);
+		return pokerPlayer1;
+	}
+    
+    
     private com.cubeia.backend.cashgame.dto.HandResult findByPlayerSessionId(PlayerSessionId playerSessionId,
         List<com.cubeia.backend.cashgame.dto.HandResult> handResults) {
         for (com.cubeia.backend.cashgame.dto.HandResult hr : handResults) {
