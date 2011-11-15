@@ -80,7 +80,7 @@ public class TableCrashHandler {
     private void sendErrorMessageToClient(Table table) {
         for (GenericPlayer player : table.getPlayerSet().getPlayers()) {
             Enums.ErrorCode errorCode = Enums.ErrorCode.UNSPECIFIED_ERROR;
-            ErrorPacket errorPacket = new ErrorPacket(errorCode);
+            ErrorPacket errorPacket = new ErrorPacket(errorCode,"knark");
             
             log.debug("sending error message to player: {}", player.getPlayerId());
             

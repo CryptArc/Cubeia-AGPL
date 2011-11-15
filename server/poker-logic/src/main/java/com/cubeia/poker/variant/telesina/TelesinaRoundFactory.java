@@ -1,6 +1,6 @@
 package com.cubeia.poker.variant.telesina;
 
-import com.cubeia.poker.rounds.DealPocketCardsRound;
+import com.cubeia.poker.rounds.DealExposedPocketCardsRound;
 import com.cubeia.poker.rounds.DealVelaCardRound;
 import com.cubeia.poker.rounds.ante.AnteRound;
 import com.cubeia.poker.rounds.ante.AnteRoundHelper;
@@ -23,8 +23,8 @@ public class TelesinaRoundFactory {
         return new BettingRound(telesina, dealerButtonSeatId, new TelesinaPlayerToActCalculator(telesina.getDeckLowestRank()));
    }
 
-    DealPocketCardsRound createDealPocketCardsRound() {
-        return new DealPocketCardsRound();
+    DealExposedPocketCardsRound createDealPocketCardsRound() {
+        return new DealExposedPocketCardsRound();
     }
 
     DealVelaCardRound createDealVelaCardRound() {

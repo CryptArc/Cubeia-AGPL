@@ -118,7 +118,7 @@ public class TelesinaSendBestHandTest {
     public void testDealExposedCards() {
         Telesina telesina = new Telesina(new DummyRNGProvider(), state, deckFactory, roundFactory);
         
-        telesina.dealExposedCards();
+        telesina.dealExposedPocketCards();
         
         
     }

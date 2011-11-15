@@ -23,14 +23,11 @@ import com.cubeia.poker.action.PokerAction;
  * Telesina specific round for dealing new pocket cards between betting rounds.
  * This round has been separated for timing reasons.
  */
-public class DealPocketCardsRound implements Round {
+public class DealExposedPocketCardsRound implements Round {
 
 	private static final long serialVersionUID = 1L;
-	
-//	private final Telesina telesina;
 
-	public DealPocketCardsRound() {
-//		this.telesina = telesina;
+	public DealExposedPocketCardsRound() {
 	}
 
 	@Override
@@ -43,9 +40,6 @@ public class DealPocketCardsRound implements Round {
 		return getClass().getSimpleName();
 	}
 
-	/**
-	 * 
-	 */
 	@Override
 	public boolean isFinished() {
 		return true;

@@ -46,8 +46,9 @@ import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.RevealOrderCalculator;
 import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.rounds.DealCommunityCardsRound;
-import com.cubeia.poker.rounds.DealPocketCardsRound;
+import com.cubeia.poker.rounds.DealExposedPocketCardsRound;
 import com.cubeia.poker.rounds.DealVelaCardRound;
+import com.cubeia.poker.rounds.ExposePrivateCardsRound;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
 import com.cubeia.poker.rounds.ante.AnteRound;
@@ -303,6 +304,11 @@ public class TexasHoldem implements GameType, RoundVisitor {
 			scheduleRoundTimeout();
 		}		
 	}
+	
+	@Override
+	public void visit(ExposePrivateCardsRound exposePrivateCardsRound) {
+		throw new UnsupportedOperationException("not implemented");
+	}
 
 	@Override
 	public void visit(AnteRound anteRound) {
@@ -330,7 +336,7 @@ public class TexasHoldem implements GameType, RoundVisitor {
 		startBettingRound();
 	}
 
-	public void visit(DealPocketCardsRound round) {
+	public void visit(DealExposedPocketCardsRound round) {
 	    throw new UnsupportedOperationException(round.getClass().getSimpleName() + " round not allowed in Texas Holdem");
 	};
 	

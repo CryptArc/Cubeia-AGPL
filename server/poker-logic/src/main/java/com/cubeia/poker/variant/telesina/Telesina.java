@@ -46,8 +46,9 @@ import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.RevealOrderCalculator;
 import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.rounds.DealCommunityCardsRound;
-import com.cubeia.poker.rounds.DealPocketCardsRound;
+import com.cubeia.poker.rounds.DealExposedPocketCardsRound;
 import com.cubeia.poker.rounds.DealVelaCardRound;
+import com.cubeia.poker.rounds.ExposePrivateCardsRound;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
 import com.cubeia.poker.rounds.ante.AnteRound;
@@ -315,7 +316,6 @@ public class Telesina implements GameType, RoundVisitor {
 
 	@Override
 	public void visit(AnteRound anteRound) {
-	    
 	    // TODO: remove this stuff when done testing crashes!!!
 	    if (System.getProperty("crash") != null) {
 	        throw new RuntimeException("Panic! Omg!");
@@ -329,8 +329,8 @@ public class Telesina implements GameType, RoundVisitor {
 		    Collection<PotTransition> potTransitions = moveChipsToPot();
 		    reportPotAndRakeUpdates(potTransitions);
 		    
-		    dealPocketCards();
-		    dealExposedCards();
+		    dealHiddenPocketCards();
+		    dealExposedPocketCards();
 		    
 		    startBettingRound();
 		}
@@ -380,6 +380,11 @@ public class Telesina implements GameType, RoundVisitor {
             scheduleRoundTimeout();
 		}
 	}
+	
+	@Override
+	public void visit(ExposePrivateCardsRound exposePrivateCardsRound) {
+		
+	}
 
 	private void returnAllBets() {
 	    for (PokerPlayer player : state.getCurrentHandSeatingMap().values()) {
@@ -398,19 +403,44 @@ public class Telesina implements GameType, RoundVisitor {
 	}
 
 	@Override
-	public void visit(DealPocketCardsRound round) {
+	public void visit(DealExposedPocketCardsRound round) {
         log.debug("deal pocked cards round finished (betting round {})", getBettingRoundId());
-        dealExposedCards();
+        
+        tryExposeCardsAndSendHandBestHands();
+        dealExposedPocketCards();
         startBettingRound();
 	}
 	
 	@Override
 	public void visit(DealVelaCardRound round) {
+		tryExposeCardsAndSendHandBestHands();
 	    dealCommunityCards(1);
         startBettingRound();
 	}
 	
-	public void dealPocketCards() {
+	private void tryExposeCardsAndSendHandBestHands(){
+		boolean enoughPlayersAreAllIn = getNumberOfAllinPlayers() >= state.getCurrentHandPlayerMap().size() - 1;
+		
+		if (enoughPlayersAreAllIn) {
+			state.exposeShowdownCards();
+			sendAllNonFoldedPlayersBestHand();
+		}
+	}
+		
+	private int getNumberOfAllinPlayers(){
+		int counter = 0;
+		Collection<PokerPlayer> players = state.getCurrentHandPlayerMap().values();
+		for (PokerPlayer pokerPlayer : players) {
+			if(pokerPlayer.isAllIn() || pokerPlayer.hasFolded()){
+				++counter;
+			}
+		}
+		
+		return counter;
+	}
+		
+	
+	public void dealHiddenPocketCards() {
 		for (PokerPlayer p : state.getCurrentHandSeatingMap().values()) {
 			if (!p.isSittingOut() && !p.hasFolded()) {
 				dealHiddenPocketCards(p, 1);
@@ -419,7 +449,7 @@ public class Telesina implements GameType, RoundVisitor {
 	}
 
 	@VisibleForTesting
-	protected void dealExposedCards() {
+	protected void dealExposedPocketCards() {
 	    TelesinaHandStrengthEvaluator handStrengthEvaluator = new TelesinaHandStrengthEvaluator(getDeckLowestRank());	    
 	    
 		for (PokerPlayer p : state.getCurrentHandSeatingMap().values()) {

@@ -27,7 +27,7 @@ import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotHolder;
-import com.cubeia.poker.rounds.DealPocketCardsRound;
+import com.cubeia.poker.rounds.DealExposedPocketCardsRound;
 import com.cubeia.poker.rounds.DealVelaCardRound;
 import com.cubeia.poker.rounds.ante.AnteRound;
 import com.cubeia.poker.rounds.betting.BettingRound;
@@ -107,7 +107,7 @@ public class TelesinaRoundsTest {
         verify(potHolder).moveChipsToPot(Mockito.anyCollection());
         assertThat((BettingRound) telesina.getCurrentRound(), is(bettingRound0));
         assertThat(telesina.getBettingRoundId(), is(1));
-        DealPocketCardsRound dealPocketCardsRound0 = mock(DealPocketCardsRound.class);
+        DealExposedPocketCardsRound dealPocketCardsRound0 = mock(DealExposedPocketCardsRound.class);
         when(roundFactory.createDealPocketCardsRound()).thenReturn(dealPocketCardsRound0);
         when(potHolder.getPots()).thenReturn(new ArrayList<Pot>());
         when(state.countNonFoldedPlayers()).thenReturn(3);
@@ -117,7 +117,7 @@ public class TelesinaRoundsTest {
         telesina.visit(bettingRound0);
         assertCardsDealt(2, 1, player1, player2, player3);
         verify(serverAdapter).scheduleTimeout(Mockito.anyLong());
-        assertThat((DealPocketCardsRound) telesina.getCurrentRound(), is(dealPocketCardsRound0));
+        assertThat((DealExposedPocketCardsRound) telesina.getCurrentRound(), is(dealPocketCardsRound0));
         assertThat(telesina.getBettingRoundId(), is(1));
         BettingRound bettingRound1 = mock(BettingRound.class);
         when(roundFactory.createBettingRound(telesina, 0)).thenReturn(bettingRound1);
@@ -127,14 +127,14 @@ public class TelesinaRoundsTest {
         assertThat((BettingRound) telesina.getCurrentRound(), is(bettingRound1));
         assertThat(telesina.getBettingRoundId(), is(2));
         assertCardsDealt(3, 2, player1, player2, player3);
-        DealPocketCardsRound dealPocketCardsRound1 = mock(DealPocketCardsRound.class);
+        DealExposedPocketCardsRound dealPocketCardsRound1 = mock(DealExposedPocketCardsRound.class);
         when(roundFactory.createDealPocketCardsRound()).thenReturn(dealPocketCardsRound1);
         assertThat(telesina.isHandFinished(), is(false));
         
         // betting 1 -> deal pocket cards round
         telesina.visit(bettingRound1); 
         verify(serverAdapter, Mockito.times(2)).scheduleTimeout(Mockito.anyLong());
-        assertThat((DealPocketCardsRound) telesina.getCurrentRound(), is(dealPocketCardsRound1));
+        assertThat((DealExposedPocketCardsRound) telesina.getCurrentRound(), is(dealPocketCardsRound1));
         assertThat(telesina.getBettingRoundId(), is(2));
         assertCardsDealt(3, 2, player1, player2, player3);
         BettingRound bettingRound2 = mock(BettingRound.class);
@@ -145,14 +145,14 @@ public class TelesinaRoundsTest {
         assertThat((BettingRound) telesina.getCurrentRound(), is(bettingRound2));
         assertThat(telesina.getBettingRoundId(), is(3));
         assertCardsDealt(4, 3, player1, player2, player3);
-        DealPocketCardsRound dealPocketCardsRound2 = mock(DealPocketCardsRound.class);
+        DealExposedPocketCardsRound dealPocketCardsRound2 = mock(DealExposedPocketCardsRound.class);
         when(roundFactory.createDealPocketCardsRound()).thenReturn(dealPocketCardsRound2);
         assertThat(telesina.isHandFinished(), is(false));
         
         // betting 2 -> deal pocket card 
         telesina.visit(bettingRound2);
         verify(serverAdapter, Mockito.times(3)).scheduleTimeout(Mockito.anyLong());
-        assertThat((DealPocketCardsRound) telesina.getCurrentRound(), is(dealPocketCardsRound2));
+        assertThat((DealExposedPocketCardsRound) telesina.getCurrentRound(), is(dealPocketCardsRound2));
         assertThat(telesina.getBettingRoundId(), is(3));
         assertCardsDealt(4, 3, player1, player2, player3);
         BettingRound bettingRound3 = mock(BettingRound.class);

@@ -31,7 +31,9 @@ public interface RoundVisitor {
 	
 	void visit(DealCommunityCardsRound round);
 
-	void visit(DealPocketCardsRound round);
+	void visit(DealExposedPocketCardsRound round);
 	
 	void visit(DealVelaCardRound round);
+
+	void visit(ExposePrivateCardsRound exposePrivateCardsRound);
 }
