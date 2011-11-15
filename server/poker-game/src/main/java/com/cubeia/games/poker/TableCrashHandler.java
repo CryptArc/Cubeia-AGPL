@@ -17,11 +17,13 @@ import com.cubeia.firebase.api.action.AbstractGameAction;
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.action.GameObjectAction;
+import com.cubeia.firebase.api.common.AttributeValue;
 import com.cubeia.firebase.api.game.player.GenericPlayer;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.cache.ActionCache;
+import com.cubeia.games.poker.lobby.PokerLobbyAttributes;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.player.PokerPlayer;
 import com.google.common.annotations.VisibleForTesting;
@@ -68,9 +70,11 @@ public class TableCrashHandler {
         closePlayerSessions(table, removedPokerPlayers);
         
         // 5. mark table as closed and let the activator take care of destroying it
-        // TODO!
-        
-        
+        markTableReadyForClose(table);
+    }
+
+    private void markTableReadyForClose(Table table) {
+        table.getAttributeAccessor().setAttribute(PokerLobbyAttributes.TABLE_READY_FOR_CLOSE.name(), new AttributeValue(1));
     }
 
     private void sendErrorMessageToClient(Table table) {
@@ -118,7 +122,7 @@ public class TableCrashHandler {
 
     private void makeTableInvisibleInLobby(Table table) {
         log.debug("setting table {} as invisible in lobby", table.getId());
-        table.getAttributeAccessor().setIntAttribute("VISIBLE_IN_LOBBY", 0);
+        table.getAttributeAccessor().setIntAttribute(PokerLobbyAttributes.VISIBLE_IN_LOBBY.name(), 0);
     }
 
 

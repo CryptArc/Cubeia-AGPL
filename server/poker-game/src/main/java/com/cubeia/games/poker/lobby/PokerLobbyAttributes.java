@@ -19,5 +19,6 @@ public enum PokerLobbyAttributes {
 	 * <p>This enum is actually mirrored from se.jadestone.dicearena.gamecontract.table.LobbyTableAttribute
 	 * which is a bit of duplication, but we don't want a dependency to all that.</p>
 	 */
-	TABLE_READY_FOR_CLOSE
+	TABLE_READY_FOR_CLOSE,
+	VISIBLE_IN_LOBBY
 }

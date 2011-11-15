@@ -33,6 +33,7 @@ import com.cubeia.firebase.api.game.lobby.LobbyTableAttributeAccessor;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.lobby.LobbyPath;
 import com.cubeia.games.poker.FirebaseState;
+import com.cubeia.games.poker.lobby.PokerLobbyAttributes;
 import com.cubeia.poker.PokerSettings;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.RakeSettings;
@@ -145,7 +146,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
 		acc.setIntAttribute("BETTING_GAME_ANTE", anteLevel);
 		acc.setStringAttribute("BETTING_GAME_BETTING_MODEL", "NO_LIMIT");
 		acc.setStringAttribute("MONETARY_TYPE", "REAL_MONEY");
-		acc.setIntAttribute("VISIBLE_IN_LOBBY", 1);
+		acc.setIntAttribute(PokerLobbyAttributes.VISIBLE_IN_LOBBY.name(), 1);
 		acc.setStringAttribute("VARIANT", variant.name());
 		acc.setIntAttribute("MIN_BUY_IN", pokerState.getMinBuyIn());
 		acc.setIntAttribute("MAX_BUY_IN", pokerState.getMaxBuyIn());

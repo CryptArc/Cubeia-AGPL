@@ -19,6 +19,7 @@ import org.mockito.Mockito;
 import com.cubeia.firebase.api.action.AbstractGameAction;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.action.GameObjectAction;
+import com.cubeia.firebase.api.common.AttributeValue;
 import com.cubeia.firebase.api.game.GameNotifier;
 import com.cubeia.firebase.api.game.lobby.LobbyTableAttributeAccessor;
 import com.cubeia.firebase.api.game.player.GenericPlayer;
@@ -26,6 +27,7 @@ import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TablePlayerSet;
 import com.cubeia.firebase.api.util.UnmodifiableSet;
 import com.cubeia.games.poker.cache.ActionCache;
+import com.cubeia.games.poker.lobby.PokerLobbyAttributes;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.player.PokerPlayer;
 
@@ -72,7 +74,7 @@ public class TableCrashHandlerTest {
         
         tableCrashHandler.handleCrashOnTable(action, table, new RuntimeException("shit happens"));
         
-        verify(attributeAccessor).setIntAttribute("VISIBLE_IN_LOBBY", 0);
+        verify(attributeAccessor).setIntAttribute(PokerLobbyAttributes.VISIBLE_IN_LOBBY.name(), 0);
         verify(state).shutdown();
         verify(gameNotifier).notifyPlayer(Mockito.eq(player1Id), Mockito.any(GameDataAction.class));
         verify(gameNotifier).notifyPlayer(Mockito.eq(player2Id), Mockito.any(GameDataAction.class));
@@ -80,6 +82,7 @@ public class TableCrashHandlerTest {
         verify(tablePlayerSet).removePlayer(player2Id);
         verify(backendPlayerSessionHandler).endPlayerSessionInBackend(table, pokerPlayer1);
         verify(backendPlayerSessionHandler).endPlayerSessionInBackend(table, pokerPlayer2);
+        verify(attributeAccessor).setAttribute(PokerLobbyAttributes.TABLE_READY_FOR_CLOSE.name(), new AttributeValue(1));
     }
     
     @Test
