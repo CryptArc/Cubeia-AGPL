@@ -55,6 +55,7 @@ import com.cubeia.backend.cashgame.TableId;
 import com.cubeia.backend.cashgame.dto.BalanceUpdate;
 import com.cubeia.backend.cashgame.dto.BatchHandRequest;
 import com.cubeia.backend.cashgame.dto.BatchHandResponse;
+import com.cubeia.backend.cashgame.exceptions.BatchHandFailedException;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
 import com.cubeia.firebase.api.action.GameAction;
@@ -349,46 +350,45 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	@Override
 	public void notifyHandEnd(HandResult handResult, HandEndStatus handEndStatus) {
 		if (handEndStatus.equals(HandEndStatus.NORMAL) && handResult != null) {
-			try {
-
-				List<PotTransfer> transfers = new ArrayList<PotTransfer>();
-				for (PotTransition pt : handResult.getPotTransitions()) {
-					transfers.add(actionTransformer.createPotTransferPacket(pt));
-				}
-
-				long handId = getIntegrationHandId();
-				TableId externalTableId = getIntegrationTableId();
-				BatchHandRequest batchHandRequest = handResultBatchFactory.createAndValidateBatchHandRequest(handResult, handId, externalTableId);
-				BatchHandResponse batchHandResult = backend.batchHand(batchHandRequest);
-
-				validateAndUpdateBalances(batchHandResult);
-
-				List<PlayerBalance> balances = new ArrayList<PlayerBalance>();
-				for (PokerPlayer player : state.getCurrentHandPlayerMap().values()) {
-					balances.add(new PlayerBalance((int) player.getBalance(), (int) player.getPendingBalance(), player.getId()));
-				}
-
-				PotTransfers potTransfers = new PotTransfers(false, transfers, null, balances);
-
-				// TODO: The following logic should be moved to poker-logic
-				// I.e. ranking hands etc do not belong in the game-layer
-				Collection<RatedPlayerHand> hands = handResult.getPlayerHands();
-				log.debug("--> handResult.getPlayerRevealOrder: {}", handResult.getPlayerRevealOrder());
-				HandEnd packet = actionTransformer.createHandEndPacket(hands, potTransfers, handResult.getPlayerRevealOrder());
-				GameDataAction action = protocolFactory.createGameAction(packet, 0, table.getId());
-
-				log.debug("--> Send HandEnd["+packet+"] to everyone");
-				sendPublicPacket(action, -1);
-
-				PokerStats.getInstance().reportHandEnd();
-
-				// Remove all idling players
-				cleanupPlayers();
-				updateLobby();
-
-			} catch (Throwable e) {
-				log.error("FAIL when reporting hand results", e);
+			List<PotTransfer> transfers = new ArrayList<PotTransfer>();
+			for (PotTransition pt : handResult.getPotTransitions()) {
+				transfers.add(actionTransformer.createPotTransferPacket(pt));
 			}
+
+			long handId = getIntegrationHandId();
+			TableId externalTableId = getIntegrationTableId();
+			BatchHandRequest batchHandRequest = handResultBatchFactory.createAndValidateBatchHandRequest(handResult, handId, externalTableId);
+			BatchHandResponse batchHandResult;
+            try {
+                batchHandResult = backend.batchHand(batchHandRequest);
+            } catch (BatchHandFailedException e) {
+                throw new RuntimeException(e);
+            }
+
+			validateAndUpdateBalances(batchHandResult);
+
+			List<PlayerBalance> balances = new ArrayList<PlayerBalance>();
+			for (PokerPlayer player : state.getCurrentHandPlayerMap().values()) {
+				balances.add(new PlayerBalance((int) player.getBalance(), (int) player.getPendingBalance(), player.getId()));
+			}
+
+			PotTransfers potTransfers = new PotTransfers(false, transfers, null, balances);
+
+			// TODO: The following logic should be moved to poker-logic
+			// I.e. ranking hands etc do not belong in the game-layer
+			Collection<RatedPlayerHand> hands = handResult.getPlayerHands();
+			log.debug("--> handResult.getPlayerRevealOrder: {}", handResult.getPlayerRevealOrder());
+			HandEnd packet = actionTransformer.createHandEndPacket(hands, potTransfers, handResult.getPlayerRevealOrder());
+			GameDataAction action = protocolFactory.createGameAction(packet, 0, table.getId());
+
+			log.debug("--> Send HandEnd["+packet+"] to everyone");
+			sendPublicPacket(action, -1);
+
+			PokerStats.getInstance().reportHandEnd();
+
+			// Remove all idling players
+			cleanupPlayers();
+			updateLobby();
 
 		} else {
 			log.info("The hand was cancelled on table: " + table.getId() + " - " + table.getMetaData().getName());
