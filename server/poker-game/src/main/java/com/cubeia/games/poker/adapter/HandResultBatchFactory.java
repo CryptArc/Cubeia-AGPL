@@ -2,6 +2,8 @@ package com.cubeia.games.poker.adapter;
 
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import com.cubeia.backend.cashgame.TableId;
 import com.cubeia.backend.cashgame.dto.BatchHandRequest;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
@@ -10,10 +12,12 @@ import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
 
 public class HandResultBatchFactory {
+	
+	private final Logger log = Logger.getLogger(getClass());
 
     public BatchHandRequest createAndValidateBatchHandRequest(HandResult handResult, long handId, TableId tableId) {
     	long totalBet = 0;
-    	long totalWin = 0;
+    	long totalNet = 0;
     	long totalRake = 0;
         BatchHandRequest bhr = new BatchHandRequest(handId, tableId, handResult.getTotalRake());
         for (Map.Entry<PokerPlayer, Result> resultEntry : handResult.getResults().entrySet()) {
@@ -22,20 +26,16 @@ public class HandResultBatchFactory {
             long bets = result.getWinningsIncludingOwnBets() - result.getNetResult();
             long wins = result.getWinningsIncludingOwnBets();
             long rake = handResult.getRakeContributionByPlayer(player);
-            
+            long net = result.getNetResult();
+            log.debug("Result for player " + player.getId() + " -> Bets: " + bets + "; Wins: " + wins + "; Rake: " + rake + "; Net: " + net);
             com.cubeia.backend.cashgame.dto.HandResult hr = new com.cubeia.backend.cashgame.dto.HandResult(player.getPlayerSessionId(), bets, wins, rake, player.getSeatId(), -1); // TODO Add initial balance?
             bhr.addHandResult(hr);
             totalBet += bets;
-            long net = result.getNetResult();
-            if(net >= 0) {
-            	totalWin += wins;
-            }
+            totalNet += net;
             totalRake += rake;
-            
-            // System.out.println("Player["+player.getId()+"] bets["+bets+"] wins["+wins+"] net["+net+"] : totalBet["+totalBet+"] totalWin["+totalWin+"]");
         }
-        if((totalBet - totalRake) != totalWin) {
-        	throw new IllegalStateException("Unbalanced hand result ((" + totalBet + " - " + totalRake + ") != " + totalWin + "); " + handResult);
+        if((totalNet + totalRake) != 0) {
+        	throw new IllegalStateException("Unbalanced hand result ((" + totalNet + " + " + totalRake + ") != 0); Total bet: " + totalBet+ "; " + handResult);
         }
         return bhr;
     }

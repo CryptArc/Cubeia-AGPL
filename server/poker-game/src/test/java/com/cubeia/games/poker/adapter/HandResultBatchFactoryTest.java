@@ -93,7 +93,7 @@ public class HandResultBatchFactoryTest {
         TableId tableId = new TableIdImpl();
         
         Map<PokerPlayer, Result> results = new HashMap<PokerPlayer, Result>();
-        Result result1 = new Result(2000, 1000, Collections.<Pot, Long>emptyMap());
+        Result result1 = new Result(981, 1000, Collections.<Pot, Long>emptyMap());
         Result result2 = new Result(-1000, 1000, Collections.<Pot, Long>emptyMap());
         results.put(pokerPlayer1, result1);
         results.put(pokerPlayer2, result2);
