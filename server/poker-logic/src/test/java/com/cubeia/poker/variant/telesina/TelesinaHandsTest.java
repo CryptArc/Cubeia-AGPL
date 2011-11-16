@@ -41,6 +41,9 @@ public class TelesinaHandsTest extends AbstractTexasHandTester {
 		assertEquals(2, mp[2].getPocketCards().getCards().size());
 		assertEquals(2, mp[0].getPocketCards().getCards().size());
 		
+		// make deal initial pocket cards round end
+		game.timeout();
+		
 		act(p[2], PokerActionType.CHECK);
 		act(p[0], PokerActionType.FOLD);
 		act(p[1], PokerActionType.CHECK);

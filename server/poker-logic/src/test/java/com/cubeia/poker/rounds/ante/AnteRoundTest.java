@@ -9,8 +9,6 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 

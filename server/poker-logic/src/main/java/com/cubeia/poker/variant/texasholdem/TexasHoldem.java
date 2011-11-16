@@ -47,7 +47,7 @@ import com.cubeia.poker.result.RevealOrderCalculator;
 import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.rounds.DealCommunityCardsRound;
 import com.cubeia.poker.rounds.DealExposedPocketCardsRound;
-import com.cubeia.poker.rounds.DealVelaCardRound;
+import com.cubeia.poker.rounds.DealInitialPocketCardsRound;
 import com.cubeia.poker.rounds.ExposePrivateCardsRound;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
@@ -158,6 +158,10 @@ public class TexasHoldem implements GameType, RoundVisitor {
 	private void reportPotUpdate() {
         state.notifyPotAndRakeUpdates(Collections.<PotTransition>emptyList());
     }
+	
+	public int getCurrentRoundId(){
+		return roundId;
+	}
 
     private void startBettingRound() {
     	log.trace("Starting new betting round. Round ID: "+(roundId+1));
@@ -316,11 +320,6 @@ public class TexasHoldem implements GameType, RoundVisitor {
 	}
 	
 	@Override
-	public void visit(DealVelaCardRound round) {
-        throw new UnsupportedOperationException("round not supported: " + round.getClass().getSimpleName());
-	}
-	
-	@Override
 	public void visit(BlindsRound blindsRound) {
 		if (blindsRound.isCanceled()) {
 			handleCanceledHand();
@@ -336,9 +335,15 @@ public class TexasHoldem implements GameType, RoundVisitor {
 		startBettingRound();
 	}
 
+	@Override
 	public void visit(DealExposedPocketCardsRound round) {
 	    throw new UnsupportedOperationException(round.getClass().getSimpleName() + " round not allowed in Texas Holdem");
-	};
+	}
+	
+	@Override
+	public void visit(DealInitialPocketCardsRound round) {
+	    throw new UnsupportedOperationException(round.getClass().getSimpleName() + " round not allowed in Texas Holdem");
+	}
 	
 	private void prepareBettingRound() {
 		int bbSeatId = blindsInfo.getBigBlindSeatId();
@@ -356,6 +361,7 @@ public class TexasHoldem implements GameType, RoundVisitor {
 			}
 		}
 	}
+	
 
 	@Override
 	// FIXME: Implement for Texas Hold'em.

@@ -41,7 +41,7 @@ public class TelesinaAnteSitInTest extends AbstractTexasHandTester {
 		assertThat(mp[1].isActionPossible(PokerActionType.ANTE), is(true));
 		assertThat(mp[0].isActionPossible(PokerActionType.ANTE), is(true));
 		act(p[1], PokerActionType.ANTE);	
-
+		
 		assertEquals(2, game.countSittingInPlayers());
 		assertEquals(2, game.getSeatedPlayers().size());
 
@@ -51,6 +51,9 @@ public class TelesinaAnteSitInTest extends AbstractTexasHandTester {
 		assertEquals(3, game.getSeatedPlayers().size());
 
 		act(p[0], PokerActionType.ANTE); 
+		
+		// timeout the DealInitialCardsRound
+		game.timeout();
 
 		act(p[1], PokerActionType.CHECK);
 		act(p[0], PokerActionType.CHECK); 	
@@ -107,6 +110,9 @@ public class TelesinaAnteSitInTest extends AbstractTexasHandTester {
 		assertFalse(game.getPlayerInCurrentHand(p[2]).isSittingOut());
 		
 		act(p[0], PokerActionType.ANTE); 
+		
+		// timeout the DealInitialCardsRound
+		game.timeout();
 		
 		// Now player 2 should not be in the hard nor be awarded cards
 		assertEquals(2, game.getPlayerInCurrentHand(p[1]).getPocketCards().getCards().size());

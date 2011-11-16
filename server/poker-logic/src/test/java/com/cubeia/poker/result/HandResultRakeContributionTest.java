@@ -10,9 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.hamcrest.BaseMatcher;
-import org.hamcrest.CoreMatchers;
 import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 import org.junit.Test;
 
 import com.cubeia.poker.model.RatedPlayerHand;

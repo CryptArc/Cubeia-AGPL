@@ -17,6 +17,7 @@
 
 package com.cubeia.poker.rounds;
 
+import com.cubeia.poker.GameType;
 import com.cubeia.poker.action.PokerAction;
 
 /**
@@ -25,9 +26,15 @@ import com.cubeia.poker.action.PokerAction;
 public class ExposePrivateCardsRound implements Round {
 
 	private static final long serialVersionUID = 1L;
+	private GameType gameType;
 	
-	public ExposePrivateCardsRound() {
+	
+	public ExposePrivateCardsRound(GameType gameType) {
+		this.gameType = gameType;
+		gameType.getState().exposeShowdownCards();
+		gameType.sendAllNonFoldedPlayersBestHand();
 	}
+	
 
 	@Override
 	public void act(PokerAction action) {

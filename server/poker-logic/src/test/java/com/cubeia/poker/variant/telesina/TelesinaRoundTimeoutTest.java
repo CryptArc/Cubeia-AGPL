@@ -112,6 +112,9 @@ public class TelesinaRoundTimeoutTest extends AbstractTexasHandTester {
 		assertThat(action2.getActionType(), is(PokerActionType.ANTE));
 
 		// NEXT ROUND
+		// make deal initial pocket cards round end
+		game.timeout();
+		
 		assertThat(mp[2].isActionPossible(PokerActionType.BET), is(true));
 		act(p[2], PokerActionType.BET);
 		

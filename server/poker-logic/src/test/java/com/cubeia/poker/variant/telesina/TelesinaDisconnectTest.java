@@ -48,6 +48,9 @@ public class TelesinaDisconnectTest extends AbstractTexasHandTester {
 		game.playerIsSittingOut(p[0], SitOutStatus.SITTING_OUT);
 		assertEquals(PokerPlayerStatus.SITOUT, mockServerAdapter.getPokerPlayerStatus(p[0]));
 		
+		// timeout the deal initialCardsRound
+		game.timeout();
+		
 		// 2. Place bet
 		act(p[2], BET);
 		// 3. Verify that player 0 is folding
@@ -75,6 +78,9 @@ public class TelesinaDisconnectTest extends AbstractTexasHandTester {
 		// 1. Disconnect player 0
 		game.playerIsSittingOut(p[0], SitOutStatus.SITTING_OUT);
 		assertEquals(PokerPlayerStatus.SITOUT, mockServerAdapter.getPokerPlayerStatus(p[0]));
+		
+		// timeout the dealInitialCardsRound
+		game.timeout();
 		
 		// 2. check
 		act(p[2], CHECK);
@@ -117,8 +123,13 @@ public class TelesinaDisconnectTest extends AbstractTexasHandTester {
 		act(p[1], ANTE);
 		act(p[2], ANTE);
 		act(p[0], ANTE);
+				
+		assertPlayersNumberOfCards(mp, 2, 2, 2);
 		
 		// --- NEW BETTING ROUND ---
+		
+		//timeout the DealInitalCardsRound
+		game.timeout();
 		
 		game.playerIsSittingOut(p[1], SitOutStatus.SITTING_OUT);
 		assertEquals(PokerPlayerStatus.SITOUT, mockServerAdapter.getPokerPlayerStatus(p[1]));
@@ -129,20 +140,25 @@ public class TelesinaDisconnectTest extends AbstractTexasHandTester {
 		assertEquals(PokerActionType.CHECK, latestActionPerformed.getActionType());
 		game.timeout();
 		
+		assertPlayersNumberOfCards(mp, 3, 3, 3);	
 		
 		// --- NEW BETTING ROUND ---
 		act(p[0], BET);
 		act(p[2], CALL);
-		
 		Assert.assertTrue(mp[1].hasFolded());
-		assertEquals(3, mp[2].getPocketCards().getCards().size());
-		assertEquals(3, mp[1].getPocketCards().getCards().size());
+		
+		assertPlayersNumberOfCards(mp, 4, 3, 4);
 		
 		game.timeout();
 		
 		// Make sure mp[0] does not get any more cards
-		assertEquals(4, mp[2].getPocketCards().getCards().size());
-		assertEquals(3, mp[1].getPocketCards().getCards().size());
+		assertPlayersNumberOfCards(mp, 4, 3, 4);
+	}
+
+	public void assertPlayersNumberOfCards(MockPlayer[] mp, int p0NumberOfCards, int p1NumberOfCards, int p2NumberOfCards) {
+		assertEquals(p0NumberOfCards, mp[0].getPocketCards().getCards().size());
+		assertEquals(p1NumberOfCards, mp[1].getPocketCards().getCards().size());
+		assertEquals(p2NumberOfCards, mp[2].getPocketCards().getCards().size());
 	}
 	
 }

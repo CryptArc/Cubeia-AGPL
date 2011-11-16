@@ -7,8 +7,8 @@ import static com.cubeia.poker.hand.Suit.DIAMONDS;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyList;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.anyList;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 

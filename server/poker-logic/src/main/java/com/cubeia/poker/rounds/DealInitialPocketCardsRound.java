@@ -18,20 +18,23 @@
 package com.cubeia.poker.rounds;
 
 import com.cubeia.poker.action.PokerAction;
+import com.cubeia.poker.variant.telesina.Telesina;
 
 /**
- * Telesina specific round for dealing vela card.
+ * Telesina specific round for dealing new pocket cards between betting rounds.
+ * This round has been separated for timing reasons.
  */
-public class DealVelaCardRound implements Round {
+public class DealInitialPocketCardsRound implements Round {
 
 	private static final long serialVersionUID = 1L;
-	
-	public DealVelaCardRound() {
+
+	public DealInitialPocketCardsRound(Telesina telesina) {
+		telesina.dealInitialPocketCards();
 	}
 
 	@Override
 	public void act(PokerAction action) {
-		throw new IllegalStateException("Perform action not allowed during DealPocketCardsRound. Action received: "+action);
+		throw new IllegalStateException("Perform action not allowed during DealInitialPocketCardsRoun. Action received: "+action);
 	}
 
 	@Override
@@ -39,9 +42,6 @@ public class DealVelaCardRound implements Round {
 		return getClass().getSimpleName();
 	}
 
-	/**
-	 * 
-	 */
 	@Override
 	public boolean isFinished() {
 		return true;

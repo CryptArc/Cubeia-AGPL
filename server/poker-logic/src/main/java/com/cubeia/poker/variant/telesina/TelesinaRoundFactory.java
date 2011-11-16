@@ -1,7 +1,10 @@
 package com.cubeia.poker.variant.telesina;
 
+import com.cubeia.poker.rounds.DealCommunityCardsRound;
 import com.cubeia.poker.rounds.DealExposedPocketCardsRound;
-import com.cubeia.poker.rounds.DealVelaCardRound;
+import com.cubeia.poker.rounds.DealInitialPocketCardsRound;
+import com.cubeia.poker.rounds.ExposePrivateCardsRound;
+import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.ante.AnteRound;
 import com.cubeia.poker.rounds.ante.AnteRoundHelper;
 import com.cubeia.poker.rounds.betting.BettingRound;
@@ -23,12 +26,21 @@ public class TelesinaRoundFactory {
         return new BettingRound(telesina, dealerButtonSeatId, new TelesinaPlayerToActCalculator(telesina.getDeckLowestRank()));
    }
 
-    DealExposedPocketCardsRound createDealPocketCardsRound() {
-        return new DealExposedPocketCardsRound();
+    DealExposedPocketCardsRound createDealExposedPocketCardsRound(Telesina telesina) {
+        return new DealExposedPocketCardsRound(telesina);
     }
 
-    DealVelaCardRound createDealVelaCardRound() {
-        return new DealVelaCardRound();
-    }
+
+	ExposePrivateCardsRound createExposePrivateCardsRound(Telesina telesina) {
+		return new ExposePrivateCardsRound(telesina);
+	}
+
+	DealCommunityCardsRound createDealCommunityCardsRound(Telesina telesina) {
+		return new DealCommunityCardsRound(telesina);
+	}
+
+	DealInitialPocketCardsRound createDealInitialCardsRound(Telesina telesina) {
+		return new DealInitialPocketCardsRound(telesina);
+	}
     
 }

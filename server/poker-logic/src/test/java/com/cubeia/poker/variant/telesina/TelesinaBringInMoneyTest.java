@@ -39,12 +39,15 @@ public class TelesinaBringInMoneyTest extends AbstractTexasHandTester {
 		act(p[2], ANTE);
 		act(p[0], ANTE);
 
+		// timeout the DealInitialCardsRound
+		game.timeout();
 
 		act(p[2], BET, 90);
 		act(p[0], CALL);
 		act(p[1], CALL);
 
 		// Progress until hand is complete
+		game.timeout();
 		game.timeout();
 		game.timeout();
 		game.timeout();
@@ -69,6 +72,9 @@ public class TelesinaBringInMoneyTest extends AbstractTexasHandTester {
 		act(p[2], ANTE);
 		act(p[1], ANTE);
 		
+		// timeout the DealInitialCardsRound
+		game.timeout();
+		
 		// Now game should progress to betting round or we have a bug!
 		Assert.assertNotNull(mp[2].getActionRequest().getOption(PokerActionType.CHECK));
 		
@@ -87,12 +93,15 @@ public class TelesinaBringInMoneyTest extends AbstractTexasHandTester {
 		act(p[2], ANTE);
 		act(p[0], ANTE);
 
+		// timeout the DealInitialCardsRound
+		game.timeout();
 
 		act(p[2], BET, 90);
 		act(p[0], CALL);
 		act(p[1], CALL);
 
 		// Progress until hand is complete
+		game.timeout();
 		game.timeout();
 		game.timeout();
 		game.timeout();
@@ -117,6 +126,9 @@ public class TelesinaBringInMoneyTest extends AbstractTexasHandTester {
 		act(p[2], ANTE);
 		act(p[1], ANTE);
 		
+		// timeout the DealInitialCardsRound
+		game.timeout();
+		
 		// Now game should progress to betting round or we have a bug!
 		Assert.assertNotNull(mp[2].getActionRequest().getOption(PokerActionType.CHECK));
 		
@@ -136,12 +148,15 @@ public class TelesinaBringInMoneyTest extends AbstractTexasHandTester {
 		act(p[2], ANTE);
 		act(p[0], ANTE);
 
+		// timeout the DealInitialCardsRound
+		game.timeout();
 
 		act(p[2], BET, 90);
 		act(p[0], CALL);
 		act(p[1], CALL);
 
 		// Progress until hand is complete
+		game.timeout();
 		game.timeout();
 		game.timeout();
 		game.timeout();
@@ -169,6 +184,9 @@ public class TelesinaBringInMoneyTest extends AbstractTexasHandTester {
 		
 		act(p[2], ANTE);
 		act(p[1], ANTE);
+		
+		// timeout the DealInitialCardsRound
+		game.timeout();
 		
 		game.playerIsSittingIn(p[0]);
 		

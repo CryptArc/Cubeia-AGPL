@@ -13,11 +13,15 @@ import java.util.Random;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.internal.verification.Times;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import com.cubeia.poker.DummyRNGProvider;
 import com.cubeia.poker.PokerState;
@@ -27,8 +31,9 @@ import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotHolder;
+import com.cubeia.poker.rounds.DealCommunityCardsRound;
 import com.cubeia.poker.rounds.DealExposedPocketCardsRound;
-import com.cubeia.poker.rounds.DealVelaCardRound;
+import com.cubeia.poker.rounds.DealInitialPocketCardsRound;
 import com.cubeia.poker.rounds.ante.AnteRound;
 import com.cubeia.poker.rounds.betting.BettingRound;
 import com.cubeia.poker.timing.impl.DefaultTimingProfile;
@@ -86,9 +91,29 @@ public class TelesinaRoundsTest {
     public void testRoundSequence() {
         Telesina telesina = new Telesina(new DummyRNGProvider(), state, deckFactory, roundFactory);
 
-        // ante round
+
         AnteRound anteRound = mock(AnteRound.class);
         when(roundFactory.createAnteRound(telesina)).thenReturn(anteRound);
+        // verytime whe run createDealExposedPocketCardsRound() we will create a new DealExposedPocketCardsRound witch in turn will deal cards
+        when(roundFactory.createDealExposedPocketCardsRound(telesina)).thenAnswer(new Answer<DealExposedPocketCardsRound>() {
+	          public DealExposedPocketCardsRound answer(InvocationOnMock invocation) throws Throwable {
+	                  return new DealExposedPocketCardsRound((Telesina)invocation.getArguments()[0]);
+	              }
+	          });
+        
+        
+        
+
+        // ante -> deal initial cards round
+        // verytime whe run createDealExposedPocketCardsRound() we will create a new DealExposedPocketCardsRound witch in turn will deal cards
+        when(roundFactory.createDealInitialCardsRound(telesina)).thenAnswer(new Answer<DealInitialPocketCardsRound>() {
+	          public DealInitialPocketCardsRound answer(InvocationOnMock invocation) throws Throwable {
+	                  return new DealInitialPocketCardsRound((Telesina)invocation.getArguments()[0]);
+	              }
+	          });
+        
+        
+        // ante round
         telesina.startHand();
         assertThat((AnteRound) telesina.getCurrentRound(), is(anteRound));
         assertThat(telesina.getBettingRoundId(), is(0));
@@ -96,81 +121,73 @@ public class TelesinaRoundsTest {
         telesina.timeout();
         verify(anteRound).timeout();
         verify(anteRound).visit(telesina);
-        
+        telesina.visit(anteRound); // jump to deal initial pocket cards round
+                
+        // deal initial cards round -> betting round 0
         BettingRound bettingRound0 = mock(BettingRound.class);
         when(roundFactory.createBettingRound(telesina, 0)).thenReturn(bettingRound0);
-
-        // ante -> betting round 0
-        // cards: 1 + 1
-        telesina.visit(anteRound);
+        telesina.visit((DealInitialPocketCardsRound)telesina.getCurrentRound()); // Jump to betting round
+        verify(serverAdapter).scheduleTimeout(Mockito.anyLong());
+        when(potHolder.getPots()).thenReturn(new ArrayList<Pot>());
+        when(state.countNonFoldedPlayers()).thenReturn(3);
+        assertThat(telesina.isHandFinished(), is(false));
         assertCardsDealt(2, 1, player1, player2, player3);
         verify(potHolder).moveChipsToPot(Mockito.anyCollection());
         assertThat((BettingRound) telesina.getCurrentRound(), is(bettingRound0));
         assertThat(telesina.getBettingRoundId(), is(1));
-        DealExposedPocketCardsRound dealPocketCardsRound0 = mock(DealExposedPocketCardsRound.class);
-        when(roundFactory.createDealPocketCardsRound()).thenReturn(dealPocketCardsRound0);
-        when(potHolder.getPots()).thenReturn(new ArrayList<Pot>());
-        when(state.countNonFoldedPlayers()).thenReturn(3);
-        assertThat(telesina.isHandFinished(), is(false));
-
-        // betting 0 -> deal pocket cards round
-        telesina.visit(bettingRound0);
-        assertCardsDealt(2, 1, player1, player2, player3);
-        verify(serverAdapter).scheduleTimeout(Mockito.anyLong());
-        assertThat((DealExposedPocketCardsRound) telesina.getCurrentRound(), is(dealPocketCardsRound0));
+        
+		// betting 0 -> deal exposed		
+        telesina.visit(bettingRound0); // bettinground is over. deal new cards
+        assertCardsDealt(3, 2, player1, player2, player3);
+        verify(serverAdapter,Mockito.times(2)).scheduleTimeout(Mockito.anyLong());
+        assertThat(telesina.getCurrentRound(), CoreMatchers.instanceOf(DealExposedPocketCardsRound.class));
         assertThat(telesina.getBettingRoundId(), is(1));
         BettingRound bettingRound1 = mock(BettingRound.class);
         when(roundFactory.createBettingRound(telesina, 0)).thenReturn(bettingRound1);
 
         // deal pocket cards -> betting round 1
-        telesina.visit(dealPocketCardsRound0); // cards: 1 + 2
+        telesina.visit((DealExposedPocketCardsRound)telesina.getCurrentRound()); // Jump to betting round
         assertThat((BettingRound) telesina.getCurrentRound(), is(bettingRound1));
         assertThat(telesina.getBettingRoundId(), is(2));
-        assertCardsDealt(3, 2, player1, player2, player3);
-        DealExposedPocketCardsRound dealPocketCardsRound1 = mock(DealExposedPocketCardsRound.class);
-        when(roundFactory.createDealPocketCardsRound()).thenReturn(dealPocketCardsRound1);
         assertThat(telesina.isHandFinished(), is(false));
-        
+
         // betting 1 -> deal pocket cards round
-        telesina.visit(bettingRound1); 
-        verify(serverAdapter, Mockito.times(2)).scheduleTimeout(Mockito.anyLong());
-        assertThat((DealExposedPocketCardsRound) telesina.getCurrentRound(), is(dealPocketCardsRound1));
+        telesina.visit(bettingRound1); // jump to dealExposedCardsRound
+        verify(serverAdapter, Mockito.times(3)).scheduleTimeout(Mockito.anyLong());
+        assertCardsDealt(4, 3, player1, player2, player3);        
+        assertThat(telesina.getCurrentRound(), CoreMatchers.instanceOf(DealExposedPocketCardsRound.class));
         assertThat(telesina.getBettingRoundId(), is(2));
-        assertCardsDealt(3, 2, player1, player2, player3);
         BettingRound bettingRound2 = mock(BettingRound.class);
-        when(roundFactory.createBettingRound(telesina, 0)).thenReturn(bettingRound2);
-        
+        when(roundFactory.createBettingRound(telesina, 0)).thenReturn(bettingRound2); 
+
         // deal pocket cards -> betting round 2
-        telesina.visit(dealPocketCardsRound1); // cards: 1 + 3
+        telesina.visit((DealExposedPocketCardsRound)telesina.getCurrentRound()); // Jump to betting round
         assertThat((BettingRound) telesina.getCurrentRound(), is(bettingRound2));
         assertThat(telesina.getBettingRoundId(), is(3));
-        assertCardsDealt(4, 3, player1, player2, player3);
-        DealExposedPocketCardsRound dealPocketCardsRound2 = mock(DealExposedPocketCardsRound.class);
-        when(roundFactory.createDealPocketCardsRound()).thenReturn(dealPocketCardsRound2);
         assertThat(telesina.isHandFinished(), is(false));
-        
-        // betting 2 -> deal pocket card 
-        telesina.visit(bettingRound2);
-        verify(serverAdapter, Mockito.times(3)).scheduleTimeout(Mockito.anyLong());
-        assertThat((DealExposedPocketCardsRound) telesina.getCurrentRound(), is(dealPocketCardsRound2));
+                
+        // betting 2 -> deal pocket card
+        telesina.visit(bettingRound2); // jump to  dealExposedCardsRound
+        assertCardsDealt(5, 4, player1, player2, player3);
+        verify(serverAdapter, Mockito.times(4)).scheduleTimeout(Mockito.anyLong());
+        assertThat(telesina.getCurrentRound(), CoreMatchers.instanceOf(DealExposedPocketCardsRound.class));
         assertThat(telesina.getBettingRoundId(), is(3));
-        assertCardsDealt(4, 3, player1, player2, player3);
         BettingRound bettingRound3 = mock(BettingRound.class);
         when(roundFactory.createBettingRound(telesina, 0)).thenReturn(bettingRound3);
-        
+                
         // deal pocket cards -> betting round 3
-        telesina.visit(dealPocketCardsRound2); // cards: 1 + 4
+        telesina.visit((DealExposedPocketCardsRound)telesina.getCurrentRound()); // Jump to betting round
         assertThat((BettingRound) telesina.getCurrentRound(), is(bettingRound3));
         assertThat(telesina.getBettingRoundId(), is(4));
         assertCardsDealt(5, 4, player1, player2, player3);
-        DealVelaCardRound dealVelaCardRound = mock(DealVelaCardRound.class);
-        when(roundFactory.createDealVelaCardRound()).thenReturn(dealVelaCardRound);
+        DealCommunityCardsRound dealVelaCardRound = mock(DealCommunityCardsRound.class);
+        when(roundFactory.createDealCommunityCardsRound(telesina)).thenReturn(dealVelaCardRound);
         assertThat(telesina.isHandFinished(), is(false));
         
         // betting 3 -> deal vela card
         telesina.visit(bettingRound3);
-        verify(serverAdapter, Mockito.times(4)).scheduleTimeout(Mockito.anyLong());
-        assertThat((DealVelaCardRound) telesina.getCurrentRound(), is(dealVelaCardRound));
+        verify(serverAdapter, Mockito.times(5)).scheduleTimeout(Mockito.anyLong());
+        assertThat((DealCommunityCardsRound) telesina.getCurrentRound(), is(dealVelaCardRound));
         assertThat(telesina.getBettingRoundId(), is(4));
         assertCardsDealt(5, 4, player1, player2, player3);
         

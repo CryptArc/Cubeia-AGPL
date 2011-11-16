@@ -48,6 +48,10 @@ public class TelesinaAllinTest extends AbstractTexasHandTester {
 		assertThat(mp[0].isActionPossible(PokerActionType.ANTE), is(true));
 		act(p[1], PokerActionType.ANTE);	
 		act(p[0], PokerActionType.ANTE); 	
+		
+		// make deal initial pocket cards round end
+		game.timeout();
+		
 		act(p[1], PokerActionType.CHECK);
 		act(p[0], PokerActionType.CHECK); 	
 		
@@ -88,7 +92,11 @@ public class TelesinaAllinTest extends AbstractTexasHandTester {
 		assertThat(mp[1].isActionPossible(PokerActionType.ANTE), is(true));
 		assertThat(mp[0].isActionPossible(PokerActionType.ANTE), is(true));
 		act(p[1], PokerActionType.ANTE);	
-		act(p[0], PokerActionType.ANTE); 	
+		act(p[0], PokerActionType.ANTE); 
+		
+		// make deal initial pocket cards round end
+		game.timeout();
+		
 		act(p[1], PokerActionType.BET, 80); // ALL IN
 		act(p[0], PokerActionType.CALL); 	// Calls but is not all in
 		

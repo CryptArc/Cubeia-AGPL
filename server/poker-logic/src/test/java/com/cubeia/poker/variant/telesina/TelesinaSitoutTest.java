@@ -41,6 +41,9 @@ public class TelesinaSitoutTest extends AbstractTexasHandTester {
 		act(p[2], ANTE);
 		act(p[0], ANTE);
 		
+		// make deal initial pocket cards round end
+		game.timeout();
+		
 		// Disconnect player 0 & 1
 		game.playerIsSittingOut(p[0], SitOutStatus.SITTING_OUT);
 		game.playerIsSittingOut(p[1], SitOutStatus.SITTING_OUT);
@@ -81,6 +84,9 @@ public class TelesinaSitoutTest extends AbstractTexasHandTester {
 		act(p[1], ANTE);
 		act(p[2], ANTE);
 		act(p[0], ANTE);
+		
+		// make deal initial pocket cards round end
+		game.timeout();
 		
 		game.playerIsSittingOut(p[0], SitOutStatus.SITTING_OUT);
 		game.playerIsSittingOut(p[1], SitOutStatus.SITTING_OUT);

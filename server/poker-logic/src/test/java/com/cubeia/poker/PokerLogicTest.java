@@ -17,8 +17,15 @@
 
 package com.cubeia.poker;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import java.util.Collection;
 import java.util.List;
+
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.core.Is;
+import org.junit.Assert;
 
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
@@ -37,6 +44,7 @@ import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.rake.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.tournament.RoundReport;
+import com.cubeia.poker.variant.texasholdem.TexasHoldem;
 
 /**
  * Integration test for poker logic.
@@ -83,9 +91,16 @@ public class PokerLogicTest extends GuiceTest {
 		act(p[0], PokerActionType.CALL);
 		act(p[1], PokerActionType.CALL);
 		act(p[2], PokerActionType.CHECK);
+		// everyone checked so now we should be in DealCommunityCards round
 
+		assertEquals(3, game.getCommunityCards().size());
+				
+		assertThat(getCurrentRoundId(), is(0));
+		
 		// Trigger deal community cards
-		game.timeout();
+		game.timeout(); // timeout deal community cards. Starts a new betting round
+		
+		assertThat(getCurrentRoundId(), is(1));
 		
 		assertEquals(3, game.getCommunityCards().size());
 
@@ -95,10 +110,12 @@ public class PokerLogicTest extends GuiceTest {
 		act(p[3], PokerActionType.CALL);
 		act(p[0], PokerActionType.CALL);
 
-		// Trigger deal community cards
-		game.timeout();
-		
 		assertEquals(4, game.getCommunityCards().size());
+		
+		// Trigger deal community cards
+		game.timeout();// timeout deal community cards. Starts a new betting round
+		
+		
 
 		// Turn round
 		act(p[1], PokerActionType.CHECK);
@@ -122,6 +139,11 @@ public class PokerLogicTest extends GuiceTest {
 		
 		// Check that we didn't create or lose any chips.
 		assertEquals(chipsInPlay, countChipsAtTable(p));
+	}
+
+	private int getCurrentRoundId() {
+		int roundId = ((TexasHoldem)game.getGameType()).getCurrentRoundId();
+		return roundId;
 	}
 
 	private int countChipsAtTable(int[] p) {

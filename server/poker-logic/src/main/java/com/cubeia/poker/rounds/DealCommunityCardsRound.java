@@ -33,6 +33,8 @@ public class DealCommunityCardsRound implements Round {
 
 	public DealCommunityCardsRound(GameType gameType) {
 		this.gameType = gameType;
+		
+		gameType.dealCommunityCards();
 	}
 
 	@Override
@@ -60,7 +62,7 @@ public class DealCommunityCardsRound implements Round {
 	
 	@Override
 	public void timeout() {
-		gameType.dealCommunityCards();
+		//nothing
 	}
 
 }

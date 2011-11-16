@@ -586,6 +586,20 @@ public class PokerState implements Serializable, IPokerState {
         }
     }
 	
+	public boolean hasAllPlayersExposedCards() {
+	
+		if (countNonFoldedPlayers() > 1)
+		{
+			for (PokerPlayer p : getCurrentHandSeatingMap().values()) {
+				if (!p.hasFolded() && !p.isExposingPocketCards()) {
+					return false;
+		        }
+		    }
+		}
+		
+		return true;
+	}
+	
 	/*------------------------------------------------
 	 
 		SERVER ADAPTER METHODS
@@ -874,4 +888,23 @@ public class PokerState implements Serializable, IPokerState {
         }
         this.currentState = newState;
     }
+
+	private int getNumberOfAllinPlayers() {
+
+		int counter = 0;
+		
+		for (PokerPlayer pokerPlayer : getCurrentHandPlayerMap().values()) {
+			if(pokerPlayer.isAllIn() || pokerPlayer.hasFolded()){
+				++counter;
+			}
+		}
+		
+		return counter;
+
+	}
+
+	public boolean isAtLeastAllButOneAllIn() {
+		return getNumberOfAllinPlayers() >= currentHandPlayerMap.size() - 1;
+	}
+
 }

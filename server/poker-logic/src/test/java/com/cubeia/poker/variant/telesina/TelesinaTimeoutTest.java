@@ -92,6 +92,10 @@ public class TelesinaTimeoutTest extends AbstractTexasHandTester {
 		// Timeout player 0
 		game.timeout();
 		
+		
+		// make deal initial pocket cards round end
+		game.timeout();
+		
 		assertEquals(PokerPlayerStatus.SITOUT, mockServerAdapter.getPokerPlayerStatus(p[0]));
 		
 		assertTrue(mp[2].isActionPossible(CHECK));
@@ -115,9 +119,14 @@ public class TelesinaTimeoutTest extends AbstractTexasHandTester {
 		game.timeout();
 		act(p[1], ANTE);
 		act(p[0], ANTE);
+		
+		// make deal initial pocket cards round end
+		game.timeout();
+		
 		act(p[1], BET, 90);
 		act(p[0], CALL);
 		// Progress until hand is complete
+		game.timeout();
 		game.timeout();
 		game.timeout();
 		game.timeout();
@@ -149,6 +158,9 @@ public class TelesinaTimeoutTest extends AbstractTexasHandTester {
 		act(p[1], ANTE);
 		act(p[2], DECLINE_ENTRY_BET);
 		act(p[0], ANTE);
+		
+		// make deal initial pocket cards round end
+		game.timeout();
 		
 		assertEquals(PokerPlayerStatus.SITOUT, mockServerAdapter.getPokerPlayerStatus(p[2]));
 		

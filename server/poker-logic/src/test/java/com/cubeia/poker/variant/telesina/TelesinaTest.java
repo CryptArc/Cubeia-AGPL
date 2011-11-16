@@ -3,7 +3,6 @@ package com.cubeia.poker.variant.telesina;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
 
 import java.util.Random;
 import java.util.SortedMap;
@@ -21,11 +20,6 @@ import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.rounds.DealExposedPocketCardsRound;
-import com.cubeia.poker.rounds.DealVelaCardRound;
-import com.cubeia.poker.rounds.ante.AnteRound;
-import com.cubeia.poker.rounds.betting.BettingRound;
-import com.cubeia.poker.rounds.betting.DefaultPlayerToActCalculator;
-import com.cubeia.poker.rounds.betting.PlayerToActCalculator;
 import com.cubeia.poker.timing.impl.DefaultTimingProfile;
 
 public class TelesinaTest {
@@ -66,46 +60,13 @@ public class TelesinaTest {
 		
 		telesina.startHand();
 		
-		DealExposedPocketCardsRound dealPocketCardsRound = mock(DealExposedPocketCardsRound.class);
-		telesina.visit(dealPocketCardsRound);
+		DealExposedPocketCardsRound dealPocketCardsRound = new DealExposedPocketCardsRound(telesina);
 
-		//two times when exposing cards, two times when dealing new cards
-		int numberOfTimeHandStrengthShouldBeSent = 4;
+		//two times when dealing new cards
+		int numberOfTimeHandStrengthShouldBeSent = 2;
 		assertEquals(numberOfTimeHandStrengthShouldBeSent, telesina.getNumberOfSentBestHands());		
 	}
 	
-	@Test
-	public void testVisitDealPocketCardsRoundExposePocketCards(){
-		setup();
-		PokerPlayer p1 = createAndAddPlayer(1, false);
-		PokerPlayer p2 = createAndAddPlayer(2, false);
-		
-		p1.clearBalance();
-		p2.clearBalance();
-				
-		DealExposedPocketCardsRound dealPocketCardsRound = mock(DealExposedPocketCardsRound.class);
-		
-		telesina.visit(dealPocketCardsRound);
-		verify(pokerState).exposeShowdownCards();
-	}
-	
-	@Test
-	public void testVisitDealVelaCardsRoundExposePocketCards(){
-		setup();
-		PokerPlayer p1 = createAndAddPlayer(1, false);
-		PokerPlayer p2 = createAndAddPlayer(2, false);
-		
-		p1.clearBalance();
-		p2.clearBalance();
-		
-		DealVelaCardRound dealVelaCardRound = mock(DealVelaCardRound.class);
-		
-		telesina.startHand();
-		
-		telesina.visit(dealVelaCardRound);
-		
-		verify(pokerState).exposeShowdownCards();
-	}
 
 	private DefaultPokerPlayer createAndAddPlayer(int playerId, boolean folded) {
 		DefaultPokerPlayer p = new DefaultPokerPlayer(playerId);

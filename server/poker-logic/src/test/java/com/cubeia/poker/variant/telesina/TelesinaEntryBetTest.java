@@ -36,6 +36,9 @@ public class TelesinaEntryBetTest extends AbstractTexasHandTester {
 		act(p[2], ANTE);
 		act(p[0], ANTE);
 		
+		// make deal initial pocket cards round end
+		game.timeout();
+		
 		ActionRequest actionRequest = mp[2].getActionRequest();
 		assertEquals(20, actionRequest.getOption(BET).getMinAmount());
 		

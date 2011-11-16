@@ -1,6 +1,5 @@
 package com.cubeia.backend.cashgame;
 
-import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class TableIdImpl implements TableId {
