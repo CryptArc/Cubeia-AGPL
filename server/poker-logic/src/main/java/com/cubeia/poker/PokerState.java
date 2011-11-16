@@ -526,11 +526,21 @@ public class PokerState implements Serializable, IPokerState {
         log.debug("player {} is sitting out", playerId);
 	    
 		PokerPlayer player = playerMap.get(playerId);
-		if ( player != null ) {
-			player.setSitOutStatus(status);
-			player.setSitOutNextRound(true);
-			notifyPlayerSittingOut(playerId);
+		if ( player == null ) return;
+		
+		player.setSitOutStatus(status);
+		player.setSitOutNextRound(true);
+		notifyPlayerSittingOut(playerId);
+		
+		// if we declined ante or did not pay ante
+		// then we should be removed from the current hand- and seating-map
+		if (status == SitOutStatus.MISSED_ANTE)
+		{
+			currentHandPlayerMap.remove(playerId);
+			int seatId = player.getSeatId();
+			currentHandSeatingMap.remove(seatId);
 		}
+		
 	}
 	
 	/**

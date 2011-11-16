@@ -17,7 +17,9 @@
 
 package com.cubeia.poker.rounds.ante;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.SortedMap;
 
 import org.apache.log4j.Logger;
@@ -102,7 +104,7 @@ public class AnteRound implements Round {
 			throw new IllegalArgumentException(action.getActionType() + " is not legal here");
 		}
 		
-		game.getState().getPlayerInCurrentHand(action.getPlayerId()).clearActionRequest();
+		player.clearActionRequest();
 		
         Collection<PokerPlayer> playersInHand = game.getState().getCurrentHandSeatingMap().values();
 		
@@ -121,7 +123,7 @@ public class AnteRound implements Round {
 	}
 
 	private void setPlayerSitOut(PokerPlayer player) {
-		game.getState().playerIsSittingOut(player.getId(), SitOutStatus.MISSSED_ANTE);
+		game.getState().playerIsSittingOut(player.getId(), SitOutStatus.MISSED_ANTE);
 	}
 
 	/**
@@ -138,7 +140,10 @@ public class AnteRound implements Round {
 	} 
 
 	public void timeout() {
-	    for (PokerPlayer player : getAllSeatedPlayers()) {
+		List<PokerPlayer> playersToSitOut = new ArrayList<PokerPlayer>();
+		
+		
+		for (PokerPlayer player : getAllSeatedPlayers()) {
 	        if (!player.hasActed()) {
 	            log.debug("Player["+player+"] ante timed out. Will decline entry bet.");
 	            PokerAction action = new PokerAction(player.getId(), PokerActionType.DECLINE_ENTRY_BET, true);
@@ -148,9 +153,14 @@ public class AnteRound implements Round {
 	            player.setHasPostedEntryBet(false);
 	            player.clearActionRequest();
 	            game.getServerAdapter().notifyActionPerformed(action, player.getBalance());
-	            setPlayerSitOut(player);
+	            playersToSitOut.add(player);
 	        }
 	    }
+		
+		// sit out all the players
+		for (PokerPlayer player : playersToSitOut) {			
+			setPlayerSitOut(player);
+		}
 	}
 
 	public String getStateDescription() {

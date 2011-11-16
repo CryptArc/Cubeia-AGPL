@@ -102,7 +102,7 @@ public class TelesinaTimeoutTest extends AbstractTexasHandTester {
 		act(p[2], PokerActionType.CHECK);
 		act(p[1], PokerActionType.CHECK);
 		
-		assertTrue(game.getPlayerInCurrentHand(p[0]).isSittingOut());
+		assertNull(game.getPlayerInCurrentHand(p[0]));
 	}
 
 	@Test
@@ -168,6 +168,6 @@ public class TelesinaTimeoutTest extends AbstractTexasHandTester {
 		act(p[1], PokerActionType.CHECK);
 		act(p[0], PokerActionType.CHECK);
 		
-		assertTrue(game.getPlayerInCurrentHand(p[2]).isSittingOut());
+		assertNull(game.getPlayerInCurrentHand(p[2]));
 	}
 }

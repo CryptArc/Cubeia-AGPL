@@ -103,11 +103,8 @@ public class TelesinaAnteSitInTest extends AbstractTexasHandTester {
 		act(p[1], PokerActionType.ANTE);	
 		act(p[2], PokerActionType.DECLINE_ENTRY_BET);
 		
-		// Assert that player 2 is now in a sit out state
-		assertTrue(game.getPlayerInCurrentHand(p[2]).isSittingOut());
-		// Player 2 now says sit-in again
-		game.playerIsSittingIn(p[2]);
-		assertFalse(game.getPlayerInCurrentHand(p[2]).isSittingOut());
+		// Assert that player 2 not in the current players
+		assertNull(game.getPlayerInCurrentHand(p[2]));
 		
 		act(p[0], PokerActionType.ANTE); 
 		
@@ -117,7 +114,7 @@ public class TelesinaAnteSitInTest extends AbstractTexasHandTester {
 		// Now player 2 should not be in the hard nor be awarded cards
 		assertEquals(2, game.getPlayerInCurrentHand(p[1]).getPocketCards().getCards().size());
 		assertEquals(2, game.getPlayerInCurrentHand(p[0]).getPocketCards().getCards().size());
-		assertEquals(0, game.getPlayerInCurrentHand(p[2]).getPocketCards().getCards().size());
+		
 		
 		act(p[1], PokerActionType.CHECK);
 		act(p[0], PokerActionType.CHECK); 	
