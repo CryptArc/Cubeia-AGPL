@@ -71,7 +71,6 @@ public class HandResultBatchFactoryTest {
         assertThat(hr1.win, is(result1.getWinningsIncludingOwnBets()));
         assertThat(hr1.rake, is(1000L / 100));
         assertThat(hr1.playerSession, is(playerSessionId1));
-        assertThat(hr1.startingBalance, is(1000L));
     }
     
     @Test(expected=IllegalStateException.class)
