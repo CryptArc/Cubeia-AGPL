@@ -20,16 +20,16 @@ public class HandResult implements Serializable {
 	public final long rake;
 	
 	public final int seat;
-	public final long initialBalance;
+	public final long startingBalance;
 	
 	public HandResult(PlayerSessionId playerSession, long aggregatedBet,
-			long win, long rake, int seat, long initialBalance) {
+			long win, long rake, int seat, long startingBalance) {
 
 		this.playerSession = playerSession;
 		this.aggregatedBet = aggregatedBet;
 		this.win = win;
 		this.rake = rake;
 		this.seat = seat;
-		this.initialBalance = initialBalance;
+		this.startingBalance = startingBalance;
 	}
 }

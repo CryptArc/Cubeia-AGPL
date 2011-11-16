@@ -320,6 +320,8 @@ public class PokerState implements Serializable, IPokerState {
 			setCurrentState(PLAYING);
 			
 			resetValuesAtStartOfHand();
+            
+            saveStartingBalances();
 			
 			currentHandSeatingMap = createCopyWithSitOutPlayersExcluded(seatingMap);
 			currentHandPlayerMap = createCopyWithSitOutPlayersExcluded(playerMap);
@@ -361,6 +363,13 @@ public class PokerState implements Serializable, IPokerState {
         potHolder = new PotHolder(new LinearRakeWithLimitCalculator(settings.getRakeSettings()));
 		gameType.prepareNewHand();
 	}
+    
+    @VisibleForTesting
+    protected void saveStartingBalances() {
+        for (PokerPlayer p : playerMap.values()) {
+            p.setStartingBalance(p.getBalance());
+        }
+    }
 
 	// TODO: This opens up for tinkering. Should we disallow this method?
 	public GameType getGameType() {

@@ -65,6 +65,8 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	 * the unused amount of chips kept by the player
 	 */
 	private long balance = 0;
+    
+    private long startingBalance = 0;
 
 	/**
 	 * the money reserved in wallet but not yet available to the player 
@@ -226,6 +228,14 @@ public class DefaultPokerPlayer implements PokerPlayer {
 		balance -= bet;
 		betStack += bet;
 	}
+
+    public void setStartingBalance(long startingBalance) {
+        this.startingBalance = startingBalance;
+    }
+
+    public long getStartingBalance() {
+        return startingBalance;
+    }
 	
 	public long getBetStack() {
 		return betStack;

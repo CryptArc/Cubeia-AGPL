@@ -28,7 +28,7 @@ public class HandResultBatchFactory {
             long rake = handResult.getRakeContributionByPlayer(player);
             long net = result.getNetResult();
             log.debug("Result for player " + player.getId() + " -> Bets: " + bets + "; Wins: " + wins + "; Rake: " + rake + "; Net: " + net);
-            com.cubeia.backend.cashgame.dto.HandResult hr = new com.cubeia.backend.cashgame.dto.HandResult(player.getPlayerSessionId(), bets, wins, rake, player.getSeatId(), -1); // TODO Add initial balance?
+            com.cubeia.backend.cashgame.dto.HandResult hr = new com.cubeia.backend.cashgame.dto.HandResult(player.getPlayerSessionId(), bets, wins, rake, player.getSeatId(), player.getStartingBalance()); // TODO Add initial balance?
             bhr.addHandResult(hr);
             totalBet += bets;
             totalNet += net;

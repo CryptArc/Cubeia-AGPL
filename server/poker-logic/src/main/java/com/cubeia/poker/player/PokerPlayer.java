@@ -106,6 +106,10 @@ public interface PokerPlayer extends Serializable {
 	public void clearBalance();
 	
 	public long getBalance();
+    
+    public void setStartingBalance(long startingBalance);
+    
+    public long getStartingBalance();
 	
 
 	/**
