@@ -24,7 +24,7 @@ public class BackendPlayerSessionHandler {
     @Service @VisibleForTesting
     protected CashGamesBackendContract cashGameBackend;
 
-    public void endPlayerSessionInBackend(Table table, PokerPlayer pokerPlayer) {
+    public void endPlayerSessionInBackend(Table table, PokerPlayer pokerPlayer, int roundNumber) {
         if (!(pokerPlayer instanceof PokerPlayerImpl)) {
             throw new IllegalStateException("must be a PokerPlayerImpl");
         }
@@ -36,7 +36,7 @@ public class BackendPlayerSessionHandler {
         log.debug("Handle session end for player[" + pokerPlayer.getId() + "], sessionid["+sessionId+"]");
         if (sessionId != null) {
             // TODO: table round number is mocked!
-            CloseSessionRequest closeSessionRequest = new CloseSessionRequest(sessionId, -1);
+            CloseSessionRequest closeSessionRequest = new CloseSessionRequest(sessionId, roundNumber);
             try {
                 cashGameBackend.closeSession(closeSessionRequest);
             } catch (CloseSessionFailedException e) {
@@ -48,7 +48,7 @@ public class BackendPlayerSessionHandler {
         }
     }
 
-    public void startWalletSession(PokerState state, Table table, int playerId) {
+    public void startWalletSession(PokerState state, Table table, int playerId, int roundNumber) {
         log.debug("starting wallet session: tId = {}, pId = {}", table.getId(), playerId);
         TableId tableId = (TableId) state.getExternalTableProperties().get(EXT_PROP_KEY_TABLE_ID);
         if (tableId == null) {
@@ -56,7 +56,7 @@ public class BackendPlayerSessionHandler {
             throw new IllegalStateException("cannot create table session if table is not announced yet, tableId = " + table.getId());
         }
         // TODO: table round number is mocked!
-        OpenSessionRequest openSessionRequest = new OpenSessionRequest(playerId, tableId, -1);
+        OpenSessionRequest openSessionRequest = new OpenSessionRequest(playerId, tableId, roundNumber);
         cashGameBackend.openSession(openSessionRequest, cashGameBackend.getCallbackFactory().createOpenSessionCallback(table));
     }
 

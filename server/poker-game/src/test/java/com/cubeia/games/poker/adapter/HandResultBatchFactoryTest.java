@@ -146,7 +146,7 @@ public class HandResultBatchFactoryTest {
 		RakeInfoContainer rakeInfoContainer = new RakeInfoContainer(334, 3, potRakes);
         HandResult handResult = new HandResult(results, Collections.<RatedPlayerHand>emptyList(), Collections.<PotTransition>emptyList(), rakeInfoContainer, new ArrayList<Integer>() );
         
-        BatchHandRequest batchHandRequest = handResultFactory.createAndValidateBatchHandRequest(handResult, handId, tableId);
+        handResultFactory.createAndValidateBatchHandRequest(handResult, handId, tableId);
     }
     
     private PokerPlayerImpl createMockPlayer(int playerId) {

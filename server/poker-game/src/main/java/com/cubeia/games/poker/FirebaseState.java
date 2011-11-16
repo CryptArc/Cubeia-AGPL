@@ -43,10 +43,6 @@ public class FirebaseState implements Serializable {
         return handCount;
     }
 
-    public void setHandCount(int handCount) {
-        this.handCount = handCount;
-    }
-
     public HandIdentifier getCurrentHandIdentifier() {
         return currentHandIdentifier;
     }
@@ -55,4 +51,7 @@ public class FirebaseState implements Serializable {
         this.currentHandIdentifier = playerHand;
     }
 
+	public void incrementHandCount() {
+		handCount++;
+	}
 }

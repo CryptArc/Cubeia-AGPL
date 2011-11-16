@@ -33,6 +33,9 @@ public class PokerTableListenerTest {
         ptl.gameStateSender = mock(GameStateSender.class);
         ptl.backendPlayerSessionHandler = mock(BackendPlayerSessionHandler.class);
         
+        FirebaseState fst = mock(FirebaseState.class);
+        when(ptl.state.getAdapterState()).thenReturn(fst);
+        
         Table table = mock(Table.class);
         when(table.getId()).thenReturn(tableId);
         TableMetaData tableMetaData = mock(TableMetaData.class);
@@ -49,7 +52,7 @@ public class PokerTableListenerTest {
         assertThat(((PokerPlayerImpl) pokerPlayer).getPlayerSessionId(), nullValue());
         verify(ptl.gameStateSender).sendGameState(table, playerId);
         verify(ptl.state).addPlayer(pokerPlayer);
-        verify(ptl.backendPlayerSessionHandler).startWalletSession(ptl.state, table, playerId);
+        verify(ptl.backendPlayerSessionHandler).startWalletSession(ptl.state, table, playerId, 0);
         verify(ptl.state, never()).getBalance(playerId);
         
         assertThat(pokerPlayer.isSittingOut(), is(true));

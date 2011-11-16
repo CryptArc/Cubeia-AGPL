@@ -117,14 +117,18 @@ public class TableCrashHandler {
     protected void closePlayerSessions(Table table, Collection<PokerPlayer> pokerPlayers) {
         for (PokerPlayer pokerPlayer : pokerPlayers) {
             try {
-                backendPlayerSessionHandler.endPlayerSessionInBackend(table, pokerPlayer);
+                backendPlayerSessionHandler.endPlayerSessionInBackend(table, pokerPlayer, getCurrentRoundNumber());
             } catch (Exception e) {
                 log.error("error closing player session for player = " + pokerPlayer.getId(), e);
             }
         }
     }
 
-    private Collection<PokerPlayer> removePlayersFromTable(Table table, Collection<GenericPlayer> players) {
+    private int getCurrentRoundNumber() {
+		return ((FirebaseState)state.getAdapterState()).getHandCount();
+	}
+
+	private Collection<PokerPlayer> removePlayersFromTable(Table table, Collection<GenericPlayer> players) {
         Collection<PokerPlayer> removedPlayers = new ArrayList<PokerPlayer>();
         
         for (GenericPlayer genericPlayer : players) {

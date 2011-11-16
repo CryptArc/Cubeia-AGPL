@@ -46,6 +46,7 @@ public class TableCrashHandlerTest {
     private StyxSerializer serializer = new StyxSerializer(new ProtocolObjectFactory());
     
     @Mock private PokerState state;
+    @Mock private FirebaseState fbState;
     @Mock private ActionCache actionCache;
     @Mock private Table table;
     @Mock private LobbyTableAttributeAccessor attributeAccessor;
@@ -60,6 +61,7 @@ public class TableCrashHandlerTest {
         tableCrashHandler = new TableCrashHandler(state, actionCache, backendPlayerSessionHandler, serverAdapter);
         when(table.getAttributeAccessor()).thenReturn(attributeAccessor);
         when(table.getId()).thenReturn(tableId);
+        when(state.getAdapterState()).thenReturn(fbState);
     }
     
     @Test
@@ -80,6 +82,8 @@ public class TableCrashHandlerTest {
         UnmodifiableSet<GenericPlayer> playerSet = new UnmongofiableSet<GenericPlayer>(asList(gp1, gp2));
         when(tablePlayerSet.getPlayers()).thenReturn(playerSet);
         
+        
+        
         PokerPlayer pokerPlayer1 = mock(PokerPlayer.class);
         PokerPlayer pokerPlayer2 = mock(PokerPlayer.class);
         when(state.getPokerPlayer(player1Id)).thenReturn(pokerPlayer1);
@@ -94,8 +98,8 @@ public class TableCrashHandlerTest {
         
         verify(tablePlayerSet).removePlayer(player1Id);
         verify(tablePlayerSet).removePlayer(player2Id);
-        verify(backendPlayerSessionHandler).endPlayerSessionInBackend(table, pokerPlayer1);
-        verify(backendPlayerSessionHandler).endPlayerSessionInBackend(table, pokerPlayer2);
+        verify(backendPlayerSessionHandler).endPlayerSessionInBackend(table, pokerPlayer1, 0);
+        verify(backendPlayerSessionHandler).endPlayerSessionInBackend(table, pokerPlayer2, 0);
         verify(attributeAccessor).setAttribute(PokerLobbyAttributes.TABLE_READY_FOR_CLOSE.name(), new AttributeValue(1));
         verify(gameNotifier).notifyPlayer(Mockito.eq(player1Id), Mockito.any(GameDataAction.class));
         
@@ -111,11 +115,11 @@ public class TableCrashHandlerTest {
     public void testClosePlayerSessionsWontStopOnException() {
         PokerPlayer pokerPlayer1 = mock(PokerPlayer.class);
         PokerPlayer pokerPlayer2 = mock(PokerPlayer.class);
-        doThrow(new RuntimeException("crash")).when(backendPlayerSessionHandler).endPlayerSessionInBackend(table, pokerPlayer1);
+        doThrow(new RuntimeException("crash")).when(backendPlayerSessionHandler).endPlayerSessionInBackend(table, pokerPlayer1, -1);
         
         tableCrashHandler.closePlayerSessions(table, Arrays.asList(pokerPlayer1, pokerPlayer2));
         
-        verify(backendPlayerSessionHandler).endPlayerSessionInBackend(table, pokerPlayer2);
+        verify(backendPlayerSessionHandler).endPlayerSessionInBackend(table, pokerPlayer2, 0);
     }
     
 }

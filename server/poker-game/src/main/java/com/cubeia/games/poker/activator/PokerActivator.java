@@ -21,7 +21,6 @@ import static com.cubeia.games.poker.activator.PokerParticipant.RAKE_FRACTION;
 import static com.cubeia.games.poker.activator.PokerParticipant.RAKE_LIMIT;
 import static com.cubeia.games.poker.activator.PokerParticipant.RAKE_LIMIT_HEADS_UP;
 import static com.cubeia.poker.variant.PokerVariant.TELESINA;
-import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
 
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;

@@ -165,23 +165,25 @@ public class PokerTableListener implements TournamentTableListener {
         
         if (!tournamentPlayer) {
             // TODO: wallet session should not be created here but on buy in request
-            
         	log.debug("Start wallet session for player: " + player);
-        	backendPlayerSessionHandler.startWalletSession(state, table, player.getPlayerId());
+        	backendPlayerSessionHandler.startWalletSession(state, table, player.getPlayerId(), getCurrentRoundNumber());
         }
         
         return pokerPlayer;
     }
+	
+	private int getCurrentRoundNumber() {
+		return ((FirebaseState)state.getAdapterState()).getHandCount();
+	}
     
 	private void removePlayer(Table table, int playerId, boolean tournamentPlayer) {
         if (!tournamentPlayer) {
         	PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) state.getPokerPlayer(playerId);
             if (pokerPlayer != null) { // Check if player was removed already
-            	backendPlayerSessionHandler.endPlayerSessionInBackend(table, pokerPlayer);
+            	backendPlayerSessionHandler.endPlayerSessionInBackend(table, pokerPlayer, getCurrentRoundNumber());
         	}
         }
         
         state.removePlayer(playerId);
     }
-	
 }

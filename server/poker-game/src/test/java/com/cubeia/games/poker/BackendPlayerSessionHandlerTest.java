@@ -51,7 +51,7 @@ public class BackendPlayerSessionHandlerTest {
         PlayerSessionId sessionId = mock(PlayerSessionId.class);
         when(pokerPlayer.getPlayerSessionId()).thenReturn(sessionId);
         
-        backendPlayerSessionHandler.endPlayerSessionInBackend(table, pokerPlayer);
+        backendPlayerSessionHandler.endPlayerSessionInBackend(table, pokerPlayer, -1);
 
         ArgumentCaptor<CloseSessionRequest> requestCaptor = ArgumentCaptor.forClass(CloseSessionRequest.class);
         verify(cashGamesBackendContract).closeSession(requestCaptor.capture());
@@ -63,7 +63,7 @@ public class BackendPlayerSessionHandlerTest {
     @Test(expected = IllegalStateException.class)
     public void testEndPlayerSessionInBackendFailIfWrongPlayerType() {
         PokerPlayer pokerPlayer = mock(PokerPlayer.class);
-        backendPlayerSessionHandler.endPlayerSessionInBackend(table, pokerPlayer);
+        backendPlayerSessionHandler.endPlayerSessionInBackend(table, pokerPlayer, -1);
     }
 
     @SuppressWarnings("serial")
@@ -78,7 +78,7 @@ public class BackendPlayerSessionHandlerTest {
         when(callbackFactory.createOpenSessionCallback(table)).thenReturn(openSessionCallback);
         
         int playerId = 234989;
-        backendPlayerSessionHandler.startWalletSession(state, table, playerId);
+        backendPlayerSessionHandler.startWalletSession(state, table, playerId, -1);
 
         verify(callbackFactory).createOpenSessionCallback(table);
         ArgumentCaptor<OpenSessionRequest> requestCaptor = ArgumentCaptor.forClass(OpenSessionRequest.class);
@@ -94,7 +94,7 @@ public class BackendPlayerSessionHandlerTest {
         Map<String, Serializable> extProps = Collections.emptyMap();
         when(state.getExternalTableProperties()).thenReturn(extProps);
         
-        backendPlayerSessionHandler.startWalletSession(state, table, 234989);
+        backendPlayerSessionHandler.startWalletSession(state, table, 234989, -1);
     }
     
 }

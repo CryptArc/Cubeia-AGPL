@@ -865,5 +865,4 @@ public class PokerState implements Serializable, IPokerState {
         }
         this.currentState = newState;
     }
-	
 }
