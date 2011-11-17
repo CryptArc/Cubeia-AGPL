@@ -131,9 +131,7 @@ public class Telesina implements GameType, RoundVisitor {
 
 	private void initHand() {	
 		log.debug("init hand");
-		
 		resetPlayerPostedEntryBets();
-        
 		deck = deckFactory.createNewDeck(rngProvider.getRNG(), state.getTableSize());
 		try {
 		state.notifyDeckInfo(deck.getTotalNumberOfCardsInDeck(), deck.getDeckLowestRank());
@@ -141,10 +139,8 @@ public class Telesina implements GameType, RoundVisitor {
 			th.printStackTrace();
 		}
 		blindsInfo.setAnteLevel(state.getAnteLevel());
-		
 		setCurrentRound(roundFactory.createAnteRound(this));
-		
-		setBettingRoundId(0);
+		resetBettingRoundId();
 	}
 
     protected void resetPlayerPostedEntryBets() {
@@ -213,8 +209,9 @@ public class Telesina implements GameType, RoundVisitor {
 
     private void startBettingRound() {
 		setCurrentRound(roundFactory.createBettingRound(this, blindsInfo.getDealerButtonSeatId()));
-		setBettingRoundId(getBettingRoundId() + 1);
+		incrementBettingRoundId();
 		log.debug("started new betting round, betting round id = {}", getBettingRoundId());
+		state.notifyNewRound();
 	}
 
     @VisibleForTesting
@@ -484,7 +481,7 @@ public class Telesina implements GameType, RoundVisitor {
     private void setCurrentRound(Round newRound) {
         log.debug("moved to new round: {} -> {}", currentRound, newRound);
         this.currentRound = newRound;
-        state.notifyNewRound();
+        // state.notifyNewRound();
     }
 
     @VisibleForTesting
@@ -492,8 +489,12 @@ public class Telesina implements GameType, RoundVisitor {
         return bettingRoundId;
     }
 
-    private void setBettingRoundId(int bettingRoundId) {
-        this.bettingRoundId = bettingRoundId;
+    private void incrementBettingRoundId() {
+        this.bettingRoundId++;
+    }
+    
+    private void resetBettingRoundId() {
+        this.bettingRoundId = 0;
     }
 
 	public Rank getDeckLowestRank() {

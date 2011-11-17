@@ -3,6 +3,7 @@ package com.cubeia.poker.variant.telesina;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -199,6 +200,9 @@ public class TelesinaRoundsTest {
         BettingRound bettingRound4 = mock(BettingRound.class);
         when(roundFactory.createBettingRound(telesina, 0)).thenReturn(bettingRound4);
         assertThat(telesina.isHandFinished(), is(true));
+        
+        // check how many calls to the state "notify new round" we've had
+        verify(state, times(5)).notifyNewRound();
         
         // SHOWDOWN!
     }
