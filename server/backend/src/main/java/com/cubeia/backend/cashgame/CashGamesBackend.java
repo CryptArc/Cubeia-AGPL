@@ -36,7 +36,7 @@ public interface CashGamesBackend {
 	@Async
 	void announceTable(AnnounceTableRequest request, AnnounceTableCallback callback);
 
-	void closeTable(CloseTableRequest request) throws CloseTableFailedException;
+	// void closeTable(CloseTableRequest request) throws CloseTableFailedException;
 
 	@Async
 	void openSession(OpenSessionRequest request, OpenSessionCallback callback);

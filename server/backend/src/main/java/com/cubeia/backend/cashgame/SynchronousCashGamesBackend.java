@@ -6,7 +6,6 @@ import com.cubeia.backend.cashgame.dto.BalanceUpdate;
 import com.cubeia.backend.cashgame.dto.BatchHandRequest;
 import com.cubeia.backend.cashgame.dto.BatchHandResponse;
 import com.cubeia.backend.cashgame.dto.CloseSessionRequest;
-import com.cubeia.backend.cashgame.dto.CloseTableRequest;
 import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
 import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
 import com.cubeia.backend.cashgame.dto.ReserveRequest;
@@ -14,7 +13,6 @@ import com.cubeia.backend.cashgame.dto.ReserveResponse;
 import com.cubeia.backend.cashgame.exceptions.AnnounceTableFailedException;
 import com.cubeia.backend.cashgame.exceptions.BatchHandFailedException;
 import com.cubeia.backend.cashgame.exceptions.CloseSessionFailedException;
-import com.cubeia.backend.cashgame.exceptions.CloseTableFailedException;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
 import com.cubeia.backend.cashgame.exceptions.OpenSessionFailedException;
 import com.cubeia.backend.cashgame.exceptions.ReserveFailedException;
@@ -25,7 +23,7 @@ public interface SynchronousCashGamesBackend {
 	
 	AnnounceTableResponse announceTable(AnnounceTableRequest request) throws AnnounceTableFailedException;
 
-	void closeTable(CloseTableRequest request) throws CloseTableFailedException;
+	// void closeTable(CloseTableRequest request) throws CloseTableFailedException;
 
 	OpenSessionResponse openSession(OpenSessionRequest request) throws OpenSessionFailedException;
 

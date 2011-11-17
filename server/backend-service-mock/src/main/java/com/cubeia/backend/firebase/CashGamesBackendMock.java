@@ -20,7 +20,6 @@ import com.cubeia.backend.cashgame.dto.BalanceUpdate;
 import com.cubeia.backend.cashgame.dto.BatchHandRequest;
 import com.cubeia.backend.cashgame.dto.BatchHandResponse;
 import com.cubeia.backend.cashgame.dto.CloseSessionRequest;
-import com.cubeia.backend.cashgame.dto.CloseTableRequest;
 import com.cubeia.backend.cashgame.dto.HandResult;
 import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
 import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
@@ -85,10 +84,10 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
         
     }
 
-    @Override
+    /*@Override
     public void closeTable(CloseTableRequest request) {
         log.debug("table removed");
-    }
+    }*/
 
     @Override
     public void openSession(OpenSessionRequest request, OpenSessionCallback callback) {
