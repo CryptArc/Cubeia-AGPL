@@ -302,13 +302,13 @@ public class FirebaseServerAdapter implements ServerAdapter {
 			int balanceOnTable = player == null ? 0 : (int) player.getBalance() + (int) player.getPendingBalance();
 	
 			int correctedMaxBuyIn = state.getMaxBuyIn() - balanceOnTable;
-			int correctedMinBuyIn = state.getMinBuyIn();
+			int correctedMinBuyIn = balanceOnTable >= state.getMinBuyIn() ? 0 : state.getMinBuyIn();
 			
 			try {
 			    resp.balanceInWallet = (int) backend.getMainAccountBalance(playerId);
 			    resp.balanceOnTable = balanceOnTable;
 			    
-			    if (correctedMaxBuyIn <= correctedMinBuyIn){
+			    if (correctedMaxBuyIn <= 0){
 			        resp.maxAmount = 0;
 			        resp.minAmount = 0;
 			        resp.resultCode = BuyInInfoResultCode.MAX_LIMIT_REACHED;

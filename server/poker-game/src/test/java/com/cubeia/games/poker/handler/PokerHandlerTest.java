@@ -71,6 +71,7 @@ public class PokerHandlerTest {
         when(pokerHandler.table.getNotifier()).thenReturn(notifier);
         when(pokerHandler.state.getPokerPlayer(playerId)).thenReturn(pokerPlayer);
         when(pokerHandler.state.getMaxBuyIn()).thenReturn(6000);
+        when(pokerHandler.state.getMinBuyIn()).thenReturn(1000);
         when(backend.getCallbackFactory()).thenReturn(callbackFactory);
     }
     
@@ -148,6 +149,26 @@ public class PokerHandlerTest {
         
         // Request more money than max buy in
         BuyInRequest buyInRequest = new BuyInRequest(14000, true);
+        
+        ReserveCallback reserveCallback = mock(ReserveCallback.class);
+        when(callbackFactory.createReserveCallback(table)).thenReturn(reserveCallback);
+        
+        pokerHandler.visit(buyInRequest);
+        
+        // since amount is higher than max allowed we should never get a call to the backend
+        verify(backend, Mockito.never()).reserve(Mockito.any(ReserveRequest.class), Mockito.any(ReserveCallback.class));
+        verify(reserveCallback).requestFailed(Mockito.any(ReserveFailedResponse.class));
+    }
+    
+    @Test
+    public void testVisitBuyInRequestAmountTooLow() {
+        PlayerSessionId playerSessionId = new PlayerSessionIdImpl(playerId);
+        when(pokerPlayer.getPlayerSessionId()).thenReturn(playerSessionId);
+        when(pokerPlayer.getBalance()).thenReturn(0L);
+        when(pokerPlayer.getPendingBalance()).thenReturn(0L);
+        
+        // Request more money than max buy in
+        BuyInRequest buyInRequest = new BuyInRequest(10, true);
         
         ReserveCallback reserveCallback = mock(ReserveCallback.class);
         when(callbackFactory.createReserveCallback(table)).thenReturn(reserveCallback);

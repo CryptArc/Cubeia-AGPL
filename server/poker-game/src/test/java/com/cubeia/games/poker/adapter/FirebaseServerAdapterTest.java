@@ -137,7 +137,7 @@ public class FirebaseServerAdapterTest {
 
 		assertThat(buyInInfoRespPacket.balanceOnTable, is(playerTotalBalanceOnTable));
 		assertThat(buyInInfoRespPacket.maxAmount, is(maxBuyIn - playerTotalBalanceOnTable));
-		assertThat(buyInInfoRespPacket.minAmount, is(minBuyIn));
+		assertThat(buyInInfoRespPacket.minAmount, is(0));
 		assertThat(buyInInfoRespPacket.mandatoryBuyin, is(true));
 		assertThat(buyInInfoRespPacket.resultCode, is(BuyInInfoResultCode.OK));
 
@@ -277,10 +277,10 @@ public class FirebaseServerAdapterTest {
 		BuyInInfoResponse buyInInfoRespPacket = (BuyInInfoResponse) new StyxSerializer(new ProtocolObjectFactory()).unpack(gda.getData());
 		assertThat(buyInInfoRespPacket.balanceInWallet, is((int) mainAccountBalance));
 		assertThat(buyInInfoRespPacket.balanceOnTable, is(playerTotalBalanceOnTable));
-		assertThat(buyInInfoRespPacket.maxAmount, is(0));
+		assertThat(buyInInfoRespPacket.maxAmount, is(50));
 		assertThat(buyInInfoRespPacket.minAmount, is(0));
 		assertThat(buyInInfoRespPacket.mandatoryBuyin, is(true));
-		assertThat(buyInInfoRespPacket.resultCode, is(BuyInInfoResultCode.MAX_LIMIT_REACHED));
+		assertThat(buyInInfoRespPacket.resultCode, is(BuyInInfoResultCode.OK));
 
 	}
 	
