@@ -105,7 +105,7 @@ public class PokerHandler extends DefaultPokerHandler {
 		        
 		        // Check if the amount is allowed by the table
 		        long sum = reserveRequest.amount + pokerPlayer.getBalance() + pokerPlayer.getPendingBalance();
-				if (sum <= state.getMaxBuyIn()) {
+				if (sum <= state.getMaxBuyIn() && sum >= state.getMinBuyIn()) {
 		        	cashGameBackend.reserve(reserveRequest, callback);
 		        } else {
 		        	ReserveFailedResponse failResponse = new ReserveFailedResponse(reserveRequest.playerSessionId, ErrorCode.AMOUNT_TOO_HIGH, "Requested buy in plus balance cannot be more than max buy in");
