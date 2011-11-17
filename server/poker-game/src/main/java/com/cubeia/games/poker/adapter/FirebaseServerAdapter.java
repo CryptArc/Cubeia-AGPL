@@ -350,6 +350,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 			
 			List<PotTransfer> transfers = new ArrayList<PotTransfer>();
 			for (PotTransition pt : handResult.getPotTransitions()) {
+			    log.debug("--> sending winner pot transfer to client: {}", pt);
 				transfers.add(actionTransformer.createPotTransferPacket(pt));
 			}
 
@@ -399,7 +400,14 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		clearActionCache();
 	}
 
-	private BatchHandResponse doBatchHandResult(
+	private void printPotTransferDebug(PotTransfers potTransfers) {
+	    for (PotTransfer pt : potTransfers.transfers) {
+	        
+	    }
+	    
+    }
+
+    private BatchHandResponse doBatchHandResult(
 			BatchHandRequest batchHandRequest) {
 		BatchHandResponse batchHandResult;
 		try {
