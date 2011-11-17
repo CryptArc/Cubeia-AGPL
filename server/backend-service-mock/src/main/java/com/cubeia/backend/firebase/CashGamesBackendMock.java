@@ -87,7 +87,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
 
     @Override
     public void closeTable(CloseTableRequest request) {
-        log.debug("table removed: {}", request.tableId);
+        log.debug("table removed");
     }
 
     @Override
