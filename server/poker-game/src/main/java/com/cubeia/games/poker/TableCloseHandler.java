@@ -55,13 +55,12 @@ public class TableCloseHandler {
      */
     public void closeTable(Table table, boolean force) {
     	log.debug("close table called for table id = {}, force = {}", table.getId(), force);
-    	if(countSeated(table) == 0 || !force) {
+    	if(countSeated(table) == 0 || force) {
+        	log.info("closing table {} with {} seated player", table.getId(), countSeated(table));
+        	doCloseTable(table, false, null);
+    	} else {
     		log.debug("close table aborted, have " + countSeated(table) + " seated players, and should not force the close");
-    		return; // EARLY RETURN
     	}
-    	log.info("closing table {} with {} seated player", table.getId(), countSeated(table));
-    	doCloseTable(table, false, null);
-    	
     }
 
 	private int countSeated(Table table) {

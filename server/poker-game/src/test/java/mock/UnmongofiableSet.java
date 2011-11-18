@@ -17,6 +17,10 @@ public final class UnmongofiableSet <T> implements UnmodifiableSet<T> {
     public UnmongofiableSet(Collection<T> collection) {
         this.set = new HashSet<T>(collection);
     }
+    
+    public UnmongofiableSet() {
+    	this.set = new HashSet<T>();
+    }
 
     @Override
     public Iterator<T> iterator() {

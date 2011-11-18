@@ -12,6 +12,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 
 import mock.UnmongofiableSet;
 
@@ -83,6 +84,21 @@ public class TableCloseHandlerTest {
         ErrorPacket errorPacket = (ErrorPacket) serializer.unpack(errorMessageAction.getData());
         assertThat(errorPacket.code, is(ErrorCode.TABLE_CLOSING));
         assertThat(errorPacket.referenceId, is(""));
+    }
+    
+    @Test
+    public void testClose() throws Exception {
+		TablePlayerSet tablePlayerSet = mock(TablePlayerSet.class);
+        when(table.getPlayerSet()).thenReturn(tablePlayerSet);
+        GameNotifier gameNotifier = mock(GameNotifier.class);
+        when(table.getNotifier()).thenReturn(gameNotifier);
+        UnmodifiableSet<GenericPlayer> playerSet = new UnmongofiableSet<GenericPlayer>();
+        when(tablePlayerSet.getPlayers()).thenReturn(playerSet);
+        when(tablePlayerSet.getPlayerCount()).thenReturn(0);
+        long handId = 4435L;
+        when(serverAdapter.getIntegrationHandId()).thenReturn(handId);
+        tableCrashHandler.closeTable(table, false);
+        verify(state, times(1)).shutdown();
     }
 
 	protected void setupCloseTableScenario() {
