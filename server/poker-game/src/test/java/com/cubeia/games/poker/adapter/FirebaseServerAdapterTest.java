@@ -15,6 +15,11 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import org.junit.Ignore;
@@ -31,6 +36,9 @@ import se.jadestone.dicearena.game.poker.network.protocol.PotTransfers;
 import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
 import se.jadestone.dicearena.game.poker.network.protocol.RequestAction;
 
+import com.cubeia.backend.cashgame.PlayerSessionId;
+import com.cubeia.backend.cashgame.dto.BalanceUpdate;
+import com.cubeia.backend.cashgame.dto.BatchHandResponse;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
 import com.cubeia.firebase.api.action.GameAction;
@@ -44,6 +52,7 @@ import com.cubeia.games.poker.FirebaseState;
 import com.cubeia.games.poker.handler.Trigger;
 import com.cubeia.games.poker.handler.TriggerType;
 import com.cubeia.games.poker.logic.TimeoutCache;
+import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.games.poker.util.ProtocolFactory;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.ActionRequest;
@@ -283,6 +292,56 @@ public class FirebaseServerAdapterTest {
 		assertThat(buyInInfoRespPacket.resultCode, is(BuyInInfoResultCode.OK));
 
 	}
+	
+	@Test(expected=IllegalStateException.class)
+	public void testValidateAndUpdateBalancesThrowsErrorIfUserNotFound() {
+		
+		FirebaseServerAdapter serverAdapter = new FirebaseServerAdapter();
+		serverAdapter.state = mock(PokerState.class);
+				
+		BatchHandResponse batchHandResult = new BatchHandResponse();
+		BalanceUpdate balanceUpdate = mock(BalanceUpdate.class);		
+		batchHandResult.addResultEntry(balanceUpdate);
+		
+		serverAdapter.validateAndUpdateBalances(batchHandResult );
+		
+	}
+	
+	@Test(expected=IllegalStateException.class)
+	public void testValidateAndUpdateBalancesThrowsErrorIfBalanceDiff() {
+		
+		FirebaseServerAdapter serverAdapter = new FirebaseServerAdapter();
+		serverAdapter.state = mock(PokerState.class);
+		SortedMap<Integer, PokerPlayer> currentPlayers = new TreeMap<Integer, PokerPlayer>();
+	
+		PlayerSessionId playerSessionId = mock(PlayerSessionId.class);
+	
+		Integer playerId = 1337;
+		PokerPlayerImpl player = mock(PokerPlayerImpl.class);
+		when(player.getId()).thenReturn(playerId);
+		Long playerBalance = 666L;
+		when(player.getBalance()).thenReturn(playerBalance);
+		when(player.getPlayerSessionId()).thenReturn(playerSessionId);
+		
+		// add player
+		currentPlayers.put(playerId, player);
+				
+		when(serverAdapter.state.getCurrentHandPlayerMap()).thenReturn(currentPlayers );
+		
+		
+		BatchHandResponse batchHandResult = new BatchHandResponse();
+	
+		long backendBalance = 100L;
+		long balanceVersionNumber = 1L;
+		BalanceUpdate balanceUpdate = new BalanceUpdate(playerSessionId, backendBalance, balanceVersionNumber);	
+		
+		batchHandResult.addResultEntry(balanceUpdate);
+		
+		
+		serverAdapter.validateAndUpdateBalances(batchHandResult );
+		
+	}
+	
 	
 	@Test
 	public void testNotifyPlayerStatusInHandSittingIn() throws IOException{

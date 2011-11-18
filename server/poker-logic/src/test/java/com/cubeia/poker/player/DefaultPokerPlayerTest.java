@@ -114,6 +114,22 @@ public class DefaultPokerPlayerTest {
     }
     
     @Test
+    public void testCommitPendingAmountWithMaxLevel4() {
+    	long balance = 200l; // player went all in
+    	long pending = 200l; // player brought max in after going all in
+    	long maxBuyIn = 200l;
+    	
+        DefaultPokerPlayer player = new DefaultPokerPlayer(1337);
+        player.setBalance(balance);
+        player.addPendingAmount(pending);
+        boolean hadPending = player.commitPendingBalance(maxBuyIn);
+        
+        assertThat(hadPending, is(true));
+        assertThat(player.getPendingBalance(), is(pending));
+        assertThat(player.getBalance(), is(balance));
+    }
+    
+    @Test
     public void testAddPendingAmount() {
         DefaultPokerPlayer player = new DefaultPokerPlayer(1337);
         

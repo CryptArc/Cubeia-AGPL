@@ -437,15 +437,15 @@ public class FirebaseServerAdapter implements ServerAdapter {
 			}
 
 			if (pokerPlayer == null) {
-				log.error("error updating balance: unable to find player with session = {}", bup.playerSessionId);
+				//log.error("error updating balance: unable to find player with session = {}", bup.playerSessionId);
+				throw new IllegalStateException("error updating balance: unable to find player with session = " + bup.playerSessionId);
 			} else {
 				long gameBalance = pokerPlayer.getBalance();
 				long backendBalance = bup.balance;
 
 				if (gameBalance != backendBalance) {
-					log.error("backend balance: {} not equal to game balance: {}, will reset to backend value", 
-							backendBalance, gameBalance);
-					pokerPlayer.setBalance(backendBalance);
+					//log.error("backend balance: {} not equal to game balance: {}, will reset to backend value", backendBalance, gameBalance);
+					throw new IllegalStateException("backend balance: "+backendBalance+" not equal to game balance: "+gameBalance+", will reset to backend value");
 				}
 			}
 		}
