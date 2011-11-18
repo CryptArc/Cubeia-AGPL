@@ -30,6 +30,7 @@ import com.cubeia.backend.cashgame.exceptions.ReserveFailedException;
 
 public class AsynchronousCashGamesBackend implements CashGamesBackend {
 
+    private static final long DELAY_BEFORE_ANNOUNCING_TABLE = 1000L;
 	private SynchronousCashGamesBackend backingImpl;
 	private ExecutorService executor;
 	
@@ -56,7 +57,9 @@ public class AsynchronousCashGamesBackend implements CashGamesBackend {
 
 	private void processAnnounceTable(AnnounceTableRequest request, AnnounceTableCallback callback) {
 		try {
+            Thread.sleep(DELAY_BEFORE_ANNOUNCING_TABLE);
 			AnnounceTableResponse response = backingImpl.announceTable(request);
+            log.debug("processAnnounceTable got response: "+response.toString());
 			callback.requestSucceded(response);
 		} catch (AnnounceTableFailedException e) {
 			log.error("failed to announce table", e);

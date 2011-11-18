@@ -29,7 +29,7 @@ public interface CashGamesBackend {
 
     /**
      * Async call to announce table. 
-     * The table will recieve a 
+     * The table will receive a 
      * @param request
      * @param callback
      */

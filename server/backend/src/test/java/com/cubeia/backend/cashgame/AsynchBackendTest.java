@@ -53,7 +53,7 @@ public class AsynchBackendTest {
 
 		backend.announceTable(request, callback);
 
-		Object response = callback.getResponse(100);
+		Object response = callback.getResponse(2000);
 
 		assertTrue(response instanceof AnnounceTableResponse);
 		assertEquals(tableId, ((AnnounceTableResponse) response).tableId);
@@ -70,7 +70,7 @@ public class AsynchBackendTest {
 
 		backend.announceTable(request, callback);
 
-		Object response = callback.getResponse(100);
+		Object response = callback.getResponse(2000);
 
 		assertTrue(response instanceof AnnounceTableFailedResponse);
 		AnnounceTableFailedResponse announceTableFailedResponse = (AnnounceTableFailedResponse) response;

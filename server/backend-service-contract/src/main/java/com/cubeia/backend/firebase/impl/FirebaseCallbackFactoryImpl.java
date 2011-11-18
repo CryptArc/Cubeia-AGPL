@@ -72,8 +72,8 @@ public class FirebaseCallbackFactoryImpl implements FirebaseCallbackFactory {
     	AnnounceTableCallback callback = new AnnounceTableCallback() {
             @Override
             public void requestSucceded(final AnnounceTableResponse response) {
-//                log.debug("announce suceeded: gId = {}, tId = {}, response = {}",
-//                    new Object[] {table.getMetaData().getGameId(), table.getId(), response });
+                log.debug("announce suceeded: gId = {}, tId = {}, response = {}",
+                    new Object[] {table.getMetaData().getGameId(), table.getId(), response });
                 sendGameObjectActionToTable(-1, table.getMetaData().getGameId(), table.getId(), response);
             }
             

@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doNothing;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -41,7 +42,7 @@ public class BackendPlayerSessionHandlerTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        backendPlayerSessionHandler = new BackendPlayerSessionHandler();
+        backendPlayerSessionHandler = new BackendPlayerSessionHandler(state);
         backendPlayerSessionHandler.cashGameBackend = cashGamesBackendContract;
     }
     
@@ -89,11 +90,10 @@ public class BackendPlayerSessionHandlerTest {
         assertThat(openSessionRequest.roundNumber, is(-1));
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = NullPointerException.class)
     public void testStartWalletSessionFailIfTableNotAnnounced() {
         Map<String, Serializable> extProps = Collections.emptyMap();
         when(state.getExternalTableProperties()).thenReturn(extProps);
-        
         backendPlayerSessionHandler.startWalletSession(state, table, 234989, -1);
     }
     

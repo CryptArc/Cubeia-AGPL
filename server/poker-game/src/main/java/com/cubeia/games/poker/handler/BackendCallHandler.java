@@ -109,11 +109,17 @@ public class BackendCallHandler {
     }
 
     public void handleAnnounceTableSuccessfulResponse(AnnounceTableResponse attachment) {
-        //log.debug("handle announce table success, tId = {}, intTableId = {}, tableProperties = {}", new Object[] { Integer.valueOf(table.getId()), attachment.tableId, attachment.tableProperties });
-        Map<String, Serializable> extProps = state.getExternalTableProperties();
-        extProps.put(EXT_PROP_KEY_TABLE_ID, attachment.tableId);
-        extProps.putAll(attachment.tableProperties);
-        makeTableVisibleInLobby(table);
+        log.debug("handle announce table success, tId = {}, intTableId = {}, tableProperties = {}", new Object[] { Integer.valueOf(table.getId()), attachment.tableId, attachment.tableProperties });
+        if(attachment.tableId == null){
+            log.error("got announce successful callback but the external table id is null! Attachment: {}", attachment);
+            LobbyTableAttributeAccessor attributeAccessor = table.getAttributeAccessor();
+            attributeAccessor.setIntAttribute(PokerLobbyAttributes.TABLE_READY_FOR_CLOSE.name(), 1);
+        }else{
+            Map<String, Serializable> extProps = state.getExternalTableProperties();
+            extProps.put(EXT_PROP_KEY_TABLE_ID, attachment.tableId);
+            extProps.putAll(attachment.tableProperties);
+            makeTableVisibleInLobby(table);
+        }
     }
 
     private void makeTableVisibleInLobby(Table table) {
@@ -128,13 +134,13 @@ public class BackendCallHandler {
 	 * @param attachment
 	 */
     public void handleAnnounceTableFailedResponse(AnnounceTableFailedResponse attachment) {
-		log.info("Handle Announce Table Failed for table["+table.getId()+"], will flag for removal");
+		log.info("handle Announce Table Failed for table["+table.getId()+"], will flag for removal");
 		LobbyTableAttributeAccessor attributeAccessor = table.getAttributeAccessor();
 		attributeAccessor.setIntAttribute(PokerLobbyAttributes.TABLE_READY_FOR_CLOSE.name(), 1);
     }
 
     public void handleOpenSessionFailedResponse(OpenSessionFailedResponse response) {
-    	log.info("Handle Open Session Failed on table["+table.getId()+"]: "+response);
+    	log.info("handle Open Session Failed on table["+table.getId()+"]: "+response);
         
     	// Send message to player
     	BuyInResponse resp = new BuyInResponse();
