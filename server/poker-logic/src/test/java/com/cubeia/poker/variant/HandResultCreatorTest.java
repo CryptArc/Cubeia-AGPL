@@ -8,10 +8,12 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -39,6 +41,10 @@ import com.cubeia.poker.variant.telesina.TelesinaHandComparator;
 import com.cubeia.poker.variant.telesina.TelesinaHandStrengthEvaluator;
 
 public class HandResultCreatorTest {
+
+    public static final BigDecimal RAKE_FRACTION = new BigDecimal("0.04");
+    public static final long RAKE_LIMIT = 500;
+    public static final long RAKE_LIMIT_HEADS_UP = 150;
 	
 	TelesinaHandStrengthEvaluator hte;
 	HandResultCalculator resultCalculator;
@@ -54,14 +60,14 @@ public class HandResultCreatorTest {
 		}
 	}; 
 	
-	
+
 	private void setupStuff(String velaCard){
 		hte = new TelesinaHandStrengthEvaluator(Rank.SEVEN);
 		resultCalculator = new HandResultCalculator(new TelesinaHandComparator(hte));
 		creator = new HandResultCreator(hte);
 		playerMap = new HashMap<Integer, PokerPlayer>();
 		communityCards = Card.list(velaCard);
-		potHolder = new PotHolder(new LinearRakeWithLimitCalculator(RakeSettings.createNoLimitRakeSettings(ZERO)));
+		potHolder = new PotHolder(new LinearRakeWithLimitCalculator(new RakeSettings(RAKE_FRACTION, RAKE_LIMIT, RAKE_LIMIT_HEADS_UP)));
 	}
 	
 	@Test
@@ -107,6 +113,53 @@ public class HandResultCreatorTest {
 		assertEquals(50L, (long) resultsSimplified.get(2));
 	}
 	
+	
+	@Test
+	public void testCreateHandResultForMultiPot4PlayerHand() {
+		setupStuff("TS");
+		PokerPlayer pp1 = mockPlayer(1, 456, true, false, new Hand("TD TC TH 8D 9D"));
+		PokerPlayer pp2 = mockPlayer(2, 1612, false, false, new Hand("JC JC JC QS KH"));
+		PokerPlayer pp3 = mockPlayer(3, 1612, false, false, new Hand("7H 8D JD QS AH"));
+		PokerPlayer pp4 = mockPlayer(4, 100, false, true, new Hand("7H 8D JD QS 9H"));
+		
+		
+		playerMap.put(1, pp1);
+		playerMap.put(2, pp2);
+		playerMap.put(3, pp3);
+		playerMap.put(4, pp4);
+		potHolder.moveChipsToPot(playerMap.values());
+		potHolder.call();
+		
+		Set<PokerPlayer> muckingPlayers = new HashSet<PokerPlayer>(playerMap.values());
+		
+		HandResult result = creator.createHandResult(communityCards, resultCalculator, potHolder, playerMap, new ArrayList<Integer>(), muckingPlayers);
+
+		assertNotNull(result);
+
+		long resultTotalRake = result.getTotalRake();
+		long resultTotalNet = 0;
+		long totalBets = 0;
+		long totalWins = 0;
+		
+		for (Result res : result.getResults().values()) {
+			resultTotalNet += res.getNetResult();
+			totalBets += res.getBets();
+			totalWins += res.getWinningsIncludingOwnBets();
+		}
+
+		long expectedTotalRake = 150;
+		
+		assertEquals(expectedTotalRake, resultTotalRake);
+		assertEquals(expectedTotalRake, totalBets - totalWins);
+		assertEquals(-expectedTotalRake, resultTotalNet);
+		
+		long totalContributedRake = 0;
+		for (PokerPlayer player : playerMap.values()) {
+			totalContributedRake += result.getRakeContributionByPlayer(player);
+		}
+		
+		assertEquals(expectedTotalRake, totalContributedRake);
+	}
 	
 	@Test
 	public void testCreateHandResultPairs() {

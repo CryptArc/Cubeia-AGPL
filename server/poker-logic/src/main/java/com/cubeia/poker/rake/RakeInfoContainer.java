@@ -1,32 +1,31 @@
 package com.cubeia.poker.rake;
 
-import java.math.BigDecimal;
 import java.util.Map;
 
 import com.cubeia.poker.pot.Pot;
 
 public class RakeInfoContainer {
     
-    private final int totalPot;
-    private final int totalRake;
-    private final Map<Pot, BigDecimal> potRakes;
+    private final long totalPot;
+    private final long totalRake;
+    private final Map<Pot, Long> potRakes;
     
-    public RakeInfoContainer(int totalPot, int totalRake, Map<Pot, BigDecimal> potRakes) {
+    public RakeInfoContainer(long totalPot, long totalRake, Map<Pot, Long> potRakes) {
         super();
         this.totalPot = totalPot;
         this.totalRake = totalRake;
         this.potRakes = potRakes;
     }
 
-    public int getTotalPot() {
+    public long getTotalPot() {
         return totalPot;
     }
 
-    public int getTotalRake() {
+    public long getTotalRake() {
         return totalRake;
     }
     
-    public Map<Pot, BigDecimal> getPotRakes() {
+    public Map<Pot, Long> getPotRakes() {
         return potRakes;
     }
 
@@ -39,8 +38,8 @@ public class RakeInfoContainer {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + totalPot;
-        result = prime * result + totalRake;
+        result = prime * result + (int) totalPot;
+        result = prime * result + (int) totalRake;
         return result;
     }
 

@@ -56,7 +56,7 @@ public class HandResultBatchFactoryTest {
         results.put(pokerPlayer1, result1);
         results.put(pokerPlayer2, result2);
         
-        RakeInfoContainer rakeInfoContainer = new RakeInfoContainer(1000 * 2, (1000 * 2) / 100, new HashMap<Pot, BigDecimal>());
+        RakeInfoContainer rakeInfoContainer = new RakeInfoContainer(1000 * 2, (1000 * 2) / 100, new HashMap<Pot, Long>());
         HandResult handResult = new HandResult(results, Collections.<RatedPlayerHand>emptyList(), Collections.<PotTransition>emptyList(), rakeInfoContainer, new ArrayList<Integer>() );
         
         BatchHandRequest batchHandRequest = handResultFactory.createAndValidateBatchHandRequest(handResult, handId, tableId);
@@ -98,7 +98,7 @@ public class HandResultBatchFactoryTest {
         results.put(pokerPlayer1, result1);
         results.put(pokerPlayer2, result2);
         
-        RakeInfoContainer rakeInfoContainer = new RakeInfoContainer(1000 * 2, (1000 * 2) / 100, new HashMap<Pot, BigDecimal>());
+        RakeInfoContainer rakeInfoContainer = new RakeInfoContainer(1000 * 2, (1000 * 2) / 100, new HashMap<Pot, Long>());
         HandResult handResult = new HandResult(results, Collections.<RatedPlayerHand>emptyList(), Collections.<PotTransition>emptyList(), rakeInfoContainer, new ArrayList<Integer>() );
         
         handResultFactory.createAndValidateBatchHandRequest(handResult, handId, tableId);
@@ -141,8 +141,8 @@ public class HandResultBatchFactoryTest {
         results.put(pokerPlayer5, result5);
         results.put(pokerPlayer9, result9);
         
-        HashMap<Pot, BigDecimal> potRakes = new HashMap<Pot, BigDecimal>();
-        potRakes.put(pot, new BigDecimal(3));
+        HashMap<Pot, Long> potRakes = new HashMap<Pot, Long>();
+        potRakes.put(pot, 3L);
 		RakeInfoContainer rakeInfoContainer = new RakeInfoContainer(334, 3, potRakes);
         HandResult handResult = new HandResult(results, Collections.<RatedPlayerHand>emptyList(), Collections.<PotTransition>emptyList(), rakeInfoContainer, new ArrayList<Integer>() );
         

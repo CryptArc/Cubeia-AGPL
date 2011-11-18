@@ -61,15 +61,13 @@ public class HandResultCalculator implements Serializable {
 	 * @param potHolder
 	 * @return
 	 */
-	public Map<PokerPlayer, Result> getPlayerResults(Collection<PlayerHand> hands, PotHolder potHolder, Map<Integer, PokerPlayer> playerMap) {
+	public Map<PokerPlayer, Result> getPlayerResults(Collection<PlayerHand> hands, PotHolder potHolder, RakeInfoContainer rakeInfoContainer, Map<Integer, PokerPlayer> playerMap) {
 		Map<PokerPlayer, Result> results = new HashMap<PokerPlayer, Result>();
 		
 		// Player ID to Net result (including own bets)
 		Map<Integer, Long> netResults = new HashMap<Integer, Long>();
 		Map<Integer, Long> netStakes = new HashMap<Integer, Long>();
 		Map<PokerPlayer, Map<Pot, Long>> playerPotWinningsShares = new HashMap<PokerPlayer, Map<Pot,Long>>();
-		
-		RakeInfoContainer rakeInfoContainer = potHolder.calculateRake();
 		
 		/*
 		 * For each pot we need to figure out:
@@ -107,13 +105,12 @@ public class HandResultCalculator implements Serializable {
 				long potRake = rakeInfoContainer.getPotRakes().get(pot).longValue();
                 long potSizeWithRakeRemoved = pot.getPotSize() - potRake;
 				long potShare = potSizeWithRakeRemoved / winners.size();
-				long rakeShare = potRake / winners.size();
 				
 				// Report winner shares
 				for (Integer winnerId : winners) {
 					PokerPlayer player = playerMap.get(winnerId);
 					Long stake = potContributors.get(player);
-					addResultBalance(netResults, netStakes, winnerId, potShare, stake, rakeShare);
+					addResultBalance(netResults, netStakes, winnerId, potShare, stake);
 					addPotWinningShare(player, pot, potShare, playerPotWinningsShares);
 				}
 	
@@ -124,7 +121,7 @@ public class HandResultCalculator implements Serializable {
 				for (Integer loserId : participantIds) {
 					PokerPlayer player = playerMap.get(loserId);
 					Long stake = pot.getPotContributors().get(player);
-					addResultBalance(netResults, netStakes, loserId, 0l, stake, 0l);
+					addResultBalance(netResults, netStakes, loserId, 0l, stake);
 				}
 			}
 		}
@@ -178,7 +175,7 @@ public class HandResultCalculator implements Serializable {
     }
 	
 	private void addResultBalance(Map<Integer, Long> netResults, Map<Integer, Long> netStakes, Integer playerId,
-	    Long winnings, Long stake, Long rake) {
+	    Long winnings, Long stake) {
 	    
 		Long balance = netResults.get(playerId);
 		if (balance == null) {

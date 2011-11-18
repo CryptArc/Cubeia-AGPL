@@ -37,14 +37,14 @@ public class LinearRakeWithLimitCalculatorTest {
         pot3.bet(player1, 1000L);
         
         RakeInfoContainer rakeInfoContainer = rc.calculateRakes(asList(pot1, pot2, pot3), true);
-        assertThat(rakeInfoContainer.getTotalPot(), is(26000));
-        assertThat(rakeInfoContainer.getTotalRake(), is(2600));
+        assertThat(rakeInfoContainer.getTotalPot(), is(26000L));
+        assertThat(rakeInfoContainer.getTotalRake(), is(2600L));
         
-        Map<Pot, BigDecimal> rakes = rakeInfoContainer.getPotRakes();
+        Map<Pot, Long> rakes = rakeInfoContainer.getPotRakes();
         
-        assertThat(rakes.get(pot1), is(rakeFraction.multiply(BigDecimal.valueOf(10000 + 10000))));
-        assertThat(rakes.get(pot2), is(rakeFraction.multiply(BigDecimal.valueOf(3000 + 2000))));
-        assertThat(rakes.get(pot3), is(rakeFraction.multiply(BigDecimal.valueOf(1000))));
+        assertThat(rakes.get(pot1), is(rakeFraction.multiply(BigDecimal.valueOf(10000 + 10000)).longValue()));
+        assertThat(rakes.get(pot2), is(rakeFraction.multiply(BigDecimal.valueOf(3000 + 2000)).longValue()));
+        assertThat(rakes.get(pot3), is(rakeFraction.multiply(BigDecimal.valueOf(1000)).longValue()));
     }
     
     @Test
@@ -74,15 +74,15 @@ public class LinearRakeWithLimitCalculatorTest {
         Collection<Pot> pots = Arrays.asList(pot1, pot2, pot3, pot4);
 
         RakeInfoContainer rakeInfoContainer = rc.calculateRakes(pots, true);
-        assertThat(rakeInfoContainer.getTotalPot(), is(7000 * 3 + 10000 + 5000 + 3000 + 10000 + 10000));
-        assertThat(rakeInfoContainer.getTotalRake(), is(4000));
+        assertThat(rakeInfoContainer.getTotalPot(), is(7000L * 3 + 10000 + 5000 + 3000 + 10000 + 10000));
+        assertThat(rakeInfoContainer.getTotalRake(), is(4000L));
         
-        Map<Pot, BigDecimal> rakes = rakeInfoContainer.getPotRakes();
+        Map<Pot, Long> rakes = rakeInfoContainer.getPotRakes();
         
-        assertThat(rakes.get(pot1), is(rakeFraction.multiply(BigDecimal.valueOf(7000 * 3))));            // 2100
-        assertThat(rakes.get(pot2), is(rakeFraction.multiply(BigDecimal.valueOf(10000 + 5000 + 3000)))); // 1800
-        assertThat(rakes.get(pot3), is(new BigDecimal("100.0"))); // 100 (limited)
-        assertThat(rakes.get(pot4), is(new BigDecimal("0.0")));   // 0 (over limit)
+        assertThat(rakes.get(pot1), is(rakeFraction.multiply(BigDecimal.valueOf(7000 * 3)).longValue()));            // 2100
+        assertThat(rakes.get(pot2), is(rakeFraction.multiply(BigDecimal.valueOf(10000 + 5000 + 3000)).longValue())); // 1800
+        assertThat(rakes.get(pot3), is(100L)); // 100 (limited)
+        assertThat(rakes.get(pot4), is(0L));   // 0 (over limit)
     }
 
     @Test
@@ -103,13 +103,13 @@ public class LinearRakeWithLimitCalculatorTest {
         Collection<Pot> pots = asList(pot1, pot2);
 
         RakeInfoContainer rakeInfoContainer = rc.calculateRakes(pots, true);
-        assertThat(rakeInfoContainer.getTotalPot(), is((50000 + 500) * 2));
-        assertThat(rakeInfoContainer.getTotalRake(), is(150));
+        assertThat(rakeInfoContainer.getTotalPot(), is((50000L + 500) * 2));
+        assertThat(rakeInfoContainer.getTotalRake(), is(150L));
         
-        Map<Pot, BigDecimal> rakes = rakeInfoContainer.getPotRakes();
+        Map<Pot, Long> rakes = rakeInfoContainer.getPotRakes();
         
-        assertThat(rakes.get(pot1), is(rakeFraction.multiply(BigDecimal.valueOf(500 * 2))));
-        assertThat(rakes.get(pot2), is(new BigDecimal("50.0")));
+        assertThat(rakes.get(pot1), is(rakeFraction.multiply(BigDecimal.valueOf(500 * 2)).longValue()));
+        assertThat(rakes.get(pot2), is(50L));
     }
     
     @Test
@@ -125,11 +125,11 @@ public class LinearRakeWithLimitCalculatorTest {
         pot1.bet(player2, 10000L);
         
         RakeInfoContainer rakeInfoContainer = rc.calculateRakes(asList(pot1), false);
-        assertThat(rakeInfoContainer.getTotalPot(), is(20000));
-        assertThat(rakeInfoContainer.getTotalRake(), is(0));
+        assertThat(rakeInfoContainer.getTotalPot(), is(20000L));
+        assertThat(rakeInfoContainer.getTotalRake(), is(0L));
         
-        Map<Pot, BigDecimal> rakes = rakeInfoContainer.getPotRakes();
-        assertThat(rakes.get(pot1), is(ZERO));
+        Map<Pot, Long> rakes = rakeInfoContainer.getPotRakes();
+        assertThat(rakes.get(pot1), is(0L));
     }
     
 }

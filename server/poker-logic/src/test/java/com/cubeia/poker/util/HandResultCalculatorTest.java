@@ -105,7 +105,7 @@ public class HandResultCalculatorTest extends TestCase {
 		long p3stake = pot0.getPotContributors().get(players.get(3));
 		assertEquals(20, p3stake);
 		
-		Map<PokerPlayer, Result> playerResults = calc.getPlayerResults(hands, potHolder, players);
+		Map<PokerPlayer, Result> playerResults = calc.getPlayerResults(hands, potHolder, potHolder.calculateRake(), players);
 		
 		Result result1 = playerResults.get(players.get(1));
 		assertThat(result1.getNetResult(), is(50L - player1Bets - pot0Rake));
@@ -151,7 +151,7 @@ public class HandResultCalculatorTest extends TestCase {
 		
 		assertEquals(1, potHolder.getNumberOfPots());
 		
-		Map<PokerPlayer, Result> playerResults = calc.getPlayerResults(hands, potHolder, players);
+		Map<PokerPlayer, Result> playerResults = calc.getPlayerResults(hands, potHolder, potHolder.calculateRake(), players);
 		
 		Result result1 = playerResults.get(players.get(1));
         long pot0WinningShare = (long) (50 - pot0Rake) / 2;
@@ -212,7 +212,7 @@ public class HandResultCalculatorTest extends TestCase {
         hands.add(new PlayerHand(2, new Hand("2s 7d"+community)));
         hands.add(new PlayerHand(3, new Hand("As Ad"+community))); // Best Hand - 3 Aces
         
-        Map<PokerPlayer, Result> playerResults = calc.getPlayerResults(hands, potHolder, players);
+        Map<PokerPlayer, Result> playerResults = calc.getPlayerResults(hands, potHolder, potHolder.calculateRake(), players);
         
         assertEquals(3, playerResults.size());
         
@@ -274,7 +274,7 @@ public class HandResultCalculatorTest extends TestCase {
 		hands.add(new PlayerHand(2, new Hand("2s 7d"+community)));
 		hands.add(new PlayerHand(3, new Hand("As Ad"+community))); // Best Hand - 3 Aces
 		
-		Map<PokerPlayer, Result> playerResults = calc.getPlayerResults(hands, potHolder, players);
+		Map<PokerPlayer, Result> playerResults = calc.getPlayerResults(hands, potHolder, potHolder.calculateRake(), players);
 		
 		assertEquals(3, playerResults.size());
 		
@@ -344,7 +344,7 @@ public class HandResultCalculatorTest extends TestCase {
 		long p3stake = potHolder.getActivePot().getPotContributors().get(players.get(3));
 		assertEquals(40, p3stake);
 		
-		Map<PokerPlayer, Result> playerResults = calc.getPlayerResults(hands, potHolder, players);
+		Map<PokerPlayer, Result> playerResults = calc.getPlayerResults(hands, potHolder, potHolder.calculateRake(), players);
 		
 		Result result1 = playerResults.get(players.get(1));
 		assertEquals(80, result1.getNetResult()); // the two other players betted 20+20 each

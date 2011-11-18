@@ -18,7 +18,6 @@
 package com.cubeia.poker.pot;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -152,9 +151,9 @@ public class PotHolder implements Serializable {
         RakeInfoContainer rakeInfoContainer = calculateRake();
         
         if (rakeInfoContainer != null) {
-            for (Map.Entry<Pot, BigDecimal> entry : rakeInfoContainer.getPotRakes().entrySet()) {
+            for (Map.Entry<Pot, Long> entry : rakeInfoContainer.getPotRakes().entrySet()) {
                 Pot pot = entry.getKey();
-                BigDecimal rake = entry.getValue();
+                long rake = entry.getValue();
                 
                 Collection<Integer> playerIds = Collections2.transform(pot.getPotContributors().keySet(), new Function<PokerPlayer, Integer>() {
                     public Integer apply(PokerPlayer pp) { return pp.getId(); };

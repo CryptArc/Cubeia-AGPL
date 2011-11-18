@@ -24,8 +24,8 @@ import com.cubeia.poker.pot.Pot;
 public class LinearRakeWithLimitCalculator implements RakeCalculator {
 
     private final BigDecimal rakeFraction;
-    private final BigDecimal rakeLimit;
-    private final BigDecimal rakeLimitHeadsUp;
+    private final long rakeLimit;
+    private final long rakeLimitHeadsUp;
     
     /**
      * Rake calculator with limit.
@@ -34,38 +34,38 @@ public class LinearRakeWithLimitCalculator implements RakeCalculator {
      */
     public LinearRakeWithLimitCalculator(RakeSettings rakeSettings) {
         this.rakeFraction = rakeSettings.getRakeFraction();
-        this.rakeLimit = new BigDecimal(rakeSettings.getRakeLimit());
-        this.rakeLimitHeadsUp = new BigDecimal(rakeSettings.getRakeLimitHeadsUp());
+        this.rakeLimit = rakeSettings.getRakeLimit();
+        this.rakeLimitHeadsUp = rakeSettings.getRakeLimitHeadsUp();
     }
     
     @Override
     public RakeInfoContainer calculateRakes(Collection<Pot> pots, boolean tableHasSeenAction) {
-        Map<Pot, BigDecimal> potRake = new HashMap<Pot, BigDecimal>();
+        Map<Pot, Long> potRake = new HashMap<Pot, Long>();
 
-        BigDecimal limit = countPlayers(pots) == 2 ? rakeLimitHeadsUp : rakeLimit;
+        long limit = countPlayers(pots) == 2 ? rakeLimitHeadsUp : rakeLimit;
         
         List<Pot> potsSortedById = sortPotsInIdOrder(pots);
         
-        BigDecimal totalRake = BigDecimal.ZERO;
-        int totalPot = 0;
+        long totalRake = 0L;
+        long totalPot = 0L;
         
         for (Pot pot : potsSortedById) {
             long potSize = pot.getPotSize();
             
-            BigDecimal rake = BigDecimal.ZERO;
+            long rake = 0L;
             if (tableHasSeenAction) {
-                rake = rakeFraction.multiply(new BigDecimal(potSize));
+                rake = rakeFraction.multiply(new BigDecimal(potSize)).longValue();
                 if (willRakeAdditionBreakLimit(totalRake, rake)) {
-                    rake = limit.subtract(totalRake);
+                    rake = limit - totalRake;
                 }
-                totalRake = totalRake.add(rake);
+                totalRake += rake;
             }
             
             totalPot += potSize;
             potRake.put(pot, rake);
         }
         
-        return new RakeInfoContainer(totalPot, totalRake.intValue(), potRake);
+        return new RakeInfoContainer(totalPot, totalRake, potRake);
     }
 
     private int countPlayers(Collection<Pot> pots) {
@@ -89,8 +89,8 @@ public class LinearRakeWithLimitCalculator implements RakeCalculator {
         return potsSortedById;
     }
 
-    private boolean willRakeAdditionBreakLimit(BigDecimal totalRake, BigDecimal rakeAddition) {
-        return totalRake.add(rakeAddition).compareTo(rakeLimit) > 0;
+    private boolean willRakeAdditionBreakLimit(long totalRake, long rakeAddition) {
+        return totalRake + rakeAddition > rakeLimit;
     }
     
     
