@@ -77,7 +77,7 @@ public class WebserverRunner {
 		PlayerAction data = new PlayerAction(ActionType.BET, 10, 10);
 		List<PlayerAction> actionsAllowed = new ArrayList<PlayerAction>();
 		actionsAllowed.add(data);
-		addEvent(facade, new RequestAction(1, 111, actionsAllowed, 100));
+		addEvent(facade, new RequestAction(1, 1, 111, actionsAllowed, 100));
 		
 		addEvent(facade, new PerformAction(2, 111, data, 0, 0, 100, false, 123));
 		addPrivateEvent(facade, new DealPrivateCards());
