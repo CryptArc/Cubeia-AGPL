@@ -7,6 +7,8 @@ import com.cubeia.poker.rng.RNGProvider;
 
 public class TelesinaForTesting extends Telesina {
 
+	private static final long serialVersionUID = 1L;
+	
 	private int numberOfSentBestHands = 0;
 	public int currentRoundId = 0;
 

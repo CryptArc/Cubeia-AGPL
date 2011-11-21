@@ -46,6 +46,7 @@ public class TelesinaTest {
 		telesina = new TelesinaForTesting(new DummyRNGProvider(), pokerState, deckFactory, roundFactory);
 	}	
 	
+	@SuppressWarnings("unused")
 	@Test
 	public void testSendAllNonFoldedPlayersBestHand() {
 		setup();

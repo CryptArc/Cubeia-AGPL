@@ -12,19 +12,14 @@ import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
 import com.cubeia.backend.cashgame.exceptions.CloseSessionFailedException;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
 import com.cubeia.firebase.api.common.AttributeValue;
-import com.cubeia.firebase.api.game.player.GenericPlayer;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.guice.inject.Service;
-import com.cubeia.games.poker.adapter.FirebaseServerAdapter;
 import com.cubeia.games.poker.lobby.PokerLobbyAttributes;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.player.PokerPlayer;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Lists;
 import com.google.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collection;
 
 public class BackendPlayerSessionHandler {
     private static Logger log = LoggerFactory.getLogger(BackendPlayerSessionHandler.class);

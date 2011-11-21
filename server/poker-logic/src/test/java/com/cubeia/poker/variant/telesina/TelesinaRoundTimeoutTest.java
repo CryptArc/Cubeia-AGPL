@@ -58,7 +58,6 @@ public class TelesinaRoundTimeoutTest extends AbstractTexasHandTester {
 	public void testTimeoutFlagWhenAnteRoundForBothPlayersWhenFirstPlayerTimesOut() {
 
 		MockPlayer[] mp = TestUtils.createMockPlayers(2, 100);
-		int[] p = TestUtils.createPlayerIdArray(mp);
 		addPlayers(game, mp);
 
 		// Force start

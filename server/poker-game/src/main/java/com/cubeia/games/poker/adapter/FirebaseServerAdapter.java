@@ -400,13 +400,6 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		clearActionCache();
 	}
 
-	private void printPotTransferDebug(PotTransfers potTransfers) {
-	    for (PotTransfer pt : potTransfers.transfers) {
-	        
-	    }
-	    
-    }
-
     private BatchHandResponse doBatchHandResult(
 			BatchHandRequest batchHandRequest) {
 		BatchHandResponse batchHandResult;

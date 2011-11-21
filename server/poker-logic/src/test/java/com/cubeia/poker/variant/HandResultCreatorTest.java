@@ -1,6 +1,5 @@
 package com.cubeia.poker.variant;
 
-import static java.math.BigDecimal.ZERO;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -13,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -53,6 +51,7 @@ public class HandResultCreatorTest {
 	List<Card> communityCards;
 	PotHolder potHolder;
 
+	@SuppressWarnings("unused")
 	private Answer<Object> THROW_EXCEPTION = new Answer<Object>() {
 		@Override
 		public Object answer(InvocationOnMock invocation) throws Throwable {
