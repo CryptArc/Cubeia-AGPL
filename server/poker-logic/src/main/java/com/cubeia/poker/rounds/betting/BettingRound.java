@@ -43,7 +43,7 @@ public class BettingRound implements Round, BettingRoundContext {
 	protected long highBet = 0;
 
 	@VisibleForTesting
-	protected int playerToAct = 0;
+    protected Integer playerToAct = null;
 	
 	private final ActionRequestFactory actionRequestFactory;
 
@@ -85,6 +85,8 @@ public class BettingRound implements Round, BettingRoundContext {
 
 		// Check if we should request actions at all
 		PokerPlayer p = playerToActCalculator.getFirstPlayerToAct(dealerSeatId, gameType.getState().getCurrentHandSeatingMap(), gameType.getState().getCommunityCards());
+		
+		log.debug("first player to act = {}", p == null ? null : p.getId());
 		
 		if (p == null || allOtherPlayersAreAllIn(p)) {
 			// No or only one player can act. We are currently in an all-in show down scenario
@@ -191,7 +193,7 @@ public class BettingRound implements Round, BettingRoundContext {
 
 	
 	private void verifyValidAction(PokerAction action, PokerPlayer player) {
-		if (playerToAct != action.getPlayerId()) {
+		if (!action.getPlayerId().equals(playerToAct)) {
 			throw new IllegalArgumentException("Expected " + playerToAct + " to act, but got action from:" + player.getId());
 		}
 
@@ -277,7 +279,8 @@ public class BettingRound implements Round, BettingRoundContext {
 	}
 
 	public void timeout() {
-		PokerPlayer player = gameType.getState().getPlayerInCurrentHand(playerToAct);
+		PokerPlayer player = playerToAct == null ? null : gameType.getState().getPlayerInCurrentHand(playerToAct);
+		    
 		if (player == null) {
 			// throw new IllegalStateException("Expected " + playerToAct + " to act, but that player can not be found at the table!");
 			log.debug("Expected " + playerToAct + " to act, but that player can not be found at the table! I will assume everyone is all in");
@@ -307,10 +310,20 @@ public class BettingRound implements Round, BettingRoundContext {
 		visitor.visit(this);
 	}
 
+	/**
+	 * True when all other player (except the given one) are all in. Sit out players are not counted.
+	 */
 	public boolean allOtherPlayersAreAllIn(PokerPlayer thisPlayer) {
 		for (PokerPlayer player : gameType.getState().getCurrentHandSeatingMap().values()) {
-			if (!player.isSittingOut() && !player.hasFolded() && !player.equals(thisPlayer) && !player.isAllIn()) {
-				return false;
+			boolean self = player.equals(thisPlayer);
+			
+			if (!self) {
+                boolean notFolded = !player.hasFolded();
+                boolean notAllIn = !player.isAllIn();
+                
+                if (notFolded  &&  notAllIn) {
+			        return false;
+			    }
 			}
 		}
 		return true;

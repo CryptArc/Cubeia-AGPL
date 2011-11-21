@@ -351,10 +351,8 @@ public class Telesina implements GameType, RoundVisitor {
 	public void visit(BettingRound bettingRound) {
 		state.setLastPlayerToBeCalled(bettingRound.getLastPlayerToBeCalled());
 		
-//	    if (!isHandFinished()) {
-    		Collection<PotTransition> potTransitions = moveChipsToPot();
-    		reportPotAndRakeUpdates(potTransitions);
-//	    }
+		Collection<PotTransition> potTransitions = moveChipsToPot();
+		reportPotAndRakeUpdates(potTransitions);
 	    
 		if (isHandFinished()) {
 		    
