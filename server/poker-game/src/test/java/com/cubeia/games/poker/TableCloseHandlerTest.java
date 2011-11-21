@@ -12,7 +12,6 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 
 import mock.UnmongofiableSet;
 

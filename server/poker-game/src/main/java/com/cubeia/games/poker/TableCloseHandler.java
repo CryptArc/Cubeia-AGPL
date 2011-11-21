@@ -54,9 +54,9 @@ public class TableCloseHandler {
      * @param force True to close even if players are sitting, false to abort if players are seated
      */
     public void closeTable(Table table, boolean force) {
-    	log.debug("close table called for table id = {}, force = {}", table.getId(), force);
+    	log.debug("close table command received; table id = {}, force = {}", table.getId(), force);
     	if(countSeated(table) == 0 || force) {
-        	log.info("closing table {} with {} seated player", table.getId(), countSeated(table));
+        	log.info("closing table {} with {} seated players", table.getId(), countSeated(table));
         	doCloseTable(table, false, null);
     	} else {
     		log.debug("close table aborted, have " + countSeated(table) + " seated players, and should not force the close");
