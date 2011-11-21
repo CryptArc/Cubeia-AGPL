@@ -432,7 +432,7 @@ public class Telesina implements GameType, RoundVisitor {
 	
 	private void dealHiddenPocketCards() {
 		for (PokerPlayer p : state.getCurrentHandSeatingMap().values()) {
-			if (!p.isSittingOut() && !p.hasFolded()) {
+			if (!p.hasFolded()) {
 				dealHiddenPocketCards(p, 1);
 			}
 		}

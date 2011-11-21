@@ -1,6 +1,5 @@
 package com.cubeia.poker.rake;
 
-import static java.math.BigDecimal.ZERO;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;

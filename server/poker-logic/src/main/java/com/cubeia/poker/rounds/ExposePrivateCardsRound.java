@@ -26,6 +26,8 @@ import com.cubeia.poker.action.PokerAction;
 public class ExposePrivateCardsRound implements Round {
 
 	private static final long serialVersionUID = 1L;
+	
+	@SuppressWarnings("unused")
 	private GameType gameType;
 	
 	

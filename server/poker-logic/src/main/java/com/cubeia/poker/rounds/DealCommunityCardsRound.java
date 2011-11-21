@@ -29,6 +29,7 @@ public class DealCommunityCardsRound implements Round {
 
 	private static final long serialVersionUID = 1L;
 	
+	@SuppressWarnings("unused")
 	private final GameType gameType;
 
 	public DealCommunityCardsRound(GameType gameType) {

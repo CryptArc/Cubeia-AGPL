@@ -23,10 +23,6 @@ import static org.junit.Assert.assertThat;
 import java.util.Collection;
 import java.util.List;
 
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.core.Is;
-import org.junit.Assert;
-
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;

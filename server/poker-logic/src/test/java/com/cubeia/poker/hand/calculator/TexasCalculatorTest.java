@@ -193,6 +193,7 @@ public class TexasCalculatorTest {
 		assertEquals(TWO, strength.getKickerCards().get(4).getRank());
 	}
 	
+	@SuppressWarnings("unused")
 	@Test
 	public void testHighCard2() throws Exception {
 		Hand hand = new Hand("2C");
