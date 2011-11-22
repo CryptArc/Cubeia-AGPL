@@ -23,5 +23,6 @@ package com.cubeia.poker.player;
 		MISSED_SMALL_BLIND,
 		MISSED_BIG_BLIND,
 		MISSED_ANTE,
-		SITTING_OUT
+		SITTING_OUT, 
+		TIMEOUT
 	}

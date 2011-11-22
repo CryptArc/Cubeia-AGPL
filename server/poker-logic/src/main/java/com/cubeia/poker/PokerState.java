@@ -524,6 +524,11 @@ public class PokerState implements Serializable, IPokerState {
 	 */
 	public void playerIsSittingOut(int playerId, SitOutStatus status) {
 
+	    if (isTournamentTable()) {
+	        log.debug("won't sit out tournament player");
+	        return;
+	    }
+	    
 		log.debug("player {} is sitting out", playerId);
 
 		PokerPlayer player = playerMap.get(playerId);

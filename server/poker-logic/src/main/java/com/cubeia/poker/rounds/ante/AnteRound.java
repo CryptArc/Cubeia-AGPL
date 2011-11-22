@@ -165,7 +165,6 @@ public class AnteRound implements Round {
 	public void timeout() {
 		List<PokerPlayer> playersToSitOut = new ArrayList<PokerPlayer>();
 		
-		
 		for (PokerPlayer player : getAllSeatedPlayers()) {
 	        if (!player.hasActed()) {
 	            log.debug("Player["+player+"] ante timed out. Will decline entry bet.");

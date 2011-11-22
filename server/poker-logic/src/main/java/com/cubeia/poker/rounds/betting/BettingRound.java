@@ -27,6 +27,7 @@ import com.cubeia.poker.action.ActionRequestFactory;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
 import com.google.common.annotations.VisibleForTesting;
@@ -190,7 +191,6 @@ public class BettingRound implements Round, BettingRoundContext {
 		
 		
 	}
-
 	
 	private void verifyValidAction(PokerAction action, PokerPlayer player) {
 		if (!action.getPlayerId().equals(playerToAct)) {
@@ -287,7 +287,12 @@ public class BettingRound implements Round, BettingRoundContext {
 			return; // Are we allin?
 		}
 		performDefaultActionForPlayer(player);
+		setPlayerSitOut(player);
 	}
+	
+    private void setPlayerSitOut(PokerPlayer player) {
+        gameType.getState().playerIsSittingOut(player.getId(), SitOutStatus.TIMEOUT);
+    }
 
 	private void performDefaultActionForPlayer(PokerPlayer player) {
 		log.debug("Perform default action for player sitting out: "+player);
