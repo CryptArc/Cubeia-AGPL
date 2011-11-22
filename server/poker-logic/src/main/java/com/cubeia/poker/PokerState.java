@@ -173,6 +173,8 @@ public class PokerState implements Serializable, IPokerState {
 	protected PokerSettings settings;
 
 	private PokerPlayer lastPlayerToBeCalled;
+    
+    private long startTime;
 
 	public PokerState() {}
 
@@ -332,11 +334,16 @@ public class PokerState implements Serializable, IPokerState {
 			notifyAllPlayerStatuses();
 
 			gameType.startHand();
+            startTime = System.currentTimeMillis();
 		} else {
 			throw new IllegalStateException("Not enough players to start hand. Was: " + countSittingInPlayers() + ", expected > 1. Players: "
 					+ playerMap);
 		}
 	}
+
+    public long getStartTime() {
+        return startTime;
+    }
 
 	/**
 	 * Take a copy of the supplied map where all players that are sitting out are removed.

@@ -72,7 +72,7 @@ import com.cubeia.firebase.api.game.player.PlayerStatus;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TableType;
 import com.cubeia.firebase.api.util.UnmodifiableSet;
-import com.cubeia.firebase.guice.inject.Service;
+import com.cubeia.firebase.guice.inject.Service; 
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.firebase.io.protocol.Enums.WatchResponseStatus;
 import com.cubeia.games.poker.FirebaseState;
@@ -357,6 +357,8 @@ public class FirebaseServerAdapter implements ServerAdapter {
 			long handId = getIntegrationHandId();
 			TableId externalTableId = getIntegrationTableId();
 			BatchHandRequest batchHandRequest = handResultBatchFactory.createAndValidateBatchHandRequest(handResult, handId, externalTableId);
+            batchHandRequest.startTime = state.getStartTime();
+            batchHandRequest.endTime = System.currentTimeMillis();
 
 			BatchHandResponse batchHandResult = doBatchHandResult(batchHandRequest);
 
