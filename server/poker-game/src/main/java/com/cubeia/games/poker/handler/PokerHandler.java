@@ -100,20 +100,24 @@ public class PokerHandler extends DefaultPokerHandler {
 		try {
 	        PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) state.getPokerPlayer(playerId);
 	        if (pokerPlayer != null) {
-		        ReserveRequest reserveRequest = new ReserveRequest(pokerPlayer.getPlayerSessionId(), -1, packet.amount);
-		        ReserveCallback callback = cashGameBackend.getCallbackFactory().createReserveCallback(table);
-		        
-		        // Check if the amount is allowed by the table
-		        long sum = reserveRequest.amount + pokerPlayer.getBalance() + pokerPlayer.getPendingBalance();
-				if (sum <= state.getMaxBuyIn() && sum >= state.getMinBuyIn()) {
-		        	cashGameBackend.reserve(reserveRequest, callback);
-		        } else {
-		        	ReserveFailedResponse failResponse = new ReserveFailedResponse(reserveRequest.playerSessionId, ErrorCode.AMOUNT_TOO_HIGH, "Requested buy in plus balance cannot be more than max buy in");
-					callback.requestFailed(failResponse);
-		        }
-		        
+                if (pokerPlayer.getPlayerSessionId() != null) {
+                    ReserveRequest reserveRequest = new ReserveRequest(pokerPlayer.getPlayerSessionId(), -1, packet.amount);
+                    ReserveCallback callback = cashGameBackend.getCallbackFactory().createReserveCallback(table);
+
+                    // Check if the amount is allowed by the table
+                    long sum = reserveRequest.amount + pokerPlayer.getBalance() + pokerPlayer.getPendingBalance();
+                    if (sum <= state.getMaxBuyIn() && sum >= state.getMinBuyIn()) {
+                        cashGameBackend.reserve(reserveRequest, callback);
+                    } else {
+                        ReserveFailedResponse failResponse = new ReserveFailedResponse(reserveRequest.playerSessionId, ErrorCode.AMOUNT_TOO_HIGH, "Requested buy in plus balance cannot be more than max buy in");
+                        callback.requestFailed(failResponse);
+                    }
+                    pokerPlayer.setSitInAfterSuccessfulBuyIn(true);
+
 		        // pokerPlayer.setSitInAfterSuccessfulBuyIn(packet.sitInIfSuccessful);
-		        pokerPlayer.setSitInAfterSuccessfulBuyIn(true);
+                }else{
+                    log.warn("PlayerSessionId was null when Poker Player tried to buy in. Table["+table.getId()+"], Request["+packet+"]");
+                }
 	        } else {
 	        	log.warn("Poker Player that was not found at table tried to buy in. Table["+table.getId()+"], Request["+packet+"]");
 	        }
