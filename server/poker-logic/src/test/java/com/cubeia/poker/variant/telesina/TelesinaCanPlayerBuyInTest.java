@@ -17,7 +17,7 @@ public class TelesinaCanPlayerBuyInTest {
     public void testCanPlayerBuyIn() {
         PokerPlayer player = mock(PokerPlayer.class);
         
-        Telesina telesina = new Telesina(null, null, null, null);
+        Telesina telesina = new Telesina(null, null, null, null,null);
         
         int anteLevel = 20;
         PokerSettings settings = new PokerSettings(anteLevel, 0, 0, null, TELESINA, 0, null, null, null);
@@ -36,7 +36,7 @@ public class TelesinaCanPlayerBuyInTest {
     public void testCanPlayerBuyInWithPending() {
         PokerPlayer player = mock(PokerPlayer.class);
         
-        Telesina telesina = new Telesina(null, null, null, null);
+        Telesina telesina = new Telesina(null, null, null, null,null);
         
         int anteLevel = 20;
         PokerSettings settings = new PokerSettings(anteLevel, 0, 0, null, TELESINA, 0, null, null, null);

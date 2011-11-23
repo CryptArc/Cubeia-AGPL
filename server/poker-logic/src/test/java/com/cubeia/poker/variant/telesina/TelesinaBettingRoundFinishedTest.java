@@ -36,6 +36,7 @@ public class TelesinaBettingRoundFinishedTest {
     @Mock private TelesinaDeckFactory deckFactory;
     @Mock private TelesinaDeck deck;
     @Mock private TelesinaRoundFactory roundFactory;
+    @Mock private TelesinaDealerButtonCalculator dealerButtonCalculator;
     private PokerPlayer player1 = new DefaultPokerPlayer(1001);
     private PokerPlayer player2 = new DefaultPokerPlayer(1002);
     private TelesinaForTesting telesina;
@@ -54,7 +55,7 @@ public class TelesinaBettingRoundFinishedTest {
 
         when(state.getPotHolder()).thenReturn(potHolder);
         when(deckFactory.createNewDeck(Mockito.any(Random.class), Mockito.anyInt())).thenReturn(deck);
-        telesina = new TelesinaForTesting(new DummyRNGProvider(), state, deckFactory, roundFactory);
+        telesina = new TelesinaForTesting(new DummyRNGProvider(), state, deckFactory, roundFactory,dealerButtonCalculator);
     }
     
     @Test

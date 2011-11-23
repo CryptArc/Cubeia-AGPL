@@ -55,7 +55,7 @@ public class AnteRound implements Round {
 		Collection<PokerPlayer> players = game.getState().getCurrentHandSeatingMap().values();
 		
 		// TODO: how do we decide dealer? for now always use first player...
-		moveDealerButtonToSeatId(players.iterator().next().getSeatId());
+		//moveDealerButton();
 		
 		handleAnteRequests(players);
 	}
@@ -88,11 +88,14 @@ public class AnteRound implements Round {
 	    anteRoundHelper.requestAntes(players, game.getBlindsInfo().getAnteLevel(), game);
     }
 
-    private void moveDealerButtonToSeatId(int newDealerSeatId) {
-		BlindsInfo blindsInfo = game.getBlindsInfo();
-		blindsInfo.setDealerButtonSeatId(newDealerSeatId);
-		game.getState().notifyDealerButton(blindsInfo.getDealerButtonSeatId());
-	}
+//    private void moveDealerButton() {
+//    	Collection<PokerPlayer> players = game.getState().getCurrentHandSeatingMap().values();
+//		int newDealerSeatId = players.iterator().next().getSeatId();
+//		
+//		BlindsInfo blindsInfo = game.getBlindsInfo();
+//		blindsInfo.setDealerButtonSeatId(newDealerSeatId);
+//		game.getState().notifyDealerButton(blindsInfo.getDealerButtonSeatId());
+//	}
 	
 	private void clearPlayerActionOptions() {
 		SortedMap<Integer, PokerPlayer> seatingMap = game.getState().getCurrentHandSeatingMap();

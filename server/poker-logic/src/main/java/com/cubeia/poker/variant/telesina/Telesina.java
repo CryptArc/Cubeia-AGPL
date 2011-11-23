@@ -85,6 +85,8 @@ public class Telesina implements GameType, RoundVisitor {
 	private static transient Logger log = LoggerFactory.getLogger(Telesina.class);
 
 	private Round currentRound;
+	
+	private TelesinaDealerButtonCalculator dealerButtonCalculator;
 
 	private TelesinaDeck deck;
 
@@ -110,11 +112,12 @@ public class Telesina implements GameType, RoundVisitor {
 
     private final TelesinaRoundFactory roundFactory;
 
-	public Telesina(RNGProvider rng, PokerState state, TelesinaDeckFactory deckFactory, TelesinaRoundFactory roundFactory) {
+	public Telesina(RNGProvider rng, PokerState state, TelesinaDeckFactory deckFactory, TelesinaRoundFactory roundFactory, TelesinaDealerButtonCalculator dealerButtonCalculator) {
 		this.rngProvider = rng;
         this.state = state;
         this.deckFactory = deckFactory;
         this.roundFactory = roundFactory;
+        this.dealerButtonCalculator = dealerButtonCalculator;
 
 	}
 	
@@ -315,11 +318,9 @@ public class Telesina implements GameType, RoundVisitor {
 
 	@Override
 	public void visit(AnteRound anteRound) {
-	    // TODO: remove this stuff when done testing crashes!!!
-	    if (System.getProperty("crash") != null) {
-	        throw new RuntimeException("Panic! Omg!");
-	    }
-	    
+	    	  
+		updateDealerButtonPosition(anteRound);
+		
 		if (anteRound.isCanceled()) {
 		    handleCanceledHand();
 		} else {
@@ -333,6 +334,22 @@ public class Telesina implements GameType, RoundVisitor {
 	}
 	
 	
+	private void updateDealerButtonPosition(AnteRound anteRound) {
+		
+		if (!anteRound.isFinished()) {
+			throw new IllegalStateException("Can not move the dealerbutton when anteround is not finished");
+		}
+		
+		boolean wasCancelled = anteRound.isCanceled();
+		
+		int currentDealerButtonSeatId = state.getBlindsInfo().getDealerButtonSeatId();
+		int newDealerSeat = dealerButtonCalculator.getNextDealerSeat(state.getCurrentHandSeatingMap(), currentDealerButtonSeatId, wasCancelled);
+		
+		state.getBlindsInfo().setDealerButtonSeatId(newDealerSeat);
+		state.notifyDealerButton(newDealerSeat);
+		
+	}
+
 	private void startDealInitialCardsRound() {
 		setCurrentRound(roundFactory.createDealInitialCardsRound(this));
 		scheduleRoundTimeout();

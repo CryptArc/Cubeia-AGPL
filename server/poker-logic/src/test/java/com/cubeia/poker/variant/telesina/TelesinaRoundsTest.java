@@ -36,6 +36,7 @@ import com.cubeia.poker.rounds.DealExposedPocketCardsRound;
 import com.cubeia.poker.rounds.DealInitialPocketCardsRound;
 import com.cubeia.poker.rounds.ante.AnteRound;
 import com.cubeia.poker.rounds.betting.BettingRound;
+import com.cubeia.poker.rounds.blinds.BlindsInfo;
 import com.cubeia.poker.timing.impl.DefaultTimingProfile;
 
 
@@ -47,6 +48,8 @@ public class TelesinaRoundsTest {
     @Mock private TelesinaDeckFactory deckFactory;
     @Mock private TelesinaDeck deck;
     @Mock private TelesinaRoundFactory roundFactory;
+    @Mock private TelesinaDealerButtonCalculator dealerButtonCalculator;
+    
     private PokerPlayer player1 = new DefaultPokerPlayer(1001);
     private PokerPlayer player2 = new DefaultPokerPlayer(1002);
     private PokerPlayer player3 = new DefaultPokerPlayer(1003);
@@ -89,7 +92,7 @@ public class TelesinaRoundsTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testRoundSequence() {
-        Telesina telesina = new Telesina(new DummyRNGProvider(), state, deckFactory, roundFactory);
+        Telesina telesina = new Telesina(new DummyRNGProvider(), state, deckFactory, roundFactory,dealerButtonCalculator);
 
 
         AnteRound anteRound = mock(AnteRound.class);
@@ -112,6 +115,8 @@ public class TelesinaRoundsTest {
 	              }
 	          });
         
+        BlindsInfo blindsInfo = mock(BlindsInfo.class);
+		when(state.getBlindsInfo()).thenReturn(blindsInfo);
         
         // ante round
         telesina.startHand();
@@ -122,6 +127,9 @@ public class TelesinaRoundsTest {
         verify(anteRound).timeout();
         verify(anteRound).visit(telesina);
         telesina.visit(anteRound); // jump to deal initial pocket cards round
+        int newDealerButtonSeatId = 0;
+		verify(blindsInfo).setDealerButtonSeatId(newDealerButtonSeatId );
+        verify(state).notifyDealerButton(newDealerButtonSeatId);
                 
         // deal initial cards round -> betting round 0
         BettingRound bettingRound0 = mock(BettingRound.class);

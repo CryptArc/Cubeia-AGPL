@@ -87,7 +87,7 @@ public class AnteRoundTest {
 
 		verify(player1).clearActionRequest();
 		verify(player2).clearActionRequest();
-		verify(state).notifyDealerButton(dealerButtonSeatId);
+		
 		
 		ArgumentCaptor<Collection> captor = ArgumentCaptor.forClass(Collection.class);
 		verify(anteRoundHelper).requestAntes(captor.capture(), Mockito.eq(anteLevel), Mockito.eq(game));
@@ -135,7 +135,9 @@ public class AnteRoundTest {
 	public void testActOnAnteImpossibleToStartHandWillAutoDecline() {
 		AnteRound anteRound = new AnteRound(game, anteRoundHelper);
 		int anteLevel = 1000;
+		int currentDealearButtonSeatId = 0;
 		when(blindsInfo.getAnteLevel()).thenReturn(anteLevel);
+		when(blindsInfo.getDealerButtonSeatId()).thenReturn(currentDealearButtonSeatId);
 
 		when(anteRoundHelper.hasAllPlayersActed(Mockito.anyCollection())).thenReturn(false);
 		ServerAdapter serverAdapter = mock(ServerAdapter.class);
@@ -163,6 +165,7 @@ public class AnteRoundTest {
 		PokerAction declineAction2 = captor.getAllValues().get(1);
 		assertThat(declineAction2.getActionType(), is(PokerActionType.DECLINE_ENTRY_BET));
 		assertThat(declineAction2.getPlayerId(), is(player2.getId()));
+		
 	}
 
 

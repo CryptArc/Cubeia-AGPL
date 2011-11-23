@@ -40,6 +40,7 @@ public class TelesinaSendBestHandTest {
     @Mock private TelesinaDeckFactory deckFactory;
     @Mock private TelesinaDeck deck;
     @Mock private TelesinaRoundFactory roundFactory;
+    @Mock private TelesinaDealerButtonCalculator dealerButtonCalculator;
     private PokerPlayer player1 = new DefaultPokerPlayer(1001);
     
     private SortedMap<Integer, PokerPlayer> seatingMap;
@@ -65,7 +66,7 @@ public class TelesinaSendBestHandTest {
     
     @Test
     public void testCalculateAndSendBestHandToPlayer() {
-        Telesina telesina = new Telesina(new DummyRNGProvider(), state, deckFactory, roundFactory);
+        Telesina telesina = new Telesina(new DummyRNGProvider(), state, deckFactory, roundFactory, dealerButtonCalculator);
         
         TelesinaHandStrengthEvaluator evaluator = Mockito.mock(TelesinaHandStrengthEvaluator.class);
         Hand hand = mock(Hand.class);
@@ -89,7 +90,7 @@ public class TelesinaSendBestHandTest {
     
     @Test
     public void testCalculateAndSendBestHandToPlayersWhenExposingHand() {
-        Telesina telesina = new Telesina(new DummyRNGProvider(), state, deckFactory, roundFactory);
+        Telesina telesina = new Telesina(new DummyRNGProvider(), state, deckFactory, roundFactory,dealerButtonCalculator);
         
         TelesinaHandStrengthEvaluator evaluator = Mockito.mock(TelesinaHandStrengthEvaluator.class);
         Hand hand = mock(Hand.class);
@@ -116,7 +117,7 @@ public class TelesinaSendBestHandTest {
     @Ignore
     @Test
     public void testDealExposedCards() {
-        Telesina telesina = new Telesina(new DummyRNGProvider(), state, deckFactory, roundFactory);
+        Telesina telesina = new Telesina(new DummyRNGProvider(), state, deckFactory, roundFactory,dealerButtonCalculator);
         
         telesina.dealExposedPocketCards();
         

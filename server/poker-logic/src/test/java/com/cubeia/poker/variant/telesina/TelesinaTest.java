@@ -31,6 +31,7 @@ public class TelesinaTest {
 	PokerPlayer dealer;
 	@Mock TelesinaDeckFactory deckFactory;
 	@Mock TelesinaDeck deck;
+	@Mock private TelesinaDealerButtonCalculator dealerButtonCalculator;
 	TelesinaForTesting telesina;
 	
 	private void setup(){
@@ -43,7 +44,7 @@ public class TelesinaTest {
             new Card(7, "8H"), new Card(7, "9H"), new Card(7, "JH"), new Card(7, "QH"), new Card(7, "KH"), new Card(7, "AH"),
             new Card(1, "2D"), new Card(2, "3D"), new Card(3, "4D"), new Card(4, "5D"), new Card(5, "6D"), new Card(6, "7D"), 
             new Card(7, "8D"), new Card(7, "9D"), new Card(7, "JD"), new Card(7, "QD"), new Card(7, "KD"), new Card(7, "AD"));
-		telesina = new TelesinaForTesting(new DummyRNGProvider(), pokerState, deckFactory, roundFactory);
+		telesina = new TelesinaForTesting(new DummyRNGProvider(), pokerState, deckFactory, roundFactory, dealerButtonCalculator);
 	}	
 	
 	@SuppressWarnings("unused")

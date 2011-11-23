@@ -32,7 +32,7 @@ public class TelesinaCancelHandTest {
         playerMap.put(1, player2);
         when(state.getCurrentHandPlayerMap()).thenReturn(playerMap);
         
-        Telesina telesina = new Telesina(null, state, null, null);
+        Telesina telesina = new Telesina(null, state, null, null,null);
         telesina.handleCanceledHand();
         
         verify(state).notifyHandFinished(Mockito.any(HandResult.class), Mockito.eq(HandEndStatus.CANCELED_TOO_FEW_PLAYERS));

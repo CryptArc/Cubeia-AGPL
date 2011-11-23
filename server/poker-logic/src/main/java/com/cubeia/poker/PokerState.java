@@ -60,6 +60,7 @@ import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.tournament.RoundReport;
 import com.cubeia.poker.variant.PokerVariant;
 import com.cubeia.poker.variant.telesina.Telesina;
+import com.cubeia.poker.variant.telesina.TelesinaDealerButtonCalculator;
 import com.cubeia.poker.variant.telesina.TelesinaDeckFactory;
 import com.cubeia.poker.variant.telesina.TelesinaRoundFactory;
 import com.cubeia.poker.variant.texasholdem.TexasHoldem;
@@ -198,7 +199,7 @@ public class PokerState implements Serializable, IPokerState {
 			gameType = new TexasHoldem(rngProvider, this);
 			break;
 		case TELESINA:
-			gameType = new Telesina(rngProvider, this, new TelesinaDeckFactory(), new TelesinaRoundFactory());
+			gameType = new Telesina(rngProvider, this, new TelesinaDeckFactory(), new TelesinaRoundFactory(), new TelesinaDealerButtonCalculator());
 			break;
 		default:
 			throw new UnsupportedOperationException("unsupported poker variant: " + variant);

@@ -13,8 +13,8 @@ public class TelesinaForTesting extends Telesina {
 	public int currentRoundId = 0;
 
 	public TelesinaForTesting(RNGProvider rng, PokerState state,
-			TelesinaDeckFactory deckFactory, TelesinaRoundFactory roundFactory) {
-		super(rng, state, deckFactory, roundFactory);
+			TelesinaDeckFactory deckFactory, TelesinaRoundFactory roundFactory, TelesinaDealerButtonCalculator dealerButtonCalculator) {
+		super(rng, state, deckFactory, roundFactory,dealerButtonCalculator);
 	}
 
 	@Override

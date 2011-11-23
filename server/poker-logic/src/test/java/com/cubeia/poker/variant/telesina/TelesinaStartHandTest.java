@@ -39,6 +39,7 @@ public class TelesinaStartHandTest {
         TelesinaRoundFactory roundFactory = mock(TelesinaRoundFactory.class);
         AnteRound anteRound = mock(AnteRound.class);
         when(roundFactory.createAnteRound(Mockito.any(Telesina.class))).thenReturn(anteRound);
+        TelesinaDealerButtonCalculator dealerButtonCalculator = mock(TelesinaDealerButtonCalculator.class);
         
         PokerPlayer player1 = mock(PokerPlayer.class);
         PokerPlayer player2 = mock(PokerPlayer.class);
@@ -47,7 +48,7 @@ public class TelesinaStartHandTest {
         seatingMap.put(1, player2);
         when(state.getCurrentHandSeatingMap()).thenReturn(seatingMap);
         
-        Telesina telesina = new Telesina(rngProvider, state, deckFactory, roundFactory);
+		Telesina telesina = new Telesina(rngProvider, state, deckFactory, roundFactory, dealerButtonCalculator );
         telesina.blindsInfo = mock(BlindsInfo.class);
         
         telesina.startHand();
