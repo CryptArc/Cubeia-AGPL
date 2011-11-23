@@ -188,6 +188,11 @@ public class MockGame implements GameType {
 			}
 			
 			@Override
+			public int countSittingInPlayers() {
+			    return 4;
+			}
+			
+			@Override
 			public boolean isPlayerInHand(int playerId) {
 				return false;
 			}
@@ -226,6 +231,9 @@ public class MockGame implements GameType {
 			@Override
 			public boolean isShutdown() { return false; }
 			
+			@Override
+			public void sitOutPlayersMarkedForSitOutNextRound() {}
+		
 		};
 	}
 

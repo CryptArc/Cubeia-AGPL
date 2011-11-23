@@ -281,15 +281,19 @@ public class PokerState implements Serializable, IPokerState {
 	public SortedMap<Integer, PokerPlayer> getCurrentHandSeatingMap() {
 		return currentHandSeatingMap;
 	}
-
-	// TODO: move side effects to new method
+	
+	@Override
+	public void sitOutPlayersMarkedForSitOutNextRound() {
+        for (PokerPlayer player : playerMap.values()) {
+            if (player.getSitOutNextRound() ) {
+                player.setSitOutStatus(SitOutStatus.SITTING_OUT);
+            }
+        }
+	}
+	
 	public int countSittingInPlayers() {
 		int sitIn = 0;
 		for (PokerPlayer player : playerMap.values()) {
-			if (player.getSitOutNextRound() ) {
-				// TODO: wtf? what happens if this method is called in the middle of a hand?
-				player.setSitOutStatus(SitOutStatus.SITTING_OUT);
-			}
 			if (!player.isSittingOut()) {
 				sitIn++;
 			}

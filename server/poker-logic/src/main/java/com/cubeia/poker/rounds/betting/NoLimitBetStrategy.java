@@ -39,17 +39,19 @@ public class NoLimitBetStrategy implements BetStrategy {
 
 	private static final long serialVersionUID = 1L;
 
-	private final BettingRoundContext bettingRoundContext;
+//	private final BettingRoundContext bettingRoundContext;
+//
+//	public NoLimitBetStrategy(BettingRoundContext bettingRoundContext) {
+//		this.bettingRoundContext = bettingRoundContext;
+//	}
 
-	public NoLimitBetStrategy(BettingRoundContext bettingRoundContext) {
-		this.bettingRoundContext = bettingRoundContext;
-	}
-
-	public long getMaxBetAmount(PokerPlayer player) {
+	@Override
+	public long getMaxBetAmount(BettingRoundContext bettingRoundContext, PokerPlayer player) {
 		return player.getBalance();
 	}
 
-	public long getMaxRaiseToAmount(PokerPlayer player) {
+	@Override
+	public long getMaxRaiseToAmount(BettingRoundContext bettingRoundContext, PokerPlayer player) {
 		if (bettingRoundContext.allOtherPlayersAreAllIn(player)) {
 			return 0;
 		}		
@@ -57,11 +59,13 @@ public class NoLimitBetStrategy implements BetStrategy {
 		return player.getBalance() + player.getBetStack();
 	}
 
-	public long getMinBetAmount(PokerPlayer player) {
+	@Override
+	public long getMinBetAmount(BettingRoundContext bettingRoundContext, PokerPlayer player) {
 		return Math.min(player.getBalance(), bettingRoundContext.getMinBet());
 	}
 
-	public long getMinRaiseToAmount(PokerPlayer player) {
+	@Override
+	public long getMinRaiseToAmount(BettingRoundContext bettingRoundContext, PokerPlayer player) {
 		if (bettingRoundContext.allOtherPlayersAreAllIn(player)) {
 			return 0;
 		}
@@ -77,7 +81,8 @@ public class NoLimitBetStrategy implements BetStrategy {
 		return player.getBetStack() + affordableCost;
 	}
 
-	public long getCallAmount(PokerPlayer player) {
+	@Override
+	public long getCallAmount(BettingRoundContext bettingRoundContext, PokerPlayer player) {
 		long diff = bettingRoundContext.getHighestBet() - player.getBetStack();
 		if (diff <= 0) {
 			throw new IllegalStateException("Nothing to call");

@@ -29,6 +29,7 @@ import org.mockito.MockitoAnnotations;
 import com.cubeia.poker.GameType;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.ActionRequest;
+import com.cubeia.poker.action.ActionRequestFactory;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.PokerPlayer;
@@ -49,7 +50,7 @@ public class BettingRoundTimeoutTest {
 	    MockitoAnnotations.initMocks(this);
 	    when(telesina.getState()).thenReturn(state);
 	    when(telesina.getServerAdapter()).thenReturn(serverAdapter);
-        round = new BettingRound(telesina, 0, playerToActCalculator);
+        round = new BettingRound(telesina, 0, playerToActCalculator, new ActionRequestFactory(new NoLimitBetStrategy()));
 	}
 
     @Test

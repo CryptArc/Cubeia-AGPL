@@ -32,15 +32,15 @@ import com.cubeia.poker.player.PokerPlayer;
  */
 public interface BetStrategy extends Serializable {
 
-	public long getMinRaiseToAmount(PokerPlayer player);
+	public long getMinRaiseToAmount(BettingRoundContext bettingRoundContext, PokerPlayer player);
 
-	public long getMaxRaiseToAmount(PokerPlayer player);
+	public long getMaxRaiseToAmount(BettingRoundContext bettingRoundContext, PokerPlayer player);
 
-	public long getMinBetAmount(PokerPlayer player);
+	public long getMinBetAmount(BettingRoundContext bettingRoundContext, PokerPlayer player);
 
-	public long getMaxBetAmount(PokerPlayer player);
+	public long getMaxBetAmount(BettingRoundContext bettingRoundContext, PokerPlayer player);
 
-	public long getCallAmount(PokerPlayer player);
+	public long getCallAmount(BettingRoundContext bettingRoundContext, PokerPlayer player);
 
 
 }

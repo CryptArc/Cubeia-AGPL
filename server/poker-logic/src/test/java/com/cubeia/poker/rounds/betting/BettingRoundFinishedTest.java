@@ -34,7 +34,7 @@ import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.ActionRequestFactory;
 import com.cubeia.poker.player.PokerPlayer;
 
-public class BettingRoundAllOtherPlayersAllInTest {
+public class BettingRoundFinishedTest {
 
     @Mock private GameType telesina;
     @Mock private PokerState state;
@@ -59,48 +59,50 @@ public class BettingRoundAllOtherPlayersAllInTest {
 	}
 
     @Test
-	public void noPlayerAllIn() {
-        when(player1.isAllIn()).thenReturn(false);
-        when(player2.isAllIn()).thenReturn(false);
-        when(player3.isAllIn()).thenReturn(false);
-        assertThat(round.allOtherPlayersAreAllIn(player1), is(false));
-        assertThat(round.allOtherPlayersAreAllIn(player2), is(false));
-        assertThat(round.allOtherPlayersAreAllIn(player3), is(false));
+    public void testNotFinishedWhenNoOneHasActed() {
+        when(state.countNonFoldedPlayers()).thenReturn(3);
+        when(state.countSittingInPlayers()).thenReturn(3);
+        when(player1.hasActed()).thenReturn(false);
+        when(player2.hasActed()).thenReturn(false);
+        when(player3.hasActed()).thenReturn(false);
+        assertThat(round.calculateIfRoundFinished(), is(false));
+    }
+	
+    @Test
+    public void testFinishedWhenEverybodyHasActed() {
+        when(state.countNonFoldedPlayers()).thenReturn(3);
+        when(state.countSittingInPlayers()).thenReturn(3);
+        when(player1.hasActed()).thenReturn(true);
+        when(player2.hasActed()).thenReturn(true);
+        when(player3.hasActed()).thenReturn(true);
+        assertThat(round.calculateIfRoundFinished(), is(true));
+    }
+    
+    @Test
+	public void testFinishedWhenAllButOneFolded() {
+        when(state.countNonFoldedPlayers()).thenReturn(1);
+        when(state.countSittingInPlayers()).thenReturn(3);
+        assertThat(round.calculateIfRoundFinished(), is(true));
 	}
     
     @Test
-    public void somePlayersAllIn() {
-        when(player1.isAllIn()).thenReturn(true);
-        when(player2.isAllIn()).thenReturn(true);
-        when(player3.isAllIn()).thenReturn(false);
-        assertThat(round.allOtherPlayersAreAllIn(player1), is(false));
-        assertThat(round.allOtherPlayersAreAllIn(player2), is(false));
-        assertThat(round.allOtherPlayersAreAllIn(player3), is(true));
-    }
-
-    @Test
-    public void allPlayersAllIn() {
-        when(player1.isAllIn()).thenReturn(true);
-        when(player2.isAllIn()).thenReturn(true);
-        when(player3.isAllIn()).thenReturn(true);
-        assertThat(round.allOtherPlayersAreAllIn(player1), is(true));
-        assertThat(round.allOtherPlayersAreAllIn(player2), is(true));
-        assertThat(round.allOtherPlayersAreAllIn(player3), is(true));
+    public void testFinishedWhenAllButOneSittingOut() {
+        when(state.countNonFoldedPlayers()).thenReturn(3);
+        when(state.countSittingInPlayers()).thenReturn(1);
+        when(player1.isSittingOut()).thenReturn(true);
+        when(player2.isSittingOut()).thenReturn(true);
+        when(player3.isSittingOut()).thenReturn(false);
+        assertThat(round.calculateIfRoundFinished(), is(false));
     }
     
     @Test
-    public void headsUpWhenOtherIsSitOutAndNotAllIn() {
-        SortedMap<Integer, PokerPlayer> seatingMap = new TreeMap<Integer, PokerPlayer>();
-        seatingMap.put(0, player1);
-        seatingMap.put(1, player2);
-        when(state.getCurrentHandSeatingMap()).thenReturn(seatingMap);
-        
-        when(player1.isAllIn()).thenReturn(false);
-        when(player2.isAllIn()).thenReturn(false);
+    public void testFinishedWhenAllSittingOut() {
+        when(state.countNonFoldedPlayers()).thenReturn(3);
+        when(state.countSittingInPlayers()).thenReturn(0);
+        when(player1.isSittingOut()).thenReturn(true);
         when(player2.isSittingOut()).thenReturn(true);
-        
-        assertThat(round.allOtherPlayersAreAllIn(player1), is(false));
-        assertThat(round.allOtherPlayersAreAllIn(player2), is(false));
+        when(player3.isSittingOut()).thenReturn(true);
+        assertThat(round.calculateIfRoundFinished(), is(true));
     }
     
 }

@@ -33,20 +33,21 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
 	}
 	
 	@Override
-	public void timeout(PokerState context) {
-		if (!context.isTournamentTable()) {
-			context.setHandFinished(false);
-			context.commitPendingBalances();
+	public void timeout(PokerState state) {
+		if (!state.isTournamentTable()) {
+			state.setHandFinished(false);
+			state.commitPendingBalances();
 						
-			if (context.countSittingInPlayers() > 1) {
-				context.startHand();
-				
+		    state.sitOutPlayersMarkedForSitOutNextRound();
+			
+			if (state.countSittingInPlayers() > 1) {
+				state.startHand();
 			} else {
-				context.setHandFinished(true);
-				context.setState(PokerState.NOT_STARTED);
-				log.info("WILL NOT START NEW HAND, TOO FEW PLAYERS SEATED: " + context.countSittingInPlayers() + " sitting in of " + context.getSeatedPlayers().size());
+				state.setHandFinished(true);
+				state.setState(PokerState.NOT_STARTED);
+				log.info("WILL NOT START NEW HAND, TOO FEW PLAYERS SEATED: " + state.countSittingInPlayers() + " sitting in of " + state.getSeatedPlayers().size());
 			}
-			context.cleanupPlayers(); // Will remove disconnected and leaving players
+			state.cleanupPlayers(); // Will remove disconnected and leaving players
 		} else {
 			log.debug("Ignoring timeout in waiting to start state, since tournament hands are started by the tournament manager.");
 		}

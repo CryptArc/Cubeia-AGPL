@@ -22,6 +22,7 @@ import java.util.Arrays;
 
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.rounds.betting.BetStrategy;
+import com.cubeia.poker.rounds.betting.BettingRoundContext;
 
 public class ActionRequestFactory implements Serializable {
 
@@ -33,10 +34,11 @@ public class ActionRequestFactory implements Serializable {
 		this.betStrategy = betStrategy;
 	}
 	
-	public ActionRequest createFoldCallRaiseActionRequest(PokerPlayer p) {
+	public ActionRequest createFoldCallRaiseActionRequest(BettingRoundContext bettingRoundContext, PokerPlayer p) {
 		PossibleAction fold = new PossibleAction(PokerActionType.FOLD, 0);
-		PossibleAction call = new PossibleAction(PokerActionType.CALL, betStrategy.getCallAmount(p));
-		PossibleAction raise = new PossibleAction(PokerActionType.RAISE, betStrategy.getMinRaiseToAmount(p), betStrategy.getMaxRaiseToAmount(p));
+		PossibleAction call = new PossibleAction(PokerActionType.CALL, betStrategy.getCallAmount(bettingRoundContext, p));
+		PossibleAction raise = new PossibleAction(PokerActionType.RAISE, betStrategy.getMinRaiseToAmount(bettingRoundContext, p), 
+		    betStrategy.getMaxRaiseToAmount(bettingRoundContext, p));
 		
 		ActionRequest request = new ActionRequest();
 		/* We will check:
@@ -53,10 +55,11 @@ public class ActionRequestFactory implements Serializable {
 	}
 	
 
-	public ActionRequest createFoldCheckBetActionRequest(PokerPlayer p) {
+	public ActionRequest createFoldCheckBetActionRequest(BettingRoundContext bettingRoundContext, PokerPlayer p) {
 		PossibleAction fold = new PossibleAction(PokerActionType.FOLD, 0);
 		PossibleAction check = new PossibleAction(PokerActionType.CHECK, 0);
-		PossibleAction bet = new PossibleAction(PokerActionType.BET, betStrategy.getMinBetAmount(p), betStrategy.getMaxBetAmount(p));
+		PossibleAction bet = new PossibleAction(PokerActionType.BET, betStrategy.getMinBetAmount(bettingRoundContext, p), 
+		    betStrategy.getMaxBetAmount(bettingRoundContext, p));
 		ActionRequest request = new ActionRequest();
 		request.setOptions(Arrays.asList(fold, check, bet));
 		request.setPlayerId(p.getId());

@@ -2,7 +2,6 @@ package com.cubeia.poker.variant.telesina;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 import java.util.SortedMap;
 import java.util.TreeMap;

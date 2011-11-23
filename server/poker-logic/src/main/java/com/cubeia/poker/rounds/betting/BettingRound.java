@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cubeia.poker.GameType;
+import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.ActionRequestFactory;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
@@ -46,7 +47,7 @@ public class BettingRound implements Round, BettingRoundContext {
 	@VisibleForTesting
     protected Integer playerToAct = null;
 	
-	private final ActionRequestFactory actionRequestFactory;
+	private ActionRequestFactory actionRequestFactory;
 
 	private boolean isFinished = false;
 
@@ -59,25 +60,21 @@ public class BettingRound implements Round, BettingRoundContext {
     
     private PokerPlayer lastPlayerToBeCalled;
 	
-	public BettingRound(GameType gameType, int dealerSeatId, PlayerToActCalculator playerToActCalculator) {
+	public BettingRound(GameType gameType, int dealerSeatId, PlayerToActCalculator playerToActCalculator, ActionRequestFactory actionRequestFactory) {
 		this.gameType = gameType;
         this.playerToActCalculator = playerToActCalculator;
-		actionRequestFactory = new ActionRequestFactory(new NoLimitBetStrategy(this));
+		this.actionRequestFactory = actionRequestFactory;
 		if (gameType != null && gameType.getState() != null) { // can be null in unit tests
 			lastBetSize = gameType.getState().getEntryBetLevel();
 		}
 		initBettingRound(dealerSeatId);
 	}
 
-	@Override
-	public String toString() {
-		return "BettingRound, isFinished["+isFinished+"]";
-	}
-	
 	private void initBettingRound(int dealerSeatId) {
 		log.debug("Init new betting round");
 		SortedMap<Integer, PokerPlayer> seatingMap = gameType.getState().getCurrentHandSeatingMap();
 		for (PokerPlayer p : seatingMap.values()) {
+		    // TODO: Why do we need to do this? 
 			if (p.getBetStack() > highBet) {
 				highBet = p.getBetStack();
 			}
@@ -89,7 +86,9 @@ public class BettingRound implements Round, BettingRoundContext {
 		
 		log.debug("first player to act = {}", p == null ? null : p.getId());
 		
-		if (p == null || allOtherPlayersAreAllIn(p)) {
+		boolean zeroPlayersSittingIn = gameType.getState().countSittingInPlayers() == 0;
+		
+        if (p == null  ||  allOtherPlayersAreAllIn(p)  ||  zeroPlayersSittingIn) {
 			// No or only one player can act. We are currently in an all-in show down scenario
 			log.debug("No players left to act. We are in an all-in show down scenario");
 			isFinished = true;
@@ -98,6 +97,11 @@ public class BettingRound implements Round, BettingRoundContext {
 			requestAction(p);
 		}
 	}
+
+	@Override
+    public String toString() {
+        return "BettingRound, isFinished["+isFinished+"]";
+    }
 	
     public void act(PokerAction action) {
 		log.debug("Act : "+action);
@@ -108,7 +112,7 @@ public class BettingRound implements Round, BettingRoundContext {
 		handleAction(action, player);
 		gameType.getServerAdapter().notifyActionPerformed(action, player.getBalance());
 			
-		if (roundFinished()) {
+		if (calculateIfRoundFinished()) {
 			isFinished = true;
 		} else {
 			requestNextAction(player.getSeatId());
@@ -135,9 +139,10 @@ public class BettingRound implements Round, BettingRoundContext {
 	private void requestAction(PokerPlayer p) {
 		playerToAct = p.getId();
 		if (p.getBetStack() < highBet) {
-			p.setActionRequest(actionRequestFactory.createFoldCallRaiseActionRequest(p));
+			p.setActionRequest(actionRequestFactory.createFoldCallRaiseActionRequest(this, p));
 		} else {
-			p.setActionRequest(actionRequestFactory.createFoldCheckBetActionRequest(p));
+			ActionRequest ar = actionRequestFactory.createFoldCheckBetActionRequest(this, p);
+            p.setActionRequest(ar);
 		}
 		
 		if (p.isSittingOut()){
@@ -147,13 +152,18 @@ public class BettingRound implements Round, BettingRoundContext {
 		}
 	}
 
-	private boolean roundFinished() {
+	@VisibleForTesting
+	protected boolean calculateIfRoundFinished() {
 		/*
 		 * If there's only one non folded player left, the round (and hand) is
 		 * finished.
 		 */
 		if (gameType.getState().countNonFoldedPlayers() < 2) {
 			return true;
+		}
+		
+		if (gameType.getState().countSittingInPlayers() == 0) {
+		    return true;
 		}
 
 		for (PokerPlayer p : gameType.getState().getCurrentHandSeatingMap().values()) {
@@ -304,7 +314,7 @@ public class BettingRound implements Round, BettingRoundContext {
 	}
 
 	public String getStateDescription() {
-		return "playerToAct=" + playerToAct + " roundFinished=" + roundFinished();
+		return "playerToAct=" + playerToAct + " roundFinished=" + calculateIfRoundFinished();
 	}
 
 	public boolean isFinished() {

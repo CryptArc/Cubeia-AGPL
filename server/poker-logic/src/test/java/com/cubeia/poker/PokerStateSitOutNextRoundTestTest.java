@@ -17,7 +17,7 @@ import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
 
-public class PokerStatePlayerSitInTest {
+public class PokerStateSitOutNextRoundTestTest {
 
 	@Mock PokerState state;
 	@Mock ServerAdapter serverAdapter;

@@ -32,7 +32,6 @@ import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
-import com.cubeia.poker.rounds.blinds.BlindsInfo;
 
 public class AnteRound implements Round {
 
@@ -44,8 +43,6 @@ public class AnteRound implements Round {
 
 	private AnteRoundHelper anteRoundHelper;
 
-//	private Integer playerToAct;
-	
 	public AnteRound(GameType game, AnteRoundHelper anteRoundHelper) {
 		this.game = game;
         this.anteRoundHelper = anteRoundHelper;

@@ -36,35 +36,35 @@ public class NoLimitBetStrategyTest extends TestCase {
 		super.setUp();
 		context = mock(BettingRoundContext.class);
 		player = mock(PokerPlayer.class);
-		strategy = new NoLimitBetStrategy(context);
+		strategy = new NoLimitBetStrategy();
 	}
 	
 	public void testGetMinBetAmount() {
 		// Player has 100 chips and min bet is 50. Result should be 50.
 		when(player.getBalance()).thenReturn(100L);
 		when(context.getMinBet()).thenReturn(50L);
-		assertEquals(50, strategy.getMinBetAmount(player));
+		assertEquals(50, strategy.getMinBetAmount(context, player));
 	}
 	
 	public void testGetMaxBetAmount() {
 		// Player has 100 chips and min bet is 50. Result should be 100.
 		when(player.getBalance()).thenReturn(100L);
 		when(context.getMinBet()).thenReturn(50L);
-		assertEquals(100, strategy.getMaxBetAmount(player));		
+		assertEquals(100, strategy.getMaxBetAmount(context, player));		
 	}
 	
 	public void testGetMinBetAmountWhenPlayerHasLessThanMinBet() {
 		// Player has 50 chips and min bet is 100. Result should be 50.
 		when(player.getBalance()).thenReturn(50L);
 		when(context.getMinBet()).thenReturn(100L);
-		assertEquals(50, strategy.getMinBetAmount(player));		
+		assertEquals(50, strategy.getMinBetAmount(context, player));		
 	}
 	
 	public void testGetMaxBetAmountWhenPlayerHasLessThanMinBet() {
 		// Player has 50 chips and min bet is 100. Result should be 50.
 		when(player.getBalance()).thenReturn(50L);
 		when(context.getMinBet()).thenReturn(100L);
-		assertEquals(50, strategy.getMaxBetAmount(player));				
+		assertEquals(50, strategy.getMaxBetAmount(context, player));				
 	}
 	
 	public void testGetCallAmount() {
@@ -72,7 +72,7 @@ public class NoLimitBetStrategyTest extends TestCase {
 		when(player.getBetStack()).thenReturn(0L);
 		when(player.getBalance()).thenReturn(100L);
 		when(context.getHighestBet()).thenReturn(50L);
-		assertEquals(50, strategy.getCallAmount(player));		
+		assertEquals(50, strategy.getCallAmount(context, player));		
 	}
 	
 	public void testGetCallAmountWhenPlayerHasBeenRaised() {
@@ -80,7 +80,7 @@ public class NoLimitBetStrategyTest extends TestCase {
 		when(player.getBetStack()).thenReturn(50L);
 		when(player.getBalance()).thenReturn(300L);
 		when(context.getHighestBet()).thenReturn(200L);
-		assertEquals(150, strategy.getCallAmount(player));		
+		assertEquals(150, strategy.getCallAmount(context, player));		
 	}
 	
 	public void testGetCallAmountWhenPlayerHasBeenRaisedAndDoesNotHaveEnoughChips() {
@@ -88,7 +88,7 @@ public class NoLimitBetStrategyTest extends TestCase {
 		when(player.getBetStack()).thenReturn(50L);
 		when(player.getBalance()).thenReturn(100L);
 		when(context.getHighestBet()).thenReturn(200L);
-		assertEquals(100, strategy.getCallAmount(player));		
+		assertEquals(100, strategy.getCallAmount(context, player));		
 	}
 	
 	public void testGetCallAmountWhenPlayerHasAlreadyBetEnough() {
@@ -97,7 +97,7 @@ public class NoLimitBetStrategyTest extends TestCase {
 		when(player.getBalance()).thenReturn(300L);
 		when(context.getHighestBet()).thenReturn(50L);
 		try {
-			strategy.getCallAmount(player);
+			strategy.getCallAmount(context, player);
 			fail();
 		} catch (IllegalStateException expected) {}
 	}
@@ -108,7 +108,7 @@ public class NoLimitBetStrategyTest extends TestCase {
 		when(player.getBalance()).thenReturn(300L);
 		when(context.getHighestBet()).thenReturn(40L);
 		try {
-			strategy.getCallAmount(player);
+			strategy.getCallAmount(context, player);
 			fail();
 		} catch (IllegalStateException expected) {}
 	}
@@ -119,7 +119,7 @@ public class NoLimitBetStrategyTest extends TestCase {
 		when(player.getBalance()).thenReturn(500L);
 		when(context.getHighestBet()).thenReturn(100L);
 		when(context.getSizeOfLastBetOrRaise()).thenReturn(100L);
-		assertEquals(200, strategy.getMinRaiseToAmount(player));
+		assertEquals(200, strategy.getMinRaiseToAmount(context, player));
 		assertAllInRaiseCorrect();
 	}
 	
@@ -129,7 +129,7 @@ public class NoLimitBetStrategyTest extends TestCase {
 		when(player.getBalance()).thenReturn(500L);
 		when(context.getHighestBet()).thenReturn(100L);
 		when(context.getSizeOfLastBetOrRaise()).thenReturn(30L);
-		assertEquals(130, strategy.getMinRaiseToAmount(player));
+		assertEquals(130, strategy.getMinRaiseToAmount(context, player));
 		assertAllInRaiseCorrect();
 	}
 	
@@ -139,12 +139,12 @@ public class NoLimitBetStrategyTest extends TestCase {
 		when(player.getBalance()).thenReturn(500L);
 		when(context.getHighestBet()).thenReturn(150L);
 		when(context.getSizeOfLastBetOrRaise()).thenReturn(100L);
-		assertEquals(250, strategy.getMinRaiseToAmount(player));
+		assertEquals(250, strategy.getMinRaiseToAmount(context, player));
 		assertAllInRaiseCorrect();
 	}
 
 	private void assertAllInRaiseCorrect() {
-		assertEquals(player.getBalance() + player.getBetStack(), strategy.getMaxRaiseToAmount(player));
+		assertEquals(player.getBalance() + player.getBetStack(), strategy.getMaxRaiseToAmount(context, player));
 	}
 	
 	public void testGetReRaiseAmountWhenPlayerDoesNotHaveEnoughChips() {
@@ -154,8 +154,8 @@ public class NoLimitBetStrategyTest extends TestCase {
 		when(player.getBalance()).thenReturn(190L);
 		when(context.getHighestBet()).thenReturn(150L);
 		when(context.getSizeOfLastBetOrRaise()).thenReturn(100L);
-		assertEquals(240, strategy.getMinRaiseToAmount(player));
-		assertEquals(240, strategy.getMaxRaiseToAmount(player));
+		assertEquals(240, strategy.getMinRaiseToAmount(context, player));
+		assertEquals(240, strategy.getMaxRaiseToAmount(context, player));
 	}	
 	
 	public void testGetRaiseAmountWhenAllOtherPlayersAreAllIn() {
@@ -164,8 +164,8 @@ public class NoLimitBetStrategyTest extends TestCase {
 		when(context.getHighestBet()).thenReturn(100L);
 		when(context.getSizeOfLastBetOrRaise()).thenReturn(100L);
 		when(context.allOtherPlayersAreAllIn(player)).thenReturn(true);
-		assertEquals(0, strategy.getMinRaiseToAmount(player));		
-		assertEquals(0, strategy.getMaxRaiseToAmount(player));
+		assertEquals(0, strategy.getMinRaiseToAmount(context, player));		
+		assertEquals(0, strategy.getMaxRaiseToAmount(context, player));
 	}
 	
 	public void testGetRaiseWhenPlayerHasBetMoreThanCurrentMax() {
@@ -174,7 +174,7 @@ public class NoLimitBetStrategyTest extends TestCase {
 		when(player.getBalance()).thenReturn(0L);
 		when(context.getHighestBet()).thenReturn(100L);
 		try {
-			strategy.getMinRaiseToAmount(player);
+			strategy.getMinRaiseToAmount(context, player);
 			fail();
 		} catch (IllegalStateException expected) {}		
 	}

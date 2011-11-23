@@ -33,6 +33,13 @@ public interface IPokerState {
 	PokerPlayer getPlayerInCurrentHand(Integer playerId);
 
 	int countNonFoldedPlayers();
+	
+	/**
+	 * Returns the number of players sitting in.
+	 * @return number of players sitting in
+	 */
+    int countSittingInPlayers();
+    
 
 	boolean isPlayerInHand(int playerId);
 
@@ -67,5 +74,11 @@ public interface IPokerState {
 	 * @return true if shut down, false otherwise
 	 */
     boolean isShutdown();
-	
+
+    /**
+     * Sit out the players that has been marked for sitout next round.
+     * This method should be called before or after a hand, not in the middle.
+     */
+    void sitOutPlayersMarkedForSitOutNextRound();
+
 }
