@@ -701,12 +701,6 @@ public class PokerState implements Serializable, IPokerState {
 		serverAdapter.notifyPlayerBalance(playerMap.get(playerId));
 	}
 
-	public void notifyPlayerStatus(int playerId) {
-		PokerPlayer pokerPlayer = playerMap.get(playerId);
-		PokerPlayerStatus status = pokerPlayer.isSittingOut() ? PokerPlayerStatus.SITOUT : PokerPlayerStatus.SITIN;
-		serverAdapter.notifyPlayerStatusChanged(playerId, status);
-	}
-
 	public void notifyAllPlayerBalances() {
 		for (PokerPlayer player : seatingMap.values()) {
 			notifyPlayerBalance(player.getId());
@@ -717,6 +711,30 @@ public class PokerState implements Serializable, IPokerState {
 		for (PokerPlayer player : seatingMap.values()) {
 			notifyPlayerStatus(player.getId());
 		}
+	}
+    
+    public void notifyPlayerStatus(int playerId) {
+		PokerPlayer pokerPlayer = playerMap.get(playerId);
+        log.debug("notifyPlayerStatus() id: "+playerId);
+        if(pokerPlayer.isSittingOut()){
+            notifyPlayerSittingOut(playerId);
+        }else{
+            notifyPlayerSittingIn(playerId);
+        }
+	}
+    
+    /**
+	 * TODO: Make this method private and change calls to this method from the BlindsRound
+	 * to use playerIsSittingOut instead to have one common way to set a player as sitout.
+	 */
+	public void notifyPlayerSittingOut(int playerId) {
+        log.debug("notifyPlayerSittingOut() id: "+playerId+" status:"+PokerPlayerStatus.SITOUT.name());
+		serverAdapter.notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITOUT);
+	}
+
+	public void notifyPlayerSittingIn(int playerId) {
+        log.debug("notifyPlayerSittingIn() id: "+playerId+" status:"+PokerPlayerStatus.SITIN.name());
+		serverAdapter.notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITIN);
 	}
 
 	public void setHandFinished(boolean finished) {
@@ -752,17 +770,7 @@ public class PokerState implements Serializable, IPokerState {
 		serverAdapter.notifyDealerButton(dealerButtonSeatId);
 	}
 
-	/**
-	 * TODO: Make this method private and change calls to this method from the BlindsRound
-	 * to use playerIsSittingOut instead to have one common way to set a player as sitout.
-	 */
-	public void notifyPlayerSittingOut(int playerId) {
-		serverAdapter.notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITOUT);
-	}
-
-	public void notifyPlayerSittingIn(int playerId) {
-		serverAdapter.notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITIN);
-	}
+	
 
 	public ServerAdapter getServerAdapter() {
 		return serverAdapter;
