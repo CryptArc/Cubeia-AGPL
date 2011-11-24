@@ -65,7 +65,8 @@ public class BettingRoundTimeoutTest {
         round.timeout();
         
         verify(state).playerIsSittingOut(playerId, SitOutStatus.TIMEOUT);
-        verify(serverAdapter).notifyActionPerformed(Mockito.any(PokerAction.class), Mockito.anyLong());
+        verify(serverAdapter).notifyActionPerformed(Mockito.any(PokerAction.class));
+        verify(serverAdapter).notifyPlayerBalance(player);
         verify(player).setHasFolded(true);
 
 	}

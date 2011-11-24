@@ -85,7 +85,7 @@ public class GameStateSummaryCreatorTest {
 		gda0.setData(styx.pack(new RequestAction()));
 		actions.add(ActionContainer.createPrivate(111, gda0));
 		GameDataAction gda1 = new GameDataAction(333, 1);
-		gda1.setData(styx.pack(new PerformAction(1, 222, new PlayerAction(), 10, 10, 10, false, 100)));
+		gda1.setData(styx.pack(new PerformAction(1, 222, new PlayerAction(), 10, 10, 10, false)));
 		actions.add(ActionContainer.createPrivate(111, gda1));
 		GameDataAction gda2 = new GameDataAction(222, 1);
 		gda2.setData(styx.pack(new DealPublicCards(new ArrayList<GameCard>())));
@@ -113,7 +113,7 @@ public class GameStateSummaryCreatorTest {
 		actions.add(ActionContainer.createPrivate(222, gda0));
 
 		GameDataAction gda1 = new GameDataAction(222, 1);
-		gda1.setData(styx.pack(new PerformAction(1, 222, new PlayerAction(), 10, 10, 10, false, 100)));
+		gda1.setData(styx.pack(new PerformAction(1, 222, new PlayerAction(), 10, 10, 10, false)));
 		actions.add(ActionContainer.createPrivate(222, gda1));
 
 		// Request without perform - this should not be filtered.
@@ -174,7 +174,7 @@ public class GameStateSummaryCreatorTest {
 		actions.add(ActionContainer.createPrivate(222, gda0));
 
 		GameDataAction gda1 = new GameDataAction(222, 1);
-		gda1.setData(styx.pack(new PerformAction(1, 222, new PlayerAction(), 10, 10, 10, false, 100)));
+		gda1.setData(styx.pack(new PerformAction(1, 222, new PlayerAction(), 10, 10, 10, false)));
 		actions.add(ActionContainer.createPrivate(222, gda1));
 
 		// Request without perform - this should not be filtered.

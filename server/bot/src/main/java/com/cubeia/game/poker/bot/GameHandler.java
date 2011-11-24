@@ -104,7 +104,7 @@ public class GameHandler implements PacketVisitor {
     
     
     public void visit(StartNewHand packet) {
-        bot.getBot().logDebug("New Hand starting. Dealer seat: "+packet.dealer);
+        bot.getBot().logDebug("New Hand starting. Dealer seat: "+packet.dealerSeatId);
     }
     
     @SuppressWarnings("static-access")

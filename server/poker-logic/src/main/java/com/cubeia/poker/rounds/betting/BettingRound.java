@@ -110,7 +110,8 @@ public class BettingRound implements Round, BettingRoundContext {
 		verifyValidAction(action, player);
 				
 		handleAction(action, player);
-		gameType.getServerAdapter().notifyActionPerformed(action, player.getBalance());
+		gameType.getServerAdapter().notifyActionPerformed(action);
+		gameType.getServerAdapter().notifyPlayerBalance(player);
 			
 		if (calculateIfRoundFinished()) {
 			isFinished = true;

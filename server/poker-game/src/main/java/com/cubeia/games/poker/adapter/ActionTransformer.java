@@ -98,7 +98,6 @@ public class ActionTransformer {
 		packet.stackAmount = (int) pokerPlayer.getBetStack();
 		packet.player = pokerAction.getPlayerId();
 		packet.timeout = pokerAction.isTimeout();
-		packet.balance = (int)pokerPlayer.getBalance();
 		return packet;
 	}
 	
@@ -329,8 +328,8 @@ public class ActionTransformer {
 	}
 	
 	
-	public GameDataAction createPlayerBalanceAction(int balance, int pendingBalance, int playerId, int tableId) {
-		PlayerBalance packet = new PlayerBalance(balance, pendingBalance, playerId);
+	public GameDataAction createPlayerBalanceAction(int balance, int pendingBalance, int playersContributionToPot, int playerId, int tableId) {
+		PlayerBalance packet = new PlayerBalance(balance, pendingBalance, playerId, playersContributionToPot);
 		log.debug("Player balance packet created: "+packet);
 		return new ProtocolFactory().createGameAction(packet, playerId, tableId);
 	}

@@ -162,6 +162,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		
 		StartNewHand packet = new StartNewHand();
 		packet.handId = handId;
+		packet.dealerSeatId = state.getBlindsInfo().getDealerButtonSeatId();
 		GameDataAction action = protocolFactory.createGameAction(packet, 0, table.getId());
 		sendPublicPacket(action, -1);
 
@@ -228,13 +229,13 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	}
 
 	@Override
-	public void notifyActionPerformed(PokerAction pokerAction, long resultingBalance) {
+	public void notifyActionPerformed(PokerAction pokerAction) {
 		PokerPlayer pokerPlayer = state.getPokerPlayer(pokerAction.getPlayerId());
 		PerformAction packet = actionTransformer.transform(pokerAction, pokerPlayer);
-		packet.balance = (int) resultingBalance;
 		GameDataAction action = protocolFactory.createGameAction(packet, pokerAction.getPlayerId(), table.getId());
 		log.debug("--> Send PerformAction["+packet+"] to everyone");
 		sendPublicPacket(action, -1);
+				
 	}
 
 
@@ -366,7 +367,8 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
 			List<PlayerBalance> balances = new ArrayList<PlayerBalance>();
 			for (PokerPlayer player : state.getCurrentHandPlayerMap().values()) {
-				balances.add(new PlayerBalance((int) player.getBalance(), (int) player.getPendingBalance(), player.getId()));
+				long playersContributionToPot = state.getPlayersTotalContributionToPot(player);
+				balances.add(new PlayerBalance((int) player.getBalance(), (int) player.getPendingBalance(), player.getId(),(int)playersContributionToPot));
 			}
 
 			PotTransfers potTransfers = new PotTransfers(false, transfers, null, balances);
@@ -453,19 +455,21 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	}
 
 	@Override
-	public void notifyPlayerBalance(PokerPlayer p) {
-		if (p == null) return;
+	public void notifyPlayerBalance(PokerPlayer player) {
+		if (player == null) return;
 
+		long playersTotalContributionToPot = state.getPlayersTotalContributionToPot(player);
+		
 		// first send private packet to the player
 		GameDataAction publicAction = actionTransformer.createPlayerBalanceAction(
-				(int) p.getBalance(), 0, p.getId(), table.getId());
-		sendPublicPacket(publicAction, p.getId());
+				(int) player.getBalance(), 0, (int)playersTotalContributionToPot, player.getId(), table.getId());
+		sendPublicPacket(publicAction, player.getId());
 
 		//	    // then send public packet to all the other players but exclude the pending balance
 		GameDataAction privateAction = actionTransformer.createPlayerBalanceAction(
-				(int) p.getBalance(), (int) p.getPendingBalance(), p.getId(), table.getId());
+				(int) player.getBalance(), (int) player.getPendingBalance(), (int)playersTotalContributionToPot, player.getId(), table.getId());
 		log.debug("Send private PBA: "+privateAction);
-		sendPrivatePacket(p.getId(),privateAction);
+		sendPrivatePacket(player.getId(),privateAction);
 
 	}
 
@@ -502,7 +506,8 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		}
 
 		for (PokerPlayer player : state.getCurrentHandPlayerMap().values()) {
-			balances.add(new PlayerBalance((int) player.getBalance(), (int) player.getPendingBalance(), player.getId()));
+			long playersTotalContributionToPot = state.getPlayersTotalContributionToPot(player);
+			balances.add(new PlayerBalance((int) player.getBalance(), (int) player.getPendingBalance(), player.getId(),(int)playersTotalContributionToPot));
 		}
 
 		PotTransfers potTransfers = new PotTransfers(fromPlayerToPot, transfers, clientPots, balances);

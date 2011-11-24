@@ -961,4 +961,12 @@ public class PokerState implements Serializable, IPokerState {
 		return getNumberOfAllinPlayers() >= currentHandPlayerMap.size() - 1;
 	}
 
+	public long getPlayersTotalContributionToPot(PokerPlayer player) {
+		if (potHolder != null)	{
+			return potHolder.calculatePlayersContributionToPotIncludingBetStacks(player);
+		}else{
+			return player.getBetStack();
+		}
+	}
+
 }

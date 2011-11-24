@@ -77,8 +77,8 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
 	}
 	
 	@Override
-	public void notifyActionPerformed(PokerAction action, long resultingBalance) {
-		super.notifyActionPerformed(action, resultingBalance);
+	public void notifyActionPerformed(PokerAction action) {
+		super.notifyActionPerformed(action);
 		PlayerAction ev = translate(action);
 		post(ev);
 	}

@@ -111,10 +111,9 @@ public interface ServerAdapter {
 	/**
 	 * Called after an action from the player has been successfully
 	 * dealt with.
-	 * @param resultingBalance the table balance after the action was performed
 	 * @param action, not null.
 	 */
-	void notifyActionPerformed(PokerAction action, long resultingBalance);
+	void notifyActionPerformed(PokerAction action);
 	
 	/**
 	 * Reports the end of a round to a tournament coordinator.

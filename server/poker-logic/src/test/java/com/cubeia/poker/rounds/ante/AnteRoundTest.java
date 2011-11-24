@@ -125,7 +125,8 @@ public class AnteRoundTest {
 		verify(player1).addBet(anteLevel);
 		verify(player1).setHasActed(true);
 		verify(player1).setHasPostedEntryBet(true);
-		verify(serverAdapter).notifyActionPerformed(action, resultingBalance);
+		verify(serverAdapter).notifyActionPerformed(action);
+		verify(serverAdapter).notifyPlayerBalance(player1);
 
 		verify(state).notifyBetStacksUpdated();
 	}
@@ -154,10 +155,11 @@ public class AnteRoundTest {
 		PokerAction action1 = new PokerAction(player1.getId(), PokerActionType.DECLINE_ENTRY_BET);
 		anteRound.act(action1);
 
-		verify(serverAdapter).notifyActionPerformed(Mockito.eq(action1), Mockito.eq(resultingBalance1));
+		verify(serverAdapter).notifyActionPerformed(Mockito.eq(action1));
+		verify(serverAdapter).notifyPlayerBalance(player1);
 
 		ArgumentCaptor<PokerAction> captor = ArgumentCaptor.forClass(PokerAction.class);
-		verify(serverAdapter, Mockito.times(2)).notifyActionPerformed(captor.capture(), Mockito.anyLong());
+		verify(serverAdapter, Mockito.times(2)).notifyActionPerformed(captor.capture());
 
 		PokerAction declineAction = captor.getAllValues().get(0);
 		assertThat(declineAction, is(action1));
@@ -191,7 +193,8 @@ public class AnteRoundTest {
 		verify(player1, never()).addBet(anteLevel);
 		verify(player1).setHasActed(true);
 		verify(player1).setHasPostedEntryBet(false);
-		verify(serverAdapter).notifyActionPerformed(action, resultingBalance );
+		verify(serverAdapter).notifyActionPerformed(action );
+		verify(serverAdapter).notifyPlayerBalance(player1);
 	}    
 
 	@Test
@@ -347,7 +350,8 @@ public class AnteRoundTest {
 		verify(player2).setHasActed(true);
 		verify(player2).setHasFolded(true);
 		verify(player2).setHasPostedEntryBet(false);
-		verify(serverAdapter).notifyActionPerformed(Mockito.any(PokerAction.class), Mockito.anyLong());
+		verify(serverAdapter).notifyActionPerformed(Mockito.any(PokerAction.class));
+		verify(serverAdapter).notifyPlayerBalance(player2);
 
 		//        player.setHasActed(true);
 		//        player.setHasFolded(true);

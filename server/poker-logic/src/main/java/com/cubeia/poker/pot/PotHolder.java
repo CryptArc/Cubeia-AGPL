@@ -121,6 +121,25 @@ public class PotHolder implements Serializable {
 	    return rakeCalculator.calculateRakes(getPots(), callHasBeenMadeInHand);
 	}
 	
+	public long calculatePlayersContributionToPotIncludingBetStacks(PokerPlayer player) {
+		long tot = 0;
+		
+		// calculate totat contribution to pot
+		for (Pot pot : pots) {
+			Map<PokerPlayer, Long> potContributors = pot.getPotContributors();
+			
+			if (potContributors.containsKey(player))
+			{
+				tot += potContributors.get(player);
+			}
+		}
+		
+		// add the players betstack
+		tot += player.getBetStack();
+		
+		return tot;
+	}
+	
 	/**
 	 * Calculate the rake info including all the bet stacks of the players
 	 * @param players
