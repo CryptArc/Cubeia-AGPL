@@ -248,6 +248,12 @@ public class BettingRoundTest extends TestCase implements TestListener {
         
         round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()));
         
+        ActionRequest actionRequest = Mockito.mock(ActionRequest.class);
+        when(player.getActionRequest()).thenReturn(actionRequest);
+        PossibleAction possibleAction = Mockito.mock(PossibleAction.class);
+        when(actionRequest.getOption(PokerActionType.BET)).thenReturn(possibleAction);
+        when(possibleAction.getMinAmount()).thenReturn(5L);
+        
         round.bet(player, 10L);
                 
         verify(state).notifyBetStacksUpdated();

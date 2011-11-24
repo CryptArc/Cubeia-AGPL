@@ -260,6 +260,10 @@ public class BettingRound implements Round, BettingRoundContext {
 
 	@VisibleForTesting
 	void bet(PokerPlayer player, long amount) {
+        long minAmount = player.getActionRequest().getOption(PokerActionType.BET).getMinAmount();
+        if(amount < minAmount){
+            throw new IllegalArgumentException("PokerPlayer["+player.getId()+"] - "+String.format("Bet (%d) is smaller than minAmount (%d)", amount, minAmount));
+        }
 		lastBetSize = amount;
 		nextValidRaiseLevel = 2*lastBetSize;
 		highBet = highBet + amount;
