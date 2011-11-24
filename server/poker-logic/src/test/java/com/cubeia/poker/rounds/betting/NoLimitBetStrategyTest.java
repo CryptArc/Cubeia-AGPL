@@ -119,6 +119,7 @@ public class NoLimitBetStrategyTest extends TestCase {
 		when(player.getBalance()).thenReturn(500L);
 		when(context.getHighestBet()).thenReturn(100L);
 		when(context.getSizeOfLastBetOrRaise()).thenReturn(100L);
+		when(context.getNextValidRaiseLevel()).thenReturn(200L);
 		assertEquals(200, strategy.getMinRaiseToAmount(context, player));
 		assertAllInRaiseCorrect();
 	}
@@ -129,6 +130,7 @@ public class NoLimitBetStrategyTest extends TestCase {
 		when(player.getBalance()).thenReturn(500L);
 		when(context.getHighestBet()).thenReturn(100L);
 		when(context.getSizeOfLastBetOrRaise()).thenReturn(30L);
+		when(context.getNextValidRaiseLevel()).thenReturn(130L);
 		assertEquals(130, strategy.getMinRaiseToAmount(context, player));
 		assertAllInRaiseCorrect();
 	}
@@ -139,6 +141,7 @@ public class NoLimitBetStrategyTest extends TestCase {
 		when(player.getBalance()).thenReturn(500L);
 		when(context.getHighestBet()).thenReturn(150L);
 		when(context.getSizeOfLastBetOrRaise()).thenReturn(100L);
+		when(context.getNextValidRaiseLevel()).thenReturn(250L);
 		assertEquals(250, strategy.getMinRaiseToAmount(context, player));
 		assertAllInRaiseCorrect();
 	}
@@ -154,6 +157,7 @@ public class NoLimitBetStrategyTest extends TestCase {
 		when(player.getBalance()).thenReturn(190L);
 		when(context.getHighestBet()).thenReturn(150L);
 		when(context.getSizeOfLastBetOrRaise()).thenReturn(100L);
+		when(context.getNextValidRaiseLevel()).thenReturn(250L);
 		assertEquals(240, strategy.getMinRaiseToAmount(context, player));
 		assertEquals(240, strategy.getMaxRaiseToAmount(context, player));
 	}	

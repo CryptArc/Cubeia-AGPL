@@ -20,6 +20,9 @@ package com.cubeia.poker.action;
 import java.io.Serializable;
 import java.util.Arrays;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.rounds.betting.BetStrategy;
 import com.cubeia.poker.rounds.betting.BettingRoundContext;
@@ -27,6 +30,8 @@ import com.cubeia.poker.rounds.betting.BettingRoundContext;
 public class ActionRequestFactory implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	
+	private static Logger log = LoggerFactory.getLogger(ActionRequestFactory.class);
 	
 	private final BetStrategy betStrategy;
 	
@@ -41,20 +46,28 @@ public class ActionRequestFactory implements Serializable {
 		    betStrategy.getMaxRaiseToAmount(bettingRoundContext, p));
 		
 		ActionRequest request = new ActionRequest();
+		
+		// Check if valid to raise
+		boolean raiseAllowed = true;
+		if (raise.getMinAmount() == p.getLastRaiseLevel()) {
+			log.debug("Raise level [{}] has not changed for player[{}]. Player is not allowed to raise for this round.", p.getLastRaiseLevel(), p.getId());
+			raiseAllowed = false;
+		}
+		
 		/* We will check:
 		 * 1. If the player have more cash than a call
 		 * 2. If raise min amount is > call (can be 0 if all other players are all in)
 		 */
-		if (p.getBalance() > call.getMinAmount() && raise.getMinAmount() > call.getMinAmount()) {
+		if (raiseAllowed && p.getBalance() > call.getMinAmount() && raise.getMinAmount() > call.getMinAmount()) {
 			request.setOptions(Arrays.asList(fold, call, raise));
 		} else {
+			log.debug("Player {} is only allowed to call or fold. balance["+p.getBalance()+"] call.min["+call.getMinAmount()+"] raise.min["+raise.getMinAmount()+"]", p.getId());
 			request.setOptions(Arrays.asList(fold, call));
 		}
 		request.setPlayerId(p.getId());
 		return request;
 	}
 	
-
 	public ActionRequest createFoldCheckBetActionRequest(BettingRoundContext bettingRoundContext, PokerPlayer p) {
 		PossibleAction fold = new PossibleAction(PokerActionType.FOLD, 0);
 		PossibleAction check = new PossibleAction(PokerActionType.CHECK, 0);

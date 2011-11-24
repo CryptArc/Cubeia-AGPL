@@ -175,4 +175,8 @@ public interface PokerPlayer extends Serializable {
 	 */
     public void resetBeforeNewHand();
     
+    public void setLastRaiseLevel(long amount);
+    
+    public long getLastRaiseLevel();
+    
 }

@@ -49,4 +49,5 @@ public interface BettingRoundContext {
 	 */
 	public boolean allOtherPlayersAreAllIn(PokerPlayer thisPlayer);
 
+	public long getNextValidRaiseLevel();
 }

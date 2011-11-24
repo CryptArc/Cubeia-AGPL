@@ -76,7 +76,7 @@ public class ManualGameHandler implements PacketVisitor {
 	}
 
 	public void visit(StartNewHand packet) {
-		System.out.println("Start a new hand. Dealer: "+packet.dealer);
+		System.out.println("Start a new hand. Dealer: "+packet.dealerSeatId);
 	}
 
 	public void visit(ExposePrivateCards packet) {

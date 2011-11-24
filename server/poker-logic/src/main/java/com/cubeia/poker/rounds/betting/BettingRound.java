@@ -47,7 +47,14 @@ public class BettingRound implements Round, BettingRoundContext {
 	@VisibleForTesting
     protected Integer playerToAct = null;
 	
-	private ActionRequestFactory actionRequestFactory;
+	/**
+	 * Placeholder for the next valid raise level in the game.
+	 * This may very well be 0 in cases where it is not set.
+	 */
+	@VisibleForTesting
+	protected long nextValidRaiseLevel = 0;
+	
+	private final ActionRequestFactory actionRequestFactory;
 
 	private boolean isFinished = false;
 
@@ -79,6 +86,7 @@ public class BettingRound implements Round, BettingRoundContext {
 				highBet = p.getBetStack();
 			}
 			p.clearActionRequest();
+			p.setLastRaiseLevel(0);
 		}
 
 		// Check if we should request actions at all
@@ -122,11 +130,11 @@ public class BettingRound implements Round, BettingRoundContext {
 
 	private void requestNextAction(int lastSeatId) {
 		PokerPlayer player = playerToActCalculator.getNextPlayerToAct(lastSeatId, gameType.getState().getCurrentHandSeatingMap());
-		log.debug("Next player to act is: "+playerToAct);
 		if (player == null) {
 			log.debug("Setting betting round is finished because there is no player left to act");
 			isFinished = true;
 		} else {
+			log.debug("Next player to act is: "+player.getId());
 			requestAction(player);
 		}
 	}
@@ -221,14 +229,24 @@ public class BettingRound implements Round, BettingRoundContext {
 					"Amounts must be larger than current highest bet");
 		}
 		
+		boolean allIn = player.getBalance() - amount == 0;
+		boolean belowMinBet = amount < 2*lastBetSize;
+		
 		/** Check if player went all in with a below minimum raise */
-		if (! (amount < 2*lastBetSize && player.isAllIn())) {
-			lastBetSize = amount-highBet;
-		} else {
+		if (belowMinBet && allIn) {
 			log.debug("Player["+player.getId()+"] made a below min raise but is allin.");
+			
+		} else if (belowMinBet && !allIn) {
+			throw new IllegalArgumentException("PokerPlayer["+player.getId()+"] is not allowed to raise below minimum raise. Highbet["+highBet+"] amount["+amount+"] balance["+player.getBalance()+"] betStack["+player.getBetStack()+"].");
+			
+		} else {
+			lastBetSize = amount-highBet;
+			long oldValid = nextValidRaiseLevel;
+			nextValidRaiseLevel = highBet+lastBetSize*2;
+			player.setLastRaiseLevel(getNextValidRaiseLevel());
 		}
 		
-		highBet = amount;
+		highBet = amount; 
 		lastPlayerToBeCalled = lastPlayerToPlaceABet;
 		lastPlayerToPlaceABet = player;
 		player.addBet(highBet - player.getBetStack());
@@ -244,9 +262,11 @@ public class BettingRound implements Round, BettingRoundContext {
 	@VisibleForTesting
 	void bet(PokerPlayer player, long amount) {
 		lastBetSize = amount;
+		nextValidRaiseLevel = 2*lastBetSize;
 		highBet = highBet + amount;
 		lastPlayerToPlaceABet = player;
 		player.addBet(highBet - player.getBetStack());
+		player.setLastRaiseLevel(getNextValidRaiseLevel());
 		resetHasActed();
 		
 		notifyBetStacksUpdated();
@@ -275,6 +295,7 @@ public class BettingRound implements Round, BettingRoundContext {
 		lastPlayerToBeCalled = lastPlayerToPlaceABet;
 		gameType.getState().call();
 		notifyBetStacksUpdated();
+		player.setLastRaiseLevel(getNextValidRaiseLevel());
 		return amountToCall;
 	}
 
@@ -359,5 +380,9 @@ public class BettingRound implements Round, BettingRoundContext {
 
 	public PokerPlayer getLastPlayerToBeCalled() {
 		return lastPlayerToBeCalled;
+	}
+	
+	public long getNextValidRaiseLevel() {
+		return nextValidRaiseLevel;
 	}
 }

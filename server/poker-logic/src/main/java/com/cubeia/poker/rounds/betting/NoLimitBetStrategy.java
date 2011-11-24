@@ -70,12 +70,17 @@ public class NoLimitBetStrategy implements BetStrategy {
 			return 0;
 		}
 		
-		long raiseTo = bettingRoundContext.getHighestBet() + bettingRoundContext.getSizeOfLastBetOrRaise();
+		// Check if we have stored a next bet level, if not create one from previous bet.
+		long raiseTo = bettingRoundContext.getNextValidRaiseLevel();
+		if (raiseTo == 0) {
+			raiseTo = bettingRoundContext.getHighestBet() + bettingRoundContext.getSizeOfLastBetOrRaise();
+		}
+		
 		long cost = raiseTo - player.getBetStack();
 		long affordableCost = Math.min(player.getBalance(), cost);
-		 
+		
 		if (cost < 0) {
-			throw new IllegalStateException(String.format("Current high bet (%d) is lower than player's bet stack (%d).", bettingRoundContext.getHighestBet(), player.getBetStack()));
+			throw new IllegalStateException(String.format("Current high bet (%d) is lower than player's bet stack (%d). MaxRaise(%d) Balance(%d)", bettingRoundContext.getHighestBet(), player.getBetStack(), raiseTo, player.getBalance()));
 		}
 		
 		return player.getBetStack() + affordableCost;

@@ -82,6 +82,9 @@ public class DefaultPokerPlayer implements PokerPlayer {
     private boolean sitInAfterSuccessfulBuyIn;
     
     private Long sitOutTimestamp;
+    
+    /** The next valid raise level for the last performed action */ 
+	private long lastRaiseLevel = 0;
 	
 	public DefaultPokerPlayer(int id) {
 		playerId = id;
@@ -344,5 +347,15 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	    clearHand();
         setHasActed(false);
         setHasFolded(false);
+	}
+	
+	@Override
+	public void setLastRaiseLevel(long amount) {
+		this.lastRaiseLevel  = amount;
+	}
+
+	@Override
+	public long getLastRaiseLevel() {
+		return lastRaiseLevel;
 	}
 }

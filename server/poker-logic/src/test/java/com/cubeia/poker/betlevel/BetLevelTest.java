@@ -91,13 +91,14 @@ public class BetLevelTest extends AbstractTexasHandTester {
 
 		act(p[2], PokerActionType.CALL);
 		act(p[3], PokerActionType.RAISE, 2000);
-
+		
 		assertEquals(p[0], mockServerAdapter.getLastActionRequest().getPlayerId());
 		assertTrue(mp[0].isActionPossible(PokerActionType.CALL));
 		assertEquals(2000, mockServerAdapter.getLastActionRequest().getOption(PokerActionType.CALL).getMinAmount());
 		assertEquals(2000, mockServerAdapter.getLastActionRequest().getOption(PokerActionType.CALL).getMaxAmount());
 
 		assertTrue(mp[0].isActionPossible(PokerActionType.RAISE));
+		
 		assertEquals(3000, mockServerAdapter.getLastActionRequest().getOption(PokerActionType.RAISE).getMinAmount());
 		assertEquals(4500, mockServerAdapter.getLastActionRequest().getOption(PokerActionType.RAISE).getMaxAmount());
 
