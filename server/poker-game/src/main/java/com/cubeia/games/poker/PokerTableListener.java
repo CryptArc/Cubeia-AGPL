@@ -134,7 +134,7 @@ public class PokerTableListener implements TournamentTableListener {
 	
 	@VisibleForTesting
 	private void sendGameStateToWatcherIfNeeded(PokerState state, Table table, int playerId) {
-	    if (state.getPlayerInCurrentHand(playerId) != null) {
+	    if (state.getPlayerInCurrentHand(playerId) == null) {
 	        gameStateSender.sendGameState(table, playerId);
 	    }
 	}
