@@ -229,7 +229,7 @@ public class BettingRound implements Round, BettingRoundContext {
 					"Amounts must be larger than current highest bet");
 		}
 		
-		boolean allIn = player.getBalance() - amount == 0;
+		boolean allIn = player.getBalance() + player.getBetStack() - amount <= 0;
 		boolean belowMinBet = amount < 2*lastBetSize;
 		
 		/** Check if player went all in with a below minimum raise */

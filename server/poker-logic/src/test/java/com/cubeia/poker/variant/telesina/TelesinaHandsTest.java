@@ -161,49 +161,83 @@ public class TelesinaHandsTest extends AbstractTexasHandTester {
 		act(p[0], CALL);
 		act(p[1], RAISE, 40);
 		
-		assertThat(mp[2].getActionRequest().getOption(CALL).getMinAmount(), is(20L)); // CALL by 20 to reach 40
+		assertThat(mp[2].getActionRequest().getOption(CALL).getMinAmount(), is(20L));  // CALL by 20 to reach 40
 		assertThat(mp[2].getActionRequest().getOption(RAISE).getMinAmount(), is(60L)); // Min raise by 40 + 20 in the bet stack = 60 in total
-		assertThat(mp[2].getActionRequest().getOption(RAISE).getMaxAmount(), is(90L));
+		assertThat(mp[2].getActionRequest().getOption(RAISE).getMaxAmount(), is(90L)); // Max raise is all-in
 		act(p[2], CALL);
 		
 	}
 	
-//	@Test
-//	@Ignore
-//	public void testLowBalance() {
-//		setAnteLevel(2);
-//		MockPlayer[] mp = TestUtils.createMockPlayers(3);
-//		mp[0].setBalance(184); // 364094956
-//		mp[1].setBalance(236); // 364094954
-//		mp[2].setBalance(47);  // 364094955 
-//		
-//		int[] p = TestUtils.createPlayerIdArray(mp);
-//		addPlayers(game, mp);
-//		
-//		// Force start
-//		game.timeout();
-//		
-//		// ANTE
-//		act(p[1], ANTE);
-//		act(p[2], ANTE); // 45 left
-//		act(p[0], ANTE);
-//
-//		// make deal initial pocket cards round end
-//		game.timeout();
-//		
-//		act(p[2], BET, 4); // 41 left
-//		act(p[0], RAISE, 44);
-//		act(p[1], CALL);
-//		
-//		ActionRequest request = mp[2].getActionRequest();
-//		PossibleAction call = request.getOption(CALL);
-//		assertThat(call, notNullValue());
-//		assertThat(call.getMinAmount(), is(40L));
-//		
-//		PossibleAction raise = request.getOption(RAISE);
-//		assertThat(request.getOption(RAISE), notNullValue()); 
-//		assertThat(raise.getMinAmount(), is(41L));
-//		assertThat(raise.getMaxAmount(), is(41L));
-//		
-//	}
+	@Test
+	public void testLowBalance() {
+		setAnteLevel(2);
+		MockPlayer[] mp = TestUtils.createMockPlayers(3);
+		mp[0].setBalance(184); // 364094956
+		mp[1].setBalance(236); // 364094954
+		mp[2].setBalance(47);  // 364094955 
+		
+		int[] p = TestUtils.createPlayerIdArray(mp);
+		addPlayers(game, mp);
+		
+		// Force start
+		game.timeout();
+		
+		// ANTE
+		act(p[1], ANTE);
+		act(p[2], ANTE); // 45 left
+		act(p[0], ANTE);
+
+		// make deal initial pocket cards round end
+		game.timeout();
+		
+		act(p[2], BET, 4); // 41 left
+		act(p[0], RAISE, 44);
+		act(p[1], CALL);
+		
+		ActionRequest request = mp[2].getActionRequest();
+		PossibleAction call = request.getOption(CALL);
+		assertThat(call, notNullValue());
+		assertThat(call.getMinAmount(), is(40L));
+		
+		PossibleAction raise = request.getOption(RAISE);
+		assertThat(request.getOption(RAISE), notNullValue()); 
+		assertThat(raise.getMinAmount(), is(45L));
+		assertThat(raise.getMaxAmount(), is(45L));
+		
+	}
+	
+	@Test
+	public void testLowBalance2() {
+		MockPlayer[] mp = TestUtils.createMockPlayers(3, 100);
+		mp[2].setBalance(60);
+		
+		int[] p = TestUtils.createPlayerIdArray(mp);
+		addPlayers(game, mp);
+		
+		// Force start
+		game.timeout();
+		
+		// ANTE - 90 left after
+		act(p[1], ANTE);
+		act(p[2], ANTE); 
+		act(p[0], ANTE);
+
+		// make deal initial pocket cards round end
+		game.timeout();
+		
+		act(p[2], BET, 20); // 30 left
+		act(p[0], RAISE, 40);
+		act(p[1], CALL);
+		
+		ActionRequest request = mp[2].getActionRequest();
+		PossibleAction call = request.getOption(CALL);
+		assertThat(call, notNullValue());
+		assertThat(call.getMinAmount(), is(20L));
+		
+		PossibleAction raise = request.getOption(RAISE);
+		assertThat(request.getOption(RAISE), notNullValue()); 
+		assertThat(raise.getMinAmount(), is(50L));
+		assertThat(raise.getMaxAmount(), is(50L));
+		
+	}
 }
