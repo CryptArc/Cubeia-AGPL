@@ -241,7 +241,6 @@ public class BettingRound implements Round, BettingRoundContext {
 			
 		} else {
 			lastBetSize = amount-highBet;
-			long oldValid = nextValidRaiseLevel;
 			nextValidRaiseLevel = highBet+lastBetSize*2;
 			player.setLastRaiseLevel(getNextValidRaiseLevel());
 		}
