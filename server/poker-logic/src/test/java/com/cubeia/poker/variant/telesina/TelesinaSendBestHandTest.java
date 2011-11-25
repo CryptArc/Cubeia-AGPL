@@ -110,24 +110,31 @@ public class TelesinaSendBestHandTest {
         
         telesina.calculateAndSendBestHandToPlayer(evaluator, player);
         verify(serverAdapter).notifyBestHand(player.getId(), HandType.FOUR_OF_A_KIND, asList(pocketCard1), true);
-        
     }
     
-    
-    @Ignore
     @Test
-    public void testDealExposedCards() {
+    public void testCalculateAndSendBestHandShouldKeepQuietWhenFolded() {
         Telesina telesina = new Telesina(new DummyRNGProvider(), state, deckFactory, roundFactory,dealerButtonCalculator);
         
-        telesina.dealExposedPocketCards();
+        TelesinaHandStrengthEvaluator evaluator = Mockito.mock(TelesinaHandStrengthEvaluator.class);
+        Hand hand = mock(Hand.class);
+        PokerPlayer player = mock(PokerPlayer.class);
+        when(player.getPocketCards()).thenReturn(hand);
+        when(player.isExposingPocketCards()).thenReturn(true);
+        when(player.hasFolded()).thenReturn(true);
+        Card pocketCard1 = new Card("AS");
+        Card pocketCard2 = new Card("5C");
+        when(hand.getCards()).thenReturn(asList(pocketCard1, pocketCard2));
+        Card velaCard = new Card("2H");
+        when(state.getCommunityCards()).thenReturn(asList(velaCard));
+        HandStrength handStrength = mock(HandStrength.class);
+        when(handStrength.getCards()).thenReturn(Arrays.asList(pocketCard1));
+        when(handStrength.getHandType()).thenReturn(HandType.FOUR_OF_A_KIND);
         
+        when(evaluator.getBestHandStrength(Mockito.any(Hand.class))).thenReturn(handStrength);
         
-    }
-    
-    @Ignore
-    @Test
-    public void testDealCommunityCards() {
-        fail("Not yet implemented");
+        telesina.calculateAndSendBestHandToPlayer(evaluator, player);
+        verify(serverAdapter).notifyBestHand(player.getId(), HandType.FOUR_OF_A_KIND, asList(pocketCard1), false);
     }
     
 }

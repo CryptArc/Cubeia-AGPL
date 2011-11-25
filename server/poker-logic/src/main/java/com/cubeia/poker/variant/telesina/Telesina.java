@@ -356,14 +356,6 @@ public class Telesina implements GameType, RoundVisitor {
 		
 	}
 
-	private Set<PokerPlayer> getMuckingPlayers(){
-		boolean allButOneHasFolded = state.countNonFoldedPlayers() <= 1;
-		if(allButOneHasFolded){
-			return new HashSet<PokerPlayer>( state.getCurrentHandSeatingMap().values());
-		}
-		return new HashSet<PokerPlayer>( );
-	}
-	
 	@Override
 	public void visit(BettingRound bettingRound) {
 		state.setLastPlayerToBeCalled(bettingRound.getLastPlayerToBeCalled());
@@ -382,7 +374,7 @@ public class Telesina implements GameType, RoundVisitor {
 			HandResultCreator resultCreator = new HandResultCreator(new TelesinaHandStrengthEvaluator(getDeckLowestRank()));
 		    HandResultCalculator resultCalculator = new HandResultCalculator(new TelesinaHandComparator(deck.getDeckLowestRank()));			
 			Map<Integer, PokerPlayer> players = state.getCurrentHandPlayerMap();
-			Set<PokerPlayer> muckingPlayers = getMuckingPlayers();
+			Set<PokerPlayer> muckingPlayers = state.getMuckingPlayers();
 			
 			HandResult handResult = resultCreator.createHandResult(state.getCommunityCards(), resultCalculator, state.getPotHolder(), players, playerRevealOrder, muckingPlayers);
 						
@@ -485,7 +477,8 @@ public class Telesina implements GameType, RoundVisitor {
         playerCards.addAll(state.getCommunityCards());
         Hand playerHand = new Hand(playerCards);
         HandStrength bestHandStrength = handStrengthEvaluator.getBestHandStrength(playerHand);
-        state.getServerAdapter().notifyBestHand(player.getId(), bestHandStrength.getHandType(), bestHandStrength.getCards(), player.isExposingPocketCards());
+        state.getServerAdapter().notifyBestHand(player.getId(), bestHandStrength.getHandType(), bestHandStrength.getCards(), 
+            player.isExposingPocketCards()  &&  !player.hasFolded());
     }
 
 	@VisibleForTesting

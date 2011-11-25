@@ -304,7 +304,7 @@ public class PokerState implements Serializable, IPokerState {
 	@Override
 	public int countNonFoldedPlayers() {
 		int nonFolded = 0;
-		for (PokerPlayer p : getCurrentHandSeatingMap().values()) {
+		for (PokerPlayer p : getCurrentHandPlayerMap().values()) {
 			if (!p.hasFolded()) {
 				nonFolded++;
 			}
@@ -607,7 +607,7 @@ public class PokerState implements Serializable, IPokerState {
 		if (countNonFoldedPlayers() > 1) {
 			ExposeCardsHolder holder = new ExposeCardsHolder();
 			for (PokerPlayer p : getCurrentHandSeatingMap().values()) {
-				if (!p.hasFolded() && !p.isExposingPocketCards()) {
+				if (!p.hasFolded()  &&  !p.isExposingPocketCards()) {
 					// exposePrivateCards(p.getId(), p.getPrivatePocketCards());
 					holder.setExposedCards(p.getId(), p.getPrivatePocketCards());
 					p.setExposingPocketCards(true);
@@ -979,5 +979,24 @@ public class PokerState implements Serializable, IPokerState {
 			return player.getBetStack();
 		}
 	}
+	
+    @VisibleForTesting
+    public Set<PokerPlayer> getMuckingPlayers() {
+        HashSet<PokerPlayer> muckers = new HashSet<PokerPlayer>();
+        
+        boolean allButOneOrAllFolded = countNonFoldedPlayers() <= 1;
+        if (allButOneOrAllFolded){
+            muckers.addAll(getCurrentHandPlayerMap().values());
+        } else {
+            for (PokerPlayer player : getCurrentHandPlayerMap().values()) {
+                if (player.hasFolded()) {
+                    muckers.add(player);
+                }
+            }
+        }
+        
+        return muckers;
+    }
+    
 
 }
