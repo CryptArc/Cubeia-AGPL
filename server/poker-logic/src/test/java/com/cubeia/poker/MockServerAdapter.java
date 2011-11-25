@@ -122,7 +122,7 @@ public class MockServerAdapter implements ServerAdapter {
         this.handEndStatus = status;
     }
     
-    public void notifyActionPerformed(PokerAction action) {
+    public void notifyActionPerformed(PokerAction action, PokerPlayer pokerPlayer) {
         allActions.add(action);
     }
 

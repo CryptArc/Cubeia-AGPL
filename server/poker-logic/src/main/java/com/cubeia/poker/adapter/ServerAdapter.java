@@ -111,9 +111,10 @@ public interface ServerAdapter {
 	/**
 	 * Called after an action from the player has been successfully
 	 * dealt with.
+	 * @param pokerPlayer TODO
 	 * @param action, not null.
 	 */
-	void notifyActionPerformed(PokerAction action);
+	void notifyActionPerformed(PokerAction action, PokerPlayer pokerPlayer);
 	
 	/**
 	 * Reports the end of a round to a tournament coordinator.

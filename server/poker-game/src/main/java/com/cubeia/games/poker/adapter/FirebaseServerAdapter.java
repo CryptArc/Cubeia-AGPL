@@ -42,7 +42,6 @@ import se.jadestone.dicearena.game.poker.network.protocol.ExposePrivateCards;
 import se.jadestone.dicearena.game.poker.network.protocol.HandCanceled;
 import se.jadestone.dicearena.game.poker.network.protocol.HandEnd;
 import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
-import se.jadestone.dicearena.game.poker.network.protocol.PlayerBalance;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerPokerStatus;
 import se.jadestone.dicearena.game.poker.network.protocol.Pot;
 import se.jadestone.dicearena.game.poker.network.protocol.PotTransfer;
@@ -72,7 +71,7 @@ import com.cubeia.firebase.api.game.player.PlayerStatus;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TableType;
 import com.cubeia.firebase.api.util.UnmodifiableSet;
-import com.cubeia.firebase.guice.inject.Service; 
+import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.firebase.io.protocol.Enums.WatchResponseStatus;
 import com.cubeia.games.poker.FirebaseState;
@@ -229,15 +228,12 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	}
 
 	@Override
-	public void notifyActionPerformed(PokerAction pokerAction) {
-		PokerPlayer pokerPlayer = state.getPokerPlayer(pokerAction.getPlayerId());
+	public void notifyActionPerformed(PokerAction pokerAction, PokerPlayer pokerPlayer) {
 		PerformAction packet = actionTransformer.transform(pokerAction, pokerPlayer);
 		GameDataAction action = protocolFactory.createGameAction(packet, pokerAction.getPlayerId(), table.getId());
 		log.debug("--> Send PerformAction["+packet+"] to everyone");
 		sendPublicPacket(action, -1);
-				
 	}
-
 
 	@Override
 	public void notifyCommunityCards(List<Card> cards) {
@@ -246,7 +242,6 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		log.debug("--> Send DealPublicCards["+packet+"] to everyone");
 		sendPublicPacket(action, -1);
 	}
-
 
 	@Override
 	public void notifyPrivateCards(int playerId, List<Card> cards) {

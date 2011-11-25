@@ -112,7 +112,7 @@ public class AnteRound implements Round {
 			player.setHasActed(true);
 			player.setHasPostedEntryBet(true);
 			action.setBetAmount(game.getBlindsInfo().getAnteLevel());
-			game.getServerAdapter().notifyActionPerformed(action);
+			game.getServerAdapter().notifyActionPerformed(action, player);
 			game.getServerAdapter().notifyPlayerBalance(player);
 			game.getState().notifyBetStacksUpdated();
 			
@@ -121,7 +121,7 @@ public class AnteRound implements Round {
             player.setHasActed(true);
             player.setHasFolded(true);
             player.setHasPostedEntryBet(false);
-            game.getServerAdapter().notifyActionPerformed(action);
+            game.getServerAdapter().notifyActionPerformed(action, player);
             game.getServerAdapter().notifyPlayerBalance(player);
             setPlayerSitOut(player);
             break;
@@ -138,7 +138,7 @@ public class AnteRound implements Round {
 			Collection<PokerPlayer> declinedPlayers = anteRoundHelper.setAllPendingPlayersToDeclineEntryBet(playersInHand);
 			for (PokerPlayer declinedPlayer : declinedPlayers) {
 		        PokerAction declineAction = new PokerAction(declinedPlayer.getId(), PokerActionType.DECLINE_ENTRY_BET);
-	            game.getServerAdapter().notifyActionPerformed(declineAction);
+	            game.getServerAdapter().notifyActionPerformed(declineAction, player);
 			}
 		}
 	}
@@ -176,7 +176,7 @@ public class AnteRound implements Round {
 	            player.setHasFolded(true);
 	            player.setHasPostedEntryBet(false);
 	            player.clearActionRequest();
-	            game.getServerAdapter().notifyActionPerformed(action);
+	            game.getServerAdapter().notifyActionPerformed(action, player);
 	            game.getServerAdapter().notifyPlayerBalance(player);
 	            playersToSitOut.add(player);
 	        }

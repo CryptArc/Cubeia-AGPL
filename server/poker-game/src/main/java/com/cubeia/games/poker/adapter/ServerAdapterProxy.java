@@ -122,9 +122,9 @@ public abstract class ServerAdapterProxy implements ServerAdapter {
 	}
 
 	@Override
-	public void notifyActionPerformed(PokerAction action) {
+	public void notifyActionPerformed(PokerAction action, PokerPlayer pokerPlayer) {
 		if(getAdaptee() != null) {
-			getAdaptee().notifyActionPerformed(action);
+			getAdaptee().notifyActionPerformed(action, pokerPlayer);
 		}
 	}
 	

@@ -423,7 +423,7 @@ public class PokerLogicTest extends GuiceTest {
 			public void exposePrivateCards(ExposeCardsHolder holder) {}
 
 			@Override 
-			public void notifyActionPerformed(PokerAction action) {
+			public void notifyActionPerformed(PokerAction action, PokerPlayer pokerPlayer) {
 				if (action.getActionType() == PokerActionType.FOLD) {
 					foldActionReceived = true;
 				}

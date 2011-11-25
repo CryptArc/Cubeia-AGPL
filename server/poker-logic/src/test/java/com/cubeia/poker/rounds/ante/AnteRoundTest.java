@@ -125,7 +125,7 @@ public class AnteRoundTest {
 		verify(player1).addBet(anteLevel);
 		verify(player1).setHasActed(true);
 		verify(player1).setHasPostedEntryBet(true);
-		verify(serverAdapter).notifyActionPerformed(action);
+		verify(serverAdapter).notifyActionPerformed(action, player1);
 		verify(serverAdapter).notifyPlayerBalance(player1);
 
 		verify(state).notifyBetStacksUpdated();
@@ -155,11 +155,11 @@ public class AnteRoundTest {
 		PokerAction action1 = new PokerAction(player1.getId(), PokerActionType.DECLINE_ENTRY_BET);
 		anteRound.act(action1);
 
-		verify(serverAdapter).notifyActionPerformed(Mockito.eq(action1));
+		verify(serverAdapter).notifyActionPerformed(action1, player1);
 		verify(serverAdapter).notifyPlayerBalance(player1);
 
 		ArgumentCaptor<PokerAction> captor = ArgumentCaptor.forClass(PokerAction.class);
-		verify(serverAdapter, Mockito.times(2)).notifyActionPerformed(captor.capture());
+		verify(serverAdapter, Mockito.times(2)).notifyActionPerformed(captor.capture(), Mockito.eq(player1));
 
 		PokerAction declineAction = captor.getAllValues().get(0);
 		assertThat(declineAction, is(action1));
@@ -193,7 +193,7 @@ public class AnteRoundTest {
 		verify(player1, never()).addBet(anteLevel);
 		verify(player1).setHasActed(true);
 		verify(player1).setHasPostedEntryBet(false);
-		verify(serverAdapter).notifyActionPerformed(action );
+		verify(serverAdapter).notifyActionPerformed(action, player1);
 		verify(serverAdapter).notifyPlayerBalance(player1);
 	}    
 
@@ -324,13 +324,6 @@ public class AnteRoundTest {
 
 	@Test
 	public void testTimeoutDeclinesAllOutstandingAntes() {
-		//        for (PokerPlayer player : getAllSeatedPlayers()) {
-		//            if (!player.hasActed()) {
-		//                log.debug("Player["+player+"] ante timed out. Will decline entry bet.");
-		//                act(new PokerAction(player.getId(), PokerActionType.DECLINE_ENTRY_BET, true));
-		//            }
-		//        }
-
 		AnteRound anteRound = new AnteRound(game, anteRoundHelper);
 
 		SortedMap<Integer, PokerPlayer> playerMap = new TreeMap<Integer, PokerPlayer>();
@@ -350,15 +343,8 @@ public class AnteRoundTest {
 		verify(player2).setHasActed(true);
 		verify(player2).setHasFolded(true);
 		verify(player2).setHasPostedEntryBet(false);
-		verify(serverAdapter).notifyActionPerformed(Mockito.any(PokerAction.class));
+		verify(serverAdapter).notifyActionPerformed(Mockito.any(PokerAction.class), Mockito.eq(player2));
 		verify(serverAdapter).notifyPlayerBalance(player2);
-
-		//        player.setHasActed(true);
-		//        player.setHasFolded(true);
-		//        player.setHasPostedEntryBet(false);
-		//        game.getServerAdapter().notifyActionPerformed(action, player.getBalance());
-
-
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
