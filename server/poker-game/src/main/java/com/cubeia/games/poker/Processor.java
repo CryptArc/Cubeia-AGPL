@@ -167,7 +167,7 @@ public class Processor implements GameProcessor, TournamentProcessor {
                     handDebugger.updatePlayerInfo(table.getId(), player.getId(), 
                         genericPlayer.getName(), !player.isSittingOut(), player.getBalance(), player.getBetStack());
                 } catch (Exception e) {
-                    log.error("unable to fill out debug info for player: " + player.getId(), e);
+                    log.warn("unable to fill out debug info for player: " + player.getId());
                 }
             }
         }
