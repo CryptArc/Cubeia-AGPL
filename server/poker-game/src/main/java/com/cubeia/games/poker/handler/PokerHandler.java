@@ -100,8 +100,10 @@ public class PokerHandler extends DefaultPokerHandler {
 		try {
 	        PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) state.getPokerPlayer(playerId);
 	        if (pokerPlayer != null) {
+	        	
                 if (pokerPlayer.getPlayerSessionId() != null) {
-                    ReserveRequest reserveRequest = new ReserveRequest(pokerPlayer.getPlayerSessionId(), -1, packet.amount);
+
+                    ReserveRequest reserveRequest = new ReserveRequest(pokerPlayer.getPlayerSessionId(), getCurrentRoundNumber(), packet.amount);
                     ReserveCallback callback = cashGameBackend.getCallbackFactory().createReserveCallback(table);
 
                     // Check if the amount is allowed by the table
@@ -149,6 +151,10 @@ public class PokerHandler extends DefaultPokerHandler {
 	    }
 	    
 	}*/
+	
+	private int getCurrentRoundNumber() {
+		return ((FirebaseState)state.getAdapterState()).getHandCount();
+	}
 
 
     private boolean verifySequence(PerformAction packet) {

@@ -68,6 +68,9 @@ public class PokerHandlerTest {
         
         pokerHandler.actionTransformer = new ActionTransformer();
         
+        FirebaseState state = Mockito.mock(FirebaseState.class);
+        
+        when(pokerHandler.state.getAdapterState()).thenReturn(state);
         when(pokerHandler.table.getNotifier()).thenReturn(notifier);
         when(pokerHandler.state.getPokerPlayer(playerId)).thenReturn(pokerPlayer);
         when(pokerHandler.state.getMaxBuyIn()).thenReturn(6000);
@@ -136,7 +139,7 @@ public class PokerHandlerTest {
         ReserveRequest reserveReq = reqCaptor.getValue();
         assertThat(reserveReq.amount, is(buyInRequest.amount));
         assertThat(reserveReq.playerSessionId, is(playerSessionId));
-        assertThat(reserveReq.roundNumber, is(-1));
+        assertThat(reserveReq.roundNumber, is(0));
     }
     
     
