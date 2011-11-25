@@ -8,12 +8,10 @@ import com.cubeia.backend.cashgame.dto.BalanceUpdate;
 import com.cubeia.backend.cashgame.dto.BatchHandRequest;
 import com.cubeia.backend.cashgame.dto.BatchHandResponse;
 import com.cubeia.backend.cashgame.dto.CloseSessionRequest;
-import com.cubeia.backend.cashgame.dto.CloseTableRequest;
 import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
 import com.cubeia.backend.cashgame.dto.ReserveRequest;
 import com.cubeia.backend.cashgame.exceptions.BatchHandFailedException;
 import com.cubeia.backend.cashgame.exceptions.CloseSessionFailedException;
-import com.cubeia.backend.cashgame.exceptions.CloseTableFailedException;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
 
 public interface CashGamesBackend {
@@ -26,6 +24,8 @@ public interface CashGamesBackend {
 	 * @return A new hand ID, never null
 	 */
 	String generateHandId();
+	
+	AllowJoinResponse allowJoinTable(int playerId);
 
     /**
      * Async call to announce table. 

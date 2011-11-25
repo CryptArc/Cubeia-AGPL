@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.cubeia.backend.cashgame.AllowJoinResponse;
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.PlayerSessionIdImpl;
 import com.cubeia.backend.cashgame.TableIdImpl;
@@ -57,6 +58,11 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
     
     private int nextId() {
         return idSequence.incrementAndGet();
+    }
+    
+    @Override
+    public AllowJoinResponse allowJoinTable(int playerId) {
+    	return new AllowJoinResponse(true, -1);
     }
     
     @Override

@@ -36,4 +36,6 @@ public interface SynchronousCashGamesBackend {
 	long getMainAccountBalance(int playerId) throws GetBalanceFailedException;
 
 	BalanceUpdate getSessionBalance(PlayerSessionId sessionId) throws GetBalanceFailedException;
+
+	AllowJoinResponse allowJoinTable(int playerId);
 }

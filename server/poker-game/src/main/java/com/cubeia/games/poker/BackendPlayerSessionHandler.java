@@ -1,10 +1,11 @@
 package com.cubeia.games.poker;
 
-import static com.cubeia.games.poker.handler.BackendCallHandler.EXT_PROP_KEY_TABLE_ID;
+import static com.cubeia.games.poker.handler.BackendCallHandler.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.cubeia.backend.cashgame.AllowJoinResponse;
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.TableId;
 import com.cubeia.backend.cashgame.dto.CloseSessionRequest;
@@ -35,6 +36,10 @@ public class BackendPlayerSessionHandler {
     }
     
 
+    public AllowJoinResponse allowJoinTable(int playerId) {
+    	return cashGameBackend.allowJoinTable(playerId);
+    }
+    
     public void endPlayerSessionInBackend(Table table, PokerPlayer pokerPlayer, int roundNumber) {
         if (!(pokerPlayer instanceof PokerPlayerImpl)) {
             throw new IllegalStateException("must be a PokerPlayerImpl");

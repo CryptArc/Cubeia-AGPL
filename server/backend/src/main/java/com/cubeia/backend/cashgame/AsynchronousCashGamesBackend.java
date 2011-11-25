@@ -45,7 +45,12 @@ public class AsynchronousCashGamesBackend implements CashGamesBackend {
 	public String generateHandId() {
 		return backingImpl.generateHandId();
 	}
-	
+
+	@Override
+	public AllowJoinResponse allowJoinTable(int playerId) {
+		return backingImpl.allowJoinTable(playerId);
+	}
+
 	public void announceTable(final AnnounceTableRequest request, final AnnounceTableCallback callback) {
 		executor.submit(new Callable<Void>() {
 			public Void call() {

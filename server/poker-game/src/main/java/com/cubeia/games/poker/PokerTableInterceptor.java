@@ -19,12 +19,14 @@ package com.cubeia.games.poker;
 
 import org.apache.log4j.Logger;
 
+import com.cubeia.backend.cashgame.AllowJoinResponse;
 import com.cubeia.firebase.api.game.table.InterceptionResponse;
 import com.cubeia.firebase.api.game.table.SeatRequest;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TableInterceptor;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.player.SitOutStatus;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 
 public class PokerTableInterceptor implements TableInterceptor {
@@ -38,9 +40,15 @@ public class PokerTableInterceptor implements TableInterceptor {
     @Inject
     PokerState state;
 
+	@Inject @VisibleForTesting
+	BackendPlayerSessionHandler backendPlayerSessionHandler;
+    
     public InterceptionResponse allowJoin(Table table, SeatRequest request) {
     	stateInjector.injectAdapter(table);
-		return new InterceptionResponse(true, -1);
+    	
+    	AllowJoinResponse allowResponse = backendPlayerSessionHandler.allowJoinTable(request.getPlayerId());
+    	
+		return new InterceptionResponse(allowResponse.allowed, allowResponse.responseCode);
 	}
 
 	
