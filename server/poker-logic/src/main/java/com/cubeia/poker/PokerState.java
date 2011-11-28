@@ -954,7 +954,7 @@ public class PokerState implements Serializable, IPokerState {
 	}
 
 	protected void setCurrentState(PokerGameSTM newState) {
-		if (SHUTDOWN.equals(getCurrentState())) {
+		if (SHUTDOWN.equals(getCurrentState()) && !newState.equals(getCurrentState())) {
 			throw new UnsupportedOperationException("attempted illegal state change from SHUTDOWN -> " + newState);
 		}
 		this.currentState = newState;

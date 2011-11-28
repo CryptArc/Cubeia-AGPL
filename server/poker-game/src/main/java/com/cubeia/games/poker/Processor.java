@@ -46,6 +46,7 @@ import com.cubeia.games.poker.jmx.PokerStats;
 import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.games.poker.services.HandDebuggerContract;
 import com.cubeia.poker.PokerState;
+import com.cubeia.poker.SystemShutdownException;
 import com.cubeia.poker.player.PokerPlayer;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
@@ -151,7 +152,11 @@ public class Processor implements GameProcessor, TournamentProcessor {
     	    } else {
     	        log.warn("Unhandled object: " + attachment.getClass().getName());
     	    }
-	    } catch (Throwable t) {
+	    } 
+        catch (SystemShutdownException t) {
+            log.debug("System is shutting down, closing table "+table.getId());
+            tableCloseHandler.closeTable(table, true);
+	    }catch (Throwable t) {
 	    	log.error("Failed handling game object action.", t);
             tableCloseHandler.handleUnexpectedExceptionOnTable(action, table, t);
 	    }
