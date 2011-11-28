@@ -166,5 +166,12 @@ public interface ServerAdapter {
     
     public void unseatPlayer(int playerId, boolean setAsWatcher);
 
+    /**
+     * Notify that a bet was taken back from betstack to balance since it was uncalled
+     * @param playerId
+     * @param amount
+     */
+	void notifyTakeBackUncalledBet(int playerId, int amount);
+
 	
 }

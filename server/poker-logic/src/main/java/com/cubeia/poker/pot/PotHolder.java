@@ -68,7 +68,7 @@ public class PotHolder implements Serializable {
 	 *
 	 * @param players a collection of players
 	 */
-	public Collection<PotTransition> moveChipsToPot(Collection<PokerPlayer> players) {
+	public Collection<PotTransition> moveChipsToPotAndTakeBackUncalledChips(Collection<PokerPlayer> players) {
 	    
 	    Collection<PotTransition> potTransitions = new ArrayList<PotTransition>();
 	    
@@ -79,7 +79,8 @@ public class PotHolder implements Serializable {
 		SortedSet<Long> allInLevels = new TreeSet<Long>();
 
 		// First, return any uncalled chips.
-		returnUnCalledChips(players);
+		Collection<PotTransition> returnedChipsTransitions = returnUnCalledChips(players);
+		potTransitions.addAll(returnedChipsTransitions);
 
 		// Add all bets to the map and check if we have all-ins.
 		for (PokerPlayer player : players) {
@@ -190,15 +191,21 @@ public class PotHolder implements Serializable {
 	 * Returns uncalled chips.
 	 *
 	 * @param betters
+     * @return 
 	 */
-	public void returnUnCalledChips(Iterable<PokerPlayer> players) {
+	public Collection<PotTransition> returnUnCalledChips(Iterable<PokerPlayer> players) {
 		PokerPlayer biggestBetter = getBiggestBetter(players);
 		PokerPlayer secondBiggestBetter = getBiggestBetter(players, biggestBetter);
 
+		ArrayList<PotTransition> transitions = new ArrayList<PotTransition>();
+		
 		try {
 			if (biggestBetter.getBetStack() > secondBiggestBetter.getBetStack()) {
 				long returnedChips = biggestBetter.getBetStack() - secondBiggestBetter.getBetStack();
-				biggestBetter.returnBetAmount(returnedChips);
+				biggestBetter.returnBetStackAmountToBalance(returnedChips);
+				
+				PotTransition potTransition = PotTransition.createTransitionFromBetStackToPlayer(biggestBetter, returnedChips);
+				transitions.add(potTransition );
 				
 				log.debug("returning " + returnedChips + " uncalled chips to " + biggestBetter);
 			}
@@ -206,6 +213,8 @@ public class PotHolder implements Serializable {
 			// FIXME: Tournaments get this exception
 			log.warn("FIXME: Should not be nullpointer here! -> PotHolder.returnUnCalledChips()");
 		}
+		
+		return transitions;
 	}
 
 	/**

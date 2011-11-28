@@ -15,6 +15,7 @@ public class PotTransition implements Serializable {
     private final PokerPlayer player;
     private final Pot pot;
     private final long amount;
+    private final boolean fromChipStackToPlayer;
 
     /**
      * Needed by JBoss Serialization
@@ -24,16 +25,29 @@ public class PotTransition implements Serializable {
         player = null;
         pot = null;
         amount = -1;
+        fromChipStackToPlayer = false;
     }
     
     public PotTransition(PokerPlayer player, Pot pot, long amount) {
         this.player = player;
         this.pot = pot;
         this.amount = amount;
+        fromChipStackToPlayer = false;
+    }
+    
+    private PotTransition(PokerPlayer player, long amount) {
+    	fromChipStackToPlayer = true;
+    	this.amount = amount;
+    	this.player = player;
+    	this.pot = null;
     }
 
     public boolean isFromPlayerToPot() {
         return getAmount() > 0;
+    }
+    
+    public boolean isFromBetStackToPlayer() {
+    	return fromChipStackToPlayer;
     }
     
     public PokerPlayer getPlayer() {
@@ -88,6 +102,20 @@ public class PotTransition implements Serializable {
 
     @Override
     public String toString() {
-        return "pot transition player " + player.getId() + ": amount " + amount + " -> pot " + pot.getId();
+        
+        
+        if (fromChipStackToPlayer)
+        {
+        	return "pot transition player " + player.getId() + ": amount " + amount + " -> pot: <null> fromChipStackToPlayer: true" ;
+        }
+        else
+        {
+        	return "pot transition player " + player.getId() + ": amount " + amount + " -> pot: " + pot.getId() + " fromChipStackToPlayer: false";	
+        }
+        
     }
+
+	public static PotTransition createTransitionFromBetStackToPlayer(PokerPlayer player, long amount) {
+			return new PotTransition(player, amount);
+	}
 }

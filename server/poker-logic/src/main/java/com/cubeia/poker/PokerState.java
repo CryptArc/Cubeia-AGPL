@@ -712,6 +712,12 @@ public class PokerState implements Serializable, IPokerState {
 			notifyPlayerBalance(player.getId());
 		}
 	}
+	
+
+	public void notifyTakeBackUncalledBets(int playerId, long amount) {
+		serverAdapter.notifyTakeBackUncalledBet(playerId, (int)amount);
+	}
+    
 
 	public void notifyAllPlayerStatuses() {
 		for (PokerPlayer player : seatingMap.values()) {
@@ -997,6 +1003,6 @@ public class PokerState implements Serializable, IPokerState {
         
         return muckers;
     }
-    
+
 
 }

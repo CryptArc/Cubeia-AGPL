@@ -176,5 +176,12 @@ public abstract class ServerAdapterProxy implements ServerAdapter {
 			getAdaptee().unseatPlayer(playerId, setAsWatcher);
 		}
 	}
+	
+	@Override
+	public void notifyTakeBackUncalledBet(int playerId, int amount) {
+		if(getAdaptee() != null) {
+			getAdaptee().notifyTakeBackUncalledBet(playerId, amount);
+		}
+	}
 
 }
