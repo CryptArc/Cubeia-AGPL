@@ -15,7 +15,7 @@ public class HandResultBatchFactory {
 	
 	private final Logger log = Logger.getLogger(getClass());
 
-    public BatchHandRequest createAndValidateBatchHandRequest(HandResult handResult, long handId, TableId tableId) {
+    public BatchHandRequest createAndValidateBatchHandRequest(HandResult handResult, String handId, TableId tableId) {
     	long totalBet = 0;
     	long totalNet = 0;
     	long totalRake = 0;

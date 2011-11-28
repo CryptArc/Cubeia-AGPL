@@ -9,7 +9,7 @@ import com.cubeia.backend.cashgame.TableId;
 @SuppressWarnings("serial")
 public class BatchHandRequest implements Serializable {
 
-	public final long handId;
+	public final String handId;
 	public final TableId tableId;
 	public final List<HandResult> handResults;
 	public final long totalRake;
@@ -17,11 +17,11 @@ public class BatchHandRequest implements Serializable {
 	public long startTime;
 	public long endTime;
 
-	public BatchHandRequest(long handId, TableId tableId, long totalRake) {
+	public BatchHandRequest(String handId, TableId tableId, long totalRake) {
 		this (handId, tableId, new LinkedList<HandResult>(), totalRake);
 	}
 	
-	public BatchHandRequest(long handId, TableId tableId,
+	public BatchHandRequest(String handId, TableId tableId,
 			List<HandResult> handResults, long totalTake) {
 		this.handId = handId;
 		this.tableId = tableId;
@@ -33,6 +33,4 @@ public class BatchHandRequest implements Serializable {
 	public void addHandResult(HandResult handResult) {
 		handResults.add(handResult);
 	}
-	
-
 }

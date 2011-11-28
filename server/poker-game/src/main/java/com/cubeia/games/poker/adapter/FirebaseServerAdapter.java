@@ -350,7 +350,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 				transfers.add(actionTransformer.createPotTransferPacket(pt));
 			}
 
-			long handId = getIntegrationHandId();
+			String handId = getIntegrationHandId();
 			TableId externalTableId = getIntegrationTableId();
 			BatchHandRequest batchHandRequest = handResultBatchFactory.createAndValidateBatchHandRequest(handResult, handId, externalTableId);
             batchHandRequest.startTime = state.getStartTime();
@@ -404,8 +404,8 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		return batchHandResult;
 	}
 	
-	public long getIntegrationHandId() {
-		return Long.valueOf(getFirebaseState().getCurrentHandIdentifier().getIntegrationId());
+	public String getIntegrationHandId() {
+		return getFirebaseState().getCurrentHandIdentifier().getIntegrationId();
 	}
 	
 	private TableId getIntegrationTableId() {
