@@ -1,9 +1,11 @@
 package com.cubeia.poker.variant.telesina;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -25,6 +27,7 @@ import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.PotHolder;
+import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.rounds.betting.BettingRound;
 
@@ -124,14 +127,21 @@ public class TelesinaBettingRoundFinishedTest {
 	  Assert.assertThat(hr.getPlayerHands().size(), CoreMatchers.is(2));
   }
     
-    @Test
+    @SuppressWarnings("unchecked")
+	@Test
     public void testClearBetStacksOnFoldedPlayersWhenRoundFinishes() {
         telesina.startHand();
         
         BettingRound bettingRound = mock(BettingRound.class);
         
         PokerPlayer player1 = mock(PokerPlayer.class);
+        when(player1.getId()).thenReturn(1337);
         PokerPlayer player2 = mock(PokerPlayer.class);
+        when(player2.getId()).thenReturn(1338);
+        
+        when(player1.getBetStack()).thenReturn(100L);
+        when(player2.getBetStack()).thenReturn(0L);
+        
         seatingMap.put(1, player1);
         seatingMap.put(2, player2);
         
@@ -141,8 +151,10 @@ public class TelesinaBettingRoundFinishedTest {
         
         telesina.visit(bettingRound);
         
-        verify(player1).returnAllBets();
-        verify(player2).returnAllBets();
+        
+        verify(state).notifyPotAndRakeUpdates(Mockito.anyCollection());
+        
+        
     }
     
 

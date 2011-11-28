@@ -253,12 +253,12 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	}
 	
 	
-	public void returnAllBets() {
+	public void returnBetstackToBalance() {
 		balance += betStack;
 		betStack = 0;
 	}
 	
-	public void returnBetAmount(long amount) {
+	public void returnBetStackAmountToBalance(long amount) {
 		if (amount > betStack) {
 			throw new IllegalArgumentException("PokerPlayer["+playerId+"] - "+String.format("Amount to return from bet (%d) is bigger than betstack (%d)", amount, betStack));
 		}

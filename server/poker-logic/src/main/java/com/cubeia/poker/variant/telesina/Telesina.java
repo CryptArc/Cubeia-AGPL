@@ -19,7 +19,6 @@ package com.cubeia.poker.variant.telesina;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -248,8 +247,9 @@ public class Telesina implements GameType, RoundVisitor {
 		state.notifyHandFinished(new HandResult(), HandEndStatus.CANCELED_TOO_FEW_PLAYERS);
 		
 		// return antes
+		returnAllBetstacksToBalance();
+		
 		for (PokerPlayer p : state.getCurrentHandPlayerMap().values()) {
-		    p.returnAllBets();
 		    state.notifyPlayerBalance(p.getId());
 		}
 		
@@ -257,8 +257,8 @@ public class Telesina implements GameType, RoundVisitor {
 		
 	}
 
-	private Collection<PotTransition> moveChipsToPot() {
-		Collection<PotTransition> potTransitions = state.getPotHolder().moveChipsToPot(state.getCurrentHandSeatingMap().values());
+	private Collection<PotTransition> moveChipsToPotAndTakeBackUncalledChips() {
+		Collection<PotTransition> potTransitions = state.getPotHolder().moveChipsToPotAndTakeBackUncalledChips(state.getCurrentHandSeatingMap().values());
 		
 		for (PokerPlayer p : state.getCurrentHandSeatingMap().values()) {
 			p.setHasActed(false);
@@ -326,7 +326,7 @@ public class Telesina implements GameType, RoundVisitor {
 		} else {
 		    log.debug("ante round finished");
 		    
-		    Collection<PotTransition> potTransitions = moveChipsToPot();
+		    Collection<PotTransition> potTransitions = moveChipsToPotAndTakeBackUncalledChips();
 		    reportPotAndRakeUpdates(potTransitions);
 		    
 		    startDealInitialCardsRound();
@@ -360,12 +360,11 @@ public class Telesina implements GameType, RoundVisitor {
 	public void visit(BettingRound bettingRound) {
 		state.setLastPlayerToBeCalled(bettingRound.getLastPlayerToBeCalled());
 		
-		Collection<PotTransition> potTransitions = moveChipsToPot();
+		Collection<PotTransition> potTransitions = moveChipsToPotAndTakeBackUncalledChips();
 		reportPotAndRakeUpdates(potTransitions);
-	    
+			    
 		if (isHandFinished()) {
 		    
-		    returnAllBets();
 		    
 		    state.exposeShowdownCards();
 
@@ -405,9 +404,14 @@ public class Telesina implements GameType, RoundVisitor {
 		scheduleRoundTimeout();
 	}
 
-	private void returnAllBets() {
+	private void returnAllBetstacksToBalance() {
 	    for (PokerPlayer player : state.getCurrentHandSeatingMap().values()) {
-	        player.returnAllBets();
+	    	
+	    	long betStack = player.getBetStack();
+	    	if (betStack > 0) {
+	    		player.returnBetstackToBalance();
+	    		state.notifyTakeBackUncalledBets(player.getId(), betStack);
+	    	}
 	    }
     }
 

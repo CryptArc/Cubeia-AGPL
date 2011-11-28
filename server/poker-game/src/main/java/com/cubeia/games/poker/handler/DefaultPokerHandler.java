@@ -49,6 +49,7 @@ import se.jadestone.dicearena.game.poker.network.protocol.RequestAction;
 import se.jadestone.dicearena.game.poker.network.protocol.StartHandHistory;
 import se.jadestone.dicearena.game.poker.network.protocol.StartNewHand;
 import se.jadestone.dicearena.game.poker.network.protocol.StopHandHistory;
+import se.jadestone.dicearena.game.poker.network.protocol.TakeBackUncalledBet;
 import se.jadestone.dicearena.game.poker.network.protocol.TournamentOut;
 
 public class DefaultPokerHandler implements PacketVisitor {
@@ -118,4 +119,6 @@ public class DefaultPokerHandler implements PacketVisitor {
     public void visit(RakeInfo packet) {}
 	@Override
 	public void visit(ErrorPacket packet) {}
+	@Override
+	public void visit(TakeBackUncalledBet packet) {}
 }

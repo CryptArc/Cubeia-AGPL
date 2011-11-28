@@ -91,7 +91,7 @@ public class HandResultCalculatorTest extends TestCase {
 	public void testSimpleCaseWithRake() {
 		PotHolder potHolder = new PotHolder(rakeCalculator);
 		potHolder.call();
-		potHolder.moveChipsToPot(players.values());
+		potHolder.moveChipsToPotAndTakeBackUncalledChips(players.values());
 		
 		assertEquals(1, potHolder.getNumberOfPots());
 		assertEquals(50, potHolder.getPotSize(0));
@@ -134,7 +134,7 @@ public class HandResultCalculatorTest extends TestCase {
 		
 		PotHolder potHolder = new PotHolder(rakeCalculator);
 		potHolder.call();
-		potHolder.moveChipsToPot(players.values());
+		potHolder.moveChipsToPotAndTakeBackUncalledChips(players.values());
 		
 		assertThat(potHolder.getNumberOfPots(), is(1));
 		long pot0Size = potHolder.getPotSize(0);
@@ -202,7 +202,7 @@ public class HandResultCalculatorTest extends TestCase {
         
         PotHolder potHolder = new PotHolder(rakeCalculator);
         potHolder.call();
-        potHolder.moveChipsToPot(players.values());
+        potHolder.moveChipsToPotAndTakeBackUncalledChips(players.values());
         
         assertEquals(2, potHolder.getNumberOfPots());
         
@@ -264,7 +264,7 @@ public class HandResultCalculatorTest extends TestCase {
 		players.put(3, p3);
 		
 		PotHolder potHolder = new PotHolder(new LinearRakeWithLimitCalculator(RakeSettings.createNoLimitRakeSettings(ZERO)));
-		potHolder.moveChipsToPot(players.values());
+		potHolder.moveChipsToPotAndTakeBackUncalledChips(players.values());
 		
 		assertEquals(2, potHolder.getNumberOfPots());
 		
@@ -324,7 +324,7 @@ public class HandResultCalculatorTest extends TestCase {
 		hands.add(new PlayerHand(3, new Hand("3s 8d"+community)));
 		
         PotHolder potHolder = new PotHolder(new LinearRakeWithLimitCalculator(RakeSettings.createNoLimitRakeSettings(ZERO)));
-		potHolder.moveChipsToPot(players.values());
+		potHolder.moveChipsToPotAndTakeBackUncalledChips(players.values());
 		
 		assertEquals(1, potHolder.getNumberOfPots());
 		assertEquals(50, potHolder.getPotSize(0)); // remember the overbet
@@ -333,7 +333,7 @@ public class HandResultCalculatorTest extends TestCase {
 		p1.addBet(10);
 		p2.addBet(20);
 		p3.addBet(20);
-		potHolder.moveChipsToPot(players.values());
+		potHolder.moveChipsToPotAndTakeBackUncalledChips(players.values());
 		
 		assertEquals(1, potHolder.getNumberOfPots());
 		assertEquals(100, potHolder.getPotSize(0)); // the total is 100 

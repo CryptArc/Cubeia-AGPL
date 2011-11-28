@@ -78,7 +78,7 @@ public class HandResultCreatorTest {
 		playerMap.put(1, pp1);
 		playerMap.put(2, pp2);
 		
-		potHolder.moveChipsToPot(playerMap.values());
+		potHolder.moveChipsToPotAndTakeBackUncalledChips(playerMap.values());
 		
 		Set<PokerPlayer> muckingPlayers = new HashSet<PokerPlayer>();
 		muckingPlayers.add(pp2);
@@ -95,7 +95,7 @@ public class HandResultCreatorTest {
 		PokerPlayer pp2 = mockPlayer(2, 50, false, false, new Hand("7H 8D JD QS 9H")); // pp2 wins using vela card
 		playerMap.put(1, pp1);
 		playerMap.put(2, pp2);
-		potHolder.moveChipsToPot(playerMap.values());
+		potHolder.moveChipsToPotAndTakeBackUncalledChips(playerMap.values());
 		
 		Set<PokerPlayer> muckingPlayers = new HashSet<PokerPlayer>(playerMap.values());
 		
@@ -126,7 +126,7 @@ public class HandResultCreatorTest {
 		playerMap.put(2, pp2);
 		playerMap.put(3, pp3);
 		playerMap.put(4, pp4);
-		potHolder.moveChipsToPot(playerMap.values());
+		potHolder.moveChipsToPotAndTakeBackUncalledChips(playerMap.values());
 		potHolder.call();
 		
 		Set<PokerPlayer> muckingPlayers = new HashSet<PokerPlayer>(playerMap.values());
@@ -167,7 +167,7 @@ public class HandResultCreatorTest {
 		PokerPlayer pp2 = mockPlayer(2, 50, false, false, new Hand("TH TD QD 9S JH")); // pp2 wins with higher pair
 		playerMap.put(1, pp1);
 		playerMap.put(2, pp2);
-		potHolder.moveChipsToPot(playerMap.values());
+		potHolder.moveChipsToPotAndTakeBackUncalledChips(playerMap.values());
 		
 		Set<PokerPlayer> muckingPlayers = new HashSet<PokerPlayer>(playerMap.values());
 		

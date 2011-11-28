@@ -49,6 +49,7 @@ import se.jadestone.dicearena.game.poker.network.protocol.PotTransfers;
 import se.jadestone.dicearena.game.poker.network.protocol.RakeInfo;
 import se.jadestone.dicearena.game.poker.network.protocol.RequestAction;
 import se.jadestone.dicearena.game.poker.network.protocol.StartNewHand;
+import se.jadestone.dicearena.game.poker.network.protocol.TakeBackUncalledBet;
 
 import com.cubeia.backend.cashgame.TableId;
 import com.cubeia.backend.cashgame.dto.BalanceUpdate;
@@ -72,6 +73,7 @@ import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TableType;
 import com.cubeia.firebase.api.util.UnmodifiableSet;
 import com.cubeia.firebase.guice.inject.Service;
+import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.firebase.io.protocol.Enums.WatchResponseStatus;
 import com.cubeia.games.poker.FirebaseState;
@@ -489,13 +491,24 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		}
 
 		for (PotTransition potTransition : potTransitions) {
-			log.debug("--> sending pot update to client: {}", potTransition);
-			transfers.add(actionTransformer.createPotTransferPacket(potTransition));
+			if (!potTransition.isFromBetStackToPlayer()) {
+				log.debug("--> sending pot update to client: {}", potTransition);
+				transfers.add(actionTransformer.createPotTransferPacket(potTransition));
+			}
 		}
 
+		// notify betstacks to pots
 		PotTransfers potTransfers = new PotTransfers(fromPlayerToPot, transfers, clientPots);
 		GameDataAction action = protocolFactory.createGameAction(potTransfers, 0, table.getId());
 		sendPublicPacket(action, -1);
+		
+		// notify return uncalled chips
+		for (PotTransition potTransition : potTransitions) {
+			if (potTransition.isFromBetStackToPlayer()) {
+				log.debug("--> sending takeBackUncalledChips to client: {}", potTransition);
+				notifyTakeBackUncalledBet(potTransition.getPlayer().getId(), (int)potTransition.getAmount());
+			}
+		}
 	}
 
 
@@ -505,6 +518,14 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		RakeInfo rakeInfo = new RakeInfo((int) rakeInfoContainer.getTotalPot(), (int) rakeInfoContainer.getTotalRake());
 		GameDataAction action = protocolFactory.createGameAction(rakeInfo, 0, table.getId());
 		sendPublicPacket(action, -1);
+	}
+	
+	@Override
+	public void notifyTakeBackUncalledBet(int playerId, int amount) {
+		log.debug("--> Taking back uncalled bet: {}", playerId, amount);
+		ProtocolObject takeBackUncalledBet = new TakeBackUncalledBet(playerId, amount);
+		GameDataAction action = protocolFactory.createGameAction(takeBackUncalledBet, playerId, table.getId());
+		sendPublicPacket(action,-1);
 	}
 
 	@Override
