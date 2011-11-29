@@ -388,9 +388,6 @@ public class FirebaseServerAdapter implements ServerAdapter {
 			// increment hand count
 			getFirebaseState().incrementHandCount();
 
-			// Remove all idling players
-			cleanupPlayers();
-			updateLobby();
 
 		} else {
 			log.info("The hand was cancelled on table: " + table.getId() + " - " + table.getMetaData().getName());
@@ -596,6 +593,8 @@ public class FirebaseServerAdapter implements ServerAdapter {
 				unseatPlayer(p.getId(), true);
 			}
 		}
+		
+		updateLobby();
 	}
 
 	public void unseatPlayer(int playerId, boolean setAsWatcher) {
