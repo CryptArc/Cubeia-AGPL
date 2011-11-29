@@ -100,10 +100,16 @@ public class BettingRound implements Round, BettingRoundContext {
 			// No or only one player can act. We are currently in an all-in show down scenario
 			log.debug("No players left to act. We are in an all-in show down scenario");
 			isFinished = true;
-			gameType.scheduleRoundTimeout();
 		} else {
 			requestAction(p);
 		}
+        
+        // This can be triggered by the if clause above, but also
+        // by traversing into requestAction and calling default act on
+        // each an every players in sit out scenarios.
+        if (isFinished()) {
+        	gameType.scheduleRoundTimeout();
+        }
 	}
 
 	@Override
