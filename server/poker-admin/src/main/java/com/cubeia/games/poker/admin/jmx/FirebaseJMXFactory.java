@@ -25,7 +25,6 @@ public class FirebaseJMXFactory {
      * Will read the property file everytime the factory is created.
      * This may not be optimum performance, but it also allows for 
      * runtime changes to the property file.
-     * 
      */
     public FirebaseJMXFactory() {
         Properties properties = new Properties();

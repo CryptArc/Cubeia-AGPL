@@ -44,7 +44,7 @@ public class TelesinaDeckUtilTest {
     }
     
     public void createFromStringAndCompareDecks(int participants, String deck){
-        List<Card> cards = TelesinaDeckUtil.createDeckFromString(participants, deck);
+        List<Card> cards = TelesinaDeckUtil.createRiggedDeck(participants, deck);
         StringBuilder cardBuffer = new StringBuilder();
         for(Card card : cards){
             cardBuffer.append(card.toString());

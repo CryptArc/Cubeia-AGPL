@@ -10,22 +10,12 @@ import java.util.List;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.hand.Suit;
-import com.sun.java.swing.plaf.nimbus.LoweredBorder;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 
 public class TelesinaDeckUtil {
 
 	private TelesinaDeckUtil() { }
     
-    public static final String DEFAULT_40_CARDS_DECK_FILE = "telesina40c.txt";
-	public static String DECK_40_CARDS_FILE = "telesina40c.txt";
-    public static final String DEFAULT_32_CARDS_DECK_FILE = "telesina32c.txt";
-	public static String DECK_32_CARDS_FILE = "telesina32c.txt";
-	
 	public static Rank calculateLowestRank(int participants) {
 		int firstRankIndex = Math.max(0, 11 - participants - 2);
     	return Rank.values()[firstRankIndex];
@@ -47,18 +37,15 @@ public class TelesinaDeckUtil {
         return cards;
     }
     
-    public static List<Card> createDeckFromString(int participants, String deck) {
-        int deckLength;
-        if(participants == 4){
-            deckLength = 32;
-        }else if(participants == 6){
-            deckLength = 40;
-        }else{
-            throw new IllegalArgumentException(participants+" participants rigged deck is not supported for the moment");
-        }
+    public static List<Card> createRiggedDeck(int participants, String deck) {
+        
+        int firstRankIndex = Math.max(0, 11 - participants - 2);
+        int deckLength = 52 - firstRankIndex*4;
+                
         if (deck == null || deck.length() != deckLength*2) {
 			throw new RuntimeException("deck file doesn't contain the correct amount of cards! is "+deck.length()+" and should be "+deckLength+" for "+participants+" participants");
 		}
+        
         //preparing cards
         Rank lowestRank = calculateLowestRank(participants);
         List<Card> sortedDeck = createDeckCards(lowestRank);
@@ -66,6 +53,7 @@ public class TelesinaDeckUtil {
         for(Card card : sortedDeck){
             cardMap.put(card.toString(), card);
         }
+        
 		List<Card> riggedDeck = new ArrayList<Card>();
 		for (int i = 0; i < deck.length(); i+=2) {
 			String cardString = deck.substring(i,i+2);
@@ -77,6 +65,7 @@ public class TelesinaDeckUtil {
                         + "reusing cards and that all your cards are at least of rank "+lowestRank.name());
             }
 		}
+        
 		return riggedDeck;
 	}
 

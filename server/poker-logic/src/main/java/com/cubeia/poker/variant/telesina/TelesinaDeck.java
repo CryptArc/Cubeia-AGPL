@@ -33,23 +33,22 @@ public class TelesinaDeck implements Deck {
      * @param numberOfParticipants
      */
     public TelesinaDeck(Shuffler<Card> shuffler, CardIdGenerator idGenerator, int numberOfParticipants) {
-        this (shuffler, idGenerator, numberOfParticipants, null);
-    }
-    
-    public TelesinaDeck(Shuffler<Card> shuffler, CardIdGenerator idGenerator, int numberOfParticipants, String useRiggedDeck) {
         checkArgument(numberOfParticipants >= 2, "participants must be >= 2");
         checkArgument(numberOfParticipants <= 10, "participants must be <= 10");
         deckLowestRank = TelesinaDeckUtil.calculateLowestRank(numberOfParticipants);
-        if(useRiggedDeck != null){
-            List<Card> readCards = TelesinaDeckUtil.createDeckFromString(numberOfParticipants, useRiggedDeck);
-            deckSize = readCards.size();
-            cards = idGenerator.copyAndAssignIds(readCards);
-        }else{
-            List<Card> vanillaCards = TelesinaDeckUtil.createDeckCards(numberOfParticipants);
-            deckSize = vanillaCards.size();
-            List<Card> shuffledCards = shuffler.shuffle(vanillaCards);
-            cards = idGenerator.copyAndAssignIds(shuffledCards);
-        }
+        List<Card> vanillaCards = TelesinaDeckUtil.createDeckCards(numberOfParticipants);
+        deckSize = vanillaCards.size();
+        List<Card> shuffledCards = shuffler.shuffle(vanillaCards);
+        cards = idGenerator.copyAndAssignIds(shuffledCards);
+    }
+    
+    //TODO: remove this code once GLI has used the rig deck feature
+    public TelesinaDeck(Shuffler<Card> shuffler, CardIdGenerator idGenerator, int numberOfParticipants, String useRiggedDeck) {
+        checkArgument(numberOfParticipants == 4 || numberOfParticipants == 6, "participants must be 4 or 6");
+        deckLowestRank = TelesinaDeckUtil.calculateLowestRank(numberOfParticipants);
+        List<Card> readCards = TelesinaDeckUtil.createRiggedDeck(numberOfParticipants, useRiggedDeck);
+        deckSize = readCards.size();
+        cards = idGenerator.copyAndAssignIds(readCards);
     }
     
     public int getTotalNumberOfCardsInDeck() {
