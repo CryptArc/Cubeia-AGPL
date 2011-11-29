@@ -193,11 +193,7 @@ public class Telesina implements GameType, RoundVisitor {
 		state.getCommunityCards().addAll(dealt);
 		state.notifyCommunityCards(dealt);
 		
-        TelesinaHandStrengthEvaluator handStrengthEvaluator = new TelesinaHandStrengthEvaluator(getDeckLowestRank());       
-		
-		for (PokerPlayer player : state.getCurrentHandPlayerMap().values()) {
-		    calculateAndSendBestHandToPlayer(handStrengthEvaluator, player);
-		}
+		sendAllNonFoldedPlayersBestHand();
 	}
 
 	public void handleFinishedRound() {
@@ -451,14 +447,14 @@ public class Telesina implements GameType, RoundVisitor {
 
 	@VisibleForTesting
 	public void dealExposedPocketCards() {
-	    TelesinaHandStrengthEvaluator handStrengthEvaluator = new TelesinaHandStrengthEvaluator(getDeckLowestRank());	    
 	    
 		for (PokerPlayer p : state.getCurrentHandSeatingMap().values()) {
 			if (!p.hasFolded()) {
 				dealExposedPocketCards(p, 1);
-				calculateAndSendBestHandToPlayer(handStrengthEvaluator, p);
 			}
 		}
+		
+		sendAllNonFoldedPlayersBestHand();
 	}
 
 	public void sendAllNonFoldedPlayersBestHand(){
