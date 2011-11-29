@@ -1,7 +1,5 @@
 package com.cubeia.poker.variant.telesina;
 
-import static com.cubeia.poker.variant.telesina.TelesinaDeckUtil.calculateLowestRank;
-import static com.cubeia.poker.variant.telesina.TelesinaDeckUtil.createDeckCards;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.ArrayList;
@@ -35,13 +33,23 @@ public class TelesinaDeck implements Deck {
      * @param numberOfParticipants
      */
     public TelesinaDeck(Shuffler<Card> shuffler, CardIdGenerator idGenerator, int numberOfParticipants) {
+        this (shuffler, idGenerator, numberOfParticipants, null);
+    }
+    
+    public TelesinaDeck(Shuffler<Card> shuffler, CardIdGenerator idGenerator, int numberOfParticipants, String useRiggedDeck) {
         checkArgument(numberOfParticipants >= 2, "participants must be >= 2");
         checkArgument(numberOfParticipants <= 10, "participants must be <= 10");
-    	deckLowestRank = calculateLowestRank(numberOfParticipants);
-        List<Card> vanillaCards = createDeckCards(deckLowestRank);
-        deckSize = vanillaCards.size();
-        List<Card> shuffledCards = shuffler.shuffle(vanillaCards);
-        cards = idGenerator.copyAndAssignIds(shuffledCards);
+        deckLowestRank = TelesinaDeckUtil.calculateLowestRank(numberOfParticipants);
+        if(useRiggedDeck != null){
+            List<Card> readCards = TelesinaDeckUtil.createDeckFromString(numberOfParticipants, useRiggedDeck);
+            deckSize = readCards.size();
+            cards = idGenerator.copyAndAssignIds(readCards);
+        }else{
+            List<Card> vanillaCards = TelesinaDeckUtil.createDeckCards(numberOfParticipants);
+            deckSize = vanillaCards.size();
+            List<Card> shuffledCards = shuffler.shuffle(vanillaCards);
+            cards = idGenerator.copyAndAssignIds(shuffledCards);
+        }
     }
     
     public int getTotalNumberOfCardsInDeck() {
