@@ -19,9 +19,17 @@
 	    		<td><input type="text" name="port" id="port"/></td>
 	    	</tr>
 	    	
+	    	
 	    	<tr>
 	    		<td><label for="connectorType">Connector Type: </label></td>
-	    		<td><input type="text" name="connectorType" id="connectorType" value="socket"/></td>
+	    		<td>
+			    	<select name="connectorType" id="connectorType">
+						<option value="mina">MINA Client (NIO)</option>
+						<option value="socket">Binary Socket</option>
+						<option value="websocket">Web Socket</option>
+						<option value="comet">Comet (HTTP)</option>
+					</select>
+				</td>
 	    	</tr>
 	    	
 	    	
