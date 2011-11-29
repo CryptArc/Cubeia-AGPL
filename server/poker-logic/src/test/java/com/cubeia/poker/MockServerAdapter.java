@@ -141,6 +141,7 @@ public class MockServerAdapter implements ServerAdapter {
     public void notifyBestHand(int playerId, HandType handType, List<Card> cardsInHand, boolean publicHand) {}
     public void notifyBuyInInfo(int playerId, boolean mandatoryBuyin) {}
     public void notifyRakeInfo(RakeInfoContainer rakeInfoContainer) {}    
+    public void notifyTakeBackUncalledBet(int playerId, int amount) {}
     
     @Override
 	public void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status) {

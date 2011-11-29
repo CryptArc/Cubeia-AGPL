@@ -178,7 +178,6 @@ public class PokerTableListener implements TournamentTableListener {
         state.addPlayer(pokerPlayer);
         
         if (!tournamentPlayer) {
-            // TODO: wallet session should not be created here but on buy in request
         	log.debug("Start wallet session for player: " + player);
         	backendPlayerSessionHandler.startWalletSession(state, table, player.getPlayerId(), getCurrentRoundNumber());
         }

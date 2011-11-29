@@ -20,5 +20,14 @@ public enum PokerLobbyAttributes {
 	 * which is a bit of duplication, but we don't want a dependency to all that.</p>
 	 */
 	TABLE_READY_FOR_CLOSE,
-	VISIBLE_IN_LOBBY
+	VISIBLE_IN_LOBBY,
+    SPEED,
+    ANTE,
+    BETTING_GAME_ANTE,
+    BETTING_GAME_BETTING_MODEL,
+    MONETARY_TYPE,
+    VARIANT,
+    MIN_BUY_IN,
+    MAX_BUY_IN,
+    DECK_SIZE
 }

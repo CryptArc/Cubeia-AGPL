@@ -139,19 +139,16 @@ public class PokerParticipant extends DefaultCreationParticipant {
 		pokerState.setId(table.getId());
 		table.getGameState().setState(pokerState);
 
-		// FIXME: Refactor these attributes to the PokerLobbyAttributes enum instead
-		acc.setIntAttribute("VISIBLE_IN_LOBBY", 0);
-		acc.setStringAttribute("SPEED", timing.name());
-		// acc.setIntAttribute("ANTE", anteLevel);
-		acc.setIntAttribute("BETTING_GAME_ANTE", anteLevel);
-		acc.setStringAttribute("BETTING_GAME_BETTING_MODEL", "NO_LIMIT");
-		acc.setStringAttribute("MONETARY_TYPE", "REAL_MONEY");
-		acc.setIntAttribute(PokerLobbyAttributes.VISIBLE_IN_LOBBY.name(), 1);
-		acc.setStringAttribute("VARIANT", variant.name());
-		acc.setIntAttribute("MIN_BUY_IN", pokerState.getMinBuyIn());
-		acc.setIntAttribute("MAX_BUY_IN", pokerState.getMaxBuyIn());
+		acc.setIntAttribute(PokerLobbyAttributes.VISIBLE_IN_LOBBY.name(), 0);
+		acc.setStringAttribute(PokerLobbyAttributes.SPEED.name(), timing.name());
+		acc.setIntAttribute(PokerLobbyAttributes.BETTING_GAME_ANTE.name(), anteLevel);
+		acc.setStringAttribute(PokerLobbyAttributes.BETTING_GAME_BETTING_MODEL.name(), "NO_LIMIT");
+		acc.setStringAttribute(PokerLobbyAttributes.MONETARY_TYPE.name(), "REAL_MONEY");
+		acc.setStringAttribute(PokerLobbyAttributes.VARIANT.name(), variant.name());
+		acc.setIntAttribute(PokerLobbyAttributes.MIN_BUY_IN.name(), pokerState.getMinBuyIn());
+		acc.setIntAttribute(PokerLobbyAttributes.MAX_BUY_IN.name(), pokerState.getMaxBuyIn());
 		int deckSize = createDeckCards(pokerState.getTableSize()).size();
-		acc.setIntAttribute("DECK_SIZE", deckSize);
+		acc.setIntAttribute(PokerLobbyAttributes.DECK_SIZE.name(), deckSize);
 		
 		FirebaseCallbackFactory callbackFactory = cashGameBackendService.getCallbackFactory();
 		AnnounceTableRequest announceRequest = new AnnounceTableRequest(table.getId());   // TODO: this should be the id from the table record

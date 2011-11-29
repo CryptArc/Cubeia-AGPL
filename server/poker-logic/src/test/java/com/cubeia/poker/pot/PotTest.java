@@ -53,7 +53,7 @@ public class PotTest {
 		PokerPlayer p2 = createPokerPlayer(20);
 
 		PotHolder potHolder = new PotHolder(rakeCalculator);
-		potHolder.moveChipsToPot(Arrays.asList(p1, p2));
+		potHolder.moveChipsToPotAndTakeBackUncalledChips(Arrays.asList(p1, p2));
 		assertEquals(1, potHolder.getNumberOfPots());
 		assertEquals(40, potHolder.getTotalPotSize());
 		assertEquals(40, potHolder.getPotSize(0));
@@ -82,7 +82,7 @@ public class PotTest {
 		p3.setHasFolded(true);
 
 		PotHolder potHolder = new PotHolder(rakeCalculator);
-		Collection<PotTransition> potTransitions = potHolder.moveChipsToPot(asList(p1, p2, p3));
+		Collection<PotTransition> potTransitions = potHolder.moveChipsToPotAndTakeBackUncalledChips(asList(p1, p2, p3));
 		assertEquals(1, potHolder.getNumberOfPots());
 		assertEquals(50, potHolder.getTotalPotSize());
 		assertEquals(50, potHolder.getPotSize(0));
@@ -102,7 +102,7 @@ public class PotTest {
 		PokerPlayer p3 = createPokerPlayer(10, true);
 
 		PotHolder potHolder = new PotHolder(rakeCalculator);
-		Collection<PotTransition> potTransitions = potHolder.moveChipsToPot(Arrays.asList(p1, p2, p3));
+		Collection<PotTransition> potTransitions = potHolder.moveChipsToPotAndTakeBackUncalledChips(Arrays.asList(p1, p2, p3));
 		assertEquals(2, potHolder.getNumberOfPots());
 		assertEquals(50, potHolder.getTotalPotSize());
 		assertEquals(30, potHolder.getPotSize(0));
@@ -147,7 +147,7 @@ public class PotTest {
 		PokerPlayer p5 = createPokerPlayer(2);
 
 		PotHolder potHolder = new PotHolder(rakeCalculator);
-		Collection<PotTransition> potTransitions = potHolder.moveChipsToPot(Arrays.asList(p1, p2, p3, p4, p5));
+		Collection<PotTransition> potTransitions = potHolder.moveChipsToPotAndTakeBackUncalledChips(Arrays.asList(p1, p2, p3, p4, p5));
 		assertEquals(3, potHolder.getNumberOfPots());
 		assertEquals(35, potHolder.getTotalPotSize());
 		assertEquals(22, potHolder.getPotSize(0));
@@ -194,7 +194,7 @@ public class PotTest {
 		PokerPlayer p1 = createPokerPlayer(20);
 		PokerPlayer p2 = createPokerPlayer(20);
 		// Second round
-		potHolder.moveChipsToPot(Arrays.asList(p1, p2));
+		potHolder.moveChipsToPotAndTakeBackUncalledChips(Arrays.asList(p1, p2));
 		assertEquals(3, potHolder.getNumberOfPots());
 		assertEquals(100, potHolder.getTotalPotSize());
 		assertEquals(50, potHolder.getPotSize(2));
@@ -206,14 +206,15 @@ public class PotTest {
 		PokerPlayer p2 = createPokerPlayer(10);
 
 		PotHolder potHolder = new PotHolder(rakeCalculator);
-		Collection<PotTransition> potTransitions = potHolder.moveChipsToPot(Arrays.asList(p1, p2));
+		Collection<PotTransition> potTransitions = potHolder.moveChipsToPotAndTakeBackUncalledChips(Arrays.asList(p1, p2));
 				
-		assertThat(potTransitions.size(), is(2));
+		assertThat(potTransitions.size(), is(3)); // two moves and one take back 
         Pot mainPot = potHolder.getPot(0);
         assertThat(mainPot.getType(), is(MAIN));
         assertThat(potTransitions, hasItems(
             new PotTransition(p1, mainPot,  5),
-            new PotTransition(p2, mainPot, 5)
+            new PotTransition(p2, mainPot, 5),
+            PotTransition.createTransitionFromBetStackToPlayer(p2, 5L)
             ));
         
         assertThat(p1.getBalance(), is(5L*5L-5L)); // player has 5 times initial bet and bet was 5
@@ -227,7 +228,7 @@ public class PotTest {
 		PokerPlayer p2 = createPokerPlayer(10);
 
 		PotHolder potHolder = new PotHolder(rakeCalculator);
-		potHolder.moveChipsToPot(Arrays.asList(p1, p2));
+		potHolder.moveChipsToPotAndTakeBackUncalledChips(Arrays.asList(p1, p2));
 		
 	}
 
@@ -266,7 +267,7 @@ public class PotTest {
 		PokerPlayer p4 = createPokerPlayer(5, true);
 
 		PotHolder potHolder = new PotHolder(rakeCalculator);
-		potHolder.moveChipsToPot(Arrays.asList(p1, p2, p3, p4));
+		potHolder.moveChipsToPotAndTakeBackUncalledChips(Arrays.asList(p1, p2, p3, p4));
 		return potHolder;
 	}
 	

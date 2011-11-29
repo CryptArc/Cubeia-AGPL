@@ -17,32 +17,16 @@
 
 package com.cubeia.games.poker;
 
-import java.util.Collections;
 import java.util.List;
 
 import com.cubeia.firebase.api.game.context.GameContext;
-import com.cubeia.firebase.api.game.table.ExtendedDetailsProvider;
-import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.firebase.guice.game.Configuration;
 import com.cubeia.firebase.guice.game.GuiceGame;
-import com.cubeia.firebase.io.protocol.Param;
 import com.cubeia.games.poker.jmx.PokerStats;
 import com.google.inject.Module;
 
-public class PokerGame extends GuiceGame implements ExtendedDetailsProvider {
-    	
-    public final static int POKER_GAME_ID = 7;
-    
-    // FIXME: Hardcoded licensee id
-    public static final int LICENSEE_ID = "Cubeia".hashCode();
-
-	// FIXME: Hardcoded currency code here, this will vary depending on game type and deployment of course
-	public static String CURRENCY_CODE = "EUR";
-	public static final int CURRENCY_FRACTIONAL_DIGITS = 2;
-    
-    // private ServiceRegistry services;
-
+public class PokerGame extends GuiceGame {
 	/*------------------------------------------------
 	 
 		LIFECYCLE METHODS
@@ -90,11 +74,6 @@ public class PokerGame extends GuiceGame implements ExtendedDetailsProvider {
  	 ------------------------------------------------*/
 	
     
-	
-    @Override
-	public List<Param> getExtendedDetails(Table table, int playerId, boolean fromLobby) {
-		// TODO
-    	return Collections.emptyList();	
-	}
+
     
 }

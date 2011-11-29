@@ -7,6 +7,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -41,6 +42,7 @@ import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.variant.PokerVariant;
+import com.cubeia.poker.variant.telesina.Telesina;
 
 public class PokerStateTest {
 
@@ -475,6 +477,42 @@ public class PokerStateTest {
 		verify(actionRequest1).setTimeToAct(state.getTimingProfile().getTime(Periods.ACTION_TIMEOUT));
 		verify(actionRequest2).setTimeToAct(state.getTimingProfile().getTime(Periods.ACTION_TIMEOUT));
 		verify(state.serverAdapter).requestMultipleActions(requests);
+	}
+	
+	@Test
+	public void testBuyInInfoSentOnJoinIfPlayerCanNotBuyin() {
+		PokerState state = new PokerState();
+		state.init(mock(RNGProvider.class), settings);
+		state.serverAdapter = mock(ServerAdapter.class);
+		state.gameType = mock(Telesina.class);
+				
+		PokerPlayer player = mock(PokerPlayer.class);
+		int playerId = 1337;
+		when(player.getId()).thenReturn(playerId);
+		
+		when(state.gameType.canPlayerBuyIn(player, settings)).thenReturn(false);
+		
+		state.addPlayer(player);
+		
+		Mockito.verify(state.serverAdapter).notifyBuyInInfo(1337, false);
+	}
+	
+	@Test
+	public void testBuyInInfoNotSentOnJoinIfPlayerCanBuyin() {
+		PokerState state = new PokerState();
+		state.init(mock(RNGProvider.class), settings);
+		state.serverAdapter = mock(ServerAdapter.class);
+		state.gameType = mock(Telesina.class);
+				
+		PokerPlayer player = mock(PokerPlayer.class);
+		int playerId = 1337;
+		when(player.getId()).thenReturn(playerId);
+		
+		when(state.gameType.canPlayerBuyIn(player, settings)).thenReturn(true);
+		
+		state.addPlayer(player);
+		
+		Mockito.verify(state.serverAdapter,never()).notifyBuyInInfo(1337, false);
 	}
 
 	@Test

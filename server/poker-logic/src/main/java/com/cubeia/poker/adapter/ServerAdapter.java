@@ -20,6 +20,7 @@ package com.cubeia.poker.adapter;
 import java.util.Collection;
 import java.util.List;
 
+import com.cubeia.poker.SystemShutdownException;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.hand.Card;
@@ -86,8 +87,10 @@ public interface ServerAdapter {
 	
     /**
      * A new hand is about to start.
+     * 
+     * @throws SystemShutdownException If the system is shutting down and the table should close
      */
-    void notifyNewHand();
+    void notifyNewHand() throws SystemShutdownException;
     
     void exposePrivateCards(ExposeCardsHolder holder);
 
@@ -162,6 +165,13 @@ public interface ServerAdapter {
     void notifyRakeInfo(RakeInfoContainer rakeInfoContainer);
     
     public void unseatPlayer(int playerId, boolean setAsWatcher);
+
+    /**
+     * Notify that a bet was taken back from betstack to balance since it was uncalled
+     * @param playerId
+     * @param amount
+     */
+	void notifyTakeBackUncalledBet(int playerId, int amount);
 
 	
 }

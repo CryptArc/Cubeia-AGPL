@@ -138,14 +138,14 @@ public interface PokerPlayer extends Serializable {
     public void addPendingAmount(long amount);
     
     /**
-     * move the full amount in betstack to returnedChips
+     * move the full amount in betstack to balance
      */
-    public void returnAllBets();
+    public void returnBetstackToBalance();
     
     /**
-     * move the amount from betstack to returnedChips
+     * move the amount from betstack to balance
      */
-    public void returnBetAmount(long amount);
+    public void returnBetStackAmountToBalance(long amount);
     
     /**
      * Adds the pending balance to the ordinary balance.

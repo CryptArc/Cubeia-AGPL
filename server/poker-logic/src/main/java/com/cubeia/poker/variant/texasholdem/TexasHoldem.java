@@ -206,7 +206,7 @@ public class TexasHoldem implements GameType, RoundVisitor {
 
 	private void moveChipsToPot() {
 		
-		state.getPotHolder().moveChipsToPot(state.getCurrentHandSeatingMap().values());
+		state.getPotHolder().moveChipsToPotAndTakeBackUncalledChips(state.getCurrentHandSeatingMap().values());
 		
 		for (PokerPlayer p : state.getCurrentHandSeatingMap().values()) {
 			p.setHasActed(false);

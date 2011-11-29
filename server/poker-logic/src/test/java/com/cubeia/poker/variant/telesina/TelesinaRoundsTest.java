@@ -140,7 +140,7 @@ public class TelesinaRoundsTest {
         when(state.countNonFoldedPlayers()).thenReturn(3);
         assertThat(telesina.isHandFinished(), is(false));
         assertCardsDealt(2, 1, player1, player2, player3);
-        verify(potHolder).moveChipsToPot(Mockito.anyCollection());
+        verify(potHolder).moveChipsToPotAndTakeBackUncalledChips(Mockito.anyCollection());
         assertThat((BettingRound) telesina.getCurrentRound(), is(bettingRound0));
         assertThat(telesina.getBettingRoundId(), is(1));
         

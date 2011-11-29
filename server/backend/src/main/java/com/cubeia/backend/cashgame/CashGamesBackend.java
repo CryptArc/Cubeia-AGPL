@@ -16,6 +16,8 @@ import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
 
 public interface CashGamesBackend {
 	
+	boolean isSystemShuttingDown();
+	
 	/**
 	 * Generate a new hand ID. This method is synchronous and
 	 * should be implemented to return as swiftly as possible as it

@@ -45,6 +45,11 @@ public class AsynchronousCashGamesBackend implements CashGamesBackend {
 	public String generateHandId() {
 		return backingImpl.generateHandId();
 	}
+	
+	@Override
+	public boolean isSystemShuttingDown() {
+		return backingImpl.isSystemShuttingDown();
+	}
 
 	@Override
 	public AllowJoinResponse allowJoinTable(int playerId) {

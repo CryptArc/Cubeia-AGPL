@@ -455,6 +455,7 @@ public class PokerLogicTest extends GuiceTest {
 			@Override public void notifyBestHand(int playerId, HandType handType, List<Card> cardsInHand, boolean publicHand) {}
 			@Override public void notifyRakeInfo(RakeInfoContainer rakeInfoContainer) {}
 			@Override public void unseatPlayer(int playerId, boolean setAsWatcher) {}
+			@Override public void notifyTakeBackUncalledBet(int playerId, int amount) {}
 		});
 		game.timeout();
 		act(p[0], PokerActionType.SMALL_BLIND, 10);

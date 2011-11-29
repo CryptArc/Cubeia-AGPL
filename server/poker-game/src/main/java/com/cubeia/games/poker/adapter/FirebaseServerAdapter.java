@@ -49,6 +49,7 @@ import se.jadestone.dicearena.game.poker.network.protocol.PotTransfers;
 import se.jadestone.dicearena.game.poker.network.protocol.RakeInfo;
 import se.jadestone.dicearena.game.poker.network.protocol.RequestAction;
 import se.jadestone.dicearena.game.poker.network.protocol.StartNewHand;
+import se.jadestone.dicearena.game.poker.network.protocol.TakeBackUncalledBet;
 
 import com.cubeia.backend.cashgame.TableId;
 import com.cubeia.backend.cashgame.dto.BalanceUpdate;
@@ -72,6 +73,7 @@ import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TableType;
 import com.cubeia.firebase.api.util.UnmodifiableSet;
 import com.cubeia.firebase.guice.inject.Service;
+import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.firebase.io.protocol.Enums.WatchResponseStatus;
 import com.cubeia.games.poker.FirebaseState;
@@ -85,6 +87,7 @@ import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.games.poker.tournament.PokerTournamentRoundReport;
 import com.cubeia.games.poker.util.ProtocolFactory;
 import com.cubeia.poker.PokerState;
+import com.cubeia.poker.SystemShutdownException;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
@@ -153,7 +156,15 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	 ------------------------------------------------*/
 
 	@Override
-	public void notifyNewHand() {
+	public void notifyNewHand() throws SystemShutdownException {
+		
+		if(backend.isSystemShuttingDown()) {
+			/*
+			 * This will be caught by the processors. 
+			 */
+			throw new SystemShutdownException();
+		}
+		
 		String handId = backend.generateHandId();
 		HandIdentifier playedHand = new HandIdentifier();
 		playedHand.setIntegrationId(handId);
@@ -350,7 +361,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 				transfers.add(actionTransformer.createPotTransferPacket(pt));
 			}
 
-			long handId = getIntegrationHandId();
+			String handId = getIntegrationHandId();
 			TableId externalTableId = getIntegrationTableId();
 			BatchHandRequest batchHandRequest = handResultBatchFactory.createAndValidateBatchHandRequest(handResult, handId, externalTableId);
             batchHandRequest.startTime = state.getStartTime();
@@ -377,9 +388,6 @@ public class FirebaseServerAdapter implements ServerAdapter {
 			// increment hand count
 			getFirebaseState().incrementHandCount();
 
-			// Remove all idling players
-			cleanupPlayers();
-			updateLobby();
 
 		} else {
 			log.info("The hand was cancelled on table: " + table.getId() + " - " + table.getMetaData().getName());
@@ -404,8 +412,8 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		return batchHandResult;
 	}
 	
-	public long getIntegrationHandId() {
-		return Long.valueOf(getFirebaseState().getCurrentHandIdentifier().getIntegrationId());
+	public String getIntegrationHandId() {
+		return getFirebaseState().getCurrentHandIdentifier().getIntegrationId();
 	}
 	
 	private TableId getIntegrationTableId() {
@@ -489,13 +497,24 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		}
 
 		for (PotTransition potTransition : potTransitions) {
-			log.debug("--> sending pot update to client: {}", potTransition);
-			transfers.add(actionTransformer.createPotTransferPacket(potTransition));
+			if (!potTransition.isFromBetStackToPlayer()) {
+				log.debug("--> sending pot update to client: {}", potTransition);
+				transfers.add(actionTransformer.createPotTransferPacket(potTransition));
+			}
 		}
 
+		// notify betstacks to pots
 		PotTransfers potTransfers = new PotTransfers(fromPlayerToPot, transfers, clientPots);
 		GameDataAction action = protocolFactory.createGameAction(potTransfers, 0, table.getId());
 		sendPublicPacket(action, -1);
+		
+		// notify return uncalled chips
+		for (PotTransition potTransition : potTransitions) {
+			if (potTransition.isFromBetStackToPlayer()) {
+				log.debug("--> sending takeBackUncalledChips to client: {}", potTransition);
+				notifyTakeBackUncalledBet(potTransition.getPlayer().getId(), (int)potTransition.getAmount());
+			}
+		}
 	}
 
 
@@ -505,6 +524,14 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		RakeInfo rakeInfo = new RakeInfo((int) rakeInfoContainer.getTotalPot(), (int) rakeInfoContainer.getTotalRake());
 		GameDataAction action = protocolFactory.createGameAction(rakeInfo, 0, table.getId());
 		sendPublicPacket(action, -1);
+	}
+	
+	@Override
+	public void notifyTakeBackUncalledBet(int playerId, int amount) {
+		log.debug("--> Taking back uncalled bet: {}", playerId, amount);
+		ProtocolObject takeBackUncalledBet = new TakeBackUncalledBet(playerId, amount);
+		GameDataAction action = protocolFactory.createGameAction(takeBackUncalledBet, playerId, table.getId());
+		sendPublicPacket(action,-1);
 	}
 
 	@Override
@@ -566,6 +593,8 @@ public class FirebaseServerAdapter implements ServerAdapter {
 				unseatPlayer(p.getId(), true);
 			}
 		}
+		
+		updateLobby();
 	}
 
 	public void unseatPlayer(int playerId, boolean setAsWatcher) {

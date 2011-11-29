@@ -94,7 +94,7 @@ public class TableCloseHandlerTest {
         UnmodifiableSet<GenericPlayer> playerSet = new UnmongofiableSet<GenericPlayer>();
         when(tablePlayerSet.getPlayers()).thenReturn(playerSet);
         when(tablePlayerSet.getPlayerCount()).thenReturn(0);
-        long handId = 4435L;
+        String handId = "4435";
         when(serverAdapter.getIntegrationHandId()).thenReturn(handId);
         tableCrashHandler.closeTable(table, false);
         verify(state, times(1)).shutdown();
@@ -118,7 +118,7 @@ public class TableCloseHandlerTest {
         PokerPlayer pokerPlayer2 = mock(PokerPlayer.class);
         when(state.getPokerPlayer(player1Id)).thenReturn(pokerPlayer1);
         when(state.getPokerPlayer(player2Id)).thenReturn(pokerPlayer2);
-        long handId = 4435L;
+        String handId = "4435";
         when(serverAdapter.getIntegrationHandId()).thenReturn(handId);
 	}
     
@@ -141,10 +141,10 @@ public class TableCloseHandlerTest {
         PokerPlayer pokerPlayer2 = mock(PokerPlayer.class);
         when(state.getPokerPlayer(player1Id)).thenReturn(pokerPlayer1);
         when(state.getPokerPlayer(player2Id)).thenReturn(pokerPlayer2);
-        long handId = 4435L;
+        String handId = "4435";
         when(serverAdapter.getIntegrationHandId()).thenReturn(handId);
         
-        tableCrashHandler.handleCrashOnTable(action, table, new RuntimeException("shit happens"));
+        tableCrashHandler.handleUnexpectedExceptionOnTable(action, table, new RuntimeException("shit happens"));
         
         verify(attributeAccessor).setIntAttribute(PokerLobbyAttributes.VISIBLE_IN_LOBBY.name(), 0);
         verify(state).shutdown();

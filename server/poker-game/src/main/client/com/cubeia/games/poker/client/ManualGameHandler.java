@@ -49,6 +49,7 @@ import se.jadestone.dicearena.game.poker.network.protocol.RequestAction;
 import se.jadestone.dicearena.game.poker.network.protocol.StartHandHistory;
 import se.jadestone.dicearena.game.poker.network.protocol.StartNewHand;
 import se.jadestone.dicearena.game.poker.network.protocol.StopHandHistory;
+import se.jadestone.dicearena.game.poker.network.protocol.TakeBackUncalledBet;
 import se.jadestone.dicearena.game.poker.network.protocol.TournamentOut;
 
 import com.cubeia.firebase.clients.java.connector.text.IOContext;
@@ -178,5 +179,7 @@ public class ManualGameHandler implements PacketVisitor {
 	public void visit(DeckInfo packet) {}
 	@Override
 	public void visit(ErrorPacket packet) {}
+	@Override
+	public void visit(TakeBackUncalledBet packet) {}
     
 }

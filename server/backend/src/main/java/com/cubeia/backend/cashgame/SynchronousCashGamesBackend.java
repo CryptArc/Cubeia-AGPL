@@ -21,6 +21,8 @@ public interface SynchronousCashGamesBackend {
 	
 	String generateHandId();
 	
+	boolean isSystemShuttingDown();
+	
 	AnnounceTableResponse announceTable(AnnounceTableRequest request) throws AnnounceTableFailedException;
 
 	// void closeTable(CloseTableRequest request) throws CloseTableFailedException;

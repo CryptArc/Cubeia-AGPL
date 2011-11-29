@@ -219,6 +219,13 @@ public class PokerState implements Serializable, IPokerState {
 	public void addPlayer(PokerPlayer player) {
 		playerMap.put(player.getId(), player);
 		seatingMap.put(player.getSeatId(), player);
+		
+		// if the player can not buy in after reconnecting we send him/her a buyInInfo 
+		if (!gameType.canPlayerBuyIn(player, settings))
+		{
+			serverAdapter.notifyBuyInInfo(player.getId(), false);
+		}
+		
 		if (!isTournamentTable()) {
 			startGame();
 		}
@@ -414,7 +421,10 @@ public class PokerState implements Serializable, IPokerState {
 				serverAdapter.notifyPlayerBalance(player);
 			}
 			
-			
+			// clean up players here and make leaveing players leave and so on
+			// also update the lobby
+			serverAdapter.cleanupPlayers();
+						
 			setPlayersWithoutMoneyAsSittingOut(result);
 			TimingProfile timing = settings.getTiming();
 			log.debug("Schedule hand over timeout in: {}", timing != null ? timing.getTime(Periods.START_NEW_HAND) : 0);
@@ -713,6 +723,12 @@ public class PokerState implements Serializable, IPokerState {
 			notifyPlayerBalance(player.getId());
 		}
 	}
+	
+
+	public void notifyTakeBackUncalledBets(int playerId, long amount) {
+		serverAdapter.notifyTakeBackUncalledBet(playerId, (int)amount);
+	}
+    
 
 	public void notifyAllPlayerStatuses() {
 		for (PokerPlayer player : seatingMap.values()) {
@@ -949,7 +965,7 @@ public class PokerState implements Serializable, IPokerState {
 	}
 
 	protected void setCurrentState(PokerGameSTM newState) {
-		if (SHUTDOWN.equals(getCurrentState())) {
+		if (SHUTDOWN.equals(getCurrentState()) && !newState.equals(getCurrentState())) {
 			throw new UnsupportedOperationException("attempted illegal state change from SHUTDOWN -> " + newState);
 		}
 		this.currentState = newState;
@@ -998,6 +1014,6 @@ public class PokerState implements Serializable, IPokerState {
         
         return muckers;
     }
-    
+
 
 }

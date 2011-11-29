@@ -26,6 +26,7 @@ import com.cubeia.games.poker.adapter.FirebaseServerAdapter;
 import com.cubeia.games.poker.cache.ActionCache;
 import com.cubeia.games.poker.lobby.PokerLobbyAttributes;
 import com.cubeia.poker.PokerState;
+import com.cubeia.poker.SystemShutdownException;
 import com.cubeia.poker.player.PokerPlayer;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
@@ -67,14 +68,18 @@ public class TableCloseHandler {
 		return table.getPlayerSet().getPlayerCount();
 	}
 
-	public void handleCrashOnTable(AbstractGameAction action, Table table, Throwable throwable) {
-        Long integrationHandId = safeGetHandId();
-        log.info("handling crashed table id = {}, hand id = {}", table.getId(), integrationHandId);
-        printToErrorLog(action, table, throwable);
-        doCloseTable(table, true, integrationHandId);
+	public void handleUnexpectedExceptionOnTable(AbstractGameAction action, Table table, Throwable throwable) {
+		if(throwable instanceof SystemShutdownException) {
+			closeTable(table, true);
+		} else {
+			String handId = getHandId();
+	        log.info("handling crashed table id = {}, hand id = {}", table.getId(), handId);
+	        printToErrorLog(action, table, throwable);
+	        doCloseTable(table, true, handId);
+		}
     }
 
-	private void doCloseTable(Table table, boolean isError, Long integrationHandId) {
+	private void doCloseTable(Table table, boolean isError, String handId) {
 		Collection<GenericPlayer> players = Lists.newArrayList(table.getPlayerSet().getPlayers());
         
         // 1. stop table from accepting actions
@@ -86,7 +91,7 @@ public class TableCloseHandler {
         
         // 3. send message to clients, must include hand id on errors
         if(isError) {
-        	sendErrorMessageToClient(table, integrationHandId);
+        	sendErrorMessageToClient(table, handId);
         } else {
         	sendCloseMessageToClient(table);
         }
@@ -109,13 +114,13 @@ public class TableCloseHandler {
     	sendMessageToClient(table, Enums.ErrorCode.TABLE_CLOSING, null);
 	}
 
-    private void sendErrorMessageToClient(Table table, Long integrationHandId) {
-        sendMessageToClient(table, Enums.ErrorCode.UNSPECIFIED_ERROR, integrationHandId);
+    private void sendErrorMessageToClient(Table table, String handId) {
+        sendMessageToClient(table, Enums.ErrorCode.UNSPECIFIED_ERROR, handId);
     }
 
-	protected void sendMessageToClient(Table table, Enums.ErrorCode errorCode, Long integrationHandId) {
+	protected void sendMessageToClient(Table table, Enums.ErrorCode errorCode, String handId) {
 		for (GenericPlayer player : table.getPlayerSet().getPlayers()) {
-            ErrorPacket errorPacket = new ErrorPacket(errorCode, integrationHandId == null ? null : "" + integrationHandId);
+            ErrorPacket errorPacket = new ErrorPacket(errorCode, handId);
             log.debug("sending {} message to player: {}", errorCode, player.getPlayerId());
             GameDataAction errorAction = new GameDataAction(player.getPlayerId(), table.getId());
             ByteBuffer packetBuffer;
@@ -129,15 +134,8 @@ public class TableCloseHandler {
         }
 	}
 
-
-    private Long safeGetHandId() {
-        Long integrationHandId = null;
-        try {
-            integrationHandId = serverAdapter.getIntegrationHandId();
-        } catch (Exception e) {
-            log.error("error getting hand id", e);
-        }
-        return integrationHandId;
+    private String getHandId() {
+        return serverAdapter.getIntegrationHandId();
     }
 
     @VisibleForTesting

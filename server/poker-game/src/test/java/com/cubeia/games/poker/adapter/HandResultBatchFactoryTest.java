@@ -33,7 +33,7 @@ public class HandResultBatchFactoryTest {
     @Test
     public void testCreateBatchHandRequest() {
         HandResultBatchFactory handResultFactory = new HandResultBatchFactory();
-        long handId = 55555;
+        String handId = "55555";
         
         int playerId1 = 22;
         PlayerSessionId playerSessionId1 = new PlayerSessionIdImpl(playerId1);
@@ -75,7 +75,7 @@ public class HandResultBatchFactoryTest {
     @Test(expected=IllegalStateException.class)
     public void testCreateUnbalancedBatchHandRequest() {
         HandResultBatchFactory handResultFactory = new HandResultBatchFactory();
-        long handId = 55555;
+        String handId = "55555";
         
         int playerId1 = 22;
         PlayerSessionId playerSessionId1 = new PlayerSessionIdImpl(playerId1);
@@ -107,7 +107,7 @@ public class HandResultBatchFactoryTest {
     @Test
     public void testCreateHandBatch() {
         HandResultBatchFactory handResultFactory = new HandResultBatchFactory();
-        long handId = 12345;
+        String handId = "12345";
         
         PokerPlayerImpl pokerPlayer8 = createMockPlayer(8);
         PokerPlayerImpl pokerPlayer2 = createMockPlayer(2);
