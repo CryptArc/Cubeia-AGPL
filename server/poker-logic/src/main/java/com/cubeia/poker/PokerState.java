@@ -413,7 +413,10 @@ public class PokerState implements Serializable, IPokerState {
 				serverAdapter.notifyPlayerBalance(player);
 			}
 			
-			
+			// clean up players here and make leaveing players leave and so on
+			// also update the lobby
+			serverAdapter.cleanupPlayers();
+						
 			setPlayersWithoutMoneyAsSittingOut(result);
 			TimingProfile timing = settings.getTiming();
 			log.debug("Schedule hand over timeout in: {}", timing != null ? timing.getTime(Periods.START_NEW_HAND) : 0);
