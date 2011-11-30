@@ -42,6 +42,10 @@ import com.google.common.collect.Multimaps;
 
 public class CashGamesBackendMock implements CashGamesBackendContract, Service, RoutableService {
     
+    protected static final String MARKET_TABLE_REFERENCE_MAGIC_KEY = "MARKET_TABLE_REFERENCE";
+
+    private static final String MARKET_TABLE_SESSION_REFERENCE_MAGIC_KEY = "MARKET_TABLE_SESSION_REFERENCE";
+
     private Logger log = LoggerFactory.getLogger(CashGamesBackendMock.class);
     
     private final AtomicInteger idSequence = new AtomicInteger(0);
@@ -86,6 +90,9 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
                 try {
                     long mockDelay = (long) (Math.random() * 2000);
                     Thread.sleep(mockDelay);
+                    
+                    response.setProperty(MARKET_TABLE_REFERENCE_MAGIC_KEY, "MOCK-TABLE-ID-" + System.currentTimeMillis());
+                    
                     callback.requestSucceded(response);
                 } catch (Throwable t) {
                     t.printStackTrace();
@@ -152,6 +159,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
             BalanceUpdate balanceUpdate = new BalanceUpdate(request.playerSessionId, newBalance, nextId());
             ReserveResponse response = new ReserveResponse(balanceUpdate, amount);
             log.debug("reserve successful: sId = {}, amount = {}, new balance = {}", new Object[] {sid, amount, newBalance});
+            response.setProperty(MARKET_TABLE_SESSION_REFERENCE_MAGIC_KEY, "MOCK-MARKET-SID-" + sid);
             callback.requestSucceded(response);
         }
         
