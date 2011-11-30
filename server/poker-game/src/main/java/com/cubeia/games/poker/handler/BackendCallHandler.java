@@ -17,6 +17,7 @@ import com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse;
 import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
 import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;
 import com.cubeia.backend.cashgame.dto.ReserveResponse;
+import com.cubeia.backend.firebase.CashGamesBackendContract;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.game.lobby.LobbyTableAttributeAccessor;
 import com.cubeia.firebase.api.game.table.Table;
@@ -49,13 +50,17 @@ public class BackendCallHandler {
     
     public void handleReserveSuccessfulResponse(ReserveResponse reserveResponse) {
     	int playerId = reserveResponse.getPlayerSessionId().getPlayerId();
-        PokerPlayer pokerPlayer = state.getPokerPlayer(playerId);
+        PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) state.getPokerPlayer(playerId);
         int amountReserved = reserveResponse.amountReserved;
-		log.debug("handle reserve response: session = {}, amount = {}, pId = {}", 
-            new Object[] {reserveResponse.getPlayerSessionId(), amountReserved, pokerPlayer.getId()});
+		log.debug("handle reserve response: session = {}, amount = {}, pId = {}, properties = {}", 
+            new Object[] {reserveResponse.getPlayerSessionId(), amountReserved, pokerPlayer.getId(), reserveResponse.reserveProperties});
         
         log.debug("player is in hand, adding reserved amount {} as pending", amountReserved);
         pokerPlayer.addPendingAmount(amountReserved);
+        
+        pokerPlayer.setExternalPlayerSessionId(reserveResponse.reserveProperties.get(
+            CashGamesBackendContract.MARKET_TABLE_SESSION_REFERENCE_KEY));
+        
         
         // TODO: response should move to PokerHandler.handleReserveResponse
         BuyInResponse resp = new BuyInResponse();
