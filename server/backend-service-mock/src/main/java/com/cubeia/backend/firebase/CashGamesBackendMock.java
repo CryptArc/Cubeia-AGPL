@@ -143,7 +143,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
         } else if (amount == 66){ // MAGIC FAIL FOR 66 cents BUY-IN 
         	log.error("Failing reserve for magic amount 66 cents (hardcoded for debug reasons). sId={}", sid);
             ReserveFailedResponse failResponse = new ReserveFailedResponse(request.playerSessionId, 
-                ReserveFailedResponse.ErrorCode.MAX_LIMIT_REACHED, "Buy in limit reached");
+                ReserveFailedResponse.ErrorCode.UNSPECIFIED_FAILURE, "Unknown operator error");
             callback.requestFailed(failResponse);
             
         } else {

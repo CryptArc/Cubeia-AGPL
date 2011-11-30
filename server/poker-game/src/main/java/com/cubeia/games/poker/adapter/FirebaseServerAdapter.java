@@ -413,7 +413,8 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	}
 	
 	public String getIntegrationHandId() {
-		return getFirebaseState().getCurrentHandIdentifier().getIntegrationId();
+		HandIdentifier id = getFirebaseState().getCurrentHandIdentifier();
+		return (id == null ? null : id.getIntegrationId());
 	}
 	
 	private TableId getIntegrationTableId() {
