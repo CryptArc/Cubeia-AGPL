@@ -162,8 +162,7 @@ public class PokerState implements Serializable, IPokerState {
 	private List<Card> communityCards = new ArrayList<Card>();
 
 	// TODO: this property should be moved into the externalTablePropertiesMap
-	@VisibleForTesting
-	String tableIntegrationId;
+	private String tableIntegrationId;
 
 	/**
 	 * Map of external table properties. External properties are optional stuff that might be needed
@@ -228,7 +227,12 @@ public class PokerState implements Serializable, IPokerState {
 		
 		if (!isTournamentTable()) {
 			startGame();
+			
+			serverAdapter.notifyMarketReferences(player.getId(), marketTableReference, marketTableSessionReference)
+			
 		}
+		
+		
 	}
 
 	/**
