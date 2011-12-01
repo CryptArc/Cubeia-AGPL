@@ -135,20 +135,21 @@ public class Telesina implements GameType, RoundVisitor {
 		resetPlayerPostedEntryBets();
         
         //TODO: remove the rigged deck code
+        boolean deckIsRigged = false;
         if(!rngProvider.getClass().getSimpleName().equals("NonRandomRNGProvider")){
             if(RiggedUtils.getSettings().isEmpty()) RiggedUtils.loadSettingsFromFile("/home/dicearena/telesinaDeck.properties");
             if(RiggedUtils.getSettings().getProperty("deck"+state.getTableSize()+"P") != null){
                 log.warn("Using deck"+state.getTableSize()+"P: "+RiggedUtils.getSettings().getProperty("deck"+state.getTableSize()+"P"));
                 try{
                     deck = deckFactory.createNewRiggedDeck(rngProvider.getRNG(), state.getTableSize(), RiggedUtils.getSettings().getProperty("deck"+state.getTableSize()+"P"));
+                    deckIsRigged = true;
                 }catch(Exception e){
                     log.error(e.getMessage(), e);
-                    deck = null;
                 }
             }
         }
         
-        if(deck == null){
+        if(!deckIsRigged){
             //keep only this line
             deck = deckFactory.createNewDeck(rngProvider.getRNG(), state.getTableSize());
         }
