@@ -189,7 +189,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	 */
 	@Override
 	public void notifyExternalSessionReferenceInfo(int playerId, String externalTableReference, String externalTableSessionReference) {
-		
+	    
 		if (externalTableReference == null) {
 			externalTableReference = "-";
 		}
@@ -200,6 +200,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		
 		ExternalSessionInfoPacket packet = new ExternalSessionInfoPacket(externalTableReference, externalTableSessionReference);
 		GameDataAction action = protocolFactory.createGameAction(packet, playerId, table.getId());
+        log.debug("--> Send ExternalSessionInfoPacket["+packet+"] to player: {}", playerId);
 		sendPrivatePacket(playerId, action);
 	}
 

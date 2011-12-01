@@ -75,7 +75,7 @@ public class PokerPlayerImpl extends DefaultPokerPlayer implements Serializable 
         return externalPlayerSessionId;
     }
 
-    public void setExternalPlayerSessionId(String externalPlayerSessionId) {
+    public void setExternalPlayerSessionReference(String externalPlayerSessionId) {
         this.externalPlayerSessionId = externalPlayerSessionId;
     }
 }

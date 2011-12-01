@@ -1,5 +1,6 @@
 package com.cubeia.games.poker.handler;
 
+import static java.util.Collections.singletonMap;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -37,6 +38,7 @@ import com.cubeia.firebase.api.game.GameNotifier;
 import com.cubeia.firebase.api.game.lobby.LobbyTableAttributeAccessor;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.io.StyxSerializer;
+import com.cubeia.games.poker.adapter.FirebaseServerAdapter;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.poker.PokerState;
 
@@ -48,6 +50,7 @@ public class BackendCallHandlerTest {
     @Mock private PokerPlayerImpl pokerPlayer;
     @Mock private CashGamesBackendContract backend;
     @Mock private FirebaseCallbackFactory callbackFactory;
+    @Mock private FirebaseServerAdapter serverAdapter;
     private BackendCallHandler callHandler;
     private int playerId = 1337;
     
@@ -58,6 +61,7 @@ public class BackendCallHandlerTest {
         when(table.getNotifier()).thenReturn(notifier);
         when(state.getPokerPlayer(playerId)).thenReturn(pokerPlayer);
         when(backend.getCallbackFactory()).thenReturn(callbackFactory);
+        when(state.getServerAdapter()).thenReturn(serverAdapter);
     }
     
     
@@ -65,18 +69,26 @@ public class BackendCallHandlerTest {
     ReserveResponse reserveResponse;
     int amount;
     BuyInResponse buyInRespPacket;
+    private String tableSessionReference = "xSessionRef";
+    private String tableReference = "xTableRef";
     
     private void setupForHandleReserveSuccessfulResponse(boolean isSitInAfterBuyIn) throws IOException{
+        tableReference = "tableRef";
+        when(state.getExternalTableProperties()).thenReturn(singletonMap(CashGamesBackendContract.MARKET_TABLE_REFERENCE_KEY, (Serializable) tableReference));
     	amount = 500;
         playerSessionId = new PlayerSessionIdImpl(playerId);
         int balanceOnRemoteWallet = 10000;
         BalanceUpdate balanceUpdate = new BalanceUpdate(playerSessionId , balanceOnRemoteWallet, -1);
-        reserveResponse = new ReserveResponse(balanceUpdate , amount);
+        reserveResponse = new ReserveResponse(balanceUpdate, amount);
+        reserveResponse.setProperty(CashGamesBackendContract.MARKET_TABLE_SESSION_REFERENCE_KEY, tableSessionReference);
         
 		when(pokerPlayer.getPendingBalance()).thenReturn((long)amount);
         when(pokerPlayer.isSitInAfterSuccessfulBuyIn()).thenReturn(isSitInAfterBuyIn);
+
         callHandler.handleReserveSuccessfulResponse(reserveResponse);
+        
         verify(pokerPlayer).addPendingAmount(amount);
+        verify(pokerPlayer).setExternalPlayerSessionReference(tableSessionReference);
         
         ArgumentCaptor<GameDataAction> buyInResponseCaptor = ArgumentCaptor.forClass(GameDataAction.class);
         verify(notifier).notifyPlayer(Mockito.eq(playerId), buyInResponseCaptor.capture());
@@ -87,6 +99,7 @@ public class BackendCallHandlerTest {
         assertThat(buyInRespPacket.pendingBalance, is(amount));
         assertThat(buyInRespPacket.resultCode, is(Enums.BuyInResultCode.OK));
         verify(state).notifyPlayerBalance(playerId);
+        
     }
     
 
@@ -94,6 +107,7 @@ public class BackendCallHandlerTest {
     @Test
     public void testHandleReserveSuccessfulResponse() throws IOException {
     	setupForHandleReserveSuccessfulResponse(false);
+    	verify(serverAdapter).notifyExternalSessionReferenceInfo(playerId, tableReference, tableSessionReference);
         verify(state, never()).playerIsSittingIn(playerId);
     }
     

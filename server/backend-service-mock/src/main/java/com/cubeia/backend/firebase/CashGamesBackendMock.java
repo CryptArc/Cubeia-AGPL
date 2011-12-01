@@ -155,7 +155,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
             BalanceUpdate balanceUpdate = new BalanceUpdate(request.playerSessionId, newBalance, nextId());
             ReserveResponse response = new ReserveResponse(balanceUpdate, amount);
             log.debug("reserve successful: sId = {}, amount = {}, new balance = {}", new Object[] {sid, amount, newBalance});
-            response.setProperty(MARKET_TABLE_SESSION_REFERENCE_KEY, "MOCK-MARKET-SID-" + sid);
+            response.setProperty(MARKET_TABLE_SESSION_REFERENCE_KEY, "MOCK-MARKET-SID-" + sid.hashCode());
             callback.requestSucceded(response);
         }
         
