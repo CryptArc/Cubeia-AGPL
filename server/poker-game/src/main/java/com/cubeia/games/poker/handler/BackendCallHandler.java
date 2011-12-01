@@ -63,9 +63,10 @@ public class BackendCallHandler {
             CashGamesBackendContract.MARKET_TABLE_SESSION_REFERENCE_KEY);
         pokerPlayer.setExternalPlayerSessionReference(externalPlayerSessionReference);
         
+        Serializable marketTableRef = state.getExternalTableProperties().get(MARKET_TABLE_REFERENCE_KEY);
         state.getServerAdapter().notifyExternalSessionReferenceInfo(
             playerId, 
-            ""+state.getExternalTableProperties().get(MARKET_TABLE_REFERENCE_KEY),
+            marketTableRef == null ? null : marketTableRef.toString(),
             externalPlayerSessionReference);
         
         // TODO: response should move to PokerHandler.handleReserveResponse
