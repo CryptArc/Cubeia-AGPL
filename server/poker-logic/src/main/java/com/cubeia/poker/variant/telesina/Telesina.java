@@ -58,10 +58,6 @@ import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.util.HandResultCalculator;
 import com.cubeia.poker.variant.HandResultCreator;
 import com.google.common.annotations.VisibleForTesting;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 /**
  * Telesina game.
@@ -139,14 +135,16 @@ public class Telesina implements GameType, RoundVisitor {
 		resetPlayerPostedEntryBets();
         
         //TODO: remove the rigged deck code
-        if(RiggedUtils.getSettings().isEmpty()) RiggedUtils.loadSettingsFromFile("/home/dicearena/telesinaDeck.properties");
-        if(RiggedUtils.getSettings().getProperty("deck"+state.getTableSize()+"P") != null){
-            log.warn("Using deck"+state.getTableSize()+"P: "+RiggedUtils.getSettings().getProperty("deck"+state.getTableSize()+"P"));
-            try{
-                deck = deckFactory.createNewRiggedDeck(rngProvider.getRNG(), state.getTableSize(), RiggedUtils.getSettings().getProperty("deck"+state.getTableSize()+"P"));
-            }catch(Exception e){
-                log.error(e.getMessage(), e);
-                deck = null;
+        if(!rngProvider.getClass().getSimpleName().equals("NonRandomRNGProvider")){
+            if(RiggedUtils.getSettings().isEmpty()) RiggedUtils.loadSettingsFromFile("/home/dicearena/telesinaDeck.properties");
+            if(RiggedUtils.getSettings().getProperty("deck"+state.getTableSize()+"P") != null){
+                log.warn("Using deck"+state.getTableSize()+"P: "+RiggedUtils.getSettings().getProperty("deck"+state.getTableSize()+"P"));
+                try{
+                    deck = deckFactory.createNewRiggedDeck(rngProvider.getRNG(), state.getTableSize(), RiggedUtils.getSettings().getProperty("deck"+state.getTableSize()+"P"));
+                }catch(Exception e){
+                    log.error(e.getMessage(), e);
+                    deck = null;
+                }
             }
         }
         
