@@ -65,7 +65,7 @@ public class BackendCallHandler {
         
         state.getServerAdapter().notifyExternalSessionReferenceInfo(
             playerId, 
-            state.getExternalTableProperties().get(MARKET_TABLE_REFERENCE_KEY).toString(),
+            ""+state.getExternalTableProperties().get(MARKET_TABLE_REFERENCE_KEY),
             externalPlayerSessionReference);
         
         // TODO: response should move to PokerHandler.handleReserveResponse
