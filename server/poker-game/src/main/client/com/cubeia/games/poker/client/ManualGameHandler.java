@@ -58,6 +58,8 @@ public class ManualGameHandler implements PacketVisitor {
 
 	private final IOContext context;
 	
+	private PokerFormatter formatter = new PokerFormatter();
+	
 	public ManualGameHandler(IOContext context) {
 		this.context = context;
 	}
@@ -67,7 +69,7 @@ public class ManualGameHandler implements PacketVisitor {
 	}
 	
 	public void visit(DealPublicCards packet) {
-		System.out.println("Public cards dealt: "+packet.cards);
+		System.out.println("Public cards dealt: "+formatter.format(packet.cards));
 	}
 
 	public void visit(DealPrivateCards packet) {
@@ -82,7 +84,7 @@ public class ManualGameHandler implements PacketVisitor {
 
 	public void visit(ExposePrivateCards packet) {
 		for (CardToDeal card : packet.cards) { 
-			System.out.println("Player "+card.player+" shows: "+card);
+			System.out.println("Player "+card.player+" shows: "+formatter.format(card.card));
 		}
 	}
 
@@ -134,9 +136,9 @@ public class ManualGameHandler implements PacketVisitor {
     @Override
 	public void visit(CardToDeal packet) {
     	if (packet.player == context.getPlayerId()) {
-    		System.out.println("I was dealt: "+packet.card);
+    		System.out.println("I was dealt: "+formatter.format(packet.card));
     	} else {
-    		System.out.println("Player["+packet.player+"] was dealt: "+packet.card);
+    		System.out.println("Player["+packet.player+"] was dealt: "+formatter.format(packet.card));
     	}
 	}
     
@@ -183,11 +185,7 @@ public class ManualGameHandler implements PacketVisitor {
 	public void visit(ErrorPacket packet) {}
 	@Override
 	public void visit(TakeBackUncalledBet packet) {}
-
 	@Override
-	public void visit(ExternalSessionInfoPacket packet) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(ExternalSessionInfoPacket packet) {}
     
 }
