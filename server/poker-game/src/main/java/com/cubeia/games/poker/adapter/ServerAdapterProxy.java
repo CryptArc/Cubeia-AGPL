@@ -184,4 +184,12 @@ public abstract class ServerAdapterProxy implements ServerAdapter {
 		}
 	}
 
+	@Override
+	public void notifyExternalSessionReferenceInfo(int playerId, String externalTableReference,
+	    String externalTableSessionReference) {
+        if(getAdaptee() != null) {
+            getAdaptee().notifyExternalSessionReferenceInfo(playerId, externalTableReference, externalTableSessionReference);
+        }
+	}
+	
 }

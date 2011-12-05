@@ -149,6 +149,17 @@ public class Processor implements GameProcessor, TournamentProcessor {
             } else if (attachment instanceof CloseTableRequest) {
             	log.debug("got close table request: {}", attachment);
                 tableCloseHandler.closeTable(table, false);
+                
+            // TODO: remove magic strings CLOSE_TABLE and CLOSE_TABLE_HINT 
+            // in jadestone branch: use enum PlatformToGameMessage
+            // in cubeia branch: remove block since nobody will send this message
+            } else if ("CLOSE_TABLE_HINT".equals(attachment.toString())) {
+            	log.debug("got CLOSE_TABLE_HINT");
+            	tableCloseHandler.closeTable(table, false);
+            } else if ("CLOSE_TABLE".equals(attachment.toString())) {
+            	log.debug("got CLOSE_TABLE");
+            	tableCloseHandler.closeTable(table, true);
+
     	    } else {
     	        log.warn("Unhandled object: " + attachment.getClass().getName());
     	    }

@@ -1,5 +1,7 @@
 package com.cubeia.games.poker.handler;
 
+import static com.cubeia.backend.firebase.CashGamesBackendContract.MARKET_TABLE_REFERENCE_KEY;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
@@ -26,7 +28,6 @@ import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.lobby.PokerLobbyAttributes;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.poker.PokerState;
-import com.cubeia.poker.player.PokerPlayer;
 import com.google.inject.Inject;
 
 public class BackendCallHandler {
@@ -58,9 +59,15 @@ public class BackendCallHandler {
         log.debug("player is in hand, adding reserved amount {} as pending", amountReserved);
         pokerPlayer.addPendingAmount(amountReserved);
         
-        pokerPlayer.setExternalPlayerSessionId(reserveResponse.reserveProperties.get(
-            CashGamesBackendContract.MARKET_TABLE_SESSION_REFERENCE_KEY));
+        String externalPlayerSessionReference = reserveResponse.reserveProperties.get(
+            CashGamesBackendContract.MARKET_TABLE_SESSION_REFERENCE_KEY);
+        pokerPlayer.setExternalPlayerSessionReference(externalPlayerSessionReference);
         
+        Serializable marketTableRef = state.getExternalTableProperties().get(MARKET_TABLE_REFERENCE_KEY);
+        state.getServerAdapter().notifyExternalSessionReferenceInfo(
+            playerId, 
+            marketTableRef == null ? null : marketTableRef.toString(),
+            externalPlayerSessionReference);
         
         // TODO: response should move to PokerHandler.handleReserveResponse
         BuyInResponse resp = new BuyInResponse();

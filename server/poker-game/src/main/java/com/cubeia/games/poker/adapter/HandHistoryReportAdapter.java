@@ -228,11 +228,4 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
 		super.unseatPlayer(playerId, setAsWatcher);
 	}
 
-	@Override
-	public void notifyExternalSessionReferenceInfo(int playerId,String externalTableReference, String externalTableSessionReference) {
-		// TODO: implement externalSessionReferenceInfo?
-	}
-
-
-
 }

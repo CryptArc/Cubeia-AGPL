@@ -117,7 +117,6 @@ public class Telesina implements GameType, RoundVisitor {
         this.deckFactory = deckFactory;
         this.roundFactory = roundFactory;
         this.dealerButtonCalculator = dealerButtonCalculator;
-
 	}
 	
 	@Override
@@ -134,11 +133,31 @@ public class Telesina implements GameType, RoundVisitor {
 	private void initHand() {	
 		log.debug("init hand");
 		resetPlayerPostedEntryBets();
-		deck = deckFactory.createNewDeck(rngProvider.getRNG(), state.getTableSize());
+        
+        //TODO: remove the rigged deck code
+        boolean deckIsRigged = false;
+        if(!rngProvider.getClass().getSimpleName().equals("NonRandomRNGProvider")){
+            if(RiggedUtils.getSettings().isEmpty()) RiggedUtils.loadSettingsFromFile("/home/dicearena/telesinaDeck.properties");
+            if(RiggedUtils.getSettings().getProperty("deck"+state.getTableSize()+"P") != null){
+                log.warn("Using deck"+state.getTableSize()+"P: "+RiggedUtils.getSettings().getProperty("deck"+state.getTableSize()+"P"));
+                try{
+                    deck = deckFactory.createNewRiggedDeck(rngProvider.getRNG(), state.getTableSize(), RiggedUtils.getSettings().getProperty("deck"+state.getTableSize()+"P"));
+                    deckIsRigged = true;
+                }catch(Exception e){
+                    log.error(e.getMessage(), e);
+                }
+            }
+        }
+        
+        if(!deckIsRigged){
+            //keep only this line
+            deck = deckFactory.createNewDeck(rngProvider.getRNG(), state.getTableSize());
+        }
+        
 		try {
-		state.notifyDeckInfo(deck.getTotalNumberOfCardsInDeck(), deck.getDeckLowestRank());
+            state.notifyDeckInfo(deck.getTotalNumberOfCardsInDeck(), deck.getDeckLowestRank());
 		} catch(Throwable th) {
-			th.printStackTrace();
+            log.error(th.getMessage(), th);
 		}
 		blindsInfo.setAnteLevel(state.getAnteLevel());
 		setCurrentRound(roundFactory.createAnteRound(this));

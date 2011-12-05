@@ -3,6 +3,7 @@ package com.cubeia.poker.variant.telesina;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -63,5 +64,48 @@ public class TelesinaStartHandTest {
 //        verify(player1).setHasFolded(false);
 //        verify(player2).setHasFolded(false);
     }
+    
+    @Test
+    public void testThatNewDeckIsCreatedOnStartHand() {
+    	 RNGProvider rngProvider = mock(RNGProvider.class);
+         Random rng = mock(Random.class);
+         when(rngProvider.getRNG()).thenReturn(rng);
+         PokerState state = mock(PokerState.class);
+         when(state.getTableSize()).thenReturn(4);
+         when(state.getAnteLevel()).thenReturn(1000);
+         TelesinaDeckFactory deckFactory = mock(TelesinaDeckFactory.class);
+         TelesinaDeck deck = mock(TelesinaDeck.class);
+         when(deck.getTotalNumberOfCardsInDeck()).thenReturn(40);
+         when(deck.getDeckLowestRank()).thenReturn(Rank.FIVE);
+         when(deckFactory.createNewDeck(rng, 4)).thenReturn(deck);
+         TelesinaRoundFactory roundFactory = mock(TelesinaRoundFactory.class);
+         AnteRound anteRound = mock(AnteRound.class);
+         when(roundFactory.createAnteRound(Mockito.any(Telesina.class))).thenReturn(anteRound);
+         TelesinaDealerButtonCalculator dealerButtonCalculator = mock(TelesinaDealerButtonCalculator.class);
+         
+         PokerPlayer player1 = mock(PokerPlayer.class);
+         PokerPlayer player2 = mock(PokerPlayer.class);
+         SortedMap<Integer, PokerPlayer> seatingMap = new TreeMap<Integer, PokerPlayer>();
+         seatingMap.put(0, player1);
+         seatingMap.put(1, player2);
+         when(state.getCurrentHandSeatingMap()).thenReturn(seatingMap);
+         
+ 		Telesina telesina = new Telesina(rngProvider, state, deckFactory, roundFactory, dealerButtonCalculator );
+         telesina.blindsInfo = mock(BlindsInfo.class);
+         
+         telesina.startHand();
+
+         verify(deckFactory, times(1)).createNewDeck(rng, 4);
+         
+         telesina.startHand();
+
+         verify(deckFactory,times(2)).createNewDeck(rng, 4);
+         
+         telesina.startHand();
+
+         verify(deckFactory,times(3)).createNewDeck(rng, 4);
+
+    }
+ 
 
 }
