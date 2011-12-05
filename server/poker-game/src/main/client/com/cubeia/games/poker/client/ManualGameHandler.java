@@ -124,7 +124,11 @@ public class ManualGameHandler implements PacketVisitor {
     }
     
     public void visit(PlayerBalance packet) {
-        System.out.println("I got balance: "+packet.balance+", pending: "+packet.pendingBalance);
+    	if (packet.player == context.getPlayerId()) {
+    		System.out.println("I got balance: "+packet.balance+", pending: "+packet.pendingBalance);
+    	} else {
+    		System.out.println("Player["+packet.player+"] balance: "+packet.balance);
+    	}
     }
     
     @Override
