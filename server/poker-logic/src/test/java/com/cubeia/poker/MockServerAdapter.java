@@ -169,4 +169,7 @@ public class MockServerAdapter implements ServerAdapter {
 	@Override
 	public void unseatPlayer(int playerId, boolean setAsWatcher) {}
 
+    @Override
+    public void performPendingBuyIns(Collection<PokerPlayer> players) {}
+
 }

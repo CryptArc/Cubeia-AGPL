@@ -20,7 +20,8 @@ package com.cubeia.poker.player;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PossibleAction;
@@ -29,7 +30,7 @@ import com.cubeia.poker.hand.Hand;
 
 public class DefaultPokerPlayer implements PokerPlayer {
 
-	private static final Logger log = Logger.getLogger(DefaultPokerPlayer.class);
+	private static final Logger log = LoggerFactory.getLogger(DefaultPokerPlayer.class);
 	
 	protected static final long serialVersionUID = 74353817602536715L;
 	
@@ -60,6 +61,10 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	protected boolean isSittingOut;
 	
 	protected boolean exposingPocketCards;
+	
+    private int futureBuyInAmount;
+    
+
 
 	/**
 	 * the unused amount of chips kept by the player
@@ -85,6 +90,8 @@ public class DefaultPokerPlayer implements PokerPlayer {
     
     /** The next valid raise level for the last performed action */ 
 	private long lastRaiseLevel = 0;
+
+    private boolean buyInRequestActive;
 	
 	public DefaultPokerPlayer(int id) {
 		playerId = id;
@@ -358,4 +365,31 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	public long getLastRaiseLevel() {
 		return lastRaiseLevel;
 	}
+
+    @Override
+    public int getFutureBuyInAmount() {
+        return futureBuyInAmount;
+    }
+
+    @Override
+    public void addFutureBuyInAmount(int buyInAmount) {
+        futureBuyInAmount += buyInAmount;
+        log.debug("added {} as future buy in amount, total future buy in amount = {}", buyInAmount, futureBuyInAmount);
+    }
+
+    @Override
+    public void clearFutureBuyInAmountAndRequest() {
+        futureBuyInAmount = 0;
+        buyInRequestActive = false;
+    }
+
+    @Override
+    public void buyInRequestActive() {
+        buyInRequestActive = true;
+    }
+
+    @Override
+    public boolean isBuyInRequestActive() {
+        return buyInRequestActive;
+    }
 }

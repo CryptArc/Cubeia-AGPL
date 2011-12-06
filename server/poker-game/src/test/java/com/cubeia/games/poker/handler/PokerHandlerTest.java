@@ -3,6 +3,7 @@ package com.cubeia.games.poker.handler;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -49,7 +50,6 @@ public class PokerHandlerTest {
     @Mock private CashGamesBackendContract backend;
     @Mock private FirebaseCallbackFactory callbackFactory;
     @Mock private TimeoutCache timeoutCache;
-    // @Mock private BackendCallHandler backendHandler;
     private PokerHandler pokerHandler;
     private int playerId = 1337;
 
@@ -64,7 +64,6 @@ public class PokerHandlerTest {
         pokerHandler.table = table;
         pokerHandler.cashGameBackend = backend;
         pokerHandler.timeoutCache = timeoutCache;
-        // pokerHandler.backendHandler = backendHandler;
         
         pokerHandler.actionTransformer = new ActionTransformer();
         
@@ -125,21 +124,16 @@ public class PokerHandlerTest {
     public void testVisitBuyInRequest() {
         PlayerSessionId playerSessionId = new PlayerSessionIdImpl(playerId);
         when(pokerPlayer.getPlayerSessionId()).thenReturn(playerSessionId);
-        BuyInRequest buyInRequest = new BuyInRequest(4000, true);
+        int buyInAmount = 4000;
+        BuyInRequest buyInRequest = new BuyInRequest(buyInAmount, true);
         ReserveCallback reserveCallback = mock(ReserveCallback.class);
         when(callbackFactory.createReserveCallback(table)).thenReturn(reserveCallback);
         
         pokerHandler.visit(buyInRequest);
         
-        verify(backend, Mockito.times(1)).reserve(Mockito.any(ReserveRequest.class), Mockito.any(ReserveCallback.class));
-        
-        ArgumentCaptor<ReserveRequest> reqCaptor = ArgumentCaptor.forClass(ReserveRequest.class);
+        verify(backend, never()).reserve(Mockito.any(ReserveRequest.class), Mockito.any(ReserveCallback.class));
+        verify(state).handleBuyInRequest(pokerPlayer, buyInAmount);
         verify(pokerPlayer).setSitInAfterSuccessfulBuyIn(true);
-        verify(backend).reserve(reqCaptor.capture(), Mockito.eq(reserveCallback));
-        ReserveRequest reserveReq = reqCaptor.getValue();
-        assertThat(reserveReq.amount, is(buyInRequest.amount));
-        assertThat(reserveReq.playerSessionId, is(playerSessionId));
-        assertThat(reserveReq.roundNumber, is(0));
     }
     
     
@@ -159,7 +153,8 @@ public class PokerHandlerTest {
         pokerHandler.visit(buyInRequest);
         
         // since amount is higher than max allowed we should never get a call to the backend
-        verify(backend, Mockito.never()).reserve(Mockito.any(ReserveRequest.class), Mockito.any(ReserveCallback.class));
+        verify(backend, never()).reserve(Mockito.any(ReserveRequest.class), Mockito.any(ReserveCallback.class));
+        verify(pokerPlayer, never()).addFutureBuyInAmount(Mockito.anyInt());
         verify(reserveCallback).requestFailed(Mockito.any(ReserveFailedResponse.class));
     }
     
@@ -180,6 +175,7 @@ public class PokerHandlerTest {
         
         // since amount is higher than max allowed we should never get a call to the backend
         verify(backend, Mockito.never()).reserve(Mockito.any(ReserveRequest.class), Mockito.any(ReserveCallback.class));
+        verify(pokerPlayer, never()).addFutureBuyInAmount(Mockito.anyInt());
         verify(reserveCallback).requestFailed(Mockito.any(ReserveFailedResponse.class));
     }
     
@@ -200,6 +196,7 @@ public class PokerHandlerTest {
         
         // since amount is higher than max allowed we should never get a call to the backend
         verify(backend, Mockito.never()).reserve(Mockito.any(ReserveRequest.class), Mockito.any(ReserveCallback.class));
+        verify(pokerPlayer, never()).addFutureBuyInAmount(Mockito.anyInt());
         verify(reserveCallback).requestFailed(Mockito.any(ReserveFailedResponse.class));
     }
     
@@ -220,6 +217,7 @@ public class PokerHandlerTest {
         
         // since amount is higher than max allowed we should never get a call to the backend
         verify(backend, Mockito.never()).reserve(Mockito.any(ReserveRequest.class), Mockito.any(ReserveCallback.class));
+        verify(pokerPlayer, never()).addFutureBuyInAmount(Mockito.anyInt());
         verify(reserveCallback).requestFailed(Mockito.any(ReserveFailedResponse.class));
     }
     
@@ -241,26 +239,7 @@ public class PokerHandlerTest {
         
         // since amount is higher than max allowed we should never get a call to the backend
         verify(backend, Mockito.never()).reserve(Mockito.any(ReserveRequest.class), Mockito.any(ReserveCallback.class));
+        verify(pokerPlayer, never()).addFutureBuyInAmount(Mockito.anyInt());
         verify(reserveCallback).requestFailed(Mockito.any(ReserveFailedResponse.class));
     }
-   
-
-    /*@Test
-    public void testVisitInternalSerializedObject() throws IOException {
-        ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-        ObjectOutputStream objOut = new ObjectOutputStream(byteOut);
-        objOut.writeObject(new OpenSessionResponse(null, null));
-        
-        InternalSerializedObject packet = new InternalSerializedObject();
-        packet.bytes = byteOut.toByteArray();
-        pokerHandler.visit(packet);
-        verify(backendHandler).handleOpenSessionSuccessfulResponse(Mockito.any(OpenSessionResponse.class));
-        
-        byteOut = new ByteArrayOutputStream();
-        objOut = new ObjectOutputStream(byteOut);
-        objOut.writeObject(new ReserveResponse(null, 0));
-        packet.bytes = byteOut.toByteArray();
-        pokerHandler.visit(packet);
-        verify(backendHandler).handleReserveSuccessfulResponse(Mockito.eq(playerId), Mockito.any(ReserveResponse.class));
-    }*/
 }

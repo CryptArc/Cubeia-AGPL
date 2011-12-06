@@ -53,9 +53,11 @@ import se.jadestone.dicearena.game.poker.network.protocol.StartNewHand;
 import se.jadestone.dicearena.game.poker.network.protocol.TakeBackUncalledBet;
 
 import com.cubeia.backend.cashgame.TableId;
+import com.cubeia.backend.cashgame.callback.ReserveCallback;
 import com.cubeia.backend.cashgame.dto.BalanceUpdate;
 import com.cubeia.backend.cashgame.dto.BatchHandRequest;
 import com.cubeia.backend.cashgame.dto.BatchHandResponse;
+import com.cubeia.backend.cashgame.dto.ReserveRequest;
 import com.cubeia.backend.cashgame.exceptions.BatchHandFailedException;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
@@ -315,6 +317,24 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		sendPublicPacket(action, -1);
 	}
 
+	@Override
+	public void performPendingBuyIns(Collection<PokerPlayer> players) {
+	    
+	    for (PokerPlayer player : players) {
+	        if (!player.isBuyInRequestActive()  &&   player.getFutureBuyInAmount() > 0) {
+	            PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) player;
+    	        ReserveCallback callback = backend.getCallbackFactory().createReserveCallback(table);
+    	        
+    	        log.debug("sending reserve request to backend: player id = {}, amount = {}", player.getId(), player.getFutureBuyInAmount());
+    	        
+    	        ReserveRequest reserveRequest = new ReserveRequest(pokerPlayer.getPlayerSessionId(), getFirebaseState().getHandCount(), 
+    	            player.getFutureBuyInAmount());
+    	        backend.reserve(reserveRequest, callback);
+    	        player.buyInRequestActive();
+	        }
+	    }
+	}
+	
 	@Override
 	public void notifyBuyInInfo(int playerId, boolean mandatoryBuyin) {
 		try {

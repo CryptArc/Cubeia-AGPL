@@ -17,9 +17,13 @@
 
 package com.cubeia.poker;
 
+import static com.google.common.collect.Collections2.filter;
+import static java.util.Arrays.asList;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -65,6 +69,7 @@ import com.cubeia.poker.variant.telesina.TelesinaDeckFactory;
 import com.cubeia.poker.variant.telesina.TelesinaRoundFactory;
 import com.cubeia.poker.variant.texasholdem.TexasHoldem;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Predicate;
 
 /**
  * This is the class that users of the poker api will interface with.
@@ -301,6 +306,22 @@ public class PokerState implements Serializable, IPokerState {
         }
 	}
 	
+	/**
+	 * Returns the players that are sitting in and has no active buy in request to the backend.
+	 * @return players ready to play
+	 */
+	@VisibleForTesting
+	@Override
+	public Collection<PokerPlayer> getPlayersReadyToStartHand() {
+	    return filter(playerMap.values(), new Predicate<PokerPlayer>() {
+	        @Override
+	        public boolean apply(PokerPlayer player) { 
+	            return !player.isSittingOut()  &&  !player.isBuyInRequestActive();
+	        }
+        });
+	}
+	
+	/*
 	public int countSittingInPlayers() {
 		int sitIn = 0;
 		for (PokerPlayer player : playerMap.values()) {
@@ -310,6 +331,7 @@ public class PokerState implements Serializable, IPokerState {
 		}
 		return sitIn;
 	}
+	*/
 
 	@Override
 	public int countNonFoldedPlayers() {
@@ -334,15 +356,15 @@ public class PokerState implements Serializable, IPokerState {
 	}
 
 	public void startHand() {
-		if (countSittingInPlayers() > 1) {
+		if (getPlayersReadyToStartHand().size() > 1) {
 			setCurrentState(PLAYING);
 
 			resetValuesAtStartOfHand();
 
 			saveStartingBalances();
 
-			currentHandSeatingMap = createCopyWithSitOutPlayersExcluded(seatingMap);
-			currentHandPlayerMap = createCopyWithSitOutPlayersExcluded(playerMap);
+			currentHandSeatingMap = createCopyWithNotReadyPlayersExcluded(seatingMap);
+			currentHandPlayerMap = createCopyWithNotReadyPlayersExcluded(playerMap);
 
 			notifyNewHand();
 			notifyAllPlayerBalances();
@@ -351,7 +373,7 @@ public class PokerState implements Serializable, IPokerState {
 			gameType.startHand();
             startTime = System.currentTimeMillis();
 		} else {
-			throw new IllegalStateException("Not enough players to start hand. Was: " + countSittingInPlayers() + ", expected > 1. Players: "
+			throw new IllegalStateException("Not enough players to start hand. Was: " + getPlayersReadyToStartHand().size() + ", expected > 1. Players: "
 					+ playerMap);
 		}
 	}
@@ -361,16 +383,16 @@ public class PokerState implements Serializable, IPokerState {
     }
 
 	/**
-	 * Take a copy of the supplied map where all players that are sitting out are removed.
-	 * 
+	 * Take a copy of the supplied map where all players that are not ready to start a hand excluded.
 	 * @param map
 	 * @return
 	 */
-	private SortedMap<Integer, PokerPlayer> createCopyWithSitOutPlayersExcluded(Map<Integer, PokerPlayer> map) {
+    @VisibleForTesting
+	protected SortedMap<Integer, PokerPlayer> createCopyWithNotReadyPlayersExcluded(Map<Integer, PokerPlayer> map) {
 		TreeMap<Integer, PokerPlayer> treeMap = new TreeMap<Integer, PokerPlayer>();
 		for (Integer pid : map.keySet()) {
 			PokerPlayer pokerPlayer = map.get(pid);
-			if (!pokerPlayer.isSittingOut()) {
+			if (!pokerPlayer.isSittingOut()  &&  !pokerPlayer.isBuyInRequestActive()) {
 				treeMap.put(pid, pokerPlayer);
 			}
 		}
@@ -423,6 +445,8 @@ public class PokerState implements Serializable, IPokerState {
 				serverAdapter.notifyPlayerBalance(player);
 			}
 			
+			serverAdapter.performPendingBuyIns(playerMap.values());
+			
 			// clean up players here and make leaveing players leave and so on
 			// also update the lobby
 			serverAdapter.cleanupPlayers();
@@ -442,12 +466,19 @@ public class PokerState implements Serializable, IPokerState {
 	 * 
 	 * @param handResult
 	 */
-	private void setPlayersWithoutMoneyAsSittingOut(HandResult handResult) {
+	@VisibleForTesting
+	protected void setPlayersWithoutMoneyAsSittingOut(HandResult handResult) {
 		for (PokerPlayer player : handResult.getResults().keySet()) {
 			long totalBalance = player.getBalance() + player.getPendingBalance();
+			
+			int playerId = player.getId();
+			
 			if (totalBalance < settings.getAnteLevel()) {
 				playerIsSittingOut(player.getId(), SitOutStatus.SITTING_OUT);
-				notifyBuyinInfo(player.getId(), true);
+				
+				if (!player.isBuyInRequestActive()) {
+				    notifyBuyinInfo(player.getId(), true);
+				}
 			}
 		}
 	}
@@ -571,8 +602,7 @@ public class PokerState implements Serializable, IPokerState {
 
 		// if we declined ante or did not pay ante
 		// then we should be removed from the current hand- and seating-map
-		if (status == SitOutStatus.MISSED_ANTE)
-		{
+		if (status == SitOutStatus.MISSED_ANTE) {
 			currentHandPlayerMap.remove(playerId);
 			int seatId = player.getSeatId();
 			currentHandSeatingMap.remove(seatId);
@@ -607,7 +637,10 @@ public class PokerState implements Serializable, IPokerState {
 			startGame();
 		} else {
 			log.debug("player {} is out of cash, must bring more before joining", playerId);
-			notifyBuyinInfo(playerId, true);
+			
+			if (!player.isBuyInRequestActive()) {
+			    notifyBuyinInfo(playerId, true);
+			}
 		}
 	}
 
@@ -1015,6 +1048,16 @@ public class PokerState implements Serializable, IPokerState {
         }
         
         return muckers;
+    }
+
+    @Override
+    public void handleBuyInRequest(PokerPlayer pokerPlayer, int amount) {
+        pokerPlayer.addFutureBuyInAmount(amount);
+        
+        if (asList(WAITING_TO_START, NOT_STARTED).contains(getCurrentState())) {
+            log.debug("game is not started, performing immediate reserve request for player: {}", pokerPlayer.getId());
+            getServerAdapter().performPendingBuyIns(Collections.singleton(pokerPlayer));
+        }
     }
 
 

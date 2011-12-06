@@ -1,5 +1,6 @@
 package com.cubeia.poker;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -38,13 +39,18 @@ public interface IPokerState {
 	 */
 	int countNonFoldedPlayers();
 	
-	/**
-	 * Returns the number of players sitting in.
-	 * @return number of players sitting in
-	 */
-    int countSittingInPlayers();
+//	/**
+//	 * Returns the number of players sitting in.
+//	 * @return number of players sitting in
+//	 */
+//    int countSittingInPlayers();
     
-
+	/**
+	 * Returns the players that are ready to start a new hand.
+	 * @return number of players ready for a new hand
+	 */
+    Collection<PokerPlayer> getPlayersReadyToStartHand();
+    
 	boolean isPlayerInHand(int playerId);
 
 	void notifyDealerButton(int dealerButtonSeatId);
@@ -84,5 +90,12 @@ public interface IPokerState {
      * This method should be called before or after a hand, not in the middle.
      */
     void sitOutPlayersMarkedForSitOutNextRound();
+
+    /**
+     * Handles a buy in request for a player.
+     * @param pokerPlayer player
+     * @param amount amount requested
+     */
+    void handleBuyInRequest(PokerPlayer pokerPlayer, int amount);
 
 }

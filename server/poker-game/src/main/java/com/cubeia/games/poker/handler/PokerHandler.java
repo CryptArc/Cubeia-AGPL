@@ -29,7 +29,6 @@ import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitoutRequest;
 import com.cubeia.backend.cashgame.callback.ReserveCallback;
 import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;
 import com.cubeia.backend.cashgame.dto.ReserveFailedResponse.ErrorCode;
-import com.cubeia.backend.cashgame.dto.ReserveRequest;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.guice.inject.Service;
@@ -103,20 +102,16 @@ public class PokerHandler extends DefaultPokerHandler {
 	        	
                 if (pokerPlayer.getPlayerSessionId() != null) {
 
-                    ReserveRequest reserveRequest = new ReserveRequest(pokerPlayer.getPlayerSessionId(), getCurrentRoundNumber(), packet.amount);
-                    ReserveCallback callback = cashGameBackend.getCallbackFactory().createReserveCallback(table);
-
                     // Check if the amount is allowed by the table
-                    long sum = reserveRequest.amount + pokerPlayer.getBalance() + pokerPlayer.getPendingBalance();
+                    long sum = packet.amount + pokerPlayer.getBalance() + pokerPlayer.getPendingBalance();
                     if (sum <= state.getMaxBuyIn() && sum >= state.getMinBuyIn()) {
-                        cashGameBackend.reserve(reserveRequest, callback);
+                        state.handleBuyInRequest(pokerPlayer, packet.amount);
                     } else {
-                        ReserveFailedResponse failResponse = new ReserveFailedResponse(reserveRequest.playerSessionId, ErrorCode.AMOUNT_TOO_HIGH, "Requested buy in plus balance cannot be more than max buy in");
+                        ReserveFailedResponse failResponse = new ReserveFailedResponse(pokerPlayer.getPlayerSessionId(), ErrorCode.AMOUNT_TOO_HIGH, "Requested buy in plus balance cannot be more than max buy in");
+                        ReserveCallback callback = cashGameBackend.getCallbackFactory().createReserveCallback(table);
                         callback.requestFailed(failResponse);
                     }
                     pokerPlayer.setSitInAfterSuccessfulBuyIn(true);
-
-		        // pokerPlayer.setSitInAfterSuccessfulBuyIn(packet.sitInIfSuccessful);
                 }else{
                     log.warn("PlayerSessionId was null when Poker Player tried to buy in. Table["+table.getId()+"], Request["+packet+"]");
                 }
@@ -128,33 +123,9 @@ public class PokerHandler extends DefaultPokerHandler {
 		}
 	}
 	
-	/*@Override
-	public void visit(InternalSerializedObject packet) {
-	    ObjectInputStream objectIn;
-	    Object object;
-        try {
-            objectIn = new ObjectInputStream(new ByteArrayInputStream(packet.bytes));
-            object = objectIn.readObject();
-        } catch (Exception e) {
-            throw new RuntimeException("error deserializing object payload", e);
-        } 
-	    
-	    if (object instanceof OpenSessionResponse) {
-	        backendHandler.handleOpenSessionSuccessfulResponse((OpenSessionResponse) object);
-	    } else if (object instanceof OpenSessionFailedResponse) {
-            log.debug("got open session failed response: {}", object);
-	    } else if (object instanceof ReserveResponse) {
-	        log.debug("got reserver response: {}", object);
-	        backendHandler.handleReserveSuccessfulResponse(playerId, (ReserveResponse) object);
-	    } else {
-	        log.warn("unhandled object: " + object.getClass().getName());
-	    }
-	    
-	}*/
-	
-	private int getCurrentRoundNumber() {
-		return ((FirebaseState)state.getAdapterState()).getHandCount();
-	}
+//	private int getCurrentRoundNumber() {
+//		return ((FirebaseState)state.getAdapterState()).getHandCount();
+//	}
 
 
     private boolean verifySequence(PerformAction packet) {

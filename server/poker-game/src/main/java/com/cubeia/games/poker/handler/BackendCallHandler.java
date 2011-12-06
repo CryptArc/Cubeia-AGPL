@@ -28,6 +28,7 @@ import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.lobby.PokerLobbyAttributes;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.poker.PokerState;
+import com.cubeia.poker.player.PokerPlayer;
 import com.google.inject.Inject;
 
 public class BackendCallHandler {
@@ -62,6 +63,8 @@ public class BackendCallHandler {
         String externalPlayerSessionReference = reserveResponse.reserveProperties.get(
             CashGamesBackendContract.MARKET_TABLE_SESSION_REFERENCE_KEY);
         pokerPlayer.setExternalPlayerSessionReference(externalPlayerSessionReference);
+        
+        pokerPlayer.clearFutureBuyInAmountAndRequest();
         
         Serializable marketTableRef = state.getExternalTableProperties().get(MARKET_TABLE_REFERENCE_KEY);
         state.getServerAdapter().notifyExternalSessionReferenceInfo(
@@ -110,7 +113,16 @@ public class BackendCallHandler {
 	        	break;
         }
         
+        PokerPlayer player = state.getPokerPlayer(playerId);
+        
+        if (player.isBuyInRequestActive()) {
+            log.error("reserve failed but player had no active request, player id = {}", playerId);
+        }
+            
+        player.clearFutureBuyInAmountAndRequest();
     	
+        // TODO: if this is a failed AAMS reserve the player MUST be removed from the table. 
+        
 		sendGameData(playerId, resp);
 	}
 

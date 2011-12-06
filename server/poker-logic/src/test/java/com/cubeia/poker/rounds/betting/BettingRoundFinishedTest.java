@@ -17,10 +17,12 @@
 
 package com.cubeia.poker.rounds.betting;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -60,7 +62,7 @@ public class BettingRoundFinishedTest {
 
     @Test
     public void testNotFinishedWhenNoOneHasActed() {
-        when(state.countSittingInPlayers()).thenReturn(3);
+        when(state.getPlayersReadyToStartHand()).thenReturn(asList(player1, player2, player3));
         when(player1.hasActed()).thenReturn(false);
         when(player2.hasActed()).thenReturn(false);
         when(player3.hasActed()).thenReturn(false);
@@ -69,7 +71,7 @@ public class BettingRoundFinishedTest {
 	
     @Test
     public void testFinishedWhenEverybodyHasActed() {
-        when(state.countSittingInPlayers()).thenReturn(3);
+        when(state.getPlayersReadyToStartHand()).thenReturn(asList(player1, player2, player3));
         when(player1.hasActed()).thenReturn(true);
         when(player2.hasActed()).thenReturn(true);
         when(player3.hasActed()).thenReturn(true);
@@ -81,13 +83,13 @@ public class BettingRoundFinishedTest {
         when(player1.hasFolded()).thenReturn(true);
         when(player2.hasFolded()).thenReturn(true);
         
-        when(state.countSittingInPlayers()).thenReturn(3);
+        when(state.getPlayersReadyToStartHand()).thenReturn(asList(player1, player2, player3));
         assertThat(round.calculateIfRoundFinished(), is(true));
 	}
     
     @Test
     public void testFinishedWhenAllButOneSittingOut() {
-        when(state.countSittingInPlayers()).thenReturn(1);
+        when(state.getPlayersReadyToStartHand()).thenReturn(asList(player3));
         when(player1.isSittingOut()).thenReturn(true);
         when(player2.isSittingOut()).thenReturn(true);
         when(player3.isSittingOut()).thenReturn(false);
@@ -96,7 +98,7 @@ public class BettingRoundFinishedTest {
     
     @Test
     public void testFinishedWhenAllSittingOut() {
-        when(state.countSittingInPlayers()).thenReturn(0);
+        when(state.getPlayersReadyToStartHand()).thenReturn(Collections.<PokerPlayer>emptyList());
         when(player1.isSittingOut()).thenReturn(true);
         when(player2.isSittingOut()).thenReturn(true);
         when(player3.isSittingOut()).thenReturn(true);
@@ -105,7 +107,7 @@ public class BettingRoundFinishedTest {
     
     @Test
     public void testFinished3PlayersAllInAndFoldedCombo() {
-        when(state.countSittingInPlayers()).thenReturn(3);
+        when(state.getPlayersReadyToStartHand()).thenReturn(asList(player1, player2, player3));
         
         when(player1.isAllIn()).thenReturn(true);
         when(player2.hasFolded()).thenReturn(true);

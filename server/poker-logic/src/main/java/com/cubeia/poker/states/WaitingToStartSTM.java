@@ -36,16 +36,17 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
 	public void timeout(PokerState state) {
 		if (!state.isTournamentTable()) {
 			state.setHandFinished(false);
+			state.getServerAdapter().performPendingBuyIns(state.getSeatedPlayers());
 			state.commitPendingBalances();
 						
 		    state.sitOutPlayersMarkedForSitOutNextRound();
 			
-			if (state.countSittingInPlayers() > 1) {
+			if (state.getPlayersReadyToStartHand().size() > 1) {
 				state.startHand();
 			} else {
 				state.setHandFinished(true);
 				state.setState(PokerState.NOT_STARTED);
-				log.info("WILL NOT START NEW HAND, TOO FEW PLAYERS SEATED: " + state.countSittingInPlayers() + " sitting in of " + state.getSeatedPlayers().size());
+				log.info("WILL NOT START NEW HAND, TOO FEW PLAYERS SEATED: " + state.getPlayersReadyToStartHand().size() + " sitting in of " + state.getSeatedPlayers().size());
 			}
 			state.cleanupPlayers(); // Will remove disconnected and leaving players
 		} else {

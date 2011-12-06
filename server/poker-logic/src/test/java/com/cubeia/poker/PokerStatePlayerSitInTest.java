@@ -48,6 +48,36 @@ public class PokerStatePlayerSitInTest {
         verify(player).setSitOutNextRound(false);
         verify(player).setSitInAfterSuccessfulBuyIn(false);
         verify(serverAdapter).notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITIN);
+        verify(serverAdapter, never()).notifyBuyInInfo(playerId, true);
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testPlayerIsSittingInNoCashSendsBuyInInfo() {
+        int playerId = 1337;
+        state.playerMap = mock(Map.class);
+        PokerPlayer player = mock(PokerPlayer.class);
+        when(state.playerMap.get(playerId)).thenReturn(player);
+        when(state.gameType.canPlayerBuyIn(Mockito.eq(player), (PokerSettings) Mockito.any())).thenReturn(false);
+        
+        state.playerIsSittingIn(playerId);
+        
+        verify(serverAdapter).notifyBuyInInfo(playerId, true);
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testPlayerIsSittingInDontSendBuyInInfoIfPendingRequest() {
+        int playerId = 1337;
+        state.playerMap = mock(Map.class);
+        PokerPlayer player = mock(PokerPlayer.class);
+        when(player.isBuyInRequestActive()).thenReturn(true);
+        when(state.playerMap.get(playerId)).thenReturn(player);
+        when(state.gameType.canPlayerBuyIn(Mockito.eq(player), (PokerSettings) Mockito.any())).thenReturn(false);
+        
+        state.playerIsSittingIn(playerId);
+        
+        verify(serverAdapter, never()).notifyBuyInInfo(playerId, true);
     }
     
     @SuppressWarnings("unchecked")

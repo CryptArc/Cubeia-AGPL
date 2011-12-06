@@ -192,4 +192,11 @@ public abstract class ServerAdapterProxy implements ServerAdapter {
         }
 	}
 	
+	@Override
+	public void performPendingBuyIns(Collection<PokerPlayer> players) {
+        if(getAdaptee() != null) {
+            getAdaptee().performPendingBuyIns(players);
+        }
+	}
+	
 }

@@ -1,12 +1,14 @@
 package com.cubeia.poker.variant.telesina;
 
-import com.cubeia.poker.hand.Card;
-import com.cubeia.poker.hand.Shuffler;
 import java.util.List;
 import java.util.Random;
+
 import junit.framework.Assert;
 
 import org.junit.Test;
+
+import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.Shuffler;
 
 public class TelesinaDeckUtilTest {
     

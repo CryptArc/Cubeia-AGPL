@@ -30,6 +30,8 @@ import com.cubeia.backend.cashgame.TableId;
 import com.cubeia.backend.cashgame.dto.AnnounceTableResponse;
 import com.cubeia.backend.cashgame.dto.BalanceUpdate;
 import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
+import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;
+import com.cubeia.backend.cashgame.dto.ReserveFailedResponse.ErrorCode;
 import com.cubeia.backend.cashgame.dto.ReserveResponse;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
 import com.cubeia.backend.firebase.FirebaseCallbackFactory;
@@ -89,6 +91,7 @@ public class BackendCallHandlerTest {
         
         verify(pokerPlayer).addPendingAmount(amount);
         verify(pokerPlayer).setExternalPlayerSessionReference(tableSessionReference);
+        verify(pokerPlayer).clearFutureBuyInAmountAndRequest();
         
         ArgumentCaptor<GameDataAction> buyInResponseCaptor = ArgumentCaptor.forClass(GameDataAction.class);
         verify(notifier).notifyPlayer(Mockito.eq(playerId), buyInResponseCaptor.capture());
@@ -102,13 +105,30 @@ public class BackendCallHandlerTest {
         
     }
     
-
+    @Test
+    public void testHandleReserveFailedResponse() throws IOException {
+        PlayerSessionId sessionId = mock(PlayerSessionId.class);
+        when(sessionId.getPlayerId()).thenReturn(playerId);
+        ReserveFailedResponse response = new ReserveFailedResponse(sessionId, ErrorCode.MAX_LIMIT_REACHED, "fallör");
+        
+        callHandler.handleReserveFailedResponse(response);
+        
+        verify(pokerPlayer).clearFutureBuyInAmountAndRequest();
+        ArgumentCaptor<GameDataAction> actionCaptor = ArgumentCaptor.forClass(GameDataAction.class);
+        verify(notifier).notifyPlayer(Mockito.eq(playerId), actionCaptor.capture());
+        
+        GameDataAction action = actionCaptor.getValue();
+        BuyInResponse buyInResponse = (BuyInResponse) new StyxSerializer(new ProtocolObjectFactory()).unpack(action.getData());
+        assertThat(buyInResponse.amountBroughtIn, is(0));
+        assertThat(buyInResponse.pendingBalance, is(0));
+        assertThat(buyInResponse.resultCode, is(Enums.BuyInResultCode.MAX_LIMIT_REACHED));
+    }
     
     @Test
     public void testHandleReserveSuccessfulResponse() throws IOException {
     	setupForHandleReserveSuccessfulResponse(false);
     	verify(serverAdapter).notifyExternalSessionReferenceInfo(playerId, tableReference, tableSessionReference);
-        verify(state, never()).playerIsSittingIn(playerId);
+    	verify(state, never()).playerIsSittingIn(playerId);
     }
     
     @Test
