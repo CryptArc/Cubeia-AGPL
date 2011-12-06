@@ -39,12 +39,15 @@ import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.player.SitOutStatus;
+import com.cubeia.poker.util.ThreadLocalProfiler;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 
 public class PokerHandler extends DefaultPokerHandler {
 
-    private static Logger log = LoggerFactory.getLogger(PokerHandler.class);
+    private static final int SLOW_RESPONSE_TIME_MS = 100;
+
+	private static Logger log = LoggerFactory.getLogger(PokerHandler.class);
     
 	public int playerId;
 	
@@ -70,10 +73,25 @@ public class PokerHandler extends DefaultPokerHandler {
 	@Override
 	public void visit(PerformAction packet) {
 	    if (verifySequence(packet)) {
-	    	timeoutCache.removeTimeout(table.getId(), playerId, table.getScheduler());
-	        PokerAction action = new PokerAction(playerId, actionTransformer.transform(packet.action.type));
-	        action.setBetAmount(packet.betAmount);
-	        state.act(action);
+	    	long start = System.currentTimeMillis();
+	    	ThreadLocalProfiler.start();
+	    	try {
+		    	timeoutCache.removeTimeout(table.getId(), playerId, table.getScheduler());
+		        PokerAction action = new PokerAction(playerId, actionTransformer.transform(packet.action.type));
+		        action.setBetAmount(packet.betAmount);
+		        state.act(action);
+	        
+	    	} finally {
+		        // Report profiling if slow 
+		        long elapsed = System.currentTimeMillis() - start;
+		        if (elapsed > SLOW_RESPONSE_TIME_MS) {
+		        	ThreadLocalProfiler.stop();
+		        	log.warn("Slow response time detected. Perform Action took "+elapsed+"ms, (more than "+SLOW_RESPONSE_TIME_MS+" ms.) " +
+		        			"Packet: "+packet+"\n"+
+		        			ThreadLocalProfiler.getCallStackAsString());
+		        }
+		        ThreadLocalProfiler.clear();
+	    	}
 	    } 
 	}
 	

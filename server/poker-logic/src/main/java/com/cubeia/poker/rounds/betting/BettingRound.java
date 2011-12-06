@@ -33,6 +33,7 @@ import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
+import com.cubeia.poker.util.ThreadLocalProfiler;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
@@ -140,6 +141,7 @@ public class BettingRound implements Round, BettingRoundContext {
 	
     public void act(PokerAction action) {
 		log.debug("Act : "+action);
+		ThreadLocalProfiler.add("BettingRound.act");
 		PokerPlayer player = gameType.getState().getPlayerInCurrentHand(action.getPlayerId());
 
 		verifyValidAction(action, player);
