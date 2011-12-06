@@ -58,6 +58,7 @@ import com.cubeia.poker.states.WaitingToStartSTM;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.tournament.RoundReport;
+import com.cubeia.poker.util.ThreadLocalProfiler;
 import com.cubeia.poker.variant.PokerVariant;
 import com.cubeia.poker.variant.telesina.Telesina;
 import com.cubeia.poker.variant.telesina.TelesinaDealerButtonCalculator;
@@ -443,6 +444,7 @@ public class PokerState implements Serializable, IPokerState {
 	 * @param handResult
 	 */
 	private void setPlayersWithoutMoneyAsSittingOut(HandResult handResult) {
+		ThreadLocalProfiler.add("PokerState.setPlayersWithoutMoneyAsSittingOut");
 		for (PokerPlayer player : handResult.getResults().keySet()) {
 			long totalBalance = player.getBalance() + player.getPendingBalance();
 			if (totalBalance < settings.getAnteLevel()) {

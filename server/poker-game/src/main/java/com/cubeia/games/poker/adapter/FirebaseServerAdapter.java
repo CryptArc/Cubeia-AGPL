@@ -105,6 +105,7 @@ import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.sitout.SitoutCalculator;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.tournament.RoundReport;
+import com.cubeia.poker.util.ThreadLocalProfiler;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 
@@ -369,6 +370,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
 	@Override
 	public void notifyHandEnd(HandResult handResult, HandEndStatus handEndStatus) {
+		ThreadLocalProfiler.add("FirebaseServerAdapter.notifyHandEnd.start");
 		if (handEndStatus.equals(HandEndStatus.NORMAL) && handResult != null) {
 			
 			List<PotTransfer> transfers = new ArrayList<PotTransfer>();
@@ -415,6 +417,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		}
 
 		clearActionCache();
+		ThreadLocalProfiler.add("FirebaseServerAdapter.notifyHandEnd.stop");
 	}
 
     private BatchHandResponse doBatchHandResult(

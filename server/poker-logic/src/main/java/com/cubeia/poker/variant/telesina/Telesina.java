@@ -56,6 +56,7 @@ import com.cubeia.poker.rounds.blinds.BlindsInfo;
 import com.cubeia.poker.rounds.blinds.BlindsRound;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.util.HandResultCalculator;
+import com.cubeia.poker.util.ThreadLocalProfiler;
 import com.cubeia.poker.variant.HandResultCreator;
 import com.google.common.annotations.VisibleForTesting;
 
@@ -172,8 +173,10 @@ public class Telesina implements GameType, RoundVisitor {
 	
 	@Override
 	public void act(PokerAction action) {
+		ThreadLocalProfiler.add("Telesina.act.start");
 		getCurrentRound().act(action);
 		checkFinishedRound();
+		ThreadLocalProfiler.add("Telesina.act.stop");
 	}
 
 	private void checkFinishedRound() {
@@ -216,6 +219,7 @@ public class Telesina implements GameType, RoundVisitor {
 	}
 
 	public void handleFinishedRound() {
+		ThreadLocalProfiler.add("Telesina.handleFinishedRound");
 		log.debug("handle finished round: {}", getCurrentRound());
 		getCurrentRound().visit(this);
 	}
@@ -252,6 +256,7 @@ public class Telesina implements GameType, RoundVisitor {
 	}
 
 	private void handleFinishedHand(HandResult handResult) {	
+		ThreadLocalProfiler.add("Telesina.handleFinishedHand");
 		log.debug("Hand over. Result: "+handResult.getPlayerHands());
 		state.notifyHandFinished(handResult, HandEndStatus.NORMAL);
 	}
@@ -295,6 +300,7 @@ public class Telesina implements GameType, RoundVisitor {
 	
 	@Override
 	public void scheduleRoundTimeout() {
+		ThreadLocalProfiler.add("Telesina.scheduleRoundTimeout");
 		log.debug("scheduleRoundTimeout in: "+ state.getTimingProfile().getTime(Periods.RIVER));
 		state.getServerAdapter().scheduleTimeout(state.getTimingProfile().getTime(Periods.RIVER));
 	}
@@ -333,7 +339,7 @@ public class Telesina implements GameType, RoundVisitor {
 
 	@Override
 	public void visit(AnteRound anteRound) {
-	    	  
+		ThreadLocalProfiler.add("Telesina.visit.AnteRound");
 		updateDealerButtonPosition(anteRound);
 		
 		if (anteRound.isCanceled()) {
@@ -373,6 +379,7 @@ public class Telesina implements GameType, RoundVisitor {
 
 	@Override
 	public void visit(BettingRound bettingRound) {
+		ThreadLocalProfiler.add("Telesina.visit.BettingRound");
 		state.setLastPlayerToBeCalled(bettingRound.getLastPlayerToBeCalled());
 		
 		Collection<PotTransition> potTransitions = moveChipsToPotAndTakeBackUncalledChips();
@@ -411,6 +418,7 @@ public class Telesina implements GameType, RoundVisitor {
 	}
 	
 	private void startDealPocketOrVelaCardRound() {
+		ThreadLocalProfiler.add("Telesina.startDealPocketOrVelaCardRound");
 		if (getBettingRoundId() == VELA_ROUND_ID) {
 		    setCurrentRound(roundFactory.createDealCommunityCardsRound(this));
 		} else {

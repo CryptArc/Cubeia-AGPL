@@ -41,6 +41,7 @@ import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
+import com.cubeia.poker.util.ThreadLocalProfiler;
 import com.google.inject.Inject;
 
 /**
@@ -114,6 +115,7 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
 	@Override
 	public void notifyHandEnd(HandResult handResult, HandEndStatus handEndStatus) {
 		super.notifyHandEnd(handResult, handEndStatus);
+		ThreadLocalProfiler.add("HandHistoryReportAdapter.notifyHandEnd.start");
 		if(!checkHasService()){
 			return; // SANITY CHECK
 		}
@@ -133,6 +135,7 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
 			service.reportResults(table.getId(), res);
 			service.stopHand(table.getId());
 		}
+		ThreadLocalProfiler.add("HandHistoryReportAdapter.notifyHandEnd.stop");
 	}
 
 	@Override
