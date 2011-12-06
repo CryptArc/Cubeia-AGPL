@@ -192,10 +192,18 @@ public class DefaultPokerPlayer implements PokerPlayer {
 		return hasPostedEntryBet;
 	}
 
+	/**
+	 * If the player was not already sitting out we will
+	 * not only set the sit out status, but also set the
+	 * time stamp for sitting out to the time when this 
+	 * method was called.
+	 */
 	public void setSitOutStatus(SitOutStatus status) {
-		this.isSittingOut = true;
 		this.sitOutStatus = status;
-		sitOutTimestamp = System.currentTimeMillis();
+		if (!isSittingOut) {
+			isSittingOut = true;
+			sitOutTimestamp = System.currentTimeMillis();
+		}
 	}
 
 	public void setHasPostedEntryBet(boolean status) {
