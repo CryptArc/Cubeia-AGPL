@@ -17,6 +17,8 @@
 
 package com.cubeia.games.poker.handler;
 
+import static com.cubeia.backend.cashgame.dto.ReserveFailedResponse.ErrorCode.AMOUNT_TOO_HIGH;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -125,7 +127,10 @@ public class PokerHandler extends DefaultPokerHandler {
                     if (sum <= state.getMaxBuyIn() && sum >= state.getMinBuyIn()) {
                         state.handleBuyInRequest(pokerPlayer, packet.amount);
                     } else {
-                        ReserveFailedResponse failResponse = new ReserveFailedResponse(pokerPlayer.getPlayerSessionId(), ErrorCode.AMOUNT_TOO_HIGH, "Requested buy in plus balance cannot be more than max buy in");
+                        ReserveFailedResponse failResponse = new ReserveFailedResponse(
+                            pokerPlayer.getPlayerSessionId(), AMOUNT_TOO_HIGH, 
+                            "Requested buy in plus balance cannot be more than max buy in");
+                        
                         ReserveCallback callback = cashGameBackend.getCallbackFactory().createReserveCallback(table);
                         callback.requestFailed(failResponse);
                     }

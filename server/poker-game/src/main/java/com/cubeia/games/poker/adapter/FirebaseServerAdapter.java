@@ -365,7 +365,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	
 			BuyInInfoResponse resp = new BuyInInfoResponse();
 	
-			int balanceOnTable = player == null ? 0 : (int) player.getBalance() + (int) player.getBalanceNotInHand();
+			int balanceOnTable = player == null ? 0 : (int) player.getBalance() + (int) player.getPendingBalanceSum();
 	
 			int correctedMaxBuyIn = state.getMaxBuyIn() - balanceOnTable;
 			int correctedMinBuyIn = balanceOnTable >= state.getMinBuyIn() ? 0 : state.getMinBuyIn();
@@ -526,10 +526,9 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
 		//	    // then send public packet to all the other players but exclude the pending balance
 		GameDataAction privateAction = actionTransformer.createPlayerBalanceAction(
-				(int) player.getBalance(), (int) player.getBalanceNotInHand(), (int)playersTotalContributionToPot, player.getId(), table.getId());
+				(int) player.getBalance(), (int) player.getPendingBalanceSum(), (int)playersTotalContributionToPot, player.getId(), table.getId());
 		log.debug("Send private PBA: "+privateAction);
 		sendPrivatePacket(player.getId(),privateAction);
-
 	}
 
 	/**

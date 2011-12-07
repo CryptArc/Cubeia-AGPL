@@ -75,7 +75,7 @@ public class BackendCallHandler {
         // TODO: response should move to PokerHandler.handleReserveResponse
         BuyInResponse resp = new BuyInResponse();
         resp.balance = (int) pokerPlayer.getBalance();
-        resp.pendingBalance = (int) pokerPlayer.getBalanceNotInHand();
+        resp.pendingBalance = (int) pokerPlayer.getPendingBalanceSum();
         resp.amountBroughtIn = amountReserved;
         resp.resultCode = Enums.BuyInResultCode.OK;
         

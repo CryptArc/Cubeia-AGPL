@@ -77,7 +77,8 @@ public class BackendCallHandlerTest {
     
     PlayerSessionId playerSessionId;
     ReserveResponse reserveResponse;
-    int amount;
+    long balanceNotInHand = 33;
+    long amountRequested;
     BuyInResponse buyInRespPacket;
     private String tableSessionReference = "xSessionRef";
     private String tableReference = "xTableRef";
@@ -85,19 +86,19 @@ public class BackendCallHandlerTest {
     private void setupForHandleReserveSuccessfulResponse(boolean isSitInAfterBuyIn) throws IOException{
         tableReference = "tableRef";
         when(state.getExternalTableProperties()).thenReturn(singletonMap(CashGamesBackendContract.MARKET_TABLE_REFERENCE_KEY, (Serializable) tableReference));
-    	amount = 500;
+    	amountRequested = 500;
         playerSessionId = new PlayerSessionIdImpl(playerId);
         int balanceOnRemoteWallet = 10000;
         BalanceUpdate balanceUpdate = new BalanceUpdate(playerSessionId , balanceOnRemoteWallet, -1);
-        reserveResponse = new ReserveResponse(balanceUpdate, amount);
+        reserveResponse = new ReserveResponse(balanceUpdate, (int) amountRequested);
         reserveResponse.setProperty(CashGamesBackendContract.MARKET_TABLE_SESSION_REFERENCE_KEY, tableSessionReference);
         
-		when(pokerPlayer.getBalanceNotInHand()).thenReturn((long)amount);
+		when(pokerPlayer.getPendingBalanceSum()).thenReturn(balanceNotInHand + amountRequested);
         when(pokerPlayer.isSitInAfterSuccessfulBuyIn()).thenReturn(isSitInAfterBuyIn);
 
         callHandler.handleReserveSuccessfulResponse(reserveResponse);
         
-        verify(pokerPlayer).addNotInHandAmount(amount);
+        verify(pokerPlayer).addNotInHandAmount(amountRequested);
         verify(pokerPlayer).setExternalPlayerSessionReference(tableSessionReference);
         verify(pokerPlayer).clearRequestedBuyInAmountAndRequest();
         
@@ -107,11 +108,9 @@ public class BackendCallHandlerTest {
         buyInRespPacket = (BuyInResponse) new StyxSerializer(new ProtocolObjectFactory()).unpack(buyInDataAction.getData());
         
         assertThat(buyInRespPacket.balance, is(0));
-        assertThat(buyInRespPacket.pendingBalance, is(amount));
+        assertThat(buyInRespPacket.pendingBalance, is((int) (amountRequested + balanceNotInHand)));
         assertThat(buyInRespPacket.resultCode, is(Enums.BuyInResultCode.OK));
         verify(state).notifyPlayerBalance(playerId);
-        
-
     }
     
     @Test
