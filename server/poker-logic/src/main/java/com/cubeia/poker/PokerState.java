@@ -462,7 +462,7 @@ public class PokerState implements Serializable, IPokerState {
 	protected void setPlayersWithoutMoneyAsSittingOut(HandResult handResult) {
 		ThreadLocalProfiler.add("PokerState.setPlayersWithoutMoneyAsSittingOut");
 		for (PokerPlayer player : handResult.getResults().keySet()) {
-			long totalBalance = player.getBalance() + player.getPendingBalance();
+			long totalBalance = player.getBalance() + player.getBalanceNotInHand();
 			
 			if (totalBalance < settings.getAnteLevel()) {
 				playerIsSittingOut(player.getId(), SitOutStatus.SITTING_OUT);
@@ -477,7 +477,7 @@ public class PokerState implements Serializable, IPokerState {
 	@VisibleForTesting
 	public void commitPendingBalances() {
 		for (PokerPlayer player : playerMap.values()) {
-			player.commitPendingBalance(getMaxBuyIn());
+			player.commitBalanceNotInHand(getMaxBuyIn());
 		}
 	}
 

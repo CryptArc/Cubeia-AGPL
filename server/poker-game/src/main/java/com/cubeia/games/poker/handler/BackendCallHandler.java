@@ -58,7 +58,7 @@ public class BackendCallHandler {
             new Object[] {reserveResponse.getPlayerSessionId(), amountReserved, pokerPlayer.getId(), reserveResponse.reserveProperties});
         
         log.debug("player is in hand, adding reserved amount {} as pending", amountReserved);
-        pokerPlayer.addPendingAmount(amountReserved);
+        pokerPlayer.addNotInHandAmount(amountReserved);
         
         String externalPlayerSessionReference = reserveResponse.reserveProperties.get(
             CashGamesBackendContract.MARKET_TABLE_SESSION_REFERENCE_KEY);
@@ -75,12 +75,12 @@ public class BackendCallHandler {
         // TODO: response should move to PokerHandler.handleReserveResponse
         BuyInResponse resp = new BuyInResponse();
         resp.balance = (int) pokerPlayer.getBalance();
-        resp.pendingBalance = (int) pokerPlayer.getPendingBalance();
+        resp.pendingBalance = (int) pokerPlayer.getBalanceNotInHand();
         resp.amountBroughtIn = amountReserved;
         resp.resultCode = Enums.BuyInResultCode.OK;
         
         if (!state.isPlayerInHand(playerId)) {
-            pokerPlayer.commitPendingBalance(state.getMaxBuyIn());
+            pokerPlayer.commitBalanceNotInHand(state.getMaxBuyIn());
         }
         
         sendGameData(playerId, resp);

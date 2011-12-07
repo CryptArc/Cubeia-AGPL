@@ -92,12 +92,12 @@ public class BackendCallHandlerTest {
         reserveResponse = new ReserveResponse(balanceUpdate, amount);
         reserveResponse.setProperty(CashGamesBackendContract.MARKET_TABLE_SESSION_REFERENCE_KEY, tableSessionReference);
         
-		when(pokerPlayer.getPendingBalance()).thenReturn((long)amount);
+		when(pokerPlayer.getBalanceNotInHand()).thenReturn((long)amount);
         when(pokerPlayer.isSitInAfterSuccessfulBuyIn()).thenReturn(isSitInAfterBuyIn);
 
         callHandler.handleReserveSuccessfulResponse(reserveResponse);
         
-        verify(pokerPlayer).addPendingAmount(amount);
+        verify(pokerPlayer).addNotInHandAmount(amount);
         verify(pokerPlayer).setExternalPlayerSessionReference(tableSessionReference);
         verify(pokerPlayer).clearRequestedBuyInAmountAndRequest();
         
@@ -140,7 +140,7 @@ public class BackendCallHandlerTest {
     	setupForHandleReserveSuccessfulResponse(false);
     	verify(serverAdapter).notifyExternalSessionReferenceInfo(playerId, tableReference, tableSessionReference);
     	verify(state, never()).playerIsSittingIn(playerId);
-    	verify(pokerPlayer, never()).commitPendingBalance(Mockito.anyInt());
+    	verify(pokerPlayer, never()).commitBalanceNotInHand(Mockito.anyInt());
     }
     
     @Test
@@ -151,7 +151,7 @@ public class BackendCallHandlerTest {
         verify(serverAdapter).notifyExternalSessionReferenceInfo(playerId, tableReference, tableSessionReference);
         verify(state, never()).playerIsSittingIn(playerId);
         
-        verify(pokerPlayer).commitPendingBalance(maxBuyIn);
+        verify(pokerPlayer).commitBalanceNotInHand(maxBuyIn);
     }
     
     @Test

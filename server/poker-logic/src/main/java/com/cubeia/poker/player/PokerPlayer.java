@@ -125,17 +125,18 @@ public interface PokerPlayer extends Serializable {
 
     /**
      * Returns the amount of currency that is not currently available 
-     * but will be added to the {@link #getBalance()} in the future.
+     * in the current hand but will be added to the {@link #getBalance()} when
+     * the hand is finished.
      * This will be nonzero if a player does a buy in during a hand.
      * @return the pending balance
      */
-    public long getPendingBalance();
+    public long getBalanceNotInHand();
 	
     /**
-     * Add the given amount to the pending balance.
+     * Add the given amount to the balance outside the current hand.
      * @param amount amount to add
      */
-    public void addPendingAmount(long amount);
+    public void addNotInHandAmount(long amount);
     
     /**
      * move the full amount in betstack to balance
@@ -148,12 +149,18 @@ public interface PokerPlayer extends Serializable {
     public void returnBetStackAmountToBalance(long amount);
     
     /**
-     * Adds the pending balance to the ordinary balance.
+     * Adds the balance outside the hand to the ordinary balance.
      * @param maxBuyIn, the total resulting balance should not be higher than this
-     * @return returns true if there was a pending balance committed
+     * @return returns true if there was an non-zero balance committed
      */
-    public boolean commitPendingBalance(long maxBuyIn);
+    public boolean commitBalanceNotInHand(long maxBuyIn);
 
+    /**
+     * Returns the sum of the balance not in hand and the requested buy ins.
+     * @return the sum of requested and balance outside the current hand
+     */
+    public long getPendingBalanceSum();
+    
     public boolean isSitInAfterSuccessfulBuyIn();
 
     public void setSitInAfterSuccessfulBuyIn(boolean sitIn);
@@ -183,13 +190,13 @@ public interface PokerPlayer extends Serializable {
      * Returns the amount of requested buy ins for the player.
      * @return amount to buy in
      */
-    int getRequestedBuyInAmount();
+    long getRequestedBuyInAmount();
 
     /**
      * Add an amount to bring in when hand is finished.
      * @param buyInAmount additional amount 
      */
-    void addRequestedBuyInAmount(int buyInAmount);
+    void addRequestedBuyInAmount(long buyInAmount);
     
     /**
      * Clear the requested future buy in amount and request active flag.

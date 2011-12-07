@@ -128,7 +128,7 @@ public class FirebaseServerAdapterTest {
 		int playerTotalBalanceOnTable = playerBalanceOnTable+playerPendingBalanceOnTable;
 
 		when(pokerPlayer.getBalance()).thenReturn((long) playerBalanceOnTable);
-		when(pokerPlayer.getPendingBalance()).thenReturn((long) playerPendingBalanceOnTable);
+		when(pokerPlayer.getBalanceNotInHand()).thenReturn((long) playerPendingBalanceOnTable);
 		long mainAccountBalance = 500000L;
 		when(fsa.backend.getMainAccountBalance(playerId)).thenReturn(mainAccountBalance);
 
@@ -177,7 +177,7 @@ public class FirebaseServerAdapterTest {
 		int playerTotalBalanceOnTable = playerBalanceOnTable+playerPendingBalanceOnTable;
 
 		when(pokerPlayer.getBalance()).thenReturn((long) playerBalanceOnTable);
-		when(pokerPlayer.getPendingBalance()).thenReturn((long) playerPendingBalanceOnTable);
+		when(pokerPlayer.getBalanceNotInHand()).thenReturn((long) playerPendingBalanceOnTable);
 		long mainAccountBalance = 500000L;
 		when(fsa.backend.getMainAccountBalance(playerId)).thenReturn(mainAccountBalance);
 
@@ -223,7 +223,7 @@ public class FirebaseServerAdapterTest {
 		int playerPendingBalanceOnTable = 100;
 
 		when(pokerPlayer.getBalance()).thenReturn((long) playerBalanceOnTable);
-		when(pokerPlayer.getPendingBalance()).thenReturn((long) playerPendingBalanceOnTable);
+		when(pokerPlayer.getBalanceNotInHand()).thenReturn((long) playerPendingBalanceOnTable);
 		when(fsa.backend.getMainAccountBalance(playerId)).thenThrow(new GetBalanceFailedException("error"));
 
 		fsa.notifyBuyInInfo(pokerPlayer.getId(), true);
@@ -270,7 +270,7 @@ public class FirebaseServerAdapterTest {
 		int playerTotalBalanceOnTable = playerBalanceOnTable+playerPendingBalanceOnTable;
 
 		when(pokerPlayer.getBalance()).thenReturn((long) playerBalanceOnTable);
-		when(pokerPlayer.getPendingBalance()).thenReturn((long) playerPendingBalanceOnTable);
+		when(pokerPlayer.getBalanceNotInHand()).thenReturn((long) playerPendingBalanceOnTable);
 		long mainAccountBalance = 500000L;
 		when(fsa.backend.getMainAccountBalance(playerId)).thenReturn(mainAccountBalance);
 
@@ -508,7 +508,7 @@ public class FirebaseServerAdapterTest {
 		PokerPlayer pokerPlayer0 = mock(PokerPlayer.class);
 		when(pokerPlayer0.getId()).thenReturn(playerId0);
 		when(pokerPlayer0.getBalance()).thenReturn(1000L);
-		when(pokerPlayer0.getPendingBalance()).thenReturn(1001L);
+		when(pokerPlayer0.getBalanceNotInHand()).thenReturn(1001L);
 
 		int playerId1 = 666;
 		PokerPlayer pokerPlayer1 = mock(PokerPlayer.class);

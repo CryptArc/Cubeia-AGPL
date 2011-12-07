@@ -61,7 +61,7 @@ public class TelesinaBringInMoneyTest extends AbstractTexasHandTester {
 
 		assertEquals(0, mp[0].getBalance());
 		assertEquals(300, mp[1].getBalance());
-		assertEquals(50, mp[2].getPendingBalance());
+		assertEquals(50, mp[2].getBalanceNotInHand());
 
 		assertTrue(mp[0].isSittingOut());
 		assertFalse(mp[2].isSittingOut());
@@ -166,7 +166,7 @@ public class TelesinaBringInMoneyTest extends AbstractTexasHandTester {
 		game.timeout();
 		bringInMoney(mp, p);
 		
-		assertEquals(50, mp[2].getPendingBalance());
+		assertEquals(50, mp[2].getBalanceNotInHand());
 		
 		game.timeout();
 		// End of hand
@@ -174,7 +174,7 @@ public class TelesinaBringInMoneyTest extends AbstractTexasHandTester {
 		assertFalse(mp[2].isSittingOut());
 		assertEquals(0, mp[0].getBalance());
 		assertEquals(300, mp[1].getBalance());
-		assertEquals(50, mp[2].getPendingBalance());
+		assertEquals(50, mp[2].getBalanceNotInHand());
 		assertTrue(mp[0].isSittingOut());
 
 		// Start new hand
@@ -203,7 +203,7 @@ public class TelesinaBringInMoneyTest extends AbstractTexasHandTester {
 		int amountReserved = 50;
 		if (game.isPlayerInHand(p[2])) {
 			System.out.println("player is in hand, adding reserved amount "+amountReserved+" as pending");
-			mp[2].addPendingAmount(amountReserved);
+			mp[2].addNotInHandAmount(amountReserved);
 		} else {
 			System.out.println("player is not in hand, adding reserved amount "+amountReserved+" to balance");
 			mp[2].addChips(amountReserved);

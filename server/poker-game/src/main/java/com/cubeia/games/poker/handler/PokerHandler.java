@@ -121,7 +121,7 @@ public class PokerHandler extends DefaultPokerHandler {
                 if (pokerPlayer.getPlayerSessionId() != null) {
 
                     // Check if the amount is allowed by the table
-                    long sum = packet.amount + pokerPlayer.getBalance() + pokerPlayer.getPendingBalance();
+                    long sum = packet.amount + pokerPlayer.getBalance() + pokerPlayer.getBalanceNotInHand();
                     if (sum <= state.getMaxBuyIn() && sum >= state.getMinBuyIn()) {
                         state.handleBuyInRequest(pokerPlayer, packet.amount);
                     } else {

@@ -142,7 +142,7 @@ public class PokerHandlerTest {
         PlayerSessionId playerSessionId = new PlayerSessionIdImpl(playerId);
         when(pokerPlayer.getPlayerSessionId()).thenReturn(playerSessionId);
         when(pokerPlayer.getBalance()).thenReturn(0L);
-        when(pokerPlayer.getPendingBalance()).thenReturn(0L);
+        when(pokerPlayer.getBalanceNotInHand()).thenReturn(0L);
         
         // Request more money than max buy in
         BuyInRequest buyInRequest = new BuyInRequest(14000, true);
@@ -163,7 +163,7 @@ public class PokerHandlerTest {
         PlayerSessionId playerSessionId = new PlayerSessionIdImpl(playerId);
         when(pokerPlayer.getPlayerSessionId()).thenReturn(playerSessionId);
         when(pokerPlayer.getBalance()).thenReturn(0L);
-        when(pokerPlayer.getPendingBalance()).thenReturn(0L);
+        when(pokerPlayer.getBalanceNotInHand()).thenReturn(0L);
         
         // Request more money than max buy in
         BuyInRequest buyInRequest = new BuyInRequest(10, true);
@@ -184,7 +184,7 @@ public class PokerHandlerTest {
         PlayerSessionId playerSessionId = new PlayerSessionIdImpl(playerId);
         when(pokerPlayer.getPlayerSessionId()).thenReturn(playerSessionId);
         when(pokerPlayer.getBalance()).thenReturn(4000L);
-        when(pokerPlayer.getPendingBalance()).thenReturn(0L);
+        when(pokerPlayer.getBalanceNotInHand()).thenReturn(0L);
         
         // Request more money than allowed, balance + buyin <= max buyin
         BuyInRequest buyInRequest = new BuyInRequest(3000, true);
@@ -205,7 +205,7 @@ public class PokerHandlerTest {
         PlayerSessionId playerSessionId = new PlayerSessionIdImpl(playerId);
         when(pokerPlayer.getPlayerSessionId()).thenReturn(playerSessionId);
         when(pokerPlayer.getBalance()).thenReturn(2000L); // balance is ok
-        when(pokerPlayer.getPendingBalance()).thenReturn(4000L); // pending will make it fail
+        when(pokerPlayer.getBalanceNotInHand()).thenReturn(4000L); // pending will make it fail
         
         // Request more money than allowed, pendingBalance + balance + buyin <= max buyin
         BuyInRequest buyInRequest = new BuyInRequest(3000, true);
@@ -226,7 +226,7 @@ public class PokerHandlerTest {
         PlayerSessionId playerSessionId = new PlayerSessionIdImpl(playerId);
         when(pokerPlayer.getPlayerSessionId()).thenReturn(playerSessionId);
         when(pokerPlayer.getBalance()).thenReturn(3000L); // balance is ok
-        when(pokerPlayer.getPendingBalance()).thenReturn(2000L); // pending will make it fail
+        when(pokerPlayer.getBalanceNotInHand()).thenReturn(2000L); // pending will make it fail
         
         // Request more money than allowed, pendingBalance + balance + buyin <= max buyin
         // the player can actually buy in 1000 but requests 2000
