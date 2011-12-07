@@ -55,13 +55,18 @@ public class TableCloseHandler {
      * @param force True to close even if players are sitting, false to abort if players are seated
      */
     public void closeTable(Table table, boolean force) {
-    	log.debug("close table command received; table id = {}, force = {}", table.getId(), force);
+    	log.debug("Close table command received; table id = {}, force = {}", table.getId(), force);
     	if(countSeated(table) == 0 || force) {
-        	log.info("closing table {} with {} seated players", table.getId(), countSeated(table));
+        	log.info("Closing table {} with {} seated players", table.getId(), countSeated(table));
         	doCloseTable(table, false, null);
     	} else {
-    		log.debug("close table aborted, have " + countSeated(table) + " seated players, and should not force the close");
+    		log.debug("Close table aborted, have " + countSeated(table) + " seated players, and should not force the close");
     	}
+    }
+    
+    public void tableCrashed(Table table) {
+    	log.info("Closing table {} with {} seated players", table.getId(), countSeated(table));
+    	doCloseTable(table, false, null);
     }
 
 	private int countSeated(Table table) {
@@ -73,7 +78,7 @@ public class TableCloseHandler {
 			closeTable(table, true);
 		} else {
 			String handId = getHandId();
-	        log.info("handling crashed table id = {}, hand id = {}", table.getId(), handId);
+	        log.info("Handling crashed table id = {}, hand id = {}", table.getId(), handId);
 	        printToErrorLog(action, table, throwable);
 	        doCloseTable(table, true, handId);
 		}
@@ -121,7 +126,7 @@ public class TableCloseHandler {
 	protected void sendMessageToClient(Table table, Enums.ErrorCode errorCode, String handId) {
 		for (GenericPlayer player : table.getPlayerSet().getPlayers()) {
             ErrorPacket errorPacket = new ErrorPacket(errorCode, handId);
-            log.debug("sending {} message to player: {}", errorCode, player.getPlayerId());
+            log.debug("Sending {} message to player: {}", errorCode, player.getPlayerId());
             GameDataAction errorAction = new GameDataAction(player.getPlayerId(), table.getId());
             ByteBuffer packetBuffer;
             try {
@@ -167,7 +172,7 @@ public class TableCloseHandler {
 
 
     private void makeTableInvisibleInLobby(Table table) {
-        log.debug("setting table {} as invisible in lobby", table.getId());
+        log.debug("Setting table {} as invisible in lobby", table.getId());
         table.getAttributeAccessor().setIntAttribute(PokerLobbyAttributes.VISIBLE_IN_LOBBY.name(), 0);
     }
 

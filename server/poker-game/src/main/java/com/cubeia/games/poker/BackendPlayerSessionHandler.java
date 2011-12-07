@@ -1,6 +1,6 @@
 package com.cubeia.games.poker;
 
-import static com.cubeia.games.poker.handler.BackendCallHandler.*;
+import static com.cubeia.games.poker.handler.BackendCallHandler.EXT_PROP_KEY_TABLE_ID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,10 +12,8 @@ import com.cubeia.backend.cashgame.dto.CloseSessionRequest;
 import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
 import com.cubeia.backend.cashgame.exceptions.CloseSessionFailedException;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
-import com.cubeia.firebase.api.common.AttributeValue;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.guice.inject.Service;
-import com.cubeia.games.poker.lobby.PokerLobbyAttributes;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.player.PokerPlayer;
@@ -28,14 +26,9 @@ public class BackendPlayerSessionHandler {
     @Service @VisibleForTesting
     protected CashGamesBackendContract cashGameBackend;
     
-    private final PokerState state;
-    
     @Inject
-    public BackendPlayerSessionHandler(PokerState state) {
-        this.state = state;
-    }
+    private TableCloseHandler closeHandler;
     
-
     public AllowJoinResponse allowJoinTable(int playerId) {
     	return cashGameBackend.allowJoinTable(playerId);
     }
@@ -69,8 +62,8 @@ public class BackendPlayerSessionHandler {
         TableId tableId = (TableId) state.getExternalTableProperties().get(EXT_PROP_KEY_TABLE_ID);
         if (tableId == null) {
             log.error("No table ID found in external properties; Table must be anounced first; tId = {}", table.getId());
-            log.debug("destroying table "+table.getId());
-            handleCrashOnTable(table);
+            log.debug("Crashing table "+table.getId());
+            closeHandler.tableCrashed(table);
         }else{
             OpenSessionRequest openSessionRequest = new OpenSessionRequest(playerId, tableId, roundNumber);
             cashGameBackend.openSession(openSessionRequest, cashGameBackend.getCallbackFactory().createOpenSessionCallback(table));
@@ -78,7 +71,7 @@ public class BackendPlayerSessionHandler {
         
     }
     
-    public void handleCrashOnTable(Table table) {
+    /*public void handleCrashOnTable(Table table) {
         log.info("handling crashed table id = {}, hand id = {}", table.getId());
         
         // 1. stop table from accepting actions
@@ -99,5 +92,5 @@ public class BackendPlayerSessionHandler {
     
     private void markTableReadyForClose(Table table) {
         table.getAttributeAccessor().setAttribute(PokerLobbyAttributes.TABLE_READY_FOR_CLOSE.name(), new AttributeValue(1));
-    }
+    }*/
 }
