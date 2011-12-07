@@ -1043,7 +1043,7 @@ public class PokerState implements Serializable, IPokerState {
 
     @Override
     public void handleBuyInRequest(PokerPlayer pokerPlayer, int amount) {
-        pokerPlayer.addFutureBuyInAmount(amount);
+        pokerPlayer.addRequestedBuyInAmount(amount);
         
         if (asList(WAITING_TO_START, NOT_STARTED).contains(getCurrentState())) {
             log.debug("game is not started, performing immediate reserve request for player: {}", pokerPlayer.getId());

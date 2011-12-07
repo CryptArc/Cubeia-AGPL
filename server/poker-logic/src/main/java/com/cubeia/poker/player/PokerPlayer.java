@@ -179,22 +179,22 @@ public interface PokerPlayer extends Serializable {
     
     public long getLastRaiseLevel();
 
-    /**
-     * Returns the requested amount of future buy ins for the player.
+    /** 
+     * Returns the amount of requested buy ins for the player.
      * @return amount to buy in
      */
-    int getFutureBuyInAmount();
+    int getRequestedBuyInAmount();
 
     /**
      * Add an amount to bring in when hand is finished.
      * @param buyInAmount additional amount 
      */
-    void addFutureBuyInAmount(int buyInAmount);
+    void addRequestedBuyInAmount(int buyInAmount);
     
     /**
      * Clear the requested future buy in amount and request active flag.
      */
-    void clearFutureBuyInAmountAndRequest();
+    void clearRequestedBuyInAmountAndRequest();
 
     /**
      * Mark this player as having a buy in request active. (asynch running against wallet)

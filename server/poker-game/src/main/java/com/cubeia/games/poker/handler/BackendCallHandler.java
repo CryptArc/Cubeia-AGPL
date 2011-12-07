@@ -64,7 +64,7 @@ public class BackendCallHandler {
             CashGamesBackendContract.MARKET_TABLE_SESSION_REFERENCE_KEY);
         pokerPlayer.setExternalPlayerSessionReference(externalPlayerSessionReference);
         
-        pokerPlayer.clearFutureBuyInAmountAndRequest();
+        pokerPlayer.clearRequestedBuyInAmountAndRequest();
         
         Serializable marketTableRef = state.getExternalTableProperties().get(MARKET_TABLE_REFERENCE_KEY);
         state.getServerAdapter().notifyExternalSessionReferenceInfo(
@@ -123,7 +123,7 @@ public class BackendCallHandler {
             log.error("reserve failed but player had no active request, player id = {}", playerId);
         }
             
-        player.clearFutureBuyInAmountAndRequest();
+        player.clearRequestedBuyInAmountAndRequest();
     	
         // TODO: if this is a failed AAMS reserve the player MUST be removed from the table. 
         

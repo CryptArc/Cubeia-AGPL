@@ -154,7 +154,7 @@ public class PokerHandlerTest {
         
         // since amount is higher than max allowed we should never get a call to the backend
         verify(backend, never()).reserve(Mockito.any(ReserveRequest.class), Mockito.any(ReserveCallback.class));
-        verify(pokerPlayer, never()).addFutureBuyInAmount(Mockito.anyInt());
+        verify(pokerPlayer, never()).addRequestedBuyInAmount(Mockito.anyInt());
         verify(reserveCallback).requestFailed(Mockito.any(ReserveFailedResponse.class));
     }
     
@@ -175,7 +175,7 @@ public class PokerHandlerTest {
         
         // since amount is higher than max allowed we should never get a call to the backend
         verify(backend, Mockito.never()).reserve(Mockito.any(ReserveRequest.class), Mockito.any(ReserveCallback.class));
-        verify(pokerPlayer, never()).addFutureBuyInAmount(Mockito.anyInt());
+        verify(pokerPlayer, never()).addRequestedBuyInAmount(Mockito.anyInt());
         verify(reserveCallback).requestFailed(Mockito.any(ReserveFailedResponse.class));
     }
     
@@ -196,7 +196,7 @@ public class PokerHandlerTest {
         
         // since amount is higher than max allowed we should never get a call to the backend
         verify(backend, Mockito.never()).reserve(Mockito.any(ReserveRequest.class), Mockito.any(ReserveCallback.class));
-        verify(pokerPlayer, never()).addFutureBuyInAmount(Mockito.anyInt());
+        verify(pokerPlayer, never()).addRequestedBuyInAmount(Mockito.anyInt());
         verify(reserveCallback).requestFailed(Mockito.any(ReserveFailedResponse.class));
     }
     
@@ -217,7 +217,7 @@ public class PokerHandlerTest {
         
         // since amount is higher than max allowed we should never get a call to the backend
         verify(backend, Mockito.never()).reserve(Mockito.any(ReserveRequest.class), Mockito.any(ReserveCallback.class));
-        verify(pokerPlayer, never()).addFutureBuyInAmount(Mockito.anyInt());
+        verify(pokerPlayer, never()).addRequestedBuyInAmount(Mockito.anyInt());
         verify(reserveCallback).requestFailed(Mockito.any(ReserveFailedResponse.class));
     }
     
@@ -239,7 +239,7 @@ public class PokerHandlerTest {
         
         // since amount is higher than max allowed we should never get a call to the backend
         verify(backend, Mockito.never()).reserve(Mockito.any(ReserveRequest.class), Mockito.any(ReserveCallback.class));
-        verify(pokerPlayer, never()).addFutureBuyInAmount(Mockito.anyInt());
+        verify(pokerPlayer, never()).addRequestedBuyInAmount(Mockito.anyInt());
         verify(reserveCallback).requestFailed(Mockito.any(ReserveFailedResponse.class));
     }
 }

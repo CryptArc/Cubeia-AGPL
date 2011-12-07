@@ -99,7 +99,7 @@ public class BackendCallHandlerTest {
         
         verify(pokerPlayer).addPendingAmount(amount);
         verify(pokerPlayer).setExternalPlayerSessionReference(tableSessionReference);
-        verify(pokerPlayer).clearFutureBuyInAmountAndRequest();
+        verify(pokerPlayer).clearRequestedBuyInAmountAndRequest();
         
         ArgumentCaptor<GameDataAction> buyInResponseCaptor = ArgumentCaptor.forClass(GameDataAction.class);
         verify(notifier).notifyPlayer(Mockito.eq(playerId), buyInResponseCaptor.capture());
@@ -122,7 +122,7 @@ public class BackendCallHandlerTest {
         
         callHandler.handleReserveFailedResponse(response);
         
-        verify(pokerPlayer).clearFutureBuyInAmountAndRequest();
+        verify(pokerPlayer).clearRequestedBuyInAmountAndRequest();
         ArgumentCaptor<GameDataAction> actionCaptor = ArgumentCaptor.forClass(GameDataAction.class);
         verify(notifier).notifyPlayer(Mockito.eq(playerId), actionCaptor.capture());
         

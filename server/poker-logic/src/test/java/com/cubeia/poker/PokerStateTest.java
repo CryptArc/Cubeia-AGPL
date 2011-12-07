@@ -536,7 +536,7 @@ public class PokerStateTest {
         
         state.handleBuyInRequest(player, amount);
 	    
-        verify(player).addFutureBuyInAmount(amount);
+        verify(player).addRequestedBuyInAmount(amount);
 	    verify(state.serverAdapter, never()).performPendingBuyIns(Mockito.anyCollection());
     }
 	
@@ -549,7 +549,7 @@ public class PokerStateTest {
         
         state.handleBuyInRequest(player, amount);
         
-        verify(player).addFutureBuyInAmount(amount);
+        verify(player).addRequestedBuyInAmount(amount);
         ArgumentCaptor<Collection> captor = ArgumentCaptor.forClass(Collection.class);
         verify(state.serverAdapter).performPendingBuyIns(captor.capture());
         Collection<PokerPlayer> players = captor.getValue();

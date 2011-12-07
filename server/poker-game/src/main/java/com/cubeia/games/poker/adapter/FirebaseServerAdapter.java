@@ -344,14 +344,14 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	public void performPendingBuyIns(Collection<PokerPlayer> players) {
 	    
 	    for (PokerPlayer player : players) {
-	        if (!player.isBuyInRequestActive()  &&   player.getFutureBuyInAmount() > 0) {
+	        if (!player.isBuyInRequestActive()  &&   player.getRequestedBuyInAmount() > 0) {
 	            PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) player;
     	        ReserveCallback callback = backend.getCallbackFactory().createReserveCallback(table);
     	        
-    	        log.debug("sending reserve request to backend: player id = {}, amount = {}", player.getId(), player.getFutureBuyInAmount());
+    	        log.debug("sending reserve request to backend: player id = {}, amount = {}", player.getId(), player.getRequestedBuyInAmount());
     	        
     	        ReserveRequest reserveRequest = new ReserveRequest(pokerPlayer.getPlayerSessionId(), getFirebaseState().getHandCount(), 
-    	            player.getFutureBuyInAmount());
+    	            player.getRequestedBuyInAmount());
     	        backend.reserve(reserveRequest, callback);
     	        player.buyInRequestActive();
 	        }

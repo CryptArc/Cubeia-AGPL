@@ -62,7 +62,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	
 	protected boolean exposingPocketCards;
 	
-    private int futureBuyInAmount;
+    private int requestedBuyInAmount;
     
 
 
@@ -375,19 +375,19 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	}
 
     @Override
-    public int getFutureBuyInAmount() {
-        return futureBuyInAmount;
+    public int getRequestedBuyInAmount() {
+        return requestedBuyInAmount;
     }
 
     @Override
-    public void addFutureBuyInAmount(int buyInAmount) {
-        futureBuyInAmount += buyInAmount;
-        log.debug("added {} as future buy in amount, total future buy in amount = {}", buyInAmount, futureBuyInAmount);
+    public void addRequestedBuyInAmount(int buyInAmount) {
+        requestedBuyInAmount += buyInAmount;
+        log.debug("added {} as future buy in amount, total future buy in amount = {}", buyInAmount, requestedBuyInAmount);
     }
 
     @Override
-    public void clearFutureBuyInAmountAndRequest() {
-        futureBuyInAmount = 0;
+    public void clearRequestedBuyInAmountAndRequest() {
+        requestedBuyInAmount = 0;
         buyInRequestActive = false;
     }
 
