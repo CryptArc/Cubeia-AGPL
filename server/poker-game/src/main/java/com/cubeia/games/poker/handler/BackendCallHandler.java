@@ -198,7 +198,7 @@ public class BackendCallHandler {
             e.printStackTrace();
         }
         
-		table.getNotifier().notifyPlayer(playerId, action );
+		table.getNotifier().notifyPlayer(playerId, action);
 	}
     
 }

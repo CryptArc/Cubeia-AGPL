@@ -19,21 +19,26 @@ package com.cubeia.games.poker.handler;
 
 import static com.cubeia.backend.cashgame.dto.ReserveFailedResponse.ErrorCode.AMOUNT_TOO_HIGH;
 
+import java.io.IOException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import se.jadestone.dicearena.game.poker.network.protocol.BuyInInfoRequest;
 import se.jadestone.dicearena.game.poker.network.protocol.BuyInRequest;
+import se.jadestone.dicearena.game.poker.network.protocol.BuyInResponse;
+import se.jadestone.dicearena.game.poker.network.protocol.Enums.BuyInResultCode;
 import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitinRequest;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitoutRequest;
 
 import com.cubeia.backend.cashgame.callback.ReserveCallback;
 import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;
-import com.cubeia.backend.cashgame.dto.ReserveFailedResponse.ErrorCode;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
+import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.guice.inject.Service;
+import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.FirebaseState;
 import com.cubeia.games.poker.adapter.ActionTransformer;
 import com.cubeia.games.poker.logic.TimeoutCache;
@@ -126,6 +131,10 @@ public class PokerHandler extends DefaultPokerHandler {
                     long sum = packet.amount + pokerPlayer.getBalance() + pokerPlayer.getBalanceNotInHand();
                     if (sum <= state.getMaxBuyIn() && sum >= state.getMinBuyIn()) {
                         state.handleBuyInRequest(pokerPlayer, packet.amount);
+                        
+                        BuyInResponse buyInResponse = new BuyInResponse((int) pokerPlayer.getBalance(), (int) pokerPlayer.getPendingBalanceSum(), 
+                            0, BuyInResultCode.PENDING);
+                        sendBuyInResponseToPlayer(pokerPlayer, buyInResponse);
                     } else {
                         ReserveFailedResponse failResponse = new ReserveFailedResponse(
                             pokerPlayer.getPlayerSessionId(), AMOUNT_TOO_HIGH, 
@@ -145,11 +154,13 @@ public class PokerHandler extends DefaultPokerHandler {
 			log.error("Buy in request failed, request["+packet+"]", e);
 		}
 	}
-	
-//	private int getCurrentRoundNumber() {
-//		return ((FirebaseState)state.getAdapterState()).getHandCount();
-//	}
 
+    private void sendBuyInResponseToPlayer(PokerPlayerImpl pokerPlayer, BuyInResponse buyInResponse) throws IOException {
+        StyxSerializer styx = new StyxSerializer(null);
+        GameDataAction gameDataAction = new GameDataAction(playerId, table.getId());
+        gameDataAction.setData(styx.pack(buyInResponse));
+        table.getNotifier().sendToClient(pokerPlayer.getId(), gameDataAction);
+    }
 
     private boolean verifySequence(PerformAction packet) {
         FirebaseState fbState = (FirebaseState)state.getAdapterState();

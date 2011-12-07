@@ -18,10 +18,13 @@ import org.mockito.MockitoAnnotations;
 
 import se.jadestone.dicearena.game.poker.network.protocol.BuyInInfoRequest;
 import se.jadestone.dicearena.game.poker.network.protocol.BuyInRequest;
+import se.jadestone.dicearena.game.poker.network.protocol.BuyInResponse;
+import se.jadestone.dicearena.game.poker.network.protocol.Enums.BuyInResultCode;
 import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerAction;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitinRequest;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitoutRequest;
+import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
 
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.PlayerSessionIdImpl;
@@ -30,9 +33,11 @@ import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;
 import com.cubeia.backend.cashgame.dto.ReserveRequest;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
 import com.cubeia.backend.firebase.FirebaseCallbackFactory;
+import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.game.GameNotifier;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TableScheduler;
+import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.FirebaseState;
 import com.cubeia.games.poker.adapter.ActionTransformer;
 import com.cubeia.games.poker.logic.TimeoutCache;
@@ -69,6 +74,7 @@ public class PokerHandlerTest {
         
         FirebaseState state = Mockito.mock(FirebaseState.class);
         
+        when(pokerPlayer.getId()).thenReturn(playerId);
         when(pokerHandler.state.getAdapterState()).thenReturn(state);
         when(pokerHandler.table.getNotifier()).thenReturn(notifier);
         when(pokerHandler.state.getPokerPlayer(playerId)).thenReturn(pokerPlayer);
@@ -121,9 +127,15 @@ public class PokerHandlerTest {
     }
 
     @Test
-    public void testVisitBuyInRequest() {
+    public void testVisitBuyInRequest() throws IOException {
         PlayerSessionId playerSessionId = new PlayerSessionIdImpl(playerId);
         when(pokerPlayer.getPlayerSessionId()).thenReturn(playerSessionId);
+        
+        long balance = 34L;
+        when(pokerPlayer.getBalance()).thenReturn(balance);
+        long pending = 44L;
+        when(pokerPlayer.getPendingBalanceSum()).thenReturn(pending);
+        
         int buyInAmount = 4000;
         BuyInRequest buyInRequest = new BuyInRequest(buyInAmount, true);
         ReserveCallback reserveCallback = mock(ReserveCallback.class);
@@ -134,6 +146,17 @@ public class PokerHandlerTest {
         verify(backend, never()).reserve(Mockito.any(ReserveRequest.class), Mockito.any(ReserveCallback.class));
         verify(state).handleBuyInRequest(pokerPlayer, buyInAmount);
         verify(pokerPlayer).setSitInAfterSuccessfulBuyIn(true);
+        
+        ArgumentCaptor<GameDataAction> captor = ArgumentCaptor.forClass(GameDataAction.class);
+        verify(notifier).sendToClient(Mockito.eq(playerId), captor.capture());
+        GameDataAction gameDataAction = captor.getValue();
+        
+        StyxSerializer styx = new StyxSerializer(new ProtocolObjectFactory());
+        BuyInResponse buyInResponse = (BuyInResponse) styx.unpack(gameDataAction.getData());
+        assertThat(buyInResponse.amountBroughtIn, is(0));
+        assertThat(buyInResponse.balance, is((int) balance));
+        assertThat(buyInResponse.pendingBalance, is((int) pending));
+        assertThat(buyInResponse.resultCode, is(BuyInResultCode.PENDING));
     }
     
     
