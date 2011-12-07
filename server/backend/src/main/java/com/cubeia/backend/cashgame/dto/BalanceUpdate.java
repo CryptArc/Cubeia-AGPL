@@ -17,4 +17,12 @@ public class BalanceUpdate implements Serializable {
 		this.balance = balance;
 		this.balanceVersionNumber = balanceVersionNumber;
 	}
+
+    @Override
+    public String toString() {
+        return "BalanceUpdate [playerSessionId=" + playerSessionId + ", balance=" + balance + ", balanceVersionNumber="
+            + balanceVersionNumber + "]";
+    }
+	
+	
 }

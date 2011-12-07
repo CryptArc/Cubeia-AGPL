@@ -26,4 +26,12 @@ public class ReserveResponse implements Serializable {
 	public void setProperty(String key, String value) {
 	    reserveProperties.put(key, value);
 	}
+
+    @Override
+    public String toString() {
+        return "ReserveResponse [balanceUpdate=" + balanceUpdate + ", amountReserved=" + amountReserved
+            + ", reserveProperties=" + reserveProperties + "]";
+    }
+	
+	
 }

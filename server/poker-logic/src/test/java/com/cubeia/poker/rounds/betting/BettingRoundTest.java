@@ -23,8 +23,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -38,7 +36,6 @@ import com.cubeia.poker.GameType;
 import com.cubeia.poker.IPokerState;
 import com.cubeia.poker.MockGame;
 import com.cubeia.poker.MockPlayer;
-import com.cubeia.poker.PokerState;
 import com.cubeia.poker.TestListener;
 import com.cubeia.poker.TestUtils;
 import com.cubeia.poker.action.ActionRequest;
