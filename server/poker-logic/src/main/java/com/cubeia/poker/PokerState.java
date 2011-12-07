@@ -353,11 +353,7 @@ public class PokerState implements Serializable, IPokerState {
 	 */
 	@Override
 	public boolean isPlayerInHand(int playerId) {
-		PokerPlayer player = getCurrentHandPlayerMap().get(playerId);
-		if (player != null && getCurrentState().equals(PLAYING)) {
-			return player.hasPostedEntryBet();
-		}
-		return false;
+		return getCurrentHandPlayerMap().containsKey(playerId) && getCurrentState().equals(PLAYING);
 	}
 
 	public void startHand() {

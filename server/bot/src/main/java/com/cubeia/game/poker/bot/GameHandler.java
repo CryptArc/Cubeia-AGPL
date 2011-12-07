@@ -22,9 +22,11 @@ import se.jadestone.dicearena.game.poker.network.protocol.Enums.PlayerTableStatu
 import se.jadestone.dicearena.game.poker.network.protocol.ErrorPacket;
 import se.jadestone.dicearena.game.poker.network.protocol.ExposePrivateCards;
 import se.jadestone.dicearena.game.poker.network.protocol.ExternalSessionInfoPacket;
+import se.jadestone.dicearena.game.poker.network.protocol.FuturePlayerAction;
 import se.jadestone.dicearena.game.poker.network.protocol.GameCard;
 import se.jadestone.dicearena.game.poker.network.protocol.HandCanceled;
 import se.jadestone.dicearena.game.poker.network.protocol.HandEnd;
+import se.jadestone.dicearena.game.poker.network.protocol.InformFutureAllowedActions;
 import se.jadestone.dicearena.game.poker.network.protocol.PacketVisitor;
 import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerAction;
@@ -242,23 +244,16 @@ public class GameHandler implements PacketVisitor {
 	public void visit(PlayerSitoutRequest arg0) {}
 	public void visit(CardToDeal packet) {}
 	public void visit(ExternalSessionInfoPacket packet) {}
-
 	public void visit(HandCanceled packet) {}
-
 	public void visit(BuyInInfoRequest packet) {}
-
 	public void visit(BuyInRequest packet) {}
-
 	public void visit(BuyInResponse packet) {}
-
 	public void visit(PotTransfer packet) {}
-
 	public void visit(PotTransfers packet) {}
-
 	public void visit(RakeInfo packet) {}
-
 	public void visit(DeckInfo packet) {}
-
 	public void visit(ErrorPacket packet) {}
+	public void visit(FuturePlayerAction packet) {}
+	public void visit(InformFutureAllowedActions packet) {}
     
 }

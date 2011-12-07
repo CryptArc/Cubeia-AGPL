@@ -71,7 +71,7 @@ public class WebserverRunner {
 		Thread.sleep(1000);
 		
 		// Add some events
-		addEvent(facade, new PlayerPokerStatus(111, PlayerTableStatus.SITIN, true));
+		addEvent(facade, new PlayerPokerStatus(111, PlayerTableStatus.SITIN));
 		addEvent(facade, new DealerButton(Byte.valueOf("1")));
 		
 		PlayerAction data = new PlayerAction(ActionType.BET, 10, 10);

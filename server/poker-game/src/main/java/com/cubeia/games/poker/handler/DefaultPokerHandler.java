@@ -30,9 +30,11 @@ import se.jadestone.dicearena.game.poker.network.protocol.DeckInfo;
 import se.jadestone.dicearena.game.poker.network.protocol.ErrorPacket;
 import se.jadestone.dicearena.game.poker.network.protocol.ExposePrivateCards;
 import se.jadestone.dicearena.game.poker.network.protocol.ExternalSessionInfoPacket;
+import se.jadestone.dicearena.game.poker.network.protocol.FuturePlayerAction;
 import se.jadestone.dicearena.game.poker.network.protocol.GameCard;
 import se.jadestone.dicearena.game.poker.network.protocol.HandCanceled;
 import se.jadestone.dicearena.game.poker.network.protocol.HandEnd;
+import se.jadestone.dicearena.game.poker.network.protocol.InformFutureAllowedActions;
 import se.jadestone.dicearena.game.poker.network.protocol.PacketVisitor;
 import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerAction;
@@ -121,4 +123,8 @@ public class DefaultPokerHandler implements PacketVisitor {
 	public void visit(ErrorPacket packet) {}
 	@Override
 	public void visit(TakeBackUncalledBet packet) {}
+	@Override
+	public void visit(FuturePlayerAction packet) {}
+	@Override
+	public void visit(InformFutureAllowedActions packet) {}
 }
