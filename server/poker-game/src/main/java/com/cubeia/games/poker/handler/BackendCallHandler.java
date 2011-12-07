@@ -79,6 +79,10 @@ public class BackendCallHandler {
         resp.amountBroughtIn = amountReserved;
         resp.resultCode = Enums.BuyInResultCode.OK;
         
+        if (!state.isPlayerInHand(playerId)) {
+            pokerPlayer.commitPendingBalance(state.getMaxBuyIn());
+        }
+        
         sendGameData(playerId, resp);
         
         if (pokerPlayer.isSitInAfterSuccessfulBuyIn()) {

@@ -464,8 +464,6 @@ public class PokerState implements Serializable, IPokerState {
 		for (PokerPlayer player : handResult.getResults().keySet()) {
 			long totalBalance = player.getBalance() + player.getPendingBalance();
 			
-			int playerId = player.getId();
-			
 			if (totalBalance < settings.getAnteLevel()) {
 				playerIsSittingOut(player.getId(), SitOutStatus.SITTING_OUT);
 				

@@ -50,6 +50,7 @@ import com.cubeia.poker.variant.telesina.Telesina;
 
 public class BackendCallHandlerTest {
 
+    private static final int maxBuyIn = 1000;
     @Mock private PokerState state;
     @Mock private Telesina gameType;
     @Mock private Table table;
@@ -69,6 +70,7 @@ public class BackendCallHandlerTest {
         when(state.getPokerPlayer(playerId)).thenReturn(pokerPlayer);
         when(backend.getCallbackFactory()).thenReturn(callbackFactory);
         when(state.getServerAdapter()).thenReturn(serverAdapter);
+        when(state.getMaxBuyIn()).thenReturn(maxBuyIn);
         when(pokerPlayer.getId()).thenReturn(playerId);
     }
     
@@ -133,9 +135,23 @@ public class BackendCallHandlerTest {
     
     @Test
     public void testHandleReserveSuccessfulResponse() throws IOException {
+        when(state.isPlayerInHand(playerId)).thenReturn(true);
+        
     	setupForHandleReserveSuccessfulResponse(false);
     	verify(serverAdapter).notifyExternalSessionReferenceInfo(playerId, tableReference, tableSessionReference);
     	verify(state, never()).playerIsSittingIn(playerId);
+    	verify(pokerPlayer, never()).commitPendingBalance(Mockito.anyInt());
+    }
+    
+    @Test
+    public void testHandleReserveSuccessfulCommitPendingIfNotInHand() throws IOException {
+        when(state.isPlayerInHand(playerId)).thenReturn(false);
+        
+        setupForHandleReserveSuccessfulResponse(false);
+        verify(serverAdapter).notifyExternalSessionReferenceInfo(playerId, tableReference, tableSessionReference);
+        verify(state, never()).playerIsSittingIn(playerId);
+        
+        verify(pokerPlayer).commitPendingBalance(maxBuyIn);
     }
     
     @Test
