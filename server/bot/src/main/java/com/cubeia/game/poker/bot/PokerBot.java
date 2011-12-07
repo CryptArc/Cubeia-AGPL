@@ -1,13 +1,21 @@
 package com.cubeia.game.poker.bot;
 
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.log4j.Logger;
 
 import se.jadestone.dicearena.game.poker.network.protocol.BuyInInfoRequest;
+import se.jadestone.dicearena.service.network.protocol.LoginRequestPayloadStruct;
+import se.jadestone.dicearena.service.network.protocol.ProtocolObjectFactory;
 
+import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.firebase.io.protocol.GameTransportPacket;
 import com.cubeia.firebase.io.protocol.ProbePacket;
 import com.cubeia.firebase.bot.Bot;
+import com.cubeia.firebase.bot.action.Action;
 import com.cubeia.firebase.bot.ai.BasicAI;
+import com.cubeia.firebase.bot.ai.Delays;
 
 /**
  * Poker Bot.
@@ -32,6 +40,36 @@ public class PokerBot extends BasicAI{
     	}
     	handler.handleGamePacket(packet);
 	}
+	
+	@Override
+	protected void handleLoggedin() {
+		super.handleLoggedin();
+	}
+	
+	
+    protected void handleConnect() {
+        Action action = new Action(bot) {
+            
+        	public void run() {
+        		bot.login(createCredentials());
+            }
+
+			private byte[] createCredentials() {
+				LoginRequestPayloadStruct str = new LoginRequestPayloadStruct();
+				str.partnerCode = "dicearena";
+				str.credential = bot.getScreenname();
+				str.desiredNickName = bot.getScreenname();
+				str.partnerAccountId = bot.getScreenname();
+				try {
+					return new StyxSerializer(new ProtocolObjectFactory()).packArray(str);
+				} catch (IOException e) {
+					throw new IllegalStateException("Failed to pack login credentials", e);
+				}
+			}
+        };
+        
+        executor.schedule(action, Delays.LOGIN_DELAY_SECONDS, TimeUnit.SECONDS);
+    }
 
 	/**
 	 * I don't care, said Pierre,

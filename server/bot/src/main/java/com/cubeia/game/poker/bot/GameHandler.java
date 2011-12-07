@@ -259,6 +259,8 @@ public class GameHandler implements PacketVisitor {
 
 	public void visit(DeckInfo packet) {}
 
-	public void visit(ErrorPacket packet) {}
-    
+	public void visit(ErrorPacket packet) {
+		
+		
+	}
 }
