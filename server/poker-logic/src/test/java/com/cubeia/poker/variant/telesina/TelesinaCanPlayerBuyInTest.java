@@ -41,13 +41,13 @@ public class TelesinaCanPlayerBuyInTest {
         int anteLevel = 20;
         PokerSettings settings = new PokerSettings(anteLevel, 0, 0, null, TELESINA, 0, null, null, null);
         
-        when(player.getPendingBalance()).thenReturn((long) anteLevel + 1);
+        when(player.getBalanceNotInHand()).thenReturn((long) anteLevel + 1);
         assertThat(telesina.canPlayerBuyIn(player, settings), is(true));
         
-        when(player.getPendingBalance()).thenReturn((long) anteLevel + 0);
+        when(player.getBalanceNotInHand()).thenReturn((long) anteLevel + 0);
         assertThat(telesina.canPlayerBuyIn(player, settings), is(true));
 
-        when(player.getPendingBalance()).thenReturn((long) anteLevel - 1);
+        when(player.getBalanceNotInHand()).thenReturn((long) anteLevel - 1);
         assertThat(telesina.canPlayerBuyIn(player, settings), is(false));
     }
     

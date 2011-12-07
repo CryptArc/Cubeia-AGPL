@@ -58,13 +58,13 @@ public class BackendCallHandler {
             new Object[] {reserveResponse.getPlayerSessionId(), amountReserved, pokerPlayer.getId(), reserveResponse.reserveProperties});
         
         log.debug("player is in hand, adding reserved amount {} as pending", amountReserved);
-        pokerPlayer.addPendingAmount(amountReserved);
+        pokerPlayer.addNotInHandAmount(amountReserved);
         
         String externalPlayerSessionReference = reserveResponse.reserveProperties.get(
             CashGamesBackendContract.MARKET_TABLE_SESSION_REFERENCE_KEY);
         pokerPlayer.setExternalPlayerSessionReference(externalPlayerSessionReference);
         
-        pokerPlayer.clearFutureBuyInAmountAndRequest();
+        pokerPlayer.clearRequestedBuyInAmountAndRequest();
         
         Serializable marketTableRef = state.getExternalTableProperties().get(MARKET_TABLE_REFERENCE_KEY);
         state.getServerAdapter().notifyExternalSessionReferenceInfo(
@@ -75,12 +75,12 @@ public class BackendCallHandler {
         // TODO: response should move to PokerHandler.handleReserveResponse
         BuyInResponse resp = new BuyInResponse();
         resp.balance = (int) pokerPlayer.getBalance();
-        resp.pendingBalance = (int) pokerPlayer.getPendingBalance();
+        resp.pendingBalance = (int) pokerPlayer.getPendingBalanceSum();
         resp.amountBroughtIn = amountReserved;
         resp.resultCode = Enums.BuyInResultCode.OK;
         
         if (!state.isPlayerInHand(playerId)) {
-            pokerPlayer.commitPendingBalance(state.getMaxBuyIn());
+            pokerPlayer.commitBalanceNotInHand(state.getMaxBuyIn());
         }
         
         sendGameData(playerId, resp);
@@ -123,7 +123,7 @@ public class BackendCallHandler {
             log.error("reserve failed but player had no active request, player id = {}", playerId);
         }
             
-        player.clearFutureBuyInAmountAndRequest();
+        player.clearRequestedBuyInAmountAndRequest();
     	
         // TODO: if this is a failed AAMS reserve the player MUST be removed from the table. 
         

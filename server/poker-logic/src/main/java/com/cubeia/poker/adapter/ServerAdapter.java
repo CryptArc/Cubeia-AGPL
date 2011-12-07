@@ -191,7 +191,7 @@ public interface ServerAdapter {
 	void notifyFutureAllowedActions(PokerPlayer player,	List<PokerActionType> optionList);
 
 	/**
-	 * Request buy in:s for the given players that has {@link PokerPlayer#getFutureBuyInAmount()} > 0.
+	 * Request buy in:s for the given players that has {@link PokerPlayer#getRequestedBuyInAmount()} > 0.
 	 * @param players
 	 */
     void performPendingBuyIns(Collection<PokerPlayer> players);

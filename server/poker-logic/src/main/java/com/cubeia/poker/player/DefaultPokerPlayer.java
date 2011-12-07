@@ -62,7 +62,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	
 	protected boolean exposingPocketCards;
 	
-    private int futureBuyInAmount;
+    private long requestedBuyInAmount;
     
 
 
@@ -76,7 +76,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	/**
 	 * the money reserved in wallet but not yet available to the player 
 	 */
-    private long pendingBalance;
+    private long balanceNotInHand;
     	
 	/**
 	 * the amount reserved for a bettingaction
@@ -100,7 +100,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	public String toString() {
 		String sitOutSince = sitOutTimestamp == null ? "" : ":"+(System.currentTimeMillis()-sitOutTimestamp+"ms");
 	    String value = "pid["+playerId+"] seat["+seatId+"] " +
-	    		"balance["+balance+"] pendingBalance["+pendingBalance+"] " +
+	    		"balance["+balance+"] pendingBalance["+balanceNotInHand+"] " +
 	    		"sitout["+isSittingOut+sitOutSince+"] sitoutstatus["+sitOutStatus+"] " +
 				"folded["+hasFolded+"] hasActed["+hasActed+"] allIn[" + isAllIn() + "] " +
 				"hasPostedEntryBet["+hasPostedEntryBet+"]";
@@ -305,34 +305,39 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	}
 
 	@Override
-	public long getPendingBalance() {
-	    return pendingBalance;
+	public long getBalanceNotInHand() {
+	    return balanceNotInHand;
 	}
 	
 	@Override
-	public void addPendingAmount(long amount) {
-	    pendingBalance += amount;
+	public void addNotInHandAmount(long amount) {
+	    balanceNotInHand += amount;
 	}
 	
     @Override
-    public boolean commitPendingBalance(long maxBuyIn) {
-    	boolean hasPending = pendingBalance > 0;
+    public boolean commitBalanceNotInHand(long maxBuyIn) {
+    	boolean hasPending = balanceNotInHand > 0;
     	if (hasPending && balance < maxBuyIn) {
     		long allowedAmount = maxBuyIn - balance;
-    		if (pendingBalance > allowedAmount) {
+    		if (balanceNotInHand > allowedAmount) {
     			balance += allowedAmount;
-    			pendingBalance -= allowedAmount;
-    			log.debug("commiting pending balance for player: " + playerId + " committedValue: " + allowedAmount + " new balance: " + balance + " new pending balance: " + pendingBalance);
+    			balanceNotInHand -= allowedAmount;
+    			log.debug("commiting pending balance for player: " + playerId + " committedValue: " + allowedAmount + " new balance: " + balance + " new pending balance: " + balanceNotInHand);
     		} else {
-    			balance += pendingBalance;
-    			log.debug("commiting all pending balance for player: " + playerId + " committedValue: " + pendingBalance + " new balance: " + balance + " new pending balance: " + 0);
-    			pendingBalance = 0;
+    			balance += balanceNotInHand;
+    			log.debug("commiting all pending balance for player: " + playerId + " committedValue: " + balanceNotInHand + " new balance: " + balance + " new pending balance: " + 0);
+    			balanceNotInHand = 0;
     			
     		}
     	}
     	return hasPending;
     }
 
+    @Override
+    public long getPendingBalanceSum() {
+        return getBalanceNotInHand() + getRequestedBuyInAmount();
+    }
+    
     @Override
     public boolean isSitInAfterSuccessfulBuyIn() {
         return sitInAfterSuccessfulBuyIn;
@@ -376,19 +381,19 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	}
 
     @Override
-    public int getFutureBuyInAmount() {
-        return futureBuyInAmount;
+    public long getRequestedBuyInAmount() {
+        return requestedBuyInAmount;
     }
 
     @Override
-    public void addFutureBuyInAmount(int buyInAmount) {
-        futureBuyInAmount += buyInAmount;
-        log.debug("added {} as future buy in amount, total future buy in amount = {}", buyInAmount, futureBuyInAmount);
+    public void addRequestedBuyInAmount(long buyInAmount) {
+        requestedBuyInAmount += buyInAmount;
+        log.debug("added {} as future buy in amount, total future buy in amount = {}", buyInAmount, requestedBuyInAmount);
     }
 
     @Override
-    public void clearFutureBuyInAmountAndRequest() {
-        futureBuyInAmount = 0;
+    public void clearRequestedBuyInAmountAndRequest() {
+        requestedBuyInAmount = 0;
         buyInRequestActive = false;
     }
 

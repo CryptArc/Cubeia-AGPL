@@ -123,12 +123,13 @@ public class FirebaseServerAdapterTest {
 		int maxBuyIn = 45000;
 		when(fsa.state.getMaxBuyIn()).thenReturn(maxBuyIn);
 
-		int playerBalanceOnTable = 100;
-		int playerPendingBalanceOnTable = 100;
-		int playerTotalBalanceOnTable = playerBalanceOnTable+playerPendingBalanceOnTable;
+		long playerBalanceOnTable = 100;
+		long playerBalanceOnTableOutsideHand = 100;
+		long playerRequestedBalance = 50;
+		long playerTotalBalanceOnTable = playerBalanceOnTable + playerBalanceOnTableOutsideHand + playerRequestedBalance;
 
 		when(pokerPlayer.getBalance()).thenReturn((long) playerBalanceOnTable);
-		when(pokerPlayer.getPendingBalance()).thenReturn((long) playerPendingBalanceOnTable);
+		when(pokerPlayer.getPendingBalanceSum()).thenReturn(playerBalanceOnTableOutsideHand + playerRequestedBalance);
 		long mainAccountBalance = 500000L;
 		when(fsa.backend.getMainAccountBalance(playerId)).thenReturn(mainAccountBalance);
 
@@ -141,8 +142,8 @@ public class FirebaseServerAdapterTest {
 		BuyInInfoResponse buyInInfoRespPacket = (BuyInInfoResponse) new StyxSerializer(new ProtocolObjectFactory()).unpack(gda.getData());
 		assertThat(buyInInfoRespPacket.balanceInWallet, is((int) mainAccountBalance));
 
-		assertThat(buyInInfoRespPacket.balanceOnTable, is(playerTotalBalanceOnTable));
-		assertThat(buyInInfoRespPacket.maxAmount, is(maxBuyIn - playerTotalBalanceOnTable));
+		assertThat(buyInInfoRespPacket.balanceOnTable, is((int) playerTotalBalanceOnTable));
+		assertThat(buyInInfoRespPacket.maxAmount, is((int) (maxBuyIn - playerTotalBalanceOnTable)));
 		assertThat(buyInInfoRespPacket.minAmount, is(0));
 		assertThat(buyInInfoRespPacket.mandatoryBuyin, is(true));
 		assertThat(buyInInfoRespPacket.resultCode, is(BuyInInfoResultCode.OK));
@@ -172,12 +173,13 @@ public class FirebaseServerAdapterTest {
 		int maxBuyIn = 150;
 		when(fsa.state.getMaxBuyIn()).thenReturn(maxBuyIn);
 
-		int playerBalanceOnTable = 100;
-		int playerPendingBalanceOnTable = 100;
-		int playerTotalBalanceOnTable = playerBalanceOnTable+playerPendingBalanceOnTable;
+		long playerBalanceOnTable = 100;
+		long playerBalanceOnTableOutsideHand = 100;
+		long playerRequestedBalance = 100; 
+		long playerTotalBalanceOnTable = playerBalanceOnTable + playerBalanceOnTableOutsideHand + playerRequestedBalance;
 
 		when(pokerPlayer.getBalance()).thenReturn((long) playerBalanceOnTable);
-		when(pokerPlayer.getPendingBalance()).thenReturn((long) playerPendingBalanceOnTable);
+		when(pokerPlayer.getPendingBalanceSum()).thenReturn(playerBalanceOnTableOutsideHand + playerRequestedBalance);
 		long mainAccountBalance = 500000L;
 		when(fsa.backend.getMainAccountBalance(playerId)).thenReturn(mainAccountBalance);
 
@@ -190,7 +192,7 @@ public class FirebaseServerAdapterTest {
 		BuyInInfoResponse buyInInfoRespPacket = (BuyInInfoResponse) new StyxSerializer(new ProtocolObjectFactory()).unpack(gda.getData());
 		assertThat(buyInInfoRespPacket.balanceInWallet, is((int) mainAccountBalance));
 
-		assertThat(buyInInfoRespPacket.balanceOnTable, is(playerTotalBalanceOnTable));
+		assertThat(buyInInfoRespPacket.balanceOnTable, is((int) playerTotalBalanceOnTable));
 		assertThat(buyInInfoRespPacket.maxAmount, is(0));
 		assertThat(buyInInfoRespPacket.minAmount, is(0));
 		assertThat(buyInInfoRespPacket.mandatoryBuyin, is(true));
@@ -223,7 +225,7 @@ public class FirebaseServerAdapterTest {
 		int playerPendingBalanceOnTable = 100;
 
 		when(pokerPlayer.getBalance()).thenReturn((long) playerBalanceOnTable);
-		when(pokerPlayer.getPendingBalance()).thenReturn((long) playerPendingBalanceOnTable);
+		when(pokerPlayer.getBalanceNotInHand()).thenReturn((long) playerPendingBalanceOnTable);
 		when(fsa.backend.getMainAccountBalance(playerId)).thenThrow(new GetBalanceFailedException("error"));
 
 		fsa.notifyBuyInInfo(pokerPlayer.getId(), true);
@@ -270,7 +272,7 @@ public class FirebaseServerAdapterTest {
 		int playerTotalBalanceOnTable = playerBalanceOnTable+playerPendingBalanceOnTable;
 
 		when(pokerPlayer.getBalance()).thenReturn((long) playerBalanceOnTable);
-		when(pokerPlayer.getPendingBalance()).thenReturn((long) playerPendingBalanceOnTable);
+		when(pokerPlayer.getBalanceNotInHand()).thenReturn((long) playerPendingBalanceOnTable);
 		long mainAccountBalance = 500000L;
 		when(fsa.backend.getMainAccountBalance(playerId)).thenReturn(mainAccountBalance);
 
@@ -508,7 +510,8 @@ public class FirebaseServerAdapterTest {
 		PokerPlayer pokerPlayer0 = mock(PokerPlayer.class);
 		when(pokerPlayer0.getId()).thenReturn(playerId0);
 		when(pokerPlayer0.getBalance()).thenReturn(1000L);
-		when(pokerPlayer0.getPendingBalance()).thenReturn(1001L);
+//		when(pokerPlayer0.getBalanceNotInHand()).thenReturn(1001L);
+		when(pokerPlayer0.getPendingBalanceSum()).thenReturn(1111L);
 
 		int playerId1 = 666;
 		PokerPlayer pokerPlayer1 = mock(PokerPlayer.class);
@@ -542,7 +545,7 @@ public class FirebaseServerAdapterTest {
 		playerBalanceAction = (PlayerBalance) new StyxSerializer(new ProtocolObjectFactory()).unpack(gda.getData());
 
 		assertThat(playerBalanceAction.balance, is(1000));
-		assertThat(playerBalanceAction.pendingBalance, is(1001));
+		assertThat(playerBalanceAction.pendingBalance, is(1111));
 		assertThat(playerBalanceAction.player, is(playerId0));
 	}
 

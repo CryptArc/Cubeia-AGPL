@@ -109,7 +109,7 @@ public class PokerStateTest {
 		PokerPlayer player1 = createMockPlayer(1337, anteLevel-1);
 		PokerPlayer player2 = createMockPlayer(666, anteLevel);
 		PokerPlayer player3 = createMockPlayer(123, 0);
-		when(player3.getPendingBalance()).thenReturn((long)anteLevel);
+		when(player3.getBalanceNotInHand()).thenReturn((long)anteLevel);
 
 		Result result1 = mock(Result.class);
 		Result result2 = mock(Result.class);
@@ -164,11 +164,11 @@ public class PokerStateTest {
 
 		DefaultPokerPlayer player1 = new DefaultPokerPlayer(1);
 		player1.setBalance(40L);
-		player1.addPendingAmount(90L);
+		player1.addNotInHandAmount(90L);
 
 		DefaultPokerPlayer player2 = new DefaultPokerPlayer(2);
 		player2.setBalance(220L);
-		player2.addPendingAmount(120L);
+		player2.addNotInHandAmount(120L);
 
 		state.playerMap.put(player1.getId(), player1);
 		state.playerMap.put(player2.getId(), player2);
@@ -176,10 +176,10 @@ public class PokerStateTest {
 		state.commitPendingBalances();
 
 		assertThat(player1.getBalance(), is(100L));
-		assertThat(player1.getPendingBalance(), is(30L));
+		assertThat(player1.getBalanceNotInHand(), is(30L));
 
 		assertThat(player2.getBalance(), is(220L));
-		assertThat(player2.getPendingBalance(), is(120L));
+		assertThat(player2.getBalanceNotInHand(), is(120L));
 
 	}
 
@@ -211,8 +211,8 @@ public class PokerStateTest {
 		state.commitPendingBalances();
 
 		// Verify interaction and max buyin level
-		verify(player1).commitPendingBalance(10000);
-		verify(player2).commitPendingBalance(10000);
+		verify(player1).commitBalanceNotInHand(10000);
+		verify(player2).commitBalanceNotInHand(10000);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -362,8 +362,8 @@ public class PokerStateTest {
 		int player1Id = 1337;
 		int player2Id = 666;
 
-		when(player1.getPendingBalance()).thenReturn(100L);
-		when(player2.getPendingBalance()).thenReturn(100L);
+		when(player1.getBalanceNotInHand()).thenReturn(100L);
+		when(player2.getBalanceNotInHand()).thenReturn(100L);
 
 		when(player1.getBalance()).thenReturn(10L);
 		when(player2.getBalance()).thenReturn(10L);
@@ -408,8 +408,8 @@ public class PokerStateTest {
 		int player1Id = 1337;
 		int player2Id = 666;
 
-		when(player1.getPendingBalance()).thenReturn(100L);
-		when(player2.getPendingBalance()).thenReturn(100L);
+		when(player1.getBalanceNotInHand()).thenReturn(100L);
+		when(player2.getBalanceNotInHand()).thenReturn(100L);
 
 		when(player1.getBalance()).thenReturn(10L);
 		when(player2.getBalance()).thenReturn(10L);
@@ -536,7 +536,7 @@ public class PokerStateTest {
         
         state.handleBuyInRequest(player, amount);
 	    
-        verify(player).addFutureBuyInAmount(amount);
+        verify(player).addRequestedBuyInAmount(amount);
 	    verify(state.serverAdapter, never()).performPendingBuyIns(Mockito.anyCollection());
     }
 	
@@ -549,7 +549,7 @@ public class PokerStateTest {
         
         state.handleBuyInRequest(player, amount);
         
-        verify(player).addFutureBuyInAmount(amount);
+        verify(player).addRequestedBuyInAmount(amount);
         ArgumentCaptor<Collection> captor = ArgumentCaptor.forClass(Collection.class);
         verify(state.serverAdapter).performPendingBuyIns(captor.capture());
         Collection<PokerPlayer> players = captor.getValue();
@@ -581,7 +581,7 @@ public class PokerStateTest {
         resultMap.put(player3, null);
         
         when(player1.getBalance()).thenReturn(10L);
-        when(player1.getPendingBalance()).thenReturn(10L);
+        when(player1.getBalanceNotInHand()).thenReturn(10L);
         when(handResult.getResults()).thenReturn(resultMap);
         when(settings.getAnteLevel()).thenReturn(20);
         when(player3.isBuyInRequestActive()).thenReturn(true);

@@ -344,14 +344,14 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	public void performPendingBuyIns(Collection<PokerPlayer> players) {
 	    
 	    for (PokerPlayer player : players) {
-	        if (!player.isBuyInRequestActive()  &&   player.getFutureBuyInAmount() > 0) {
+	        if (!player.isBuyInRequestActive()  &&   player.getRequestedBuyInAmount() > 0) {
 	            PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) player;
     	        ReserveCallback callback = backend.getCallbackFactory().createReserveCallback(table);
     	        
-    	        log.debug("sending reserve request to backend: player id = {}, amount = {}", player.getId(), player.getFutureBuyInAmount());
+    	        log.debug("sending reserve request to backend: player id = {}, amount = {}", player.getId(), player.getRequestedBuyInAmount());
     	        
     	        ReserveRequest reserveRequest = new ReserveRequest(pokerPlayer.getPlayerSessionId(), getFirebaseState().getHandCount(), 
-    	            player.getFutureBuyInAmount());
+    	            (int) player.getRequestedBuyInAmount());
     	        backend.reserve(reserveRequest, callback);
     	        player.buyInRequestActive();
 	        }
@@ -365,7 +365,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	
 			BuyInInfoResponse resp = new BuyInInfoResponse();
 	
-			int balanceOnTable = player == null ? 0 : (int) player.getBalance() + (int) player.getPendingBalance();
+			int balanceOnTable = player == null ? 0 : (int) player.getBalance() + (int) player.getPendingBalanceSum();
 	
 			int correctedMaxBuyIn = state.getMaxBuyIn() - balanceOnTable;
 			int correctedMinBuyIn = balanceOnTable >= state.getMinBuyIn() ? 0 : state.getMinBuyIn();
@@ -496,7 +496,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 				//log.error("error updating balance: unable to find player with session = {}", bup.playerSessionId);
 				throw new IllegalStateException("error updating balance: unable to find player with session = " + bup.playerSessionId);
 			} else {
-				long gameBalance = pokerPlayer.getBalance() + pokerPlayer.getPendingBalance();
+				long gameBalance = pokerPlayer.getBalance() + pokerPlayer.getBalanceNotInHand();
 				long backendBalance = bup.balance;
 
 				if (gameBalance != backendBalance) {
@@ -526,10 +526,9 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
 		//	    // then send public packet to all the other players but exclude the pending balance
 		GameDataAction privateAction = actionTransformer.createPlayerBalanceAction(
-				(int) player.getBalance(), (int) player.getPendingBalance(), (int)playersTotalContributionToPot, player.getId(), table.getId());
+				(int) player.getBalance(), (int) player.getPendingBalanceSum(), (int)playersTotalContributionToPot, player.getId(), table.getId());
 		log.debug("Send private PBA: "+privateAction);
 		sendPrivatePacket(player.getId(),privateAction);
-
 	}
 
 	/**
