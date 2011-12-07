@@ -10,6 +10,7 @@ import com.cubeia.poker.rounds.ante.AnteRoundHelper;
 import com.cubeia.poker.rounds.betting.BettingRound;
 import com.cubeia.poker.rounds.betting.NoLimitBetStrategy;
 import com.cubeia.poker.rounds.betting.TelesinaPlayerToActCalculator;
+import com.cubeia.poker.variant.FutureActionsCalculator;
 
 /**
  * Factory of Telesina game rounds.
@@ -25,7 +26,7 @@ public class TelesinaRoundFactory {
 
     BettingRound createBettingRound(Telesina telesina, int dealerButtonSeatId) {
         return new BettingRound(telesina, dealerButtonSeatId, new TelesinaPlayerToActCalculator(
-            telesina.getDeckLowestRank()), new ActionRequestFactory(new NoLimitBetStrategy()));
+            telesina.getDeckLowestRank()), new ActionRequestFactory(new NoLimitBetStrategy()), new FutureActionsCalculator());
     }
 
     DealExposedPocketCardsRound createDealExposedPocketCardsRound(Telesina telesina) {

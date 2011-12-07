@@ -230,5 +230,7 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
 	public void unseatPlayer(int playerId, boolean setAsWatcher) {
 		super.unseatPlayer(playerId, setAsWatcher);
 	}
+	
+	
 
 }

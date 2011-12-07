@@ -22,6 +22,12 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
 import junit.framework.TestCase;
 
 import org.hamcrest.CoreMatchers;
@@ -32,6 +38,7 @@ import com.cubeia.poker.GameType;
 import com.cubeia.poker.IPokerState;
 import com.cubeia.poker.MockGame;
 import com.cubeia.poker.MockPlayer;
+import com.cubeia.poker.PokerState;
 import com.cubeia.poker.TestListener;
 import com.cubeia.poker.TestUtils;
 import com.cubeia.poker.action.ActionRequest;
@@ -39,7 +46,10 @@ import com.cubeia.poker.action.ActionRequestFactory;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
+import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.variant.FutureActionsCalculator;
+import com.cubeia.poker.variant.telesina.Telesina;
 
 public class BettingRoundTest extends TestCase implements TestListener {
 
@@ -62,7 +72,7 @@ public class BettingRoundTest extends TestCase implements TestListener {
 		MockPlayer[] p = TestUtils.createMockPlayers(2);
 
 		game.addPlayers(p);
-		round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()));
+		round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new FutureActionsCalculator());
 
 		assertFalse(game.roundFinished);
 
@@ -77,7 +87,7 @@ public class BettingRoundTest extends TestCase implements TestListener {
 		MockPlayer[] p = TestUtils.createMockPlayers(2, 100);
 
 		game.addPlayers(p);
-		round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()));
+		round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new FutureActionsCalculator());
 
 		assertFalse(game.roundFinished);
 		act(p[1], PokerActionType.BET, 70);
@@ -95,7 +105,7 @@ public class BettingRoundTest extends TestCase implements TestListener {
         when(game.getState()).thenReturn(state );
         PokerPlayer player = Mockito.mock(PokerPlayer.class);
         
-        round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()));
+        round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new FutureActionsCalculator());
         round.call(player);
         
         verify(state).call();
@@ -112,10 +122,10 @@ public class BettingRoundTest extends TestCase implements TestListener {
         when(player.getBetStack()).thenReturn(betStack);
         when(player.getBalance()).thenReturn(betStack * 10);
         
-        BettingRound round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()));
+        BettingRound round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new FutureActionsCalculator());
         round.highBet = 100;
         
-        round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()));
+        round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new FutureActionsCalculator());
         
         long amountCalled = round.call(player);
         
@@ -131,9 +141,9 @@ public class BettingRoundTest extends TestCase implements TestListener {
         when(game.getState()).thenReturn(state);
         PokerPlayer player = Mockito.mock(PokerPlayer.class);
         
-        BettingRound round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()));
+        BettingRound round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new FutureActionsCalculator());
         
-        round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()));
+        round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new FutureActionsCalculator());
         
         round.call(player);
                 
@@ -148,7 +158,7 @@ public class BettingRoundTest extends TestCase implements TestListener {
 
         PokerPlayer player = Mockito.mock(PokerPlayer.class);
         
-        BettingRound round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()));
+        BettingRound round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new FutureActionsCalculator());
         round.highBet = 100;
         long betStack = 75L;
         when(player.getBetStack()).thenReturn(betStack);
@@ -168,7 +178,7 @@ public class BettingRoundTest extends TestCase implements TestListener {
 		MockPlayer[] p = TestUtils.createMockPlayers(2);
 
 		game.addPlayers(p);
-		round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()));
+		round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new FutureActionsCalculator());
 
 		assertFalse(game.roundFinished);
 
@@ -187,9 +197,9 @@ public class BettingRoundTest extends TestCase implements TestListener {
         when(game.getState()).thenReturn(state);
         PokerPlayer player = Mockito.mock(PokerPlayer.class);
         
-        BettingRound round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()));
+        BettingRound round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new FutureActionsCalculator());
         
-        round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()));
+        round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new FutureActionsCalculator());
         
         round.raise(player, 10L);
                 
@@ -201,7 +211,7 @@ public class BettingRoundTest extends TestCase implements TestListener {
 		MockPlayer[] p = TestUtils.createMockPlayers(2);
 
 		game.addPlayers(p);
-		round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()));
+		round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new FutureActionsCalculator());
 
 		assertFalse(game.roundFinished);
 
@@ -213,7 +223,7 @@ public class BettingRoundTest extends TestCase implements TestListener {
     private MockPlayer[] createAndGetPlayersAddThemToTheGameAndCreateABettingRound(int numberOfPlayers){
 		MockPlayer[] p = TestUtils.createMockPlayers(numberOfPlayers);
 		game.addPlayers(p);
-		round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()));
+		round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new FutureActionsCalculator());
 		return p;
     }
     
@@ -244,9 +254,9 @@ public class BettingRoundTest extends TestCase implements TestListener {
         when(game.getState()).thenReturn(state);
         PokerPlayer player = Mockito.mock(PokerPlayer.class);
         
-        BettingRound round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()));
+        BettingRound round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new FutureActionsCalculator());
         
-        round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()));
+        round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new FutureActionsCalculator());
         
         ActionRequest actionRequest = Mockito.mock(ActionRequest.class);
         when(player.getActionRequest()).thenReturn(actionRequest);
@@ -270,7 +280,7 @@ public class BettingRoundTest extends TestCase implements TestListener {
 		MockPlayer[] p = TestUtils.createMockPlayers(2);
 
 		game.addPlayers(p);
-		round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()));
+		round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new FutureActionsCalculator());
 
 		assertFalse(game.roundFinished);
 
@@ -285,7 +295,7 @@ public class BettingRoundTest extends TestCase implements TestListener {
 		MockPlayer[] p = TestUtils.createMockPlayers(2);
 
 		game.addPlayers(p);
-		round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()));
+		round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new FutureActionsCalculator());
 
 		assertFalse(game.roundFinished);
 
@@ -299,7 +309,7 @@ public class BettingRoundTest extends TestCase implements TestListener {
 		MockPlayer[] p = TestUtils.createMockPlayers(2);
 
 		game.addPlayers(p);
-		round = new BettingRound(game, 3, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()));
+		round = new BettingRound(game, 3, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new FutureActionsCalculator());
 
 		assertFalse(game.roundFinished);
 
@@ -308,6 +318,51 @@ public class BettingRoundTest extends TestCase implements TestListener {
 
 		assertTrue(round.isFinished());		
 	}
+    
+    @SuppressWarnings("unchecked")
+	@Test
+    public void testFutureActionsNotified() {
+    	int p0Id = 1337;
+    	PokerPlayer p0 = mock(PokerPlayer.class);
+		when(p0.getId()).thenReturn(p0Id);
+		
+		int p1Id = 1338;
+    	PokerPlayer p1 = mock(PokerPlayer.class);
+    	when(p1.getId()).thenReturn(p1Id);
+
+    	int p2Id = 1339;
+    	PokerPlayer p2 = mock(PokerPlayer.class);
+    	when(p2.getId()).thenReturn(p2Id);
+    	
+    	IPokerState state = mock(IPokerState.class);
+		GameType game = mock(Telesina.class);
+		when(game.getState()).thenReturn(state);
+		ServerAdapter serverAdapter = mock(ServerAdapter.class);
+		when(game.getServerAdapter()).thenReturn(serverAdapter);
+		
+		SortedMap<Integer, PokerPlayer> playerSeatingMap = new TreeMap<Integer, PokerPlayer>();
+		playerSeatingMap.put(0,p0);
+		playerSeatingMap.put(1,p1);
+		playerSeatingMap.put(2,p2);
+		when(state.getCurrentHandSeatingMap()).thenReturn(playerSeatingMap);
+		
+		SortedMap<Integer, PokerPlayer> playerMap = new TreeMap<Integer, PokerPlayer>();
+		playerMap.put(p0.getId(),p0);
+		playerMap.put(p1.getId(),p1);
+		playerMap.put(p2.getId(),p2);
+		when(state.getCurrentHandPlayerMap()).thenReturn(playerMap);
+		
+		PlayerToActCalculator playerToActCalculator = mock(PlayerToActCalculator.class);
+		
+		ActionRequestFactory actionRequestFactory = new ActionRequestFactory(new NoLimitBetStrategy());
+		FutureActionsCalculator futureActionsCalculator = new FutureActionsCalculator();
+		round = new BettingRound(game, 0, playerToActCalculator, actionRequestFactory, futureActionsCalculator);
+		
+		verify(serverAdapter).notifyFutureAllowedActions(Mockito.eq(p0),Mockito.anyList());
+		verify(serverAdapter).notifyFutureAllowedActions(Mockito.eq(p1),Mockito.anyList());
+		verify(serverAdapter).notifyFutureAllowedActions(Mockito.eq(p2),Mockito.anyList());
+		
+    }
 
 	// HELPERS
 	

@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
+import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
@@ -192,6 +193,12 @@ public abstract class ServerAdapterProxy implements ServerAdapter {
         }
 	}
 	
+	@Override
+	public void notifyFutureAllowedActions(PokerPlayer player,	List<PokerActionType> optionList) {
+		if (getAdaptee() != null) {
+			getAdaptee().notifyFutureAllowedActions(player, optionList);	
+		}
+	}
 	@Override
 	public void performPendingBuyIns(Collection<PokerPlayer> players) {
         if(getAdaptee() != null) {

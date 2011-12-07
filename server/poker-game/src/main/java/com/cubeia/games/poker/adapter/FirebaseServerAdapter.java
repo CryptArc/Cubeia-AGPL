@@ -40,8 +40,10 @@ import se.jadestone.dicearena.game.poker.network.protocol.Enums;
 import se.jadestone.dicearena.game.poker.network.protocol.Enums.BuyInInfoResultCode;
 import se.jadestone.dicearena.game.poker.network.protocol.ExposePrivateCards;
 import se.jadestone.dicearena.game.poker.network.protocol.ExternalSessionInfoPacket;
+import se.jadestone.dicearena.game.poker.network.protocol.FuturePlayerAction;
 import se.jadestone.dicearena.game.poker.network.protocol.HandCanceled;
 import se.jadestone.dicearena.game.poker.network.protocol.HandEnd;
+import se.jadestone.dicearena.game.poker.network.protocol.InformFutureAllowedActions;
 import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerPokerStatus;
 import se.jadestone.dicearena.game.poker.network.protocol.Pot;
@@ -93,6 +95,7 @@ import com.cubeia.poker.PokerState;
 import com.cubeia.poker.SystemShutdownException;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
+import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
@@ -264,6 +267,25 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		log.debug("--> Send PerformAction["+packet+"] to everyone");
 		sendPublicPacket(action, -1);
 	}
+	
+	@Override
+	public void notifyFutureAllowedActions(PokerPlayer player,	List<PokerActionType> optionList) {
+		
+		InformFutureAllowedActions packet = new InformFutureAllowedActions();
+		
+		List<FuturePlayerAction> options = new ArrayList<FuturePlayerAction>();
+		
+		for (PokerActionType actionType : optionList) {
+			options.add( new FuturePlayerAction(actionTransformer.fromPokerActionTypeToProtocolActionType(actionType)));
+		}
+		
+		packet.actions = options;
+		
+		GameDataAction action = protocolFactory.createGameAction(packet, player.getId(), table.getId());
+		sendPrivatePacket(player.getId(), action);
+		
+	}
+	
 
 	@Override
 	public void notifyCommunityCards(List<Card> cards) {

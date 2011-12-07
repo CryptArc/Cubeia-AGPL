@@ -79,6 +79,10 @@ public class BackendCallHandler {
         resp.amountBroughtIn = amountReserved;
         resp.resultCode = Enums.BuyInResultCode.OK;
         
+        if (!state.isPlayerInHand(playerId)) {
+            pokerPlayer.commitPendingBalance(state.getMaxBuyIn());
+        }
+        
         sendGameData(playerId, resp);
         
         if (pokerPlayer.isSitInAfterSuccessfulBuyIn()) {
@@ -132,6 +136,14 @@ public class BackendCallHandler {
         // log.debug("handle open session response: session = {}, pId = {}", playerSessionId, playerId);
         PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) state.getPokerPlayer(playerId);
         pokerPlayer.setPlayerSessionId(playerSessionId);
+		/*
+		 * if the player can not buy, eg. have enough cash at hand, in after reconnecting 
+		 * we send him/her a buyInInfo 
+		 */
+		if (!state.getGameType().canPlayerBuyIn(pokerPlayer, state.getSettings()))
+		{
+			state.notifyBuyinInfo(pokerPlayer.getId(), false);
+		}
     }
 
     public void handleAnnounceTableSuccessfulResponse(AnnounceTableResponse attachment) {
@@ -150,7 +162,7 @@ public class BackendCallHandler {
 
     private void makeTableVisibleInLobby(Table table) {
         //log.debug("setting table {} as visible in lobby", table.getId());
-        table.getAttributeAccessor().setIntAttribute("VISIBLE_IN_LOBBY", 1);
+        table.getAttributeAccessor().setIntAttribute(PokerLobbyAttributes.VISIBLE_IN_LOBBY.name(), 1);
     }
 
     /**

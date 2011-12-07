@@ -41,7 +41,7 @@ public class BackendPlayerSessionHandlerTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        backendPlayerSessionHandler = new BackendPlayerSessionHandler(state);
+        backendPlayerSessionHandler = new BackendPlayerSessionHandler();
         backendPlayerSessionHandler.cashGameBackend = cashGamesBackendContract;
     }
     

@@ -457,6 +457,7 @@ public class PokerLogicTest extends GuiceTest {
 			@Override public void unseatPlayer(int playerId, boolean setAsWatcher) {}
 			@Override public void notifyTakeBackUncalledBet(int playerId, int amount) {}
 			@Override public void notifyExternalSessionReferenceInfo(int playerId,String externalTableReference,String externalTableSessionReference) {}
+			@Override public void notifyFutureAllowedActions(PokerPlayer player, List<PokerActionType> optionList) {}
 			@Override public void performPendingBuyIns(Collection<PokerPlayer> players) {}
 		});
 		game.timeout();

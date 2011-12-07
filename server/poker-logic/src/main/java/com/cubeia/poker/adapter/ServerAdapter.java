@@ -23,6 +23,7 @@ import java.util.List;
 import com.cubeia.poker.SystemShutdownException;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
+import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.ExposeCardsHolder;
 import com.cubeia.poker.hand.HandType;
@@ -183,9 +184,15 @@ public interface ServerAdapter {
 	void notifyTakeBackUncalledBet(int playerId, int amount);
 
 	/**
+	 * Notify that the player will be able to do this actions later when it is the players turn
+	 * @param player
+	 * @param optionList
+	 */
+	void notifyFutureAllowedActions(PokerPlayer player,	List<PokerActionType> optionList);
+
+	/**
 	 * Request buy in:s for the given players that has {@link PokerPlayer#getFutureBuyInAmount()} > 0.
 	 * @param players
 	 */
     void performPendingBuyIns(Collection<PokerPlayer> players);
-
 }

@@ -3,6 +3,7 @@ package com.cubeia.games.poker.handler;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -42,11 +43,16 @@ import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.adapter.FirebaseServerAdapter;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
+import com.cubeia.poker.PokerSettings;
 import com.cubeia.poker.PokerState;
+import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.variant.telesina.Telesina;
 
 public class BackendCallHandlerTest {
 
+    private static final int maxBuyIn = 1000;
     @Mock private PokerState state;
+    @Mock private Telesina gameType;
     @Mock private Table table;
     @Mock private GameNotifier notifier;
     @Mock private PokerPlayerImpl pokerPlayer;
@@ -64,6 +70,8 @@ public class BackendCallHandlerTest {
         when(state.getPokerPlayer(playerId)).thenReturn(pokerPlayer);
         when(backend.getCallbackFactory()).thenReturn(callbackFactory);
         when(state.getServerAdapter()).thenReturn(serverAdapter);
+        when(state.getMaxBuyIn()).thenReturn(maxBuyIn);
+        when(pokerPlayer.getId()).thenReturn(playerId);
     }
     
     
@@ -103,6 +111,7 @@ public class BackendCallHandlerTest {
         assertThat(buyInRespPacket.resultCode, is(Enums.BuyInResultCode.OK));
         verify(state).notifyPlayerBalance(playerId);
         
+
     }
     
     @Test
@@ -126,9 +135,23 @@ public class BackendCallHandlerTest {
     
     @Test
     public void testHandleReserveSuccessfulResponse() throws IOException {
+        when(state.isPlayerInHand(playerId)).thenReturn(true);
+        
     	setupForHandleReserveSuccessfulResponse(false);
     	verify(serverAdapter).notifyExternalSessionReferenceInfo(playerId, tableReference, tableSessionReference);
     	verify(state, never()).playerIsSittingIn(playerId);
+    	verify(pokerPlayer, never()).commitPendingBalance(Mockito.anyInt());
+    }
+    
+    @Test
+    public void testHandleReserveSuccessfulCommitPendingIfNotInHand() throws IOException {
+        when(state.isPlayerInHand(playerId)).thenReturn(false);
+        
+        setupForHandleReserveSuccessfulResponse(false);
+        verify(serverAdapter).notifyExternalSessionReferenceInfo(playerId, tableReference, tableSessionReference);
+        verify(state, never()).playerIsSittingIn(playerId);
+        
+        verify(pokerPlayer).commitPendingBalance(maxBuyIn);
     }
     
     @Test
@@ -139,10 +162,13 @@ public class BackendCallHandlerTest {
 
     @Test
     public void testHandleOpenSessionSuccessfulResponse() {
+    	when(state.getGameType()).thenReturn(gameType);
+        when(gameType.canPlayerBuyIn(any(PokerPlayer.class), any(PokerSettings.class))).thenReturn(false);
         PlayerSessionId playerSessionId = new PlayerSessionIdImpl(playerId);
         OpenSessionResponse openSessionResponse = new OpenSessionResponse(playerSessionId, Collections.<String, String>emptyMap());
         callHandler.handleOpenSessionSuccessfulResponse(openSessionResponse);
         verify(pokerPlayer).setPlayerSessionId(playerSessionId);
+        verify(state).notifyBuyinInfo(playerId, false);
     }
     
     @SuppressWarnings({ "serial", "unchecked" })

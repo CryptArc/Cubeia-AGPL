@@ -3,7 +3,6 @@ package com.cubeia.backend.firebase;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -160,8 +159,8 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
             long delay = 0;
             
             if (amount == 67) {
-                delay = (long) (Math.random() * 2000);
-                log.info("Succeeding reserve with {}ms delay for magic amount 67 cents (hardcoded for debug reasons). sId={}", delay, sid);
+                delay = (long) (5000 + Math.random() * 10000);
+                log.info("succeeding reserve with {}ms delay for magic amount 67 cents (hardcoded for debug reasons). sId={}", delay, sid);
             }
             
             executor.schedule(new Runnable() {

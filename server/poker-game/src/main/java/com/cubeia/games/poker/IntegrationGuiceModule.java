@@ -48,6 +48,6 @@ public class IntegrationGuiceModule extends AbstractModule {
 		bind(ActionSequenceGenerator.class).in(Singleton.class);
         bind(TimeoutCache.class).in(Singleton.class);
         bind(BackendPlayerSessionHandler.class).in(Singleton.class);
-		bind(TableCloseHandler.class).in(EventScoped.class);
+		bind(TableCloseHandlerImpl.class).in(EventScoped.class);
 	}
 }

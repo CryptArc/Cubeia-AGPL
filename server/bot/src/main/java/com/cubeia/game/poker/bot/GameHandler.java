@@ -255,5 +255,4 @@ public class GameHandler implements PacketVisitor {
 	public void visit(ErrorPacket packet) {}
 	public void visit(FuturePlayerAction packet) {}
 	public void visit(InformFutureAllowedActions packet) {}
-    
 }

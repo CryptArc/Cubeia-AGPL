@@ -30,6 +30,7 @@ import org.apache.log4j.Logger;
 
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
+import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
@@ -143,6 +144,7 @@ public class MockServerAdapter implements ServerAdapter {
     public void notifyRakeInfo(RakeInfoContainer rakeInfoContainer) {}    
     public void notifyTakeBackUncalledBet(int playerId, int amount) {}
     public void notifyExternalSessionReferenceInfo(int playerId,String externalTableReference, String externalTableSessionReference) {}
+    public void notifyFutureAllowedActions(PokerPlayer player, List<PokerActionType> optionList) {}
     
     @Override
 	public void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status) {

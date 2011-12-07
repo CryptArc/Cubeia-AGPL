@@ -224,19 +224,10 @@ public class PokerState implements Serializable, IPokerState {
 	 */
 	public void addPlayer(PokerPlayer player) {
 		playerMap.put(player.getId(), player);
-		seatingMap.put(player.getSeatId(), player);
-		
-		// if the player can not buy in after reconnecting we send him/her a buyInInfo 
-		if (!gameType.canPlayerBuyIn(player, settings))
-		{
-			serverAdapter.notifyBuyInInfo(player.getId(), false);
-		}
-		
+		seatingMap.put(player.getSeatId(), player);		
 		if (!isTournamentTable()) {
 			startGame();
 		}
-		
-		
 	}
 
 	/**
@@ -986,7 +977,7 @@ public class PokerState implements Serializable, IPokerState {
 
 	@Override
 	public void shutdown() {
-		log.debug("shutting down table {}", getId());
+		log.debug("Shutting down table {}", getId());
 		setCurrentState(SHUTDOWN);
 	}
 

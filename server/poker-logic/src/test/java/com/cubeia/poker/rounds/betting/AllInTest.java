@@ -28,6 +28,7 @@ import com.cubeia.poker.action.ActionRequestFactory;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
+import com.cubeia.poker.variant.FutureActionsCalculator;
 
 public class AllInTest extends TestCase implements TestListener {
 
@@ -50,7 +51,7 @@ public class AllInTest extends TestCase implements TestListener {
 		MockPlayer[] p = TestUtils.createMockPlayers(2, 500);
 
 		game.addPlayers(p);
-		round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()));
+		round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()),  new FutureActionsCalculator());
 
 		PossibleAction bet = requestedAction.getOption(PokerActionType.BET);
 		assertEquals(500, bet.getMaxAmount());

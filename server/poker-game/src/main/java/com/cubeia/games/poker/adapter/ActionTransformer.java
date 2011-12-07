@@ -149,48 +149,34 @@ public class ActionTransformer {
 	@VisibleForTesting
 	protected PlayerAction createPlayerAction(PokerActionType actionType) {
 		PlayerAction action = new PlayerAction();
+		action.type = fromPokerActionTypeToProtocolActionType(actionType);
+		
+		return action;
+	}
+
+	public ActionType fromPokerActionTypeToProtocolActionType(PokerActionType actionType) {
 		switch(actionType) {
 			case FOLD:
-				action.type = ActionType.FOLD;
-				break;
-				
+				return ActionType.FOLD;
 			case CHECK:
-				action.type = ActionType.CHECK;
-				break;
-				
+				return ActionType.CHECK;
 			case CALL:
-				action.type = ActionType.CALL;
-				break;
-				
+				return ActionType.CALL;
 			case BET:
-				action.type = ActionType.BET;
-				break;
-				
+				return ActionType.BET;
 			case BIG_BLIND:
-				action.type = ActionType.BIG_BLIND;
-				break;
-				
+				return ActionType.BIG_BLIND;
 			case SMALL_BLIND:
-				action.type = ActionType.SMALL_BLIND;
-				break;
-				
+				return ActionType.SMALL_BLIND;
 			case RAISE:
-				action.type = ActionType.RAISE;
-				break;
-			
+				return ActionType.RAISE;
 			case DECLINE_ENTRY_BET:
-			    action.type = ActionType.DECLINE_ENTRY_BET;
-				break;
-			    
+			    return ActionType.DECLINE_ENTRY_BET;
 			case ANTE:
-			    action.type = ActionType.ANTE;
-			    break;
-				
+			    return ActionType.ANTE;
 			default:
                 throw new UnsupportedOperationException("unsupported action type: " + actionType.name());
 		}
-		
-		return action;
 	}
 
 	/**

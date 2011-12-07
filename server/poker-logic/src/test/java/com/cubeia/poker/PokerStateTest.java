@@ -474,7 +474,10 @@ public class PokerStateTest {
 		verify(state.serverAdapter).requestMultipleActions(requests);
 	}
 	
-	@Test
+	/*
+	 * This is now tested in backend call handler test 'testHandleOpenSessionSuccessfulResponse'
+	 */
+	/*@Test
 	public void testBuyInInfoSentOnJoinIfPlayerCanNotBuyin() {
 		PokerState state = new PokerState();
 		state.init(mock(RNGProvider.class), settings);
@@ -490,7 +493,7 @@ public class PokerStateTest {
 		state.addPlayer(player);
 		
 		Mockito.verify(state.serverAdapter).notifyBuyInInfo(1337, false);
-	}
+	}*/
 	
 	@Test
 	public void testBuyInInfoNotSentOnJoinIfPlayerCanBuyin() {

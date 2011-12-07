@@ -34,6 +34,7 @@ import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
 import com.cubeia.poker.util.ThreadLocalProfiler;
+import com.cubeia.poker.variant.FutureActionsCalculator;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
@@ -72,13 +73,18 @@ public class BettingRound implements Round, BettingRoundContext {
     
     private PokerPlayer lastPlayerToBeCalled;
 
+    private FutureActionsCalculator futureActionsCalculator;
+    
     /**
      * Players still in play (not folded or all in) that entered this round. 
      */
     @VisibleForTesting
     protected Set<PokerPlayer> playersInPlayAtRoundStart;
+
 	
-	public BettingRound(GameType gameType, int dealerSeatId, PlayerToActCalculator playerToActCalculator, ActionRequestFactory actionRequestFactory) {
+	
+	public BettingRound(GameType gameType, int dealerSeatId, PlayerToActCalculator playerToActCalculator, ActionRequestFactory actionRequestFactory, FutureActionsCalculator futureActionsCalculator) {
+		this.futureActionsCalculator = futureActionsCalculator;
 		this.gameType = gameType;
         this.playerToActCalculator = playerToActCalculator;
 		this.actionRequestFactory = actionRequestFactory;
@@ -121,9 +127,11 @@ public class BettingRound implements Round, BettingRoundContext {
         if (p == null  ||  allOtherNonFoldedPlayersAreAllIn(p)  ||  zeroPlayersReadyToStart) {
 			// No or only one player can act. We are currently in an all-in show down scenario
 			log.debug("No players left to act. We are in an all-in show down scenario");
+			notifyAllPlayersOfNoPossibleFutureActions();
 			isFinished = true;
 		} else {
 			requestAction(p);
+			notifyAllPlayersOfPossibleFutureActions(p);
 		}
         
         // This can be triggered by the if clause above, but also
@@ -133,6 +141,8 @@ public class BettingRound implements Round, BettingRoundContext {
         	gameType.scheduleRoundTimeout();
         }
 	}
+
+
 
 	@Override
     public String toString() {
@@ -165,6 +175,7 @@ public class BettingRound implements Round, BettingRoundContext {
 		} else {
 			log.debug("Next player to act is: "+player.getId());
 			requestAction(player);
+			notifyAllPlayersOfPossibleFutureActions(player);
 		}
 	}
 
@@ -189,6 +200,38 @@ public class BettingRound implements Round, BettingRoundContext {
 			gameType.requestAction(p.getActionRequest());
 		}
 	}
+	
+	/**
+	 * Notify all the other players about their future action options
+	 * i.e. check next and fold next checkboxes
+	 * @param excludePlayer player that should get no actions
+	 */
+	private void notifyAllPlayersOfPossibleFutureActions(PokerPlayer excludePlayer) {
+		
+		for (PokerPlayer player : gameType.getState().getCurrentHandPlayerMap().values()) {
+			
+			if (player.getId() != excludePlayer.getId())
+			{
+				gameType.getServerAdapter().notifyFutureAllowedActions(player, futureActionsCalculator.calculateFutureActionOptionList(player, highBet));
+			}
+			else
+			{
+				gameType.getServerAdapter().notifyFutureAllowedActions(player, futureActionsCalculator.getEmptyFutureOptionList());
+			}
+		}
+		
+	}
+	/**
+	 * Notify all players that they will not have any future actions in the current round
+	 * so they can turn of the check, check/fold and fold checkboxes
+	 */
+	private void notifyAllPlayersOfNoPossibleFutureActions() {
+		for (PokerPlayer player : gameType.getState().getCurrentHandPlayerMap().values()) {
+			gameType.getServerAdapter().notifyFutureAllowedActions(player, futureActionsCalculator.getEmptyFutureOptionList());
+		}
+	}
+		
+	
 
 	@VisibleForTesting
 	protected boolean calculateIfRoundFinished() {

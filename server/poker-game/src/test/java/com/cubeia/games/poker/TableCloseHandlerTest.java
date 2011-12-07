@@ -53,13 +53,13 @@ public class TableCloseHandlerTest {
     @Mock private LobbyTableAttributeAccessor attributeAccessor;
     @Mock private BackendPlayerSessionHandler backendPlayerSessionHandler;
     @Mock private FirebaseServerAdapter serverAdapter;
-    private TableCloseHandler tableCrashHandler;
+    private TableCloseHandlerImpl tableCrashHandler;
     private int tableId = 1343;
 
     @Before
     public void setup() {
         initMocks(this);
-        tableCrashHandler = new TableCloseHandler(state, actionCache, backendPlayerSessionHandler, serverAdapter);
+        tableCrashHandler = new TableCloseHandlerImpl(state, actionCache, backendPlayerSessionHandler, serverAdapter);
         when(table.getAttributeAccessor()).thenReturn(attributeAccessor);
         when(table.getId()).thenReturn(tableId);
         when(state.getAdapterState()).thenReturn(fbState);

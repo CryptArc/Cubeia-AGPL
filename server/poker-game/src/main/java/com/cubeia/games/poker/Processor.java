@@ -83,7 +83,7 @@ public class Processor implements GameProcessor, TournamentProcessor {
     TimeoutCache timeoutCache;
     
     @Inject @VisibleForTesting
-    TableCloseHandler tableCloseHandler;
+    TableCloseHandlerImpl tableCloseHandler;
     
     @Service @VisibleForTesting
     HandDebuggerContract handDebugger;
