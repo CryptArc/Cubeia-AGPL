@@ -114,6 +114,16 @@
 		<appender-ref ref="ERROR_LOG" />
 	</category>
 	
+	
+	<category name="com.cubeia.backend" additivity="false">
+		<priority value="debug"/>
+		<appender-ref ref="STDOUT"/>
+		<appender-ref ref="SERVER_LOG"/>
+		<appender-ref ref="ERROR_LOG" />
+	</category>
+
+	
+	
 	<!-- Enable debug to get the hand history written to the logs in JSON format -->
 	<category name="com.cubeia.poker.handhistory.impl.JsonHandHistoryLogger" additivity="false">
 		<priority value="debug"/>
@@ -159,7 +169,7 @@
 		<appender-ref ref="ERROR_LOG" />
 	</category>
 	
-		<category name="com.cubeia.game.server.service.wallet" additivity="false">
+	<category name="com.cubeia.game.server.service.wallet" additivity="false">
 		<priority value="info"/>
 		<appender-ref ref="SERVER_LOG"/>
 		<appender-ref ref="ERROR_LOG" />

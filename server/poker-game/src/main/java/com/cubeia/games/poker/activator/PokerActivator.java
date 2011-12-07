@@ -134,8 +134,8 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
         CashGamesBackendContract cashGameBackendService = context.getServices().getServiceInstance(CashGamesBackendContract.class);
         
     	// participants.add(new PokerParticipant(10, "ITALIAN/cashgame/REAL_MONEY", 10, Timings.DEFAULT, TEXAS_HOLDEM, rngProvider, cashGameBackendService));
-    	participants.add(new PokerParticipant(4, "ITALIAN/cashgame/REAL_MONEY/4", 2, Timings.EXPRESS, TELESINA, rngProvider, cashGameBackendService));
-    	participants.add(new PokerParticipant(6, "ITALIAN/cashgame/REAL_MONEY/6", 2, Timings.EXPRESS, TELESINA, rngProvider, cashGameBackendService));
+    	participants.add(new PokerParticipant(4, "ITALIAN/cashgame/REAL_MONEY/4", 2, Timings.DEFAULT, TELESINA, rngProvider, cashGameBackendService));
+    	participants.add(new PokerParticipant(6, "ITALIAN/cashgame/REAL_MONEY/6", 2, Timings.DEFAULT, TELESINA, rngProvider, cashGameBackendService));
     	
     	for (PokerParticipant part : participants) {
     		part.setInjector(injector);
@@ -161,6 +161,9 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
         }
     }
     
+    /**
+     * Create table by JMX.
+     */
     public void createTable(String domain, int seats, int level, PokerVariant variant) {
     	this.tableRegistry.createTable(seats, new PokerParticipant(seats, domain, level, Timings.DEFAULT, variant, rngProvider, null));
     }
