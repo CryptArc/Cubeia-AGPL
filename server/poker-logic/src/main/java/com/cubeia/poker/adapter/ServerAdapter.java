@@ -182,5 +182,10 @@ public interface ServerAdapter {
      */
 	void notifyTakeBackUncalledBet(int playerId, int amount);
 
-	
+	/**
+	 * Request buy in:s for the given players that has {@link PokerPlayer#getFutureBuyInAmount()} > 0.
+	 * @param players
+	 */
+    void performPendingBuyIns(Collection<PokerPlayer> players);
+
 }

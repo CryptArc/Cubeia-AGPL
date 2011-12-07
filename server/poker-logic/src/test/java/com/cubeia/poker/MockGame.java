@@ -17,6 +17,8 @@
 
 package com.cubeia.poker;
 
+import static java.util.Arrays.asList;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,6 +31,7 @@ import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.rng.RNGProvider;
@@ -148,6 +151,13 @@ public class MockGame implements GameType {
 	@Override
 	public IPokerState getState() {
 		return new IPokerState() {
+		    
+            private PokerPlayer player1 = new DefaultPokerPlayer(1000);
+            private PokerPlayer player2 = new DefaultPokerPlayer(1001);
+            private PokerPlayer player3 = new DefaultPokerPlayer(1002);
+            private PokerPlayer player4 = new DefaultPokerPlayer(1003);
+		    
+		    
 			@Override
 			public void notifyPlayerSittingOut(int playerId) {
 			}
@@ -188,8 +198,8 @@ public class MockGame implements GameType {
 			}
 			
 			@Override
-			public int countSittingInPlayers() {
-			    return 4;
+			public Collection<PokerPlayer> getPlayersReadyToStartHand() {
+			    return asList(player1, player2, player3, player4);
 			}
 			
 			@Override
@@ -233,6 +243,12 @@ public class MockGame implements GameType {
 			
 			@Override
 			public void sitOutPlayersMarkedForSitOutNextRound() {}
+
+            @Override
+            public void handleBuyInRequest(PokerPlayer pokerPlayer, int amount) {
+                // TODO Auto-generated method stub
+                
+            }
 		
 		};
 	}

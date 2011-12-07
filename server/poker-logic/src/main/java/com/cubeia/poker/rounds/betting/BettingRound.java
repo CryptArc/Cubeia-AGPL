@@ -33,6 +33,7 @@ import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
+import com.cubeia.poker.util.ThreadLocalProfiler;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
@@ -115,9 +116,9 @@ public class BettingRound implements Round, BettingRoundContext {
 		
 		log.debug("first player to act = {}", p == null ? null : p.getId());
 		
-		boolean zeroPlayersSittingIn = gameType.getState().countSittingInPlayers() == 0;
+		boolean zeroPlayersReadyToStart = gameType.getState().getPlayersReadyToStartHand().size() == 0;
 		
-        if (p == null  ||  allOtherNonFoldedPlayersAreAllIn(p)  ||  zeroPlayersSittingIn) {
+        if (p == null  ||  allOtherNonFoldedPlayersAreAllIn(p)  ||  zeroPlayersReadyToStart) {
 			// No or only one player can act. We are currently in an all-in show down scenario
 			log.debug("No players left to act. We are in an all-in show down scenario");
 			isFinished = true;
@@ -140,6 +141,7 @@ public class BettingRound implements Round, BettingRoundContext {
 	
     public void act(PokerAction action) {
 		log.debug("Act : "+action);
+		ThreadLocalProfiler.add("BettingRound.act");
 		PokerPlayer player = gameType.getState().getPlayerInCurrentHand(action.getPlayerId());
 
 		verifyValidAction(action, player);
@@ -210,7 +212,7 @@ public class BettingRound implements Round, BettingRoundContext {
 //		    return true;
 //		}
 		
-		if (gameType.getState().countSittingInPlayers() == 0) {
+		if (gameType.getState().getPlayersReadyToStartHand().isEmpty()) {
 		    return true;
 		}
 

@@ -98,7 +98,12 @@ public class PokerTextClient extends SimpleTextClient {
 		packet.player = context.getPlayerId();
 		packet.seq = seq;
 		
-		if (args[0].equals("small")) {
+		if (args[0].equals("ante")) {
+			PlayerAction type = new PlayerAction();
+			type.type = ActionType.ANTE;
+			packet.action = type;
+			
+		} else if (args[0].equals("small")) {
 			PlayerAction type = new PlayerAction();
 			type.type = ActionType.SMALL_BLIND;
 			packet.action = type;

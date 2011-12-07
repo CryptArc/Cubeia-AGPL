@@ -1,5 +1,6 @@
 package com.cubeia.poker.rounds.betting;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -7,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
+import java.util.Collections;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -33,9 +35,7 @@ public class BettingRoundInitTest {
     @Mock private ActionRequestFactory actionRequestFactory;
     private SortedMap<Integer, PokerPlayer> currentHandSeatingMap;
 
-//  Integer player1Id = 1001;
     private Integer player2Id = 1002;
-//  Integer player3Id = 1003;
     
     
     @Before
@@ -45,9 +45,7 @@ public class BettingRoundInitTest {
         when(gameType.getState()).thenReturn(state);
         int entryBetLevel = 20;
         when(state.getEntryBetLevel()).thenReturn(entryBetLevel);
-//        when(player1.getId()).thenReturn(player1Id);
         when(player2.getId()).thenReturn(player2Id);
-//        when(player3.getId()).thenReturn(player3Id);
         
         currentHandSeatingMap = new TreeMap<Integer, PokerPlayer>();
         currentHandSeatingMap.put(0, player1);
@@ -62,7 +60,7 @@ public class BettingRoundInitTest {
         int dealerSeatId = 0;
         when(playertoActCalculator.getFirstPlayerToAct(Mockito.eq(dealerSeatId), Mockito.eq(currentHandSeatingMap), 
             Mockito.anyListOf(Card.class))).thenReturn(player2);
-        when(state.countSittingInPlayers()).thenReturn(3);
+        when(state.getPlayersReadyToStartHand()).thenReturn(asList(player1, player2, player3));
         
         ActionRequest actionRequest = mock(ActionRequest.class);
         when(actionRequestFactory.createFoldCheckBetActionRequest(Mockito.any(BettingRound.class), Mockito.eq(player2)))
@@ -81,7 +79,7 @@ public class BettingRoundInitTest {
         int dealerSeatId = 0;
         when(playertoActCalculator.getFirstPlayerToAct(Mockito.eq(dealerSeatId), Mockito.eq(currentHandSeatingMap), 
             Mockito.anyListOf(Card.class))).thenReturn(player2);
-        when(state.countSittingInPlayers()).thenReturn(3);
+        when(state.getPlayersReadyToStartHand()).thenReturn(asList(player1, player2, player3));
         when(player1.isAllIn()).thenReturn(true);
         when(player3.isAllIn()).thenReturn(true);
         
@@ -95,7 +93,7 @@ public class BettingRoundInitTest {
         int dealerSeatId = 0;
         when(playertoActCalculator.getFirstPlayerToAct(Mockito.eq(dealerSeatId), Mockito.eq(currentHandSeatingMap), 
             Mockito.anyListOf(Card.class))).thenReturn(player2);
-        when(state.countSittingInPlayers()).thenReturn(0);
+        when(state.getPlayersReadyToStartHand()).thenReturn(Collections.<PokerPlayer>emptyList());
         
         BettingRound round = new BettingRound(gameType, dealerSeatId, playertoActCalculator, actionRequestFactory);
         verify(gameType).scheduleRoundTimeout();

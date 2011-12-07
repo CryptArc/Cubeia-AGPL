@@ -3,6 +3,10 @@ package com.cubeia.backend.firebase;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
@@ -49,6 +53,8 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
     private final Multimap<PlayerSessionId, Integer> sessionTransactions = 
         Multimaps.<PlayerSessionId, Integer>synchronizedListMultimap(LinkedListMultimap.<PlayerSessionId, Integer>create());
 
+    private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+    
     private ServiceRouter router;
     
     @Override
@@ -78,24 +84,14 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
     @Override
     public void announceTable(AnnounceTableRequest request, final AnnounceTableCallback callback) {
         final AnnounceTableResponse response = new AnnounceTableResponse(new TableIdImpl());
+        response.setProperty(MARKET_TABLE_REFERENCE_KEY, "MOCK-TABLE-ID-" + System.currentTimeMillis());
         
         // Dirty mokkie fix as we cannot run this in the same thread as the participant runs in
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    long mockDelay = (long) (Math.random() * 2000);
-                    Thread.sleep(mockDelay);
-                    
-                    response.setProperty(MARKET_TABLE_REFERENCE_KEY, "MOCK-TABLE-ID-" + System.currentTimeMillis());
-                    
-                    callback.requestSucceded(response);
-                } catch (Throwable t) {
-                    t.printStackTrace();
-                }
-            }
-        }).start();
+        long mockDelay = (long) (Math.random() * 2000);
         
+        executor.schedule(new Runnable() {
+            @Override public void run() { callback.requestSucceded(response); }
+        }, mockDelay, TimeUnit.MILLISECONDS);
     }
 
     /*@Override
@@ -133,7 +129,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
     }
 
     @Override
-    public void reserve(ReserveRequest request, ReserveCallback callback) {
+    public void reserve(ReserveRequest request, final ReserveCallback callback) {
         int amount = request.amount;
         PlayerSessionId sid = request.playerSessionId;
         
@@ -144,19 +140,33 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
             callback.requestFailed(failResponse);
             
         } else if (amount == 66){ // MAGIC FAIL FOR 66 cents BUY-IN 
-        	log.error("Failing reserve for magic amount 66 cents (hardcoded for debug reasons). sId={}", sid);
-            ReserveFailedResponse failResponse = new ReserveFailedResponse(request.playerSessionId, 
-                ReserveFailedResponse.ErrorCode.UNSPECIFIED_FAILURE, "Unknown operator error");
-            callback.requestFailed(failResponse);
+        	log.error("Failing reserve with {}ms delay for magic amount 66 cents (hardcoded for debug reasons). sId={}", sid);
+            final ReserveFailedResponse failResponse = new ReserveFailedResponse(request.playerSessionId, 
+                ReserveFailedResponse.ErrorCode.UNSPECIFIED_FAILURE, "Unknown operator error (magic 66-cent ultra-fail)");
+            long delay = (long) (Math.random() * 2000);
+            
+            executor.schedule(new Runnable() {
+                @Override public void run() { callback.requestFailed(failResponse); }
+            }, delay, TimeUnit.MILLISECONDS);
             
         } else {
             sessionTransactions.put(sid, amount);
             int newBalance = getBalance(sid);
             BalanceUpdate balanceUpdate = new BalanceUpdate(request.playerSessionId, newBalance, nextId());
-            ReserveResponse response = new ReserveResponse(balanceUpdate, amount);
+            final ReserveResponse response = new ReserveResponse(balanceUpdate, amount);
             log.debug("reserve successful: sId = {}, amount = {}, new balance = {}", new Object[] {sid, amount, newBalance});
             response.setProperty(MARKET_TABLE_SESSION_REFERENCE_KEY, "MOCK-MARKET-SID-" + sid.hashCode());
-            callback.requestSucceded(response);
+            
+            long delay = 0;
+            
+            if (amount == 67) {
+                delay = (long) (Math.random() * 2000);
+                log.info("Succeeding reserve with {}ms delay for magic amount 67 cents (hardcoded for debug reasons). sId={}", delay, sid);
+            }
+            
+            executor.schedule(new Runnable() {
+                @Override public void run() { callback.requestSucceded(response); }
+            }, delay, TimeUnit.MILLISECONDS);
         }
         
         printDiagnostics();

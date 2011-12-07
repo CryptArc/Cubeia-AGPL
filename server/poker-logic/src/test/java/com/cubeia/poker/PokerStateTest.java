@@ -6,6 +6,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -18,10 +19,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 import org.mockito.Mockito;
 
 import com.cubeia.poker.action.ActionRequest;
@@ -30,6 +33,7 @@ import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotHolder;
@@ -60,7 +64,7 @@ public class PokerStateTest {
 		when(settings.getVariant()).thenReturn(PokerVariant.TELESINA);
 		when(settings.getTiming()).thenReturn(TimingFactory.getRegistry().getDefaultTimingProfile());
 		state.serverAdapter = mock(ServerAdapter.class);
-
+		state.settings = settings;
 	}
 
 	private PokerPlayer createMockPlayer(int playerId, int balance){
@@ -69,33 +73,26 @@ public class PokerStateTest {
 		when(player.getId()).thenReturn(playerId);
 		return player;
 	}
-
-	/*
+	
 	@Test
-	public void testGetPlayersStillInPlay() {
-        state.currentHandPlayerMap = new HashMap<Integer, PokerPlayer>();
-        PokerPlayer player0 = mock(PokerPlayer.class);
+	public void testCreateCopyWithNotReadyPlayersExcluded() {
         PokerPlayer player1 = mock(PokerPlayer.class);
         PokerPlayer player2 = mock(PokerPlayer.class);
-        state.currentHandPlayerMap.put(0, player0);
-        state.currentHandPlayerMap.put(1, player1);
-        state.currentHandPlayerMap.put(2, player2);
-        
-        Set<PokerPlayer> playersStillInPlay;
-        
-        when(player0.isAllIn()).thenReturn(true);
-        when(player1.hasFolded()).thenReturn(true);
-        playersStillInPlay = state.getPlayersStillInPlay();
-	    assertThat(playersStillInPlay.size(), is(1));
-	    assertThat(playersStillInPlay, JUnitMatchers.hasItem(player2));
+        PokerPlayer player3 = mock(PokerPlayer.class);
 	    
-        when(player0.isAllIn()).thenReturn(false);
-        when(player1.hasFolded()).thenReturn(false);
-        playersStillInPlay = state.getPlayersStillInPlay();
-        assertThat(playersStillInPlay.size(), is(3));
-        assertThat(playersStillInPlay, JUnitMatchers.hasItems(player0, player1, player2));
+        when(player2.isSittingOut()).thenReturn(true);
+        when(player3.isBuyInRequestActive()).thenReturn(true);
+        
+	    Map<Integer, PokerPlayer> map = new HashMap<Integer, PokerPlayer>();
+        map.put(1, player1);
+        map.put(2, player2);
+        map.put(3, player3);
+	    
+        SortedMap<Integer, PokerPlayer> copy = state.createCopyWithNotReadyPlayersExcluded(map);
+	    
+        assertThat(copy.size(), is(1));
+        assertThat(copy.get(1), is(player1));
 	}
-	*/
 	
 	@Test
 	public void testNotifyHandFinished() {
@@ -113,7 +110,6 @@ public class PokerStateTest {
 		PokerPlayer player2 = createMockPlayer(666, anteLevel);
 		PokerPlayer player3 = createMockPlayer(123, 0);
 		when(player3.getPendingBalance()).thenReturn((long)anteLevel);
-
 
 		Result result1 = mock(Result.class);
 		Result result2 = mock(Result.class);
@@ -139,7 +135,11 @@ public class PokerStateTest {
 		state.notifyHandFinished(result, HandEndStatus.NORMAL);
 
 		verify(player1).addChips(winningsIncludingOwnBets);
-		verify(state.serverAdapter).notifyHandEnd(result, HandEndStatus.NORMAL);
+		
+		InOrder inOrder = Mockito.inOrder(state.serverAdapter);
+		inOrder.verify(state.serverAdapter).notifyHandEnd(result, HandEndStatus.NORMAL);
+		inOrder.verify(state.serverAdapter).performPendingBuyIns(state.playerMap.values());
+		
 		verify(player1).setSitOutStatus(SitOutStatus.SITTING_OUT);
 		verify(state.serverAdapter).scheduleTimeout(Mockito.anyLong());
 		assertThat(state.isFinished(), is(true));
@@ -151,7 +151,6 @@ public class PokerStateTest {
 		verify(state.serverAdapter).notifyPlayerBalance(player3);
 
 		verify(state.serverAdapter).notifyBuyInInfo(player1.getId(),true);
-
 		verify(player2, Mockito.never()).setSitOutStatus(SitOutStatus.SITTING_OUT);
 	}
 
@@ -428,10 +427,6 @@ public class PokerStateTest {
 		state.seatingMap.put(1, player2);
 
 		state.startHand();
-
-		//verify(state.serverAdapter).notifyPlayerStatusChanged(player1Id, PokerPlayerStatus.SITIN);
-		//verify(state.serverAdapter).notifyPlayerStatusChanged(player2Id, PokerPlayerStatus.SITIN);
-
 	}
 
 	@Test
@@ -531,4 +526,75 @@ public class PokerStateTest {
 		state.setCurrentState(PokerState.SHUTDOWN);
 		state.setCurrentState(PokerState.PLAYING);
 	}
+	
+	@SuppressWarnings("unchecked")
+    @Test
+    public void testHandleBuyInRequestWhileGamePlaying() {
+	    PokerPlayer player = mock(PokerPlayer.class);
+	    state.setCurrentState(PokerState.PLAYING);
+        int amount = 1234;
+        
+        state.handleBuyInRequest(player, amount);
+	    
+        verify(player).addFutureBuyInAmount(amount);
+	    verify(state.serverAdapter, never()).performPendingBuyIns(Mockito.anyCollection());
+    }
+	
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Test
+    public void testHandleBuyInRequestWhenWaitingToStart() {
+        PokerPlayer player = mock(PokerPlayer.class);
+        state.setCurrentState(PokerState.WAITING_TO_START);
+        int amount = 1234;
+        
+        state.handleBuyInRequest(player, amount);
+        
+        verify(player).addFutureBuyInAmount(amount);
+        ArgumentCaptor<Collection> captor = ArgumentCaptor.forClass(Collection.class);
+        verify(state.serverAdapter).performPendingBuyIns(captor.capture());
+        Collection<PokerPlayer> players = captor.getValue();
+        assertThat(players.size(), is(1));
+        assertThat(players, hasItem(player));
+    }	
+    
+    @Test
+    public void testSetPlayersWithoutMoneyAsSittingOut() {
+        int player1id = 1001;
+        int player2id = 1002;
+        int player3id = 1003;
+        PokerPlayer player1 = mock(PokerPlayer.class);
+        PokerPlayer player2 = mock(PokerPlayer.class);
+        PokerPlayer player3 = mock(PokerPlayer.class);
+        when(player1.getId()).thenReturn(player1id);
+        when(player2.getId()).thenReturn(player2id);
+        when(player3.getId()).thenReturn(player3id);
+        HandResult handResult = mock(HandResult.class);
+        Map<PokerPlayer, Result> resultMap = new HashMap<PokerPlayer, Result>();
+        
+        state.playerMap = new HashMap<Integer, PokerPlayer>();
+        state.playerMap.put(player1id, player1);
+        state.playerMap.put(player2id, player2);
+        state.playerMap.put(player3id, player3);
+        
+        resultMap.put(player1, null);
+        resultMap.put(player2, null);
+        resultMap.put(player3, null);
+        
+        when(player1.getBalance()).thenReturn(10L);
+        when(player1.getPendingBalance()).thenReturn(10L);
+        when(handResult.getResults()).thenReturn(resultMap);
+        when(settings.getAnteLevel()).thenReturn(20);
+        when(player3.isBuyInRequestActive()).thenReturn(true);
+        
+        state.setPlayersWithoutMoneyAsSittingOut(handResult);
+        
+        
+        verify(state.serverAdapter, never()).notifyPlayerStatusChanged(Mockito.eq(player1id), Mockito.any(PokerPlayerStatus.class));
+        verify(state.serverAdapter).notifyPlayerStatusChanged(player2id, PokerPlayerStatus.SITOUT);
+        verify(state.serverAdapter).notifyPlayerStatusChanged(player3id, PokerPlayerStatus.SITOUT);
+        
+        verify(state.serverAdapter).notifyBuyInInfo(player2id, true);
+        verify(state.serverAdapter, never()).notifyBuyInInfo(player3id, true);
+    }
+    
 }

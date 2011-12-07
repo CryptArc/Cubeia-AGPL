@@ -22,6 +22,7 @@ import com.cubeia.poker.rake.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
 import com.cubeia.poker.util.HandResultCalculator;
+import com.cubeia.poker.util.ThreadLocalProfiler;
 import com.google.common.annotations.VisibleForTesting;
 
 public class HandResultCreator {
@@ -35,14 +36,20 @@ public class HandResultCreator {
 	public HandResult createHandResult(List<Card> communityCards, HandResultCalculator handResultCalculator, PotHolder potHolder, 
 			Map<Integer, PokerPlayer> currentHandPlayerMap, List<Integer> playerRevealOrder, Set<PokerPlayer> muckingPlayers) {
 		
+		ThreadLocalProfiler.add("HandTypeEvaluator.createHandResult.start");
+		
 		RakeInfoContainer calculatedRake = potHolder.calculateRake();
 		List<PlayerHand> playerHands = createHandsList(communityCards, currentHandPlayerMap.values());
 		Map<PokerPlayer, Result> playerResults = handResultCalculator.getPlayerResults(playerHands, potHolder, calculatedRake, currentHandPlayerMap);
 		Collection<PotTransition> potTransitions = createPotTransitionsByResults(playerResults);
 				
 		playerHands = filterOutMuckedPlayerHands(playerHands, muckingPlayers);
+		List<RatedPlayerHand> ratedHands = rateHands(playerHands);
+		HandResult handResult = new HandResult(playerResults, ratedHands, potTransitions, calculatedRake, playerRevealOrder);
 		
-		return new HandResult(playerResults, rateHands(playerHands), potTransitions, calculatedRake, playerRevealOrder);
+		ThreadLocalProfiler.add("HandTypeEvaluator.createHandResult.stop");
+		
+		return handResult;
 	}
 	
 	protected List<PlayerHand> filterOutMuckedPlayerHands(List<PlayerHand> playerHands, Set<PokerPlayer> muckingPlayers){

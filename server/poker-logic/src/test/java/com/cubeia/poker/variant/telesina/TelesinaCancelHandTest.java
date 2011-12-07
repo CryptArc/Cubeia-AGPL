@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 

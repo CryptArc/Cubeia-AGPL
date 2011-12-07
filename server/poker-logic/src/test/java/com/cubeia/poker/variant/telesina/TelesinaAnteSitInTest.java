@@ -42,12 +42,12 @@ public class TelesinaAnteSitInTest extends AbstractTexasHandTester {
 		assertThat(mp[0].isActionPossible(PokerActionType.ANTE), is(true));
 		act(p[1], PokerActionType.ANTE);	
 		
-		assertEquals(2, game.countSittingInPlayers());
+		assertEquals(2, game.getPlayersReadyToStartHand().size());
 		assertEquals(2, game.getSeatedPlayers().size());
 
 		game.addPlayer(mp[3]);
 
-		assertEquals(3, game.countSittingInPlayers());
+		assertEquals(3, game.getPlayersReadyToStartHand().size());
 		assertEquals(3, game.getSeatedPlayers().size());
 
 		act(p[0], PokerActionType.ANTE); 
@@ -61,13 +61,6 @@ public class TelesinaAnteSitInTest extends AbstractTexasHandTester {
 		game.timeout();
 		act(p[1], PokerActionType.CHECK);
 		act(p[0], PokerActionType.CHECK); 	
-
-		//assertFalse(mp[1].isActionPossible(PokerActionType.ANTE));
-		//		act(p[0], PokerActionType.ANTE); 
-		//		
-		//		act(p[1], PokerActionType.CHECK);
-		//		
-		//		act(p[0], PokerActionType.CHECK); 	
 
 	}
 

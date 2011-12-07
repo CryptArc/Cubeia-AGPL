@@ -31,12 +31,12 @@ public class RiggedUtils {
                 properties.load(is);
                 is.close();
             } else {
-                logger.error("File " + file + " not found");
+                logger.debug("File " + file + " not found");
             }
         } catch (FileNotFoundException e) {
-            logger.error("File " + file + " not found");
+            logger.debug("File " + file + " not found");
         } catch (IOException e) {
-            logger.error("Can't read " + file + "");
+            logger.debug("Can't read " + file + "");
         }
         return properties;
     }

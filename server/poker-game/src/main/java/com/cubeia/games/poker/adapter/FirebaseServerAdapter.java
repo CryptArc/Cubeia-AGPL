@@ -53,9 +53,11 @@ import se.jadestone.dicearena.game.poker.network.protocol.StartNewHand;
 import se.jadestone.dicearena.game.poker.network.protocol.TakeBackUncalledBet;
 
 import com.cubeia.backend.cashgame.TableId;
+import com.cubeia.backend.cashgame.callback.ReserveCallback;
 import com.cubeia.backend.cashgame.dto.BalanceUpdate;
 import com.cubeia.backend.cashgame.dto.BatchHandRequest;
 import com.cubeia.backend.cashgame.dto.BatchHandResponse;
+import com.cubeia.backend.cashgame.dto.ReserveRequest;
 import com.cubeia.backend.cashgame.exceptions.BatchHandFailedException;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
@@ -105,6 +107,7 @@ import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.sitout.SitoutCalculator;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.tournament.RoundReport;
+import com.cubeia.poker.util.ThreadLocalProfiler;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 
@@ -316,6 +319,24 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	}
 
 	@Override
+	public void performPendingBuyIns(Collection<PokerPlayer> players) {
+	    
+	    for (PokerPlayer player : players) {
+	        if (!player.isBuyInRequestActive()  &&   player.getFutureBuyInAmount() > 0) {
+	            PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) player;
+    	        ReserveCallback callback = backend.getCallbackFactory().createReserveCallback(table);
+    	        
+    	        log.debug("sending reserve request to backend: player id = {}, amount = {}", player.getId(), player.getFutureBuyInAmount());
+    	        
+    	        ReserveRequest reserveRequest = new ReserveRequest(pokerPlayer.getPlayerSessionId(), getFirebaseState().getHandCount(), 
+    	            player.getFutureBuyInAmount());
+    	        backend.reserve(reserveRequest, callback);
+    	        player.buyInRequestActive();
+	        }
+	    }
+	}
+	
+	@Override
 	public void notifyBuyInInfo(int playerId, boolean mandatoryBuyin) {
 		try {
 			PokerPlayer player = state.getPokerPlayer(playerId);
@@ -369,6 +390,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
 	@Override
 	public void notifyHandEnd(HandResult handResult, HandEndStatus handEndStatus) {
+		ThreadLocalProfiler.add("FirebaseServerAdapter.notifyHandEnd.start");
 		if (handEndStatus.equals(HandEndStatus.NORMAL) && handResult != null) {
 			
 			List<PotTransfer> transfers = new ArrayList<PotTransfer>();
@@ -415,6 +437,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		}
 
 		clearActionCache();
+		ThreadLocalProfiler.add("FirebaseServerAdapter.notifyHandEnd.stop");
 	}
 
     private BatchHandResponse doBatchHandResult(

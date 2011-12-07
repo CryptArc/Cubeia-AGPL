@@ -18,7 +18,6 @@
 package com.cubeia.games.poker.model;
 
 import java.io.Serializable;
-import java.util.Map;
 
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.firebase.api.game.player.GenericPlayer;
@@ -40,7 +39,7 @@ public class PokerPlayerImpl extends DefaultPokerPlayer implements Serializable 
 	private PlayerSessionId playerSessionId;
 	
 	private String externalPlayerSessionId;
-	
+
 	public PokerPlayerImpl (GenericPlayer placeholder) {
 		super(placeholder.getPlayerId());
 		this.placeholder = placeholder;
@@ -78,4 +77,5 @@ public class PokerPlayerImpl extends DefaultPokerPlayer implements Serializable 
     public void setExternalPlayerSessionReference(String externalPlayerSessionId) {
         this.externalPlayerSessionId = externalPlayerSessionId;
     }
+    
 }

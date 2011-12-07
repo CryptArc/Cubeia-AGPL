@@ -69,7 +69,6 @@ public class TelesinaTest {
 		assertEquals(numberOfTimeHandStrengthShouldBeSent, telesina.getNumberOfSentBestHands());		
 	}
 	
-
 	private DefaultPokerPlayer createAndAddPlayer(int playerId, boolean folded) {
 		DefaultPokerPlayer p = new DefaultPokerPlayer(playerId);
 		p.setHasFolded(folded);

@@ -17,7 +17,6 @@
 
 package com.cubeia.games.poker.client;
 
-import se.jadestone.dicearena.game.poker.network.protocol.AamsSessionInfoPacket;
 import se.jadestone.dicearena.game.poker.network.protocol.BestHand;
 import se.jadestone.dicearena.game.poker.network.protocol.BuyInInfoRequest;
 import se.jadestone.dicearena.game.poker.network.protocol.BuyInInfoResponse;
@@ -30,6 +29,7 @@ import se.jadestone.dicearena.game.poker.network.protocol.DealerButton;
 import se.jadestone.dicearena.game.poker.network.protocol.DeckInfo;
 import se.jadestone.dicearena.game.poker.network.protocol.ErrorPacket;
 import se.jadestone.dicearena.game.poker.network.protocol.ExposePrivateCards;
+import se.jadestone.dicearena.game.poker.network.protocol.ExternalSessionInfoPacket;
 import se.jadestone.dicearena.game.poker.network.protocol.GameCard;
 import se.jadestone.dicearena.game.poker.network.protocol.HandCanceled;
 import se.jadestone.dicearena.game.poker.network.protocol.HandEnd;
@@ -58,6 +58,8 @@ public class ManualGameHandler implements PacketVisitor {
 
 	private final IOContext context;
 	
+	private PokerFormatter formatter = new PokerFormatter();
+	
 	public ManualGameHandler(IOContext context) {
 		this.context = context;
 	}
@@ -67,7 +69,7 @@ public class ManualGameHandler implements PacketVisitor {
 	}
 	
 	public void visit(DealPublicCards packet) {
-		System.out.println("Public cards dealt: "+packet.cards);
+		System.out.println("Public cards dealt: "+formatter.format(packet.cards));
 	}
 
 	public void visit(DealPrivateCards packet) {
@@ -82,7 +84,7 @@ public class ManualGameHandler implements PacketVisitor {
 
 	public void visit(ExposePrivateCards packet) {
 		for (CardToDeal card : packet.cards) { 
-			System.out.println("Player "+card.player+" shows: "+card);
+			System.out.println("Player "+card.player+" shows: "+formatter.format(card.card));
 		}
 	}
 
@@ -124,15 +126,19 @@ public class ManualGameHandler implements PacketVisitor {
     }
     
     public void visit(PlayerBalance packet) {
-        System.out.println("I got balance: "+packet.balance+", pending: "+packet.pendingBalance);
+    	if (packet.player == context.getPlayerId()) {
+    		System.out.println("I got balance: "+packet.balance+", pending: "+packet.pendingBalance);
+    	} else {
+    		System.out.println("Player["+packet.player+"] balance: "+packet.balance);
+    	}
     }
     
     @Override
 	public void visit(CardToDeal packet) {
     	if (packet.player == context.getPlayerId()) {
-    		System.out.println("I was dealt: "+packet.card);
+    		System.out.println("I was dealt: "+formatter.format(packet.card));
     	} else {
-    		System.out.println("Player["+packet.player+"] was dealt: "+packet.card);
+    		System.out.println("Player["+packet.player+"] was dealt: "+formatter.format(packet.card));
     	}
 	}
     
@@ -160,8 +166,6 @@ public class ManualGameHandler implements PacketVisitor {
 	@Override
 	public void visit(PlayerSitoutRequest packet) {}
 	@Override
-	public void visit(AamsSessionInfoPacket packet) {}
-	@Override
 	public void visit(HandCanceled packet) {}
 	@Override
 	public void visit(BuyInInfoRequest packet) {}
@@ -181,5 +185,7 @@ public class ManualGameHandler implements PacketVisitor {
 	public void visit(ErrorPacket packet) {}
 	@Override
 	public void visit(TakeBackUncalledBet packet) {}
+	@Override
+	public void visit(ExternalSessionInfoPacket packet) {}
     
 }
