@@ -459,6 +459,7 @@ public class PokerLogicTest extends GuiceTest {
 			@Override public void notifyExternalSessionReferenceInfo(int playerId,String externalTableReference,String externalTableSessionReference) {}
 			@Override public void notifyFutureAllowedActions(PokerPlayer player, List<PokerActionType> optionList) {}
 			@Override public void performPendingBuyIns(Collection<PokerPlayer> players) {}
+			@Override public void notifyHandStartPlayerStatus(int playerId,PokerPlayerStatus status) {}
 		});
 		game.timeout();
 		act(p[0], PokerActionType.SMALL_BLIND, 10);

@@ -302,6 +302,11 @@
 		<var name="player" type="int32"/>
 		<var name="status" type="player_table_status"/>
 	</struct>
+	
+	<struct name="player_hand_start_status">
+		<var name="player" type="int32"/>
+		<var name="status" type="player_table_status"/>
+	</struct>
 
 	<!-- A player has requested to sit in again (Client -> Server) -->
 	<struct name="player_sitin_request" />

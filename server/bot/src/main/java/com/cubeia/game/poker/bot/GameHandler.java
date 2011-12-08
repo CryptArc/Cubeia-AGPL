@@ -31,6 +31,7 @@ import se.jadestone.dicearena.game.poker.network.protocol.PacketVisitor;
 import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerAction;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerBalance;
+import se.jadestone.dicearena.game.poker.network.protocol.PlayerHandStartStatus;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerPokerStatus;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitinRequest;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitoutRequest;
@@ -255,4 +256,5 @@ public class GameHandler implements PacketVisitor {
 	public void visit(ErrorPacket packet) {}
 	public void visit(FuturePlayerAction packet) {}
 	public void visit(InformFutureAllowedActions packet) {}
+	public void visit(PlayerHandStartStatus packet) {}
 }

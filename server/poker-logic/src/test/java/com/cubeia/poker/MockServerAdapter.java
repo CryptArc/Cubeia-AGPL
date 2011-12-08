@@ -151,6 +151,12 @@ public class MockServerAdapter implements ServerAdapter {
 		playerStatus.put(playerId, status);
 	}
     
+    @Override
+	public void notifyHandStartPlayerStatus(int playerId, PokerPlayerStatus status) {
+		// TODO Auto-generated method stub
+		
+	}
+    
 	public List<PokerPlayer> getWinners() {
 		List<PokerPlayer> winners = new ArrayList<PokerPlayer>();
 		for (Entry<PokerPlayer, Result> entry : result.getResults().entrySet()) {

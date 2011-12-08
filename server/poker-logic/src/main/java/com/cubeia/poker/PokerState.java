@@ -360,7 +360,7 @@ public class PokerState implements Serializable, IPokerState {
 
 			notifyNewHand();
 			notifyAllPlayerBalances();
-			notifyAllPlayerStatuses();
+			notifyAllHandStartPlayerStatus();
 
 			gameType.startHand();
             startTime = System.currentTimeMillis();
@@ -755,10 +755,16 @@ public class PokerState implements Serializable, IPokerState {
 		serverAdapter.notifyTakeBackUncalledBet(playerId, (int)amount);
 	}
     
-
-	public void notifyAllPlayerStatuses() {
+	/**
+	 * Notify everyone about hand start status.
+	 */
+	public void notifyAllHandStartPlayerStatus() {
 		for (PokerPlayer player : seatingMap.values()) {
-			notifyPlayerStatus(player.getId());
+			if(player.isSittingOut()){
+				serverAdapter.notifyHandStartPlayerStatus(player.getId(), PokerPlayerStatus.SITOUT);
+	        }else{
+	        	serverAdapter.notifyHandStartPlayerStatus(player.getId(), PokerPlayerStatus.SITIN);
+	        }
 		}
 	}
     

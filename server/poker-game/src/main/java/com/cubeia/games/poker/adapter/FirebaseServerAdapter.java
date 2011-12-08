@@ -45,6 +45,7 @@ import se.jadestone.dicearena.game.poker.network.protocol.HandCanceled;
 import se.jadestone.dicearena.game.poker.network.protocol.HandEnd;
 import se.jadestone.dicearena.game.poker.network.protocol.InformFutureAllowedActions;
 import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
+import se.jadestone.dicearena.game.poker.network.protocol.PlayerHandStartStatus;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerPokerStatus;
 import se.jadestone.dicearena.game.poker.network.protocol.Pot;
 import se.jadestone.dicearena.game.poker.network.protocol.PotTransfer;
@@ -594,7 +595,24 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		GameDataAction action = protocolFactory.createGameAction(takeBackUncalledBet, playerId, table.getId());
 		sendPublicPacket(action,-1);
 	}
-
+	
+	@Override
+	public void notifyHandStartPlayerStatus(int playerId, PokerPlayerStatus status) {
+		log.debug("Notify hand start player status: "+playerId+" -> "+status);
+		PlayerHandStartStatus packet = new PlayerHandStartStatus();
+		packet.player = playerId;
+		switch (status) {
+		case SITIN:
+			packet.status = Enums.PlayerTableStatus.SITIN;
+			break;
+		case SITOUT:
+			packet.status = Enums.PlayerTableStatus.SITOUT;
+			break;
+		}
+		GameDataAction action = protocolFactory.createGameAction(packet, playerId, table.getId());
+		sendPublicPacket(action, -1);
+	}
+	
 	@Override
 	public void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status) {
 		log.debug("Notify player status changed: "+playerId+" -> "+status);

@@ -196,4 +196,12 @@ public interface ServerAdapter {
 	 */
     void performPendingBuyIns(Collection<PokerPlayer> players);
 
+    /**
+     * Send out a player status for a new hand starting
+     * 
+     * @param playerId
+     * @param status
+     */
+	void notifyHandStartPlayerStatus(int playerId, PokerPlayerStatus status);
+
 }
