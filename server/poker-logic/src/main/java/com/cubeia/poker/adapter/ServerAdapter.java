@@ -195,4 +195,5 @@ public interface ServerAdapter {
 	 * @param players
 	 */
     void performPendingBuyIns(Collection<PokerPlayer> players);
+
 }

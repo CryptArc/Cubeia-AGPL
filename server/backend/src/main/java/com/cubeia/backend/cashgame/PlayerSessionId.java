@@ -12,5 +12,4 @@ import java.io.Serializable;
 public interface PlayerSessionId extends Serializable {
 
 	int getPlayerId();
-
 }
