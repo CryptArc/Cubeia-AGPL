@@ -8,6 +8,9 @@ target
 *.log
 *.log.*
 glob:client/lobby/.actionScriptProperties
+glob:client/flex/assembly/
+glob:client/flex/styles/bin/
+
 glob:*.flexProperties
 glob:*.actionScriptProperties
 glob:*.flexLibProperties
