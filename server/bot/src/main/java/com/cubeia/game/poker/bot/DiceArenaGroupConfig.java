@@ -7,7 +7,7 @@ import com.cubeia.firebase.bot.model.Table;
 public class DiceArenaGroupConfig implements BotGroupConfig {
 
 	public String createBotScreenName(int id) {
-		return "Bot_" + id;
+		return null;
 	}
 	
 	public String createLobbyBotScreenName(int id) {
@@ -15,11 +15,11 @@ public class DiceArenaGroupConfig implements BotGroupConfig {
 	}
 	
 	public boolean isTableJoinable(Table table) {
-		/*for (String key : table.getAttributes().keySet()) {
+		for (String key : table.getAttributes().keySet()) {
 			if(key.equals("VISIBLE_IN_LOBBY")) {
 				return (ParameterUtil.convertAsInt(table.getAttributes().get(key)).getValue().intValue() == 1);
 			}
-		}*/
-		return true;
+		}
+		return false;
 	}
 }
