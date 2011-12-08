@@ -7,7 +7,7 @@ import com.cubeia.firebase.bot.model.Table;
 public class DiceArenaGroupConfig implements BotGroupConfig {
 
 	public String createBotScreenName(int id) {
-		return null;
+		return "Bot_" + id;
 	}
 	
 	public String createLobbyBotScreenName(int id) {
