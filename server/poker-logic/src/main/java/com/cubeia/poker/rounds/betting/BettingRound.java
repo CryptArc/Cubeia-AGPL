@@ -165,6 +165,15 @@ public class BettingRound implements Round, BettingRoundContext {
 		} else {
 			requestNextAction(player.getSeatId());
 		}
+		
+		//send to all but the next player that they can do check next and fold and so on
+		PokerPlayer nextPlayer = playerToActCalculator.getNextPlayerToAct(player.getSeatId(), gameType.getState().getCurrentHandSeatingMap());
+		if (nextPlayer != null) {
+			notifyAllPlayersOfPossibleFutureActions(nextPlayer);
+		}else {
+			notifyAllPlayersOfNoPossibleFutureActions();
+		}
+		
 	}
 
 	private void requestNextAction(int lastSeatId) {
@@ -175,7 +184,6 @@ public class BettingRound implements Round, BettingRoundContext {
 		} else {
 			log.debug("Next player to act is: "+player.getId());
 			requestAction(player);
-			notifyAllPlayersOfPossibleFutureActions(player);
 		}
 	}
 
@@ -207,7 +215,7 @@ public class BettingRound implements Round, BettingRoundContext {
 	 * @param excludePlayer player that should get no actions
 	 */
 	private void notifyAllPlayersOfPossibleFutureActions(PokerPlayer excludePlayer) {
-		
+				
 		for (PokerPlayer player : gameType.getState().getCurrentHandPlayerMap().values()) {
 			
 			if (player.getId() != excludePlayer.getId())

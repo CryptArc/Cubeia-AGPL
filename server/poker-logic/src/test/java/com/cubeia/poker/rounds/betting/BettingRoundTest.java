@@ -19,17 +19,24 @@ package com.cubeia.poker.rounds.betting;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import junit.framework.TestCase;
 
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.Description;
+import org.hamcrest.SelfDescribing;
 import org.junit.Test;
+import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
 import com.cubeia.poker.GameType;
@@ -44,6 +51,7 @@ import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.adapter.ServerAdapter;
+import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.variant.FutureActionsCalculator;
 import com.cubeia.poker.variant.telesina.Telesina;
@@ -318,48 +326,294 @@ public class BettingRoundTest extends TestCase implements TestListener {
     
     @SuppressWarnings("unchecked")
 	@Test
-    public void testFutureActionsNotified() {
+    public void testFutureActionsNotifiedWhenInitializingVanillaBetRound() {
+    	//setup players
     	int p0Id = 1337;
     	PokerPlayer p0 = mock(PokerPlayer.class);
 		when(p0.getId()).thenReturn(p0Id);
+		when(p0.getBalance()).thenReturn(100L);
 		
 		int p1Id = 1338;
     	PokerPlayer p1 = mock(PokerPlayer.class);
     	when(p1.getId()).thenReturn(p1Id);
+    	when(p1.getBalance()).thenReturn(100L);
 
     	int p2Id = 1339;
     	PokerPlayer p2 = mock(PokerPlayer.class);
     	when(p2.getId()).thenReturn(p2Id);
+    	when(p2.getBalance()).thenReturn(100L);
     	
+    	//setup state
     	IPokerState state = mock(IPokerState.class);
 		GameType game = mock(Telesina.class);
 		when(game.getState()).thenReturn(state);
 		ServerAdapter serverAdapter = mock(ServerAdapter.class);
 		when(game.getServerAdapter()).thenReturn(serverAdapter);
 		
+		// all players ready to start
+		ArrayList<PokerPlayer> playersReadyToStart = new ArrayList<PokerPlayer>();
+		playersReadyToStart.add(p0);
+		playersReadyToStart.add(p1);
+		playersReadyToStart.add(p2);
+		when(state.getPlayersReadyToStartHand()).thenReturn(playersReadyToStart);
+		
+		// all players are in seating map
 		SortedMap<Integer, PokerPlayer> playerSeatingMap = new TreeMap<Integer, PokerPlayer>();
 		playerSeatingMap.put(0,p0);
 		playerSeatingMap.put(1,p1);
 		playerSeatingMap.put(2,p2);
 		when(state.getCurrentHandSeatingMap()).thenReturn(playerSeatingMap);
 		
+		// all players are in playermap
 		SortedMap<Integer, PokerPlayer> playerMap = new TreeMap<Integer, PokerPlayer>();
 		playerMap.put(p0.getId(),p0);
 		playerMap.put(p1.getId(),p1);
 		playerMap.put(p2.getId(),p2);
 		when(state.getCurrentHandPlayerMap()).thenReturn(playerMap);
 		
+		// p0 starts to act
 		PlayerToActCalculator playerToActCalculator = mock(PlayerToActCalculator.class);
+		when(playerToActCalculator.getFirstPlayerToAct(0, playerSeatingMap, new ArrayList<Card>())).thenReturn(p0);
 		
+		// p1 is next to act
+		when(playerToActCalculator.getNextPlayerToAct(0, playerSeatingMap)).thenReturn(p1);
+		
+		// init round
 		ActionRequestFactory actionRequestFactory = new ActionRequestFactory(new NoLimitBetStrategy());
 		FutureActionsCalculator futureActionsCalculator = new FutureActionsCalculator();
 		round = new BettingRound(game, 0, playerToActCalculator, actionRequestFactory, futureActionsCalculator);
 		
-		verify(serverAdapter).notifyFutureAllowedActions(Mockito.eq(p0),Mockito.anyList());
-		verify(serverAdapter).notifyFutureAllowedActions(Mockito.eq(p1),Mockito.anyList());
-		verify(serverAdapter).notifyFutureAllowedActions(Mockito.eq(p2),Mockito.anyList());
+		// starting player gets empty list the others get check and fold
+		verify(serverAdapter).notifyFutureAllowedActions(Mockito.eq(p0),argThat(new IsListOfNElements(0)));
+		verify(serverAdapter).notifyFutureAllowedActions(Mockito.eq(p1),argThat(new IsListOfNElements(2)));
+		verify(serverAdapter).notifyFutureAllowedActions(Mockito.eq(p2),argThat(new IsListOfNElements(2)));
 		
     }
+    
+    @SuppressWarnings("unchecked")
+  	@Test
+      public void testFutureActionsNotNotifiedWhenInitializingBetRoundAndNoPlayersAreReadyToStart() {
+      	//setup players
+      	int p0Id = 1337;
+      	PokerPlayer p0 = mock(PokerPlayer.class);
+  		when(p0.getId()).thenReturn(p0Id);
+  		when(p0.getBalance()).thenReturn(100L);
+  		
+  		int p1Id = 1338;
+      	PokerPlayer p1 = mock(PokerPlayer.class);
+      	when(p1.getId()).thenReturn(p1Id);
+      	when(p1.getBalance()).thenReturn(100L);
+
+      	int p2Id = 1339;
+      	PokerPlayer p2 = mock(PokerPlayer.class);
+      	when(p2.getId()).thenReturn(p2Id);
+      	when(p2.getBalance()).thenReturn(100L);
+      	
+      	//setup state
+      	IPokerState state = mock(IPokerState.class);
+  		GameType game = mock(Telesina.class);
+  		when(game.getState()).thenReturn(state);
+  		ServerAdapter serverAdapter = mock(ServerAdapter.class);
+  		when(game.getServerAdapter()).thenReturn(serverAdapter);
+  		
+  		// no players ready to start
+  		ArrayList<PokerPlayer> playersReadyToStart = new ArrayList<PokerPlayer>();
+  		when(state.getPlayersReadyToStartHand()).thenReturn(playersReadyToStart);
+  		
+  		// all players are in seating map
+  		SortedMap<Integer, PokerPlayer> playerSeatingMap = new TreeMap<Integer, PokerPlayer>();
+  		playerSeatingMap.put(0,p0);
+  		playerSeatingMap.put(1,p1);
+  		playerSeatingMap.put(2,p2);
+  		when(state.getCurrentHandSeatingMap()).thenReturn(playerSeatingMap);
+  		
+  		// all players are in playermap
+  		SortedMap<Integer, PokerPlayer> playerMap = new TreeMap<Integer, PokerPlayer>();
+  		playerMap.put(p0.getId(),p0);
+  		playerMap.put(p1.getId(),p1);
+  		playerMap.put(p2.getId(),p2);
+  		when(state.getCurrentHandPlayerMap()).thenReturn(playerMap);
+  		
+  		// p0 starts to act
+  		PlayerToActCalculator playerToActCalculator = mock(PlayerToActCalculator.class);
+  		when(playerToActCalculator.getFirstPlayerToAct(0, playerSeatingMap, new ArrayList<Card>())).thenReturn(p0);
+  		
+  		// p1 is next to act
+  		when(playerToActCalculator.getNextPlayerToAct(0, playerSeatingMap)).thenReturn(p1);
+  		
+  		// init round
+  		ActionRequestFactory actionRequestFactory = new ActionRequestFactory(new NoLimitBetStrategy());
+  		FutureActionsCalculator futureActionsCalculator = new FutureActionsCalculator();
+  		round = new BettingRound(game, 0, playerToActCalculator, actionRequestFactory, futureActionsCalculator);
+  		
+  		// starting player gets empty list the others get check and fold
+  		verify(serverAdapter).notifyFutureAllowedActions(Mockito.eq(p0),argThat(new IsListOfNElements(0)));
+  		verify(serverAdapter).notifyFutureAllowedActions(Mockito.eq(p1),argThat(new IsListOfNElements(0)));
+  		verify(serverAdapter).notifyFutureAllowedActions(Mockito.eq(p2),argThat(new IsListOfNElements(0)));
+  		
+      }
+    
+    @SuppressWarnings("unchecked")
+  	@Test
+      public void testFutureActionsNotNotifiedWhenAllPlayersButOneAreAllIn() {
+      	//setup players
+      	int p0Id = 1337;
+      	PokerPlayer p0 = mock(PokerPlayer.class);
+  		when(p0.getId()).thenReturn(p0Id);
+  		when(p0.getBalance()).thenReturn(100L);
+  		when(p0.isAllIn()).thenReturn(false);
+  		
+  		int p1Id = 1338;
+      	PokerPlayer p1 = mock(PokerPlayer.class);
+      	when(p1.getId()).thenReturn(p1Id);
+      	when(p1.getBalance()).thenReturn(0L);
+      	when(p1.isAllIn()).thenReturn(true);
+
+      	int p2Id = 1339;
+      	PokerPlayer p2 = mock(PokerPlayer.class);
+      	when(p2.getId()).thenReturn(p2Id);
+      	when(p2.getBalance()).thenReturn(0L);
+      	when(p2.isAllIn()).thenReturn(true);
+      	
+      	//setup state
+      	IPokerState state = mock(IPokerState.class);
+  		GameType game = mock(Telesina.class);
+  		when(game.getState()).thenReturn(state);
+  		ServerAdapter serverAdapter = mock(ServerAdapter.class);
+  		when(game.getServerAdapter()).thenReturn(serverAdapter);
+  		
+  		// all players ready to start
+  		ArrayList<PokerPlayer> playersReadyToStart = new ArrayList<PokerPlayer>();
+  		playersReadyToStart.add(p0);
+  		playersReadyToStart.add(p1);
+  		playersReadyToStart.add(p2);
+  		when(state.getPlayersReadyToStartHand()).thenReturn(playersReadyToStart);
+  		
+  		// all players are in seating map
+  		SortedMap<Integer, PokerPlayer> playerSeatingMap = new TreeMap<Integer, PokerPlayer>();
+  		playerSeatingMap.put(0,p0);
+  		playerSeatingMap.put(1,p1);
+  		playerSeatingMap.put(2,p2);
+  		when(state.getCurrentHandSeatingMap()).thenReturn(playerSeatingMap);
+  		
+  		// all players are in playermap
+  		SortedMap<Integer, PokerPlayer> playerMap = new TreeMap<Integer, PokerPlayer>();
+  		playerMap.put(p0.getId(),p0);
+  		playerMap.put(p1.getId(),p1);
+  		playerMap.put(p2.getId(),p2);
+  		when(state.getCurrentHandPlayerMap()).thenReturn(playerMap);
+  		
+  		// p0 starts to act
+  		PlayerToActCalculator playerToActCalculator = mock(PlayerToActCalculator.class);
+  		when(playerToActCalculator.getFirstPlayerToAct(0, playerSeatingMap, new ArrayList<Card>())).thenReturn(p0);
+  		
+  		// p1 is next to act
+  		when(playerToActCalculator.getNextPlayerToAct(0, playerSeatingMap)).thenReturn(p1);
+  		
+  		// init round
+  		ActionRequestFactory actionRequestFactory = new ActionRequestFactory(new NoLimitBetStrategy());
+  		FutureActionsCalculator futureActionsCalculator = new FutureActionsCalculator();
+  		round = new BettingRound(game, 0, playerToActCalculator, actionRequestFactory, futureActionsCalculator);
+  		
+  		// starting player gets empty list the others get check and fold
+  		verify(serverAdapter).notifyFutureAllowedActions(Mockito.eq(p0),argThat(new IsListOfNElements(0)));
+  		verify(serverAdapter).notifyFutureAllowedActions(Mockito.eq(p1),argThat(new IsListOfNElements(0)));
+  		verify(serverAdapter).notifyFutureAllowedActions(Mockito.eq(p2),argThat(new IsListOfNElements(0)));
+  		
+      }
+    
+    @SuppressWarnings("unchecked")
+  	@Test
+      public void testFutureActionsNotifiedWhenPlayerActed() {
+      	//setup players
+      	int p0Id = 1337;
+      	PokerPlayer p0 = mock(PokerPlayer.class);
+  		when(p0.getId()).thenReturn(p0Id);
+  		when(p0.getBalance()).thenReturn(100L);
+  		when(p0.isAllIn()).thenReturn(false);
+  		
+  		int p1Id = 1338;
+      	PokerPlayer p1 = mock(PokerPlayer.class);
+      	when(p1.getId()).thenReturn(p1Id);
+      	when(p1.getBalance()).thenReturn(100L);
+      	when(p1.isAllIn()).thenReturn(false);
+
+      	int p2Id = 1339;
+      	PokerPlayer p2 = mock(PokerPlayer.class);
+      	when(p2.getId()).thenReturn(p2Id);
+      	when(p2.getBalance()).thenReturn(100L);
+      	when(p2.isAllIn()).thenReturn(false);
+      	
+      	//setup state
+      	IPokerState state = mock(IPokerState.class);
+  		GameType game = mock(Telesina.class);
+  		when(game.getState()).thenReturn(state);
+  		ServerAdapter serverAdapter = mock(ServerAdapter.class);
+  		when(game.getServerAdapter()).thenReturn(serverAdapter);
+  		
+  		// all players ready to start
+  		ArrayList<PokerPlayer> playersReadyToStart = new ArrayList<PokerPlayer>();
+  		playersReadyToStart.add(p0);
+  		playersReadyToStart.add(p1);
+  		playersReadyToStart.add(p2);
+  		when(state.getPlayersReadyToStartHand()).thenReturn(playersReadyToStart);
+  		
+  		// all players are in seating map
+  		SortedMap<Integer, PokerPlayer> playerSeatingMap = new TreeMap<Integer, PokerPlayer>();
+  		playerSeatingMap.put(0,p0);
+  		playerSeatingMap.put(1,p1);
+  		playerSeatingMap.put(2,p2);
+  		when(state.getCurrentHandSeatingMap()).thenReturn(playerSeatingMap);
+  		
+  		// all players are in playermap
+  		SortedMap<Integer, PokerPlayer> playerMap = new TreeMap<Integer, PokerPlayer>();
+  		playerMap.put(p0.getId(),p0);
+  		playerMap.put(p1.getId(),p1);
+  		playerMap.put(p2.getId(),p2);
+  		when(state.getCurrentHandPlayerMap()).thenReturn(playerMap);
+  		
+  		// get player in current hand
+  		when(state.getPlayerInCurrentHand(p0Id)).thenReturn(p0);
+  		when(state.getPlayerInCurrentHand(p1Id)).thenReturn(p1);
+  		when(state.getPlayerInCurrentHand(p2Id)).thenReturn(p2);
+  		
+  		// p0 starts to act
+  		PlayerToActCalculator playerToActCalculator = mock(PlayerToActCalculator.class);
+  		when(playerToActCalculator.getFirstPlayerToAct(0, playerSeatingMap, new ArrayList<Card>())).thenReturn(p0);
+  		
+  		// p1 is next to act
+  		when(playerToActCalculator.getNextPlayerToAct(0, playerSeatingMap)).thenReturn(p1);
+  		
+  		// init round
+  		ActionRequestFactory actionRequestFactory = new ActionRequestFactory(new NoLimitBetStrategy());
+  		FutureActionsCalculator futureActionsCalculator = new FutureActionsCalculator();
+  		round = new BettingRound(game, 0, playerToActCalculator, actionRequestFactory, futureActionsCalculator);
+  		round.playerToAct = p0Id;
+  		  		
+  		verify(serverAdapter).notifyFutureAllowedActions(Mockito.eq(p0),argThat(new IsListOfNElements(0)));
+  		verify(serverAdapter).notifyFutureAllowedActions(Mockito.eq(p1),argThat(new IsListOfNElements(2)));
+  		verify(serverAdapter).notifyFutureAllowedActions(Mockito.eq(p2),argThat(new IsListOfNElements(2)));
+  		
+  		// player checks
+  		PokerAction action = mock(PokerAction.class);
+  		when(action.getActionType()).thenReturn(PokerActionType.CHECK);
+  		when(action.getPlayerId()).thenReturn(p0Id);
+  		
+  		ActionRequest actionRequest = mock(ActionRequest.class);
+  		when(actionRequest.isOptionEnabled(PokerActionType.CHECK)).thenReturn(true);
+  		when(actionRequest.matches(action)).thenReturn(true);
+  		
+		when(p0.getActionRequest()).thenReturn(actionRequest);
+		when(actionRequest.getPlayerId()).thenReturn(p1Id);
+  		
+		round.act(action);
+  		
+  		// next player gets empty list the others get check and fold
+  		verify(serverAdapter).notifyFutureAllowedActions(Mockito.eq(p0),argThat(new IsListOfNElements(2)));
+  		verify(serverAdapter).notifyFutureAllowedActions(Mockito.eq(p1),argThat(new IsListOfNElements(0)));
+  		verify(serverAdapter, times(2)).notifyFutureAllowedActions(Mockito.eq(p2),argThat(new IsListOfNElements(2)));
+  		
+      }
 
 	// HELPERS
 	
@@ -380,6 +634,19 @@ public class BettingRoundTest extends TestCase implements TestListener {
 
 	public void notifyActionRequested(ActionRequest r) {
 		this.requestedAction = r;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	class IsListOfNElements extends ArgumentMatcher<List> {
+		private final int n;
+		public IsListOfNElements(int n) {
+			this.n = n;
+
+		}
+		public boolean matches(Object list) {
+	        return ((List) list).size() == n;
+	    }
+		
 	}
 
 }
