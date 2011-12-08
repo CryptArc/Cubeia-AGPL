@@ -38,6 +38,7 @@
 		<value>FULL_HOUSE</value>
 		<value>FOUR_OF_A_KIND</value>
 		<value>STRAIGHT_FLUSH</value>
+		<value>ROYAL_STRAIGHT_FLUSH</value>
 	</enum>
 
 	<enum name="hand_phase_holdem">
@@ -63,6 +64,7 @@
 		<value>RAISE</value>
 		<value>FOLD</value>
 		<value>DECLINE_ENTRY_BET</value>
+		<value>ANTE</value>
 	</enum>
 
 	<enum name="pot_type">
@@ -71,21 +73,50 @@
 	</enum>
 
 	<enum name="player_table_status">
-		<value>NORMAL</value>
+		<value>SITIN</value>
 		<value>SITOUT</value>
-		<value>ALLIN</value>
 	</enum>
 	
+	<enum name="buy_in_result_code">
+		<value>OK</value>
+		<value>PENDING</value>
+		<value>INSUFFICIENT_FUNDS_ERROR</value>
+		<value>PARTNER_ERROR</value>
+		<value>MAX_LIMIT_REACHED</value>
+		<value>AMOUNT_TOO_HIGH</value>
+		<value>UNSPECIFIED_ERROR</value>
+		<value>SESSION_NOT_OPEN</value>
+	</enum>
+	
+	<enum name="buy_in_info_result_code">
+		<value>OK</value>
+		<value>MAX_LIMIT_REACHED</value>
+		<value>UNSPECIFIED_ERROR</value>
+	</enum>
+
+	<enum name="error_code">
+		<value>UNSPECIFIED_ERROR</value>
+		<value>TABLE_CLOSING</value>
+	</enum>
 
 	<!-- ==========  Generic Structs ========== -->
-	
+
 	<struct name="player_action">
 		<var name="type" type="action_type"/>
 		<var name="min_amount" type="int32" />
 		<var name="max_amount" type="int32" />
 	</struct>
+
+	<!-- s>c generic error message with human readable description -->
+	<struct name="error_packet">
+		<var name="code" type="error_code" />
+		<var name="reference_id" type="string" />
+	</struct>	
 	
-     
+	<struct name="future_player_action">
+		<var name="action" type="action_type"/>
+	</struct>
+
 	<!-- ==========  Game Structs ========== -->
 
 	<struct name="game_card">
@@ -96,8 +127,8 @@
 
 	<struct name="best_hand">
 		<var name="player" type="int32"/>
-		<var name="rank" type="int32"/>
-		<var name="name" type="string"/>
+		<var name="hand_type" type="hand_type"/>
+		<list name="cards" type="game_card"/>
 	</struct>
 
 	<struct name="player_state">
@@ -113,13 +144,20 @@
 
 	<!--
 	Request action from a player.
-	This is sent to all players so everyone is notified about who is supposed to act.
+	This is sent to all players so everyone is notified about who is supposed to act
+	and what the player can do
 	-->
 	<struct name="request_action">
+		<var name="current_pot_size" type="int32"/>
 		<var name="seq" type="int32"/>
 		<var name="player" type="int32"/>
 		<list name="allowed_actions" type="player_action"/>
 		<var name="time_to_act" type="int32"/>
+	</struct>
+	
+	<!-- inform about comming possible actions. This can be check next. Fold next and so on -->
+	<struct name="inform_future_allowed_actions">
+		<list name="actions" type="future_player_action"/>
 	</struct>
 
 
@@ -128,7 +166,8 @@
 	Dealer is the seat id that should have the dealer button.
 	-->
 	<struct name="start_new_hand">
-		<var name="dealer" type="int16"/>
+		<var name="dealerSeatId" type="int32"/>
+		<var name="handId" type="string" />
 	</struct>
 
 	<struct name="dealer_button">
@@ -151,7 +190,12 @@
 	</struct>
 
 	<struct name="hand_end">
+		<list name="player_id_reveal_order" type="int32"/>
 		<list name="hands" type="best_hand"/>
+		<var name="pot_transfers" type="pot_transfers"/>
+	</struct>
+	
+	<struct name="hand_canceled">
 	</struct>
 
 	<!-- Next actions are part of state history cache -->
@@ -160,6 +204,9 @@
 	<!-- All state history have been sent -->
 	<struct name="stop_hand_history"/>
 
+	<!-- client sends perform action when it wants to perform an action
+	Server sends to all players (including the player that performed the action) the same packet
+	-->
 	<struct name="perform_action">
 		<var name="seq" type="int32"/>
 		<var name="player" type="int32"/>
@@ -168,7 +215,6 @@
 		<var name="raise_amount" type="int32"/>
 		<var name="stack_amount" type="int32"/> 
 		<var name="timeout" type="bool"/>
-		<var name="balance" type="int32"/>
 	</struct>
 
 	<struct name="tournament_out">
@@ -180,10 +226,40 @@
 	<struct name="player_balance">
 		<!-- Balance in the system currency multiplied to contain all fractional digits of the currency.
 		For most currencies it is multiplied by 100. 
-
 		Sent when the balance has changed for a player. -->
 		<var name="balance" type="int32" />
+		<var name="pendingBalance" type="int32" />
 		<var name="player" type="int32" />
+		<var name="players_contribution_to_pot" type="int32"/>
+	</struct>
+	
+	<!-- Request that the server returns information on how to buy in-->
+	<struct name="buy_in_info_request"/>
+
+	<!-- server tells client on rules for buy in-->	
+	<struct name="buy_in_info_response">
+		<var name="max_amount" type="int32" />
+		<var name="min_amount" type="int32" />
+		<var name="balance_in_wallet" type="int32" />
+		<var name="balance_on_table" type="int32" />
+		<var name="mandatory_buyin" type="bool" />
+		<var name="result_code" type="buy_in_info_result_code"/>
+	</struct>
+	
+	<struct name="buy_in_request">
+		<var name="amount" type="int32" />
+		<var name="sit_in_if_successful" type="bool" />
+	</struct>
+	
+	<struct name="buy_in_response">
+	    <!-- Balance that is currently in the hand. -->
+		<var name="balance" type="int32" />
+		
+		<!-- Pending balance that will be added after hand is finished. -->
+		<var name="pending_balance" type="int32" />
+		<var name="amount_brought_in" type="int32" />
+		
+		<var name="result_code" type="buy_in_result_code" />
 	</struct>
 
 	<struct name="pot">
@@ -191,6 +267,35 @@
 		<var name="type" type="pot_type" />
 		<var name="amount" type="int32" />
 	</struct>
+	
+	<!-- Transfer of money from player to a pot. -->
+	<struct name="pot_transfer">
+	  <var name="pot_id" type="int8"/>
+	  <var name="player_id" type="int32"/>
+	  <var name="amount" type="int32"/>
+	</struct>
+
+	<!-- List of pot transfers and the resulting pot sizes and player balances. -->
+    <struct name="pot_transfers">
+      <var name="fromPlayerToPot" type="bool"/>
+      <list name="transfers" type="pot_transfer"/>
+      <list name="pots" type="pot"/>
+    </struct>
+    
+    <!-- Take back a bet that was in the betstack but was never called-->
+    <struct name="take_back_uncalled_bet">
+    	<var name="player_id" type="int32"/>
+    	<var name="amount" type="int32"/>
+    </struct>
+    
+    <struct name="rake_info">
+		<!-- Total pot size of all pots including rake -->
+		<var name="total_pot" type="int32"/>
+		
+		<!-- Total rake of all pots -->
+		<var name="total_rake" type="int32"/>
+    </struct>
+    
 
 	<!-- A player's status at the table has changed (Server -> Client)-->
 	<struct name="player_poker_status">
@@ -204,15 +309,19 @@
 	<!-- A player has requested to sit out (Client -> Server) -->
 	<struct name="player_sitout_request" />
 	
-	<!-- Inform the player that he can clean up the table for a few seconds -->
-	<struct name="inform_round_ended" />
+	<!-- Deck information -->
+	<struct name="deck_info">
+	  <var name="size" type="int32" />
+      <var name="rank_low" type="rank"/>
+	</struct>
+
 	
 	<!-- ==========  Misc Structs ========== -->
 	
-	<!-- server notifies client about this tables AAMS refs -->
-	<struct name="aams_session_info_packet">
-		<var name="aams_tournament_id" type="string" />
-		<var name="aams_tournament_session_id" type="string" />
+	<!-- server notifies client about this tables Market reference refs -->
+	<struct name="external_session_info_packet">
+		<var name="external_table_reference" type="string" />
+		<var name="external_table_session_reference" type="string" />
 	</struct>
 	
 </protocol>
