@@ -156,6 +156,7 @@ public class PokerHandler extends DefaultPokerHandler {
 	}
 
     private void sendBuyInResponseToPlayer(PokerPlayerImpl pokerPlayer, BuyInResponse buyInResponse) throws IOException {
+        log.debug("sending buy in response to player {}: {}", pokerPlayer.getId(), buyInResponse);
         StyxSerializer styx = new StyxSerializer(null);
         GameDataAction gameDataAction = new GameDataAction(playerId, table.getId());
         gameDataAction.setData(styx.pack(buyInResponse));
