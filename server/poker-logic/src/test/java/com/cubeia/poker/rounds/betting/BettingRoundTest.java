@@ -33,8 +33,6 @@ import java.util.TreeMap;
 import junit.framework.TestCase;
 
 import org.hamcrest.CoreMatchers;
-import org.hamcrest.Description;
-import org.hamcrest.SelfDescribing;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;

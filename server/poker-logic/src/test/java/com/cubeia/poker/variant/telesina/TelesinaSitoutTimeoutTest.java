@@ -49,7 +49,7 @@ public class TelesinaSitoutTimeoutTest extends AbstractTexasHandTester {
 		assertTrue(mp[2].getSitOutTimestamp()+sitoutTimeLimitMilliseconds < System.currentTimeMillis());
 		
 		SitoutCalculator calculator = new SitoutCalculator();
-		Collection<PokerPlayer> timeouts = calculator.checkTimeoutPlayers(game);
+		Collection<PokerPlayer> timeouts = calculator.checkTimeoutPlayers(game.getSeatedPlayers(), sitoutTimeLimitMilliseconds);
 		Assert.assertEquals(1, timeouts.size());
 		Assert.assertEquals(mp[2], timeouts.iterator().next());
 	}

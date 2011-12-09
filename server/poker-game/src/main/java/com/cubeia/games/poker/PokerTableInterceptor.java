@@ -25,6 +25,7 @@ import com.cubeia.firebase.api.game.table.SeatRequest;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TableInterceptor;
 import com.cubeia.poker.PokerState;
+import com.cubeia.poker.player.PokerPlayer;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 
@@ -57,7 +58,10 @@ public class PokerTableInterceptor implements TableInterceptor {
 	 */
 	public InterceptionResponse allowLeave(Table table, int playerId) {
 		stateInjector.injectAdapter(table); // TODO: Fix this with Guice logic module
-		if (state.getGameState().getClass() == PokerState.NOT_STARTED.getClass()) {
+		boolean notPlaying = state.getGameState().getClass() == PokerState.NOT_STARTED.getClass();
+		PokerPlayer player = state.getPokerPlayer(playerId);
+		
+        if (notPlaying  &&  !player.isBuyInRequestActive()) {
 			// No hand running, let him go...
 			return new InterceptionResponse(true, -1);
 		} else {

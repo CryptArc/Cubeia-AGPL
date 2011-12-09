@@ -34,6 +34,7 @@ import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.rake.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
+import com.cubeia.poker.sitout.SitoutCalculator;
 import com.cubeia.poker.tournament.RoundReport;
 
 public interface ServerAdapter {
@@ -139,7 +140,7 @@ public interface ServerAdapter {
 	/**
      * Remove all players in state LEAVING or DISCONNECTED
      */
-    void cleanupPlayers();
+    void cleanupPlayers(SitoutCalculator sitoutCalculator);
     
     /**
      * Notifies the client about pot updates by sending the post and pot transitions.

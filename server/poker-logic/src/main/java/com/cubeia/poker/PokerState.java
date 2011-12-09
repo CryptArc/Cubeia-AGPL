@@ -54,6 +54,7 @@ import com.cubeia.poker.result.Result;
 import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.rounds.betting.BetStrategyName;
 import com.cubeia.poker.rounds.blinds.BlindsInfo;
+import com.cubeia.poker.sitout.SitoutCalculator;
 import com.cubeia.poker.states.NotStartedSTM;
 import com.cubeia.poker.states.PlayingSTM;
 import com.cubeia.poker.states.PokerGameSTM;
@@ -441,7 +442,7 @@ public class PokerState implements Serializable, IPokerState {
 			
 			// clean up players here and make leaveing players leave and so on
 			// also update the lobby
-			serverAdapter.cleanupPlayers();
+			cleanupPlayers();
 						
 			setPlayersWithoutMoneyAsSittingOut(result);
 			TimingProfile timing = settings.getTiming();
@@ -801,7 +802,7 @@ public class PokerState implements Serializable, IPokerState {
 	 */
 	public void cleanupPlayers() {
 		// Clean up players in states not accessible to the poker logic
-		serverAdapter.cleanupPlayers();
+		serverAdapter.cleanupPlayers(new SitoutCalculator());
 	}
 
 	@Override

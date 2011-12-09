@@ -24,6 +24,8 @@ import com.cubeia.games.poker.adapter.ActionSequenceGenerator;
 import com.cubeia.games.poker.adapter.ActionTransformer;
 import com.cubeia.games.poker.adapter.FirebaseServerAdapter;
 import com.cubeia.games.poker.adapter.HandHistoryReportAdapter;
+import com.cubeia.games.poker.adapter.LobbyUpdater;
+import com.cubeia.games.poker.adapter.PlayerUnseater;
 import com.cubeia.games.poker.cache.ActionCache;
 import com.cubeia.games.poker.handler.BackendCallHandler;
 import com.cubeia.games.poker.handler.PokerHandler;
@@ -49,5 +51,7 @@ public class IntegrationGuiceModule extends AbstractModule {
         bind(TimeoutCache.class).in(Singleton.class);
         bind(BackendPlayerSessionHandler.class).in(Singleton.class);
 		bind(TableCloseHandlerImpl.class).in(EventScoped.class);
+		bind(LobbyUpdater.class).in(Singleton.class);
+		bind(PlayerUnseater.class).in(Singleton.class);
 	}
 }

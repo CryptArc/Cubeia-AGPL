@@ -18,6 +18,7 @@ import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.rake.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
+import com.cubeia.poker.sitout.SitoutCalculator;
 import com.cubeia.poker.tournament.RoundReport;
 
 public abstract class ServerAdapterProxy implements ServerAdapter {
@@ -144,9 +145,9 @@ public abstract class ServerAdapterProxy implements ServerAdapter {
 	}
 
 	@Override
-	public void cleanupPlayers() {
+	public void cleanupPlayers(SitoutCalculator sitoutCalculator) {
 		if(getAdaptee() != null) {
-			getAdaptee().cleanupPlayers();
+			getAdaptee().cleanupPlayers(sitoutCalculator);
 		}
 	}
 

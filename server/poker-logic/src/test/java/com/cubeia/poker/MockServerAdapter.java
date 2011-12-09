@@ -45,6 +45,7 @@ import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.rake.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
+import com.cubeia.poker.sitout.SitoutCalculator;
 import com.cubeia.poker.tournament.RoundReport;
 
 public class MockServerAdapter implements ServerAdapter {
@@ -134,7 +135,7 @@ public class MockServerAdapter implements ServerAdapter {
 	public void exposePrivateCards(ExposeCardsHolder holder) {}
 	public void notifyDealerButton(int playerId) {}
     public void reportTournamentRound(RoundReport report) {}
-    public void cleanupPlayers() {}
+    public void cleanupPlayers(SitoutCalculator sitoutCalculator) {}
     public void updatePot(Integer sum) {}
     public void notifyPlayerBalance(PokerPlayer p) {}
     public void notifyNewHand() {}

@@ -17,6 +17,8 @@
 
 package com.cubeia.games.poker.adapter;
 
+import static com.cubeia.firebase.api.game.player.PlayerStatus.DISCONNECTED;
+import static com.cubeia.firebase.api.game.player.PlayerStatus.LEAVING;
 import static com.cubeia.games.poker.handler.BackendCallHandler.EXT_PROP_KEY_TABLE_ID;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -67,21 +69,15 @@ import com.cubeia.backend.firebase.CashGamesBackendContract;
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.action.GameObjectAction;
-import com.cubeia.firebase.api.action.LeaveAction;
-import com.cubeia.firebase.api.action.WatchResponseAction;
 import com.cubeia.firebase.api.action.mtt.MttRoundReportAction;
-import com.cubeia.firebase.api.common.AttributeValue;
 import com.cubeia.firebase.api.game.context.GameContext;
-import com.cubeia.firebase.api.game.lobby.LobbyTableAttributeAccessor;
 import com.cubeia.firebase.api.game.player.GenericPlayer;
-import com.cubeia.firebase.api.game.player.PlayerStatus;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TableType;
 import com.cubeia.firebase.api.util.UnmodifiableSet;
 import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
-import com.cubeia.firebase.io.protocol.Enums.WatchResponseStatus;
 import com.cubeia.games.poker.FirebaseState;
 import com.cubeia.games.poker.cache.ActionCache;
 import com.cubeia.games.poker.entity.HandIdentifier;
@@ -148,6 +144,12 @@ public class FirebaseServerAdapter implements ServerAdapter {
     @Inject @VisibleForTesting
     TimeoutCache timeoutCache;
 	
+    @Inject @VisibleForTesting
+    LobbyUpdater lobbyUpdater;
+    
+    @Inject @VisibleForTesting
+    PlayerUnseater playerUnseater;
+    
 	@VisibleForTesting
 	ProtocolFactory protocolFactory = new ProtocolFactory();
 
@@ -452,7 +454,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
 		} else {
 			log.info("The hand was cancelled on table: " + table.getId() + " - " + table.getMetaData().getName());
-			cleanupPlayers();
+			cleanupPlayers(new SitoutCalculator());
 			HandCanceled handCanceledPacket = new HandCanceled();
 			GameDataAction action = protocolFactory.createGameAction(handCanceledPacket, -1, table.getId());
 			log.debug("--> Send HandCanceled["+handCanceledPacket+"] to everyone");
@@ -653,39 +655,34 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	/**
 	 * Remove all players in state LEAVING or DISCONNECTED
 	 */
-	public void cleanupPlayers() {
+	public void cleanupPlayers(SitoutCalculator sitoutCalculator) {
 		if (table.getMetaData().getType().equals(TableType.NORMAL)) {
 			// Check for disconnected and leaving players
 			UnmodifiableSet<GenericPlayer> players = table.getPlayerSet().getPlayers();
 			for (GenericPlayer p : players) {
-				if (p.getStatus() == PlayerStatus.DISCONNECTED || p.getStatus() == PlayerStatus.LEAVING) {
+				if (p.getStatus() == DISCONNECTED || p.getStatus() == LEAVING) {
 					log.debug("Player clean up - unseat leaving or disconnected player["+p.getPlayerId()+"] from table["+table.getId()+"]");
-					unseatPlayer(p.getPlayerId(), false);
+				    unseatPlayer(p.getPlayerId(), false);
 				}
 			}
 
 			// Check sitting out players for time outs
-			Collection<PokerPlayer> timeoutPlayers = new SitoutCalculator().checkTimeoutPlayers(state);
+			Collection<PokerPlayer> timeoutPlayers = sitoutCalculator.checkTimeoutPlayers(
+			    state.getSeatedPlayers(), state.getSettings().getSitoutTimeLimitMilliseconds());
 			for (PokerPlayer p : timeoutPlayers) {
 				log.debug("Player clean up - unseat timed out sit-out player["+p.getId()+"] from table["+table.getId()+"]");
 				unseatPlayer(p.getId(), true);
 			}
 		}
 		
-		updateLobby();
+		lobbyUpdater.updateLobby((FirebaseState) state.getAdapterState(), table);
 	}
 
 	public void unseatPlayer(int playerId, boolean setAsWatcher) {
-		table.getPlayerSet().unseatPlayer(playerId);
-		table.getListener().playerLeft(table, playerId);
-		if (setAsWatcher) {
-			LeaveAction leave = new LeaveAction(playerId, table.getId());
-			WatchResponseAction watch = new WatchResponseAction(table.getId(), WatchResponseStatus.OK);
-			table.getNotifier().sendToClient(playerId, leave);
-			table.getNotifier().sendToClient(playerId, watch);
-			table.getWatcherSet().addWatcher(playerId);
-			table.getListener().watcherJoined(table, playerId);
-		}
+        PokerPlayer pokerPlayer = state.getPokerPlayer(playerId);
+        if (!pokerPlayer.isBuyInRequestActive()) {
+            playerUnseater.unseatPlayer(table, playerId, setAsWatcher);
+        }
 	}
 
 	/**
@@ -733,12 +730,6 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		getFirebaseState().setCurrentRequestSequence(seq);
 	}
 
-
-	private void updateLobby() {
-		FirebaseState fbState = (FirebaseState)state.getAdapterState();
-		LobbyTableAttributeAccessor lobbyTable = table.getAttributeAccessor();
-		lobbyTable.setAttribute("handcount", new AttributeValue(fbState.getHandCount()));
-	}
 
 	@Override
 	public void notifyDeckInfo(int size, com.cubeia.poker.hand.Rank rankLow) {

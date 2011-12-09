@@ -39,6 +39,7 @@ import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.rake.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
+import com.cubeia.poker.sitout.SitoutCalculator;
 import com.cubeia.poker.tournament.RoundReport;
 import com.cubeia.poker.variant.texasholdem.TexasHoldem;
 
@@ -446,7 +447,7 @@ public class PokerLogicTest extends GuiceTest {
 			@Override public void requestMultipleActions(Collection<ActionRequest> requests) {}
 			@Override public void scheduleTimeout(long millis) {}
             @Override public void reportTournamentRound(RoundReport report) {}
-            @Override public void cleanupPlayers() {}
+            @Override public void cleanupPlayers(SitoutCalculator sitoutCalculator) {}
             @Override public void notifyPlayerBalance(PokerPlayer p) {}
             @Override public void notifyNewHand() {}
 			@Override public void notifyPlayerStatusChanged(int playerId,PokerPlayerStatus status) {}
