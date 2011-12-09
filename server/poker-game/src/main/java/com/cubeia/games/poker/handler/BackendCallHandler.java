@@ -132,6 +132,7 @@ public class BackendCallHandler {
 
     public void handleOpenSessionSuccessfulResponse(OpenSessionResponse openSessionResponse) {
         PlayerSessionId playerSessionId = openSessionResponse.sessionId;
+        
         int playerId = playerSessionId.getPlayerId();
         // log.debug("handle open session response: session = {}, pId = {}", playerSessionId, playerId);
         PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) state.getPokerPlayer(playerId);
@@ -140,8 +141,7 @@ public class BackendCallHandler {
 		 * if the player can not buy, eg. have enough cash at hand, in after reconnecting 
 		 * we send him/her a buyInInfo 
 		 */
-		if (!state.getGameType().canPlayerBuyIn(pokerPlayer, state.getSettings()))
-		{
+		if (!state.getGameType().canPlayerBuyIn(pokerPlayer, state.getSettings())) {
 			state.notifyBuyinInfo(pokerPlayer.getId(), false);
 		}
     }
@@ -179,15 +179,19 @@ public class BackendCallHandler {
 
     public void handleOpenSessionFailedResponse(OpenSessionFailedResponse response) {
     	log.info("handle Open Session Failed on table["+table.getId()+"]: "+response);
+    	int playerId = response.playerId;
         
-    	// Send message to player
+    	sendErrorToClientAndUnseatPlayer(playerId);
+    }
+
+    private void sendErrorToClientAndUnseatPlayer(int playerId) {
+        // Send message to player
     	BuyInResponse resp = new BuyInResponse();
         resp.resultCode = Enums.BuyInResultCode.SESSION_NOT_OPEN;
-        sendGameData(response.playerId, resp);
+        sendGameData(playerId, resp);
     	
     	// Unseat player & set as watcher
-    	state.unseatPlayer(response.playerId, true);
-    	
+    	state.unseatPlayer(playerId, true);
     }
 
     private void sendGameData(int playerId, ProtocolObject resp) {
