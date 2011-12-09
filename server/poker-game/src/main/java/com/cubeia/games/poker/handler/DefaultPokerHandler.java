@@ -37,13 +37,17 @@ import se.jadestone.dicearena.game.poker.network.protocol.HandEnd;
 import se.jadestone.dicearena.game.poker.network.protocol.InformFutureAllowedActions;
 import se.jadestone.dicearena.game.poker.network.protocol.PacketVisitor;
 import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
+import se.jadestone.dicearena.game.poker.network.protocol.PingPacket;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerAction;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerBalance;
+import se.jadestone.dicearena.game.poker.network.protocol.PlayerDisconnectedPacket;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerHandStartStatus;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerPokerStatus;
+import se.jadestone.dicearena.game.poker.network.protocol.PlayerReconnectedPacket;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitinRequest;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitoutRequest;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerState;
+import se.jadestone.dicearena.game.poker.network.protocol.PongPacket;
 import se.jadestone.dicearena.game.poker.network.protocol.Pot;
 import se.jadestone.dicearena.game.poker.network.protocol.PotTransfer;
 import se.jadestone.dicearena.game.poker.network.protocol.PotTransfers;
@@ -130,4 +134,12 @@ public class DefaultPokerHandler implements PacketVisitor {
 	public void visit(InformFutureAllowedActions packet) {}
 	@Override
 	public void visit(PlayerHandStartStatus packet) {}
+	@Override
+	public void visit(PlayerDisconnectedPacket packet) {}
+	@Override
+	public void visit(PlayerReconnectedPacket packet) {}
+	@Override
+	public void visit(PingPacket packet) {}
+	@Override
+	public void visit(PongPacket packet) {}
 }

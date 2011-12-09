@@ -29,8 +29,10 @@ import se.jadestone.dicearena.game.poker.network.protocol.BuyInRequest;
 import se.jadestone.dicearena.game.poker.network.protocol.BuyInResponse;
 import se.jadestone.dicearena.game.poker.network.protocol.Enums.BuyInResultCode;
 import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
+import se.jadestone.dicearena.game.poker.network.protocol.PingPacket;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitinRequest;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitoutRequest;
+import se.jadestone.dicearena.game.poker.network.protocol.PongPacket;
 
 import com.cubeia.backend.cashgame.callback.ReserveCallback;
 import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;
@@ -155,7 +157,30 @@ public class PokerHandler extends DefaultPokerHandler {
 		}
 	}
 
-    private void sendBuyInResponseToPlayer(PokerPlayerImpl pokerPlayer, BuyInResponse buyInResponse) throws IOException {
+	@Override
+	public void visit(PingPacket packet) {
+		try {
+			PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) state.getPokerPlayer(playerId);
+	        if (pokerPlayer != null) {
+				sendPongToPlayer(pokerPlayer, packet.identifier);
+	        } else {
+	        	log.warn("Poker Player that was not found at table tried to ping. Table["+table.getId()+"], Request["+packet+"]");
+	        }
+		} catch (Exception e) {
+			log.error("Ping request failed, request["+packet+"],e");
+		}
+	}
+	
+    private void sendPongToPlayer(PokerPlayerImpl pokerPlayer, int identifier) throws IOException {
+		log.debug("sending pong to player {}", pokerPlayer.getId());
+		StyxSerializer styx = new StyxSerializer(null);
+		PongPacket pongPacket = new PongPacket(identifier);
+		GameDataAction gameDataAction = new GameDataAction(playerId, table.getId());
+		gameDataAction.setData(styx.pack(pongPacket));
+		table.getNotifier().sendToClient(pokerPlayer.getId(), gameDataAction);
+	}
+
+	private void sendBuyInResponseToPlayer(PokerPlayerImpl pokerPlayer, BuyInResponse buyInResponse) throws IOException {
         log.debug("sending buy in response to player {}: {}", pokerPlayer.getId(), buyInResponse);
         StyxSerializer styx = new StyxSerializer(null);
         GameDataAction gameDataAction = new GameDataAction(playerId, table.getId());
@@ -187,5 +212,7 @@ public class PokerHandler extends DefaultPokerHandler {
             return false;
         }
     }
+    
+    
 
 }
