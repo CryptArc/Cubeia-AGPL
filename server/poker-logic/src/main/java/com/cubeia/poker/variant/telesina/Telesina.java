@@ -265,16 +265,18 @@ public class Telesina implements GameType, RoundVisitor {
 	@VisibleForTesting
 	protected void handleCanceledHand() {
 	    log.debug("hand canceled in round {}: {}", getCurrentRound(), HandEndStatus.CANCELED_TOO_FEW_PLAYERS);
-		state.notifyHandFinished(new HandResult(), HandEndStatus.CANCELED_TOO_FEW_PLAYERS);
 		
 		// return antes
 		returnAllBetstacksToBalance();
-		
-		for (PokerPlayer p : state.getCurrentHandPlayerMap().values()) {
-		    state.notifyPlayerBalance(p.getId());
-		}
-		
 		state.notifyRakeInfo();
+		
+		state.notifyHandFinished(new HandResult(), HandEndStatus.CANCELED_TOO_FEW_PLAYERS);
+		
+		// Make sure status are reported if we get other players joining the table
+		// while waiting to start a new hand.
+		state.notifyAllHandStartPlayerStatus();
+		
+		state.cleanupPlayers();
 		
 	}
 

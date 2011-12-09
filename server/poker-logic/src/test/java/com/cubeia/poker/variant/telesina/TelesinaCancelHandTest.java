@@ -48,8 +48,8 @@ public class TelesinaCancelHandTest {
         verify(state).notifyHandFinished(Mockito.any(HandResult.class), Mockito.eq(HandEndStatus.CANCELED_TOO_FEW_PLAYERS));
         verify(state,never()).notifyTakeBackUncalledBets(player1.getId(), 0L);
         verify(state).notifyTakeBackUncalledBets(player2.getId(), 100L);
-        verify(state).notifyPlayerBalance(player1Id);
-        verify(state).notifyPlayerBalance(player2Id);
+//        verify(state).notifyPlayerBalance(player1Id);
+//        verify(state).notifyPlayerBalance(player2Id);
         
         verify(state).notifyRakeInfo();
     }

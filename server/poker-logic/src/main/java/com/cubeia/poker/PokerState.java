@@ -432,9 +432,9 @@ public class PokerState implements Serializable, IPokerState {
 			// Report round to tournament coordinator and wait for notification
 			tournamentRoundReport();
 		} else {
-			serverAdapter.notifyHandEnd(result, status);
+			notifyHandEnd(result, status);
 			
-			for (PokerPlayer player:currentHandPlayerMap.values()) {
+			for (PokerPlayer player:playerMap.values()) {
 				serverAdapter.notifyPlayerBalance(player);
 			}
 			
@@ -442,6 +442,7 @@ public class PokerState implements Serializable, IPokerState {
 			
 			// clean up players here and make leaveing players leave and so on
 			// also update the lobby
+			// cleanupPlayers();
 			cleanupPlayers();
 						
 			setPlayersWithoutMoneyAsSittingOut(result);
@@ -451,6 +452,11 @@ public class PokerState implements Serializable, IPokerState {
 		}
 
 		setCurrentState(WAITING_TO_START);
+		
+	}
+	
+	public void notifyHandEnd(HandResult result, HandEndStatus status) {
+		serverAdapter.notifyHandEnd(result, status);
 	}
 
 	/**
