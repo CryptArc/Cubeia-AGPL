@@ -2,14 +2,12 @@ package com.cubeia.games.poker;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 
 import com.cubeia.firebase.api.game.table.InterceptionResponse;
 import com.cubeia.firebase.api.game.table.Table;
@@ -47,19 +45,29 @@ public class AllowLeaveTest {
     }
 
     @Test
+    public void okIfWaitingToStart() {
+        when(state.getGameState()).thenReturn(PokerState.WAITING_TO_START);
+        when(pokerPlayer.isBuyInRequestActive()).thenReturn(false);
+        
+        InterceptionResponse response = tableInterceptor.allowLeave(table, playerId);
+        assertThat(response.isAllowed(), is(true));
+    }
+    
+    @Test
+    public void okIfShutdown() {
+        when(state.getGameState()).thenReturn(PokerState.SHUTDOWN);
+        when(pokerPlayer.isBuyInRequestActive()).thenReturn(false);
+        
+        InterceptionResponse response = tableInterceptor.allowLeave(table, playerId);
+        assertThat(response.isAllowed(), is(true));
+    }
+    
+    @Test
     public void donwAllowIfPlaying() {
         when(pokerPlayer.isBuyInRequestActive()).thenReturn(false);
         
         when(state.getGameState()).thenReturn(PokerState.PLAYING);
         InterceptionResponse response = tableInterceptor.allowLeave(table, playerId);
-        assertThat(response.isAllowed(), is(false));
-        
-        when(state.getGameState()).thenReturn(PokerState.WAITING_TO_START);
-        response = tableInterceptor.allowLeave(table, playerId);
-        assertThat(response.isAllowed(), is(false));
-        
-        when(state.getGameState()).thenReturn(PokerState.SHUTDOWN);
-        response = tableInterceptor.allowLeave(table, playerId);
         assertThat(response.isAllowed(), is(false));
     }
     

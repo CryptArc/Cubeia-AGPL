@@ -640,6 +640,7 @@ public class PokerState implements Serializable, IPokerState {
 			    notifyBuyinInfo(playerId, true);
 			}
 		}
+		
 	}
 
 	/**
