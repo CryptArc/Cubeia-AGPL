@@ -205,8 +205,8 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
 
     @Override
     public long getMainAccountBalance(int playerId) {
-        log.debug("getMainAccountBalance is not implemented yet! Returning hardcoded value of 133700");
-        return 133700;
+        log.debug("getMainAccountBalance is not implemented yet! Returning hardcoded value of 1337000");
+        return 1337000;
     }
 
     private int getBalance(PlayerSessionId sid) {
