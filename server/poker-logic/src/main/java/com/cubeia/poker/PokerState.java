@@ -623,7 +623,10 @@ public class PokerState implements Serializable, IPokerState {
 			return;
 		}
 
-		if (gameType.canPlayerBuyIn(player, settings)) {
+		
+		
+		if (gameType.canPlayerAffordAnte(player, settings)) {
+			log.debug("Player {} can afford ante. Sit in", player);
 			player.sitIn();
 			player.setSitOutNextRound(false);
 			player.setSitInAfterSuccessfulBuyIn(false);
@@ -634,9 +637,10 @@ public class PokerState implements Serializable, IPokerState {
 
 			startGame();
 		} else {
-			log.debug("player {} is out of cash, must bring more before joining", playerId);
+			log.debug("player {} is out of cash, must bring more before joining", player);
 			
-			if (!player.isBuyInRequestActive()) {
+			if (!player.isBuyInRequestActive() && player.getRequestedBuyInAmount() == 0L) {
+				log.debug("player {} does not have buy in request active so notify buy in info", player);
 			    notifyBuyinInfo(playerId, true);
 			}
 		}

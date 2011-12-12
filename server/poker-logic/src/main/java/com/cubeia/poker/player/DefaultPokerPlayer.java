@@ -76,7 +76,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	/**
 	 * the money reserved in wallet but not yet available to the player 
 	 */
-    private long balanceNotInHand;
+    private long balanceNotInHand = 0L;
     	
 	/**
 	 * the amount reserved for a bettingaction
@@ -100,7 +100,9 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	public String toString() {
 		String sitOutSince = sitOutTimestamp == null ? "" : ":"+(System.currentTimeMillis()-sitOutTimestamp+"ms");
 	    String value = "pid["+playerId+"] seat["+seatId+"] " +
-	    		"balance["+balance+"] pendingBalance["+balanceNotInHand+"] " +
+	    		"balance["+balance+"] balanceNotInHand["+balanceNotInHand+"] " +
+	    		"buyInRequestActive["+buyInRequestActive+"] " +
+	    		"requestedBuyInAmount["+requestedBuyInAmount+"] " +
 	    		"sitout["+isSittingOut+sitOutSince+"] sitoutstatus["+sitOutStatus+"] " +
 				"folded["+hasFolded+"] hasActed["+hasActed+"] allIn[" + isAllIn() + "] " +
 				"hasPostedEntryBet["+hasPostedEntryBet+"]";

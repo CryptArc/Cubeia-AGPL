@@ -23,13 +23,13 @@ public class TelesinaCanPlayerBuyInTest {
         PokerSettings settings = new PokerSettings(anteLevel, 0, 0, null, TELESINA, 0, null, null, null);
         
         when(player.getBalance()).thenReturn((long) anteLevel + 1);
-        assertThat(telesina.canPlayerBuyIn(player, settings), is(true));
+        assertThat(telesina.canPlayerAffordAnte(player, settings), is(true));
         
         when(player.getBalance()).thenReturn((long) anteLevel + 0);
-        assertThat(telesina.canPlayerBuyIn(player, settings), is(true));
+        assertThat(telesina.canPlayerAffordAnte(player, settings), is(true));
 
         when(player.getBalance()).thenReturn((long) anteLevel - 1);
-        assertThat(telesina.canPlayerBuyIn(player, settings), is(false));
+        assertThat(telesina.canPlayerAffordAnte(player, settings), is(false));
     }
     
     @Test
@@ -41,14 +41,14 @@ public class TelesinaCanPlayerBuyInTest {
         int anteLevel = 20;
         PokerSettings settings = new PokerSettings(anteLevel, 0, 0, null, TELESINA, 0, null, null, null);
         
-        when(player.getBalanceNotInHand()).thenReturn((long) anteLevel + 1);
-        assertThat(telesina.canPlayerBuyIn(player, settings), is(true));
+        when(player.getPendingBalanceSum()).thenReturn((long) anteLevel + 1);
+        assertThat(telesina.canPlayerAffordAnte(player, settings), is(true));
         
-        when(player.getBalanceNotInHand()).thenReturn((long) anteLevel + 0);
-        assertThat(telesina.canPlayerBuyIn(player, settings), is(true));
+        when(player.getPendingBalanceSum()).thenReturn((long) anteLevel + 0);
+        assertThat(telesina.canPlayerAffordAnte(player, settings), is(true));
 
-        when(player.getBalanceNotInHand()).thenReturn((long) anteLevel - 1);
-        assertThat(telesina.canPlayerBuyIn(player, settings), is(false));
+        when(player.getPendingBalanceSum()).thenReturn((long) anteLevel - 1);
+        assertThat(telesina.canPlayerAffordAnte(player, settings), is(false));
     }
     
     

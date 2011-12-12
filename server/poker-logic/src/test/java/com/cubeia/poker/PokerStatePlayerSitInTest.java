@@ -40,7 +40,7 @@ public class PokerStatePlayerSitInTest {
         state.playerMap = mock(Map.class);
         PokerPlayer player = mock(PokerPlayer.class);
         when(state.playerMap.get(playerId)).thenReturn(player);
-        when(state.gameType.canPlayerBuyIn(Mockito.eq(player), (PokerSettings) Mockito.any())).thenReturn(true);
+        when(state.gameType.canPlayerAffordAnte(Mockito.eq(player), (PokerSettings) Mockito.any())).thenReturn(true);
         
         state.playerIsSittingIn(playerId);
         
@@ -58,7 +58,7 @@ public class PokerStatePlayerSitInTest {
         state.playerMap = mock(Map.class);
         PokerPlayer player = mock(PokerPlayer.class);
         when(state.playerMap.get(playerId)).thenReturn(player);
-        when(state.gameType.canPlayerBuyIn(Mockito.eq(player), (PokerSettings) Mockito.any())).thenReturn(false);
+        when(state.gameType.canPlayerAffordAnte(Mockito.eq(player), (PokerSettings) Mockito.any())).thenReturn(false);
         
         state.playerIsSittingIn(playerId);
         
@@ -73,7 +73,7 @@ public class PokerStatePlayerSitInTest {
         PokerPlayer player = mock(PokerPlayer.class);
         when(player.isBuyInRequestActive()).thenReturn(true);
         when(state.playerMap.get(playerId)).thenReturn(player);
-        when(state.gameType.canPlayerBuyIn(Mockito.eq(player), (PokerSettings) Mockito.any())).thenReturn(false);
+        when(state.gameType.canPlayerAffordAnte(Mockito.eq(player), (PokerSettings) Mockito.any())).thenReturn(false);
         
         state.playerIsSittingIn(playerId);
         
@@ -87,7 +87,7 @@ public class PokerStatePlayerSitInTest {
         state.playerMap = mock(Map.class);
         PokerPlayer player = mock(PokerPlayer.class);
         when(state.playerMap.get(playerId)).thenReturn(player);
-        when(state.gameType.canPlayerBuyIn(Mockito.eq(player), (PokerSettings) Mockito.any())).thenReturn(false);
+        when(state.gameType.canPlayerAffordAnte(Mockito.eq(player), (PokerSettings) Mockito.any())).thenReturn(false);
         
         state.playerIsSittingIn(playerId);
         

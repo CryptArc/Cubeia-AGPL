@@ -141,7 +141,7 @@ public class BackendCallHandler {
 		 * if the player can not buy, eg. have enough cash at hand, in after reconnecting 
 		 * we send him/her a buyInInfo 
 		 */
-		if (!state.getGameType().canPlayerBuyIn(pokerPlayer, state.getSettings())) {
+		if (!state.getGameType().canPlayerAffordAnte(pokerPlayer, state.getSettings())) {
 			state.notifyBuyinInfo(pokerPlayer.getId(), false);
 		}
     }
