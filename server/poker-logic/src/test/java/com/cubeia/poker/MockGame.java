@@ -262,7 +262,7 @@ public class MockGame implements GameType {
 	}
 	
 	@Override
-	public boolean canPlayerBuyIn(PokerPlayer player, PokerSettings settings) {
+	public boolean canPlayerAffordAnte(PokerPlayer player, PokerSettings settings) {
 	    return true;
 	}
 

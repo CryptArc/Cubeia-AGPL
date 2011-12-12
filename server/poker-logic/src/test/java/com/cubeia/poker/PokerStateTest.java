@@ -506,7 +506,7 @@ public class PokerStateTest {
 		int playerId = 1337;
 		when(player.getId()).thenReturn(playerId);
 		
-		when(state.gameType.canPlayerBuyIn(player, settings)).thenReturn(true);
+		when(state.gameType.canPlayerAffordAnte(player, settings)).thenReturn(true);
 		
 		state.addPlayer(player);
 		

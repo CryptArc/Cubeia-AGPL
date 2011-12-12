@@ -83,5 +83,5 @@ public interface GameType extends Serializable {
 	 * @param settings settings
 	 * @return true if player can buy in, false otherwise
 	 */
-    public boolean canPlayerBuyIn(PokerPlayer player, PokerSettings settings);
+    public boolean canPlayerAffordAnte(PokerPlayer player, PokerSettings settings);
 }

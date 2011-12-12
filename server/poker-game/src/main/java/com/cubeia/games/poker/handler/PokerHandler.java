@@ -43,6 +43,7 @@ import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.FirebaseState;
 import com.cubeia.games.poker.adapter.ActionTransformer;
+import com.cubeia.games.poker.cache.ActionCache;
 import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.poker.PokerState;
@@ -59,6 +60,9 @@ public class PokerHandler extends DefaultPokerHandler {
 	private static Logger log = LoggerFactory.getLogger(PokerHandler.class);
     
 	public int playerId;
+	
+	@Inject @VisibleForTesting
+	ActionCache cache;
 	
 	@Inject @VisibleForTesting
 	public Table table;
@@ -186,6 +190,10 @@ public class PokerHandler extends DefaultPokerHandler {
         GameDataAction gameDataAction = new GameDataAction(playerId, table.getId());
         gameDataAction.setData(styx.pack(buyInResponse));
         table.getNotifier().sendToClient(pokerPlayer.getId(), gameDataAction);
+        
+        if (cache != null) {
+			cache.addPrivateAction(table.getId(), playerId, gameDataAction);
+		}
     }
 
     private boolean verifySequence(PerformAction packet) {
