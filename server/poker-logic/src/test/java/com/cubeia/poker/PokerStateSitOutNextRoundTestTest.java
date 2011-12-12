@@ -16,7 +16,6 @@ import org.mockito.MockitoAnnotations;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
-import com.cubeia.poker.player.SitOutStatus;
 
 public class PokerStateSitOutNextRoundTestTest {
 
@@ -41,7 +40,7 @@ public class PokerStateSitOutNextRoundTestTest {
         state.playerMap = mock(Map.class);
         PokerPlayer player = mock(PokerPlayer.class);
         when(state.playerMap.get(playerId)).thenReturn(player);
-        when(state.gameType.canPlayerAffordAnte(Mockito.eq(player), (PokerSettings) Mockito.any())).thenReturn(true);
+        when(state.gameType.canPlayerAffordEntryBet(Mockito.eq(player), (PokerSettings) Mockito.any(), Mockito.eq(true))).thenReturn(true);
 
         when(player.isSittingOut()).thenReturn(true);
         state.playerIsSittingIn(playerId);
@@ -59,7 +58,7 @@ public class PokerStateSitOutNextRoundTestTest {
         state.playerMap = mock(Map.class);
         PokerPlayer player = mock(PokerPlayer.class);
         when(state.playerMap.get(playerId)).thenReturn(player);
-        when(state.gameType.canPlayerAffordAnte(Mockito.eq(player), (PokerSettings) Mockito.any())).thenReturn(false);
+        when(state.gameType.canPlayerAffordEntryBet(Mockito.eq(player), (PokerSettings) Mockito.any(), Mockito.eq(true))).thenReturn(false);
         
         when(player.isSittingOut()).thenReturn(true);
         state.playerIsSittingIn(playerId);

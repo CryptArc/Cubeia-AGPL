@@ -162,7 +162,7 @@ public class BackendCallHandlerTest {
     @Test
     public void testHandleOpenSessionSuccessfulResponse() {
     	when(state.getGameType()).thenReturn(gameType);
-        when(gameType.canPlayerAffordAnte(any(PokerPlayer.class), any(PokerSettings.class))).thenReturn(false);
+        when(gameType.canPlayerAffordEntryBet(any(PokerPlayer.class), any(PokerSettings.class), Mockito.eq(true))).thenReturn(false);
         PlayerSessionId playerSessionId = new PlayerSessionIdImpl(playerId);
         OpenSessionResponse openSessionResponse = new OpenSessionResponse(playerSessionId, Collections.<String, String>emptyMap());
         callHandler.handleOpenSessionSuccessfulResponse(openSessionResponse);

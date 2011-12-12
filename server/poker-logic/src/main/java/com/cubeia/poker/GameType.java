@@ -81,7 +81,8 @@ public interface GameType extends Serializable {
 	 * the player can buy in if he can afford the ante.
 	 * @param player player
 	 * @param settings settings
+	 * @param includePending if true include the pending balance (that will be committed in the future)
 	 * @return true if player can buy in, false otherwise
 	 */
-    public boolean canPlayerAffordAnte(PokerPlayer player, PokerSettings settings);
+    public boolean canPlayerAffordEntryBet(PokerPlayer player, PokerSettings settings, boolean includePending);
 }
