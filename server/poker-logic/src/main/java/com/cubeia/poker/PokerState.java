@@ -359,6 +359,8 @@ public class PokerState implements Serializable, IPokerState {
 			currentHandSeatingMap = createCopyWithNotReadyPlayersExcluded(seatingMap);
 			currentHandPlayerMap = createCopyWithNotReadyPlayersExcluded(playerMap);
 
+			log.debug("starting new hand with players: {}", currentHandPlayerMap.keySet());
+			
 			notifyNewHand();
 			notifyAllPlayerBalances();
 			notifyAllHandStartPlayerStatus();
@@ -440,7 +442,7 @@ public class PokerState implements Serializable, IPokerState {
 			
 			serverAdapter.performPendingBuyIns(playerMap.values());
 			
-			// clean up players here and make leaveing players leave and so on
+			// clean up players here and make leaving players leave and so on
 			// also update the lobby
 			// cleanupPlayers();
 			cleanupPlayers();

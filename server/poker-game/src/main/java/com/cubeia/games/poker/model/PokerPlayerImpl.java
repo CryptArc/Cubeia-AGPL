@@ -18,6 +18,7 @@
 package com.cubeia.games.poker.model;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,8 +60,11 @@ public class PokerPlayerImpl extends DefaultPokerPlayer implements Serializable 
 	 * @param sessionId the session id, or null to leave the session
 	 */
 	public void setPlayerSessionId(PlayerSessionId playerSessionId) {
+	    log.debug("updating player {} session id: {} -> {}", new Object[] {getId(), this.playerSessionId, playerSessionId});
 	    
-	    log.debug("updating player session id: {} -> {}", this.playerSessionId, playerSessionId);
+	    if (playerSessionId == null) {
+	        log.debug("nulling player {} session trace\n: {}", getId(), Arrays.toString(Thread.currentThread().getStackTrace()));
+	    }
 	    
 		this.playerSessionId = playerSessionId;
 	}	

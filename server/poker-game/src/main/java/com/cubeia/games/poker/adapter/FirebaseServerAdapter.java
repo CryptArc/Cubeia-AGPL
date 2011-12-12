@@ -680,7 +680,9 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
 	public void unseatPlayer(int playerId, boolean setAsWatcher) {
         PokerPlayer pokerPlayer = state.getPokerPlayer(playerId);
-        if (!pokerPlayer.isBuyInRequestActive()) {
+        boolean participatingInCurrentHand = state.getPlayerInCurrentHand(playerId) != null;
+        
+        if (!pokerPlayer.isBuyInRequestActive()  &&  !participatingInCurrentHand) {
             playerUnseater.unseatPlayer(table, playerId, setAsWatcher);
         }
 	}
