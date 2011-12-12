@@ -306,12 +306,7 @@ public class PokerState implements Serializable, IPokerState {
 	@VisibleForTesting
 	@Override
 	public Collection<PokerPlayer> getPlayersReadyToStartHand() {
-	    return filter(playerMap.values(), new Predicate<PokerPlayer>() {
-	        @Override
-	        public boolean apply(PokerPlayer player) { 
-	            return !player.isSittingOut()  &&  !player.isBuyInRequestActive();
-	        }
-        });
+	    return createCopyWithNotReadyPlayersExcluded(playerMap).values();
 	}
 	
 	@Override
@@ -375,12 +370,19 @@ public class PokerState implements Serializable, IPokerState {
 		TreeMap<Integer, PokerPlayer> treeMap = new TreeMap<Integer, PokerPlayer>();
 		for (Integer pid : map.keySet()) {
 			PokerPlayer pokerPlayer = map.get(pid);
-			if (!pokerPlayer.isSittingOut()  &&  !pokerPlayer.isBuyInRequestActive()) {
+			if (playerReadyToStartHand(pokerPlayer)) {
 				treeMap.put(pid, pokerPlayer);
 			}
 		}
 		return treeMap;
 	}
+
+    @VisibleForTesting
+    protected boolean playerReadyToStartHand(PokerPlayer pokerPlayer) {
+        return !pokerPlayer.isSittingOut()  
+            &&  !pokerPlayer.isBuyInRequestActive()  
+            &&  gameType.canPlayerAffordEntryBet(pokerPlayer, settings, false);
+    }
 
 	@VisibleForTesting
 	protected void resetValuesAtStartOfHand() {
@@ -624,7 +626,7 @@ public class PokerState implements Serializable, IPokerState {
 		}
 		
 		
-		if (gameType.canPlayerAffordAnte(player, settings)) {
+		if (gameType.canPlayerAffordEntryBet(player, settings, true)) {
 			log.debug("Player {} can afford ante. Sit in", player);
 
 		        player.sitIn();
@@ -992,7 +994,12 @@ public class PokerState implements Serializable, IPokerState {
 
 	@Override
 	public boolean isShutdown() {
-		return getCurrentState().equals(SHUTDOWN);
+		return SHUTDOWN.equals(getCurrentState());
+	}
+	
+	@Override
+	public boolean isPlaying() {
+        return PLAYING.equals(getCurrentState());
 	}
 
 	protected PokerGameSTM getCurrentState() {

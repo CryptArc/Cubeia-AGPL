@@ -7,7 +7,6 @@ import junit.framework.Assert;
 
 import org.apache.log4j.Logger;
 import org.hamcrest.CoreMatchers;
-import org.mockito.Mockito;
 
 import com.cubeia.poker.AbstractTexasHandTester;
 import com.cubeia.poker.MockPlayer;

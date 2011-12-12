@@ -27,7 +27,8 @@ public interface IPokerState {
 	SortedMap<Integer, PokerPlayer> getCurrentHandSeatingMap();
 
 	/**
-	 * Returns a player participating in the current hand by it's id.
+	 * Returns a player participating in the current hand (or the last played hand if waiting to start) by it's id.
+	 * NOTE: that this method might return a player even after the hand is finished.
 	 * @param playerId player id
 	 * @return player or null if not in hand
 	 */
@@ -97,5 +98,11 @@ public interface IPokerState {
      * @param amount amount requested
      */
     void handleBuyInRequest(PokerPlayer pokerPlayer, int amount);
+
+    /**
+     * True if the current state is PLAYING.
+     * @return true if playing, false otherwise
+     */
+    boolean isPlaying();
 
 }

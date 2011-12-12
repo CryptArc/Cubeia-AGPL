@@ -40,7 +40,7 @@ public class PokerStatePlayerSitInTest {
         state.playerMap = mock(Map.class);
         PokerPlayer player = mock(PokerPlayer.class);
         when(state.playerMap.get(playerId)).thenReturn(player);
-        when(state.gameType.canPlayerAffordAnte(Mockito.eq(player), (PokerSettings) Mockito.any())).thenReturn(true);
+        when(state.gameType.canPlayerAffordEntryBet(Mockito.eq(player), (PokerSettings) Mockito.any(), Mockito.eq(true))).thenReturn(true);
         
         when(player.isSittingOut()).thenReturn(true);
         state.playerIsSittingIn(playerId);
@@ -59,7 +59,7 @@ public class PokerStatePlayerSitInTest {
         state.playerMap = mock(Map.class);
         PokerPlayer player = mock(PokerPlayer.class);
         when(state.playerMap.get(playerId)).thenReturn(player);
-        when(state.gameType.canPlayerAffordAnte(Mockito.eq(player), (PokerSettings) Mockito.any())).thenReturn(false);
+        when(state.gameType.canPlayerAffordEntryBet(Mockito.eq(player), (PokerSettings) Mockito.any(), Mockito.eq(true))).thenReturn(false);
         
         when(player.isSittingOut()).thenReturn(true);
         state.playerIsSittingIn(playerId);
@@ -75,7 +75,7 @@ public class PokerStatePlayerSitInTest {
         PokerPlayer player = mock(PokerPlayer.class);
         when(player.isBuyInRequestActive()).thenReturn(true);
         when(state.playerMap.get(playerId)).thenReturn(player);
-        when(state.gameType.canPlayerAffordAnte(Mockito.eq(player), (PokerSettings) Mockito.any())).thenReturn(false);
+        when(state.gameType.canPlayerAffordEntryBet(Mockito.eq(player), (PokerSettings) Mockito.any(), Mockito.eq(true))).thenReturn(false);
         
         state.playerIsSittingIn(playerId);
         
@@ -89,7 +89,7 @@ public class PokerStatePlayerSitInTest {
         state.playerMap = mock(Map.class);
         PokerPlayer player = mock(PokerPlayer.class);
         when(state.playerMap.get(playerId)).thenReturn(player);
-        when(state.gameType.canPlayerAffordAnte(Mockito.eq(player), (PokerSettings) Mockito.any())).thenReturn(false);
+        when(state.gameType.canPlayerAffordEntryBet(Mockito.eq(player), (PokerSettings) Mockito.any(), Mockito.eq(true))).thenReturn(false);
         
         when(player.isSittingOut()).thenReturn(true);
         state.playerIsSittingIn(playerId);

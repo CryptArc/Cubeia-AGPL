@@ -149,6 +149,7 @@ public class CleanupPlayersTest {
     @Test
     public void testUnseatPlayerRefuseIfParticipatingInHand() {
         when(state.getPlayerInCurrentHand(player1Id)).thenReturn(pokerPlayer1);
+        when(state.isPlaying()).thenReturn(true);
         firebaseServerAdapter.unseatPlayer(player1Id, false);
         verify(playerUnseater, never()).unseatPlayer(table, player1Id, false);
     }

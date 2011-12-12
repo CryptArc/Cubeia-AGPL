@@ -242,6 +242,9 @@ public class MockGame implements GameType {
 			public boolean isShutdown() { return false; }
 			
 			@Override
+			public boolean isPlaying() { return true; }
+			
+			@Override
 			public void sitOutPlayersMarkedForSitOutNextRound() {}
 
             @Override
@@ -262,7 +265,7 @@ public class MockGame implements GameType {
 	}
 	
 	@Override
-	public boolean canPlayerAffordAnte(PokerPlayer player, PokerSettings settings) {
+	public boolean canPlayerAffordEntryBet(PokerPlayer player, PokerSettings settings, boolean includePending) {
 	    return true;
 	}
 
