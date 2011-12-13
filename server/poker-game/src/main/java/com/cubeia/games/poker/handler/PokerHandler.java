@@ -144,7 +144,7 @@ public class PokerHandler extends DefaultPokerHandler {
                     } else {
                         ReserveFailedResponse failResponse = new ReserveFailedResponse(
                             pokerPlayer.getPlayerSessionId(), AMOUNT_TOO_HIGH, 
-                            "Requested buy in plus balance cannot be more than max buy in");
+                            "Requested buy in plus balance cannot be more than max buy in", false);
                         
                         ReserveCallback callback = cashGameBackend.getCallbackFactory().createReserveCallback(table);
                         callback.requestFailed(failResponse);

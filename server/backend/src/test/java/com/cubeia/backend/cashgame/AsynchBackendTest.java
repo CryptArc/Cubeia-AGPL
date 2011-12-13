@@ -162,7 +162,8 @@ public class AsynchBackendTest {
 		ReserveRequest request = new ReserveRequest(playerSessionId, roundNumber, amountReserved);
 		ReserveCallbackHandler callback = new ReserveCallbackHandler();
 
-		when(backingMock.reserve(any(ReserveRequest.class))).thenThrow(new ReserveFailedException("fail reserve", ReserveFailedResponse.ErrorCode.UNSPECIFIED_FAILURE));
+		when(backingMock.reserve(any(ReserveRequest.class))).thenThrow(
+		    new ReserveFailedException("fail reserve", ReserveFailedResponse.ErrorCode.UNSPECIFIED_FAILURE, true));
 
 		backend.reserve(request, callback);
 
@@ -172,5 +173,6 @@ public class AsynchBackendTest {
 
 		assertEquals("fail reserve", reserveFailedResponse.message);
 		assertEquals(ReserveFailedResponse.ErrorCode.UNSPECIFIED_FAILURE, reserveFailedResponse.errorCode);
+		assertTrue(reserveFailedResponse.playerSessionNeedsToBeClosed);
 	}
 }

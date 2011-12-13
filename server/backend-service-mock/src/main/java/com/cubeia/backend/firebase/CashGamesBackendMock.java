@@ -135,13 +135,13 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
         if (!sessionTransactions.containsKey(sid)) {
             log.error("reserve failed, session not found: sId = " + sid);
             ReserveFailedResponse failResponse = new ReserveFailedResponse(request.playerSessionId, 
-                ReserveFailedResponse.ErrorCode.SESSION_NOT_OPEN, "session " + sid + " not open");
+                ReserveFailedResponse.ErrorCode.SESSION_NOT_OPEN, "session " + sid + " not open", true);
             callback.requestFailed(failResponse);
             
         } else if (amount == 66){ // MAGIC FAIL FOR 66 cents BUY-IN 
         	log.error("Failing reserve with {}ms delay for magic amount 66 cents (hardcoded for debug reasons). sId={}", sid);
             final ReserveFailedResponse failResponse = new ReserveFailedResponse(request.playerSessionId, 
-                ReserveFailedResponse.ErrorCode.UNSPECIFIED_FAILURE, "Unknown operator error (magic 66-cent ultra-fail)");
+                ReserveFailedResponse.ErrorCode.UNSPECIFIED_FAILURE, "Unknown operator error (magic 66-cent ultra-fail)", true);
             long delay = (long) (Math.random() * 2000);
             
             executor.schedule(new Runnable() {

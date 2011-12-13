@@ -2,6 +2,7 @@ package com.cubeia.backend.cashgame;
 
 import java.util.concurrent.atomic.AtomicLong;
 
+@SuppressWarnings("serial")
 public class TableIdImpl implements TableId {
 
 	private static final AtomicLong idGenerator = new AtomicLong(0);
