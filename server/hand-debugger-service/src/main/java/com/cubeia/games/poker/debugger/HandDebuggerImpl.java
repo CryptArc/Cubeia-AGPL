@@ -2,6 +2,12 @@ package com.cubeia.games.poker.debugger;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.TableChatAction;
@@ -16,6 +22,8 @@ import com.google.inject.Inject;
 
 public class HandDebuggerImpl implements HandDebuggerContract {
 	
+	private Logger log = LoggerFactory.getLogger(this.getClass());
+	
 	@Inject GuiceConfig guice;
 	
 	@Inject WebServer server;
@@ -25,6 +33,8 @@ public class HandDebuggerImpl implements HandDebuggerContract {
     @Inject TablePlayerInfoCache playerInfoCache;
 
 	private ServiceRouter router;
+	
+	private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 	
 	public void start() {
 		server.start();
@@ -53,14 +63,10 @@ public class HandDebuggerImpl implements HandDebuggerContract {
 	@Override
 	public void sendHttpLink(int tableId, int playerId) {
 		if (router != null) {
-			String myAddress = getLocalIP();
-			String url = "http://"+myAddress+":9091/table.html?tableid="+tableId;
-			String message = "Hand debugger is available at "+url;
-			TableChatAction chat = new TableChatAction(playerId, tableId, message);
-	        router.dispatchToPlayer(playerId, chat);
+			scheduler.schedule(new URLSender(tableId, playerId), 2, TimeUnit.SECONDS);
 		}
 	}
-
+	
 	private String getLocalIP() {
 		String address = null;
 		try {
@@ -77,4 +83,27 @@ public class HandDebuggerImpl implements HandDebuggerContract {
 
 	@Override
 	public void onAction(ServiceAction e) {}
+	
+	
+	private class URLSender implements Runnable {
+
+		private final int tableId;
+		private final int playerId;
+
+		public URLSender(int tableId, int playerId) {
+			this.tableId = tableId;
+			this.playerId = playerId;
+		}
+		
+		@Override
+		public void run() {
+			String myAddress = getLocalIP();
+			String url = "http://"+myAddress+":9091/table.html?tableid="+tableId;
+			String message = "Hand debugger is available at "+url;
+			TableChatAction chat = new TableChatAction(playerId, tableId, message);
+			log.info("Sending hand debugger info for table[{}] to player[{}]: "+message, tableId, playerId);
+			router.dispatchToPlayer(playerId, chat);
+		}
+		
+	}
 }
