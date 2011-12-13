@@ -40,6 +40,7 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
 			state.commitPendingBalances();
 						
 		    state.sitOutPlayersMarkedForSitOutNextRound();
+		    state.cleanupPlayers(); // Will remove disconnected and leaving players
 			
 			if (state.getPlayersReadyToStartHand().size() > 1) {
 				state.startHand();
@@ -48,7 +49,6 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
 				state.setState(PokerState.NOT_STARTED);
 				log.info("WILL NOT START NEW HAND, TOO FEW PLAYERS SEATED: " + state.getPlayersReadyToStartHand().size() + " sitting in of " + state.getSeatedPlayers().size());
 			}
-			state.cleanupPlayers(); // Will remove disconnected and leaving players
 		} else {
 			log.debug("Ignoring timeout in waiting to start state, since tournament hands are started by the tournament manager.");
 		}

@@ -8,7 +8,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import se.jadestone.dicearena.game.poker.network.protocol.Enums;
 import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
+import se.jadestone.dicearena.game.poker.network.protocol.PlayerAction;
 import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
 import se.jadestone.dicearena.game.poker.network.protocol.RequestAction;
 import se.jadestone.dicearena.game.poker.network.protocol.StartHandHistory;
@@ -93,8 +95,27 @@ public class GameStateSender {
                     packet = styxalizer.unpack(gda.getData());
                     
                     if (packet instanceof RequestAction) {
-                    	lastRequest = (RequestAction)packet;
-                    	lastContainer = container;
+                    	
+                    	// special case for ante since that can be sent out of order
+                    	// we need to always send all ante 
+                    	RequestAction requestAction = (RequestAction)packet;
+                    	
+                    	boolean anteAllowed = false;
+
+                    	for (PlayerAction playerAction : requestAction.allowedActions) {
+                    		if (playerAction.type == Enums.ActionType.ANTE) {
+                    			anteAllowed = true;
+                    		}							
+						}
+                    	
+						if (anteAllowed){
+                    		ga = adjustTimeToAct(styxalizer, container, requestAction);
+                    		filteredActions.add(ga);
+                    	}else{
+                    		lastRequest = requestAction;
+                        	lastContainer = container;
+                        	
+                    	}
 						 
 					} else if (packet instanceof PerformAction) {
 						lastRequest = null;

@@ -132,4 +132,26 @@ public class CleanupPlayersTest {
         verify(playerUnseater, never()).unseatPlayer(Mockito.eq(table), Mockito.eq(player2Id), Mockito.anyBoolean());
         verify(playerUnseater).unseatPlayer(table, player3Id, false);
     }
+    
+    @Test
+    public void testUnseatPlayer() {
+        firebaseServerAdapter.unseatPlayer(player1Id, false);
+        verify(playerUnseater).unseatPlayer(table, player1Id, false);
+    }
+    
+    @Test
+    public void testUnseatPlayerRefuseIfActiveBackendRequest() {
+        when(pokerPlayer1.isBuyInRequestActive()).thenReturn(true);
+        firebaseServerAdapter.unseatPlayer(player1Id, false);
+        verify(playerUnseater, never()).unseatPlayer(table, player1Id, false);
+    }
+    
+    @Test
+    public void testUnseatPlayerRefuseIfParticipatingInHand() {
+        when(state.getPlayerInCurrentHand(player1Id)).thenReturn(pokerPlayer1);
+        when(state.isPlaying()).thenReturn(true);
+        firebaseServerAdapter.unseatPlayer(player1Id, false);
+        verify(playerUnseater, never()).unseatPlayer(table, player1Id, false);
+    }
+    
 }

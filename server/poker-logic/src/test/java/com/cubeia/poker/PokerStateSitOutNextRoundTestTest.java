@@ -40,8 +40,9 @@ public class PokerStateSitOutNextRoundTestTest {
         state.playerMap = mock(Map.class);
         PokerPlayer player = mock(PokerPlayer.class);
         when(state.playerMap.get(playerId)).thenReturn(player);
-        when(state.gameType.canPlayerBuyIn(Mockito.eq(player), (PokerSettings) Mockito.any())).thenReturn(true);
-        
+        when(state.gameType.canPlayerAffordEntryBet(Mockito.eq(player), (PokerSettings) Mockito.any(), Mockito.eq(true))).thenReturn(true);
+
+        when(player.isSittingOut()).thenReturn(true);
         state.playerIsSittingIn(playerId);
         
         verify(player).sitIn();
@@ -57,8 +58,9 @@ public class PokerStateSitOutNextRoundTestTest {
         state.playerMap = mock(Map.class);
         PokerPlayer player = mock(PokerPlayer.class);
         when(state.playerMap.get(playerId)).thenReturn(player);
-        when(state.gameType.canPlayerBuyIn(Mockito.eq(player), (PokerSettings) Mockito.any())).thenReturn(false);
+        when(state.gameType.canPlayerAffordEntryBet(Mockito.eq(player), (PokerSettings) Mockito.any(), Mockito.eq(true))).thenReturn(false);
         
+        when(player.isSittingOut()).thenReturn(true);
         state.playerIsSittingIn(playerId);
         
         verify(player, never()).sitIn();

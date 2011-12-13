@@ -131,7 +131,6 @@ public class BettingRound implements Round, BettingRoundContext {
 			isFinished = true;
 		} else {
 			requestAction(p);
-			notifyAllPlayersOfPossibleFutureActions(p);
 		}
         
         // This can be triggered by the if clause above, but also
@@ -166,14 +165,6 @@ public class BettingRound implements Round, BettingRoundContext {
 			requestNextAction(player.getSeatId());
 		}
 		
-		//send to all but the next player that they can do check next and fold and so on
-		PokerPlayer nextPlayer = playerToActCalculator.getNextPlayerToAct(player.getSeatId(), gameType.getState().getCurrentHandSeatingMap());
-		if (nextPlayer != null) {
-			notifyAllPlayersOfPossibleFutureActions(nextPlayer);
-		}else {
-			notifyAllPlayersOfNoPossibleFutureActions();
-		}
-		
 	}
 
 	private void requestNextAction(int lastSeatId) {
@@ -181,6 +172,7 @@ public class BettingRound implements Round, BettingRoundContext {
 		if (player == null) {
 			log.debug("Setting betting round is finished because there is no player left to act");
 			isFinished = true;
+			notifyAllPlayersOfNoPossibleFutureActions();
 		} else {
 			log.debug("Next player to act is: "+player.getId());
 			requestAction(player);
@@ -206,6 +198,7 @@ public class BettingRound implements Round, BettingRoundContext {
 			performDefaultActionForPlayer(p);
 		} else {
 			gameType.requestAction(p.getActionRequest());
+			notifyAllPlayersOfPossibleFutureActions(p);
 		}
 	}
 	

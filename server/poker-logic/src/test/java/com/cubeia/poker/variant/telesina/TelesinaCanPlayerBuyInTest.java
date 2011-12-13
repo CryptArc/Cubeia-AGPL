@@ -14,7 +14,7 @@ import com.cubeia.poker.player.PokerPlayer;
 public class TelesinaCanPlayerBuyInTest {
     
     @Test
-    public void testCanPlayerBuyIn() {
+    public void testCanPlayerAffordEntryBet() {
         PokerPlayer player = mock(PokerPlayer.class);
         
         Telesina telesina = new Telesina(null, null, null, null,null);
@@ -23,17 +23,17 @@ public class TelesinaCanPlayerBuyInTest {
         PokerSettings settings = new PokerSettings(anteLevel, 0, 0, null, TELESINA, 0, null, null, null);
         
         when(player.getBalance()).thenReturn((long) anteLevel + 1);
-        assertThat(telesina.canPlayerBuyIn(player, settings), is(true));
+        assertThat(telesina.canPlayerAffordEntryBet(player, settings, true), is(true));
         
         when(player.getBalance()).thenReturn((long) anteLevel + 0);
-        assertThat(telesina.canPlayerBuyIn(player, settings), is(true));
+        assertThat(telesina.canPlayerAffordEntryBet(player, settings, true), is(true));
 
         when(player.getBalance()).thenReturn((long) anteLevel - 1);
-        assertThat(telesina.canPlayerBuyIn(player, settings), is(false));
+        assertThat(telesina.canPlayerAffordEntryBet(player, settings, true), is(false));
     }
     
     @Test
-    public void testCanPlayerBuyInWithPending() {
+    public void testCanPlayerAffordEntryBetWithPending() {
         PokerPlayer player = mock(PokerPlayer.class);
         
         Telesina telesina = new Telesina(null, null, null, null,null);
@@ -41,15 +41,43 @@ public class TelesinaCanPlayerBuyInTest {
         int anteLevel = 20;
         PokerSettings settings = new PokerSettings(anteLevel, 0, 0, null, TELESINA, 0, null, null, null);
         
-        when(player.getBalanceNotInHand()).thenReturn((long) anteLevel + 1);
-        assertThat(telesina.canPlayerBuyIn(player, settings), is(true));
+        when(player.getPendingBalanceSum()).thenReturn((long) anteLevel + 1);
+        assertThat(telesina.canPlayerAffordEntryBet(player, settings, true), is(true));
+        assertThat(telesina.canPlayerAffordEntryBet(player, settings, false), is(false));
         
-        when(player.getBalanceNotInHand()).thenReturn((long) anteLevel + 0);
-        assertThat(telesina.canPlayerBuyIn(player, settings), is(true));
+        when(player.getPendingBalanceSum()).thenReturn((long) anteLevel + 0);
+        assertThat(telesina.canPlayerAffordEntryBet(player, settings, true), is(true));
+        assertThat(telesina.canPlayerAffordEntryBet(player, settings, false), is(false));
 
-        when(player.getBalanceNotInHand()).thenReturn((long) anteLevel - 1);
-        assertThat(telesina.canPlayerBuyIn(player, settings), is(false));
+        when(player.getPendingBalanceSum()).thenReturn((long) anteLevel - 1);
+        assertThat(telesina.canPlayerAffordEntryBet(player, settings, true), is(false));
+        assertThat(telesina.canPlayerAffordEntryBet(player, settings, false), is(false));
     }
     
+    
+    @Test
+    public void testCanPlayerAffordEntryBetWithBothPendingAndNormal() {
+        PokerPlayer player = mock(PokerPlayer.class);
+        
+        Telesina telesina = new Telesina(null, null, null, null,null);
+        
+        int anteLevel = 20;
+        PokerSettings settings = new PokerSettings(anteLevel, 0, 0, null, TELESINA, 0, null, null, null);
+        
+        when(player.getBalance()).thenReturn((long) anteLevel / 2);
+        when(player.getPendingBalanceSum()).thenReturn((long) anteLevel / 2);
+        assertThat(telesina.canPlayerAffordEntryBet(player, settings, false), is(false));
+        assertThat(telesina.canPlayerAffordEntryBet(player, settings, true), is(true));
+        
+        when(player.getBalance()).thenReturn((long) anteLevel - 1);
+        when(player.getPendingBalanceSum()).thenReturn((long) anteLevel);
+        assertThat(telesina.canPlayerAffordEntryBet(player, settings, false), is(false));
+        assertThat(telesina.canPlayerAffordEntryBet(player, settings, true), is(true));
+        
+        when(player.getBalance()).thenReturn((long) anteLevel);
+        when(player.getPendingBalanceSum()).thenReturn((long) anteLevel);
+        assertThat(telesina.canPlayerAffordEntryBet(player, settings, false), is(true));
+        assertThat(telesina.canPlayerAffordEntryBet(player, settings, true), is(true));
+    }
     
 }

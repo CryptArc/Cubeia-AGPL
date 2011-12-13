@@ -21,6 +21,7 @@ import org.mockito.Mockito;
 
 import se.jadestone.dicearena.game.poker.network.protocol.DealPrivateCards;
 import se.jadestone.dicearena.game.poker.network.protocol.DealPublicCards;
+import se.jadestone.dicearena.game.poker.network.protocol.Enums;
 import se.jadestone.dicearena.game.poker.network.protocol.GameCard;
 import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerAction;
@@ -126,6 +127,86 @@ public class GameStateSummaryCreatorTest {
 		List<GameAction> filteredActions = gameStateSummaryCreator.filterRequestActions(actions, -99);
 		assertThat(filteredActions.size(), is(3));
 		assertThat(filteredActions, is(Arrays.<GameAction>asList(act0, gda1, lastRequest)));
+	}
+	
+	@Test
+	public void testFilterAllButLastRequestActionsButIncludeAllAntes() throws IOException {
+		GameStateSender gameStateSummaryCreator = new GameStateSender(null);
+		StyxSerializer styx = new StyxSerializer(new ProtocolObjectFactory());
+
+		List<ActionContainer> actions = new ArrayList<ActionContainer>();
+		JoinRequestAction act0 = new JoinRequestAction(111, 1, 0, "snubbe");
+		actions.add(ActionContainer.createPrivate(111, act0));
+
+		int tableId = 1;
+		
+		// Request ante
+		int player0Id = 222;
+		GameDataAction gda0 = new GameDataAction(player0Id, tableId);
+		RequestAction ra0 = new RequestAction();
+		ra0.allowedActions = new ArrayList<PlayerAction>();
+		ra0.allowedActions.add(new PlayerAction(Enums.ActionType.ANTE, 0, 0));
+		gda0.setData(styx.pack(ra0));
+		actions.add(ActionContainer.createPrivate(player0Id, gda0));
+
+		//request ante for other guy
+		int player1Id = 223;
+		GameDataAction gda1 = new GameDataAction(player1Id, tableId);
+		RequestAction ra1 = new RequestAction();
+		ra1.allowedActions = new ArrayList<PlayerAction>();
+		ra1.allowedActions.add(new PlayerAction(Enums.ActionType.ANTE, 0, 0));
+		gda1.setData(styx.pack(ra1));
+		actions.add(ActionContainer.createPrivate(player1Id, gda1));
+
+		assertThat(actions.size(), is(3));
+
+		List<GameAction> filteredActions = gameStateSummaryCreator.filterRequestActions(actions, player0Id);
+		assertThat(filteredActions.size(), is(3)); // the join request and two ante requests
+		assertThat(filteredActions.contains(gda0), is(true));
+		assertThat(filteredActions.contains(gda1), is(true));
+	}
+	
+	@Test
+	public void testFilterAllButLastRequestActionsButIncludeAllAntesEvenIfTheyHaveAResponse() throws IOException {
+		GameStateSender gameStateSummaryCreator = new GameStateSender(null);
+		StyxSerializer styx = new StyxSerializer(new ProtocolObjectFactory());
+
+		List<ActionContainer> actions = new ArrayList<ActionContainer>();
+		JoinRequestAction act0 = new JoinRequestAction(111, 1, 0, "snubbe");
+		actions.add(ActionContainer.createPrivate(111, act0));
+
+		int tableId = 1;
+		
+		// Request ante
+		int player0Id = 222;
+		GameDataAction gda0 = new GameDataAction(player0Id, tableId);
+		RequestAction ra0 = new RequestAction();
+		ra0.allowedActions = new ArrayList<PlayerAction>();
+		ra0.allowedActions.add(new PlayerAction(Enums.ActionType.ANTE, 0, 0));
+		gda0.setData(styx.pack(ra0));
+		actions.add(ActionContainer.createPrivate(player0Id, gda0));
+
+		//request ante for other guy
+		int player1Id = 223;
+		GameDataAction gda1 = new GameDataAction(player1Id, tableId);
+		RequestAction ra1 = new RequestAction();
+		ra1.allowedActions = new ArrayList<PlayerAction>();
+		ra1.allowedActions.add(new PlayerAction(Enums.ActionType.ANTE, 0, 0));
+		gda1.setData(styx.pack(ra1));
+		actions.add(ActionContainer.createPrivate(player1Id, gda1));
+		
+		// the other guy sends a perform action
+		GameDataAction gda2 = new GameDataAction(player1Id, tableId);
+		gda2.setData(styx.pack(new PerformAction(tableId, player1Id, new PlayerAction(), 10, 10, 10, false)));
+		actions.add(ActionContainer.createPrivate(player1Id, gda2));
+
+		assertThat(actions.size(), is(4));
+
+
+		List<GameAction> filteredActions = gameStateSummaryCreator.filterRequestActions(actions, player0Id);
+		assertThat(filteredActions.size(), is(4)); // the join request and two ante requests
+		assertThat(filteredActions.contains(gda0), is(true));
+		assertThat(filteredActions.contains(gda1), is(true));
 	}
 
 	@Test

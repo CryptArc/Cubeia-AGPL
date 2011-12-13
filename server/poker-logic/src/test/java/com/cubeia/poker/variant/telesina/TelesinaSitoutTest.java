@@ -6,6 +6,7 @@ import static com.cubeia.poker.action.PokerActionType.CHECK;
 import junit.framework.Assert;
 
 import org.apache.log4j.Logger;
+import org.hamcrest.CoreMatchers;
 
 import com.cubeia.poker.AbstractTexasHandTester;
 import com.cubeia.poker.MockPlayer;
@@ -18,6 +19,8 @@ import com.cubeia.poker.variant.PokerVariant;
 public class TelesinaSitoutTest extends AbstractTexasHandTester {
 
 	Logger log = Logger.getLogger(this.getClass());
+	private MockPlayer[] mp;
+	int[] p;
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -26,11 +29,9 @@ public class TelesinaSitoutTest extends AbstractTexasHandTester {
 		sitoutTimeLimitMilliseconds = 1;
 		super.setUp();
 		setAnteLevel(10);
-	}
-	
-	public void testAllSittingOutButOne() throws InterruptedException {
-		MockPlayer[] mp = TestUtils.createMockPlayers(3, 100);
-		int[] p = TestUtils.createPlayerIdArray(mp);
+		
+		mp = TestUtils.createMockPlayers(3, 100);
+		p = TestUtils.createPlayerIdArray(mp);
 		addPlayers(game, mp);
 		
 		// Force start
@@ -43,7 +44,9 @@ public class TelesinaSitoutTest extends AbstractTexasHandTester {
 		
 		// make deal initial pocket cards round end
 		game.timeout();
-		
+	}
+	
+	public void testAllSittingOutButOne() throws InterruptedException {
 		// Disconnect player 0 & 1
 		game.playerIsSittingOut(p[0], SitOutStatus.SITTING_OUT);
 		game.playerIsSittingOut(p[1], SitOutStatus.SITTING_OUT);
@@ -73,21 +76,6 @@ public class TelesinaSitoutTest extends AbstractTexasHandTester {
 	}
 	
 	public void testAllSittingOutButOneFirstBettingRoundBug() throws InterruptedException {
-		MockPlayer[] mp = TestUtils.createMockPlayers(3, 100);
-		int[] p = TestUtils.createPlayerIdArray(mp);
-		addPlayers(game, mp);
-		
-		// Force start
-		game.timeout();
-		
-		// ANTE
-		act(p[1], ANTE);
-		act(p[2], ANTE);
-		act(p[0], ANTE);
-		
-		// make deal initial pocket cards round end
-		game.timeout();
-		
 		game.playerIsSittingOut(p[0], SitOutStatus.SITTING_OUT);
 		game.playerIsSittingOut(p[1], SitOutStatus.SITTING_OUT);
 		
@@ -109,6 +97,28 @@ public class TelesinaSitoutTest extends AbstractTexasHandTester {
 		
 	}
 	
+	public void testSitoutTwiceOnlyNotifiesOnce(){
+		game.playerIsSittingOut(p[0], SitOutStatus.SITTING_OUT);
+		game.playerIsSittingIn(p[0]);
+		org.junit.Assert.assertThat(mockServerAdapter.getPokerPlayerStatus(p[0]), CoreMatchers.is(PokerPlayerStatus.SITIN));
+		game.playerIsSittingOut(p[0], SitOutStatus.SITTING_OUT);
+		org.junit.Assert.assertThat(mockServerAdapter.getPokerPlayerStatus(p[0]), CoreMatchers.is(PokerPlayerStatus.SITOUT));
+		//this is a hack for setting the players status without going the normal way
+		mockServerAdapter.notifyPlayerStatusChanged(p[0], PokerPlayerStatus.SITIN);
+		//now we can try to sitout again but it should not notify the player since we already are sitout
+		game.playerIsSittingOut(p[0], SitOutStatus.SITTING_OUT);
+		org.junit.Assert.assertThat(mockServerAdapter.getPokerPlayerStatus(p[0]), CoreMatchers.is(PokerPlayerStatus.SITIN));
+	}
 	
-	
+	public void testSitinTwiceOnlyNotifiesOnce(){
+		game.playerIsSittingOut(p[0], SitOutStatus.SITTING_OUT);
+		org.junit.Assert.assertThat(mockServerAdapter.getPokerPlayerStatus(p[0]), CoreMatchers.is(PokerPlayerStatus.SITOUT));
+		game.playerIsSittingIn(p[0]);
+		org.junit.Assert.assertThat(mockServerAdapter.getPokerPlayerStatus(p[0]), CoreMatchers.is(PokerPlayerStatus.SITIN));
+		//this is a hack for setting the players status without going the normal way
+		mockServerAdapter.notifyPlayerStatusChanged(p[0], PokerPlayerStatus.SITOUT);
+		//now we can try to sitin again but it should not notify the player since we already are sitin
+		game.playerIsSittingIn(p[0]);
+		org.junit.Assert.assertThat(mockServerAdapter.getPokerPlayerStatus(p[0]), CoreMatchers.is(PokerPlayerStatus.SITOUT));
+	}
 }

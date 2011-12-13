@@ -171,9 +171,12 @@ public class TableCloseHandlerImpl implements TableCloseHandler {
         Collection<PokerPlayer> removedPlayers = new ArrayList<PokerPlayer>();
         
         for (GenericPlayer genericPlayer : players) {
-            PokerPlayer pokerPlayer = state.getPokerPlayer(genericPlayer.getPlayerId());
             table.getPlayerSet().removePlayer(genericPlayer.getPlayerId());
-            removedPlayers.add(pokerPlayer);
+            PokerPlayer pokerPlayer = state.getPokerPlayer(genericPlayer.getPlayerId());
+            if (pokerPlayer != null) {
+                log.debug("poker player not found from generic player {} while closing table", genericPlayer.getPlayerId());
+                removedPlayers.add(pokerPlayer);
+            }
         }
         
         return removedPlayers;

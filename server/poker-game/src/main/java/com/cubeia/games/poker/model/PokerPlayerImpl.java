@@ -18,6 +18,10 @@
 package com.cubeia.games.poker.model;
 
 import java.io.Serializable;
+import java.util.Arrays;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.firebase.api.game.player.GenericPlayer;
@@ -31,7 +35,8 @@ import com.cubeia.poker.player.DefaultPokerPlayer;
  * @author Fredrik Johansson, Cubeia Ltd
  */
 public class PokerPlayerImpl extends DefaultPokerPlayer implements Serializable {
-	
+    private static final Logger log = LoggerFactory.getLogger(PokerPlayerImpl.class);
+    
 	private static final long serialVersionUID = 1L;
 
 	private GenericPlayer placeholder;
@@ -55,6 +60,12 @@ public class PokerPlayerImpl extends DefaultPokerPlayer implements Serializable 
 	 * @param sessionId the session id, or null to leave the session
 	 */
 	public void setPlayerSessionId(PlayerSessionId playerSessionId) {
+	    log.debug("updating player {} session id: {} -> {}", new Object[] {getId(), this.playerSessionId, playerSessionId});
+	    
+	    if (playerSessionId == null) {
+	        log.debug("nulling player {} session trace\n: {}", getId(), Arrays.toString(Thread.currentThread().getStackTrace()));
+	    }
+	    
 		this.playerSessionId = playerSessionId;
 	}	
 

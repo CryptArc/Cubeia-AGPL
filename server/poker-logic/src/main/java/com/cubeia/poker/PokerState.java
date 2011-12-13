@@ -306,26 +306,9 @@ public class PokerState implements Serializable, IPokerState {
 	@VisibleForTesting
 	@Override
 	public Collection<PokerPlayer> getPlayersReadyToStartHand() {
-	    return filter(playerMap.values(), new Predicate<PokerPlayer>() {
-	        @Override
-	        public boolean apply(PokerPlayer player) { 
-	            return !player.isSittingOut()  &&  !player.isBuyInRequestActive();
-	        }
-        });
+	    return createCopyWithNotReadyPlayersExcluded(playerMap).values();
 	}
 	
-	/*
-	public int countSittingInPlayers() {
-		int sitIn = 0;
-		for (PokerPlayer player : playerMap.values()) {
-			if (!player.isSittingOut()) {
-				sitIn++;
-			}
-		}
-		return sitIn;
-	}
-	*/
-
 	@Override
 	public int countNonFoldedPlayers() {
 		int nonFolded = 0;
@@ -359,6 +342,8 @@ public class PokerState implements Serializable, IPokerState {
 			currentHandSeatingMap = createCopyWithNotReadyPlayersExcluded(seatingMap);
 			currentHandPlayerMap = createCopyWithNotReadyPlayersExcluded(playerMap);
 
+			log.debug("starting new hand with players: {}", currentHandPlayerMap.keySet());
+			
 			notifyNewHand();
 			notifyAllPlayerBalances();
 			notifyAllHandStartPlayerStatus();
@@ -385,12 +370,19 @@ public class PokerState implements Serializable, IPokerState {
 		TreeMap<Integer, PokerPlayer> treeMap = new TreeMap<Integer, PokerPlayer>();
 		for (Integer pid : map.keySet()) {
 			PokerPlayer pokerPlayer = map.get(pid);
-			if (!pokerPlayer.isSittingOut()  &&  !pokerPlayer.isBuyInRequestActive()) {
+			if (playerReadyToStartHand(pokerPlayer)) {
 				treeMap.put(pid, pokerPlayer);
 			}
 		}
 		return treeMap;
 	}
+
+    @VisibleForTesting
+    protected boolean playerReadyToStartHand(PokerPlayer pokerPlayer) {
+        return !pokerPlayer.isSittingOut()  
+            &&  !pokerPlayer.isBuyInRequestActive()  
+            &&  gameType.canPlayerAffordEntryBet(pokerPlayer, settings, false);
+    }
 
 	@VisibleForTesting
 	protected void resetValuesAtStartOfHand() {
@@ -440,7 +432,7 @@ public class PokerState implements Serializable, IPokerState {
 			
 			serverAdapter.performPendingBuyIns(playerMap.values());
 			
-			// clean up players here and make leaveing players leave and so on
+			// clean up players here and make leaving players leave and so on
 			// also update the lobby
 			// cleanupPlayers();
 			cleanupPlayers();
@@ -588,11 +580,16 @@ public class PokerState implements Serializable, IPokerState {
 	        log.debug("won't sit out tournament player");
 	        return;
 	    }
-	    
+	        
 		log.debug("player {} is sitting out", playerId);
 
 		PokerPlayer player = playerMap.get(playerId);
 		if ( player == null ) return;
+		
+		if(player.isSittingOut()){
+			log.debug("sitout status " + status.toString() + " has not changed");
+			return;
+		}
 
 		player.setSitOutStatus(status);
 		player.setSitOutNextRound(true);
@@ -622,9 +619,17 @@ public class PokerState implements Serializable, IPokerState {
 			log.warn("player {} not at table but tried to sit in. Ignoring.", playerId);
 			return;
 		}
+		
+		if(!player.isSittingOut()){
+			log.debug("sitin status has not changed");
+			return;
+		}
+		
+		
+		if (gameType.canPlayerAffordEntryBet(player, settings, true)) {
+			log.debug("Player {} can afford ante. Sit in", player);
 
-		if (gameType.canPlayerBuyIn(player, settings)) {
-			player.sitIn();
+		        player.sitIn();
 			player.setSitOutNextRound(false);
 			player.setSitInAfterSuccessfulBuyIn(false);
 			notifyPlayerSittingIn(playerId);
@@ -634,9 +639,10 @@ public class PokerState implements Serializable, IPokerState {
 
 			startGame();
 		} else {
-			log.debug("player {} is out of cash, must bring more before joining", playerId);
+			log.debug("player {} is out of cash, must bring more before joining", player);
 			
-			if (!player.isBuyInRequestActive()) {
+			if (!player.isBuyInRequestActive() && player.getRequestedBuyInAmount() == 0L) {
+				log.debug("player {} does not have buy in request active so notify buy in info", player);
 			    notifyBuyinInfo(playerId, true);
 			}
 		}
@@ -776,15 +782,6 @@ public class PokerState implements Serializable, IPokerState {
 		}
 	}
     
-    public void notifyPlayerStatus(int playerId) {
-		PokerPlayer pokerPlayer = playerMap.get(playerId);
-        log.debug("notifyPlayerStatus() id: "+playerId);
-        if(pokerPlayer.isSittingOut()){
-            notifyPlayerSittingOut(playerId);
-        }else{
-            notifyPlayerSittingIn(playerId);
-        }
-	}
     
     /**
 	 * TODO: Make this method private and change calls to this method from the BlindsRound
@@ -997,7 +994,12 @@ public class PokerState implements Serializable, IPokerState {
 
 	@Override
 	public boolean isShutdown() {
-		return getCurrentState().equals(SHUTDOWN);
+		return SHUTDOWN.equals(getCurrentState());
+	}
+	
+	@Override
+	public boolean isPlaying() {
+        return PLAYING.equals(getCurrentState());
 	}
 
 	protected PokerGameSTM getCurrentState() {

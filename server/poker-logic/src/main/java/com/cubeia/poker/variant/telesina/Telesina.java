@@ -540,8 +540,8 @@ public class Telesina implements GameType, RoundVisitor {
 	}
 	
 	@Override
-	public boolean canPlayerBuyIn(PokerPlayer player, PokerSettings pokerSettings) {
-	    return player.getBalance() + player.getBalanceNotInHand() >= pokerSettings.getAnteLevel();
+	public boolean canPlayerAffordEntryBet(PokerPlayer player, PokerSettings pokerSettings, boolean includePending) {
+	    return player.getBalance() + (includePending ? player.getPendingBalanceSum() : 0) >= pokerSettings.getAnteLevel();
 	}
 
 	

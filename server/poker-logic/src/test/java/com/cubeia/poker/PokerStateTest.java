@@ -11,6 +11,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import com.cubeia.poker.action.ActionRequest;
@@ -51,20 +53,23 @@ import com.cubeia.poker.variant.telesina.Telesina;
 public class PokerStateTest {
 
 	PokerState state;
-	PokerSettings settings;
+	@Mock PokerSettings settings;
+	@Mock GameType gameType;
 	int anteLevel;
 
 	@Before
 	public void setup() {
+	    initMocks(this);
 		state = new PokerState();
-		settings = mock(PokerSettings.class);
 		anteLevel = 100;
 		when(settings.getRakeSettings()).thenReturn(TestUtils.createOnePercentRakeSettings());
 		when(settings.getAnteLevel()).thenReturn(anteLevel);
 		when(settings.getVariant()).thenReturn(PokerVariant.TELESINA);
 		when(settings.getTiming()).thenReturn(TimingFactory.getRegistry().getDefaultTimingProfile());
+		when(gameType.canPlayerAffordEntryBet(Mockito.any(PokerPlayer.class), Mockito.any(PokerSettings.class), Mockito.eq(false))).thenReturn(true);
 		state.serverAdapter = mock(ServerAdapter.class);
 		state.settings = settings;
+		state.gameType = gameType;
 	}
 
 	private PokerPlayer createMockPlayer(int playerId, int balance){
@@ -299,8 +304,6 @@ public class PokerStateTest {
 
 	@Test
 	public void testPotsClearedAtStartOfHand() {
-		PokerState state = new PokerState();
-		state.gameType = mock(GameType.class);
 		state.serverAdapter = mock(ServerAdapter.class);
 		state.playerMap = new HashMap<Integer, PokerPlayer>();
 		RakeSettings rakeSettings = TestUtils.createOnePercentRakeSettings();
@@ -344,10 +347,8 @@ public class PokerStateTest {
 
 	@Test
 	public void testNotifyBalancesAsStartOfHand() {
-		PokerState state = new PokerState();
 		PotHolder oldPotHolder = new PotHolder(null);
 		state.potHolder = oldPotHolder;
-		state.gameType = mock(GameType.class);
 		RakeSettings rakeSettings = TestUtils.createOnePercentRakeSettings();
 		PokerSettings settings = new PokerSettings(0, 0, 0, null, null, 4, null, rakeSettings, "1");
 		state.settings = settings;
@@ -390,10 +391,8 @@ public class PokerStateTest {
 
 	@Test
 	public void testNotifyStatusesAsStartOfHand() {
-		PokerState state = new PokerState();
 		PotHolder oldPotHolder = new PotHolder(null);
 		state.potHolder = oldPotHolder;
-		state.gameType = mock(GameType.class);
 		RakeSettings rakeSettings = TestUtils.createOnePercentRakeSettings();
 		PokerSettings settings = new PokerSettings(0, 0, 0, null, null, 4, null, rakeSettings, "1");
 		state.settings = settings;
@@ -474,27 +473,6 @@ public class PokerStateTest {
 		verify(state.serverAdapter).requestMultipleActions(requests);
 	}
 	
-	/*
-	 * This is now tested in backend call handler test 'testHandleOpenSessionSuccessfulResponse'
-	 */
-	/*@Test
-	public void testBuyInInfoSentOnJoinIfPlayerCanNotBuyin() {
-		PokerState state = new PokerState();
-		state.init(mock(RNGProvider.class), settings);
-		state.serverAdapter = mock(ServerAdapter.class);
-		state.gameType = mock(Telesina.class);
-				
-		PokerPlayer player = mock(PokerPlayer.class);
-		int playerId = 1337;
-		when(player.getId()).thenReturn(playerId);
-		
-		when(state.gameType.canPlayerBuyIn(player, settings)).thenReturn(false);
-		
-		state.addPlayer(player);
-		
-		Mockito.verify(state.serverAdapter).notifyBuyInInfo(1337, false);
-	}*/
-	
 	@Test
 	public void testBuyInInfoNotSentOnJoinIfPlayerCanBuyin() {
 		PokerState state = new PokerState();
@@ -506,7 +484,7 @@ public class PokerStateTest {
 		int playerId = 1337;
 		when(player.getId()).thenReturn(playerId);
 		
-		when(state.gameType.canPlayerBuyIn(player, settings)).thenReturn(true);
+		when(state.gameType.canPlayerAffordEntryBet(player, settings, true)).thenReturn(true);
 		
 		state.addPlayer(player);
 		
