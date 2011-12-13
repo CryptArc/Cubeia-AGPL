@@ -53,7 +53,7 @@ public class DefaultTimingProfile implements TimingProfile {
 			case LATENCY_GRACE_PERIOD:
 				return 1000;
 			case DISCONNECT_EXTRA_TIME:
-				return 2*15000;
+				return 3*15000;
 			default:
 				return 5000;
 		}

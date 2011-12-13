@@ -25,6 +25,7 @@ import se.jadestone.dicearena.game.poker.network.protocol.Enums;
 import se.jadestone.dicearena.game.poker.network.protocol.GameCard;
 import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerAction;
+import se.jadestone.dicearena.game.poker.network.protocol.PlayerDisconnectedPacket;
 import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
 import se.jadestone.dicearena.game.poker.network.protocol.RequestAction;
 import se.jadestone.dicearena.game.poker.network.protocol.StartHandHistory;
@@ -314,6 +315,34 @@ public class GameStateSummaryCreatorTest {
 		RequestAction request = (RequestAction)styx.unpack(gameAction.getData());
 
 		Assert.assertEquals(0, request.timeToAct);
+	}
+	
+	@Test
+	public void testAdjustTimeoutWithDisconnect() throws Exception {
+		GameStateSender gameStateSummaryCreator = new GameStateSender(null);
+		StyxSerializer styx = new StyxSerializer(new ProtocolObjectFactory());
+
+		List<ActionContainer> actions = new ArrayList<ActionContainer>();
+
+		// Request without perform - this should not be filtered.
+		GameDataAction lastRequest = new GameDataAction(333, 1);
+		lastRequest.setData(styx.pack(new RequestAction(0,1, 111, new ArrayList<PlayerAction>(), 100)));
+		actions.add(ActionContainer.createPrivate(333, lastRequest));
+		
+		GameDataAction disconnected = new GameDataAction(333, 1);
+		disconnected.setData(styx.pack(new PlayerDisconnectedPacket(1, 200)));
+		actions.add(ActionContainer.createPrivate(333, disconnected));
+
+
+		Thread.sleep(20); // Wait so we can check adjustment
+
+		List<GameAction> filteredActions = gameStateSummaryCreator.filterRequestActions(actions, -99);
+
+		GameDataAction gameAction = (GameDataAction)filteredActions.get(1);
+		Assert.assertEquals(gameAction, lastRequest);
+		RequestAction request = (RequestAction)styx.unpack(gameAction.getData());
+
+		Assert.assertTrue(request.timeToAct > 100);
 	}
 
 	private ProtocolObject extractProtocolObject(GameDataAction gda) throws IOException {
