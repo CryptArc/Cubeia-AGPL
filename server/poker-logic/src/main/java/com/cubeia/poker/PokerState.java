@@ -619,7 +619,7 @@ public class PokerState implements Serializable, IPokerState {
 
 		PokerPlayer player = playerMap.get(playerId);
 		if (player == null) {
-			log.error("player {} not at table but tried to sit in. Ignoring.", playerId);
+			log.warn("player {} not at table but tried to sit in. Ignoring.", playerId);
 			return;
 		}
 
