@@ -117,7 +117,7 @@ public class BackendCallHandlerTest {
     public void testHandleReserveFailedResponse() throws IOException {
         PlayerSessionId sessionId = mock(PlayerSessionId.class);
         when(sessionId.getPlayerId()).thenReturn(playerId);
-        ReserveFailedResponse response = new ReserveFailedResponse(sessionId, ErrorCode.MAX_LIMIT_REACHED, "fallör");
+        ReserveFailedResponse response = new ReserveFailedResponse(sessionId, ErrorCode.MAX_LIMIT_REACHED, "fallör", true);
         
         callHandler.handleReserveFailedResponse(response);
         
