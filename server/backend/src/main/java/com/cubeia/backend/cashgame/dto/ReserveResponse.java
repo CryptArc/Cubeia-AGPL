@@ -12,7 +12,7 @@ public class ReserveResponse implements Serializable {
 	public final BalanceUpdate balanceUpdate;
 	public final int amountReserved;
     public final Map<String, String> reserveProperties;
-
+    
 	public ReserveResponse(BalanceUpdate balanceUpdate, int amountReserved) {
 		this.balanceUpdate = balanceUpdate;
 		this.amountReserved = amountReserved;

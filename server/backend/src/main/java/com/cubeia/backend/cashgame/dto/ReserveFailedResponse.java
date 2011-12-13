@@ -11,11 +11,13 @@ public class ReserveFailedResponse implements Serializable {
 	public final ErrorCode errorCode;
 	public final String message;
 	public final PlayerSessionId sessionId;
+	public final boolean playerSessionNeedsToBeClosed;
 
-	public ReserveFailedResponse(PlayerSessionId sessionId, ErrorCode errorCode, String message) {
+	public ReserveFailedResponse(PlayerSessionId sessionId, ErrorCode errorCode, String message, boolean playerSessionNeedsToBeClosed) {
         this.sessionId = sessionId;
         this.errorCode = errorCode;
 		this.message = message;
+        this.playerSessionNeedsToBeClosed = playerSessionNeedsToBeClosed;
 	}
 
 	public enum ErrorCode {
