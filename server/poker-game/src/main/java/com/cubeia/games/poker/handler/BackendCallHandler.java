@@ -4,6 +4,7 @@ import static com.cubeia.backend.firebase.CashGamesBackendContract.MARKET_TABLE_
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.ByteBuffer;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -11,6 +12,9 @@ import org.slf4j.LoggerFactory;
 
 import se.jadestone.dicearena.game.poker.network.protocol.BuyInResponse;
 import se.jadestone.dicearena.game.poker.network.protocol.Enums;
+import se.jadestone.dicearena.game.poker.network.protocol.Enums.BuyInResultCode;
+import se.jadestone.dicearena.game.poker.network.protocol.Enums.ErrorCode;
+import se.jadestone.dicearena.game.poker.network.protocol.ErrorPacket;
 
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.dto.AnnounceTableFailedResponse;
@@ -25,6 +29,8 @@ import com.cubeia.firebase.api.game.lobby.LobbyTableAttributeAccessor;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
+import com.cubeia.games.poker.BackendPlayerSessionHandler;
+import com.cubeia.games.poker.FirebaseState;
 import com.cubeia.games.poker.lobby.PokerLobbyAttributes;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.poker.PokerState;
@@ -36,18 +42,19 @@ public class BackendCallHandler {
 
     private static Logger log = LoggerFactory.getLogger(BackendCallHandler.class);
     
-    @Inject
     private final PokerState state;
     
-    @Inject
     private final Table table;
 
+    private final BackendPlayerSessionHandler backendPlayerSessionHandler;
+    
     private StyxSerializer styx = new StyxSerializer(null);
     
     @Inject
-    public BackendCallHandler(PokerState state, Table table) {
+    public BackendCallHandler(PokerState state, Table table, BackendPlayerSessionHandler backendPlayerSessionHandler) {
         this.state = state;
         this.table = table;
+        this.backendPlayerSessionHandler = backendPlayerSessionHandler;
     }
     
     public void handleReserveSuccessfulResponse(ReserveResponse reserveResponse) {
@@ -96,24 +103,24 @@ public class BackendCallHandler {
     public void handleReserveFailedResponse(ReserveFailedResponse response) {
     	int playerId = response.sessionId.getPlayerId();
     	
-    	BuyInResponse resp = new BuyInResponse();
-        resp.resultCode = Enums.BuyInResultCode.UNSPECIFIED_ERROR; 
+    	
+        BuyInResultCode errorCode;
         
         switch (response.errorCode) {
 	        case AMOUNT_TOO_HIGH: 
-	        	resp.resultCode = Enums.BuyInResultCode.AMOUNT_TOO_HIGH;
+	            errorCode = Enums.BuyInResultCode.AMOUNT_TOO_HIGH;
 	        	break;
 	        	
 	        case MAX_LIMIT_REACHED: 
-	        	resp.resultCode = Enums.BuyInResultCode.MAX_LIMIT_REACHED;
+	            errorCode = Enums.BuyInResultCode.MAX_LIMIT_REACHED;
 	        	break;
 	        	
 	        case SESSION_NOT_OPEN: 
-	        	resp.resultCode = Enums.BuyInResultCode.SESSION_NOT_OPEN;
+	            errorCode = Enums.BuyInResultCode.SESSION_NOT_OPEN;
 	        	break;
 	        	
-	        case UNSPECIFIED_FAILURE: 
-	        	resp.resultCode = Enums.BuyInResultCode.UNSPECIFIED_ERROR;
+	        default: 
+	            errorCode = Enums.BuyInResultCode.UNSPECIFIED_ERROR;
 	        	break;
         }
         
@@ -125,11 +132,36 @@ public class BackendCallHandler {
             
         player.clearRequestedBuyInAmountAndRequest();
     	
-        // TODO: if this is a failed AAMS reserve the player MUST be removed from the table. 
-        
-		sendGameData(playerId, resp);
+        if (response.playerSessionNeedsToBeClosed) {
+            sendGeneralErrorMessageToClient(player, Enums.ErrorCode.CLOSED_SESSION_DUE_TO_FATAL_ERROR, getHandId());
+            
+            try {
+                backendPlayerSessionHandler.endPlayerSessionInBackend(table, player, getCurrentRoundNumber());
+            } catch (Exception e) {
+                log.error("error closing player session for player = " + player.getId(), e);
+            }
+
+            state.unseatPlayer(playerId, false);
+            
+        } else {
+            sendBuyInResponseToPlayer(playerId, errorCode);
+        }
 	}
 
+    private void sendBuyInResponseToPlayer(int playerId, BuyInResultCode errorCode) {
+        BuyInResponse resp = new BuyInResponse();
+        resp.resultCode = errorCode; 
+        sendGameData(playerId, resp);
+    }
+
+    private int getCurrentRoundNumber() {
+        return ((FirebaseState)state.getAdapterState()).getHandCount();
+    }
+
+    private String getHandId() {
+        return state.getServerAdapter().getIntegrationHandId();
+    }
+    
     public void handleOpenSessionSuccessfulResponse(OpenSessionResponse openSessionResponse) {
         PlayerSessionId playerSessionId = openSessionResponse.sessionId;
         
@@ -181,18 +213,34 @@ public class BackendCallHandler {
     	log.info("handle Open Session Failed on table["+table.getId()+"]: "+response);
     	int playerId = response.playerId;
         
-    	sendErrorToClientAndUnseatPlayer(playerId);
+    	sendBuyInErrorToClientAndUnseatPlayer(playerId, true, Enums.BuyInResultCode.SESSION_NOT_OPEN);
     }
 
-    private void sendErrorToClientAndUnseatPlayer(int playerId) {
-        // Send message to player
-    	BuyInResponse resp = new BuyInResponse();
-        resp.resultCode = Enums.BuyInResultCode.SESSION_NOT_OPEN;
-        sendGameData(playerId, resp);
+    private void sendBuyInErrorToClientAndUnseatPlayer(int playerId, boolean setAsWatcher, BuyInResultCode buyInResultCode) {
+        log.debug("sending buy in error to client: player = {}, result code = {}", playerId, buyInResultCode);
+        
+        sendBuyInResponseToPlayer(playerId, buyInResultCode);
     	
-    	// Unseat player & set as watcher
-    	state.unseatPlayer(playerId, true);
+    	// Unseat player and optinally set as watcher
+        state.unseatPlayer(playerId, setAsWatcher);
     }
+    
+    private void sendGeneralErrorMessageToClient(PokerPlayer player, ErrorCode errorCode, String handId) {
+        log.debug("sending general error message to client: player = {}, result code = {}, hand id = {}", 
+            new Object[] {player.getId(), errorCode, handId});
+        
+        ErrorPacket errorPacket = new ErrorPacket(errorCode, handId);
+        GameDataAction errorAction = new GameDataAction(player.getId(), table.getId());
+        ByteBuffer packetBuffer;
+        try {
+            packetBuffer = styx.pack(errorPacket);
+            errorAction.setData(packetBuffer);
+            table.getNotifier().notifyPlayer(player.getId(), errorAction);
+        } catch (IOException e) {
+            log.error("failed to send error message to client", e);
+        }
+    }
+    
 
     private void sendGameData(int playerId, ProtocolObject resp) {
 		GameDataAction action = new GameDataAction(playerId, table.getId());

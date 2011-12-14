@@ -745,9 +745,8 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	public void notifyDisconnected(int playerId) {
 		timeoutCache.removeTimeout(table.getId(), playerId, table.getScheduler());
 		
-		long disconnectTime = state.getTimingProfile().getTime(Periods.DISCONNECT_EXTRA_TIME);
-		long latency = state.getTimingProfile().getTime(Periods.LATENCY_GRACE_PERIOD);
-		long timeout = disconnectTime + latency;
+		long timeout = state.getTimingProfile().getTime(Periods.DISCONNECT_EXTRA_TIME);
+		long latencyTimeout = timeout+state.getTimingProfile().getTime(Periods.LATENCY_GRACE_PERIOD);
 		PlayerDisconnectedPacket packet = new PlayerDisconnectedPacket();
 		packet.playerId = playerId;
 		packet.timebank = (int)timeout;
@@ -756,8 +755,8 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		GameDataAction action = protocolFactory.createGameAction(packet, playerId, table.getId());
 		sendPublicPacket(action, -1);
 		
-		log.debug("Schedule new timeout for player in {} ms", timeout);
-		schedulePlayerTimeout(timeout, playerId, getFirebaseState().getCurrentRequestSequence());
+		log.debug("Schedule new timeout for player in {} ms", latencyTimeout);
+		schedulePlayerTimeout(latencyTimeout, playerId, getFirebaseState().getCurrentRequestSequence());
 	}
 	
 }

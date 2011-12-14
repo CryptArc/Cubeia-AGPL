@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import se.jadestone.dicearena.game.poker.network.protocol.Enums;
 import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerAction;
+import se.jadestone.dicearena.game.poker.network.protocol.PlayerDisconnectedPacket;
 import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
 import se.jadestone.dicearena.game.poker.network.protocol.RequestAction;
 import se.jadestone.dicearena.game.poker.network.protocol.StartHandHistory;
@@ -69,6 +70,8 @@ public class GameStateSender {
      * 
      * 2. Remove all actions that are marked as excluded for this player id to avoid duplicates.
      * 
+     * 3. Remove all disconnect packets and add to last request if applicable
+     * 
      * @param actions actions to filter
      * @param playerId, player id to check for exclusion.
      * @return new filtered list
@@ -117,6 +120,15 @@ public class GameStateSender {
                         	
                     	}
 						 
+					} else if (packet instanceof PlayerDisconnectedPacket) {
+						// Store and send packet, but also adjust the time out for the last 
+						// found action request to make it easier for the client.
+						filteredActions.add(ga);
+						if (lastRequest != null) {
+							lastRequest.timeToAct = ((PlayerDisconnectedPacket)packet).timebank;
+							
+						}
+						
 					} else if (packet instanceof PerformAction) {
 						lastRequest = null;
 						lastContainer = null;

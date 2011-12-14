@@ -23,6 +23,7 @@ import org.mockito.MockitoAnnotations;
 
 import se.jadestone.dicearena.game.poker.network.protocol.BuyInResponse;
 import se.jadestone.dicearena.game.poker.network.protocol.Enums;
+import se.jadestone.dicearena.game.poker.network.protocol.ErrorPacket;
 import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
 
 import com.cubeia.backend.cashgame.PlayerSessionId;
@@ -41,6 +42,8 @@ import com.cubeia.firebase.api.game.GameNotifier;
 import com.cubeia.firebase.api.game.lobby.LobbyTableAttributeAccessor;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.io.StyxSerializer;
+import com.cubeia.games.poker.BackendPlayerSessionHandler;
+import com.cubeia.games.poker.FirebaseState;
 import com.cubeia.games.poker.adapter.FirebaseServerAdapter;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.poker.PokerSettings;
@@ -52,6 +55,7 @@ public class BackendCallHandlerTest {
 
     private static final int maxBuyIn = 1000;
     @Mock private PokerState state;
+    @Mock private FirebaseState firebaseState;
     @Mock private Telesina gameType;
     @Mock private Table table;
     @Mock private GameNotifier notifier;
@@ -59,19 +63,21 @@ public class BackendCallHandlerTest {
     @Mock private CashGamesBackendContract backend;
     @Mock private FirebaseCallbackFactory callbackFactory;
     @Mock private FirebaseServerAdapter serverAdapter;
+    @Mock private BackendPlayerSessionHandler backendPlayerSessionHandler;
     private BackendCallHandler callHandler;
     private int playerId = 1337;
     
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        callHandler = new BackendCallHandler(state, table);
+        callHandler = new BackendCallHandler(state, table, backendPlayerSessionHandler);
         when(table.getNotifier()).thenReturn(notifier);
         when(state.getPokerPlayer(playerId)).thenReturn(pokerPlayer);
         when(backend.getCallbackFactory()).thenReturn(callbackFactory);
         when(state.getServerAdapter()).thenReturn(serverAdapter);
         when(state.getMaxBuyIn()).thenReturn(maxBuyIn);
         when(pokerPlayer.getId()).thenReturn(playerId);
+        when(state.getAdapterState()).thenReturn(firebaseState);
     }
     
     
@@ -114,10 +120,10 @@ public class BackendCallHandlerTest {
     }
     
     @Test
-    public void testHandleReserveFailedResponse() throws IOException {
+    public void testHandleReserveFailed() throws IOException {
         PlayerSessionId sessionId = mock(PlayerSessionId.class);
         when(sessionId.getPlayerId()).thenReturn(playerId);
-        ReserveFailedResponse response = new ReserveFailedResponse(sessionId, ErrorCode.MAX_LIMIT_REACHED, "fallör", true);
+        ReserveFailedResponse response = new ReserveFailedResponse(sessionId, ErrorCode.MAX_LIMIT_REACHED, "fallör", false);
         
         callHandler.handleReserveFailedResponse(response);
         
@@ -130,6 +136,40 @@ public class BackendCallHandlerTest {
         assertThat(buyInResponse.amountBroughtIn, is(0));
         assertThat(buyInResponse.pendingBalance, is(0));
         assertThat(buyInResponse.resultCode, is(Enums.BuyInResultCode.MAX_LIMIT_REACHED));
+    }
+    
+    @Test
+    public void testHandleReserveFailedWithSessionCloseForced() throws IOException {
+        int roundNumber = 43434;
+        String handId = "h1111";
+        PlayerSessionId sessionId = mock(PlayerSessionId.class);
+        when(sessionId.getPlayerId()).thenReturn(playerId);
+        when(firebaseState.getHandCount()).thenReturn(roundNumber);
+        when(serverAdapter.getIntegrationHandId()).thenReturn(handId);
+        ReserveFailedResponse response = new ReserveFailedResponse(sessionId, ErrorCode.MAX_LIMIT_REACHED, "fallör", true);
+        
+        callHandler.handleReserveFailedResponse(response);
+        
+        verify(pokerPlayer).clearRequestedBuyInAmountAndRequest();
+        verify(state).unseatPlayer(playerId, false);
+        
+        
+        StyxSerializer styx = new StyxSerializer(new ProtocolObjectFactory());
+        ArgumentCaptor<GameDataAction> actionCaptor = ArgumentCaptor.forClass(GameDataAction.class);
+        verify(notifier, Mockito.times(1)).notifyPlayer(Mockito.eq(playerId), actionCaptor.capture());
+//        
+//        GameDataAction action = actionCaptor.getAllValues().get(0);
+//        BuyInResponse buyInResponse = (BuyInResponse) styx.unpack(action.getData());
+//        assertThat(buyInResponse.amountBroughtIn, is(0));
+//        assertThat(buyInResponse.pendingBalance, is(0));
+//        assertThat(buyInResponse.resultCode, is(Enums.BuyInResultCode.MAX_LIMIT_REACHED));
+        
+        GameDataAction action = actionCaptor.getValue();
+        ErrorPacket errorPacket = (ErrorPacket) styx.unpack(action.getData());
+        assertThat(errorPacket.code, is(Enums.ErrorCode.CLOSED_SESSION_DUE_TO_FATAL_ERROR));
+        assertThat(errorPacket.referenceId, is(handId));
+        
+        verify(backendPlayerSessionHandler).endPlayerSessionInBackend(table, pokerPlayer, roundNumber);
     }
     
     @Test

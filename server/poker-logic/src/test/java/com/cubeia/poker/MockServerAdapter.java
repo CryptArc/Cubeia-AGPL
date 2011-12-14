@@ -146,6 +146,7 @@ public class MockServerAdapter implements ServerAdapter {
     public void notifyTakeBackUncalledBet(int playerId, int amount) {}
     public void notifyExternalSessionReferenceInfo(int playerId,String externalTableReference, String externalTableSessionReference) {}
     public void notifyFutureAllowedActions(PokerPlayer player, List<PokerActionType> optionList) {}
+    public String getIntegrationHandId() { return null; }
     
     @Override
 	public void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status) {

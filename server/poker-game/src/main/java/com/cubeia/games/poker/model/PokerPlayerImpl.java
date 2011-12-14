@@ -61,11 +61,6 @@ public class PokerPlayerImpl extends DefaultPokerPlayer implements Serializable 
 	 */
 	public void setPlayerSessionId(PlayerSessionId playerSessionId) {
 	    log.debug("updating player {} session id: {} -> {}", new Object[] {getId(), this.playerSessionId, playerSessionId});
-	    
-	    if (playerSessionId == null) {
-	        log.debug("nulling player {} session trace\n: {}", getId(), Arrays.toString(Thread.currentThread().getStackTrace()));
-	    }
-	    
 		this.playerSessionId = playerSessionId;
 	}	
 

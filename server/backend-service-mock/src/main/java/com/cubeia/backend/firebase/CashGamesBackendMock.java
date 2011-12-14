@@ -138,7 +138,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
                 ReserveFailedResponse.ErrorCode.SESSION_NOT_OPEN, "session " + sid + " not open", true);
             callback.requestFailed(failResponse);
             
-        } else if (amount == 66){ // MAGIC FAIL FOR 66 cents BUY-IN 
+        } else if (amount == 66  ||  amount == 660  ||  amount == 6600){ // MAGIC FAIL FOR 66 cents BUY-IN 
         	log.error("Failing reserve with {}ms delay for magic amount 66 cents (hardcoded for debug reasons). sId={}", sid);
             final ReserveFailedResponse failResponse = new ReserveFailedResponse(request.playerSessionId, 
                 ReserveFailedResponse.ErrorCode.UNSPECIFIED_FAILURE, "Unknown operator error (magic 66-cent ultra-fail)", true);
@@ -158,7 +158,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
             
             long delay = 0;
             
-            if (amount == 67) {
+            if (amount == 67  ||  amount == 670  ||  amount == 6700) {
                 delay = (long) (5000 + Math.random() * 10000);
                 log.info("succeeding reserve with {}ms delay for magic amount 67 cents (hardcoded for debug reasons). sId={}", delay, sid);
             }
