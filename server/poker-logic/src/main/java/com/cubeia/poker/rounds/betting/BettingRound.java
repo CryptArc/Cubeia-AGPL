@@ -474,4 +474,9 @@ public class BettingRound implements Round, BettingRoundContext {
 	public long getNextValidRaiseLevel() {
 		return nextValidRaiseLevel;
 	}
+	
+	@Override
+	public boolean isWaitingForPlayer(int playerId) {
+		return playerId == playerToAct;
+	}
 }

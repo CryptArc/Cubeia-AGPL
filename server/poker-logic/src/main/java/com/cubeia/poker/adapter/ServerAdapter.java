@@ -205,6 +205,8 @@ public interface ServerAdapter {
      */
 	void notifyHandStartPlayerStatus(int playerId, PokerPlayerStatus status);
 
+	void notifyDisconnected(int playerId);
+
 	/**
 	 * Returns the identifier of the hand that was provided by the backend.
 	 * @return backen integration hand id

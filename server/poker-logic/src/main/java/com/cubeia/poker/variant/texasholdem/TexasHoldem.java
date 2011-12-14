@@ -378,4 +378,9 @@ public class TexasHoldem implements GameType, RoundVisitor {
 	    // TODO: check if players balance + pending balance is big enough to pay ante/small/big blind
 	    return true;
 	}
+	
+	@Override
+	public boolean isCurrentlyWaitingForPlayer(int playerId) {
+		return currentRound.isWaitingForPlayer(playerId);
+	}
 }

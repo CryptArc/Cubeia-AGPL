@@ -461,6 +461,7 @@ public class PokerLogicTest extends GuiceTest {
 			@Override public void notifyFutureAllowedActions(PokerPlayer player, List<PokerActionType> optionList) {}
 			@Override public void performPendingBuyIns(Collection<PokerPlayer> players) {}
 			@Override public void notifyHandStartPlayerStatus(int playerId,PokerPlayerStatus status) {}
+			@Override public void notifyDisconnected(int playerId) {}
 			@Override public String getIntegrationHandId() { return "hid"; }
 		});
 		game.timeout();

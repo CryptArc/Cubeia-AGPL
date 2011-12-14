@@ -230,5 +230,10 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
 		super.unseatPlayer(playerId, setAsWatcher);
 	}
 
+	@Override
+	public void notifyDisconnected(int playerId) {
+		super.notifyDisconnected(playerId);
+	}
+
 
 }

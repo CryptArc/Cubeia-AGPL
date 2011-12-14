@@ -463,4 +463,10 @@ public class BlindsRound implements Round {
 	public void visit(RoundVisitor visitor) {
 		visitor.visit(this);
 	}
+	
+	// FIXME: Actually check who we are waiting for
+	@Override
+	public boolean isWaitingForPlayer(int playerId) {
+		return false;
+	}
 }

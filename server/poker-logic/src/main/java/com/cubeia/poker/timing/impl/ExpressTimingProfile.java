@@ -46,6 +46,8 @@ public class ExpressTimingProfile implements TimingProfile {
                 return 200;
             case LATENCY_GRACE_PERIOD:
 				return 500;
+			case DISCONNECT_EXTRA_TIME:
+				return 10000;
             default:
                 return 800;
         }

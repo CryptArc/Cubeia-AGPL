@@ -37,4 +37,11 @@ public class PlayingSTM extends AbstractPokerGameSTM {
 	public void timeout(PokerState pokerGame) {
 		pokerGame.getGameType().timeout();
 	}
+	
+	@Override
+	public boolean isCurrentlyWaitingForPlayer(PokerState pokerGame, int playerId) {
+		return pokerGame.getGameType().isCurrentlyWaitingForPlayer(playerId);
+	}
+	
+
 }

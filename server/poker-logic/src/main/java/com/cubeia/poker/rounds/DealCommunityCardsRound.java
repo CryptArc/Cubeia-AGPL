@@ -66,4 +66,9 @@ public class DealCommunityCardsRound implements Round {
 		//nothing
 	}
 
+	@Override
+	public boolean isWaitingForPlayer(int playerId) {
+		return false;
+	}
+
 }

@@ -213,5 +213,12 @@ public abstract class ServerAdapterProxy implements ServerAdapter {
             getAdaptee().performPendingBuyIns(players);
         }
 	}
-	
+
+	@Override
+	public void notifyDisconnected(int playerId) {
+		if(getAdaptee() != null) {
+			getAdaptee().notifyDisconnected(playerId);
+		}
+	}
+
 }

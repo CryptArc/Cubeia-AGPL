@@ -272,5 +272,10 @@ public class MockGame implements GameType {
 	@Override
 	public void sendAllNonFoldedPlayersBestHand() {
 	}
+
+	@Override
+	public boolean isCurrentlyWaitingForPlayer(int playerId) {
+		return false;
+	}
 	
 }

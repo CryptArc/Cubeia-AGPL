@@ -182,4 +182,10 @@ public class MockServerAdapter implements ServerAdapter {
     @Override
     public void performPendingBuyIns(Collection<PokerPlayer> players) {}
 
+	@Override
+	public void notifyDisconnected(int playerId) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

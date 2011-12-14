@@ -1065,5 +1065,9 @@ public class PokerState implements Serializable, IPokerState {
         }
     }
 
+	public boolean isWaitingForPlayerToAct(int playerId) {
+		return getCurrentState().isCurrentlyWaitingForPlayer(this, playerId);
+	}
+
 
 }

@@ -53,7 +53,11 @@ public class DealInitialPocketCardsRound implements Round {
 	}
 	
 	@Override
-	public void timeout() {
+	public void timeout() {}
+	
+	@Override
+	public boolean isWaitingForPlayer(int playerId) {
+		return false;
 	}
 
 }

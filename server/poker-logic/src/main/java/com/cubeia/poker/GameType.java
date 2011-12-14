@@ -85,4 +85,6 @@ public interface GameType extends Serializable {
 	 * @return true if player can buy in, false otherwise
 	 */
     public boolean canPlayerAffordEntryBet(PokerPlayer player, PokerSettings settings, boolean includePending);
+
+	public boolean isCurrentlyWaitingForPlayer(int playerId);
 }

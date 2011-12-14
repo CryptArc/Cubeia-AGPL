@@ -33,6 +33,7 @@ import com.cubeia.firebase.api.game.player.GenericPlayer;
 import com.cubeia.firebase.api.game.player.PlayerStatus;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TournamentTableListener;
+import com.cubeia.games.poker.adapter.DisconnectHandler;
 import com.cubeia.games.poker.cache.ActionCache;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.poker.PokerState;
@@ -70,6 +71,8 @@ public class PokerTableListener implements TournamentTableListener {
 	
     @Inject @VisibleForTesting
     PokerState state;
+    
+    @Inject DisconnectHandler disconnectHandler;
     
 	/**
 	 * A Player has joined our table. =)
@@ -151,6 +154,8 @@ public class PokerTableListener implements TournamentTableListener {
 		} else {
 			log.debug("Player status changed but we don't care, tid["+table.getId()+"] pid["+playerId+"] status["+status+"]");
 		}
+		
+		disconnectHandler.checkDisconnectTime(table, playerId, status);
 	}
 
 	public void seatReserved(Table table, GenericPlayer player) {}

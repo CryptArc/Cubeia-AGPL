@@ -212,4 +212,10 @@ public class AnteRound implements Round {
         Collection<PokerPlayer> players = game.getState().getCurrentHandSeatingMap().values();
         return anteRoundHelper.hasAllPlayersActed(players)  &&  anteRoundHelper.numberOfPlayersPayedAnte(players) < 2;
     }
+    
+    @Override
+	public boolean isWaitingForPlayer(int playerId) {
+    	PokerPlayer pokerPlayer = game.getState().getCurrentHandPlayerMap().get(playerId);
+		return !pokerPlayer.hasActed();
+	}
 }

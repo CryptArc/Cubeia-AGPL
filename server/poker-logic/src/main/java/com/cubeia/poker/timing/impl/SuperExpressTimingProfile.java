@@ -46,6 +46,8 @@ public class SuperExpressTimingProfile implements TimingProfile {
                 return 100;
             case LATENCY_GRACE_PERIOD:
 				return 200;
+            case DISCONNECT_EXTRA_TIME:
+            	return 2000;
             default:
                 return 500;
         }

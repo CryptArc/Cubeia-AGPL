@@ -544,6 +544,9 @@ public class Telesina implements GameType, RoundVisitor {
 	    return player.getBalance() + (includePending ? player.getPendingBalanceSum() : 0) >= pokerSettings.getAnteLevel();
 	}
 
-	
+	@Override
+	public boolean isCurrentlyWaitingForPlayer(int playerId) {
+		return getCurrentRound().isWaitingForPlayer(playerId);
+	}
 	
 }

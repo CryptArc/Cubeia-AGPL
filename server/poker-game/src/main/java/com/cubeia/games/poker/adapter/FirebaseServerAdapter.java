@@ -47,6 +47,7 @@ import se.jadestone.dicearena.game.poker.network.protocol.HandCanceled;
 import se.jadestone.dicearena.game.poker.network.protocol.HandEnd;
 import se.jadestone.dicearena.game.poker.network.protocol.InformFutureAllowedActions;
 import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
+import se.jadestone.dicearena.game.poker.network.protocol.PlayerDisconnectedPacket;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerHandStartStatus;
 import se.jadestone.dicearena.game.poker.network.protocol.PlayerPokerStatus;
 import se.jadestone.dicearena.game.poker.network.protocol.Pot;
@@ -738,6 +739,25 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		DeckInfo deckInfoPacket = new DeckInfo(size, actionTransformer.convertRankToProtocolEnum(rankLow));
 		GameDataAction action = protocolFactory.createGameAction(deckInfoPacket, 0, table.getId());
 		sendPublicPacket(action, -1);
+	}
+
+	@Override
+	public void notifyDisconnected(int playerId) {
+		timeoutCache.removeTimeout(table.getId(), playerId, table.getScheduler());
+		
+		long disconnectTime = state.getTimingProfile().getTime(Periods.DISCONNECT_EXTRA_TIME);
+		long latency = state.getTimingProfile().getTime(Periods.LATENCY_GRACE_PERIOD);
+		long timeout = disconnectTime + latency;
+		PlayerDisconnectedPacket packet = new PlayerDisconnectedPacket();
+		packet.playerId = playerId;
+		packet.timebank = (int)timeout;
+		
+		log.debug("Notify disconnect: {}", packet);
+		GameDataAction action = protocolFactory.createGameAction(packet, playerId, table.getId());
+		sendPublicPacket(action, -1);
+		
+		log.debug("Schedule new timeout for player in {} ms", timeout);
+		schedulePlayerTimeout(timeout, playerId, getFirebaseState().getCurrentRequestSequence());
 	}
 	
 }

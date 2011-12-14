@@ -24,4 +24,5 @@ public class NotStartedSTM extends AbstractPokerGameSTM {
 	public String toString() {
 	    return "NotStartedState";
 	}
+
 }

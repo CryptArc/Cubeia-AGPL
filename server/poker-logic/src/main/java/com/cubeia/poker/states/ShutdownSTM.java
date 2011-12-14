@@ -42,4 +42,5 @@ public class ShutdownSTM extends AbstractPokerGameSTM {
 	public void timeout(PokerState pokerGame) {
         log.warn("table {} is shut down, dropping incoming timout", pokerGame.getId());
 	}
+
 }

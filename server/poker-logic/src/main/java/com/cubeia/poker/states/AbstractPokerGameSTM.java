@@ -35,4 +35,10 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
 	public String getStateDescription() {
 		return getClass().getName();
 	}
+	
+	@Override
+	public boolean isCurrentlyWaitingForPlayer(PokerState pokerGame, int playerId) {
+		return false;
+	}
+	
 }

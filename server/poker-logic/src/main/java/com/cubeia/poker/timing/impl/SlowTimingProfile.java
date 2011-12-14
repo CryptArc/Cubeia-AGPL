@@ -52,6 +52,8 @@ public class SlowTimingProfile implements TimingProfile {
 				return 300;
 			case LATENCY_GRACE_PERIOD:
 				return 1000;
+			case DISCONNECT_EXTRA_TIME:
+				return 2*15000;
 			default:
 				return 5000;
 		}

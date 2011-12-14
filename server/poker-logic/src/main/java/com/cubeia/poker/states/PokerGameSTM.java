@@ -30,4 +30,11 @@ public interface PokerGameSTM extends Serializable {
 
 	public String getStateDescription();
 
+	/**
+	 * 
+	 * @param playerId
+	 * @return true if we are waiting for this player to act.
+	 */
+	public boolean isCurrentlyWaitingForPlayer(PokerState pokerGame, int playerId);
+
 }
