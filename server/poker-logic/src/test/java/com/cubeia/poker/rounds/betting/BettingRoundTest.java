@@ -111,7 +111,7 @@ public class BettingRoundTest extends TestCase implements TestListener {
         round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new FutureActionsCalculator());
         round.call(player);
         
-        verify(state).call();
+        verify(state).callOrRaise();
         
     }   
 	
@@ -132,7 +132,7 @@ public class BettingRoundTest extends TestCase implements TestListener {
         
         long amountCalled = round.call(player);
         
-        verify(state).call();
+        verify(state).callOrRaise();
         assertThat(amountCalled, is(round.highBet - betStack));
 
     }
@@ -208,7 +208,23 @@ public class BettingRoundTest extends TestCase implements TestListener {
                 
         verify(state).notifyBetStacksUpdated();
     }
-	
+    
+    @Test
+    public void testRaiseNotifiesCallOrRaise() {
+        GameType game = mock(GameType.class);
+        IPokerState state = mock(IPokerState.class);
+        when(game.getState()).thenReturn(state);
+        PokerPlayer player = Mockito.mock(PokerPlayer.class);
+        
+        BettingRound round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new FutureActionsCalculator());
+        
+        round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new FutureActionsCalculator());
+        
+        round.raise(player, 10L);
+                
+        verify(state).callOrRaise();
+    }
+  	
     @Test
 	public void testNoRaiseAllowedWhenAllOtherPlayersAreAllIn() {
 		MockPlayer[] p = TestUtils.createMockPlayers(2);

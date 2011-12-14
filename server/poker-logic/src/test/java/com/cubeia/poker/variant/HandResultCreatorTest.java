@@ -127,7 +127,7 @@ public class HandResultCreatorTest {
 		playerMap.put(3, pp3);
 		playerMap.put(4, pp4);
 		potHolder.moveChipsToPotAndTakeBackUncalledChips(playerMap.values());
-		potHolder.call();
+		potHolder.callOrRaise();
 		
 		Set<PokerPlayer> muckingPlayers = new HashSet<PokerPlayer>(playerMap.values());
 		

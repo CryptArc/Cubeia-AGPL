@@ -33,7 +33,7 @@ public class PotHolderTest {
         potHolder.calculateRake();
         verify(rakeCalculator).calculateRakes(Mockito.anyCollection(), Mockito.eq(false));
         
-        potHolder.call();
+        potHolder.callOrRaise();
         potHolder.calculateRake();
         verify(rakeCalculator).calculateRakes(Mockito.anyCollection(), Mockito.eq(true));
     }
@@ -93,7 +93,7 @@ public class PotHolderTest {
 		
 		PotHolder potHolder = new PotHolder(rakeCalculator);
 		Pot mainPot = new Pot(0);
-		potHolder.callHasBeenMadeInHand = true;
+		potHolder.callOrRaiseHasBeenMadeInHand = true;
 		
 		potHolder.addPot(mainPot);
 		
