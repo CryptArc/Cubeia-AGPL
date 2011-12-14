@@ -13,7 +13,6 @@ import java.util.Map;
 import com.cubeia.poker.RakeSettings;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.Pot;
-import com.google.common.annotations.VisibleForTesting;
 
 /**
  * Rake calculator where rake is linear (defined by a fraction) up to a limit after which
@@ -56,7 +55,7 @@ public class LinearRakeWithLimitCalculator implements RakeCalculator {
             long rake = 0L;
             if (tableHasSeenAction) {
                 rake = rakeFraction.multiply(new BigDecimal(potSize)).longValue();
-                if (willRakeAdditionBreakLimit(totalRake, rake, limit)) {
+                if (willRakeAdditionBreakLimit(totalRake, rake)) {
                     rake = limit - totalRake;
                 }
                 totalRake += rake;
@@ -69,8 +68,7 @@ public class LinearRakeWithLimitCalculator implements RakeCalculator {
         return new RakeInfoContainer(totalPot, totalRake, potRake);
     }
 
-    @VisibleForTesting
-    protected int countPlayers(Collection<Pot> pots) {
+    private int countPlayers(Collection<Pot> pots) {
         HashSet<PokerPlayer> players = new HashSet<PokerPlayer>();
         for (Pot pot : pots) {
             players.addAll(pot.getPotContributors().keySet());
@@ -91,8 +89,8 @@ public class LinearRakeWithLimitCalculator implements RakeCalculator {
         return potsSortedById;
     }
 
-    private boolean willRakeAdditionBreakLimit(long totalRake, long rakeAddition, long limit) {
-        return totalRake + rakeAddition > limit;
+    private boolean willRakeAdditionBreakLimit(long totalRake, long rakeAddition) {
+        return totalRake + rakeAddition > rakeLimit;
     }
     
     

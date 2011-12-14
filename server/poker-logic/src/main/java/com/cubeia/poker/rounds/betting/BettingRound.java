@@ -332,7 +332,6 @@ public class BettingRound implements Round, BettingRoundContext {
 		
 		highBet = amount; 
 		lastPlayerToBeCalled = lastPlayerToPlaceABet;
-		gameType.getState().callOrRaise();
 		lastPlayerToPlaceABet = player;
 		player.addBet(highBet - player.getBetStack());
 		resetHasActed();
@@ -382,7 +381,7 @@ public class BettingRound implements Round, BettingRoundContext {
 		long amountToCall = getAmountToCall(player);
         player.addBet(amountToCall);
 		lastPlayerToBeCalled = lastPlayerToPlaceABet;
-		gameType.getState().callOrRaise();
+		gameType.getState().call();
 		notifyBetStacksUpdated();
 		player.setLastRaiseLevel(getNextValidRaiseLevel());
 		return amountToCall;

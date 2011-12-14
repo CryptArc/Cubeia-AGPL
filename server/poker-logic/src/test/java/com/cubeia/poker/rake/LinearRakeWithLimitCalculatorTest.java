@@ -112,33 +112,6 @@ public class LinearRakeWithLimitCalculatorTest {
     }
     
     @Test
-    public void testCalculateRakeWithLimitHeadsUpAndPlayersThatContributedZero() {
-        BigDecimal rakeFraction = new BigDecimal("0.6");
-        RakeSettings rakeSettings = new RakeSettings(rakeFraction, 400L, 150L);
-		LinearRakeWithLimitCalculator rc = new LinearRakeWithLimitCalculator(rakeSettings);
-        
-        PokerPlayer player1 = Mockito.mock(PokerPlayer.class);
-        PokerPlayer player2 = Mockito.mock(PokerPlayer.class);
-                
-        Pot mainpot = new Pot(0);
-        Pot betstackpot = new Pot(Integer.MAX_VALUE);
-        
-        mainpot.bet(player1, 5000L);
-        mainpot.bet(player2, 5000L);
-                
-        betstackpot.bet(player1, 100L);
-        betstackpot.bet(player2, 100L);
-        
-        
-        Collection<Pot> pots = asList(mainpot, betstackpot);
-
-        RakeInfoContainer rakeInfoContainer = rc.calculateRakes(pots, true);
-        assertThat(rakeInfoContainer.getTotalPot(), is(10200L));
-        assertThat(rakeInfoContainer.getTotalRake(), is(150L));
-        
-    }
-    
-    @Test
     public void testCalculateRakeNoRakeBeforeFirstCall() {
         BigDecimal rakeFraction = new BigDecimal("0.1");
         LinearRakeWithLimitCalculator rc = new LinearRakeWithLimitCalculator(RakeSettings.createNoLimitRakeSettings(rakeFraction));

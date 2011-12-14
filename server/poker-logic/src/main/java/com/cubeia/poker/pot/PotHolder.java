@@ -53,8 +53,7 @@ public class PotHolder implements Serializable {
 
 	private Set<Integer> allInPlayers = new HashSet<Integer>();
 
-	@VisibleForTesting
-	protected boolean callOrRaiseHasBeenMadeInHand = false;
+	private boolean callHasBeenMadeInHand = false;
 	
     private final RakeCalculator rakeCalculator;
 
@@ -120,7 +119,7 @@ public class PotHolder implements Serializable {
 	}
 
 	public RakeInfoContainer calculateRake() {
-	    return rakeCalculator.calculateRakes(getPots(), callOrRaiseHasBeenMadeInHand);
+	    return rakeCalculator.calculateRakes(getPots(), callHasBeenMadeInHand);
 	}
 	
 	public long calculatePlayersContributionToPotIncludingBetStacks(PokerPlayer player) {
@@ -160,7 +159,7 @@ public class PotHolder implements Serializable {
 		
 		allPots.add(betPot);
 			
-		return rakeCalculator.calculateRakes(allPots, callOrRaiseHasBeenMadeInHand);
+		return rakeCalculator.calculateRakes(allPots, callHasBeenMadeInHand);
 		
 		
 	}
@@ -366,11 +365,11 @@ public class PotHolder implements Serializable {
 	}
 
 	/**
-	 * Indicate that a call or a raise has been made by some player in this hand. This method must be
-	 * invoked at least when the first call or raise is made in a hand for the rake calculation to be correct.
+	 * Indicate that a call has been made by some player in this hand. This method must be
+	 * invoked at least when the first call is made in a hand for the rake calculation to be correct.
 	 */
-	public void callOrRaise() {
-	    callOrRaiseHasBeenMadeInHand = true;
+	public void call() {
+	    callHasBeenMadeInHand = true;
 	}
 	
 	/**

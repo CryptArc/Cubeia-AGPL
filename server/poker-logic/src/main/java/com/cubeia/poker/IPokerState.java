@@ -65,7 +65,7 @@ public interface IPokerState {
 	/**
 	 * Must be invoked when the first call in the hand has been made.
 	 */
-	void callOrRaise();
+	void call();
 	
 	/**
 	 * Notify that the betstack of a player has updated

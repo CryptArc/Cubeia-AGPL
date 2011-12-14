@@ -219,8 +219,8 @@ public class PokerStateTest {
 	public void testCall() {
 		PokerState state = new PokerState();
 		state.potHolder = mock(PotHolder.class);
-		state.callOrRaise();
-		verify(state.potHolder).callOrRaise();
+		state.call();
+		verify(state.potHolder).call();
 	}
 
 
