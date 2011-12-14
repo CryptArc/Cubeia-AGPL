@@ -90,7 +90,7 @@ public class HandResultCalculatorTest extends TestCase {
 	
 	public void testSimpleCaseWithRake() {
 		PotHolder potHolder = new PotHolder(rakeCalculator);
-		potHolder.call();
+		potHolder.callOrRaise();
 		potHolder.moveChipsToPotAndTakeBackUncalledChips(players.values());
 		
 		assertEquals(1, potHolder.getNumberOfPots());
@@ -133,7 +133,7 @@ public class HandResultCalculatorTest extends TestCase {
 		hands.add(new PlayerHand(3, new Hand("3s 8d " + community)));
 		
 		PotHolder potHolder = new PotHolder(rakeCalculator);
-		potHolder.call();
+		potHolder.callOrRaise();
 		potHolder.moveChipsToPotAndTakeBackUncalledChips(players.values());
 		
 		assertThat(potHolder.getNumberOfPots(), is(1));
@@ -201,7 +201,7 @@ public class HandResultCalculatorTest extends TestCase {
         players.put(3, p3);
         
         PotHolder potHolder = new PotHolder(rakeCalculator);
-        potHolder.call();
+        potHolder.callOrRaise();
         potHolder.moveChipsToPotAndTakeBackUncalledChips(players.values());
         
         assertEquals(2, potHolder.getNumberOfPots());
