@@ -346,6 +346,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
 	@Override
 	public void performPendingBuyIns(Collection<PokerPlayer> players) {
+	    
 	    for (PokerPlayer player : players) {
 	        if (!player.isBuyInRequestActive()  &&   player.getRequestedBuyInAmount() > 0) {
 	            PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) player;

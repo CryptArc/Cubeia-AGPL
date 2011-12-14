@@ -59,22 +59,14 @@ public class TelesinaBettingRoundFinishedTest {
     }
     
     @Test
-    public void testLastPlayerToBeCalledIsSet() {
+    public void testLastPlayerToBeCalledIsSet()
+    {
     	telesina.startHand();
     	BettingRound bettingRound = mock(BettingRound.class);
     	when(bettingRound.getLastPlayerToBeCalled()).thenReturn(player1);
 		telesina.visit(bettingRound);
 		verify(state).setLastPlayerToBeCalled(player1);
     }
-    
-    @Test
-    public void testPerformPendingBuyInsWhenRoundFinished() {
-        telesina.startHand();
-        BettingRound bettingRound = mock(BettingRound.class);
-        telesina.visit(bettingRound);
-        verify(state).performPendingBuyInsForFoldedPlayers();
-    }
-    
     
     PokerPlayer mockPlayer1;
     PokerPlayer mockPlayer2;

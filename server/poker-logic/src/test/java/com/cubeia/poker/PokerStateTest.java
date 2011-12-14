@@ -7,7 +7,6 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.hasItem;
-import static org.junit.matchers.JUnitMatchers.hasItems;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -78,32 +77,6 @@ public class PokerStateTest {
 		when(player.getBalance()).thenReturn((long)balance);
 		when(player.getId()).thenReturn(playerId);
 		return player;
-	}
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-    @Test
-	public void testPerformPendingBuyInsForFoldedPlayers() {
-        PokerPlayer player1 = mock(PokerPlayer.class);
-        PokerPlayer player2 = mock(PokerPlayer.class);
-        PokerPlayer player3 = mock(PokerPlayer.class);
-        
-        HashMap<Integer, PokerPlayer> currentHandPlayerMap = new HashMap<Integer, PokerPlayer>();
-        state.currentHandPlayerMap = currentHandPlayerMap;
-        currentHandPlayerMap.put(1, player1);
-        currentHandPlayerMap.put(2, player2);
-        currentHandPlayerMap.put(3, player3);
-        
-        when(player1.hasFolded()).thenReturn(true);
-        when(player2.hasFolded()).thenReturn(false);
-        when(player3.hasFolded()).thenReturn(true);
-	    
-	    state.performPendingBuyInsForFoldedPlayers();
-	    
-	    ArgumentCaptor<Collection> playersCaptor = ArgumentCaptor.forClass(Collection.class);
-	    verify(state.serverAdapter).performPendingBuyIns(playersCaptor.capture());
-	    Collection<PokerPlayer> players = playersCaptor.getValue();
-        assertThat(players.size(), is(2));
-        assertThat(players, hasItems(player1, player3));
 	}
 	
 	@Test

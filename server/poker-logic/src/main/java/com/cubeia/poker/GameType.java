@@ -87,5 +87,4 @@ public interface GameType extends Serializable {
     public boolean canPlayerAffordEntryBet(PokerPlayer player, PokerSettings settings, boolean includePending);
 
 	public boolean isCurrentlyWaitingForPlayer(int playerId);
-
 }

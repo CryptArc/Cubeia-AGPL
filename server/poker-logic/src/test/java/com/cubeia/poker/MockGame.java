@@ -145,7 +145,6 @@ public class MockGame implements GameType {
 		return null;
 	}
 
-	
 	public void logDebug(String string) {
 	}
 
@@ -250,7 +249,10 @@ public class MockGame implements GameType {
 
             @Override
             public void handleBuyInRequest(PokerPlayer pokerPlayer, int amount) {
+                // TODO Auto-generated method stub
+                
             }
+		
 		};
 	}
 

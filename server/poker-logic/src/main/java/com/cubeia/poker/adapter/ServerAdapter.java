@@ -193,7 +193,6 @@ public interface ServerAdapter {
 
 	/**
 	 * Request buy in:s for the given players that has {@link PokerPlayer#getRequestedBuyInAmount()} > 0.
-	 * Players with {@link PokerPlayer#isBuyInRequestActive()} will be ignored.
 	 * @param players
 	 */
     void performPendingBuyIns(Collection<PokerPlayer> players);

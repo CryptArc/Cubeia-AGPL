@@ -17,7 +17,6 @@
 
 package com.cubeia.poker;
 
-import static com.google.common.collect.Collections2.filter;
 import static java.util.Arrays.asList;
 
 import java.io.Serializable;
@@ -71,7 +70,6 @@ import com.cubeia.poker.variant.telesina.TelesinaDeckFactory;
 import com.cubeia.poker.variant.telesina.TelesinaRoundFactory;
 import com.cubeia.poker.variant.texasholdem.TexasHoldem;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Predicate;
 
 /**
  * This is the class that users of the poker api will interface with.
@@ -307,23 +305,6 @@ public class PokerState implements Serializable, IPokerState {
 	@Override
 	public Collection<PokerPlayer> getPlayersReadyToStartHand() {
 	    return createCopyWithNotReadyPlayersExcluded(playerMap).values();
-	}
-	
-    /**
-     * Returns all players that has folded in the current hand.
-     * @return collection of folded players, never null
-     */
-	private Collection<PokerPlayer> getFoldedPlayersInCurrentHand() {
-	    return filter(getCurrentHandPlayerMap().values(), new Predicate<PokerPlayer>() {
-            @Override public boolean apply(PokerPlayer player) { return player.hasFolded(); }
-	    });
-	}
-	
-	/**
-	 * Performs pending buy in requests for players that has folded.
-	 */
-	public void performPendingBuyInsForFoldedPlayers() {
-	    getServerAdapter().performPendingBuyIns(getFoldedPlayersInCurrentHand());
 	}
 	
 	@Override

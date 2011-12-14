@@ -387,9 +387,10 @@ public class Telesina implements GameType, RoundVisitor {
 		
 		Collection<PotTransition> potTransitions = moveChipsToPotAndTakeBackUncalledChips();
 		reportPotAndRakeUpdates(potTransitions);
-		state.performPendingBuyInsForFoldedPlayers();
 			    
 		if (isHandFinished()) {
+		    
+		    
 		    state.exposeShowdownCards();
 
 			PokerPlayer playerAtDealerButton = state.getPlayerAtDealerButton();
