@@ -391,9 +391,17 @@ public class DefaultPokerPlayer implements PokerPlayer {
     @Override
     public void addRequestedBuyInAmount(long buyInAmount) {
         requestedBuyInAmount += buyInAmount;
-        log.debug("added {} as future buy in amount, total future buy in amount = {}", buyInAmount, requestedBuyInAmount);
+        log.debug("added {} as future buy in amount for player {}, total future buy in amount = {}", 
+            new Object[] {buyInAmount, playerId, requestedBuyInAmount});
     }
 
+    @Override
+    public void setRequestedBuyInAmount(long amount) {
+        log.debug("setting buy in amount for player {} to: {}, was: {}", 
+            new Object[] {playerId, amount, requestedBuyInAmount});
+        requestedBuyInAmount = amount;
+    }
+    
     @Override
     public void clearRequestedBuyInAmountAndRequest() {
         requestedBuyInAmount = 0;

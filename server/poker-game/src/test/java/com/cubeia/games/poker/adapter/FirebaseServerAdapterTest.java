@@ -34,10 +34,13 @@ import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
 import se.jadestone.dicearena.game.poker.network.protocol.RequestAction;
 
 import com.cubeia.backend.cashgame.PlayerSessionId;
+import com.cubeia.backend.cashgame.callback.ReserveCallback;
 import com.cubeia.backend.cashgame.dto.BalanceUpdate;
 import com.cubeia.backend.cashgame.dto.BatchHandResponse;
+import com.cubeia.backend.cashgame.dto.ReserveRequest;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
+import com.cubeia.backend.firebase.FirebaseCallbackFactory;
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.action.GameObjectAction;
@@ -103,7 +106,7 @@ public class FirebaseServerAdapterTest {
 	public void testNotifyBuyInInfo() throws IOException, GetBalanceFailedException {
 		FirebaseServerAdapter fsa = new FirebaseServerAdapter();
 		fsa.actionTransformer = new ActionTransformer();
-		fsa.buyInLimitsCalculator = new BuyInLimitsCalculator();
+		fsa.buyInCalculator = new BuyInCalculator();
 		fsa.table = mock(Table.class);
 		fsa.backend = mock(CashGamesBackendContract.class);
 		GameNotifier tableNotifier = mock(GameNotifier.class);
@@ -157,7 +160,7 @@ public class FirebaseServerAdapterTest {
 		FirebaseServerAdapter fsa = new FirebaseServerAdapter();
 		fsa.table = mock(Table.class);
 		fsa.backend = mock(CashGamesBackendContract.class);
-        fsa.buyInLimitsCalculator = new BuyInLimitsCalculator();
+        fsa.buyInCalculator = new BuyInCalculator();
 		GameNotifier tableNotifier = mock(GameNotifier.class);
 		when(fsa.table.getNotifier()).thenReturn(tableNotifier);
 
@@ -199,15 +202,53 @@ public class FirebaseServerAdapterTest {
 		assertThat(buyInInfoRespPacket.minAmount, is(0));
 		assertThat(buyInInfoRespPacket.mandatoryBuyin, is(true));
 		assertThat(buyInInfoRespPacket.resultCode, is(BuyInInfoResultCode.MAX_LIMIT_REACHED));
-
 	}
+	
+    @Test
+    public void testPerformPendingBuyIns() {
+        
+        FirebaseServerAdapter fsa = new FirebaseServerAdapter();
+        fsa.table = mock(Table.class);
+        fsa.backend = mock(CashGamesBackendContract.class);
+        fsa.buyInCalculator = mock(BuyInCalculator.class);
+        fsa.state = mock(PokerState.class);
+        
+        FirebaseState adapterState = mock(FirebaseState.class);
+        when(fsa.state.getAdapterState()).thenReturn(adapterState);
+        
+        FirebaseCallbackFactory callbackFactory = mock(FirebaseCallbackFactory.class);
+        when(fsa.backend.getCallbackFactory()).thenReturn(callbackFactory );
+        ReserveCallback callback = mock(ReserveCallback.class);
+        when(callbackFactory.createReserveCallback(fsa.table)).thenReturn(callback);
+
+        PokerPlayer player1 = mock(PokerPlayerImpl.class);
+        PokerPlayer player2 = mock(PokerPlayerImpl.class);
+        PokerPlayer player3 = mock(PokerPlayerImpl.class);
+        Collection<PokerPlayer> players = Arrays.asList(player1, player2, player3);
+        when(player1.isBuyInRequestActive()).thenReturn(false);
+        when(player1.getRequestedBuyInAmount()).thenReturn(5000L);
+        when(player2.isBuyInRequestActive()).thenReturn(false);
+        when(player2.getRequestedBuyInAmount()).thenReturn(25000L);
+        when(player3.isBuyInRequestActive()).thenReturn(true);
+        
+        when(fsa.buyInCalculator.calculateAmountToReserve(Mockito.anyInt(), Mockito.anyInt(), Mockito.eq(5000))).thenReturn(2500);
+        when(fsa.buyInCalculator.calculateAmountToReserve(Mockito.anyInt(), Mockito.anyInt(), Mockito.eq(25000))).thenReturn(0);
+        
+        fsa.performPendingBuyIns(players);
+        
+        verify(fsa.state, times(2)).getMaxBuyIn();
+        verify(fsa.backend).reserve(Mockito.any(ReserveRequest.class), Mockito.eq(callback));
+        verify(player1).buyInRequestActive();
+        verify(player1).setRequestedBuyInAmount(2500L);
+        verify(player2).clearRequestedBuyInAmountAndRequest();
+    }
 
 	@Test
 	public void testNotifyBuyInInfoErrorGettingWalletBalance() throws IOException, GetBalanceFailedException {
 		FirebaseServerAdapter fsa = new FirebaseServerAdapter();
 		fsa.table = mock(Table.class);
 		fsa.backend = mock(CashGamesBackendContract.class);
-        fsa.buyInLimitsCalculator = new BuyInLimitsCalculator();
+        fsa.buyInCalculator = new BuyInCalculator();
 		GameNotifier tableNotifier = mock(GameNotifier.class);
 		when(fsa.table.getNotifier()).thenReturn(tableNotifier);
 
@@ -250,7 +291,7 @@ public class FirebaseServerAdapterTest {
 		FirebaseServerAdapter fsa = new FirebaseServerAdapter();
 		fsa.table = mock(Table.class);
 		fsa.backend = mock(CashGamesBackendContract.class);
-        fsa.buyInLimitsCalculator = new BuyInLimitsCalculator();
+        fsa.buyInCalculator = new BuyInCalculator();
 		GameNotifier tableNotifier = mock(GameNotifier.class);
 		when(fsa.table.getNotifier()).thenReturn(tableNotifier);
 

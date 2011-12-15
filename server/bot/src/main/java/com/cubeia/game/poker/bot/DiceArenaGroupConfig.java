@@ -8,10 +8,22 @@ import com.cubeia.firebase.bot.model.Table;
 
 public class DiceArenaGroupConfig implements BotGroupConfig {
 
+	private static final int DA_MIN_LENGTH = 6;
+	private static final int DA_MAX_LENGTH = 12;
+	
 	private static transient Logger log = Logger.getLogger(DiceArenaGroupConfig.class);
 	
 	public String createBotScreenName(int id) {
-		return "Bot_" + id;
+		String s = "Bot_" + id;
+		// Must be 6 characters...
+		while(s.length() < DA_MIN_LENGTH) {
+			s += "_";
+		}
+		// Must be less than 12
+		while(s.length() > DA_MAX_LENGTH) {
+			s = s.substring(1);
+		}
+		return s;
 	}
 	
 	public String createLobbyBotScreenName(int id) {

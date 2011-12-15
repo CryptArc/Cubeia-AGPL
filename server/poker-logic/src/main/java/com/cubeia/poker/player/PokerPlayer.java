@@ -199,6 +199,13 @@ public interface PokerPlayer extends Serializable {
     void addRequestedBuyInAmount(long buyInAmount);
     
     /**
+     * Set an amount to bring in when hand is finished.
+     * @param amount the amount
+     */
+    void setRequestedBuyInAmount(long amount);
+    
+    
+    /**
      * Clear the requested future buy in amount and request active flag.
      */
     void clearRequestedBuyInAmountAndRequest();
@@ -216,5 +223,5 @@ public interface PokerPlayer extends Serializable {
     public boolean isDisconnectTimeoutUsed();
 
 	public void setDisconnectTimeoutUsed(boolean disconnectTimeoutUsed);
-    
+
 }
