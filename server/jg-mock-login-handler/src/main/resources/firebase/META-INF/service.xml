@@ -1,0 +1,8 @@
+<service auto-start="false">
+    <name>LocalLoginService</name>
+    <public-id>ns://www.jadestone.se/mocklogin</public-id>
+    <contract>com.cubeia.firebase.api.login.LoginLocator</contract>
+    <service>se.jadestone.dicearena.firebase.login.LocalLoginHandler</service>
+    <description/>
+    <exported/>
+</service>
