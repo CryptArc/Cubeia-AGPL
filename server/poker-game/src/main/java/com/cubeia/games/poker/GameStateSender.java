@@ -72,6 +72,9 @@ public class GameStateSender {
      * 
      * 3. Remove all disconnect packets and add to last request if applicable
      * 
+     * If there is one last action request and a disconnect after that we will adjust the 
+     * time out for that action request.
+     * 
      * @param actions actions to filter
      * @param playerId, player id to check for exclusion.
      * @return new filtered list
@@ -83,6 +86,7 @@ public class GameStateSender {
         StyxSerializer styxalizer = new StyxSerializer(new ProtocolObjectFactory());
         
         ActionContainer lastContainer = null; 
+        Long lastRequestTimeSTamp = null;
         RequestAction lastRequest = null;
         
         for (ActionContainer container : actions) {
@@ -112,26 +116,31 @@ public class GameStateSender {
 						}
                     	
 						if (anteAllowed){
-                    		ga = adjustTimeToAct(styxalizer, container, requestAction);
+                    		ga = adjustTimeToAct(styxalizer, container, requestAction, container.getTimestamp());
                     		filteredActions.add(ga);
                     	}else{
                     		lastRequest = requestAction;
                         	lastContainer = container;
-                        	
+                        	lastRequestTimeSTamp = container.getTimestamp();
                     	}
 						 
 					} else if (packet instanceof PlayerDisconnectedPacket) {
-						// Store and send packet, but also adjust the time out for the last 
-						// found action request to make it easier for the client.
-						filteredActions.add(ga);
+						PlayerDisconnectedPacket disconnect = (PlayerDisconnectedPacket)packet;
+						// Store and send packet, but also adjust the time out for this disconnect
+						// and the last found action request to make it easier for the client.
 						if (lastRequest != null) {
-							lastRequest.timeToAct = ((PlayerDisconnectedPacket)packet).timebank;
-							
+							lastRequest.timeToAct = disconnect.timebank;
+							lastRequestTimeSTamp = container.getTimestamp();
 						}
+						// ordering is important here, the adjust time method will change the time allows on
+						// the disconnect which is also used above. So, we change it after we have modified last request action
+						ga = adjustTimeToAct(styxalizer, container, disconnect);
+						filteredActions.add(ga);
 						
 					} else if (packet instanceof PerformAction) {
 						lastRequest = null;
 						lastContainer = null;
+						lastRequestTimeSTamp = null;
 						filteredActions.add(ga);
 						
 					} else {
@@ -147,15 +156,15 @@ public class GameStateSender {
         
         // If we have an unanswered request then adjust the time left to act and add it last
         if (lastRequest != null) {
-        	GameDataAction requestAction = adjustTimeToAct(styxalizer, lastContainer, lastRequest);
+        	GameDataAction requestAction = adjustTimeToAct(styxalizer, lastContainer, lastRequest, lastRequestTimeSTamp);
         	filteredActions.add(requestAction);
         }
         
         return filteredActions;
     }
 
-	private GameDataAction adjustTimeToAct(StyxSerializer styxalizer, ActionContainer lastContainer, RequestAction lastRequest) throws IOException {
-		long elapsed = System.currentTimeMillis() - lastContainer.getTimestamp();
+	private GameDataAction adjustTimeToAct(StyxSerializer styxalizer, ActionContainer lastContainer, RequestAction lastRequest, Long timerTimeStamp) throws IOException {
+		long elapsed = System.currentTimeMillis() - timerTimeStamp;
 		int timeToAct = lastRequest.timeToAct - (int)elapsed;
 		if (timeToAct < 0) {
 			timeToAct = 0;
@@ -164,6 +173,18 @@ public class GameStateSender {
 		GameDataAction requestAction = (GameDataAction)lastContainer.getGameAction();
 		requestAction.setData(styxalizer.pack(lastRequest));
 		return requestAction;
+	}
+	
+	private GameDataAction adjustTimeToAct(StyxSerializer styxalizer, ActionContainer container, PlayerDisconnectedPacket disconnect) throws IOException {
+		long elapsed = System.currentTimeMillis() - container.getTimestamp();
+		int timeToAct = disconnect.timebank - (int)elapsed;
+		if (timeToAct < 0) {
+			timeToAct = 0;
+		}
+		disconnect.timebank = timeToAct;
+		GameDataAction disconnectAction = (GameDataAction)container.getGameAction();
+		disconnectAction.setData(styxalizer.pack(disconnect));
+		return disconnectAction;
 	}
     
 }
