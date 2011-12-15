@@ -8,7 +8,7 @@ import static java.lang.Math.min;
  * the rules of the table.
  * @author w
  */
-public class BuyInLimitsCalculator {
+public class BuyInCalculator {
     
     /**
      * Calculates the possible buy in range.
@@ -27,6 +27,10 @@ public class BuyInLimitsCalculator {
             calculateMinBuyIn(tableMinBuyIn, tableMaxBuyIn, anteLevel, playerBalance), 
             calculateMaxBuyIn(tableMinBuyIn, tableMaxBuyIn, anteLevel, playerBalance), 
             true);
+    }
+    
+    public int calculateAmountToReserve(int tableMaxBuyIn, int playerBalanceIncludingPending, int amountRequestedByUser) {
+        return min(amountRequestedByUser, tableMaxBuyIn - playerBalanceIncludingPending);
     }
     
     private int calculateMinBuyIn(int tableMinBuyIn, int tableMaxBuyIn, int anteLevel, int playerBalance) {
