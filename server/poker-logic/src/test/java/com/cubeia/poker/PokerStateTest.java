@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -107,6 +108,10 @@ public class PokerStateTest {
 
 		state.init(null, settings);
 		state.setTournamentTable(false);
+		
+		Telesina telesina = mock(Telesina.class);
+		state.gameType = telesina;
+		
 
 		Map<PokerPlayer, Result> results = new HashMap<PokerPlayer, Result>();
 
@@ -129,10 +134,19 @@ public class PokerStateTest {
 		state.playerMap.put(player2.getId(), player2);
 		state.playerMap.put(player3.getId(), player3);
 		
+		state.seatingMap = new TreeMap<Integer, PokerPlayer>();
+		state.seatingMap.put(0, player1);
+		state.seatingMap.put(1, player2);
+		state.seatingMap.put(2, player3);
+		
 		state.currentHandPlayerMap = new HashMap<Integer, PokerPlayer>();
 		state.currentHandPlayerMap.put(player1.getId(), player1);
 		state.currentHandPlayerMap.put(player2.getId(), player2);
 		state.currentHandPlayerMap.put(player3.getId(), player3);
+		
+		when(telesina.canPlayerAffordEntryBet(player1, settings, true)).thenReturn(false);
+		when(telesina.canPlayerAffordEntryBet(player2, settings, true)).thenReturn(true);
+		when(telesina.canPlayerAffordEntryBet(player3, settings, true)).thenReturn(true);
 		
 		Long winningsIncludingOwnBets = 344L;
 		when(result1.getWinningsIncludingOwnBets()).thenReturn(winningsIncludingOwnBets );
@@ -546,33 +560,91 @@ public class PokerStateTest {
         when(player1.getId()).thenReturn(player1id);
         when(player2.getId()).thenReturn(player2id);
         when(player3.getId()).thenReturn(player3id);
-        HandResult handResult = mock(HandResult.class);
-        Map<PokerPlayer, Result> resultMap = new HashMap<PokerPlayer, Result>();
         
-        state.playerMap = new HashMap<Integer, PokerPlayer>();
+        when(player1.isSittingOut()).thenReturn(false);
+        when(player2.isSittingOut()).thenReturn(false);
+        when(player3.isSittingOut()).thenReturn(false);
+        
+        state.seatingMap = new TreeMap<Integer, PokerPlayer>();
+        state.seatingMap.put(0, player1);
+        state.seatingMap.put(1, player2);
+        state.seatingMap.put(2, player3);
+        
+        state.playerMap = new TreeMap<Integer, PokerPlayer>();
         state.playerMap.put(player1id, player1);
         state.playerMap.put(player2id, player2);
         state.playerMap.put(player3id, player3);
         
-        resultMap.put(player1, null);
-        resultMap.put(player2, null);
-        resultMap.put(player3, null);
+        GameType telesina = mock(Telesina.class);
+        state.gameType = telesina;
+
         
         when(player1.getBalance()).thenReturn(10L);
-        when(player1.getBalanceNotInHand()).thenReturn(10L);
-        when(handResult.getResults()).thenReturn(resultMap);
+        when(player1.getPendingBalanceSum()).thenReturn(10L);
         when(settings.getAnteLevel()).thenReturn(20);
+
         when(player3.isBuyInRequestActive()).thenReturn(true);
         
-        state.setPlayersWithoutMoneyAsSittingOut(handResult);
+        when(telesina.canPlayerAffordEntryBet(player1, settings, true)).thenReturn(true);
+        when(telesina.canPlayerAffordEntryBet(player2, settings, true)).thenReturn(false);
+        when(telesina.canPlayerAffordEntryBet(player3, settings, true)).thenReturn(false);
         
+        state.setPlayersWithoutMoneyAsSittingOut();
         
-        verify(state.serverAdapter, never()).notifyPlayerStatusChanged(Mockito.eq(player1id), Mockito.any(PokerPlayerStatus.class));
-        verify(state.serverAdapter).notifyPlayerStatusChanged(player2id, PokerPlayerStatus.SITOUT);
-        verify(state.serverAdapter).notifyPlayerStatusChanged(player3id, PokerPlayerStatus.SITOUT);
+        verify(player1, never()).setSitOutStatus(Mockito.any(SitOutStatus.class));
+        verify(player2).setSitOutStatus( SitOutStatus.SITTING_OUT);
+        verify(player3).setSitOutStatus( SitOutStatus.SITTING_OUT);
         
-        verify(state.serverAdapter).notifyBuyInInfo(player2id, true);
+        verify(state.serverAdapter, never()).notifyBuyInInfo(player1id, true);
+        verify(state.serverAdapter, never()).notifyBuyInInfo(player2id, true);
         verify(state.serverAdapter, never()).notifyBuyInInfo(player3id, true);
+    }
+    
+    @Test
+    public void testSendBuyInInfoToPlayersWithoutMoney() {
+        int player1id = 1001;
+        int player2id = 1002;
+        int player3id = 1003;
+        PokerPlayer player1 = mock(PokerPlayer.class);
+        PokerPlayer player2 = mock(PokerPlayer.class);
+        PokerPlayer player3 = mock(PokerPlayer.class);
+        when(player1.getId()).thenReturn(player1id);
+        when(player2.getId()).thenReturn(player2id);
+        when(player3.getId()).thenReturn(player3id);
+        
+        when(player1.isSittingOut()).thenReturn(false);
+        when(player2.isSittingOut()).thenReturn(false);
+        when(player3.isSittingOut()).thenReturn(false);
+        
+        state.seatingMap = new TreeMap<Integer, PokerPlayer>();
+        state.seatingMap.put(0, player1);
+        state.seatingMap.put(1, player2);
+        state.seatingMap.put(2, player3);
+        
+        state.playerMap = new TreeMap<Integer, PokerPlayer>();
+        state.playerMap.put(player1id, player1);
+        state.playerMap.put(player2id, player2);
+        state.playerMap.put(player3id, player3);
+        
+        GameType telesina = mock(Telesina.class);
+        state.gameType = telesina;
+
+        
+        when(player1.getBalance()).thenReturn(10L);
+        when(player1.getPendingBalanceSum()).thenReturn(10L);
+        when(settings.getAnteLevel()).thenReturn(20);
+
+        when(player3.isBuyInRequestActive()).thenReturn(true);
+        
+        when(telesina.canPlayerAffordEntryBet(player1, settings, true)).thenReturn(true);
+        when(telesina.canPlayerAffordEntryBet(player2, settings, true)).thenReturn(false);
+        when(telesina.canPlayerAffordEntryBet(player3, settings, true)).thenReturn(false);
+        
+        state.sendBuyinInfoToPlayersWithoutMoney();
+           
+        verify(state.serverAdapter, never()).notifyBuyInInfo(player1id, true); // player affords buyin
+        verify(state.serverAdapter).notifyBuyInInfo(player2id, true);
+        verify(state.serverAdapter, never()).notifyBuyInInfo(player3id, true); // player has pending buyin that will cover it
     }
     
 }

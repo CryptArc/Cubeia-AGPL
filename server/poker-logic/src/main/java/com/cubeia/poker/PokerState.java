@@ -435,7 +435,9 @@ public class PokerState implements Serializable, IPokerState {
 			// cleanupPlayers();
 			cleanupPlayers();
 						
-			setPlayersWithoutMoneyAsSittingOut(result);
+			setPlayersWithoutMoneyAsSittingOut();
+			sendBuyinInfoToPlayersWithoutMoney();
+			
 			TimingProfile timing = settings.getTiming();
 			log.debug("Schedule hand over timeout in: {}", timing != null ? timing.getTime(Periods.START_NEW_HAND) : 0);
 			serverAdapter.scheduleTimeout(timing.getTime(Periods.START_NEW_HAND));
@@ -445,10 +447,23 @@ public class PokerState implements Serializable, IPokerState {
 		
 	}
 	
-	public void notifyHandEnd(HandResult result, HandEndStatus status) {
-		serverAdapter.notifyHandEnd(result, status);
+	/**
+	 * Send to all players in the current hand that do not have enough money to pay ante
+	 * to buy in more
+	 */
+	@VisibleForTesting
+	protected void sendBuyinInfoToPlayersWithoutMoney() {
+		for (PokerPlayer player : seatingMap.values()) {
+			
+			boolean canPlayerAffordEntryBet = gameType.canPlayerAffordEntryBet(player, settings, true);
+			if (!canPlayerAffordEntryBet) {
+				if (!player.isBuyInRequestActive()) {
+				    notifyBuyinInfo(player.getId(), true);
+				}
+			}
+		}
 	}
-
+	
 	/**
 	 * If a player has no money left he should be set as sitting out to 
 	 * prevent him to be included in new games. 
@@ -456,20 +471,22 @@ public class PokerState implements Serializable, IPokerState {
 	 * @param handResult
 	 */
 	@VisibleForTesting
-	protected void setPlayersWithoutMoneyAsSittingOut(HandResult handResult) {
+	protected void setPlayersWithoutMoneyAsSittingOut() {
 		ThreadLocalProfiler.add("PokerState.setPlayersWithoutMoneyAsSittingOut");
-		for (PokerPlayer player : handResult.getResults().keySet()) {
-			long totalBalance = player.getBalance() + player.getBalanceNotInHand();
+		for (PokerPlayer player : seatingMap.values()) {
 			
-			if (totalBalance < settings.getAnteLevel()) {
+			boolean canPlayerAffordEntryBet = gameType.canPlayerAffordEntryBet(player, settings, true);
+			
+			if (!canPlayerAffordEntryBet) {
 				playerIsSittingOut(player.getId(), SitOutStatus.SITTING_OUT);
-				
-				if (!player.isBuyInRequestActive()) {
-				    notifyBuyinInfo(player.getId(), true);
-				}
 			}
 		}
 	}
+
+	public void notifyHandEnd(HandResult result, HandEndStatus status) {
+		serverAdapter.notifyHandEnd(result, status);
+	}
+
 
 	@VisibleForTesting
 	public void commitPendingBalances() {
