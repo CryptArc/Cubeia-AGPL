@@ -12,6 +12,7 @@ import com.cubeia.firebase.api.game.player.PlayerStatus;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TableScheduler;
 import com.cubeia.games.poker.logic.TimeoutCache;
+import com.cubeia.poker.MockPlayer;
 import com.cubeia.poker.PokerState;
 
 
@@ -44,6 +45,7 @@ public class DisconnectHandlerTest {
 		when(table.getId()).thenReturn(66);
 		
 		when(state.isWaitingForPlayerToAct(1)).thenReturn(true);
+		when(state.getPokerPlayer(1)).thenReturn(new MockPlayer(66));
 	}
 	
 	@Test
