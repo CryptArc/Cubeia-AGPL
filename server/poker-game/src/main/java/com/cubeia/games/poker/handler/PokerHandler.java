@@ -140,14 +140,19 @@ public class PokerHandler extends DefaultPokerHandler {
                         
                         BuyInResponse buyInResponse = new BuyInResponse((int) pokerPlayer.getBalance(), (int) pokerPlayer.getPendingBalanceSum(),  0, BuyInResultCode.PENDING);
                         sendBuyInResponseToPlayer(pokerPlayer, buyInResponse);
-                    
+                        
+                        // sit in the player
+                        state.playerIsSittingIn(playerId);
+                        
+                        // sit in the player when the buyin is done
+                        pokerPlayer.setSitInAfterSuccessfulBuyIn(true);
                     } else {
                         ReserveFailedResponse failResponse = new ReserveFailedResponse(pokerPlayer.getPlayerSessionId(), AMOUNT_TOO_HIGH, "Requested buy in plus balance cannot be more than max buy in", false);
                         
                         ReserveCallback callback = cashGameBackend.getCallbackFactory().createReserveCallback(table);
                         callback.requestFailed(failResponse);
                     }
-                    pokerPlayer.setSitInAfterSuccessfulBuyIn(true);
+                  
                 }else{
                     log.warn("PlayerSessionId was null when Poker Player tried to buy in. Table["+table.getId()+"], Request["+packet+"]");
                 }

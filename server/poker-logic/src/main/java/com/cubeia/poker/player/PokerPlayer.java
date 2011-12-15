@@ -210,4 +210,11 @@ public interface PokerPlayer extends Serializable {
 
     public boolean isBuyInRequestActive();
     
+    /**
+     * @return true if the player has used up his available disconnect extra time
+     */
+    public boolean isDisconnectTimeoutUsed();
+
+	public void setDisconnectTimeoutUsed(boolean disconnectTimeoutUsed);
+    
 }

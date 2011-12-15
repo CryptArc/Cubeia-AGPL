@@ -64,7 +64,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	
     private long requestedBuyInAmount;
     
-
+    protected boolean disconnectTimeoutUsed = false;
 
 	/**
 	 * the unused amount of chips kept by the player
@@ -370,6 +370,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
 	    clearHand();
         setHasActed(false);
         setHasFolded(false);
+        setDisconnectTimeoutUsed(false);
 	}
 	
 	@Override
@@ -408,4 +409,12 @@ public class DefaultPokerPlayer implements PokerPlayer {
     public boolean isBuyInRequestActive() {
         return buyInRequestActive;
     }
+
+	public boolean isDisconnectTimeoutUsed() {
+		return disconnectTimeoutUsed;
+	}
+
+	public void setDisconnectTimeoutUsed(boolean disconnectTimeoutUsed) {
+		this.disconnectTimeoutUsed = disconnectTimeoutUsed;
+	}
 }

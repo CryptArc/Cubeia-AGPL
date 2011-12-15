@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.cubeia.firebase.api.game.player.PlayerStatus;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.poker.PokerState;
+import com.cubeia.poker.player.PokerPlayer;
 import com.google.inject.Inject;
 
 public class DisconnectHandler {
@@ -46,9 +47,16 @@ public class DisconnectHandler {
 	 */
 	private void handleDisconnected(int playerId) {
 		boolean playerToAct = state.isWaitingForPlayerToAct(playerId);
-		log.debug("Disconnected player {} is current player: {}", playerId, playerToAct);
+		log.debug("Disconnected player {}, current player: {}", playerId, playerToAct);
 		if (playerToAct) {
-			adapter.notifyDisconnected(playerId);
+			PokerPlayer pokerPlayer = state.getPokerPlayer(playerId);
+			log.debug("Disconnected player {} has used disconnect timer: {}", playerId, pokerPlayer.isDisconnectTimeoutUsed());
+			if (!pokerPlayer.isDisconnectTimeoutUsed()) {
+				adapter.notifyDisconnected(playerId);
+				pokerPlayer.setDisconnectTimeoutUsed(true);
+			} else {
+				log.debug("Player[{}] disconnected but will not be granted extra time since the disconnect time used flag is set", playerId);
+			}
 		}
 	}
 }
