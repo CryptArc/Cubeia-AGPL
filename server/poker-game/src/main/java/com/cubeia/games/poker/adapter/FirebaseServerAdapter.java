@@ -80,7 +80,7 @@ import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.FirebaseState;
-import com.cubeia.games.poker.adapter.BuyInLimitsCalculator.MinAndMaxBuyInResult;
+import com.cubeia.games.poker.adapter.BuyInCalculator.MinAndMaxBuyInResult;
 import com.cubeia.games.poker.cache.ActionCache;
 import com.cubeia.games.poker.entity.HandIdentifier;
 import com.cubeia.games.poker.handler.Trigger;
@@ -153,7 +153,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
     PlayerUnseater playerUnseater;
     
     @Inject @VisibleForTesting
-    BuyInLimitsCalculator buyInLimitsCalculator;
+    BuyInCalculator buyInCalculator;
     
 	@VisibleForTesting
 	ProtocolFactory protocolFactory = new ProtocolFactory();
@@ -350,18 +350,28 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
 	@Override
 	public void performPendingBuyIns(Collection<PokerPlayer> players) {
-	    
 	    for (PokerPlayer player : players) {
 	        if (!player.isBuyInRequestActive()  &&   player.getRequestedBuyInAmount() > 0) {
 	            PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) player;
-    	        ReserveCallback callback = backend.getCallbackFactory().createReserveCallback(table);
     	        
-    	        log.debug("sending reserve request to backend: player id = {}, amount = {}", player.getId(), player.getRequestedBuyInAmount());
+    	        int playerBalanceIncludingPending = (int) (pokerPlayer.getBalance() + pokerPlayer.getBalanceNotInHand());
+                int amountToBuyIn = buyInCalculator.calculateAmountToReserve(
+                    state.getMaxBuyIn(), playerBalanceIncludingPending, (int) player.getRequestedBuyInAmount());
     	        
-    	        ReserveRequest reserveRequest = new ReserveRequest(pokerPlayer.getPlayerSessionId(), getFirebaseState().getHandCount(), 
-    	            (int) player.getRequestedBuyInAmount());
-    	        backend.reserve(reserveRequest, callback);
-    	        player.buyInRequestActive();
+                if (amountToBuyIn > 0) {
+                    log.debug("sending reserve request to backend: player id = {}, amount = {}, amount requested by player = {}", 
+                        new Object[] {player.getId(), amountToBuyIn, player.getRequestedBuyInAmount()});
+                    
+                    ReserveCallback callback = backend.getCallbackFactory().createReserveCallback(table);
+        	        ReserveRequest reserveRequest = new ReserveRequest(pokerPlayer.getPlayerSessionId(), getFirebaseState().getHandCount(), 
+        	            amountToBuyIn);
+        	        player.setRequestedBuyInAmount(amountToBuyIn);
+        	        backend.reserve(reserveRequest, callback);
+        	        player.buyInRequestActive();
+                } else {
+                    log.debug("wont reserve money, max reached: player id = {}, amount wanted = {}", player.getId(), player.getRequestedBuyInAmount());
+                    player.clearRequestedBuyInAmountAndRequest();
+                }
 	        }
 	    }
 	}
@@ -385,7 +395,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 			}
 			
 			if (resp.resultCode != BuyInInfoResultCode.UNSPECIFIED_ERROR) {
-    			MinAndMaxBuyInResult buyInRange = buyInLimitsCalculator.calculateBuyInLimits(
+    			MinAndMaxBuyInResult buyInRange = buyInCalculator.calculateBuyInLimits(
     			    state.getMinBuyIn(), state.getMaxBuyIn(), state.getAnteLevel(), playerBalance);
     			resp.minAmount = buyInRange.getMinBuyIn();
     			resp.maxAmount = buyInRange.getMaxBuyIn();

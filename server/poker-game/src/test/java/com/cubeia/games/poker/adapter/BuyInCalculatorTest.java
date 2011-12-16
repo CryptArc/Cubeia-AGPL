@@ -1,21 +1,20 @@
 package com.cubeia.games.poker.adapter;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import com.cubeia.games.poker.adapter.BuyInLimitsCalculator.MinAndMaxBuyInResult;
+import com.cubeia.games.poker.adapter.BuyInCalculator.MinAndMaxBuyInResult;
 
-public class BuyInLimitsCalculatorTest {
+public class BuyInCalculatorTest {
 
     @Test
     public void testCalculateBelowMax() {
         int tableMinBuyIn = 100;
         int tableMaxBuyIn = 20000;
         int anteLevel = 20;
-        BuyInLimitsCalculator blc = new BuyInLimitsCalculator();
+        BuyInCalculator blc = new BuyInCalculator();
         
         MinAndMaxBuyInResult result;
         
@@ -50,7 +49,7 @@ public class BuyInLimitsCalculatorTest {
         int tableMinBuyIn = 100;
         int tableMaxBuyIn = 20000;
         int anteLevel = 20;
-        BuyInLimitsCalculator blc = new BuyInLimitsCalculator();
+        BuyInCalculator blc = new BuyInCalculator();
         
         MinAndMaxBuyInResult result;
 
@@ -71,7 +70,7 @@ public class BuyInLimitsCalculatorTest {
         int tableMinBuyIn = 100;
         int tableMaxBuyIn = 20000;
         int anteLevel = 20;
-        BuyInLimitsCalculator blc = new BuyInLimitsCalculator();
+        BuyInCalculator blc = new BuyInCalculator();
         
         MinAndMaxBuyInResult result;
 
@@ -86,4 +85,15 @@ public class BuyInLimitsCalculatorTest {
         assertThat(result.isBuyInPossible(), is(false));
     }
 
+    @Test
+    public void testCalculateReserveAmount() {
+        int tableMaxBuyIn = 20000;
+        BuyInCalculator blc = new BuyInCalculator();
+        
+        assertThat(blc.calculateAmountToReserve(tableMaxBuyIn, 5000, 20000), is(20000 - 5000));
+        assertThat(blc.calculateAmountToReserve(tableMaxBuyIn, 5000, 2000), is(2000));
+        assertThat(blc.calculateAmountToReserve(tableMaxBuyIn, 0, 20000), is(20000));
+        assertThat(blc.calculateAmountToReserve(tableMaxBuyIn, 20000, 20000), is(0));
+    }
+    
 }

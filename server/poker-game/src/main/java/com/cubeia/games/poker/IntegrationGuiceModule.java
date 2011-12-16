@@ -22,7 +22,7 @@ import com.cubeia.firebase.api.game.table.TournamentTableListener;
 import com.cubeia.firebase.guice.game.EventScoped;
 import com.cubeia.games.poker.adapter.ActionSequenceGenerator;
 import com.cubeia.games.poker.adapter.ActionTransformer;
-import com.cubeia.games.poker.adapter.BuyInLimitsCalculator;
+import com.cubeia.games.poker.adapter.BuyInCalculator;
 import com.cubeia.games.poker.adapter.FirebaseServerAdapter;
 import com.cubeia.games.poker.adapter.HandHistoryReportAdapter;
 import com.cubeia.games.poker.adapter.LobbyUpdater;
@@ -54,6 +54,6 @@ public class IntegrationGuiceModule extends AbstractModule {
 		bind(TableCloseHandlerImpl.class).in(EventScoped.class);
 		bind(LobbyUpdater.class).in(Singleton.class);
 		bind(PlayerUnseater.class).in(Singleton.class);
-		bind(BuyInLimitsCalculator.class).in(Singleton.class);
+		bind(BuyInCalculator.class).in(Singleton.class);
 	}
 }

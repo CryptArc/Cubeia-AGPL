@@ -478,6 +478,6 @@ public class BettingRound implements Round, BettingRoundContext {
 	
 	@Override
 	public boolean isWaitingForPlayer(int playerId) {
-		return playerId == playerToAct;
+		return playerToAct == null ? false : playerId == playerToAct;
 	}
 }

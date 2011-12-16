@@ -138,8 +138,7 @@ public class PokerHandler extends DefaultPokerHandler {
                     if (sum <= state.getMaxBuyIn() && sum >= state.getMinBuyIn()) {
                         state.handleBuyInRequest(pokerPlayer, packet.amount);
                         
-                        BuyInResponse buyInResponse = new BuyInResponse((int) pokerPlayer.getBalance(), (int) pokerPlayer.getPendingBalanceSum(), 
-                            0, BuyInResultCode.PENDING);
+                        BuyInResponse buyInResponse = new BuyInResponse((int) pokerPlayer.getBalance(), (int) pokerPlayer.getPendingBalanceSum(),  0, BuyInResultCode.PENDING);
                         sendBuyInResponseToPlayer(pokerPlayer, buyInResponse);
                         
                         // sit in the player
@@ -148,9 +147,7 @@ public class PokerHandler extends DefaultPokerHandler {
                         // sit in the player when the buyin is done
                         pokerPlayer.setSitInAfterSuccessfulBuyIn(true);
                     } else {
-                        ReserveFailedResponse failResponse = new ReserveFailedResponse(
-                            pokerPlayer.getPlayerSessionId(), AMOUNT_TOO_HIGH, 
-                            "Requested buy in plus balance cannot be more than max buy in", false);
+                        ReserveFailedResponse failResponse = new ReserveFailedResponse(pokerPlayer.getPlayerSessionId(), AMOUNT_TOO_HIGH, "Requested buy in plus balance cannot be more than max buy in", false);
                         
                         ReserveCallback callback = cashGameBackend.getCallbackFactory().createReserveCallback(table);
                         callback.requestFailed(failResponse);
@@ -196,9 +193,15 @@ public class PokerHandler extends DefaultPokerHandler {
         GameDataAction gameDataAction = new GameDataAction(playerId, table.getId());
         gameDataAction.setData(styx.pack(buyInResponse));
         table.getNotifier().sendToClient(pokerPlayer.getId(), gameDataAction);
-        
         if (cache != null) {
-			cache.addPrivateAction(table.getId(), playerId, gameDataAction);
+			/*
+			 * We're not adding this to the cache as it will never be removed when finished,
+			 * so if you reserve and get "pending" then leave the table and return, it will still
+			 * say "pending" in the client as you get the cache. By removing this in the cache
+			 * the other version will be true: if you have pending money and reconnect it will
+			 * not be shown in the client... /LJN
+			 */
+        	// cache.addPrivateAction(table.getId(), playerId, gameDataAction);
 		}
     }
 
