@@ -129,7 +129,7 @@ public class TableCloseHandlerImpl implements TableCloseHandler {
 	}
 
     private void sendErrorMessageToClient(Table table, String handId) {
-        sendMessageToClient(table, Enums.ErrorCode.UNSPECIFIED_ERROR, handId);
+        sendMessageToClient(table, Enums.ErrorCode.TABLE_CLOSING_FORCED, handId);
     }
 
 	protected void sendMessageToClient(Table table, Enums.ErrorCode errorCode, String handId) {
