@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<project>
+	<parent>
+		<groupId>com.cubeia.games</groupId>
+		<artifactId>poker</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.cubeia.games</groupId>
+	<artifactId>poker-uar</artifactId>
+	<name>Poker Unified Archive</name>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>firebase-uar</packaging>
+
+	<dependencies>
+
+		<!-- Common dependencies. -->
+		<dependency>
+			<!-- <groupId>com.cubeia.games</groupId> <artifactId>poker-protocol</artifactId> -->
+			<groupId>se.jadestone.dicearena</groupId>
+			<artifactId>poker-protocol</artifactId>
+		</dependency>
+
+		<!-- Firebase types. -->
+		<dependency>
+			<groupId>com.cubeia.games</groupId>
+			<artifactId>poker-game</artifactId>
+			<type>firebase-gar</type>
+		</dependency>
+
+		<dependency>
+			<groupId>com.cubeia.games</groupId>
+			<artifactId>poker-tournament</artifactId>
+			<type>firebase-tar</type>
+		</dependency>
+
+
+
+		<!-- Services needed to Firebase:Run plugin -->
+
+		<dependency>
+			<groupId>com.cubeia.games</groupId>
+			<artifactId>backend-service-mock</artifactId>
+			<type>firebase-sar</type>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.cubeia.network.wallet.firebase</groupId>
+			<artifactId>mock-wallet-service</artifactId>
+			<version>1.2.3</version>
+			<type>firebase-sar</type>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.cubeia.games</groupId>
+			<artifactId>jg-mock-login</artifactId>
+			<version>1.0-SNAPSHOT</version>
+			<type>firebase-sar</type>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.cubeia.games.handhistory</groupId>
+			<artifactId>hh-collect</artifactId>
+			<version>${project.version}</version>
+			<type>firebase-sar</type>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.cubeia.games.poker</groupId>
+			<artifactId>hand-debugger-service</artifactId>
+			<version>1.0-SNAPSHOT</version>
+			<type>firebase-sar</type>
+			<scope>provided</scope>
+		</dependency>
+
+	<dependency>
+			<groupId>com.cubeia.games.poker</groupId>
+			<artifactId>bot-service</artifactId>
+			<version>1.0-SNAPSHOT</version>
+			<type>firebase-sar</type>
+			<scope>provided</scope>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.cubeia.tools</groupId>
+				<artifactId>firebase-maven-plugin</artifactId>
+				<version>1.7.3.1-CE</version>
+				<configuration>
+					<!-- enable copy of overlay files -->
+					<overlaysEnabled>true</overlaysEnabled>
+
+					<!-- copy overlay files from this directory to the firebase root -->
+					<overlaySourceDirectory>${basedir}/src/test/resources/firebase</overlaySourceDirectory>
+
+					<!-- included Firebase archives with scope provided -->
+					<includeProvidedArchives>true</includeProvidedArchives>
+
+					<!-- delete temp firebase instance on exit, set to false for faster 
+						startup -->
+					<deleteOnExit>false</deleteOnExit>
+					<deleteOnStart>false</deleteOnStart>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
