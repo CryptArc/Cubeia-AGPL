@@ -12,10 +12,8 @@
     <module>poker-protocol</module>
     <module>poker-logic</module>
     <module>poker-logic-blinds</module>
-    <!--module>poker-cep-service</module--> <!-- depends on stuff not in public repo (yet) -->
     <module>poker-tournament</module>
     <module>poker-uar</module>
-    <module>jg-mock-login-handler</module>
     <module>backend</module>
     <module>backend-service-contract</module>
     <module>backend-service-mock</module>

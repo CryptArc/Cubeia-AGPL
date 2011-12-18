@@ -2,7 +2,6 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.cubeia.games</groupId>
   <artifactId>poker-bot</artifactId>
   <packaging>jar</packaging>
   <name>PokerBot</name>
@@ -29,19 +28,12 @@
   <dependency>
       <groupId>se.jadestone.dicearena</groupId>
       <artifactId>poker-protocol</artifactId>
-	   <version>1-TRUNK-SNAPSHOT</version>
     </dependency>
     
     <dependency>
       <groupId>com.cubeia.tools</groupId>
 	  <artifactId>firebase-bots</artifactId>
       <version>1.7.3-SNAPSHOT</version>
-    </dependency>
-    
-    <dependency>
-    	<groupId>se.jadestone.dicearena</groupId>
-    	<artifactId>service-protocol</artifactId>
-    	<version>1-TRUNK-SNAPSHOT</version>
     </dependency>
 
   </dependencies>
