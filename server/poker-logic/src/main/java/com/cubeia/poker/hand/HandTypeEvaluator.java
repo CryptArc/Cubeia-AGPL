@@ -1,5 +1,7 @@
 package com.cubeia.poker.hand;
 
+import java.util.Comparator;
+
 public interface HandTypeEvaluator {
 
 	/**
@@ -12,4 +14,8 @@ public interface HandTypeEvaluator {
 	 * the given cards.
 	 */
 	public HandInfo getBestHandInfo(Hand hand);
+
+    Comparator<Hand> createHandComparator(int playersInPot);
+	
+	
 }

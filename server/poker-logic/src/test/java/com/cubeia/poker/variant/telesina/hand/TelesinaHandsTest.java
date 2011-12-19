@@ -1,4 +1,4 @@
-package com.cubeia.poker.variant.telesina;
+package com.cubeia.poker.variant.telesina.hand;
 
 import static com.cubeia.poker.action.PokerActionType.ANTE;
 import static com.cubeia.poker.action.PokerActionType.BET;
@@ -29,6 +29,8 @@ import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.variant.telesina.TelesinaDeck;
+import com.cubeia.poker.variant.telesina.TelesinaDeckFactory;
 
 public class TelesinaHandsTest extends AbstractTelesinaHandTester {
 

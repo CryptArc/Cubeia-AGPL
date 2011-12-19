@@ -1,4 +1,4 @@
-package com.cubeia.poker.variant.telesina;
+package com.cubeia.poker.variant.telesina.hand;
 
 import static com.cubeia.poker.hand.HandType.ROYAL_STRAIGHT_FLUSH;
 
@@ -13,6 +13,7 @@ import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.hand.HandStrength;
 import com.cubeia.poker.hand.HandType;
 import com.cubeia.poker.hand.Suit;
+import com.cubeia.poker.variant.telesina.TelesinaCardComparator;
 
 /**
  * This class is a specialization of HandStrengthComparator for Telesina rules
@@ -25,31 +26,34 @@ public class TelesinaHandComparator implements Comparator<Hand> {
 
 	private final static Hand HIGHEST_ROYAL_STRAIGHT_FLUSH = new Hand("TH JH QH KH AH");
 
+    private final int playersInPot;
+
 	
 	
 	/**
 	 * Needed by JBoss serialization.
 	 */
 	@SuppressWarnings("unused")
-    private TelesinaHandComparator() {}
+    private TelesinaHandComparator() {
+	    playersInPot = 0;
+	}
 	
 	/**
-	 * 
-	 * @param deckLowestRank the rank of the lowest card not stripped from the deck
+	 * Create a new telesina hand comparator. Package private as this comparator 
+	 * must be created by the factory method: {@link TelesinaHandStrengthEvaluator#createHandComparator(int)}.
+	 * @param evaluator
+	 * @param playersInPot
 	 */
-//	public TelesinaHandComparator(Rank deckLowestRank) {
-//		this.evaluator = new TelesinaHandStrengthEvaluator(deckLowestRank);
-//	}
-
-	public TelesinaHandComparator(TelesinaHandStrengthEvaluator evaluator) {
+	TelesinaHandComparator(TelesinaHandStrengthEvaluator evaluator, int playersInPot) {
 		this.evaluator = evaluator;
+        this.playersInPot = playersInPot;
 	}
 	
 	public int compare(Hand h1, Hand h2) {
 		HandStrength c1Strength = evaluator.getBestHandStrength(h1);
 		HandStrength c2Strength = evaluator.getBestHandStrength(h2);
 		
-		if (checkForRoyals(c1Strength, c2Strength)) {
+		if (playersInPot == 2  &&  checkForRoyals(c1Strength, c2Strength)) {
 	        List<Card> highestRoyal = HIGHEST_ROYAL_STRAIGHT_FLUSH.getCards();
 	        List<Card> lowestRoyal = evaluator.getLowestStraightFlushCards();
 		    

@@ -85,8 +85,13 @@ public class TexasHoldem implements GameType, RoundVisitor {
 	
 	private final RNGProvider rngProvider;
 	
-	private HandResultCalculator handResultCalculator = new HandResultCalculator(Collections.reverseOrder(new TexasHoldemHandComparator()));
+	private HandResultCalculator handResultCalculator = new HandResultCalculator(
+	    new TexasHoldemHandCalculator());
+//	    
+//	    Collections.reverseOrder(new TexasHoldemHandComparator()));
 
+	
+	
 	public TexasHoldem(RNGProvider rngProvider, PokerState state) {
 	    this.rngProvider = rngProvider;
 		this.state = state;

@@ -1,30 +1,27 @@
-package com.cubeia.poker.variant.telesina;
+package com.cubeia.poker.variant.telesina.hand;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.Test;
-import org.junit.matchers.JUnitMatchers;
 
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.hand.Rank;
-import com.google.inject.matcher.Matchers;
 
 public class TelesinaHandComparatorTest {
 
     
-    private TelesinaHandComparator createComparatorByLowestRank(Rank lowestRank) {
+    private TelesinaHandComparator createComparatorByLowestRank(Rank lowestRank, int playersInHand) {
         TelesinaHandStrengthEvaluator evaluator = new TelesinaHandStrengthEvaluator(lowestRank);
-        return new TelesinaHandComparator(evaluator);
+        return new TelesinaHandComparator(evaluator, playersInHand);
     }
     
 	@Test
 	public void testShortHandsOneCard() {
-		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN);
+		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN, 3);
 		
 		// high card wins
 		assertTrue(comp.compare(new Hand("AS"), new Hand("KC")) > 0);
@@ -42,7 +39,7 @@ public class TelesinaHandComparatorTest {
 	
 	@Test
 	public void testShortHandsTwoCards() {
-		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN);
+		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN, 3);
 		
 		// high card wins
 		assertTrue(comp.compare(new Hand("AS TD"), new Hand("KH QH")) > 0);
@@ -66,7 +63,7 @@ public class TelesinaHandComparatorTest {
 	
 	@Test
 	public void testShortHandsThreeCards() {
-		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN);
+		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN, 3);
 		
 		// three of a kinds found
 		assertTrue(comp.compare(new Hand("8S 8H 8D"), new Hand("AS AC QC")) > 0);
@@ -77,7 +74,7 @@ public class TelesinaHandComparatorTest {
 	
 	@Test
 	public void testShortHandsFourCards() {
-		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN);
+		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN, 3);
 		
 		// three of a kind beats two pair
 		assertTrue(comp.compare(new Hand("8S 8H 8D 7C"), new Hand("AS AC QC QH")) > 0);
@@ -101,7 +98,7 @@ public class TelesinaHandComparatorTest {
 	
 	@Test
 	public void testHighCard() {
-		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN);
+		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN, 3);
 		
 		// highest rank wins
 		assertTrue(comp.compare(new Hand("AS KC QH JH 7S"), new Hand("KC QH JH TD 7S")) > 0);
@@ -122,7 +119,7 @@ public class TelesinaHandComparatorTest {
 	
 	@Test
 	public void testPairs() {
-		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN);
+		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN, 3);
 		
 		// pair beats high card
 		assertTrue(comp.compare(new Hand("8S 8C TH 9H 7S"), new Hand("AS KC QH JH 7S")) > 0);
@@ -157,7 +154,7 @@ public class TelesinaHandComparatorTest {
 	
 	@Test
 	public void testPairs2() {
-		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN);
+		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN, 3);
 		
 		// kicker decides
 		assertTrue(comp.compare(new Hand("AS AC KS 8H 7S"), new Hand("AD AH QS 8H 7S")) > 0);
@@ -167,7 +164,7 @@ public class TelesinaHandComparatorTest {
 	
 	@Test
 	public void testTwoPairs() {
-		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN);
+		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN, 3);
 		
 		// two pairs is better than one pair
 		assertTrue(comp.compare(new Hand("8S 8D 9S 9D TC"), new Hand("AS AC KH QH JH")) > 0);
@@ -209,13 +206,13 @@ public class TelesinaHandComparatorTest {
 	
 	@Test
 	public void testTwoPair2() {
-		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN);
+		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN, 3);
 		assertTrue(comp.compare(new Hand("AH AD KS KC JD"), new Hand("AS AC KH KD JD")) > 0);
 	}
 	
 	@Test
 	public void testThreeOfAKind() {
-		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN);
+		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN, 3);
 
 		// three of a kind beats two pair
 		assertTrue(comp.compare(new Hand("AS AC AD 7S 8D"), new Hand("AS AC KH KS JH")) > 0);
@@ -238,7 +235,7 @@ public class TelesinaHandComparatorTest {
 	
 	@Test
 	public void testStraight() {
-		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN);
+		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN, 3);
 		
 		// straight beats three of a kind
 		assertTrue(comp.compare(new Hand("7D 8C 9H TS JH"), new Hand("KS KC 7D AS KD")) > 0);
@@ -284,10 +281,10 @@ public class TelesinaHandComparatorTest {
 		assertTrue(comp.compare(new Hand("TS JS QS KH AD"), new Hand("TH JH QH KC AD")) > 0);
 		
 		// strippedness of deck decides if ace may be low
-		comp = createComparatorByLowestRank(Rank.NINE);
+		comp = createComparatorByLowestRank(Rank.NINE, 3);
 		assertTrue(comp.compare(new Hand("AC 9H TS JD QH"), new Hand("KS KC 7D AS KD")) > 0);
 		
-		comp = createComparatorByLowestRank(Rank.FIVE);
+		comp = createComparatorByLowestRank(Rank.FIVE, 3);
 		assertTrue(comp.compare(new Hand("AC 5H 6S 7D 8H"), new Hand("KS KC 7D AS KD")) > 0);
 		assertTrue(comp.compare(new Hand("AC 6H 7S 8D 9H"), new Hand("KS KC 7D AS KD")) < 0);
 		assertTrue(comp.compare(new Hand("AC 9H TS JD QH"), new Hand("KS KC 7D AS KD")) < 0);
@@ -295,7 +292,7 @@ public class TelesinaHandComparatorTest {
 	
 	@Test
 	public void testFullHouse() {
-		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN);
+		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN, 3);
 		
 		// full house beats straight
 		assertTrue(comp.compare(new Hand("8D 8H 8C 9D 9S"), new Hand("TS JS QS KH AD")) > 0);
@@ -324,7 +321,7 @@ public class TelesinaHandComparatorTest {
 	
 	@Test
 	public void testFlush() {
-		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN);
+		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN, 3);
 		
 		// flush beats full house
 		assertTrue(comp.compare(new Hand("8D TD QD KD AD"), new Hand("KD KH KC 9C 9H")) > 0);
@@ -354,7 +351,7 @@ public class TelesinaHandComparatorTest {
 		assertTrue(comp.compare(new Hand("7D 8C 9D TD JD QD"), new Hand("AS AD AH KS KH")) > 0);
 		
 		// if same suit flush high card decides
-		comp = createComparatorByLowestRank(Rank.FIVE);
+		comp = createComparatorByLowestRank(Rank.FIVE, 3);
 		assertTrue(comp.compare(new Hand("5D 6D 7D JD AD"), new Hand("8D 9D TD QD KD")) > 0);
 		
 		// ... with second card if highest shared
@@ -363,7 +360,7 @@ public class TelesinaHandComparatorTest {
 	
 	@Test
 	public void testFourOfAKind() {
-		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN);
+		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN, 3);
 		
 		// four of a kind beats flush
 		assertTrue(comp.compare(new Hand("9D 9S 9C 9H TS"), new Hand("7D 8D 9D KD AD")) > 0);
@@ -398,7 +395,7 @@ public class TelesinaHandComparatorTest {
 	
 	@Test
 	public void testStraightFlush() {
-		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN);
+		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN, 3);
 		
 		// straight flush beats four of a kind
 		assertTrue(comp.compare(new Hand("7S 8S 9S TS JS"), new Hand("AD AS AC AH TC")) > 0);
@@ -442,16 +439,16 @@ public class TelesinaHandComparatorTest {
 		assertTrue(comp.compare(new Hand("8H 9H TH JH QH"), new Hand("8D 9D TD JD QD")) > 0);
 
 		// strippedness of deck decides if ace may be low
-		comp = createComparatorByLowestRank(Rank.FIVE);
+		comp = createComparatorByLowestRank(Rank.FIVE, 3);
 		assertTrue(comp.compare(new Hand("AS 5S 6S 7S 8S"), new Hand("AD AS AC AH TC")) > 0);
 		
-		comp = createComparatorByLowestRank(Rank.NINE);
+		comp = createComparatorByLowestRank(Rank.NINE, 3);
 		assertTrue(comp.compare(new Hand("AS 9S TS JS QS"), new Hand("AD AS AC AH TC")) > 0);
 	}
 	
     @Test
     public void testStraightFlushLowestBeatsHighestHeadsUp() {
-        TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN);
+        TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN, 2);
         
         Hand highestHearts = new Hand("TH JH QH KH AH");
         Hand lowestSpades = new Hand("AS 7S 8S 9S TS");
@@ -467,7 +464,7 @@ public class TelesinaHandComparatorTest {
 
         
         // strippedness of deck decides if ace may be low
-        comp = createComparatorByLowestRank(Rank.FIVE);
+        comp = createComparatorByLowestRank(Rank.FIVE, 2);
         lowestSpades = new Hand("AS 5S 6S 7S 8S");
         assertThat(comp.compare(lowestSpades, highestHearts) > 0, is(true));
         assertThat(comp.compare(highestHearts, lowestSpades) < 0, is(true));
@@ -475,7 +472,7 @@ public class TelesinaHandComparatorTest {
         assertThat(comp.compare(highestHearts, highestClubs) > 0, is(true));
         assertThat(comp.compare(highestClubs, lowestSpades) > 0, is(true));
         
-        comp = createComparatorByLowestRank(Rank.NINE);
+        comp = createComparatorByLowestRank(Rank.NINE, 2);
         lowestSpades = new Hand("AS 9S TS JS QS");
         assertThat(comp.compare(lowestSpades, highestHearts) > 0, is(true));
         assertThat(comp.compare(highestHearts, lowestSpades) < 0, is(true));
@@ -483,10 +480,24 @@ public class TelesinaHandComparatorTest {
         assertThat(comp.compare(highestHearts, highestClubs) > 0, is(true));
         assertThat(comp.compare(highestClubs, lowestSpades) > 0, is(true));
     }
-	
+    
+    @Test
+    public void testStraightFlushLowestDontBeatHighestWhenNotHeadsUp() {
+        TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN, 3);
+        
+        Hand highestHearts = new Hand("TH JH QH KH AH");
+        Hand lowestSpades = new Hand("AS 7S 8S 9S TS");
+        Hand highestClubs = new Hand("TC JC QC KC AC");
+        
+        assertThat(comp.compare(lowestSpades, highestHearts) > 0, is(false));
+        assertThat(comp.compare(highestHearts, lowestSpades) < 0, is(false));
+        assertThat(comp.compare(highestHearts, highestClubs) > 0, is(true));
+        assertThat(comp.compare(highestClubs, lowestSpades) > 0, is(true));
+    }
+    
 	@Test
 	public void testEqualHandsAreEqual() {
-		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN);
+		TelesinaHandComparator comp = createComparatorByLowestRank(Rank.SEVEN, 3);
 
 		assertEquals(0, comp.compare(new Hand("7S 8S 9C TC TS"), new Hand("7S 8S 9C TC TS")));
 		

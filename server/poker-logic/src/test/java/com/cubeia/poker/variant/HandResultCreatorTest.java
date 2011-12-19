@@ -35,8 +35,7 @@ import com.cubeia.poker.rake.LinearRakeWithLimitCalculator;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
 import com.cubeia.poker.util.HandResultCalculator;
-import com.cubeia.poker.variant.telesina.TelesinaHandComparator;
-import com.cubeia.poker.variant.telesina.TelesinaHandStrengthEvaluator;
+import com.cubeia.poker.variant.telesina.hand.TelesinaHandStrengthEvaluator;
 
 public class HandResultCreatorTest {
 
@@ -62,7 +61,8 @@ public class HandResultCreatorTest {
 
 	private void setupStuff(String velaCard){
 		hte = new TelesinaHandStrengthEvaluator(Rank.SEVEN);
-		resultCalculator = new HandResultCalculator(new TelesinaHandComparator(hte));
+		resultCalculator = new HandResultCalculator(hte);
+		
 		creator = new HandResultCreator(hte);
 		playerMap = new HashMap<Integer, PokerPlayer>();
 		communityCards = Card.list(velaCard);

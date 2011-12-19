@@ -1,4 +1,4 @@
-package com.cubeia.poker.variant.telesina;
+package com.cubeia.poker.variant.telesina.hand;
 
 import static com.cubeia.poker.hand.Suit.SPADES;
 
@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.cubeia.poker.hand.Card;
@@ -38,14 +39,19 @@ public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Seriali
         this.deckLowestRank = deckLowestRank;
         typeCalculator = new HandTypeCheckCalculator(deckLowestRank);
 	}
-
+	
 	@Override
 	public HandInfo getBestHandInfo(Hand hand) {
 		return getBestHandStrength(hand);
 	}
 	
+	@Override
+	public Comparator<Hand> createHandComparator(int playersInPot) {
+	    return new TelesinaHandComparator(this, playersInPot);
+	}
+	
 	private List<Card> findBestHand(Hand hand) {
-		TelesinaHandComparator comp = new TelesinaHandComparator(this);
+		TelesinaHandComparator comp = new TelesinaHandComparator(this, 1);
 		Combinator<Card> comb = new Combinator<Card>(hand.getCards(), 5);
 		List<Card> best = comb.next();
 

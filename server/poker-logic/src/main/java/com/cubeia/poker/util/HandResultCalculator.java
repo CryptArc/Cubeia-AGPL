@@ -27,7 +27,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.cubeia.poker.hand.Hand;
+import com.cubeia.poker.hand.HandTypeEvaluator;
 import com.cubeia.poker.model.PlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.Pot;
@@ -41,10 +41,11 @@ public class HandResultCalculator implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	private Comparator<Hand> comparator;
+    private final HandTypeEvaluator handEvaluator;
+	
 
-	public HandResultCalculator(Comparator<Hand> comparator) {
-		this.comparator = comparator;
+	public HandResultCalculator(HandTypeEvaluator handEvaluator) {
+        this.handEvaluator = handEvaluator;
 	}
 
 	/**
@@ -197,7 +198,8 @@ public class HandResultCalculator implements Serializable {
 		List<Integer> winners = new ArrayList<Integer>();
 		
 		List<PlayerHand> copy = new LinkedList<PlayerHand>(hands);
-		Comparator<PlayerHand> phComparator = Collections.reverseOrder(new PlayerHandComparator(comparator));
+		Comparator<PlayerHand> phComparator = Collections.reverseOrder(
+		    new PlayerHandComparator(handEvaluator.createHandComparator(hands.size())));
 		Collections.sort(copy, phComparator);
 		
 		PlayerHand previousHand = null;

@@ -1,4 +1,4 @@
-package com.cubeia.poker.variant.telesina;
+package com.cubeia.poker.variant.telesina.hand;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
@@ -14,6 +14,7 @@ import com.cubeia.poker.hand.HandStrength;
 import com.cubeia.poker.hand.HandType;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.hand.eval.HandTypeCheckCalculator;
+import com.cubeia.poker.variant.telesina.hand.TelesinaHandStrengthEvaluator;
 
 
 public class TelesinaHandStrengthEvaluatorTest {

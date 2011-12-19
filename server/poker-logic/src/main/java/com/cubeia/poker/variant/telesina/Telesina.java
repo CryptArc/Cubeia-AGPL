@@ -58,6 +58,7 @@ import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.util.HandResultCalculator;
 import com.cubeia.poker.util.ThreadLocalProfiler;
 import com.cubeia.poker.variant.HandResultCreator;
+import com.cubeia.poker.variant.telesina.hand.TelesinaHandStrengthEvaluator;
 import com.google.common.annotations.VisibleForTesting;
 
 /**
@@ -396,7 +397,7 @@ public class Telesina implements GameType, RoundVisitor {
 			
 			TelesinaHandStrengthEvaluator evaluator = new TelesinaHandStrengthEvaluator(getDeckLowestRank());
             HandResultCreator resultCreator = new HandResultCreator(evaluator);
-		    HandResultCalculator resultCalculator = new HandResultCalculator(new TelesinaHandComparator(evaluator));			
+		    HandResultCalculator resultCalculator = new HandResultCalculator(evaluator);			
 			Map<Integer, PokerPlayer> players = state.getCurrentHandPlayerMap();
 			Set<PokerPlayer> muckingPlayers = state.getMuckingPlayers();
 			

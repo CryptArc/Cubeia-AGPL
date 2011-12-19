@@ -1,5 +1,6 @@
 package com.cubeia.poker.rounds.betting;
 
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedMap;
@@ -9,8 +10,7 @@ import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.util.PokerUtils;
-import com.cubeia.poker.variant.telesina.TelesinaHandComparator;
-import com.cubeia.poker.variant.telesina.TelesinaHandStrengthEvaluator;
+import com.cubeia.poker.variant.telesina.hand.TelesinaHandStrengthEvaluator;
 
 /**
  * In Telesina the first player to act is the one showing the best hand formed from
@@ -23,7 +23,7 @@ import com.cubeia.poker.variant.telesina.TelesinaHandStrengthEvaluator;
  */
 public class TelesinaPlayerToActCalculator implements PlayerToActCalculator {
 
-	private TelesinaHandComparator thc;
+    private TelesinaHandStrengthEvaluator evaluator;
 
 	/**
 	 * Needed for serialization.
@@ -32,12 +32,12 @@ public class TelesinaPlayerToActCalculator implements PlayerToActCalculator {
     private TelesinaPlayerToActCalculator() {}
 	
 	public TelesinaPlayerToActCalculator(Rank deckLowestRank) {
-		TelesinaHandStrengthEvaluator evaluator = new TelesinaHandStrengthEvaluator(deckLowestRank);
-        this.thc = new TelesinaHandComparator(evaluator);
+		evaluator = new TelesinaHandStrengthEvaluator(deckLowestRank);
 	}
 
 	@Override
 	public PokerPlayer getFirstPlayerToAct(int dealerButtonSeatId, SortedMap<Integer, PokerPlayer> seatingMap, List<Card> communityCards) {
+        Comparator<Hand> thc = evaluator.createHandComparator(seatingMap.size());
 		PokerPlayer currentBestPlayer = null;
 		Hand currentBestHand = null;
 		
