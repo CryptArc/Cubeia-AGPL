@@ -407,8 +407,8 @@ public class BettingRound implements Round, BettingRoundContext {
 			log.debug("Expected " + playerToAct + " to act, but that player can not be found at the table! I will assume everyone is all in");
 			return; // Are we allin?
 		}
-		performDefaultActionForPlayer(player);
 		setPlayerSitOut(player);
+		performDefaultActionForPlayer(player);
 	}
 	
     private void setPlayerSitOut(PokerPlayer player) {
