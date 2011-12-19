@@ -34,7 +34,7 @@ import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
 import com.cubeia.poker.util.ThreadLocalProfiler;
-import com.cubeia.poker.variant.FutureActionsCalculator;
+import com.cubeia.poker.variant.texasholdem.FutureActionsCalculator;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;

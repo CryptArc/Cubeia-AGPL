@@ -51,8 +51,8 @@ import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.variant.FutureActionsCalculator;
 import com.cubeia.poker.variant.telesina.Telesina;
+import com.cubeia.poker.variant.texasholdem.FutureActionsCalculator;
 
 public class BettingRoundTest extends TestCase implements TestListener {
 

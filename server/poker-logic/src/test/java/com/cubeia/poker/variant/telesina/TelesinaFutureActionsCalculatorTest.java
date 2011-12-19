@@ -13,7 +13,7 @@ import org.mockito.Mockito;
 
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.variant.FutureActionsCalculator;
+import com.cubeia.poker.variant.texasholdem.FutureActionsCalculator;
 
 public class TelesinaFutureActionsCalculatorTest {
 

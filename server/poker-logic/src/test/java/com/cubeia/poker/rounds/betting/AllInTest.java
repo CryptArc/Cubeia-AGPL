@@ -28,7 +28,7 @@ import com.cubeia.poker.action.ActionRequestFactory;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
-import com.cubeia.poker.variant.FutureActionsCalculator;
+import com.cubeia.poker.variant.texasholdem.FutureActionsCalculator;
 
 public class AllInTest extends TestCase implements TestListener {
 

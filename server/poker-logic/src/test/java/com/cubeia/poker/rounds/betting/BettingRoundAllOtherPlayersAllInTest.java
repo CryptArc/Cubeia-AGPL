@@ -33,7 +33,7 @@ import com.cubeia.poker.GameType;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.ActionRequestFactory;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.variant.FutureActionsCalculator;
+import com.cubeia.poker.variant.texasholdem.FutureActionsCalculator;
 
 public class BettingRoundAllOtherPlayersAllInTest {
 

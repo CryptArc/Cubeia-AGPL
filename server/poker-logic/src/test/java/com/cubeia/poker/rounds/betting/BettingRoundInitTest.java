@@ -23,7 +23,7 @@ import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.ActionRequestFactory;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.variant.FutureActionsCalculator;
+import com.cubeia.poker.variant.texasholdem.FutureActionsCalculator;
 
 public class BettingRoundInitTest {
 

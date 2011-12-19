@@ -60,7 +60,6 @@ import com.cubeia.poker.rounds.blinds.BlindsInfo;
 import com.cubeia.poker.rounds.blinds.BlindsRound;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.util.HandResultCalculator;
-import com.cubeia.poker.variant.FutureActionsCalculator;
 import com.cubeia.poker.variant.HandResultCreator;
 
 public class TexasHoldem implements GameType, RoundVisitor {

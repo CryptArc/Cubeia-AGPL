@@ -10,7 +10,7 @@ import com.cubeia.poker.rounds.ante.AnteRoundHelper;
 import com.cubeia.poker.rounds.betting.BettingRound;
 import com.cubeia.poker.rounds.betting.NoLimitBetStrategy;
 import com.cubeia.poker.rounds.betting.TelesinaPlayerToActCalculator;
-import com.cubeia.poker.variant.FutureActionsCalculator;
+import com.cubeia.poker.variant.texasholdem.FutureActionsCalculator;
 
 /**
  * Factory of Telesina game rounds.

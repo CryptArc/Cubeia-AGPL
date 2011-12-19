@@ -1,4 +1,4 @@
-package com.cubeia.poker.variant;
+package com.cubeia.poker.variant.texasholdem;
 
 import java.util.ArrayList;
 import java.util.List;
