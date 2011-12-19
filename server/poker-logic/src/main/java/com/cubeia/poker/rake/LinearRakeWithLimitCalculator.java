@@ -55,7 +55,7 @@ public class LinearRakeWithLimitCalculator implements RakeCalculator {
             long rake = 0L;
             if (tableHasSeenAction) {
                 rake = rakeFraction.multiply(new BigDecimal(potSize)).longValue();
-                if (willRakeAdditionBreakLimit(totalRake, rake)) {
+                if (willRakeAdditionBreakLimit(totalRake, rake, limit)) {
                     rake = limit - totalRake;
                 }
                 totalRake += rake;
@@ -89,8 +89,8 @@ public class LinearRakeWithLimitCalculator implements RakeCalculator {
         return potsSortedById;
     }
 
-    private boolean willRakeAdditionBreakLimit(long totalRake, long rakeAddition) {
-        return totalRake + rakeAddition > rakeLimit;
+    private boolean willRakeAdditionBreakLimit(long totalRake, long rakeAddition, long limit) {
+        return totalRake + rakeAddition > limit;
     }
     
     

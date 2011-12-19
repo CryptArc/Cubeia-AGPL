@@ -8,12 +8,12 @@ import com.cubeia.poker.hand.Shuffler;
 
 public class TelesinaDeckFactory {
 
-    TelesinaDeck createNewDeck(Random rng, int tableSize) {
+    public TelesinaDeck createNewDeck(Random rng, int tableSize) {
         return new TelesinaDeck(new Shuffler<Card>(rng), new IndexCardIdGenerator(), tableSize);
     }
     
     //TODO: remove this code once GLI has used the rig deck feature
-    TelesinaDeck createNewRiggedDeck(Random rng, int tableSize, String riggedDeck) {
+    public TelesinaDeck createNewRiggedDeck(Random rng, int tableSize, String riggedDeck) {
         return new TelesinaDeck(new Shuffler<Card>(rng), new IndexCardIdGenerator(), tableSize, riggedDeck);
     }
 

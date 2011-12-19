@@ -4,6 +4,7 @@ import com.cubeia.poker.PokerState;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.rng.RNGProvider;
+import com.cubeia.poker.variant.telesina.hand.TelesinaHandStrengthEvaluator;
 
 public class TelesinaForTesting extends Telesina {
 

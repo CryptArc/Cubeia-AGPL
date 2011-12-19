@@ -29,6 +29,7 @@ import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.timing.impl.DefaultTimingProfile;
+import com.cubeia.poker.variant.telesina.hand.TelesinaHandStrengthEvaluator;
 
 public class TelesinaSendBestHandTest {
 

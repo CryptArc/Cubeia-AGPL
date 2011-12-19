@@ -5,12 +5,12 @@ import static com.google.common.collect.Sets.cartesianProduct;
 import static java.util.Arrays.asList;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.hand.Suit;
-import java.util.HashMap;
 
 public class TelesinaDeckUtil {
 
@@ -43,7 +43,7 @@ public class TelesinaDeckUtil {
         int deckLength = 52 - firstRankIndex*4;
                 
         if (deck == null || deck.length() != deckLength*2) {
-			throw new RuntimeException("deck file doesn't contain the correct amount of cards! is "+deck.length()+" and should be "+deckLength+" for "+participants+" participants");
+			throw new RuntimeException("deck file doesn't contain the correct amount of cards! is "+(deck.length() / 2)+" and should be "+deckLength+" for "+participants+" participants");
 		}
         
         //preparing cards

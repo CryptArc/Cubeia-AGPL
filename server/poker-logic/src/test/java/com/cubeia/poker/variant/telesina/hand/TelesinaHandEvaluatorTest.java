@@ -1,4 +1,4 @@
-package com.cubeia.poker.variant.telesina;
+package com.cubeia.poker.variant.telesina.hand;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -10,6 +10,7 @@ import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.hand.HandInfo;
 import com.cubeia.poker.hand.HandType;
 import com.cubeia.poker.hand.Rank;
+import com.cubeia.poker.variant.telesina.hand.TelesinaHandStrengthEvaluator;
 
 public class TelesinaHandEvaluatorTest {
 

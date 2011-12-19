@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -14,8 +15,11 @@ import java.util.Map;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.cubeia.poker.RakeSettings;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.rake.LinearRakeWithLimitCalculator;
 import com.cubeia.poker.rake.RakeCalculator;
+import com.cubeia.poker.rake.RakeInfoContainer;
 
 public class PotHolderTest {
 
@@ -28,7 +32,7 @@ public class PotHolderTest {
         potHolder.calculateRake();
         verify(rakeCalculator).calculateRakes(Mockito.anyCollection(), Mockito.eq(false));
         
-        potHolder.call();
+        potHolder.callOrRaise();
         potHolder.calculateRake();
         verify(rakeCalculator).calculateRakes(Mockito.anyCollection(), Mockito.eq(true));
     }
@@ -69,6 +73,49 @@ public class PotHolderTest {
 		assertThat(potHolder.calculatePlayersContributionToPotIncludingBetStacks(player0), is(1060L));
 		assertThat(potHolder.calculatePlayersContributionToPotIncludingBetStacks(player1), is(10L));
 		assertThat(potHolder.calculatePlayersContributionToPotIncludingBetStacks(player2), is(0L));
+        
+    }
+    
+    @Test
+    public void testHeadsupRakeIncludingBetStacksWithRakeCap() {
+    	
+    	PokerPlayer player0 = mock(PokerPlayer.class);
+        PokerPlayer player1 = mock(PokerPlayer.class);
+        
+        when(player0.getBetStack()).thenReturn(400L);
+        when(player1.getBetStack()).thenReturn(200L);
+        
+        RakeSettings rakeSettings = new RakeSettings(new BigDecimal("0.06"), 500, 150);
+		RakeCalculator rakeCalculator = new LinearRakeWithLimitCalculator(rakeSettings);
+		
+		PotHolder potHolder = new PotHolder(rakeCalculator);
+		Pot mainPot = new Pot(0);
+		potHolder.callOrRaiseHasBeenMadeInHand = true;
+		
+		potHolder.addPot(mainPot);
+		
+		mainPot.bet(player0, 100L); // ante
+		mainPot.bet(player1, 100L); // ante
+		
+		mainPot.bet(player0, 5000L); // raise
+		mainPot.bet(player1, 10000L); // raise
+		mainPot.bet(player0, 5000L); // call
+		
+		//uncapped rake excluding betstacks should be 1212 that is 20200 (total pot) * 0.06 (rake)
+		 		 		 
+		// check that the total rake is 150 (capped)
+		RakeInfoContainer calculatedRake = potHolder.calculateRake();
+		assertThat(calculatedRake.getTotalRake(), is(150L));
+        
+		//uncapped rake excluding betstacks should be 1248 that is 20800 (total pot) * 0.06 (rake)
+		
+		//check that the total rake including betstacks is 150 (capped)
+		Collection<PokerPlayer> players = new ArrayList<PokerPlayer>();
+		players.add(player0);
+		players.add(player1);
+		RakeInfoContainer calculatedRakeIncludingBetStacks = potHolder.calculateRakeIncludingBetStacks(players);
+		
+		assertThat(calculatedRakeIncludingBetStacks.getTotalRake(), is(150L));
         
     }
     

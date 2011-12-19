@@ -1,7 +1,11 @@
 package com.cubeia.poker.hand;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -44,4 +48,30 @@ public class CardTest {
         assertThat(card2.getSuit(), is(card.getSuit()));
         assertThat(card2.getRank(), is(card.getRank()));
 	}
+	
+	@Test 
+	public void testMakeCopyWithoutId() {
+        Card card = new Card(43, Rank.ACE, Suit.SPADES);
+        Card card2 = card.makeCopyWithoutId();
+        assertThat(card2.getId(), nullValue());
+        assertThat(card2.getSuit(), is(card.getSuit()));
+        assertThat(card2.getRank(), is(card.getRank()));
+	}
+	
+    @Test 
+    public void testMakeCopyWithoutIds() {
+        Card card1 = new Card(43, Rank.ACE, Suit.SPADES);
+        Card card2 = new Card(44, Rank.KING, Suit.CLUBS);
+        
+        List<Card> cardsCopy = Card.makeCopyWithoutIds(Arrays.asList(card1, card2));
+        
+        assertThat(cardsCopy.size(), is(2));
+        assertThat(cardsCopy.get(0).getId(), nullValue());
+        assertThat(cardsCopy.get(0).getSuit(), is(card1.getSuit()));
+        assertThat(cardsCopy.get(0).getRank(), is(card1.getRank()));
+        assertThat(cardsCopy.get(1).getId(), nullValue());
+        assertThat(cardsCopy.get(1).getSuit(), is(card2.getSuit()));
+        assertThat(cardsCopy.get(1).getRank(), is(card2.getRank()));
+        
+    }
 }

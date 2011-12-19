@@ -563,8 +563,8 @@ public class PokerState implements Serializable, IPokerState {
 	}
 
 	@Override
-	public void call() {
-		potHolder.call();
+	public void callOrRaise() {
+		potHolder.callOrRaise();
 	}
 
 	public boolean isTournamentTable() {

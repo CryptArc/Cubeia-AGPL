@@ -1,5 +1,10 @@
 package com.cubeia.poker.hand;
 
+import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
@@ -40,4 +45,23 @@ public class HandTest {
 	public void testHandFailFromString2() {
 		new Hand("AX 5c kh");
 	}
+	
+	@Test
+	public void testContainsAllCardsRegardlessOfId() {
+        Hand hand = new Hand(Arrays.asList(
+            new Card(1, "5C"), 
+            new Card(1, "3C"), 
+            new Card(1, "6C"), 
+            new Card(1, "2C"), 
+            new Card(1, "4C")));
+        
+        assertThat(hand.containsAllCardsRegardlessOfId(new Hand("6C").getCards()), is(true));
+        assertThat(hand.containsAllCardsRegardlessOfId(new Hand("2C 5C").getCards()), is(true));
+        assertThat(hand.containsAllCardsRegardlessOfId(new Hand("6C 2C 5C").getCards()), is(true));
+        assertThat(hand.containsAllCardsRegardlessOfId(asList(new Card(34, "6C"), new Card(10, "2C"))), is(true));
+        
+        assertThat(hand.containsAllCardsRegardlessOfId(new Hand("6D 2C 5C").getCards()), is(false));
+	}
+	
+	
 }

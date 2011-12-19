@@ -160,7 +160,7 @@ public class TableCloseHandlerTest {
         verify(gameNotifier).notifyPlayer(Mockito.eq(player2Id), actionCaptor.capture());
         GameDataAction errorMessageAction = actionCaptor.getValue();
         ErrorPacket errorPacket = (ErrorPacket) serializer.unpack(errorMessageAction.getData());
-        assertThat(errorPacket.code, is(ErrorCode.UNSPECIFIED_ERROR));
+        assertThat(errorPacket.code, is(ErrorCode.TABLE_CLOSING_FORCED));
         assertThat(errorPacket.referenceId, is("" + handId));
     }
     

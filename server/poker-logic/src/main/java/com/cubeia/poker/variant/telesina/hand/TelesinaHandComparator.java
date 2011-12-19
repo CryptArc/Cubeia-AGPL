@@ -1,4 +1,6 @@
-package com.cubeia.poker.variant.telesina;
+package com.cubeia.poker.variant.telesina.hand;
+
+import static com.cubeia.poker.hand.HandType.ROYAL_STRAIGHT_FLUSH;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -10,8 +12,8 @@ import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.hand.HandStrength;
 import com.cubeia.poker.hand.HandType;
-import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.hand.Suit;
+import com.cubeia.poker.variant.telesina.TelesinaCardComparator;
 
 /**
  * This class is a specialization of HandStrengthComparator for Telesina rules
@@ -21,36 +23,46 @@ import com.cubeia.poker.hand.Suit;
 public class TelesinaHandComparator implements Comparator<Hand> {
 
 	private TelesinaHandStrengthEvaluator evaluator;
+
+	private final static Hand HIGHEST_ROYAL_STRAIGHT_FLUSH = new Hand("TH JH QH KH AH");
+
+    private final int playersInPot;
+
+	
 	
 	/**
 	 * Needed by JBoss serialization.
 	 */
 	@SuppressWarnings("unused")
-    private TelesinaHandComparator() {}
+    private TelesinaHandComparator() {
+	    playersInPot = 0;
+	}
 	
 	/**
-	 * 
-	 * @param deckLowestRank the rank of the lowest card not stripped from the deck
+	 * Create a new telesina hand comparator. Package private as this comparator 
+	 * must be created by the factory method: {@link TelesinaHandStrengthEvaluator#createHandComparator(int)}.
+	 * @param evaluator
+	 * @param playersInPot
 	 */
-	public TelesinaHandComparator(Rank deckLowestRank) {
-		this.evaluator = new TelesinaHandStrengthEvaluator(deckLowestRank);
-	}
-
-	public TelesinaHandComparator(TelesinaHandStrengthEvaluator evaluator) {
+	TelesinaHandComparator(TelesinaHandStrengthEvaluator evaluator, int playersInPot) {
 		this.evaluator = evaluator;
+        this.playersInPot = playersInPot;
 	}
-	
-//	@Override
-//	public int compare(Hand h1, Hand h2) {
-//		List<Card> c1 = h1.getCards();
-//		List<Card> c2 = h2.getCards();
-//
-//		return compare(c1, c2);
-//	}
 	
 	public int compare(Hand h1, Hand h2) {
 		HandStrength c1Strength = evaluator.getBestHandStrength(h1);
 		HandStrength c2Strength = evaluator.getBestHandStrength(h2);
+		
+		if (playersInPot == 2  &&  checkForRoyals(c1Strength, c2Strength)) {
+	        List<Card> highestRoyal = HIGHEST_ROYAL_STRAIGHT_FLUSH.getCards();
+	        List<Card> lowestRoyal = evaluator.getLowestStraightFlushCards();
+		    
+		    if (h1.containsAllCardsRegardlessOfId(highestRoyal)  &&  h2.containsAllCardsRegardlessOfId(lowestRoyal)) {
+		        return -1;
+		    } else if (h2.containsAllCardsRegardlessOfId(highestRoyal)  &&  h1.containsAllCardsRegardlessOfId(lowestRoyal)) {
+                return 1;
+		    } 
+		}
 		
 		if (c1Strength.getHandType() != c2Strength.getHandType()) {
 			return c1Strength.getHandType().telesinaHandTypeValue - c2Strength.getHandType().telesinaHandTypeValue;
@@ -78,6 +90,13 @@ public class TelesinaHandComparator implements Comparator<Hand> {
 		
 		return 0;
 	}
+
+	/**
+	 * Returns true if any of the given hand strengths contains a royal straight flush.
+	 */
+    private boolean checkForRoyals(HandStrength c1Strength, HandStrength c2Strength) {
+        return c1Strength.getHandType() == ROYAL_STRAIGHT_FLUSH  ||  c2Strength.getHandType() == ROYAL_STRAIGHT_FLUSH;
+    }
 
 	private int compareKickers(List<Card> c1, List<Card> c2) {
 		if (c1.size() != c2.size()) {

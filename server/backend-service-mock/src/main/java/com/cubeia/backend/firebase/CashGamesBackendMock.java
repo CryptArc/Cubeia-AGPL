@@ -33,6 +33,7 @@ import com.cubeia.backend.cashgame.dto.ReserveResponse;
 import com.cubeia.backend.cashgame.exceptions.BatchHandFailedException;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
 import com.cubeia.backend.firebase.impl.FirebaseCallbackFactoryImpl;
+import com.cubeia.backend.firebase.jmx.MockController;
 import com.cubeia.firebase.api.action.service.ServiceAction;
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.firebase.api.service.RoutableService;
@@ -238,6 +239,10 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
         this.router = router;
     }
     
+    public ServiceRouter getRouter() {
+        return router;
+    }
+    
     @Override
     public void onAction(ServiceAction e) {
         // nothing should arrive here
@@ -246,6 +251,10 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
     @Override
     public void init(ServiceContext con) throws SystemException {
         log.debug("service init");
+        
+        log.debug("initializing jmx stuff");
+        MockController mockController = new MockController(this);
+        
     }
 
     @Override

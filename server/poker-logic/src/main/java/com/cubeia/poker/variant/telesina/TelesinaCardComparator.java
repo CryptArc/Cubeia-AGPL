@@ -9,6 +9,7 @@ import com.cubeia.poker.hand.Card;
  * Compares two cards telesina style. Note an ACE will always be better than any other 
  * Rank card. So an ACE used as a low card in a straight will still compare as a high card 
  * if compared to another card.
+ * This comparator excludes the id of the card from the comparison.
  */
 public class TelesinaCardComparator implements Comparator<Card> {
 	public static final Comparator<Card> ASC = new TelesinaCardComparator();

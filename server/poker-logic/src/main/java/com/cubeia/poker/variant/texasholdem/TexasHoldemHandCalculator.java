@@ -1,5 +1,8 @@
 package com.cubeia.poker.variant.texasholdem;
 
+import java.util.Collections;
+import java.util.Comparator;
+
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.hand.HandInfo;
 import com.cubeia.poker.hand.HandStrength;
@@ -22,6 +25,11 @@ public class TexasHoldemHandCalculator implements HandCalculator, HandTypeEvalua
 	@Override
 	public HandInfo getBestHandInfo(Hand hand) {
 		return getHandStrength(hand);
+	}
+	
+	@Override
+	public Comparator<Hand> createHandComparator(int playersInPot) {
+        return Collections.reverseOrder(new TexasHoldemHandComparator());
 	}
 	
 	/* ----------------------------------------------------

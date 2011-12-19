@@ -97,14 +97,6 @@ public class Hand implements Serializable {
 	public Card getCardAt(int index) {
 		return cards.get(index);
 	}
-	/*
-	public HandStrength getHandStrength() {
-		return handStrength;
-	}
-	
-	public void setHandStrength(HandStrength handStrength) {
-		this.handStrength = handStrength;
-	}*/
 
     public void clear() {
         cards.clear();
@@ -113,5 +105,17 @@ public class Hand implements Serializable {
 	public int getNumberOfCards() {
 		return cards.size();
 	}
+
+	/**
+	 * Returns true if the given hand contains all cards in the given list regardless
+	 * of card id and order.
+	 * @param cardsToCheck cards to check for inclusion in the hand
+	 * @return true if all cards contained, false otherwise
+	 */
+    public boolean containsAllCardsRegardlessOfId(List<Card> cardsToCheck) {
+        List<Card> handCardsWithoutIds = Card.makeCopyWithoutIds(cards);
+        List<Card> givenCardsWithoutIds = Card.makeCopyWithoutIds(cardsToCheck);
+        return handCardsWithoutIds.containsAll(givenCardsWithoutIds);
+    }
 
 }

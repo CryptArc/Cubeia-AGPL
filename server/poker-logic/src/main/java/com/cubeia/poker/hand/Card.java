@@ -1,6 +1,8 @@
 package com.cubeia.poker.hand;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -71,6 +73,14 @@ public class Card implements Serializable {
         this.id = id;
     }
 
+	/**
+	 * @see #Card(String)
+	 * @param s
+	 * @return
+	 */
+	public static Card fromString(String s) {
+	    return new Card(s);
+	}
 
 	/**
 	 * Convenience method to create a list of cards.
@@ -91,6 +101,27 @@ public class Card implements Serializable {
         return new Card(id, rank, suit);
     }
 	
+    /**
+     * Returns a copy of this card with the id stripped (nulled).
+     * @return card with id set to null
+     */
+    public Card makeCopyWithoutId() {
+        return new Card(null, rank, suit);
+    }
+    
+    /**
+     * Copy the given collection of cards and strip their id:s.
+     * @param cards cards to copy
+     * @return collection of cards with id:s set to null
+     */
+    public static List<Card> makeCopyWithoutIds(Collection<Card> cards) {
+        ArrayList<Card> cardsCopy = new ArrayList<Card>();
+        for (Card c : cards) {
+            cardsCopy.add(c.makeCopyWithoutId());
+        }
+        return cardsCopy;
+    }
+    
     public String toString() {
 		return rank.toShortString()+suit.toShortString();
 	}

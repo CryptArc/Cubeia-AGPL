@@ -332,6 +332,7 @@ public class BettingRound implements Round, BettingRoundContext {
 		
 		highBet = amount; 
 		lastPlayerToBeCalled = lastPlayerToPlaceABet;
+		gameType.getState().callOrRaise();
 		lastPlayerToPlaceABet = player;
 		player.addBet(highBet - player.getBetStack());
 		resetHasActed();
@@ -381,7 +382,7 @@ public class BettingRound implements Round, BettingRoundContext {
 		long amountToCall = getAmountToCall(player);
         player.addBet(amountToCall);
 		lastPlayerToBeCalled = lastPlayerToPlaceABet;
-		gameType.getState().call();
+		gameType.getState().callOrRaise();
 		notifyBetStacksUpdated();
 		player.setLastRaiseLevel(getNextValidRaiseLevel());
 		return amountToCall;
@@ -406,8 +407,8 @@ public class BettingRound implements Round, BettingRoundContext {
 			log.debug("Expected " + playerToAct + " to act, but that player can not be found at the table! I will assume everyone is all in");
 			return; // Are we allin?
 		}
-		performDefaultActionForPlayer(player);
 		setPlayerSitOut(player);
+		performDefaultActionForPlayer(player);
 	}
 	
     private void setPlayerSitOut(PokerPlayer player) {
@@ -477,6 +478,6 @@ public class BettingRound implements Round, BettingRoundContext {
 	
 	@Override
 	public boolean isWaitingForPlayer(int playerId) {
-		return playerId == playerToAct;
+		return playerToAct == null ? false : playerId == playerToAct;
 	}
 }
