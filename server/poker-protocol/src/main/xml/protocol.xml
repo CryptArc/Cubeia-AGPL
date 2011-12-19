@@ -94,9 +94,24 @@
 		<value>UNSPECIFIED_ERROR</value>
 	</enum>
 
-	<enum name="error_code">		<value>UNSPECIFIED_ERROR</value>
+	<enum name="error_code">
+		<value>UNSPECIFIED_ERROR</value>
 		<value>TABLE_CLOSING</value>
-		<value>CLOSED_SESSION_DUE_TO_FATAL_ERROR</value>	</enum>	<!-- ==========  Generic Structs ========== -->	<struct name="player_action">		<var name="type" type="action_type"/>		<var name="min_amount" type="int32" />		<var name="max_amount" type="int32" />	</struct>	<!-- s>c generic error message with human readable description -->	<struct name="error_packet">		<var name="code" type="error_code" />
+		<value>TABLE_CLOSING_FORCED</value>
+		<value>CLOSED_SESSION_DUE_TO_FATAL_ERROR</value>
+	</enum>
+
+	<!-- ==========  Generic Structs ========== -->
+
+	<struct name="player_action">
+		<var name="type" type="action_type"/>
+		<var name="min_amount" type="int32" />
+		<var name="max_amount" type="int32" />
+	</struct>
+
+	<!-- s>c generic error message with human readable description -->
+	<struct name="error_packet">
+		<var name="code" type="error_code" />
 		<var name="reference_id" type="string" />
 	</struct>	
 	
