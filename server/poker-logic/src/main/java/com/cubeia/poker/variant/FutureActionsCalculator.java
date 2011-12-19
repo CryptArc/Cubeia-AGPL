@@ -1,14 +1,11 @@
 package com.cubeia.poker.variant;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.player.PokerPlayer;
 
-public class FutureActionsCalculator  {
-
-	
+public interface FutureActionsCalculator {
 
 	/**
 	 * Calculate what a player can do in the future given that the state does not change.
@@ -16,25 +13,9 @@ public class FutureActionsCalculator  {
 	 * @param player
 	 * @return
 	 */
-	public List<PokerActionType> calculateFutureActionOptionList(PokerPlayer player, Long highestBet) {
-		List<PokerActionType> options = new ArrayList<PokerActionType>();
-		
-		// players that are all in or has folded should not have anything
-		if (player.hasFolded() || player.isAllIn() || player.isSittingOut())	{
-			return options;
-		}
-		
-		if (player.getBetStack() >= highestBet)	{
-			options.add(PokerActionType.CHECK);
-		}
-		
-		options.add(PokerActionType.FOLD);
-		
-		
-		return options;
-	}
-	
-	public List<PokerActionType> getEmptyFutureOptionList() {
-		return new ArrayList<PokerActionType>();
-	}
+	public abstract List<PokerActionType> calculateFutureActionOptionList(
+			PokerPlayer player, Long highestBet);
+
+	public abstract List<PokerActionType> getEmptyFutureOptionList();
+
 }
