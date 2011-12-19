@@ -23,7 +23,7 @@ import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.ActionRequestFactory;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.variant.texasholdem.FutureActionsCalculator;
+import com.cubeia.poker.variant.texasholdem.TexasHoldemFutureActionsCalculator;
 
 public class BettingRoundInitTest {
 
@@ -68,7 +68,7 @@ public class BettingRoundInitTest {
             .thenReturn(actionRequest);
         when(player2.getActionRequest()).thenReturn(actionRequest);
 
-        BettingRound round = new BettingRound(gameType, dealerSeatId, playertoActCalculator, actionRequestFactory, new FutureActionsCalculator());
+        BettingRound round = new BettingRound(gameType, dealerSeatId, playertoActCalculator, actionRequestFactory, new TexasHoldemFutureActionsCalculator());
         
         assertThat(round.playerToAct, is(player2Id));
         verify(player2).setActionRequest(actionRequest);
@@ -84,7 +84,7 @@ public class BettingRoundInitTest {
         when(player1.isAllIn()).thenReturn(true);
         when(player3.isAllIn()).thenReturn(true);
         
-        BettingRound round = new BettingRound(gameType, dealerSeatId, playertoActCalculator, actionRequestFactory, new FutureActionsCalculator());
+        BettingRound round = new BettingRound(gameType, dealerSeatId, playertoActCalculator, actionRequestFactory, new TexasHoldemFutureActionsCalculator());
         verify(gameType).scheduleRoundTimeout();
         assertThat(round.isFinished(), is(true));
     }
@@ -96,7 +96,7 @@ public class BettingRoundInitTest {
             Mockito.anyListOf(Card.class))).thenReturn(player2);
         when(state.getPlayersReadyToStartHand()).thenReturn(Collections.<PokerPlayer>emptyList());
         
-        BettingRound round = new BettingRound(gameType, dealerSeatId, playertoActCalculator, actionRequestFactory, new FutureActionsCalculator());
+        BettingRound round = new BettingRound(gameType, dealerSeatId, playertoActCalculator, actionRequestFactory, new TexasHoldemFutureActionsCalculator());
         verify(gameType).scheduleRoundTimeout();
         assertThat(round.isFinished(), is(true));
     }

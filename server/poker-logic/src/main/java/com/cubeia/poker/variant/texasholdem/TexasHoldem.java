@@ -173,7 +173,7 @@ public class TexasHoldem implements GameType, RoundVisitor {
     private void startBettingRound() {
     	log.trace("Starting new betting round. Round ID: "+(roundId+1));
 		currentRound = new BettingRound(this, blindsInfo.getDealerButtonSeatId(), new DefaultPlayerToActCalculator(), 
-		    new ActionRequestFactory(new NoLimitBetStrategy()), new FutureActionsCalculator());
+		    new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
 		roundId++;
 	}
     
@@ -355,7 +355,7 @@ public class TexasHoldem implements GameType, RoundVisitor {
 	
 	private void prepareBettingRound() {
 		int bbSeatId = blindsInfo.getBigBlindSeatId();
-		currentRound = new BettingRound(this, bbSeatId, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new FutureActionsCalculator());
+		currentRound = new BettingRound(this, bbSeatId, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
 	}
 
 	private void updateBlindsInfo(BlindsRound blindsRound) {

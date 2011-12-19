@@ -5,17 +5,16 @@ import java.util.List;
 
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.variant.FutureActionsCalculator;
 
-public class FutureActionsCalculator  {
+public class TexasHoldemFutureActionsCalculator implements FutureActionsCalculator  {
 
 	
 
-	/**
-	 * Calculate what a player can do in the future given that the state does not change.
-	 * i.e. the check next and fold next checkboxes
-	 * @param player
-	 * @return
+	/* (non-Javadoc)
+	 * @see com.cubeia.poker.variant.texasholdem.FutureActionsCalculator#calculateFutureActionOptionList(com.cubeia.poker.player.PokerPlayer, java.lang.Long)
 	 */
+	@Override
 	public List<PokerActionType> calculateFutureActionOptionList(PokerPlayer player, Long highestBet) {
 		List<PokerActionType> options = new ArrayList<PokerActionType>();
 		
@@ -34,6 +33,10 @@ public class FutureActionsCalculator  {
 		return options;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.cubeia.poker.variant.texasholdem.FutureActionsCalculator#getEmptyFutureOptionList()
+	 */
+	@Override
 	public List<PokerActionType> getEmptyFutureOptionList() {
 		return new ArrayList<PokerActionType>();
 	}
