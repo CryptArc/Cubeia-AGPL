@@ -227,7 +227,7 @@ public class MockGame implements GameType {
 			public void playerIsSittingOut(int playerId, SitOutStatus misssedAnte) {}
 			
 			@Override
-			public void call() {}
+			public void callOrRaise() {}
 
 			@Override
 			public void exposeShowdownCards() {}
