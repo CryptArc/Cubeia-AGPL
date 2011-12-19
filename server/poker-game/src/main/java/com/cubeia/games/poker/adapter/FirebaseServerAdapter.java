@@ -560,6 +560,14 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		boolean fromPlayerToPot = !potTransitions.isEmpty()  &&  potTransitions.iterator().next().isFromPlayerToPot();
 		List<Pot> clientPots = new ArrayList<Pot>();
 		List<PotTransfer> transfers = new ArrayList<PotTransfer>();
+		
+		// notify return uncalled chips
+		for (PotTransition potTransition : potTransitions) {
+			if (potTransition.isFromBetStackToPlayer()) {
+				log.debug("--> sending takeBackUncalledChips to client: {}", potTransition);
+				notifyTakeBackUncalledBet(potTransition.getPlayer().getId(), (int)potTransition.getAmount());
+			}
+		}
 
 		for (com.cubeia.poker.pot.Pot pot : pots) {
 			clientPots.add(actionTransformer.createPotUpdatePacket(pot.getId(), pot.getPotSize()));
@@ -577,13 +585,6 @@ public class FirebaseServerAdapter implements ServerAdapter {
 		GameDataAction action = protocolFactory.createGameAction(potTransfers, 0, table.getId());
 		sendPublicPacket(action, -1);
 		
-		// notify return uncalled chips
-		for (PotTransition potTransition : potTransitions) {
-			if (potTransition.isFromBetStackToPlayer()) {
-				log.debug("--> sending takeBackUncalledChips to client: {}", potTransition);
-				notifyTakeBackUncalledBet(potTransition.getPlayer().getId(), (int)potTransition.getAmount());
-			}
-		}
 	}
 
 
