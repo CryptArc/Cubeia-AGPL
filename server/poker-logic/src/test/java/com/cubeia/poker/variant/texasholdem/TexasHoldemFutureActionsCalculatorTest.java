@@ -1,4 +1,4 @@
-package com.cubeia.poker.variant.telesina;
+package com.cubeia.poker.variant.texasholdem;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -14,13 +14,14 @@ import org.mockito.Mockito;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.variant.FutureActionsCalculator;
+import com.cubeia.poker.variant.texasholdem.TexasHoldemFutureActionsCalculator;
 
-public class TelesinaFutureActionsCalculatorTest {
+public class TexasHoldemFutureActionsCalculatorTest {
 
 	@Test
 	public void testAllIn() {
 		
-		FutureActionsCalculator calc = new TelesinaFutureActionsCalculator();
+		FutureActionsCalculator calc = new TexasHoldemFutureActionsCalculator();
 		
 		PokerPlayer player = Mockito.mock(PokerPlayer.class);
 		when(player.isAllIn()).thenReturn(true);
@@ -33,7 +34,7 @@ public class TelesinaFutureActionsCalculatorTest {
 	@Test
 	public void testNotAllIn() {
 		
-		FutureActionsCalculator calc = new TelesinaFutureActionsCalculator();
+		FutureActionsCalculator calc = new TexasHoldemFutureActionsCalculator();
 		
 		PokerPlayer player = Mockito.mock(PokerPlayer.class);
 		when(player.isAllIn()).thenReturn(false);
@@ -47,7 +48,7 @@ public class TelesinaFutureActionsCalculatorTest {
 	@Test
 	public void testNotFolded() {
 		
-		FutureActionsCalculator calc = new TelesinaFutureActionsCalculator();
+		FutureActionsCalculator calc = new TexasHoldemFutureActionsCalculator();
 		
 		PokerPlayer player = Mockito.mock(PokerPlayer.class);
 		when(player.isAllIn()).thenReturn(false);
@@ -60,7 +61,7 @@ public class TelesinaFutureActionsCalculatorTest {
 	@Test
 	public void testFolded() {
 		
-		FutureActionsCalculator calc = new TelesinaFutureActionsCalculator();
+		FutureActionsCalculator calc = new TexasHoldemFutureActionsCalculator();
 		
 		PokerPlayer player = Mockito.mock(PokerPlayer.class);
 		when(player.isAllIn()).thenReturn(false);
@@ -74,7 +75,7 @@ public class TelesinaFutureActionsCalculatorTest {
 	@Test
 	public void testHavingHighestBet() {
 		
-		FutureActionsCalculator calc = new TelesinaFutureActionsCalculator();
+		FutureActionsCalculator calc = new TexasHoldemFutureActionsCalculator();
 		
 		PokerPlayer player = Mockito.mock(PokerPlayer.class);
 		when(player.isAllIn()).thenReturn(false);
@@ -91,7 +92,7 @@ public class TelesinaFutureActionsCalculatorTest {
 	@Test
 	public void testNotHavingHighestBet() {
 		
-		FutureActionsCalculator calc = new TelesinaFutureActionsCalculator();
+		FutureActionsCalculator calc = new TexasHoldemFutureActionsCalculator();
 		
 		PokerPlayer player = Mockito.mock(PokerPlayer.class);
 		when(player.isAllIn()).thenReturn(false);
@@ -107,7 +108,7 @@ public class TelesinaFutureActionsCalculatorTest {
 	@Test
 	public void testHavingHighestBetButHaveActed() {
 		
-		FutureActionsCalculator calc = new TelesinaFutureActionsCalculator();
+		FutureActionsCalculator calc = new TexasHoldemFutureActionsCalculator();
 		
 		PokerPlayer player = Mockito.mock(PokerPlayer.class);
 		when(player.isAllIn()).thenReturn(false);
@@ -117,8 +118,8 @@ public class TelesinaFutureActionsCalculatorTest {
 		when(player.getBalance()).thenReturn(2000L);
 		
 		List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L);
-		assertThat(options, hasItems(PokerActionType.FOLD));
-		assertThat(options.size(), is(1));
+		assertThat(options, hasItems(PokerActionType.CHECK, PokerActionType.FOLD));
+		assertThat(options.size(), is(2));
 		
 	}
 	

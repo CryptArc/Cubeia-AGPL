@@ -34,7 +34,7 @@ import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
-import com.cubeia.poker.variant.FutureActionsCalculator;
+import com.cubeia.poker.variant.texasholdem.TexasHoldemFutureActionsCalculator;
 
 public class BettingRoundTimeoutTest {
 
@@ -51,7 +51,7 @@ public class BettingRoundTimeoutTest {
 	    MockitoAnnotations.initMocks(this);
 	    when(telesina.getState()).thenReturn(state);
 	    when(telesina.getServerAdapter()).thenReturn(serverAdapter);
-        round = new BettingRound(telesina, 0, playerToActCalculator, new ActionRequestFactory(new NoLimitBetStrategy()), new FutureActionsCalculator());
+        round = new BettingRound(telesina, 0, playerToActCalculator, new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
 	}
 
     @Test
