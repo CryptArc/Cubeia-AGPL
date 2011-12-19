@@ -109,7 +109,7 @@ public class BettingRound implements Round, BettingRoundContext {
 		
 		playersInPlayAtRoundStart = new HashSet<PokerPlayer>();
 		for (PokerPlayer player : gameType.getState().getCurrentHandSeatingMap().values()) {
-		    log.debug("player {}: folded {}, allIn: {}", new Object[] {player.getId(), player.hasFolded(), player.isAllIn()});
+		    log.debug("player {}: folded {}, allIn: {}, hasActed: {}", new Object[] {player.getId(), player.hasFolded(), player.isAllIn(), player.hasActed()});
 		    
 		    if (!player.isAllIn()  &&  !player.hasFolded()) {
 		        playersInPlayAtRoundStart.add(player);
@@ -122,9 +122,10 @@ public class BettingRound implements Round, BettingRoundContext {
 		
 		log.debug("first player to act = {}", p == null ? null : p.getId());
 		
-		boolean zeroPlayersReadyToStart = gameType.getState().getPlayersReadyToStartHand().size() == 0;
-		
-        if (p == null  ||  allOtherNonFoldedPlayersAreAllIn(p)  ||  zeroPlayersReadyToStart) {
+		// boolean everyoneIsSittingOut = gameType.getState().isEveryoneSittingOut();
+
+		// if (p == null  ||  allOtherNonFoldedPlayersAreAllIn(p)  ||  everyoneIsSittingOut) {
+		if (p == null  ||  allOtherNonFoldedPlayersAreAllIn(p)) {
 			// No or only one player can act. We are currently in an all-in show down scenario
 			log.debug("No players left to act. We are in an all-in show down scenario");
 			notifyAllPlayersOfNoPossibleFutureActions();
@@ -160,6 +161,7 @@ public class BettingRound implements Round, BettingRoundContext {
 		gameType.getServerAdapter().notifyPlayerBalance(player);
 			
 		if (calculateIfRoundFinished()) {
+			log.debug("BettingRound is finished");
 			isFinished = true;
 		} else {
 			requestNextAction(player.getSeatId());
@@ -256,9 +258,13 @@ public class BettingRound implements Round, BettingRoundContext {
 //		    return true;
 //		}
 		
-		if (gameType.getState().getPlayersReadyToStartHand().isEmpty()) {
-		    return true;
-		}
+//		if (gameType.getState().getPlayersReadyToStartHand().isEmpty()) {
+//		    return true;
+//		}
+		
+//		if (gameType.getState().isEveryoneSittingOut()) {
+//		    return true;
+//		}
 
 		for (PokerPlayer p : gameType.getState().getCurrentHandSeatingMap().values()) {
 			if (!p.hasFolded() && !p.hasActed()) {
@@ -304,6 +310,10 @@ public class BettingRound implements Round, BettingRoundContext {
 		if (!player.getActionRequest().matches(action)) {
 			throw new IllegalArgumentException("Player " + player.getId() + " tried to act " + action.getActionType() + " but his options were "
 					+ player.getActionRequest().getOptions());
+		}
+		
+		if (player.hasActed()) {
+			throw new IllegalArgumentException("Player has already acted in this BettingRound. Player["+player+"], action["+action+"]");
 		}
 	}
 
@@ -402,7 +412,7 @@ public class BettingRound implements Round, BettingRoundContext {
 	public void timeout() {
 		PokerPlayer player = playerToAct == null ? null : gameType.getState().getPlayerInCurrentHand(playerToAct);
 		    
-		if (player == null) {
+		if (player == null || player.hasActed()) {
 			// throw new IllegalStateException("Expected " + playerToAct + " to act, but that player can not be found at the table!");
 			log.debug("Expected " + playerToAct + " to act, but that player can not be found at the table! I will assume everyone is all in");
 			return; // Are we allin?

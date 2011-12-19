@@ -96,6 +96,10 @@ public class MockServerAdapter implements ServerAdapter {
 	public PokerAction getNthAction(int n) {
 		return allActions.get(n);
 	}
+	
+	public int getPerformedActionCount() {
+		return allActions.size();
+	}
 
 	public ActionRequest getLastActionRequest() {
 		return requests.peekLast();

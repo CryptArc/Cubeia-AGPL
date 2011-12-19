@@ -602,7 +602,6 @@ public class PokerState implements Serializable, IPokerState {
 		if ( player == null ) return;
 		
 		if(player.isSittingOut()){
-			log.debug("sitout status " + status.toString() + " has not changed");
 			return;
 		}
 
@@ -1084,6 +1083,16 @@ public class PokerState implements Serializable, IPokerState {
 
 	public boolean isWaitingForPlayerToAct(int playerId) {
 		return getCurrentState().isCurrentlyWaitingForPlayer(this, playerId);
+	}
+
+	@Override
+	public boolean isEveryoneSittingOut() {
+		boolean everyoneIsSittingOut = true;
+		Map<Integer, PokerPlayer> allCurrentPlayers = getCurrentHandPlayerMap();
+		for (PokerPlayer player : allCurrentPlayers.values()) {
+			everyoneIsSittingOut &= player.isSittingOut();
+		}
+		return everyoneIsSittingOut;
 	}
 
 

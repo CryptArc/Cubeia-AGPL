@@ -12,6 +12,7 @@ import com.cubeia.poker.AbstractTexasHandTester;
 import com.cubeia.poker.MockPlayer;
 import com.cubeia.poker.NonRandomRNGProvider;
 import com.cubeia.poker.TestUtils;
+import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.variant.PokerVariant;
@@ -121,4 +122,39 @@ public class TelesinaSitoutTest extends AbstractTexasHandTester {
 		state.playerIsSittingIn(p[0]);
 		org.junit.Assert.assertThat(mockServerAdapter.getPokerPlayerStatus(p[0]), CoreMatchers.is(PokerPlayerStatus.SITOUT));
 	}
+	
+	public void testEveryoneSittingOutDoesNotLeadToAllInScenario() throws InterruptedException {
+		mockServerAdapter.clear();
+		// Disconnect EVERYONE!
+		state.playerIsSittingOut(p[0], SitOutStatus.SITTING_OUT);
+		state.playerIsSittingOut(p[1], SitOutStatus.SITTING_OUT);
+		state.playerIsSittingOut(p[2], SitOutStatus.SITTING_OUT);
+		assertEquals(PokerPlayerStatus.SITOUT, mockServerAdapter.getPokerPlayerStatus(p[0]));
+		assertEquals(PokerPlayerStatus.SITOUT, mockServerAdapter.getPokerPlayerStatus(p[1]));
+		assertEquals(PokerPlayerStatus.SITOUT, mockServerAdapter.getPokerPlayerStatus(p[2]));
+		
+		state.timeout();
+		
+		assertEquals(3, mockServerAdapter.getPerformedActionCount());
+		
+		PokerAction check1 = mockServerAdapter.getNthAction(0);
+		assertEquals(new Integer(p[2]), check1.getPlayerId());
+		
+		PokerAction check2 = mockServerAdapter.getNthAction(1);
+		assertEquals(new Integer(p[0]), check2.getPlayerId());
+		
+		PokerAction check3 = mockServerAdapter.getNthAction(2);
+		assertEquals(new Integer(p[1]), check3.getPlayerId());
+		
+		mockServerAdapter.clear();
+		state.timeout();
+		assertEquals(3, mockServerAdapter.getPerformedActionCount());
+		
+		state.timeout(); // Deal pocket cards round
+		
+		mockServerAdapter.clear();
+		state.timeout();
+		assertEquals(3, mockServerAdapter.getPerformedActionCount());
+	}
+
 }

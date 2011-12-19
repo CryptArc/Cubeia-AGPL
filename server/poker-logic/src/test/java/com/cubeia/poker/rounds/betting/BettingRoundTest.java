@@ -407,22 +407,28 @@ public class BettingRoundTest extends TestCase implements TestListener {
     
     @SuppressWarnings("unchecked")
   	@Test
-      public void testFutureActionsNotNotifiedWhenInitializingBetRoundAndNoPlayersAreReadyToStart() {
+      public void testFutureActionsNotNotifiedWhenInitializingBetRoundAndAllPlayersSittingOut() {
       	//setup players
       	int p0Id = 1337;
       	PokerPlayer p0 = mock(PokerPlayer.class);
   		when(p0.getId()).thenReturn(p0Id);
   		when(p0.getBalance()).thenReturn(100L);
+  		when(p0.isSittingOut()).thenReturn(true);
+  		when(p0.isAllIn()).thenReturn(true);
   		
   		int p1Id = 1338;
       	PokerPlayer p1 = mock(PokerPlayer.class);
       	when(p1.getId()).thenReturn(p1Id);
       	when(p1.getBalance()).thenReturn(100L);
+      	when(p1.isSittingOut()).thenReturn(true);
+      	when(p1.isAllIn()).thenReturn(true);
 
       	int p2Id = 1339;
       	PokerPlayer p2 = mock(PokerPlayer.class);
       	when(p2.getId()).thenReturn(p2Id);
       	when(p2.getBalance()).thenReturn(100L);
+      	when(p2.isSittingOut()).thenReturn(true);
+      	when(p2.isAllIn()).thenReturn(true);
       	
       	//setup state
       	IPokerState state = mock(IPokerState.class);
@@ -431,9 +437,8 @@ public class BettingRoundTest extends TestCase implements TestListener {
   		ServerAdapter serverAdapter = mock(ServerAdapter.class);
   		when(game.getServerAdapter()).thenReturn(serverAdapter);
   		
-  		// no players ready to start
-  		ArrayList<PokerPlayer> playersReadyToStart = new ArrayList<PokerPlayer>();
-  		when(state.getPlayersReadyToStartHand()).thenReturn(playersReadyToStart);
+  		// All sitting out and all in
+  		when(state.isEveryoneSittingOut()).thenReturn(true);
   		
   		// all players are in seating map
   		SortedMap<Integer, PokerPlayer> playerSeatingMap = new TreeMap<Integer, PokerPlayer>();

@@ -1,10 +1,13 @@
 package com.cubeia.poker.variant.telesina;
 
+import static com.cubeia.poker.action.PokerActionType.ANTE;
+import static com.cubeia.poker.action.PokerActionType.BET;
+import static com.cubeia.poker.action.PokerActionType.CALL;
+import static com.cubeia.poker.action.PokerActionType.CHECK;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.cubeia.poker.AbstractTexasHandTester;
@@ -74,7 +77,6 @@ public class TelesinaAllinTest extends AbstractTexasHandTester {
 	
 	
 	@Test
-	@Ignore
 	public void testAllInNoBettingAllowed() {
 		
 		MockPlayer[] mp = TestUtils.createMockPlayers(2);
@@ -112,8 +114,42 @@ public class TelesinaAllinTest extends AbstractTexasHandTester {
 		
 		option = mp[0].getActionRequest().getOption(PokerActionType.BET);
 		assertThat(option, nullValue());
-
+	}
+	
+	@Test
+	public void testHighBetLevelShouldNotCauseAllIn() {
+		MockPlayer[] mp = TestUtils.createMockPlayers(2, 1000);
+		int[] p = TestUtils.createPlayerIdArray(mp);
+		addPlayers(state, mp);
+		
+		// Force start
+		state.timeout();
+		
+		// Blinds
+		assertThat(mp[1].isActionPossible(ANTE), is(true));
+		assertThat(mp[0].isActionPossible(ANTE), is(true));
+		act(p[1], ANTE);	
+		act(p[0], ANTE); 	
+		
+		// make deal initial pocket cards round end
+		state.timeout();
+		
+		act(p[1], BET, 970);
+		act(p[0], CALL); 	
+		
+		state.timeout();
+		
+		PossibleAction betRequest = mp[1].getActionRequest().getOption(PokerActionType.BET);
+		assertThat(betRequest.getMinAmount(), is(10L));
+		assertThat(betRequest.getMaxAmount(), is(10L));
+		
+		act(p[1], CHECK);
+		
+		betRequest = mp[0].getActionRequest().getOption(PokerActionType.BET);
+		assertNotNull(betRequest);
+		assertThat(betRequest.getMinAmount(), is(10L));
+		assertThat(betRequest.getMaxAmount(), is(10L));
 		
 	}
-
+	
 }

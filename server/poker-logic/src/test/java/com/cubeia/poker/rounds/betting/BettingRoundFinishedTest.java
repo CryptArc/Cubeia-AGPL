@@ -22,7 +22,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
-import java.util.Collections;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -98,12 +97,12 @@ public class BettingRoundFinishedTest {
     }
     
     @Test
-    public void testFinishedWhenAllSittingOut() {
-        when(state.getPlayersReadyToStartHand()).thenReturn(Collections.<PokerPlayer>emptyList());
+    public void testNotFinishedWhenAllSittingOut() {
+        when(state.isEveryoneSittingOut()).thenReturn(true);
         when(player1.isSittingOut()).thenReturn(true);
         when(player2.isSittingOut()).thenReturn(true);
         when(player3.isSittingOut()).thenReturn(true);
-        assertThat(round.calculateIfRoundFinished(), is(true));
+        assertThat(round.calculateIfRoundFinished(), is(false));
     }
     
     @Test
