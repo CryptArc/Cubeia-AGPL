@@ -1,0 +1,20 @@
+syntax: glob
+
+target
+*.prefs
+.project
+.classpath
+.settings
+*.log
+*.log.*
+glob:client/lobby/.actionScriptProperties
+glob:client/flex/assembly/
+glob:client/flex/styles/bin/
+
+glob:*.flexProperties
+glob:*.actionScriptProperties
+glob:*.flexLibProperties
+glob:*.tlog
+
+syntax: regexp
+^server/poker-logic/src/test/resources/scrap\.jpage$
