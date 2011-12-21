@@ -56,6 +56,7 @@ public class TableCloseHandlerTest {
     @Mock private FirebaseServerAdapter serverAdapter;
     private TableCloseHandlerImpl tableCrashHandler;
     private int tableId = 1343;
+    private String handId = "4435";
 
     @Before
     public void setup() {
@@ -76,6 +77,7 @@ public class TableCloseHandlerTest {
     @Test
     public void testCloseForced() throws IOException {
         setupCloseTableScenario();
+        when(serverAdapter.getIntegrationHandId()).thenReturn(handId);
         tableCrashHandler.closeTable(table, true);
         verify(state, times(1)).shutdown();
         ArgumentCaptor<GameDataAction> actionCaptor = ArgumentCaptor.forClass(GameDataAction.class);
@@ -83,10 +85,9 @@ public class TableCloseHandlerTest {
         GameDataAction errorMessageAction = actionCaptor.getValue();
         ErrorPacket errorPacket = (ErrorPacket) serializer.unpack(errorMessageAction.getData());
         assertThat(errorPacket.code, is(ErrorCode.TABLE_CLOSING));
-        assertThat(errorPacket.referenceId, is(""));
+        assertThat(errorPacket.referenceId, is(handId));
     }
     
-    @SuppressWarnings("unchecked")
 	@Test
     public void testCloseWhenNooneIsSeated() throws Exception {
     	setupCloseTableScenario();
@@ -98,8 +99,6 @@ public class TableCloseHandlerTest {
         when(tablePlayerSet.getPlayers()).thenReturn(playerSet);
         when(tablePlayerSet.getPlayerCount()).thenReturn(0);
     	
-    	
-        String handId = "4435";
         when(serverAdapter.getIntegrationHandId()).thenReturn(handId);
         tableCrashHandler.closeTable(table, false);
         verify(state, times(1)).shutdown();
@@ -137,7 +136,6 @@ public class TableCloseHandlerTest {
         PokerPlayer pokerPlayer2 = mock(PokerPlayer.class);
         when(state.getPokerPlayer(player1Id)).thenReturn(pokerPlayer1);
         when(state.getPokerPlayer(player2Id)).thenReturn(pokerPlayer2);
-        String handId = "4435";
         when(serverAdapter.getIntegrationHandId()).thenReturn(handId);
 	}
     

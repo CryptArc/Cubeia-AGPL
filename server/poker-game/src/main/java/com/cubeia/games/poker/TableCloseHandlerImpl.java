@@ -109,7 +109,7 @@ public class TableCloseHandlerImpl implements TableCloseHandler {
         if(isError) {
         	sendErrorMessageToClient(table, handId);
         } else {
-        	sendCloseMessageToClient(table);
+        	sendCloseMessageToClient(table, handId);
         }
         
         // 4. remove players from table
@@ -126,8 +126,8 @@ public class TableCloseHandlerImpl implements TableCloseHandler {
         table.getAttributeAccessor().setAttribute(PokerLobbyAttributes.TABLE_READY_FOR_CLOSE.name(), new AttributeValue(1));
     }
     
-    private void sendCloseMessageToClient(Table table) {
-    	sendMessageToClient(table, Enums.ErrorCode.TABLE_CLOSING, null);
+    private void sendCloseMessageToClient(Table table, String handId) {
+    	sendMessageToClient(table, Enums.ErrorCode.TABLE_CLOSING, handId);
 	}
 
     private void sendErrorMessageToClient(Table table, String handId) {
