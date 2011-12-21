@@ -803,12 +803,14 @@ public class PokerState implements Serializable, IPokerState {
 	 */
 	public void notifyPlayerSittingOut(int playerId) {
         log.debug("notifyPlayerSittingOut() id: "+playerId+" status:"+PokerPlayerStatus.SITOUT.name());
-		serverAdapter.notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITOUT);
+        boolean isInCurrentHand = isPlayerInHand(playerId);
+		serverAdapter.notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITOUT, isInCurrentHand);
 	}
 
 	public void notifyPlayerSittingIn(int playerId) {
         log.debug("notifyPlayerSittingIn() id: "+playerId+" status:"+PokerPlayerStatus.SITIN.name());
-		serverAdapter.notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITIN);
+        boolean isInCurrentHand = isPlayerInHand(playerId);
+		serverAdapter.notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITIN, isInCurrentHand);
 	}
 
 	public void setHandFinished(boolean finished) {

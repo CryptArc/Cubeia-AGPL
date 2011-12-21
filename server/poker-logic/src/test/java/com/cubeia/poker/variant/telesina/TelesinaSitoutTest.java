@@ -105,7 +105,7 @@ public class TelesinaSitoutTest extends AbstractTexasHandTester {
 		state.playerIsSittingOut(p[0], SitOutStatus.SITTING_OUT);
 		org.junit.Assert.assertThat(mockServerAdapter.getPokerPlayerStatus(p[0]), CoreMatchers.is(PokerPlayerStatus.SITOUT));
 		//this is a hack for setting the players status without going the normal way
-		mockServerAdapter.notifyPlayerStatusChanged(p[0], PokerPlayerStatus.SITIN);
+		mockServerAdapter.notifyPlayerStatusChanged(p[0], PokerPlayerStatus.SITIN, false);
 		//now we can try to sitout again but it should not notify the player since we already are sitout
 		state.playerIsSittingOut(p[0], SitOutStatus.SITTING_OUT);
 		org.junit.Assert.assertThat(mockServerAdapter.getPokerPlayerStatus(p[0]), CoreMatchers.is(PokerPlayerStatus.SITIN));
@@ -117,7 +117,7 @@ public class TelesinaSitoutTest extends AbstractTexasHandTester {
 		state.playerIsSittingIn(p[0]);
 		org.junit.Assert.assertThat(mockServerAdapter.getPokerPlayerStatus(p[0]), CoreMatchers.is(PokerPlayerStatus.SITIN));
 		//this is a hack for setting the players status without going the normal way
-		mockServerAdapter.notifyPlayerStatusChanged(p[0], PokerPlayerStatus.SITOUT);
+		mockServerAdapter.notifyPlayerStatusChanged(p[0], PokerPlayerStatus.SITOUT, false);
 		//now we can try to sitin again but it should not notify the player since we already are sitin
 		state.playerIsSittingIn(p[0]);
 		org.junit.Assert.assertThat(mockServerAdapter.getPokerPlayerStatus(p[0]), CoreMatchers.is(PokerPlayerStatus.SITOUT));
