@@ -149,7 +149,7 @@ public interface ServerAdapter {
      */
     void notifyPotUpdates(Collection<Pot> pots, Collection<PotTransition> potTransitions);
 
-    void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status);
+    void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status, boolean inCurrentHand);
 
     /**
      * Send information if the deck in use.

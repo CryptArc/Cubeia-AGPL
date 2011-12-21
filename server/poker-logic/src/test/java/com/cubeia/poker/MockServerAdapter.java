@@ -153,7 +153,7 @@ public class MockServerAdapter implements ServerAdapter {
     public String getIntegrationHandId() { return null; }
     
     @Override
-	public void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status) {
+	public void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status, boolean isInCurrenHand) {
 		playerStatus.put(playerId, status);
 	}
     
