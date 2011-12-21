@@ -34,6 +34,7 @@ import com.cubeia.firebase.api.game.lobby.LobbyTableAttributeAccessor;
 import com.cubeia.firebase.api.game.player.GenericPlayer;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TablePlayerSet;
+import com.cubeia.firebase.api.game.table.TableWatcherSet;
 import com.cubeia.firebase.api.util.UnmodifiableSet;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.adapter.FirebaseServerAdapter;
@@ -78,42 +79,60 @@ public class TableCloseHandlerTest {
         tableCrashHandler.closeTable(table, true);
         verify(state, times(1)).shutdown();
         ArgumentCaptor<GameDataAction> actionCaptor = ArgumentCaptor.forClass(GameDataAction.class);
-        verify(table.getNotifier(), times(2)).notifyPlayer(Mockito.anyInt(), actionCaptor.capture());
+        verify(table.getNotifier(), times(4)).notifyPlayer(Mockito.anyInt(), actionCaptor.capture());
         GameDataAction errorMessageAction = actionCaptor.getValue();
         ErrorPacket errorPacket = (ErrorPacket) serializer.unpack(errorMessageAction.getData());
         assertThat(errorPacket.code, is(ErrorCode.TABLE_CLOSING));
         assertThat(errorPacket.referenceId, is(""));
     }
     
-    @Test
-    public void testClose() throws Exception {
-		TablePlayerSet tablePlayerSet = mock(TablePlayerSet.class);
-        when(table.getPlayerSet()).thenReturn(tablePlayerSet);
-        GameNotifier gameNotifier = mock(GameNotifier.class);
-        when(table.getNotifier()).thenReturn(gameNotifier);
-        UnmodifiableSet<GenericPlayer> playerSet = new UnmongofiableSet<GenericPlayer>();
+    @SuppressWarnings("unchecked")
+	@Test
+    public void testCloseWhenNooneIsSeated() throws Exception {
+    	setupCloseTableScenario();
+    	
+    	// remove all seated players
+    	TablePlayerSet tablePlayerSet = mock(TablePlayerSet.class);
+    	when(table.getPlayerSet()).thenReturn(tablePlayerSet);
+    	UnmodifiableSet<GenericPlayer> playerSet = new UnmongofiableSet<GenericPlayer>(Arrays.<GenericPlayer>asList());
         when(tablePlayerSet.getPlayers()).thenReturn(playerSet);
         when(tablePlayerSet.getPlayerCount()).thenReturn(0);
+    	
+    	
         String handId = "4435";
         when(serverAdapter.getIntegrationHandId()).thenReturn(handId);
         tableCrashHandler.closeTable(table, false);
         verify(state, times(1)).shutdown();
+        
+        verify(table.getNotifier(), times(2)).notifyPlayer(Mockito.anyInt(),Mockito.any(GameDataAction.class));
     }
 
 	protected void setupCloseTableScenario() {
 		TablePlayerSet tablePlayerSet = mock(TablePlayerSet.class);
         when(table.getPlayerSet()).thenReturn(tablePlayerSet);
+        
+        TableWatcherSet tableWatcherSet = mock(TableWatcherSet.class);
+		when(table.getWatcherSet()).thenReturn(tableWatcherSet);
+		
         GameNotifier gameNotifier = mock(GameNotifier.class);
         when(table.getNotifier()).thenReturn(gameNotifier);
+        
         final GenericPlayer gp1 = mock(GenericPlayer.class);
         final GenericPlayer gp2 = mock(GenericPlayer.class);
         int player1Id = 1003;
         int player2Id = 4001;
         when(gp1.getPlayerId()).thenReturn(player1Id);
         when(gp2.getPlayerId()).thenReturn(player2Id);
+        
         UnmodifiableSet<GenericPlayer> playerSet = new UnmongofiableSet<GenericPlayer>(asList(gp1, gp2));
+        UnmodifiableSet<Integer> watcherSet = new UnmongofiableSet<Integer>(Arrays.<Integer>asList(1337,1338));
+        
         when(tablePlayerSet.getPlayers()).thenReturn(playerSet);
         when(tablePlayerSet.getPlayerCount()).thenReturn(2);
+        
+        when(tableWatcherSet.getWatchers()).thenReturn(watcherSet);
+        when(tableWatcherSet.getCountWatchers()).thenReturn(2);
+        
         PokerPlayer pokerPlayer1 = mock(PokerPlayer.class);
         PokerPlayer pokerPlayer2 = mock(PokerPlayer.class);
         when(state.getPokerPlayer(player1Id)).thenReturn(pokerPlayer1);
@@ -143,6 +162,15 @@ public class TableCloseHandlerTest {
         when(state.getPokerPlayer(player2Id)).thenReturn(pokerPlayer2);
         String handId = "4435";
         when(serverAdapter.getIntegrationHandId()).thenReturn(handId);
+    	
+        int watcher0id = 1337;
+		int watcher1id = 1338;
+		UnmodifiableSet<Integer> watcherSet = new UnmongofiableSet<Integer>(Arrays.<Integer>asList(watcher0id,watcher1id));
+        TableWatcherSet tableWatcherSet = mock(TableWatcherSet.class);
+		when(table.getWatcherSet()).thenReturn(tableWatcherSet);
+        when(tableWatcherSet.getWatchers()).thenReturn(watcherSet);
+        when(tableWatcherSet.getCountWatchers()).thenReturn(2);
+		
         
         tableCrashHandler.handleUnexpectedExceptionOnTable(action, table, new RuntimeException("shit happens"));
         
@@ -155,6 +183,9 @@ public class TableCloseHandlerTest {
         verify(backendPlayerSessionHandler).endPlayerSessionInBackend(table, pokerPlayer2, 0);
         verify(attributeAccessor).setAttribute(PokerLobbyAttributes.TABLE_READY_FOR_CLOSE.name(), new AttributeValue(1));
         verify(gameNotifier).notifyPlayer(Mockito.eq(player1Id), Mockito.any(GameDataAction.class));
+        
+        verify(gameNotifier).notifyPlayer(Mockito.eq(watcher0id), Mockito.any(GameDataAction.class));
+        verify(gameNotifier).notifyPlayer(Mockito.eq(watcher1id), Mockito.any(GameDataAction.class));
         
         ArgumentCaptor<GameDataAction> actionCaptor = ArgumentCaptor.forClass(GameDataAction.class);
         verify(gameNotifier).notifyPlayer(Mockito.eq(player2Id), actionCaptor.capture());

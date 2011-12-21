@@ -20,6 +20,7 @@ import com.cubeia.firebase.api.action.GameObjectAction;
 import com.cubeia.firebase.api.common.AttributeValue;
 import com.cubeia.firebase.api.game.player.GenericPlayer;
 import com.cubeia.firebase.api.game.table.Table;
+import com.cubeia.firebase.api.util.UnmodifiableSet;
 import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.adapter.FirebaseServerAdapter;
@@ -29,6 +30,7 @@ import com.cubeia.poker.PokerState;
 import com.cubeia.poker.SystemShutdownException;
 import com.cubeia.poker.player.PokerPlayer;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
@@ -133,15 +135,29 @@ public class TableCloseHandlerImpl implements TableCloseHandler {
     }
 
 	protected void sendMessageToClient(Table table, Enums.ErrorCode errorCode, String handId) {
-		for (GenericPlayer player : table.getPlayerSet().getPlayers()) {
+		
+		// find all watchers and all players and add them to one list so we can send to all the connected players
+		UnmodifiableSet<GenericPlayer> players = table.getPlayerSet().getPlayers();
+		UnmodifiableSet<Integer> watcherIds = table.getWatcherSet().getWatchers();
+
+		// extract player ids
+		ArrayList<Integer> playerIds = new ArrayList<Integer>();
+		for (GenericPlayer player : players) {
+			playerIds.add(player.getPlayerId());
+		}
+				
+		// concat players and watchers
+		Iterable<Integer> allPlayerIds = Iterables.concat(playerIds, watcherIds );
+		
+		for (Integer playerId : allPlayerIds) {
             ErrorPacket errorPacket = new ErrorPacket(errorCode, handId);
-            log.debug("Sending {} message to player: {}", errorCode, player.getPlayerId());
-            GameDataAction errorAction = new GameDataAction(player.getPlayerId(), table.getId());
+            log.debug("Sending {} message to player: {}", errorCode, playerId);
+            GameDataAction errorAction = new GameDataAction(playerId, table.getId());
             ByteBuffer packetBuffer;
             try {
                 packetBuffer = serializer.pack(errorPacket);
                 errorAction.setData(packetBuffer);
-                table.getNotifier().notifyPlayer(player.getPlayerId(), errorAction);
+                table.getNotifier().notifyPlayer(playerId, errorAction);
             } catch (IOException e) {
                 log.error("failed to send error message to client", e);
             }
