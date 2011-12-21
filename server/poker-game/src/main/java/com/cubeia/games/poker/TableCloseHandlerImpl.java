@@ -61,7 +61,7 @@ public class TableCloseHandlerImpl implements TableCloseHandler {
     	log.debug("Close table command received; table id = {}, force = {}", table.getId(), force);
     	if(countSeated(table) == 0 || force) {
         	log.info("Closing table {} with {} seated players", table.getId(), countSeated(table));
-        	doCloseTable(table, false, null);
+        	doCloseTable(table, false, getHandId());
     	} else {
     		log.debug("Close table aborted, have " + countSeated(table) + " seated players, and should not force the close");
     	}
