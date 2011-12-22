@@ -303,6 +303,7 @@
 	<struct name="player_poker_status">
 		<var name="player" type="int32"/>
 		<var name="status" type="player_table_status"/>
+		<var name="in_current_hand" type="bool"/>
 	</struct>
 	
 	<struct name="player_hand_start_status">
@@ -353,3 +354,4 @@
 	</struct>
 	
 </protocol>
+
