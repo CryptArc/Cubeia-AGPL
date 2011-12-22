@@ -82,6 +82,12 @@ public class HandResultCreator {
         return potTransitions;
     }
 
+	/**
+	 * Creates a list of participating hands for the non folded players.
+	 * @param communityCards community cards
+	 * @param players players
+	 * @return hands for all non folded players
+	 */
 	private List<PlayerHand> createHandsList(List<Card> communityCards, Collection<PokerPlayer> players) {
 		ArrayList<PlayerHand> playerHands = new ArrayList<PlayerHand>();
 

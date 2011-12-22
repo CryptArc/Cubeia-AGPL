@@ -14,19 +14,17 @@ import com.cubeia.poker.hand.Suit;
 
 public class TelesinaDeckUtil {
 
-	private TelesinaDeckUtil() { }
-    
-	public static Rank calculateLowestRank(int participants) {
+	public Rank calculateLowestRank(int participants) {
 		int firstRankIndex = Math.max(0, 11 - participants - 2);
     	return Rank.values()[firstRankIndex];
 	}
 	
-	public static List<Card> createDeckCards(int participants) {
+	public List<Card> createDeckCards(int participants) {
 		return createDeckCards(calculateLowestRank(participants));
 	}
 	
 	@SuppressWarnings("unchecked")
-    public static List<Card> createDeckCards(Rank lowestRank) {
+    public List<Card> createDeckCards(Rank lowestRank) {
         ArrayList<Card> cards = new ArrayList<Card>();
         List<Rank> ranks = asList(Rank.values()).subList(lowestRank.ordinal(), Rank.values().length);
         for (List<Enum<?>> cardContainer : cartesianProduct(copyOf(Suit.values()), copyOf(ranks))) {
@@ -37,7 +35,7 @@ public class TelesinaDeckUtil {
         return cards;
     }
     
-    public static List<Card> createRiggedDeck(int participants, String deck) {
+    public List<Card> createRiggedDeck(int participants, String deck) {
         
         int firstRankIndex = Math.max(0, 11 - participants - 2);
         int deckLength = 52 - firstRankIndex*4;

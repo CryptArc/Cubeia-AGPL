@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * A deck of cards. A deck is stateful and remembers it's shuffled order of cards
- * as well as a which cards has been delt. 
+ * as well as a which cards has been dealt. 
  * @author w
  *
  */
@@ -25,6 +25,7 @@ public interface Deck extends Serializable {
     
     /**
      * Returns a list (copy) of all cards in the deck including dealt cards.
+     * The returned list won't reflect the shuffling of the deck.
      * @return list of cards
      */
     List<Card> getAllCards();

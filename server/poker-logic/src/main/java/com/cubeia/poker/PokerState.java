@@ -602,7 +602,6 @@ public class PokerState implements Serializable, IPokerState {
 		if ( player == null ) return;
 		
 		if(player.isSittingOut()){
-			log.debug("sitout status " + status.toString() + " has not changed");
 			return;
 		}
 
@@ -804,12 +803,14 @@ public class PokerState implements Serializable, IPokerState {
 	 */
 	public void notifyPlayerSittingOut(int playerId) {
         log.debug("notifyPlayerSittingOut() id: "+playerId+" status:"+PokerPlayerStatus.SITOUT.name());
-		serverAdapter.notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITOUT);
+        boolean isInCurrentHand = isPlayerInHand(playerId);
+		serverAdapter.notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITOUT, isInCurrentHand);
 	}
 
 	public void notifyPlayerSittingIn(int playerId) {
         log.debug("notifyPlayerSittingIn() id: "+playerId+" status:"+PokerPlayerStatus.SITIN.name());
-		serverAdapter.notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITIN);
+        boolean isInCurrentHand = isPlayerInHand(playerId);
+		serverAdapter.notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITIN, isInCurrentHand);
 	}
 
 	public void setHandFinished(boolean finished) {
@@ -1084,6 +1085,16 @@ public class PokerState implements Serializable, IPokerState {
 
 	public boolean isWaitingForPlayerToAct(int playerId) {
 		return getCurrentState().isCurrentlyWaitingForPlayer(this, playerId);
+	}
+
+	@Override
+	public boolean isEveryoneSittingOut() {
+		boolean everyoneIsSittingOut = true;
+		Map<Integer, PokerPlayer> allCurrentPlayers = getCurrentHandPlayerMap();
+		for (PokerPlayer player : allCurrentPlayers.values()) {
+			everyoneIsSittingOut &= player.isSittingOut();
+		}
+		return everyoneIsSittingOut;
 	}
 
 

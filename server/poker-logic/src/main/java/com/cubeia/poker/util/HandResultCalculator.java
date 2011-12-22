@@ -58,9 +58,9 @@ public class HandResultCalculator implements Serializable {
 	 * For example, if player A, B and C bet $10 each and player C won, the results will be:
 	 * A->-$10, B->-$10, C->$20
 	 * 
-	 * @param hands
-	 * @param potHolder
-	 * @return
+	 * @param hands the hands of the non folded players
+	 * @param potHolder pot holder
+	 * @return results map
 	 */
 	public Map<PokerPlayer, Result> getPlayerResults(Collection<PlayerHand> hands, PotHolder potHolder, RakeInfoContainer rakeInfoContainer, Map<Integer, PokerPlayer> playerMap) {
 		Map<PokerPlayer, Result> results = new HashMap<PokerPlayer, Result>();

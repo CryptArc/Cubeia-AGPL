@@ -105,4 +105,6 @@ public interface IPokerState {
      */
     boolean isPlaying();
 
+	boolean isEveryoneSittingOut();
+
 }

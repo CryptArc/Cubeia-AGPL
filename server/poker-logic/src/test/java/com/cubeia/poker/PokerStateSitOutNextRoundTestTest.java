@@ -41,14 +41,15 @@ public class PokerStateSitOutNextRoundTestTest {
         PokerPlayer player = mock(PokerPlayer.class);
         when(state.playerMap.get(playerId)).thenReturn(player);
         when(state.gameType.canPlayerAffordEntryBet(Mockito.eq(player), (PokerSettings) Mockito.any(), Mockito.eq(true))).thenReturn(true);
-
+        state.currentHandPlayerMap = mock(Map.class);
+        when(state.currentHandPlayerMap.containsKey(playerId)).thenReturn(false);
         when(player.isSittingOut()).thenReturn(true);
         state.playerIsSittingIn(playerId);
         
         verify(player).sitIn();
         verify(player).setSitOutNextRound(false);
         verify(player).setSitInAfterSuccessfulBuyIn(false);
-        verify(serverAdapter).notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITIN);
+        verify(serverAdapter).notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITIN, false);
     }
     
     @SuppressWarnings("unchecked")
@@ -64,7 +65,7 @@ public class PokerStateSitOutNextRoundTestTest {
         state.playerIsSittingIn(playerId);
         
         verify(player, never()).sitIn();
-        verify(serverAdapter, never()).notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITIN);
+        verify(serverAdapter, never()).notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITIN, false);
         verify(serverAdapter).notifyBuyInInfo(playerId, true);
     }
 

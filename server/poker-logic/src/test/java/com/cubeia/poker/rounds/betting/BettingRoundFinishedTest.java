@@ -22,7 +22,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
-import java.util.Collections;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -35,7 +34,7 @@ import com.cubeia.poker.GameType;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.ActionRequestFactory;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.variant.FutureActionsCalculator;
+import com.cubeia.poker.variant.texasholdem.TexasHoldemFutureActionsCalculator;
 
 public class BettingRoundFinishedTest {
 
@@ -58,7 +57,7 @@ public class BettingRoundFinishedTest {
         seatingMap.put(2, player3);
         when(state.getCurrentHandSeatingMap()).thenReturn(seatingMap);
 	    
-        round = new BettingRound(telesina, 0, playerToActCalculator, new ActionRequestFactory(new NoLimitBetStrategy()), new FutureActionsCalculator());
+        round = new BettingRound(telesina, 0, playerToActCalculator, new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
 	}
 
     @Test
@@ -98,12 +97,12 @@ public class BettingRoundFinishedTest {
     }
     
     @Test
-    public void testFinishedWhenAllSittingOut() {
-        when(state.getPlayersReadyToStartHand()).thenReturn(Collections.<PokerPlayer>emptyList());
+    public void testNotFinishedWhenAllSittingOut() {
+        when(state.isEveryoneSittingOut()).thenReturn(true);
         when(player1.isSittingOut()).thenReturn(true);
         when(player2.isSittingOut()).thenReturn(true);
         when(player3.isSittingOut()).thenReturn(true);
-        assertThat(round.calculateIfRoundFinished(), is(true));
+        assertThat(round.calculateIfRoundFinished(), is(false));
     }
     
     @Test

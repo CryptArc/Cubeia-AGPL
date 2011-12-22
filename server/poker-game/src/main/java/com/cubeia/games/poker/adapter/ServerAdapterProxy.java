@@ -166,9 +166,9 @@ public abstract class ServerAdapterProxy implements ServerAdapter {
 	}
 
 	@Override
-	public void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status) {
+	public void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status, boolean isInCurrentHand) {
 		if(getAdaptee() != null) {
-			getAdaptee().notifyPlayerStatusChanged(playerId, status);
+			getAdaptee().notifyPlayerStatusChanged(playerId, status, isInCurrentHand);
 		}
 	}
 

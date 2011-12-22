@@ -1,5 +1,9 @@
 package com.cubeia.poker.variant.telesina;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -8,20 +12,65 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.hand.Shuffler;
 
 public class TelesinaDeckUtilTest {
     
     private static Shuffler<Card> SHUFFLER = new Shuffler<Card>(new Random());
 
+    private TelesinaDeckUtil telesinaDeckUtil = new TelesinaDeckUtil();
+    
 	@Test
 	public void checkDeckSize() {
-		Assert.assertEquals(32, TelesinaDeckUtil.createDeckCards(4).size());
-		Assert.assertEquals(36, TelesinaDeckUtil.createDeckCards(5).size());
-		Assert.assertEquals(40, TelesinaDeckUtil.createDeckCards(6).size());
-		Assert.assertEquals(52, TelesinaDeckUtil.createDeckCards(10).size());
+		assertThat(telesinaDeckUtil.createDeckCards(4).size(),  is(32));
+		assertThat(telesinaDeckUtil.createDeckCards(5).size(),  is(36));
+        assertThat(telesinaDeckUtil.createDeckCards(6).size(),  is(40));
+        assertThat(telesinaDeckUtil.createDeckCards(7).size(),  is(44));
+        assertThat(telesinaDeckUtil.createDeckCards(8).size(),  is(48));
+        assertThat(telesinaDeckUtil.createDeckCards(9).size(),  is(52));
+		assertThat(telesinaDeckUtil.createDeckCards(10).size(), is(52));
+	}
+	
+	@Test
+	public void calculateLowestRank() {
+        assertThat(telesinaDeckUtil.calculateLowestRank(4), is(Rank.SEVEN));
+        assertThat(telesinaDeckUtil.calculateLowestRank(5), is(Rank.SIX));
+        assertThat(telesinaDeckUtil.calculateLowestRank(6), is(Rank.FIVE));
+        assertThat(telesinaDeckUtil.calculateLowestRank(10), is(Rank.TWO));
 	}
     
+	@Test
+	public void createDeckCards() {
+	    List<Card> cards = telesinaDeckUtil.createDeckCards(4);
+	    List<Card> cardsFromString = createCardsFromString("7C, 7D, 7H, 7S, 8C, 8D, 8H, 8S, 9C, 9D, 9H, 9S, " +
+	    		"TC, TD, TH, TS, JC, JD, JH, JS, QC, QD, QH, QS, KC, KD, KH, KS, AC, AD, AH, AS");
+	    assertThat(cards, is(cardsFromString));
+	    assertThat(cards.size(), is(32));
+	    
+        cards = telesinaDeckUtil.createDeckCards(6);
+        cardsFromString = createCardsFromString("5C, 5D, 5H, 5S, 6C, 6D, 6H, 6S, 7C, 7D, 7H, 7S, 8C, 8D, 8H, 8S, " +
+        		"9C, 9D, 9H, 9S, TC, TD, TH, TS, JC, JD, JH, JS, QC, QD, QH, QS, KC, KD, KH, KS, AC, AD, AH, AS");
+        assertThat(cards, is(cardsFromString));
+        assertThat(cards.size(), is(40));
+        
+        cards = telesinaDeckUtil.createDeckCards(10);
+        cardsFromString = createCardsFromString("2C, 2D, 2H, 2S, 3C, 3D, 3H, 3S, 4C, 4D, 4H, 4S, 5C, 5D, 5H, 5S, " +
+        		"6C, 6D, 6H, 6S, 7C, 7D, 7H, 7S, 8C, 8D, 8H, 8S, 9C, 9D, 9H, 9S, TC, TD, TH, TS, JC, JD, JH, JS, " +
+        		"QC, QD, QH, QS, KC, KD, KH, KS, AC, AD, AH, AS");
+        assertThat(cards, is(cardsFromString));
+        assertThat(cards.size(), is(52));
+	}
+	
+	private List<Card> createCardsFromString(String str) {
+	    String[] cardStrings = str.split("[,\\. ]+");
+	    ArrayList<Card> cards = new ArrayList<Card>();
+	    for (String cardString : cardStrings) {
+	        cards.add(new Card(cardString));
+	    }
+	    return cards;
+	}
+	
     @Test
     public void checkFromString(){
         for(int i = 0; i < 100; i++){
@@ -34,7 +83,7 @@ public class TelesinaDeckUtilTest {
     }
     
     public String generateShuffleDeck(int participants){
-        List<Card> orderderCards = TelesinaDeckUtil.createDeckCards(participants);
+        List<Card> orderderCards = telesinaDeckUtil.createDeckCards(participants);
         List<Card> shuffledCard = SHUFFLER.shuffle(orderderCards);
         
         StringBuilder shuffledCardBuffer = new StringBuilder();
@@ -46,7 +95,7 @@ public class TelesinaDeckUtilTest {
     }
     
     public void createFromStringAndCompareDecks(int participants, String deck){
-        List<Card> cards = TelesinaDeckUtil.createRiggedDeck(participants, deck);
+        List<Card> cards = telesinaDeckUtil.createRiggedDeck(participants, deck);
         StringBuilder cardBuffer = new StringBuilder();
         for(Card card : cards){
             cardBuffer.append(card.toString());

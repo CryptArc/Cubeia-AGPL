@@ -249,9 +249,12 @@ public class MockGame implements GameType {
 
             @Override
             public void handleBuyInRequest(PokerPlayer pokerPlayer, int amount) {
-                // TODO Auto-generated method stub
-                
             }
+
+			@Override
+			public boolean isEveryoneSittingOut() {
+				return false;
+			}
 		
 		};
 	}

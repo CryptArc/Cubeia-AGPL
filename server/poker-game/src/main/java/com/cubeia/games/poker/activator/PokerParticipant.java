@@ -17,8 +17,6 @@
 
 package com.cubeia.games.poker.activator;
 
-import static com.cubeia.poker.variant.telesina.TelesinaDeckUtil.createDeckCards;
-
 import java.math.BigDecimal;
 
 import org.slf4j.Logger;
@@ -43,6 +41,7 @@ import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.timing.Timings;
 import com.cubeia.poker.variant.PokerVariant;
+import com.cubeia.poker.variant.telesina.TelesinaDeckUtil;
 import com.google.inject.Injector;
 
 
@@ -54,7 +53,9 @@ import com.google.inject.Injector;
  */
 public class PokerParticipant extends DefaultCreationParticipant {
     
-	@SuppressWarnings("unused")
+	private static final TelesinaDeckUtil TELESINA_DECK_UTIL = new TelesinaDeckUtil();
+
+    @SuppressWarnings("unused")
 	private static Logger log = LoggerFactory.getLogger(PokerParticipant.class);
 
 	public static final int GAME_ID = 4718;
@@ -147,7 +148,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
 		acc.setStringAttribute(PokerLobbyAttributes.VARIANT.name(), variant.name());
 		acc.setIntAttribute(PokerLobbyAttributes.MIN_BUY_IN.name(), pokerState.getMinBuyIn());
 		acc.setIntAttribute(PokerLobbyAttributes.MAX_BUY_IN.name(), pokerState.getMaxBuyIn());
-		int deckSize = createDeckCards(pokerState.getTableSize()).size();
+		int deckSize = TELESINA_DECK_UTIL.createDeckCards(pokerState.getTableSize()).size();
 		acc.setIntAttribute(PokerLobbyAttributes.DECK_SIZE.name(), deckSize);
 		
 		FirebaseCallbackFactory callbackFactory = cashGameBackendService.getCallbackFactory();

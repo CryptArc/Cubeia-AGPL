@@ -96,6 +96,10 @@ public class MockServerAdapter implements ServerAdapter {
 	public PokerAction getNthAction(int n) {
 		return allActions.get(n);
 	}
+	
+	public int getPerformedActionCount() {
+		return allActions.size();
+	}
 
 	public ActionRequest getLastActionRequest() {
 		return requests.peekLast();
@@ -149,7 +153,7 @@ public class MockServerAdapter implements ServerAdapter {
     public String getIntegrationHandId() { return null; }
     
     @Override
-	public void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status) {
+	public void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status, boolean isInCurrenHand) {
 		playerStatus.put(playerId, status);
 	}
     

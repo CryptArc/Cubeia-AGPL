@@ -622,7 +622,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 	}
 	
 	@Override
-	public void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status) {
+	public void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status, boolean inCurrentHand) {
 		log.debug("Notify player status changed: "+playerId+" -> "+status);
 		PlayerPokerStatus packet = new PlayerPokerStatus();
 		packet.player = playerId;
@@ -634,6 +634,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 			packet.status = Enums.PlayerTableStatus.SITOUT;
 			break;
 		}
+		packet.inCurrentHand = inCurrentHand;
 		GameDataAction action = protocolFactory.createGameAction(packet, playerId, table.getId());
 		sendPublicPacket(action, -1);
 	}

@@ -400,7 +400,7 @@ public class FirebaseServerAdapterTest {
 		PokerPlayerStatus status = PokerPlayerStatus.SITIN;
 		
 		when(serverAdapter.state.isPlayerInHand(playerId)).thenReturn(inCurrentHand);
-		serverAdapter.notifyPlayerStatusChanged(playerId, status);
+		serverAdapter.notifyPlayerStatusChanged(playerId, status, true);
 		
 		ArgumentCaptor<GameDataAction> captor = ArgumentCaptor.forClass(GameDataAction.class);
 		verify(tableNotifier).notifyAllPlayers(captor.capture());
@@ -410,6 +410,7 @@ public class FirebaseServerAdapterTest {
 		// assertThat(playerPokerStatusPacket.inCurrentHand, is(true));
 		assertThat(playerPokerStatusPacket.status, is(PlayerTableStatus.SITIN));
 		assertThat(playerPokerStatusPacket.player, is(playerId));
+		assertThat(playerPokerStatusPacket.inCurrentHand, is(true));
 
 	}
 	
@@ -428,7 +429,7 @@ public class FirebaseServerAdapterTest {
 		PokerPlayerStatus status = PokerPlayerStatus.SITOUT;
 		
 		when(serverAdapter.state.isPlayerInHand(playerId)).thenReturn(inCurrentHand);
-		serverAdapter.notifyPlayerStatusChanged(playerId, status);
+		serverAdapter.notifyPlayerStatusChanged(playerId, status, false);
 		
 		ArgumentCaptor<GameDataAction> captor = ArgumentCaptor.forClass(GameDataAction.class);
 		verify(tableNotifier).notifyAllPlayers(captor.capture());
@@ -438,6 +439,7 @@ public class FirebaseServerAdapterTest {
 		// assertThat(playerPokerStatusPacket.inCurrentHand, is(true));
 		assertThat(playerPokerStatusPacket.status, is(PlayerTableStatus.SITOUT));
 		assertThat(playerPokerStatusPacket.player, is(playerId));
+		assertThat(playerPokerStatusPacket.inCurrentHand, is(false));
 
 	}
 	
@@ -456,7 +458,7 @@ public class FirebaseServerAdapterTest {
 		PokerPlayerStatus status = PokerPlayerStatus.SITIN;
 		
 		when(serverAdapter.state.isPlayerInHand(playerId)).thenReturn(inCurrentHand);
-		serverAdapter.notifyPlayerStatusChanged(playerId, status);
+		serverAdapter.notifyPlayerStatusChanged(playerId, status, inCurrentHand);
 		
 		ArgumentCaptor<GameDataAction> captor = ArgumentCaptor.forClass(GameDataAction.class);
 		verify(tableNotifier).notifyAllPlayers(captor.capture());
@@ -484,7 +486,7 @@ public class FirebaseServerAdapterTest {
 		PokerPlayerStatus status = PokerPlayerStatus.SITOUT;
 		
 		when(serverAdapter.state.isPlayerInHand(playerId)).thenReturn(inCurrentHand);
-		serverAdapter.notifyPlayerStatusChanged(playerId, status);
+		serverAdapter.notifyPlayerStatusChanged(playerId, status,inCurrentHand);
 		
 		ArgumentCaptor<GameDataAction> captor = ArgumentCaptor.forClass(GameDataAction.class);
 		verify(tableNotifier).notifyAllPlayers(captor.capture());

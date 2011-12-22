@@ -6,162 +6,177 @@ import static com.cubeia.poker.hand.Suit.CLUBS;
 import static com.cubeia.poker.hand.Suit.DIAMONDS;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
-import java.util.Collections;
-import java.util.List;
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Random;
 
+import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
+import org.mockito.Mock;
 
 import com.cubeia.poker.variant.telesina.TelesinaDeck;
+import com.cubeia.poker.variant.telesina.TelesinaDeckUtil;
 
 public class TelesinaDeckTest {
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    @Test
-    public void testConstruction() {
-        Shuffler<Card> shuffler = mock(Shuffler.class);
-        CardIdGenerator idGenerator = mock(CardIdGenerator.class);
-        new TelesinaDeck(shuffler, idGenerator, 6);
-        
-        ArgumentCaptor<List> listCaptor = ArgumentCaptor.forClass(List.class);
-        verify(shuffler).shuffle(listCaptor.capture());
-        verify(idGenerator).copyAndAssignIds(Mockito.anyList());
-        assertThat(listCaptor.getValue().size(), is(40));
+    @Mock private Random rng;
+    
+    @Before
+    public void setup() {
+        initMocks(this);
     }
     
-    @SuppressWarnings("unchecked")
+    @Test
+    public void testConstruction() {
+        TelesinaDeck deck = new TelesinaDeck(new TelesinaDeckUtil(), rng, 6);
+        assertThat(deck.isEmpty(), is(false));
+        assertThat(deck.getAllCards().size(), is(40));
+        assertThat(deck.getDeckLowestRank(), is(Rank.FIVE));
+    }
+    
     @Test
     public void calculateRanksToUse() {
-    	Answer<?> answer = new Answer<List<Card>>() {
-        	
-        	@Override
-        	public List<Card> answer(InvocationOnMock invocation) throws Throwable {
-        		return (List<Card>) invocation.getArguments()[0];
-        	}
-		};
-        Shuffler<Card> shuffler = mock(Shuffler.class);
-        when(shuffler.shuffle(anyList())).thenAnswer(answer);
-        CardIdGenerator idGenerator = mock(CardIdGenerator.class);
-        when(idGenerator.copyAndAssignIds(anyList())).thenAnswer(answer);
-        
-        TelesinaDeck deck = new TelesinaDeck(shuffler, idGenerator, 2);
+        TelesinaDeckUtil telesinaDeckUtil = new TelesinaDeckUtil();
+        TelesinaDeck deck = new TelesinaDeck(telesinaDeckUtil, rng, 2);
         assertThat(deck.getDeckLowestRank(), is(Rank.NINE));
         assertThat(deck.getAllCards().size(), is(6 * 4));
 
-        deck = new TelesinaDeck(shuffler, idGenerator, 3);
+        deck = new TelesinaDeck(telesinaDeckUtil, rng, 3);
         assertThat(deck.getDeckLowestRank(), is(Rank.EIGHT));
         assertThat(deck.getAllCards().size(), is(7 * 4));
         
-        deck = new TelesinaDeck(shuffler, idGenerator, 4);
+        deck = new TelesinaDeck(telesinaDeckUtil, rng, 4);
         assertThat(deck.getDeckLowestRank(), is(Rank.SEVEN));
         assertThat(deck.getAllCards().size(), is(8 * 4));
         
-        deck = new TelesinaDeck(shuffler, idGenerator, 5);
+        deck = new TelesinaDeck(telesinaDeckUtil, rng, 5);
         assertThat(deck.getDeckLowestRank(), is(Rank.SIX));
         assertThat(deck.getAllCards().size(), is(9 * 4));
         
-        deck = new TelesinaDeck(shuffler, idGenerator, 6);
+        deck = new TelesinaDeck(telesinaDeckUtil, rng, 6);
         assertThat(deck.getDeckLowestRank(), is(Rank.FIVE));
         assertThat(deck.getAllCards().size(), is(10 * 4));
         
-        deck = new TelesinaDeck(shuffler, idGenerator, 7);
+        deck = new TelesinaDeck(telesinaDeckUtil, rng, 7);
         assertThat(deck.getDeckLowestRank(), is(Rank.FOUR));
         assertThat(deck.getAllCards().size(), is(11 * 4));
         
-        deck = new TelesinaDeck(shuffler, idGenerator, 9);
+        deck = new TelesinaDeck(telesinaDeckUtil, rng, 9);
         assertThat(deck.getDeckLowestRank(), is(Rank.TWO));
         assertThat(deck.getAllCards().size(), is(Rank.values().length * 4));
         
-        deck = new TelesinaDeck(shuffler, idGenerator, 10);
+        deck = new TelesinaDeck(telesinaDeckUtil, rng, 10);
         assertThat(deck.getDeckLowestRank(), is(Rank.TWO));
         assertThat(deck.getAllCards().size(), is(Rank.values().length * 4));
     }
 
     
-    @SuppressWarnings("unchecked")
     @Test
     public void testGetLowestRank() {
-        Shuffler<Card> shuffler = mock(Shuffler.class);
-        CardIdGenerator idGenerator = mock(CardIdGenerator.class);
-        
-        TelesinaDeck deck = new TelesinaDeck(shuffler, idGenerator, 2);
+        TelesinaDeckUtil telesinaDeckUtil = new TelesinaDeckUtil();
+        TelesinaDeck deck = new TelesinaDeck(telesinaDeckUtil , rng, 2);
         assertThat(deck.getDeckLowestRank(), is(Rank.NINE));
         
-        deck = new TelesinaDeck(shuffler, idGenerator, 4);
+        deck = new TelesinaDeck(telesinaDeckUtil, rng, 4);
         assertThat(deck.getDeckLowestRank(), is(Rank.SEVEN));
         
-        deck = new TelesinaDeck(shuffler, idGenerator, 8);
+        deck = new TelesinaDeck(telesinaDeckUtil, rng, 8);
         assertThat(deck.getDeckLowestRank(), is(Rank.THREE));
     }
     
-    @SuppressWarnings("unchecked")
     @Test
     public void testGetTotalNumberOfCardsInDeck() {
-        Shuffler<Card> shuffler = mock(Shuffler.class);
-        CardIdGenerator idGenerator = mock(CardIdGenerator.class);
-        
-        TelesinaDeck deck = new TelesinaDeck(shuffler, idGenerator, 2);
+        TelesinaDeckUtil telesinaDeckUtil = new TelesinaDeckUtil();
+        TelesinaDeck deck = new TelesinaDeck(telesinaDeckUtil, rng, 2);
         assertThat(deck.getTotalNumberOfCardsInDeck(), is(6 * 4));
         
-        deck = new TelesinaDeck(shuffler, idGenerator, 4);
+        deck = new TelesinaDeck(telesinaDeckUtil, rng, 4);
         assertThat(deck.getTotalNumberOfCardsInDeck(), is(8 * 4));
         
-        deck = new TelesinaDeck(shuffler, idGenerator, 9);
+        deck = new TelesinaDeck(telesinaDeckUtil, rng, 9);
         assertThat(deck.getTotalNumberOfCardsInDeck(), is(13 * 4));
         
-        deck = new TelesinaDeck(shuffler, idGenerator, 10);
+        deck = new TelesinaDeck(telesinaDeckUtil, rng, 10);
         assertThat(deck.getTotalNumberOfCardsInDeck(), is(13 * 4));
     }
     
-    @SuppressWarnings("unchecked")
     @Test
     public void dealCard() {
-        Shuffler<Card> shuffler = mock(Shuffler.class);
-        CardIdGenerator idGenerator = mock(CardIdGenerator.class);
-        Card card1 = new Card(0, KING, CLUBS);
-        Card card2 = new Card(1, QUEEN, DIAMONDS);
-        when(idGenerator.copyAndAssignIds(Mockito.anyList())).thenReturn(asList(card1, card2));
+        Card card1 = new Card(KING, CLUBS);
+        Card card2 = new Card(QUEEN, DIAMONDS);
+        Card card3 = new Card(QUEEN, DIAMONDS);
+        TelesinaDeckUtil telesinaDeckUtil = mock(TelesinaDeckUtil.class);
+        when(telesinaDeckUtil.createDeckCards(4)).thenReturn(asList(card1, card2, card3));
         
-        TelesinaDeck deck = new TelesinaDeck(shuffler, idGenerator, 4);
+        TelesinaDeck deck = new TelesinaDeck(telesinaDeckUtil, rng, 4);
         
-        verify(shuffler).shuffle(Mockito.anyList());
         assertThat(deck.isEmpty(), is(false));
-        assertThat(deck.deal(), is(card1));
+
+        Card card = deck.deal();
+        assertThat(card.getId(), is(0));
+        assertThat(card.makeCopyWithoutId(), is(card1));
+        verify(rng).nextInt(3);
         assertThat(deck.isEmpty(), is(false));
-        assertThat(deck.deal(), is(card2));
+        
+        card = deck.deal();
+        assertThat(card.getId(), is(1));
+        assertThat(card.makeCopyWithoutId(), is(card2));
+        verify(rng).nextInt(2);
+        assertThat(deck.isEmpty(), is(false));
+        
+        card = deck.deal();
+        assertThat(card.getId(), is(2));
+        assertThat(card.makeCopyWithoutId(), is(card3));
+        verify(rng).nextInt(1);
         assertThat(deck.isEmpty(), is(true));
     }
     
-    @SuppressWarnings("unchecked")
+    @Test
+    public void dealShufflingDifferendForDifferentSeeds() {
+        SecureRandom rng1 = new SecureRandom(new byte[] {0});
+        SecureRandom rng2 = new SecureRandom(new byte[] {1});
+        
+        TelesinaDeckUtil telesinaDeckUtil = new TelesinaDeckUtil();
+        TelesinaDeck deck1 = new TelesinaDeck(telesinaDeckUtil, rng1, 10);
+        TelesinaDeck deck2 = new TelesinaDeck(telesinaDeckUtil, rng2, 10);
+        
+        ArrayList<Card> cards1 = new ArrayList<Card>();
+        ArrayList<Card> cards2 = new ArrayList<Card>();
+        
+        while (!deck1.isEmpty()) {
+            cards1.add(deck1.deal());
+        }
+        while (!deck2.isEmpty()) {
+            cards1.add(deck2.deal());
+        }
+        
+        assertThat(cards1, is(not(cards2)));
+    }
+    
     @Test(expected = IllegalStateException.class)
     public void dealCardExceptionIfEmpty() {
-        Shuffler<Card> shuffler = mock(Shuffler.class);
-        CardIdGenerator idGenerator = mock(CardIdGenerator.class);
-        when(shuffler.shuffle(Mockito.anyList())).thenReturn(Collections.<Card>emptyList());
-        
-        TelesinaDeck deck = new TelesinaDeck(shuffler, idGenerator, 4);
+        TelesinaDeckUtil telesinaDeckUtil = mock(TelesinaDeckUtil.class);
+        when(telesinaDeckUtil.createDeckCards(4)).thenReturn(new ArrayList<Card>());
+        TelesinaDeck deck = new TelesinaDeck(telesinaDeckUtil, rng, 4);
         assertThat(deck.isEmpty(), is(true));
         deck.deal();
     }
     
-    @SuppressWarnings("unchecked")
     @Test
     public void getAllCards() {
-        Shuffler<Card> shuffler = mock(Shuffler.class);
-        CardIdGenerator idGenerator = mock(CardIdGenerator.class);
-        Card card1 = new Card(1, KING, CLUBS);
-        Card card2 = new Card(2, QUEEN, DIAMONDS);
-        when(idGenerator.copyAndAssignIds(Mockito.anyList())).thenReturn(asList(card1, card2));
-        TelesinaDeck deck = new TelesinaDeck(shuffler, idGenerator, 4);
+        Card card1 = new Card(KING, CLUBS);
+        Card card2 = new Card(QUEEN, DIAMONDS);
+        TelesinaDeckUtil telesinaDeckUtil = mock(TelesinaDeckUtil.class);
+        when(telesinaDeckUtil.createDeckCards(4)).thenReturn(asList(card1, card2));
+        
+        TelesinaDeck deck = new TelesinaDeck(telesinaDeckUtil, rng, 4);
         
         assertThat(deck.getAllCards().size(), is(2));
         deck.deal();
