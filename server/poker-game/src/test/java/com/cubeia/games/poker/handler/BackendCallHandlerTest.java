@@ -89,7 +89,8 @@ public class BackendCallHandlerTest {
     private String tableSessionReference = "xSessionRef";
     private String tableReference = "xTableRef";
     
-    private void setupForHandleReserveSuccessfulResponse(boolean isSitInAfterBuyIn) throws IOException{
+    @SuppressWarnings("unchecked")
+	private void setupForHandleReserveSuccessfulResponse(boolean isSitInAfterBuyIn) throws IOException{
         tableReference = "tableRef";
         when(state.getExternalTableProperties()).thenReturn(singletonMap(CashGamesBackendContract.MARKET_TABLE_REFERENCE_KEY, (Serializable) tableReference));
     	amountRequested = 500;
@@ -101,11 +102,13 @@ public class BackendCallHandlerTest {
         
 		when(pokerPlayer.getPendingBalanceSum()).thenReturn(balanceNotInHand + amountRequested);
         when(pokerPlayer.isSitInAfterSuccessfulBuyIn()).thenReturn(isSitInAfterBuyIn);
-
+        Map<Serializable, Serializable> attributes = mock(Map.class);
+		when(pokerPlayer.getAttributes()).thenReturn(attributes );
+        
         callHandler.handleReserveSuccessfulResponse(reserveResponse);
         
         verify(pokerPlayer).addNotInHandAmount(amountRequested);
-        verify(pokerPlayer).setExternalPlayerSessionReference(tableSessionReference);
+        verify(attributes).put(PokerPlayerImpl.ATTR_PLAYER_EXTERNAL_SESSION_ID, tableSessionReference);
         verify(pokerPlayer).clearRequestedBuyInAmountAndRequest();
         
         ArgumentCaptor<GameDataAction> buyInResponseCaptor = ArgumentCaptor.forClass(GameDataAction.class);

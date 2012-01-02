@@ -18,6 +18,8 @@
 package com.cubeia.games.poker.model;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,15 +36,19 @@ import com.cubeia.poker.player.DefaultPokerPlayer;
  * @author Fredrik Johansson, Cubeia Ltd
  */
 public class PokerPlayerImpl extends DefaultPokerPlayer implements Serializable {
+	public static final String ATTR_PLAYER_EXTERNAL_SESSION_ID = "PLAYER_EXTERNAL_SESSION_ID";
+	
     private static final Logger log = LoggerFactory.getLogger(PokerPlayerImpl.class);
     
 	private static final long serialVersionUID = 1L;
 
 	private GenericPlayer placeholder;
 
+	private Map<Serializable, Serializable> attributes = new HashMap<Serializable, Serializable>();
+	
 	private PlayerSessionId playerSessionId;
 	
-	private String externalPlayerSessionId;
+//	private String externalPlayerSessionId;
 
 	public PokerPlayerImpl (GenericPlayer placeholder) {
 		super(placeholder.getPlayerId());
@@ -55,11 +61,19 @@ public class PokerPlayerImpl extends DefaultPokerPlayer implements Serializable 
 	}
 	
 	/**
+	 * Returns the player attribute map.
+	 * @return attributes
+	 */
+	public Map<Serializable, Serializable> getAttributes() {
+		return attributes;
+	}
+	
+	/**
 	 * Sets a session id for this player. 
 	 * @param sessionId the session id, or null to leave the session
 	 */
 	public void setPlayerSessionId(PlayerSessionId playerSessionId) {
-	    log.debug("updating player {} session id: {} -> {}", new Object[] {getId(), this.playerSessionId, playerSessionId});
+	    log.debug("updating player {} session id: {} -> {}", new Object[] {getId(), getPlayerSessionId(), playerSessionId});
 		this.playerSessionId = playerSessionId;
 	}	
 
@@ -71,16 +85,4 @@ public class PokerPlayerImpl extends DefaultPokerPlayer implements Serializable 
 		return playerSessionId;
 	}
 
-	/**
-	 * Returns the external (AAMS for example) session id for the current session. 
-	 * @return session id, can be null if no session is open
-	 */
-	public String getExternalPlayerSessionId() {
-        return externalPlayerSessionId;
-    }
-
-    public void setExternalPlayerSessionReference(String externalPlayerSessionId) {
-        this.externalPlayerSessionId = externalPlayerSessionId;
-    }
-    
 }

@@ -1,6 +1,7 @@
 package com.cubeia.games.poker.handler;
 
 import static com.cubeia.backend.firebase.CashGamesBackendContract.MARKET_TABLE_REFERENCE_KEY;
+import static com.cubeia.games.poker.model.PokerPlayerImpl.ATTR_PLAYER_EXTERNAL_SESSION_ID;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -69,7 +70,7 @@ public class BackendCallHandler {
         
         String externalPlayerSessionReference = reserveResponse.reserveProperties.get(
             CashGamesBackendContract.MARKET_TABLE_SESSION_REFERENCE_KEY);
-        pokerPlayer.setExternalPlayerSessionReference(externalPlayerSessionReference);
+        pokerPlayer.getAttributes().put(ATTR_PLAYER_EXTERNAL_SESSION_ID, externalPlayerSessionReference);
         
         pokerPlayer.clearRequestedBuyInAmountAndRequest();
         
