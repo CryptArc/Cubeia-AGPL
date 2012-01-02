@@ -1,6 +1,7 @@
 package com.cubeia.poker;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import com.cubeia.poker.rounds.betting.BetStrategyName;
 import com.cubeia.poker.timing.TimingProfile;
@@ -17,7 +18,7 @@ public class PokerSettings implements Serializable {
     private final int tableSize;
     private final BetStrategyName betStrategy;
     private final RakeSettings rakeSettings;
-    private final String tableIntegrationId;
+    private final Map<Serializable, Serializable> attributes;
     
     /** Default is 1 minute */
     private long sitoutTimeLimitMilliseconds = 1 * 60 * 1000;
@@ -31,7 +32,7 @@ public class PokerSettings implements Serializable {
 			int tableSize,
 			BetStrategyName betStrategy,
 			RakeSettings rakeSettings,
-			String tableIntegrationId) {
+			Map<Serializable, Serializable> attributes) {
 		
 		this.anteLevel = anteLevel;
 		this.minBuyIn = minBuyIn;
@@ -41,11 +42,12 @@ public class PokerSettings implements Serializable {
 		this.tableSize = tableSize;
 		this.betStrategy = betStrategy;
 		this.rakeSettings = rakeSettings;
-		this.tableIntegrationId = tableIntegrationId;
+		this.attributes = attributes;
+		
 	}
 
-	public String getTableIntegrationId() {
-		return tableIntegrationId;
+	public Map<Serializable, Serializable> getAttributes() {
+		return attributes;
 	}
 	
 	public int getAnteLevel() {

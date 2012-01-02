@@ -22,8 +22,10 @@ import static com.cubeia.games.poker.activator.PokerParticipant.RAKE_LIMIT;
 import static com.cubeia.games.poker.activator.PokerParticipant.RAKE_LIMIT_HEADS_UP;
 import static com.cubeia.poker.variant.PokerVariant.TELESINA;
 
+import java.io.Serializable;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -67,7 +69,12 @@ import com.google.inject.Injector;
  */
 public class PokerActivator extends DefaultActivator implements MttAwareActivator, PokerActivatorMBean {
 
-    private static final String JMX_BIND_NAME = "com.cubeia.poker:type=PokerActivator";
+	/**
+	 * Table attribute key for external table id.
+	 */
+    public static final String ATTR_EXTERNAL_TABLE_ID = "EXTERNAL_TABLE_ID";
+
+	private static final String JMX_BIND_NAME = "com.cubeia.poker:type=PokerActivator";
     
     private transient Logger log = Logger.getLogger(this.getClass());
 
@@ -232,7 +239,8 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
         
         PokerSettings settings = new PokerSettings(-1, -1, -1, timing, PokerVariant.TEXAS_HOLDEM, 
             table.getPlayerSet().getSeatingMap().getNumberOfSeats(), BetStrategyName.NO_LIMIT, 
-            new RakeSettings(RAKE_FRACTION, RAKE_LIMIT, RAKE_LIMIT_HEADS_UP), "MOCK_TRN::" + table.getId());
+            new RakeSettings(RAKE_FRACTION, RAKE_LIMIT, RAKE_LIMIT_HEADS_UP), 
+            Collections.<Serializable, Serializable>singletonMap(ATTR_EXTERNAL_TABLE_ID, "MOCK_TRN::" + table.getId()));
         
         pokerState.init(rngProvider, settings);
         pokerState.setTournamentTable(true);

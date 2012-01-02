@@ -320,7 +320,7 @@ public class PokerStateTest {
 		state.serverAdapter = mock(ServerAdapter.class);
 		state.playerMap = new HashMap<Integer, PokerPlayer>();
 		RakeSettings rakeSettings = TestUtils.createOnePercentRakeSettings();
-		PokerSettings settings = new PokerSettings(0, 0, 0, null, null, 4, null, rakeSettings, "1");
+		PokerSettings settings = new PokerSettings(0, 0, 0, null, null, 4, null, rakeSettings, null);
 		state.settings = settings;
 		PokerPlayer player1 = mock(PokerPlayer.class);
 		PokerPlayer player2 = mock(PokerPlayer.class);
@@ -341,7 +341,7 @@ public class PokerStateTest {
 		state.potHolder = oldPotHolder;
 		state.gameType = mock(GameType.class);
 		RakeSettings rakeSettings = TestUtils.createOnePercentRakeSettings();
-		PokerSettings settings = new PokerSettings(0, 0, 0, null, null, 4, null, rakeSettings, "1");
+		PokerSettings settings = new PokerSettings(0, 0, 0, null, null, 4, null, rakeSettings, null);
 		state.settings = settings;
 
 		state.playerMap = new HashMap<Integer, PokerPlayer>();
@@ -363,7 +363,7 @@ public class PokerStateTest {
 		PotHolder oldPotHolder = new PotHolder(null);
 		state.potHolder = oldPotHolder;
 		RakeSettings rakeSettings = TestUtils.createOnePercentRakeSettings();
-		PokerSettings settings = new PokerSettings(0, 0, 0, null, null, 4, null, rakeSettings, "1");
+		PokerSettings settings = new PokerSettings(0, 0, 0, null, null, 4, null, rakeSettings, null);
 		state.settings = settings;
 
 		ServerAdapter serverAdapter = mock(ServerAdapter.class);
@@ -407,7 +407,7 @@ public class PokerStateTest {
 		PotHolder oldPotHolder = new PotHolder(null);
 		state.potHolder = oldPotHolder;
 		RakeSettings rakeSettings = TestUtils.createOnePercentRakeSettings();
-		PokerSettings settings = new PokerSettings(0, 0, 0, null, null, 4, null, rakeSettings, "1");
+		PokerSettings settings = new PokerSettings(0, 0, 0, null, null, 4, null, rakeSettings, null);
 		state.settings = settings;
 
 		ServerAdapter serverAdapter = mock(ServerAdapter.class);

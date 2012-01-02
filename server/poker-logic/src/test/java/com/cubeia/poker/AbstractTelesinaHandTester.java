@@ -19,6 +19,8 @@ package com.cubeia.poker;
 
 import static com.cubeia.poker.timing.Timings.MINIMUM_DELAY;
 
+import java.io.Serializable;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -80,14 +82,13 @@ public abstract class AbstractTelesinaHandTester extends TestCase {
         game.setServerAdapter(mockServerAdapter);
         game.settings = createPokerSettings(anteLevel, rakeSettings);
         game.gameType = new Telesina(rngProvider, game, deckFactory, new TelesinaRoundFactory(), new TelesinaDealerButtonCalculator());
-        game.tableIntegrationId = game.settings.getTableIntegrationId();
-        
     }
     
     protected PokerSettings createPokerSettings(int anteLevel, RakeSettings rakeSettings) {
         PokerSettings settings = new PokerSettings(anteLevel, 1000, 10000, 
                 TimingFactory.getRegistry().getTimingProfile(MINIMUM_DELAY), PokerVariant.TELESINA, 6, 
-                BetStrategyName.NO_LIMIT, rakeSettings, null);
+                BetStrategyName.NO_LIMIT, rakeSettings, 
+                Collections.<Serializable, Serializable>singletonMap("EXTERNAL_TABLE_ID", "xyz"));
         
         settings.setSitoutTimeLimitMilliseconds(sitoutTimeLimitMilliseconds);
         return settings;

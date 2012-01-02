@@ -17,7 +17,11 @@
 
 package com.cubeia.games.poker.activator;
 
+import static com.cubeia.games.poker.activator.PokerActivator.ATTR_EXTERNAL_TABLE_ID;
+
+import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Collections;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -134,7 +138,8 @@ public class PokerParticipant extends DefaultCreationParticipant {
 
         PokerSettings settings = new PokerSettings(anteLevel, anteLevel * MIN_BUY_IN_ANTE_MULTIPLIER, anteLevel * MAX_BUY_IN_ANTE_MULTIPLIER, timingProfile, variant, 
 		    table.getPlayerSet().getSeatingMap().getNumberOfSeats(), BetStrategyName.NO_LIMIT, 
-		    new RakeSettings(RAKE_FRACTION, RAKE_LIMIT, RAKE_LIMIT_HEADS_UP), "MOCK::" + table.getId());
+		    new RakeSettings(RAKE_FRACTION, RAKE_LIMIT, RAKE_LIMIT_HEADS_UP), 
+		    Collections.<Serializable, Serializable>singletonMap(ATTR_EXTERNAL_TABLE_ID, "MOCK::" + table.getId()));
 		pokerState.init(rngProvider, settings);
 		pokerState.setAdapterState(new FirebaseState());
 		pokerState.setId(table.getId());

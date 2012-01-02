@@ -166,10 +166,6 @@ public class PokerState implements Serializable, IPokerState {
 
 	private List<Card> communityCards = new ArrayList<Card>();
 
-	// TODO: this property should be moved into the externalTablePropertiesMap
-	@VisibleForTesting
-	protected String tableIntegrationId;
-
 	/**
 	 * Map of external table properties. External properties are optional stuff that might be needed
 	 * when integrating to external systems. Session/table/tournament id's for example.
@@ -194,7 +190,6 @@ public class PokerState implements Serializable, IPokerState {
 		this.settings = settings;
 
 		gameType = createGameTypeByVariant(rngProvider, settings.getVariant());
-		tableIntegrationId = settings.getTableIntegrationId();
 	}
 
 	protected GameType createGameTypeByVariant(RNGProvider rngProvider, PokerVariant variant) {
@@ -977,10 +972,6 @@ public class PokerState implements Serializable, IPokerState {
 
 	public void notifyNewRound() {
 		serverAdapter.notifyNewRound();
-	}
-
-	public String getIntegrationId() {
-		return tableIntegrationId;
 	}
 
 	public PokerSettings getSettings() {

@@ -16,6 +16,7 @@ import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TablePlayerSet;
 import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.games.poker.FirebaseState;
+import com.cubeia.games.poker.activator.PokerActivator;
 import com.cubeia.games.poker.entity.HandIdentifier;
 import com.cubeia.games.poker.handhistory.HandHistoryCollectorService;
 import com.cubeia.poker.PokerState;
@@ -186,7 +187,7 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
 	}
 	
 	private String getIntegrationTableId() {
-		return state.getIntegrationId();
+		return state.getSettings().getAttributes().get(PokerActivator.ATTR_EXTERNAL_TABLE_ID).toString();
 	}
 
 	private void post(HandHistoryEvent ev) {
