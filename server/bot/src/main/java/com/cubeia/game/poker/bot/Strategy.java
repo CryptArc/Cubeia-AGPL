@@ -3,8 +3,8 @@ package com.cubeia.game.poker.bot;
 import java.util.List;
 import java.util.Random;
 
-import se.jadestone.dicearena.game.poker.network.protocol.Enums.ActionType;
-import se.jadestone.dicearena.game.poker.network.protocol.PlayerAction;
+import com.cubeia.games.poker.io.protocol.Enums.ActionType;
+import com.cubeia.games.poker.io.protocol.PlayerAction;
 
 public class Strategy {
 

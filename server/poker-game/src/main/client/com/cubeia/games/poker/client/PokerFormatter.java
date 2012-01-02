@@ -2,7 +2,7 @@ package com.cubeia.games.poker.client;
 
 import java.util.List;
 
-import se.jadestone.dicearena.game.poker.network.protocol.GameCard;
+import com.cubeia.games.poker.io.protocol.GameCard;
 
 public class PokerFormatter {
 

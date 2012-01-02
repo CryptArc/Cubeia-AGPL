@@ -9,15 +9,15 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import se.jadestone.dicearena.game.poker.network.protocol.DealPrivateCards;
-import se.jadestone.dicearena.game.poker.network.protocol.DealerButton;
-import se.jadestone.dicearena.game.poker.network.protocol.Enums.ActionType;
-import se.jadestone.dicearena.game.poker.network.protocol.Enums.PlayerTableStatus;
-import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
-import se.jadestone.dicearena.game.poker.network.protocol.PlayerAction;
-import se.jadestone.dicearena.game.poker.network.protocol.PlayerPokerStatus;
-import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
-import se.jadestone.dicearena.game.poker.network.protocol.RequestAction;
+import com.cubeia.games.poker.io.protocol.DealPrivateCards;
+import com.cubeia.games.poker.io.protocol.DealerButton;
+import com.cubeia.games.poker.io.protocol.Enums.ActionType;
+import com.cubeia.games.poker.io.protocol.Enums.PlayerTableStatus;
+import com.cubeia.games.poker.io.protocol.PerformAction;
+import com.cubeia.games.poker.io.protocol.PlayerAction;
+import com.cubeia.games.poker.io.protocol.PlayerPokerStatus;
+import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
+import com.cubeia.games.poker.io.protocol.RequestAction;
 
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.server.SystemException;

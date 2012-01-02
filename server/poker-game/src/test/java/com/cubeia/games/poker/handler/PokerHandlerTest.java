@@ -16,15 +16,15 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import se.jadestone.dicearena.game.poker.network.protocol.BuyInInfoRequest;
-import se.jadestone.dicearena.game.poker.network.protocol.BuyInRequest;
-import se.jadestone.dicearena.game.poker.network.protocol.BuyInResponse;
-import se.jadestone.dicearena.game.poker.network.protocol.Enums.BuyInResultCode;
-import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
-import se.jadestone.dicearena.game.poker.network.protocol.PlayerAction;
-import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitinRequest;
-import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitoutRequest;
-import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
+import com.cubeia.games.poker.io.protocol.BuyInInfoRequest;
+import com.cubeia.games.poker.io.protocol.BuyInRequest;
+import com.cubeia.games.poker.io.protocol.BuyInResponse;
+import com.cubeia.games.poker.io.protocol.Enums.BuyInResultCode;
+import com.cubeia.games.poker.io.protocol.PerformAction;
+import com.cubeia.games.poker.io.protocol.PlayerAction;
+import com.cubeia.games.poker.io.protocol.PlayerSitinRequest;
+import com.cubeia.games.poker.io.protocol.PlayerSitoutRequest;
+import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
 
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.PlayerSessionIdImpl;

@@ -32,15 +32,15 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import se.jadestone.dicearena.game.poker.network.protocol.BestHand;
-import se.jadestone.dicearena.game.poker.network.protocol.CardToDeal;
-import se.jadestone.dicearena.game.poker.network.protocol.DealPrivateCards;
-import se.jadestone.dicearena.game.poker.network.protocol.Enums;
-import se.jadestone.dicearena.game.poker.network.protocol.Enums.ActionType;
-import se.jadestone.dicearena.game.poker.network.protocol.GameCard;
-import se.jadestone.dicearena.game.poker.network.protocol.HandEnd;
-import se.jadestone.dicearena.game.poker.network.protocol.PotTransfer;
-import se.jadestone.dicearena.game.poker.network.protocol.PotTransfers;
+import com.cubeia.games.poker.io.protocol.BestHand;
+import com.cubeia.games.poker.io.protocol.CardToDeal;
+import com.cubeia.games.poker.io.protocol.DealPrivateCards;
+import com.cubeia.games.poker.io.protocol.Enums;
+import com.cubeia.games.poker.io.protocol.Enums.ActionType;
+import com.cubeia.games.poker.io.protocol.GameCard;
+import com.cubeia.games.poker.io.protocol.HandEnd;
+import com.cubeia.games.poker.io.protocol.PotTransfer;
+import com.cubeia.games.poker.io.protocol.PotTransfers;
 
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.hand.Card;

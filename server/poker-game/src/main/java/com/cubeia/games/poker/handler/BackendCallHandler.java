@@ -10,11 +10,11 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import se.jadestone.dicearena.game.poker.network.protocol.BuyInResponse;
-import se.jadestone.dicearena.game.poker.network.protocol.Enums;
-import se.jadestone.dicearena.game.poker.network.protocol.Enums.BuyInResultCode;
-import se.jadestone.dicearena.game.poker.network.protocol.Enums.ErrorCode;
-import se.jadestone.dicearena.game.poker.network.protocol.ErrorPacket;
+import com.cubeia.games.poker.io.protocol.BuyInResponse;
+import com.cubeia.games.poker.io.protocol.Enums;
+import com.cubeia.games.poker.io.protocol.Enums.BuyInResultCode;
+import com.cubeia.games.poker.io.protocol.Enums.ErrorCode;
+import com.cubeia.games.poker.io.protocol.ErrorPacket;
 
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.dto.AnnounceTableFailedResponse;

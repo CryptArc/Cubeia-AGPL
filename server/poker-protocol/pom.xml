@@ -29,8 +29,10 @@
         <configuration>
           <protocol_file>src/main/xml/protocol.xml</protocol_file>
           <language>all</language>
-          <!--package_name>com.cubeia.games.poker.io.protocol</package_name-->
+          <package_name>com.cubeia.games.poker.io.protocol</package_name>
+          <!-- 
 					<package_name>se.jadestone.dicearena.game.poker.network.protocol</package_name>
+           -->
           <generate_visitors>true</generate_visitors>
 	  <fail_on_bad_packet_order>false</fail_on_bad_packet_order>
 	</configuration>

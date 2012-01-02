@@ -21,9 +21,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import se.jadestone.dicearena.game.poker.network.protocol.Enums.ErrorCode;
-import se.jadestone.dicearena.game.poker.network.protocol.ErrorPacket;
-import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
+import com.cubeia.games.poker.io.protocol.Enums.ErrorCode;
+import com.cubeia.games.poker.io.protocol.ErrorPacket;
+import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
 
 import com.cubeia.firebase.api.action.AbstractGameAction;
 import com.cubeia.firebase.api.action.GameDataAction;

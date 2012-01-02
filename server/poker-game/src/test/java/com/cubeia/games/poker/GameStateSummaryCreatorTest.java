@@ -19,17 +19,17 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import se.jadestone.dicearena.game.poker.network.protocol.DealPrivateCards;
-import se.jadestone.dicearena.game.poker.network.protocol.DealPublicCards;
-import se.jadestone.dicearena.game.poker.network.protocol.Enums;
-import se.jadestone.dicearena.game.poker.network.protocol.GameCard;
-import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
-import se.jadestone.dicearena.game.poker.network.protocol.PlayerAction;
-import se.jadestone.dicearena.game.poker.network.protocol.PlayerDisconnectedPacket;
-import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
-import se.jadestone.dicearena.game.poker.network.protocol.RequestAction;
-import se.jadestone.dicearena.game.poker.network.protocol.StartHandHistory;
-import se.jadestone.dicearena.game.poker.network.protocol.StopHandHistory;
+import com.cubeia.games.poker.io.protocol.DealPrivateCards;
+import com.cubeia.games.poker.io.protocol.DealPublicCards;
+import com.cubeia.games.poker.io.protocol.Enums;
+import com.cubeia.games.poker.io.protocol.GameCard;
+import com.cubeia.games.poker.io.protocol.PerformAction;
+import com.cubeia.games.poker.io.protocol.PlayerAction;
+import com.cubeia.games.poker.io.protocol.PlayerDisconnectedPacket;
+import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
+import com.cubeia.games.poker.io.protocol.RequestAction;
+import com.cubeia.games.poker.io.protocol.StartHandHistory;
+import com.cubeia.games.poker.io.protocol.StopHandHistory;
 
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.GameDataAction;

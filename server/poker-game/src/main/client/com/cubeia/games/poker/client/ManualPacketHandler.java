@@ -22,7 +22,7 @@ import java.nio.ByteBuffer;
 
 import org.apache.log4j.Logger;
 
-import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
+import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
 
 import com.cubeia.firebase.clients.java.connector.text.AbstractClientPacketHandler;
 import com.cubeia.firebase.clients.java.connector.text.IOContext;

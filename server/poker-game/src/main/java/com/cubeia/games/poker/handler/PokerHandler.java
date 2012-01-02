@@ -24,15 +24,15 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import se.jadestone.dicearena.game.poker.network.protocol.BuyInInfoRequest;
-import se.jadestone.dicearena.game.poker.network.protocol.BuyInRequest;
-import se.jadestone.dicearena.game.poker.network.protocol.BuyInResponse;
-import se.jadestone.dicearena.game.poker.network.protocol.Enums.BuyInResultCode;
-import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
-import se.jadestone.dicearena.game.poker.network.protocol.PingPacket;
-import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitinRequest;
-import se.jadestone.dicearena.game.poker.network.protocol.PlayerSitoutRequest;
-import se.jadestone.dicearena.game.poker.network.protocol.PongPacket;
+import com.cubeia.games.poker.io.protocol.BuyInInfoRequest;
+import com.cubeia.games.poker.io.protocol.BuyInRequest;
+import com.cubeia.games.poker.io.protocol.BuyInResponse;
+import com.cubeia.games.poker.io.protocol.Enums.BuyInResultCode;
+import com.cubeia.games.poker.io.protocol.PerformAction;
+import com.cubeia.games.poker.io.protocol.PingPacket;
+import com.cubeia.games.poker.io.protocol.PlayerSitinRequest;
+import com.cubeia.games.poker.io.protocol.PlayerSitoutRequest;
+import com.cubeia.games.poker.io.protocol.PongPacket;
 
 import com.cubeia.backend.cashgame.callback.ReserveCallback;
 import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;

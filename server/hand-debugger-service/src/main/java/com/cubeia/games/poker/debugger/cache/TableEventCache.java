@@ -8,12 +8,12 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import se.jadestone.dicearena.game.poker.network.protocol.Enums.PlayerTableStatus;
-import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
-import se.jadestone.dicearena.game.poker.network.protocol.PlayerBalance;
-import se.jadestone.dicearena.game.poker.network.protocol.PlayerPokerStatus;
-import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
-import se.jadestone.dicearena.game.poker.network.protocol.RequestAction;
+import com.cubeia.games.poker.io.protocol.Enums.PlayerTableStatus;
+import com.cubeia.games.poker.io.protocol.PerformAction;
+import com.cubeia.games.poker.io.protocol.PlayerBalance;
+import com.cubeia.games.poker.io.protocol.PlayerPokerStatus;
+import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
+import com.cubeia.games.poker.io.protocol.RequestAction;
 
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.GameDataAction;

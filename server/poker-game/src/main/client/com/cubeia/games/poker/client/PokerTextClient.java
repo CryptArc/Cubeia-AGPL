@@ -21,10 +21,10 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.regex.Pattern;
 
-import se.jadestone.dicearena.game.poker.network.protocol.Enums.ActionType;
-import se.jadestone.dicearena.game.poker.network.protocol.BuyInRequest;
-import se.jadestone.dicearena.game.poker.network.protocol.PerformAction;
-import se.jadestone.dicearena.game.poker.network.protocol.PlayerAction;
+import com.cubeia.games.poker.io.protocol.Enums.ActionType;
+import com.cubeia.games.poker.io.protocol.BuyInRequest;
+import com.cubeia.games.poker.io.protocol.PerformAction;
+import com.cubeia.games.poker.io.protocol.PlayerAction;
 
 import com.cubeia.firebase.clients.java.connector.text.SimpleTextClient;
 import com.cubeia.firebase.io.ProtocolObject;

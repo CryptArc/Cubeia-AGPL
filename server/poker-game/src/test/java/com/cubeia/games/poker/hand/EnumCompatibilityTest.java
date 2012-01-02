@@ -5,7 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import se.jadestone.dicearena.game.poker.network.protocol.Enums;
+import com.cubeia.games.poker.io.protocol.Enums;
 
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.hand.Suit;

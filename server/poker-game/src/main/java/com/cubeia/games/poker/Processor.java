@@ -20,7 +20,7 @@ package com.cubeia.games.poker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
+import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
 
 import com.cubeia.backend.cashgame.dto.AnnounceTableFailedResponse;
 import com.cubeia.backend.cashgame.dto.AnnounceTableResponse;

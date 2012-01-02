@@ -21,10 +21,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import se.jadestone.dicearena.game.poker.network.protocol.BuyInResponse;
-import se.jadestone.dicearena.game.poker.network.protocol.Enums;
-import se.jadestone.dicearena.game.poker.network.protocol.ErrorPacket;
-import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
+import com.cubeia.games.poker.io.protocol.BuyInResponse;
+import com.cubeia.games.poker.io.protocol.Enums;
+import com.cubeia.games.poker.io.protocol.ErrorPacket;
+import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
 
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.PlayerSessionIdImpl;

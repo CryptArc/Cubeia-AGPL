@@ -2,7 +2,7 @@ package com.cubeia.game.poker.bot;
 
 import org.apache.log4j.Logger;
 
-import se.jadestone.dicearena.game.poker.network.protocol.BuyInInfoRequest;
+import com.cubeia.games.poker.io.protocol.BuyInInfoRequest;
 
 import com.cubeia.firebase.bot.Bot;
 import com.cubeia.firebase.bot.ai.BasicAI;

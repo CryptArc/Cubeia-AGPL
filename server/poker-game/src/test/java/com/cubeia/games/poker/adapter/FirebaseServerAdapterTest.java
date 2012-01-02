@@ -24,14 +24,14 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import se.jadestone.dicearena.game.poker.network.protocol.BuyInInfoResponse;
-import se.jadestone.dicearena.game.poker.network.protocol.Enums.BuyInInfoResultCode;
-import se.jadestone.dicearena.game.poker.network.protocol.Enums.PlayerTableStatus;
-import se.jadestone.dicearena.game.poker.network.protocol.PlayerBalance;
-import se.jadestone.dicearena.game.poker.network.protocol.PlayerPokerStatus;
-import se.jadestone.dicearena.game.poker.network.protocol.PotTransfers;
-import se.jadestone.dicearena.game.poker.network.protocol.ProtocolObjectFactory;
-import se.jadestone.dicearena.game.poker.network.protocol.RequestAction;
+import com.cubeia.games.poker.io.protocol.BuyInInfoResponse;
+import com.cubeia.games.poker.io.protocol.Enums.BuyInInfoResultCode;
+import com.cubeia.games.poker.io.protocol.Enums.PlayerTableStatus;
+import com.cubeia.games.poker.io.protocol.PlayerBalance;
+import com.cubeia.games.poker.io.protocol.PlayerPokerStatus;
+import com.cubeia.games.poker.io.protocol.PotTransfers;
+import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
+import com.cubeia.games.poker.io.protocol.RequestAction;
 
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.callback.ReserveCallback;
