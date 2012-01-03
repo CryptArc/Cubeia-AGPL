@@ -11,7 +11,6 @@
     <module>poker-game</module>
     <module>poker-protocol</module>
     <module>poker-logic</module>
-    <module>poker-logic-blinds</module>
     <module>poker-tournament</module>
     <module>poker-uar</module>
     <module>backend</module>
@@ -315,18 +314,6 @@
     </developerConnection>
   </scm>
 
-<distributionManagement>
-<repository>
-<id>JGNexus</id>
-<url>http://repo.jadestone.se/nexus/content/repositories/releases</url>
-</repository>
-
-<snapshotRepository>
-  <id>JGNexus</id>
-  <url>http://repo.jadestone.se/nexus/content/repositories/snapshots</url>
-</snapshotRepository>
-</distributionManagement>
-<!--
   <distributionManagement>
 	<repository>
 		<id>cubeia-nexus</id>
@@ -339,5 +326,5 @@
 		<url>http://m2.cubeia.com/nexus/content/repositories/internal-snapshots/</url>
 	</snapshotRepository>
   </distributionManagement>  
--->
+
 </project>
