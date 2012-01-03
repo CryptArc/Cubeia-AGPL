@@ -52,6 +52,9 @@
 				maxBetAmount = playerAction.maxAmount  / 100;
 
 				switch ( playerAction.type ) {
+					case ActionTypeEnum.ANTE :
+						anteButton.visible = true;
+						break;
 					case ActionTypeEnum.BET :
 						betButton.visible = true;
 						enableBetSlider(playerAction.minAmount, playerAction.maxAmount);
@@ -84,6 +87,9 @@
 				sounds.playAction(type);
 				
 				switch ( type ) {
+					case ActionTypeEnum.ANTE :
+						sendAction(type, callAmount);
+						break;
 					case ActionTypeEnum.BET :
 						sendAction(type, int(betSlider.value * 100));
 						break;
@@ -157,7 +163,7 @@
 		]]>
 	</mx:Script>
 
-
+	<mx:Button x="98" y="10"  label="Ante" id="anteButton" width="80" enabled="{table.betControlsEnabled}" visible="false" click="action(ActionTypeEnum.ANTE)"/>
 	<mx:Button x="98" y="10"  label="Call" id="callButton" width="80" enabled="{table.betControlsEnabled}" visible="false" click="action(ActionTypeEnum.CALL)"/>
 	<mx:Button x="10" y="10"  label="Fold" id="foldButton" width="80"  enabled="{table.betControlsEnabled}" visible="false" click="action(ActionTypeEnum.FOLD)"/>
 	<mx:Button x="186" y="10" label="Bet" id="betButton" width="136"  enabled="{table.betControlsEnabled}" visible="false" click="action(ActionTypeEnum.BET)"/>

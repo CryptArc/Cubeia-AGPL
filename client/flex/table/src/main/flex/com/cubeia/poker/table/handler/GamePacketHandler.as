@@ -31,6 +31,8 @@ package com.cubeia.poker.table.handler
 	import com.cubeia.firebase.model.PlayerInfo;
 	import com.cubeia.games.poker.io.protocol.ActionTypeEnum;
 	import com.cubeia.games.poker.io.protocol.BestHand;
+	import com.cubeia.games.poker.io.protocol.BuyInInfoResponse;
+	import com.cubeia.games.poker.io.protocol.BuyInRequest;
 	import com.cubeia.games.poker.io.protocol.CardToDeal;
 	import com.cubeia.games.poker.io.protocol.DealPrivateCards;
 	import com.cubeia.games.poker.io.protocol.DealPublicCards;
@@ -212,6 +214,9 @@ package com.cubeia.poker.table.handler
 				case PlayerPokerStatus.CLASSID :
 					handlePlayerStatusChanged(PlayerPokerStatus(protocolObject));
 					break;
+				case BuyInInfoResponse.CLASSID :
+					handleBuyInInfoResponse(BuyInInfoResponse(protocolObject));
+					break;
 				default :
 					trace("Received unhandled poker game packet [" + protocolObject.toString() + "]");
 			}
@@ -298,6 +303,15 @@ package com.cubeia.poker.table.handler
 //					player.status = Player.STATUS_ALLIN;
 //					break;
 			}
+		}
+		
+		private function handleBuyInInfoResponse(info:BuyInInfoResponse):void {
+			// Send back a buy in request for maximum allowed amount
+			var request:BuyInRequest  = new BuyInRequest();
+			request.amount = info.maxAmount;
+			request.sitInIfSuccessful = true;
+			
+			PokerTable.messageBusClient.sendGamePacket(table.myPlayerId, table.id, GamePacketHandler.styxSerializer.pack(request));
 		}
 	
 	}
