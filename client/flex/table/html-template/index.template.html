@@ -41,10 +41,19 @@
             <!-- To use express install, set to playerProductInstall.swf, otherwise the empty string. -->
             var xiSwfUrlStr = "${expressInstallSwf}";
             var flashvars = {};
+            flashvars.busName = swfobject.getQueryParamValue("busName");
+			flashvars.tableid = swfobject.getQueryParamValue("tableid");
+			flashvars.autoJoin = swfobject.getQueryParamValue("autoJoin");
+			flashvars.tableSize = swfobject.getQueryParamValue("tableSize");
+			flashvars.styleName = swfobject.getQueryParamValue("styleName");
+			flashvars.pid = swfobject.getQueryParamValue("pid");
+			flashvars.screenname = swfobject.getQueryParamValue("screenname");
+			flashvars.seatid = swfobject.getQueryParamValue("seatid");
             var params = {};
+            params.allownetworking = "all";		
             params.quality = "high";
             params.bgcolor = "${bgcolor}";
-            params.allowscriptaccess = "sameDomain";
+            params.allowscriptaccess = "always";
             params.allowfullscreen = "true";
             var attributes = {};
             attributes.id = "${application}";
@@ -81,13 +90,13 @@
                 <param name="movie" value="${swf}.swf" />
                 <param name="quality" value="high" />
                 <param name="bgcolor" value="${bgcolor}" />
-                <param name="allowScriptAccess" value="sameDomain" />
+                <param name="allowScriptAccess" value="always" />
                 <param name="allowFullScreen" value="true" />
                 <!--[if !IE]>-->
                 <object type="application/x-shockwave-flash" data="${swf}.swf" width="${width}" height="${height}">
                     <param name="quality" value="high" />
                     <param name="bgcolor" value="${bgcolor}" />
-                    <param name="allowScriptAccess" value="sameDomain" />
+                    <param name="allowScriptAccess" value="always" />
                     <param name="allowFullScreen" value="true" />
                 <!--<![endif]-->
                 <!--[if gte IE 6]>-->
