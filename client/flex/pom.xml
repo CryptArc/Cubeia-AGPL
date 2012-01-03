@@ -41,7 +41,7 @@
       </snapshots>
       <id>cubeia-nexus</id>
       <name>Cubeia Repo</name>
-      <url>http://m2.cubeia.com/nexus/content/groups/internal-development</url>
+      <url>http://m2.cubeia.com/nexus/content/groups/public/</url>
     </repository>
   </repositories>
 
@@ -55,7 +55,7 @@
       </snapshots>
       <id>cubeia-nexus</id>
       <name>Cubeia Repo</name>
-      <url>http://m2.cubeia.com/nexus/content/groups/internal-development</url>
+      <url>http://m2.cubeia.com/nexus/content/groups/public/</url>
     </pluginRepository>
   </pluginRepositories>
   
@@ -71,6 +71,7 @@
       <url>http://m2.cubeia.com/nexus/content/repositories/internal-snapshots</url>
     </snapshotRepository>
   </distributionManagement>
+  
   
   <build>
     <plugins>
