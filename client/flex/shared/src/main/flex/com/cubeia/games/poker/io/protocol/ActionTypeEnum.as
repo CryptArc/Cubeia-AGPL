@@ -17,6 +17,7 @@ package com.cubeia.games.poker.io.protocol {
         public static const RAISE:int = 5;
         public static const FOLD:int = 6;
         public static const DECLINE_ENTRY_BET:int = 7;
+        public static const ANTE:int = 8;
 
         public static function makeActionTypeEnum(value:int):int  {
             switch(value) {
@@ -28,6 +29,7 @@ package com.cubeia.games.poker.io.protocol {
                 case 5: return ActionTypeEnum.RAISE;
                 case 6: return ActionTypeEnum.FOLD;
                 case 7: return ActionTypeEnum.DECLINE_ENTRY_BET;
+                case 8: return ActionTypeEnum.ANTE;
             }
             return -1;
         }

@@ -8,7 +8,7 @@ package com.cubeia.games.poker.io.protocol {
     import flash.utils.ByteArray;
 
     public class PerformAction implements ProtocolObject {
-        public static const CLASSID:int = 15;
+        public static const CLASSID:int = 19;
 
         public function classId():int {
             return PerformAction.CLASSID;
@@ -21,7 +21,6 @@ package com.cubeia.games.poker.io.protocol {
         public var raiseAmount:int;
         public var stackAmount:int;
         public var timeout:Boolean;
-        public var balance:int;
 
         public function save():ByteArray
         {
@@ -34,7 +33,6 @@ package com.cubeia.games.poker.io.protocol {
             ps.saveInt(raiseAmount);
             ps.saveInt(stackAmount);
             ps.saveBoolean(timeout);
-            ps.saveInt(balance);
             return buffer;
         }
 
@@ -49,7 +47,6 @@ package com.cubeia.games.poker.io.protocol {
             raiseAmount = ps.loadInt();
             stackAmount = ps.loadInt();
             timeout = ps.loadBoolean();
-            balance = ps.loadInt();
         }
         
 
@@ -63,7 +60,6 @@ package com.cubeia.games.poker.io.protocol {
             result += " raise_amount["+raiseAmount+"]" ;
             result += " stack_amount["+stackAmount+"]" ;
             result += " timeout["+timeout+"]" ;
-            result += " balance["+balance+"]" ;
             return result;
         }
 

@@ -8,7 +8,7 @@ package com.cubeia.games.poker.io.protocol {
     import flash.utils.ByteArray;
 
     public class PlayerPokerStatus implements ProtocolObject {
-        public static const CLASSID:int = 19;
+        public static const CLASSID:int = 31;
 
         public function classId():int {
             return PlayerPokerStatus.CLASSID;
@@ -16,6 +16,7 @@ package com.cubeia.games.poker.io.protocol {
 
         public var player:int;
         public var status:uint;
+        public var inCurrentHand:Boolean;
 
         public function save():ByteArray
         {
@@ -23,6 +24,7 @@ package com.cubeia.games.poker.io.protocol {
             var ps:PacketOutputStream = new PacketOutputStream(buffer);
             ps.saveInt(player);
             ps.saveUnsignedByte(status);
+            ps.saveBoolean(inCurrentHand);
             return buffer;
         }
 
@@ -31,6 +33,7 @@ package com.cubeia.games.poker.io.protocol {
             var ps:PacketInputStream = new PacketInputStream(buffer);
             player = ps.loadInt();
             status = PlayerTableStatusEnum.makePlayerTableStatusEnum(ps.loadUnsignedByte());
+            inCurrentHand = ps.loadBoolean();
         }
         
 
@@ -39,6 +42,7 @@ package com.cubeia.games.poker.io.protocol {
             var result:String = "PlayerPokerStatus :";
             result += " player["+player+"]" ;
             result += " status["+status+"]" ;
+            result += " in_current_hand["+inCurrentHand+"]" ;
             return result;
         }
 

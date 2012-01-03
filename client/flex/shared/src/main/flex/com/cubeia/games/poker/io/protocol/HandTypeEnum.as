@@ -19,6 +19,7 @@ package com.cubeia.games.poker.io.protocol {
         public static const FULL_HOUSE:int = 7;
         public static const FOUR_OF_A_KIND:int = 8;
         public static const STRAIGHT_FLUSH:int = 9;
+        public static const ROYAL_STRAIGHT_FLUSH:int = 10;
 
         public static function makeHandTypeEnum(value:int):int  {
             switch(value) {
@@ -32,6 +33,7 @@ package com.cubeia.games.poker.io.protocol {
                 case 7: return HandTypeEnum.FULL_HOUSE;
                 case 8: return HandTypeEnum.FOUR_OF_A_KIND;
                 case 9: return HandTypeEnum.STRAIGHT_FLUSH;
+                case 10: return HandTypeEnum.ROYAL_STRAIGHT_FLUSH;
             }
             return -1;
         }

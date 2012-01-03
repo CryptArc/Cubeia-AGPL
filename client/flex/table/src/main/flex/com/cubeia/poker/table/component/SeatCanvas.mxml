@@ -148,6 +148,9 @@
 	
 	<component:PocketCardCanvas x="60" y="18" id="card1" width="29" height="43" card="{seat.player.pocketCards.getItemAt(0) as WrappedGameCard}"/>
 	<component:PocketCardCanvas x="92" y="18" id="card2" width="29" height="43" card="{seat.player.pocketCards.getItemAt(1) as WrappedGameCard}"/>
+	<component:PocketCardCanvas x="124" y="18" id="card3" width="29" height="43" card="{seat.player.pocketCards.getItemAt(2) as WrappedGameCard}"/>
+	<component:PocketCardCanvas x="156" y="18" id="card4" width="29" height="43" card="{seat.player.pocketCards.getItemAt(3) as WrappedGameCard}"/>
+	<component:PocketCardCanvas x="188" y="18" id="card5" width="29" height="43" card="{seat.player.pocketCards.getItemAt(4) as WrappedGameCard}"/>
 	<mx:Image x="-8" y="4" id="playerIcon" source="assets/player_icon.png" visible="{seat.mySeat}"/>
 	<component:TimeoutBar y="81" id="timeoutBar" left="4" right="4">
 	</component:TimeoutBar>

@@ -8,12 +8,13 @@ package com.cubeia.games.poker.io.protocol {
     import flash.utils.ByteArray;
 
     public class RequestAction implements ProtocolObject {
-        public static const CLASSID:int = 6;
+        public static const CLASSID:int = 8;
 
         public function classId():int {
             return RequestAction.CLASSID;
         }
 
+        public var currentPotSize:int;
         public var seq:int;
         public var player:int;
         public var allowedActions:Array = new Array();
@@ -23,6 +24,7 @@ package com.cubeia.games.poker.io.protocol {
         {
             var buffer:ByteArray = new ByteArray();
             var ps:PacketOutputStream = new PacketOutputStream(buffer);
+            ps.saveInt(currentPotSize);
             ps.saveInt(seq);
             ps.saveInt(player);
             ps.saveInt(allowedActions.length);
@@ -39,6 +41,7 @@ package com.cubeia.games.poker.io.protocol {
         public function load(buffer:ByteArray):void 
         {
             var ps:PacketInputStream = new PacketInputStream(buffer);
+            currentPotSize = ps.loadInt();
             seq = ps.loadInt();
             player = ps.loadInt();
             var i:int;
@@ -56,6 +59,7 @@ package com.cubeia.games.poker.io.protocol {
         public function toString():String
         {
             var result:String = "RequestAction :";
+            result += " current_pot_size["+currentPotSize+"]" ;
             result += " seq["+seq+"]" ;
             result += " player["+player+"]" ;
             result += " allowed_actions["+allowedActions+"]" ;

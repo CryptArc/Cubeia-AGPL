@@ -9,15 +9,13 @@ package com.cubeia.games.poker.io.protocol {
 
     public final class PlayerTableStatusEnum
     {
-        public static const NORMAL:int = 0;
+        public static const SITIN:int = 0;
         public static const SITOUT:int = 1;
-        public static const ALLIN:int = 2;
 
         public static function makePlayerTableStatusEnum(value:int):int  {
             switch(value) {
-                case 0: return PlayerTableStatusEnum.NORMAL;
+                case 0: return PlayerTableStatusEnum.SITIN;
                 case 1: return PlayerTableStatusEnum.SITOUT;
-                case 2: return PlayerTableStatusEnum.ALLIN;
             }
             return -1;
         }

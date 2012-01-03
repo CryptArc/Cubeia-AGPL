@@ -7,17 +7,17 @@ package com.cubeia.games.poker.io.protocol {
   
     import flash.utils.ByteArray;
 
-    public class PlayerBalance implements ProtocolObject {
-        public static const CLASSID:int = 21;
+    public class BuyInResponse implements ProtocolObject {
+        public static const CLASSID:int = 25;
 
         public function classId():int {
-            return PlayerBalance.CLASSID;
+            return BuyInResponse.CLASSID;
         }
 
         public var balance:int;
         public var pendingBalance:int;
-        public var player:int;
-        public var playersContributionToPot:int;
+        public var amountBroughtIn:int;
+        public var resultCode:uint;
 
         public function save():ByteArray
         {
@@ -25,8 +25,8 @@ package com.cubeia.games.poker.io.protocol {
             var ps:PacketOutputStream = new PacketOutputStream(buffer);
             ps.saveInt(balance);
             ps.saveInt(pendingBalance);
-            ps.saveInt(player);
-            ps.saveInt(playersContributionToPot);
+            ps.saveInt(amountBroughtIn);
+            ps.saveUnsignedByte(resultCode);
             return buffer;
         }
 
@@ -35,18 +35,18 @@ package com.cubeia.games.poker.io.protocol {
             var ps:PacketInputStream = new PacketInputStream(buffer);
             balance = ps.loadInt();
             pendingBalance = ps.loadInt();
-            player = ps.loadInt();
-            playersContributionToPot = ps.loadInt();
+            amountBroughtIn = ps.loadInt();
+            resultCode = BuyInResultCodeEnum.makeBuyInResultCodeEnum(ps.loadUnsignedByte());
         }
         
 
         public function toString():String
         {
-            var result:String = "PlayerBalance :";
+            var result:String = "BuyInResponse :";
             result += " balance["+balance+"]" ;
-            result += " pendingBalance["+pendingBalance+"]" ;
-            result += " player["+player+"]" ;
-            result += " players_contribution_to_pot["+playersContributionToPot+"]" ;
+            result += " pending_balance["+pendingBalance+"]" ;
+            result += " amount_brought_in["+amountBroughtIn+"]" ;
+            result += " result_code["+resultCode+"]" ;
             return result;
         }
 

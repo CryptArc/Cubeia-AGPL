@@ -7,38 +7,38 @@ package com.cubeia.games.poker.io.protocol {
   
     import flash.utils.ByteArray;
 
-    public class AamsSessionInfoPacket implements ProtocolObject {
-        public static const CLASSID:int = 23;
+    public class DeckInfo implements ProtocolObject {
+        public static const CLASSID:int = 35;
 
         public function classId():int {
-            return AamsSessionInfoPacket.CLASSID;
+            return DeckInfo.CLASSID;
         }
 
-        public var aamsTournamentId:String;
-        public var aamsTournamentSessionId:String;
+        public var size:int;
+        public var rankLow:uint;
 
         public function save():ByteArray
         {
             var buffer:ByteArray = new ByteArray();
             var ps:PacketOutputStream = new PacketOutputStream(buffer);
-            ps.saveString(aamsTournamentId);
-            ps.saveString(aamsTournamentSessionId);
+            ps.saveInt(size);
+            ps.saveUnsignedByte(rankLow);
             return buffer;
         }
 
         public function load(buffer:ByteArray):void 
         {
             var ps:PacketInputStream = new PacketInputStream(buffer);
-            aamsTournamentId = ps.loadString();
-            aamsTournamentSessionId = ps.loadString();
+            size = ps.loadInt();
+            rankLow = RankEnum.makeRankEnum(ps.loadUnsignedByte());
         }
         
 
         public function toString():String
         {
-            var result:String = "AamsSessionInfoPacket :";
-            result += " aams_tournament_id["+aamsTournamentId+"]" ;
-            result += " aams_tournament_session_id["+aamsTournamentSessionId+"]" ;
+            var result:String = "DeckInfo :";
+            result += " size["+size+"]" ;
+            result += " rank_low["+rankLow+"]" ;
             return result;
         }
 

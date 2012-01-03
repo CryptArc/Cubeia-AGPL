@@ -7,42 +7,38 @@ package com.cubeia.games.poker.io.protocol {
   
     import flash.utils.ByteArray;
 
-    public class Pot implements ProtocolObject {
-        public static const CLASSID:int = 26;
+    public class ErrorPacket implements ProtocolObject {
+        public static const CLASSID:int = 2;
 
         public function classId():int {
-            return Pot.CLASSID;
+            return ErrorPacket.CLASSID;
         }
 
-        public var id:int;
-        public var type:uint;
-        public var amount:int;
+        public var code:uint;
+        public var referenceId:String;
 
         public function save():ByteArray
         {
             var buffer:ByteArray = new ByteArray();
             var ps:PacketOutputStream = new PacketOutputStream(buffer);
-            ps.saveByte(id);
-            ps.saveUnsignedByte(type);
-            ps.saveInt(amount);
+            ps.saveUnsignedByte(code);
+            ps.saveString(referenceId);
             return buffer;
         }
 
         public function load(buffer:ByteArray):void 
         {
             var ps:PacketInputStream = new PacketInputStream(buffer);
-            id = ps.loadByte();
-            type = PotTypeEnum.makePotTypeEnum(ps.loadUnsignedByte());
-            amount = ps.loadInt();
+            code = ErrorCodeEnum.makeErrorCodeEnum(ps.loadUnsignedByte());
+            referenceId = ps.loadString();
         }
         
 
         public function toString():String
         {
-            var result:String = "Pot :";
-            result += " id["+id+"]" ;
-            result += " type["+type+"]" ;
-            result += " amount["+amount+"]" ;
+            var result:String = "ErrorPacket :";
+            result += " code["+code+"]" ;
+            result += " reference_id["+referenceId+"]" ;
             return result;
         }
 

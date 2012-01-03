@@ -8,33 +8,37 @@ package com.cubeia.games.poker.io.protocol {
     import flash.utils.ByteArray;
 
     public class StartNewHand implements ProtocolObject {
-        public static const CLASSID:int = 7;
+        public static const CLASSID:int = 10;
 
         public function classId():int {
             return StartNewHand.CLASSID;
         }
 
-        public var dealer:int;
+        public var dealerSeatId:int;
+        public var handId:String;
 
         public function save():ByteArray
         {
             var buffer:ByteArray = new ByteArray();
             var ps:PacketOutputStream = new PacketOutputStream(buffer);
-            ps.saveShort(dealer);
+            ps.saveInt(dealerSeatId);
+            ps.saveString(handId);
             return buffer;
         }
 
         public function load(buffer:ByteArray):void 
         {
             var ps:PacketInputStream = new PacketInputStream(buffer);
-            dealer = ps.loadShort();
+            dealerSeatId = ps.loadInt();
+            handId = ps.loadString();
         }
         
 
         public function toString():String
         {
             var result:String = "StartNewHand :";
-            result += " dealer["+dealer+"]" ;
+            result += " dealerSeatId["+dealerSeatId+"]" ;
+            result += " handId["+handId+"]" ;
             return result;
         }
 

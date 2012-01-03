@@ -7,42 +7,38 @@ package com.cubeia.games.poker.io.protocol {
   
     import flash.utils.ByteArray;
 
-    public class Pot implements ProtocolObject {
-        public static const CLASSID:int = 26;
+    public class BuyInRequest implements ProtocolObject {
+        public static const CLASSID:int = 24;
 
         public function classId():int {
-            return Pot.CLASSID;
+            return BuyInRequest.CLASSID;
         }
 
-        public var id:int;
-        public var type:uint;
         public var amount:int;
+        public var sitInIfSuccessful:Boolean;
 
         public function save():ByteArray
         {
             var buffer:ByteArray = new ByteArray();
             var ps:PacketOutputStream = new PacketOutputStream(buffer);
-            ps.saveByte(id);
-            ps.saveUnsignedByte(type);
             ps.saveInt(amount);
+            ps.saveBoolean(sitInIfSuccessful);
             return buffer;
         }
 
         public function load(buffer:ByteArray):void 
         {
             var ps:PacketInputStream = new PacketInputStream(buffer);
-            id = ps.loadByte();
-            type = PotTypeEnum.makePotTypeEnum(ps.loadUnsignedByte());
             amount = ps.loadInt();
+            sitInIfSuccessful = ps.loadBoolean();
         }
         
 
         public function toString():String
         {
-            var result:String = "Pot :";
-            result += " id["+id+"]" ;
-            result += " type["+type+"]" ;
+            var result:String = "BuyInRequest :";
             result += " amount["+amount+"]" ;
+            result += " sit_in_if_successful["+sitInIfSuccessful+"]" ;
             return result;
         }
 

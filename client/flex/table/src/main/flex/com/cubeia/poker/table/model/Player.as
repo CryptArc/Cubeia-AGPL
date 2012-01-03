@@ -56,7 +56,7 @@ package com.cubeia.poker.table.model
 		public var betStack:Number;
 		
 		[Bindable]
-		public var pocketCards:ArrayCollection = new ArrayCollection(new Array(2));
+		public var pocketCards:ArrayCollection = new ArrayCollection(new Array(5));
 		
 		/** time available before timeout */
 		[Bindable]
@@ -78,6 +78,9 @@ package com.cubeia.poker.table.model
 		public function removePocketCards():void {
 			pocketCards.setItemAt(null, 0);
 			pocketCards.setItemAt(null, 1);
+			pocketCards.setItemAt(null, 2);
+			pocketCards.setItemAt(null, 3);
+			pocketCards.setItemAt(null, 4);
 		}
 		
 		/**

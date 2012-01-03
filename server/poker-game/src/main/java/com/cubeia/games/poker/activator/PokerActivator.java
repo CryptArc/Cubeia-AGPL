@@ -21,6 +21,7 @@ import static com.cubeia.games.poker.activator.PokerParticipant.RAKE_FRACTION;
 import static com.cubeia.games.poker.activator.PokerParticipant.RAKE_LIMIT;
 import static com.cubeia.games.poker.activator.PokerParticipant.RAKE_LIMIT_HEADS_UP;
 import static com.cubeia.poker.variant.PokerVariant.TELESINA;
+import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
 
 import java.io.Serializable;
 import java.lang.management.ManagementFactory;
@@ -140,11 +141,12 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
         
         CashGamesBackendContract cashGameBackendService = context.getServices().getServiceInstance(CashGamesBackendContract.class);
         
-    	// participants.add(new PokerParticipant(10, "ITALIAN/cashgame/REAL_MONEY", 10, Timings.DEFAULT, TEXAS_HOLDEM, rngProvider, cashGameBackendService));
-        participants.add(new PokerParticipant(2, "ITALIAN/cashgame/REAL_MONEY/2", 200, Timings.DEFAULT, TELESINA, rngProvider, cashGameBackendService));
-        participants.add(new PokerParticipant(3, "ITALIAN/cashgame/REAL_MONEY/3", 200, Timings.DEFAULT, TELESINA, rngProvider, cashGameBackendService));
-    	participants.add(new PokerParticipant(4, "ITALIAN/cashgame/REAL_MONEY/4", 200, Timings.DEFAULT, TELESINA, rngProvider, cashGameBackendService));
-    	participants.add(new PokerParticipant(5, "ITALIAN/cashgame/REAL_MONEY/5", 200, Timings.DEFAULT, TELESINA, rngProvider, cashGameBackendService));
+    	participants.add(new PokerParticipant(10, "ITALIAN/cashgame/REAL_MONEY", 100, Timings.DEFAULT, TEXAS_HOLDEM, rngProvider, cashGameBackendService));
+    	participants.add(new PokerParticipant(6, "ITALIAN/cashgame/REAL_MONEY", 100, Timings.DEFAULT, TEXAS_HOLDEM, rngProvider, cashGameBackendService));
+//        participants.add(new PokerParticipant(2, "ITALIAN/cashgame/REAL_MONEY/2", 200, Timings.DEFAULT, TELESINA, rngProvider, cashGameBackendService));
+//        participants.add(new PokerParticipant(3, "ITALIAN/cashgame/REAL_MONEY/3", 200, Timings.DEFAULT, TELESINA, rngProvider, cashGameBackendService));
+//    	participants.add(new PokerParticipant(4, "ITALIAN/cashgame/REAL_MONEY/4", 200, Timings.DEFAULT, TELESINA, rngProvider, cashGameBackendService));
+//    	participants.add(new PokerParticipant(5, "ITALIAN/cashgame/REAL_MONEY/5", 200, Timings.DEFAULT, TELESINA, rngProvider, cashGameBackendService));
     	participants.add(new PokerParticipant(6, "ITALIAN/cashgame/REAL_MONEY/6", 200, Timings.DEFAULT, TELESINA, rngProvider, cashGameBackendService));
     	
     	for (PokerParticipant part : participants) {

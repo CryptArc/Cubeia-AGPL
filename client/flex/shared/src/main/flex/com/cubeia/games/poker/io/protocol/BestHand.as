@@ -8,23 +8,29 @@ package com.cubeia.games.poker.io.protocol {
     import flash.utils.ByteArray;
 
     public class BestHand implements ProtocolObject {
-        public static const CLASSID:int = 3;
+        public static const CLASSID:int = 5;
 
         public function classId():int {
             return BestHand.CLASSID;
         }
 
         public var player:int;
-        public var rank:int;
-        public var name:String;
+        public var handType:uint;
+        public var cards:Array = new Array();
 
         public function save():ByteArray
         {
             var buffer:ByteArray = new ByteArray();
             var ps:PacketOutputStream = new PacketOutputStream(buffer);
             ps.saveInt(player);
-            ps.saveInt(rank);
-            ps.saveString(name);
+            ps.saveUnsignedByte(handType);
+            ps.saveInt(cards.length);
+            var i:int;
+            for( i = 0; i != cards.length; i ++)
+            {
+                var _tmp_cards:ByteArray = cards[i].save();
+                ps.saveArray(_tmp_cards);
+            }
             return buffer;
         }
 
@@ -32,8 +38,15 @@ package com.cubeia.games.poker.io.protocol {
         {
             var ps:PacketInputStream = new PacketInputStream(buffer);
             player = ps.loadInt();
-            rank = ps.loadInt();
-            name = ps.loadString();
+            handType = HandTypeEnum.makeHandTypeEnum(ps.loadUnsignedByte());
+            var i:int;
+            var cardsCount:int = ps.loadInt();
+            cards = new Array();
+            for( i = 0; i < cardsCount; i ++) {
+                var _tmp1:GameCard  = new GameCard();
+                _tmp1.load(buffer);
+                cards[i] = _tmp1;
+            }
         }
         
 
@@ -41,8 +54,8 @@ package com.cubeia.games.poker.io.protocol {
         {
             var result:String = "BestHand :";
             result += " player["+player+"]" ;
-            result += " rank["+rank+"]" ;
-            result += " name["+name+"]" ;
+            result += " hand_type["+handType+"]" ;
+            result += " cards["+cards+"]" ;
             return result;
         }
 

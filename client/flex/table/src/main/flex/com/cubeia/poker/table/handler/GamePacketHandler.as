@@ -231,7 +231,6 @@ package com.cubeia.poker.table.handler
 			var player:Player = table.getPlayer(action.player);
 			player.status = Player.STATUS_ACTED;
 			player.betStack = action.stackAmount;
-			player.balance = action.balance;
 			
 			// set player timeToAct to zero (stops timeout bar)
 			player.timeToAct = 0;
@@ -247,8 +246,8 @@ package com.cubeia.poker.table.handler
 		private function handleHandEnd(handEnd:HandEnd):void {
 			for each ( var bestHand:BestHand in handEnd.hands ) {
 				var playerName:String = table.getPlayer(bestHand.player).screenname;
-				table.chatOutput += playerName + " shows " + bestHand.name + "\n";
-				trace(playerName + " shows " + bestHand.name + "\n");
+				table.chatOutput += playerName + " shows " + "N/A" + "\n";
+				trace(playerName + " shows " + "N/A" + "\n");
 			}
 		}
 		
@@ -295,9 +294,9 @@ package com.cubeia.poker.table.handler
 				case PlayerTableStatusEnum.SITOUT :
 					player.status = Player.STATUS_SITOUT;
 					break;
-				case PlayerTableStatusEnum.ALLIN :
-					player.status = Player.STATUS_ALLIN;
-					break;
+//				case PlayerTableStatusEnum.ALLIN :
+//					player.status = Player.STATUS_ALLIN;
+//					break;
 			}
 		}
 	

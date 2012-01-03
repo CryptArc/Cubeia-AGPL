@@ -8,7 +8,7 @@ package com.cubeia.games.poker.io.protocol {
     import flash.utils.ByteArray;
 
     public class StartHandHistory implements ProtocolObject {
-        public static const CLASSID:int = 13;
+        public static const CLASSID:int = 17;
 
         public function classId():int {
             return StartHandHistory.CLASSID;

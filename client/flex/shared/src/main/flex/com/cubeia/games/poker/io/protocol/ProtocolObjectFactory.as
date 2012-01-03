@@ -19,49 +19,83 @@ public class ProtocolObjectFactory implements com.cubeia.firebase.io.ObjectFacto
             case 1:
                 return new PlayerAction();
             case 2:
-                return new GameCard();
+                return new ErrorPacket();
             case 3:
-                return new BestHand();
+                return new FuturePlayerAction();
             case 4:
-                return new PlayerState();
+                return new GameCard();
             case 5:
-                return new CardToDeal();
+                return new BestHand();
             case 6:
-                return new RequestAction();
+                return new PlayerState();
             case 7:
-                return new StartNewHand();
+                return new CardToDeal();
             case 8:
-                return new DealerButton();
+                return new RequestAction();
             case 9:
-                return new DealPublicCards();
+                return new InformFutureAllowedActions();
             case 10:
-                return new DealPrivateCards();
+                return new StartNewHand();
             case 11:
-                return new ExposePrivateCards();
+                return new DealerButton();
             case 12:
-                return new HandEnd();
+                return new DealPublicCards();
             case 13:
-                return new StartHandHistory();
+                return new DealPrivateCards();
             case 14:
-                return new StopHandHistory();
+                return new ExposePrivateCards();
             case 15:
-                return new PerformAction();
+                return new HandEnd();
             case 16:
-                return new TournamentOut();
+                return new HandCanceled();
             case 17:
-                return new PlayerBalance();
+                return new StartHandHistory();
             case 18:
-                return new Pot();
+                return new StopHandHistory();
             case 19:
-                return new PlayerPokerStatus();
+                return new PerformAction();
             case 20:
-                return new PlayerSitinRequest();
+                return new TournamentOut();
             case 21:
-                return new PlayerSitoutRequest();
+                return new PlayerBalance();
             case 22:
-                return new InformRoundEnded();
+                return new BuyInInfoRequest();
             case 23:
-                return new AamsSessionInfoPacket();
+                return new BuyInInfoResponse();
+            case 24:
+                return new BuyInRequest();
+            case 25:
+                return new BuyInResponse();
+            case 26:
+                return new Pot();
+            case 27:
+                return new PotTransfer();
+            case 28:
+                return new PotTransfers();
+            case 29:
+                return new TakeBackUncalledBet();
+            case 30:
+                return new RakeInfo();
+            case 31:
+                return new PlayerPokerStatus();
+            case 32:
+                return new PlayerHandStartStatus();
+            case 33:
+                return new PlayerSitinRequest();
+            case 34:
+                return new PlayerSitoutRequest();
+            case 35:
+                return new DeckInfo();
+            case 36:
+                return new ExternalSessionInfoPacket();
+            case 37:
+                return new PlayerDisconnectedPacket();
+            case 38:
+                return new PlayerReconnectedPacket();
+            case 39:
+                return new PingPacket();
+            case 40:
+                return new PongPacket();
         }
         return null;
     }

@@ -8,7 +8,7 @@ package com.cubeia.games.poker.io.protocol {
     import flash.utils.ByteArray;
 
     public class GameCard implements ProtocolObject {
-        public static const CLASSID:int = 2;
+        public static const CLASSID:int = 4;
 
         public function classId():int {
             return GameCard.CLASSID;

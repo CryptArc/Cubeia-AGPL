@@ -7,42 +7,38 @@ package com.cubeia.games.poker.io.protocol {
   
     import flash.utils.ByteArray;
 
-    public class Pot implements ProtocolObject {
-        public static const CLASSID:int = 26;
+    public class RakeInfo implements ProtocolObject {
+        public static const CLASSID:int = 30;
 
         public function classId():int {
-            return Pot.CLASSID;
+            return RakeInfo.CLASSID;
         }
 
-        public var id:int;
-        public var type:uint;
-        public var amount:int;
+        public var totalPot:int;
+        public var totalRake:int;
 
         public function save():ByteArray
         {
             var buffer:ByteArray = new ByteArray();
             var ps:PacketOutputStream = new PacketOutputStream(buffer);
-            ps.saveByte(id);
-            ps.saveUnsignedByte(type);
-            ps.saveInt(amount);
+            ps.saveInt(totalPot);
+            ps.saveInt(totalRake);
             return buffer;
         }
 
         public function load(buffer:ByteArray):void 
         {
             var ps:PacketInputStream = new PacketInputStream(buffer);
-            id = ps.loadByte();
-            type = PotTypeEnum.makePotTypeEnum(ps.loadUnsignedByte());
-            amount = ps.loadInt();
+            totalPot = ps.loadInt();
+            totalRake = ps.loadInt();
         }
         
 
         public function toString():String
         {
-            var result:String = "Pot :";
-            result += " id["+id+"]" ;
-            result += " type["+type+"]" ;
-            result += " amount["+amount+"]" ;
+            var result:String = "RakeInfo :";
+            result += " total_pot["+totalPot+"]" ;
+            result += " total_rake["+totalRake+"]" ;
             return result;
         }
 
