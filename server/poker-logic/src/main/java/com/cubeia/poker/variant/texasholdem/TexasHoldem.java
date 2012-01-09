@@ -379,8 +379,7 @@ public class TexasHoldem implements GameType, RoundVisitor {
 	
 	@Override
 	public boolean canPlayerAffordEntryBet(PokerPlayer player, PokerSettings settings, boolean includePending) {
-	    // TODO: check if players balance + pending balance is big enough to pay ante/small/big blind
-	    return true;
+		return player.getBalance() + (includePending ? player.getPendingBalanceSum() : 0) >= settings.getAnteLevel();
 	}
 	
 	@Override
