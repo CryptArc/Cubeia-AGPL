@@ -346,7 +346,7 @@ public class FirebaseServerAdapterTest {
 		BalanceUpdate balanceUpdate = mock(BalanceUpdate.class);		
 		batchHandResult.addResultEntry(balanceUpdate);
 		
-		serverAdapter.validateAndUpdateBalances(batchHandResult );
+		serverAdapter.validateAndUpdateBalances(batchHandResult);
 		
 	}
 	

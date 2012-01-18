@@ -56,8 +56,8 @@ public class BackendPlayerSessionHandlerTest {
         ArgumentCaptor<CloseSessionRequest> requestCaptor = ArgumentCaptor.forClass(CloseSessionRequest.class);
         verify(cashGamesBackendContract).closeSession(requestCaptor.capture());
         CloseSessionRequest closeSessionRequest = requestCaptor.getValue();
-        assertThat(closeSessionRequest.playerSessionId, is(sessionId));
-        assertThat(closeSessionRequest.roundNumber, is(-1));
+        assertThat(closeSessionRequest.getPlayerSessionId(), is(sessionId));
+        assertThat(closeSessionRequest.getRoundNumber(), is(-1));
     }
     
     @Test(expected = IllegalStateException.class)
@@ -84,9 +84,9 @@ public class BackendPlayerSessionHandlerTest {
         ArgumentCaptor<OpenSessionRequest> requestCaptor = ArgumentCaptor.forClass(OpenSessionRequest.class);
         verify(cashGamesBackendContract).openSession(requestCaptor.capture(), Mockito.eq(openSessionCallback));
         OpenSessionRequest openSessionRequest = requestCaptor.getValue();
-        assertThat(openSessionRequest.playerId, is(playerId));
-        assertThat(openSessionRequest.tableId, is(tableId));
-        assertThat(openSessionRequest.roundNumber, is(-1));
+        assertThat(openSessionRequest.getPlayerId(), is(playerId));
+        assertThat(openSessionRequest.getTableId(), is(tableId));
+        assertThat(openSessionRequest.getRoundNumber(), is(-1));
     }
 
     @Test(expected = NullPointerException.class)

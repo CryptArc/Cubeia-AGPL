@@ -434,8 +434,8 @@ public class FirebaseServerAdapter implements ServerAdapter {
 			String handId = getIntegrationHandId();
 			TableId externalTableId = getIntegrationTableId();
 			BatchHandRequest batchHandRequest = handResultBatchFactory.createAndValidateBatchHandRequest(handResult, handId, externalTableId);
-            batchHandRequest.startTime = state.getStartTime();
-            batchHandRequest.endTime = System.currentTimeMillis();
+            batchHandRequest.setStartTime(state.getStartTime());
+            batchHandRequest.setEndTime(System.currentTimeMillis());
 
 			BatchHandResponse batchHandResult = doBatchHandResult(batchHandRequest);
 
@@ -494,20 +494,20 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
 	@VisibleForTesting
 	protected void validateAndUpdateBalances(BatchHandResponse batchHandResult) {
-		for (BalanceUpdate bup : batchHandResult.resultingBalances) {
+		for (BalanceUpdate bup : batchHandResult.getResultingBalances()) {
 			PokerPlayerImpl pokerPlayer = null;
 			for (PokerPlayer pp : state.getCurrentHandPlayerMap().values()) {
-				if (((PokerPlayerImpl) pp).getPlayerSessionId().equals(bup.playerSessionId)) {
+				if (((PokerPlayerImpl) pp).getPlayerSessionId().equals(bup.getPlayerSessionId())) {
 					pokerPlayer = (PokerPlayerImpl) pp;
 				}
 			}
 
 			if (pokerPlayer == null) {
 				//log.error("error updating balance: unable to find player with session = {}", bup.playerSessionId);
-				throw new IllegalStateException("error updating balance: unable to find player with session = " + bup.playerSessionId);
+				throw new IllegalStateException("error updating balance: unable to find player with session = " + bup.getPlayerSessionId());
 			} else {
 				long gameBalance = pokerPlayer.getBalance() + pokerPlayer.getBalanceNotInHand();
-				long backendBalance = bup.balance.getAmount();
+				long backendBalance = bup.getBalance().getAmount();
 
 				if (gameBalance != backendBalance) {
 					//log.error("backend balance: {} not equal to game balance: {}, will reset to backend value", backendBalance, gameBalance);

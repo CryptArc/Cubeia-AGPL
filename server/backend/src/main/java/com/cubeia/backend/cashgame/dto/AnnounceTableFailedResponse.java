@@ -4,21 +4,29 @@ import java.io.Serializable;
 
 @SuppressWarnings("serial")
 public class AnnounceTableFailedResponse implements Serializable {
-	public final ErrorCode errorCode;
-	public final String message;
+	private final ErrorCode errorCode;
+	private final String message;
 
 	public AnnounceTableFailedResponse(ErrorCode errorCode, String message) {
 		this.errorCode = errorCode;
 		this.message = message;
 	}
 
-	public enum ErrorCode {
+	public ErrorCode getErrorCode() {
+        return errorCode;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public enum ErrorCode {
 		EXTERNAL_CALL_FAILED, UNKOWN_PLATFORM_TABLE_ID, WALLET_CALL_FAILED;
 	}
 
 	@Override
 	public String toString() {
-		return "AnnounceTableFailedResponse [errorCode=" + errorCode
-				+ ", message=" + message + "]";
+		return "AnnounceTableFailedResponse [errorCode=" + getErrorCode()
+				+ ", message=" + getMessage() + "]";
 	}
 }

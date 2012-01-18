@@ -57,7 +57,7 @@ public class AsynchBackendTest {
 		Object response = callback.getResponse(2000);
 
 		assertTrue(response instanceof AnnounceTableResponse);
-		assertEquals(tableId, ((AnnounceTableResponse) response).tableId);
+		assertEquals(tableId, ((AnnounceTableResponse) response).getTableId());
 	}
 
 	@Test
@@ -75,8 +75,8 @@ public class AsynchBackendTest {
 
 		assertTrue(response instanceof AnnounceTableFailedResponse);
 		AnnounceTableFailedResponse announceTableFailedResponse = (AnnounceTableFailedResponse) response;
-		assertEquals("no fun", announceTableFailedResponse.message);
-		assertEquals(AnnounceTableFailedResponse.ErrorCode.UNKOWN_PLATFORM_TABLE_ID, announceTableFailedResponse.errorCode);
+		assertEquals("no fun", announceTableFailedResponse.getMessage());
+		assertEquals(AnnounceTableFailedResponse.ErrorCode.UNKOWN_PLATFORM_TABLE_ID, announceTableFailedResponse.getErrorCode());
 	}
 
 
@@ -101,9 +101,9 @@ public class AsynchBackendTest {
 		Object response = callback.getResponse(100);
 		assertTrue(response instanceof OpenSessionResponse);
 		OpenSessionResponse openSessionResponse = (OpenSessionResponse) response;
-		assertEquals(playerSessionId, openSessionResponse.sessionId);
-		assertEquals(1, openSessionResponse.sessionProperties.size());
-		assertEquals("MAGIC_VALUE", openSessionResponse.sessionProperties.get("MAGIC_KEY"));
+		assertEquals(playerSessionId, openSessionResponse.getSessionId());
+		assertEquals(1, openSessionResponse.getSessionProperties().size());
+		assertEquals("MAGIC_VALUE", openSessionResponse.getSessionProperties().get("MAGIC_KEY"));
 	}
 
 	@Test
@@ -121,8 +121,8 @@ public class AsynchBackendTest {
 		Object response = callback.getResponse(100);
 		assertTrue(response instanceof OpenSessionFailedResponse);
 		OpenSessionFailedResponse openSessionFailedResponse = (OpenSessionFailedResponse) response;
-		assertEquals("fail fail fail", openSessionFailedResponse.message);
-		assertEquals(OpenSessionFailedResponse.ErrorCode.UNKOWN_PLATFORM_TABLE_ID, openSessionFailedResponse.errorCode);
+		assertEquals("fail fail fail", openSessionFailedResponse.getMessage());
+		assertEquals(OpenSessionFailedResponse.ErrorCode.UNKOWN_PLATFORM_TABLE_ID, openSessionFailedResponse.getErrorCode());
 
 	}
 
@@ -149,9 +149,9 @@ public class AsynchBackendTest {
 		assertTrue(response instanceof ReserveResponse);
 		ReserveResponse reserveResponse = (ReserveResponse) response;
 
-		assertEquals(amountReserved, reserveResponse.amountReserved);
-		assertEquals(balanceVersionNumber, reserveResponse.balanceUpdate.balanceVersionNumber);
-		assertEquals(newBalance, reserveResponse.balanceUpdate.balance);
+		assertEquals(amountReserved, reserveResponse.getAmountReserved());
+		assertEquals(balanceVersionNumber, reserveResponse.getBalanceUpdate().getBalanceVersionNumber());
+		assertEquals(newBalance, reserveResponse.getBalanceUpdate().getBalance());
 	}
 
 	@Test
@@ -174,8 +174,8 @@ public class AsynchBackendTest {
 		assertTrue(response instanceof ReserveFailedResponse);
 		ReserveFailedResponse reserveFailedResponse = (ReserveFailedResponse) response;
 
-		assertEquals("fail reserve", reserveFailedResponse.message);
-		assertEquals(ReserveFailedResponse.ErrorCode.UNSPECIFIED_FAILURE, reserveFailedResponse.errorCode);
-		assertTrue(reserveFailedResponse.playerSessionNeedsToBeClosed);
+		assertEquals("fail reserve", reserveFailedResponse.getMessage());
+		assertEquals(ReserveFailedResponse.ErrorCode.UNSPECIFIED_FAILURE, reserveFailedResponse.getErrorCode());
+		assertTrue(reserveFailedResponse.isPlayerSessionNeedsToBeClosed());
 	}
 }

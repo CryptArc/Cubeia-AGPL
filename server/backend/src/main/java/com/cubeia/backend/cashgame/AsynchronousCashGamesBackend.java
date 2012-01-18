@@ -105,12 +105,12 @@ public class AsynchronousCashGamesBackend implements CashGamesBackend {
 			log.error("failed to open session", e);
 			OpenSessionFailedResponse.ErrorCode errorCode = e.getErrorCode();
 			String message = e.getMessage();
-			callback.requestFailed(new OpenSessionFailedResponse(errorCode, message, request.playerId));
+			callback.requestFailed(new OpenSessionFailedResponse(errorCode, message, request.getPlayerId()));
 		} catch (Throwable t) {
 			log.error("failed to open session", t);
 			OpenSessionFailedResponse.ErrorCode errorCode = null;
 			String message = t.getMessage();
-			callback.requestFailed(new OpenSessionFailedResponse(errorCode, message, request.playerId));
+			callback.requestFailed(new OpenSessionFailedResponse(errorCode, message, request.getPlayerId()));
 		}
 	}
 	
@@ -135,12 +135,12 @@ public class AsynchronousCashGamesBackend implements CashGamesBackend {
 			log.error("failed to reserve", e);
 			ReserveFailedResponse.ErrorCode errorCode = e.getErrorCode();
 			String message = e.getMessage();
-			callback.requestFailed(new ReserveFailedResponse(request.playerSessionId, errorCode, message, e.playerSessionNeedsToBeClosed));
+			callback.requestFailed(new ReserveFailedResponse(request.getPlayerSessionId(), errorCode, message, e.playerSessionNeedsToBeClosed));
 		} catch (Throwable t) {
 			log.error("failed to reserve (unhandled error)", t);
 			ReserveFailedResponse.ErrorCode errorCode = null;
 			String message = t.getMessage();
-			callback.requestFailed(new ReserveFailedResponse(request.playerSessionId, errorCode, message, true));
+			callback.requestFailed(new ReserveFailedResponse(request.getPlayerSessionId(), errorCode, message, true));
 		}
 	}
 	

@@ -7,13 +7,25 @@ import com.cubeia.backend.cashgame.PlayerSessionId;
 @SuppressWarnings("serial")
 public class ReserveRequest implements Serializable {
 
-	public final PlayerSessionId playerSessionId;
-	public final int roundNumber;
-	public final Money amount;
+	private final PlayerSessionId playerSessionId;
+	private final int roundNumber;
+	private final Money amount;
 
 	public ReserveRequest(PlayerSessionId playerSessionId, int roundNumber, Money amount) {
 		this.playerSessionId = playerSessionId;
 		this.roundNumber = roundNumber;
 		this.amount = amount;
 	}
+
+    public PlayerSessionId getPlayerSessionId() {
+        return playerSessionId;
+    }
+
+    public int getRoundNumber() {
+        return roundNumber;
+    }
+
+    public Money getAmount() {
+        return amount;
+    }
 }

@@ -102,12 +102,12 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
 
     @Override
     public void openSession(OpenSessionRequest request, OpenSessionCallback callback) {
-        PlayerSessionId sessionId = new PlayerSessionIdImpl(request.playerId);
-        sessionTransactions.put(sessionId, request.openingBalance);
+        PlayerSessionId sessionId = new PlayerSessionIdImpl(request.getPlayerId());
+        sessionTransactions.put(sessionId, request.getOpeningBalance());
         
         OpenSessionResponse response = new OpenSessionResponse(sessionId, Collections.<String, String>emptyMap());
         log.debug("new session opened, tId = {}, pId = {}, sId = {}", 
-            new Object[] {request.tableId, request.playerId, response.sessionId});
+            new Object[] {request.getTableId(), request.getPlayerId(), response.getSessionId()});
         log.debug("currently open sessions: {}", sessionTransactions.size());
         callback.requestSucceded(response);
         
@@ -116,7 +116,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
 
     @Override
     public void closeSession(CloseSessionRequest request) {
-        PlayerSessionId sid = request.playerSessionId;
+        PlayerSessionId sid = request.getPlayerSessionId();
         
         if (!sessionTransactions.containsKey(sid)) {
             log.error("error closing session {}: not found", sid);
@@ -131,18 +131,18 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
 
     @Override
     public void reserve(ReserveRequest request, final ReserveCallback callback) {
-        Money amount = request.amount;
-        PlayerSessionId sid = request.playerSessionId;
+        Money amount = request.getAmount();
+        PlayerSessionId sid = request.getPlayerSessionId();
         
         if (!sessionTransactions.containsKey(sid)) {
             log.error("reserve failed, session not found: sId = " + sid);
-            ReserveFailedResponse failResponse = new ReserveFailedResponse(request.playerSessionId, 
+            ReserveFailedResponse failResponse = new ReserveFailedResponse(request.getPlayerSessionId(), 
                 ReserveFailedResponse.ErrorCode.SESSION_NOT_OPEN, "session " + sid + " not open", true);
             callback.requestFailed(failResponse);
             
         } else if (amount.getAmount() == 66  ||  amount.getAmount() == 660  ||  amount.getAmount() == 6600){ // MAGIC FAIL FOR 66 cents BUY-IN 
         	log.error("Failing reserve with {}ms delay for magic amount 66 cents (hardcoded for debug reasons). sId={}", sid);
-            final ReserveFailedResponse failResponse = new ReserveFailedResponse(request.playerSessionId, 
+            final ReserveFailedResponse failResponse = new ReserveFailedResponse(request.getPlayerSessionId(), 
                 ReserveFailedResponse.ErrorCode.UNSPECIFIED_FAILURE, "Unknown operator error (magic 66-cent ultra-fail)", true);
             long delay = (long) (Math.random() * 2000);
             
@@ -153,7 +153,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
         } else {
             sessionTransactions.put(sid, amount);
             Money newBalance = getBalance(sid);
-            BalanceUpdate balanceUpdate = new BalanceUpdate(request.playerSessionId, newBalance, nextId());
+            BalanceUpdate balanceUpdate = new BalanceUpdate(request.getPlayerSessionId(), newBalance, nextId());
             final ReserveResponse response = new ReserveResponse(balanceUpdate, amount);
             log.debug("reserve successful: sId = {}, amount = {}, new balance = {}", new Object[] {sid, amount, newBalance});
             response.setProperty(MARKET_TABLE_SESSION_REFERENCE_KEY, "MOCK-MARKET-SID-" + sid.hashCode());
@@ -179,16 +179,16 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
         int totalWins = 0;
         int totalRakes = 0;
         List<BalanceUpdate> resultingBalances = new ArrayList<BalanceUpdate>();
-        for (HandResult hr : request.handResults) {
+        for (HandResult hr : request.getHandResults()) {
             log.debug("recording hand result: handId = {}, sessionId = {}, bets = {}, wins = {}, rake = {}", 
-                new Object[] {request.handId, hr.playerSession, hr.aggregatedBet, hr.win, hr.rake});
-            long amount = hr.win.getAmount() - hr.aggregatedBet.getAmount();
-            sessionTransactions.put(hr.playerSession, new Money(amount, hr.win.getCurrencyCode(), hr.win.getFractionalDigits()));
-            resultingBalances.add(new BalanceUpdate(hr.playerSession, getBalance(hr.playerSession), -1));
+                new Object[] {request.getHandId(), hr.getPlayerSession(), hr.getAggregatedBet(), hr.getWin(), hr.getRake()});
+            long amount = hr.getWin().getAmount() - hr.getAggregatedBet().getAmount();
+            sessionTransactions.put(hr.getPlayerSession(), new Money(amount, hr.getWin().getCurrencyCode(), hr.getWin().getFractionalDigits()));
+            resultingBalances.add(new BalanceUpdate(hr.getPlayerSession(), getBalance(hr.getPlayerSession()), -1));
             
-            totalBets += hr.aggregatedBet.getAmount();
-            totalWins += hr.win.getAmount();
-            totalRakes += hr.rake.getAmount();
+            totalBets += hr.getAggregatedBet().getAmount();
+            totalWins += hr.getWin().getAmount();
+            totalRakes += hr.getRake().getAmount();
         }
         
         //Sanity check on the sum

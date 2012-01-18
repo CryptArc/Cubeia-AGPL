@@ -6,21 +6,21 @@ import com.cubeia.backend.cashgame.PlayerSessionId;
 
 @SuppressWarnings("serial")
 public class HandResult implements Serializable {
-	public final PlayerSessionId playerSession;
+	private final PlayerSessionId playerSession;
 	
 	/**
 	 * Sum of all players bets in the hand.
 	 */
-	public final Money aggregatedBet;
+	private final Money aggregatedBet;
 	
 	/**
 	 * Player winnings including own bets.
 	 */
-	public final Money win;
-	public final Money rake;
+	private final Money win;
+	private final Money rake;
 	
-	public final int seat;
-	public final Money startingBalance;
+	private final int seat;
+	private final Money startingBalance;
 	
 	public HandResult(PlayerSessionId playerSession, Money aggregatedBet,
 	    Money win, Money rake, int seat, Money startingBalance) {
@@ -32,4 +32,28 @@ public class HandResult implements Serializable {
 		this.seat = seat;
 		this.startingBalance = startingBalance;
 	}
+
+    public PlayerSessionId getPlayerSession() {
+        return playerSession;
+    }
+
+    public Money getAggregatedBet() {
+        return aggregatedBet;
+    }
+
+    public Money getWin() {
+        return win;
+    }
+
+    public Money getRake() {
+        return rake;
+    }
+
+    public int getSeat() {
+        return seat;
+    }
+
+    public Money getStartingBalance() {
+        return startingBalance;
+    }
 }

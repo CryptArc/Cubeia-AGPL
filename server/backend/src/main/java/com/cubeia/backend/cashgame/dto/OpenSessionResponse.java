@@ -1,14 +1,15 @@
 package com.cubeia.backend.cashgame.dto;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.cubeia.backend.cashgame.PlayerSessionId;
 
 @SuppressWarnings("serial")
 public class OpenSessionResponse implements Serializable {
-    public final PlayerSessionId sessionId;
-	public final Map<String, String> sessionProperties;
+    private final PlayerSessionId sessionId;
+	private final Map<String, String> sessionProperties;
 	
 	public OpenSessionResponse(PlayerSessionId sessionId, Map<String, String> sessionProperties) {
 
@@ -17,10 +18,18 @@ public class OpenSessionResponse implements Serializable {
 	}
 
 	public String getProperty(String key) {
-		return sessionProperties.get(key);
+		return getSessionProperties().get(key);
 	}
 
 	public void setProperty(String key, String value) {
 		sessionProperties.put(key, value);
 	}
+
+    public PlayerSessionId getSessionId() {
+        return sessionId;
+    }
+
+    public Map<String, String> getSessionProperties() {
+        return new HashMap<String, String>(sessionProperties);
+    }
 }

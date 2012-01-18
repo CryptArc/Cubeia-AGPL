@@ -8,10 +8,10 @@ import com.cubeia.backend.cashgame.PlayerSessionId;
 @SuppressWarnings("serial")
 public class ReserveFailedResponse implements Serializable {
     
-	public final ErrorCode errorCode;
-	public final String message;
-	public final PlayerSessionId sessionId;
-	public final boolean playerSessionNeedsToBeClosed;
+	private final ErrorCode errorCode;
+	private final String message;
+	private final PlayerSessionId sessionId;
+	private final boolean playerSessionNeedsToBeClosed;
 
 	public ReserveFailedResponse(PlayerSessionId sessionId, ErrorCode errorCode, String message, boolean playerSessionNeedsToBeClosed) {
         this.sessionId = sessionId;
@@ -20,7 +20,23 @@ public class ReserveFailedResponse implements Serializable {
         this.playerSessionNeedsToBeClosed = playerSessionNeedsToBeClosed;
 	}
 
-	public enum ErrorCode {
+	public ErrorCode getErrorCode() {
+        return errorCode;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public PlayerSessionId getSessionId() {
+        return sessionId;
+    }
+
+    public boolean isPlayerSessionNeedsToBeClosed() {
+        return playerSessionNeedsToBeClosed;
+    }
+
+    public enum ErrorCode {
 		AMOUNT_TOO_HIGH, UNSPECIFIED_FAILURE, SESSION_NOT_OPEN, MAX_LIMIT_REACHED;
 	}
 }

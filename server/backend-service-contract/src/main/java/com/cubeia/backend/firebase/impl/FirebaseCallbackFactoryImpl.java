@@ -33,14 +33,14 @@ public class FirebaseCallbackFactoryImpl implements FirebaseCallbackFactory {
             @Override
             public void requestSucceded(OpenSessionResponse response) {
                 log.debug("open session succeeded: gId = {}, tId = {}, sId = {}", 
-                    new Object[] {table.getMetaData().getGameId(), table.getId(), response.sessionId});
-                sendGameObjectActionToTable(response.sessionId.getPlayerId(), table.getMetaData().getGameId(), table.getId(), response);
+                    new Object[] {table.getMetaData().getGameId(), table.getId(), response.getSessionId()});
+                sendGameObjectActionToTable(response.getSessionId().getPlayerId(), table.getMetaData().getGameId(), table.getId(), response);
             }
             
             @Override
             public void requestFailed(OpenSessionFailedResponse response) {
                 log.debug("open session failed: gId = {}, tId = {}, error = {}, msg = {}", 
-                    new Object[] {table.getMetaData().getGameId(), table.getId(), response.errorCode, response.message});
+                    new Object[] {table.getMetaData().getGameId(), table.getId(), response.getErrorCode(), response.getMessage()});
                 sendGameObjectActionToTable(-1, table.getMetaData().getGameId(), table.getId(), response);
             }
         };
@@ -60,8 +60,8 @@ public class FirebaseCallbackFactoryImpl implements FirebaseCallbackFactory {
             @Override
             public void requestFailed(ReserveFailedResponse response) {
                 log.debug("reserve failed: gId = {}, tId = {}, error = {}, msg = {}", 
-                    new Object[] {table.getMetaData().getGameId(), table.getId(), response.errorCode, response.message});
-                sendGameObjectActionToTable(response.sessionId.getPlayerId(), table.getMetaData().getGameId(), table.getId(), response);
+                    new Object[] {table.getMetaData().getGameId(), table.getId(), response.getErrorCode(), response.getMessage()});
+                sendGameObjectActionToTable(response.getSessionId().getPlayerId(), table.getMetaData().getGameId(), table.getId(), response);
             }
         };
         return callback;
@@ -80,7 +80,7 @@ public class FirebaseCallbackFactoryImpl implements FirebaseCallbackFactory {
             @Override
             public void requestFailed(AnnounceTableFailedResponse response) {
                 log.debug("announce failed: gId = {}, tId = {}, error = {}, msg = {}", 
-                    new Object[] {table.getMetaData().getGameId(), table.getId(), response.errorCode, response.message});
+                    new Object[] {table.getMetaData().getGameId(), table.getId(), response.getErrorCode(), response.getMessage()});
                 sendGameObjectActionToTable(-1, table.getMetaData().getGameId(), table.getId(), response);
             }
         };

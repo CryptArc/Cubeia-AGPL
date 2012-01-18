@@ -57,22 +57,22 @@ public class HandResultBatchFactoryTest {
         results.put(pokerPlayer2, result2);
         
         RakeInfoContainer rakeInfoContainer = new RakeInfoContainer(1000 * 2, (1000 * 2) / 100, new HashMap<Pot, Long>());
-        HandResult handResult = new HandResult(results, Collections.<RatedPlayerHand>emptyList(), Collections.<PotTransition>emptyList(), rakeInfoContainer, new ArrayList<Integer>() );
+        HandResult handResult = new HandResult(results, Collections.<RatedPlayerHand>emptyList(), Collections.<PotTransition>emptyList(), rakeInfoContainer, new ArrayList<Integer>());
         
         BatchHandRequest batchHandRequest = handResultFactory.createAndValidateBatchHandRequest(handResult, handId, tableId);
         
         assertThat(batchHandRequest, notNullValue());
-        assertThat(batchHandRequest.handId, is(handId));        
-        assertThat(batchHandRequest.tableId, is(tableId));   
-        assertThat(batchHandRequest.handResults.size(), is(2));
+        assertThat(batchHandRequest.getHandId(), is(handId));        
+        assertThat(batchHandRequest.getTableId(), is(tableId));   
+        assertThat(batchHandRequest.getHandResults().size(), is(2));
         
-        com.cubeia.backend.cashgame.dto.HandResult hr1 = findByPlayerSessionId(playerSessionId1, batchHandRequest.handResults);
-        assertThat(hr1.aggregatedBet.getAmount(), is(result1.getWinningsIncludingOwnBets() - result1.getNetResult()));
-        assertThat(hr1.aggregatedBet.getCurrencyCode(), is(DEFAULT_ZERO_MONEY.getCurrencyCode()));
-        assertThat(hr1.aggregatedBet.getFractionalDigits(), is(DEFAULT_ZERO_MONEY.getFractionalDigits()));
-        assertThat(hr1.win.getAmount(), is(result1.getWinningsIncludingOwnBets()));
-        assertThat(hr1.rake.getAmount(), is(1000L / 100));
-        assertThat(hr1.playerSession, is(playerSessionId1));
+        com.cubeia.backend.cashgame.dto.HandResult hr1 = findByPlayerSessionId(playerSessionId1, batchHandRequest.getHandResults());
+        assertThat(hr1.getAggregatedBet().getAmount(), is(result1.getWinningsIncludingOwnBets() - result1.getNetResult()));
+        assertThat(hr1.getAggregatedBet().getCurrencyCode(), is(DEFAULT_ZERO_MONEY.getCurrencyCode()));
+        assertThat(hr1.getAggregatedBet().getFractionalDigits(), is(DEFAULT_ZERO_MONEY.getFractionalDigits()));
+        assertThat(hr1.getWin().getAmount(), is(result1.getWinningsIncludingOwnBets()));
+        assertThat(hr1.getRake().getAmount(), is(1000L / 100));
+        assertThat(hr1.getPlayerSession(), is(playerSessionId1));
     }
     
     @Test(expected=IllegalStateException.class)
@@ -163,7 +163,7 @@ public class HandResultBatchFactoryTest {
     private com.cubeia.backend.cashgame.dto.HandResult findByPlayerSessionId(PlayerSessionId playerSessionId,
         List<com.cubeia.backend.cashgame.dto.HandResult> handResults) {
         for (com.cubeia.backend.cashgame.dto.HandResult hr : handResults) {
-            if (hr.playerSession.equals(playerSessionId)) {
+            if (hr.getPlayerSession().equals(playerSessionId)) {
                 return hr;
             }
         }

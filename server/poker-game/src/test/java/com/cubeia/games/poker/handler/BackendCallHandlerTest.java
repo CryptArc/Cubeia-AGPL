@@ -81,7 +81,6 @@ public class BackendCallHandlerTest {
         when(state.getAdapterState()).thenReturn(firebaseState);
     }
     
-    
     PlayerSessionId playerSessionId;
     ReserveResponse reserveResponse;
     long balanceNotInHand = 33;
@@ -104,7 +103,7 @@ public class BackendCallHandlerTest {
 		when(pokerPlayer.getPendingBalanceSum()).thenReturn(balanceNotInHand + amountRequested);
         when(pokerPlayer.isSitInAfterSuccessfulBuyIn()).thenReturn(isSitInAfterBuyIn);
         Map<Serializable, Serializable> attributes = mock(Map.class);
-		when(pokerPlayer.getAttributes()).thenReturn(attributes );
+		when(pokerPlayer.getAttributes()).thenReturn(attributes);
         
         callHandler.handleReserveSuccessfulResponse(reserveResponse);
         
@@ -227,7 +226,7 @@ public class BackendCallHandlerTest {
         announceTableResponse.setProperty("test", "klyka");
         callHandler.handleAnnounceTableSuccessfulResponse(announceTableResponse);
         verify(extProps).put("tableId", tableId);
-        verify(extProps).putAll(announceTableResponse.tableProperties);
+        verify(extProps).putAll(announceTableResponse.getTableProperties());
         verify(attributeAccessor).setIntAttribute("VISIBLE_IN_LOBBY", 1);
     }
     

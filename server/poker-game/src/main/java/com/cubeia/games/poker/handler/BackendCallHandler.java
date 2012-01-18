@@ -61,14 +61,14 @@ public class BackendCallHandler {
     public void handleReserveSuccessfulResponse(ReserveResponse reserveResponse) {
     	int playerId = reserveResponse.getPlayerSessionId().getPlayerId();
         PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) state.getPokerPlayer(playerId);
-        Money amountReserved = reserveResponse.amountReserved;
+        Money amountReserved = reserveResponse.getAmountReserved();
 		log.debug("handle reserve response: session = {}, amount = {}, pId = {}, properties = {}", 
-            new Object[] {reserveResponse.getPlayerSessionId(), amountReserved, pokerPlayer.getId(), reserveResponse.reserveProperties});
+            new Object[] {reserveResponse.getPlayerSessionId(), amountReserved, pokerPlayer.getId(), reserveResponse.getReserveProperties()});
         
         log.debug("player is in hand, adding reserved amount {} as pending", amountReserved);
         pokerPlayer.addNotInHandAmount(amountReserved.getAmount());
         
-        String externalPlayerSessionReference = reserveResponse.reserveProperties.get(
+        String externalPlayerSessionReference = reserveResponse.getReserveProperties().get(
             CashGamesBackendContract.MARKET_TABLE_SESSION_REFERENCE_KEY);
         pokerPlayer.getAttributes().put(ATTR_PLAYER_EXTERNAL_SESSION_ID, externalPlayerSessionReference);
         
@@ -102,12 +102,12 @@ public class BackendCallHandler {
     }
     
     public void handleReserveFailedResponse(ReserveFailedResponse response) {
-    	int playerId = response.sessionId.getPlayerId();
+    	int playerId = response.getSessionId().getPlayerId();
     	
     	
         BuyInResultCode errorCode;
         
-        switch (response.errorCode) {
+        switch (response.getErrorCode()) {
 	        case AMOUNT_TOO_HIGH: 
 	            errorCode = Enums.BuyInResultCode.AMOUNT_TOO_HIGH;
 	        	break;
@@ -133,7 +133,7 @@ public class BackendCallHandler {
             
         player.clearRequestedBuyInAmountAndRequest();
     	
-        if (response.playerSessionNeedsToBeClosed) {
+        if (response.isPlayerSessionNeedsToBeClosed()) {
             sendGeneralErrorMessageToClient(player, Enums.ErrorCode.CLOSED_SESSION_DUE_TO_FATAL_ERROR, getHandId());
             
             try {
@@ -164,7 +164,7 @@ public class BackendCallHandler {
     }
     
     public void handleOpenSessionSuccessfulResponse(OpenSessionResponse openSessionResponse) {
-        PlayerSessionId playerSessionId = openSessionResponse.sessionId;
+        PlayerSessionId playerSessionId = openSessionResponse.getSessionId();
         
         int playerId = playerSessionId.getPlayerId();
         // log.debug("handle open session response: session = {}, pId = {}", playerSessionId, playerId);
@@ -180,15 +180,15 @@ public class BackendCallHandler {
     }
 
     public void handleAnnounceTableSuccessfulResponse(AnnounceTableResponse attachment) {
-        log.debug("handle announce table success, tId = {}, intTableId = {}, tableProperties = {}", new Object[] { Integer.valueOf(table.getId()), attachment.tableId, attachment.tableProperties });
-        if(attachment.tableId == null){
+        log.debug("handle announce table success, tId = {}, intTableId = {}, tableProperties = {}", new Object[] { Integer.valueOf(table.getId()), attachment.getTableId(), attachment.getTableProperties() });
+        if(attachment.getTableId() == null){
             log.error("got announce successful callback but the external table id is null! Attachment: {}", attachment);
             LobbyTableAttributeAccessor attributeAccessor = table.getAttributeAccessor();
             attributeAccessor.setIntAttribute(PokerLobbyAttributes.TABLE_READY_FOR_CLOSE.name(), 1);
         }else{
             Map<String, Serializable> extProps = state.getExternalTableProperties();
-            extProps.put(EXT_PROP_KEY_TABLE_ID, attachment.tableId);
-            extProps.putAll(attachment.tableProperties);
+            extProps.put(EXT_PROP_KEY_TABLE_ID, attachment.getTableId());
+            extProps.putAll(attachment.getTableProperties());
             makeTableVisibleInLobby(table);
         }
     }
@@ -212,7 +212,7 @@ public class BackendCallHandler {
 
     public void handleOpenSessionFailedResponse(OpenSessionFailedResponse response) {
     	log.info("handle Open Session Failed on table["+table.getId()+"]: "+response);
-    	int playerId = response.playerId;
+    	int playerId = response.getPlayerId();
         
     	sendBuyInErrorToClientAndUnseatPlayer(playerId, true, Enums.BuyInResultCode.SESSION_NOT_OPEN);
     }
