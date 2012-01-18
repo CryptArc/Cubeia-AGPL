@@ -1,11 +1,14 @@
 package com.cubeia.games.poker.adapter;
 
+import static com.cubeia.games.poker.BackendPlayerSessionHandler.DEFAULT_ZERO_MONEY;
+
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 
 import com.cubeia.backend.cashgame.TableId;
 import com.cubeia.backend.cashgame.dto.BatchHandRequest;
+import com.cubeia.backend.cashgame.dto.Money;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.result.HandResult;
@@ -19,20 +22,23 @@ public class HandResultBatchFactory {
     	long totalBet = 0;
     	long totalNet = 0;
     	long totalRake = 0;
-        BatchHandRequest bhr = new BatchHandRequest(handId, tableId, handResult.getTotalRake());
+        BatchHandRequest bhr = new BatchHandRequest(handId, tableId, 
+            DEFAULT_ZERO_MONEY.add(handResult.getTotalRake()));
         for (Map.Entry<PokerPlayer, Result> resultEntry : handResult.getResults().entrySet()) {
             PokerPlayerImpl player = (PokerPlayerImpl) resultEntry.getKey();
             Result result = resultEntry.getValue();
-            long bets = result.getWinningsIncludingOwnBets() - result.getNetResult();
-            long wins = result.getWinningsIncludingOwnBets();
-            long rake = handResult.getRakeContributionByPlayer(player);
-            long net = result.getNetResult();
+            Money bets = DEFAULT_ZERO_MONEY.add(result.getWinningsIncludingOwnBets() - result.getNetResult());
+            Money wins = DEFAULT_ZERO_MONEY.add(result.getWinningsIncludingOwnBets());
+            Money rake = DEFAULT_ZERO_MONEY.add(handResult.getRakeContributionByPlayer(player));
+            Money net = DEFAULT_ZERO_MONEY.add(result.getNetResult());
+            Money startingBalanceMoney = DEFAULT_ZERO_MONEY.add(player.getStartingBalance());
             log.debug("Result for player " + player.getId() + " -> Bets: " + bets + "; Wins: " + wins + "; Rake: " + rake + "; Net: " + net);
-            com.cubeia.backend.cashgame.dto.HandResult hr = new com.cubeia.backend.cashgame.dto.HandResult(player.getPlayerSessionId(), bets, wins, rake, player.getSeatId(), player.getStartingBalance()); // TODO Add initial balance?
+            com.cubeia.backend.cashgame.dto.HandResult hr = new com.cubeia.backend.cashgame.dto.HandResult(
+                player.getPlayerSessionId(), bets, wins, rake, player.getSeatId(), startingBalanceMoney); // TODO Add initial balance?
             bhr.addHandResult(hr);
-            totalBet += bets;
-            totalNet += net;
-            totalRake += rake;
+            totalBet += bets.getAmount();
+            totalNet += net.getAmount();
+            totalRake += rake.getAmount();
         }
         if((totalNet + totalRake) != 0) {
         	throw new IllegalStateException("Unbalanced hand result ((" + totalNet + " + " + totalRake + ") != 0); Total bet: " + totalBet+ "; " + handResult);

@@ -19,6 +19,7 @@ package com.cubeia.games.poker.adapter;
 
 import static com.cubeia.firebase.api.game.player.PlayerStatus.DISCONNECTED;
 import static com.cubeia.firebase.api.game.player.PlayerStatus.LEAVING;
+import static com.cubeia.games.poker.BackendPlayerSessionHandler.DEFAULT_ZERO_MONEY;
 import static com.cubeia.games.poker.handler.BackendCallHandler.EXT_PROP_KEY_TABLE_ID;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -32,6 +33,34 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.cubeia.backend.cashgame.TableId;
+import com.cubeia.backend.cashgame.callback.ReserveCallback;
+import com.cubeia.backend.cashgame.dto.BalanceUpdate;
+import com.cubeia.backend.cashgame.dto.BatchHandRequest;
+import com.cubeia.backend.cashgame.dto.BatchHandResponse;
+import com.cubeia.backend.cashgame.dto.Money;
+import com.cubeia.backend.cashgame.dto.ReserveRequest;
+import com.cubeia.backend.cashgame.exceptions.BatchHandFailedException;
+import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
+import com.cubeia.backend.firebase.CashGamesBackendContract;
+import com.cubeia.firebase.api.action.GameAction;
+import com.cubeia.firebase.api.action.GameDataAction;
+import com.cubeia.firebase.api.action.GameObjectAction;
+import com.cubeia.firebase.api.action.mtt.MttRoundReportAction;
+import com.cubeia.firebase.api.game.context.GameContext;
+import com.cubeia.firebase.api.game.player.GenericPlayer;
+import com.cubeia.firebase.api.game.table.Table;
+import com.cubeia.firebase.api.game.table.TableType;
+import com.cubeia.firebase.api.util.UnmodifiableSet;
+import com.cubeia.firebase.guice.inject.Service;
+import com.cubeia.firebase.io.ProtocolObject;
+import com.cubeia.firebase.io.StyxSerializer;
+import com.cubeia.games.poker.FirebaseState;
+import com.cubeia.games.poker.adapter.BuyInCalculator.MinAndMaxBuyInResult;
+import com.cubeia.games.poker.cache.ActionCache;
+import com.cubeia.games.poker.entity.HandIdentifier;
+import com.cubeia.games.poker.handler.Trigger;
+import com.cubeia.games.poker.handler.TriggerType;
 import com.cubeia.games.poker.io.protocol.BestHand;
 import com.cubeia.games.poker.io.protocol.BuyInInfoResponse;
 import com.cubeia.games.poker.io.protocol.DealPrivateCards;
@@ -57,34 +86,6 @@ import com.cubeia.games.poker.io.protocol.RakeInfo;
 import com.cubeia.games.poker.io.protocol.RequestAction;
 import com.cubeia.games.poker.io.protocol.StartNewHand;
 import com.cubeia.games.poker.io.protocol.TakeBackUncalledBet;
-
-import com.cubeia.backend.cashgame.TableId;
-import com.cubeia.backend.cashgame.callback.ReserveCallback;
-import com.cubeia.backend.cashgame.dto.BalanceUpdate;
-import com.cubeia.backend.cashgame.dto.BatchHandRequest;
-import com.cubeia.backend.cashgame.dto.BatchHandResponse;
-import com.cubeia.backend.cashgame.dto.ReserveRequest;
-import com.cubeia.backend.cashgame.exceptions.BatchHandFailedException;
-import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
-import com.cubeia.backend.firebase.CashGamesBackendContract;
-import com.cubeia.firebase.api.action.GameAction;
-import com.cubeia.firebase.api.action.GameDataAction;
-import com.cubeia.firebase.api.action.GameObjectAction;
-import com.cubeia.firebase.api.action.mtt.MttRoundReportAction;
-import com.cubeia.firebase.api.game.context.GameContext;
-import com.cubeia.firebase.api.game.player.GenericPlayer;
-import com.cubeia.firebase.api.game.table.Table;
-import com.cubeia.firebase.api.game.table.TableType;
-import com.cubeia.firebase.api.util.UnmodifiableSet;
-import com.cubeia.firebase.guice.inject.Service;
-import com.cubeia.firebase.io.ProtocolObject;
-import com.cubeia.firebase.io.StyxSerializer;
-import com.cubeia.games.poker.FirebaseState;
-import com.cubeia.games.poker.adapter.BuyInCalculator.MinAndMaxBuyInResult;
-import com.cubeia.games.poker.cache.ActionCache;
-import com.cubeia.games.poker.entity.HandIdentifier;
-import com.cubeia.games.poker.handler.Trigger;
-import com.cubeia.games.poker.handler.TriggerType;
 import com.cubeia.games.poker.jmx.PokerStats;
 import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
@@ -363,8 +364,9 @@ public class FirebaseServerAdapter implements ServerAdapter {
                         new Object[] {player.getId(), amountToBuyIn, player.getRequestedBuyInAmount()});
                     
                     ReserveCallback callback = backend.getCallbackFactory().createReserveCallback(table);
-        	        ReserveRequest reserveRequest = new ReserveRequest(pokerPlayer.getPlayerSessionId(), getFirebaseState().getHandCount(), 
-        	            amountToBuyIn);
+        	        Money amountToBuyInMoney = DEFAULT_ZERO_MONEY.add(amountToBuyIn);
+                    ReserveRequest reserveRequest = new ReserveRequest(
+        	            pokerPlayer.getPlayerSessionId(), getFirebaseState().getHandCount(), amountToBuyInMoney);
         	        player.setRequestedBuyInAmount(amountToBuyIn);
         	        backend.reserve(reserveRequest, callback);
         	        player.buyInRequestActive();
@@ -505,7 +507,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 				throw new IllegalStateException("error updating balance: unable to find player with session = " + bup.playerSessionId);
 			} else {
 				long gameBalance = pokerPlayer.getBalance() + pokerPlayer.getBalanceNotInHand();
-				long backendBalance = bup.balance;
+				long backendBalance = bup.balance.getAmount();
 
 				if (gameBalance != backendBalance) {
 					//log.error("backend balance: {} not equal to game balance: {}, will reset to backend value", backendBalance, gameBalance);

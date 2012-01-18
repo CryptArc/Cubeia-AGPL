@@ -69,6 +69,15 @@ public final class Money implements Serializable {
         return new Money(getAmount() + m.getAmount(), getCurrencyCode(), getFractionalDigits());
     }
     
+    /**
+     * Returns a new money object with the given scalar amount added.
+     * @param amount amount to add
+     * @return new money with amount added
+     */
+    public Money add(long amount) {
+        return new Money(getAmount() + amount, getCurrencyCode(), getFractionalDigits());
+    }
+    
     @Override
     public int hashCode() {
         final int prime = 31;

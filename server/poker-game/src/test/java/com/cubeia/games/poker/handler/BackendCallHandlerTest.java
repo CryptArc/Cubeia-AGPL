@@ -31,6 +31,7 @@ import com.cubeia.backend.cashgame.PlayerSessionIdImpl;
 import com.cubeia.backend.cashgame.TableId;
 import com.cubeia.backend.cashgame.dto.AnnounceTableResponse;
 import com.cubeia.backend.cashgame.dto.BalanceUpdate;
+import com.cubeia.backend.cashgame.dto.Money;
 import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
 import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;
 import com.cubeia.backend.cashgame.dto.ReserveFailedResponse.ErrorCode;
@@ -96,8 +97,8 @@ public class BackendCallHandlerTest {
     	amountRequested = 500;
         playerSessionId = new PlayerSessionIdImpl(playerId);
         int balanceOnRemoteWallet = 10000;
-        BalanceUpdate balanceUpdate = new BalanceUpdate(playerSessionId , balanceOnRemoteWallet, -1);
-        reserveResponse = new ReserveResponse(balanceUpdate, (int) amountRequested);
+        BalanceUpdate balanceUpdate = new BalanceUpdate(playerSessionId , new Money(balanceOnRemoteWallet, "USD", 2), -1);
+        reserveResponse = new ReserveResponse(balanceUpdate, new Money(amountRequested, "USD", 2));
         reserveResponse.setProperty(CashGamesBackendContract.MARKET_TABLE_SESSION_REFERENCE_KEY, tableSessionReference);
         
 		when(pokerPlayer.getPendingBalanceSum()).thenReturn(balanceNotInHand + amountRequested);

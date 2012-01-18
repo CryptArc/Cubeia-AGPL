@@ -9,6 +9,7 @@ import com.cubeia.backend.cashgame.AllowJoinResponse;
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.TableId;
 import com.cubeia.backend.cashgame.dto.CloseSessionRequest;
+import com.cubeia.backend.cashgame.dto.Money;
 import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
 import com.cubeia.backend.cashgame.exceptions.CloseSessionFailedException;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
@@ -23,6 +24,11 @@ import com.google.inject.Inject;
 public class BackendPlayerSessionHandler {
     private static Logger log = LoggerFactory.getLogger(BackendPlayerSessionHandler.class);
 
+    /**
+     * Default zero money object. This currently defines the currency and fractional digits in the system.
+     */
+    public final static Money DEFAULT_ZERO_MONEY = new Money(0, "SEK", 2);
+    
     @Service @VisibleForTesting
     protected CashGamesBackendContract cashGameBackend;
     
@@ -65,7 +71,8 @@ public class BackendPlayerSessionHandler {
             log.debug("Crashing table "+table.getId());
             closeHandler.tableCrashed(table);
         }else{
-            OpenSessionRequest openSessionRequest = new OpenSessionRequest(playerId, tableId, roundNumber);
+            OpenSessionRequest openSessionRequest = new OpenSessionRequest(
+                playerId, tableId, DEFAULT_ZERO_MONEY, roundNumber);
             cashGameBackend.openSession(openSessionRequest, cashGameBackend.getCallbackFactory().createOpenSessionCallback(table));
         }
         

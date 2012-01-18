@@ -1,5 +1,6 @@
 package com.cubeia.games.poker.adapter;
 
+import static com.cubeia.games.poker.BackendPlayerSessionHandler.DEFAULT_ZERO_MONEY;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -66,9 +67,11 @@ public class HandResultBatchFactoryTest {
         assertThat(batchHandRequest.handResults.size(), is(2));
         
         com.cubeia.backend.cashgame.dto.HandResult hr1 = findByPlayerSessionId(playerSessionId1, batchHandRequest.handResults);
-        assertThat(hr1.aggregatedBet, is(result1.getWinningsIncludingOwnBets() - result1.getNetResult()));
-        assertThat(hr1.win, is(result1.getWinningsIncludingOwnBets()));
-        assertThat(hr1.rake, is(1000L / 100));
+        assertThat(hr1.aggregatedBet.getAmount(), is(result1.getWinningsIncludingOwnBets() - result1.getNetResult()));
+        assertThat(hr1.aggregatedBet.getCurrencyCode(), is(DEFAULT_ZERO_MONEY.getCurrencyCode()));
+        assertThat(hr1.aggregatedBet.getFractionalDigits(), is(DEFAULT_ZERO_MONEY.getFractionalDigits()));
+        assertThat(hr1.win.getAmount(), is(result1.getWinningsIncludingOwnBets()));
+        assertThat(hr1.rake.getAmount(), is(1000L / 100));
         assertThat(hr1.playerSession, is(playerSessionId1));
     }
     

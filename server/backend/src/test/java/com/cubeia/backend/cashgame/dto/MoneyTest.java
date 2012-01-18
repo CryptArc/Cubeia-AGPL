@@ -39,6 +39,14 @@ public class MoneyTest {
     }
     
     @Test
+    public void testAddScalar() {
+        Money m1 = new Money(1000, "SEK", 2);
+        Money m2 = new Money(-1000, "EUR", 3);
+        assertThat(m1.add(1234), is(new Money(2234, "SEK", 2)));
+        assertThat(m2.add(1000), is(new Money(0, "EUR", 3)));
+    }
+    
+    @Test
     public void testToString() {
         Money money = new Money(1234, "SEK", 2);
         assertThat(money.toString(), is("12.34 SEK"));

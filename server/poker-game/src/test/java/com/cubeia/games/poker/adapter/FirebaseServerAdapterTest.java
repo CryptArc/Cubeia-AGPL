@@ -37,6 +37,7 @@ import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.callback.ReserveCallback;
 import com.cubeia.backend.cashgame.dto.BalanceUpdate;
 import com.cubeia.backend.cashgame.dto.BatchHandResponse;
+import com.cubeia.backend.cashgame.dto.Money;
 import com.cubeia.backend.cashgame.dto.ReserveRequest;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
@@ -373,7 +374,7 @@ public class FirebaseServerAdapterTest {
 		
 		BatchHandResponse batchHandResult = new BatchHandResponse();
 	
-		long backendBalance = 100L;
+		Money backendBalance = new Money(100L, "EUR", 2);
 		long balanceVersionNumber = 1L;
 		BalanceUpdate balanceUpdate = new BalanceUpdate(playerSessionId, backendBalance, balanceVersionNumber);	
 		

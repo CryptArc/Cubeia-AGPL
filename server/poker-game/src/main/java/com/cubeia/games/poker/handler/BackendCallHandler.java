@@ -11,15 +11,10 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.cubeia.games.poker.io.protocol.BuyInResponse;
-import com.cubeia.games.poker.io.protocol.Enums;
-import com.cubeia.games.poker.io.protocol.Enums.BuyInResultCode;
-import com.cubeia.games.poker.io.protocol.Enums.ErrorCode;
-import com.cubeia.games.poker.io.protocol.ErrorPacket;
-
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.dto.AnnounceTableFailedResponse;
 import com.cubeia.backend.cashgame.dto.AnnounceTableResponse;
+import com.cubeia.backend.cashgame.dto.Money;
 import com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse;
 import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
 import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;
@@ -32,6 +27,11 @@ import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.BackendPlayerSessionHandler;
 import com.cubeia.games.poker.FirebaseState;
+import com.cubeia.games.poker.io.protocol.BuyInResponse;
+import com.cubeia.games.poker.io.protocol.Enums;
+import com.cubeia.games.poker.io.protocol.Enums.BuyInResultCode;
+import com.cubeia.games.poker.io.protocol.Enums.ErrorCode;
+import com.cubeia.games.poker.io.protocol.ErrorPacket;
 import com.cubeia.games.poker.lobby.PokerLobbyAttributes;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.poker.PokerState;
@@ -61,12 +61,12 @@ public class BackendCallHandler {
     public void handleReserveSuccessfulResponse(ReserveResponse reserveResponse) {
     	int playerId = reserveResponse.getPlayerSessionId().getPlayerId();
         PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) state.getPokerPlayer(playerId);
-        int amountReserved = reserveResponse.amountReserved;
+        Money amountReserved = reserveResponse.amountReserved;
 		log.debug("handle reserve response: session = {}, amount = {}, pId = {}, properties = {}", 
             new Object[] {reserveResponse.getPlayerSessionId(), amountReserved, pokerPlayer.getId(), reserveResponse.reserveProperties});
         
         log.debug("player is in hand, adding reserved amount {} as pending", amountReserved);
-        pokerPlayer.addNotInHandAmount(amountReserved);
+        pokerPlayer.addNotInHandAmount(amountReserved.getAmount());
         
         String externalPlayerSessionReference = reserveResponse.reserveProperties.get(
             CashGamesBackendContract.MARKET_TABLE_SESSION_REFERENCE_KEY);
@@ -84,7 +84,7 @@ public class BackendCallHandler {
         BuyInResponse resp = new BuyInResponse();
         resp.balance = (int) pokerPlayer.getBalance();
         resp.pendingBalance = (int) pokerPlayer.getPendingBalanceSum();
-        resp.amountBroughtIn = amountReserved;
+        resp.amountBroughtIn = (int) amountReserved.getAmount();
         resp.resultCode = Enums.BuyInResultCode.OK;
         
         if (!state.isPlayerInHand(playerId)) {
