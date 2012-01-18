@@ -68,7 +68,7 @@
 			<scope>provided</scope>
 		</dependency>
 
-	<dependency>
+	    <dependency>
 			<groupId>com.cubeia.games.poker</groupId>
 			<artifactId>bot-service</artifactId>
 			<version>1.0-SNAPSHOT</version>

@@ -27,6 +27,6 @@ public class OpenSessionFailedResponse implements Serializable {
     }
 
     public enum ErrorCode {
-		UNKOWN_PLATFORM_TABLE_ID, WALLET_CALL_FAILED;
+		UNKOWN_PLATFORM_TABLE_ID, WALLET_CALL_FAILED, UNSPECIFIED_ERROR;
 	}
 }

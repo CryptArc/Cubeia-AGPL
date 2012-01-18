@@ -39,6 +39,23 @@ public class MoneyTest {
     }
     
     @Test
+    public void testNegate() {
+        Money m1 = new Money(1000, "SEK", 2);
+        Money m2 = new Money(-123, "EUR", 3);
+        assertThat(m1.negate(), is(new Money(-1000, "SEK", 2)));
+        assertThat(m2.negate(), is(new Money(123, "EUR", 3)));
+    }
+    
+    @Test
+    public void testSubtract() {
+        Money m1 = new Money(1000, "SEK", 2);
+        Money m2 = new Money(-123, "SEK", 2);
+        assertThat(m1.subtract(m2), is(new Money(1123, "SEK", 2)));
+        assertThat(m2.subtract(m1), is(new Money(-1123, "SEK", 2)));
+        assertThat(m1.subtract(m1), is(new Money(0, "SEK", 2)));
+    }
+    
+    @Test
     public void testAddScalar() {
         Money m1 = new Money(1000, "SEK", 2);
         Money m2 = new Money(-1000, "EUR", 3);

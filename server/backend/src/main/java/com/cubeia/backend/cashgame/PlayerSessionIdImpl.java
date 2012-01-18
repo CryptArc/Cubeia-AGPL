@@ -16,7 +16,12 @@ public class PlayerSessionIdImpl implements PlayerSessionId, Serializable {
 		this.playerId = playerId;
 		this.id = idGenerator.incrementAndGet();
 	}
-
+	
+	public PlayerSessionIdImpl(int playerId, long sessionId) {
+        this.playerId = playerId;
+        this.id = sessionId;
+	}
+	
 	public long getSessionId() {
 	    return id;
 	}

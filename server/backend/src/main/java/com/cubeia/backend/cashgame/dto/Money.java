@@ -70,12 +70,26 @@ public final class Money implements Serializable {
     }
     
     /**
+     * Subtract the given money from this money.
+     * This is the same as doing this.add(that.negate()).
+     * @param m money to subtract
+     * @return the result
+     */
+    public Money subtract(Money m) {
+        return this.add(m.negate());
+    }
+    
+    /**
      * Returns a new money object with the given scalar amount added.
      * @param amount amount to add
      * @return new money with amount added
      */
     public Money add(long amount) {
         return new Money(getAmount() + amount, getCurrencyCode(), getFractionalDigits());
+    }
+    
+    public Money negate() {
+        return new Money(-getAmount(), getCurrencyCode(), getFractionalDigits());
     }
     
     @Override
