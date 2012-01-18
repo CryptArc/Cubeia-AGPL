@@ -16,6 +16,29 @@ public class MoneyTest {
     }
     
     @Test
+    public void testAdd() {
+        Money m1 = new Money(1000, "SEK", 2);
+        Money m2 = new Money(-1000, "SEK", 2);
+        Money m3 = new Money(1234, "SEK", 2);
+        assertThat(m1.add(m2), is(new Money(0, "SEK", 2)));
+        assertThat(m1.add(m3), is(new Money(2234, "SEK", 2)));
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddFailOnIncompatibleCurrencies() {
+        Money m1 = new Money(1000, "SEK", 2);
+        Money m2 = new Money(-1000, "EUR", 2);
+        m1.add(m2);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddFailOnIncompatibleFractionalDigits() {
+        Money m1 = new Money(1000, "SEK", 2);
+        Money m2 = new Money(-1000, "SEK", 3);
+        m1.add(m2);
+    }
+    
+    @Test
     public void testToString() {
         Money money = new Money(1234, "SEK", 2);
         assertThat(money.toString(), is("12.34 SEK"));

@@ -52,7 +52,23 @@ public final class Money implements Serializable {
     public long getAmount() {
         return amount;
     }
-
+    
+    /**
+     * Returns a new money object by adding the given money to this money.
+     * The currencies must be the same.
+     * @param m money to add
+     * @throws IllegalArgumentException if the currencies are incompatible
+     * @return the sum of this money and the given money
+     */
+    public Money add(Money m) {
+        if (getFractionalDigits() != m.getFractionalDigits()  ||  !getCurrencyCode().equals(m.getCurrencyCode())) {
+            throw new IllegalArgumentException("incompatible currencies: this = " + 
+                getCurrencyCode() + "+" + getFractionalDigits() + ", other = " + 
+                m.getCurrencyCode() + "+" + m.getFractionalDigits());
+        }
+        return new Money(getAmount() + m.getAmount(), getCurrencyCode(), getFractionalDigits());
+    }
+    
     @Override
     public int hashCode() {
         final int prime = 31;

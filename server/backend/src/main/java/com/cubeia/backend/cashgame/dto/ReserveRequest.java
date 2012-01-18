@@ -9,9 +9,9 @@ public class ReserveRequest implements Serializable {
 
 	public final PlayerSessionId playerSessionId;
 	public final int roundNumber;
-	public final int amount;
+	public final Money amount;
 
-	public ReserveRequest(PlayerSessionId playerSessionId, int roundNumber, int amount) {
+	public ReserveRequest(PlayerSessionId playerSessionId, int roundNumber, Money amount) {
 		this.playerSessionId = playerSessionId;
 		this.roundNumber = roundNumber;
 		this.amount = amount;

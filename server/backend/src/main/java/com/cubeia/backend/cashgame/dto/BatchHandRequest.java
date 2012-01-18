@@ -12,23 +12,21 @@ public class BatchHandRequest implements Serializable {
 	public final String handId;
 	public final TableId tableId;
 	public final List<HandResult> handResults;
-	public final long totalRake;
+	public final Money totalRake;
 	
 	public long startTime;
 	public long endTime;
 
-	public BatchHandRequest(String handId, TableId tableId, long totalRake) {
-		this (handId, tableId, new LinkedList<HandResult>(), totalRake);
+	public BatchHandRequest(String handId, TableId tableId, Money totalRake) {
+		this(handId, tableId, new LinkedList<HandResult>(), totalRake);
 	}
 	
-	public BatchHandRequest(String handId, TableId tableId,
-			List<HandResult> handResults, long totalTake) {
+	public BatchHandRequest(String handId, TableId tableId, List<HandResult> handResults, Money totalRake) {
 		this.handId = handId;
 		this.tableId = tableId;
 		this.handResults = handResults;
-		totalRake = totalTake;
+		this.totalRake = totalRake;
 	}
-
 
 	public void addHandResult(HandResult handResult) {
 		handResults.add(handResult);

@@ -8,11 +8,10 @@ import com.cubeia.backend.cashgame.PlayerSessionId;
 public class BalanceUpdate implements Serializable {
 
 	public final PlayerSessionId playerSessionId;
-	public final long balance;
+	public final Money balance;
 	public final long balanceVersionNumber;
 
-	public BalanceUpdate(PlayerSessionId playerSessionId, long balance,
-			long balanceVersionNumber) {
+	public BalanceUpdate(PlayerSessionId playerSessionId, Money balance, long balanceVersionNumber) {
 		this.playerSessionId = playerSessionId;
 		this.balance = balance;
 		this.balanceVersionNumber = balanceVersionNumber;

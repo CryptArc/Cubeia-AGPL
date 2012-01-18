@@ -18,6 +18,7 @@ import com.cubeia.backend.cashgame.dto.AnnounceTableFailedResponse;
 import com.cubeia.backend.cashgame.dto.AnnounceTableRequest;
 import com.cubeia.backend.cashgame.dto.AnnounceTableResponse;
 import com.cubeia.backend.cashgame.dto.BalanceUpdate;
+import com.cubeia.backend.cashgame.dto.Money;
 import com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse;
 import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
 import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
@@ -82,7 +83,8 @@ public class AsynchBackendTest {
 	@Test
 	public void testOpenSession() throws Exception {
 
-		OpenSessionRequest request = new OpenSessionRequest(123, new TableIdImpl(), 123);
+		OpenSessionRequest request = new OpenSessionRequest(123, new TableIdImpl(), 
+		    new Money(0, "SEK", 2), 123);
 
 		int playerId = 42;
         PlayerSessionId playerSessionId = new PlayerSessionIdImpl(playerId);
@@ -107,7 +109,8 @@ public class AsynchBackendTest {
 	@Test
 	public void testOpenSessionFail() throws Exception {
 
-		OpenSessionRequest request = new OpenSessionRequest(123, new TableIdImpl(), 123);
+		OpenSessionRequest request = new OpenSessionRequest(123, new TableIdImpl(), 
+		    new Money(0, "SEK", 2), 123);
 
 		OpenSessionCallbackHandler callback = new OpenSessionCallbackHandler();
 
@@ -128,10 +131,10 @@ public class AsynchBackendTest {
 		int playerId = 42;
         PlayerSessionId playerSessionId = new PlayerSessionIdImpl(playerId);
 
-		int amountReserved = 1000;
+		Money amountReserved = new Money(1000, "USD", 2);
 		int roundNumber = 2;
 		long balanceVersionNumber = 102030;
-		int newBalance = 5000;
+		Money newBalance = new Money(5000, "USD", 2);
 
 		ReserveRequest request = new ReserveRequest(playerSessionId, roundNumber, amountReserved);
 		ReserveCallbackHandler callback = new ReserveCallbackHandler();
@@ -156,7 +159,7 @@ public class AsynchBackendTest {
 
 		int playerId = 42;
         PlayerSessionId playerSessionId = new PlayerSessionIdImpl(playerId);
-		int amountReserved = 1000;
+		Money amountReserved = new Money(1000, "SEK", 2);
 		int roundNumber = 2;
 
 		ReserveRequest request = new ReserveRequest(playerSessionId, roundNumber, amountReserved);

@@ -10,10 +10,10 @@ import com.cubeia.backend.cashgame.PlayerSessionId;
 public class ReserveResponse implements Serializable {
 
 	public final BalanceUpdate balanceUpdate;
-	public final int amountReserved;
+	public final Money amountReserved;
     public final Map<String, String> reserveProperties;
     
-	public ReserveResponse(BalanceUpdate balanceUpdate, int amountReserved) {
+	public ReserveResponse(BalanceUpdate balanceUpdate, Money amountReserved) {
 		this.balanceUpdate = balanceUpdate;
 		this.amountReserved = amountReserved;
 		this.reserveProperties = new HashMap<String, String>();

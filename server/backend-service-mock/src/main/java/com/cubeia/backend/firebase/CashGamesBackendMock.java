@@ -25,6 +25,7 @@ import com.cubeia.backend.cashgame.dto.BatchHandRequest;
 import com.cubeia.backend.cashgame.dto.BatchHandResponse;
 import com.cubeia.backend.cashgame.dto.CloseSessionRequest;
 import com.cubeia.backend.cashgame.dto.HandResult;
+import com.cubeia.backend.cashgame.dto.Money;
 import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
 import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
 import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;
@@ -50,8 +51,8 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
     
     private final AtomicInteger idSequence = new AtomicInteger(0);
 
-    private final Multimap<PlayerSessionId, Integer> sessionTransactions = 
-        Multimaps.<PlayerSessionId, Integer>synchronizedListMultimap(LinkedListMultimap.<PlayerSessionId, Integer>create());
+    private final Multimap<PlayerSessionId, Money> sessionTransactions = 
+        Multimaps.<PlayerSessionId, Money>synchronizedListMultimap(LinkedListMultimap.<PlayerSessionId, Money>create());
 
     private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
     
@@ -102,7 +103,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
     @Override
     public void openSession(OpenSessionRequest request, OpenSessionCallback callback) {
         PlayerSessionId sessionId = new PlayerSessionIdImpl(request.playerId);
-        sessionTransactions.put(sessionId, 0);
+        sessionTransactions.put(sessionId, request.openingBalance);
         
         OpenSessionResponse response = new OpenSessionResponse(sessionId, Collections.<String, String>emptyMap());
         log.debug("new session opened, tId = {}, pId = {}, sId = {}", 
@@ -120,7 +121,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
         if (!sessionTransactions.containsKey(sid)) {
             log.error("error closing session {}: not found", sid);
         } else {
-            int closingBalance = getBalance(sid);
+            Money closingBalance = getBalance(sid);
             sessionTransactions.removeAll(sid);
             log.debug("closed session {} with balance: {}", sid, closingBalance);
         }
@@ -130,7 +131,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
 
     @Override
     public void reserve(ReserveRequest request, final ReserveCallback callback) {
-        int amount = request.amount;
+        Money amount = request.amount;
         PlayerSessionId sid = request.playerSessionId;
         
         if (!sessionTransactions.containsKey(sid)) {
@@ -139,7 +140,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
                 ReserveFailedResponse.ErrorCode.SESSION_NOT_OPEN, "session " + sid + " not open", true);
             callback.requestFailed(failResponse);
             
-        } else if (amount == 66  ||  amount == 660  ||  amount == 6600){ // MAGIC FAIL FOR 66 cents BUY-IN 
+        } else if (amount.getAmount() == 66  ||  amount.getAmount() == 660  ||  amount.getAmount() == 6600){ // MAGIC FAIL FOR 66 cents BUY-IN 
         	log.error("Failing reserve with {}ms delay for magic amount 66 cents (hardcoded for debug reasons). sId={}", sid);
             final ReserveFailedResponse failResponse = new ReserveFailedResponse(request.playerSessionId, 
                 ReserveFailedResponse.ErrorCode.UNSPECIFIED_FAILURE, "Unknown operator error (magic 66-cent ultra-fail)", true);
@@ -151,7 +152,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
             
         } else {
             sessionTransactions.put(sid, amount);
-            int newBalance = getBalance(sid);
+            Money newBalance = getBalance(sid);
             BalanceUpdate balanceUpdate = new BalanceUpdate(request.playerSessionId, newBalance, nextId());
             final ReserveResponse response = new ReserveResponse(balanceUpdate, amount);
             log.debug("reserve successful: sId = {}, amount = {}, new balance = {}", new Object[] {sid, amount, newBalance});
@@ -159,7 +160,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
             
             long delay = 0;
             
-            if (amount == 67  ||  amount == 670  ||  amount == 6700) {
+            if (amount.getAmount() == 67  ||  amount.getAmount() == 670  ||  amount.getAmount() == 6700) {
                 delay = (long) (5000 + Math.random() * 10000);
                 log.info("succeeding reserve with {}ms delay for magic amount 67 cents (hardcoded for debug reasons). sId={}", delay, sid);
             }
@@ -181,13 +182,13 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
         for (HandResult hr : request.handResults) {
             log.debug("recording hand result: handId = {}, sessionId = {}, bets = {}, wins = {}, rake = {}", 
                 new Object[] {request.handId, hr.playerSession, hr.aggregatedBet, hr.win, hr.rake});
-            long amount = hr.win - hr.aggregatedBet;
-            sessionTransactions.put(hr.playerSession, (int) amount);
+            long amount = hr.win.getAmount() - hr.aggregatedBet.getAmount();
+            sessionTransactions.put(hr.playerSession, new Money(amount, hr.win.getCurrencyCode(), hr.win.getFractionalDigits()));
             resultingBalances.add(new BalanceUpdate(hr.playerSession, getBalance(hr.playerSession), -1));
             
-            totalBets += hr.aggregatedBet;
-            totalWins += hr.win;
-            totalRakes += hr.rake;
+            totalBets += hr.aggregatedBet.getAmount();
+            totalWins += hr.win.getAmount();
+            totalRakes += hr.rake.getAmount();
         }
         
         //Sanity check on the sum
@@ -210,10 +211,15 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
         return 1337000;
     }
 
-    private int getBalance(PlayerSessionId sid) {
-        int balance = 0;
-        for (Integer tx : sessionTransactions.get(sid)) {
-            balance += tx;
+    private Money getBalance(PlayerSessionId sid) {
+        Money balance = null;
+        
+        for (Money tx : sessionTransactions.get(sid)) {
+            if (balance == null) {
+                balance = tx;
+            } else {
+                balance = balance.add(tx);
+            }
         }
         return balance;
     }
@@ -248,6 +254,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
         // nothing should arrive here
     }
     
+    @SuppressWarnings("unused")
     @Override
     public void init(ServiceContext con) throws SystemException {
         log.debug("service init");
