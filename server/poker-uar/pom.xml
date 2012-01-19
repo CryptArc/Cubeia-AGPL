@@ -47,7 +47,7 @@
 		<dependency>
 			<groupId>com.cubeia.network.wallet.firebase</groupId>
 			<artifactId>mock-wallet-service</artifactId>
-			<version>1.2.3</version>
+			<version>1.2.4-SNAPSHOT</version>
 			<type>firebase-sar</type>
 			<scope>provided</scope>
 		</dependency>

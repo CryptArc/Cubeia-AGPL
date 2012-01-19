@@ -24,7 +24,7 @@ public class AccountLookupUtil {
         lar.setTypes(asList(SYSTEM_ACCOUNT));
         lar.setUserId(CashGamesBackendAdapter.RAKE_ACCOUNT_USER_ID);
         AccountQueryResult accounts = walletService.listAccounts(lar);
-        if (accounts.getAccounts().size() < 1) {
+        if (accounts.getAccounts() == null  ||  accounts.getAccounts().size() < 1) {
             throw new SystemException("Error getting rake account. Looked for account matching: " + lar);
         } 
         return accounts.getAccounts().iterator().next().getId();
