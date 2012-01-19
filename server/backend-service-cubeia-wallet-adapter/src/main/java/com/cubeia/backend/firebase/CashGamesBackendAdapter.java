@@ -1,6 +1,7 @@
 package com.cubeia.backend.firebase;
 
 import static com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse.ErrorCode.UNSPECIFIED_ERROR;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -10,7 +11,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.slf4j.Logger;
@@ -85,6 +85,10 @@ public class CashGamesBackendAdapter implements CashGamesBackendContract, Servic
     
     @VisibleForTesting
     protected long rakeAccountId;
+
+    /** Grace delay before callback is called. If called immediately some messages seems to be dropped. :-( */
+    @VisibleForTesting
+    protected static int CALLBACK_GRACE_DELAY_MS = 500;
     
     private long nextId() {
         return idSequence.getAndIncrement();
@@ -117,9 +121,14 @@ public class CashGamesBackendAdapter implements CashGamesBackendContract, Servic
         final AnnounceTableResponse response = new AnnounceTableResponse(new TableIdImpl());
         response.setProperty(MARKET_TABLE_REFERENCE_KEY, "CUBEIA-TABLE-ID::" + UUID.randomUUID());
         
-        executor.schedule(new Runnable() {
+        Runnable announceTask = new Runnable() {
             @Override public void run() { callback.requestSucceded(response); }
-        }, 0, TimeUnit.MILLISECONDS);
+        };
+        scheduleCallback(announceTask);
+    }
+
+    private void scheduleCallback(Runnable runnable) {
+        executor.schedule(wrapWithTryCatch(runnable), CALLBACK_GRACE_DELAY_MS, MILLISECONDS);
     }
     
     @Override
@@ -150,7 +159,7 @@ public class CashGamesBackendAdapter implements CashGamesBackendContract, Servic
             }
         };
         
-        executor.schedule(openSessionTask, 0, TimeUnit.MILLISECONDS);
+        scheduleCallback(openSessionTask);
     }
 
     @Override
@@ -204,7 +213,7 @@ public class CashGamesBackendAdapter implements CashGamesBackendContract, Servic
             }
         };
         
-        executor.schedule(task, 0, TimeUnit.MILLISECONDS);
+        scheduleCallback(task);
     }
 
     /**
@@ -296,6 +305,20 @@ public class CashGamesBackendAdapter implements CashGamesBackendContract, Servic
     @Override
     public void onAction(ServiceAction e) {
         // nothing should arrive here
+    }
+    
+    /** Wrap the given runnable with a catch all block. */
+    public Runnable wrapWithTryCatch(final Runnable delegateRunnable) {
+        return new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    delegateRunnable.run();
+                } catch (Throwable t) {
+                    log.error("wrapped runnable throw uncaught throwable", t);
+                }
+            }
+        };
     }
     
     @SuppressWarnings("unused")

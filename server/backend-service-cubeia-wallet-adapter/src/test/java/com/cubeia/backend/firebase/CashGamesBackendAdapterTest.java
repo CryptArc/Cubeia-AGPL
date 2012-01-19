@@ -67,6 +67,7 @@ public class CashGamesBackendAdapterTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
+        CashGamesBackendAdapter.CALLBACK_GRACE_DELAY_MS = 0;
         backend = new CashGamesBackendAdapter();
         backend.accountLookupUtil = accountLookupUtil;
         backend.walletService = walletService;
