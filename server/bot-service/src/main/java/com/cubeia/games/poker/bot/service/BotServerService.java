@@ -18,7 +18,7 @@ public class BotServerService implements BotServerContract, Service {
 		ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
 		try {
 			Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
-			BotServerDaemon.startLocalHTTP(9090, 1);
+			BotServerDaemon.startLocalHTTP(19090, 1);
 		} finally {
 			Thread.currentThread().setContextClassLoader(originalClassLoader);
 		}
