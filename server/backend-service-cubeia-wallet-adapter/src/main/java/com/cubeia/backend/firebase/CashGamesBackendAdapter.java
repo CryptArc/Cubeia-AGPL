@@ -304,6 +304,10 @@ public class CashGamesBackendAdapter implements CashGamesBackendContract, Servic
         log.debug("backend wallet adapter service init");
         
         walletService = con.getParentRegistry().getServiceInstance(WalletServiceContract.class);
+        if (walletService == null) {
+            log.error("fatal error: wallet service contract ({}) not found, won't start", WalletServiceContract.class.getSimpleName());
+            throw new SystemException("wallet service not found");
+        }
         log.debug("found wallet service: {}", walletService.getClass().getSimpleName());
         
         rakeAccountId = accountLookupUtil.lookupRakeAccountId(walletService);
