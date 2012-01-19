@@ -1,8 +1,6 @@
 package com.cubeia.backend.firebase;
 
 import static com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse.ErrorCode.UNSPECIFIED_ERROR;
-import static com.cubeia.backoffice.wallet.api.dto.Account.AccountType.SYSTEM_ACCOUNT;
-import static java.util.Arrays.asList;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -44,12 +42,9 @@ import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
 import com.cubeia.backend.firebase.impl.FirebaseCallbackFactoryImpl;
 import com.cubeia.backend.firebase.jmx.MockController;
 import com.cubeia.backoffice.accounting.api.UnbalancedTransactionException;
-import com.cubeia.backoffice.wallet.api.dto.Account.AccountStatus;
-import com.cubeia.backoffice.wallet.api.dto.AccountQueryResult;
 import com.cubeia.backoffice.wallet.api.dto.SessionBalance;
 import com.cubeia.backoffice.wallet.api.dto.report.TransactionRequest;
 import com.cubeia.backoffice.wallet.api.dto.report.TransactionResult;
-import com.cubeia.backoffice.wallet.api.dto.request.ListAccountsRequest;
 import com.cubeia.firebase.api.action.service.ServiceAction;
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.firebase.api.service.RoutableService;
@@ -58,6 +53,7 @@ import com.cubeia.firebase.api.service.ServiceContext;
 import com.cubeia.firebase.api.service.ServiceRouter;
 import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
 import com.cubeia.network.wallet.firebase.domain.TransactionBuilder;
+import com.google.common.annotations.VisibleForTesting;
 
 /**
  * Adapter from the Backend Service Contract to the Cubeia Wallet Service.
@@ -71,19 +67,24 @@ public class CashGamesBackendAdapter implements CashGamesBackendContract, Servic
     /** Hardcoded game id, should be configurable or part of requests */
     public static final int GAME_ID = 4718;
 
-    private static final Long RAKE_ACCOUNT_USER_ID = -1000L;
+    static final Long RAKE_ACCOUNT_USER_ID = -1000L;
     
     private Logger log = LoggerFactory.getLogger(CashGamesBackendAdapter.class);
     
-    private ScheduledExecutorService executor = Executors.newScheduledThreadPool(20);
+    @VisibleForTesting
+    protected ScheduledExecutorService executor = Executors.newScheduledThreadPool(20);
     
     private ServiceRouter router;
     
     private final AtomicLong idSequence = new AtomicLong(0);
     
-    private WalletServiceContract walletService;
+    @VisibleForTesting
+    protected WalletServiceContract walletService;
 
-    private Long rakeAccountId;
+    protected AccountLookupUtil accountLookupUtil = new AccountLookupUtil();
+    
+    @VisibleForTesting
+    protected long rakeAccountId;
     
     private long nextId() {
         return idSequence.getAndIncrement();
@@ -163,7 +164,7 @@ public class CashGamesBackendAdapter implements CashGamesBackendContract, Servic
                 ", player id = " + sid.getPlayerId());
         
         log.debug("wallet session {} closed for player {}, amount deposited: {}", 
-            new Object[] { walletSessionId, sid.getPlayerId(), amountDeposited.toString()});
+            new Object[] { walletSessionId, sid.getPlayerId(), amountDeposited});
     }
 
     private long getWalletSessionIdByPlayerSessionId(PlayerSessionId sid) {
@@ -232,7 +233,8 @@ public class CashGamesBackendAdapter implements CashGamesBackendContract, Servic
         
         try {
             String currencyCode = request.getTotalRake().getCurrencyCode();
-            TransactionBuilder txBuilder = new TransactionBuilder(currencyCode);
+            int fractionalDigits = request.getTotalRake().getFractionalDigits();
+            TransactionBuilder txBuilder = new TransactionBuilder(currencyCode, fractionalDigits);
             
             HashMap<Long, PlayerSessionIdImpl> sessionToPlayerSessionMap = new HashMap<Long, PlayerSessionIdImpl>();
             
@@ -304,24 +306,11 @@ public class CashGamesBackendAdapter implements CashGamesBackendContract, Servic
         walletService = con.getParentRegistry().getServiceInstance(WalletServiceContract.class);
         log.debug("found wallet service: {}", walletService.getClass().getSimpleName());
         
-        rakeAccountId = lookupRakeAccountId();
+        rakeAccountId = accountLookupUtil.lookupRakeAccountId(walletService);
         log.debug("system rake account id = {}", rakeAccountId);
         
         log.debug("initializing jmx stuff");
         MockController mockController = new MockController(this);
-    }
-
-    private long lookupRakeAccountId() throws SystemException {
-        ListAccountsRequest lar = new ListAccountsRequest();
-        lar.setLimit(1);
-        lar.setStatus(AccountStatus.OPEN);
-        lar.setTypes(asList(SYSTEM_ACCOUNT));
-        lar.setUserId(RAKE_ACCOUNT_USER_ID);
-        AccountQueryResult accounts = walletService.listAccounts(lar);
-        if (accounts.getAccounts().size() < 1) {
-            throw new SystemException("Error getting rake account. Looked for account matching: " + lar);
-        } 
-        return accounts.getAccounts().iterator().next().getId();
     }
 
     @Override
