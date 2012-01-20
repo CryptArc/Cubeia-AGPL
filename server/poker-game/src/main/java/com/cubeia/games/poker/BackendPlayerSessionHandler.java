@@ -27,7 +27,7 @@ public class BackendPlayerSessionHandler {
     /**
      * Default zero money object. This currently defines the currency and fractional digits in the system.
      */
-    public final static Money DEFAULT_ZERO_MONEY = new Money(0, "SEK", 2);
+    public final static Money DEFAULT_ZERO_MONEY = new Money(0, "EUR", 2);
     
     @Service @VisibleForTesting
     protected CashGamesBackendContract cashGameBackend;

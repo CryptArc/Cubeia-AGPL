@@ -13,6 +13,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicLong;
 
+import javax.swing.text.TabExpander;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -259,6 +261,8 @@ public class CashGamesBackendAdapter implements CashGamesBackendContract, Servic
             }
             
             txBuilder.entry(rakeAccountId, convertToWalletMoney(request.getTotalRake()).getAmount());
+            txBuilder.comment("hand result: game = " + GAME_ID + ", hand id = " + request.getHandId() 
+                + ", table id = " + request.getTableId());
             
             TransactionRequest txRequest = txBuilder.toTransactionRequest();
             
