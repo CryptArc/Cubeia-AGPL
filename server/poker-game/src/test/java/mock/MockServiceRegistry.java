@@ -17,7 +17,9 @@
 
 package mock;
 
+import java.lang.annotation.Annotation;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.cubeia.firebase.api.service.Contract;
@@ -51,6 +53,20 @@ public class MockServiceRegistry implements ServiceRegistry {
     }
 
     public <T extends Contract> T getServiceInstance(Class<T> arg0, String arg1) {
+        return null;
+    }
+
+    @Override
+    public <T extends Annotation> List<ServiceInfo> listServicesByAnnotation(
+        Class<T> arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public <T extends Contract> List<ServiceInfo> listServicesByContract(
+        Class<T> arg0) {
+        // TODO Auto-generated method stub
         return null;
     }
 
