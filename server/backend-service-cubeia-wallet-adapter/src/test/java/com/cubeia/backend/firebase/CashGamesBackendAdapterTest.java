@@ -218,7 +218,8 @@ public class CashGamesBackendAdapterTest {
         TransactionResult txResult = mock(TransactionResult.class);
         SessionBalance sessionBalance1 = new SessionBalance(session1Id, walletMoney("11.11"));
         SessionBalance sessionBalance2 = new SessionBalance(session2Id, walletMoney("22.22"));
-        when(txResult.getBalances()).thenReturn(Arrays.asList(sessionBalance1, sessionBalance2));
+        SessionBalance rakeAccountBalance = new SessionBalance(backend.rakeAccountId, walletMoney("1232322.22"));
+        when(txResult.getBalances()).thenReturn(Arrays.asList(sessionBalance1, sessionBalance2, rakeAccountBalance));
         
         when(walletService.doTransaction(txCaptor.capture())).thenReturn(txResult);
         

@@ -503,7 +503,6 @@ public class FirebaseServerAdapter implements ServerAdapter {
 			}
 
 			if (pokerPlayer == null) {
-				//log.error("error updating balance: unable to find player with session = {}", bup.playerSessionId);
 				throw new IllegalStateException("error updating balance: unable to find player with session = " + bup.getPlayerSessionId());
 			} else {
 				long gameBalance = pokerPlayer.getBalance() + pokerPlayer.getBalanceNotInHand();

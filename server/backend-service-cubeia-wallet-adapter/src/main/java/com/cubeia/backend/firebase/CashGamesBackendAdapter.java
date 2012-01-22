@@ -271,9 +271,11 @@ public class CashGamesBackendAdapter implements CashGamesBackendContract, Servic
             
             List<BalanceUpdate> resultingBalances = new ArrayList<BalanceUpdate>();
             for (SessionBalance sb : txResult.getBalances()) {
-                PlayerSessionIdImpl playerSessionId = sessionToPlayerSessionMap.get(sb.getSessionId());
-                Money balance = convertFromWalletMoney(sb.getBalance());
-                resultingBalances.add(new BalanceUpdate(playerSessionId, balance, nextId()));
+                if (sb.getSessionId() != rakeAccountId) {
+                    PlayerSessionIdImpl playerSessionId = sessionToPlayerSessionMap.get(sb.getSessionId());
+                    Money balance = convertFromWalletMoney(sb.getBalance());
+                    resultingBalances.add(new BalanceUpdate(playerSessionId, balance, nextId()));
+                }
             }
             return new BatchHandResponse(resultingBalances);
             
