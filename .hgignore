@@ -7,6 +7,8 @@ target
 .settings
 *.log
 *.log.*
+*.iml
+*.hsp
 glob:client/lobby/.actionScriptProperties
 glob:client/flex/assembly/
 glob:client/flex/styles/bin/
