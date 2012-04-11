@@ -48,7 +48,7 @@ import com.cubeia.backend.cashgame.dto.ReserveRequest;
 import com.cubeia.backend.cashgame.dto.ReserveResponse;
 import com.cubeia.backend.cashgame.exceptions.BatchHandFailedException;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
-import com.cubeia.backoffice.wallet.api.dto.SessionBalance;
+import com.cubeia.backoffice.wallet.api.dto.AccountBalanceResult;
 import com.cubeia.backoffice.wallet.api.dto.report.TransactionEntry;
 import com.cubeia.backoffice.wallet.api.dto.report.TransactionRequest;
 import com.cubeia.backoffice.wallet.api.dto.report.TransactionResult;
@@ -172,7 +172,7 @@ public class CashGamesBackendAdapterTest {
         ReserveRequest request = new ReserveRequest(playerSessionId, roundNumber, amount);
         ReserveCallback callback = mock(ReserveCallback.class);
         
-        SessionBalance sessionBalance = mock(SessionBalance.class);
+        AccountBalanceResult sessionBalance = mock(AccountBalanceResult.class);
         com.cubeia.backoffice.accounting.api.Money sessionBalanceMoney = new com.cubeia.backoffice.accounting.api.Money("EUR", 2, new BigDecimal("500"));
         when(sessionBalance.getBalance()).thenReturn(sessionBalanceMoney);
         when(walletService.getBalance(sessionId)).thenReturn(sessionBalance);
@@ -216,9 +216,9 @@ public class CashGamesBackendAdapterTest {
         
         ArgumentCaptor<TransactionRequest> txCaptor = ArgumentCaptor.forClass(TransactionRequest.class);
         TransactionResult txResult = mock(TransactionResult.class);
-        SessionBalance sessionBalance1 = new SessionBalance(session1Id, walletMoney("11.11"));
-        SessionBalance sessionBalance2 = new SessionBalance(session2Id, walletMoney("22.22"));
-        SessionBalance rakeAccountBalance = new SessionBalance(backend.rakeAccountId, walletMoney("1232322.22"));
+        AccountBalanceResult sessionBalance1 = new AccountBalanceResult(session1Id, walletMoney("11.11"));
+        AccountBalanceResult sessionBalance2 = new AccountBalanceResult(session2Id, walletMoney("22.22"));
+        AccountBalanceResult rakeAccountBalance = new AccountBalanceResult(backend.rakeAccountId, walletMoney("1232322.22"));
         when(txResult.getBalances()).thenReturn(Arrays.asList(sessionBalance1, sessionBalance2, rakeAccountBalance));
         
         when(walletService.doTransaction(txCaptor.capture())).thenReturn(txResult);
@@ -273,7 +273,7 @@ public class CashGamesBackendAdapterTest {
 
         com.cubeia.backoffice.accounting.api.Money balance = new com.cubeia.backoffice.accounting.api.Money(
             "SEK", 2, new BigDecimal("343434"));
-        SessionBalance sessionBalance = new SessionBalance(sessionId, balance );
+        AccountBalanceResult sessionBalance = new AccountBalanceResult(sessionId, balance );
         when(walletService.getBalance(sessionId)).thenReturn(sessionBalance);
         
         BalanceUpdate balanceUpdate = backend.getSessionBalance(playerSessionId);

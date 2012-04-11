@@ -13,8 +13,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicLong;
 
-import javax.swing.text.TabExpander;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +42,7 @@ import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
 import com.cubeia.backend.firebase.impl.FirebaseCallbackFactoryImpl;
 import com.cubeia.backend.firebase.jmx.MockController;
 import com.cubeia.backoffice.accounting.api.UnbalancedTransactionException;
-import com.cubeia.backoffice.wallet.api.dto.SessionBalance;
+import com.cubeia.backoffice.wallet.api.dto.AccountBalanceResult;
 import com.cubeia.backoffice.wallet.api.dto.report.TransactionRequest;
 import com.cubeia.backoffice.wallet.api.dto.report.TransactionResult;
 import com.cubeia.firebase.api.action.service.ServiceAction;
@@ -196,7 +194,7 @@ public class CashGamesBackendAdapter implements CashGamesBackendContract, Servic
                     walletService.withdraw(walletAmount , LICENSEE_ID, walletSessionId.longValue(), 
                         "reserve " + amount +" to game " + GAME_ID + " by player " + sid.getPlayerId());
                     
-                    SessionBalance sessionBalance = walletService.getBalance(walletSessionId);
+                    AccountBalanceResult sessionBalance = walletService.getBalance(walletSessionId);
                     Money newBalance = convertFromWalletMoney(sessionBalance.getBalance());
                     
                     BalanceUpdate balanceUpdate = new BalanceUpdate(request.getPlayerSessionId(), newBalance, nextId());
@@ -270,9 +268,9 @@ public class CashGamesBackendAdapter implements CashGamesBackendContract, Servic
             TransactionResult txResult = walletService.doTransaction(txRequest);
             
             List<BalanceUpdate> resultingBalances = new ArrayList<BalanceUpdate>();
-            for (SessionBalance sb : txResult.getBalances()) {
-                if (sb.getSessionId() != rakeAccountId) {
-                    PlayerSessionIdImpl playerSessionId = sessionToPlayerSessionMap.get(sb.getSessionId());
+            for (AccountBalanceResult sb : txResult.getBalances()) {
+                if (sb.getAccountId() != rakeAccountId) {
+                    PlayerSessionIdImpl playerSessionId = sessionToPlayerSessionMap.get(sb.getAccountId());
                     Money balance = convertFromWalletMoney(sb.getBalance());
                     resultingBalances.add(new BalanceUpdate(playerSessionId, balance, nextId()));
                 }
@@ -294,7 +292,7 @@ public class CashGamesBackendAdapter implements CashGamesBackendContract, Servic
 
     @Override
     public BalanceUpdate getSessionBalance(PlayerSessionId sessionId) throws GetBalanceFailedException {
-        SessionBalance sessionBalance = walletService.getBalance(getWalletSessionIdByPlayerSessionId(sessionId));
+        AccountBalanceResult sessionBalance = walletService.getBalance(getWalletSessionIdByPlayerSessionId(sessionId));
         Money balanceMoney = convertFromWalletMoney(sessionBalance.getBalance());
     	return new BalanceUpdate(sessionId, balanceMoney, nextId());
     }
