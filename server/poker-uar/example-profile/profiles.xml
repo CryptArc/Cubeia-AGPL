@@ -1,9 +1,0 @@
-<profiles>
-        <profile>
-                <id>deploy</id>
-                <properties>
-                        <firebase.home>/home/viktor/cbfirebase/current</firebase.home>
-                        <target>target</target>
-                </properties>
-        </profile>
-</profiles>
