@@ -65,7 +65,7 @@ public class CashGamesBackendAdapter implements CashGamesBackendContract, Servic
     public static final int LICENSEE_ID = 0;
     
     /** Hardcoded game id, should be configurable or part of requests */
-    public static final int GAME_ID = 4718;
+    public static final int GAME_ID = 1;
 
     static final Long RAKE_ACCOUNT_USER_ID = -1000L;
     
