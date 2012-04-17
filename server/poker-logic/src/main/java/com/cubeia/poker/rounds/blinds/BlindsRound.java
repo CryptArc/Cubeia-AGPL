@@ -323,7 +323,8 @@ public class BlindsRound implements Round {
 			currentState.declineEntryBet(action.getPlayerId(), this);
 			break;
 		default:
-			throw new IllegalArgumentException(action.getActionType() + " is not legal here");
+			log.info(action.getActionType()  + " is not legal here");
+			return;
 		}
 		getGame().getState().getPlayerInCurrentHand(action.getPlayerId()).clearActionRequest();
 		PokerPlayer player = game.getState().getPlayerInCurrentHand(action.getPlayerId());	
