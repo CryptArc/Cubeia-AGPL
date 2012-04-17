@@ -39,7 +39,6 @@ public class PokerTextClient extends SimpleTextClient {
 	
 	public PokerTextClient(String host, int port) {
 		super(host, port);
-		   printHelp();
 		ManualPacketHandler handler = new ManualPacketHandler(context);
 		handler.setTestHandler(new ManualGameHandler(context));
 		context.getConnector().addPacketHandler(handler);
