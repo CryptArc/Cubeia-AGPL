@@ -5,7 +5,7 @@ import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
 
 public interface OpenSessionCallback {
 
-	void requestSucceded(OpenSessionResponse response);
+	void requestSucceeded(OpenSessionResponse response);
 	
 	void requestFailed(OpenSessionFailedResponse response);
 }

@@ -31,7 +31,7 @@ public class FirebaseCallbackFactoryImpl implements FirebaseCallbackFactory {
     public OpenSessionCallback createOpenSessionCallback(final Table table) {
         OpenSessionCallback callback = new OpenSessionCallback() {
             @Override
-            public void requestSucceded(OpenSessionResponse response) {
+            public void requestSucceeded(OpenSessionResponse response) {
                 log.debug("open session succeeded: gId = {}, tId = {}, sId = {}", 
                     new Object[] {table.getMetaData().getGameId(), table.getId(), response.getSessionId()});
                 sendGameObjectActionToTable(response.getSessionId().getPlayerId(), table.getMetaData().getGameId(), table.getId(), response);
@@ -51,7 +51,7 @@ public class FirebaseCallbackFactoryImpl implements FirebaseCallbackFactory {
     public ReserveCallback createReserveCallback(final Table table) {
         ReserveCallback callback = new ReserveCallback() {
             @Override
-            public void requestSucceded(ReserveResponse response) {
+            public void requestSucceeded(ReserveResponse response) {
                 log.debug("reserve succeeded: gId = {}, tId = {}, sId = {}", 
                     new Object[] {table.getMetaData().getGameId(), table.getId(), response.getPlayerSessionId()});
                 sendGameObjectActionToTable(response.getPlayerSessionId().getPlayerId(), table.getMetaData().getGameId(), table.getId(), response);
@@ -71,7 +71,7 @@ public class FirebaseCallbackFactoryImpl implements FirebaseCallbackFactory {
     public AnnounceTableCallback createAnnounceTableCallback(final Table table) {
     	AnnounceTableCallback callback = new AnnounceTableCallback() {
             @Override
-            public void requestSucceded(final AnnounceTableResponse response) {
+            public void requestSucceeded(final AnnounceTableResponse response) {
                 log.debug("announce suceeded: gId = {}, tId = {}, response = {}",
                     new Object[] {table.getMetaData().getGameId(), table.getId(), response });
                 sendGameObjectActionToTable(-1, table.getMetaData().getGameId(), table.getId(), response);

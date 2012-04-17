@@ -5,7 +5,7 @@ import com.cubeia.backend.cashgame.dto.AnnounceTableResponse;
 
 public interface AnnounceTableCallback {
 
-	void requestSucceded(AnnounceTableResponse response);
+	void requestSucceeded(AnnounceTableResponse response);
 	
 	void requestFailed(AnnounceTableFailedResponse response);
 }

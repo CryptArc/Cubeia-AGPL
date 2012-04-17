@@ -112,7 +112,7 @@ public class CashGamesBackendAdapterTest {
         waitForCallback();
         
         ArgumentCaptor<AnnounceTableResponse> responseCaptor = ArgumentCaptor.forClass(AnnounceTableResponse.class);
-        verify(callback).requestSucceded(responseCaptor.capture());
+        verify(callback).requestSucceeded(responseCaptor.capture());
 
         AnnounceTableResponse response = responseCaptor.getValue();
         assertThat(response.getTableId(), notNullValue());
@@ -138,7 +138,7 @@ public class CashGamesBackendAdapterTest {
         waitForCallback();
         
         ArgumentCaptor<OpenSessionResponse> responseCaptor = ArgumentCaptor.forClass(OpenSessionResponse.class);
-        verify(callback).requestSucceded(responseCaptor.capture());
+        verify(callback).requestSucceeded(responseCaptor.capture());
 
         OpenSessionResponse response = responseCaptor.getValue();
         PlayerSessionIdImpl playerSessionIdImpl = (PlayerSessionIdImpl) response.getSessionId();
@@ -185,7 +185,7 @@ public class CashGamesBackendAdapterTest {
             Mockito.eq(sessionId), Mockito.anyString());
         
         ArgumentCaptor<ReserveResponse> responseCaptor = ArgumentCaptor.forClass(ReserveResponse.class);
-        verify(callback).requestSucceded(responseCaptor.capture());
+        verify(callback).requestSucceeded(responseCaptor.capture());
         ReserveResponse response = responseCaptor.getValue();
         assertThat(response.getPlayerSessionId(), is((PlayerSessionId) playerSessionId));
         assertThat(response.getAmountReserved().getAmount(), is(amount.getAmount()));

@@ -91,7 +91,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
         long mockDelay = (long) (Math.random() * 2000);
         
         executor.schedule(new Runnable() {
-            @Override public void run() { callback.requestSucceded(response); }
+            @Override public void run() { callback.requestSucceeded(response); }
         }, mockDelay, TimeUnit.MILLISECONDS);
     }
 
@@ -109,7 +109,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
         log.debug("new session opened, tId = {}, pId = {}, sId = {}", 
             new Object[] {request.getTableId(), request.getPlayerId(), response.getSessionId()});
         log.debug("currently open sessions: {}", sessionTransactions.size());
-        callback.requestSucceded(response);
+        callback.requestSucceeded(response);
         
         printDiagnostics();        
     }
@@ -166,7 +166,7 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
             }
             
             executor.schedule(new Runnable() {
-                @Override public void run() { callback.requestSucceded(response); }
+                @Override public void run() { callback.requestSucceeded(response); }
             }, delay, TimeUnit.MILLISECONDS);
         }
         

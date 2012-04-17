@@ -122,7 +122,7 @@ public class CashGamesBackendAdapter implements CashGamesBackendContract, Servic
         response.setProperty(MARKET_TABLE_REFERENCE_KEY, "CUBEIA-TABLE-ID::" + UUID.randomUUID());
         
         Runnable announceTask = new Runnable() {
-            @Override public void run() { callback.requestSucceded(response); }
+            @Override public void run() { callback.requestSucceeded(response); }
         };
         scheduleCallback(announceTask);
     }
@@ -149,7 +149,7 @@ public class CashGamesBackendAdapter implements CashGamesBackendContract, Servic
                     OpenSessionResponse response = new OpenSessionResponse(sessionId, Collections.<String, String>emptyMap());
                     log.debug("new session opened, tId = {}, pId = {}, sId = {}", 
                         new Object[] {request.getTableId(), request.getPlayerId(), response.getSessionId()});
-                    callback.requestSucceded(response);
+                    callback.requestSucceeded(response);
                 } catch (Exception e) {
                     String msg = "error opening session for player " + request.getPlayerId() + ": "
                         + e.getMessage();
@@ -201,7 +201,7 @@ public class CashGamesBackendAdapter implements CashGamesBackendContract, Servic
                     ReserveResponse response = new ReserveResponse(balanceUpdate, amount);
                     log.debug("reserve successful: sId = {}, amount = {}, new balance = {}", new Object[] {sid, amount, newBalance});
                     response.setProperty(MARKET_TABLE_SESSION_REFERENCE_KEY, "CUBEIA-MARKET-SID-" + sid.hashCode());
-                    callback.requestSucceded(response);
+                    callback.requestSucceeded(response);
                 } catch (Exception e) {
                     String msg = "error reserving " + amount + " to session " + walletSessionId + " for player " + sid.getPlayerId() + ": "
                         + e.getMessage();

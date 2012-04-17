@@ -70,7 +70,7 @@ public class AsynchronousCashGamesBackend implements CashGamesBackend {
             Thread.sleep(DELAY_BEFORE_ANNOUNCING_TABLE);
 			AnnounceTableResponse response = backingImpl.announceTable(request);
             log.debug("processAnnounceTable got response: "+response.toString());
-			callback.requestSucceded(response);
+			callback.requestSucceeded(response);
 		} catch (AnnounceTableFailedException e) {
 			log.error("failed to announce table", e);
 			AnnounceTableFailedResponse.ErrorCode errorCode = e.getErrorCode();
@@ -100,7 +100,7 @@ public class AsynchronousCashGamesBackend implements CashGamesBackend {
 	private void processOpenSession(OpenSessionRequest request, OpenSessionCallback callback) {
 		try {
 			OpenSessionResponse response = backingImpl.openSession(request);
-			callback.requestSucceded(response);
+			callback.requestSucceeded(response);
 		} catch (OpenSessionFailedException e) {
 			log.error("failed to open session", e);
 			OpenSessionFailedResponse.ErrorCode errorCode = e.getErrorCode();
@@ -130,7 +130,7 @@ public class AsynchronousCashGamesBackend implements CashGamesBackend {
 	private void processReserve(ReserveRequest request, ReserveCallback callback) {
 		try {
 			ReserveResponse response = backingImpl.reserve(request);
-			callback.requestSucceded(response);
+			callback.requestSucceeded(response);
 		} catch (ReserveFailedException e) {
 			log.error("failed to reserve", e);
 			ReserveFailedResponse.ErrorCode errorCode = e.getErrorCode();

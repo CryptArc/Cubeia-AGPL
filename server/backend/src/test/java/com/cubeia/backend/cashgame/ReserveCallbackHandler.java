@@ -9,7 +9,7 @@ import com.cubeia.backend.cashgame.dto.ReserveResponse;
 public class ReserveCallbackHandler extends CallbackHandler implements ReserveCallback {
 
 	@Override
-	public void requestSucceded(ReserveResponse response) {
+	public void requestSucceeded(ReserveResponse response) {
 		setResponse(response);
 	}
 

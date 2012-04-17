@@ -13,7 +13,7 @@ public class OpenSessionCallbackHandler extends CallbackHandler implements OpenS
 	}
 	
 	@Override
-	public void requestSucceded(OpenSessionResponse response) {
+	public void requestSucceeded(OpenSessionResponse response) {
 		setResponse(response);
 	}
 }

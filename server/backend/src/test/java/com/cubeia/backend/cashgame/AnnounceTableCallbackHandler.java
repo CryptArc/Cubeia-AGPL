@@ -6,7 +6,7 @@ import com.cubeia.backend.cashgame.dto.AnnounceTableResponse;
 
 class AnnounceTableCallbackHandler extends CallbackHandler implements AnnounceTableCallback {
 	@Override
-	public void requestSucceded(AnnounceTableResponse response) {
+	public void requestSucceeded(AnnounceTableResponse response) {
 		setResponse(response);
 	}
 
