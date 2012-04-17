@@ -35,7 +35,7 @@
 
 
 
-		<!-- Services needed to Firebase:Run plugin -->
+		<!-- Services needed by Firebase:Run plugin -->
 
 		<dependency>
 			<groupId>com.cubeia.games</groupId>
