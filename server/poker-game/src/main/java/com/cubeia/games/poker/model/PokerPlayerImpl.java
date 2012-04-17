@@ -70,7 +70,7 @@ public class PokerPlayerImpl extends DefaultPokerPlayer implements Serializable 
 	
 	/**
 	 * Sets a session id for this player. 
-	 * @param sessionId the session id, or null to leave the session
+	 * @param playerSessionId the session id, or null to leave the session
 	 */
 	public void setPlayerSessionId(PlayerSessionId playerSessionId) {
 	    log.debug("updating player {} session id: {} -> {}", new Object[] {getId(), getPlayerSessionId(), playerSessionId});
