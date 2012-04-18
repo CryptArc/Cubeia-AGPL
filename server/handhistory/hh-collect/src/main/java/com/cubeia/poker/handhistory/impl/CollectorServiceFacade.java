@@ -56,7 +56,6 @@ public class CollectorServiceFacade extends GuiceService implements HandHistoryC
 		g().reportResults(tableId, res);
 	}
 	
-	
 	// --- PRIVATE METHODS --- //
 	
 	private HandHistoryCollectorService g() {

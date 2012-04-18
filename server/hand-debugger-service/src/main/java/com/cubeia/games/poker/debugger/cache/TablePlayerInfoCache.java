@@ -28,7 +28,6 @@ public class TablePlayerInfoCache {
         playerIdToInfoMap.put(playerId, playerInfo);
     }
 
-
     public synchronized PlayerInfo getPlayerInfoById(int playerId) {
         return playerIdToInfoMap.get(playerId);
     }

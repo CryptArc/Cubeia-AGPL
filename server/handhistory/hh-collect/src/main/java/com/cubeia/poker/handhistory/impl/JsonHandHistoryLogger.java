@@ -23,7 +23,7 @@ public class JsonHandHistoryLogger implements HandHistoryPersister {
 	private Logger log;
 	
 	@Override
-	public HistoricHand retreive(HandIdentification id) {
+	public HistoricHand retrieve(HandIdentification id) {
 		log.warn("Operation 'retrieve' not supported by JSON logger");
 		return null;
 	}
@@ -39,7 +39,6 @@ public class JsonHandHistoryLogger implements HandHistoryPersister {
 	// --- PRIVATE METHODS --- //
 	
 	private Gson createGson() {
-		// TODO Auto-generated method stub
 		GsonBuilder b = new GsonBuilder();
 		b.registerTypeAdapter(HandHistoryEvent.class, new EventSerializer());
 		b.setPrettyPrinting();

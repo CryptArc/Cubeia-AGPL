@@ -13,7 +13,7 @@ public interface HandHistoryPersister {
 	 * @param id Id of hand to read, must not be null
 	 * @return A hand, or null if not found
 	 */
-	public HistoricHand retreive(HandIdentification id);
+	public HistoricHand retrieve(HandIdentification id);
 
 	
 	/**
