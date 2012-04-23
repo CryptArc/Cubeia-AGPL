@@ -462,9 +462,8 @@ public class PokerState implements Serializable, IPokerState {
 	/**
 	 * If a player has no money left he should be set as sitting out to 
 	 * prevent him to be included in new games. 
-	 * 
-	 * @param handResult
-	 */
+	 *
+     */
 	@VisibleForTesting
 	public void setPlayersWithoutMoneyAsSittingOut() {
 		ThreadLocalProfiler.add("PokerState.setPlayersWithoutMoneyAsSittingOut");

@@ -46,9 +46,9 @@ import com.cubeia.poker.util.ThreadLocalProfiler;
 import com.google.inject.Inject;
 
 /**
- * Adapter between login and game which captures significant events
+ * Adapter between logic and game which captures significant events
  * to the hand history collector. This is a proxy adapter and will first
- * forward the event to it's proxied member before executing itself.
+ * forward the event to its proxied member before executing itself.
  * 
  * @author Lars J. Nilsson
  */
@@ -196,7 +196,7 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
 	}
 	
 	private boolean checkHasService() {
-		if(this.service == null) {
+		if (this.service == null) {
 			Logger.getLogger(getClass()).warn("No hand history collector service deployed!");
 			return false;
 		} else {
