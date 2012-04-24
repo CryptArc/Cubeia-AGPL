@@ -94,7 +94,7 @@ public class PokerCEPServiceImpl implements PokerCEPService, Service {
      * Report that a hand ended at a table with the given id and currency.
      * 
      */
-    public void reportHandEnd(int tableId, EventMontaryType monetaryType) {
+    public void reportHandEnd(int tableId, EventMonetaryType monetaryType) {
     	if (!cepAvailable()) return; // SANITY CHECK !!!
     	
         EventSubType subType;

@@ -33,5 +33,5 @@ public interface PokerCEPService extends Contract {
 
     void reportHandResult(int tableId, PokerPlayer p, long amount);
     
-    public void reportHandEnd(int tableId, EventMontaryType monetaryType);
+    public void reportHandEnd(int tableId, EventMonetaryType monetaryType);
 }

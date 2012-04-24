@@ -17,7 +17,7 @@
 
 package com.cubeia.games.poker.cep;
 
-public enum EventMontaryType {
+public enum EventMonetaryType {
     REAL_MONEY,
     PLAY_MONEY,
     TOURNAMENT

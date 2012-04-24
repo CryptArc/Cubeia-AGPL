@@ -1,6 +1,5 @@
-This is the start of a backoffice for the poker.
+This is the start of a back office for the poker.
 
-It currently has some functionality for
-
-However, it depends on poker-persistence which does not exist?
+It currently has some functionality for creating and editing tournaments as well as checking how many players
+are online.
 
