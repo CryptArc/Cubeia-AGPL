@@ -16,6 +16,7 @@
     <module>poker-blinds-logic</module>
     <module>poker-game</module>
     <module>poker-logic</module>
+    <module>poker-uar</module>
   </modules>
 
 </project>

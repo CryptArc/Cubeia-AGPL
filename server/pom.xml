@@ -8,19 +8,12 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>poker-game</module>
-    <module>poker-protocol</module>
-    <module>poker-logic</module>
-    <module>poker-tournament</module>
-    <module>poker-uar</module>
-    <module>backend</module>
-    <module>backend-service-contract</module>
-    <module>backend-service-mock</module>
-    <module>backend-service-cubeia-wallet-adapter</module>
-    <module>handhistory</module>
-    <module>hand-debugger-service</module>
-    <module>bot</module>
-    <module>bot-service</module>
+    <module>bot-modules</module>
+    <module>common-modules</module>
+    <module>firebase-service-modules</module>
+    <module>game-modules</module>
+    <module>protocol-modules</module>
+    <module>tournament-modules</module>
   </modules>
 
     <organization>
