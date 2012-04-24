@@ -17,7 +17,7 @@
     <module>bot-service</module>
     <module>hand-debugger-service</module>
     <module>hand-history-collector-service</module>
-    <module>poker-cep-service</module>
+    <!-- module>poker-cep-service</module -->
   </modules>
 
 </project>

@@ -3,9 +3,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.cubeia.poker.poker-gameserver</groupId>
-	<artifactId>poker-gameserver-blinds</artifactId>
-	<name>poker-gameserver-blinds</name>
+	<groupId>com.cubeia.games.poker</groupId>
+	<artifactId>poker-blinds-logic</artifactId>
+	<name>poker-blinds-logic</name>
 	<version>1.0-SNAPSHOT</version>
 	<dependencies>
 		<dependency>

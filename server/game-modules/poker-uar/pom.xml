@@ -2,7 +2,7 @@
 <project>
 	<parent>
 		<groupId>com.cubeia.games</groupId>
-		<artifactId>poker</artifactId>
+		<artifactId>game-modules</artifactId>
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
@@ -54,7 +54,7 @@
 
 		<dependency>
 			<groupId>com.cubeia.games.handhistory</groupId>
-			<artifactId>hh-collect</artifactId>
+			<artifactId>hand-history-collector-service</artifactId>
 			<version>${project.version}</version>
 			<type>firebase-sar</type>
 			<scope>provided</scope>
