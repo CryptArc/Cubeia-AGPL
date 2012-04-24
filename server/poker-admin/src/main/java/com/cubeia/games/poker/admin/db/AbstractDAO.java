@@ -6,7 +6,7 @@ import org.apache.log4j.Logger;
 import org.springframework.orm.jpa.support.JpaDaoSupport;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cubeia.games.poker.persistence.tournament.model.TournamentConfiguration;
+import com.cubeia.games.poker.tournament.model.TournamentConfiguration;
 
 
 /**
@@ -43,8 +43,7 @@ public class AbstractDAO extends JpaDaoSupport implements AdminDAO {
      */
     @SuppressWarnings("unchecked")
     public List<TournamentConfiguration> getAllTournaments() {
-        List<TournamentConfiguration> result = getJpaTemplate().find("from TournamentConfiguration");
-        return result;
+        return getJpaTemplate().find("from TournamentConfiguration");
     }
     
 }

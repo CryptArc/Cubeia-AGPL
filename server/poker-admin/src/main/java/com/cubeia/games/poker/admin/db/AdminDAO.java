@@ -2,7 +2,7 @@ package com.cubeia.games.poker.admin.db;
 
 import java.util.List;
 
-import com.cubeia.games.poker.persistence.tournament.model.TournamentConfiguration;
+import com.cubeia.games.poker.tournament.model.TournamentConfiguration;
 
 public interface AdminDAO {
 
@@ -12,8 +12,8 @@ public interface AdminDAO {
     public abstract void persist(Object entity);
 
     /**
-     * 
-     * @param name
+     * Gets a list of all tournaments.
+     *
      * @return null if not found
      */
     @SuppressWarnings("unchecked")
