@@ -20,7 +20,7 @@ import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.debugger.json.EventType;
-import com.cubeia.games.poker.services.HandDebuggerContract;
+import com.cubeia.games.poker.debugger.HandDebuggerContract;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 

@@ -1,4 +1,4 @@
-package com.cubeia.games.poker.services;
+package com.cubeia.games.poker.debugger;
 
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.service.Contract;

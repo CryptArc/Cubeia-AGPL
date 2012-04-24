@@ -44,7 +44,7 @@ import com.cubeia.games.poker.handler.PokerHandler;
 import com.cubeia.games.poker.handler.Trigger;
 import com.cubeia.games.poker.jmx.PokerStats;
 import com.cubeia.games.poker.logic.TimeoutCache;
-import com.cubeia.games.poker.services.HandDebuggerContract;
+import com.cubeia.games.poker.debugger.HandDebuggerContract;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.SystemShutdownException;
 import com.cubeia.poker.player.PokerPlayer;

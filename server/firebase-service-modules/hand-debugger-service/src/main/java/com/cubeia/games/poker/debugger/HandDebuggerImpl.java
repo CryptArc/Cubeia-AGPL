@@ -17,7 +17,6 @@ import com.cubeia.games.poker.debugger.cache.TableEventCache;
 import com.cubeia.games.poker.debugger.cache.TablePlayerInfoCache;
 import com.cubeia.games.poker.debugger.guice.GuiceConfig;
 import com.cubeia.games.poker.debugger.server.WebServer;
-import com.cubeia.games.poker.services.HandDebuggerContract;
 import com.google.inject.Inject;
 
 public class HandDebuggerImpl implements HandDebuggerContract {

@@ -14,7 +14,6 @@ import com.cubeia.firebase.guice.service.Configuration;
 import com.cubeia.firebase.guice.service.ContractsConfig;
 import com.cubeia.firebase.guice.service.GuiceService;
 import com.cubeia.games.poker.debugger.guice.GuiceModule;
-import com.cubeia.games.poker.services.HandDebuggerContract;
 import com.google.inject.Module;
 
 public class HandDebuggerFacade extends GuiceService implements HandDebuggerContract {

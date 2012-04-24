@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.guice.inject.Service;
-import com.cubeia.games.poker.services.HandDebuggerContract;
+import com.cubeia.games.poker.debugger.HandDebuggerContract;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
