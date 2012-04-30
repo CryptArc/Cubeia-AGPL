@@ -1,4 +1,4 @@
-package com.cubeia.games.poker.handhistory;
+package com.cubeia.poker.handhistory.api;
 
 import java.util.List;
 

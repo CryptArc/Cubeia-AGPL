@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.cubeia.poker.handhistory.api.HandHistoryCollectorService;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 
 import com.cubeia.firebase.api.service.ServiceContext;
 import com.cubeia.firebase.guice.inject.Log4j;
-import com.cubeia.games.poker.handhistory.HandHistoryCollectorService;
 import com.cubeia.poker.handhistory.api.DeckInfo;
 import com.cubeia.poker.handhistory.api.HandHistoryEvent;
 import com.cubeia.poker.handhistory.api.HandHistoryPersistenceService;

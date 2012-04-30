@@ -18,7 +18,7 @@ import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.games.poker.FirebaseState;
 import com.cubeia.games.poker.activator.PokerActivator;
 import com.cubeia.games.poker.entity.HandIdentifier;
-import com.cubeia.games.poker.handhistory.HandHistoryCollectorService;
+import com.cubeia.poker.handhistory.api.HandHistoryCollectorService;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
