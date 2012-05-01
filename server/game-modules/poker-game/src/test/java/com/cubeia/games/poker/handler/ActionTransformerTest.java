@@ -64,6 +64,7 @@ public class ActionTransformerTest {
     @Before
     public void setup() {
         actionTransformer = new ActionTransformer();
+
     }
     
     @Test
