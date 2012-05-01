@@ -89,6 +89,12 @@
             </dependency>
 
             <dependency>
+                <groupId>com.cubeia.games.poker</groupId>
+                <artifactId>timings</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>com.cubeia.games</groupId>
                 <artifactId>poker-logic</artifactId>
                 <classifier>tests</classifier>
