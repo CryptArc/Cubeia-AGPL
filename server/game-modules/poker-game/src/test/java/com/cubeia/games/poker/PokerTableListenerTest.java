@@ -10,6 +10,8 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 
+import com.cubeia.games.poker.handler.BackendPlayerSessionHandler;
+import com.cubeia.games.poker.state.FirebaseState;
 import org.junit.Test;
 
 import com.cubeia.firebase.api.game.GameNotifier;

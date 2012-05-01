@@ -25,6 +25,8 @@ import static com.cubeia.poker.player.SitOutStatus.NOT_ENTERED_YET;
 
 import java.io.Serializable;
 
+import com.cubeia.games.poker.handler.BackendPlayerSessionHandler;
+import com.cubeia.games.poker.state.FirebaseState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +66,7 @@ public class PokerTableListener implements TournamentTableListener {
 //	CashGamesBackendContract cashGameBackend;
 	
 	@Inject @VisibleForTesting
-	BackendPlayerSessionHandler backendPlayerSessionHandler;
+    BackendPlayerSessionHandler backendPlayerSessionHandler;
 	
     @Inject @VisibleForTesting
     StateInjector stateInjector;

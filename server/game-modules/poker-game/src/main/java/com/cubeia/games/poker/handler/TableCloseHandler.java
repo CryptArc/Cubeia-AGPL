@@ -1,7 +1,8 @@
-package com.cubeia.games.poker;
+package com.cubeia.games.poker.handler;
 
 import com.cubeia.firebase.api.action.AbstractGameAction;
 import com.cubeia.firebase.api.game.table.Table;
+import com.cubeia.games.poker.TableCloseHandlerImpl;
 import com.google.inject.ImplementedBy;
 
 @ImplementedBy(TableCloseHandlerImpl.class)

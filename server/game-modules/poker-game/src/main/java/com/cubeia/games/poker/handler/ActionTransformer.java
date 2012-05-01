@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.adapter;
+package com.cubeia.games.poker.handler;
 
 import java.util.ArrayList;
 import java.util.Collection;

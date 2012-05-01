@@ -14,6 +14,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
 
+import com.cubeia.games.poker.state.FirebaseState;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -43,8 +44,6 @@ import com.cubeia.firebase.api.game.GameNotifier;
 import com.cubeia.firebase.api.game.lobby.LobbyTableAttributeAccessor;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.io.StyxSerializer;
-import com.cubeia.games.poker.BackendPlayerSessionHandler;
-import com.cubeia.games.poker.FirebaseState;
 import com.cubeia.games.poker.adapter.FirebaseServerAdapter;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.poker.PokerSettings;

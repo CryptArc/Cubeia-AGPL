@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.Map;
 
+import com.cubeia.games.poker.state.FirebaseState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,8 +26,6 @@ import com.cubeia.firebase.api.game.lobby.LobbyTableAttributeAccessor;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
-import com.cubeia.games.poker.BackendPlayerSessionHandler;
-import com.cubeia.games.poker.FirebaseState;
 import com.cubeia.games.poker.io.protocol.BuyInResponse;
 import com.cubeia.games.poker.io.protocol.Enums;
 import com.cubeia.games.poker.io.protocol.Enums.BuyInResultCode;

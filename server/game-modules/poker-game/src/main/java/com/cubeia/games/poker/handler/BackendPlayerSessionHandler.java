@@ -1,4 +1,4 @@
-package com.cubeia.games.poker;
+package com.cubeia.games.poker.handler;
 
 import static com.cubeia.games.poker.handler.BackendCallHandler.EXT_PROP_KEY_TABLE_ID;
 

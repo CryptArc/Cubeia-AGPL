@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 
+import com.cubeia.games.poker.state.FirebaseState;
 import org.apache.log4j.Logger;
 
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TablePlayerSet;
 import com.cubeia.firebase.guice.inject.Service;
-import com.cubeia.games.poker.FirebaseState;
 import com.cubeia.games.poker.activator.PokerActivator;
 import com.cubeia.games.poker.entity.HandIdentifier;
 import com.cubeia.poker.handhistory.api.HandHistoryCollectorService;

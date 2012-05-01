@@ -1,6 +1,6 @@
 package com.cubeia.games.poker.adapter;
 
-import static com.cubeia.games.poker.BackendPlayerSessionHandler.DEFAULT_ZERO_MONEY;
+import static com.cubeia.games.poker.handler.BackendPlayerSessionHandler.DEFAULT_ZERO_MONEY;
 
 import java.util.Map;
 

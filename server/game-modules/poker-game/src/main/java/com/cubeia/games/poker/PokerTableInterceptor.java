@@ -17,6 +17,7 @@
 
 package com.cubeia.games.poker;
 
+import com.cubeia.games.poker.handler.BackendPlayerSessionHandler;
 import org.apache.log4j.Logger;
 
 import com.cubeia.backend.cashgame.AllowJoinResponse;
@@ -41,7 +42,7 @@ public class PokerTableInterceptor implements TableInterceptor {
     PokerState state;
 
 	@Inject @VisibleForTesting
-	BackendPlayerSessionHandler backendPlayerSessionHandler;
+    BackendPlayerSessionHandler backendPlayerSessionHandler;
     
     public InterceptionResponse allowJoin(Table table, SeatRequest request) {
     	stateInjector.injectAdapter(table);

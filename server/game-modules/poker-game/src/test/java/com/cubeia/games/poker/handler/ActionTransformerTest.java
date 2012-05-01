@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.adapter;
+package com.cubeia.games.poker.handler;
 
 import static com.cubeia.poker.hand.HandType.ROYAL_STRAIGHT_FLUSH;
 import static java.util.Arrays.asList;
@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.cubeia.games.poker.handler.ActionTransformer;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

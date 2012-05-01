@@ -21,6 +21,7 @@ import static com.cubeia.backend.cashgame.dto.ReserveFailedResponse.ErrorCode.AM
 
 import java.io.IOException;
 
+import com.cubeia.games.poker.state.FirebaseState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,8 +42,6 @@ import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.firebase.io.StyxSerializer;
-import com.cubeia.games.poker.FirebaseState;
-import com.cubeia.games.poker.adapter.ActionTransformer;
 import com.cubeia.games.poker.cache.ActionCache;
 import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.games.poker.model.PokerPlayerImpl;

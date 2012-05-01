@@ -17,6 +17,7 @@
 
 package com.cubeia.games.poker;
 
+import com.cubeia.games.poker.state.FirebaseState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

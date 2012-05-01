@@ -1,6 +1,6 @@
 package com.cubeia.games.poker.adapter;
 
-import static com.cubeia.games.poker.BackendPlayerSessionHandler.DEFAULT_ZERO_MONEY;
+import static com.cubeia.games.poker.handler.BackendPlayerSessionHandler.DEFAULT_ZERO_MONEY;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;

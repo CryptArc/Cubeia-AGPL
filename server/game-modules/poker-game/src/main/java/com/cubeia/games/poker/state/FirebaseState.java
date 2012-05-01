@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker;
+package com.cubeia.games.poker.state;
 
 import java.io.Serializable;
 

@@ -13,6 +13,8 @@ import static org.mockito.MockitoAnnotations.initMocks;
 import java.io.IOException;
 import java.util.Arrays;
 
+import com.cubeia.games.poker.handler.BackendPlayerSessionHandler;
+import com.cubeia.games.poker.state.FirebaseState;
 import mock.UnmongofiableSet;
 
 import org.junit.Before;

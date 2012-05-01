@@ -13,6 +13,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 import java.util.Arrays;
 import java.util.Collection;
 
+import com.cubeia.games.poker.state.FirebaseState;
 import mock.UnmongofiableSet;
 
 import org.junit.Before;
@@ -26,7 +27,6 @@ import com.cubeia.firebase.api.game.table.TableMetaData;
 import com.cubeia.firebase.api.game.table.TablePlayerSet;
 import com.cubeia.firebase.api.game.table.TableType;
 import com.cubeia.firebase.api.util.UnmodifiableSet;
-import com.cubeia.games.poker.FirebaseState;
 import com.cubeia.poker.PokerSettings;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.player.PokerPlayer;

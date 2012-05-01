@@ -33,6 +33,7 @@ import java.util.Random;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import com.cubeia.games.poker.state.FirebaseState;
 import org.apache.log4j.Logger;
 
 import com.cubeia.backend.firebase.CashGamesBackendContract;
@@ -46,7 +47,6 @@ import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.lobby.LobbyAttributeAccessor;
 import com.cubeia.firebase.api.lobby.LobbyPath;
 import com.cubeia.firebase.api.server.SystemException;
-import com.cubeia.games.poker.FirebaseState;
 import com.cubeia.games.poker.lobby.PokerLobbyAttributes;
 import com.cubeia.games.poker.tournament.activator.TournamentTableSettings;
 import com.cubeia.poker.PokerGuiceModule;

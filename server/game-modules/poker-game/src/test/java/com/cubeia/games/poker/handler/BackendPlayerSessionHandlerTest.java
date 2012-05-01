@@ -1,4 +1,4 @@
-package com.cubeia.games.poker;
+package com.cubeia.games.poker.handler;
 
 import static com.cubeia.games.poker.handler.BackendCallHandler.EXT_PROP_KEY_TABLE_ID;
 import static org.hamcrest.CoreMatchers.is;
@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
 
+import com.cubeia.games.poker.handler.BackendPlayerSessionHandler;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;

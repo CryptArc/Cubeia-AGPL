@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 
+import com.cubeia.games.poker.state.FirebaseState;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -38,8 +39,6 @@ import com.cubeia.firebase.api.game.GameNotifier;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TableScheduler;
 import com.cubeia.firebase.io.StyxSerializer;
-import com.cubeia.games.poker.FirebaseState;
-import com.cubeia.games.poker.adapter.ActionTransformer;
 import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.poker.PokerState;
