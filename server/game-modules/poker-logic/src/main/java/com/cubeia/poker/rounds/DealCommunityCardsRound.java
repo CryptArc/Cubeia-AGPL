@@ -22,53 +22,53 @@ import com.cubeia.poker.action.PokerAction;
 
 /**
  * This round has been separated for timing reasons.
- * 
+ *
  * @author Fredrik Johansson, Cubeia Ltd
  */
 public class DealCommunityCardsRound implements Round {
 
-	private static final long serialVersionUID = 1L;
-	
-	@SuppressWarnings("unused")
-	private final GameType gameType;
+    private static final long serialVersionUID = 1L;
 
-	public DealCommunityCardsRound(GameType gameType) {
-		this.gameType = gameType;
-		
-		gameType.dealCommunityCards();
-	}
+    @SuppressWarnings("unused")
+    private final GameType gameType;
 
-	@Override
-	public void act(PokerAction action) {
-		throw new IllegalStateException("Perform action not allowed during DealCommunityCardsRound. Action received: "+action);
-	}
+    public DealCommunityCardsRound(GameType gameType) {
+        this.gameType = gameType;
 
-	@Override
-	public String getStateDescription() {
-		return "DealCommunityCardsRound";
-	}
+        gameType.dealCommunityCards();
+    }
 
-	/**
-	 * 
-	 */
-	@Override
-	public boolean isFinished() {
-		return true;
-	}
+    @Override
+    public void act(PokerAction action) {
+        throw new IllegalStateException("Perform action not allowed during DealCommunityCardsRound. Action received: " + action);
+    }
 
-	@Override
-	public void visit(RoundVisitor visitor) {
-		visitor.visit(this);
-	}
-	
-	@Override
-	public void timeout() {
-		//nothing
-	}
+    @Override
+    public String getStateDescription() {
+        return "DealCommunityCardsRound";
+    }
 
-	@Override
-	public boolean isWaitingForPlayer(int playerId) {
-		return false;
-	}
+    /**
+     *
+     */
+    @Override
+    public boolean isFinished() {
+        return true;
+    }
+
+    @Override
+    public void visit(RoundVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public void timeout() {
+        //nothing
+    }
+
+    @Override
+    public boolean isWaitingForPlayer(int playerId) {
+        return false;
+    }
 
 }

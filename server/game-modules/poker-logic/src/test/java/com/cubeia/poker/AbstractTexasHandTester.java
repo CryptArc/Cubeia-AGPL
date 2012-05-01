@@ -22,31 +22,31 @@ import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.player.PokerPlayer;
 
 public abstract class AbstractTexasHandTester extends GuiceTest {
-	
-    @Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		setAnteLevel(500);
-	}
-	
-	protected void setAnteLevel(int anteLevel) {
-		state.init(rng, createPokerSettings(anteLevel));
-	}
-	
-	protected void act(int playerId, PokerActionType actionType) {
-		act(playerId, actionType, mockServerAdapter.getLastActionRequest().getOption(actionType).getMinAmount());
-	}
-	
-	protected void act(int playerId, PokerActionType actionType, long amount) {
-		PokerAction action = new PokerAction(playerId, actionType);
-		action.setBetAmount(amount);
-		state.act(action);
-	}	
 
-	protected void addPlayers(PokerState game, PokerPlayer[] p) {
-		for (PokerPlayer pl : p) {
-			game.addPlayer(pl);
-		}
-	}
-	
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        setAnteLevel(500);
+    }
+
+    protected void setAnteLevel(int anteLevel) {
+        state.init(rng, createPokerSettings(anteLevel));
+    }
+
+    protected void act(int playerId, PokerActionType actionType) {
+        act(playerId, actionType, mockServerAdapter.getLastActionRequest().getOption(actionType).getMinAmount());
+    }
+
+    protected void act(int playerId, PokerActionType actionType, long amount) {
+        PokerAction action = new PokerAction(playerId, actionType);
+        action.setBetAmount(amount);
+        state.act(action);
+    }
+
+    protected void addPlayers(PokerState game, PokerPlayer[] p) {
+        for (PokerPlayer pl : p) {
+            game.addPlayer(pl);
+        }
+    }
+
 }

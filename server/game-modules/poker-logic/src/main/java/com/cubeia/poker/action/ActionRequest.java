@@ -25,83 +25,81 @@ import java.util.List;
 /**
  * Represents a request for action from a player. An action request might contain
  * several options, for example "check", "bet" or "fold".
- *
  */
 public class ActionRequest implements Serializable {
 
-	private static final long serialVersionUID = 7626744583853784962L;
+    private static final long serialVersionUID = 7626744583853784962L;
 
-	private List<PossibleAction> options = new ArrayList<PossibleAction>();
+    private List<PossibleAction> options = new ArrayList<PossibleAction>();
 
-	private int playerId;
-	
-	private long timeToAct = -1;
-	
-	private long totalPotSize = 0;
+    private int playerId;
 
-	public String toString() {
-		return "ActionRequest pid["+playerId+"] time["+timeToAct+"] options["+options+"] ptoSize["+totalPotSize+"]";
-	}
-	
-	public void setOptions(List<PossibleAction> options) {
-		this.options  = options;
-	}
+    private long timeToAct = -1;
 
-	public Iterable<PossibleAction> getOptions() {
-		return options;
-	}
+    private long totalPotSize = 0;
 
-	public boolean matches(PokerAction action) {
-		// TODO: Temp impl, add validation of amounts.
-		return isOptionEnabled(action.getActionType());
-	}
-	
-	
+    public String toString() {
+        return "ActionRequest pid[" + playerId + "] time[" + timeToAct + "] options[" + options + "] ptoSize[" + totalPotSize + "]";
+    }
 
-	public long getTotalPotSize() {
-		return totalPotSize;
-	}
+    public void setOptions(List<PossibleAction> options) {
+        this.options = options;
+    }
 
-	public void setTotalPotSize(long totalPotSize) {
-		this.totalPotSize = totalPotSize;
-	}
+    public Iterable<PossibleAction> getOptions() {
+        return options;
+    }
 
-	public int getPlayerId() {
-		return playerId;
-	}
-	
-	public void setPlayerId(int playerId) {
-		this.playerId = playerId;
-	}
+    public boolean matches(PokerAction action) {
+        // TODO: Temp impl, add validation of amounts.
+        return isOptionEnabled(action.getActionType());
+    }
 
-	public long getTimeToAct() {
-		return timeToAct;
-	}
 
-	public void setTimeToAct(long timeToAct) {
-		this.timeToAct = timeToAct;
-	}
+    public long getTotalPotSize() {
+        return totalPotSize;
+    }
 
-	public boolean isOptionEnabled(PokerActionType option) {
-		for (PossibleAction action : options) {
-			if (action.allows(option)) {
-				return true;
-			}
-		}
-		return false;
-	}
+    public void setTotalPotSize(long totalPotSize) {
+        this.totalPotSize = totalPotSize;
+    }
 
-	public void enable(PossibleAction option) {
-		options.add(option);
-	}
+    public int getPlayerId() {
+        return playerId;
+    }
 
-	public PossibleAction getOption(PokerActionType type) {
-		PossibleAction result = null;
-		for (PossibleAction option : options) {
-			if (option.allows(type)) {
-				result = option;
-			}
-		}
-		return result;
-	}
+    public void setPlayerId(int playerId) {
+        this.playerId = playerId;
+    }
+
+    public long getTimeToAct() {
+        return timeToAct;
+    }
+
+    public void setTimeToAct(long timeToAct) {
+        this.timeToAct = timeToAct;
+    }
+
+    public boolean isOptionEnabled(PokerActionType option) {
+        for (PossibleAction action : options) {
+            if (action.allows(option)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void enable(PossibleAction option) {
+        options.add(option);
+    }
+
+    public PossibleAction getOption(PokerActionType type) {
+        PossibleAction result = null;
+        for (PossibleAction option : options) {
+            if (option.allows(type)) {
+                result = option;
+            }
+        }
+        return result;
+    }
 }

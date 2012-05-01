@@ -17,15 +17,17 @@
 
 package com.cubeia.games.poker.state;
 
-import java.io.Serializable;
-
 import com.cubeia.games.poker.entity.HandIdentifier;
+
+import java.io.Serializable;
 
 public class FirebaseState implements Serializable {
 
-    /** Version id */
+    /**
+     * Version id
+     */
     private static final long serialVersionUID = 1L;
-    
+
     private int currentRequestSequence = -1;
     private int handCount = 0;
 
@@ -51,7 +53,7 @@ public class FirebaseState implements Serializable {
         this.currentHandIdentifier = playerHand;
     }
 
-	public void incrementHandCount() {
-		handCount++;
-	}
+    public void incrementHandCount() {
+        handCount++;
+    }
 }

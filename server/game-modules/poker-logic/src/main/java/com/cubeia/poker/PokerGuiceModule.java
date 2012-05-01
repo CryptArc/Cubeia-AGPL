@@ -21,12 +21,12 @@ import com.google.inject.AbstractModule;
 
 public class PokerGuiceModule extends AbstractModule {
 
-	@Override
-	protected void configure() {
-		bind(PokerState.class);
-		
+    @Override
+    protected void configure() {
+        bind(PokerState.class);
+
 //		// Bind poker game types
 //		bind(GameType.class).annotatedWith(TexasHoldemGame.class).to(TexasHoldem.class);
 //		bind(GameType.class).annotatedWith(TelesinaGame.class).to(Telesina.class);
-	}
+    }
 }

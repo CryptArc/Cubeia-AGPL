@@ -1,43 +1,29 @@
 package com.cubeia.backend.cashgame;
 
-import com.cubeia.backend.cashgame.dto.AnnounceTableRequest;
-import com.cubeia.backend.cashgame.dto.AnnounceTableResponse;
-import com.cubeia.backend.cashgame.dto.BalanceUpdate;
-import com.cubeia.backend.cashgame.dto.BatchHandRequest;
-import com.cubeia.backend.cashgame.dto.BatchHandResponse;
-import com.cubeia.backend.cashgame.dto.CloseSessionRequest;
-import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
-import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
-import com.cubeia.backend.cashgame.dto.ReserveRequest;
-import com.cubeia.backend.cashgame.dto.ReserveResponse;
-import com.cubeia.backend.cashgame.exceptions.AnnounceTableFailedException;
-import com.cubeia.backend.cashgame.exceptions.BatchHandFailedException;
-import com.cubeia.backend.cashgame.exceptions.CloseSessionFailedException;
-import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
-import com.cubeia.backend.cashgame.exceptions.OpenSessionFailedException;
-import com.cubeia.backend.cashgame.exceptions.ReserveFailedException;
+import com.cubeia.backend.cashgame.dto.*;
+import com.cubeia.backend.cashgame.exceptions.*;
 
 public interface SynchronousCashGamesBackend {
-	
-	String generateHandId();
-	
-	boolean isSystemShuttingDown();
-	
-	AnnounceTableResponse announceTable(AnnounceTableRequest request) throws AnnounceTableFailedException;
 
-	// void closeTable(CloseTableRequest request) throws CloseTableFailedException;
+    String generateHandId();
 
-	OpenSessionResponse openSession(OpenSessionRequest request) throws OpenSessionFailedException;
+    boolean isSystemShuttingDown();
 
-	void closeSession(CloseSessionRequest request) throws CloseSessionFailedException;
+    AnnounceTableResponse announceTable(AnnounceTableRequest request) throws AnnounceTableFailedException;
 
-	ReserveResponse reserve(ReserveRequest request) throws ReserveFailedException;
+    // void closeTable(CloseTableRequest request) throws CloseTableFailedException;
 
-	BatchHandResponse batchHand(BatchHandRequest request) throws BatchHandFailedException;
+    OpenSessionResponse openSession(OpenSessionRequest request) throws OpenSessionFailedException;
 
-	long getMainAccountBalance(int playerId) throws GetBalanceFailedException;
+    void closeSession(CloseSessionRequest request) throws CloseSessionFailedException;
 
-	BalanceUpdate getSessionBalance(PlayerSessionId sessionId) throws GetBalanceFailedException;
+    ReserveResponse reserve(ReserveRequest request) throws ReserveFailedException;
 
-	AllowJoinResponse allowJoinTable(int playerId);
+    BatchHandResponse batchHand(BatchHandRequest request) throws BatchHandFailedException;
+
+    long getMainAccountBalance(int playerId) throws GetBalanceFailedException;
+
+    BalanceUpdate getSessionBalance(PlayerSessionId sessionId) throws GetBalanceFailedException;
+
+    AllowJoinResponse allowJoinTable(int playerId);
 }

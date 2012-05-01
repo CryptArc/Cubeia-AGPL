@@ -24,42 +24,42 @@ import com.cubeia.poker.action.PossibleAction;
 
 public class MoneyRelatedPokerTests extends GuiceTest {
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+    }
 
-	public void testSmallBlindCost() {
-		long startingChips = 10000;
-		MockPlayer[] mp = TestUtils.createMockPlayers(4, startingChips);
-		int[] p = TestUtils.createPlayerIdArray(mp);
-		assertEquals(4, p.length);
-		TestUtils.addPlayers(state, mp, 0);
-		assertEquals(startingChips, mp[0].getBalance());
+    public void testSmallBlindCost() {
+        long startingChips = 10000;
+        MockPlayer[] mp = TestUtils.createMockPlayers(4, startingChips);
+        int[] p = TestUtils.createPlayerIdArray(mp);
+        assertEquals(4, p.length);
+        TestUtils.addPlayers(state, mp, 0);
+        assertEquals(startingChips, mp[0].getBalance());
 
-		// Force start
-		state.timeout();
-		
-		// Blinds
+        // Force start
+        state.timeout();
+
+        // Blinds
 //		mockServerAdapter.getActionRequest()
-		act(PokerActionType.SMALL_BLIND);
-		long balance = mp[2].getBalance();
-		act(PokerActionType.BIG_BLIND);
-		assertEquals(balance - 100, mp[2].getBalance());
-		
+        act(PokerActionType.SMALL_BLIND);
+        long balance = mp[2].getBalance();
+        act(PokerActionType.BIG_BLIND);
+        assertEquals(balance - 100, mp[2].getBalance());
+
 //		System.out.println(mp[1].getBalance());
 //		System.out.println(mp[3].getBalance());
 
-		// Everyone folds and bb wins
-		act(PokerActionType.FOLD);
-		act(PokerActionType.FOLD);
-		act(PokerActionType.FOLD);
-	}
-	
-	private void act(PokerActionType choice) {
-		ActionRequest request = mockServerAdapter.getLastActionRequest();
-		PossibleAction option = request.getOption(choice);
-		PokerAction action = new PokerAction(request.getPlayerId(), choice, option.getMinAmount());
-		state.act(action);
-	}
+        // Everyone folds and bb wins
+        act(PokerActionType.FOLD);
+        act(PokerActionType.FOLD);
+        act(PokerActionType.FOLD);
+    }
+
+    private void act(PokerActionType choice) {
+        ActionRequest request = mockServerAdapter.getLastActionRequest();
+        PossibleAction option = request.getOption(choice);
+        PokerAction action = new PokerAction(request.getPlayerId(), choice, option.getMinAmount());
+        state.act(action);
+    }
 }

@@ -26,28 +26,28 @@ import com.cubeia.poker.PokerState;
 
 public class IntegrationGuiceConfig extends ConfigurationAdapter {
 
-	@Override
-	public Class<? extends GameProcessor> getGameProcessorClass() {
-		return Processor.class;
-	}
+    @Override
+    public Class<? extends GameProcessor> getGameProcessorClass() {
+        return Processor.class;
+    }
 
-	@Override
-	public Class<? extends TableListener> getTableListenerClass() {
-		return PokerTableListener.class;
-	}
+    @Override
+    public Class<? extends TableListener> getTableListenerClass() {
+        return PokerTableListener.class;
+    }
 
-	@Override
-	public Class<?> getGameStateClass() {
-		return PokerState.class;
-	}
+    @Override
+    public Class<?> getGameStateClass() {
+        return PokerState.class;
+    }
 
-	@Override
-	public Class<? extends TableInterceptor> getTableInterceptorClass() {
-		return PokerTableInterceptor.class;
-	}
+    @Override
+    public Class<? extends TableInterceptor> getTableInterceptorClass() {
+        return PokerTableInterceptor.class;
+    }
 
-	@Override
-	public Class<? extends TournamentProcessor> getTournamentProcessorClass() {
-		return Processor.class;
-	}
+    @Override
+    public Class<? extends TournamentProcessor> getTournamentProcessorClass() {
+        return Processor.class;
+    }
 }

@@ -1,31 +1,31 @@
 package poker.gs.server.blinds;
 
 public class MissedBlind {
-	
-	private BlindsPlayer player;
-	
-	private MissedBlindsStatus missedBlindsStatus;
 
-	public MissedBlind(BlindsPlayer player, MissedBlindsStatus missedBlindsStatus) {
-		super();
-		this.player = player;
-		this.missedBlindsStatus = missedBlindsStatus;
-	}
+    private BlindsPlayer player;
 
-	public BlindsPlayer getPlayer() {
-		return player;
-	}
+    private MissedBlindsStatus missedBlindsStatus;
 
-	public void setPlayer(BlindsPlayer player) {
-		this.player = player;
-	}
+    public MissedBlind(BlindsPlayer player, MissedBlindsStatus missedBlindsStatus) {
+        super();
+        this.player = player;
+        this.missedBlindsStatus = missedBlindsStatus;
+    }
 
-	public MissedBlindsStatus getMissedBlindsStatus() {
-		return missedBlindsStatus;
-	}
+    public BlindsPlayer getPlayer() {
+        return player;
+    }
 
-	public void setMissedBlindsStatus(MissedBlindsStatus missedBlindsStatus) {
-		this.missedBlindsStatus = missedBlindsStatus;
-	}	
-	
+    public void setPlayer(BlindsPlayer player) {
+        this.player = player;
+    }
+
+    public MissedBlindsStatus getMissedBlindsStatus() {
+        return missedBlindsStatus;
+    }
+
+    public void setMissedBlindsStatus(MissedBlindsStatus missedBlindsStatus) {
+        this.missedBlindsStatus = missedBlindsStatus;
+    }
+
 }

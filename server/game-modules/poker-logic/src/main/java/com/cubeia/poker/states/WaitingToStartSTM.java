@@ -17,47 +17,46 @@
 
 package com.cubeia.poker.states;
 
-import org.apache.log4j.Logger;
-
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.PokerAction;
+import org.apache.log4j.Logger;
 
 public class WaitingToStartSTM extends AbstractPokerGameSTM {
 
-	private static final long serialVersionUID = -4837159720440582936L;
-	
-	private static transient Logger log = Logger.getLogger(WaitingToStartSTM.class);
+    private static final long serialVersionUID = -4837159720440582936L;
 
-	public String toString() {
-	    return "WaitingToStartState";
-	}
-	
-	@Override
-	public void timeout(PokerState state) {
-		if (!state.isTournamentTable()) {
-			state.setHandFinished(false);
-			state.getServerAdapter().performPendingBuyIns(state.getSeatedPlayers());
-			state.commitPendingBalances();
-			
-			state.setPlayersWithoutMoneyAsSittingOut();
-						
-		    state.sitOutPlayersMarkedForSitOutNextRound();
-		    state.cleanupPlayers(); // Will remove disconnected and leaving players
-			
-			if (state.getPlayersReadyToStartHand().size() > 1) {
-				state.startHand();
-			} else {
-				state.setHandFinished(true);
-				state.setState(PokerState.NOT_STARTED);
-				log.info("WILL NOT START NEW HAND, TOO FEW PLAYERS SEATED: " + state.getPlayersReadyToStartHand().size() + " sitting in of " + state.getSeatedPlayers().size());
-			}
-		} else {
-			log.debug("Ignoring timeout in waiting to start state, since tournament hands are started by the tournament manager.");
-		}
-	}
-	
-	public void act(PokerAction action, PokerState pokerGame) {
-		log.info("Discarding out of order action: "+action);
-	}
+    private static transient Logger log = Logger.getLogger(WaitingToStartSTM.class);
+
+    public String toString() {
+        return "WaitingToStartState";
+    }
+
+    @Override
+    public void timeout(PokerState state) {
+        if (!state.isTournamentTable()) {
+            state.setHandFinished(false);
+            state.getServerAdapter().performPendingBuyIns(state.getSeatedPlayers());
+            state.commitPendingBalances();
+
+            state.setPlayersWithoutMoneyAsSittingOut();
+
+            state.sitOutPlayersMarkedForSitOutNextRound();
+            state.cleanupPlayers(); // Will remove disconnected and leaving players
+
+            if (state.getPlayersReadyToStartHand().size() > 1) {
+                state.startHand();
+            } else {
+                state.setHandFinished(true);
+                state.setState(PokerState.NOT_STARTED);
+                log.info("WILL NOT START NEW HAND, TOO FEW PLAYERS SEATED: " + state.getPlayersReadyToStartHand().size() + " sitting in of " + state.getSeatedPlayers().size());
+            }
+        } else {
+            log.debug("Ignoring timeout in waiting to start state, since tournament hands are started by the tournament manager.");
+        }
+    }
+
+    public void act(PokerAction action, PokerState pokerGame) {
+        log.info("Discarding out of order action: " + action);
+    }
 
 }

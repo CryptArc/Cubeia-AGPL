@@ -1,6 +1,6 @@
 package com.cubeia.poker.variant;
 
 public enum PokerVariant {
-	TEXAS_HOLDEM,
-	TELESINA
+    TEXAS_HOLDEM,
+    TELESINA
 }

@@ -17,60 +17,64 @@
 
 package com.cubeia.poker.result;
 
+import com.cubeia.poker.pot.Pot;
+
 import java.io.Serializable;
 import java.util.Map;
 
-import com.cubeia.poker.pot.Pot;
-
 public class Result implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final long netResult;
-	
-	private final long winningsIncludingOwnBets;
-	
-	private final long bets;
-	
-	/** winning share by pot for this player */
-	private final Map<Pot, Long> winningsByPot;
+    private final long netResult;
 
-	public Result(long netResult, long ownBets, Map<Pot, Long> winningsByPot) {
-		this.netResult = netResult;
+    private final long winningsIncludingOwnBets;
+
+    private final long bets;
+
+    /**
+     * winning share by pot for this player
+     */
+    private final Map<Pot, Long> winningsByPot;
+
+    public Result(long netResult, long ownBets, Map<Pot, Long> winningsByPot) {
+        this.netResult = netResult;
         this.bets = ownBets;
         this.winningsByPot = winningsByPot;
-		this.winningsIncludingOwnBets = netResult + ownBets;
-	}
+        this.winningsIncludingOwnBets = netResult + ownBets;
+    }
 
-	/**
-	 * The net result for this player. This value might be negative.
-	 * @return net result
-	 */
-	public long getNetResult() {
-		return netResult;
-	}
+    /**
+     * The net result for this player. This value might be negative.
+     *
+     * @return net result
+     */
+    public long getNetResult() {
+        return netResult;
+    }
 
-	/**
-	 * Returns the winnings including own bets. 
-	 * @return 
-	 */
-	public long getWinningsIncludingOwnBets() {
-		return winningsIncludingOwnBets;
-	}
-	
-	public long getBets() {
+    /**
+     * Returns the winnings including own bets.
+     *
+     * @return
+     */
+    public long getWinningsIncludingOwnBets() {
+        return winningsIncludingOwnBets;
+    }
+
+    public long getBets() {
         return bets;
     }
-	
-	public Map<Pot, Long> getWinningsByPot() {
+
+    public Map<Pot, Long> getWinningsByPot() {
         return winningsByPot;
     }
 
     @Override
     public String toString() {
         return "Result [netResult=" + netResult + ", winningsIncludingOwnBets=" + winningsIncludingOwnBets
-            + ", winningsByPot=" + winningsByPot + "]";
+                + ", winningsByPot=" + winningsByPot + "]";
     }
-	
+
 
 }

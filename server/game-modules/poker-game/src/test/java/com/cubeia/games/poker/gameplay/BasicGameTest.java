@@ -17,29 +17,30 @@
 
 package com.cubeia.games.poker.gameplay;
 
-import mock.MockServiceRegistry;
-
-import org.junit.Test;
-
 import com.cubeia.firebase.api.game.context.GameContext;
 import com.cubeia.firebase.api.service.ServiceRegistry;
 import com.cubeia.firebase.api.util.ResourceLocator;
 import com.cubeia.games.poker.PokerGame;
+import mock.MockServiceRegistry;
+import org.junit.Test;
 
 public class BasicGameTest {
-	
-	@Test
-	public void testBasic() throws Exception {
-		PokerGame game = new PokerGame();
-		
-		game.init(new GameContext() {
-			public ResourceLocator getResourceLocator() {return null;}
-			public ServiceRegistry getServices() {
-				MockServiceRegistry mockServiceRegistry = new MockServiceRegistry();
-				// mockServiceRegistry.addService(WalletServiceContract.class, mockWalletService);
-				return mockServiceRegistry;
-			}
-		});
-	}
-	
+
+    @Test
+    public void testBasic() throws Exception {
+        PokerGame game = new PokerGame();
+
+        game.init(new GameContext() {
+            public ResourceLocator getResourceLocator() {
+                return null;
+            }
+
+            public ServiceRegistry getServices() {
+                MockServiceRegistry mockServiceRegistry = new MockServiceRegistry();
+                // mockServiceRegistry.addService(WalletServiceContract.class, mockWalletService);
+                return mockServiceRegistry;
+            }
+        });
+    }
+
 }

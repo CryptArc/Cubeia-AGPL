@@ -31,59 +31,59 @@ import com.cubeia.firebase.api.service.mttplayerreg.TournamentPlayerRegistry;
 
 public class MttInstanceAdapter implements MttInstance {
 
-	TournamentPlayerRegistry tournamentPlayerRegistry = new TournamentPlayerRegistryAdapter();
-	
-	LobbyAttributeAccessor lobbyAttributeAccessor = new LobbyAttributeAccessorAdapter();
+    TournamentPlayerRegistry tournamentPlayerRegistry = new TournamentPlayerRegistryAdapter();
 
-	private MTTState state;
+    LobbyAttributeAccessor lobbyAttributeAccessor = new LobbyAttributeAccessorAdapter();
 
-	private Scheduler<MttAction> scheduler; 
-	
-	public LobbyAttributeAccessor getLobbyAccessor() {
-		return lobbyAttributeAccessor;
-	}
+    private MTTState state;
 
-	public Scheduler<MttAction> getScheduler() {
-		return scheduler;
-	}
-	
-	public MttNotifier getMttNotifier() {
-		return null;
-	}
-	
-	public MttTableCreator getTableCreator() {
-		return null;
-	}
-	
-	public void setScheduler(Scheduler<MttAction> scheduler) {
-		this.scheduler = scheduler;
-	}
+    private Scheduler<MttAction> scheduler;
 
-	public ServiceRegistry getServiceRegistry() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public LobbyAttributeAccessor getLobbyAccessor() {
+        return lobbyAttributeAccessor;
+    }
 
-	public MTTState getState() {
-		return state;
-	}
+    public Scheduler<MttAction> getScheduler() {
+        return scheduler;
+    }
 
-	public TournamentPlayerRegistry getSystemPlayerRegistry() {
-		return tournamentPlayerRegistry;
-	}
+    public MttNotifier getMttNotifier() {
+        return null;
+    }
 
-	public LobbyAttributeAccessor getTableLobbyAccessor(int tableId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public MttTableCreator getTableCreator() {
+        return null;
+    }
 
-	public int getId() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    public void setScheduler(Scheduler<MttAction> scheduler) {
+        this.scheduler = scheduler;
+    }
 
-	public void setState(MTTStateSupport state) {
-		this.state = state;
-	}
+    public ServiceRegistry getServiceRegistry() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public MTTState getState() {
+        return state;
+    }
+
+    public TournamentPlayerRegistry getSystemPlayerRegistry() {
+        return tournamentPlayerRegistry;
+    }
+
+    public LobbyAttributeAccessor getTableLobbyAccessor(int tableId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public int getId() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    public void setState(MTTStateSupport state) {
+        this.state = state;
+    }
 
 }

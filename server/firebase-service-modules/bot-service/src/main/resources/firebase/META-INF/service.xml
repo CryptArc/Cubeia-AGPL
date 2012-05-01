@@ -5,6 +5,6 @@
     <service>com.cubeia.games.poker.bot.service.BotServerService</service>
     <description/>
     <exported>
- 
+
     </exported>
 </service>

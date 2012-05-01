@@ -28,35 +28,35 @@ import com.cubeia.poker.timing.TimingProfile;
  */
 public class DefaultTimingProfile implements TimingProfile {
 
-	private static final long serialVersionUID = -3621659377668490319L;
+    private static final long serialVersionUID = -3621659377668490319L;
 
-	public String toString() {
+    public String toString() {
         return "DefaultTimingProfile";
     }
-    
-	public long getTime(Periods period) {
-		switch (period) {
-			case POCKET_CARDS:
-				return 3000;
-			case FLOP:
-				return 3000;
-			case TURN:
-				return 3000;
-			case RIVER:
-				return 3000;
-			case START_NEW_HAND:
-				return 8000;
-			case ACTION_TIMEOUT:
-				return 15000;
-			case AUTO_POST_BLIND_DELAY:
-				return 300;
-			case LATENCY_GRACE_PERIOD:
-				return 1000;
-			case DISCONNECT_EXTRA_TIME:
-				return 3*15000;
-			default:
-				return 5000;
-		}
-	}
+
+    public long getTime(Periods period) {
+        switch (period) {
+            case POCKET_CARDS:
+                return 3000;
+            case FLOP:
+                return 3000;
+            case TURN:
+                return 3000;
+            case RIVER:
+                return 3000;
+            case START_NEW_HAND:
+                return 8000;
+            case ACTION_TIMEOUT:
+                return 15000;
+            case AUTO_POST_BLIND_DELAY:
+                return 300;
+            case LATENCY_GRACE_PERIOD:
+                return 1000;
+            case DISCONNECT_EXTRA_TIME:
+                return 3 * 15000;
+            default:
+                return 5000;
+        }
+    }
 
 }

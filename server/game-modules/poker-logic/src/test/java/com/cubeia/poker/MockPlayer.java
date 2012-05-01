@@ -22,30 +22,30 @@ import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
 
 
-public class MockPlayer extends DefaultPokerPlayer implements PokerPlayer  {
+public class MockPlayer extends DefaultPokerPlayer implements PokerPlayer {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public MockPlayer(int id) {
-		super(id+100);
+    public MockPlayer(int id) {
+        super(id + 100);
 //		setBalance(5000);
-		seatId = id;
-	}
+        seatId = id;
+    }
 
-	public boolean isActionPossible(PokerActionType actionType) {
-		return getActionRequest().isOptionEnabled(actionType);
-	}
+    public boolean isActionPossible(PokerActionType actionType) {
+        return getActionRequest().isOptionEnabled(actionType);
+    }
 
-	@Override
-	public int getSeatId() {
-		return seatId;
-	}
-	
-	public void setPlayerId(int id) {
-	    super.playerId = id;
-	}
-	
-	public void setSeatId(int i) {
-		seatId = i;
-	}
+    @Override
+    public int getSeatId() {
+        return seatId;
+    }
+
+    public void setPlayerId(int id) {
+        super.playerId = id;
+    }
+
+    public void setSeatId(int i) {
+        seatId = i;
+    }
 }

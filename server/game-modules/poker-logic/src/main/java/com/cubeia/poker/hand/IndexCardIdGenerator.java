@@ -5,6 +5,7 @@ import java.util.List;
 
 /**
  * Id generator that assigns the list index as id:s to the cards.
+ *
  * @author w
  */
 public class IndexCardIdGenerator implements CardIdGenerator {
@@ -17,5 +18,5 @@ public class IndexCardIdGenerator implements CardIdGenerator {
         }
         return newCards;
     }
-    
+
 }

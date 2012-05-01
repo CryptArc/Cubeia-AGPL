@@ -17,30 +17,30 @@
 
 package com.cubeia.games.poker.logic;
 
+import com.cubeia.firebase.api.game.table.TableScheduler;
+import com.cubeia.games.poker.util.TablePlayerKey;
+
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import com.cubeia.firebase.api.game.table.TableScheduler;
-import com.cubeia.games.poker.util.TablePlayerKey;
-
 
 /**
  * TODO: This whole implementation does not support fail over of server nodes.
- * 
+ * <p/>
  * The actions needs to be stored in the game state.
- * 
+ * <p/>
  * This must be a singleton at table level.
- * 
+ *
  * @author Fredrik Johansson, Cubeia Ltd
  */
 public class TimeoutCache {
-    
-    protected ConcurrentMap<TablePlayerKey,UUID> actions = new ConcurrentHashMap<TablePlayerKey, UUID>();
-    
+
+    protected ConcurrentMap<TablePlayerKey, UUID> actions = new ConcurrentHashMap<TablePlayerKey, UUID>();
+
     /**
      * Adds a reference to a timeout for an action request.
-     * 
+     *
      * @param tableId
      * @param pid
      * @param actionId
@@ -48,11 +48,11 @@ public class TimeoutCache {
     public void addTimeout(int tableId, int pid, UUID actionId) {
         actions.put(new TablePlayerKey(tableId, pid), actionId);
     }
-    
+
     /**
      * Removes reference from the map and cancel the scheduled action from
      * the given scheduler.
-     * 
+     *
      * @param tableId
      * @param pid
      * @param tableScheduler, if null then skipped.
@@ -64,6 +64,6 @@ public class TimeoutCache {
             tableScheduler.cancelScheduledAction(remove);
         }
     }
- 
-    
+
+
 }

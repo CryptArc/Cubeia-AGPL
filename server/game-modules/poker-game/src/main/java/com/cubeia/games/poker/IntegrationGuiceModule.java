@@ -20,14 +20,9 @@ package com.cubeia.games.poker;
 import com.cubeia.firebase.api.game.TournamentProcessor;
 import com.cubeia.firebase.api.game.table.TournamentTableListener;
 import com.cubeia.firebase.guice.game.EventScoped;
-import com.cubeia.games.poker.adapter.ActionSequenceGenerator;
-import com.cubeia.games.poker.handler.ActionTransformer;
-import com.cubeia.games.poker.adapter.BuyInCalculator;
-import com.cubeia.games.poker.adapter.FirebaseServerAdapter;
-import com.cubeia.games.poker.adapter.HandHistoryReportAdapter;
-import com.cubeia.games.poker.adapter.LobbyUpdater;
-import com.cubeia.games.poker.adapter.PlayerUnseater;
+import com.cubeia.games.poker.adapter.*;
 import com.cubeia.games.poker.cache.ActionCache;
+import com.cubeia.games.poker.handler.ActionTransformer;
 import com.cubeia.games.poker.handler.BackendCallHandler;
 import com.cubeia.games.poker.handler.BackendPlayerSessionHandler;
 import com.cubeia.games.poker.handler.PokerHandler;
@@ -37,24 +32,24 @@ import com.google.inject.Singleton;
 
 public class IntegrationGuiceModule extends AbstractModule {
 
-	@Override
-	protected void configure() {
-		bind(StateInjector.class).in(EventScoped.class);
-		bind(ActionCache.class).in(Singleton.class);
-		bind(HandHistoryReportAdapter.class).in(EventScoped.class);
-		bind(FirebaseServerAdapter.class).in(EventScoped.class);
-		bind(GameStateSender.class).in(Singleton.class);
-		bind(BackendCallHandler.class).in(EventScoped.class);
-		bind(PokerHandler.class).in(EventScoped.class);
-		bind(TournamentProcessor.class).to(Processor.class);
-		bind(TournamentTableListener.class).to(PokerTableListener.class);
-		bind(ActionTransformer.class).in(Singleton.class);
-		bind(ActionSequenceGenerator.class).in(Singleton.class);
+    @Override
+    protected void configure() {
+        bind(StateInjector.class).in(EventScoped.class);
+        bind(ActionCache.class).in(Singleton.class);
+        bind(HandHistoryReportAdapter.class).in(EventScoped.class);
+        bind(FirebaseServerAdapter.class).in(EventScoped.class);
+        bind(GameStateSender.class).in(Singleton.class);
+        bind(BackendCallHandler.class).in(EventScoped.class);
+        bind(PokerHandler.class).in(EventScoped.class);
+        bind(TournamentProcessor.class).to(Processor.class);
+        bind(TournamentTableListener.class).to(PokerTableListener.class);
+        bind(ActionTransformer.class).in(Singleton.class);
+        bind(ActionSequenceGenerator.class).in(Singleton.class);
         bind(TimeoutCache.class).in(Singleton.class);
         bind(BackendPlayerSessionHandler.class).in(Singleton.class);
-		bind(TableCloseHandlerImpl.class).in(EventScoped.class);
-		bind(LobbyUpdater.class).in(Singleton.class);
-		bind(PlayerUnseater.class).in(Singleton.class);
-		bind(BuyInCalculator.class).in(Singleton.class);
-	}
+        bind(TableCloseHandlerImpl.class).in(EventScoped.class);
+        bind(LobbyUpdater.class).in(Singleton.class);
+        bind(PlayerUnseater.class).in(Singleton.class);
+        bind(BuyInCalculator.class).in(Singleton.class);
+    }
 }

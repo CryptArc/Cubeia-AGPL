@@ -1,14 +1,11 @@
 package com.cubeia.poker.states;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-
-import org.junit.Test;
-
 import com.cubeia.poker.GameType;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.PokerAction;
+import org.junit.Test;
+
+import static org.mockito.Mockito.*;
 
 public class ShutdownSTMTest {
 
@@ -18,9 +15,9 @@ public class ShutdownSTMTest {
         PokerState pokerGame = mock(PokerState.class);
         GameType gameType = mock(GameType.class);
         when(pokerGame.getGameType()).thenReturn(gameType);
-        
+
         shutdownSTM.timeout(pokerGame);
-        
+
         verifyZeroInteractions(gameType);
     }
 
@@ -31,9 +28,9 @@ public class ShutdownSTMTest {
         PokerState pokerGame = mock(PokerState.class);
         GameType gameType = mock(GameType.class);
         when(pokerGame.getGameType()).thenReturn(gameType);
-        
+
         shutdownSTM.act(action, pokerGame);
-        
+
         verifyZeroInteractions(gameType);
     }
 

@@ -23,22 +23,23 @@ import com.cubeia.poker.PokerState;
 import com.google.inject.Inject;
 
 /**
- * TODO: The functionality of this class should be modeled 
+ * TODO: The functionality of this class should be modeled
  * in Guice modules instead.
- *  
+ *
  * @author Fredrik
  */
 public class StateInjector {
 
-	@Inject
-	HandHistoryReportAdapter adapter;
-	
-	/**
-	 * Inject the server adapter to the game logic.
-	 * @param table
-	 */
-	public void injectAdapter(Table table) {
-		PokerState state = (PokerState)table.getGameState().getState();
-		state.setServerAdapter(adapter);
-	}
+    @Inject
+    HandHistoryReportAdapter adapter;
+
+    /**
+     * Inject the server adapter to the game logic.
+     *
+     * @param table
+     */
+    public void injectAdapter(Table table) {
+        PokerState state = (PokerState) table.getGameState().getState();
+        state.setServerAdapter(adapter);
+    }
 }

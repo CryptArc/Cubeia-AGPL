@@ -7,24 +7,27 @@ import com.cubeia.firebase.poker.pokerbots.server.BotServerDaemon;
 
 public class BotServerService implements BotServerContract, Service {
 
-	@Override
-	public void init(ServiceContext con) throws SystemException {}
+    @Override
+    public void init(ServiceContext con) throws SystemException {
+    }
 
-	@Override
-	public void destroy() {}
+    @Override
+    public void destroy() {
+    }
 
-	@Override
-	public void start() {
-		ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
-		try {
-			Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
-			BotServerDaemon.startLocalHTTP(19090, 1);
-		} finally {
-			Thread.currentThread().setContextClassLoader(originalClassLoader);
-		}
-	}
+    @Override
+    public void start() {
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
+            BotServerDaemon.startLocalHTTP(19090, 1);
+        } finally {
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
+        }
+    }
 
-	@Override
-	public void stop() {}
+    @Override
+    public void stop() {
+    }
 
 }

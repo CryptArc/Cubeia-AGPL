@@ -24,65 +24,64 @@ import com.cubeia.poker.action.PokerActionType;
 
 /**
  * Test for Ticket 59
- * 
  */
 public class Ticket59_TableFreeze extends AbstractTexasHandTester {
 
-	/**
-	 * Mock Game is staked at 10/5'
-	 * Player default balance: 5000
-	 */
-	public void testBothPlayerActs() {
-		setAnteLevel(10);
-		MockPlayer[] mp = TestUtils.createMockPlayers(4);
-		int[] p = TestUtils.createPlayerIdArray(mp);
-		addPlayers(state, mp);
-		
-		assertEquals(1, mockServerAdapter.getTimeoutRequests());
-		// Force start
-		state.timeout();
-		
-		// Blinds
-		act(p[1], PokerActionType.SMALL_BLIND);	
-		act(p[2], PokerActionType.BIG_BLIND);	
-		
-		assertTrue(mp[3].isActionPossible(PokerActionType.CALL));
-		assertEquals(10, mockServerAdapter.getLastActionRequest().getOption(PokerActionType.CALL).getMinAmount());
-		
-	}
-	
-	/**
-	 * Mock Game is staked at 10/5'
-	 * Player default balance: 5000
-	 * 
-	 * If big blind is declined (or timed out) the table can go to an infinite loop of asking
-	 * the next player to post big blind. If this player is timing out then it will never go further.
-	 */
-	public void testBigBlindTimesOut() {
-		setAnteLevel(10);
-		MockPlayer[] mp = TestUtils.createMockPlayers(4);
-		addPlayers(state, mp);
-		
-		assertEquals(1, mockServerAdapter.getTimeoutRequests());
-		// Force start
-		state.timeout();
-		
-		// Blinds
-		//act(p[1], PokerActionType.SMALL_BLIND);
-		state.timeout();
-		state.timeout();
-		
-		assertTrue(mp[3].isActionPossible(PokerActionType.BIG_BLIND));
-		state.timeout();
-		
-		assertFalse(mp[3].isActionPossible(PokerActionType.BIG_BLIND));
-		assertTrue(mp[0].isActionPossible(PokerActionType.BIG_BLIND));
-		state.timeout();
-		
-		assertTrue(state.isFinished());
-		assertEquals("WaitingToStartState", state.getGameState().toString());
-		
-	}
+    /**
+     * Mock Game is staked at 10/5'
+     * Player default balance: 5000
+     */
+    public void testBothPlayerActs() {
+        setAnteLevel(10);
+        MockPlayer[] mp = TestUtils.createMockPlayers(4);
+        int[] p = TestUtils.createPlayerIdArray(mp);
+        addPlayers(state, mp);
+
+        assertEquals(1, mockServerAdapter.getTimeoutRequests());
+        // Force start
+        state.timeout();
+
+        // Blinds
+        act(p[1], PokerActionType.SMALL_BLIND);
+        act(p[2], PokerActionType.BIG_BLIND);
+
+        assertTrue(mp[3].isActionPossible(PokerActionType.CALL));
+        assertEquals(10, mockServerAdapter.getLastActionRequest().getOption(PokerActionType.CALL).getMinAmount());
+
+    }
+
+    /**
+     * Mock Game is staked at 10/5'
+     * Player default balance: 5000
+     * <p/>
+     * If big blind is declined (or timed out) the table can go to an infinite loop of asking
+     * the next player to post big blind. If this player is timing out then it will never go further.
+     */
+    public void testBigBlindTimesOut() {
+        setAnteLevel(10);
+        MockPlayer[] mp = TestUtils.createMockPlayers(4);
+        addPlayers(state, mp);
+
+        assertEquals(1, mockServerAdapter.getTimeoutRequests());
+        // Force start
+        state.timeout();
+
+        // Blinds
+        //act(p[1], PokerActionType.SMALL_BLIND);
+        state.timeout();
+        state.timeout();
+
+        assertTrue(mp[3].isActionPossible(PokerActionType.BIG_BLIND));
+        state.timeout();
+
+        assertFalse(mp[3].isActionPossible(PokerActionType.BIG_BLIND));
+        assertTrue(mp[0].isActionPossible(PokerActionType.BIG_BLIND));
+        state.timeout();
+
+        assertTrue(state.isFinished());
+        assertEquals("WaitingToStartState", state.getGameState().toString());
+
+    }
 
 
 }

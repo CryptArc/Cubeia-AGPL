@@ -17,18 +17,18 @@
 
 package com.cubeia.games.poker.util;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 import java.math.BigDecimal;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 public class WalletAmountConverterTest {
 
     @Test
     public void testConvertToWalletAmount() {
         WalletAmountConverter wac = new WalletAmountConverter(2);
-        
+
         BigDecimal a = wac.convertToWalletAmount(-12345);
         assertEquals(new BigDecimal("-123.45"), a);
         assertEquals(2, a.scale());

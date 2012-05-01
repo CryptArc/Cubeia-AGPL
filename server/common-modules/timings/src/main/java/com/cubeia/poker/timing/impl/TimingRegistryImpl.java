@@ -28,29 +28,29 @@ import com.cubeia.poker.timing.Timings;
  */
 public class TimingRegistryImpl implements TimingRegistry {
 
-	private TimingProfile defaultProfile = new DefaultTimingProfile();
-	
-	public TimingProfile getDefaultTimingProfile() {
-		return defaultProfile;
-	}
+    private TimingProfile defaultProfile = new DefaultTimingProfile();
 
-	public TimingProfile getTimingProfile(Timings profile) {
-		switch (profile) {
-		    case SLOW:
-		        return new SlowTimingProfile();
-		
-			case MINIMUM_DELAY:
-				return new MinDelayTimingProfile();
-				
-			case EXPRESS:
+    public TimingProfile getDefaultTimingProfile() {
+        return defaultProfile;
+    }
+
+    public TimingProfile getTimingProfile(Timings profile) {
+        switch (profile) {
+            case SLOW:
+                return new SlowTimingProfile();
+
+            case MINIMUM_DELAY:
+                return new MinDelayTimingProfile();
+
+            case EXPRESS:
                 return new ExpressTimingProfile();
-                
-			case SUPER_EXPRESS:
+
+            case SUPER_EXPRESS:
                 return new SuperExpressTimingProfile();
-			
-			default:
-				return getDefaultTimingProfile();
-		}
-	}
+
+            default:
+                return getDefaultTimingProfile();
+        }
+    }
 
 }

@@ -7,16 +7,16 @@ import java.util.Random;
 
 /**
  * Shuffles a list.
- * 
+ * <p/>
  * This class implements the Fisher-Yates modern algorithm: http://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
- * 
+ * <p/>
  * <code>
- *   To shuffle an array a of n elements (indexes 0..n-1):
- *     for i from n − 1 downto 1 do
- *          j <- random integer with 0 <= j <= i
- *          exchange a[j] and a[i] 
+ * To shuffle an array a of n elements (indexes 0..n-1):
+ * for i from n − 1 downto 1 do
+ * j <- random integer with 0 <= j <= i
+ * exchange a[j] and a[i]
  * </code>
- * 
+ *
  * @author w
  */
 public class Shuffler<T> {
@@ -26,11 +26,12 @@ public class Shuffler<T> {
     public Shuffler(Random rng) {
         this.rng = rng;
     }
-    
+
     /**
      * Returns a new shuffled copy of the given list.
+     *
      * @param list list to be shuffled
-     * @param rng random number generator
+     * @param rng  random number generator
      * @return shuffled list
      */
     public List<T> shuffle(List<T> list) {
@@ -41,6 +42,6 @@ public class Shuffler<T> {
         }
         return shuffledList;
     }
-    
-    
+
+
 }

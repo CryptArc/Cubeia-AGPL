@@ -17,16 +17,14 @@
 
 package com.cubeia.games.poker.jmx;
 
-import java.lang.management.ManagementFactory;
-import java.util.Date;
+import com.cubeia.games.poker.jmx.stats.StatCounter;
+import com.cubeia.games.poker.jmx.stats.StateMap;
+import org.apache.log4j.Logger;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-
-import org.apache.log4j.Logger;
-
-import com.cubeia.games.poker.jmx.stats.StatCounter;
-import com.cubeia.games.poker.jmx.stats.StateMap;
+import java.lang.management.ManagementFactory;
+import java.util.Date;
 
 /**
  * Singleton implementation of a statistics holder.
@@ -34,55 +32,61 @@ import com.cubeia.games.poker.jmx.stats.StateMap;
  * @author Fredrik Johansson, Cubeia Ltd
  */
 public class PokerStats implements PokerStatsMBean {
-    
+
     private static final String JMX_BIND_NAME = "com.cubeia.poker:type=PokerStats";
 
     private static transient Logger log = Logger.getLogger(PokerStats.class);
-    
+
     private static PokerStats instance = new PokerStats();
-    
-    /** 60 second timer counter */
-    private StatCounter handsPerMinute = new StatCounter(1000*60);
-    
-    /** 1 hour timer counter */
-    private StatCounter handsPerHour = new StatCounter(1000*60*60);
-    
+
+    /**
+     * 60 second timer counter
+     */
+    private StatCounter handsPerMinute = new StatCounter(1000 * 60);
+
+    /**
+     * 1 hour timer counter
+     */
+    private StatCounter handsPerHour = new StatCounter(1000 * 60 * 60);
+
     private StateMap stateMap = new StateMap();
 
-    /** 
+    /**
      * If true, then state changes will be recorded in a map. The map will
      * also frequently be scanned for stale tables.
-     * 
+     * <p/>
      * Default is false.
      */
-	private boolean stateTrackingEnabled = false;
-    
+    private boolean stateTrackingEnabled = false;
+
     /*------------------------------------------------
-        
-        CONSTRUCTOR(S)
-    
-     ------------------------------------------------*/
-    
+
+       CONSTRUCTOR(S)
+
+    ------------------------------------------------*/
+
     public static PokerStats getInstance() {
         return instance;
     }
-    
-    
+
+
     private PokerStats() {
         initJmx();
-    };
-    
+    }
+
+    ;
+
     /*------------------------------------------------
-        
-        STATISTICAL ACCESSORS AND REPORTING
-    
-     ------------------------------------------------*/
-    
+
+       STATISTICAL ACCESSORS AND REPORTING
+
+    ------------------------------------------------*/
+
     public void reportHandEnd() {
         handsPerMinute.register();
         handsPerHour.register();
     }
-    
+
     public int getHandsPerHour() {
         return handsPerHour.getCurrent();
     }
@@ -92,53 +96,53 @@ public class PokerStats implements PokerStatsMBean {
         return handsPerMinute.getCurrent();
     }
 
-	public String getCurrentState(int tableId) {
-		return stateMap.getState(tableId);
-	}
-	
-	/**
-	 * Stores a representation of the state for a given table.
-	 * 
-	 * Note, will only have effect if stateTrackingEnabled is set to true.
-	 * 
-	 * @param tableId
-	 * @param state
-	 */
-	public void setState(int tableId, String state) {
-		if (stateTrackingEnabled) {
-			stateMap.setState(tableId, state);
-		}
-	}
-	
-	public Date getLastChangeDate(int tableId) {
-		return stateMap.getLastChangeDate(tableId);
-	}
-	
-	public void setStateTrackingEnabled(boolean enabled) {
-		this.stateTrackingEnabled = enabled;
-	}
-	
-	public boolean isStateTrackingEnabled() {
-		return stateTrackingEnabled;
-	}
-    
+    public String getCurrentState(int tableId) {
+        return stateMap.getState(tableId);
+    }
+
+    /**
+     * Stores a representation of the state for a given table.
+     * <p/>
+     * Note, will only have effect if stateTrackingEnabled is set to true.
+     *
+     * @param tableId
+     * @param state
+     */
+    public void setState(int tableId, String state) {
+        if (stateTrackingEnabled) {
+            stateMap.setState(tableId, state);
+        }
+    }
+
+    public Date getLastChangeDate(int tableId) {
+        return stateMap.getLastChangeDate(tableId);
+    }
+
+    public void setStateTrackingEnabled(boolean enabled) {
+        this.stateTrackingEnabled = enabled;
+    }
+
+    public boolean isStateTrackingEnabled() {
+        return stateTrackingEnabled;
+    }
+
     /*------------------------------------------------
-        
-        JMX INITIALIZATION & DESTRUCTION
-    
-     ------------------------------------------------*/
-    
+
+       JMX INITIALIZATION & DESTRUCTION
+
+    ------------------------------------------------*/
+
     private void initJmx() {
         try {
             MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
             ObjectName monitorName = new ObjectName(JMX_BIND_NAME);
             mbs.registerMBean(this, monitorName);
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.error("failed to start mbean server", e);
         }
     }
-    
-    
+
+
     /**
      * Hmm, haven't found a good hook for shutting down JMX yet.
      */
@@ -147,10 +151,10 @@ public class PokerStats implements PokerStatsMBean {
         try {
             MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
             ObjectName monitorName = new ObjectName(JMX_BIND_NAME);
-            if(mbs.isRegistered(monitorName)) {
+            if (mbs.isRegistered(monitorName)) {
                 mbs.unregisterMBean(monitorName);
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.error("failed to start mbean server", e);
         }
     }

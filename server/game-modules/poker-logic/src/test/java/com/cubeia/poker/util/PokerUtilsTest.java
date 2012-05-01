@@ -17,86 +17,85 @@
 
 package com.cubeia.poker.util;
 
+import com.cubeia.poker.MockPlayer;
+import com.cubeia.poker.player.PokerPlayer;
+import junit.framework.TestCase;
+
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import junit.framework.TestCase;
-
-import com.cubeia.poker.MockPlayer;
-import com.cubeia.poker.player.PokerPlayer;
-
 public class PokerUtilsTest extends TestCase {
 
-	public void testGetElementAfter() {
-		SortedMap<Integer, PokerPlayer> map = new TreeMap<Integer, PokerPlayer>();
-		
-		PokerPlayer p1 = new MockPlayer(1);
-		PokerPlayer p2 = new MockPlayer(2);
-		PokerPlayer p3 = new MockPlayer(3);
-		
-		map.put(3, p3);
-		map.put(1, p1);
-		map.put(2, p2);
-	
-		assertEquals(p3, PokerUtils.getElementAfter(2, map));
-		assertEquals(p1, PokerUtils.getElementAfter(3, map));
-		assertEquals(p2, PokerUtils.getElementAfter(1, map));
-	}
-	
-	public void testEqualsBug() {
-		SortedMap<Integer, PokerPlayer> map = new TreeMap<Integer, PokerPlayer>();
-		
-		PokerPlayer p1 = new MockPlayer(1);
-		PokerPlayer p2 = new MockPlayer(2);
-		PokerPlayer p3 = new MockPlayer(3);
-		
-		map.put(Integer.valueOf(3), p3);
-		map.put(Integer.valueOf(1), p1);
-		map.put(Integer.valueOf(2), p2);
-	
-		assertEquals(p1, PokerUtils.getElementAfter(Integer.valueOf(3), map));
-	}
-	
-	public void testGetElementAfterNonExistingElement() {
-		SortedMap<Integer, PokerPlayer> map = new TreeMap<Integer, PokerPlayer>();
-		
-		PokerPlayer p1 = new MockPlayer(1);
-		PokerPlayer p3 = new MockPlayer(3);
-		
-		map.put(3, p3);
-		map.put(1, p1);
-	
-		assertEquals(p3, PokerUtils.getElementAfter(2, map));
-	}
-	
-	public void testGetElementAfterSpecialCases() {
-		SortedMap<Integer, PokerPlayer> map = new TreeMap<Integer, PokerPlayer>();
-		
-		PokerPlayer p3 = new MockPlayer(3);
-		
-		map.put(3, p3);
-	
-		assertEquals(p3, PokerUtils.getElementAfter(2, map));
-		assertEquals(p3, PokerUtils.getElementAfter(3, map));
-		assertEquals(p3, PokerUtils.getElementAfter(4, map));
-	}	
-	
-	public void testUnwrapList() {
-		SortedMap<Integer, PokerPlayer> map = new TreeMap<Integer, PokerPlayer>();
-		
-		PokerPlayer p1 = new MockPlayer(1);
-		PokerPlayer p2 = new MockPlayer(2);
-		PokerPlayer p3 = new MockPlayer(3);
-		
-		map.put(Integer.valueOf(3), p3);
-		map.put(Integer.valueOf(1), p1);
-		map.put(Integer.valueOf(2), p2);
-		
-		List<PokerPlayer> list = PokerUtils.unwrapList(map, 3);
-		assertEquals(p3, list.get(0));
-		assertEquals(p1, list.get(1));
-		assertEquals(p2, list.get(2));
-		assertEquals(3, list.size());
-	}
+    public void testGetElementAfter() {
+        SortedMap<Integer, PokerPlayer> map = new TreeMap<Integer, PokerPlayer>();
+
+        PokerPlayer p1 = new MockPlayer(1);
+        PokerPlayer p2 = new MockPlayer(2);
+        PokerPlayer p3 = new MockPlayer(3);
+
+        map.put(3, p3);
+        map.put(1, p1);
+        map.put(2, p2);
+
+        assertEquals(p3, PokerUtils.getElementAfter(2, map));
+        assertEquals(p1, PokerUtils.getElementAfter(3, map));
+        assertEquals(p2, PokerUtils.getElementAfter(1, map));
+    }
+
+    public void testEqualsBug() {
+        SortedMap<Integer, PokerPlayer> map = new TreeMap<Integer, PokerPlayer>();
+
+        PokerPlayer p1 = new MockPlayer(1);
+        PokerPlayer p2 = new MockPlayer(2);
+        PokerPlayer p3 = new MockPlayer(3);
+
+        map.put(Integer.valueOf(3), p3);
+        map.put(Integer.valueOf(1), p1);
+        map.put(Integer.valueOf(2), p2);
+
+        assertEquals(p1, PokerUtils.getElementAfter(Integer.valueOf(3), map));
+    }
+
+    public void testGetElementAfterNonExistingElement() {
+        SortedMap<Integer, PokerPlayer> map = new TreeMap<Integer, PokerPlayer>();
+
+        PokerPlayer p1 = new MockPlayer(1);
+        PokerPlayer p3 = new MockPlayer(3);
+
+        map.put(3, p3);
+        map.put(1, p1);
+
+        assertEquals(p3, PokerUtils.getElementAfter(2, map));
+    }
+
+    public void testGetElementAfterSpecialCases() {
+        SortedMap<Integer, PokerPlayer> map = new TreeMap<Integer, PokerPlayer>();
+
+        PokerPlayer p3 = new MockPlayer(3);
+
+        map.put(3, p3);
+
+        assertEquals(p3, PokerUtils.getElementAfter(2, map));
+        assertEquals(p3, PokerUtils.getElementAfter(3, map));
+        assertEquals(p3, PokerUtils.getElementAfter(4, map));
+    }
+
+    public void testUnwrapList() {
+        SortedMap<Integer, PokerPlayer> map = new TreeMap<Integer, PokerPlayer>();
+
+        PokerPlayer p1 = new MockPlayer(1);
+        PokerPlayer p2 = new MockPlayer(2);
+        PokerPlayer p3 = new MockPlayer(3);
+
+        map.put(Integer.valueOf(3), p3);
+        map.put(Integer.valueOf(1), p1);
+        map.put(Integer.valueOf(2), p2);
+
+        List<PokerPlayer> list = PokerUtils.unwrapList(map, 3);
+        assertEquals(p3, list.get(0));
+        assertEquals(p1, list.get(1));
+        assertEquals(p2, list.get(2));
+        assertEquals(3, list.size());
+    }
 }

@@ -18,9 +18,9 @@
 package com.cubeia.poker.timing;
 
 public enum Timings {
-	DEFAULT,
-	SLOW,
-	MINIMUM_DELAY,
-	EXPRESS,
-	SUPER_EXPRESS
+    DEFAULT,
+    SLOW,
+    MINIMUM_DELAY,
+    EXPRESS,
+    SUPER_EXPRESS
 }

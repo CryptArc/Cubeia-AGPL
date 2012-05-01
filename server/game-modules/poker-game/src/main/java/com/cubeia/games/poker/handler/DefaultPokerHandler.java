@@ -17,129 +17,167 @@
 
 package com.cubeia.games.poker.handler;
 
-import com.cubeia.games.poker.io.protocol.BestHand;
-import com.cubeia.games.poker.io.protocol.BuyInInfoRequest;
-import com.cubeia.games.poker.io.protocol.BuyInInfoResponse;
-import com.cubeia.games.poker.io.protocol.BuyInRequest;
-import com.cubeia.games.poker.io.protocol.BuyInResponse;
-import com.cubeia.games.poker.io.protocol.CardToDeal;
-import com.cubeia.games.poker.io.protocol.DealPrivateCards;
-import com.cubeia.games.poker.io.protocol.DealPublicCards;
-import com.cubeia.games.poker.io.protocol.DealerButton;
-import com.cubeia.games.poker.io.protocol.DeckInfo;
-import com.cubeia.games.poker.io.protocol.ErrorPacket;
-import com.cubeia.games.poker.io.protocol.ExposePrivateCards;
-import com.cubeia.games.poker.io.protocol.ExternalSessionInfoPacket;
-import com.cubeia.games.poker.io.protocol.FuturePlayerAction;
-import com.cubeia.games.poker.io.protocol.GameCard;
-import com.cubeia.games.poker.io.protocol.HandCanceled;
-import com.cubeia.games.poker.io.protocol.HandEnd;
-import com.cubeia.games.poker.io.protocol.InformFutureAllowedActions;
-import com.cubeia.games.poker.io.protocol.PacketVisitor;
-import com.cubeia.games.poker.io.protocol.PerformAction;
-import com.cubeia.games.poker.io.protocol.PingPacket;
-import com.cubeia.games.poker.io.protocol.PlayerAction;
-import com.cubeia.games.poker.io.protocol.PlayerBalance;
-import com.cubeia.games.poker.io.protocol.PlayerDisconnectedPacket;
-import com.cubeia.games.poker.io.protocol.PlayerHandStartStatus;
-import com.cubeia.games.poker.io.protocol.PlayerPokerStatus;
-import com.cubeia.games.poker.io.protocol.PlayerReconnectedPacket;
-import com.cubeia.games.poker.io.protocol.PlayerSitinRequest;
-import com.cubeia.games.poker.io.protocol.PlayerSitoutRequest;
-import com.cubeia.games.poker.io.protocol.PlayerState;
-import com.cubeia.games.poker.io.protocol.PongPacket;
-import com.cubeia.games.poker.io.protocol.Pot;
-import com.cubeia.games.poker.io.protocol.PotTransfer;
-import com.cubeia.games.poker.io.protocol.PotTransfers;
-import com.cubeia.games.poker.io.protocol.RakeInfo;
-import com.cubeia.games.poker.io.protocol.RequestAction;
-import com.cubeia.games.poker.io.protocol.StartHandHistory;
-import com.cubeia.games.poker.io.protocol.StartNewHand;
-import com.cubeia.games.poker.io.protocol.StopHandHistory;
-import com.cubeia.games.poker.io.protocol.TakeBackUncalledBet;
-import com.cubeia.games.poker.io.protocol.TournamentOut;
+import com.cubeia.games.poker.io.protocol.*;
 
 public class DefaultPokerHandler implements PacketVisitor {
-	
-	public void visit(PerformAction packet) {}
-	
-	// -----  TO CLIENTS
-	@Override
-	public void visit(GameCard packet) {}
-	@Override
-	public void visit(DealPublicCards packet) {}
-	@Override
-	public void visit(DealPrivateCards packet) {}
-	@Override
-	public void visit(StartNewHand packet) {}
-	@Override
-	public void visit(ExposePrivateCards packet) {}
-	@Override
-	public void visit(HandEnd packet) {}
-	@Override
-	public void visit(BestHand packet) {}
-	@Override
-	public void visit(PlayerState packet) {}
-	@Override
-	public void visit(PlayerAction packet) {}
-	@Override
-	public void visit(RequestAction packet) {}
-	@Override
-	public void visit(DealerButton packet) {}
-	@Override
-    public void visit(StartHandHistory packet) {}
+
+    public void visit(PerformAction packet) {
+    }
+
+    // -----  TO CLIENTS
     @Override
-    public void visit(StopHandHistory packet) {}
+    public void visit(GameCard packet) {
+    }
+
     @Override
-    public void visit(TournamentOut packet) {}
+    public void visit(DealPublicCards packet) {
+    }
+
     @Override
-	public void visit(PlayerBalance packet) {}
+    public void visit(DealPrivateCards packet) {
+    }
+
     @Override
-    public void visit(Pot packet) {}
-	@Override
-	public void visit(PlayerSitinRequest packet) {}
-	@Override
-	public void visit(PlayerPokerStatus packet) {}
-	@Override
-	public void visit(PlayerSitoutRequest packet) {}
-	@Override
-	public void visit(CardToDeal packet) {}
-	@Override
-	public void visit(ExternalSessionInfoPacket packet) {}
-	@Override
-	public void visit(DeckInfo packet) {}
+    public void visit(StartNewHand packet) {
+    }
+
     @Override
-    public void visit(PotTransfer packet) {}
+    public void visit(ExposePrivateCards packet) {
+    }
+
     @Override
-    public void visit(PotTransfers packet) {}
+    public void visit(HandEnd packet) {
+    }
+
     @Override
-    public void visit(BuyInInfoRequest packet) {}
+    public void visit(BestHand packet) {
+    }
+
     @Override
-    public void visit(BuyInInfoResponse packet) {}
+    public void visit(PlayerState packet) {
+    }
+
     @Override
-    public void visit(BuyInRequest packet) {}
+    public void visit(PlayerAction packet) {
+    }
+
     @Override
-    public void visit(BuyInResponse packet) {}
+    public void visit(RequestAction packet) {
+    }
+
     @Override
-    public void visit(HandCanceled packet) {}
+    public void visit(DealerButton packet) {
+    }
+
     @Override
-    public void visit(RakeInfo packet) {}
-	@Override
-	public void visit(ErrorPacket packet) {}
-	@Override
-	public void visit(TakeBackUncalledBet packet) {}
-	@Override
-	public void visit(FuturePlayerAction packet) {}
-	@Override
-	public void visit(InformFutureAllowedActions packet) {}
-	@Override
-	public void visit(PlayerHandStartStatus packet) {}
-	@Override
-	public void visit(PlayerDisconnectedPacket packet) {}
-	@Override
-	public void visit(PlayerReconnectedPacket packet) {}
-	@Override
-	public void visit(PingPacket packet) {}
-	@Override
-	public void visit(PongPacket packet) {}
+    public void visit(StartHandHistory packet) {
+    }
+
+    @Override
+    public void visit(StopHandHistory packet) {
+    }
+
+    @Override
+    public void visit(TournamentOut packet) {
+    }
+
+    @Override
+    public void visit(PlayerBalance packet) {
+    }
+
+    @Override
+    public void visit(Pot packet) {
+    }
+
+    @Override
+    public void visit(PlayerSitinRequest packet) {
+    }
+
+    @Override
+    public void visit(PlayerPokerStatus packet) {
+    }
+
+    @Override
+    public void visit(PlayerSitoutRequest packet) {
+    }
+
+    @Override
+    public void visit(CardToDeal packet) {
+    }
+
+    @Override
+    public void visit(ExternalSessionInfoPacket packet) {
+    }
+
+    @Override
+    public void visit(DeckInfo packet) {
+    }
+
+    @Override
+    public void visit(PotTransfer packet) {
+    }
+
+    @Override
+    public void visit(PotTransfers packet) {
+    }
+
+    @Override
+    public void visit(BuyInInfoRequest packet) {
+    }
+
+    @Override
+    public void visit(BuyInInfoResponse packet) {
+    }
+
+    @Override
+    public void visit(BuyInRequest packet) {
+    }
+
+    @Override
+    public void visit(BuyInResponse packet) {
+    }
+
+    @Override
+    public void visit(HandCanceled packet) {
+    }
+
+    @Override
+    public void visit(RakeInfo packet) {
+    }
+
+    @Override
+    public void visit(ErrorPacket packet) {
+    }
+
+    @Override
+    public void visit(TakeBackUncalledBet packet) {
+    }
+
+    @Override
+    public void visit(FuturePlayerAction packet) {
+    }
+
+    @Override
+    public void visit(InformFutureAllowedActions packet) {
+    }
+
+    @Override
+    public void visit(PlayerHandStartStatus packet) {
+    }
+
+    @Override
+    public void visit(PlayerDisconnectedPacket packet) {
+    }
+
+    @Override
+    public void visit(PlayerReconnectedPacket packet) {
+    }
+
+    @Override
+    public void visit(PingPacket packet) {
+    }
+
+    @Override
+    public void visit(PongPacket packet) {
+    }
 }

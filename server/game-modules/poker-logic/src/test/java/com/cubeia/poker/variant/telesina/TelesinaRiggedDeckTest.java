@@ -1,17 +1,16 @@
 package com.cubeia.poker.variant.telesina;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.Rank;
+import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
-
-import com.cubeia.poker.hand.Card;
-import com.cubeia.poker.hand.Rank;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class TelesinaRiggedDeckTest {
 
@@ -27,9 +26,9 @@ public class TelesinaRiggedDeckTest {
         when(telesinaDeckUtil.calculateLowestRank(participants)).thenReturn(Rank.SEVEN);
         List<Card> vanillaCards = Arrays.asList(new Card("2H"), new Card("3H"), new Card("4H"));
         when(telesinaDeckUtil.createDeckCards(participants)).thenReturn(vanillaCards);
-        
+
         TelesinaRiggedDeck riggedDeck = new TelesinaRiggedDeck(telesinaDeckUtil, participants, riggedDeckString);
-        
+
         assertThat(riggedDeck.getAllCards().size(), is(3));
         assertThat(riggedDeck.isEmpty(), is(false));
         assertThat(riggedDeck.deal().makeCopyWithoutId(), is(card1));
@@ -37,5 +36,5 @@ public class TelesinaRiggedDeckTest {
         assertThat(riggedDeck.deal().makeCopyWithoutId(), is(card3));
         assertThat(riggedDeck.isEmpty(), is(true));
     }
-    
+
 }

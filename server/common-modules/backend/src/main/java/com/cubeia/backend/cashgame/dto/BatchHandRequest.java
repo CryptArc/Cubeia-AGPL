@@ -1,37 +1,37 @@
 package com.cubeia.backend.cashgame.dto;
 
+import com.cubeia.backend.cashgame.TableId;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.cubeia.backend.cashgame.TableId;
-
 @SuppressWarnings("serial")
 public class BatchHandRequest implements Serializable {
 
-	private final String handId;
-	private final TableId tableId;
-	private final List<HandResult> handResults;
-	private final Money totalRake;
-	
-	private long startTime;
-	private long endTime;
+    private final String handId;
+    private final TableId tableId;
+    private final List<HandResult> handResults;
+    private final Money totalRake;
 
-	public BatchHandRequest(String handId, TableId tableId, Money totalRake) {
-		this(handId, tableId, new LinkedList<HandResult>(), totalRake);
-	}
-	
-	public BatchHandRequest(String handId, TableId tableId, List<HandResult> handResults, Money totalRake) {
-		this.handId = handId;
-		this.tableId = tableId;
-		this.handResults = handResults;
-		this.totalRake = totalRake;
-	}
+    private long startTime;
+    private long endTime;
 
-	public void addHandResult(HandResult handResult) {
-		handResults.add(handResult);
-	}
+    public BatchHandRequest(String handId, TableId tableId, Money totalRake) {
+        this(handId, tableId, new LinkedList<HandResult>(), totalRake);
+    }
+
+    public BatchHandRequest(String handId, TableId tableId, List<HandResult> handResults, Money totalRake) {
+        this.handId = handId;
+        this.tableId = tableId;
+        this.handResults = handResults;
+        this.totalRake = totalRake;
+    }
+
+    public void addHandResult(HandResult handResult) {
+        handResults.add(handResult);
+    }
 
     public String getHandId() {
         return handId;

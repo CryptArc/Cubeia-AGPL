@@ -17,16 +17,6 @@
 
 package com.cubeia.games.poker.activator;
 
-import static com.cubeia.games.poker.activator.PokerActivator.ATTR_EXTERNAL_TABLE_ID;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Collections;
-
-import com.cubeia.games.poker.state.FirebaseState;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.cubeia.backend.cashgame.dto.AnnounceTableRequest;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
 import com.cubeia.backend.firebase.FirebaseCallbackFactory;
@@ -36,6 +26,7 @@ import com.cubeia.firebase.api.game.lobby.LobbyTableAttributeAccessor;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.lobby.LobbyPath;
 import com.cubeia.games.poker.lobby.PokerLobbyAttributes;
+import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.poker.PokerSettings;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.RakeSettings;
@@ -47,145 +38,156 @@ import com.cubeia.poker.timing.Timings;
 import com.cubeia.poker.variant.PokerVariant;
 import com.cubeia.poker.variant.telesina.TelesinaDeckUtil;
 import com.google.inject.Injector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Collections;
+
+import static com.cubeia.games.poker.activator.PokerActivator.ATTR_EXTERNAL_TABLE_ID;
 
 
 /**
  * Table Creator.
- * 
  *
  * @author Fredrik Johansson, Cubeia Ltd
  */
 public class PokerParticipant extends DefaultCreationParticipant {
-    
-	private static final TelesinaDeckUtil TELESINA_DECK_UTIL = new TelesinaDeckUtil();
+
+    private static final TelesinaDeckUtil TELESINA_DECK_UTIL = new TelesinaDeckUtil();
 
     @SuppressWarnings("unused")
-	private static Logger log = LoggerFactory.getLogger(PokerParticipant.class);
+    private static Logger log = LoggerFactory.getLogger(PokerParticipant.class);
 
-	public static final int GAME_ID = 1;
-	
-	// the minimum buy in as a multiple of ante.
-	private static final int MIN_BUY_IN_ANTE_MULTIPLIER = 10;
-	
-	// max buy in as a multiple of ante
-	private static final int MAX_BUY_IN_ANTE_MULTIPLIER = 100;
+    public static final int GAME_ID = 1;
 
-	/** Number of seats at the table */
-	private int seats = 10;
+    // the minimum buy in as a multiple of ante.
+    private static final int MIN_BUY_IN_ANTE_MULTIPLIER = 10;
 
-	/** Dummy domain for testing lobby tree */
-	private String domain = "A";
+    // max buy in as a multiple of ante
+    private static final int MAX_BUY_IN_ANTE_MULTIPLIER = 100;
 
-	private TimingProfile timingProfile = TimingFactory.getRegistry().getDefaultTimingProfile();
+    /**
+     * Number of seats at the table
+     */
+    private int seats = 10;
 
-	private Timings timing = Timings.DEFAULT;
+    /**
+     * Dummy domain for testing lobby tree
+     */
+    private String domain = "A";
 
-	private final int anteLevel;
-	
-	private final RNGProvider rngProvider;
+    private TimingProfile timingProfile = TimingFactory.getRegistry().getDefaultTimingProfile();
 
-	// FIXME: This is not good IoC practice *cough*
-	private Injector injector;
+    private Timings timing = Timings.DEFAULT;
 
-	private final PokerVariant variant;
+    private final int anteLevel;
 
-	// TODO: get rake settings from property/db
+    private final RNGProvider rngProvider;
+
+    // FIXME: This is not good IoC practice *cough*
+    private Injector injector;
+
+    private final PokerVariant variant;
+
+    // TODO: get rake settings from property/db
     public static final BigDecimal RAKE_FRACTION = new BigDecimal("0.01");
     public static final long RAKE_LIMIT = 500;
     public static final long RAKE_LIMIT_HEADS_UP = 150;
 
     private final CashGamesBackendContract cashGameBackendService;
 
-    
-	public PokerParticipant(int seats, String domain, int anteLevel, Timings timing, PokerVariant variant, 
-	    RNGProvider rngProvider, CashGamesBackendContract cashGameBackendService) {
-	    
-		super();
-		this.seats = seats;
-		this.domain = domain;
-		this.timing = timing;
-		this.anteLevel = anteLevel;
-		this.variant = variant;
+
+    public PokerParticipant(int seats, String domain, int anteLevel, Timings timing, PokerVariant variant,
+                            RNGProvider rngProvider, CashGamesBackendContract cashGameBackendService) {
+
+        super();
+        this.seats = seats;
+        this.domain = domain;
+        this.timing = timing;
+        this.anteLevel = anteLevel;
+        this.variant = variant;
         this.cashGameBackendService = cashGameBackendService;
-		this.timingProfile  = TimingFactory.getRegistry().getTimingProfile(timing);
-		this.rngProvider = rngProvider;
-	}
+        this.timingProfile = TimingFactory.getRegistry().getTimingProfile(timing);
+        this.rngProvider = rngProvider;
+    }
 
 
-	public LobbyPath getLobbyPath() {
-		LobbyPath path = new LobbyPath(GAME_ID, domain + "/" + variant.name());
-		return path;
-	}
+    public LobbyPath getLobbyPath() {
+        LobbyPath path = new LobbyPath(GAME_ID, domain + "/" + variant.name());
+        return path;
+    }
 
-	public void setInjector(Injector injector) {
-		this.injector = injector;
-	}
+    public void setInjector(Injector injector) {
+        this.injector = injector;
+    }
 
-	/* (non-Javadoc)
-	 * @see com.cubeia.firebase.api.game.activator.DefaultCreationParticipant#getLobbyPathForTable(com.cubeia.firebase.api.game.table.Table)
-	 */
-	@Override 
-	public LobbyPath getLobbyPathForTable(Table table) {
-		LobbyPath path = getLobbyPath();
-		path.setObjectId(table.getId());
-		return path;
-	}
+    /* (non-Javadoc)
+      * @see com.cubeia.firebase.api.game.activator.DefaultCreationParticipant#getLobbyPathForTable(com.cubeia.firebase.api.game.table.Table)
+      */
+    @Override
+    public LobbyPath getLobbyPathForTable(Table table) {
+        LobbyPath path = getLobbyPath();
+        path.setObjectId(table.getId());
+        return path;
+    }
 
-	@Override
-	public void tableCreated(Table table, LobbyTableAttributeAccessor acc) {
-		super.tableCreated(table, acc);
-		PokerState pokerState = injector.getInstance(PokerState.class);
+    @Override
+    public void tableCreated(Table table, LobbyTableAttributeAccessor acc) {
+        super.tableCreated(table, acc);
+        PokerState pokerState = injector.getInstance(PokerState.class);
 
-        PokerSettings settings = new PokerSettings(anteLevel, anteLevel * MIN_BUY_IN_ANTE_MULTIPLIER, anteLevel * MAX_BUY_IN_ANTE_MULTIPLIER, timingProfile, variant, 
-		    table.getPlayerSet().getSeatingMap().getNumberOfSeats(), BetStrategyName.NO_LIMIT, 
-		    new RakeSettings(RAKE_FRACTION, RAKE_LIMIT, RAKE_LIMIT_HEADS_UP), 
-		    Collections.<Serializable, Serializable>singletonMap(ATTR_EXTERNAL_TABLE_ID, "MOCK::" + table.getId()));
-		pokerState.init(rngProvider, settings);
-		pokerState.setAdapterState(new FirebaseState());
-		pokerState.setId(table.getId());
-		table.getGameState().setState(pokerState);
+        PokerSettings settings = new PokerSettings(anteLevel, anteLevel * MIN_BUY_IN_ANTE_MULTIPLIER, anteLevel * MAX_BUY_IN_ANTE_MULTIPLIER, timingProfile, variant,
+                table.getPlayerSet().getSeatingMap().getNumberOfSeats(), BetStrategyName.NO_LIMIT,
+                new RakeSettings(RAKE_FRACTION, RAKE_LIMIT, RAKE_LIMIT_HEADS_UP),
+                Collections.<Serializable, Serializable>singletonMap(ATTR_EXTERNAL_TABLE_ID, "MOCK::" + table.getId()));
+        pokerState.init(rngProvider, settings);
+        pokerState.setAdapterState(new FirebaseState());
+        pokerState.setId(table.getId());
+        table.getGameState().setState(pokerState);
 
-		acc.setIntAttribute(PokerLobbyAttributes.VISIBLE_IN_LOBBY.name(), 0);
-		acc.setStringAttribute(PokerLobbyAttributes.SPEED.name(), timing.name());
-		acc.setIntAttribute(PokerLobbyAttributes.BETTING_GAME_ANTE.name(), anteLevel);
-		acc.setStringAttribute(PokerLobbyAttributes.BETTING_GAME_BETTING_MODEL.name(), "NO_LIMIT");
-		acc.setStringAttribute(PokerLobbyAttributes.MONETARY_TYPE.name(), "REAL_MONEY");
-		acc.setStringAttribute(PokerLobbyAttributes.VARIANT.name(), variant.name());
-		acc.setIntAttribute(PokerLobbyAttributes.MIN_BUY_IN.name(), pokerState.getMinBuyIn());
-		acc.setIntAttribute(PokerLobbyAttributes.MAX_BUY_IN.name(), pokerState.getMaxBuyIn());
-		int deckSize = TELESINA_DECK_UTIL.createDeckCards(pokerState.getTableSize()).size();
-		acc.setIntAttribute(PokerLobbyAttributes.DECK_SIZE.name(), deckSize);
-		
-		FirebaseCallbackFactory callbackFactory = cashGameBackendService.getCallbackFactory();
-		AnnounceTableRequest announceRequest = new AnnounceTableRequest(table.getId());   // TODO: this should be the id from the table record
+        acc.setIntAttribute(PokerLobbyAttributes.VISIBLE_IN_LOBBY.name(), 0);
+        acc.setStringAttribute(PokerLobbyAttributes.SPEED.name(), timing.name());
+        acc.setIntAttribute(PokerLobbyAttributes.BETTING_GAME_ANTE.name(), anteLevel);
+        acc.setStringAttribute(PokerLobbyAttributes.BETTING_GAME_BETTING_MODEL.name(), "NO_LIMIT");
+        acc.setStringAttribute(PokerLobbyAttributes.MONETARY_TYPE.name(), "REAL_MONEY");
+        acc.setStringAttribute(PokerLobbyAttributes.VARIANT.name(), variant.name());
+        acc.setIntAttribute(PokerLobbyAttributes.MIN_BUY_IN.name(), pokerState.getMinBuyIn());
+        acc.setIntAttribute(PokerLobbyAttributes.MAX_BUY_IN.name(), pokerState.getMaxBuyIn());
+        int deckSize = TELESINA_DECK_UTIL.createDeckCards(pokerState.getTableSize()).size();
+        acc.setIntAttribute(PokerLobbyAttributes.DECK_SIZE.name(), deckSize);
+
+        FirebaseCallbackFactory callbackFactory = cashGameBackendService.getCallbackFactory();
+        AnnounceTableRequest announceRequest = new AnnounceTableRequest(table.getId());   // TODO: this should be the id from the table record
         cashGameBackendService.announceTable(announceRequest, callbackFactory.createAnnounceTableCallback(table));
-	}
+    }
 
-	@Override
-	public String getTableName(GameDefinition def, Table t) {
-		return variant.name() + "<"+t.getId()+">";
-	}
+    @Override
+    public String getTableName(GameDefinition def, Table t) {
+        return variant.name() + "<" + t.getId() + ">";
+    }
 
-	public int getSeats() {
-		return seats;
-	}
+    public int getSeats() {
+        return seats;
+    }
 
-	public void setSeats(int seats) {
-		this.seats = seats;
-	}
+    public void setSeats(int seats) {
+        this.seats = seats;
+    }
 
-	public String getDomain() {
-		return domain;
-	}
+    public String getDomain() {
+        return domain;
+    }
 
-	public void setDomain(String domain) {
-		this.domain = domain;
-	}
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
 
-	@Override
-	public String toString() {
-		return "PokerParticipant [seats=" + seats + ", domain=" + domain
-				+ ", timingProfile=" + timingProfile + ", timing=" + timing
-				+ ", anteLevel=" + anteLevel + ", variant=" + variant + "]";
-	}
+    @Override
+    public String toString() {
+        return "PokerParticipant [seats=" + seats + ", domain=" + domain
+                + ", timingProfile=" + timingProfile + ", timing=" + timing
+                + ", anteLevel=" + anteLevel + ", variant=" + variant + "]";
+    }
 }

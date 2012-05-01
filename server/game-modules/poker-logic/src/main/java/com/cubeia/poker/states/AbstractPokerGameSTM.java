@@ -22,23 +22,23 @@ import com.cubeia.poker.action.PokerAction;
 
 public abstract class AbstractPokerGameSTM implements PokerGameSTM {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public void timeout(PokerState context) {
-		throw new IllegalStateException(this + " is wrong state. Context: "+context);
-	}
-	
-	public void act(PokerAction action, PokerState pokerGame) {
-		throw new IllegalStateException("PokerState: "+pokerGame+" Action: "+action);
-	}
+    public void timeout(PokerState context) {
+        throw new IllegalStateException(this + " is wrong state. Context: " + context);
+    }
 
-	public String getStateDescription() {
-		return getClass().getName();
-	}
-	
-	@Override
-	public boolean isCurrentlyWaitingForPlayer(PokerState pokerGame, int playerId) {
-		return false;
-	}
-	
+    public void act(PokerAction action, PokerState pokerGame) {
+        throw new IllegalStateException("PokerState: " + pokerGame + " Action: " + action);
+    }
+
+    public String getStateDescription() {
+        return getClass().getName();
+    }
+
+    @Override
+    public boolean isCurrentlyWaitingForPlayer(PokerState pokerGame, int playerId) {
+        return false;
+    }
+
 }

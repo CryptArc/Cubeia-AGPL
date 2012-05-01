@@ -17,15 +17,6 @@
 
 package com.cubeia.poker.rounds.betting;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-
 import com.cubeia.poker.GameType;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.ActionRequest;
@@ -35,41 +26,55 @@ import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.variant.texasholdem.TexasHoldemFutureActionsCalculator;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class BettingRoundTimeoutTest {
 
-    @Mock private GameType telesina;
-    @Mock private PokerState state;
-    @Mock private PlayerToActCalculator playerToActCalculator;
-    @Mock private PokerPlayer player;
-    @Mock private ActionRequest actionRequest;
-    @Mock private ServerAdapter serverAdapter;
-	private BettingRound round;
+    @Mock
+    private GameType telesina;
+    @Mock
+    private PokerState state;
+    @Mock
+    private PlayerToActCalculator playerToActCalculator;
+    @Mock
+    private PokerPlayer player;
+    @Mock
+    private ActionRequest actionRequest;
+    @Mock
+    private ServerAdapter serverAdapter;
+    private BettingRound round;
 
-	@Before
-	public void setUp() throws Exception {
-	    MockitoAnnotations.initMocks(this);
-	    when(telesina.getState()).thenReturn(state);
-	    when(telesina.getServerAdapter()).thenReturn(serverAdapter);
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+        when(telesina.getState()).thenReturn(state);
+        when(telesina.getServerAdapter()).thenReturn(serverAdapter);
         round = new BettingRound(telesina, 0, playerToActCalculator, new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
-	}
+    }
 
     @Test
-	public void testMakeDefaultActionAndThenSitOutOnTimeout() {
+    public void testMakeDefaultActionAndThenSitOutOnTimeout() {
         int playerId = 1334;
         round.playerToAct = playerId;
         when(state.getPlayerInCurrentHand(playerId)).thenReturn(player);
         when(player.getId()).thenReturn(playerId);
         when(actionRequest.matches(Mockito.any(PokerAction.class))).thenReturn(true);
         when(player.getActionRequest()).thenReturn(actionRequest);
-        
+
         round.timeout();
-        
+
         verify(state).playerIsSittingOut(playerId, SitOutStatus.TIMEOUT);
         verify(serverAdapter).notifyActionPerformed(Mockito.any(PokerAction.class), Mockito.eq(player));
         verify(serverAdapter).notifyPlayerBalance(player);
         verify(player).setHasFolded(true);
 
-	}
-    
+    }
+
 }

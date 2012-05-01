@@ -17,27 +17,27 @@
 
 package mock;
 
+import com.cubeia.firebase.api.service.Contract;
+import com.cubeia.firebase.api.service.ServiceInfo;
+import com.cubeia.firebase.api.service.ServiceRegistry;
+
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.cubeia.firebase.api.service.Contract;
-import com.cubeia.firebase.api.service.ServiceInfo;
-import com.cubeia.firebase.api.service.ServiceRegistry;
-
 public class MockServiceRegistry implements ServiceRegistry {
 
-	@SuppressWarnings("rawtypes")
-	private Map<Class, Object> serviceMap = new HashMap<Class, Object>();
-	
-	public <T extends Contract> void addService(Class<T> contract, T service) {
-		serviceMap.put(contract, service);
-	}
-	
+    @SuppressWarnings("rawtypes")
+    private Map<Class, Object> serviceMap = new HashMap<Class, Object>();
+
+    public <T extends Contract> void addService(Class<T> contract, T service) {
+        serviceMap.put(contract, service);
+    }
+
     @SuppressWarnings("unchecked")
     public <T extends Contract> T getServiceInstance(Class<T> serviceClass) {
-    	return (T) serviceMap.get(serviceClass);
+        return (T) serviceMap.get(serviceClass);
     }
 
     public ServiceInfo getServiceInfo(String arg0) {
@@ -58,14 +58,14 @@ public class MockServiceRegistry implements ServiceRegistry {
 
     @Override
     public <T extends Annotation> List<ServiceInfo> listServicesByAnnotation(
-        Class<T> arg0) {
+            Class<T> arg0) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public <T extends Contract> List<ServiceInfo> listServicesByContract(
-        Class<T> arg0) {
+            Class<T> arg0) {
         // TODO Auto-generated method stub
         return null;
     }

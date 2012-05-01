@@ -26,30 +26,30 @@ import com.cubeia.poker.action.PokerActionType;
  * Integration test for poker logic.
  */
 public class BlindsLevelTest extends AbstractTexasHandTester {
-	
-	public void testSimpleHoldemHand() {
-		setAnteLevel(100);
-		MockPlayer[] mp = TestUtils.createMockPlayers(4);
-		int[] p = TestUtils.createPlayerIdArray(mp);
-		assertEquals(4, p.length);
-		addPlayers(state, mp);
-		assertEquals(4, state.getSeatedPlayers().size());
 
-		// Force start
-		state.timeout();
-		assertEquals(101, mockServerAdapter.getLastActionRequest().getPlayerId());
-		assertEquals(50, mockServerAdapter.getLastActionRequest().getOption(PokerActionType.SMALL_BLIND).getMinAmount());
-		assertEquals(50, mockServerAdapter.getLastActionRequest().getOption(PokerActionType.SMALL_BLIND).getMaxAmount());
+    public void testSimpleHoldemHand() {
+        setAnteLevel(100);
+        MockPlayer[] mp = TestUtils.createMockPlayers(4);
+        int[] p = TestUtils.createPlayerIdArray(mp);
+        assertEquals(4, p.length);
+        addPlayers(state, mp);
+        assertEquals(4, state.getSeatedPlayers().size());
 
-		// Blinds
-		act(p[1], PokerActionType.SMALL_BLIND);
+        // Force start
+        state.timeout();
+        assertEquals(101, mockServerAdapter.getLastActionRequest().getPlayerId());
+        assertEquals(50, mockServerAdapter.getLastActionRequest().getOption(PokerActionType.SMALL_BLIND).getMinAmount());
+        assertEquals(50, mockServerAdapter.getLastActionRequest().getOption(PokerActionType.SMALL_BLIND).getMaxAmount());
 
-		assertTrue(mp[2].isActionPossible(PokerActionType.BIG_BLIND));
-		assertEquals(102, mockServerAdapter.getLastActionRequest().getPlayerId());
-		assertEquals(100, mockServerAdapter.getLastActionRequest().getOption(PokerActionType.BIG_BLIND).getMinAmount());
-		assertEquals(100, mockServerAdapter.getLastActionRequest().getOption(PokerActionType.BIG_BLIND).getMaxAmount());
-		act(p[2], PokerActionType.BIG_BLIND);
-		
-	}
+        // Blinds
+        act(p[1], PokerActionType.SMALL_BLIND);
+
+        assertTrue(mp[2].isActionPossible(PokerActionType.BIG_BLIND));
+        assertEquals(102, mockServerAdapter.getLastActionRequest().getPlayerId());
+        assertEquals(100, mockServerAdapter.getLastActionRequest().getOption(PokerActionType.BIG_BLIND).getMinAmount());
+        assertEquals(100, mockServerAdapter.getLastActionRequest().getOption(PokerActionType.BIG_BLIND).getMaxAmount());
+        act(p[2], PokerActionType.BIG_BLIND);
+
+    }
 
 }

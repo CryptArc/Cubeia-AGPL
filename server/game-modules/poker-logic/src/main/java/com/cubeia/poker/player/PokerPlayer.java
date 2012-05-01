@@ -17,139 +17,147 @@
 
 package com.cubeia.poker.player;
 
-import java.io.Serializable;
-import java.util.Set;
-
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Hand;
 
+import java.io.Serializable;
+import java.util.Set;
+
 public interface PokerPlayer extends Serializable {
 
-	/**
-	 * Returns the players pocket cards. Note that this might
-	 * be a defensive copy and should NOT be modified.
-	 * Use {@link #addPocketCard(Card, boolean)} to add a card to the player's hand.
-	 * @return the player's hand, never null.
-	 */
-	public Hand getPocketCards();
-	
-	/**
-	 * Get the players pocket cards that are public (visible to all).
-	 * @return set of visible pocket cards, never null
-	 */
-	public Set<Card> getPublicPocketCards();
-	
-	/**
-	 * Get the players pocket cards that are private (only visible to player).
-	 * @return set of visible pocket cards, never null
-	 */
-	public Set<Card> getPrivatePocketCards();
-	
-	public void addPocketCard(Card card, boolean publicCard);
-	
-	public void clearHand();
-	
-	public boolean getSitOutNextRound();
-	
-	public void setSitOutNextRound(boolean b);
-	
-	/**
-	 * Gets the player's id.
-	 * @return
-	 */
-	public int getId();
-
-	public int getSeatId();
-
-	public long getBetStack();
-	
-	public void removeFromBetStack(long amount);
-
-	/**
-	 * Move amount from balance to betstack
-	 * @param amount the amount to move
-	 */
-	public void addBet(long amount);
-
-	public void clearActionRequest();
-
-	public void setActionRequest(ActionRequest possibleActions);
-
-	public ActionRequest getActionRequest();
-
-	public void setHasActed(boolean b);
-
-	public void setHasFolded(boolean b);
-
-	public boolean hasFolded();
-
-	public boolean hasActed();
-
-	public void setHasOption(boolean b);
-	
-	public boolean hasOption();
-
-	public void enableOption(PossibleAction option);
-
-	public void setSitOutStatus(SitOutStatus status);
-
-	public SitOutStatus getSitOutStatus();
-
-	public boolean hasPostedEntryBet();
-
-	public void setHasPostedEntryBet(boolean b);
-
-	public boolean isSittingOut();
-
-	public void clearBalance();
-	
-	public long getBalance();
-    
-    public void setStartingBalance(long startingBalance);
-    
-    public long getStartingBalance();
-	
-
-	/**
-	 * Adds (or removes) chips to the player's chip stack.
-	 * 
-	 * @param chips chips to add (positive) or remove (negative)
-	 */
-	public void addChips(long chips);
-	
-	public boolean isAllIn();
-	
-	public void sitIn();
+    /**
+     * Returns the players pocket cards. Note that this might
+     * be a defensive copy and should NOT be modified.
+     * Use {@link #addPocketCard(Card, boolean)} to add a card to the player's hand.
+     *
+     * @return the player's hand, never null.
+     */
+    public Hand getPocketCards();
 
     /**
-     * Returns the amount of currency that is not currently available 
+     * Get the players pocket cards that are public (visible to all).
+     *
+     * @return set of visible pocket cards, never null
+     */
+    public Set<Card> getPublicPocketCards();
+
+    /**
+     * Get the players pocket cards that are private (only visible to player).
+     *
+     * @return set of visible pocket cards, never null
+     */
+    public Set<Card> getPrivatePocketCards();
+
+    public void addPocketCard(Card card, boolean publicCard);
+
+    public void clearHand();
+
+    public boolean getSitOutNextRound();
+
+    public void setSitOutNextRound(boolean b);
+
+    /**
+     * Gets the player's id.
+     *
+     * @return
+     */
+    public int getId();
+
+    public int getSeatId();
+
+    public long getBetStack();
+
+    public void removeFromBetStack(long amount);
+
+    /**
+     * Move amount from balance to betstack
+     *
+     * @param amount the amount to move
+     */
+    public void addBet(long amount);
+
+    public void clearActionRequest();
+
+    public void setActionRequest(ActionRequest possibleActions);
+
+    public ActionRequest getActionRequest();
+
+    public void setHasActed(boolean b);
+
+    public void setHasFolded(boolean b);
+
+    public boolean hasFolded();
+
+    public boolean hasActed();
+
+    public void setHasOption(boolean b);
+
+    public boolean hasOption();
+
+    public void enableOption(PossibleAction option);
+
+    public void setSitOutStatus(SitOutStatus status);
+
+    public SitOutStatus getSitOutStatus();
+
+    public boolean hasPostedEntryBet();
+
+    public void setHasPostedEntryBet(boolean b);
+
+    public boolean isSittingOut();
+
+    public void clearBalance();
+
+    public long getBalance();
+
+    public void setStartingBalance(long startingBalance);
+
+    public long getStartingBalance();
+
+
+    /**
+     * Adds (or removes) chips to the player's chip stack.
+     *
+     * @param chips chips to add (positive) or remove (negative)
+     */
+    public void addChips(long chips);
+
+    public boolean isAllIn();
+
+    public void sitIn();
+
+    /**
+     * Returns the amount of currency that is not currently available
      * in the current hand but will be added to the {@link #getBalance()} when
      * the hand is finished.
      * This will be nonzero if a player does a buy in during a hand.
+     *
      * @return the pending balance
      */
     public long getBalanceNotInHand();
-	
+
     /**
      * Add the given amount to the balance outside the current hand.
+     *
      * @param amount amount to add
      */
     public void addNotInHandAmount(long amount);
-    
+
     /**
      * move the full amount in betstack to balance
      */
     public void returnBetstackToBalance();
-    
+
     /**
      * move the amount from betstack to balance
      */
     public void returnBetStackAmountToBalance(long amount);
-    
+
     /**
      * Adds the balance outside the hand to the ordinary balance.
+     *
      * @param maxBuyIn, the total resulting balance should not be higher than this
      * @return returns true if there was an non-zero balance committed
      */
@@ -157,54 +165,58 @@ public interface PokerPlayer extends Serializable {
 
     /**
      * Returns the sum of the balance not in hand and the requested buy ins.
+     *
      * @return the sum of requested and balance outside the current hand
      */
     public long getPendingBalanceSum();
-    
+
     public boolean isSitInAfterSuccessfulBuyIn();
 
     public void setSitInAfterSuccessfulBuyIn(boolean sitIn);
-    
-    /** 
+
+    /**
      * Get the timestamp for when the player was set as sitting out.
      * Will be null if the player is currently not in a sit out state.
-     * 
-     * @return UTC milliseconds or null 
+     *
+     * @return UTC milliseconds or null
      */
     public Long getSitOutTimestamp();
 
-	public boolean isExposingPocketCards();
+    public boolean isExposingPocketCards();
 
-	public void setExposingPocketCards(boolean b);
+    public void setExposingPocketCards(boolean b);
 
-	/**
-	 * Reset all hand/round specific flags to prepare player for a new hand.
-	 */
+    /**
+     * Reset all hand/round specific flags to prepare player for a new hand.
+     */
     public void resetBeforeNewHand();
-    
+
     public void setLastRaiseLevel(long amount);
-    
+
     public long getLastRaiseLevel();
 
-    /** 
+    /**
      * Returns the amount of requested buy ins for the player.
+     *
      * @return amount to buy in
      */
     long getRequestedBuyInAmount();
 
     /**
      * Add an amount to bring in when hand is finished.
-     * @param buyInAmount additional amount 
+     *
+     * @param buyInAmount additional amount
      */
     void addRequestedBuyInAmount(long buyInAmount);
-    
+
     /**
      * Set an amount to bring in when hand is finished.
+     *
      * @param amount the amount
      */
     void setRequestedBuyInAmount(long amount);
-    
-    
+
+
     /**
      * Clear the requested future buy in amount and request active flag.
      */
@@ -216,12 +228,12 @@ public interface PokerPlayer extends Serializable {
     public void buyInRequestActive();
 
     public boolean isBuyInRequestActive();
-    
+
     /**
      * @return true if the player has used up his available disconnect extra time
      */
     public boolean isDisconnectTimeoutUsed();
 
-	public void setDisconnectTimeoutUsed(boolean disconnectTimeoutUsed);
+    public void setDisconnectTimeoutUsed(boolean disconnectTimeoutUsed);
 
 }

@@ -17,19 +17,7 @@
 
 package com.cubeia.games.poker;
 
-import com.cubeia.games.poker.state.FirebaseState;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
-
-import com.cubeia.backend.cashgame.dto.AnnounceTableFailedResponse;
-import com.cubeia.backend.cashgame.dto.AnnounceTableResponse;
-import com.cubeia.backend.cashgame.dto.CloseTableRequest;
-import com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse;
-import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
-import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;
-import com.cubeia.backend.cashgame.dto.ReserveResponse;
+import com.cubeia.backend.cashgame.dto.*;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.action.GameObjectAction;
 import com.cubeia.firebase.api.game.GameProcessor;
@@ -40,17 +28,21 @@ import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.cache.ActionCache;
+import com.cubeia.games.poker.debugger.HandDebuggerContract;
 import com.cubeia.games.poker.handler.BackendCallHandler;
 import com.cubeia.games.poker.handler.PokerHandler;
 import com.cubeia.games.poker.handler.Trigger;
+import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
 import com.cubeia.games.poker.jmx.PokerStats;
 import com.cubeia.games.poker.logic.TimeoutCache;
-import com.cubeia.games.poker.debugger.HandDebuggerContract;
+import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.SystemShutdownException;
 import com.cubeia.poker.player.PokerPlayer;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -186,8 +178,8 @@ public class Processor implements GameProcessor, TournamentProcessor {
                 try {
                     GenericPlayer genericPlayer = table.getPlayerSet().getPlayer(player.getId());
                     handDebugger.updatePlayerInfo(table.getId(), player.getId(),
-                                                  genericPlayer.getName(), !player.isSittingOut(), player.getBalance(),
-                                                  player.getBetStack());
+                            genericPlayer.getName(), !player.isSittingOut(), player.getBalance(),
+                            player.getBetStack());
                 } catch (Exception e) {
                     log.warn("unable to fill out debug info for player: " + player.getId());
                 }
@@ -216,8 +208,8 @@ public class Processor implements GameProcessor, TournamentProcessor {
                 } else {
                     log.warn("Invalid sequence detected");
                     tableCloseHandler.printActionsToErrorLog(null,
-                                                             "Timeout command OOB: " + command + " on table: " + table,
-                                                             table);
+                            "Timeout command OOB: " + command + " on table: " + table,
+                            table);
                 }
                 break;
             case PLAYER_TIMEOUT:

@@ -24,7 +24,7 @@ public interface PokerTournamentActivator {
     void shutdownTournament(int mttInstanceId);
 
     void startTournament(int mttInstanceId);
-    
+
     void destroyTournament(int mttInstanceId);
 
 }

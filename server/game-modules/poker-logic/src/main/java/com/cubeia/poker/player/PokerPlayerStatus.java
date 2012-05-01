@@ -18,6 +18,6 @@
 package com.cubeia.poker.player;
 
 public enum PokerPlayerStatus {
-	SITIN,
-	SITOUT
+    SITIN,
+    SITOUT
 }

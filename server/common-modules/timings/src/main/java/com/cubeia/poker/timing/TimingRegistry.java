@@ -19,15 +19,15 @@ package com.cubeia.poker.timing;
 
 /**
  * A registry for returning timing definitions.
- * 
- * A Timing is a set of predefined pause/waiting times between 
- * events in the game. E.g. waitperiod between last call to new cards are 
+ * <p/>
+ * A Timing is a set of predefined pause/waiting times between
+ * events in the game. E.g. waitperiod between last call to new cards are
  * dealt.
- * 
+ * <p/>
  * My intentions are that we should eventually support different
- * sets of waiting period. This way we could support slow and express 
+ * sets of waiting period. This way we could support slow and express
  * tables, the difference is just what timing profile they use.
- * 
+ * <p/>
  * Currently I am only using a default definition. This is hardly
  * a prioritized task atm, but I think it nice to have a well defined
  * interface so it wont be such a pain to implement different time
@@ -36,22 +36,21 @@ package com.cubeia.poker.timing;
  * @author Fredrik Johansson, Cubeia Ltd
  */
 public interface TimingRegistry {
-	
-	/**
-	 * Get the default timing profile.
-	 * 
-	 * @return
-	 */
-	public TimingProfile getDefaultTimingProfile();
-	
-	/**
-	 * Get a timing profile based on the given profile.
-	 * 
-	 * @param profile
-	 * @return
-	 */
-	public TimingProfile getTimingProfile(Timings profile);
-	
-	
-	
+
+    /**
+     * Get the default timing profile.
+     *
+     * @return
+     */
+    public TimingProfile getDefaultTimingProfile();
+
+    /**
+     * Get a timing profile based on the given profile.
+     *
+     * @param profile
+     * @return
+     */
+    public TimingProfile getTimingProfile(Timings profile);
+
+
 }

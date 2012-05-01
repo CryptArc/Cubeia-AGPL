@@ -22,90 +22,89 @@ import com.cubeia.poker.player.PokerPlayer;
 
 public class PokerTournamentTest extends GuiceTest {
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		state.setTournamentTable(true);
-		state.setTournamentId(1);
-	}
-	
-	public void testTournamentHand() {
-		MockPlayer[] mp = TestUtils.createMockPlayers(4);
-		int[] p = TestUtils.createPlayerIdArray(mp);
-		assertEquals(4, p.length);
-		TestUtils.addPlayers(state, mp);
-		assertEquals(4, state.getSeatedPlayers().size());
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        state.setTournamentTable(true);
+        state.setTournamentId(1);
+    }
 
-		// Force start
-		state.startHand();
+    public void testTournamentHand() {
+        MockPlayer[] mp = TestUtils.createMockPlayers(4);
+        int[] p = TestUtils.createPlayerIdArray(mp);
+        assertEquals(4, p.length);
+        TestUtils.addPlayers(state, mp);
+        assertEquals(4, state.getSeatedPlayers().size());
 
-		// Blinds are auto.
-		state.timeout();
-		state.timeout();
+        // Force start
+        state.startHand();
 
-		assertAllPlayersHaveCards(mp, 2);
+        // Blinds are auto.
+        state.timeout();
+        state.timeout();
 
-		assertEquals(0, state.getCommunityCards().size());
+        assertAllPlayersHaveCards(mp, 2);
 
-		// Check that tournament players don't sit out.
-		state.timeout();
-		state.timeout();
-		state.timeout();
-		
-		assertTrue(state.isFinished());
-		
-		// Next round starts
-		state.startHand();
-		assertAllPlayersHaveCards(mp, 0);
+        assertEquals(0, state.getCommunityCards().size());
 
-		// Blinds
-		state.timeout();
-		state.timeout();
-		
-		assertAllPlayersHaveCards(mp, 2);
-		
-		// No response again.
-		state.timeout();
-		state.timeout();
-		state.timeout();
-		
-		assertTrue(state.isFinished());		
-	}
-	
-	public void testBigBlindMovedFromTheTable() {
-		MockPlayer[] mp = TestUtils.createMockPlayers(4);
-		int[] p = TestUtils.createPlayerIdArray(mp);
-		assertEquals(4, p.length);
-		TestUtils.addPlayers(state, mp);
+        // Check that tournament players don't sit out.
+        state.timeout();
+        state.timeout();
+        state.timeout();
 
-		
-		
-		// Force start
-		state.startHand();
+        assertTrue(state.isFinished());
 
-		// Blinds are auto.
-		state.timeout();
-		state.timeout();
+        // Next round starts
+        state.startHand();
+        assertAllPlayersHaveCards(mp, 0);
 
-		// Check that tournament players don't sit out.
-		TestUtils.act(state, p[3], PokerActionType.FOLD);
-		TestUtils.act(state, p[0], PokerActionType.FOLD);
-		TestUtils.act(state, p[1], PokerActionType.FOLD);
-		
-		state.removePlayer(p[2]);
-		
-		state.startHand();
-		
-		// P3 should post bb here.
-		state.timeout();
+        // Blinds
+        state.timeout();
+        state.timeout();
 
-		// Check that p0 is up to act
-		assertEquals(mp[0].getId(), mockServerAdapter.getLastActionRequest().getPlayerId());
-	}	
-	
-	public void assertAllPlayersHaveCards(PokerPlayer[] p, int expectedNumberOfCards) {
-		for (PokerPlayer pl : p) {
-			assertEquals(expectedNumberOfCards, pl.getPocketCards().getCards().size());
-		}
-	}	
+        assertAllPlayersHaveCards(mp, 2);
+
+        // No response again.
+        state.timeout();
+        state.timeout();
+        state.timeout();
+
+        assertTrue(state.isFinished());
+    }
+
+    public void testBigBlindMovedFromTheTable() {
+        MockPlayer[] mp = TestUtils.createMockPlayers(4);
+        int[] p = TestUtils.createPlayerIdArray(mp);
+        assertEquals(4, p.length);
+        TestUtils.addPlayers(state, mp);
+
+
+        // Force start
+        state.startHand();
+
+        // Blinds are auto.
+        state.timeout();
+        state.timeout();
+
+        // Check that tournament players don't sit out.
+        TestUtils.act(state, p[3], PokerActionType.FOLD);
+        TestUtils.act(state, p[0], PokerActionType.FOLD);
+        TestUtils.act(state, p[1], PokerActionType.FOLD);
+
+        state.removePlayer(p[2]);
+
+        state.startHand();
+
+        // P3 should post bb here.
+        state.timeout();
+
+        // Check that p0 is up to act
+        assertEquals(mp[0].getId(), mockServerAdapter.getLastActionRequest().getPlayerId());
+    }
+
+    public void assertAllPlayersHaveCards(PokerPlayer[] p, int expectedNumberOfCards) {
+        for (PokerPlayer pl : p) {
+            assertEquals(expectedNumberOfCards, pl.getPocketCards().getCards().size());
+        }
+    }
 }

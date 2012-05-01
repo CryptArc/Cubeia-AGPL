@@ -1,25 +1,26 @@
 package mock;
 
+import com.cubeia.firebase.api.util.UnmodifiableSet;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import com.cubeia.firebase.api.util.UnmodifiableSet;
-
 /**
  * Testable implementation of a Firebase unmodifiable set.
+ *
  * @author w
  */
-public final class UnmongofiableSet <T> implements UnmodifiableSet<T> {
+public final class UnmongofiableSet<T> implements UnmodifiableSet<T> {
     private final Set<T> set;
 
     public UnmongofiableSet(Collection<T> collection) {
         this.set = new HashSet<T>(collection);
     }
-    
+
     public UnmongofiableSet() {
-    	this.set = new HashSet<T>();
+        this.set = new HashSet<T>();
     }
 
     @Override

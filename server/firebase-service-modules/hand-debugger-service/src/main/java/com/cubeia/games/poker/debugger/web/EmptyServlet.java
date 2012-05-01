@@ -1,11 +1,10 @@
 package com.cubeia.games.poker.debugger.web;
 
-import java.io.IOException;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * An Empty, "do nothing servlet" to add to the context. Otherwise, the filters

@@ -19,10 +19,10 @@ package com.cubeia.poker.states;
 
 public class NotStartedSTM extends AbstractPokerGameSTM {
 
-	private static final long serialVersionUID = -1675095508189680830L;
+    private static final long serialVersionUID = -1675095508189680830L;
 
-	public String toString() {
-	    return "NotStartedState";
-	}
+    public String toString() {
+        return "NotStartedState";
+    }
 
 }

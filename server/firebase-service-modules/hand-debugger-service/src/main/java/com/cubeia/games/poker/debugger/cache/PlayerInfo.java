@@ -1,16 +1,15 @@
 package com.cubeia.games.poker.debugger.cache;
 
-import java.util.Date;
-
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
+
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Date;
 
 @XmlRootElement
 @JsonSerialize(include = Inclusion.NON_NULL)
 public class PlayerInfo {
-    
+
     private final int tableId;
     private final int playerId;
     private final String name;
@@ -60,8 +59,8 @@ public class PlayerInfo {
     @Override
     public String toString() {
         return "PlayerInfo [tableId=" + tableId + ", playerId=" + playerId + ", name=" + name + ", isSittingIn="
-            + isSittingIn + ", balance=" + balance + ", betstack=" + betstack + ", timestamp=" + timestamp + "]";
+                + isSittingIn + ", balance=" + balance + ", betstack=" + betstack + ", timestamp=" + timestamp + "]";
     }
-    
-    
+
+
 }

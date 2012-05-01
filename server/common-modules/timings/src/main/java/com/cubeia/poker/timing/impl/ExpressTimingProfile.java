@@ -22,12 +22,12 @@ import com.cubeia.poker.timing.TimingProfile;
 
 public class ExpressTimingProfile implements TimingProfile {
 
-	private static final long serialVersionUID = 4317305784161455439L;
+    private static final long serialVersionUID = 4317305784161455439L;
 
-	public String toString() {
+    public String toString() {
         return "ExpressTimingProfile";
     }
-    
+
     public long getTime(Periods period) {
         switch (period) {
             case POCKET_CARDS:
@@ -45,9 +45,9 @@ public class ExpressTimingProfile implements TimingProfile {
             case AUTO_POST_BLIND_DELAY:
                 return 200;
             case LATENCY_GRACE_PERIOD:
-				return 500;
-			case DISCONNECT_EXTRA_TIME:
-				return 3*5000;
+                return 500;
+            case DISCONNECT_EXTRA_TIME:
+                return 3 * 5000;
             default:
                 return 800;
         }

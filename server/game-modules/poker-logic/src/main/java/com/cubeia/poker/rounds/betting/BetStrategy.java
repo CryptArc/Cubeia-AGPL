@@ -17,30 +17,30 @@
 
 package com.cubeia.poker.rounds.betting;
 
-import java.io.Serializable;
-
 import com.cubeia.poker.player.PokerPlayer;
+
+import java.io.Serializable;
 
 /**
  * Bet strategy for deciding what the min and max bets are, given the situation.
- * 
+ * <p/>
  * For fixed limit, we need to know:
  * 1. Min bet (will vary between rounds)
- * 2. Player to act's current bet stack and total stack 
+ * 2. Player to act's current bet stack and total stack
  * 3. The number of bets and raises
  * 4. The max number of bets and raises allowed (usually 4)
  */
 public interface BetStrategy extends Serializable {
 
-	public long getMinRaiseToAmount(BettingRoundContext bettingRoundContext, PokerPlayer player);
+    public long getMinRaiseToAmount(BettingRoundContext bettingRoundContext, PokerPlayer player);
 
-	public long getMaxRaiseToAmount(BettingRoundContext bettingRoundContext, PokerPlayer player);
+    public long getMaxRaiseToAmount(BettingRoundContext bettingRoundContext, PokerPlayer player);
 
-	public long getMinBetAmount(BettingRoundContext bettingRoundContext, PokerPlayer player);
+    public long getMinBetAmount(BettingRoundContext bettingRoundContext, PokerPlayer player);
 
-	public long getMaxBetAmount(BettingRoundContext bettingRoundContext, PokerPlayer player);
+    public long getMaxBetAmount(BettingRoundContext bettingRoundContext, PokerPlayer player);
 
-	public long getCallAmount(BettingRoundContext bettingRoundContext, PokerPlayer player);
+    public long getCallAmount(BettingRoundContext bettingRoundContext, PokerPlayer player);
 
 
 }

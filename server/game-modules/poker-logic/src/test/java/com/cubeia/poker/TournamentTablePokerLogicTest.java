@@ -28,186 +28,186 @@ import com.cubeia.poker.player.PokerPlayer;
  */
 public class TournamentTablePokerLogicTest extends GuiceTest {
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-	
-	public void testAddPlayerInTheMiddleOfHand() {
-	    state.setTournamentTable(true);
-		MockPlayer[] mp = TestUtils.createMockPlayers(4, 500);
-		int[] p = TestUtils.createPlayerIdArray(mp);
-		assertEquals(4, p.length);
-		addPlayers(state, mp, 4);
-		assertEquals(4, state.getSeatedPlayers().size());
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+    }
 
-		// Force start
-		state.startHand();
+    public void testAddPlayerInTheMiddleOfHand() {
+        state.setTournamentTable(true);
+        MockPlayer[] mp = TestUtils.createMockPlayers(4, 500);
+        int[] p = TestUtils.createPlayerIdArray(mp);
+        assertEquals(4, p.length);
+        addPlayers(state, mp, 4);
+        assertEquals(4, state.getSeatedPlayers().size());
 
-		// Blinds
-		state.timeout();
-		state.timeout();
-		assertTrue(mp[2].hasOption());
-		assertAllPlayersHaveCards(mp, 2, 4);
+        // Force start
+        state.startHand();
 
-		assertEquals(0, state.getCommunityCards().size());
+        // Blinds
+        state.timeout();
+        state.timeout();
+        assertTrue(mp[2].hasOption());
+        assertAllPlayersHaveCards(mp, 2, 4);
 
-		// Pre flop round
-		assertEquals(103, mockServerAdapter.getLastActionRequest().getPlayerId());
-		act(PokerActionType.CALL);
-		assertTrue(mp[3].hasActed());
-		assertEquals(100, mockServerAdapter.getLastActionRequest().getPlayerId());
-		act(PokerActionType.CALL);
-		act(PokerActionType.CALL);
-		act(PokerActionType.CHECK);
+        assertEquals(0, state.getCommunityCards().size());
 
-		// Trigger deal community cards
-		state.timeout();
-		
-		assertEquals(3, state.getCommunityCards().size());
+        // Pre flop round
+        assertEquals(103, mockServerAdapter.getLastActionRequest().getPlayerId());
+        act(PokerActionType.CALL);
+        assertTrue(mp[3].hasActed());
+        assertEquals(100, mockServerAdapter.getLastActionRequest().getPlayerId());
+        act(PokerActionType.CALL);
+        act(PokerActionType.CALL);
+        act(PokerActionType.CHECK);
 
-		// Player joins in the middle of the hand.
-		MockPlayer p5 = new MockPlayer(5);
-		p5.setSeatId(5);		
-		p5.setBalance(500);
-		state.addPlayer(p5);
-		
-		// Check that we still only have 4 players.
-		assertEquals(4, state.getCurrentHandPlayerMap().size());
-		
-		// Flop round
-		act(PokerActionType.BET);
-		act(PokerActionType.CALL);
-		act(PokerActionType.CALL);
-		act(PokerActionType.CALL);
+        // Trigger deal community cards
+        state.timeout();
 
-		// Trigger deal community cards
-		state.timeout();
-		assertEquals(4, state.getCommunityCards().size());
-		
-		// Turn round
-		act(PokerActionType.CHECK);
-		act(PokerActionType.BET);
-		act(PokerActionType.FOLD);
-		act(PokerActionType.FOLD);
-		act(PokerActionType.CALL);
+        assertEquals(3, state.getCommunityCards().size());
 
-		// Trigger deal community cards
-		state.timeout();
-		assertEquals(5, state.getCommunityCards().size());
+        // Player joins in the middle of the hand.
+        MockPlayer p5 = new MockPlayer(5);
+        p5.setSeatId(5);
+        p5.setBalance(500);
+        state.addPlayer(p5);
 
-		// River round
-		act(PokerActionType.CHECK);
-		act(PokerActionType.BET);
-		act(PokerActionType.FOLD);
+        // Check that we still only have 4 players.
+        assertEquals(4, state.getCurrentHandPlayerMap().size());
 
-		// Assertions
-		assertTrue(state.isFinished());
-		
-		// Start next hand.
-		state.startHand();
-		
-		// Check that we now have 5 players
-		assertEquals(5, state.getSeatedPlayers().size());
-		assertEquals(5, state.getCurrentHandSeatingMap().size());
-		
-		// Auto blinds, as usual
-		state.timeout();
-		state.timeout();
-		
-		// Run next hand
-		act(PokerActionType.FOLD);
-		act(PokerActionType.FOLD);
-		act(PokerActionType.FOLD);
-		act(PokerActionType.FOLD);
-		
-		assertTrue(state.isFinished());
-		
-		// Still 5 players.
-		assertEquals(5, state.getSeatedPlayers().size());
-		assertEquals(5, state.getCurrentHandSeatingMap().size());
-	}
-	
-	public void testSitAndLeave() {
-		MockPlayer[] mp = TestUtils.createMockPlayers(4);
-		int[] p = TestUtils.createPlayerIdArray(mp);
-		assertEquals(4, p.length);
-		addPlayers(state, mp, 4);
-		assertEquals(4, state.getSeatedPlayers().size());
+        // Flop round
+        act(PokerActionType.BET);
+        act(PokerActionType.CALL);
+        act(PokerActionType.CALL);
+        act(PokerActionType.CALL);
 
-		// Force start
-		state.timeout();
+        // Trigger deal community cards
+        state.timeout();
+        assertEquals(4, state.getCommunityCards().size());
 
-		// Blinds
-		act(PokerActionType.SMALL_BLIND);
+        // Turn round
+        act(PokerActionType.CHECK);
+        act(PokerActionType.BET);
+        act(PokerActionType.FOLD);
+        act(PokerActionType.FOLD);
+        act(PokerActionType.CALL);
 
-		assertTrue(mp[2].isActionPossible(PokerActionType.BIG_BLIND));
-		assertEquals(102, mockServerAdapter.getLastActionRequest().getPlayerId());
-		act(PokerActionType.BIG_BLIND);
-		
-		assertTrue(mp[2].hasOption());
-		assertAllPlayersHaveCards(mp, 2, 4);
+        // Trigger deal community cards
+        state.timeout();
+        assertEquals(5, state.getCommunityCards().size());
 
-		assertEquals(0, state.getCommunityCards().size());
+        // River round
+        act(PokerActionType.CHECK);
+        act(PokerActionType.BET);
+        act(PokerActionType.FOLD);
 
-		// Pre flop round
-		assertEquals(103, mockServerAdapter.getLastActionRequest().getPlayerId());
-		act(PokerActionType.CALL);
-		assertTrue(mp[3].hasActed());
-		assertEquals(100, mockServerAdapter.getLastActionRequest().getPlayerId());
-		act(PokerActionType.CALL);
-		act(PokerActionType.CALL);
-		act(PokerActionType.CHECK);
+        // Assertions
+        assertTrue(state.isFinished());
 
-		// Trigger deal community cards
-		state.timeout();
-		assertEquals(3, state.getCommunityCards().size());
+        // Start next hand.
+        state.startHand();
 
-		// Player joins in the middle of the hand.
-		MockPlayer p5 = new MockPlayer(5);
-		p5.setSeatId(5);		
-		state.addPlayer(p5);
-		
-		// Check that we still only have 4 players.
-		assertEquals(5, state.getSeatedPlayers().size());
-		assertEquals(4, state.getCurrentHandSeatingMap().size());
-		
-		state.removePlayer(p5.getId());
-		assertEquals(4, state.getSeatedPlayers().size());
-	}
-	
-	public void testSmallBlindTimeoutOnTournamentTable() {
-	    state.setTournamentTable(true);
+        // Check that we now have 5 players
+        assertEquals(5, state.getSeatedPlayers().size());
+        assertEquals(5, state.getCurrentHandSeatingMap().size());
+
+        // Auto blinds, as usual
+        state.timeout();
+        state.timeout();
+
+        // Run next hand
+        act(PokerActionType.FOLD);
+        act(PokerActionType.FOLD);
+        act(PokerActionType.FOLD);
+        act(PokerActionType.FOLD);
+
+        assertTrue(state.isFinished());
+
+        // Still 5 players.
+        assertEquals(5, state.getSeatedPlayers().size());
+        assertEquals(5, state.getCurrentHandSeatingMap().size());
+    }
+
+    public void testSitAndLeave() {
+        MockPlayer[] mp = TestUtils.createMockPlayers(4);
+        int[] p = TestUtils.createPlayerIdArray(mp);
+        assertEquals(4, p.length);
+        addPlayers(state, mp, 4);
+        assertEquals(4, state.getSeatedPlayers().size());
+
+        // Force start
+        state.timeout();
+
+        // Blinds
+        act(PokerActionType.SMALL_BLIND);
+
+        assertTrue(mp[2].isActionPossible(PokerActionType.BIG_BLIND));
+        assertEquals(102, mockServerAdapter.getLastActionRequest().getPlayerId());
+        act(PokerActionType.BIG_BLIND);
+
+        assertTrue(mp[2].hasOption());
+        assertAllPlayersHaveCards(mp, 2, 4);
+
+        assertEquals(0, state.getCommunityCards().size());
+
+        // Pre flop round
+        assertEquals(103, mockServerAdapter.getLastActionRequest().getPlayerId());
+        act(PokerActionType.CALL);
+        assertTrue(mp[3].hasActed());
+        assertEquals(100, mockServerAdapter.getLastActionRequest().getPlayerId());
+        act(PokerActionType.CALL);
+        act(PokerActionType.CALL);
+        act(PokerActionType.CHECK);
+
+        // Trigger deal community cards
+        state.timeout();
+        assertEquals(3, state.getCommunityCards().size());
+
+        // Player joins in the middle of the hand.
+        MockPlayer p5 = new MockPlayer(5);
+        p5.setSeatId(5);
+        state.addPlayer(p5);
+
+        // Check that we still only have 4 players.
+        assertEquals(5, state.getSeatedPlayers().size());
+        assertEquals(4, state.getCurrentHandSeatingMap().size());
+
+        state.removePlayer(p5.getId());
+        assertEquals(4, state.getSeatedPlayers().size());
+    }
+
+    public void testSmallBlindTimeoutOnTournamentTable() {
+        state.setTournamentTable(true);
         MockPlayer[] mp = TestUtils.createMockPlayers(2);
         addPlayers(state, mp, 2);
 
         // Force start
         state.startHand();
-        
+
         state.timeout();
         state.timeout();
         assertEquals(2, mockServerAdapter.getTimeoutRequests());
-        
-        assertFalse(mockServerAdapter.getLastActionRequest().isOptionEnabled(PokerActionType.BIG_BLIND));
-    }   
-	
-	private void assertAllPlayersHaveCards(PokerPlayer[] p, int expectedNumberOfCards, int count) {
-	    for (int i = 0; i < count; i++) {
-			assertEquals(expectedNumberOfCards, p[i].getPocketCards().getCards().size());
-		}
-	}
 
-	private void addPlayers(PokerState game, PokerPlayer[] p, int count) {
-		for (int i = 0; i < count; i++) {
-			game.addPlayer(p[i]);
-		}
-	}
-	
-	private void act(PokerActionType choice) {
-		ActionRequest request = mockServerAdapter.getLastActionRequest();
-		PossibleAction option = request.getOption(choice);
-		PokerAction action = new PokerAction(request.getPlayerId(), choice, option.getMinAmount());
-		state.act(action);
-	}	
+        assertFalse(mockServerAdapter.getLastActionRequest().isOptionEnabled(PokerActionType.BIG_BLIND));
+    }
+
+    private void assertAllPlayersHaveCards(PokerPlayer[] p, int expectedNumberOfCards, int count) {
+        for (int i = 0; i < count; i++) {
+            assertEquals(expectedNumberOfCards, p[i].getPocketCards().getCards().size());
+        }
+    }
+
+    private void addPlayers(PokerState game, PokerPlayer[] p, int count) {
+        for (int i = 0; i < count; i++) {
+            game.addPlayer(p[i]);
+        }
+    }
+
+    private void act(PokerActionType choice) {
+        ActionRequest request = mockServerAdapter.getLastActionRequest();
+        PossibleAction option = request.getOption(choice);
+        PokerAction action = new PokerAction(request.getPlayerId(), choice, option.getMinAmount());
+        state.act(action);
+    }
 
 }

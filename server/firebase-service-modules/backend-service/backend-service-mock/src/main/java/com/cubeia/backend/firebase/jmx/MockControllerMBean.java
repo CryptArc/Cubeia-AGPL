@@ -19,9 +19,9 @@ package com.cubeia.backend.firebase.jmx;
 
 
 public interface MockControllerMBean {
-    
+
     void closeTableByGameIdAndTableId(int gameId, int tableId);
 
     void closeTableHintByGameIdAndTableId(int gameId, int tableId);
-    
+
 }

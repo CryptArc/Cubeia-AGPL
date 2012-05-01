@@ -30,23 +30,24 @@ public class TournamentConfiguration implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Integer id;
-    
+
     private String name;
-    
+
     private TournamentStartType startType = TournamentStartType.SIT_AND_GO;
-    
+
     private int seatsPerTable = 10;
-    
+
     private int timingType = 0;
-    
+
     private int minPlayers = 0;
-    
+
     private int maxPlayers = 0;
-    
-    public TournamentConfiguration() {}
-    
+
+    public TournamentConfiguration() {
+    }
+
     public String toString() {
-        return "id["+id+"] name["+name+"] startType["+startType+"] seats["+seatsPerTable+"] timing["+timingType+"] min["+minPlayers+"] max["+maxPlayers+"] ";
+        return "id[" + id + "] name[" + name + "] startType[" + startType + "] seats[" + seatsPerTable + "] timing[" + timingType + "] min[" + minPlayers + "] max[" + maxPlayers + "] ";
     }
 
     public Integer getId() {
@@ -104,7 +105,6 @@ public class TournamentConfiguration implements Serializable {
     public void setMaxPlayers(int maxPlayer) {
         this.maxPlayers = maxPlayer;
     }
-    
-    
-    
+
+
 }

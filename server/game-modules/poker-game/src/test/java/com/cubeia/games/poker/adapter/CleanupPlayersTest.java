@@ -1,54 +1,61 @@
 package com.cubeia.games.poker.adapter;
 
-import static com.cubeia.firebase.api.game.player.PlayerStatus.CONNECTED;
-import static com.cubeia.firebase.api.game.player.PlayerStatus.DISCONNECTED;
-import static com.cubeia.firebase.api.game.player.PlayerStatus.LEAVING;
-import static java.util.Arrays.asList;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
-
-import java.util.Arrays;
-import java.util.Collection;
-
-import com.cubeia.games.poker.state.FirebaseState;
-import mock.UnmongofiableSet;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-
 import com.cubeia.firebase.api.game.player.GenericPlayer;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TableMetaData;
 import com.cubeia.firebase.api.game.table.TablePlayerSet;
 import com.cubeia.firebase.api.game.table.TableType;
 import com.cubeia.firebase.api.util.UnmodifiableSet;
+import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.poker.PokerSettings;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.sitout.SitoutCalculator;
+import mock.UnmongofiableSet;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+
+import java.util.Arrays;
+import java.util.Collection;
+
+import static com.cubeia.firebase.api.game.player.PlayerStatus.*;
+import static java.util.Arrays.asList;
+import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 public class CleanupPlayersTest {
 
-    @Mock private Table table;
-    @Mock private TableMetaData tableMetaData;
-    @Mock private TablePlayerSet tablePlayerSet;
-    @Mock private PokerState state;
-    @Mock private SitoutCalculator sitoutCalculator;
-    @Mock private GenericPlayer genericPlayer1;
-    @Mock private GenericPlayer genericPlayer2;
-    @Mock private GenericPlayer genericPlayer3;
-    @Mock private PokerPlayer pokerPlayer1;
-    @Mock private PokerPlayer pokerPlayer2;
-    @Mock private PokerPlayer pokerPlayer3;
-    @Mock private FirebaseState firebaseState;
-    @Mock private LobbyUpdater lobbyUpdater;
-    @Mock private PlayerUnseater playerUnseater;
-    
+    @Mock
+    private Table table;
+    @Mock
+    private TableMetaData tableMetaData;
+    @Mock
+    private TablePlayerSet tablePlayerSet;
+    @Mock
+    private PokerState state;
+    @Mock
+    private SitoutCalculator sitoutCalculator;
+    @Mock
+    private GenericPlayer genericPlayer1;
+    @Mock
+    private GenericPlayer genericPlayer2;
+    @Mock
+    private GenericPlayer genericPlayer3;
+    @Mock
+    private PokerPlayer pokerPlayer1;
+    @Mock
+    private PokerPlayer pokerPlayer2;
+    @Mock
+    private PokerPlayer pokerPlayer3;
+    @Mock
+    private FirebaseState firebaseState;
+    @Mock
+    private LobbyUpdater lobbyUpdater;
+    @Mock
+    private PlayerUnseater playerUnseater;
+
     private FirebaseServerAdapter firebaseServerAdapter = new FirebaseServerAdapter();
     private int player1Id = 1001;
     private int player2Id = 1002;
@@ -61,24 +68,24 @@ public class CleanupPlayersTest {
         firebaseServerAdapter.state = state;
         firebaseServerAdapter.playerUnseater = playerUnseater;
         firebaseServerAdapter.lobbyUpdater = lobbyUpdater;
-        
+
         when(genericPlayer1.getPlayerId()).thenReturn(player1Id);
         when(genericPlayer2.getPlayerId()).thenReturn(player2Id);
         when(genericPlayer3.getPlayerId()).thenReturn(player3Id);
-        
+
         when(state.getPokerPlayer(player1Id)).thenReturn(pokerPlayer1);
         when(state.getPokerPlayer(player2Id)).thenReturn(pokerPlayer2);
         when(state.getPokerPlayer(player3Id)).thenReturn(pokerPlayer3);
-        
+
         when(state.getAdapterState()).thenReturn(firebaseState);
         PokerSettings pokerSettings = mock(PokerSettings.class);
         when(state.getSettings()).thenReturn(pokerSettings);
         when(table.getMetaData()).thenReturn(tableMetaData);
-        
+
         when(tableMetaData.getType()).thenReturn(TableType.NORMAL);
         when(table.getPlayerSet()).thenReturn(tablePlayerSet);
         UnmodifiableSet<GenericPlayer> players = new UnmongofiableSet<GenericPlayer>(
-            asList(genericPlayer1, genericPlayer2, genericPlayer3));
+                asList(genericPlayer1, genericPlayer2, genericPlayer3));
         when(tablePlayerSet.getPlayers()).thenReturn(players);
     }
 
@@ -87,15 +94,15 @@ public class CleanupPlayersTest {
         when(genericPlayer1.getStatus()).thenReturn(CONNECTED);
         when(genericPlayer2.getStatus()).thenReturn(DISCONNECTED);
         when(genericPlayer3.getStatus()).thenReturn(LEAVING);
-        
+
         firebaseServerAdapter.cleanupPlayers(sitoutCalculator);
-        
+
         verify(playerUnseater, never()).unseatPlayer(table, player1Id, false);
         verify(playerUnseater).unseatPlayer(table, player2Id, false);
         verify(playerUnseater).unseatPlayer(table, player3Id, false);
     }
-    
-    @SuppressWarnings({ "unchecked"})
+
+    @SuppressWarnings({"unchecked"})
     @Test
     public void removeTimedOutPlayers() {
         when(genericPlayer1.getStatus()).thenReturn(CONNECTED);
@@ -105,9 +112,9 @@ public class CleanupPlayersTest {
         when(timedOutPokerPlayer.getId()).thenReturn(player2Id);
         Collection<PokerPlayer> pokerPlayers = Arrays.asList(timedOutPokerPlayer);
         when(sitoutCalculator.checkTimeoutPlayers((Collection<PokerPlayer>) Mockito.any(), Mockito.anyLong())).thenReturn(pokerPlayers);
-        
+
         firebaseServerAdapter.cleanupPlayers(sitoutCalculator);
-        
+
         verify(playerUnseater, never()).unseatPlayer(Mockito.eq(table), Mockito.eq(player1Id), Mockito.anyBoolean());
         verify(playerUnseater).unseatPlayer(table, player2Id, true);
         verify(playerUnseater, never()).unseatPlayer(table, player3Id, true);
@@ -120,32 +127,32 @@ public class CleanupPlayersTest {
         when(genericPlayer2.getStatus()).thenReturn(DISCONNECTED);
         when(genericPlayer3.getStatus()).thenReturn(LEAVING);
         when(pokerPlayer2.isBuyInRequestActive()).thenReturn(true);
-        
+
         PokerPlayer timedOutPokerPlayer = mock(PokerPlayer.class);
         when(timedOutPokerPlayer.getId()).thenReturn(player2Id);
         Collection<PokerPlayer> pokerPlayers = Arrays.asList(timedOutPokerPlayer);
         when(sitoutCalculator.checkTimeoutPlayers((Collection<PokerPlayer>) Mockito.any(), Mockito.anyLong())).thenReturn(pokerPlayers);
-        
+
         firebaseServerAdapter.cleanupPlayers(sitoutCalculator);
-        
+
         verify(playerUnseater, never()).unseatPlayer(Mockito.eq(table), Mockito.eq(player1Id), Mockito.anyBoolean());
         verify(playerUnseater, never()).unseatPlayer(Mockito.eq(table), Mockito.eq(player2Id), Mockito.anyBoolean());
         verify(playerUnseater).unseatPlayer(table, player3Id, false);
     }
-    
+
     @Test
     public void testUnseatPlayer() {
         firebaseServerAdapter.unseatPlayer(player1Id, false);
         verify(playerUnseater).unseatPlayer(table, player1Id, false);
     }
-    
+
     @Test
     public void testUnseatPlayerRefuseIfActiveBackendRequest() {
         when(pokerPlayer1.isBuyInRequestActive()).thenReturn(true);
         firebaseServerAdapter.unseatPlayer(player1Id, false);
         verify(playerUnseater, never()).unseatPlayer(table, player1Id, false);
     }
-    
+
     @Test
     public void testUnseatPlayerRefuseIfParticipatingInHand() {
         when(state.getPlayerInCurrentHand(player1Id)).thenReturn(pokerPlayer1);
@@ -153,5 +160,5 @@ public class CleanupPlayersTest {
         firebaseServerAdapter.unseatPlayer(player1Id, false);
         verify(playerUnseater, never()).unseatPlayer(table, player1Id, false);
     }
-    
+
 }

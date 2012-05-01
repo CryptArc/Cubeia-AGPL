@@ -1,15 +1,15 @@
 package com.cubeia.poker.rake;
 
-import java.util.Map;
-
 import com.cubeia.poker.pot.Pot;
 
+import java.util.Map;
+
 public class RakeInfoContainer {
-    
+
     private final long totalPot;
     private final long totalRake;
     private final Map<Pot, Long> potRakes;
-    
+
     public RakeInfoContainer(long totalPot, long totalRake, Map<Pot, Long> potRakes) {
         super();
         this.totalPot = totalPot;
@@ -24,7 +24,7 @@ public class RakeInfoContainer {
     public long getTotalRake() {
         return totalRake;
     }
-    
+
     public Map<Pot, Long> getPotRakes() {
         return potRakes;
     }
@@ -58,5 +58,5 @@ public class RakeInfoContainer {
             return false;
         return true;
     }
-    
+
 }

@@ -1,37 +1,37 @@
 package com.cubeia.backend.cashgame.dto;
 
-import java.io.Serializable;
-
 import com.cubeia.backend.cashgame.PlayerSessionId;
+
+import java.io.Serializable;
 
 @SuppressWarnings("serial")
 public class HandResult implements Serializable {
-	private final PlayerSessionId playerSession;
-	
-	/**
-	 * Sum of all players bets in the hand.
-	 */
-	private final Money aggregatedBet;
-	
-	/**
-	 * Player winnings including own bets.
-	 */
-	private final Money win;
-	private final Money rake;
-	
-	private final int seat;
-	private final Money startingBalance;
-	
-	public HandResult(PlayerSessionId playerSession, Money aggregatedBet,
-	    Money win, Money rake, int seat, Money startingBalance) {
+    private final PlayerSessionId playerSession;
 
-		this.playerSession = playerSession;
-		this.aggregatedBet = aggregatedBet;
-		this.win = win;
-		this.rake = rake;
-		this.seat = seat;
-		this.startingBalance = startingBalance;
-	}
+    /**
+     * Sum of all players bets in the hand.
+     */
+    private final Money aggregatedBet;
+
+    /**
+     * Player winnings including own bets.
+     */
+    private final Money win;
+    private final Money rake;
+
+    private final int seat;
+    private final Money startingBalance;
+
+    public HandResult(PlayerSessionId playerSession, Money aggregatedBet,
+                      Money win, Money rake, int seat, Money startingBalance) {
+
+        this.playerSession = playerSession;
+        this.aggregatedBet = aggregatedBet;
+        this.win = win;
+        this.rake = rake;
+        this.seat = seat;
+        this.startingBalance = startingBalance;
+    }
 
     public PlayerSessionId getPlayerSession() {
         return playerSession;

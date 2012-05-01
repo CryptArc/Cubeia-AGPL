@@ -17,55 +17,54 @@
 
 package com.cubeia.poker.rounds.blinds;
 
-import org.apache.log4j.Logger;
-
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
+import org.apache.log4j.Logger;
 
 public class WaitingForSmallBlindState extends AbstractBlindsState {
 
-	private static final long serialVersionUID = 4983163822097132780L;
-	
-	private static transient Logger log = Logger.getLogger(WaitingForSmallBlindState.class);
-    
-	
-	@Override
-	public void smallBlind(int playerId, BlindsRound context) {
-		int smallBlind = context.getBlindsInfo().getSmallBlindPlayerId();
-		if (smallBlind == playerId) {
-			PokerPlayer player = context.getGame().getState().getPlayerInCurrentHand(playerId);
-			player.addBet(context.getBlindsInfo().getSmallBlindLevel());
-			context.smallBlindPosted();
-		} else {
-			throw new IllegalArgumentException("Expected player " + smallBlind + " to act, but got action from " + playerId);
-		}
-		
-	}
-	
-	@Override
-	public void declineEntryBet(Integer playerId, BlindsRound context) {
-		int smallBlind = context.getBlindsInfo().getSmallBlindPlayerId();
-		if (smallBlind == playerId) {
-			PokerPlayer player = context.getGame().getState().getPlayerInCurrentHand(playerId);
-			player.setSitOutStatus(SitOutStatus.MISSED_SMALL_BLIND);
-			context.getBlindsInfo().setHasDeadSmallBlind(true);
-			context.smallBlindDeclined(player);
-		} else {
-			throw new IllegalArgumentException("Expected player " + smallBlind + " to act, but got action from " + playerId);
-		}		
-	}
-	
-	@Override
-	public void timeout(BlindsRound context) {
-		if (context.isTournamentBlinds()) {
-		    log.debug("Small blind timeout on tournament table - auto post small blind for player: "+context.getBlindsInfo().getSmallBlindPlayerId());
-			smallBlind(context.getBlindsInfo().getSmallBlindPlayerId(), context);
-		} else {
-			int smallBlind = context.getBlindsInfo().getSmallBlindPlayerId();
-			PokerPlayer player = context.getGame().getState().getPlayerInCurrentHand(smallBlind);
-			player.setSitOutStatus(SitOutStatus.MISSED_SMALL_BLIND);
-			context.getBlindsInfo().setHasDeadSmallBlind(true);
-			context.smallBlindDeclined(player);
-		}
-	}
+    private static final long serialVersionUID = 4983163822097132780L;
+
+    private static transient Logger log = Logger.getLogger(WaitingForSmallBlindState.class);
+
+
+    @Override
+    public void smallBlind(int playerId, BlindsRound context) {
+        int smallBlind = context.getBlindsInfo().getSmallBlindPlayerId();
+        if (smallBlind == playerId) {
+            PokerPlayer player = context.getGame().getState().getPlayerInCurrentHand(playerId);
+            player.addBet(context.getBlindsInfo().getSmallBlindLevel());
+            context.smallBlindPosted();
+        } else {
+            throw new IllegalArgumentException("Expected player " + smallBlind + " to act, but got action from " + playerId);
+        }
+
+    }
+
+    @Override
+    public void declineEntryBet(Integer playerId, BlindsRound context) {
+        int smallBlind = context.getBlindsInfo().getSmallBlindPlayerId();
+        if (smallBlind == playerId) {
+            PokerPlayer player = context.getGame().getState().getPlayerInCurrentHand(playerId);
+            player.setSitOutStatus(SitOutStatus.MISSED_SMALL_BLIND);
+            context.getBlindsInfo().setHasDeadSmallBlind(true);
+            context.smallBlindDeclined(player);
+        } else {
+            throw new IllegalArgumentException("Expected player " + smallBlind + " to act, but got action from " + playerId);
+        }
+    }
+
+    @Override
+    public void timeout(BlindsRound context) {
+        if (context.isTournamentBlinds()) {
+            log.debug("Small blind timeout on tournament table - auto post small blind for player: " + context.getBlindsInfo().getSmallBlindPlayerId());
+            smallBlind(context.getBlindsInfo().getSmallBlindPlayerId(), context);
+        } else {
+            int smallBlind = context.getBlindsInfo().getSmallBlindPlayerId();
+            PokerPlayer player = context.getGame().getState().getPlayerInCurrentHand(smallBlind);
+            player.setSitOutStatus(SitOutStatus.MISSED_SMALL_BLIND);
+            context.getBlindsInfo().setHasDeadSmallBlind(true);
+            context.smallBlindDeclined(player);
+        }
+    }
 }

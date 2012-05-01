@@ -20,67 +20,59 @@ package mock;
 import com.cubeia.firebase.api.game.GameNotifier;
 import com.cubeia.firebase.api.game.TournamentNotifier;
 import com.cubeia.firebase.api.game.lobby.LobbyTableAttributeAccessor;
-import com.cubeia.firebase.api.game.table.ExtendedDetailsProvider;
-import com.cubeia.firebase.api.game.table.Table;
-import com.cubeia.firebase.api.game.table.TableGameState;
-import com.cubeia.firebase.api.game.table.TableInterceptor;
-import com.cubeia.firebase.api.game.table.TableListener;
-import com.cubeia.firebase.api.game.table.TableMetaData;
-import com.cubeia.firebase.api.game.table.TablePlayerSet;
-import com.cubeia.firebase.api.game.table.TableScheduler;
-import com.cubeia.firebase.api.game.table.TableWatcherSet;
+import com.cubeia.firebase.api.game.table.*;
 
 public class MockTable implements Table {
 
-	private TableGameState state = new MockTableGameState();
-	
-	private GameNotifier notifier = new MockNotifier();
-	
-	private TableScheduler scheduler = new MockScheduler();
-	
-	public GameNotifier getNotifier() {
-		return notifier;
-	}
-	
-	public TableGameState getGameState() {
-		return state;
-	}
-	
-	public TableScheduler getScheduler() {
-		return scheduler;
-	}
-	
-	public ExtendedDetailsProvider getExtendedDetailsProvider() {
-		return null;
-	}
-	
-	public TableInterceptor getInterceptor() {
-		return null;
-	}
+    private TableGameState state = new MockTableGameState();
 
-	public TableListener getListener() {
-		return null;
-	}
+    private GameNotifier notifier = new MockNotifier();
 
-	public TableMetaData getMetaData() {
-		return null;
-	}
+    private TableScheduler scheduler = new MockScheduler();
 
-	public TablePlayerSet getPlayerSet() {
-		return null;
-	}
+    public GameNotifier getNotifier() {
+        return notifier;
+    }
 
-	public TournamentNotifier getTournamentNotifier() {
-		return null;
-	}
+    public TableGameState getGameState() {
+        return state;
+    }
 
-	public TableWatcherSet getWatcherSet() {
-		return null;
-	}
+    public TableScheduler getScheduler() {
+        return scheduler;
+    }
 
-	public int getId() {
-		return 0;
-	}
+    public ExtendedDetailsProvider getExtendedDetailsProvider() {
+        return null;
+    }
+
+    public TableInterceptor getInterceptor() {
+        return null;
+    }
+
+    public TableListener getListener() {
+        return null;
+    }
+
+    public TableMetaData getMetaData() {
+        return null;
+    }
+
+    public TablePlayerSet getPlayerSet() {
+        return null;
+    }
+
+    public TournamentNotifier getTournamentNotifier() {
+        return null;
+    }
+
+    public TableWatcherSet getWatcherSet() {
+        return null;
+    }
+
+    public int getId() {
+        return 0;
+    }
 
     public LobbyTableAttributeAccessor getAttributeAccessor() {
         return null;

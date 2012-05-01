@@ -11,8 +11,9 @@ public class RakeSettings implements Serializable {
 
     /**
      * Constructor.
-     * @param rakeFraction fraction to rake (0.01 == 1%)
-     * @param rakeLimit rake cap for normal play
+     *
+     * @param rakeFraction     fraction to rake (0.01 == 1%)
+     * @param rakeLimit        rake cap for normal play
      * @param rakeLimitHeadsUp rake cap for heads up play (only two players bought in)
      */
     public RakeSettings(BigDecimal rakeFraction, long rakeLimit, long rakeLimitHeadsUp) {
@@ -24,15 +25,15 @@ public class RakeSettings implements Serializable {
     public static RakeSettings createNoLimitRakeSettings(BigDecimal rakeFraction) {
         return new RakeSettings(rakeFraction, Long.MAX_VALUE, Long.MAX_VALUE);
     }
-    
+
     public BigDecimal getRakeFraction() {
         return rakeFraction;
     }
-    
+
     public long getRakeLimit() {
         return rakeLimit;
     }
-    
+
     public long getRakeLimitHeadsUp() {
         return rakeLimitHeadsUp;
     }
@@ -40,6 +41,6 @@ public class RakeSettings implements Serializable {
     @Override
     public String toString() {
         return "RakeSettings [rakeFraction=" + rakeFraction + ", rakeLimit=" + rakeLimit + ", rakeLimitHeadsUp="
-            + rakeLimitHeadsUp + "]";
+                + rakeLimitHeadsUp + "]";
     }
 }

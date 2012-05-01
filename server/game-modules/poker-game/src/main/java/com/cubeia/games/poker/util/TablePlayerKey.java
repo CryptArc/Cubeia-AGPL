@@ -25,7 +25,7 @@ package com.cubeia.games.poker.util;
 public class TablePlayerKey {
     public final int pid;
     public final int tableId;
-    
+
     public TablePlayerKey(int tableId, int pid) {
         this.pid = pid;
         this.tableId = tableId;

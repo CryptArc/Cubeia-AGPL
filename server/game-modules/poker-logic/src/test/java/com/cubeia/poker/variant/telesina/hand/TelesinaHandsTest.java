@@ -1,36 +1,24 @@
 package com.cubeia.poker.variant.telesina.hand;
 
-import static com.cubeia.poker.action.PokerActionType.ANTE;
-import static com.cubeia.poker.action.PokerActionType.BET;
-import static com.cubeia.poker.action.PokerActionType.CALL;
-import static com.cubeia.poker.action.PokerActionType.CHECK;
-import static com.cubeia.poker.action.PokerActionType.FOLD;
-import static com.cubeia.poker.action.PokerActionType.RAISE;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.math.BigDecimal;
-import java.util.Random;
-
-import org.hamcrest.CoreMatchers;
-import org.junit.Test;
-import org.mockito.Mockito;
-
-import com.cubeia.poker.AbstractTelesinaHandTester;
-import com.cubeia.poker.MockPlayer;
-import com.cubeia.poker.NonRandomRNGProvider;
-import com.cubeia.poker.RakeSettings;
-import com.cubeia.poker.TestUtils;
+import com.cubeia.poker.*;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.variant.telesina.TelesinaDeck;
 import com.cubeia.poker.variant.telesina.TelesinaDeckFactory;
+import org.hamcrest.CoreMatchers;
+import org.junit.Test;
+import org.mockito.Mockito;
+
+import java.math.BigDecimal;
+import java.util.Random;
+
+import static com.cubeia.poker.action.PokerActionType.*;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class TelesinaHandsTest extends AbstractTelesinaHandTester {
 
@@ -71,7 +59,7 @@ public class TelesinaHandsTest extends AbstractTelesinaHandTester {
         assertEquals(2, mp[0].getPocketCards().getCards().size());
     }
 
-    
+
     @Test
     public void testRaiseLevelWhenNoMinBet() {
         MockPlayer[] mp = TestUtils.createMockPlayers(3, 110);
@@ -91,7 +79,7 @@ public class TelesinaHandsTest extends AbstractTelesinaHandTester {
         // make deal initial pocket cards round end
         game.timeout();
 
-        
+
         act(p[2], BET, 20);
         act(p[0], CALL, 19); // All in
 
@@ -173,34 +161,34 @@ public class TelesinaHandsTest extends AbstractTelesinaHandTester {
         act(p[2], CALL);
 
     }
-    
+
     @Test
     public void testAllButOneFoldsOnSidePotFinishesTheHand() throws Exception {
         TelesinaDeckFactory deckFactory = mock(TelesinaDeckFactory.class);
-        
+
         TelesinaDeck deck = mock(TelesinaDeck.class);
         when(deckFactory.createNewDeck(Mockito.any(Random.class), Mockito.anyInt())).thenReturn(deck);
         when(deck.deal()).thenReturn(
-            new Card( 1, "2H"), new Card( 2, "3H"), new Card( 3, "4H"), new Card( 4, "5H"), new Card( 5, "6H"), // Unknown :-(
-            new Card( 6, "9D"), new Card( 7, "6D"), new Card( 8, "6H"), new Card( 9, "5H"), new Card(10, "TD"), // first round
-            new Card(11, "KS"), new Card(12, "8C"), new Card(13, "QD"), new Card(14, "QH"),                     // second round
-            new Card(15, "TC"), new Card(16, "7D"), new Card(17, "8D"),                                         // third round
-            
-            new Card(18, "7D"), new Card(19, "8D"), new Card(20, "9D"), 
-            new Card(21, "JD"), new Card(22, "QD"), new Card(23, "KD"), new Card(24, "AD"));
-        
+                new Card(1, "2H"), new Card(2, "3H"), new Card(3, "4H"), new Card(4, "5H"), new Card(5, "6H"), // Unknown :-(
+                new Card(6, "9D"), new Card(7, "6D"), new Card(8, "6H"), new Card(9, "5H"), new Card(10, "TD"), // first round
+                new Card(11, "KS"), new Card(12, "8C"), new Card(13, "QD"), new Card(14, "QH"),                     // second round
+                new Card(15, "TC"), new Card(16, "7D"), new Card(17, "8D"),                                         // third round
+
+                new Card(18, "7D"), new Card(19, "8D"), new Card(20, "9D"),
+                new Card(21, "JD"), new Card(22, "QD"), new Card(23, "KD"), new Card(24, "AD"));
+
         super.setUpTelesina(new NonRandomRNGProvider(), deckFactory, 2, new RakeSettings(new BigDecimal("0.01"), 500L, 150L));
-        
+
         MockPlayer[] mp = TestUtils.createMockPlayers(5);
         setBalanceAndPlayerId(0, mp, 1995583417, 170);
-        setBalanceAndPlayerId(1, mp, 1995583572,   2);
+        setBalanceAndPlayerId(1, mp, 1995583572, 2);
         setBalanceAndPlayerId(2, mp, 1995583424, 158);
         setBalanceAndPlayerId(3, mp, 1995583448, 422);
         setBalanceAndPlayerId(4, mp, 1995583478, 638);
-        
+
         long initialBalance = mp[0].getBalance() + mp[1].getBalance() + mp[2].getBalance() + mp[3].getBalance() + mp[4].getBalance();
-        
-        
+
+
         int[] p = TestUtils.createPlayerIdArray(mp);
         addPlayers(game, mp);
 
@@ -213,18 +201,18 @@ public class TelesinaHandsTest extends AbstractTelesinaHandTester {
         act(p[2], ANTE);
         act(p[3], ANTE);
         act(p[4], ANTE);
-        
+
         assertThat(mp[0].getBalance(), is((long) 170 - 2));
-        assertThat(mp[1].getBalance(), is((long)       0));
+        assertThat(mp[1].getBalance(), is((long) 0));
         assertThat(mp[2].getBalance(), is((long) 158 - 2));
         assertThat(mp[3].getBalance(), is((long) 422 - 2));
         assertThat(mp[4].getBalance(), is((long) 638 - 2));
-        
+
         // make deal initial pocket cards round end
         game.timeout();
 
         assertThat(mp[1].isAllIn(), is(true));
-        
+
         act(p[4], BET, 4);
         act(p[0], RAISE, 8);
         // p[1] is all in, can't act
@@ -237,34 +225,34 @@ public class TelesinaHandsTest extends AbstractTelesinaHandTester {
         act(p[0], CALL);
 
         game.timeout();
-        
-        
+
+
         act(p[0], FOLD);
         act(p[2], CHECK);
         act(p[4], CHECK);
-        
+
         game.timeout();
-        
+
         act(p[4], FOLD);
-        
+
         game.timeout();
         game.timeout();
         game.timeout();
         game.timeout();
-        
+
         long totalRake = game.getPotHolder().calculateRake().getTotalRake();
         assertThat(totalRake, is(2L));
-        
+
         game.timeout();
-        
+
         // player 1 (1995583572) won, all other folded
         assertThat(mp[1].getBalance(), is(2 * 5L));     // winner of first pot (10)
-        
+
         assertThat(mp[0].getBalance(), is(88L));
         assertThat(mp[2].getBalance(), is(76L + 240 - 2));        // winner of seconds pot (240), rake = 2
         assertThat(mp[3].getBalance(), is(420L));
         assertThat(mp[4].getBalance(), is(556L));
-        
+
         long resultingBalance = mp[0].getBalance() + mp[1].getBalance() + mp[2].getBalance() + mp[3].getBalance() + mp[4].getBalance();
         assertThat(resultingBalance, is(initialBalance - totalRake));
     }
@@ -273,6 +261,6 @@ public class TelesinaHandsTest extends AbstractTelesinaHandTester {
         mp[index].setPlayerId(playerId);
         mp[index].setBalance(balance);
     }
-    
-    
+
+
 }

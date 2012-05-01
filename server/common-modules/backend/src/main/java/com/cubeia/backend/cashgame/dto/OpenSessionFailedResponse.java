@@ -4,17 +4,17 @@ import java.io.Serializable;
 
 @SuppressWarnings("serial")
 public class OpenSessionFailedResponse implements Serializable {
-	private final ErrorCode errorCode;
-	private final String message;
-	private final int playerId;
+    private final ErrorCode errorCode;
+    private final String message;
+    private final int playerId;
 
-	public OpenSessionFailedResponse(ErrorCode errorCode, String message, int playerId) {
-		this.errorCode = errorCode;
-		this.message = message;
-		this.playerId = playerId;
-	}
+    public OpenSessionFailedResponse(ErrorCode errorCode, String message, int playerId) {
+        this.errorCode = errorCode;
+        this.message = message;
+        this.playerId = playerId;
+    }
 
-	public ErrorCode getErrorCode() {
+    public ErrorCode getErrorCode() {
         return errorCode;
     }
 
@@ -27,6 +27,6 @@ public class OpenSessionFailedResponse implements Serializable {
     }
 
     public enum ErrorCode {
-		UNKOWN_PLATFORM_TABLE_ID, WALLET_CALL_FAILED, UNSPECIFIED_ERROR;
-	}
+        UNKOWN_PLATFORM_TABLE_ID, WALLET_CALL_FAILED, UNSPECIFIED_ERROR;
+    }
 }

@@ -17,16 +17,6 @@
 
 package com.cubeia.poker;
 
-import static java.util.Arrays.asList;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.ServerAdapter;
@@ -38,40 +28,44 @@ import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.rounds.blinds.BlindsInfo;
 import com.cubeia.poker.variant.PokerVariant;
 
+import java.util.*;
+
+import static java.util.Arrays.asList;
+
 public class MockGame implements GameType {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private SortedMap<Integer, PokerPlayer> seatingMap = new TreeMap<Integer, PokerPlayer>();
-	
-	private SortedMap<Integer, PokerPlayer> playerMap = new TreeMap<Integer, PokerPlayer>();
+    private SortedMap<Integer, PokerPlayer> seatingMap = new TreeMap<Integer, PokerPlayer>();
 
-	public BlindsInfo blindsInfo = new BlindsInfo();
-	
-	public List<TestListener> listeners = new ArrayList<TestListener>();
-	
-	public boolean roundFinished = false;
+    private SortedMap<Integer, PokerPlayer> playerMap = new TreeMap<Integer, PokerPlayer>();
 
-	public boolean blindsCanceled = false;
-	
-	private MockServerAdapter mockServerAdapter = new MockServerAdapter();
-	
-	public MockGame() {
-	}
-	
+    public BlindsInfo blindsInfo = new BlindsInfo();
+
+    public List<TestListener> listeners = new ArrayList<TestListener>();
+
+    public boolean roundFinished = false;
+
+    public boolean blindsCanceled = false;
+
+    private MockServerAdapter mockServerAdapter = new MockServerAdapter();
+
+    public MockGame() {
+    }
+
 //	@Override
 //	public int getAnteLevel() {
 //		return 100;
 //	}
-	
-	@Override
-	public void act(PokerAction action) {
-	}
 
-	@Override
-	public BlindsInfo getBlindsInfo() {
-		return blindsInfo;
-	}
+    @Override
+    public void act(PokerAction action) {
+    }
+
+    @Override
+    public BlindsInfo getBlindsInfo() {
+        return blindsInfo;
+    }
 
 //	@Override
 //	public PokerPlayer getPlayer(int playerId) {
@@ -83,36 +77,36 @@ public class MockGame implements GameType {
 //		return seatingMap.values();
 //	}
 
-	@Override
-	public void requestAction(ActionRequest r) {
-		for (TestListener l : listeners) {
-			l.notifyActionRequested(r);
-		}
-	}
-	
-	@Override
-	public void requestMultipleActions(Collection<ActionRequest> requests) {
-	}
+    @Override
+    public void requestAction(ActionRequest r) {
+        for (TestListener l : listeners) {
+            l.notifyActionRequested(r);
+        }
+    }
 
-	public void roundFinished() {
-		roundFinished = true;
-	}
-	
-	@Override
-	public void startHand() {
-	}
-	
-	public void initMockState(SortedMap<Integer, PokerPlayer> seatingMap, SortedMap<Integer, PokerPlayer> playerMap) {
-		this.seatingMap = seatingMap;
-		this.playerMap = playerMap;
-	}
+    @Override
+    public void requestMultipleActions(Collection<ActionRequest> requests) {
+    }
 
-	public void addPlayers(MockPlayer[] p) {
-		for (MockPlayer m : p) {
-			seatingMap.put(m.getSeatId(), m);
-			playerMap.put(m.getId(), m);
-		}
-	}
+    public void roundFinished() {
+        roundFinished = true;
+    }
+
+    @Override
+    public void startHand() {
+    }
+
+    public void initMockState(SortedMap<Integer, PokerPlayer> seatingMap, SortedMap<Integer, PokerPlayer> playerMap) {
+        this.seatingMap = seatingMap;
+        this.playerMap = playerMap;
+    }
+
+    public void addPlayers(MockPlayer[] p) {
+        for (MockPlayer m : p) {
+            seatingMap.put(m.getSeatId(), m);
+            playerMap.put(m.getId(), m);
+        }
+    }
 
 //	@Override
 //	public int countNonFoldedPlayers() {
@@ -126,159 +120,170 @@ public class MockGame implements GameType {
 //		return nonFolded;
 //	}
 
-	@Override
-	public void prepareNewHand() {
-		// YEAH YEAH.
-	}
+    @Override
+    public void prepareNewHand() {
+        // YEAH YEAH.
+    }
 
-	@Override
-	public ServerAdapter getServerAdapter() {
-		return mockServerAdapter;
-	}
+    @Override
+    public ServerAdapter getServerAdapter() {
+        return mockServerAdapter;
+    }
 
-	@Override
-	public void timeout() {
-	}
+    @Override
+    public void timeout() {
+    }
 
-	@Override
-	public String getStateDescription() {
-		return null;
-	}
+    @Override
+    public String getStateDescription() {
+        return null;
+    }
 
-	public void logDebug(String string) {
-	}
+    public void logDebug(String string) {
+    }
 
-	@Override
-	public IPokerState getState() {
-		return new IPokerState() {
-		    
+    @Override
+    public IPokerState getState() {
+        return new IPokerState() {
+
             private PokerPlayer player1 = new DefaultPokerPlayer(1000);
             private PokerPlayer player2 = new DefaultPokerPlayer(1001);
             private PokerPlayer player3 = new DefaultPokerPlayer(1002);
             private PokerPlayer player4 = new DefaultPokerPlayer(1003);
-		    
-		    
-			@Override
-			public void notifyPlayerSittingOut(int playerId) {
-			}
-			
-			@Override
-			public void init(RNGProvider rng, PokerSettings settings) {
-			}
-			
-			@Override
-			public SortedMap<Integer, PokerPlayer> getCurrentHandSeatingMap() {
-				return seatingMap;
-			}
-			
-			@Override
-			public Map<Integer, PokerPlayer> getCurrentHandPlayerMap() {
-				return playerMap;
-			}
-			
-			@Override
-			public int getAnteLevel() {
-				return 0;
-			}
-			
-			@SuppressWarnings("unchecked")
+
+
             @Override
-			public List<Card> getCommunityCards() {
-				return Collections.EMPTY_LIST;
-			}
+            public void notifyPlayerSittingOut(int playerId) {
+            }
 
-			@Override
-			public PokerPlayer getPlayerInCurrentHand(Integer playerId) {
-				return playerMap.get(playerId);
-			}
+            @Override
+            public void init(RNGProvider rng, PokerSettings settings) {
+            }
 
-			@Override
-			public int countNonFoldedPlayers() {
-				return 4;
-			}
-			
-			@Override
-			public Collection<PokerPlayer> getPlayersReadyToStartHand() {
-			    return asList(player1, player2, player3, player4);
-			}
-			
-			@Override
-			public boolean isPlayerInHand(int playerId) {
-				return false;
-			}
-			
-			@Override
-			public PokerVariant getPokerVariant() {
-			    return PokerVariant.TEXAS_HOLDEM;
-			}
-			
-			@Override
-			public void notifyDealerButton(int dealerButtonSeatId) {
-				// System.out.println("Dealer button is on seat: " + dealerButtonSeatId);
-				// WAEVVA, I'll do what i want, I'm a mock!
-			}
+            @Override
+            public SortedMap<Integer, PokerPlayer> getCurrentHandSeatingMap() {
+                return seatingMap;
+            }
 
-			@Override
-			public int getEntryBetLevel() {
-				return 0;
-			}
+            @Override
+            public Map<Integer, PokerPlayer> getCurrentHandPlayerMap() {
+                return playerMap;
+            }
 
-			@Override
-			public void playerIsSittingOut(int playerId, SitOutStatus misssedAnte) {}
-			
-			@Override
-			public void callOrRaise() {}
+            @Override
+            public int getAnteLevel() {
+                return 0;
+            }
 
-			@Override
-			public void exposeShowdownCards() {}
-			
-			@Override
-			public void notifyBetStacksUpdated() {}
-			
-			@Override
-			public void shutdown() {}
-			
-			@Override
-			public boolean isShutdown() { return false; }
-			
-			@Override
-			public boolean isPlaying() { return true; }
-			
-			@Override
-			public void sitOutPlayersMarkedForSitOutNextRound() {}
+            @SuppressWarnings("unchecked")
+            @Override
+            public List<Card> getCommunityCards() {
+                return Collections.EMPTY_LIST;
+            }
+
+            @Override
+            public PokerPlayer getPlayerInCurrentHand(Integer playerId) {
+                return playerMap.get(playerId);
+            }
+
+            @Override
+            public int countNonFoldedPlayers() {
+                return 4;
+            }
+
+            @Override
+            public Collection<PokerPlayer> getPlayersReadyToStartHand() {
+                return asList(player1, player2, player3, player4);
+            }
+
+            @Override
+            public boolean isPlayerInHand(int playerId) {
+                return false;
+            }
+
+            @Override
+            public PokerVariant getPokerVariant() {
+                return PokerVariant.TEXAS_HOLDEM;
+            }
+
+            @Override
+            public void notifyDealerButton(int dealerButtonSeatId) {
+                // System.out.println("Dealer button is on seat: " + dealerButtonSeatId);
+                // WAEVVA, I'll do what i want, I'm a mock!
+            }
+
+            @Override
+            public int getEntryBetLevel() {
+                return 0;
+            }
+
+            @Override
+            public void playerIsSittingOut(int playerId, SitOutStatus misssedAnte) {
+            }
+
+            @Override
+            public void callOrRaise() {
+            }
+
+            @Override
+            public void exposeShowdownCards() {
+            }
+
+            @Override
+            public void notifyBetStacksUpdated() {
+            }
+
+            @Override
+            public void shutdown() {
+            }
+
+            @Override
+            public boolean isShutdown() {
+                return false;
+            }
+
+            @Override
+            public boolean isPlaying() {
+                return true;
+            }
+
+            @Override
+            public void sitOutPlayersMarkedForSitOutNextRound() {
+            }
 
             @Override
             public void handleBuyInRequest(PokerPlayer pokerPlayer, int amount) {
             }
 
-			@Override
-			public boolean isEveryoneSittingOut() {
-				return false;
-			}
-		
-		};
-	}
+            @Override
+            public boolean isEveryoneSittingOut() {
+                return false;
+            }
 
-	@Override
-	public void scheduleRoundTimeout() {}
+        };
+    }
 
-	@Override
-	public void dealCommunityCards() {
-		
-	}
-	
-	@Override
-	public boolean canPlayerAffordEntryBet(PokerPlayer player, PokerSettings settings, boolean includePending) {
-	    return true;
-	}
+    @Override
+    public void scheduleRoundTimeout() {
+    }
 
-	@Override
-	public void sendAllNonFoldedPlayersBestHand() {
-	}
+    @Override
+    public void dealCommunityCards() {
 
-	@Override
-	public boolean isCurrentlyWaitingForPlayer(int playerId) {
-		return false;
-	}
-	
+    }
+
+    @Override
+    public boolean canPlayerAffordEntryBet(PokerPlayer player, PokerSettings settings, boolean includePending) {
+        return true;
+    }
+
+    @Override
+    public void sendAllNonFoldedPlayersBestHand() {
+    }
+
+    @Override
+    public boolean isCurrentlyWaitingForPlayer(int playerId) {
+        return false;
+    }
+
 }

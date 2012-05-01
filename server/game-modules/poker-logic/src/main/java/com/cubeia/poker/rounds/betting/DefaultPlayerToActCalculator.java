@@ -1,11 +1,11 @@
 package com.cubeia.poker.rounds.betting;
 
-import java.util.List;
-import java.util.SortedMap;
-
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.util.PokerUtils;
+
+import java.util.List;
+import java.util.SortedMap;
 
 public class DefaultPlayerToActCalculator implements PlayerToActCalculator {
 

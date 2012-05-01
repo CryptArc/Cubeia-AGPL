@@ -1,48 +1,48 @@
 package com.cubeia.poker.model;
 
-import java.io.Serializable;
-import java.util.List;
-
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.hand.HandType;
 
+import java.io.Serializable;
+import java.util.List;
+
 public class RatedPlayerHand implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private PlayerHand playerHand;
-	private HandType bestHandType;
-	private List<Card> bestHandCards;
-	
-	public RatedPlayerHand(PlayerHand playerHand, HandType bestHandType, List<Card> bestHandCards) {
-		this.playerHand = playerHand;
-		this.bestHandType = bestHandType;
-		this.bestHandCards = bestHandCards;
-	}
+    private PlayerHand playerHand;
+    private HandType bestHandType;
+    private List<Card> bestHandCards;
 
-	public PlayerHand getPlayerHand() {
-		return playerHand;
-	}
+    public RatedPlayerHand(PlayerHand playerHand, HandType bestHandType, List<Card> bestHandCards) {
+        this.playerHand = playerHand;
+        this.bestHandType = bestHandType;
+        this.bestHandCards = bestHandCards;
+    }
 
-	public HandType getBestHandType() {
-		return bestHandType;
-	}
+    public PlayerHand getPlayerHand() {
+        return playerHand;
+    }
 
-	public Integer getPlayerId() {
-		return playerHand.getPlayerId();
-	}
+    public HandType getBestHandType() {
+        return bestHandType;
+    }
 
-	public Hand getHand() {
-		return playerHand.getHand();
-	}
+    public Integer getPlayerId() {
+        return playerHand.getPlayerId();
+    }
 
-	public List<Card> getBestHandCards() {
-		return bestHandCards;
-	}
-	
-	@Override
-	public String toString() {
-		return "RatedPlayerHand playerHand["+playerHand+"] bestHandType["+bestHandType+"] bestHandCards["+bestHandCards+"]";
-	}
+    public Hand getHand() {
+        return playerHand.getHand();
+    }
+
+    public List<Card> getBestHandCards() {
+        return bestHandCards;
+    }
+
+    @Override
+    public String toString() {
+        return "RatedPlayerHand playerHand[" + playerHand + "] bestHandType[" + bestHandType + "] bestHandCards[" + bestHandCards + "]";
+    }
 }

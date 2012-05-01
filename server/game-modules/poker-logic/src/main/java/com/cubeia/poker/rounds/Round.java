@@ -17,9 +17,9 @@
 
 package com.cubeia.poker.rounds;
 
-import java.io.Serializable;
-
 import com.cubeia.poker.action.PokerAction;
+
+import java.io.Serializable;
 
 /**
  * A round is a specific part of a poker hand, e.g. deal initial
@@ -29,23 +29,23 @@ import com.cubeia.poker.action.PokerAction;
  */
 public interface Round extends Serializable {
 
-	/**
-	 * A player request to act. The action should
-	 * be checked before executed so it is valid
-	 * given the current state.
-	 * 
-	 * @param action
-	 */
-	public void act(PokerAction action);
+    /**
+     * A player request to act. The action should
+     * be checked before executed so it is valid
+     * given the current state.
+     *
+     * @param action
+     */
+    public void act(PokerAction action);
 
-	public void timeout();
+    public void timeout();
 
-	public String getStateDescription();
+    public String getStateDescription();
 
-	public boolean isFinished();
+    public boolean isFinished();
 
-	public void visit(RoundVisitor visitor);
+    public void visit(RoundVisitor visitor);
 
-	public boolean isWaitingForPlayer(int playerId);
+    public boolean isWaitingForPlayer(int playerId);
 
 }

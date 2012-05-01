@@ -1,12 +1,13 @@
 package com.cubeia.poker.pot;
 
-import java.io.Serializable;
-
 import com.cubeia.poker.player.PokerPlayer;
+
+import java.io.Serializable;
 
 /**
  * Transition of money from a player to a pot.
  * If the amount is negative the direction is from pot to player.
+ *
  * @author w
  */
 @SuppressWarnings("serial")
@@ -27,29 +28,29 @@ public class PotTransition implements Serializable {
         amount = -1;
         fromChipStackToPlayer = false;
     }
-    
+
     public PotTransition(PokerPlayer player, Pot pot, long amount) {
         this.player = player;
         this.pot = pot;
         this.amount = amount;
         fromChipStackToPlayer = false;
     }
-    
+
     private PotTransition(PokerPlayer player, long amount) {
-    	fromChipStackToPlayer = true;
-    	this.amount = amount;
-    	this.player = player;
-    	this.pot = null;
+        fromChipStackToPlayer = true;
+        this.amount = amount;
+        this.player = player;
+        this.pot = null;
     }
 
     public boolean isFromPlayerToPot() {
         return getAmount() > 0;
     }
-    
+
     public boolean isFromBetStackToPlayer() {
-    	return fromChipStackToPlayer;
+        return fromChipStackToPlayer;
     }
-    
+
     public PokerPlayer getPlayer() {
         return player;
     }
@@ -71,7 +72,6 @@ public class PotTransition implements Serializable {
         result = prime * result + ((pot == null) ? 0 : pot.hashCode());
         return result;
     }
-
 
 
     @Override
@@ -99,23 +99,19 @@ public class PotTransition implements Serializable {
     }
 
 
-
     @Override
     public String toString() {
-        
-        
-        if (fromChipStackToPlayer)
-        {
-        	return "pot transition player " + player.getId() + ": amount " + amount + " -> pot: <null> fromChipStackToPlayer: true" ;
+
+
+        if (fromChipStackToPlayer) {
+            return "pot transition player " + player.getId() + ": amount " + amount + " -> pot: <null> fromChipStackToPlayer: true";
+        } else {
+            return "pot transition player " + player.getId() + ": amount " + amount + " -> pot: " + pot.getId() + " fromChipStackToPlayer: false";
         }
-        else
-        {
-        	return "pot transition player " + player.getId() + ": amount " + amount + " -> pot: " + pot.getId() + " fromChipStackToPlayer: false";	
-        }
-        
+
     }
 
-	public static PotTransition createTransitionFromBetStackToPlayer(PokerPlayer player, long amount) {
-			return new PotTransition(player, amount);
-	}
+    public static PotTransition createTransitionFromBetStackToPlayer(PokerPlayer player, long amount) {
+        return new PotTransition(player, amount);
+    }
 }

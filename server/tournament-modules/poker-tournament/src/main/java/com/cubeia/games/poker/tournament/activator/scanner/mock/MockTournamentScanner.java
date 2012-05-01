@@ -17,13 +17,6 @@
 
 package com.cubeia.games.poker.tournament.activator.scanner.mock;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-
 import com.cubeia.firebase.api.mtt.activator.ActivatorContext;
 import com.cubeia.firebase.api.mtt.lobby.MttLobbyObject;
 import com.cubeia.firebase.io.protocol.Enums;
@@ -32,11 +25,16 @@ import com.cubeia.games.poker.tournament.activator.PokerTournamentCreationPartic
 import com.cubeia.games.poker.tournament.activator.scanner.AbstractTournamentScanner;
 import com.cubeia.games.poker.tournament.state.PokerTournamentStatus;
 import com.cubeia.poker.timing.Timings;
+import org.apache.log4j.Logger;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 
 /**
  * The Mock Tournament Activator creates new tournament automatically without the need of a database.
- * 
  *
  * @author Fredrik Johansson, Cubeia Ltd
  */
@@ -47,20 +45,19 @@ public class MockTournamentScanner extends AbstractTournamentScanner {
     private Map<String, PokerTournamentCreationParticipant> requestedTournaments = new HashMap<String, PokerTournamentCreationParticipant>();
 
 
-
     /*------------------------------------------------
 
-        LIFECYCLE METHODS
+       LIFECYCLE METHODS
 
-     ------------------------------------------------*/
+    ------------------------------------------------*/
 
     public MockTournamentScanner() {
         requestedTournaments.put("headsup", new PokerTournamentCreationParticipant("headsup", 2));
         requestedTournaments.put("ten", new PokerTournamentCreationParticipant("ten", 10, Timings.SUPER_EXPRESS));
-        requestedTournaments.put("hundred",  new PokerTournamentCreationParticipant("hundred", 100, Timings.SUPER_EXPRESS));
-        requestedTournaments.put("1k",  new PokerTournamentCreationParticipant("1k", 1000, Timings.SUPER_EXPRESS));
-        requestedTournaments.put("Five-oh",  new PokerTournamentCreationParticipant("Five-oh", 5000, Timings.EXPRESS));
-        requestedTournaments.put("Big Ten",  new PokerTournamentCreationParticipant("Big Ten", 10000, Timings.EXPRESS));
+        requestedTournaments.put("hundred", new PokerTournamentCreationParticipant("hundred", 100, Timings.SUPER_EXPRESS));
+        requestedTournaments.put("1k", new PokerTournamentCreationParticipant("1k", 1000, Timings.SUPER_EXPRESS));
+        requestedTournaments.put("Five-oh", new PokerTournamentCreationParticipant("Five-oh", 5000, Timings.EXPRESS));
+        requestedTournaments.put("Big Ten", new PokerTournamentCreationParticipant("Big Ten", 10000, Timings.EXPRESS));
         requestedTournaments.put("Twenty", new PokerTournamentCreationParticipant("Twenty", 20));
         requestedTournaments.put("Faaivssouzand", new PokerTournamentCreationParticipant("Faaivssouzand", 5000));
         requestedTournaments.put("Tensouzand", new PokerTournamentCreationParticipant("Tensouzand", 10000));
@@ -69,14 +66,11 @@ public class MockTournamentScanner extends AbstractTournamentScanner {
     }
 
 
-    
-    
-
     /*------------------------------------------------
 
-        PUBLIC ACTIVATOR INTERFACE METHODS
+       PUBLIC ACTIVATOR INTERFACE METHODS
 
-     ------------------------------------------------*/
+    ------------------------------------------------*/
 
     public void checkTournamentsNow() {
         synchronized (LOCK) {
@@ -86,12 +80,11 @@ public class MockTournamentScanner extends AbstractTournamentScanner {
     }
 
 
-
     /*------------------------------------------------
 
-        PRIVATE METHODS
+       PRIVATE METHODS
 
-     ------------------------------------------------*/
+    ------------------------------------------------*/
 
 
     private void createInstance(String name, ActivatorContext context) {
@@ -101,7 +94,7 @@ public class MockTournamentScanner extends AbstractTournamentScanner {
         }
 
         factory.createMtt(context.getMttId(), name, requestedTournaments.get(name));
-    }	
+    }
 
 
     protected void checkTournaments() {

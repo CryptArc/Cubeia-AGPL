@@ -20,16 +20,16 @@ package com.cubeia.games.poker.entity;
 import java.io.Serializable;
 
 public class HandIdentifier implements Serializable {
-	
+
     private static final long serialVersionUID = 1L;
-    
-	private String integrationId;
-    
+
+    private String integrationId;
+
     public String getIntegrationId() {
-		return integrationId;
-	}
-    
+        return integrationId;
+    }
+
     public void setIntegrationId(String integrationId) {
-		this.integrationId = integrationId;
-	}
+        this.integrationId = integrationId;
+    }
 }

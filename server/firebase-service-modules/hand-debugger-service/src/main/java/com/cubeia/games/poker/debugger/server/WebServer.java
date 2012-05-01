@@ -1,10 +1,10 @@
 package com.cubeia.games.poker.debugger.server;
 
-import java.net.URL;
-import java.util.EnumSet;
-
-import javax.servlet.DispatcherType;
-
+import com.cubeia.games.poker.debugger.guice.GuiceConfig;
+import com.cubeia.games.poker.debugger.web.EmptyServlet;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.servlet.GuiceFilter;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.DefaultHandler;
@@ -13,64 +13,64 @@ import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
-import com.cubeia.games.poker.debugger.guice.GuiceConfig;
-import com.cubeia.games.poker.debugger.web.EmptyServlet;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.servlet.GuiceFilter;
+import javax.servlet.DispatcherType;
+import java.net.URL;
+import java.util.EnumSet;
 
 @Singleton
 public class WebServer implements Runnable {
 
-	@Inject GuiceConfig guice;
-	private Server server;
+    @Inject
+    GuiceConfig guice;
+    private Server server;
 
-	Thread thread;
+    Thread thread;
 
-	public void start() {
-		thread = new Thread(this);
-		thread.setContextClassLoader(Thread.currentThread().getContextClassLoader());
-		thread.setDaemon(true);
-		thread.start();
-	}
+    public void start() {
+        thread = new Thread(this);
+        thread.setContextClassLoader(Thread.currentThread().getContextClassLoader());
+        thread.setDaemon(true);
+        thread.start();
+    }
 
-	public void run() {
-		try {
-			server = new Server(19091);
+    public void run() {
+        try {
+            server = new Server(19091);
 
-			// Static resources
-			URL url = getClass().getResource("/html/base_index_file.html");
-			String resource = url.toString().replaceAll("base_index_file.html", "");
-			
-			ResourceHandler resource_handler = new ResourceHandler();
-			resource_handler.setDirectoriesListed(true);
-			resource_handler.setResourceBase(resource);
+            // Static resources
+            URL url = getClass().getResource("/html/base_index_file.html");
+            String resource = url.toString().replaceAll("base_index_file.html", "");
 
-			// Dynamic content
-			ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-			context.setClassLoader(getClass().getClassLoader());
-			context.setContextPath("/api");
-			context.addEventListener(guice);
-			
-			FilterHolder filterHolder = new FilterHolder(GuiceFilter.class);
-			context.addFilter(filterHolder, "/*", EnumSet.allOf(DispatcherType.class));
-			context.addServlet(EmptyServlet.class, "/*");
+            ResourceHandler resource_handler = new ResourceHandler();
+            resource_handler.setDirectoriesListed(true);
+            resource_handler.setResourceBase(resource);
 
-			// Add all handlers to server
-			HandlerList handlers = new HandlerList();
-			handlers.setHandlers(new Handler[] { resource_handler, context, new DefaultHandler() });
-			server.setHandler(handlers);
+            // Dynamic content
+            ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+            context.setClassLoader(getClass().getClassLoader());
+            context.setContextPath("/api");
+            context.addEventListener(guice);
 
-			server.start();
+            FilterHolder filterHolder = new FilterHolder(GuiceFilter.class);
+            context.addFilter(filterHolder, "/*", EnumSet.allOf(DispatcherType.class));
+            context.addServlet(EmptyServlet.class, "/*");
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+            // Add all handlers to server
+            HandlerList handlers = new HandlerList();
+            handlers.setHandlers(new Handler[]{resource_handler, context, new DefaultHandler()});
+            server.setHandler(handlers);
 
-	public void stop() {
-		try {
-			server.stop();
-		} catch (Exception e) {}
-	}
+            server.start();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void stop() {
+        try {
+            server.stop();
+        } catch (Exception e) {
+        }
+    }
 }

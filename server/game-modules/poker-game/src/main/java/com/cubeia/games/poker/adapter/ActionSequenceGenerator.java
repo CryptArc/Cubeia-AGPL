@@ -5,9 +5,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * A sequence generator for actions. This class should be a singleton at least per table.
  * Sequence numbers are used to check the validity of responses from the client.
- * 
+ * <p/>
  * This class is thread safe.
- * 
+ *
  * @author w
  */
 public class ActionSequenceGenerator {

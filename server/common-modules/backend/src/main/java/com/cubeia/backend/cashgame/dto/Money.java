@@ -21,19 +21,20 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
- * Immutable domain object representing money. 
- * 
+ * Immutable domain object representing money.
+ * <p/>
  * The value must be multiplied by 10^fractionalDigits. For example: $12.34
  * should be stored as Money(1234, "USD", 2).
+ *
  * @author w
  */
 public final class Money implements Serializable {
-	private static final long serialVersionUID = 6524466586945917257L;
+    private static final long serialVersionUID = 6524466586945917257L;
 
-	private final String currencyCode;
-	private final int fractionalDigits;
-	private final long amount;
-	
+    private final String currencyCode;
+    private final int fractionalDigits;
+    private final long amount;
+
     public Money(long amount, String currencyCode, int fractionalDigits) {
         super();
         this.amount = amount;
@@ -52,46 +53,49 @@ public final class Money implements Serializable {
     public long getAmount() {
         return amount;
     }
-    
+
     /**
      * Returns a new money object by adding the given money to this money.
      * The currencies must be the same.
+     *
      * @param m money to add
-     * @throws IllegalArgumentException if the currencies are incompatible
      * @return the sum of this money and the given money
+     * @throws IllegalArgumentException if the currencies are incompatible
      */
     public Money add(Money m) {
-        if (getFractionalDigits() != m.getFractionalDigits()  ||  !getCurrencyCode().equals(m.getCurrencyCode())) {
-            throw new IllegalArgumentException("incompatible currencies: this = " + 
-                getCurrencyCode() + "+" + getFractionalDigits() + ", other = " + 
-                m.getCurrencyCode() + "+" + m.getFractionalDigits());
+        if (getFractionalDigits() != m.getFractionalDigits() || !getCurrencyCode().equals(m.getCurrencyCode())) {
+            throw new IllegalArgumentException("incompatible currencies: this = " +
+                    getCurrencyCode() + "+" + getFractionalDigits() + ", other = " +
+                    m.getCurrencyCode() + "+" + m.getFractionalDigits());
         }
         return new Money(getAmount() + m.getAmount(), getCurrencyCode(), getFractionalDigits());
     }
-    
+
     /**
      * Subtract the given money from this money.
      * This is the same as doing this.add(that.negate()).
+     *
      * @param m money to subtract
      * @return the result
      */
     public Money subtract(Money m) {
         return this.add(m.negate());
     }
-    
+
     /**
      * Returns a new money object with the given scalar amount added.
+     *
      * @param amount amount to add
      * @return new money with amount added
      */
     public Money add(long amount) {
         return new Money(getAmount() + amount, getCurrencyCode(), getFractionalDigits());
     }
-    
+
     public Money negate() {
         return new Money(-getAmount(), getCurrencyCode(), getFractionalDigits());
     }
-    
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -122,7 +126,7 @@ public final class Money implements Serializable {
             return false;
         return true;
     }
-    
+
     @Override
     public String toString() {
         BigDecimal amountBd = new BigDecimal(getAmount());

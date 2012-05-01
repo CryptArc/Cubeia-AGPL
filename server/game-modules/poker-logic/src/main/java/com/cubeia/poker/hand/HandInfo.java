@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface HandInfo {
 
-	HandType getHandType();
-	
-	List<Card> getCards();
+    HandType getHandType();
+
+    List<Card> getCards();
 }

@@ -28,10 +28,10 @@ public class MockMttActivatorContext implements ActivatorContext {
     public ConfigSource getConfigSource() {
         return null;
     }
-    
+
     public ActivatorRouter getActivatorRouter() {
-    	// TODO Auto-generated method stub
-    	return null;
+        // TODO Auto-generated method stub
+        return null;
     }
 
     public int getMttId() {

@@ -26,8 +26,8 @@ import com.cubeia.games.poker.tournament.state.PokerTournamentStatus;
 
 public class PokerTournamentInterceptor implements PlayerInterceptor {
 
-	private transient PokerTournamentUtil util = new PokerTournamentUtil();
-	
+    private transient PokerTournamentUtil util = new PokerTournamentUtil();
+
     @SuppressWarnings("unused")
     private final PokerTournament pokerTournament;
 
@@ -36,7 +36,7 @@ public class PokerTournamentInterceptor implements PlayerInterceptor {
     }
 
     public MttRegisterResponse register(MttInstance instance, MttRegistrationRequest request) {
-    	PokerTournamentState state = util.getPokerState(instance);
+        PokerTournamentState state = util.getPokerState(instance);
         if (state.getStatus() != PokerTournamentStatus.REGISTERING) {
             return MttRegisterResponse.ALLOWED;
         } else {
@@ -45,8 +45,8 @@ public class PokerTournamentInterceptor implements PlayerInterceptor {
     }
 
     public MttRegisterResponse unregister(MttInstance instance, int pid) {
-    	PokerTournamentState state = util.getPokerState(instance);
-    	
+        PokerTournamentState state = util.getPokerState(instance);
+
         if (state.getStatus() != PokerTournamentStatus.REGISTERING) {
             return MttRegisterResponse.DENIED;
         } else {

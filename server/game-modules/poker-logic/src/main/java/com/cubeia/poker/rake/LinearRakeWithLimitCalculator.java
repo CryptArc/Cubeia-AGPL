@@ -1,24 +1,17 @@
 package com.cubeia.poker.rake;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-
 import com.cubeia.poker.RakeSettings;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.Pot;
 
+import java.math.BigDecimal;
+import java.util.*;
+
 /**
  * Rake calculator where rake is linear (defined by a fraction) up to a limit after which
  * no more rake is taken.
- * @author w
  *
+ * @author w
  */
 @SuppressWarnings("serial")
 public class LinearRakeWithLimitCalculator implements RakeCalculator {
@@ -26,32 +19,33 @@ public class LinearRakeWithLimitCalculator implements RakeCalculator {
     private final BigDecimal rakeFraction;
     private final long rakeLimit;
     private final long rakeLimitHeadsUp;
-    
+
     /**
      * Rake calculator with limit.
+     *
      * @param rakeFraction fraction (0.01 gives 1%)
-     * @param rakeLimit rake limit
+     * @param rakeLimit    rake limit
      */
     public LinearRakeWithLimitCalculator(RakeSettings rakeSettings) {
         this.rakeFraction = rakeSettings.getRakeFraction();
         this.rakeLimit = rakeSettings.getRakeLimit();
         this.rakeLimitHeadsUp = rakeSettings.getRakeLimitHeadsUp();
     }
-    
+
     @Override
     public RakeInfoContainer calculateRakes(Collection<Pot> pots, boolean tableHasSeenAction) {
         Map<Pot, Long> potRake = new HashMap<Pot, Long>();
 
         long limit = countPlayers(pots) == 2 ? rakeLimitHeadsUp : rakeLimit;
-        
+
         List<Pot> potsSortedById = sortPotsInIdOrder(pots);
-        
+
         long totalRake = 0L;
         long totalPot = 0L;
-        
+
         for (Pot pot : potsSortedById) {
             long potSize = pot.getPotSize();
-            
+
             long rake = 0L;
             if (tableHasSeenAction) {
                 rake = rakeFraction.multiply(new BigDecimal(potSize)).longValue();
@@ -60,11 +54,11 @@ public class LinearRakeWithLimitCalculator implements RakeCalculator {
                 }
                 totalRake += rake;
             }
-            
+
             totalPot += potSize;
             potRake.put(pot, rake);
         }
-        
+
         return new RakeInfoContainer(totalPot, totalRake, potRake);
     }
 
@@ -78,13 +72,17 @@ public class LinearRakeWithLimitCalculator implements RakeCalculator {
 
     /**
      * Returns a new list where the pots are ordered by ascending pot id.
+     *
      * @param pots pots to sort
      * @return new sorted list
      */
     private List<Pot> sortPotsInIdOrder(Collection<Pot> pots) {
         List<Pot> potsSortedById = new ArrayList<Pot>(pots);
         Collections.sort(potsSortedById, new Comparator<Pot>() {
-            @Override public int compare(Pot p1, Pot p2) { return p1.getId() - p2.getId(); }
+            @Override
+            public int compare(Pot p1, Pot p2) {
+                return p1.getId() - p2.getId();
+            }
         });
         return potsSortedById;
     }
@@ -92,8 +90,8 @@ public class LinearRakeWithLimitCalculator implements RakeCalculator {
     private boolean willRakeAdditionBreakLimit(long totalRake, long rakeAddition, long limit) {
         return totalRake + rakeAddition > limit;
     }
-    
-    
+
+
     @Override
     public String toString() {
         return "rake fraction = " + rakeFraction + ", rake limit = " + rakeLimit;

@@ -20,26 +20,27 @@ package com.cubeia.poker.rounds;
 import com.cubeia.poker.rounds.ante.AnteRound;
 import com.cubeia.poker.rounds.betting.BettingRound;
 import com.cubeia.poker.rounds.blinds.BlindsRound;
+
 /**
  * These will be called at the end of a round
- * @author per.hjelm The master of the universe
  *
+ * @author per.hjelm The master of the universe
  */
 public interface RoundVisitor {
 
-	void visit(AnteRound anteRound);
-	
-	void visit(BettingRound bettingRound);
+    void visit(AnteRound anteRound);
 
-	void visit(BlindsRound blindsRound);
-	
-	void visit(DealCommunityCardsRound round);
+    void visit(BettingRound bettingRound);
 
-	void visit(DealExposedPocketCardsRound round);
+    void visit(BlindsRound blindsRound);
 
-	void visit(DealInitialPocketCardsRound round);
-	
-	void visit(ExposePrivateCardsRound exposePrivateCardsRound);
-	
-	
+    void visit(DealCommunityCardsRound round);
+
+    void visit(DealExposedPocketCardsRound round);
+
+    void visit(DealInitialPocketCardsRound round);
+
+    void visit(ExposePrivateCardsRound exposePrivateCardsRound);
+
+
 }

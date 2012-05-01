@@ -1,10 +1,5 @@
 package com.cubeia.games.poker.handler;
 
-import static com.cubeia.games.poker.handler.BackendCallHandler.EXT_PROP_KEY_TABLE_ID;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.cubeia.backend.cashgame.AllowJoinResponse;
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.TableId;
@@ -20,6 +15,10 @@ import com.cubeia.poker.PokerState;
 import com.cubeia.poker.player.PokerPlayer;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static com.cubeia.games.poker.handler.BackendCallHandler.EXT_PROP_KEY_TABLE_ID;
 
 public class BackendPlayerSessionHandler {
     private static Logger log = LoggerFactory.getLogger(BackendPlayerSessionHandler.class);
@@ -28,27 +27,28 @@ public class BackendPlayerSessionHandler {
      * Default zero money object. This currently defines the currency and fractional digits in the system.
      */
     public final static Money DEFAULT_ZERO_MONEY = new Money(0, "EUR", 2);
-    
-    @Service @VisibleForTesting
+
+    @Service
+    @VisibleForTesting
     protected CashGamesBackendContract cashGameBackend;
-    
+
     @Inject
     private TableCloseHandler closeHandler;
-    
+
     public AllowJoinResponse allowJoinTable(int playerId) {
-    	return cashGameBackend.allowJoinTable(playerId);
+        return cashGameBackend.allowJoinTable(playerId);
     }
-    
+
     public void endPlayerSessionInBackend(Table table, PokerPlayer pokerPlayer, int roundNumber) {
         if (!(pokerPlayer instanceof PokerPlayerImpl)) {
             throw new IllegalStateException("must be a PokerPlayerImpl");
         }
-        
+
         PokerPlayerImpl pokerPlayerImpl = (PokerPlayerImpl) pokerPlayer;
-        
+
         PlayerSessionId sessionId = pokerPlayerImpl.getPlayerSessionId();
-        
-        log.debug("Handle session end for player[" + pokerPlayer.getId() + "], sessionid["+sessionId+"]");
+
+        log.debug("Handle session end for player[" + pokerPlayer.getId() + "], sessionid[" + sessionId + "]");
         if (sessionId != null) {
             // TODO: table round number is mocked!
             CloseSessionRequest closeSessionRequest = new CloseSessionRequest(sessionId, roundNumber);
@@ -68,16 +68,16 @@ public class BackendPlayerSessionHandler {
         TableId tableId = (TableId) state.getExternalTableProperties().get(EXT_PROP_KEY_TABLE_ID);
         if (tableId == null) {
             log.error("No table ID found in external properties; Table must be anounced first; tId = {}", table.getId());
-            log.debug("Crashing table "+table.getId());
+            log.debug("Crashing table " + table.getId());
             closeHandler.tableCrashed(table);
-        }else{
+        } else {
             OpenSessionRequest openSessionRequest = new OpenSessionRequest(
-                playerId, tableId, DEFAULT_ZERO_MONEY, roundNumber);
+                    playerId, tableId, DEFAULT_ZERO_MONEY, roundNumber);
             cashGameBackend.openSession(openSessionRequest, cashGameBackend.getCallbackFactory().createOpenSessionCallback(table));
         }
-        
+
     }
-    
+
     /*public void handleCrashOnTable(Table table) {
         log.info("handling crashed table id = {}, hand id = {}", table.getId());
         

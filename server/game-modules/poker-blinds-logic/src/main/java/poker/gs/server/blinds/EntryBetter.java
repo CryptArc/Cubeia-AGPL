@@ -2,29 +2,28 @@ package poker.gs.server.blinds;
 
 /**
  * Describes a player who should pay the entry bet.
- * 
- * @author viktor
  *
+ * @author viktor
  */
 public class EntryBetter {
 
-	private final BlindsPlayer player;
-	
-	private final EntryBetType entryBetType;
-	
-	public EntryBetter(BlindsPlayer player, EntryBetType entryBetType) {
-		super();
-		this.player = player;
-		this.entryBetType = entryBetType;
-	}
+    private final BlindsPlayer player;
 
-	public BlindsPlayer getPlayer() {
-		return player;
-	}
+    private final EntryBetType entryBetType;
 
-	public EntryBetType getEntryBetType() {
-		return entryBetType;
-	}
-	
-	
+    public EntryBetter(BlindsPlayer player, EntryBetType entryBetType) {
+        super();
+        this.player = player;
+        this.entryBetType = entryBetType;
+    }
+
+    public BlindsPlayer getPlayer() {
+        return player;
+    }
+
+    public EntryBetType getEntryBetType() {
+        return entryBetType;
+    }
+
+
 }

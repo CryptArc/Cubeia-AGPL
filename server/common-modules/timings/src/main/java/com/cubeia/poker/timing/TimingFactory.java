@@ -25,11 +25,11 @@ import com.cubeia.poker.timing.impl.TimingRegistryImpl;
  * @author Fredrik Johansson, Cubeia Ltd
  */
 public class TimingFactory {
-	
-	private static TimingRegistry registry = new TimingRegistryImpl();
 
-	public static TimingRegistry getRegistry() {
-		return registry;
-	}
-	
+    private static TimingRegistry registry = new TimingRegistryImpl();
+
+    public static TimingRegistry getRegistry() {
+        return registry;
+    }
+
 }

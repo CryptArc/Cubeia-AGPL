@@ -21,6 +21,6 @@ import com.cubeia.poker.action.ActionRequest;
 
 public interface TestListener {
 
-	void notifyActionRequested(ActionRequest r);
+    void notifyActionRequested(ActionRequest r);
 
 }

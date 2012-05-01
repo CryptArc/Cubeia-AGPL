@@ -5,6 +5,7 @@ import java.util.Random;
 
 /**
  * Provides a random number generator.
+ *
  * @author w
  */
 public interface RNGProvider extends Serializable {

@@ -6,7 +6,7 @@ import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.io.protocol.Enums.WatchResponseStatus;
 
 public class PlayerUnseater {
-    
+
     public void unseatPlayer(Table table, int playerId, boolean setAsWatcher) {
         table.getPlayerSet().unseatPlayer(playerId);
         table.getListener().playerLeft(table, playerId);

@@ -17,24 +17,23 @@
 
 package com.cubeia.poker.states;
 
-import java.io.Serializable;
-
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.PokerAction;
 
+import java.io.Serializable;
+
 public interface PokerGameSTM extends Serializable {
 
-	public void timeout(PokerState context);
+    public void timeout(PokerState context);
 
-	public void act(PokerAction action, PokerState pokerGame);
+    public void act(PokerAction action, PokerState pokerGame);
 
-	public String getStateDescription();
+    public String getStateDescription();
 
-	/**
-	 * 
-	 * @param playerId
-	 * @return true if we are waiting for this player to act.
-	 */
-	public boolean isCurrentlyWaitingForPlayer(PokerState pokerGame, int playerId);
+    /**
+     * @param playerId
+     * @return true if we are waiting for this player to act.
+     */
+    public boolean isCurrentlyWaitingForPlayer(PokerState pokerGame, int playerId);
 
 }

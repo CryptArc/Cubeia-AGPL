@@ -5,6 +5,6 @@
     <service>com.cubeia.games.poker.debugger.HandDebuggerFacade</service>
     <description/>
     <exported>
- 
+
     </exported>
 </service>

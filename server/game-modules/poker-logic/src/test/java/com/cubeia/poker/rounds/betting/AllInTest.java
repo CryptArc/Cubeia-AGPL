@@ -17,64 +17,58 @@
 
 package com.cubeia.poker.rounds.betting;
 
-import junit.framework.TestCase;
-
 import com.cubeia.poker.MockGame;
 import com.cubeia.poker.MockPlayer;
 import com.cubeia.poker.TestListener;
 import com.cubeia.poker.TestUtils;
-import com.cubeia.poker.action.ActionRequest;
-import com.cubeia.poker.action.ActionRequestFactory;
-import com.cubeia.poker.action.PokerAction;
-import com.cubeia.poker.action.PokerActionType;
-import com.cubeia.poker.action.PossibleAction;
+import com.cubeia.poker.action.*;
 import com.cubeia.poker.variant.texasholdem.TexasHoldemFutureActionsCalculator;
+import junit.framework.TestCase;
 
 public class AllInTest extends TestCase implements TestListener {
 
-	private ActionRequest requestedAction;
+    private ActionRequest requestedAction;
 
-	private MockGame game;
+    private MockGame game;
 
-	private BettingRound round;
+    private BettingRound round;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		game = new MockGame();
-		game.listeners.add(this);
-		
-	}
-	
-	public void testAllInBet() {
-		// NOTE: This implies no limit betting.
-		MockPlayer[] p = TestUtils.createMockPlayers(2, 500);
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        game = new MockGame();
+        game.listeners.add(this);
 
-		game.addPlayers(p);
-		round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()),  new TexasHoldemFutureActionsCalculator());
+    }
 
-		PossibleAction bet = requestedAction.getOption(PokerActionType.BET);
-		assertEquals(500, bet.getMaxAmount());
-		assertEquals(500, p[1].getBalance());
-		act(p[1], PokerActionType.BET, bet.getMaxAmount());
-		assertEquals(0, p[1].getBalance());
-		assertTrue(p[1].isAllIn());
-		
-		
-		
-	}
-	
-	
-	// HELPERS
-	
-	private void act(MockPlayer player, PokerActionType action, long amount) {
-		PokerAction a = new PokerAction(player.getId(), action);
-		a.setBetAmount(amount);
-		round.act(a);
-	}	
+    public void testAllInBet() {
+        // NOTE: This implies no limit betting.
+        MockPlayer[] p = TestUtils.createMockPlayers(2, 500);
 
-	public void notifyActionRequested(ActionRequest r) {
-		this.requestedAction = r;
-	}
+        game.addPlayers(p);
+        round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
+
+        PossibleAction bet = requestedAction.getOption(PokerActionType.BET);
+        assertEquals(500, bet.getMaxAmount());
+        assertEquals(500, p[1].getBalance());
+        act(p[1], PokerActionType.BET, bet.getMaxAmount());
+        assertEquals(0, p[1].getBalance());
+        assertTrue(p[1].isAllIn());
+
+
+    }
+
+
+    // HELPERS
+
+    private void act(MockPlayer player, PokerActionType action, long amount) {
+        PokerAction a = new PokerAction(player.getId(), action);
+        a.setBetAmount(amount);
+        round.act(a);
+    }
+
+    public void notifyActionRequested(ActionRequest r) {
+        this.requestedAction = r;
+    }
 
 }

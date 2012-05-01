@@ -21,13 +21,13 @@ import com.cubeia.poker.player.PokerPlayer;
 
 /**
  * Implementation of no limit betting strategy.
- * 
- * Rules: 
+ * <p/>
+ * Rules:
  * Players may bet or raise their entire stack at any given time.
  * Exception: when all players are all-in except for the player to act, in this case he may only call or fold.
  * When betting, the size of the bet must be >= the min bet according to the configuration.
- * When raising, the size of the raise must be >= the size of the last bet or raise. 
- * 
+ * When raising, the size of the raise must be >= the size of the last bet or raise.
+ * <p/>
  * What we need to know:
  * 1. Min bet (as configured)
  * 2. Player to act's current bet stack and total stack
@@ -37,7 +37,7 @@ import com.cubeia.poker.player.PokerPlayer;
  */
 public class NoLimitBetStrategy implements BetStrategy {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
 //	private final BettingRoundContext bettingRoundContext;
 //
@@ -45,55 +45,55 @@ public class NoLimitBetStrategy implements BetStrategy {
 //		this.bettingRoundContext = bettingRoundContext;
 //	}
 
-	@Override
-	public long getMaxBetAmount(BettingRoundContext bettingRoundContext, PokerPlayer player) {
-		return player.getBalance();
-	}
+    @Override
+    public long getMaxBetAmount(BettingRoundContext bettingRoundContext, PokerPlayer player) {
+        return player.getBalance();
+    }
 
-	@Override
-	public long getMaxRaiseToAmount(BettingRoundContext bettingRoundContext, PokerPlayer player) {
-		if (bettingRoundContext.allOtherNonFoldedPlayersAreAllIn(player)) {
-			return 0;
-		}		
-		
-		return player.getBalance() + player.getBetStack();
-	}
+    @Override
+    public long getMaxRaiseToAmount(BettingRoundContext bettingRoundContext, PokerPlayer player) {
+        if (bettingRoundContext.allOtherNonFoldedPlayersAreAllIn(player)) {
+            return 0;
+        }
 
-	@Override
-	public long getMinBetAmount(BettingRoundContext bettingRoundContext, PokerPlayer player) {
-		return Math.min(player.getBalance(), bettingRoundContext.getMinBet());
-	}
+        return player.getBalance() + player.getBetStack();
+    }
 
-	@Override
-	public long getMinRaiseToAmount(BettingRoundContext bettingRoundContext, PokerPlayer player) {
-		if (bettingRoundContext.allOtherNonFoldedPlayersAreAllIn(player)) {
-			return 0;
-		}
-		
-		// Check if we have stored a next bet level, if not create one from previous bet.
-		long raiseTo = bettingRoundContext.getNextValidRaiseLevel();
-		if (raiseTo == 0) {
-			raiseTo = bettingRoundContext.getHighestBet() + bettingRoundContext.getSizeOfLastBetOrRaise();
-		}
-		
-		long cost = raiseTo - player.getBetStack();
-		long affordableCost = Math.min(player.getBalance(), cost);
-		
-		if (cost < 0) {
-			throw new IllegalStateException(String.format("Current high bet (%d) is lower than player's bet stack (%d). MaxRaise(%d) Balance(%d)", bettingRoundContext.getHighestBet(), player.getBetStack(), raiseTo, player.getBalance()));
-		}
-		
-		return player.getBetStack() + affordableCost;
-	}
+    @Override
+    public long getMinBetAmount(BettingRoundContext bettingRoundContext, PokerPlayer player) {
+        return Math.min(player.getBalance(), bettingRoundContext.getMinBet());
+    }
 
-	@Override
-	public long getCallAmount(BettingRoundContext bettingRoundContext, PokerPlayer player) {
-		long diff = bettingRoundContext.getHighestBet() - player.getBetStack();
-		if (diff <= 0) {
-			throw new IllegalStateException("Nothing to call");
-		}
-		
-		return Math.min(player.getBalance(), diff);
-	}
+    @Override
+    public long getMinRaiseToAmount(BettingRoundContext bettingRoundContext, PokerPlayer player) {
+        if (bettingRoundContext.allOtherNonFoldedPlayersAreAllIn(player)) {
+            return 0;
+        }
+
+        // Check if we have stored a next bet level, if not create one from previous bet.
+        long raiseTo = bettingRoundContext.getNextValidRaiseLevel();
+        if (raiseTo == 0) {
+            raiseTo = bettingRoundContext.getHighestBet() + bettingRoundContext.getSizeOfLastBetOrRaise();
+        }
+
+        long cost = raiseTo - player.getBetStack();
+        long affordableCost = Math.min(player.getBalance(), cost);
+
+        if (cost < 0) {
+            throw new IllegalStateException(String.format("Current high bet (%d) is lower than player's bet stack (%d). MaxRaise(%d) Balance(%d)", bettingRoundContext.getHighestBet(), player.getBetStack(), raiseTo, player.getBalance()));
+        }
+
+        return player.getBetStack() + affordableCost;
+    }
+
+    @Override
+    public long getCallAmount(BettingRoundContext bettingRoundContext, PokerPlayer player) {
+        long diff = bettingRoundContext.getHighestBet() - player.getBetStack();
+        if (diff <= 0) {
+            throw new IllegalStateException("Nothing to call");
+        }
+
+        return Math.min(player.getBalance(), diff);
+    }
 
 }

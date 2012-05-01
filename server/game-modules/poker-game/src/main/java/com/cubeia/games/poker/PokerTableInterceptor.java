@@ -17,63 +17,63 @@
 
 package com.cubeia.games.poker;
 
-import com.cubeia.games.poker.handler.BackendPlayerSessionHandler;
-import org.apache.log4j.Logger;
-
 import com.cubeia.backend.cashgame.AllowJoinResponse;
 import com.cubeia.firebase.api.game.table.InterceptionResponse;
 import com.cubeia.firebase.api.game.table.SeatRequest;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TableInterceptor;
+import com.cubeia.games.poker.handler.BackendPlayerSessionHandler;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.player.PokerPlayer;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
+import org.apache.log4j.Logger;
 
 public class PokerTableInterceptor implements TableInterceptor {
 
     @SuppressWarnings("unused")
     private static final transient Logger log = Logger.getLogger(PokerTableInterceptor.class);
-    
+
     @Inject
     StateInjector stateInjector;
-    
+
     @Inject
     PokerState state;
 
-	@Inject @VisibleForTesting
+    @Inject
+    @VisibleForTesting
     BackendPlayerSessionHandler backendPlayerSessionHandler;
-    
+
     public InterceptionResponse allowJoin(Table table, SeatRequest request) {
-    	stateInjector.injectAdapter(table);
-    	
-    	AllowJoinResponse allowResponse = backendPlayerSessionHandler.allowJoinTable(request.getPlayerId());
-    	
-		return new InterceptionResponse(allowResponse.allowed, allowResponse.responseCode);
-	}
+        stateInjector.injectAdapter(table);
 
-	
-	/**
-	 * We will flag the player as disconnected only since we need to hold the
-	 * player at the table until the end of next hand.
-	 */
-	public InterceptionResponse allowLeave(Table table, int playerId) {
-		stateInjector.injectAdapter(table); // TODO: Fix this with Guice logic module
-		boolean notPlaying = state.getGameState().getClass() != PokerState.PLAYING.getClass();
-		PokerPlayer player = state.getPokerPlayer(playerId);
-		
-        if (notPlaying  &&  !player.isBuyInRequestActive()) {
-			// No hand running, let him go...
-			return new InterceptionResponse(true, -1);
-		} else {
-			// Hand running, set to disconnected only
-		    // state.playerIsSittingOut(playerId, SitOutStatus.SITTING_OUT); // Will be handled in listener?
-			return new InterceptionResponse(false, -1);
-		}
-	}
+        AllowJoinResponse allowResponse = backendPlayerSessionHandler.allowJoinTable(request.getPlayerId());
 
-	public InterceptionResponse allowReservation(Table table, SeatRequest request) {
-		stateInjector.injectAdapter(table);
-		return new InterceptionResponse(true, -1);
-	}
+        return new InterceptionResponse(allowResponse.allowed, allowResponse.responseCode);
+    }
+
+
+    /**
+     * We will flag the player as disconnected only since we need to hold the
+     * player at the table until the end of next hand.
+     */
+    public InterceptionResponse allowLeave(Table table, int playerId) {
+        stateInjector.injectAdapter(table); // TODO: Fix this with Guice logic module
+        boolean notPlaying = state.getGameState().getClass() != PokerState.PLAYING.getClass();
+        PokerPlayer player = state.getPokerPlayer(playerId);
+
+        if (notPlaying && !player.isBuyInRequestActive()) {
+            // No hand running, let him go...
+            return new InterceptionResponse(true, -1);
+        } else {
+            // Hand running, set to disconnected only
+            // state.playerIsSittingOut(playerId, SitOutStatus.SITTING_OUT); // Will be handled in listener?
+            return new InterceptionResponse(false, -1);
+        }
+    }
+
+    public InterceptionResponse allowReservation(Table table, SeatRequest request) {
+        stateInjector.injectAdapter(table);
+        return new InterceptionResponse(true, -1);
+    }
 }

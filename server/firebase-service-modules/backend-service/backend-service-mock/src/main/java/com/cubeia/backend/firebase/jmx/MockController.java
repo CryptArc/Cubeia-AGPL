@@ -17,33 +17,33 @@
 
 package com.cubeia.backend.firebase.jmx;
 
-import java.lang.management.ManagementFactory;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-
+import com.cubeia.backend.firebase.CashGamesBackendMock;
+import com.cubeia.firebase.api.action.GameObjectAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.cubeia.backend.firebase.CashGamesBackendMock;
-import com.cubeia.firebase.api.action.GameObjectAction;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import java.lang.management.ManagementFactory;
 
 public class MockController implements MockControllerMBean {
-    
+
     private static final String JMX_BIND_NAME = "com.cubeia.poker.backend:type=MockController";
 
     private Logger log = LoggerFactory.getLogger(MockController.class);
 
     private final CashGamesBackendMock cashGamesBackendMock;
-    
+
     private final String CLOSE_TABLE_MSG = "CLOSE_TABLE";
     private final String CLOSE_TABLE_HINT_MSG = "CLOSE_TABLE_HINT";
-    
+
     public MockController(CashGamesBackendMock cashGamesBackendMock) {
         this.cashGamesBackendMock = cashGamesBackendMock;
         initJmx();
-    };
-    
+    }
+
+    ;
+
     @Override
     public void closeTableByGameIdAndTableId(int gameId, int tableId) {
         sendGameObjectActionToTable(gameId, tableId, CLOSE_TABLE_MSG);
@@ -53,24 +53,24 @@ public class MockController implements MockControllerMBean {
     public void closeTableHintByGameIdAndTableId(int gameId, int tableId) {
         sendGameObjectActionToTable(gameId, tableId, CLOSE_TABLE_HINT_MSG);
     }
-    
+
     private void sendGameObjectActionToTable(int gameId, int tableId, Object object) {
-        log.debug("sending object action: game = {}, table = {}, action = {}", 
-            new Object[] {gameId, tableId, object});
+        log.debug("sending object action: game = {}, table = {}, action = {}",
+                new Object[]{gameId, tableId, object});
         GameObjectAction action = new GameObjectAction(tableId);
         action.setAttachment(object);
         cashGamesBackendMock.getRouter().dispatchToGame(gameId, action);
     }
-    
+
     private void initJmx() {
         try {
             MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
             ObjectName objectName = new ObjectName(JMX_BIND_NAME);
             mbs.registerMBean(this, objectName);
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.error("failed to start mbean server", e);
         }
     }
-    
-    
+
+
 }

@@ -1,15 +1,15 @@
 package com.cubeia.poker.model;
 
-import java.io.Serializable;
-
 import com.cubeia.poker.hand.Hand;
+
+import java.io.Serializable;
 
 public class PlayerHand implements Serializable {
     private static final long serialVersionUID = 8327782333044163208L;
-    
+
     private final Integer playerId;
     private final Hand hand;
-    
+
     public PlayerHand(Integer playerId, Hand hand) {
         this.playerId = playerId;
         this.hand = hand;
@@ -53,9 +53,9 @@ public class PlayerHand implements Serializable {
             return false;
         return true;
     }
-    
+
     @Override
     public String toString() {
-    	return "PlayerHand - PlayerId["+playerId+"] Hand["+hand+"]";
+        return "PlayerHand - PlayerId[" + playerId + "] Hand[" + hand + "]";
     }
 }

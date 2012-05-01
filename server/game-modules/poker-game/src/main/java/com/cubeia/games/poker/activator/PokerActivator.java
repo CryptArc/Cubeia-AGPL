@@ -17,25 +17,6 @@
 
 package com.cubeia.games.poker.activator;
 
-import static com.cubeia.games.poker.activator.PokerParticipant.RAKE_FRACTION;
-import static com.cubeia.games.poker.activator.PokerParticipant.RAKE_LIMIT;
-import static com.cubeia.games.poker.activator.PokerParticipant.RAKE_LIMIT_HEADS_UP;
-import static com.cubeia.poker.variant.PokerVariant.TELESINA;
-import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
-
-import java.io.Serializable;
-import java.lang.management.ManagementFactory;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-
-import com.cubeia.games.poker.state.FirebaseState;
-import org.apache.log4j.Logger;
-
 import com.cubeia.backend.firebase.CashGamesBackendContract;
 import com.cubeia.firebase.api.common.AttributeValue;
 import com.cubeia.firebase.api.game.activator.ActivatorContext;
@@ -48,6 +29,7 @@ import com.cubeia.firebase.api.lobby.LobbyAttributeAccessor;
 import com.cubeia.firebase.api.lobby.LobbyPath;
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.games.poker.lobby.PokerLobbyAttributes;
+import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.games.poker.tournament.activator.TournamentTableSettings;
 import com.cubeia.poker.PokerGuiceModule;
 import com.cubeia.poker.PokerSettings;
@@ -61,6 +43,20 @@ import com.cubeia.poker.timing.Timings;
 import com.cubeia.poker.variant.PokerVariant;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import org.apache.log4j.Logger;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import java.io.Serializable;
+import java.lang.management.ManagementFactory;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+
+import static com.cubeia.games.poker.activator.PokerParticipant.*;
+import static com.cubeia.poker.variant.PokerVariant.TELESINA;
+import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
 
 /**
  * Override the default game activator in order to provide my own
@@ -177,8 +173,8 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
      */
     public void createTable(String domain, int seats, int level, PokerVariant variant) {
         this.tableRegistry.createTable(seats,
-                                       new PokerParticipant(seats, domain, level, Timings.DEFAULT, variant, rngProvider,
-                                                            null));
+                new PokerParticipant(seats, domain, level, Timings.DEFAULT, variant, rngProvider,
+                        null));
     }
 
     /**
@@ -245,11 +241,11 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
         pokerState.setId(table.getId());
 
         PokerSettings settings = new PokerSettings(-1, -1, -1, timing, PokerVariant.TEXAS_HOLDEM,
-                                                   table.getPlayerSet().getSeatingMap().getNumberOfSeats(),
-                                                   BetStrategyName.NO_LIMIT,
-                                                   new RakeSettings(RAKE_FRACTION, RAKE_LIMIT, RAKE_LIMIT_HEADS_UP),
-                                                   Collections.<Serializable, Serializable>singletonMap(
-                                                           ATTR_EXTERNAL_TABLE_ID, "MOCK_TRN::" + table.getId()));
+                table.getPlayerSet().getSeatingMap().getNumberOfSeats(),
+                BetStrategyName.NO_LIMIT,
+                new RakeSettings(RAKE_FRACTION, RAKE_LIMIT, RAKE_LIMIT_HEADS_UP),
+                Collections.<Serializable, Serializable>singletonMap(
+                        ATTR_EXTERNAL_TABLE_ID, "MOCK_TRN::" + table.getId()));
 
         pokerState.init(rngProvider, settings);
         pokerState.setTournamentTable(true);

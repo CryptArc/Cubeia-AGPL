@@ -17,72 +17,74 @@
 
 package com.cubeia.games.poker.model;
 
+import com.cubeia.backend.cashgame.PlayerSessionId;
+import com.cubeia.firebase.api.game.player.GenericPlayer;
+import com.cubeia.poker.player.DefaultPokerPlayer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.cubeia.backend.cashgame.PlayerSessionId;
-import com.cubeia.firebase.api.game.player.GenericPlayer;
-import com.cubeia.poker.player.DefaultPokerPlayer;
-
 /**
  * Models a player that is active in the game.
- * 
+ * <p/>
  * Part of replicated game state
  *
  * @author Fredrik Johansson, Cubeia Ltd
  */
 public class PokerPlayerImpl extends DefaultPokerPlayer implements Serializable {
-	public static final String ATTR_PLAYER_EXTERNAL_SESSION_ID = "PLAYER_EXTERNAL_SESSION_ID";
-	
+    public static final String ATTR_PLAYER_EXTERNAL_SESSION_ID = "PLAYER_EXTERNAL_SESSION_ID";
+
     private static final Logger log = LoggerFactory.getLogger(PokerPlayerImpl.class);
-    
-	private static final long serialVersionUID = 1L;
 
-	private GenericPlayer placeholder;
+    private static final long serialVersionUID = 1L;
 
-	private Map<Serializable, Serializable> attributes = new HashMap<Serializable, Serializable>();
-	
-	private PlayerSessionId playerSessionId;
-	
+    private GenericPlayer placeholder;
+
+    private Map<Serializable, Serializable> attributes = new HashMap<Serializable, Serializable>();
+
+    private PlayerSessionId playerSessionId;
+
 //	private String externalPlayerSessionId;
 
-	public PokerPlayerImpl (GenericPlayer placeholder) {
-		super(placeholder.getPlayerId());
-		this.placeholder = placeholder;
-	}
+    public PokerPlayerImpl(GenericPlayer placeholder) {
+        super(placeholder.getPlayerId());
+        this.placeholder = placeholder;
+    }
 
-	@Override
-	public int getSeatId() {
-		return placeholder.getSeatId();
-	}
-	
-	/**
-	 * Returns the player attribute map.
-	 * @return attributes
-	 */
-	public Map<Serializable, Serializable> getAttributes() {
-		return attributes;
-	}
-	
-	/**
-	 * Sets a session id for this player. 
-	 * @param playerSessionId the session id, or null to leave the session
-	 */
-	public void setPlayerSessionId(PlayerSessionId playerSessionId) {
-	    log.debug("updating player {} session id: {} -> {}", new Object[] {getId(), getPlayerSessionId(), playerSessionId});
-		this.playerSessionId = playerSessionId;
-	}	
+    @Override
+    public int getSeatId() {
+        return placeholder.getSeatId();
+    }
 
-	/**
-	 * Returns the session id for this player.
-	 * @return the session id, null if not in a session
-	 */
-	public PlayerSessionId getPlayerSessionId() {
-		return playerSessionId;
-	}
+    /**
+     * Returns the player attribute map.
+     *
+     * @return attributes
+     */
+    public Map<Serializable, Serializable> getAttributes() {
+        return attributes;
+    }
+
+    /**
+     * Sets a session id for this player.
+     *
+     * @param playerSessionId the session id, or null to leave the session
+     */
+    public void setPlayerSessionId(PlayerSessionId playerSessionId) {
+        log.debug("updating player {} session id: {} -> {}", new Object[]{getId(), getPlayerSessionId(), playerSessionId});
+        this.playerSessionId = playerSessionId;
+    }
+
+    /**
+     * Returns the session id for this player.
+     *
+     * @return the session id, null if not in a session
+     */
+    public PlayerSessionId getPlayerSessionId() {
+        return playerSessionId;
+    }
 
 }

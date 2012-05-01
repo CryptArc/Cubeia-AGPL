@@ -9,6 +9,6 @@ public interface FirebaseCallbackFactory {
     public OpenSessionCallback createOpenSessionCallback(Table table);
 
     public ReserveCallback createReserveCallback(Table table);
-    
+
     public AnnounceTableCallback createAnnounceTableCallback(Table table);
 }

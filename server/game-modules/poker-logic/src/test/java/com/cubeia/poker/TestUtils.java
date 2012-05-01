@@ -17,63 +17,63 @@
 
 package com.cubeia.poker;
 
-import java.math.BigDecimal;
-
-import org.junit.Ignore;
-
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.player.PokerPlayer;
+import org.junit.Ignore;
+
+import java.math.BigDecimal;
 
 @Ignore("not a test")
 public class TestUtils {
-	
-    private TestUtils() {}
-    
-	public static MockPlayer[] createMockPlayers(int n) {
-		return createMockPlayers(n, 5000);
-	}
-	
-	public static MockPlayer[] createMockPlayers(int n, long balance) {
-		MockPlayer[] r = new MockPlayer[n];
 
-		for (int i = 0; i < n; i++) {
-			r[i] = new MockPlayer(i);
-			r[i].setSeatId(i);
-			r[i].setBalance(balance);
-		}
+    private TestUtils() {
+    }
 
-		return r;		
-	}	
+    public static MockPlayer[] createMockPlayers(int n) {
+        return createMockPlayers(n, 5000);
+    }
 
-	public static int[] createPlayerIdArray(MockPlayer[] mp) {
-		int[] ids = new int[mp.length];
-		
-		for (int i = 0; i < mp.length; i++) {
-			ids[i] = mp[i].getId();
-		}
-		
-		return ids;
-	}
-	
-	public static void addPlayers(PokerState game, PokerPlayer[] p, long startingChips) {
-		for (PokerPlayer pl : p) {
-			game.addPlayer(pl);
-			game.addChips(pl.getId(), startingChips);
-		}
-	}
-	
-	public static void addPlayers(PokerState game, PokerPlayer[] p) {
-		addPlayers(game, p, 10000);
-	}
+    public static MockPlayer[] createMockPlayers(int n, long balance) {
+        MockPlayer[] r = new MockPlayer[n];
 
-	public static void act(PokerState game, int playerId, PokerActionType actionType) {
-		game.act(new PokerAction(playerId, actionType));
-	}
+        for (int i = 0; i < n; i++) {
+            r[i] = new MockPlayer(i);
+            r[i].setSeatId(i);
+            r[i].setBalance(balance);
+        }
 
-	public static RakeSettings createOnePercentRakeSettings() {
-	    return new RakeSettings(new BigDecimal("0.1"), Long.MAX_VALUE, Long.MAX_VALUE);
-	}
+        return r;
+    }
+
+    public static int[] createPlayerIdArray(MockPlayer[] mp) {
+        int[] ids = new int[mp.length];
+
+        for (int i = 0; i < mp.length; i++) {
+            ids[i] = mp[i].getId();
+        }
+
+        return ids;
+    }
+
+    public static void addPlayers(PokerState game, PokerPlayer[] p, long startingChips) {
+        for (PokerPlayer pl : p) {
+            game.addPlayer(pl);
+            game.addChips(pl.getId(), startingChips);
+        }
+    }
+
+    public static void addPlayers(PokerState game, PokerPlayer[] p) {
+        addPlayers(game, p, 10000);
+    }
+
+    public static void act(PokerState game, int playerId, PokerActionType actionType) {
+        game.act(new PokerAction(playerId, actionType));
+    }
+
+    public static RakeSettings createOnePercentRakeSettings() {
+        return new RakeSettings(new BigDecimal("0.1"), Long.MAX_VALUE, Long.MAX_VALUE);
+    }
 
     public static RakeSettings createZeroRakeSettings() {
         return new RakeSettings(BigDecimal.ZERO, Long.MAX_VALUE, Long.MAX_VALUE);

@@ -26,38 +26,39 @@ import com.cubeia.poker.variant.telesina.Telesina;
  */
 public class DealInitialPocketCardsRound implements Round {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public DealInitialPocketCardsRound(Telesina telesina) {
-		telesina.dealInitialPocketCards();
-	}
+    public DealInitialPocketCardsRound(Telesina telesina) {
+        telesina.dealInitialPocketCards();
+    }
 
-	@Override
-	public void act(PokerAction action) {
-		throw new IllegalStateException("Perform action not allowed during DealInitialPocketCardsRoun. Action received: "+action);
-	}
+    @Override
+    public void act(PokerAction action) {
+        throw new IllegalStateException("Perform action not allowed during DealInitialPocketCardsRoun. Action received: " + action);
+    }
 
-	@Override
-	public String getStateDescription() {
-		return getClass().getSimpleName();
-	}
+    @Override
+    public String getStateDescription() {
+        return getClass().getSimpleName();
+    }
 
-	@Override
-	public boolean isFinished() {
-		return true;
-	}
+    @Override
+    public boolean isFinished() {
+        return true;
+    }
 
-	@Override
-	public void visit(RoundVisitor visitor) {
-		visitor.visit(this);
-	}
-	
-	@Override
-	public void timeout() {}
-	
-	@Override
-	public boolean isWaitingForPlayer(int playerId) {
-		return false;
-	}
+    @Override
+    public void visit(RoundVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public void timeout() {
+    }
+
+    @Override
+    public boolean isWaitingForPlayer(int playerId) {
+        return false;
+    }
 
 }

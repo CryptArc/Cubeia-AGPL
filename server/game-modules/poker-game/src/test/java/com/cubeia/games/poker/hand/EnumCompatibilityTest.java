@@ -1,14 +1,12 @@
 package com.cubeia.games.poker.hand;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
-import org.junit.Test;
-
 import com.cubeia.games.poker.io.protocol.Enums;
-
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.hand.Suit;
+import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class EnumCompatibilityTest {
     @Test

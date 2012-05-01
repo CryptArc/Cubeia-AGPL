@@ -1,10 +1,7 @@
 package com.cubeia.poker.hand;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -12,8 +9,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import org.junit.Test;
-import org.mockito.Mockito;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ShufflerTest {
 
@@ -25,8 +25,8 @@ public class ShufflerTest {
         List<String> shuffledList = new Shuffler<String>(rng).shuffle(list);
         assertThat(shuffledList, is(Arrays.asList("b", "c", "a")));
     }
-    
-    
+
+
     /**
      * Example from: http://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#Modern_method
      */
@@ -38,14 +38,14 @@ public class ShufflerTest {
         List<Integer> shuffledList = new Shuffler<Integer>(rng).shuffle(list);
         assertThat(shuffledList, is(Arrays.asList(7, 5, 4, 3, 1, 8, 2, 6)));
     }
-    
+
     @Test
     public void testShuffleReallyBigListJustForFun() {
         List<Integer> list = new ArrayList<Integer>();
         for (int i = 0; i < 10000; i++) {
             list.add(i);
         }
-        SecureRandom rng = new SecureRandom(new byte[] {1, 2, 3, 4});
+        SecureRandom rng = new SecureRandom(new byte[]{1, 2, 3, 4});
         List<Integer> shuffledList = new Shuffler<Integer>(rng).shuffle(list);
         assertThat(shuffledList.size(), is(list.size()));
         assertThat(shuffledList, not(list));

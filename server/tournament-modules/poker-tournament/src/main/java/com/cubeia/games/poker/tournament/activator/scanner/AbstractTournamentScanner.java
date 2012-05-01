@@ -17,15 +17,6 @@
 
 package com.cubeia.games.poker.tournament.activator.scanner;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.log4j.Logger;
-
 import com.cubeia.firebase.api.mtt.MttFactory;
 import com.cubeia.firebase.api.mtt.activator.ActivatorContext;
 import com.cubeia.firebase.api.mtt.lobby.MttLobbyObject;
@@ -33,6 +24,14 @@ import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes;
 import com.cubeia.games.poker.tournament.activator.PokerActivator;
 import com.cubeia.games.poker.tournament.state.PokerTournamentStatus;
+import org.apache.log4j.Logger;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractTournamentScanner implements PokerActivator, Runnable {
 
@@ -41,61 +40,60 @@ public abstract class AbstractTournamentScanner implements PokerActivator, Runna
     public static final long TOURNAMENT_CHECK_INTERVAL = 10000;
 
     public static final long SHUTDOWN_WAIT_TIME = 10000;
-    
+
     public static final long DELAY_BEFORE_REMOVING_FINISHED_TOURNAMENTS = 30; // Seconds
-    
+
     private static final transient Logger log = Logger.getLogger(AbstractTournamentScanner.class);
-    
+
     protected MttFactory factory;
 
     protected ActivatorContext context;
-    
-    protected ScheduledExecutorService executorService = null;
-    
-    private ScheduledFuture<?> checkTablesFuture = null;
-    
-    /** Lock to synchronize reading and creation of tournament instances */
-    protected final Object LOCK = new Object();
-    
-    
 
-    
+    protected ScheduledExecutorService executorService = null;
+
+    private ScheduledFuture<?> checkTablesFuture = null;
+
+    /**
+     * Lock to synchronize reading and creation of tournament instances
+     */
+    protected final Object LOCK = new Object();
+
 
     /*------------------------------------------------
 
-        LIFECYCLE METHODS
+       LIFECYCLE METHODS
 
-     ------------------------------------------------*/
-    
+    ------------------------------------------------*/
+
     public void init(ActivatorContext context) throws SystemException {
         this.context = context;
     }
-    
-    
+
+
     public void start() {
-        synchronized (LOCK) {                       
+        synchronized (LOCK) {
             if (checkTablesFuture != null) {
                 log.warn("Start called on running activator.");
             }
 
             executorService = Executors.newScheduledThreadPool(1);
             checkTablesFuture = executorService.scheduleAtFixedRate(this, INITIAL_TOURNAMENT_CHECK_DELAY, TOURNAMENT_CHECK_INTERVAL, TimeUnit.MILLISECONDS);
-        }       
+        }
     }
-    
-    
+
+
     public void setMttFactory(MttFactory factory) {
         this.factory = factory;
     }
-    
+
     public void stop() {
-        synchronized (LOCK) {       
-            if (checkTablesFuture == null) {                
+        synchronized (LOCK) {
+            if (checkTablesFuture == null) {
                 // already stopped
                 return;
-            } 
+            }
 
-            checkTablesFuture.cancel(false);        
+            checkTablesFuture.cancel(false);
             executorService.shutdown();
 
             try {
@@ -110,34 +108,33 @@ public abstract class AbstractTournamentScanner implements PokerActivator, Runna
 
             checkTablesFuture = null;
             executorService = null;
-        }       
+        }
     }
-    
-    public void destroy() {}
-    
-    
+
+    public void destroy() {
+    }
+
+
     /*------------------------------------------------
 
-        ABSTRACT METHODS
+       ABSTRACT METHODS
 
-     ------------------------------------------------*/
+    ------------------------------------------------*/
 
-    
-    
-    
+
     /*------------------------------------------------
 
-        PRIVATE & LOGIC METHODS
+       PRIVATE & LOGIC METHODS
 
-     ------------------------------------------------*/
-    
+    ------------------------------------------------*/
+
     /**
      * Checks for finished tournaments and schedules them to be removed.
      */
     protected Set<Integer> checkDestroyTournaments() {
         MttLobbyObject[] tournamentInstances = factory.listTournamentInstances();
         Set<Integer> removed = new HashSet<Integer>();
-        
+
         for (MttLobbyObject t : tournamentInstances) {
             String status = (String) t.getAttributes().get(PokerTournamentLobbyAttributes.STATUS.name()).getData();
 
@@ -148,8 +145,8 @@ public abstract class AbstractTournamentScanner implements PokerActivator, Runna
         }
         return removed;
     }
-    
-    
+
+
     protected class Destroyer implements Runnable {
 
         private final int mttid;
@@ -163,8 +160,8 @@ public abstract class AbstractTournamentScanner implements PokerActivator, Runna
             factory.destroyMtt(7, mttid);
         }
     }
-    
-    
+
+
     public void run() {
         try {
             synchronized (LOCK) {
@@ -173,6 +170,6 @@ public abstract class AbstractTournamentScanner implements PokerActivator, Runna
         } catch (Throwable t) {
             // Catching all errors so that the scheduler won't take the hit (and die).
             log.fatal("Failed checking tournaments: " + t, t);
-        }       
+        }
     }
 }

@@ -24,18 +24,18 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Getting the count has performance impact so it is important not to call this
  * method often and/or concurrently. (It is typically designed for using with
  * a JMX interface which polls about once per second).
- * 
+ * <p/>
  * This class is not targeted towards highly concurrent data (e.g. > 100 hits per second).
  *
  * @author Fredrik Johansson, Cubeia Ltd
  */
 public class StatCounter {
-    
-    private ConcurrentLinkedQueue<Hit> cache = new ConcurrentLinkedQueue<Hit>(); 
-    
+
+    private ConcurrentLinkedQueue<Hit> cache = new ConcurrentLinkedQueue<Hit>();
+
     private final long window;
-    
-    
+
+
     /**
      * Add a hit and remove tail object if too old.
      * The removal of the head object is only a safety precaution if no-one is polling
@@ -49,14 +49,14 @@ public class StatCounter {
             }
         }
     }
-    
+
     public int getCurrent() {
         cleanAllOldObjects();
         return cache.size();
     }
-    
-    
-	private void cleanAllOldObjects() {
+
+
+    private void cleanAllOldObjects() {
         synchronized (cache) {
             while (cache.size() > 0) {
                 if (System.currentTimeMillis() > cache.peek().time + window) {
@@ -66,16 +66,16 @@ public class StatCounter {
                 }
             }
         }
-        
+
     }
 
     public StatCounter(long millis) {
         this.window = millis;
-	}
-	
-    
-    private class Hit {
-        public long time = System.currentTimeMillis();    
     }
-	
+
+
+    private class Hit {
+        public long time = System.currentTimeMillis();
+    }
+
 }

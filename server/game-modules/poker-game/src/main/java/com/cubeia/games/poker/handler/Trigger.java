@@ -25,40 +25,42 @@ import java.io.Serializable;
  * @author Fredrik Johansson, Cubeia Ltd
  */
 public class Trigger implements Serializable {
-    
-    /** Version Id */
+
+    /**
+     * Version Id
+     */
     private static final long serialVersionUID = 1L;
-    
+
     private final TriggerType type;
     private int pid = 0;
     private int seq = -1;
-    
+
     public Trigger(TriggerType type) {
-        this.type = type; 
+        this.type = type;
     }
-    
+
     public Trigger(TriggerType type, int pid) {
-        this.type = type; 
+        this.type = type;
         this.pid = pid;
     }
-    
+
     public String toString() {
-        return "pid["+pid+"] type["+type+"] seq["+seq+"]";
+        return "pid[" + pid + "] type[" + type + "] seq[" + seq + "]";
     }
-    
+
     public int getPid() {
         return pid;
     }
-    
+
     public TriggerType getType() {
         return type;
     }
-    
+
     public int getSeq() {
-		return seq;
-	}
-    
+        return seq;
+    }
+
     public void setSeq(int seq) {
-		this.seq = seq;
-	}
+        this.seq = seq;
+    }
 }

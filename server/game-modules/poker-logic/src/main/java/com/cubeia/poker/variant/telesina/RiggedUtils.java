@@ -1,12 +1,9 @@
 package com.cubeia.poker.variant.telesina;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 import org.apache.log4j.Logger;
+
+import java.io.*;
+import java.util.Properties;
 
 /**
  * @author Jeremy Comte
@@ -20,7 +17,7 @@ public class RiggedUtils {
     /**
      * Loads the specified .properties file into the specified Properties object
      *
-     * @param file the file to load
+     * @param file          the file to load
      * @param oldProperties the Properties to load the file into
      * @return the Properties
      */
@@ -66,7 +63,6 @@ public class RiggedUtils {
     /**
      * Reloads the settings file
      *
-     *
      * @return the loaded Properties or a new empty if the file does not exist or can't be read
      */
     public static void reloadSettings() {
@@ -95,11 +91,11 @@ public class RiggedUtils {
 
     public static Double getPropertyAsDouble(String property, Double defaultValue) {
         Double value = defaultValue;
-            try{
-                value = Double.parseDouble(getSettings().getProperty(property));
-            } catch (Exception e) {
-                logger.error("can't read the property "+property+" from file "+settingsFile.getName());
-            }
+        try {
+            value = Double.parseDouble(getSettings().getProperty(property));
+        } catch (Exception e) {
+            logger.error("can't read the property " + property + " from file " + settingsFile.getName());
+        }
         return value;
     }
 
@@ -109,26 +105,26 @@ public class RiggedUtils {
 
     public static Long getPropertyAsLong(String property, Long defaultValue) {
         Long value = defaultValue;
-            try{
-                value = Long.parseLong(getSettings().getProperty(property));
-            } catch (Exception e) {
-                logger.error("can't read the property "+property+" from file "+settingsFile.getName());
-            }
+        try {
+            value = Long.parseLong(getSettings().getProperty(property));
+        } catch (Exception e) {
+            logger.error("can't read the property " + property + " from file " + settingsFile.getName());
+        }
         return value;
     }
-    
+
     public static Integer getPropertyAsInteger(String property) {
         return getPropertyAsInteger(property, null);
     }
 
     public static Integer getPropertyAsInteger(String property, Integer defaultValue) {
         Integer value = defaultValue;
-            try{
-                value = Integer.parseInt(getSettings().getProperty(property));
-            } catch (Exception e) {
-                logger.error("can't read the property "+property+" from file "+settingsFile.getName());
-            }
+        try {
+            value = Integer.parseInt(getSettings().getProperty(property));
+        } catch (Exception e) {
+            logger.error("can't read the property " + property + " from file " + settingsFile.getName());
+        }
         return value;
     }
-    
+
 }

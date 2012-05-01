@@ -17,11 +17,6 @@
 
 package mock;
 
-import static com.cubeia.poker.timing.Timings.MINIMUM_DELAY;
-import static com.cubeia.poker.variant.PokerVariant.TELESINA;
-
-import java.util.Random;
-
 import com.cubeia.poker.MockGame;
 import com.cubeia.poker.PokerSettings;
 import com.cubeia.poker.PokerState;
@@ -30,28 +25,33 @@ import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.rounds.betting.BetStrategyName;
 import com.cubeia.poker.timing.TimingFactory;
 
+import java.util.Random;
+
+import static com.cubeia.poker.timing.Timings.MINIMUM_DELAY;
+import static com.cubeia.poker.variant.PokerVariant.TELESINA;
+
 public class MockTableFactory {
 
     public static MockTable create() {
-		MockTable table = new MockTable();
-		
-		PokerSettings settings = new PokerSettings(-1, -1, -1, TimingFactory.getRegistry().getTimingProfile(MINIMUM_DELAY), TELESINA, 6, 
-		    BetStrategyName.NO_LIMIT, TestUtils.createOnePercentRakeSettings(), null);
+        MockTable table = new MockTable();
 
-		final Random rng = new Random();
-		PokerState pokerState = new PokerState();
-		pokerState.init(new RNGProvider() {
-            
-			private static final long serialVersionUID = -1911497186832055195L;
+        PokerSettings settings = new PokerSettings(-1, -1, -1, TimingFactory.getRegistry().getTimingProfile(MINIMUM_DELAY), TELESINA, 6,
+                BetStrategyName.NO_LIMIT, TestUtils.createOnePercentRakeSettings(), null);
 
-			@Override
+        final Random rng = new Random();
+        PokerState pokerState = new PokerState();
+        pokerState.init(new RNGProvider() {
+
+            private static final long serialVersionUID = -1911497186832055195L;
+
+            @Override
             public Random getRNG() {
                 return rng;
             }
         }, settings);
-		pokerState.setGameType(new MockGame());
-		table.getGameState().setState(pokerState);
-		return table;
-	}
-	
+        pokerState.setGameType(new MockGame());
+        table.getGameState().setState(pokerState);
+        return table;
+    }
+
 }

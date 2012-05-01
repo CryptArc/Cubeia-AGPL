@@ -17,15 +17,6 @@
 
 package com.cubeia.poker;
 
-import static com.cubeia.poker.timing.Timings.MINIMUM_DELAY;
-
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
-import junit.framework.TestCase;
-
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.player.PokerPlayer;
@@ -40,42 +31,51 @@ import com.cubeia.poker.variant.telesina.TelesinaRoundFactory;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import junit.framework.TestCase;
+
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
+import static com.cubeia.poker.timing.Timings.MINIMUM_DELAY;
 
 public abstract class AbstractTelesinaHandTester extends TestCase {
-	
+
     protected Injector injector;
 
     protected MockServerAdapter mockServerAdapter;
-    
+
     protected PokerState game;
 
     protected RNGProvider rng = new DummyRNGProvider();
-    
-    /** Defaults to 10 seconds */
-    protected long sitoutTimeLimitMilliseconds = 10000; 
 
-    
+    /**
+     * Defaults to 10 seconds
+     */
+    protected long sitoutTimeLimitMilliseconds = 10000;
+
+
     protected void setUpTelesina(RNGProvider rngProvider, TelesinaDeckFactory telesinaDeckFactory, int anteLevel) throws Exception {
         setUpTelesina(rngProvider, telesinaDeckFactory, anteLevel, TestUtils.createZeroRakeSettings());
     }
-    
+
     /**
-     * 
      * @param rngProvider
      * @param telesinaDeckFactory
      * @param anteLevel
      * @throws Exception
      */
-	protected void setUpTelesina(RNGProvider rngProvider, TelesinaDeckFactory telesinaDeckFactory, int anteLevel, RakeSettings rakeSettings) throws Exception {
+    protected void setUpTelesina(RNGProvider rngProvider, TelesinaDeckFactory telesinaDeckFactory, int anteLevel, RakeSettings rakeSettings) throws Exception {
         rng = new NonRandomRNGProvider();
-        
+
         List<Module> list = new LinkedList<Module>();
         list.add(new PokerGuiceModule());
         injector = Guice.createInjector(list);
         setupDefaultGame(rngProvider, telesinaDeckFactory, anteLevel, rakeSettings);
-	}
-	
-    
+    }
+
+
     private void setupDefaultGame(RNGProvider rngProvider, TelesinaDeckFactory deckFactory, int anteLevel, RakeSettings rakeSettings) {
         mockServerAdapter = new MockServerAdapter();
         game = injector.getInstance(PokerState.class);
@@ -83,35 +83,35 @@ public abstract class AbstractTelesinaHandTester extends TestCase {
         game.settings = createPokerSettings(anteLevel, rakeSettings);
         game.gameType = new Telesina(rngProvider, game, deckFactory, new TelesinaRoundFactory(), new TelesinaDealerButtonCalculator());
     }
-    
+
     protected PokerSettings createPokerSettings(int anteLevel, RakeSettings rakeSettings) {
-        PokerSettings settings = new PokerSettings(anteLevel, 1000, 10000, 
-                TimingFactory.getRegistry().getTimingProfile(MINIMUM_DELAY), PokerVariant.TELESINA, 6, 
-                BetStrategyName.NO_LIMIT, rakeSettings, 
+        PokerSettings settings = new PokerSettings(anteLevel, 1000, 10000,
+                TimingFactory.getRegistry().getTimingProfile(MINIMUM_DELAY), PokerVariant.TELESINA, 6,
+                BetStrategyName.NO_LIMIT, rakeSettings,
                 Collections.<Serializable, Serializable>singletonMap("EXTERNAL_TABLE_ID", "xyz"));
-        
+
         settings.setSitoutTimeLimitMilliseconds(sitoutTimeLimitMilliseconds);
         return settings;
     }
-    
+
 //	protected void setAnteLevel(int anteLevel) {
 //		game.init(rng, createPokerSettings(anteLevel));
 //	}
-	
-	protected void act(int playerId, PokerActionType actionType) {
-		act(playerId, actionType, mockServerAdapter.getLastActionRequest().getOption(actionType).getMinAmount());
-	}
-	
-	protected void act(int playerId, PokerActionType actionType, long amount) {
-		PokerAction action = new PokerAction(playerId, actionType);
-		action.setBetAmount(amount);
-		game.act(action);
-	}	
 
-	protected void addPlayers(PokerState game, PokerPlayer[] p) {
-		for (PokerPlayer pl : p) {
-			game.addPlayer(pl);
-		}
-	}
-	
+    protected void act(int playerId, PokerActionType actionType) {
+        act(playerId, actionType, mockServerAdapter.getLastActionRequest().getOption(actionType).getMinAmount());
+    }
+
+    protected void act(int playerId, PokerActionType actionType, long amount) {
+        PokerAction action = new PokerAction(playerId, actionType);
+        action.setBetAmount(amount);
+        game.act(action);
+    }
+
+    protected void addPlayers(PokerState game, PokerPlayer[] p) {
+        for (PokerPlayer pl : p) {
+            game.addPlayer(pl);
+        }
+    }
+
 }

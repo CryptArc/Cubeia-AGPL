@@ -15,6 +15,7 @@ import com.cubeia.poker.rounds.betting.TelesinaPlayerToActCalculator;
  * Factory of Telesina game rounds.
  * The main purpose of this class is to separate round creation from the game type logic
  * to enable unit testing.
+ *
  * @author w
  */
 public class TelesinaRoundFactory {
@@ -25,7 +26,7 @@ public class TelesinaRoundFactory {
 
     BettingRound createBettingRound(Telesina telesina, int dealerButtonSeatId) {
         return new BettingRound(telesina, dealerButtonSeatId, new TelesinaPlayerToActCalculator(
-            telesina.getDeckLowestRank()), new ActionRequestFactory(new NoLimitBetStrategy()), new TelesinaFutureActionsCalculator());
+                telesina.getDeckLowestRank()), new ActionRequestFactory(new NoLimitBetStrategy()), new TelesinaFutureActionsCalculator());
     }
 
     DealExposedPocketCardsRound createDealExposedPocketCardsRound(Telesina telesina) {
@@ -33,16 +34,16 @@ public class TelesinaRoundFactory {
     }
 
 
-	ExposePrivateCardsRound createExposePrivateCardsRound(Telesina telesina) {
-		return new ExposePrivateCardsRound(telesina);
-	}
+    ExposePrivateCardsRound createExposePrivateCardsRound(Telesina telesina) {
+        return new ExposePrivateCardsRound(telesina);
+    }
 
-	DealCommunityCardsRound createDealCommunityCardsRound(Telesina telesina) {
-		return new DealCommunityCardsRound(telesina);
-	}
+    DealCommunityCardsRound createDealCommunityCardsRound(Telesina telesina) {
+        return new DealCommunityCardsRound(telesina);
+    }
 
-	DealInitialPocketCardsRound createDealInitialCardsRound(Telesina telesina) {
-		return new DealInitialPocketCardsRound(telesina);
-	}
-    
+    DealInitialPocketCardsRound createDealInitialCardsRound(Telesina telesina) {
+        return new DealInitialPocketCardsRound(telesina);
+    }
+
 }

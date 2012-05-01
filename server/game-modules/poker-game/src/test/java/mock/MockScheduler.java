@@ -17,42 +17,44 @@
 
 package mock;
 
-import java.util.UUID;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-
 import com.cubeia.firebase.api.action.Action;
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.game.table.TableScheduler;
 import com.cubeia.firebase.api.util.UnmodifiableSet;
 
+import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+
 public class MockScheduler implements TableScheduler {
 
-	@SuppressWarnings("unused")
-	private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-	
-	public void cancelScheduledAction(UUID arg0) {}
-	
-	public void cancelAllScheduledActions() {}
+    @SuppressWarnings("unused")
+    private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
-	public UnmodifiableSet<UUID> getAllScheduledGameActions() {
-		return null;
-	}
+    public void cancelScheduledAction(UUID arg0) {
+    }
 
-	public Action getScheduledGameAction(UUID arg0) {
-		return null;
-	}
+    public void cancelAllScheduledActions() {
+    }
 
-	public long getScheduledGameActionDelay(UUID arg0) {
-		return 0;
-	}
+    public UnmodifiableSet<UUID> getAllScheduledGameActions() {
+        return null;
+    }
 
-	public boolean hasScheduledGameAction(UUID arg0) {
-		return false;
-	}
+    public Action getScheduledGameAction(UUID arg0) {
+        return null;
+    }
 
-	public UUID scheduleAction(GameAction arg0, long arg1) {
-		return null;
-	}
+    public long getScheduledGameActionDelay(UUID arg0) {
+        return 0;
+    }
+
+    public boolean hasScheduledGameAction(UUID arg0) {
+        return false;
+    }
+
+    public UUID scheduleAction(GameAction arg0, long arg1) {
+        return null;
+    }
 
 }

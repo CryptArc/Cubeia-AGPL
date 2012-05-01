@@ -24,68 +24,67 @@ import com.cubeia.poker.action.PokerActionType;
 
 /**
  * Test for Ticket 55:
- * 
+ * <p/>
  * We get reported ignored table time outs in the log;
- * 
- * 2010-04-12 01:51:53,292 WARN  ReceivingGameEventDaemon-44 games.poker.handler.PokerHandler - Table[6] Ignoring scheduled command, 
- * current-seq[35] command-seq[-1] - command[pid[0] type[TIMEOUT] seq[-1]] state[PokerState - state[PlayingState] 
+ * <p/>
+ * 2010-04-12 01:51:53,292 WARN  ReceivingGameEventDaemon-44 games.poker.handler.PokerHandler - Table[6] Ignoring scheduled command,
+ * current-seq[35] command-seq[-1] - command[pid[0] type[TIMEOUT] seq[-1]] state[PokerState - state[PlayingState]
  * type[TexasHoldem, current round[BettingRound, isFinished[false]] roundId[0] ]]
- * 
- * This is not ok behavior. A table timeout should never be overridden by a player timeout. 
- * We most likely have more cases like the previous timeout mayhem where multiple timeouts are scheduled and the last one wins the 
+ * <p/>
+ * This is not ok behavior. A table timeout should never be overridden by a player timeout.
+ * We most likely have more cases like the previous timeout mayhem where multiple timeouts are scheduled and the last one wins the
  * race to be the correct sequence for the response.
- * 
  */
 public class Ticket55_TimeoutOOB extends AbstractTexasHandTester {
 
-	/**
-	 * Mock Game is staked at 10/5'
-	 * Player default balance: 5000
-	 */
-	public void testAllInHoldemHand() {
-		setAnteLevel(10);
-		MockPlayer[] mp = TestUtils.createMockPlayers(4);
-		int[] p = TestUtils.createPlayerIdArray(mp);
-		addPlayers(state, mp);
-		
-		assertEquals(1, mockServerAdapter.getTimeoutRequests());
-		// Force start
-		state.timeout();
-		
-		// Blinds
-		System.out.println("Scheduled timeouts: "+mockServerAdapter.getTimeoutRequests());
-		act(p[1], PokerActionType.SMALL_BLIND);	
-		act(p[2], PokerActionType.BIG_BLIND);	
-		act(p[3], PokerActionType.RAISE, 5000);
-		act(p[0], PokerActionType.CALL);
-		act(p[1], PokerActionType.CALL);
-		act(p[2], PokerActionType.CALL); // Everyone should be all in now
-		
-		assertTrue(mp[0].isAllIn());
-		assertTrue(mp[1].isAllIn());
-		assertTrue(mp[2].isAllIn());
-		assertTrue(mp[3].isAllIn());
-		
-		// Trigger deal community cards
-		state.timeout();
-		// FLOP
-		state.timeout();
-		
-		// Trigger deal community cards
-		state.timeout();
-		// TURN
-		state.timeout();
-		
-		// Trigger deal community cards
-		state.timeout();
-		// RIVER
-		mockServerAdapter.clear();
-		state.timeout();
-		
-		assertTrue(state.isFinished());
-		
-		System.out.println("Scheduled timeouts: "+mockServerAdapter.getTimeoutRequests());
-		
-	}
+    /**
+     * Mock Game is staked at 10/5'
+     * Player default balance: 5000
+     */
+    public void testAllInHoldemHand() {
+        setAnteLevel(10);
+        MockPlayer[] mp = TestUtils.createMockPlayers(4);
+        int[] p = TestUtils.createPlayerIdArray(mp);
+        addPlayers(state, mp);
+
+        assertEquals(1, mockServerAdapter.getTimeoutRequests());
+        // Force start
+        state.timeout();
+
+        // Blinds
+        System.out.println("Scheduled timeouts: " + mockServerAdapter.getTimeoutRequests());
+        act(p[1], PokerActionType.SMALL_BLIND);
+        act(p[2], PokerActionType.BIG_BLIND);
+        act(p[3], PokerActionType.RAISE, 5000);
+        act(p[0], PokerActionType.CALL);
+        act(p[1], PokerActionType.CALL);
+        act(p[2], PokerActionType.CALL); // Everyone should be all in now
+
+        assertTrue(mp[0].isAllIn());
+        assertTrue(mp[1].isAllIn());
+        assertTrue(mp[2].isAllIn());
+        assertTrue(mp[3].isAllIn());
+
+        // Trigger deal community cards
+        state.timeout();
+        // FLOP
+        state.timeout();
+
+        // Trigger deal community cards
+        state.timeout();
+        // TURN
+        state.timeout();
+
+        // Trigger deal community cards
+        state.timeout();
+        // RIVER
+        mockServerAdapter.clear();
+        state.timeout();
+
+        assertTrue(state.isFinished());
+
+        System.out.println("Scheduled timeouts: " + mockServerAdapter.getTimeoutRequests());
+
+    }
 
 }

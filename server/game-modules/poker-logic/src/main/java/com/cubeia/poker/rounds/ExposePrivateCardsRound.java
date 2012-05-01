@@ -25,47 +25,48 @@ import com.cubeia.poker.action.PokerAction;
  */
 public class ExposePrivateCardsRound implements Round {
 
-	private static final long serialVersionUID = 1L;
-	
-	@SuppressWarnings("unused")
-	private GameType gameType;
-	
-	
-	public ExposePrivateCardsRound(GameType gameType) {
-		this.gameType = gameType;
-		gameType.getState().exposeShowdownCards();
-		gameType.sendAllNonFoldedPlayersBestHand();
-	}
-	
+    private static final long serialVersionUID = 1L;
 
-	@Override
-	public void act(PokerAction action) {
-		throw new IllegalStateException("Perform action not allowed during DealPocketCardsRound. Action received: "+action);
-	}
+    @SuppressWarnings("unused")
+    private GameType gameType;
 
-	@Override
-	public String getStateDescription() {
-		return getClass().getSimpleName();
-	}
 
-	/**
-	 * 
-	 */
-	@Override
-	public boolean isFinished() {
-		return true;
-	}
+    public ExposePrivateCardsRound(GameType gameType) {
+        this.gameType = gameType;
+        gameType.getState().exposeShowdownCards();
+        gameType.sendAllNonFoldedPlayersBestHand();
+    }
 
-	@Override
-	public void visit(RoundVisitor visitor) {
-		visitor.visit(this);
-	}
-	
-	@Override
-	public void timeout() {}
 
-	@Override
-	public boolean isWaitingForPlayer(int playerId) {
-		return false;
-	}
+    @Override
+    public void act(PokerAction action) {
+        throw new IllegalStateException("Perform action not allowed during DealPocketCardsRound. Action received: " + action);
+    }
+
+    @Override
+    public String getStateDescription() {
+        return getClass().getSimpleName();
+    }
+
+    /**
+     *
+     */
+    @Override
+    public boolean isFinished() {
+        return true;
+    }
+
+    @Override
+    public void visit(RoundVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public void timeout() {
+    }
+
+    @Override
+    public boolean isWaitingForPlayer(int playerId) {
+        return false;
+    }
 }

@@ -17,9 +17,6 @@
 
 package com.cubeia.poker.adapter;
 
-import java.util.Collection;
-import java.util.List;
-
 import com.cubeia.poker.SystemShutdownException;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
@@ -37,113 +34,121 @@ import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.sitout.SitoutCalculator;
 import com.cubeia.poker.tournament.RoundReport;
 
+import java.util.Collection;
+import java.util.List;
+
 public interface ServerAdapter {
-	
-	void scheduleTimeout(long millis);
-	
-	void requestAction(ActionRequest request);
 
-	/**
-	 * Requests multiple actions sharing the same sequence number and timeout.
-	 * @param requests
-	 */
-	void requestMultipleActions(Collection<ActionRequest> requests);
+    void scheduleTimeout(long millis);
+
+    void requestAction(ActionRequest request);
+
+    /**
+     * Requests multiple actions sharing the same sequence number and timeout.
+     *
+     * @param requests
+     */
+    void requestMultipleActions(Collection<ActionRequest> requests);
 
 
-	
-	void notifyCommunityCards(List<Card> cards);
-	
-	/**
-	 * Notify all players who is dealer.
-	 * 
-	 * @param seatId
-	 */
-	void notifyDealerButton(int seatId);
-	
-	/**
-	 * Sends the private cards to the given player and notify
-	 * all other players with hidden cards.
-	 * 
-	 * @param playerId
-	 * @param cards
-	 */
-	void notifyPrivateCards(int playerId, List<Card> cards);
-	
-	/**
-	 * Notify the user of his best possible hand using both pocket (hidden and exposted) and community cards.
-	 * @param playerId player id
-	 * @param handType hand type classification
-	 * @param cardsInHand cards used in best hand
-	 * @param publicHand if the bestHand should be broadcasted to all players or just the owner
-	 */
-	void notifyBestHand(int playerId, HandType handType, List<Card> cardsInHand, boolean publicHand);
-	
-	/**
-	 * Sends the private cards to the given player and notify
-	 * all other players with exposed cards.
-	 * @param playerId
-	 * @param cards
-	 */
+    void notifyCommunityCards(List<Card> cards);
+
+    /**
+     * Notify all players who is dealer.
+     *
+     * @param seatId
+     */
+    void notifyDealerButton(int seatId);
+
+    /**
+     * Sends the private cards to the given player and notify
+     * all other players with hidden cards.
+     *
+     * @param playerId
+     * @param cards
+     */
+    void notifyPrivateCards(int playerId, List<Card> cards);
+
+    /**
+     * Notify the user of his best possible hand using both pocket (hidden and exposted) and community cards.
+     *
+     * @param playerId    player id
+     * @param handType    hand type classification
+     * @param cardsInHand cards used in best hand
+     * @param publicHand  if the bestHand should be broadcasted to all players or just the owner
+     */
+    void notifyBestHand(int playerId, HandType handType, List<Card> cardsInHand, boolean publicHand);
+
+    /**
+     * Sends the private cards to the given player and notify
+     * all other players with exposed cards.
+     *
+     * @param playerId
+     * @param cards
+     */
     void notifyPrivateExposedCards(int playerId, List<Card> cards);
-	
-	
+
+
     /**
      * A new hand is about to start.
-     * 
+     *
      * @throws SystemShutdownException If the system is shutting down and the table should close
      */
     void notifyNewHand() throws SystemShutdownException;
-    
+
     /**
-	 * Notify about market references.
-	 * If any reference is null then it is replaced by a minus sign.
-	 * @param playerId
-	 * @param externalTableReference the tables reference
-	 * @param externalTableSessionReference the players table reference
-	 */
-	void notifyExternalSessionReferenceInfo(int playerId, String externalTableReference, String externalTableSessionReference);
-    
+     * Notify about market references.
+     * If any reference is null then it is replaced by a minus sign.
+     *
+     * @param playerId
+     * @param externalTableReference        the tables reference
+     * @param externalTableSessionReference the players table reference
+     */
+    void notifyExternalSessionReferenceInfo(int playerId, String externalTableReference, String externalTableSessionReference);
+
     void exposePrivateCards(ExposeCardsHolder holder);
 
-	/**
-	 * Notifies that the hand has ended.
-	 * 
-	 * @param handResult Summary of the results or null if hand was cancelled
-	 * @param handEndStatus the way the hand ended, for example normal or canceled
-	 */
-	void notifyHandEnd(HandResult handResult, HandEndStatus handEndStatus);
+    /**
+     * Notifies that the hand has ended.
+     *
+     * @param handResult    Summary of the results or null if hand was cancelled
+     * @param handEndStatus the way the hand ended, for example normal or canceled
+     */
+    void notifyHandEnd(HandResult handResult, HandEndStatus handEndStatus);
 
-	/**
-	 * Notify players about updated player balance.
-	 * 
-	 * @param player
-	 */
-	void notifyPlayerBalance(PokerPlayer player);
-	
-	
-	/**
-	 * Called after an action from the player has been successfully
-	 * dealt with.
-	 * @param pokerPlayer TODO
-	 * @param action, not null.
-	 */
-	void notifyActionPerformed(PokerAction action, PokerPlayer pokerPlayer);
-	
-	/**
-	 * Reports the end of a round to a tournament coordinator.
-	 * 
-	 * @param report, a report value object. Not null.
-	 */
-	void reportTournamentRound(RoundReport report);
-	
-	/**
+    /**
+     * Notify players about updated player balance.
+     *
+     * @param player
+     */
+    void notifyPlayerBalance(PokerPlayer player);
+
+
+    /**
+     * Called after an action from the player has been successfully
+     * dealt with.
+     *
+     * @param pokerPlayer TODO
+     * @param action,     not null.
+     */
+    void notifyActionPerformed(PokerAction action, PokerPlayer pokerPlayer);
+
+    /**
+     * Reports the end of a round to a tournament coordinator.
+     *
+     * @param report, a report value object. Not null.
+     */
+    void reportTournamentRound(RoundReport report);
+
+    /**
      * Remove all players in state LEAVING or DISCONNECTED
      */
     void cleanupPlayers(SitoutCalculator sitoutCalculator);
-    
+
     /**
      * Notifies the client about pot updates by sending the post and pot transitions.
-     * @param pots updated post
+     *
+     * @param pots           updated post
      * @param potTransitions pot transitions
      */
     void notifyPotUpdates(Collection<Pot> pots, Collection<PotTransition> potTransitions);
@@ -152,64 +157,71 @@ public interface ServerAdapter {
 
     /**
      * Send information if the deck in use.
-     * @param size total number of cards in deck
-     * @param rankLow lowest used rank in deck, this is normally TWO, but if the deck is stripped 
-     * it might be different.
+     *
+     * @param size    total number of cards in deck
+     * @param rankLow lowest used rank in deck, this is normally TWO, but if the deck is stripped
+     *                it might be different.
      */
     void notifyDeckInfo(int size, Rank rankLow);
 
-	void notifyNewRound();
-	
+    void notifyNewRound();
+
     /**
      * Send information to client about buyins
+     *
      * @param playerId
      * @param mandatoryBuyin TODO
      */
 
-	void notifyBuyInInfo(int playerId, boolean mandatoryBuyin);
+    void notifyBuyInInfo(int playerId, boolean mandatoryBuyin);
 
-	/**
-	 * Notify the client of the current total rake ant pot sizes.
-	 * @param rakeInfoContainer rake info
-	 */
+    /**
+     * Notify the client of the current total rake ant pot sizes.
+     *
+     * @param rakeInfoContainer rake info
+     */
     void notifyRakeInfo(RakeInfoContainer rakeInfoContainer);
-    
+
     public void unseatPlayer(int playerId, boolean setAsWatcher);
 
     /**
      * Notify that a bet was taken back from betstack to balance since it was uncalled
+     *
      * @param playerId
      * @param amount
      */
-	void notifyTakeBackUncalledBet(int playerId, int amount);
+    void notifyTakeBackUncalledBet(int playerId, int amount);
 
-	/**
-	 * Notify that the player will be able to do this actions later when it is the players turn
-	 * @param player
-	 * @param optionList
-	 */
-	void notifyFutureAllowedActions(PokerPlayer player,	List<PokerActionType> optionList);
+    /**
+     * Notify that the player will be able to do this actions later when it is the players turn
+     *
+     * @param player
+     * @param optionList
+     */
+    void notifyFutureAllowedActions(PokerPlayer player, List<PokerActionType> optionList);
 
-	/**
-	 * Request buy in:s for the given players that has {@link PokerPlayer#getRequestedBuyInAmount()} > 0.
-	 * @param players
-	 */
+    /**
+     * Request buy in:s for the given players that has {@link PokerPlayer#getRequestedBuyInAmount()} > 0.
+     *
+     * @param players
+     */
     void performPendingBuyIns(Collection<PokerPlayer> players);
 
     /**
      * Send out a player status for a new hand starting
-     * 
+     *
      * @param playerId
      * @param status
      */
-	void notifyHandStartPlayerStatus(int playerId, PokerPlayerStatus status);
+    void notifyHandStartPlayerStatus(int playerId, PokerPlayerStatus status);
 
-	void notifyDisconnected(int playerId);
+    void notifyDisconnected(int playerId);
 
-	/**
-	 * Returns the identifier of the hand that was provided by the backend.
-	 * @return backen integration hand id
-	 */
+    /**
+     * Returns the identifier of the hand that was provided by the backend.
+     *
+     * @return backen integration hand id
+     */
     String getIntegrationHandId();
 
 }
