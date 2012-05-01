@@ -47,7 +47,7 @@ public interface TimingRegistry {
 	/**
 	 * Get a timing profile based on the given profile.
 	 * 
-	 * @param name
+	 * @param profile
 	 * @return
 	 */
 	public TimingProfile getTimingProfile(Timings profile);
