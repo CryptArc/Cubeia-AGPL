@@ -4,7 +4,6 @@ import com.cubeia.poker.PokerSettings;
 import com.cubeia.poker.player.PokerPlayer;
 import org.junit.Test;
 
-import static com.cubeia.poker.variant.PokerVariant.TELESINA;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -19,7 +18,7 @@ public class TelesinaCanPlayerBuyInTest {
         Telesina telesina = new Telesina(null, null, null, null, null);
 
         int anteLevel = 20;
-        PokerSettings settings = new PokerSettings(anteLevel, 0, 0, null, TELESINA, 0, null, null, null);
+        PokerSettings settings = new PokerSettings(anteLevel, anteLevel * 2, 0, 0, null, 0, null, null, null);
 
         when(player.getBalance()).thenReturn((long) anteLevel + 1);
         assertThat(telesina.canPlayerAffordEntryBet(player, settings, true), is(true));
@@ -38,7 +37,7 @@ public class TelesinaCanPlayerBuyInTest {
         Telesina telesina = new Telesina(null, null, null, null, null);
 
         int anteLevel = 20;
-        PokerSettings settings = new PokerSettings(anteLevel, 0, 0, null, TELESINA, 0, null, null, null);
+        PokerSettings settings = new PokerSettings(anteLevel, anteLevel * 2, 0, 0, null, 0, null, null, null);
 
         when(player.getPendingBalanceSum()).thenReturn((long) anteLevel + 1);
         assertThat(telesina.canPlayerAffordEntryBet(player, settings, true), is(true));
@@ -61,7 +60,7 @@ public class TelesinaCanPlayerBuyInTest {
         Telesina telesina = new Telesina(null, null, null, null, null);
 
         int anteLevel = 20;
-        PokerSettings settings = new PokerSettings(anteLevel, 0, 0, null, TELESINA, 0, null, null, null);
+        PokerSettings settings = new PokerSettings(anteLevel, anteLevel * 2, 0, 0, null, 0, null, null, null);
 
         when(player.getBalance()).thenReturn((long) anteLevel / 2);
         when(player.getPendingBalanceSum()).thenReturn((long) anteLevel / 2);

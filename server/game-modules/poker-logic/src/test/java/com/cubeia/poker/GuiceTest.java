@@ -68,8 +68,9 @@ public abstract class GuiceTest extends TestCase {
     }
 
     protected PokerSettings createPokerSettings(int anteLevel) {
-        PokerSettings settings = new PokerSettings(anteLevel, 1000, 10000,
-                TimingFactory.getRegistry().getTimingProfile(MINIMUM_DELAY), variant, 6,
+        int entryBetLevel = (variant == PokerVariant.TELESINA) ? anteLevel * 2 : anteLevel;
+        PokerSettings settings = new PokerSettings(anteLevel, entryBetLevel, 1000, 10000,
+                TimingFactory.getRegistry().getTimingProfile(MINIMUM_DELAY), 6,
                 BetStrategyName.NO_LIMIT, TestUtils.createZeroRakeSettings(), null);
 
         settings.setSitoutTimeLimitMilliseconds(sitoutTimeLimitMilliseconds);

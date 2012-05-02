@@ -85,8 +85,8 @@ public abstract class AbstractTelesinaHandTester extends TestCase {
     }
 
     protected PokerSettings createPokerSettings(int anteLevel, RakeSettings rakeSettings) {
-        PokerSettings settings = new PokerSettings(anteLevel, 1000, 10000,
-                TimingFactory.getRegistry().getTimingProfile(MINIMUM_DELAY), PokerVariant.TELESINA, 6,
+        PokerSettings settings = new PokerSettings(anteLevel, anteLevel * 2, 1000, 10000,
+                TimingFactory.getRegistry().getTimingProfile(MINIMUM_DELAY), 6,
                 BetStrategyName.NO_LIMIT, rakeSettings,
                 Collections.<Serializable, Serializable>singletonMap("EXTERNAL_TABLE_ID", "xyz"));
 

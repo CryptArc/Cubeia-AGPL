@@ -238,7 +238,7 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
         PokerState pokerState = injector.getInstance(PokerState.class);
         pokerState.setId(table.getId());
 
-        PokerSettings settings = new PokerSettings(-1, -1, -1, timing, PokerVariant.TEXAS_HOLDEM,
+        PokerSettings settings = new PokerSettings(-1, -1, -1, -1, timing,
                 table.getPlayerSet().getSeatingMap().getNumberOfSeats(),
                 BetStrategyName.NO_LIMIT,
                 new RakeSettings(RAKE_FRACTION, RAKE_LIMIT, RAKE_LIMIT_HEADS_UP),

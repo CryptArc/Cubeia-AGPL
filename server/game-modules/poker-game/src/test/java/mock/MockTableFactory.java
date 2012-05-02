@@ -33,10 +33,10 @@ public class MockTableFactory {
     public static MockTable create() {
         MockTable table = new MockTable();
 
-        PokerSettings settings = new PokerSettings(-1, -1, -1, TimingFactory.getRegistry().getTimingProfile(MINIMUM_DELAY), TELESINA, 6,
+        PokerSettings settings = new PokerSettings(-1, -1, -1, -1, TimingFactory.getRegistry().getTimingProfile(MINIMUM_DELAY)
+                , 6,
                 BetStrategyName.NO_LIMIT, TestUtils.createOnePercentRakeSettings(), null);
 
-        final Random rng = new Random();
         PokerState pokerState = new PokerState();
         GameType gameType = GameTypeFactory.createGameType(TELESINA, pokerState, null);
         pokerState.init(gameType, settings);

@@ -24,7 +24,6 @@ public class TelesinaAllinTest extends AbstractTexasHandTester {
         setAnteLevel(20);
     }
 
-
     /**
      * Mock Game is staked at 20
      */

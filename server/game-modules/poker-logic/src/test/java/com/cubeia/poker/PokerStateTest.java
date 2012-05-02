@@ -16,7 +16,6 @@ import com.cubeia.poker.result.Result;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
-import com.cubeia.poker.variant.PokerVariant;
 import com.cubeia.poker.variant.telesina.Telesina;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,10 +36,13 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class PokerStateTest {
 
     PokerState state;
+
     @Mock
     PokerSettings settings;
+
     @Mock
     GameType gameType;
+
     int anteLevel;
 
     @Before
@@ -50,7 +52,6 @@ public class PokerStateTest {
         anteLevel = 100;
         when(settings.getRakeSettings()).thenReturn(TestUtils.createOnePercentRakeSettings());
         when(settings.getAnteLevel()).thenReturn(anteLevel);
-        when(settings.getVariant()).thenReturn(PokerVariant.TELESINA);
         when(settings.getTiming()).thenReturn(TimingFactory.getRegistry().getDefaultTimingProfile());
         when(gameType.canPlayerAffordEntryBet(Mockito.any(PokerPlayer.class), Mockito.any(PokerSettings.class), Mockito.eq(false))).thenReturn(true);
         state.serverAdapter = mock(ServerAdapter.class);
@@ -201,7 +202,6 @@ public class PokerStateTest {
         PokerState state = new PokerState();
         PokerSettings settings = mock(PokerSettings.class);
         when(settings.getMaxBuyIn()).thenReturn(10000);
-        when(settings.getVariant()).thenReturn(PokerVariant.TELESINA);
 
         state.init(gameType, settings);
 
@@ -306,7 +306,7 @@ public class PokerStateTest {
         state.serverAdapter = mock(ServerAdapter.class);
         state.playerMap = new HashMap<Integer, PokerPlayer>();
         RakeSettings rakeSettings = TestUtils.createOnePercentRakeSettings();
-        PokerSettings settings = new PokerSettings(0, 0, 0, null, null, 4, null, rakeSettings, null);
+        PokerSettings settings = new PokerSettings(0, 0, 0, 0, null, 4, null, rakeSettings, null);
         state.settings = settings;
         PokerPlayer player1 = mock(PokerPlayer.class);
         PokerPlayer player2 = mock(PokerPlayer.class);
@@ -327,7 +327,7 @@ public class PokerStateTest {
         state.potHolder = oldPotHolder;
         state.gameType = mock(GameType.class);
         RakeSettings rakeSettings = TestUtils.createOnePercentRakeSettings();
-        PokerSettings settings = new PokerSettings(0, 0, 0, null, null, 4, null, rakeSettings, null);
+        PokerSettings settings = new PokerSettings(0, 0, 0, 0, null, 4, null, rakeSettings, null);
         state.settings = settings;
 
         state.playerMap = new HashMap<Integer, PokerPlayer>();
@@ -349,7 +349,7 @@ public class PokerStateTest {
         PotHolder oldPotHolder = new PotHolder(null);
         state.potHolder = oldPotHolder;
         RakeSettings rakeSettings = TestUtils.createOnePercentRakeSettings();
-        PokerSettings settings = new PokerSettings(0, 0, 0, null, null, 4, null, rakeSettings, null);
+        PokerSettings settings = new PokerSettings(0, 0, 0, 0, null, 4, null, rakeSettings, null);
         state.settings = settings;
 
         ServerAdapter serverAdapter = mock(ServerAdapter.class);
@@ -393,7 +393,7 @@ public class PokerStateTest {
         PotHolder oldPotHolder = new PotHolder(null);
         state.potHolder = oldPotHolder;
         RakeSettings rakeSettings = TestUtils.createOnePercentRakeSettings();
-        PokerSettings settings = new PokerSettings(0, 0, 0, null, null, 4, null, rakeSettings, null);
+        PokerSettings settings = new PokerSettings(0, 0, 0, 0, null, 4, null, rakeSettings, null);
         state.settings = settings;
 
         ServerAdapter serverAdapter = mock(ServerAdapter.class);

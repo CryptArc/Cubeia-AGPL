@@ -7,40 +7,35 @@ import com.cubeia.poker.variant.PokerVariant;
 import java.io.Serializable;
 import java.util.Map;
 
-@SuppressWarnings("serial")
 public class PokerSettings implements Serializable {
 
     private final int anteLevel;
+    private int entryBetLevel;
     private final int minBuyIn;
     private final int maxBuyIn;
     private final TimingProfile timing;
-    private final PokerVariant variant;
     private final int tableSize;
     private final BetStrategyName betStrategy;
     private final RakeSettings rakeSettings;
     private final Map<Serializable, Serializable> attributes;
-
-    /**
-     * Default is 1 minute
-     */
     private long sitoutTimeLimitMilliseconds = 1 * 60 * 1000;
 
     public PokerSettings(
             int anteLevel,
+            int entryBetLevel,
             int minBuyIn,
             int maxBuyIn,
             TimingProfile timing,
-            PokerVariant variant,
             int tableSize,
             BetStrategyName betStrategy,
             RakeSettings rakeSettings,
             Map<Serializable, Serializable> attributes) {
 
         this.anteLevel = anteLevel;
+        this.entryBetLevel = entryBetLevel;
         this.minBuyIn = minBuyIn;
         this.maxBuyIn = maxBuyIn;
         this.timing = timing;
-        this.variant = variant;
         this.tableSize = tableSize;
         this.betStrategy = betStrategy;
         this.rakeSettings = rakeSettings;
@@ -62,10 +57,6 @@ public class PokerSettings implements Serializable {
 
     public TimingProfile getTiming() {
         return timing;
-    }
-
-    public PokerVariant getVariant() {
-        return variant;
     }
 
     public int getTableSize() {
@@ -93,12 +84,7 @@ public class PokerSettings implements Serializable {
     }
 
     public int getEntryBetLevel() {
-        switch (variant) {
-            case TELESINA:
-                return anteLevel * 2;
-            default:
-                return anteLevel;
-        }
+        return entryBetLevel;
     }
 
 }

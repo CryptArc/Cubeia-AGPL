@@ -46,6 +46,7 @@ import org.slf4j.LoggerFactory;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.Map;
 
 import static com.cubeia.games.poker.activator.PokerActivator.ATTR_EXTERNAL_TABLE_ID;
 
@@ -141,10 +142,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
         PokerState pokerState = injector.getInstance(PokerState.class);
 
         GameType gameType = GameTypeFactory.createGameType(variant, pokerState, rngProvider);
-        PokerSettings settings = new PokerSettings(anteLevel, anteLevel * MIN_BUY_IN_ANTE_MULTIPLIER, anteLevel * MAX_BUY_IN_ANTE_MULTIPLIER, timingProfile, variant,
-                table.getPlayerSet().getSeatingMap().getNumberOfSeats(), BetStrategyName.NO_LIMIT,
-                new RakeSettings(RAKE_FRACTION, RAKE_LIMIT, RAKE_LIMIT_HEADS_UP),
-                Collections.<Serializable, Serializable>singletonMap(ATTR_EXTERNAL_TABLE_ID, "MOCK::" + table.getId()));
+        PokerSettings settings = createSettings(table, variant);
         pokerState.init(gameType, settings);
         pokerState.setAdapterState(new FirebaseState());
         pokerState.setId(table.getId());
@@ -164,6 +162,17 @@ public class PokerParticipant extends DefaultCreationParticipant {
         FirebaseCallbackFactory callbackFactory = cashGameBackendService.getCallbackFactory();
         AnnounceTableRequest announceRequest = new AnnounceTableRequest(table.getId());   // TODO: this should be the id from the table record
         cashGameBackendService.announceTable(announceRequest, callbackFactory.createAnnounceTableCallback(table));
+    }
+
+    private PokerSettings createSettings(Table table, PokerVariant variant) {
+        int minBuyIn = anteLevel * MIN_BUY_IN_ANTE_MULTIPLIER;
+        int maxBuyIn = anteLevel * MAX_BUY_IN_ANTE_MULTIPLIER;
+        int seats = table.getPlayerSet().getSeatingMap().getNumberOfSeats();
+        RakeSettings rake = new RakeSettings(RAKE_FRACTION, RAKE_LIMIT, RAKE_LIMIT_HEADS_UP);
+        BetStrategyName limit = BetStrategyName.NO_LIMIT;
+        Map<Serializable,Serializable> attributes = Collections.<Serializable, Serializable>singletonMap(ATTR_EXTERNAL_TABLE_ID, "MOCK::" + table.getId());
+        int entryBetLevel = (variant == PokerVariant.TELESINA) ? anteLevel * 2 : anteLevel;
+        return new PokerSettings(anteLevel, entryBetLevel, minBuyIn, maxBuyIn, timingProfile, seats, limit, rake, attributes);
     }
 
     @Override
