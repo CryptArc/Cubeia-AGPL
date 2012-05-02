@@ -69,10 +69,7 @@ public class TexasHoldem implements GameType, RoundVisitor {
 
     private final RNGProvider rngProvider;
 
-    private HandResultCalculator handResultCalculator = new HandResultCalculator(
-            new TexasHoldemHandCalculator());
-//	    
-//	    Collections.reverseOrder(new TexasHoldemHandComparator()));
+    private HandResultCalculator handResultCalculator = new HandResultCalculator(new TexasHoldemHandCalculator());
 
 
     public TexasHoldem(RNGProvider rngProvider, PokerState state) {
@@ -97,11 +94,6 @@ public class TexasHoldem implements GameType, RoundVisitor {
         currentRound = new BlindsRound(this, state.isTournamentTable());
         roundId = 0;
     }
-
-//	@Override
-//	public SortedMap<Integer, PokerPlayer> getSeatingMap() {
-//		return seatingMap;
-//	}
 
     @Override
     public void act(PokerAction action) {
@@ -130,17 +122,6 @@ public class TexasHoldem implements GameType, RoundVisitor {
         state.getCommunityCards().addAll(dealt);
         state.notifyCommunityCards(dealt);
     }
-
-//	@Override
-//	public PokerPlayer getPlayer(int playerId) {
-//		PokerPlayer pokerPlayer = game.getCurrentHandPlayerMap().get(playerId);
-//		return pokerPlayer;
-//	}
-
-//	@Override
-//	public Iterable<PokerPlayer> getPlayers() {
-//		return game.getCurrentHandPlayerMap().values();
-//	}
 
     public void handleFinishedRound() {
         currentRound.visit(this);
@@ -226,22 +207,6 @@ public class TexasHoldem implements GameType, RoundVisitor {
     private boolean blindRequested(ActionRequest r) {
         return r.isOptionEnabled(PokerActionType.SMALL_BLIND) || r.isOptionEnabled(PokerActionType.BIG_BLIND);
     }
-
-//	public void requestAction(PokerPlayer player,
-//			PossibleAction ... possibleActions) {
-//		ActionRequest actionRequest = new ActionRequest();
-//		List<PossibleAction> options = new ArrayList<PossibleAction>();
-//
-//		for (PossibleAction action : possibleActions) {
-//			options.add(action);
-//		}
-//
-//		actionRequest.setOptions(options);
-//		actionRequest.setPlayerId(player.getId());
-//		player.setActionRequest(actionRequest);
-//		logDebug("Requesting action " + actionRequest);
-//		game.requestAction(actionRequest);
-//	}
 
     @Override
     public BlindsInfo getBlindsInfo() {

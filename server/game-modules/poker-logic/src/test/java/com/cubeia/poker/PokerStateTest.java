@@ -13,7 +13,6 @@ import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.rake.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
-import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
@@ -92,7 +91,7 @@ public class PokerStateTest {
         when(settings.getTiming()).thenReturn(timingProfile);
         when(settings.getMaxBuyIn()).thenReturn(10000);
 
-        state.init(null, settings);
+        state.init(gameType, settings);
         state.setTournamentTable(false);
 
         Telesina telesina = mock(Telesina.class);
@@ -165,7 +164,7 @@ public class PokerStateTest {
         when(settings.getTiming()).thenReturn(timingProfile);
         when(settings.getMaxBuyIn()).thenReturn(100);
 
-        state.init(null, settings);
+        state.init(gameType, settings);
 
         DefaultPokerPlayer player1 = new DefaultPokerPlayer(1);
         player1.setBalance(40L);
@@ -204,7 +203,7 @@ public class PokerStateTest {
         when(settings.getMaxBuyIn()).thenReturn(10000);
         when(settings.getVariant()).thenReturn(PokerVariant.TELESINA);
 
-        state.init(null, settings);
+        state.init(gameType, settings);
 
         PokerPlayer player1 = Mockito.mock(PokerPlayer.class);
         PokerPlayer player2 = Mockito.mock(PokerPlayer.class);
@@ -431,7 +430,7 @@ public class PokerStateTest {
     @Test
     public void requestAction() {
         PokerState state = new PokerState();
-        state.init(mock(RNGProvider.class), settings);
+        state.init(gameType, settings);
 
 
         state.serverAdapter = mock(ServerAdapter.class);
@@ -453,7 +452,7 @@ public class PokerStateTest {
     @Test
     public void requestMultipleActions() {
         PokerState state = new PokerState();
-        state.init(mock(RNGProvider.class), settings);
+        state.init(gameType, settings);
         state.serverAdapter = mock(ServerAdapter.class);
 
         state.potHolder = mock(PotHolder.class);
@@ -476,7 +475,7 @@ public class PokerStateTest {
     @Test
     public void testBuyInInfoNotSentOnJoinIfPlayerCanBuyin() {
         PokerState state = new PokerState();
-        state.init(mock(RNGProvider.class), settings);
+        state.init(gameType, settings);
         state.serverAdapter = mock(ServerAdapter.class);
         state.gameType = mock(Telesina.class);
 

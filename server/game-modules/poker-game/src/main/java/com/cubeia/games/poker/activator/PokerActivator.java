@@ -31,15 +31,13 @@ import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.games.poker.lobby.PokerLobbyAttributes;
 import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.games.poker.tournament.activator.TournamentTableSettings;
-import com.cubeia.poker.PokerGuiceModule;
-import com.cubeia.poker.PokerSettings;
-import com.cubeia.poker.PokerState;
-import com.cubeia.poker.RakeSettings;
+import com.cubeia.poker.*;
 import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.rounds.betting.BetStrategyName;
 import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.timing.Timings;
+import com.cubeia.poker.variant.GameTypeFactory;
 import com.cubeia.poker.variant.PokerVariant;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -247,7 +245,8 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
                 Collections.<Serializable, Serializable>singletonMap(
                         ATTR_EXTERNAL_TABLE_ID, "MOCK_TRN::" + table.getId()));
 
-        pokerState.init(rngProvider, settings);
+        GameType gameType = GameTypeFactory.createGameType(PokerVariant.TEXAS_HOLDEM, pokerState, rngProvider);
+        pokerState.init(gameType, settings);
         pokerState.setTournamentTable(true);
         pokerState.setTournamentId(mttId);
         pokerState.setAdapterState(new FirebaseState());

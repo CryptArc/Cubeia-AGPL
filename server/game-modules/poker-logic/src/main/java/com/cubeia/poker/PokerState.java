@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.cubeia.poker;
 
 import com.cubeia.poker.action.ActionRequest;
@@ -32,7 +31,6 @@ import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.rake.LinearRakeWithLimitCalculator;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
-import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.rounds.betting.BetStrategyName;
 import com.cubeia.poker.rounds.blinds.BlindsInfo;
 import com.cubeia.poker.sitout.SitoutCalculator;
@@ -41,12 +39,6 @@ import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.tournament.RoundReport;
 import com.cubeia.poker.util.ThreadLocalProfiler;
-import com.cubeia.poker.variant.PokerVariant;
-import com.cubeia.poker.variant.telesina.Telesina;
-import com.cubeia.poker.variant.telesina.TelesinaDealerButtonCalculator;
-import com.cubeia.poker.variant.telesina.TelesinaDeckFactory;
-import com.cubeia.poker.variant.telesina.TelesinaRoundFactory;
-import com.cubeia.poker.variant.texasholdem.TexasHoldem;
 import com.google.common.annotations.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,10 +77,7 @@ public class PokerState implements Serializable, IPokerState {
 
     /* -------- Dependency Injection Members, initialization needed -------- */
 
-    //	@Inject
-    //	@TexasHoldemGame
     GameType gameType;
-
 
     /**
      * The server adapter is the layer between the server and the game logic.
@@ -180,27 +169,9 @@ public class PokerState implements Serializable, IPokerState {
     }
 
     @Override
-    public void init(RNGProvider rngProvider, PokerSettings settings) {
+    public void init(GameType gameType, PokerSettings settings) {
+        this.gameType = gameType;
         this.settings = settings;
-
-        gameType = createGameTypeByVariant(rngProvider, settings.getVariant());
-    }
-
-    protected GameType createGameTypeByVariant(RNGProvider rngProvider, PokerVariant variant) {
-        GameType gameType;
-
-        switch (variant) {
-            case TEXAS_HOLDEM:
-                gameType = new TexasHoldem(rngProvider, this);
-                break;
-            case TELESINA:
-                gameType = new Telesina(rngProvider, this, new TelesinaDeckFactory(), new TelesinaRoundFactory(), new TelesinaDealerButtonCalculator());
-                break;
-            default:
-                throw new UnsupportedOperationException("unsupported poker variant: " + variant);
-        }
-
-        return gameType;
     }
 
     /**
@@ -543,10 +514,10 @@ public class PokerState implements Serializable, IPokerState {
         return settings.getTiming();
     }
 
-    @Override
-    public PokerVariant getPokerVariant() {
-        return settings.getVariant();
-    }
+//    @Override
+//    public PokerVariant getPokerVariant() {
+//        return settings.getVariant();
+//    }
 
     public int getTableSize() {
         return settings.getTableSize();

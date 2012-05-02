@@ -186,7 +186,7 @@ public class PotHolder implements Serializable {
     /**
      * Returns uncalled chips.
      *
-     * @param betters
+     * @param players
      * @return
      */
     public Collection<PotTransition> returnUnCalledChips(Iterable<PokerPlayer> players) {
@@ -216,7 +216,7 @@ public class PotHolder implements Serializable {
     /**
      * Gets the biggest better in this round, possibly excluding one player.
      *
-     * @param betters
+     * @param players
      * @param excludedPlayer the player to exclude, may be null
      * @return the biggest better
      */
@@ -238,7 +238,7 @@ public class PotHolder implements Serializable {
     /**
      * Gets the biggest better in this round.
      *
-     * @param betters
+     * @param players
      * @return
      */
     private PokerPlayer getBiggestBetter(Iterable<PokerPlayer> players) {
@@ -371,25 +371,12 @@ public class PotHolder implements Serializable {
     /**
      * Adds a pot of size potSize.
      *
-     * @param potSize
+     * @param pot
      */
     @VisibleForTesting
     protected void addPot(Pot pot) {
         pots.add(pot);
     }
-
-//	/**
-//	 * Gets the amount raked in this hand.
-//	 *
-//	 * @return
-//	 */
-//	public BigDecimal getTotalRake() {
-//	    BigDecimal totalRake = BigDecimal.ZERO;
-//	    for (Pot p : pots) {
-//	        totalRake = totalRake.add(p.getRake());
-//	    }
-//		return totalRake;
-//	}
 
     @Override
     public String toString() {

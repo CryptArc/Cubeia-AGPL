@@ -14,7 +14,7 @@ import java.util.SortedMap;
 
 public interface IPokerState {
 
-    void init(RNGProvider rngProvider, PokerSettings settings);
+    void init(GameType gameType, PokerSettings settings);
 
     void notifyPlayerSittingOut(int playerId);
 
@@ -27,7 +27,7 @@ public interface IPokerState {
     SortedMap<Integer, PokerPlayer> getCurrentHandSeatingMap();
 
     /**
-     * Returns a player participating in the current hand (or the last played hand if waiting to start) by it's id.
+     * Returns a player participating in the current hand (or the last played hand if waiting to start) by its id.
      * NOTE: that this method might return a player even after the hand is finished.
      *
      * @param playerId player id
@@ -42,12 +42,6 @@ public interface IPokerState {
      */
     int countNonFoldedPlayers();
 
-//	/**
-//	 * Returns the number of players sitting in.
-//	 * @return number of players sitting in
-//	 */
-//    int countSittingInPlayers();
-
     /**
      * Returns the players that are ready to start a new hand.
      *
@@ -59,7 +53,7 @@ public interface IPokerState {
 
     void notifyDealerButton(int dealerButtonSeatId);
 
-    PokerVariant getPokerVariant();
+//    PokerVariant getPokerVariant();
 
     List<Card> getCommunityCards();
 

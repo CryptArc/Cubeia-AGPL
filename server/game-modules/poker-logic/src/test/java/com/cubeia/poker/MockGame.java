@@ -24,7 +24,6 @@ import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
-import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.rounds.blinds.BlindsInfo;
 import com.cubeia.poker.variant.PokerVariant;
 
@@ -157,7 +156,7 @@ public class MockGame implements GameType {
             }
 
             @Override
-            public void init(RNGProvider rng, PokerSettings settings) {
+            public void init(GameType gameType, PokerSettings settings) {
             }
 
             @Override
@@ -199,11 +198,6 @@ public class MockGame implements GameType {
             @Override
             public boolean isPlayerInHand(int playerId) {
                 return false;
-            }
-
-            @Override
-            public PokerVariant getPokerVariant() {
-                return PokerVariant.TEXAS_HOLDEM;
             }
 
             @Override

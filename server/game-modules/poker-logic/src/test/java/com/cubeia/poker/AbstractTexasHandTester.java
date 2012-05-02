@@ -19,7 +19,10 @@ package com.cubeia.poker;
 
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
+import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.variant.GameTypeFactory;
+import com.cubeia.poker.variant.PokerVariant;
 
 public abstract class AbstractTexasHandTester extends GuiceTest {
 
@@ -30,11 +33,13 @@ public abstract class AbstractTexasHandTester extends GuiceTest {
     }
 
     protected void setAnteLevel(int anteLevel) {
-        state.init(rng, createPokerSettings(anteLevel));
+        GameType gameType = GameTypeFactory.createGameType(variant, state, rng);
+        state.init(gameType, createPokerSettings(anteLevel));
     }
 
     protected void act(int playerId, PokerActionType actionType) {
-        act(playerId, actionType, mockServerAdapter.getLastActionRequest().getOption(actionType).getMinAmount());
+        PossibleAction option = mockServerAdapter.getLastActionRequest().getOption(actionType);
+        act(playerId, actionType, option.getMinAmount());
     }
 
     protected void act(int playerId, PokerActionType actionType, long amount) {

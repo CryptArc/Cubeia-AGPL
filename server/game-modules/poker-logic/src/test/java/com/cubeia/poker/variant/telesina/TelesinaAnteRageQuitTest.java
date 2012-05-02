@@ -9,7 +9,7 @@ import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.variant.PokerVariant;
 import org.junit.Test;
 
-public class TelesinaAnteRageQuiteTest extends AbstractTexasHandTester {
+public class TelesinaAnteRageQuitTest extends AbstractTexasHandTester {
 
     @Override
     protected void setUp() throws Exception {
@@ -20,7 +20,7 @@ public class TelesinaAnteRageQuiteTest extends AbstractTexasHandTester {
     }
 
     @Test
-    public void testAnteSitOutThenSitIt() {
+    public void testAnteSitOutThenSitOut() {
         MockPlayer[] mp = TestUtils.createMockPlayers(2, 100);
         int[] p = TestUtils.createPlayerIdArray(mp);
         addPlayers(state, mp);
@@ -28,7 +28,7 @@ public class TelesinaAnteRageQuiteTest extends AbstractTexasHandTester {
         // Force start
         state.timeout();
 
-        // Blinds
+        // Antes
         act(p[1], PokerActionType.ANTE);
         state.playerIsSittingOut(p[1], SitOutStatus.SITTING_OUT);
         act(p[0], PokerActionType.ANTE);
@@ -36,7 +36,7 @@ public class TelesinaAnteRageQuiteTest extends AbstractTexasHandTester {
         state.timeout();
 
         // Verify that both players get 2 cards dealt (one hidden and one public)
-        // The rage quite bug was that the player sitting out, p[1], did not get the hidden card.
+        // The rage quit bug was that the player sitting out, p[1], did not get the hidden card.
         assertEquals(2, state.getPlayerInCurrentHand(p[1]).getPocketCards().getCards().size());
         assertEquals(1, state.getPlayerInCurrentHand(p[1]).getPrivatePocketCards().size());
         assertEquals(2, state.getPlayerInCurrentHand(p[0]).getPocketCards().getCards().size());

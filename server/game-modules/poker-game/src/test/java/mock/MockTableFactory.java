@@ -17,13 +17,11 @@
 
 package mock;
 
-import com.cubeia.poker.MockGame;
-import com.cubeia.poker.PokerSettings;
-import com.cubeia.poker.PokerState;
-import com.cubeia.poker.TestUtils;
-import com.cubeia.poker.rng.RNGProvider;
+import com.cubeia.poker.*;
 import com.cubeia.poker.rounds.betting.BetStrategyName;
 import com.cubeia.poker.timing.TimingFactory;
+import com.cubeia.poker.variant.GameTypeFactory;
+import com.cubeia.poker.variant.PokerVariant;
 
 import java.util.Random;
 
@@ -40,15 +38,8 @@ public class MockTableFactory {
 
         final Random rng = new Random();
         PokerState pokerState = new PokerState();
-        pokerState.init(new RNGProvider() {
-
-            private static final long serialVersionUID = -1911497186832055195L;
-
-            @Override
-            public Random getRNG() {
-                return rng;
-            }
-        }, settings);
+        GameType gameType = GameTypeFactory.createGameType(TELESINA, pokerState, null);
+        pokerState.init(gameType, settings);
         pokerState.setGameType(new MockGame());
         table.getGameState().setState(pokerState);
         return table;

@@ -27,6 +27,7 @@ import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.lobby.LobbyPath;
 import com.cubeia.games.poker.lobby.PokerLobbyAttributes;
 import com.cubeia.games.poker.state.FirebaseState;
+import com.cubeia.poker.GameType;
 import com.cubeia.poker.PokerSettings;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.RakeSettings;
@@ -35,6 +36,7 @@ import com.cubeia.poker.rounds.betting.BetStrategyName;
 import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.timing.Timings;
+import com.cubeia.poker.variant.GameTypeFactory;
 import com.cubeia.poker.variant.PokerVariant;
 import com.cubeia.poker.variant.telesina.TelesinaDeckUtil;
 import com.google.inject.Injector;
@@ -138,11 +140,12 @@ public class PokerParticipant extends DefaultCreationParticipant {
         super.tableCreated(table, acc);
         PokerState pokerState = injector.getInstance(PokerState.class);
 
+        GameType gameType = GameTypeFactory.createGameType(variant, pokerState, rngProvider);
         PokerSettings settings = new PokerSettings(anteLevel, anteLevel * MIN_BUY_IN_ANTE_MULTIPLIER, anteLevel * MAX_BUY_IN_ANTE_MULTIPLIER, timingProfile, variant,
                 table.getPlayerSet().getSeatingMap().getNumberOfSeats(), BetStrategyName.NO_LIMIT,
                 new RakeSettings(RAKE_FRACTION, RAKE_LIMIT, RAKE_LIMIT_HEADS_UP),
                 Collections.<Serializable, Serializable>singletonMap(ATTR_EXTERNAL_TABLE_ID, "MOCK::" + table.getId()));
-        pokerState.init(rngProvider, settings);
+        pokerState.init(gameType, settings);
         pokerState.setAdapterState(new FirebaseState());
         pokerState.setId(table.getId());
         table.getGameState().setState(pokerState);

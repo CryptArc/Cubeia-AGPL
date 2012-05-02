@@ -111,7 +111,6 @@ public class PokerTableListener implements TournamentTableListener {
         removePlayer(table, playerId, false);
     }
 
-
     public void tournamentPlayerJoined(Table table, GenericPlayer player, Serializable balance) {
         stateInjector.injectAdapter(table);
         PokerPlayer pokerPlayer = addPlayer(table, player, true);
