@@ -179,7 +179,6 @@ public class TexasHoldem implements GameType, RoundVisitor, Dealer {
     @Override
     public void exposeShowdownCards() {
         // Not valid / used yet.
-        // TODO: Figure out exactly why we expose private cards in Telesina before dealing vela card?
     }
 
     private void handleFinishedHand(HandResult handResult) {
