@@ -51,9 +51,6 @@ public class AnteRound implements Round {
 
         Collection<PokerPlayer> players = game.getState().getCurrentHandSeatingMap().values();
 
-        // TODO: how do we decide dealer? for now always use first player...
-        //moveDealerButton();
-
         handleAnteRequests(players);
     }
 
