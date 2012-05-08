@@ -3,7 +3,7 @@ package com.cubeia.poker;
 import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.rounds.betting.BetStrategyName;
 import com.cubeia.poker.timing.TimingProfile;
-import com.cubeia.poker.variant.GameTypeFactory;
+import com.cubeia.poker.variant.factory.GameTypeFactory;
 import com.cubeia.poker.variant.telesina.Telesina;
 import com.cubeia.poker.variant.texasholdem.TexasHoldem;
 import org.junit.Before;

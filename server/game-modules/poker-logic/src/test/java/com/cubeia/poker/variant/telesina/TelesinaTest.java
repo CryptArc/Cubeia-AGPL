@@ -6,7 +6,7 @@ import com.cubeia.poker.PokerState;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.rounds.DealExposedPocketCardsRound;
+import com.cubeia.poker.rounds.dealing.DealExposedPocketCardsRound;
 import com.cubeia.poker.timing.impl.DefaultTimingProfile;
 import org.junit.Test;
 import org.mockito.Mock;

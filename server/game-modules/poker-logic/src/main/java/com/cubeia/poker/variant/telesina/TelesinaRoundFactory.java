@@ -1,15 +1,15 @@
 package com.cubeia.poker.variant.telesina;
 
 import com.cubeia.poker.action.ActionRequestFactory;
-import com.cubeia.poker.rounds.DealCommunityCardsRound;
-import com.cubeia.poker.rounds.DealExposedPocketCardsRound;
-import com.cubeia.poker.rounds.DealInitialPocketCardsRound;
-import com.cubeia.poker.rounds.ExposePrivateCardsRound;
+import com.cubeia.poker.rounds.dealing.DealCommunityCardsRound;
+import com.cubeia.poker.rounds.dealing.DealExposedPocketCardsRound;
+import com.cubeia.poker.rounds.dealing.DealInitialPocketCardsRound;
 import com.cubeia.poker.rounds.ante.AnteRound;
 import com.cubeia.poker.rounds.ante.AnteRoundHelper;
 import com.cubeia.poker.rounds.betting.BettingRound;
 import com.cubeia.poker.rounds.betting.NoLimitBetStrategy;
-import com.cubeia.poker.rounds.betting.TelesinaPlayerToActCalculator;
+import com.cubeia.poker.variant.telesina.hand.TelesinaPlayerToActCalculator;
+import com.cubeia.poker.rounds.dealing.ExposePrivateCardsRound;
 
 /**
  * Factory of Telesina game rounds.

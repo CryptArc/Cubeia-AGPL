@@ -15,10 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.poker.rounds;
+package com.cubeia.poker.rounds.dealing;
 
-import com.cubeia.poker.GameType;
 import com.cubeia.poker.action.PokerAction;
+import com.cubeia.poker.rounds.Round;
+import com.cubeia.poker.rounds.RoundVisitor;
 
 /**
  * Telesina specific round for dealing vela card.
@@ -27,16 +28,9 @@ public class ExposePrivateCardsRound implements Round {
 
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private GameType gameType;
-
-
-    public ExposePrivateCardsRound(GameType gameType) {
-        this.gameType = gameType;
-        gameType.getState().exposeShowdownCards();
-        gameType.sendAllNonFoldedPlayersBestHand();
+    public ExposePrivateCardsRound(Dealer dealer) {
+        dealer.exposeShowdownCards();
     }
-
 
     @Override
     public void act(PokerAction action) {
@@ -48,9 +42,6 @@ public class ExposePrivateCardsRound implements Round {
         return getClass().getSimpleName();
     }
 
-    /**
-     *
-     */
     @Override
     public boolean isFinished() {
         return true;

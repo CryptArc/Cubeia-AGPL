@@ -22,7 +22,6 @@ import com.cubeia.poker.action.*;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.variant.FutureActionsCalculator;
 import com.cubeia.poker.variant.telesina.Telesina;
 import com.cubeia.poker.variant.texasholdem.TexasHoldemFutureActionsCalculator;
 import junit.framework.TestCase;

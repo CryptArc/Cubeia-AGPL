@@ -2,7 +2,7 @@ package com.cubeia.poker.variant.telesina;
 
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.variant.FutureActionsCalculator;
+import com.cubeia.poker.rounds.betting.FutureActionsCalculator;
 import org.junit.Test;
 import org.mockito.Mockito;
 

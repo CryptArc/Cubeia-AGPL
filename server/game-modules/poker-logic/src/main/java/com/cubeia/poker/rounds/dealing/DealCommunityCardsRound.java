@@ -15,10 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.poker.rounds;
+package com.cubeia.poker.rounds.dealing;
 
-import com.cubeia.poker.GameType;
 import com.cubeia.poker.action.PokerAction;
+import com.cubeia.poker.rounds.Round;
+import com.cubeia.poker.rounds.RoundVisitor;
 
 /**
  * This round has been separated for timing reasons.
@@ -29,13 +30,8 @@ public class DealCommunityCardsRound implements Round {
 
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final GameType gameType;
-
-    public DealCommunityCardsRound(GameType gameType) {
-        this.gameType = gameType;
-
-        gameType.dealCommunityCards();
+    public DealCommunityCardsRound(Dealer dealer) {
+        dealer.dealCommunityCards();
     }
 
     @Override
@@ -48,9 +44,6 @@ public class DealCommunityCardsRound implements Round {
         return "DealCommunityCardsRound";
     }
 
-    /**
-     *
-     */
     @Override
     public boolean isFinished() {
         return true;

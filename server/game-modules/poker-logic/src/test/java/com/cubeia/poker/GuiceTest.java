@@ -20,13 +20,12 @@ package com.cubeia.poker;
 import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.rounds.betting.BetStrategyName;
 import com.cubeia.poker.timing.TimingFactory;
-import com.cubeia.poker.variant.GameTypeFactory;
+import com.cubeia.poker.variant.factory.GameTypeFactory;
 import com.cubeia.poker.variant.PokerVariant;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import junit.framework.TestCase;
-import org.mockito.Mockito;
 
 import java.util.LinkedList;
 import java.util.List;

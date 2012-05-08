@@ -2,7 +2,7 @@ package com.cubeia.poker.variant.telesina;
 
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.variant.FutureActionsCalculator;
+import com.cubeia.poker.rounds.betting.FutureActionsCalculator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,8 +11,8 @@ public class TelesinaFutureActionsCalculator implements FutureActionsCalculator 
 
 
     /* (non-Javadoc)
-      * @see com.cubeia.poker.variant.texasholdem.FutureActionsCalculator#calculateFutureActionOptionList(com.cubeia.poker.player.PokerPlayer, java.lang.Long)
-      */
+     * @see com.cubeia.poker.variant.texasholdem.FutureActionsCalculator#calculateFutureActionOptionList(com.cubeia.poker.player.PokerPlayer, java.lang.Long)
+     */
     @Override
     public List<PokerActionType> calculateFutureActionOptionList(PokerPlayer player, Long highestBet) {
         List<PokerActionType> options = new ArrayList<PokerActionType>();
@@ -31,13 +31,5 @@ public class TelesinaFutureActionsCalculator implements FutureActionsCalculator 
 
 
         return options;
-    }
-
-    /* (non-Javadoc)
-      * @see com.cubeia.poker.variant.texasholdem.FutureActionsCalculator#getEmptyFutureOptionList()
-      */
-    @Override
-    public List<PokerActionType> getEmptyFutureOptionList() {
-        return new ArrayList<PokerActionType>();
     }
 }

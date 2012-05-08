@@ -20,6 +20,10 @@ package com.cubeia.poker.rounds;
 import com.cubeia.poker.rounds.ante.AnteRound;
 import com.cubeia.poker.rounds.betting.BettingRound;
 import com.cubeia.poker.rounds.blinds.BlindsRound;
+import com.cubeia.poker.rounds.dealing.DealCommunityCardsRound;
+import com.cubeia.poker.rounds.dealing.DealExposedPocketCardsRound;
+import com.cubeia.poker.rounds.dealing.DealInitialPocketCardsRound;
+import com.cubeia.poker.rounds.dealing.ExposePrivateCardsRound;
 
 /**
  * These will be called at the end of a round

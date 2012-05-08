@@ -15,10 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.poker.rounds;
+package com.cubeia.poker.rounds.dealing;
 
 import com.cubeia.poker.action.PokerAction;
-import com.cubeia.poker.variant.telesina.Telesina;
+import com.cubeia.poker.rounds.Round;
+import com.cubeia.poker.rounds.RoundVisitor;
 
 /**
  * Telesina specific round for dealing new pocket cards between betting rounds.
@@ -28,8 +29,8 @@ public class DealInitialPocketCardsRound implements Round {
 
     private static final long serialVersionUID = 1L;
 
-    public DealInitialPocketCardsRound(Telesina telesina) {
-        telesina.dealInitialPocketCards();
+    public DealInitialPocketCardsRound(Dealer dealer) {
+        dealer.dealInitialPocketCards();
     }
 
     @Override

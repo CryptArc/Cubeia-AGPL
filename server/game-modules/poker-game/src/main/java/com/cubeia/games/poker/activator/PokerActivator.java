@@ -37,7 +37,7 @@ import com.cubeia.poker.rounds.betting.BetStrategyName;
 import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.timing.Timings;
-import com.cubeia.poker.variant.GameTypeFactory;
+import com.cubeia.poker.variant.factory.GameTypeFactory;
 import com.cubeia.poker.variant.PokerVariant;
 import com.google.inject.Guice;
 import com.google.inject.Injector;

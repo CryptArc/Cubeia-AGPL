@@ -27,9 +27,9 @@ import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
 import com.cubeia.poker.util.ThreadLocalProfiler;
-import com.cubeia.poker.variant.FutureActionsCalculator;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -218,7 +218,7 @@ public class BettingRound implements Round, BettingRoundContext {
             if (player.getId() != excludePlayer.getId()) {
                 gameType.getServerAdapter().notifyFutureAllowedActions(player, futureActionsCalculator.calculateFutureActionOptionList(player, highBet));
             } else {
-                gameType.getServerAdapter().notifyFutureAllowedActions(player, futureActionsCalculator.getEmptyFutureOptionList());
+                gameType.getServerAdapter().notifyFutureAllowedActions(player, Lists.<PokerActionType>newArrayList());
             }
         }
 
@@ -230,7 +230,7 @@ public class BettingRound implements Round, BettingRoundContext {
      */
     private void notifyAllPlayersOfNoPossibleFutureActions() {
         for (PokerPlayer player : gameType.getState().getCurrentHandPlayerMap().values()) {
-            gameType.getServerAdapter().notifyFutureAllowedActions(player, futureActionsCalculator.getEmptyFutureOptionList());
+            gameType.getServerAdapter().notifyFutureAllowedActions(player, Lists.<PokerActionType>newArrayList());
         }
     }
 

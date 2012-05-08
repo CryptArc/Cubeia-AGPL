@@ -40,6 +40,7 @@ import com.cubeia.poker.rounds.betting.DefaultPlayerToActCalculator;
 import com.cubeia.poker.rounds.betting.NoLimitBetStrategy;
 import com.cubeia.poker.rounds.blinds.BlindsInfo;
 import com.cubeia.poker.rounds.blinds.BlindsRound;
+import com.cubeia.poker.rounds.dealing.*;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.util.HandResultCalculator;
 import com.cubeia.poker.variant.HandResultCreator;
@@ -47,7 +48,7 @@ import org.apache.log4j.Logger;
 
 import java.util.*;
 
-public class TexasHoldem implements GameType, RoundVisitor {
+public class TexasHoldem implements GameType, RoundVisitor, Dealer {
 
     private static final long serialVersionUID = -1523110440727681601L;
 
@@ -163,6 +164,22 @@ public class TexasHoldem implements GameType, RoundVisitor {
         } else {
             dealCommunityCards(1);
         }
+    }
+
+    @Override
+    public void dealExposedPocketCards() {
+        dealCommunityCards();
+    }
+
+    @Override
+    public void dealInitialPocketCards() {
+        // Not used yet.
+    }
+
+    @Override
+    public void exposeShowdownCards() {
+        // Not valid / used yet.
+        // TODO: Figure out exactly why we expose private cards in Telesina before dealing vela card?
     }
 
     private void handleFinishedHand(HandResult handResult) {

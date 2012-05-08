@@ -1,9 +1,10 @@
-package com.cubeia.poker.rounds.betting;
+package com.cubeia.poker.variant.telesina.hand;
 
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.rounds.betting.PlayerToActCalculator;
 import com.cubeia.poker.util.PokerUtils;
 import com.cubeia.poker.variant.telesina.hand.TelesinaHandStrengthEvaluator;
 

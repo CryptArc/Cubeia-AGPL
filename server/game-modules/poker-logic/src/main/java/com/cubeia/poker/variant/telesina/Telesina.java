@@ -39,6 +39,7 @@ import com.cubeia.poker.rounds.ante.AnteRound;
 import com.cubeia.poker.rounds.betting.BettingRound;
 import com.cubeia.poker.rounds.blinds.BlindsInfo;
 import com.cubeia.poker.rounds.blinds.BlindsRound;
+import com.cubeia.poker.rounds.dealing.*;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.util.HandResultCalculator;
 import com.cubeia.poker.util.ThreadLocalProfiler;
@@ -65,7 +66,7 @@ import java.util.*;
  * 9  DealVelaCard, 1 + 4 & 1 community (vela)
  * 10  Betting round
  */
-public class Telesina implements GameType, RoundVisitor {
+public class Telesina implements GameType, RoundVisitor, Dealer {
 
     private static final int VELA_ROUND_ID = 4;
 
@@ -258,7 +259,7 @@ public class Telesina implements GameType, RoundVisitor {
         log.debug("hand canceled in round {}: {}", getCurrentRound(), HandEndStatus.CANCELED_TOO_FEW_PLAYERS);
 
         // return antes
-        returnAllBetstacksToBalance();
+        returnAllBetStacksToBalance();
         state.notifyRakeInfo();
 
         state.notifyHandFinished(new HandResult(), HandEndStatus.CANCELED_TOO_FEW_PLAYERS);
@@ -421,7 +422,7 @@ public class Telesina implements GameType, RoundVisitor {
         scheduleRoundTimeout();
     }
 
-    private void returnAllBetstacksToBalance() {
+    private void returnAllBetStacksToBalance() {
         for (PokerPlayer player : state.getCurrentHandSeatingMap().values()) {
 
             long betStack = player.getBetStack();
@@ -456,6 +457,12 @@ public class Telesina implements GameType, RoundVisitor {
     public void dealInitialPocketCards() {
         dealHiddenPocketCards();
         dealExposedPocketCards();
+    }
+
+    @Override
+    public void exposeShowdownCards() {
+        state.exposeShowdownCards();
+        sendAllNonFoldedPlayersBestHand();
     }
 
     private void dealHiddenPocketCards() {

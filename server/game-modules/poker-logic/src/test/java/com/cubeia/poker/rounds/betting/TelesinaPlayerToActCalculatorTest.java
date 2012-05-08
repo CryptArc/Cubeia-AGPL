@@ -4,6 +4,7 @@ import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.variant.telesina.hand.TelesinaPlayerToActCalculator;
 import org.junit.Test;
 
 import java.util.*;

@@ -2,7 +2,7 @@ package com.cubeia.poker.variant.texasholdem;
 
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.variant.FutureActionsCalculator;
+import com.cubeia.poker.rounds.betting.FutureActionsCalculator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +30,5 @@ public class TexasHoldemFutureActionsCalculator implements FutureActionsCalculat
 
 
         return options;
-    }
-
-    /* (non-Javadoc)
-      * @see com.cubeia.poker.variant.texasholdem.FutureActionsCalculator#getEmptyFutureOptionList()
-      */
-    @Override
-    public List<PokerActionType> getEmptyFutureOptionList() {
-        return new ArrayList<PokerActionType>();
     }
 }
