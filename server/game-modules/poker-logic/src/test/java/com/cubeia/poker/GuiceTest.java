@@ -61,9 +61,9 @@ public abstract class GuiceTest extends TestCase {
     protected void setupDefaultGame() {
         mockServerAdapter = new MockServerAdapter();
         state = injector.getInstance(PokerState.class);
-        state.setServerAdapter(mockServerAdapter);
-        GameType gameType = GameTypeFactory.createGameType(variant, state, rng);
+        GameType gameType = GameTypeFactory.createGameType(variant, rng);
         state.init(gameType, createPokerSettings(100));
+        state.setServerAdapter(mockServerAdapter);
     }
 
     protected PokerSettings createPokerSettings(int anteLevel) {

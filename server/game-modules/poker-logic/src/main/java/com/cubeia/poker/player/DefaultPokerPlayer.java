@@ -150,7 +150,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
     }
 
     public void setActionRequest(ActionRequest actionRequest) {
-        // log.trace("Setting action request " + actionRequest + " on player " + getId());
+        // log.trace("Setting action request " + actionRequest + " on player " + getTableId());
         this.actionRequest = actionRequest;
     }
 

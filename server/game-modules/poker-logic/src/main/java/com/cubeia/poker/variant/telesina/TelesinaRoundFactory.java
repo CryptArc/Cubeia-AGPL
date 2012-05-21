@@ -1,6 +1,9 @@
 package com.cubeia.poker.variant.telesina;
 
+import com.cubeia.poker.PokerContext;
 import com.cubeia.poker.action.ActionRequestFactory;
+import com.cubeia.poker.hand.Rank;
+import com.cubeia.poker.rounds.betting.PlayerToActCalculator;
 import com.cubeia.poker.rounds.dealing.DealCommunityCardsRound;
 import com.cubeia.poker.rounds.dealing.DealExposedPocketCardsRound;
 import com.cubeia.poker.rounds.dealing.DealInitialPocketCardsRound;
@@ -8,8 +11,9 @@ import com.cubeia.poker.rounds.ante.AnteRound;
 import com.cubeia.poker.rounds.ante.AnteRoundHelper;
 import com.cubeia.poker.rounds.betting.BettingRound;
 import com.cubeia.poker.rounds.betting.NoLimitBetStrategy;
-import com.cubeia.poker.variant.telesina.hand.TelesinaPlayerToActCalculator;
 import com.cubeia.poker.rounds.dealing.ExposePrivateCardsRound;
+import com.cubeia.poker.states.ServerAdapterHolder;
+import com.cubeia.poker.variant.telesina.hand.TelesinaPlayerToActCalculator;
 
 /**
  * Factory of Telesina game rounds.
@@ -20,13 +24,15 @@ import com.cubeia.poker.rounds.dealing.ExposePrivateCardsRound;
  */
 public class TelesinaRoundFactory {
 
-    AnteRound createAnteRound(Telesina telesina) {
-        return new AnteRound(telesina, new AnteRoundHelper());
+    AnteRound createAnteRound(PokerContext context, ServerAdapterHolder serverAdapterHolder) {
+        return new AnteRound(context, serverAdapterHolder, new AnteRoundHelper(context, serverAdapterHolder));
     }
 
-    BettingRound createBettingRound(Telesina telesina, int dealerButtonSeatId) {
-        return new BettingRound(telesina, dealerButtonSeatId, new TelesinaPlayerToActCalculator(
-                telesina.getDeckLowestRank()), new ActionRequestFactory(new NoLimitBetStrategy()), new TelesinaFutureActionsCalculator());
+    BettingRound createBettingRound(PokerContext context, ServerAdapterHolder serverAdapterHolder, Rank lowestRank) {
+        ActionRequestFactory actionRequestFactory = new ActionRequestFactory(new NoLimitBetStrategy());
+        TelesinaPlayerToActCalculator playerToActCalculator = new TelesinaPlayerToActCalculator(lowestRank);
+        TelesinaFutureActionsCalculator futureActionsCalculator = new TelesinaFutureActionsCalculator();
+        return new BettingRound(context, serverAdapterHolder, playerToActCalculator, actionRequestFactory, futureActionsCalculator);
     }
 
     DealExposedPocketCardsRound createDealExposedPocketCardsRound(Telesina telesina) {

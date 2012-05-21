@@ -17,14 +17,16 @@
 
 package com.cubeia.poker.rounds.ante;
 
-import com.cubeia.poker.GameType;
+import com.cubeia.poker.PokerContext;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
+import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
+import com.cubeia.poker.states.ServerAdapterHolder;
 import com.cubeia.poker.util.ThreadLocalProfiler;
 import org.apache.log4j.Logger;
 
@@ -39,17 +41,20 @@ public class AnteRound implements Round {
 
     private static transient Logger log = Logger.getLogger(AnteRound.class);
 
-    private final GameType game;
-
     private AnteRoundHelper anteRoundHelper;
+    
+    private PokerContext context;
+    
+    private ServerAdapterHolder serverAdapterHolder;
 
-    public AnteRound(GameType game, AnteRoundHelper anteRoundHelper) {
-        this.game = game;
+    public AnteRound(PokerContext context, ServerAdapterHolder serverAdapterHolder, AnteRoundHelper anteRoundHelper) {
+        this.context = context;
         this.anteRoundHelper = anteRoundHelper;
+        this.serverAdapterHolder = serverAdapterHolder;
 
         clearPlayerActionOptions();
 
-        Collection<PokerPlayer> players = game.getState().getCurrentHandSeatingMap().values();
+        Collection<PokerPlayer> players = context.getCurrentHandSeatingMap().values();
 
         handleAnteRequests(players);
     }
@@ -79,20 +84,11 @@ public class AnteRound implements Round {
     }
 
     private void requestAnteFromAllPlayersInHand(Collection<PokerPlayer> players) {
-        anteRoundHelper.requestAntes(players, game.getBlindsInfo().getAnteLevel(), game);
+        anteRoundHelper.requestAntes(players);
     }
 
-//    private void moveDealerButton() {
-//    	Collection<PokerPlayer> players = game.getState().getCurrentHandSeatingMap().values();
-//		int newDealerSeatId = players.iterator().next().getSeatId();
-//		
-//		BlindsInfo blindsInfo = game.getBlindsInfo();
-//		blindsInfo.setDealerButtonSeatId(newDealerSeatId);
-//		game.getState().notifyDealerButton(blindsInfo.getDealerButtonSeatId());
-//	}
-
     private void clearPlayerActionOptions() {
-        SortedMap<Integer, PokerPlayer> seatingMap = game.getState().getCurrentHandSeatingMap();
+        SortedMap<Integer, PokerPlayer> seatingMap = context.getCurrentHandSeatingMap();
         for (PokerPlayer p : seatingMap.values()) {
             p.clearActionRequest();
         }
@@ -100,19 +96,19 @@ public class AnteRound implements Round {
 
     public void act(PokerAction action) {
         log.debug("Act: " + action);
-        PokerPlayer player = game.getState().getPlayerInCurrentHand(action.getPlayerId());
+        PokerPlayer player = context.getPlayerInCurrentHand(action.getPlayerId());
         verifyValidAnte(player);
 
         switch (action.getActionType()) {
             case ANTE:
                 ThreadLocalProfiler.add("AnteRound.act.ante");
-                player.addBet(game.getBlindsInfo().getAnteLevel());
+                player.addBet(context.getBlindsInfo().getAnteLevel());
                 player.setHasActed(true);
                 player.setHasPostedEntryBet(true);
-                action.setBetAmount(game.getBlindsInfo().getAnteLevel());
-                game.getServerAdapter().notifyActionPerformed(action, player);
-                game.getServerAdapter().notifyPlayerBalance(player);
-                game.getState().notifyBetStacksUpdated();
+                action.setBetAmount(context.getBlindsInfo().getAnteLevel());
+                getServerAdapter().notifyActionPerformed(action, player);
+                getServerAdapter().notifyPlayerBalance(player);
+                anteRoundHelper.notifyPotSizeAndRakeInfo();
 
                 break;
             case DECLINE_ENTRY_BET:
@@ -120,9 +116,9 @@ public class AnteRound implements Round {
                 player.setHasActed(true);
                 player.setHasFolded(true);
                 player.setHasPostedEntryBet(false);
-                game.getServerAdapter().notifyActionPerformed(action, player);
-                game.getServerAdapter().notifyPlayerBalance(player);
-                setPlayerSitOut(player);
+                getServerAdapter().notifyActionPerformed(action, player);
+                getServerAdapter().notifyPlayerBalance(player);
+                anteRoundHelper.setPlayerSitOut(player, SitOutStatus.MISSED_ANTE, context, getServerAdapter());
                 break;
             default:
                 throw new IllegalArgumentException(action.getActionType() + " is not legal here");
@@ -130,30 +126,26 @@ public class AnteRound implements Round {
 
         player.clearActionRequest();
 
-        Collection<PokerPlayer> playersInHand = game.getState().getCurrentHandSeatingMap().values();
+        Collection<PokerPlayer> playersInHand = context.getCurrentHandSeatingMap().values();
 
         if (anteRoundHelper.isImpossibleToStartRound(playersInHand)) {
             log.debug("impossible to start hand, too few players payed ante, will cancel");
             Collection<PokerPlayer> declinedPlayers = anteRoundHelper.setAllPendingPlayersToDeclineEntryBet(playersInHand);
             for (PokerPlayer declinedPlayer : declinedPlayers) {
                 PokerAction declineAction = new PokerAction(declinedPlayer.getId(), PokerActionType.DECLINE_ENTRY_BET);
-                game.getServerAdapter().notifyActionPerformed(declineAction, player);
+                getServerAdapter().notifyActionPerformed(declineAction, player);
             }
         }
     }
 
     private Collection<PokerPlayer> getAllSeatedPlayers() {
-        return game.getState().getCurrentHandSeatingMap().values();
-    }
-
-    private void setPlayerSitOut(PokerPlayer player) {
-        game.getState().playerIsSittingOut(player.getId(), SitOutStatus.MISSED_ANTE);
+        return context.getCurrentHandSeatingMap().values();
     }
 
     /**
      * Verify that this player is allowed to place ante.
      *
-     * @param player
+     * @param player the player who tries to place the ante
      * @throws IllegalArgumentException if the player was not allowed to place ANTE
      */
     private void verifyValidAnte(PokerPlayer player) {
@@ -175,15 +167,15 @@ public class AnteRound implements Round {
                 player.setHasFolded(true);
                 player.setHasPostedEntryBet(false);
                 player.clearActionRequest();
-                game.getServerAdapter().notifyActionPerformed(action, player);
-                game.getServerAdapter().notifyPlayerBalance(player);
+                getServerAdapter().notifyActionPerformed(action, player);
+                getServerAdapter().notifyPlayerBalance(player);
                 playersToSitOut.add(player);
             }
         }
 
         // sit out all the players
         for (PokerPlayer player : playersToSitOut) {
-            setPlayerSitOut(player);
+            anteRoundHelper.setPlayerSitOut(player, SitOutStatus.MISSED_ANTE, context, getServerAdapter());
         }
     }
 
@@ -205,13 +197,17 @@ public class AnteRound implements Round {
     }
 
     public boolean isCanceled() {
-        Collection<PokerPlayer> players = game.getState().getCurrentHandSeatingMap().values();
+        Collection<PokerPlayer> players = context.getCurrentHandSeatingMap().values();
         return anteRoundHelper.hasAllPlayersActed(players) && anteRoundHelper.numberOfPlayersPayedAnte(players) < 2;
     }
 
     @Override
     public boolean isWaitingForPlayer(int playerId) {
-        PokerPlayer pokerPlayer = game.getState().getCurrentHandPlayerMap().get(playerId);
+        PokerPlayer pokerPlayer = context.getCurrentHandPlayerMap().get(playerId);
         return !pokerPlayer.hasActed();
+    }
+    
+    private ServerAdapter getServerAdapter() {
+        return serverAdapterHolder.get();
     }
 }

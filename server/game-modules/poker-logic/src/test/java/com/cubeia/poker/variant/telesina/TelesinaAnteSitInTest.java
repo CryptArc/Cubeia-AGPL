@@ -1,17 +1,19 @@
 package com.cubeia.poker.variant.telesina;
 
-import com.cubeia.poker.AbstractTexasHandTester;
-import com.cubeia.poker.MockPlayer;
-import com.cubeia.poker.NonRandomRNGProvider;
-import com.cubeia.poker.TestUtils;
+import com.cubeia.poker.*;
 import com.cubeia.poker.action.PokerActionType;
+import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.variant.PokerVariant;
+import com.google.common.base.Predicate;
 import org.junit.Test;
+import org.mockito.Matchers;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 public class TelesinaAnteSitInTest extends AbstractTexasHandTester {
+
+    private PokerContext context;
 
     @Override
     protected void setUp() throws Exception {
@@ -19,6 +21,7 @@ public class TelesinaAnteSitInTest extends AbstractTexasHandTester {
         rng = new NonRandomRNGProvider();
         super.setUp();
         setAnteLevel(20);
+        context = state.getContext();
     }
 
 
@@ -41,12 +44,12 @@ public class TelesinaAnteSitInTest extends AbstractTexasHandTester {
         assertThat(mp[0].isActionPossible(PokerActionType.ANTE), is(true));
         act(p[1], PokerActionType.ANTE);
 
-        assertEquals(2, state.getPlayersReadyToStartHand().size());
+        assertEquals(2, context.getPlayersReadyToStartHand(Matchers.<Predicate<PokerPlayer>>any()).size());
         assertEquals(2, state.getSeatedPlayers().size());
 
         state.addPlayer(mp[3]);
 
-        assertEquals(3, state.getPlayersReadyToStartHand().size());
+        assertEquals(3, context.getPlayersReadyToStartHand(Matchers.<Predicate<PokerPlayer>>any()).size());
         assertEquals(3, state.getSeatedPlayers().size());
 
         act(p[0], PokerActionType.ANTE);

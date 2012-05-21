@@ -17,12 +17,37 @@
 
 package com.cubeia.poker.states;
 
+import com.cubeia.poker.GameType;
+import com.cubeia.poker.PokerContext;
+import com.cubeia.poker.player.PokerPlayer;
+
+import java.util.Set;
+
 public class NotStartedSTM extends AbstractPokerGameSTM {
 
     private static final long serialVersionUID = -1675095508189680830L;
 
+    public NotStartedSTM() {
+    }
+
+    public NotStartedSTM(GameType gameType, PokerContext context, ServerAdapterHolder serverAdapterHolder, StateChanger stateChanger) {
+        super(gameType, context, serverAdapterHolder, stateChanger);
+    }
+
     public String toString() {
         return "NotStartedState";
+    }
+
+    @Override
+    public void playerJoined(PokerPlayer player) {
+        if (context.getNumberOfPlayersSittingIn() > 1) {
+            changeState(new WaitingToStartSTM());
+        }
+    }
+
+    @Override
+    public void performPendingBuyIns(Set<PokerPlayer> players) {
+        doPerformPendingBuyIns(players);
     }
 
 }

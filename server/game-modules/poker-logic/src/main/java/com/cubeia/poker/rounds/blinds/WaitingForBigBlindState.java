@@ -17,6 +17,7 @@
 
 package com.cubeia.poker.rounds.blinds;
 
+import com.cubeia.poker.PokerContext;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
@@ -29,9 +30,9 @@ public class WaitingForBigBlindState extends AbstractBlindsState {
     private static transient Logger log = Logger.getLogger(WaitingForBigBlindState.class);
 
     @Override
-    public void bigBlind(int playerId, BlindsRound blindsRound) {
-        BlindsInfo blindsInfo = blindsRound.getBlindsInfo();
-        PokerPlayer player = blindsRound.getGame().getState().getPlayerInCurrentHand(playerId);
+    public void bigBlind(int playerId, PokerContext context, BlindsRound blindsRound) {
+        BlindsInfo blindsInfo = context.getBlindsInfo();
+        PokerPlayer player = context.getPlayerInCurrentHand(playerId);
         if (player.getActionRequest().isOptionEnabled(PokerActionType.BIG_BLIND)) {
             blindsInfo.setBigBlind(player);
             player.addBet(blindsRound.getBlindsInfo().getBigBlindLevel());
@@ -44,8 +45,8 @@ public class WaitingForBigBlindState extends AbstractBlindsState {
     }
 
     @Override
-    public void declineEntryBet(Integer playerId, BlindsRound blindsRound) {
-        PokerPlayer player = blindsRound.getGame().getState().getPlayerInCurrentHand(playerId);
+    public void declineEntryBet(Integer playerId, PokerContext context, BlindsRound blindsRound) {
+        PokerPlayer player = context.getPlayerInCurrentHand(playerId);
         if (player.getActionRequest().isOptionEnabled(PokerActionType.DECLINE_ENTRY_BET)) {
             player.setSitOutStatus(SitOutStatus.MISSED_BIG_BLIND);
             blindsRound.bigBlindDeclined(player);
@@ -55,16 +56,16 @@ public class WaitingForBigBlindState extends AbstractBlindsState {
     }
 
     @Override
-    public void timeout(BlindsRound context) {
+    public void timeout(PokerContext context, BlindsRound round) {
         if (context.isTournamentBlinds()) {
             log.debug("Big blind timeout on tournament table - auto post big blind for player: " + context.getBlindsInfo().getBigBlindPlayerId());
-            bigBlind(context.getBlindsInfo().getBigBlindPlayerId(), context);
+            bigBlind(context.getBlindsInfo().getBigBlindPlayerId(), context, round);
         } else {
             int bigBlind = context.getBlindsInfo().getBigBlindPlayerId();
-            PokerPlayer player = context.getGame().getState().getPlayerInCurrentHand(bigBlind);
+            PokerPlayer player = context.getPlayerInCurrentHand(bigBlind);
             player.setSitOutStatus(SitOutStatus.MISSED_BIG_BLIND);
             // context.getBlindsInfo().setHasDeadSmallBlind(true);
-            context.bigBlindDeclined(player);
+            round.bigBlindDeclined(player);
         }
     }
 }

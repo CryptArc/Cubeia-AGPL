@@ -23,7 +23,6 @@ import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.rounds.betting.BetStrategyName;
 import com.cubeia.poker.timing.TimingFactory;
-import com.cubeia.poker.variant.PokerVariant;
 import com.cubeia.poker.variant.telesina.Telesina;
 import com.cubeia.poker.variant.telesina.TelesinaDealerButtonCalculator;
 import com.cubeia.poker.variant.telesina.TelesinaDeckFactory;
@@ -80,8 +79,9 @@ public abstract class AbstractTelesinaHandTester extends TestCase {
         mockServerAdapter = new MockServerAdapter();
         game = injector.getInstance(PokerState.class);
         game.setServerAdapter(mockServerAdapter);
-        game.settings = createPokerSettings(anteLevel, rakeSettings);
-        game.gameType = new Telesina(rngProvider, game, deckFactory, new TelesinaRoundFactory(), new TelesinaDealerButtonCalculator());
+        PokerSettings settings = createPokerSettings(anteLevel, rakeSettings);
+        Telesina gameType = new Telesina(rngProvider, deckFactory, new TelesinaRoundFactory(), new TelesinaDealerButtonCalculator());
+        game.init(gameType, settings);
     }
 
     protected PokerSettings createPokerSettings(int anteLevel, RakeSettings rakeSettings) {

@@ -118,7 +118,7 @@ public class BackendCallHandlerTest {
         assertThat(buyInRespPacket.balance, is(0));
         assertThat(buyInRespPacket.pendingBalance, is((int) (amountRequested + balanceNotInHand)));
         assertThat(buyInRespPacket.resultCode, is(Enums.BuyInResultCode.OK));
-        verify(state).notifyPlayerBalance(playerId);
+        verify(serverAdapter).notifyPlayerBalance(pokerPlayer);
     }
 
     @Test
@@ -203,7 +203,7 @@ public class BackendCallHandlerTest {
 
     @Test
     public void testHandleOpenSessionSuccessfulResponse() {
-        when(state.getGameType()).thenReturn(gameType);
+//        when(state.getGameType()).thenReturn(gameType);
         when(gameType.canPlayerAffordEntryBet(any(PokerPlayer.class), any(PokerSettings.class), Mockito.eq(true))).thenReturn(false);
         PlayerSessionId playerSessionId = new PlayerSessionIdImpl(playerId);
         OpenSessionResponse openSessionResponse = new OpenSessionResponse(playerSessionId, Collections.<String, String>emptyMap());

@@ -1,18 +1,49 @@
 package com.cubeia.poker.variant.telesina;
 
+import com.cubeia.poker.PokerContext;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.adapter.HandEndStatus;
+import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.result.HandResult;
+import com.cubeia.poker.states.ServerAdapterHolder;
+import com.cubeia.poker.variant.HandFinishedListener;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 public class TelesinaCancelHandTest {
+
+    @Mock
+    private PokerContext context;
+
+    @Mock
+    private ServerAdapterHolder serverAdapterHolder;
+
+    @Mock
+    private ServerAdapter serverAdapter;
+
+    @Mock
+    private HandFinishedListener handFinishedListener;
+
+    private Telesina telesina;
+
+    @Before
+    public void setup() {
+        initMocks(this);
+        when(serverAdapterHolder.get()).thenReturn(serverAdapter);
+        telesina = new Telesina(null, null, null, null);
+        telesina.setPokerContextAndServerAdapter(context, serverAdapterHolder);
+        telesina.addHandFinishedListener(handFinishedListener);
+    }
 
     @Test
     public void testCancelHand() {
@@ -38,12 +69,11 @@ public class TelesinaCancelHandTest {
         seatingMap.put(1, player2);
         when(state.getCurrentHandSeatingMap()).thenReturn(seatingMap);
 
-        Telesina telesina = new Telesina(null, state, null, null, null);
         telesina.handleCanceledHand();
 
-        verify(state).notifyHandFinished(Mockito.any(HandResult.class), Mockito.eq(HandEndStatus.CANCELED_TOO_FEW_PLAYERS));
-        verify(state, never()).notifyTakeBackUncalledBets(player1.getId(), 0L);
-        verify(state).notifyTakeBackUncalledBets(player2.getId(), 100L);
+        verify(handFinishedListener).handFinished(Mockito.any(HandResult.class), Mockito.eq(HandEndStatus.CANCELED_TOO_FEW_PLAYERS));
+        verify(serverAdapter, never()).notifyTakeBackUncalledBet(player1.getId(), 0);
+        verify(serverAdapter).notifyTakeBackUncalledBet(player2.getId(), 100);
 //        verify(state).notifyPlayerBalance(player1Id);
 //        verify(state).notifyPlayerBalance(player2Id);
 

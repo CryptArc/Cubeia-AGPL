@@ -141,11 +141,11 @@ public class PokerParticipant extends DefaultCreationParticipant {
         super.tableCreated(table, acc);
         PokerState pokerState = injector.getInstance(PokerState.class);
 
-        GameType gameType = GameTypeFactory.createGameType(variant, pokerState, rngProvider);
+        GameType gameType = GameTypeFactory.createGameType(variant, rngProvider);
         PokerSettings settings = createSettings(table, variant);
         pokerState.init(gameType, settings);
         pokerState.setAdapterState(new FirebaseState());
-        pokerState.setId(table.getId());
+        pokerState.setTableId(table.getId());
         table.getGameState().setState(pokerState);
 
         acc.setIntAttribute(PokerLobbyAttributes.VISIBLE_IN_LOBBY.name(), 0);

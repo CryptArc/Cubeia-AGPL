@@ -47,6 +47,7 @@ public class DisconnectHandler {
      * @param playerId
      */
     private void handleDisconnected(int playerId) {
+        // TODO: Tell don't ask. (Remove isWaiting and instead tell the game that a player has disconnected)
         boolean playerToAct = state.isWaitingForPlayerToAct(playerId);
         log.debug("Disconnected player {}, current player: {}", playerId, playerToAct);
         if (playerToAct) {

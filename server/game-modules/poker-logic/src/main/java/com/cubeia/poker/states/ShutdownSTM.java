@@ -17,8 +17,10 @@
 
 package com.cubeia.poker.states;
 
-import com.cubeia.poker.PokerState;
+import com.cubeia.poker.GameType;
+import com.cubeia.poker.PokerContext;
 import com.cubeia.poker.action.PokerAction;
+import com.google.common.annotations.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,18 +30,26 @@ public class ShutdownSTM extends AbstractPokerGameSTM {
 
     private static final long serialVersionUID = 7076228045164551068L;
 
+    public ShutdownSTM() {
+    }
+
+    @VisibleForTesting
+    public ShutdownSTM(GameType gameType, PokerContext context, ServerAdapterHolder serverAdapterHolder, StateChanger stateChanger) {
+        super(gameType, context, serverAdapterHolder, stateChanger);
+    }
+
     public String toString() {
         return "ShutdownState";
     }
 
     @Override
-    public void act(PokerAction action, PokerState pokerGame) {
-        log.warn("table {} is shut down, dropping incoming action: {}", pokerGame.getId(), action);
+    public void act(PokerAction action) {
+        log.warn("table {} is shut down, dropping incoming action: {}", context.getTableId(), action);
     }
 
     @Override
-    public void timeout(PokerState pokerGame) {
-        log.warn("table {} is shut down, dropping incoming timout", pokerGame.getId());
+    public void timeout() {
+        log.warn("table {} is shut down, dropping incoming timeout", context.getTableId());
     }
 
 }

@@ -17,23 +17,71 @@
 
 package com.cubeia.poker.states;
 
-import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.PokerAction;
+import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.player.SitOutStatus;
 
 import java.io.Serializable;
+import java.util.Set;
 
 public interface PokerGameSTM extends Serializable {
 
-    public void timeout(PokerState context);
-
-    public void act(PokerAction action, PokerState pokerGame);
-
-    public String getStateDescription();
+    /**
+     * Invoked when a scheduled timeout has occurred.
+     *
+     */
+    public void timeout();
 
     /**
+     * Invoked when an action has been received.
+     *
+     * @param action
+     */
+    public void act(PokerAction action);
+
+    /**
+     * TODO: TELL DON'T ASK!
+     *
      * @param playerId
      * @return true if we are waiting for this player to act.
      */
-    public boolean isCurrentlyWaitingForPlayer(PokerState pokerGame, int playerId);
+    public boolean isCurrentlyWaitingForPlayer(int playerId);
 
+    /**
+     * Invoked when a new player has joined the table.
+     *
+     * @param player
+     */
+    void playerJoined(PokerPlayer player);
+
+    /**
+     * Gets a description of the current state.
+     *
+     * @return
+     */
+    public String getStateDescription();
+
+    /**
+     * Invoked when we enter a state.
+     */
+    public void enterState();
+
+    /**
+     * Checks if the player is currently in a hand.
+     *
+     * @param playerId
+     * @return
+     */
+    boolean isPlayerInHand(int playerId);
+
+    /**
+     * Starts the next hand.
+     */
+    void startHand();
+
+    void playerSitsOut(int playerId, SitOutStatus status);
+
+    void playerSitsIn(int playerId);
+
+    void performPendingBuyIns(Set<PokerPlayer> singleton);
 }

@@ -17,14 +17,17 @@
 
 package com.cubeia.poker.rounds.blinds;
 
-import com.cubeia.poker.GameType;
+import com.cubeia.poker.PokerContext;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
+import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.rounds.Round;
+import com.cubeia.poker.rounds.RoundHelper;
 import com.cubeia.poker.rounds.RoundVisitor;
+import com.cubeia.poker.states.ServerAdapterHolder;
 import com.cubeia.poker.util.PokerUtils;
 import org.apache.log4j.Logger;
 
@@ -39,9 +42,6 @@ public class BlindsRound implements Round {
 
     private static transient Logger log = Logger.getLogger(BlindsRound.class);
 
-    // TODO: Remove this dependency!
-    private GameType game;
-
     private BlindsState currentState;
 
     private BlindsInfo blindsInfo = new BlindsInfo();
@@ -49,6 +49,12 @@ public class BlindsRound implements Round {
     private BlindsInfo previousBlindsInfo;
 
     private boolean isTournamentBlinds;
+    
+    private PokerContext context;
+    
+    private ServerAdapterHolder serverAdapterHolder;
+    
+    private RoundHelper roundHelper;
 
     public static final BlindsState WAITING_FOR_SMALL_BLIND_STATE = new WaitingForSmallBlindState();
 
@@ -61,13 +67,15 @@ public class BlindsRound implements Round {
     public static final BlindsState CANCELED_STATE = new CanceledState();
 
     private SortedMap<Integer, PokerPlayer> sittingInPlayers;
-
-    public BlindsRound(GameType game, boolean isTournament) {
-        this.isTournamentBlinds = isTournament;
-        this.game = game;
-        this.sittingInPlayers = getSittingInPlayers(game.getState().getCurrentHandSeatingMap());
-        this.previousBlindsInfo = game.getBlindsInfo();
-        blindsInfo.setAnteLevel(game.getState().getAnteLevel());
+    
+    public BlindsRound(PokerContext context, ServerAdapterHolder serverAdapterHolder) {
+        this.serverAdapterHolder = serverAdapterHolder;
+        this.roundHelper = new RoundHelper(context, serverAdapterHolder);
+        this.isTournamentBlinds = context.isTournamentBlinds();
+        this.context = context;
+        this.sittingInPlayers = getSittingInPlayers(context.getCurrentHandSeatingMap());
+        this.previousBlindsInfo = context.getBlindsInfo();
+        blindsInfo.setAnteLevel(context.getAnteLevel());
         clearPlayerActionOptions();
         initBlinds();
         if (blindsInfo.hasDeadSmallBlind()) {
@@ -78,7 +86,7 @@ public class BlindsRound implements Round {
     }
 
     private void clearPlayerActionOptions() {
-        SortedMap<Integer, PokerPlayer> seatingMap = game.getState().getCurrentHandSeatingMap();
+        SortedMap<Integer, PokerPlayer> seatingMap = context.getCurrentHandSeatingMap();
         for (PokerPlayer p : seatingMap.values()) {
             p.clearActionRequest();
         }
@@ -159,7 +167,7 @@ public class BlindsRound implements Round {
     }
 
     private void handleDeadSmallBlind() {
-        PokerPlayer player = game.getState().getPlayerInCurrentHand(previousBlindsInfo.getBigBlindPlayerId());
+        PokerPlayer player = context.getPlayerInCurrentHand(previousBlindsInfo.getBigBlindPlayerId());
 
         if (player != null) {
             if (isSittingOut(player)) {
@@ -219,17 +227,21 @@ public class BlindsRound implements Round {
         getBlindsInfo().setSmallBlind(smallBlind);
         smallBlind.enableOption(new PossibleAction(PokerActionType.SMALL_BLIND, blindsInfo.getAnteLevel() / 2));
         smallBlind.enableOption(new PossibleAction(PokerActionType.DECLINE_ENTRY_BET));
-        game.requestAction(smallBlind.getActionRequest());
+        roundHelper.requestAction(smallBlind.getActionRequest());
+    }
+
+    private ServerAdapter getServerAdapter() {
+        return serverAdapterHolder.get();
     }
 
     private void requestBigBlind(PokerPlayer bigBlind) {
-        for (PokerPlayer p : game.getState().getCurrentHandSeatingMap().values()) {
+        for (PokerPlayer p : context.getCurrentHandSeatingMap().values()) {
             p.clearActionRequest();
         }
 
         bigBlind.enableOption(new PossibleAction(PokerActionType.BIG_BLIND, blindsInfo.getAnteLevel()));
         bigBlind.enableOption(new PossibleAction(PokerActionType.DECLINE_ENTRY_BET));
-        game.requestAction(bigBlind.getActionRequest());
+        roundHelper.requestAction(bigBlind.getActionRequest());
     }
 
     private void initFirstHand(Iterator<PokerPlayer> iterator) {
@@ -245,7 +257,7 @@ public class BlindsRound implements Round {
     }
 
     private void setAllPlayersToNoMissedBlinds() {
-        for (PokerPlayer p : game.getState().getCurrentHandPlayerMap().values()) {
+        for (PokerPlayer p : context.getCurrentHandPlayerMap().values()) {
             p.setHasPostedEntryBet(true);
         }
     }
@@ -280,11 +292,11 @@ public class BlindsRound implements Round {
         if (!isTournamentBlinds) {
             markPlayersWhoMissedBlinds(previousBlindsInfo.getDealerButtonSeatId(), blindsInfo.getDealerButtonSeatId());
         }
-        game.getState().notifyDealerButton(blindsInfo.getDealerButtonSeatId());
+        getServerAdapter().notifyDealerButton(blindsInfo.getDealerButtonSeatId());
     }
 
     private void markPlayersWhoMissedBlinds(int buttonFromSeatId, int buttonToSeatId) {
-        for (PokerPlayer p : game.getState().getCurrentHandSeatingMap().values()) {
+        for (PokerPlayer p : context.getCurrentHandSeatingMap().values()) {
             if (PokerUtils.isBetween(p.getSeatId(), buttonFromSeatId, buttonToSeatId)
                     && !p.hasPostedEntryBet()
                     && p.getSitOutStatus() != SitOutStatus.NOT_ENTERED_YET) {
@@ -303,7 +315,7 @@ public class BlindsRound implements Round {
     }
 
     private PokerPlayer getPlayerInSeat(int seatId) {
-        return game.getState().getCurrentHandSeatingMap().get(seatId);
+        return context.getCurrentHandSeatingMap().get(seatId);
     }
 
     private int numberPlayersSittingIn() {
@@ -313,22 +325,22 @@ public class BlindsRound implements Round {
     public void act(PokerAction action) {
         switch (action.getActionType()) {
             case SMALL_BLIND:
-                currentState.smallBlind(action.getPlayerId(), this);
+                currentState.smallBlind(action.getPlayerId(), context, this);
                 break;
             case BIG_BLIND:
-                currentState.bigBlind(action.getPlayerId(), this);
+                currentState.bigBlind(action.getPlayerId(), context, this);
                 break;
             case DECLINE_ENTRY_BET:
-                currentState.declineEntryBet(action.getPlayerId(), this);
+                currentState.declineEntryBet(action.getPlayerId(), context, this);
                 break;
             default:
                 log.info(action.getActionType() + " is not legal here");
                 return;
         }
-        getGame().getState().getPlayerInCurrentHand(action.getPlayerId()).clearActionRequest();
-        PokerPlayer player = game.getState().getPlayerInCurrentHand(action.getPlayerId());
-        game.getServerAdapter().notifyActionPerformed(action, player);
-        game.getServerAdapter().notifyPlayerBalance(player);
+        context.getPlayerInCurrentHand(action.getPlayerId()).clearActionRequest();
+        PokerPlayer player = context.getPlayerInCurrentHand(action.getPlayerId());
+        getServerAdapter().notifyActionPerformed(action, player);
+        getServerAdapter().notifyPlayerBalance(player);
     }
 
     public BlindsInfo getBlindsInfo() {
@@ -337,15 +349,15 @@ public class BlindsRound implements Round {
 
     public void smallBlindPosted() {
         this.currentState = WAITING_FOR_BIG_BLIND_STATE;
-        PokerPlayer bigBlind = game.getState().getPlayerInCurrentHand(blindsInfo.getBigBlindPlayerId());
+        PokerPlayer bigBlind = context.getPlayerInCurrentHand(blindsInfo.getBigBlindPlayerId());
         requestBigBlind(bigBlind);
     }
 
     public void smallBlindDeclined(PokerPlayer player) {
         sittingInPlayers.remove(player.getSeatId());
-        notifyPlayerSittingOut(player.getId());
+        notifyPlayerSittingOut(player.getId(), SitOutStatus.MISSED_SMALL_BLIND);
         if (numberPlayersSittingIn() >= 2) {
-            PokerPlayer bigBlind = game.getState().getPlayerInCurrentHand(blindsInfo.getBigBlindPlayerId());
+            PokerPlayer bigBlind = context.getPlayerInCurrentHand(blindsInfo.getBigBlindPlayerId());
             requestBigBlind(bigBlind);
             currentState = WAITING_FOR_BIG_BLIND_STATE;
         } else {
@@ -353,10 +365,10 @@ public class BlindsRound implements Round {
         }
     }
 
-    private void notifyPlayerSittingOut(int playerId) {
+    private void notifyPlayerSittingOut(int playerId, SitOutStatus status) {
         log.debug("Notify player sitout: " + playerId);
-        if (game.getState() != null) {
-            game.getState().notifyPlayerSittingOut(playerId);
+        if (context != null) {
+            context.setSitOutStatus(playerId, status);
         } else {
             log.warn("Trying to notify sit out pid[" + playerId + "] on NULL state!");
         }
@@ -404,7 +416,7 @@ public class BlindsRound implements Round {
     public void bigBlindDeclined(PokerPlayer player) {
         log.debug(player + " declined big blind.");
         sittingInPlayers.remove(player.getSeatId());
-        notifyPlayerSittingOut(player.getId());
+        notifyPlayerSittingOut(player.getId(), SitOutStatus.MISSED_BIG_BLIND);
         PokerPlayer nextBig = getSittingInPlayerInSeatAfter(player.getSeatId());
         if (nextBig != null && playerIsSittingInAndNotSmallBlind(nextBig)) {
             requestBigBlind(nextBig);
@@ -417,7 +429,7 @@ public class BlindsRound implements Round {
 
     public void entryBetDeclined(PokerPlayer player) {
         sittingInPlayers.remove(player.getSeatId());
-        notifyPlayerSittingOut(player.getId());
+        notifyPlayerSittingOut(player.getId(), SitOutStatus.NOT_ENTERED_YET);
         if (thereAreUnEnteredPlayersBetweenBigBlindAndDealerButton()) {
             log.debug("There are unentereed players, requesting entry bet");
             this.currentState = WAITING_FOR_ENTRY_BET_STATE;
@@ -436,12 +448,8 @@ public class BlindsRound implements Round {
         return true;
     }
 
-    public GameType getGame() {
-        return game;
-    }
-
     public void timeout() {
-        currentState.timeout(this);
+        currentState.timeout(context, this);
     }
 
     public boolean isTournamentBlinds() {

@@ -27,19 +27,20 @@ import static com.cubeia.poker.variant.PokerVariant.TELESINA;
 
 public class MockTableFactory {
 
-    public static MockTable create() {
-        MockTable table = new MockTable();
-
-        PokerSettings settings = new PokerSettings(-1, -1, -1, -1, TimingFactory.getRegistry().getTimingProfile(MINIMUM_DELAY)
-                , 6,
-                BetStrategyName.NO_LIMIT, TestUtils.createOnePercentRakeSettings(), null);
-
-        PokerState pokerState = new PokerState();
-        GameType gameType = GameTypeFactory.createGameType(TELESINA, pokerState, null);
-        pokerState.init(gameType, settings);
-        pokerState.setGameType(new MockGame());
-        table.getGameState().setState(pokerState);
-        return table;
-    }
+    // TODO: DELETE?
+//    public static MockTable create() {
+//        MockTable table = new MockTable();
+//
+//        PokerSettings settings = new PokerSettings(-1, -1, -1, -1, TimingFactory.getRegistry().getTimingProfile(MINIMUM_DELAY)
+//                , 6,
+//                BetStrategyName.NO_LIMIT, TestUtils.createOnePercentRakeSettings(), null);
+//
+//        PokerState pokerState = new PokerState();
+//        GameType gameType = GameTypeFactory.createGameType(TELESINA, pokerState, null);
+//        pokerState.init(gameType, settings);
+//        pokerState.setGameType(new MockGame());
+//        table.getGameState().setState(pokerState);
+//        return table;
+//    }
 
 }

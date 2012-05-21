@@ -93,20 +93,13 @@ public class Processor implements GameProcessor, TournamentProcessor {
 
 
     /**
-     * Handle a wrapped game packet.
-     * Throw the unpacket to the visitor.
+     * Handles a wrapped game packet.
      */
     public void handle(GameDataAction action, Table table) {
         stateInjector.injectAdapter(table);
-        ProtocolObject packet = null;
-
-        if (state.isShutdown()) {
-            log.warn("dropping action for shut down table: {}", table.getId());
-            return;
-        }
 
         try {
-            packet = serializer.unpack(action.getData());
+            ProtocolObject packet = serializer.unpack(action.getData());
             pokerHandler.setPlayerId(action.getPlayerId());
             packet.accept(pokerHandler);
             PokerStats.getInstance().setState(table.getId(), state.getStateDescription());
@@ -194,11 +187,6 @@ public class Processor implements GameProcessor, TournamentProcessor {
      * @param command
      */
     private void handleCommand(Table table, Trigger command) {
-
-        if (state.isShutdown()) {
-            log.warn("dropping scheduled {} command for shut down table: {}", command.getType(), table.getId());
-            return;
-        }
 
         switch (command.getType()) {
             case TIMEOUT:

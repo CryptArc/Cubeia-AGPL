@@ -1,6 +1,7 @@
 package com.cubeia.poker.variant.telesina;
 
 import com.cubeia.poker.DummyRNGProvider;
+import com.cubeia.poker.PokerContext;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
@@ -14,6 +15,7 @@ import com.cubeia.poker.rounds.ante.AnteRound;
 import com.cubeia.poker.rounds.betting.BettingRound;
 import com.cubeia.poker.rounds.blinds.BlindsInfo;
 import com.cubeia.poker.rounds.dealing.DealInitialPocketCardsRound;
+import com.cubeia.poker.states.ServerAdapterHolder;
 import com.cubeia.poker.timing.impl.DefaultTimingProfile;
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
@@ -34,11 +36,7 @@ import static org.mockito.Mockito.*;
 public class TelesinaRoundsTest {
 
     @Mock
-    private PokerState state;
-    @Mock
     private PotHolder potHolder;
-    @Mock
-    private ServerAdapter serverAdapter;
     @Mock
     private TelesinaDeckFactory deckFactory;
     @Mock
@@ -47,12 +45,19 @@ public class TelesinaRoundsTest {
     private TelesinaRoundFactory roundFactory;
     @Mock
     private TelesinaDealerButtonCalculator dealerButtonCalculator;
+    @Mock
+    private PokerContext context;
+    @Mock
+    private ServerAdapterHolder serverAdapterHolder;
+    @Mock
+    private ServerAdapter serverAdapter;
 
     private PokerPlayer player1 = new DefaultPokerPlayer(1001);
     private PokerPlayer player2 = new DefaultPokerPlayer(1002);
     private PokerPlayer player3 = new DefaultPokerPlayer(1003);
 
     private SortedMap<Integer, PokerPlayer> seatingMap;
+
 
 
     @Before
@@ -63,17 +68,16 @@ public class TelesinaRoundsTest {
         seatingMap.put(0, player1);
         seatingMap.put(1, player2);
         seatingMap.put(2, player3);
-        when(state.getCurrentHandSeatingMap()).thenReturn(seatingMap);
+        when(context.getCurrentHandSeatingMap()).thenReturn(seatingMap);
 
         Map<Integer, PokerPlayer> playerMap = new HashMap<Integer, PokerPlayer>();
         playerMap.put(player1.getId(), player1);
         playerMap.put(player2.getId(), player2);
         playerMap.put(player3.getId(), player3);
-        when(state.getCurrentHandPlayerMap()).thenReturn(playerMap);
+        when(context.getCurrentHandPlayerMap()).thenReturn(playerMap);
 
-        when(state.getTimingProfile()).thenReturn(new DefaultTimingProfile());
-        when(state.getServerAdapter()).thenReturn(serverAdapter);
-        when(state.getPotHolder()).thenReturn(potHolder);
+        when(context.getTimingProfile()).thenReturn(new DefaultTimingProfile());
+        when(context.getPotHolder()).thenReturn(potHolder);
         when(deckFactory.createNewDeck(Mockito.any(Random.class), Mockito.anyInt())).thenReturn(deck);
 
         // just return enough cards to make tests happy...
@@ -82,6 +86,8 @@ public class TelesinaRoundsTest {
                 new Card(7, "8H"), new Card(7, "9H"), new Card(7, "JH"), new Card(7, "QH"), new Card(7, "KH"), new Card(7, "AH"),
                 new Card(1, "2D"), new Card(2, "3D"), new Card(3, "4D"), new Card(4, "5D"), new Card(5, "6D"), new Card(6, "7D"),
                 new Card(7, "8D"), new Card(7, "9D"), new Card(7, "JD"), new Card(7, "QD"), new Card(7, "KD"), new Card(7, "AD"));
+
+        when(serverAdapterHolder.get()).thenReturn(serverAdapter);
     }
 
     /**
@@ -90,11 +96,11 @@ public class TelesinaRoundsTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testRoundSequence() {
-        Telesina telesina = new Telesina(new DummyRNGProvider(), state, deckFactory, roundFactory, dealerButtonCalculator);
+        Telesina telesina = new Telesina(new DummyRNGProvider(), deckFactory, roundFactory, dealerButtonCalculator);
 
 
         AnteRound anteRound = mock(AnteRound.class);
-        when(roundFactory.createAnteRound(telesina)).thenReturn(anteRound);
+        when(roundFactory.createAnteRound(context, serverAdapterHolder)).thenReturn(anteRound);
         // verytime whe run createDealExposedPocketCardsRound() we will create a new DealExposedPocketCardsRound witch in turn will deal cards
         when(roundFactory.createDealExposedPocketCardsRound(telesina)).thenAnswer(new Answer<DealExposedPocketCardsRound>() {
             public DealExposedPocketCardsRound answer(InvocationOnMock invocation) throws Throwable {
@@ -112,7 +118,7 @@ public class TelesinaRoundsTest {
         });
 
         BlindsInfo blindsInfo = mock(BlindsInfo.class);
-        when(state.getBlindsInfo()).thenReturn(blindsInfo);
+        when(context.getBlindsInfo()).thenReturn(blindsInfo);
 
         // ante round
         telesina.startHand();
@@ -125,15 +131,15 @@ public class TelesinaRoundsTest {
         telesina.visit(anteRound); // jump to deal initial pocket cards round
         int newDealerButtonSeatId = 0;
         verify(blindsInfo).setDealerButtonSeatId(newDealerButtonSeatId);
-        verify(state).notifyDealerButton(newDealerButtonSeatId);
+        verify(serverAdapter).notifyDealerButton(newDealerButtonSeatId);
 
         // deal initial cards round -> betting round 0
         BettingRound bettingRound0 = mock(BettingRound.class);
-        when(roundFactory.createBettingRound(telesina, 0)).thenReturn(bettingRound0);
+        when(roundFactory.createBettingRound(context, serverAdapterHolder, null)).thenReturn(bettingRound0);
         telesina.visit((DealInitialPocketCardsRound) telesina.getCurrentRound()); // Jump to betting round
         verify(serverAdapter).scheduleTimeout(Mockito.anyLong());
         when(potHolder.getPots()).thenReturn(new ArrayList<Pot>());
-        when(state.countNonFoldedPlayers()).thenReturn(3);
+        when(context.countNonFoldedPlayers()).thenReturn(3);
         assertThat(telesina.isHandFinished(), is(false));
         assertCardsDealt(2, 1, player1, player2, player3);
         verify(potHolder).moveChipsToPotAndTakeBackUncalledChips(Mockito.anyCollection());
@@ -147,7 +153,7 @@ public class TelesinaRoundsTest {
         assertThat(telesina.getCurrentRound(), CoreMatchers.instanceOf(DealExposedPocketCardsRound.class));
         assertThat(telesina.getBettingRoundId(), is(1));
         BettingRound bettingRound1 = mock(BettingRound.class);
-        when(roundFactory.createBettingRound(telesina, 0)).thenReturn(bettingRound1);
+        when(roundFactory.createBettingRound(context, serverAdapterHolder, null)).thenReturn(bettingRound1);
 
         // deal pocket cards -> betting round 1
         telesina.visit((DealExposedPocketCardsRound) telesina.getCurrentRound()); // Jump to betting round
@@ -162,7 +168,7 @@ public class TelesinaRoundsTest {
         assertThat(telesina.getCurrentRound(), CoreMatchers.instanceOf(DealExposedPocketCardsRound.class));
         assertThat(telesina.getBettingRoundId(), is(2));
         BettingRound bettingRound2 = mock(BettingRound.class);
-        when(roundFactory.createBettingRound(telesina, 0)).thenReturn(bettingRound2);
+        when(roundFactory.createBettingRound(context, serverAdapterHolder, null)).thenReturn(bettingRound2);
 
         // deal pocket cards -> betting round 2
         telesina.visit((DealExposedPocketCardsRound) telesina.getCurrentRound()); // Jump to betting round
@@ -177,7 +183,7 @@ public class TelesinaRoundsTest {
         assertThat(telesina.getCurrentRound(), CoreMatchers.instanceOf(DealExposedPocketCardsRound.class));
         assertThat(telesina.getBettingRoundId(), is(3));
         BettingRound bettingRound3 = mock(BettingRound.class);
-        when(roundFactory.createBettingRound(telesina, 0)).thenReturn(bettingRound3);
+        when(roundFactory.createBettingRound(context, serverAdapterHolder, null)).thenReturn(bettingRound3);
 
         // deal pocket cards -> betting round 3
         telesina.visit((DealExposedPocketCardsRound) telesina.getCurrentRound()); // Jump to betting round
@@ -201,11 +207,11 @@ public class TelesinaRoundsTest {
         assertThat(telesina.getBettingRoundId(), is(5));
         assertCardsDealt(5, 4, player1, player2, player3);
         BettingRound bettingRound4 = mock(BettingRound.class);
-        when(roundFactory.createBettingRound(telesina, 0)).thenReturn(bettingRound4);
+        when(roundFactory.createBettingRound(context, serverAdapterHolder, null)).thenReturn(bettingRound4);
         assertThat(telesina.isHandFinished(), is(true));
 
         // check how many calls to the state "notify new round" we've had
-        verify(state, times(5)).notifyNewRound();
+        verify(serverAdapter, times(5)).notifyNewRound();
 
         // SHOWDOWN!
     }

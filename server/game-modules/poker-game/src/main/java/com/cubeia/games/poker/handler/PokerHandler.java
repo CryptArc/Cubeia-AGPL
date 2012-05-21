@@ -43,6 +43,9 @@ import java.io.IOException;
 
 import static com.cubeia.backend.cashgame.dto.ReserveFailedResponse.ErrorCode.AMOUNT_TOO_HIGH;
 
+/**
+ * This class visits incoming packets and calls the appropriate method in the poker game.
+ */
 public class PokerHandler extends DefaultPokerHandler {
 
     private static final int SLOW_RESPONSE_TIME_MS = 100;
@@ -107,7 +110,7 @@ public class PokerHandler extends DefaultPokerHandler {
     // player wants to sit out next hand
     @Override
     public void visit(PlayerSitoutRequest packet) {
-        state.playerIsSittingOut(playerId, SitOutStatus.SITTING_OUT);
+        state.playerSitsOut(playerId, SitOutStatus.SITTING_OUT);
     }
 
     // player wants to sit in again
@@ -197,7 +200,7 @@ public class PokerHandler extends DefaultPokerHandler {
                 * the other version will be true: if you have pending money and reconnect it will
                 * not be shown in the client... /LJN
                 */
-            // cache.addPrivateAction(table.getId(), playerId, gameDataAction);
+            // cache.addPrivateAction(table.getTableId(), playerId, gameDataAction);
         }
     }
 

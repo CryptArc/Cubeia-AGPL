@@ -16,9 +16,9 @@ public interface IPokerState {
 
     void init(GameType gameType, PokerSettings settings);
 
-    void notifyPlayerSittingOut(int playerId);
+    void playerSitsOut(int playerId, SitOutStatus sitOutStatus);
 
-    void playerIsSittingOut(int playerId, SitOutStatus misssedAnte);
+    void playerIsSittingOut(int playerId, SitOutStatus missedAnte);
 
     int getAnteLevel();
 
@@ -47,42 +47,26 @@ public interface IPokerState {
      *
      * @return number of players ready for a new hand
      */
-    Collection<PokerPlayer> getPlayersReadyToStartHand();
+//    Collection<PokerPlayer> getPlayersReadyToStartHand();
 
     boolean isPlayerInHand(int playerId);
 
     void notifyDealerButton(int dealerButtonSeatId);
-
-//    PokerVariant getPokerVariant();
 
     List<Card> getCommunityCards();
 
     int getEntryBetLevel();
 
     /**
-     * Must be invoked when the first call in the hand has been made.
-     */
-    void callOrRaise();
-
-    /**
      * Notify that the betstack of a player has updated
      */
     void notifyBetStacksUpdated();
-
-    void exposeShowdownCards();
 
     /**
      * Shutdown this table. After calling this method the table cannot be started again.
      * The game will move to the {@link ShutdownSTM} state.
      */
     void shutdown();
-
-    /**
-     * Returns true if the state/table is shut down.
-     *
-     * @return true if shut down, false otherwise
-     */
-    boolean isShutdown();
 
     /**
      * Sit out the players that has been marked for sitout next round.
@@ -97,13 +81,6 @@ public interface IPokerState {
      * @param amount      amount requested
      */
     void handleBuyInRequest(PokerPlayer pokerPlayer, int amount);
-
-    /**
-     * True if the current state is PLAYING.
-     *
-     * @return true if playing, false otherwise
-     */
-    boolean isPlaying();
 
     boolean isEveryoneSittingOut();
 

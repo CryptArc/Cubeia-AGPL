@@ -18,7 +18,7 @@ public class TelesinaPrepareHandTest {
         PokerState state = mock(PokerState.class);
         List<Card> communityCards = mock(List.class);
         Mockito.when(state.getCommunityCards()).thenReturn(communityCards);
-        Telesina telesina = new Telesina(null, state, null, null, null);
+        Telesina telesina = new Telesina(null, null, null, null);
         telesina.prepareNewHand();
         verify(communityCards).clear();
     }

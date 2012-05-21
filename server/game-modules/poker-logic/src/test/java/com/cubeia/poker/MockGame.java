@@ -17,19 +17,16 @@
 
 package com.cubeia.poker;
 
-import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
-import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.rounds.blinds.BlindsInfo;
-import com.cubeia.poker.variant.PokerVariant;
+import com.cubeia.poker.states.ServerAdapterHolder;
+import com.cubeia.poker.variant.HandFinishedListener;
 
 import java.util.*;
-
-import static java.util.Arrays.asList;
 
 public class MockGame implements GameType {
 
@@ -52,39 +49,8 @@ public class MockGame implements GameType {
     public MockGame() {
     }
 
-//	@Override
-//	public int getAnteLevel() {
-//		return 100;
-//	}
-
     @Override
     public void act(PokerAction action) {
-    }
-
-    @Override
-    public BlindsInfo getBlindsInfo() {
-        return blindsInfo;
-    }
-
-//	@Override
-//	public PokerPlayer getPlayer(int playerId) {
-//		return playerMap.get(playerId);
-//	}
-
-//	@Override
-//	public Iterable<PokerPlayer> getPlayers() {
-//		return seatingMap.values();
-//	}
-
-    @Override
-    public void requestAction(ActionRequest r) {
-        for (TestListener l : listeners) {
-            l.notifyActionRequested(r);
-        }
-    }
-
-    @Override
-    public void requestMultipleActions(Collection<ActionRequest> requests) {
     }
 
     public void roundFinished() {
@@ -125,11 +91,6 @@ public class MockGame implements GameType {
     }
 
     @Override
-    public ServerAdapter getServerAdapter() {
-        return mockServerAdapter;
-    }
-
-    @Override
     public void timeout() {
     }
 
@@ -141,7 +102,6 @@ public class MockGame implements GameType {
     public void logDebug(String string) {
     }
 
-    @Override
     public IPokerState getState() {
         return new IPokerState() {
 
@@ -152,11 +112,12 @@ public class MockGame implements GameType {
 
 
             @Override
-            public void notifyPlayerSittingOut(int playerId) {
+            public void init(GameType gameType, PokerSettings settings) {
             }
 
             @Override
-            public void init(GameType gameType, PokerSettings settings) {
+            public void playerSitsOut(int playerId, SitOutStatus sitOutStatus) {
+
             }
 
             @Override
@@ -191,11 +152,6 @@ public class MockGame implements GameType {
             }
 
             @Override
-            public Collection<PokerPlayer> getPlayersReadyToStartHand() {
-                return asList(player1, player2, player3, player4);
-            }
-
-            @Override
             public boolean isPlayerInHand(int playerId) {
                 return false;
             }
@@ -216,29 +172,11 @@ public class MockGame implements GameType {
             }
 
             @Override
-            public void callOrRaise() {
-            }
-
-            @Override
-            public void exposeShowdownCards() {
-            }
-
-            @Override
             public void notifyBetStacksUpdated() {
             }
 
             @Override
             public void shutdown() {
-            }
-
-            @Override
-            public boolean isShutdown() {
-                return false;
-            }
-
-            @Override
-            public boolean isPlaying() {
-                return true;
             }
 
             @Override
@@ -278,6 +216,16 @@ public class MockGame implements GameType {
     @Override
     public boolean isCurrentlyWaitingForPlayer(int playerId) {
         return false;
+    }
+
+    @Override
+    public void addHandFinishedListener(HandFinishedListener handFinishedListener) {
+        logDebug("AAAAAAAA");
+    }
+
+    @Override
+    public void setPokerContextAndServerAdapter(PokerContext context, ServerAdapterHolder serverAdapterHolder) {
+
     }
 
 }

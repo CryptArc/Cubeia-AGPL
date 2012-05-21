@@ -1,15 +1,16 @@
 package com.cubeia.poker.rounds.ante;
 
-import com.cubeia.poker.GameType;
+import com.cubeia.poker.PokerContext;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
+import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.states.ServerAdapterHolder;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,11 +30,21 @@ public class AnteRoundHelperTest {
     private PokerPlayer player2;
     @Mock
     private PokerPlayer player3;
-    private AnteRoundHelper arh = new AnteRoundHelper();
+    @Mock
+    PokerContext context;
+    @Mock
+    private ServerAdapterHolder serverAdapterHolder;
+    @Mock
+    private ServerAdapter serverAdapter;
+
+    private AnteRoundHelper helper;
+
 
     @Before
     public void setup() {
         initMocks(this);
+        when(serverAdapterHolder.get()).thenReturn(serverAdapter);
+        helper = new AnteRoundHelper(context, serverAdapterHolder);
     }
 
     @Test
@@ -42,10 +53,10 @@ public class AnteRoundHelperTest {
         when(player2.hasActed()).thenReturn(true);
         when(player3.hasActed()).thenReturn(false);
 
-        assertThat(arh.hasAllPlayersActed(asList(player1, player2, player3)), is(false));
-        assertThat(arh.hasAllPlayersActed(asList(player1, player2)), is(true));
-        assertThat(arh.hasAllPlayersActed(asList(player1, player3)), is(false));
-        assertThat(arh.hasAllPlayersActed(Collections.<PokerPlayer>emptyList()), is(true));
+        assertThat(helper.hasAllPlayersActed(asList(player1, player2, player3)), is(false));
+        assertThat(helper.hasAllPlayersActed(asList(player1, player2)), is(true));
+        assertThat(helper.hasAllPlayersActed(asList(player1, player3)), is(false));
+        assertThat(helper.hasAllPlayersActed(Collections.<PokerPlayer>emptyList()), is(true));
     }
 
     @Test
@@ -54,9 +65,9 @@ public class AnteRoundHelperTest {
         when(player2.hasPostedEntryBet()).thenReturn(false);
         when(player3.hasPostedEntryBet()).thenReturn(true);
 
-        assertThat(arh.numberOfPlayersPayedAnte(asList(player1, player2, player3)), is(2));
-        assertThat(arh.numberOfPlayersPayedAnte(asList(player1, player2)), is(1));
-        assertThat(arh.numberOfPlayersPayedAnte(Collections.<PokerPlayer>emptyList()), is(0));
+        assertThat(helper.numberOfPlayersPayedAnte(asList(player1, player2, player3)), is(2));
+        assertThat(helper.numberOfPlayersPayedAnte(asList(player1, player2)), is(1));
+        assertThat(helper.numberOfPlayersPayedAnte(Collections.<PokerPlayer>emptyList()), is(0));
     }
 
     @Test
@@ -65,9 +76,9 @@ public class AnteRoundHelperTest {
         when(player2.hasActed()).thenReturn(false);
         when(player3.hasActed()).thenReturn(true);
 
-        assertThat(arh.numberOfPendingPlayers(asList(player1, player2, player3)), is(1));
-        assertThat(arh.numberOfPendingPlayers(asList(player1, player2)), is(1));
-        assertThat(arh.numberOfPendingPlayers(Collections.<PokerPlayer>emptyList()), is(0));
+        assertThat(helper.numberOfPendingPlayers(asList(player1, player2, player3)), is(1));
+        assertThat(helper.numberOfPendingPlayers(asList(player1, player2)), is(1));
+        assertThat(helper.numberOfPendingPlayers(Collections.<PokerPlayer>emptyList()), is(0));
     }
 
     @Test
@@ -76,33 +87,32 @@ public class AnteRoundHelperTest {
         when(player1.isAllIn()).thenReturn(false);
         when(player1.isSittingOut()).thenReturn(false);
         when(player1.hasFolded()).thenReturn(false);
-        assertThat(arh.canPlayerAct(player1), is(true));
+        assertThat(helper.canPlayerAct(player1), is(true));
 
         when(player1.hasActed()).thenReturn(true);
         when(player1.isAllIn()).thenReturn(false);
         when(player1.isSittingOut()).thenReturn(false);
         when(player1.hasFolded()).thenReturn(false);
-        assertThat(arh.canPlayerAct(player1), is(false));
+        assertThat(helper.canPlayerAct(player1), is(false));
 
         when(player1.hasActed()).thenReturn(true);
         when(player1.isAllIn()).thenReturn(true);
         when(player1.isSittingOut()).thenReturn(true);
         when(player1.hasFolded()).thenReturn(true);
-        assertThat(arh.canPlayerAct(player1), is(false));
+        assertThat(helper.canPlayerAct(player1), is(false));
     }
 
     @Test
     public void testRequestAntes() {
         int anteLevel = 100;
-        GameType game = Mockito.mock(GameType.class);
         ActionRequest actionRequest1 = new ActionRequest();
         ActionRequest actionRequest2 = new ActionRequest();
         when(player1.getActionRequest()).thenReturn(actionRequest1);
         when(player2.getActionRequest()).thenReturn(actionRequest2);
 
-        arh.requestAntes(Arrays.asList(player1, player2), anteLevel, game);
+        helper.requestAntes(Arrays.asList(player1, player2));
 
-        verify(game).requestMultipleActions(Arrays.asList(actionRequest1, actionRequest2));
+        verify(serverAdapter).requestMultipleActions(Arrays.asList(actionRequest1, actionRequest2));
 
         ArgumentCaptor<PossibleAction> possibleActionCaptor = ArgumentCaptor.forClass(PossibleAction.class);
         verify(player1, times(2)).enableOption(possibleActionCaptor.capture());
@@ -129,7 +139,7 @@ public class AnteRoundHelperTest {
         when(player3.hasPostedEntryBet()).thenReturn(false);
         List<PokerPlayer> players = Arrays.asList(player1, player2, player3);
 
-        assertThat(arh.isImpossibleToStartRound(players), is(false));
+        assertThat(helper.isImpossibleToStartRound(players), is(false));
 
         when(player1.hasActed()).thenReturn(true);
         when(player1.hasPostedEntryBet()).thenReturn(false);
@@ -138,7 +148,7 @@ public class AnteRoundHelperTest {
         when(player3.hasActed()).thenReturn(false);
         when(player3.hasPostedEntryBet()).thenReturn(false);
 
-        assertThat(arh.isImpossibleToStartRound(players), is(true));
+        assertThat(helper.isImpossibleToStartRound(players), is(true));
     }
 
     @Test
@@ -149,7 +159,7 @@ public class AnteRoundHelperTest {
 
 
         List<PokerPlayer> players = Arrays.asList(player1, player2, player3);
-        arh.setAllPendingPlayersToDeclineEntryBet(players);
+        helper.setAllPendingPlayersToDeclineEntryBet(players);
         verify(player1, never()).setHasActed(true);
         verify(player2).setHasActed(true);
         verify(player3, never()).setHasActed(true);

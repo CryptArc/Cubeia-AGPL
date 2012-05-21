@@ -17,6 +17,7 @@
 
 package com.cubeia.poker.rounds.blinds;
 
+import com.cubeia.poker.PokerContext;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.player.PokerPlayer;
 
@@ -24,8 +25,9 @@ public class WaitingForEntryBetState extends AbstractBlindsState {
 
     private static final long serialVersionUID = 1L;
 
-    public void bigBlind(int playerId, BlindsRound blindsRound) {
-        PokerPlayer player = blindsRound.getGame().getState().getPlayerInCurrentHand(playerId);
+    @Override
+    public void bigBlind(int playerId, PokerContext context, BlindsRound blindsRound) {
+        PokerPlayer player = context.getPlayerInCurrentHand(playerId);
         if (player.getActionRequest().isOptionEnabled(PokerActionType.BIG_BLIND)) {
             player.setHasPostedEntryBet(true);
             player.addBet(100);
@@ -35,8 +37,9 @@ public class WaitingForEntryBetState extends AbstractBlindsState {
         }
     }
 
-    public void declineEntryBet(Integer playerId, BlindsRound blindsRound) {
-        PokerPlayer player = blindsRound.getGame().getState().getPlayerInCurrentHand(playerId);
+    @Override
+    public void declineEntryBet(Integer playerId, PokerContext context, BlindsRound blindsRound) {
+        PokerPlayer player = context.getPlayerInCurrentHand(playerId);
         if (player.getActionRequest().isOptionEnabled(PokerActionType.DECLINE_ENTRY_BET)) {
             blindsRound.entryBetDeclined(player);
         } else {
@@ -44,9 +47,10 @@ public class WaitingForEntryBetState extends AbstractBlindsState {
         }
     }
 
-    public void timeout(BlindsRound context) {
-        PokerPlayer nextEntryBetter = context.getNextEntryBetter();
-        declineEntryBet(nextEntryBetter.getId(), context);
+    @Override
+    public void timeout(PokerContext context, BlindsRound round) {
+        PokerPlayer nextEntryBetter = round.getNextEntryBetter();
+        declineEntryBet(nextEntryBetter.getId(), context, round);
     }
 
 }

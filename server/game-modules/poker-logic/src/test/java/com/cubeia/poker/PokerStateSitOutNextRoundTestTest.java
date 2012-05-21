@@ -21,7 +21,6 @@ public class PokerStateSitOutNextRoundTestTest {
     ServerAdapter serverAdapter;
     @Mock
     GameType gameType;
-    int anteLevel = 100;
 
     @Before
     public void setup() {
@@ -29,19 +28,19 @@ public class PokerStateSitOutNextRoundTestTest {
 
         state = new PokerState();
         state.serverAdapter = serverAdapter;
-        state.gameType = gameType;
+        state.init(gameType, null);
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void testPlayerIsSittingIn() {
         int playerId = 1337;
-        state.playerMap = mock(Map.class);
+        state.pokerContext.playerMap = mock(Map.class);
         PokerPlayer player = mock(PokerPlayer.class);
-        when(state.playerMap.get(playerId)).thenReturn(player);
-        when(state.gameType.canPlayerAffordEntryBet(Mockito.eq(player), (PokerSettings) Mockito.any(), Mockito.eq(true))).thenReturn(true);
-        state.currentHandPlayerMap = mock(Map.class);
-        when(state.currentHandPlayerMap.containsKey(playerId)).thenReturn(false);
+        when(state.pokerContext.playerMap.get(playerId)).thenReturn(player);
+        when(gameType.canPlayerAffordEntryBet(Mockito.eq(player), (PokerSettings) Mockito.any(), Mockito.eq(true))).thenReturn(true);
+        state.pokerContext.currentHandPlayerMap = mock(Map.class);
+        when(state.pokerContext.getCurrentHandPlayerMap().containsKey(playerId)).thenReturn(false);
         when(player.isSittingOut()).thenReturn(true);
         state.playerIsSittingIn(playerId);
 
@@ -55,10 +54,10 @@ public class PokerStateSitOutNextRoundTestTest {
     @Test
     public void testPlayerIsSittingInWithInsufficientCashToBuyIn() {
         int playerId = 1337;
-        state.playerMap = mock(Map.class);
+        state.pokerContext.playerMap = mock(Map.class);
         PokerPlayer player = mock(PokerPlayer.class);
-        when(state.playerMap.get(playerId)).thenReturn(player);
-        when(state.gameType.canPlayerAffordEntryBet(Mockito.eq(player), (PokerSettings) Mockito.any(), Mockito.eq(true))).thenReturn(false);
+        when(state.pokerContext.playerMap.get(playerId)).thenReturn(player);
+        when(gameType.canPlayerAffordEntryBet(Mockito.eq(player), (PokerSettings) Mockito.any(), Mockito.eq(true))).thenReturn(false);
 
         when(player.isSittingOut()).thenReturn(true);
         state.playerIsSittingIn(playerId);

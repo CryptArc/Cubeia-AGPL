@@ -14,18 +14,20 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.cubeia.poker.rounds.betting;
 
-import com.cubeia.poker.GameType;
+import com.cubeia.poker.PokerContext;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.ActionRequestFactory;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
+import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.rounds.Round;
+import com.cubeia.poker.rounds.RoundHelper;
 import com.cubeia.poker.rounds.RoundVisitor;
+import com.cubeia.poker.states.ServerAdapterHolder;
 import com.cubeia.poker.util.ThreadLocalProfiler;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
@@ -44,7 +46,11 @@ public class BettingRound implements Round, BettingRoundContext {
 
     private static transient Logger log = LoggerFactory.getLogger(BettingRound.class);
 
-    private final GameType gameType;
+    private PokerContext context;
+
+    private ServerAdapterHolder serverAdapterHolder;
+    
+    private RoundHelper roundHelper;
 
     @VisibleForTesting
     protected long highBet = 0;
@@ -83,20 +89,20 @@ public class BettingRound implements Round, BettingRoundContext {
     protected Set<PokerPlayer> playersInPlayAtRoundStart;
 
 
-    public BettingRound(GameType gameType, int dealerSeatId, PlayerToActCalculator playerToActCalculator, ActionRequestFactory actionRequestFactory, FutureActionsCalculator futureActionsCalculator) {
+    public BettingRound(PokerContext context, ServerAdapterHolder serverAdapterHolder, PlayerToActCalculator playerToActCalculator, ActionRequestFactory actionRequestFactory, FutureActionsCalculator futureActionsCalculator) {
+        this.context = context;
+        this.serverAdapterHolder = serverAdapterHolder;
         this.futureActionsCalculator = futureActionsCalculator;
-        this.gameType = gameType;
         this.playerToActCalculator = playerToActCalculator;
         this.actionRequestFactory = actionRequestFactory;
-        if (gameType != null && gameType.getState() != null) { // can be null in unit tests
-            lastBetSize = gameType.getState().getEntryBetLevel();
-        }
-        initBettingRound(dealerSeatId);
+        this.roundHelper = new RoundHelper(context, serverAdapterHolder);
+        lastBetSize = context.getEntryBetLevel();
+        initBettingRound(context.getBlindsInfo().getDealerButtonSeatId());
     }
 
     private void initBettingRound(int dealerSeatId) {
         log.debug("Init new betting round");
-        SortedMap<Integer, PokerPlayer> seatingMap = gameType.getState().getCurrentHandSeatingMap();
+        SortedMap<Integer, PokerPlayer> seatingMap = context.getCurrentHandSeatingMap();
         for (PokerPlayer p : seatingMap.values()) {
             /*
                 * Initialize the highBet to the highest bet stack of the incoming players.
@@ -110,7 +116,7 @@ public class BettingRound implements Round, BettingRoundContext {
         }
 
         playersInPlayAtRoundStart = new HashSet<PokerPlayer>();
-        for (PokerPlayer player : gameType.getState().getCurrentHandSeatingMap().values()) {
+        for (PokerPlayer player : context.getPlayersInHand()) {
             log.debug("player {}: folded {}, allIn: {}, hasActed: {}", new Object[]{player.getId(), player.hasFolded(), player.isAllIn(), player.hasActed()});
 
             if (!player.isAllIn() && !player.hasFolded()) {
@@ -120,11 +126,11 @@ public class BettingRound implements Round, BettingRoundContext {
         log.debug("players in play entering round: {}", playersInPlayAtRoundStart);
 
         // Check if we should request actions at all
-        PokerPlayer p = playerToActCalculator.getFirstPlayerToAct(dealerSeatId, gameType.getState().getCurrentHandSeatingMap(), gameType.getState().getCommunityCards());
+        PokerPlayer p = playerToActCalculator.getFirstPlayerToAct(dealerSeatId, context.getCurrentHandSeatingMap(), context.getCommunityCards());
 
         log.debug("first player to act = {}", p == null ? null : p.getId());
 
-        // boolean everyoneIsSittingOut = gameType.getState().isEveryoneSittingOut();
+        // boolean everyoneIsSittingOut = context.isEveryoneSittingOut();
 
         // if (p == null  ||  allOtherNonFoldedPlayersAreAllIn(p)  ||  everyoneIsSittingOut) {
         if (p == null || allOtherNonFoldedPlayersAreAllIn(p)) {
@@ -138,12 +144,11 @@ public class BettingRound implements Round, BettingRoundContext {
 
         // This can be triggered by the if clause above, but also
         // by traversing into requestAction and calling default act on
-        // each an every players in sit out scenarios.
+        // each and every player in sit out scenarios.
         if (isFinished()) {
-            gameType.scheduleRoundTimeout();
+            roundHelper.scheduleRoundTimeout(context, getServerAdapter());
         }
     }
-
 
     @Override
     public String toString() {
@@ -153,13 +158,13 @@ public class BettingRound implements Round, BettingRoundContext {
     public void act(PokerAction action) {
         log.debug("Act : " + action);
         ThreadLocalProfiler.add("BettingRound.act");
-        PokerPlayer player = gameType.getState().getPlayerInCurrentHand(action.getPlayerId());
+        PokerPlayer player = context.getPlayerInCurrentHand(action.getPlayerId());
 
         verifyValidAction(action, player);
 
         handleAction(action, player);
-        gameType.getServerAdapter().notifyActionPerformed(action, player);
-        gameType.getServerAdapter().notifyPlayerBalance(player);
+        getServerAdapter().notifyActionPerformed(action, player);
+        getServerAdapter().notifyPlayerBalance(player);
 
         if (calculateIfRoundFinished()) {
             log.debug("BettingRound is finished");
@@ -167,11 +172,10 @@ public class BettingRound implements Round, BettingRoundContext {
         } else {
             requestNextAction(player.getSeatId());
         }
-
     }
 
     private void requestNextAction(int lastSeatId) {
-        PokerPlayer player = playerToActCalculator.getNextPlayerToAct(lastSeatId, gameType.getState().getCurrentHandSeatingMap());
+        PokerPlayer player = playerToActCalculator.getNextPlayerToAct(lastSeatId, context.getCurrentHandSeatingMap());
         if (player == null) {
             log.debug("Setting betting round is finished because there is no player left to act");
             isFinished = true;
@@ -200,7 +204,7 @@ public class BettingRound implements Round, BettingRoundContext {
         if (p.isSittingOut()) {
             performDefaultActionForPlayer(p);
         } else {
-            gameType.requestAction(p.getActionRequest());
+            roundHelper.requestAction(p.getActionRequest());
             notifyAllPlayersOfPossibleFutureActions(p);
         }
     }
@@ -213,12 +217,12 @@ public class BettingRound implements Round, BettingRoundContext {
      */
     private void notifyAllPlayersOfPossibleFutureActions(PokerPlayer excludePlayer) {
 
-        for (PokerPlayer player : gameType.getState().getCurrentHandPlayerMap().values()) {
+        for (PokerPlayer player : context.getCurrentHandPlayerMap().values()) {
 
             if (player.getId() != excludePlayer.getId()) {
-                gameType.getServerAdapter().notifyFutureAllowedActions(player, futureActionsCalculator.calculateFutureActionOptionList(player, highBet));
+                getServerAdapter().notifyFutureAllowedActions(player, futureActionsCalculator.calculateFutureActionOptionList(player, highBet));
             } else {
-                gameType.getServerAdapter().notifyFutureAllowedActions(player, Lists.<PokerActionType>newArrayList());
+                getServerAdapter().notifyFutureAllowedActions(player, Lists.<PokerActionType>newArrayList());
             }
         }
 
@@ -229,8 +233,8 @@ public class BettingRound implements Round, BettingRoundContext {
      * so they can turn of the check, check/fold and fold checkboxes
      */
     private void notifyAllPlayersOfNoPossibleFutureActions() {
-        for (PokerPlayer player : gameType.getState().getCurrentHandPlayerMap().values()) {
-            gameType.getServerAdapter().notifyFutureAllowedActions(player, Lists.<PokerActionType>newArrayList());
+        for (PokerPlayer player : context.getCurrentHandPlayerMap().values()) {
+            getServerAdapter().notifyFutureAllowedActions(player, Lists.<PokerActionType>newArrayList());
         }
     }
 
@@ -246,7 +250,7 @@ public class BettingRound implements Round, BettingRoundContext {
         if (nonFoldedPlayersLeftInRound.size() < 2) {
             return true;
         }
-        for (PokerPlayer p : gameType.getState().getCurrentHandSeatingMap().values()) {
+        for (PokerPlayer p : context.getCurrentHandSeatingMap().values()) {
             if (!p.hasFolded() && !p.hasActed()) {
                 return false;
             }
@@ -278,8 +282,6 @@ public class BettingRound implements Round, BettingRoundContext {
                 throw new IllegalArgumentException();
         }
         player.setHasActed(true);
-
-
     }
 
     private void verifyValidAction(PokerAction action, PokerPlayer player) {
@@ -320,12 +322,16 @@ public class BettingRound implements Round, BettingRoundContext {
 
         highBet = amount;
         lastPlayerToBeCalled = lastPlayerToPlaceABet;
-        gameType.getState().callOrRaise();
+        context.callOrRaise();
         lastPlayerToPlaceABet = player;
         player.addBet(highBet - player.getBetStack());
         resetHasActed();
 
-        notifyBetStacksUpdated();
+        notifyPotSizeAndRakeInfo();
+    }
+
+    private void notifyPotSizeAndRakeInfo() {
+        roundHelper.notifyPotSizeAndRakeInfo();
     }
 
     private void setRaiseByAmount(PokerPlayer player, PokerAction action) {
@@ -346,11 +352,11 @@ public class BettingRound implements Round, BettingRoundContext {
         player.setLastRaiseLevel(getNextValidRaiseLevel());
         resetHasActed();
 
-        notifyBetStacksUpdated();
+        notifyPotSizeAndRakeInfo();
     }
 
     private void resetHasActed() {
-        for (PokerPlayer p : gameType.getState().getCurrentHandSeatingMap().values()) {
+        for (PokerPlayer p : context.getCurrentHandSeatingMap().values()) {
             if (!p.hasFolded()) {
                 p.setHasActed(false);
             }
@@ -370,14 +376,10 @@ public class BettingRound implements Round, BettingRoundContext {
         long amountToCall = getAmountToCall(player);
         player.addBet(amountToCall);
         lastPlayerToBeCalled = lastPlayerToPlaceABet;
-        gameType.getState().callOrRaise();
-        notifyBetStacksUpdated();
+        context.callOrRaise();
+        notifyPotSizeAndRakeInfo();
         player.setLastRaiseLevel(getNextValidRaiseLevel());
         return amountToCall;
-    }
-
-    private void notifyBetStacksUpdated() {
-        gameType.getState().notifyBetStacksUpdated();
     }
 
     /**
@@ -388,7 +390,7 @@ public class BettingRound implements Round, BettingRoundContext {
     }
 
     public void timeout() {
-        PokerPlayer player = playerToAct == null ? null : gameType.getState().getPlayerInCurrentHand(playerToAct);
+        PokerPlayer player = playerToAct == null ? null : context.getPlayerInCurrentHand(playerToAct);
 
         if (player == null || player.hasActed()) {
             // throw new IllegalStateException("Expected " + playerToAct + " to act, but that player can not be found at the table!");
@@ -400,7 +402,7 @@ public class BettingRound implements Round, BettingRoundContext {
     }
 
     private void setPlayerSitOut(PokerPlayer player) {
-        gameType.getState().playerIsSittingOut(player.getId(), SitOutStatus.TIMEOUT);
+        context.setSitOutStatus(player.getId(), SitOutStatus.TIMEOUT);
     }
 
     private void performDefaultActionForPlayer(PokerPlayer player) {
@@ -429,7 +431,7 @@ public class BettingRound implements Round, BettingRoundContext {
      * Sit out and folded players are not counted.
      */
     public boolean allOtherNonFoldedPlayersAreAllIn(PokerPlayer thisPlayer) {
-        for (PokerPlayer player : gameType.getState().getCurrentHandSeatingMap().values()) {
+        for (PokerPlayer player : context.getCurrentHandSeatingMap().values()) {
             boolean self = player.equals(thisPlayer);
 
             if (!self) {
@@ -449,7 +451,7 @@ public class BettingRound implements Round, BettingRoundContext {
     }
 
     public long getMinBet() {
-        return gameType.getState().getEntryBetLevel();
+        return context.getEntryBetLevel();
     }
 
     public long getSizeOfLastBetOrRaise() {
@@ -467,5 +469,9 @@ public class BettingRound implements Round, BettingRoundContext {
     @Override
     public boolean isWaitingForPlayer(int playerId) {
         return playerToAct == null ? false : playerId == playerToAct;
+    }
+    
+    private ServerAdapter getServerAdapter() {
+        return serverAdapterHolder.get();
     }
 }

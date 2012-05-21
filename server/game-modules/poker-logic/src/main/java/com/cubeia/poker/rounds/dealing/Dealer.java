@@ -9,4 +9,6 @@ public interface Dealer {
     void dealInitialPocketCards();
 
     void exposeShowdownCards();
+
+    void sendAllNonFoldedPlayersBestHand();
 }

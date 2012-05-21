@@ -17,13 +17,15 @@
 
 package com.cubeia.poker.rounds.betting;
 
-import com.cubeia.poker.MockGame;
-import com.cubeia.poker.MockPlayer;
-import com.cubeia.poker.TestListener;
-import com.cubeia.poker.TestUtils;
+import com.cubeia.poker.*;
 import com.cubeia.poker.action.*;
+import com.cubeia.poker.states.ServerAdapterHolder;
 import com.cubeia.poker.variant.texasholdem.TexasHoldemFutureActionsCalculator;
 import junit.framework.TestCase;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import static org.mockito.MockitoAnnotations.initMocks;
 
 public class AllInTest extends TestCase implements TestListener {
 
@@ -33,12 +35,18 @@ public class AllInTest extends TestCase implements TestListener {
 
     private BettingRound round;
 
+    @Mock
+    private PokerContext context;
+
+    @Mock
+    private ServerAdapterHolder serverAdapter;
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+        initMocks(this);
         game = new MockGame();
         game.listeners.add(this);
-
     }
 
     public void testAllInBet() {
@@ -46,7 +54,7 @@ public class AllInTest extends TestCase implements TestListener {
         MockPlayer[] p = TestUtils.createMockPlayers(2, 500);
 
         game.addPlayers(p);
-        round = new BettingRound(game, 0, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
+        round = new BettingRound(context, serverAdapter, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
 
         PossibleAction bet = requestedAction.getOption(PokerActionType.BET);
         assertEquals(500, bet.getMaxAmount());
@@ -54,13 +62,9 @@ public class AllInTest extends TestCase implements TestListener {
         act(p[1], PokerActionType.BET, bet.getMaxAmount());
         assertEquals(0, p[1].getBalance());
         assertTrue(p[1].isAllIn());
-
-
     }
 
-
     // HELPERS
-
     private void act(MockPlayer player, PokerActionType action, long amount) {
         PokerAction a = new PokerAction(player.getId(), action);
         a.setBetAmount(amount);

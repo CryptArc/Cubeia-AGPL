@@ -236,7 +236,7 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
         log.debug("Created tournament table[" + table.getId() + "] with timing profile: " + timing);
 
         PokerState pokerState = injector.getInstance(PokerState.class);
-        pokerState.setId(table.getId());
+        pokerState.setTableId(table.getId());
 
         PokerSettings settings = new PokerSettings(-1, -1, -1, -1, timing,
                 table.getPlayerSet().getSeatingMap().getNumberOfSeats(),
@@ -245,7 +245,7 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
                 Collections.<Serializable, Serializable>singletonMap(
                         ATTR_EXTERNAL_TABLE_ID, "MOCK_TRN::" + table.getId()));
 
-        GameType gameType = GameTypeFactory.createGameType(PokerVariant.TEXAS_HOLDEM, pokerState, rngProvider);
+        GameType gameType = GameTypeFactory.createGameType(PokerVariant.TEXAS_HOLDEM, rngProvider);
         pokerState.init(gameType, settings);
         pokerState.setTournamentTable(true);
         pokerState.setTournamentId(mttId);

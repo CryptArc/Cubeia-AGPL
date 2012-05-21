@@ -18,6 +18,7 @@
 package com.cubeia.poker.rounds.betting;
 
 import com.cubeia.poker.GameType;
+import com.cubeia.poker.PokerContext;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.ActionRequestFactory;
@@ -25,6 +26,7 @@ import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
+import com.cubeia.poker.states.ServerAdapterHolder;
 import com.cubeia.poker.variant.texasholdem.TexasHoldemFutureActionsCalculator;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,11 +36,12 @@ import org.mockito.MockitoAnnotations;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 public class BettingRoundTimeoutTest {
 
     @Mock
-    private GameType telesina;
+    private PokerContext context;
     @Mock
     private PokerState state;
     @Mock
@@ -48,15 +51,16 @@ public class BettingRoundTimeoutTest {
     @Mock
     private ActionRequest actionRequest;
     @Mock
+    private ServerAdapterHolder serverAdapterHolder;
+    @Mock
     private ServerAdapter serverAdapter;
     private BettingRound round;
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
-        when(telesina.getState()).thenReturn(state);
-        when(telesina.getServerAdapter()).thenReturn(serverAdapter);
-        round = new BettingRound(telesina, 0, playerToActCalculator, new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
+        initMocks(this);
+        round = new BettingRound(context, serverAdapterHolder, playerToActCalculator, new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
+        when(serverAdapterHolder.get()).thenReturn(serverAdapter);
     }
 
     @Test

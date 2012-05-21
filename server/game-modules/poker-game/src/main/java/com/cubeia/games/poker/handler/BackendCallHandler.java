@@ -51,6 +51,7 @@ public class BackendCallHandler {
     }
 
     public void handleReserveSuccessfulResponse(ReserveResponse reserveResponse) {
+        // TODO: A lot of ask don't tell going on here.
         int playerId = reserveResponse.getPlayerSessionId().getPlayerId();
         PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) state.getPokerPlayer(playerId);
         Money amountReserved = reserveResponse.getAmountReserved();
@@ -89,7 +90,7 @@ public class BackendCallHandler {
             state.playerIsSittingIn(playerId);
         }
 
-        state.notifyPlayerBalance(playerId);
+        state.getServerAdapter().notifyPlayerBalance(pokerPlayer);
 
     }
 
@@ -162,13 +163,16 @@ public class BackendCallHandler {
         // log.debug("handle open session response: session = {}, pId = {}", playerSessionId, playerId);
         PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) state.getPokerPlayer(playerId);
         pokerPlayer.setPlayerSessionId(playerSessionId);
+
+
         /*
-           * if the player can not buy, eg. have enough cash at hand, in after reconnecting
-           * we send him/her a buyInInfo
-           */
-        if (!state.getGameType().canPlayerAffordEntryBet(pokerPlayer, state.getSettings(), true)) {
-            state.notifyBuyinInfo(pokerPlayer.getId(), false);
-        }
+         * if the player can not buy, eg. have enough cash at hand, in after reconnecting
+         * we send him/her a buyInInfo
+         */
+        // TODO: VN REMOVED THIS! TOO MUCH ASKING AND NOT TELLING. FIX IT!
+//        if (!state.canPlayerAffordEntryBet(pokerPlayer, state.getSettings(), true)) {
+//            state.notifyBuyinInfo(pokerPlayer.getId(), false);
+//        }
     }
 
     public void handleAnnounceTableSuccessfulResponse(AnnounceTableResponse attachment) {
@@ -186,7 +190,7 @@ public class BackendCallHandler {
     }
 
     private void makeTableVisibleInLobby(Table table) {
-        //log.debug("setting table {} as visible in lobby", table.getId());
+        //log.debug("setting table {} as visible in lobby", table.getTableId());
         table.getAttributeAccessor().setIntAttribute(PokerLobbyAttributes.VISIBLE_IN_LOBBY.name(), 1);
     }
 

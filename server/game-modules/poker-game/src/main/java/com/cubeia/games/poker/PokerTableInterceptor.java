@@ -59,7 +59,7 @@ public class PokerTableInterceptor implements TableInterceptor {
      */
     public InterceptionResponse allowLeave(Table table, int playerId) {
         stateInjector.injectAdapter(table); // TODO: Fix this with Guice logic module
-        boolean notPlaying = state.getGameState().getClass() != PokerState.PLAYING.getClass();
+        boolean notPlaying = state.isPlaying();
         PokerPlayer player = state.getPokerPlayer(playerId);
 
         if (notPlaying && !player.isBuyInRequestActive()) {

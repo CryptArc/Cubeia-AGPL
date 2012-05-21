@@ -1,10 +1,12 @@
 package com.cubeia.poker.rounds.ante;
 
-import com.cubeia.poker.GameType;
+import com.cubeia.poker.PokerContext;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.rounds.RoundHelper;
+import com.cubeia.poker.states.ServerAdapterHolder;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 
@@ -16,13 +18,20 @@ import java.util.Collection;
  *
  * @author w
  */
-public class AnteRoundHelper {
+public class AnteRoundHelper extends RoundHelper {
+
+    private PokerContext context;
+
+    public AnteRoundHelper(PokerContext context, ServerAdapterHolder serverAdapter) {
+        super(context, serverAdapter);
+        this.context = context;
+    }
 
     /**
-     * Returns true if all players has acted.
+     * Returns true if all players have acted.
      *
      * @param players players
-     * @return true if all players has acted
+     * @return true if all players have acted
      */
     boolean hasAllPlayersActed(Collection<PokerPlayer> players) {
         boolean allActed = true;
@@ -34,7 +43,7 @@ public class AnteRoundHelper {
     }
 
     /**
-     * Test if a placer can act. A player can act if all of the following are true:
+     * Tests if a player can act. A player can act if all of the following are true:
      * - has not folded
      * - has not acted
      * - is not sitting out
@@ -51,17 +60,17 @@ public class AnteRoundHelper {
      * Setup the given players current action requests as ante requests and send them via the game.
      *
      * @param players
-     * @param anteLevel
-     * @param game
      */
-    public void requestAntes(Collection<PokerPlayer> players, int anteLevel, GameType game) {
+    public void requestAntes(Collection<PokerPlayer> players) {
+        int anteLevel = context.getBlindsInfo().getAnteLevel();
         ArrayList<ActionRequest> requests = new ArrayList<ActionRequest>();
         for (PokerPlayer player : players) {
             player.enableOption(new PossibleAction(PokerActionType.ANTE, anteLevel));
             player.enableOption(new PossibleAction(PokerActionType.DECLINE_ENTRY_BET));
-            requests.add(player.getActionRequest());
+            ActionRequest request = player.getActionRequest();
+            requests.add(request);
         }
-        game.requestMultipleActions(requests);
+        requestMultipleActions(requests);
     }
 
     /**

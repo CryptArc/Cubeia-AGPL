@@ -30,6 +30,7 @@ public class ExposePrivateCardsRound implements Round {
 
     public ExposePrivateCardsRound(Dealer dealer) {
         dealer.exposeShowdownCards();
+        dealer.sendAllNonFoldedPlayersBestHand();
     }
 
     @Override

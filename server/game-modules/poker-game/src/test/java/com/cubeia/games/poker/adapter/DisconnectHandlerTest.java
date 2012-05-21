@@ -55,7 +55,7 @@ public class DisconnectHandlerTest {
     @Test
     public void testWaitRejoin() {
         handler.checkDisconnectTime(table, 1, PlayerStatus.WAITING_REJOIN);
-        //Mockito.verify(timeoutCache).removeTimeout(table.getId(), 1, table.getScheduler());
+        //Mockito.verify(timeoutCache).removeTimeout(table.getTableId(), 1, table.getScheduler());
         Mockito.verify(adapter).notifyDisconnected(1);
     }
 

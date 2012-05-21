@@ -79,7 +79,7 @@ public class BackendPlayerSessionHandler {
     }
 
     /*public void handleCrashOnTable(Table table) {
-        log.info("handling crashed table id = {}, hand id = {}", table.getId());
+        log.info("handling crashed table id = {}, hand id = {}", table.getTableId());
         
         // 1. stop table from accepting actions
         //    Gotcha: client actions should not be accepted but callbacks from backend should.
@@ -93,7 +93,7 @@ public class BackendPlayerSessionHandler {
     }
     
     private void makeTableInvisibleInLobby(Table table) {
-        log.debug("setting table {} as invisible in lobby", table.getId());
+        log.debug("setting table {} as invisible in lobby", table.getTableId());
         table.getAttributeAccessor().setIntAttribute(PokerLobbyAttributes.VISIBLE_IN_LOBBY.name(), 0);
     }
     

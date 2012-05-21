@@ -17,14 +17,9 @@
 
 package com.cubeia.poker.variant.telesina;
 
-import com.cubeia.poker.GameType;
-import com.cubeia.poker.IPokerState;
 import com.cubeia.poker.PokerSettings;
-import com.cubeia.poker.PokerState;
-import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
-import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.hand.HandStrength;
@@ -34,7 +29,8 @@ import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.RevealOrderCalculator;
 import com.cubeia.poker.rng.RNGProvider;
-import com.cubeia.poker.rounds.*;
+import com.cubeia.poker.rounds.Round;
+import com.cubeia.poker.rounds.RoundVisitor;
 import com.cubeia.poker.rounds.ante.AnteRound;
 import com.cubeia.poker.rounds.betting.BettingRound;
 import com.cubeia.poker.rounds.blinds.BlindsInfo;
@@ -43,6 +39,7 @@ import com.cubeia.poker.rounds.dealing.*;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.util.HandResultCalculator;
 import com.cubeia.poker.util.ThreadLocalProfiler;
+import com.cubeia.poker.variant.AbstractGameType;
 import com.cubeia.poker.variant.HandResultCreator;
 import com.cubeia.poker.variant.telesina.hand.TelesinaHandStrengthEvaluator;
 import com.google.common.annotations.VisibleForTesting;
@@ -66,7 +63,7 @@ import java.util.*;
  * 9  DealVelaCard, 1 + 4 & 1 community (vela)
  * 10  Betting round
  */
-public class Telesina implements GameType, RoundVisitor, Dealer {
+public class Telesina extends AbstractGameType implements RoundVisitor, Dealer {
 
     private static final int VELA_ROUND_ID = 4;
 
@@ -90,20 +87,14 @@ public class Telesina implements GameType, RoundVisitor, Dealer {
      */
     private int bettingRoundId;
 
-    @VisibleForTesting
-    BlindsInfo blindsInfo = new BlindsInfo();
-
-    final PokerState state;
-
     private final RNGProvider rngProvider;
 
     private final TelesinaDeckFactory deckFactory;
 
     private final TelesinaRoundFactory roundFactory;
 
-    public Telesina(RNGProvider rng, PokerState state, TelesinaDeckFactory deckFactory, TelesinaRoundFactory roundFactory, TelesinaDealerButtonCalculator dealerButtonCalculator) {
+    public Telesina(RNGProvider rng, TelesinaDeckFactory deckFactory, TelesinaRoundFactory roundFactory, TelesinaDealerButtonCalculator dealerButtonCalculator) {
         this.rngProvider = rng;
-        this.state = state;
         this.deckFactory = deckFactory;
         this.roundFactory = roundFactory;
         this.dealerButtonCalculator = dealerButtonCalculator;
@@ -131,10 +122,10 @@ public class Telesina implements GameType, RoundVisitor, Dealer {
 
             if (RiggedUtils.getSettings().isEmpty())
                 RiggedUtils.loadSettingsFromFile("/home/dicearena/telesinaDeck.properties");
-            if (RiggedUtils.getSettings().getProperty("deck" + state.getTableSize() + "P") != null) {
-                log.warn("Using deck" + state.getTableSize() + "P: " + RiggedUtils.getSettings().getProperty("deck" + state.getTableSize() + "P"));
+            if (RiggedUtils.getSettings().getProperty("deck" + context.getTableSize() + "P") != null) {
+                log.warn("Using deck" + context.getTableSize() + "P: " + RiggedUtils.getSettings().getProperty("deck" + context.getTableSize() + "P"));
                 try {
-                    deck = deckFactory.createNewRiggedDeck(state.getTableSize(), RiggedUtils.getSettings().getProperty("deck" + state.getTableSize() + "P"));
+                    deck = deckFactory.createNewRiggedDeck(context.getTableSize(), RiggedUtils.getSettings().getProperty("deck" + context.getTableSize() + "P"));
                     deckIsRigged = true;
                 } catch (Exception e) {
                     log.error(e.getMessage(), e);
@@ -144,21 +135,21 @@ public class Telesina implements GameType, RoundVisitor, Dealer {
 
         if (!deckIsRigged) {
             //keep only this line
-            deck = deckFactory.createNewDeck(rngProvider.getRNG(), state.getTableSize());
+            deck = deckFactory.createNewDeck(rngProvider.getRNG(), context.getTableSize());
         }
 
         try {
-            state.notifyDeckInfo(deck.getTotalNumberOfCardsInDeck(), deck.getDeckLowestRank());
+            getServerAdapter().notifyDeckInfo(deck.getTotalNumberOfCardsInDeck(), deck.getDeckLowestRank());
         } catch (Throwable th) {
             log.error(th.getMessage(), th);
         }
-        blindsInfo.setAnteLevel(state.getAnteLevel());
-        setCurrentRound(roundFactory.createAnteRound(this));
+        context.getBlindsInfo().setAnteLevel(context.getAnteLevel());
+        setCurrentRound(roundFactory.createAnteRound(context, serverAdapterHolder));
         resetBettingRoundId();
     }
 
     protected void resetPlayerPostedEntryBets() {
-        for (PokerPlayer p : getState().getCurrentHandSeatingMap().values()) {
+        for (PokerPlayer p : context.getPlayersInHand()) {
             p.setHasPostedEntryBet(false);
         }
     }
@@ -186,7 +177,7 @@ public class Telesina implements GameType, RoundVisitor, Dealer {
             p.addPocketCard(card, false);
         }
         log.debug("notifying user {} of private cards: {}", p.getId(), cardsDealt);
-        state.notifyPrivateCards(p.getId(), cardsDealt);
+        getServerAdapter().notifyPrivateCards(p.getId(), cardsDealt);
     }
 
     private void dealExposedPocketCards(PokerPlayer player, int n) {
@@ -197,7 +188,7 @@ public class Telesina implements GameType, RoundVisitor, Dealer {
             player.addPocketCard(card, true);
         }
         log.debug("notifying all users of private exposed cards to {}: {}", player.getId(), cardsDealt);
-        state.notifyPrivateExposedCards(player.getId(), cardsDealt);
+        getServerAdapter().notifyPrivateExposedCards(player.getId(), cardsDealt);
     }
 
     private void dealCommunityCards(int n) {
@@ -205,8 +196,8 @@ public class Telesina implements GameType, RoundVisitor, Dealer {
         for (int i = 0; i < n; i++) {
             dealt.add(deck.deal());
         }
-        state.getCommunityCards().addAll(dealt);
-        state.notifyCommunityCards(dealt);
+        context.getCommunityCards().addAll(dealt);
+        getServerAdapter().notifyCommunityCards(dealt);
 
         sendAllNonFoldedPlayersBestHand();
     }
@@ -218,30 +209,19 @@ public class Telesina implements GameType, RoundVisitor, Dealer {
     }
 
     private void reportPotAndRakeUpdates(Collection<PotTransition> potTransitions) {
-        state.notifyPotAndRakeUpdates(potTransitions);
+        notifyPotAndRakeUpdates(potTransitions);
     }
 
     private void startBettingRound() {
-        setCurrentRound(roundFactory.createBettingRound(this, blindsInfo.getDealerButtonSeatId()));
+        setCurrentRound(roundFactory.createBettingRound(context, serverAdapterHolder, getDeckLowestRank()));
         incrementBettingRoundId();
         log.debug("started new betting round, betting round id = {}", getBettingRoundId());
-        state.notifyNewRound();
+        getServerAdapter().notifyNewRound();
     }
 
     @VisibleForTesting
     protected boolean isHandFinished() {
-        return (getBettingRoundId() >= 5 || state.countNonFoldedPlayers() <= 1);
-    }
-
-    public int countPlayersSittingIn() {
-        int sittingIn = 0;
-        for (PokerPlayer p : state.getCurrentHandSeatingMap().values()) {
-            if (!p.isSittingOut()) {
-                sittingIn++;
-            }
-        }
-
-        return sittingIn;
+        return (getBettingRoundId() >= 5 || context.countNonFoldedPlayers() <= 1);
     }
 
     public void dealCommunityCards() {
@@ -251,7 +231,7 @@ public class Telesina implements GameType, RoundVisitor, Dealer {
     private void handleFinishedHand(HandResult handResult) {
         ThreadLocalProfiler.add("Telesina.handleFinishedHand");
         log.debug("Hand over. Result: " + handResult.getPlayerHands());
-        state.notifyHandFinished(handResult, HandEndStatus.NORMAL);
+        notifyHandFinished(handResult, HandEndStatus.NORMAL);
     }
 
     @VisibleForTesting
@@ -260,22 +240,20 @@ public class Telesina implements GameType, RoundVisitor, Dealer {
 
         // return antes
         returnAllBetStacksToBalance();
-        state.notifyRakeInfo();
+        notifyRakeInfo();
 
-        state.notifyHandFinished(new HandResult(), HandEndStatus.CANCELED_TOO_FEW_PLAYERS);
+        notifyHandFinished(new HandResult(), HandEndStatus.CANCELED_TOO_FEW_PLAYERS);
 
-        // Make sure status are reported if we get other players joining the table
+        // Make sure status is reported if we get other players joining the table
         // while waiting to start a new hand.
-        state.notifyAllHandStartPlayerStatus();
-
-        state.cleanupPlayers();
-
+        notifyAllHandStartPlayerStatus();
+        cleanupPlayers();
     }
 
     private Collection<PotTransition> moveChipsToPotAndTakeBackUncalledChips() {
-        Collection<PotTransition> potTransitions = state.getPotHolder().moveChipsToPotAndTakeBackUncalledChips(state.getCurrentHandSeatingMap().values());
+        Collection<PotTransition> potTransitions = context.getPotHolder().moveChipsToPotAndTakeBackUncalledChips(context.getCurrentHandSeatingMap().values());
 
-        for (PokerPlayer p : state.getCurrentHandSeatingMap().values()) {
+        for (PokerPlayer p : context.getCurrentHandSeatingMap().values()) {
             p.setHasActed(false);
             p.clearActionRequest();
         }
@@ -284,35 +262,19 @@ public class Telesina implements GameType, RoundVisitor, Dealer {
     }
 
     @Override
-    public void requestAction(ActionRequest r) {
-        state.requestAction(r);
-    }
-
-    @Override
-    public void requestMultipleActions(Collection<ActionRequest> requests) {
-        state.requestMultipleActions(requests);
-    }
-
-    @Override
     public void scheduleRoundTimeout() {
         ThreadLocalProfiler.add("Telesina.scheduleRoundTimeout");
-        log.debug("scheduleRoundTimeout in: " + state.getTimingProfile().getTime(Periods.RIVER));
-        state.getServerAdapter().scheduleTimeout(state.getTimingProfile().getTime(Periods.RIVER));
+        log.debug("scheduleRoundTimeout in: " + context.getTimingProfile().getTime(Periods.RIVER));
+        getServerAdapter().scheduleTimeout(context.getTimingProfile().getTime(Periods.RIVER));
     }
 
-    @Override
     public BlindsInfo getBlindsInfo() {
-        return blindsInfo;
+        return context.getBlindsInfo();
     }
 
     @Override
     public void prepareNewHand() {
-        state.getCommunityCards().clear();
-    }
-
-    @Override
-    public ServerAdapter getServerAdapter() {
-        return state.getServerAdapter();
+        context.getCommunityCards().clear();
     }
 
     @Override
@@ -320,11 +282,6 @@ public class Telesina implements GameType, RoundVisitor, Dealer {
         log.debug("Timeout");
         getCurrentRound().timeout();
         checkFinishedRound();
-    }
-
-    @Override
-    public IPokerState getState() {
-        return state;
     }
 
     @Override
@@ -353,16 +310,16 @@ public class Telesina implements GameType, RoundVisitor, Dealer {
     private void updateDealerButtonPosition(AnteRound anteRound) {
 
         if (!anteRound.isFinished()) {
-            throw new IllegalStateException("Can not move the dealerbutton when anteround is not finished");
+            throw new IllegalStateException("Can not move the dealer button when ante round is not finished");
         }
 
         boolean wasCancelled = anteRound.isCanceled();
 
-        int currentDealerButtonSeatId = state.getBlindsInfo().getDealerButtonSeatId();
-        int newDealerSeat = dealerButtonCalculator.getNextDealerSeat(state.getCurrentHandSeatingMap(), currentDealerButtonSeatId, wasCancelled);
+        int currentDealerButtonSeatId = getBlindsInfo().getDealerButtonSeatId();
+        int newDealerSeat = dealerButtonCalculator.getNextDealerSeat(context.getCurrentHandSeatingMap(), currentDealerButtonSeatId, wasCancelled);
 
-        state.getBlindsInfo().setDealerButtonSeatId(newDealerSeat);
-        state.notifyDealerButton(newDealerSeat);
+        getBlindsInfo().setDealerButtonSeatId(newDealerSeat);
+        getServerAdapter().notifyDealerButton(newDealerSeat);
 
     }
 
@@ -375,30 +332,30 @@ public class Telesina implements GameType, RoundVisitor, Dealer {
     @Override
     public void visit(BettingRound bettingRound) {
         ThreadLocalProfiler.add("Telesina.visit.BettingRound");
-        state.setLastPlayerToBeCalled(bettingRound.getLastPlayerToBeCalled());
+        context.setLastPlayerToBeCalled(bettingRound.getLastPlayerToBeCalled());
 
         Collection<PotTransition> potTransitions = moveChipsToPotAndTakeBackUncalledChips();
         reportPotAndRakeUpdates(potTransitions);
 
         if (isHandFinished()) {
-            state.exposeShowdownCards();
+            exposeShowdownCards();
 
-            PokerPlayer playerAtDealerButton = state.getPlayerAtDealerButton();
-            List<Integer> playerRevealOrder = new RevealOrderCalculator().calculateRevealOrder(state.getCurrentHandSeatingMap(), state.getLastPlayerToBeCalled(), playerAtDealerButton);
+            PokerPlayer playerAtDealerButton = context.getPlayerInDealerSeat();
+            List<Integer> playerRevealOrder = new RevealOrderCalculator().calculateRevealOrder(context.getCurrentHandSeatingMap(), context.getLastPlayerToBeCalled(), playerAtDealerButton);
 
             TelesinaHandStrengthEvaluator evaluator = new TelesinaHandStrengthEvaluator(getDeckLowestRank());
             HandResultCreator resultCreator = new HandResultCreator(evaluator);
             HandResultCalculator resultCalculator = new HandResultCalculator(evaluator);
-            Map<Integer, PokerPlayer> players = state.getCurrentHandPlayerMap();
-            Set<PokerPlayer> muckingPlayers = state.getMuckingPlayers();
+            Map<Integer, PokerPlayer> players = context.getCurrentHandPlayerMap();
+            Set<PokerPlayer> muckingPlayers = context.getMuckingPlayers();
 
-            HandResult handResult = resultCreator.createHandResult(state.getCommunityCards(), resultCalculator, state.getPotHolder(), players, playerRevealOrder, muckingPlayers);
+            HandResult handResult = resultCreator.createHandResult(context.getCommunityCards(), resultCalculator, context.getPotHolder(), players, playerRevealOrder, muckingPlayers);
 
             handleFinishedHand(handResult);
-            state.getPotHolder().clearPots();
+            context.getPotHolder().clearPots();
 
         } else {
-            if (state.isAtLeastAllButOneAllIn() && !state.hasAllPlayersExposedCards()) {
+            if (context.isAtLeastAllButOneAllIn() && !context.hasAllPlayersExposedCards()) {
                 setCurrentRound(roundFactory.createExposePrivateCardsRound(this));
                 scheduleRoundTimeout();
             } else {
@@ -423,12 +380,12 @@ public class Telesina implements GameType, RoundVisitor, Dealer {
     }
 
     private void returnAllBetStacksToBalance() {
-        for (PokerPlayer player : state.getCurrentHandSeatingMap().values()) {
+        for (PokerPlayer player : context.getCurrentHandSeatingMap().values()) {
 
             long betStack = player.getBetStack();
             if (betStack > 0) {
                 player.returnBetstackToBalance();
-                state.notifyTakeBackUncalledBets(player.getId(), betStack);
+                getServerAdapter().notifyTakeBackUncalledBet(player.getId(), (int) betStack);
             }
         }
     }
@@ -459,14 +416,8 @@ public class Telesina implements GameType, RoundVisitor, Dealer {
         dealExposedPocketCards();
     }
 
-    @Override
-    public void exposeShowdownCards() {
-        state.exposeShowdownCards();
-        sendAllNonFoldedPlayersBestHand();
-    }
-
     private void dealHiddenPocketCards() {
-        for (PokerPlayer p : state.getCurrentHandSeatingMap().values()) {
+        for (PokerPlayer p : context.getCurrentHandSeatingMap().values()) {
             if (!p.hasFolded()) {
                 dealHiddenPocketCards(p, 1);
             }
@@ -475,7 +426,7 @@ public class Telesina implements GameType, RoundVisitor, Dealer {
 
     @VisibleForTesting
     public void dealExposedPocketCards() {
-        for (PokerPlayer p : state.getCurrentHandSeatingMap().values()) {
+        for (PokerPlayer p : context.getCurrentHandSeatingMap().values()) {
             if (!p.hasFolded()) {
                 dealExposedPocketCards(p, 1);
             }
@@ -486,7 +437,7 @@ public class Telesina implements GameType, RoundVisitor, Dealer {
 
     public void sendAllNonFoldedPlayersBestHand() {
         TelesinaHandStrengthEvaluator handStrengthEvaluator = new TelesinaHandStrengthEvaluator(getDeckLowestRank());
-        for (PokerPlayer p : state.getCurrentHandSeatingMap().values()) {
+        for (PokerPlayer p : context.getCurrentHandSeatingMap().values()) {
             if (!p.hasFolded()) {
                 calculateAndSendBestHandToPlayer(handStrengthEvaluator, p);
             }
@@ -502,10 +453,10 @@ public class Telesina implements GameType, RoundVisitor, Dealer {
      */
     protected void calculateAndSendBestHandToPlayer(TelesinaHandStrengthEvaluator handStrengthEvaluator, PokerPlayer player) {
         List<Card> playerCards = new ArrayList<Card>(player.getPocketCards().getCards());
-        playerCards.addAll(state.getCommunityCards());
+        playerCards.addAll(context.getCommunityCards());
         Hand playerHand = new Hand(playerCards);
         HandStrength bestHandStrength = handStrengthEvaluator.getBestHandStrength(playerHand);
-        state.getServerAdapter().notifyBestHand(player.getId(), bestHandStrength.getHandType(), bestHandStrength.getCards(),
+        getServerAdapter().notifyBestHand(player.getId(), bestHandStrength.getHandType(), bestHandStrength.getCards(),
                 player.isExposingPocketCards() && !player.hasFolded());
     }
 
@@ -517,7 +468,7 @@ public class Telesina implements GameType, RoundVisitor, Dealer {
     private void setCurrentRound(Round newRound) {
         log.debug("moved to new round: {} -> {}", currentRound, newRound);
         this.currentRound = newRound;
-        // state.notifyNewRound();
+        // context.notifyNewRound();
     }
 
     @VisibleForTesting

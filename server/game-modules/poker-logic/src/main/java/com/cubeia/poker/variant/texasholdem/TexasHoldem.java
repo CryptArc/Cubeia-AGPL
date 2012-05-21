@@ -17,38 +17,36 @@
 
 package com.cubeia.poker.variant.texasholdem;
 
-import com.cubeia.poker.GameType;
-import com.cubeia.poker.IPokerState;
 import com.cubeia.poker.PokerSettings;
-import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.ActionRequestFactory;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.adapter.HandEndStatus;
-import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.*;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.RevealOrderCalculator;
 import com.cubeia.poker.rng.RNGProvider;
-import com.cubeia.poker.rounds.*;
+import com.cubeia.poker.rounds.Round;
+import com.cubeia.poker.rounds.RoundHelper;
+import com.cubeia.poker.rounds.RoundVisitor;
 import com.cubeia.poker.rounds.ante.AnteRound;
 import com.cubeia.poker.rounds.betting.BettingRound;
 import com.cubeia.poker.rounds.betting.DefaultPlayerToActCalculator;
 import com.cubeia.poker.rounds.betting.NoLimitBetStrategy;
-import com.cubeia.poker.rounds.blinds.BlindsInfo;
 import com.cubeia.poker.rounds.blinds.BlindsRound;
 import com.cubeia.poker.rounds.dealing.*;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.util.HandResultCalculator;
+import com.cubeia.poker.variant.AbstractGameType;
 import com.cubeia.poker.variant.HandResultCreator;
 import org.apache.log4j.Logger;
 
 import java.util.*;
 
-public class TexasHoldem implements GameType, RoundVisitor, Dealer {
+public class TexasHoldem extends AbstractGameType implements RoundVisitor, Dealer {
 
     private static final long serialVersionUID = -1523110440727681601L;
 
@@ -63,20 +61,14 @@ public class TexasHoldem implements GameType, RoundVisitor, Dealer {
      */
     private int roundId;
 
-    private BlindsInfo blindsInfo = new BlindsInfo();
-
-    //	@Inject
-    private final PokerState state;
-
     private final RNGProvider rngProvider;
 
     private HandResultCalculator handResultCalculator = new HandResultCalculator(new TexasHoldemHandCalculator());
 
+    private RoundHelper roundHelper;
 
-    public TexasHoldem(RNGProvider rngProvider, PokerState state) {
+    public TexasHoldem(RNGProvider rngProvider) {
         this.rngProvider = rngProvider;
-        this.state = state;
-
     }
 
     @Override
@@ -92,7 +84,7 @@ public class TexasHoldem implements GameType, RoundVisitor, Dealer {
     private void initHand() {
         deck = new StandardDeck(new Shuffler<Card>(rngProvider.getRNG()), new IndexCardIdGenerator());
 
-        currentRound = new BlindsRound(this, state.isTournamentTable());
+        currentRound = new BlindsRound(context, serverAdapterHolder);
         roundId = 0;
     }
 
@@ -112,7 +104,7 @@ public class TexasHoldem implements GameType, RoundVisitor, Dealer {
         for (int i = 0; i < n; i++) {
             p.addPocketCard(deck.deal(), false);
         }
-        state.notifyPrivateCards(p.getId(), p.getPocketCards().getCards());
+        getServerAdapter().notifyPrivateCards(p.getId(), p.getPocketCards().getCards());
     }
 
     private void dealCommunityCards(int n) {
@@ -120,8 +112,8 @@ public class TexasHoldem implements GameType, RoundVisitor, Dealer {
         for (int i = 0; i < n; i++) {
             dealt.add(deck.deal());
         }
-        state.getCommunityCards().addAll(dealt);
-        state.notifyCommunityCards(dealt);
+        context.getCommunityCards().addAll(dealt);
+        getServerAdapter().notifyCommunityCards(dealt);
     }
 
     public void handleFinishedRound() {
@@ -129,7 +121,7 @@ public class TexasHoldem implements GameType, RoundVisitor, Dealer {
     }
 
     private void reportPotUpdate() {
-        state.notifyPotAndRakeUpdates(Collections.<PotTransition>emptyList());
+        notifyPotAndRakeUpdates(Collections.<PotTransition>emptyList());
     }
 
     public int getCurrentRoundId() {
@@ -138,18 +130,18 @@ public class TexasHoldem implements GameType, RoundVisitor, Dealer {
 
     private void startBettingRound() {
         log.trace("Starting new betting round. Round ID: " + (roundId + 1));
-        currentRound = new BettingRound(this, blindsInfo.getDealerButtonSeatId(), new DefaultPlayerToActCalculator(),
+        currentRound = new BettingRound(context, serverAdapterHolder, new DefaultPlayerToActCalculator(),
                 new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
         roundId++;
     }
 
     private boolean isHandFinished() {
-        return (roundId >= 3 || state.countNonFoldedPlayers() <= 1);
+        return (roundId >= 3 || context.countNonFoldedPlayers() <= 1);
     }
 
     public int countPlayersSittingIn() {
         int sittingIn = 0;
-        for (PokerPlayer p : state.getCurrentHandSeatingMap().values()) {
+        for (PokerPlayer p : context.getCurrentHandSeatingMap().values()) {
             if (!p.isSittingOut()) {
                 sittingIn++;
             }
@@ -183,29 +175,29 @@ public class TexasHoldem implements GameType, RoundVisitor, Dealer {
 
     private void handleFinishedHand(HandResult handResult) {
         log.debug("Hand over. Result: " + handResult.getPlayerHands());
-        state.notifyHandFinished(handResult, HandEndStatus.NORMAL);
+        notifyHandFinished(handResult, HandEndStatus.NORMAL);
     }
 
     private void handleCanceledHand() {
-        state.notifyHandFinished(new HandResult(), HandEndStatus.CANCELED_TOO_FEW_PLAYERS);
+        notifyHandFinished(new HandResult(), HandEndStatus.CANCELED_TOO_FEW_PLAYERS);
     }
 
     private void moveChipsToPot() {
 
-        state.getPotHolder().moveChipsToPotAndTakeBackUncalledChips(state.getCurrentHandSeatingMap().values());
+        context.getPotHolder().moveChipsToPotAndTakeBackUncalledChips(context.getCurrentHandSeatingMap().values());
 
-        for (PokerPlayer p : state.getCurrentHandSeatingMap().values()) {
+        for (PokerPlayer p : context.getCurrentHandSeatingMap().values()) {
             p.setHasActed(false);
             p.clearActionRequest();
         }
     }
 
-    @Override
     public void requestAction(ActionRequest r) {
-        if (blindRequested(r) && state.isTournamentTable()) {
-            state.getServerAdapter().scheduleTimeout(state.getTimingProfile().getTime(Periods.AUTO_POST_BLIND_DELAY));
+        // OUCH! TODO!
+        if (blindRequested(r) && context.isTournamentTable()) {
+            getServerAdapter().scheduleTimeout(context.getTimingProfile().getTime(Periods.AUTO_POST_BLIND_DELAY));
         } else {
-            state.requestAction(r);
+            roundHelper.requestAction(r);
         }
     }
 
@@ -216,8 +208,8 @@ public class TexasHoldem implements GameType, RoundVisitor, Dealer {
 
     @Override
     public void scheduleRoundTimeout() {
-        log.debug("scheduleRoundTimeout in: " + state.getTimingProfile().getTime(Periods.RIVER));
-        state.getServerAdapter().scheduleTimeout(state.getTimingProfile().getTime(Periods.RIVER));
+        log.debug("scheduleRoundTimeout in: " + context.getTimingProfile().getTime(Periods.RIVER));
+        getServerAdapter().scheduleTimeout(context.getTimingProfile().getTime(Periods.RIVER));
     }
 
     private boolean blindRequested(ActionRequest r) {
@@ -225,22 +217,12 @@ public class TexasHoldem implements GameType, RoundVisitor, Dealer {
     }
 
     @Override
-    public BlindsInfo getBlindsInfo() {
-        return blindsInfo;
-    }
-
-    @Override
     public void prepareNewHand() {
-        state.getCommunityCards().clear();
-        for (PokerPlayer player : state.getCurrentHandPlayerMap().values()) {
+        context.getCommunityCards().clear();
+        for (PokerPlayer player : context.getCurrentHandPlayerMap().values()) {
             player.clearHand();
             player.setHasFolded(false);
         }
-    }
-
-    @Override
-    public ServerAdapter getServerAdapter() {
-        return state.getServerAdapter();
     }
 
     @Override
@@ -248,11 +230,6 @@ public class TexasHoldem implements GameType, RoundVisitor, Dealer {
         log.debug("Timeout");
         currentRound.timeout();
         checkFinishedRound();
-    }
-
-    @Override
-    public IPokerState getState() {
-        return state;
     }
 
     @Override
@@ -266,14 +243,14 @@ public class TexasHoldem implements GameType, RoundVisitor, Dealer {
         reportPotUpdate();
 
         if (isHandFinished()) {
-            state.exposeShowdownCards();
-            PokerPlayer playerAtDealerButton = state.getPlayerAtDealerButton();
-            List<Integer> playerRevealOrder = new RevealOrderCalculator().calculateRevealOrder(state.getCurrentHandSeatingMap(), state.getLastPlayerToBeCalled(), playerAtDealerButton);
+            exposeShowdownCards();
+            PokerPlayer playerAtDealerButton = context.getPlayerInDealerSeat();
+            List<Integer> playerRevealOrder = new RevealOrderCalculator().calculateRevealOrder(context.getCurrentHandSeatingMap(), context.getLastPlayerToBeCalled(), playerAtDealerButton);
             Set<PokerPlayer> muckingPlayers = new HashSet<PokerPlayer>();
-            HandResult handResult = new HandResultCreator(new TexasHoldemHandCalculator()).createHandResult(state.getCommunityCards(), handResultCalculator, state.getPotHolder(), state.getCurrentHandPlayerMap(), playerRevealOrder, muckingPlayers);
+            HandResult handResult = new HandResultCreator(new TexasHoldemHandCalculator()).createHandResult(context.getCommunityCards(), handResultCalculator, context.getPotHolder(), context.getCurrentHandPlayerMap(), playerRevealOrder, muckingPlayers);
 
             handleFinishedHand(handResult);
-            state.getPotHolder().clearPots();
+            context.getPotHolder().clearPots();
         } else {
             // Start deal community cards round
             currentRound = new DealCommunityCardsRound(this);
@@ -319,16 +296,15 @@ public class TexasHoldem implements GameType, RoundVisitor, Dealer {
     }
 
     private void prepareBettingRound() {
-        int bbSeatId = blindsInfo.getBigBlindSeatId();
-        currentRound = new BettingRound(this, bbSeatId, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
+        currentRound = new BettingRound(context, serverAdapterHolder, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
     }
 
     private void updateBlindsInfo(BlindsRound blindsRound) {
-        this.blindsInfo = blindsRound.getBlindsInfo();
+        context.setBlindsInfo(blindsRound.getBlindsInfo());
     }
 
     private void dealPocketCards() {
-        for (PokerPlayer p : state.getCurrentHandSeatingMap().values()) {
+        for (PokerPlayer p : context.getCurrentHandSeatingMap().values()) {
             if (!p.isSittingOut()) {
                 dealPocketCards(p, 2);
             }

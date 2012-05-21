@@ -149,7 +149,7 @@ public class PokerTableListener implements TournamentTableListener {
         stateInjector.injectAdapter(table);
         if (status.equals(DISCONNECTED) || status.equals(LEAVING) || status.equals(WAITING_REJOIN)) {
             log.debug("Player status changed will be set as sit out, tid[" + table.getId() + "] pid[" + playerId + "] status[" + status + "]");
-            state.playerIsSittingOut(playerId, SitOutStatus.SITTING_OUT);
+            state.playerSitsOut(playerId, SitOutStatus.SITTING_OUT);
         } else if (status.equals(CONNECTED)) {
             log.debug("Player status changed will be set as sit in, tid[" + table.getId() + "] pid[" + playerId + "] status[" + status + "]");
             state.playerIsSittingIn(playerId);

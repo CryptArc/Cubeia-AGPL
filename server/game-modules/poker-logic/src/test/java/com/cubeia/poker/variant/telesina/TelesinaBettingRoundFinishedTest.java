@@ -1,31 +1,34 @@
 package com.cubeia.poker.variant.telesina;
 
 import com.cubeia.poker.DummyRNGProvider;
+import com.cubeia.poker.PokerContext;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.adapter.HandEndStatus;
+import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.PotHolder;
+import com.cubeia.poker.rake.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.rounds.betting.BettingRound;
+import com.cubeia.poker.states.ServerAdapterHolder;
+import com.cubeia.poker.variant.HandFinishedListener;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 
 import java.util.*;
 
 import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 
 public class TelesinaBettingRoundFinishedTest {
 
     @Mock
-    private PokerState state;
+    PokerContext context;
     @Mock
     private PotHolder potHolder;
     @Mock
@@ -36,6 +39,12 @@ public class TelesinaBettingRoundFinishedTest {
     private TelesinaRoundFactory roundFactory;
     @Mock
     private TelesinaDealerButtonCalculator dealerButtonCalculator;
+    @Mock
+    private HandFinishedListener handFinishedListener;
+    @Mock
+    private ServerAdapterHolder serverAdapterHolder;
+    @Mock
+    private ServerAdapter serverAdapter;
     private PokerPlayer player1 = new DefaultPokerPlayer(1001);
     private PokerPlayer player2 = new DefaultPokerPlayer(1002);
     private TelesinaForTesting telesina;
@@ -45,16 +54,18 @@ public class TelesinaBettingRoundFinishedTest {
 
     @Before
     public void setup() {
-        MockitoAnnotations.initMocks(this);
+        initMocks(this);
 
         seatingMap = new TreeMap<Integer, PokerPlayer>();
         seatingMap.put(0, player1);
         seatingMap.put(1, player2);
-        when(state.getCurrentHandSeatingMap()).thenReturn(seatingMap);
+        when(context.getCurrentHandSeatingMap()).thenReturn(seatingMap);
 
-        when(state.getPotHolder()).thenReturn(potHolder);
+        when(context.getPotHolder()).thenReturn(potHolder);
         when(deckFactory.createNewDeck(Mockito.any(Random.class), Mockito.anyInt())).thenReturn(deck);
-        telesina = new TelesinaForTesting(new DummyRNGProvider(), state, deckFactory, roundFactory, dealerButtonCalculator);
+        telesina = new TelesinaForTesting(new DummyRNGProvider(), deckFactory, roundFactory, dealerButtonCalculator);
+        telesina.setPokerContextAndServerAdapter(context, serverAdapterHolder);
+        telesina.addHandFinishedListener(handFinishedListener);
     }
 
     @Test
@@ -63,7 +74,7 @@ public class TelesinaBettingRoundFinishedTest {
         BettingRound bettingRound = mock(BettingRound.class);
         when(bettingRound.getLastPlayerToBeCalled()).thenReturn(player1);
         telesina.visit(bettingRound);
-        verify(state).setLastPlayerToBeCalled(player1);
+        verify(context).setLastPlayerToBeCalled(player1);
     }
 
     PokerPlayer mockPlayer1;
@@ -92,12 +103,12 @@ public class TelesinaBettingRoundFinishedTest {
 
         when(mockPlayer1.hasFolded()).thenReturn(false);
         when(mockPlayer2.hasFolded()).thenReturn(true);
-        when(state.countNonFoldedPlayers()).thenReturn(1);
+        when(context.countNonFoldedPlayers()).thenReturn(1);
 
         telesina.visit(bettingRound);
 
         ArgumentCaptor<HandResult> resultCaptor = ArgumentCaptor.forClass(HandResult.class);
-        verify(state).notifyHandFinished(resultCaptor.capture(), Mockito.eq(HandEndStatus.NORMAL));
+        verify(handFinishedListener).handFinished(resultCaptor.capture(), Mockito.eq(HandEndStatus.NORMAL));
         HandResult hr = resultCaptor.getValue();
         Assert.assertThat(hr.getPlayerHands().size(), CoreMatchers.is(0));
     }
@@ -110,14 +121,14 @@ public class TelesinaBettingRoundFinishedTest {
 
         when(mockPlayer1.hasFolded()).thenReturn(false);
         when(mockPlayer2.hasFolded()).thenReturn(false);
-        when(state.countNonFoldedPlayers()).thenReturn(2);
+        when(context.countNonFoldedPlayers()).thenReturn(2);
 
-        when(state.getCurrentHandPlayerMap()).thenReturn(playerMap);
+        when(context.getCurrentHandPlayerMap()).thenReturn(playerMap);
 
         telesina.visit(bettingRound);
 
         ArgumentCaptor<HandResult> resultCaptor = ArgumentCaptor.forClass(HandResult.class);
-        verify(state).notifyHandFinished(resultCaptor.capture(), Mockito.eq(HandEndStatus.NORMAL));
+        verify(handFinishedListener).handFinished(resultCaptor.capture(), Mockito.eq(HandEndStatus.NORMAL));
         HandResult hr = resultCaptor.getValue();
         Assert.assertThat(hr.getPlayerHands().size(), CoreMatchers.is(2));
     }
@@ -142,12 +153,11 @@ public class TelesinaBettingRoundFinishedTest {
 
         when(player1.hasFolded()).thenReturn(false);
         when(player2.hasFolded()).thenReturn(true);
-        when(state.countNonFoldedPlayers()).thenReturn(1);
+        when(context.countNonFoldedPlayers()).thenReturn(1);
 
         telesina.visit(bettingRound);
 
-
-        verify(state).notifyPotAndRakeUpdates(Mockito.anyCollection());
+        verify(serverAdapter).notifyRakeInfo(Matchers.<RakeInfoContainer>any());
 
 
     }

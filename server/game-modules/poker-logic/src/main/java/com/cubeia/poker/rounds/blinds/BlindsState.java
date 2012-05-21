@@ -17,18 +17,20 @@
 
 package com.cubeia.poker.rounds.blinds;
 
+import com.cubeia.poker.PokerContext;
+
 import java.io.Serializable;
 
 
 public interface BlindsState extends Serializable {
 
-    void smallBlind(int playerId, BlindsRound blindsRound);
+    void smallBlind(int playerId, PokerContext context, BlindsRound blindsRound);
 
-    void bigBlind(int playerId, BlindsRound blindsRound);
+    void bigBlind(int playerId, PokerContext context, BlindsRound blindsRound);
 
-    void declineEntryBet(Integer playerId, BlindsRound blindsRound);
+    void declineEntryBet(Integer playerId, PokerContext context, BlindsRound blindsRound);
 
-    void timeout(BlindsRound context);
+    void timeout(PokerContext context, BlindsRound round);
 
     boolean isFinished();
 

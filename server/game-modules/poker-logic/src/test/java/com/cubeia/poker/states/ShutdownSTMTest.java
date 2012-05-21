@@ -1,37 +1,51 @@
 package com.cubeia.poker.states;
 
 import com.cubeia.poker.GameType;
+import com.cubeia.poker.PokerContext;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.PokerAction;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 public class ShutdownSTMTest {
 
+    @Mock
+    private GameType gameType;
+
+    @Mock
+    private PokerContext pokerContext;
+
+    @Mock
+    private ServerAdapterHolder serverAdapterHolder;
+
+    @Mock
+    private StateChanger stateChanger;
+
+    private ShutdownSTM shutdownSTM;
+
+    @Before
+    public void setup() {
+        initMocks(this);
+        shutdownSTM = new ShutdownSTM(gameType, pokerContext, serverAdapterHolder, stateChanger);
+    }
+
     @Test
     public void testTimeoutShouldNotDoAnything() {
-        ShutdownSTM shutdownSTM = new ShutdownSTM();
-        PokerState pokerGame = mock(PokerState.class);
-        GameType gameType = mock(GameType.class);
-        when(pokerGame.getGameType()).thenReturn(gameType);
-
-        shutdownSTM.timeout(pokerGame);
-
-        verifyZeroInteractions(gameType);
+        shutdownSTM.timeout();
+        verifyZeroInteractions(gameType, pokerContext, serverAdapterHolder, stateChanger);
     }
 
     @Test
     public void testActShouldNotDoAnything() {
-        ShutdownSTM shutdownSTM = new ShutdownSTM();
         PokerAction action = mock(PokerAction.class);
-        PokerState pokerGame = mock(PokerState.class);
-        GameType gameType = mock(GameType.class);
-        when(pokerGame.getGameType()).thenReturn(gameType);
+        shutdownSTM.act(action);
 
-        shutdownSTM.act(action, pokerGame);
-
-        verifyZeroInteractions(gameType);
+        verifyZeroInteractions(gameType, pokerContext, serverAdapterHolder, stateChanger);
     }
 
 }

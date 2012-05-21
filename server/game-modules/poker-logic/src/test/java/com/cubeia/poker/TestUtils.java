@@ -59,7 +59,7 @@ public class TestUtils {
     public static void addPlayers(PokerState game, PokerPlayer[] p, long startingChips) {
         for (PokerPlayer pl : p) {
             game.addPlayer(pl);
-            game.addChips(pl.getId(), startingChips);
+            game.pokerContext.addChips(pl.getId(), startingChips);
         }
     }
 

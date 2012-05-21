@@ -31,9 +31,9 @@ public class GameStateInitialization {
     @Test
     public void createGameTypeByVariant() {
         PokerState state = new PokerState();
-        GameType gameType = GameTypeFactory.createGameType(TELESINA, state, rngProvider);
+        GameType gameType = GameTypeFactory.createGameType(TELESINA, rngProvider);
         assertThat(gameType, instanceOf(Telesina.class));
-        gameType = GameTypeFactory.createGameType(TEXAS_HOLDEM, state, rngProvider);
+        gameType = GameTypeFactory.createGameType(TEXAS_HOLDEM, rngProvider);
         assertThat(gameType, instanceOf(TexasHoldem.class));
     }
 
@@ -46,12 +46,11 @@ public class GameStateInitialization {
 
         RNGProvider rngProvider = Mockito.mock(RNGProvider.class);
         PokerState state = new PokerState();
-        GameType gt = GameTypeFactory.createGameType(TELESINA, state, rngProvider);
+        GameType gt = GameTypeFactory.createGameType(TELESINA, rngProvider);
         state.init(gt, settings);
 
         assertThat(state.getAnteLevel(), is(anteLevel));
         assertThat(state.getTimingProfile(), is(timing));
-        assertThat(state.getGameType(), is(Telesina.class));
         assertThat(state.getTableSize(), is(6));
     }
 

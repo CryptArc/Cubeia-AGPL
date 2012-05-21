@@ -172,7 +172,6 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
         StartNewHand packet = new StartNewHand();
         packet.handId = handId;
-        packet.dealerSeatId = state.getBlindsInfo().getDealerButtonSeatId();
         GameDataAction action = protocolFactory.createGameAction(packet, 0, table.getId());
         sendPublicPacket(action, -1);
 

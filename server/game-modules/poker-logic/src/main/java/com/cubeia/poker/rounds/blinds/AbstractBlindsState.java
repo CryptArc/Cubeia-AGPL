@@ -18,23 +18,25 @@
 package com.cubeia.poker.rounds.blinds;
 
 
+import com.cubeia.poker.PokerContext;
+
 public abstract class AbstractBlindsState implements BlindsState {
 
     private static final long serialVersionUID = 1L;
 
-    public void bigBlind(int playerId, BlindsRound context) {
+    public void bigBlind(int playerId, PokerContext context, BlindsRound round) {
         throw new IllegalStateException();
     }
 
-    public void smallBlind(int playerId, BlindsRound context) {
+    public void smallBlind(int playerId, PokerContext context, BlindsRound round) {
         throw new IllegalStateException();
     }
 
-    public void declineEntryBet(Integer playerId, BlindsRound blindsRound) {
+    public void declineEntryBet(Integer playerId, PokerContext context, BlindsRound blindsRound) {
         throw new IllegalStateException();
     }
 
-    public void timeout(BlindsRound context) {
+    public void timeout(PokerContext context, BlindsRound round) {
         throw new IllegalStateException();
     }
 

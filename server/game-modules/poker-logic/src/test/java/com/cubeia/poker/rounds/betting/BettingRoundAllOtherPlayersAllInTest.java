@@ -18,9 +18,11 @@
 package com.cubeia.poker.rounds.betting;
 
 import com.cubeia.poker.GameType;
+import com.cubeia.poker.PokerContext;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.ActionRequestFactory;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.states.ServerAdapterHolder;
 import com.cubeia.poker.variant.texasholdem.TexasHoldemFutureActionsCalculator;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,6 +35,7 @@ import java.util.TreeMap;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 public class BettingRoundAllOtherPlayersAllInTest {
 
@@ -48,20 +51,23 @@ public class BettingRoundAllOtherPlayersAllInTest {
     private PokerPlayer player2;
     @Mock
     private PokerPlayer player3;
+    @Mock
+    private PokerContext context;
+    @Mock
+    private ServerAdapterHolder serverAdapterHolder;
     private BettingRound round;
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        initMocks(this);
 
-        when(telesina.getState()).thenReturn(state);
         SortedMap<Integer, PokerPlayer> seatingMap = new TreeMap<Integer, PokerPlayer>();
         seatingMap.put(0, player1);
         seatingMap.put(1, player2);
         seatingMap.put(2, player3);
         when(state.getCurrentHandSeatingMap()).thenReturn(seatingMap);
 
-        round = new BettingRound(telesina, 0, playerToActCalculator, new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
+        round = new BettingRound(context, serverAdapterHolder, playerToActCalculator, new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
     }
 
     @Test
