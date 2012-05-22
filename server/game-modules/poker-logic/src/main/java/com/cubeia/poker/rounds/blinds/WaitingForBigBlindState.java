@@ -59,9 +59,9 @@ public class WaitingForBigBlindState extends AbstractBlindsState {
     public void timeout(PokerContext context, BlindsRound round) {
         if (context.isTournamentBlinds()) {
             log.debug("Big blind timeout on tournament table - auto post big blind for player: " + context.getBlindsInfo().getBigBlindPlayerId());
-            bigBlind(context.getBlindsInfo().getBigBlindPlayerId(), context, round);
+            bigBlind(round.getBlindsInfo().getBigBlindPlayerId(), context, round);
         } else {
-            int bigBlind = context.getBlindsInfo().getBigBlindPlayerId();
+            int bigBlind = round.getBlindsInfo().getBigBlindPlayerId();
             PokerPlayer player = context.getPlayerInCurrentHand(bigBlind);
             player.setSitOutStatus(SitOutStatus.MISSED_BIG_BLIND);
             // context.getBlindsInfo().setHasDeadSmallBlind(true);

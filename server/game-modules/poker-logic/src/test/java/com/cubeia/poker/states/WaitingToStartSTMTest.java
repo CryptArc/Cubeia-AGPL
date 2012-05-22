@@ -92,7 +92,7 @@ public class WaitingToStartSTMTest {
         when(context.getPlayersReadyToStartHand(Matchers.<Predicate<PokerPlayer>>any())).thenReturn(players);
         when(context.getSeatedPlayers()).thenReturn(players);
 
-        stateUnderTest.timeout();
+        stateUnderTest.startHand();
 
         verify(serverAdapter).notifyPlayerBalance(player1);
         verify(serverAdapter).notifyPlayerBalance(player2);
