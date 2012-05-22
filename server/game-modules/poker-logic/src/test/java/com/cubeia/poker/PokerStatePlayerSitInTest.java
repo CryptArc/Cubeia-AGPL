@@ -12,6 +12,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.Map;
 
 import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 public class PokerStatePlayerSitInTest {
 
@@ -24,11 +25,11 @@ public class PokerStatePlayerSitInTest {
 
     @Before
     public void setup() {
-        MockitoAnnotations.initMocks(this);
+        initMocks(this);
 
         state = new PokerState();
-        state.serverAdapter = serverAdapter;
         state.init(gameType, null);
+        state.setServerAdapter(serverAdapter);
     }
 
     @SuppressWarnings("unchecked")

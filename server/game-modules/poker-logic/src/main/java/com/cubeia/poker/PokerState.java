@@ -60,8 +60,7 @@ public class PokerState implements Serializable, IPokerState {
      * declared transient, so if you serialize the game state you will need to
      * reset the server adapter.
      */
-    @VisibleForTesting
-    protected transient ServerAdapter serverAdapter;
+    private transient ServerAdapter serverAdapter;
 
     private ServerAdapterHolder serverAdapterHolder = new ServerAdapterHolder();
 
@@ -198,12 +197,6 @@ public class PokerState implements Serializable, IPokerState {
     }
 
     @VisibleForTesting
-    protected void resetValuesAtStartOfHand() {
-
-        pokerContext.resetValuesAtStartOfHand();
-    }
-
-    @VisibleForTesting
     protected void saveStartingBalances() {
         pokerContext.saveStartingBalances();
     }
@@ -219,10 +212,6 @@ public class PokerState implements Serializable, IPokerState {
 
     public PokerGameSTM getGameState() {
         return getCurrentState();
-    }
-
-    public void removePlayer(PokerPlayer player) {
-        pokerContext.removePlayer(player);
     }
 
     public void removePlayer(int playerId) {

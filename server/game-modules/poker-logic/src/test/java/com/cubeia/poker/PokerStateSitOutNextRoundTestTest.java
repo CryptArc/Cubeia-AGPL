@@ -27,8 +27,8 @@ public class PokerStateSitOutNextRoundTestTest {
         MockitoAnnotations.initMocks(this);
 
         state = new PokerState();
-        state.serverAdapter = serverAdapter;
         state.init(gameType, null);
+        state.setServerAdapter(serverAdapter);
     }
 
     @SuppressWarnings("unchecked")

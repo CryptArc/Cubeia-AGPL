@@ -166,7 +166,8 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
             public boolean apply(@Nullable PokerPlayer pokerPlayer) {
                 boolean canAffordEntryBet = gameType.canPlayerAffordEntryBet(pokerPlayer, context.getSettings(), false);
                 boolean isSittingIn = !pokerPlayer.isSittingOut();
-                return canAffordEntryBet && isSittingIn;
+                boolean buyInActive = pokerPlayer.isBuyInRequestActive();
+                return canAffordEntryBet && isSittingIn && !buyInActive;
             }
         };
     }

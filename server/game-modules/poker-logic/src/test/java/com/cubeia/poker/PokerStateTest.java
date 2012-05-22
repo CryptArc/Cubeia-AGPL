@@ -1,38 +1,30 @@
 package com.cubeia.poker;
 
-import com.cubeia.poker.action.ActionRequest;
-import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
-import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.rake.RakeInfoContainer;
-import com.cubeia.poker.result.HandResult;
-import com.cubeia.poker.result.Result;
 import com.cubeia.poker.states.ServerAdapterHolder;
 import com.cubeia.poker.states.StateChanger;
-import com.cubeia.poker.states.WaitingToStartSTM;
-import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
-import com.cubeia.poker.variant.telesina.Telesina;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -47,7 +39,7 @@ public class PokerStateTest {
     GameType gameType;
 
     @Mock
-    ServerAdapterHolder serverAdapterHolder;
+    ServerAdapter serverAdapter;
 
     @Mock
     PokerContext context;
@@ -66,7 +58,8 @@ public class PokerStateTest {
         when(settings.getAnteLevel()).thenReturn(anteLevel);
         when(settings.getTiming()).thenReturn(TimingFactory.getRegistry().getDefaultTimingProfile());
         when(gameType.canPlayerAffordEntryBet(Mockito.any(PokerPlayer.class), Mockito.any(PokerSettings.class), Mockito.eq(false))).thenReturn(true);
-        state.serverAdapter = mock(ServerAdapter.class);
+
+        state.setServerAdapter(serverAdapter);
         state.init(gameType, settings);
         state.pokerContext.settings = settings;
     }
@@ -123,8 +116,6 @@ public class PokerStateTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testNotifyPotUpdated() {
-        PokerState state = new PokerState();
-
         state.pokerContext.currentHandPlayerMap = new HashMap<Integer, PokerPlayer>();
         PokerPlayer player0 = mock(PokerPlayer.class);
         when(player0.getId()).thenReturn(1337);
@@ -138,7 +129,6 @@ public class PokerStateTest {
         state.pokerContext.getCurrentHandPlayerMap().put(player2.getId(), player2);
 
         state.pokerContext.potHolder = mock(PotHolder.class);
-        state.serverAdapter = mock(ServerAdapter.class);
 
         Collection<Pot> pots = new ArrayList<Pot>();
         when(state.pokerContext.getPotHolder().getPots()).thenReturn(pots);
@@ -154,13 +144,13 @@ public class PokerStateTest {
         Collection<PotTransition> potTransitions = new ArrayList<PotTransition>();
         state.notifyPotAndRakeUpdates(potTransitions);
 
-        verify(state.serverAdapter).notifyPotUpdates(pots, potTransitions);
-        verify(state.serverAdapter).notifyPlayerBalance(player0);
-        verify(state.serverAdapter).notifyPlayerBalance(player1);
-        verify(state.serverAdapter).notifyPlayerBalance(player2);
+        verify(serverAdapter).notifyPotUpdates(pots, potTransitions);
+        verify(serverAdapter).notifyPlayerBalance(player0);
+        verify(serverAdapter).notifyPlayerBalance(player1);
+        verify(serverAdapter).notifyPlayerBalance(player2);
 
         ArgumentCaptor<RakeInfoContainer> rakeInfoCaptor = ArgumentCaptor.forClass(RakeInfoContainer.class);
-        verify(state.serverAdapter).notifyRakeInfo(rakeInfoCaptor.capture());
+        verify(serverAdapter).notifyRakeInfo(rakeInfoCaptor.capture());
         RakeInfoContainer rakeInfoContainer1 = rakeInfoCaptor.getValue();
         assertThat(rakeInfoContainer1, is(rakeInfoContainer));
 
@@ -168,7 +158,6 @@ public class PokerStateTest {
 
     @Test
     public void testGetTotalPotSize() {
-        PokerState state = new PokerState();
         state.pokerContext.potHolder = mock(PotHolder.class);
 
         PokerPlayer player0 = mock(PokerPlayer.class);
@@ -204,88 +193,22 @@ public class PokerStateTest {
 
     @Test
     public void testPotsClearedAtStartOfHand() {
-        state.serverAdapter = mock(ServerAdapter.class);
-        state.pokerContext.playerMap = new HashMap<Integer, PokerPlayer>();
-        RakeSettings rakeSettings = TestUtils.createOnePercentRakeSettings();
-        PokerSettings settings = new PokerSettings(0, 0, 0, 0, null, 4, null, rakeSettings, null);
-        state.pokerContext.settings = settings;
-        PokerPlayer player1 = mock(PokerPlayer.class);
-        PokerPlayer player2 = mock(PokerPlayer.class);
-        state.pokerContext.playerMap.put(1, player1);
-        state.pokerContext.playerMap.put(2, player2);
-        when(player1.isSittingOut()).thenReturn(false);
-        when(player2.isSittingOut()).thenReturn(false);
+        PokerPlayer player1 = mockPlayer(1);
+        PokerPlayer player2 = mockPlayer(2);
 
         assertThat(state.pokerContext.getPotHolder(), nullValue());
+        state.addPlayer(player1);
+        state.addPlayer(player2);
         state.startHand();
         assertThat(state.pokerContext.getPotHolder(), notNullValue());
     }
 
-    @Test
-    public void testResetValuesAtStartOfHand() {
-        PokerState state = new PokerState();
-        PotHolder oldPotHolder = new PotHolder(null);
-        state.pokerContext.potHolder = oldPotHolder;
-        RakeSettings rakeSettings = TestUtils.createOnePercentRakeSettings();
-        PokerSettings settings = new PokerSettings(0, 0, 0, 0, null, 4, null, rakeSettings, null);
-        state.pokerContext.settings = settings;
-
-        state.pokerContext.playerMap = new HashMap<Integer, PokerPlayer>();
-        PokerPlayer player1 = mock(PokerPlayer.class);
-        PokerPlayer player2 = mock(PokerPlayer.class);
-        state.pokerContext.playerMap.put(1, player1);
-        state.pokerContext.playerMap.put(2, player2);
-
-        state.resetValuesAtStartOfHand();
-
-        verify(player1).resetBeforeNewHand();
-        verify(player2).resetBeforeNewHand();
-        assertThat(state.pokerContext.getPotHolder(), not(sameInstance(oldPotHolder)));
-        verify(gameType).prepareNewHand();
-    }
-
-    @Test
-    public void testNotifyBalancesAsStartOfHand() {
-        PotHolder oldPotHolder = new PotHolder(null);
-        state.pokerContext.potHolder = oldPotHolder;
-        RakeSettings rakeSettings = TestUtils.createOnePercentRakeSettings();
-        PokerSettings settings = new PokerSettings(0, 0, 0, 0, null, 4, null, rakeSettings, null);
-        state.pokerContext.settings = settings;
-
-        ServerAdapter serverAdapter = mock(ServerAdapter.class);
-        state.serverAdapter = serverAdapter;
-
-        state.pokerContext.playerMap = new HashMap<Integer, PokerPlayer>();
-        PokerPlayer player1 = mock(PokerPlayer.class);
-        PokerPlayer player2 = mock(PokerPlayer.class);
-
-        int player1Id = 1337;
-        int player2Id = 666;
-
-        when(player1.getBalanceNotInHand()).thenReturn(100L);
-        when(player2.getBalanceNotInHand()).thenReturn(100L);
-
-        when(player1.getBalance()).thenReturn(10L);
-        when(player2.getBalance()).thenReturn(10L);
-
-        when(player1.getId()).thenReturn(player1Id);
-        when(player2.getId()).thenReturn(player2Id);
-
-        when(player1.isSittingOut()).thenReturn(false);
-        when(player2.isSittingOut()).thenReturn(false);
-
-        state.pokerContext.playerMap.put(player1Id, player1);
-        state.pokerContext.playerMap.put(player2Id, player2);
-
-        state.pokerContext.seatingMap.put(0, player1);
-        state.pokerContext.seatingMap.put(1, player2);
-
-        state.startHand();
-
-        verify(state.serverAdapter).notifyPlayerBalance(player1);
-        verify(state.serverAdapter).notifyPlayerBalance(player2);
-
-
+    private PokerPlayer mockPlayer(int id) {
+        PokerPlayer player = mock(PokerPlayer.class);
+        when(player.getId()).thenReturn(id);
+        when(player.getSeatId()).thenReturn(id);
+        when(player.isSittingOut()).thenReturn(false);
+        return player;
     }
 
     @Test
@@ -295,9 +218,6 @@ public class PokerStateTest {
         RakeSettings rakeSettings = TestUtils.createOnePercentRakeSettings();
         PokerSettings settings = new PokerSettings(0, 0, 0, 0, null, 4, null, rakeSettings, null);
         state.pokerContext.settings = settings;
-
-        ServerAdapter serverAdapter = mock(ServerAdapter.class);
-        state.serverAdapter = serverAdapter;
 
         state.pokerContext.playerMap = new HashMap<Integer, PokerPlayer>();
         PokerPlayer player1 = mock(PokerPlayer.class);

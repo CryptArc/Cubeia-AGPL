@@ -12,6 +12,8 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.*;
@@ -35,27 +37,28 @@ public class WaitingToStartSTMTest {
     private GameType gameType;
 
     private WaitingToStartSTM stateUnderTest;
+    private PokerPlayer player1;
+    private PokerPlayer player2;
 
     @Before
     public void setup() {
         initMocks(this);
-        stateUnderTest = new WaitingToStartSTM(null, context, serverAdapterHolder, stateChanger);
+        stateUnderTest = new WaitingToStartSTM(gameType, context, serverAdapterHolder, stateChanger);
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
+        when(context.isTournamentTable()).thenReturn(false);
+        player1 = mock(PokerPlayer.class);
+        player2 = mock(PokerPlayer.class);
     }
     
     @Test
     public void testTimeout() {
-        when(context.isTournamentTable()).thenReturn(false);
-        PokerPlayer player1 = mock(PokerPlayer.class);
-        PokerPlayer player2 = mock(PokerPlayer.class);
-        when(context.getPlayersReadyToStartHand(Matchers.<Predicate<PokerPlayer>>any())).thenReturn(asList(player1, player2));
-
-        ArrayList<PokerPlayer> seatedPlayers = new ArrayList<PokerPlayer>();
-        when(context.getSeatedPlayers()).thenReturn(seatedPlayers);
+        List<PokerPlayer> players = asList(player1, player2);
+        when(context.getPlayersReadyToStartHand(Matchers.<Predicate<PokerPlayer>>any())).thenReturn(players);
+        when(context.getSeatedPlayers()).thenReturn(players);
 
         stateUnderTest.timeout();
 
-        verify(serverAdapter).performPendingBuyIns(seatedPlayers);
+        verify(serverAdapter).performPendingBuyIns(players);
         verify(context).setHandFinished(false);
 //        verify(stateUnderTest).setPlayersWithoutMoneyAsSittingOut(); TODO. Test this in another way?
         verify(context).commitPendingBalances();
@@ -66,7 +69,6 @@ public class WaitingToStartSTMTest {
 
     @Test
     public void testTimeoutTooFewPlayers() {
-        when(context.isTournamentTable()).thenReturn(false);
         PokerPlayer player = mock(PokerPlayer.class);
         when(context.getPlayersReadyToStartHand(Matchers.<Predicate<PokerPlayer>>any())).thenReturn(asList(player));
         ArrayList<PokerPlayer> seatedPlayers = new ArrayList<PokerPlayer>();
@@ -82,6 +84,18 @@ public class WaitingToStartSTMTest {
         verify(serverAdapter).cleanupPlayers(Matchers.<SitoutCalculator>any());
 
         verify(gameType, never()).startHand();
+    }
+
+    @Test
+    public void testNotifyBalanceAtStartOfHand() {
+        List<PokerPlayer> players = asList(player1, player2);
+        when(context.getPlayersReadyToStartHand(Matchers.<Predicate<PokerPlayer>>any())).thenReturn(players);
+        when(context.getSeatedPlayers()).thenReturn(players);
+
+        stateUnderTest.timeout();
+
+        verify(serverAdapter).notifyPlayerBalance(player1);
+        verify(serverAdapter).notifyPlayerBalance(player2);
     }
 
 }
