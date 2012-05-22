@@ -103,8 +103,7 @@ public class BettingRound implements Round, BettingRoundContext {
 
     private void initBettingRound(int seatIdToStartBettingAfter) {
         log.debug("Init new betting round");
-        SortedMap<Integer, PokerPlayer> seatingMap = context.getCurrentHandSeatingMap();
-        for (PokerPlayer p : seatingMap.values()) {
+        for (PokerPlayer p : context.getPlayersInHand()) {
             /*
                 * Initialize the highBet to the highest bet stack of the incoming players.
                 * This will be zero on all rounds except when blinds have been posted.
@@ -251,7 +250,7 @@ public class BettingRound implements Round, BettingRoundContext {
         if (nonFoldedPlayersLeftInRound.size() < 2) {
             return true;
         }
-        for (PokerPlayer p : context.getCurrentHandSeatingMap().values()) {
+        for (PokerPlayer p : context.getPlayersInHand()) {
             if (!p.hasFolded() && !p.hasActed()) {
                 return false;
             }
@@ -469,7 +468,7 @@ public class BettingRound implements Round, BettingRoundContext {
 
     @Override
     public boolean isWaitingForPlayer(int playerId) {
-        return playerToAct == null ? false : playerId == playerToAct;
+        return playerToAct != null && playerId == playerToAct;
     }
     
     private ServerAdapter getServerAdapter() {

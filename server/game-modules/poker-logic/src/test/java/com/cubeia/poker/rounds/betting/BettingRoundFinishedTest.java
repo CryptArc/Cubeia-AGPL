@@ -20,8 +20,10 @@ package com.cubeia.poker.rounds.betting;
 import com.cubeia.poker.GameType;
 import com.cubeia.poker.PokerContext;
 import com.cubeia.poker.action.ActionRequestFactory;
+import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.states.ServerAdapterHolder;
+import com.cubeia.poker.timing.impl.DefaultTimingProfile;
 import com.cubeia.poker.variant.texasholdem.TexasHoldemFutureActionsCalculator;
 import com.google.common.base.Predicate;
 import org.junit.Before;
@@ -54,6 +56,8 @@ public class BettingRoundFinishedTest {
     private PokerPlayer player3;
     @Mock
     private ServerAdapterHolder serverAdapterHolder;
+    @Mock
+    private ServerAdapter serverAdapter;
 
     private BettingRound round;
     
@@ -65,7 +69,9 @@ public class BettingRoundFinishedTest {
         seatingMap.put(0, player1);
         seatingMap.put(1, player2);
         seatingMap.put(2, player3);
-        when(context.getCurrentHandSeatingMap()).thenReturn(seatingMap);
+        when(context.getPlayersInHand()).thenReturn(seatingMap.values());
+        when(context.getTimingProfile()).thenReturn(new DefaultTimingProfile());
+        when(serverAdapterHolder.get()).thenReturn(serverAdapter);
 
         round = new BettingRound(0, context, serverAdapterHolder, playerToActCalculator, new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
     }
