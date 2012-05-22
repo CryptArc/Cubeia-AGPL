@@ -25,7 +25,6 @@ import com.cubeia.poker.action.*;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.PotHolder;
-import com.cubeia.poker.rake.LinearRakeWithLimitCalculator;
 import com.cubeia.poker.rake.RakeCalculator;
 import com.cubeia.poker.states.ServerAdapterHolder;
 import com.cubeia.poker.timing.impl.DefaultTimingProfile;
@@ -34,7 +33,6 @@ import junit.framework.TestCase;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;

@@ -21,19 +21,31 @@ import com.cubeia.poker.*;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
+import com.cubeia.poker.adapter.ServerAdapter;
+import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
+import com.cubeia.poker.pot.Pot;
+import com.cubeia.poker.pot.PotHolder;
+import com.cubeia.poker.rake.LinearRakeWithLimitCalculator;
+import com.cubeia.poker.rake.RakeCalculator;
 import com.cubeia.poker.states.ServerAdapterHolder;
+import com.cubeia.poker.timing.impl.DefaultTimingProfile;
+import com.google.common.base.Predicate;
 import junit.framework.TestCase;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.Mockito;
 
+import javax.annotation.Nullable;
+import java.util.SortedMap;
 import java.util.Stack;
 
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class BlindsRoundTest extends TestCase implements TestListener {
-
-    private MockGame game;
+public class BlindsRoundTest extends TestCase {
 
     private BlindsRound round;
 
@@ -41,24 +53,44 @@ public class BlindsRoundTest extends TestCase implements TestListener {
 
     private Stack<ActionRequest> requestedActions = new Stack<ActionRequest>();
 
-    @Mock
     private PokerContext context;
 
     @Mock
-    private ServerAdapterHolder serverAdapter;
+    private ServerAdapterHolder serverAdapterHolder;
+
+    @Mock
+    private PokerSettings settings;
+
+    @Mock
+    private ServerAdapter serverAdapter;
+
+    @Mock
+    private RakeCalculator rakeCalculator;
+
+    private Predicate<PokerPlayer> allGood = new Predicate<PokerPlayer>() {
+        @Override
+        public boolean apply(@Nullable PokerPlayer pokerPlayer) {
+            return true;
+        }
+    };
+
+    private ArgumentCaptor<ActionRequest> captor;
 
     @Override
     protected void setUp() throws Exception {
         initMocks(this);
-        game = new MockGame();
-        game.listeners.add(this);
-        round = new BlindsRound(context, serverAdapter);
+        when(serverAdapterHolder.get()).thenReturn(serverAdapter);
+        when(settings.getTiming()).thenReturn(new DefaultTimingProfile());
+        context = new PokerContext(settings);
+        context.setPotHolder(new PotHolder(rakeCalculator));
+        captor = ArgumentCaptor.forClass(ActionRequest.class);
     }
 
     public void testBasicBlinds() throws Exception {
         // Seat three players.
         MockPlayer[] p = TestUtils.createMockPlayers(3);
-        game.addPlayers(p);
+        addPlayers(p);
+        round = new BlindsRound(context, serverAdapterHolder);
         
 
         // Check that the next player gets the small blind.
@@ -77,10 +109,19 @@ public class BlindsRoundTest extends TestCase implements TestListener {
         assertTrue(round.isFinished());
     }
 
+    private void addPlayers(MockPlayer[] p) {
+        SortedMap<Integer,PokerPlayer> sortedMap = TestUtils.asSeatingMap(p);
+        for (PokerPlayer player : p) {
+            context.addPlayer(player);
+        }
+        context.prepareReadyPlayers(allGood);
+    }
+
     public void testHeadsUpBlinds() throws Exception {
         // Seat two players.
         MockPlayer[] p = TestUtils.createMockPlayers(2);
-        game.addPlayers(p);
+        addPlayers(p);
+        round = new BlindsRound(context, serverAdapterHolder);
         
 
         // Check that the dealer gets the small blind.
@@ -102,13 +143,13 @@ public class BlindsRoundTest extends TestCase implements TestListener {
     public void testHeadsUpBlindsSecondHand() throws Exception {
         // Seat two players.
         MockPlayer[] p = TestUtils.createMockPlayers(2);
-        game.addPlayers(p);
-        
+        addPlayers(p);
+        round = new BlindsRound(context, serverAdapterHolder);
 
         act(p[0], PokerActionType.SMALL_BLIND);
         act(p[1], PokerActionType.BIG_BLIND);
-        game.blindsInfo = round.getBlindsInfo();
-        round = new BlindsRound(context, serverAdapter);
+        context.setBlindsInfo(round.getBlindsInfo());
+        round = new BlindsRound(context, serverAdapterHolder);
 
         verifyAndAct(p[1], PokerActionType.SMALL_BLIND);
         verifyAndAct(p[0], PokerActionType.BIG_BLIND);
@@ -117,11 +158,11 @@ public class BlindsRoundTest extends TestCase implements TestListener {
 
     public void testMoveFromHeadsUpToNonHeadsUp() throws Exception {
         MockPlayer[] p = TestUtils.createMockPlayers(3);
-        game.addPlayers(p);
+        addPlayers(p);
         setPreviousBlindsInfo(0, 0, 1);
         p[0].setHasPostedEntryBet(true);
         p[1].setHasPostedEntryBet(true);
-        
+        round = new BlindsRound(context, serverAdapterHolder);
 
         verifyAndAct(p[1], PokerActionType.SMALL_BLIND);
         verifyAndAct(p[2], PokerActionType.BIG_BLIND);
@@ -130,11 +171,11 @@ public class BlindsRoundTest extends TestCase implements TestListener {
 
     public void testMoveFromNonHeadsUpToHeadsUp() throws Exception {
         MockPlayer[] p = TestUtils.createMockPlayers(2);
-        game.addPlayers(p);
+        addPlayers(p);
         setPreviousBlindsInfo(0, 1, 2);
         p[0].setHasPostedEntryBet(true);
         p[1].setHasPostedEntryBet(true);
-        
+        round = new BlindsRound(context, serverAdapterHolder);
 
         verifyAndAct(p[1], PokerActionType.SMALL_BLIND);
         verifyAndAct(p[0], PokerActionType.BIG_BLIND);
@@ -142,11 +183,11 @@ public class BlindsRoundTest extends TestCase implements TestListener {
 
     public void testMoveFromNonHeadsUpToHeadsUpSbLeaves() throws Exception {
         MockPlayer[] p = TestUtils.createMockPlayers(2);
-        game.addPlayers(p);
+        addPlayers(p);
         setPreviousBlindsInfo(1, 2, 0);
         p[0].setHasPostedEntryBet(true);
         p[1].setHasPostedEntryBet(true);
-        
+        round = new BlindsRound(context, serverAdapterHolder);
 
         verifyAndAct(p[0], PokerActionType.SMALL_BLIND);
         verifyAndAct(p[1], PokerActionType.BIG_BLIND);
@@ -160,10 +201,10 @@ public class BlindsRoundTest extends TestCase implements TestListener {
         p2.setBalance(10000);
         p[1] = p2;
 
-        game.addPlayers(p);
+        addPlayers(p);
         setPreviousBlindsInfo(0, 0, 1);
         p[0].setHasPostedEntryBet(true);
-        
+        round = new BlindsRound(context, serverAdapterHolder);
 
         verifyAndAct(p[1], PokerActionType.BIG_BLIND);
         assertEquals(1, round.getBlindsInfo().getDealerButtonSeatId());
@@ -175,8 +216,8 @@ public class BlindsRoundTest extends TestCase implements TestListener {
 
     public void testOutOfOrderActing() throws Exception {
         MockPlayer[] p = TestUtils.createMockPlayers(3);
-        game.addPlayers(p);
-        
+        addPlayers(p);
+        round = new BlindsRound(context, serverAdapterHolder);
 
         // Wrong player posts small blind.
         try {
@@ -230,18 +271,18 @@ public class BlindsRoundTest extends TestCase implements TestListener {
     public void testDealerButtonPosition() throws Exception {
         // Seat three players.
         MockPlayer[] p = TestUtils.createMockPlayers(3);
-        game.addPlayers(p);
+        addPlayers(p);
+        round = new BlindsRound(context, serverAdapterHolder);
         
-
         assertEquals(0, round.getBlindsInfo().getDealerButtonSeatId());
     }
 
     public void testSecondHandsDealerButtonPosition() throws Exception {
         MockPlayer[] p = TestUtils.createMockPlayers(3);
         p[0].setHasPostedEntryBet(true);
-        game.addPlayers(p);
-
+        addPlayers(p);
         setPreviousBlindsInfo(0, 1, 2);
+        round = new BlindsRound(context, serverAdapterHolder);
 
         
         assertEquals(1, round.getBlindsInfo().getDealerButtonSeatId());
@@ -249,8 +290,8 @@ public class BlindsRoundTest extends TestCase implements TestListener {
 
     public void testDeclineSmallBlindWithTwoPlayersEndsHand() {
         MockPlayer[] p = TestUtils.createMockPlayers(2);
-        game.addPlayers(p);
-        
+        addPlayers(p);
+        round = new BlindsRound(context, serverAdapterHolder);
 
         assertOptionEnabled(PokerActionType.DECLINE_ENTRY_BET, p[0]);
         verifyAndAct(p[0], PokerActionType.DECLINE_ENTRY_BET);
@@ -259,8 +300,8 @@ public class BlindsRoundTest extends TestCase implements TestListener {
 
     public void testDeclineSmallBlind() {
         MockPlayer[] p = TestUtils.createMockPlayers(3);
-        game.addPlayers(p);
-        
+        addPlayers(p);
+        round = new BlindsRound(context, serverAdapterHolder);
 
         assertOptionEnabled(PokerActionType.DECLINE_ENTRY_BET, p[1]);
         verifyAndAct(p[1], PokerActionType.DECLINE_ENTRY_BET);
@@ -271,8 +312,8 @@ public class BlindsRoundTest extends TestCase implements TestListener {
 
     public void testTimeout() {
         MockPlayer[] p = TestUtils.createMockPlayers(2);
-        game.addPlayers(p);
-        
+        addPlayers(p);
+        round = new BlindsRound(context, serverAdapterHolder);
 
         round.timeout();
         assertTrue(round.isCanceled());
@@ -280,8 +321,8 @@ public class BlindsRoundTest extends TestCase implements TestListener {
 
     public void testTimeoutBigBlind() {
         MockPlayer[] p = TestUtils.createMockPlayers(2);
-        game.addPlayers(p);
-        
+        addPlayers(p);
+        round = new BlindsRound(context, serverAdapterHolder);
 
         verifyAndAct(p[0], PokerActionType.SMALL_BLIND);
         round.timeout();
@@ -290,8 +331,8 @@ public class BlindsRoundTest extends TestCase implements TestListener {
 
     public void testDenyBigBlind() {
         MockPlayer[] p = TestUtils.createMockPlayers(2);
-        game.addPlayers(p);
-        
+        addPlayers(p);
+        round = new BlindsRound(context, serverAdapterHolder);
 
         verifyAndAct(p[0], PokerActionType.SMALL_BLIND);
         verifyAndAct(p[1], PokerActionType.DECLINE_ENTRY_BET);
@@ -300,8 +341,8 @@ public class BlindsRoundTest extends TestCase implements TestListener {
 
     public void testPlayerAfterDeniedBBGetsAskedForBB() {
         MockPlayer[] p = TestUtils.createMockPlayers(3);
-        game.addPlayers(p);
-        
+        addPlayers(p);
+        round = new BlindsRound(context, serverAdapterHolder);
 
         act(p[1], PokerActionType.SMALL_BLIND);
         act(p[2], PokerActionType.DECLINE_ENTRY_BET);
@@ -311,8 +352,8 @@ public class BlindsRoundTest extends TestCase implements TestListener {
 
     public void testSamePlayerDeclinesBBThenPostsBB() {
         MockPlayer[] p = TestUtils.createMockPlayers(3);
-        game.addPlayers(p);
-        
+        addPlayers(p);
+        round = new BlindsRound(context, serverAdapterHolder);
 
         act(p[1], PokerActionType.SMALL_BLIND);
         act(p[2], PokerActionType.DECLINE_ENTRY_BET);
@@ -325,8 +366,8 @@ public class BlindsRoundTest extends TestCase implements TestListener {
 
     public void testNoMoreBigBlinds() {
         MockPlayer[] p = TestUtils.createMockPlayers(3);
-        game.addPlayers(p);
-        
+        addPlayers(p);
+        round = new BlindsRound(context, serverAdapterHolder);
 
         act(p[1], PokerActionType.SMALL_BLIND);
         act(p[2], PokerActionType.DECLINE_ENTRY_BET);
@@ -336,49 +377,61 @@ public class BlindsRoundTest extends TestCase implements TestListener {
 
     public void testSittingOutPlayerIsNotAskedToPostSmallBlind() {
         MockPlayer[] p = TestUtils.createMockPlayers(4);
-        game.addPlayers(p);
-
+        addPlayers(p);
         p[1].setSitOutStatus(SitOutStatus.MISSED_BIG_BLIND);
-        
+        round = new BlindsRound(context, serverAdapterHolder);
+
+        requestedAction = getRequestedAction();
         assertEquals(p[2].getId(), requestedAction.getPlayerId());
+    }
+
+    private ActionRequest getRequestedAction() {
+        verify(serverAdapter).requestAction(captor.capture());
+        return captor.getValue();
     }
 
     public void testSittingOutPlayerIsNotAskedToPostBigBlind() {
         MockPlayer[] p = TestUtils.createMockPlayers(4);
-        game.addPlayers(p);
+        addPlayers(p);
 
         p[2].setSitOutStatus(SitOutStatus.MISSED_BIG_BLIND);
+        round = new BlindsRound(context, serverAdapterHolder);
         
         act(p[1], PokerActionType.SMALL_BLIND);
+        requestedAction = getRequestedAction();
         assertEquals(p[3].getId(), requestedAction.getPlayerId());
     }
 
     public void testSittingOutPlayerIsNotAskedToPostBigBlindAfterInit() {
         MockPlayer[] p = TestUtils.createMockPlayers(4);
-        game.addPlayers(p);
+        addPlayers(p);
 
         p[3].setSitOutStatus(SitOutStatus.MISSED_BIG_BLIND);
+        round = new BlindsRound(context, serverAdapterHolder);
         
         act(p[1], PokerActionType.SMALL_BLIND);
         act(p[2], PokerActionType.DECLINE_ENTRY_BET);
+        requestedAction = getRequestedAction();
         assertEquals(p[0].getId(), requestedAction.getPlayerId());
     }
 
     public void testConsiderHandFirstOnTableWhenNoPlayersHavePosted() {
         MockPlayer[] p = TestUtils.createMockPlayers(4);
-        game.addPlayers(p);
+        addPlayers(p);
         setPreviousBlindsInfo(0, 1, 2);
+        round = new BlindsRound(context, serverAdapterHolder);
         
         assertEquals(0, round.getBlindsInfo().getDealerButtonSeatId());
     }
 
     public void testNonEnteredPlayerCannotPostSmallBlind() {
         MockPlayer[] p = TestUtils.createMockPlayers(4);
-        game.addPlayers(p);
+        addPlayers(p);
         setPreviousBlindsInfo(0, 1, 2);
         p[0].setHasPostedEntryBet(true);
-        
+        round = new BlindsRound(context, serverAdapterHolder);
 
+        requestedAction = getRequestedAction();
         // Small blind is on seat 1, but seat 2 has not posted the entry bet, so he should not be asked to post small blind.
         assertTrue(requestedAction.isOptionEnabled(PokerActionType.BIG_BLIND));
         assertEquals(103, requestedAction.getPlayerId());
@@ -386,7 +439,7 @@ public class BlindsRoundTest extends TestCase implements TestListener {
 
     public void testEntryBet() {
         MockPlayer[] p = TestUtils.createMockPlayers(4);
-        game.addPlayers(p);
+        addPlayers(p);
         setPreviousBlindsInfo(0, 1, 2);
 
         // Everyone has posted the entry bet, except player 0.
@@ -394,18 +447,19 @@ public class BlindsRoundTest extends TestCase implements TestListener {
         p[1].setHasPostedEntryBet(true);
         p[2].setHasPostedEntryBet(true);
         p[3].setHasPostedEntryBet(true);
-
+        round = new BlindsRound(context, serverAdapterHolder);
         
 
         act(p[2], PokerActionType.SMALL_BLIND);
         act(p[3], PokerActionType.BIG_BLIND);
+        requestedAction = getRequestedAction();
         assertEquals(100, requestedAction.getPlayerId());
         assertTrue(requestedAction.isOptionEnabled(PokerActionType.BIG_BLIND));
     }
 
     public void testDeclineEntryBet() {
         MockPlayer[] p = TestUtils.createMockPlayers(4);
-        game.addPlayers(p);
+        addPlayers(p);
         setPreviousBlindsInfo(0, 1, 2);
 
         // Everyone has posted the entry bet, except player 0.
@@ -413,7 +467,7 @@ public class BlindsRoundTest extends TestCase implements TestListener {
         p[1].setHasPostedEntryBet(true);
         p[2].setHasPostedEntryBet(true);
         p[3].setHasPostedEntryBet(true);
-
+        round = new BlindsRound(context, serverAdapterHolder);
         
 
         act(p[2], PokerActionType.SMALL_BLIND);
@@ -425,7 +479,7 @@ public class BlindsRoundTest extends TestCase implements TestListener {
 
     public void testEntryBetTimeout() {
         MockPlayer[] p = TestUtils.createMockPlayers(4);
-        game.addPlayers(p);
+        addPlayers(p);
         setPreviousBlindsInfo(0, 1, 2);
 
         // Everyone has posted the entry bet, except player 0.
@@ -433,7 +487,7 @@ public class BlindsRoundTest extends TestCase implements TestListener {
         p[1].setHasPostedEntryBet(true);
         p[2].setHasPostedEntryBet(true);
         p[3].setHasPostedEntryBet(true);
-
+        round = new BlindsRound(context, serverAdapterHolder);
         
 
         act(p[2], PokerActionType.SMALL_BLIND);
@@ -444,7 +498,7 @@ public class BlindsRoundTest extends TestCase implements TestListener {
 
     public void testTwoEntryBets() {
         MockPlayer[] p = TestUtils.createMockPlayers(6);
-        game.addPlayers(p);
+        addPlayers(p);
         setPreviousBlindsInfo(0, 1, 2);
 
         // Everyone has posted the entry bet, except player 4 and 5.
@@ -454,11 +508,14 @@ public class BlindsRoundTest extends TestCase implements TestListener {
         p[3].setHasPostedEntryBet(true);
         p[4].setHasPostedEntryBet(false);
         p[5].setHasPostedEntryBet(false);
+        round = new BlindsRound(context, serverAdapterHolder);
 
-        
-
+        requestedAction =  getRequestedAction();
+        System.out.println("1" + captor.getValue());
         act(p[2], PokerActionType.SMALL_BLIND);
+
         act(p[3], PokerActionType.BIG_BLIND);
+        System.out.println("2" + captor.getValue());
         assertEquals(104, requestedAction.getPlayerId());
         assertTrue(requestedAction.isOptionEnabled(PokerActionType.BIG_BLIND));
         act(p[4], PokerActionType.BIG_BLIND);
@@ -470,7 +527,7 @@ public class BlindsRoundTest extends TestCase implements TestListener {
 
     public void testTwoEntryBetDeclines() {
         MockPlayer[] p = TestUtils.createMockPlayers(6);
-        game.addPlayers(p);
+        addPlayers(p);
         setPreviousBlindsInfo(0, 1, 2);
 
         // Everyone has posted the entry bet, except player 4 and 5.
@@ -480,8 +537,7 @@ public class BlindsRoundTest extends TestCase implements TestListener {
         p[3].setHasPostedEntryBet(true);
         p[4].setHasPostedEntryBet(false);
         p[5].setHasPostedEntryBet(false);
-
-        
+        round = new BlindsRound(context, serverAdapterHolder);
 
         act(p[2], PokerActionType.SMALL_BLIND);
         act(p[3], PokerActionType.BIG_BLIND);
@@ -492,7 +548,7 @@ public class BlindsRoundTest extends TestCase implements TestListener {
 
     public void testEntryBetOutOfTurn() {
         MockPlayer[] p = TestUtils.createMockPlayers(6);
-        game.addPlayers(p);
+        addPlayers(p);
         setPreviousBlindsInfo(0, 1, 2);
 
         // Everyone has posted the entry bet, except player 4 and 5.
@@ -502,8 +558,7 @@ public class BlindsRoundTest extends TestCase implements TestListener {
         p[3].setHasPostedEntryBet(true);
         p[4].setHasPostedEntryBet(false);
         p[5].setHasPostedEntryBet(false);
-
-        
+        round = new BlindsRound(context, serverAdapterHolder);
 
         act(p[2], PokerActionType.SMALL_BLIND);
         act(p[3], PokerActionType.BIG_BLIND);
@@ -517,7 +572,7 @@ public class BlindsRoundTest extends TestCase implements TestListener {
 
     public void testTwoEntryBetsWithWrap() {
         MockPlayer[] p = TestUtils.createMockPlayers(6);
-        game.addPlayers(p);
+        addPlayers(p);
         setPreviousBlindsInfo(1, 2, 3);
 
         // Everyone has posted the entry bet, except player 5 and 1.
@@ -527,8 +582,7 @@ public class BlindsRoundTest extends TestCase implements TestListener {
         p[3].setHasPostedEntryBet(true);
         p[4].setHasPostedEntryBet(true);
         p[5].setHasPostedEntryBet(false);
-
-        
+        round = new BlindsRound(context, serverAdapterHolder);
 
         act(p[3], PokerActionType.SMALL_BLIND);
         act(p[4], PokerActionType.BIG_BLIND);
@@ -554,19 +608,17 @@ public class BlindsRoundTest extends TestCase implements TestListener {
         bi.setBigBlindSeatId(bigSeatId);
         bi.setBigBlindPlayerId(bigSeatId + 100);
 
-        game.blindsInfo = bi;
-    }
-
-    public void notifyActionRequested(ActionRequest r) {
-        requestedAction = r;
-        requestedActions.add(r);
+        context.setBlindsInfo(bi);
     }
 
     private void verifyAndAct(MockPlayer player, PokerActionType action) {
-        assertTrue("Player " + player + " should have option: " + action,
-                player.getActionRequest().isOptionEnabled(action));
-        assertTrue(requestedAction.isOptionEnabled(action));
-        assertEquals(player.getId(), requestedAction.getPlayerId());
+//        ArgumentCaptor<ActionRequest> captor = ArgumentCaptor.forClass(ActionRequest.class);
+//        verify(serverAdapter).requestAction(captor.capture());
+//        requestedAction = captor.getValue();
+//        assertTrue("Player " + player + " should have option: " + action,
+//                player.getActionRequest().isOptionEnabled(action));
+//        assertTrue(requestedAction.isOptionEnabled(action));
+//        assertEquals(player.getId(), requestedAction.getPlayerId());
         act(player, action);
     }
 
