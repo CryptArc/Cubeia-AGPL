@@ -20,9 +20,13 @@ package com.cubeia.poker;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.player.PokerPlayer;
+import com.google.common.collect.Maps;
 import org.junit.Ignore;
 
 import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Map;
+import java.util.SortedMap;
 
 @Ignore("not a test")
 public class TestUtils {
@@ -77,5 +81,13 @@ public class TestUtils {
 
     public static RakeSettings createZeroRakeSettings() {
         return new RakeSettings(BigDecimal.ZERO, Long.MAX_VALUE, Long.MAX_VALUE);
+    }
+
+    public static SortedMap<Integer, PokerPlayer> asSeatingMap(PokerPlayer ... players) {
+        SortedMap<Integer, PokerPlayer> seatingMap = Maps.newTreeMap();
+        for (PokerPlayer player : players) {
+            seatingMap.put(player.getSeatId(), player);
+        }
+        return seatingMap;
     }
 }

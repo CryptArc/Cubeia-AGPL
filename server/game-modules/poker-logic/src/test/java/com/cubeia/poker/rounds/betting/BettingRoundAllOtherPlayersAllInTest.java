@@ -21,8 +21,10 @@ import com.cubeia.poker.GameType;
 import com.cubeia.poker.PokerContext;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.ActionRequestFactory;
+import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.states.ServerAdapterHolder;
+import com.cubeia.poker.timing.impl.DefaultTimingProfile;
 import com.cubeia.poker.variant.texasholdem.TexasHoldemFutureActionsCalculator;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,6 +57,9 @@ public class BettingRoundAllOtherPlayersAllInTest {
     private PokerContext context;
     @Mock
     private ServerAdapterHolder serverAdapterHolder;
+    @Mock
+    private ServerAdapter serverAdapter;
+
     private BettingRound round;
 
     @Before
@@ -65,7 +70,9 @@ public class BettingRoundAllOtherPlayersAllInTest {
         seatingMap.put(0, player1);
         seatingMap.put(1, player2);
         seatingMap.put(2, player3);
-        when(state.getCurrentHandSeatingMap()).thenReturn(seatingMap);
+        when(serverAdapterHolder.get()).thenReturn(serverAdapter);
+        when(context.getTimingProfile()).thenReturn(new DefaultTimingProfile());
+        when(context.getCurrentHandSeatingMap()).thenReturn(seatingMap);
 
         round = new BettingRound(0, context, serverAdapterHolder, playerToActCalculator, new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
     }

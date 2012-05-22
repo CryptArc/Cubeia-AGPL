@@ -17,46 +17,68 @@
 
 package com.cubeia.poker.rounds.betting;
 
-import com.cubeia.poker.*;
+import com.cubeia.poker.MockPlayer;
+import com.cubeia.poker.PokerContext;
+import com.cubeia.poker.PokerSettings;
+import com.cubeia.poker.TestUtils;
 import com.cubeia.poker.action.*;
+import com.cubeia.poker.adapter.ServerAdapter;
+import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.pot.PotHolder;
+import com.cubeia.poker.rake.LinearRakeWithLimitCalculator;
+import com.cubeia.poker.rake.RakeCalculator;
 import com.cubeia.poker.states.ServerAdapterHolder;
+import com.cubeia.poker.timing.impl.DefaultTimingProfile;
 import com.cubeia.poker.variant.texasholdem.TexasHoldemFutureActionsCalculator;
 import junit.framework.TestCase;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class AllInTest extends TestCase implements TestListener {
-
-    private ActionRequest requestedAction;
-
-    private MockGame game;
+public class AllInTest extends TestCase  {
 
     private BettingRound round;
 
-    @Mock
     private PokerContext context;
 
     @Mock
-    private ServerAdapterHolder serverAdapter;
+    private PokerSettings settings;
+
+    @Mock
+    private ServerAdapterHolder serverAdapterHolder;
+
+    @Mock
+    private ServerAdapter serverAdapter;
+
+    @Mock
+    private RakeCalculator rakeCalculator;
+
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         initMocks(this);
-        game = new MockGame();
-        game.listeners.add(this);
+
+        when(serverAdapterHolder.get()).thenReturn(serverAdapter);
+        when(settings.getTiming()).thenReturn(new DefaultTimingProfile());
+        context = new PokerContext(settings);
+        context.setPotHolder(new PotHolder(rakeCalculator));
     }
 
     public void testAllInBet() {
         // NOTE: This implies no limit betting.
         MockPlayer[] p = TestUtils.createMockPlayers(2, 500);
+        addPlayers(p);
 
-        game.addPlayers(p);
-        round = new BettingRound(0, context, serverAdapter, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
+        round = new BettingRound(0, context, serverAdapterHolder, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
 
-        PossibleAction bet = requestedAction.getOption(PokerActionType.BET);
+        ArgumentCaptor<ActionRequest> captor = ArgumentCaptor.forClass(ActionRequest.class);
+        verify(serverAdapter).requestAction(captor.capture());
+        PossibleAction bet = captor.getValue().getOption(PokerActionType.BET);
         assertEquals(500, bet.getMaxAmount());
         assertEquals(500, p[1].getBalance());
         act(p[1], PokerActionType.BET, bet.getMaxAmount());
@@ -64,15 +86,19 @@ public class AllInTest extends TestCase implements TestListener {
         assertTrue(p[1].isAllIn());
     }
 
+    private void addPlayers(MockPlayer[] players) {
+        for (PokerPlayer player : players) {
+            context.addPlayer(player);
+            context.getCurrentHandSeatingMap().put(player.getSeatId(), player);
+            context.getCurrentHandPlayerMap().put(player.getId(), player);
+        }
+    }
+
     // HELPERS
     private void act(MockPlayer player, PokerActionType action, long amount) {
         PokerAction a = new PokerAction(player.getId(), action);
         a.setBetAmount(amount);
         round.act(a);
-    }
-
-    public void notifyActionRequested(ActionRequest r) {
-        this.requestedAction = r;
     }
 
 }

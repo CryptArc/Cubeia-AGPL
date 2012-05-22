@@ -116,10 +116,6 @@ public class PokerContext implements Serializable {
         return playerMap.values();
     }
 
-    public Map<Integer, PokerPlayer> getCurrentHandPlayerMap() {
-        return currentHandPlayerMap;
-    }
-
     public PokerPlayer getPlayerInCurrentHand(Integer playerId) {
         return getCurrentHandPlayerMap().get(playerId);
     }
@@ -135,10 +131,6 @@ public class PokerContext implements Serializable {
             throw new IllegalStateException("no current hand seating map when getting player at dealer button");
         }
         return currentHandSeatingMap.get(blindsInfo.getDealerButtonSeatId());
-    }
-
-    public SortedMap<Integer, PokerPlayer> getCurrentHandSeatingMap() {
-        return currentHandSeatingMap;
     }
 
     public void sitOutPlayersMarkedForSitOutNextRound() {
@@ -485,6 +477,14 @@ public class PokerContext implements Serializable {
 
     public Collection<PokerPlayer> getPlayersInHand() {
         return currentHandSeatingMap.values();
+    }
+
+    public Map<Integer, PokerPlayer> getCurrentHandPlayerMap() {
+        return currentHandPlayerMap;
+    }
+
+    public SortedMap<Integer, PokerPlayer> getCurrentHandSeatingMap() {
+        return currentHandSeatingMap;
     }
 
     public void setLastPlayerToBeCalled(PokerPlayer lastPlayerToBeCalled) {
