@@ -8,6 +8,7 @@ import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.states.ServerAdapterHolder;
+import com.cubeia.poker.timing.impl.DefaultTimingProfile;
 import com.cubeia.poker.variant.texasholdem.TexasHoldemFutureActionsCalculator;
 import com.google.common.base.Predicate;
 import org.junit.Before;
@@ -71,6 +72,8 @@ public class BettingRoundInitTest {
         currentHandSeatingMap.put(2, player3);
 
         when(context.getCurrentHandSeatingMap()).thenReturn(currentHandSeatingMap);
+        when(context.getPlayersInHand()).thenReturn(currentHandSeatingMap.values());
+        when(context.getTimingProfile()).thenReturn(new DefaultTimingProfile());
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
         round = new BettingRound(dealerSeatId, context, serverAdapterHolder, playertoActCalculator, actionRequestFactory, new TexasHoldemFutureActionsCalculator());
     }
@@ -86,6 +89,8 @@ public class BettingRoundInitTest {
                 .thenReturn(actionRequest);
         when(player2.getActionRequest()).thenReturn(actionRequest);
 
+        round = new BettingRound(dealerSeatId, context, serverAdapterHolder, playertoActCalculator, actionRequestFactory, new TexasHoldemFutureActionsCalculator());
+
         assertThat(round.playerToAct, is(player2Id));
         verify(player2).setActionRequest(actionRequest);
         verify(serverAdapter).requestAction(actionRequest);
@@ -99,7 +104,7 @@ public class BettingRoundInitTest {
         when(player1.isAllIn()).thenReturn(true);
         when(player3.isAllIn()).thenReturn(true);
 
-        verify(serverAdapter).scheduleTimeout(Matchers.<Long>any());
+        verify(serverAdapter).scheduleTimeout(anyLong());
         assertThat(round.isFinished(), is(true));
     }
 

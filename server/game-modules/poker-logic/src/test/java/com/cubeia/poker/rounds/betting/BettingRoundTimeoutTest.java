@@ -27,6 +27,7 @@ import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.states.ServerAdapterHolder;
+import com.cubeia.poker.timing.impl.DefaultTimingProfile;
 import com.cubeia.poker.variant.texasholdem.TexasHoldemFutureActionsCalculator;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,8 +44,6 @@ public class BettingRoundTimeoutTest {
     @Mock
     private PokerContext context;
     @Mock
-    private PokerState state;
-    @Mock
     private PlayerToActCalculator playerToActCalculator;
     @Mock
     private PokerPlayer player;
@@ -59,22 +58,23 @@ public class BettingRoundTimeoutTest {
     @Before
     public void setUp() throws Exception {
         initMocks(this);
-        round = new BettingRound(0, context, serverAdapterHolder, playerToActCalculator, new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
+        when(context.getTimingProfile()).thenReturn(new DefaultTimingProfile());
+        round = new BettingRound(0, context, serverAdapterHolder, playerToActCalculator, new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
     }
 
     @Test
     public void testMakeDefaultActionAndThenSitOutOnTimeout() {
         int playerId = 1334;
         round.playerToAct = playerId;
-        when(state.getPlayerInCurrentHand(playerId)).thenReturn(player);
+        when(context.getPlayerInCurrentHand(playerId)).thenReturn(player);
         when(player.getId()).thenReturn(playerId);
         when(actionRequest.matches(Mockito.any(PokerAction.class))).thenReturn(true);
         when(player.getActionRequest()).thenReturn(actionRequest);
 
         round.timeout();
 
-        verify(state).playerIsSittingOut(playerId, SitOutStatus.TIMEOUT);
+        verify(context).setSitOutStatus(playerId, SitOutStatus.TIMEOUT);
         verify(serverAdapter).notifyActionPerformed(Mockito.any(PokerAction.class), Mockito.eq(player));
         verify(serverAdapter).notifyPlayerBalance(player);
         verify(player).setHasFolded(true);
