@@ -160,6 +160,11 @@ public abstract class AbstractGameType implements GameType {
         handFinishedListeners.add(handFinishedListener);
     }
 
+    @Override
+    public void removeHandFinishedListener(HandFinishedListener handFinishedListener) {
+        handFinishedListeners.remove(handFinishedListener);
+    }
+
     protected void notifyHandFinished(HandResult handResult, HandEndStatus status) {
         for (HandFinishedListener listener : handFinishedListeners) {
             listener.handFinished(handResult, status);

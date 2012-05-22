@@ -54,6 +54,8 @@ public class BettingRoundInitTest {
 
     private BettingRound round;
 
+    private int dealerSeatId = 0;
+
 
     @Before
     public void setup() {
@@ -70,12 +72,11 @@ public class BettingRoundInitTest {
 
         when(context.getCurrentHandSeatingMap()).thenReturn(currentHandSeatingMap);
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
-        round = new BettingRound(context, serverAdapterHolder, playertoActCalculator, actionRequestFactory, new TexasHoldemFutureActionsCalculator());
+        round = new BettingRound(dealerSeatId, context, serverAdapterHolder, playertoActCalculator, actionRequestFactory, new TexasHoldemFutureActionsCalculator());
     }
 
     @Test
     public void testSimple() {
-        int dealerSeatId = 0;
         when(playertoActCalculator.getFirstPlayerToAct(Mockito.eq(dealerSeatId), Mockito.eq(currentHandSeatingMap),
                 Mockito.anyListOf(Card.class))).thenReturn(player2);
         when(context.getPlayersReadyToStartHand(Matchers.<Predicate<PokerPlayer>>any())).thenReturn(asList(player1, player2, player3));
@@ -92,7 +93,6 @@ public class BettingRoundInitTest {
 
     @Test
     public void testShortcutWhenShowdown() {
-        int dealerSeatId = 0;
         when(playertoActCalculator.getFirstPlayerToAct(Mockito.eq(dealerSeatId), Mockito.eq(currentHandSeatingMap),
                 Mockito.anyListOf(Card.class))).thenReturn(player2);
         when(context.getPlayersReadyToStartHand(Matchers.<Predicate<PokerPlayer>>any())).thenReturn(asList(player1, player2, player3));
@@ -106,7 +106,6 @@ public class BettingRoundInitTest {
     @Test
     @Ignore // This test is incorrect(?), a betting round should not end due to sit outs
     public void testShortcutWhenAllIsSittingOut() {
-        int dealerSeatId = 0;
         when(playertoActCalculator.getFirstPlayerToAct(Mockito.eq(dealerSeatId), Mockito.eq(currentHandSeatingMap),
                 Mockito.anyListOf(Card.class))).thenReturn(player2);
         when(context.isEveryoneSittingOut()).thenReturn(true);

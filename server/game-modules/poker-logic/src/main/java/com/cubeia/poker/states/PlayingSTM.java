@@ -49,6 +49,11 @@ public class PlayingSTM extends AbstractPokerGameSTM implements HandFinishedList
     }
 
     @Override
+    public void exitState() {
+        gameType.removeHandFinishedListener(this);
+    }
+
+    @Override
     public void act(PokerAction action) {
         gameType.act(action);
     }

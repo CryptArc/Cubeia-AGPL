@@ -54,7 +54,7 @@ public class AllInTest extends TestCase implements TestListener {
         MockPlayer[] p = TestUtils.createMockPlayers(2, 500);
 
         game.addPlayers(p);
-        round = new BettingRound(context, serverAdapter, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
+        round = new BettingRound(0, context, serverAdapter, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
 
         PossibleAction bet = requestedAction.getOption(PokerActionType.BET);
         assertEquals(500, bet.getMaxAmount());

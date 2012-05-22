@@ -273,6 +273,7 @@ public class PokerLogicTest extends GuiceTest {
 
         // Assertions
         assertTrue(state.isFinished());
+        assertEquals(chipsInPlay, countChipsAtTable(p));
 
         // Second hand, check that pocket cards have been cleared.
         state.timeout();
@@ -292,6 +293,7 @@ public class PokerLogicTest extends GuiceTest {
         act(p[1], PokerActionType.FOLD);
 
         assertTrue(state.isFinished());
+        assertEquals(chipsInPlay, countChipsAtTable(p));
 
         // Third hand, check that community cards have been cleared.
         state.timeout();

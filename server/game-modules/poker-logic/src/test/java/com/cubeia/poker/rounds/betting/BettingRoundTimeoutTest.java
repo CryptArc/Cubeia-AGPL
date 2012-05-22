@@ -59,7 +59,7 @@ public class BettingRoundTimeoutTest {
     @Before
     public void setUp() throws Exception {
         initMocks(this);
-        round = new BettingRound(context, serverAdapterHolder, playerToActCalculator, new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
+        round = new BettingRound(0, context, serverAdapterHolder, playerToActCalculator, new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
     }
 

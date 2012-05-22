@@ -62,9 +62,14 @@ public interface PokerGameSTM extends Serializable {
     public String getStateDescription();
 
     /**
-     * Invoked when we enter a state.
+     * Invoked when we enter this state.
      */
     public void enterState();
+
+    /**
+     * Invoked when we leave this state.
+     */
+    public void exitState();
 
     /**
      * Checks if the player is currently in a hand.

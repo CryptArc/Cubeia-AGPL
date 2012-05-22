@@ -32,7 +32,7 @@ public class TelesinaRoundFactory {
         ActionRequestFactory actionRequestFactory = new ActionRequestFactory(new NoLimitBetStrategy());
         TelesinaPlayerToActCalculator playerToActCalculator = new TelesinaPlayerToActCalculator(lowestRank);
         TelesinaFutureActionsCalculator futureActionsCalculator = new TelesinaFutureActionsCalculator();
-        return new BettingRound(context, serverAdapterHolder, playerToActCalculator, actionRequestFactory, futureActionsCalculator);
+        return new BettingRound(context.getBlindsInfo().getDealerButtonSeatId(), context, serverAdapterHolder, playerToActCalculator, actionRequestFactory, futureActionsCalculator);
     }
 
     DealExposedPocketCardsRound createDealExposedPocketCardsRound(Telesina telesina) {

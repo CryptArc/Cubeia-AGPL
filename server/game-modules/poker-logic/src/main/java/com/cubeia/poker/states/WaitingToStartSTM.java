@@ -51,7 +51,7 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
     @Override
     public void enterState() {
         long timeout = context.getSettings().getTiming().getTime(Periods.START_NEW_HAND);
-        log.info("Entered playing state. Scheduling timeout in " + timeout + " millis.");
+        log.info("Entered waiting to start state. Scheduling timeout in " + timeout + " millis.");
         getServerAdapter().scheduleTimeout(timeout);
     }
 
@@ -164,7 +164,9 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
         return new Predicate<PokerPlayer>() {
             @Override
             public boolean apply(@Nullable PokerPlayer pokerPlayer) {
-                return gameType.canPlayerAffordEntryBet(pokerPlayer, context.getSettings(), false);
+                boolean canAffordEntryBet = gameType.canPlayerAffordEntryBet(pokerPlayer, context.getSettings(), false);
+                boolean isSittingIn = !pokerPlayer.isSittingOut();
+                return canAffordEntryBet && isSittingIn;
             }
         };
     }

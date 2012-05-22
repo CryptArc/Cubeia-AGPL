@@ -88,8 +88,9 @@ public class BettingRound implements Round, BettingRoundContext {
     @VisibleForTesting
     protected Set<PokerPlayer> playersInPlayAtRoundStart;
 
+    // TODO: Would probably be nice if the playerToActCalculator knew all it needs to know, so we don't need to pass "seatIdToStart.." as well.
+    public BettingRound(int seatIdToStartBettingAfter, PokerContext context, ServerAdapterHolder serverAdapterHolder, PlayerToActCalculator playerToActCalculator, ActionRequestFactory actionRequestFactory, FutureActionsCalculator futureActionsCalculator) {
 
-    public BettingRound(PokerContext context, ServerAdapterHolder serverAdapterHolder, PlayerToActCalculator playerToActCalculator, ActionRequestFactory actionRequestFactory, FutureActionsCalculator futureActionsCalculator) {
         this.context = context;
         this.serverAdapterHolder = serverAdapterHolder;
         this.futureActionsCalculator = futureActionsCalculator;
@@ -97,10 +98,10 @@ public class BettingRound implements Round, BettingRoundContext {
         this.actionRequestFactory = actionRequestFactory;
         this.roundHelper = new RoundHelper(context, serverAdapterHolder);
         lastBetSize = context.getEntryBetLevel();
-        initBettingRound(context.getBlindsInfo().getDealerButtonSeatId());
+        initBettingRound(seatIdToStartBettingAfter);
     }
 
-    private void initBettingRound(int dealerSeatId) {
+    private void initBettingRound(int seatIdToStartBettingAfter) {
         log.debug("Init new betting round");
         SortedMap<Integer, PokerPlayer> seatingMap = context.getCurrentHandSeatingMap();
         for (PokerPlayer p : seatingMap.values()) {
@@ -126,7 +127,7 @@ public class BettingRound implements Round, BettingRoundContext {
         log.debug("players in play entering round: {}", playersInPlayAtRoundStart);
 
         // Check if we should request actions at all
-        PokerPlayer p = playerToActCalculator.getFirstPlayerToAct(dealerSeatId, context.getCurrentHandSeatingMap(), context.getCommunityCards());
+        PokerPlayer p = playerToActCalculator.getFirstPlayerToAct(seatIdToStartBettingAfter, context.getCurrentHandSeatingMap(), context.getCommunityCards());
 
         log.debug("first player to act = {}", p == null ? null : p.getId());
 

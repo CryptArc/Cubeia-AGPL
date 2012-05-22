@@ -67,7 +67,7 @@ public class BettingRoundAllOtherPlayersAllInTest {
         seatingMap.put(2, player3);
         when(state.getCurrentHandSeatingMap()).thenReturn(seatingMap);
 
-        round = new BettingRound(context, serverAdapterHolder, playerToActCalculator, new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
+        round = new BettingRound(0, context, serverAdapterHolder, playerToActCalculator, new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
     }
 
     @Test

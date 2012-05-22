@@ -22,6 +22,7 @@ import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.rounds.blinds.BlindsInfo;
+import com.cubeia.poker.states.PlayingSTM;
 import com.cubeia.poker.states.ServerAdapterHolder;
 import com.cubeia.poker.variant.HandFinishedListener;
 
@@ -74,5 +75,8 @@ public interface GameType extends Serializable {
 
     public void addHandFinishedListener(HandFinishedListener handFinishedListener);
 
-    void setPokerContextAndServerAdapter(PokerContext context, ServerAdapterHolder serverAdapterHolder);
+    public void removeHandFinishedListener(HandFinishedListener handFinishedListener);
+
+    public void setPokerContextAndServerAdapter(PokerContext context, ServerAdapterHolder serverAdapterHolder);
+
 }

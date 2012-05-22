@@ -73,18 +73,6 @@ public class MockGame implements GameType {
         }
     }
 
-//	@Override
-//	public int countNonFoldedPlayers() {
-//		int nonFolded = 0;
-//		for (PokerPlayer p : seatingMap.values()) {
-//			if (!p.hasFolded()) {
-//				nonFolded++;
-//			}
-//		}
-//
-//		return nonFolded;
-//	}
-
     @Override
     public void prepareNewHand() {
         // YEAH YEAH.
@@ -220,7 +208,10 @@ public class MockGame implements GameType {
 
     @Override
     public void addHandFinishedListener(HandFinishedListener handFinishedListener) {
-        logDebug("AAAAAAAA");
+    }
+
+    @Override
+    public void removeHandFinishedListener(HandFinishedListener handFinishedListener) {
     }
 
     @Override

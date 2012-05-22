@@ -130,7 +130,7 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
 
     private void startBettingRound() {
         log.trace("Starting new betting round. Round ID: " + (roundId + 1));
-        currentRound = new BettingRound(context, serverAdapterHolder, new DefaultPlayerToActCalculator(),
+        currentRound = new BettingRound(context.getBlindsInfo().getDealerButtonSeatId(), context, serverAdapterHolder, new DefaultPlayerToActCalculator(),
                 new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
         roundId++;
     }
@@ -296,7 +296,7 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
     }
 
     private void prepareBettingRound() {
-        currentRound = new BettingRound(context, serverAdapterHolder, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
+        currentRound = new BettingRound(context.getBlindsInfo().getBigBlindSeatId(), context, serverAdapterHolder, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
     }
 
     private void updateBlindsInfo(BlindsRound blindsRound) {

@@ -65,6 +65,10 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
     }
 
     @Override
+    public void exitState() {
+    }
+
+    @Override
     public void timeout() {
         throw new IllegalStateException(this + " is wrong state. Context: " + context);
     }
