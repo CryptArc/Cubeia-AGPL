@@ -2,7 +2,9 @@ package com.cubeia.poker.states;
 
 import com.cubeia.poker.adapter.ServerAdapter;
 
-public class ServerAdapterHolder {
+import java.io.Serializable;
+
+public class ServerAdapterHolder implements Serializable {
 
     private transient ServerAdapter serverAdapter;
 

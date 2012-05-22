@@ -20,12 +20,16 @@ package com.cubeia.poker.states;
 import com.cubeia.poker.GameType;
 import com.cubeia.poker.PokerContext;
 import com.cubeia.poker.player.PokerPlayer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 
 public class NotStartedSTM extends AbstractPokerGameSTM {
 
     private static final long serialVersionUID = -1675095508189680830L;
+
+    private static final Logger log = LoggerFactory.getLogger(NotStartedSTM.class);
 
     public NotStartedSTM() {
     }
@@ -40,8 +44,18 @@ public class NotStartedSTM extends AbstractPokerGameSTM {
 
     @Override
     public void playerJoined(PokerPlayer player) {
-        if (context.getNumberOfPlayersSittingIn() > 1) {
+        // TODO: Probably prettier to have a separate state for tournaments.
+        if (context.getNumberOfPlayersSittingIn() > 1 && !context.isTournamentTable()) {
             changeState(new WaitingToStartSTM());
+        }
+    }
+
+    @Override
+    public void startHand() {
+        log.debug("Starting hand.");
+        // This should only really happen from tournaments.
+        if (context.isTournamentTable()) {
+            doStartHand();
         }
     }
 

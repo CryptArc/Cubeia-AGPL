@@ -105,71 +105,11 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
     }
 
     public void startHand() {
-        Collection<PokerPlayer> playersReadyToStartHand = getPlayersReadyToStartHand();
-        if (playersReadyToStartHand.size() > 1) {
-            context.resetValuesAtStartOfHand();
-            context.saveStartingBalances();
-            context.prepareReadyPlayers(getReadyPlayerFilter());
-
-            notifyNewHand();
-            notifyAllPlayerBalances();
-            notifyAllHandStartPlayerStatus();
-
-            gameType.prepareNewHand();
-            gameType.startHand();
-
-            changeState(new PlayingSTM());
-        } else {
-            log.warn("Not enough players to start hand: " + playersReadyToStartHand.size());
-            changeState(new NotStartedSTM());
-        }
-    }
-
-    private Collection<PokerPlayer> getPlayersReadyToStartHand() {
-        return context.getPlayersReadyToStartHand(getReadyPlayerFilter());
-    }
-
-    /**
-     * Notify everyone about hand start status.
-     */
-    public void notifyAllHandStartPlayerStatus() {
-        for (PokerPlayer player : context.getSeatedPlayers()) {
-            if (player.isSittingOut()) {
-                getServerAdapter().notifyHandStartPlayerStatus(player.getId(), PokerPlayerStatus.SITOUT);
-            } else {
-                getServerAdapter().notifyHandStartPlayerStatus(player.getId(), PokerPlayerStatus.SITIN);
-            }
-        }
-    }
-
-    public void notifyNewHand() {
-        getServerAdapter().notifyNewHand();
-    }
-
-    public void notifyAllPlayerBalances() {
-        for (PokerPlayer player : context.getSeatedPlayers()) {
-            notifyPlayerBalance(player);
-        }
-    }
-
-    public void notifyPlayerBalance(PokerPlayer player) {
-        getServerAdapter().notifyPlayerBalance(player);
+        doStartHand();
     }
 
     public String toString() {
         return "WaitingToStartState";
-    }
-
-    private Predicate<PokerPlayer> getReadyPlayerFilter() {
-        return new Predicate<PokerPlayer>() {
-            @Override
-            public boolean apply(@Nullable PokerPlayer pokerPlayer) {
-                boolean canAffordEntryBet = gameType.canPlayerAffordEntryBet(pokerPlayer, context.getSettings(), false);
-                boolean isSittingIn = !pokerPlayer.isSittingOut();
-                boolean buyInActive = pokerPlayer.isBuyInRequestActive();
-                return canAffordEntryBet && isSittingIn && !buyInActive;
-            }
-        };
     }
 
 }

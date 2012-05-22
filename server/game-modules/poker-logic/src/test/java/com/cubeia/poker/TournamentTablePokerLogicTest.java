@@ -186,7 +186,7 @@ public class TournamentTablePokerLogicTest extends GuiceTest {
 
         state.timeout();
         state.timeout();
-        assertEquals(2, mockServerAdapter.getTimeoutRequests());
+        assertEquals(2, mockServerAdapter.getTimeoutRequests()); // 1 for small blind 1 for big blind and one before starting the hand
 
         assertFalse(mockServerAdapter.getLastActionRequest().isOptionEnabled(PokerActionType.BIG_BLIND));
     }

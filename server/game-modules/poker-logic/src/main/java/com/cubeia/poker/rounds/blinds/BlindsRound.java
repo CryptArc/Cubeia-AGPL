@@ -28,6 +28,7 @@ import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundHelper;
 import com.cubeia.poker.rounds.RoundVisitor;
 import com.cubeia.poker.states.ServerAdapterHolder;
+import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.util.PokerUtils;
 import org.apache.log4j.Logger;
 
@@ -227,7 +228,11 @@ public class BlindsRound implements Round {
         getBlindsInfo().setSmallBlind(smallBlind);
         smallBlind.enableOption(new PossibleAction(PokerActionType.SMALL_BLIND, blindsInfo.getAnteLevel() / 2));
         smallBlind.enableOption(new PossibleAction(PokerActionType.DECLINE_ENTRY_BET));
-        roundHelper.requestAction(smallBlind.getActionRequest());
+        if (isTournamentBlinds()) {
+            roundHelper.scheduleTimeoutForAutoAction();
+        } else {
+            roundHelper.requestAction(smallBlind.getActionRequest());
+        }
     }
 
     private ServerAdapter getServerAdapter() {
@@ -241,7 +246,11 @@ public class BlindsRound implements Round {
 
         bigBlind.enableOption(new PossibleAction(PokerActionType.BIG_BLIND, blindsInfo.getAnteLevel()));
         bigBlind.enableOption(new PossibleAction(PokerActionType.DECLINE_ENTRY_BET));
-        roundHelper.requestAction(bigBlind.getActionRequest());
+        if (isTournamentBlinds()) {
+            roundHelper.scheduleTimeoutForAutoAction();
+        } else {
+            roundHelper.requestAction(bigBlind.getActionRequest());
+        }
     }
 
     private void initFirstHand(Iterator<PokerPlayer> iterator) {

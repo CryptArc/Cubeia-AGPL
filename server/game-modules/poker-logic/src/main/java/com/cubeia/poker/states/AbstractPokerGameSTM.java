@@ -25,14 +25,13 @@ import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.player.SitOutStatus;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
-
-import static java.util.Arrays.asList;
 
 public abstract class AbstractPokerGameSTM implements PokerGameSTM {
 
@@ -177,5 +176,69 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
 
     protected ServerAdapter getServerAdapter() {
         return serverAdapter.get();
+    }
+
+    protected void doStartHand() {
+        Collection<PokerPlayer> playersReadyToStartHand = getPlayersReadyToStartHand();
+        if (playersReadyToStartHand.size() > 1) {
+            context.resetValuesAtStartOfHand();
+            context.saveStartingBalances();
+            context.prepareReadyPlayers(getReadyPlayerFilter());
+
+            notifyNewHand();
+            notifyAllPlayerBalances();
+            notifyAllHandStartPlayerStatus();
+
+            gameType.prepareNewHand();
+            gameType.startHand();
+
+            changeState(new PlayingSTM());
+        } else {
+            log.warn("Not enough players to start hand: " + playersReadyToStartHand.size());
+            changeState(new NotStartedSTM());
+        }
+    }
+
+    protected Collection<PokerPlayer> getPlayersReadyToStartHand() {
+        return context.getPlayersReadyToStartHand(getReadyPlayerFilter());
+    }
+
+    /**
+     * Notify everyone about hand start status.
+     */
+    public void notifyAllHandStartPlayerStatus() {
+        for (PokerPlayer player : context.getSeatedPlayers()) {
+            if (player.isSittingOut()) {
+                getServerAdapter().notifyHandStartPlayerStatus(player.getId(), PokerPlayerStatus.SITOUT);
+            } else {
+                getServerAdapter().notifyHandStartPlayerStatus(player.getId(), PokerPlayerStatus.SITIN);
+            }
+        }
+    }
+
+    public void notifyNewHand() {
+        getServerAdapter().notifyNewHand();
+    }
+
+    public void notifyAllPlayerBalances() {
+        for (PokerPlayer player : context.getSeatedPlayers()) {
+            notifyPlayerBalance(player);
+        }
+    }
+
+    public void notifyPlayerBalance(PokerPlayer player) {
+        getServerAdapter().notifyPlayerBalance(player);
+    }
+
+    private Predicate<PokerPlayer> getReadyPlayerFilter() {
+        return new Predicate<PokerPlayer>() {
+            @Override
+            public boolean apply(@Nullable PokerPlayer pokerPlayer) {
+                boolean canAffordEntryBet = gameType.canPlayerAffordEntryBet(pokerPlayer, context.getSettings(), false);
+                boolean isSittingIn = !pokerPlayer.isSittingOut();
+                boolean buyInActive = pokerPlayer.isBuyInRequestActive();
+                return canAffordEntryBet && isSittingIn && !buyInActive;
+            }
+        };
     }
 }

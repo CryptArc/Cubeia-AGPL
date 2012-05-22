@@ -61,4 +61,7 @@ public class RoundHelper implements Serializable{
     }
 
 
+    public void scheduleTimeoutForAutoAction() {
+        serverAdapter.get().scheduleTimeout(context.getTimingProfile().getTime(Periods.AUTO_POST_BLIND_DELAY));
+    }
 }
