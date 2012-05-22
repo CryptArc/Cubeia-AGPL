@@ -44,6 +44,7 @@ public class RoundHelperTest {
         initMocks(this);
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
         when(context.getTimingProfile()).thenReturn(timingProfile);
+        when(context.getTotalPotSize()).thenReturn(50L);
         when(timingProfile.getTime(Periods.ACTION_TIMEOUT)).thenReturn(10L);
         roundHelper = new RoundHelper(context, serverAdapterHolder);
     }
