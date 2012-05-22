@@ -239,7 +239,6 @@ public class DefaultPokerPlayer implements PokerPlayer {
     }
 
     public void addChips(long chips) {
-        System.out.println("Adding " + chips + " to " + playerId);
         this.balance += chips;
     }
 
@@ -250,7 +249,6 @@ public class DefaultPokerPlayer implements PokerPlayer {
         }
         balance -= bet;
         betStack += bet;
-        System.out.println("Player " + playerId + " has " + balance);
     }
 
     public void setStartingBalance(long startingBalance) {

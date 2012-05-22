@@ -10,6 +10,7 @@ import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.rounds.blinds.BlindsInfo;
 import com.cubeia.poker.states.ServerAdapterHolder;
+import com.cubeia.poker.timing.impl.DefaultTimingProfile;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -31,14 +32,19 @@ public class AnteRoundTest {
     @Mock
     private PokerPlayer player2;
 
-    @Mock
-    private AnteRoundHelper anteRoundHelper;
+    private AnteRoundHelper realAnteRoundHelper;
 
     @Mock
     private PokerContext context;
 
     @Mock
     private ServerAdapterHolder serverAdapterHolder;
+
+    @Mock
+    private ServerAdapter serverAdapter;
+
+    @Mock
+    private AnteRoundHelper anteRoundHelper;
 
     private ActionRequest actionRequest1;
     private ActionRequest actionRequest2;
@@ -54,14 +60,15 @@ public class AnteRoundTest {
         when(player2.getId()).thenReturn(222);
 
         actionRequest1 = new ActionRequest();
+        actionRequest1.setPlayerId(111);
         actionRequest1.enable(new PossibleAction(PokerActionType.ANTE, 10));
 
         actionRequest2 = new ActionRequest();
+        actionRequest2.setPlayerId(222);
         actionRequest2.enable(new PossibleAction(PokerActionType.ANTE, 10));
 
         when(player1.getActionRequest()).thenReturn(actionRequest1);
         when(player2.getActionRequest()).thenReturn(actionRequest2);
-
 
         playerMap = new TreeMap<Integer, PokerPlayer>();
         playerMap.put(0, player1);
@@ -75,6 +82,11 @@ public class AnteRoundTest {
         when(context.getPlayerInCurrentHand(player1.getId())).thenReturn(player1);
         when(context.getPlayerInCurrentHand(player2.getId())).thenReturn(player2);
 
+        when(context.getTimingProfile()).thenReturn(new DefaultTimingProfile());
+        when(serverAdapterHolder.get()).thenReturn(serverAdapter);
+
+        realAnteRoundHelper = new AnteRoundHelper(context, serverAdapterHolder);
+        anteRoundHelper = mock(AnteRoundHelper.class);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -83,20 +95,20 @@ public class AnteRoundTest {
         int anteLevel = 1000;
         when(blindsInfo.getAnteLevel()).thenReturn(anteLevel);
 
-        AnteRound anteRound = new AnteRound(context, serverAdapterHolder, anteRoundHelper);
+        AnteRound anteRound = new AnteRound(context, serverAdapterHolder, realAnteRoundHelper);
 
         verify(player1).clearActionRequest();
         verify(player2).clearActionRequest();
 
 
         ArgumentCaptor<Collection> captor = ArgumentCaptor.forClass(Collection.class);
-        verify(anteRoundHelper).requestAntes(captor.capture());
-        Collection<PokerPlayer> captured = captor.getValue();
+        verify(serverAdapter).requestMultipleActions(captor.capture());
+        Collection<ActionRequest> captured = captor.getValue();
 
-        Iterator<PokerPlayer> iterator = captured.iterator();
+        Iterator<ActionRequest> iterator = captured.iterator();
         Iterator<PokerPlayer> original = playerMap.values().iterator();
         while (iterator.hasNext()) {
-            assertThat(iterator.next(), is(original.next()));
+            assertThat(iterator.next().getPlayerId(), is(original.next().getId()));
         }
 
         assertThat(anteRound.isFinished(), is(false));
@@ -112,7 +124,7 @@ public class AnteRoundTest {
         when(blindsInfo.getAnteLevel()).thenReturn(anteLevel);
 
         when(anteRoundHelper.hasAllPlayersActed(Mockito.anyCollection())).thenReturn(false);
-        //        when(anteRoundHelper.getNextPlayerToAct(Mockito.eq(0), Mockito.any(SortedMap.class))).thenReturn(player2);
+        //        when(realAnteRoundHelper.getNextPlayerToAct(Mockito.eq(0), Mockito.any(SortedMap.class))).thenReturn(player2);
         ServerAdapter serverAdapter = mock(ServerAdapter.class);
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
 
@@ -136,9 +148,9 @@ public class AnteRoundTest {
     public void testActOnAnteImpossibleToStartHandWillAutoDecline() {
         AnteRound anteRound = new AnteRound(context, serverAdapterHolder, anteRoundHelper);
         int anteLevel = 1000;
-        int currentDealearButtonSeatId = 0;
+        int currentDealerButtonSeatId = 0;
         when(blindsInfo.getAnteLevel()).thenReturn(anteLevel);
-        when(blindsInfo.getDealerButtonSeatId()).thenReturn(currentDealearButtonSeatId);
+        when(blindsInfo.getDealerButtonSeatId()).thenReturn(currentDealerButtonSeatId);
 
         when(anteRoundHelper.hasAllPlayersActed(Mockito.anyCollection())).thenReturn(false);
         ServerAdapter serverAdapter = mock(ServerAdapter.class);
@@ -181,7 +193,7 @@ public class AnteRoundTest {
         when(blindsInfo.getAnteLevel()).thenReturn(anteLevel);
 
         when(anteRoundHelper.hasAllPlayersActed(Mockito.anyCollection())).thenReturn(false);
-        //        when(anteRoundHelper.getNextPlayerToAct(Mockito.eq(0), Mockito.any(SortedMap.class))).thenReturn(player2);
+        //        when(realAnteRoundHelper.getNextPlayerToAct(Mockito.eq(0), Mockito.any(SortedMap.class))).thenReturn(player2);
         ServerAdapter serverAdapter = mock(ServerAdapter.class);
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
         long resultingBalance = 343L;
@@ -199,7 +211,7 @@ public class AnteRoundTest {
 
     @Test
     public void testCancelHandWhenAllButOneRejectedAnte() {
-        AnteRound anteRound = new AnteRound(context, serverAdapterHolder, anteRoundHelper);
+        AnteRound anteRound = new AnteRound(context, serverAdapterHolder, realAnteRoundHelper);
 
         int player1Id = 1;
         DefaultPokerPlayer player1 = createPlayer(player1Id, 1000L);
@@ -226,7 +238,7 @@ public class AnteRoundTest {
 
     @Test
     public void testCancelHandWhenAllButOneRejectedAnte3Players() {
-        AnteRound anteRound = new AnteRound(context, serverAdapterHolder, anteRoundHelper);
+        AnteRound anteRound = new AnteRound(context, serverAdapterHolder, realAnteRoundHelper);
 
         int player1Id = 1;
         DefaultPokerPlayer player1 = createPlayer(player1Id, 1000L);
@@ -276,7 +288,7 @@ public class AnteRoundTest {
 
     @Test
     public void testIsFinished() {
-        AnteRound anteRound = new AnteRound(context, serverAdapterHolder, anteRoundHelper);
+        AnteRound anteRound = new AnteRound(context, serverAdapterHolder, realAnteRoundHelper);
 
         when(player1.hasActed()).thenReturn(true);
         when(player1.hasPostedEntryBet()).thenReturn(true);
@@ -292,7 +304,7 @@ public class AnteRoundTest {
 
     @Test
     public void testIsFinishedFalseOnTooFewAntes() {
-        AnteRound anteRound = new AnteRound(context, serverAdapterHolder, anteRoundHelper);
+        AnteRound anteRound = new AnteRound(context, serverAdapterHolder, realAnteRoundHelper);
 
         when(player1.hasActed()).thenReturn(true);
         when(player1.hasPostedEntryBet()).thenReturn(false);

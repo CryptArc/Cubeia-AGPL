@@ -95,13 +95,9 @@ public class ActionRequest implements Serializable {
 
     public PossibleAction getOption(PokerActionType type) {
         PossibleAction result = null;
-        System.out.println("Type = " + type);
         for (PossibleAction option : options) {
-            System.out.println("checking option " + option);
             if (option.allows(type)) {
-                System.out.println("option " + option + " allowed ");
                 result = option;
-                System.out.println("Result is now " + result);
             }
         }
         return result;

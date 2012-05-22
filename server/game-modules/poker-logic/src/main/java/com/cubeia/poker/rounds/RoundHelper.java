@@ -60,7 +60,6 @@ public class RoundHelper implements Serializable{
         serverAdapter.notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITOUT, context.isPlayerInHand(playerId));
     }
 
-
     public void scheduleTimeoutForAutoAction() {
         serverAdapter.get().scheduleTimeout(context.getTimingProfile().getTime(Periods.AUTO_POST_BLIND_DELAY));
     }
