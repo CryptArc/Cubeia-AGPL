@@ -41,7 +41,7 @@ public class TelesinaDisconnectTest extends AbstractTexasHandTester {
         act(p[0], ANTE);
 
         // 1. Disconnect player 0
-        state.playerIsSittingOut(p[0], SitOutStatus.SITTING_OUT);
+        state.playerSitsOut(p[0], SitOutStatus.SITTING_OUT);
         assertEquals(PokerPlayerStatus.SITOUT, mockServerAdapter.getPokerPlayerStatus(p[0]));
 
         // timeout the deal initialCardsRound
@@ -51,7 +51,7 @@ public class TelesinaDisconnectTest extends AbstractTexasHandTester {
         act(p[2], BET);
         // 3. Verify that player 0 is folding
         Assert.assertTrue(mp[0].hasFolded());
-        state.playerIsSittingOut(p[0], SitOutStatus.SITTING_OUT);
+        state.playerSitsOut(p[0], SitOutStatus.SITTING_OUT);
         assertEquals(PokerPlayerStatus.SITOUT, mockServerAdapter.getPokerPlayerStatus(p[0]));
 
     }
@@ -72,7 +72,7 @@ public class TelesinaDisconnectTest extends AbstractTexasHandTester {
 
         // TODO
         // 1. Disconnect player 0
-        state.playerIsSittingOut(p[0], SitOutStatus.SITTING_OUT);
+        state.playerSitsOut(p[0], SitOutStatus.SITTING_OUT);
         assertEquals(PokerPlayerStatus.SITOUT, mockServerAdapter.getPokerPlayerStatus(p[0]));
 
         // timeout the dealInitialCardsRound
@@ -127,7 +127,7 @@ public class TelesinaDisconnectTest extends AbstractTexasHandTester {
         //timeout the DealInitalCardsRound
         state.timeout();
 
-        state.playerIsSittingOut(p[1], SitOutStatus.SITTING_OUT);
+        state.playerSitsOut(p[1], SitOutStatus.SITTING_OUT);
         assertEquals(PokerPlayerStatus.SITOUT, mockServerAdapter.getPokerPlayerStatus(p[1]));
         act(p[2], CHECK);
         act(p[0], CHECK);

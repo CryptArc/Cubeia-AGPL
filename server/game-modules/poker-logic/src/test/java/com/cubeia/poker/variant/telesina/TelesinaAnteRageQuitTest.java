@@ -30,7 +30,7 @@ public class TelesinaAnteRageQuitTest extends AbstractTexasHandTester {
 
         // Antes
         act(p[1], PokerActionType.ANTE);
-        state.playerIsSittingOut(p[1], SitOutStatus.SITTING_OUT);
+        state.playerSitsOut(p[1], SitOutStatus.SITTING_OUT);
         act(p[0], PokerActionType.ANTE);
 
         state.timeout();

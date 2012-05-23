@@ -40,8 +40,8 @@ public class TelesinaSitoutAllPlayersTest extends AbstractTexasHandTester {
         mockServerAdapter.clear();
         state.timeout();
 
-        state.playerIsSittingOut(p[0], SitOutStatus.SITTING_OUT);
-        state.playerIsSittingOut(p[1], SitOutStatus.SITTING_OUT);
+        state.playerSitsOut(p[0], SitOutStatus.SITTING_OUT);
+        state.playerSitsOut(p[1], SitOutStatus.SITTING_OUT);
 
         state.timeout();
 

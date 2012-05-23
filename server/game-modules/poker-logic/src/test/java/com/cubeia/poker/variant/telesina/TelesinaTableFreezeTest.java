@@ -40,8 +40,8 @@ public class TelesinaTableFreezeTest extends AbstractTexasHandTester {
         act(p[0], PokerActionType.CALL);
         act(p[1], PokerActionType.CALL);
 
-        state.playerIsSittingOut(p[0], SitOutStatus.SITTING_OUT);
-        state.playerIsSittingOut(p[1], SitOutStatus.SITTING_OUT);
+        state.playerSitsOut(p[0], SitOutStatus.SITTING_OUT);
+        state.playerSitsOut(p[1], SitOutStatus.SITTING_OUT);
 
         int numberOfTimeoutsRequested = mockServerAdapter.getTimeoutRequests();
 

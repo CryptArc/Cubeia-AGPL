@@ -18,8 +18,6 @@ public interface IPokerState {
 
     void playerSitsOut(int playerId, SitOutStatus sitOutStatus);
 
-    void playerIsSittingOut(int playerId, SitOutStatus missedAnte);
-
     int getAnteLevel();
 
     Map<Integer, PokerPlayer> getCurrentHandPlayerMap();

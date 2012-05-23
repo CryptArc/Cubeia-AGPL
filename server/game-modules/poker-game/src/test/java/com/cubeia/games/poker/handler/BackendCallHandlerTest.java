@@ -209,7 +209,8 @@ public class BackendCallHandlerTest {
         OpenSessionResponse openSessionResponse = new OpenSessionResponse(playerSessionId, Collections.<String, String>emptyMap());
         callHandler.handleOpenSessionSuccessfulResponse(openSessionResponse);
         verify(pokerPlayer).setPlayerSessionId(playerSessionId);
-        verify(state).notifyBuyinInfo(playerId, false);
+
+        // verify(state).notifyBuyinInfo(playerId, false); // TODO: VN REMOVED THIS.
     }
 
     @SuppressWarnings({"serial", "unchecked"})

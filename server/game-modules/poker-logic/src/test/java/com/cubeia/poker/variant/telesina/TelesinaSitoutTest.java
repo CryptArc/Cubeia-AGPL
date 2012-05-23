@@ -53,8 +53,8 @@ public class TelesinaSitoutTest extends AbstractTexasHandTester {
 
     public void testAllSittingOutButOne() throws InterruptedException {
         // Disconnect player 0 & 1
-        state.playerIsSittingOut(p[0], SitOutStatus.SITTING_OUT);
-        state.playerIsSittingOut(p[1], SitOutStatus.SITTING_OUT);
+        state.playerSitsOut(p[0], SitOutStatus.SITTING_OUT);
+        state.playerSitsOut(p[1], SitOutStatus.SITTING_OUT);
         assertEquals(PokerPlayerStatus.SITOUT, mockServerAdapter.getPokerPlayerStatus(p[0]));
         assertEquals(PokerPlayerStatus.SITOUT, mockServerAdapter.getPokerPlayerStatus(p[1]));
 
@@ -81,8 +81,8 @@ public class TelesinaSitoutTest extends AbstractTexasHandTester {
     }
 
     public void testAllSittingOutButOneFirstBettingRoundBug() throws InterruptedException {
-        state.playerIsSittingOut(p[0], SitOutStatus.SITTING_OUT);
-        state.playerIsSittingOut(p[1], SitOutStatus.SITTING_OUT);
+        state.playerSitsOut(p[0], SitOutStatus.SITTING_OUT);
+        state.playerSitsOut(p[1], SitOutStatus.SITTING_OUT);
 
         Assert.assertEquals(2, mp[2].getPocketCards().getCards().size());
         assertNotNull(mp[2].getActionRequest().getOption(CHECK));
@@ -106,10 +106,10 @@ public class TelesinaSitoutTest extends AbstractTexasHandTester {
         ServerAdapter serverAdapter = mock(ServerAdapter.class);
         state.setServerAdapter(serverAdapter);
 
-        state.playerIsSittingOut(p[0], SitOutStatus.SITTING_OUT);
+        state.playerSitsOut(p[0], SitOutStatus.SITTING_OUT);
         state.playerIsSittingIn(p[0]);
-        state.playerIsSittingOut(p[0], SitOutStatus.SITTING_OUT);
-        state.playerIsSittingOut(p[0], SitOutStatus.SITTING_OUT);
+        state.playerSitsOut(p[0], SitOutStatus.SITTING_OUT);
+        state.playerSitsOut(p[0], SitOutStatus.SITTING_OUT);
 
         verify(serverAdapter, times(2)).notifyPlayerStatusChanged(p[0], PokerPlayerStatus.SITOUT, true);
     }
@@ -118,7 +118,7 @@ public class TelesinaSitoutTest extends AbstractTexasHandTester {
         ServerAdapter serverAdapter = mock(ServerAdapter.class);
         state.setServerAdapter(serverAdapter);
 
-        state.playerIsSittingOut(p[0], SitOutStatus.SITTING_OUT);
+        state.playerSitsOut(p[0], SitOutStatus.SITTING_OUT);
         state.playerIsSittingIn(p[0]);
         state.playerIsSittingIn(p[0]);
 
@@ -128,9 +128,9 @@ public class TelesinaSitoutTest extends AbstractTexasHandTester {
     public void testEveryoneSittingOutDoesNotLeadToAllInScenario() throws InterruptedException {
         mockServerAdapter.clear();
         // Disconnect EVERYONE!
-        state.playerIsSittingOut(p[0], SitOutStatus.SITTING_OUT);
-        state.playerIsSittingOut(p[1], SitOutStatus.SITTING_OUT);
-        state.playerIsSittingOut(p[2], SitOutStatus.SITTING_OUT);
+        state.playerSitsOut(p[0], SitOutStatus.SITTING_OUT);
+        state.playerSitsOut(p[1], SitOutStatus.SITTING_OUT);
+        state.playerSitsOut(p[2], SitOutStatus.SITTING_OUT);
         assertEquals(PokerPlayerStatus.SITOUT, mockServerAdapter.getPokerPlayerStatus(p[0]));
         assertEquals(PokerPlayerStatus.SITOUT, mockServerAdapter.getPokerPlayerStatus(p[1]));
         assertEquals(PokerPlayerStatus.SITOUT, mockServerAdapter.getPokerPlayerStatus(p[2]));

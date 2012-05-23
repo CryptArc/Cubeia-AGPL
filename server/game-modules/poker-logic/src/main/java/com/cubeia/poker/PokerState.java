@@ -248,15 +248,6 @@ public class PokerState implements Serializable, IPokerState {
     }
 
     /**
-     * Called by the adapter layer when a player leaves or disconnects.
-     *
-     * @param playerId
-     */
-    public void playerIsSittingOut(int playerId, SitOutStatus status) {
-        getCurrentState().playerSitsOut(playerId, status);
-    }
-
-    /**
      * Called by the adapter layer when a player rejoins/reconnects.
      *
      * @param playerId

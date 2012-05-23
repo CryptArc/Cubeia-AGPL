@@ -67,7 +67,7 @@ public class PokerTableInterceptor implements TableInterceptor {
             return new InterceptionResponse(true, -1);
         } else {
             // Hand running, set to disconnected only
-            // state.playerIsSittingOut(playerId, SitOutStatus.SITTING_OUT); // Will be handled in listener?
+            // state.playerSitsOut(playerId, SitOutStatus.SITTING_OUT); // Will be handled in listener?
             return new InterceptionResponse(false, -1);
         }
     }

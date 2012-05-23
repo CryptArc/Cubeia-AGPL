@@ -156,10 +156,6 @@ public class MockGame implements GameType {
             }
 
             @Override
-            public void playerIsSittingOut(int playerId, SitOutStatus misssedAnte) {
-            }
-
-            @Override
             public void notifyBetStacksUpdated() {
             }
 

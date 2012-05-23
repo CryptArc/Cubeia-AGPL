@@ -108,7 +108,7 @@ public class PokerHandlerTest {
     public void testVisitPlayerSitoutRequest() {
         PlayerSitoutRequest sitOutRequest = new PlayerSitoutRequest();
         pokerHandler.visit(sitOutRequest);
-        verify(pokerHandler.state).playerIsSittingOut(playerId, SitOutStatus.SITTING_OUT);
+        verify(pokerHandler.state).playerSitsOut(playerId, SitOutStatus.SITTING_OUT);
     }
 
     @Test
