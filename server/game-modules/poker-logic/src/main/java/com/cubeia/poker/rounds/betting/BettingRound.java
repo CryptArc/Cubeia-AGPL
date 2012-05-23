@@ -23,6 +23,7 @@ import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundHelper;
@@ -403,6 +404,7 @@ public class BettingRound implements Round, BettingRoundContext {
 
     private void setPlayerSitOut(PokerPlayer player) {
         context.setSitOutStatus(player.getId(), SitOutStatus.TIMEOUT);
+        getServerAdapter().notifyPlayerStatusChanged(player.getId(), PokerPlayerStatus.SITOUT, true);
     }
 
     private void performDefaultActionForPlayer(PokerPlayer player) {

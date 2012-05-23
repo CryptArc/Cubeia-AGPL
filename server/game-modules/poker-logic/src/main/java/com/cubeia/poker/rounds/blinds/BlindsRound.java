@@ -23,6 +23,7 @@ import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundHelper;
@@ -378,6 +379,7 @@ public class BlindsRound implements Round {
         log.debug("Notify player sitout: " + playerId);
         if (context != null) {
             context.setSitOutStatus(playerId, status);
+            getServerAdapter().notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITOUT, true);
         } else {
             log.warn("Trying to notify sit out pid[" + playerId + "] on NULL state!");
         }

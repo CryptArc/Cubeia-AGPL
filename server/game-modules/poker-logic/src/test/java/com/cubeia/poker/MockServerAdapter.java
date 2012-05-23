@@ -185,7 +185,7 @@ public class MockServerAdapter implements ServerAdapter {
     }
 
     @Override
-    public void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status, boolean isInCurrenHand) {
+    public void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status, boolean isInCurrentHand) {
         playerStatus.put(playerId, status);
     }
 
