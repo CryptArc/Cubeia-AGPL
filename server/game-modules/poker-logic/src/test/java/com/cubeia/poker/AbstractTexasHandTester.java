@@ -21,6 +21,7 @@ import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.variant.GameType;
 import com.cubeia.poker.variant.factory.GameTypeFactory;
 
 public abstract class AbstractTexasHandTester extends GuiceTest {

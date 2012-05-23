@@ -17,14 +17,6 @@
 
 package mock;
 
-import com.cubeia.poker.*;
-import com.cubeia.poker.rounds.betting.BetStrategyName;
-import com.cubeia.poker.timing.TimingFactory;
-import com.cubeia.poker.variant.factory.GameTypeFactory;
-
-import static com.cubeia.poker.timing.Timings.MINIMUM_DELAY;
-import static com.cubeia.poker.variant.PokerVariant.TELESINA;
-
 public class MockTableFactory {
 
     // TODO: DELETE?

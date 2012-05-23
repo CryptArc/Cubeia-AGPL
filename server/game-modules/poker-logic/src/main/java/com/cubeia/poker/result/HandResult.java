@@ -21,7 +21,7 @@ import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.PotTransition;
-import com.cubeia.poker.rake.RakeInfoContainer;
+import com.cubeia.poker.pot.rake.RakeInfoContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

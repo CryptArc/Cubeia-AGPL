@@ -1,14 +1,14 @@
 package com.cubeia.poker.variant.telesina;
 
-import com.cubeia.poker.PokerContext;
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Rank;
+import com.cubeia.poker.model.BlindsInfo;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.ante.AnteRound;
-import com.cubeia.poker.rounds.blinds.BlindsInfo;
-import com.cubeia.poker.states.ServerAdapterHolder;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

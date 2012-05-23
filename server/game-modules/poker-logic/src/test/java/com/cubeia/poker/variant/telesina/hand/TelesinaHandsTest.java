@@ -5,6 +5,7 @@ import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.variant.telesina.TelesinaDeck;
 import com.cubeia.poker.variant.telesina.TelesinaDeckFactory;
 import org.hamcrest.CoreMatchers;

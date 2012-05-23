@@ -1,8 +1,8 @@
 package com.cubeia.poker.variant.telesina;
 
 import com.cubeia.poker.DummyRNGProvider;
-import com.cubeia.poker.PokerContext;
-import com.cubeia.poker.PokerState;
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Hand;
@@ -11,7 +11,6 @@ import com.cubeia.poker.hand.HandType;
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.PotHolder;
-import com.cubeia.poker.states.ServerAdapterHolder;
 import com.cubeia.poker.timing.impl.DefaultTimingProfile;
 import com.cubeia.poker.variant.telesina.hand.TelesinaHandStrengthEvaluator;
 import org.junit.Before;

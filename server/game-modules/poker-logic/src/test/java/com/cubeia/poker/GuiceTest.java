@@ -18,8 +18,10 @@
 package com.cubeia.poker;
 
 import com.cubeia.poker.rng.RNGProvider;
-import com.cubeia.poker.rounds.betting.BetStrategyName;
+import com.cubeia.poker.settings.BetStrategyName;
+import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.timing.TimingFactory;
+import com.cubeia.poker.variant.GameType;
 import com.cubeia.poker.variant.factory.GameTypeFactory;
 import com.cubeia.poker.variant.PokerVariant;
 import com.google.inject.Guice;

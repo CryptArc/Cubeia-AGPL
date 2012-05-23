@@ -20,7 +20,7 @@ import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
 import com.cubeia.games.poker.lobby.PokerLobbyAttributes;
 import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.poker.PokerState;
-import com.cubeia.poker.SystemShutdownException;
+import com.cubeia.poker.adapter.SystemShutdownException;
 import com.cubeia.poker.player.PokerPlayer;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Iterables;

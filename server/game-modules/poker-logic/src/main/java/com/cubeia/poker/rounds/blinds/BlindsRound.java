@@ -17,19 +17,19 @@
 
 package com.cubeia.poker.rounds.blinds;
 
-import com.cubeia.poker.PokerContext;
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.adapter.ServerAdapter;
+import com.cubeia.poker.model.BlindsInfo;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundHelper;
 import com.cubeia.poker.rounds.RoundVisitor;
-import com.cubeia.poker.states.ServerAdapterHolder;
-import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.util.PokerUtils;
 import org.apache.log4j.Logger;
 

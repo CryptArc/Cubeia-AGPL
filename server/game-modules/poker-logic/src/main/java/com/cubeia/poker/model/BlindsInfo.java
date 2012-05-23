@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.poker.rounds.blinds;
+package com.cubeia.poker.model;
 
 import com.cubeia.poker.player.PokerPlayer;
 

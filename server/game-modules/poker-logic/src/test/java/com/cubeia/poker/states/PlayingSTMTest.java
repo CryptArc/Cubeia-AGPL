@@ -1,7 +1,8 @@
 package com.cubeia.poker.states;
 
-import com.cubeia.poker.PokerContext;
-import com.cubeia.poker.PokerSettings;
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
+import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.model.RatedPlayerHand;

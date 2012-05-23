@@ -1,8 +1,6 @@
-package com.cubeia.poker;
+package com.cubeia.poker.settings;
 
-import com.cubeia.poker.rounds.betting.BetStrategyName;
 import com.cubeia.poker.timing.TimingProfile;
-import com.cubeia.poker.variant.PokerVariant;
 
 import java.io.Serializable;
 import java.util.Map;

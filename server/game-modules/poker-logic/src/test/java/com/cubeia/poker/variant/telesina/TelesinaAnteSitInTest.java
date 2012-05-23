@@ -2,11 +2,9 @@ package com.cubeia.poker.variant.telesina;
 
 import com.cubeia.poker.*;
 import com.cubeia.poker.action.PokerActionType;
-import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.variant.PokerVariant;
-import com.google.common.base.Predicate;
 import org.junit.Test;
-import org.mockito.Matchers;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;

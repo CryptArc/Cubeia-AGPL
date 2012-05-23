@@ -1,21 +1,19 @@
 package com.cubeia.poker.variant.telesina;
 
-import com.cubeia.poker.PokerContext;
-import com.cubeia.poker.PokerState;
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.PotHolder;
-import com.cubeia.poker.rake.RakeInfoContainer;
+import com.cubeia.poker.pot.rake.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
-import com.cubeia.poker.states.ServerAdapterHolder;
 import com.cubeia.poker.variant.HandFinishedListener;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 
 import java.util.SortedMap;
 import java.util.TreeMap;

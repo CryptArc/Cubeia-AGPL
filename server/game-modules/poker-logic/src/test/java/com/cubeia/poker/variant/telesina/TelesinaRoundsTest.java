@@ -1,10 +1,11 @@
 package com.cubeia.poker.variant.telesina;
 
 import com.cubeia.poker.DummyRNGProvider;
-import com.cubeia.poker.PokerContext;
-import com.cubeia.poker.PokerState;
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.model.BlindsInfo;
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.Pot;
@@ -13,9 +14,7 @@ import com.cubeia.poker.rounds.dealing.DealCommunityCardsRound;
 import com.cubeia.poker.rounds.dealing.DealExposedPocketCardsRound;
 import com.cubeia.poker.rounds.ante.AnteRound;
 import com.cubeia.poker.rounds.betting.BettingRound;
-import com.cubeia.poker.rounds.blinds.BlindsInfo;
 import com.cubeia.poker.rounds.dealing.DealInitialPocketCardsRound;
-import com.cubeia.poker.states.ServerAdapterHolder;
 import com.cubeia.poker.timing.impl.DefaultTimingProfile;
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;

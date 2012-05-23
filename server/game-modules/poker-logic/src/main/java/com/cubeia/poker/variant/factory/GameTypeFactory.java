@@ -1,6 +1,6 @@
 package com.cubeia.poker.variant.factory;
 
-import com.cubeia.poker.GameType;
+import com.cubeia.poker.variant.GameType;
 import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.variant.PokerVariant;
 import com.cubeia.poker.variant.telesina.Telesina;

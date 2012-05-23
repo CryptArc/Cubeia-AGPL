@@ -1,7 +1,8 @@
 package com.cubeia.poker.states;
 
-import com.cubeia.poker.GameType;
-import com.cubeia.poker.PokerContext;
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.variant.GameType;
+import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.sitout.SitoutCalculator;
@@ -12,7 +13,6 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import static java.util.Arrays.asList;

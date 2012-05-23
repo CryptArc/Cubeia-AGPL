@@ -13,7 +13,7 @@ import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotTransition;
-import com.cubeia.poker.rake.RakeInfoContainer;
+import com.cubeia.poker.pot.rake.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.sitout.SitoutCalculator;
 import com.cubeia.poker.tournament.RoundReport;

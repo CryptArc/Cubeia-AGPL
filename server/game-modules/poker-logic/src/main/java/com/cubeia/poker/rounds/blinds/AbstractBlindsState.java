@@ -18,7 +18,7 @@
 package com.cubeia.poker.rounds.blinds;
 
 
-import com.cubeia.poker.PokerContext;
+import com.cubeia.poker.context.PokerContext;
 
 public abstract class AbstractBlindsState implements BlindsState {
 

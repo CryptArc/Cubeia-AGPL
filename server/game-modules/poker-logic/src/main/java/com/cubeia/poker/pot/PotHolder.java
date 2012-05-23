@@ -18,8 +18,8 @@
 package com.cubeia.poker.pot;
 
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.rake.RakeCalculator;
-import com.cubeia.poker.rake.RakeInfoContainer;
+import com.cubeia.poker.pot.rake.RakeCalculator;
+import com.cubeia.poker.pot.rake.RakeInfoContainer;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;

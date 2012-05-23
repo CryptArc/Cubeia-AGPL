@@ -1,12 +1,12 @@
 package com.cubeia.poker.rounds.ante;
 
-import com.cubeia.poker.PokerContext;
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.rounds.RoundHelper;
-import com.cubeia.poker.states.ServerAdapterHolder;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 

@@ -1,10 +1,10 @@
 package com.cubeia.poker.pot;
 
-import com.cubeia.poker.RakeSettings;
+import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.rake.LinearRakeWithLimitCalculator;
-import com.cubeia.poker.rake.RakeCalculator;
-import com.cubeia.poker.rake.RakeInfoContainer;
+import com.cubeia.poker.pot.rake.LinearRakeWithLimitCalculator;
+import com.cubeia.poker.pot.rake.RakeCalculator;
+import com.cubeia.poker.pot.rake.RakeInfoContainer;
 import org.junit.Test;
 import org.mockito.Mockito;
 

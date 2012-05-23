@@ -3,11 +3,10 @@ package com.cubeia.poker;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
-import com.cubeia.poker.rng.RNGProvider;
+import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.states.ShutdownSTM;
-import com.cubeia.poker.variant.PokerVariant;
+import com.cubeia.poker.variant.GameType;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;

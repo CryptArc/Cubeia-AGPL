@@ -1,4 +1,4 @@
-package com.cubeia.poker;
+package com.cubeia.poker.settings;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

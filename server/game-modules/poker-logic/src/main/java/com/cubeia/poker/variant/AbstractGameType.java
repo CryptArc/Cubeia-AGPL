@@ -1,7 +1,7 @@
 package com.cubeia.poker.variant;
 
-import com.cubeia.poker.GameType;
-import com.cubeia.poker.PokerContext;
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
@@ -13,7 +13,6 @@ import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.rounds.RoundHelper;
 import com.cubeia.poker.sitout.SitoutCalculator;
-import com.cubeia.poker.states.ServerAdapterHolder;
 import com.cubeia.poker.timing.Periods;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

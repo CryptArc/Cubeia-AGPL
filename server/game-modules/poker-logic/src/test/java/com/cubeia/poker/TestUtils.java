@@ -20,12 +20,11 @@ package com.cubeia.poker;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.settings.RakeSettings;
 import com.google.common.collect.Maps;
 import org.junit.Ignore;
 
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Map;
 import java.util.SortedMap;
 
 @Ignore("not a test")

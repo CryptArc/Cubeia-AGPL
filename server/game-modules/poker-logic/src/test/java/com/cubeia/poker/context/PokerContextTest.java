@@ -1,9 +1,11 @@
-package com.cubeia.poker;
+package com.cubeia.poker.context;
 
+import com.cubeia.poker.TestUtils;
+import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.PotHolder;
+import com.cubeia.poker.settings.PokerSettings;
 import com.google.common.base.Predicate;
-import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

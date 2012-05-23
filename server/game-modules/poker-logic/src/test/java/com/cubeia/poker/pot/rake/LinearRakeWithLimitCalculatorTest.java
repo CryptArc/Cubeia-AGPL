@@ -1,6 +1,6 @@
-package com.cubeia.poker.rake;
+package com.cubeia.poker.pot.rake;
 
-import com.cubeia.poker.RakeSettings;
+import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.Pot;
 import org.junit.Test;

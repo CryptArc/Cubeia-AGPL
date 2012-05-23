@@ -18,12 +18,15 @@
 package com.cubeia.poker;
 
 import com.cubeia.poker.action.PokerAction;
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.model.BlindsInfo;
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
-import com.cubeia.poker.rounds.blinds.BlindsInfo;
-import com.cubeia.poker.states.ServerAdapterHolder;
+import com.cubeia.poker.settings.PokerSettings;
+import com.cubeia.poker.variant.GameType;
 import com.cubeia.poker.variant.HandFinishedListener;
 
 import java.util.*;

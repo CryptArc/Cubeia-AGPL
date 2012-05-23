@@ -17,12 +17,12 @@
 
 package com.cubeia.poker.rounds.betting;
 
-import com.cubeia.poker.GameType;
-import com.cubeia.poker.PokerContext;
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.variant.GameType;
+import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.action.ActionRequestFactory;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.states.ServerAdapterHolder;
 import com.cubeia.poker.timing.impl.DefaultTimingProfile;
 import com.cubeia.poker.variant.texasholdem.TexasHoldemFutureActionsCalculator;
 import com.google.common.base.Predicate;

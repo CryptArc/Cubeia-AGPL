@@ -1,13 +1,14 @@
-package com.cubeia.poker;
+package com.cubeia.poker.context;
 
+import com.cubeia.poker.model.BlindsInfo;
+import com.cubeia.poker.settings.BetStrategyName;
+import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.pot.PotHolder;
-import com.cubeia.poker.rake.LinearRakeWithLimitCalculator;
-import com.cubeia.poker.rake.RakeInfoContainer;
-import com.cubeia.poker.rounds.betting.BetStrategyName;
-import com.cubeia.poker.rounds.blinds.BlindsInfo;
+import com.cubeia.poker.pot.rake.LinearRakeWithLimitCalculator;
+import com.cubeia.poker.pot.rake.RakeInfoContainer;
 import com.cubeia.poker.timing.TimingProfile;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
@@ -67,12 +68,12 @@ public class PokerContext implements Serializable {
     private boolean handFinished = false;
 
     @VisibleForTesting
-    PotHolder potHolder;
+    public PotHolder potHolder;
     
     private List<Card> communityCards = new ArrayList<Card>();
 
     @VisibleForTesting
-    protected PokerSettings settings;
+    public PokerSettings settings;
     
     private PokerPlayer lastPlayerToBeCalled;
     
@@ -329,7 +330,7 @@ public class PokerContext implements Serializable {
         return settings.getBetStrategy();
     }
 
-    void checkWarnings() {
+    public void checkWarnings() {
         if (playerMap.size() > 20) {
             log.warn("PLAYER MAP SIZE WARNING. Size=" + playerMap.size() + ", Values: " + playerMap);
         }

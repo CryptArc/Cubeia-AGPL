@@ -3,11 +3,12 @@ package com.cubeia.poker;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
+import com.cubeia.poker.settings.PokerSettings;
+import com.cubeia.poker.variant.GameType;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 
 import java.util.Map;
 

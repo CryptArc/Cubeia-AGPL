@@ -17,7 +17,7 @@
 
 package com.cubeia.poker.rounds.blinds;
 
-import com.cubeia.poker.PokerContext;
+import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.player.PokerPlayer;
 

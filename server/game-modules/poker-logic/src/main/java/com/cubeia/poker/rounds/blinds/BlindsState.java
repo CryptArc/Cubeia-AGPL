@@ -17,7 +17,7 @@
 
 package com.cubeia.poker.rounds.blinds;
 
-import com.cubeia.poker.PokerContext;
+import com.cubeia.poker.context.PokerContext;
 
 import java.io.Serializable;
 

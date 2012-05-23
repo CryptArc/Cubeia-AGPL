@@ -17,7 +17,8 @@
 
 package com.cubeia.poker.rounds.ante;
 
-import com.cubeia.poker.PokerContext;
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
@@ -26,7 +27,6 @@ import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
-import com.cubeia.poker.states.ServerAdapterHolder;
 import com.cubeia.poker.util.ThreadLocalProfiler;
 import org.apache.log4j.Logger;
 

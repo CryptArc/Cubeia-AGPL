@@ -1,18 +1,17 @@
 package com.cubeia.poker.variant.telesina;
 
 import com.cubeia.poker.DummyRNGProvider;
-import com.cubeia.poker.PokerContext;
-import com.cubeia.poker.PokerState;
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
+import com.cubeia.poker.model.BlindsInfo;
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.PotHolder;
-import com.cubeia.poker.rake.RakeInfoContainer;
+import com.cubeia.poker.pot.rake.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.rounds.betting.BettingRound;
-import com.cubeia.poker.rounds.blinds.BlindsInfo;
-import com.cubeia.poker.states.ServerAdapterHolder;
 import com.cubeia.poker.variant.HandFinishedListener;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;

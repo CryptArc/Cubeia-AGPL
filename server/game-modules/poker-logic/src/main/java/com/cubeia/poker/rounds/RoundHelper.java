@@ -1,12 +1,12 @@
 package com.cubeia.poker.rounds;
 
-import com.cubeia.poker.PokerContext;
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.player.SitOutStatus;
-import com.cubeia.poker.states.ServerAdapterHolder;
 import com.cubeia.poker.timing.Periods;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

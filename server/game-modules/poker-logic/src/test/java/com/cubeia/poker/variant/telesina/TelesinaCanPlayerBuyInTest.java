@@ -1,7 +1,8 @@
 package com.cubeia.poker.variant.telesina;
 
-import com.cubeia.poker.PokerSettings;
+import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.settings.PokerSettings;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;

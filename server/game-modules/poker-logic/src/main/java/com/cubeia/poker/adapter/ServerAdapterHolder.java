@@ -1,4 +1,4 @@
-package com.cubeia.poker.states;
+package com.cubeia.poker.adapter;
 
 import com.cubeia.poker.adapter.ServerAdapter;
 

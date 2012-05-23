@@ -17,14 +17,14 @@
 
 package com.cubeia.poker.util;
 
-import com.cubeia.poker.RakeSettings;
+import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.model.PlayerHand;
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotHolder;
-import com.cubeia.poker.rake.LinearRakeWithLimitCalculator;
+import com.cubeia.poker.pot.rake.LinearRakeWithLimitCalculator;
 import com.cubeia.poker.result.Result;
 import com.cubeia.poker.variant.texasholdem.TexasHoldemHandCalculator;
 import junit.framework.TestCase;

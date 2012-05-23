@@ -1,4 +1,4 @@
-package com.cubeia.poker;
+package com.cubeia.poker.adapter;
 
 public class SystemShutdownException extends RuntimeException {
 

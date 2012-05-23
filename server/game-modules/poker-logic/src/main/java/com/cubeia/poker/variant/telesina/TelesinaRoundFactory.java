@@ -1,9 +1,9 @@
 package com.cubeia.poker.variant.telesina;
 
-import com.cubeia.poker.PokerContext;
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.action.ActionRequestFactory;
 import com.cubeia.poker.hand.Rank;
-import com.cubeia.poker.rounds.betting.PlayerToActCalculator;
 import com.cubeia.poker.rounds.dealing.DealCommunityCardsRound;
 import com.cubeia.poker.rounds.dealing.DealExposedPocketCardsRound;
 import com.cubeia.poker.rounds.dealing.DealInitialPocketCardsRound;
@@ -12,7 +12,6 @@ import com.cubeia.poker.rounds.ante.AnteRoundHelper;
 import com.cubeia.poker.rounds.betting.BettingRound;
 import com.cubeia.poker.rounds.betting.NoLimitBetStrategy;
 import com.cubeia.poker.rounds.dealing.ExposePrivateCardsRound;
-import com.cubeia.poker.states.ServerAdapterHolder;
 import com.cubeia.poker.variant.telesina.hand.TelesinaPlayerToActCalculator;
 
 /**

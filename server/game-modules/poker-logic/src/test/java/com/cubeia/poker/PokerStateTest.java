@@ -1,16 +1,19 @@
 package com.cubeia.poker;
 
 import com.cubeia.poker.adapter.ServerAdapter;
+import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.pot.PotTransition;
-import com.cubeia.poker.rake.RakeInfoContainer;
-import com.cubeia.poker.states.ServerAdapterHolder;
+import com.cubeia.poker.pot.rake.RakeInfoContainer;
+import com.cubeia.poker.settings.PokerSettings;
+import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.states.StateChanger;
 import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
+import com.cubeia.poker.variant.GameType;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;

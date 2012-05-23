@@ -17,7 +17,7 @@
 
 package com.cubeia.poker.rounds.blinds;
 
-import com.cubeia.poker.PokerContext;
+import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
 import org.apache.log4j.Logger;
