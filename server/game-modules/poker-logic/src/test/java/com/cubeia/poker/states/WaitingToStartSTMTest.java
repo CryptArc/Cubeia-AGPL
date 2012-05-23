@@ -1,11 +1,11 @@
 package com.cubeia.poker.states;
 
 import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.util.SitoutCalculator;
 import com.cubeia.poker.variant.GameType;
 import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.sitout.SitoutCalculator;
 import com.google.common.base.Predicate;
 import org.junit.Before;
 import org.junit.Test;

@@ -2,7 +2,7 @@ package com.cubeia.poker.variant.telesina;
 
 import com.cubeia.poker.adapter.ServerAdapterHolder;
 import com.cubeia.poker.context.PokerContext;
-import com.cubeia.poker.action.ActionRequestFactory;
+import com.cubeia.poker.rounds.betting.ActionRequestFactory;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.rounds.dealing.DealCommunityCardsRound;
 import com.cubeia.poker.rounds.dealing.DealExposedPocketCardsRound;

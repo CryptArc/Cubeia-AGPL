@@ -29,7 +29,7 @@ import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.settings.PokerSettings;
-import com.cubeia.poker.sitout.SitoutCalculator;
+import com.cubeia.poker.util.SitoutCalculator;
 import com.cubeia.poker.states.*;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.variant.GameType;

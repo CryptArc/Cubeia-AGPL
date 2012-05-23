@@ -18,6 +18,7 @@
 package com.cubeia.poker.variant.telesina;
 
 import com.cubeia.poker.model.BlindsInfo;
+import com.cubeia.poker.result.HandResultCalculator;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
@@ -37,7 +38,7 @@ import com.cubeia.poker.rounds.betting.BettingRound;
 import com.cubeia.poker.rounds.blinds.BlindsRound;
 import com.cubeia.poker.rounds.dealing.*;
 import com.cubeia.poker.timing.Periods;
-import com.cubeia.poker.util.HandResultCalculator;
+import com.cubeia.poker.result.HandResultCalculator;
 import com.cubeia.poker.util.ThreadLocalProfiler;
 import com.cubeia.poker.variant.AbstractGameType;
 import com.cubeia.poker.variant.HandResultCreator;

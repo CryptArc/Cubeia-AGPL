@@ -5,7 +5,7 @@ import com.cubeia.poker.MockPlayer;
 import com.cubeia.poker.NonRandomRNGProvider;
 import com.cubeia.poker.TestUtils;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.sitout.SitoutCalculator;
+import com.cubeia.poker.util.SitoutCalculator;
 import com.cubeia.poker.variant.PokerVariant;
 import junit.framework.Assert;
 

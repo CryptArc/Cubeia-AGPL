@@ -22,7 +22,7 @@ import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
-import com.cubeia.poker.sitout.SitoutCalculator;
+import com.cubeia.poker.util.SitoutCalculator;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.tournament.RoundReport;

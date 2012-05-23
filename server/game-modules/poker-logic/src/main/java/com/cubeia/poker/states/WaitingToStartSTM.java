@@ -18,12 +18,12 @@
 package com.cubeia.poker.states;
 
 import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.util.SitoutCalculator;
 import com.cubeia.poker.variant.GameType;
 import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
-import com.cubeia.poker.sitout.SitoutCalculator;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.util.ThreadLocalProfiler;
 import org.slf4j.Logger;

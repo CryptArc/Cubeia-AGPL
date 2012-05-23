@@ -15,11 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.poker.action;
+package com.cubeia.poker.rounds.betting;
 
+import com.cubeia.poker.action.ActionRequest;
+import com.cubeia.poker.action.PokerActionType;
+import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.rounds.betting.BetStrategy;
-import com.cubeia.poker.rounds.betting.BettingRoundContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

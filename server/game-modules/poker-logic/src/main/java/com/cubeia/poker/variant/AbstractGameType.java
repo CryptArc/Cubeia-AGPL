@@ -12,7 +12,7 @@ import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.rounds.RoundHelper;
-import com.cubeia.poker.sitout.SitoutCalculator;
+import com.cubeia.poker.util.SitoutCalculator;
 import com.cubeia.poker.timing.Periods;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -18,6 +18,7 @@
 package com.cubeia.poker.util;
 
 import com.cubeia.poker.rake.LinearRakeWithLimitCalculator;
+import com.cubeia.poker.result.HandResultCalculator;
 import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.model.PlayerHand;

@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.poker.util;
+package com.cubeia.poker.result;
 
 import com.cubeia.poker.hand.HandTypeEvaluator;
 import com.cubeia.poker.model.PlayerHand;
@@ -25,6 +25,7 @@ import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.pot.RakeInfoContainer;
 import com.cubeia.poker.pot.RakeInfoContainer;
 import com.cubeia.poker.result.Result;
+import com.cubeia.poker.util.PlayerHandComparator;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 

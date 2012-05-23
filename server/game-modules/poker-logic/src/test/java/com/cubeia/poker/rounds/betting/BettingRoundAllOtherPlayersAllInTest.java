@@ -21,7 +21,6 @@ import com.cubeia.poker.adapter.ServerAdapterHolder;
 import com.cubeia.poker.variant.GameType;
 import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.PokerState;
-import com.cubeia.poker.action.ActionRequestFactory;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.timing.impl.DefaultTimingProfile;

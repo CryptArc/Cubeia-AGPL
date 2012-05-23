@@ -1,4 +1,4 @@
-package com.cubeia.poker.sitout;
+package com.cubeia.poker.util;
 
 import com.cubeia.poker.player.PokerPlayer;
 import org.apache.log4j.Logger;
