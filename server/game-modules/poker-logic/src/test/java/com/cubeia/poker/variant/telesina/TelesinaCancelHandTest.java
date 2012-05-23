@@ -5,11 +5,14 @@ import com.cubeia.poker.PokerState;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.pot.PotHolder;
+import com.cubeia.poker.rake.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.states.ServerAdapterHolder;
 import com.cubeia.poker.variant.HandFinishedListener;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -34,12 +37,16 @@ public class TelesinaCancelHandTest {
     @Mock
     private HandFinishedListener handFinishedListener;
 
+    @Mock
+    private PotHolder potHolder;
+    
     private Telesina telesina;
 
     @Before
     public void setup() {
         initMocks(this);
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
+        when(context.getPotHolder()).thenReturn(potHolder);
         telesina = new Telesina(null, null, null, null);
         telesina.setPokerContextAndServerAdapter(context, serverAdapterHolder);
         telesina.addHandFinishedListener(handFinishedListener);
@@ -47,7 +54,6 @@ public class TelesinaCancelHandTest {
 
     @Test
     public void testCancelHand() {
-        PokerState state = mock(PokerState.class);
         Integer player1Id = 1222;
         Integer player2Id = 2333;
 
@@ -62,21 +68,18 @@ public class TelesinaCancelHandTest {
         SortedMap<Integer, PokerPlayer> playerMap = new TreeMap<Integer, PokerPlayer>();
         playerMap.put(player1Id, player1);
         playerMap.put(player2Id, player2);
-        when(state.getCurrentHandPlayerMap()).thenReturn(playerMap);
+        when(context.getCurrentHandPlayerMap()).thenReturn(playerMap);
 
         SortedMap<Integer, PokerPlayer> seatingMap = new TreeMap<Integer, PokerPlayer>();
         seatingMap.put(0, player1);
         seatingMap.put(1, player2);
-        when(state.getCurrentHandSeatingMap()).thenReturn(seatingMap);
+        when(context.getCurrentHandSeatingMap()).thenReturn(seatingMap);
 
         telesina.handleCanceledHand();
 
         verify(handFinishedListener).handFinished(Mockito.any(HandResult.class), Mockito.eq(HandEndStatus.CANCELED_TOO_FEW_PLAYERS));
         verify(serverAdapter, never()).notifyTakeBackUncalledBet(player1.getId(), 0);
         verify(serverAdapter).notifyTakeBackUncalledBet(player2.getId(), 100);
-//        verify(state).notifyPlayerBalance(player1Id);
-//        verify(state).notifyPlayerBalance(player2Id);
-
-        verify(state).notifyRakeInfo();
+        verify(serverAdapter).notifyRakeInfo(Matchers.<RakeInfoContainer>any());
     }
 }

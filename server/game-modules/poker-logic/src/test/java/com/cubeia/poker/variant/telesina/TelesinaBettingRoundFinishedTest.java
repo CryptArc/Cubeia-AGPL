@@ -11,6 +11,7 @@ import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.rake.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.rounds.betting.BettingRound;
+import com.cubeia.poker.rounds.blinds.BlindsInfo;
 import com.cubeia.poker.states.ServerAdapterHolder;
 import com.cubeia.poker.variant.HandFinishedListener;
 import org.hamcrest.CoreMatchers;
@@ -45,6 +46,8 @@ public class TelesinaBettingRoundFinishedTest {
     private ServerAdapterHolder serverAdapterHolder;
     @Mock
     private ServerAdapter serverAdapter;
+    @Mock
+    private BlindsInfo blindsInfo;
     private PokerPlayer player1 = new DefaultPokerPlayer(1001);
     private PokerPlayer player2 = new DefaultPokerPlayer(1002);
     private TelesinaForTesting telesina;
@@ -60,8 +63,9 @@ public class TelesinaBettingRoundFinishedTest {
         seatingMap.put(0, player1);
         seatingMap.put(1, player2);
         when(context.getCurrentHandSeatingMap()).thenReturn(seatingMap);
-
+        when(serverAdapterHolder.get()).thenReturn(serverAdapter);
         when(context.getPotHolder()).thenReturn(potHolder);
+        when(context.getBlindsInfo()).thenReturn(blindsInfo);
         when(deckFactory.createNewDeck(Mockito.any(Random.class), Mockito.anyInt())).thenReturn(deck);
         telesina = new TelesinaForTesting(new DummyRNGProvider(), deckFactory, roundFactory, dealerButtonCalculator);
         telesina.setPokerContextAndServerAdapter(context, serverAdapterHolder);

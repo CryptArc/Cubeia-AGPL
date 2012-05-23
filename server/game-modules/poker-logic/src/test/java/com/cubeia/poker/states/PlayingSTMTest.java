@@ -61,6 +61,7 @@ public class PlayingSTMTest {
         playing.context = context;
         playing.gameType = telesina;
         playing.stateChanger = stateChanger;
+        playing.serverAdapterHolder = serverAdapterHolder;
 
         Map<PokerPlayer, Result> results = new HashMap<PokerPlayer, Result>();
 

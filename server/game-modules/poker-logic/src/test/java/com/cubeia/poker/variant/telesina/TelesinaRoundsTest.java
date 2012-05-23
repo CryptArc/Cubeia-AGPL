@@ -75,6 +75,7 @@ public class TelesinaRoundsTest {
         playerMap.put(player2.getId(), player2);
         playerMap.put(player3.getId(), player3);
         when(context.getCurrentHandPlayerMap()).thenReturn(playerMap);
+        when(context.getPlayersInHand()).thenReturn(playerMap.values());
 
         when(context.getTimingProfile()).thenReturn(new DefaultTimingProfile());
         when(context.getPotHolder()).thenReturn(potHolder);
@@ -97,11 +98,12 @@ public class TelesinaRoundsTest {
     @Test
     public void testRoundSequence() {
         Telesina telesina = new Telesina(new DummyRNGProvider(), deckFactory, roundFactory, dealerButtonCalculator);
+        telesina.setPokerContextAndServerAdapter(context, serverAdapterHolder);
 
 
         AnteRound anteRound = mock(AnteRound.class);
         when(roundFactory.createAnteRound(context, serverAdapterHolder)).thenReturn(anteRound);
-        // verytime whe run createDealExposedPocketCardsRound() we will create a new DealExposedPocketCardsRound witch in turn will deal cards
+        // every time whe run createDealExposedPocketCardsRound() we will create a new DealExposedPocketCardsRound witch in turn will deal cards
         when(roundFactory.createDealExposedPocketCardsRound(telesina)).thenAnswer(new Answer<DealExposedPocketCardsRound>() {
             public DealExposedPocketCardsRound answer(InvocationOnMock invocation) throws Throwable {
                 return new DealExposedPocketCardsRound((Telesina) invocation.getArguments()[0]);
@@ -110,7 +112,7 @@ public class TelesinaRoundsTest {
 
 
         // ante -> deal initial cards round
-        // verytime whe run createDealExposedPocketCardsRound() we will create a new DealExposedPocketCardsRound witch in turn will deal cards
+        // every time whe run createDealExposedPocketCardsRound() we will create a new DealExposedPocketCardsRound witch in turn will deal cards
         when(roundFactory.createDealInitialCardsRound(telesina)).thenAnswer(new Answer<DealInitialPocketCardsRound>() {
             public DealInitialPocketCardsRound answer(InvocationOnMock invocation) throws Throwable {
                 return new DealInitialPocketCardsRound((Telesina) invocation.getArguments()[0]);

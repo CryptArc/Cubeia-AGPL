@@ -21,17 +21,13 @@ import com.cubeia.poker.GameType;
 import com.cubeia.poker.PokerContext;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.sitout.SitoutCalculator;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.util.ThreadLocalProfiler;
-import com.google.common.base.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
-import java.util.Collection;
 import java.util.Set;
 
 public class WaitingToStartSTM extends AbstractPokerGameSTM {
@@ -52,20 +48,20 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
     public void enterState() {
         long timeout = context.getSettings().getTiming().getTime(Periods.START_NEW_HAND);
         log.info("Entered waiting to start state. Scheduling timeout in " + timeout + " millis.");
-        getServerAdapter().scheduleTimeout(timeout);
+        getServerAdapterHolder().scheduleTimeout(timeout);
     }
 
     @Override
     public void timeout() {
         if (!context.isTournamentTable()) {
             context.setHandFinished(false);
-            getServerAdapter().performPendingBuyIns(context.getSeatedPlayers());
+            getServerAdapterHolder().performPendingBuyIns(context.getSeatedPlayers());
             context.commitPendingBalances();
 
             setPlayersWithoutMoneyAsSittingOut();
 
             context.sitOutPlayersMarkedForSitOutNextRound();
-            getServerAdapter().cleanupPlayers(new SitoutCalculator());
+            getServerAdapterHolder().cleanupPlayers(new SitoutCalculator());
 
             if (getPlayersReadyToStartHand().size() > 1) {
                 startHand();

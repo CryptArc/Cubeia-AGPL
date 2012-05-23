@@ -349,7 +349,7 @@ public class BettingRoundTest extends TestCase  { // implements TestListener
 //        GameType game = mock(Telesina.class);
 //        when(game.getState()).thenReturn(state);
 //        ServerAdapter serverAdapter = mock(ServerAdapter.class);
-//        when(game.getServerAdapter()).thenReturn(serverAdapter);
+//        when(game.getServerAdapterHolder()).thenReturn(serverAdapter);
 //
 //        // all players ready to start
 //        ArrayList<PokerPlayer> playersReadyToStart = new ArrayList<PokerPlayer>();
@@ -421,7 +421,7 @@ public class BettingRoundTest extends TestCase  { // implements TestListener
 //        GameType game = mock(Telesina.class);
 //        when(game.getState()).thenReturn(state);
 //        ServerAdapter serverAdapter = mock(ServerAdapter.class);
-//        when(game.getServerAdapter()).thenReturn(serverAdapter);
+//        when(game.getServerAdapterHolder()).thenReturn(serverAdapter);
 //
 //        // All sitting out and all in
 //        when(state.isEveryoneSittingOut()).thenReturn(true);
@@ -486,7 +486,7 @@ public class BettingRoundTest extends TestCase  { // implements TestListener
 //        GameType game = mock(Telesina.class);
 //        when(game.getState()).thenReturn(state);
 //        ServerAdapter serverAdapter = mock(ServerAdapter.class);
-//        when(game.getServerAdapter()).thenReturn(serverAdapter);
+//        when(game.getServerAdapterHolder()).thenReturn(serverAdapter);
 //
 //        // all players ready to start
 //        ArrayList<PokerPlayer> playersReadyToStart = new ArrayList<PokerPlayer>();
@@ -555,7 +555,7 @@ public class BettingRoundTest extends TestCase  { // implements TestListener
 //        GameType game = mock(Telesina.class);
 //        when(game.getState()).thenReturn(state);
 //        ServerAdapter serverAdapter = mock(ServerAdapter.class);
-//        when(game.getServerAdapter()).thenReturn(serverAdapter);
+//        when(game.getServerAdapterHolder()).thenReturn(serverAdapter);
 //
 //        // all players ready to start
 //        ArrayList<PokerPlayer> playersReadyToStart = new ArrayList<PokerPlayer>();

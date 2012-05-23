@@ -1,6 +1,7 @@
 package com.cubeia.poker.variant.telesina;
 
 import com.cubeia.poker.DummyRNGProvider;
+import com.cubeia.poker.PokerContext;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
@@ -10,6 +11,7 @@ import com.cubeia.poker.hand.HandType;
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.PotHolder;
+import com.cubeia.poker.states.ServerAdapterHolder;
 import com.cubeia.poker.timing.impl.DefaultTimingProfile;
 import com.cubeia.poker.variant.telesina.hand.TelesinaHandStrengthEvaluator;
 import org.junit.Before;
@@ -26,8 +28,6 @@ import static org.mockito.Mockito.*;
 public class TelesinaSendBestHandTest {
 
     @Mock
-    private PokerState state;
-    @Mock
     private PotHolder potHolder;
     @Mock
     private ServerAdapter serverAdapter;
@@ -39,6 +39,11 @@ public class TelesinaSendBestHandTest {
     private TelesinaRoundFactory roundFactory;
     @Mock
     private TelesinaDealerButtonCalculator dealerButtonCalculator;
+    @Mock
+    private PokerContext context;
+    @Mock
+    private ServerAdapterHolder serverAdapterHolder;
+
     private PokerPlayer player1 = new DefaultPokerPlayer(1001);
 
     private SortedMap<Integer, PokerPlayer> seatingMap;
@@ -50,21 +55,22 @@ public class TelesinaSendBestHandTest {
 
         seatingMap = new TreeMap<Integer, PokerPlayer>();
         seatingMap.put(0, player1);
-        when(state.getCurrentHandSeatingMap()).thenReturn(seatingMap);
+        when(context.getCurrentHandSeatingMap()).thenReturn(seatingMap);
 
         Map<Integer, PokerPlayer> playerMap = new HashMap<Integer, PokerPlayer>();
         playerMap.put(player1.getId(), player1);
-        when(state.getCurrentHandPlayerMap()).thenReturn(playerMap);
+        when(context.getCurrentHandPlayerMap()).thenReturn(playerMap);
 
-        when(state.getTimingProfile()).thenReturn(new DefaultTimingProfile());
-        when(state.getServerAdapter()).thenReturn(serverAdapter);
-        when(state.getPotHolder()).thenReturn(potHolder);
+        when(context.getTimingProfile()).thenReturn(new DefaultTimingProfile());
+        when(serverAdapterHolder.get()).thenReturn(serverAdapter);
+        when(context.getPotHolder()).thenReturn(potHolder);
         when(deckFactory.createNewDeck(Mockito.any(Random.class), Mockito.anyInt())).thenReturn(deck);
     }
 
     @Test
     public void testCalculateAndSendBestHandToPlayer() {
         Telesina telesina = new Telesina(new DummyRNGProvider(), deckFactory, roundFactory, dealerButtonCalculator);
+        telesina.setPokerContextAndServerAdapter(context, serverAdapterHolder);
 
         TelesinaHandStrengthEvaluator evaluator = Mockito.mock(TelesinaHandStrengthEvaluator.class);
         Hand hand = mock(Hand.class);
@@ -75,7 +81,7 @@ public class TelesinaSendBestHandTest {
         Card pocketCard2 = new Card("5C");
         when(hand.getCards()).thenReturn(asList(pocketCard1, pocketCard2));
         Card velaCard = new Card("2H");
-        when(state.getCommunityCards()).thenReturn(asList(velaCard));
+        when(context.getCommunityCards()).thenReturn(asList(velaCard));
         HandStrength handStrength = mock(HandStrength.class);
         when(handStrength.getCards()).thenReturn(Arrays.asList(pocketCard1));
         when(handStrength.getHandType()).thenReturn(HandType.FOUR_OF_A_KIND);
@@ -89,6 +95,7 @@ public class TelesinaSendBestHandTest {
     @Test
     public void testCalculateAndSendBestHandToPlayersWhenExposingHand() {
         Telesina telesina = new Telesina(new DummyRNGProvider(), deckFactory, roundFactory, dealerButtonCalculator);
+        telesina.setPokerContextAndServerAdapter(context, serverAdapterHolder);
 
         TelesinaHandStrengthEvaluator evaluator = Mockito.mock(TelesinaHandStrengthEvaluator.class);
         Hand hand = mock(Hand.class);
@@ -99,7 +106,7 @@ public class TelesinaSendBestHandTest {
         Card pocketCard2 = new Card("5C");
         when(hand.getCards()).thenReturn(asList(pocketCard1, pocketCard2));
         Card velaCard = new Card("2H");
-        when(state.getCommunityCards()).thenReturn(asList(velaCard));
+        when(context.getCommunityCards()).thenReturn(asList(velaCard));
         HandStrength handStrength = mock(HandStrength.class);
         when(handStrength.getCards()).thenReturn(Arrays.asList(pocketCard1));
         when(handStrength.getHandType()).thenReturn(HandType.FOUR_OF_A_KIND);
@@ -113,6 +120,7 @@ public class TelesinaSendBestHandTest {
     @Test
     public void testCalculateAndSendBestHandShouldKeepQuietWhenFolded() {
         Telesina telesina = new Telesina(new DummyRNGProvider(), deckFactory, roundFactory, dealerButtonCalculator);
+        telesina.setPokerContextAndServerAdapter(context, serverAdapterHolder);
 
         TelesinaHandStrengthEvaluator evaluator = Mockito.mock(TelesinaHandStrengthEvaluator.class);
         Hand hand = mock(Hand.class);
@@ -124,7 +132,7 @@ public class TelesinaSendBestHandTest {
         Card pocketCard2 = new Card("5C");
         when(hand.getCards()).thenReturn(asList(pocketCard1, pocketCard2));
         Card velaCard = new Card("2H");
-        when(state.getCommunityCards()).thenReturn(asList(velaCard));
+        when(context.getCommunityCards()).thenReturn(asList(velaCard));
         HandStrength handStrength = mock(HandStrength.class);
         when(handStrength.getCards()).thenReturn(Arrays.asList(pocketCard1));
         when(handStrength.getHandType()).thenReturn(HandType.FOUR_OF_A_KIND);

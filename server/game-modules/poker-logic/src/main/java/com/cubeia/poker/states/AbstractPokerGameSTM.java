@@ -44,7 +44,7 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
 
     protected PokerContext context;
 
-    private ServerAdapterHolder serverAdapter;
+    protected ServerAdapterHolder serverAdapterHolder;
 
     private static final Logger log = LoggerFactory.getLogger(AbstractPokerGameSTM.class);
 
@@ -52,7 +52,7 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
         this.gameType = gameType;
         this.stateChanger = stateChanger;
         this.context = context;
-        this.serverAdapter = serverAdapter;
+        this.serverAdapterHolder = serverAdapter;
     }
 
     protected AbstractPokerGameSTM() {
@@ -144,11 +144,11 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
     public void notifyPlayerSittingIn(int playerId) {
         log.debug("notifyPlayerSittingIn() id: " + playerId + " status:" + PokerPlayerStatus.SITIN.name());
         boolean isInCurrentHand = context.isPlayerInHand(playerId);
-        getServerAdapter().notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITIN, isInCurrentHand);
+        getServerAdapterHolder().notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITIN, isInCurrentHand);
     }
 
     private void notifyBuyinInfo(int playerId, boolean mandatoryBuyin) {
-        getServerAdapter().notifyBuyInInfo(playerId, mandatoryBuyin);
+        getServerAdapterHolder().notifyBuyInInfo(playerId, mandatoryBuyin);
     }
 
     @Override
@@ -157,25 +157,25 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
     }
 
     protected void doPerformPendingBuyIns(Set<PokerPlayer> players) {
-        getServerAdapter().performPendingBuyIns(players);
+        getServerAdapterHolder().performPendingBuyIns(players);
     }
 
     private void notifyPlayerSittingOut(int playerId) {
         log.debug("playerSitsOut() id: " + playerId + " status:" + PokerPlayerStatus.SITOUT.name());
         boolean isInCurrentHand = context.isPlayerInHand(playerId);
-        getServerAdapter().notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITOUT, isInCurrentHand);
+        getServerAdapterHolder().notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITOUT, isInCurrentHand);
     }
 
     protected void changeState(AbstractPokerGameSTM newState) {
         newState.context = context;
         newState.gameType = gameType;
-        newState.serverAdapter = serverAdapter;
+        newState.serverAdapterHolder = serverAdapterHolder;
         newState.stateChanger = stateChanger;
         stateChanger.changeState(newState);
     }
 
-    protected ServerAdapter getServerAdapter() {
-        return serverAdapter.get();
+    protected ServerAdapter getServerAdapterHolder() {
+        return serverAdapterHolder.get();
     }
 
     protected void doStartHand() {
@@ -209,15 +209,15 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
     public void notifyAllHandStartPlayerStatus() {
         for (PokerPlayer player : context.getSeatedPlayers()) {
             if (player.isSittingOut()) {
-                getServerAdapter().notifyHandStartPlayerStatus(player.getId(), PokerPlayerStatus.SITOUT);
+                getServerAdapterHolder().notifyHandStartPlayerStatus(player.getId(), PokerPlayerStatus.SITOUT);
             } else {
-                getServerAdapter().notifyHandStartPlayerStatus(player.getId(), PokerPlayerStatus.SITIN);
+                getServerAdapterHolder().notifyHandStartPlayerStatus(player.getId(), PokerPlayerStatus.SITIN);
             }
         }
     }
 
     public void notifyNewHand() {
-        getServerAdapter().notifyNewHand();
+        getServerAdapterHolder().notifyNewHand();
     }
 
     public void notifyAllPlayerBalances() {
@@ -227,7 +227,7 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
     }
 
     public void notifyPlayerBalance(PokerPlayer player) {
-        getServerAdapter().notifyPlayerBalance(player);
+        getServerAdapterHolder().notifyPlayerBalance(player);
     }
 
     private Predicate<PokerPlayer> getReadyPlayerFilter() {

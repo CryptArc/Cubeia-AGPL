@@ -78,23 +78,23 @@ public class PlayingSTM extends AbstractPokerGameSTM implements HandFinishedList
             // Report round to tournament coordinator and wait for notification
             sendTournamentRoundReport();
         } else {
-            getServerAdapter().notifyHandEnd(result, status);
+            getServerAdapterHolder().notifyHandEnd(result, status);
 
             for (PokerPlayer player : context.getPlayerMap().values()) {
-                getServerAdapter().notifyPlayerBalance(player);
+                getServerAdapterHolder().notifyPlayerBalance(player);
             }
 
-            getServerAdapter().performPendingBuyIns(context.getPlayerMap().values());
+            getServerAdapterHolder().performPendingBuyIns(context.getPlayerMap().values());
 
             // clean up players here and make leaving players leave and so on also update the lobby
-            getServerAdapter().cleanupPlayers(new SitoutCalculator());
+            getServerAdapterHolder().cleanupPlayers(new SitoutCalculator());
 
             //setPlayersWithoutMoneyAsSittingOut();
             sendBuyinInfoToPlayersWithoutMoney();
 
             TimingProfile timing = context.getSettings().getTiming();
             log.debug("Schedule hand over timeout in: {}", timing != null ? timing.getTime(Periods.START_NEW_HAND) : 0);
-            getServerAdapter().scheduleTimeout(timing.getTime(Periods.START_NEW_HAND));
+            getServerAdapterHolder().scheduleTimeout(timing.getTime(Periods.START_NEW_HAND));
         }
 
         changeState(new WaitingToStartSTM());
@@ -115,7 +115,7 @@ public class PlayingSTM extends AbstractPokerGameSTM implements HandFinishedList
             boolean canPlayerAffordEntryBet = gameType.canPlayerAffordEntryBet(player, context.getSettings(), true);
             if (!canPlayerAffordEntryBet) {
                 if (!player.isBuyInRequestActive()) {
-                    getServerAdapter().notifyBuyInInfo(player.getId(), true);
+                    getServerAdapterHolder().notifyBuyInInfo(player.getId(), true);
                 }
             }
         }
@@ -127,7 +127,7 @@ public class PlayingSTM extends AbstractPokerGameSTM implements HandFinishedList
             report.setSetBalance(player.getId(), player.getBalance());
         }
         log.debug("Sending tournament round report: " + report);
-        getServerAdapter().reportTournamentRound(report);
+        getServerAdapterHolder().reportTournamentRound(report);
     }
 
     private void awardWinners(Map<PokerPlayer, Result> results) {

@@ -39,17 +39,14 @@ public class TelesinaAnteSitInTest extends AbstractTexasHandTester {
         state.timeout();
 
         // Blinds
-
         assertThat(mp[1].isActionPossible(PokerActionType.ANTE), is(true));
         assertThat(mp[0].isActionPossible(PokerActionType.ANTE), is(true));
         act(p[1], PokerActionType.ANTE);
 
-        assertEquals(2, context.getPlayersReadyToStartHand(Matchers.<Predicate<PokerPlayer>>any()).size());
         assertEquals(2, state.getSeatedPlayers().size());
 
         state.addPlayer(mp[3]);
 
-        assertEquals(3, context.getPlayersReadyToStartHand(Matchers.<Predicate<PokerPlayer>>any()).size());
         assertEquals(3, state.getSeatedPlayers().size());
 
         act(p[0], PokerActionType.ANTE);

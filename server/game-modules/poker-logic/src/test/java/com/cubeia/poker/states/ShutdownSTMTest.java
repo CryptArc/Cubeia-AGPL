@@ -37,7 +37,7 @@ public class ShutdownSTMTest {
     @Test
     public void testTimeoutShouldNotDoAnything() {
         shutdownSTM.timeout();
-        verifyZeroInteractions(gameType, pokerContext, serverAdapterHolder, stateChanger);
+        verifyZeroInteractions(gameType, serverAdapterHolder, stateChanger);
     }
 
     @Test
@@ -45,7 +45,7 @@ public class ShutdownSTMTest {
         PokerAction action = mock(PokerAction.class);
         shutdownSTM.act(action);
 
-        verifyZeroInteractions(gameType, pokerContext, serverAdapterHolder, stateChanger);
+        verifyZeroInteractions(gameType, serverAdapterHolder, stateChanger);
     }
 
 }
