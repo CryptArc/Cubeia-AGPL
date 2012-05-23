@@ -47,6 +47,7 @@ public class TelesinaSendBestHandTest {
     private PokerPlayer player1 = new DefaultPokerPlayer(1001);
 
     private SortedMap<Integer, PokerPlayer> seatingMap;
+    private Telesina telesina;
 
 
     @Before
@@ -65,13 +66,13 @@ public class TelesinaSendBestHandTest {
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
         when(context.getPotHolder()).thenReturn(potHolder);
         when(deckFactory.createNewDeck(Mockito.any(Random.class), Mockito.anyInt())).thenReturn(deck);
+
+        telesina = new Telesina(new DummyRNGProvider(), deckFactory, roundFactory, dealerButtonCalculator);
+        telesina.setPokerContextAndServerAdapter(context, serverAdapterHolder);
     }
 
     @Test
     public void testCalculateAndSendBestHandToPlayer() {
-        Telesina telesina = new Telesina(new DummyRNGProvider(), deckFactory, roundFactory, dealerButtonCalculator);
-        telesina.setPokerContextAndServerAdapter(context, serverAdapterHolder);
-
         TelesinaHandStrengthEvaluator evaluator = Mockito.mock(TelesinaHandStrengthEvaluator.class);
         Hand hand = mock(Hand.class);
         PokerPlayer player = mock(PokerPlayer.class);
@@ -94,9 +95,6 @@ public class TelesinaSendBestHandTest {
 
     @Test
     public void testCalculateAndSendBestHandToPlayersWhenExposingHand() {
-        Telesina telesina = new Telesina(new DummyRNGProvider(), deckFactory, roundFactory, dealerButtonCalculator);
-        telesina.setPokerContextAndServerAdapter(context, serverAdapterHolder);
-
         TelesinaHandStrengthEvaluator evaluator = Mockito.mock(TelesinaHandStrengthEvaluator.class);
         Hand hand = mock(Hand.class);
         PokerPlayer player = mock(PokerPlayer.class);
@@ -119,9 +117,6 @@ public class TelesinaSendBestHandTest {
 
     @Test
     public void testCalculateAndSendBestHandShouldKeepQuietWhenFolded() {
-        Telesina telesina = new Telesina(new DummyRNGProvider(), deckFactory, roundFactory, dealerButtonCalculator);
-        telesina.setPokerContextAndServerAdapter(context, serverAdapterHolder);
-
         TelesinaHandStrengthEvaluator evaluator = Mockito.mock(TelesinaHandStrengthEvaluator.class);
         Hand hand = mock(Hand.class);
         PokerPlayer player = mock(PokerPlayer.class);

@@ -45,55 +45,47 @@ public class TelesinaStartHandTest {
     @Mock
     private Random rng;
 
+    @Mock
+    private TelesinaDeck deck;
+
+    @Mock
+    private TelesinaRoundFactory roundFactory;
+
+    @Mock
+    private AnteRound anteRound;
+
+    @Mock
+    private TelesinaDealerButtonCalculator dealerButtonCalculator;
+
     private Telesina telesina;
 
     @Before
     public void init() {
         initMocks(this);
 
-        rng = mock(Random.class);
         when(rngProvider.getRNG()).thenReturn(rng);
-
         when(context.getTableSize()).thenReturn(4);
         when(context.getAnteLevel()).thenReturn(1000);
-
-        TelesinaDeck deck = mock(TelesinaDeck.class);
         when(deck.getTotalNumberOfCardsInDeck()).thenReturn(40);
         when(deck.getDeckLowestRank()).thenReturn(Rank.FIVE);
         when(deckFactory.createNewDeck(rng, 4)).thenReturn(deck);
-        TelesinaRoundFactory roundFactory = mock(TelesinaRoundFactory.class);
-        AnteRound anteRound = mock(AnteRound.class);
         when(roundFactory.createAnteRound(context, serverAdapterHolder)).thenReturn(anteRound);
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
-        TelesinaDealerButtonCalculator dealerButtonCalculator = mock(TelesinaDealerButtonCalculator.class);
+        when(context.getBlindsInfo()).thenReturn(blindsInfo);
 
         telesina = new Telesina(rngProvider, deckFactory, roundFactory, dealerButtonCalculator);
+        telesina.setPokerContextAndServerAdapter(context, serverAdapterHolder);
     }
 
     @Test
     public void testStartHand() {
-        RNGProvider rngProvider = mock(RNGProvider.class);
-        Random rng = mock(Random.class);
-        when(rngProvider.getRNG()).thenReturn(rng);
-        TelesinaDeckFactory deckFactory = mock(TelesinaDeckFactory.class);
-        TelesinaDeck deck = mock(TelesinaDeck.class);
-        when(deck.getTotalNumberOfCardsInDeck()).thenReturn(40);
-        when(deck.getDeckLowestRank()).thenReturn(Rank.FIVE);
-        when(deckFactory.createNewDeck(rng, 4)).thenReturn(deck);
-        TelesinaRoundFactory roundFactory = mock(TelesinaRoundFactory.class);
-        AnteRound anteRound = mock(AnteRound.class);
-        when(roundFactory.createAnteRound(context, serverAdapterHolder)).thenReturn(anteRound);
-        TelesinaDealerButtonCalculator dealerButtonCalculator = mock(TelesinaDealerButtonCalculator.class);
-
         PokerPlayer player1 = mock(PokerPlayer.class);
         PokerPlayer player2 = mock(PokerPlayer.class);
         SortedMap<Integer, PokerPlayer> seatingMap = new TreeMap<Integer, PokerPlayer>();
         seatingMap.put(0, player1);
         seatingMap.put(1, player2);
         when(context.getCurrentHandSeatingMap()).thenReturn(seatingMap);
-
-        Telesina telesina = new Telesina(rngProvider, deckFactory, roundFactory, dealerButtonCalculator);
-        context.setBlindsInfo(blindsInfo);
+        when(context.getPlayersInHand()).thenReturn(seatingMap.values());
 
         telesina.startHand();
 
@@ -106,7 +98,6 @@ public class TelesinaStartHandTest {
 
     @Test
     public void testThatNewDeckIsCreatedOnStartHand() {
-
         PokerPlayer player1 = mock(PokerPlayer.class);
         PokerPlayer player2 = mock(PokerPlayer.class);
         SortedMap<Integer, PokerPlayer> seatingMap = new TreeMap<Integer, PokerPlayer>();
@@ -114,22 +105,15 @@ public class TelesinaStartHandTest {
         seatingMap.put(1, player2);
         when(context.getCurrentHandSeatingMap()).thenReturn(seatingMap);
 
-
         context.setBlindsInfo(blindsInfo);
 
         telesina.startHand();
-
         verify(deckFactory, times(1)).createNewDeck(rng, 4);
 
         telesina.startHand();
-
         verify(deckFactory, times(2)).createNewDeck(rng, 4);
 
         telesina.startHand();
-
         verify(deckFactory, times(3)).createNewDeck(rng, 4);
-
     }
-
-
 }
