@@ -169,16 +169,18 @@ public class PokerContext implements Serializable {
         return createCopyWithNotReadyPlayersExcluded(playerMap, readyPlayersFilter).values();
     }
 
-    public void setSitOutStatus(int playerId, SitOutStatus status) {
+    public boolean setSitOutStatus(int playerId, SitOutStatus status) {
         if (isTournamentTable()) {
             log.debug("won't sit out tournament player");
-            return;
+            return false;
         }
 
         log.debug("player {} is sitting out", playerId);
 
         PokerPlayer player = playerMap.get(playerId);
-        if (player == null || player.isSittingOut()) return;
+        if (player == null || player.isSittingOut()) {
+            return false;
+        }
 
         player.setSitOutStatus(status);
         player.setSitOutNextRound(true);
@@ -191,6 +193,7 @@ public class PokerContext implements Serializable {
             int seatId = player.getSeatId();
             currentHandSeatingMap.remove(seatId);
         }
+        return true;
     }
 
     public int countNonFoldedPlayers() {

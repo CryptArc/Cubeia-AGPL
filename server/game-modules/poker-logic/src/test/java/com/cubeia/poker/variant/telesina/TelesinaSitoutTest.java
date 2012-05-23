@@ -5,14 +5,21 @@ import com.cubeia.poker.MockPlayer;
 import com.cubeia.poker.NonRandomRNGProvider;
 import com.cubeia.poker.TestUtils;
 import com.cubeia.poker.action.PokerAction;
+import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.variant.PokerVariant;
 import junit.framework.Assert;
 import org.apache.log4j.Logger;
 import org.hamcrest.CoreMatchers;
+import org.mockito.Mockito;
 
 import static com.cubeia.poker.action.PokerActionType.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 public class TelesinaSitoutTest extends AbstractTexasHandTester {
 
@@ -95,29 +102,27 @@ public class TelesinaSitoutTest extends AbstractTexasHandTester {
 
     }
 
-    public void testSitoutTwiceOnlyNotifiesOnce() {
+    public void testSitOutTwiceOnlyNotifiesOnce() {
+        ServerAdapter serverAdapter = mock(ServerAdapter.class);
+        state.setServerAdapter(serverAdapter);
+
         state.playerIsSittingOut(p[0], SitOutStatus.SITTING_OUT);
         state.playerIsSittingIn(p[0]);
-        org.junit.Assert.assertThat(mockServerAdapter.getPokerPlayerStatus(p[0]), CoreMatchers.is(PokerPlayerStatus.SITIN));
         state.playerIsSittingOut(p[0], SitOutStatus.SITTING_OUT);
-        org.junit.Assert.assertThat(mockServerAdapter.getPokerPlayerStatus(p[0]), CoreMatchers.is(PokerPlayerStatus.SITOUT));
-        //this is a hack for setting the players status without going the normal way
-        mockServerAdapter.notifyPlayerStatusChanged(p[0], PokerPlayerStatus.SITIN, false);
-        //now we can try to sitout again but it should not notify the player since we already are sitout
         state.playerIsSittingOut(p[0], SitOutStatus.SITTING_OUT);
-        org.junit.Assert.assertThat(mockServerAdapter.getPokerPlayerStatus(p[0]), CoreMatchers.is(PokerPlayerStatus.SITIN));
+
+        verify(serverAdapter, times(2)).notifyPlayerStatusChanged(p[0], PokerPlayerStatus.SITOUT, true);
     }
 
-    public void testSitinTwiceOnlyNotifiesOnce() {
+    public void testSitInTwiceOnlyNotifiesOnce() {
+        ServerAdapter serverAdapter = mock(ServerAdapter.class);
+        state.setServerAdapter(serverAdapter);
+
         state.playerIsSittingOut(p[0], SitOutStatus.SITTING_OUT);
-        org.junit.Assert.assertThat(mockServerAdapter.getPokerPlayerStatus(p[0]), CoreMatchers.is(PokerPlayerStatus.SITOUT));
         state.playerIsSittingIn(p[0]);
-        org.junit.Assert.assertThat(mockServerAdapter.getPokerPlayerStatus(p[0]), CoreMatchers.is(PokerPlayerStatus.SITIN));
-        //this is a hack for setting the players status without going the normal way
-        mockServerAdapter.notifyPlayerStatusChanged(p[0], PokerPlayerStatus.SITOUT, false);
-        //now we can try to sitin again but it should not notify the player since we already are sitin
         state.playerIsSittingIn(p[0]);
-        org.junit.Assert.assertThat(mockServerAdapter.getPokerPlayerStatus(p[0]), CoreMatchers.is(PokerPlayerStatus.SITOUT));
+
+        verify(serverAdapter, times(1)).notifyPlayerStatusChanged(p[0], PokerPlayerStatus.SITIN, true);
     }
 
     public void testEveryoneSittingOutDoesNotLeadToAllInScenario() throws InterruptedException {

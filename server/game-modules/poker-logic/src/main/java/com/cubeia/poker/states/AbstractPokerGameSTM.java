@@ -102,8 +102,9 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
 
     @Override
     public void playerSitsOut(int playerId, SitOutStatus status) {
-        context.setSitOutStatus(playerId, status);
-        notifyPlayerSittingOut(playerId);
+        if (context.setSitOutStatus(playerId, status)) {
+            notifyPlayerSittingOut(playerId);
+        }
     }
 
     @Override

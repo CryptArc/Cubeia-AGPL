@@ -2,11 +2,14 @@ package com.cubeia.poker.variant.telesina;
 
 import com.cubeia.poker.DummyRNGProvider;
 import com.cubeia.poker.MockServerAdapter;
+import com.cubeia.poker.PokerContext;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.rounds.blinds.BlindsInfo;
 import com.cubeia.poker.rounds.dealing.DealExposedPocketCardsRound;
+import com.cubeia.poker.states.ServerAdapterHolder;
 import com.cubeia.poker.timing.impl.DefaultTimingProfile;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -23,18 +26,28 @@ import static org.mockito.Mockito.when;
 
 public class TelesinaTest {
 
-    @Mock
-    private PokerState pokerState;
-
     private SortedMap<Integer, PokerPlayer> playerMap = new TreeMap<Integer, PokerPlayer>();
 
     PokerPlayer dealer;
+
     @Mock
     TelesinaDeckFactory deckFactory;
+
     @Mock
     TelesinaDeck deck;
+
     @Mock
     private TelesinaDealerButtonCalculator dealerButtonCalculator;
+
+    @Mock
+    private PokerContext context;
+
+    @Mock
+    private ServerAdapterHolder serverAdapterHolder;
+
+    @Mock
+    private BlindsInfo blindsInfo;
+    
     TelesinaForTesting telesina;
 
     private void setup() {
@@ -47,7 +60,10 @@ public class TelesinaTest {
                 new Card(7, "8H"), new Card(7, "9H"), new Card(7, "JH"), new Card(7, "QH"), new Card(7, "KH"), new Card(7, "AH"),
                 new Card(1, "2D"), new Card(2, "3D"), new Card(3, "4D"), new Card(4, "5D"), new Card(5, "6D"), new Card(6, "7D"),
                 new Card(7, "8D"), new Card(7, "9D"), new Card(7, "JD"), new Card(7, "QD"), new Card(7, "KD"), new Card(7, "AD"));
+        when(context.getBlindsInfo()).thenReturn(blindsInfo);
+
         telesina = new TelesinaForTesting(new DummyRNGProvider(), deckFactory, roundFactory, dealerButtonCalculator);
+        telesina.setPokerContextAndServerAdapter(context, serverAdapterHolder);
     }
 
     @SuppressWarnings("unused")
@@ -59,9 +75,9 @@ public class TelesinaTest {
         createAndAddPlayer(2, false);
         createAndAddPlayer(3, false);
 
-        when(pokerState.getCurrentHandSeatingMap()).thenReturn(playerMap);
-        when(pokerState.getTimingProfile()).thenReturn(new DefaultTimingProfile());
-        when(pokerState.getServerAdapter()).thenReturn(new MockServerAdapter());
+        when(context.getCurrentHandSeatingMap()).thenReturn(playerMap);
+        when(context.getTimingProfile()).thenReturn(new DefaultTimingProfile());
+        when(serverAdapterHolder.get()).thenReturn(new MockServerAdapter());
 
         telesina.startHand();
 

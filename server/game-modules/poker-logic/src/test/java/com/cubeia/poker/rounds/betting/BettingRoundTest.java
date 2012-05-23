@@ -42,6 +42,10 @@ import static org.mockito.Mockito.*;
 
 public class BettingRoundTest extends TestCase  { // implements TestListener
 
+    public void testSomething() {
+        
+    }
+
     // TODO FIXTESTS
 //    private ActionRequest requestedAction;
 //
