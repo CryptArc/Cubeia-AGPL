@@ -28,7 +28,7 @@ import com.cubeia.poker.model.BlindsInfo;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.pot.PotHolder;
-import com.cubeia.poker.pot.rake.RakeCalculator;
+import com.cubeia.poker.pot.RakeCalculator;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.timing.impl.DefaultTimingProfile;
 import com.google.common.base.Predicate;

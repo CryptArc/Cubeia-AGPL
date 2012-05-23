@@ -1,14 +1,15 @@
 package com.cubeia.poker.context;
 
 import com.cubeia.poker.model.BlindsInfo;
+import com.cubeia.poker.pot.RakeInfoContainer;
+import com.cubeia.poker.rake.LinearRakeWithLimitCalculator;
 import com.cubeia.poker.settings.BetStrategyName;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.pot.PotHolder;
-import com.cubeia.poker.pot.rake.LinearRakeWithLimitCalculator;
-import com.cubeia.poker.pot.rake.RakeInfoContainer;
+import com.cubeia.poker.pot.RakeInfoContainer;
 import com.cubeia.poker.timing.TimingProfile;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;

@@ -1,4 +1,4 @@
-package com.cubeia.poker.pot.rake;
+package com.cubeia.poker.pot;
 
 import com.cubeia.poker.pot.Pot;
 

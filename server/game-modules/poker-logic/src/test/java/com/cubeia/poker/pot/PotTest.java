@@ -19,7 +19,7 @@ package com.cubeia.poker.pot;
 
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.pot.rake.RakeCalculator;
+import com.cubeia.poker.pot.RakeCalculator;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

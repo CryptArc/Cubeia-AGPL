@@ -1,5 +1,9 @@
-package com.cubeia.poker.pot.rake;
+package com.cubeia.poker.rake;
 
+import com.cubeia.poker.pot.RakeCalculator;
+import com.cubeia.poker.pot.RakeCalculator;
+import com.cubeia.poker.pot.RakeInfoContainer;
+import com.cubeia.poker.pot.RakeInfoContainer;
 import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.Pot;

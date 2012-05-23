@@ -1,6 +1,7 @@
-package com.cubeia.poker.pot.rake;
+package com.cubeia.poker.pot;
 
 import com.cubeia.poker.pot.Pot;
+import com.cubeia.poker.pot.RakeInfoContainer;
 
 import java.io.Serializable;
 import java.util.Collection;
