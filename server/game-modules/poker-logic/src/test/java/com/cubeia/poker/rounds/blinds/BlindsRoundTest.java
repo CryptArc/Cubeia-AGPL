@@ -33,6 +33,7 @@ import com.cubeia.poker.timing.impl.DefaultTimingProfile;
 import com.google.common.base.Predicate;
 import junit.framework.TestCase;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -48,8 +49,6 @@ public class BlindsRoundTest extends TestCase {
     private BlindsRound round;
 
     private ActionRequest requestedAction;
-
-    private Stack<ActionRequest> requestedActions = new Stack<ActionRequest>();
 
     private PokerContext context;
 
@@ -72,8 +71,6 @@ public class BlindsRoundTest extends TestCase {
         }
     };
 
-    private ArgumentCaptor<ActionRequest> captor;
-
     @Override
     protected void setUp() throws Exception {
         initMocks(this);
@@ -81,7 +78,6 @@ public class BlindsRoundTest extends TestCase {
         when(settings.getTiming()).thenReturn(new DefaultTimingProfile());
         context = new PokerContext(settings);
         context.setPotHolder(new PotHolder(rakeCalculator));
-        captor = ArgumentCaptor.forClass(ActionRequest.class);
     }
 
     public void testBasicBlinds() throws Exception {
@@ -239,7 +235,7 @@ public class BlindsRoundTest extends TestCase {
         }
 
         // Check that only the small blind has been asked so far.
-        assertEquals(1, requestedActions.size());
+        verify(serverAdapter, times(1)).requestAction(Matchers.<ActionRequest>any());
 
         // Ok, no more fooling around.
         act(p[1], PokerActionType.SMALL_BLIND);
@@ -378,14 +374,14 @@ public class BlindsRoundTest extends TestCase {
         addPlayers(p);
         p[1].setSitOutStatus(SitOutStatus.MISSED_BIG_BLIND);
         round = new BlindsRound(context, serverAdapterHolder);
-
-        requestedAction = getRequestedAction();
+        getRequestedAction();
         assertEquals(p[2].getId(), requestedAction.getPlayerId());
     }
 
-    private ActionRequest getRequestedAction() {
+    private void getRequestedAction() {
+        ArgumentCaptor<ActionRequest> captor = ArgumentCaptor.forClass(ActionRequest.class);
         verify(serverAdapter, atLeastOnce()).requestAction(captor.capture());
-        return captor.getValue();
+        requestedAction = captor.getValue();
     }
 
     public void testSittingOutPlayerIsNotAskedToPostBigBlind() {
@@ -396,7 +392,7 @@ public class BlindsRoundTest extends TestCase {
         round = new BlindsRound(context, serverAdapterHolder);
         
         act(p[1], PokerActionType.SMALL_BLIND);
-        requestedAction = getRequestedAction();
+
         assertEquals(p[3].getId(), requestedAction.getPlayerId());
     }
 
@@ -409,7 +405,7 @@ public class BlindsRoundTest extends TestCase {
         
         act(p[1], PokerActionType.SMALL_BLIND);
         act(p[2], PokerActionType.DECLINE_ENTRY_BET);
-        requestedAction = getRequestedAction();
+
         assertEquals(p[0].getId(), requestedAction.getPlayerId());
     }
 
@@ -429,8 +425,9 @@ public class BlindsRoundTest extends TestCase {
         p[0].setHasPostedEntryBet(true);
         round = new BlindsRound(context, serverAdapterHolder);
 
-        requestedAction = getRequestedAction();
+
         // Small blind is on seat 1, but seat 2 has not posted the entry bet, so he should not be asked to post small blind.
+        getRequestedAction();
         assertTrue(requestedAction.isOptionEnabled(PokerActionType.BIG_BLIND));
         assertEquals(103, requestedAction.getPlayerId());
     }
@@ -450,7 +447,7 @@ public class BlindsRoundTest extends TestCase {
 
         act(p[2], PokerActionType.SMALL_BLIND);
         act(p[3], PokerActionType.BIG_BLIND);
-        requestedAction = getRequestedAction();
+
         assertEquals(100, requestedAction.getPlayerId());
         assertTrue(requestedAction.isOptionEnabled(PokerActionType.BIG_BLIND));
     }
@@ -508,12 +505,9 @@ public class BlindsRoundTest extends TestCase {
         p[5].setHasPostedEntryBet(false);
         round = new BlindsRound(context, serverAdapterHolder);
 
-        requestedAction =  getRequestedAction();
-        System.out.println("1" + captor.getValue());
         act(p[2], PokerActionType.SMALL_BLIND);
 
         act(p[3], PokerActionType.BIG_BLIND);
-        System.out.println("2" + captor.getValue());
         assertEquals(104, requestedAction.getPlayerId());
         assertTrue(requestedAction.isOptionEnabled(PokerActionType.BIG_BLIND));
         act(p[4], PokerActionType.BIG_BLIND);
@@ -610,18 +604,17 @@ public class BlindsRoundTest extends TestCase {
     }
 
     private void verifyAndAct(MockPlayer player, PokerActionType action) {
-//        ArgumentCaptor<ActionRequest> captor = ArgumentCaptor.forClass(ActionRequest.class);
-//        verify(serverAdapter).requestAction(captor.capture());
-//        requestedAction = captor.getValue();
-//        assertTrue("Player " + player + " should have option: " + action,
-//                player.getActionRequest().isOptionEnabled(action));
-//        assertTrue(requestedAction.isOptionEnabled(action));
-//        assertEquals(player.getId(), requestedAction.getPlayerId());
+        getRequestedAction();
+        assertTrue("Player " + player + " should have option: " + action,
+                player.getActionRequest().isOptionEnabled(action));
+        assertTrue(requestedAction.isOptionEnabled(action));
+        assertEquals(player.getId(), requestedAction.getPlayerId());
         act(player, action);
     }
 
     private void act(MockPlayer player, PokerActionType action) {
         PokerAction a = new PokerAction(player.getId(), action);
         round.act(a);
+        getRequestedAction();
     }
 }
