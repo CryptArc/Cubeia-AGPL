@@ -78,6 +78,7 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
         throw new IllegalStateException("PokerState: " + context + " Action: " + action);
     }
 
+    @Override
     public String getStateDescription() {
         return getClass().getName();
     }
@@ -143,7 +144,21 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
         }
     }
 
-    public void notifyPlayerSittingIn(int playerId) {
+    @Override
+    public void performPendingBuyIns(Set<PokerPlayer> singleton) {
+        log.debug("Not performing pending buy-ins as the current state does not think that's appropriate: " + this);
+    }
+
+    @Override
+    public void playerOpenedSession(int playerId) {
+        boolean enoughMoney = gameType.canPlayerAffordEntryBet(context.getPlayer(playerId), context.getSettings(), false);
+        log.debug("Player {} opened session. Sending buy-in request if he doesn't have enough money for an entry bet: {}", playerId, enoughMoney);
+        if (!enoughMoney) {
+            getServerAdapterHolder().notifyBuyInInfo(playerId, false);
+        }
+    }
+
+    private void notifyPlayerSittingIn(int playerId) {
         log.debug("notifyPlayerSittingIn() id: " + playerId + " status:" + PokerPlayerStatus.SITIN.name());
         boolean isInCurrentHand = context.isPlayerInHand(playerId);
         getServerAdapterHolder().notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITIN, isInCurrentHand);
@@ -153,10 +168,6 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
         getServerAdapterHolder().notifyBuyInInfo(playerId, mandatoryBuyin);
     }
 
-    @Override
-    public void performPendingBuyIns(Set<PokerPlayer> singleton) {
-        log.debug("Not performing pending buy-ins as the current state does not think that's appropriate: " + this);
-    }
 
     protected void doPerformPendingBuyIns(Set<PokerPlayer> players) {
         getServerAdapterHolder().performPendingBuyIns(players);

@@ -126,6 +126,7 @@ public class Processor implements GameProcessor, TournamentProcessor {
                 Trigger command = (Trigger) attachment;
                 handleCommand(table, command);
             } else if (attachment instanceof OpenSessionResponse) {
+                log.debug("got open session response: {}", attachment);
                 backendHandler.handleOpenSessionSuccessfulResponse((OpenSessionResponse) attachment);
             } else if (attachment instanceof OpenSessionFailedResponse) {
                 log.debug("got open session failed response: {}", attachment);

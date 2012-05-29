@@ -46,6 +46,7 @@ public class NotStartedSTM extends AbstractPokerGameSTM {
     @Override
     public void playerJoined(PokerPlayer player) {
         // TODO: Probably prettier to have a separate state for tournaments.
+        log.debug("Player " + player.getId() + " joined. Number of players: " + context.getNumberOfPlayersSittingIn());
         if (context.getNumberOfPlayersSittingIn() > 1 && !context.isTournamentTable()) {
             changeState(new WaitingToStartSTM());
         }

@@ -89,4 +89,6 @@ public interface PokerGameSTM extends Serializable {
     void playerSitsIn(int playerId);
 
     void performPendingBuyIns(Set<PokerPlayer> singleton);
+
+    void playerOpenedSession(int playerId);
 }

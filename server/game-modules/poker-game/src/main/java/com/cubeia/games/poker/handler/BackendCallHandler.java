@@ -158,21 +158,12 @@ public class BackendCallHandler {
 
     public void handleOpenSessionSuccessfulResponse(OpenSessionResponse openSessionResponse) {
         PlayerSessionId playerSessionId = openSessionResponse.getSessionId();
-
         int playerId = playerSessionId.getPlayerId();
-        // log.debug("handle open session response: session = {}, pId = {}", playerSessionId, playerId);
+
+        // TODO: This ain't pretty. Either make PokerPlayer know about sessions or hold the session in some wrapper.
         PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) state.getPokerPlayer(playerId);
         pokerPlayer.setPlayerSessionId(playerSessionId);
-
-
-        /*
-         * if the player can not buy, eg. have enough cash at hand, in after reconnecting
-         * we send him/her a buyInInfo
-         */
-        // TODO: VN REMOVED THIS! TOO MUCH ASKING AND NOT TELLING. FIX IT!
-//        if (!state.canPlayerAffordEntryBet(pokerPlayer, state.getSettings(), true)) {
-//            state.notifyBuyinInfo(pokerPlayer.getId(), false);
-//        }
+        state.playerOpenedSession(playerId);
     }
 
     public void handleAnnounceTableSuccessfulResponse(AnnounceTableResponse attachment) {
