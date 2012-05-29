@@ -205,10 +205,6 @@ public class PokerState implements Serializable, IPokerState {
         pokerContext.saveStartingBalances();
     }
 
-    public void notifyHandEnd(HandResult result, HandEndStatus status) {
-        serverAdapter.notifyHandEnd(result, status);
-    }
-
     @VisibleForTesting
     public void commitPendingBalances() {
         pokerContext.commitPendingBalances();
@@ -257,6 +253,7 @@ public class PokerState implements Serializable, IPokerState {
      * @param playerId
      */
     public void playerIsSittingIn(int playerId) {
+        log.debug("Player " + playerId + " is sitting in.");
         getCurrentState().playerSitsIn(playerId);
     }
 
@@ -456,5 +453,9 @@ public class PokerState implements Serializable, IPokerState {
     // TODO: Remove, this is only used from one test.
     public PokerContext getContext() {
         return pokerContext;
+    }
+
+    public void playerOpenedSession(int playerId) {
+        stateHolder.get().playerOpenedSession(playerId);
     }
 }

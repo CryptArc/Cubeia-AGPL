@@ -511,4 +511,8 @@ public class PokerContext implements Serializable {
     public void setBlindsInfo(BlindsInfo blindsInfo) {
         this.blindsInfo = blindsInfo;
     }
+
+    public PokerPlayer getPlayer(int playerId) {
+        return playerMap.get(playerId);
+    }
 }
