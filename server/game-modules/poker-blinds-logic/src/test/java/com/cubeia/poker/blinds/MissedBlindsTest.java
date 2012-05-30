@@ -15,16 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package poker.gs.server.blinds;
+package com.cubeia.poker.blinds;
 
 import junit.framework.TestCase;
-import poker.gs.server.blinds.utils.MockPlayer;
+import com.cubeia.poker.blinds.utils.MockPlayer;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static poker.gs.server.blinds.Fixtures.blindsInfo;
-import static poker.gs.server.blinds.Fixtures.players;
+import static com.cubeia.poker.blinds.Fixtures.blindsInfo;
+import static com.cubeia.poker.blinds.Fixtures.players;
 
 public class MissedBlindsTest extends TestCase {
 

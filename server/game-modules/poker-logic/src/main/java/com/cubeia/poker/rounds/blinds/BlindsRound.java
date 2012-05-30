@@ -154,7 +154,7 @@ public class BlindsRound implements Round {
     }
 
     private void initNonHeadsUpHand() {
-        log.debug("Initing non heads up hand on table");
+        log.debug("Initializing non heads up hand on table");
         moveDealerButtonToSeatId(previousBlindsInfo.getSmallBlindSeatId());
         PokerPlayer smallBlind = getPlayerInSeat(previousBlindsInfo.getBigBlindSeatId());
         PokerPlayer bigBlind = getSittingInPlayerInSeatAfter(previousBlindsInfo.getBigBlindSeatId());
@@ -273,7 +273,7 @@ public class BlindsRound implements Round {
     }
 
     private void initFirstHeadsUpHand() {
-        log.debug("Initing first heads up hand on table");
+        log.debug("Initializing first heads up hand on table");
         Collection<PokerPlayer> players = sittingInPlayers.values();
         PokerPlayer firstPlayer = players.iterator().next();
         moveDealerButtonToSeatId(firstPlayer.getSeatId());
@@ -282,7 +282,7 @@ public class BlindsRound implements Round {
     }
 
     private void initFirstNonHeadsUpHand() {
-        log.debug("Initing first non heads up hand on table");
+        log.debug("Initializing first non heads up hand on table");
         Iterator<PokerPlayer> iterator = sittingInPlayers.values().iterator();
         PokerPlayer firstPlayer = iterator.next();
         moveDealerButtonToSeatId(firstPlayer.getSeatId());

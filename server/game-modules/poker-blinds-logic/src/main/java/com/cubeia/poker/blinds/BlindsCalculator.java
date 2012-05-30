@@ -15,11 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package poker.gs.server.blinds;
+package com.cubeia.poker.blinds;
 
 import java.util.*;
 
-import static poker.gs.server.blinds.utils.PokerUtils.*;
+import static com.cubeia.poker.blinds.utils.PokerUtils.*;
 
 /**
  * Used for calculating where the dealer button, small blind and big blind should be.
@@ -173,7 +173,6 @@ public class BlindsCalculator {
     /**
      * Initializes the player map, by mapping players to their seat ids.
      *
-     * @param players the list of players at the table
      */
     private void initPlayerMap() {
         seatedPlayers = new TreeMap<Integer, BlindsPlayer>();

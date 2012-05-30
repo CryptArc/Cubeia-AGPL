@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package poker.gs.server.blinds.utils;
+package com.cubeia.poker.blinds.utils;
 
 import java.util.ArrayList;
 import java.util.Iterator;

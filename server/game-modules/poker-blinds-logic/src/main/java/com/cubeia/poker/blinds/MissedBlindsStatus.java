@@ -15,32 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package poker.gs.server.blinds;
+package com.cubeia.poker.blinds;
 
 /**
- * Describes a player who should pay the entry bet.
+ * Enum for describing which blinds have been missed.
+ * <p/>
+ * A new player will have NOT_ENTERED_YET as his status.
  *
  * @author viktor
  */
-public class EntryBetter {
-
-    private final BlindsPlayer player;
-
-    private final EntryBetType entryBetType;
-
-    public EntryBetter(BlindsPlayer player, EntryBetType entryBetType) {
-        super();
-        this.player = player;
-        this.entryBetType = entryBetType;
-    }
-
-    public BlindsPlayer getPlayer() {
-        return player;
-    }
-
-    public EntryBetType getEntryBetType() {
-        return entryBetType;
-    }
-
-
+public enum MissedBlindsStatus {
+    NOT_ENTERED_YET, NO_MISSED_BLINDS, MISSED_SMALL_BLIND, MISSED_BIG_AND_SMALL_BLIND;
 }

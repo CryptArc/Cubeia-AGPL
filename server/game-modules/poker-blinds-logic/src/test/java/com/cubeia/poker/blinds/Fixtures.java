@@ -15,9 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package poker.gs.server.blinds;
+package com.cubeia.poker.blinds;
 
-import poker.gs.server.blinds.utils.MockPlayer;
+import com.cubeia.poker.blinds.utils.MockPlayer;
 
 import java.util.ArrayList;
 import java.util.List;

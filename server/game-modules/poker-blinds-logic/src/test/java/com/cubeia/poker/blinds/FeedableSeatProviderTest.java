@@ -15,8 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package poker.gs.server.blinds;
+package com.cubeia.poker.blinds;
 
+import com.cubeia.poker.blinds.FeedableSeatProvider;
 import junit.framework.TestCase;
 
 import java.util.Arrays;

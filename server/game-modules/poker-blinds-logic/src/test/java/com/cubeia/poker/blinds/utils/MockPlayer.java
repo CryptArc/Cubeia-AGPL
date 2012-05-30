@@ -15,10 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package poker.gs.server.blinds.utils;
+package com.cubeia.poker.blinds.utils;
 
-import poker.gs.server.blinds.BlindsPlayer;
-import poker.gs.server.blinds.MissedBlindsStatus;
+import com.cubeia.poker.blinds.BlindsPlayer;
+import com.cubeia.poker.blinds.MissedBlindsStatus;
 
 public class MockPlayer implements BlindsPlayer {
 

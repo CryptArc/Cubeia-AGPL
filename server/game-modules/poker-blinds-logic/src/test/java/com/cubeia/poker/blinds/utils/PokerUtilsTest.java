@@ -15,10 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package poker.gs.server.blinds.utils;
+package com.cubeia.poker.blinds.utils;
 
+import com.cubeia.poker.blinds.BlindsPlayer;
 import junit.framework.TestCase;
-import poker.gs.server.blinds.BlindsPlayer;
 
 import java.util.List;
 import java.util.SortedMap;

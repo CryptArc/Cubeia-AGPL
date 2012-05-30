@@ -15,18 +15,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package poker.gs.server.blinds;
+package com.cubeia.poker.blinds;
 
 /**
- * Interface for logging.
+ * Describes a player who should pay the entry bet.
+ *
+ * @author viktor
  */
-public interface LogCallback {
+public class EntryBetter {
 
-    /**
-     * Logs the message.
-     *
-     * @param message
-     */
-    void log(String message);
+    private final BlindsPlayer player;
+
+    private final EntryBetType entryBetType;
+
+    public EntryBetter(BlindsPlayer player, EntryBetType entryBetType) {
+        super();
+        this.player = player;
+        this.entryBetType = entryBetType;
+    }
+
+    public BlindsPlayer getPlayer() {
+        return player;
+    }
+
+    public EntryBetType getEntryBetType() {
+        return entryBetType;
+    }
+
 
 }

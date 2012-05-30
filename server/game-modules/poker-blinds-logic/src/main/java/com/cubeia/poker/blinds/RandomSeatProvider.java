@@ -15,8 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package poker.gs.server.blinds;
+package com.cubeia.poker.blinds;
 
-public enum EntryBetType {
-    BIG_BLIND, DEAD_SMALL_BLIND, BIG_BLIND_PLUS_DEAD_SMALL_BLIND
+import java.util.List;
+
+/**
+ * Interface for providing a random seatId.
+ * <p/>
+ * Used when moving the dealer button to a random seat.
+ */
+public interface RandomSeatProvider {
+
+    /**
+     * Returns a random seat id of the given seat ids.
+     *
+     * @param availableSeatIds the list of available seat ids
+     * @return A random seat id of the given seat ids. The result must be one of the values in the given list
+     */
+    public int getRandomSeatId(List<Integer> availableSeatIds);
 }
