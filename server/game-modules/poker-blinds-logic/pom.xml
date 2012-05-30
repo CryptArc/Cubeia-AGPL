@@ -6,7 +6,14 @@
     <groupId>com.cubeia.games.poker</groupId>
     <artifactId>poker-blinds-logic</artifactId>
     <name>poker-blinds-logic</name>
-    <version>1.0-SNAPSHOT</version>
+
+    <parent>
+        <artifactId>game-modules</artifactId>
+        <groupId>com.cubeia.games</groupId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
