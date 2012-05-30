@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.cubeia.poker.result;
 
 import com.cubeia.poker.hand.HandTypeEvaluator;
@@ -23,8 +22,6 @@ import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.pot.RakeInfoContainer;
-import com.cubeia.poker.pot.RakeInfoContainer;
-import com.cubeia.poker.result.Result;
 import com.cubeia.poker.util.PlayerHandComparator;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
@@ -66,19 +63,18 @@ public class HandResultCalculator implements Serializable {
         Map<PokerPlayer, Map<Pot, Long>> playerPotWinningsShares = new HashMap<PokerPlayer, Map<Pot, Long>>();
 
         /*
-           * For each pot we need to figure out:
-           *
-           * 1. Participating players
-           * 2. Winner(s) of the participating players
-           * 3. Net winnings and net losses for the participating players
-           *
-           * Net winnings and losses are aggregated over all pots since
-           * a player can participate in more than one pot.
-           *
-           * Finally we construct a result DTO for each player and return them
-           * as a map.
-           */
-
+         * For each pot we need to figure out:
+         *
+         * 1. Participating players
+         * 2. Winner(s) of the participating players
+         * 3. Net winnings and net losses for the participating players
+         *
+         * Net winnings and losses are aggregated over all pots since
+         * a player can participate in more than one pot.
+         *
+         * Finally we construct a result DTO for each player and return them
+         * as a map.
+         */
         for (Pot pot : potHolder.getPots()) {
             // Get participating players
             Map<PokerPlayer, Long> participants = pot.getPotContributors();
@@ -110,7 +106,6 @@ public class HandResultCalculator implements Serializable {
                     addPotWinningShare(player, pot, potShare, playerPotWinningsShares);
                 }
 
-
                 // --- LOSERS ---
                 // Report loser losses
                 participantIds.removeAll(winners);
@@ -121,7 +116,6 @@ public class HandResultCalculator implements Serializable {
                 }
             }
         }
-
 
         // Create result DTO's for the net results over all Pots
         for (Integer playerId : playerMap.keySet()) {
@@ -141,7 +135,6 @@ public class HandResultCalculator implements Serializable {
             Result result = new Result(netResultSafe, playerStakeSafe, potShares);
             results.put(player, result);
         }
-
         return results;
     }
 
@@ -171,9 +164,7 @@ public class HandResultCalculator implements Serializable {
         });
     }
 
-    private void addResultBalance(Map<Integer, Long> netResults, Map<Integer, Long> netStakes, Integer playerId,
-                                  Long winnings, Long stake) {
-
+    private void addResultBalance(Map<Integer, Long> netResults, Map<Integer, Long> netStakes, Integer playerId, Long winnings, Long stake) {
         Long balance = netResults.get(playerId);
         if (balance == null) {
             netResults.put(playerId, winnings - stake);
@@ -189,13 +180,11 @@ public class HandResultCalculator implements Serializable {
         }
     }
 
-
     private List<Integer> getWinners(Collection<PlayerHand> hands) {
         List<Integer> winners = new ArrayList<Integer>();
 
         List<PlayerHand> copy = new LinkedList<PlayerHand>(hands);
-        Comparator<PlayerHand> phComparator = Collections.reverseOrder(
-                new PlayerHandComparator(handEvaluator.createHandComparator(hands.size())));
+        Comparator<PlayerHand> phComparator = Collections.reverseOrder(new PlayerHandComparator(handEvaluator.createHandComparator(hands.size())));
         Collections.sort(copy, phComparator);
 
         PlayerHand previousHand = null;

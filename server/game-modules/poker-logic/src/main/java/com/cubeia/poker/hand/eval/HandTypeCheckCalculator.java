@@ -16,7 +16,7 @@ import static com.cubeia.poker.hand.HandType.*;
  * <p><em>Design Note: If you are extending or copy-pasting from this class you are
  * probably not doing it correctly.</em></p>
  * <p/>
- * <p><em>Design Note 2: Try to keep as litle state as possible in this class.</em></p>
+ * <p><em>Design Note 2: Try to keep as little state as possible in this class.</em></p>
  *
  * @author Fredrik Johansson, Cubeia Ltd
  */
@@ -65,7 +65,7 @@ public class HandTypeCheckCalculator {
     /**
      * <p>Checks if all cards are the same suit, regardless of the number of cards.</p>
      *
-     * @return HandStrenght, null if not flush.
+     * @return HandStrength, null if not flush.
      */
     public HandStrength checkFlush(Hand hand) {
         return checkFlush(hand, 1);
@@ -74,7 +74,9 @@ public class HandTypeCheckCalculator {
     /**
      * <p>Checks if all cards are the same suit and the number of cards are enough</p>
      *
-     * @return HandStrenght, null if not flush.
+     * @param hand
+     * @param minimumNumberOfCards
+     * @return HandStrength, null if not flush.
      */
     @SuppressWarnings("unchecked")
     public HandStrength checkFlush(Hand hand, int minimumNumberOfCards) {
@@ -112,6 +114,8 @@ public class HandTypeCheckCalculator {
      * <p>Checks if all cards are a straight, regardless of the number of cards.</p>
      * <p/>
      * <p><strong>Note: </strong><em>Assumes that you have executed a sort (Hand.sortAscending) on the hand first!</em></p>
+     * @param hand
+     * @return
      */
     public HandStrength checkStraight(Hand hand) {
         return checkStraight(hand, false);
@@ -121,8 +125,8 @@ public class HandTypeCheckCalculator {
      * Check for straights. Hands with only cards will never be reported
      * as a straight.
      *
-     * @param hand
-     * @param acesAreLow
+     * @param hand the hand to check
+     * @param acesAreLow true if aces are low, meaning A 2 3 4 5 can count as straight
      * @return HandStrength, null if not a straight
      */
     @SuppressWarnings("unchecked")
@@ -190,7 +194,7 @@ public class HandTypeCheckCalculator {
      * Check for three and four of a kind. Will return with the
      * highest rank that matches the number of cards that is looked for.
      *
-     * @param hand
+     * @param hand the hand to check
      * @param number, number of same rank to look for, i.e. 3 = three of a kind
      * @return the highest match found or null if not found
      */
@@ -252,9 +256,9 @@ public class HandTypeCheckCalculator {
     }
 
     /**
-     * @param hand
+     * @param hand the hand to check
      * @param number, the number to check highest multiple. I.e. 2 = two pair, 3 = full house
-     * @return
+     * @return a hand strength
      */
     @SuppressWarnings("unchecked")
     private HandStrength checkDoubleManyCards(Hand hand, int number) {

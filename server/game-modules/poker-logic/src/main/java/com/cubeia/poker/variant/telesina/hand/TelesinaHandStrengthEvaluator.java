@@ -60,7 +60,6 @@ public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Seriali
      * The cards are all spades. For a deck with lowest rank = 3 this is:
      * AS 3S 4S 5S 6S
      *
-     * @param deckLowestRank lowest rank in the deck
      * @return lowest possible straight flush
      */
     public List<Card> getLowestStraightFlushCards() {
@@ -79,7 +78,7 @@ public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Seriali
     /**
      * Find the strength of the best hand that can be built using a list of cards.
      *
-     * @param cards
+     * @param hand
      * @return
      */
     public HandStrength getBestHandStrength(Hand hand) {
@@ -153,7 +152,7 @@ public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Seriali
      * Checks to see if ALL cards (any number) supplied form a straight, aces low allowed.
      * Deck may be stripped.
      *
-     * @param cards         The cards to check
+     * @param hand         The cards to check
      * @param minimumLength The minimum length required for a set of card to count as a straight (NOTE a one card straight is never recognized)
      * @return
      */
@@ -174,7 +173,7 @@ public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Seriali
      * Checks to see if ALL cards (any number) supplied form a straight flush.
      * Deck may be stripped.
      *
-     * @param cards         The cards to check
+     * @param hand         The cards to check
      * @param minimumLength The minimum length required for a set of card to count as a straight
      * @return
      */
@@ -197,7 +196,7 @@ public class TelesinaHandStrengthEvaluator implements HandTypeEvaluator, Seriali
     /**
      * Checks for a Royal Straight Flush.
      *
-     * @param cards         The cards to check
+     * @param hand         The cards to check
      * @param minimumLength The minimum length required for a set of card to count as a straight
      * @return hand strength, null if not a royal straight flush
      * @see #checkStraightFlush(Hand, int)

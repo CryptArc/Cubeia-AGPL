@@ -21,7 +21,7 @@ import java.util.List;
 public class TexasHoldemHandComparator implements Comparator<Hand> {
 
     private HandStrengthComparator hsc;
-    HandCalculator calc = new TexasHoldemHandCalculator();
+    private TexasHoldemHandCalculator calc = new TexasHoldemHandCalculator();
 
 
     public TexasHoldemHandComparator() {
@@ -30,32 +30,10 @@ public class TexasHoldemHandComparator implements Comparator<Hand> {
 
     @Override
     public int compare(Hand h1, Hand h2) {
-
-        HandStrength h1Strength = getBestCombinationHandStrength(h1);
-        HandStrength h2Strength = getBestCombinationHandStrength(h2);
+        HandStrength h1Strength = calc.getBestCombinationHandStrength(h1, 5);
+        HandStrength h2Strength = calc.getBestCombinationHandStrength(h2, 5);
         return hsc.compare(h1Strength, h2Strength);
     }
 
 
-    /**
-     * Get all possible hand combinations and rank them.
-     *
-     * @param hand with more than 5 cards
-     * @return the best HandStrength found.
-     */
-    protected HandStrength getBestCombinationHandStrength(Hand hand) {
-        List<HandStrength> allPossibleHands = new ArrayList<HandStrength>();
-        Combinator<Card> combinator = new Combinator<Card>(hand.getCards(), 5);
-        for (List<Card> cards : combinator) {
-            HandStrength handStrength = calc.getHandStrength(new Hand(cards));
-            allPossibleHands.add(handStrength);
-        }
-
-        if (allPossibleHands.isEmpty()) {
-            throw new IllegalStateException("calculated 0 possible hands from cards: " + hand.toString());
-        }
-
-        Collections.sort(allPossibleHands, new HandStrengthComparator());
-        return allPossibleHands.get(0);
-    }
 }

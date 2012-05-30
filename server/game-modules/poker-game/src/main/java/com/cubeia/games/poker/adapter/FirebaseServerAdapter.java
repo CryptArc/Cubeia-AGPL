@@ -418,18 +418,11 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
             String handId = getIntegrationHandId();
             TableId externalTableId = getIntegrationTableId();
-            BatchHandRequest batchHandRequest = handResultBatchFactory.createAndValidateBatchHandRequest(handResult, handId, externalTableId);
-            batchHandRequest.setStartTime(state.getStartTime());
-            batchHandRequest.setEndTime(System.currentTimeMillis());
-
-            BatchHandResponse batchHandResult = doBatchHandResult(batchHandRequest);
-
+            BatchHandResponse batchHandResult = batchHand(handResult, handId, externalTableId);
             validateAndUpdateBalances(batchHandResult);
 
             PotTransfers potTransfers = new PotTransfers(false, transfers, null);
 
-            // TODO: The following logic should be moved to poker-logic
-            // I.e. ranking hands etc do not belong in the game-layer
             Collection<RatedPlayerHand> hands = handResult.getPlayerHands();
             log.debug("--> handResult.getPlayerRevealOrder: {}", handResult.getPlayerRevealOrder());
             HandEnd packet = actionTransformer.createHandEndPacket(hands, potTransfers, handResult.getPlayerRevealOrder());
@@ -442,8 +435,6 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
             // increment hand count
             getFirebaseState().incrementHandCount();
-
-
         } else {
             log.info("The hand was cancelled on table: " + table.getId() + " - " + table.getMetaData().getName());
             cleanupPlayers(new SitoutCalculator());
@@ -457,8 +448,15 @@ public class FirebaseServerAdapter implements ServerAdapter {
         ThreadLocalProfiler.add("FirebaseServerAdapter.notifyHandEnd.stop");
     }
 
-    private BatchHandResponse doBatchHandResult(
-            BatchHandRequest batchHandRequest) {
+    private BatchHandResponse batchHand(HandResult handResult, String handId, TableId externalTableId) {
+        BatchHandRequest batchHandRequest = handResultBatchFactory.createAndValidateBatchHandRequest(handResult, handId, externalTableId);
+        batchHandRequest.setStartTime(state.getStartTime());
+        batchHandRequest.setEndTime(System.currentTimeMillis());
+
+        return doBatchHandResult(batchHandRequest);
+    }
+
+    private BatchHandResponse doBatchHandResult(BatchHandRequest batchHandRequest) {
         BatchHandResponse batchHandResult;
         try {
             batchHandResult = backend.batchHand(batchHandRequest);

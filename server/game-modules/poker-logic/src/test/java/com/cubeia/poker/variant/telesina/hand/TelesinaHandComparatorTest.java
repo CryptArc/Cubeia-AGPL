@@ -350,6 +350,9 @@ public class TelesinaHandComparatorTest {
         comp = createComparatorByLowestRank(Rank.FIVE, 3);
         assertTrue(comp.compare(new Hand("5D 6D 7D JD AD"), new Hand("8D 9D TD QD KD")) > 0);
 
+        // if both hands have same highest card (and second, third and fourth highest), the next highest should decide.
+        assertTrue(comp.compare(new Hand("5D 6D 7D JD AD"), new Hand("4D 6D 7D JD AD")) > 0);
+
         // ... with second card if highest shared
         assertTrue(comp.compare(new Hand("5D 6D 7D KD AD"), new Hand("8D 9D TD QD AD")) > 0);
     }

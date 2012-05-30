@@ -18,6 +18,7 @@
 package com.cubeia.poker;
 
 import com.cubeia.poker.action.PokerActionType;
+import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
 
@@ -28,7 +29,6 @@ public class MockPlayer extends DefaultPokerPlayer implements PokerPlayer {
 
     public MockPlayer(int id) {
         super(id + 100);
-//		setBalance(5000);
         seatId = id;
     }
 
@@ -47,5 +47,9 @@ public class MockPlayer extends DefaultPokerPlayer implements PokerPlayer {
 
     public void setSeatId(int i) {
         seatId = i;
+    }
+
+    public void setPocketCards(Hand pocketCards) {
+        this.pocketCards = pocketCards;
     }
 }

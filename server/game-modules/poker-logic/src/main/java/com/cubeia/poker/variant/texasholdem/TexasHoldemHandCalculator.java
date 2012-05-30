@@ -4,12 +4,14 @@ import com.cubeia.poker.hand.*;
 import com.cubeia.poker.hand.calculator.HandCalculator;
 import com.cubeia.poker.hand.eval.HandTypeCheckCalculator;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * <p>Texas Holdem implementation of a Hand Calculator. This is probably
- * the common calculations for most poker games, but variations do exists.</p>
+ * the common calculations for most poker games, but variations do exist.</p>
  *
  * @author Fredrik Johansson, Cubeia Ltd
  */
@@ -19,12 +21,34 @@ public class TexasHoldemHandCalculator implements HandCalculator, HandTypeEvalua
 
     @Override
     public HandInfo getBestHandInfo(Hand hand) {
-        return getHandStrength(hand);
+        return getBestCombinationHandStrength(hand, 5);
     }
 
     @Override
     public Comparator<Hand> createHandComparator(int playersInPot) {
         return Collections.reverseOrder(new TexasHoldemHandComparator());
+    }
+
+    /**
+     * Get all possible hand combinations and rank them.
+     *
+     * @param hand with more than 5 cards
+     * @return the best HandStrength found.
+     */
+    protected HandStrength getBestCombinationHandStrength(Hand hand, int minElements) {
+        List<HandStrength> allPossibleHands = new ArrayList<HandStrength>();
+        Combinator<Card> combinator = new Combinator<Card>(hand.getCards(), minElements);
+        for (List<Card> cards : combinator) {
+            HandStrength handStrength = getHandStrength(new Hand(cards));
+            allPossibleHands.add(handStrength);
+        }
+
+        if (allPossibleHands.isEmpty()) {
+            throw new IllegalStateException("calculated 0 possible hands from cards: " + hand.toString());
+        }
+
+        Collections.sort(allPossibleHands, new HandStrengthComparator());
+        return allPossibleHands.get(0);
     }
 
     /* ----------------------------------------------------

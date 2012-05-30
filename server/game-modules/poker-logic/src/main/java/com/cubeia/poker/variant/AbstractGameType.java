@@ -165,6 +165,7 @@ public abstract class AbstractGameType implements GameType {
     }
 
     protected void notifyHandFinished(HandResult handResult, HandEndStatus status) {
+        log.debug("Hand over. Result: " + handResult.getPlayerHands());
         for (HandFinishedListener listener : handFinishedListeners) {
             listener.handFinished(handResult, status);
         }

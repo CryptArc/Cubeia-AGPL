@@ -61,7 +61,7 @@ public class PlayerAction extends HandHistoryEvent {
         int result = 1;
         result = prime * result + ((action == null) ? 0 : action.hashCode());
         result = prime * result + ((amount == null) ? 0 : amount.hashCode());
-        result = prime * result + (int) (playerId ^ (playerId >>> 32));
+        result = prime * result + (playerId ^ (playerId >>> 32));
         result = prime * result + (timeout ? 1231 : 1237);
         return result;
     }

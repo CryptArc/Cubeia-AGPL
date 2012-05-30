@@ -1,6 +1,5 @@
 package com.cubeia.poker.hand;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -9,6 +8,7 @@ import java.util.List;
 
 import static com.cubeia.poker.hand.HandType.*;
 import static com.cubeia.poker.hand.Rank.*;
+import static org.junit.Assert.assertEquals;
 
 
 public class HandStrengthComparatorTest {
@@ -29,10 +29,10 @@ public class HandStrengthComparatorTest {
 
         Collections.sort(list, new HandStrengthComparator());
 
-        Assert.assertEquals(STRAIGHT_FLUSH, list.get(0).getHandType());
-        Assert.assertEquals(FULL_HOUSE, list.get(1).getHandType());
-        Assert.assertEquals(STRAIGHT, list.get(2).getHandType());
-        Assert.assertEquals(THREE_OF_A_KIND, list.get(3).getHandType());
+        assertEquals(STRAIGHT_FLUSH, list.get(0).getHandType());
+        assertEquals(FULL_HOUSE, list.get(1).getHandType());
+        assertEquals(STRAIGHT, list.get(2).getHandType());
+        assertEquals(THREE_OF_A_KIND, list.get(3).getHandType());
     }
 
     @Test
@@ -54,9 +54,9 @@ public class HandStrengthComparatorTest {
 
         Collections.sort(list, new HandStrengthComparator());
 
-        Assert.assertEquals(ACE, list.get(0).getHighestRank());
-        Assert.assertEquals(KING, list.get(1).getHighestRank());
-        Assert.assertEquals(TEN, list.get(2).getHighestRank());
+        assertEquals(ACE, list.get(0).getHighestRank());
+        assertEquals(KING, list.get(1).getHighestRank());
+        assertEquals(TEN, list.get(2).getHighestRank());
     }
 
     @Test
@@ -81,9 +81,9 @@ public class HandStrengthComparatorTest {
 
         Collections.sort(list, new HandStrengthComparator());
 
-        Assert.assertEquals(KING, list.get(0).getSecondRank());
-        Assert.assertEquals(JACK, list.get(1).getSecondRank());
-        Assert.assertEquals(TWO, list.get(2).getSecondRank());
+        assertEquals(KING, list.get(0).getSecondRank());
+        assertEquals(JACK, list.get(1).getSecondRank());
+        assertEquals(TWO, list.get(2).getSecondRank());
     }
 
     @Test
@@ -117,9 +117,9 @@ public class HandStrengthComparatorTest {
 
         Collections.sort(list, new HandStrengthComparator());
 
-        Assert.assertEquals(JACK, list.get(0).getKickerCards().get(0).getRank());
-        Assert.assertEquals(TEN, list.get(1).getKickerCards().get(0).getRank());
-        Assert.assertEquals(FOUR, list.get(2).getKickerCards().get(0).getRank());
+        assertEquals(JACK, list.get(0).getKickerCards().get(0).getRank());
+        assertEquals(TEN, list.get(1).getKickerCards().get(0).getRank());
+        assertEquals(FOUR, list.get(2).getKickerCards().get(0).getRank());
     }
 
     @Test
@@ -156,13 +156,13 @@ public class HandStrengthComparatorTest {
 
         Collections.sort(list, new HandStrengthComparator());
 
-        Assert.assertEquals(TEN, list.get(0).getKickerCards().get(2).getRank());
-        Assert.assertEquals(EIGHT, list.get(1).getKickerCards().get(2).getRank());
-        Assert.assertEquals(TWO, list.get(2).getKickerCards().get(2).getRank());
+        assertEquals(TEN, list.get(0).getKickerCards().get(2).getRank());
+        assertEquals(EIGHT, list.get(1).getKickerCards().get(2).getRank());
+        assertEquals(TWO, list.get(2).getKickerCards().get(2).getRank());
 
-        Assert.assertEquals(strength3, list.get(0));
-        Assert.assertEquals(strength2, list.get(1));
-        Assert.assertEquals(strength1, list.get(2));
+        assertEquals(strength3, list.get(0));
+        assertEquals(strength2, list.get(1));
+        assertEquals(strength1, list.get(2));
     }
 
     @Test
@@ -210,11 +210,11 @@ public class HandStrengthComparatorTest {
 
         strength1.toString();
 
-        Assert.assertEquals(QUEEN, list.get(0).getKickerCards().get(0).getRank());
+        assertEquals(QUEEN, list.get(0).getKickerCards().get(0).getRank());
 
-        Assert.assertEquals(strength2, list.get(0));
-        Assert.assertEquals(strength3, list.get(1));
-        Assert.assertEquals(strength1, list.get(2));
+        assertEquals(strength2, list.get(0));
+        assertEquals(strength3, list.get(1));
+        assertEquals(strength1, list.get(2));
     }
 
 
@@ -250,9 +250,9 @@ public class HandStrengthComparatorTest {
         Collections.sort(list, new HandStrengthComparator());
 
         // Collection should not be touched since all are the same
-        Assert.assertEquals(strength1, list.get(0));
-        Assert.assertEquals(strength2, list.get(1));
-        Assert.assertEquals(strength3, list.get(2));
+        assertEquals(strength1, list.get(0));
+        assertEquals(strength2, list.get(1));
+        assertEquals(strength3, list.get(2));
     }
 
 }

@@ -19,8 +19,6 @@ public class TelesinaRiggedDeck extends TelesinaDeck {
         protected int next(int bits) {
             return 0;
         }
-
-        ;
     };
 
     public TelesinaRiggedDeck(TelesinaDeckUtil telesinaDeckUtil, int numberOfParticipants, String riggedDeckString) {

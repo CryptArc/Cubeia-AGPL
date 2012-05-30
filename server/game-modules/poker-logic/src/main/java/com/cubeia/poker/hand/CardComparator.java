@@ -1,5 +1,6 @@
 package com.cubeia.poker.hand;
 
+import java.util.Collections;
 import java.util.Comparator;
 
 /**
@@ -12,6 +13,9 @@ import java.util.Comparator;
  * @author w
  */
 public class CardComparator implements Comparator<Card> {
+    public static final Comparator<Card> ASC = new CardComparator();
+    public static final Comparator<Card> DESC = Collections.reverseOrder(ASC);
+
     @Override
     public int compare(Card c1, Card c2) {
         int comp = c1.getRank().ordinal() * 1000 - c2.getRank().ordinal() * 1000;

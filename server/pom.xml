@@ -30,7 +30,7 @@
     </licenses>
 
     <properties>
-        <firebase.version>1.8-CE-RC.2</firebase.version>
+        <firebase.version>1.8.0-CE</firebase.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -75,11 +75,9 @@
             </dependency>
 
             <dependency>
-
                 <groupId>com.cubeia.games</groupId>
                 <artifactId>poker-protocol</artifactId>
                 <version>${project.version}</version>
-
             </dependency>
 
             <dependency>
@@ -214,8 +212,12 @@
                 <artifactId>slf4j-log4j12</artifactId>
                 <version>1.6.1</version>
             </dependency>
-
-
+            <dependency>
+                <groupId>junit-addons</groupId>
+                <artifactId>junit-addons</artifactId>
+                <version>1.4</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

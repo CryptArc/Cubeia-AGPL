@@ -1,6 +1,12 @@
 package com.cubeia.poker.hand;
 
+import com.cubeia.poker.variant.telesina.TelesinaCardComparator;
+
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * <p>Compare to another hand strength with hand ranking in mind,
@@ -17,13 +23,19 @@ public class HandStrengthComparator implements Comparator<HandStrength> {
             return hs2.getHandType().ordinal() - hs1.getHandType().ordinal();
 
         } else {
-            // Check highest card etc.
+            // Check highest rank etc.
             if (hs2.getHighestRank() != hs1.getHighestRank()) {
                 return hs2.getHighestRank().ordinal() - hs1.getHighestRank().ordinal();
 
             } else if (hs2.getSecondRank() != hs1.getSecondRank()) {
                 return hs2.getSecondRank().ordinal() - hs1.getSecondRank().ordinal();
-
+            } else if (hs1.getHandType() == HandType.FLUSH) {
+                for (int i = 0; i < hs1.getGroupSize(); i++) {
+                    int compare = compareGroups(hs1.getGroup(i), hs2.getGroup(i));
+                    if (compare != 0) {
+                        return compare;
+                    }
+                }
             } else {
                 // Check kickers in descending order
                 for (int i = 0; i < hs1.getKickerCards().size(); i++) {
@@ -35,6 +47,30 @@ public class HandStrengthComparator implements Comparator<HandStrength> {
         }
 
         // Same strength
+        return 0;
+    }
+
+    private int compareGroups(List<Card> cardList1, List<Card> cardList2) {
+        if (cardList1.size() != cardList2.size()) {
+            throw new IllegalArgumentException("Only kicker lists of equal length may be compared");
+        }
+
+        List<Card> copy1 = new LinkedList<Card>(cardList1);
+        List<Card> copy2 = new LinkedList<Card>(cardList2);
+
+        Collections.sort(copy1, TelesinaCardComparator.DESC);
+        Collections.sort(copy2, TelesinaCardComparator.DESC);
+
+        Iterator<Card> c1iter = copy1.iterator();
+        Iterator<Card> c2iter = copy2.iterator();
+
+        while (c1iter.hasNext() && c2iter.hasNext()) {
+            int cmp = CardComparator.DESC.compare(c1iter.next(), c2iter.next());
+            if (cmp != 0) {
+                return cmp;
+            }
+        }
+
         return 0;
     }
 

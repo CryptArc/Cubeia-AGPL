@@ -229,12 +229,6 @@ public class Telesina extends AbstractGameType implements RoundVisitor, Dealer {
         dealCommunityCards(1);
     }
 
-    private void handleFinishedHand(HandResult handResult) {
-        ThreadLocalProfiler.add("Telesina.handleFinishedHand");
-        log.debug("Hand over. Result: " + handResult.getPlayerHands());
-        notifyHandFinished(handResult, HandEndStatus.NORMAL);
-    }
-
     @VisibleForTesting
     protected void handleCanceledHand() {
         log.debug("hand canceled in round {}: {}", getCurrentRound(), HandEndStatus.CANCELED_TOO_FEW_PLAYERS);
@@ -339,22 +333,7 @@ public class Telesina extends AbstractGameType implements RoundVisitor, Dealer {
         reportPotAndRakeUpdates(potTransitions);
 
         if (isHandFinished()) {
-            exposeShowdownCards();
-
-            PokerPlayer playerAtDealerButton = context.getPlayerInDealerSeat();
-            List<Integer> playerRevealOrder = new RevealOrderCalculator().calculateRevealOrder(context.getCurrentHandSeatingMap(), context.getLastPlayerToBeCalled(), playerAtDealerButton);
-
-            TelesinaHandStrengthEvaluator evaluator = new TelesinaHandStrengthEvaluator(getDeckLowestRank());
-            HandResultCreator resultCreator = new HandResultCreator(evaluator);
-            HandResultCalculator resultCalculator = new HandResultCalculator(evaluator);
-            Map<Integer, PokerPlayer> players = context.getCurrentHandPlayerMap();
-            Set<PokerPlayer> muckingPlayers = context.getMuckingPlayers();
-
-            HandResult handResult = resultCreator.createHandResult(context.getCommunityCards(), resultCalculator, context.getPotHolder(), players, playerRevealOrder, muckingPlayers);
-
-            handleFinishedHand(handResult);
-            context.getPotHolder().clearPots();
-
+            handleFinishedHand();
         } else {
             if (context.isAtLeastAllButOneAllIn() && !context.hasAllPlayersExposedCards()) {
                 setCurrentRound(roundFactory.createExposePrivateCardsRound(this));
@@ -363,6 +342,27 @@ public class Telesina extends AbstractGameType implements RoundVisitor, Dealer {
                 startDealPocketOrVelaCardRound();
             }
         }
+    }
+
+    private void handleFinishedHand() {
+        exposeShowdownCards();
+
+        PokerPlayer playerAtDealerButton = context.getPlayerInDealerSeat();
+        List<Integer> playerRevealOrder = new RevealOrderCalculator().calculateRevealOrder(context.getCurrentHandSeatingMap(), context.getLastPlayerToBeCalled(), playerAtDealerButton);
+
+        TelesinaHandStrengthEvaluator evaluator = new TelesinaHandStrengthEvaluator(getDeckLowestRank());
+        HandResultCreator resultCreator = new HandResultCreator(evaluator);
+        HandResultCalculator resultCalculator = new HandResultCalculator(evaluator);
+        Map<Integer, PokerPlayer> players = context.getCurrentHandPlayerMap();
+        Set<PokerPlayer> muckingPlayers = context.getMuckingPlayers();
+
+        HandResult handResult = resultCreator.createHandResult(context.getCommunityCards(), resultCalculator, context.getPotHolder(), players, playerRevealOrder, muckingPlayers);
+
+        ThreadLocalProfiler.add("Telesina.handleFinishedHand");
+        log.debug("Hand over. Result: " + handResult.getPlayerHands());
+        notifyHandFinished(handResult, HandEndStatus.NORMAL);
+
+        context.getPotHolder().clearPots();
     }
 
     @Override

@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class StatCounter {
 
-    private ConcurrentLinkedQueue<Hit> cache = new ConcurrentLinkedQueue<Hit>();
+    private final ConcurrentLinkedQueue<Hit> cache = new ConcurrentLinkedQueue<Hit>();
 
     private final long window;
 

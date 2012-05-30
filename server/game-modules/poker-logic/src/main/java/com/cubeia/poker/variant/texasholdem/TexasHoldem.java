@@ -17,31 +17,30 @@
 
 package com.cubeia.poker.variant.texasholdem;
 
-import com.cubeia.poker.result.HandResultCalculator;
-import com.cubeia.poker.rounds.betting.ActionRequestFactory;
-import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
-import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.hand.*;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.result.HandResult;
+import com.cubeia.poker.result.HandResultCalculator;
 import com.cubeia.poker.result.RevealOrderCalculator;
 import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.rounds.Round;
-import com.cubeia.poker.rounds.RoundHelper;
 import com.cubeia.poker.rounds.RoundVisitor;
 import com.cubeia.poker.rounds.ante.AnteRound;
+import com.cubeia.poker.rounds.betting.ActionRequestFactory;
 import com.cubeia.poker.rounds.betting.BettingRound;
 import com.cubeia.poker.rounds.betting.DefaultPlayerToActCalculator;
 import com.cubeia.poker.rounds.betting.NoLimitBetStrategy;
 import com.cubeia.poker.rounds.blinds.BlindsRound;
 import com.cubeia.poker.rounds.dealing.*;
+import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.variant.AbstractGameType;
 import com.cubeia.poker.variant.HandResultCreator;
+import com.google.common.annotations.VisibleForTesting;
 import org.apache.log4j.Logger;
 
 import java.util.*;
@@ -64,8 +63,6 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
     private final RNGProvider rngProvider;
 
     private HandResultCalculator handResultCalculator = new HandResultCalculator(new TexasHoldemHandCalculator());
-
-    private RoundHelper roundHelper;
 
     public TexasHoldem(RNGProvider rngProvider) {
         this.rngProvider = rngProvider;
@@ -124,10 +121,6 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
         notifyPotAndRakeUpdates(Collections.<PotTransition>emptyList());
     }
 
-    public int getCurrentRoundId() {
-        return roundId;
-    }
-
     private void startBettingRound() {
         log.trace("Starting new betting round. Round ID: " + (roundId + 1));
         currentRound = new BettingRound(context.getBlindsInfo().getDealerButtonSeatId(), context, serverAdapterHolder, new DefaultPlayerToActCalculator(),
@@ -137,17 +130,6 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
 
     private boolean isHandFinished() {
         return (roundId >= 3 || context.countNonFoldedPlayers() <= 1);
-    }
-
-    public int countPlayersSittingIn() {
-        int sittingIn = 0;
-        for (PokerPlayer p : context.getCurrentHandSeatingMap().values()) {
-            if (!p.isSittingOut()) {
-                sittingIn++;
-            }
-        }
-
-        return sittingIn;
     }
 
     public void dealCommunityCards() {
@@ -173,11 +155,6 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
         // Not valid / used yet.
     }
 
-    private void handleFinishedHand(HandResult handResult) {
-        log.debug("Hand over. Result: " + handResult.getPlayerHands());
-        notifyHandFinished(handResult, HandEndStatus.NORMAL);
-    }
-
     private void handleCanceledHand() {
         notifyHandFinished(new HandResult(), HandEndStatus.CANCELED_TOO_FEW_PLAYERS);
     }
@@ -192,15 +169,6 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
         }
     }
 
-    public void requestAction(ActionRequest r) {
-        // OUCH! TODO!
-        if (blindRequested(r) && context.isTournamentTable()) {
-            getServerAdapter().scheduleTimeout(context.getTimingProfile().getTime(Periods.AUTO_POST_BLIND_DELAY));
-        } else {
-            roundHelper.requestAction(r);
-        }
-    }
-
     @Override
     public void requestMultipleActions(Collection<ActionRequest> requests) {
         throw new UnsupportedOperationException("sending multiple action requests not implemented");
@@ -210,10 +178,6 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
     public void scheduleRoundTimeout() {
         log.debug("scheduleRoundTimeout in: " + context.getTimingProfile().getTime(Periods.RIVER));
         getServerAdapter().scheduleTimeout(context.getTimingProfile().getTime(Periods.RIVER));
-    }
-
-    private boolean blindRequested(ActionRequest r) {
-        return r.isOptionEnabled(PokerActionType.SMALL_BLIND) || r.isOptionEnabled(PokerActionType.BIG_BLIND);
     }
 
     @Override
@@ -243,20 +207,26 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
         reportPotUpdate();
 
         if (isHandFinished()) {
-            exposeShowdownCards();
-            PokerPlayer playerAtDealerButton = context.getPlayerInDealerSeat();
-            List<Integer> playerRevealOrder = new RevealOrderCalculator().calculateRevealOrder(context.getCurrentHandSeatingMap(), context.getLastPlayerToBeCalled(), playerAtDealerButton);
-            Set<PokerPlayer> muckingPlayers = new HashSet<PokerPlayer>();
-            HandResult handResult = new HandResultCreator(new TexasHoldemHandCalculator()).createHandResult(context.getCommunityCards(), handResultCalculator, context.getPotHolder(), context.getCurrentHandPlayerMap(), playerRevealOrder, muckingPlayers);
-
-            handleFinishedHand(handResult);
-            context.getPotHolder().clearPots();
+            handleFinishedHand();
         } else {
             // Start deal community cards round
             currentRound = new DealCommunityCardsRound(this);
             // Schedule timeout for the community cards round
             scheduleRoundTimeout();
         }
+    }
+
+    @VisibleForTesting
+    void handleFinishedHand() {
+        exposeShowdownCards();
+        PokerPlayer playerAtDealerButton = context.getPlayerInDealerSeat();
+        List<Integer> playerRevealOrder = new RevealOrderCalculator().calculateRevealOrder(context.getCurrentHandSeatingMap(), context.getLastPlayerToBeCalled(), playerAtDealerButton);
+
+        Set<PokerPlayer> muckingPlayers = context.getMuckingPlayers();
+        HandResult handResult = new HandResultCreator(new TexasHoldemHandCalculator()).createHandResult(context.getCommunityCards(), handResultCalculator, context.getPotHolder(), context.getCurrentHandPlayerMap(), playerRevealOrder, muckingPlayers);
+
+        notifyHandFinished(handResult, HandEndStatus.NORMAL);
+        context.getPotHolder().clearPots();
     }
 
     @Override
@@ -311,9 +281,8 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
         }
     }
 
-
     @Override
-    // FIXME: Implement for Texas Hold'em.
+    // TODO: Implement for Texas Hold'em.
     public void sendAllNonFoldedPlayersBestHand() {
         log.warn("Implement sendAllNonFoldedPlayersBestHand for Texas Hold'em.");
     }
