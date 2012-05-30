@@ -17,10 +17,10 @@
 
 package com.cubeia.poker.states;
 
-import com.cubeia.poker.adapter.ServerAdapterHolder;
-import com.cubeia.poker.variant.GameType;
-import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.action.PokerAction;
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
+import com.cubeia.poker.variant.GameType;
 import com.google.common.annotations.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

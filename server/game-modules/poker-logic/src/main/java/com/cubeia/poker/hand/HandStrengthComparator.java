@@ -1,7 +1,5 @@
 package com.cubeia.poker.hand;
 
-import com.cubeia.poker.variant.telesina.TelesinaCardComparator;
-
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -58,8 +56,8 @@ public class HandStrengthComparator implements Comparator<HandStrength> {
         List<Card> copy1 = new LinkedList<Card>(cardList1);
         List<Card> copy2 = new LinkedList<Card>(cardList2);
 
-        Collections.sort(copy1, TelesinaCardComparator.DESC);
-        Collections.sort(copy2, TelesinaCardComparator.DESC);
+        Collections.sort(copy1, CardComparator.DESC);
+        Collections.sort(copy2, CardComparator.DESC);
 
         Iterator<Card> c1iter = copy1.iterator();
         Iterator<Card> c2iter = copy2.iterator();
