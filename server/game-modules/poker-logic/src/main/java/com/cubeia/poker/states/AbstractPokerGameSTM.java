@@ -194,9 +194,7 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
     protected void doStartHand() {
         Collection<PokerPlayer> playersReadyToStartHand = getPlayersReadyToStartHand();
         if (playersReadyToStartHand.size() > 1) {
-            context.resetValuesAtStartOfHand();
-            context.saveStartingBalances();
-            context.prepareReadyPlayers(getReadyPlayerFilter());
+            context.prepareHand(getReadyPlayerFilter());
 
             notifyNewHand();
             notifyAllPlayerBalances();

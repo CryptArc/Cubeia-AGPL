@@ -17,6 +17,8 @@
 
 package com.cubeia.poker.blinds;
 
+import org.slf4j.Logger;
+
 import java.util.*;
 
 import static com.cubeia.poker.blinds.utils.PokerUtils.*;
@@ -48,7 +50,7 @@ public class BlindsCalculator {
     /**
      * Contains all players at the table. Used for calculating missed blinds.
      */
-    private List<BlindsPlayer> players;
+    private Collection<? extends BlindsPlayer> players;
 
     /**
      * Maps players to seat ids. Only contains seated players.
@@ -65,10 +67,7 @@ public class BlindsCalculator {
      */
     private final List<MissedBlind> missedBlinds = new ArrayList<MissedBlind>();
 
-    /**
-     * Used for logging.
-     */
-    private LogCallback logCallback;
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(BlindsCalculator.class);
 
     /**
      * Constructor.
@@ -94,7 +93,7 @@ public class BlindsCalculator {
      *                        Should contain all players, including players sitting out.
      * @return the {@link BlindsInfo} for the new hand, or null if no hand could be started
      */
-    public BlindsInfo initializeBlinds(final BlindsInfo lastHandsBlinds, final List<BlindsPlayer> players) {
+    public BlindsInfo initializeBlinds(final BlindsInfo lastHandsBlinds, final Collection<? extends BlindsPlayer> players) {
         this.lastHandsBlinds = lastHandsBlinds;
         this.players = players;
 
@@ -136,9 +135,9 @@ public class BlindsCalculator {
 
                 if (player.getMissedBlindsStatus() == MissedBlindsStatus.NO_MISSED_BLINDS) {
                     /*
-                          * This should not happen, a player who has not missed any blinds should still
-                          * be considered as having paid the entry bet.
-                          */
+                     * This should not happen, a player who has not missed any blinds should still
+                     * be considered as having paid the entry bet.
+                     */
                     log("WARN: Player with id " + player.getPlayerId() + " has not missed any blinds, but has not posted the entry bet.");
                 } else if (!onDealer && !betweenDealerAndBig && !betweenDealerAndSmall) {
                     entryBetters.add(new EntryBetter(player, getEntryBetType(player)));
@@ -184,6 +183,7 @@ public class BlindsCalculator {
     }
 
     private void initBlinds() {
+        log.debug("Initializing blinds. Last hands blinds: " + lastHandsBlinds);
         if (firstHandAtTable()) {
             initFirstHandAtTable();
         } else if (onlyOneEnteredPlayer()) {
@@ -207,25 +207,23 @@ public class BlindsCalculator {
     }
 
     private void initWithDealer(final BlindsPlayer dealer) {
-        blindsInfo.setDealerSeatId(dealer.getSeatId());
+        setDealerSeat(dealer.getSeatId());
 
         if (headsUp()) {
             // The entered player gets the small blind.
-            blindsInfo.setSmallBlindSeatId(dealer.getSeatId());
-            blindsInfo.setSmallBlindPlayerId(dealer.getPlayerId());
+            setSmallBlind(dealer);
 
             // The other player gets the big blind.
             BlindsPlayer bigBlind = getElementAfter(dealer.getSeatId(), seatedPlayers);
-            blindsInfo.setBigBlindSeatId(bigBlind.getSeatId());
+            setBigBlind(bigBlind);
         } else {
             // The next player gets the small blind.
             BlindsPlayer smallBlind = getElementAfter(dealer.getSeatId(), seatedPlayers);
-            blindsInfo.setSmallBlindSeatId(smallBlind.getSeatId());
-            blindsInfo.setSmallBlindPlayerId(smallBlind.getPlayerId());
+            setSmallBlind(smallBlind);
 
             // The next player gets the big blind.
             BlindsPlayer bigBlind = getElementAfter(smallBlind.getSeatId(), seatedPlayers);
-            blindsInfo.setBigBlindSeatId(bigBlind.getSeatId());
+            setBigBlind(bigBlind);
         }
     }
 
@@ -246,13 +244,14 @@ public class BlindsCalculator {
         // If small blind is sitting out, mark him as having missed the small blind.
         final BlindsPlayer smallBlind = getPlayerInSeat(blindsInfo.getSmallBlindSeatId());
         if (smallBlind != null && !smallBlind.isSittingIn() && smallBlind.getPlayerId() == lastHandsBlinds.getBigBlindPlayerId()) {
+            blindsInfo.setSmallBlindPlayerId(-1);
             addMissedBlind(smallBlind, MissedBlindsStatus.MISSED_SMALL_BLIND);
         }
 
         /*
-           * All sitting out players between the old dealer button position and the
-           * new dealer button position should be marked as having missed big+small.
-           */
+         * All sitting out players between the old dealer button position and the
+         * new dealer button position should be marked as having missed big+small.
+         */
         final int lastDealerSeatId = lastHandsBlinds.getDealerSeatId();
         final int newDealerSeatId = blindsInfo.getDealerSeatId();
         for (final BlindsPlayer player : players) {
@@ -294,8 +293,8 @@ public class BlindsCalculator {
 
     /**
      * Initializes a hand when there is only one entered player.
-     * This should mean that the last hand was canceled. The rule is that
-     * the entered player does _not_ have to pay the big blind.
+     * This should mean that the last hand was canceled or that game has been on pause since the last hand finished.
+     * The rule is that the entered player does _not_ have to pay the big blind.
      */
     private void initHandWhenOnlyOneEnteredPlayer() {
         log("Initializing hand when only one entered player.");
@@ -344,16 +343,15 @@ public class BlindsCalculator {
         log("Initializing non heads up hand.");
         // Last hand's small blind gets the dealer button.
         final int dealerSeatId = lastHandsBlinds.getSmallBlindSeatId();
-        blindsInfo.setDealerSeatId(dealerSeatId);
+        setDealerSeat(dealerSeatId);
 
         // Last hand's big blind gets the small blind.
         final int smallBlindSeatId = lastHandsBlinds.getBigBlindSeatId();
-        blindsInfo.setSmallBlindSeatId(smallBlindSeatId);
-        blindsInfo.setSmallBlindPlayerId(lastHandsBlinds.getBigBlindPlayerId());
+        setSmallBlind(smallBlindSeatId, lastHandsBlinds.getBigBlindPlayerId());
 
         // The next player gets the big blind.
         final BlindsPlayer bigBlind = getElementAfter(smallBlindSeatId, seatedPlayers);
-        blindsInfo.setBigBlindSeatId(bigBlind.getSeatId());
+        setBigBlind(bigBlind);
     }
 
     private void moveFromHeadsUpToNonHeadsUp() {
@@ -364,25 +362,23 @@ public class BlindsCalculator {
 
         // The big blind from last hand gets the small blind.
         final int smallBlindSeatId = lastHandsBlinds.getBigBlindSeatId();
-        blindsInfo.setSmallBlindSeatId(smallBlindSeatId);
-        blindsInfo.setSmallBlindPlayerId(lastHandsBlinds.getBigBlindPlayerId());
+        setSmallBlind(smallBlindSeatId, lastHandsBlinds.getBigBlindPlayerId());
 
         // The next player gets the big blind.
         final BlindsPlayer bigBlind = getElementAfter(smallBlindSeatId, seatedPlayers);
-        blindsInfo.setBigBlindSeatId(bigBlind.getSeatId());
+        setBigBlind(bigBlind);
     }
 
     private void moveFromNonHeadsUpToHeadsUp() {
         log("Moving from non heads up to heads up.");
         // The player after last hand's big blind gets the big blind.
         final BlindsPlayer bigBlind = getElementAfter(lastHandsBlinds.getBigBlindSeatId(), seatedPlayers);
-        blindsInfo.setBigBlindSeatId(bigBlind.getSeatId());
+        setBigBlind(bigBlind);
 
         // The other player gets the dealer button and the small blind.
         final BlindsPlayer smallBlind = getElementAfter(bigBlind.getSeatId(), seatedPlayers);
-        blindsInfo.setDealerSeatId(smallBlind.getSeatId());
-        blindsInfo.setSmallBlindSeatId(smallBlind.getSeatId());
-        blindsInfo.setSmallBlindPlayerId(smallBlind.getPlayerId());
+        setDealerSeat(smallBlind.getSeatId());
+        setSmallBlind(smallBlind);
     }
 
     private void initHeadsUpHand() {
@@ -395,13 +391,12 @@ public class BlindsCalculator {
         }
         final int dealerSeatId = dealer.getSeatId();
 
-        blindsInfo.setDealerSeatId(dealerSeatId);
-        blindsInfo.setSmallBlindSeatId(dealerSeatId);
-        blindsInfo.setSmallBlindPlayerId(dealer.getPlayerId());
+        setDealerSeat(dealer.getSeatId());
+        setSmallBlind(dealer);
 
         // The next player gets the big blind.
         final BlindsPlayer bigBlind = getElementAfter(dealerSeatId, seatedPlayers);
-        blindsInfo.setBigBlindSeatId(bigBlind.getSeatId());
+        setBigBlind(bigBlind);
     }
 
     private void initFirstHandAtTable() {
@@ -417,29 +412,57 @@ public class BlindsCalculator {
         log("Initializing first non heads up hand at table.");
         // Random player gets the button.
         final BlindsPlayer dealer = getRandomSeatedPlayer();
-        blindsInfo.setDealerSeatId(dealer.getSeatId());
+        setDealerSeat(dealer.getSeatId());
 
         // The next player gets the small blind.
         final BlindsPlayer smallBlind = getElementAfter(dealer.getSeatId(), seatedPlayers);
-        blindsInfo.setSmallBlindSeatId(smallBlind.getSeatId());
-        blindsInfo.setSmallBlindPlayerId(smallBlind.getPlayerId());
+        setSmallBlind(smallBlind);
 
         // The next player gets the big blind.
         final BlindsPlayer bigBlind = getElementAfter(smallBlind.getSeatId(), seatedPlayers);
-        blindsInfo.setBigBlindSeatId(bigBlind.getSeatId());
+        setBigBlind(bigBlind);
+    }
+
+    private void setSmallBlind(BlindsPlayer smallBlind) {
+        setSmallBlind(smallBlind.getSeatId(), smallBlind.getPlayerId());
+    }
+
+    private void setSmallBlind(int seatId, int playerId) {
+        if (getPlayerInSeat(seatId) == null) {
+            log.debug("No one is sitting in the small blind seat {}. Marking it as dead.", seatId);
+            blindsInfo.setSmallBlindPlayerId(-1);
+        } else if (getPlayerInSeat(seatId).getPlayerId() != playerId) {
+            log.debug("There's a new player {} in the sb seat {}, marking sb as dead. ", playerId, seatId);
+            blindsInfo.setSmallBlindPlayerId(-1);
+        } else {
+            log.debug("Small blind is on player " + playerId + " in seat " + seatId);
+            blindsInfo.setSmallBlindPlayerId(playerId);
+        }
+        blindsInfo.setSmallBlindSeatId(seatId);
     }
 
     private void initFirstHeadsUpHand() {
         log("Initializing first heads up hand at table.");
         // Random player gets the button and small blind.
         final BlindsPlayer dealer = getRandomSeatedPlayer();
-        blindsInfo.setDealerSeatId(dealer.getSeatId());
-        blindsInfo.setSmallBlindSeatId(dealer.getSeatId());
-        blindsInfo.setSmallBlindPlayerId(dealer.getPlayerId());
+
+        setDealerSeat(dealer.getSeatId());
+        setSmallBlind(dealer);
 
         // The other player gets the big blind.
         final BlindsPlayer bigBlind = getElementAfter(dealer.getSeatId(), seatedPlayers);
+        setBigBlind(bigBlind);
+    }
+
+    private void setDealerSeat(int dealerSeat) {
+        log.debug("Dealer button is on seat " + dealerSeat);
+        blindsInfo.setDealerSeatId(dealerSeat);
+    }
+
+    private void setBigBlind(BlindsPlayer bigBlind) {
+        log.debug("Big blind is on player " + bigBlind.getPlayerId() + " in seat " + bigBlind.getSeatId());
         blindsInfo.setBigBlindSeatId(bigBlind.getSeatId());
+        blindsInfo.setBigBlindPlayerId(bigBlind.getPlayerId());
     }
 
     /**
@@ -493,6 +516,7 @@ public class BlindsCalculator {
                 enteredPlayers++;
             }
         }
+        log.debug("Entered players: " + enteredPlayers);
         return enteredPlayers;
     }
 
@@ -595,19 +619,8 @@ public class BlindsCalculator {
         return result;
     }
 
-    /**
-     * Adds a callback for logging.
-     *
-     * @param logCallback
-     */
-    public void setLogCallback(LogCallback logCallback) {
-        this.logCallback = logCallback;
-    }
-
     private void log(String message) {
-        if (logCallback != null) {
-            logCallback.log(message);
-        }
+        log.debug(message);
     }
 
 

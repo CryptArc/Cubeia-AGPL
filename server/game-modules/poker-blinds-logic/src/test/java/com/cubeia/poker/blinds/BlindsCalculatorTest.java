@@ -36,12 +36,8 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
     protected void setUp() throws Exception {
         super.setUp();
         calc = new BlindsCalculator();
-        calc.setLogCallback(this);
     }
 
-    /**
-     * This corresponds to use case 1.1.
-     */
     public void testFirstHeadsUpHand() {
         // Given
         List<Integer> seatIdList = Arrays.asList(0, 1);
@@ -61,9 +57,6 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         assertBlindsInfo(result, 1, 1, 0);
     }
 
-    /**
-     * This corresponds to test case 1.2.
-     */
     public void testNonFirstHeadsUpHand() {
         // Given
         BlindsInfo lastHandsBlinds = Fixtures.blindsInfo(1, 1, 2);
@@ -305,7 +298,8 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
 
     public void testInitWhenLastHandWasCancelled() {
         // Given
-        BlindsInfo lastHandsBlinds = Fixtures.blindsInfo(2, 0, 0); // This hand was canceled
+        BlindsInfo lastHandsBlinds = Fixtures.blindsInfo(2, 0, 0);
+        lastHandsBlinds.setHandCanceled(); // This hand was canceled
         List<BlindsPlayer> players = new ArrayList<BlindsPlayer>();
         players = Fixtures.players(2, 3);
 
@@ -322,6 +316,7 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         RandomSeatProvider randomizer = mock(RandomSeatProvider.class);
         when(randomizer.getRandomSeatId(Mockito.anyListOf(Integer.class))).thenReturn(3);
         BlindsInfo lastHandsBlinds = Fixtures.blindsInfo(2, 0, 0);
+        lastHandsBlinds.setHandCanceled();
         List<BlindsPlayer> players = new ArrayList<BlindsPlayer>();
         players = Fixtures.players(3, 4, 5);
         players.add(Fixtures.player(2, false, false));

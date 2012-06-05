@@ -201,11 +201,6 @@ public class PokerState implements Serializable, IPokerState {
     }
 
     @VisibleForTesting
-    protected void saveStartingBalances() {
-        pokerContext.saveStartingBalances();
-    }
-
-    @VisibleForTesting
     public void commitPendingBalances() {
         pokerContext.commitPendingBalances();
     }

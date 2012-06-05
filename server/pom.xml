@@ -100,6 +100,12 @@
             </dependency>
 
             <dependency>
+                <groupId>com.cubeia.games.poker</groupId>
+                <artifactId>poker-blinds-logic</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>com.cubeia.games</groupId>
                 <artifactId>poker-tournament</artifactId>
                 <version>${project.version}</version>

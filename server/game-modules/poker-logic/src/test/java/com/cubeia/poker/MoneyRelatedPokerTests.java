@@ -41,14 +41,10 @@ public class MoneyRelatedPokerTests extends GuiceTest {
         state.timeout();
 
         // Blinds
-//		mockServerAdapter.getActionRequest()
-        act(PokerActionType.SMALL_BLIND);
-        long balance = mp[2].getBalance();
-        act(PokerActionType.BIG_BLIND);
-        assertEquals(balance - 100, mp[2].getBalance());
-
-//		System.out.println(mp[1].getBalance());
-//		System.out.println(mp[3].getBalance());
+        int actorId = act(PokerActionType.SMALL_BLIND);
+        long balance = getPlayer(actorId + 1, mp).getBalance();
+        actorId = act(PokerActionType.BIG_BLIND);
+        assertEquals(balance - 100, getPlayer(actorId, mp).getBalance());
 
         // Everyone folds and bb wins
         act(PokerActionType.FOLD);
@@ -56,10 +52,20 @@ public class MoneyRelatedPokerTests extends GuiceTest {
         act(PokerActionType.FOLD);
     }
 
-    private void act(PokerActionType choice) {
+    private MockPlayer getPlayer(int actorId, MockPlayer[] mp) {
+        for (MockPlayer player : mp) {
+            if (player.getPlayerId() == actorId) {
+                return player;
+            }
+        }
+        return null;
+    }
+
+    private int act(PokerActionType choice) {
         ActionRequest request = mockServerAdapter.getLastActionRequest();
         PossibleAction option = request.getOption(choice);
         PokerAction action = new PokerAction(request.getPlayerId(), choice, option.getMinAmount());
         state.act(action);
+        return request.getPlayerId();
     }
 }

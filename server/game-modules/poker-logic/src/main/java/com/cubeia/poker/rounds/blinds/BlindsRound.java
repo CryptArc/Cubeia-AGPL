@@ -18,6 +18,10 @@
 package com.cubeia.poker.rounds.blinds;
 
 import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.blinds.BlindsCalculator;
+import com.cubeia.poker.blinds.EntryBetType;
+import com.cubeia.poker.blinds.EntryBetter;
+import com.cubeia.poker.blinds.MissedBlind;
 import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
@@ -35,6 +39,8 @@ import org.apache.log4j.Logger;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Queue;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -55,7 +61,9 @@ public class BlindsRound implements Round {
     private PokerContext context;
     
     private ServerAdapterHolder serverAdapterHolder;
-    
+
+    private BlindsCalculator blindsCalculator;
+
     private RoundHelper roundHelper;
 
     public static final BlindsState WAITING_FOR_SMALL_BLIND_STATE = new WaitingForSmallBlindState();
@@ -69,9 +77,14 @@ public class BlindsRound implements Round {
     public static final BlindsState CANCELED_STATE = new CanceledState();
 
     private SortedMap<Integer, PokerPlayer> sittingInPlayers;
-    
-    public BlindsRound(PokerContext context, ServerAdapterHolder serverAdapterHolder) {
+
+    private Queue<EntryBetter> entryBetters;
+
+    private int pendingEntryBetterId;
+
+    public BlindsRound(PokerContext context, ServerAdapterHolder serverAdapterHolder, BlindsCalculator blindsCalculator) {
         this.serverAdapterHolder = serverAdapterHolder;
+        this.blindsCalculator = blindsCalculator;
         this.roundHelper = new RoundHelper(context, serverAdapterHolder);
         this.isTournamentBlinds = context.isTournamentBlinds();
         this.context = context;
@@ -95,23 +108,47 @@ public class BlindsRound implements Round {
     }
 
     private void initBlinds() {
-        if (firstHandOnTable()) {
-            initFirstHandOnTable();
-        } else {
-            if (previousBlindsInfo.isHeadsUpLogic()) {
-                if (numberPlayersSittingIn() > 2) {
-                    moveFromHeadsUpToNonHeadsUp();
-                } else {
-                    initHeadsUpHand();
-                }
+        com.cubeia.poker.blinds.BlindsInfo newBlindsInfo = blindsCalculator.initializeBlinds(convertBlindsInfo(), context.getPlayerMap().values());
+        if (newBlindsInfo != null) {
+            setNewBlindsInfo(newBlindsInfo);
+            markMissedBlinds(blindsCalculator.getMissedBlinds());
+            entryBetters = blindsCalculator.getEntryBetters();
+
+            if (newBlindsInfo.getSmallBlindPlayerId() != -1) {
+                requestSmallBlind(getPlayerInSeat(newBlindsInfo.getSmallBlindSeatId()));
             } else {
-                if (numberPlayersSittingIn() > 2) {
-                    initNonHeadsUpHand();
-                } else {
-                    moveFromNonHeadsUpToHeadsUp();
-                }
+                requestBigBlind(getPlayerInSeat(newBlindsInfo.getBigBlindSeatId()));
             }
+        } else {
+            throw new RuntimeException("Could not initialize blinds. Not enough players. Players sitting in: " + sittingInPlayers);
         }
+    }
+
+    private void markMissedBlinds(List<MissedBlind> missedBlinds) {
+        for (MissedBlind missed : missedBlinds) {
+            log.info("Settings missed blinds status to " + missed.getMissedBlindsStatus() + " for player " + missed.getPlayer().getPlayerId());
+            context.getPlayer(missed.getPlayer().getPlayerId()).setMissedBlindsStatus(missed.getMissedBlindsStatus());
+        }
+    }
+
+    private void setNewBlindsInfo(com.cubeia.poker.blinds.BlindsInfo newBlindsInfo) {
+        blindsInfo.setDealerButtonSeatId(newBlindsInfo.getDealerSeatId());
+        // Small blind
+        if (newBlindsInfo.getSmallBlindPlayerId() != -1) {
+            blindsInfo.setSmallBlind(getPlayerInSeat(newBlindsInfo.getSmallBlindSeatId()));
+        } else {
+            blindsInfo.setHasDeadSmallBlind(true);
+        }
+        blindsInfo.setSmallBlindPlayerId(newBlindsInfo.getSmallBlindPlayerId());
+
+        // Big blind
+        blindsInfo.setBigBlindSeatId(newBlindsInfo.getBigBlindSeatId());
+        blindsInfo.setBigBlindPlayerId(newBlindsInfo.getBigBlindPlayerId());
+    }
+
+    private com.cubeia.poker.blinds.BlindsInfo convertBlindsInfo() {
+        return new com.cubeia.poker.blinds.BlindsInfo(previousBlindsInfo.getDealerButtonSeatId(),
+                previousBlindsInfo.getSmallBlindSeatId(), previousBlindsInfo.getBigBlindSeatId(), previousBlindsInfo.getBigBlindPlayerId());
     }
 
     private boolean firstHandOnTable() {
@@ -359,7 +396,7 @@ public class BlindsRound implements Round {
 
     public void smallBlindPosted() {
         this.currentState = WAITING_FOR_BIG_BLIND_STATE;
-        PokerPlayer bigBlind = context.getPlayerInCurrentHand(blindsInfo.getBigBlindPlayerId());
+        PokerPlayer bigBlind = getPlayerInSeat(blindsInfo.getBigBlindSeatId());
         requestBigBlind(bigBlind);
     }
 
@@ -367,7 +404,7 @@ public class BlindsRound implements Round {
         sittingInPlayers.remove(player.getSeatId());
         notifyPlayerSittingOut(player.getId(), SitOutStatus.MISSED_SMALL_BLIND);
         if (numberPlayersSittingIn() >= 2) {
-            PokerPlayer bigBlind = context.getPlayerInCurrentHand(blindsInfo.getBigBlindPlayerId());
+            PokerPlayer bigBlind = getPlayerInSeat(blindsInfo.getBigBlindSeatId());
             requestBigBlind(bigBlind);
             currentState = WAITING_FOR_BIG_BLIND_STATE;
         } else {
@@ -389,35 +426,44 @@ public class BlindsRound implements Round {
         if (!isTournamentBlinds() && thereAreUnEnteredPlayersBetweenBigBlindAndDealerButton()) {
             log.debug("There are unentered players, requesting entry bet");
             this.currentState = WAITING_FOR_ENTRY_BET_STATE;
-            PokerPlayer entryBetter = getNextEntryBetter();
-            requestBigBlind(entryBetter);
+            requestNextEntryBet();
         } else {
             currentState = FINISHED_STATE;
         }
     }
 
-    public PokerPlayer getNextEntryBetter() {
-        PokerPlayer result = null;
-        for (PokerPlayer player : PokerUtils.unwrapList(sittingInPlayers, blindsInfo.getBigBlindSeatId())) {
-            if (!player.hasPostedEntryBet() && !player.isSittingOut()) {
-                result = player;
-                break;
+    private void requestNextEntryBet() {
+        if (!entryBetters.isEmpty()) {
+            EntryBetter entryBetter = entryBetters.poll();
+            PokerPlayer player = context.getPlayer(entryBetter.getPlayer().getPlayerId());
+            if (entryBetter.getEntryBetType() == EntryBetType.BIG_BLIND) {
+                log.debug("Requesting entry big blind from " + player);
+                requestBigBlind(player);
+            } else if (entryBetter.getEntryBetType() == EntryBetType.DEAD_SMALL_BLIND) {
+                requestDeadSmallBlind(player);
+            } else if (entryBetter.getEntryBetType() == EntryBetType.BIG_BLIND_PLUS_DEAD_SMALL_BLIND) {
+                requestBigBlindPlusDeadSmallBlind(player);
             }
+            pendingEntryBetterId = player.getId();
+        } else {
+            log.warn("No more entry betters!");
         }
-        return result;
+    }
+
+    private void requestBigBlindPlusDeadSmallBlind(PokerPlayer player) {
+        log.debug("Requesting big blind plus dead small blind from " + player);
+    }
+
+    private void requestDeadSmallBlind(PokerPlayer player) {
+        log.debug("Requesting dead small blind from " + player);
+    }
+
+    private EntryBetter getNextEntryBetter() {
+        return entryBetters.poll();
     }
 
     private boolean thereAreUnEnteredPlayersBetweenBigBlindAndDealerButton() {
-        boolean result = false;
-
-        for (PokerPlayer player : sittingInPlayers.values()) {
-            if (isPlayerBetweenBigBlindAndDealerButton(player) && !player.hasPostedEntryBet() && !player.isSittingOut()) {
-                result = true;
-                break;
-            }
-        }
-
-        return result;
+        return !entryBetters.isEmpty();
     }
 
     private boolean isPlayerBetweenBigBlindAndDealerButton(PokerPlayer player) {
@@ -442,10 +488,9 @@ public class BlindsRound implements Round {
         sittingInPlayers.remove(player.getSeatId());
         notifyPlayerSittingOut(player.getId(), SitOutStatus.NOT_ENTERED_YET);
         if (thereAreUnEnteredPlayersBetweenBigBlindAndDealerButton()) {
-            log.debug("There are unentereed players, requesting entry bet");
+            log.debug("There are unentered players, requesting entry bet");
             this.currentState = WAITING_FOR_ENTRY_BET_STATE;
-            PokerPlayer entryBetter = getNextEntryBetter();
-            requestBigBlind(entryBetter);
+            requestNextEntryBet();
         } else {
             currentState = FINISHED_STATE;
         }
@@ -487,5 +532,9 @@ public class BlindsRound implements Round {
     @Override
     public boolean isWaitingForPlayer(int playerId) {
         return false;
+    }
+
+    public int getPendingEntryBetterId() {
+        return pendingEntryBetterId;
     }
 }

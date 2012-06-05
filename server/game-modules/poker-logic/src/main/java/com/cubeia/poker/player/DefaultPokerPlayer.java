@@ -19,6 +19,7 @@ package com.cubeia.poker.player;
 
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PossibleAction;
+import com.cubeia.poker.blinds.MissedBlindsStatus;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Hand;
 import org.slf4j.Logger;
@@ -78,7 +79,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
     private long balanceNotInHand = 0L;
 
     /**
-     * the amount reserved for a bettingaction
+     * the amount reserved for a betting action
      */
     protected long betStack = 0;
 
@@ -93,6 +94,11 @@ public class DefaultPokerPlayer implements PokerPlayer {
     private long lastRaiseLevel = 0;
 
     private boolean buyInRequestActive;
+
+    /**
+     * Indicates whether this player has any missed blinds. TODO: Remove blinds stuff from SitOutStatus.
+     */
+    private MissedBlindsStatus missedBlindsStatus = MissedBlindsStatus.NOT_ENTERED_YET;
 
     public DefaultPokerPlayer(int id) {
         playerId = id;
@@ -139,6 +145,16 @@ public class DefaultPokerPlayer implements PokerPlayer {
 
     public int getSeatId() {
         return seatId;
+    }
+
+    @Override
+    public int getPlayerId() {
+        return playerId;
+    }
+
+    @Override
+    public boolean isSittingIn() {
+        return !isSittingOut();
     }
 
     public boolean hasActed() {
@@ -424,5 +440,15 @@ public class DefaultPokerPlayer implements PokerPlayer {
 
     public void setDisconnectTimeoutUsed(boolean disconnectTimeoutUsed) {
         this.disconnectTimeoutUsed = disconnectTimeoutUsed;
+    }
+
+    @Override
+    public void setMissedBlindsStatus(MissedBlindsStatus missedBlindsStatus) {
+        this.missedBlindsStatus = missedBlindsStatus;
+    }
+
+    @Override
+    public MissedBlindsStatus getMissedBlindsStatus() {
+        return missedBlindsStatus;
     }
 }

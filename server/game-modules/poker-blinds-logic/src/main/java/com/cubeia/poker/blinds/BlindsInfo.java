@@ -28,21 +28,24 @@ public class BlindsInfo {
 
     private int smallBlindSeatId;
 
-    private long smallBlindPlayerId;
+    private int smallBlindPlayerId;
 
     private int bigBlindSeatId;
 
-    private long bigBlindPlayerId;
+    private int bigBlindPlayerId;
+
+    /** Indicates that this blinds info belongs to a hand that was canceled. */
+    private boolean handCanceled = false;
 
     public BlindsInfo() {
         // Empty constructor.
     }
 
-    public BlindsInfo(int dealerSeatId, int smallBlindSeatId, int bigBlindSeatId) {
+    public BlindsInfo(int dealerSeatId, int smallBlindSeatId, int bigBlindSeatId, int bigBlindPlayerId) {
         this.dealerSeatId = dealerSeatId;
         this.smallBlindSeatId = smallBlindSeatId;
         this.bigBlindSeatId = bigBlindSeatId;
-
+        this.bigBlindPlayerId = bigBlindPlayerId;
     }
 
     public int getDealerSeatId() {
@@ -84,7 +87,11 @@ public class BlindsInfo {
         bigBlindSeatId = seatId;
     }
 
-    public long getSmallBlindPlayerId() {
+    /**
+     * Gets the player id of the player who pays the small blind, or -1 if no player pays the small blind (it's dead).
+     * @return
+     */
+    public int getSmallBlindPlayerId() {
         return smallBlindPlayerId;
     }
 
@@ -93,19 +100,23 @@ public class BlindsInfo {
         return String.format("dealer=%s small=%s big=%s " + "smallpid=%s bigpid=%s", dealerSeatId, smallBlindSeatId, bigBlindSeatId, smallBlindPlayerId, bigBlindPlayerId);
     }
 
-    public void setSmallBlindPlayerId(long playerId) {
+    public void setSmallBlindPlayerId(int playerId) {
         this.smallBlindPlayerId = playerId;
     }
 
-    public long getBigBlindPlayerId() {
+    public int getBigBlindPlayerId() {
         return bigBlindPlayerId;
     }
 
-    public void setBigBlindPlayerId(long bigBlindPlayerId) {
+    public void setBigBlindPlayerId(int bigBlindPlayerId) {
         this.bigBlindPlayerId = bigBlindPlayerId;
     }
 
     public boolean handCanceled() {
-        return dealerSeatId != 0 && (smallBlindSeatId == 0 || bigBlindSeatId == 0);
+        return handCanceled;
+    }
+
+    public void setHandCanceled() {
+        handCanceled = true;
     }
 }

@@ -76,7 +76,7 @@ public class PokerTournamentTest extends GuiceTest {
         int[] p = TestUtils.createPlayerIdArray(mp);
         assertEquals(4, p.length);
         TestUtils.addPlayers(state, mp);
-
+        markPlayersAsHavingPostedEntryBet(mp);
 
         // Force start
         state.startHand();
@@ -99,6 +99,12 @@ public class PokerTournamentTest extends GuiceTest {
 
         // Check that p0 is up to act
         assertEquals(mp[0].getId(), mockServerAdapter.getLastActionRequest().getPlayerId());
+    }
+
+    private void markPlayersAsHavingPostedEntryBet(PokerPlayer[] players) {
+        for (PokerPlayer player : players) {
+            player.setHasPostedEntryBet(true);
+        }
     }
 
     public void assertAllPlayersHaveCards(PokerPlayer[] p, int expectedNumberOfCards) {

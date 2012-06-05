@@ -43,9 +43,10 @@ public class MissedBlindsTest extends TestCase {
         sitOut(players, 3); // Small blind is sitting out.
 
         // When
-        calc.initializeBlinds(blinds, players);
+        BlindsInfo blindsInfo = calc.initializeBlinds(blinds, players);
 
         // Then
+        System.out.println(blindsInfo.getSmallBlindPlayerId());
         List<MissedBlind> missedBlinds = calc.getMissedBlinds();
         assertEquals(MissedBlindsStatus.MISSED_SMALL_BLIND, missedBlinds.get(0).getMissedBlindsStatus());
     }

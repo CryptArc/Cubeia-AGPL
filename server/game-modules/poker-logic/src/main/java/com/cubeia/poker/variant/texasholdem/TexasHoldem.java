@@ -20,6 +20,7 @@ package com.cubeia.poker.variant.texasholdem;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
+import com.cubeia.poker.blinds.BlindsCalculator;
 import com.cubeia.poker.hand.*;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.PotTransition;
@@ -81,7 +82,7 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
     private void initHand() {
         deck = new StandardDeck(new Shuffler<Card>(rngProvider.getRNG()), new IndexCardIdGenerator());
 
-        currentRound = new BlindsRound(context, serverAdapterHolder);
+        currentRound = new BlindsRound(context, serverAdapterHolder, new BlindsCalculator(new NonRandomSeatProvider()));
         roundId = 0;
     }
 

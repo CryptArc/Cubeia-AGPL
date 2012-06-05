@@ -36,7 +36,7 @@ public interface BlindsPlayer {
      *
      * @return the player id of this player
      */
-    public long getPlayerId();
+    public int getPlayerId();
 
     /**
      * Checks whether the player is sitting in.

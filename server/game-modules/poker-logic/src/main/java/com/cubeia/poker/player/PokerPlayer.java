@@ -19,13 +19,15 @@ package com.cubeia.poker.player;
 
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PossibleAction;
+import com.cubeia.poker.blinds.BlindsPlayer;
+import com.cubeia.poker.blinds.MissedBlindsStatus;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Hand;
 
 import java.io.Serializable;
 import java.util.Set;
 
-public interface PokerPlayer extends Serializable {
+public interface PokerPlayer extends BlindsPlayer, Serializable {
 
     /**
      * Returns the players pocket cards. Note that this might
@@ -236,4 +238,7 @@ public interface PokerPlayer extends Serializable {
 
     public void setDisconnectTimeoutUsed(boolean disconnectTimeoutUsed);
 
+    public void setMissedBlindsStatus(MissedBlindsStatus missedBlindsStatus);
+
+    public MissedBlindsStatus getMissedBlindsStatus();
 }

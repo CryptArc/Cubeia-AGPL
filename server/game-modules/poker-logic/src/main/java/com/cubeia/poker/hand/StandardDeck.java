@@ -46,7 +46,7 @@ public class StandardDeck implements Deck {
     protected List<Card> createDeck() {
         ArrayList<Card> cards = new ArrayList<Card>();
 
-        for (List<Enum<?>> cardContainer : cartesianProduct(copyOf(Suit.values()), copyOf(Rank.values()))) {
+        for (List<Enum<? extends Enum<?>>> cardContainer : cartesianProduct(copyOf(Suit.values()), copyOf(Rank.values()))) {
             Suit suit = (Suit) cardContainer.get(0);
             Rank rank = (Rank) cardContainer.get(1);
             cards.add(new Card(rank, suit));

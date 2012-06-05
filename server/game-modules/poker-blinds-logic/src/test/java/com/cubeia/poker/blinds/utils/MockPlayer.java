@@ -32,7 +32,7 @@ public class MockPlayer implements BlindsPlayer {
         this.playerId = playerId;
     }
 
-    public long getPlayerId() {
+    public int getPlayerId() {
         return playerId;
     }
 

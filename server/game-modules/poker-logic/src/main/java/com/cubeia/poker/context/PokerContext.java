@@ -17,16 +17,15 @@
 
 package com.cubeia.poker.context;
 
-import com.cubeia.poker.model.BlindsInfo;
-import com.cubeia.poker.pot.RakeInfoContainer;
-import com.cubeia.poker.rake.LinearRakeWithLimitCalculator;
-import com.cubeia.poker.settings.BetStrategyName;
-import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.model.BlindsInfo;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.pot.RakeInfoContainer;
+import com.cubeia.poker.rake.LinearRakeWithLimitCalculator;
+import com.cubeia.poker.settings.BetStrategyName;
+import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.timing.TimingProfile;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
@@ -34,7 +33,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * This class contains all the game data for a poker game, including players, cards and pots.
@@ -230,7 +237,7 @@ public class PokerContext implements Serializable {
         return startTime;
     }
 
-    public void saveStartingBalances() {
+    private void saveStartingBalances() {
         for (PokerPlayer p : playerMap.values()) {
             p.setStartingBalance(p.getBalance());
         }
@@ -483,13 +490,15 @@ public class PokerContext implements Serializable {
         return playerMap;
     }
 
+    @VisibleForTesting
     public void prepareReadyPlayers(Predicate<PokerPlayer> readyPlayerFilter) {
         currentHandSeatingMap = createCopyWithNotReadyPlayersExcluded(seatingMap, readyPlayerFilter);
         currentHandPlayerMap = createCopyWithNotReadyPlayersExcluded(playerMap, readyPlayerFilter);
         log.debug("players ready for next hand: {}", currentHandPlayerMap.keySet());
     }
 
-    public void resetValuesAtStartOfHand() {
+    @VisibleForTesting
+    void resetValuesAtStartOfHand() {
         startTime = System.currentTimeMillis();
         for (PokerPlayer player : playerMap.values()) {
             player.resetBeforeNewHand();
@@ -531,5 +540,11 @@ public class PokerContext implements Serializable {
 
     public PokerPlayer getPlayer(int playerId) {
         return playerMap.get(playerId);
+    }
+
+    public void prepareHand(Predicate<PokerPlayer> readyPlayersFilter) {
+        resetValuesAtStartOfHand();
+        saveStartingBalances();
+        prepareReadyPlayers(readyPlayersFilter);
     }
 }

@@ -49,8 +49,8 @@ public class WaitingForEntryBetState extends AbstractBlindsState {
 
     @Override
     public void timeout(PokerContext context, BlindsRound round) {
-        PokerPlayer nextEntryBetter = round.getNextEntryBetter();
-        declineEntryBet(nextEntryBetter.getId(), context, round);
+        int entryBetter = round.getPendingEntryBetterId();
+        declineEntryBet(entryBetter, context, round);
     }
 
 }
