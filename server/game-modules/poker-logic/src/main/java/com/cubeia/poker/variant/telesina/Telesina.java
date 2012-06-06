@@ -38,7 +38,6 @@ import com.cubeia.poker.rounds.betting.BettingRound;
 import com.cubeia.poker.rounds.blinds.BlindsRound;
 import com.cubeia.poker.rounds.dealing.*;
 import com.cubeia.poker.timing.Periods;
-import com.cubeia.poker.result.HandResultCalculator;
 import com.cubeia.poker.util.ThreadLocalProfiler;
 import com.cubeia.poker.variant.AbstractGameType;
 import com.cubeia.poker.variant.HandResultCreator;
@@ -385,7 +384,7 @@ public class Telesina extends AbstractGameType implements RoundVisitor, Dealer {
 
             long betStack = player.getBetStack();
             if (betStack > 0) {
-                player.returnBetstackToBalance();
+                player.returnBetStackToBalance();
                 getServerAdapter().notifyTakeBackUncalledBet(player.getId(), (int) betStack);
             }
         }

@@ -116,8 +116,7 @@ public class Pot implements Serializable {
 
     /**
      * Gets the size of this pot. Note that the returned size includes the
-     * rake that should be taken. To get the actual amount that will be shared
-     * by the winners use {@link #getPotSizeWithRakeRemoved()}.
+     * rake that should be taken.
      *
      * @return the size of this pot (including rake)
      */

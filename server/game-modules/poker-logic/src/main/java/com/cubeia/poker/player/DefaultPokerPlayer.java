@@ -22,11 +22,14 @@ import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.blinds.MissedBlindsStatus;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Hand;
+import com.google.common.base.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 public class DefaultPokerPlayer implements PokerPlayer {
 
@@ -253,14 +256,26 @@ public class DefaultPokerPlayer implements PokerPlayer {
     }
 
     public void addChips(long chips) {
+        if (chips < 0) {
+            throw new IllegalArgumentException("Tried to add " + chips + " to player " + playerId);
+        }
         this.balance += chips;
     }
 
-    public void addBet(long bet) {
+    /**
+     * Takes chips from the given player, without adding them to his bet stack.
+     *
+     * @param amount
+     */
+    public void takeChips(long amount) {
+        checkArgument(amount <= balance, "PokerPlayer[" + playerId + "] - " + String.format("Amount (%d) is bigger than balance (%d)", amount, balance));
+        checkArgument(amount >= 0, "Chips must be positive, was " + amount);
+        balance -= amount;
+    }
 
-        if (bet > balance) {
-            throw new IllegalArgumentException("PokerPlayer[" + playerId + "] - " + String.format("Bet (%d) is bigger than balance (%d)", bet, balance));
-        }
+    public void addBet(long bet) {
+        checkArgument(bet <= balance, "PokerPlayer[" + playerId + "] - " + String.format("Bet (%d) is bigger than balance (%d)", bet, balance));
+        checkArgument(bet >= 0, "Chips must be positive, was " + bet);
         balance -= bet;
         betStack += bet;
     }
@@ -285,7 +300,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
     }
 
 
-    public void returnBetstackToBalance() {
+    public void returnBetStackToBalance() {
         balance += betStack;
         betStack = 0;
     }
@@ -297,7 +312,6 @@ public class DefaultPokerPlayer implements PokerPlayer {
         balance += amount;
         betStack -= amount;
     }
-
 
     public void setBalance(long balance) {
         this.balance = balance;

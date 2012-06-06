@@ -52,7 +52,9 @@ public class WaitingForEntryBetState extends AbstractBlindsState {
         PokerPlayer player = context.getPlayerInCurrentHand(playerId);
         if (player.getActionRequest().isOptionEnabled(PokerActionType.DEAD_SMALL_BLIND)) {
             player.setHasPostedEntryBet(true);
-            player.addBet(round.getBlindsInfo().getBigBlindLevel());
+            int amount = round.getBlindsInfo().getSmallBlindLevel();
+            player.takeChips(amount);
+            context.getPotHolder().getActivePot().bet(player, Long.valueOf(amount));
             round.entryBetPosted();
         } else {
             throw new IllegalArgumentException("Player " + player + " is not allowed to post big blind. Options were " + player.getActionRequest());
@@ -64,7 +66,10 @@ public class WaitingForEntryBetState extends AbstractBlindsState {
         PokerPlayer player = context.getPlayerInCurrentHand(playerId);
         if (player.getActionRequest().isOptionEnabled(PokerActionType.BIG_BLIND_PLUS_DEAD_SMALL_BLIND)) {
             player.setHasPostedEntryBet(true);
-            player.addBet(round.getBlindsInfo().getBigBlindLevel() + round.getBlindsInfo().getSmallBlindLevel());
+            player.addBet(round.getBlindsInfo().getBigBlindLevel());
+            int deadAmount = round.getBlindsInfo().getSmallBlindLevel();
+            player.takeChips(deadAmount);
+            context.getPotHolder().getActivePot().bet(player, Long.valueOf(deadAmount));
             round.entryBetPosted();
         } else {
             throw new IllegalArgumentException("Player " + player + " is not allowed to post big blind plus dead small blind. Options were " + player.getActionRequest());

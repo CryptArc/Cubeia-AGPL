@@ -28,6 +28,7 @@ import com.cubeia.games.poker.handler.BackendPlayerSessionHandler;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.poker.PokerState;
+import com.cubeia.poker.blinds.MissedBlindsStatus;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
 import com.google.common.annotations.VisibleForTesting;
@@ -37,8 +38,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 
-import static com.cubeia.firebase.api.game.player.PlayerStatus.*;
-import static com.cubeia.poker.player.SitOutStatus.NOT_ENTERED_YET;
+import static com.cubeia.firebase.api.game.player.PlayerStatus.CONNECTED;
+import static com.cubeia.firebase.api.game.player.PlayerStatus.DISCONNECTED;
+import static com.cubeia.firebase.api.game.player.PlayerStatus.LEAVING;
+import static com.cubeia.firebase.api.game.player.PlayerStatus.WAITING_REJOIN;
 
 /**
  * <p>In this class we are modifying a stored watcher list in the poker state object.
@@ -59,9 +62,6 @@ public class PokerTableListener implements TournamentTableListener {
     @Inject
     @VisibleForTesting
     GameStateSender gameStateSender;
-
-//	@Service
-//	CashGamesBackendContract cashGameBackend;
 
     @Inject
     @VisibleForTesting
@@ -182,7 +182,7 @@ public class PokerTableListener implements TournamentTableListener {
 
         sendGameStateToSittingInPlayerIfNeeded(table, player);
         PokerPlayer pokerPlayer = new PokerPlayerImpl(player);
-        pokerPlayer.setSitOutStatus(NOT_ENTERED_YET);
+        pokerPlayer.setMissedBlindsStatus(MissedBlindsStatus.NOT_ENTERED_YET);
         state.addPlayer(pokerPlayer);
 
         if (!tournamentPlayer) {

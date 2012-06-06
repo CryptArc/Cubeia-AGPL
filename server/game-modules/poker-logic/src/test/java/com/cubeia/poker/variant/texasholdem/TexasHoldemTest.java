@@ -119,8 +119,6 @@ public class TexasHoldemTest {
 
         player1 = new MockPlayer(1);
         player2 = new MockPlayer(2);
-
-        createPot();
     }
 
     private void prepareContext(PokerPlayer ... players) {
@@ -192,35 +190,24 @@ public class TexasHoldemTest {
         int bbPlusSbCost = context.getBlindsInfo().getBigBlindLevel() + context.getBlindsInfo().getSmallBlindLevel();
         assertTrue(bbPlusSbCost > 0);
         assertEquals(balanceBefore - bbPlusSbCost, p[3].getBalance());
-    }
 
-    private void startHand(PokerContext context) {
-        context.prepareHand(readyPlayersFilter);
-        texas.startHand();
-    }
+        // It's p3s turn again. He checks
+        act(p[3], CHECK);
 
-    private void act(MockPlayer player, PokerActionType actionType) {
-        texas.act(new PokerAction(player.getId(), actionType));
-    }
+        // The small blind should be dead, meaning the next player should only have to call a normal big blind.
+        assertEquals(context.getBlindsInfo().getBigBlindLevel(), p[0].getActionRequest().getOption(CALL).getMinAmount());
 
-    private void act(MockPlayer player, PokerActionType actionType, int value) {
-        texas.act(new PokerAction(player.getId(), actionType, value));
-    }
+        act(p[0], CALL, 10);
+        act(p[1], CALL, 5);
+        act(p[2], CHECK, 5);
 
-    private PokerContext prepareContext(int numberOfPlayers) {
-        PokerSettings settings = new PokerSettings(10, 10, 100, 5000, new DefaultTimingProfile(), 6, BetStrategyName.NO_LIMIT, rakeSettings, null);
-        PokerContext context = new PokerContext(settings);
-        texas.setPokerContextAndServerAdapter(context, serverAdapterHolder);
-        p = TestUtils.createMockPlayers(numberOfPlayers);
-        for (PokerPlayer player : p) {
-            player.setHasPostedEntryBet(true);
-            context.addPlayer(player);
-        }
-        return context;
+        // All players call. Pot should be 4 big blinds + dead small blind = 40 + 5.
+        assertEquals(45, context.getTotalPotSize());
     }
 
     @Test
     public void testHandResultForFlushWithKicker() {
+        createPot();
         prepareContext(player1, player2);
         // This is the scenario we want to set up, there are 4 clubs on the board, and the two players have one low club on their hand each.
 
@@ -248,6 +235,31 @@ public class TexasHoldemTest {
     private void createPot() {
         potHolder.getActivePot().bet(player1, 600L);
         potHolder.getActivePot().bet(player2, 600L);
+    }
+
+    private void startHand(PokerContext context) {
+        context.prepareHand(readyPlayersFilter);
+        texas.startHand();
+    }
+
+    private void act(MockPlayer player, PokerActionType actionType) {
+        texas.act(new PokerAction(player.getId(), actionType));
+    }
+
+    private void act(MockPlayer player, PokerActionType actionType, int value) {
+        texas.act(new PokerAction(player.getId(), actionType, value));
+    }
+
+    private PokerContext prepareContext(int numberOfPlayers) {
+        PokerSettings settings = new PokerSettings(10, 10, 100, 5000, new DefaultTimingProfile(), 6, BetStrategyName.NO_LIMIT, rakeSettings, null);
+        PokerContext context = new PokerContext(settings);
+        texas.setPokerContextAndServerAdapter(context, serverAdapterHolder);
+        p = TestUtils.createMockPlayers(numberOfPlayers);
+        for (PokerPlayer player : p) {
+            player.setHasPostedEntryBet(true);
+            context.addPlayer(player);
+        }
+        return context;
     }
 
 }

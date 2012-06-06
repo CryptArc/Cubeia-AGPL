@@ -74,11 +74,20 @@ public interface PokerPlayer extends BlindsPlayer, Serializable {
     public void removeFromBetStack(long amount);
 
     /**
-     * Move amount from balance to betstack
+     * Moves the given amount from this player's balance balance to his bet stack
      *
      * @param amount the amount to move
+     * @throws IllegalArgumentException if the bet is bigger than the player's stack or if the bet is negative
      */
     public void addBet(long amount);
+
+    /**
+     * Takes chips from the given player, without adding them to his bet stack.
+     *
+     * @param amount amount the amount to take
+     * @throws IllegalArgumentException if the bet is bigger than the player's stack or if the bet is negative
+     */
+    void takeChips(long amount);
 
     public void clearActionRequest();
 
@@ -150,7 +159,7 @@ public interface PokerPlayer extends BlindsPlayer, Serializable {
     /**
      * move the full amount in betstack to balance
      */
-    public void returnBetstackToBalance();
+    public void returnBetStackToBalance();
 
     /**
      * move the amount from betstack to balance
