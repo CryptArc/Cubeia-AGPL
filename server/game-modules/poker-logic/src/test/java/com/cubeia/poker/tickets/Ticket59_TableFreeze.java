@@ -67,14 +67,12 @@ public class Ticket59_TableFreeze extends AbstractTexasHandTester {
         state.timeout();
 
         // Blinds
-        //act(p[1], PokerActionType.SMALL_BLIND);
         state.timeout();
         state.timeout();
 
         assertTrue(mp[3].isActionPossible(PokerActionType.BIG_BLIND));
         state.timeout();
 
-        assertFalse(mp[3].isActionPossible(PokerActionType.BIG_BLIND));
         assertTrue(mp[0].isActionPossible(PokerActionType.BIG_BLIND));
         state.timeout();
 

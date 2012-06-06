@@ -48,7 +48,7 @@ public class HandHistoryTranslatorTest {
     public void checkActionTypeMatch() {
         for (PokerActionType t : PokerActionType.values()) {
             PlayerAction.Type pat = PlayerAction.Type.values()[t.ordinal()];
-            assertEquals(t.name(), pat.name());
+            assertEquals("PokerActionType " + t.name() + " does not have same name as protocol enum type " + pat.name(), t.name(), pat.name());
         }
     }
 }

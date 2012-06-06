@@ -206,7 +206,7 @@ public class PotHolder implements Serializable {
             }
         } catch (NullPointerException ne) {
             // FIXME: Tournaments get this exception
-            log.warn("FIXME: Should not be nullpointer here! -> PotHolder.returnUnCalledChips()");
+            log.warn("FIXME: Should not be nullpointer here! -> PotHolder.returnUnCalledChips()", ne);
         }
 
         return transitions;

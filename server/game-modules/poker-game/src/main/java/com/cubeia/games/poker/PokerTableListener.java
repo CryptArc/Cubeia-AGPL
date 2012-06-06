@@ -182,12 +182,12 @@ public class PokerTableListener implements TournamentTableListener {
 
         sendGameStateToSittingInPlayerIfNeeded(table, player);
         PokerPlayer pokerPlayer = new PokerPlayerImpl(player);
-        pokerPlayer.setMissedBlindsStatus(MissedBlindsStatus.NOT_ENTERED_YET);
         state.addPlayer(pokerPlayer);
 
         if (!tournamentPlayer) {
             log.debug("Start wallet session for player: " + player);
             backendPlayerSessionHandler.startWalletSession(state, table, player.getPlayerId(), getCurrentRoundNumber());
+            pokerPlayer.setMissedBlindsStatus(MissedBlindsStatus.NOT_ENTERED_YET);
         }
 
         return pokerPlayer;

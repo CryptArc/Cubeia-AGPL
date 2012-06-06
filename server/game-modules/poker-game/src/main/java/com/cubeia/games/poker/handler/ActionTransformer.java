@@ -124,6 +124,14 @@ public class ActionTransformer {
                 type = PokerActionType.ANTE;
                 break;
 
+            case BIG_BLIND_PLUS_DEAD_SMALL_BLIND:
+                type = PokerActionType.BIG_BLIND_PLUS_DEAD_SMALL_BLIND;
+                break;
+
+            case DEAD_SMALL_BLIND:
+                type = PokerActionType.DEAD_SMALL_BLIND;
+                break;
+
             default:
                 throw new UnsupportedOperationException("unsupported action type: " + protocol.name());
         }
@@ -158,6 +166,10 @@ public class ActionTransformer {
                 return ActionType.DECLINE_ENTRY_BET;
             case ANTE:
                 return ActionType.ANTE;
+            case BIG_BLIND_PLUS_DEAD_SMALL_BLIND:
+                return ActionType.BIG_BLIND_PLUS_DEAD_SMALL_BLIND;
+            case DEAD_SMALL_BLIND:
+                return ActionType.DEAD_SMALL_BLIND;
             default:
                 throw new UnsupportedOperationException("unsupported action type: " + actionType.name());
         }

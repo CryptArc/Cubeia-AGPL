@@ -22,6 +22,7 @@ import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.blinds.MissedBlindsStatus;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Hand;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -158,35 +159,48 @@ public class DefaultPokerPlayer implements PokerPlayer {
         return !isSittingOut();
     }
 
+    @Override
+    public boolean isSittingOut() {
+        return sitOutStatus == SitOutStatus.SITTING_OUT;
+    }
+
+    @Override
     public boolean hasActed() {
         return hasActed;
     }
 
+    @Override
     public boolean hasFolded() {
         return hasFolded;
     }
 
+    @Override
     public void setActionRequest(ActionRequest actionRequest) {
         // log.trace("Setting action request " + actionRequest + " on player " + getTableId());
         this.actionRequest = actionRequest;
     }
 
+    @Override
     public void setHasActed(boolean b) {
         this.hasActed = b;
     }
 
+    @Override
     public void setHasFolded(boolean b) {
         this.hasFolded = b;
     }
 
+    @Override
     public void setHasOption(boolean b) {
         hasOption = b;
     }
 
+    @Override
     public boolean hasOption() {
         return hasOption;
     }
 
+    @Override
     public void addPocketCard(Card card, boolean publicCard) {
         pocketCards.addCard(card);
         if (publicCard) {
@@ -196,6 +210,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
         }
     }
 
+    @Override
     public void clearHand() {
         pocketCards.clear();
         publicPocketCards.clear();
@@ -203,6 +218,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
         exposingPocketCards = false;
     }
 
+    @Override
     public void enableOption(PossibleAction option) {
         if (actionRequest == null) {
             actionRequest = new ActionRequest();
@@ -212,10 +228,12 @@ public class DefaultPokerPlayer implements PokerPlayer {
         actionRequest.enable(option);
     }
 
+    @Override
     public SitOutStatus getSitOutStatus() {
         return sitOutStatus;
     }
 
+    @Override
     public boolean hasPostedEntryBet() {
         return hasPostedEntryBet && missedBlindsStatus == MissedBlindsStatus.NO_MISSED_BLINDS;
     }
@@ -226,6 +244,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
      * time stamp for sitting out to the time when this
      * method was called.
      */
+    @Override
     public void setSitOutStatus(SitOutStatus status) {
         this.sitOutStatus = status;
         if (status == SitOutStatus.SITTING_OUT) {
@@ -233,28 +252,29 @@ public class DefaultPokerPlayer implements PokerPlayer {
         }
     }
 
+    @Override
     public void setHasPostedEntryBet(boolean status) {
         hasPostedEntryBet = status;
         missedBlindsStatus = MissedBlindsStatus.NO_MISSED_BLINDS;
     }
 
-    public boolean isSittingOut() {
-        return sitOutStatus == SitOutStatus.SITTING_OUT;
-    }
-
+    @Override
     public void sitIn() {
         sitOutStatus = SitOutStatus.SITTING_IN;
         sitOutTimestamp = null;
     }
 
+    @Override
     public void clearBalance() {
         this.balance = 0;
     }
 
+    @Override
     public long getBalance() {
         return balance;
     }
 
+    @Override
     public void addChips(long chips) {
         if (chips < 0) {
             throw new IllegalArgumentException("Tried to add " + chips + " to player " + playerId);
@@ -267,12 +287,14 @@ public class DefaultPokerPlayer implements PokerPlayer {
      *
      * @param amount
      */
+    @Override
     public void takeChips(long amount) {
         checkArgument(amount <= balance, "PokerPlayer[" + playerId + "] - " + String.format("Amount (%d) is bigger than balance (%d)", amount, balance));
         checkArgument(amount >= 0, "Chips must be positive, was " + amount);
         balance -= amount;
     }
 
+    @Override
     public void addBet(long bet) {
         checkArgument(bet <= balance, "PokerPlayer[" + playerId + "] - " + String.format("Bet (%d) is bigger than balance (%d)", bet, balance));
         checkArgument(bet >= 0, "Chips must be positive, was " + bet);
@@ -280,18 +302,22 @@ public class DefaultPokerPlayer implements PokerPlayer {
         betStack += bet;
     }
 
+    @Override
     public void setStartingBalance(long startingBalance) {
         this.startingBalance = startingBalance;
     }
 
+    @Override
     public long getStartingBalance() {
         return startingBalance;
     }
 
+    @Override
     public long getBetStack() {
         return betStack;
     }
 
+    @Override
     public void removeFromBetStack(long amount) {
         if (amount > betStack) {
             throw new IllegalArgumentException("PokerPlayer[" + playerId + "] - " + String.format("Amount to remove from bet (%d) is bigger than betstack (%d)", amount, betStack));
@@ -300,11 +326,13 @@ public class DefaultPokerPlayer implements PokerPlayer {
     }
 
 
+    @Override
     public void returnBetStackToBalance() {
         balance += betStack;
         betStack = 0;
     }
 
+    @Override
     public void returnBetStackAmountToBalance(long amount) {
         if (amount > betStack) {
             throw new IllegalArgumentException("PokerPlayer[" + playerId + "] - " + String.format("Amount to return from bet (%d) is bigger than betstack (%d)", amount, betStack));
@@ -313,15 +341,10 @@ public class DefaultPokerPlayer implements PokerPlayer {
         betStack -= amount;
     }
 
-    public void setBalance(long balance) {
-        this.balance = balance;
-    }
-
     @Override
     public boolean isAllIn() {
         return getBalance() == 0;
     }
-
 
     @Override
     public boolean getSitOutNextRound() {
@@ -446,10 +469,12 @@ public class DefaultPokerPlayer implements PokerPlayer {
         return buyInRequestActive;
     }
 
+    @Override
     public boolean isDisconnectTimeoutUsed() {
         return disconnectTimeoutUsed;
     }
 
+    @Override
     public void setDisconnectTimeoutUsed(boolean disconnectTimeoutUsed) {
         this.disconnectTimeoutUsed = disconnectTimeoutUsed;
     }
@@ -462,5 +487,10 @@ public class DefaultPokerPlayer implements PokerPlayer {
     @Override
     public MissedBlindsStatus getMissedBlindsStatus() {
         return missedBlindsStatus;
+    }
+
+    @VisibleForTesting
+    public void setBalance(long balance) {
+        this.balance = balance;
     }
 }

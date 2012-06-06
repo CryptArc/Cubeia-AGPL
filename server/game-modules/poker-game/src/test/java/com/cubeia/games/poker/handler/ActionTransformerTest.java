@@ -117,7 +117,7 @@ public class ActionTransformerTest {
 
     @Test
     public void testTransformActionTypeToPokerActionType() {
-        assertThat("wrong number of action types, something broken?", ActionType.values().length, is(9));
+        assertThat("wrong number of action types, something broken?", ActionType.values().length, is(11));
         assertThat(actionTransformer.transform(ActionType.FOLD), is(PokerActionType.FOLD));
         assertThat(actionTransformer.transform(ActionType.CHECK), is(PokerActionType.CHECK));
         assertThat(actionTransformer.transform(ActionType.CALL), is(PokerActionType.CALL));
@@ -127,6 +127,8 @@ public class ActionTransformerTest {
         assertThat(actionTransformer.transform(ActionType.RAISE), is(PokerActionType.RAISE));
         assertThat(actionTransformer.transform(ActionType.DECLINE_ENTRY_BET), is(PokerActionType.DECLINE_ENTRY_BET));
         assertThat(actionTransformer.transform(ActionType.ANTE), is(PokerActionType.ANTE));
+        assertThat(actionTransformer.transform(ActionType.BIG_BLIND_PLUS_DEAD_SMALL_BLIND), is(PokerActionType.BIG_BLIND_PLUS_DEAD_SMALL_BLIND));
+        assertThat(actionTransformer.transform(ActionType.DEAD_SMALL_BLIND), is(PokerActionType.DEAD_SMALL_BLIND));
 
         // sanity check
         for (ActionType at : ActionType.values()) {
@@ -186,7 +188,7 @@ public class ActionTransformerTest {
 
     @Test
     public void testCreatePlayerAction() {
-        assertThat("wrong number of poker action types, something broken?", PokerActionType.values().length, is(9));
+        assertThat("wrong number of poker action types, something broken?", PokerActionType.values().length, is(11));
         assertThat(actionTransformer.createPlayerAction(PokerActionType.FOLD).type, is(ActionType.FOLD));
         assertThat(actionTransformer.createPlayerAction(PokerActionType.CHECK).type, is(ActionType.CHECK));
         assertThat(actionTransformer.createPlayerAction(PokerActionType.CALL).type, is(ActionType.CALL));

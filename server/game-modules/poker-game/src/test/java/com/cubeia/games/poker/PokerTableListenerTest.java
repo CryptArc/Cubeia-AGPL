@@ -25,6 +25,7 @@ import com.cubeia.games.poker.handler.BackendPlayerSessionHandler;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.poker.PokerState;
+import com.cubeia.poker.blinds.MissedBlindsStatus;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
 import org.junit.Test;
@@ -70,8 +71,8 @@ public class PokerTableListenerTest {
         verify(ptl.backendPlayerSessionHandler).startWalletSession(ptl.state, table, playerId, 0);
         verify(ptl.state, never()).getBalance(playerId);
 
-        assertThat(pokerPlayer.isSittingOut(), is(true));
-        assertThat(pokerPlayer.getSitOutStatus(), is(SitOutStatus.NOT_ENTERED_YET));
+        assertThat(pokerPlayer.isSittingOut(), is(false));
+        assertThat(pokerPlayer.getMissedBlindsStatus(), is(MissedBlindsStatus.NOT_ENTERED_YET));
     }
 
 }

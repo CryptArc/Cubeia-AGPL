@@ -65,6 +65,8 @@
         <value>FOLD</value>
         <value>DECLINE_ENTRY_BET</value>
         <value>ANTE</value>
+        <value>BIG_BLIND_PLUS_DEAD_SMALL_BLIND</value>
+        <value>DEAD_SMALL_BLIND</value>
     </enum>
 
     <enum name="pot_type">

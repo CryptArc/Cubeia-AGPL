@@ -165,11 +165,6 @@ public class BlindsRound implements Round {
     }
 
     private void requestBigBlind(PokerPlayer bigBlind) {
-        // TODO: Remove or make consistent with other requests.
-        for (PokerPlayer p : context.getSeatedPlayers()) {
-            p.clearActionRequest();
-        }
-
         bigBlind.enableOption(new PossibleAction(PokerActionType.BIG_BLIND, blindsInfo.getAnteLevel()));
         bigBlind.enableOption(new PossibleAction(PokerActionType.DECLINE_ENTRY_BET));
         if (isTournamentBlinds()) {

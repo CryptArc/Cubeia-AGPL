@@ -20,7 +20,7 @@ package com.cubeia.poker.handhistory.api;
 public class PlayerAction extends HandHistoryEvent {
 
     public enum Type {
-        SMALL_BLIND, BIG_BLIND, CALL, CHECK, BET, RAISE, FOLD, DECLINE_ENTRY_BET, ANTE;
+        SMALL_BLIND, BIG_BLIND, CALL, CHECK, BET, RAISE, FOLD, DECLINE_ENTRY_BET, ANTE, BIG_BLIND_PLUS_DEAD_SMALL_BLIND, DEAD_SMALL_BLIND;
     }
 
     private Type action;
