@@ -24,6 +24,7 @@ import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.adapter.ServerAdapterHolder;
 import com.cubeia.poker.blinds.BlindsCalculator;
+import com.cubeia.poker.blinds.MissedBlindsStatus;
 import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.model.BlindsInfo;
 import com.cubeia.poker.player.PokerPlayer;
@@ -378,7 +379,7 @@ public class BlindsRoundTest extends TestCase {
     public void testSittingOutPlayerIsNotAskedToPostSmallBlind() {
         MockPlayer[] p = TestUtils.createMockPlayers(4);
         addPlayers(p);
-        p[1].setSitOutStatus(SitOutStatus.MISSED_BIG_BLIND);
+        p[1].setSitOutStatus(SitOutStatus.SITTING_OUT);
         round = new BlindsRound(context, serverAdapterHolder, blindsCalculator);
         getRequestedAction();
         assertEquals(p[2].getId(), requestedAction.getPlayerId());
@@ -394,7 +395,7 @@ public class BlindsRoundTest extends TestCase {
         MockPlayer[] p = TestUtils.createMockPlayers(4);
         addPlayers(p);
 
-        p[2].setSitOutStatus(SitOutStatus.MISSED_BIG_BLIND);
+        p[2].setSitOutStatus(SitOutStatus.SITTING_OUT);
         round = new BlindsRound(context, serverAdapterHolder, blindsCalculator);
         
         act(p[1], PokerActionType.SMALL_BLIND);
@@ -406,7 +407,7 @@ public class BlindsRoundTest extends TestCase {
         MockPlayer[] p = TestUtils.createMockPlayers(4);
         addPlayers(p);
 
-        p[3].setSitOutStatus(SitOutStatus.MISSED_BIG_BLIND);
+        p[3].setSitOutStatus(SitOutStatus.SITTING_OUT);
         round = new BlindsRound(context, serverAdapterHolder, blindsCalculator);
         
         act(p[1], PokerActionType.SMALL_BLIND);
@@ -447,6 +448,7 @@ public class BlindsRoundTest extends TestCase {
 
         // Everyone has posted the entry bet, except player 0.
         p[0].setHasPostedEntryBet(false);
+        p[0].setMissedBlindsStatus(MissedBlindsStatus.NOT_ENTERED_YET);
         p[1].setHasPostedEntryBet(true);
         p[2].setHasPostedEntryBet(true);
         p[3].setHasPostedEntryBet(true);
@@ -467,6 +469,7 @@ public class BlindsRoundTest extends TestCase {
 
         // Everyone has posted the entry bet, except player 0.
         p[0].setHasPostedEntryBet(false);
+        p[0].setMissedBlindsStatus(MissedBlindsStatus.NOT_ENTERED_YET);
         p[1].setHasPostedEntryBet(true);
         p[2].setHasPostedEntryBet(true);
         p[3].setHasPostedEntryBet(true);
@@ -487,6 +490,8 @@ public class BlindsRoundTest extends TestCase {
 
         // Everyone has posted the entry bet, except player 0.
         p[0].setHasPostedEntryBet(false);
+        p[0].setMissedBlindsStatus(MissedBlindsStatus.NOT_ENTERED_YET);
+        
         p[1].setHasPostedEntryBet(true);
         p[2].setHasPostedEntryBet(true);
         p[3].setHasPostedEntryBet(true);
@@ -510,7 +515,9 @@ public class BlindsRoundTest extends TestCase {
         p[2].setHasPostedEntryBet(true);
         p[3].setHasPostedEntryBet(true);
         p[4].setHasPostedEntryBet(false);
+        p[4].setMissedBlindsStatus(MissedBlindsStatus.NOT_ENTERED_YET);
         p[5].setHasPostedEntryBet(false);
+        p[5].setMissedBlindsStatus(MissedBlindsStatus.NOT_ENTERED_YET);
         round = new BlindsRound(context, serverAdapterHolder, blindsCalculator);
 
         act(p[2], PokerActionType.SMALL_BLIND);
@@ -536,7 +543,9 @@ public class BlindsRoundTest extends TestCase {
         p[2].setHasPostedEntryBet(true);
         p[3].setHasPostedEntryBet(true);
         p[4].setHasPostedEntryBet(false);
+        p[4].setMissedBlindsStatus(MissedBlindsStatus.NOT_ENTERED_YET);
         p[5].setHasPostedEntryBet(false);
+        p[5].setMissedBlindsStatus(MissedBlindsStatus.NOT_ENTERED_YET);
         round = new BlindsRound(context, serverAdapterHolder, blindsCalculator);
 
         act(p[2], PokerActionType.SMALL_BLIND);
@@ -557,7 +566,9 @@ public class BlindsRoundTest extends TestCase {
         p[2].setHasPostedEntryBet(true);
         p[3].setHasPostedEntryBet(true);
         p[4].setHasPostedEntryBet(false);
+        p[4].setMissedBlindsStatus(MissedBlindsStatus.NOT_ENTERED_YET);
         p[5].setHasPostedEntryBet(false);
+        p[5].setMissedBlindsStatus(MissedBlindsStatus.NOT_ENTERED_YET);
         round = new BlindsRound(context, serverAdapterHolder, blindsCalculator);
 
         act(p[2], PokerActionType.SMALL_BLIND);
@@ -578,10 +589,12 @@ public class BlindsRoundTest extends TestCase {
         // Everyone has posted the entry bet, except player 5 and 1.
         p[0].setHasPostedEntryBet(true);
         p[1].setHasPostedEntryBet(false);
+        p[1].setMissedBlindsStatus(MissedBlindsStatus.NOT_ENTERED_YET);
         p[2].setHasPostedEntryBet(true);
         p[3].setHasPostedEntryBet(true);
         p[4].setHasPostedEntryBet(true);
         p[5].setHasPostedEntryBet(false);
+        p[5].setMissedBlindsStatus(MissedBlindsStatus.NOT_ENTERED_YET);
         round = new BlindsRound(context, serverAdapterHolder, blindsCalculator);
 
         act(p[3], PokerActionType.SMALL_BLIND);

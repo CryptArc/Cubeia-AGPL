@@ -81,8 +81,8 @@ public class MissedBlindsTest extends TestCase {
         List<MissedBlind> missedBlinds = calc.getMissedBlinds();
         assertEquals(3, missedBlinds.size());
         assertEquals(MissedBlindsStatus.MISSED_SMALL_BLIND, missedBlinds.get(0).getMissedBlindsStatus());
-        assertEquals(MissedBlindsStatus.MISSED_BIG_AND_SMALL_BLIND, missedBlinds.get(1).getMissedBlindsStatus());
-        assertEquals(MissedBlindsStatus.MISSED_BIG_AND_SMALL_BLIND, missedBlinds.get(2).getMissedBlindsStatus());
+        assertEquals(MissedBlindsStatus.MISSED_BIG_BLIND_AND_SMALL_BLIND, missedBlinds.get(1).getMissedBlindsStatus());
+        assertEquals(MissedBlindsStatus.MISSED_BIG_BLIND_AND_SMALL_BLIND, missedBlinds.get(2).getMissedBlindsStatus());
 
         // Note, player in seat 4 is now on the dealer button, but sitting out. He did not miss any blinds.
     }
@@ -99,9 +99,9 @@ public class MissedBlindsTest extends TestCase {
         // Then
         List<MissedBlind> missedBlinds = calc.getMissedBlinds();
         assertEquals(3, missedBlinds.size());
-        assertEquals(MissedBlindsStatus.MISSED_BIG_AND_SMALL_BLIND, missedBlinds.get(0).getMissedBlindsStatus());
-        assertEquals(MissedBlindsStatus.MISSED_BIG_AND_SMALL_BLIND, missedBlinds.get(1).getMissedBlindsStatus());
-        assertEquals(MissedBlindsStatus.MISSED_BIG_AND_SMALL_BLIND, missedBlinds.get(2).getMissedBlindsStatus());
+        assertEquals(MissedBlindsStatus.MISSED_BIG_BLIND_AND_SMALL_BLIND, missedBlinds.get(0).getMissedBlindsStatus());
+        assertEquals(MissedBlindsStatus.MISSED_BIG_BLIND_AND_SMALL_BLIND, missedBlinds.get(1).getMissedBlindsStatus());
+        assertEquals(MissedBlindsStatus.MISSED_BIG_BLIND_AND_SMALL_BLIND, missedBlinds.get(2).getMissedBlindsStatus());
     }
 
     public void testGetEligiblePlayerList() {
@@ -115,7 +115,7 @@ public class MissedBlindsTest extends TestCase {
         List<BlindsPlayer> eligiblePlayerList = calc.getEligiblePlayerList();
 
         // Then
-        assertEquals(Arrays.asList(players.get(4), players.get(5)), eligiblePlayerList);
+        assertEquals(Arrays.asList(players.get(0), players.get(4), players.get(5)), eligiblePlayerList);
     }
 
 }

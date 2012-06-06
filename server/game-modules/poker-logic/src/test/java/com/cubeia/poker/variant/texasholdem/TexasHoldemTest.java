@@ -25,12 +25,12 @@ import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.blinds.MissedBlindsStatus;
 import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.hand.HandType;
 import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.rake.LinearRakeWithLimitCalculator;
 import com.cubeia.poker.result.HandResult;
@@ -40,7 +40,6 @@ import com.cubeia.poker.rounds.betting.BettingRound;
 import com.cubeia.poker.settings.BetStrategyName;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.settings.RakeSettings;
-import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.timing.impl.DefaultTimingProfile;
 import com.cubeia.poker.variant.HandFinishedListener;
 import com.google.common.base.Predicate;
@@ -60,8 +59,9 @@ import static com.cubeia.poker.action.PokerActionType.FOLD;
 import static com.cubeia.poker.util.TestHelpers.assertSameListsDisregardingOrder;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.only;
+import static org.mockito.Matchers.longThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -159,7 +159,7 @@ public class TexasHoldemTest {
         act(p[2], FOLD);
         act(p[0], FOLD);
 
-        assertEquals(SitOutStatus.MISSED_BIG_BLIND, p[3].getSitOutStatus());
+        assertEquals(MissedBlindsStatus.MISSED_BIG_BLIND_AND_SMALL_BLIND, p[3].getMissedBlindsStatus());
         assertFalse(p[3].hasPostedEntryBet());
 
         // The guy who missed the big comes back. He can't play this round though, because he's between the dealer button and the small blind.
@@ -176,13 +176,22 @@ public class TexasHoldemTest {
         act(p[1], FOLD);
 
         // Now, the dealer button will be on p0, the small blind will be on p1 and bb on p2. p3 can join if he posts bb+sb
+        assertTrue(p[3].isSittingIn());
         startHand(context);
         act(p[1], SMALL_BLIND);
         act(p[2], BIG_BLIND);
 
-        // SHOULD BE BIG+SMALL
-        act(p[3], BIG_PLUS_SMALL);
-        assertEquals(SitOutStatus.NO_MISSED_BLINDS, p[3].getSitOutStatus());
+        // Player 3 posts the bb + the dead small.
+        long balanceBefore = p[3].getBalance();
+        act(p[3], BIG_BLIND_PLUS_DEAD_SMALL_BLIND);
+
+        // Now he should have no missed blinds.
+        assertEquals(MissedBlindsStatus.NO_MISSED_BLINDS, p[3].getMissedBlindsStatus());
+
+        // He should have bb+sb less in his account.
+        int bbPlusSbCost = context.getBlindsInfo().getBigBlindLevel() + context.getBlindsInfo().getSmallBlindLevel();
+        assertTrue(bbPlusSbCost > 0);
+        assertEquals(balanceBefore - bbPlusSbCost, p[3].getBalance());
     }
 
     private void startHand(PokerContext context) {

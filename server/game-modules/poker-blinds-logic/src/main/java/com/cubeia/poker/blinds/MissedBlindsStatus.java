@@ -25,5 +25,5 @@ package com.cubeia.poker.blinds;
  * @author viktor
  */
 public enum MissedBlindsStatus {
-    NOT_ENTERED_YET, NO_MISSED_BLINDS, MISSED_SMALL_BLIND, MISSED_BIG_AND_SMALL_BLIND;
+    NOT_ENTERED_YET, NO_MISSED_BLINDS, MISSED_SMALL_BLIND, MISSED_BIG_BLIND_AND_SMALL_BLIND;
 }

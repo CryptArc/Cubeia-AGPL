@@ -144,7 +144,7 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         BlindsInfo lastHandsBlinds = Fixtures.blindsInfo(1, 2, 3);
         List<BlindsPlayer> players = Fixtures.players(1, 2, 3, 4);
         MockPlayer playerWhoMissedSmallBlind = Fixtures.player(5, false);
-        playerWhoMissedSmallBlind.setMissedBlindsStatus(MissedBlindsStatus.MISSED_BIG_AND_SMALL_BLIND);
+        playerWhoMissedSmallBlind.setMissedBlindsStatus(MissedBlindsStatus.MISSED_BIG_BLIND_AND_SMALL_BLIND);
         players.add(playerWhoMissedSmallBlind);
 
         // When
@@ -187,7 +187,7 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         players.add(newPlayer);
 
         MockPlayer playerWhoMissedBigBlind = Fixtures.player(7, false);
-        playerWhoMissedBigBlind.setMissedBlindsStatus(MissedBlindsStatus.MISSED_BIG_AND_SMALL_BLIND);
+        playerWhoMissedBigBlind.setMissedBlindsStatus(MissedBlindsStatus.MISSED_BIG_BLIND_AND_SMALL_BLIND);
         players.add(playerWhoMissedBigBlind);
 
         // When
@@ -266,7 +266,7 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         List<BlindsPlayer> players = new ArrayList<BlindsPlayer>();
         players.add(Fixtures.player(2, true));
         MockPlayer player = Fixtures.player(3, false);
-        player.setMissedBlindsStatus(MissedBlindsStatus.MISSED_BIG_AND_SMALL_BLIND);
+        player.setMissedBlindsStatus(MissedBlindsStatus.MISSED_BIG_BLIND_AND_SMALL_BLIND);
         players.add(player);
 
         // When
@@ -283,9 +283,9 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         List<BlindsPlayer> players = new ArrayList<BlindsPlayer>();
         players.add(Fixtures.player(2, true));
         MockPlayer player3 = Fixtures.player(3, false);
-        player3.setMissedBlindsStatus(MissedBlindsStatus.MISSED_BIG_AND_SMALL_BLIND);
+        player3.setMissedBlindsStatus(MissedBlindsStatus.MISSED_BIG_BLIND_AND_SMALL_BLIND);
         MockPlayer player4 = Fixtures.player(4, false);
-        player4.setMissedBlindsStatus(MissedBlindsStatus.MISSED_BIG_AND_SMALL_BLIND);
+        player4.setMissedBlindsStatus(MissedBlindsStatus.MISSED_BIG_BLIND_AND_SMALL_BLIND);
         players.addAll(Arrays.asList(player3, player4));
 
         // When

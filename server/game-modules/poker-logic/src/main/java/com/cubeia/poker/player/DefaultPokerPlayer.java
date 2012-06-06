@@ -58,8 +58,6 @@ public class DefaultPokerPlayer implements PokerPlayer {
 
     protected boolean hasPostedEntryBet;
 
-    protected boolean isSittingOut = false;
-
     protected boolean exposingPocketCards;
 
     private long requestedBuyInAmount;
@@ -96,7 +94,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
     private boolean buyInRequestActive;
 
     /**
-     * Indicates whether this player has any missed blinds. TODO: Remove blinds stuff from SitOutStatus.
+     * Indicates whether this player has any missed blinds.
      */
     private MissedBlindsStatus missedBlindsStatus = MissedBlindsStatus.NOT_ENTERED_YET;
 
@@ -110,7 +108,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
                 "balance[" + balance + "] balanceNotInHand[" + balanceNotInHand + "] " +
                 "buyInRequestActive[" + buyInRequestActive + "] " +
                 "requestedBuyInAmount[" + requestedBuyInAmount + "] " +
-                "sitout[" + isSittingOut + sitOutSince + "] sitoutstatus[" + sitOutStatus + "] " +
+                "sitout[" + getSitOutStatus() + sitOutSince + "] sitoutstatus[" + sitOutStatus + "] " +
                 "folded[" + hasFolded + "] hasActed[" + hasActed + "] allIn[" + isAllIn() + "] " +
                 "hasPostedEntryBet[" + hasPostedEntryBet + "]";
         return value;
@@ -216,7 +214,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
     }
 
     public boolean hasPostedEntryBet() {
-        return hasPostedEntryBet;
+        return hasPostedEntryBet && missedBlindsStatus == MissedBlindsStatus.NO_MISSED_BLINDS;
     }
 
     /**
@@ -227,22 +225,22 @@ public class DefaultPokerPlayer implements PokerPlayer {
      */
     public void setSitOutStatus(SitOutStatus status) {
         this.sitOutStatus = status;
-        if (!isSittingOut) {
-            isSittingOut = true;
+        if (status == SitOutStatus.SITTING_OUT) {
             sitOutTimestamp = System.currentTimeMillis();
         }
     }
 
     public void setHasPostedEntryBet(boolean status) {
         hasPostedEntryBet = status;
+        missedBlindsStatus = MissedBlindsStatus.NO_MISSED_BLINDS;
     }
 
     public boolean isSittingOut() {
-        return isSittingOut;
+        return sitOutStatus == SitOutStatus.SITTING_OUT;
     }
 
     public void sitIn() {
-        this.isSittingOut = false;
+        sitOutStatus = SitOutStatus.SITTING_IN;
         sitOutTimestamp = null;
     }
 

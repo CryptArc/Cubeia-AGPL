@@ -17,6 +17,7 @@
 
 package com.cubeia.poker.rounds.blinds;
 
+import com.cubeia.poker.blinds.MissedBlindsStatus;
 import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.model.BlindsInfo;
@@ -34,7 +35,7 @@ public class WaitingForBigBlindState extends AbstractBlindsState {
     public void bigBlind(int playerId, PokerContext context, BlindsRound blindsRound) {
         BlindsInfo blindsInfo = context.getBlindsInfo();
         PokerPlayer player = context.getPlayerInCurrentHand(playerId);
-        if (player.getActionRequest().isOptionEnabled(PokerActionType.BIG_BLIND)) {
+        if (player != null && player.getActionRequest().isOptionEnabled(PokerActionType.BIG_BLIND)) {
             blindsInfo.setBigBlind(player);
             player.addBet(blindsRound.getBlindsInfo().getBigBlindLevel());
             player.setHasOption(true);
@@ -46,10 +47,11 @@ public class WaitingForBigBlindState extends AbstractBlindsState {
     }
 
     @Override
-    public void declineEntryBet(Integer playerId, PokerContext context, BlindsRound blindsRound) {
+    public void declineEntryBet(int playerId, PokerContext context, BlindsRound blindsRound) {
         PokerPlayer player = context.getPlayerInCurrentHand(playerId);
-        if (player.getActionRequest().isOptionEnabled(PokerActionType.DECLINE_ENTRY_BET)) {
-            player.setSitOutStatus(SitOutStatus.MISSED_BIG_BLIND);
+        if (player != null && player.getActionRequest().isOptionEnabled(PokerActionType.DECLINE_ENTRY_BET)) {
+            player.setSitOutStatus(SitOutStatus.SITTING_OUT);
+            player.setMissedBlindsStatus(MissedBlindsStatus.MISSED_BIG_BLIND_AND_SMALL_BLIND);
             blindsRound.bigBlindDeclined(player);
         } else {
             throw new IllegalArgumentException("Player " + player + " is not allowed to decline big blind.");
@@ -64,7 +66,8 @@ public class WaitingForBigBlindState extends AbstractBlindsState {
         } else {
             int bigBlind = round.getBlindsInfo().getBigBlindPlayerId();
             PokerPlayer player = context.getPlayerInCurrentHand(bigBlind);
-            player.setSitOutStatus(SitOutStatus.MISSED_BIG_BLIND);
+            player.setSitOutStatus(SitOutStatus.SITTING_OUT);
+            player.setMissedBlindsStatus(MissedBlindsStatus.MISSED_BIG_BLIND_AND_SMALL_BLIND);
             // context.getBlindsInfo().setHasDeadSmallBlind(true);
             round.bigBlindDeclined(player);
         }

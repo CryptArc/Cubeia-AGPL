@@ -125,6 +125,7 @@ public class BlindsCalculator {
         final BlindsPlayer nextPlayer = getElementAfter(bigBlindSeatId, seatedPlayers);
         final List<BlindsPlayer> playerList = unwrapList(seatedPlayers, nextPlayer.getSeatId());
         for (BlindsPlayer player : playerList) {
+            log.debug("Checking if player " + player.getPlayerId() + " should post an entry bet.");
             if (!player.hasPostedEntryBet()) {
                 // A player on the dealer button cannot post entry bet.
                 final boolean onDealer = player.getSeatId() == dealerSeatId;
@@ -140,6 +141,7 @@ public class BlindsCalculator {
                      */
                     log("WARN: Player with id " + player.getPlayerId() + " has not missed any blinds, but has not posted the entry bet.");
                 } else if (!onDealer && !betweenDealerAndBig && !betweenDealerAndSmall) {
+                    log.debug("Adding entry better " + player.getPlayerId());
                     entryBetters.add(new EntryBetter(player, getEntryBetType(player)));
                 }
             }
@@ -149,7 +151,7 @@ public class BlindsCalculator {
     private EntryBetType getEntryBetType(final BlindsPlayer player) {
         EntryBetType result = null;
         switch (player.getMissedBlindsStatus()) {
-            case MISSED_BIG_AND_SMALL_BLIND:
+            case MISSED_BIG_BLIND_AND_SMALL_BLIND:
                 result = EntryBetType.BIG_BLIND_PLUS_DEAD_SMALL_BLIND;
                 break;
             case MISSED_SMALL_BLIND:
@@ -262,7 +264,7 @@ public class BlindsCalculator {
             final boolean betweenOldAndNewDealerButton = isBetween(player.getSeatId(), lastDealerSeatId, newDealerSeatId);
             final boolean betweenSmallAndBigBlind = isBetween(player.getSeatId(), blindsInfo.getSmallBlindSeatId(), blindsInfo.getBigBlindSeatId());
             if (betweenOldAndNewDealerButton || betweenSmallAndBigBlind) {
-                addMissedBlind(player, MissedBlindsStatus.MISSED_BIG_AND_SMALL_BLIND);
+                addMissedBlind(player, MissedBlindsStatus.MISSED_BIG_BLIND_AND_SMALL_BLIND);
             }
         }
     }
@@ -401,10 +403,17 @@ public class BlindsCalculator {
 
     private void initFirstHandAtTable() {
         log("Initializing first hand at table.");
+        markAllPlayersAsHavingPostedEntryBet();
         if (headsUp()) {
             initFirstHeadsUpHand();
         } else {
             initFirstNonHeadsUpHand();
+        }
+    }
+
+    private void markAllPlayersAsHavingPostedEntryBet() {
+        for (BlindsPlayer player : seatedPlayers.values()) {
+            player.setHasPostedEntryBet(true);
         }
     }
 
@@ -602,17 +611,21 @@ public class BlindsCalculator {
         final int dealerSeatId = blindsInfo.getDealerSeatId();
         final int bigBlindSeatId = blindsInfo.getBigBlindSeatId();
         final int smallBlindSeatId = blindsInfo.getSmallBlindSeatId();
+        final int smallBlindPlayerId = blindsInfo.getSmallBlindPlayerId();
 
         for (BlindsPlayer player : seatedPlayers.values()) {
             if (!player.hasPostedEntryBet()) {
+                log.debug("Player " + player.getPlayerId() + " has not posted the entry bet.");
                 continue;
             }
-            // Player between the dealer and the big blind is not eligible.
-            final boolean betweenDealerAndBig = isBetween(player.getSeatId(), dealerSeatId, bigBlindSeatId);
-            // Nor is a player between the dealer and the small blind.
+            // Players between the dealer and the small blind are not eligible to play.
             final boolean betweenDealerAndSmall = isBetween(player.getSeatId(), dealerSeatId, smallBlindSeatId);
+            // Nor are players between the small blind and the big blind.
+            final boolean betweenDealerAndBig = isBetween(player.getSeatId(), smallBlindSeatId, bigBlindSeatId);
+            // If the player who sits in the small blind seat is not actually the small blind, he's not eligible either.
+            final boolean wrongPlayerOnSmallBlind = player.getSeatId() == smallBlindSeatId && player.getPlayerId() != smallBlindPlayerId;
 
-            if (!betweenDealerAndBig && !betweenDealerAndSmall) {
+            if (!betweenDealerAndBig && !betweenDealerAndSmall && !wrongPlayerOnSmallBlind) {
                 result.add(player);
             }
         }

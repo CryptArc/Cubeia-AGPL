@@ -181,7 +181,7 @@ public class PokerLogicTest extends GuiceTest {
         assertTrue(state.isFinished());
     }
 
-    public void testDeclinedplayerSitsOut() {
+    public void testDeclinedPlayerSitsOut() {
         MockPlayer[] mp = TestUtils.createMockPlayers(3);
         int[] p = TestUtils.createPlayerIdArray(mp);
         addPlayers(state, mp);

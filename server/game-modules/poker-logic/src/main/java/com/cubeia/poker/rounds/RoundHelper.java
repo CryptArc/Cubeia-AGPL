@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 import java.io.Serializable;
 import java.util.Collection;
 
-public class RoundHelper implements Serializable{
+public class RoundHelper implements Serializable {
 
     private PokerContext context;
 
@@ -71,13 +71,23 @@ public class RoundHelper implements Serializable{
         serverAdapter.scheduleTimeout(context.getTimingProfile().getTime(Periods.RIVER));
     }
 
-    public void setPlayerSitOut(PokerPlayer player, SitOutStatus status, PokerContext context, ServerAdapter serverAdapter) {
+    public void setPlayerSitOut(PokerPlayer player, PokerContext context, ServerAdapter serverAdapter) {
+        if (player.getSitOutStatus() == SitOutStatus.SITTING_OUT) {
+            return;
+        }
         int playerId = player.getId();
-        context.setSitOutStatus(player.getId(), status);
+
+        context.setSitOutStatus(player.getId(), SitOutStatus.SITTING_OUT);
         serverAdapter.notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITOUT, context.isPlayerInHand(playerId));
     }
 
     public void scheduleTimeoutForAutoAction() {
         serverAdapter.get().scheduleTimeout(context.getTimingProfile().getTime(Periods.AUTO_POST_BLIND_DELAY));
+    }
+
+    public void removePlayerFromCurrentHand(PokerPlayer player, PokerContext context) {
+        context.getCurrentHandPlayerMap().remove(player.getId());
+        int seatId = player.getSeatId();
+        context.getCurrentHandSeatingMap().remove(seatId);
     }
 }

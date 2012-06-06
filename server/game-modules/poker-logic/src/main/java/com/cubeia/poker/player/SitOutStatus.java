@@ -17,13 +17,7 @@
 
 package com.cubeia.poker.player;
 
-// TODO: MISSED_ANTE should not be a status, how is that different from just sitting out?
 public enum SitOutStatus {
-    NOT_ENTERED_YET,
-    NO_MISSED_BLINDS,
-    MISSED_SMALL_BLIND,
-    MISSED_BIG_BLIND,
-    MISSED_ANTE,
     SITTING_OUT,
-    TIMEOUT
+    SITTING_IN
 }

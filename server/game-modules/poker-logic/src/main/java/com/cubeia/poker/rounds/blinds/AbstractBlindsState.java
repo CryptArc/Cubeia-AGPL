@@ -24,26 +24,42 @@ public abstract class AbstractBlindsState implements BlindsState {
 
     private static final long serialVersionUID = 1L;
 
+    @Override
     public void bigBlind(int playerId, PokerContext context, BlindsRound round) {
         throw new IllegalStateException();
     }
 
+    @Override
     public void smallBlind(int playerId, PokerContext context, BlindsRound round) {
         throw new IllegalStateException();
     }
 
-    public void declineEntryBet(Integer playerId, PokerContext context, BlindsRound blindsRound) {
+    @Override
+    public void declineEntryBet(int playerId, PokerContext context, BlindsRound blindsRound) {
         throw new IllegalStateException();
     }
 
+    @Override
+    public void deadSmallBlind(int playerId, PokerContext context, BlindsRound blindsRound) {
+        throw new IllegalStateException();
+    }
+
+    @Override
+    public void bigBlindPlusDeadSmallBlind(int playerId, PokerContext context, BlindsRound round) {
+        throw new IllegalStateException();
+    }
+
+    @Override
     public void timeout(PokerContext context, BlindsRound round) {
         throw new IllegalStateException();
     }
 
+    @Override
     public boolean isFinished() {
         return false;
     }
 
+    @Override
     public boolean isCanceled() {
         return false;
     }

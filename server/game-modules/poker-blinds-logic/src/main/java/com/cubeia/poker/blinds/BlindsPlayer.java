@@ -63,4 +63,6 @@ public interface BlindsPlayer {
      * @return the {@link MissedBlindsStatus} of this player
      */
     public MissedBlindsStatus getMissedBlindsStatus();
+
+    void setHasPostedEntryBet(boolean hasPostedEntryBet);
 }

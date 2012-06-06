@@ -118,7 +118,7 @@ public class AnteRound implements Round {
                 player.setHasPostedEntryBet(false);
                 getServerAdapter().notifyActionPerformed(action, player);
                 getServerAdapter().notifyPlayerBalance(player);
-                anteRoundHelper.setPlayerSitOut(player, SitOutStatus.MISSED_ANTE, context, getServerAdapter());
+                removeNonParticipatingPlayer(player);
                 break;
             default:
                 throw new IllegalArgumentException(action.getActionType() + " is not legal here");
@@ -175,8 +175,13 @@ public class AnteRound implements Round {
 
         // sit out all the players
         for (PokerPlayer player : playersToSitOut) {
-            anteRoundHelper.setPlayerSitOut(player, SitOutStatus.MISSED_ANTE, context, getServerAdapter());
+            removeNonParticipatingPlayer(player);
         }
+    }
+
+    private void removeNonParticipatingPlayer(PokerPlayer player) {
+        anteRoundHelper.setPlayerSitOut(player, context, getServerAdapter());
+        anteRoundHelper.removePlayerFromCurrentHand(player, context);
     }
 
     public String getStateDescription() {

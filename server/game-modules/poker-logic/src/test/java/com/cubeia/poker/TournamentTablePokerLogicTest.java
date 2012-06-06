@@ -70,6 +70,7 @@ public class TournamentTablePokerLogicTest extends GuiceTest {
         MockPlayer p5 = new MockPlayer(5);
         p5.setSeatId(5);
         p5.setBalance(500);
+        p5.setHasPostedEntryBet(true);
         state.addPlayer(p5);
 
         // Check that we still only have 4 players.

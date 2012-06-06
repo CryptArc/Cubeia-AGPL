@@ -17,6 +17,7 @@
 
 package com.cubeia.poker.rounds.blinds;
 
+import com.cubeia.poker.blinds.MissedBlindsStatus;
 import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
@@ -43,11 +44,12 @@ public class WaitingForSmallBlindState extends AbstractBlindsState {
     }
 
     @Override
-    public void declineEntryBet(Integer playerId, PokerContext pokerContext, BlindsRound round) {
+    public void declineEntryBet(int playerId, PokerContext pokerContext, BlindsRound round) {
         int smallBlind = round.getBlindsInfo().getSmallBlindPlayerId();
         if (smallBlind == playerId) {
             PokerPlayer player = pokerContext.getPlayerInCurrentHand(playerId);
-            player.setSitOutStatus(SitOutStatus.MISSED_SMALL_BLIND);
+            player.setSitOutStatus(SitOutStatus.SITTING_OUT);
+            player.setMissedBlindsStatus(MissedBlindsStatus.MISSED_SMALL_BLIND);
             round.getBlindsInfo().setHasDeadSmallBlind(true);
             round.smallBlindDeclined(player);
         } else {
@@ -63,7 +65,8 @@ public class WaitingForSmallBlindState extends AbstractBlindsState {
         } else {
             int smallBlind = round.getBlindsInfo().getSmallBlindPlayerId();
             PokerPlayer player = pokerContext.getPlayerInCurrentHand(smallBlind);
-            player.setSitOutStatus(SitOutStatus.MISSED_SMALL_BLIND);
+            player.setSitOutStatus(SitOutStatus.SITTING_OUT);
+            player.setMissedBlindsStatus(MissedBlindsStatus.MISSED_SMALL_BLIND);
             round.getBlindsInfo().setHasDeadSmallBlind(true);
             round.smallBlindDeclined(player);
         }

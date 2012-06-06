@@ -210,15 +210,6 @@ public class PokerContext implements Serializable {
 
         player.setSitOutStatus(status);
         player.setSitOutNextRound(true);
-
-        // if we declined ante or did not pay ante
-        // then we should be removed from the current hand- and seating-map
-        // TODO: This should be done from the ante round
-        if (status == SitOutStatus.MISSED_ANTE) {
-            currentHandPlayerMap.remove(playerId);
-            int seatId = player.getSeatId();
-            currentHandSeatingMap.remove(seatId);
-        }
         return true;
     }
 
@@ -349,10 +340,6 @@ public class PokerContext implements Serializable {
 
     public int getMaxBuyIn() {
         return settings.getMaxBuyIn();
-    }
-
-    public BetStrategyName getBetStrategyName() {
-        return settings.getBetStrategy();
     }
 
     public void checkWarnings() {

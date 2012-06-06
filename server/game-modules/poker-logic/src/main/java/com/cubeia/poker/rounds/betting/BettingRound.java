@@ -401,7 +401,7 @@ public class BettingRound implements Round, BettingRoundContext {
     }
 
     private void setPlayerSitOut(PokerPlayer player) {
-        context.setSitOutStatus(player.getId(), SitOutStatus.TIMEOUT);
+        context.setSitOutStatus(player.getId(), SitOutStatus.SITTING_OUT);
         getServerAdapter().notifyPlayerStatusChanged(player.getId(), PokerPlayerStatus.SITOUT, true);
     }
 

@@ -26,9 +26,13 @@ public interface BlindsState extends Serializable {
 
     void smallBlind(int playerId, PokerContext context, BlindsRound blindsRound);
 
+    void deadSmallBlind(int playerId, PokerContext context, BlindsRound blindsRound);
+
     void bigBlind(int playerId, PokerContext context, BlindsRound blindsRound);
 
-    void declineEntryBet(Integer playerId, PokerContext context, BlindsRound blindsRound);
+    void bigBlindPlusDeadSmallBlind(int playerId, PokerContext context, BlindsRound round);
+
+    void declineEntryBet(int playerId, PokerContext context, BlindsRound blindsRound);
 
     void timeout(PokerContext context, BlindsRound round);
 
