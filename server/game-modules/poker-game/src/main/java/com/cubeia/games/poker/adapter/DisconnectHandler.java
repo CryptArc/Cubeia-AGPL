@@ -41,7 +41,7 @@ public class DisconnectHandler {
 
     /**
      * Check the new status and adjust time to act accordingly and send
-     * out notifiations as needed.
+     * out notifications as needed.
      *
      * @param table
      * @param playerId

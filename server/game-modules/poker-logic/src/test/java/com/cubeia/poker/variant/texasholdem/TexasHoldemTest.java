@@ -46,6 +46,7 @@ import com.google.common.base.Predicate;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 
 import javax.annotation.Nullable;
@@ -62,6 +63,7 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.longThat;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -111,7 +113,6 @@ public class TexasHoldemTest {
         potHolder = new PotHolder(new LinearRakeWithLimitCalculator(rakeSettings));
         when(context.getPotHolder()).thenReturn(potHolder);
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
-
 
         texas = new TexasHoldem(new DummyRNGProvider());
         texas.setPokerContextAndServerAdapter(context, serverAdapterHolder);
@@ -203,6 +204,78 @@ public class TexasHoldemTest {
 
         // All players call. Pot should be 4 big blinds + dead small blind = 40 + 5.
         assertEquals(45, context.getTotalPotSize());
+    }
+
+    @Test
+    public void testPlayerWhoMissesBigAndComesBackOnBigDoesNotPayDeadSmall() {
+        PokerContext context = prepareContext(4);
+        startHand(context);
+
+        // First play a normal hand.
+        act(p[1], SMALL_BLIND);
+        act(p[2], BIG_BLIND);
+        act(p[3], CALL);
+        act(p[0], RAISE, 20);
+
+        act(p[1], FOLD);
+        act(p[2], FOLD);
+        act(p[3], FOLD);
+
+        verify(listener, times(1)).handFinished(Matchers.<HandResult>any(), Matchers.<HandEndStatus>any());
+
+        // Then the big blind rejects
+        startHand(context);
+        act(p[2], SMALL_BLIND);
+        act(p[3], PokerActionType.DECLINE_ENTRY_BET);
+        act(p[0], BIG_BLIND);
+
+        act(p[1], RAISE, 20);
+        act(p[2], FOLD);
+        act(p[0], FOLD);
+
+        verify(listener, times(2)).handFinished(Matchers.<HandResult>any(), Matchers.<HandEndStatus>any());
+
+        // Player 3 sits
+        p[3].sitIn();
+        p[3].setSitOutNextRound(false);
+
+        // But can't play this hand.
+        startHand(context);
+
+        act(p[0], SMALL_BLIND);
+        act(p[1], BIG_BLIND);
+
+        act(p[2], RAISE, 20);
+        act(p[0], FOLD);
+        act(p[1], FOLD);
+
+        verify(listener, times(3)).handFinished(Matchers.<HandResult>any(), Matchers.<HandEndStatus>any());
+
+        // Now p3 is asked to post big + dead sb but rejects.
+        startHand(context);
+        act(p[1], SMALL_BLIND);
+        act(p[2], BIG_BLIND);
+
+        assertTrue(p[3].getActionRequest().isOptionEnabled(PokerActionType.BIG_BLIND_PLUS_DEAD_SMALL_BLIND));
+        act(p[3], DECLINE_ENTRY_BET);
+        act(p[0], RAISE, 20);
+        act(p[1], FOLD);
+        act(p[2], FOLD);
+
+        verify(listener, times(4)).handFinished(Matchers.<HandResult>any(), Matchers.<HandEndStatus>any());
+
+        // In the next hand, player 3 is BB. He shouldn't have to post a dead sb.
+        p[3].sitIn();
+        p[3].setSitOutNextRound(false);
+        startHand(context);
+        act(p[2], SMALL_BLIND);
+        assertTrue(p[3].getActionRequest().isOptionEnabled(PokerActionType.BIG_BLIND));
+        act(p[3], BIG_BLIND);
+
+        act(p[0], RAISE, 20);
+        act(p[1], FOLD);
+        act(p[2], FOLD);
+        verify(listener, times(5)).handFinished(Matchers.<HandResult>any(), Matchers.<HandEndStatus>any());
     }
 
     @Test

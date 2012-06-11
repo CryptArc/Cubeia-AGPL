@@ -89,7 +89,6 @@ public class BettingRound implements Round, BettingRoundContext {
 
     // TODO: Would probably be nice if the playerToActCalculator knew all it needs to know, so we don't need to pass "seatIdToStart.." as well.
     public BettingRound(int seatIdToStartBettingAfter, PokerContext context, ServerAdapterHolder serverAdapterHolder, PlayerToActCalculator playerToActCalculator, ActionRequestFactory actionRequestFactory, FutureActionsCalculator futureActionsCalculator) {
-
         this.context = context;
         this.serverAdapterHolder = serverAdapterHolder;
         this.futureActionsCalculator = futureActionsCalculator;
@@ -104,9 +103,9 @@ public class BettingRound implements Round, BettingRoundContext {
         log.debug("Init new betting round");
         for (PokerPlayer p : context.getPlayersInHand()) {
             /*
-                * Initialize the highBet to the highest bet stack of the incoming players.
-                * This will be zero on all rounds except when blinds have been posted.
-                */
+             * Initialize the highBet to the highest bet stack of the incoming players.
+             * This will be zero on all rounds except when blinds have been posted.
+             */
             if (p.getBetStack() > highBet) {
                 highBet = p.getBetStack();
             }
