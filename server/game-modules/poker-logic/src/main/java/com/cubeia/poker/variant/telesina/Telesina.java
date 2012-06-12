@@ -115,28 +115,7 @@ public class Telesina extends AbstractGameType implements RoundVisitor, Dealer {
         log.debug("init hand");
         resetPlayerPostedEntryBets();
 
-        //TODO: remove the rigged deck code
-        boolean deckIsRigged = false;
-        if (!rngProvider.getClass().getSimpleName().equals("NonRandomRNGProvider")) {
-            log.warn("USING RIGGED DECK!");
-
-            if (RiggedUtils.getSettings().isEmpty())
-                RiggedUtils.loadSettingsFromFile("/home/dicearena/telesinaDeck.properties");
-            if (RiggedUtils.getSettings().getProperty("deck" + context.getTableSize() + "P") != null) {
-                log.warn("Using deck" + context.getTableSize() + "P: " + RiggedUtils.getSettings().getProperty("deck" + context.getTableSize() + "P"));
-                try {
-                    deck = deckFactory.createNewRiggedDeck(context.getTableSize(), RiggedUtils.getSettings().getProperty("deck" + context.getTableSize() + "P"));
-                    deckIsRigged = true;
-                } catch (Exception e) {
-                    log.error(e.getMessage(), e);
-                }
-            }
-        }
-
-        if (!deckIsRigged) {
-            //keep only this line
-            deck = deckFactory.createNewDeck(rngProvider.getRNG(), context.getTableSize());
-        }
+        deck = deckFactory.createNewDeck(rngProvider.getRNG(), context.getTableSize());
 
         try {
             getServerAdapter().notifyDeckInfo(deck.getTotalNumberOfCardsInDeck(), deck.getDeckLowestRank());
