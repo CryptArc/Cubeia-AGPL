@@ -82,12 +82,28 @@ public interface PokerPlayer extends BlindsPlayer, Serializable {
     public void addBet(long amount);
 
     /**
+     * Adds a bet and goes all-in if the bet is larger than the player's chips stack.
+     *
+     * @param amount the desired amount
+     */
+    public void addBetOrGoAllIn(long amount);
+
+    /**
      * Takes chips from the given player, without adding them to his bet stack.
      *
      * @param amount amount the amount to take
      * @throws IllegalArgumentException if the bet is bigger than the player's stack or if the bet is negative
      */
     void takeChips(long amount);
+
+    /**
+     * Takes chips from the given player, without adding them to his bet stack and goes all-in if the desired amount is >= the
+     * player's current balance.
+     *
+     * @param amount amount the amount to take
+     * @return the amount taken
+     */
+    long takeChipsOrGoAllIn(long amount);
 
     public void clearActionRequest();
 

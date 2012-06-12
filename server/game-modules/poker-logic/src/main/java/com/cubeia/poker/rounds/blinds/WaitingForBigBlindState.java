@@ -37,7 +37,7 @@ public class WaitingForBigBlindState extends AbstractBlindsState {
         PokerPlayer player = context.getPlayerInCurrentHand(playerId);
         if (player != null && player.getActionRequest().isOptionEnabled(PokerActionType.BIG_BLIND)) {
             blindsInfo.setBigBlind(player);
-            player.addBet(blindsRound.getBlindsInfo().getBigBlindLevel());
+            player.addBetOrGoAllIn(blindsRound.getBlindsInfo().getBigBlindLevel());
             player.setHasOption(true);
             player.setHasPostedEntryBet(true);
             blindsRound.bigBlindPosted();

@@ -276,9 +276,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
 
     @Override
     public void addChips(long chips) {
-        if (chips < 0) {
-            throw new IllegalArgumentException("Tried to add " + chips + " to player " + playerId);
-        }
+        checkArgument(chips >= 0, "PokerPlayer[" + playerId + "] - " + String.format("Tried to add negative amount of chips (%d)", chips));
         this.balance += chips;
     }
 
@@ -295,11 +293,30 @@ public class DefaultPokerPlayer implements PokerPlayer {
     }
 
     @Override
+    public long takeChipsOrGoAllIn(long amount) {
+        if (amount >= balance) {
+            log.debug("Balance {} >= amount {}, going all-in.", balance, amount);
+            amount = balance;
+        }
+        takeChips(amount);
+        return amount;
+    }
+
+    @Override
     public void addBet(long bet) {
         checkArgument(bet <= balance, "PokerPlayer[" + playerId + "] - " + String.format("Bet (%d) is bigger than balance (%d)", bet, balance));
         checkArgument(bet >= 0, "Chips must be positive, was " + bet);
         balance -= bet;
         betStack += bet;
+    }
+
+    @Override
+    public void addBetOrGoAllIn(long amount) {
+        if (amount >= balance) {
+            log.debug("Balance {} >= amount {}, going all-in.", balance, amount);
+            amount = balance;
+        }
+        addBet(amount);
     }
 
     @Override

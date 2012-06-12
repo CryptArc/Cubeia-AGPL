@@ -87,6 +87,13 @@ public class BettingRound implements Round, BettingRoundContext {
     @VisibleForTesting
     protected Set<PokerPlayer> playersInPlayAtRoundStart;
 
+    private Predicate<PokerPlayer> nonFolded = new Predicate<PokerPlayer>() {
+        @Override
+        public boolean apply(PokerPlayer player) {
+            return !player.hasFolded();
+        }
+    };
+
     // TODO: Would probably be nice if the playerToActCalculator knew all it needs to know, so we don't need to pass "seatIdToStart.." as well.
     public BettingRound(int seatIdToStartBettingAfter, PokerContext context, ServerAdapterHolder serverAdapterHolder, PlayerToActCalculator playerToActCalculator, ActionRequestFactory actionRequestFactory, FutureActionsCalculator futureActionsCalculator) {
         this.context = context;
@@ -112,6 +119,7 @@ public class BettingRound implements Round, BettingRoundContext {
             p.clearActionRequest();
             p.setLastRaiseLevel(0);
         }
+        makeSureHighBetIsNotSmallerThanBigBlind();
 
         playersInPlayAtRoundStart = new HashSet<PokerPlayer>();
         for (PokerPlayer player : context.getPlayersInHand()) {
@@ -145,6 +153,12 @@ public class BettingRound implements Round, BettingRoundContext {
         // each and every player in sit out scenarios.
         if (isFinished()) {
             roundHelper.scheduleRoundTimeout(context, getServerAdapter());
+        }
+    }
+
+    private void makeSureHighBetIsNotSmallerThanBigBlind() {
+        if (highBet > 0 && highBet < context.getBlindsInfo().getBigBlindLevel()) {
+            highBet = context.getBlindsInfo().getBigBlindLevel();
         }
     }
 
@@ -239,13 +253,7 @@ public class BettingRound implements Round, BettingRoundContext {
 
     @VisibleForTesting
     protected boolean calculateIfRoundFinished() {
-        Set<PokerPlayer> nonFoldedPlayersLeftInRound = Sets.filter(playersInPlayAtRoundStart, new Predicate<PokerPlayer>() {
-            @Override
-            public boolean apply(PokerPlayer player) {
-                return !player.hasFolded();
-            }
-        });
-        if (nonFoldedPlayersLeftInRound.size() < 2) {
+        if (Sets.filter(playersInPlayAtRoundStart, nonFolded).size() < 2) {
             return true;
         }
         for (PokerPlayer p : context.getPlayersInHand()) {

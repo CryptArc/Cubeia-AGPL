@@ -206,6 +206,11 @@ public class TexasHoldemTest {
         assertEquals(45, context.getTotalPotSize());
     }
 
+    /**
+     * If you miss the big blind, you need to pay bb+dead sb to re-enter the game.
+     *
+     * However, if you wait until the bb comes around to you, you only need to pay the bb.
+     */
     @Test
     public void testPlayerWhoMissesBigAndComesBackOnBigDoesNotPayDeadSmall() {
         PokerContext context = prepareContext(4);
@@ -235,7 +240,7 @@ public class TexasHoldemTest {
 
         verify(listener, times(2)).handFinished(Matchers.<HandResult>any(), Matchers.<HandEndStatus>any());
 
-        // Player 3 sits
+        // Player 3 sits in again.
         p[3].sitIn();
         p[3].setSitOutNextRound(false);
 
@@ -275,6 +280,7 @@ public class TexasHoldemTest {
         act(p[0], RAISE, 20);
         act(p[1], FOLD);
         act(p[2], FOLD);
+        act(p[3], FOLD);
         verify(listener, times(5)).handFinished(Matchers.<HandResult>any(), Matchers.<HandEndStatus>any());
     }
 
@@ -304,6 +310,48 @@ public class TexasHoldemTest {
         assertSameListsDisregardingOrder(new Hand("6C 8C 9C AC 5C").getCards(), ratedPlayerHand.getBestHandCards());
         assertEquals(HandType.FLUSH, ratedPlayerHand.getBestHandType());
     }
+
+    @Test
+    public void testAllInOnSmallBlind() {
+        PokerContext context = prepareContext(4);
+        startHand(context);
+
+        // The small blind costs 5, so let the small blind only have 3 chips left.
+        p[1].setBalance(3);
+
+        // First play a normal hand.
+        act(p[1], SMALL_BLIND);
+        assertTrue(p[1].isAllIn());
+    }
+
+    @Test
+    public void testAllInOnBigBlind() {
+        PokerContext context = prepareContext(4);
+        startHand(context);
+
+        // The big blind costs 10, so let the small blind only have 7 chips left.
+        p[2].setBalance(7);
+
+        // First play a normal hand.
+        act(p[1], SMALL_BLIND);
+        act(p[2], BIG_BLIND);
+        assertTrue(p[2].isAllIn());
+    }
+
+    @Test
+    public void testPlayerAfterAllInBigBlindStillCallsFullBigBlind() {
+        PokerContext context = prepareContext(4);
+        startHand(context);
+
+        p[2].setBalance(7);
+
+        // First play a normal hand.
+        act(p[1], SMALL_BLIND);
+        act(p[2], BIG_BLIND);
+
+        assertEquals(10, p[3].getActionRequest().getOption(CALL).getMinAmount());
+    }
+
 
     private void createPot() {
         potHolder.getActivePot().bet(player1, 600L);

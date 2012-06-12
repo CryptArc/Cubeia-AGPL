@@ -78,10 +78,10 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         players.add(Fixtures.player(5, false));
 
         // When
-        calc.initializeBlinds(lastHandsBlinds, players);
+        BlindsInfo blindsInfo = calc.initializeBlinds(lastHandsBlinds, players);
 
         // Then
-        Queue<EntryBetter> entryBetters = calc.getEntryBetters();
+        Queue<EntryBetter> entryBetters = calc.getEntryBetters(blindsInfo.getDealerSeatId(), blindsInfo.getBigBlindSeatId(), blindsInfo.getBigBlindSeatId());
         EntryBetter entryBetter = entryBetters.peek();
         assertEquals(5, entryBetter.getPlayer().getSeatId());
         assertEquals(EntryBetType.BIG_BLIND, entryBetter.getEntryBetType());
@@ -94,10 +94,10 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         players.add(Fixtures.player(4, false));
 
         // When
-        calc.initializeBlinds(lastHandsBlinds, players);
+        BlindsInfo blindsInfo = calc.initializeBlinds(lastHandsBlinds, players);
 
         // Then
-        assertEquals(0, calc.getEntryBetters().size());
+        assertEquals(0, calc.getEntryBetters(blindsInfo.getDealerSeatId(), blindsInfo.getBigBlindSeatId(), blindsInfo.getBigBlindSeatId()).size());
     }
 
     public void testPlayerOnDealerButtonDoesNotPostEntryBet() {
@@ -107,18 +107,18 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         players.add(Fixtures.player(3, false));
 
         // When
-        calc.initializeBlinds(lastHandsBlinds, players);
+        BlindsInfo blindsInfo = calc.initializeBlinds(lastHandsBlinds, players);
 
         // Then
-        assertEquals(0, calc.getEntryBetters().size());
+        assertEquals(0, calc.getEntryBetters(blindsInfo.getDealerSeatId(), blindsInfo.getBigBlindSeatId(), blindsInfo.getBigBlindSeatId()).size());
     }
 
     public void testCalculatingEntryBetsWhenDealerIsOnEmptySeatDoesNotHang() {
         BlindsInfo blinds = Fixtures.blindsInfo(1, 4, 5);
         List<BlindsPlayer> players = Fixtures.players(1, 2, 3, 5, 6, 7);
 
-        calc.initializeBlinds(blinds, players);
-        assertEquals(0, calc.getEntryBetters().size());
+        BlindsInfo blindsInfo = calc.initializeBlinds(blinds, players);
+        assertEquals(0, calc.getEntryBetters(blindsInfo.getDealerSeatId(), blindsInfo.getBigBlindSeatId(), blindsInfo.getBigBlindSeatId()).size());
     }
 
     public void testPlayerShouldPayDeadSmallBlind() {
@@ -130,10 +130,10 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         players.add(playerWhoMissedSmallBlind);
 
         // When
-        calc.initializeBlinds(lastHandsBlinds, players);
+        BlindsInfo blindsInfo = calc.initializeBlinds(lastHandsBlinds, players);
 
         // Then
-        Queue<EntryBetter> entryBetters = calc.getEntryBetters();
+        Queue<EntryBetter> entryBetters = calc.getEntryBetters(blindsInfo.getDealerSeatId(), blindsInfo.getBigBlindSeatId(), blindsInfo.getBigBlindSeatId());
         EntryBetter entryBetter = entryBetters.peek();
         assertEquals(5, entryBetter.getPlayer().getSeatId());
         assertEquals(EntryBetType.DEAD_SMALL_BLIND, entryBetter.getEntryBetType());
@@ -148,10 +148,10 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         players.add(playerWhoMissedSmallBlind);
 
         // When
-        calc.initializeBlinds(lastHandsBlinds, players);
+        BlindsInfo blindsInfo = calc.initializeBlinds(lastHandsBlinds, players);
 
         // Then
-        Queue<EntryBetter> entryBetters = calc.getEntryBetters();
+        Queue<EntryBetter> entryBetters = calc.getEntryBetters(blindsInfo.getDealerSeatId(), blindsInfo.getBigBlindSeatId(), blindsInfo.getBigBlindSeatId());
         EntryBetter entryBetter = entryBetters.peek();
         assertEquals(5, entryBetter.getPlayer().getSeatId());
         assertEquals(EntryBetType.BIG_BLIND_PLUS_DEAD_SMALL_BLIND, entryBetter.getEntryBetType());
@@ -166,10 +166,10 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         players.add(playerWhoMissedNoBlinds);
 
         // When
-        calc.initializeBlinds(lastHandsBlinds, players);
+        BlindsInfo blindsInfo = calc.initializeBlinds(lastHandsBlinds, players);
 
         // Then
-        Queue<EntryBetter> entryBetters = calc.getEntryBetters();
+        Queue<EntryBetter> entryBetters = calc.getEntryBetters(blindsInfo.getDealerSeatId(), blindsInfo.getBigBlindSeatId(), blindsInfo.getBigBlindSeatId());
         assertEquals(0, entryBetters.size());
     }
 
@@ -191,10 +191,10 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         players.add(playerWhoMissedBigBlind);
 
         // When
-        calc.initializeBlinds(lastHandsBlinds, players);
+        BlindsInfo blindsInfo = calc.initializeBlinds(lastHandsBlinds, players);
 
         // Then
-        Queue<EntryBetter> entryBetters = calc.getEntryBetters();
+        Queue<EntryBetter> entryBetters = calc.getEntryBetters(blindsInfo.getDealerSeatId(), blindsInfo.getBigBlindSeatId(), blindsInfo.getBigBlindSeatId());
 
         EntryBetter entryBetter = entryBetters.poll();
         assertEquals(5, entryBetter.getPlayer().getSeatId());
@@ -239,7 +239,7 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
 
         // Then
         assertBlindsInfo(result, 5, 4, 5);
-        assertEquals(0, calc.getEntryBetters().size());
+        assertEquals(0, calc.getEntryBetters(result.getDealerSeatId(), result.getBigBlindSeatId(), result.getBigBlindSeatId()).size());
     }
 
     public void testUndefinedLastHandCountsAsFirstHandOnTable() {
@@ -274,7 +274,7 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
 
         // Then
         assertBlindsInfo(result, 2, 2, 3);
-        assertEquals(0, calc.getEntryBetters().size());
+        assertEquals(0, calc.getEntryBetters(result.getDealerSeatId(), result.getBigBlindSeatId(), result.getBigBlindSeatId()).size());
     }
 
     public void testOnlyOneEnteredPlayerDoesNotGetTheBigBlindNonHeadsUp() {
@@ -293,7 +293,7 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
 
         // Then
         assertBlindsInfo(result, 2, 3, 4);
-        assertEquals(0, calc.getEntryBetters().size());
+        assertEquals(0, calc.getEntryBetters(result.getDealerSeatId(), result.getBigBlindSeatId(), result.getBigBlindSeatId()).size());
     }
 
     public void testInitWhenLastHandWasCancelled() {
@@ -308,7 +308,7 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
 
         // Then
         assertBlindsInfo(result, 2, 2, 3);
-        assertEquals(0, calc.getEntryBetters().size());
+        assertEquals(0, calc.getEntryBetters(result.getDealerSeatId(), result.getBigBlindSeatId(), result.getBigBlindSeatId()).size());
     }
 
     public void testInitWhenLastHandWasCancelledAndDealerNotSeated() {
@@ -327,7 +327,7 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
 
         // Then
         assertBlindsInfo(result, 3, 4, 5);
-        assertEquals(0, calc.getEntryBetters().size());
+        assertEquals(0, calc.getEntryBetters(result.getDealerSeatId(), result.getBigBlindSeatId(), result.getBigBlindSeatId()).size());
     }
 
     public void testReturnNullIfNotEnoughPlayers() {
@@ -357,7 +357,7 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
 
         // Then
         assertBlindsInfo(result, 3, 3, 2);
-        assertEquals(0, calc.getEntryBetters().size());
+        assertEquals(0, calc.getEntryBetters(result.getDealerSeatId(), result.getBigBlindSeatId(), result.getBigBlindSeatId()).size());
     }
 
     public void testNonFirstHeadsUpButDealerIsGone() {
@@ -371,7 +371,7 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
 
         // Then
         assertBlindsInfo(result, 5, 5, 6);
-        assertEquals(0, calc.getEntryBetters().size());
+        assertEquals(0, calc.getEntryBetters(result.getDealerSeatId(), result.getBigBlindSeatId(), result.getBigBlindSeatId()).size());
     }
 
     public void testGetPlayersBetweenDealerAndBig() {

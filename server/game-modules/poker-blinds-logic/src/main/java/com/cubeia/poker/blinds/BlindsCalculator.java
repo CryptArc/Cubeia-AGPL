@@ -148,6 +148,36 @@ public class BlindsCalculator {
         }
     }
 
+    /**
+     * Gets a queue of players who should pay the entry bet. The queue will be ordered
+     * in the order the players should be asked.
+     *
+     * @param dealerSeatId the seat id of the dealer
+     * @param bigBlindSeatId the seat id of the player who actually posted the big blind
+     * @return the queue of players who should pay the entry bet
+     */
+    public Queue<EntryBetter> getEntryBetters(final int dealerSeatId, final int smallBlindSeatId, final int bigBlindSeatId) {
+        Queue<EntryBetter> remainingEntryBetters = new LinkedList<EntryBetter>();
+        /*
+         * We will use the queue of entry betters calculated at initialization time, but we'll remove players
+         * between the dealer and the bb. Note that the dealer might have ended up on the dealer button if
+         * everyone rejected the bb, so we also remove players between the dealer and the sb.
+         *
+         * Also, a player who was up for posting an entry bet might have actually posted the bb if the original
+         * bb declined, so we remove potential entry betters who have already posted the entry bet.
+         */
+        for (EntryBetter entryBetter : entryBetters) {
+            final boolean betweenDealerAndBig = isBetween(entryBetter.getPlayer().getSeatId(), dealerSeatId, bigBlindSeatId);
+            final boolean betweenDealerAndSmall = isBetween(entryBetter.getPlayer().getSeatId(), dealerSeatId, smallBlindSeatId);
+            final boolean hasPostedEntryBet = entryBetter.getPlayer().hasPostedEntryBet();
+            if (!betweenDealerAndBig && !betweenDealerAndSmall && !hasPostedEntryBet) {
+                remainingEntryBetters.add(entryBetter);
+            }
+        }
+        log.debug("Remaining entry betters: " + remainingEntryBetters);
+        return remainingEntryBetters;
+    }
+
     private EntryBetType getEntryBetType(final BlindsPlayer player) {
         EntryBetType result = null;
         switch (player.getMissedBlindsStatus()) {
@@ -536,16 +566,6 @@ public class BlindsCalculator {
      */
     public BlindsInfo getBlindsInfo() {
         return blindsInfo;
-    }
-
-    /**
-     * Gets the list of players who should pay the entry bet. The list will be ordered
-     * in the order the players should be asked.
-     *
-     * @return the list of players who should pay the entry bet
-     */
-    public Queue<EntryBetter> getEntryBetters() {
-        return entryBetters;
     }
 
     /**

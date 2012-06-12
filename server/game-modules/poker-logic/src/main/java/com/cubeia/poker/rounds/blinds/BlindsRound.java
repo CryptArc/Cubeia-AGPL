@@ -110,7 +110,6 @@ public class BlindsRound implements Round {
             setNewBlindsInfo(newBlindsInfo);
             moveDealerButtonToSeatId(newBlindsInfo.getDealerSeatId());
             markMissedBlinds(blindsCalculator.getMissedBlinds());
-            entryBetters = blindsCalculator.getEntryBetters();
 
             if (newBlindsInfo.getSmallBlindPlayerId() != -1) {
                 requestSmallBlind(getPlayerInSeat(newBlindsInfo.getSmallBlindSeatId()));
@@ -251,6 +250,7 @@ public class BlindsRound implements Round {
     }
 
     public void bigBlindPosted() {
+        entryBetters = blindsCalculator.getEntryBetters(blindsInfo.getDealerButtonSeatId(), blindsInfo.getBigBlindSeatId(), blindsInfo.getBigBlindSeatId());
         askForNextEntryBetOrFinishBlindsRound();
     }
 

@@ -17,12 +17,14 @@
 
 package com.cubeia.poker.blinds;
 
+import java.io.Serializable;
+
 /**
  * Describes a player who should pay the entry bet.
  *
  * @author viktor
  */
-public class EntryBetter {
+public class EntryBetter implements Serializable {
 
     private final BlindsPlayer player;
 
@@ -42,5 +44,8 @@ public class EntryBetter {
         return entryBetType;
     }
 
-
+    @Override
+    public String toString() {
+        return "[playerId = " + player.getPlayerId() + ", entryBetType = " + entryBetType + "]";
+    }
 }
