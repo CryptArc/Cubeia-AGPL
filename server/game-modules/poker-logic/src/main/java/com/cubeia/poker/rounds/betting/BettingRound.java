@@ -307,7 +307,7 @@ public class BettingRound implements Round, BettingRoundContext {
 
     @VisibleForTesting
     void raise(PokerPlayer player, long amount) {
-        if (amount <= highBet) {
+        if (amount < highBet) {
             throw new IllegalArgumentException("PokerPlayer[" + player.getId() + "] incorrect raise amount. Highbet[" + highBet + "] amount[" + amount + "]. " +
                     "Amounts must be larger than current highest bet");
         }

@@ -70,7 +70,7 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
 
     @Override
     public void timeout() {
-        throw new IllegalStateException(this + " is wrong state. Context: " + context);
+        log.warn("Ignoring timeout in state " + this + " context: " + context);
     }
 
     @Override

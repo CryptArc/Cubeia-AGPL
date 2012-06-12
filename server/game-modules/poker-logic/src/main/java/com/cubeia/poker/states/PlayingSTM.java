@@ -91,10 +91,6 @@ public class PlayingSTM extends AbstractPokerGameSTM implements HandFinishedList
 
             //setPlayersWithoutMoneyAsSittingOut();
             sendBuyinInfoToPlayersWithoutMoney();
-
-            TimingProfile timing = context.getSettings().getTiming();
-            log.debug("Schedule hand over timeout in: {}", timing != null ? timing.getTime(Periods.START_NEW_HAND) : 0);
-            getServerAdapterHolder().scheduleTimeout(timing.getTime(Periods.START_NEW_HAND));
         }
 
         changeState(new WaitingToStartSTM());

@@ -419,7 +419,7 @@ public class PokerContext implements Serializable {
 
     @Override
     public String toString() {
-        return "PokerContext";
+        return "PokerContext handFinished: " + handFinished + " communityCards: " + communityCards;
     }
 
     public boolean isTournamentTable() {

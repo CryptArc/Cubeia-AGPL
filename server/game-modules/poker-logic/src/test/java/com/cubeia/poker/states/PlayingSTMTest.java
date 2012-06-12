@@ -126,8 +126,6 @@ public class PlayingSTMTest {
         inOrder.verify(serverAdapter).notifyHandEnd(result, HandEndStatus.NORMAL);
         inOrder.verify(serverAdapter).performPendingBuyIns(context.playerMap.values());
 
-
-        verify(serverAdapter).scheduleTimeout(Mockito.anyLong());
         assertThat(context.isFinished(), is(true));
         verify(stateChanger).changeState(isA(WaitingToStartSTM.class));
         verify(player3, Mockito.never()).setSitOutStatus(SitOutStatus.SITTING_OUT);
