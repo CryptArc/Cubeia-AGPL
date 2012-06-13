@@ -138,28 +138,8 @@ public class MockGame implements GameType {
             }
 
             @Override
-            public int countNonFoldedPlayers() {
-                return 4;
-            }
-
-            @Override
             public boolean isPlayerInHand(int playerId) {
                 return false;
-            }
-
-            @Override
-            public void notifyDealerButton(int dealerButtonSeatId) {
-                // System.out.println("Dealer button is on seat: " + dealerButtonSeatId);
-                // WAEVVA, I'll do what i want, I'm a mock!
-            }
-
-            @Override
-            public int getEntryBetLevel() {
-                return 0;
-            }
-
-            @Override
-            public void notifyBetStacksUpdated() {
             }
 
             @Override
@@ -172,11 +152,6 @@ public class MockGame implements GameType {
 
             @Override
             public void handleBuyInRequest(PokerPlayer pokerPlayer, int amount) {
-            }
-
-            @Override
-            public boolean isEveryoneSittingOut() {
-                return false;
             }
 
         };

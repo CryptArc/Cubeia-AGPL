@@ -221,14 +221,11 @@ public class BackendCallHandlerTest {
 
     @Test
     public void testHandleOpenSessionSuccessfulResponse() {
-//        when(state.getGameType()).thenReturn(gameType);
         when(gameType.canPlayerAffordEntryBet(any(PokerPlayer.class), any(PokerSettings.class), Mockito.eq(true))).thenReturn(false);
         PlayerSessionId playerSessionId = new PlayerSessionIdImpl(playerId);
         OpenSessionResponse openSessionResponse = new OpenSessionResponse(playerSessionId, Collections.<String, String>emptyMap());
         callHandler.handleOpenSessionSuccessfulResponse(openSessionResponse);
         verify(pokerPlayer).setPlayerSessionId(playerSessionId);
-
-        // verify(state).notifyBuyinInfo(playerId, false); // TODO: VN REMOVED THIS.
     }
 
     @SuppressWarnings({"serial", "unchecked"})

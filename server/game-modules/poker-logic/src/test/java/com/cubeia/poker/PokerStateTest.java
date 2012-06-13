@@ -208,7 +208,7 @@ public class PokerStateTest {
 
         state.pokerContext.currentHandPlayerMap = playerMap;
 
-        assertThat(state.getTotalPotSize(), is(520L));
+        assertThat(state.pokerContext.getTotalPotSize(), is(520L));
 
     }
 

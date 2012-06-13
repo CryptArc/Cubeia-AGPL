@@ -66,7 +66,7 @@ public class PokerTournamentCreationParticipant implements CreationParticipant {
     public void tournamentCreated(MTTState mtt, LobbyAttributeAccessor acc) {
         System.out.println("Poker tournament created. MTT: [" + mtt.getId() + "]" + mtt.getName());
         MTTStateSupport stateSupport = ((MTTStateSupport) mtt);
-        stateSupport.setGameId(7);
+        stateSupport.setGameId(PokerTournamentActivatorImpl.POKER_GAME_ID);
         stateSupport.setSeats(config.getSeatsPerTable());
         stateSupport.setName(config.getName());
         stateSupport.setCapacity(config.getMaxPlayers());

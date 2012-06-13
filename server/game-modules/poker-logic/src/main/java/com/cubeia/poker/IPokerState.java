@@ -49,32 +49,9 @@ public interface IPokerState {
      */
     PokerPlayer getPlayerInCurrentHand(Integer playerId);
 
-    /**
-     * Returns the number of non folded players.
-     *
-     * @return number of non folded players
-     */
-    int countNonFoldedPlayers();
-
-    /**
-     * Returns the players that are ready to start a new hand.
-     *
-     * @return number of players ready for a new hand
-     */
-//    Collection<PokerPlayer> getPlayersReadyToStartHand();
-
     boolean isPlayerInHand(int playerId);
 
-    void notifyDealerButton(int dealerButtonSeatId);
-
     List<Card> getCommunityCards();
-
-    int getEntryBetLevel();
-
-    /**
-     * Notify that the betstack of a player has updated
-     */
-    void notifyBetStacksUpdated();
 
     /**
      * Shutdown this table. After calling this method the table cannot be started again.
@@ -95,7 +72,5 @@ public interface IPokerState {
      * @param amount      amount requested
      */
     void handleBuyInRequest(PokerPlayer pokerPlayer, int amount);
-
-    boolean isEveryoneSittingOut();
 
 }

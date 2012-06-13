@@ -17,20 +17,20 @@
 package com.cubeia.poker;
 
 import com.cubeia.poker.action.PokerAction;
-import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.adapter.ServerAdapterHolder;
 import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.hand.Card;
-import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.pot.PotTransition;
-import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.settings.PokerSettings;
-import com.cubeia.poker.util.SitoutCalculator;
-import com.cubeia.poker.states.*;
+import com.cubeia.poker.states.NotStartedSTM;
+import com.cubeia.poker.states.PlayingSTM;
+import com.cubeia.poker.states.PokerGameSTM;
+import com.cubeia.poker.states.ShutdownSTM;
+import com.cubeia.poker.states.StateChanger;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.variant.GameType;
 import com.google.common.annotations.VisibleForTesting;
@@ -38,7 +38,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
 
 /**
  * This is the class that users of the poker api will interface with.
@@ -176,12 +181,6 @@ public class PokerState implements Serializable, IPokerState {
         pokerContext.sitOutPlayersMarkedForSitOutNextRound();
     }
 
-    @Override
-    public int countNonFoldedPlayers() {
-
-        return pokerContext.countNonFoldedPlayers();
-    }
-
     /**
      * Returns true if the player is in the set of players for the hand and
      * we are in a playing state (i.e. not playing or waiting to start will result
@@ -225,17 +224,9 @@ public class PokerState implements Serializable, IPokerState {
         return pokerContext.getTableSize();
     }
 
-    public boolean isTournamentTable() {
-        return pokerContext.isTournamentTable();
-    }
-
     // TODO: Refactor to inheritance.
     public void setTournamentTable(boolean tournamentTable) {
         pokerContext.setTournamentTable(tournamentTable);
-    }
-
-    public int getTournamentId() {
-        return pokerContext.getTournamentId();
     }
 
     public void setTournamentId(int tournamentId) {
@@ -245,7 +236,7 @@ public class PokerState implements Serializable, IPokerState {
     /**
      * Called by the adapter layer when a player rejoins/reconnects.
      *
-     * @param playerId
+     * @param playerId the id of the player to check
      */
     public void playerIsSittingIn(int playerId) {
         log.debug("Player " + playerId + " is sitting in.");
@@ -264,36 +255,6 @@ public class PokerState implements Serializable, IPokerState {
                   that need to call the server adapter.
 
       ------------------------------------------------*/
-
-
-    public void notifyNewHand() {
-        serverAdapter.notifyNewHand();
-    }
-
-    /**
-     * takes all players' bet stacks and sums it to the pot
-     *
-     * @return sum of the size of all pots committed to the main or side pots
-     */
-    @VisibleForTesting
-    protected long getTotalPotSize() {
-
-        return pokerContext.getTotalPotSize();
-    }
-
-
-    /**
-     * Removes all disconnected players from the table
-     */
-    public void cleanupPlayers() {
-        // Clean up players in states not accessible to the poker logic
-        serverAdapter.cleanupPlayers(new SitoutCalculator());
-    }
-
-    @Override
-    public void notifyBetStacksUpdated() {
-        notifyRakeInfo();
-    }
 
     public void notifyPotAndRakeUpdates(Collection<PotTransition> potTransitions) {
         serverAdapter.notifyPotUpdates(pokerContext.getPotHolder().getPots(), potTransitions);
@@ -371,20 +332,12 @@ public class PokerState implements Serializable, IPokerState {
         return pokerContext.getAnteLevel();
     }
 
-    public int getEntryBetLevel() {
-        return pokerContext.getEntryBetLevel();
-    }
-
     public int getMinBuyIn() {
         return pokerContext.getMinBuyIn();
     }
 
     public int getMaxBuyIn() {
         return pokerContext.getMaxBuyIn();
-    }
-
-    public void notifyDeckInfo(int size, Rank rankLow) {
-        serverAdapter.notifyDeckInfo(size, rankLow);
     }
 
     public boolean removeAsWatcher(int playerId) {
@@ -395,16 +348,8 @@ public class PokerState implements Serializable, IPokerState {
         pokerContext.addWatcher(playerId);
     }
 
-    public void notifyNewRound() {
-        serverAdapter.notifyNewRound();
-    }
-
     public PokerSettings getSettings() {
         return pokerContext.getSettings();
-    }
-
-    public PokerPlayer getLastPlayerToBeCalled() {
-        return pokerContext.getLastPlayerToBeCalled();
     }
 
     @Override
@@ -429,11 +374,6 @@ public class PokerState implements Serializable, IPokerState {
 
     public boolean isWaitingForPlayerToAct(int playerId) {
         return getCurrentState().isCurrentlyWaitingForPlayer(playerId);
-    }
-
-    @Override
-    public boolean isEveryoneSittingOut() {
-        return pokerContext.isEveryoneSittingOut();
     }
 
     // TODO: Preferably remove this method, or at least replace with code in state class.

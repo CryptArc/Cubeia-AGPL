@@ -239,7 +239,6 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
         log.debug("Created tournament table[" + table.getId() + "] with timing profile: " + timing);
 
         PokerState pokerState = injector.getInstance(PokerState.class);
-        pokerState.setTableId(table.getId());
 
         PokerSettings settings = new PokerSettings(-1, -1, -1, -1, timing,
                 table.getPlayerSet().getSeatingMap().getNumberOfSeats(),
@@ -250,6 +249,7 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
 
         GameType gameType = GameTypeFactory.createGameType(PokerVariant.TEXAS_HOLDEM, rngProvider);
         pokerState.init(gameType, settings);
+        pokerState.setTableId(table.getId());
         pokerState.setTournamentTable(true);
         pokerState.setTournamentId(mttId);
         pokerState.setAdapterState(new FirebaseState());

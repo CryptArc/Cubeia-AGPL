@@ -70,7 +70,9 @@ public class TableEventCache {
 
     public void clearTable(int tableId) {
         List<Event> removed = events.remove(tableId);
-        previousEvents.put(tableId, removed);
+        if (removed != null) {
+            previousEvents.put(tableId, removed);
+        }
     }
 
     public List<Event> getEvents(int tableId) {

@@ -23,6 +23,7 @@ import com.cubeia.firebase.api.mtt.lobby.MttLobbyObject;
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes;
 import com.cubeia.games.poker.tournament.activator.PokerActivator;
+import com.cubeia.games.poker.tournament.activator.PokerTournamentActivatorImpl;
 import com.cubeia.games.poker.tournament.state.PokerTournamentStatus;
 import org.apache.log4j.Logger;
 
@@ -156,8 +157,7 @@ public abstract class AbstractTournamentScanner implements PokerActivator, Runna
         }
 
         public void run() {
-            // FIXME: Magic number 7 here is poker game id
-            factory.destroyMtt(7, mttid);
+            factory.destroyMtt(PokerTournamentActivatorImpl.POKER_GAME_ID, mttid);
         }
     }
 

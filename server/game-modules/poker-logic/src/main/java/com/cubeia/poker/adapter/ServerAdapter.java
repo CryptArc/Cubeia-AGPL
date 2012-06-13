@@ -127,7 +127,7 @@ public interface ServerAdapter {
      * Called after an action from the player has been successfully
      * dealt with.
      *
-     * @param pokerPlayer TODO
+     * @param pokerPlayer the player who performed an action
      * @param action,     not null.
      */
     void notifyActionPerformed(PokerAction action, PokerPlayer pokerPlayer);

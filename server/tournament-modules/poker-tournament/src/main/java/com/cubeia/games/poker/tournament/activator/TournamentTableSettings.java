@@ -24,12 +24,11 @@ import java.io.Serializable;
 
 public class TournamentTableSettings implements Serializable {
 
-    /**
-     * version id
-     */
     private static final long serialVersionUID = 1L;
 
     private TimingProfile timingProfile = TimingFactory.getRegistry().getDefaultTimingProfile();
+
+    private int blindsLevel;
 
     public TimingProfile getTimingProfile() {
         return timingProfile;
@@ -39,4 +38,7 @@ public class TournamentTableSettings implements Serializable {
         this.timingProfile = timingProfile;
     }
 
+    public int getBlindsLevel() {
+        return blindsLevel;
+    }
 }

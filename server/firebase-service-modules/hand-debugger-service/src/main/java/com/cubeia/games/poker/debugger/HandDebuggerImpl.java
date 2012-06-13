@@ -46,7 +46,7 @@ public class HandDebuggerImpl implements HandDebuggerContract {
     WebServer server;
 
     @Inject
-    TableEventCache tableEvenCache;
+    TableEventCache tableEventCache;
 
     @Inject
     TablePlayerInfoCache playerInfoCache;
@@ -61,12 +61,12 @@ public class HandDebuggerImpl implements HandDebuggerContract {
 
     @Override
     public void addPublicAction(int tableId, GameAction action) {
-        tableEvenCache.addPublicAction(tableId, action);
+        tableEventCache.addPublicAction(tableId, action);
     }
 
     @Override
     public void addPrivateAction(int tableId, int playerId, GameAction action) {
-        tableEvenCache.addPrivateAction(tableId, playerId, action);
+        tableEventCache.addPrivateAction(tableId, playerId, action);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class HandDebuggerImpl implements HandDebuggerContract {
 
     @Override
     public void clearTable(int tableId) {
-        tableEvenCache.clearTable(tableId);
+        tableEventCache.clearTable(tableId);
     }
 
     @Override

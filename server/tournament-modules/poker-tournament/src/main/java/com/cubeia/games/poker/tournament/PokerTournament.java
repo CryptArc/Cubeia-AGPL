@@ -247,6 +247,7 @@ public class PokerTournament extends MTTSupport {
 
     @Override
     public void process(MttTablesCreatedAction action, MttInstance instance) {
+        log.info("Tables created: " + action + " instance: " + instance);
         try {
             MDC.put(MDC_TAG, "Tournament[" + instance.getId() + "]");
             MTTStateSupport state = (MTTStateSupport) instance.getState();

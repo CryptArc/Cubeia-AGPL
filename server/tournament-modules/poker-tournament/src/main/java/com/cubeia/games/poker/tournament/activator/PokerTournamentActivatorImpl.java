@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
  */
 public class PokerTournamentActivatorImpl implements MttActivator, Startable, PokerTournamentActivator {
 
-    public static final int POKER_GAME_ID = 7;
+    public static final int POKER_GAME_ID = 1;
 
     public static int POKER_TOURNAMENT_ID = 77;
 
