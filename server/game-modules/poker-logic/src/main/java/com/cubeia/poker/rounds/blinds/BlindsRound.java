@@ -35,6 +35,7 @@ import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundHelper;
 import com.cubeia.poker.rounds.RoundVisitor;
+import com.cubeia.poker.settings.PokerSettings;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -80,14 +81,16 @@ public class BlindsRound implements Round {
 
     private int pendingEntryBetterId;
 
+    private PokerSettings settings;
+
     public BlindsRound(PokerContext context, ServerAdapterHolder serverAdapterHolder, BlindsCalculator blindsCalculator) {
         this.serverAdapterHolder = serverAdapterHolder;
         this.blindsCalculator = blindsCalculator;
         this.roundHelper = new RoundHelper(context, serverAdapterHolder);
         this.isTournamentBlinds = context.isTournamentBlinds();
         this.context = context;
+        this.settings = context.getSettings();
         this.previousBlindsInfo = context.getBlindsInfo();
-        blindsInfo.setAnteLevel(context.getAnteLevel());
         clearPlayerActionOptions();
         initBlinds();
         if (blindsInfo.hasDeadSmallBlind()) {
@@ -150,7 +153,7 @@ public class BlindsRound implements Round {
 
     private void requestSmallBlind(PokerPlayer smallBlind) {
         getBlindsInfo().setSmallBlind(smallBlind);
-        smallBlind.enableOption(new PossibleAction(PokerActionType.SMALL_BLIND, blindsInfo.getAnteLevel() / 2));
+        smallBlind.enableOption(new PossibleAction(PokerActionType.SMALL_BLIND, settings.getSmallBlindAmount()));
         smallBlind.enableOption(new PossibleAction(PokerActionType.DECLINE_ENTRY_BET));
         if (isTournamentBlinds()) {
             roundHelper.scheduleTimeoutForAutoAction();
@@ -164,7 +167,7 @@ public class BlindsRound implements Round {
     }
 
     private void requestBigBlind(PokerPlayer bigBlind) {
-        bigBlind.enableOption(new PossibleAction(PokerActionType.BIG_BLIND, blindsInfo.getAnteLevel()));
+        bigBlind.enableOption(new PossibleAction(PokerActionType.BIG_BLIND, settings.getBigBlindAmount()));
         bigBlind.enableOption(new PossibleAction(PokerActionType.DECLINE_ENTRY_BET));
         if (isTournamentBlinds()) {
             roundHelper.scheduleTimeoutForAutoAction();
@@ -316,7 +319,7 @@ public class BlindsRound implements Round {
     private void requestBigBlindPlusDeadSmallBlind(PokerPlayer player) {
         log.debug("Requesting big blind plus dead small blind from " + player);
 
-        player.enableOption(new PossibleAction(PokerActionType.BIG_BLIND_PLUS_DEAD_SMALL_BLIND, blindsInfo.getBigBlindLevel() + blindsInfo.getSmallBlindLevel()));
+        player.enableOption(new PossibleAction(PokerActionType.BIG_BLIND_PLUS_DEAD_SMALL_BLIND, settings.getBigBlindAmount() + settings.getSmallBlindAmount()));
         player.enableOption(new PossibleAction(PokerActionType.DECLINE_ENTRY_BET));
         roundHelper.requestAction(player.getActionRequest());
     }
@@ -324,7 +327,7 @@ public class BlindsRound implements Round {
     private void requestDeadSmallBlind(PokerPlayer player) {
         log.debug("Requesting dead small blind from " + player);
 
-        player.enableOption(new PossibleAction(PokerActionType.DEAD_SMALL_BLIND, blindsInfo.getSmallBlindLevel()));
+        player.enableOption(new PossibleAction(PokerActionType.DEAD_SMALL_BLIND, settings.getSmallBlindAmount()));
         player.enableOption(new PossibleAction(PokerActionType.DECLINE_ENTRY_BET));
         roundHelper.requestAction(player.getActionRequest());
     }

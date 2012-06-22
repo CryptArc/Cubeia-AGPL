@@ -56,16 +56,10 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static com.cubeia.poker.action.PokerActionType.*;
-import static com.cubeia.poker.action.PokerActionType.FOLD;
 import static com.cubeia.poker.util.TestHelpers.assertSameListsDisregardingOrder;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.*;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.longThat;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class TexasHoldemTest {
@@ -142,7 +136,7 @@ public class TexasHoldemTest {
         act(p[1], SMALL_BLIND);
         act(p[2], BIG_BLIND);
         act(p[3], CALL);
-        act(p[0], RAISE, 20);
+        act(p[0], RAISE, 40);
 
         act(p[1], FOLD);
         act(p[2], FOLD);
@@ -154,7 +148,7 @@ public class TexasHoldemTest {
         act(p[3], PokerActionType.DECLINE_ENTRY_BET);
         act(p[0], BIG_BLIND);
 
-        act(p[1], RAISE, 20);
+        act(p[1], RAISE, 40);
         act(p[2], FOLD);
         act(p[0], FOLD);
 
@@ -170,7 +164,7 @@ public class TexasHoldemTest {
         act(p[0], SMALL_BLIND);
         act(p[1], BIG_BLIND);
 
-        act(p[2], RAISE, 20);
+        act(p[2], RAISE, 40);
         act(p[0], FOLD);
         act(p[1], FOLD);
 
@@ -188,7 +182,7 @@ public class TexasHoldemTest {
         assertEquals(MissedBlindsStatus.NO_MISSED_BLINDS, p[3].getMissedBlindsStatus());
 
         // He should have bb+sb less in his account.
-        int bbPlusSbCost = context.getBlindsInfo().getBigBlindLevel() + context.getBlindsInfo().getSmallBlindLevel();
+        int bbPlusSbCost = context.getSettings().getBigBlindAmount() + context.getSettings().getSmallBlindAmount();
         assertTrue(bbPlusSbCost > 0);
         assertEquals(balanceBefore - bbPlusSbCost, p[3].getBalance());
 
@@ -196,14 +190,14 @@ public class TexasHoldemTest {
         act(p[3], CHECK);
 
         // The small blind should be dead, meaning the next player should only have to call a normal big blind.
-        assertEquals(context.getBlindsInfo().getBigBlindLevel(), p[0].getActionRequest().getOption(CALL).getMinAmount());
+        assertEquals(context.getSettings().getBigBlindAmount(), p[0].getActionRequest().getOption(CALL).getMinAmount());
 
-        act(p[0], CALL, 10);
-        act(p[1], CALL, 5);
-        act(p[2], CHECK, 5);
+        act(p[0], CALL, 20);
+        act(p[1], CALL, 10);
+        act(p[2], CHECK);
 
-        // All players call. Pot should be 4 big blinds + dead small blind = 40 + 5.
-        assertEquals(45, context.getTotalPotSize());
+        // All players call. Pot should be 4 big blinds + dead small blind = 4 * 20 + 10 = 90.
+        assertEquals(90, context.getTotalPotSize());
     }
 
     /**
@@ -220,7 +214,7 @@ public class TexasHoldemTest {
         act(p[1], SMALL_BLIND);
         act(p[2], BIG_BLIND);
         act(p[3], CALL);
-        act(p[0], RAISE, 20);
+        act(p[0], RAISE, 40);
 
         act(p[1], FOLD);
         act(p[2], FOLD);
@@ -234,7 +228,7 @@ public class TexasHoldemTest {
         act(p[3], PokerActionType.DECLINE_ENTRY_BET);
         act(p[0], BIG_BLIND);
 
-        act(p[1], RAISE, 20);
+        act(p[1], RAISE, 40);
         act(p[2], FOLD);
         act(p[0], FOLD);
 
@@ -250,7 +244,7 @@ public class TexasHoldemTest {
         act(p[0], SMALL_BLIND);
         act(p[1], BIG_BLIND);
 
-        act(p[2], RAISE, 20);
+        act(p[2], RAISE, 40);
         act(p[0], FOLD);
         act(p[1], FOLD);
 
@@ -263,7 +257,7 @@ public class TexasHoldemTest {
 
         assertTrue(p[3].getActionRequest().isOptionEnabled(PokerActionType.BIG_BLIND_PLUS_DEAD_SMALL_BLIND));
         act(p[3], DECLINE_ENTRY_BET);
-        act(p[0], RAISE, 20);
+        act(p[0], RAISE, 40);
         act(p[1], FOLD);
         act(p[2], FOLD);
 
@@ -277,7 +271,7 @@ public class TexasHoldemTest {
         assertTrue(p[3].getActionRequest().isOptionEnabled(PokerActionType.BIG_BLIND));
         act(p[3], BIG_BLIND);
 
-        act(p[0], RAISE, 20);
+        act(p[0], RAISE, 40);
         act(p[1], FOLD);
         act(p[2], FOLD);
         act(p[3], FOLD);
@@ -349,7 +343,7 @@ public class TexasHoldemTest {
         act(p[1], SMALL_BLIND);
         act(p[2], BIG_BLIND);
 
-        assertEquals(10, p[3].getActionRequest().getOption(CALL).getMinAmount());
+        assertEquals(20, p[3].getActionRequest().getOption(CALL).getMinAmount());
     }
 
 
@@ -372,7 +366,7 @@ public class TexasHoldemTest {
     }
 
     private PokerContext prepareContext(int numberOfPlayers) {
-        PokerSettings settings = new PokerSettings(10, 10, 100, 5000, new DefaultTimingProfile(), 6, BetStrategyName.NO_LIMIT, rakeSettings, null);
+        PokerSettings settings = new PokerSettings(10, 10, 20, 100, 5000, new DefaultTimingProfile(), 6, BetStrategyName.NO_LIMIT, rakeSettings, null);
         PokerContext context = new PokerContext(settings);
         texas.setPokerContextAndServerAdapter(context, serverAdapterHolder);
         p = TestUtils.createMockPlayers(numberOfPlayers);

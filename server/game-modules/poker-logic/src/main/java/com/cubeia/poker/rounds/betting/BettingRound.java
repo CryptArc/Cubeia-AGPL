@@ -30,6 +30,7 @@ import com.cubeia.poker.rounds.RoundHelper;
 import com.cubeia.poker.rounds.RoundVisitor;
 import com.cubeia.poker.util.ThreadLocalProfiler;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -87,6 +88,11 @@ public class BettingRound implements Round, BettingRoundContext {
     @VisibleForTesting
     protected Set<PokerPlayer> playersInPlayAtRoundStart;
 
+    /**
+     * The minimum betting amount in this round.
+     */
+    private long minBet;
+
     private Predicate<PokerPlayer> nonFolded = new Predicate<PokerPlayer>() {
         @Override
         public boolean apply(PokerPlayer player) {
@@ -94,15 +100,23 @@ public class BettingRound implements Round, BettingRoundContext {
         }
     };
 
+
     // TODO: Would probably be nice if the playerToActCalculator knew all it needs to know, so we don't need to pass "seatIdToStart.." as well.
-    public BettingRound(int seatIdToStartBettingAfter, PokerContext context, ServerAdapterHolder serverAdapterHolder, PlayerToActCalculator playerToActCalculator, ActionRequestFactory actionRequestFactory, FutureActionsCalculator futureActionsCalculator) {
+    public BettingRound(int seatIdToStartBettingAfter,
+                        PokerContext context,
+                        ServerAdapterHolder serverAdapterHolder,
+                        PlayerToActCalculator playerToActCalculator,
+                        ActionRequestFactory actionRequestFactory,
+                        FutureActionsCalculator futureActionsCalculator,
+                        int minBet) {
         this.context = context;
         this.serverAdapterHolder = serverAdapterHolder;
         this.futureActionsCalculator = futureActionsCalculator;
         this.playerToActCalculator = playerToActCalculator;
         this.actionRequestFactory = actionRequestFactory;
         this.roundHelper = new RoundHelper(context, serverAdapterHolder);
-        lastBetSize = context.getEntryBetLevel();
+        this.minBet = minBet;
+        this.lastBetSize = minBet;
         initBettingRound(seatIdToStartBettingAfter);
     }
 
@@ -157,8 +171,8 @@ public class BettingRound implements Round, BettingRoundContext {
     }
 
     private void makeSureHighBetIsNotSmallerThanBigBlind() {
-        if (highBet > 0 && highBet < context.getBlindsInfo().getBigBlindLevel()) {
-            highBet = context.getBlindsInfo().getBigBlindLevel();
+        if (highBet > 0 && highBet < context.getSettings().getBigBlindAmount()) {
+            highBet = context.getSettings().getBigBlindAmount();
         }
     }
 
@@ -202,7 +216,7 @@ public class BettingRound implements Round, BettingRoundContext {
      * Get the player's available actions and send a request to the client
      * or perform default action if the player is sitting out.
      *
-     * @param p
+     * @param p the player to request an action for
      */
     private void requestAction(PokerPlayer p) {
         playerToAct = p.getId();
@@ -278,7 +292,7 @@ public class BettingRound implements Round, BettingRoundContext {
                 fold(player);
                 break;
             case RAISE:
-                setRaiseByAmount(player, action);
+                setRaiseByAmount(action);
                 raise(player, action.getBetAmount());
                 break;
             case BET:
@@ -340,7 +354,7 @@ public class BettingRound implements Round, BettingRoundContext {
         roundHelper.notifyPotSizeAndRakeInfo();
     }
 
-    private void setRaiseByAmount(PokerPlayer player, PokerAction action) {
+    private void setRaiseByAmount(PokerAction action) {
         action.setRaiseAmount(action.getBetAmount() - highBet);
     }
 
@@ -458,7 +472,7 @@ public class BettingRound implements Round, BettingRoundContext {
     }
 
     public long getMinBet() {
-        return context.getEntryBetLevel();
+        return minBet;
     }
 
     public long getSizeOfLastBetOrRaise() {

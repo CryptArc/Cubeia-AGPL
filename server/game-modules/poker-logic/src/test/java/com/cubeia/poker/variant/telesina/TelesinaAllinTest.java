@@ -58,7 +58,7 @@ public class TelesinaAllinTest extends AbstractTexasHandTester {
         // Force start
         state.timeout();
 
-        // Blinds
+        // Antes
         assertThat(mp[1].isActionPossible(PokerActionType.ANTE), is(true));
         assertThat(mp[0].isActionPossible(PokerActionType.ANTE), is(true));
         act(p[1], PokerActionType.ANTE);

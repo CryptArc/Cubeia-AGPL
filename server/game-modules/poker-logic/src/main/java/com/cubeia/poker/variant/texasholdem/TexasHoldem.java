@@ -124,9 +124,22 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
 
     private void startBettingRound() {
         log.trace("Starting new betting round. Round ID: " + (roundId + 1));
-        currentRound = new BettingRound(context.getBlindsInfo().getDealerButtonSeatId(), context, serverAdapterHolder, new DefaultPlayerToActCalculator(),
-                new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
+        currentRound = createBettingRound(context.getBlindsInfo().getDealerButtonSeatId());
         roundId++;
+    }
+
+    private BettingRound createBettingRound(int seatIdToStartBettingFrom) {
+        DefaultPlayerToActCalculator playerToActCalculator = new DefaultPlayerToActCalculator();
+        ActionRequestFactory requestFactory = new ActionRequestFactory(new NoLimitBetStrategy());
+        TexasHoldemFutureActionsCalculator futureActionsCalculator = new TexasHoldemFutureActionsCalculator();
+        int betLevel = getBetLevel(roundId, context.getSettings().getBigBlindAmount());
+        return new BettingRound(seatIdToStartBettingFrom, context, serverAdapterHolder, playerToActCalculator, requestFactory, futureActionsCalculator, betLevel);
+    }
+
+    private int getBetLevel(int roundId, int bigBlindAmount) {
+        int betLevel = (roundId < 2) ? bigBlindAmount : bigBlindAmount * 2;
+        log.debug("Bet level for round " + roundId + " = " + betLevel);
+        return betLevel;
     }
 
     private boolean isHandFinished() {
@@ -267,7 +280,7 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
     }
 
     private void prepareBettingRound() {
-        currentRound = new BettingRound(context.getBlindsInfo().getBigBlindSeatId(), context, serverAdapterHolder, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
+        currentRound = createBettingRound(context.getBlindsInfo().getBigBlindSeatId());
     }
 
     private void updateBlindsInfo(BlindsRound blindsRound) {
@@ -290,7 +303,7 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
 
     @Override
     public boolean canPlayerAffordEntryBet(PokerPlayer player, PokerSettings settings, boolean includePending) {
-        return player.getBalance() + (includePending ? player.getPendingBalanceSum() : 0) >= settings.getAnteLevel();
+        return player.getBalance() + (includePending ? player.getPendingBalanceSum() : 0) >= settings.getAnteAmount();
     }
 
     @Override

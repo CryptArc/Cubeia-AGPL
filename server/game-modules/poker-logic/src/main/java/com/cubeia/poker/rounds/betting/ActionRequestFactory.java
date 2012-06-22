@@ -55,9 +55,9 @@ public class ActionRequestFactory implements Serializable {
         }
 
         /* We will check:
-           * 1. If the player have more cash than a call
-           * 2. If raise min amount is > call (can be 0 if all other players are all in)
-           */
+         * 1. If the player have more cash than a call
+         * 2. If raise min amount is > call (can be 0 if all other players are all in)
+         */
         if (raiseAllowed && p.getBalance() > call.getMinAmount() && raise.getMinAmount() > call.getMinAmount()) {
             request.setOptions(Arrays.asList(fold, call, raise));
         } else {

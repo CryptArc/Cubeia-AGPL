@@ -25,7 +25,6 @@ import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.pot.RakeInfoContainer;
-import com.cubeia.poker.pot.RakeInfoContainer;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.states.StateChanger;
@@ -76,7 +75,7 @@ public class PokerStateTest {
         state = new PokerState();
         anteLevel = 100;
         when(settings.getRakeSettings()).thenReturn(TestUtils.createOnePercentRakeSettings());
-        when(settings.getAnteLevel()).thenReturn(anteLevel);
+        when(settings.getAnteAmount()).thenReturn(anteLevel);
         when(settings.getTiming()).thenReturn(TimingFactory.getRegistry().getDefaultTimingProfile());
         when(gameType.canPlayerAffordEntryBet(Mockito.any(PokerPlayer.class), Mockito.any(PokerSettings.class), Mockito.eq(false))).thenReturn(true);
 
@@ -237,7 +236,7 @@ public class PokerStateTest {
         PotHolder oldPotHolder = new PotHolder(null);
         state.pokerContext.potHolder = oldPotHolder;
         RakeSettings rakeSettings = TestUtils.createOnePercentRakeSettings();
-        PokerSettings settings = new PokerSettings(0, 0, 0, 0, null, 4, null, rakeSettings, null);
+        PokerSettings settings = new PokerSettings(0, 0, 0, 0, 0, null, 4, null, rakeSettings, null);
         state.pokerContext.settings = settings;
 
         state.pokerContext.playerMap = new HashMap<Integer, PokerPlayer>();
@@ -363,7 +362,7 @@ public class PokerStateTest {
 //
 //        when(player1.getBalance()).thenReturn(10L);
 //        when(player1.getPendingBalanceSum()).thenReturn(10L);
-//        when(settings.getAnteLevel()).thenReturn(20);
+//        when(settings.getAnteAmount()).thenReturn(20);
 //
 //        when(player3.isBuyInRequestActive()).thenReturn(true);
 //
@@ -414,7 +413,7 @@ public class PokerStateTest {
 //
 //        when(player1.getBalance()).thenReturn(10L);
 //        when(player1.getPendingBalanceSum()).thenReturn(10L);
-//        when(settings.getAnteLevel()).thenReturn(20);
+//        when(settings.getAnteAmount()).thenReturn(20);
 //
 //        when(player3.isBuyInRequestActive()).thenReturn(true);
 //

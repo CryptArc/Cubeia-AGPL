@@ -53,6 +53,7 @@ import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import static com.cubeia.games.poker.activator.PokerParticipant.*;
@@ -229,23 +230,29 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
 
     public void mttTableCreated(Table table, int mttId, Object commandAttachment, LobbyAttributeAccessor acc) {
         log.debug("Created poker tournament table: " + table.getId());
+        int anteAmount = -1;
+        int smallBlindAmount = -1;
+        int bigBlindAmount = -1;
 
         TimingProfile timing = TimingFactory.getRegistry().getDefaultTimingProfile();
         if (commandAttachment instanceof TournamentTableSettings) {
             TournamentTableSettings settings = (TournamentTableSettings) commandAttachment;
             timing = settings.getTimingProfile();
+
+            anteAmount = settings.getAnteAmount();
+            smallBlindAmount = settings.getSmallBlindAmount();
+            bigBlindAmount = settings.getBigBlindAmount();
         }
 
         log.debug("Created tournament table[" + table.getId() + "] with timing profile: " + timing);
 
         PokerState pokerState = injector.getInstance(PokerState.class);
 
-        PokerSettings settings = new PokerSettings(-1, -1, -1, -1, timing,
-                table.getPlayerSet().getSeatingMap().getNumberOfSeats(),
-                BetStrategyName.NO_LIMIT,
-                new RakeSettings(RAKE_FRACTION, RAKE_LIMIT, RAKE_LIMIT_HEADS_UP),
-                Collections.<Serializable, Serializable>singletonMap(
-                        ATTR_EXTERNAL_TABLE_ID, "MOCK_TRN::" + table.getId()));
+        int numberOfSeats = table.getPlayerSet().getSeatingMap().getNumberOfSeats();
+        BetStrategyName noLimit = BetStrategyName.NO_LIMIT;
+        RakeSettings rakeSettings = new RakeSettings(RAKE_FRACTION, RAKE_LIMIT, RAKE_LIMIT_HEADS_UP);
+        Map<Serializable,Serializable> attributes = Collections.<Serializable, Serializable>singletonMap(ATTR_EXTERNAL_TABLE_ID, "MOCK_TRN::" + table.getId());
+        PokerSettings settings = new PokerSettings(anteAmount, smallBlindAmount, bigBlindAmount, -1, -1, timing, numberOfSeats, noLimit, rakeSettings, attributes);
 
         GameType gameType = GameTypeFactory.createGameType(PokerVariant.TEXAS_HOLDEM, rngProvider);
         pokerState.init(gameType, settings);
@@ -254,7 +261,6 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
         pokerState.setTournamentId(mttId);
         pokerState.setAdapterState(new FirebaseState());
         table.getGameState().setState(pokerState);
-
     }
 
     public void mttTableCreated(Table table, int mttId, LobbyAttributeAccessor acc) {

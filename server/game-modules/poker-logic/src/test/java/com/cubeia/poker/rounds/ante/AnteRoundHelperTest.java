@@ -25,6 +25,7 @@ import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.model.BlindsInfo;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.timing.impl.DefaultTimingProfile;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,6 +53,8 @@ public class AnteRoundHelperTest {
     @Mock
     PokerContext context;
     @Mock
+    PokerSettings settings;
+    @Mock
     private ServerAdapterHolder serverAdapterHolder;
     @Mock
     private ServerAdapter serverAdapter;
@@ -67,6 +70,7 @@ public class AnteRoundHelperTest {
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
         when(context.getBlindsInfo()).thenReturn(blindsInfo);
         when(context.getTimingProfile()).thenReturn(new DefaultTimingProfile());
+        when(context.getSettings()).thenReturn(settings);
         helper = new AnteRoundHelper(context, serverAdapterHolder);
     }
 
@@ -128,7 +132,7 @@ public class AnteRoundHelperTest {
     @Test
     public void testRequestAntes() {
         int anteLevel = 100;
-        when(blindsInfo.getAnteLevel()).thenReturn(anteLevel);
+        when(settings.getAnteAmount()).thenReturn(anteLevel);
         ActionRequest actionRequest1 = new ActionRequest();
         ActionRequest actionRequest2 = new ActionRequest();
         when(player1.getActionRequest()).thenReturn(actionRequest1);

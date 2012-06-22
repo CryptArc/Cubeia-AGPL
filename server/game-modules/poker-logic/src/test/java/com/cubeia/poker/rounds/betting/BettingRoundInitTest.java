@@ -39,6 +39,7 @@ import java.util.TreeMap;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -78,7 +79,6 @@ public class BettingRoundInitTest {
         initMocks(this);
 
         int entryBetLevel = 20;
-        when(context.getEntryBetLevel()).thenReturn(entryBetLevel);
         when(player2.getId()).thenReturn(player2Id);
 
         currentHandSeatingMap = new TreeMap<Integer, PokerPlayer>();
@@ -90,21 +90,20 @@ public class BettingRoundInitTest {
         when(context.getPlayersInHand()).thenReturn(currentHandSeatingMap.values());
         when(context.getTimingProfile()).thenReturn(new DefaultTimingProfile());
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
-        round = new BettingRound(dealerSeatId, context, serverAdapterHolder, playertoActCalculator, actionRequestFactory, new TexasHoldemFutureActionsCalculator());
+        TexasHoldemFutureActionsCalculator futureActionsCalculator = new TexasHoldemFutureActionsCalculator();
+        round = new BettingRound(dealerSeatId, context, serverAdapterHolder, playertoActCalculator, actionRequestFactory, futureActionsCalculator, entryBetLevel);
     }
 
     @Test
     public void testSimple() {
-        when(playertoActCalculator.getFirstPlayerToAct(Mockito.eq(dealerSeatId), Mockito.eq(currentHandSeatingMap),
-                Mockito.anyListOf(Card.class))).thenReturn(player2);
+        when(playertoActCalculator.getFirstPlayerToAct(Mockito.eq(dealerSeatId), Mockito.eq(currentHandSeatingMap), Mockito.anyListOf(Card.class))).thenReturn(player2);
         when(context.getPlayersReadyToStartHand(Matchers.<Predicate<PokerPlayer>>any())).thenReturn(asList(player1, player2, player3));
 
         ActionRequest actionRequest = mock(ActionRequest.class);
-        when(actionRequestFactory.createFoldCheckBetActionRequest(Mockito.any(BettingRound.class), Mockito.eq(player2)))
-                .thenReturn(actionRequest);
+        when(actionRequestFactory.createFoldCheckBetActionRequest(Mockito.any(BettingRound.class), Mockito.eq(player2))).thenReturn(actionRequest);
         when(player2.getActionRequest()).thenReturn(actionRequest);
 
-        round = new BettingRound(dealerSeatId, context, serverAdapterHolder, playertoActCalculator, actionRequestFactory, new TexasHoldemFutureActionsCalculator());
+        round = new BettingRound(dealerSeatId, context, serverAdapterHolder, playertoActCalculator, actionRequestFactory, new TexasHoldemFutureActionsCalculator(), 0);
 
         assertThat(round.playerToAct, is(player2Id));
         verify(player2).setActionRequest(actionRequest);

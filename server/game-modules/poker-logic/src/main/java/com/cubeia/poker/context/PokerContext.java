@@ -24,7 +24,6 @@ import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.pot.RakeInfoContainer;
 import com.cubeia.poker.rake.LinearRakeWithLimitCalculator;
-import com.cubeia.poker.settings.BetStrategyName;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.timing.TimingProfile;
 import com.google.common.annotations.VisibleForTesting;
@@ -327,11 +326,7 @@ public class PokerContext implements Serializable {
     }
 
     public int getAnteLevel() {
-        return settings.getAnteLevel();
-    }
-
-    public int getEntryBetLevel() {
-        return settings.getEntryBetLevel();
+        return settings.getAnteAmount();
     }
 
     public int getMinBuyIn() {

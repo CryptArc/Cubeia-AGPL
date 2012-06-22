@@ -85,7 +85,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
 
     private Timings timing = Timings.DEFAULT;
 
-    private final int anteLevel;
+    private final int anteAmount;
 
     private final RNGProvider rngProvider;
 
@@ -100,22 +100,22 @@ public class PokerParticipant extends DefaultCreationParticipant {
     public static final long RAKE_LIMIT_HEADS_UP = 150;
 
     private final CashGamesBackendContract cashGameBackendService;
+    private int smallBlindAmount;
+    private int bigBlindAmount;
 
 
     public PokerParticipant(int seats, String domain, int anteLevel, Timings timing, PokerVariant variant,
                             RNGProvider rngProvider, CashGamesBackendContract cashGameBackendService) {
-
         super();
         this.seats = seats;
         this.domain = domain;
         this.timing = timing;
-        this.anteLevel = anteLevel;
+        this.anteAmount = anteLevel;
         this.variant = variant;
         this.cashGameBackendService = cashGameBackendService;
         this.timingProfile = TimingFactory.getRegistry().getTimingProfile(timing);
         this.rngProvider = rngProvider;
     }
-
 
     public LobbyPath getLobbyPath() {
         LobbyPath path = new LobbyPath(GAME_ID, domain + "/" + variant.name());
@@ -150,7 +150,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
 
         acc.setIntAttribute(PokerLobbyAttributes.VISIBLE_IN_LOBBY.name(), 0);
         acc.setStringAttribute(PokerLobbyAttributes.SPEED.name(), timing.name());
-        acc.setIntAttribute(PokerLobbyAttributes.BETTING_GAME_ANTE.name(), anteLevel);
+        acc.setIntAttribute(PokerLobbyAttributes.BETTING_GAME_ANTE.name(), anteAmount);
         acc.setStringAttribute(PokerLobbyAttributes.BETTING_GAME_BETTING_MODEL.name(), "NO_LIMIT");
         acc.setStringAttribute(PokerLobbyAttributes.MONETARY_TYPE.name(), "REAL_MONEY");
         acc.setStringAttribute(PokerLobbyAttributes.VARIANT.name(), variant.name());
@@ -165,14 +165,17 @@ public class PokerParticipant extends DefaultCreationParticipant {
     }
 
     private PokerSettings createSettings(Table table, PokerVariant variant) {
-        int minBuyIn = anteLevel * MIN_BUY_IN_ANTE_MULTIPLIER;
-        int maxBuyIn = anteLevel * MAX_BUY_IN_ANTE_MULTIPLIER;
+        int minBuyIn = anteAmount * MIN_BUY_IN_ANTE_MULTIPLIER;
+        int maxBuyIn = anteAmount * MAX_BUY_IN_ANTE_MULTIPLIER;
         int seats = table.getPlayerSet().getSeatingMap().getNumberOfSeats();
         RakeSettings rake = new RakeSettings(RAKE_FRACTION, RAKE_LIMIT, RAKE_LIMIT_HEADS_UP);
         BetStrategyName limit = BetStrategyName.NO_LIMIT;
         Map<Serializable,Serializable> attributes = Collections.<Serializable, Serializable>singletonMap(ATTR_EXTERNAL_TABLE_ID, "MOCK::" + table.getId());
-        int entryBetLevel = (variant == PokerVariant.TELESINA) ? anteLevel * 2 : anteLevel;
-        return new PokerSettings(anteLevel, entryBetLevel, minBuyIn, maxBuyIn, timingProfile, seats, limit, rake, attributes);
+
+        // TODO: Make this configurable.
+        smallBlindAmount = anteAmount;
+        bigBlindAmount = 2 * smallBlindAmount;
+        return new PokerSettings(anteAmount, smallBlindAmount, bigBlindAmount, minBuyIn, maxBuyIn, timingProfile, seats, limit, rake, attributes);
     }
 
     @Override
@@ -200,6 +203,6 @@ public class PokerParticipant extends DefaultCreationParticipant {
     public String toString() {
         return "PokerParticipant [seats=" + seats + ", domain=" + domain
                 + ", timingProfile=" + timingProfile + ", timing=" + timing
-                + ", anteLevel=" + anteLevel + ", variant=" + variant + "]";
+                + ", anteAmount=" + anteAmount + ", variant=" + variant + "]";
     }
 }

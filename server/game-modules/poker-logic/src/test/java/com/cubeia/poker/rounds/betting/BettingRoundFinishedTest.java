@@ -72,7 +72,9 @@ public class BettingRoundFinishedTest {
         when(context.getTimingProfile()).thenReturn(new DefaultTimingProfile());
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
 
-        round = new BettingRound(0, context, serverAdapterHolder, playerToActCalculator, new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator());
+        ActionRequestFactory actionRequestFactory = new ActionRequestFactory(new NoLimitBetStrategy());
+        TexasHoldemFutureActionsCalculator futureActionsCalculator = new TexasHoldemFutureActionsCalculator();
+        round = new BettingRound(0, context, serverAdapterHolder, playerToActCalculator, actionRequestFactory, futureActionsCalculator, 0);
     }
 
     @Test

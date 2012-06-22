@@ -17,7 +17,6 @@
 
 package com.cubeia.poker.variant.telesina;
 
-import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.settings.PokerSettings;
 import org.junit.Test;
@@ -36,7 +35,7 @@ public class TelesinaCanPlayerBuyInTest {
         Telesina telesina = new Telesina(null, null, null, null);
 
         int anteLevel = 20;
-        PokerSettings settings = new PokerSettings(anteLevel, anteLevel * 2, 0, 0, null, 0, null, null, null);
+        PokerSettings settings = new PokerSettings(anteLevel, anteLevel, anteLevel * 2, 0, 0, null, 0, null, null, null);
 
         when(player.getBalance()).thenReturn((long) anteLevel + 1);
         assertThat(telesina.canPlayerAffordEntryBet(player, settings, true), is(true));
@@ -55,7 +54,7 @@ public class TelesinaCanPlayerBuyInTest {
         Telesina telesina = new Telesina(null, null, null, null);
 
         int anteLevel = 20;
-        PokerSettings settings = new PokerSettings(anteLevel, anteLevel * 2, 0, 0, null, 0, null, null, null);
+        PokerSettings settings = new PokerSettings(anteLevel, anteLevel, anteLevel * 2, 0, 0, null, 0, null, null, null);
 
         when(player.getPendingBalanceSum()).thenReturn((long) anteLevel + 1);
         assertThat(telesina.canPlayerAffordEntryBet(player, settings, true), is(true));
@@ -78,7 +77,7 @@ public class TelesinaCanPlayerBuyInTest {
         Telesina telesina = new Telesina(null, null, null, null);
 
         int anteLevel = 20;
-        PokerSettings settings = new PokerSettings(anteLevel, anteLevel * 2, 0, 0, null, 0, null, null, null);
+        PokerSettings settings = new PokerSettings(anteLevel, anteLevel, anteLevel * 2, 0, 0, null, 0, null, null, null);
 
         when(player.getBalance()).thenReturn((long) anteLevel / 2);
         when(player.getPendingBalanceSum()).thenReturn((long) anteLevel / 2);

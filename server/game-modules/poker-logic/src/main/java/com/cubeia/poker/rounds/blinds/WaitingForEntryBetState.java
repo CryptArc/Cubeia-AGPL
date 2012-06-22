@@ -30,7 +30,7 @@ public class WaitingForEntryBetState extends AbstractBlindsState {
         PokerPlayer player = context.getPlayerInCurrentHand(playerId);
         if (player.getActionRequest().isOptionEnabled(PokerActionType.BIG_BLIND)) {
             player.setHasPostedEntryBet(true);
-            player.addBetOrGoAllIn(blindsRound.getBlindsInfo().getBigBlindLevel());
+            player.addBetOrGoAllIn(context.getSettings().getBigBlindAmount());
             blindsRound.entryBetPosted();
         } else {
             throw new IllegalArgumentException("Player " + player + " is not allowed to post big blind. Options were " + player.getActionRequest());
@@ -52,7 +52,7 @@ public class WaitingForEntryBetState extends AbstractBlindsState {
         PokerPlayer player = context.getPlayerInCurrentHand(playerId);
         if (player.getActionRequest().isOptionEnabled(PokerActionType.DEAD_SMALL_BLIND)) {
             player.setHasPostedEntryBet(true);
-            int amount = round.getBlindsInfo().getSmallBlindLevel();
+            int amount = context.getSettings().getSmallBlindAmount();
             long takenAmount = player.takeChipsOrGoAllIn(amount);
             context.getPotHolder().getActivePot().bet(player, Long.valueOf(takenAmount));
             round.entryBetPosted();
@@ -66,8 +66,8 @@ public class WaitingForEntryBetState extends AbstractBlindsState {
         PokerPlayer player = context.getPlayerInCurrentHand(playerId);
         if (player.getActionRequest().isOptionEnabled(PokerActionType.BIG_BLIND_PLUS_DEAD_SMALL_BLIND)) {
             player.setHasPostedEntryBet(true);
-            player.addBetOrGoAllIn(round.getBlindsInfo().getBigBlindLevel());
-            int deadAmount = round.getBlindsInfo().getSmallBlindLevel();
+            player.addBetOrGoAllIn(context.getSettings().getBigBlindAmount());
+            int deadAmount = context.getSettings().getSmallBlindAmount();
             long amountTaken = player.takeChipsOrGoAllIn(deadAmount);
             context.getPotHolder().getActivePot().bet(player, Long.valueOf(amountTaken));
             round.entryBetPosted();

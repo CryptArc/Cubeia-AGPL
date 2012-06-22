@@ -25,8 +25,6 @@ public class BlindsInfo implements Serializable {
 
     private static final long serialVersionUID = -5897169468846176172L;
 
-    private int anteLevel = -1;
-
     private int smallBlindPlayerId;
 
     private int dealerButtonSeatId;
@@ -53,14 +51,6 @@ public class BlindsInfo implements Serializable {
 
     public int getBigBlindSeatId() {
         return bigBlindSeatId;
-    }
-
-    public boolean isDefined() {
-        return (smallBlindSeatId != bigBlindSeatId);
-    }
-
-    public boolean isHeadsUpLogic() {
-        return dealerButtonSeatId == smallBlindSeatId;
     }
 
     public int getSmallBlindSeatId() {
@@ -103,21 +93,5 @@ public class BlindsInfo implements Serializable {
 
     public void setBigBlindPlayerId(int i) {
         this.bigBlindPlayerId = i;
-    }
-
-    public void setAnteLevel(int anteLevel) {
-        this.anteLevel = anteLevel;
-    }
-
-    public int getAnteLevel() {
-        return anteLevel;
-    }
-
-    public int getSmallBlindLevel() {
-        return anteLevel / 2;
-    }
-
-    public int getBigBlindLevel() {
-        return anteLevel;
     }
 }

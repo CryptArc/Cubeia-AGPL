@@ -24,20 +24,32 @@ import java.util.Map;
 
 public class PokerSettings implements Serializable {
 
-    private final int anteLevel;
-    private int entryBetLevel;
+    private final int anteAmount;
+
+    private int smallBlindAmount;
+
+    private int bigBlindAmount;
+
     private final int minBuyIn;
+
     private final int maxBuyIn;
+
     private final TimingProfile timing;
+
     private final int tableSize;
+
     private final BetStrategyName betStrategy;
+
     private final RakeSettings rakeSettings;
+
     private final Map<Serializable, Serializable> attributes;
+
     private long sitoutTimeLimitMilliseconds = 1 * 60 * 1000;
 
     public PokerSettings(
-            int anteLevel,
-            int entryBetLevel,
+            int anteAmount,
+            int smallBlindAmount,
+            int bigBlindAmount,
             int minBuyIn,
             int maxBuyIn,
             TimingProfile timing,
@@ -46,8 +58,9 @@ public class PokerSettings implements Serializable {
             RakeSettings rakeSettings,
             Map<Serializable, Serializable> attributes) {
 
-        this.anteLevel = anteLevel;
-        this.entryBetLevel = entryBetLevel;
+        this.anteAmount = anteAmount;
+        this.smallBlindAmount = smallBlindAmount;
+        this.bigBlindAmount = bigBlindAmount;
         this.minBuyIn = minBuyIn;
         this.maxBuyIn = maxBuyIn;
         this.timing = timing;
@@ -55,15 +68,14 @@ public class PokerSettings implements Serializable {
         this.betStrategy = betStrategy;
         this.rakeSettings = rakeSettings;
         this.attributes = attributes;
-
     }
 
     public Map<Serializable, Serializable> getAttributes() {
         return attributes;
     }
 
-    public int getAnteLevel() {
-        return anteLevel;
+    public int getAnteAmount() {
+        return anteAmount;
     }
 
     public int getMaxBuyIn() {
@@ -98,8 +110,11 @@ public class PokerSettings implements Serializable {
         this.sitoutTimeLimitMilliseconds = sitoutTimeLimitMilliseconds;
     }
 
-    public int getEntryBetLevel() {
-        return entryBetLevel;
+    public int getSmallBlindAmount() {
+        return smallBlindAmount;
     }
 
+    public int getBigBlindAmount() {
+        return bigBlindAmount;
+    }
 }

@@ -60,6 +60,7 @@ public class PokerTournamentListener implements PlayerListener {
 
     private void startTournament(MttInstance instance, MTTStateSupport state) {
         PokerTournamentState pokerState = util.getPokerState(instance);
+        setInitialBlinds(pokerState);
 
         long registrationElapsedTime = pokerState.getLastRegisteredTime() - pokerState.getFirstRegisteredTime();
         log.debug("Starting tournament [" + instance.getId() + " : " + instance.getState().getName() + "]. Registration time was " + registrationElapsedTime + " ms");
@@ -74,19 +75,23 @@ public class PokerTournamentListener implements PlayerListener {
         pokerTournament.createTables(state, tablesToCreate, "test", settings);
     }
 
+    private void setInitialBlinds(PokerTournamentState pokerState) {
+        // TODO: Make configurable.
+        pokerState.setSmallBlindAmount(10);
+        pokerState.setBigBlindAmount(20);
+    }
+
     private boolean tournamentShouldStart(MTTStateSupport state) {
         return state.getRegisteredPlayersCount() == state.getMinPlayers();
     }
 
     public void playerUnregistered(MttInstance instance, int pid) {
         // TODO Auto-generated method stub
-
     }
 
     private TournamentTableSettings getTableSettings(PokerTournamentState state) {
-        TournamentTableSettings settings = new TournamentTableSettings();
+        TournamentTableSettings settings = new TournamentTableSettings(state.getSmallBlindAmount(), state.getBigBlindAmount());
         settings.setTimingProfile(TimingFactory.getRegistry().getTimingProfile(state.getTiming()));
         return settings;
     }
-
 }

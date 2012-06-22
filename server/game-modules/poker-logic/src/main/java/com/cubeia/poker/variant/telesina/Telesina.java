@@ -122,7 +122,6 @@ public class Telesina extends AbstractGameType implements RoundVisitor, Dealer {
         } catch (Throwable th) {
             log.error(th.getMessage(), th);
         }
-        context.getBlindsInfo().setAnteLevel(context.getAnteLevel());
         setCurrentRound(roundFactory.createAnteRound(context, serverAdapterHolder));
         resetBettingRoundId();
     }
@@ -469,7 +468,7 @@ public class Telesina extends AbstractGameType implements RoundVisitor, Dealer {
 
     @Override
     public boolean canPlayerAffordEntryBet(PokerPlayer player, PokerSettings pokerSettings, boolean includePending) {
-        return player.getBalance() + (includePending ? player.getPendingBalanceSum() : 0) >= pokerSettings.getAnteLevel();
+        return player.getBalance() + (includePending ? player.getPendingBalanceSum() : 0) >= pokerSettings.getAnteAmount();
     }
 
     @Override

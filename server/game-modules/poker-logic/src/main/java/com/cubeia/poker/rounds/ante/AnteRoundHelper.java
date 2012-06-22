@@ -81,7 +81,7 @@ public class AnteRoundHelper extends RoundHelper {
      * @param players
      */
     public void requestAntes(Collection<PokerPlayer> players) {
-        int anteLevel = context.getBlindsInfo().getAnteLevel();
+        int anteLevel = context.getSettings().getAnteAmount();
         ArrayList<ActionRequest> requests = new ArrayList<ActionRequest>();
         for (PokerPlayer player : players) {
             player.enableOption(new PossibleAction(PokerActionType.ANTE, anteLevel));
@@ -96,7 +96,7 @@ public class AnteRoundHelper extends RoundHelper {
      * Returns true if it is impossible to start the round.
      * If all players but one has declined ante the round can't be started.
      *
-     * @param playersInHand
+     * @param playersInHand all players who could potentially have paid the ante
      * @return true if round is impossible to start
      */
     boolean isImpossibleToStartRound(Collection<PokerPlayer> playersInHand) {

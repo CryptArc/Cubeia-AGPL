@@ -37,17 +37,19 @@ public class PokerTournamentState implements Serializable {
 
     private PokerTournamentStatus status = PokerTournamentStatus.ANNOUNCED;
 
-
     // Timestamps for profiling
     private long firstRegisteredTime = 0;
-    private long lastRegisteredTime = 0;
 
+    private long lastRegisteredTime = 0;
 
     /**
      * Maps playerId to balance
      */
     private Map<Integer, Long> balances = new HashMap<Integer, Long>();
 
+    private int smallBlindAmount;
+
+    private int bigBlindAmount;
 
     public boolean allTablesHaveBeenCreated(int tablesCreated) {
         return tablesCreated >= tablesToCreate;
@@ -97,4 +99,19 @@ public class PokerTournamentState implements Serializable {
         this.lastRegisteredTime = lastRegisteredTime;
     }
 
+    public int getSmallBlindAmount() {
+        return smallBlindAmount;
+    }
+
+    public int getBigBlindAmount() {
+        return bigBlindAmount;
+    }
+
+    public void setSmallBlindAmount(int smallBlindAmount) {
+        this.smallBlindAmount = smallBlindAmount;
+    }
+
+    public void setBigBlindAmount(int bigBlindAmount) {
+        this.bigBlindAmount = bigBlindAmount;
+    }
 }

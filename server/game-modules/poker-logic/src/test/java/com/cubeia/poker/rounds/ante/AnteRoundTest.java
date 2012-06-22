@@ -27,6 +27,7 @@ import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.model.BlindsInfo;
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.timing.impl.DefaultTimingProfile;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,6 +63,9 @@ public class AnteRoundTest {
 
     @Mock
     private AnteRoundHelper anteRoundHelper;
+
+    @Mock
+    private PokerSettings settings;
 
     private ActionRequest actionRequest1;
     private ActionRequest actionRequest2;
@@ -101,6 +105,7 @@ public class AnteRoundTest {
 
         when(context.getTimingProfile()).thenReturn(new DefaultTimingProfile());
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
+        when(context.getSettings()).thenReturn(settings);
 
         realAnteRoundHelper = new AnteRoundHelper(context, serverAdapterHolder);
         anteRoundHelper = mock(AnteRoundHelper.class);
@@ -110,7 +115,7 @@ public class AnteRoundTest {
     @Test
     public void testCreationAndAnteRequestBroadcast() {
         int anteLevel = 1000;
-        when(blindsInfo.getAnteLevel()).thenReturn(anteLevel);
+        when(settings.getAnteAmount()).thenReturn(anteLevel);
 
         AnteRound anteRound = new AnteRound(context, serverAdapterHolder, realAnteRoundHelper);
 
@@ -138,7 +143,7 @@ public class AnteRoundTest {
         int player1Id = 1337;
         when(context.getPlayerInCurrentHand(player1Id)).thenReturn(player1);
         int anteLevel = 1000;
-        when(blindsInfo.getAnteLevel()).thenReturn(anteLevel);
+        when(settings.getAnteAmount()).thenReturn(anteLevel);
 
         when(anteRoundHelper.hasAllPlayersActed(Mockito.anyCollection())).thenReturn(false);
         //        when(realAnteRoundHelper.getNextPlayerToAct(Mockito.eq(0), Mockito.any(SortedMap.class))).thenReturn(player2);
@@ -166,7 +171,7 @@ public class AnteRoundTest {
         AnteRound anteRound = new AnteRound(context, serverAdapterHolder, anteRoundHelper);
         int anteLevel = 1000;
         int currentDealerButtonSeatId = 0;
-        when(blindsInfo.getAnteLevel()).thenReturn(anteLevel);
+        when(settings.getAnteAmount()).thenReturn(anteLevel);
         when(blindsInfo.getDealerButtonSeatId()).thenReturn(currentDealerButtonSeatId);
 
         when(anteRoundHelper.hasAllPlayersActed(Mockito.anyCollection())).thenReturn(false);
@@ -207,7 +212,7 @@ public class AnteRoundTest {
         int player1Id = 1337;
         when(context.getPlayerInCurrentHand(player1Id)).thenReturn(player1);
         int anteLevel = 1000;
-        when(blindsInfo.getAnteLevel()).thenReturn(anteLevel);
+        when(settings.getAnteAmount()).thenReturn(anteLevel);
 
         when(anteRoundHelper.hasAllPlayersActed(Mockito.anyCollection())).thenReturn(false);
         //        when(realAnteRoundHelper.getNextPlayerToAct(Mockito.eq(0), Mockito.any(SortedMap.class))).thenReturn(player2);

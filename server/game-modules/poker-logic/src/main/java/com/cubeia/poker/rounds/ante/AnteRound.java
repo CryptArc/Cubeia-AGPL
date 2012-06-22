@@ -17,14 +17,13 @@
 
 package com.cubeia.poker.rounds.ante;
 
-import com.cubeia.poker.adapter.ServerAdapterHolder;
-import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.adapter.ServerAdapter;
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
 import com.cubeia.poker.util.ThreadLocalProfiler;
@@ -102,10 +101,10 @@ public class AnteRound implements Round {
         switch (action.getActionType()) {
             case ANTE:
                 ThreadLocalProfiler.add("AnteRound.act.ante");
-                player.addBet(context.getBlindsInfo().getAnteLevel());
+                player.addBet(context.getSettings().getAnteAmount());
                 player.setHasActed(true);
                 player.setHasPostedEntryBet(true);
-                action.setBetAmount(context.getBlindsInfo().getAnteLevel());
+                action.setBetAmount(context.getSettings().getAnteAmount());
                 getServerAdapter().notifyActionPerformed(action, player);
                 getServerAdapter().notifyPlayerBalance(player);
                 anteRoundHelper.notifyPotSizeAndRakeInfo();
