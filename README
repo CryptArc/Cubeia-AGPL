@@ -1,4 +1,4 @@
-ust a quick note on how to get started with the poker.
+To get started with the poker:
 
 Step 1: Check out the poker from the repo: bitbucket.org/cubeia/cubeia-poker
 Step 2: Run "mvn install" in the server directory.
