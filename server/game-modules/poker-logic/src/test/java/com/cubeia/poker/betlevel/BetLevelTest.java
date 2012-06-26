@@ -159,13 +159,10 @@ public class BetLevelTest extends AbstractTexasHandTester {
         // Force start
         state.timeout();
         // Blinds
-        try {
-            act(p[1], PokerActionType.SMALL_BLIND, 5);
-            act(p[1], PokerActionType.BIG_BLIND, 10);
-            fail("Player 1 should not be allowed to post blinds 2 times in a row.");
-        } catch (Exception e) {
-            // Expected
-        }
+        act(p[1], PokerActionType.SMALL_BLIND, 5);
+        long balance = mp[1].getBalance();
+        act(p[1], PokerActionType.BIG_BLIND, 10);
+        assertEquals(balance, mp[1].getBalance());
     }
 
 

@@ -346,7 +346,6 @@ public class TexasHoldemTest {
         assertEquals(20, p[3].getActionRequest().getOption(CALL).getMinAmount());
     }
 
-
     private void createPot() {
         potHolder.getActivePot().bet(player1, 600L);
         potHolder.getActivePot().bet(player2, 600L);

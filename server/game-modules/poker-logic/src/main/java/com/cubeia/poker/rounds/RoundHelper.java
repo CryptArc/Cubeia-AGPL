@@ -77,8 +77,9 @@ public class RoundHelper implements Serializable {
         }
         int playerId = player.getId();
 
-        context.setSitOutStatus(player.getId(), SitOutStatus.SITTING_OUT);
-        serverAdapter.notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITOUT, context.isPlayerInHand(playerId));
+        if (context.setSitOutStatus(player.getId(), SitOutStatus.SITTING_OUT)) {
+            serverAdapter.notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITOUT, context.isPlayerInHand(playerId));
+        }
     }
 
     public void scheduleTimeoutForAutoAction() {

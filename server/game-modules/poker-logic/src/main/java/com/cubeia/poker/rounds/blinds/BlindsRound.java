@@ -195,28 +195,32 @@ public class BlindsRound implements Round {
         return playersSittingIn;
     }
 
-    public void act(PokerAction action) {
+    public boolean act(PokerAction action) {
         PokerPlayer player = context.getPlayerInCurrentHand(action.getPlayerId());
+        boolean handled;
         switch (action.getActionType()) {
             case SMALL_BLIND:
-                currentState.smallBlind(action.getPlayerId(), context, this);
+                handled = currentState.smallBlind(action.getPlayerId(), context, this);
                 break;
             case BIG_BLIND:
-                currentState.bigBlind(action.getPlayerId(), context, this);
+                handled = currentState.bigBlind(action.getPlayerId(), context, this);
                 break;
             case DECLINE_ENTRY_BET:
-                currentState.declineEntryBet(action.getPlayerId(), context, this);
+                handled = currentState.declineEntryBet(action.getPlayerId(), context, this);
                 break;
             case BIG_BLIND_PLUS_DEAD_SMALL_BLIND:
-                currentState.bigBlindPlusDeadSmallBlind(action.getPlayerId(), context, this);
+                handled = currentState.bigBlindPlusDeadSmallBlind(action.getPlayerId(), context, this);
                 break;
             default:
                 log.info(action.getActionType() + " is not legal here");
-                return;
+                return false;
         }
-        player.clearActionRequest();
-        getServerAdapter().notifyActionPerformed(action, player);
-        getServerAdapter().notifyPlayerBalance(player);
+        if (handled) {
+            player.clearActionRequest();
+            getServerAdapter().notifyActionPerformed(action, player);
+            getServerAdapter().notifyPlayerBalance(player);
+        }
+        return handled;
     }
 
     public BlindsInfo getBlindsInfo() {
@@ -245,8 +249,9 @@ public class BlindsRound implements Round {
     private void notifyPlayerSittingOut(int playerId, SitOutStatus status) {
         log.debug("Notify player sitout: " + playerId);
         if (context != null) {
-            context.setSitOutStatus(playerId, status);
-            getServerAdapter().notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITOUT, true);
+            if (context.setSitOutStatus(playerId, status)) {
+                getServerAdapter().notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITOUT, true);
+            }
         } else {
             log.warn("Trying to notify sit out pid[" + playerId + "] on NULL state!");
         }

@@ -99,7 +99,6 @@ public class PokerTournament extends MTTSupport {
         }
     }
 
-
     private void handleFinishedTournament(MttInstance instance) {
         log.info("Tournament [" + instance.getId() + ":" + instance.getState().getName() + "] was finished.");
         util.setTournamentStatus(instance, PokerTournamentStatus.FINISHED);

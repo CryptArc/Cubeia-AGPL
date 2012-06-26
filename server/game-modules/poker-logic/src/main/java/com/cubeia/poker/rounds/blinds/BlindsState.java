@@ -24,17 +24,17 @@ import java.io.Serializable;
 
 public interface BlindsState extends Serializable {
 
-    void smallBlind(int playerId, PokerContext context, BlindsRound blindsRound);
+    boolean smallBlind(int playerId, PokerContext context, BlindsRound blindsRound);
 
-    void deadSmallBlind(int playerId, PokerContext context, BlindsRound blindsRound);
+    boolean deadSmallBlind(int playerId, PokerContext context, BlindsRound blindsRound);
 
-    void bigBlind(int playerId, PokerContext context, BlindsRound blindsRound);
+    boolean bigBlind(int playerId, PokerContext context, BlindsRound blindsRound);
 
-    void bigBlindPlusDeadSmallBlind(int playerId, PokerContext context, BlindsRound round);
+    boolean bigBlindPlusDeadSmallBlind(int playerId, PokerContext context, BlindsRound round);
 
-    void declineEntryBet(int playerId, PokerContext context, BlindsRound blindsRound);
+    boolean declineEntryBet(int playerId, PokerContext context, BlindsRound blindsRound);
 
-    void timeout(PokerContext context, BlindsRound round);
+    boolean timeout(PokerContext context, BlindsRound round);
 
     boolean isFinished();
 

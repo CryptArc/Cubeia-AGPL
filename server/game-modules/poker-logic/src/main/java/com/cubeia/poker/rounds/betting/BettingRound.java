@@ -30,7 +30,6 @@ import com.cubeia.poker.rounds.RoundHelper;
 import com.cubeia.poker.rounds.RoundVisitor;
 import com.cubeia.poker.util.ThreadLocalProfiler;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -181,23 +180,28 @@ public class BettingRound implements Round, BettingRoundContext {
         return "BettingRound, isFinished[" + isFinished + "]";
     }
 
-    public void act(PokerAction action) {
+    public boolean act(PokerAction action) {
         log.debug("Act : " + action);
         ThreadLocalProfiler.add("BettingRound.act");
         PokerPlayer player = context.getPlayerInCurrentHand(action.getPlayerId());
 
-        verifyValidAction(action, player);
-
-        handleAction(action, player);
-        getServerAdapter().notifyActionPerformed(action, player);
-        getServerAdapter().notifyPlayerBalance(player);
-
-        if (calculateIfRoundFinished()) {
-            log.debug("BettingRound is finished");
-            isFinished = true;
-        } else {
-            requestNextAction(player.getSeatId());
+        if (!isValidAction(action, player)) {
+            return false;
         }
+
+        boolean handled = handleAction(action, player);
+        if (handled) {
+            getServerAdapter().notifyActionPerformed(action, player);
+            getServerAdapter().notifyPlayerBalance(player);
+
+            if (calculateIfRoundFinished()) {
+                log.debug("BettingRound is finished");
+                isFinished = true;
+            } else {
+                requestNextAction(player.getSeatId());
+            }
+        }
+        return handled;
     }
 
     private void requestNextAction(int lastSeatId) {
@@ -279,51 +283,63 @@ public class BettingRound implements Round, BettingRoundContext {
     }
 
     @VisibleForTesting
-    protected void handleAction(PokerAction action, PokerPlayer player) {
+    protected boolean handleAction(PokerAction action, PokerPlayer player) {
+        boolean handled;
         switch (action.getActionType()) {
             case CALL:
-                long calledAmount = call(player);
-                action.setBetAmount(calledAmount);
+                long amountToCall = getAmountToCall(player);
+                handled = call(player);
+                action.setBetAmount(amountToCall);
                 break;
             case CHECK:
-                check(player);
+                handled = check(player);
                 break;
             case FOLD:
-                fold(player);
+                handled = fold(player);
                 break;
             case RAISE:
                 setRaiseByAmount(action);
-                raise(player, action.getBetAmount());
+                handled = raise(player, action.getBetAmount());
                 break;
             case BET:
-                bet(player, action.getBetAmount());
+                handled = bet(player, action.getBetAmount());
                 break;
             default:
-                throw new IllegalArgumentException();
+                log.warn("Can't handle " + action.getActionType());
+                handled = false;
+                break;
         }
-        player.setHasActed(true);
+        if (handled) {
+            player.setHasActed(true);
+        }
+        return handled;
     }
 
-    private void verifyValidAction(PokerAction action, PokerPlayer player) {
+    private boolean isValidAction(PokerAction action, PokerPlayer player) {
         if (!action.getPlayerId().equals(playerToAct)) {
-            throw new IllegalArgumentException("Expected " + playerToAct + " to act, but got action from:" + player.getId());
+            log.warn("Expected " + playerToAct + " to act, but got action from:" + player.getId());
+            return false;
         }
 
         if (!player.getActionRequest().matches(action)) {
-            throw new IllegalArgumentException("Player " + player.getId() + " tried to act " + action.getActionType() + " but his options were "
+            log.warn("Player " + player.getId() + " tried to act " + action.getActionType() + " but his options were "
                     + player.getActionRequest().getOptions());
+            return false;
         }
 
         if (player.hasActed()) {
-            throw new IllegalArgumentException("Player has already acted in this BettingRound. Player[" + player + "], action[" + action + "]");
+            log.warn("Player has already acted in this BettingRound. Player[" + player + "], action[" + action + "]");
+            return false;
         }
+        return true;
     }
 
     @VisibleForTesting
-    void raise(PokerPlayer player, long amount) {
+    boolean raise(PokerPlayer player, long amount) {
         if (amount < highBet) {
-            throw new IllegalArgumentException("PokerPlayer[" + player.getId() + "] incorrect raise amount. Highbet[" + highBet + "] amount[" + amount + "]. " +
+            log.warn("PokerPlayer[" + player.getId() + "] incorrect raise amount. Highbet[" + highBet + "] amount[" + amount + "]. " +
                     "Amounts must be larger than current highest bet");
+            return false;
         }
 
         boolean allIn = player.getBalance() + player.getBetStack() - amount <= 0;
@@ -333,7 +349,8 @@ public class BettingRound implements Round, BettingRoundContext {
         if (belowMinBet && allIn) {
             log.debug("Player[" + player.getId() + "] made a below min raise but is allin.");
         } else if (belowMinBet && !allIn) {
-            throw new IllegalArgumentException("PokerPlayer[" + player.getId() + "] is not allowed to raise below minimum raise. Highbet[" + highBet + "] amount[" + amount + "] balance[" + player.getBalance() + "] betStack[" + player.getBetStack() + "].");
+            log.warn("PokerPlayer[" + player.getId() + "] is not allowed to raise below minimum raise. Highbet[" + highBet + "] amount[" + amount + "] balance[" + player.getBalance() + "] betStack[" + player.getBetStack() + "].");
+            return allIn;
         } else {
             lastBetSize = amount - highBet;
             nextValidRaiseLevel = highBet + lastBetSize * 2;
@@ -348,6 +365,7 @@ public class BettingRound implements Round, BettingRoundContext {
         resetHasActed();
 
         notifyPotSizeAndRakeInfo();
+        return true;
     }
 
     private void notifyPotSizeAndRakeInfo() {
@@ -359,10 +377,11 @@ public class BettingRound implements Round, BettingRoundContext {
     }
 
     @VisibleForTesting
-    void bet(PokerPlayer player, long amount) {
+    boolean bet(PokerPlayer player, long amount) {
         long minAmount = player.getActionRequest().getOption(PokerActionType.BET).getMinAmount();
         if (amount < minAmount) {
-            throw new IllegalArgumentException("PokerPlayer[" + player.getId() + "] - " + String.format("Bet (%d) is smaller than minAmount (%d)", amount, minAmount));
+            log.warn("PokerPlayer[" + player.getId() + "] - " + String.format("Bet (%d) is smaller than minAmount (%d)", amount, minAmount));
+            return false;
         }
         lastBetSize = amount;
         nextValidRaiseLevel = 2 * lastBetSize;
@@ -373,6 +392,7 @@ public class BettingRound implements Round, BettingRoundContext {
         resetHasActed();
 
         notifyPotSizeAndRakeInfo();
+        return true;
     }
 
     private void resetHasActed() {
@@ -383,23 +403,25 @@ public class BettingRound implements Round, BettingRoundContext {
         }
     }
 
-    private void fold(PokerPlayer player) {
+    private boolean fold(PokerPlayer player) {
         player.setHasFolded(true);
+        return true;
     }
 
-    private void check(PokerPlayer player) {
+    private boolean check(PokerPlayer player) {
         // Nothing to do.
+        return true;
     }
 
     @VisibleForTesting
-    protected long call(PokerPlayer player) {
+    protected boolean call(PokerPlayer player) {
         long amountToCall = getAmountToCall(player);
         player.addBet(amountToCall);
         lastPlayerToBeCalled = lastPlayerToPlaceABet;
         context.callOrRaise();
         notifyPotSizeAndRakeInfo();
         player.setLastRaiseLevel(getNextValidRaiseLevel());
-        return amountToCall;
+        return true;
     }
 
     /**
@@ -422,8 +444,9 @@ public class BettingRound implements Round, BettingRoundContext {
     }
 
     private void setPlayerSitOut(PokerPlayer player) {
-        context.setSitOutStatus(player.getId(), SitOutStatus.SITTING_OUT);
-        getServerAdapter().notifyPlayerStatusChanged(player.getId(), PokerPlayerStatus.SITOUT, true);
+        if (context.setSitOutStatus(player.getId(), SitOutStatus.SITTING_OUT)) {
+            getServerAdapter().notifyPlayerStatusChanged(player.getId(), PokerPlayerStatus.SITOUT, true);
+        }
     }
 
     private void performDefaultActionForPlayer(PokerPlayer player) {

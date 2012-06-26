@@ -219,25 +219,17 @@ public class BlindsRoundTest extends TestCase {
         round = new BlindsRound(context, serverAdapterHolder, blindsCalculator);
 
         // Wrong player posts small blind.
-        try {
-            act(p[0], PokerActionType.SMALL_BLIND);
-            fail("Expected exception");
-        } catch (IllegalArgumentException expected) {
-        }
+        ActionRequest before = getRequestedAction();
+        act(p[0], PokerActionType.SMALL_BLIND);
+        assertEquals(before, requestedAction);
 
-        try {
-            // Right player posts wrong thing
-            act(p[1], PokerActionType.BIG_BLIND);
-            fail("Expected exception");
-        } catch (IllegalStateException expected) {
-        }
+        // Right player posts wrong thing
+        act(p[1], PokerActionType.BIG_BLIND);
+        assertEquals(before, requestedAction);
 
-        try {
-            // Right player posts right thing at wrong time
-            act(p[2], PokerActionType.BIG_BLIND);
-            fail("Expected exception");
-        } catch (IllegalStateException expected) {
-        }
+        // Right player posts right thing at wrong time
+        act(p[2], PokerActionType.BIG_BLIND);
+        assertEquals(before, requestedAction);
 
         // Check that only the small blind has been asked so far.
         verify(serverAdapter, times(1)).requestAction(Matchers.<ActionRequest>any());
@@ -247,18 +239,13 @@ public class BlindsRoundTest extends TestCase {
 
         // And let's be a pain again.
         // Wrong player posts big blind.
-        try {
-            act(p[1], PokerActionType.BIG_BLIND);
-            fail("Expected exception");
-        } catch (IllegalArgumentException expected) {
-        }
+        before = requestedAction;
+        act(p[1], PokerActionType.BIG_BLIND);
+        assertEquals(before, requestedAction);
 
-        try {
-            // Right player posts wrong thing
-            act(p[2], PokerActionType.SMALL_BLIND);
-            fail("Expected exception");
-        } catch (IllegalStateException expected) {
-        }
+        // Right player posts wrong thing
+        act(p[2], PokerActionType.SMALL_BLIND);
+        assertEquals(before, requestedAction);
 
         // And be nice.
         act(p[2], PokerActionType.BIG_BLIND);
@@ -358,11 +345,9 @@ public class BlindsRoundTest extends TestCase {
 
         act(p[1], PokerActionType.SMALL_BLIND);
         act(p[2], PokerActionType.DECLINE_ENTRY_BET);
-        try {
-            act(p[2], PokerActionType.BIG_BLIND);
-            fail();
-        } catch (IllegalArgumentException expected) {
-        }
+        ActionRequest before = getRequestedAction();
+        act(p[2], PokerActionType.BIG_BLIND);
+        assertEquals(before, getRequestedAction());
     }
 
     public void testNoMoreBigBlinds() {
@@ -385,10 +370,11 @@ public class BlindsRoundTest extends TestCase {
         assertEquals(p[2].getId(), requestedAction.getPlayerId());
     }
 
-    private void getRequestedAction() {
+    private ActionRequest getRequestedAction() {
         ArgumentCaptor<ActionRequest> captor = ArgumentCaptor.forClass(ActionRequest.class);
         verify(serverAdapter, atLeastOnce()).requestAction(captor.capture());
         requestedAction = captor.getValue();
+        return requestedAction;
     }
 
     public void testSittingOutPlayerIsNotAskedToPostBigBlind() {
@@ -574,11 +560,9 @@ public class BlindsRoundTest extends TestCase {
         act(p[2], PokerActionType.SMALL_BLIND);
         act(p[3], PokerActionType.BIG_BLIND);
 
-        try {
-            act(p[5], PokerActionType.BIG_BLIND);
-            fail();
-        } catch (IllegalArgumentException expected) {
-        }
+        assertEquals(p[4].getId(), getRequestedAction().getPlayerId());
+        act(p[5], PokerActionType.BIG_BLIND);
+        assertEquals(p[4].getId(), getRequestedAction().getPlayerId());
     }
 
     public void testTwoEntryBetsWithWrap() {

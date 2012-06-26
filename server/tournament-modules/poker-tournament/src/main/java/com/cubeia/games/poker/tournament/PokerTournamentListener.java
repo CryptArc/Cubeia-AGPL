@@ -77,6 +77,7 @@ public class PokerTournamentListener implements PlayerListener {
 
     private void setInitialBlinds(PokerTournamentState pokerState) {
         // TODO: Make configurable.
+        log.info("Setting initial blinds. (sb = 10, bb = 20).");
         pokerState.setSmallBlindAmount(10);
         pokerState.setBigBlindAmount(20);
     }
@@ -86,7 +87,7 @@ public class PokerTournamentListener implements PlayerListener {
     }
 
     public void playerUnregistered(MttInstance instance, int pid) {
-        // TODO Auto-generated method stub
+        // TODO Add support for unregistration.
     }
 
     private TournamentTableSettings getTableSettings(PokerTournamentState state) {

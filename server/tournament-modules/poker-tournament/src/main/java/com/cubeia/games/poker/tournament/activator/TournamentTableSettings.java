@@ -51,7 +51,6 @@ public class TournamentTableSettings implements Serializable {
         this.timingProfile = timingProfile;
     }
 
-
     public int getAnteAmount() {
         return anteAmount;
     }
@@ -62,5 +61,13 @@ public class TournamentTableSettings implements Serializable {
 
     public int getBigBlindAmount() {
         return bigBlindAmount;
+    }
+
+    public void setSmallBlindAmount(int smallBlindAmount) {
+        this.smallBlindAmount = smallBlindAmount;
+    }
+
+    public void setBigBlindAmount(int bigBlindAmount) {
+        this.bigBlindAmount = bigBlindAmount;
     }
 }

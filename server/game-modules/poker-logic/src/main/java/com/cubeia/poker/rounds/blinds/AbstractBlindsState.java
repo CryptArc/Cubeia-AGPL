@@ -19,39 +19,48 @@ package com.cubeia.poker.rounds.blinds;
 
 
 import com.cubeia.poker.context.PokerContext;
+import org.apache.log4j.Logger;
 
 public abstract class AbstractBlindsState implements BlindsState {
 
     private static final long serialVersionUID = 1L;
 
+    private static transient Logger log = Logger.getLogger(AbstractBlindsState.class);
+
     @Override
-    public void bigBlind(int playerId, PokerContext context, BlindsRound round) {
-        throw new IllegalStateException();
+    public boolean bigBlind(int playerId, PokerContext context, BlindsRound round) {
+        log.debug("Ignoring bigBlind from player " + playerId + " in state " + this);
+        return false;
     }
 
     @Override
-    public void smallBlind(int playerId, PokerContext context, BlindsRound round) {
-        throw new IllegalStateException();
+    public boolean smallBlind(int playerId, PokerContext context, BlindsRound round) {
+        log.debug("Ignoring smallBlind from player " + playerId + " in state " + this);
+        return false;
     }
 
     @Override
-    public void declineEntryBet(int playerId, PokerContext context, BlindsRound blindsRound) {
-        throw new IllegalStateException();
+    public boolean declineEntryBet(int playerId, PokerContext context, BlindsRound blindsRound) {
+        log.debug("Ignoring declineEntryBet from player " + playerId + " in state " + this);
+        return false;
     }
 
     @Override
-    public void deadSmallBlind(int playerId, PokerContext context, BlindsRound blindsRound) {
-        throw new IllegalStateException();
+    public boolean deadSmallBlind(int playerId, PokerContext context, BlindsRound blindsRound) {
+        log.debug("Ignoring deadSmallBlind from player " + playerId + " in state " + this);
+        return false;
     }
 
     @Override
-    public void bigBlindPlusDeadSmallBlind(int playerId, PokerContext context, BlindsRound round) {
-        throw new IllegalStateException();
+    public boolean bigBlindPlusDeadSmallBlind(int playerId, PokerContext context, BlindsRound round) {
+        log.debug("Ignoring bbPlusDeadSmallBlind from player " + playerId + " in state " + this);
+        return false;
     }
 
     @Override
-    public void timeout(PokerContext context, BlindsRound round) {
-        throw new IllegalStateException();
+    public boolean timeout(PokerContext context, BlindsRound round) {
+        log.debug("Ignoring timeout in state " + this);
+        return false;
     }
 
     @Override

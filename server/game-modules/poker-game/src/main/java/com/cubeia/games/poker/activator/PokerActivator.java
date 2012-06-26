@@ -101,19 +101,15 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
 
     @SuppressWarnings("serial")
     private static class DummyRNGProvider implements RNGProvider {
-        // TODO: This provider should get the rng from a service and store it in a transient field
-        //   to avoid serializing it.
+        // TODO: This provider should get the rng from a service and store it in a transient field to avoid serializing it.
         final Random rng = new Random();
 
-        // TODO: This provider should get the rng from a service and store it in a transient field
-        //   to avoid serializing it.
+        // TODO: This provider should get the rng from a service and store it in a transient field to avoid serializing it.
         @Override
         public Random getRNG() {
             return rng;
         }
     }
-
-    ;
 
     @Override
     public void init(ActivatorContext context) throws SystemException {
@@ -147,7 +143,7 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
         participants.add(new PokerParticipant(6, "telesina/cashgame/REAL_MONEY/6", 200, Timings.DEFAULT, TELESINA, rngProvider, cashGameBackendService));
 
         for (PokerParticipant part : participants) {
-            part.setInjector(injector);
+            part.setInjector(getInjector());
         }
     }
 
@@ -227,7 +223,7 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
         tableRegistry.createTables(config.getIncrementSize() * multiplier, participant.getSeats(), participant);
     }
 
-
+    @Override
     public void mttTableCreated(Table table, int mttId, Object commandAttachment, LobbyAttributeAccessor acc) {
         log.debug("Created poker tournament table: " + table.getId());
         int anteAmount = -1;
@@ -246,7 +242,7 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
 
         log.debug("Created tournament table[" + table.getId() + "] with timing profile: " + timing);
 
-        PokerState pokerState = injector.getInstance(PokerState.class);
+        PokerState pokerState = getInjector().getInstance(PokerState.class);
 
         int numberOfSeats = table.getPlayerSet().getSeatingMap().getNumberOfSeats();
         BetStrategyName noLimit = BetStrategyName.NO_LIMIT;
@@ -261,6 +257,10 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
         pokerState.setTournamentId(mttId);
         pokerState.setAdapterState(new FirebaseState());
         table.getGameState().setState(pokerState);
+    }
+
+    protected Injector getInjector() {
+        return injector;
     }
 
     public void mttTableCreated(Table table, int mttId, LobbyAttributeAccessor acc) {

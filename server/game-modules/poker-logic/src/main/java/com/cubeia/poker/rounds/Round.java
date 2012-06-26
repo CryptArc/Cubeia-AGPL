@@ -35,8 +35,9 @@ public interface Round extends Serializable {
      * given the current state.
      *
      * @param action
+     * @return true if the action was handled, false if it was ignored (in case of an illegal action)
      */
-    public void act(PokerAction action);
+    public boolean act(PokerAction action);
 
     public void timeout();
 

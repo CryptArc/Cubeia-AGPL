@@ -20,6 +20,8 @@ package com.cubeia.poker.rounds.dealing;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Telesina specific round for dealing vela card.
@@ -28,14 +30,17 @@ public class ExposePrivateCardsRound implements Round {
 
     private static final long serialVersionUID = 1L;
 
+    private static transient Logger log = LoggerFactory.getLogger(ExposePrivateCardsRound.class);
+
     public ExposePrivateCardsRound(Dealer dealer) {
         dealer.exposeShowdownCards();
         dealer.sendAllNonFoldedPlayersBestHand();
     }
 
     @Override
-    public void act(PokerAction action) {
-        throw new IllegalStateException("Perform action not allowed during DealPocketCardsRound. Action received: " + action);
+    public boolean act(PokerAction action) {
+        log.warn("Perform action not allowed during DealPocketCardsRound. Action received: " + action);
+        return false;
     }
 
     @Override

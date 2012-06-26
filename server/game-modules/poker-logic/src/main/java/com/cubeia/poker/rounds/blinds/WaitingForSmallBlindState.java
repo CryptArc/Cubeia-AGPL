@@ -20,7 +20,6 @@ package com.cubeia.poker.rounds.blinds;
 import com.cubeia.poker.blinds.MissedBlindsStatus;
 import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.player.SitOutStatus;
 import org.apache.log4j.Logger;
 
 public class WaitingForSmallBlindState extends AbstractBlindsState {
@@ -31,44 +30,46 @@ public class WaitingForSmallBlindState extends AbstractBlindsState {
 
 
     @Override
-    public void smallBlind(int playerId, PokerContext pokerContext, BlindsRound round) {
+    public boolean smallBlind(int playerId, PokerContext pokerContext, BlindsRound round) {
         int smallBlind = round.getBlindsInfo().getSmallBlindPlayerId();
         if (smallBlind == playerId) {
             PokerPlayer player = pokerContext.getPlayerInCurrentHand(playerId);
             player.addBetOrGoAllIn(pokerContext.getSettings().getSmallBlindAmount());
             round.smallBlindPosted();
+            return true;
         } else {
-            throw new IllegalArgumentException("Expected player " + smallBlind + " to act, but got action from " + playerId);
+            log.info("Expected player " + smallBlind + " to act, but got action from " + playerId);
+            return false;
         }
-
     }
 
     @Override
-    public void declineEntryBet(int playerId, PokerContext pokerContext, BlindsRound round) {
+    public boolean declineEntryBet(int playerId, PokerContext pokerContext, BlindsRound round) {
         int smallBlind = round.getBlindsInfo().getSmallBlindPlayerId();
         if (smallBlind == playerId) {
             PokerPlayer player = pokerContext.getPlayerInCurrentHand(playerId);
-            player.setSitOutStatus(SitOutStatus.SITTING_OUT);
             player.setMissedBlindsStatus(MissedBlindsStatus.MISSED_SMALL_BLIND);
             round.getBlindsInfo().setHasDeadSmallBlind(true);
             round.smallBlindDeclined(player);
+            return true;
         } else {
-            throw new IllegalArgumentException("Expected player " + smallBlind + " to act, but got action from " + playerId);
+            log.info("Expected player " + smallBlind + " to act, but got action from " + playerId);
+            return false;
         }
     }
 
     @Override
-    public void timeout(PokerContext pokerContext, BlindsRound round) {
+    public boolean timeout(PokerContext pokerContext, BlindsRound round) {
         if (round.isTournamentBlinds()) {
             log.debug("Small blind timeout on tournament table - auto post small blind for player: " + round.getBlindsInfo().getSmallBlindPlayerId());
             smallBlind(round.getBlindsInfo().getSmallBlindPlayerId(), pokerContext, round);
         } else {
             int smallBlind = round.getBlindsInfo().getSmallBlindPlayerId();
             PokerPlayer player = pokerContext.getPlayerInCurrentHand(smallBlind);
-            player.setSitOutStatus(SitOutStatus.SITTING_OUT);
             player.setMissedBlindsStatus(MissedBlindsStatus.MISSED_SMALL_BLIND);
             round.getBlindsInfo().setHasDeadSmallBlind(true);
             round.smallBlindDeclined(player);
         }
+        return true;
     }
 }

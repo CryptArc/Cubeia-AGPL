@@ -36,7 +36,7 @@ public class SitoutTest extends GuiceTest {
         super.setUp();
     }
 
-    public void testDeclinedplayerSitsOut() {
+    public void testDeclinedPlayerSitsOut() {
         mockServerAdapter.clear();
         MockPlayer[] mp = TestUtils.createMockPlayers(3);
         int[] p = TestUtils.createPlayerIdArray(mp);

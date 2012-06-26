@@ -20,35 +20,42 @@ package com.cubeia.poker.rounds.blinds;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.player.PokerPlayer;
+import org.apache.log4j.Logger;
 
 public class WaitingForEntryBetState extends AbstractBlindsState {
 
     private static final long serialVersionUID = 1L;
 
+    private static transient Logger log = Logger.getLogger(WaitingForEntryBetState.class);
+
     @Override
-    public void bigBlind(int playerId, PokerContext context, BlindsRound blindsRound) {
+    public boolean bigBlind(int playerId, PokerContext context, BlindsRound blindsRound) {
         PokerPlayer player = context.getPlayerInCurrentHand(playerId);
         if (player.getActionRequest().isOptionEnabled(PokerActionType.BIG_BLIND)) {
             player.setHasPostedEntryBet(true);
             player.addBetOrGoAllIn(context.getSettings().getBigBlindAmount());
             blindsRound.entryBetPosted();
+            return true;
         } else {
-            throw new IllegalArgumentException("Player " + player + " is not allowed to post big blind. Options were " + player.getActionRequest());
+            log.info("Player " + player + " is not allowed to post big blind. Options were " + player.getActionRequest());
+            return false;
         }
     }
 
     @Override
-    public void declineEntryBet(int playerId, PokerContext context, BlindsRound blindsRound) {
+    public boolean declineEntryBet(int playerId, PokerContext context, BlindsRound blindsRound) {
         PokerPlayer player = context.getPlayerInCurrentHand(playerId);
         if (player.getActionRequest().isOptionEnabled(PokerActionType.DECLINE_ENTRY_BET)) {
             blindsRound.entryBetDeclined(player);
+            return true;
         } else {
-            throw new IllegalArgumentException("Player " + player + " is not allowed to decline entry bet.");
+            log.info("Player " + player + " is not allowed to decline entry bet.");
+            return false;
         }
     }
 
     @Override
-    public void deadSmallBlind(int playerId, PokerContext context, BlindsRound round) {
+    public boolean deadSmallBlind(int playerId, PokerContext context, BlindsRound round) {
         PokerPlayer player = context.getPlayerInCurrentHand(playerId);
         if (player.getActionRequest().isOptionEnabled(PokerActionType.DEAD_SMALL_BLIND)) {
             player.setHasPostedEntryBet(true);
@@ -56,13 +63,15 @@ public class WaitingForEntryBetState extends AbstractBlindsState {
             long takenAmount = player.takeChipsOrGoAllIn(amount);
             context.getPotHolder().getActivePot().bet(player, Long.valueOf(takenAmount));
             round.entryBetPosted();
+            return true;
         } else {
-            throw new IllegalArgumentException("Player " + player + " is not allowed to post big blind. Options were " + player.getActionRequest());
+            log.info("Player " + player + " is not allowed to post big blind. Options were " + player.getActionRequest());
+            return false;
         }
     }
 
     @Override
-    public void bigBlindPlusDeadSmallBlind(int playerId, PokerContext context, BlindsRound round) {
+    public boolean bigBlindPlusDeadSmallBlind(int playerId, PokerContext context, BlindsRound round) {
         PokerPlayer player = context.getPlayerInCurrentHand(playerId);
         if (player.getActionRequest().isOptionEnabled(PokerActionType.BIG_BLIND_PLUS_DEAD_SMALL_BLIND)) {
             player.setHasPostedEntryBet(true);
@@ -71,15 +80,18 @@ public class WaitingForEntryBetState extends AbstractBlindsState {
             long amountTaken = player.takeChipsOrGoAllIn(deadAmount);
             context.getPotHolder().getActivePot().bet(player, Long.valueOf(amountTaken));
             round.entryBetPosted();
+            return true;
         } else {
-            throw new IllegalArgumentException("Player " + player + " is not allowed to post big blind plus dead small blind. Options were " + player.getActionRequest());
+            log.info("Player " + player + " is not allowed to post big blind plus dead small blind. Options were " + player.getActionRequest());
+            return false;
         }
     }
 
     @Override
-    public void timeout(PokerContext context, BlindsRound round) {
+    public boolean timeout(PokerContext context, BlindsRound round) {
         int entryBetter = round.getPendingEntryBetterId();
         declineEntryBet(entryBetter, context, round);
+        return true;
     }
 
 }

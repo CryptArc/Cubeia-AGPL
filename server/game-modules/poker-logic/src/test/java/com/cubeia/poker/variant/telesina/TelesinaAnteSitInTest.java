@@ -86,15 +86,11 @@ public class TelesinaAnteSitInTest extends AbstractTexasHandTester {
 
         // Force start
         state.timeout();
-        try {
-            // Blinds
-            act(p[1], PokerActionType.ANTE);
-            act(p[1], PokerActionType.ANTE);
-            fail("Should not be able to post Ante two times in a row");
-        } catch (IllegalArgumentException e) {
-            // Expected
-        }
-
+        // Same player posts ante twice.
+        act(p[1], PokerActionType.ANTE);
+        long before = mp[1].getBalance();
+        act(p[1], PokerActionType.ANTE);
+        assertEquals(before, mp[1].getBalance());
     }
 
     @Test

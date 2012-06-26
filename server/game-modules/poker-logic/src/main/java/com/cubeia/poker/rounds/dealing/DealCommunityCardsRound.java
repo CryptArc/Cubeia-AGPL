@@ -20,6 +20,8 @@ package com.cubeia.poker.rounds.dealing;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This round has been separated for timing reasons.
@@ -30,13 +32,16 @@ public class DealCommunityCardsRound implements Round {
 
     private static final long serialVersionUID = 1L;
 
+    private static transient Logger log = LoggerFactory.getLogger(DealCommunityCardsRound.class);
+
     public DealCommunityCardsRound(Dealer dealer) {
         dealer.dealCommunityCards();
     }
 
     @Override
-    public void act(PokerAction action) {
-        throw new IllegalStateException("Perform action not allowed during DealCommunityCardsRound. Action received: " + action);
+    public boolean act(PokerAction action) {
+        log.info("Perform action not allowed during DealCommunityCardsRound. Action received: " + action);
+        return false;
     }
 
     @Override

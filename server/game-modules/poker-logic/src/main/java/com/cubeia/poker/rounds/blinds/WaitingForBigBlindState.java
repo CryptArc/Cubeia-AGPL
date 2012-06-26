@@ -22,7 +22,6 @@ import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.model.BlindsInfo;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.player.SitOutStatus;
 import org.apache.log4j.Logger;
 
 public class WaitingForBigBlindState extends AbstractBlindsState {
@@ -32,7 +31,7 @@ public class WaitingForBigBlindState extends AbstractBlindsState {
     private static transient Logger log = Logger.getLogger(WaitingForBigBlindState.class);
 
     @Override
-    public void bigBlind(int playerId, PokerContext context, BlindsRound blindsRound) {
+    public boolean bigBlind(int playerId, PokerContext context, BlindsRound blindsRound) {
         BlindsInfo blindsInfo = context.getBlindsInfo();
         PokerPlayer player = context.getPlayerInCurrentHand(playerId);
         if (player != null && player.getActionRequest().isOptionEnabled(PokerActionType.BIG_BLIND)) {
@@ -41,35 +40,37 @@ public class WaitingForBigBlindState extends AbstractBlindsState {
             player.setHasOption(true);
             player.setHasPostedEntryBet(true);
             blindsRound.bigBlindPosted();
+            return true;
         } else {
-            throw new IllegalArgumentException("Player " + player + " is not allowed to post big blind.");
+            log.info("Player " + player + " is not allowed to post big blind.");
+            return false;
         }
     }
 
     @Override
-    public void declineEntryBet(int playerId, PokerContext context, BlindsRound blindsRound) {
+    public boolean declineEntryBet(int playerId, PokerContext context, BlindsRound blindsRound) {
         PokerPlayer player = context.getPlayerInCurrentHand(playerId);
         if (player != null && player.getActionRequest().isOptionEnabled(PokerActionType.DECLINE_ENTRY_BET)) {
-            player.setSitOutStatus(SitOutStatus.SITTING_OUT);
             player.setMissedBlindsStatus(MissedBlindsStatus.MISSED_BIG_BLIND_AND_SMALL_BLIND);
             blindsRound.bigBlindDeclined(player);
+            return true;
         } else {
-            throw new IllegalArgumentException("Player " + player + " is not allowed to decline big blind.");
+            log.info("Player " + player + " is not allowed to decline big blind.");
+            return false;
         }
     }
 
     @Override
-    public void timeout(PokerContext context, BlindsRound round) {
+    public boolean timeout(PokerContext context, BlindsRound round) {
         if (context.isTournamentBlinds()) {
             log.debug("Big blind timeout on tournament table - auto post big blind for player: " + context.getBlindsInfo().getBigBlindPlayerId());
             bigBlind(round.getBlindsInfo().getBigBlindPlayerId(), context, round);
         } else {
             int bigBlind = round.getBlindsInfo().getBigBlindPlayerId();
             PokerPlayer player = context.getPlayerInCurrentHand(bigBlind);
-            player.setSitOutStatus(SitOutStatus.SITTING_OUT);
             player.setMissedBlindsStatus(MissedBlindsStatus.MISSED_BIG_BLIND_AND_SMALL_BLIND);
-            // context.getBlindsInfo().setHasDeadSmallBlind(true);
             round.bigBlindDeclined(player);
         }
+        return true;
     }
 }

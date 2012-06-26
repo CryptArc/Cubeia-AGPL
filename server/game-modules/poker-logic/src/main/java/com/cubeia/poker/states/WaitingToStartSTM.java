@@ -48,14 +48,15 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
     @Override
     public void enterState() {
         long timeout = context.getSettings().getTiming().getTime(Periods.START_NEW_HAND);
-        log.info("Entered waiting to start state. Scheduling timeout in " + timeout + " millis.");
-        getServerAdapterHolder().scheduleTimeout(timeout);
+        if (!context.isTournamentTable()) {
+            log.info("Entered waiting to start state. Scheduling timeout in " + timeout + " millis.");
+            getServerAdapterHolder().scheduleTimeout(timeout);
+        }
     }
 
     @Override
     public void timeout() {
         if (!context.isTournamentTable()) {
-            context.setHandFinished(false);
             getServerAdapterHolder().performPendingBuyIns(context.getSeatedPlayers());
             context.commitPendingBalances();
 

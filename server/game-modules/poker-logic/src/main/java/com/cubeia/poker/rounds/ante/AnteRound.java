@@ -93,10 +93,13 @@ public class AnteRound implements Round {
         }
     }
 
-    public void act(PokerAction action) {
+    public boolean act(PokerAction action) {
         log.debug("Act: " + action);
         PokerPlayer player = context.getPlayerInCurrentHand(action.getPlayerId());
-        verifyValidAnte(player);
+        if (!isValidAnte(player)) {
+            return false;
+        }
+        boolean handled = true;
 
         switch (action.getActionType()) {
             case ANTE:
@@ -120,21 +123,26 @@ public class AnteRound implements Round {
                 removeNonParticipatingPlayer(player);
                 break;
             default:
-                throw new IllegalArgumentException(action.getActionType() + " is not legal here");
+                log.info(action.getActionType() + " is not legal here");
+                handled = false;
+                break;
         }
 
-        player.clearActionRequest();
+        if (handled) {
+            player.clearActionRequest();
 
-        Collection<PokerPlayer> playersInHand = context.getCurrentHandSeatingMap().values();
+            Collection<PokerPlayer> playersInHand = context.getCurrentHandSeatingMap().values();
 
-        if (anteRoundHelper.isImpossibleToStartRound(playersInHand)) {
-            log.debug("impossible to start hand, too few players payed ante, will cancel");
-            Collection<PokerPlayer> declinedPlayers = anteRoundHelper.setAllPendingPlayersToDeclineEntryBet(playersInHand);
-            for (PokerPlayer declinedPlayer : declinedPlayers) {
-                PokerAction declineAction = new PokerAction(declinedPlayer.getId(), PokerActionType.DECLINE_ENTRY_BET);
-                getServerAdapter().notifyActionPerformed(declineAction, player);
+            if (anteRoundHelper.isImpossibleToStartRound(playersInHand)) {
+                log.debug("impossible to start hand, too few players payed ante, will cancel");
+                Collection<PokerPlayer> declinedPlayers = anteRoundHelper.setAllPendingPlayersToDeclineEntryBet(playersInHand);
+                for (PokerPlayer declinedPlayer : declinedPlayers) {
+                    PokerAction declineAction = new PokerAction(declinedPlayer.getId(), PokerActionType.DECLINE_ENTRY_BET);
+                    getServerAdapter().notifyActionPerformed(declineAction, player);
+                }
             }
         }
+        return handled;
     }
 
     private Collection<PokerPlayer> getAllSeatedPlayers() {
@@ -142,16 +150,18 @@ public class AnteRound implements Round {
     }
 
     /**
-     * Verify that this player is allowed to place ante.
+     * Checks whether this player is allowed to place ante.
      *
      * @param player the player who tries to place the ante
-     * @throws IllegalArgumentException if the player was not allowed to place ANTE
+     * @return false if the player was not allowed to place ANTE
      */
-    private void verifyValidAnte(PokerPlayer player) {
+    private boolean isValidAnte(PokerPlayer player) {
         PossibleAction option = player.getActionRequest().getOption(PokerActionType.ANTE);
         if (option == null) {
-            throw new IllegalArgumentException("Illegal ante request from player [" + player + "]");
+            log.info("Illegal ante request from player [" + player + "]");
+            return false;
         }
+        return true;
     }
 
     public void timeout() {

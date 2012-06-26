@@ -138,7 +138,7 @@ public class PokerTextClient extends SimpleTextClient {
                 packet.action = type;
                 packet.betAmount = Integer.parseInt(args[2]);
             } catch (Exception e) {
-                System.out.println("usage: bet <tid> <amount>");
+                System.out.println("usage: raise <tid> <amount>");
             }
 
         } else if (args[0].equals("fold")) {
@@ -193,10 +193,7 @@ public class PokerTextClient extends SimpleTextClient {
 
         PokerTextClient client = new PokerTextClient(args[hostIndex], port);
         client.run();
-
-
     }
-
 
     /**
      * Print bad command to user with a specified error.

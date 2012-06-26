@@ -20,6 +20,8 @@ package com.cubeia.poker.rounds.dealing;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Telesina specific round for dealing new pocket cards between betting rounds.
@@ -29,13 +31,16 @@ public class DealInitialPocketCardsRound implements Round {
 
     private static final long serialVersionUID = 1L;
 
+    private static transient Logger log = LoggerFactory.getLogger(DealInitialPocketCardsRound.class);
+
     public DealInitialPocketCardsRound(Dealer dealer) {
         dealer.dealInitialPocketCards();
     }
 
     @Override
-    public void act(PokerAction action) {
-        throw new IllegalStateException("Perform action not allowed during DealInitialPocketCardsRoun. Action received: " + action);
+    public boolean act(PokerAction action) {
+        log.info("Perform action not allowed during DealInitialPocketCardsRound. Action received: " + action);
+        return false;
     }
 
     @Override

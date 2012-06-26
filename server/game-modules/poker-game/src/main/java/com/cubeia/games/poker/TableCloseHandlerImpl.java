@@ -114,6 +114,7 @@ public class TableCloseHandlerImpl implements TableCloseHandler {
     }
 
     private void doCloseTable(Table table, boolean isError, String handId) {
+        log.info("Closing table {} ", table.getId());
         Collection<GenericPlayer> players = Lists.newArrayList(table.getPlayerSet().getPlayers());
 
         // 1. stop table from accepting actions
@@ -261,7 +262,6 @@ public class TableCloseHandlerImpl implements TableCloseHandler {
                 }
             } catch (Exception e2) {
             }
-            ;
             error.append("\n\t" + packet);
         }
         error.append("\nStackTrace: ");
