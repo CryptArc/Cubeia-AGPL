@@ -27,6 +27,7 @@ public class MockPlayer extends DefaultPokerPlayer implements PokerPlayer {
 
     private static final long serialVersionUID = 1L;
     private boolean allIn;
+    private boolean forceAllIn = false;
 
     public MockPlayer(int id) {
         super(id + 100);
@@ -54,12 +55,16 @@ public class MockPlayer extends DefaultPokerPlayer implements PokerPlayer {
         this.pocketCards = pocketCards;
     }
 
-    public void setAllIn(boolean b) {
+    public void forceAllIn(boolean b) {
+        forceAllIn = true;
         allIn = b;
     }
 
     @Override
     public boolean isAllIn() {
+        if (!forceAllIn) {
+            return super.isAllIn();
+        }
         return allIn;
     }
 }

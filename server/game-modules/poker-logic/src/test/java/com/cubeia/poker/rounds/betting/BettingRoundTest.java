@@ -320,9 +320,9 @@ public class BettingRoundTest extends TestCase {
     @Test
     public void testFutureActionsNotNotifiedWhenInitializingBetRoundAndAllPlayersSittingOut() {
         MockPlayer[] p = TestUtils.createMockPlayers(3);
-        p[0].setAllIn(true);
-        p[1].setAllIn(true);
-        p[2].setAllIn(true);
+        p[0].forceAllIn(true);
+        p[1].forceAllIn(true);
+        p[2].forceAllIn(true);
         preparePlayers(p);
         round = new BettingRound(0, context, adapterHolder, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator(), minBet);
 
@@ -335,9 +335,9 @@ public class BettingRoundTest extends TestCase {
     @Test
     public void testFutureActionsNotNotifiedWhenAllPlayersButOneAreAllIn() {
         MockPlayer[] p = TestUtils.createMockPlayers(3);
-        p[0].setAllIn(true);
-        p[1].setAllIn(true);
-        p[2].setAllIn(false);
+        p[0].forceAllIn(true);
+        p[1].forceAllIn(true);
+        p[2].forceAllIn(false);
         preparePlayers(p);
         round = new BettingRound(0, context, adapterHolder, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator(), minBet);
 
