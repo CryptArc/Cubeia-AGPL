@@ -22,10 +22,8 @@ import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
-import com.cubeia.poker.util.SitoutCalculator;
-import com.cubeia.poker.timing.Periods;
-import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.tournament.RoundReport;
+import com.cubeia.poker.util.SitoutCalculator;
 import com.cubeia.poker.variant.HandFinishedListener;
 import com.google.common.annotations.VisibleForTesting;
 import org.slf4j.Logger;
@@ -89,7 +87,7 @@ public class PlayingSTM extends AbstractPokerGameSTM implements HandFinishedList
             // clean up players here and make leaving players leave and so on also update the lobby
             getServerAdapterHolder().cleanupPlayers(new SitoutCalculator());
 
-            //setPlayersWithoutMoneyAsSittingOut();
+//            setPlayersWithoutMoneyAsSittingOut();
             sendBuyinInfoToPlayersWithoutMoney();
         }
 

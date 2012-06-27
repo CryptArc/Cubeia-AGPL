@@ -44,7 +44,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
+import static org.junit.matchers.JUnitMatchers.hasItem;
+import static org.mockito.Matchers.anyCollection;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -159,7 +161,7 @@ public class PokerStateTest {
         when(state.pokerContext.getPotHolder().calculateRake()).thenReturn(new RakeInfoContainer((int) totalPot, totalRake.intValue(), null));
         RakeInfoContainer rakeInfoContainer = mock(RakeInfoContainer.class);
 
-        when(state.pokerContext.getPotHolder().calculateRakeIncludingBetStacks(Mockito.anyCollection())).thenReturn(rakeInfoContainer);
+        when(state.pokerContext.getPotHolder().calculateRakeIncludingBetStacks(anyCollection())).thenReturn(rakeInfoContainer);
 
         Collection<PotTransition> potTransitions = new ArrayList<PotTransition>();
         state.notifyPotAndRakeUpdates(potTransitions);
@@ -197,7 +199,7 @@ public class PokerStateTest {
 
         Collection<Pot> pots = new ArrayList<Pot>();
         when(state.pokerContext.getPotHolder().getPots()).thenReturn(pots);
-        long totalPot = 500L; // already betted in earlier betting rounds
+        long totalPot = 500L; // already bet in earlier betting rounds
         when(state.pokerContext.getPotHolder().getTotalPotSize()).thenReturn(totalPot);
 
         Map<Integer, PokerPlayer> playerMap = new HashMap<Integer, PokerPlayer>();
@@ -232,7 +234,7 @@ public class PokerStateTest {
     }
 
     @Test
-    public void testNotifyStatusesAsStartOfHand() {
+    public void testNotifyStatusesAtStartOfHand() {
         PotHolder oldPotHolder = new PotHolder(null);
         state.pokerContext.potHolder = oldPotHolder;
         RakeSettings rakeSettings = TestUtils.createOnePercentRakeSettings();
@@ -267,165 +269,50 @@ public class PokerStateTest {
         state.startHand();
     }
 
-    // TODO FIXTESTS
-//    @Test
-//    public void testBuyInInfoNotSentOnJoinIfPlayerCanBuyin() {
-//        PokerState state = new PokerState();
-//        state.init(gameType, settings);
-//        state.serverAdapter = mock(ServerAdapter.class);
-//        state.gameType = mock(Telesina.class);
-//
-//        PokerPlayer player = mock(PokerPlayer.class);
-//        int playerId = 1337;
-//        when(player.getId()).thenReturn(playerId);
-//
-//        when(state.gameType.canPlayerAffordEntryBet(player, settings, true)).thenReturn(true);
-//
-//        state.addPlayer(player);
-//
-//        Mockito.verify(state.serverAdapter, never()).notifyBuyInInfo(1337, false);
-//    }
-//
-//    @Test
-//    public void shutdown() {
-//        PokerState state = new PokerState();
-//        state.shutdown();
-//        assertThat(state.getCurrentState(), is(PokerState.SHUTDOWN));
-//    }
-//
-//    @Test(expected = UnsupportedOperationException.class)
-//    public void illegalToMoveFromShutdownState() {
-//        PokerState state = new PokerState();
-//        state.setCurrentState(PokerState.SHUTDOWN);
-//        state.setCurrentState(PokerState.PLAYING);
-//    }
-//
-//    @SuppressWarnings("unchecked")
-//    @Test
-//    public void testHandleBuyInRequestWhileGamePlaying() {
-//        PokerPlayer player = mock(PokerPlayer.class);
-//        state.setCurrentState(PokerState.PLAYING);
-//        int amount = 1234;
-//
-//        state.handleBuyInRequest(player, amount);
-//
-//        verify(player).addRequestedBuyInAmount(amount);
-//        verify(state.serverAdapter, never()).performPendingBuyIns(Mockito.anyCollection());
-//    }
-//
-//    @SuppressWarnings({"unchecked", "rawtypes"})
-//    @Test
-//    public void testHandleBuyInRequestWhenWaitingToStart() {
-//        PokerPlayer player = mock(PokerPlayer.class);
-//        state.setCurrentState(PokerState.WAITING_TO_START);
-//        int amount = 1234;
-//
-//        state.handleBuyInRequest(player, amount);
-//
-//        verify(player).addRequestedBuyInAmount(amount);
-//        ArgumentCaptor<Collection> captor = ArgumentCaptor.forClass(Collection.class);
-//        verify(state.serverAdapter).performPendingBuyIns(captor.capture());
-//        Collection<PokerPlayer> players = captor.getValue();
-//        assertThat(players.size(), is(1));
-//        assertThat(players, hasItem(player));
-//    }
-//
-//    @Test
-//    public void testSetPlayersWithoutMoneyAsSittingOut() {
-//        int player1id = 1001;
-//        int player2id = 1002;
-//        int player3id = 1003;
-//        PokerPlayer player1 = mock(PokerPlayer.class);
-//        PokerPlayer player2 = mock(PokerPlayer.class);
-//        PokerPlayer player3 = mock(PokerPlayer.class);
-//        when(player1.getId()).thenReturn(player1id);
-//        when(player2.getId()).thenReturn(player2id);
-//        when(player3.getId()).thenReturn(player3id);
-//
-//        when(player1.isSittingOut()).thenReturn(false);
-//        when(player2.isSittingOut()).thenReturn(false);
-//        when(player3.isSittingOut()).thenReturn(false);
-//
-//        state.pokerContext.seatingMap = new TreeMap<Integer, PokerPlayer>();
-//        state.pokerContext.seatingMap.put(0, player1);
-//        state.pokerContext.seatingMap.put(1, player2);
-//        state.pokerContext.seatingMap.put(2, player3);
-//
-//        state.pokerContext.playerMap = new TreeMap<Integer, PokerPlayer>();
-//        state.pokerContext.playerMap.put(player1id, player1);
-//        state.pokerContext.playerMap.put(player2id, player2);
-//        state.pokerContext.playerMap.put(player3id, player3);
-//
-//        GameType telesina = mock(Telesina.class);
-//        state.gameType = telesina;
-//
-//
-//        when(player1.getBalance()).thenReturn(10L);
-//        when(player1.getPendingBalanceSum()).thenReturn(10L);
-//        when(settings.getAnteAmount()).thenReturn(20);
-//
-//        when(player3.isBuyInRequestActive()).thenReturn(true);
-//
-//        when(telesina.canPlayerAffordEntryBet(player1, settings, true)).thenReturn(true);
-//        when(telesina.canPlayerAffordEntryBet(player2, settings, true)).thenReturn(false);
-//        when(telesina.canPlayerAffordEntryBet(player3, settings, true)).thenReturn(false);
-//
-//        state.setPlayersWithoutMoneyAsSittingOut();
-//
-//        verify(player1, never()).setSitOutStatus(Mockito.any(SitOutStatus.class));
-//        verify(player2).setSitOutStatus(SitOutStatus.SITTING_OUT);
-//        verify(player3).setSitOutStatus(SitOutStatus.SITTING_OUT);
-//
-//        verify(state.serverAdapter, never()).notifyBuyInInfo(player1id, true);
-//        verify(state.serverAdapter, never()).notifyBuyInInfo(player2id, true);
-//        verify(state.serverAdapter, never()).notifyBuyInInfo(player3id, true);
-//    }
-//
-//    @Test
-//    public void testSendBuyInInfoToPlayersWithoutMoney() {
-//        int player1id = 1001;
-//        int player2id = 1002;
-//        int player3id = 1003;
-//        PokerPlayer player1 = mock(PokerPlayer.class);
-//        PokerPlayer player2 = mock(PokerPlayer.class);
-//        PokerPlayer player3 = mock(PokerPlayer.class);
-//        when(player1.getId()).thenReturn(player1id);
-//        when(player2.getId()).thenReturn(player2id);
-//        when(player3.getId()).thenReturn(player3id);
-//
-//        when(player1.isSittingOut()).thenReturn(false);
-//        when(player2.isSittingOut()).thenReturn(false);
-//        when(player3.isSittingOut()).thenReturn(false);
-//
-//        state.pokerContext.seatingMap = new TreeMap<Integer, PokerPlayer>();
-//        state.pokerContext.seatingMap.put(0, player1);
-//        state.pokerContext.seatingMap.put(1, player2);
-//        state.pokerContext.seatingMap.put(2, player3);
-//
-//        state.pokerContext.playerMap = new TreeMap<Integer, PokerPlayer>();
-//        state.pokerContext.playerMap.put(player1id, player1);
-//        state.pokerContext.playerMap.put(player2id, player2);
-//        state.pokerContext.playerMap.put(player3id, player3);
-//
-//        GameType telesina = mock(Telesina.class);
-//        state.gameType = telesina;
-//
-//
-//        when(player1.getBalance()).thenReturn(10L);
-//        when(player1.getPendingBalanceSum()).thenReturn(10L);
-//        when(settings.getAnteAmount()).thenReturn(20);
-//
-//        when(player3.isBuyInRequestActive()).thenReturn(true);
-//
-//        when(telesina.canPlayerAffordEntryBet(player1, settings, true)).thenReturn(true);
-//        when(telesina.canPlayerAffordEntryBet(player2, settings, true)).thenReturn(false);
-//        when(telesina.canPlayerAffordEntryBet(player3, settings, true)).thenReturn(false);
-//
-//        state.sendBuyinInfoToPlayersWithoutMoney();
-//
-//        verify(state.serverAdapter, never()).notifyBuyInInfo(player1id, true); // player affords buyin
-//        verify(state.serverAdapter).notifyBuyInInfo(player2id, true);
-//        verify(state.serverAdapter, never()).notifyBuyInInfo(player3id, true); // player has pending buyin that will cover it
-//    }
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testHandleBuyInRequestWhileGamePlaying() {
+        PokerPlayer player1 = mock(PokerPlayer.class);
+        PokerPlayer player2 = mock(PokerPlayer.class);
 
+        when(player1.getId()).thenReturn(1);
+        when(player2.getId()).thenReturn(2);
+
+        state.addPlayer(player1);
+        state.addPlayer(player2);
+        state.timeout();
+        assertTrue(state.isPlaying());
+        int amount = 1234;
+
+        state.handleBuyInRequest(player1, amount);
+
+        verify(player1).addRequestedBuyInAmount(amount);
+        // This is called once when starting the hand, but should not be called twice
+        verify(serverAdapter, times(1)).performPendingBuyIns(anyCollection());
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Test
+    public void testHandleBuyInRequestWhenWaitingToStart() {
+        PokerPlayer player1 = mock(PokerPlayer.class);
+        PokerPlayer player2 = mock(PokerPlayer.class);
+
+        when(player1.getId()).thenReturn(1);
+        when(player2.getId()).thenReturn(2);
+
+        state.addPlayer(player1);
+        state.addPlayer(player2);
+        assertFalse(state.isPlaying());
+
+        int amount = 1234;
+        state.handleBuyInRequest(player1, amount);
+
+        verify(player1).addRequestedBuyInAmount(amount);
+        // This is called once when starting the hand, but should not be called twice
+        ArgumentCaptor<Collection> captor = ArgumentCaptor.forClass(Collection.class);
+        verify(serverAdapter).performPendingBuyIns(captor.capture());
+        Collection<PokerPlayer> players = captor.getValue();
+        assertThat(players.size(), is(1));
+        assertThat(players, hasItem(player1));
+    }
 }

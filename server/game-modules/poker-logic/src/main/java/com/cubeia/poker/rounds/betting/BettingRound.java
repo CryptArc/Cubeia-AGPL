@@ -16,12 +16,12 @@
  */
 package com.cubeia.poker.rounds.betting;
 
-import com.cubeia.poker.adapter.ServerAdapterHolder;
-import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.adapter.ServerAdapter;
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.player.SitOutStatus;
@@ -427,7 +427,8 @@ public class BettingRound implements Round, BettingRoundContext {
     /**
      * Returns the amount with which the player has to increase his current bet when doing a call.
      */
-    private long getAmountToCall(PokerPlayer player) {
+    @VisibleForTesting
+    long getAmountToCall(PokerPlayer player) {
         return Math.min(highBet - player.getBetStack(), player.getBalance());
     }
 

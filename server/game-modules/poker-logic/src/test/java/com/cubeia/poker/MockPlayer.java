@@ -26,6 +26,7 @@ import com.cubeia.poker.player.PokerPlayer;
 public class MockPlayer extends DefaultPokerPlayer implements PokerPlayer {
 
     private static final long serialVersionUID = 1L;
+    private boolean allIn;
 
     public MockPlayer(int id) {
         super(id + 100);
@@ -51,5 +52,14 @@ public class MockPlayer extends DefaultPokerPlayer implements PokerPlayer {
 
     public void setPocketCards(Hand pocketCards) {
         this.pocketCards = pocketCards;
+    }
+
+    public void setAllIn(boolean b) {
+        allIn = b;
+    }
+
+    @Override
+    public boolean isAllIn() {
+        return allIn;
     }
 }

@@ -17,14 +17,14 @@
 
 package com.cubeia.poker.states;
 
-import com.cubeia.poker.adapter.ServerAdapterHolder;
-import com.cubeia.poker.variant.GameType;
-import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.ServerAdapter;
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.player.SitOutStatus;
+import com.cubeia.poker.variant.GameType;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
 import org.slf4j.Logger;
@@ -104,6 +104,7 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
 
     @Override
     public void playerSitsOut(int playerId, SitOutStatus status) {
+        log.info("Player with id " + playerId + " sits out");
         if (context.setSitOutStatus(playerId, status)) {
             notifyPlayerSittingOut(playerId);
         }

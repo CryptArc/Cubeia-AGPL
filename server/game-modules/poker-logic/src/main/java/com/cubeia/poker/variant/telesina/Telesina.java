@@ -17,18 +17,17 @@
 
 package com.cubeia.poker.variant.telesina;
 
-import com.cubeia.poker.model.BlindsInfo;
-import com.cubeia.poker.result.HandResultCalculator;
-import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.hand.HandStrength;
 import com.cubeia.poker.hand.Rank;
+import com.cubeia.poker.model.BlindsInfo;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.result.HandResult;
+import com.cubeia.poker.result.HandResultCalculator;
 import com.cubeia.poker.result.RevealOrderCalculator;
 import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.rounds.Round;
@@ -37,6 +36,7 @@ import com.cubeia.poker.rounds.ante.AnteRound;
 import com.cubeia.poker.rounds.betting.BettingRound;
 import com.cubeia.poker.rounds.blinds.BlindsRound;
 import com.cubeia.poker.rounds.dealing.*;
+import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.util.ThreadLocalProfiler;
 import com.cubeia.poker.variant.AbstractGameType;
@@ -468,7 +468,9 @@ public class Telesina extends AbstractGameType implements RoundVisitor, Dealer {
 
     @Override
     public boolean canPlayerAffordEntryBet(PokerPlayer player, PokerSettings pokerSettings, boolean includePending) {
-        return player.getBalance() + (includePending ? player.getPendingBalanceSum() : 0) >= pokerSettings.getAnteAmount();
+        long balance = player.getBalance() + (includePending ? player.getPendingBalanceSum() : 0);
+        System.out.println("Checking if player can afford entry bet. Balance = " + balance + ", ante = " + pokerSettings.getAnteAmount());
+        return balance >= pokerSettings.getAnteAmount();
     }
 
     @Override

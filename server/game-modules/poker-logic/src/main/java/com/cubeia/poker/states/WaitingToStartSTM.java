@@ -17,15 +17,15 @@
 
 package com.cubeia.poker.states;
 
-import com.cubeia.poker.adapter.ServerAdapterHolder;
-import com.cubeia.poker.util.SitoutCalculator;
-import com.cubeia.poker.variant.GameType;
-import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.action.PokerAction;
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.timing.Periods;
+import com.cubeia.poker.util.SitoutCalculator;
 import com.cubeia.poker.util.ThreadLocalProfiler;
+import com.cubeia.poker.variant.GameType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,9 +94,10 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
     public void setPlayersWithoutMoneyAsSittingOut() {
         ThreadLocalProfiler.add("setPlayersWithoutMoneyAsSittingOut");
         for (PokerPlayer player : context.getPlayerMap().values()) {
-
+            log.info("Checking if player " + player.getId() + " can post entry bet.");
             boolean canPlayerAffordEntryBet = gameType.canPlayerAffordEntryBet(player, context.getSettings(), true);
             if (!canPlayerAffordEntryBet) {
+                log.info("Player with id " + player.getId() + " can not post entry bet.");
                 playerSitsOut(player.getId(), SitOutStatus.SITTING_OUT);
             }
         }

@@ -17,20 +17,25 @@
 
 package com.cubeia.poker.states;
 
+import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
+import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.player.SitOutStatus;
+import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.util.SitoutCalculator;
 import com.cubeia.poker.variant.GameType;
-import com.cubeia.poker.context.PokerContext;
-import com.cubeia.poker.adapter.ServerAdapter;
-import com.cubeia.poker.player.PokerPlayer;
 import com.google.common.base.Predicate;
+import com.google.common.collect.Maps;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.*;
@@ -53,6 +58,9 @@ public class WaitingToStartSTMTest {
     @Mock
     private GameType gameType;
 
+    @Mock
+    private PokerSettings settings;
+
     private WaitingToStartSTM stateUnderTest;
     private PokerPlayer player1;
     private PokerPlayer player2;
@@ -63,6 +71,7 @@ public class WaitingToStartSTMTest {
         stateUnderTest = new WaitingToStartSTM(gameType, context, serverAdapterHolder, stateChanger);
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
         when(context.isTournamentTable()).thenReturn(false);
+        when(context.getSettings()).thenReturn(settings);
         player1 = mock(PokerPlayer.class);
         player2 = mock(PokerPlayer.class);
     }
@@ -113,6 +122,36 @@ public class WaitingToStartSTMTest {
 
         verify(serverAdapter).notifyPlayerBalance(player1);
         verify(serverAdapter).notifyPlayerBalance(player2);
+    }
+
+    @Test
+    public void testSetPlayersWithoutMoneyAsSittingOut() {
+        PokerPlayer p1 = mock(PokerPlayer.class);
+        PokerPlayer p2 = mock(PokerPlayer.class);
+        PokerPlayer p3 = mock(PokerPlayer.class);
+
+        Map<Integer, PokerPlayer> map = createPlayerMap(p1, p2, p3);
+        when(gameType.canPlayerAffordEntryBet(p1, settings, true)).thenReturn(true);
+        when(gameType.canPlayerAffordEntryBet(p2, settings, true)).thenReturn(false);
+        when(gameType.canPlayerAffordEntryBet(p3, settings, true)).thenReturn(false);
+        when(context.getPlayerMap()).thenReturn(map);
+
+        stateUnderTest.setPlayersWithoutMoneyAsSittingOut();
+
+        verify(context, never()).setSitOutStatus(eq(p1.getId()), Mockito.any(SitOutStatus.class));
+        verify(context).setSitOutStatus(p2.getId(), SitOutStatus.SITTING_OUT);
+        verify(context).setSitOutStatus(p3.getId(), SitOutStatus.SITTING_OUT);
+    }
+
+    private Map<Integer, PokerPlayer> createPlayerMap(PokerPlayer ... players) {
+        Map<Integer, PokerPlayer> map = Maps.newHashMap();
+        for (int i = 0; i < players.length; i++) {
+            PokerPlayer player = players[i];
+            int playerId = i + 1;
+            map.put(playerId, player);
+            when(player.getId()).thenReturn(playerId);
+        }
+        return map;
     }
 
 }

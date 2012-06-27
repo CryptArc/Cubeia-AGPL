@@ -18,7 +18,6 @@
 package com.cubeia.poker.pot;
 
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.pot.RakeInfoContainer;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
@@ -154,7 +153,6 @@ public class PotHolder implements Serializable {
 
 
     }
-
 
     private void printDiagnostics() {
         log.debug("pots: ");

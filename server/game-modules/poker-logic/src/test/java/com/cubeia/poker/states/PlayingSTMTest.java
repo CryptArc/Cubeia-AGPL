@@ -17,19 +17,21 @@
 
 package com.cubeia.poker.states;
 
-import com.cubeia.poker.adapter.ServerAdapterHolder;
-import com.cubeia.poker.context.PokerContext;
-import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
+import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.timing.TimingProfile;
+import com.cubeia.poker.variant.GameType;
 import com.cubeia.poker.variant.telesina.Telesina;
+import com.google.common.collect.Maps;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -57,12 +59,19 @@ public class PlayingSTMTest {
     @Mock
     private StateChanger stateChanger;
     
+    @Mock
+    private PokerContext context;
+
+    @Mock
+    private GameType gameType;
+
     int anteLevel;
-    
+
     @Before
     public void setup() {
         initMocks(this);
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
+        when(context.getSettings()).thenReturn(settings);
     }
     
     @Test
@@ -137,12 +146,49 @@ public class PlayingSTMTest {
         verify(serverAdapter).notifyBuyInInfo(player1.getId(), true);
         verify(player2, Mockito.never()).setSitOutStatus(SitOutStatus.SITTING_OUT);
     }
-    
+
+    @Test
+    public void testSendBuyInInfoToPlayersWithoutMoney() {
+        PokerPlayer p1 = mock(PokerPlayer.class);
+        PokerPlayer p2 = mock(PokerPlayer.class);
+        PokerPlayer p3 = mock(PokerPlayer.class);
+        PlayingSTM playing = new PlayingSTM();
+        playing.context = context;
+
+        playing.gameType = gameType;
+        playing.stateChanger = stateChanger;
+        playing.serverAdapterHolder = serverAdapterHolder;
+
+        Map<Integer, PokerPlayer> map = createPlayerMap(p1, p2, p3);
+        when(gameType.canPlayerAffordEntryBet(p1, settings, true)).thenReturn(true);
+        when(gameType.canPlayerAffordEntryBet(p2, settings, true)).thenReturn(false);
+        when(gameType.canPlayerAffordEntryBet(p3, settings, true)).thenReturn(false);
+        when(context.getPlayerMap()).thenReturn(map);
+
+        when(p3.isBuyInRequestActive()).thenReturn(true);
+
+        playing.sendBuyinInfoToPlayersWithoutMoney();
+
+        verify(serverAdapter, never()).notifyBuyInInfo(p1.getId(), true); // player affords buyin
+        verify(serverAdapter).notifyBuyInInfo(p2.getId(), true);
+        verify(serverAdapter, never()).notifyBuyInInfo(p3.getId(), true); // player has pending buyin, so we won't bother him
+    }
+
     private PokerPlayer createMockPlayer(int playerId, int balance) {
         PokerPlayer player = mock(PokerPlayer.class);
         when(player.getBalance()).thenReturn((long) balance);
         when(player.getId()).thenReturn(playerId);
         return player;
     }
-    
+
+    private Map<Integer, PokerPlayer> createPlayerMap(PokerPlayer ... players) {
+        Map<Integer, PokerPlayer> map = Maps.newHashMap();
+        for (int i = 0; i < players.length; i++) {
+            PokerPlayer player = players[i];
+            int playerId = i + 1;
+            map.put(playerId, player);
+            when(player.getId()).thenReturn(playerId);
+        }
+        return map;
+    }
 }

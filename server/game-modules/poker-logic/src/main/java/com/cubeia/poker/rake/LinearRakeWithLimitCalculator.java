@@ -17,13 +17,11 @@
 
 package com.cubeia.poker.rake;
 
-import com.cubeia.poker.pot.RakeCalculator;
-import com.cubeia.poker.pot.RakeCalculator;
-import com.cubeia.poker.pot.RakeInfoContainer;
-import com.cubeia.poker.pot.RakeInfoContainer;
-import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.Pot;
+import com.cubeia.poker.pot.RakeCalculator;
+import com.cubeia.poker.pot.RakeInfoContainer;
+import com.cubeia.poker.settings.RakeSettings;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -41,12 +39,6 @@ public class LinearRakeWithLimitCalculator implements RakeCalculator {
     private final long rakeLimit;
     private final long rakeLimitHeadsUp;
 
-    /**
-     * Rake calculator with limit.
-     *
-     * @param rakeFraction fraction (0.01 gives 1%)
-     * @param rakeLimit    rake limit
-     */
     public LinearRakeWithLimitCalculator(RakeSettings rakeSettings) {
         this.rakeFraction = rakeSettings.getRakeFraction();
         this.rakeLimit = rakeSettings.getRakeLimit();
