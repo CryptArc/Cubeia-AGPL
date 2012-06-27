@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.cubeia.games.poker;
 
 import com.cubeia.firebase.api.game.table.InterceptionResponse;
@@ -55,50 +54,40 @@ public class AllowLeaveTest {
         when(state.getPokerPlayer(playerId)).thenReturn(pokerPlayer);
     }
 
-    // TODO: FIXTEST!
-//    @Test
-//    public void okIfPlayerHasNoRunningWalletRequestAndNotPlaying() {
-//        when(state.getGameState()).thenReturn(PokerState.NOT_STARTED);
-//        when(pokerPlayer.isBuyInRequestActive()).thenReturn(false);
-//
-//        InterceptionResponse response = tableInterceptor.allowLeave(table, playerId);
-//        assertThat(response.isAllowed(), is(true));
-//    }
-//
-//    @Test
-//    public void okIfWaitingToStart() {
-//        when(state.getGameState()).thenReturn(PokerState.WAITING_TO_START);
-//        when(pokerPlayer.isBuyInRequestActive()).thenReturn(false);
-//
-//        InterceptionResponse response = tableInterceptor.allowLeave(table, playerId);
-//        assertThat(response.isAllowed(), is(true));
-//    }
-//
-//    @Test
-//    public void okIfShutdown() {
-//        when(state.getGameState()).thenReturn(PokerState.SHUTDOWN);
-//        when(pokerPlayer.isBuyInRequestActive()).thenReturn(false);
-//
-//        InterceptionResponse response = tableInterceptor.allowLeave(table, playerId);
-//        assertThat(response.isAllowed(), is(true));
-//    }
-//
-//    @Test
-//    public void donwAllowIfPlaying() {
-//        when(pokerPlayer.isBuyInRequestActive()).thenReturn(false);
-//
-//        when(state.getGameState()).thenReturn(PokerState.PLAYING);
-//        InterceptionResponse response = tableInterceptor.allowLeave(table, playerId);
-//        assertThat(response.isAllowed(), is(false));
-//    }
-//
-//    @Test
-//    public void dontAllowIfWalletRequestActive() {
-//        when(state.getGameState()).thenReturn(PokerState.NOT_STARTED);
-//        when(pokerPlayer.isBuyInRequestActive()).thenReturn(true);
-//
-//        InterceptionResponse response = tableInterceptor.allowLeave(table, playerId);
-//        assertThat(response.isAllowed(), is(false));
-//    }
+    @Test
+    public void okIfPlayerHasNoRunningWalletRequestAndNotPlaying() {
+        when(state.isPlaying()).thenReturn(false);
+        when(pokerPlayer.isBuyInRequestActive()).thenReturn(false);
+
+        InterceptionResponse response = tableInterceptor.allowLeave(table, playerId);
+        assertThat(response.isAllowed(), is(true));
+    }
+
+    @Test
+    public void okIfWaitingToStart() {
+        when(state.isPlaying()).thenReturn(false);
+        when(pokerPlayer.isBuyInRequestActive()).thenReturn(false);
+
+        InterceptionResponse response = tableInterceptor.allowLeave(table, playerId);
+        assertThat(response.isAllowed(), is(true));
+    }
+
+    @Test
+    public void doNotAllowIfPlaying() {
+        when(pokerPlayer.isBuyInRequestActive()).thenReturn(false);
+
+        when(state.isPlaying()).thenReturn(true);
+        InterceptionResponse response = tableInterceptor.allowLeave(table, playerId);
+        assertThat(response.isAllowed(), is(false));
+    }
+
+    @Test
+    public void doNotAllowIfWalletRequestActive() {
+        when(state.isPlaying()).thenReturn(false);
+        when(pokerPlayer.isBuyInRequestActive()).thenReturn(true);
+
+        InterceptionResponse response = tableInterceptor.allowLeave(table, playerId);
+        assertThat(response.isAllowed(), is(false));
+    }
 
 }

@@ -52,14 +52,13 @@ public class PokerTableInterceptor implements TableInterceptor {
         return new InterceptionResponse(allowResponse.allowed, allowResponse.responseCode);
     }
 
-
     /**
      * We will flag the player as disconnected only since we need to hold the
      * player at the table until the end of next hand.
      */
     public InterceptionResponse allowLeave(Table table, int playerId) {
         stateInjector.injectAdapter(table); // TODO: Fix this with Guice logic module
-        boolean notPlaying = state.isPlaying();
+        boolean notPlaying = !state.isPlaying();
         PokerPlayer player = state.getPokerPlayer(playerId);
 
         if (notPlaying && !player.isBuyInRequestActive()) {

@@ -17,7 +17,14 @@
 
 package com.cubeia.poker;
 
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.settings.PokerSettings;
+import com.cubeia.poker.states.PlayingSTM;
+import com.cubeia.poker.states.StateChanger;
+import com.cubeia.poker.states.WaitingToStartSTM;
+import com.cubeia.poker.variant.GameType;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -28,57 +35,68 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class PlayerReadyToStartHandTest {
-    // TODO! FIXTESTS
-//    @Mock
-//    GameType gameType;
-//    @Mock
-//    PokerPlayer pokerPlayer;
-//    @Mock
-//    PokerSettings settings;
-//    PokerState state;
-//
-//    @Before
-//    public void setup() {
-//        initMocks(this);
-//        state = new PokerState();
-//        state.gameType = gameType;
-//        state.pokerContext.settings = settings;
-//    }
-//
-//    @Test
-//    public void testPlayerReadyToStartHand() {
-//        when(pokerPlayer.isSittingOut()).thenReturn(false);
-//        when(pokerPlayer.isBuyInRequestActive()).thenReturn(false);
-//        when(gameType.canPlayerAffordEntryBet(pokerPlayer, settings, false)).thenReturn(true);
-//
-//        assertThat(state.playerReadyToStartHand(pokerPlayer), is(true));
-//    }
-//
-//    @Test
-//    public void testPlayerNotReadyToStartHandWhenSittingOut() {
-//        when(pokerPlayer.isSittingOut()).thenReturn(true);
-//        when(pokerPlayer.isBuyInRequestActive()).thenReturn(false);
-//        when(gameType.canPlayerAffordEntryBet(pokerPlayer, settings, false)).thenReturn(true);
-//
-//        assertThat(state.playerReadyToStartHand(pokerPlayer), is(false));
-//    }
-//
-//    @Test
-//    public void testPlayerNotReadyToStartHandWhileBackendRequestActive() {
-//        when(pokerPlayer.isSittingOut()).thenReturn(false);
-//        when(pokerPlayer.isBuyInRequestActive()).thenReturn(true);
-//        when(gameType.canPlayerAffordEntryBet(pokerPlayer, settings, false)).thenReturn(true);
-//
-//        assertThat(state.playerReadyToStartHand(pokerPlayer), is(false));
-//    }
-//
-//    @Test
-//    public void testPlayerNotReadyToStartHandIfNoCashForEntryBet() {
-//        when(pokerPlayer.isSittingOut()).thenReturn(false);
-//        when(pokerPlayer.isBuyInRequestActive()).thenReturn(false);
-//        when(gameType.canPlayerAffordEntryBet(pokerPlayer, settings, false)).thenReturn(false);
-//
-//        assertThat(state.playerReadyToStartHand(pokerPlayer), is(false));
-//    }
+
+    @Mock
+    private GameType gameType;
+
+    @Mock
+    private PokerPlayer pokerPlayer;
+
+    @Mock
+    private PokerSettings settings;
+
+    @Mock
+    private PokerContext pokerContext;
+
+    @Mock
+    private ServerAdapterHolder adapterHolder;
+
+    @Mock
+    private StateChanger stateChanger;
+
+    WaitingToStartSTM state;
+
+    @Before
+    public void setup() {
+        initMocks(this);
+        when(pokerContext.getSettings()).thenReturn(settings);
+        state = new WaitingToStartSTM(gameType, pokerContext, adapterHolder, stateChanger);
+    }
+
+    @Test
+    public void testPlayerReadyToStartHand() {
+        when(pokerPlayer.isSittingOut()).thenReturn(false);
+        when(pokerPlayer.isBuyInRequestActive()).thenReturn(false);
+        when(gameType.canPlayerAffordEntryBet(pokerPlayer, settings, false)).thenReturn(true);
+
+        assertThat(state.playerReadyToStartHand(pokerPlayer), is(true));
+    }
+
+    @Test
+    public void testPlayerNotReadyToStartHandWhenSittingOut() {
+        when(pokerPlayer.isSittingOut()).thenReturn(true);
+        when(pokerPlayer.isBuyInRequestActive()).thenReturn(false);
+        when(gameType.canPlayerAffordEntryBet(pokerPlayer, settings, false)).thenReturn(true);
+
+        assertThat(state.playerReadyToStartHand(pokerPlayer), is(false));
+    }
+
+    @Test
+    public void testPlayerNotReadyToStartHandWhileBackendRequestActive() {
+        when(pokerPlayer.isSittingOut()).thenReturn(false);
+        when(pokerPlayer.isBuyInRequestActive()).thenReturn(true);
+        when(gameType.canPlayerAffordEntryBet(pokerPlayer, settings, false)).thenReturn(true);
+
+        assertThat(state.playerReadyToStartHand(pokerPlayer), is(false));
+    }
+
+    @Test
+    public void testPlayerNotReadyToStartHandIfNoCashForEntryBet() {
+        when(pokerPlayer.isSittingOut()).thenReturn(false);
+        when(pokerPlayer.isBuyInRequestActive()).thenReturn(false);
+        when(gameType.canPlayerAffordEntryBet(pokerPlayer, settings, false)).thenReturn(false);
+
+        assertThat(state.playerReadyToStartHand(pokerPlayer), is(false));
+    }
 
 }

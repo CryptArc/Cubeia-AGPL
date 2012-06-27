@@ -253,4 +253,8 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
             }
         };
     }
+
+    public boolean playerReadyToStartHand(PokerPlayer pokerPlayer) {
+        return getReadyPlayerFilter().apply(pokerPlayer);
+    }
 }
