@@ -50,7 +50,7 @@ public class PokerTournament extends MTTSupport {
 
     private static transient Logger log = Logger.getLogger(PokerTournament.class);
 
-    private static final Long STARTING_CHIPS = Long.valueOf(100000);
+    private static final Long STARTING_CHIPS = 100000L;
 
     private transient PokerTournamentUtil util = new PokerTournamentUtil();
 
@@ -206,8 +206,6 @@ public class PokerTournament extends MTTSupport {
         return map;
     }
 
-    // private Random rng = new Random();
-
     private Set<Integer> getPlayersOut(PokerTournamentRoundReport report) {
         Set<Integer> playersOut = new HashSet<Integer>();
 
@@ -216,19 +214,6 @@ public class PokerTournament extends MTTSupport {
                 playersOut.add(balance.getKey());
             }
         }
-
-        // FIXME: Remove this when balances are updated.
-//		if (playersOut.isEmpty()) {
-//			for (Entry<Integer, Long> balance : report.getBalances()) {
-//				int value = rng.nextInt(100);
-//				if (value < 60) {
-//					playersOut.add(balance.getKey());
-//					if (playersOut.size() >= report.getBalances().size()-1) {
-//					    break;
-//					}
-//				}
-//			}
-//		}
 
         log.debug("These players have 0 balance and are out: " + playersOut);
         return playersOut;

@@ -23,39 +23,22 @@ import com.cubeia.firebase.api.mtt.MTTState;
 import com.cubeia.firebase.api.mtt.activator.CreationParticipant;
 import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes;
-import com.cubeia.games.poker.tournament.model.TournamentConfiguration;
-import com.cubeia.games.poker.tournament.model.TournamentStartType;
+import com.cubeia.games.poker.tournament.activator.configuration.TournamentConfiguration;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.state.PokerTournamentStatus;
 import com.cubeia.poker.timing.Timings;
 import org.apache.log4j.Logger;
 
-public class PokerTournamentCreationParticipant implements CreationParticipant {
+public abstract class PokerTournamentCreationParticipant implements CreationParticipant {
 
-    private final TournamentConfiguration config;
+    protected final TournamentConfiguration config;
 
     private Timings timing = Timings.DEFAULT;
 
-    @SuppressWarnings("unused")
     private static transient Logger log = Logger.getLogger(PokerTournamentCreationParticipant.class);
 
     public PokerTournamentCreationParticipant(TournamentConfiguration config) {
-        this.config = config;
-    }
-
-    public PokerTournamentCreationParticipant(String name, int minPlayers) {
-        this(name, minPlayers, Timings.DEFAULT);
-    }
-
-    public PokerTournamentCreationParticipant(String name, int minPlayers, Timings timing) {
-        TournamentConfiguration config = new TournamentConfiguration();
-        config.setName(name);
-        config.setMinPlayers(minPlayers);
-        config.setMaxPlayers(minPlayers);
-        config.setSeatsPerTable(10);
-        config.setStartType(TournamentStartType.SIT_AND_GO);
-        config.setTimingType(timing.ordinal());
-
+        log.debug("Creating tournament participant with config " + config);
         this.config = config;
     }
 
@@ -63,8 +46,8 @@ public class PokerTournamentCreationParticipant implements CreationParticipant {
         return new LobbyPath(mtt.getMttLogicId(), "sitandgo");
     }
 
-    public void tournamentCreated(MTTState mtt, LobbyAttributeAccessor acc) {
-        System.out.println("Poker tournament created. MTT: [" + mtt.getId() + "]" + mtt.getName());
+    public final void tournamentCreated(MTTState mtt, LobbyAttributeAccessor acc) {
+        log.debug("Poker tournament created. MTT: [" + mtt.getId() + "]" + mtt.getName());
         MTTStateSupport stateSupport = ((MTTStateSupport) mtt);
         stateSupport.setGameId(PokerTournamentActivatorImpl.POKER_GAME_ID);
         stateSupport.setSeats(config.getSeatsPerTable());
@@ -73,13 +56,21 @@ public class PokerTournamentCreationParticipant implements CreationParticipant {
         stateSupport.setMinPlayers(config.getMinPlayers());
 
         PokerTournamentState pokerState = new PokerTournamentState();
-        pokerState.setStatus(PokerTournamentStatus.REGISTERING);
         pokerState.setTiming(Timings.values()[config.getTimingType()]);
         stateSupport.setState(pokerState);
 
-        // Sit and go tournaments start in registering mode.
-        acc.setStringAttribute(PokerTournamentLobbyAttributes.STATUS.name(), PokerTournamentStatus.REGISTERING.name());
-        acc.setIntAttribute(PokerTournamentLobbyAttributes.TABLE_SIZE.name(), 10);
         acc.setStringAttribute("SPEED", timing.name());
+        // TODO: Should be configurable.
+        acc.setIntAttribute(PokerTournamentLobbyAttributes.TABLE_SIZE.name(), 10);
+
+        tournamentCreated(pokerState, acc);
     }
+
+    protected void setStatus(PokerTournamentState pokerState, LobbyAttributeAccessor lobbyAttributeAccessor, PokerTournamentStatus status) {
+        lobbyAttributeAccessor.setStringAttribute(PokerTournamentLobbyAttributes.STATUS.name(), status.name());
+        pokerState.setStatus(status);
+    }
+
+    protected abstract void tournamentCreated(PokerTournamentState pokerState, LobbyAttributeAccessor lobbyAttributeAccessor);
+
 }

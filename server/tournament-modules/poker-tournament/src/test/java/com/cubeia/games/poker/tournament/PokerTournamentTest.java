@@ -28,6 +28,8 @@ import com.cubeia.firebase.api.mtt.model.MttRegistrationRequest;
 import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.firebase.api.mtt.support.MttNotifierAdapter;
 import com.cubeia.games.poker.tournament.activator.PokerTournamentCreationParticipant;
+import com.cubeia.games.poker.tournament.activator.SitAndGoCreationParticipant;
+import com.cubeia.games.poker.tournament.activator.configuration.SitAndGoConfiguration;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.state.PokerTournamentStatus;
 import junit.framework.TestCase;
@@ -71,7 +73,7 @@ public class PokerTournamentTest extends TestCase {
         tournament.setTableCreator(new MockTableCreator(tournament, instance));
         tournament.setMttNotifier(new MttNotifierAdapter());
 
-        PokerTournamentCreationParticipant part = new PokerTournamentCreationParticipant("test", 20);
+        PokerTournamentCreationParticipant part = new SitAndGoCreationParticipant(new SitAndGoConfiguration("test", 20));
         part.tournamentCreated(state, instance.getLobbyAccessor());
         pokerState = (PokerTournamentState) state.getState();
     }
@@ -101,6 +103,10 @@ public class PokerTournamentTest extends TestCase {
     public void testBalanceTables() {
         fillTournament();
         forceBalancing();
+    }
+
+    public void testScheduledTournamentSchedulesOpeningRegistration() {
+
     }
 
     private void forceBalancing() {
@@ -163,7 +169,7 @@ public class PokerTournamentTest extends TestCase {
         int playersInTournament = state.getRemainingPlayerCount();
 
         for (Integer playerId : playersAtTable) {
-            // Check so we dont kick all players out
+            // Check so we don't kick all players out
             long randomBalance = getRandomBalance();
             if (randomBalance <= 0 && --playersInTournament == 0) {
                 randomBalance = 1000; // Last player

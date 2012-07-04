@@ -15,10 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.tournament;
+package com.cubeia.games.poker.tournament.activator.configuration.provider;
 
-public enum PokerTournamentLobbyAttributes {
-    STATUS,
-    TABLE_SIZE,
-    IDENTIFIER
+import com.cubeia.games.poker.tournament.activator.configuration.ScheduledTournamentConfiguration;
+
+import java.util.Collection;
+
+/**
+ * Interface for providing the schedule for scheduled tournaments.
+ *
+ */
+public interface TournamentScheduleProvider {
+
+    Collection<ScheduledTournamentConfiguration> getTournamentSchedule();
 }

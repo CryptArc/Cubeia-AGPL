@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.tournament.model;
+package com.cubeia.games.poker.tournament.activator.configuration;
 
 public enum TournamentStartType {
     SIT_AND_GO,

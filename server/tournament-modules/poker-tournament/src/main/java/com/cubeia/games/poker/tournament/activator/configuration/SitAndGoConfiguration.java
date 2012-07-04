@@ -15,10 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.tournament;
+package com.cubeia.games.poker.tournament.activator.configuration;
 
-public enum PokerTournamentLobbyAttributes {
-    STATUS,
-    TABLE_SIZE,
-    IDENTIFIER
+import com.cubeia.poker.timing.Timings;
+
+public class SitAndGoConfiguration extends TournamentConfiguration {
+
+    public SitAndGoConfiguration(String name, int capacity, Timings timings) {
+        super.setName(name);
+        super.setMinPlayers(capacity);
+        super.setMaxPlayers(capacity);
+        super.setSeatsPerTable(10);
+        super.setStartType(TournamentStartType.SIT_AND_GO);
+        super.setTimingType(timings.ordinal());
+    }
+
+    public SitAndGoConfiguration(String name, int capacity) {
+        this(name, capacity, Timings.DEFAULT);
+    }
 }

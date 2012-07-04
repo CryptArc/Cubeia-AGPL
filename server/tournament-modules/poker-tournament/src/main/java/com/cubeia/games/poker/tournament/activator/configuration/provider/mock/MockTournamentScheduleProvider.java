@@ -15,10 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.tournament;
+package com.cubeia.games.poker.tournament.activator.configuration.provider.mock;
 
-public enum PokerTournamentLobbyAttributes {
-    STATUS,
-    TABLE_SIZE,
-    IDENTIFIER
+import com.cubeia.games.poker.tournament.activator.configuration.ScheduledTournamentConfiguration;
+import com.cubeia.games.poker.tournament.activator.configuration.provider.TournamentScheduleProvider;
+
+import java.util.Collection;
+
+public class MockTournamentScheduleProvider implements TournamentScheduleProvider {
+
+    @Override
+    public Collection<ScheduledTournamentConfiguration> getTournamentSchedule() {
+        return null;
+    }
 }

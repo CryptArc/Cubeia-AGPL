@@ -67,12 +67,13 @@ public class PokerTournamentListener implements PlayerListener {
 
         util.setTournamentStatus(instance, PokerTournamentStatus.RUNNING);
         int tablesToCreate = state.getRegisteredPlayersCount() / state.getSeats();
+        // Not sure why we do this?
         if (state.getRegisteredPlayersCount() % state.getSeats() > 0) {
             tablesToCreate++;
         }
         pokerState.setTablesToCreate(tablesToCreate);
         TournamentTableSettings settings = getTableSettings(pokerState);
-        pokerTournament.createTables(state, tablesToCreate, "test", settings);
+        pokerTournament.createTables(state, tablesToCreate, "mtt", settings);
     }
 
     private void setInitialBlinds(PokerTournamentState pokerState) {

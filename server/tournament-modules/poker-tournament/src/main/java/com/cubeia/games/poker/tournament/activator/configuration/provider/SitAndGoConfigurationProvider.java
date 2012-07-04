@@ -15,10 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.tournament;
+package com.cubeia.games.poker.tournament.activator.configuration.provider;
 
-public enum PokerTournamentLobbyAttributes {
-    STATUS,
-    TABLE_SIZE,
-    IDENTIFIER
+import com.cubeia.games.poker.tournament.activator.configuration.SitAndGoConfiguration;
+
+import java.util.Collection;
+
+public interface SitAndGoConfigurationProvider {
+
+    public Collection<SitAndGoConfiguration> getConfigurations();
 }

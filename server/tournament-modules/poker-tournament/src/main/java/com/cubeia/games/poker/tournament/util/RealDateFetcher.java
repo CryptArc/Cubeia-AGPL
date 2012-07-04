@@ -15,10 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.tournament;
+package com.cubeia.games.poker.tournament.util;
 
-public enum PokerTournamentLobbyAttributes {
-    STATUS,
-    TABLE_SIZE,
-    IDENTIFIER
+import org.joda.time.DateTime;
+
+public class RealDateFetcher implements DateFetcher {
+
+    @Override
+    public DateTime now() {
+        return new DateTime();
+    }
 }
