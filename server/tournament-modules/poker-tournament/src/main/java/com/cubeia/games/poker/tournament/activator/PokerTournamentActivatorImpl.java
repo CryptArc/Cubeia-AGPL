@@ -53,6 +53,7 @@ public class PokerTournamentActivatorImpl implements MttActivator, Startable, Po
     private DateFetcher dateFetcher = new RealDateFetcher();
 
     public PokerTournamentActivatorImpl() {
+
     }
 
     private JMXActivator jmxInterface;

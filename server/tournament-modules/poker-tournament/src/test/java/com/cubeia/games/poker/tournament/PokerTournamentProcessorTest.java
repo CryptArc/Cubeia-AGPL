@@ -23,6 +23,7 @@ import com.cubeia.firebase.api.action.mtt.MttAction;
 import com.cubeia.firebase.api.action.mtt.MttRoundReportAction;
 import com.cubeia.firebase.api.common.Attribute;
 import com.cubeia.firebase.api.lobby.LobbyAttributeAccessor;
+import com.cubeia.firebase.api.mtt.MttInstance;
 import com.cubeia.firebase.api.mtt.MttNotifier;
 import com.cubeia.firebase.api.mtt.model.MttPlayer;
 import com.cubeia.firebase.api.mtt.model.MttRegistrationRequest;
@@ -66,7 +67,7 @@ public class PokerTournamentProcessorTest extends TestCase {
     private MTTStateSupport state;
 
     @Mock
-    private MttInstanceAdapter instance;
+    private MttInstance instance;
 
     @Mock
     private Scheduler<MttAction> scheduler;
@@ -79,19 +80,14 @@ public class PokerTournamentProcessorTest extends TestCase {
 
     private LobbyAttributeAccessor lobbyAccessor = new LobbyAttributeAccessorAdapter();
 
-    PokerTournamentState pokerState;
+    private PokerTournamentState pokerState;
 
-    Random rng = new Random();
-
-    private PokerTournamentHandler tournament;
-
-    private PokerTournamentState pokerTournamentState;
+    private Random rng = new Random();
 
     @Override
     protected void setUp() throws Exception {
         initMocks(this);
         tournamentProcessor = new PokerTournamentProcessor();
-        pokerTournamentState = new PokerTournamentState();
         state = new MTTStateSupport(1, 1);
         when(instance.getSystemPlayerRegistry()).thenReturn(playerRegistry);
         when(instance.getState()).thenReturn(state);

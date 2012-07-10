@@ -124,8 +124,6 @@ public class TournamentScannerTest {
         MttLobbyObject lobbyObject = mock(MttLobbyObject.class);
         Map<String, AttributeValue> map = Maps.newHashMap();
         map.put(PokerTournamentLobbyAttributes.IDENTIFIER.name(), AttributeValue.wrap(identifier));
-//        map.put(Enums.TournamentAttributes.NAME.name(), AttributeValue.wrap(identifier));
-//        map.put(Enums.TournamentAttributes.STATUS.name(), AttributeValue.wrap("ANNOUNCED"));
         when(lobbyObject.getAttributes()).thenReturn(map);
         return lobbyObject;
     }
