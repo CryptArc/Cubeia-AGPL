@@ -29,7 +29,7 @@ import static com.google.common.collect.Maps.newHashMap;
 
 
 /**
- * The Mock Tournament Activator creates new tournament automatically without the need of a database.
+ * The mock provider creates new tournament automatically without the need of a database.
  *
  * @author Fredrik Johansson, Cubeia Ltd
  */

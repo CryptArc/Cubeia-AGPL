@@ -37,6 +37,8 @@ public class PokerTournament implements PlayerListener, PlayerInterceptor, Seria
 
     private PokerTournamentUtil util = new PokerTournamentUtil();
 
+    private StartCriterion startCriterion;
+
     private transient MTTStateSupport state;
 
     private transient MttInstance instance;
