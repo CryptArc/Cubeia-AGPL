@@ -35,6 +35,7 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.quartz.CronTrigger;
 
 import java.util.Map;
 
@@ -45,6 +46,7 @@ import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.quartz.CronScheduleBuilder.dailyAtHourAndMinute;
+import static org.quartz.TriggerBuilder.newTrigger;
 
 public class TournamentScannerTest {
 
@@ -78,8 +80,11 @@ public class TournamentScannerTest {
     @Test
     public void shouldCreateTournamentWhenAnnouncingTimeHasCome() {
         // Given a tournament that should start at 14.30 and be announced 30 minutes before.
-        TournamentSchedule schedule = new TournamentSchedule(dailyAtHourAndMinute(14, 30).build(), 10, 20, 30);
-        ScheduledTournamentConfiguration tournament = new ScheduledTournamentConfiguration(schedule);
+        CronTrigger schedule = newTrigger().withSchedule(dailyAtHourAndMinute(14, 30))
+                .startAt(new DateTime(2011, 7, 5, 9, 0, 0).toDate())
+                .endAt(new DateTime(2013, 7, 5, 9, 0, 0).toDate()).build();
+        TournamentSchedule tournamentSchedule = new TournamentSchedule(schedule, 10, 20, 30);
+        ScheduledTournamentConfiguration tournament = new ScheduledTournamentConfiguration(tournamentSchedule);
         when(tournamentScheduleProvider.getTournamentSchedule()).thenReturn(singletonList(tournament));
 
         // When we scan tournaments at 14.00.
@@ -93,8 +98,11 @@ public class TournamentScannerTest {
     @Test
     public void shouldOnlyCreateOneInstancePerStartTime() {
         // Given a tournament that should start at 14.30 and be announced 30 minutes before.
-        TournamentSchedule schedule = new TournamentSchedule(dailyAtHourAndMinute(14, 30).build(), 10, 20, 30);
-        ScheduledTournamentConfiguration tournament = new ScheduledTournamentConfiguration(schedule);
+        CronTrigger schedule = newTrigger().withSchedule(dailyAtHourAndMinute(14, 30))
+                .startAt(new DateTime(2011, 7, 5, 9, 0, 0).toDate())
+                .endAt(new DateTime(2013, 7, 5, 9, 0, 0).toDate()).build();
+        TournamentSchedule tournamentSchedule = new TournamentSchedule(schedule, 10, 20, 30);
+        ScheduledTournamentConfiguration tournament = new ScheduledTournamentConfiguration(tournamentSchedule);
         when(tournamentScheduleProvider.getTournamentSchedule()).thenReturn(singletonList(tournament));
 
         // When we scan tournaments at 14:00.02 and 14:00.03.

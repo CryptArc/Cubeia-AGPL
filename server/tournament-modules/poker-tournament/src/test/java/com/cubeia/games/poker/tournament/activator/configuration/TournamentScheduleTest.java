@@ -43,8 +43,9 @@ public class TournamentScheduleTest {
 
     @Test
     public void testNoMoreTournamentsAfterEndDate() {
-        CronTrigger schedule = newTrigger().withSchedule(dailyAtHourAndMinute(14, 30)).endAt(new DateTime(2012, 7, 5, 9, 0, 0).toDate()).build();
-        System.out.println(schedule.getFinalFireTime());
+        CronTrigger schedule = newTrigger().withSchedule(dailyAtHourAndMinute(14, 30))
+                .startAt(new DateTime(2012, 6, 5, 9, 0, 0).toDate())
+                .endAt(new DateTime(2012, 7, 5, 9, 0, 0).toDate()).build();
         TournamentSchedule tournamentSchedule = new TournamentSchedule(schedule, 10, 20, 30);
 
         DateTime nextAnnounceTime = tournamentSchedule.getNextAnnounceTime(new DateTime(2012, 7, 9, 9, 0, 0));

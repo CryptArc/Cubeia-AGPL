@@ -22,10 +22,12 @@ import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.state.PokerTournamentStatus;
 
-public class PokerTournamentUtil {
+import java.io.Serializable;
+
+public class PokerTournamentUtil implements Serializable {
 
     public PokerTournamentState getPokerState(MttInstance instance) {
-        return (PokerTournamentState) instance.getState().getState();
+        return getPokerState((MTTStateSupport) instance.getState());
     }
 
     public void setTournamentStatus(MttInstance instance, PokerTournamentStatus status) {
@@ -38,7 +40,7 @@ public class PokerTournamentUtil {
     }
 
     public PokerTournamentState getPokerState(MTTStateSupport state) {
-        return (PokerTournamentState) state.getState();
+        return ((PokerTournamentHandler) state.getState()).getPokerTournamentState();
     }
 
 }

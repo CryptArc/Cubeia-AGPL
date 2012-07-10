@@ -26,14 +26,14 @@ import java.util.Collection;
 
 public class MockTableCreator implements MttTableCreator {
 
-    private PokerTournament tournament;
+    private PokerTournamentProcessor tournamentProcessor;
 
     private MttInstance instance;
 
     private PokerTournamentUtil util = new PokerTournamentUtil();
 
-    public MockTableCreator(PokerTournament tournament, MttInstance instance) {
-        this.tournament = tournament;
+    public MockTableCreator(PokerTournamentProcessor tournamentProcessor, MttInstance instance) {
+        this.tournamentProcessor = tournamentProcessor;
         this.instance = instance;
     }
 
@@ -44,7 +44,7 @@ public class MockTableCreator implements MttTableCreator {
         }
         MTTStateSupport state = util.getStateSupport(instance);
         state.getTables().addAll(action.getTables());
-        tournament.process(action, instance);
+        tournamentProcessor.process(action, instance);
     }
 
     public void removeTables(int gameId, int mttId, Collection<Integer> tableIds) {

@@ -29,10 +29,10 @@ public class PokerTournamentInterceptor implements PlayerInterceptor {
     private transient PokerTournamentUtil util = new PokerTournamentUtil();
 
     @SuppressWarnings("unused")
-    private final PokerTournament pokerTournament;
+    private final PokerTournamentProcessor pokerTournamentProcessor;
 
-    public PokerTournamentInterceptor(PokerTournament pokerTournament) {
-        this.pokerTournament = pokerTournament;
+    public PokerTournamentInterceptor(PokerTournamentProcessor pokerTournamentProcessor) {
+        this.pokerTournamentProcessor = pokerTournamentProcessor;
     }
 
     public MttRegisterResponse register(MttInstance instance, MttRegistrationRequest request) {

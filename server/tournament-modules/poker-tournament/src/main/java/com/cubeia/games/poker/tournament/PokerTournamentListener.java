@@ -31,12 +31,12 @@ public class PokerTournamentListener implements PlayerListener {
 
     private static transient Logger log = Logger.getLogger(PokerTournamentListener.class);
 
-    private transient PokerTournament pokerTournament;
+    private transient PokerTournamentProcessor pokerTournamentProcessor;
 
     private transient PokerTournamentUtil util = new PokerTournamentUtil();
 
-    public PokerTournamentListener(PokerTournament pokerTournament) {
-        this.pokerTournament = pokerTournament;
+    public PokerTournamentListener(PokerTournamentProcessor pokerTournamentProcessor) {
+        this.pokerTournamentProcessor = pokerTournamentProcessor;
     }
 
     public void playerRegistered(MttInstance instance, MttRegistrationRequest request) {
@@ -49,12 +49,12 @@ public class PokerTournamentListener implements PlayerListener {
     }
 
     private void addJoinedTimestamps(MTTStateSupport state) {
-        PokerTournamentState pokerState = (PokerTournamentState) state.getState();
+        PokerTournamentState tournamentState = util.getPokerState(state);
         if (state.getRegisteredPlayersCount() == 1) {
-            pokerState.setFirstRegisteredTime(System.currentTimeMillis());
+            tournamentState.setFirstRegisteredTime(System.currentTimeMillis());
 
         } else if (state.getRegisteredPlayersCount() == state.getMinPlayers()) {
-            pokerState.setLastRegisteredTime(System.currentTimeMillis());
+            tournamentState.setLastRegisteredTime(System.currentTimeMillis());
         }
     }
 
@@ -73,7 +73,7 @@ public class PokerTournamentListener implements PlayerListener {
         }
         pokerState.setTablesToCreate(tablesToCreate);
         TournamentTableSettings settings = getTableSettings(pokerState);
-        pokerTournament.createTables(state, tablesToCreate, "mtt", settings);
+        pokerTournamentProcessor.createTables(state, tablesToCreate, "mtt", settings);
     }
 
     private void setInitialBlinds(PokerTournamentState pokerState) {
