@@ -9,21 +9,27 @@ import com.cubeia.firebase.api.mtt.MttInstance;
 import com.cubeia.firebase.api.mtt.MttNotifier;
 import com.cubeia.firebase.api.mtt.lobby.DefaultMttAttributes;
 import com.cubeia.firebase.api.mtt.model.MttPlayer;
+import com.cubeia.firebase.api.mtt.model.MttRegisterResponse;
+import com.cubeia.firebase.api.mtt.model.MttRegistrationRequest;
 import com.cubeia.firebase.api.mtt.seating.SeatingContainer;
 import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.firebase.api.mtt.support.MTTSupport;
+import com.cubeia.firebase.api.mtt.support.registry.PlayerInterceptor;
+import com.cubeia.firebase.api.mtt.support.registry.PlayerListener;
 import com.cubeia.firebase.api.mtt.support.tables.Move;
 import com.cubeia.firebase.api.mtt.support.tables.TableBalancer;
 import com.cubeia.games.poker.io.protocol.TournamentOut;
+import com.cubeia.games.poker.tournament.activator.TournamentTableSettings;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.state.PokerTournamentStatus;
 import com.cubeia.games.poker.tournament.util.ProtocolFactory;
+import com.cubeia.poker.timing.TimingFactory;
 import org.apache.log4j.Logger;
 
 import java.io.Serializable;
 import java.util.*;
 
-public class PokerTournament implements Serializable {
+public class PokerTournament implements PlayerListener, PlayerInterceptor, Serializable {
 
     private static final Logger log = Logger.getLogger(PokerTournament.class);
 
@@ -259,5 +265,89 @@ public class PokerTournament implements Serializable {
 
     public PokerTournamentState getPokerTournamentState() {
         return pokerState;
+    }
+
+    private void setTournamentStatus(MttInstance instance, PokerTournamentStatus status) {
+        instance.getLobbyAccessor().setStringAttribute(PokerTournamentLobbyAttributes.STATUS.name(), status.name());
+        pokerState.setStatus(status);
+    }
+
+    private void addJoinedTimestamps() {
+        if (state.getRegisteredPlayersCount() == 1) {
+            pokerState.setFirstRegisteredTime(System.currentTimeMillis());
+
+        } else if (state.getRegisteredPlayersCount() == state.getMinPlayers()) {
+            pokerState.setLastRegisteredTime(System.currentTimeMillis());
+        }
+    }
+
+    private void startTournament() {
+        setInitialBlinds(pokerState);
+
+        long registrationElapsedTime = pokerState.getLastRegisteredTime() - pokerState.getFirstRegisteredTime();
+        log.debug("Starting tournament [" + instance.getId() + " : " + instance.getState().getName() + "]. Registration time was " + registrationElapsedTime + " ms");
+
+        setTournamentStatus(instance, PokerTournamentStatus.RUNNING);
+        int tablesToCreate = state.getRegisteredPlayersCount() / state.getSeats();
+        // Not sure why we do this?
+        if (state.getRegisteredPlayersCount() % state.getSeats() > 0) {
+            tablesToCreate++;
+        }
+        pokerState.setTablesToCreate(tablesToCreate);
+        TournamentTableSettings settings = getTableSettings(pokerState);
+        mttSupport.createTables(state, tablesToCreate, "mtt", settings);
+    }
+
+    private void setInitialBlinds(PokerTournamentState pokerState) {
+        // TODO: Make configurable.
+        log.info("Setting initial blinds. (sb = 10, bb = 20).");
+        pokerState.setSmallBlindAmount(10);
+        pokerState.setBigBlindAmount(20);
+    }
+
+    private boolean tournamentShouldStart() {
+        return state.getRegisteredPlayersCount() == state.getMinPlayers();
+    }
+
+    private TournamentTableSettings getTableSettings(PokerTournamentState state) {
+        TournamentTableSettings settings = new TournamentTableSettings(state.getSmallBlindAmount(), state.getBigBlindAmount());
+        settings.setTimingProfile(TimingFactory.getRegistry().getTimingProfile(state.getTiming()));
+        return settings;
+    }
+
+    // Listener interface
+
+    @Override
+    public void playerRegistered(MttInstance instance, MttRegistrationRequest request) {
+        addJoinedTimestamps();
+
+        if (tournamentShouldStart()) {
+            startTournament();
+        }
+    }
+
+    @Override
+    public void playerUnregistered(MttInstance instance, int pid) {
+        // TODO Add support for unregistration.
+    }
+
+    // Interceptor interface
+
+    @Override
+    public MttRegisterResponse register(MttInstance instance, MttRegistrationRequest request) {
+        if (pokerState.getStatus() != PokerTournamentStatus.REGISTERING) {
+            return MttRegisterResponse.ALLOWED;
+        } else {
+            return MttRegisterResponse.ALLOWED;
+        }
+    }
+
+    @Override
+    public MttRegisterResponse unregister(MttInstance instance, int pid) {
+        if (pokerState.getStatus() != PokerTournamentStatus.REGISTERING) {
+            return MttRegisterResponse.DENIED;
+        } else {
+            return MttRegisterResponse.ALLOWED;
+        }
     }
 }
