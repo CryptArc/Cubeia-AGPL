@@ -130,7 +130,7 @@ public class PokerTournamentProcessorTest extends TestCase {
         forceBalancing();
     }
 
-    public void testScheduledTournamentSchedulesOpeningRegistration() {
+    public void testScheduledTournamentSchedulesOpeningRegistrationWhenCreated() {
 
     }
 

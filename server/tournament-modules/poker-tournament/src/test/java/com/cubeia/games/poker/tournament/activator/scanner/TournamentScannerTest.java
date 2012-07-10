@@ -34,6 +34,7 @@ import com.google.common.collect.Maps;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.quartz.CronTrigger;
 
@@ -109,15 +110,20 @@ public class TournamentScannerTest {
         when(dateFetcher.now()).thenReturn(new DateTime(2012, 7, 5, 14, 0, 2)).thenReturn(new DateTime(2012, 7, 5, 14, 0, 3));
         scanner.checkTournamentsNow();
 
+        // We should create one tournament.
+        ArgumentCaptor<ScheduledTournamentCreationParticipant> captor = ArgumentCaptor.forClass(ScheduledTournamentCreationParticipant.class);
+        verify(factory, times(1)).createMtt(anyInt(), anyString(), captor.capture());
+
+        // And then check it again at 14.00.03 (resetting the factory so we can have it return the tournament we just created).
         reset(factory);
-        ScheduledTournamentInstance instance = tournament.spawnConfigurationForNextInstance(dateFetcher.now());
+        ScheduledTournamentInstance instance = captor.getValue().getInstance();
         MttLobbyObject mttLobbyObject = tournamentWithNameAndIdentifier(instance.getName(), instance.getIdentifier());
         MttLobbyObject[] mttLobbyObjects = new MttLobbyObject[]{mttLobbyObject};
         when(factory.listTournamentInstances()).thenReturn(mttLobbyObjects);
         scanner.checkTournamentsNow();
 
-        // Then we should only create one instance of the tournament.
-        verify(factory, times(1)).createMtt(anyInt(), anyString(), isA(ScheduledTournamentCreationParticipant.class));
+        // Then we should not create any more tournaments (because the factory has been reset, the first invocation is gone).
+        verify(factory, never()).createMtt(anyInt(), anyString(), isA(ScheduledTournamentCreationParticipant.class));
     }
 
     private MttLobbyObject tournamentWithNameAndIdentifier(String name, String identifier) {

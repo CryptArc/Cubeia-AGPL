@@ -23,9 +23,9 @@ import org.apache.log4j.Logger;
 import java.io.Serializable;
 import java.util.*;
 
-public class PokerTournamentHandler implements Serializable {
+public class PokerTournament implements Serializable {
 
-    private static final Logger log = Logger.getLogger(PokerTournamentHandler.class);
+    private static final Logger log = Logger.getLogger(PokerTournament.class);
 
     private PokerTournamentState pokerState;
 
@@ -41,7 +41,7 @@ public class PokerTournamentHandler implements Serializable {
 
     private static final Long STARTING_CHIPS = 100000L;
 
-    public PokerTournamentHandler(PokerTournamentState pokerState) {
+    public PokerTournament(PokerTournamentState pokerState) {
         this.pokerState = pokerState;
     }
 

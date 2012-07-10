@@ -22,7 +22,7 @@ import com.cubeia.firebase.api.lobby.LobbyPath;
 import com.cubeia.firebase.api.mtt.MTTState;
 import com.cubeia.firebase.api.mtt.activator.CreationParticipant;
 import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
-import com.cubeia.games.poker.tournament.PokerTournamentHandler;
+import com.cubeia.games.poker.tournament.PokerTournament;
 import com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes;
 import com.cubeia.games.poker.tournament.activator.configuration.TournamentConfiguration;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
@@ -58,7 +58,7 @@ public abstract class PokerTournamentCreationParticipant implements CreationPart
 
         PokerTournamentState pokerState = new PokerTournamentState();
         pokerState.setTiming(Timings.values()[config.getTimingType()]);
-        PokerTournamentHandler tournament = new PokerTournamentHandler(pokerState);
+        PokerTournament tournament = new PokerTournament(pokerState);
         stateSupport.setState(tournament);
 
         acc.setStringAttribute("SPEED", timing.name());

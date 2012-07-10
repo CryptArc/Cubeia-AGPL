@@ -40,7 +40,7 @@ public class PokerTournamentUtil implements Serializable {
     }
 
     public PokerTournamentState getPokerState(MTTStateSupport state) {
-        return ((PokerTournamentHandler) state.getState()).getPokerTournamentState();
+        return ((PokerTournament) state.getState()).getPokerTournamentState();
     }
 
 }

@@ -51,7 +51,7 @@ public class PokerTournamentProcessor extends MTTSupport {
     public void process(MttRoundReportAction action, MttInstance instance) {
         try {
             MDC.put(MDC_TAG, "Tournament[" + instance.getId() + "]");
-            PokerTournamentHandler tournament = (PokerTournamentHandler) instance.getState().getState();
+            PokerTournament tournament = (PokerTournament) instance.getState().getState();
             injectDependencies(tournament, instance);
             tournament.processRoundReport(action);
         } finally {
@@ -65,16 +65,12 @@ public class PokerTournamentProcessor extends MTTSupport {
         log.info("Tables created: " + action + " instance: " + instance);
         try {
             MDC.put(MDC_TAG, "Tournament[" + instance.getId() + "]");
-            PokerTournamentHandler tournament = (PokerTournamentHandler) instance.getState().getState();
+            PokerTournament tournament = (PokerTournament) instance.getState().getState();
             injectDependencies(tournament, instance);
             tournament.handleTablesCreated();
         } finally {
             MDC.remove(MDC_TAG);
         }
-    }
-
-    private void injectDependencies(PokerTournamentHandler tournament, MttInstance instance) {
-        tournament.injectTransientDependencies(instance, this, util.getStateSupport(instance), instance.getMttNotifier());
     }
 
     @Override
@@ -100,13 +96,16 @@ public class PokerTournamentProcessor extends MTTSupport {
 
     @Override
     public void tournamentCreated(MttInstance mttInstance) {
-        // TODO Auto-generated method stub
 
     }
 
     public void tournamentDestroyed(MttInstance mttInstance) {
         // TODO Auto-generated method stub
 
+    }
+
+    private void injectDependencies(PokerTournament tournament, MttInstance instance) {
+        tournament.injectTransientDependencies(instance, this, util.getStateSupport(instance), instance.getMttNotifier());
     }
 
 }

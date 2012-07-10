@@ -17,6 +17,7 @@
 
 package com.cubeia.games.poker.tournament.activator.configuration;
 
+import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 
 /**
@@ -30,12 +31,15 @@ public class ScheduledTournamentInstance {
 
     private DateTime startTime;
 
+    private static final Logger log = Logger.getLogger(ScheduledTournamentInstance.class);
+
     public ScheduledTournamentInstance(TournamentConfiguration configuration, DateTime startTime) {
         this.configuration = configuration;
         this.startTime = startTime;
     }
 
     public String getIdentifier() {
+        log.debug("Configuration " + configuration.getId() + " has startTimeMillis: " + startTime.getMillis() + " start time: " + startTime);
         return "" + configuration.getId() + startTime.getMillis();
     }
 
