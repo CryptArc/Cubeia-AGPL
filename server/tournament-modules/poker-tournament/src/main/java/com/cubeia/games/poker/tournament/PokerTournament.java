@@ -14,14 +14,14 @@ import com.cubeia.firebase.api.mtt.model.MttRegistrationRequest;
 import com.cubeia.firebase.api.mtt.seating.SeatingContainer;
 import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.firebase.api.mtt.support.MTTSupport;
-import com.cubeia.firebase.api.mtt.support.registry.PlayerInterceptor;
-import com.cubeia.firebase.api.mtt.support.registry.PlayerListener;
 import com.cubeia.firebase.api.mtt.support.tables.Move;
 import com.cubeia.firebase.api.mtt.support.tables.TableBalancer;
 import com.cubeia.games.poker.io.protocol.TournamentOut;
 import com.cubeia.games.poker.tournament.activator.TournamentTableSettings;
+import com.cubeia.games.poker.tournament.configuration.TournamentLifeCycle;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.state.PokerTournamentStatus;
+import com.cubeia.games.poker.tournament.util.DateFetcher;
 import com.cubeia.games.poker.tournament.util.ProtocolFactory;
 import com.cubeia.poker.timing.TimingFactory;
 import org.apache.log4j.Logger;
@@ -29,7 +29,7 @@ import org.apache.log4j.Logger;
 import java.io.Serializable;
 import java.util.*;
 
-public class PokerTournament implements PlayerListener, PlayerInterceptor, Serializable {
+public class PokerTournament implements Serializable {
 
     private static final Logger log = Logger.getLogger(PokerTournament.class);
 
@@ -37,7 +37,7 @@ public class PokerTournament implements PlayerListener, PlayerInterceptor, Seria
 
     private PokerTournamentUtil util = new PokerTournamentUtil();
 
-    private StartCriterion startCriterion;
+    private TournamentLifeCycle tournamentLifeCycle;
 
     private transient MTTStateSupport state;
 
@@ -49,8 +49,12 @@ public class PokerTournament implements PlayerListener, PlayerInterceptor, Seria
 
     private static final Long STARTING_CHIPS = 100000L;
 
-    public PokerTournament(PokerTournamentState pokerState) {
+    private DateFetcher dateFetcher;
+
+    public PokerTournament(PokerTournamentState pokerState, DateFetcher dateFetcher, TournamentLifeCycle tournamentLifeCycle) {
         this.pokerState = pokerState;
+        this.dateFetcher = dateFetcher;
+        this.tournamentLifeCycle = tournamentLifeCycle;
     }
 
     public void injectTransientDependencies(MttInstance instance, MTTSupport support, MTTStateSupport state, MttNotifier notifier) {
@@ -91,7 +95,7 @@ public class PokerTournament implements PlayerListener, PlayerInterceptor, Seria
     public void handleTablesCreated() {
         if (pokerState.allTablesHaveBeenCreated(state.getTables().size())) {
             mttSupport.seatPlayers(state, createInitialSeating());
-            scheduleTournamentStart(instance);
+            scheduleTournamentStart();
         }
     }
 
@@ -240,9 +244,16 @@ public class PokerTournament implements PlayerListener, PlayerInterceptor, Seria
         return map;
     }
 
-    private void scheduleTournamentStart(MttInstance instance) {
+    private void scheduleTournamentStart() {
         MttObjectAction action = new MttObjectAction(instance.getId(), TournamentTrigger.START);
         instance.getScheduler().scheduleAction(action, 10000);
+    }
+
+    private void scheduleRegistrationOpening() {
+        MttObjectAction action = new MttObjectAction(instance.getId(), TournamentTrigger.OPEN_REGISTRATION);
+        long timeToRegistrationStart = tournamentLifeCycle.getTimeToRegistrationStart(dateFetcher.now());
+        log.debug("Scheduling registration opening in " + timeToRegistrationStart + " millis");
+        instance.getScheduler().scheduleAction(action, timeToRegistrationStart);
     }
 
     private Collection<SeatingContainer> createInitialSeating() {
@@ -269,7 +280,7 @@ public class PokerTournament implements PlayerListener, PlayerInterceptor, Seria
         return pokerState;
     }
 
-    private void setTournamentStatus(MttInstance instance, PokerTournamentStatus status) {
+    private void setTournamentStatus(PokerTournamentStatus status) {
         instance.getLobbyAccessor().setStringAttribute(PokerTournamentLobbyAttributes.STATUS.name(), status.name());
         pokerState.setStatus(status);
     }
@@ -289,7 +300,7 @@ public class PokerTournament implements PlayerListener, PlayerInterceptor, Seria
         long registrationElapsedTime = pokerState.getLastRegisteredTime() - pokerState.getFirstRegisteredTime();
         log.debug("Starting tournament [" + instance.getId() + " : " + instance.getState().getName() + "]. Registration time was " + registrationElapsedTime + " ms");
 
-        setTournamentStatus(instance, PokerTournamentStatus.RUNNING);
+        setTournamentStatus(PokerTournamentStatus.RUNNING);
         int tablesToCreate = state.getRegisteredPlayersCount() / state.getSeats();
         // Not sure why we do this?
         if (state.getRegisteredPlayersCount() % state.getSeats() > 0) {
@@ -308,7 +319,11 @@ public class PokerTournament implements PlayerListener, PlayerInterceptor, Seria
     }
 
     private boolean tournamentShouldStart() {
-        return state.getRegisteredPlayersCount() == state.getMinPlayers();
+        return tournamentLifeCycle.shouldStartTournament(dateFetcher.now(), state.getRegisteredPlayersCount(), state.getMinPlayers());
+    }
+
+    private boolean tournamentShouldBeCancelled() {
+        return tournamentLifeCycle.shouldCancelTournament(dateFetcher.now(), state.getRegisteredPlayersCount(), state.getMinPlayers());
     }
 
     private TournamentTableSettings getTableSettings(PokerTournamentState state) {
@@ -316,11 +331,8 @@ public class PokerTournament implements PlayerListener, PlayerInterceptor, Seria
         settings.setTimingProfile(TimingFactory.getRegistry().getTimingProfile(state.getTiming()));
         return settings;
     }
-
-    // Listener interface
-
-    @Override
-    public void playerRegistered(MttInstance instance, MttRegistrationRequest request) {
+    
+    public void playerRegistered(MttRegistrationRequest request) {
         addJoinedTimestamps();
 
         if (tournamentShouldStart()) {
@@ -328,15 +340,11 @@ public class PokerTournament implements PlayerListener, PlayerInterceptor, Seria
         }
     }
 
-    @Override
-    public void playerUnregistered(MttInstance instance, int pid) {
+    public void playerUnregistered(int pid) {
         // TODO Add support for unregistration.
     }
 
-    // Interceptor interface
-
-    @Override
-    public MttRegisterResponse register(MttInstance instance, MttRegistrationRequest request) {
+    public MttRegisterResponse register(MttRegistrationRequest request) {
         if (pokerState.getStatus() != PokerTournamentStatus.REGISTERING) {
             return MttRegisterResponse.ALLOWED;
         } else {
@@ -344,12 +352,48 @@ public class PokerTournament implements PlayerListener, PlayerInterceptor, Seria
         }
     }
 
-    @Override
-    public MttRegisterResponse unregister(MttInstance instance, int pid) {
+    public MttRegisterResponse unregister(int pid) {
         if (pokerState.getStatus() != PokerTournamentStatus.REGISTERING) {
             return MttRegisterResponse.DENIED;
         } else {
             return MttRegisterResponse.ALLOWED;
+        }
+    }
+
+    public void tournamentCreated() {
+        if (tournamentShouldBeCancelled()) {
+            cancelTournament();
+        } else if (tournamentLifeCycle.shouldOpenRegistration(dateFetcher.now())) {
+            openRegistration();
+            scheduleTournamentStart();
+        } else if (tournamentLifeCycle.shouldScheduleRegistrationOpening(pokerState.getStatus(), dateFetcher.now())) {
+            scheduleRegistrationOpening();
+        }
+    }
+
+    private void openRegistration() {
+        setTournamentStatus(PokerTournamentStatus.REGISTERING);
+    }
+
+    private void cancelTournament() {
+        setTournamentStatus(PokerTournamentStatus.CANCELLED);
+        refundPlayers();
+    }
+
+    private void refundPlayers() {
+        // TODO
+    }
+
+    public void handleTrigger(TournamentTrigger trigger) {
+        switch (trigger) {
+            case START:
+                log.debug("START TOURNAMENT!");
+                mttSupport.sendRoundStartActionToTables(state, state.getTables());
+                break;
+            case OPEN_REGISTRATION:
+                log.debug("Opening registration");
+                openRegistration();
+                break;
         }
     }
 }

@@ -15,29 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.tournament.activator.configuration;
+package com.cubeia.games.poker.tournament.configuration.provider;
 
-import org.joda.time.DateTime;
+import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
+
+import java.util.Collection;
 
 /**
- * This is the configuration for one stream of scheduled tournaments.
+ * Interface for providing the schedule for scheduled tournaments.
  *
- * Given this configuration, we can get the schedule and figure out when to start tournaments.
  */
-public class ScheduledTournamentConfiguration extends TournamentConfiguration {
+public interface TournamentScheduleProvider {
 
-    private TournamentSchedule schedule;
-
-    public ScheduledTournamentConfiguration(TournamentSchedule schedule) {
-        this.schedule = schedule;
-    }
-
-    public TournamentSchedule getSchedule() {
-        return schedule;
-    }
-
-    public ScheduledTournamentInstance spawnConfigurationForNextInstance(DateTime startTime) {
-        return new ScheduledTournamentInstance(this, startTime);
-    }
-
+    Collection<ScheduledTournamentConfiguration> getTournamentSchedule();
 }

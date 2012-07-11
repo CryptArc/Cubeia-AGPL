@@ -18,7 +18,9 @@
 package com.cubeia.games.poker.tournament.activator;
 
 import com.cubeia.firebase.api.lobby.LobbyAttributeAccessor;
-import com.cubeia.games.poker.tournament.activator.configuration.SitAndGoConfiguration;
+import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
+import com.cubeia.games.poker.tournament.configuration.SitAndGoLifeCycle;
+import com.cubeia.games.poker.tournament.configuration.TournamentLifeCycle;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.state.PokerTournamentStatus;
 
@@ -26,6 +28,11 @@ public class SitAndGoCreationParticipant extends PokerTournamentCreationParticip
 
     public SitAndGoCreationParticipant(SitAndGoConfiguration config) {
         super(config);
+    }
+
+    @Override
+    protected TournamentLifeCycle getTournamentLifeCycle() {
+        return new SitAndGoLifeCycle();
     }
 
     @Override

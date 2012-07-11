@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.tournament.activator.configuration;
+package com.cubeia.games.poker.tournament.configuration;
 
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
@@ -27,13 +27,13 @@ import org.joda.time.DateTime;
  */
 public class ScheduledTournamentInstance {
 
-    private TournamentConfiguration configuration;
+    private ScheduledTournamentConfiguration configuration;
 
     private DateTime startTime;
 
     private static final Logger log = Logger.getLogger(ScheduledTournamentInstance.class);
 
-    public ScheduledTournamentInstance(TournamentConfiguration configuration, DateTime startTime) {
+    public ScheduledTournamentInstance(ScheduledTournamentConfiguration configuration, DateTime startTime) {
         this.configuration = configuration;
         this.startTime = startTime;
     }
@@ -49,5 +49,13 @@ public class ScheduledTournamentInstance {
 
     public TournamentConfiguration getConfiguration() {
         return configuration;
+    }
+
+    public DateTime getStartTime() {
+        return startTime;
+    }
+
+    public DateTime getOpenRegistrationTime() {
+        return startTime.minusMinutes(configuration.getSchedule().getMinutesInRegistering());
     }
 }

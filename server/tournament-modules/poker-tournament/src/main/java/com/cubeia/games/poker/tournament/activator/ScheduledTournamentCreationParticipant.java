@@ -19,7 +19,9 @@ package com.cubeia.games.poker.tournament.activator;
 
 import com.cubeia.firebase.api.lobby.LobbyAttributeAccessor;
 import com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes;
-import com.cubeia.games.poker.tournament.activator.configuration.ScheduledTournamentInstance;
+import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentInstance;
+import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentLifeCycle;
+import com.cubeia.games.poker.tournament.configuration.TournamentLifeCycle;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.state.PokerTournamentStatus;
 
@@ -30,6 +32,11 @@ public class ScheduledTournamentCreationParticipant extends PokerTournamentCreat
     public ScheduledTournamentCreationParticipant(ScheduledTournamentInstance config) {
         super(config.getConfiguration());
         instanceConfiguration = config;
+    }
+
+    @Override
+    protected TournamentLifeCycle getTournamentLifeCycle() {
+        return new ScheduledTournamentLifeCycle(instanceConfiguration.getStartTime(), instanceConfiguration.getOpenRegistrationTime());
     }
 
     @Override

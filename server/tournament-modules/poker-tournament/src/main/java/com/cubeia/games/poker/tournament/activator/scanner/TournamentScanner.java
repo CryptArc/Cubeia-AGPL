@@ -27,12 +27,12 @@ import com.cubeia.games.poker.tournament.activator.PokerActivator;
 import com.cubeia.games.poker.tournament.activator.PokerTournamentActivatorImpl;
 import com.cubeia.games.poker.tournament.activator.ScheduledTournamentCreationParticipant;
 import com.cubeia.games.poker.tournament.activator.SitAndGoCreationParticipant;
-import com.cubeia.games.poker.tournament.activator.configuration.ScheduledTournamentConfiguration;
-import com.cubeia.games.poker.tournament.activator.configuration.ScheduledTournamentInstance;
-import com.cubeia.games.poker.tournament.activator.configuration.SitAndGoConfiguration;
-import com.cubeia.games.poker.tournament.activator.configuration.TournamentSchedule;
-import com.cubeia.games.poker.tournament.activator.configuration.provider.SitAndGoConfigurationProvider;
-import com.cubeia.games.poker.tournament.activator.configuration.provider.TournamentScheduleProvider;
+import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
+import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentInstance;
+import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
+import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
+import com.cubeia.games.poker.tournament.configuration.provider.SitAndGoConfigurationProvider;
+import com.cubeia.games.poker.tournament.configuration.provider.TournamentScheduleProvider;
 import com.cubeia.games.poker.tournament.util.DateFetcher;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
@@ -224,13 +224,7 @@ public class TournamentScanner implements PokerActivator, Runnable {
     private void checkScheduledTournaments() {
         Collection<ScheduledTournamentConfiguration> tournamentSchedule = tournamentScheduleProvider.getTournamentSchedule();
 
-        Set<String> existingTournaments = newHashSet();
-        MttLobbyObject[] tournamentInstances = factory.listTournamentInstances();
-        for (MttLobbyObject tournament : tournamentInstances) {
-            String identifier = getStringAttribute(tournament, IDENTIFIER.name());
-            log.debug("Found tournament with identifier " + identifier);
-            existingTournaments.add(identifier);
-        }
+        Set<String> existingTournaments = getExistingTournaments();
 
         for (ScheduledTournamentConfiguration configuration : tournamentSchedule) {
             TournamentSchedule schedule = configuration.getSchedule();
@@ -242,6 +236,17 @@ public class TournamentScanner implements PokerActivator, Runnable {
                 }
             }
         }
+    }
+
+    private Set<String> getExistingTournaments() {
+        Set<String> existingTournaments = newHashSet();
+        MttLobbyObject[] tournamentInstances = factory.listTournamentInstances();
+        for (MttLobbyObject tournament : tournamentInstances) {
+            String identifier = getStringAttribute(tournament, IDENTIFIER.name());
+            log.debug("Found tournament with identifier " + identifier);
+            existingTournaments.add(identifier);
+        }
+        return existingTournaments;
     }
 
     private String getStringAttribute(MttLobbyObject tournament, String attributeName) {

@@ -21,6 +21,8 @@ import com.cubeia.firebase.api.action.mtt.MttObjectAction;
 import com.cubeia.firebase.api.action.mtt.MttRoundReportAction;
 import com.cubeia.firebase.api.action.mtt.MttTablesCreatedAction;
 import com.cubeia.firebase.api.mtt.MttInstance;
+import com.cubeia.firebase.api.mtt.model.MttRegisterResponse;
+import com.cubeia.firebase.api.mtt.model.MttRegistrationRequest;
 import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.firebase.api.mtt.support.MTTSupport;
 import com.cubeia.firebase.api.mtt.support.registry.PlayerInterceptor;
@@ -28,7 +30,7 @@ import com.cubeia.firebase.api.mtt.support.registry.PlayerListener;
 import org.apache.log4j.Logger;
 import org.apache.log4j.MDC;
 
-public class PokerTournamentProcessor extends MTTSupport {
+public class PokerTournamentProcessor extends MTTSupport implements PlayerInterceptor, PlayerListener {
 
     // Use %X{pokerid} in the layout pattern to include this information.
     private static final String MDC_TAG = "pokerid";
@@ -39,21 +41,19 @@ public class PokerTournamentProcessor extends MTTSupport {
 
     @Override
     public PlayerInterceptor getPlayerInterceptor(MTTStateSupport state) {
-        return new PokerTournamentInterceptor(this);
+        return this;
     }
 
     @Override
     public PlayerListener getPlayerListener(MTTStateSupport state) {
-        return new PokerTournamentListener(this);
+        return this;
     }
 
     @Override
     public void process(MttRoundReportAction action, MttInstance instance) {
         try {
             MDC.put(MDC_TAG, "Tournament[" + instance.getId() + "]");
-            PokerTournament tournament = (PokerTournament) instance.getState().getState();
-            injectDependencies(tournament, instance);
-            tournament.processRoundReport(action);
+            prepareTournament(instance).processRoundReport(action);
         } finally {
             MDC.remove(MDC_TAG);
         }
@@ -65,9 +65,7 @@ public class PokerTournamentProcessor extends MTTSupport {
         log.info("Tables created: " + action + " instance: " + instance);
         try {
             MDC.put(MDC_TAG, "Tournament[" + instance.getId() + "]");
-            PokerTournament tournament = (PokerTournament) instance.getState().getState();
-            injectDependencies(tournament, instance);
-            tournament.handleTablesCreated();
+            prepareTournament(instance).handleTablesCreated();
         } finally {
             MDC.remove(MDC_TAG);
         }
@@ -77,16 +75,10 @@ public class PokerTournamentProcessor extends MTTSupport {
     public void process(MttObjectAction action, MttInstance instance) {
         try {
             MDC.put(MDC_TAG, "Tournament[" + instance.getId() + "]");
-            MTTStateSupport state = (MTTStateSupport) instance.getState();
             Object command = action.getAttachment();
             if (command instanceof TournamentTrigger) {
                 TournamentTrigger trigger = (TournamentTrigger) command;
-                switch (trigger) {
-                    case START:
-                        log.debug("START TOURNAMENT!");
-                        sendRoundStartActionToTables(state, state.getTables());
-                        break;
-                }
+                prepareTournament(instance).handleTrigger(trigger);
             }
         } finally {
             MDC.remove(MDC_TAG);
@@ -95,17 +87,68 @@ public class PokerTournamentProcessor extends MTTSupport {
     }
 
     @Override
-    public void tournamentCreated(MttInstance mttInstance) {
-
+    public void tournamentCreated(MttInstance instance) {
+        log.info("Tournament created: " + instance);
+        try {
+            MDC.put(MDC_TAG, "Tournament[" + instance.getId() + "]");
+            prepareTournament(instance).tournamentCreated();
+        } finally {
+            MDC.remove(MDC_TAG);
+        }
     }
 
+    @Override
     public void tournamentDestroyed(MttInstance mttInstance) {
-        // TODO Auto-generated method stub
+        log.debug("Tournament " + mttInstance + " destroyed.");
+    }
 
+    @Override
+    public MttRegisterResponse register(MttInstance instance, MttRegistrationRequest request) {
+        try {
+            MDC.put(MDC_TAG, "Tournament[" + instance.getId() + "]");
+            return prepareTournament(instance).register(request);
+        } finally {
+            MDC.remove(MDC_TAG);
+        }
+    }
+
+    @Override
+    public MttRegisterResponse unregister(MttInstance instance, int pid) {
+        try {
+            MDC.put(MDC_TAG, "Tournament[" + instance.getId() + "]");
+            return prepareTournament(instance).unregister(pid);
+        } finally {
+            MDC.remove(MDC_TAG);
+        }
+    }
+
+    @Override
+    public void playerRegistered(MttInstance instance, MttRegistrationRequest request) {
+        try {
+            MDC.put(MDC_TAG, "Tournament[" + instance.getId() + "]");
+            prepareTournament(instance).playerRegistered(request);
+        } finally {
+            MDC.remove(MDC_TAG);
+        }
+    }
+
+    @Override
+    public void playerUnregistered(MttInstance instance, int pid) {
+        try {
+            MDC.put(MDC_TAG, "Tournament[" + instance.getId() + "]");
+            prepareTournament(instance).playerUnregistered(pid);
+        } finally {
+            MDC.remove(MDC_TAG);
+        }
     }
 
     private void injectDependencies(PokerTournament tournament, MttInstance instance) {
         tournament.injectTransientDependencies(instance, this, util.getStateSupport(instance), instance.getMttNotifier());
     }
 
+    private PokerTournament prepareTournament(MttInstance instance) {
+        PokerTournament tournament = (PokerTournament) instance.getState().getState();
+        injectDependencies(tournament, instance);
+        return tournament;
+    }
 }

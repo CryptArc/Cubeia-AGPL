@@ -15,9 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.tournament.activator.configuration.provider;
+package com.cubeia.games.poker.tournament.configuration.provider;
 
-import com.cubeia.games.poker.tournament.activator.configuration.SitAndGoConfiguration;
+import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
 
 import java.util.Collection;
 

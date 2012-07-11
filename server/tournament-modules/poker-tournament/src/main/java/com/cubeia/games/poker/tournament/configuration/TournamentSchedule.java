@@ -15,14 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.tournament.activator.configuration;
+package com.cubeia.games.poker.tournament.configuration;
 
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.quartz.Trigger;
 
 import java.util.Date;
-
 
 public class TournamentSchedule {
 

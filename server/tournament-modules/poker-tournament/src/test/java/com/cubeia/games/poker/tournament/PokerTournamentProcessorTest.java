@@ -20,6 +20,7 @@ package com.cubeia.games.poker.tournament;
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.SeatPlayersMttAction;
 import com.cubeia.firebase.api.action.mtt.MttAction;
+import com.cubeia.firebase.api.action.mtt.MttObjectAction;
 import com.cubeia.firebase.api.action.mtt.MttRoundReportAction;
 import com.cubeia.firebase.api.common.Attribute;
 import com.cubeia.firebase.api.lobby.LobbyAttributeAccessor;
@@ -33,8 +34,11 @@ import com.cubeia.firebase.api.mtt.support.MttNotifierAdapter;
 import com.cubeia.firebase.api.scheduler.Scheduler;
 import com.cubeia.firebase.api.service.mttplayerreg.TournamentPlayerRegistry;
 import com.cubeia.games.poker.tournament.activator.PokerTournamentCreationParticipant;
+import com.cubeia.games.poker.tournament.activator.ScheduledTournamentCreationParticipant;
 import com.cubeia.games.poker.tournament.activator.SitAndGoCreationParticipant;
-import com.cubeia.games.poker.tournament.activator.configuration.SitAndGoConfiguration;
+import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentInstance;
+import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
+import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.state.PokerTournamentStatus;
 import junit.framework.TestCase;
@@ -43,6 +47,8 @@ import org.mockito.Mock;
 
 import java.util.*;
 
+import static com.cubeia.games.poker.tournament.state.PokerTournamentStatus.ANNOUNCED;
+import static com.cubeia.games.poker.tournament.state.PokerTournamentStatus.REGISTERING;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -78,6 +84,12 @@ public class PokerTournamentProcessorTest extends TestCase {
     @Mock
     private MttNotifier notifier;
 
+    @Mock
+    private ScheduledTournamentInstance instanceConfig;
+
+    @Mock
+    private TournamentConfiguration configuration;
+
     private LobbyAttributeAccessor lobbyAccessor = new LobbyAttributeAccessorAdapter();
 
     private PokerTournamentState pokerState;
@@ -94,6 +106,7 @@ public class PokerTournamentProcessorTest extends TestCase {
         when(instance.getLobbyAccessor()).thenReturn(lobbyAccessor);
         when(instance.getScheduler()).thenReturn(scheduler);
         when(instance.getMttNotifier()).thenReturn(notifier);
+        when(instanceConfig.getConfiguration()).thenReturn(configuration);
         tournamentProcessor.setTableCreator(new MockTableCreator(tournamentProcessor, instance));
         tournamentProcessor.setMttNotifier(new MttNotifierAdapter());
 
@@ -108,7 +121,7 @@ public class PokerTournamentProcessorTest extends TestCase {
     }
 
     public void testSitAndGo() {
-        assertEquals(PokerTournamentStatus.REGISTERING.name(),
+        assertEquals(REGISTERING.name(),
                 instance.getLobbyAccessor().getStringAttribute(PokerTournamentLobbyAttributes.STATUS.name()));
         assertEquals(20, state.getMinPlayers());
         fillTournament();
@@ -130,8 +143,23 @@ public class PokerTournamentProcessorTest extends TestCase {
         forceBalancing();
     }
 
-    public void testScheduledTournamentSchedulesOpeningRegistrationWhenCreated() {
+    public void testScheduledTournamentSchedulesOpeningRegistrationWhenAskedTo() {
+        // Given a scheduled tournament
+        prepareScheduledTournament();
 
+        // When the tournament receives an open registration trigger.
+        MttObjectAction objectAction = new MttObjectAction(instance.getId(), TournamentTrigger.OPEN_REGISTRATION);
+        tournamentProcessor.process(objectAction, instance);
+
+        // Then the registration should be opened.
+        assertEquals(REGISTERING, pokerState.getStatus());
+    }
+
+    private void prepareScheduledTournament() {
+        PokerTournamentCreationParticipant participant = new ScheduledTournamentCreationParticipant(instanceConfig);
+        participant.tournamentCreated(state, instance.getLobbyAccessor());
+        pokerState = new PokerTournamentUtil().getPokerState(instance);
+        assertEquals(ANNOUNCED, pokerState.getStatus());
     }
 
     private void forceBalancing() {

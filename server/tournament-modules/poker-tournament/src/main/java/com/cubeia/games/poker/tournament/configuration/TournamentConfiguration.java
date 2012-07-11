@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.tournament.activator.configuration;
+package com.cubeia.games.poker.tournament.configuration;
 
 import java.io.Serializable;
 

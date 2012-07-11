@@ -15,17 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.tournament.activator.configuration.provider;
+package com.cubeia.games.poker.tournament.configuration.provider.mock;
 
-import com.cubeia.games.poker.tournament.activator.configuration.ScheduledTournamentConfiguration;
+import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
+import com.cubeia.games.poker.tournament.configuration.provider.TournamentScheduleProvider;
 
 import java.util.Collection;
 
-/**
- * Interface for providing the schedule for scheduled tournaments.
- *
- */
-public interface TournamentScheduleProvider {
+public class MockTournamentScheduleProvider implements TournamentScheduleProvider {
 
-    Collection<ScheduledTournamentConfiguration> getTournamentSchedule();
+    @Override
+    public Collection<ScheduledTournamentConfiguration> getTournamentSchedule() {
+        return null;
+    }
 }

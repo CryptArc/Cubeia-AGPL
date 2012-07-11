@@ -15,10 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.tournament.activator.configuration.provider.mock;
+package com.cubeia.games.poker.tournament.configuration.provider.mock;
 
-import com.cubeia.games.poker.tournament.activator.configuration.SitAndGoConfiguration;
-import com.cubeia.games.poker.tournament.activator.configuration.provider.SitAndGoConfigurationProvider;
+import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
+import com.cubeia.games.poker.tournament.configuration.provider.SitAndGoConfigurationProvider;
 import com.cubeia.poker.timing.Timings;
 import org.apache.log4j.Logger;
 
