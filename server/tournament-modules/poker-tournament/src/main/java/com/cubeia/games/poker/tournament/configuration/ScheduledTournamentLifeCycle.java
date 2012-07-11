@@ -35,6 +35,13 @@ public class ScheduledTournamentLifeCycle implements TournamentLifeCycle {
     }
 
     @Override
+    public long getTimeToTournamentStart(DateTime now) {
+        long timeToStart = startTime.toDate().getTime() - now.toDate().getTime();
+        // If the registration should already have opened, schedule it in one second.
+        return (timeToStart <= 1000) ? 1000 : timeToStart;
+    }
+
+    @Override
     public long getTimeToRegistrationStart(DateTime now) {
         long timeToRegistrationOpening = openRegistrationTime.toDate().getTime() - now.toDate().getTime();
         // If the registration should already have opened, schedule it in one second.

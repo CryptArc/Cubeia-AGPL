@@ -43,6 +43,7 @@ import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.state.PokerTournamentStatus;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.mockito.Mock;
 
 import java.util.*;
@@ -156,6 +157,8 @@ public class PokerTournamentProcessorTest extends TestCase {
     }
 
     private void prepareScheduledTournament() {
+        when(instanceConfig.getStartTime()).thenReturn(new DateTime());
+        when(instanceConfig.getOpenRegistrationTime()).thenReturn(new DateTime());
         PokerTournamentCreationParticipant participant = new ScheduledTournamentCreationParticipant(instanceConfig);
         participant.tournamentCreated(state, instance.getLobbyAccessor());
         pokerState = new PokerTournamentUtil().getPokerState(instance);

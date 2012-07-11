@@ -25,6 +25,7 @@ import com.cubeia.games.poker.tournament.util.DateFetcher;
 import com.cubeia.games.poker.tournament.util.ProtocolFactory;
 import com.cubeia.poker.timing.TimingFactory;
 import org.apache.log4j.Logger;
+import org.joda.time.Duration;
 
 import java.io.Serializable;
 import java.util.*;
@@ -246,13 +247,15 @@ public class PokerTournament implements Serializable {
 
     private void scheduleTournamentStart() {
         MttObjectAction action = new MttObjectAction(instance.getId(), TournamentTrigger.START);
-        instance.getScheduler().scheduleAction(action, 10000);
+        long timeToTournamentStart = tournamentLifeCycle.getTimeToTournamentStart(dateFetcher.now());
+        log.debug("Scheduling tournament start in " + Duration.millis(timeToTournamentStart).getStandardMinutes() + " minutes, for tournament " + instance);
+        instance.getScheduler().scheduleAction(action, timeToTournamentStart);
     }
 
     private void scheduleRegistrationOpening() {
         MttObjectAction action = new MttObjectAction(instance.getId(), TournamentTrigger.OPEN_REGISTRATION);
         long timeToRegistrationStart = tournamentLifeCycle.getTimeToRegistrationStart(dateFetcher.now());
-        log.debug("Scheduling registration opening in " + timeToRegistrationStart + " millis");
+        log.debug("Scheduling registration opening in " + timeToRegistrationStart + " millis, for tournament " + instance);
         instance.getScheduler().scheduleAction(action, timeToRegistrationStart);
     }
 
@@ -393,6 +396,7 @@ public class PokerTournament implements Serializable {
             case OPEN_REGISTRATION:
                 log.debug("Opening registration");
                 openRegistration();
+                scheduleTournamentStart();
                 break;
         }
     }
