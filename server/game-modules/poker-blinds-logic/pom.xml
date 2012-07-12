@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.cubeia.games.poker</groupId>
     <artifactId>poker-blinds-logic</artifactId>
-    <name>poker-blinds-logic</name>
+    <name>Poker Blinds Logic</name>
 
     <parent>
         <artifactId>game-modules</artifactId>

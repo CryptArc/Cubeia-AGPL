@@ -22,13 +22,17 @@ import com.cubeia.firebase.api.mtt.MttFactory;
 import com.cubeia.firebase.api.mtt.activator.ActivatorContext;
 import com.cubeia.firebase.api.mtt.lobby.MttLobbyObject;
 import com.cubeia.firebase.api.server.SystemException;
+import com.cubeia.firebase.io.protocol.Enums;
 import com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes;
 import com.cubeia.games.poker.tournament.activator.ScheduledTournamentCreationParticipant;
+import com.cubeia.games.poker.tournament.activator.SitAndGoCreationParticipant;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentInstance;
+import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
 import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
 import com.cubeia.games.poker.tournament.configuration.provider.SitAndGoConfigurationProvider;
 import com.cubeia.games.poker.tournament.configuration.provider.TournamentScheduleProvider;
+import com.cubeia.games.poker.tournament.state.PokerTournamentStatus;
 import com.cubeia.games.poker.tournament.util.DateFetcher;
 import com.google.common.collect.Maps;
 import org.joda.time.DateTime;
@@ -38,6 +42,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.quartz.CronTrigger;
 
+import java.util.Collections;
 import java.util.Map;
 
 import static java.util.Collections.singletonList;
@@ -85,7 +90,7 @@ public class TournamentScannerTest {
                 .startAt(new DateTime(2011, 7, 5, 9, 0, 0).toDate())
                 .endAt(new DateTime(2013, 7, 5, 9, 0, 0).toDate()).build();
         TournamentSchedule tournamentSchedule = new TournamentSchedule(schedule, 10, 20, 30);
-        ScheduledTournamentConfiguration tournament = new ScheduledTournamentConfiguration(tournamentSchedule);
+        ScheduledTournamentConfiguration tournament = new ScheduledTournamentConfiguration(tournamentSchedule, "14.30", 1);
         when(tournamentScheduleProvider.getTournamentSchedule()).thenReturn(singletonList(tournament));
 
         // When we scan tournaments at 14.00.
@@ -103,7 +108,7 @@ public class TournamentScannerTest {
                 .startAt(new DateTime(2011, 7, 5, 9, 0, 0).toDate())
                 .endAt(new DateTime(2013, 7, 5, 9, 0, 0).toDate()).build();
         TournamentSchedule tournamentSchedule = new TournamentSchedule(schedule, 10, 20, 30);
-        ScheduledTournamentConfiguration tournament = new ScheduledTournamentConfiguration(tournamentSchedule);
+        ScheduledTournamentConfiguration tournament = new ScheduledTournamentConfiguration(tournamentSchedule, "14.30", 1);
         when(tournamentScheduleProvider.getTournamentSchedule()).thenReturn(singletonList(tournament));
 
         // When we scan tournaments at 14:00.02 and 14:00.03.
@@ -126,10 +131,35 @@ public class TournamentScannerTest {
         verify(factory, never()).createMtt(anyInt(), anyString(), isA(ScheduledTournamentCreationParticipant.class));
     }
 
+    @Test
+    public void onlyCreateOneInstancePerSitAndGo() {
+        // Given that the provider supplies this configuration.
+        String name = "my sit and go";
+        SitAndGoConfiguration configuration = new SitAndGoConfiguration(name, 10);
+        when(sitAndGoProvider.getConfigurations()).thenReturn(Collections.singleton(configuration));
+
+        // When we check for tournaments.
+        scanner.checkTournamentsNow();
+
+        // Then a tournament should be created.
+        verify(factory).createMtt(anyInt(), anyString(), isA(SitAndGoCreationParticipant.class));
+
+        // But if we scan again, when this tournament already exists.
+        reset(factory);
+        MttLobbyObject mttLobbyObject = tournamentWithNameAndIdentifier(name, "");
+        MttLobbyObject[] mttLobbyObjects = new MttLobbyObject[]{mttLobbyObject};
+        when(factory.listTournamentInstances()).thenReturn(mttLobbyObjects);
+        scanner.checkTournamentsNow();
+
+        verify(factory, never()).createMtt(anyInt(), anyString(), isA(SitAndGoCreationParticipant.class));
+    }
+
     private MttLobbyObject tournamentWithNameAndIdentifier(String name, String identifier) {
         MttLobbyObject lobbyObject = mock(MttLobbyObject.class);
         Map<String, AttributeValue> map = Maps.newHashMap();
         map.put(PokerTournamentLobbyAttributes.IDENTIFIER.name(), AttributeValue.wrap(identifier));
+        map.put(Enums.TournamentAttributes.NAME.name(), AttributeValue.wrap(name));
+        map.put(Enums.TournamentAttributes.STATUS.name(), AttributeValue.wrap(PokerTournamentStatus.REGISTERING.name()));
         when(lobbyObject.getAttributes()).thenReturn(map);
         return lobbyObject;
     }

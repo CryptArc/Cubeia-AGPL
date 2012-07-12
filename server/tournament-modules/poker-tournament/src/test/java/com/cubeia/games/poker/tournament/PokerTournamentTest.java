@@ -11,7 +11,6 @@ import com.cubeia.firebase.api.scheduler.Scheduler;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentLifeCycle;
 import com.cubeia.games.poker.tournament.configuration.TournamentLifeCycle;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
-import com.cubeia.games.poker.tournament.state.PokerTournamentStatus;
 import com.cubeia.games.poker.tournament.util.DateFetcher;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -27,7 +26,6 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 public class PokerTournamentTest {
 
-    @Mock
     private PokerTournamentState pokerState;
 
     @Mock
@@ -57,6 +55,7 @@ public class PokerTournamentTest {
     @Before
     public void setup() {
         initMocks(this);
+        pokerState = new PokerTournamentState();
         when(instance.getScheduler()).thenReturn(scheduler);
         when(instance.getLobbyAccessor()).thenReturn(lobbyAccessor);
     }
@@ -81,7 +80,7 @@ public class PokerTournamentTest {
     public void shouldScheduleTournamentStartAfterOpeningRegistration() {
         // Given a scheduled tournament
         prepareTournament();
-        when(dateFetcher.now()).thenReturn(new DateTime(2011, 7, 5, 14, 00, 0));
+        when(dateFetcher.now()).thenReturn(new DateTime(2011, 7, 5, 14, 00, 1));
 
         // When registration is opened
         tournament.handleTrigger(TournamentTrigger.OPEN_REGISTRATION);
@@ -99,7 +98,6 @@ public class PokerTournamentTest {
         lifeCycle = new ScheduledTournamentLifeCycle(startTime, openRegistrationTime);
         tournament = new PokerTournament(pokerState, dateFetcher, lifeCycle);
         tournament.injectTransientDependencies(instance, support, state, notifier);
-        when(pokerState.getStatus()).thenReturn(PokerTournamentStatus.ANNOUNCED);
         return lifeCycle;
     }
 }

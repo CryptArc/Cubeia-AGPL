@@ -11,7 +11,7 @@
     <groupId>com.cubeia.games.poker</groupId>
     <artifactId>timings</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>timings</name>
+    <name>Poker Timings</name>
     <url>http://maven.apache.org</url>
     <dependencies>
         <dependency>

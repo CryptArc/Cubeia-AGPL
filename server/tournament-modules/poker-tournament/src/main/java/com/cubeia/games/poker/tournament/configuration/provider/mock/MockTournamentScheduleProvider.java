@@ -18,14 +18,34 @@
 package com.cubeia.games.poker.tournament.configuration.provider.mock;
 
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
+import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
 import com.cubeia.games.poker.tournament.configuration.provider.TournamentScheduleProvider;
+import com.google.common.collect.Lists;
+import org.joda.time.DateTime;
+import org.quartz.CronTrigger;
 
 import java.util.Collection;
+
+import static org.quartz.CronScheduleBuilder.cronSchedule;
+import static org.quartz.TriggerBuilder.newTrigger;
 
 public class MockTournamentScheduleProvider implements TournamentScheduleProvider {
 
     @Override
     public Collection<ScheduledTournamentConfiguration> getTournamentSchedule() {
-        return null;
+        Collection<ScheduledTournamentConfiguration> tournamentConfigurations = Lists.newArrayList();
+        ScheduledTournamentConfiguration everyTenMinutes = everyTenMinutes();
+        everyTenMinutes.setMinPlayers(2);
+        everyTenMinutes.setMaxPlayers(100);
+        tournamentConfigurations.add(everyTenMinutes);
+        return tournamentConfigurations;
+    }
+
+    private ScheduledTournamentConfiguration everyTenMinutes() {
+        CronTrigger schedule = newTrigger().withSchedule(cronSchedule("0 */10 * * * ?"))
+                        .startAt(new DateTime(2011, 7, 5, 9, 0, 0).toDate())
+                        .endAt(new DateTime(2022, 7, 5, 9, 0, 0).toDate()).build();
+        TournamentSchedule tournamentSchedule = new TournamentSchedule(schedule, 3, 5, 5);
+        return new ScheduledTournamentConfiguration(tournamentSchedule, "Every Ten Minutes", 1);
     }
 }

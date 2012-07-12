@@ -11,6 +11,8 @@ public interface TournamentLifeCycle {
 
     public boolean shouldScheduleRegistrationOpening(PokerTournamentStatus status, DateTime now);
 
+    public boolean shouldScheduleTournamentStart(PokerTournamentStatus status, DateTime now);
+
     public boolean shouldOpenRegistration(DateTime now);
 
     public long getTimeToRegistrationStart(DateTime now);

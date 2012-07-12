@@ -31,7 +31,8 @@ import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.games.poker.lobby.PokerLobbyAttributes;
 import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.games.poker.tournament.activator.TournamentTableSettings;
-import com.cubeia.poker.*;
+import com.cubeia.poker.PokerGuiceModule;
+import com.cubeia.poker.PokerState;
 import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.settings.BetStrategyName;
 import com.cubeia.poker.settings.PokerSettings;
@@ -40,8 +41,8 @@ import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.timing.Timings;
 import com.cubeia.poker.variant.GameType;
-import com.cubeia.poker.variant.factory.GameTypeFactory;
 import com.cubeia.poker.variant.PokerVariant;
+import com.cubeia.poker.variant.factory.GameTypeFactory;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.apache.log4j.Logger;
@@ -50,11 +51,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import java.io.Serializable;
 import java.lang.management.ManagementFactory;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import static com.cubeia.games.poker.activator.PokerParticipant.*;
 import static com.cubeia.poker.variant.PokerVariant.TELESINA;
@@ -186,11 +183,11 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
 
         for (PokerParticipant part : participants) {
             LobbyTable[] tables = tableRegistry.listTables(part.getLobbyPath());
-            log.info("Getting tables for " + part.getLobbyPath());
+//            log.info("Getting tables for " + part.getLobbyPath());
             List<LobbyTable> empty = findEmpty(tables);
-            log.info("Empty tables " + empty.size());
+//            log.info("Empty tables " + empty.size());
             DefaultActivatorConfig config = getConfiguration();
-            log.info("Min avail tables: " + config.getMinAvailTables());
+//            log.info("Min avail tables: " + config.getMinAvailTables());
             if (empty.size() < config.getMinAvailTables()) {
                 incrementTables(config, part);
             } else {

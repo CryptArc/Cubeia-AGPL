@@ -28,8 +28,10 @@ public class ScheduledTournamentConfiguration extends TournamentConfiguration {
 
     private TournamentSchedule schedule;
 
-    public ScheduledTournamentConfiguration(TournamentSchedule schedule) {
+    public ScheduledTournamentConfiguration(TournamentSchedule schedule, String name, int id) {
         this.schedule = schedule;
+        setName(name);
+        setId(id);
     }
 
     public TournamentSchedule getSchedule() {

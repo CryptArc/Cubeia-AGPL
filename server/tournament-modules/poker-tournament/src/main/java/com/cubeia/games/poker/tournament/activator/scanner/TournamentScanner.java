@@ -34,11 +34,13 @@ import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
 import com.cubeia.games.poker.tournament.configuration.provider.SitAndGoConfigurationProvider;
 import com.cubeia.games.poker.tournament.configuration.provider.TournamentScheduleProvider;
 import com.cubeia.games.poker.tournament.util.DateFetcher;
+import com.google.common.collect.Maps;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -50,6 +52,7 @@ import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.I
 import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.STATUS;
 import static com.cubeia.games.poker.tournament.state.PokerTournamentStatus.FINISHED;
 import static com.cubeia.games.poker.tournament.state.PokerTournamentStatus.REGISTERING;
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Sets.newHashSet;
 
 public class TournamentScanner implements PokerActivator, Runnable {
@@ -222,6 +225,7 @@ public class TournamentScanner implements PokerActivator, Runnable {
     }
 
     private void checkScheduledTournaments() {
+        log.info("Checking scheduled tournaments.");
         Collection<ScheduledTournamentConfiguration> tournamentSchedule = tournamentScheduleProvider.getTournamentSchedule();
 
         Set<String> existingTournaments = getExistingTournaments();
@@ -243,8 +247,10 @@ public class TournamentScanner implements PokerActivator, Runnable {
         MttLobbyObject[] tournamentInstances = factory.listTournamentInstances();
         for (MttLobbyObject tournament : tournamentInstances) {
             String identifier = getStringAttribute(tournament, IDENTIFIER.name());
-            log.debug("Found tournament with identifier " + identifier);
-            existingTournaments.add(identifier);
+            if (!isNullOrEmpty(identifier)) {
+                log.debug("Found tournament with identifier " + identifier);
+                existingTournaments.add(identifier);
+            }
         }
         return existingTournaments;
     }
@@ -259,10 +265,11 @@ public class TournamentScanner implements PokerActivator, Runnable {
     }
 
     private void checkSitAndGos() {
+        log.debug("Checking sit and gos.");
         MttLobbyObject[] tournamentInstances = factory.listTournamentInstances();
-        Set<SitAndGoConfiguration> missingTournaments = new HashSet<SitAndGoConfiguration>();
-        Collection<SitAndGoConfiguration> requestedConfigurations = sitAndGoConfigurationProvider.getConfigurations();
-        missingTournaments.addAll(requestedConfigurations);
+        Set<String> missingTournaments = new HashSet<String>();
+        Map<String, SitAndGoConfiguration> requestedConfigurations = mapToName(sitAndGoConfigurationProvider.getConfigurations());
+        missingTournaments.addAll(requestedConfigurations.keySet());
 
         for (MttLobbyObject t : tournamentInstances) {
             String status = getStringAttribute(t, STATUS.name());
@@ -276,9 +283,17 @@ public class TournamentScanner implements PokerActivator, Runnable {
 //            }
         }
 
-        for (SitAndGoConfiguration configuration : missingTournaments) {
-            createSitAndGo(configuration, context);
+        for (String configuration : missingTournaments) {
+            createSitAndGo(requestedConfigurations.get(configuration), context);
         }
+    }
+
+    private Map<String, SitAndGoConfiguration> mapToName(Collection<SitAndGoConfiguration> configurations) {
+        Map<String, SitAndGoConfiguration> map = Maps.newHashMap();
+        for (SitAndGoConfiguration configuration : configurations) {
+            map.put(configuration.getName(), configuration);
+        }
+        return map;
     }
 
     protected class Destroyer implements Runnable {

@@ -23,6 +23,7 @@ import org.quartz.CronTrigger;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
+import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.CronScheduleBuilder.dailyAtHourAndMinute;
 import static org.quartz.TriggerBuilder.newTrigger;
 
@@ -36,9 +37,7 @@ public class TournamentScheduleTest {
         TournamentSchedule tournamentSchedule = new TournamentSchedule(schedule, 10, 20, 30);
 
         DateTime nextAnnounceTime = tournamentSchedule.getNextAnnounceTime(new DateTime(2012, 6, 2, 9, 0, 0));
-        assertEquals(2, nextAnnounceTime.getDayOfMonth());
-        assertEquals(14, nextAnnounceTime.getHourOfDay());
-        assertEquals(0, nextAnnounceTime.getMinuteOfHour());
+        assertEquals(new DateTime(2012, 6, 2, 14, 0, 0), nextAnnounceTime);
     }
 
     @Test
@@ -50,5 +49,16 @@ public class TournamentScheduleTest {
 
         DateTime nextAnnounceTime = tournamentSchedule.getNextAnnounceTime(new DateTime(2012, 7, 9, 9, 0, 0));
         assertNull("Should be null, but was " + nextAnnounceTime, nextAnnounceTime);
+    }
+
+    @Test
+    public void test10MinuteSchedule() {
+        CronTrigger schedule = newTrigger().withSchedule(cronSchedule("0 */10 * * * ?"))
+                        .startAt(new DateTime(2011, 7, 5, 9, 0, 0).toDate())
+                        .endAt(new DateTime(2013, 7, 5, 9, 0, 0).toDate()).build();
+        TournamentSchedule tournamentSchedule = new TournamentSchedule(schedule, 3, 5, 5);
+
+        DateTime nextAnnounceTime = tournamentSchedule.getNextStartTime(new DateTime(2012, 7, 9, 15, 3, 0));
+        assertEquals(new DateTime(2012, 7, 9, 15, 10, 0), nextAnnounceTime);
     }
 }

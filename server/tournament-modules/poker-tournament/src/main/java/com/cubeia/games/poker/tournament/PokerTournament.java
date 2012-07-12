@@ -246,10 +246,14 @@ public class PokerTournament implements Serializable {
     }
 
     private void scheduleTournamentStart() {
-        MttObjectAction action = new MttObjectAction(instance.getId(), TournamentTrigger.START);
-        long timeToTournamentStart = tournamentLifeCycle.getTimeToTournamentStart(dateFetcher.now());
-        log.debug("Scheduling tournament start in " + Duration.millis(timeToTournamentStart).getStandardMinutes() + " minutes, for tournament " + instance);
-        instance.getScheduler().scheduleAction(action, timeToTournamentStart);
+        if (tournamentLifeCycle.shouldScheduleTournamentStart(pokerState.getStatus(), dateFetcher.now())) {
+            MttObjectAction action = new MttObjectAction(instance.getId(), TournamentTrigger.START);
+            long timeToTournamentStart = tournamentLifeCycle.getTimeToTournamentStart(dateFetcher.now());
+            log.debug("Scheduling tournament start in " + Duration.millis(timeToTournamentStart).getStandardMinutes() + " minutes, for tournament " + instance);
+            instance.getScheduler().scheduleAction(action, timeToTournamentStart);
+        } else {
+            log.debug("Won't schedule tournament start because the life cycle says no.");
+        }
     }
 
     private void scheduleRegistrationOpening() {
@@ -348,6 +352,7 @@ public class PokerTournament implements Serializable {
     }
 
     public MttRegisterResponse register(MttRegistrationRequest request) {
+        log.info("Checking if " + request + " is allowed to register.");
         if (pokerState.getStatus() != PokerTournamentStatus.REGISTERING) {
             return MttRegisterResponse.ALLOWED;
         } else {
@@ -391,7 +396,7 @@ public class PokerTournament implements Serializable {
         switch (trigger) {
             case START:
                 log.debug("START TOURNAMENT!");
-                mttSupport.sendRoundStartActionToTables(state, state.getTables());
+                startTournament();
                 break;
             case OPEN_REGISTRATION:
                 log.debug("Opening registration");

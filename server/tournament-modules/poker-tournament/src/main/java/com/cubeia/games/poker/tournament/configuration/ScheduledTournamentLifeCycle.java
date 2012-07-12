@@ -35,6 +35,11 @@ public class ScheduledTournamentLifeCycle implements TournamentLifeCycle {
     }
 
     @Override
+    public boolean shouldScheduleTournamentStart(PokerTournamentStatus status, DateTime now) {
+        return status == PokerTournamentStatus.REGISTERING && now.isAfter(openRegistrationTime);
+    }
+
+    @Override
     public long getTimeToTournamentStart(DateTime now) {
         long timeToStart = startTime.toDate().getTime() - now.toDate().getTime();
         // If the registration should already have opened, schedule it in one second.
