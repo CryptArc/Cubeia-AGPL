@@ -89,7 +89,7 @@ public class PokerTournamentTest {
         ArgumentCaptor<MttAction> captor = ArgumentCaptor.forClass(MttAction.class);
         long timeToTournamentStart = lifeCycle.getTimeToTournamentStart(dateFetcher.now());
         verify(scheduler).scheduleAction(captor.capture(), eq(timeToTournamentStart));
-        assertEquals(TournamentTrigger.START, ((MttObjectAction) captor.getValue()).getAttachment());
+        assertEquals(TournamentTrigger.CREATE_TABLES, ((MttObjectAction) captor.getValue()).getAttachment());
     }
 
     private TournamentLifeCycle prepareTournament() {

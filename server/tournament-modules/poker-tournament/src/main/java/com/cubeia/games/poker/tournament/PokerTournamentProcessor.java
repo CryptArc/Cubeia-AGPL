@@ -33,7 +33,7 @@ import org.apache.log4j.MDC;
 public class PokerTournamentProcessor extends MTTSupport implements PlayerInterceptor, PlayerListener {
 
     // Use %X{pokerid} in the layout pattern to include this information.
-    private static final String MDC_TAG = "pokerid";
+    private static final String MDC_TAG = "tableid";
 
     private static transient Logger log = Logger.getLogger(PokerTournamentProcessor.class);
 
