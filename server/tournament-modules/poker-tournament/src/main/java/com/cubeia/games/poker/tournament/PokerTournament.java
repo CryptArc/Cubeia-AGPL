@@ -245,9 +245,9 @@ public class PokerTournament implements Serializable {
         return map;
     }
 
-    private void scheduleTournamentStart() {
+    private void scheduleTableCreation() {
         if (tournamentLifeCycle.shouldScheduleTournamentStart(pokerState.getStatus(), dateFetcher.now())) {
-            MttObjectAction action = new MttObjectAction(instance.getId(), TournamentTrigger.START);
+            MttObjectAction action = new MttObjectAction(instance.getId(), TournamentTrigger.CREATE_TABLES);
             long timeToTournamentStart = tournamentLifeCycle.getTimeToTournamentStart(dateFetcher.now());
             log.debug("Scheduling tournament start in " + Duration.millis(timeToTournamentStart).getStandardMinutes() + " minutes, for tournament " + instance);
             instance.getScheduler().scheduleAction(action, timeToTournamentStart);
@@ -261,6 +261,12 @@ public class PokerTournament implements Serializable {
         long timeToRegistrationStart = tournamentLifeCycle.getTimeToRegistrationStart(dateFetcher.now());
         log.debug("Scheduling registration opening in " + timeToRegistrationStart + " millis, for tournament " + instance);
         instance.getScheduler().scheduleAction(action, timeToRegistrationStart);
+    }
+
+    private void scheduleTournamentStart() {
+        MttObjectAction action = new MttObjectAction(instance.getId(), TournamentTrigger.START_TOURNAMENT);
+        log.debug("Scheduling round start in " + 1000 + " millis, for tournament " + instance);
+        instance.getScheduler().scheduleAction(action, 1000);
     }
 
     private Collection<SeatingContainer> createInitialSeating() {
@@ -301,7 +307,7 @@ public class PokerTournament implements Serializable {
         }
     }
 
-    private void startTournament() {
+    private void createTables() {
         setInitialBlinds(pokerState);
 
         long registrationElapsedTime = pokerState.getLastRegisteredTime() - pokerState.getFirstRegisteredTime();
@@ -309,12 +315,13 @@ public class PokerTournament implements Serializable {
 
         setTournamentStatus(PokerTournamentStatus.RUNNING);
         int tablesToCreate = state.getRegisteredPlayersCount() / state.getSeats();
+
         // Not sure why we do this?
         if (state.getRegisteredPlayersCount() % state.getSeats() > 0) {
             tablesToCreate++;
         }
         pokerState.setTablesToCreate(tablesToCreate);
-        TournamentTableSettings settings = getTableSettings(pokerState);
+        TournamentTableSettings settings = getTableSettings();
         mttSupport.createTables(state, tablesToCreate, "mtt", settings);
     }
 
@@ -333,9 +340,9 @@ public class PokerTournament implements Serializable {
         return tournamentLifeCycle.shouldCancelTournament(dateFetcher.now(), state.getRegisteredPlayersCount(), state.getMinPlayers());
     }
 
-    private TournamentTableSettings getTableSettings(PokerTournamentState state) {
-        TournamentTableSettings settings = new TournamentTableSettings(state.getSmallBlindAmount(), state.getBigBlindAmount());
-        settings.setTimingProfile(TimingFactory.getRegistry().getTimingProfile(state.getTiming()));
+    private TournamentTableSettings getTableSettings() {
+        TournamentTableSettings settings = new TournamentTableSettings(pokerState.getSmallBlindAmount(), pokerState.getBigBlindAmount());
+        settings.setTimingProfile(TimingFactory.getRegistry().getTimingProfile(pokerState.getTiming()));
         return settings;
     }
     
@@ -343,7 +350,7 @@ public class PokerTournament implements Serializable {
         addJoinedTimestamps();
 
         if (tournamentShouldStart()) {
-            startTournament();
+            createTables();
         }
     }
 
@@ -373,13 +380,30 @@ public class PokerTournament implements Serializable {
             cancelTournament();
         } else if (tournamentLifeCycle.shouldOpenRegistration(dateFetcher.now())) {
             openRegistration();
-            scheduleTournamentStart();
+            scheduleTableCreation();
         } else if (tournamentLifeCycle.shouldScheduleRegistrationOpening(pokerState.getStatus(), dateFetcher.now())) {
             scheduleRegistrationOpening();
         }
     }
 
+    public void handleTrigger(TournamentTrigger trigger) {
+        switch (trigger) {
+            case CREATE_TABLES:
+                createTables();
+                break;
+            case OPEN_REGISTRATION:
+                openRegistration();
+                scheduleTableCreation();
+                break;
+            case START_TOURNAMENT:
+                sendRoundStartToAllTables();
+                scheduleNextBlindsLevel();
+                break;
+        }
+    }
+
     private void openRegistration() {
+        log.debug("Opening registration.");
         setTournamentStatus(PokerTournamentStatus.REGISTERING);
     }
 
@@ -392,17 +416,12 @@ public class PokerTournament implements Serializable {
         // TODO
     }
 
-    public void handleTrigger(TournamentTrigger trigger) {
-        switch (trigger) {
-            case START:
-                log.debug("START TOURNAMENT!");
-                startTournament();
-                break;
-            case OPEN_REGISTRATION:
-                log.debug("Opening registration");
-                openRegistration();
-                scheduleTournamentStart();
-                break;
-        }
+    private void scheduleNextBlindsLevel() {
+
+    }
+
+    private void sendRoundStartToAllTables() {
+        log.debug("Sending round start to all tables.");
+        mttSupport.sendRoundStartActionToTables(state, state.getTables());
     }
 }
