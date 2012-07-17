@@ -18,5 +18,5 @@
 package com.cubeia.games.poker.tournament;
 
 public enum TournamentTrigger {
-    OPEN_REGISTRATION, START_TOURNAMENT, CREATE_TABLES
+    OPEN_REGISTRATION, SEND_START_TO_TABLES, INCREASE_BLINDS, START_TOURNAMENT
 }

@@ -36,6 +36,7 @@ import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
 import com.cubeia.games.poker.jmx.PokerStats;
 import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.games.poker.state.FirebaseState;
+import com.cubeia.games.poker.tournament.configuration.blinds.BlindsLevel;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.adapter.SystemShutdownException;
 import com.cubeia.poker.player.PokerPlayer;
@@ -145,13 +146,14 @@ public class Processor implements GameProcessor, TournamentProcessor {
             } else if (attachment instanceof CloseTableRequest) {
                 log.debug("got close table request: {}", attachment);
                 tableCloseHandler.closeTable(table, false);
+            } else if (attachment instanceof BlindsLevel) {
+                handleBlindsLevel((BlindsLevel) attachment);
             } else if ("CLOSE_TABLE_HINT".equals(attachment.toString())) {
                 log.debug("got CLOSE_TABLE_HINT");
                 tableCloseHandler.closeTable(table, false);
             } else if ("CLOSE_TABLE".equals(attachment.toString())) {
                 log.debug("got CLOSE_TABLE");
                 tableCloseHandler.closeTable(table, true);
-
             } else {
                 log.warn("Unhandled object: " + attachment.getClass().getName());
             }
@@ -164,6 +166,10 @@ public class Processor implements GameProcessor, TournamentProcessor {
         }
 
         updatePlayerDebugInfo(table);
+    }
+
+    private void handleBlindsLevel(BlindsLevel blindsLevel) {
+        state.setBlindsLevels(blindsLevel.getSmallBlindAmount(), blindsLevel.getBigBlindAmount(), blindsLevel.getAnteAmount());
     }
 
     private void updatePlayerDebugInfo(Table table) {

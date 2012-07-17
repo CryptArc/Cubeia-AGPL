@@ -39,6 +39,8 @@ import com.cubeia.games.poker.tournament.activator.SitAndGoCreationParticipant;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentInstance;
 import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
 import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
+import com.cubeia.games.poker.tournament.configuration.blinds.BlindsLevel;
+import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructureFactory;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.state.PokerTournamentStatus;
 import junit.framework.TestCase;
@@ -102,6 +104,7 @@ public class PokerTournamentProcessorTest extends TestCase {
         initMocks(this);
         tournamentProcessor = new PokerTournamentProcessor();
         state = new MTTStateSupport(1, 1);
+        when(configuration.getBlindsStructure()).thenReturn(BlindsStructureFactory.createDefaultBlindsStructure());
         when(instance.getSystemPlayerRegistry()).thenReturn(playerRegistry);
         when(instance.getState()).thenReturn(state);
         when(instance.getLobbyAccessor()).thenReturn(lobbyAccessor);
@@ -111,7 +114,9 @@ public class PokerTournamentProcessorTest extends TestCase {
         tournamentProcessor.setTableCreator(new MockTableCreator(tournamentProcessor, instance));
         tournamentProcessor.setMttNotifier(new MttNotifierAdapter());
 
-        PokerTournamentCreationParticipant part = new SitAndGoCreationParticipant(new SitAndGoConfiguration("test", 20));
+        SitAndGoConfiguration config = new SitAndGoConfiguration("test", 20);
+        config.setBlindsStructure(BlindsStructureFactory.createDefaultBlindsStructure());
+        PokerTournamentCreationParticipant part = new SitAndGoCreationParticipant(config);
         part.tournamentCreated(state, instance.getLobbyAccessor());
 
         pokerState = new PokerTournamentUtil().getPokerState(instance);
@@ -174,7 +179,7 @@ public class PokerTournamentProcessorTest extends TestCase {
 
         // Another table finishes a hand.
         int playersAtTableTwo = state.getPlayersAtTable(1).size();
-        sendRoundReport(1, new PokerTournamentRoundReport());
+        sendRoundReport(1, new PokerTournamentRoundReport(new BlindsLevel(10, 20, 0)));
         assertEquals(playersAtTableTwo - 1, state.getPlayersAtTable(1).size());
     }
 
@@ -220,7 +225,7 @@ public class PokerTournamentProcessorTest extends TestCase {
     }
 
     private PokerTournamentRoundReport createRoundReport(int tableId) {
-        PokerTournamentRoundReport report = new PokerTournamentRoundReport();
+        PokerTournamentRoundReport report = new PokerTournamentRoundReport(new BlindsLevel(10, 20, 0));
         Collection<Integer> playersAtTable = state.getPlayersAtTable(tableId);
         int playersInTournament = state.getRemainingPlayerCount();
 
@@ -264,7 +269,7 @@ public class PokerTournamentProcessorTest extends TestCase {
     }
 
     private PokerTournamentRoundReport createPlayersOutRoundReport(int... playerIds) {
-        PokerTournamentRoundReport roundReport = new PokerTournamentRoundReport();
+        PokerTournamentRoundReport roundReport = new PokerTournamentRoundReport(new BlindsLevel(10, 20, 0));
         for (int playerId : playerIds) {
             roundReport.setBalance(playerId, 0);
         }

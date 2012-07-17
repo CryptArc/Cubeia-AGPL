@@ -41,4 +41,9 @@ public class SitAndGoCreationParticipant extends PokerTournamentCreationParticip
         setStatus(pokerState, lobbyAttributeAccessor, PokerTournamentStatus.REGISTERING);
     }
 
+    @Override
+    protected String getType() {
+        return "sitandgo";
+    }
+
 }

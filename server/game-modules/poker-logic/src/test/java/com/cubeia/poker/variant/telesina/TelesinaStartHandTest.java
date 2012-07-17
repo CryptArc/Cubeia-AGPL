@@ -17,9 +17,9 @@
 
 package com.cubeia.poker.variant.telesina;
 
+import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.adapter.ServerAdapterHolder;
 import com.cubeia.poker.context.PokerContext;
-import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.model.BlindsInfo;
 import com.cubeia.poker.player.PokerPlayer;
@@ -82,7 +82,7 @@ public class TelesinaStartHandTest {
 
         when(rngProvider.getRNG()).thenReturn(rng);
         when(context.getTableSize()).thenReturn(4);
-        when(context.getAnteLevel()).thenReturn(1000);
+        when(context.getAnteAmount()).thenReturn(1000);
         when(deck.getTotalNumberOfCardsInDeck()).thenReturn(40);
         when(deck.getDeckLowestRank()).thenReturn(Rank.FIVE);
         when(deckFactory.createNewDeck(rng, 4)).thenReturn(deck);

@@ -48,14 +48,15 @@ import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.games.poker.tournament.PokerTournamentRoundReport;
+import com.cubeia.games.poker.tournament.configuration.blinds.BlindsLevel;
 import com.cubeia.games.poker.util.ProtocolFactory;
 import com.cubeia.poker.PokerState;
-import com.cubeia.poker.adapter.SystemShutdownException;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
+import com.cubeia.poker.adapter.SystemShutdownException;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.ExposeCardsHolder;
 import com.cubeia.poker.hand.HandType;
@@ -65,9 +66,9 @@ import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.pot.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
-import com.cubeia.poker.util.SitoutCalculator;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.tournament.RoundReport;
+import com.cubeia.poker.util.SitoutCalculator;
 import com.cubeia.poker.util.ThreadLocalProfiler;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
@@ -532,7 +533,8 @@ public class FirebaseServerAdapter implements ServerAdapter {
         PokerStats.getInstance().reportHandEnd();
 
         // Map the report to a server specific round report
-        PokerTournamentRoundReport pokerReport = new PokerTournamentRoundReport(report.getBalanceMap());
+        BlindsLevel currentLevel = new BlindsLevel(report.getSmallBlindAmount(), report.getBigBlindAmount(), report.getAnteAmount());
+        PokerTournamentRoundReport pokerReport = new PokerTournamentRoundReport(report.getBalanceMap(), currentLevel);
         MttRoundReportAction action = new MttRoundReportAction(table.getMetaData().getMttId(), table.getId());
         action.setAttachment(pokerReport);
         table.getTournamentNotifier().sendToTournament(action);

@@ -32,15 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * This class contains all the game data for a poker game, including players, cards and pots.
@@ -325,10 +317,6 @@ public class PokerContext implements Serializable {
         return potHolder;
     }
 
-    public int getAnteLevel() {
-        return settings.getAnteAmount();
-    }
-
     public int getMinBuyIn() {
         return settings.getMinBuyIn();
     }
@@ -528,5 +516,21 @@ public class PokerContext implements Serializable {
         resetValuesAtStartOfHand();
         saveStartingBalances();
         prepareReadyPlayers(readyPlayersFilter);
+    }
+
+    public void setBlindsLevels(int smallBlindAmount, int bigBlindAmount, int ante) {
+        settings.setBlindsLevels(smallBlindAmount, bigBlindAmount, ante);
+    }
+
+    public int getSmallBlindAmount() {
+        return settings.getSmallBlindAmount();
+    }
+
+    public int getBigBlindAmount() {
+        return settings.getBigBlindAmount();
+    }
+
+    public int getAnteAmount() {
+        return settings.getAnteAmount();
     }
 }

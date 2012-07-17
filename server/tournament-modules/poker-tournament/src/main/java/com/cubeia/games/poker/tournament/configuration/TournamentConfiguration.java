@@ -17,6 +17,8 @@
 
 package com.cubeia.games.poker.tournament.configuration;
 
+import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
+
 import java.io.Serializable;
 
 /**
@@ -42,6 +44,8 @@ public class TournamentConfiguration implements Serializable {
     private int minPlayers = 0;
 
     private int maxPlayers = 0;
+
+    private BlindsStructure blindsStructure;
 
     public TournamentConfiguration() {
     }
@@ -106,5 +110,11 @@ public class TournamentConfiguration implements Serializable {
         this.maxPlayers = maxPlayer;
     }
 
+    public BlindsStructure getBlindsStructure() {
+        return blindsStructure;
+    }
 
+    public void setBlindsStructure(BlindsStructure blindsStructure) {
+        this.blindsStructure = blindsStructure;
+    }
 }

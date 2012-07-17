@@ -24,6 +24,30 @@ public class RoundReport {
 
     private Map<Integer, Long> balanceMap = new HashMap<Integer, Long>();
 
+    private int smallBlindAmount;
+
+    private int bigBlindAmount;
+
+    private int anteAmount;
+
+    public RoundReport(int smallBlindAmount, int bigBlindAmount, int anteAmount) {
+        this.smallBlindAmount = smallBlindAmount;
+        this.bigBlindAmount = bigBlindAmount;
+        this.anteAmount = anteAmount;
+    }
+
+    public int getSmallBlindAmount() {
+        return smallBlindAmount;
+    }
+
+    public int getBigBlindAmount() {
+        return bigBlindAmount;
+    }
+
+    public int getAnteAmount() {
+        return anteAmount;
+    }
+
     public void setSetBalance(int playerId, long balance) {
         balanceMap.put(playerId, balance);
     }

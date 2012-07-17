@@ -26,11 +26,7 @@ import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.settings.PokerSettings;
-import com.cubeia.poker.states.NotStartedSTM;
-import com.cubeia.poker.states.PlayingSTM;
-import com.cubeia.poker.states.PokerGameSTM;
-import com.cubeia.poker.states.ShutdownSTM;
-import com.cubeia.poker.states.StateChanger;
+import com.cubeia.poker.states.*;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.variant.GameType;
 import com.google.common.annotations.VisibleForTesting;
@@ -38,12 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
+import java.util.*;
 
 /**
  * This is the class that users of the poker api will interface with.
@@ -74,7 +65,7 @@ public class PokerState implements Serializable, IPokerState {
     private ServerAdapterHolder serverAdapterHolder = new ServerAdapterHolder();
 
     /**
-     * Used by the server adapter layer to store state.
+     * Used by the server adapter layer to store state. (Should be removed)
      */
     private Object adapterState;
 
@@ -329,7 +320,7 @@ public class PokerState implements Serializable, IPokerState {
     }
 
     public int getAnteLevel() {
-        return pokerContext.getAnteLevel();
+        return pokerContext.getAnteAmount();
     }
 
     public int getMinBuyIn() {
@@ -392,5 +383,9 @@ public class PokerState implements Serializable, IPokerState {
 
     public void playerOpenedSession(int playerId) {
         stateHolder.get().playerOpenedSession(playerId);
+    }
+
+    public void setBlindsLevels(int smallBlindAmount, int bigBlindAmount, int ante) {
+        pokerContext.setBlindsLevels(smallBlindAmount, bigBlindAmount, ante);
     }
 }

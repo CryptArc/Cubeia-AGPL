@@ -24,7 +24,7 @@ import java.util.Map;
 
 public class PokerSettings implements Serializable {
 
-    private final int anteAmount;
+    private int anteAmount;
 
     private int smallBlindAmount;
 
@@ -116,5 +116,11 @@ public class PokerSettings implements Serializable {
 
     public int getBigBlindAmount() {
         return bigBlindAmount;
+    }
+
+    public void setBlindsLevels(int smallBlindAmount, int bigBlindAmount, int ante) {
+        this.smallBlindAmount = smallBlindAmount;
+        this.bigBlindAmount = bigBlindAmount;
+        this.anteAmount = ante;
     }
 }

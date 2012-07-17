@@ -45,6 +45,11 @@ public class ScheduledTournamentCreationParticipant extends PokerTournamentCreat
         lobbyAttributeAccessor.setStringAttribute(PokerTournamentLobbyAttributes.IDENTIFIER.name(), instanceConfiguration.getIdentifier());
     }
 
+    @Override
+    protected String getType() {
+        return "scheduled";
+    }
+
     public ScheduledTournamentInstance getInstance() {
         return instanceConfiguration;
     }

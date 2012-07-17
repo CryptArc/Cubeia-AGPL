@@ -46,7 +46,7 @@ public abstract class PokerTournamentCreationParticipant implements CreationPart
     }
 
     public LobbyPath getLobbyPathForTournament(MTTState mtt) {
-        return new LobbyPath(mtt.getMttLogicId(), "sitandgo");
+        return new LobbyPath(mtt.getMttLogicId(), getType());
     }
 
     public final void tournamentCreated(MTTState mtt, LobbyAttributeAccessor acc) {
@@ -60,6 +60,7 @@ public abstract class PokerTournamentCreationParticipant implements CreationPart
 
         PokerTournamentState pokerState = new PokerTournamentState();
         pokerState.setTiming(Timings.values()[config.getTimingType()]);
+        pokerState.setBlindsStructure(config.getBlindsStructure());
         PokerTournament tournament = new PokerTournament(pokerState, new RealDateFetcher(), getTournamentLifeCycle());
         stateSupport.setState(tournament);
 
@@ -78,5 +79,7 @@ public abstract class PokerTournamentCreationParticipant implements CreationPart
     protected abstract TournamentLifeCycle getTournamentLifeCycle();
 
     protected abstract void tournamentCreated(PokerTournamentState pokerState, LobbyAttributeAccessor lobbyAttributeAccessor);
+
+    protected abstract String getType();
 
 }

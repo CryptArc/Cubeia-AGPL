@@ -1,5 +1,6 @@
 package com.cubeia.games.poker.tournament;
 
+import com.cubeia.firebase.api.action.GameObjectAction;
 import com.cubeia.firebase.api.action.UnseatPlayersMttAction;
 import com.cubeia.firebase.api.action.mtt.MttDataAction;
 import com.cubeia.firebase.api.action.mtt.MttObjectAction;
@@ -19,6 +20,7 @@ import com.cubeia.firebase.api.mtt.support.tables.TableBalancer;
 import com.cubeia.games.poker.io.protocol.TournamentOut;
 import com.cubeia.games.poker.tournament.activator.TournamentTableSettings;
 import com.cubeia.games.poker.tournament.configuration.TournamentLifeCycle;
+import com.cubeia.games.poker.tournament.configuration.blinds.BlindsLevel;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.state.PokerTournamentStatus;
 import com.cubeia.games.poker.tournament.util.DateFetcher;
@@ -83,6 +85,7 @@ public class PokerTournament implements Serializable {
             handleFinishedTournament();
         } else {
             if (!tableClosed) {
+                increaseBlindsIfNeeded(report.getCurrentBlindsLevel(), action.getTableId());
                 startNextRoundIfPossible(action.getTableId());
             }
         }
@@ -91,6 +94,14 @@ public class PokerTournament implements Serializable {
             log.debug("Remaining players: " + state.getRemainingPlayerCount() + " Remaining tables: " + state.getTables());
         }
         updateRemainingPlayerCount();
+    }
+
+    private void increaseBlindsIfNeeded(BlindsLevel currentBlindsLevel, int tableId) {
+        if (currentBlindsLevel.getBigBlindAmount() < pokerState.getBigBlindAmount()) {
+            GameObjectAction action = new GameObjectAction(tableId);
+            action.setAttachment(pokerState.getCurrentBlindsLevel());
+            instance.getMttNotifier().notifyTable(tableId, action);
+        }
     }
 
     public void handleTablesCreated() {
@@ -247,7 +258,7 @@ public class PokerTournament implements Serializable {
 
     private void scheduleTableCreation() {
         if (tournamentLifeCycle.shouldScheduleTournamentStart(pokerState.getStatus(), dateFetcher.now())) {
-            MttObjectAction action = new MttObjectAction(instance.getId(), TournamentTrigger.CREATE_TABLES);
+            MttObjectAction action = new MttObjectAction(instance.getId(), TournamentTrigger.START_TOURNAMENT);
             long timeToTournamentStart = tournamentLifeCycle.getTimeToTournamentStart(dateFetcher.now());
             log.debug("Scheduling tournament start in " + Duration.millis(timeToTournamentStart).getStandardMinutes() + " minutes, for tournament " + instance);
             instance.getScheduler().scheduleAction(action, timeToTournamentStart);
@@ -264,9 +275,15 @@ public class PokerTournament implements Serializable {
     }
 
     private void scheduleTournamentStart() {
-        MttObjectAction action = new MttObjectAction(instance.getId(), TournamentTrigger.START_TOURNAMENT);
+        MttObjectAction action = new MttObjectAction(instance.getId(), TournamentTrigger.SEND_START_TO_TABLES);
         log.debug("Scheduling round start in " + 1000 + " millis, for tournament " + instance);
         instance.getScheduler().scheduleAction(action, 1000);
+    }
+
+    private void scheduleNextBlindsLevel() {
+        long timeToNextLevel = pokerState.getBlindsStructure().getTimeToNextLevel();
+        log.debug("Scheduling next blinds level in " + timeToNextLevel + " millis, for tournament " + instance);
+        instance.getScheduler().scheduleAction(new MttObjectAction(instance.getId(), TournamentTrigger.INCREASE_BLINDS), timeToNextLevel);
     }
 
     private Collection<SeatingContainer> createInitialSeating() {
@@ -307,9 +324,7 @@ public class PokerTournament implements Serializable {
         }
     }
 
-    private void createTables() {
-        setInitialBlinds(pokerState);
-
+    private void startTournament() {
         long registrationElapsedTime = pokerState.getLastRegisteredTime() - pokerState.getFirstRegisteredTime();
         log.debug("Starting tournament [" + instance.getId() + " : " + instance.getState().getName() + "]. Registration time was " + registrationElapsedTime + " ms");
 
@@ -323,13 +338,6 @@ public class PokerTournament implements Serializable {
         pokerState.setTablesToCreate(tablesToCreate);
         TournamentTableSettings settings = getTableSettings();
         mttSupport.createTables(state, tablesToCreate, "mtt", settings);
-    }
-
-    private void setInitialBlinds(PokerTournamentState pokerState) {
-        // TODO: Make configurable.
-        log.info("Setting initial blinds. (sb = 10, bb = 20).");
-        pokerState.setSmallBlindAmount(10);
-        pokerState.setBigBlindAmount(20);
     }
 
     private boolean tournamentShouldStart() {
@@ -350,7 +358,7 @@ public class PokerTournament implements Serializable {
         addJoinedTimestamps();
 
         if (tournamentShouldStart()) {
-            createTables();
+            startTournament();
         }
     }
 
@@ -388,18 +396,34 @@ public class PokerTournament implements Serializable {
 
     public void handleTrigger(TournamentTrigger trigger) {
         switch (trigger) {
-            case CREATE_TABLES:
-                createTables();
+            case START_TOURNAMENT:
+                if (enoughPlayers()) {
+                    startTournament();
+                } else {
+                    cancelTournament();
+                }
                 break;
             case OPEN_REGISTRATION:
                 openRegistration();
                 scheduleTableCreation();
                 break;
-            case START_TOURNAMENT:
+            case SEND_START_TO_TABLES:
                 sendRoundStartToAllTables();
                 scheduleNextBlindsLevel();
                 break;
+            case INCREASE_BLINDS:
+                increaseBlindsLevel();
+                scheduleNextBlindsLevel();
+                break;
         }
+    }
+
+    private boolean enoughPlayers() {
+        return state.getRegisteredPlayersCount() >= state.getMinPlayers();
+    }
+
+    private void increaseBlindsLevel() {
+        pokerState.increaseBindsLevel();
     }
 
     private void openRegistration() {
@@ -413,11 +437,8 @@ public class PokerTournament implements Serializable {
     }
 
     private void refundPlayers() {
-        // TODO
-    }
-
-    private void scheduleNextBlindsLevel() {
-
+        // TODO: Refund players.
+        log.warn("Should refund players here!");
     }
 
     private void sendRoundStartToAllTables() {

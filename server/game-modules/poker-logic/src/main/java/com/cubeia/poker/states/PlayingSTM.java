@@ -116,7 +116,7 @@ public class PlayingSTM extends AbstractPokerGameSTM implements HandFinishedList
     }
 
     void sendTournamentRoundReport() {
-        RoundReport report = new RoundReport();
+        RoundReport report = new RoundReport(context.getSmallBlindAmount(), context.getBigBlindAmount(), context.getAnteAmount());
         for (PokerPlayer player : context.getPlayerMap().values()) {
             report.setSetBalance(player.getId(), player.getBalance());
         }

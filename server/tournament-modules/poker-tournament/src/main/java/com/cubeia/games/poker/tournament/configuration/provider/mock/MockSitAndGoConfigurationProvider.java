@@ -39,7 +39,6 @@ public class MockSitAndGoConfigurationProvider implements SitAndGoConfigurationP
 
     private Map<String, SitAndGoConfiguration> requestedTournaments = newHashMap();
 
-
     /*------------------------------------------------
 
        LIFECYCLE METHODS

@@ -50,8 +50,7 @@ import java.util.concurrent.TimeUnit;
 import static com.cubeia.firebase.io.protocol.Enums.TournamentAttributes.NAME;
 import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.IDENTIFIER;
 import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.STATUS;
-import static com.cubeia.games.poker.tournament.state.PokerTournamentStatus.FINISHED;
-import static com.cubeia.games.poker.tournament.state.PokerTournamentStatus.REGISTERING;
+import static com.cubeia.games.poker.tournament.state.PokerTournamentStatus.*;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Sets.newHashSet;
 
@@ -174,7 +173,7 @@ public class TournamentScanner implements PokerActivator, Runnable {
         for (MttLobbyObject t : tournamentInstances) {
             String status = getStringAttribute(t, STATUS.name());
 
-            if (status.equalsIgnoreCase(FINISHED.name())) {
+            if (status.equalsIgnoreCase(FINISHED.name()) || status.equalsIgnoreCase(CANCELLED.name())) {
                 executorService.schedule(new Destroyer(t.getTournamentId()), DELAY_BEFORE_REMOVING_FINISHED_TOURNAMENTS, TimeUnit.SECONDS);
                 removed.add(t.getTournamentId());
             }

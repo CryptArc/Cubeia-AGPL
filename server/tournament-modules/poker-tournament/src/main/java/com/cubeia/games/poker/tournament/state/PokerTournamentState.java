@@ -17,6 +17,8 @@
 
 package com.cubeia.games.poker.tournament.state;
 
+import com.cubeia.games.poker.tournament.configuration.blinds.BlindsLevel;
+import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
 import com.cubeia.poker.timing.Timings;
 import org.apache.log4j.Logger;
 
@@ -47,9 +49,7 @@ public class PokerTournamentState implements Serializable {
      */
     private Map<Integer, Long> balances = new HashMap<Integer, Long>();
 
-    private int smallBlindAmount;
-
-    private int bigBlindAmount;
+    private BlindsStructure blindsStructure;
 
     public boolean allTablesHaveBeenCreated(int tablesCreated) {
         return tablesCreated >= tablesToCreate;
@@ -100,18 +100,26 @@ public class PokerTournamentState implements Serializable {
     }
 
     public int getSmallBlindAmount() {
-        return smallBlindAmount;
+        return blindsStructure.getCurrentLevel().getSmallBlindAmount();
     }
 
     public int getBigBlindAmount() {
-        return bigBlindAmount;
+        return blindsStructure.getCurrentLevel().getBigBlindAmount();
     }
 
-    public void setSmallBlindAmount(int smallBlindAmount) {
-        this.smallBlindAmount = smallBlindAmount;
+    public void setBlindsStructure(BlindsStructure blindsStructure) {
+        this.blindsStructure = blindsStructure;
     }
 
-    public void setBigBlindAmount(int bigBlindAmount) {
-        this.bigBlindAmount = bigBlindAmount;
+    public BlindsStructure getBlindsStructure() {
+        return blindsStructure;
+    }
+
+    public void increaseBindsLevel() {
+        blindsStructure.increaseLevel();
+    }
+
+    public BlindsLevel getCurrentBlindsLevel() {
+        return blindsStructure.getCurrentLevel();
     }
 }
