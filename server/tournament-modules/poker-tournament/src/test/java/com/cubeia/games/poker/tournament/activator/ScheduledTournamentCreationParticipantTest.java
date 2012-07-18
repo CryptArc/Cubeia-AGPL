@@ -26,7 +26,6 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
-import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.REGISTRATION_OPENING_TIME;
 import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.START_TIME;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.eq;
@@ -60,7 +59,6 @@ public class ScheduledTournamentCreationParticipantTest {
         participant.tournamentCreated(pokerState, accessor);
 
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-        verify(accessor).setStringAttribute(eq(REGISTRATION_OPENING_TIME.name()), captor.capture());
         verify(accessor).setStringAttribute(eq(START_TIME.name()), captor.capture());
         assertEquals("2012-06-04 13:10", captor.getValue());
     }
