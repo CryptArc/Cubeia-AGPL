@@ -20,7 +20,6 @@ package com.cubeia.games.poker.tournament;
 import com.cubeia.firebase.api.mtt.MttInstance;
 import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
-import com.cubeia.games.poker.tournament.state.PokerTournamentStatus;
 
 import java.io.Serializable;
 

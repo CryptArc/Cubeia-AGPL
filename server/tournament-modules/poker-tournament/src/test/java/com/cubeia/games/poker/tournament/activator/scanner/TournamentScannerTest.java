@@ -32,7 +32,7 @@ import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
 import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
 import com.cubeia.games.poker.tournament.configuration.provider.SitAndGoConfigurationProvider;
 import com.cubeia.games.poker.tournament.configuration.provider.TournamentScheduleProvider;
-import com.cubeia.games.poker.tournament.state.PokerTournamentStatus;
+import com.cubeia.games.poker.tournament.PokerTournamentStatus;
 import com.cubeia.games.poker.tournament.util.DateFetcher;
 import com.google.common.collect.Maps;
 import org.joda.time.DateTime;

@@ -42,7 +42,6 @@ import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsLevel;
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructureFactory;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
-import com.cubeia.games.poker.tournament.state.PokerTournamentStatus;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
@@ -50,8 +49,8 @@ import org.mockito.Mock;
 
 import java.util.*;
 
-import static com.cubeia.games.poker.tournament.state.PokerTournamentStatus.ANNOUNCED;
-import static com.cubeia.games.poker.tournament.state.PokerTournamentStatus.REGISTERING;
+import static com.cubeia.games.poker.tournament.PokerTournamentStatus.ANNOUNCED;
+import static com.cubeia.games.poker.tournament.PokerTournamentStatus.REGISTERING;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 

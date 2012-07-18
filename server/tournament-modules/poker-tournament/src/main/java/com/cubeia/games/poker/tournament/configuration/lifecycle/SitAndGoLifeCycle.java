@@ -15,9 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.tournament.configuration;
+package com.cubeia.games.poker.tournament.configuration.lifecycle;
 
-import com.cubeia.games.poker.tournament.state.PokerTournamentStatus;
+import com.cubeia.games.poker.tournament.PokerTournamentStatus;
 import org.joda.time.DateTime;
 
 public class SitAndGoLifeCycle implements TournamentLifeCycle {
