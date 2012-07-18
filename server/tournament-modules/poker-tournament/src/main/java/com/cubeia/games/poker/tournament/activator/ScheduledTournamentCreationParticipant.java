@@ -18,16 +18,18 @@
 package com.cubeia.games.poker.tournament.activator;
 
 import com.cubeia.firebase.api.lobby.LobbyAttributeAccessor;
-import com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentInstance;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentLifeCycle;
 import com.cubeia.games.poker.tournament.configuration.TournamentLifeCycle;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.state.PokerTournamentStatus;
 
+import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.*;
+
 public class ScheduledTournamentCreationParticipant extends PokerTournamentCreationParticipant {
 
     private ScheduledTournamentInstance instanceConfiguration;
+    private String pattern = "yyyy-MM-dd HH:mm";
 
     public ScheduledTournamentCreationParticipant(ScheduledTournamentInstance config) {
         super(config.getConfiguration());
@@ -42,7 +44,9 @@ public class ScheduledTournamentCreationParticipant extends PokerTournamentCreat
     @Override
     protected void tournamentCreated(PokerTournamentState pokerState, LobbyAttributeAccessor lobbyAttributeAccessor) {
         setStatus(pokerState, lobbyAttributeAccessor, PokerTournamentStatus.ANNOUNCED);
-        lobbyAttributeAccessor.setStringAttribute(PokerTournamentLobbyAttributes.IDENTIFIER.name(), instanceConfiguration.getIdentifier());
+        lobbyAttributeAccessor.setStringAttribute(IDENTIFIER.name(), instanceConfiguration.getIdentifier());
+        lobbyAttributeAccessor.setStringAttribute(START_TIME.name(), instanceConfiguration.getStartTime().toString(pattern));
+        lobbyAttributeAccessor.setStringAttribute(REGISTRATION_OPENING_TIME.name(), instanceConfiguration.getOpenRegistrationTime().toString(pattern));
     }
 
     @Override

@@ -18,7 +18,5 @@
 package com.cubeia.games.poker.tournament;
 
 public enum PokerTournamentLobbyAttributes {
-    STATUS,
-    TABLE_SIZE,
-    IDENTIFIER
+    STATUS, TABLE_SIZE, START_TIME, REGISTRATION_OPENING_TIME, IDENTIFIER
 }

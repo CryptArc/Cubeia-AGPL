@@ -26,7 +26,6 @@ public class SitAndGoConfiguration extends TournamentConfiguration {
         super.setMinPlayers(capacity);
         super.setMaxPlayers(capacity);
         super.setSeatsPerTable(10);
-        super.setStartType(TournamentStartType.SIT_AND_GO);
         super.setTimingType(timings.ordinal());
     }
 

@@ -276,10 +276,6 @@ public class TournamentScanner implements PokerActivator, Runnable {
                 String name = getStringAttribute(t, NAME.name());
                 missingTournaments.remove(name);
             }
-
-//            if (status.equalsIgnoreCase(PokerTournamentStatus.FINISHED.name())) {
-//                executorService.schedule(new Destroyer(t.getTournamentId()), DELAY_BEFORE_REMOVING_FINISHED_TOURNAMENTS, TimeUnit.SECONDS);
-//            }
         }
 
         for (String configuration : missingTournaments) {
