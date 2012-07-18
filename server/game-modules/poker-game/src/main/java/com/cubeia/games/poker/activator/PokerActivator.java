@@ -51,6 +51,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import java.io.Serializable;
 import java.lang.management.ManagementFactory;
+import java.math.BigDecimal;
 import java.util.*;
 
 import static com.cubeia.games.poker.activator.PokerParticipant.*;
@@ -243,7 +244,7 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
 
         int numberOfSeats = table.getPlayerSet().getSeatingMap().getNumberOfSeats();
         BetStrategyName noLimit = BetStrategyName.NO_LIMIT;
-        RakeSettings rakeSettings = new RakeSettings(RAKE_FRACTION, RAKE_LIMIT, RAKE_LIMIT_HEADS_UP);
+        RakeSettings rakeSettings = new RakeSettings(new BigDecimal(0), 0, 0); // No rake in tournaments.
         Map<Serializable,Serializable> attributes = Collections.<Serializable, Serializable>singletonMap(ATTR_EXTERNAL_TABLE_ID, "MOCK_TRN::" + table.getId());
         PokerSettings settings = new PokerSettings(anteAmount, smallBlindAmount, bigBlindAmount, -1, -1, timing, numberOfSeats, noLimit, rakeSettings, attributes);
 

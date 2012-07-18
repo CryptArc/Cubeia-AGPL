@@ -99,7 +99,6 @@ public class CollectorServiceImpl implements HandHistoryCollectorService {
         cache.remove(tableId);
     }
 
-
     // --- PRIVATE METHODS --- //
 
     private HistoricHand getCurrent(int tableId) {

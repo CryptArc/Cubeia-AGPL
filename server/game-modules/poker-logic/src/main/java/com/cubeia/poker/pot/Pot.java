@@ -40,8 +40,6 @@ public class Pot implements Serializable {
         MAIN, SIDE
     }
 
-    ;
-
     /**
      * pot id
      */

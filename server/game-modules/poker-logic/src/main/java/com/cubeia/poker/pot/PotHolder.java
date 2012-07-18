@@ -137,8 +137,6 @@ public class PotHolder implements Serializable {
      * @return
      */
     public RakeInfoContainer calculateRakeIncludingBetStacks(Collection<PokerPlayer> players) {
-
-
         Collection<Pot> allPots = new ArrayList<Pot>(getPots());
 
         Pot betPot = new Pot(Integer.MAX_VALUE);
@@ -202,9 +200,9 @@ public class PotHolder implements Serializable {
 
                 log.debug("returning " + returnedChips + " uncalled chips to " + biggestBetter);
             }
-        } catch (NullPointerException ne) {
+        } catch (NullPointerException e) {
             // FIXME: Tournaments get this exception
-            log.warn("FIXME: Should not be nullpointer here! -> PotHolder.returnUnCalledChips()", ne);
+            log.warn("FIXME: Should not be nullpointer here! -> PotHolder.returnUnCalledChips()", e);
         }
 
         return transitions;
