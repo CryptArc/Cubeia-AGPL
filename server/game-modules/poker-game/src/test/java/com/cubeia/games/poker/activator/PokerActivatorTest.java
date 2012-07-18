@@ -22,7 +22,7 @@ import com.cubeia.firebase.api.game.table.TableGameState;
 import com.cubeia.firebase.api.game.table.TablePlayerSet;
 import com.cubeia.firebase.api.game.table.TableSeatingMap;
 import com.cubeia.firebase.api.lobby.LobbyAttributeAccessor;
-import com.cubeia.games.poker.tournament.activator.TournamentTableSettings;
+import com.cubeia.games.poker.tournament.configuration.TournamentTableSettings;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.variant.GameType;

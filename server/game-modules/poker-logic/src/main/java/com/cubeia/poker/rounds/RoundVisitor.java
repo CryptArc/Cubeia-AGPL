@@ -26,9 +26,8 @@ import com.cubeia.poker.rounds.dealing.DealInitialPocketCardsRound;
 import com.cubeia.poker.rounds.dealing.ExposePrivateCardsRound;
 
 /**
- * These will be called at the end of a round
+ * Used for inspecting the current round and figuring out where to go next.
  *
- * @author per.hjelm The master of the universe
  */
 public interface RoundVisitor {
 

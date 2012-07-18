@@ -26,6 +26,7 @@ import com.cubeia.firebase.io.protocol.Enums;
 import com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes;
 import com.cubeia.games.poker.tournament.activator.ScheduledTournamentCreationParticipant;
 import com.cubeia.games.poker.tournament.activator.SitAndGoCreationParticipant;
+import com.cubeia.games.poker.tournament.activator.TournamentScanner;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentInstance;
 import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;

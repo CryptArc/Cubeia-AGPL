@@ -23,7 +23,6 @@ import com.cubeia.firebase.api.mtt.activator.MttActivator;
 import com.cubeia.firebase.api.server.Startable;
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.games.poker.tournament.activator.external.jmx.JMXActivator;
-import com.cubeia.games.poker.tournament.activator.scanner.TournamentScanner;
 import com.cubeia.games.poker.tournament.configuration.provider.mock.MockSitAndGoConfigurationProvider;
 import com.cubeia.games.poker.tournament.configuration.provider.mock.MockTournamentScheduleProvider;
 import com.cubeia.games.poker.tournament.util.DateFetcher;

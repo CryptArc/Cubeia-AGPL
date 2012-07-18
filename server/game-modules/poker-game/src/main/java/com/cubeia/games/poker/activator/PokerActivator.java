@@ -30,7 +30,7 @@ import com.cubeia.firebase.api.lobby.LobbyPath;
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.games.poker.lobby.PokerLobbyAttributes;
 import com.cubeia.games.poker.state.FirebaseState;
-import com.cubeia.games.poker.tournament.activator.TournamentTableSettings;
+import com.cubeia.games.poker.tournament.configuration.TournamentTableSettings;
 import com.cubeia.poker.PokerGuiceModule;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.rng.RNGProvider;

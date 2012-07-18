@@ -18,7 +18,7 @@ import com.cubeia.firebase.api.mtt.support.MTTSupport;
 import com.cubeia.firebase.api.mtt.support.tables.Move;
 import com.cubeia.firebase.api.mtt.support.tables.TableBalancer;
 import com.cubeia.games.poker.io.protocol.TournamentOut;
-import com.cubeia.games.poker.tournament.activator.TournamentTableSettings;
+import com.cubeia.games.poker.tournament.configuration.TournamentTableSettings;
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsLevel;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.TournamentLifeCycle;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;

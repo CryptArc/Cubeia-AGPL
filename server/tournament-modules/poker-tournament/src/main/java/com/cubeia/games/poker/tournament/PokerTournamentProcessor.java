@@ -27,7 +27,6 @@ import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.firebase.api.mtt.support.MTTSupport;
 import com.cubeia.firebase.api.mtt.support.registry.PlayerInterceptor;
 import com.cubeia.firebase.api.mtt.support.registry.PlayerListener;
-import com.cubeia.games.poker.tournament.activator.scanner.TournamentScanner;
 import org.apache.log4j.Logger;
 import org.apache.log4j.MDC;
 

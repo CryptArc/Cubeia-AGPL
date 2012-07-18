@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.tournament.activator.scanner;
+package com.cubeia.games.poker.tournament.activator;
 
 import com.cubeia.firebase.api.common.AttributeValue;
 import com.cubeia.firebase.api.mtt.MttFactory;
@@ -23,10 +23,6 @@ import com.cubeia.firebase.api.mtt.activator.ActivatorContext;
 import com.cubeia.firebase.api.mtt.activator.CreationParticipant;
 import com.cubeia.firebase.api.mtt.lobby.MttLobbyObject;
 import com.cubeia.firebase.api.server.SystemException;
-import com.cubeia.games.poker.tournament.activator.PokerActivator;
-import com.cubeia.games.poker.tournament.activator.PokerTournamentActivatorImpl;
-import com.cubeia.games.poker.tournament.activator.ScheduledTournamentCreationParticipant;
-import com.cubeia.games.poker.tournament.activator.SitAndGoCreationParticipant;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentInstance;
 import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;

@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.tournament.activator;
+package com.cubeia.games.poker.tournament.configuration;
 
 import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
