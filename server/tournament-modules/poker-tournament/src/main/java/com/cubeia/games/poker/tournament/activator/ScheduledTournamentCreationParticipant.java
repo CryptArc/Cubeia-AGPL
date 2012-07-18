@@ -18,11 +18,11 @@
 package com.cubeia.games.poker.tournament.activator;
 
 import com.cubeia.firebase.api.lobby.LobbyAttributeAccessor;
-import com.cubeia.games.poker.tournament.PokerTournamentStatus;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentInstance;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.ScheduledTournamentLifeCycle;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.TournamentLifeCycle;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
+import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 
 import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.*;
 

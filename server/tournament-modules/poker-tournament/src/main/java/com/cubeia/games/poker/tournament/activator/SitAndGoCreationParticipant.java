@@ -18,11 +18,11 @@
 package com.cubeia.games.poker.tournament.activator;
 
 import com.cubeia.firebase.api.lobby.LobbyAttributeAccessor;
-import com.cubeia.games.poker.tournament.PokerTournamentStatus;
 import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.SitAndGoLifeCycle;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.TournamentLifeCycle;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
+import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 
 public class SitAndGoCreationParticipant extends PokerTournamentCreationParticipant {
 

@@ -50,7 +50,7 @@ import java.util.concurrent.TimeUnit;
 import static com.cubeia.firebase.io.protocol.Enums.TournamentAttributes.NAME;
 import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.IDENTIFIER;
 import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.STATUS;
-import static com.cubeia.games.poker.tournament.PokerTournamentStatus.*;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.*;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Sets.newHashSet;
 

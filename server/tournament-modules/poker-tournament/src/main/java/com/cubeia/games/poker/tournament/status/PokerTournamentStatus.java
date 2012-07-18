@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.tournament;
+package com.cubeia.games.poker.tournament.status;
 
 public enum PokerTournamentStatus {
     ANNOUNCED, REGISTERING, RUNNING, PREPARING_BREAK, ON_BREAK, FINISHED, CANCELLED

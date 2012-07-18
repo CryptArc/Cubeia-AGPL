@@ -17,7 +17,7 @@
 
 package com.cubeia.games.poker.tournament.configuration.lifecycle;
 
-import com.cubeia.games.poker.tournament.PokerTournamentStatus;
+import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 import org.joda.time.DateTime;
 
 public class ScheduledTournamentLifeCycle implements TournamentLifeCycle {
