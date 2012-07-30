@@ -23,6 +23,8 @@ import com.cubeia.poker.rounds.RoundVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
+
 /**
  * Telesina specific round for dealing vela card.
  */
@@ -33,7 +35,7 @@ public class ExposePrivateCardsRound implements Round {
     private static transient Logger log = LoggerFactory.getLogger(ExposePrivateCardsRound.class);
 
     public ExposePrivateCardsRound(Dealer dealer) {
-        dealer.exposeShowdownCards();
+        dealer.exposeShowdownCards(Collections.<Integer>emptyList());
         dealer.sendAllNonFoldedPlayersBestHand();
     }
 

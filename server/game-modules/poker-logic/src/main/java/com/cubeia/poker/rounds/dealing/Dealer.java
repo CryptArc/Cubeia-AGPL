@@ -17,6 +17,8 @@
 
 package com.cubeia.poker.rounds.dealing;
 
+import java.util.List;
+
 public interface Dealer {
 
     void dealCommunityCards();
@@ -25,7 +27,7 @@ public interface Dealer {
 
     void dealInitialPocketCards();
 
-    void exposeShowdownCards();
+    void exposeShowdownCards(List<Integer> playerRevealOrder);
 
     void sendAllNonFoldedPlayersBestHand();
 }

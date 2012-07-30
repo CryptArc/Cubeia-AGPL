@@ -30,6 +30,7 @@ import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.ExposeCardsHolder;
+import com.cubeia.poker.hand.ExposedCards;
 import com.cubeia.poker.hand.HandType;
 import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
@@ -238,15 +239,15 @@ public class ActionTransformer {
     public ExposePrivateCards createExposeCardsPacket(ExposeCardsHolder holder) {
         ExposePrivateCards packet = new ExposePrivateCards();
         packet.cards = new LinkedList<CardToDeal>();
-        for (Integer playerId : holder.getPlayerIdSet()) {
-            Collection<Card> cards = holder.getCardsForPlayer(playerId);
+        for (ExposedCards exposedCards : holder.getExposedCards()) {
+            Collection<Card> cards = exposedCards.getCards();
             for (Card card : cards) {
                 GameCard gCard = new GameCard();
                 gCard.rank = Enums.Rank.values()[card.getRank().ordinal()];
                 gCard.suit = Enums.Suit.values()[card.getSuit().ordinal()];
                 gCard.cardId = card.getId();
 
-                CardToDeal deal = new CardToDeal(playerId, gCard);
+                CardToDeal deal = new CardToDeal(exposedCards.getPlayerId(), gCard);
                 packet.cards.add(deal);
             }
         }

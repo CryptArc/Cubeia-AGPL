@@ -322,7 +322,7 @@ public class Telesina extends AbstractGameType implements RoundVisitor, Dealer {
     }
 
     private void handleFinishedHand() {
-        exposeShowdownCards();
+        exposeShowdownCards(Collections.<Integer>emptyList());
 
         PokerPlayer playerAtDealerButton = context.getPlayerInDealerSeat();
         List<Integer> playerRevealOrder = new RevealOrderCalculator().calculateRevealOrder(context.getCurrentHandSeatingMap(), context.getLastPlayerToBeCalled(), playerAtDealerButton);

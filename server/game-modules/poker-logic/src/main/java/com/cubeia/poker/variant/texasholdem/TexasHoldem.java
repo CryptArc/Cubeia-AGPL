@@ -65,8 +65,11 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
 
     private HandResultCalculator handResultCalculator = new HandResultCalculator(new TexasHoldemHandCalculator());
 
+    private RevealOrderCalculator revealOrderCalculator;
+
     public TexasHoldem(RNGProvider rngProvider) {
         this.rngProvider = rngProvider;
+        revealOrderCalculator = new RevealOrderCalculator();
     }
 
     @Override
@@ -165,8 +168,12 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
     }
 
     @Override
-    public void exposeShowdownCards() {
-        // Not valid / used yet.
+    public void exposeShowdownCards(List<Integer> playerRevealOrder) {
+        ExposeCardsHolder holder = new ExposeCardsHolder();
+        for (int playerId : playerRevealOrder) {
+            holder.setExposedCards(playerId, context.getPlayer(playerId).getPrivatePocketCards());
+        }
+        serverAdapterHolder.get().exposePrivateCards(holder);
     }
 
     private void handleCanceledHand() {
@@ -232,9 +239,10 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
 
     @VisibleForTesting
     void handleFinishedHand() {
-        exposeShowdownCards();
         PokerPlayer playerAtDealerButton = context.getPlayerInDealerSeat();
-        List<Integer> playerRevealOrder = new RevealOrderCalculator().calculateRevealOrder(context.getCurrentHandSeatingMap(), context.getLastPlayerToBeCalled(), playerAtDealerButton);
+
+        List<Integer> playerRevealOrder = revealOrderCalculator.calculateRevealOrder(context.getCurrentHandSeatingMap(), context.getLastPlayerToBeCalled(), playerAtDealerButton);
+        exposeShowdownCards(playerRevealOrder);
 
         Set<PokerPlayer> muckingPlayers = context.getMuckingPlayers();
         HandResult handResult = new HandResultCreator(new TexasHoldemHandCalculator()).createHandResult(context.getCommunityCards(), handResultCalculator, context.getPotHolder(), context.getCurrentHandPlayerMap(), playerRevealOrder, muckingPlayers);
@@ -309,5 +317,9 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
     @Override
     public boolean isCurrentlyWaitingForPlayer(int playerId) {
         return currentRound.isWaitingForPlayer(playerId);
+    }
+
+    public void setRevealOrderCalculator(RevealOrderCalculator revealOrderCalculator) {
+        this.revealOrderCalculator = revealOrderCalculator;
     }
 }

@@ -17,30 +17,24 @@
 
 package com.cubeia.poker.hand;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import com.google.common.collect.Lists;
 
+import java.util.Collection;
+import java.util.List;
 
 public class ExposeCardsHolder {
 
-    private Map<Integer, Collection<Card>> allCards = new HashMap<Integer, Collection<Card>>();
+    private List<ExposedCards> exposedCards = Lists.newArrayList();
 
     public void setExposedCards(int playerId, Collection<Card> cards) {
-        allCards.put(playerId, cards);
+        exposedCards.add(new ExposedCards(playerId, cards));
     }
 
     public boolean hasCards() {
-        return allCards.size() > 0;
+        return !exposedCards.isEmpty();
     }
 
-    public Set<Integer> getPlayerIdSet() {
-        return allCards.keySet();
+    public List<ExposedCards> getExposedCards() {
+        return exposedCards;
     }
-
-    public Collection<Card> getCardsForPlayer(Integer playerId) {
-        return allCards.get(playerId);
-    }
-
 }

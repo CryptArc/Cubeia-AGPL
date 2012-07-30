@@ -17,14 +17,14 @@
 
 package com.cubeia.poker.rounds.betting;
 
-import com.cubeia.poker.IPokerState;
-import com.cubeia.poker.PokerState;
 import com.cubeia.poker.rounds.dealing.Dealer;
 import com.cubeia.poker.rounds.dealing.ExposePrivateCardsRound;
-import com.cubeia.poker.variant.telesina.Telesina;
 import org.junit.Test;
 
-import static org.mockito.Mockito.*;
+import java.util.Collections;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class ExposePrivateCardsRoundTest {
 
@@ -35,7 +35,7 @@ public class ExposePrivateCardsRoundTest {
         Dealer dealer = mock(Dealer.class);
 
         new ExposePrivateCardsRound(dealer);
-        verify(dealer).exposeShowdownCards();
+        verify(dealer).exposeShowdownCards(Collections.<Integer>emptyList());
     }
 
 }

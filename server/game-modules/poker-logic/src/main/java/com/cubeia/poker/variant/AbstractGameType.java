@@ -17,11 +17,11 @@
 
 package com.cubeia.poker.variant;
 
-import com.cubeia.poker.adapter.ServerAdapterHolder;
-import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.ExposeCardsHolder;
 import com.cubeia.poker.player.PokerPlayer;
@@ -29,8 +29,8 @@ import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.rounds.RoundHelper;
-import com.cubeia.poker.util.SitoutCalculator;
 import com.cubeia.poker.timing.Periods;
+import com.cubeia.poker.util.SitoutCalculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,8 +54,9 @@ public abstract class AbstractGameType implements GameType {
      * Expose all pocket cards for players still in the hand
      * i.e. not folded. Will set a flag so that sequential calls
      * will not generate any outgoing packets.
+     * @param playerRevealOrder
      */
-    public void exposeShowdownCards() {
+    public void exposeShowdownCards(List<Integer> playerRevealOrder) {
         if (context.countNonFoldedPlayers() > 1) {
             ExposeCardsHolder holder = new ExposeCardsHolder();
             for (PokerPlayer p : context.getPlayersInHand()) {

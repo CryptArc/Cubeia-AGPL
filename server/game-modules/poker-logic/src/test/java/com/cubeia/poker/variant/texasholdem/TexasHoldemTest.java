@@ -27,6 +27,7 @@ import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.adapter.ServerAdapterHolder;
 import com.cubeia.poker.blinds.MissedBlindsStatus;
 import com.cubeia.poker.context.PokerContext;
+import com.cubeia.poker.hand.ExposeCardsHolder;
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.hand.HandType;
 import com.cubeia.poker.model.RatedPlayerHand;
@@ -35,6 +36,7 @@ import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.rake.LinearRakeWithLimitCalculator;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
+import com.cubeia.poker.result.RevealOrderCalculator;
 import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.rounds.betting.BettingRound;
 import com.cubeia.poker.settings.BetStrategyName;
@@ -43,6 +45,7 @@ import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.timing.impl.DefaultTimingProfile;
 import com.cubeia.poker.variant.HandFinishedListener;
 import com.google.common.base.Predicate;
+import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -53,6 +56,7 @@ import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 import static com.cubeia.poker.action.PokerActionType.*;
@@ -68,17 +72,24 @@ public class TexasHoldemTest {
 
     @Mock
     private PokerContext context;
+
     @Mock
     private RNGProvider rngProvider;
+
     @Mock
     private BettingRound bettingRound;
 
     @Mock
     private ServerAdapterHolder serverAdapterHolder;
+
     @Mock
     private ServerAdapter serverAdapter;
+
     @Mock
     private HandFinishedListener listener;
+
+    @Mock
+    private RevealOrderCalculator revealOrderCalculator;
 
     private MockPlayer player1;
 
@@ -92,13 +103,14 @@ public class TexasHoldemTest {
 
     private RakeSettings rakeSettings;
 
+    private MockPlayer[] p;
+
     private Predicate<PokerPlayer> readyPlayersFilter = new Predicate<PokerPlayer>() {
         @Override
         public boolean apply(@Nullable PokerPlayer pokerPlayer) {
             return true;
         }
     };
-    private MockPlayer[] p;
 
     @Before
     public void setup() {
@@ -286,6 +298,8 @@ public class TexasHoldemTest {
 
         // So, given:
         when(context.getCommunityCards()).thenReturn(new Hand("8C 6D 9C AC 5C").getCards());
+        when(context.getPlayer(101)).thenReturn(player1);
+        when(context.getPlayer(102)).thenReturn(player2);
         player1.setPocketCards(new Hand("QS 3C"));
         player2.setPocketCards(new Hand("6C 9D"));
 
@@ -316,6 +330,52 @@ public class TexasHoldemTest {
         // First play a normal hand.
         act(p[1], SMALL_BLIND);
         assertTrue(p[1].isAllIn());
+    }
+
+    @Test
+    public void testShowdown() {
+        PokerContext context = prepareContext(3);
+        texas.setRevealOrderCalculator(revealOrderCalculator);
+        when(revealOrderCalculator.calculateRevealOrder(Matchers.<SortedMap<Integer, PokerPlayer>>any(),Matchers.<PokerPlayer>any(),Matchers.<PokerPlayer>any())).
+                thenReturn(Lists.newArrayList(102, 100, 101));
+
+        startHand(context);
+
+        // First play a normal hand.
+        act(p[1], SMALL_BLIND);
+        act(p[2], BIG_BLIND);
+
+        // pre
+        act(p[0], CALL);
+        act(p[1], CALL);
+        act(p[2], CHECK);
+
+        texas.timeout();
+
+        // flop
+        act(p[1], CHECK);
+        act(p[2], CHECK);
+        act(p[0], CHECK);
+
+        texas.timeout();
+
+        // turn
+        act(p[1], CHECK);
+        act(p[2], CHECK);
+        act(p[0], CHECK);
+
+        texas.timeout();
+
+        // river
+        act(p[1], CHECK);
+        act(p[2], BET, 40);
+        act(p[0], CALL);
+        act(p[1], CALL);
+
+        ArgumentCaptor<ExposeCardsHolder> captor = ArgumentCaptor.forClass(ExposeCardsHolder.class);
+        verify(serverAdapter).exposePrivateCards(captor.capture());
+        ExposeCardsHolder holder = captor.getValue();
+        assertEquals(102, holder.getExposedCards().get(0).getPlayerId());
     }
 
     @Test
