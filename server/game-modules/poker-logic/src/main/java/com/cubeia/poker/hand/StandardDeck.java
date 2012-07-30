@@ -17,11 +17,12 @@
 
 package com.cubeia.poker.hand;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static com.google.common.collect.ImmutableSet.copyOf;
 import static com.google.common.collect.Sets.cartesianProduct;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Standard 52-card deck.
@@ -46,7 +47,8 @@ public class StandardDeck implements Deck {
     protected List<Card> createDeck() {
         ArrayList<Card> cards = new ArrayList<Card>();
 
-        for (List<Enum<? extends Enum<?>>> cardContainer : cartesianProduct(copyOf(Suit.values()), copyOf(Rank.values()))) {
+        Set<List<Enum<?>>> deck = cartesianProduct(copyOf(Suit.values()), copyOf(Rank.values()));
+        for (List<Enum<?>> cardContainer : deck) {
             Suit suit = (Suit) cardContainer.get(0);
             Rank rank = (Rank) cardContainer.get(1);
             cards.add(new Card(rank, suit));
