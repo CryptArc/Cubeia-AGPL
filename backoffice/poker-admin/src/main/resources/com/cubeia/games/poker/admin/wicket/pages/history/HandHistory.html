@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:wicket="http://wicket.apache.org/">
+<body>
+	
+    <wicket:extend>
+		
+		<script type="text/javascript">
+			function debug(d){
+				console.debug(d);
+			}
+			var HandHistory = function(settings) {this.initialize(settings);};
+			HandHistory.prototype = {
+					settings : null,
+					initialize : function(settings) {
+						this.settings = settings;
+						this.getHistory();
+						
+					},
+					getHistory : function() {
+						var self = this;
+						$.ajax(this.settings.historyUrl,{
+							dataType : "json",
+							success:function(data){
+								self.displayHistory(data);
+							}
+						});
+						
+					}, 
+					displayHistory : function(history) {
+						var self = this;
+						$.each(history,function(i,hand){
+							$("#handHistoryListItemTemplate").tmpl(hand).appendTo("#listContent").click(function(e){
+								if($("#details-"+hand.handId.handId).length==0) {
+									self.getHand(hand.handId.handId, $(this));
+								} else {
+									$("#details-"+hand.handId.handId).toggle();
+								}
+							});						
+						});
+					},
+					getHand : function(handId,container) {
+						$.ajax(this.settings.handUrl, {
+							dataType : "json",
+							success : function(hand) {
+								$("#handTemplate").tmpl(hand).insertAfter(container);
+							}
+						})
+					}
+			};
+			$(document).ready(function(){
+				var hh = new HandHistory({ historyUrl : historyUrl, handUrl : handUrl});
+			});
+		</script>
+		
+		<section>
+			<div class="page-header">
+		   		<h1>Hand History</h1>
+			</div>
+	   		
+	   		<table class="table table-striped">
+	   			<thead>
+	   				<tr>
+	   					<th>Hand id</th>
+	   					<th>Table id</th>
+	   					<th>Start time</th>
+	   					<th>End time</th>
+	   					<th>Total rake</th>
+	   				</tr>
+	   			</thead>
+	   			<tbody id="listContent">
+	   				
+	   			</tbody>
+	   		</table>
+		</section>
+	
+	
+	
+	<script id="handHistoryListItemTemplate" type="text/tmpl">
+			<tr>
+				<td>${handId.handId}</td>
+				<td>${handId.tableId}</td>
+				<td>${startTime}</td>
+				<td>${endTime}</td>
+				<td>${results.totalRake}</td>
+			</tr>
+			
+	</script>
+	
+	<script id="handTemplate" type="text/tmpl">
+			<tr id="details-${handId.handId}" class="child">
+				<td colspan="5">
+					<table class="table">
+					<tr>
+						<th>Player id</th>
+						<th>Net Win</th>
+						<th>Total Win</th>
+						<th>Total Bet</th>
+						<th>Rake</th>
+					</tr>
+					{{each(id,res) results.results}}
+						<tr>
+
+							<td>${res.playerId}</td>
+							<td>${res.netWin}</td>
+							<td>${res.totalWin}</td>
+							<td>${res.totalBet}</td>
+							<td>${res.rake}</td>
+						</tr>
+					{{/each}}
+					</table
+				</td>
+			</tr>
+	</script>
+
+
+  	</wicket:extend>
+	
+</body>
+</html>
