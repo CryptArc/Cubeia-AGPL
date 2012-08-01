@@ -20,7 +20,6 @@ package com.cubeia.poker.handhistory.impl;
 import com.cubeia.firebase.guice.inject.Log4j;
 import com.cubeia.poker.handhistory.api.HandHistoryEvent;
 import com.cubeia.poker.handhistory.api.HandHistoryPersister;
-import com.cubeia.poker.handhistory.api.HandIdentification;
 import com.cubeia.poker.handhistory.api.HistoricHand;
 import com.google.gson.*;
 import com.google.inject.Singleton;
@@ -35,16 +34,14 @@ public class JsonHandHistoryLogger implements HandHistoryPersister {
     private Logger log;
 
     @Override
-    public HistoricHand retrieve(HandIdentification id) {
-        log.warn("Operation 'retrieve' not supported by JSON logger");
-        return null;
+    public void persist(HistoricHand hand) {
+        String json = convertToJson(hand);
+        log.info(json);
     }
 
-    @Override
-    public void persist(HistoricHand hand) {
+    public String convertToJson(HistoricHand hand) {
         Gson gson = createGson();
-        String json = gson.toJson(hand);
-        log.info(json);
+        return gson.toJson(hand);
     }
 
 
