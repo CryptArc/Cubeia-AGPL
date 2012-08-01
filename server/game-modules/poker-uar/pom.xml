@@ -75,6 +75,14 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.cubeia.games.handhistory</groupId>
+            <artifactId>hand-history-storage-service</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <type>firebase-sar</type>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
     <build>

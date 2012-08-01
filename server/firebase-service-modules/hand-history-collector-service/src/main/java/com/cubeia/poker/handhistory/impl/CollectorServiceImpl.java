@@ -89,7 +89,9 @@ public class CollectorServiceImpl implements HandHistoryCollectorService {
     public void stopHand(int tableId) {
         HistoricHand hand = getCurrent(tableId);
         hand.setEndTime(new DateTime().getMillis());
+        log.debug("Storing hand via persister.");
         getPersister().persist(hand);
+        log.debug("Done storing hand via persister.");
         cache.remove(tableId);
     }
 
@@ -118,4 +120,5 @@ public class CollectorServiceImpl implements HandHistoryCollectorService {
             return jsonPersist;
         }
     }
+
 }
