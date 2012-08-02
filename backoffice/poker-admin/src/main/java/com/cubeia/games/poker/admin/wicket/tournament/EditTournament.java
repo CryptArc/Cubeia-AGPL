@@ -13,8 +13,8 @@ import com.cubeia.games.poker.admin.wicket.BasePage;
 
 public class EditTournament extends BasePage {
 
-    @SpringBean(name="abstractDAO")
-    private AdminDAO abstractDAO;
+    @SpringBean(name="adminDAO")
+    private AdminDAO adminDAO;
     
     @SuppressWarnings("unused")
     private TournamentConfiguration tournament;
@@ -48,7 +48,7 @@ public class EditTournament extends BasePage {
     }
 
     private void loadFormData(final Integer tournamentId) {
-        tournament = abstractDAO.getItem(TournamentConfiguration.class, tournamentId);
+        tournament = adminDAO.getItem(TournamentConfiguration.class, tournamentId);
     }
     
     @Override

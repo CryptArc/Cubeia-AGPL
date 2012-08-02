@@ -41,10 +41,10 @@ public class HandHistory extends BasePage {
             public void onRequest() {
                 RequestCycle requestCycle = RequestCycle.get();
                 /*
-                     * Request request = requestCycle.getRequest();
-                     * IRequestParameters irp = request.getRequestParameters();
-                     * StringValue state = irp.getParameterValue("term");
-                     */
+                 * Request request = requestCycle.getRequest();
+                 * IRequestParameters irp = request.getRequestParameters();
+                 * StringValue state = irp.getParameterValue("term");
+                 */
 
                 requestCycle.scheduleRequestHandlerAfterCurrent(new TextRequestHandler(
                         "application/json", "UTF-8", historyService.findHandHistoryByPlayerId(1)));

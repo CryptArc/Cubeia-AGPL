@@ -20,48 +20,41 @@ import com.cubeia.games.poker.admin.db.AdminDAO;
 import com.cubeia.games.poker.admin.tournament.configuration.TournamentConfiguration;
 
 /**
- * Homepage
+ * Page for listing all tournaments. Currently lists sit&go tournaments.
  */
 public class Tournaments extends BasePage {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@SpringBean(name="abstractDAO")
-	private AdminDAO abstractDAO;
-	
+    @SpringBean(name = "adminDAO")
+    private AdminDAO adminDAO;
+
     /**
-	 * Constructor that is invoked when page is invoked without a session.
-	 * 
-	 * @param parameters
-	 *            Page parameters
-	 */
+     * Constructor that is invoked when page is invoked without a session.
+     *
+     * @param parameters Page parameters
+     */
     public Tournaments(final PageParameters parameters) {
         ISortableDataProvider dataProvider = new SortableDataProviderExtension();
         ArrayList<AbstractColumn> columns = new ArrayList<AbstractColumn>();
-        
+
         columns.add(new PropertyColumn(new Model("id"), "id"));
         columns.add(new PropertyColumn(new Model("Name"), "name"));
         columns.add(new PropertyColumn(new Model("Seats"), "seatsPerTable"));
         columns.add(new PropertyColumn(new Model("Min"), "minPlayers"));
         columns.add(new PropertyColumn(new Model("Max"), "maxPlayers"));
-        columns.add(new PropertyColumn(new Model("Start Type"), "startType"));
 
-        DefaultDataTable userTable = new DefaultDataTable("tournamentTable", columns, dataProvider , 20);
+        DefaultDataTable userTable = new DefaultDataTable("tournamentTable", columns, dataProvider, 20);
         add(userTable);
-    	
     }
-    
-    
+
     private List<TournamentConfiguration> getTournamentList() {
-        return abstractDAO.getAllTournaments();
+        return adminDAO.getAllTournaments();
     }
-    
-    
-    
-    
+
     private final class SortableDataProviderExtension extends SortableDataProvider {
         private static final long serialVersionUID = 1L;
-        
+
         public SortableDataProviderExtension() {
             setSort("id", SortOrder.DESCENDING);
         }
@@ -69,10 +62,8 @@ public class Tournaments extends BasePage {
         @SuppressWarnings("unchecked")
         @Override
         public Iterator iterator(int first, int count) {
-            return getTournamentList().subList(first, count+first).iterator();
+            return getTournamentList().subList(first, count + first).iterator();
         }
-
-        
 
         @Override
         public IModel model(Object object) {
@@ -84,9 +75,6 @@ public class Tournaments extends BasePage {
             return getTournamentList().size();
         }
     }
-
-
-
 
     @Override
     public String getPageTitle() {

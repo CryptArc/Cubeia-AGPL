@@ -16,8 +16,8 @@ public class CreateSitAndGo extends BasePage {
 
     private static final transient Logger log = Logger.getLogger(CreateSitAndGo.class);
     
-    @SpringBean(name="abstractDAO")
-    private AdminDAO abstractDAO;
+    @SpringBean(name="adminDAO")
+    private AdminDAO adminDAO;
     
     private TournamentConfiguration tournament;
     
@@ -30,7 +30,7 @@ public class CreateSitAndGo extends BasePage {
             
             @Override
             protected void onSubmit() {
-                abstractDAO.persist(tournament);
+                adminDAO.persist(tournament);
                 log.debug("created tournament config with id = " + tournament);
             }
         };
