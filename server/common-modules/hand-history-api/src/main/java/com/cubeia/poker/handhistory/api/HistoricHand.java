@@ -17,10 +17,11 @@
 
 package com.cubeia.poker.handhistory.api;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HistoricHand {
+public class HistoricHand implements Serializable {
 
     private HandIdentification handId;
 
