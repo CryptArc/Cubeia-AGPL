@@ -4,16 +4,40 @@
 
 <wicket:extend>
 
+    <div class="page-header">
+        <h1>Hand History Search</h1>
+    </div>
+
+    <div class="span8">
+        <form class="form-horizontal" wicket:id="form">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="playerId">Player id</label>
+                    <div class="controls">
+                        <input type="text" class="input-xlarge" id="playerId" wicket:id="playerId"/>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">From date</label>
+                    <div class="controls">
+                        <span type="text" class="input-xlarge" wicket:id="fromDate"/>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">To date</label>
+                    <div class="controls">
+                        <span type="text" class="input-xlarge" wicket:id="toDate"/>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <input type="submit" class="btn primary" value="Search">
+                </div>
+            </fieldset>
+        </form>
+    </div>
+
     <table class="table table-striped">
-        <!--<tbody id="listContent">-->
-        <tr wicket:id="hands">
-            <!--<td><span wicket:id="handId"/></td>-->
-            <!--<td><span wicket:id="tableId"/></td>-->
-            <!--<td><span wicket:id="startTime"/></td>-->
-            <!--<td><span wicket:id="endTime"/></td>-->
-            <!--<td><span wicket:id="totalRake"/></td>-->
-        </tr>
-        <!--</tbody>-->
+        <tr wicket:id="hands"/>
     </table>
 
 </wicket:extend>
