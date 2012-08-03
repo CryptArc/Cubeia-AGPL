@@ -38,9 +38,13 @@ public class HandHistory extends BasePage {
     private final HandHistory.HandProvider handProvider = new HandProvider();;
 
     public HandHistory() {
+        addForm();
+        addResultsTable();
+    }
+
+    private void addResultsTable() {
         List<IColumn<HistoricHand>> columns = createColumns();
         add(new AjaxFallbackDefaultDataTable<HistoricHand>("hands", columns, handProvider, 8));
-        addForm();
     }
 
     private List<IColumn<HistoricHand>> createColumns() {
@@ -85,7 +89,7 @@ public class HandHistory extends BasePage {
 
         @Override
         public int size() {
-            return 2;
+            return hands.size();
         }
 
         @Override
@@ -94,7 +98,7 @@ public class HandHistory extends BasePage {
         }
 
         public void search(HandHistorySearch params) {
-            hands = historyService.findHandHistoryByPlayerId(params.playerId);
+            hands = historyService.findHandHistory(params.playerId, params.fromDate, params.toDate);
         }
     }
 
