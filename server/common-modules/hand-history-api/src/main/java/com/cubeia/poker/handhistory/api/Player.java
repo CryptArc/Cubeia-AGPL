@@ -19,11 +19,14 @@ package com.cubeia.poker.handhistory.api;
 
 public class Player {
 
-    private final int id;
+    private int id;
 
     private long initialBalance;
     private int seatId;
     private String name;
+
+    public Player() {
+    }
 
     public Player(int id) {
         this.id = id;

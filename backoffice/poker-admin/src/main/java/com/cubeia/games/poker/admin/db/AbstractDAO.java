@@ -20,8 +20,6 @@ public class AbstractDAO extends JpaDaoSupport implements AdminDAO {
     @SuppressWarnings("unused")
     private static transient Logger log = Logger.getLogger(AbstractDAO.class);
 
-    public static boolean persist = true; 
-    
     /* (non-Javadoc)
      * @see com.cubeia.games.poker.admin.db.AdminDAO#getItem(java.lang.Class, java.lang.Integer)
      */

@@ -25,12 +25,15 @@ package com.cubeia.poker.handhistory.api;
  */
 public class HandResult {
 
-    private final int playerId;
+    private int playerId;
 
     private long netWin;
     private long totalWin;
     private long rake;
     private long totalBet;
+
+    public HandResult() {
+    }
 
     public HandResult(int playerId, long netWin, long totalWin, long rake, long totalBet) {
         this.playerId = playerId;

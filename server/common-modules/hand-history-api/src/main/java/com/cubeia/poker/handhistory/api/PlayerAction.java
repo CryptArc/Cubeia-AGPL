@@ -27,7 +27,10 @@ public class PlayerAction extends HandHistoryEvent {
     private Amount amount;
     private boolean timeout;
 
-    private final int playerId;
+    private int playerId;
+
+    public PlayerAction() {
+    }
 
     public PlayerAction(int playerId) {
         this.playerId = playerId;

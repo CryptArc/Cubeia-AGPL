@@ -26,6 +26,9 @@ public class Amount {
         OTHER
     }
 
+    public Amount() {
+    }
+
     public static Amount bet(long amount) {
         return new Amount(Type.BET, amount);
     }
@@ -42,8 +45,8 @@ public class Amount {
         return new Amount(Type.OTHER, amount);
     }
 
-    private final Type type;
-    private final long amount;
+    private Type type;
+    private long amount;
 
     private Amount(Type type, long amount) {
         this.type = type;

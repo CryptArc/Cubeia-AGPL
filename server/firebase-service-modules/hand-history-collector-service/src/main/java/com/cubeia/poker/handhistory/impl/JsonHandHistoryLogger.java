@@ -62,7 +62,9 @@ public class JsonHandHistoryLogger implements HandHistoryPersister {
         @Override
         public JsonElement serialize(HandHistoryEvent src, Type typeOfSrc, JsonSerializationContext context) {
             Class<? extends HandHistoryEvent> cl = src.getClass();
-            return context.serialize(src, cl);
+            JsonElement element = context.serialize(src, cl);
+            element.getAsJsonObject().addProperty("_class", cl.getCanonicalName());
+            return element;
         }
     }
 }

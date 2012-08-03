@@ -42,8 +42,11 @@ public class GameCard {
         SPADES;
     }
 
-    private final Suit suit;
-    private final Rank rank;
+    private Suit suit;
+    private Rank rank;
+
+    public GameCard() {
+    }
 
     public GameCard(Suit suit, Rank rank) {
         this.suit = suit;

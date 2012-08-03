@@ -22,9 +22,12 @@ import java.util.List;
 
 public class PlayerCardsDealt extends HandHistoryEvent {
 
-    private final int playerId;
+    private int playerId;
     private final List<GameCard> cards = new LinkedList<GameCard>();
-    private final boolean isExposed;
+    private boolean isExposed;
+
+    public PlayerCardsDealt() {
+    }
 
     public PlayerCardsDealt(int playerId, boolean isExposed) {
         this.playerId = playerId;

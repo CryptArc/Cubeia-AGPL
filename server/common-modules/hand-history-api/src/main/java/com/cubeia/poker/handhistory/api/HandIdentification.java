@@ -19,9 +19,12 @@ package com.cubeia.poker.handhistory.api;
 
 public class HandIdentification {
 
-    private final int tableId;
-    private final String tableIntegrationId;
-    private final String handId;
+    private int tableId;
+    private String tableIntegrationId;
+    private String handId;
+
+    public HandIdentification() {
+    }
 
     public HandIdentification(int tableId, String tableIntegrationId, String handId) {
         this.tableId = tableId;

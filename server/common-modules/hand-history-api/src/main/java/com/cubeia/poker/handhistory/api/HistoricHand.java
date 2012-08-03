@@ -22,7 +22,10 @@ import java.util.List;
 
 public class HistoricHand {
 
-    private final HandIdentification handId;
+    private HandIdentification handId;
+
+    /** This is not the hand id! Only here for json de-serialization. (TODO: Fixable?) */
+    private String id;
 
     private long startTime;
     private long endTime;
@@ -32,6 +35,9 @@ public class HistoricHand {
 
     private final List<HandHistoryEvent> events = new ArrayList<HandHistoryEvent>();
     private final List<Player> seats = new ArrayList<Player>(6);
+
+    public HistoricHand() {
+    }
 
     public HistoricHand(HandIdentification id) {
         this.handId = id;
@@ -79,6 +85,14 @@ public class HistoricHand {
 
     public List<Player> getSeats() {
         return seats;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override

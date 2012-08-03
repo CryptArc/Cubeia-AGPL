@@ -22,10 +22,13 @@ import java.util.Set;
 
 public class GamePot {
 
-    private final int potId;
-    private final Set<Integer> players = new HashSet<Integer>();
+    private int potId;
+    private Set<Integer> players = new HashSet<Integer>();
 
     private long potSize;
+
+    public GamePot() {
+    }
 
     public GamePot(int potId) {
         this.potId = potId;

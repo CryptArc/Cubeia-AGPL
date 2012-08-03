@@ -22,3 +22,5 @@ glob:*/bin/*
 
 syntax: regexp
 ^server/poker-logic/src/test/resources/scrap\.jpage$
+backoffice/poker-admin.index.db
+backoffice/poker-admin.data.db

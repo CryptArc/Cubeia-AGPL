@@ -21,8 +21,11 @@ import com.cubeia.poker.handhistory.api.GameCard.Rank;
 
 public class DeckInfo {
 
-    private final int size;
-    private final Rank lowRank;
+    private int size;
+    private Rank lowRank;
+
+    public DeckInfo() {
+    }
 
     public DeckInfo(int size, Rank lowRank) {
         this.size = size;
