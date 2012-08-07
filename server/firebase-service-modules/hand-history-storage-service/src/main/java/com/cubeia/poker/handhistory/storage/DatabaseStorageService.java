@@ -77,15 +77,18 @@ public class DatabaseStorageService implements HandHistoryPersistenceService, Se
     public void persist(HistoricHand hand) {
         log.info("Persisting hand to mongo");
 
-        DB db = db();
-        if (db != null) {
-            DBObject dbObject = (DBObject) JSON.parse(jsonLogger.convertToJson(hand));
-            db().getCollection(HANDS_COLLECTION).insert(dbObject);
-            log.info("Done persisting hand to mongo");
-        } else {
-            log.warn("Logging hand history to file because mongo database is unreachable.");
+        try {
+            persistToMongo(hand);
+        } catch (Exception e) {
+            log.warn("Failed persisting hand history to mondodb. Please start a mongodb server on host " + host + " and port " + port, e);
             jsonLogger.persist(hand);
         }
+    }
+
+    private void persistToMongo(HistoricHand hand) {
+        DBObject dbObject = (DBObject) JSON.parse(jsonLogger.convertToJson(hand));
+        db().getCollection(HANDS_COLLECTION).insert(dbObject);
+        log.info("Done persisting hand to mongo");
     }
 
     private DB db() {

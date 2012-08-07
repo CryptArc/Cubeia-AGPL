@@ -17,7 +17,6 @@
 
 package com.cubeia.poker.handhistory.impl;
 
-import com.cubeia.firebase.guice.inject.Log4j;
 import com.cubeia.poker.handhistory.api.HandHistoryEvent;
 import com.cubeia.poker.handhistory.api.HandHistoryPersister;
 import com.cubeia.poker.handhistory.api.HistoricHand;
@@ -30,8 +29,7 @@ import java.lang.reflect.Type;
 @Singleton
 public class JsonHandHistoryLogger implements HandHistoryPersister {
 
-    @Log4j
-    private Logger log;
+    private static final Logger log = Logger.getLogger(JsonHandHistoryLogger.class);
 
     @Override
     public void persist(HistoricHand hand) {
