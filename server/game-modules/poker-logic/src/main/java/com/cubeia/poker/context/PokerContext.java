@@ -258,7 +258,7 @@ public class PokerContext implements Serializable {
         potHolder.callOrRaise();
     }
 
-    public boolean hasAllPlayersExposedCards() {
+    public boolean haveAllPlayersExposedCards() {
 
         if (countNonFoldedPlayers() > 1) {
             for (PokerPlayer p : getCurrentHandSeatingMap().values()) {

@@ -312,8 +312,8 @@ public class Telesina extends AbstractGameType implements RoundVisitor, Dealer {
         if (isHandFinished()) {
             handleFinishedHand();
         } else {
-            if (context.isAtLeastAllButOneAllIn() && !context.hasAllPlayersExposedCards()) {
-                setCurrentRound(roundFactory.createExposePrivateCardsRound(this));
+            if (context.isAtLeastAllButOneAllIn() && !context.haveAllPlayersExposedCards()) {
+                setCurrentRound(roundFactory.createExposePrivateCardsRound(this, calculateRevealOrder()));
                 scheduleRoundTimeout();
             } else {
                 startDealPocketOrVelaCardRound();
@@ -324,9 +324,8 @@ public class Telesina extends AbstractGameType implements RoundVisitor, Dealer {
     private void handleFinishedHand() {
         exposeShowdownCards(Collections.<Integer>emptyList());
 
-        PokerPlayer playerAtDealerButton = context.getPlayerInDealerSeat();
-        List<Integer> playerRevealOrder = new RevealOrderCalculator().calculateRevealOrder(context.getCurrentHandSeatingMap(), context.getLastPlayerToBeCalled(), playerAtDealerButton);
 
+        List<Integer> playerRevealOrder = calculateRevealOrder();
         TelesinaHandStrengthEvaluator evaluator = new TelesinaHandStrengthEvaluator(getDeckLowestRank());
         HandResultCreator resultCreator = new HandResultCreator(evaluator);
         HandResultCalculator resultCalculator = new HandResultCalculator(evaluator);
@@ -340,6 +339,11 @@ public class Telesina extends AbstractGameType implements RoundVisitor, Dealer {
         notifyHandFinished(handResult, HandEndStatus.NORMAL);
 
         context.getPotHolder().clearPots();
+    }
+
+    private List<Integer> calculateRevealOrder() {
+        PokerPlayer playerAtDealerButton = context.getPlayerInDealerSeat();
+        return new RevealOrderCalculator().calculateRevealOrder(context.getCurrentHandSeatingMap(), context.getLastPlayerToBeCalled(), playerAtDealerButton, context.countNonFoldedPlayers());
     }
 
     @Override

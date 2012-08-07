@@ -167,15 +167,6 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
         // Not used yet.
     }
 
-    @Override
-    public void exposeShowdownCards(List<Integer> playerRevealOrder) {
-        ExposeCardsHolder holder = new ExposeCardsHolder();
-        for (int playerId : playerRevealOrder) {
-            holder.setExposedCards(playerId, context.getPlayer(playerId).getPrivatePocketCards());
-        }
-        serverAdapterHolder.get().exposePrivateCards(holder);
-    }
-
     private void handleCanceledHand() {
         notifyHandFinished(new HandResult(), HandEndStatus.CANCELED_TOO_FEW_PLAYERS);
     }
@@ -241,9 +232,9 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
     void handleFinishedHand() {
         PokerPlayer playerAtDealerButton = context.getPlayerInDealerSeat();
 
-        List<Integer> playerRevealOrder = revealOrderCalculator.calculateRevealOrder(context.getCurrentHandSeatingMap(), context.getLastPlayerToBeCalled(), playerAtDealerButton);
-        exposeShowdownCards(playerRevealOrder);
+        List<Integer> playerRevealOrder = revealOrderCalculator.calculateRevealOrder(context.getCurrentHandSeatingMap(), context.getLastPlayerToBeCalled(), playerAtDealerButton, context.countNonFoldedPlayers());
 
+        exposeShowdownCards(playerRevealOrder);
         Set<PokerPlayer> muckingPlayers = context.getMuckingPlayers();
         HandResult handResult = new HandResultCreator(new TexasHoldemHandCalculator()).createHandResult(context.getCommunityCards(), handResultCalculator, context.getPotHolder(), context.getCurrentHandPlayerMap(), playerRevealOrder, muckingPlayers);
 

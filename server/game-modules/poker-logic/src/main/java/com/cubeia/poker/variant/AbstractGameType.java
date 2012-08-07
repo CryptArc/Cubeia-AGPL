@@ -54,38 +54,25 @@ public abstract class AbstractGameType implements GameType {
      * Expose all pocket cards for players still in the hand
      * i.e. not folded. Will set a flag so that sequential calls
      * will not generate any outgoing packets.
-     * @param playerRevealOrder
+
+     * @param playerRevealOrder the order in which cards should be revealed.
      */
     public void exposeShowdownCards(List<Integer> playerRevealOrder) {
-        if (context.countNonFoldedPlayers() > 1) {
-            ExposeCardsHolder holder = new ExposeCardsHolder();
-            for (PokerPlayer p : context.getPlayersInHand()) {
-                if (!p.hasFolded() && !p.isExposingPocketCards()) {
-                    // exposePrivateCards(p.getId(), p.getPrivatePocketCards());
-                    holder.setExposedCards(p.getId(), p.getPrivatePocketCards());
-                    p.setExposingPocketCards(true);
-                }
+        ExposeCardsHolder holder = new ExposeCardsHolder();
+        for (int playerId : playerRevealOrder) {
+            PokerPlayer player = context.getPlayer(playerId);
+            if (!player.hasFolded() && !player.isExposingPocketCards()) {
+                holder.setExposedCards(playerId, player.getPrivatePocketCards());
+                player.setExposingPocketCards(true);
             }
-
-            if (holder.hasCards()) {
-                exposePrivateCards(holder);
-            }
+        }
+        if (holder.hasCards()) {
+            exposePrivateCards(holder);
         }
     }
 
     private void exposePrivateCards(ExposeCardsHolder holder) {
         getServerAdapter().exposePrivateCards(holder);
-    }
-
-    public boolean haveAllPlayersExposedCards() {
-        if (context.countNonFoldedPlayers() > 1) {
-            for (PokerPlayer p : context.getPlayersInHand()) {
-                if (!p.hasFolded() && !p.isExposingPocketCards()) {
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 
     public void requestMultipleActions(Collection<ActionRequest> requests) {
