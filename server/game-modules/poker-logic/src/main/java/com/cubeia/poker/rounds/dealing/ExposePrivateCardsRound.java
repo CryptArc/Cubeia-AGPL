@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Telesina specific round for dealing vela card.
@@ -34,8 +35,8 @@ public class ExposePrivateCardsRound implements Round {
 
     private static transient Logger log = LoggerFactory.getLogger(ExposePrivateCardsRound.class);
 
-    public ExposePrivateCardsRound(Dealer dealer) {
-        dealer.exposeShowdownCards(Collections.<Integer>emptyList());
+    public ExposePrivateCardsRound(Dealer dealer, List<Integer> revealOrder) {
+        dealer.exposeShowdownCards(revealOrder);
         dealer.sendAllNonFoldedPlayersBestHand();
     }
 

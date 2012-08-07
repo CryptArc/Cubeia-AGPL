@@ -336,7 +336,7 @@ public class TexasHoldemTest {
     public void testShowdown() {
         PokerContext context = prepareContext(3);
         texas.setRevealOrderCalculator(revealOrderCalculator);
-        when(revealOrderCalculator.calculateRevealOrder(Matchers.<SortedMap<Integer, PokerPlayer>>any(),Matchers.<PokerPlayer>any(),Matchers.<PokerPlayer>any())).
+        when(revealOrderCalculator.calculateRevealOrder(Matchers.<SortedMap<Integer, PokerPlayer>>any(),Matchers.<PokerPlayer>any(),Matchers.<PokerPlayer>any(), anyInt())).
                 thenReturn(Lists.newArrayList(102, 100, 101));
 
         startHand(context);

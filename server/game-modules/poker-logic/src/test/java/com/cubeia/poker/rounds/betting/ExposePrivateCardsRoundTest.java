@@ -34,7 +34,7 @@ public class ExposePrivateCardsRoundTest {
 
         Dealer dealer = mock(Dealer.class);
 
-        new ExposePrivateCardsRound(dealer);
+        new ExposePrivateCardsRound(dealer, Collections.<Integer>emptyList());
         verify(dealer).exposeShowdownCards(Collections.<Integer>emptyList());
     }
 

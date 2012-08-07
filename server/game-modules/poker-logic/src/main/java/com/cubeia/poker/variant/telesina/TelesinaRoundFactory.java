@@ -31,6 +31,8 @@ import com.cubeia.poker.rounds.betting.NoLimitBetStrategy;
 import com.cubeia.poker.rounds.dealing.ExposePrivateCardsRound;
 import com.cubeia.poker.variant.telesina.hand.TelesinaPlayerToActCalculator;
 
+import java.util.List;
+
 /**
  * Factory of Telesina game rounds.
  * The main purpose of this class is to separate round creation from the game type logic
@@ -58,8 +60,8 @@ public class TelesinaRoundFactory {
     }
 
 
-    ExposePrivateCardsRound createExposePrivateCardsRound(Telesina telesina) {
-        return new ExposePrivateCardsRound(telesina);
+    ExposePrivateCardsRound createExposePrivateCardsRound(Telesina telesina, List<Integer> revealOrder) {
+        return new ExposePrivateCardsRound(telesina, revealOrder);
     }
 
     DealCommunityCardsRound createDealCommunityCardsRound(Telesina telesina) {

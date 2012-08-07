@@ -17,7 +17,9 @@
 
 package com.cubeia.poker.handhistory.api;
 
-public abstract class HandHistoryEvent {
+import java.io.Serializable;
+
+public abstract class HandHistoryEvent implements Serializable {
 
     private final String type;
     private long time;

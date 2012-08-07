@@ -17,9 +17,11 @@
 
 package com.cubeia.poker.handhistory.api;
 
-public class Player {
+import java.io.Serializable;
 
-    private int id;
+public class Player implements Serializable {
+
+    private int playerId;
 
     private long initialBalance;
     private int seatId;
@@ -28,12 +30,12 @@ public class Player {
     public Player() {
     }
 
-    public Player(int id) {
-        this.id = id;
+    public Player(int playerId) {
+        this.playerId = playerId;
     }
 
-    public Player(int id, int seatId, long initialBalance, String name) {
-        this.id = id;
+    public Player(int playerId, int seatId, long initialBalance, String name) {
+        this.playerId = playerId;
         this.seatId = seatId;
         this.initialBalance = initialBalance;
         this.name = name;
@@ -47,8 +49,12 @@ public class Player {
         this.initialBalance = balance;
     }
 
-    public int getId() {
-        return id;
+    public int getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(int playerId) {
+        this.playerId = playerId;
     }
 
     public void setName(String name) {
@@ -71,7 +77,7 @@ public class Player {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + id;
+        result = prime * result + playerId;
         result = prime * result
                 + (int) (initialBalance ^ (initialBalance >>> 32));
         result = prime * result + ((name == null) ? 0 : name.hashCode());
@@ -88,7 +94,7 @@ public class Player {
         if (getClass() != obj.getClass())
             return false;
         Player other = (Player) obj;
-        if (id != other.id)
+        if (playerId != other.playerId)
             return false;
         if (initialBalance != other.initialBalance)
             return false;
@@ -104,7 +110,7 @@ public class Player {
 
     @Override
     public String toString() {
-        return "Player [id=" + id + ", initialBalance=" + initialBalance
+        return "Player [playerId=" + playerId + ", initialBalance=" + initialBalance
                 + ", seatId=" + seatId + ", name=" + name + "]";
     }
 }

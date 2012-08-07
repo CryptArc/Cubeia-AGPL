@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface HandHistoryService {
 
-    public List<HistoricHand> findHandHistory(int playerId, Date fromDate, Date toDate);
+    public List<HistoricHand> findHandHistory(Integer playerId, Date fromDate, Date toDate);
 
+    HistoricHand findById(String handId);
 }

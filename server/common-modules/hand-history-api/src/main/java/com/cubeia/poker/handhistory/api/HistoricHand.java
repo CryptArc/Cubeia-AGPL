@@ -35,7 +35,7 @@ public class HistoricHand implements Serializable {
     private Results results;
 
     private final List<HandHistoryEvent> events = new ArrayList<HandHistoryEvent>();
-    private final List<Player> seats = new ArrayList<Player>(6);
+    private final  List<Player> seats = new ArrayList<Player>(6);
 
     public HistoricHand() {
     }

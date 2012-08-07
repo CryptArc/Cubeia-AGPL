@@ -72,21 +72,21 @@ public class RevealOrderCalculatorTest {
     @Test
     public void testRevealOrderWithLastCaller() {
         setup();
-        revealOrder = roc.calculateRevealOrder(seatingMap, player2, player1);
+        revealOrder = roc.calculateRevealOrder(seatingMap, player2, player1, 3);
         assertPlayersId(player2Id, player3Id, player1Id);
     }
 
     @Test
     public void testRevealOrderWithNoLastCaller() {
         setup();
-        revealOrder = roc.calculateRevealOrder(seatingMap, null, player2);
+        revealOrder = roc.calculateRevealOrder(seatingMap, null, player2, 3);
         assertPlayersId(player3Id, player1Id, player2Id);
     }
 
     @Test
     public void testRevealOrderWithNoLastCallerDealerButtonAtLastSeat() {
         setup();
-        revealOrder = roc.calculateRevealOrder(seatingMap, null, player3);
+        revealOrder = roc.calculateRevealOrder(seatingMap, null, player3, 3);
         assertPlayersId(player1Id, player2Id, player3Id);
     }
 
@@ -94,8 +94,17 @@ public class RevealOrderCalculatorTest {
     public void testRevealOrderOnePlayerFolded() {
         setup();
         when(player2.hasFolded()).thenReturn(true);
-        revealOrder = roc.calculateRevealOrder(seatingMap, null, player1);
+        revealOrder = roc.calculateRevealOrder(seatingMap, null, player1, 2);
         assertThat(revealOrder.size(), is(2));
+    }
+
+    @Test
+    public void testRevealOrderOnlyOneNonFoldedPlayer() {
+        setup();
+        when(player2.hasFolded()).thenReturn(true);
+        when(player3.hasFolded()).thenReturn(true);
+        revealOrder = roc.calculateRevealOrder(seatingMap, null, player1, 1);
+        assertThat(revealOrder.isEmpty(), is(true));
     }
 
 }

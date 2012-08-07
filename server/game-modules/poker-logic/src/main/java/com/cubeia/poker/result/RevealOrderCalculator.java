@@ -29,13 +29,16 @@ public class RevealOrderCalculator {
 
     /**
      * Calculate the order in which the players should reveal their hidden card(s).
+     * If there's only one non folded player left, an empty list will be returned.
      *
      * @param currentHandSeatingMap seating map
      * @param lastPlayerToBeCalled  last called player, can be null
      * @param dealerButtonPlayer    player at the dealer button, never null
+     * @param nonFoldedPlayers      the number of non folded players in the hand
      * @return list of player id:s, never null
      */
-    public List<Integer> calculateRevealOrder(SortedMap<Integer, PokerPlayer> currentHandSeatingMap, PokerPlayer lastPlayerToBeCalled, PokerPlayer dealerButtonPlayer) {
+    public List<Integer> calculateRevealOrder(SortedMap<Integer, PokerPlayer> currentHandSeatingMap, PokerPlayer lastPlayerToBeCalled, PokerPlayer dealerButtonPlayer, int nonFoldedPlayers) {
+        if (nonFoldedPlayers <= 1) return new ArrayList<Integer>();
         Integer startPlayerSeat;
 
         if (lastPlayerToBeCalled != null) {
