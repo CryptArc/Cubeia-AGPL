@@ -40,18 +40,16 @@ public class MockTournamentScheduleProvider implements TournamentScheduleProvide
     public Collection<ScheduledTournamentConfiguration> getTournamentSchedule() {
         Collection<ScheduledTournamentConfiguration> tournamentConfigurations = Lists.newArrayList();
         ScheduledTournamentConfiguration everyTenMinutes = everyTenMinutes();
-        everyTenMinutes.setMinPlayers(2);
-        everyTenMinutes.setMaxPlayers(100);
-        everyTenMinutes.setBlindsStructure(BlindsStructureFactory.createDefaultBlindsStructure());
+        everyTenMinutes.getSchmonfiguration().setMinPlayers(2);
+        everyTenMinutes.getSchmonfiguration().setMaxPlayers(100);
+        everyTenMinutes.getSchmonfiguration().setBlindsStructure(BlindsStructureFactory.createDefaultBlindsStructure());
         tournamentConfigurations.add(everyTenMinutes);
         return tournamentConfigurations;
     }
 
     private ScheduledTournamentConfiguration everyTenMinutes() {
-        CronTrigger schedule = newTrigger().withSchedule(cronSchedule("0 */10 * * * ?"))
-                        .startAt(new DateTime(2011, 7, 5, 9, 0, 0).toDate())
-                        .endAt(new DateTime(2022, 7, 5, 9, 0, 0).toDate()).build();
-        TournamentSchedule tournamentSchedule = new TournamentSchedule(schedule, 3, 5, 5);
+        TournamentSchedule tournamentSchedule = new TournamentSchedule(new DateTime(2011, 7, 5, 9, 0, 0).toDate(), new DateTime(2022, 7, 5, 9, 0, 0).toDate(),
+                "0 */10 * * * ?", 3, 5, 5);
         return new ScheduledTournamentConfiguration(tournamentSchedule, "Every Ten Minutes", 1);
     }
 }

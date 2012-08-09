@@ -21,13 +21,28 @@ import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.quartz.Trigger;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.util.Date;
 
+import static org.quartz.CronScheduleBuilder.cronSchedule;
+import static org.quartz.TriggerBuilder.newTrigger;
+
+@Entity
 public class TournamentSchedule {
+
+    @Id
+    @GeneratedValue
+    private Integer id;
 
     private static final Logger log = Logger.getLogger(TournamentSchedule.class);
 
-    private Trigger schedule;
+    private Date startDate;
+
+    private Date endDate;
+
+    private String cronSchedule;
 
     private int minutesInAnnounced;
 
@@ -35,9 +50,15 @@ public class TournamentSchedule {
 
     private int minutesVisibleAfterFinished;
 
-    public TournamentSchedule(Trigger schedule, int minutesInAnnounced, int minutesInRegistering, int minutesVisibleAfterFinished) {
-        log.debug("Created tournament schedule. Start date: " + schedule.getStartTime() + " End date: " + schedule.getEndTime());
-        this.schedule = schedule;
+    public TournamentSchedule() {
+
+    }
+
+    public TournamentSchedule(Date startDate, Date endDate, String cronSchedule, int minutesInAnnounced, int minutesInRegistering, int minutesVisibleAfterFinished) {
+        log.debug("Created tournament schedule. Start date: " + startDate + " End date: " + endDate);
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.cronSchedule = cronSchedule;
         this.minutesInAnnounced = minutesInAnnounced;
         this.minutesInRegistering = minutesInRegistering;
         this.minutesVisibleAfterFinished = minutesVisibleAfterFinished;
@@ -56,7 +77,7 @@ public class TournamentSchedule {
     }
 
     public DateTime getNextAnnounceTime(DateTime now) {
-        log.debug("Getting next announce time after " + now + ". Start date = " + schedule.getStartTime());
+        log.debug("Getting next announce time after " + now + ". Start date = " + getSchedule().getStartTime());
         DateTime nextStartTime = getNextStartTime(now);
         log.debug("Next startTime: " + nextStartTime);
         if (nextStartTime == null) {
@@ -69,11 +90,59 @@ public class TournamentSchedule {
     }
 
     public DateTime getNextStartTime(DateTime now) {
-        Date nextStartTime = schedule.getFireTimeAfter(now.toDate());
+        Date nextStartTime = getSchedule().getFireTimeAfter(now.toDate());
         if (nextStartTime == null) {
             return null;
         } else {
             return new DateTime(nextStartTime);
         }
+    }
+
+    public Trigger getSchedule() {
+        return newTrigger().withSchedule(cronSchedule(cronSchedule)).startAt(startDate).endAt(endDate).build();
+    }
+
+    public void setMinutesInAnnounced(int minutesInAnnounced) {
+        this.minutesInAnnounced = minutesInAnnounced;
+    }
+
+    public void setMinutesInRegistering(int minutesInRegistering) {
+        this.minutesInRegistering = minutesInRegistering;
+    }
+
+    public void setMinutesVisibleAfterFinished(int minutesVisibleAfterFinished) {
+        this.minutesVisibleAfterFinished = minutesVisibleAfterFinished;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    public String getCronSchedule() {
+        return cronSchedule;
+    }
+
+    public void setCronSchedule(String cronSchedule) {
+        this.cronSchedule = cronSchedule;
     }
 }

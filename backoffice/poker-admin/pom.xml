@@ -27,6 +27,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.cubeia.games</groupId>
+            <artifactId>poker-tournament</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.cubeia.firebase</groupId>
             <artifactId>firebase-jmx</artifactId>
             <version>${firebase.version}</version>

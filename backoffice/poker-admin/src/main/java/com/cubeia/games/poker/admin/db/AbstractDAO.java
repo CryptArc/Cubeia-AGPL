@@ -6,7 +6,7 @@ import org.apache.log4j.Logger;
 import org.springframework.orm.jpa.support.JpaDaoSupport;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cubeia.games.poker.admin.tournament.configuration.TournamentConfiguration;
+import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
 
 
 /**

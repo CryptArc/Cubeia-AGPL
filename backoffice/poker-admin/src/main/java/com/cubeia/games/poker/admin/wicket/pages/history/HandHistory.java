@@ -58,6 +58,8 @@ public class HandHistory extends BasePage {
 
     private List<IColumn<HistoricHand>> createColumns() {
         List<IColumn<HistoricHand>> columns = new ArrayList<IColumn<HistoricHand>>();
+
+        // Add column with clickable hand ids.
         columns.add(new AbstractColumn<HistoricHand>(new Model<String>("User id")) {
             private static final long serialVersionUID = 1L;
 
@@ -65,11 +67,7 @@ public class HandHistory extends BasePage {
             public void populateItem(Item<ICellPopulator<HistoricHand>> item, String componentId, IModel<HistoricHand> model) {
                 HistoricHand hand = model.getObject();
                 String handId = hand.getHandId().getHandId();
-                Component panel = new LabelLinkPanel(
-                    componentId,
-                    "" + handId,
-                    ShowHand.class,
-                    ParamBuilder.params("handId", handId));
+                Component panel = new LabelLinkPanel(componentId, "" + handId, ShowHand.class, ParamBuilder.params("handId", handId));
                 item.add(panel);
             }
 
@@ -89,7 +87,7 @@ public class HandHistory extends BasePage {
     }
 
     private void addForm() {
-        Form form = new Form<HandHistorySearch>("form",  new CompoundPropertyModel<HandHistorySearch>(new HandHistorySearch())) {
+        Form<HandHistorySearch> form = new Form<HandHistorySearch>("form",  new CompoundPropertyModel<HandHistorySearch>(new HandHistorySearch())) {
             @Override
             protected void onSubmit() {
                 handProvider.search(getModel().getObject());

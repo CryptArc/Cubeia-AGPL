@@ -19,27 +19,62 @@ package com.cubeia.games.poker.tournament.configuration;
 
 import org.joda.time.DateTime;
 
+import javax.persistence.*;
+
 /**
  * This is the configuration for one stream of scheduled tournaments.
- *
+ * <p/>
  * Given this configuration, we can get the schedule and figure out when to start tournaments.
  */
-public class ScheduledTournamentConfiguration extends TournamentConfiguration {
+@Entity
+public class ScheduledTournamentConfiguration {
 
-    private TournamentSchedule schedule;
+    @Id
+    @GeneratedValue
+    private Integer id;
 
-    public ScheduledTournamentConfiguration(TournamentSchedule schedule, String name, int id) {
-        this.schedule = schedule;
-        setName(name);
-        setId(id);
+    @ManyToOne(cascade = {CascadeType.ALL})
+    private TournamentSchedule schmedule;
+
+    @ManyToOne(cascade = {CascadeType.ALL})
+    private TournamentConfiguration schmonfiguration;
+
+    public ScheduledTournamentConfiguration() {
+        this.schmonfiguration = new TournamentConfiguration();
     }
 
-    public TournamentSchedule getSchedule() {
-        return schedule;
+    public ScheduledTournamentConfiguration(TournamentSchedule schmedule, String name, int id) {
+        this.schmedule = schmedule;
+        this.schmonfiguration = new TournamentConfiguration();
+        schmonfiguration.setName(name);
+        schmonfiguration.setId(id);
+    }
+
+    public TournamentSchedule getSchmedule() {
+        return schmedule;
     }
 
     public ScheduledTournamentInstance spawnConfigurationForNextInstance(DateTime startTime) {
         return new ScheduledTournamentInstance(this, startTime);
     }
 
+    public void setSchmedule(TournamentSchedule schmedule) {
+        this.schmedule = schmedule;
+    }
+
+    public TournamentConfiguration getSchmonfiguration() {
+        return schmonfiguration;
+    }
+
+    public void setSchmonfiguration(TournamentConfiguration configuration) {
+        this.schmonfiguration = configuration;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 }

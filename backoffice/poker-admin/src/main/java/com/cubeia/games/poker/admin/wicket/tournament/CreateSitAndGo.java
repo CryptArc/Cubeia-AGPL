@@ -9,12 +9,13 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import com.cubeia.games.poker.admin.db.AdminDAO;
-import com.cubeia.games.poker.admin.tournament.configuration.TournamentConfiguration;
+import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
 import com.cubeia.games.poker.admin.wicket.BasePage;
 
 public class CreateSitAndGo extends BasePage {
 
     private static final transient Logger log = Logger.getLogger(CreateSitAndGo.class);
+
     
     @SpringBean(name="adminDAO")
     private AdminDAO adminDAO;

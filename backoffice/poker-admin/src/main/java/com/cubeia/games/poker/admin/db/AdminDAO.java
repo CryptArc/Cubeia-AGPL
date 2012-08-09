@@ -2,7 +2,7 @@ package com.cubeia.games.poker.admin.db;
 
 import java.util.List;
 
-import com.cubeia.games.poker.admin.tournament.configuration.TournamentConfiguration;
+import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
 
 public interface AdminDAO {
 

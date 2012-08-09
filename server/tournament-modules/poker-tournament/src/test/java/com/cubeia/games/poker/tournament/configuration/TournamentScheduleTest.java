@@ -21,6 +21,8 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 import org.quartz.CronTrigger;
 
+import java.util.Date;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
 import static org.quartz.CronScheduleBuilder.cronSchedule;
@@ -31,10 +33,9 @@ public class TournamentScheduleTest {
 
     @Test
     public void testNextAnnounceTime() {
-        CronTrigger schedule = newTrigger().withSchedule(dailyAtHourAndMinute(14, 30))
-                .startAt(new DateTime(2011, 7, 5, 9, 0, 0).toDate())
-                .endAt(new DateTime(2012, 7, 5, 9, 0, 0).toDate()).build();
-        TournamentSchedule tournamentSchedule = new TournamentSchedule(schedule, 10, 20, 30);
+        Date startDate = new DateTime(2011, 7, 5, 9, 0, 0).toDate();
+        Date endDate = new DateTime(2012, 7, 5, 9, 0, 0).toDate();
+        TournamentSchedule tournamentSchedule = new TournamentSchedule(startDate, endDate, "0 30 14 * * ?", 10, 20, 30);
 
         DateTime nextAnnounceTime = tournamentSchedule.getNextAnnounceTime(new DateTime(2012, 6, 2, 9, 0, 0));
         assertEquals(new DateTime(2012, 6, 2, 14, 0, 0), nextAnnounceTime);
@@ -42,10 +43,9 @@ public class TournamentScheduleTest {
 
     @Test
     public void testNoMoreTournamentsAfterEndDate() {
-        CronTrigger schedule = newTrigger().withSchedule(dailyAtHourAndMinute(14, 30))
-                .startAt(new DateTime(2012, 6, 5, 9, 0, 0).toDate())
-                .endAt(new DateTime(2012, 7, 5, 9, 0, 0).toDate()).build();
-        TournamentSchedule tournamentSchedule = new TournamentSchedule(schedule, 10, 20, 30);
+        Date start = new DateTime(2012, 6, 5, 9, 0, 0).toDate();
+        Date end = new DateTime(2012, 7, 5, 9, 0, 0).toDate();
+        TournamentSchedule tournamentSchedule = new TournamentSchedule(start, end, "0 30 14 * * ?", 10, 20, 30);
 
         DateTime nextAnnounceTime = tournamentSchedule.getNextAnnounceTime(new DateTime(2012, 7, 9, 9, 0, 0));
         assertNull("Should be null, but was " + nextAnnounceTime, nextAnnounceTime);
@@ -53,10 +53,9 @@ public class TournamentScheduleTest {
 
     @Test
     public void test10MinuteSchedule() {
-        CronTrigger schedule = newTrigger().withSchedule(cronSchedule("0 */10 * * * ?"))
-                        .startAt(new DateTime(2011, 7, 5, 9, 0, 0).toDate())
-                        .endAt(new DateTime(2013, 7, 5, 9, 0, 0).toDate()).build();
-        TournamentSchedule tournamentSchedule = new TournamentSchedule(schedule, 3, 5, 5);
+        Date start = new DateTime(2011, 7, 5, 9, 0, 0).toDate();
+        Date end = new DateTime(2013, 7, 5, 9, 0, 0).toDate();
+        TournamentSchedule tournamentSchedule = new TournamentSchedule(start, end, "0 */10 * * * ?", 3, 5, 5);
 
         DateTime nextAnnounceTime = tournamentSchedule.getNextStartTime(new DateTime(2012, 7, 9, 15, 3, 0));
         assertEquals(new DateTime(2012, 7, 9, 15, 10, 0), nextAnnounceTime);

@@ -19,6 +19,9 @@ package com.cubeia.games.poker.tournament.configuration;
 
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.io.Serializable;
 
 /**
@@ -27,10 +30,12 @@ import java.io.Serializable;
  *
  * @author Fredrik Johansson, Cubeia Ltd
  */
+@Entity
 public class TournamentConfiguration implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @Id @GeneratedValue
     private Integer id;
 
     private String name;

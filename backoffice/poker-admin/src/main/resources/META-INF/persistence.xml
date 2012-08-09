@@ -5,7 +5,9 @@
    version="1.0">
    
    <persistence-unit name="adminPersistenceUnit" transaction-type="RESOURCE_LOCAL">
-       <class>com.cubeia.games.poker.admin.tournament.configuration.TournamentConfiguration</class>
+       <class>com.cubeia.games.poker.tournament.configuration.TournamentSchedule</class>
+       <class>com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration</class>
+       <class>com.cubeia.games.poker.tournament.configuration.TournamentConfiguration</class>
    
       <properties>
       	<!-- property name="hibernate.hbm2ddl.auto" value="create-drop"/-->

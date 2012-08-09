@@ -44,6 +44,7 @@ import org.mockito.Mock;
 import org.quartz.CronTrigger;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.Map;
 
 import static java.util.Collections.singletonList;
@@ -87,10 +88,9 @@ public class TournamentScannerTest {
     @Test
     public void shouldCreateTournamentWhenAnnouncingTimeHasCome() {
         // Given a tournament that should start at 14.30 and be announced 30 minutes before.
-        CronTrigger schedule = newTrigger().withSchedule(dailyAtHourAndMinute(14, 30))
-                .startAt(new DateTime(2011, 7, 5, 9, 0, 0).toDate())
-                .endAt(new DateTime(2013, 7, 5, 9, 0, 0).toDate()).build();
-        TournamentSchedule tournamentSchedule = new TournamentSchedule(schedule, 10, 20, 30);
+        Date start = new DateTime(2011, 7, 5, 9, 0, 0).toDate();
+        Date end = new DateTime(2013, 7, 5, 9, 0, 0).toDate();
+        TournamentSchedule tournamentSchedule = new TournamentSchedule(start, end, "0 30 14 * * ?", 10, 20, 30);
         ScheduledTournamentConfiguration tournament = new ScheduledTournamentConfiguration(tournamentSchedule, "14.30", 1);
         when(tournamentScheduleProvider.getTournamentSchedule()).thenReturn(singletonList(tournament));
 
@@ -105,10 +105,10 @@ public class TournamentScannerTest {
     @Test
     public void shouldOnlyCreateOneInstancePerStartTime() {
         // Given a tournament that should start at 14.30 and be announced 30 minutes before.
-        CronTrigger schedule = newTrigger().withSchedule(dailyAtHourAndMinute(14, 30))
-                .startAt(new DateTime(2011, 7, 5, 9, 0, 0).toDate())
-                .endAt(new DateTime(2013, 7, 5, 9, 0, 0).toDate()).build();
-        TournamentSchedule tournamentSchedule = new TournamentSchedule(schedule, 10, 20, 30);
+        Date start = new DateTime(2011, 7, 5, 9, 0, 0).toDate();
+        Date end = new DateTime(2013, 7, 5, 9, 0, 0).toDate();
+
+        TournamentSchedule tournamentSchedule = new TournamentSchedule(start, end, "0 30 14 * * ?", 10, 20, 30);
         ScheduledTournamentConfiguration tournament = new ScheduledTournamentConfiguration(tournamentSchedule, "14.30", 1);
         when(tournamentScheduleProvider.getTournamentSchedule()).thenReturn(singletonList(tournament));
 
