@@ -109,10 +109,10 @@ public class PokerTournamentActivatorImpl implements MttActivator, Startable, Po
 
     public void init(ActivatorContext context) throws SystemException {
         if (System.getProperty("useIntegrations") == null) {
-            log.warn("System is configured to use mocks, using mocks.");
+            log.warn("Using mock activator module.");
             injector = Guice.createInjector(new MockActivatorModule());
         } else {
-            log.info("Creating poker activator module.");
+            log.info("Creating database based activator module.");
             injector = Guice.createInjector(new ActivatorModule());
             injector.getInstance(PersistInitializer.class).start();
         }
