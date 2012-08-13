@@ -23,10 +23,10 @@ import com.cubeia.firebase.api.mtt.activator.MttActivator;
 import com.cubeia.firebase.api.server.Startable;
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.games.poker.tournament.activator.external.jmx.JMXActivator;
-import com.cubeia.games.poker.tournament.configuration.provider.mock.MockSitAndGoConfigurationProvider;
-import com.cubeia.games.poker.tournament.configuration.provider.mock.MockTournamentScheduleProvider;
-import com.cubeia.games.poker.tournament.util.DateFetcher;
-import com.cubeia.games.poker.tournament.util.RealDateFetcher;
+import com.cubeia.games.poker.tournament.guice.ActivatorModule;
+import com.cubeia.games.poker.tournament.guice.PersistInitializer;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import org.apache.log4j.Logger;
 
 /**
@@ -49,7 +49,7 @@ public class PokerTournamentActivatorImpl implements MttActivator, Startable, Po
 
     private MttFactory factory;
 
-    private DateFetcher dateFetcher = new RealDateFetcher();
+    private Injector injector;
 
     public PokerTournamentActivatorImpl() {
 
@@ -107,11 +107,15 @@ public class PokerTournamentActivatorImpl implements MttActivator, Startable, Po
     }
 
     public void init(ActivatorContext context) throws SystemException {
-        createActivator();
+        injector = Guice.createInjector(new ActivatorModule());
+        injector.getInstance(PersistInitializer.class).start();
+
+        activator = injector.getInstance(PokerActivator.class);
         activator.init(context);
     }
 
     public void start() {
+        activator.setMttFactory(factory);
         activator.start();
         jmxInterface = new JMXActivator(this);
     }
@@ -120,19 +124,4 @@ public class PokerTournamentActivatorImpl implements MttActivator, Startable, Po
         activator.stop();
     }
 
-    /*------------------------------------------------
-
-       PRIVATE METHODS
-
-    ------------------------------------------------*/
-
-    private void createActivator() {
-        createMockActivator();
-    }
-
-    private void createMockActivator() {
-        log.warn("Poker : Mock Tournament Activator used");
-        activator = new TournamentScanner(new MockSitAndGoConfigurationProvider(), new MockTournamentScheduleProvider(), dateFetcher);
-        activator.setMttFactory(factory);
-    }
 }

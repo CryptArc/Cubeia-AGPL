@@ -23,12 +23,10 @@ import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructureFac
 import com.cubeia.games.poker.tournament.configuration.provider.TournamentScheduleProvider;
 import com.google.common.collect.Lists;
 import org.joda.time.DateTime;
-import org.quartz.CronTrigger;
 
 import java.util.Collection;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
-import static org.quartz.TriggerBuilder.newTrigger;
 
 /**
  * This is a mock provider for providing the tournament schedule. A real implementation would fetch the tournament
@@ -40,9 +38,9 @@ public class MockTournamentScheduleProvider implements TournamentScheduleProvide
     public Collection<ScheduledTournamentConfiguration> getTournamentSchedule() {
         Collection<ScheduledTournamentConfiguration> tournamentConfigurations = Lists.newArrayList();
         ScheduledTournamentConfiguration everyTenMinutes = everyTenMinutes();
-        everyTenMinutes.getSchmonfiguration().setMinPlayers(2);
-        everyTenMinutes.getSchmonfiguration().setMaxPlayers(100);
-        everyTenMinutes.getSchmonfiguration().setBlindsStructure(BlindsStructureFactory.createDefaultBlindsStructure());
+        everyTenMinutes.getConfiguration().setMinPlayers(2);
+        everyTenMinutes.getConfiguration().setMaxPlayers(100);
+        everyTenMinutes.getConfiguration().setBlindsStructure(BlindsStructureFactory.createDefaultBlindsStructure());
         tournamentConfigurations.add(everyTenMinutes);
         return tournamentConfigurations;
     }

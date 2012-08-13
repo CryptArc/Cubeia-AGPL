@@ -39,16 +39,16 @@ public class ScheduledTournamentInstance {
     }
 
     public String getIdentifier() {
-        log.debug("Configuration " + configuration.getSchmonfiguration().getId() + " has startTimeMillis: " + startTime.getMillis() + " start time: " + startTime);
-        return "" + configuration.getSchmonfiguration().getId() + startTime.getMillis();
+        log.debug("Configuration " + configuration.getConfiguration().getId() + " has startTimeMillis: " + startTime.getMillis() + " start time: " + startTime);
+        return "" + configuration.getConfiguration().getId() + startTime.getMillis();
     }
 
     public String getName() {
-        return configuration.getSchmonfiguration().getName();
+        return configuration.getConfiguration().getName();
     }
 
     public TournamentConfiguration getConfiguration() {
-        return configuration.getSchmonfiguration();
+        return configuration.getConfiguration();
     }
 
     public DateTime getStartTime() {
@@ -56,6 +56,6 @@ public class ScheduledTournamentInstance {
     }
 
     public DateTime getOpenRegistrationTime() {
-        return startTime.minusMinutes(configuration.getSchmedule().getMinutesInRegistering());
+        return startTime.minusMinutes(configuration.getSchedule().getMinutesInRegistering());
     }
 }

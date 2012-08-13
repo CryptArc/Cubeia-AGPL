@@ -27,7 +27,7 @@ import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 public class SitAndGoCreationParticipant extends PokerTournamentCreationParticipant {
 
     public SitAndGoCreationParticipant(SitAndGoConfiguration config) {
-        super(config);
+        super(config.getConfiguration());
     }
 
     @Override

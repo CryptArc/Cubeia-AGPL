@@ -1,14 +1,16 @@
-package com.cubeia.games.poker.admin.wicket;
+package com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.games.poker.admin.wicket.pages.history.ShowHand;
-import com.cubeia.games.poker.admin.wicket.tournament.EditTournament;
+import com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled.EditTournament;
 import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
 import com.cubeia.games.poker.admin.wicket.util.ParamBuilder;
+import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
 import com.cubeia.poker.handhistory.api.HistoricHand;
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
@@ -30,7 +32,7 @@ import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
 /**
  * Page for listing all tournaments. Currently lists sit&go tournaments.
  */
-public class Tournaments extends BasePage {
+public class ListTournaments extends BasePage {
 
     private static final long serialVersionUID = 1L;
 
@@ -43,16 +45,16 @@ public class Tournaments extends BasePage {
      *
      * @param parameters Page parameters
      */
-    public Tournaments(final PageParameters parameters) {
+    public ListTournaments(final PageParameters parameters) {
         SortableDataProviderExtension dataProvider = new SortableDataProviderExtension();
         ArrayList<AbstractColumn> columns = new ArrayList<AbstractColumn>();
 
-        columns.add(new AbstractColumn<TournamentConfiguration>(new Model<String>("Id")) {
+        columns.add(new AbstractColumn<ScheduledTournamentConfiguration>(new Model<String>("Id")) {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public void populateItem(Item<ICellPopulator<TournamentConfiguration>> item, String componentId, IModel<TournamentConfiguration> model) {
-                TournamentConfiguration tournament = model.getObject();
+            public void populateItem(Item<ICellPopulator<ScheduledTournamentConfiguration>> item, String componentId, IModel<ScheduledTournamentConfiguration> model) {
+                ScheduledTournamentConfiguration tournament = model.getObject();
                 Component panel = new LabelLinkPanel(
                     componentId,
                     "" + tournament.getId(),
@@ -68,20 +70,20 @@ public class Tournaments extends BasePage {
         });
 
 //        columns.add(new PropertyColumn(new Model("Id"), "id"));
-        columns.add(new PropertyColumn(new Model("Name"), "name"));
-        columns.add(new PropertyColumn(new Model("Seats"), "seatsPerTable"));
-        columns.add(new PropertyColumn(new Model("Min"), "minPlayers"));
-        columns.add(new PropertyColumn(new Model("Max"), "maxPlayers"));
+        columns.add(new PropertyColumn(new Model("Name"), "configuration.name"));
+        columns.add(new PropertyColumn(new Model("Seats"), "configuration.seatsPerTable"));
+        columns.add(new PropertyColumn(new Model("Min"), "configuration.minPlayers"));
+        columns.add(new PropertyColumn(new Model("Max"), "configuration.maxPlayers"));
 
         DefaultDataTable userTable = new DefaultDataTable("tournamentTable", columns, dataProvider, 20);
         add(userTable);
     }
 
-    private List<TournamentConfiguration> getTournamentList() {
-        return adminDAO.getAllTournaments();
+    private List<ScheduledTournamentConfiguration> getTournamentList() {
+        return adminDAO.getScheduledTournamentConfigurations();
     }
 
-    private final class SortableDataProviderExtension extends SortableDataProvider<TournamentConfiguration> {
+    private final class SortableDataProviderExtension extends SortableDataProvider<ScheduledTournamentConfiguration> {
         private static final long serialVersionUID = 1L;
 
         public SortableDataProviderExtension() {
@@ -89,12 +91,12 @@ public class Tournaments extends BasePage {
         }
 
         @Override
-        public Iterator<TournamentConfiguration> iterator(int first, int count) {
+        public Iterator<ScheduledTournamentConfiguration> iterator(int first, int count) {
             return getTournamentList().subList(first, count + first).iterator();
         }
 
         @Override
-        public IModel<TournamentConfiguration> model(TournamentConfiguration object) {
+        public IModel<ScheduledTournamentConfiguration> model(ScheduledTournamentConfiguration object) {
             return new Model(object);
         }
 

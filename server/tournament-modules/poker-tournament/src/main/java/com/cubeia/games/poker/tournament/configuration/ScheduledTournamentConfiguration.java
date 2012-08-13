@@ -20,6 +20,7 @@ package com.cubeia.games.poker.tournament.configuration;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * This is the configuration for one stream of scheduled tournaments.
@@ -27,47 +28,47 @@ import javax.persistence.*;
  * Given this configuration, we can get the schedule and figure out when to start tournaments.
  */
 @Entity
-public class ScheduledTournamentConfiguration {
+public class ScheduledTournamentConfiguration implements Serializable {
 
     @Id
     @GeneratedValue
     private Integer id;
 
     @ManyToOne(cascade = {CascadeType.ALL})
-    private TournamentSchedule schmedule;
+    private TournamentSchedule schedule;
 
     @ManyToOne(cascade = {CascadeType.ALL})
-    private TournamentConfiguration schmonfiguration;
+    private TournamentConfiguration configuration;
 
     public ScheduledTournamentConfiguration() {
-        this.schmonfiguration = new TournamentConfiguration();
+        this.configuration = new TournamentConfiguration();
     }
 
-    public ScheduledTournamentConfiguration(TournamentSchedule schmedule, String name, int id) {
-        this.schmedule = schmedule;
-        this.schmonfiguration = new TournamentConfiguration();
-        schmonfiguration.setName(name);
-        schmonfiguration.setId(id);
+    public ScheduledTournamentConfiguration(TournamentSchedule schedule, String name, int id) {
+        this.schedule = schedule;
+        this.configuration = new TournamentConfiguration();
+        configuration.setName(name);
+        configuration.setId(id);
     }
 
-    public TournamentSchedule getSchmedule() {
-        return schmedule;
+    public TournamentSchedule getSchedule() {
+        return schedule;
     }
 
     public ScheduledTournamentInstance spawnConfigurationForNextInstance(DateTime startTime) {
         return new ScheduledTournamentInstance(this, startTime);
     }
 
-    public void setSchmedule(TournamentSchedule schmedule) {
-        this.schmedule = schmedule;
+    public void setSchedule(TournamentSchedule schedule) {
+        this.schedule = schedule;
     }
 
-    public TournamentConfiguration getSchmonfiguration() {
-        return schmonfiguration;
+    public TournamentConfiguration getConfiguration() {
+        return configuration;
     }
 
-    public void setSchmonfiguration(TournamentConfiguration configuration) {
-        this.schmonfiguration = configuration;
+    public void setConfiguration(TournamentConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     public Integer getId() {

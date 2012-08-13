@@ -164,18 +164,6 @@
          <artifactId>spring-data-mongodb</artifactId>
          <version>1.0.2.RELEASE</version>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver</artifactId>
-            <version>2.6.3</version>
-        </dependency>
-        <dependency>
-            <groupId>de.flapdoodle.embedmongo</groupId>
-            <artifactId>de.flapdoodle.embedmongo</artifactId>
-            <version>1.16</version>
-            <scope>test</scope>
-        </dependency>-->
 
         <!-- Hibernate -->
         <dependency>
@@ -192,6 +180,13 @@
               <artifactId>cglib</artifactId>
             </exclusion>
           </exclusions>
+        </dependency>
+
+        <!-- Mysql -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.9</version>
         </dependency>
 
         <dependency>

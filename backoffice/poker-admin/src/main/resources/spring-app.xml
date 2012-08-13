@@ -28,12 +28,20 @@
     </bean>
 
     <!-- DataSource -->
-    <bean id="dataSource" destroy-method="close"
-          class="org.apache.commons.dbcp.BasicDataSource">
+<!--
+    <bean id="dataSource" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="org.h2.Driver"/>
         <property name="url" value="jdbc:h2:file:"/>
         <property name="username" value="sa"/>
         <property name="password" value=""/>
+    </bean>
+-->
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${jdbc.driverClassName}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
     </bean>
 
     <!-- JPA Entitymanager support -->
@@ -45,7 +53,7 @@
            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
               <property name="showSql" value="false" />
               <property name="generateDdl" value="true" />
-              <property name="databasePlatform" value="org.hibernate.dialect.H2Dialect" />
+              <property name="databasePlatform" value="org.hibernate.dialect.MySQLDialect" />
            </bean>
         </property>
     </bean>
