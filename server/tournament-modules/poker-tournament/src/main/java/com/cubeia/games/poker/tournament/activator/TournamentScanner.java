@@ -228,8 +228,6 @@ public class TournamentScanner implements PokerActivator, Runnable {
         for (ScheduledTournamentConfiguration configuration : tournamentSchedule) {
             TournamentSchedule schedule = configuration.getSchedule();
             DateTime nextAnnounceTime = schedule.getNextAnnounceTime(dateFetcher.now());
-            System.out.println("Checking if now " + dateFetcher.now() + " is > " + nextAnnounceTime);
-            System.out.println("Checking if now " + dateFetcher.now().toDate().getTime() + " is > " + nextAnnounceTime.toDate().getTime());
             if (dateFetcher.now().isAfter(nextAnnounceTime)) {
                 ScheduledTournamentInstance instance = configuration.spawnConfigurationForNextInstance(schedule.getNextStartTime(dateFetcher.now()));
                 if (!existingTournaments.contains(instance.getIdentifier())) {

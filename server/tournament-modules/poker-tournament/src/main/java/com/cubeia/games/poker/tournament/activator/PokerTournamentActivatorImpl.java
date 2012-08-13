@@ -24,6 +24,7 @@ import com.cubeia.firebase.api.server.Startable;
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.games.poker.tournament.activator.external.jmx.JMXActivator;
 import com.cubeia.games.poker.tournament.guice.ActivatorModule;
+import com.cubeia.games.poker.tournament.guice.MockActivatorModule;
 import com.cubeia.games.poker.tournament.guice.PersistInitializer;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -107,9 +108,14 @@ public class PokerTournamentActivatorImpl implements MttActivator, Startable, Po
     }
 
     public void init(ActivatorContext context) throws SystemException {
-        injector = Guice.createInjector(new ActivatorModule());
-        injector.getInstance(PersistInitializer.class).start();
-
+        if (System.getProperty("useIntegrations") == null) {
+            log.warn("System is configured to use mocks, using mocks.");
+            injector = Guice.createInjector(new MockActivatorModule());
+        } else {
+            log.info("Creating poker activator module.");
+            injector = Guice.createInjector(new ActivatorModule());
+            injector.getInstance(PersistInitializer.class).start();
+        }
         activator = injector.getInstance(PokerActivator.class);
         activator.init(context);
     }
