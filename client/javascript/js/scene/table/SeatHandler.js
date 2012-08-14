@@ -68,6 +68,10 @@ SeatHandler.prototype.createSeatNumberOnTableEntityAtXY = function(seatNr, table
 
     entityHandler.addUiComponent(seatEntity, "", "poker_seat_box", null);
 
+    console.log(seatEntity)
+
+    var seatBoxDivId = seatEntity.ui.divId;
+
 
 
     entityHandler.addSpatial(tableEntity.ui.divId, seatEntity, x, y);

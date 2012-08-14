@@ -12,7 +12,18 @@ View = function(containerId) {
 
 
 View.prototype.initTableView = function(numberOfSeats) {
-    uiElementHandler.createDivElement("body", this.containerId, "View Container", "screenframe", null)
+    var id = uiElementHandler.createDivElement("body", this.containerId, "View Container", "screenframe", null)
+
+//    var container = document.getElementById(id);
+
+    var parent = document.getElementsByTagName("head")[0];
+
+    var index = parent.getElementsByTagName("*");
+    var newdiv = document.createElement('meta', [index]);
+    newdiv.setAttribute('name', "apple-mobile-web-app-status-bar-style");
+    newdiv.setAttribute('content', "black-translucent");
+
+    parent.appendChild(newdiv);
 
 
 

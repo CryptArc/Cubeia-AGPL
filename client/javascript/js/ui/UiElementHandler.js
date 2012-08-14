@@ -111,3 +111,98 @@ UiElementHandler.prototype.removeElementChildren = function(release, elementId) 
     }, 50, this);
 
 };
+
+UiElementHandler.prototype.createParentDivElement = function(id) {
+
+    var elementData = {
+        parent:{id:"viewContainer"},
+        elementType:'div',
+        attributes:{
+            id:id
+        }
+    }
+    var newdiv = this.createElement(elementData)
+
+    var viewportMetaData = {
+        parent:{tagName:"head"},
+        elementType:'meta',
+        attributes:{
+            name:"viewport",
+            id:"viewportMetaTag",
+        }
+    }
+
+    var viewportMetaTag = this.createElement(viewportMetaData)
+    this.setViewportDimensions();
+    this.setOrientationChangeBehaviour();
+
+    var homescreenMetaData = {
+        parent:{tagName:"head"},
+        elementType:'meta',
+        attributes:{
+            name:"apple-mobile-web-app-status-bar-style",
+            content:"black-translucent"
+        }
+    }
+    var homescreenMetaTag = this.createElement(homescreenMetaData)
+
+    var webappMetaData = {
+        parent:{tagName:"head"},
+        elementType:'meta',
+        attributes:{
+            name:"apple-mobile-web-app-capable",
+            content:"yes"
+        }
+    }
+    var webappMetaTag = this.createElement(webappMetaData)
+    return newdiv;
+};
+
+
+UiElementHandler.prototype.setViewportDimensions = function() {
+    var viewportTagElement = document.getElementById("viewportMetaTag")
+    var width = window.innerWidth;
+    var height = window.innerHeight;
+
+    var viewportWidth=540;
+
+    if (width > height) {
+        viewportWidth=1260;
+    }
+
+    viewportTagElement.setAttribute('content','width = '+width+'; user-scalable = no');
+    console.log("Viewport width update to ---> w: "+width+" h:"+height);
+}
+
+UiElementHandler.prototype.setOrientationChangeBehaviour = function() {
+    var instance = this;
+    var setDimensions = function() {
+        instance.setViewportDimensions()
+    }
+
+    window.addEventListener("orientationchange", function() {
+        setDimensions()
+    });
+};
+
+UiElementHandler.prototype.createElement = function(elementData) {
+    var parentElement = null;
+    var type = elementData.parent
+    for (index in type) {
+        if (index == "id") {
+            parentElement = this.getElementById(type[index]);
+        }
+        if (index == "tagName") {
+            parentElement = document.getElementsByTagName(type[index])[0];
+        }
+    }
+    var index = parentElement.getElementsByTagName("*");
+    var newElement = document.createElement(elementData.elementType, [index]);
+
+    for (keys in elementData.attributes) {
+        newElement.setAttribute(keys, elementData.attributes[keys])
+    }
+    parentElement.appendChild(newElement);
+//    newElement.className = "OdoboBase"
+    return newElement;
+};

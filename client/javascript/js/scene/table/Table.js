@@ -85,8 +85,8 @@ Table.prototype.createVisualTable = function(containerId) {
     // Add a visual component for the table entity and return the divId
     var tableDivId = containerId+"_Table";
     uiElementHandler.createDivElement(containerId, tableDivId, "", "poker_table", null);
-    uiElementHandler.createDivElement(tableDivId, tableDivId+"_logo", "", "poker_table_cubeia_logo", null);
-    uiElementHandler.createDivElement(tableDivId, tableDivId+"_blob", "", "table_center_blob", null);
+//    uiElementHandler.createDivElement(tableDivId, tableDivId+"_logo", "", "poker_table_cubeia_logo", null);
+//    uiElementHandler.createDivElement(tableDivId, tableDivId+"_blob", "", "table_center_blob", null);
     return tableDivId;
 };
 
@@ -446,11 +446,11 @@ Table.prototype.getSeatLocationsForTableWithSize = function(numberOfSeats) {
 	        break;
 		case 10:
 	        var zero = [50, 68];
-	        var first = [11, 66];
+	        var first = [11.5, 66];
 	        var second = [11, 38];
 	        var third = [11, 10];
 	        var fourth = [30, 10];
-	        var fifth = [50, 10];
+	        var fifth = [30.3, 10];
 	        var sixth = [100 - fourth[0], fourth[1]];
 	        var seventh = [100 - third[0], third[1]];
 	        var eigth = [100 - second[0], second[1]];
