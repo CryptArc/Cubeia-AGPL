@@ -131,9 +131,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
       */
     @Override
     public LobbyPath getLobbyPathForTable(Table table) {
-        LobbyPath path = getLobbyPath();
-        path.setObjectId(table.getId());
-        return path;
+        return getLobbyPath();
     }
 
     @Override

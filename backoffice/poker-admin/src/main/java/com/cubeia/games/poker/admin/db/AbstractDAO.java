@@ -2,6 +2,8 @@ package com.cubeia.games.poker.admin.db;
 
 import java.util.List;
 
+import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
+import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
 import org.apache.log4j.Logger;
 import org.springframework.orm.jpa.support.JpaDaoSupport;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +26,7 @@ public class AbstractDAO extends JpaDaoSupport implements AdminDAO {
      * @see com.cubeia.games.poker.admin.db.AdminDAO#getItem(java.lang.Class, java.lang.Integer)
      */
     @SuppressWarnings("unchecked")
-    public <T> T getItem(Class<TournamentConfiguration> class1, Integer id) {
+    public <T> T getItem(Class<T> class1, Integer id) {
         return (T) getJpaTemplate().find(class1, id);
     }
     
@@ -35,13 +37,19 @@ public class AbstractDAO extends JpaDaoSupport implements AdminDAO {
         getJpaTemplate().persist(entity);
     }
 
-    
-    /* (non-Javadoc)
-     * @see com.cubeia.games.poker.admin.db.AdminDAO#getAllTournaments()
-     */
-    @SuppressWarnings("unchecked")
-    public List<TournamentConfiguration> getAllTournaments() {
-        return getJpaTemplate().find("from TournamentConfiguration");
+    public void save(Object entity) {
+        getJpaTemplate().merge(entity);
     }
-    
+
+    @Override
+    public List<SitAndGoConfiguration> getSitAndGoConfigurations() {
+        return getJpaTemplate().find("from SitAndGoConfiguration");
+    }
+
+    @Override
+    public List<ScheduledTournamentConfiguration> getScheduledTournamentConfigurations() {
+        return getJpaTemplate().find("from ScheduledTournamentConfiguration");
+    }
+
+
 }

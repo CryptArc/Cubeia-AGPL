@@ -19,6 +19,7 @@ package com.cubeia.games.poker.tournament;
 
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.SeatPlayersMttAction;
+import com.cubeia.firebase.api.action.UnseatPlayersMttAction;
 import com.cubeia.firebase.api.action.mtt.MttAction;
 import com.cubeia.firebase.api.action.mtt.MttObjectAction;
 import com.cubeia.firebase.api.action.mtt.MttRoundReportAction;
@@ -33,6 +34,7 @@ import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.firebase.api.mtt.support.MttNotifierAdapter;
 import com.cubeia.firebase.api.scheduler.Scheduler;
 import com.cubeia.firebase.api.service.mttplayerreg.TournamentPlayerRegistry;
+import com.cubeia.firebase.guice.tournament.TournamentAssist;
 import com.cubeia.games.poker.tournament.activator.PokerTournamentCreationParticipant;
 import com.cubeia.games.poker.tournament.activator.ScheduledTournamentCreationParticipant;
 import com.cubeia.games.poker.tournament.activator.SitAndGoCreationParticipant;
@@ -46,12 +48,16 @@ import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 
 import java.util.*;
 
 import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.ANNOUNCED;
 import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.REGISTERING;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -93,6 +99,8 @@ public class PokerTournamentProcessorTest extends TestCase {
     @Mock
     private TournamentConfiguration configuration;
 
+    private MockTournamentAssist support;
+
     private LobbyAttributeAccessor lobbyAccessor = new LobbyAttributeAccessorAdapter();
 
     private PokerTournamentState pokerState;
@@ -103,6 +111,9 @@ public class PokerTournamentProcessorTest extends TestCase {
     protected void setUp() throws Exception {
         initMocks(this);
         tournamentProcessor = new PokerTournamentProcessor();
+        support = new MockTournamentAssist();
+        tournamentProcessor.setSupport(support);
+
         state = new MTTStateSupport(1, 1);
         when(configuration.getBlindsStructure()).thenReturn(BlindsStructureFactory.createDefaultBlindsStructure());
         when(instance.getSystemPlayerRegistry()).thenReturn(playerRegistry);
@@ -111,11 +122,11 @@ public class PokerTournamentProcessorTest extends TestCase {
         when(instance.getScheduler()).thenReturn(scheduler);
         when(instance.getMttNotifier()).thenReturn(notifier);
         when(instanceConfig.getConfiguration()).thenReturn(configuration);
-        tournamentProcessor.setTableCreator(new MockTableCreator(tournamentProcessor, instance));
-        tournamentProcessor.setMttNotifier(new MttNotifierAdapter());
+        support.setTableCreator(new MockTableCreator(tournamentProcessor, instance));
+        support.setMttNotifier(new MttNotifierAdapter());
 
         SitAndGoConfiguration config = new SitAndGoConfiguration("test", 20);
-        config.setBlindsStructure(BlindsStructureFactory.createDefaultBlindsStructure());
+        config.getConfiguration().setBlindsStructure(BlindsStructureFactory.createDefaultBlindsStructure());
         PokerTournamentCreationParticipant part = new SitAndGoCreationParticipant(config);
         part.tournamentCreated(state, instance.getLobbyAccessor());
 
@@ -190,7 +201,7 @@ public class PokerTournamentProcessorTest extends TestCase {
 
     public void testBalanceAfterMove() {
         fillTournament();
-        tournamentProcessor.setMttNotifier(new MttNotifier() {
+        support.setMttNotifier(new MttNotifier() {
 
             public void notifyPlayer(int playerId, MttAction action) {
 

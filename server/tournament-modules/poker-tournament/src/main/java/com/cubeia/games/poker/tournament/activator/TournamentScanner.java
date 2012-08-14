@@ -31,6 +31,7 @@ import com.cubeia.games.poker.tournament.configuration.provider.SitAndGoConfigur
 import com.cubeia.games.poker.tournament.configuration.provider.TournamentScheduleProvider;
 import com.cubeia.games.poker.tournament.util.DateFetcher;
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 
@@ -81,12 +82,11 @@ public class TournamentScanner implements PokerActivator, Runnable {
 
     private DateFetcher dateFetcher;
 
+    @Inject
     public TournamentScanner(SitAndGoConfigurationProvider sitAndGoConfigurationProvider, TournamentScheduleProvider tournamentScheduleProvider,
                              DateFetcher dateFetcher) {
         this.sitAndGoConfigurationProvider = sitAndGoConfigurationProvider;
         this.tournamentScheduleProvider = tournamentScheduleProvider;
-        this.context = context;
-        this.factory = factory;
         this.dateFetcher = dateFetcher;
     }
 
@@ -199,7 +199,7 @@ public class TournamentScanner implements PokerActivator, Runnable {
 
 
     private void createSitAndGo(SitAndGoConfiguration sitAndGo, ActivatorContext context) {
-        factory.createMtt(context.getMttId(), sitAndGo.getName(), createParticipant(sitAndGo));
+        factory.createMtt(context.getMttId(), sitAndGo.getConfiguration().getName(), createParticipant(sitAndGo));
     }
 
     private void createScheduledTournament(ScheduledTournamentInstance configuration) {
@@ -226,10 +226,8 @@ public class TournamentScanner implements PokerActivator, Runnable {
         Set<String> existingTournaments = getExistingTournaments();
 
         for (ScheduledTournamentConfiguration configuration : tournamentSchedule) {
-            TournamentSchedule schedule = configuration.getSchmedule();
+            TournamentSchedule schedule = configuration.getSchedule();
             DateTime nextAnnounceTime = schedule.getNextAnnounceTime(dateFetcher.now());
-            System.out.println("Checking if now " + dateFetcher.now() + " is > " + nextAnnounceTime);
-            System.out.println("Checking if now " + dateFetcher.now().toDate().getTime() + " is > " + nextAnnounceTime.toDate().getTime());
             if (dateFetcher.now().isAfter(nextAnnounceTime)) {
                 ScheduledTournamentInstance instance = configuration.spawnConfigurationForNextInstance(schedule.getNextStartTime(dateFetcher.now()));
                 if (!existingTournaments.contains(instance.getIdentifier())) {
@@ -283,8 +281,8 @@ public class TournamentScanner implements PokerActivator, Runnable {
 
     private Map<String, SitAndGoConfiguration> mapToName(Collection<SitAndGoConfiguration> configurations) {
         Map<String, SitAndGoConfiguration> map = Maps.newHashMap();
-        for (SitAndGoConfiguration configuration : configurations) {
-            map.put(configuration.getName(), configuration);
+        for (SitAndGoConfiguration sitAndGo : configurations) {
+            map.put(sitAndGo.getConfiguration().getName(), sitAndGo);
         }
         return map;
     }

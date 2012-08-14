@@ -19,17 +19,48 @@ package com.cubeia.games.poker.tournament.configuration;
 
 import com.cubeia.poker.timing.Timings;
 
-public class SitAndGoConfiguration extends TournamentConfiguration {
+import javax.persistence.*;
+import java.io.Serializable;
+
+@Entity
+public class SitAndGoConfiguration implements Serializable {
+
+    @Id
+    @GeneratedValue
+    private Integer id;
+
+    @ManyToOne(cascade = {CascadeType.ALL})
+    private TournamentConfiguration configuration;
+
+    public SitAndGoConfiguration() {
+    }
+
+    public TournamentConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(TournamentConfiguration configuration) {
+        this.configuration = configuration;
+    }
 
     public SitAndGoConfiguration(String name, int capacity, Timings timings) {
-        super.setName(name);
-        super.setMinPlayers(capacity);
-        super.setMaxPlayers(capacity);
-        super.setSeatsPerTable(10);
-        super.setTimingType(timings.ordinal());
+        configuration = new TournamentConfiguration();
+        configuration.setName(name);
+        configuration.setMinPlayers(capacity);
+        configuration.setMaxPlayers(capacity);
+        configuration.setSeatsPerTable(10);
+        configuration.setTimingType(timings.ordinal());
     }
 
     public SitAndGoConfiguration(String name, int capacity) {
         this(name, capacity, Timings.DEFAULT);
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }

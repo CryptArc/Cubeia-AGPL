@@ -34,6 +34,7 @@ import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.firebase.api.mtt.support.MTTSupport;
 import com.cubeia.firebase.api.mtt.support.tables.Move;
 import com.cubeia.firebase.api.mtt.support.tables.TableBalancer;
+import com.cubeia.firebase.guice.tournament.TournamentAssist;
 import com.cubeia.games.poker.io.protocol.TournamentOut;
 import com.cubeia.games.poker.tournament.configuration.TournamentTableSettings;
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsLevel;
@@ -49,6 +50,8 @@ import org.joda.time.Duration;
 import java.io.Serializable;
 import java.util.*;
 
+import static java.util.Collections.singleton;
+
 public class PokerTournament implements Serializable {
 
     private static final Logger log = Logger.getLogger(PokerTournament.class);
@@ -59,17 +62,17 @@ public class PokerTournament implements Serializable {
 
     private TournamentLifeCycle tournamentLifeCycle;
 
+    private DateFetcher dateFetcher;
+
     private transient MTTStateSupport state;
 
     private transient MttInstance instance;
 
-    private transient MTTSupport mttSupport;
+    private transient TournamentAssist mttSupport;
 
     private transient MttNotifier notifier;
 
     private static final Long STARTING_CHIPS = 100000L;
-
-    private DateFetcher dateFetcher;
 
     public PokerTournament(PokerTournamentState pokerState, DateFetcher dateFetcher, TournamentLifeCycle tournamentLifeCycle) {
         this.pokerState = pokerState;
@@ -77,7 +80,7 @@ public class PokerTournament implements Serializable {
         this.tournamentLifeCycle = tournamentLifeCycle;
     }
 
-    public void injectTransientDependencies(MttInstance instance, MTTSupport support, MTTStateSupport state, MttNotifier notifier) {
+    public void injectTransientDependencies(MttInstance instance, TournamentAssist support, MTTStateSupport state, MttNotifier notifier) {
         this.instance = instance;
         this.mttSupport = support;
         this.state = state;
@@ -189,7 +192,7 @@ public class PokerTournament implements Serializable {
 
     private void startNextRoundIfPossible(int tableId) {
         if (state.getPlayersAtTable(tableId).size() > 1) {
-            mttSupport.sendRoundStartActionToTable(state, tableId);
+            mttSupport.sendRoundStartActionToTables(state, singleton(tableId));
         }
     }
 
@@ -231,19 +234,15 @@ public class PokerTournament implements Serializable {
             }
         }
 
-        for (int tableId : tablesToStart) {
-            if (log.isDebugEnabled()) {
-                log.debug("Sending explicit start to table[" + tableId + "] due to low number of players.");
-            }
-            mttSupport.sendRoundStartActionToTable(state, tableId);
-        }
+        log.debug("Sending explicit start to tables[" + tablesToStart.toArray() + "] due to low number of players.");
+        mttSupport.sendRoundStartActionToTables(state, tablesToStart);
 
         return closeTableIfEmpty(sourceTableId);
     }
 
     private boolean closeTableIfEmpty(int tableId) {
         if (state.getPlayersAtTable(tableId).isEmpty()) {
-            mttSupport.closeTable(state, tableId);
+            mttSupport.closeTables(state, singleton(tableId));
             return true;
         }
 

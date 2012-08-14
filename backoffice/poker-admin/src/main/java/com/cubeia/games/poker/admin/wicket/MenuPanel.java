@@ -1,6 +1,8 @@
 package com.cubeia.games.poker.admin.wicket;
 
-import com.cubeia.games.poker.admin.wicket.tournament.CreateTournament;
+import com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled.CreateTournament;
+import com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled.ListTournaments;
+import com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo.ListSitAndGoTournaments;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -10,8 +12,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import com.cubeia.games.poker.admin.wicket.component.NavMenuItem;
 import com.cubeia.games.poker.admin.wicket.jmx.Clients;
 import com.cubeia.games.poker.admin.wicket.pages.history.HandHistory;
-import com.cubeia.games.poker.admin.wicket.tournament.CreateSitAndGo;
-import com.cubeia.games.poker.admin.wicket.tournament.EditTournament;
+import com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo.CreateSitAndGo;
 
 public class MenuPanel extends Panel {
     private static final long serialVersionUID = 1L;
@@ -20,11 +21,9 @@ public class MenuPanel extends Panel {
         super(id);
         add(createNavMenuItem("home", HomePage.class, currentPageClass));
         add(createNavMenuItem("handHistory", HandHistory.class, currentPageClass));
-        add(createNavMenuItem("tournaments", Tournaments.class, currentPageClass));
-        add(createNavMenuItem("createSitAndGo", CreateSitAndGo.class, currentPageClass));
-        add(createNavMenuItem("createTournament", CreateTournament.class, currentPageClass));
+        add(createNavMenuItem("sitAndGo", ListSitAndGoTournaments.class, currentPageClass));
+        add(createNavMenuItem("scheduled", ListTournaments.class, currentPageClass));
         add(createNavMenuItem("clients", Clients.class, currentPageClass));
-
     }
 
     private NavMenuItem<String> createNavMenuItem(String id, Class<? extends Page> pageClass,

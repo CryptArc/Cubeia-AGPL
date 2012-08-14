@@ -24,13 +24,14 @@ import org.quartz.Trigger;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.io.Serializable;
 import java.util.Date;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.TriggerBuilder.newTrigger;
 
 @Entity
-public class TournamentSchedule {
+public class TournamentSchedule implements Serializable {
 
     @Id
     @GeneratedValue

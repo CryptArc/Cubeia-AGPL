@@ -24,13 +24,15 @@ import com.cubeia.firebase.api.mtt.MttInstance;
 import com.cubeia.firebase.api.mtt.model.MttRegisterResponse;
 import com.cubeia.firebase.api.mtt.model.MttRegistrationRequest;
 import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
-import com.cubeia.firebase.api.mtt.support.MTTSupport;
 import com.cubeia.firebase.api.mtt.support.registry.PlayerInterceptor;
 import com.cubeia.firebase.api.mtt.support.registry.PlayerListener;
+import com.cubeia.firebase.guice.tournament.TournamentAssist;
+import com.cubeia.firebase.guice.tournament.TournamentHandler;
+import com.google.inject.Inject;
 import org.apache.log4j.Logger;
 import org.apache.log4j.MDC;
 
-public class PokerTournamentProcessor extends MTTSupport implements PlayerInterceptor, PlayerListener {
+public class PokerTournamentProcessor implements TournamentHandler, PlayerInterceptor, PlayerListener {
 
     // Use %X{pokerid} in the layout pattern to include this information.
     private static final String MDC_TAG = "tableid";
@@ -38,6 +40,9 @@ public class PokerTournamentProcessor extends MTTSupport implements PlayerInterc
     private static transient Logger log = Logger.getLogger(PokerTournamentProcessor.class);
 
     private PokerTournamentUtil util = new PokerTournamentUtil();
+
+    @Inject
+    private TournamentAssist support;
 
     @Override
     public PlayerInterceptor getPlayerInterceptor(MTTStateSupport state) {
@@ -142,8 +147,12 @@ public class PokerTournamentProcessor extends MTTSupport implements PlayerInterc
         }
     }
 
+    public void setSupport(TournamentAssist support) {
+        this.support = support;
+    }
+
     private void injectDependencies(PokerTournament tournament, MttInstance instance) {
-        tournament.injectTransientDependencies(instance, this, util.getStateSupport(instance), instance.getMttNotifier());
+        tournament.injectTransientDependencies(instance, support, util.getStateSupport(instance), instance.getMttNotifier());
     }
 
     private PokerTournament prepareTournament(MttInstance instance) {

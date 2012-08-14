@@ -25,6 +25,7 @@ import com.cubeia.firebase.api.mtt.MttNotifier;
 import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.firebase.api.mtt.support.MTTSupport;
 import com.cubeia.firebase.api.scheduler.Scheduler;
+import com.cubeia.firebase.guice.tournament.TournamentAssist;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.ScheduledTournamentLifeCycle;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.TournamentLifeCycle;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
@@ -52,7 +53,7 @@ public class PokerTournamentTest {
     private MttInstance instance;
 
     @Mock
-    private MTTSupport support;
+    private TournamentAssist support;
 
     @Mock
     private MTTStateSupport state;

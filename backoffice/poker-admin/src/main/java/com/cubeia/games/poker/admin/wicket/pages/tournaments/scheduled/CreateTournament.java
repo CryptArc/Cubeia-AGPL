@@ -1,7 +1,8 @@
-package com.cubeia.games.poker.admin.wicket.tournament;
+package com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled;
 
 import com.cubeia.games.poker.admin.db.AdminDAO;
 import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo.CreateSitAndGo;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
 import org.apache.log4j.Logger;
@@ -33,15 +34,16 @@ public class CreateTournament extends BasePage {
                 TournamentSchedule schedule = new TournamentSchedule(form.startDate, form.endDate, form.schedule, form.minutesInAnnounced,
                                                                      form.minutesInRegistering, form.minutesVisibleAfterFinished);
                 ScheduledTournamentConfiguration tournament = new ScheduledTournamentConfiguration();
-                tournament.getSchmonfiguration().setName(form.name);
-                tournament.getSchmonfiguration().setMinPlayers(form.minPlayers);
-                tournament.getSchmonfiguration().setMaxPlayers(form.maxPlayers);
-                tournament.getSchmonfiguration().setSeatsPerTable(form.seatsPerTable);
+                tournament.getConfiguration().setName(form.name);
+                tournament.getConfiguration().setMinPlayers(form.minPlayers);
+                tournament.getConfiguration().setMaxPlayers(form.maxPlayers);
+                tournament.getConfiguration().setSeatsPerTable(form.seatsPerTable);
 
-                tournament.getSchmonfiguration().setTimingType(form.timingType);
-                tournament.setSchmedule(schedule);
+                tournament.getConfiguration().setTimingType(form.timingType);
+                tournament.setSchedule(schedule);
                 adminDAO.persist(tournament);
                 log.debug("created tournament config with id = " + tournament);
+                setResponsePage(ListTournaments.class);
             }
         };
 
@@ -56,7 +58,6 @@ public class CreateTournament extends BasePage {
         tournamentForm.add(new TextField<Integer>("timingType"));
         tournamentForm.add(new TextField<Integer>("minPlayers"));
         tournamentForm.add(new TextField<Integer>("maxPlayers"));
-
 
         add(tournamentForm);
         add(new FeedbackPanel("feedback"));
