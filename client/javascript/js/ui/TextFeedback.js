@@ -78,8 +78,6 @@ TextFeedback.prototype.addSeatEventText = function(pid, textString) {
     var fontSize = 38;
 
 
-    console.log(seatEntity)
-
         document.getElementById(key).style.webkitTransitionProperty = "top, opacity, left";
         document.getElementById(key).style.webkitTransitionTimingFunction = "ease-in";
         document.getElementById(key).style.webkitTransitionDuration = "5s";

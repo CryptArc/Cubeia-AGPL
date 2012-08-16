@@ -23,7 +23,6 @@ UiUtils.prototype.createActionButton = function(buttonData, parentDivId) {
     document.getElementById(buttonFrameDivId).style.height = buttonData.height+"px";
 //  document.getElementById(buttonFrameDivId).style.visibility = "hidden";
 
-
     var buttonDivId = buttonFrameDivId+"_button";
 
     buttonData.buttonDivId = buttonDivId;

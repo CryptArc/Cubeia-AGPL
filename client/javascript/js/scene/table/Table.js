@@ -22,14 +22,11 @@ Table.prototype.createTableOfSize = function(numberOfSeats, containerId) {
     tableEntity.ui.tablePotDivId = this.createTablePot(tableEntity.ui.divId);
 
 
-    pokerDealer.createDealerButton()
+    pokerDealer.createDealerButton();
 
     this.showCurrentState();
 
     tableEntity.seats = {};
-
-
-
 
     var seatPositions = this.getSeatLocationsForTableWithSize(numberOfSeats);
     for (var i = 0; i < seatPositions.length; i++) {
@@ -38,7 +35,6 @@ Table.prototype.createTableOfSize = function(numberOfSeats, containerId) {
         view.seatHandler.setSeatEntityToPassive(seatEntity);
         tableEntity.seats[seatNr] = seatEntity;
     }
-    console.log(tableEntity);
 	console.log(entityHandler.entities);
 
     /*
@@ -47,8 +43,19 @@ Table.prototype.createTableOfSize = function(numberOfSeats, containerId) {
     */
 
     this.updateTableSeatPositions();
-
+    this.addLineSeparator();
 };
+
+Table.prototype.addLineSeparator = function() {
+        var tableEntity = entityHandler.getEntityById(this.entityId);
+        var parent = document.getElementById(tableEntity.ui.divId);
+        var index = parent.getElementsByTagName("*");
+        var newdiv = document.createElement('div', [index]);
+        newdiv.setAttribute('id', 'lineSeparator');
+        newdiv.className = 'line_separator';
+
+        parent.appendChild(newdiv);
+}
 
 Table.prototype.updateTableSeatPositions = function() {
     /*
@@ -97,7 +104,7 @@ Table.prototype.createTableJoinButton = function(tableDivId) {
     }
 
     this.buttons = {
-        inputButtons: {label: "Join Table", posX: 85, posY: 90, height: 55, width: 140, hasValue:false, clickFunction:joinTable},
+        inputButtons: {label: "Join Table", posX: 84, posY: 84.6, height: 110, width: 110, hasValue:false, clickFunction:joinTable},
     };
 
 

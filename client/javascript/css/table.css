@@ -567,7 +567,7 @@ div.table_pot_area
     /*box-shadow: 0px 0px 19px #383;*/
     /*height: 38px;*/
 
-    left: 33%;
+    left: 28.5%;
     right: 40%;
     top: 50%;
 }
@@ -615,4 +615,14 @@ div.event_text
     text-align: center;
     left: 0px;
     right: 0px;
+}
+
+div.line_separator
+{
+    bottom: 120px;
+    left: 70px;
+    right: 60px;
+    height: 1px;
+    background-color: #9bba00;
+    position: absolute;
 }

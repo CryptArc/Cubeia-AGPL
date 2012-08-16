@@ -44,9 +44,6 @@ SeatHandler.prototype.setCurrentPlayerActionTimeout = function(pid, timeToAct) {
     var seatEntity = entityHandler.getEntityById(this.getSeatEntityIdBySeatNumber(seatNr));
 
     this.setCurrentActingSeatEntity(seatEntity)
-
-
-
     console.log(seatEntity);
 
 
