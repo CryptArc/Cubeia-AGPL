@@ -104,7 +104,7 @@ Table.prototype.createTableJoinButton = function(tableDivId) {
     }
 
     this.buttons = {
-        inputButtons: {label: "Join Table", posX: 84, posY: 84.6, height: 110, width: 110, hasValue:false, clickFunction:joinTable},
+        inputButtons: {label: "Join", posX: 84, posY: 85.5, height: 100, width: 100, hasValue:false, clickFunction:joinTable}
     };
 
 
@@ -183,15 +183,14 @@ Table.prototype.showTableFull = function() {
 Table.prototype.showJoinButton = function() {
     var tableEntity = entityHandler.getEntityById(this.entityId);
     var buttonLabelDivId = tableEntity.ui.joinButtonLabelDivId;
-//    var frameDivId = tableEntity.ui.joinButtonFrameDivId;
     var buttonDivId = tableEntity.ui.joinButtonDivId;
 
     var joinTable = function() {
         view.table.playerPressesJoinButton();
     }
 
-    document.getElementById(buttonLabelDivId).innerHTML = "Join Table";
-//    document.getElementById(frameDivId).style.visibility = "visible";
+    document.getElementById(buttonLabelDivId).innerHTML = "Join";
+    var buttonDivId = tableEntity.ui.joinButtonFrameDivId;
     document.getElementById(buttonDivId).style.visibility = "visible";
     document.getElementById(buttonDivId).onclick = function(e) {
     	joinTable();
@@ -200,7 +199,7 @@ Table.prototype.showJoinButton = function() {
 
 Table.prototype.hideJoinButton = function() {
     var tableEntity = entityHandler.getEntityById(this.entityId);
-    var buttonDivId = tableEntity.ui.joinButtonDivId;
+    var buttonDivId = tableEntity.ui.joinButtonFrameDivId;
     document.getElementById(buttonDivId).style.visibility = "hidden";
 }
 
@@ -209,17 +208,17 @@ Table.prototype.setLeaveTableFunction = function() {
 //    var frameDivId = tableEntity.ui.joinButtonFrameDivId;
     var buttonDivId = tableEntity.ui.joinButtonDivId;
     var buttonLabelDivId = tableEntity.ui.joinButtonLabelDivId;
-
+    view.table.hideJoinButton();
     var leaveFunction = function() {
         view.table.hideJoinButton();
         playerActions.leaveTable();
 
     }
 
-    document.getElementById(buttonLabelDivId).innerHTML = "Leave Table";
-    document.getElementById(buttonDivId).onclick = function(e) {
-        leaveFunction();
-    }
+//    document.getElementById(buttonLabelDivId).innerHTML = "Leave Table";
+//    document.getElementById(buttonDivId).onclick = function(e) {
+//        leaveFunction();
+//    }
 
 
 };
@@ -255,7 +254,7 @@ Table.prototype.handleRequestAction = function(requestAction) {
 
 	this.potUpdated(requestAction.currentPotSize);
 	this.startPlayerCountDown(requestAction.player, requestAction.timeToAct);
-
+    console.log("player in " + requestAction.player +  " me: " + parseInt(pid));
 	if ( requestAction.player == parseInt(pid) ) {
 		this.clearButtonStates();
 		// save it for later

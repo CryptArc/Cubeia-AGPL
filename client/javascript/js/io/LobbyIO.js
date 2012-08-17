@@ -48,6 +48,8 @@ function lobbyCallback(protocolObject) {
  */
 function statusCallback(status) {
     console.log("Status recevied: " + status);
+    alert("status: " + status);
+
     if (status === FIREBASE.ConnectionStatus.CONNECTED) {
         if (autoLogin) {
             connector.login(usr, pwd);

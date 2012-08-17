@@ -26,6 +26,7 @@ UiUtils.prototype.createActionButton = function(buttonData, parentDivId) {
     var buttonDivId = buttonFrameDivId+"_button";
 
     buttonData.buttonDivId = buttonDivId;
+    buttonData.divId = buttonFrameDivId;
 
     uiElementHandler.createDivElement(buttonFrameDivId, buttonData.buttonDivId, "", "poker_game_action_button", null);
 

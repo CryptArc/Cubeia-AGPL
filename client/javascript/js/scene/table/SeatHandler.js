@@ -14,22 +14,27 @@ SeatHandler.prototype.getSeatEntityIdBySeatNumber = function(seatNr) {
 SeatHandler.prototype.setSeatEntityToPassive = function(seatEntity) {
     this.setSeatTimerPercentRemaining(seatEntity, 0);
 
-    document.getElementById(seatEntity.ui.seatActionFrameDivId).style.backgroundColor = "#eee";
-    document.getElementById(seatEntity.ui.seatActionFrameDivId).style.borderColor = "#555";
+    document.getElementById(seatEntity.ui.divId).style.backgroundColor = "#999";
+//    document.getElementById(seatEntity.ui.seatActionFrameDivId).style.backgroundColor = "#eee";
+//    document.getElementById(seatEntity.ui.seatActionFrameDivId).style.borderColor = "#555";
 //    document.getElementById(seatEntity.ui.seatActionSlotDivId).className = "seat_turn_state_passive";
 
 }
 
 SeatHandler.prototype.setCurrentActingSeatEntity = function(seatEntity) {
-
+    console.log("SETTING CURRENT ACTING");
+    console.log(seatEntity);
     if (this.activeSeatEntity) {
         this.setSeatEntityToPassive(this.activeSeatEntity)
     };
 
     this.activeSeatEntity = seatEntity;
-    document.getElementById(this.activeSeatEntity.ui.seatActionFrameDivId).style.backgroundColor = "#8f8";
-    document.getElementById(this.activeSeatEntity.ui.seatActionSlotDivId).className = "seat_turn_state_active";
-    document.getElementById(seatEntity.ui.seatActionFrameDivId).style.backgroundColor = "#cfc";
+    console.log(this.activeSeatEntity);
+    console.log("id: " + this.activeSeatEntity.ui.divId);
+    document.getElementById(this.activeSeatEntity.ui.divId).style.backgroundColor = "#9bba00";
+//    document.getElementById(this.activeSeatEntity.ui.seatActionFrameDivId).style.backgroundColor = "#8f8";
+//    document.getElementById(this.activeSeatEntity.ui.seatActionSlotDivId).className = "seat_turn_state_active";
+//    document.getElementById(seatEntity.ui.seatActionFrameDivId).style.backgroundColor = "#cfc";
 }
 
 
@@ -37,6 +42,8 @@ SeatHandler.prototype.setCurrentActingSeatEntity = function(seatEntity) {
 SeatHandler.prototype.setCurrentPlayerActionTimeout = function(pid, timeToAct) {
 
     var playerEntity = entityHandler.getEntityById(playerHandler.getPlayerEntityIdByPid(pid));
+    console.log("BOOTLEG PLAYER ENTITY!");
+    console.log(playerEntity);
     var seatNr = playerEntity.state.seatId;
 
     playerEntity.state.actionStartTime = new Date().getTime();
@@ -227,10 +234,10 @@ SeatHandler.prototype.addCardFieldToSeat = function(seatEntity) {
 SeatHandler.prototype.addPlayerToSeat = function(playerEntity, seatEntity) {
     document.getElementById(seatEntity.spatial.transform.anchorId).style.opacity = 1;
 
-    if (playerEntity.pid == playerHandler.myPlayerPid) {
-        console.log("Adding Self to Seat")
-        document.getElementById(playerEntity.ui.divId).className = "my_player_nameplate";
-    }
+//    if (playerEntity.pid == playerHandler.myPlayerPid) {
+//        console.log("Adding Self to Seat")
+//        document.getElementById(playerEntity.ui.divId).className = "my_player_nameplate";
+//    }
 
     uiElementHandler.setDivElementParent(playerEntity.spatial.transform.anchorId, seatEntity.ui.divId);
 };
