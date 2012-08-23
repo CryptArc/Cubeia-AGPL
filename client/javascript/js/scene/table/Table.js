@@ -50,11 +50,34 @@ Table.prototype.addLineSeparator = function() {
         var tableEntity = entityHandler.getEntityById(this.entityId);
         var parent = document.getElementById(tableEntity.ui.divId);
         var index = parent.getElementsByTagName("*");
-        var newdiv = document.createElement('div', [index]);
-        newdiv.setAttribute('id', 'lineSeparator');
-        newdiv.className = 'line_separator';
+        var lineDiv = document.createElement('div', [index]);
+        lineDiv.setAttribute('id', 'lineSeparator');
+        lineDiv.className = 'line_separator';
 
-        parent.appendChild(newdiv);
+        parent.appendChild(lineDiv);
+}
+
+Table.prototype.addSelf = function(name) {
+    var tableEntity = entityHandler.getEntityById(this.entityId);
+    var parent = document.getElementById(tableEntity.ui.divId);
+    var index = parent.getElementsByTagName("*");
+    var nameDiv = document.createElement('div', [index]);
+    nameDiv.setAttribute('id', 'hud_player_name');
+    nameDiv.className = 'hud_player_name';
+    nameDiv.innerHTML = name;
+    parent.appendChild(nameDiv);
+
+    var balanceDiv = document.createElement('div', [index]);
+    balanceDiv.setAttribute('id', 'hud_balance');
+    balanceDiv.className = 'hud_balance';
+    balanceDiv.innerHTML = "<span style='color:#9bba00'>&euro;</span>4.50";
+    parent.appendChild(balanceDiv);
+}
+
+Table.prototype.updateOwnBalance = function(balance) {
+    // TODO: HUD
+//    createDivElement
+//    document.getElementById
 }
 
 Table.prototype.updateTableSeatPositions = function() {
@@ -63,7 +86,6 @@ Table.prototype.updateTableSeatPositions = function() {
      *
      * The remaining data should be available within the entity by now.
      */
-
     var tableEntity = entityHandler.getEntityById(this.entityId);
 
     for (index in tableEntity.seats) {
@@ -104,7 +126,7 @@ Table.prototype.createTableJoinButton = function(tableDivId) {
     }
 
     this.buttons = {
-        inputButtons: {label: "Join", posX: 84, posY: 85.5, height: 100, width: 100, hasValue:false, clickFunction:joinTable}
+        inputButtons: {label: "Join", posX: 82.7, posY: 83, height: 120, width: 120, hasValue:false, clickFunction:joinTable}
     };
 
 
@@ -453,8 +475,8 @@ Table.prototype.getSeatLocationsForTableWithSize = function(numberOfSeats) {
 	        break;
 		case 10:
 //	        var zero = [50, 68];
-	        var first = [11, 66];
-	        var second = [11, 38];
+	        var first = [11, 62];
+	        var second = [11, 35];
 	        var third = [11, 10];
 	        var fourth = [30, 10];
 	        var fifth = [50, 10];

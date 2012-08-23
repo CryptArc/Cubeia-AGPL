@@ -136,7 +136,7 @@ FIREBASE.Connector = function(packetCallback, lobbyCallback, loginCallback, stat
 		var loginRequest = new FB_PROTOCOL.LoginRequestPacket();
 		loginRequest.user = user;
 		loginRequest.password = pwd;
-		loginRequest.operatorid = operatorid || 1;
+		loginRequest.operatorid = operatorid || 0;
 		loginRequest.credentials = credentials || [];
 		this.sendProtocolObject(loginRequest);	          
 	};  

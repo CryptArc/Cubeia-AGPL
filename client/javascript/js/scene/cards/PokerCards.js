@@ -46,11 +46,18 @@ PokerCards.prototype.clearSeatEntityCards = function(seatEntity) {
 };
 
 PokerCards.prototype.handCardIdToPlayerEntity = function(cardId, playerEntity, cardUrl) {
-    var seatEntity = view.table.getSeatBySeatNumber(playerEntity.state.seatId)
-    var cardFieldDivId = seatEntity.ui.cardFieldDivId;
-    var card = this.addClientCardWithIdAndUrl(cardId, cardUrl);
-    var cardDivId = card.divId;
-    uiElementHandler.setDivElementParent(cardDivId, cardFieldDivId);
+    if (playerEntity.pid == playerHandler.myPlayerPid)
+    {
+        // TODO: HUD
+    }
+    else
+    {
+        var seatEntity = view.table.getSeatBySeatNumber(playerEntity.state.seatId)
+        var cardFieldDivId = seatEntity.ui.cardFieldDivId;
+        var card = this.addClientCardWithIdAndUrl(cardId, cardUrl);
+        var cardDivId = card.divId;
+        uiElementHandler.setDivElementParent(cardDivId, cardFieldDivId);
+    }
 };
 
 /**

@@ -281,7 +281,7 @@ this.send=function(packet){if(_ioAdapter){_ioAdapter.send(packet)
 this.login=function(user,pwd,operatorid,credentials){var loginRequest=new FB_PROTOCOL.LoginRequestPacket();
 loginRequest.user=user;
 loginRequest.password=pwd;
-loginRequest.operatorid=operatorid||1;
+loginRequest.operatorid=operatorid === undefined ? 1 : operatorid;
 loginRequest.credentials=credentials||[];
 this.sendProtocolObject(loginRequest)
 };

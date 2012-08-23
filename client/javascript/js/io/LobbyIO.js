@@ -48,7 +48,6 @@ function lobbyCallback(protocolObject) {
  */
 function statusCallback(status) {
     console.log("Status recevied: " + status);
-    alert("status: " + status);
 
     if (status === FIREBASE.ConnectionStatus.CONNECTED) {
         if (autoLogin) {
@@ -114,7 +113,7 @@ function doLogin() {
     if ($('#user').val() != "username" && $('#pwd').val() != "Password") {
         usr = $('#user').val();
         pwd = $('#pwd').val();
-        connector.login(usr, pwd);
+        connector.login(usr, pwd, 0);
     }
 }
 ;

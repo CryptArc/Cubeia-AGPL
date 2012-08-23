@@ -1,25 +1,31 @@
-PlayerHandler = function(pid) {
+PlayerHandler = function (pid) {
     this.myPlayerPid = pid;
 };
 
-PlayerHandler.prototype.getPlayerEntityIdByPid = function(pid) {
-    var playerEntityId = "playerId_"+pid;
+PlayerHandler.prototype.getPlayerEntityIdByPid = function (pid) {
+    var playerEntityId = "playerId_" + pid;
     return playerEntityId;
 };
 
 
- PlayerHandler.prototype.addWatchingPlayer = function(pid, nick) {
+PlayerHandler.prototype.addWatchingPlayer = function (pid, nick) {
     var playerEntity = entityHandler.addEntity(this.getPlayerEntityIdByPid(pid));
- 
+
     playerEntity.name = nick;
     playerEntity.pid = pid;
 
-    entityHandler.addSpatial("body", playerEntity, 0, 0);
-    entityHandler.setEntityToWatchingState(playerEntity);
+    if (pid == this.myPlayerPid)
+    {
+        view.table.addSelf(nick);
+    }
+    else
+    {
+        entityHandler.addSpatial("body", playerEntity, 0, 0);
+        entityHandler.setEntityToWatchingState(playerEntity);
+    }
 };
 
-
-PlayerHandler.prototype.updateSeatIdWithPlayerEntity = function(seatId, playerEntity) {
+PlayerHandler.prototype.updateSeatIdWithPlayerEntity = function (seatId, playerEntity) {
     var seat = view.table.getSeatBySeatNumber(seatId);
     entityHandler.setEntityToSeatedAtSeatIdState(playerEntity, seatId);
     seat.occupant = playerEntity;
@@ -27,7 +33,7 @@ PlayerHandler.prototype.updateSeatIdWithPlayerEntity = function(seatId, playerEn
     pokerDealer.addPlayerCardsComponent(playerEntity);
 };
 
-PlayerHandler.prototype.getPlayerEntityActionTimePercentRemaining = function(playerEntity, currentTime) {
+PlayerHandler.prototype.getPlayerEntityActionTimePercentRemaining = function (playerEntity, currentTime) {
     var startTime = playerEntity.state.actionStartTime;
     var timeToAct = playerEntity.state.timeToAct;
     var percentDone = uiUtils.getPercentDoneForMinMaxCurrent(0, timeToAct, currentTime - startTime);
@@ -35,22 +41,34 @@ PlayerHandler.prototype.getPlayerEntityActionTimePercentRemaining = function(pla
 }
 
 
-PlayerHandler.prototype.seatPlayerIdAtTable = function(pid, seatId) {
-    var playerEntity = entityHandler.getEntityById(this.getPlayerEntityIdByPid(pid));
-    this.updateSeatIdWithPlayerEntity(seatId, playerEntity);
+PlayerHandler.prototype.seatPlayerIdAtTable = function (pid, seatId) {
+    if (pid == this.myPlayerPid)
+    {
+        // TODO: HUD.
+    }
+    else
+    {
+        var playerEntity = entityHandler.getEntityById(this.getPlayerEntityIdByPid(pid));
+        this.updateSeatIdWithPlayerEntity(seatId, playerEntity);
+    }
 };
 
-PlayerHandler.prototype.updateSeatBalance = function(pid, balance) {
-	
-	var playerEntity = entityHandler.getEntityById(this.getPlayerEntityIdByPid(pid));
-	var seatEntityId = view.seatHandler.getSeatEntityIdBySeatNumber(playerEntity.state.seatId);
-	var seatEntity = entityHandler.getEntityById(seatEntityId);
-	var balanceDivId = seatEntity.ui.balanceDivId;
-	var div = document.getElementById(balanceDivId);
-	div.innerHTML = balance;
+PlayerHandler.prototype.updateSeatBalance = function (pid, balance) {
+    if (pid == this.myPlayerPid) {
+        view.table.updateOwnBalance(balance);
+    }
+    else
+    {
+        var playerEntity = entityHandler.getEntityById(this.getPlayerEntityIdByPid(pid));
+        var seatEntityId = view.seatHandler.getSeatEntityIdBySeatNumber(playerEntity.state.seatId);
+        var seatEntity = entityHandler.getEntityById(seatEntityId);
+        var balanceDivId = seatEntity.ui.balanceDivId;
+        var div = document.getElementById(balanceDivId);
+        div.innerHTML = balance;
+    }
 };
 
-PlayerHandler.prototype.unseatPlayer = function(pid) {
+PlayerHandler.prototype.unseatPlayer = function (pid) {
     var playerEntity = entityHandler.getEntityById(this.getPlayerEntityIdByPid(pid));
     this.updateSeatBalance(pid, "");
 
@@ -73,18 +91,18 @@ PlayerHandler.prototype.unseatPlayer = function(pid) {
 
 };
 
-PlayerHandler.prototype.handlePlayerStatus = function(pid, status) {
+PlayerHandler.prototype.handlePlayerStatus = function (pid, status) {
     var playerEntity = entityHandler.getEntityById(this.getPlayerEntityIdByPid(pid));
     var seatEntity = entityHandler.getEntityById(view.seatHandler.getSeatEntityIdBySeatNumber(playerEntity.state.seatId));
 
-	switch (status) {
-		case POKER_PROTOCOL.PlayerTableStatusEnum.SITIN :
+    switch (status) {
+        case POKER_PROTOCOL.PlayerTableStatusEnum.SITIN :
             playerActions.handlePlayerActionFeedback(pid, "Sit In")
             document.getElementById(seatEntity.spatial.transform.anchorId).style.opacity = 1;
-			break;
-		case POKER_PROTOCOL.PlayerTableStatusEnum.SITOUT :
+            break;
+        case POKER_PROTOCOL.PlayerTableStatusEnum.SITOUT :
             playerActions.handlePlayerActionFeedback(pid, "Sit Out")
             document.getElementById(seatEntity.spatial.transform.anchorId).style.opacity = 0.6;
-			break;
-	}
+            break;
+    }
 }

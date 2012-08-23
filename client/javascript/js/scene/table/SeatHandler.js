@@ -232,14 +232,12 @@ SeatHandler.prototype.addCardFieldToSeat = function(seatEntity) {
 };
 
 SeatHandler.prototype.addPlayerToSeat = function(playerEntity, seatEntity) {
-    document.getElementById(seatEntity.spatial.transform.anchorId).style.opacity = 1;
-
-//    if (playerEntity.pid == playerHandler.myPlayerPid) {
-//        console.log("Adding Self to Seat")
-//        document.getElementById(playerEntity.ui.divId).className = "my_player_nameplate";
-//    }
-
-    uiElementHandler.setDivElementParent(playerEntity.spatial.transform.anchorId, seatEntity.ui.divId);
+    if (playerEntity.pid == playerHandler.myPlayerPid) {
+        // TODO: HUD.
+    } else {
+        document.getElementById(seatEntity.spatial.transform.anchorId).style.opacity = 1;
+        uiElementHandler.setDivElementParent(playerEntity.spatial.transform.anchorId, seatEntity.ui.divId);
+    }
 };
 
 SeatHandler.prototype.setSeatTimerPercentRemaining = function(seatEntity, percent) {

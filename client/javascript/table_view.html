@@ -103,6 +103,9 @@ lobbyWindow = window.opener;
 // lobbyWindow = parent
 tableid = getUrlParam("tableid");
 pid = getUrlParam("pid");
+if (!pid) {
+    pid = 88;
+}
 screenname = getUrlParam("screenname");
 numberOfSeats = parseInt(getUrlParam("capacity")) || 10;
 

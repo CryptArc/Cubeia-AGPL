@@ -44,14 +44,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.cubeia.network.wallet.firebase</groupId>
-            <artifactId>mock-wallet-service</artifactId>
-            <version>1.2.4-SNAPSHOT</version>
-            <type>firebase-sar</type>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>com.cubeia.games.handhistory</groupId>
             <artifactId>hand-history-collector-service</artifactId>
             <version>${project.version}</version>
@@ -83,7 +75,6 @@
             <scope>provided</scope>
         </dependency>
 
-<!--
         <dependency>
             <groupId>com.cubeia.network.users</groupId>
             <artifactId>fb-user-service</artifactId>
@@ -91,8 +82,21 @@
             <type>firebase-sar</type>
             <scope>provided</scope>
         </dependency>
--->
 
+        <dependency>
+            <groupId>com.cubeia.network.users</groupId>
+            <artifactId>fb-user-service</artifactId>
+            <version>1.4.0-RC2-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.cubeia.network.wallet.firebase</groupId>
+            <artifactId>mock-wallet-service</artifactId>
+            <version>1.4.0-RC1</version>
+            <type>firebase-sar</type>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -100,7 +104,7 @@
             <plugin>
                 <groupId>com.cubeia.tools</groupId>
                 <artifactId>firebase-maven-plugin</artifactId>
-                <version>1.9.0-CE-RC.1</version>
+                <version>1.9.0-CE-RC.2</version>
                 <configuration>
                     <!-- enable copy of overlay files -->
                     <overlaysEnabled>true</overlaysEnabled>
