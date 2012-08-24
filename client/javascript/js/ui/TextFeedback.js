@@ -50,6 +50,7 @@ TextFeedback.prototype.showSeatSpaceTextFeedback = function(pid, action, value) 
     var playerEntity = entityHandler.getEntityById(playerEntityId);
 
     var seatEntity = entityHandler.getEntityById(view.seatHandler.getSeatEntityIdBySeatNumber(playerEntity.state.seatId));
+    if (!seatEntity) return;
 
     var betFieldDivId = seatEntity.ui.betFieldDivId;
     var valueString = "";
@@ -66,6 +67,7 @@ TextFeedback.prototype.addSeatEventText = function(pid, textString) {
     var playerEntityId = playerHandler.getPlayerEntityIdByPid(pid);
     var playerEntity = entityHandler.getEntityById(playerEntityId);
     var seatEntity = entityHandler.getEntityById(view.seatHandler.getSeatEntityIdBySeatNumber(playerEntity.state.seatId));
+    if (!seatEntity) return;
     var tableEntity = entityHandler.getEntityById(view.table.entityId);
 
 

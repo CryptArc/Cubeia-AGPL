@@ -14,6 +14,7 @@ PokerCards.prototype.getClientCardByCardId = function(cardId) {
 
 PokerCards.prototype.setClientCardDivImageUrl = function(cardId, cardUrl) {
     var card = this.getClientCardByCardId(cardId);
+    if (!card) return;
     card.image = "url(./images/cards-75/"+cardUrl+")";
     document.getElementById(card.divId).style.backgroundImage = card.image;
 };

@@ -12,6 +12,7 @@ SeatHandler.prototype.getSeatEntityIdBySeatNumber = function(seatNr) {
 };
 
 SeatHandler.prototype.setSeatEntityToPassive = function(seatEntity) {
+    if (!seatEntity) return;
     this.setSeatTimerPercentRemaining(seatEntity, 0);
 
     document.getElementById(seatEntity.ui.divId).style.backgroundColor = "#999";
@@ -22,11 +23,12 @@ SeatHandler.prototype.setSeatEntityToPassive = function(seatEntity) {
 }
 
 SeatHandler.prototype.setCurrentActingSeatEntity = function(seatEntity) {
-    console.log("SETTING CURRENT ACTING");
     console.log(seatEntity);
     if (this.activeSeatEntity) {
         this.setSeatEntityToPassive(this.activeSeatEntity)
     };
+
+    if (seatEntity === undefined) return;
 
     this.activeSeatEntity = seatEntity;
     console.log(this.activeSeatEntity);
@@ -42,7 +44,6 @@ SeatHandler.prototype.setCurrentActingSeatEntity = function(seatEntity) {
 SeatHandler.prototype.setCurrentPlayerActionTimeout = function(pid, timeToAct) {
 
     var playerEntity = entityHandler.getEntityById(playerHandler.getPlayerEntityIdByPid(pid));
-    console.log("BOOTLEG PLAYER ENTITY!");
     console.log(playerEntity);
     var seatNr = playerEntity.state.seatId;
 

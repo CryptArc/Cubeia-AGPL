@@ -277,7 +277,7 @@ Table.prototype.handleRequestAction = function(requestAction) {
 	this.potUpdated(requestAction.currentPotSize);
 	this.startPlayerCountDown(requestAction.player, requestAction.timeToAct);
     console.log("player in " + requestAction.player +  " me: " + parseInt(pid));
-	if ( requestAction.player == parseInt(pid) ) {
+	if (requestAction.player == parseInt(pid)) {
 		this.clearButtonStates();
 		// save it for later
 		this.lastActionRequest = requestAction;
@@ -286,8 +286,8 @@ Table.prototype.handleRequestAction = function(requestAction) {
 			var playerAction = requestAction.allowedActions[i];
 			
 			// Auto small/big blind
-			if ( playerAction.type === POKER_PROTOCOL.ActionTypeEnum.SMALL_BLIND || 
-					playerAction.type === POKER_PROTOCOL.ActionTypeEnum.BIG_BLIND ) {
+			if (playerAction.type === POKER_PROTOCOL.ActionTypeEnum.SMALL_BLIND ||
+					playerAction.type === POKER_PROTOCOL.ActionTypeEnum.BIG_BLIND) {
 				sendAction(requestAction.seq, playerAction.type, playerAction.minAmount);
 				return;
 	
