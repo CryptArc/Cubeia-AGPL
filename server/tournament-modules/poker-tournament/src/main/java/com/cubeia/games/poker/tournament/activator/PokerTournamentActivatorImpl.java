@@ -114,6 +114,7 @@ public class PokerTournamentActivatorImpl implements MttActivator, Startable, Po
         } else {
             log.info("Creating database based activator module.");
             injector = Guice.createInjector(new ActivatorModule());
+            // This will initialize JPA.
             injector.getInstance(PersistInitializer.class);
         }
         activator = injector.getInstance(PokerActivator.class);
