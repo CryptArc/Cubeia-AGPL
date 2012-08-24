@@ -80,19 +80,15 @@ TextFeedback.prototype.addSeatEventText = function(pid, textString) {
     var fontSize = 38;
 
 
-        document.getElementById(key).style.webkitTransitionProperty = "top, opacity, left";
-        document.getElementById(key).style.webkitTransitionTimingFunction = "ease-in";
-        document.getElementById(key).style.webkitTransitionDuration = "5s";
-        document.getElementById(key+"_text").style.color = "#ff9730";
-        document.getElementById(key+"_text").style.fontSize = fontSize;
-        document.getElementById(key).style.opacity = 1;
-        document.getElementById(key).style.width = 30+"%";
-        document.getElementById(key).style.top = seatEntity.spatial.transform.pos.y - 2 +"%";
-        document.getElementById(key).style.left = seatEntity.spatial.transform.pos.x - 15 +"%";
-
-
-
-
+    document.getElementById(key).style.webkitTransitionProperty = "top, opacity, left";
+    document.getElementById(key).style.webkitTransitionTimingFunction = "ease-in";
+    document.getElementById(key).style.webkitTransitionDuration = "5s";
+    document.getElementById(key+"_text").style.color = "#ff9730";
+    document.getElementById(key+"_text").style.fontSize = fontSize;
+    document.getElementById(key).style.opacity = 1;
+    document.getElementById(key).style.width = 30+"%";
+    document.getElementById(key).style.top = seatEntity.spatial.transform.pos.y - 2 +"%";
+    document.getElementById(key).style.left = seatEntity.spatial.transform.pos.x - 15 +"%";
 
     this.textEvents += 1;
 

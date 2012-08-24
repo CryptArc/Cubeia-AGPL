@@ -1,5 +1,6 @@
 Table = function() {
     this.entityId = "tableEntity";
+    this.myBalanceEntityId = "myBalanceEntity";
 };
 
 Table.prototype.createTableOfSize = function(numberOfSeats, containerId) {
@@ -58,8 +59,14 @@ Table.prototype.addLineSeparator = function() {
 }
 
 Table.prototype.addSelf = function(name) {
+    if (document.getElementById('hud_player_name'))
+    {
+        // Only add ourselves once.
+        return;
+    }
     var tableEntity = entityHandler.getEntityById(this.entityId);
     var parent = document.getElementById(tableEntity.ui.divId);
+
     var index = parent.getElementsByTagName("*");
     var nameDiv = document.createElement('div', [index]);
     nameDiv.setAttribute('id', 'hud_player_name');
@@ -67,17 +74,15 @@ Table.prototype.addSelf = function(name) {
     nameDiv.innerHTML = name;
     parent.appendChild(nameDiv);
 
-    var balanceDiv = document.createElement('div', [index]);
-    balanceDiv.setAttribute('id', 'hud_balance');
-    balanceDiv.className = 'hud_balance';
-    balanceDiv.innerHTML = "<span style='color:#9bba00'>&euro;</span>4.50";
-    parent.appendChild(balanceDiv);
+    var balanceEntity = entityHandler.addEntity(this.myBalanceEntityId);
+    entityHandler.addUiComponent(balanceEntity, "", "hud_balance", parent);
 }
 
 Table.prototype.updateOwnBalance = function(balance) {
-    // TODO: HUD
-//    createDivElement
-//    document.getElementById
+    var balanceEntity = entityHandler.getEntityById(this.myBalanceEntityId);
+    var balanceDivId = balanceEntity.ui.divId;
+    var div = document.getElementById(balanceDivId);
+    div.innerHTML = "<span style='color:#9bba00'>&euro;</span>" + balance;
 }
 
 Table.prototype.updateTableSeatPositions = function() {
