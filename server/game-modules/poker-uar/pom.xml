@@ -14,13 +14,10 @@
 
     <dependencies>
 
-        <!-- Common dependencies. -->
         <dependency>
             <groupId>com.cubeia.games</groupId>
             <artifactId>poker-protocol</artifactId>
         </dependency>
-
-        <!-- Firebase types. -->
         <dependency>
             <groupId>com.cubeia.games</groupId>
             <artifactId>poker-game</artifactId>
@@ -33,14 +30,10 @@
             <type>firebase-tar</type>
         </dependency>
 
-
-        <!-- Services needed by Firebase:Run plugin -->
-
         <dependency>
             <groupId>com.cubeia.games</groupId>
             <artifactId>backend-service-mock</artifactId>
             <type>firebase-sar</type>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -48,7 +41,6 @@
             <artifactId>hand-history-collector-service</artifactId>
             <version>${project.version}</version>
             <type>firebase-sar</type>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -56,47 +48,16 @@
             <artifactId>hand-debugger-service</artifactId>
             <version>1.0-SNAPSHOT</version>
             <type>firebase-sar</type>
-            <scope>provided</scope>
         </dependency>
 
+<!--
         <dependency>
             <groupId>com.cubeia.games.poker</groupId>
             <artifactId>bot-service</artifactId>
             <version>1.0-SNAPSHOT</version>
             <type>firebase-sar</type>
-            <scope>provided</scope>
         </dependency>
-
-        <dependency>
-            <groupId>com.cubeia.games.handhistory</groupId>
-            <artifactId>hand-history-storage-service</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <type>firebase-sar</type>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.cubeia.network.users</groupId>
-            <artifactId>fb-user-service</artifactId>
-            <version>1.4.0-RC2-SNAPSHOT</version>
-            <type>firebase-sar</type>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.cubeia.network.users</groupId>
-            <artifactId>fb-user-service</artifactId>
-            <version>1.4.0-RC2-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.cubeia.network.wallet.firebase</groupId>
-            <artifactId>mock-wallet-service</artifactId>
-            <version>1.4.0-RC1</version>
-            <type>firebase-sar</type>
-            <scope>provided</scope>
-        </dependency>
+-->
     </dependencies>
 
     <build>
@@ -104,7 +65,7 @@
             <plugin>
                 <groupId>com.cubeia.tools</groupId>
                 <artifactId>firebase-maven-plugin</artifactId>
-                <version>1.9.0-CE-RC.2</version>
+                <version>1.9.0-CE-RC.3</version>
                 <configuration>
                     <!-- enable copy of overlay files -->
                     <overlaysEnabled>true</overlaysEnabled>
@@ -124,5 +85,42 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!-- Activate this profile to use interations. This currently needs:
+             - Cubeia Network running on port on location defined in cluster.props
+             - A mongodb server running. Settings configured in poker.properties
+        -->
+        <profile>
+            <id>use-integrations</id>
+            <activation>
+                <property>
+                    <name>use-integrations</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.cubeia.games.handhistory</groupId>
+                    <artifactId>hand-history-storage-service</artifactId>
+                    <version>1.0-SNAPSHOT</version>
+                    <type>firebase-sar</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>com.cubeia.network.users</groupId>
+                    <artifactId>fb-user-service</artifactId>
+                    <version>1.4.0-RC2-SNAPSHOT</version>
+                    <type>firebase-sar</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>com.cubeia.network.wallet.firebase</groupId>
+                    <artifactId>mock-wallet-service</artifactId>
+                    <version>1.4.0-RC1</version>
+                    <type>firebase-sar</type>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 
 </project>
