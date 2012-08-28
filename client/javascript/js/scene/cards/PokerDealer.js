@@ -8,7 +8,7 @@ PokerDealer = function() {
  * @param {POKER_PROTOCOL.CardToDeal} cardToDeal
  */
 PokerDealer.prototype.dealCardIdToPid = function(cardToDeal) {
-    console.log(cardToDeal)
+    console.log(cardToDeal);
     var playerEntity = entityHandler.getEntityById(playerHandler.getPlayerEntityIdByPid(cardToDeal.player));
     var cardUrl = pokerCards.getCardUrl(cardToDeal.card);
     console.log("Player Card: -- CardId: ["+cardToDeal.card.cardId+"], cardurl ["+cardUrl+"]  rank[" + cardToDeal.card.rank +"]  suit[" + cardToDeal.card.suit +"]");

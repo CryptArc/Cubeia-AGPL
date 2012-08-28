@@ -27,7 +27,7 @@ CommunityCards.prototype.initCommunityCardArea = function() {
 
 CommunityCards.prototype.setClientCardAsCommunityCard = function(card) {
 
-    console.log(card)
+    console.log(card);
     var communityCardEntity = entityHandler.getEntityById(view.communityCards.entityId);
     var parentDiv = communityCardEntity.ui.divId;
 

@@ -49,7 +49,11 @@ PokerCards.prototype.clearSeatEntityCards = function(seatEntity) {
 PokerCards.prototype.handCardIdToPlayerEntity = function(cardId, playerEntity, cardUrl) {
     if (playerEntity.pid == playerHandler.myPlayerPid)
     {
-        // TODO: HUD
+        var card = this.addClientCardWithIdAndUrl(cardId, cardUrl);
+        var cardDivId = card.divId;
+        var cardHolderEntity = entityHandler.getEntityById("ownCardsAreaEntityId");
+        uiElementHandler.setDivElementParent(cardDivId, cardHolderEntity.ui.divId);
+        document.getElementById(cardDivId).className = "hud_card";
     }
     else
     {
@@ -60,6 +64,29 @@ PokerCards.prototype.handCardIdToPlayerEntity = function(cardId, playerEntity, c
         uiElementHandler.setDivElementParent(cardDivId, cardFieldDivId);
     }
 };
+
+PokerCards.prototype.initOwnCardArea = function() {
+    var tableEntity = entityHandler.getEntityById(view.table.entityId);
+    var uiEntity = entityHandler.addEntity("ownCardsAreaEntityId");
+    uiEntity.cards = {};
+
+    entityHandler.addUiComponent(uiEntity, "", "own_card_area", null);
+
+    var posX = 42;
+    var posY = 64.5;
+
+    tableEntity.ui.ownCardsDivId = uiEntity.ui.divId
+    entityHandler.addSpatial("body", uiEntity, posX, posY);
+    uiElementHandler.setDivElementParent(uiEntity.ui.divId, uiEntity.spatial.transform.anchorId);
+    uiElementHandler.setDivElementParent(uiEntity.spatial.transform.anchorId, tableEntity.ui.divId);
+
+    document.getElementById(uiEntity.ui.divId).style.width = 200;
+    document.getElementById(uiEntity.ui.divId).style.left = -100;
+    document.getElementById(uiEntity.ui.divId).style.top = -30;
+
+    view.spatialManager.positionVisualEntityAtSpatial(uiEntity);
+};
+
 
 /**
  * Get a card

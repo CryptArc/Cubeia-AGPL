@@ -86,7 +86,7 @@ function fakeAction() {
         seatPlayer(88+i, i, "Player" + i);
         pokerDealer.dealCardIdToPid({player: 88+i, card: {cardId: cardId++, rank:13, suit:4}});
         pokerDealer.dealCardIdToPid({player: 88+i, card: {cardId: cardId++, rank:13, suit:4}});
-        playerHandler.updateSeatBalance(88+i, "<span style='color: #9bba00;'>&euro;</span>6.25");
+        playerHandler.updateSeatBalance(88+i, "6.25");
     }
     playerActions.handlePlayerActionFeedback(88+6, "Bet", 100);
     playerActions.handlePlayerActionFeedback(88+8, "Call", 100);

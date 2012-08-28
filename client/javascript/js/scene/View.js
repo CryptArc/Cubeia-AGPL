@@ -35,6 +35,7 @@ View.prototype.initTableView = function(numberOfSeats) {
     var renderFrameTime = 30 // in milliseconds
     this.renderLoop.initRenderLoop(renderFrameTime);
     this.textFeedback.initTextFeedback();
+    pokerCards.initOwnCardArea();
 }
 
 View.prototype.setupTableStructure = function(numberOfSeats) {
