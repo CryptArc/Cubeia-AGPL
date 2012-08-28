@@ -49,9 +49,7 @@ PokerDealer.prototype.createDealerButton = function() {
     entityHandler.addUiComponent(dealerButtonEntity, "", "dealer_button", null);
     uiElementHandler.createDivElement(dealerButtonEntity.ui.divId, "dealer_button_label", "D", "dealer_button_label", null);
 
-    var posX = 10;
-    var posY = -70;
-    entityHandler.addSpatial("body", dealerButtonEntity, posX, posY);
+    entityHandler.addSpatial("body", dealerButtonEntity, 0, 0);
 
 };
 
@@ -65,8 +63,6 @@ PokerDealer.prototype.moveDealerButton = function(seatId) {
     console.log(dealerButton)
 
     uiElementHandler.setDivElementParent(dealerButton.ui.divId, targetDivId);
-
-
 };
 
 
