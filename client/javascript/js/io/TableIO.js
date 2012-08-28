@@ -76,8 +76,8 @@ function currencyFormatted(amount) {
 };
 
 function joinGame() {
-	connector.joinTable(tableid, -1);
-//    fakeAction();
+//	connector.joinTable(tableid, -1);
+    fakeAction();
 }
 
 function fakeAction() {
@@ -99,6 +99,7 @@ function fakeAction() {
     pokerDealer.dealPublicCard({cardId: cardId++, rank:12, suit:3});
     pokerDealer.dealPublicCard({cardId: cardId++, rank:10, suit:2});
     view.table.potUpdated(1025);
+    pokerDealer.moveDealerButton(4);
 
 //    pid = 1;
 //    seatPlayer(1, 1, "player" + 1);

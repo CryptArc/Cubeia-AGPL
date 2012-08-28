@@ -1,14 +1,27 @@
 div.dealer_button
 {
-    background-image: url(../images/elements/dealer_button_circular.png);
+    /*background-image: url(../images/elements/dealer_button_circular.png);*/
     background-size: 100% 100%;
     background-repeat:no-repeat;
-    border-radius: 50px;
-    box-shadow: 1px 1px 4px #000;
-    height: 40px;
-    width: 40px;
+    border-radius: 33px;
+    /*box-shadow: 1px 1px 4px #000;*/
+    background-color: #9bba00;
+    height: 33px;
+    width: 33px;
     top: -80px;
     left: -2px;
+}
+
+div.dealer_button_label
+{
+    color: #FFF;
+    /*text-align: center;*/
+    font-weight: bold;
+    font-size: 18px;
+    position: absolute;
+    top: 7px;
+    left: 11px;
+    text-shadow: none;
 }
 
 

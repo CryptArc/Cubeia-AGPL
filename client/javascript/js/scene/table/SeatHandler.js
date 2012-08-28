@@ -82,7 +82,7 @@ SeatHandler.prototype.createSeatNumberOnTableEntityAtXY = function(seatNr, table
 
     var playerPoint = {posX: 50, posY:0};
     var cardsPoint = {posX:50, posY:50};
-    var dealerButtonPoint = {posX: 97, posY:77};
+    var dealerButtonPoint = {posX: 75, posY:-2};
     var actionPoint = {posX: 0, posY: 100};
     var balancePoint = {posX:0, posY:100};
     var playerTimer = {posX: 15, posY:50};
@@ -178,7 +178,6 @@ SeatHandler.prototype.addDealerButtonFieldToSeat = function(seatEntity) {
 
     seatEntity.ui.dealerButtonSlotDivId = uiEntity.ui.divId+"_slot";
     uiElementHandler.createDivElement(uiEntity.ui.divId, seatEntity.ui.dealerButtonSlotDivId, "", "anchor", null);
-
 
 };
 

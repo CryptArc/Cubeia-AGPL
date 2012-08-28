@@ -47,6 +47,7 @@ PokerDealer.prototype.addPlayerCardsComponent = function(playerEntity) {
 PokerDealer.prototype.createDealerButton = function() {
     var dealerButtonEntity = entityHandler.addEntity(this.dealerButtonEntityId);
     entityHandler.addUiComponent(dealerButtonEntity, "", "dealer_button", null);
+    uiElementHandler.createDivElement(dealerButtonEntity.ui.divId, "dealer_button_label", "D", "dealer_button_label", null);
 
     var posX = 10;
     var posY = -70;
@@ -57,6 +58,7 @@ PokerDealer.prototype.createDealerButton = function() {
 PokerDealer.prototype.moveDealerButton = function(seatId) {
 	var dealerButton = entityHandler.getEntityById(this.dealerButtonEntityId);
     var seatEntity = entityHandler.getEntityById(view.seatHandler.getSeatEntityIdBySeatNumber(seatId));
+    if (!seatEntity) return;
 
     var targetDivId = seatEntity.ui.dealerButtonSlotDivId;
     console.log("Move Dealer Button")
