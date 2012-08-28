@@ -76,8 +76,8 @@ function currencyFormatted(amount) {
 };
 
 function joinGame() {
-//	connector.joinTable(tableid, -1);
-    fakeAction();
+	connector.joinTable(tableid, -1);
+//    fakeAction();
 }
 
 function fakeAction() {

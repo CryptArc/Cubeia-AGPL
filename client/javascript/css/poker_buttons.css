@@ -1,11 +1,9 @@
 div.dealer_button
 {
-    /*background-image: url(../images/elements/dealer_button_circular.png);*/
     position: absolute;
     background-size: 100% 100%;
     background-repeat:no-repeat;
     border-radius: 33px;
-    /*box-shadow: 1px 1px 4px #000;*/
     background-color: #9bba00;
     height: 27px;
     width: 27px;
@@ -15,25 +13,12 @@ div.dealer_button
     color: #FFF;
     text-align: center;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 19px;
     padding-top: 6px;
-    padding-left: 3px;
+    padding-left: 5px;
     padding-right: 3px;
     text-shadow: none;
 }
-
-div.dealer_button_label
-{
-    color: #FFF;
-    /*text-align: center;*/
-    font-weight: bold;
-    font-size: 18px;
-    position: absolute;
-    top: 7px;
-    left: 11px;
-    text-shadow: none;
-}
-
 
 div.poker_game_action_button
 {
