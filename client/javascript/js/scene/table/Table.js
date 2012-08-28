@@ -21,7 +21,7 @@ Table.prototype.createTableOfSize = function(numberOfSeats, containerId) {
     tableEntity.ui.joinButtonDivId = joinButtonDivs[1];
     tableEntity.ui.joinButtonLabelDivId = joinButtonDivs[2];
     tableEntity.ui.tablePotDivId = this.createTablePot(tableEntity.ui.divId);
-
+    tableEntity.ui.tablePotLabelDivId = this.createTablePotLabel(tableEntity.ui.divId);
 
     pokerDealer.createDealerButton();
 
@@ -110,10 +110,18 @@ Table.prototype.createTablePot = function(tableDivId) {
     uiElementHandler.createDivElement(tableDivId, potAreaDivId, "", "table_pot_area", null);
     var potDivId = potAreaDivId+"_TablePot";
     uiElementHandler.createDivElement(potAreaDivId, potDivId, "", "table_pot_text", null);
-    uiElementHandler.createDivElement(potAreaDivId, potAreaDivId+"_label", "Pot size", "table_pot_label", null);
 
     return potDivId;
 };
+
+Table.prototype.createTablePotLabel = function(tableDivId) {
+    var potAreaDivId = tableDivId+"_TablePot_area"
+    var potLabelDivId = potAreaDivId+"_label";
+    uiElementHandler.createDivElement(potAreaDivId, potLabelDivId, "Pot size", "table_pot_label", null);
+    document.getElementById(potLabelDivId).style.visibility = "hidden";
+
+    return potLabelDivId;
+}
 
 Table.prototype.createVisualTable = function(containerId) {
     // Add a visual component for the table entity and return the divId
@@ -166,7 +174,6 @@ Table.prototype.getSeatBySeatNumber = function(seatNr) {
 	return tableEntity.seats[seatNr];
 };
 
-
 Table.prototype.findSeatForNewPlayer = function() {
     var tableEntity = entityHandler.getEntityById(this.entityId);
 
@@ -178,8 +185,6 @@ Table.prototype.findSeatForNewPlayer = function() {
     }
 
 };
-
-
 
 Table.prototype.enableJoinTable = function() {
     var availableSeat = this.findSeatForNewPlayer();
@@ -278,7 +283,6 @@ Table.prototype.startPlayerCountDown = function(pid, timeToAct) {
 Table.prototype.handleRequestAction = function(requestAction) {
     console.log(requestAction);
 	
-
 	this.potUpdated(requestAction.currentPotSize);
 	this.startPlayerCountDown(requestAction.player, requestAction.timeToAct);
     console.log("player in " + requestAction.player +  " me: " + parseInt(pid));
@@ -301,7 +305,6 @@ Table.prototype.handleRequestAction = function(requestAction) {
 			}
 		}
 	}
-
 };
 
 /**
@@ -317,10 +320,24 @@ Table.prototype.clearButtonStates = function() {
  */
 Table.prototype.potUpdated = function(amount) {
 	var tableEntity = entityHandler.getEntityById(this.entityId);
+    document.getElementById(tableEntity.ui.tablePotLabelDivId).style.visibility = "visible";
     document.getElementById(tableEntity.ui.tablePotDivId).innerHTML = "<span style='color: #9bba00;'>&euro;</span>" +
         currencyFormatted(amount);
-
 };
+
+Table.prototype.handlePotTransfers = function(potTransfers) {
+    // This means the round is over, clear action labels.
+    view.textFeedback.clearAllSeatSpaceTextFeedback();
+    if (potTransfers.pots.length > 0) {
+        this.potUpdated(potTransfers.pots[0].amount);
+    }
+}
+
+Table.prototype.clearPot = function() {
+    alert("Clearing pot");
+    var tableEntity = entityHandler.getEntityById(this.entityId);
+    document.getElementById(tableEntity.ui.tablePotDivId).innerHTML = "";
+}
 
 /**
  * Handle hand end
@@ -333,7 +350,7 @@ Table.prototype.handleBestHand = function(bestHand) {
 	var playerEntity = entityHandler.getEntityById(playerEntityId);
 	var playerName = playerEntity.name;
 	
-	switch ( bestHand.handType ) {
+	switch (bestHand.handType) {
 		case POKER_PROTOCOL.HandTypeEnum.HIGH_CARD: 
 			handString = "High Card";
 			break;

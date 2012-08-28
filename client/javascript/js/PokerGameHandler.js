@@ -225,19 +225,13 @@ com.cubeia.games.poker.PokerGameHandler = function(callbackInstance) {
 	 */
 	this.handlePongPacket= function(pongPacket) {
 	};
-	
-	/**
-	 * Handle Pot
-	 * @param {POKER_PROTOCOL.Pot} pot
-	 */
-	this.handlePot= function(pot) {
-	};
-	
+
 	/**
 	 * Handle PotTransfer
 	 * @param {POKER_PROTOCOL.PotTransfer} potTransfer
 	 */
-	this.handlePotTransfer= function(potTransfer) {
+	this.handlePotTransfers= function(potTransfers) {
+        view.table.handlePotTransfers(potTransfers);
 	};
 	
 	/**

@@ -94,6 +94,7 @@ PlayerHandler.prototype.unseatPlayer = function (pid) {
 PlayerHandler.prototype.handlePlayerStatus = function (pid, status) {
     var playerEntity = entityHandler.getEntityById(this.getPlayerEntityIdByPid(pid));
     var seatEntity = entityHandler.getEntityById(view.seatHandler.getSeatEntityIdBySeatNumber(playerEntity.state.seatId));
+    if (!seatEntity) return;
 
     switch (status) {
         case POKER_PROTOCOL.PlayerTableStatusEnum.SITIN :

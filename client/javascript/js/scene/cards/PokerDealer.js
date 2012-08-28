@@ -49,7 +49,7 @@ PokerDealer.prototype.createDealerButton = function() {
     entityHandler.addUiComponent(dealerButtonEntity, "", "dealer_button", null);
 
     var posX = 10;
-    var posY = 10;
+    var posY = -70;
     entityHandler.addSpatial("body", dealerButtonEntity, posX, posY);
 
 };
@@ -71,6 +71,7 @@ PokerDealer.prototype.moveDealerButton = function(seatId) {
 PokerDealer.prototype.startNewHand = function() {
     console.log("Starting New Hand - Clearing all Cards!")
     view.textFeedback.clearAllSeatSpaceTextFeedback();
+    view.table.clearPot();
     pokerCards.clearAllCards();
 
 };

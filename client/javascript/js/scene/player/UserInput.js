@@ -105,7 +105,7 @@ UserInput.prototype.hideActionButtons = function() {
     for (index in this.inputButtons) {
         console.log(this.inputButtons[index]);
         console.log("#### HIDING " + this.inputButtons[index].divId);
-         document.getElementById(this.inputButtons[index].divId).style.visibility = "hidden";
+        document.getElementById(this.inputButtons[index].divId).style.visibility = "hidden";
     }
 };
 

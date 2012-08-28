@@ -105,12 +105,9 @@ POKER_PROTOCOL.PokerProtocolHandler = function(pokerGameHandler) {
 			case POKER_PROTOCOL.PongPacket.CLASSID:
 				this.pokerGameHandler.handlePongPacket(protocolObject);
 				break;
-			case POKER_PROTOCOL.Pot.CLASSID:
-				this.pokerGameHandler.handlePot(protocolObject);
-				break;
-			case POKER_PROTOCOL.PotTransfer.CLASSID:
-				this.pokerGameHandler.handlePotTransfer(protocolObject);
-				break;
+            case POKER_PROTOCOL.PotTransfers.CLASSID:
+                this.pokerGameHandler.handlePotTransfers(protocolObject);
+                break;
 			case POKER_PROTOCOL.RakeInfo.CLASSID:
 				this.pokerGameHandler.handleRakeInfo(protocolObject);
 				break;
@@ -132,6 +129,9 @@ POKER_PROTOCOL.PokerProtocolHandler = function(pokerGameHandler) {
 			case POKER_PROTOCOL.TournamentOut.CLASSID:
 				this.pokerGameHandler.handleTournamentOut(protocolObject);
 				break;
+            default:
+                console.log("Ignoring packet: " + protocolObject);
+                break;
 		}
 	};
 };
