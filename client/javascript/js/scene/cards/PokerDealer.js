@@ -46,11 +46,11 @@ PokerDealer.prototype.addPlayerCardsComponent = function(playerEntity) {
 
 PokerDealer.prototype.createDealerButton = function() {
     var dealerButtonEntity = entityHandler.addEntity(this.dealerButtonEntityId);
-    entityHandler.addUiComponent(dealerButtonEntity, "", "dealer_button", null);
-    uiElementHandler.createDivElement(dealerButtonEntity.ui.divId, "dealer_button_label", "D", "dealer_button_label", null);
+    entityHandler.addUiComponent(dealerButtonEntity, "D", "dealer_button", null);
+//    uiElementHandler.createDivElement(dealerButtonEntity.ui.divId, "dealer_button_label", "D", "dealer_button_label", null);
 
     entityHandler.addSpatial("body", dealerButtonEntity, 0, 0);
-
+    console.log(dealerButtonEntity)
 };
 
 PokerDealer.prototype.moveDealerButton = function(seatId) {
