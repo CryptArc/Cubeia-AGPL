@@ -1,6 +1,7 @@
 div.dealer_button
 {
     /*background-image: url(../images/elements/dealer_button_circular.png);*/
+    position: absolute;
     background-size: 100% 100%;
     background-repeat:no-repeat;
     border-radius: 33px;
@@ -8,8 +9,16 @@ div.dealer_button
     background-color: #9bba00;
     height: 33px;
     width: 33px;
-    top: -80px;
-    left: -2px;
+    top: -50%;
+    left: -50%;
+
+    color: #FFF;
+    /*text-align: center;*/
+    font-weight: bold;
+    font-size: 18px;
+    padding-top: 7px;
+    padding-left: 2px;
+    text-shadow: none;
 }
 
 div.dealer_button_label
