@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>poker-bot</artifactId>
     <packaging>jar</packaging>
-    <name>PokerBot</name>
+    <name>Poker Bot</name>
 
     <parent>
         <groupId>com.cubeia.games</groupId>

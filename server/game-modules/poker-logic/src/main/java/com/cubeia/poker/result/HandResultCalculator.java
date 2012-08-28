@@ -96,14 +96,21 @@ public class HandResultCalculator implements Serializable {
 
                 long potRake = rakeInfoContainer.getPotRakes().get(pot).longValue();
                 long potSizeWithRakeRemoved = pot.getPotSize() - potRake;
+
                 long potShare = potSizeWithRakeRemoved / winners.size();
+                long extraCents = potSizeWithRakeRemoved - winners.size() * potShare;
 
                 // Report winner shares
                 for (Integer winnerId : winners) {
                     PokerPlayer player = playerMap.get(winnerId);
                     Long stake = potContributors.get(player);
-                    addResultBalance(netResults, netStakes, winnerId, potShare, stake);
-                    addPotWinningShare(player, pot, potShare, playerPotWinningsShares);
+                    long playerWinnings = potShare;
+                    if (extraCents > 0) {
+                        playerWinnings++;
+                        extraCents--;
+                    }
+                    addResultBalance(netResults, netStakes, winnerId, playerWinnings, stake);
+                    addPotWinningShare(player, pot, playerWinnings, playerPotWinningsShares);
                 }
 
                 // --- LOSERS ---

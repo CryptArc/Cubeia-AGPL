@@ -17,16 +17,17 @@
 
 package com.cubeia.poker.util;
 
-import com.cubeia.poker.rake.LinearRakeWithLimitCalculator;
-import com.cubeia.poker.result.HandResultCalculator;
-import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.model.PlayerHand;
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotHolder;
+import com.cubeia.poker.pot.RakeInfoContainer;
+import com.cubeia.poker.rake.LinearRakeWithLimitCalculator;
+import com.cubeia.poker.result.HandResultCalculator;
 import com.cubeia.poker.result.Result;
+import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.variant.texasholdem.TexasHoldemHandCalculator;
 import junit.framework.TestCase;
 
@@ -118,7 +119,7 @@ public class HandResultCalculatorTest extends TestCase {
         assertThat(result2.getNetResult(), is((long) -player2Bets));
         assertThat(result2.getWinningsByPot().isEmpty(), is(true));
         Result result3 = playerResults.get(players.get(3));
-        assertThat(result3.getNetResult(), is((long) -player2Bets)); // remember that player 3 only betted player 2's bet in the end since he took some back
+        assertThat(result3.getNetResult(), is((long) -player2Bets)); // remember that player 3 only bet player 2's bet in the end since he took some back
         assertThat(result3.getWinningsByPot().isEmpty(), is(true));
     }
 
@@ -153,11 +154,10 @@ public class HandResultCalculatorTest extends TestCase {
 
         Result result1 = playerResults.get(players.get(1));
         long pot0WinningShare = (long) (50 - pot0Rake) / 2;
-        assertThat(result1.getNetResult(), is(pot0WinningShare - player1Bets));
-        assertThat(result1.getWinningsIncludingOwnBets(), is(pot0WinningShare));
-
+        assertThat(result1.getNetResult(), is(pot0WinningShare - player1Bets + 1)); // This guy gets the rounded cent.
+        assertThat(result1.getWinningsIncludingOwnBets(), is(pot0WinningShare + 1));
         assertThat(result1.getWinningsByPot().size(), is(1));
-        assertThat(result1.getWinningsByPot().get(pot0), is(pot0WinningShare));
+        assertThat(result1.getWinningsByPot().get(pot0), is(pot0WinningShare + 1));
 
         Result result2 = playerResults.get(players.get(2));
         assertThat(result2.getNetResult(), is(pot0WinningShare - player2Bets));
@@ -172,12 +172,6 @@ public class HandResultCalculatorTest extends TestCase {
         assertThat(result3.getWinningsByPot().size(), is(0));
 
         assertThat(playerResults.size(), is(3));
-
-        // TODO: what do we do with rounding losses? Result zero sum invariant is broken here... :-(
-//		long netResultSum = result1.getNetResult() + result2.getNetResult() + result3.getNetResult();
-//		long rakeSum = result1.getRake() + result2.getRake() + result3.getRake();
-//		
-//        assertThat(netResultSum + rakeSum, is(0L));
     }
 
     public void testMultiplePotsWithRake() {
@@ -237,11 +231,44 @@ public class HandResultCalculatorTest extends TestCase {
         assertThat(result3.getWinningsIncludingOwnBets(), is(120L - 12L));
         assertThat(result3.getWinningsByPot().size(), is(1));
         assertThat(result3.getWinningsByPot().get(pot0), is(120L - 12L));
-
-        // TODO: zero sum invariant is broken because of rounding errors
-//        assertEquals(0, result1.getNetResult()+result2.getNetResult()+result3.getNetResult());
     }
 
+    public void testRoundingErrorsWhenSplitPot() {
+        players = new HashMap<Integer, PokerPlayer>();
+        PokerPlayer p1 = new DefaultPokerPlayer(1);
+        p1.addChips(100);
+        p1.addBet(80);
+        PokerPlayer p2 = new DefaultPokerPlayer(2);
+        p2.addChips(100);
+        p2.addBet(80);
+        PokerPlayer p3 = new DefaultPokerPlayer(3);
+        p3.addChips(35);
+        p3.addBet(35);
+
+        players.put(1, p1);
+        players.put(2, p2);
+        players.put(3, p3);
+
+        PotHolder potHolder = new PotHolder(rakeCalculator);
+        potHolder.callOrRaise();
+        potHolder.moveChipsToPotAndTakeBackUncalledChips(players.values());
+
+        hands = new ArrayList<PlayerHand>();
+        String community = " 2c Kc Qd 6h Th";
+        hands.add(new PlayerHand(1, new Hand("As Ad" + community))); // Best Hand
+        hands.add(new PlayerHand(2, new Hand("Ac Ah" + community))); // Best Hand - split
+        hands.add(new PlayerHand(3, new Hand("Ks 8d" + community)));
+
+        RakeInfoContainer totalRake = potHolder.calculateRake();
+        Map<PokerPlayer, Result> playerResults = calc.getPlayerResults(hands, potHolder, totalRake, players);
+
+        Result result1 = playerResults.get(players.get(1));
+        Result result2 = playerResults.get(players.get(2));
+        Result result3 = playerResults.get(players.get(3));
+
+        long netResultSum = result1.getNetResult() + result2.getNetResult() + result3.getNetResult();
+        assertThat(netResultSum + totalRake.getTotalRake(), is(0L));
+    }
 
     public void testMultiplePotsNoRake() {
         players = new HashMap<Integer, PokerPlayer>();
