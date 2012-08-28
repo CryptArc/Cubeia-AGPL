@@ -7,17 +7,18 @@ div.dealer_button
     border-radius: 33px;
     /*box-shadow: 1px 1px 4px #000;*/
     background-color: #9bba00;
-    height: 33px;
-    width: 33px;
+    height: 27px;
+    width: 27px;
     top: -50%;
     left: -50%;
 
     color: #FFF;
-    /*text-align: center;*/
+    text-align: center;
     font-weight: bold;
     font-size: 18px;
-    padding-top: 7px;
-    padding-left: 2px;
+    padding-top: 6px;
+    padding-left: 3px;
+    padding-right: 3px;
     text-shadow: none;
 }
 
