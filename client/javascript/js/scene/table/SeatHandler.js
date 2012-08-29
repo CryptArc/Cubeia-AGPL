@@ -1,5 +1,8 @@
 SeatHandler = function() {
     this.activeSeatEntity = null;
+    this.myTurn = false;
+    this.playerProgressBar = null;
+
 };
 
 SeatHandler.prototype.removePlayerFromSeat = function(seatEntity) {
@@ -14,14 +17,12 @@ SeatHandler.prototype.getSeatEntityIdBySeatNumber = function(seatNr) {
 SeatHandler.prototype.setSeatEntityToPassive = function(seatEntity) {
     if (!seatEntity) return;
     this.setSeatTimerPercentRemaining(seatEntity, 0);
-    console.log("passsssive");
     console.log($("#"+seatEntity.ui.divId));
     $("#"+seatEntity.ui.divId).removeClass("poker_seat_box_active");
   
 };
 
 SeatHandler.prototype.setCurrentActingSeatEntity = function(seatEntity) {
-    console.log(seatEntity);
     if (this.activeSeatEntity) {
         this.setSeatEntityToPassive(this.activeSeatEntity);
     };
@@ -35,16 +36,23 @@ SeatHandler.prototype.setCurrentActingSeatEntity = function(seatEntity) {
 
 
 SeatHandler.prototype.setCurrentPlayerActionTimeout = function(pid, timeToAct) {
-
+	if(pid == playerHandler.myPlayerPid) {
+		this.myTurn = true;
+	} else {
+		this.myTurn = false;
+	}
+	
     var playerEntity = entityHandler.getEntityById(playerHandler.getPlayerEntityIdByPid(pid));
-    console.log(playerEntity);
+    
+
     var seatNr = playerEntity.state.seatId;
+    
 
     playerEntity.state.actionStartTime = new Date().getTime();
     playerEntity.state.timeToAct = timeToAct;
-    console.log(playerEntity.state);
+    
     var seatEntity = entityHandler.getEntityById(this.getSeatEntityIdBySeatNumber(seatNr));
-
+  
     this.setCurrentActingSeatEntity(seatEntity);
     console.log(seatEntity);
 
@@ -103,6 +111,9 @@ SeatHandler.prototype.createSeatNumberOnTableEntityAtXY = function(seatNr, table
     this.addPlayerAvatar(seatEntity);
     this.addCardFieldToSeat(seatEntity);
     this.addDealerButtonFieldToSeat(seatEntity);
+    
+
+    
     return seatEntity;
 
 };
@@ -245,8 +256,9 @@ SeatHandler.prototype.addCardFieldToSeat = function(seatEntity) {
 
 SeatHandler.prototype.addPlayerToSeat = function(playerEntity, seatEntity) {
     if (playerEntity.pid == playerHandler.myPlayerPid) {
-        // TODO: HUD.
+    	
     } else {
+    	
         document.getElementById(seatEntity.spatial.transform.anchorId).style.opacity = 1;
         uiElementHandler.setDivElementParent(playerEntity.spatial.transform.anchorId, seatEntity.ui.divId);
     }
@@ -258,18 +270,27 @@ SeatHandler.prototype.setSeatTimerPercentRemaining = function(seatEntity, percen
 };
 
 SeatHandler.prototype.updateActiveSeatTimer = function(currentTime) {
-    if (!this.activeSeatEntity) return;
-    var playerEntity = this.activeSeatEntity.occupant;
-    var percentRemaining = playerHandler.getPlayerEntityActionTimePercentRemaining(playerEntity, currentTime);
+	if (this.myTurn==true) {
 
-   
-    
-    this.setSeatTimerPercentRemaining(this.activeSeatEntity, percentRemaining);
+    	var playerEntity =  entityHandler.getEntityById(playerHandler.getPlayerEntityIdByPid(playerHandler.myPlayerPid));
 
-    if (percentRemaining < 0) {
-        this.setSeatEntityToPassive(this.activeSeatEntity);
-        this.activeSeatEntity = null;
-    };
+    	var percentRemaining = playerHandler.getPlayerEntityActionTimePercentRemaining(playerEntity, currentTime);
+    	this.playerProgressBar.reset();
+    	this.playerProgressBar.render(percentRemaining);
+	} else if (!this.activeSeatEntity) {
+		return;
+	} else {
+    	var playerEntity = this.activeSeatEntity.occupant;
+    	
+    	var percentRemaining = playerHandler.getPlayerEntityActionTimePercentRemaining(playerEntity, currentTime);
+
+    	this.setSeatTimerPercentRemaining(this.activeSeatEntity, 100-percentRemaining);
+    	
+    	if (percentRemaining < 0) {
+    		this.setSeatEntityToPassive(this.activeSeatEntity);
+    		this.activeSeatEntity = null;
+    	};
+    }
 };
 
 

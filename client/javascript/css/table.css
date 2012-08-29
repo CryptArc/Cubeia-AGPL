@@ -594,3 +594,12 @@ div.hud_card
     top: 0px;
     left: 12px;
 }
+
+div.player_timer {
+    bottom: 13px;
+    left: 490px;
+    color: #fff;
+    position: absolute;
+    width:100px;
+    height:100px;
+}

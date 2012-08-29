@@ -37,7 +37,7 @@ PlayerHandler.prototype.getPlayerEntityActionTimePercentRemaining = function (pl
     var startTime = playerEntity.state.actionStartTime;
     var timeToAct = playerEntity.state.timeToAct;
     var percentDone = uiUtils.getPercentDoneForMinMaxCurrent(0, timeToAct, currentTime - startTime);
-    return 100 - percentDone;
+    return percentDone;
 }
 
 

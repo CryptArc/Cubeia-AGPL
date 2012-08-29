@@ -1,6 +1,8 @@
 Table = function() {
     this.entityId = "tableEntity";
     this.myBalanceEntityId = "myBalanceEntity";
+    this.playerTimerEntityId = "playerTimerEntityId";
+    this.playerProgressBar = null;
 };
 
 Table.prototype.createTableOfSize = function(numberOfSeats, containerId) {
@@ -36,6 +38,7 @@ Table.prototype.createTableOfSize = function(numberOfSeats, containerId) {
         view.seatHandler.setSeatEntityToPassive(seatEntity);
         tableEntity.seats[seatNr] = seatEntity;
     }
+   
 	console.log(entityHandler.entities);
 
     /*
@@ -76,6 +79,14 @@ Table.prototype.addSelf = function(name) {
 
     var balanceEntity = entityHandler.addEntity(this.myBalanceEntityId);
     entityHandler.addUiComponent(balanceEntity, "", "hud_balance", parent);
+    console.log("")
+
+    var playerTimerEntity = entityHandler.addEntity(this.playerTimerEntityId);
+    entityHandler.addUiComponent(playerTimerEntity,"","player_timer",parent);
+    //inits the progress bar and creates the html in the correct container
+    this.playerProgressBar = new CircularProgressBar(playerTimerEntity.ui.divId);
+    this.playerProgressBar.hide();
+    view.seatHandler.playerProgressBar = this.playerProgressBar;
 }
 
 Table.prototype.updateOwnBalance = function(balance) {
@@ -287,6 +298,7 @@ Table.prototype.handleRequestAction = function(requestAction) {
 	this.startPlayerCountDown(requestAction.player, requestAction.timeToAct);
     console.log("player in " + requestAction.player +  " me: " + parseInt(pid));
 	if (requestAction.player == parseInt(pid)) {
+		
 		this.clearButtonStates();
 		// save it for later
 		this.lastActionRequest = requestAction;
@@ -304,6 +316,7 @@ Table.prototype.handleRequestAction = function(requestAction) {
 				this.handlePlayerActionRequest(playerAction);
 			}
 		}
+		this.playerProgressBar.show();
 	}
 };
 
@@ -312,6 +325,7 @@ Table.prototype.handleRequestAction = function(requestAction) {
  */
 Table.prototype.clearButtonStates = function() {
 	userInput.hideActionButtons();
+	this.playerProgressBar.hide();
 };
 
 /**
