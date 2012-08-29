@@ -54,8 +54,6 @@ import java.lang.management.ManagementFactory;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static com.cubeia.games.poker.activator.PokerParticipant.*;
-import static com.cubeia.poker.variant.PokerVariant.TELESINA;
 import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
 
 /**
@@ -82,7 +80,7 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
     /**
      * Holds all participants that should be used for creating tables.
      * I hold the implementation instead of the interface so that I can keep
-     * bingo-specific data in the participants, i.e. FQN and special attributes.
+     * poker-specific data in the participants, i.e. FQN and special attributes.
      */
     private List<PokerParticipant> participants = new ArrayList<PokerParticipant>();
 
@@ -138,7 +136,7 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
                 CashGamesBackendContract.class);
 
         participants.add(new PokerParticipant(10, "texas/cashgame/REAL_MONEY/10", 100, Timings.DEFAULT, TEXAS_HOLDEM, rngProvider, cashGameBackendService));
-        participants.add(new PokerParticipant(6, "telesina/cashgame/REAL_MONEY/6", 200, Timings.DEFAULT, TELESINA, rngProvider, cashGameBackendService));
+//        participants.add(new PokerParticipant(6, "telesina/cashgame/REAL_MONEY/6", 200, Timings.DEFAULT, TELESINA, rngProvider, cashGameBackendService));
 
         for (PokerParticipant part : participants) {
             part.setInjector(getInjector());

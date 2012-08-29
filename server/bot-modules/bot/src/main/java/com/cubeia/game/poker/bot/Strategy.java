@@ -17,7 +17,6 @@
 
 package com.cubeia.game.poker.bot;
 
-import com.cubeia.games.poker.io.protocol.Enums.ActionType;
 import com.cubeia.games.poker.io.protocol.PlayerAction;
 
 import java.util.List;
@@ -28,13 +27,6 @@ public class Strategy {
     private static Random rng = new Random();
 
     public static PlayerAction getAction(List<PlayerAction> allowedActions) {
-
-//    	List<PlayerAction> allowedActions = new ArrayList<PlayerAction>();
-//    	for (PlayerAction action : allowedActionsX) {
-//    		if (!action.type.equals(ActionType.RAISE)) {
-//    			allowedActions.add(action);
-//    		}
-//    	}
 
         // Always post blinds
         for (PlayerAction action : allowedActions) {
@@ -54,11 +46,13 @@ public class Strategy {
         int optionIndex = rng.nextInt(optionCount);
         PlayerAction playerAction = allowedActions.get(optionIndex);
 
+/*
         if (playerAction.type == ActionType.FOLD) {
             // We need to downplay fold
             if (rng.nextBoolean()) return getAction(allowedActions);
 
         }
+*/
 
         return playerAction;
     }

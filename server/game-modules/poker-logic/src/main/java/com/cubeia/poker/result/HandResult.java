@@ -22,7 +22,6 @@ import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.pot.RakeInfoContainer;
-import com.cubeia.poker.pot.RakeInfoContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -181,9 +180,11 @@ public class HandResult implements Serializable {
 
     private String cardsToString(List<Card> bestHandCards) {
         StringBuilder sb = new StringBuilder();
-        for (Card card : bestHandCards) {
-            sb.append(card.toString());
-            sb.append(" ");
+        if (bestHandCards != null) {
+            for (Card card : bestHandCards) {
+                sb.append(card.toString());
+                sb.append(" ");
+            }
         }
         return sb.toString();
     }

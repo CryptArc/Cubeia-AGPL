@@ -25,7 +25,6 @@ import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.firebase.io.protocol.GameTransportPacket;
 import com.cubeia.firebase.io.protocol.MttTransportPacket;
-import com.cubeia.game.poker.util.Arithmetic;
 import com.cubeia.games.poker.io.protocol.*;
 import com.cubeia.games.poker.io.protocol.Enums.PlayerTableStatus;
 import org.apache.log4j.Logger;
@@ -35,6 +34,8 @@ import java.nio.ByteBuffer;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static com.cubeia.game.poker.util.Arithmetic.gaussianAverage;
 
 public class GameHandler implements PacketVisitor {
 
@@ -120,7 +121,7 @@ public class GameHandler implements PacketVisitor {
             if (Strategy.useDelay(request.allowedActions)) {
                 int expected = request.timeToAct / 6;
                 int deviation = request.timeToAct / 3;
-                wait = Arithmetic.gaussianAverage(expected, deviation);
+                wait = gaussianAverage(expected, deviation);
                 wait = wait < 0 ? 0 : wait;
             }
 
@@ -135,33 +136,25 @@ public class GameHandler implements PacketVisitor {
 
         //return playerAction.minAmount;
 
-        // 10% chance of min bet
-        if (rng.nextInt(100) < 10) {
+        // 70% chance of min bet
+        if (rng.nextInt(100) < 70) {
             return playerAction.minAmount;
         }
 
-        // 5% chance of all in
-        if (rng.nextInt(100) < 5) {
+        // 1% chance of all in
+        if (rng.nextInt(100) < 1) {
             return playerAction.maxAmount;
         }
 
-
-        // Use min amount as minimum betting step
-        int increment = playerAction.minAmount == 0 ? playerAction.maxAmount / 10 : playerAction.minAmount;
-        int maxLevel = playerAction.maxAmount % increment;
-
-        if (maxLevel < 2) {
-            return playerAction.minAmount;
-        } else {
-            // Randomize how many min amount bets we will bet
-            int bets = 2 + rng.nextInt(maxLevel);
-            int betThis = playerAction.minAmount * bets;
-            int cappedBet = Math.min(betThis, playerAction.maxAmount);
-            if (cappedBet < playerAction.minAmount) {
-                cappedBet = playerAction.minAmount; // FIXME: This is a bug that occurs
-            }
-            return cappedBet;
+        int maxLevel = 5;
+        // Randomize how many min amount bets we will bet
+        int bets = 1 + rng.nextInt(maxLevel);
+        int betThis = playerAction.minAmount * bets;
+        int cappedBet = Math.min(betThis, playerAction.maxAmount);
+        if (cappedBet < playerAction.minAmount) {
+            cappedBet = playerAction.minAmount;
         }
+        return cappedBet;
     }
 
     public void visit(StartHandHistory packet) {
