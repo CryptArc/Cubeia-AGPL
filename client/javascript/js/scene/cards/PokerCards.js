@@ -41,6 +41,8 @@ PokerCards.prototype.addClientCardWithIdAndUrl = function(cardId, cardUrl) {
 }
 
 PokerCards.prototype.clearSeatEntityCards = function(seatEntity) {
+    console.log("clearing cards: entity = " + seatEntity);
+    if (!seatEntity) return;
     var divId = seatEntity.ui.cardFieldDivId;
     uiElementHandler.removeElementChildren(0, divId);
 
@@ -58,10 +60,14 @@ PokerCards.prototype.handCardIdToPlayerEntity = function(cardId, playerEntity, c
     else
     {
         var seatEntity = view.table.getSeatBySeatNumber(playerEntity.state.seatId)
-        var cardFieldDivId = seatEntity.ui.cardFieldDivId;
-        var card = this.addClientCardWithIdAndUrl(cardId, cardUrl);
-        var cardDivId = card.divId;
-        uiElementHandler.setDivElementParent(cardDivId, cardFieldDivId);
+        if (!seatEntity) {
+            console.log("Cannot find seat entity for seatId: " + playerEntity.state.seatId);
+        } else {
+            var cardFieldDivId = seatEntity.ui.cardFieldDivId;
+            var card = this.addClientCardWithIdAndUrl(cardId, cardUrl);
+            var cardDivId = card.divId;
+            uiElementHandler.setDivElementParent(cardDivId, cardFieldDivId);
+        }
     }
 };
 

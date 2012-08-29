@@ -55,7 +55,7 @@ TextFeedback.prototype.showSeatSpaceTextFeedback = function(pid, action, value) 
     var betFieldDivId = seatEntity.ui.betFieldDivId;
     var valueString = "";
     if (value) {
-        valueString = " &euro;<span style='color:#FFF;'>" +  value / 100 + "</span>"
+        valueString = " &euro;<span style='color:#FFF;'>" + value + "</span>"
     }
     document.getElementById(betFieldDivId).innerHTML = action + valueString;
 //    this.addSeatEventText(pid, action)

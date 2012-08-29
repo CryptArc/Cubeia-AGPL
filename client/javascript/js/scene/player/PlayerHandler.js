@@ -62,9 +62,13 @@ PlayerHandler.prototype.updateSeatBalance = function (pid, balance) {
         var playerEntity = entityHandler.getEntityById(this.getPlayerEntityIdByPid(pid));
         var seatEntityId = view.seatHandler.getSeatEntityIdBySeatNumber(playerEntity.state.seatId);
         var seatEntity = entityHandler.getEntityById(seatEntityId);
-        var balanceDivId = seatEntity.ui.balanceDivId;
-        var div = document.getElementById(balanceDivId);
-        div.innerHTML = balance;
+        if (!seatEntity) {
+            console.log("No seat entity for pid " + pid);
+        } else {
+            var balanceDivId = seatEntity.ui.balanceDivId;
+            var div = document.getElementById(balanceDivId);
+            div.innerHTML = balance;
+        }
     }
 };
 

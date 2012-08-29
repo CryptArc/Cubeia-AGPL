@@ -260,7 +260,7 @@ Table.prototype.getSeatBySeatedEntityId = function(entityId) {
 
     for (index in tableEntity.seats) {
         var occupant = tableEntity.seats[index].occupant;
-        if (occupant.id == entityId) {
+        if (occupant && occupant.id == entityId) {
             return tableEntity.seats[index];
         }
     }
@@ -334,7 +334,6 @@ Table.prototype.handlePotTransfers = function(potTransfers) {
 }
 
 Table.prototype.clearPot = function() {
-    alert("Clearing pot");
     var tableEntity = entityHandler.getEntityById(this.entityId);
     document.getElementById(tableEntity.ui.tablePotDivId).innerHTML = "";
 }
@@ -399,32 +398,39 @@ Table.prototype.handlePerformAction = function(performAction) {
 		this.clearButtonStates();
 		
 	} else {
-		switch ( performAction.action.type) {
-			case POKER_PROTOCOL.ActionTypeEnum.CHECK:
+        switch (performAction.action.type) {
+            case POKER_PROTOCOL.ActionTypeEnum.CHECK:
                 playerActions.handlePlayerActionFeedback(performAction.player, "Check", null);
-				// player performAction.pid checks
-				break;
-			case POKER_PROTOCOL.ActionTypeEnum.CALL:
+                // player performAction.pid checks
+                break;
+            case POKER_PROTOCOL.ActionTypeEnum.CALL:
                 playerActions.handlePlayerActionFeedback(performAction.player, "Call", null);
-				// player performAction.pid calls
-				break;
-			case POKER_PROTOCOL.ActionTypeEnum.BET:
+                // player performAction.pid calls
+                break;
+            case POKER_PROTOCOL.ActionTypeEnum.BET:
                 var value = currencyFormatted(performAction.betAmount);
                 playerActions.handlePlayerActionFeedback(performAction.player, "Bet", value);
-				// player performAction.pid bets performAction.action.minAmount
-				break;
-			case POKER_PROTOCOL.ActionTypeEnum.RAISE:
+                // player performAction.pid bets performAction.action.minAmount
+                break;
+            case POKER_PROTOCOL.ActionTypeEnum.RAISE:
                 var value = currencyFormatted(performAction.betAmount);
                 playerActions.handlePlayerActionFeedback(performAction.player, "Raise", value);
-				// player performAction.pid raises performAction.action.minAmount
-				break;
-			case POKER_PROTOCOL.ActionTypeEnum.FOLD:
+                // player performAction.pid raises performAction.action.minAmount
+                break;
+            case POKER_PROTOCOL.ActionTypeEnum.FOLD:
+                var playerEntityId = playerHandler.getPlayerEntityIdByPid(performAction.player);
+                pokerCards.clearSeatEntityCards(view.table.getSeatBySeatedEntityId(playerEntityId));
                 playerActions.handlePlayerActionFeedback(performAction.player, "Fold", null);
-				// player performAction.pid folds
-				break;
-		
-		}
-	}
+                // player performAction.pid folds
+                break;
+            case POKER_PROTOCOL.ActionTypeEnum.SMALL_BLIND:
+                playerActions.handlePlayerActionFeedback(performAction.player, "Small Blind", null);
+                break;
+            case POKER_PROTOCOL.ActionTypeEnum.BIG_BLIND:
+                playerActions.handlePlayerActionFeedback(performAction.player, "Big Blind", null);
+                break;
+        }
+    }
 };
 
 /**
