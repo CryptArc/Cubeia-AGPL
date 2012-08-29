@@ -20,6 +20,8 @@ POKER_PROTOCOL.PokerProtocolHandler = function(pokerGameHandler) {
 		
 		var protocolObject = POKER_PROTOCOL.ProtocolObjectFactory.create(classId, gameData);
 		
+		//console.log(protocolObject);
+		
 		switch ( protocolObject.classId() ) {
 			case POKER_PROTOCOL.BestHand.CLASSID:
 				this.pokerGameHandler.handleBestHand(protocolObject);

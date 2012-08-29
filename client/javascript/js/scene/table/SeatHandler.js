@@ -14,30 +14,23 @@ SeatHandler.prototype.getSeatEntityIdBySeatNumber = function(seatNr) {
 SeatHandler.prototype.setSeatEntityToPassive = function(seatEntity) {
     if (!seatEntity) return;
     this.setSeatTimerPercentRemaining(seatEntity, 0);
-
-    document.getElementById(seatEntity.ui.divId).style.backgroundColor = "#999";
-//    document.getElementById(seatEntity.ui.seatActionFrameDivId).style.backgroundColor = "#eee";
-//    document.getElementById(seatEntity.ui.seatActionFrameDivId).style.borderColor = "#555";
-//    document.getElementById(seatEntity.ui.seatActionSlotDivId).className = "seat_turn_state_passive";
-
-}
+    console.log("passsssive");
+    console.log($("#"+seatEntity.ui.divId));
+    $("#"+seatEntity.ui.divId).removeClass("poker_seat_box_active");
+  
+};
 
 SeatHandler.prototype.setCurrentActingSeatEntity = function(seatEntity) {
     console.log(seatEntity);
     if (this.activeSeatEntity) {
-        this.setSeatEntityToPassive(this.activeSeatEntity)
+        this.setSeatEntityToPassive(this.activeSeatEntity);
     };
 
     if (seatEntity === undefined) return;
 
     this.activeSeatEntity = seatEntity;
-    console.log(this.activeSeatEntity);
-    console.log("id: " + this.activeSeatEntity.ui.divId);
-    document.getElementById(this.activeSeatEntity.ui.divId).style.backgroundColor = "#9bba00";
-//    document.getElementById(this.activeSeatEntity.ui.seatActionFrameDivId).style.backgroundColor = "#8f8";
-//    document.getElementById(this.activeSeatEntity.ui.seatActionSlotDivId).className = "seat_turn_state_active";
-//    document.getElementById(seatEntity.ui.seatActionFrameDivId).style.backgroundColor = "#cfc";
-}
+    $("#"+this.activeSeatEntity.ui.divId).addClass("poker_seat_box_active");
+};
 
 
 
@@ -49,14 +42,15 @@ SeatHandler.prototype.setCurrentPlayerActionTimeout = function(pid, timeToAct) {
 
     playerEntity.state.actionStartTime = new Date().getTime();
     playerEntity.state.timeToAct = timeToAct;
+    console.log(playerEntity.state);
     var seatEntity = entityHandler.getEntityById(this.getSeatEntityIdBySeatNumber(seatNr));
 
-    this.setCurrentActingSeatEntity(seatEntity)
+    this.setCurrentActingSeatEntity(seatEntity);
     console.log(seatEntity);
 
 
 
-}
+};
 
 SeatHandler.prototype.getPidByOccupiedSeatNumber = function(occupiedSeatNr) {
     console.log(occupiedSeatNr);
@@ -74,7 +68,7 @@ SeatHandler.prototype.createSeatNumberOnTableEntityAtXY = function(seatNr, table
     entityHandler.addUiComponent(seatEntity, "", "poker_seat_box", null);
 //    document.getElementById(uiEntity.ui.divId).style.width = 36+"px";
 
-    console.log(seatEntity)
+    console.log(seatEntity);
 
     var seatBoxDivId = seatEntity.ui.divId;
 
@@ -100,18 +94,36 @@ SeatHandler.prototype.createSeatNumberOnTableEntityAtXY = function(seatNr, table
     seatEntity.spatial.attachmentPoints = seatAttachmentPoints;
     uiElementHandler.setDivElementParent(seatEntity.ui.divId, seatEntity.spatial.transform.anchorId);
     this.addBalanceFieldToSeat(seatEntity);
-    this.addCardFieldToSeat(seatEntity);
+    
     this.addPlacedBetFieldToSeat(seatEntity);
-    this.addDealerButtonFieldToSeat(seatEntity);
-//    this.addPlayerTimerProgressBar(seatEntity);
+    
+    this.addPlayerTimerProgressBar(seatEntity);
     this.addPlayerActionIndicator(seatEntity);
-
-    this.removePlayerFromSeat(seatEntity)
-
+    this.removePlayerFromSeat(seatEntity);
+    this.addPlayerAvatar(seatEntity);
+    this.addCardFieldToSeat(seatEntity);
+    this.addDealerButtonFieldToSeat(seatEntity);
     return seatEntity;
 
 };
+SeatHandler.prototype.addPlayerAvatar = function(seatEntity) {
+	 	var uiEntity = entityHandler.addEntity(seatEntity.id+"_avatarUI");
+	    entityHandler.addUiComponent(uiEntity, "", "player_avatar", null);
 
+
+	    var posX = seatEntity.spatial.attachmentPoints.playerTimer.transform.posX;
+	    var posY = seatEntity.spatial.attachmentPoints.playerTimer.transform.posY;
+
+	    seatEntity.ui.avatarDiv = uiEntity.ui.divId;
+
+	    entityHandler.addSpatial(seatEntity.ui.divId, uiEntity, posX, posY);
+	    uiElementHandler.setDivElementParent(uiEntity.ui.divId, uiEntity.spatial.transform.anchorId);
+	    uiElementHandler.setDivElementParent(uiEntity.spatial.transform.anchorId, seatEntity.ui.divId);
+	    view.spatialManager.positionVisualEntityAtSpatial(uiEntity);
+
+	    seatEntity.ui.avatarUI = uiEntity.ui.divId+"Avatar";
+	    //uiElementHandler.createDivElement(seatEntity.ui.divId, seatEntity.ui.avatarUI, "", "class", null);
+};
 SeatHandler.prototype.addPlayerActionIndicator = function(seatEntity) {
     var uiEntity = entityHandler.addEntity(seatEntity.id+"_seatActionUi");
     entityHandler.addUiComponent(uiEntity, "", "seat_element_frame", null);
@@ -152,7 +164,7 @@ SeatHandler.prototype.addPlayerTimerProgressBar = function(seatEntity) {
     view.spatialManager.positionVisualEntityAtSpatial(uiEntity);
 
     seatEntity.ui.timeProgressBarDivId = uiEntity.ui.divId+"TimeProgress";
-    uiElementHandler.createDivElement(seatEntity.ui.timeProgressBarFrameDivId, seatEntity.ui.timeProgressBarDivId, "", "standing_progressbar", null);
+    uiElementHandler.createDivElement(seatEntity.ui.divId, seatEntity.ui.timeProgressBarDivId, "", "standing_progressbar", null);
 
 };
 
@@ -224,7 +236,7 @@ SeatHandler.prototype.addCardFieldToSeat = function(seatEntity) {
     var posX = seatEntity.spatial.attachmentPoints.cards.transform.posX;
     var posY = seatEntity.spatial.attachmentPoints.cards.transform.posY;
 
-    seatEntity.ui.cardFieldDivId = uiEntity.ui.divId
+    seatEntity.ui.cardFieldDivId = uiEntity.ui.divId;
     entityHandler.addSpatial("body", uiEntity, posX, posY);
     uiElementHandler.setDivElementParent(uiEntity.ui.divId, uiEntity.spatial.transform.anchorId);
     uiElementHandler.setDivElementParent(uiEntity.spatial.transform.anchorId, seatEntity.ui.divId);
@@ -241,16 +253,18 @@ SeatHandler.prototype.addPlayerToSeat = function(playerEntity, seatEntity) {
 };
 
 SeatHandler.prototype.setSeatTimerPercentRemaining = function(seatEntity, percent) {
-//    document.getElementById(seatEntity.ui.timeProgressBarDivId).style.height = percent+"%";
+    document.getElementById(seatEntity.ui.timeProgressBarDivId).style.height = percent+"%";
 
 };
 
 SeatHandler.prototype.updateActiveSeatTimer = function(currentTime) {
     if (!this.activeSeatEntity) return;
-    var playerEntity = this.activeSeatEntity.occupant
-    var percentRemaining = playerHandler.getPlayerEntityActionTimePercentRemaining(playerEntity, currentTime)
+    var playerEntity = this.activeSeatEntity.occupant;
+    var percentRemaining = playerHandler.getPlayerEntityActionTimePercentRemaining(playerEntity, currentTime);
 
-    this.setSeatTimerPercentRemaining(this.activeSeatEntity, percentRemaining)
+   
+    
+    this.setSeatTimerPercentRemaining(this.activeSeatEntity, percentRemaining);
 
     if (percentRemaining < 0) {
         this.setSeatEntityToPassive(this.activeSeatEntity);
@@ -261,6 +275,6 @@ SeatHandler.prototype.updateActiveSeatTimer = function(currentTime) {
 
 
 SeatHandler.prototype.tick = function(currentTime) {
-    this.updateActiveSeatTimer(currentTime)
+    this.updateActiveSeatTimer(currentTime);
 };
 
