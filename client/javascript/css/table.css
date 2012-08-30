@@ -596,10 +596,12 @@ div.hud_card
 }
 
 div.player_timer {
-    bottom: 13px;
-    left: 490px;
+    bottom: 10px;
     color: #fff;
     position: absolute;
     width:100px;
-    height:100px;
+    height:100px;    
+    right: 450px;
+
+    
 }

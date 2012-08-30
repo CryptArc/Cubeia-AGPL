@@ -4,6 +4,7 @@ var CircularProgressBar = function(containerId) {
 CircularProgressBar.prototype = {
 	containerId : null,
 	secondPartCreated : false,
+	nextToggle : 20,
 	_initialize : function(containerId) {
 		if (containerId == null) {
 			throw "CircularProgressBar: containerId must be set";
@@ -17,11 +18,9 @@ CircularProgressBar.prototype = {
 		this._addContent();
 	},
 	show : function() {
-		console.log("showing progressbar");
 		$(this.containerId).show();
 	},
 	hide : function() {
-		console.log("hiding progressbar");
 		$(this.containerId).hide();
 	},
 	_addContent : function() {
@@ -42,18 +41,25 @@ CircularProgressBar.prototype = {
 		$(".cpb-animated .cpb-slice", this.containerId).removeClass("cpb-gt50");
 		$(".cpb-animated .cpb-fill", this.containerId).hide();
 		this.secondPartCreated = false;
-		this.render(0);
+		
+		this.lastToggle = 20;
 	},
+
 	render : function(percent) {
-		if(percent>=100) {
+		if(percent>100) {
 			percent=100;
 		}
+		
 		if (percent > 50 && !this.secondPartCreated) {
 			this.secondPartCreated = true;
 			$(".cpb-animated .cpb-slice", this.containerId).addClass("cpb-gt50");
 			$(".cpb-animated .cpb-fill", this.containerId).show();
+		} else if(percent <= 50 && this.secondPartCreated) {
+			this.secondPartCreated = false;
+			$(".cpb-animated .cpb-slice", this.containerId).removeClass("cpb-gt50");
+			$(".cpb-animated .cpb-fill", this.containerId).hide();
 		}
-
+		
 		var deg = 360 / 100 * percent;
 
 		$('.cpb-animated .cpb-pie', this.containerId).css({

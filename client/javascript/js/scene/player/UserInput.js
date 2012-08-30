@@ -1,26 +1,27 @@
 UserInput = function() {
     this.entityId = "userInputEntityId";
+    this.playerProgressBar = null;
 };
 
 UserInput.prototype.setCheckAvailable = function(playerAction) {
-    this.showCheck(playerAction)
+    this.showCheck(playerAction);
 };
 
 UserInput.prototype.setCallAvailable = function(playerAction) {
-    this.showCall(playerAction)
+    this.showCall(playerAction);
 };
 
 UserInput.prototype.setBetAvailable = function(playerAction) {
-    this.showPlaceBet(playerAction)
+    this.showPlaceBet(playerAction);
 };
 
 UserInput.prototype.setRaiseAvailable = function(playerAction) {
 
-    this.showRaiseBet(playerAction)
+    this.showRaiseBet(playerAction);
 };
 
 UserInput.prototype.setFoldAvailable = function() {
-    this.showFold()
+    this.showFold();
 };
 
 
@@ -28,7 +29,7 @@ UserInput.prototype.setupUserInput = function() {
     var entity = entityHandler.addEntity(this.entityId);
     entityHandler.addUiComponent(entity, "", "user_input_frame", null);
 
-    this.initPlayerGameActionUi(entity)
+    this.initPlayerGameActionUi(entity);
 };
 
 UserInput.prototype.initPlayerGameActionUi = function(parentEntity) {
@@ -50,23 +51,23 @@ UserInput.prototype.initPlayerGameActionUi = function(parentEntity) {
 
     var placeBet = function() {
         userInput.clickPlaceBetButton();
-    }
+    };
 
     var raise = function() {
         userInput.clickRaiseButton();
-    }
+    };
 
     var call = function() {
         userInput.clickCallButton();
-    }
+    };
 
     var check = function() {
         userInput.clickCheckButton();
-    }
+    };
 
     var fold = function() {
         userInput.clickFoldButton();
-    }
+    };
 
     var buttonSide = 100;
     this.inputButtons = {
@@ -84,7 +85,7 @@ UserInput.prototype.initPlayerGameActionUi = function(parentEntity) {
     uiUtils.createActionButton(this.inputButtons.foldButton, entity.ui.divId);
 
     this.hideActionButtons();
-}
+};
 
 UserInput.prototype.clearUserEntityTimeToAct = function() {
     var userEntity = entityHandler.getEntityById(playerHandler.getPlayerEntityIdByPid(playerHandler.myPlayerPid));
@@ -93,13 +94,13 @@ UserInput.prototype.clearUserEntityTimeToAct = function() {
     var seatEntity = entityHandler.getEntityById(view.seatHandler.getSeatEntityIdBySeatNumber(userEntity.state.seatId));
     view.seatHandler.setSeatEntityToPassive(seatEntity);
 
-}
+};
 
 UserInput.prototype.endUserTurn = function() {
     this.hideActionButtons();
     this.clearUserEntityTimeToAct();
 
-}
+};
 
 UserInput.prototype.hideActionButtons = function() {
     for (index in this.inputButtons) {
@@ -134,7 +135,7 @@ UserInput.prototype.showFold = function() {
 
 UserInput.prototype.setBetValueMinMax = function(min, valueMax) {
 
-}
+};
 
 UserInput.prototype.setCallValue = function(value) {
 //    document.getElementById(this.inputButtons.callButton.valueDivId).innerHTML = currencyFormatted(value);
@@ -184,26 +185,18 @@ UserInput.prototype.clickFoldButton = function() {
 
 
 UserInput.prototype.setUserActionProgressBar = function(currentTime) {
-//    var userEntity = entityHandler.getEntityById(playerHandler.getPlayerEntityIdByPid(playerHandler.myPlayerPid));
-//    if (!userEntity || view.seatHandler.activeSeatEntity == null) {
-//        console.log("no user entity yet!");
-//        return;
-//    }
-//    if (userEntity.id == view.seatHandler.activeSeatEntity.occupant.id) {
-//        console.log("User Has time to act");
-//        var percentRemaining = playerHandler.getPlayerEntityActionTimePercentRemaining(userEntity, currentTime);
-//    } else {
-//        console.log("User is out of time");
-//        percentRemaining = 0;
-//    }
-//
-//    var uiEntity = entityHandler.getEntityById(this.entityId);
-//    document.getElementById(uiEntity.ui.userProgressBarDivId).style.width = percentRemaining+"%";
-
+	
+	if(view.seatHandler.myTurn) {
+		var playerEntity =  entityHandler.getEntityById(playerHandler.getPlayerEntityIdByPid(playerHandler.myPlayerPid));
+		
+		var percentRemaining = playerHandler.getPlayerEntityActionTimePercentRemaining(playerEntity, currentTime);
+		this.playerProgressBar.reset();
+		this.playerProgressBar.render(100-percentRemaining);		
+	}
 };
 
 UserInput.prototype.tick = function(currentTime) {
-    this.setUserActionProgressBar(currentTime)
+    this.setUserActionProgressBar(currentTime);
 
 
 };

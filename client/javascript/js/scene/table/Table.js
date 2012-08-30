@@ -59,7 +59,7 @@ Table.prototype.addLineSeparator = function() {
         lineDiv.className = 'line_separator';
 
         parent.appendChild(lineDiv);
-}
+};
 
 Table.prototype.addSelf = function(name) {
     if (document.getElementById('hud_player_name'))
@@ -79,22 +79,23 @@ Table.prototype.addSelf = function(name) {
 
     var balanceEntity = entityHandler.addEntity(this.myBalanceEntityId);
     entityHandler.addUiComponent(balanceEntity, "", "hud_balance", parent);
-    console.log("")
+
 
     var playerTimerEntity = entityHandler.addEntity(this.playerTimerEntityId);
-    entityHandler.addUiComponent(playerTimerEntity,"","player_timer",parent);
+    entityHandler.addUiComponent(playerTimerEntity,"","player_timer",null);
+    
     //inits the progress bar and creates the html in the correct container
     this.playerProgressBar = new CircularProgressBar(playerTimerEntity.ui.divId);
     this.playerProgressBar.hide();
-    view.seatHandler.playerProgressBar = this.playerProgressBar;
-}
+    userInput.playerProgressBar = this.playerProgressBar;
+};
 
 Table.prototype.updateOwnBalance = function(balance) {
     var balanceEntity = entityHandler.getEntityById(this.myBalanceEntityId);
     var balanceDivId = balanceEntity.ui.divId;
     var div = document.getElementById(balanceDivId);
     div.innerHTML = "<span style='color:#9bba00'>&euro;</span>" + balance;
-}
+};
 
 Table.prototype.updateTableSeatPositions = function() {
     /*
@@ -117,7 +118,7 @@ Table.prototype.createTableStateIndicator = function(tableDivId) {
 };
 
 Table.prototype.createTablePot = function(tableDivId) {
-    var potAreaDivId = tableDivId+"_TablePot_area"
+    var potAreaDivId = tableDivId+"_TablePot_area";
     uiElementHandler.createDivElement(tableDivId, potAreaDivId, "", "table_pot_area", null);
     var potDivId = potAreaDivId+"_TablePot";
     uiElementHandler.createDivElement(potAreaDivId, potDivId, "", "table_pot_text", null);
@@ -126,13 +127,13 @@ Table.prototype.createTablePot = function(tableDivId) {
 };
 
 Table.prototype.createTablePotLabel = function(tableDivId) {
-    var potAreaDivId = tableDivId+"_TablePot_area"
+    var potAreaDivId = tableDivId+"_TablePot_area";
     var potLabelDivId = potAreaDivId+"_label";
     uiElementHandler.createDivElement(potAreaDivId, potLabelDivId, "Pot size", "table_pot_label", null);
     document.getElementById(potLabelDivId).style.visibility = "hidden";
 
     return potLabelDivId;
-}
+};
 
 Table.prototype.createVisualTable = function(containerId) {
     // Add a visual component for the table entity and return the divId
@@ -147,7 +148,7 @@ Table.prototype.createTableJoinButton = function(tableDivId) {
 
     var joinTable = function() {
         view.table.playerPressesJoinButton();
-    }
+    };
 
     this.buttons = {
         inputButtons: {label: "Join", posX: 82.7, posY: 83, height: 120, width: 120, hasValue:false, clickFunction:joinTable}
@@ -230,21 +231,21 @@ Table.prototype.showJoinButton = function() {
 
     var joinTable = function() {
         view.table.playerPressesJoinButton();
-    }
+    };
 
     document.getElementById(buttonLabelDivId).innerHTML = "Join";
     var buttonDivId = tableEntity.ui.joinButtonFrameDivId;
     document.getElementById(buttonDivId).style.visibility = "visible";
     document.getElementById(buttonDivId).onclick = function(e) {
     	joinTable();
-    }
+    };
 };
 
 Table.prototype.hideJoinButton = function() {
     var tableEntity = entityHandler.getEntityById(this.entityId);
     var buttonDivId = tableEntity.ui.joinButtonFrameDivId;
     document.getElementById(buttonDivId).style.visibility = "hidden";
-}
+};
 
 Table.prototype.setLeaveTableFunction = function() {
     var tableEntity = entityHandler.getEntityById(this.entityId);
@@ -256,7 +257,7 @@ Table.prototype.setLeaveTableFunction = function() {
         view.table.hideJoinButton();
         playerActions.leaveTable();
 
-    }
+    };
 
 //    document.getElementById(buttonLabelDivId).innerHTML = "Leave Table";
 //    document.getElementById(buttonDivId).onclick = function(e) {
@@ -316,7 +317,8 @@ Table.prototype.handleRequestAction = function(requestAction) {
 				this.handlePlayerActionRequest(playerAction);
 			}
 		}
-		this.playerProgressBar.show();
+
+		userInput.playerProgressBar.show();			
 	}
 };
 
@@ -325,7 +327,8 @@ Table.prototype.handleRequestAction = function(requestAction) {
  */
 Table.prototype.clearButtonStates = function() {
 	userInput.hideActionButtons();
-	this.playerProgressBar.hide();
+	userInput.playerProgressBar.hide();		
+	
 };
 
 /**
@@ -345,12 +348,12 @@ Table.prototype.handlePotTransfers = function(potTransfers) {
     if (potTransfers.pots.length > 0) {
         this.potUpdated(potTransfers.pots[0].amount);
     }
-}
+};
 
 Table.prototype.clearPot = function() {
     var tableEntity = entityHandler.getEntityById(this.entityId);
     document.getElementById(tableEntity.ui.tablePotDivId).innerHTML = "";
-}
+};
 
 /**
  * Handle hand end
@@ -396,7 +399,7 @@ Table.prototype.handleBestHand = function(bestHand) {
 			break;
 			
 	}
-	view.textFeedback.addLogText("" + playerName + " shows " + handString+".")
+	view.textFeedback.addLogText("" + playerName + " shows " + handString+".");
     view.textFeedback.addSeatEventText(bestHand.player, handString);
 	console.log("Player " + playerName + " shows " + handString);
 	

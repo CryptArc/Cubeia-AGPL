@@ -38,7 +38,7 @@ PlayerHandler.prototype.getPlayerEntityActionTimePercentRemaining = function (pl
     var timeToAct = playerEntity.state.timeToAct;
     var percentDone = uiUtils.getPercentDoneForMinMaxCurrent(0, timeToAct, currentTime - startTime);
     return percentDone;
-}
+};
 
 
 PlayerHandler.prototype.seatPlayerIdAtTable = function (pid, seatId) {
@@ -102,12 +102,12 @@ PlayerHandler.prototype.handlePlayerStatus = function (pid, status) {
 
     switch (status) {
         case POKER_PROTOCOL.PlayerTableStatusEnum.SITIN :
-            playerActions.handlePlayerActionFeedback(pid, "Sit In")
+            playerActions.handlePlayerActionFeedback(pid, "Sit In");
             document.getElementById(seatEntity.spatial.transform.anchorId).style.opacity = 1;
             break;
         case POKER_PROTOCOL.PlayerTableStatusEnum.SITOUT :
-            playerActions.handlePlayerActionFeedback(pid, "Sit Out")
+            playerActions.handlePlayerActionFeedback(pid, "Sit Out");
             document.getElementById(seatEntity.spatial.transform.anchorId).style.opacity = 0.6;
             break;
     }
-}
+};

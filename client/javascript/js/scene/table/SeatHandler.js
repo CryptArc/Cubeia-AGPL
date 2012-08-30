@@ -270,14 +270,7 @@ SeatHandler.prototype.setSeatTimerPercentRemaining = function(seatEntity, percen
 };
 
 SeatHandler.prototype.updateActiveSeatTimer = function(currentTime) {
-	if (this.myTurn==true) {
-
-    	var playerEntity =  entityHandler.getEntityById(playerHandler.getPlayerEntityIdByPid(playerHandler.myPlayerPid));
-
-    	var percentRemaining = playerHandler.getPlayerEntityActionTimePercentRemaining(playerEntity, currentTime);
-    	this.playerProgressBar.reset();
-    	this.playerProgressBar.render(percentRemaining);
-	} else if (!this.activeSeatEntity) {
+	if (this.myTurn || !this.activeSeatEntity) {
 		return;
 	} else {
     	var playerEntity = this.activeSeatEntity.occupant;

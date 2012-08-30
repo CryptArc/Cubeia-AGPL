@@ -37,7 +37,7 @@ EntityHandler.prototype.addUiComponent = function(entity, html ,styleClass, clic
     entity.ui = {};
     entity.ui.divId = entity.id+"_divId";
 
-    if (!parentDiv) parentDiv = "body"
+    if (!parentDiv) parentDiv = "body";
 
     uiElementHandler.createDivElement(parentDiv, entity.ui.divId, html, styleClass, clickFunction);
 
