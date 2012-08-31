@@ -220,7 +220,7 @@ SeatHandler.prototype.addPlacedBetFieldToSeat = function(seatEntity) {
     uiElementHandler.setDivElementParent(uiEntity.spatial.transform.anchorId, seatEntity.ui.divId);
     view.spatialManager.positionVisualEntityAtSpatial(uiEntity);
 };
-
+	
 SeatHandler.prototype.addBalanceFieldToSeat = function(seatEntity) {
     var uiEntity = entityHandler.addEntity(seatEntity.id+"_balanceUi");
     entityHandler.addUiComponent(uiEntity, "", "player_balance", null);
@@ -280,10 +280,13 @@ SeatHandler.prototype.updateActiveSeatTimer = function(currentTime) {
     	this.setSeatTimerPercentRemaining(this.activeSeatEntity, 100-percentRemaining);
     	
     	if (percentRemaining < 0) {
-    		this.setSeatEntityToPassive(this.activeSeatEntity);
-    		this.activeSeatEntity = null;
+    		this.clearActiveSeatEntity();
     	};
     }
+};
+SeatHandler.prototype.clearActiveSeatEntity = function() {
+	this.setSeatEntityToPassive(this.activeSeatEntity);
+	this.activeSeatEntity = null;
 };
 
 

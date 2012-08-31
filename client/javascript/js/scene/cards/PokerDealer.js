@@ -1,5 +1,5 @@
 PokerDealer = function() {
-    this.dealerButtonEntityId = "dealer_button_entity"
+    this.dealerButtonEntityId = "dealer_button_entity";
 };
 
 /**
@@ -13,6 +13,10 @@ PokerDealer.prototype.dealCardIdToPid = function(cardToDeal) {
     var cardUrl = pokerCards.getCardUrl(cardToDeal.card);
     console.log("Player Card: -- CardId: ["+cardToDeal.card.cardId+"], cardurl ["+cardUrl+"]  rank[" + cardToDeal.card.rank +"]  suit[" + cardToDeal.card.suit +"]");
     pokerCards.handCardIdToPlayerEntity(cardToDeal.card.cardId, playerEntity, cardUrl);
+    
+    var playerEntityId = playerHandler.getPlayerEntityIdByPid(cardToDeal.player);
+    var seatEntity = view.table.getSeatBySeatedEntityId(playerEntityId);
+    document.getElementById(seatEntity.spatial.transform.anchorId).style.opacity = 1; 
 };
 
 
@@ -23,9 +27,9 @@ PokerDealer.prototype.dealCardIdToPid = function(cardToDeal) {
 PokerDealer.prototype.dealPublicCard = function(gameCard) {
     console.log("Deal Community Card: "+gameCard.cardId);
     var cardUrl = pokerCards.getCardUrl(gameCard);
-    console.log(cardUrl)
+    console.log(cardUrl);
     var card = pokerCards.addClientCardWithIdAndUrl(gameCard.cardId, cardUrl);
-    console.log(card)
+    console.log(card);
     view.communityCards.setClientCardAsCommunityCard(card);
 };
 
@@ -37,7 +41,7 @@ PokerDealer.prototype.dealPublicCard = function(gameCard) {
  */
 PokerDealer.prototype.exposePrivateCards = function(exposeData) {
 	var cardUrl = pokerCards.getCardUrl(exposeData.card);
-    pokerCards.setClientCardDivImageUrl(exposeData.card.cardId, cardUrl)
+    pokerCards.setClientCardDivImageUrl(exposeData.card.cardId, cardUrl);
 };
 
 PokerDealer.prototype.addPlayerCardsComponent = function(playerEntity) {
@@ -47,10 +51,8 @@ PokerDealer.prototype.addPlayerCardsComponent = function(playerEntity) {
 PokerDealer.prototype.createDealerButton = function() {
     var dealerButtonEntity = entityHandler.addEntity(this.dealerButtonEntityId);
     entityHandler.addUiComponent(dealerButtonEntity, "D", "dealer_button", null);
-//    uiElementHandler.createDivElement(dealerButtonEntity.ui.divId, "dealer_button_label", "D", "dealer_button_label", null);
-
     entityHandler.addSpatial("body", dealerButtonEntity, 0, 0);
-    console.log(dealerButtonEntity)
+
 };
 
 PokerDealer.prototype.moveDealerButton = function(seatId) {
@@ -59,15 +61,11 @@ PokerDealer.prototype.moveDealerButton = function(seatId) {
     if (!seatEntity) return;
 
     var targetDivId = seatEntity.ui.dealerButtonSlotDivId;
-    console.log("Move Dealer Button")
-    console.log(dealerButton)
-
     uiElementHandler.setDivElementParent(dealerButton.ui.divId, targetDivId);
 };
 
 
 PokerDealer.prototype.startNewHand = function() {
-    console.log("Starting New Hand - Clearing all Cards!")
     view.textFeedback.clearAllSeatSpaceTextFeedback();
     view.table.clearPot();
     pokerCards.clearAllCards();

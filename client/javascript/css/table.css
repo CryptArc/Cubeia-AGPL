@@ -55,7 +55,12 @@ div.poker_seat_box
         left: -38px;
     }
 div.poker_seat_box_active {
-    border: 1px solid #C0E00B;
+    left:-39px;
+    top:-44px;
+    border: 2 solid #C0E00B;
+    box-shadow:0px 0px 15px #EBFFC4;
+    -web-kit-box-shadow:0px 0px 15px #EBFFC4;
+    -moz-box-shadow:0px 0px 15px #EBFFC4;
 }
 div.player_avatar {
     background-image: url(../images/players/player6.png);

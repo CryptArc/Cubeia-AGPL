@@ -415,6 +415,8 @@ Table.prototype.handlePerformAction = function(performAction) {
 		this.clearButtonStates();
 		
 	} else {
+ 
+        
         switch (performAction.action.type) {
             case POKER_PROTOCOL.ActionTypeEnum.CHECK:
                 playerActions.handlePlayerActionFeedback(performAction.player, "Check", null);
@@ -435,10 +437,11 @@ Table.prototype.handlePerformAction = function(performAction) {
                 // player performAction.pid raises performAction.action.minAmount
                 break;
             case POKER_PROTOCOL.ActionTypeEnum.FOLD:
-                var playerEntityId = playerHandler.getPlayerEntityIdByPid(performAction.player);
-                pokerCards.clearSeatEntityCards(view.table.getSeatBySeatedEntityId(playerEntityId));
+       		 	var playerEntityId = playerHandler.getPlayerEntityIdByPid(performAction.player);
+       		 	var seatEntity = view.table.getSeatBySeatedEntityId(playerEntityId);
+                pokerCards.setCardsFolded(seatEntity);  
+                document.getElementById(seatEntity.spatial.transform.anchorId).style.opacity = 0.4;   
                 playerActions.handlePlayerActionFeedback(performAction.player, "Fold", null);
-                // player performAction.pid folds
                 break;
             case POKER_PROTOCOL.ActionTypeEnum.SMALL_BLIND:
                 playerActions.handlePlayerActionFeedback(performAction.player, "Small Blind", null);
@@ -447,6 +450,7 @@ Table.prototype.handlePerformAction = function(performAction) {
                 playerActions.handlePlayerActionFeedback(performAction.player, "Big Blind", null);
                 break;
         }
+        view.seatHandler.clearActiveSeatEntity();
     }
 };
 

@@ -107,7 +107,7 @@ PlayerHandler.prototype.handlePlayerStatus = function (pid, status) {
             break;
         case POKER_PROTOCOL.PlayerTableStatusEnum.SITOUT :
             playerActions.handlePlayerActionFeedback(pid, "Sit Out");
-            document.getElementById(seatEntity.spatial.transform.anchorId).style.opacity = 0.6;
+            document.getElementById(seatEntity.spatial.transform.anchorId).style.opacity = 0.4;
             break;
     }
 };
