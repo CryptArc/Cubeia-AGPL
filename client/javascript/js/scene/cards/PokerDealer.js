@@ -15,8 +15,12 @@ PokerDealer.prototype.dealCardIdToPid = function(cardToDeal) {
     pokerCards.handCardIdToPlayerEntity(cardToDeal.card.cardId, playerEntity, cardUrl);
     
     var playerEntityId = playerHandler.getPlayerEntityIdByPid(cardToDeal.player);
-    var seatEntity = view.table.getSeatBySeatedEntityId(playerEntityId);
-    document.getElementById(seatEntity.spatial.transform.anchorId).style.opacity = 1; 
+    if(playerEntityId) {
+	    var seatEntity = view.table.getSeatBySeatedEntityId(playerEntityId);
+	    if(seatEntity) {
+	    	document.getElementById(seatEntity.spatial.transform.anchorId).style.opacity = 1;     	
+	    }
+    }
 };
 
 

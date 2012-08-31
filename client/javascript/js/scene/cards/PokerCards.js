@@ -49,7 +49,8 @@ PokerCards.prototype.clearSeatEntityCards = function(seatEntity) {
 };
 
 PokerCards.prototype.setCardsFolded = function(seatEntity) {
-    console.log(seatEntity);
+ 
+    if (!seatEntity) return;
     var cards = seatEntity.occupant.cardIds;
     for(var i = 0; i<cards.length; i++) {
     	console.log("setting cards folded = " + cards[i]);
@@ -58,8 +59,7 @@ PokerCards.prototype.setCardsFolded = function(seatEntity) {
 };
 
 PokerCards.prototype.handCardIdToPlayerEntity = function(cardId, playerEntity, cardUrl) {
-    if (playerEntity.pid == playerHandler.myPlayerPid)
-    {
+    if (playerEntity.pid == playerHandler.myPlayerPid) {
         var card = this.addClientCardWithIdAndUrl(cardId, cardUrl);
         var cardDivId = card.divId;
         var cardHolderEntity = entityHandler.getEntityById("ownCardsAreaEntityId");
@@ -68,7 +68,7 @@ PokerCards.prototype.handCardIdToPlayerEntity = function(cardId, playerEntity, c
     }
     else
     {
-        var seatEntity = view.table.getSeatBySeatNumber(playerEntity.state.seatId)
+        var seatEntity = view.table.getSeatBySeatNumber(playerEntity.state.seatId);
         if (!seatEntity) {
             console.log("Cannot find seat entity for seatId: " + playerEntity.state.seatId);
         } else {

@@ -30,7 +30,7 @@
 }
 
 .cpb-background >.cpb-slice >.cpb-pie {
-	border: 0.3em solid #999;
+	border: 0.3em solid #333;
 }
 
 .cpb-timer >.cpb-slice >.cpb-pie.cpb-fill {
