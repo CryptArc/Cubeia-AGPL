@@ -25,6 +25,7 @@ import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.cache.ActionCache;
 import com.cubeia.games.poker.cache.ActionContainer;
 import com.cubeia.games.poker.io.protocol.*;
+import com.cubeia.games.poker.tournament.util.DateFetcher;
 import com.cubeia.games.poker.util.ProtocolFactory;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
@@ -44,9 +45,11 @@ import java.util.List;
 public class GameStateSender {
     private static Logger log = LoggerFactory.getLogger(PokerTableListener.class);
     private final ActionCache actionCache;
+    private DateFetcher dateFetcher;
 
     @Inject
-    public GameStateSender(ActionCache actionCache) {
+    public GameStateSender(ActionCache actionCache, DateFetcher dateFetcher) {
+        this.dateFetcher = dateFetcher;
         this.actionCache = actionCache;
     }
 
@@ -94,7 +97,7 @@ public class GameStateSender {
         StyxSerializer styxalizer = new StyxSerializer(new ProtocolObjectFactory());
 
         ActionContainer lastContainer = null;
-        Long lastRequestTimeSTamp = null;
+        Long lastRequestTimeStamp = null;
         RequestAction lastRequest = null;
 
         for (ActionContainer container : actions) {
@@ -129,7 +132,7 @@ public class GameStateSender {
                         } else {
                             lastRequest = requestAction;
                             lastContainer = container;
-                            lastRequestTimeSTamp = container.getTimestamp();
+                            lastRequestTimeStamp = container.getTimestamp();
                         }
 
                     } else if (packet instanceof PlayerDisconnectedPacket) {
@@ -138,7 +141,7 @@ public class GameStateSender {
                         // and the last found action request to make it easier for the client.
                         if (lastRequest != null) {
                             lastRequest.timeToAct = disconnect.timebank;
-                            lastRequestTimeSTamp = container.getTimestamp();
+                            lastRequestTimeStamp = container.getTimestamp();
                         }
                         // ordering is important here, the adjust time method will change the time allows on
                         // the disconnect which is also used above. So, we change it after we have modified last request action
@@ -148,7 +151,7 @@ public class GameStateSender {
                     } else if (packet instanceof PerformAction) {
                         lastRequest = null;
                         lastContainer = null;
-                        lastRequestTimeSTamp = null;
+                        lastRequestTimeStamp = null;
                         filteredActions.add(ga);
 
                     } else {
@@ -164,7 +167,7 @@ public class GameStateSender {
 
         // If we have an unanswered request then adjust the time left to act and add it last
         if (lastRequest != null) {
-            GameDataAction requestAction = adjustTimeToAct(styxalizer, lastContainer, lastRequest, lastRequestTimeSTamp);
+            GameDataAction requestAction = adjustTimeToAct(styxalizer, lastContainer, lastRequest, lastRequestTimeStamp);
             filteredActions.add(requestAction);
         }
 
@@ -172,7 +175,7 @@ public class GameStateSender {
     }
 
     private GameDataAction adjustTimeToAct(StyxSerializer styxalizer, ActionContainer lastContainer, RequestAction lastRequest, Long timerTimeStamp) throws IOException {
-        long elapsed = System.currentTimeMillis() - timerTimeStamp;
+        long elapsed = dateFetcher.now().getMillis() - timerTimeStamp;
         int timeToAct = lastRequest.timeToAct - (int) elapsed;
         if (timeToAct < 0) {
             timeToAct = 0;
@@ -184,7 +187,7 @@ public class GameStateSender {
     }
 
     private GameDataAction adjustTimeToAct(StyxSerializer styxalizer, ActionContainer container, PlayerDisconnectedPacket disconnect) throws IOException {
-        long elapsed = System.currentTimeMillis() - container.getTimestamp();
+        long elapsed = dateFetcher.now().getMillis() - container.getTimestamp();
         int timeToAct = disconnect.timebank - (int) elapsed;
         if (timeToAct < 0) {
             timeToAct = 0;

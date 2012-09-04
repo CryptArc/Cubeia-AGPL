@@ -27,6 +27,8 @@ import com.cubeia.games.poker.handler.BackendCallHandler;
 import com.cubeia.games.poker.handler.BackendPlayerSessionHandler;
 import com.cubeia.games.poker.handler.PokerHandler;
 import com.cubeia.games.poker.logic.TimeoutCache;
+import com.cubeia.games.poker.tournament.util.DateFetcher;
+import com.cubeia.games.poker.tournament.util.RealDateFetcher;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 
@@ -51,5 +53,6 @@ public class IntegrationGuiceModule extends AbstractModule {
         bind(LobbyUpdater.class).in(Singleton.class);
         bind(PlayerUnseater.class).in(Singleton.class);
         bind(BuyInCalculator.class).in(Singleton.class);
+        bind(DateFetcher.class).to(RealDateFetcher.class).in(Singleton.class);
     }
 }

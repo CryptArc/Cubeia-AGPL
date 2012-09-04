@@ -27,36 +27,37 @@ public class ActionContainer {
 
     private final GameAction gameAction;
 
-    private final Long timestamp = System.currentTimeMillis();
+    private final Long timestamp;
 
-    private ActionContainer(Integer playerId, GameAction gameAction, Integer excludedPlayerId) {
+    private ActionContainer(Integer playerId, GameAction gameAction, Integer excludedPlayerId, Long timestamp) {
         this.playerId = playerId;
         this.gameAction = gameAction;
         this.excludedPlayerId = excludedPlayerId;
+        this.timestamp = timestamp;
     }
 
-    private ActionContainer(GameAction gameAction, Integer excludedPlayerId) {
-        this(null, gameAction, excludedPlayerId);
+    private ActionContainer(GameAction gameAction, Integer excludedPlayerId, Long timestamp) {
+        this(null, gameAction, excludedPlayerId, timestamp);
     }
 
-    private ActionContainer(Integer playerId, GameAction gameAction) {
-        this(playerId, gameAction, null);
+    private ActionContainer(Integer playerId, GameAction gameAction, Long timestamp) {
+        this(playerId, gameAction, null, timestamp);
     }
 
-    private ActionContainer(GameAction gameAction) {
-        this(null, gameAction, null);
+    private ActionContainer(GameAction gameAction, Long timestamp) {
+        this(null, gameAction, null, timestamp);
     }
 
-    public static ActionContainer createPublic(GameAction gameAction) {
-        return new ActionContainer(null, gameAction);
+    public static ActionContainer createPublic(GameAction gameAction, Long timestamp) {
+        return new ActionContainer(null, gameAction, timestamp);
     }
 
-    public static ActionContainer createPublic(GameAction gameAction, Integer excludedPlayerId) {
-        return new ActionContainer(null, gameAction, excludedPlayerId);
+    public static ActionContainer createPublic(GameAction gameAction, Integer excludedPlayerId, Long timestamp) {
+        return new ActionContainer(null, gameAction, excludedPlayerId, timestamp);
     }
 
-    public static ActionContainer createPrivate(int playerId, GameAction gameAction) {
-        return new ActionContainer(playerId, gameAction);
+    public static ActionContainer createPrivate(int playerId, GameAction gameAction, Long timestamp) {
+        return new ActionContainer(playerId, gameAction, timestamp);
     }
 
     public int getPlayerId() {
