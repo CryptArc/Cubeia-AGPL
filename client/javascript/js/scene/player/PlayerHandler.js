@@ -44,7 +44,11 @@ PlayerHandler.prototype.getPlayerEntityActionTimePercentRemaining = function (pl
 PlayerHandler.prototype.seatPlayerIdAtTable = function (pid, seatId) {
     if (pid == this.myPlayerPid)
     {
-        // TODO: HUD.
+        // First rotate the seats.
+        view.table.rotate(seatId);
+
+        // Then remove the seat for self, since he is now part of the hud.
+        $('#seat_nr_' + seatId + '_anchor').detach();
     }
     else
     {

@@ -1,8 +1,10 @@
 Table = function() {
     this.entityId = "tableEntity";
     this.myBalanceEntityId = "myBalanceEntity";
+    this.rotation = 0;
     this.playerTimerEntityId = "playerTimerEntityId";
     this.playerProgressBar = null;
+    this.numberOfSeats = 0;
 };
 
 Table.prototype.createTableOfSize = function(numberOfSeats, containerId) {
@@ -10,7 +12,7 @@ Table.prototype.createTableOfSize = function(numberOfSeats, containerId) {
     /*
      * the entityHandler creates, stores and returns an empty object which becomes the "tableEntity"
      */
-
+    this.numberOfSeats = numberOfSeats;
     var tableEntity = entityHandler.addEntity(this.entityId);
 
     tableEntity.ui = {};
@@ -177,9 +179,7 @@ Table.prototype.showCurrentState = function() {
     } else if (currentState == "playing") {
         document.getElementById(divId).style.backgroundColor = "64c";
     }
-
 };
-
 
 Table.prototype.getSeatBySeatNumber = function(seatNr) {
 	var tableEntity = entityHandler.getEntityById(this.entityId);
@@ -195,7 +195,6 @@ Table.prototype.findSeatForNewPlayer = function() {
             return tableEntity.seats[index];
         }
     }
-
 };
 
 Table.prototype.enableJoinTable = function() {
@@ -523,7 +522,7 @@ Table.prototype.getSeatLocationsForTableWithSize = function(numberOfSeats) {
 	        seatCoordinate = [zero, first, second, third, fourth, fifth, sixth, seventh];
 	        break;
 		case 10:
-//	        var zero = [50, 68];
+	        var zero = [50, 62];
 	        var first = [11, 62];
 	        var second = [11, 35];
 	        var third = [11, 10];
@@ -534,8 +533,43 @@ Table.prototype.getSeatLocationsForTableWithSize = function(numberOfSeats) {
 	        var eigth = [100 - second[0], second[1]];
 	        var ninth = [100 - first[0], first[1]];
 
-	        seatCoordinate = [first, second, third, fourth, fifth, sixth, seventh, eigth, ninth];
+	        seatCoordinate = [zero, first, second, third, fourth, fifth, sixth, seventh, eigth, ninth];
 	        break;
 	}
     return seatCoordinate;
 };
+
+/**
+ * Rotates the view so that given my seatId, the player to the left of me will be in seat 0 and so on.
+ *
+ * @param mySeatId
+ */
+Table.prototype.rotate = function(mySeatId) {
+    /*
+     * Here's what we are doing. If the player sits down on seat 8 (of 10), we will rotate
+     * all seats two steps, so that "self" is seated on seat 0. To do this, we first store
+     * the top, left and opacity of the current seats and the we set seat 0 to 2's values,
+     * 1 to 3's values, and so on, which will give seat 8 the position of seat 0.
+     */
+    var rotation = this.numberOfSeats - mySeatId;
+    if (this.rotation != rotation) {
+        var oldOpacities = new Array();
+        var oldTops = new Array();
+        var oldLefts = new Array();
+
+        for (i = 0; i < this.numberOfSeats; i++) {
+            oldOpacities[i] = $('#seat_nr_' + i + '_anchor').css("opacity");
+            oldLefts[i] = $('#seat_nr_' + i + '_anchor').css("left");
+            oldTops[i] = $('#seat_nr_' + i + '_anchor').css("top");
+        }
+
+        for (i = 0; i < this.numberOfSeats; i++) {
+            var rotatedIndex = (i + rotation) % this.numberOfSeats;
+            console.log("currently handling seat " + i + ". seat i will get the values from " + rotatedIndex);
+            $('#seat_nr_' + i + '_anchor').css({opacity: oldOpacities[rotatedIndex]});
+            $('#seat_nr_' + i + '_anchor').css({left: oldLefts[rotatedIndex]});
+            $('#seat_nr_' + i + '_anchor').css({top: oldTops[rotatedIndex]});
+        }
+        this.rotation = rotation;
+    }
+}

@@ -33,8 +33,6 @@ SeatHandler.prototype.setCurrentActingSeatEntity = function(seatEntity) {
     $("#"+this.activeSeatEntity.ui.divId).addClass("poker_seat_box_active");
 };
 
-
-
 SeatHandler.prototype.setCurrentPlayerActionTimeout = function(pid, timeToAct) {
 	if(pid == playerHandler.myPlayerPid) {
 		this.myTurn = true;
@@ -55,10 +53,7 @@ SeatHandler.prototype.setCurrentPlayerActionTimeout = function(pid, timeToAct) {
   
     this.setCurrentActingSeatEntity(seatEntity);
     console.log(seatEntity);
-
-
-
-};
+}
 
 SeatHandler.prototype.getPidByOccupiedSeatNumber = function(occupiedSeatNr) {
     console.log(occupiedSeatNr);
@@ -201,10 +196,7 @@ SeatHandler.prototype.addDealerButtonFieldToSeat = function(seatEntity) {
 
     seatEntity.ui.dealerButtonSlotDivId = uiEntity.ui.divId+"_slot";
     uiElementHandler.createDivElement(uiEntity.ui.divId, seatEntity.ui.dealerButtonSlotDivId, "", "anchor", null);
-
 };
-
-
 
 SeatHandler.prototype.addPlacedBetFieldToSeat = function(seatEntity) {
 

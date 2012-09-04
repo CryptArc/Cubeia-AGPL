@@ -46,15 +46,15 @@ CircularProgressBar.prototype = {
 	},
 
 	render : function(percent) {
-		if(percent>100) {
-			percent=100;
+		if (percent > 100) {
+			percent = 100;
 		}
 		
 		if (percent > 50 && !this.secondPartCreated) {
 			this.secondPartCreated = true;
 			$(".cpb-animated .cpb-slice", this.containerId).addClass("cpb-gt50");
 			$(".cpb-animated .cpb-fill", this.containerId).show();
-		} else if(percent <= 50 && this.secondPartCreated) {
+		} else if (percent <= 50 && this.secondPartCreated) {
 			this.secondPartCreated = false;
 			$(".cpb-animated .cpb-slice", this.containerId).removeClass("cpb-gt50");
 			$(".cpb-animated .cpb-fill", this.containerId).hide();

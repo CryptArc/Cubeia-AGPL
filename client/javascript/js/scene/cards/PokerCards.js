@@ -114,12 +114,11 @@ PokerCards.prototype.initOwnCardArea = function() {
     uiElementHandler.setDivElementParent(uiEntity.spatial.transform.anchorId, tableEntity.ui.divId);
 
     document.getElementById(uiEntity.ui.divId).style.width = 200;
-    document.getElementById(uiEntity.ui.divId).style.left = -100;
+    document.getElementById(uiEntity.ui.divId).style.left = -120;
     document.getElementById(uiEntity.ui.divId).style.top = -30;
 
     view.spatialManager.positionVisualEntityAtSpatial(uiEntity);
 };
-
 
 /**
  * Get a card

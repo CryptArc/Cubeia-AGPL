@@ -80,18 +80,23 @@ function joinGame() {
 //    fakeAction();
 }
 
+function rotate() {
+    view.table.rotate(6);
+}
+
 function fakeAction() {
     var cardId = 0;
-    for (var i = 0; i < 9; i++ ) {
-        seatPlayer(88+i, i, "Player" + i);
-        pokerDealer.dealCardIdToPid({player: 88+i, card: {cardId: cardId++, rank:13, suit:4}});
-        pokerDealer.dealCardIdToPid({player: 88+i, card: {cardId: cardId++, rank:13, suit:4}});
-        playerHandler.updateSeatBalance(88+i, "6.25");
+    for (var i = 0; i < 9; i+=2 ) {
+        console.log("Seating player " + (89+i));
+        seatPlayer(89+i, i, "Player" + i);
+        pokerDealer.dealCardIdToPid({player: 89+i, card: {cardId: cardId++, rank:13, suit:4}});
+        pokerDealer.dealCardIdToPid({player: 89+i, card: {cardId: cardId++, rank:13, suit:4}});
+        playerHandler.updateSeatBalance(89+i, "6.25");
     }
-    playerActions.handlePlayerActionFeedback(88+6, "Bet", 100);
-    playerActions.handlePlayerActionFeedback(88+8, "Call", 100);
-    playerActions.handlePlayerActionFeedback(88, "Raise", 125);
-    playerActions.handlePlayerActionFeedback(89, "Thinking", null);
+    playerActions.handlePlayerActionFeedback(89+4, "93", null);
+    playerActions.handlePlayerActionFeedback(89+6, "95", null);
+    playerActions.handlePlayerActionFeedback(89, "89", null);
+//    playerActions.handlePlayerActionFeedback(89, "89", null);
 
     pokerDealer.dealPublicCard({cardId: cardId++, rank:8, suit:3});
     pokerDealer.dealPublicCard({cardId: cardId++, rank:2, suit:1});

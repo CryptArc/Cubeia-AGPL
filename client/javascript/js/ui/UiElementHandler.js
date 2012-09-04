@@ -3,8 +3,12 @@ UiElementHandler = function() {
 };
 
 UiElementHandler.prototype.removeDivElement = function(id) {
-	var divId = document.getElementById(id);	
-	divId.parentNode.removeChild(divId);
+	var divId = document.getElementById(id);
+    if (!divId) {
+        console.log("Can't remove divId " + id + " because it does not exist.");
+    } else {
+        divId.parentNode.removeChild(divId);
+    }
 };
 
 UiElementHandler.prototype.setDivElementParent = function(id, parentId) {
