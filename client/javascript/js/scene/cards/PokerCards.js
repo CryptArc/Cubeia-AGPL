@@ -105,7 +105,7 @@ PokerCards.prototype.initOwnCardArea = function() {
 
     entityHandler.addUiComponent(uiEntity, "", "own_card_area", null);
 
-    var posX = 42;
+    var posX = 40;
     var posY = 64.5;
 
     tableEntity.ui.ownCardsDivId = uiEntity.ui.divId;

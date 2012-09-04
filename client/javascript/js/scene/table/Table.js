@@ -551,7 +551,9 @@ Table.prototype.rotate = function(mySeatId) {
      * the top, left and opacity of the current seats and the we set seat 0 to 2's values,
      * 1 to 3's values, and so on, which will give seat 8 the position of seat 0.
      */
+    if (mySeatId == 0) return;
     var rotation = this.numberOfSeats - mySeatId;
+    console.log("Rotating " + rotation + " steps. Number of seats: " + this.numberOfSeats);
     if (this.rotation != rotation) {
         var oldOpacities = new Array();
         var oldTops = new Array();

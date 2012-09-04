@@ -48,7 +48,7 @@ PlayerHandler.prototype.seatPlayerIdAtTable = function (pid, seatId) {
         view.table.rotate(seatId);
 
         // Then remove the seat for self, since he is now part of the hud.
-        $('#seat_nr_' + seatId + '_anchor').detach();
+        $('#seat_nr_' + seatId + '_anchor').hide();
     }
     else
     {
