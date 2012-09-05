@@ -185,18 +185,15 @@ UserInput.prototype.clickFoldButton = function() {
 
 
 UserInput.prototype.setUserActionProgressBar = function(currentTime) {
-	
 	if(view.seatHandler.myTurn) {
 		var playerEntity =  entityHandler.getEntityById(playerHandler.getPlayerEntityIdByPid(playerHandler.myPlayerPid));
 		
 		var percentRemaining = playerHandler.getPlayerEntityActionTimePercentRemaining(playerEntity, currentTime);
 		this.playerProgressBar.reset();
-		this.playerProgressBar.render(100-percentRemaining);		
+		this.playerProgressBar.render(percentRemaining);
 	}
 };
 
 UserInput.prototype.tick = function(currentTime) {
     this.setUserActionProgressBar(currentTime);
-
-
 };

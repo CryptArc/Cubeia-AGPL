@@ -48,26 +48,32 @@ PokerCards.prototype.clearSeatEntityCards = function(seatEntity) {
     uiElementHandler.removeElementChildren(0, divId);
 };
 
-PokerCards.prototype.setCardsFolded = function(seatEntity) {
- 
-    if (!seatEntity) return;
-    var cards = seatEntity.occupant.cardIds;
-    for(var i = 0; i<cards.length; i++) {
-    	console.log("setting cards folded = " + cards[i]);
-    	this.setClientCardDivImageUrl(cards[i], "gray_card_back.png");    	
+PokerCards.prototype.setCardsFolded = function(seatEntity, playerId) {
+    console.log("Player " + playerId + " folded. I am " + playerHandler.myPlayerPid);
+    if (playerId == playerHandler.myPlayerPid) {
+        console.log("I folded");
+        var cardHolderEntity = entityHandler.getEntityById("ownCardsAreaEntityId");
+        document.getElementById(cardHolderEntity.ui.divId).style.opacity = 0.2;
+    } else {
+        if (!seatEntity) return;
+        var cards = seatEntity.occupant.cardIds;
+        for (var i = 0; i < cards.length; i++) {
+            console.log("setting cards folded = " + cards[i]);
+            this.setClientCardDivImageUrl(cards[i], "gray_card_back.png");
+        }
     }
 };
 
 PokerCards.prototype.handCardIdToPlayerEntity = function(cardId, playerEntity, cardUrl) {
     if (playerEntity.pid == playerHandler.myPlayerPid) {
+        // Give card to self.
         var card = this.addClientCardWithIdAndUrl(cardId, cardUrl);
         var cardDivId = card.divId;
         var cardHolderEntity = entityHandler.getEntityById("ownCardsAreaEntityId");
+        document.getElementById(cardHolderEntity.ui.divId).style.opacity = 1;
         uiElementHandler.setDivElementParent(cardDivId, cardHolderEntity.ui.divId);
         document.getElementById(cardDivId).className = "hud_card";
-    }
-    else
-    {
+    } else {
         var seatEntity = view.table.getSeatBySeatNumber(playerEntity.state.seatId);
         if (!seatEntity) {
             console.log("Cannot find seat entity for seatId: " + playerEntity.state.seatId);

@@ -69,7 +69,6 @@ SeatHandler.prototype.createSeatNumberOnTableEntityAtXY = function(seatNr, table
     var seatEntity = entityHandler.addEntity(this.getSeatEntityIdBySeatNumber(seatNr));
 
     entityHandler.addUiComponent(seatEntity, "", "poker_seat_box", null);
-//    document.getElementById(uiEntity.ui.divId).style.width = 36+"px";
 
     console.log(seatEntity);
 
@@ -83,7 +82,6 @@ SeatHandler.prototype.createSeatNumberOnTableEntityAtXY = function(seatNr, table
     var actionPoint = {posX: 0, posY: 100};
     var balancePoint = {posX:0, posY:100};
     var playerTimer = {posX: 15, posY:50};
-//    var playerAction = {posX: 0, posY:20};
 
     var seatAttachmentPoints = {
         player:{transform:playerPoint},
@@ -92,7 +90,6 @@ SeatHandler.prototype.createSeatNumberOnTableEntityAtXY = function(seatNr, table
         actionLabel:{transform:actionPoint},
         balance:{transform:balancePoint},
         playerTimer:{transform:playerTimer}
-//        playerAction:{transform:playerAction}
     };
     seatEntity.spatial.attachmentPoints = seatAttachmentPoints;
     uiElementHandler.setDivElementParent(seatEntity.ui.divId, seatEntity.spatial.transform.anchorId);
@@ -107,15 +104,12 @@ SeatHandler.prototype.createSeatNumberOnTableEntityAtXY = function(seatNr, table
     this.addCardFieldToSeat(seatEntity);
     this.addDealerButtonFieldToSeat(seatEntity);
     
-
-    
     return seatEntity;
 
 };
 SeatHandler.prototype.addPlayerAvatar = function(seatEntity) {
 	 	var uiEntity = entityHandler.addEntity(seatEntity.id+"_avatarUI");
 	    entityHandler.addUiComponent(uiEntity, "", "player_avatar", null);
-
 
 	    var posX = seatEntity.spatial.attachmentPoints.playerTimer.transform.posX;
 	    var posY = seatEntity.spatial.attachmentPoints.playerTimer.transform.posY;
@@ -133,25 +127,8 @@ SeatHandler.prototype.addPlayerAvatar = function(seatEntity) {
 SeatHandler.prototype.addPlayerActionIndicator = function(seatEntity) {
     var uiEntity = entityHandler.addEntity(seatEntity.id+"_seatActionUi");
     entityHandler.addUiComponent(uiEntity, "", "seat_element_frame", null);
-
-//    document.getElementById(uiEntity.ui.divId).style.width = 36+"px";
-//    document.getElementById(uiEntity.ui.divId).style.height = 36+"px";
-//    document.getElementById(uiEntity.ui.divId).style.left = -18+"px";
-//    document.getElementById(uiEntity.ui.divId).style.top = -18+"px";
-
-//    var posX = seatEntity.spatial.attachmentPoints.playerAction.transform.posX;
-//    var posY = seatEntity.spatial.attachmentPoints.playerAction.transform.posY;
-
 	seatEntity.ui.seatActionFrameDivId = uiEntity.ui.divId;
     seatEntity.ui.seatActionSlotDivId = uiEntity.ui.divId+"_slot";
-
-//    entityHandler.addSpatial("body", uiEntity, 0, 0);
-//    uiElementHandler.setDivElementParent(uiEntity.ui.divId, uiEntity.spatial.transform.anchorId);
-//    uiElementHandler.setDivElementParent(uiEntity.spatial.transform.anchorId, seatEntity.ui.divId);
-//    view.spatialManager.positionVisualEntityAtSpatial(uiEntity);
-
-//    uiElementHandler.createDivElement(uiEntity.ui.divId, seatEntity.ui.seatActionSlotDivId, "", "seat_turn_state_passive", null);
-
 };
 
 SeatHandler.prototype.addPlayerTimerProgressBar = function(seatEntity) {
@@ -178,11 +155,6 @@ SeatHandler.prototype.addDealerButtonFieldToSeat = function(seatEntity) {
 
     var uiEntity = entityHandler.addEntity(seatEntity.id+"_dealerButtonUi");
     entityHandler.addUiComponent(uiEntity, "", "anchor", null);
-
-//    document.getElementById(uiEntity.ui.divId).style.width = 46+"px";
-//    document.getElementById(uiEntity.ui.divId).style.height = 46+"px";
-//    document.getElementById(uiEntity.ui.divId).style.left = -23+"px";
-//    document.getElementById(uiEntity.ui.divId).style.top = -23+"px";
 
     var posX = seatEntity.spatial.attachmentPoints.dealerButton.transform.posX;
     var posY = seatEntity.spatial.attachmentPoints.dealerButton.transform.posY;
@@ -250,7 +222,6 @@ SeatHandler.prototype.addPlayerToSeat = function(playerEntity, seatEntity) {
     if (playerEntity.pid == playerHandler.myPlayerPid) {
     	
     } else {
-    	
         document.getElementById(seatEntity.spatial.transform.anchorId).style.opacity = 1;
         uiElementHandler.setDivElementParent(playerEntity.spatial.transform.anchorId, seatEntity.ui.divId);
     }

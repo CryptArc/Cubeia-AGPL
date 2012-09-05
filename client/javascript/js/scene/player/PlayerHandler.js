@@ -60,9 +60,7 @@ PlayerHandler.prototype.seatPlayerIdAtTable = function (pid, seatId) {
 PlayerHandler.prototype.updateSeatBalance = function (pid, balance) {
     if (pid == this.myPlayerPid) {
         view.table.updateOwnBalance(balance);
-    }
-    else
-    {
+    } else {
         var playerEntity = entityHandler.getEntityById(this.getPlayerEntityIdByPid(pid));
         var seatEntityId = view.seatHandler.getSeatEntityIdBySeatNumber(playerEntity.state.seatId);
         var seatEntity = entityHandler.getEntityById(seatEntityId);
