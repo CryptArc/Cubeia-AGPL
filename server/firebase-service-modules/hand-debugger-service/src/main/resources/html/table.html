@@ -1,0 +1,59 @@
+<html>
+<head>
+    <script type="text/javascript" src="jquery.js"></script>
+    <link rel=StyleSheet href="style.css" type="text/css">
+
+    <script type="text/javascript">
+        $.urlParam = function(name) {
+            var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
+            if (!results) {
+                return 0;
+            }
+            return results[1] || 0;
+        }
+
+        // Get table id from URL parameters
+        var tableId = $.urlParam("tableid");
+
+
+        function addEvents(events, element) {
+            var items = [];
+            $.each(events, function(key, val) {
+                items.push('<div class="tableEvent"><div class="' + val.type + '">' + val.description + '</div></div>');
+            });
+
+            $('<div/>', {
+                'class': 'handHistory',
+                html: items.join('')
+            }).appendTo(element);
+
+        }
+
+        // Get current hand history in JSON format and add to page
+        $.getJSON('/api/table/id/' + tableId, function(data) {
+            $("#tableHeader").html("Poker Table " + tableId);
+            $('#current').append('<h3>Current Hand</h3>');
+            addEvents(data.events, '#current');
+        });
+
+
+        // Get previous hand history in JSON format and add to page
+        $.getJSON('/api/table/previous/id/' + tableId, function(data) {
+            $('<h3>Previous Hand</h3>').appendTo('#previous');
+            addEvents(data.events, '#previous');
+        });
+
+    </script>
+
+</head>
+
+<body>
+<div class="header"><h1 id="tableHeader"></h1></div>
+<br/>
+
+<div id="current"></div>
+<br/>
+
+<div id="previous"></div>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+</head>
+<body>
+<wicket:extend>
+
+    <div class="page-header">
+        <h1>Create Tournament</h1>
+    </div>
+
+    <span wicket:id="feedback">feedback messages will be put here</span>
+
+    <form wicket:id="tournamentForm">
+        <table class="table table-striped">
+            <tr>
+                <td>
+                    <label for="name">Name</label>
+                </td>
+                <td>
+                    <input wicket:id="name" id="name" type="text" size="10"/>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <label>Start date</label>
+                </td>
+                <td>
+                    <span type="text" class="input-xlarge" wicket:id="startDate"/>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <label>End date</label>
+                </td>
+                <td>
+                    <span type="text" class="input-xlarge" wicket:id="endDate"/>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <label for="schedule">Schedule (cron format) (Example: 0 */10 * * * ? = every ten minutes, 0 30 14 * * ? = every day at 14.30)</label>
+                </td>
+                <td>
+                    <input wicket:id="schedule" id="schedule" type="text" size="20"/>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <label for="minutesInAnnounced">Minutes in announced</label>
+                </td>
+                <td>
+                    <input wicket:id="minutesInAnnounced" id="minutesInAnnounced" type="text" size="20"/>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <label for="minutesInRegistering">Minutes in registering</label>
+                </td>
+                <td>
+                    <input wicket:id="minutesInRegistering" id="minutesInRegistering" type="text" size="20"/>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <label for="minutesVisibleAfterFinished">Minutes visible after finished</label>
+                </td>
+                <td>
+                    <input wicket:id="minutesVisibleAfterFinished" id="minutesVisibleAfterFinished" type="text" size="20"/>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <label for="seatsPerTable">Seats Per Table</label>
+                </td>
+                <td>
+                    <input wicket:id="seatsPerTable" id="seatsPerTable" type="text" size="20"/>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <label for="timingType">Timing [0(def)|1|2(expr)|3]</label>
+                </td>
+                <td>
+                    <input wicket:id="timingType" id="timingType" type="text" size="20"/>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <label for="minPlayers">Min Players</label>
+                </td>
+                <td>
+                    <input wicket:id="minPlayers" id="minPlayers" type="text" size="20"/>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <label for="maxPlayers">Max Players</label>
+                </td>
+                <td>
+                    <input wicket:id="maxPlayers" id="maxPlayers" type="text" size="20"/>
+                </td>
+            </tr>
+
+
+        </table>
+
+        <input type="submit" value="Create"/>
+    </form>
+
+</wicket:extend>
+</body>
+</html>
+
