@@ -57,7 +57,14 @@ TextFeedback.prototype.showSeatSpaceTextFeedback = function(pid, action, value) 
     if (value) {
         valueString = " &euro;<span style='color:#FFF;'>" + value + "</span>"
     }
-    document.getElementById(betFieldDivId).innerHTML = action + valueString;
+    document.getElementById(seatEntity.ui.betTextDivId).innerHTML=action;
+    if(action && action!="") {
+        $("#"+seatEntity.ui.betTextDivId).show();
+    }  else {
+        $("#"+seatEntity.ui.betTextDivId).hide();
+    }
+
+    document.getElementById(betFieldDivId).innerHTML = valueString;
 //    this.addSeatEventText(pid, action)
 };
 
@@ -134,7 +141,10 @@ TextFeedback.prototype.clearAllSeatSpaceTextFeedback = function() {
     for (index in tableEntity.seats) {
         var seatEntity = entityHandler.getEntityById(view.seatHandler.getSeatEntityIdBySeatNumber(index));
         var betFieldDivId = seatEntity.ui.betFieldDivId;
-        document.getElementById(betFieldDivId).innerHTML = "";
+        document.getElementById(seatEntity.ui.betTextDivId).innerHTML="";
+        var text = $("#"+seatEntity.ui.betTextDivId);
+        text.hide();
+        text.html("");
     }
 
 }

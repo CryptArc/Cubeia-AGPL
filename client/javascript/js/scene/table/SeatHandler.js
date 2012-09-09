@@ -95,13 +95,14 @@ SeatHandler.prototype.createSeatNumberOnTableEntityAtXY = function(seatNr, table
     uiElementHandler.setDivElementParent(seatEntity.ui.divId, seatEntity.spatial.transform.anchorId);
     this.addBalanceFieldToSeat(seatEntity);
     
-    this.addPlacedBetFieldToSeat(seatEntity);
+
     
     this.addPlayerTimerProgressBar(seatEntity);
     this.addPlayerActionIndicator(seatEntity);
     this.removePlayerFromSeat(seatEntity);
     this.addPlayerAvatar(seatEntity);
     this.addCardFieldToSeat(seatEntity);
+    this.addPlacedBetFieldToSeat(seatEntity);
     this.addDealerButtonFieldToSeat(seatEntity);
     
     return seatEntity;
@@ -129,6 +130,8 @@ SeatHandler.prototype.addPlayerActionIndicator = function(seatEntity) {
     entityHandler.addUiComponent(uiEntity, "", "seat_element_frame", null);
 	seatEntity.ui.seatActionFrameDivId = uiEntity.ui.divId;
     seatEntity.ui.seatActionSlotDivId = uiEntity.ui.divId+"_slot";
+
+
 };
 
 SeatHandler.prototype.addPlayerTimerProgressBar = function(seatEntity) {
@@ -172,17 +175,28 @@ SeatHandler.prototype.addDealerButtonFieldToSeat = function(seatEntity) {
 
 SeatHandler.prototype.addPlacedBetFieldToSeat = function(seatEntity) {
 
+    var betTextEntity = entityHandler.addEntity(seatEntity.id+"_betText");
     var uiEntity = entityHandler.addEntity(seatEntity.id+"_betFieldUi");
     entityHandler.addUiComponent(uiEntity, "", "player_action", null);
+    entityHandler.addUiComponent(betTextEntity,"","player_action_text",null);
 
     var posX = seatEntity.spatial.attachmentPoints.actionLabel.transform.posX;
     var posY = seatEntity.spatial.attachmentPoints.actionLabel.transform.posY;
 	seatEntity.ui.betFieldDivId = uiEntity.ui.divId;
+    seatEntity.ui.betTextDivId = betTextEntity.ui.divId;
 	
     entityHandler.addSpatial("body", uiEntity, posX, posY);
+    entityHandler.addSpatial("body",betTextEntity,posX,posY);
+
     uiElementHandler.setDivElementParent(uiEntity.ui.divId, uiEntity.spatial.transform.anchorId);
     uiElementHandler.setDivElementParent(uiEntity.spatial.transform.anchorId, seatEntity.ui.divId);
     view.spatialManager.positionVisualEntityAtSpatial(uiEntity);
+
+    uiElementHandler.setDivElementParent(betTextEntity.ui.divId, betTextEntity.spatial.transform.anchorId);
+    uiElementHandler.setDivElementParent(betTextEntity.spatial.transform.anchorId, seatEntity.ui.divId);
+    view.spatialManager.positionVisualEntityAtSpatial(betTextEntity);
+    $("#"+seatEntity.ui.betTextDivId).hide();
+
 };
 	
 SeatHandler.prototype.addBalanceFieldToSeat = function(seatEntity) {

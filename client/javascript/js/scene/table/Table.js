@@ -24,7 +24,7 @@ Table.prototype.createTableOfSize = function(numberOfSeats, containerId) {
     tableEntity.ui.joinButtonDivId = joinButtonDivs[1];
     tableEntity.ui.joinButtonLabelDivId = joinButtonDivs[2];
     tableEntity.ui.tablePotDivId = this.createTablePot(tableEntity.ui.divId);
-    tableEntity.ui.tablePotLabelDivId = this.createTablePotLabel(tableEntity.ui.divId);
+    //tableEntity.ui.tablePotLabelDivId = this.createTablePotLabel(tableEntity.ui.divId);
 
     pokerDealer.createDealerButton();
 
@@ -335,8 +335,7 @@ Table.prototype.clearButtonStates = function() {
  */
 Table.prototype.potUpdated = function(amount) {
 	var tableEntity = entityHandler.getEntityById(this.entityId);
-    document.getElementById(tableEntity.ui.tablePotLabelDivId).style.visibility = "visible";
-    document.getElementById(tableEntity.ui.tablePotDivId).innerHTML = "<span style='color: #9bba00;'>&euro;</span>" +
+    document.getElementById(tableEntity.ui.tablePotDivId).innerHTML = "<span style='color: #9bba00;'><span style='font-weight: normal;'>Pot:</span> &euro;</span>" +
         currencyFormatted(amount);
 };
 

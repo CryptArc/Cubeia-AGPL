@@ -152,20 +152,10 @@ div.poker_player
 div.player_balance
 {
     font-family: arial;
-    font-size: 25px;
+    font-size: 18px;
     font-weight: bold;
-    /*padding: -0px;*/
     padding-top: 31px;
     color: #fff;
-    /*background-color:#759006;*/
-    /*position:absolute;*/
-    /*border: 1px solid #000;*/
-    /*box-shadow: 0px 0px 4px #000;*/
-    /*border-radius: 12px;*/
-    /*height: 20px;*/
-    /*width: 0px;*/
-    /*left: 0px;*/
-    /*top: 0px;*/
 }
 
 div.player_action
@@ -185,6 +175,21 @@ div.player_action
     width: 200px;
     text-align: left;
     /*top: 0px;*/
+}
+
+div.player_action_text
+{
+    font-family: arial;
+    font-size: 18px;
+    color: #9bba00;
+    background-color: #262626;
+    opacity: 0.8;
+    width: 150px;
+    text-transform: uppercase;
+    margin-left: -38px;
+    margin-top:-8px;
+    text-align: center;
+    padding:3px 0px;
 }
 
 div.card_area
@@ -500,7 +505,7 @@ div.table_pot_area
 
     left: 28.5%;
     right: 40%;
-    top: 50.5%;
+    top: 48%;
 }
 
 div.table_pot_text
