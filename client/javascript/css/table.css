@@ -156,42 +156,61 @@ div.player_balance
     font-weight: bold;
     padding-top: 31px;
     color: #fff;
+    width: 150px;
+    text-align: center;
+    margin-left: -40px
 }
 
 div.player_action
 {
     font-family: arial;
     font-size: 25px;
-    /*font-weight: bold;*/
-    /*padding: -0px;*/
     padding-top: 58px;
     color: #9bba00;
-    /*background-color:#759006;*/
-    /*position:absolute;*/
-    /*border: 1px solid #000;*/
-    /*box-shadow: 0px 0px 4px #000;*/
-    /*border-radius: 12px;*/
-    /*height: 20px;*/
     width: 200px;
     text-align: left;
-    /*top: 0px;*/
 }
 
 div.player_action_text
 {
     font-family: arial;
-    font-size: 18px;
+    font-size: 14px;
     color: #9bba00;
     background-color: #262626;
     opacity: 0.8;
-    width: 150px;
+    width: 110px;
     text-transform: uppercase;
-    margin-left: -38px;
-    margin-top:-8px;
+    margin-left: -19px;
+    margin-top:-4px;
     text-align: center;
     padding:3px 0px;
+    text-shadow: none;
+    font-weight: bold;
+}
+div.raise-action, div.bet-action {
+    background-image: url("../images/raise-arrow.png");
+    background-size: 100%;
+    width: 17px;
+    height: 22px;
+    margin-left:2px;
+    display:inline-block;
+
+}
+div.call-action.action-inactive, div.check-action.action-inactive {
+    background-image: url("../images/check-arrow-inactive.png");
 }
 
+div.raise-action.action-inactive, div.bet-action.action-inactive {
+    background-image: url("../images/raise-arrow-inactive.png");
+}
+div.call-action, div.check-action {
+    background-image: url("../images/check-arrow.png");
+    background-size: 100%;
+    width: 22px;
+    height: 20px;
+    display:inline-block;
+
+}
 div.card_area
     {
     font-family: arial;
@@ -200,18 +219,18 @@ div.card_area
     font-size: 14px;
     text-shadow: #eee 0px 0px 2px;
     color: #aaa;
-		background-size: 100% 100%;
-		background-repeat:no-repeat;
-		text-shadow: #000 1px 1px 1px;
-		text-align: center;
-		padding: 0px;
-		position:absolute;
-		border-radius: 10px;
-        height: 80px;
-        width: 130px;
-        left: -56px;
-        top: 23px;
-    }
+    background-size: 100% 100%;
+    background-repeat:no-repeat;
+    text-shadow: #000 1px 1px 1px;
+    text-align: center;
+    padding: 0px;
+    position:absolute;
+    border-radius: 10px;
+    height: 80px;
+    width: 130px;
+    left: -56px;
+    top: 23px;
+}
 
 div.table_state
 {

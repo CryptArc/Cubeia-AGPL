@@ -43,7 +43,7 @@ TextFeedback.prototype.addLogText = function(text) {
     document.getElementById(textBoxDivId).innerHTML = textstring;
 };
 
-TextFeedback.prototype.showSeatSpaceTextFeedback = function(pid, action, value) {
+TextFeedback.prototype.showSeatSpaceTextFeedback = function(pid, action, value, actionType) {
     console.log(action)
 
     var playerEntityId = playerHandler.getPlayerEntityIdByPid(pid);
@@ -54,14 +54,20 @@ TextFeedback.prototype.showSeatSpaceTextFeedback = function(pid, action, value) 
 
     var betFieldDivId = seatEntity.ui.betFieldDivId;
     var valueString = "";
+
     if (value) {
-        valueString = " &euro;<span style='color:#FFF;'>" + value + "</span>"
+        if(actionType== ACTIONS.RAISE) {
+            $(".user-action").addClass("action-inactive");
+        }
+        valueString = "&euro;<span style='color:#FFF;'>" + value + '</span><div class="user-action '+actionType+'"></div>'
     }
-    document.getElementById(seatEntity.ui.betTextDivId).innerHTML=action;
+    var betText =  $("#"+seatEntity.ui.betTextDivId);
+    betText.html(action);
+
     if(action && action!="") {
-        $("#"+seatEntity.ui.betTextDivId).show();
+       betText.show();
     }  else {
-        $("#"+seatEntity.ui.betTextDivId).hide();
+        betText.hide();
     }
 
     document.getElementById(betFieldDivId).innerHTML = valueString;
@@ -141,7 +147,7 @@ TextFeedback.prototype.clearAllSeatSpaceTextFeedback = function() {
     for (index in tableEntity.seats) {
         var seatEntity = entityHandler.getEntityById(view.seatHandler.getSeatEntityIdBySeatNumber(index));
         var betFieldDivId = seatEntity.ui.betFieldDivId;
-        document.getElementById(seatEntity.ui.betTextDivId).innerHTML="";
+        $("#"+seatEntity.ui.betFieldDivId).html("");
         var text = $("#"+seatEntity.ui.betTextDivId);
         text.hide();
         text.html("");
@@ -150,7 +156,5 @@ TextFeedback.prototype.clearAllSeatSpaceTextFeedback = function() {
 }
 
 TextFeedback.prototype.tick = function(currentTime) {
-
-
 
 };

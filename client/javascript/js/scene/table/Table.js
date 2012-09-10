@@ -413,21 +413,22 @@ Table.prototype.handlePerformAction = function(performAction) {
 	}
     switch (performAction.action.type) {
         case POKER_PROTOCOL.ActionTypeEnum.CHECK:
-            playerActions.handlePlayerActionFeedback(performAction.player, "Check", null);
+            playerActions.handlePlayerActionFeedback(performAction.player, "Check", null, ACTIONS.CHECK);
             // player performAction.pid checks
             break;
         case POKER_PROTOCOL.ActionTypeEnum.CALL:
-            playerActions.handlePlayerActionFeedback(performAction.player, "Call", null);
+            var value = currencyFormatted(performAction.betAmount);
+            playerActions.handlePlayerActionFeedback(performAction.player, "Call", value, ACTIONS.CALL);
             // player performAction.pid calls
             break;
         case POKER_PROTOCOL.ActionTypeEnum.BET:
             var value = currencyFormatted(performAction.betAmount);
-            playerActions.handlePlayerActionFeedback(performAction.player, "Bet", value);
+            playerActions.handlePlayerActionFeedback(performAction.player, "Bet", value, ACTIONS.BET);
             // player performAction.pid bets performAction.action.minAmount
             break;
         case POKER_PROTOCOL.ActionTypeEnum.RAISE:
             var value = currencyFormatted(performAction.betAmount);
-            playerActions.handlePlayerActionFeedback(performAction.player, "Raise", value);
+            playerActions.handlePlayerActionFeedback(performAction.player, "Raise", value, ACTIONS.RAISE);
             // player performAction.pid raises performAction.action.minAmount
             break;
         case POKER_PROTOCOL.ActionTypeEnum.FOLD:
@@ -436,14 +437,16 @@ Table.prototype.handlePerformAction = function(performAction) {
             pokerCards.setCardsFolded(seatEntity, performAction.player);
             if (performAction.player != parseInt(pid)) {
                 document.getElementById(seatEntity.spatial.transform.anchorId).style.opacity = 0.4;
-                playerActions.handlePlayerActionFeedback(performAction.player, "Fold", null);
+                playerActions.handlePlayerActionFeedback(performAction.player, "Fold", null, ACTIONS.FOLD);
             }
             break;
         case POKER_PROTOCOL.ActionTypeEnum.SMALL_BLIND:
-            playerActions.handlePlayerActionFeedback(performAction.player, "Small Blind", null);
+            var value = currencyFormatted(performAction.betAmount);
+            playerActions.handlePlayerActionFeedback(performAction.player, "Small Blind", value);
             break;
         case POKER_PROTOCOL.ActionTypeEnum.BIG_BLIND:
-            playerActions.handlePlayerActionFeedback(performAction.player, "Big Blind", null);
+            var value = currencyFormatted(performAction.betAmount);
+            playerActions.handlePlayerActionFeedback(performAction.player, "Big Blind", value);
             break;
     }
     view.seatHandler.clearActiveSeatEntity();

@@ -89,8 +89,8 @@ PlayerHandler.prototype.unseatPlayer = function (pid) {
             var balanceDivId = table.seats[index].ui.balanceDivId;
             document.getElementById(balanceDivId).innerHTML = "";
             document.getElementById(table.seats[index].ui.betFieldDivId).innerHTML = "";
-            document.getElementById(table.seats[index].ui.betTextDivId).innerHTML = "";
-            $("#"+table.seats[index].ui.betTextDivId).hide();
+            var betText = $("#"+table.seats[index].ui.betTextDivId);
+            betText.html("").hide();
             seatHandler.removePlayerFromSeat(table.seats[index]);
         }
     }
