@@ -427,6 +427,7 @@ Table.prototype.handlePerformAction = function(performAction) {
             // player performAction.pid bets performAction.action.minAmount
             break;
         case POKER_PROTOCOL.ActionTypeEnum.RAISE:
+
             var value = currencyFormatted(performAction.betAmount);
             playerActions.handlePlayerActionFeedback(performAction.player, "Raise", value, ACTIONS.RAISE);
             // player performAction.pid raises performAction.action.minAmount

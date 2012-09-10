@@ -56,7 +56,8 @@ TextFeedback.prototype.showSeatSpaceTextFeedback = function(pid, action, value, 
     var valueString = "";
 
     if (value) {
-        if(actionType== ACTIONS.RAISE) {
+        if(actionType==ACTIONS.RAISE || actionType==ACTIONS.BET) {
+            this.clearAllActionText();
             $(".user-action").addClass("action-inactive");
         }
         valueString = "&euro;<span style='color:#FFF;'>" + value + '</span><div class="user-action '+actionType+'"></div>'
@@ -148,6 +149,16 @@ TextFeedback.prototype.clearAllSeatSpaceTextFeedback = function() {
         var seatEntity = entityHandler.getEntityById(view.seatHandler.getSeatEntityIdBySeatNumber(index));
         var betFieldDivId = seatEntity.ui.betFieldDivId;
         $("#"+seatEntity.ui.betFieldDivId).html("");
+        var text = $("#"+seatEntity.ui.betTextDivId);
+        text.hide();
+        text.html("");
+    }
+
+}
+TextFeedback.prototype.clearAllActionText = function() {
+    var tableEntity = entityHandler.getEntityById(view.table.entityId);
+    for (index in tableEntity.seats) {
+        var seatEntity = entityHandler.getEntityById(view.seatHandler.getSeatEntityIdBySeatNumber(index));
         var text = $("#"+seatEntity.ui.betTextDivId);
         text.hide();
         text.html("");
