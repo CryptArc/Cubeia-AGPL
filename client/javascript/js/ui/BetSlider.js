@@ -9,21 +9,21 @@ BetSlider.prototype.draw = function(parent) {
         animate: true,
         range: "min",
         orientation: "vertical",
-        value: this.minBet,
-        max: this.maxBet,
-        min: this.minBet,
+        value: this.minBet / 100,
+        max: this.maxBet / 100,
+        min: this.minBet / 100,
         step: 0.5,
 
         //this gets a live reading of the value and prints it on the page
         slide: function( event, ui ) {
             console.log("Slide: " + ui.value);
-             $("#sliderValue").html("$" + (ui.value / 100) + "<br>");
+             $("#sliderValue").html("$" + ui.value + "<br>");
         },
 
         //this updates the hidden form field so we can submit the data using a form
         change: function(event, ui) {
             console.log("Change: "+ui.value);
-            $("#sliderValue").html("$" + (ui.value / 100) + "<br>");
+            $("#sliderValue").html("$" + ui.value + "<br>");
         }
 
     });
@@ -43,7 +43,7 @@ BetSlider.prototype.draw = function(parent) {
 
         // parent.append("<div class='marker'>"+marker+"</div>");
     }
-
+    $("#sliderValue").html("$" + (this.minBet / 100) + "<br>");
 }
 
 BetSlider.prototype.setMinBet = function(minBet) {

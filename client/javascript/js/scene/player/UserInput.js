@@ -34,6 +34,7 @@ UserInput.prototype.betOK = function() {
     userInput.endUserTurn();
     console.log("User Action Button:   Bet ");
     userInput.hideSlider();
+    this.tempHiddenButtons = [];
 };
 
 UserInput.prototype.raiseOK = function() {
@@ -45,6 +46,7 @@ UserInput.prototype.raiseOK = function() {
     userInput.endUserTurn();
     console.log("User Action Button:   Raise ");
     userInput.hideSlider();
+    this.tempHiddenButtons = [];
 };
 
 UserInput.prototype.setupUserInput = function() {
@@ -86,7 +88,7 @@ UserInput.prototype.initPlayerGameActionUi = function(parentEntity) {
 
     var sliderCancel = function() {
         console.log("CANCEL!");
-        userInput.hideActionButtons();
+        userInput.hideSlider();
         userInput.showTempHiddenButtons();
     }
 
