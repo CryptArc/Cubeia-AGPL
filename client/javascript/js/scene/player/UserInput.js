@@ -1,6 +1,7 @@
 UserInput = function() {
     this.entityId = "userInputEntityId";
     this.playerProgressBar = null;
+    this.tempHiddenButtons = [];
 };
 
 UserInput.prototype.setCheckAvailable = function(playerAction) {
@@ -24,6 +25,27 @@ UserInput.prototype.setFoldAvailable = function() {
     this.showFold();
 };
 
+UserInput.prototype.betOK = function() {
+    console.log("Bet OK!");
+    userInput.hideActionButtons();
+    var amount = $("#sliderValue").text().replace('$', '');
+    console.log("Bet amount: " + amount);
+    playerActions.bet(amount * 100);
+    userInput.endUserTurn();
+    console.log("User Action Button:   Bet ");
+    userInput.hideSlider();
+};
+
+UserInput.prototype.raiseOK = function() {
+    console.log("Raise OK!");
+    userInput.hideActionButtons();
+    var amount = $("#sliderValue").text().replace('$', '');
+    console.log("Raise amount: " + amount);
+    playerActions.raise(amount * 100);
+    userInput.endUserTurn();
+    console.log("User Action Button:   Raise ");
+    userInput.hideSlider();
+};
 
 UserInput.prototype.setupUserInput = function() {
     var entity = entityHandler.addEntity(this.entityId);
@@ -38,19 +60,8 @@ UserInput.prototype.initPlayerGameActionUi = function(parentEntity) {
 
     entityHandler.addUiComponent(entity, "", "player_actions_frame", null, userInputEntity.ui.divId);
 
-//    var userProgressFrameId = "user_input_progressbar_frame";
-//    var userInputProgressbar = userProgressFrameId+"_bar";
-//    uiElementHandler.createDivElement(parentEntity.ui.divId, userProgressFrameId, "", "seat_timer_frame", null);
-//    document.getElementById(userProgressFrameId).style.left = 27+"%";
-//    document.getElementById(userProgressFrameId).style.right = 27+"%";
-//    document.getElementById(userProgressFrameId).style.top = 2+"px";
-//    document.getElementById(userProgressFrameId).style.height = 4+"px";
-//    document.getElementById(userProgressFrameId).style.width = "auto";
-//    uiElementHandler.createDivElement(userProgressFrameId, userInputProgressbar, "", "horizontal_progressbar", null);
-//    parentEntity.ui.userProgressBarDivId = userInputProgressbar;
-
     var placeBet = function() {
-        userInput.clickPlaceBetButton();
+        userInput.clickBetButton();
     };
 
     var raise = function() {
@@ -69,13 +80,25 @@ UserInput.prototype.initPlayerGameActionUi = function(parentEntity) {
         userInput.clickFoldButton();
     };
 
+    var sliderOK = function() {
+        userInput.hideActionButtons();
+    }
+
+    var sliderCancel = function() {
+        console.log("CANCEL!");
+        userInput.hideActionButtons();
+        userInput.showTempHiddenButtons();
+    }
+
     var buttonSide = 100;
     this.inputButtons = {
         foldButton: {label: "Fold", posX: 0, posY: 0, height: buttonSide, width: buttonSide, hasValue:false, clickFunction:fold},
         checkButton: {label: "Check", posX: 20, posY: 0, height: buttonSide, width: buttonSide, hasValue:false, clickFunction:check},
         callButton: {label: "Call", posX: 20, posY: 0, height: buttonSide, width: buttonSide, hasValue:false, clickFunction:call},
         betButton: {label: "Bet", posX: 40, posY: 0, height: buttonSide, width: buttonSide, hasValue:false, clickFunction:placeBet},
-        raiseButton: {label: "Raise", posX: 40, posY: 0, height: buttonSide, width: buttonSide, hasValue:false, clickFunction:raise}
+        raiseButton: {label: "Raise", posX: 40, posY: 0, height: buttonSide, width: buttonSide, hasValue:false, clickFunction:raise},
+        sliderCancelButton: {label: "Cancel", posX: 20, posY: 0, height: buttonSide, width: buttonSide, hasValue:false, clickFunction:sliderCancel},
+        sliderOKButton: {label: "OK", posX: 40, posY: 0, height: buttonSide, width: buttonSide, hasValue:false, clickFunction:sliderOK}
     };
 
     uiUtils.createActionButton(this.inputButtons.betButton, entity.ui.divId);
@@ -83,6 +106,8 @@ UserInput.prototype.initPlayerGameActionUi = function(parentEntity) {
     uiUtils.createActionButton(this.inputButtons.callButton, entity.ui.divId);
     uiUtils.createActionButton(this.inputButtons.checkButton, entity.ui.divId);
     uiUtils.createActionButton(this.inputButtons.foldButton, entity.ui.divId);
+    uiUtils.createActionButton(this.inputButtons.sliderCancelButton, entity.ui.divId);
+    uiUtils.createActionButton(this.inputButtons.sliderOKButton, entity.ui.divId);
 
     this.hideActionButtons();
 };
@@ -99,7 +124,6 @@ UserInput.prototype.clearUserEntityTimeToAct = function() {
 UserInput.prototype.endUserTurn = function() {
     this.hideActionButtons();
     this.clearUserEntityTimeToAct();
-
 };
 
 UserInput.prototype.hideActionButtons = function() {
@@ -109,6 +133,29 @@ UserInput.prototype.hideActionButtons = function() {
         document.getElementById(this.inputButtons[index].divId).style.visibility = "hidden";
     }
 };
+
+UserInput.prototype.tempHideActionButtons = function() {
+    for (var index in this.inputButtons) {
+        console.log(this.inputButtons[index]);
+        console.log("#### TEMP HIDING " + this.inputButtons[index].divId);
+        var button = document.getElementById(this.inputButtons[index].divId);
+        if (button.style.visibility == "visible") {
+            button.style.visibility = "hidden";
+            this.tempHiddenButtons.push(button);
+        }
+    }
+};
+
+UserInput.prototype.showTempHiddenButtons = function() {
+    console.log("Showing temp hidden buttons");
+    for (var index = 0; index < this.tempHiddenButtons.length; index++) {
+        var button = this.tempHiddenButtons[index];
+        console.log(button);
+        button.style.visibility = "visible";
+    }
+    this.tempHiddenButtons = [];
+};
+
 
 UserInput.prototype.showPlaceBet = function(playerAction) {
     this.setBetValue(playerAction.minAmount);
@@ -133,6 +180,17 @@ UserInput.prototype.showFold = function() {
     document.getElementById(this.inputButtons.foldButton.divId).style.visibility = "visible";
 };
 
+UserInput.prototype.showSliderOKCancel = function() {
+    document.getElementById(this.inputButtons.sliderCancelButton.divId).style.visibility = "visible";
+    document.getElementById(this.inputButtons.sliderOKButton.divId).style.visibility = "visible";
+};
+
+UserInput.prototype.hideSlider = function() {
+    $('#slider').remove();
+    document.getElementById(this.inputButtons.sliderCancelButton.divId).style.visibility = "hidden";
+    document.getElementById(this.inputButtons.sliderOKButton.divId).style.visibility = "hidden";
+};
+
 UserInput.prototype.setBetValueMinMax = function(min, valueMax) {
 
 };
@@ -149,19 +207,51 @@ UserInput.prototype.setBetValue = function(value) {
 //    document.getElementById(this.inputButtons.betButton.valueDivId).innerHTML = currencyFormatted(value);
 };
 
+UserInput.prototype.clickBetButton = function() {
+    $('#' + this.inputButtons.sliderOKButton.divId + '_button').click(this.betOK);
+    $('#' + this.inputButtons.sliderOKButton.divId + '_button_label').text("Bet");
+    jQuery('<span/>', {
+        id: 'sliderValue'
+    }).prependTo('#' + this.inputButtons.sliderOKButton.divId + '_button_label');
 
-
-
-UserInput.prototype.clickPlaceBetButton = function() {
-	playerActions.bet(view.table.validActions[POKER_PROTOCOL.ActionTypeEnum.BET].minAmount);
-    this.endUserTurn();
-    console.log("User Action Button:   Bet");
+    var min = view.table.validActions[POKER_PROTOCOL.ActionTypeEnum.BET].minAmount;
+    var max = view.table.validActions[POKER_PROTOCOL.ActionTypeEnum.BET].maxAmount;
+    this.showBetSlider(min, max);
 };
 
+UserInput.prototype.showBetSlider = function(minBet, maxBet) {
+    console.log("Showing bet slider, min = " + minBet + " max = " + maxBet);
+    jQuery('<div/>', {
+        id: 'slider',
+        class: 'cubeia'
+    }).appendTo('#body');
+
+    var slider = new BetSlider();
+    slider.setMinBet(minBet);
+    slider.setMaxBet(maxBet);
+
+    slider.addMarker("Min", minBet);
+    slider.addMarker("Half in", maxBet / 2);
+    slider.addMarker("All in", maxBet);
+
+    slider.draw($("#slider"));
+
+//    $(".bettingButton").hide();
+//    $(".sliderButton").show();
+    this.tempHideActionButtons();
+    this.showSliderOKCancel();
+}
+
 UserInput.prototype.clickRaiseButton = function() {
-    playerActions.raise(view.table.validActions[POKER_PROTOCOL.ActionTypeEnum.RAISE].minAmount);
-    this.endUserTurn();
-    console.log("User Action Button:   Raise ");
+    $('#' + this.inputButtons.sliderOKButton.divId + '_button').click(this.raiseOK);
+    $('#' + this.inputButtons.sliderOKButton.divId + '_button_label').text("Raise");
+    jQuery('<span/>', {
+        id: 'sliderValue'
+    }).prependTo('#' + this.inputButtons.sliderOKButton.divId + '_button_label');
+
+    var min = view.table.validActions[POKER_PROTOCOL.ActionTypeEnum.RAISE].minAmount;
+    var max = view.table.validActions[POKER_PROTOCOL.ActionTypeEnum.RAISE].maxAmount;
+    this.showBetSlider(min, max);
 };
 
 UserInput.prototype.clickCallButton = function() {

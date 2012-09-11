@@ -204,7 +204,6 @@ Table.prototype.enableJoinTable = function() {
     }
 
     this.showJoinButton();
-
 };
 
 Table.prototype.showTableFull = function() {
@@ -325,8 +324,10 @@ Table.prototype.handleRequestAction = function(requestAction) {
  */
 Table.prototype.clearButtonStates = function() {
 	userInput.hideActionButtons();
-	userInput.playerProgressBar.hide();		
-	
+    if (userInput.playerProgressBar) {
+	    userInput.playerProgressBar.hide();
+    }
+
 };
 
 /**
