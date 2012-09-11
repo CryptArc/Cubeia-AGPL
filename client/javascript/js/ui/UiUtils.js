@@ -35,7 +35,6 @@ UiUtils.prototype.createActionButton = function(buttonData, parentDivId) {
 
     if (buttonData.hasValue == true) {
         var valueLabelDiv = labelDivId+"_value";
-        document.getElementById(labelDivId).style.top = 16+"%";
         uiElementHandler.createDivElement(labelDivId, valueLabelDiv, "", "poker_button_value", null);
         buttonData.valueDivId = valueLabelDiv;
     }

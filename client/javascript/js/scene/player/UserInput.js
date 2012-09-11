@@ -96,7 +96,7 @@ UserInput.prototype.initPlayerGameActionUi = function(parentEntity) {
     this.inputButtons = {
         foldButton: {label: "Fold", posX: 0, posY: 0, height: buttonSide, width: buttonSide, hasValue:false, clickFunction:fold},
         checkButton: {label: "Check", posX: 20, posY: 0, height: buttonSide, width: buttonSide, hasValue:false, clickFunction:check},
-        callButton: {label: "Call", posX: 20, posY: 0, height: buttonSide, width: buttonSide, hasValue:false, clickFunction:call},
+        callButton: {label: "Call", posX: 20, posY: 0, height: buttonSide, width: buttonSide, hasValue:true, clickFunction:call},
         betButton: {label: "Bet", posX: 40, posY: 0, height: buttonSide, width: buttonSide, hasValue:false, clickFunction:placeBet},
         raiseButton: {label: "Raise", posX: 40, posY: 0, height: buttonSide, width: buttonSide, hasValue:false, clickFunction:raise},
         sliderCancelButton: {label: "Cancel", posX: 20, posY: 0, height: buttonSide, width: buttonSide, hasValue:false, clickFunction:sliderCancel},
@@ -199,7 +199,7 @@ UserInput.prototype.setBetValueMinMax = function(min, valueMax) {
 };
 
 UserInput.prototype.setCallValue = function(value) {
-//    document.getElementById(this.inputButtons.callButton.valueDivId).innerHTML = currencyFormatted(value);
+    document.getElementById(this.inputButtons.callButton.valueDivId).innerHTML ="€"+ currencyFormatted(value);
 };
 
 UserInput.prototype.setRaiseValue = function(value) {

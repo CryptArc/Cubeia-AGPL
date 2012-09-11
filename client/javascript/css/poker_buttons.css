@@ -107,13 +107,11 @@ div.poker_button_value
         pointer-events: none;
 		font-family: arial;
         text-align: center;
-		font-size: 15px;
+		font-size: 18px;
 		color: inherit;
-        opacity: 0.8;
-		text-shadow: #cef 0px 0px 5px;
 		padding: 0px;
 		position:absolute;
-        left: 0px;
         right: 0px;
-		top: 82%;
+        top:-80%;
+
 	}
