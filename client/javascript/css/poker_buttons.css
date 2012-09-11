@@ -98,7 +98,8 @@ div.poker_button_label
 		position:absolute;
         left: 0px;
         right: 10px;
-		top: 65%;
+        bottom: 4%;
+		/*top: 65%;*/
 	}
 
 div.poker_button_value

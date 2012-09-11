@@ -85,52 +85,53 @@ function rotate() {
 }
 
 function fakeAction() {
-    var cardId = 0;
-    for (var i = 0; i < 9; i+=2 ) {
-        console.log("Seating player " + (89+i));
-        seatPlayer(89+i, i, "Player" + i);
-        pokerDealer.dealCardIdToPid({player: 89+i, card: {cardId: cardId++, rank:13, suit:4}});
-        pokerDealer.dealCardIdToPid({player: 89+i, card: {cardId: cardId++, rank:13, suit:4}});
-        playerHandler.updateSeatBalance(89+i, "6.25");
-    }
-    playerActions.handlePlayerActionFeedback(89+4, "93", null);
-    playerActions.handlePlayerActionFeedback(89+6, "95", null);
-    playerActions.handlePlayerActionFeedback(89, "89", null);
+//    var cardId = 0;
+//    for (var i = 0; i < 9; i+=2 ) {
+//        console.log("Seating player " + (89+i));
+//        seatPlayer(89+i, i, "Player" + i);
+//        pokerDealer.dealCardIdToPid({player: 89+i, card: {cardId: cardId++, rank:13, suit:4}});
+//        pokerDealer.dealCardIdToPid({player: 89+i, card: {cardId: cardId++, rank:13, suit:4}});
+//        playerHandler.updateSeatBalance(89+i, "6.25");
+//    }
+//    playerActions.handlePlayerActionFeedback(89+4, "93", null);
+//    playerActions.handlePlayerActionFeedback(89+6, "95", null);
+//    playerActions.handlePlayerActionFeedback(89, "89", null);
 //    playerActions.handlePlayerActionFeedback(89, "89", null);
 
-    pokerDealer.dealPublicCard({cardId: cardId++, rank:8, suit:3});
-    pokerDealer.dealPublicCard({cardId: cardId++, rank:2, suit:1});
-    pokerDealer.dealPublicCard({cardId: cardId++, rank:11, suit:0});
-    pokerDealer.dealPublicCard({cardId: cardId++, rank:12, suit:3});
-    pokerDealer.dealPublicCard({cardId: cardId++, rank:10, suit:2});
-    view.table.potUpdated(1025);
-    pokerDealer.moveDealerButton(4);
+//    pokerDealer.dealPublicCard({cardId: cardId++, rank:8, suit:3});
+//    pokerDealer.dealPublicCard({cardId: cardId++, rank:2, suit:1});
+//    pokerDealer.dealPublicCard({cardId: cardId++, rank:11, suit:0});
+//    pokerDealer.dealPublicCard({cardId: cardId++, rank:12, suit:3});
+//    pokerDealer.dealPublicCard({cardId: cardId++, rank:10, suit:2});
+//    view.table.potUpdated(1025);
+//    pokerDealer.moveDealerButton(4);
 
-//    pid = 1;
-//    seatPlayer(1, 1, "player" + 1);
-//    seatPlayer(2, 2, "player" + 2);
-//
-//    var action = new POKER_PROTOCOL.RequestAction();
-//    var allowedAction = new POKER_PROTOCOL.PlayerAction();
-//    allowedAction.type = 6;
-//    allowedAction.minAmount = 0;
-//    allowedAction.maxAmount = 0;
-//
-//    var allowedAction2 = new POKER_PROTOCOL.PlayerAction();
-//    allowedAction2.type = 3;
-//    allowedAction2.minAmount = 100;
-//    allowedAction2.maxAmount = 1000;
-//
-//    var allowedAction3 = new POKER_PROTOCOL.PlayerAction();
-//    allowedAction3.type = 4;
-//    allowedAction3.minAmount = 100;
-//    allowedAction3.maxAmount = 500;
-//
-//    action.allowedActions = [allowedAction, allowedAction2, allowedAction3];
-//    action.timeToAct = 15000;
-//    action.currentPotSize = 0;
-//    action.player = 1;
-//    view.table.handleRequestAction(action);
+    pid = 88;
+    seatPlayer(1, 1, "player" + 1);
+    seatPlayer(88, 2, "player" + 88);
+
+    var action = new POKER_PROTOCOL.RequestAction();
+    var allowedAction = new POKER_PROTOCOL.PlayerAction();
+    allowedAction.type = 6;
+    allowedAction.minAmount = 0;
+    allowedAction.maxAmount = 0;
+
+    var allowedAction2 = new POKER_PROTOCOL.PlayerAction();
+    allowedAction2.type = 3;
+    allowedAction2.minAmount = 100;
+    allowedAction2.maxAmount = 1000;
+
+    var allowedAction3 = new POKER_PROTOCOL.PlayerAction();
+    allowedAction3.type = 4;
+    allowedAction3.minAmount = 100;
+    allowedAction3.maxAmount = 500;
+
+    action.allowedActions = [allowedAction, allowedAction2, allowedAction3];
+    action.timeToAct = 15000;
+    action.currentPotSize = 0;
+    action.player = 88;
+//    view.table.validActions = action.allowedActions;
+    view.table.handleRequestAction(action);
 };
 
 
