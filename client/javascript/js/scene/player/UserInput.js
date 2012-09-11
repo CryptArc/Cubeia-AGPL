@@ -126,6 +126,7 @@ UserInput.prototype.clearUserEntityTimeToAct = function() {
 UserInput.prototype.endUserTurn = function() {
     this.hideActionButtons();
     this.clearUserEntityTimeToAct();
+    this.tempHiddenButtons = [];
 };
 
 UserInput.prototype.hideActionButtons = function() {
@@ -138,10 +139,10 @@ UserInput.prototype.hideActionButtons = function() {
 
 UserInput.prototype.tempHideActionButtons = function() {
     for (var index in this.inputButtons) {
-        console.log(this.inputButtons[index]);
-        console.log("#### TEMP HIDING " + this.inputButtons[index].divId);
         var button = document.getElementById(this.inputButtons[index].divId);
         if (button.style.visibility == "visible") {
+            console.log("#### TEMP HIDING " + this.inputButtons[index].divId);
+            console.log(this.inputButtons[index]);
             button.style.visibility = "hidden";
             this.tempHiddenButtons.push(button);
         }
