@@ -126,7 +126,7 @@ SeatHandler.prototype.addPlayerAvatar = function(seatEntity) {
     seatEntity.ui.avatarUI = uiEntity.ui.divId+"Avatar";
     var randomAvatarId = Math.floor(Math.random() * 9);
     console.log("Setting avatar " + randomAvatarId + " on avatar " + uiEntity.ui.divId);
-    $('#' + uiEntity.ui.divId).css('background-image','url(images/players/heroes/hero' + randomAvatarId + '.png)')
+    $('#' + uiEntity.ui.divId).css('background-image','url(images/players/player' + randomAvatarId + '.png)')
 
     //uiElementHandler.createDivElement(seatEntity.ui.divId, seatEntity.ui.avatarUI, "", "class", null);
 };
