@@ -108,22 +108,27 @@ SeatHandler.prototype.createSeatNumberOnTableEntityAtXY = function(seatNr, table
     return seatEntity;
 
 };
+
 SeatHandler.prototype.addPlayerAvatar = function(seatEntity) {
-	 	var uiEntity = entityHandler.addEntity(seatEntity.id+"_avatarUI");
-	    entityHandler.addUiComponent(uiEntity, "", "player_avatar", null);
+    var uiEntity = entityHandler.addEntity(seatEntity.id+"_avatarUI");
+    entityHandler.addUiComponent(uiEntity, "", "player_avatar", null);
 
-	    var posX = seatEntity.spatial.attachmentPoints.playerTimer.transform.posX;
-	    var posY = seatEntity.spatial.attachmentPoints.playerTimer.transform.posY;
+    var posX = seatEntity.spatial.attachmentPoints.playerTimer.transform.posX;
+    var posY = seatEntity.spatial.attachmentPoints.playerTimer.transform.posY;
 
-	    seatEntity.ui.avatarDiv = uiEntity.ui.divId;
+    seatEntity.ui.avatarDiv = uiEntity.ui.divId;
 
-	    entityHandler.addSpatial(seatEntity.ui.divId, uiEntity, posX, posY);
-	    uiElementHandler.setDivElementParent(uiEntity.ui.divId, uiEntity.spatial.transform.anchorId);
-	    uiElementHandler.setDivElementParent(uiEntity.spatial.transform.anchorId, seatEntity.ui.divId);
-	    view.spatialManager.positionVisualEntityAtSpatial(uiEntity);
+    entityHandler.addSpatial(seatEntity.ui.divId, uiEntity, posX, posY);
+    uiElementHandler.setDivElementParent(uiEntity.ui.divId, uiEntity.spatial.transform.anchorId);
+    uiElementHandler.setDivElementParent(uiEntity.spatial.transform.anchorId, seatEntity.ui.divId);
+    view.spatialManager.positionVisualEntityAtSpatial(uiEntity);
 
-	    seatEntity.ui.avatarUI = uiEntity.ui.divId+"Avatar";
-	    //uiElementHandler.createDivElement(seatEntity.ui.divId, seatEntity.ui.avatarUI, "", "class", null);
+    seatEntity.ui.avatarUI = uiEntity.ui.divId+"Avatar";
+    var randomAvatarId = Math.floor(Math.random() * 9);
+    console.log("Setting avatar " + randomAvatarId + " on avatar " + uiEntity.ui.divId);
+    $('#' + uiEntity.ui.divId).css('background-image','url(images/players/heroes/hero' + randomAvatarId + '.png)')
+
+    //uiElementHandler.createDivElement(seatEntity.ui.divId, seatEntity.ui.avatarUI, "", "class", null);
 };
 SeatHandler.prototype.addPlayerActionIndicator = function(seatEntity) {
     var uiEntity = entityHandler.addEntity(seatEntity.id+"_seatActionUi");
