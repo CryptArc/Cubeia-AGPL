@@ -53,7 +53,8 @@ PokerCards.prototype.setCardsFolded = function(seatEntity, playerId) {
     if (playerId == playerHandler.myPlayerPid) {
         console.log("I folded");
         var cardHolderEntity = entityHandler.getEntityById("ownCardsAreaEntityId");
-        document.getElementById(cardHolderEntity.ui.divId).style.opacity = 0.2;
+        var cardHolderElement = document.getElementById(cardHolderEntity.ui.divId);
+        TweenMax.to(cardHolderElement, 0.5, {css:{opacity:0.2}});
     } else {
         if (!seatEntity) return;
         var cards = seatEntity.occupant.cardIds;
@@ -65,6 +66,7 @@ PokerCards.prototype.setCardsFolded = function(seatEntity, playerId) {
 };
 
 PokerCards.prototype.handCardIdToPlayerEntity = function(cardId, playerEntity, cardUrl) {
+    console.log("Dealing card " + cardId + " to entity " + playerEntity);
     if (playerEntity.pid == playerHandler.myPlayerPid) {
         // Give card to self.
         var card = this.addClientCardWithIdAndUrl(cardId, cardUrl);
@@ -72,7 +74,10 @@ PokerCards.prototype.handCardIdToPlayerEntity = function(cardId, playerEntity, c
         var cardHolderEntity = entityHandler.getEntityById("ownCardsAreaEntityId");
         document.getElementById(cardHolderEntity.ui.divId).style.opacity = 1;
         uiElementHandler.setDivElementParent(cardDivId, cardHolderEntity.ui.divId);
-        document.getElementById(cardDivId).className = "hud_card";
+        var cardElement = document.getElementById(cardDivId);
+        cardElement.className = "hud_card";
+        TweenMax.to(cardElement, 0.6, {css:{opacity:1}});
+        TweenMax.to(cardElement, 0.4, {css:{top:0}});
     } else {
         var seatEntity = view.table.getSeatBySeatNumber(playerEntity.state.seatId);
         if (!seatEntity) {
@@ -83,6 +88,9 @@ PokerCards.prototype.handCardIdToPlayerEntity = function(cardId, playerEntity, c
             var cardDivId = card.divId;
             uiElementHandler.setDivElementParent(cardDivId, cardFieldDivId);
             this.addCardIdToEntity(seatEntity,cardId);
+            var cardElement = document.getElementById(cardDivId);
+            TweenMax.to(cardElement, 0.6, {css:{opacity:1}});
+            TweenMax.to(cardElement, 0.4, {css:{top:0}});
         }
     }
 };

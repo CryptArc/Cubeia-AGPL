@@ -17,7 +17,7 @@ PokerDealer.prototype.dealCardIdToPid = function(cardToDeal) {
     var playerEntityId = playerHandler.getPlayerEntityIdByPid(cardToDeal.player);
     if(playerEntityId) {
 	    var seatEntity = view.table.getSeatBySeatedEntityId(playerEntityId);
-	    if(seatEntity) {
+	    if (seatEntity) {
 	    	document.getElementById(seatEntity.spatial.transform.anchorId).style.opacity = 1;     	
 	    }
     }
@@ -28,11 +28,15 @@ PokerDealer.prototype.dealCardIdToPid = function(cardToDeal) {
  * Deal a public card
  * @param {POKER_PROTOCOL.GameCard} gameCard
  */
-PokerDealer.prototype.dealPublicCard = function(gameCard) {
+PokerDealer.prototype.dealCommunityCard = function(gameCard) {
     console.log("Deal Community Card: "+gameCard.cardId);
     var cardUrl = pokerCards.getCardUrl(gameCard);
     console.log(cardUrl);
     var card = pokerCards.addClientCardWithIdAndUrl(gameCard.cardId, cardUrl);
+    var cardElement = document.getElementById(card.divId);
+    console.log("Comm card: " + card.divId + " el " + cardElement);
+    TweenMax.to(cardElement, 0.6, {css:{opacity:1}});
+    TweenMax.to(cardElement, 0.4, {css:{top:0}});
     console.log(card);
     view.communityCards.setClientCardAsCommunityCard(card);
 };
@@ -64,8 +68,29 @@ PokerDealer.prototype.moveDealerButton = function(seatId) {
     var seatEntity = entityHandler.getEntityById(view.seatHandler.getSeatEntityIdBySeatNumber(seatId));
     if (!seatEntity) return;
 
-    var targetDivId = seatEntity.ui.dealerButtonSlotDivId;
-    uiElementHandler.setDivElementParent(dealerButton.ui.divId, targetDivId);
+    var button = $('#' + dealerButton.ui.divId);
+    var offset = button.offset();
+    var target = $('#' + seatEntity.ui.dealerButtonSlotDivId);
+    var targetOffset = target.offset();
+
+    // Set the button's position as fixed and use its global coordinates.
+    button.css('position','fixed');
+    button.css('left', offset.left);
+    button.css('top', offset.top);
+
+    // Create an onComplete-function that will detach the element from the old parent and add it to the new.
+    function onComplete() {
+        button.detach();
+        button.appendTo(target);
+
+        // Clear the css properties so it get the parent's properties instead.
+        button.css('position','');
+        button.css('left', '');
+        button.css('top', '');
+    }
+
+    // Animate the coordinates to the global coordinates of the destination.
+    TweenMax.to(button, 0.4, {css:{top:targetOffset.top, left:targetOffset.left}});
 };
 
 

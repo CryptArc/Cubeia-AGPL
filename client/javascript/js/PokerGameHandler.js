@@ -70,7 +70,7 @@ com.cubeia.games.poker.PokerGameHandler = function(callbackInstance) {
 	 */
 	this.handleDealPublicCards= function(dealPublicCards) {
 		for ( var i = 0; i < dealPublicCards.cards.length; i ++ ) {
-		 	pokerDealer.dealPublicCard(dealPublicCards.cards[i]);
+		 	pokerDealer.dealCommunityCard(dealPublicCards.cards[i]);
 		}
 	};
 	
