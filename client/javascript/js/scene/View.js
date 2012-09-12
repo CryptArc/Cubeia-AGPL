@@ -8,13 +8,20 @@ View = function(containerId) {
     this.watchingPlayers = new WatchingPlayers();
     this.renderLoop = new RenderLoop();
     this.textFeedback = new TextFeedback();
-}
+};
 
-
+View.prototype.clear = function() {
+    $("#"+this.containerId).remove();
+    this.table.clear();
+    $(".anchor").remove();
+    $(".seat_element_frame").remove();
+    $("#userInputEntityId_divId").remove();
+    $("#dealer_button_entity_divId").remove();
+    $("#myBalanceEntity_divId").remove();
+    $("#playerTimerEntityId_divId").remove();
+};
 View.prototype.initTableView = function(numberOfSeats) {
-    var id = uiElementHandler.createDivElement("body", this.containerId, "View Container", "screenframe", null)
-
-//    var container = document.getElementById(id);
+    var id = uiElementHandler.createDivElement("body", this.containerId, "View Container", "screenframe", null);
 
     var parent = document.getElementsByTagName("head")[0];
 

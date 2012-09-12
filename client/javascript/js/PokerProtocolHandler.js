@@ -18,117 +18,117 @@ POKER_PROTOCOL.PokerProtocolHandler = function(pokerGameHandler) {
 		
 		console.log("received protocolObject - classId=" + classId);
 		
-		var protocolObject = POKER_PROTOCOL.ProtocolObjectFactory.create(classId, gameData);
+		var protocolObject = com.cubeia.games.poker.io.protocol.ProtocolObjectFactory.create(classId, gameData);
 		
 		//console.log(protocolObject);
 		
 		switch ( protocolObject.classId() ) {
-			case POKER_PROTOCOL.BestHand.CLASSID:
+			case com.cubeia.games.poker.io.protocol.BestHand.CLASSID:
 				this.pokerGameHandler.handleBestHand(protocolObject);
 				break;
-			case POKER_PROTOCOL.BuyInInfoRequest.CLASSID:
+			case com.cubeia.games.poker.io.protocol.BuyInInfoRequest.CLASSID:
 				this.pokerGameHandler.handleBuyInInfoRequest(protocolObject);
 				break;
-			case POKER_PROTOCOL.BuyInInfoResponse.CLASSID:
+			case com.cubeia.games.poker.io.protocol.BuyInInfoResponse.CLASSID:
 				this.pokerGameHandler.handleBuyInInfoResponse(protocolObject);
 				break;
-			case POKER_PROTOCOL.BuyInResponse.CLASSID:
+			case com.cubeia.games.poker.io.protocol.BuyInResponse.CLASSID:
 				this.pokerGameHandler.handleBuyInResponse(protocolObject);
 				break;
-			case POKER_PROTOCOL.CardToDeal.CLASSID:
+			case com.cubeia.games.poker.io.protocol.CardToDeal.CLASSID:
 				this.pokerGameHandler.handleCardToDeal(protocolObject);
 				break;
-			case POKER_PROTOCOL.DealerButton.CLASSID:
+			case com.cubeia.games.poker.io.protocol.DealerButton.CLASSID:
 				this.pokerGameHandler.handleDealerButton(protocolObject);
 				break;
-			case POKER_PROTOCOL.DealPrivateCards.CLASSID:
+			case com.cubeia.games.poker.io.protocol.DealPrivateCards.CLASSID:
 				this.pokerGameHandler.handleDealPrivateCards(protocolObject);
 				break;
-			case POKER_PROTOCOL.DealPublicCards.CLASSID:
+			case com.cubeia.games.poker.io.protocol.DealPublicCards.CLASSID:
 				this.pokerGameHandler.handleDealPublicCards(protocolObject);
 				break;
-			case POKER_PROTOCOL.DeckInfo.CLASSID:
+			case com.cubeia.games.poker.io.protocol.DeckInfo.CLASSID:
 				this.pokerGameHandler.handleDeckInfo(protocolObject);
 				break;
-			case POKER_PROTOCOL.ErrorPacket.CLASSID:
+			case com.cubeia.games.poker.io.protocol.ErrorPacket.CLASSID:
 				this.pokerGameHandler.handleErrorPacket(protocolObject);
 				break;
-			case POKER_PROTOCOL.ExposePrivateCards.CLASSID:
+			case com.cubeia.games.poker.io.protocol.ExposePrivateCards.CLASSID:
 				this.pokerGameHandler.handleExposePrivateCards(protocolObject);
 				break;
-			case POKER_PROTOCOL.ExternalSessionInfoPacket.CLASSID:
+			case com.cubeia.games.poker.io.protocol.ExternalSessionInfoPacket.CLASSID:
 				this.pokerGameHandler.handleExternalSessionInfoPacket(protocolObject);
 				break;
-			case POKER_PROTOCOL.FuturePlayerAction.CLASSID:
+			case com.cubeia.games.poker.io.protocol.FuturePlayerAction.CLASSID:
 				this.pokerGameHandler.handleFuturePlayerAction(protocolObject);
 				break;
-			case POKER_PROTOCOL.GameCard.CLASSID:
+			case com.cubeia.games.poker.io.protocol.GameCard.CLASSID:
 				this.pokerGameHandler.handleGameCard(protocolObject);
 				break;
-			case POKER_PROTOCOL.HandCanceled.CLASSID:
+			case com.cubeia.games.poker.io.protocol.HandCanceled.CLASSID:
 				this.pokerGameHandler.handleHandCanceled(protocolObject);
 				break;
-			case POKER_PROTOCOL.HandEnd.CLASSID:
+			case com.cubeia.games.poker.io.protocol.HandEnd.CLASSID:
 				this.pokerGameHandler.handleHandEnd(protocolObject);
 				break;
-			case POKER_PROTOCOL.InformFutureAllowedActions.CLASSID:
+			case com.cubeia.games.poker.io.protocol.InformFutureAllowedActions.CLASSID:
 				this.pokerGameHandler.handleInformFutureAllowedActions(protocolObject);
 				break;
-			case POKER_PROTOCOL.PerformAction.CLASSID:
+			case com.cubeia.games.poker.io.protocol.PerformAction.CLASSID:
 				this.pokerGameHandler.handlePerformAction(protocolObject);
 				break;
-			case POKER_PROTOCOL.PingPacket.CLASSID:
+			case com.cubeia.games.poker.io.protocol.PingPacket.CLASSID:
 				this.pokerGameHandler.handlePingPacket(protocolObject);
 				break;
-			case POKER_PROTOCOL.PlayerAction.CLASSID:
+			case com.cubeia.games.poker.io.protocol.PlayerAction.CLASSID:
 				this.pokerGameHandler.handlePlayerAction(protocolObject);
 				break;
-			case POKER_PROTOCOL.PlayerBalance.CLASSID:
+			case com.cubeia.games.poker.io.protocol.PlayerBalance.CLASSID:
 				this.pokerGameHandler.handlePlayerBalance(protocolObject);
 				break;
-			case POKER_PROTOCOL.PlayerDisconnectedPacket.CLASSID:
+			case com.cubeia.games.poker.io.protocol.PlayerDisconnectedPacket.CLASSID:
 				this.pokerGameHandler.handlePlayerDisconnectedPacket(protocolObject);
 				break;
-			case POKER_PROTOCOL.PlayerHandStartStatus.CLASSID:
+			case com.cubeia.games.poker.io.protocol.PlayerHandStartStatus.CLASSID:
 				this.pokerGameHandler.handlePlayerHandStartStatus(protocolObject);
 				break;
-			case POKER_PROTOCOL.PlayerPokerStatus.CLASSID:
+			case com.cubeia.games.poker.io.protocol.PlayerPokerStatus.CLASSID:
 				this.pokerGameHandler.handlePlayerPokerStatus(protocolObject);
 				break;
-			case POKER_PROTOCOL.PlayerReconnectedPacket.CLASSID:
+			case com.cubeia.games.poker.io.protocol.PlayerReconnectedPacket.CLASSID:
 				this.pokerGameHandler.handlePlayerReconnectedPacket(protocolObject);
 				break;
-			case POKER_PROTOCOL.PlayerState.CLASSID:
+			case com.cubeia.games.poker.io.protocol.PlayerState.CLASSID:
 				this.pokerGameHandler.handlePlayerState(protocolObject);
 				break;
-			case POKER_PROTOCOL.PingPacket.CLASSID:
+			case com.cubeia.games.poker.io.protocol.PingPacket.CLASSID:
 				this.pokerGameHandler.handlePingPacket(protocolObject);
 				break;
-			case POKER_PROTOCOL.PongPacket.CLASSID:
+			case com.cubeia.games.poker.io.protocol.PongPacket.CLASSID:
 				this.pokerGameHandler.handlePongPacket(protocolObject);
 				break;
-            case POKER_PROTOCOL.PotTransfers.CLASSID:
+            case com.cubeia.games.poker.io.protocol.PotTransfers.CLASSID:
                 this.pokerGameHandler.handlePotTransfers(protocolObject);
                 break;
-			case POKER_PROTOCOL.RakeInfo.CLASSID:
+			case com.cubeia.games.poker.io.protocol.RakeInfo.CLASSID:
 				this.pokerGameHandler.handleRakeInfo(protocolObject);
 				break;
-			case POKER_PROTOCOL.RequestAction.CLASSID:
+			case com.cubeia.games.poker.io.protocol.RequestAction.CLASSID:
 				this.pokerGameHandler.handleRequestAction(protocolObject);
 				break;
-			case POKER_PROTOCOL.StartHandHistory.CLASSID:
+			case com.cubeia.games.poker.io.protocol.StartHandHistory.CLASSID:
 				this.pokerGameHandler.handleStartHandHistory(protocolObject);
 				break;
-			case POKER_PROTOCOL.StartNewHand.CLASSID:
+			case com.cubeia.games.poker.io.protocol.StartNewHand.CLASSID:
 				this.pokerGameHandler.handleStartNewHand(protocolObject);
 				break;
-			case POKER_PROTOCOL.StopHandHistory.CLASSID:
+			case com.cubeia.games.poker.io.protocol.StopHandHistory.CLASSID:
 				this.pokerGameHandler.handleStopHandHistory(protocolObject);
 				break;
-			case POKER_PROTOCOL.TakeBackUncalledBet.CLASSID:
+			case com.cubeia.games.poker.io.protocol.TakeBackUncalledBet.CLASSID:
 				this.pokerGameHandler.handleTakeBackUncalledBet(protocolObject);
 				break;
-			case POKER_PROTOCOL.TournamentOut.CLASSID:
+			case com.cubeia.games.poker.io.protocol.TournamentOut.CLASSID:
 				this.pokerGameHandler.handleTournamentOut(protocolObject);
 				break;
             default:

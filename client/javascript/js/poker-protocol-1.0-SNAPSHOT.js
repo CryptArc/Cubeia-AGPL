@@ -1,76 +1,103 @@
 // I AM AUTO-GENERATED, DON'T CHECK ME INTO SUBVERSION (or else...)
 
-var POKER_PROTOCOL = POKER_PROTOCOL || {};
+var com = com || {};
+com.cubeia = com.cubeia || {};
+com.cubeia.games = com.cubeia.games || {};
+com.cubeia.games.poker = com.cubeia.games.poker || {};
+com.cubeia.games.poker.io = com.cubeia.games.poker.io || {};
+com.cubeia.games.poker.io.protocol = com.cubeia.games.poker.io.protocol || {};
 
 
-
-POKER_PROTOCOL.ActionTypeEnum=function(){};
-POKER_PROTOCOL.ActionTypeEnum.SMALL_BLIND=0;
-POKER_PROTOCOL.ActionTypeEnum.BIG_BLIND=1;
-POKER_PROTOCOL.ActionTypeEnum.CALL=2;
-POKER_PROTOCOL.ActionTypeEnum.CHECK=3;
-POKER_PROTOCOL.ActionTypeEnum.BET=4;
-POKER_PROTOCOL.ActionTypeEnum.RAISE=5;
-POKER_PROTOCOL.ActionTypeEnum.FOLD=6;
-POKER_PROTOCOL.ActionTypeEnum.DECLINE_ENTRY_BET=7;
-POKER_PROTOCOL.ActionTypeEnum.ANTE=8;
-POKER_PROTOCOL.ActionTypeEnum.makeActionTypeEnum=function(value){switch(value){case 0:return POKER_PROTOCOL.ActionTypeEnum.SMALL_BLIND;
-case 1:return POKER_PROTOCOL.ActionTypeEnum.BIG_BLIND;
-case 2:return POKER_PROTOCOL.ActionTypeEnum.CALL;
-case 3:return POKER_PROTOCOL.ActionTypeEnum.CHECK;
-case 4:return POKER_PROTOCOL.ActionTypeEnum.BET;
-case 5:return POKER_PROTOCOL.ActionTypeEnum.RAISE;
-case 6:return POKER_PROTOCOL.ActionTypeEnum.FOLD;
-case 7:return POKER_PROTOCOL.ActionTypeEnum.DECLINE_ENTRY_BET;
-case 8:return POKER_PROTOCOL.ActionTypeEnum.ANTE
+com.cubeia.games.poker.io.protocol.ActionTypeEnum=function(){};
+com.cubeia.games.poker.io.protocol.ActionTypeEnum.SMALL_BLIND=0;
+com.cubeia.games.poker.io.protocol.ActionTypeEnum.BIG_BLIND=1;
+com.cubeia.games.poker.io.protocol.ActionTypeEnum.CALL=2;
+com.cubeia.games.poker.io.protocol.ActionTypeEnum.CHECK=3;
+com.cubeia.games.poker.io.protocol.ActionTypeEnum.BET=4;
+com.cubeia.games.poker.io.protocol.ActionTypeEnum.RAISE=5;
+com.cubeia.games.poker.io.protocol.ActionTypeEnum.FOLD=6;
+com.cubeia.games.poker.io.protocol.ActionTypeEnum.DECLINE_ENTRY_BET=7;
+com.cubeia.games.poker.io.protocol.ActionTypeEnum.ANTE=8;
+com.cubeia.games.poker.io.protocol.ActionTypeEnum.BIG_BLIND_PLUS_DEAD_SMALL_BLIND=9;
+com.cubeia.games.poker.io.protocol.ActionTypeEnum.DEAD_SMALL_BLIND=10;
+com.cubeia.games.poker.io.protocol.ActionTypeEnum.makeActionTypeEnum=function(a){switch(a){case 0:return com.cubeia.games.poker.io.protocol.ActionTypeEnum.SMALL_BLIND;
+case 1:return com.cubeia.games.poker.io.protocol.ActionTypeEnum.BIG_BLIND;
+case 2:return com.cubeia.games.poker.io.protocol.ActionTypeEnum.CALL;
+case 3:return com.cubeia.games.poker.io.protocol.ActionTypeEnum.CHECK;
+case 4:return com.cubeia.games.poker.io.protocol.ActionTypeEnum.BET;
+case 5:return com.cubeia.games.poker.io.protocol.ActionTypeEnum.RAISE;
+case 6:return com.cubeia.games.poker.io.protocol.ActionTypeEnum.FOLD;
+case 7:return com.cubeia.games.poker.io.protocol.ActionTypeEnum.DECLINE_ENTRY_BET;
+case 8:return com.cubeia.games.poker.io.protocol.ActionTypeEnum.ANTE;
+case 9:return com.cubeia.games.poker.io.protocol.ActionTypeEnum.BIG_BLIND_PLUS_DEAD_SMALL_BLIND;
+case 10:return com.cubeia.games.poker.io.protocol.ActionTypeEnum.DEAD_SMALL_BLIND
 }return -1
 };
-POKER_PROTOCOL.BestHand=function(){this.classId=function(){return POKER_PROTOCOL.BestHand.CLASSID
+com.cubeia.games.poker.io.protocol.ActionTypeEnum.toString=function(a){switch(a){case 0:return"SMALL_BLIND";
+case 1:return"BIG_BLIND";
+case 2:return"CALL";
+case 3:return"CHECK";
+case 4:return"BET";
+case 5:return"RAISE";
+case 6:return"FOLD";
+case 7:return"DECLINE_ENTRY_BET";
+case 8:return"ANTE";
+case 9:return"BIG_BLIND_PLUS_DEAD_SMALL_BLIND";
+case 10:return"DEAD_SMALL_BLIND"
+}return"INVALID_ENUM_VALUE"
+};com.cubeia.games.poker.io.protocol.BestHand=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.BestHand.CLASSID
 };
 this.player={};
 this.handType={};
 this.cards=[];
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeInt(this.player);
-byteArray.writeUnsignedByte(this.handType);
-byteArray.writeInt(this.cards.length);
-var i;
-for(i=0;
-i<this.cards.length;
-i++){byteArray.writeArray(this.cards[i].save())
-}return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeInt(this.player);
+a.writeUnsignedByte(this.handType);
+a.writeInt(this.cards.length);
+var b;
+for(b=0;
+b<this.cards.length;
+b++){a.writeArray(this.cards[b].save())
+}return a
 };
-this.load=function(byteArray){this.player=byteArray.readInt();
-this.handType=POKER_PROTOCOL.HandTypeEnum.makeHandTypeEnum(byteArray.readUnsignedByte());
-var i;
-var cardsCount=byteArray.readInt();
-var oGameCard;
+this.load=function(a){this.player=a.readInt();
+this.handType=com.cubeia.games.poker.io.protocol.HandTypeEnum.makeHandTypeEnum(a.readUnsignedByte());
+var b;
+var d=a.readInt();
+var c;
 this.cards=[];
-for(i=0;
-i<cardsCount;
-i++){oGameCard=new POKER_PROTOCOL.GameCard();
-oGameCard.load(byteArray);
-this.cards.push(oGameCard)
+for(b=0;
+b<d;
+b++){c=new com.cubeia.games.poker.io.protocol.GameCard();
+c.load(a);
+this.cards.push(c)
 }};
-this.toString=function(){var result="POKER_PROTOCOL.BestHand :";
-result+=" player["+this.player.toString()+"]";
-result+=" hand_type["+this.handType.toString()+"]";
-result+=" cards["+this.cards.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.BestHand";
+a.details={};
+a.details.player=this.player;
+a.details.handType=com.cubeia.games.poker.io.protocol.HandTypeEnum.toString(this.handType);
+a.details.cards=[];
+for(b=0;
+b<this.cards.length;
+b++){a.details.cards.push(this.cards[b].getNormalizedObject())
+}return a
 }
 };
-POKER_PROTOCOL.BestHand.CLASSID=5;
-POKER_PROTOCOL.BuyInInfoRequest=function(){this.classId=function(){return POKER_PROTOCOL.BuyInInfoRequest.CLASSID
+com.cubeia.games.poker.io.protocol.BestHand.CLASSID=5;com.cubeia.games.poker.io.protocol.BuyInInfoRequest=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.BuyInInfoRequest.CLASSID
 };
 this.save=function(){return[]
 };
-this.load=function(byteArray){};
-this.toString=function(){var result="POKER_PROTOCOL.BuyInInfoRequest :";
-return result
+this.load=function(a){};
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.BuyInInfoRequest";
+a.details={};
+return a
 }
 };
-POKER_PROTOCOL.BuyInInfoRequest.CLASSID=22;
-POKER_PROTOCOL.BuyInInfoResponse=function(){this.classId=function(){return POKER_PROTOCOL.BuyInInfoResponse.CLASSID
+com.cubeia.games.poker.io.protocol.BuyInInfoRequest.CLASSID=22;com.cubeia.games.poker.io.protocol.BuyInInfoResponse=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.BuyInInfoResponse.CLASSID
 };
 this.maxAmount={};
 this.minAmount={};
@@ -78,457 +105,547 @@ this.balanceInWallet={};
 this.balanceOnTable={};
 this.mandatoryBuyin={};
 this.resultCode={};
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeInt(this.maxAmount);
-byteArray.writeInt(this.minAmount);
-byteArray.writeInt(this.balanceInWallet);
-byteArray.writeInt(this.balanceOnTable);
-byteArray.writeBoolean(this.mandatoryBuyin);
-byteArray.writeUnsignedByte(this.resultCode);
-return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeInt(this.maxAmount);
+a.writeInt(this.minAmount);
+a.writeInt(this.balanceInWallet);
+a.writeInt(this.balanceOnTable);
+a.writeBoolean(this.mandatoryBuyin);
+a.writeUnsignedByte(this.resultCode);
+return a
 };
-this.load=function(byteArray){this.maxAmount=byteArray.readInt();
-this.minAmount=byteArray.readInt();
-this.balanceInWallet=byteArray.readInt();
-this.balanceOnTable=byteArray.readInt();
-this.mandatoryBuyin=byteArray.readBoolean();
-this.resultCode=POKER_PROTOCOL.BuyInInfoResultCodeEnum.makeBuyInInfoResultCodeEnum(byteArray.readUnsignedByte())
+this.load=function(a){this.maxAmount=a.readInt();
+this.minAmount=a.readInt();
+this.balanceInWallet=a.readInt();
+this.balanceOnTable=a.readInt();
+this.mandatoryBuyin=a.readBoolean();
+this.resultCode=com.cubeia.games.poker.io.protocol.BuyInInfoResultCodeEnum.makeBuyInInfoResultCodeEnum(a.readUnsignedByte())
 };
-this.toString=function(){var result="POKER_PROTOCOL.BuyInInfoResponse :";
-result+=" max_amount["+this.maxAmount.toString()+"]";
-result+=" min_amount["+this.minAmount.toString()+"]";
-result+=" balance_in_wallet["+this.balanceInWallet.toString()+"]";
-result+=" balance_on_table["+this.balanceOnTable.toString()+"]";
-result+=" mandatory_buyin["+this.mandatoryBuyin.toString()+"]";
-result+=" result_code["+this.resultCode.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.BuyInInfoResponse";
+a.details={};
+a.details.maxAmount=this.maxAmount;
+a.details.minAmount=this.minAmount;
+a.details.balanceInWallet=this.balanceInWallet;
+a.details.balanceOnTable=this.balanceOnTable;
+a.details.mandatoryBuyin=this.mandatoryBuyin;
+a.details.resultCode=com.cubeia.games.poker.io.protocol.BuyInInfoResultCodeEnum.toString(this.resultCode);
+return a
 }
 };
-POKER_PROTOCOL.BuyInInfoResponse.CLASSID=23;
-POKER_PROTOCOL.BuyInInfoResultCodeEnum=function(){};
-POKER_PROTOCOL.BuyInInfoResultCodeEnum.OK=0;
-POKER_PROTOCOL.BuyInInfoResultCodeEnum.MAX_LIMIT_REACHED=1;
-POKER_PROTOCOL.BuyInInfoResultCodeEnum.UNSPECIFIED_ERROR=2;
-POKER_PROTOCOL.BuyInInfoResultCodeEnum.makeBuyInInfoResultCodeEnum=function(value){switch(value){case 0:return POKER_PROTOCOL.BuyInInfoResultCodeEnum.OK;
-case 1:return POKER_PROTOCOL.BuyInInfoResultCodeEnum.MAX_LIMIT_REACHED;
-case 2:return POKER_PROTOCOL.BuyInInfoResultCodeEnum.UNSPECIFIED_ERROR
+com.cubeia.games.poker.io.protocol.BuyInInfoResponse.CLASSID=23;com.cubeia.games.poker.io.protocol.BuyInInfoResultCodeEnum=function(){};
+com.cubeia.games.poker.io.protocol.BuyInInfoResultCodeEnum.OK=0;
+com.cubeia.games.poker.io.protocol.BuyInInfoResultCodeEnum.MAX_LIMIT_REACHED=1;
+com.cubeia.games.poker.io.protocol.BuyInInfoResultCodeEnum.UNSPECIFIED_ERROR=2;
+com.cubeia.games.poker.io.protocol.BuyInInfoResultCodeEnum.makeBuyInInfoResultCodeEnum=function(a){switch(a){case 0:return com.cubeia.games.poker.io.protocol.BuyInInfoResultCodeEnum.OK;
+case 1:return com.cubeia.games.poker.io.protocol.BuyInInfoResultCodeEnum.MAX_LIMIT_REACHED;
+case 2:return com.cubeia.games.poker.io.protocol.BuyInInfoResultCodeEnum.UNSPECIFIED_ERROR
 }return -1
 };
-POKER_PROTOCOL.BuyInRequest=function(){this.classId=function(){return POKER_PROTOCOL.BuyInRequest.CLASSID
+com.cubeia.games.poker.io.protocol.BuyInInfoResultCodeEnum.toString=function(a){switch(a){case 0:return"OK";
+case 1:return"MAX_LIMIT_REACHED";
+case 2:return"UNSPECIFIED_ERROR"
+}return"INVALID_ENUM_VALUE"
+};com.cubeia.games.poker.io.protocol.BuyInRequest=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.BuyInRequest.CLASSID
 };
 this.amount={};
 this.sitInIfSuccessful={};
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeInt(this.amount);
-byteArray.writeBoolean(this.sitInIfSuccessful);
-return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeInt(this.amount);
+a.writeBoolean(this.sitInIfSuccessful);
+return a
 };
-this.load=function(byteArray){this.amount=byteArray.readInt();
-this.sitInIfSuccessful=byteArray.readBoolean()
+this.load=function(a){this.amount=a.readInt();
+this.sitInIfSuccessful=a.readBoolean()
 };
-this.toString=function(){var result="POKER_PROTOCOL.BuyInRequest :";
-result+=" amount["+this.amount.toString()+"]";
-result+=" sit_in_if_successful["+this.sitInIfSuccessful.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.BuyInRequest";
+a.details={};
+a.details.amount=this.amount;
+a.details.sitInIfSuccessful=this.sitInIfSuccessful;
+return a
 }
 };
-POKER_PROTOCOL.BuyInRequest.CLASSID=24;
-POKER_PROTOCOL.BuyInResponse=function(){this.classId=function(){return POKER_PROTOCOL.BuyInResponse.CLASSID
+com.cubeia.games.poker.io.protocol.BuyInRequest.CLASSID=24;com.cubeia.games.poker.io.protocol.BuyInResponse=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.BuyInResponse.CLASSID
 };
 this.balance={};
 this.pendingBalance={};
 this.amountBroughtIn={};
 this.resultCode={};
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeInt(this.balance);
-byteArray.writeInt(this.pendingBalance);
-byteArray.writeInt(this.amountBroughtIn);
-byteArray.writeUnsignedByte(this.resultCode);
-return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeInt(this.balance);
+a.writeInt(this.pendingBalance);
+a.writeInt(this.amountBroughtIn);
+a.writeUnsignedByte(this.resultCode);
+return a
 };
-this.load=function(byteArray){this.balance=byteArray.readInt();
-this.pendingBalance=byteArray.readInt();
-this.amountBroughtIn=byteArray.readInt();
-this.resultCode=POKER_PROTOCOL.BuyInResultCodeEnum.makeBuyInResultCodeEnum(byteArray.readUnsignedByte())
+this.load=function(a){this.balance=a.readInt();
+this.pendingBalance=a.readInt();
+this.amountBroughtIn=a.readInt();
+this.resultCode=com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.makeBuyInResultCodeEnum(a.readUnsignedByte())
 };
-this.toString=function(){var result="POKER_PROTOCOL.BuyInResponse :";
-result+=" balance["+this.balance.toString()+"]";
-result+=" pending_balance["+this.pendingBalance.toString()+"]";
-result+=" amount_brought_in["+this.amountBroughtIn.toString()+"]";
-result+=" result_code["+this.resultCode.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.BuyInResponse";
+a.details={};
+a.details.balance=this.balance;
+a.details.pendingBalance=this.pendingBalance;
+a.details.amountBroughtIn=this.amountBroughtIn;
+a.details.resultCode=com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.toString(this.resultCode);
+return a
 }
 };
-POKER_PROTOCOL.BuyInResponse.CLASSID=25;
-POKER_PROTOCOL.BuyInResultCodeEnum=function(){};
-POKER_PROTOCOL.BuyInResultCodeEnum.OK=0;
-POKER_PROTOCOL.BuyInResultCodeEnum.PENDING=1;
-POKER_PROTOCOL.BuyInResultCodeEnum.INSUFFICIENT_FUNDS_ERROR=2;
-POKER_PROTOCOL.BuyInResultCodeEnum.PARTNER_ERROR=3;
-POKER_PROTOCOL.BuyInResultCodeEnum.MAX_LIMIT_REACHED=4;
-POKER_PROTOCOL.BuyInResultCodeEnum.AMOUNT_TOO_HIGH=5;
-POKER_PROTOCOL.BuyInResultCodeEnum.UNSPECIFIED_ERROR=6;
-POKER_PROTOCOL.BuyInResultCodeEnum.SESSION_NOT_OPEN=7;
-POKER_PROTOCOL.BuyInResultCodeEnum.makeBuyInResultCodeEnum=function(value){switch(value){case 0:return POKER_PROTOCOL.BuyInResultCodeEnum.OK;
-case 1:return POKER_PROTOCOL.BuyInResultCodeEnum.PENDING;
-case 2:return POKER_PROTOCOL.BuyInResultCodeEnum.INSUFFICIENT_FUNDS_ERROR;
-case 3:return POKER_PROTOCOL.BuyInResultCodeEnum.PARTNER_ERROR;
-case 4:return POKER_PROTOCOL.BuyInResultCodeEnum.MAX_LIMIT_REACHED;
-case 5:return POKER_PROTOCOL.BuyInResultCodeEnum.AMOUNT_TOO_HIGH;
-case 6:return POKER_PROTOCOL.BuyInResultCodeEnum.UNSPECIFIED_ERROR;
-case 7:return POKER_PROTOCOL.BuyInResultCodeEnum.SESSION_NOT_OPEN
+com.cubeia.games.poker.io.protocol.BuyInResponse.CLASSID=25;com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum=function(){};
+com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.OK=0;
+com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.PENDING=1;
+com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.INSUFFICIENT_FUNDS_ERROR=2;
+com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.PARTNER_ERROR=3;
+com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.MAX_LIMIT_REACHED=4;
+com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.AMOUNT_TOO_HIGH=5;
+com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.UNSPECIFIED_ERROR=6;
+com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.SESSION_NOT_OPEN=7;
+com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.makeBuyInResultCodeEnum=function(a){switch(a){case 0:return com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.OK;
+case 1:return com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.PENDING;
+case 2:return com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.INSUFFICIENT_FUNDS_ERROR;
+case 3:return com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.PARTNER_ERROR;
+case 4:return com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.MAX_LIMIT_REACHED;
+case 5:return com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.AMOUNT_TOO_HIGH;
+case 6:return com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.UNSPECIFIED_ERROR;
+case 7:return com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.SESSION_NOT_OPEN
 }return -1
 };
-POKER_PROTOCOL.CardToDeal=function(){this.classId=function(){return POKER_PROTOCOL.CardToDeal.CLASSID
+com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.toString=function(a){switch(a){case 0:return"OK";
+case 1:return"PENDING";
+case 2:return"INSUFFICIENT_FUNDS_ERROR";
+case 3:return"PARTNER_ERROR";
+case 4:return"MAX_LIMIT_REACHED";
+case 5:return"AMOUNT_TOO_HIGH";
+case 6:return"UNSPECIFIED_ERROR";
+case 7:return"SESSION_NOT_OPEN"
+}return"INVALID_ENUM_VALUE"
+};com.cubeia.games.poker.io.protocol.CardToDeal=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.CardToDeal.CLASSID
 };
 this.player={};
 this.card={};
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeInt(this.player);
-byteArray.writeArray(this.card.save());
-return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeInt(this.player);
+a.writeArray(this.card.save());
+return a
 };
-this.load=function(byteArray){this.player=byteArray.readInt();
-this.card=new POKER_PROTOCOL.GameCard();
-this.card.load(byteArray)
+this.load=function(a){this.player=a.readInt();
+this.card=new com.cubeia.games.poker.io.protocol.GameCard();
+this.card.load(a)
 };
-this.toString=function(){var result="POKER_PROTOCOL.CardToDeal :";
-result+=" player["+this.player.toString()+"]";
-result+=" card["+this.card.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.CardToDeal";
+a.details={};
+a.details.player=this.player;
+a.details.card=this.card.getNormalizedObject();
+return a
 }
 };
-POKER_PROTOCOL.CardToDeal.CLASSID=7;
-POKER_PROTOCOL.DealPrivateCards=function(){this.classId=function(){return POKER_PROTOCOL.DealPrivateCards.CLASSID
+com.cubeia.games.poker.io.protocol.CardToDeal.CLASSID=7;com.cubeia.games.poker.io.protocol.DealPrivateCards=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.DealPrivateCards.CLASSID
 };
 this.cards=[];
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeInt(this.cards.length);
-var i;
-for(i=0;
-i<this.cards.length;
-i++){byteArray.writeArray(this.cards[i].save())
-}return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeInt(this.cards.length);
+var b;
+for(b=0;
+b<this.cards.length;
+b++){a.writeArray(this.cards[b].save())
+}return a
 };
-this.load=function(byteArray){var i;
-var cardsCount=byteArray.readInt();
-var oCardToDeal;
+this.load=function(a){var b;
+var d=a.readInt();
+var c;
 this.cards=[];
-for(i=0;
-i<cardsCount;
-i++){oCardToDeal=new POKER_PROTOCOL.CardToDeal();
-oCardToDeal.load(byteArray);
-this.cards.push(oCardToDeal)
+for(b=0;
+b<d;
+b++){c=new com.cubeia.games.poker.io.protocol.CardToDeal();
+c.load(a);
+this.cards.push(c)
 }};
-this.toString=function(){var result="POKER_PROTOCOL.DealPrivateCards :";
-result+=" cards["+this.cards.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.DealPrivateCards";
+a.details={};
+a.details.cards=[];
+for(b=0;
+b<this.cards.length;
+b++){a.details.cards.push(this.cards[b].getNormalizedObject())
+}return a
 }
 };
-POKER_PROTOCOL.DealPrivateCards.CLASSID=13;
-POKER_PROTOCOL.DealPublicCards=function(){this.classId=function(){return POKER_PROTOCOL.DealPublicCards.CLASSID
+com.cubeia.games.poker.io.protocol.DealPrivateCards.CLASSID=13;com.cubeia.games.poker.io.protocol.DealPublicCards=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.DealPublicCards.CLASSID
 };
 this.cards=[];
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeInt(this.cards.length);
-var i;
-for(i=0;
-i<this.cards.length;
-i++){byteArray.writeArray(this.cards[i].save())
-}return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeInt(this.cards.length);
+var b;
+for(b=0;
+b<this.cards.length;
+b++){a.writeArray(this.cards[b].save())
+}return a
 };
-this.load=function(byteArray){var i;
-var cardsCount=byteArray.readInt();
-var oGameCard;
+this.load=function(a){var b;
+var d=a.readInt();
+var c;
 this.cards=[];
-for(i=0;
-i<cardsCount;
-i++){oGameCard=new POKER_PROTOCOL.GameCard();
-oGameCard.load(byteArray);
-this.cards.push(oGameCard)
+for(b=0;
+b<d;
+b++){c=new com.cubeia.games.poker.io.protocol.GameCard();
+c.load(a);
+this.cards.push(c)
 }};
-this.toString=function(){var result="POKER_PROTOCOL.DealPublicCards :";
-result+=" cards["+this.cards.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.DealPublicCards";
+a.details={};
+a.details.cards=[];
+for(b=0;
+b<this.cards.length;
+b++){a.details.cards.push(this.cards[b].getNormalizedObject())
+}return a
 }
 };
-POKER_PROTOCOL.DealPublicCards.CLASSID=12;
-POKER_PROTOCOL.DealerButton=function(){this.classId=function(){return POKER_PROTOCOL.DealerButton.CLASSID
+com.cubeia.games.poker.io.protocol.DealPublicCards.CLASSID=12;com.cubeia.games.poker.io.protocol.DealerButton=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.DealerButton.CLASSID
 };
 this.seat={};
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeByte(this.seat);
-return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeByte(this.seat);
+return a
 };
-this.load=function(byteArray){this.seat=byteArray.readByte()
+this.load=function(a){this.seat=a.readByte()
 };
-this.toString=function(){var result="POKER_PROTOCOL.DealerButton :";
-result+=" seat["+this.seat.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.DealerButton";
+a.details={};
+a.details.seat=this.seat;
+return a
 }
 };
-POKER_PROTOCOL.DealerButton.CLASSID=11;
-POKER_PROTOCOL.DeckInfo=function(){this.classId=function(){return POKER_PROTOCOL.DeckInfo.CLASSID
+com.cubeia.games.poker.io.protocol.DealerButton.CLASSID=11;com.cubeia.games.poker.io.protocol.DeckInfo=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.DeckInfo.CLASSID
 };
 this.size={};
 this.rankLow={};
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeInt(this.size);
-byteArray.writeUnsignedByte(this.rankLow);
-return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeInt(this.size);
+a.writeUnsignedByte(this.rankLow);
+return a
 };
-this.load=function(byteArray){this.size=byteArray.readInt();
-this.rankLow=POKER_PROTOCOL.RankEnum.makeRankEnum(byteArray.readUnsignedByte())
+this.load=function(a){this.size=a.readInt();
+this.rankLow=com.cubeia.games.poker.io.protocol.RankEnum.makeRankEnum(a.readUnsignedByte())
 };
-this.toString=function(){var result="POKER_PROTOCOL.DeckInfo :";
-result+=" size["+this.size.toString()+"]";
-result+=" rank_low["+this.rankLow.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.DeckInfo";
+a.details={};
+a.details.size=this.size;
+a.details.rankLow=com.cubeia.games.poker.io.protocol.RankEnum.toString(this.rankLow);
+return a
 }
 };
-POKER_PROTOCOL.DeckInfo.CLASSID=35;
-POKER_PROTOCOL.ErrorCodeEnum=function(){};
-POKER_PROTOCOL.ErrorCodeEnum.UNSPECIFIED_ERROR=0;
-POKER_PROTOCOL.ErrorCodeEnum.TABLE_CLOSING=1;
-POKER_PROTOCOL.ErrorCodeEnum.TABLE_CLOSING_FORCED=2;
-POKER_PROTOCOL.ErrorCodeEnum.CLOSED_SESSION_DUE_TO_FATAL_ERROR=3;
-POKER_PROTOCOL.ErrorCodeEnum.makeErrorCodeEnum=function(value){switch(value){case 0:return POKER_PROTOCOL.ErrorCodeEnum.UNSPECIFIED_ERROR;
-case 1:return POKER_PROTOCOL.ErrorCodeEnum.TABLE_CLOSING;
-case 2:return POKER_PROTOCOL.ErrorCodeEnum.TABLE_CLOSING_FORCED;
-case 3:return POKER_PROTOCOL.ErrorCodeEnum.CLOSED_SESSION_DUE_TO_FATAL_ERROR
+com.cubeia.games.poker.io.protocol.DeckInfo.CLASSID=35;com.cubeia.games.poker.io.protocol.ErrorCodeEnum=function(){};
+com.cubeia.games.poker.io.protocol.ErrorCodeEnum.UNSPECIFIED_ERROR=0;
+com.cubeia.games.poker.io.protocol.ErrorCodeEnum.TABLE_CLOSING=1;
+com.cubeia.games.poker.io.protocol.ErrorCodeEnum.TABLE_CLOSING_FORCED=2;
+com.cubeia.games.poker.io.protocol.ErrorCodeEnum.CLOSED_SESSION_DUE_TO_FATAL_ERROR=3;
+com.cubeia.games.poker.io.protocol.ErrorCodeEnum.makeErrorCodeEnum=function(a){switch(a){case 0:return com.cubeia.games.poker.io.protocol.ErrorCodeEnum.UNSPECIFIED_ERROR;
+case 1:return com.cubeia.games.poker.io.protocol.ErrorCodeEnum.TABLE_CLOSING;
+case 2:return com.cubeia.games.poker.io.protocol.ErrorCodeEnum.TABLE_CLOSING_FORCED;
+case 3:return com.cubeia.games.poker.io.protocol.ErrorCodeEnum.CLOSED_SESSION_DUE_TO_FATAL_ERROR
 }return -1
 };
-POKER_PROTOCOL.ErrorPacket=function(){this.classId=function(){return POKER_PROTOCOL.ErrorPacket.CLASSID
+com.cubeia.games.poker.io.protocol.ErrorCodeEnum.toString=function(a){switch(a){case 0:return"UNSPECIFIED_ERROR";
+case 1:return"TABLE_CLOSING";
+case 2:return"TABLE_CLOSING_FORCED";
+case 3:return"CLOSED_SESSION_DUE_TO_FATAL_ERROR"
+}return"INVALID_ENUM_VALUE"
+};com.cubeia.games.poker.io.protocol.ErrorPacket=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.ErrorPacket.CLASSID
 };
 this.code={};
 this.referenceId={};
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeUnsignedByte(this.code);
-byteArray.writeString(this.referenceId);
-return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeUnsignedByte(this.code);
+a.writeString(this.referenceId);
+return a
 };
-this.load=function(byteArray){this.code=POKER_PROTOCOL.ErrorCodeEnum.makeErrorCodeEnum(byteArray.readUnsignedByte());
-this.referenceId=byteArray.readString()
+this.load=function(a){this.code=com.cubeia.games.poker.io.protocol.ErrorCodeEnum.makeErrorCodeEnum(a.readUnsignedByte());
+this.referenceId=a.readString()
 };
-this.toString=function(){var result="POKER_PROTOCOL.ErrorPacket :";
-result+=" code["+this.code.toString()+"]";
-result+=" reference_id["+this.referenceId.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.ErrorPacket";
+a.details={};
+a.details.code=com.cubeia.games.poker.io.protocol.ErrorCodeEnum.toString(this.code);
+a.details.referenceId=this.referenceId;
+return a
 }
 };
-POKER_PROTOCOL.ErrorPacket.CLASSID=2;
-POKER_PROTOCOL.ExposePrivateCards=function(){this.classId=function(){return POKER_PROTOCOL.ExposePrivateCards.CLASSID
+com.cubeia.games.poker.io.protocol.ErrorPacket.CLASSID=2;com.cubeia.games.poker.io.protocol.ExposePrivateCards=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.ExposePrivateCards.CLASSID
 };
 this.cards=[];
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeInt(this.cards.length);
-var i;
-for(i=0;
-i<this.cards.length;
-i++){byteArray.writeArray(this.cards[i].save())
-}return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeInt(this.cards.length);
+var b;
+for(b=0;
+b<this.cards.length;
+b++){a.writeArray(this.cards[b].save())
+}return a
 };
-this.load=function(byteArray){var i;
-var cardsCount=byteArray.readInt();
-var oCardToDeal;
+this.load=function(a){var b;
+var d=a.readInt();
+var c;
 this.cards=[];
-for(i=0;
-i<cardsCount;
-i++){oCardToDeal=new POKER_PROTOCOL.CardToDeal();
-oCardToDeal.load(byteArray);
-this.cards.push(oCardToDeal)
+for(b=0;
+b<d;
+b++){c=new com.cubeia.games.poker.io.protocol.CardToDeal();
+c.load(a);
+this.cards.push(c)
 }};
-this.toString=function(){var result="POKER_PROTOCOL.ExposePrivateCards :";
-result+=" cards["+this.cards.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.ExposePrivateCards";
+a.details={};
+a.details.cards=[];
+for(b=0;
+b<this.cards.length;
+b++){a.details.cards.push(this.cards[b].getNormalizedObject())
+}return a
 }
 };
-POKER_PROTOCOL.ExposePrivateCards.CLASSID=14;
-POKER_PROTOCOL.ExternalSessionInfoPacket=function(){this.classId=function(){return POKER_PROTOCOL.ExternalSessionInfoPacket.CLASSID
+com.cubeia.games.poker.io.protocol.ExposePrivateCards.CLASSID=14;com.cubeia.games.poker.io.protocol.ExternalSessionInfoPacket=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.ExternalSessionInfoPacket.CLASSID
 };
 this.externalTableReference={};
 this.externalTableSessionReference={};
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeString(this.externalTableReference);
-byteArray.writeString(this.externalTableSessionReference);
-return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeString(this.externalTableReference);
+a.writeString(this.externalTableSessionReference);
+return a
 };
-this.load=function(byteArray){this.externalTableReference=byteArray.readString();
-this.externalTableSessionReference=byteArray.readString()
+this.load=function(a){this.externalTableReference=a.readString();
+this.externalTableSessionReference=a.readString()
 };
-this.toString=function(){var result="POKER_PROTOCOL.ExternalSessionInfoPacket :";
-result+=" external_table_reference["+this.externalTableReference.toString()+"]";
-result+=" external_table_session_reference["+this.externalTableSessionReference.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.ExternalSessionInfoPacket";
+a.details={};
+a.details.externalTableReference=this.externalTableReference;
+a.details.externalTableSessionReference=this.externalTableSessionReference;
+return a
 }
 };
-POKER_PROTOCOL.ExternalSessionInfoPacket.CLASSID=36;
-POKER_PROTOCOL.FuturePlayerAction=function(){this.classId=function(){return POKER_PROTOCOL.FuturePlayerAction.CLASSID
+com.cubeia.games.poker.io.protocol.ExternalSessionInfoPacket.CLASSID=36;com.cubeia.games.poker.io.protocol.FuturePlayerAction=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.FuturePlayerAction.CLASSID
 };
 this.action={};
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeUnsignedByte(this.action);
-return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeUnsignedByte(this.action);
+return a
 };
-this.load=function(byteArray){this.action=POKER_PROTOCOL.ActionTypeEnum.makeActionTypeEnum(byteArray.readUnsignedByte())
+this.load=function(a){this.action=com.cubeia.games.poker.io.protocol.ActionTypeEnum.makeActionTypeEnum(a.readUnsignedByte())
 };
-this.toString=function(){var result="POKER_PROTOCOL.FuturePlayerAction :";
-result+=" action["+this.action.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.FuturePlayerAction";
+a.details={};
+a.details.action=com.cubeia.games.poker.io.protocol.ActionTypeEnum.toString(this.action);
+return a
 }
 };
-POKER_PROTOCOL.FuturePlayerAction.CLASSID=3;
-POKER_PROTOCOL.GameCard=function(){this.classId=function(){return POKER_PROTOCOL.GameCard.CLASSID
+com.cubeia.games.poker.io.protocol.FuturePlayerAction.CLASSID=3;com.cubeia.games.poker.io.protocol.GameCard=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.GameCard.CLASSID
 };
 this.cardId={};
 this.suit={};
 this.rank={};
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeInt(this.cardId);
-byteArray.writeUnsignedByte(this.suit);
-byteArray.writeUnsignedByte(this.rank);
-return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeInt(this.cardId);
+a.writeUnsignedByte(this.suit);
+a.writeUnsignedByte(this.rank);
+return a
 };
-this.load=function(byteArray){this.cardId=byteArray.readInt();
-this.suit=POKER_PROTOCOL.SuitEnum.makeSuitEnum(byteArray.readUnsignedByte());
-this.rank=POKER_PROTOCOL.RankEnum.makeRankEnum(byteArray.readUnsignedByte())
+this.load=function(a){this.cardId=a.readInt();
+this.suit=com.cubeia.games.poker.io.protocol.SuitEnum.makeSuitEnum(a.readUnsignedByte());
+this.rank=com.cubeia.games.poker.io.protocol.RankEnum.makeRankEnum(a.readUnsignedByte())
 };
-this.toString=function(){var result="POKER_PROTOCOL.GameCard :";
-result+=" card_id["+this.cardId.toString()+"]";
-result+=" suit["+this.suit.toString()+"]";
-result+=" rank["+this.rank.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.GameCard";
+a.details={};
+a.details.cardId=this.cardId;
+a.details.suit=com.cubeia.games.poker.io.protocol.SuitEnum.toString(this.suit);
+a.details.rank=com.cubeia.games.poker.io.protocol.RankEnum.toString(this.rank);
+return a
 }
 };
-POKER_PROTOCOL.GameCard.CLASSID=4;
-POKER_PROTOCOL.HandCanceled=function(){this.classId=function(){return POKER_PROTOCOL.HandCanceled.CLASSID
+com.cubeia.games.poker.io.protocol.GameCard.CLASSID=4;com.cubeia.games.poker.io.protocol.HandCanceled=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.HandCanceled.CLASSID
 };
 this.save=function(){return[]
 };
-this.load=function(byteArray){};
-this.toString=function(){var result="POKER_PROTOCOL.HandCanceled :";
-return result
+this.load=function(a){};
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.HandCanceled";
+a.details={};
+return a
 }
 };
-POKER_PROTOCOL.HandCanceled.CLASSID=16;
-POKER_PROTOCOL.HandEnd=function(){this.classId=function(){return POKER_PROTOCOL.HandEnd.CLASSID
+com.cubeia.games.poker.io.protocol.HandCanceled.CLASSID=16;com.cubeia.games.poker.io.protocol.HandEnd=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.HandEnd.CLASSID
 };
 this.playerIdRevealOrder=[];
 this.hands=[];
 this.potTransfers={};
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeInt(this.playerIdRevealOrder.length);
-var i;
-for(i=0;
-i<this.playerIdRevealOrder.length;
-i++){byteArray.writeInt(this.playerIdRevealOrder[i])
-}byteArray.writeInt(this.hands.length);
-for(i=0;
-i<this.hands.length;
-i++){byteArray.writeArray(this.hands[i].save())
-}byteArray.writeArray(this.potTransfers.save());
-return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeInt(this.playerIdRevealOrder.length);
+var b;
+for(b=0;
+b<this.playerIdRevealOrder.length;
+b++){a.writeInt(this.playerIdRevealOrder[b])
+}a.writeInt(this.hands.length);
+for(b=0;
+b<this.hands.length;
+b++){a.writeArray(this.hands[b].save())
+}a.writeArray(this.potTransfers.save());
+return a
 };
-this.load=function(byteArray){var i;
-var playerIdRevealOrderCount=byteArray.readInt();
+this.load=function(a){var c;
+var b=a.readInt();
 this.playerIdRevealOrder=[];
-for(i=0;
-i<playerIdRevealOrderCount;
-i++){this.playerIdRevealOrder.push(byteArray.readInt())
-}var handsCount=byteArray.readInt();
-var oBestHand;
+for(c=0;
+c<b;
+c++){this.playerIdRevealOrder.push(a.readInt())
+}var d=a.readInt();
+var e;
 this.hands=[];
-for(i=0;
-i<handsCount;
-i++){oBestHand=new POKER_PROTOCOL.BestHand();
-oBestHand.load(byteArray);
-this.hands.push(oBestHand)
-}this.potTransfers=new POKER_PROTOCOL.PotTransfers();
-this.potTransfers.load(byteArray)
+for(c=0;
+c<d;
+c++){e=new com.cubeia.games.poker.io.protocol.BestHand();
+e.load(a);
+this.hands.push(e)
+}this.potTransfers=new com.cubeia.games.poker.io.protocol.PotTransfers();
+this.potTransfers.load(a)
 };
-this.toString=function(){var result="POKER_PROTOCOL.HandEnd :";
-result+=" player_id_reveal_order["+this.playerIdRevealOrder.toString()+"]";
-result+=" hands["+this.hands.toString()+"]";
-result+=" pot_transfers["+this.potTransfers.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.HandEnd";
+a.details={};
+a.details.playerIdRevealOrder=[];
+for(b=0;
+b<this.playerIdRevealOrder.length;
+b++){a.details.playerIdRevealOrder.push(this.playerIdRevealOrder[b].getNormalizedObject())
+}a.details.hands=[];
+for(b=0;
+b<this.hands.length;
+b++){a.details.hands.push(this.hands[b].getNormalizedObject())
+}a.details.potTransfers=this.potTransfers.getNormalizedObject();
+return a
 }
 };
-POKER_PROTOCOL.HandEnd.CLASSID=15;
-POKER_PROTOCOL.HandPhase5cardEnum=function(){};
-POKER_PROTOCOL.HandPhase5cardEnum.BETTING=0;
-POKER_PROTOCOL.HandPhase5cardEnum.THIRD_STREET=1;
-POKER_PROTOCOL.HandPhase5cardEnum.FOURTH_STREET=2;
-POKER_PROTOCOL.HandPhase5cardEnum.FIFTH_STREET=3;
-POKER_PROTOCOL.HandPhase5cardEnum.makeHandPhase5cardEnum=function(value){switch(value){case 0:return POKER_PROTOCOL.HandPhase5cardEnum.BETTING;
-case 1:return POKER_PROTOCOL.HandPhase5cardEnum.THIRD_STREET;
-case 2:return POKER_PROTOCOL.HandPhase5cardEnum.FOURTH_STREET;
-case 3:return POKER_PROTOCOL.HandPhase5cardEnum.FIFTH_STREET
+com.cubeia.games.poker.io.protocol.HandEnd.CLASSID=15;com.cubeia.games.poker.io.protocol.HandPhase5cardEnum=function(){};
+com.cubeia.games.poker.io.protocol.HandPhase5cardEnum.BETTING=0;
+com.cubeia.games.poker.io.protocol.HandPhase5cardEnum.THIRD_STREET=1;
+com.cubeia.games.poker.io.protocol.HandPhase5cardEnum.FOURTH_STREET=2;
+com.cubeia.games.poker.io.protocol.HandPhase5cardEnum.FIFTH_STREET=3;
+com.cubeia.games.poker.io.protocol.HandPhase5cardEnum.makeHandPhase5cardEnum=function(a){switch(a){case 0:return com.cubeia.games.poker.io.protocol.HandPhase5cardEnum.BETTING;
+case 1:return com.cubeia.games.poker.io.protocol.HandPhase5cardEnum.THIRD_STREET;
+case 2:return com.cubeia.games.poker.io.protocol.HandPhase5cardEnum.FOURTH_STREET;
+case 3:return com.cubeia.games.poker.io.protocol.HandPhase5cardEnum.FIFTH_STREET
 }return -1
 };
-POKER_PROTOCOL.HandPhaseHoldemEnum=function(){};
-POKER_PROTOCOL.HandPhaseHoldemEnum.PREFLOP=0;
-POKER_PROTOCOL.HandPhaseHoldemEnum.FLOP=1;
-POKER_PROTOCOL.HandPhaseHoldemEnum.TURN=2;
-POKER_PROTOCOL.HandPhaseHoldemEnum.RIVER=3;
-POKER_PROTOCOL.HandPhaseHoldemEnum.makeHandPhaseHoldemEnum=function(value){switch(value){case 0:return POKER_PROTOCOL.HandPhaseHoldemEnum.PREFLOP;
-case 1:return POKER_PROTOCOL.HandPhaseHoldemEnum.FLOP;
-case 2:return POKER_PROTOCOL.HandPhaseHoldemEnum.TURN;
-case 3:return POKER_PROTOCOL.HandPhaseHoldemEnum.RIVER
+com.cubeia.games.poker.io.protocol.HandPhase5cardEnum.toString=function(a){switch(a){case 0:return"BETTING";
+case 1:return"THIRD_STREET";
+case 2:return"FOURTH_STREET";
+case 3:return"FIFTH_STREET"
+}return"INVALID_ENUM_VALUE"
+};com.cubeia.games.poker.io.protocol.HandPhaseHoldemEnum=function(){};
+com.cubeia.games.poker.io.protocol.HandPhaseHoldemEnum.PREFLOP=0;
+com.cubeia.games.poker.io.protocol.HandPhaseHoldemEnum.FLOP=1;
+com.cubeia.games.poker.io.protocol.HandPhaseHoldemEnum.TURN=2;
+com.cubeia.games.poker.io.protocol.HandPhaseHoldemEnum.RIVER=3;
+com.cubeia.games.poker.io.protocol.HandPhaseHoldemEnum.makeHandPhaseHoldemEnum=function(a){switch(a){case 0:return com.cubeia.games.poker.io.protocol.HandPhaseHoldemEnum.PREFLOP;
+case 1:return com.cubeia.games.poker.io.protocol.HandPhaseHoldemEnum.FLOP;
+case 2:return com.cubeia.games.poker.io.protocol.HandPhaseHoldemEnum.TURN;
+case 3:return com.cubeia.games.poker.io.protocol.HandPhaseHoldemEnum.RIVER
 }return -1
 };
-POKER_PROTOCOL.HandTypeEnum=function(){};
-POKER_PROTOCOL.HandTypeEnum.UNKNOWN=0;
-POKER_PROTOCOL.HandTypeEnum.HIGH_CARD=1;
-POKER_PROTOCOL.HandTypeEnum.PAIR=2;
-POKER_PROTOCOL.HandTypeEnum.TWO_PAIR=3;
-POKER_PROTOCOL.HandTypeEnum.THREE_OF_A_KIND=4;
-POKER_PROTOCOL.HandTypeEnum.STRAIGHT=5;
-POKER_PROTOCOL.HandTypeEnum.FLUSH=6;
-POKER_PROTOCOL.HandTypeEnum.FULL_HOUSE=7;
-POKER_PROTOCOL.HandTypeEnum.FOUR_OF_A_KIND=8;
-POKER_PROTOCOL.HandTypeEnum.STRAIGHT_FLUSH=9;
-POKER_PROTOCOL.HandTypeEnum.ROYAL_STRAIGHT_FLUSH=10;
-POKER_PROTOCOL.HandTypeEnum.makeHandTypeEnum=function(value){switch(value){case 0:return POKER_PROTOCOL.HandTypeEnum.UNKNOWN;
-case 1:return POKER_PROTOCOL.HandTypeEnum.HIGH_CARD;
-case 2:return POKER_PROTOCOL.HandTypeEnum.PAIR;
-case 3:return POKER_PROTOCOL.HandTypeEnum.TWO_PAIR;
-case 4:return POKER_PROTOCOL.HandTypeEnum.THREE_OF_A_KIND;
-case 5:return POKER_PROTOCOL.HandTypeEnum.STRAIGHT;
-case 6:return POKER_PROTOCOL.HandTypeEnum.FLUSH;
-case 7:return POKER_PROTOCOL.HandTypeEnum.FULL_HOUSE;
-case 8:return POKER_PROTOCOL.HandTypeEnum.FOUR_OF_A_KIND;
-case 9:return POKER_PROTOCOL.HandTypeEnum.STRAIGHT_FLUSH;
-case 10:return POKER_PROTOCOL.HandTypeEnum.ROYAL_STRAIGHT_FLUSH
+com.cubeia.games.poker.io.protocol.HandPhaseHoldemEnum.toString=function(a){switch(a){case 0:return"PREFLOP";
+case 1:return"FLOP";
+case 2:return"TURN";
+case 3:return"RIVER"
+}return"INVALID_ENUM_VALUE"
+};com.cubeia.games.poker.io.protocol.HandTypeEnum=function(){};
+com.cubeia.games.poker.io.protocol.HandTypeEnum.UNKNOWN=0;
+com.cubeia.games.poker.io.protocol.HandTypeEnum.HIGH_CARD=1;
+com.cubeia.games.poker.io.protocol.HandTypeEnum.PAIR=2;
+com.cubeia.games.poker.io.protocol.HandTypeEnum.TWO_PAIR=3;
+com.cubeia.games.poker.io.protocol.HandTypeEnum.THREE_OF_A_KIND=4;
+com.cubeia.games.poker.io.protocol.HandTypeEnum.STRAIGHT=5;
+com.cubeia.games.poker.io.protocol.HandTypeEnum.FLUSH=6;
+com.cubeia.games.poker.io.protocol.HandTypeEnum.FULL_HOUSE=7;
+com.cubeia.games.poker.io.protocol.HandTypeEnum.FOUR_OF_A_KIND=8;
+com.cubeia.games.poker.io.protocol.HandTypeEnum.STRAIGHT_FLUSH=9;
+com.cubeia.games.poker.io.protocol.HandTypeEnum.ROYAL_STRAIGHT_FLUSH=10;
+com.cubeia.games.poker.io.protocol.HandTypeEnum.makeHandTypeEnum=function(a){switch(a){case 0:return com.cubeia.games.poker.io.protocol.HandTypeEnum.UNKNOWN;
+case 1:return com.cubeia.games.poker.io.protocol.HandTypeEnum.HIGH_CARD;
+case 2:return com.cubeia.games.poker.io.protocol.HandTypeEnum.PAIR;
+case 3:return com.cubeia.games.poker.io.protocol.HandTypeEnum.TWO_PAIR;
+case 4:return com.cubeia.games.poker.io.protocol.HandTypeEnum.THREE_OF_A_KIND;
+case 5:return com.cubeia.games.poker.io.protocol.HandTypeEnum.STRAIGHT;
+case 6:return com.cubeia.games.poker.io.protocol.HandTypeEnum.FLUSH;
+case 7:return com.cubeia.games.poker.io.protocol.HandTypeEnum.FULL_HOUSE;
+case 8:return com.cubeia.games.poker.io.protocol.HandTypeEnum.FOUR_OF_A_KIND;
+case 9:return com.cubeia.games.poker.io.protocol.HandTypeEnum.STRAIGHT_FLUSH;
+case 10:return com.cubeia.games.poker.io.protocol.HandTypeEnum.ROYAL_STRAIGHT_FLUSH
 }return -1
 };
-POKER_PROTOCOL.InformFutureAllowedActions=function(){this.classId=function(){return POKER_PROTOCOL.InformFutureAllowedActions.CLASSID
+com.cubeia.games.poker.io.protocol.HandTypeEnum.toString=function(a){switch(a){case 0:return"UNKNOWN";
+case 1:return"HIGH_CARD";
+case 2:return"PAIR";
+case 3:return"TWO_PAIR";
+case 4:return"THREE_OF_A_KIND";
+case 5:return"STRAIGHT";
+case 6:return"FLUSH";
+case 7:return"FULL_HOUSE";
+case 8:return"FOUR_OF_A_KIND";
+case 9:return"STRAIGHT_FLUSH";
+case 10:return"ROYAL_STRAIGHT_FLUSH"
+}return"INVALID_ENUM_VALUE"
+};com.cubeia.games.poker.io.protocol.InformFutureAllowedActions=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.InformFutureAllowedActions.CLASSID
 };
 this.actions=[];
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeInt(this.actions.length);
-var i;
-for(i=0;
-i<this.actions.length;
-i++){byteArray.writeArray(this.actions[i].save())
-}return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeInt(this.actions.length);
+var b;
+for(b=0;
+b<this.actions.length;
+b++){a.writeArray(this.actions[b].save())
+}return a
 };
-this.load=function(byteArray){var i;
-var actionsCount=byteArray.readInt();
-var oFuturePlayerAction;
+this.load=function(a){var c;
+var d=a.readInt();
+var b;
 this.actions=[];
-for(i=0;
-i<actionsCount;
-i++){oFuturePlayerAction=new POKER_PROTOCOL.FuturePlayerAction();
-oFuturePlayerAction.load(byteArray);
-this.actions.push(oFuturePlayerAction)
+for(c=0;
+c<d;
+c++){b=new com.cubeia.games.poker.io.protocol.FuturePlayerAction();
+b.load(a);
+this.actions.push(b)
 }};
-this.toString=function(){var result="POKER_PROTOCOL.InformFutureAllowedActions :";
-result+=" actions["+this.actions.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.InformFutureAllowedActions";
+a.details={};
+a.details.actions=[];
+for(b=0;
+b<this.actions.length;
+b++){a.details.actions.push(this.actions[b].getNormalizedObject())
+}return a
 }
 };
-POKER_PROTOCOL.InformFutureAllowedActions.CLASSID=9;
-POKER_PROTOCOL.PerformAction=function(){this.classId=function(){return POKER_PROTOCOL.PerformAction.CLASSID
+com.cubeia.games.poker.io.protocol.InformFutureAllowedActions.CLASSID=9;com.cubeia.games.poker.io.protocol.PerformAction=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.PerformAction.CLASSID
 };
 this.seq={};
 this.player={};
@@ -537,657 +654,750 @@ this.betAmount={};
 this.raiseAmount={};
 this.stackAmount={};
 this.timeout={};
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeInt(this.seq);
-byteArray.writeInt(this.player);
-byteArray.writeArray(this.action.save());
-byteArray.writeInt(this.betAmount);
-byteArray.writeInt(this.raiseAmount);
-byteArray.writeInt(this.stackAmount);
-byteArray.writeBoolean(this.timeout);
-return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeInt(this.seq);
+a.writeInt(this.player);
+a.writeArray(this.action.save());
+a.writeInt(this.betAmount);
+a.writeInt(this.raiseAmount);
+a.writeInt(this.stackAmount);
+a.writeBoolean(this.timeout);
+return a
 };
-this.load=function(byteArray){this.seq=byteArray.readInt();
-this.player=byteArray.readInt();
-this.action=new POKER_PROTOCOL.PlayerAction();
-this.action.load(byteArray);
-this.betAmount=byteArray.readInt();
-this.raiseAmount=byteArray.readInt();
-this.stackAmount=byteArray.readInt();
-this.timeout=byteArray.readBoolean()
+this.load=function(a){this.seq=a.readInt();
+this.player=a.readInt();
+this.action=new com.cubeia.games.poker.io.protocol.PlayerAction();
+this.action.load(a);
+this.betAmount=a.readInt();
+this.raiseAmount=a.readInt();
+this.stackAmount=a.readInt();
+this.timeout=a.readBoolean()
 };
-this.toString=function(){var result="POKER_PROTOCOL.PerformAction :";
-result+=" seq["+this.seq.toString()+"]";
-result+=" player["+this.player.toString()+"]";
-result+=" action["+this.action.toString()+"]";
-result+=" bet_amount["+this.betAmount.toString()+"]";
-result+=" raise_amount["+this.raiseAmount.toString()+"]";
-result+=" stack_amount["+this.stackAmount.toString()+"]";
-result+=" timeout["+this.timeout.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.PerformAction";
+a.details={};
+a.details.seq=this.seq;
+a.details.player=this.player;
+a.details.action=this.action.getNormalizedObject();
+a.details.betAmount=this.betAmount;
+a.details.raiseAmount=this.raiseAmount;
+a.details.stackAmount=this.stackAmount;
+a.details.timeout=this.timeout;
+return a
 }
 };
-POKER_PROTOCOL.PerformAction.CLASSID=19;
-POKER_PROTOCOL.PingPacket=function(){this.classId=function(){return POKER_PROTOCOL.PingPacket.CLASSID
+com.cubeia.games.poker.io.protocol.PerformAction.CLASSID=19;com.cubeia.games.poker.io.protocol.PingPacket=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.PingPacket.CLASSID
 };
 this.identifier={};
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeInt(this.identifier);
-return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeInt(this.identifier);
+return a
 };
-this.load=function(byteArray){this.identifier=byteArray.readInt()
+this.load=function(a){this.identifier=a.readInt()
 };
-this.toString=function(){var result="POKER_PROTOCOL.PingPacket :";
-result+=" identifier["+this.identifier.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.PingPacket";
+a.details={};
+a.details.identifier=this.identifier;
+return a
 }
 };
-POKER_PROTOCOL.PingPacket.CLASSID=39;
-POKER_PROTOCOL.PlayerAction=function(){this.classId=function(){return POKER_PROTOCOL.PlayerAction.CLASSID
+com.cubeia.games.poker.io.protocol.PingPacket.CLASSID=39;com.cubeia.games.poker.io.protocol.PlayerAction=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.PlayerAction.CLASSID
 };
 this.type={};
 this.minAmount={};
 this.maxAmount={};
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeUnsignedByte(this.type);
-byteArray.writeInt(this.minAmount);
-byteArray.writeInt(this.maxAmount);
-return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeUnsignedByte(this.type);
+a.writeInt(this.minAmount);
+a.writeInt(this.maxAmount);
+return a
 };
-this.load=function(byteArray){this.type=POKER_PROTOCOL.ActionTypeEnum.makeActionTypeEnum(byteArray.readUnsignedByte());
-this.minAmount=byteArray.readInt();
-this.maxAmount=byteArray.readInt()
+this.load=function(a){this.type=com.cubeia.games.poker.io.protocol.ActionTypeEnum.makeActionTypeEnum(a.readUnsignedByte());
+this.minAmount=a.readInt();
+this.maxAmount=a.readInt()
 };
-this.toString=function(){var result="POKER_PROTOCOL.PlayerAction :";
-result+=" type["+this.type.toString()+"]";
-result+=" min_amount["+this.minAmount.toString()+"]";
-result+=" max_amount["+this.maxAmount.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.PlayerAction";
+a.details={};
+a.details.type=com.cubeia.games.poker.io.protocol.ActionTypeEnum.toString(this.type);
+a.details.minAmount=this.minAmount;
+a.details.maxAmount=this.maxAmount;
+return a
 }
 };
-POKER_PROTOCOL.PlayerAction.CLASSID=1;
-POKER_PROTOCOL.PlayerBalance=function(){this.classId=function(){return POKER_PROTOCOL.PlayerBalance.CLASSID
+com.cubeia.games.poker.io.protocol.PlayerAction.CLASSID=1;com.cubeia.games.poker.io.protocol.PlayerBalance=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.PlayerBalance.CLASSID
 };
 this.balance={};
 this.pendingBalance={};
 this.player={};
 this.playersContributionToPot={};
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeInt(this.balance);
-byteArray.writeInt(this.pendingBalance);
-byteArray.writeInt(this.player);
-byteArray.writeInt(this.playersContributionToPot);
-return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeInt(this.balance);
+a.writeInt(this.pendingBalance);
+a.writeInt(this.player);
+a.writeInt(this.playersContributionToPot);
+return a
 };
-this.load=function(byteArray){this.balance=byteArray.readInt();
-this.pendingBalance=byteArray.readInt();
-this.player=byteArray.readInt();
-this.playersContributionToPot=byteArray.readInt()
+this.load=function(a){this.balance=a.readInt();
+this.pendingBalance=a.readInt();
+this.player=a.readInt();
+this.playersContributionToPot=a.readInt()
 };
-this.toString=function(){var result="POKER_PROTOCOL.PlayerBalance :";
-result+=" balance["+this.balance.toString()+"]";
-result+=" pendingBalance["+this.pendingBalance.toString()+"]";
-result+=" player["+this.player.toString()+"]";
-result+=" players_contribution_to_pot["+this.playersContributionToPot.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.PlayerBalance";
+a.details={};
+a.details.balance=this.balance;
+a.details.pendingBalance=this.pendingBalance;
+a.details.player=this.player;
+a.details.playersContributionToPot=this.playersContributionToPot;
+return a
 }
 };
-POKER_PROTOCOL.PlayerBalance.CLASSID=21;
-POKER_PROTOCOL.PlayerDisconnectedPacket=function(){this.classId=function(){return POKER_PROTOCOL.PlayerDisconnectedPacket.CLASSID
+com.cubeia.games.poker.io.protocol.PlayerBalance.CLASSID=21;com.cubeia.games.poker.io.protocol.PlayerDisconnectedPacket=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.PlayerDisconnectedPacket.CLASSID
 };
 this.playerId={};
 this.timebank={};
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeInt(this.playerId);
-byteArray.writeInt(this.timebank);
-return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeInt(this.playerId);
+a.writeInt(this.timebank);
+return a
 };
-this.load=function(byteArray){this.playerId=byteArray.readInt();
-this.timebank=byteArray.readInt()
+this.load=function(a){this.playerId=a.readInt();
+this.timebank=a.readInt()
 };
-this.toString=function(){var result="POKER_PROTOCOL.PlayerDisconnectedPacket :";
-result+=" player_id["+this.playerId.toString()+"]";
-result+=" timebank["+this.timebank.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.PlayerDisconnectedPacket";
+a.details={};
+a.details.playerId=this.playerId;
+a.details.timebank=this.timebank;
+return a
 }
 };
-POKER_PROTOCOL.PlayerDisconnectedPacket.CLASSID=37;
-POKER_PROTOCOL.PlayerHandStartStatus=function(){this.classId=function(){return POKER_PROTOCOL.PlayerHandStartStatus.CLASSID
+com.cubeia.games.poker.io.protocol.PlayerDisconnectedPacket.CLASSID=37;com.cubeia.games.poker.io.protocol.PlayerHandStartStatus=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.PlayerHandStartStatus.CLASSID
 };
 this.player={};
 this.status={};
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeInt(this.player);
-byteArray.writeUnsignedByte(this.status);
-return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeInt(this.player);
+a.writeUnsignedByte(this.status);
+return a
 };
-this.load=function(byteArray){this.player=byteArray.readInt();
-this.status=POKER_PROTOCOL.PlayerTableStatusEnum.makePlayerTableStatusEnum(byteArray.readUnsignedByte())
+this.load=function(a){this.player=a.readInt();
+this.status=com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.makePlayerTableStatusEnum(a.readUnsignedByte())
 };
-this.toString=function(){var result="POKER_PROTOCOL.PlayerHandStartStatus :";
-result+=" player["+this.player.toString()+"]";
-result+=" status["+this.status.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.PlayerHandStartStatus";
+a.details={};
+a.details.player=this.player;
+a.details.status=com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.toString(this.status);
+return a
 }
 };
-POKER_PROTOCOL.PlayerHandStartStatus.CLASSID=32;
-POKER_PROTOCOL.PlayerPokerStatus=function(){this.classId=function(){return POKER_PROTOCOL.PlayerPokerStatus.CLASSID
+com.cubeia.games.poker.io.protocol.PlayerHandStartStatus.CLASSID=32;com.cubeia.games.poker.io.protocol.PlayerPokerStatus=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.PlayerPokerStatus.CLASSID
 };
 this.player={};
 this.status={};
 this.inCurrentHand={};
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeInt(this.player);
-byteArray.writeUnsignedByte(this.status);
-byteArray.writeBoolean(this.inCurrentHand);
-return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeInt(this.player);
+a.writeUnsignedByte(this.status);
+a.writeBoolean(this.inCurrentHand);
+return a
 };
-this.load=function(byteArray){this.player=byteArray.readInt();
-this.status=POKER_PROTOCOL.PlayerTableStatusEnum.makePlayerTableStatusEnum(byteArray.readUnsignedByte());
-this.inCurrentHand=byteArray.readBoolean()
+this.load=function(a){this.player=a.readInt();
+this.status=com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.makePlayerTableStatusEnum(a.readUnsignedByte());
+this.inCurrentHand=a.readBoolean()
 };
-this.toString=function(){var result="POKER_PROTOCOL.PlayerPokerStatus :";
-result+=" player["+this.player.toString()+"]";
-result+=" status["+this.status.toString()+"]";
-result+=" in_current_hand["+this.inCurrentHand.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.PlayerPokerStatus";
+a.details={};
+a.details.player=this.player;
+a.details.status=com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.toString(this.status);
+a.details.inCurrentHand=this.inCurrentHand;
+return a
 }
 };
-POKER_PROTOCOL.PlayerPokerStatus.CLASSID=31;
-POKER_PROTOCOL.PlayerReconnectedPacket=function(){this.classId=function(){return POKER_PROTOCOL.PlayerReconnectedPacket.CLASSID
+com.cubeia.games.poker.io.protocol.PlayerPokerStatus.CLASSID=31;com.cubeia.games.poker.io.protocol.PlayerReconnectedPacket=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.PlayerReconnectedPacket.CLASSID
 };
 this.playerId={};
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeInt(this.playerId);
-return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeInt(this.playerId);
+return a
 };
-this.load=function(byteArray){this.playerId=byteArray.readInt()
+this.load=function(a){this.playerId=a.readInt()
 };
-this.toString=function(){var result="POKER_PROTOCOL.PlayerReconnectedPacket :";
-result+=" player_id["+this.playerId.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.PlayerReconnectedPacket";
+a.details={};
+a.details.playerId=this.playerId;
+return a
 }
 };
-POKER_PROTOCOL.PlayerReconnectedPacket.CLASSID=38;
-POKER_PROTOCOL.PlayerSitinRequest=function(){this.classId=function(){return POKER_PROTOCOL.PlayerSitinRequest.CLASSID
+com.cubeia.games.poker.io.protocol.PlayerReconnectedPacket.CLASSID=38;com.cubeia.games.poker.io.protocol.PlayerSitinRequest=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.PlayerSitinRequest.CLASSID
 };
-this.save=function(){return[]
+this.player={};
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeInt(this.player);
+return a
 };
-this.load=function(byteArray){};
-this.toString=function(){var result="POKER_PROTOCOL.PlayerSitinRequest :";
-return result
+this.load=function(a){this.player=a.readInt()
+};
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.PlayerSitinRequest";
+a.details={};
+a.details.player=this.player;
+return a
 }
 };
-POKER_PROTOCOL.PlayerSitinRequest.CLASSID=33;
-POKER_PROTOCOL.PlayerSitoutRequest=function(){this.classId=function(){return POKER_PROTOCOL.PlayerSitoutRequest.CLASSID
+com.cubeia.games.poker.io.protocol.PlayerSitinRequest.CLASSID=33;com.cubeia.games.poker.io.protocol.PlayerSitoutRequest=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.PlayerSitoutRequest.CLASSID
 };
-this.save=function(){return[]
+this.player={};
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeInt(this.player);
+return a
 };
-this.load=function(byteArray){};
-this.toString=function(){var result="POKER_PROTOCOL.PlayerSitoutRequest :";
-return result
+this.load=function(a){this.player=a.readInt()
+};
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.PlayerSitoutRequest";
+a.details={};
+a.details.player=this.player;
+return a
 }
 };
-POKER_PROTOCOL.PlayerSitoutRequest.CLASSID=34;
-POKER_PROTOCOL.PlayerState=function(){this.classId=function(){return POKER_PROTOCOL.PlayerState.CLASSID
+com.cubeia.games.poker.io.protocol.PlayerSitoutRequest.CLASSID=34;com.cubeia.games.poker.io.protocol.PlayerState=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.PlayerState.CLASSID
 };
 this.player={};
 this.cards=[];
 this.balance={};
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeInt(this.player);
-byteArray.writeInt(this.cards.length);
-var i;
-for(i=0;
-i<this.cards.length;
-i++){byteArray.writeArray(this.cards[i].save())
-}byteArray.writeInt(this.balance);
-return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeInt(this.player);
+a.writeInt(this.cards.length);
+var b;
+for(b=0;
+b<this.cards.length;
+b++){a.writeArray(this.cards[b].save())
+}a.writeInt(this.balance);
+return a
 };
-this.load=function(byteArray){this.player=byteArray.readInt();
-var i;
-var cardsCount=byteArray.readInt();
-var oGameCard;
+this.load=function(a){this.player=a.readInt();
+var b;
+var d=a.readInt();
+var c;
 this.cards=[];
-for(i=0;
-i<cardsCount;
-i++){oGameCard=new POKER_PROTOCOL.GameCard();
-oGameCard.load(byteArray);
-this.cards.push(oGameCard)
-}this.balance=byteArray.readInt()
+for(b=0;
+b<d;
+b++){c=new com.cubeia.games.poker.io.protocol.GameCard();
+c.load(a);
+this.cards.push(c)
+}this.balance=a.readInt()
 };
-this.toString=function(){var result="POKER_PROTOCOL.PlayerState :";
-result+=" player["+this.player.toString()+"]";
-result+=" cards["+this.cards.toString()+"]";
-result+=" balance["+this.balance.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.PlayerState";
+a.details={};
+a.details.player=this.player;
+a.details.cards=[];
+for(b=0;
+b<this.cards.length;
+b++){a.details.cards.push(this.cards[b].getNormalizedObject())
+}a.details.balance=this.balance;
+return a
 }
 };
-POKER_PROTOCOL.PlayerState.CLASSID=6;
-POKER_PROTOCOL.PlayerTableStatusEnum=function(){};
-POKER_PROTOCOL.PlayerTableStatusEnum.SITIN=0;
-POKER_PROTOCOL.PlayerTableStatusEnum.SITOUT=1;
-POKER_PROTOCOL.PlayerTableStatusEnum.makePlayerTableStatusEnum=function(value){switch(value){case 0:return POKER_PROTOCOL.PlayerTableStatusEnum.SITIN;
-case 1:return POKER_PROTOCOL.PlayerTableStatusEnum.SITOUT
+com.cubeia.games.poker.io.protocol.PlayerState.CLASSID=6;com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum=function(){};
+com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.SITIN=0;
+com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.SITOUT=1;
+com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.makePlayerTableStatusEnum=function(a){switch(a){case 0:return com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.SITIN;
+case 1:return com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.SITOUT
 }return -1
 };
-POKER_PROTOCOL.PongPacket=function(){this.classId=function(){return POKER_PROTOCOL.PongPacket.CLASSID
+com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.toString=function(a){switch(a){case 0:return"SITIN";
+case 1:return"SITOUT"
+}return"INVALID_ENUM_VALUE"
+};com.cubeia.games.poker.io.protocol.PongPacket=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.PongPacket.CLASSID
 };
 this.identifier={};
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeInt(this.identifier);
-return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeInt(this.identifier);
+return a
 };
-this.load=function(byteArray){this.identifier=byteArray.readInt()
+this.load=function(a){this.identifier=a.readInt()
 };
-this.toString=function(){var result="POKER_PROTOCOL.PongPacket :";
-result+=" identifier["+this.identifier.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.PongPacket";
+a.details={};
+a.details.identifier=this.identifier;
+return a
 }
 };
-POKER_PROTOCOL.PongPacket.CLASSID=40;
-POKER_PROTOCOL.Pot=function(){this.classId=function(){return POKER_PROTOCOL.Pot.CLASSID
+com.cubeia.games.poker.io.protocol.PongPacket.CLASSID=40;com.cubeia.games.poker.io.protocol.Pot=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.Pot.CLASSID
 };
 this.id={};
 this.type={};
 this.amount={};
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeByte(this.id);
-byteArray.writeUnsignedByte(this.type);
-byteArray.writeInt(this.amount);
-return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeByte(this.id);
+a.writeUnsignedByte(this.type);
+a.writeInt(this.amount);
+return a
 };
-this.load=function(byteArray){this.id=byteArray.readByte();
-this.type=POKER_PROTOCOL.PotTypeEnum.makePotTypeEnum(byteArray.readUnsignedByte());
-this.amount=byteArray.readInt()
+this.load=function(a){this.id=a.readByte();
+this.type=com.cubeia.games.poker.io.protocol.PotTypeEnum.makePotTypeEnum(a.readUnsignedByte());
+this.amount=a.readInt()
 };
-this.toString=function(){var result="POKER_PROTOCOL.Pot :";
-result+=" id["+this.id.toString()+"]";
-result+=" type["+this.type.toString()+"]";
-result+=" amount["+this.amount.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.Pot";
+a.details={};
+a.details.id=this.id;
+a.details.type=com.cubeia.games.poker.io.protocol.PotTypeEnum.toString(this.type);
+a.details.amount=this.amount;
+return a
 }
 };
-POKER_PROTOCOL.Pot.CLASSID=26;
-POKER_PROTOCOL.PotTransfer=function(){this.classId=function(){return POKER_PROTOCOL.PotTransfer.CLASSID
+com.cubeia.games.poker.io.protocol.Pot.CLASSID=26;com.cubeia.games.poker.io.protocol.PotTransfer=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.PotTransfer.CLASSID
 };
 this.potId={};
 this.playerId={};
 this.amount={};
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeByte(this.potId);
-byteArray.writeInt(this.playerId);
-byteArray.writeInt(this.amount);
-return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeByte(this.potId);
+a.writeInt(this.playerId);
+a.writeInt(this.amount);
+return a
 };
-this.load=function(byteArray){this.potId=byteArray.readByte();
-this.playerId=byteArray.readInt();
-this.amount=byteArray.readInt()
+this.load=function(a){this.potId=a.readByte();
+this.playerId=a.readInt();
+this.amount=a.readInt()
 };
-this.toString=function(){var result="POKER_PROTOCOL.PotTransfer :";
-result+=" pot_id["+this.potId.toString()+"]";
-result+=" player_id["+this.playerId.toString()+"]";
-result+=" amount["+this.amount.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.PotTransfer";
+a.details={};
+a.details.potId=this.potId;
+a.details.playerId=this.playerId;
+a.details.amount=this.amount;
+return a
 }
 };
-POKER_PROTOCOL.PotTransfer.CLASSID=27;
-POKER_PROTOCOL.PotTransfers=function(){this.classId=function(){return POKER_PROTOCOL.PotTransfers.CLASSID
+com.cubeia.games.poker.io.protocol.PotTransfer.CLASSID=27;com.cubeia.games.poker.io.protocol.PotTransfers=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.PotTransfers.CLASSID
 };
 this.fromPlayerToPot={};
 this.transfers=[];
 this.pots=[];
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeBoolean(this.fromPlayerToPot);
-byteArray.writeInt(this.transfers.length);
-var i;
-for(i=0;
-i<this.transfers.length;
-i++){byteArray.writeArray(this.transfers[i].save())
-}byteArray.writeInt(this.pots.length);
-for(i=0;
-i<this.pots.length;
-i++){byteArray.writeArray(this.pots[i].save())
-}return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeBoolean(this.fromPlayerToPot);
+a.writeInt(this.transfers.length);
+var b;
+for(b=0;
+b<this.transfers.length;
+b++){a.writeArray(this.transfers[b].save())
+}a.writeInt(this.pots.length);
+for(b=0;
+b<this.pots.length;
+b++){a.writeArray(this.pots[b].save())
+}return a
 };
-this.load=function(byteArray){this.fromPlayerToPot=byteArray.readBoolean();
-var i;
-var transfersCount=byteArray.readInt();
-var oPotTransfer;
+this.load=function(b){this.fromPlayerToPot=b.readBoolean();
+var e;
+var d=b.readInt();
+var a;
 this.transfers=[];
-for(i=0;
-i<transfersCount;
-i++){oPotTransfer=new POKER_PROTOCOL.PotTransfer();
-oPotTransfer.load(byteArray);
-this.transfers.push(oPotTransfer)
-}var potsCount=byteArray.readInt();
-var oPot;
+for(e=0;
+e<d;
+e++){a=new com.cubeia.games.poker.io.protocol.PotTransfer();
+a.load(b);
+this.transfers.push(a)
+}var f=b.readInt();
+var c;
 this.pots=[];
-for(i=0;
-i<potsCount;
-i++){oPot=new POKER_PROTOCOL.Pot();
-oPot.load(byteArray);
-this.pots.push(oPot)
+for(e=0;
+e<f;
+e++){c=new com.cubeia.games.poker.io.protocol.Pot();
+c.load(b);
+this.pots.push(c)
 }};
-this.toString=function(){var result="POKER_PROTOCOL.PotTransfers :";
-result+=" fromPlayerToPot["+this.fromPlayerToPot.toString()+"]";
-result+=" transfers["+this.transfers.toString()+"]";
-result+=" pots["+this.pots.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.PotTransfers";
+a.details={};
+a.details.fromPlayerToPot=this.fromPlayerToPot;
+a.details.transfers=[];
+for(b=0;
+b<this.transfers.length;
+b++){a.details.transfers.push(this.transfers[b].getNormalizedObject())
+}a.details.pots=[];
+for(b=0;
+b<this.pots.length;
+b++){a.details.pots.push(this.pots[b].getNormalizedObject())
+}return a
 }
 };
-POKER_PROTOCOL.PotTransfers.CLASSID=28;
-POKER_PROTOCOL.PotTypeEnum=function(){};
-POKER_PROTOCOL.PotTypeEnum.MAIN=0;
-POKER_PROTOCOL.PotTypeEnum.SIDE=1;
-POKER_PROTOCOL.PotTypeEnum.makePotTypeEnum=function(value){switch(value){case 0:return POKER_PROTOCOL.PotTypeEnum.MAIN;
-case 1:return POKER_PROTOCOL.PotTypeEnum.SIDE
+com.cubeia.games.poker.io.protocol.PotTransfers.CLASSID=28;com.cubeia.games.poker.io.protocol.PotTypeEnum=function(){};
+com.cubeia.games.poker.io.protocol.PotTypeEnum.MAIN=0;
+com.cubeia.games.poker.io.protocol.PotTypeEnum.SIDE=1;
+com.cubeia.games.poker.io.protocol.PotTypeEnum.makePotTypeEnum=function(a){switch(a){case 0:return com.cubeia.games.poker.io.protocol.PotTypeEnum.MAIN;
+case 1:return com.cubeia.games.poker.io.protocol.PotTypeEnum.SIDE
 }return -1
 };
-POKER_PROTOCOL.ProtocolObjectFactory={};
-POKER_PROTOCOL.ProtocolObjectFactory.create=function(classId,gameData){var protocolObject;
-switch(classId){case POKER_PROTOCOL.PlayerAction.CLASSID:protocolObject=new POKER_PROTOCOL.PlayerAction();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.ErrorPacket.CLASSID:protocolObject=new POKER_PROTOCOL.ErrorPacket();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.FuturePlayerAction.CLASSID:protocolObject=new POKER_PROTOCOL.FuturePlayerAction();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.GameCard.CLASSID:protocolObject=new POKER_PROTOCOL.GameCard();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.BestHand.CLASSID:protocolObject=new POKER_PROTOCOL.BestHand();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.PlayerState.CLASSID:protocolObject=new POKER_PROTOCOL.PlayerState();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.CardToDeal.CLASSID:protocolObject=new POKER_PROTOCOL.CardToDeal();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.RequestAction.CLASSID:protocolObject=new POKER_PROTOCOL.RequestAction();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.InformFutureAllowedActions.CLASSID:protocolObject=new POKER_PROTOCOL.InformFutureAllowedActions();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.StartNewHand.CLASSID:protocolObject=new POKER_PROTOCOL.StartNewHand();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.DealerButton.CLASSID:protocolObject=new POKER_PROTOCOL.DealerButton();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.DealPublicCards.CLASSID:protocolObject=new POKER_PROTOCOL.DealPublicCards();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.DealPrivateCards.CLASSID:protocolObject=new POKER_PROTOCOL.DealPrivateCards();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.ExposePrivateCards.CLASSID:protocolObject=new POKER_PROTOCOL.ExposePrivateCards();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.HandEnd.CLASSID:protocolObject=new POKER_PROTOCOL.HandEnd();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.HandCanceled.CLASSID:protocolObject=new POKER_PROTOCOL.HandCanceled();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.StartHandHistory.CLASSID:protocolObject=new POKER_PROTOCOL.StartHandHistory();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.StopHandHistory.CLASSID:protocolObject=new POKER_PROTOCOL.StopHandHistory();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.PerformAction.CLASSID:protocolObject=new POKER_PROTOCOL.PerformAction();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.TournamentOut.CLASSID:protocolObject=new POKER_PROTOCOL.TournamentOut();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.PlayerBalance.CLASSID:protocolObject=new POKER_PROTOCOL.PlayerBalance();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.BuyInInfoRequest.CLASSID:protocolObject=new POKER_PROTOCOL.BuyInInfoRequest();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.BuyInInfoResponse.CLASSID:protocolObject=new POKER_PROTOCOL.BuyInInfoResponse();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.BuyInRequest.CLASSID:protocolObject=new POKER_PROTOCOL.BuyInRequest();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.BuyInResponse.CLASSID:protocolObject=new POKER_PROTOCOL.BuyInResponse();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.Pot.CLASSID:protocolObject=new POKER_PROTOCOL.Pot();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.PotTransfer.CLASSID:protocolObject=new POKER_PROTOCOL.PotTransfer();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.PotTransfers.CLASSID:protocolObject=new POKER_PROTOCOL.PotTransfers();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.TakeBackUncalledBet.CLASSID:protocolObject=new POKER_PROTOCOL.TakeBackUncalledBet();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.RakeInfo.CLASSID:protocolObject=new POKER_PROTOCOL.RakeInfo();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.PlayerPokerStatus.CLASSID:protocolObject=new POKER_PROTOCOL.PlayerPokerStatus();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.PlayerHandStartStatus.CLASSID:protocolObject=new POKER_PROTOCOL.PlayerHandStartStatus();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.PlayerSitinRequest.CLASSID:protocolObject=new POKER_PROTOCOL.PlayerSitinRequest();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.PlayerSitoutRequest.CLASSID:protocolObject=new POKER_PROTOCOL.PlayerSitoutRequest();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.DeckInfo.CLASSID:protocolObject=new POKER_PROTOCOL.DeckInfo();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.ExternalSessionInfoPacket.CLASSID:protocolObject=new POKER_PROTOCOL.ExternalSessionInfoPacket();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.PlayerDisconnectedPacket.CLASSID:protocolObject=new POKER_PROTOCOL.PlayerDisconnectedPacket();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.PlayerReconnectedPacket.CLASSID:protocolObject=new POKER_PROTOCOL.PlayerReconnectedPacket();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.PingPacket.CLASSID:protocolObject=new POKER_PROTOCOL.PingPacket();
-protocolObject.load(gameData);
-return protocolObject;
-case POKER_PROTOCOL.PongPacket.CLASSID:protocolObject=new POKER_PROTOCOL.PongPacket();
-protocolObject.load(gameData);
-return protocolObject
+com.cubeia.games.poker.io.protocol.PotTypeEnum.toString=function(a){switch(a){case 0:return"MAIN";
+case 1:return"SIDE"
+}return"INVALID_ENUM_VALUE"
+};com.cubeia.games.poker.io.protocol.ProtocolObjectFactory={};
+com.cubeia.games.poker.io.protocol.ProtocolObjectFactory.create=function(c,a){var b;
+switch(c){case com.cubeia.games.poker.io.protocol.PlayerAction.CLASSID:b=new com.cubeia.games.poker.io.protocol.PlayerAction();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.ErrorPacket.CLASSID:b=new com.cubeia.games.poker.io.protocol.ErrorPacket();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.FuturePlayerAction.CLASSID:b=new com.cubeia.games.poker.io.protocol.FuturePlayerAction();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.GameCard.CLASSID:b=new com.cubeia.games.poker.io.protocol.GameCard();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.BestHand.CLASSID:b=new com.cubeia.games.poker.io.protocol.BestHand();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.PlayerState.CLASSID:b=new com.cubeia.games.poker.io.protocol.PlayerState();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.CardToDeal.CLASSID:b=new com.cubeia.games.poker.io.protocol.CardToDeal();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.RequestAction.CLASSID:b=new com.cubeia.games.poker.io.protocol.RequestAction();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.InformFutureAllowedActions.CLASSID:b=new com.cubeia.games.poker.io.protocol.InformFutureAllowedActions();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.StartNewHand.CLASSID:b=new com.cubeia.games.poker.io.protocol.StartNewHand();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.DealerButton.CLASSID:b=new com.cubeia.games.poker.io.protocol.DealerButton();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.DealPublicCards.CLASSID:b=new com.cubeia.games.poker.io.protocol.DealPublicCards();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.DealPrivateCards.CLASSID:b=new com.cubeia.games.poker.io.protocol.DealPrivateCards();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.ExposePrivateCards.CLASSID:b=new com.cubeia.games.poker.io.protocol.ExposePrivateCards();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.HandEnd.CLASSID:b=new com.cubeia.games.poker.io.protocol.HandEnd();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.HandCanceled.CLASSID:b=new com.cubeia.games.poker.io.protocol.HandCanceled();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.StartHandHistory.CLASSID:b=new com.cubeia.games.poker.io.protocol.StartHandHistory();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.StopHandHistory.CLASSID:b=new com.cubeia.games.poker.io.protocol.StopHandHistory();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.PerformAction.CLASSID:b=new com.cubeia.games.poker.io.protocol.PerformAction();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.TournamentOut.CLASSID:b=new com.cubeia.games.poker.io.protocol.TournamentOut();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.PlayerBalance.CLASSID:b=new com.cubeia.games.poker.io.protocol.PlayerBalance();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.BuyInInfoRequest.CLASSID:b=new com.cubeia.games.poker.io.protocol.BuyInInfoRequest();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.BuyInInfoResponse.CLASSID:b=new com.cubeia.games.poker.io.protocol.BuyInInfoResponse();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.BuyInRequest.CLASSID:b=new com.cubeia.games.poker.io.protocol.BuyInRequest();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.BuyInResponse.CLASSID:b=new com.cubeia.games.poker.io.protocol.BuyInResponse();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.Pot.CLASSID:b=new com.cubeia.games.poker.io.protocol.Pot();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.PotTransfer.CLASSID:b=new com.cubeia.games.poker.io.protocol.PotTransfer();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.PotTransfers.CLASSID:b=new com.cubeia.games.poker.io.protocol.PotTransfers();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.TakeBackUncalledBet.CLASSID:b=new com.cubeia.games.poker.io.protocol.TakeBackUncalledBet();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.RakeInfo.CLASSID:b=new com.cubeia.games.poker.io.protocol.RakeInfo();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.PlayerPokerStatus.CLASSID:b=new com.cubeia.games.poker.io.protocol.PlayerPokerStatus();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.PlayerHandStartStatus.CLASSID:b=new com.cubeia.games.poker.io.protocol.PlayerHandStartStatus();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.PlayerSitinRequest.CLASSID:b=new com.cubeia.games.poker.io.protocol.PlayerSitinRequest();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.PlayerSitoutRequest.CLASSID:b=new com.cubeia.games.poker.io.protocol.PlayerSitoutRequest();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.DeckInfo.CLASSID:b=new com.cubeia.games.poker.io.protocol.DeckInfo();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.ExternalSessionInfoPacket.CLASSID:b=new com.cubeia.games.poker.io.protocol.ExternalSessionInfoPacket();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.PlayerDisconnectedPacket.CLASSID:b=new com.cubeia.games.poker.io.protocol.PlayerDisconnectedPacket();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.PlayerReconnectedPacket.CLASSID:b=new com.cubeia.games.poker.io.protocol.PlayerReconnectedPacket();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.PingPacket.CLASSID:b=new com.cubeia.games.poker.io.protocol.PingPacket();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.PongPacket.CLASSID:b=new com.cubeia.games.poker.io.protocol.PongPacket();
+b.load(a);
+return b
 }return null
-};
-POKER_PROTOCOL.RakeInfo=function(){this.classId=function(){return POKER_PROTOCOL.RakeInfo.CLASSID
+};com.cubeia.games.poker.io.protocol.RakeInfo=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.RakeInfo.CLASSID
 };
 this.totalPot={};
 this.totalRake={};
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeInt(this.totalPot);
-byteArray.writeInt(this.totalRake);
-return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeInt(this.totalPot);
+a.writeInt(this.totalRake);
+return a
 };
-this.load=function(byteArray){this.totalPot=byteArray.readInt();
-this.totalRake=byteArray.readInt()
+this.load=function(a){this.totalPot=a.readInt();
+this.totalRake=a.readInt()
 };
-this.toString=function(){var result="POKER_PROTOCOL.RakeInfo :";
-result+=" total_pot["+this.totalPot.toString()+"]";
-result+=" total_rake["+this.totalRake.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.RakeInfo";
+a.details={};
+a.details.totalPot=this.totalPot;
+a.details.totalRake=this.totalRake;
+return a
 }
 };
-POKER_PROTOCOL.RakeInfo.CLASSID=30;
-POKER_PROTOCOL.RankEnum=function(){};
-POKER_PROTOCOL.RankEnum.TWO=0;
-POKER_PROTOCOL.RankEnum.THREE=1;
-POKER_PROTOCOL.RankEnum.FOUR=2;
-POKER_PROTOCOL.RankEnum.FIVE=3;
-POKER_PROTOCOL.RankEnum.SIX=4;
-POKER_PROTOCOL.RankEnum.SEVEN=5;
-POKER_PROTOCOL.RankEnum.EIGHT=6;
-POKER_PROTOCOL.RankEnum.NINE=7;
-POKER_PROTOCOL.RankEnum.TEN=8;
-POKER_PROTOCOL.RankEnum.JACK=9;
-POKER_PROTOCOL.RankEnum.QUEEN=10;
-POKER_PROTOCOL.RankEnum.KING=11;
-POKER_PROTOCOL.RankEnum.ACE=12;
-POKER_PROTOCOL.RankEnum.HIDDEN=13;
-POKER_PROTOCOL.RankEnum.makeRankEnum=function(value){switch(value){case 0:return POKER_PROTOCOL.RankEnum.TWO;
-case 1:return POKER_PROTOCOL.RankEnum.THREE;
-case 2:return POKER_PROTOCOL.RankEnum.FOUR;
-case 3:return POKER_PROTOCOL.RankEnum.FIVE;
-case 4:return POKER_PROTOCOL.RankEnum.SIX;
-case 5:return POKER_PROTOCOL.RankEnum.SEVEN;
-case 6:return POKER_PROTOCOL.RankEnum.EIGHT;
-case 7:return POKER_PROTOCOL.RankEnum.NINE;
-case 8:return POKER_PROTOCOL.RankEnum.TEN;
-case 9:return POKER_PROTOCOL.RankEnum.JACK;
-case 10:return POKER_PROTOCOL.RankEnum.QUEEN;
-case 11:return POKER_PROTOCOL.RankEnum.KING;
-case 12:return POKER_PROTOCOL.RankEnum.ACE;
-case 13:return POKER_PROTOCOL.RankEnum.HIDDEN
+com.cubeia.games.poker.io.protocol.RakeInfo.CLASSID=30;com.cubeia.games.poker.io.protocol.RankEnum=function(){};
+com.cubeia.games.poker.io.protocol.RankEnum.TWO=0;
+com.cubeia.games.poker.io.protocol.RankEnum.THREE=1;
+com.cubeia.games.poker.io.protocol.RankEnum.FOUR=2;
+com.cubeia.games.poker.io.protocol.RankEnum.FIVE=3;
+com.cubeia.games.poker.io.protocol.RankEnum.SIX=4;
+com.cubeia.games.poker.io.protocol.RankEnum.SEVEN=5;
+com.cubeia.games.poker.io.protocol.RankEnum.EIGHT=6;
+com.cubeia.games.poker.io.protocol.RankEnum.NINE=7;
+com.cubeia.games.poker.io.protocol.RankEnum.TEN=8;
+com.cubeia.games.poker.io.protocol.RankEnum.JACK=9;
+com.cubeia.games.poker.io.protocol.RankEnum.QUEEN=10;
+com.cubeia.games.poker.io.protocol.RankEnum.KING=11;
+com.cubeia.games.poker.io.protocol.RankEnum.ACE=12;
+com.cubeia.games.poker.io.protocol.RankEnum.HIDDEN=13;
+com.cubeia.games.poker.io.protocol.RankEnum.makeRankEnum=function(a){switch(a){case 0:return com.cubeia.games.poker.io.protocol.RankEnum.TWO;
+case 1:return com.cubeia.games.poker.io.protocol.RankEnum.THREE;
+case 2:return com.cubeia.games.poker.io.protocol.RankEnum.FOUR;
+case 3:return com.cubeia.games.poker.io.protocol.RankEnum.FIVE;
+case 4:return com.cubeia.games.poker.io.protocol.RankEnum.SIX;
+case 5:return com.cubeia.games.poker.io.protocol.RankEnum.SEVEN;
+case 6:return com.cubeia.games.poker.io.protocol.RankEnum.EIGHT;
+case 7:return com.cubeia.games.poker.io.protocol.RankEnum.NINE;
+case 8:return com.cubeia.games.poker.io.protocol.RankEnum.TEN;
+case 9:return com.cubeia.games.poker.io.protocol.RankEnum.JACK;
+case 10:return com.cubeia.games.poker.io.protocol.RankEnum.QUEEN;
+case 11:return com.cubeia.games.poker.io.protocol.RankEnum.KING;
+case 12:return com.cubeia.games.poker.io.protocol.RankEnum.ACE;
+case 13:return com.cubeia.games.poker.io.protocol.RankEnum.HIDDEN
 }return -1
 };
-POKER_PROTOCOL.RequestAction=function(){this.classId=function(){return POKER_PROTOCOL.RequestAction.CLASSID
+com.cubeia.games.poker.io.protocol.RankEnum.toString=function(a){switch(a){case 0:return"TWO";
+case 1:return"THREE";
+case 2:return"FOUR";
+case 3:return"FIVE";
+case 4:return"SIX";
+case 5:return"SEVEN";
+case 6:return"EIGHT";
+case 7:return"NINE";
+case 8:return"TEN";
+case 9:return"JACK";
+case 10:return"QUEEN";
+case 11:return"KING";
+case 12:return"ACE";
+case 13:return"HIDDEN"
+}return"INVALID_ENUM_VALUE"
+};com.cubeia.games.poker.io.protocol.RequestAction=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.RequestAction.CLASSID
 };
 this.currentPotSize={};
 this.seq={};
 this.player={};
 this.allowedActions=[];
 this.timeToAct={};
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeInt(this.currentPotSize);
-byteArray.writeInt(this.seq);
-byteArray.writeInt(this.player);
-byteArray.writeInt(this.allowedActions.length);
-var i;
-for(i=0;
-i<this.allowedActions.length;
-i++){byteArray.writeArray(this.allowedActions[i].save())
-}byteArray.writeInt(this.timeToAct);
-return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeInt(this.currentPotSize);
+a.writeInt(this.seq);
+a.writeInt(this.player);
+a.writeInt(this.allowedActions.length);
+var b;
+for(b=0;
+b<this.allowedActions.length;
+b++){a.writeArray(this.allowedActions[b].save())
+}a.writeInt(this.timeToAct);
+return a
 };
-this.load=function(byteArray){this.currentPotSize=byteArray.readInt();
-this.seq=byteArray.readInt();
-this.player=byteArray.readInt();
-var i;
-var allowedActionsCount=byteArray.readInt();
-var oPlayerAction;
+this.load=function(b){this.currentPotSize=b.readInt();
+this.seq=b.readInt();
+this.player=b.readInt();
+var c;
+var a=b.readInt();
+var d;
 this.allowedActions=[];
-for(i=0;
-i<allowedActionsCount;
-i++){oPlayerAction=new POKER_PROTOCOL.PlayerAction();
-oPlayerAction.load(byteArray);
-this.allowedActions.push(oPlayerAction)
-}this.timeToAct=byteArray.readInt()
+for(c=0;
+c<a;
+c++){d=new com.cubeia.games.poker.io.protocol.PlayerAction();
+d.load(b);
+this.allowedActions.push(d)
+}this.timeToAct=b.readInt()
 };
-this.toString=function(){var result="POKER_PROTOCOL.RequestAction :";
-result+=" current_pot_size["+this.currentPotSize.toString()+"]";
-result+=" seq["+this.seq.toString()+"]";
-result+=" player["+this.player.toString()+"]";
-result+=" allowed_actions["+this.allowedActions.toString()+"]";
-result+=" time_to_act["+this.timeToAct.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.RequestAction";
+a.details={};
+a.details.currentPotSize=this.currentPotSize;
+a.details.seq=this.seq;
+a.details.player=this.player;
+a.details.allowedActions=[];
+for(b=0;
+b<this.allowedActions.length;
+b++){a.details.allowedActions.push(this.allowedActions[b].getNormalizedObject())
+}a.details.timeToAct=this.timeToAct;
+return a
 }
 };
-POKER_PROTOCOL.RequestAction.CLASSID=8;
-POKER_PROTOCOL.StartHandHistory=function(){this.classId=function(){return POKER_PROTOCOL.StartHandHistory.CLASSID
+com.cubeia.games.poker.io.protocol.RequestAction.CLASSID=8;com.cubeia.games.poker.io.protocol.StartHandHistory=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.StartHandHistory.CLASSID
 };
 this.save=function(){return[]
 };
-this.load=function(byteArray){};
-this.toString=function(){var result="POKER_PROTOCOL.StartHandHistory :";
-return result
+this.load=function(a){};
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.StartHandHistory";
+a.details={};
+return a
 }
 };
-POKER_PROTOCOL.StartHandHistory.CLASSID=17;
-POKER_PROTOCOL.StartNewHand=function(){this.classId=function(){return POKER_PROTOCOL.StartNewHand.CLASSID
+com.cubeia.games.poker.io.protocol.StartHandHistory.CLASSID=17;com.cubeia.games.poker.io.protocol.StartNewHand=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.StartNewHand.CLASSID
 };
 this.dealerSeatId={};
 this.handId={};
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeInt(this.dealerSeatId);
-byteArray.writeString(this.handId);
-return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeInt(this.dealerSeatId);
+a.writeString(this.handId);
+return a
 };
-this.load=function(byteArray){this.dealerSeatId=byteArray.readInt();
-this.handId=byteArray.readString()
+this.load=function(a){this.dealerSeatId=a.readInt();
+this.handId=a.readString()
 };
-this.toString=function(){var result="POKER_PROTOCOL.StartNewHand :";
-result+=" dealerSeatId["+this.dealerSeatId.toString()+"]";
-result+=" handId["+this.handId.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.StartNewHand";
+a.details={};
+a.details.dealerSeatId=this.dealerSeatId;
+a.details.handId=this.handId;
+return a
 }
 };
-POKER_PROTOCOL.StartNewHand.CLASSID=10;
-POKER_PROTOCOL.StopHandHistory=function(){this.classId=function(){return POKER_PROTOCOL.StopHandHistory.CLASSID
+com.cubeia.games.poker.io.protocol.StartNewHand.CLASSID=10;com.cubeia.games.poker.io.protocol.StopHandHistory=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.StopHandHistory.CLASSID
 };
 this.save=function(){return[]
 };
-this.load=function(byteArray){};
-this.toString=function(){var result="POKER_PROTOCOL.StopHandHistory :";
-return result
+this.load=function(a){};
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.StopHandHistory";
+a.details={};
+return a
 }
 };
-POKER_PROTOCOL.StopHandHistory.CLASSID=18;
-POKER_PROTOCOL.SuitEnum=function(){};
-POKER_PROTOCOL.SuitEnum.CLUBS=0;
-POKER_PROTOCOL.SuitEnum.DIAMONDS=1;
-POKER_PROTOCOL.SuitEnum.HEARTS=2;
-POKER_PROTOCOL.SuitEnum.SPADES=3;
-POKER_PROTOCOL.SuitEnum.HIDDEN=4;
-POKER_PROTOCOL.SuitEnum.makeSuitEnum=function(value){switch(value){case 0:return POKER_PROTOCOL.SuitEnum.CLUBS;
-case 1:return POKER_PROTOCOL.SuitEnum.DIAMONDS;
-case 2:return POKER_PROTOCOL.SuitEnum.HEARTS;
-case 3:return POKER_PROTOCOL.SuitEnum.SPADES;
-case 4:return POKER_PROTOCOL.SuitEnum.HIDDEN
+com.cubeia.games.poker.io.protocol.StopHandHistory.CLASSID=18;com.cubeia.games.poker.io.protocol.SuitEnum=function(){};
+com.cubeia.games.poker.io.protocol.SuitEnum.CLUBS=0;
+com.cubeia.games.poker.io.protocol.SuitEnum.DIAMONDS=1;
+com.cubeia.games.poker.io.protocol.SuitEnum.HEARTS=2;
+com.cubeia.games.poker.io.protocol.SuitEnum.SPADES=3;
+com.cubeia.games.poker.io.protocol.SuitEnum.HIDDEN=4;
+com.cubeia.games.poker.io.protocol.SuitEnum.makeSuitEnum=function(a){switch(a){case 0:return com.cubeia.games.poker.io.protocol.SuitEnum.CLUBS;
+case 1:return com.cubeia.games.poker.io.protocol.SuitEnum.DIAMONDS;
+case 2:return com.cubeia.games.poker.io.protocol.SuitEnum.HEARTS;
+case 3:return com.cubeia.games.poker.io.protocol.SuitEnum.SPADES;
+case 4:return com.cubeia.games.poker.io.protocol.SuitEnum.HIDDEN
 }return -1
 };
-POKER_PROTOCOL.TakeBackUncalledBet=function(){this.classId=function(){return POKER_PROTOCOL.TakeBackUncalledBet.CLASSID
+com.cubeia.games.poker.io.protocol.SuitEnum.toString=function(a){switch(a){case 0:return"CLUBS";
+case 1:return"DIAMONDS";
+case 2:return"HEARTS";
+case 3:return"SPADES";
+case 4:return"HIDDEN"
+}return"INVALID_ENUM_VALUE"
+};com.cubeia.games.poker.io.protocol.TakeBackUncalledBet=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.TakeBackUncalledBet.CLASSID
 };
 this.playerId={};
 this.amount={};
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeInt(this.playerId);
-byteArray.writeInt(this.amount);
-return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeInt(this.playerId);
+a.writeInt(this.amount);
+return a
 };
-this.load=function(byteArray){this.playerId=byteArray.readInt();
-this.amount=byteArray.readInt()
+this.load=function(a){this.playerId=a.readInt();
+this.amount=a.readInt()
 };
-this.toString=function(){var result="POKER_PROTOCOL.TakeBackUncalledBet :";
-result+=" player_id["+this.playerId.toString()+"]";
-result+=" amount["+this.amount.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.TakeBackUncalledBet";
+a.details={};
+a.details.playerId=this.playerId;
+a.details.amount=this.amount;
+return a
 }
 };
-POKER_PROTOCOL.TakeBackUncalledBet.CLASSID=29;
-POKER_PROTOCOL.TournamentOut=function(){this.classId=function(){return POKER_PROTOCOL.TournamentOut.CLASSID
+com.cubeia.games.poker.io.protocol.TakeBackUncalledBet.CLASSID=29;com.cubeia.games.poker.io.protocol.TournamentOut=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.TournamentOut.CLASSID
 };
 this.player={};
 this.position={};
-this.save=function(){var byteArray=new FIREBASE.ByteArray();
-byteArray.writeInt(this.player);
-byteArray.writeInt(this.position);
-return byteArray
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeInt(this.player);
+a.writeInt(this.position);
+return a
 };
-this.load=function(byteArray){this.player=byteArray.readInt();
-this.position=byteArray.readInt()
+this.load=function(a){this.player=a.readInt();
+this.position=a.readInt()
 };
-this.toString=function(){var result="POKER_PROTOCOL.TournamentOut :";
-result+=" player["+this.player.toString()+"]";
-result+=" position["+this.position.toString()+"]";
-return result
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.TournamentOut";
+a.details={};
+a.details.player=this.player;
+a.details.position=this.position;
+return a
 }
 };
-POKER_PROTOCOL.TournamentOut.CLASSID=20;
+com.cubeia.games.poker.io.protocol.TournamentOut.CLASSID=20;

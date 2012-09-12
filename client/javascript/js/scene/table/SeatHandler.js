@@ -5,6 +5,8 @@ SeatHandler = function() {
 
 };
 
+
+
 SeatHandler.prototype.removePlayerFromSeat = function(seatEntity) {
     document.getElementById(seatEntity.spatial.transform.anchorId).style.opacity = 0.4;
     seatEntity.occupant = null;

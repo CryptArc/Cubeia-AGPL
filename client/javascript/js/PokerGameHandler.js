@@ -25,7 +25,7 @@ com.cubeia.games.poker.PokerGameHandler = function(callbackInstance) {
 	 * @param {POKER_PROTOCOL.BuyInInfoResponse} buyInInfoResponse
 	 */
 	this.handleBuyInInfoResponse = function(buyInInfoResponse) {
-		var buyInRequest = new POKER_PROTOCOL.BuyInRequest();
+		var buyInRequest = new com.cubeia.games.poker.io.protocol.BuyInRequest();
 		buyInRequest.amount = buyInInfoResponse.maxAmount;
 		buyInRequest.sitInIfSuccessful = true;
 		sendGameTransportPacket(buyInRequest);

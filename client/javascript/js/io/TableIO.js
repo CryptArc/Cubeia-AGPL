@@ -51,7 +51,9 @@ function handlePacket(protocolObject) {
 			handleSeatInfo(protocolObject);
 			break;
 		case FB_PROTOCOL.JoinResponsePacket.CLASSID :
-			view.table.setLeaveTableFunction();
+			view.table.hideJoinButton();
+            view.table.hideLeaveButton();
+            view.table.showSitOutButton();
 			handleJoinResponse(protocolObject);
 			break;
 		case FB_PROTOCOL.GameTransportPacket.CLASSID :
@@ -59,9 +61,10 @@ function handlePacket(protocolObject) {
 			break;
 		case FB_PROTOCOL.WatchResponsePacket.CLASSID :
 			view.table.enableJoinTable();
+            view.table.showLeaveButton();
 			break;
 		case FB_PROTOCOL.LeaveResponsePacket.CLASSID :
-			callReload();
+            showLobby();
 			break;
 	}
 };
@@ -117,18 +120,18 @@ function fakeActionRequest() {
     seatPlayer(1, 1, "player" + 1);
     seatPlayer(88, 2, "player" + 88);
 
-    var action = new POKER_PROTOCOL.RequestAction();
-    var allowedAction = new POKER_PROTOCOL.PlayerAction();
+    var action = new com.cubeia.games.poker.io.protocol.RequestAction();
+    var allowedAction = new com.cubeia.games.poker.io.protocol.PlayerAction();
     allowedAction.type = 6;
     allowedAction.minAmount = 0;
     allowedAction.maxAmount = 0;
 
-    var allowedAction2 = new POKER_PROTOCOL.PlayerAction();
+    var allowedAction2 = new com.cubeia.games.poker.io.protocol.PlayerAction();
     allowedAction2.type = 3;
     allowedAction2.minAmount = 100;
     allowedAction2.maxAmount = 1000;
 
-    var allowedAction3 = new POKER_PROTOCOL.PlayerAction();
+    var allowedAction3 = new com.cubeia.games.poker.io.protocol.PlayerAction();
     allowedAction3.type = 4;
     allowedAction3.minAmount = 100;
     allowedAction3.maxAmount = 500;
@@ -143,9 +146,9 @@ function fakeActionRequest() {
 
 
 function sendAction(seq, actionType, betAmount, raiseAmount) {
-	var performAction = new POKER_PROTOCOL.PerformAction();
+	var performAction = new com.cubeia.games.poker.io.protocol.PerformAction();
 	performAction.player = pid;
-	performAction.action = new POKER_PROTOCOL.PlayerAction();
+	performAction.action = new com.cubeia.games.poker.io.protocol.PlayerAction();
 	console.log("sending action type=" + actionType);
 	performAction.action.type = actionType;
 	performAction.action.minAmount = 0;
@@ -157,7 +160,20 @@ function sendAction(seq, actionType, betAmount, raiseAmount) {
 	
 	sendGameTransportPacket(performAction);
 };
-
+function sitOutAction() {
+    var sitOut = new com.cubeia.games.poker.io.protocol.PlayerSitoutRequest();
+    sitOut.player = pid;
+    //sendGameTransportPacket(sitOut);
+    console.log("SITTING OUT");
+    connector.sendStyxGameData(0, tableid, sitOut); //sendProtocolObject(0, tableid, sitOut.classId(), []);
+};
+function sitInAction() {
+    var sitIn = new com.cubeia.games.poker.io.protocol.PlayerSitinRequest();
+    sitIn.player = pid;
+    //sendGameTransportPacket(sitOut);
+    console.log("SITTING IN");
+    connector.sendStyxGameData(0, tableid, sitIn); //sendProtocolObject(0, tableid, sitOut.classId(), []);
+};
 function sendGameTransportPacket(gamedata) {
 //	var byteArray = gamedata.save();
     connector.sendStyxGameData(0, tableid, gamedata);

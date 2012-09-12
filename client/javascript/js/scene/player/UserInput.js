@@ -2,6 +2,7 @@ UserInput = function() {
     this.entityId = "userInputEntityId";
     this.playerProgressBar = null;
     this.tempHiddenButtons = [];
+
 };
 
 UserInput.prototype.setCheckAvailable = function(playerAction) {
@@ -112,7 +113,10 @@ UserInput.prototype.initPlayerGameActionUi = function(parentEntity) {
     uiUtils.createActionButton(this.inputButtons.sliderOKButton, entity.ui.divId);
 
     this.hideActionButtons();
+
+
 };
+
 
 UserInput.prototype.clearUserEntityTimeToAct = function() {
     var userEntity = entityHandler.getEntityById(playerHandler.getPlayerEntityIdByPid(playerHandler.myPlayerPid));
@@ -217,8 +221,8 @@ UserInput.prototype.clickBetButton = function() {
         id: 'sliderValue'
     }).prependTo('#' + this.inputButtons.sliderOKButton.divId + '_button_label');
 
-    var min = view.table.validActions[POKER_PROTOCOL.ActionTypeEnum.BET].minAmount;
-    var max = view.table.validActions[POKER_PROTOCOL.ActionTypeEnum.BET].maxAmount;
+    var min = view.table.validActions[com.cubeia.games.poker.io.protocol.ActionTypeEnum.BET].minAmount;
+    var max = view.table.validActions[com.cubeia.games.poker.io.protocol.ActionTypeEnum.BET].maxAmount;
     this.showBetSlider(min, max);
 };
 
@@ -252,8 +256,8 @@ UserInput.prototype.clickRaiseButton = function() {
         id: 'sliderValue'
     }).prependTo('#' + this.inputButtons.sliderOKButton.divId + '_button_label');
 
-    var min = view.table.validActions[POKER_PROTOCOL.ActionTypeEnum.RAISE].minAmount;
-    var max = view.table.validActions[POKER_PROTOCOL.ActionTypeEnum.RAISE].maxAmount;
+    var min = view.table.validActions[com.cubeia.games.poker.io.protocol.ActionTypeEnum.RAISE].minAmount;
+    var max = view.table.validActions[com.cubeia.games.poker.io.protocol.ActionTypeEnum.RAISE].maxAmount;
     this.showBetSlider(min, max);
 };
 

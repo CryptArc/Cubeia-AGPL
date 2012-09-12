@@ -203,9 +203,9 @@
 	var screenname;
 	var numberOfSeats;
 
-	// create game message handlers
-	var pokerGameHandler = new com.cubeia.games.poker.PokerGameHandler(this);
-	var pokerProtocolHandler = new POKER_PROTOCOL.PokerProtocolHandler(pokerGameHandler);
+    // create game message handlers
+    var pokerGameHandler = new com.cubeia.games.poker.PokerGameHandler(this);
+    var pokerProtocolHandler = new POKER_PROTOCOL.PokerProtocolHandler(pokerGameHandler);
 
 	var view;
 	var uiElementHandler;
@@ -219,7 +219,7 @@
 	var usr, pwd;
 	var autoLogin = false;
 	var webSocketUrl = "localhost";
-//    var webSocketUrl ="192.168.1.110";
+    //var webSocketUrl ="192.168.1.110";
 	var webSocketPort = 9191;
 	/*
 	 * Provide a "seed" for setting ID's to the div hierarchy
@@ -291,6 +291,7 @@
 
 
 	function showLobby() {
+
 		var winH = $(window).height();
 		var winW = $(window).width();
 
@@ -303,9 +304,13 @@
 		//transition effect
 		//$('#switcher').fadeIn(2000);
 
-		$('#lobby').fadeIn(1000);
+		$('#lobby').show();
+        $('#boxes').show();
 		createGrid();
 		connector.lobbySubscribe(1, "/");
+        if(view) {
+            view.clear();
+        }
 
 		//fillData();
 	}

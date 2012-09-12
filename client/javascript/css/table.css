@@ -586,22 +586,33 @@ div.line_separator
 
 div.hud_player_name
 {
-    bottom: 82px;
-    left: 70px;
-    font-size: 45;
+    bottom: 66px;
+    left: 175px;
+    font-size: 40px;
     color: #fff;
     position: absolute;
 }
 
 div.hud_balance
 {
-    bottom: 16px;
-    left: 70px;
-    font-size: 65;
+    bottom: 10px;
+    left: 175px;
+    font-size: 50px;
     font-weight: bold;
     color: #fff;
     position: absolute;
 }
+
+div.sitting_out_text
+{
+    bottom: 55px;
+    left: 70px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #999;
+    position: absolute;
+}
+
 
 div.hud_card
 {

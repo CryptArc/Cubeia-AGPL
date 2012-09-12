@@ -9,12 +9,13 @@ UiUtils.prototype.getPercentDoneForMinMaxCurrent = function(min, max, current) {
     var percentDone = Math.max(0, Math.min(100, ((completed) / total) * 100));
 
     return percentDone;
-}
+};
 
 
 UiUtils.prototype.createActionButton = function(buttonData, parentDivId) {
+    console.log(buttonData);
+    console.log("parentDivId=" + parentDivId);
     var buttonFrameDivId = "userActionButton_"+buttonData.label;
-
 
     uiElementHandler.createDivElement(parentDivId, buttonFrameDivId, "<br>"+buttonData.label, "pressed_frame", null);
     document.getElementById(buttonFrameDivId).style.top = buttonData.posY+"%";

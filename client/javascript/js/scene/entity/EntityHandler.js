@@ -10,7 +10,6 @@ EntityHandler.prototype.addEntity = function(id) {
     entity.state = {};
     this.entities[id] = entity;
     return entity;
-
 };
 
 EntityHandler.prototype.addSpatial = function(parentDivId, entity, posX, posY) {

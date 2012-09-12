@@ -8,6 +8,8 @@ PlayerHandler.prototype.getPlayerEntityIdByPid = function (pid) {
 };
 
 
+
+
 PlayerHandler.prototype.addWatchingPlayer = function (pid, nick) {
     var playerEntity = entityHandler.addEntity(this.getPlayerEntityIdByPid(pid));
 
@@ -100,16 +102,26 @@ PlayerHandler.prototype.unseatPlayer = function (pid) {
 };
 
 PlayerHandler.prototype.handlePlayerStatus = function (pid, status) {
+    if(pid == this.myPlayerPid ) {
+        switch (status) {
+            case com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.SITIN :
+                view.table.onSitIn();
+                break;
+            case com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.SITOUT :
+                view.table.onSitOut();
+                break;
+        }
+    }
     var playerEntity = entityHandler.getEntityById(this.getPlayerEntityIdByPid(pid));
     var seatEntity = entityHandler.getEntityById(view.seatHandler.getSeatEntityIdBySeatNumber(playerEntity.state.seatId));
     if (!seatEntity) return;
 
     switch (status) {
-        case POKER_PROTOCOL.PlayerTableStatusEnum.SITIN :
+        case com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.SITIN :
             playerActions.handlePlayerActionFeedback(pid, "Sit In");
             document.getElementById(seatEntity.spatial.transform.anchorId).style.opacity = 1;
             break;
-        case POKER_PROTOCOL.PlayerTableStatusEnum.SITOUT :
+        case com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.SITOUT :
             playerActions.handlePlayerActionFeedback(pid, "Sit Out");
             document.getElementById(seatEntity.spatial.transform.anchorId).style.opacity = 0.4;
             break;

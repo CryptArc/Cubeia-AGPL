@@ -5,6 +5,8 @@ Table = function() {
     this.playerTimerEntityId = "playerTimerEntityId";
     this.playerProgressBar = null;
     this.numberOfSeats = 0;
+    this.sitOutTextDivId = "sitoutTextDivId";
+    this.sitOutAndLeaveEntityId = "sitOutAndLeaveEntity";
 };
 
 Table.prototype.createTableOfSize = function(numberOfSeats, containerId) {
@@ -19,12 +21,34 @@ Table.prototype.createTableOfSize = function(numberOfSeats, containerId) {
     tableEntity.state.active = "NYA";
     tableEntity.ui.divId = this.createVisualTable(containerId);
     tableEntity.ui.stateDivId = this.createTableStateIndicator(tableEntity.ui.divId);
+
     var joinButtonDivs = this.createTableJoinButton(tableEntity.ui.divId);
     tableEntity.ui.joinButtonFrameDivId = joinButtonDivs[0];
     tableEntity.ui.joinButtonDivId = joinButtonDivs[1];
     tableEntity.ui.joinButtonLabelDivId = joinButtonDivs[2];
+
+    var leaveButtonDivs = this.createTableLeaveButton(tableEntity.ui.divId);
+    tableEntity.ui.leaveButtonFrameDivId = leaveButtonDivs[0];
+    tableEntity.ui.leaveButtonDivId = leaveButtonDivs[1];
+    tableEntity.ui.leaveButtonLabelDivId = leaveButtonDivs[2];
+
+    var sitOutButtonDivs = this.createSitOutButton(tableEntity.ui.divId);
+    tableEntity.ui.sitOutButtonFrameDivId = sitOutButtonDivs[0];
+    tableEntity.ui.sitOutButtonDivId = sitOutButtonDivs[1];
+    tableEntity.ui.sitOutButtonLabelDivId = sitOutButtonDivs[2];
+
+    var sitInButtonDivs = this.createSitInButton(tableEntity.ui.divId);
+    tableEntity.ui.sitInButtonFrameDivId = sitInButtonDivs[0];
+    tableEntity.ui.sitInButtonDivId = sitInButtonDivs[1];
+    tableEntity.ui.sitInButtonLabelDivId = sitInButtonDivs[2];
+
+    this.hideSitInButton();
+    this.hideSitOutButton();
+
+
+    this.createSitOutText(tableEntity.ui.divId);
+    this.hideSitOutText();
     tableEntity.ui.tablePotDivId = this.createTablePot(tableEntity.ui.divId);
-    //tableEntity.ui.tablePotLabelDivId = this.createTablePotLabel(tableEntity.ui.divId);
 
     pokerDealer.createDealerButton();
 
@@ -50,7 +74,27 @@ Table.prototype.createTableOfSize = function(numberOfSeats, containerId) {
     this.updateTableSeatPositions();
     this.addLineSeparator();
 };
-
+Table.prototype.clear = function() {
+    var tableEntity = entityHandler.getEntityById(this.entityId);
+    $("#"+tableEntity.ui.joinButtonFrameDivId).remove();
+    $("#"+tableEntity.ui.leaveButtonFrameDivId).remove();
+    $("#"+tableEntity.ui.sitOutButtonFrameDivId).remove();
+    $("#"+tableEntity.ui.sitInButtonFrameDivId).remove();
+    $("#"+tableEntity.ui.tablePotDivId).remove();
+    $("#"+tableEntity.ui.leaveButtonFrameDivId).remove();
+};
+Table.prototype.onSitOut = function() {
+    this.hideSitOutButton();
+    this.showSitInButton();
+    this.showLeaveButton();
+    this.showSitOutText();
+};
+Table.prototype.onSitIn = function() {
+    this.showSitOutButton();
+    this.hideSitInButton();
+    this.hideLeaveButton();
+    this.hideSitOutText();
+};
 Table.prototype.addLineSeparator = function() {
         var tableEntity = entityHandler.getEntityById(this.entityId);
         var parent = document.getElementById(tableEntity.ui.divId);
@@ -80,6 +124,8 @@ Table.prototype.addSelf = function(name) {
 
     var balanceEntity = entityHandler.addEntity(this.myBalanceEntityId);
     entityHandler.addUiComponent(balanceEntity, "", "hud_balance", parent);
+
+
 
 
     var playerTimerEntity = entityHandler.addEntity(this.playerTimerEntityId);
@@ -161,6 +207,24 @@ Table.prototype.createTableJoinButton = function(tableDivId) {
     return divIds;
 };
 
+Table.prototype.createTableLeaveButton = function(tableDivId) {
+
+
+    var leaveTable = function(){
+        playerActions.leaveTable();
+        console.log("leave table button click")
+    };
+
+    this.buttons = {
+        leaveButton : { label : "Leave", posX : 70, posY : 83, height:120, width: 120,  hasValue: false, clickFunction : leaveTable }
+    };
+
+
+    var divIds = uiUtils.createActionButton(this.buttons.leaveButton, tableDivId);
+
+    return divIds;
+};
+
 Table.prototype.playerPressesJoinButton = function() {
     var playerPid = playerHandler.myPlayerPid;
     joinGame();
@@ -237,31 +301,86 @@ Table.prototype.showJoinButton = function() {
     	joinTable();
     };
 };
-
-Table.prototype.hideJoinButton = function() {
+Table.prototype.showLeaveButton = function() {
     var tableEntity = entityHandler.getEntityById(this.entityId);
-    var buttonDivId = tableEntity.ui.joinButtonFrameDivId;
+    var buttonLabelDivId = tableEntity.ui.leaveButtonLabelDivId;
+    var buttonDivId = tableEntity.ui.leaveButtonDivId;
+
+
+    var buttonDivId = tableEntity.ui.leaveButtonFrameDivId;
+    document.getElementById(buttonDivId).style.visibility = "visible";
+};
+
+Table.prototype.hideLeaveButton = function() {
+    var tableEntity = entityHandler.getEntityById(this.entityId);
+    var buttonDivId = tableEntity.ui.leaveButtonFrameDivId;
     document.getElementById(buttonDivId).style.visibility = "hidden";
 };
 
-Table.prototype.setLeaveTableFunction = function() {
+Table.prototype.hideJoinButton = function() {
+    console.log("HIDING JOIN");
     var tableEntity = entityHandler.getEntityById(this.entityId);
-//    var frameDivId = tableEntity.ui.joinButtonFrameDivId;
-    var buttonDivId = tableEntity.ui.joinButtonDivId;
-    var buttonLabelDivId = tableEntity.ui.joinButtonLabelDivId;
-    view.table.hideJoinButton();
-    var leaveFunction = function() {
-        view.table.hideJoinButton();
-        playerActions.leaveTable();
+    var buttonDivId = tableEntity.ui.joinButtonFrameDivId;
+    console.log("divId = " + buttonDivId);
+    document.getElementById(buttonDivId).style.visibility = "hidden";
+};
 
+
+Table.prototype.createSitOutButton = function(tableDivEntityId){
+    var buttonSide = 100;
+
+    var sitOutFunc = function() {
+        sitOutAction();
     };
 
-//    document.getElementById(buttonLabelDivId).innerHTML = "Leave Table";
-//    document.getElementById(buttonDivId).onclick = function(e) {
-//        leaveFunction();
-//    }
+    var  sitOutButton = { label : "Sit-out", posX : 6.5, posY : 85, height:buttonSide, width: buttonSide,  hasValue: false, clickFunction : sitOutFunc };
+
+    var divIds = uiUtils.createActionButton(sitOutButton, tableDivEntityId);
 
 
+    return divIds;
+};
+Table.prototype.createSitOutText = function(tableDivEntity) {
+    uiElementHandler.createDivElement(tableDivEntity, this.sitOutTextDivId, "sitting out", "sitting_out_text",null);
+};
+Table.prototype.hideSitOutText = function() {
+    console.log("sitouttextid=====" + document.getElementById(this.sitOutTextDivId));
+    document.getElementById(this.sitOutTextDivId).style.visibility = "hidden";
+};
+Table.prototype.showSitOutText = function() {
+    document.getElementById(this.sitOutTextDivId).style.visibility = "";
+};
+Table.prototype.createSitInButton = function(tableDivEntityId){
+    var buttonSide = 120;
+    var sitInFunc = function() {
+        sitInAction();
+    };
+    var sitInButton = { label : "Sit-in", posX : 83, posY : 83, height:buttonSide, width: buttonSide,  hasValue: false, clickFunction : sitInFunc };
+
+    var divIds = uiUtils.createActionButton(sitInButton, tableDivEntityId);
+
+    return divIds;
+};
+
+Table.prototype.showSitOutButton = function() {
+    var tableEntity = entityHandler.getEntityById(this.entityId);
+    var buttonDivId = tableEntity.ui.sitOutButtonFrameDivId;
+    document.getElementById(buttonDivId).style.visibility = "";
+};
+Table.prototype.showSitInButton = function() {
+    var tableEntity = entityHandler.getEntityById(this.entityId);
+    var buttonDivId = tableEntity.ui.sitInButtonFrameDivId;
+    document.getElementById(buttonDivId).style.visibility = "";
+};
+Table.prototype.hideSitOutButton = function() {
+    var tableEntity = entityHandler.getEntityById(this.entityId);
+    var buttonDivId = tableEntity.ui.sitOutButtonFrameDivId;
+    document.getElementById(buttonDivId).style.visibility = "hidden";
+};
+Table.prototype.hideSitInButton = function() {
+    var tableEntity = entityHandler.getEntityById(this.entityId);
+    var buttonDivId = tableEntity.ui.sitInButtonFrameDivId;
+    document.getElementById(buttonDivId).style.visibility = "hidden";
 };
 
 Table.prototype.getSeatBySeatedEntityId = function(entityId) {
@@ -305,8 +424,8 @@ Table.prototype.handleRequestAction = function(requestAction) {
 			var playerAction = requestAction.allowedActions[i];
 			
 			// Auto small/big blind
-			if (playerAction.type === POKER_PROTOCOL.ActionTypeEnum.SMALL_BLIND ||
-					playerAction.type === POKER_PROTOCOL.ActionTypeEnum.BIG_BLIND) {
+			if (playerAction.type === com.cubeia.games.poker.io.protocol.ActionTypeEnum.SMALL_BLIND ||
+					playerAction.type === com.cubeia.games.poker.io.protocol.ActionTypeEnum.BIG_BLIND) {
 				sendAction(requestAction.seq, playerAction.type, playerAction.minAmount);
 				return;
 	
@@ -363,27 +482,27 @@ Table.prototype.handleBestHand = function(bestHand) {
 	var playerEntityId = playerHandler.getPlayerEntityIdByPid(bestHand.player);
 	var playerEntity = entityHandler.getEntityById(playerEntityId);
 	var playerName = playerEntity.name;
-	
+    var POKER_PROTOCOL = com.cubeia.games.poker.io.protocol;
 	switch (bestHand.handType) {
-		case POKER_PROTOCOL.HandTypeEnum.HIGH_CARD: 
+		case POKER_PROTOCOL.HandTypeEnum.HIGH_CARD:
 			handString = "High Card";
 			break;
-		case POKER_PROTOCOL.HandTypeEnum.PAIR: 
+		case POKER_PROTOCOL.HandTypeEnum.PAIR:
 			handString = "Pair";
 			break;
-		case POKER_PROTOCOL.HandTypeEnum.TWO_PAIR: 
+		case POKER_PROTOCOL.HandTypeEnum.TWO_PAIR:
 			handString = "Two Pair";
 			break;
-		case POKER_PROTOCOL.HandTypeEnum.THREE_OF_A_KIND: 
+		case POKER_PROTOCOL.HandTypeEnum.THREE_OF_A_KIND:
 			handString = "Three of a Kind";
 			break;
-		case POKER_PROTOCOL.HandTypeEnum.STRAIGHT: 
+		case POKER_PROTOCOL.HandTypeEnum.STRAIGHT:
 			handString = "Straight";
 			break;
-		case POKER_PROTOCOL.HandTypeEnum.FLUSH: 
+		case POKER_PROTOCOL.HandTypeEnum.FLUSH:
 			handString = "Flush";
 			break;
-		case POKER_PROTOCOL.HandTypeEnum.FULL_HOUSE: 
+		case POKER_PROTOCOL.HandTypeEnum.FULL_HOUSE:
 			handString = "Full House";
 			break;
 		case POKER_PROTOCOL.HandTypeEnum.FOUR_OF_A_KIND: 
@@ -411,7 +530,8 @@ Table.prototype.handlePerformAction = function(performAction) {
 
 	if (performAction.player == parseInt(pid)) {
 		this.clearButtonStates();
-	}
+    }
+    var POKER_PROTOCOL = com.cubeia.games.poker.io.protocol;
     switch (performAction.action.type) {
         case POKER_PROTOCOL.ActionTypeEnum.CHECK:
             playerActions.handlePlayerActionFeedback(performAction.player, "Check", null, ACTIONS.CHECK);
@@ -460,7 +580,7 @@ Table.prototype.handlePerformAction = function(performAction) {
  */
 Table.prototype.handlePlayerActionRequest = function(playerAction) {
 	console.log(playerAction);
-	
+    var POKER_PROTOCOL = com.cubeia.games.poker.io.protocol;
 	switch (playerAction.type) {
 		case POKER_PROTOCOL.ActionTypeEnum.CHECK:
             userInput.setCheckAvailable(playerAction);

@@ -314,10 +314,14 @@
     </struct>
 
     <!-- A player has requested to sit in again (Client -> Server) -->
-    <struct name="player_sitin_request"/>
+    <struct name="player_sitin_request">
+    	<var name="player" type="int32"/>
+    </struct>
 
     <!-- A player has requested to sit out (Client -> Server) -->
-    <struct name="player_sitout_request"/>
+    <struct name="player_sitout_request">
+	<var name="player" type="int32"/>
+    </struct>
 
     <!-- Deck information -->
     <struct name="deck_info">
