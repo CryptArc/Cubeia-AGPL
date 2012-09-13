@@ -12,5 +12,6 @@ RenderLoop.prototype.initRenderLoop = function(frameTime) {
 
 RenderLoop.prototype.render = function(currentTime) {
     view.seatHandler.tick(currentTime);
-    userInput.tick(currentTime)
+    userInput.tick(currentTime);
+    animator.tick(currentTime);
 };

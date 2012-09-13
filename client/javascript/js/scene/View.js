@@ -39,7 +39,7 @@ View.prototype.initTableView = function(numberOfSeats) {
 
     this.watchingPlayers.setupWatchingPlayersBox();
     this.communityCards.initCommunityCardArea();
-    var renderFrameTime = 30 // in milliseconds
+    var renderFrameTime = 24; // in milliseconds
     this.renderLoop.initRenderLoop(renderFrameTime);
     this.textFeedback.initTextFeedback();
     pokerCards.initOwnCardArea();

@@ -20,7 +20,7 @@ POKER_PROTOCOL.PokerProtocolHandler = function(pokerGameHandler) {
 		
 		var protocolObject = com.cubeia.games.poker.io.protocol.ProtocolObjectFactory.create(classId, gameData);
 		
-		//console.log(protocolObject);
+		console.log(protocolObject);
 		
 		switch ( protocolObject.classId() ) {
 			case com.cubeia.games.poker.io.protocol.BestHand.CLASSID:

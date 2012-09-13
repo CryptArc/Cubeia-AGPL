@@ -35,8 +35,8 @@ PokerDealer.prototype.dealCommunityCard = function(gameCard) {
     var card = pokerCards.addClientCardWithIdAndUrl(gameCard.cardId, cardUrl);
     var cardElement = document.getElementById(card.divId);
     console.log("Comm card: " + card.divId + " el " + cardElement);
-    TweenMax.to(cardElement, 0.6, {css:{opacity:1}});
-    TweenMax.to(cardElement, 0.4, {css:{top:0}});
+    animator.addAnimation(new Animation(cardElement,0.3,{opacity: 1, top: 0}));
+
     console.log(card);
     view.communityCards.setClientCardAsCommunityCard(card);
 };
@@ -69,28 +69,12 @@ PokerDealer.prototype.moveDealerButton = function(seatId) {
     if (!seatEntity) return;
 
     var button = $('#' + dealerButton.ui.divId);
+    console.debug("Dealer button div id = " + dealerButton.ui.divId);
     var offset = button.offset();
     var target = $('#' + seatEntity.ui.dealerButtonSlotDivId);
     var targetOffset = target.offset();
 
-    // Set the button's position as fixed and use its global coordinates.
-    button.css('position','fixed');
-    button.css('left', offset.left);
-    button.css('top', offset.top);
-
-    // Create an onComplete-function that will detach the element from the old parent and add it to the new.
-    function onComplete() {
-        button.detach();
-        button.appendTo(target);
-
-        // Clear the css properties so it get the parent's properties instead.
-        button.css('position','');
-        button.css('left', '');
-        button.css('top', '');
-    }
-
-    // Animate the coordinates to the global coordinates of the destination.
-    TweenMax.to(button, 0.4, {css:{top:targetOffset.top, left:targetOffset.left}});
+    animator.addAnimation(new Animation(button.get(0),0.6,{top: targetOffset.top, left: targetOffset.left}));
 };
 
 

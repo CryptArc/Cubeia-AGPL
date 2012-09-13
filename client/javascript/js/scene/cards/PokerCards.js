@@ -54,7 +54,7 @@ PokerCards.prototype.setCardsFolded = function(seatEntity, playerId) {
         console.log("I folded");
         var cardHolderEntity = entityHandler.getEntityById("ownCardsAreaEntityId");
         var cardHolderElement = document.getElementById(cardHolderEntity.ui.divId);
-        TweenMax.to(cardHolderElement, 0.5, {css:{opacity:0.2}});
+        animationTimeLine.addAnimation(TweenMax.to(cardHolderElement, 0.5, {css:{opacity:0.2}}));
     } else {
         if (!seatEntity) return;
         var cards = seatEntity.occupant.cardIds;
@@ -76,8 +76,7 @@ PokerCards.prototype.handCardIdToPlayerEntity = function(cardId, playerEntity, c
         uiElementHandler.setDivElementParent(cardDivId, cardHolderEntity.ui.divId);
         var cardElement = document.getElementById(cardDivId);
         cardElement.className = "hud_card";
-        TweenMax.to(cardElement, 0.6, {css:{opacity:1}});
-        TweenMax.to(cardElement, 0.4, {css:{top:0}});
+        animator.addAnimation(new Animation(cardElement,0.6, {opacity : 1, top: 0 }));
     } else {
         var seatEntity = view.table.getSeatBySeatNumber(playerEntity.state.seatId);
         if (!seatEntity) {
@@ -89,8 +88,7 @@ PokerCards.prototype.handCardIdToPlayerEntity = function(cardId, playerEntity, c
             uiElementHandler.setDivElementParent(cardDivId, cardFieldDivId);
             this.addCardIdToEntity(seatEntity,cardId);
             var cardElement = document.getElementById(cardDivId);
-            TweenMax.to(cardElement, 0.6, {css:{opacity:1}});
-            TweenMax.to(cardElement, 0.4, {css:{top:0}});
+            animator.addAnimation(new Animation(cardElement,0.2, {opacity : 1, top: 0 }),0.1);
         }
     }
 };

@@ -176,6 +176,10 @@
 <script type="text/javascript" src="./js/ui/CircularProgressBar.js"></script>
 <script type="text/javascript" src="./js/ui/BetSlider.js"></script>
 <script type="text/javascript" src="./js/greensock/TweenMax.min.js"></script>
+<script type="text/javascript" src="./js/greensock/TimelineMax.min.js"></script>
+
+<script type="text/javascript" src="./js/scene/Animator.js"></script>
+
 
 <style>
 	body {
@@ -207,6 +211,8 @@
     var pokerGameHandler = new com.cubeia.games.poker.PokerGameHandler(this);
     var pokerProtocolHandler = new POKER_PROTOCOL.PokerProtocolHandler(pokerGameHandler);
 
+    var animator;
+    var animationTimeLine;
 	var view;
 	var uiElementHandler;
 	var entityHandler;
@@ -218,8 +224,8 @@
 	var uiUtils;
 	var usr, pwd;
 	var autoLogin = false;
-	var webSocketUrl = "localhost";
-    //var webSocketUrl ="192.168.1.110";
+	//var webSocketUrl = "localhost";
+    var webSocketUrl ="192.168.1.110";
 	var webSocketPort = 9191;
 	/*
 	 * Provide a "seed" for setting ID's to the div hierarchy
@@ -334,7 +340,7 @@
 		tableid = table;
 		numberOfSeats = capacity;
 		console.log("numberOfSeats [" + numberOfSeats + "]");
-
+        animator = new Animator();
 		view = new View(viewContainerDivId);
 		uiElementHandler = new UiElementHandler();
 		entityHandler = new EntityHandler();
