@@ -88,7 +88,7 @@ PokerCards.prototype.handCardIdToPlayerEntity = function(cardId, playerEntity, c
             uiElementHandler.setDivElementParent(cardDivId, cardFieldDivId);
             this.addCardIdToEntity(seatEntity,cardId);
             var cardElement = document.getElementById(cardDivId);
-            animator.addAnimation(new Animation(cardElement,0.2, {opacity : 1, top: 0 }),0.1);
+            animator.addAnimation(new Animation(cardElement,0.2, {opacity : 1, top: 0 }));
         }
     }
 };
