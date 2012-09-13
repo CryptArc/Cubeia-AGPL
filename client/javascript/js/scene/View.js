@@ -34,7 +34,7 @@ View.prototype.initTableView = function(numberOfSeats) {
 
 
 
-    this.setupTableStructure(numberOfSeats)
+    this.setupTableStructure(numberOfSeats);
 
 
     this.watchingPlayers.setupWatchingPlayersBox();
@@ -43,6 +43,7 @@ View.prototype.initTableView = function(numberOfSeats) {
     this.renderLoop.initRenderLoop(renderFrameTime);
     this.textFeedback.initTextFeedback();
     pokerCards.initOwnCardArea();
+    this.seatHandler.initOwnBetTextArea();
 }
 
 View.prototype.setupTableStructure = function(numberOfSeats) {

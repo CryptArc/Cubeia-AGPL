@@ -27,12 +27,10 @@ CommunityCards.prototype.initCommunityCardArea = function() {
 
 CommunityCards.prototype.setClientCardAsCommunityCard = function(card) {
 
-    console.log(card);
     var communityCardEntity = entityHandler.getEntityById(view.communityCards.entityId);
     var parentDiv = communityCardEntity.ui.divId;
 
     uiElementHandler.setDivElementParent(card.divId, parentDiv);
-    console.log(communityCardEntity);
     document.getElementById(card.divId).className = "community_card";
 }
 

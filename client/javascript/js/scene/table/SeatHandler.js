@@ -84,6 +84,7 @@ SeatHandler.prototype.createSeatNumberOnTableEntityAtXY = function(seatNr, table
     var actionPoint = {posX: 0, posY: 100};
     var balancePoint = {posX:0, posY:100};
     var playerTimer = {posX: 15, posY:50};
+    var playerHandStrength = {posX:0,posY:155};
 
     var seatAttachmentPoints = {
         player:{transform:playerPoint},
@@ -91,7 +92,8 @@ SeatHandler.prototype.createSeatNumberOnTableEntityAtXY = function(seatNr, table
         dealerButton:{transform:dealerButtonPoint},
         actionLabel:{transform:actionPoint},
         balance:{transform:balancePoint},
-        playerTimer:{transform:playerTimer}
+        playerTimer:{transform:playerTimer},
+        playerHandStrength : {transform : playerHandStrength}
     };
     seatEntity.spatial.attachmentPoints = seatAttachmentPoints;
     uiElementHandler.setDivElementParent(seatEntity.ui.divId, seatEntity.spatial.transform.anchorId);
@@ -106,6 +108,7 @@ SeatHandler.prototype.createSeatNumberOnTableEntityAtXY = function(seatNr, table
     this.addCardFieldToSeat(seatEntity);
     this.addPlacedBetFieldToSeat(seatEntity);
     this.addDealerButtonFieldToSeat(seatEntity);
+    this.addHandStrength(seatEntity);
     
     return seatEntity;
 
@@ -135,8 +138,33 @@ SeatHandler.prototype.addPlayerAvatar = function(seatEntity) {
 SeatHandler.prototype.addPlayerActionIndicator = function(seatEntity) {
     var uiEntity = entityHandler.addEntity(seatEntity.id+"_seatActionUi");
     entityHandler.addUiComponent(uiEntity, "", "seat_element_frame", null);
-	seatEntity.ui.seatActionFrameDivId = uiEntity.ui.divId;
+    seatEntity.ui.seatActionFrameDivId = uiEntity.ui.divId;
     seatEntity.ui.seatActionSlotDivId = uiEntity.ui.divId+"_slot";
+
+
+};
+SeatHandler.prototype.showHandStrength = function(seatEntity,text) {
+    document.getElementById(seatEntity.ui.handStrengthDiv).style.visibility="";
+    document.getElementById(seatEntity.ui.handStrengthDiv).innerHTML = text;
+};
+SeatHandler.prototype.hideHandStrength = function(seatEntity) {
+    document.getElementById(seatEntity.ui.handStrengthDiv).style.visibility="hidden";
+};
+SeatHandler.prototype.addHandStrength = function(seatEntity) {
+    var uiEntity = entityHandler.addEntity(seatEntity.id+"_handStrengthUI");
+    entityHandler.addUiComponent(uiEntity, "", "player_hand_strength", null);
+
+    var posX = seatEntity.spatial.attachmentPoints.playerHandStrength.transform.posX;
+    var posY = seatEntity.spatial.attachmentPoints.playerHandStrength.transform.posY;
+
+    seatEntity.ui.handStrengthDiv = uiEntity.ui.divId;
+
+    entityHandler.addSpatial(seatEntity.ui.divId, uiEntity, posX, posY);
+    uiElementHandler.setDivElementParent(uiEntity.ui.divId, uiEntity.spatial.transform.anchorId);
+    uiElementHandler.setDivElementParent(uiEntity.spatial.transform.anchorId, seatEntity.ui.divId);
+    view.spatialManager.positionVisualEntityAtSpatial(uiEntity);
+
+
 
 
 };
@@ -205,7 +233,28 @@ SeatHandler.prototype.addPlacedBetFieldToSeat = function(seatEntity) {
     $("#"+seatEntity.ui.betTextDivId).hide();
 
 };
-	
+SeatHandler.prototype.initOwnBetTextArea = function() {
+
+    var tableEntity = entityHandler.getEntityById(view.table.entityId);
+    var uiEntity = entityHandler.addEntity("ownBetTextAreaEntityId");
+    uiEntity.cards = {};
+
+    entityHandler.addUiComponent(uiEntity, "", "own_player_action", null);
+
+    var posX = 40;
+    var posY = 60;
+
+    tableEntity.ui.ownBetTextDivId = uiEntity.ui.divId;
+    entityHandler.addSpatial("body", uiEntity, posX, posY);
+    uiElementHandler.setDivElementParent(uiEntity.ui.divId, uiEntity.spatial.transform.anchorId);
+    uiElementHandler.setDivElementParent(uiEntity.spatial.transform.anchorId, tableEntity.ui.divId);
+
+    document.getElementById(uiEntity.ui.divId).style.width = 200;
+    document.getElementById(uiEntity.ui.divId).style.left = -120;
+    document.getElementById(uiEntity.ui.divId).style.top = -30;
+
+    view.spatialManager.positionVisualEntityAtSpatial(uiEntity);
+};
 SeatHandler.prototype.addBalanceFieldToSeat = function(seatEntity) {
     var uiEntity = entityHandler.addEntity(seatEntity.id+"_balanceUi");
     entityHandler.addUiComponent(uiEntity, "", "player_balance", null);

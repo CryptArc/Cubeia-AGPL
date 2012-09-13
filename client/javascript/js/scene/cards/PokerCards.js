@@ -15,7 +15,6 @@ PokerCards.prototype.getClientCardByCardId = function(cardId) {
 PokerCards.prototype.setClientCardDivImageUrl = function(cardId, cardUrl) {
     var card = this.getClientCardByCardId(cardId);
     if (!card) return;
-    console.log("setting url = " + cardUrl);
     card.image = "url(./images/cards-svg/"+cardUrl+")";
     document.getElementById(card.divId).style.backgroundImage = card.image;
 };
@@ -32,7 +31,6 @@ PokerCards.prototype.addClientCardWithIdAndUrl = function(cardId, cardUrl) {
     card.id = cardId;
     this.clientCards[card.id] = card;
     var cardDivId = "clientCardDiv_" + cardId;
-    console.log(cardDivId);
     card.divId = cardDivId;
     uiElementHandler.createDivElement("body", card.divId, "", "poker_card", null);
 
@@ -42,31 +40,27 @@ PokerCards.prototype.addClientCardWithIdAndUrl = function(cardId, cardUrl) {
 };
 
 PokerCards.prototype.clearSeatEntityCards = function(seatEntity) {
-    console.log("clearing cards: entity = " + seatEntity);
     if (!seatEntity) return;
     var divId = seatEntity.ui.cardFieldDivId;
     uiElementHandler.removeElementChildren(0, divId);
 };
 
 PokerCards.prototype.setCardsFolded = function(seatEntity, playerId) {
-    console.log("Player " + playerId + " folded. I am " + playerHandler.myPlayerPid);
     if (playerId == playerHandler.myPlayerPid) {
         console.log("I folded");
         var cardHolderEntity = entityHandler.getEntityById("ownCardsAreaEntityId");
         var cardHolderElement = document.getElementById(cardHolderEntity.ui.divId);
-        animationTimeLine.addAnimation(TweenMax.to(cardHolderElement, 0.5, {css:{opacity:0.2}}));
+        animator.addAnimation(new Animation(cardHolderElement,0.3,{opacity : 0.5}));
     } else {
         if (!seatEntity) return;
         var cards = seatEntity.occupant.cardIds;
         for (var i = 0; i < cards.length; i++) {
-            console.log("setting cards folded = " + cards[i]);
             this.setClientCardDivImageUrl(cards[i], "gray-back.svg");
         }
     }
 };
 
 PokerCards.prototype.handCardIdToPlayerEntity = function(cardId, playerEntity, cardUrl) {
-    console.log("Dealing card " + cardId + " to entity " + playerEntity);
     if (playerEntity.pid == playerHandler.myPlayerPid) {
         // Give card to self.
         var card = this.addClientCardWithIdAndUrl(cardId, cardUrl);

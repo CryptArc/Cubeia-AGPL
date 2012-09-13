@@ -161,7 +161,7 @@ div.player_balance
     margin-left: -40px
 }
 
-div.player_action
+div.player_action, div.own_player_action
 {
     font-family: arial;
     font-size: 25px;
@@ -169,6 +169,10 @@ div.player_action
     color: #9bba00;
     width: 200px;
     text-align: left;
+}
+div.own_player_action {
+    padding-top: 0px;
+    text-align: center;
 }
 
 div.player_action_text
@@ -561,14 +565,22 @@ div.table_pot_label
     top: -26px;
 }
 
+div.player_hand_strength {
+    width: 140px;
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+    position: absolute;
+    left: -35px;
 
+}
 div.event_text
 {
     position:absolute;
     font-size: 45;
-    /*font-weight: bold;*/
     font-style: italic;
     text-shadow: #000 2px 2px 3px;
+    color:#fff;
     text-align: center;
     left: 0px;
     right: 0px;

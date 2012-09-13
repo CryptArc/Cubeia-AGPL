@@ -43,16 +43,24 @@ TextFeedback.prototype.addLogText = function(text) {
     document.getElementById(textBoxDivId).innerHTML = textstring;
 };
 
-TextFeedback.prototype.showSeatSpaceTextFeedback = function(pid, action, value, actionType) {
-    console.log(action)
+TextFeedback.prototype.showSeatSpaceTextFeedback = function(playerId, action, value, actionType) {
+    var betFieldDivId = "";
+    if(pid == playerId) {
+        var tableEntity = entityHandler.getEntityById(view.table.entityId);
+        betFieldDivId = tableEntity.ui.ownBetTextDivId;
+    } else {
+        var playerEntityId = playerHandler.getPlayerEntityIdByPid(playerId);
+        var playerEntity = entityHandler.getEntityById(playerEntityId);
+        var seatEntity = entityHandler.getEntityById(view.seatHandler.getSeatEntityIdBySeatNumber(playerEntity.state.seatId));
+        if (!seatEntity) return;
 
-    var playerEntityId = playerHandler.getPlayerEntityIdByPid(pid);
-    var playerEntity = entityHandler.getEntityById(playerEntityId);
+         betFieldDivId = seatEntity.ui.betFieldDivId;
+    }
 
-    var seatEntity = entityHandler.getEntityById(view.seatHandler.getSeatEntityIdBySeatNumber(playerEntity.state.seatId));
-    if (!seatEntity) return;
+    this.setSeatBetText(betFieldDivId,action,actionType,value);
 
-    var betFieldDivId = seatEntity.ui.betFieldDivId;
+};
+TextFeedback.prototype.setSeatBetText = function(betFieldDivId, action, actionType, value) {
     var valueString = "";
 
     if (value) {
@@ -62,17 +70,16 @@ TextFeedback.prototype.showSeatSpaceTextFeedback = function(pid, action, value, 
         }
         valueString = "&euro;<span style='color:#FFF;'>" + value + '</span><div class="user-action '+actionType+'"></div>'
     }
-    var betText =  $("#"+seatEntity.ui.betTextDivId);
+    var betText =  $("#"+betFieldDivId);
     betText.html(action);
 
     if(action && action!="") {
-       betText.show();
+        betText.show();
     }  else {
         betText.hide();
     }
 
     document.getElementById(betFieldDivId).innerHTML = valueString;
-//    this.addSeatEventText(pid, action)
 };
 
 
@@ -86,48 +93,9 @@ TextFeedback.prototype.addSeatEventText = function(pid, textString) {
 
 
     var key = "seat_event_key"+this.textEvents+"";
+    console.debug("hand strength == " + textString);
+    view.seatHandler.showHandStrength(seatEntity,textString);
 
-
-    uiElementHandler.createDivElement(tableEntity.ui.divId, key, "", "text_log", null);
-    uiElementHandler.createDivElement(key, key+"_text", textString, "event_text", null);
-
-    var fontSize = 38;
-
-
-    document.getElementById(key).style.webkitTransitionProperty = "top, opacity, left";
-    document.getElementById(key).style.webkitTransitionTimingFunction = "ease-in";
-    document.getElementById(key).style.webkitTransitionDuration = "5s";
-    document.getElementById(key+"_text").style.color = "#ff9730";
-    document.getElementById(key+"_text").style.fontSize = fontSize;
-    document.getElementById(key).style.opacity = 1;
-    document.getElementById(key).style.width = 30+"%";
-    document.getElementById(key).style.top = seatEntity.spatial.transform.pos.y - 2 +"%";
-    document.getElementById(key).style.left = seatEntity.spatial.transform.pos.x - 15 +"%";
-
-    this.textEvents += 1;
-
-    var t = setTimeout(function() {
-        view.textFeedback.triggerTextAnimation(key);
-    }, 100);
-
-
-    /*
-
-    if (this.textEvents >= 4) {
-        this.textEvents = 1;
-    }
-
-    this.randomDir = Math.random()* 5 + this.textEvents;
-    key = "seat_event_key"+this.textEvents+"";
-
-    document.getElementById(key).style.webkitTransitionDuration = "0s";
-    document.getElementById(key).style.color = "#697";
-    document.getElementById(key).innerHTML = "";
-    document.getElementById(key).style.opacity = 1;
-    document.getElementById(key).style.top = 0;
-    document.getElementById(key).style.left = -88 + this.randomDir * 9;
-
-    */
 };
 
 TextFeedback.prototype.triggerTextAnimation = function(key) {
@@ -152,7 +120,12 @@ TextFeedback.prototype.clearAllSeatSpaceTextFeedback = function() {
         var text = $("#"+seatEntity.ui.betTextDivId);
         text.hide();
         text.html("");
+        view.seatHandler.hideHandStrength(seatEntity);
     }
+    var tableEntity = entityHandler.getEntityById(view.table.entityId);
+    var text = $("#"+tableEntity.ui.ownBetTextDivId);
+    text.html("").hide();
+
 
 }
 TextFeedback.prototype.clearAllActionText = function() {

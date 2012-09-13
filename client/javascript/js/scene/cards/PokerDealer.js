@@ -8,12 +8,10 @@ PokerDealer = function() {
  * @param {POKER_PROTOCOL.CardToDeal} cardToDeal
  */
 PokerDealer.prototype.dealCardIdToPid = function(cardToDeal) {
-    console.log(cardToDeal);
     var playerEntity = entityHandler.getEntityById(playerHandler.getPlayerEntityIdByPid(cardToDeal.player));
     var cardUrl = pokerCards.getCardUrl(cardToDeal.card);
-    console.log("Player Card: -- CardId: ["+cardToDeal.card.cardId+"], cardurl ["+cardUrl+"]  rank[" + cardToDeal.card.rank +"]  suit[" + cardToDeal.card.suit +"]");
     pokerCards.handCardIdToPlayerEntity(cardToDeal.card.cardId, playerEntity, cardUrl);
-    
+
     var playerEntityId = playerHandler.getPlayerEntityIdByPid(cardToDeal.player);
     if(playerEntityId) {
 	    var seatEntity = view.table.getSeatBySeatedEntityId(playerEntityId);
@@ -31,13 +29,10 @@ PokerDealer.prototype.dealCardIdToPid = function(cardToDeal) {
 PokerDealer.prototype.dealCommunityCard = function(gameCard) {
     console.log("Deal Community Card: "+gameCard.cardId);
     var cardUrl = pokerCards.getCardUrl(gameCard);
-    console.log(cardUrl);
     var card = pokerCards.addClientCardWithIdAndUrl(gameCard.cardId, cardUrl);
     var cardElement = document.getElementById(card.divId);
-    console.log("Comm card: " + card.divId + " el " + cardElement);
     animator.addAnimation(new Animation(cardElement,0.3,{opacity: 1, top: 0}));
 
-    console.log(card);
     view.communityCards.setClientCardAsCommunityCard(card);
 };
 
@@ -69,7 +64,6 @@ PokerDealer.prototype.moveDealerButton = function(seatId) {
     if (!seatEntity) return;
 
     var button = $('#' + dealerButton.ui.divId);
-    console.debug("Dealer button div id = " + dealerButton.ui.divId);
     var offset = button.offset();
     var target = $('#' + seatEntity.ui.dealerButtonSlotDivId);
     var targetOffset = target.offset();

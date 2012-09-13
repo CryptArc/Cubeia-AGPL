@@ -93,7 +93,7 @@ PlayerHandler.prototype.unseatPlayer = function (pid) {
             document.getElementById(table.seats[index].ui.betFieldDivId).innerHTML = "";
             var betText = $("#"+table.seats[index].ui.betTextDivId);
             betText.html("").hide();
-            seatHandler.removePlayerFromSeat(table.seats[index]);
+            view.seatHandler.removePlayerFromSeat(table.seats[index]);
         }
     }
 
