@@ -1,5 +1,6 @@
 PlayerHandler = function (pid) {
     this.myPlayerPid = pid;
+    this.mySeatId = -1;
 };
 
 PlayerHandler.prototype.getPlayerEntityIdByPid = function (pid) {
@@ -48,6 +49,7 @@ PlayerHandler.prototype.seatPlayerIdAtTable = function (pid, seatId) {
     {
         // First rotate the seats.
         view.table.rotate(seatId);
+        this.mySeatId = seatId;
 
         // Then remove the seat for self, since he is now part of the hud.
         $('#seat_nr_' + seatId + '_anchor').hide();

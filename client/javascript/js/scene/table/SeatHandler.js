@@ -143,12 +143,12 @@ SeatHandler.prototype.addPlayerActionIndicator = function(seatEntity) {
 
 
 };
-SeatHandler.prototype.showHandStrength = function(seatEntity,text) {
-    document.getElementById(seatEntity.ui.handStrengthDiv).style.visibility="";
-    document.getElementById(seatEntity.ui.handStrengthDiv).innerHTML = text;
+SeatHandler.prototype.showHandStrength = function(divId,text) {
+    document.getElementById(divId).style.visibility="";
+    document.getElementById(divId).innerHTML = text;
 };
-SeatHandler.prototype.hideHandStrength = function(seatEntity) {
-    document.getElementById(seatEntity.ui.handStrengthDiv).style.visibility="hidden";
+SeatHandler.prototype.hideHandStrength = function(divId) {
+    document.getElementById(divId).style.visibility="hidden";
 };
 SeatHandler.prototype.addHandStrength = function(seatEntity) {
     var uiEntity = entityHandler.addEntity(seatEntity.id+"_handStrengthUI");
@@ -237,8 +237,6 @@ SeatHandler.prototype.initOwnBetTextArea = function() {
 
     var tableEntity = entityHandler.getEntityById(view.table.entityId);
     var uiEntity = entityHandler.addEntity("ownBetTextAreaEntityId");
-    uiEntity.cards = {};
-
     entityHandler.addUiComponent(uiEntity, "", "own_player_action", null);
 
     var posX = 40;
@@ -249,9 +247,39 @@ SeatHandler.prototype.initOwnBetTextArea = function() {
     uiElementHandler.setDivElementParent(uiEntity.ui.divId, uiEntity.spatial.transform.anchorId);
     uiElementHandler.setDivElementParent(uiEntity.spatial.transform.anchorId, tableEntity.ui.divId);
 
-    document.getElementById(uiEntity.ui.divId).style.width = 200;
-    document.getElementById(uiEntity.ui.divId).style.left = -120;
-    document.getElementById(uiEntity.ui.divId).style.top = -30;
+    view.spatialManager.positionVisualEntityAtSpatial(uiEntity);
+};
+SeatHandler.prototype.initOwnActionTextArea = function() {
+
+    var tableEntity = entityHandler.getEntityById(view.table.entityId);
+    var uiEntity = entityHandler.addEntity("ownActionTextAreaEntityId");
+
+    entityHandler.addUiComponent(uiEntity, "", "own_action_text", null);
+
+    var posX = 43.5;
+    var posY = 72;
+
+    tableEntity.ui.ownActionTextDivId = uiEntity.ui.divId;
+    entityHandler.addSpatial("body", uiEntity, posX, posY);
+    uiElementHandler.setDivElementParent(uiEntity.ui.divId, uiEntity.spatial.transform.anchorId);
+    uiElementHandler.setDivElementParent(uiEntity.spatial.transform.anchorId, tableEntity.ui.divId);
+
+    view.spatialManager.positionVisualEntityAtSpatial(uiEntity);
+};
+SeatHandler.prototype.initOwnHandStrengthArea = function() {
+
+    var tableEntity = entityHandler.getEntityById(view.table.entityId);
+    var uiEntity = entityHandler.addEntity("ownHandStrengthAreaEntityId");
+
+    entityHandler.addUiComponent(uiEntity, "", "own_hand_strength", null);
+
+    var posX = 40;
+    var posY = 60;
+
+    tableEntity.ui.ownHandStrengthDivId = uiEntity.ui.divId;
+    entityHandler.addSpatial("body", uiEntity, posX, posY);
+    uiElementHandler.setDivElementParent(uiEntity.ui.divId, uiEntity.spatial.transform.anchorId);
+    uiElementHandler.setDivElementParent(uiEntity.spatial.transform.anchorId, tableEntity.ui.divId);
 
     view.spatialManager.positionVisualEntityAtSpatial(uiEntity);
 };

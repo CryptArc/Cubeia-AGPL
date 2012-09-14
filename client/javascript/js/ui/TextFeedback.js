@@ -45,22 +45,25 @@ TextFeedback.prototype.addLogText = function(text) {
 
 TextFeedback.prototype.showSeatSpaceTextFeedback = function(playerId, action, value, actionType) {
     var betFieldDivId = "";
+    var betTextDivId = "";
     if(pid == playerId) {
         var tableEntity = entityHandler.getEntityById(view.table.entityId);
         betFieldDivId = tableEntity.ui.ownBetTextDivId;
+        betTextDivId = tableEntity.ui.ownActionTextDivId;
     } else {
         var playerEntityId = playerHandler.getPlayerEntityIdByPid(playerId);
         var playerEntity = entityHandler.getEntityById(playerEntityId);
         var seatEntity = entityHandler.getEntityById(view.seatHandler.getSeatEntityIdBySeatNumber(playerEntity.state.seatId));
         if (!seatEntity) return;
 
-         betFieldDivId = seatEntity.ui.betFieldDivId;
+        betFieldDivId = seatEntity.ui.betFieldDivId;
+        betTextDivId = seatEntity.ui.betTextDivId;
     }
 
-    this.setSeatBetText(betFieldDivId,action,actionType,value);
+    this.setSeatBetText(betFieldDivId,betTextDivId,action,actionType,value);
 
 };
-TextFeedback.prototype.setSeatBetText = function(betFieldDivId, action, actionType, value) {
+TextFeedback.prototype.setSeatBetText = function(betFieldDivId, betTextDivId, action, actionType, value) {
     var valueString = "";
 
     if (value) {
@@ -70,31 +73,32 @@ TextFeedback.prototype.setSeatBetText = function(betFieldDivId, action, actionTy
         }
         valueString = "&euro;<span style='color:#FFF;'>" + value + '</span><div class="user-action '+actionType+'"></div>'
     }
-    var betText =  $("#"+betFieldDivId);
-    betText.html(action);
-
-    if(action && action!="") {
-        betText.show();
-    }  else {
-        betText.hide();
-    }
-
-    document.getElementById(betFieldDivId).innerHTML = valueString;
+    var betText =  $("#"+betTextDivId);
+    betText.html(action).show();
+    $("#"+betFieldDivId).html(valueString).show();
 };
 
 
 TextFeedback.prototype.addSeatEventText = function(pid, textString) {
 
-    var playerEntityId = playerHandler.getPlayerEntityIdByPid(pid);
-    var playerEntity = entityHandler.getEntityById(playerEntityId);
-    var seatEntity = entityHandler.getEntityById(view.seatHandler.getSeatEntityIdBySeatNumber(playerEntity.state.seatId));
-    if (!seatEntity) return;
-    var tableEntity = entityHandler.getEntityById(view.table.entityId);
+    var divId = "";
+
+    if(pid==playerHandler.myPlayerPid) {
+        var tableEntity = entityHandler.getEntityById(view.table.entityId);
+        divId = tableEntity.ui.ownHandStrengthDivId;
+    } else {
+        var playerEntityId = playerHandler.getPlayerEntityIdByPid(pid);
+        var playerEntity = entityHandler.getEntityById(playerEntityId);
+        var seatEntity = entityHandler.getEntityById(view.seatHandler.getSeatEntityIdBySeatNumber(playerEntity.state.seatId));
+        if (!seatEntity) return;
+        var tableEntity = entityHandler.getEntityById(view.table.entityId);
+        var key = "seat_event_key"+this.textEvents+"";
+        console.debug("hand strength == " + textString);
+        divId = seatEntity.ui.handStrengthDiv;
+    }
 
 
-    var key = "seat_event_key"+this.textEvents+"";
-    console.debug("hand strength == " + textString);
-    view.seatHandler.showHandStrength(seatEntity,textString);
+    view.seatHandler.showHandStrength(divId,textString);
 
 };
 
@@ -117,14 +121,16 @@ TextFeedback.prototype.clearAllSeatSpaceTextFeedback = function() {
         var seatEntity = entityHandler.getEntityById(view.seatHandler.getSeatEntityIdBySeatNumber(index));
         var betFieldDivId = seatEntity.ui.betFieldDivId;
         $("#"+seatEntity.ui.betFieldDivId).html("");
-        var text = $("#"+seatEntity.ui.betTextDivId);
-        text.hide();
-        text.html("");
-        view.seatHandler.hideHandStrength(seatEntity);
+        $("#"+seatEntity.ui.betTextDivId).html("").hide();
+        view.seatHandler.hideHandStrength(seatEntity.ui.handStrengthDiv);
     }
     var tableEntity = entityHandler.getEntityById(view.table.entityId);
-    var text = $("#"+tableEntity.ui.ownBetTextDivId);
-    text.html("").hide();
+
+    $("#"+tableEntity.ui.ownBetTextDivId).html("").hide();
+    $("#"+tableEntity.ui.ownActionTextDivId).html("").hide();
+
+    document.getElementById(tableEntity.ui.ownHandStrengthDivId).style.visibility ="hidden";
+    document.getElementById(tableEntity.ui.ownHandStrengthDivId).innerHTML = "";
 
 
 }
@@ -136,6 +142,8 @@ TextFeedback.prototype.clearAllActionText = function() {
         text.hide();
         text.html("");
     }
+    $("#"+tableEntity.ui.ownActionTextDivId).html("").hide();
+
 
 }
 

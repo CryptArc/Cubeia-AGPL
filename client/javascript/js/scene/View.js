@@ -43,7 +43,9 @@ View.prototype.initTableView = function(numberOfSeats) {
     this.renderLoop.initRenderLoop(renderFrameTime);
     this.textFeedback.initTextFeedback();
     pokerCards.initOwnCardArea();
+    this.seatHandler.initOwnHandStrengthArea();
     this.seatHandler.initOwnBetTextArea();
+    this.seatHandler.initOwnActionTextArea();
 }
 
 View.prototype.setupTableStructure = function(numberOfSeats) {

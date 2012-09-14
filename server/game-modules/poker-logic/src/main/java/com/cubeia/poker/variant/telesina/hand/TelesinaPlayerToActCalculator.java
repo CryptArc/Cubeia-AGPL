@@ -41,6 +41,8 @@ import java.util.SortedMap;
  */
 public class TelesinaPlayerToActCalculator implements PlayerToActCalculator {
 
+    private static final long serialVersionUID = 1470908665729381611L;
+
     private TelesinaHandStrengthEvaluator evaluator;
 
     /**

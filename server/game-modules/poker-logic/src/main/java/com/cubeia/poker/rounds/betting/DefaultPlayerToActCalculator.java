@@ -26,6 +26,8 @@ import java.util.SortedMap;
 
 public class DefaultPlayerToActCalculator implements PlayerToActCalculator {
 
+    private static final long serialVersionUID = -6580325428294822478L;
+
     @Override
     public PokerPlayer getFirstPlayerToAct(int dealerButtonSeatId, SortedMap<Integer, PokerPlayer> seatingMap, List<Card> communityCards) {
         return getNextPlayerToAct(dealerButtonSeatId, seatingMap);

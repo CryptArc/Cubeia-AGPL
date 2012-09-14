@@ -59,16 +59,28 @@ PokerDealer.prototype.createDealerButton = function() {
 };
 
 PokerDealer.prototype.moveDealerButton = function(seatId) {
-	var dealerButton = entityHandler.getEntityById(this.dealerButtonEntityId);
-    var seatEntity = entityHandler.getEntityById(view.seatHandler.getSeatEntityIdBySeatNumber(seatId));
-    if (!seatEntity) return;
-
+    var targetDivId = "";
+    var dealerButton = entityHandler.getEntityById(this.dealerButtonEntityId);
     var button = $('#' + dealerButton.ui.divId);
     var offset = button.offset();
-    var target = $('#' + seatEntity.ui.dealerButtonSlotDivId);
-    var targetOffset = target.offset();
+    var animation = null;
+    if(playerHandler.mySeatId == seatId && playerHandler.mySeatId!=-1) {
+        var tableEntity = entityHandler.getEntityById(view.table.entityId);
+        targetDivId = tableEntity.ui.ownCardsDivId;
+        var target = $('#' + targetDivId);
+        var targetOffset = target.offset();
+        animation = new Animation(button.get(0),0.6,{top: targetOffset.top, left: (targetOffset.left + target.width())});
 
-    animator.addAnimation(new Animation(button.get(0),0.6,{top: targetOffset.top, left: targetOffset.left}));
+    } else {
+        var seatEntity = entityHandler.getEntityById(view.seatHandler.getSeatEntityIdBySeatNumber(seatId));
+        if (!seatEntity) return;
+        targetDivId =   seatEntity.ui.dealerButtonSlotDivId;
+        var target = $('#' + targetDivId);
+        var targetOffset = target.offset();
+        animation = new Animation(button.get(0),0.6,{top: targetOffset.top, left: targetOffset.left});
+    }
+
+    animator.addAnimation(animation);
 };
 
 

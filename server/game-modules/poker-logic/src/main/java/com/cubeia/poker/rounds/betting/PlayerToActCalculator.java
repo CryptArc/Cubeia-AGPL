@@ -20,10 +20,11 @@ package com.cubeia.poker.rounds.betting;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.PokerPlayer;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.SortedMap;
 
-public interface PlayerToActCalculator {
+public interface PlayerToActCalculator extends Serializable {
 
     /**
      * Returns the first player in the round to act.

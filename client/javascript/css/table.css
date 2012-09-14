@@ -11,6 +11,9 @@ div.poker_table
 		background-color:#eee;
 	}
 
+#text_log_id_anchor {
+    display:none;
+}
 div.poker_table_cubeia_logo
 	{
         background-size: 100% 100%;
@@ -22,6 +25,7 @@ div.poker_table_cubeia_logo
 	    left: 0px;
         width: 445px;
         height: 132px;
+        display:none;
 	}
 
 div.table_center_blob
@@ -175,7 +179,7 @@ div.own_player_action {
     text-align: center;
 }
 
-div.player_action_text
+div.player_action_text,div.own_action_text
 {
     font-family: arial;
     font-size: 14px;
@@ -191,6 +195,12 @@ div.player_action_text
     text-shadow: none;
     font-weight: bold;
 }
+div.own_action_text {
+    font-size: 16px;
+    width:173px;
+    opacity: 0.9;
+}
+
 div.raise-action, div.bet-action {
     background-image: url("../images/raise-arrow.png");
     background-size: 100%;
@@ -565,14 +575,18 @@ div.table_pot_label
     top: -26px;
 }
 
-div.player_hand_strength {
+div.player_hand_strength, div.own_hand_strength {
     width: 140px;
-    font-size: 22px;
+    font-size: 18px;
     font-weight: bold;
     text-align: center;
     position: absolute;
     left: -35px;
+}
 
+div.own_hand_strength {
+    width:260px;
+    font-size: 22px;
 }
 div.event_text
 {
