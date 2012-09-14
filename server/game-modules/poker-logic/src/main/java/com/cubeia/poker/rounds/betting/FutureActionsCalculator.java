@@ -20,9 +20,10 @@ package com.cubeia.poker.rounds.betting;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.player.PokerPlayer;
 
+import java.io.Serializable;
 import java.util.List;
 
-public interface FutureActionsCalculator {
+public interface FutureActionsCalculator extends Serializable {
 
     /**
      * Calculates what a player can do in the future given that the state does not change.

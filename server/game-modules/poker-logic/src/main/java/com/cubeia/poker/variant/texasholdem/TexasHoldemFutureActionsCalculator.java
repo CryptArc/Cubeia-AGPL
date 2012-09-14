@@ -27,9 +27,11 @@ import java.util.List;
 public class TexasHoldemFutureActionsCalculator implements FutureActionsCalculator {
 
 
+    private static final long serialVersionUID = 6513501780238216186L;
+
     /* (non-Javadoc)
-      * @see com.cubeia.poker.variant.texasholdem.FutureActionsCalculator#calculateFutureActionOptionList(com.cubeia.poker.player.PokerPlayer, java.lang.Long)
-      */
+    * @see com.cubeia.poker.variant.texasholdem.FutureActionsCalculator#calculateFutureActionOptionList(com.cubeia.poker.player.PokerPlayer, java.lang.Long)
+    */
     @Override
     public List<PokerActionType> calculateFutureActionOptionList(PokerPlayer player, Long highestBet) {
         List<PokerActionType> options = new ArrayList<PokerActionType>();
