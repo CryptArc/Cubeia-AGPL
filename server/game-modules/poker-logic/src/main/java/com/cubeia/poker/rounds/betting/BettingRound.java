@@ -36,6 +36,7 @@ import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -92,12 +93,17 @@ public class BettingRound implements Round, BettingRoundContext {
      */
     private long minBet;
 
-    private Predicate<PokerPlayer> nonFolded = new Predicate<PokerPlayer>() {
+    private Predicate<PokerPlayer> nonFolded = new PokerPredicate() {
+
+    };
+
+    private static class  PokerPredicate implements Predicate<PokerPlayer>, Serializable {
+        private static final long serialVersionUID = 3189327257295089272L;
         @Override
         public boolean apply(PokerPlayer player) {
             return !player.hasFolded();
         }
-    };
+    }
 
 
     // TODO: Would probably be nice if the playerToActCalculator knew all it needs to know, so we don't need to pass "seatIdToStart.." as well.

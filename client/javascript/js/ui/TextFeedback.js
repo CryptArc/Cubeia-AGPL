@@ -51,7 +51,11 @@ TextFeedback.prototype.showSeatSpaceTextFeedback = function(playerId, action, va
         betFieldDivId = tableEntity.ui.ownBetTextDivId;
         betTextDivId = tableEntity.ui.ownActionTextDivId;
     } else {
+
         var playerEntityId = playerHandler.getPlayerEntityIdByPid(playerId);
+        if(!playerEntityId) {
+            return;
+        }
         var playerEntity = entityHandler.getEntityById(playerEntityId);
         var seatEntity = entityHandler.getEntityById(view.seatHandler.getSeatEntityIdBySeatNumber(playerEntity.state.seatId));
         if (!seatEntity) return;

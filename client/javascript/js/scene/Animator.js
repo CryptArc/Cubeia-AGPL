@@ -106,5 +106,4 @@ Animation.prototype = {
     getProgress : function(currentTime) {
         return (currentTime-this.startTime);
     }
-
 };
