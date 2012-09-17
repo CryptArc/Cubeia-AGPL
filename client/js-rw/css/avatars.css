@@ -1,0 +1,48 @@
+.avatar {
+    background-image: url("../images/avatars/avatar0.png");
+    background-size: auto 100%;
+    background-position: bottom;
+    background-repeat: no-repeat;
+    width:40%;
+    height: 50%;
+    left:30%;
+    top:8%;
+    position: absolute;
+}
+.avatar0 {
+    background-image: url("../images/avatars/avatar0.png");
+}
+.avatar1 {
+    background-image: url("../images/avatars/avatar1.png");
+}
+
+.avatar2 {
+    background-image: url("../images/avatars/avatar2.png");
+}
+
+.avatar3 {
+    background-image: url("../images/avatars/avatar3.png");
+}
+
+.avatar4 {
+    background-image: url("../images/avatars/avatar4.png");
+}
+
+.avatar5 {
+    background-image: url("../images/avatars/avatar5.png");
+}
+
+.avatar6 {
+    background-image: url("../images/avatars/avatar6.png");
+}
+.avatar7 {
+    background-image: url("../images/avatars/avatar7.png");
+}
+.avatar8 {
+    background-image: url("../images/avatars/avatar8.png");
+}
+.avatar9 {
+    background-image: url("../images/avatars/avatar9.png");
+}
+
+

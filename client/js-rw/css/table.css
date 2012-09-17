@@ -1,0 +1,90 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #262626;
+    color:#fff;
+    font-family: Arial, san-serif;
+}
+.table-container {
+    width:100%;
+    height:100%;
+    background-size: 100%;
+    position: fixed;
+}
+.default-table {
+    width:100%;
+    height:80%;
+    background-image: url("../images/table/table-background.jpg");
+    background-size: 100% 100%;
+    position: absolute;
+}
+.bottom-bar {
+    background-color:#262626;
+    border-top: 1px solid #9aba00;
+    bottom: 0;
+    height: 16%;
+    width: 94%;
+    margin: 0% 3%;
+    position: absolute;
+    padding-top:2%;
+}
+.own-player {
+    width:30%;
+    display: inline-block;
+}
+.own-player .name {
+    font-size:250%;
+}
+.own-player .balance {
+    font-size:350%;
+    font-weight: bold;
+}
+.balance:first-letter {
+    color:#9aba00;
+}
+
+.user-actions {
+    width:35%;
+    height:80%;
+    display: inline-block;
+    float:right;
+    position: relative;
+}
+.user-actions .action-button {
+    width:31%;
+    padding-bottom: 31%;
+}
+.user-actions .action-button:first-child {
+    margin-left: 1%;
+}
+.user-actions .action-button:last-child {
+    margin-right: 0;
+}
+.main-pot {
+    font-size: 250%;
+    position: absolute;
+    width: 50%;
+    top: 60%;
+    left: 25%;
+
+}
+.main-pot span, .main-pot div {
+    display: inline-block;
+}
+.main-pot span {
+    color:#9aba00;
+}
+.community-cards {
+    position: absolute;
+    width: 50%;
+    height: 22%;
+    left: 25%;
+    top: 37%;
+}
+.community-card-container {
+    position: relative;
+    height: 100%;
+    width: 18%;
+    display: inline-block;
+    margin-right: 1%;
+}
