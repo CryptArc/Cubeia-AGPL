@@ -41,7 +41,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         seatId = parseInt(seatId);
         console.log("Player " + player.name + " added at seat " + seatId);
         var seat = null;
-        if(player.id == Poker.MyPlayer.id) {
+        if (player.id == Poker.MyPlayer.id) {
             seat = new Poker.MyPlayerSeat(seatId,player,this.templateManager,this.myActionsManager);
             this.myPlayerSeatId = seatId;
             this.calculateSeatPositions();
@@ -66,7 +66,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
 
     },
     getNormalizedSeatPosition : function(seatId){
-        if(this.myPlayerSeatId!=-1) {
+        if(this.myPlayerSeatId != -1) {
             return ( this.capacity + seatId - this.myPlayerSeatId ) % this.capacity;
         } else {
             return seatId;

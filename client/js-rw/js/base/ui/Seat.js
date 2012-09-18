@@ -15,8 +15,7 @@ Poker.Seat = Class.extend({
        this.renderSeat();
    },
    setSeatPos : function(previousPos, position) {
-     this.seatElement.removeClass("seat-empty").removeClass("seat-pos-"+previousPos).addClass("seat-pos-"+position);
-
+     this.seatElement.removeClass("seat-empty").removeClass("seat-pos-"+previousPos).removeClass("seat-inactive").addClass("seat-pos-"+position);
    },
    renderSeat : function() {
        var output = Mustache.render(this.templateManager.getTemplate("seatTemplate"),this.player);
@@ -75,6 +74,10 @@ Poker.Seat = Class.extend({
    },
    dealCard : function(card) {
        this.seatElement.find(".cards-container").append(card.render()).show();
+       var div = $('#' + card.getCardDivId());
+       var currentTop = div.css("top");
+       div.css({top: parseInt(currentTop) + 30 + "%"});
+       Firmin.animate(div.get(0), { top: currentTop }, "400ms");
    },
    inactivateSeat : function() {
         this.seatElement.removeClass("active-seat");
