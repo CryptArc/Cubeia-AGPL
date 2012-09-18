@@ -349,12 +349,12 @@
         <repository>
             <id>cubeia-nexus</id>
             <name>Cubeia Internal Release Repo</name>
-            <url>http://m2.cubeia.com/nexus/content/repositories/internal-releases/</url>
+            <url>http://m2.cubeia.com/nexus/content/repositories/foss-releases/</url>
         </repository>
         <snapshotRepository>
             <id>cubeia-nexus</id>
             <name>Cubeia Snapshot Repo</name>
-            <url>http://m2.cubeia.com/nexus/content/repositories/internal-snapshots/</url>
+            <url>http://m2.cubeia.com/nexus/content/repositories/foss-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
