@@ -97,6 +97,12 @@ Poker.Seat = Class.extend({
            this.progressBarElement.attr("style","").hide();
        }
    },
+    /**
+     * When a betting round is complete (communicards are dealt/show shown);
+     */
+   onBettingRoundComplete : function(){
+       this.inactivateSeat();
+   },
    activateSeat : function(allowedActions, timeToAct) {
        this.seatElement.addClass("active-seat");
        this.progressBarElement.show();

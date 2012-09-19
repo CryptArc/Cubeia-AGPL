@@ -17,6 +17,8 @@
 
 package com.cubeia.poker.handhistory.impl;
 
+import com.cubeia.firebase.api.server.SystemException;
+import com.cubeia.firebase.api.service.Service;
 import com.cubeia.firebase.api.service.ServiceContext;
 import com.cubeia.firebase.guice.inject.Log4j;
 import com.cubeia.poker.handhistory.api.*;
@@ -42,7 +44,7 @@ import java.util.concurrent.ConcurrentHashMap;
 // TODO Persist on each event to support fail-over?
 // TODO Read hand from database (if not found) to support fail-over
 
-public class CollectorServiceImpl implements HandHistoryCollectorService {
+public class CollectorServiceImpl implements HandHistoryCollectorService, Service {
 
     @Log4j
     private Logger log;
@@ -120,5 +122,17 @@ public class CollectorServiceImpl implements HandHistoryCollectorService {
             return jsonPersist;
         }
     }
+
+	@Override
+	public void init(ServiceContext con) throws SystemException { }
+
+	@Override
+	public void destroy() { }
+
+	@Override
+	public void start() { }
+
+	@Override
+	public void stop() { }
 
 }

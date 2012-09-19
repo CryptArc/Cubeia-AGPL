@@ -31,13 +31,6 @@
         <dependency>
             <groupId>com.cubeia.firebase</groupId>
             <artifactId>guice-support</artifactId>
-            <version>1.1.1</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>guice</artifactId>
-                    <groupId>com.google.code.guice</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>

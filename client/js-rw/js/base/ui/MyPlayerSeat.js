@@ -14,6 +14,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.circularProgressBar = new CircularProgressBar("circularProgressBar");
         this.circularProgressBar.hide();
 
+
     },
     renderSeat : function(){
         var t = this.templateManager.getTemplate("myPlayerSeatTemplate");

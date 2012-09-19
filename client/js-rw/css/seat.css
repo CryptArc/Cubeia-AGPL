@@ -32,6 +32,15 @@
     top:0;
     left:0;
 }
+.cards-container-player .player-card-container {
+    position:absolute;
+    left:0;
+    width:50%;
+    height:150%;
+    top:-25%;
+    -webkit-transform: scale(0.75);
+    -webkit-transition:-webkit-transform 0.5s linear;
+}
 
 .cards-container {
     position: absolute;
@@ -85,9 +94,8 @@ img.player-card {
 }
 .circular-progress-bar {
     position: absolute;
-
     left:50%;
-    top:15%;
+    top:84%;
     width:10%;
     padding-bottom:10%;
 }
