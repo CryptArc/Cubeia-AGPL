@@ -4,7 +4,10 @@ var CircularProgressBar = function(containerId) {
 CircularProgressBar.prototype = {
 	containerId : null,
 	secondPartCreated : false,
-	nextToggle : 20,
+    slice : null,
+    fill : null,
+    pie : null,
+    pieElement : null,
 	_initialize : function(containerId) {
 		if (containerId == null) {
 			throw "CircularProgressBar: containerId must be set";
@@ -21,7 +24,10 @@ CircularProgressBar.prototype = {
 		$(this.containerId).show();
 	},
 	hide : function() {
+        this.running=false;
 		$(this.containerId).hide();
+        $(this.containerId).empty();
+        this._addContent();
 	},
 	_addContent : function() {
 		var progressBarHTML = ''
@@ -37,45 +43,30 @@ CircularProgressBar.prototype = {
 				+ '<div class="cpb-pie"></div>'
 				+ '<div class="cpb-pie cpb-fill"></div>' + '</div>' + '</div>';
 
-		$(this.containerId).append(backgroundHTML).append(progressBarHTML);
-
-	},
-	reset : function() {
-
-		$(".cpb-animated .cpb-slice", this.containerId).removeClass("cpb-gt50");
-		$(".cpb-animated .cpb-fill", this.containerId).hide();
-        $('.cpb-animated .cpb-pie', this.containerId).removeAttr("style");
+        $(this.containerId).append(backgroundHTML).append(progressBarHTML);
+        this.slice = $(".cpb-animated .cpb-slice", self.containerId);
+        this.fill = $(".cpb-animated .cpb-fill", self.containerId);
+        this.pie = $('.cpb-animated .cpb-pie', this.containerId);
+        this.pieElement = this.pie.get(0);
 	},
     animation : null,
+    startTime : null,
+    animationTime : null,
+    endTime : null,
+    running : false,
 	render : function(time) {
-
-        if(this.animation!=null){
-            this.animation.rotate("0deg");
-        }
-        $(".cpb-animated .cpb-slice", this.containerId).removeClass("cpb-gt50");
-        $(".cpb-animated .cpb-fill", this.containerId).hide();
-
-
         var self = this;
-        var el = $('.cpb-animated .cpb-pie', this.containerId);
 
-        this.animation = Firmin.animateR(el.get(0),
-            { rotate : "179.9deg", timingFunction : 'linear'},
-            time/2000,
-            function(){
-                self.animation.rotate("180.1deg");
-                $(".cpb-animated .cpb-slice", self.containerId).addClass("cpb-gt50");
-                $(".cpb-animated .cpb-fill", self.containerId).show();
+      this.pieElement.style.cssText="-webkit-transition:-webkit-transform "+(time/2000)+"s linear;";
+      this.pieElement.addEventListener('webkitTransitionEnd',function(e){
+          self.slice.addClass("cpb-gt50");
+          self.fill.show();
+          self.pieElement.style.cssText+="-webkit-transform: rotate(360deg);";
+      },false);
+      setTimeout(function(){self.pieElement.style.cssText+="-webkit-transform: rotate(180deg);";},100);
 
-                self.animation.animateR(
-                    { rotate : "179.8deg", timingFunction:"linear"},
-                    time/2000
-
-                );
-            }
-        );
     },
     detach : function() {
-        $(this.containerId).remove();
+        $(this.containerId).empty();
     }
 };

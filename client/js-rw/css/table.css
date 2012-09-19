@@ -31,6 +31,9 @@ body {
     position: absolute;
     padding-top:2%;
 }
+#circularProgressBar {
+    background-color:#262626;
+}
 .own-player {
     width:30%;
     display: inline-block;

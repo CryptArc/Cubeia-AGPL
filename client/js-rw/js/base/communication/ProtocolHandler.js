@@ -60,10 +60,12 @@ Poker.PokerProtocolHandler = function(tableManager,tableComHandler) {
 
 				break;
 			case com.cubeia.games.poker.io.protocol.DealPublicCards.CLASSID:
+                this.tableManager.bettingRoundComplete();
                 for ( var i = 0; i < protocolObject.cards.length; i ++ ) {
                     this.tableManager.dealCommunityCard(protocolObject.cards[i].cardId,
                         Poker.Utils.getCardString(protocolObject.cards[i]));
                 }
+
                 break;
 			case com.cubeia.games.poker.io.protocol.DeckInfo.CLASSID:
                 console.log("UNHANDLED PO DeckInfo");
@@ -74,10 +76,12 @@ Poker.PokerProtocolHandler = function(tableManager,tableComHandler) {
                 console.log(protocolObject);
 				break;
 			case com.cubeia.games.poker.io.protocol.ExposePrivateCards.CLASSID:
+                this.tableManager.bettingRoundComplete();
                 for ( var i = 0; i < protocolObject.cards.length; i ++ ) {
                     this.tableManager.exposePrivateCard(protocolObject.cards[i].card.cardId,
                         Poker.Utils.getCardString(protocolObject.cards[i].card));
                 }
+
 
                 break;
             case com.cubeia.games.poker.io.protocol.ExternalSessionInfoPacket.CLASSID:

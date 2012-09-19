@@ -16,13 +16,19 @@
     <link rel="stylesheet" type="text/css" href="css/slider.css"/>
     <link rel="stylesheet" type="text/css" href="css/action-buttons.css"/>
     <link rel="stylesheet" type="text/css" href="css/avatars.css"/>
+    <link rel="stylesheet" type="text/css" href="css/transitions.css"/>
 
-    <!--ipad home fiz -->
+    <!--ipad home fix -->
     <link type="text/css" rel="stylesheet" media="only screen and (min-device-width: 768px) and (max-device-width: 1024px)" href="css/ipad.css" />
 
     <script type="text/javascript" src="js/lib/classjs.js"></script>
     <script type="text/javascript" src="js/lib/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="js/lib/jquery-ui-1.8.21.custom.min.js"></script>
+
+
+    <script type="text/javascript" src="js/lib/tweenjs/Ease.js"></script>
+    <script type="text/javascript" src="js/lib/tweenjs/Tween.js"></script>
+    <script type="text/javascript" src="js/lib/tweenjs/CSSPlugin.js"></script>
 
     <script type="text/javascript" src="js/lib/mustache.js"></script>
     <script type="text/javascript" src="js/lib/jquery.jqGrid.min.js"></script>
@@ -64,6 +70,8 @@
     <script type="text/javascript" src="js/base/Pot.js"></script>
     <script type="text/javascript" src="js/base/Hand.js"></script>
     <script type="text/javascript" src="js/base/ui/describe.js"></script>
+
+
 
 
     <script type="text/javascript">
@@ -178,9 +186,7 @@
                 <div class="name" id="myPlayerName"></div>
                 <div class="balance" id="myPlayerBalance"></div>
             </div>
-            <div id="circularProgressBar" class="circular-progress-bar" style="width:100px; height:100px;">
 
-            </div>
             <div id="userActActions" class="user-actions">
                 <div class="action-button" id="actionFold" style="display: none;">
                     <span>Fold</span>
@@ -224,7 +230,9 @@
 
             </div>
         </div>
+        <div id="circularProgressBar" class="circular-progress-bar" style="width:100px; height:100px;">
 
+        </div>
 
     </div>
 
@@ -246,8 +254,8 @@
         <div class="avatar">
 
         </div>
-        <div class="cards-container">
-            <div class="player-card-container">
+        <div class="cards-container cards-container-player">
+            <div class="player-card-container player-card-animation">
                 <img src="images/cards/back.svg" class="player-card"/>
             </div>
 

@@ -122,6 +122,11 @@ Poker.TableManager = Class.extend({
             this.tableListeners[x].onExposePrivateCard(cardId,cardString);
         }
     },
+    bettingRoundComplete : function() {
+        for(var x in this.tableListeners)   {
+            this.tableListeners[x].onBettingRoundComplete();
+        }
+    },
     leaveTable : function() {
         for(var x in this.tableListeners)   {
             this.tableListeners[x].onLeaveTable();
