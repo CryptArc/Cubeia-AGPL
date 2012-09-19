@@ -22,6 +22,7 @@ import com.cubeia.firebase.api.mtt.activator.ActivatorContext;
 import com.cubeia.firebase.api.mtt.activator.MttActivator;
 import com.cubeia.firebase.api.server.Startable;
 import com.cubeia.firebase.api.server.SystemException;
+import com.cubeia.game.poker.config.api.PokerConfigurationService;
 import com.cubeia.games.poker.tournament.activator.external.jmx.JMXActivator;
 import com.cubeia.games.poker.tournament.guice.ActivatorModule;
 import com.cubeia.games.poker.tournament.guice.MockActivatorModule;
@@ -57,6 +58,7 @@ public class PokerTournamentActivatorImpl implements MttActivator, Startable, Po
     }
 
     private JMXActivator jmxInterface;
+	private ActivatorContext context;
 
     /*------------------------------------------------
 
@@ -108,7 +110,8 @@ public class PokerTournamentActivatorImpl implements MttActivator, Startable, Po
     }
 
     public void init(ActivatorContext context) throws SystemException {
-        if (System.getProperty("useIntegrations") == null) {
+    	this.context = context;
+        if (useMockIntegrations()) {
             log.warn("Using mock activator module.");
             injector = Guice.createInjector(new MockActivatorModule());
         } else {
@@ -121,7 +124,7 @@ public class PokerTournamentActivatorImpl implements MttActivator, Startable, Po
         activator.init(context);
     }
 
-    public void start() {
+	public void start() {
         activator.setMttFactory(factory);
         activator.start();
         jmxInterface = new JMXActivator(this);
@@ -131,4 +134,10 @@ public class PokerTournamentActivatorImpl implements MttActivator, Startable, Po
         activator.stop();
     }
 
+    
+    // --- PRIVATE METHODS --- //
+    
+    private boolean useMockIntegrations() {
+		return context.getServices().getServiceInstance(PokerConfigurationService.class).getTournamentActivatorConfig().useMockIntegrations();
+	}
 }

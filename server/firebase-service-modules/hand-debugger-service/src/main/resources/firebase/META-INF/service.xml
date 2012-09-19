@@ -1,10 +1,8 @@
 <service auto-start="true">
-    <name>Mock wallet service</name>
+    <name>Hand Debugger Service</name>
     <public-id>ns://www.cubeia.com/poker/handdebugger</public-id>
     <contract>com.cubeia.games.poker.debugger.HandDebuggerContract</contract>
-    <service>com.cubeia.games.poker.debugger.HandDebuggerFacade</service>
+    <invocation-handler>com.cubeia.games.poker.debugger.HandDebuggerServiceHandler</invocation-handler>
     <description/>
-    <exported>
-
-    </exported>
+    <exported />
 </service>
