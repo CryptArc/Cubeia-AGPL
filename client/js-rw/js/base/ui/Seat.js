@@ -24,9 +24,19 @@ Poker.Seat = Class.extend({
        this.seatElement.find(".avatar").addClass("avatar"+(this.player.id%9));
        this.reset();
    },
+   clearSeat : function() {
+       this.seatElement.html("");
+   },
    updatePlayer : function(player) {
        this.player = player;
-       this.seatElement.find(".seat-balance").html("&euro;"+this.player.balance);
+       var balanceDiv = this.seatElement.find(".seat-balance");
+       if (this.player.balance == 0) {
+           balanceDiv.html("All in");
+           balanceDiv.removeClass("balance");
+       } else {
+           balanceDiv.html("&euro;"+this.player.balance);
+           balanceDiv.addClass("balance");
+       }
        this.handlePlayerStatus();
    },
    handlePlayerStatus : function() {
@@ -50,8 +60,8 @@ Poker.Seat = Class.extend({
    hideActionText : function() {
        this.seatElement.find(".action-text").html("").hide();
    },
-
    onAction : function(actionType,amount) {
+       this.inactivateSeat();
        this.showActionData(actionType,amount);
        if(actionType == Poker.ActionType.FOLD) {
             this.fold();
@@ -66,7 +76,6 @@ Poker.Seat = Class.extend({
        }
    },
    fold : function() {
-       this.clearProgressBar();
        this.seatElement.addClass("seat-folded");
        this.seatElement.removeClass("active-seat");
        this.seatElement.find(".player-card-container img").attr("src","images/cards/gray-back.svg");

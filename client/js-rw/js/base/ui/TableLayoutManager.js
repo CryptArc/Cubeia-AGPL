@@ -51,6 +51,10 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         }
         this.seats[seatId] = seat;
     },
+    onPlayerRemoved : function(playerId) {
+        var seat = this.getSeatByPlayerId(playerId);
+        seat.clearSeat();
+    },
     calculateSeatPositions : function() {
         //my player seat should always be 0
         for(var s in this.seats){
@@ -128,6 +132,12 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         var html = card.render();
         $("#communityCards").append(html);
         this.storeCard(card);
+
+        console.log(card);
+        var div = $('#' + card.getCardDivId());
+        div.css({top:  "30%"});
+        Firmin.animate(div.get(0), { top: "0%" }, "400ms");
+
         this.hideSeatActionInfo();
     },
     resetCommunity : function() {
@@ -154,13 +164,13 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         $("#mainPotContainer").html(Mustache.render(t,{amount : amount}));
     },
     onRequestPlayerAction : function(player,allowedActions,timeToAct){
-        for(var s in this.seats) {
+        for (var s in this.seats) {
             this.seats[s].inactivateSeat();
         }
         var seat = this.getSeatByPlayerId(player.id);
         seat.activateSeat(allowedActions,timeToAct);
     },
-    onLeaveTable : function() {
+    onLeaveTableSuccess : function() {
         $(this.tableContainer).hide();
         for(var i = 0; i<this.capacity; i++) {
             var s = $("#seat"+i);
@@ -174,7 +184,5 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         this.resetCommunity();
         this.cardElements = [];
         this.myActionsManager.clear();
-
     }
-
 });

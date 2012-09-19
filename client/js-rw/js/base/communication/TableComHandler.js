@@ -3,6 +3,7 @@ var Poker = Poker || {};
 Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
     tableManager : null,
     pokerProtocolHandler : null,
+    isSeated : false,
     init : function(connector) {
         this.connector = connector;
     },
@@ -11,7 +12,11 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
         if(actionType.id == Poker.ActionType.JOIN.id){
             this.joinTable();
         } else if(actionType.id == Poker.ActionType.LEAVE.id) {
-            this.leaveTable();
+            if (this.isSeated) {
+                this.leaveTable();
+            } else {
+                this.unwatchTable();
+            }
         } else if(actionType.id == Poker.ActionType.SIT_IN.id) {
             this.sitIn();
         } else if(actionType.id == Poker.ActionType.SIT_OUT.id) {
@@ -70,11 +75,8 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
         this.tableManager = new Poker.TableManager();
 
         this.tableId = tableId;
-
         this.tableManager.createTable(tableId,capacity,[tableLayoutManager]);
-
         this.pokerProtocolHandler = new Poker.PokerProtocolHandler(this.tableManager,this);
-
         this.connector.watchTable(tableId);
     },
     handleSeatInfo : function(seatInfoPacket) {
@@ -85,25 +87,55 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
         //seatPlayer(seatInfoPacket.player.pid, seatInfoPacket.seat, seatInfoPacket.player.nick);
     },
     handleNotifyLeave : function(notifyLeavePacket) {
-        //playerHandler.unseatPlayer(notifyLeavePacket.pid);
+        if (notifyLeavePacket.pid === Poker.MyPlayer.id) {
+            console.log("I left this table, closing it.");
+            this.tableManager.leaveTable();
+            this.showLobby();
+        } else {
+            this.tableManager.removePlayer(notifyLeavePacket.pid);
+        }
     },
-
     handleNotifyJoin : function(notifyJoinPacket) {
         console.log("NOTIFY JOIN!!");
         this.tableManager.addPlayer(notifyJoinPacket.seat,notifyJoinPacket.pid,notifyJoinPacket.nick);
     },
-
     handleJoinResponse : function(joinResponsePacket) {
         console.log(joinResponsePacket);
-        console.log("join response seat = " + joinResponsePacket.seat + " player id = " +Poker.MyPlayer.id);
-        this.tableManager.addPlayer(joinResponsePacket.seat,Poker.MyPlayer.id,Poker.MyPlayer.name);
+        console.log("join response seat = " + joinResponsePacket.seat + " player id = " + Poker.MyPlayer.id);
+        if (joinResponsePacket.status == "OK") {
+            this.tableManager.addPlayer(joinResponsePacket.seat,Poker.MyPlayer.id,Poker.MyPlayer.name);
+            this.isSeated = true;
+        } else {
+            console.log("Join failed. Status: " + joinResponsePacket.status);
+            alert("Join failed");
+        }
+    },
+    handleUnwatchResponse : function(unwatchResponse) {
+        console.log("Unwatch response = ");
+        console.log(unwatchResponse);
+        if (unwatchResponse.status == "OK") {
+            this.tableManager.leaveTable();
+            this.showLobby();
+        } else {
+            alert("Your unwatch request was denied, you will be removed after the current hand is finished.");
+        }
+    },
+    handleLeaveResponse : function(leaveResponse) {
+        console.log("leave response: ");
+        console.log(leaveResponse);
+        this.tableManager.leaveTable();
+        this.showLobby();
     },
     leaveTable : function() {
-
         this.connector.leaveTable(this.tableManager.getTableId());
+        // Note, we have to wait for the response before we know if we should actually close the table.
+    },
+    unwatchTable : function() {
+        var unwatchRequest = new FB_PROTOCOL.UnwatchRequestPacket();
+        unwatchRequest.tableid = this.tableId;
+        this.connector.sendProtocolObject(unwatchRequest)
         comHandler.subscribeToLobby();
     },
-
     handlePacket : function(protocolObject) {
         switch (protocolObject.classId) {
             case FB_PROTOCOL.NotifyJoinPacket.CLASSID :
@@ -121,12 +153,13 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
             case FB_PROTOCOL.GameTransportPacket.CLASSID :
                 this.handleGameDataPacket(protocolObject);
                 break;
-            case FB_PROTOCOL.WatchResponsePacket.CLASSID :
+            case FB_PROTOCOL.UnwatchResponsePacket.CLASSID:
+                this.handleUnwatchResponse(protocolObject);
                 break;
-            case FB_PROTOCOL.LeaveResponsePacket.CLASSID :
+            case FB_PROTOCOL.LeaveResponsePacket.CLASSID:
                 console.log("leave response = ");
                 console.log(protocolObject);
-                this.tableManager.leaveTable();
+                this.handleLeaveResponse(protocolObject);
                 $("#boxes").show(); //should be somewhere else
                 break;
             default :
@@ -139,8 +172,9 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
     },
     joinGame : function() {
         this.connector.joinTable(this.tableManager.getTableId(), -1);
+    },
+    showLobby : function() {
+        $("#boxes").show(); //should be somewhere else
+        comHandler.subscribeToLobby();
     }
-
-
-
 });

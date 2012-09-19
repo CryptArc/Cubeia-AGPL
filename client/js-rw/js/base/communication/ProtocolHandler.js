@@ -14,7 +14,7 @@ Poker.PokerProtocolHandler = function(tableManager,tableComHandler) {
     this.packetCount = 0;
 	this.handleGameTransportPacket = function(gameTransportPacket) {
         if(this.tableManager.getTableId()!=-1 && this.tableManager.getTableId() != gameTransportPacket.tableid) {
-            console.log("Recieved packet for table you're not viewing");
+            console.log("Received packet for table you're not viewing");
             return;
         }
 		var valueArray =  FIREBASE.ByteArray.fromBase64String(gameTransportPacket.gamedata);
@@ -22,11 +22,12 @@ Poker.PokerProtocolHandler = function(tableManager,tableComHandler) {
 		var length = gameData.readInt();
 		var classId = gameData.readUnsignedByte();
 
-		//console.log("received protocolObject - classId=" + classId);
-
 		var protocolObject = com.cubeia.games.poker.io.protocol.ProtocolObjectFactory.create(classId, gameData);
-		
-		switch (protocolObject.classId() ) {
+
+        console.log("Received packet: ");
+        console.log(protocolObject);
+
+        switch (protocolObject.classId() ) {
 			case com.cubeia.games.poker.io.protocol.BestHand.CLASSID:
                 console.log("UNHANDLED PO BestHand");
                 console.log(protocolObject);

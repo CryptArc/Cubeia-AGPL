@@ -33,6 +33,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.circularProgressBar.hide();
         this.showActionData(actionType,amount);
         this.myActionsManager.hideAllActionButtons();
+        this.clearProgressBar();
         if(actionType == Poker.ActionType.FOLD) {
             this.fold();
         }
@@ -50,7 +51,6 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         }
     },
     fold : function() {
-        this.clearProgressBar();
         this.seatElement.addClass("seat-folded");
         this.seatElement.find(".player-card-container").addClass("seat-folded");
         this.myActionsManager.onFold();
