@@ -113,12 +113,8 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
     handleUnwatchResponse : function(unwatchResponse) {
         console.log("Unwatch response = ");
         console.log(unwatchResponse);
-        if (unwatchResponse.status == "OK") {
-            this.tableManager.leaveTable();
-            this.showLobby();
-        } else {
-            alert("Your unwatch request was denied, you will be removed after the current hand is finished.");
-        }
+        this.tableManager.leaveTable();
+        this.showLobby();
     },
     handleLeaveResponse : function(leaveResponse) {
         console.log("leave response: ");
@@ -128,7 +124,6 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
     },
     leaveTable : function() {
         this.connector.leaveTable(this.tableManager.getTableId());
-        // Note, we have to wait for the response before we know if we should actually close the table.
     },
     unwatchTable : function() {
         var unwatchRequest = new FB_PROTOCOL.UnwatchRequestPacket();
