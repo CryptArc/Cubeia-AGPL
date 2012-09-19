@@ -17,6 +17,23 @@
 
 package com.cubeia.games.poker.activator;
 
+import static com.cubeia.poker.timing.Timings.DEFAULT;
+import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
+
+import java.io.Serializable;
+import java.lang.management.ManagementFactory;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+
+import org.apache.log4j.Logger;
+
 import com.cubeia.backend.firebase.CashGamesBackendContract;
 import com.cubeia.firebase.api.common.AttributeValue;
 import com.cubeia.firebase.api.game.activator.ActivatorContext;
@@ -28,6 +45,7 @@ import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.lobby.LobbyAttributeAccessor;
 import com.cubeia.firebase.api.lobby.LobbyPath;
 import com.cubeia.firebase.api.server.SystemException;
+import com.cubeia.games.poker.entity.TableConfigTemplate;
 import com.cubeia.games.poker.lobby.PokerLobbyAttributes;
 import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.games.poker.tournament.configuration.TournamentTableSettings;
@@ -39,22 +57,11 @@ import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
-import com.cubeia.poker.timing.Timings;
 import com.cubeia.poker.variant.GameType;
 import com.cubeia.poker.variant.PokerVariant;
 import com.cubeia.poker.variant.factory.GameTypeFactory;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import org.apache.log4j.Logger;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import java.io.Serializable;
-import java.lang.management.ManagementFactory;
-import java.math.BigDecimal;
-import java.util.*;
-
-import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
 
 /**
  * Override the default game activator in order to provide my own
@@ -134,13 +141,18 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
 
         CashGamesBackendContract cashGameBackendService = context.getServices().getServiceInstance(
                 CashGamesBackendContract.class);
+        
+        // TODO: Read from DB
+        TableConfigTemplate templ = new TableConfigTemplate();
+        templ.setAnte(100);
+        templ.setSeats(10);
+        templ.setTiming(DEFAULT);
+        templ.setVariant(TEXAS_HOLDEM);
+        
+        InjectorPokerStateCreator stateCreator = getInjector().getInstance(InjectorPokerStateCreator.class);
+        
+        participants.add(new PokerParticipant(templ, "texas/cashgame/REAL_MONEY/10", stateCreator, rngProvider, cashGameBackendService));
 
-        participants.add(new PokerParticipant(10, "texas/cashgame/REAL_MONEY/10", 100, Timings.DEFAULT, TEXAS_HOLDEM, rngProvider, cashGameBackendService));
-//        participants.add(new PokerParticipant(6, "telesina/cashgame/REAL_MONEY/6", 200, Timings.DEFAULT, TELESINA, rngProvider, cashGameBackendService));
-
-        for (PokerParticipant part : participants) {
-            part.setInjector(getInjector());
-        }
     }
 
     /**
@@ -154,7 +166,7 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
 
         for (PokerParticipant part : participants) {
             // Get all tables for given FQN
-            LobbyTable[] tables = tableRegistry.listTables(part.getLobbyPath());
+            LobbyTable[] tables = tableRegistry.listTables(part.getLobbyPathForTable(null));
             if (tables.length == 0) {
                 incrementTables(configuration, part);
             }
@@ -166,9 +178,13 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
      * Create table by JMX.
      */
     public void createTable(String domain, int seats, int level, PokerVariant variant) {
-        this.tableRegistry.createTable(seats,
-                new PokerParticipant(seats, domain, level, Timings.DEFAULT, variant, rngProvider,
-                        null));
+    	TableConfigTemplate templ = new TableConfigTemplate();
+        templ.setAnte(level);
+        templ.setSeats(seats);
+        templ.setTiming(DEFAULT);
+        templ.setVariant(variant);
+        InjectorPokerStateCreator stateCreator = getInjector().getInstance(InjectorPokerStateCreator.class);
+        this.tableRegistry.createTable(seats, new PokerParticipant(templ, domain, stateCreator, rngProvider, null));
     }
 
     /**
@@ -181,7 +197,7 @@ public class PokerActivator extends DefaultActivator implements MttAwareActivato
         checkAndRemoveFlaggedTables();
 
         for (PokerParticipant part : participants) {
-            LobbyTable[] tables = tableRegistry.listTables(part.getLobbyPath());
+            LobbyTable[] tables = tableRegistry.listTables(part.getLobbyPathForTable(null));
 //            log.info("Getting tables for " + part.getLobbyPath());
             List<LobbyTable> empty = findEmpty(tables);
 //            log.info("Empty tables " + empty.size());
