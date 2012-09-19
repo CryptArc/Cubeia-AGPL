@@ -20,6 +20,9 @@ package com.cubeia.games.poker.debugger;
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.TableChatAction;
 import com.cubeia.firebase.api.action.service.ServiceAction;
+import com.cubeia.firebase.api.server.SystemException;
+import com.cubeia.firebase.api.service.Service;
+import com.cubeia.firebase.api.service.ServiceContext;
 import com.cubeia.firebase.api.service.ServiceRouter;
 import com.cubeia.games.poker.debugger.cache.TableEventCache;
 import com.cubeia.games.poker.debugger.cache.TablePlayerInfoCache;
@@ -35,7 +38,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class HandDebuggerImpl implements HandDebuggerContract {
+public class HandDebuggerImpl implements HandDebuggerContract, Service {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -55,6 +58,16 @@ public class HandDebuggerImpl implements HandDebuggerContract {
 
     private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
+    @Override
+    public void destroy() { }
+    
+	@Override
+	public void init(ServiceContext con) throws SystemException { }
+	
+	@Override
+	public void stop() { }
+    
+    @Override
     public void start() {
         server.start();
     }

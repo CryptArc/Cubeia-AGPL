@@ -26,14 +26,6 @@
         <dependency>
             <groupId>com.cubeia.firebase</groupId>
             <artifactId>guice-support</artifactId>
-            <version>1.1.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.testng</groupId>
-                    <artifactId>testng</artifactId>
-                </exclusion>
-            </exclusions>
-            <type>jar</type>
         </dependency>
         <!-- Gson: Java to Json conversion -->
         <dependency>
