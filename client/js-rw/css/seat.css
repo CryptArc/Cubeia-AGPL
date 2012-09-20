@@ -1,0 +1,192 @@
+
+.player-name {
+    width:100%;
+    text-align: center;
+    position: absolute;
+    font-size:90%;
+    color:#999;
+    top:0;
+    left:0;
+
+}
+.avatar-base {
+    background-color:#808080;
+    width:40%;
+    height: 50%;
+    left:30%;
+    top:8%;
+    position: absolute;
+}
+.active-seat .avatar-base {
+    border: 2px solid #C0E00B;
+    box-shadow:0px 0px 15px #EBFFC4;
+    -web-kit-box-shadow:0px 0px 15px #EBFFC4;
+    -moz-box-shadow:0px 0px 15px #EBFFC4;
+    margin-left:-1px;
+}
+
+.player-card-container {
+    position:absolute;
+    width:50%;
+    height:100%;
+    top:0;
+    left:0;
+}
+.cards-container-player .player-card-container {
+    position:absolute;
+    left:0;
+    width:50%;
+    height:150%;
+    top:-25%;
+    -webkit-transform: scale(0.75);
+    -webkit-transition:-webkit-transform 0.5s linear;
+}
+
+.cards-container {
+    position: absolute;
+    left: 27%;
+    width: 46%;
+    height: 25%;
+    top: 50%;
+}
+.my-player-seat .cards-container {
+    width: 100%;
+    height: 75%;
+    top: 25%;
+    left: 0;
+}
+.player-card-container:last-child {
+    left:51%;
+}
+img.player-card {
+    max-width: 100%;
+    max-height: 100%;
+    position: absolute;
+}
+.my-player-seat {
+    position: absolute;
+    width: 20%;
+    height: 25%;
+    top: 73%;
+    left: 40%;
+
+}
+.my-player-seat .action-amount {
+    top:0;
+    left:0;
+}
+.my-player-seat .hand-strength {
+    top:0;
+    left:0;
+}
+.my-player-seat .action-text {
+    left:0;
+    width:100%;
+}
+.my-player-seat .player-card-container {
+    width: 45%;
+    height: 100%;
+    left: 3%;
+}
+.my-player-seat .player-card-container:last-child {
+;
+    left:51%;
+}
+.circular-progress-bar {
+    position: absolute;
+    left:50%;
+    top:84%;
+    width:10%;
+    padding-bottom:10%;
+}
+
+.action-text, .player-status {
+    color:#9aba00;
+    font-weight: bold;
+    background-color: #262626;
+    opacity: 0.8;
+    position: absolute;
+    top:55%;
+    width:72%;
+    left:14%;
+    text-align: center;
+    font-size:120%;
+    text-transform: uppercase;
+    padding:2% 0;
+}
+.seat-balance {
+    font-size: 120%;
+    position: absolute;
+    top: 77%;
+    width:100%;
+    text-align: center;
+}
+.action-amount {
+    font-size: 180%;
+    position: absolute;
+    top: 88%;
+    font-weight: bold;
+    width:100%;
+    text-align: center;
+}
+.player-action-icon {
+    background-size: 100%;
+    width: 17px;
+    height: 22px;
+    margin-left:2px;
+    display:inline-block;
+    background-repeat: no-repeat;
+}
+.action-raise, .action-bet {
+    background-image: url("../images/table/raise-arrow.png");
+}
+.action-call, .action-check {
+    background-image: url("../images/table/check-arrow.png");
+}
+.action-call.action-inactive, .action-check.action-inactive {
+    background-image: url("../images/table/check-arrow-inactive.png");
+}
+.action-raise.action-inactive, .action-bet.action-inactive {
+    background-image: url("../images/table/raise-arrow-inactive.png");
+}
+.open-seat {
+    position: absolute;
+    width:100%;
+    text-align: center;
+    top:40%;
+    color:#ddd;
+    font-weight: bold;
+}
+.hand-strength {
+    font-size: 180%;
+    position: absolute;
+    top: 88%;
+    font-weight: bold;
+    width:100%;
+    text-align: center;
+}
+.progress-bar {
+    position: absolute;
+    background: #C0E00B;
+    background-image: linear-gradient(bottom, #9EBA02 26%, #C0E00B 100%);
+    background-image: -o-linear-gradient(bottom, #9EBA02 26%, #C0E00B 100%);
+    background-image: -moz-linear-gradient(bottom, #9EBA02 26%, #C0E00B 100%);
+    background-image: -webkit-linear-gradient(bottom, #9EBA02 26%, #C0E00B 100%);
+    background-image: -ms-linear-gradient(bottom, #9EBA02 26%, #C0E00B 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#9EBA02', endColorstr='#C0E00B',GradientType=0 ); /* IE6-9 */
+    width:40%;
+    height: 50%;
+    left:30%;
+    top:8%;
+    margin-left:1px;
+}
+
+.seat-folded, .seat-sit-out{
+    opacity: 0.4;
+}
+.seat-inactive {
+    opacity: 0.2;
+}
+.seat-sit-out .player-card-container {
+    display:none;
+}

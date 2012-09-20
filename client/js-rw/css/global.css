@@ -1,0 +1,9 @@
+@font-face {
+    font-family: header_font;
+    src: url('../../../client/resources/fonts/JungleFeverNF.ttf');
+}
+
+@font-face {
+    font-family: rich_font;
+    src: url('../../../client/resources/fonts/kimbalt_.ttf');
+}
