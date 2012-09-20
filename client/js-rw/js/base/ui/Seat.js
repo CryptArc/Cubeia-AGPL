@@ -24,15 +24,27 @@ Poker.Seat = Class.extend({
        this.seatElement.find(".avatar").addClass("avatar"+(this.player.id%9));
        this.reset();
    },
+   clearSeat : function() {
+       this.seatElement.html("");
+   },
    updatePlayer : function(player) {
        this.player = player;
-       this.seatElement.find(".seat-balance").html("&euro;"+this.player.balance);
+       var balanceDiv = this.seatElement.find(".seat-balance");
+       if (this.player.balance == 0) {
+           balanceDiv.html("All in");
+           balanceDiv.removeClass("balance");
+       } else {
+           balanceDiv.html("&euro;"+this.player.balance);
+           balanceDiv.addClass("balance");
+       }
        this.handlePlayerStatus();
    },
    handlePlayerStatus : function() {
-       if(this.player.status == Poker.PlayerStatus.SITTING_OUT) {
+       if(this.player.tableStatus == Poker.PlayerTableStatus.SITTING_OUT) {
             this.seatElement.addClass("seat-sit-out");
+            this.seatElement.find(".player-status").html(this.player.tableStatus.text);
        } else {
+           this.seatElement.find(".player-status").html("").hide();
            this.seatElement.removeClass("seat-sit-out");
        }
    },
@@ -50,8 +62,8 @@ Poker.Seat = Class.extend({
    hideActionText : function() {
        this.seatElement.find(".action-text").html("").hide();
    },
-
    onAction : function(actionType,amount) {
+       this.inactivateSeat();
        this.showActionData(actionType,amount);
        if(actionType == Poker.ActionType.FOLD) {
             this.fold();
@@ -66,7 +78,6 @@ Poker.Seat = Class.extend({
        }
    },
    fold : function() {
-       this.clearProgressBar();
        this.seatElement.addClass("seat-folded");
        this.seatElement.removeClass("active-seat");
        this.seatElement.find(".player-card-container img").attr("src","images/cards/gray-back.svg");
@@ -87,6 +98,12 @@ Poker.Seat = Class.extend({
        if(this.progressBarElement) {
            this.progressBarElement.attr("style","").hide();
        }
+   },
+    /**
+     * When a betting round is complete (communicards are dealt/show shown);
+     */
+   onBettingRoundComplete : function(){
+       this.inactivateSeat();
    },
    activateSeat : function(allowedActions, timeToAct) {
        this.seatElement.addClass("active-seat");

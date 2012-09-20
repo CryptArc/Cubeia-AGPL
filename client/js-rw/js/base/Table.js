@@ -21,6 +21,10 @@ Poker.Table = Class.extend({
         }
         this.players[seat] = player;
     },
+    removePlayer : function(playerId) {
+        // Need to remove the players from the map, but we don't know the seatId.
+        console.log("TODO!");
+    },
     /**
      * Get player at a specific position
      * @param seat of the player

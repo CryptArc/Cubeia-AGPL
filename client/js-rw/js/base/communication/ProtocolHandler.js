@@ -14,7 +14,7 @@ Poker.PokerProtocolHandler = function(tableManager,tableComHandler) {
     this.packetCount = 0;
 	this.handleGameTransportPacket = function(gameTransportPacket) {
         if(this.tableManager.getTableId()!=-1 && this.tableManager.getTableId() != gameTransportPacket.tableid) {
-            console.log("Recieved packet for table you're not viewing");
+            console.log("Recieved packet for table ("+gameTransportPacket.tableid+") you're not viewing (yours="+this.tableManager.getTableId()+")");
             return;
         }
 		var valueArray =  FIREBASE.ByteArray.fromBase64String(gameTransportPacket.gamedata);
@@ -22,11 +22,12 @@ Poker.PokerProtocolHandler = function(tableManager,tableComHandler) {
 		var length = gameData.readInt();
 		var classId = gameData.readUnsignedByte();
 
-		//console.log("received protocolObject - classId=" + classId);
-
 		var protocolObject = com.cubeia.games.poker.io.protocol.ProtocolObjectFactory.create(classId, gameData);
-		
-		switch (protocolObject.classId() ) {
+
+        console.log("Received packet: ");
+        console.log(protocolObject);
+
+        switch (protocolObject.classId() ) {
 			case com.cubeia.games.poker.io.protocol.BestHand.CLASSID:
                 console.log("UNHANDLED PO BestHand");
                 console.log(protocolObject);
@@ -53,6 +54,7 @@ Poker.PokerProtocolHandler = function(tableManager,tableComHandler) {
 				break;
 			case com.cubeia.games.poker.io.protocol.DealPrivateCards.CLASSID:
                 var cardsToDeal = protocolObject.cards;
+
                 for(var c in cardsToDeal) {
                     var cardString = Poker.Utils.getCardString(cardsToDeal[c].card);
                     this.tableManager.dealPlayerCard(cardsToDeal[c].player,cardsToDeal[c].card.cardId,cardString);
@@ -60,10 +62,12 @@ Poker.PokerProtocolHandler = function(tableManager,tableComHandler) {
 
 				break;
 			case com.cubeia.games.poker.io.protocol.DealPublicCards.CLASSID:
+                this.tableManager.bettingRoundComplete();
                 for ( var i = 0; i < protocolObject.cards.length; i ++ ) {
                     this.tableManager.dealCommunityCard(protocolObject.cards[i].cardId,
                         Poker.Utils.getCardString(protocolObject.cards[i]));
                 }
+
                 break;
 			case com.cubeia.games.poker.io.protocol.DeckInfo.CLASSID:
                 console.log("UNHANDLED PO DeckInfo");
@@ -74,10 +78,12 @@ Poker.PokerProtocolHandler = function(tableManager,tableComHandler) {
                 console.log(protocolObject);
 				break;
 			case com.cubeia.games.poker.io.protocol.ExposePrivateCards.CLASSID:
+                this.tableManager.bettingRoundComplete();
                 for ( var i = 0; i < protocolObject.cards.length; i ++ ) {
                     this.tableManager.exposePrivateCard(protocolObject.cards[i].card.cardId,
                         Poker.Utils.getCardString(protocolObject.cards[i].card));
                 }
+
 
                 break;
             case com.cubeia.games.poker.io.protocol.ExternalSessionInfoPacket.CLASSID:
@@ -126,9 +132,9 @@ Poker.PokerProtocolHandler = function(tableManager,tableComHandler) {
                 console.log(protocolObject);
 				break;
 			case com.cubeia.games.poker.io.protocol.PlayerHandStartStatus.CLASSID:
-                var status = Poker.PlayerStatus.SITTING_OUT;
+                var status = Poker.PlayerTableStatus.SITTING_OUT;
                 if(protocolObject.status == com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.SITIN){
-                    status = Poker.PlayerStatus.SITTING_IN;
+                    status = Poker.PlayerTableStatus.SITTING_IN;
                 }
                 this.tableManager.updatePlayerStatus(protocolObject.player, status);
                 break;
@@ -136,10 +142,10 @@ Poker.PokerProtocolHandler = function(tableManager,tableComHandler) {
                 var status = protocolObject.status;
                 switch (status) {
                     case com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.SITIN :
-                        this.tableManager.updatePlayerStatus(protocolObject.player, Poker.PlayerStatus.SITTING_IN);
+                        this.tableManager.updatePlayerStatus(protocolObject.player, Poker.PlayerTableStatus.SITTING_IN);
                         break;
                     case com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.SITOUT :
-                        this.tableManager.updatePlayerStatus(protocolObject.player, Poker.PlayerStatus.SITTING_OUT);
+                        this.tableManager.updatePlayerStatus(protocolObject.player, Poker.PlayerTableStatus.SITTING_OUT);
                         break;
                 }
 				break;
@@ -257,7 +263,10 @@ Poker.PokerProtocolHandler = function(tableManager,tableComHandler) {
     this.getPokerActions = function(allowedActions){
         var actions = [];
         for(var a in allowedActions) {
-            actions.push(this.getAction(allowedActions[a]));
+            var ac = this.getAction(allowedActions[a]);
+            if(ac!=null) {
+                actions.push(ac);
+            }
         }
         return actions;
     };
@@ -267,7 +276,7 @@ Poker.PokerProtocolHandler = function(tableManager,tableComHandler) {
         this.seq = requestAction.seq;
         var acts = this.getPokerActions(requestAction.allowedActions);
 
-        if(acts.length>0 && (acts[0].type == Poker.ActionType.BIG_BLIND || acts[0].type == Poker.ActionType.SMALL_BLIND)) {
+        if(acts.length>0 && (acts[0].type.id == Poker.ActionType.BIG_BLIND.id || acts[0].type.id == Poker.ActionType.SMALL_BLIND.id)) {
             //for now auto post blinds
             console.log("Auto posting " + acts[0].type.text);
             this.tableComHandler.sendAction(requestAction.seq, requestAction.allowedActions[0].type, requestAction.allowedActions[0].minAmount);

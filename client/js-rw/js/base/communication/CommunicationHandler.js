@@ -45,6 +45,7 @@ Poker.CommunicationHandler = Poker.AbstractConnectorHandler.extend({
         }
     },
     watchTable : function(tableId) {
+        console.log("WATCHING TABLE = " + tableId);
         this.connector.watchTable(tableId);
     },
     loginCallback : function(status,playerId,name) {

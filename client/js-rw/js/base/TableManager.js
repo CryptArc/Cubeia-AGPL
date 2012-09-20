@@ -9,11 +9,18 @@ Poker.TableManager = Class.extend({
     },
     createTable : function(tableId,capacity, tableListeners) {
         this.table = new Poker.Table(tableId,capacity);
+
+        this.tableListeners = [];
         if(tableListeners) {
             for(var x in tableListeners)   {
                 this.addTableListener(tableListeners[x]);
             }
         }
+        console.log("Creating table with listeners = " + this.tableListeners.length);
+        console.log(this.tableListeners);
+    },
+    removeEventListener : function() {
+      this.tableListeners = [];
     },
     getTableId : function() {
       return this.table.id;
@@ -54,6 +61,11 @@ Poker.TableManager = Class.extend({
         this.table.addPlayer(seat,p);
         this._notifyPlayerAdded(seat,p);
     },
+    removePlayer : function(playerId) {
+        console.log("removing player with playerId " + playerId);
+        this.table.removePlayer(playerId);
+        this._notifyPlayerRemoved(playerId);
+    },
     /**
      * handle deal cards, passes a card string as parameter
      * card string i h2 (two of hearts), ck (king of spades)
@@ -63,11 +75,11 @@ Poker.TableManager = Class.extend({
      */
     dealPlayerCard : function(playerId,cardId,cardString) {
         var player = this.table.getPlayerById(playerId);
+        console.log("deal player cards to listeners = " + this.tableListeners.length);
         for(var x in this.tableListeners)   {
             this.tableListeners[x].onDealPlayerCard(player,cardId, cardString);
         }
     },
-
     addTableListener : function(listener) {
         if(listener instanceof Poker.TableListener) {
             this.tableListeners.push(listener);
@@ -90,7 +102,7 @@ Poker.TableManager = Class.extend({
             throw "Player with id " + playerId + " not found";
         }
 
-        p.status = status;
+        p.tableStatus = status;
         this._notifyPlayerUpdated(p);
     },
     handleRequestPlayerAction : function(playerId,allowedActions,timeToAct) {
@@ -122,9 +134,14 @@ Poker.TableManager = Class.extend({
             this.tableListeners[x].onExposePrivateCard(cardId,cardString);
         }
     },
+    bettingRoundComplete : function() {
+        for(var x in this.tableListeners)   {
+            this.tableListeners[x].onBettingRoundComplete();
+        }
+    },
     leaveTable : function() {
         for(var x in this.tableListeners)   {
-            this.tableListeners[x].onLeaveTable();
+            this.tableListeners[x].onLeaveTableSuccess();
         }
         this.tableListeners = [];
         this.table = null;
@@ -142,6 +159,11 @@ Poker.TableManager = Class.extend({
     _notifyPlayerAdded : function(seat,player) {
         for(var l in this.tableListeners){
             this.tableListeners[l].onPlayerAdded(seat,player);
+        }
+    },
+    _notifyPlayerRemoved : function(playerId) {
+        for(var l in this.tableListeners){
+            this.tableListeners[l].onPlayerRemoved(playerId);
         }
     }
 });

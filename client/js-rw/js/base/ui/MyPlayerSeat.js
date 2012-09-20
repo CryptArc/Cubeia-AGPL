@@ -14,6 +14,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.circularProgressBar = new CircularProgressBar("circularProgressBar");
         this.circularProgressBar.hide();
 
+
     },
     renderSeat : function(){
         var t = this.templateManager.getTemplate("myPlayerSeatTemplate");
@@ -33,6 +34,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.circularProgressBar.hide();
         this.showActionData(actionType,amount);
         this.myActionsManager.hideAllActionButtons();
+        this.clearProgressBar();
         if(actionType == Poker.ActionType.FOLD) {
             this.fold();
         }
@@ -43,14 +45,13 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.handlePlayerStatus();
     },
     handlePlayerStatus : function() {
-        if(this.player.status == Poker.PlayerStatus.SITTING_OUT) {
+        if(this.player.tableStatus == Poker.PlayerTableStatus.SITTING_OUT) {
             this.myActionsManager.onSitOut();
         } else {
             this.myActionsManager.onSitIn();
         }
     },
     fold : function() {
-        this.clearProgressBar();
         this.seatElement.addClass("seat-folded");
         this.seatElement.find(".player-card-container").addClass("seat-folded");
         this.myActionsManager.onFold();

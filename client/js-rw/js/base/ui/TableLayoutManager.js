@@ -3,7 +3,7 @@ var Poker = Poker || {};
 /**
  * Handles the table UI extends the Poker.TableListener
  * interface to receive events about the table
- * @type {*}
+ * @type {Poker.TableLayoutManager}
  */
 Poker.TableLayoutManager = Poker.TableListener.extend({
     tableContainer : null,
@@ -44,33 +44,16 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         if (player.id == Poker.MyPlayer.id) {
             seat = new Poker.MyPlayerSeat(seatId,player,this.templateManager,this.myActionsManager);
             this.myPlayerSeatId = seatId;
-            this.calculateSeatPositions();
+            this._calculateSeatPositions();
         } else {
             seat = new Poker.Seat(seatId,player,this.templateManager);
-            seat.setSeatPos(-1,this.getNormalizedSeatPosition(seatId));
+            seat.setSeatPos(-1,this._getNormalizedSeatPosition(seatId));
         }
         this.seats[seatId] = seat;
     },
-    calculateSeatPositions : function() {
-        //my player seat should always be 0
-        for(var s in this.seats){
-            this.seats[s].setSeatPos(this.seats[s].seatId,this.getNormalizedSeatPosition(this.seats[s].seatId));
-        }
-        //do empty seats, question is if we want them or not, looked a bit empty without them
-        for(var i = 0; i<this.capacity; i++){
-            var seat = $("#seat"+i);
-            if(seat.hasClass("seat-empty")){
-                 seat.removeClass("seat-pos-"+i).addClass("seat-inactive").addClass("seat-pos-"+this.getNormalizedSeatPosition(i));
-            }
-        }
-
-    },
-    getNormalizedSeatPosition : function(seatId){
-        if(this.myPlayerSeatId != -1) {
-            return ( this.capacity + seatId - this.myPlayerSeatId ) % this.capacity;
-        } else {
-            return seatId;
-        }
+    onPlayerRemoved : function(playerId) {
+        var seat = this.getSeatByPlayerId(playerId);
+        seat.clearSeat();
     },
     getSeatByPlayerId : function(id) {
         for(var s in this.seats) {
@@ -88,12 +71,9 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         }
         seat.updatePlayer(p);
     },
-    storeCard : function(card){
-        this.cardElements[card.getCardDivId()]=card.getDOMElement();
-    },
     onStartHand : function(dealerSeatId) {
-        this.resetSeats();
-        this.resetCommunity();
+        this._resetSeats();
+        this._resetCommunity();
         this.cardElements = [];
     },
     onPlayerActed : function(player,actionType,amount) {
@@ -104,63 +84,67 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         //make icons gray and hide the action text
         if(actionType == Poker.ActionType.BET || actionType == Poker.ActionType.RAISE) {
              $(".player-action-icon").addClass("action-inactive");
-             this.hideSeatActionText();
+             this._hideSeatActionText();
         }
         seat.onAction(actionType,amount);
     },
     onDealPlayerCard : function(player,cardId,cardString) {
+        console.log("DEAL Player CARD = " + player +" cardId = " + cardId);
         var seat = this.getSeatByPlayerId(player.id);
         var card = new Poker.Card(cardId,cardString,this.templateManager);
         seat.dealCard(card);
-        this.storeCard(card);
+        this._storeCard(card);
     },
     onExposePrivateCard : function(cardId,cardString){
         var card = new Poker.Card(cardId, cardString,this.templateManager);
-        var cardEl = this.cardElements[card.getCardDivId()];
-        $(cardEl).replaceWith(card.render());
+        var oldCard = this.cardElements[card.getCardDivId()];
+        var cardId = oldCard.getCardDivId();
+        if(cardString == oldCard.cardString) {
+            return;
+        }
+        $("#"+cardId).replaceWith(card.render());
+        var e = $("#"+cardId);
+        setTimeout(function(){
+            e.attr("style","top:-35%; -webkit-transform: scale(1); -webkit-transform-origin: center bottom;");
+        },100);
+
+    },
+    onBettingRoundComplete :function() {
+        for(var x in this.seats) {
+            this.seats[x].onBettingRoundComplete();
+        }
     },
     onPlayerHandStrength : function(player, hand) {
         var seat = this.getSeatByPlayerId(player.id);
         seat.showHandStrength(hand);
     },
     onDealCommunityCard : function(cardId, cardString) {
+        console.log("DEAL COMM CARD cardId =" + cardId);
         var card = new Poker.CommunityCard(cardId,cardString,this.templateManager);
         var html = card.render();
         $("#communityCards").append(html);
-        this.storeCard(card);
-        this.hideSeatActionInfo();
-    },
-    resetCommunity : function() {
-      $("#communityCards").empty();
-      $("#mainPotContainer").empty();
-    },
-    hideSeatActionInfo : function() {
-      for(var s in this.seats) {
-          this.seats[s].hideActionInfo();
-      }
-    },
-    hideSeatActionText : function() {
-        for(var s in this.seats) {
-            this.seats[s].hideActionText();
-        }
-    },
-    resetSeats : function() {
-        for(var s in this.seats){
-            this.seats[s].reset();
-        }
+
+        // Animate the cards.
+        console.log(card);
+        var div = $('#' + card.getCardDivId());
+        div.css({top:  "30%"});
+        Firmin.animate(div.get(0), { top: "0%" }, "400ms");
+
+        this._storeCard(card);
+        this._hideSeatActionInfo();
     },
     onMainPotUpdate : function(amount) {
         var t = this.templateManager.getTemplate("mainPotTemplate");
         $("#mainPotContainer").html(Mustache.render(t,{amount : amount}));
     },
     onRequestPlayerAction : function(player,allowedActions,timeToAct){
-        for(var s in this.seats) {
+        for (var s in this.seats) {
             this.seats[s].inactivateSeat();
         }
         var seat = this.getSeatByPlayerId(player.id);
         seat.activateSeat(allowedActions,timeToAct);
     },
-    onLeaveTable : function() {
+    onLeaveTableSuccess : function() {
         $(this.tableContainer).hide();
         for(var i = 0; i<this.capacity; i++) {
             var s = $("#seat"+i);
@@ -171,10 +155,54 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
             this.seats[this.myPlayerSeatId].clear();
         }
         this.myPlayerSeatId=-1;
-        this.resetCommunity();
-        this.cardElements = [];
+        this._resetCommunity();
+        for(var x in this.cardElements) {
+            $("#"+this.cardElements[x].getCardDivId()).remove();
+        }
         this.myActionsManager.clear();
+    },
+    _hideSeatActionText : function() {
+        for(var s in this.seats) {
+            this.seats[s].hideActionText();
+        }
+    },
+    _resetSeats : function() {
+        for(var s in this.seats){
+            this.seats[s].reset();
+        }
+    },
 
+    _storeCard : function(card){
+        this.cardElements[card.getCardDivId()]=card;
+    },
+    _calculateSeatPositions : function() {
+        //my player seat should always be 0
+        for(var s in this.seats){
+            this.seats[s].setSeatPos(this.seats[s].seatId,this._getNormalizedSeatPosition(this.seats[s].seatId));
+        }
+        //do empty seats, question is if we want them or not, looked a bit empty without them
+        for(var i = 0; i<this.capacity; i++){
+            var seat = $("#seat"+i);
+            if(seat.hasClass("seat-empty")){
+                seat.removeClass("seat-pos-"+i).addClass("seat-inactive").addClass("seat-pos-"+this._getNormalizedSeatPosition(i));
+            }
+        }
+
+    },
+    _getNormalizedSeatPosition : function(seatId){
+        if(this.myPlayerSeatId != -1) {
+            return ( this.capacity + seatId - this.myPlayerSeatId ) % this.capacity;
+        } else {
+            return seatId;
+        }
+    },
+    _resetCommunity : function() {
+        $("#communityCards").empty();
+        $("#mainPotContainer").empty();
+    },
+    _hideSeatActionInfo : function() {
+        for(var s in this.seats) {
+            this.seats[s].hideActionInfo();
+        }
     }
-
 });

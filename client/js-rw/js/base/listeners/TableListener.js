@@ -71,7 +71,10 @@ Poker.TableListener = Class.extend({
     onPlayerHandStrength : function(player, hand) {
 
     },
-    onLeaveTable : function() {
+    onLeaveTableSuccess : function() {
+
+    },
+    onBettingRoundComplete : function() {
 
     }
 

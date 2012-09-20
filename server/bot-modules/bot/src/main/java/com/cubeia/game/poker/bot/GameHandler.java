@@ -109,7 +109,7 @@ public class GameHandler implements PacketVisitor {
                         }
 
                         // bot.getBot().logInfo("Request("+request+") -> Response("+response+")");
-                        bot.getBot().sendGameData(bot.getTable().getId(), bot.getBot().getPid(), response);
+                       bot.getBot().sendGameData(bot.getTable().getId(), bot.getBot().getPid(), response);
                     } catch (Throwable th) {
                         th.printStackTrace();
                     }
@@ -136,8 +136,8 @@ public class GameHandler implements PacketVisitor {
 
         //return playerAction.minAmount;
 
-        // 70% chance of min bet
-        if (rng.nextInt(100) < 70) {
+        // 90% chance of min bet
+        if (rng.nextInt(100) < 90) {
             return playerAction.minAmount;
         }
 
