@@ -9,6 +9,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.myActionsManager = myActionsManager;
         this.seatElement = $("#myPlayerSeat");
         this.renderSeat();
+        this.cardsContainer = this.seatElement.find(".cards-container");
         $("#myPlayer").show();
         this.myActionsManager.onSitIn();
         this.circularProgressBar = new CircularProgressBar("circularProgressBar");
@@ -50,6 +51,15 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         } else {
             this.myActionsManager.onSitIn();
         }
+    },
+    animateDealCard : function(div) {
+        var self = this;
+
+        setTimeout(function(){
+            self.cssAnimator.addTransition(div,"transform 0.5s ease-out",false);
+            self.cssAnimator.addTransforms(div,["translate3d(0,0,0)"],"center bottom");
+        },100);
+
     },
     fold : function() {
         this.seatElement.addClass("seat-folded");
