@@ -75,12 +75,12 @@ public class PokerActivator implements GameActivator, MttAwareActivator, PokerAc
     
     @Override
     public void init(ActivatorContext context) throws SystemException {
-        log.debug("Init called.");
         new Jmx().mountBean(JMX_BIND_NAME, this);
         Guice.createInjector(
         		new ActivatorGuiceModule(context),
                 new PokerGuiceModule()
         ).injectMembers(this);
+        log.debug("Init called.");
     }
     
     @Override

@@ -42,7 +42,7 @@ public class ActivatorGuiceModule extends FirebaseModule {
     @Override
     protected void configure() {
         super.configure();
-        bind(RNGProvider.class).to(DummyRNGProvider.class); // FIX FOR REAL IMPLEMENTATION
+        bind(RNGProvider.class).to(DummyRNGProvider.class); // TODO: Change for Cubeia RNG
         bind(ScheduledExecutorService.class).annotatedWith(Names.named("activatorThreads")).toInstance(Executors.newSingleThreadScheduledExecutor());
         bind(TableFactory.class).toInstance(context.getTableFactory());
         bind(ActivatorContext.class).toInstance(context);
@@ -50,10 +50,11 @@ public class ActivatorGuiceModule extends FirebaseModule {
         bind(LobbyDomainSelector.class).to(LobbyDomainSelectorImpl.class);
         bind(PokerStateCreator.class).to(InjectorPokerStateCreator.class);
         bind(TableActionHandler.class).to(TableActionHandlerImpl.class);
-        bind(ActivatorRouter.class).toInstance(context.getActivatorRouter());
+        bind(ActivatorRouter.class).toInstance(context.getActivatorRouter()); 
         bind(ActivatorTableManager.class).to(ActivatorTableManagerImpl.class);
         bind(LobbyTableInspector.class).to(LobbyTableInspectorImpl.class); 
         bind(MttTableCreationHandler.class).to(MttTableCreationHandlerImpl.class);
+        bind(TableConfigTemplateProvider.class).to(SimpleTableConfigTemplateProvider.class); // TODO: Read from DB
         bind(Long.class).annotatedWith(Names.named("activatorInterval")).toProvider(new Provider<Long>() {
         	
         	@Service
