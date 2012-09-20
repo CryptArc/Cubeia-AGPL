@@ -67,7 +67,7 @@ body {
     margin-right: 0;
 }
 .main-pot {
-    font-size: 250%;
+    font-size: 200%;
     position: absolute;
     width: 50%;
     top: 60%;
@@ -93,4 +93,12 @@ body {
     width: 18%;
     display: inline-block;
     margin-right: 1%;
+    -webkit-transform: translate3d(0,30%,0);
+    -moz-transform: translate3d(0,30%,0);
+    -o-transform: translate3d(0,30%,0);
+
+    -webkit-transition: -webkit-transform 0.5s ease-out;
+    -moz-transition: -moz-transform 0.5s ease-out;
+    -o-transition: -o-transform 0.5s ease-out;
+
 }

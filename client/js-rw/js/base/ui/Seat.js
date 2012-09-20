@@ -7,12 +7,17 @@ Poker.Seat = Class.extend({
    player : null,
    seatElement : null,
    progressBarElement : null,
+   cssAnimator : null,
+   cards : null,
+   cardsContainer : null,
    init : function(seatId, player, templateManager) {
        this.seatId = seatId
        this.player = player;
        this.templateManager = templateManager;
        this.seatElement =  $("#seat"+this.seatId);
+       this.cssAnimator = new Poker.CSSAnimator();
        this.renderSeat();
+       this.cardsContainer = this.seatElement.find(".cards-container");
    },
    setSeatPos : function(previousPos, position) {
      this.seatElement.removeClass("seat-empty").removeClass("seat-pos-"+previousPos).removeClass("seat-inactive").addClass("seat-pos-"+position);
@@ -50,9 +55,11 @@ Poker.Seat = Class.extend({
    },
    reset : function() {
        this.hideActionInfo();
-       this.seatElement.find(".cards-container").html("").hide();
        this.seatElement.find(".hand-strength").html("").hide();
        this.clearProgressBar();
+       if(this.cardsContainer) {
+           this.cardsContainer.empty();
+       }
        this.seatElement.removeClass("seat-folded");
    },
    hideActionInfo : function() {
@@ -84,11 +91,20 @@ Poker.Seat = Class.extend({
 
    },
    dealCard : function(card) {
-       this.seatElement.find(".cards-container").append(card.render()).show();
-       var div = $('#' + card.getCardDivId());
-       var currentTop = div.css("top");
-       div.css({top: parseInt(currentTop) + 30 + "%"});
-       Firmin.animate(div.get(0), { top: currentTop }, "400ms");
+       this.cardsContainer.append(card.render());
+       this.animateDealCard(card.getDOMElement());
+   },
+   animateDealCard : function(div) {
+       this.cssAnimator.addTransforms(div,["translate3d(0,0,0)", "scale3d(0.75,0.75,0)"]);
+       this.cssAnimator.addTransition(div,"transform 0.5s ease-out",false);
+       var self = this;
+       setTimeout(function(){
+
+           self.cssAnimator.addTransforms(div,["translate3d(0,-18%,0)", "scale3d(0.75,0.75,0)"]);
+       },100);
+
+
+
    },
    inactivateSeat : function() {
         this.seatElement.removeClass("active-seat");

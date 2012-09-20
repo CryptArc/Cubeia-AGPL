@@ -15,6 +15,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
     myActionsManager : null,
     tableComHandler : null,
     myPlayerSeatId : -1,
+    cssAnimator : null,
     seats : [],
     init : function(tableContainer,templateManager,tableComHandler,capacity){
         if(!tableContainer) {
@@ -26,7 +27,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
           self.tableComHandler.onMyPlayerAction(actionType,amount);
         };
         this.myActionsManager = new Poker.MyActionsManager(actionCallback);
-
+        this.cssAnimator = new Poker.CSSAnimator();
         this.templateManager = templateManager;
         this.capacity = capacity || this.capacity;
         this.tableContainer = tableContainer;
@@ -96,17 +97,15 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         this._storeCard(card);
     },
     onExposePrivateCard : function(cardId,cardString){
-        var card = new Poker.Card(cardId, cardString,this.templateManager);
-        var oldCard = this.cardElements[card.getCardDivId()];
-        var cardId = oldCard.getCardDivId();
-        if(cardString == oldCard.cardString) {
+        var card = this.cardElements[cardId];
+        if(cardString == card.cardString) {
             return;
         }
-        $("#"+cardId).replaceWith(card.render());
-        var e = $("#"+cardId);
-        setTimeout(function(){
-            e.attr("style","top:-35%; -webkit-transform: scale(1); -webkit-transform-origin: center bottom;");
-        },100);
+        card.exposeCard(cardString);
+
+        var self = this;
+        this.cssAnimator.addTransforms(card.getDOMElement(),["scale3d(1,1,0)", "translate3d(0,-30%,0)"],"center bottom");
+
 
     },
     onBettingRoundComplete :function() {
@@ -125,10 +124,14 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         $("#communityCards").append(html);
 
         // Animate the cards.
-        console.log(card);
         var div = $('#' + card.getCardDivId());
-        div.css({top:  "30%"});
-        Firmin.animate(div.get(0), { top: "0%" }, "400ms");
+        //this.cssAnimator.addTransition(div.get(0),"transform 0.5s ease-out",false);
+        var self = this;
+        setTimeout(function(){
+            self.cssAnimator.addTransform(div.get(0),"translate3d(0,0,0)");
+        },100);
+
+
 
         this._storeCard(card);
         this._hideSeatActionInfo();
@@ -173,7 +176,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
     },
 
     _storeCard : function(card){
-        this.cardElements[card.getCardDivId()]=card;
+        this.cardElements[card.id]=card;
     },
     _calculateSeatPositions : function() {
         //my player seat should always be 0
