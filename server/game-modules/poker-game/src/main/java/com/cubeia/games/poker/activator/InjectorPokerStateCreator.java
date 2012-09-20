@@ -13,6 +13,6 @@ public class InjectorPokerStateCreator implements PokerStateCreator {
 	
 	@Override
 	public PokerState newPokerState() {
-		return injector.getInstance(PokerState.class);
+		return injector.getInstance(PokerState.class); 
 	}
 }

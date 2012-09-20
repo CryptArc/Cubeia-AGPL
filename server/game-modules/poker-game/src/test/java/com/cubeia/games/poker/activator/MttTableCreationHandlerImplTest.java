@@ -17,6 +17,17 @@
 
 package com.cubeia.games.poker.activator;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TableGameState;
 import com.cubeia.firebase.api.game.table.TablePlayerSet;
@@ -26,24 +37,17 @@ import com.cubeia.games.poker.tournament.configuration.TournamentTableSettings;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.variant.GameType;
-import com.google.inject.Injector;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Module;
+import com.google.inject.Provider;
+import com.google.inject.util.Modules;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
+public class MttTableCreationHandlerImplTest {
 
-public class PokerActivatorTest {
-
-    PokerActivator activator;
-
-    @Mock
-    private Injector injector;
+	@Inject
+	private MttTableCreationHandlerImpl handler;
 
     @Mock
     private Table table;
@@ -66,19 +70,37 @@ public class PokerActivatorTest {
     @Before
     public void setup() {
         initMocks(this);
-        this.activator = new TestablePokerActivator(injector);
-        when(injector.getInstance(PokerState.class)).thenReturn(pokerState);
         when(table.getPlayerSet()).thenReturn(playerSet);
         when(playerSet.getSeatingMap()).thenReturn(seatingMap);
         when(seatingMap.getNumberOfSeats()).thenReturn(6);
-        when(table.getGameState()).thenReturn(gameState);
+        when(table.getGameState()).thenReturn(gameState); 
+        Module m1 = new TestActivatorModule();
+        Guice.createInjector(Modules.override(m1).with(new AbstractModule() {
+        	
+        	@Override
+        	protected void configure() {
+        		bind(MttTableCreationHandler.class).to(MttTableCreationHandlerImpl.class);
+        		bind(PokerStateCreator.class).toProvider(new Provider<PokerStateCreator>() {
+        			
+        			@Override
+        			public PokerStateCreator get() {
+        				return new PokerStateCreator() {
+							
+							@Override
+							public PokerState newPokerState() {
+								return pokerState;
+							}
+						};
+        			}
+				});
+        	}
+        })).injectMembers(this);
     }
 
     @Test
     public void testBlindsForTournamentTable() {
         TournamentTableSettings settings = new TournamentTableSettings(10, 20);
-        activator.mttTableCreated(table, 1, settings, accessor);
-
+        handler.tableCreated(table, 1, settings, accessor);
         ArgumentCaptor<PokerSettings> captor = ArgumentCaptor.forClass(PokerSettings.class);
         verify(pokerState).init(isA(GameType.class), captor.capture());
         PokerSettings pokerSettings = captor.getValue();

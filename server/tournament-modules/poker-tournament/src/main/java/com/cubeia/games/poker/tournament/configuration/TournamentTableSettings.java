@@ -29,14 +29,12 @@ public class TournamentTableSettings implements Serializable {
     private TimingProfile timingProfile = TimingFactory.getRegistry().getDefaultTimingProfile();
 
     private int anteAmount;
-
     private int smallBlindAmount;
-
     private int bigBlindAmount;
 
     public TournamentTableSettings(int smallBlindAmount, int bigBlindAmount) {
         this.smallBlindAmount = smallBlindAmount;
-        this.bigBlindAmount = bigBlindAmount;
+        this.bigBlindAmount = bigBlindAmount; 
     }
 
     public TournamentTableSettings(int anteAmount) {

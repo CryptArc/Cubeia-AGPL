@@ -44,9 +44,6 @@ public class TableConfigTemplate {
 	private int minEmptyTables;
 	
 	@Column(nullable=false)
-	private int maxEmptyTables;
-	
-	@Column(nullable=false)
 	private int minTables;
 
 	@Column(nullable=false)
@@ -63,6 +60,17 @@ public class TableConfigTemplate {
 	
 	@Column(nullable=false)
 	private BigDecimal rakeFraction = DEF_RAKE_FRACTION;
+	
+	@Column(nullable=false)
+	private long ttl;
+	
+	public long getTTL() {
+		return ttl;
+	}
+	
+	public void setTTL(long ttl) {
+		this.ttl = ttl;
+	}
 	
 	public long getRakeLimit() {
 		return rakeLimit;
@@ -160,14 +168,6 @@ public class TableConfigTemplate {
 		this.minEmptyTables = minEmptyTables;
 	}
 
-	public int getMaxEmptyTables() {
-		return maxEmptyTables;
-	}
-
-	public void setMaxEmptyTables(int maxEmptyTables) {
-		this.maxEmptyTables = maxEmptyTables;
-	}
-
 	public int getMinTables() {
 		return minTables;
 	}
@@ -183,7 +183,6 @@ public class TableConfigTemplate {
 		result = prime * result + ante;
 		result = prime * result + id;
 		result = prime * result + maxBuyInMultiplyer;
-		result = prime * result + maxEmptyTables;
 		result = prime * result + minBuyInMultiplyer;
 		result = prime * result + minEmptyTables;
 		result = prime * result + minTables;
@@ -213,8 +212,6 @@ public class TableConfigTemplate {
 		if (id != other.id)
 			return false;
 		if (maxBuyInMultiplyer != other.maxBuyInMultiplyer)
-			return false;
-		if (maxEmptyTables != other.maxEmptyTables)
 			return false;
 		if (minBuyInMultiplyer != other.minBuyInMultiplyer)
 			return false;
@@ -251,8 +248,7 @@ public class TableConfigTemplate {
 				+ ", variant=" + variant + ", ante=" + ante
 				+ ", minBuyInMultiplyer=" + minBuyInMultiplyer
 				+ ", maxBuyInMultiplyer=" + maxBuyInMultiplyer
-				+ ", minEmptyTables=" + minEmptyTables + ", maxEmptyTables="
-				+ maxEmptyTables + ", minTables=" + minTables + ", seats="
+				+ ", minEmptyTables=" + minEmptyTables + ", minTables=" + minTables + ", seats="
 				+ seats + ", timing=" + timing + ", rakeLimit=" + rakeLimit
 				+ ", rakeHeadsUpLimit=" + rakeHeadsUpLimit + ", rakeFraction="
 				+ rakeFraction + "]";

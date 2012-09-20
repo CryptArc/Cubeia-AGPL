@@ -17,7 +17,7 @@
 
 package com.cubeia.games.poker.activator;
 
-import static com.cubeia.games.poker.activator.PokerActivator.ATTR_EXTERNAL_TABLE_ID;
+import static com.cubeia.games.poker.lobby.PokerLobbyAttributes.TABLE_EXTERNAL_ID;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -63,13 +63,13 @@ public class PokerParticipant extends DefaultCreationParticipant {
     private static Logger log = LoggerFactory.getLogger(PokerParticipant.class);
 
     public static final int GAME_ID = 1;
-
+ 
     private final String domain;
     private final RNGProvider rngProvider; // should be removed...
     private final PokerStateCreator stateCreator;
     private final CashGamesBackendContract cashGameBackendService;
     private final TableConfigTemplate template;
-    
+
     public PokerParticipant(TableConfigTemplate template, String domain, PokerStateCreator stateCreator, RNGProvider rngProvider, CashGamesBackendContract cashGameBackendService) {
         this.domain = domain;
         this.template = template;
@@ -118,7 +118,8 @@ public class PokerParticipant extends DefaultCreationParticipant {
         int seats = table.getPlayerSet().getSeatingMap().getNumberOfSeats();
         RakeSettings rake = new RakeSettings(template.getRakeFraction(), template.getRakeLimit(), template.getRakeHeadsUpLimit());
         BetStrategyName limit = BetStrategyName.NO_LIMIT;
-        Map<Serializable,Serializable> attributes = Collections.<Serializable, Serializable>singletonMap(ATTR_EXTERNAL_TABLE_ID, "MOCK::" + table.getId());
+        // Map<Serializable,Serializable> attributes = Collections.emptyMap();
+        Map<Serializable,Serializable> attributes = Collections.<Serializable, Serializable>singletonMap(TABLE_EXTERNAL_ID.name(), "MOCK::" + table.getId());
         // TODO: Make this configurable.
         int smallBlindAmount = template.getAnte();
         int bigBlindAmount = 2 * smallBlindAmount;
@@ -148,6 +149,18 @@ public class PokerParticipant extends DefaultCreationParticipant {
     public String getDomain() {
         return domain;
     }
+    
+    public CashGamesBackendContract getCashGameBackendService() {
+		return cashGameBackendService;
+	}
+    
+    public RNGProvider getRngProvider() {
+		return rngProvider;
+	}
+    
+    public TableConfigTemplate getTemplate() {
+		return template;
+	}
 
     @Override
     public String toString() {

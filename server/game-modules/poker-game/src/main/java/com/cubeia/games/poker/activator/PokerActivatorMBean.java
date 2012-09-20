@@ -21,11 +21,8 @@ import com.cubeia.poker.variant.PokerVariant;
 
 public interface PokerActivatorMBean {
 
-    public int getMultiplier();
-
     public void createTable(String domain, int seats, int anteLevel, PokerVariant variant);
 
-    public void setMultiplier(int multiplier);
-
     public void destroyTable(int id);
+
 }

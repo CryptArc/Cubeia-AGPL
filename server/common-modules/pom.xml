@@ -17,6 +17,7 @@
         <module>backend</module>
         <module>hand-history-api</module>
         <module>timings</module>
+        <module>common</module>
     </modules>
 
 </project>

@@ -17,10 +17,22 @@
 
 package com.cubeia.games.poker.adapter;
 
+import static com.cubeia.games.poker.adapter.HandHistoryTranslator.translate;
+import static com.cubeia.games.poker.adapter.HandHistoryTranslator.translateCards;
+import static com.cubeia.games.poker.lobby.PokerLobbyAttributes.TABLE_EXTERNAL_ID;
+import static com.cubeia.poker.adapter.HandEndStatus.CANCELED_TOO_FEW_PLAYERS;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+
+import org.apache.log4j.Logger;
+
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TablePlayerSet;
 import com.cubeia.firebase.guice.inject.Service;
-import com.cubeia.games.poker.activator.PokerActivator;
 import com.cubeia.games.poker.entity.HandIdentifier;
 import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.poker.PokerState;
@@ -31,7 +43,18 @@ import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.ExposeCardsHolder;
 import com.cubeia.poker.hand.ExposedCards;
 import com.cubeia.poker.hand.Rank;
-import com.cubeia.poker.handhistory.api.*;
+import com.cubeia.poker.handhistory.api.DeckInfo;
+import com.cubeia.poker.handhistory.api.HandHistoryCollectorService;
+import com.cubeia.poker.handhistory.api.HandHistoryEvent;
+import com.cubeia.poker.handhistory.api.HandIdentification;
+import com.cubeia.poker.handhistory.api.Player;
+import com.cubeia.poker.handhistory.api.PlayerAction;
+import com.cubeia.poker.handhistory.api.PlayerCardsDealt;
+import com.cubeia.poker.handhistory.api.PlayerCardsExposed;
+import com.cubeia.poker.handhistory.api.PotUpdate;
+import com.cubeia.poker.handhistory.api.Results;
+import com.cubeia.poker.handhistory.api.RoundStarted;
+import com.cubeia.poker.handhistory.api.TableCardsDealt;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotTransition;
@@ -39,13 +62,6 @@ import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
 import com.cubeia.poker.util.ThreadLocalProfiler;
 import com.google.inject.Inject;
-import org.apache.log4j.Logger;
-
-import java.util.*;
-
-import static com.cubeia.games.poker.adapter.HandHistoryTranslator.translate;
-import static com.cubeia.games.poker.adapter.HandHistoryTranslator.translateCards;
-import static com.cubeia.poker.adapter.HandEndStatus.CANCELED_TOO_FEW_PLAYERS;
 
 /**
  * Adapter between logic and game which captures significant events
@@ -189,7 +205,7 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
     }
 
     private String getIntegrationTableId() {
-        return state.getSettings().getAttributes().get(PokerActivator.ATTR_EXTERNAL_TABLE_ID).toString();
+        return state.getSettings().getAttributes().get(TABLE_EXTERNAL_ID.name()).toString();
     }
 
     private void post(HandHistoryEvent ev) {

@@ -12,4 +12,10 @@ public interface PokerActivatorConfig extends Configurable {
 	@Property(defaultValue="false")
 	public boolean useMockIntegrations();
 	
+	@Property(defaultValue="60000", property="default-table-ttl")
+	public long getDefaultTableTTL();
+
+	@Property(defaultValue="30000")
+	public long getActivatorInterval();
+
 }

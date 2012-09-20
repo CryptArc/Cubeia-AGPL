@@ -4,6 +4,6 @@ import com.cubeia.firebase.api.service.Contract;
 
 public interface PokerConfigurationService extends Contract { 
 	
-	public PokerActivatorConfig getTournamentActivatorConfig();
+	public PokerActivatorConfig getActivatorConfig();
 	
 }

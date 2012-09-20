@@ -28,7 +28,7 @@ public class PokerConfigurationServiceImpl implements com.cubeia.firebase.api.se
 	public void start() { }
 	
 	@Override
-	public PokerActivatorConfig getTournamentActivatorConfig() {
+	public PokerActivatorConfig getActivatorConfig() {
 		return config(PokerActivatorConfig.class);
 	}
 

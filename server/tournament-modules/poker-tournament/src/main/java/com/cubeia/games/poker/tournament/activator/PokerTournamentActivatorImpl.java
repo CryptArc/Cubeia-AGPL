@@ -138,6 +138,6 @@ public class PokerTournamentActivatorImpl implements MttActivator, Startable, Po
     // --- PRIVATE METHODS --- //
     
     private boolean useMockIntegrations() {
-		return context.getServices().getServiceInstance(PokerConfigurationService.class).getTournamentActivatorConfig().useMockIntegrations();
+		return context.getServices().getServiceInstance(PokerConfigurationService.class).getActivatorConfig().useMockIntegrations();
 	}
 }

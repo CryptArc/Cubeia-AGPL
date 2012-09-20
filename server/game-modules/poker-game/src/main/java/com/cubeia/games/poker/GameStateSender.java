@@ -24,8 +24,8 @@ import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.cache.ActionCache;
 import com.cubeia.games.poker.cache.ActionContainer;
+import com.cubeia.games.poker.common.SystemTime;
 import com.cubeia.games.poker.io.protocol.*;
-import com.cubeia.games.poker.tournament.util.DateFetcher;
 import com.cubeia.games.poker.util.ProtocolFactory;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
@@ -45,10 +45,10 @@ import java.util.List;
 public class GameStateSender {
     private static Logger log = LoggerFactory.getLogger(PokerTableListener.class);
     private final ActionCache actionCache;
-    private DateFetcher dateFetcher;
+    private SystemTime dateFetcher;
 
     @Inject
-    public GameStateSender(ActionCache actionCache, DateFetcher dateFetcher) {
+    public GameStateSender(ActionCache actionCache, SystemTime dateFetcher) {
         this.dateFetcher = dateFetcher;
         this.actionCache = actionCache;
     }
@@ -175,7 +175,7 @@ public class GameStateSender {
     }
 
     private GameDataAction adjustTimeToAct(StyxSerializer styxalizer, ActionContainer lastContainer, RequestAction lastRequest, Long timerTimeStamp) throws IOException {
-        long elapsed = dateFetcher.now().getMillis() - timerTimeStamp;
+        long elapsed = dateFetcher.date().getMillis() - timerTimeStamp;
         int timeToAct = lastRequest.timeToAct - (int) elapsed;
         if (timeToAct < 0) {
             timeToAct = 0;
@@ -187,7 +187,7 @@ public class GameStateSender {
     }
 
     private GameDataAction adjustTimeToAct(StyxSerializer styxalizer, ActionContainer container, PlayerDisconnectedPacket disconnect) throws IOException {
-        long elapsed = dateFetcher.now().getMillis() - container.getTimestamp();
+        long elapsed = dateFetcher.date().getMillis() - container.getTimestamp();
         int timeToAct = disconnect.timebank - (int) elapsed;
         if (timeToAct < 0) {
             timeToAct = 0;

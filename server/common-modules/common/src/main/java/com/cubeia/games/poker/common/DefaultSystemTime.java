@@ -15,20 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.activator;
+package com.cubeia.games.poker.common;
 
-import com.google.inject.Injector;
+import org.joda.time.DateTime;
 
-public class TestablePokerActivator extends PokerActivator {
+import com.google.inject.Singleton;
 
-    Injector injector;
-
-    public TestablePokerActivator(Injector injector) {
-        this.injector = injector;
-    }
+@Singleton
+public class DefaultSystemTime implements SystemTime {
 
     @Override
-    protected Injector getInjector() {
-        return injector;
+    public DateTime date() {
+        return new DateTime();
+    }
+    
+    @Override
+    public long now() {
+    	return System.currentTimeMillis();
     }
 }
