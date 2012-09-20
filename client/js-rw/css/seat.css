@@ -100,7 +100,7 @@ img.player-card {
     padding-bottom:10%;
 }
 
-.action-text {
+.action-text, .player-status {
     color:#9aba00;
     font-weight: bold;
     background-color: #262626;

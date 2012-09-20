@@ -107,7 +107,7 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
             this.isSeated = true;
         } else {
             console.log("Join failed. Status: " + joinResponsePacket.status);
-            alert("Join failed");
+
         }
     },
     handleUnwatchResponse : function(unwatchResponse) {

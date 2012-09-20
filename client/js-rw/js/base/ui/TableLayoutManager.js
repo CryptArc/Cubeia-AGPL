@@ -89,6 +89,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         seat.onAction(actionType,amount);
     },
     onDealPlayerCard : function(player,cardId,cardString) {
+        console.log("DEAL Player CARD = " + player +" cardId = " + cardId);
         var seat = this.getSeatByPlayerId(player.id);
         var card = new Poker.Card(cardId,cardString,this.templateManager);
         seat.dealCard(card);
@@ -118,6 +119,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         seat.showHandStrength(hand);
     },
     onDealCommunityCard : function(cardId, cardString) {
+        console.log("DEAL COMM CARD cardId =" + cardId);
         var card = new Poker.CommunityCard(cardId,cardString,this.templateManager);
         var html = card.render();
         $("#communityCards").append(html);
@@ -154,7 +156,9 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         }
         this.myPlayerSeatId=-1;
         this._resetCommunity();
-        this.cardElements = [];
+        for(var x in this.cardElements) {
+            $("#"+this.cardElements[x].getCardDivId()).remove();
+        }
         this.myActionsManager.clear();
     },
     _hideSeatActionText : function() {

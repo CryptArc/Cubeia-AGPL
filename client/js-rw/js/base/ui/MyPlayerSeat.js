@@ -45,7 +45,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.handlePlayerStatus();
     },
     handlePlayerStatus : function() {
-        if(this.player.status == Poker.PlayerStatus.SITTING_OUT) {
+        if(this.player.tableStatus == Poker.PlayerTableStatus.SITTING_OUT) {
             this.myActionsManager.onSitOut();
         } else {
             this.myActionsManager.onSitIn();
