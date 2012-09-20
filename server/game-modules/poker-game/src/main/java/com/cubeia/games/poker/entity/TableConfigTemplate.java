@@ -1,5 +1,6 @@
 package com.cubeia.games.poker.entity;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
@@ -11,7 +12,9 @@ import com.cubeia.poker.timing.Timings;
 import com.cubeia.poker.variant.PokerVariant;
 
 @Entity
-public class TableConfigTemplate {
+public class TableConfigTemplate implements Serializable {
+	
+    private static final long serialVersionUID = -1593417411016642341L;
 	
     public static final int DEF_MIN_BUY_IN_ANTE_MULTIPLIER = 10;
     public static final int DEF_MAX_BUY_IN_ANTE_MULTIPLIER = 100;

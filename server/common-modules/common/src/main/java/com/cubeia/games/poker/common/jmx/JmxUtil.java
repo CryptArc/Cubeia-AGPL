@@ -1,4 +1,4 @@
-package com.cubeia.games.poker.common;
+package com.cubeia.games.poker.common.jmx;
 
 import java.lang.management.ManagementFactory;
 
@@ -7,15 +7,15 @@ import javax.management.ObjectName;
 
 import org.apache.log4j.Logger;
 
-public class Jmx {
+public class JmxUtil {
 
     private final MBeanServer mbs;
 	
-	public Jmx() { 
+	public JmxUtil() { 
 		this(ManagementFactory.getPlatformMBeanServer());
 	}
 	
-	public Jmx(MBeanServer server) {
+	public JmxUtil(MBeanServer server) {
 		this.mbs = server;
 	}
 
@@ -26,7 +26,7 @@ public class Jmx {
                 mbs.registerMBean(bean, monitorName);           	
             }
         } catch (Exception e) {
-            Logger.getLogger(Jmx.class).error("failed to bind poker activator to JMX", e);
+            Logger.getLogger(JmxUtil.class).error("failed to bind poker activator to JMX", e);
         }
 	}
 
@@ -38,7 +38,7 @@ public class Jmx {
                 mbs.unregisterMBean(monitorName);
             }
         } catch (Exception e) {
-        	Logger.getLogger(Jmx.class).error("failed to unbind poker activator to JMX", e);
+        	Logger.getLogger(JmxUtil.class).error("failed to unbind poker activator to JMX", e);
         }
 	}
 }

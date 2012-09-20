@@ -26,9 +26,9 @@ public class ActivatorTableManagerImpl implements ActivatorTableManager {
 	
 	@Override 
 	public void run() {
-		log.trace("Table manager executing.");
+		log.debug("Table manager executing.");
 		List<TableConfigTemplate> templs = provider.getTemplates();
-		log.debug("Found " + templs.size() + " templates.");
+		log.debug("Found " + templs.size() + " templates."); 
 		List<TableModifierAction> actions = inspector.match(templs);
 		log.debug("Inspector resports " + actions.size() + " actions.");
 		for (TableModifierAction a : actions) {

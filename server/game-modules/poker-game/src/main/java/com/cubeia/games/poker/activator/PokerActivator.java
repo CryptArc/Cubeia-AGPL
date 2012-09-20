@@ -32,12 +32,15 @@ import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.lobby.LobbyAttributeAccessor;
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.firebase.guice.inject.Log4j;
-import com.cubeia.games.poker.common.Jmx;
+import com.cubeia.game.poker.config.api.PokerConfigurationService;
+import com.cubeia.games.poker.common.guice.JpaInitializer;
+import com.cubeia.games.poker.common.jmx.JmxUtil;
 import com.cubeia.games.poker.entity.TableConfigTemplate;
 import com.cubeia.poker.PokerGuiceModule;
 import com.cubeia.poker.variant.PokerVariant;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.name.Named;
 
 /**
@@ -75,12 +78,18 @@ public class PokerActivator implements GameActivator, MttAwareActivator, PokerAc
     
     @Override
     public void init(ActivatorContext context) throws SystemException {
-        new Jmx().mountBean(JMX_BIND_NAME, this);
-        Guice.createInjector(
-        		new ActivatorGuiceModule(context),
+        new JmxUtil().mountBean(JMX_BIND_NAME, this);
+        boolean useDatabase = !useMockIntegrations(context);
+        Injector inj = Guice.createInjector(
+        		new ActivatorGuiceModule(context, useDatabase),
                 new PokerGuiceModule()
-        ).injectMembers(this);
+        );
+        inj.injectMembers(this);
         log.debug("Init called.");
+        if(useDatabase) {
+        	log.debug("Initializing JPA.");
+        	inj.getInstance(JpaInitializer.class);
+        }
     }
     
     @Override
@@ -113,10 +122,14 @@ public class PokerActivator implements GameActivator, MttAwareActivator, PokerAc
 
     @Override
     public void destroy() {
-        new Jmx().unmountBean(JMX_BIND_NAME);
+        new JmxUtil().unmountBean(JMX_BIND_NAME);
     }
   
     // --- PRIVATE METHODS ---- //
+    
+    private boolean useMockIntegrations(ActivatorContext context) {
+		return context.getServices().getServiceInstance(PokerConfigurationService.class).getActivatorConfig().useMockIntegrations();
+	}
     
     private TableConfigTemplate createNewTemplate(int seats, int anteLevel, PokerVariant variant) {
     	TableConfigTemplate t = new TableConfigTemplate();

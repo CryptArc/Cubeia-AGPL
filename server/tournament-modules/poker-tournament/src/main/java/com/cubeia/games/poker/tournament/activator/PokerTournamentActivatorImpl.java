@@ -23,10 +23,10 @@ import com.cubeia.firebase.api.mtt.activator.MttActivator;
 import com.cubeia.firebase.api.server.Startable;
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.game.poker.config.api.PokerConfigurationService;
+import com.cubeia.games.poker.common.guice.JpaInitializer;
 import com.cubeia.games.poker.tournament.activator.external.jmx.JMXActivator;
 import com.cubeia.games.poker.tournament.guice.ActivatorModule;
 import com.cubeia.games.poker.tournament.guice.MockActivatorModule;
-import com.cubeia.games.poker.tournament.guice.PersistInitializer;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.apache.log4j.Logger;
@@ -118,7 +118,7 @@ public class PokerTournamentActivatorImpl implements MttActivator, Startable, Po
             log.info("Creating database based activator module.");
             injector = Guice.createInjector(new ActivatorModule());
             // This will initialize JPA.
-            injector.getInstance(PersistInitializer.class);
+            injector.getInstance(JpaInitializer.class);
         }
         activator = injector.getInstance(PokerActivator.class);
         activator.init(context);

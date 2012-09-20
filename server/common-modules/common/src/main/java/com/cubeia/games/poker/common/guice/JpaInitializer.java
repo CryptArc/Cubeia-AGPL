@@ -15,16 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.tournament.guice;
+package com.cubeia.games.poker.common.guice;
 
 import com.google.inject.Inject;
 import com.google.inject.persist.PersistService;
 
-public class PersistInitializer {
+public class JpaInitializer {
 
     @Inject
-    public PersistInitializer(PersistService service) {
+    public JpaInitializer(PersistService service) {
         service.start();
     }
-
 }
