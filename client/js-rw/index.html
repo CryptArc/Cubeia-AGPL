@@ -6,8 +6,9 @@
 
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
+    <link rel="stylesheet" type="text/css" href="css/global.css"/>
     <link rel="stylesheet" type="text/css" href="css/lobby.css"/>
     <link rel="stylesheet" type="text/css" href="css/table.css"/>
     <link rel="stylesheet" type="text/css" href="css/seat.css"/>
@@ -67,7 +68,7 @@
     <script type="text/javascript" src="js/base/Hand.js"></script>
     <script type="text/javascript" src="js/base/ui/describe.js"></script>
     <script type="text/javascript" src="js/base/ui/CSSAnimator.js"></script>
-
+    <script type="text/javascript" src="js/base/ui/DealerButton.js"></script>
 
 
 
@@ -76,8 +77,13 @@
         $(document).ready(function(){
             $(".describe").describe();
 
-            var webSocketUrl = "localhost";
-            //var webSocketUrl = "192.168.1.110";
+            $("body").bind("touchmove", function(e){
+                if(!$(e.target).hasClass("ui-slider-handle")) {
+                    e.preventDefault();
+                }
+            });
+            //var webSocketUrl = "localhost";
+            var webSocketUrl = "192.168.1.110";
             var webSocketPort = 9191;
             var tableComManager = null;
             //handles the lobby UI
@@ -173,6 +179,9 @@
             </div>
             <div id="mainPotContainer" class="main-pot">
 
+            </div>
+            <div id="dealerButton" class="dealer-button" style="display:none;">
+                <div>D</div>
             </div>
         </div>
         <div id="myPlayerContainer" class="bottom-bar">

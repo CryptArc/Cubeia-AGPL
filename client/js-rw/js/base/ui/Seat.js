@@ -10,6 +10,8 @@ Poker.Seat = Class.extend({
    cssAnimator : null,
    cards : null,
    cardsContainer : null,
+   avatarElement : null,
+   actionAmount : null,
    init : function(seatId, player, templateManager) {
        this.seatId = seatId
        this.player = player;
@@ -18,6 +20,7 @@ Poker.Seat = Class.extend({
        this.cssAnimator = new Poker.CSSAnimator();
        this.renderSeat();
        this.cardsContainer = this.seatElement.find(".cards-container");
+       this.actionAmount = this.seatElement.find(".action-amount");
    },
    setSeatPos : function(previousPos, position) {
      this.seatElement.removeClass("seat-empty").removeClass("seat-pos-"+previousPos).removeClass("seat-inactive").addClass("seat-pos-"+position);
@@ -26,8 +29,12 @@ Poker.Seat = Class.extend({
        var output = Mustache.render(this.templateManager.getTemplate("seatTemplate"),this.player);
        this.seatElement.html(output);
        this.progressBarElement = this.seatElement.find(".progress-bar");
-       this.seatElement.find(".avatar").addClass("avatar"+(this.player.id%9));
+       this.avatarElement = this.seatElement.find(".avatar");
+       this.avatarElement.addClass("avatar"+(this.player.id%9));
        this.reset();
+   },
+   getDealerButtonOffsetElement : function() {
+       return this.avatarElement;
    },
    clearSeat : function() {
        this.seatElement.html("");
@@ -64,7 +71,9 @@ Poker.Seat = Class.extend({
    },
    hideActionInfo : function() {
        this.hideActionText();
-       this.seatElement.find(".action-amount").html("").hide();
+       if(this.actionAmount!=null) {
+           this.actionAmount.html("").hide();
+       }
    },
    hideActionText : function() {
        this.seatElement.find(".action-text").html("").hide();
@@ -80,9 +89,16 @@ Poker.Seat = Class.extend({
        this.seatElement.find(".action-text").html(actionType.text).show();
        var icon = $("<div/>").addClass("player-action-icon").addClass(actionType.id);
        if(amount>0) {
-           this.seatElement.find(".action-amount").empty().append("&euro;").
-               append(amount).append(icon).show();
+           this.actionAmount.removeClass("placed");
+           this.actionAmount.empty().append("&euro;").append(amount).append(icon).show();
+           this.animateActionAmount();
        }
+   },
+   animateActionAmount : function() {
+       var self = this;
+       setTimeout(function(){
+            self.actionAmount.addClass("placed");
+       },100);
    },
    fold : function() {
        this.seatElement.addClass("seat-folded");

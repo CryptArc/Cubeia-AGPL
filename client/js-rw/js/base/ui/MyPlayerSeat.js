@@ -10,10 +10,12 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.seatElement = $("#myPlayerSeat");
         this.renderSeat();
         this.cardsContainer = this.seatElement.find(".cards-container");
+
         $("#myPlayer").show();
         this.myActionsManager.onSitIn();
         this.circularProgressBar = new CircularProgressBar("circularProgressBar");
         this.circularProgressBar.hide();
+        this.actionAmount = this.seatElement.find(".action-amount");
 
 
     },
@@ -68,5 +70,8 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.seatElement.empty();
         $("#myPlayer").hide();
         this.circularProgressBar.detach();
+    },
+    getDealerButtonOffsetElement : function() {
+        return this.cardsContainer;
     }
 });

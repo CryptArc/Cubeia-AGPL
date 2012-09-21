@@ -31,17 +31,17 @@ Poker.BetSlider = Class.extend({
             orientation: "vertical",
             value: self.minBet,
             max: self.maxBet,
-            min: self.minBet,
+            min: 0,
             step: 50,
 
             //this gets a live reading of the value and prints it on the page
-            slide: function( event, ui ) {
-                self.displayOutput(ui.value);
+            slide: function(event,ui ) {
+                self.handleChangeValue(ui.value);
             },
 
             //this updates the hidden form field so we can submit the data using a form
             change: function(event, ui) {
-                self.displayOutput(ui.value);
+                self.handleChangeValue(ui.value);
             }
 
         });
@@ -49,18 +49,29 @@ Poker.BetSlider = Class.extend({
         $.each(this.markers,function(i,m){
             var value = m.value;
             var marker = m.name;
-            var percent = Math.round(100*(value-self.minBet)/self.maxBet);
-            var position = 100 - percent;
-            if(position>98) {
-                position=96;
+            var percent = Math.round(100*(value/self.maxBet));
+            var position = 0;
+            var property = "top";
+            if(percent<50) {
+                position = percent;
+                property = "bottom";
+            } else {
+                position = 100 - percent;
             }
-            var div = $("<div/>").append(marker).addClass("marker").css("top", position+"%");
+            var div = $("<div/>").append(marker).addClass("marker").css(property, position+"%");
             container.append(div);
             div.click(function(e){
                 self.slider.slider("value",value);
             });
         });
         this.displayOutput(this.minBet);
+    },
+    handleChangeValue : function(value) {
+        if(value<this.minBet) {
+            this.slider.slider("value",this.minBet);
+        } else {
+            this.displayOutput(value);
+        }
     },
     setMinBet : function(minBet) {
         this.minBet = minBet;

@@ -74,9 +74,9 @@ Poker.Map = Class.extend({
                 this.length--;
                 return val;
             }
-        } else {
-            return null;
         }
+        return null;
+
    },
     /**
      * Get an array of the values in this map
