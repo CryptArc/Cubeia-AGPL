@@ -92,18 +92,12 @@ Poker.Seat = Class.extend({
    },
    dealCard : function(card) {
        this.cardsContainer.append(card.render());
-       this.animateDealCard(card.getDOMElement());
+       this.animateDealCard(card.getJQElement());
    },
    animateDealCard : function(div) {
-       this.cssAnimator.addTransforms(div,["translate3d(0,0,0)", "scale3d(0.75,0.75,0)"]);
-       this.cssAnimator.addTransition(div,"transform 0.5s ease-out",false);
-       var self = this;
-       setTimeout(function(){
-
-           self.cssAnimator.addTransforms(div,["translate3d(0,-18%,0)", "scale3d(0.75,0.75,0)"]);
-       },100);
-
-
+      setTimeout(function(){
+          div.addClass("dealt");
+      },100);
 
    },
    inactivateSeat : function() {
@@ -124,12 +118,12 @@ Poker.Seat = Class.extend({
    activateSeat : function(allowedActions, timeToAct) {
        this.seatElement.addClass("active-seat");
        this.progressBarElement.show();
-       Firmin.animate(
-            this.progressBarElement.get(0), {
-            scale:{y:0.001},
-            origin : { x:"100%", y: "100%" },
-            timingFunction : 'linear'
-       }, timeToAct/1000);
+       var div = this.progressBarElement.get(0);
+       this.cssAnimator.addTransition(div,"transform " + timeToAct/1000+"s linear");
+       var self = this;
+       setTimeout(function(){
+            self.cssAnimator.addTransform(div,"scale3d(1,0.01,0)","bottom");
+       },50);
    },
    showHandStrength : function(hand) {
        this.seatElement.find(".action-amount").html("").hide();

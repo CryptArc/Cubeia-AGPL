@@ -24,8 +24,8 @@ Poker.PokerProtocolHandler = function(tableManager,tableComHandler) {
 
 		var protocolObject = com.cubeia.games.poker.io.protocol.ProtocolObjectFactory.create(classId, gameData);
 
-        console.log("Received packet: ");
-        console.log(protocolObject);
+        //console.log("Received packet: ");
+        //console.log(protocolObject);
 
         switch (protocolObject.classId() ) {
 			case com.cubeia.games.poker.io.protocol.BestHand.CLASSID:
