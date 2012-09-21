@@ -17,6 +17,26 @@
 
 package com.cubeia.games.poker.adapter;
 
+import static com.cubeia.firebase.api.game.player.PlayerStatus.CONNECTED;
+import static com.cubeia.firebase.api.game.player.PlayerStatus.DISCONNECTED;
+import static com.cubeia.firebase.api.game.player.PlayerStatus.LEAVING;
+import static java.util.Arrays.asList;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+
+import java.util.Arrays;
+import java.util.Collection;
+
+import mock.UnmongofiableSet;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+
 import com.cubeia.firebase.api.game.player.GenericPlayer;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TableMetaData;
@@ -24,23 +44,10 @@ import com.cubeia.firebase.api.game.table.TablePlayerSet;
 import com.cubeia.firebase.api.game.table.TableType;
 import com.cubeia.firebase.api.util.UnmodifiableSet;
 import com.cubeia.games.poker.state.FirebaseState;
-import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.util.SitoutCalculator;
-import mock.UnmongofiableSet;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-
-import java.util.Arrays;
-import java.util.Collection;
-
-import static com.cubeia.firebase.api.game.player.PlayerStatus.*;
-import static java.util.Arrays.asList;
-import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 public class CleanupPlayersTest {
 
@@ -99,7 +106,7 @@ public class CleanupPlayersTest {
         when(state.getSettings()).thenReturn(pokerSettings);
         when(table.getMetaData()).thenReturn(tableMetaData);
 
-        when(tableMetaData.getType()).thenReturn(TableType.NORMAL);
+        when(tableMetaData.getType()).thenReturn(TableType.NORMAL); 
         when(table.getPlayerSet()).thenReturn(tablePlayerSet);
         UnmodifiableSet<GenericPlayer> players = new UnmongofiableSet<GenericPlayer>(
                 asList(genericPlayer1, genericPlayer2, genericPlayer3));

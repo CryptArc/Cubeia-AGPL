@@ -6,7 +6,7 @@ import com.cubeia.firebase.api.server.conf.Configurable;
 import com.cubeia.firebase.api.server.conf.Configurated;
 import com.cubeia.firebase.api.server.conf.Property;
 
-@Configurated(inheritance=ALLOW,namespace="com.cubeia.game.poker")
+@Configurated(inheritance=ALLOW,namespace="com.cubeia.game.poker.activator")
 public interface PokerActivatorConfig extends Configurable {
 
 	@Property(defaultValue="false")

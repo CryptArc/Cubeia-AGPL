@@ -21,6 +21,8 @@ import com.cubeia.backend.cashgame.dto.*;
 import com.cubeia.backend.cashgame.exceptions.AnnounceTableFailedException;
 import com.cubeia.backend.cashgame.exceptions.OpenSessionFailedException;
 import com.cubeia.backend.cashgame.exceptions.ReserveFailedException;
+import com.cubeia.games.poker.common.Money;
+
 import org.junit.Before;
 import org.junit.Test;
 

@@ -18,6 +18,7 @@
 package com.cubeia.backend.cashgame.dto;
 
 import com.cubeia.backend.cashgame.TableId;
+import com.cubeia.games.poker.common.Money;
 
 import java.io.Serializable;
 import java.util.ArrayList;

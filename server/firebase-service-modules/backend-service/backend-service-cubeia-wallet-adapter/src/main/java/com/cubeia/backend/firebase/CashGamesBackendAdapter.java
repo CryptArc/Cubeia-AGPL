@@ -39,6 +39,7 @@ import com.cubeia.firebase.api.service.RoutableService;
 import com.cubeia.firebase.api.service.Service;
 import com.cubeia.firebase.api.service.ServiceContext;
 import com.cubeia.firebase.api.service.ServiceRouter;
+import com.cubeia.games.poker.common.Money;
 import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
 import com.cubeia.network.wallet.firebase.domain.TransactionBuilder;
 import com.google.common.annotations.VisibleForTesting;

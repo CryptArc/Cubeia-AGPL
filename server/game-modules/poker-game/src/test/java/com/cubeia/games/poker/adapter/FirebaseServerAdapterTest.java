@@ -21,7 +21,6 @@ import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.callback.ReserveCallback;
 import com.cubeia.backend.cashgame.dto.BalanceUpdate;
 import com.cubeia.backend.cashgame.dto.BatchHandResponse;
-import com.cubeia.backend.cashgame.dto.Money;
 import com.cubeia.backend.cashgame.dto.ReserveRequest;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
@@ -33,6 +32,8 @@ import com.cubeia.firebase.api.game.GameNotifier;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TableScheduler;
 import com.cubeia.firebase.io.StyxSerializer;
+import com.cubeia.games.poker.PokerConfigServiceMock;
+import com.cubeia.games.poker.common.Money;
 import com.cubeia.games.poker.handler.ActionTransformer;
 import com.cubeia.games.poker.handler.Trigger;
 import com.cubeia.games.poker.handler.TriggerType;
@@ -84,7 +85,7 @@ public class FirebaseServerAdapterTest {
         Table table = mock(Table.class);
         fsa.table = table;
         when(table.getId()).thenReturn(1337);
-
+ 
         GameNotifier notifier = mock(GameNotifier.class);
         when(table.getNotifier()).thenReturn(notifier);
 
@@ -211,6 +212,7 @@ public class FirebaseServerAdapterTest {
     public void testPerformPendingBuyIns() {
 
         FirebaseServerAdapter fsa = new FirebaseServerAdapter();
+        fsa.configService = new PokerConfigServiceMock();
         fsa.table = mock(Table.class);
         fsa.backend = mock(CashGamesBackendContract.class);
         fsa.buyInCalculator = mock(BuyInCalculator.class);
