@@ -1,13 +1,4 @@
-body {
-    margin: 0;
-    padding: 0;
-    background-color: #262626;
-    color:#fff;
-    font-family: Arial, san-serif;
-    width: 100%;
-    height:100%;
-    overflow: hidden;
-}
+
 .table-container {
     width:100%;
     height:100%;
@@ -101,4 +92,30 @@ body {
     -moz-transition: -moz-transform 0.5s ease-out;
     -o-transition: -o-transform 0.5s ease-out;
 
+}
+
+.dealer-button {
+    border-radius:100px;
+    width:3%;
+    height:0;
+    padding-bottom: 3%;
+    position: absolute;
+    left:0;
+    top:0;
+    background-color:#9ABA00;
+    -webkit-transition: -webkit-transform 1s ease-out;
+    -moz-transition: -moz-transform 1s ease-out;
+    -o-transition: -o-transform 1s ease-out;
+
+}
+.dealer-button div {
+    height: 70%;
+    left: 14%;
+    top: 18%;
+    position: absolute;
+    font-weight: bold;
+    font-size: 120%;
+    display: block;
+    width: 70%;
+    text-align: center;
 }

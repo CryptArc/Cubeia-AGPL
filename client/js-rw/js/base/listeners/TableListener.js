@@ -79,6 +79,9 @@ Poker.TableListener = Class.extend({
     },
     onPlayerRemoved : function(playerId) {
 
+    },
+    onMoveDealerButton : function(seatId) {
+
     }
 
 });

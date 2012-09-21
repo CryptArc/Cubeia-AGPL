@@ -14,6 +14,7 @@ Poker.TableManager = Class.extend({
         if(tableListeners) {
             for(var x in tableListeners)   {
                 this.addTableListener(tableListeners[x]);
+                tableListeners[x].onTableCreated();
             }
         }
         console.log("Creating table with listeners = " + this.tableListeners.length);
@@ -53,7 +54,9 @@ Poker.TableManager = Class.extend({
         }
     },
     setDealerButton : function(seatId) {
-        console.log("tableManager.setDealerButton");
+        for(var x in this.tableListeners)   {
+            this.tableListeners[x].onMoveDealerButton(seatId);
+        }
     },
     addPlayer : function(seat,playerId, playerName) {
         console.log("adding player " + playerName + " at seat" + seat);
@@ -75,7 +78,6 @@ Poker.TableManager = Class.extend({
      */
     dealPlayerCard : function(playerId,cardId,cardString) {
         var player = this.table.getPlayerById(playerId);
-        console.log("deal player cards to listeners = " + this.tableListeners.length);
         for(var x in this.tableListeners)   {
             this.tableListeners[x].onDealPlayerCard(player,cardId, cardString);
         }
