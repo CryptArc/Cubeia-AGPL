@@ -54,11 +54,9 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
     },
     animateDealCard : function(div) {
         var self = this;
-
         setTimeout(function(){
-            self.cssAnimator.addTransition(div,"transform 0.5s ease-out",false);
-            self.cssAnimator.addTransforms(div,["translate3d(0,0,0)"],"center bottom");
-        },100);
+           div.addClass("dealt");
+        },50);
 
     },
     fold : function() {

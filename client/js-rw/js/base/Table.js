@@ -4,11 +4,12 @@ var Poker = Poker || {};
 Poker.Table = Class.extend({
     capacity : 0,
     id : -1,
-    players : [],
+    players : null,
     myPlayerSeat : null,
     init : function(id,capacity) {
         this.id = id;
         this.capacity = capacity;
+        this.players = new Poker.Map();
     },
     /**
      *
@@ -19,11 +20,18 @@ Poker.Table = Class.extend({
         if(seat<0 || seat>=this.capacity) {
             throw "Table : seat " + seat + " of player "+ player.name+" is invalid, capacity="+this.capacity;
         }
-        this.players[seat] = player;
+        this.players.put(seat,player);
+
     },
     removePlayer : function(playerId) {
-        // Need to remove the players from the map, but we don't know the seatId.
-        console.log("TODO!");
+       var kvp = this.players.keyValuePairs();
+       for(var i = 0; i<kvp.length; i++) {
+           if(kvp[i].value.id == playerId) {
+               this.players.remove(kvp[i].key);
+               return;
+           }
+       }
+       console.log("player not found when trying to remove");
     },
     /**
      * Get player at a specific position
@@ -31,7 +39,8 @@ Poker.Table = Class.extend({
      * @return {Poker.Player} the player at the seat
      */
     getPlayerAtPosition : function(seat) {
-        return this.players[seat];
+
+        return this.players.get(seat);
     },
     /**
      * Get a player by its player id
@@ -39,12 +48,12 @@ Poker.Table = Class.extend({
      * @return {Poker.Player} with the playerId or null if not found
      */
     getPlayerById : function(playerId) {
-        for(var p in this.players) {
-            if(this.players[p].id == playerId) {
-                return this.players[p];
+        var players = this.players.values();
+        for(var i = 0; i<players.length; i++) {
+            if(players[i].id == playerId) {
+                return players[i];
             }
         }
-
         return null;
     },
     /**
@@ -52,7 +61,7 @@ Poker.Table = Class.extend({
      * @return {int}
      */
     getNrOfPlayers : function() {
-        return this.players.length;
+        return this.players.size();
 
     }
 });

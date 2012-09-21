@@ -32,9 +32,7 @@
     top:-45%;
     left:0;
 
-    -webkit-transform: translate3d(0,30%,0);
-    -moz-transform:  translate3d(0,30%,0);
-    -o-transform:  translate3d(0,30%,0);
+
 }
 .cards-container-player .player-card-container {
     position:absolute;
@@ -42,18 +40,8 @@
     width:50%;
     height:150%;
     top:0;
-
-    /*
-
-    -webkit-transition: -webkit-transform 0.5s ease-out;
-    -moz-transition: -moz-transform 0.5s ease-out;
-    -o-transition: -o-transform 0.5s ease-out;
-
-    -webkit-transform: scale3d(0.75,0.75,0) translate3d(0,1%,0);
-    -moz-transform: scale3d(0.75,0.75,0) translate3d(0,1%,0);
-    -o-transform: scale3d(0.75,0.75,0) translate3d(0,1%,0);
-      */
 }
+
 
 .cards-container {
     position: absolute;
@@ -195,9 +183,9 @@ img.player-card {
     background-image: -webkit-linear-gradient(bottom, #9EBA02 26%, #C0E00B 100%);
     background-image: -ms-linear-gradient(bottom, #9EBA02 26%, #C0E00B 100%);
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#9EBA02', endColorstr='#C0E00B',GradientType=0 ); /* IE6-9 */
-    width:40%;
-    height: 50%;
-    left:30%;
+    width:42%;
+    height: 52%;
+    left:29%;
     top:8%;
     margin-left:1px;
 }

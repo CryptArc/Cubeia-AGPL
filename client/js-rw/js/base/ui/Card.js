@@ -24,14 +24,15 @@ Poker.Card = Class.extend({
         this.cardString = cardString;
         this.cardImage.attr("src","images/cards/"+this.cardString+".svg");
     },
-    getDOMElement:function () {
+    getJQElement:function () {
         if(this.cardElement==null) {
             this.cardElement =  $("#" + this.getCardDivId());
             this.cardImage = this.cardElement.find("img");
         }
-        return this.cardElement.get(0);
-
-
+        return this.cardElement;
+    },
+    getDOMElement : function() {
+      return this.getJQElement().get(0);
     },
     getTemplate:function () {
         return this.templateManager.getTemplate("playerCardTemplate");
