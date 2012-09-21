@@ -15,6 +15,7 @@
 		<module>game-modules</module>
 		<module>protocol-modules</module>
 		<module>tournament-modules</module>
+		<module>test-modules</module>
 	</modules>
 
 	<organization>
