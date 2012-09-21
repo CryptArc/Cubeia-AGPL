@@ -2,15 +2,20 @@ package com.cubeia.games.poker;
 
 import static com.cubeia.backoffice.wallet.api.dto.Account.AccountType.STATIC_ACCOUNT;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
+import com.cubeia.backoffice.accounting.api.Money;
 import com.cubeia.backoffice.users.api.dto.CreateUserRequest;
 import com.cubeia.backoffice.users.api.dto.CreateUserResponse;
 import com.cubeia.backoffice.users.api.dto.CreationStatus;
 import com.cubeia.backoffice.users.api.dto.User;
 import com.cubeia.backoffice.users.api.dto.UserInformation;
 import com.cubeia.backoffice.users.client.UserServiceClientHTTP;
+import com.cubeia.backoffice.wallet.api.dto.Account;
 import com.cubeia.backoffice.wallet.api.dto.MetaInformation;
+import com.cubeia.backoffice.wallet.api.dto.report.TransactionEntry;
+import com.cubeia.backoffice.wallet.api.dto.report.TransactionRequest;
 import com.cubeia.backoffice.wallet.api.dto.request.CreateAccountRequest;
 import com.cubeia.backoffice.wallet.client.WalletServiceClientHTTP;
 import com.sampullara.cli.Args;
@@ -52,15 +57,41 @@ public class CreateUser {
 	@Argument(alias="l", description="last name, option", required=false)
 	private String lastname;
 	
+	@Argument(alias="i", description="initial balance, set to -1 to disable, defaults to 50000", required=false)
+	private long balance = 50000;
+	
+	@Argument(alias="b", description="bank account for initial balance, defaults to -3000", required=false)
+	private long bankaccount = -3000;
+	
 	public void execute() throws Exception {
 		long userId = tryCreateUser();
 		System.out.println("User " + userId + " created.");
 		long accountId = tryCreateAccounts(userId);
 		System.out.println("User " + userId + " get main account " + accountId);
+		long transactionId = tryInitialAmount(accountId, userId);
+		if(transactionId != -1) {
+			System.out.println("User " + userId + " got initial balance " + balance);
+		}
 	}
 	
+	private long tryInitialAmount(long accountId, long userId) throws Exception {
+		if(balance > 0) {
+			WalletServiceClientHTTP client = new WalletServiceClientHTTP(walletService);
+			TransactionRequest req = new TransactionRequest();
+			Money credit = new Money(currency, 2, new BigDecimal(String.valueOf(balance)));
+			req.getEntries().add(new TransactionEntry(accountId, credit));
+			Account acc = client.getAccount(bankaccount, "EUR");
+			req.getEntries().add(new TransactionEntry(acc.getId(), credit.negate()));
+			req.setComment("initial balance for user " + userId);
+			return client.doTransaction(req).getTransactionId();
+		} else {
+			return -1;
+		}
+	}
+
 	private long tryCreateAccounts(long userId) throws Exception {
 		CreateAccountRequest req = new CreateAccountRequest();
+		req.setNegativeBalanceAllowed(false);
 		req.setRequestId(UUID.randomUUID());
 		req.setUserId(userId);
 		req.setCurrencyCode(currency);
