@@ -3,41 +3,135 @@ var Poker = Poker || {};
 
 Poker.LobbyLayoutManager = Class.extend({
     lobbyData : [],
+    listItemTemplate : null,
+    filters : [],
     init : function() {
+        var templateManager = new Poker.TemplateManager();
+        this.listItemTemplate = templateManager.getTemplate("tableListItemTemplate");
+        var self = this;
+        var fullTablesFilter = new Poker.LobbyFilter("fullTables",true,
+            function(enabled,lobbyData){
+                if(!enabled) {
+                    return lobbyData.seated<lobbyData.capacity;
+                } else {
+                    return true;
+                }
+            },this);
+        this.filters.push(fullTablesFilter);
+        var emptyTablesFilter = new Poker.LobbyFilter("emptyTables",true,
+            function(enabled,lobbyData){
+                if(!enabled) {
+                    return lobbyData.seated>0;
+                } else {
+                    return true;
+                }
+
+            },this);
+
+        this.filters.push(emptyTablesFilter);
+
+        var noLimitFilter = new Poker.LobbyFilter("noLimit",true,
+            function(enabled,lobbyData){
+                if(!enabled) {
+                    return lobbyData.type != "NL";
+                } else {
+                    return true;
+                }
+            },this);
+        this.filters.push(noLimitFilter);
+
+        var noLimitFilter = new Poker.LobbyFilter("potLimit",true,
+            function(enabled,lobbyData){
+                if(!enabled) {
+                    return lobbyData.type != "PL";
+                } else {
+                    return true;
+                }
+            },this);
+        this.filters.push(noLimitFilter);
+
+        var noLimitFilter = new Poker.LobbyFilter("fixedLimit",true,
+            function(enabled,lobbyData){
+                if(!enabled) {
+                    return lobbyData.type != "FL";
+                } else {
+                    return true;
+                }
+            },this);
+        this.filters.push(noLimitFilter);
+
     },
     handleTableSnapshotList: function(tableSnapshotList) {
         for (var i = 0; i < tableSnapshotList.length; i ++) {
             this.handleTableSnapshot(tableSnapshotList[i]);
         }
-        jQuery("#list4").trigger("reloadGrid");
+        this.createGrid();
     },
     handleTableSnapshot : function(tableSnapshot) {
         if (this.findTable(tableSnapshot.tableid) === null) {
+
             var speedParam = this.readParam("SPEED", tableSnapshot.params);
-            var i = this.lobbyData.push({id:tableSnapshot.tableid, name:tableSnapshot.name, speed:speedParam, capacity:tableSnapshot.capacity,seated:tableSnapshot.seated});
-            console.debug("tableid: " + tableSnapshot.tableid);
-            jQuery("#list4").jqGrid('addRowData', tableSnapshot.tableid, this.lobbyData[i - 1]);
+            //var variant = this.readParam("VARIANT", tableSnapshot.params);
+            var bettingModel = this.readParam("BETTING_GAME_BETTING_MODEL",tableSnapshot.params);
+            var ante = this.readParam("BETTING_GAME_ANTE",tableSnapshot.params);
+
+            var data = {id:tableSnapshot.tableid,
+                name:tableSnapshot.name,
+                speed:speedParam,
+                capacity: tableSnapshot.capacity,
+                seated: tableSnapshot.seated,
+                blinds : (Poker.Utils.formatBlinds(ante)+"/"+Poker.Utils.formatBlinds(ante*2)),
+                type : this.getBettingModel(bettingModel),
+                tableStatus : this.getTableStatus(tableSnapshot.seated,tableSnapshot.capacity)
+            };
+            var i = this.lobbyData.push(data);
+
         } else {
             console.debug("duplicate found - tableid: " + tableSnapshot.tableid);
         }
+    },
+    getTableStatus : function(seated,capacity) {
+        if(seated == capacity) {
+            return "full";
+        }
+        return "open";
+    },
+    getBettingModel : function(model) {
+       if(model == "NO_LIMIT") {
+           return "NL"
+       } else if (model == "POT_LIMIT"){
+           return "PL";
+       } else if(model == "FIXED_LIMIT") {
+           return "FL";
+       }
+       return model;
     },
     handleTableUpdateList : function(tableUpdateList) {
         for (var i = 0; i < tableUpdateList.length; i ++) {
             this.handleTableUpdate(tableUpdateList[i]);
         }
-        jQuery("#list4").trigger("reloadGrid");
+
     },
     handleTableUpdate : function(tableUpdate) {
         var tableData = this.findTable(tableUpdate.tableid);
         if (tableData) {
             tableData.seated = tableUpdate.seated;
-            jQuery("#list4").jqGrid('setRowData', tableUpdate.tableid, {seated:tableData.seated});
+            //it might be filtered out
+            var item = $("#tableItem"+tableData.id);
+            if(item.length>0) {
+                item.unbind().replaceWith(this.getTableItemHtml(tableData));
+                item.click(function(e){
+                    comHandler.openTable(tableData.id,tableData.capacity);
+                });
+            }
+            console.log("table updated, seated = "+ tableUpdate.seated);
         }
     },
     handleTableRemoved : function(tableid) {
         console.debug("removing table " + tableid);
         this.removeTable(tableid);
-        jQuery("#list4").jqGrid('delRowData', tableid);
+        $("#tableItem"+tableid).remove();
+
     },
     removeTable : function(tableid) {
         for (var i = 0; i < this.lobbyData.length; i ++) {
@@ -59,60 +153,66 @@ Poker.LobbyLayoutManager = Class.extend({
         return null;
     },
     reSort : function() {
-        var lastsort = jQuery("#list4").jqGrid('getGridParam', 'lastsort');
-        if (lastsort == 3) {
-            jQuery("#list4").jqGrid('sortGrid', 'seated', true);
-        }
+
     },
     createGrid : function() {
 
         $('#lobby').show();
+        $("#tableListItemContainer").empty();
 
         var self = this;
-        jQuery("#list4").jqGrid({
-            datatype: "local",
-            data: self.lobbyData,
-            height: 504,
-            colNames:['Name', 'Speed', 'Capacity', 'Seated', ''],
-            colModel:[
-                {name:'name',index:'name', width:200, sorttype:"string"},
-                {name:'speed',index:'speed', width:150, sorttype:"string"},
-                {name:'capacity',index:'capacity', width:110, sorttype:"int"},
-                {name:'seated',index:'seated', width:110, sorttype:"int"},
-                {name:'act',index:'act', width:100}
-            ],
-            caption: "Cash Games",
-            scroll: true,
-            multiselect: false,
-            gridComplete: function() {
-                var ids = jQuery("#list4").jqGrid('getDataIDs');
-                $.each(ids,function(i,cl){
-                    var pb = $("<div/>").append($("<div/>").attr("id","open-"+cl).addClass("open-button").html("Open"));
-                    jQuery("#list4").jqGrid('setRowData', cl, {act:pb.html()});
-                    $("#open-"+cl).click(
-                        function(){
-                            comHandler.openTable(cl,self.getCapacity(cl));
-                        });
+
+        $.each(this.lobbyData,function(i,data){
+            if(self.includeData(data)) {
+                $("#tableListItemContainer").append(self.getTableItemHtml(data));
+                $("#tableItem"+data.id).click(function(e){
+                    $("#tableListItemContainer").empty();
+                    comHandler.openTable(data.id,data.capacity);
                 });
-
-
-            },
-            cellSelect: function() {
             }
-
         });
-        $(".ui-jqgrid-bdiv").css("overflow","auto");
+        setTimeout(function(){
+            $("#tableListContainerWrapper").niceScroll("#tableListContainer",
+                {cursorcolor:"#555", scrollspeed:50, bouncescroll : false, cursorwidth : 8, cursorborder : "none"});
+        },400);
+
         console.debug("grid created");
+    },
+    includeData : function(tableData) {
+      for(var i = 0; i<this.filters.length; i++) {
+          var filter = this.filters[i];
+          if(filter.filter(tableData) == false) {
+              return false;
+          }
+      }
+      return true;
+    },
+    getTableItemHtml : function(t) {
+        var item =  Mustache.render(this.listItemTemplate,t);
+        return item;
     },
     readParam : function(key, params) {
 
         for (var i = 0; i < params.length; i ++) {
-
-
             var object = params[i];
+
             if (object.key == key) {
-                var valueArray = FIREBASE.ByteArray.fromBase64String(object.value);
-                return FIREBASE.Styx.readParam(valueArray);
+                //console.log("'"+object.key+"' val = " + object.value);
+                //var valueArray = FIREBASE.ByteArray.fromBase64String(object);
+                //console.log(object);
+
+                var p = null;
+                var valueArray =  FIREBASE.ByteArray.fromBase64String(object.value);
+                var byteArray = new FIREBASE.ByteArray(valueArray);
+                if ( object.type == 1 ) {
+                    p =  byteArray.readInt();
+                } else {
+                    p =  byteArray.readString();
+                }
+
+                //shouldn't this work?
+                //  var p =  FIREBASE.Styx.readParam(object);
+                return p;
             }
         }
     },
@@ -123,6 +223,41 @@ Poker.LobbyLayoutManager = Class.extend({
     showLogin : function() {
         $('#dialog1').fadeIn(1000);
 
+    }
+});
+
+Poker.LobbyFilter = Class.extend({
+    enabled : false,
+    id : null,
+    filterFunction : null,
+    lobbyLayoutManager : null,
+    init : function(id,enabled,filterFunction,lobbyLayoutManager) {
+        this.enabled = enabled;
+        this.id = id;
+        this.filterFunction = filterFunction;
+        this.lobbyLayoutManager = lobbyLayoutManager;
+        var self = this;
+
+        $("#"+id).click(function(){
+            self.enabled=!self.enabled;
+            $(this).toggleClass("active");
+            self.filterUpdated();
+        });
+        if(this.enabled==true) {
+            $("#"+id).addClass("active");
+        }
+    },
+    filterUpdated : function(){
+        this.lobbyLayoutManager.createGrid();
+    },
+    /**
+     * Returns true if it should be included in the lobby and
+     * false if it shouldn't
+     * @param lobbyData
+     * @return {boolean} if it should be included
+     */
+    filter : function(lobbyData) {
+        return this.filterFunction(this.enabled,lobbyData);
     }
 });
 

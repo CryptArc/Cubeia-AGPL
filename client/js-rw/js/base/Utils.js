@@ -10,5 +10,15 @@ Poker.Utils = {
         var suits = "cdhs ";
         var cardString = ranks.charAt(gamecard.rank) + suits.charAt(gamecard.suit);
         return cardString;
+    },
+    formatBlinds : function(amount) {
+        var str = ""+ Poker.Utils.formatCurrency(amount);
+        if(str.charAt(str.length-1)=="0") {
+            str = str.substr(0,str.length-1);
+            if(str.charAt(str.length-1)=="0"){
+                str = str.substr(0,str.length-2);
+            }
+        }
+        return str;
     }
 };

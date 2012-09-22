@@ -16,7 +16,7 @@ Poker.CommunicationHandler = Poker.AbstractConnectorHandler.extend({
 
     },
     showConnectStatus : function(text) {
-      $("#connectStatus").html(text);
+      $(".connect-status").html(text);
     },
     openTable : function(tableId,capacity){
         console.log("CommunicationHandler.openTable");
@@ -30,8 +30,10 @@ Poker.CommunicationHandler = Poker.AbstractConnectorHandler.extend({
 
     },
     lobbyCallback : function(protocolObject) {
+        console.log(protocolObject);
         switch (protocolObject.classId) {
             // Table snapshot list
+
             case FB_PROTOCOL.TableSnapshotListPacket.CLASSID :
                 this.lobbyLayoutManager.handleTableSnapshotList(protocolObject.snapshots);
                 break;
@@ -51,6 +53,7 @@ Poker.CommunicationHandler = Poker.AbstractConnectorHandler.extend({
     loginCallback : function(status,playerId,name) {
         if (status == "OK") {
             Poker.MyPlayer.onLogin(playerId,name);
+            $("#username").html(name);
             $('#dialog1').fadeOut(1000);
             this.subscribeToLobby();
         }

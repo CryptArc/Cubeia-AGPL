@@ -31,7 +31,7 @@
     <script type="text/javascript" src="js/lib/json2.js"></script>
     <script type="text/javascript"  src="js/lib/matrix.js"></script>
     <script type="text/javascript"  src="js/lib/firmin.js"></script>
-
+    <script type="text/javascript"  src="js/lib/jquery.nicescroll.js"></script>
 
     <script type="text/javascript" src="js/base/ui/CircularProgressBar.js"></script>
 
@@ -72,6 +72,8 @@
 
 
 
+
+
     <script type="text/javascript">
         var comHandler = null;
         function handleKeyUp(keyCode) {
@@ -87,8 +89,9 @@
                     e.preventDefault();
                 }
             });
-            var webSocketUrl = "localhost";
+            //var webSocketUrl = "localhost";
             //var webSocketUrl = "192.168.1.110";
+            var webSocketUrl = "192.168.0.100";
             var webSocketPort = 9191;
             var tableComManager = null;
             //handles the lobby UI
@@ -129,8 +132,52 @@
 <body>
     <div id="boxes" class="lobby-container">
         <div id="lobby" class="lobby-list" style="display:none;">
-            <div class="logo-container"><img src="images/lobby/logo.png"/></div>
-            <table id="list4"></table>
+            <div class="user-panel">
+               User:<span id="username"></span> <span class="status">(<span class="connect-status"></span>)</span>
+            </div>
+            <div class="left-column">
+                <div class="logo-container">
+                    <img src="images/lobby/logo.png"/>
+                </div>
+                <ul class="main-menu">
+                    <li class="selected">Cash Games</li>
+                    <li>Sit &amp; Go's</li>
+                    <li>Tournaments</li>
+                </ul>
+            </div>
+            <div class="right-column">
+                <div class="table-filter">
+                    <div class="filter-group">
+                        <div class="filter-label">Show tables:</div>
+                        <div class="filter-button" id="fullTables">Full</div>
+                        <div class="filter-button" id="emptyTables">Empty</div>
+                    </div>
+                    <div class="filter-group">
+                        <div class="filter-label">Show Limits:</div>
+                        <div class="filter-button" id="noLimit">NL</div>
+                        <div class="filter-button" id="potLimit">PL</div>
+                        <div class="filter-button" id="fixedLimit">FL</div>
+                    </div>
+
+                </div>
+                <div class="lobby-tab">
+                    <div id="tableListContainerWrapper">
+                        <div id="tableListContainer">
+                            <div class="table-item-header">
+                                <div class="table-name">name</div>
+                                <div class="seated">seated</div>
+                                <div class="blinds">blinds</div>
+                                <div class="type">type</div>
+                                <div class="play"></div>
+                            </div>
+
+                            <div id="tableListItemContainer">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div id="dialog1" class="login-dialog">
             <div class="logo-container"><img src="images/lobby/logo.png"/></div>
@@ -143,7 +190,7 @@
                     <span>login</span>
                 </div>
             </div>
-            <div class="status-label">Status: <span id="connectStatus"></span></div>
+            <div class="status-label">Status: <span class="connect-status"></span></div>
 
         </div>
 
@@ -321,5 +368,16 @@
         </div>
     </div>
 
+    <div id="tableListItemTemplate" style="display: none;">
+        <div class="table-item  {{tableStatus}}" id="tableItem{{id}}">
+            <div class="table-name">{{name}}</div>
+            <div class="seated">{{seated}}/{{capacity}}</div>
+            <div class="blinds">{{blinds}}</div>
+            <div class="type">{{type}}</div>
+            <div class="play">&raquo;</div>
+            <div class="full">Full</div>
+        </div>
+
+    </div>
 </body>
 </html>
