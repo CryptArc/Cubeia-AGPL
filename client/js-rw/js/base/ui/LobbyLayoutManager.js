@@ -9,6 +9,22 @@ Poker.LobbyLayoutManager = Class.extend({
         var templateManager = new Poker.TemplateManager();
         this.listItemTemplate = templateManager.getTemplate("tableListItemTemplate");
         var self = this;
+
+        $("#cashGameMenu").click(function(e){
+            $(".main-menu .selected").removeClass("selected");
+            $(this).addClass("selected");
+        });
+        $("#sitAndGoMenu").click(function(e){
+            $(".main-menu .selected").removeClass("selected");
+            $(this).addClass("selected");
+        });
+        $("#tournamentMenu").click(function(e){
+            $(".main-menu .selected").removeClass("selected");
+            $(this).addClass("selected");
+        });
+        this.initFilters();
+    },
+    initFilters : function() {
         var fullTablesFilter = new Poker.LobbyFilter("fullTables",true,
             function(enabled,lobbyData){
                 if(!enabled) {
@@ -59,7 +75,6 @@ Poker.LobbyLayoutManager = Class.extend({
                 }
             },this);
         this.filters.push(noLimitFilter);
-
     },
     handleTableSnapshotList: function(tableSnapshotList) {
         for (var i = 0; i < tableSnapshotList.length; i ++) {
@@ -87,7 +102,7 @@ Poker.LobbyLayoutManager = Class.extend({
             var i = this.lobbyData.push(data);
 
         } else {
-            console.debug("duplicate found - tableid: " + tableSnapshot.tableid);
+            console.log("duplicate found - tableid: " + tableSnapshot.tableid);
         }
     },
     getTableStatus : function(seated,capacity) {

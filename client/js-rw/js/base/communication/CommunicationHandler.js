@@ -54,6 +54,7 @@ Poker.CommunicationHandler = Poker.AbstractConnectorHandler.extend({
         if (status == "OK") {
             Poker.MyPlayer.onLogin(playerId,name);
             $("#username").html(name);
+            $("#userId").html(playerId);
             $('#dialog1').fadeOut(1000);
             this.subscribeToLobby();
         }

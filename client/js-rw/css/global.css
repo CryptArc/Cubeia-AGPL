@@ -7,4 +7,5 @@ body {
     height:100%;
     background: #262626 url("../images/table/table-background.jpg") no-repeat fixed;
     background-size: contain;
+    overflow: hidden;
 }

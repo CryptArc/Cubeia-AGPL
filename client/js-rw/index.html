@@ -133,16 +133,16 @@
     <div id="boxes" class="lobby-container">
         <div id="lobby" class="lobby-list" style="display:none;">
             <div class="user-panel">
-               User:<span id="username"></span> <span class="status">(<span class="connect-status"></span>)</span>
+               <span class="status">Logged in: </span><span id="username"></span> (<span id="userId"></span>)
             </div>
             <div class="left-column">
                 <div class="logo-container">
                     <img src="images/lobby/logo.png"/>
                 </div>
                 <ul class="main-menu">
-                    <li class="selected">Cash Games</li>
-                    <li>Sit &amp; Go's</li>
-                    <li>Tournaments</li>
+                    <li id="cashGameMenu" class="selected">Cash Games</li>
+                    <li id="sitAndGoMenu">Sit &amp; Go's</li>
+                    <li id="tournamentMenu">Tournaments</li>
                 </ul>
             </div>
             <div class="right-column">
