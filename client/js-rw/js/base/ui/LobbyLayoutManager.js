@@ -176,9 +176,10 @@ Poker.LobbyLayoutManager = Class.extend({
         $("#tableListItemContainer").empty();
 
         var self = this;
-
+        var count = 0;
         $.each(this.lobbyData,function(i,data){
             if(self.includeData(data)) {
+                count++;
                 $("#tableListItemContainer").append(self.getTableItemHtml(data));
                 $("#tableItem"+data.id).click(function(e){
                     $("#tableListItemContainer").empty();
@@ -186,6 +187,9 @@ Poker.LobbyLayoutManager = Class.extend({
                 });
             }
         });
+        if(count==0) {
+            $("#tableListItemContainer").append($("<div/>").addClass("no-tables").html("Currently no tables matching your criteria"));
+        }
         setTimeout(function(){
             $("#tableListContainerWrapper").niceScroll("#tableListContainer",
                 {cursorcolor:"#555", scrollspeed:50, bouncescroll : false, cursorwidth : 8, cursorborder : "none"});

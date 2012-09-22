@@ -266,3 +266,10 @@
     width:100%;
 
 }
+
+.no-tables {
+    width:100%;
+    font-size:150%;
+    clear:both;
+    padding:2%;
+}
