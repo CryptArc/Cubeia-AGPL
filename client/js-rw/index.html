@@ -74,6 +74,11 @@
 
     <script type="text/javascript">
         var comHandler = null;
+        function handleKeyUp(keyCode) {
+            if(keyCode == 13) {
+                $("#loginButton").click();
+            }
+        }
         $(document).ready(function(){
             $(".describe").describe();
 
@@ -99,6 +104,12 @@
                     comHandler.doLogin(usr,pwd);
 
                 }
+            });
+            $("#user").keyup(function(e){
+               handleKeyUp(e.keyCode);
+            });
+            $("#pwd").keyup(function(e){
+                handleKeyUp(e.keyCode);
             });
 
             setFontSize();

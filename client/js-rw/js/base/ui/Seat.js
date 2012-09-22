@@ -1,6 +1,9 @@
 "use strict";
 var Poker = Poker || {};
-
+/**
+ * Handles all interactions and UI for a players seat
+ * @type {Poker.Seat}
+ */
 Poker.Seat = Class.extend({
    templateManager : null,
    seatId : -1,
@@ -12,6 +15,8 @@ Poker.Seat = Class.extend({
    cardsContainer : null,
    avatarElement : null,
    actionAmount : null,
+   actionText : null,
+   handStrength : null,
    init : function(seatId, player, templateManager) {
        this.seatId = seatId
        this.player = player;
@@ -19,8 +24,7 @@ Poker.Seat = Class.extend({
        this.seatElement =  $("#seat"+this.seatId);
        this.cssAnimator = new Poker.CSSAnimator();
        this.renderSeat();
-       this.cardsContainer = this.seatElement.find(".cards-container");
-       this.actionAmount = this.seatElement.find(".action-amount");
+
    },
    setSeatPos : function(previousPos, position) {
      this.seatElement.removeClass("seat-empty").removeClass("seat-pos-"+previousPos).removeClass("seat-inactive").addClass("seat-pos-"+position);
@@ -31,6 +35,14 @@ Poker.Seat = Class.extend({
        this.progressBarElement = this.seatElement.find(".progress-bar");
        this.avatarElement = this.seatElement.find(".avatar");
        this.avatarElement.addClass("avatar"+(this.player.id%9));
+
+       this.cardsContainer = this.seatElement.find(".cards-container");
+       this.actionAmount = this.seatElement.find(".action-amount");
+       this.actionText = this.seatElement.find(".action-text");
+       var self = this;
+
+       this.handStrength = this.seatElement.find(".hand-strength");
+
        this.reset();
    },
    getDealerButtonOffsetElement : function() {
@@ -62,7 +74,7 @@ Poker.Seat = Class.extend({
    },
    reset : function() {
        this.hideActionInfo();
-       this.seatElement.find(".hand-strength").html("").hide();
+       this.handStrength.html("").hide();
        this.clearProgressBar();
        if(this.cardsContainer) {
            this.cardsContainer.empty();
@@ -76,7 +88,7 @@ Poker.Seat = Class.extend({
        }
    },
    hideActionText : function() {
-       this.seatElement.find(".action-text").html("").hide();
+       this.actionText.html("").hide();
    },
    onAction : function(actionType,amount) {
        this.inactivateSeat();
@@ -86,7 +98,7 @@ Poker.Seat = Class.extend({
        }
    },
    showActionData : function(actionType,amount) {
-       this.seatElement.find(".action-text").html(actionType.text).show();
+       this.actionText.html(actionType.text).show();
        var icon = $("<div/>").addClass("player-action-icon").addClass(actionType.id);
        if(amount>0) {
            this.actionAmount.removeClass("placed");
@@ -126,12 +138,14 @@ Poker.Seat = Class.extend({
        }
    },
     /**
-     * When a betting round is complete (communicards are dealt/show shown);
+     * When a betting round is complete (community cards are dealt/shown);
      */
    onBettingRoundComplete : function(){
        this.inactivateSeat();
+
+
    },
-   activateSeat : function(allowedActions, timeToAct) {
+   activateSeat : function(allowedActions, timeToAct,mainPot) {
        this.seatElement.addClass("active-seat");
        this.progressBarElement.show();
        var div = this.progressBarElement.get(0);
@@ -142,14 +156,57 @@ Poker.Seat = Class.extend({
        },50);
    },
    showHandStrength : function(hand) {
-       this.seatElement.find(".action-amount").html("").hide();
-       this.seatElement.find(".action-text").html("").hide();
+       this.actionAmount.html("").hide();
+       this.actionText.html("").hide();
        if(hand.id != Poker.Hand.UNKNOWN.id) {
-           this.seatElement.find(".hand-strength").html(hand.text).show();
+           this.handStrength.html(hand.text).show();
        }
 
    },
    clear : function() {
 
+   },
+   moveAmountToPot : function() {
+       this.hideActionInfo();
+       return;
+       //before enabling animations for bet amounts going into the pot we need a better
+       //handling of animations
+       var self = this;
+       var amount = this.actionAmount.get(0);
+
+       this.cssAnimator.addTransitionCallback(amount, function(e){
+           self.onMoveToPotEnd();
+       });
+       setTimeout(function(){
+           self.moveToPotComplete = false;
+           var pos = self.calculatePotOffset();
+           self.cssAnimator.addTransform(amount,"translate3d("+pos.left+","+pos.top+",0)");
+       },50);
+
+       setTimeout(function(){
+           self.onMoveToPotEnd();
+       }, 700);
+   },
+   moveToPotComplete : true,
+   onMoveToPotEnd : function() {
+       if(this.moveToPotComplete == false) {
+           this.moveToPotComplete = true;
+           this.hideActionInfo();
+           this.actionAmount.attr("style","");
+           this.cssAnimator.removeTransitionCallback(this.actionAmount.get(0))
+       }
+   },
+   calculatePotOffset : function(){
+        var c = $("#tableContainer");
+        var width = c.width();
+        var height = c.height();
+        var amountOffset = this.actionAmount.offset();
+        var mainPotOffset = $("#mainPotContainer").offset();
+        var left = mainPotOffset.left - amountOffset.left;
+        var top = mainPotOffset.top - amountOffset.top;
+        return { top : Math.round(top) +"px", left :Math.round(left)+"px" };
+   },
+   isMySeat : function() {
+       return false;
    }
 });

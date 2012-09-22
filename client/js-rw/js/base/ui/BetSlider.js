@@ -50,15 +50,9 @@ Poker.BetSlider = Class.extend({
             var value = m.value;
             var marker = m.name;
             var percent = Math.round(100*(value/self.maxBet));
-            var position = 0;
-            var property = "top";
-            if(percent<50) {
-                position = percent;
-                property = "bottom";
-            } else {
-                position = 100 - percent;
-            }
-            var div = $("<div/>").append(marker).addClass("marker").css(property, position+"%");
+
+
+            var div = $("<div/>").append(marker).addClass("marker").css("bottom", percent+"%");
             container.append(div);
             div.click(function(e){
                 self.slider.slider("value",value);
@@ -88,7 +82,26 @@ Poker.BetSlider = Class.extend({
           $("#"+this.containerId).remove();
       }
     },
+    closeValueExist : function(val) {
+      for(var x in this.markers) {
+          var mv = 100 * this.markers[x].value / this.maxBet;
+          var valPercent = 100 * val / this.maxBet;
+          if(mv<(valPercent+5) && mv>(valPercent-5)){
+              return true;
+          }
+      }
+      return false;
+    },
+    /**
+     * Adds a marker to the slider, if there is a marker too close
+     * tho this marker value it will be ignored
+     *
+     * @param name  - marker label
+     * @param value - the value of the marker
+     */
     addMarker : function(name, value) {
-        this.markers.push({name : name, value  : value});
+        if(value<=this.maxBet && value>=this.minBet && !this.closeValueExist(value)) {
+            this.markers.push({name : name, value  : value})
+        }
     }
 });

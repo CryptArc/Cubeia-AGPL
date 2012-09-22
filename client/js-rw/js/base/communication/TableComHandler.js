@@ -69,6 +69,10 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
     },
     onOpenTable : function(tableId,capacity){
         console.log("ON OPEN TABLE")
+        this.onOpenTableAccepted(tableId,capacity);
+        this.connector.watchTable(tableId);
+    },
+    onOpenTableAccepted : function(tableId,capacity) {
         var tableContainer = $("#tableContainer").get(0);
         var templateManager = new Poker.TemplateManager();
         var tableLayoutManager = new Poker.TableLayoutManager(tableContainer,templateManager,this,capacity);
@@ -77,7 +81,6 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
         this.tableId = tableId;
         this.tableManager.createTable(tableId,capacity,[tableLayoutManager]);
         this.pokerProtocolHandler = new Poker.PokerProtocolHandler(this.tableManager,this);
-        this.connector.watchTable(tableId);
     },
     handleSeatInfo : function(seatInfoPacket) {
         console.log(seatInfoPacket);
@@ -157,8 +160,16 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
                 this.handleLeaveResponse(protocolObject);
                 $("#boxes").show(); //should be somewhere else
                 break;
+            case FB_PROTOCOL.WatchResponsePacket.CLASSID:
+                if(protocolObject.status == "DENIED_ALREADY_SEATED")  {
+                    this.joinTable();
+                } else if(protocolObject.status == "CONNECTED") {
+
+                }
+                break;
             default :
                 console.log("NO HANDLER");
+                console.log(protocolObject);
                 break;
         }
     },

@@ -203,19 +203,19 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
 
 
         this._storeCard(card);
-        this._hideSeatActionInfo();
+        this._moveToPot();
     },
     onMainPotUpdate : function(amount) {
         var t = this.templateManager.getTemplate("mainPotTemplate");
-        $("#mainPotContainer").html(Mustache.render(t,{amount : amount}));
+        $("#mainPotContainer").html(Mustache.render(t,{amount : Poker.Utils.formatCurrency(amount)}));
     },
-    onRequestPlayerAction : function(player,allowedActions,timeToAct){
+    onRequestPlayerAction : function(player,allowedActions,timeToAct,mainPot){
         var seats = this.seats.values();
         for (var s in seats) {
             seats[s].inactivateSeat();
         }
         var seat = this.getSeatByPlayerId(player.id);
-        seat.activateSeat(allowedActions,timeToAct);
+        seat.activateSeat(allowedActions,timeToAct,mainPot);
     },
     onLeaveTableSuccess : function() {
         $(this.tableContainer).hide();
@@ -261,7 +261,9 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         for(var i = 0; i<this.capacity; i++){
             var seat = $("#seat"+i);
             if(seat.hasClass("seat-empty")){
-                seat.removeClass("seat-pos-"+i).addClass("seat-inactive").addClass("seat-pos-"+this._getNormalizedSeatPosition(i));
+               if(this.myPlayerSeatId!=i) {
+                   seat.removeClass("seat-pos-"+i).addClass("seat-inactive").addClass("seat-pos-"+this._getNormalizedSeatPosition(i));
+               }
             }
         }
 
@@ -282,6 +284,12 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         var seats = this.seats.values();
         for(var s in seats) {
             seats[s].hideActionInfo();
+        }
+    },
+    _moveToPot : function() {
+        var seats = this.seats.values();
+        for(var s in seats) {
+            seats[s].moveAmountToPot();
         }
     }
 });

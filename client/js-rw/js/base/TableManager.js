@@ -4,6 +4,9 @@ var Poker = Poker || {};
 Poker.TableManager = Class.extend({
     table : null,
     tableListeners : [],
+    handCount: 0,
+    dealerSeatId : -1,
+    mainPot : 0,
     init : function() {
 
     },
@@ -27,6 +30,8 @@ Poker.TableManager = Class.extend({
       return this.table.id;
     },
     startNewHand : function(handId, dealerSeatId) {
+        this.handCount++;
+        this.dealerSeatId = dealerSeatId;
         this._notifyNewHand(dealerSeatId);
     },
     endHand : function(hands,potTransfers) {
@@ -34,6 +39,20 @@ Poker.TableManager = Class.extend({
             this.showHandStrength(
                 hands[h].player,
                 Poker.Hand.fromId(hands[h].handType));
+        }
+        var count = this.handCount;
+        var self = this;
+        setTimeout(function(){
+            //if no new hand has started in the next 15 secs we clear the table
+            self.clearTable(count);
+        },15000);
+    },
+    clearTable : function(handCount) {
+        if(this.handCount==handCount) {
+            console.log("No hand started clearing table");
+            this._notifyNewHand(this.dealerSeatId);
+        } else {
+            console.log("new hand started, skipping clear table")
         }
     },
     showHandStrength : function(playerId,hand) {
@@ -110,11 +129,12 @@ Poker.TableManager = Class.extend({
     handleRequestPlayerAction : function(playerId,allowedActions,timeToAct) {
         var player = this.table.getPlayerById(playerId);
         for(var x in this.tableListeners)   {
-            this.tableListeners[x].onRequestPlayerAction(player,allowedActions,timeToAct);
+            this.tableListeners[x].onRequestPlayerAction(player,allowedActions,timeToAct,this.mainPot);
         }
 
     },
     updateMainPot : function(amount){
+        this.mainPot = amount;
         this._notifyMainPotUpdated(amount);
     },
     dealCommunityCard : function(cardId,cardString) {
@@ -126,6 +146,7 @@ Poker.TableManager = Class.extend({
         for(var p in pots) {
             if(pots[p].type == Poker.PotType.MAIN) {
                 console.log("updating main pot");
+                this.mainPot = pots[p].amount;
                 this._notifyMainPotUpdated(pots[p].amount);
                 break;
             }

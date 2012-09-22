@@ -24,8 +24,8 @@ Poker.PokerProtocolHandler = function(tableManager,tableComHandler) {
 
 		var protocolObject = com.cubeia.games.poker.io.protocol.ProtocolObjectFactory.create(classId, gameData);
 
-        //console.log("Received packet: ");
-        //console.log(protocolObject);
+        console.log("Received packet: ");
+        console.log(protocolObject);
 
         switch (protocolObject.classId() ) {
 			case com.cubeia.games.poker.io.protocol.BestHand.CLASSID:
@@ -170,7 +170,7 @@ Poker.PokerProtocolHandler = function(tableManager,tableComHandler) {
                     if(com.cubeia.games.poker.io.protocol.PotTypeEnum.SIDE == p.type) {
                         type = Poker.PotType.SIDE;
                     }
-                    pots.push(new Poker.Pot(p.id,type, Poker.Utils.formatCurrency(p.amount)));
+                    pots.push(new Poker.Pot(p.id,type, p.amount));
                 }
                 if(pots.length>0) {
                     this.tableManager.updatePots(pots);
@@ -272,7 +272,7 @@ Poker.PokerProtocolHandler = function(tableManager,tableComHandler) {
     };
     this.handleRequestAction = function(requestAction) {
 
-        this.tableManager.updateMainPot(Poker.Utils.formatCurrency(requestAction.currentPotSize));
+        this.tableManager.updateMainPot(requestAction.currentPotSize);
         this.seq = requestAction.seq;
         var acts = this.getPokerActions(requestAction.allowedActions);
 

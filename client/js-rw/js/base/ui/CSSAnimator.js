@@ -67,9 +67,15 @@ Poker.CSSAnimator = Class.extend({
         if(!element || !func) {
            throw "Poker.CSSAnimator: Illegal argument, element and callback function must be set"
         }
-        element.addEventListener("webkitAnimationEnd", func,false);
+        element.addEventListener("webkitTransitionEnd", func,false);
         element.addEventListener("transitionend", func,false);
         element.addEventListener("oanimationend", func,false);
         element.addEventListener("msTransitionEnd",func,false);
+    },
+    removeTransitionCallback : function(element) {
+        element.removeEventListener("webkitTransitionEnd");
+        element.removeEventListener("transitionend");
+        element.removeEventListener("oanimationend");
+        element.removeEventListener("msTransitionEnd");
     }
 });
