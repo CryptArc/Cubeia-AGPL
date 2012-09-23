@@ -10,7 +10,9 @@
     <link rel="apple-touch-icon" href="images/lobby/icon.png" />
 
     <link rel="stylesheet" type="text/css" href="css/global.css"/>
+    <!--
     <link rel="stylesheet" type="text/css" href="css/lobby.css"/>
+    -->
     <link rel="stylesheet" type="text/css" href="css/table.css"/>
     <link rel="stylesheet" type="text/css" href="css/seat.css"/>
     <link rel="stylesheet" type="text/css" href="css/table-10.css"/>
@@ -20,8 +22,15 @@
     <link rel="stylesheet" type="text/css" href="css/avatars.css"/>
     <link rel="stylesheet" type="text/css" href="css/transitions.css"/>
 
+    <link rel="stylesheet/less" type="text/css" href="less/lobby.less">
+
+
     <!--ipad home fix -->
     <link type="text/css" rel="stylesheet" media="only screen and (min-device-width: 768px) and (max-device-width: 1024px)" href="css/ipad.css" />
+
+
+    <script type="text/javascript"  src="js/lib/less-1.3.0.min.js"></script>
+
 
     <script type="text/javascript" src="js/lib/classjs.js"></script>
     <script type="text/javascript" src="js/lib/jquery-1.7.2.min.js"></script>
@@ -74,6 +83,11 @@
 
 
 
+    <script type="text/javascript">
+        $(document).ready(function(){
+            less.watch(); //only for debug, auto reloading of less css files
+        });
+    </script>
 
 
     <script type="text/javascript">
