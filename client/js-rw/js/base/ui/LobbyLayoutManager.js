@@ -166,11 +166,12 @@ Poker.LobbyLayoutManager = Class.extend({
             var item = $("#tableItem"+tableData.id);
             if(item.length>0) {
                 item.unbind().replaceWith(this.getTableItemHtml(tableData));
+                var item = $("#tableItem"+tableData.id);  //need to pick it up again to be able to bind to it
                 item.click(function(e){
                     comHandler.openTable(tableData.id,tableData.capacity);
                 });
             }
-            console.log("table updated, seated = "+ tableUpdate.seated);
+            console.log("table " + tableData.id +"  updated, seated = "+ tableData.seated);
         }
     },
     handleTableRemoved : function(tableid) {
