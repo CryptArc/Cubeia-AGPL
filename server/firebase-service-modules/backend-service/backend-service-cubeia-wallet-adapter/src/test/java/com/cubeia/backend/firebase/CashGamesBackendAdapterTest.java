@@ -31,6 +31,7 @@ import com.cubeia.backoffice.wallet.api.dto.report.TransactionResult;
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.firebase.api.service.ServiceContext;
 import com.cubeia.firebase.api.service.ServiceRegistry;
+import com.cubeia.games.poker.common.Money;
 import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
 import org.junit.Before;
 import org.junit.Test;

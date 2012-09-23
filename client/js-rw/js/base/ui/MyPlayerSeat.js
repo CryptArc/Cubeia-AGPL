@@ -9,6 +9,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.myActionsManager = myActionsManager;
         this.seatElement = $("#myPlayerSeat");
         this.renderSeat();
+
         $("#myPlayer").show();
         this.myActionsManager.onSitIn();
         this.circularProgressBar = new CircularProgressBar("circularProgressBar");
@@ -20,11 +21,17 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         var t = this.templateManager.getTemplate("myPlayerSeatTemplate");
         var output = Mustache.render(t,this.player);
         this.seatElement.html(output);
+
+        this.cardsContainer = this.seatElement.find(".cards-container");
+        this.actionAmount = this.seatElement.find(".action-amount");
+        this.actionText = this.seatElement.find(".action-text");
+        this.handStrength = this.seatElement.find(".hand-strength");
+
         this.reset();
         $("#myPlayerName").html(this.player.name);
     },
-    activateSeat : function(allowedActions, timeToAct) {
-        this.myActionsManager.onRequestPlayerAction(allowedActions);
+    activateSeat : function(allowedActions, timeToAct,mainPot) {
+        this.myActionsManager.onRequestPlayerAction(allowedActions,mainPot);
         this.circularProgressBar.show();
         this.circularProgressBar.render(timeToAct);
 
@@ -45,11 +52,18 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.handlePlayerStatus();
     },
     handlePlayerStatus : function() {
-        if(this.player.status == Poker.PlayerStatus.SITTING_OUT) {
+        if(this.player.tableStatus == Poker.PlayerTableStatus.SITTING_OUT) {
             this.myActionsManager.onSitOut();
         } else {
             this.myActionsManager.onSitIn();
         }
+    },
+    animateDealCard : function(div) {
+        var self = this;
+        setTimeout(function(){
+           div.addClass("dealt");
+        },50);
+
     },
     fold : function() {
         this.seatElement.addClass("seat-folded");
@@ -60,5 +74,11 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.seatElement.empty();
         $("#myPlayer").hide();
         this.circularProgressBar.detach();
+    },
+    getDealerButtonOffsetElement : function() {
+        return this.cardsContainer;
+    },
+    isMySeat : function() {
+        return true;
     }
 });

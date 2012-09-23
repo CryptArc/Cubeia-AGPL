@@ -22,6 +22,10 @@
         <constructor-arg ref="mongo"/>
         <constructor-arg name="databaseName" value="hands"/>
     </bean>
+    
+    <bean id="webConfig" class="com.cubeia.games.poker.admin.Configuration">
+    	<property name="networkUrl" value="${network.bo-base-url}" />
+    </bean>
 
     <bean id="adminDAO" class="com.cubeia.games.poker.admin.db.AbstractDAO">
       <property name="entityManagerFactory" ref="entityManagerFactory"/>

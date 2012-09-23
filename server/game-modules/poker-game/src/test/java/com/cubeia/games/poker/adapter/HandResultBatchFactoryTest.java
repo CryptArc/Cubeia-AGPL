@@ -17,36 +17,41 @@
 
 package com.cubeia.games.poker.adapter;
 
-import com.cubeia.backend.cashgame.PlayerSessionId;
-import com.cubeia.backend.cashgame.PlayerSessionIdImpl;
-import com.cubeia.backend.cashgame.TableId;
-import com.cubeia.backend.cashgame.TableIdImpl;
-import com.cubeia.backend.cashgame.dto.BatchHandRequest;
-import com.cubeia.games.poker.model.PokerPlayerImpl;
-import com.cubeia.poker.model.RatedPlayerHand;
-import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.pot.Pot;
-import com.cubeia.poker.pot.PotTransition;
-import com.cubeia.poker.pot.RakeInfoContainer;
-import com.cubeia.poker.pot.RakeInfoContainer;
-import com.cubeia.poker.result.HandResult;
-import com.cubeia.poker.result.Result;
-import org.junit.Test;
-
-import java.util.*;
-
-import static com.cubeia.games.poker.handler.BackendPlayerSessionHandler.DEFAULT_ZERO_MONEY;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Test;
+
+import com.cubeia.backend.cashgame.PlayerSessionId;
+import com.cubeia.backend.cashgame.PlayerSessionIdImpl;
+import com.cubeia.backend.cashgame.TableId;
+import com.cubeia.backend.cashgame.TableIdImpl;
+import com.cubeia.backend.cashgame.dto.BatchHandRequest;
+import com.cubeia.games.poker.PokerConfigServiceMock;
+import com.cubeia.games.poker.model.PokerPlayerImpl;
+import com.cubeia.poker.model.RatedPlayerHand;
+import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.pot.Pot;
+import com.cubeia.poker.pot.PotTransition;
+import com.cubeia.poker.pot.RakeInfoContainer;
+import com.cubeia.poker.result.HandResult;
+import com.cubeia.poker.result.Result;
+
 public class HandResultBatchFactoryTest {
 
     @Test
     public void testCreateBatchHandRequest() {
         HandResultBatchFactory handResultFactory = new HandResultBatchFactory();
+        handResultFactory.configService = new PokerConfigServiceMock();
         String handId = "55555";
 
         int playerId1 = 22;
@@ -55,10 +60,10 @@ public class HandResultBatchFactoryTest {
         when(pokerPlayer1.getId()).thenReturn(playerId1);
         when(pokerPlayer1.getPlayerSessionId()).thenReturn(playerSessionId1);
 
-        int playerId2 = 33;
+        int playerId2 = 33; 
         PlayerSessionId playerSessionId2 = new PlayerSessionIdImpl(playerId2);
         PokerPlayerImpl pokerPlayer2 = mock(PokerPlayerImpl.class);
-        when(pokerPlayer2.getId()).thenReturn(playerId2);
+        when(pokerPlayer2.getId()).thenReturn(playerId2); 
         when(pokerPlayer2.getPlayerSessionId()).thenReturn(playerSessionId2);
 
         TableId tableId = new TableIdImpl();
@@ -81,8 +86,8 @@ public class HandResultBatchFactoryTest {
 
         com.cubeia.backend.cashgame.dto.HandResult hr1 = findByPlayerSessionId(playerSessionId1, batchHandRequest.getHandResults());
         assertThat(hr1.getAggregatedBet().getAmount(), is(result1.getWinningsIncludingOwnBets() - result1.getNetResult()));
-        assertThat(hr1.getAggregatedBet().getCurrencyCode(), is(DEFAULT_ZERO_MONEY.getCurrencyCode()));
-        assertThat(hr1.getAggregatedBet().getFractionalDigits(), is(DEFAULT_ZERO_MONEY.getFractionalDigits()));
+        assertThat(hr1.getAggregatedBet().getCurrencyCode(), is("EUR"));
+        assertThat(hr1.getAggregatedBet().getFractionalDigits(), is(2));
         assertThat(hr1.getWin().getAmount(), is(result1.getWinningsIncludingOwnBets()));
         assertThat(hr1.getRake().getAmount(), is(1000L / 100));
         assertThat(hr1.getPlayerSession(), is(playerSessionId1));
@@ -91,6 +96,7 @@ public class HandResultBatchFactoryTest {
     @Test(expected = IllegalStateException.class)
     public void testCreateUnbalancedBatchHandRequest() {
         HandResultBatchFactory handResultFactory = new HandResultBatchFactory();
+        handResultFactory.configService = new PokerConfigServiceMock();
         String handId = "55555";
 
         int playerId1 = 22;
@@ -123,6 +129,7 @@ public class HandResultBatchFactoryTest {
     @Test
     public void testCreateHandBatch() {
         HandResultBatchFactory handResultFactory = new HandResultBatchFactory();
+        handResultFactory.configService = new PokerConfigServiceMock();
         String handId = "12345";
 
         PokerPlayerImpl pokerPlayer8 = createMockPlayer(8);

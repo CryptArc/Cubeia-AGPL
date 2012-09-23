@@ -35,13 +35,13 @@ import com.cubeia.firebase.api.mtt.support.MTTSupport;
 import com.cubeia.firebase.api.mtt.support.tables.Move;
 import com.cubeia.firebase.api.mtt.support.tables.TableBalancer;
 import com.cubeia.firebase.guice.tournament.TournamentAssist;
+import com.cubeia.games.poker.common.SystemTime;
 import com.cubeia.games.poker.io.protocol.TournamentOut;
 import com.cubeia.games.poker.tournament.configuration.TournamentTableSettings;
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsLevel;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.TournamentLifeCycle;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
-import com.cubeia.games.poker.tournament.util.DateFetcher;
 import com.cubeia.games.poker.tournament.util.ProtocolFactory;
 import com.cubeia.poker.timing.TimingFactory;
 import org.apache.log4j.Logger;
@@ -62,7 +62,7 @@ public class PokerTournament implements Serializable {
 
     private TournamentLifeCycle tournamentLifeCycle;
 
-    private DateFetcher dateFetcher;
+    private SystemTime dateFetcher;
 
     private transient MTTStateSupport state;
 
@@ -74,7 +74,7 @@ public class PokerTournament implements Serializable {
 
     private static final Long STARTING_CHIPS = 100000L;
 
-    public PokerTournament(PokerTournamentState pokerState, DateFetcher dateFetcher, TournamentLifeCycle tournamentLifeCycle) {
+    public PokerTournament(PokerTournamentState pokerState, SystemTime dateFetcher, TournamentLifeCycle tournamentLifeCycle) {
         this.pokerState = pokerState;
         this.dateFetcher = dateFetcher;
         this.tournamentLifeCycle = tournamentLifeCycle;
@@ -273,9 +273,9 @@ public class PokerTournament implements Serializable {
     }
 
     private void scheduleTableCreation() {
-        if (tournamentLifeCycle.shouldScheduleTournamentStart(pokerState.getStatus(), dateFetcher.now())) {
+        if (tournamentLifeCycle.shouldScheduleTournamentStart(pokerState.getStatus(), dateFetcher.date())) {
             MttObjectAction action = new MttObjectAction(instance.getId(), TournamentTrigger.START_TOURNAMENT);
-            long timeToTournamentStart = tournamentLifeCycle.getTimeToTournamentStart(dateFetcher.now());
+            long timeToTournamentStart = tournamentLifeCycle.getTimeToTournamentStart(dateFetcher.date());
             log.debug("Scheduling tournament start in " + Duration.millis(timeToTournamentStart).getStandardMinutes() + " minutes, for tournament " + instance);
             instance.getScheduler().scheduleAction(action, timeToTournamentStart);
         } else {
@@ -285,7 +285,7 @@ public class PokerTournament implements Serializable {
 
     private void scheduleRegistrationOpening() {
         MttObjectAction action = new MttObjectAction(instance.getId(), TournamentTrigger.OPEN_REGISTRATION);
-        long timeToRegistrationStart = tournamentLifeCycle.getTimeToRegistrationStart(dateFetcher.now());
+        long timeToRegistrationStart = tournamentLifeCycle.getTimeToRegistrationStart(dateFetcher.date());
         log.debug("Scheduling registration opening in " + timeToRegistrationStart + " millis, for tournament " + instance);
         instance.getScheduler().scheduleAction(action, timeToRegistrationStart);
     }
@@ -357,11 +357,11 @@ public class PokerTournament implements Serializable {
     }
 
     private boolean tournamentShouldStart() {
-        return tournamentLifeCycle.shouldStartTournament(dateFetcher.now(), state.getRegisteredPlayersCount(), state.getMinPlayers());
+        return tournamentLifeCycle.shouldStartTournament(dateFetcher.date(), state.getRegisteredPlayersCount(), state.getMinPlayers());
     }
 
     private boolean tournamentShouldBeCancelled() {
-        return tournamentLifeCycle.shouldCancelTournament(dateFetcher.now(), state.getRegisteredPlayersCount(), state.getMinPlayers());
+        return tournamentLifeCycle.shouldCancelTournament(dateFetcher.date(), state.getRegisteredPlayersCount(), state.getMinPlayers());
     }
 
     private TournamentTableSettings getTableSettings() {
@@ -402,10 +402,10 @@ public class PokerTournament implements Serializable {
     public void tournamentCreated() {
         if (tournamentShouldBeCancelled()) {
             cancelTournament();
-        } else if (tournamentLifeCycle.shouldOpenRegistration(dateFetcher.now())) {
+        } else if (tournamentLifeCycle.shouldOpenRegistration(dateFetcher.date())) {
             openRegistration();
             scheduleTableCreation();
-        } else if (tournamentLifeCycle.shouldScheduleRegistrationOpening(pokerState.getStatus(), dateFetcher.now())) {
+        } else if (tournamentLifeCycle.shouldScheduleRegistrationOpening(pokerState.getStatus(), dateFetcher.date())) {
             scheduleRegistrationOpening();
         }
     }

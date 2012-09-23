@@ -23,6 +23,7 @@ import com.cubeia.firebase.api.service.ServiceContext;
 import com.cubeia.firebase.guice.inject.Log4j;
 import com.cubeia.poker.handhistory.api.*;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 
@@ -43,7 +44,7 @@ import java.util.concurrent.ConcurrentHashMap;
 // TODO Reap dead hands?
 // TODO Persist on each event to support fail-over?
 // TODO Read hand from database (if not found) to support fail-over
-
+@Singleton
 public class CollectorServiceImpl implements HandHistoryCollectorService, Service {
 
     @Log4j

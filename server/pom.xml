@@ -15,6 +15,7 @@
 		<module>game-modules</module>
 		<module>protocol-modules</module>
 		<module>tournament-modules</module>
+		<module>test-modules</module>
 	</modules>
 
 	<organization>
@@ -32,6 +33,7 @@
 	<properties>
 		<firebase.version>1.9.0-CE-RC.1</firebase.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<cubeia.network.version>1.4.0-RC2-SNAPSHOT</cubeia.network.version>
 	</properties>
 
 	<dependencies>
@@ -75,9 +77,30 @@
 			</dependency>
 
 			<dependency>
+				<groupId>com.cubeia.game.poker.config</groupId>
+				<artifactId>config-service</artifactId>
+				<version>${project.version}</version>
+				<type>firebase-sar</type>
+			</dependency>
+
+			<dependency>
 				<groupId>com.cubeia.games</groupId>
 				<artifactId>poker-protocol</artifactId>
 				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.cubeia.games.common</groupId>
+				<artifactId>poker-common</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.cubeia.games.common</groupId>
+				<artifactId>poker-common</artifactId>
+				<version>${project.version}</version>
+				<classifier>tests</classifier>
+				<scope>test</scope>
 			</dependency>
 
 			<dependency>
@@ -251,6 +274,16 @@
 				<groupId>joda-time</groupId>
 				<artifactId>joda-time</artifactId>
 				<version>2.1</version>
+			</dependency>
+			<dependency>
+				<groupId>com.google.inject</groupId>
+				<artifactId>guice</artifactId>
+				<version>3.0</version>
+			</dependency>
+			<dependency>
+				<groupId>com.google.inject.extensions</groupId>
+				<artifactId>guice-persist</artifactId>
+				<version>3.0</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

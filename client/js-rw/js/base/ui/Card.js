@@ -5,6 +5,8 @@ Poker.Card = Class.extend({
     cardString:null,
     id:-1,
     templateManager:null,
+    cardImage : null,
+    cardElement : null,
     init:function (id, cardString, templateManager) {
         this.templateManager = templateManager;
         this.id = id;
@@ -18,14 +20,19 @@ Poker.Card = Class.extend({
         var output = Mustache.render(t, {domId:this.id, cardString:this.cardString});
         return output;
     },
-    getDOMElement:function () {
-        var el = $("#" + this.getCardDivId());
-        if (el) {
-            return el.get(0);
-        } else {
-            return null;
+    exposeCard : function(cardString) {
+        this.cardString = cardString;
+        this.cardImage.attr("src","images/cards/"+this.cardString+".svg");
+    },
+    getJQElement:function () {
+        if(this.cardElement==null) {
+            this.cardElement =  $("#" + this.getCardDivId());
+            this.cardImage = this.cardElement.find("img");
         }
-
+        return this.cardElement;
+    },
+    getDOMElement : function() {
+      return this.getJQElement().get(0);
     },
     getTemplate:function () {
         return this.templateManager.getTemplate("playerCardTemplate");

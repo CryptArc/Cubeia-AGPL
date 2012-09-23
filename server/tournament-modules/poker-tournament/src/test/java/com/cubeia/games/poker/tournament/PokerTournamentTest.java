@@ -26,10 +26,10 @@ import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.firebase.api.mtt.support.MTTSupport;
 import com.cubeia.firebase.api.scheduler.Scheduler;
 import com.cubeia.firebase.guice.tournament.TournamentAssist;
+import com.cubeia.games.poker.common.SystemTime;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.ScheduledTournamentLifeCycle;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.TournamentLifeCycle;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
-import com.cubeia.games.poker.tournament.util.DateFetcher;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,7 +47,7 @@ public class PokerTournamentTest {
     private PokerTournamentState pokerState;
 
     @Mock
-    private DateFetcher dateFetcher;
+    private SystemTime dateFetcher;
 
     @Mock
     private MttInstance instance;
@@ -82,14 +82,14 @@ public class PokerTournamentTest {
     public void registrationStartShouldBeScheduledWhenScheduledTournamentIsCreated() {
         // Given a scheduled tournament
         prepareTournament();
-        when(dateFetcher.now()).thenReturn(new DateTime(2011, 7, 5, 13, 30, 1));
+        when(dateFetcher.date()).thenReturn(new DateTime(2011, 7, 5, 13, 30, 1));
 
         // When the tournament is created
         tournament.tournamentCreated();
 
         // Then registration opening should be scheduled
         ArgumentCaptor<MttAction> captor = ArgumentCaptor.forClass(MttAction.class);
-        long timeToRegistrationStart = lifeCycle.getTimeToRegistrationStart(dateFetcher.now());
+        long timeToRegistrationStart = lifeCycle.getTimeToRegistrationStart(dateFetcher.date());
         verify(scheduler).scheduleAction(captor.capture(), eq(timeToRegistrationStart));
         assertEquals(TournamentTrigger.OPEN_REGISTRATION, ((MttObjectAction) captor.getValue()).getAttachment());
     }
@@ -98,14 +98,14 @@ public class PokerTournamentTest {
     public void shouldScheduleTournamentStartAfterOpeningRegistration() {
         // Given a scheduled tournament
         prepareTournament();
-        when(dateFetcher.now()).thenReturn(new DateTime(2011, 7, 5, 14, 00, 1));
+        when(dateFetcher.date()).thenReturn(new DateTime(2011, 7, 5, 14, 00, 1));
 
         // When registration is opened
         tournament.handleTrigger(TournamentTrigger.OPEN_REGISTRATION);
 
         // Then we should schedule tournament start
         ArgumentCaptor<MttAction> captor = ArgumentCaptor.forClass(MttAction.class);
-        long timeToTournamentStart = lifeCycle.getTimeToTournamentStart(dateFetcher.now());
+        long timeToTournamentStart = lifeCycle.getTimeToTournamentStart(dateFetcher.date());
         verify(scheduler).scheduleAction(captor.capture(), eq(timeToTournamentStart));
         assertEquals(TournamentTrigger.START_TOURNAMENT, ((MttObjectAction) captor.getValue()).getAttachment());
     }

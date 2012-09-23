@@ -20,13 +20,13 @@ Poker.MyActionsManager  = Class.extend({
         this._addTableButton("actionSitIn",Poker.ActionType.SIT_IN,actionCallback);
         this._addTableButton("actionSitOut",Poker.ActionType.SIT_OUT,actionCallback);
 
-        var cb = function(minAmount,maxAmount){
-            self.onClickBetButton(minAmount,maxAmount);
+        var cb = function(minAmount,maxAmount,mainPot){
+            self.onClickBetButton(minAmount,maxAmount,mainPot);
         };
         this._addActionButton("actionBet",Poker.ActionType.BET,cb ,false);
 
-        var cr = function(minAmount,maxAmount) {
-            self.onClickRaiseButton(minAmount,maxAmount);
+        var cr = function(minAmount,maxAmount,mainPot) {
+            self.onClickRaiseButton(minAmount,maxAmount,mainPot);
         };
 
         this._addActionButton("actionRaise",Poker.ActionType.RAISE,cr,false);
@@ -47,19 +47,19 @@ Poker.MyActionsManager  = Class.extend({
         this.allActions.push(this.cancelBetActionButton);
         this.onWatchingTable();
     },
-    onClickBetButton : function(minAmount,maxAmount) {
-        this.handleBetSliderButtons(minAmount,maxAmount);
+    onClickBetButton : function(minAmount,maxAmount,mainPot) {
+        this.handleBetSliderButtons(minAmount,maxAmount,mainPot);
         this.doBetActionButton.show();
     },
-    onClickRaiseButton : function(minAmount,maxAmount) {
+    onClickRaiseButton : function(minAmount,maxAmount,mainPot) {
         console.log(minAmount);
-        this.handleBetSliderButtons(minAmount,maxAmount);
+        this.handleBetSliderButtons(minAmount,maxAmount,mainPot);
         this.doRaiseActionButton.show();
     },
-    handleBetSliderButtons : function(minAmount,maxAmount) {
+    handleBetSliderButtons : function(minAmount,maxAmount,mainPot) {
         this.hideAllActionButtons();
         this.cancelBetActionButton.show();
-        this.showSlider(minAmount,maxAmount);
+        this.showSlider(minAmount,maxAmount,mainPot);
     },
     onClickCancelButton : function() {
         this.onRequestPlayerAction(this.currentActions);
@@ -72,15 +72,16 @@ Poker.MyActionsManager  = Class.extend({
             this.slider.remove();
         }
     },
-    showSlider : function(minAmount,maxAmount) {
+    showSlider : function(minAmount,maxAmount,mainPot) {
         this.slider = new Poker.BetSlider("betSlider");
         this.slider.clear();
         this.slider.setMinBet(minAmount);
         this.slider.setMaxBet(maxAmount);
 
         this.slider.addMarker("Min", minAmount);
-        this.slider.addMarker("Half in", Math.round(maxAmount / 2));
+        console.log("showing slider mainPot = " + mainPot);
         this.slider.addMarker("All in", maxAmount);
+        this.slider.addMarker("Pot",mainPot);
         this.slider.draw();
     },
     _addActionButton : function(elId, actionType ,callback,showAmount){
@@ -97,13 +98,13 @@ Poker.MyActionsManager  = Class.extend({
         this.tableButtons[actionType.id] = new Poker.ActionButton(elId,actionType,callback,false);
         this.allActions.push(this.tableButtons[actionType.id]);
     },
-    onRequestPlayerAction : function(actions){
+    onRequestPlayerAction : function(actions,mainPot){
       this.currentActions = actions;
       this.hideAllActionButtons();
       for(var a in actions){;
           var act = actions[a];
           if(act.minAmount>0) {
-              this.actionButtons[act.type.id].setAmount(act.minAmount,act.maxAmount);
+              this.actionButtons[act.type.id].setAmount(act.minAmount,act.maxAmount,mainPot);
           }
           this.actionButtons[act.type.id].show();
       }
@@ -163,6 +164,7 @@ Poker.ActionButton = Class.extend({
     showAmount : false,
     minAmount : 0,
     maxAmount : 0,
+    mainPot : 0,
     init : function(elId,actionType,callback,showAmount){
         var self = this;
         this.el = $("#"+elId);
@@ -196,12 +198,15 @@ Poker.ActionButton = Class.extend({
             });
         }
     },
-    setAmount : function(minAmount,maxAmount){
+    setAmount : function(minAmount,maxAmount,mainPot){
         if(this.showAmount){
             this.el.find(".amount").html("&euro;").append(Poker.Utils.formatCurrency(minAmount)).show();
         }
         if(maxAmount) {
             this.maxAmount = maxAmount;
+        }
+        if(mainPot) {
+            this.mainPot = mainPot;
         }
         this.minAmount = minAmount;
     },
@@ -230,7 +235,7 @@ Poker.BetSliderButton = Poker.ActionButton.extend({
     bindCallBack : function() {
         var self = this;
         this.el.click(function(){
-            self.callback(self.minAmount,self.maxAmount);
+            self.callback(self.minAmount,self.maxAmount,self.mainPot);
         });
     }
 });

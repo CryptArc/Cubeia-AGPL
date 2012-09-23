@@ -26,6 +26,7 @@ import com.cubeia.backend.cashgame.exceptions.CloseSessionFailedException;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
 import com.cubeia.backend.firebase.FirebaseCallbackFactory;
 import com.cubeia.firebase.api.game.table.Table;
+import com.cubeia.games.poker.PokerConfigServiceMock;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.player.PokerPlayer;
@@ -49,10 +50,13 @@ public class BackendPlayerSessionHandlerTest {
 
     @Mock
     CashGamesBackendContract cashGamesBackendContract;
+    
     @Mock
     Table table;
+    
     @Mock
     PokerState state;
+    
     private BackendPlayerSessionHandler backendPlayerSessionHandler;
 
     @Before
@@ -60,6 +64,7 @@ public class BackendPlayerSessionHandlerTest {
         MockitoAnnotations.initMocks(this);
         backendPlayerSessionHandler = new BackendPlayerSessionHandler();
         backendPlayerSessionHandler.cashGameBackend = cashGamesBackendContract;
+        backendPlayerSessionHandler.configService = new PokerConfigServiceMock();
     }
 
     @Test
@@ -78,7 +83,7 @@ public class BackendPlayerSessionHandlerTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testEndPlayerSessionInBackendFailIfWrongPlayerType() {
+    public void testEndPlayerSessionInBackendFailIfWrongPlayerType() { 
         PokerPlayer pokerPlayer = mock(PokerPlayer.class);
         backendPlayerSessionHandler.endPlayerSessionInBackend(table, pokerPlayer, -1);
     }

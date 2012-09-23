@@ -17,8 +17,13 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.history;
 
+import com.cubeia.games.poker.admin.Configuration;
 import com.cubeia.games.poker.admin.service.history.HandHistoryService;
 import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled.EditTournament;
+import com.cubeia.games.poker.admin.wicket.util.ExternalLinkPanel;
+import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
+import com.cubeia.games.poker.admin.wicket.util.ParamBuilder;
 import com.cubeia.poker.handhistory.api.Amount;
 import com.cubeia.poker.handhistory.api.GameCard;
 import com.cubeia.poker.handhistory.api.GamePot;
@@ -30,6 +35,8 @@ import com.cubeia.poker.handhistory.api.PlayerCardsDealt;
 import com.cubeia.poker.handhistory.api.PlayerCardsExposed;
 import com.cubeia.poker.handhistory.api.PotUpdate;
 import com.cubeia.poker.handhistory.api.TableCardsDealt;
+
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.ContextImage;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -40,6 +47,7 @@ import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Date;
 import java.util.List;
@@ -49,10 +57,12 @@ public class ShowHand extends BasePage {
     @SpringBean
     private HandHistoryService historyService;
 
+    @SpringBean(name="webConfig")
+    private Configuration config;
+    
     public ShowHand(PageParameters parameters) {
         String handId = parameters.get("handId").toString();
         HistoricHand hand = historyService.findById(handId);
-
         addSummary(hand);
         addPlayerList(hand);
         addEvents(hand);
@@ -61,16 +71,28 @@ public class ShowHand extends BasePage {
     private void addPlayerList(final HistoricHand hand) {
         DataView<Player> players = new DataView<Player>("players", new ListDataProvider<Player>(hand.getSeats())) {
 
-            @Override
+            private static final long serialVersionUID = 1908334758912501993L;
+
+			@Override
             protected void populateItem(Item<Player> item) {
                 Player player = item.getModelObject();
-                item.add(new Label("playerName", player.getName()));
+                // item.add(new Label("playerName", player.getName()));
+                item.add(new ExternalLinkPanel("playerName", player.getName(), createPlayerLink(player)));
                 item.add(new Label("playerId", String.valueOf(player.getPlayerId())));
                 item.add(new Label("seat", String.valueOf(player.getSeatId())));
                 item.add(new Label("bet", formatAmount(hand.getResults().getResults().get(player.getPlayerId()).getTotalBet())));
                 item.add(new Label("net", formatAmount(hand.getResults().getResults().get(player.getPlayerId()).getNetWin())));
 
             }
+
+			private String createPlayerLink(Player player) {
+				String tmp = config.getNetworkUrl();
+				if(!tmp.endsWith("/")) {
+					tmp += "/";
+				}
+				tmp += "wicket/bookmarkable/com.cubeia.backoffice.web.user.UserSummary?userId=" + player.getPlayerId();
+				return tmp;
+			}
         };
         add(players);
     }

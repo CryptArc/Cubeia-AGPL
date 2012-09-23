@@ -17,11 +17,8 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled;
 
-import com.cubeia.games.poker.admin.db.AdminDAO;
-import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo.CreateSitAndGo;
-import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
-import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
+import java.util.Date;
+
 import org.apache.log4j.Logger;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.extensions.yui.calendar.DateField;
@@ -33,11 +30,17 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import java.util.Date;
+import com.cubeia.games.poker.admin.db.AdminDAO;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo.CreateSitAndGo;
+import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
+import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
 
 public class CreateTournament extends BasePage {
 
-    private static final transient Logger log = Logger.getLogger(CreateSitAndGo.class);
+    private static final long serialVersionUID = -6246267360222453882L;
+
+	private static final transient Logger log = Logger.getLogger(CreateSitAndGo.class);
 
     @SpringBean(name="adminDAO")
     private AdminDAO adminDAO;
@@ -45,7 +48,10 @@ public class CreateTournament extends BasePage {
     public CreateTournament(final PageParameters parameters) {
         Form<ScheduledTournamentForm> tournamentForm = new Form<ScheduledTournamentForm>("tournamentForm",
                                 new CompoundPropertyModel<ScheduledTournamentForm>(new ScheduledTournamentForm())) {
-            @Override
+            
+									private static final long serialVersionUID = -7252092022985787625L;
+
+			@Override
             protected void onSubmit() {
                 ScheduledTournamentForm form = getModel().getObject();
                 TournamentSchedule schedule = new TournamentSchedule(form.startDate, form.endDate, form.schedule, form.minutesInAnnounced,
@@ -64,10 +70,10 @@ public class CreateTournament extends BasePage {
             }
         };
 
-        tournamentForm.add(new RequiredTextField("name"));
+        tournamentForm.add(new RequiredTextField<String>("name"));
         tournamentForm.add(new DateField("startDate"));
         tournamentForm.add(new DateField("endDate"));
-        tournamentForm.add(new RequiredTextField("schedule"));
+        tournamentForm.add(new RequiredTextField<String>("schedule"));
         tournamentForm.add(new TextField<Integer>("minutesInAnnounced"));
         tournamentForm.add(new TextField<Integer>("minutesInRegistering"));
         tournamentForm.add(new TextField<Integer>("minutesVisibleAfterFinished"));
@@ -86,7 +92,10 @@ public class CreateTournament extends BasePage {
     }
 
     private class ScheduledTournamentForm implements IClusterable {
-        String name;
+        
+    	private static final long serialVersionUID = 4787613808772855918L;
+		
+    	String name;
         Date startDate;
         Date endDate;
         String schedule;

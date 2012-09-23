@@ -19,6 +19,8 @@ package com.cubeia.backend.cashgame.dto;
 
 import org.junit.Test;
 
+import com.cubeia.games.poker.common.Money;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 

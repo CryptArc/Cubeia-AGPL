@@ -26,8 +26,8 @@ import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.cache.ActionCache;
 import com.cubeia.games.poker.cache.ActionContainer;
+import com.cubeia.games.poker.common.SystemTime;
 import com.cubeia.games.poker.io.protocol.*;
-import com.cubeia.games.poker.tournament.util.DateFetcher;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Before;
@@ -49,7 +49,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class GameStateSummaryCreatorTest {
 
     @Mock
-    private DateFetcher dateFetcher;
+    private SystemTime dateFetcher;
 
     private Long timestamp;
     
@@ -60,7 +60,7 @@ public class GameStateSummaryCreatorTest {
         initMocks(this);
         now = new DateTime();
         timestamp = now.getMillis();
-        when(dateFetcher.now()).thenReturn(now);
+        when(dateFetcher.date()).thenReturn(now);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -306,7 +306,7 @@ public class GameStateSummaryCreatorTest {
         actions.add(container);
 
         DateTime later = now.plusMillis(20);
-        when(dateFetcher.now()).thenReturn(later);
+        when(dateFetcher.date()).thenReturn(later);
 
         List<GameAction> filteredActions = gameStateSummaryCreator.filterRequestActions(actions, -99);
 
@@ -330,7 +330,7 @@ public class GameStateSummaryCreatorTest {
         actions.add(createPrivate(333, lastRequest));
 
         DateTime later = now.plusMillis(20);
-        when(dateFetcher.now()).thenReturn(later);
+        when(dateFetcher.date()).thenReturn(later);
 
         List<GameAction> filteredActions = gameStateSummaryCreator.filterRequestActions(actions, -99);
 

@@ -7,8 +7,8 @@
       <New class="org.apache.commons.dbcp.BasicDataSource">
         <Set name="driverClassName">com.mysql.jdbc.Driver</Set>
         <Set name="url">jdbc:mysql://localhost:3306/poker</Set>
-        <Set name="username">root</Set>
-        <Set name="password">root</Set>
+        <Set name="username">poker</Set>
+        <Set name="password">poker</Set>
       </New>
     </Arg>
   </New>

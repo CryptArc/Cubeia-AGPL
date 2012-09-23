@@ -19,10 +19,8 @@ package com.cubeia.backend.cashgame.dto;
 
 import java.io.Serializable;
 
-@SuppressWarnings("serial")
 public class CloseTableRequest implements Serializable {
 
-    public CloseTableRequest() {
-    }
-
+	private static final long serialVersionUID = 4343845180631285556L; 
+	
 }

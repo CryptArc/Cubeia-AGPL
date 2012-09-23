@@ -15,14 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.tournament.util;
+package com.cubeia.games.poker.common;
 
 import org.joda.time.DateTime;
 
-public class RealDateFetcher implements DateFetcher {
+import com.google.inject.ImplementedBy;
 
-    @Override
-    public DateTime now() {
-        return new DateTime();
-    }
+@ImplementedBy(DefaultSystemTime.class)
+public interface SystemTime {
+
+    public DateTime date();
+    
+    public long now();
+    
 }

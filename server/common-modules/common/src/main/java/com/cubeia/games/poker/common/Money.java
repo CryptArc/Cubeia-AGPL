@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.backend.cashgame.dto;
+package com.cubeia.games.poker.common;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -39,7 +39,7 @@ public final class Money implements Serializable {
         super();
         this.amount = amount;
         this.currencyCode = currencyCode;
-        this.fractionalDigits = fractionalDigits;
+        this.fractionalDigits = fractionalDigits; 
     }
 
     public String getCurrencyCode() {
@@ -51,7 +51,7 @@ public final class Money implements Serializable {
     }
 
     public long getAmount() {
-        return amount;
+        return amount; 
     }
 
     /**

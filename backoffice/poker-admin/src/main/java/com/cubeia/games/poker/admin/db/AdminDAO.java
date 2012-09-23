@@ -19,9 +19,9 @@ package com.cubeia.games.poker.admin.db;
 
 import java.util.List;
 
+import com.cubeia.games.poker.entity.TableConfigTemplate;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
-import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
 
 public interface AdminDAO {
 
@@ -39,5 +39,9 @@ public interface AdminDAO {
     public List<SitAndGoConfiguration> getSitAndGoConfigurations();
 
     public List<ScheduledTournamentConfiguration> getScheduledTournamentConfigurations();
+    
+    public List<TableConfigTemplate> getTableConfigTemplates();
+
+	public abstract <T> void removeItem(Class<T> class1, int templateId);
 
 }

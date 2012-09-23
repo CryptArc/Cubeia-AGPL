@@ -29,7 +29,7 @@ public class MockPlayer extends DefaultPokerPlayer implements PokerPlayer {
     private boolean allIn;
     private boolean forceAllIn = false;
 
-    public MockPlayer(int id) {
+    public MockPlayer(int id) { 
         super(id + 100);
         seatId = id;
     }

@@ -19,8 +19,8 @@ package com.cubeia.games.poker.cache;
 
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.guice.inject.Service;
+import com.cubeia.games.poker.common.SystemTime;
 import com.cubeia.games.poker.debugger.HandDebuggerContract;
-import com.cubeia.games.poker.tournament.util.DateFetcher;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
@@ -46,13 +46,13 @@ public class ActionCache {
 
     private final Multimap<Integer, ActionContainer> cache;
 
-    private DateFetcher dateFetcher;
+    private SystemTime dateFetcher;
 
     @Service
     HandDebuggerContract handDebugger;
 
     @Inject
-    public ActionCache(DateFetcher dateFetcher) {
+    public ActionCache(SystemTime dateFetcher) {
         this.dateFetcher = dateFetcher;
         LinkedListMultimap<Integer, ActionContainer> linkedListMultimap = LinkedListMultimap.<Integer, ActionContainer>create();
         // TODO: this map is fully synchronized but we only need to synchronize on table id (events on the same table are never concurrent)
@@ -76,7 +76,7 @@ public class ActionCache {
      * @param action
      */
     public void addPublicActionWithExclusion(int tableId, GameAction action, int excludedPlayerId) {
-        cache.put(tableId, ActionContainer.createPublic(action, excludedPlayerId, dateFetcher.now().getMillis()));
+        cache.put(tableId, ActionContainer.createPublic(action, excludedPlayerId, dateFetcher.date().getMillis()));
         log.trace("added public action to cache, tableId = {}, action type = {}, new cache size = {}",
                 new Object[]{tableId, action.getClass().getSimpleName(), cache.get(tableId).size()});
 
@@ -93,7 +93,7 @@ public class ActionCache {
      * @param action
      */
     public void addPrivateAction(int tableId, int playerId, GameAction action) {
-        cache.put(tableId, ActionContainer.createPrivate(playerId, action, dateFetcher.now().getMillis()));
+        cache.put(tableId, ActionContainer.createPrivate(playerId, action, dateFetcher.date().getMillis()));
         log.trace("added private action to cache, tableId = {}, playerId = {}, action type = {}, new cache size = {}",
                 new Object[]{tableId, playerId, action.getClass().getSimpleName(), cache.get(tableId).size()});
 

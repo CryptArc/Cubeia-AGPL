@@ -22,5 +22,9 @@
             <groupId>com.cubeia.firebase</groupId>
             <artifactId>guice-support</artifactId>
         </dependency>
+        <dependency>
+			<groupId>com.cubeia.games.common</groupId>
+			<artifactId>poker-common</artifactId>
+		</dependency>
 	</dependencies>
 </project>

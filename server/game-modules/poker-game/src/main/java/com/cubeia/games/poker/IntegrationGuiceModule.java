@@ -22,13 +22,13 @@ import com.cubeia.firebase.api.game.table.TournamentTableListener;
 import com.cubeia.firebase.guice.game.EventScoped;
 import com.cubeia.games.poker.adapter.*;
 import com.cubeia.games.poker.cache.ActionCache;
+import com.cubeia.games.poker.common.SystemTime;
+import com.cubeia.games.poker.common.DefaultSystemTime;
 import com.cubeia.games.poker.handler.ActionTransformer;
 import com.cubeia.games.poker.handler.BackendCallHandler;
 import com.cubeia.games.poker.handler.BackendPlayerSessionHandler;
 import com.cubeia.games.poker.handler.PokerHandler;
 import com.cubeia.games.poker.logic.TimeoutCache;
-import com.cubeia.games.poker.tournament.util.DateFetcher;
-import com.cubeia.games.poker.tournament.util.RealDateFetcher;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 
@@ -53,6 +53,6 @@ public class IntegrationGuiceModule extends AbstractModule {
         bind(LobbyUpdater.class).in(Singleton.class);
         bind(PlayerUnseater.class).in(Singleton.class);
         bind(BuyInCalculator.class).in(Singleton.class);
-        bind(DateFetcher.class).to(RealDateFetcher.class).in(Singleton.class);
+        bind(SystemTime.class).to(DefaultSystemTime.class).in(Singleton.class);
     }
 }

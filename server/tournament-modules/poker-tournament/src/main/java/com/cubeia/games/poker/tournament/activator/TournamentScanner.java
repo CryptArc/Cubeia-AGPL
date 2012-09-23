@@ -23,13 +23,13 @@ import com.cubeia.firebase.api.mtt.activator.ActivatorContext;
 import com.cubeia.firebase.api.mtt.activator.CreationParticipant;
 import com.cubeia.firebase.api.mtt.lobby.MttLobbyObject;
 import com.cubeia.firebase.api.server.SystemException;
+import com.cubeia.games.poker.common.SystemTime;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentInstance;
 import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
 import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
 import com.cubeia.games.poker.tournament.configuration.provider.SitAndGoConfigurationProvider;
 import com.cubeia.games.poker.tournament.configuration.provider.TournamentScheduleProvider;
-import com.cubeia.games.poker.tournament.util.DateFetcher;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import org.apache.log4j.Logger;
@@ -80,11 +80,11 @@ public class TournamentScanner implements PokerActivator, Runnable {
      */
     protected final Object LOCK = new Object();
 
-    private DateFetcher dateFetcher;
+    private SystemTime dateFetcher;
 
     @Inject
     public TournamentScanner(SitAndGoConfigurationProvider sitAndGoConfigurationProvider, TournamentScheduleProvider tournamentScheduleProvider,
-                             DateFetcher dateFetcher) {
+                             SystemTime dateFetcher) {
         this.sitAndGoConfigurationProvider = sitAndGoConfigurationProvider;
         this.tournamentScheduleProvider = tournamentScheduleProvider;
         this.dateFetcher = dateFetcher;
@@ -227,9 +227,9 @@ public class TournamentScanner implements PokerActivator, Runnable {
 
         for (ScheduledTournamentConfiguration configuration : tournamentSchedule) {
             TournamentSchedule schedule = configuration.getSchedule();
-            DateTime nextAnnounceTime = schedule.getNextAnnounceTime(dateFetcher.now());
-            if (dateFetcher.now().isAfter(nextAnnounceTime)) {
-                ScheduledTournamentInstance instance = configuration.spawnConfigurationForNextInstance(schedule.getNextStartTime(dateFetcher.now()));
+            DateTime nextAnnounceTime = schedule.getNextAnnounceTime(dateFetcher.date());
+            if (dateFetcher.date().isAfter(nextAnnounceTime)) {
+                ScheduledTournamentInstance instance = configuration.spawnConfigurationForNextInstance(schedule.getNextStartTime(dateFetcher.date()));
                 if (!existingTournaments.contains(instance.getIdentifier())) {
                     createScheduledTournament(instance);
                 }

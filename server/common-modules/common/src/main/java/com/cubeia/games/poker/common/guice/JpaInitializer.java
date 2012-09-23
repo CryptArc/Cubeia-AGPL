@@ -15,20 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.activator;
+package com.cubeia.games.poker.common.guice;
 
-import com.google.inject.Injector;
+import com.google.inject.Inject;
+import com.google.inject.persist.PersistService;
 
-public class TestablePokerActivator extends PokerActivator {
+public class JpaInitializer {
 
-    Injector injector;
-
-    public TestablePokerActivator(Injector injector) {
-        this.injector = injector;
-    }
-
-    @Override
-    protected Injector getInjector() {
-        return injector;
+    @Inject
+    public JpaInitializer(PersistService service) {
+        service.start();
     }
 }

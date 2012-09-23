@@ -59,7 +59,7 @@ Poker.TableListener = Class.extend({
      * @param {Array<Poker.Action>} allowedActions the allowed actions the player can take
      * @param {int} timeToAct - the time the player has to act
      */
-    onRequestPlayerAction : function(player,allowedActions,timeToAct){
+    onRequestPlayerAction : function(player,allowedActions,timeToAct, mainPot){
 
     },
     onDealCommunityCard : function(cardId,cardString) {
@@ -75,6 +75,12 @@ Poker.TableListener = Class.extend({
 
     },
     onBettingRoundComplete : function() {
+
+    },
+    onPlayerRemoved : function(playerId) {
+
+    },
+    onMoveDealerButton : function(seatId) {
 
     }
 

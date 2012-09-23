@@ -17,14 +17,14 @@
 
 package com.cubeia.games.poker.tournament.guice;
 
+import com.cubeia.games.poker.common.SystemTime;
+import com.cubeia.games.poker.common.DefaultSystemTime;
 import com.cubeia.games.poker.tournament.activator.PokerActivator;
 import com.cubeia.games.poker.tournament.activator.TournamentScanner;
 import com.cubeia.games.poker.tournament.configuration.provider.SitAndGoConfigurationProvider;
 import com.cubeia.games.poker.tournament.configuration.provider.TournamentScheduleProvider;
 import com.cubeia.games.poker.tournament.configuration.provider.mock.MockSitAndGoConfigurationProvider;
 import com.cubeia.games.poker.tournament.configuration.provider.mock.MockTournamentScheduleProvider;
-import com.cubeia.games.poker.tournament.util.DateFetcher;
-import com.cubeia.games.poker.tournament.util.RealDateFetcher;
 import com.google.inject.AbstractModule;
 
 public class MockActivatorModule extends AbstractModule {
@@ -32,7 +32,7 @@ public class MockActivatorModule extends AbstractModule {
     public void configure() {
         bind(TournamentScheduleProvider.class).to(MockTournamentScheduleProvider.class);
         bind(SitAndGoConfigurationProvider.class).to(MockSitAndGoConfigurationProvider.class);
-        bind(DateFetcher.class).to(RealDateFetcher.class);
+        bind(SystemTime.class).to(DefaultSystemTime.class);
         bind(PokerActivator.class).to(TournamentScanner.class);
     }
 

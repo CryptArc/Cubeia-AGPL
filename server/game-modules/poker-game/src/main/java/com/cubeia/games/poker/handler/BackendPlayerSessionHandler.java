@@ -17,43 +17,43 @@
 
 package com.cubeia.games.poker.handler;
 
+import static com.cubeia.games.poker.handler.BackendCallHandler.EXT_PROP_KEY_TABLE_ID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cubeia.backend.cashgame.AllowJoinResponse;
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.TableId;
 import com.cubeia.backend.cashgame.dto.CloseSessionRequest;
-import com.cubeia.backend.cashgame.dto.Money;
 import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
 import com.cubeia.backend.cashgame.exceptions.CloseSessionFailedException;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.guice.inject.Service;
+import com.cubeia.game.poker.config.api.PokerConfigurationService;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.player.PokerPlayer;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static com.cubeia.games.poker.handler.BackendCallHandler.EXT_PROP_KEY_TABLE_ID;
 
 public class BackendPlayerSessionHandler {
     private static Logger log = LoggerFactory.getLogger(BackendPlayerSessionHandler.class);
 
-    /**
-     * Default zero money object. This currently defines the currency and fractional digits in the system.
-     */
-    public final static Money DEFAULT_ZERO_MONEY = new Money(0, "EUR", 2);
-
     @Service
     @VisibleForTesting
     protected CashGamesBackendContract cashGameBackend;
+    
+    @Service
+    @VisibleForTesting
+    protected PokerConfigurationService configService;
 
     @Inject
     private TableCloseHandler closeHandler;
 
     public AllowJoinResponse allowJoinTable(int playerId) {
-        return cashGameBackend.allowJoinTable(playerId);
+        return cashGameBackend.allowJoinTable(playerId); 
     }
 
     public void endPlayerSessionInBackend(Table table, PokerPlayer pokerPlayer, int roundNumber) {
@@ -89,7 +89,7 @@ public class BackendPlayerSessionHandler {
             closeHandler.tableCrashed(table);
         } else {
             OpenSessionRequest openSessionRequest = new OpenSessionRequest(
-                    playerId, tableId, DEFAULT_ZERO_MONEY, roundNumber);
+                    playerId, tableId, configService.createSystemMoney(0), roundNumber);
             cashGameBackend.openSession(openSessionRequest, cashGameBackend.getCallbackFactory().createOpenSessionCallback(table));
         }
 

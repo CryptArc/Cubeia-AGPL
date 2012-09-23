@@ -59,6 +59,7 @@ CircularProgressBar.prototype = {
 
       this.pieElement.style.cssText="-webkit-transition:-webkit-transform "+(time/2000)+"s linear;";
       this.pieElement.addEventListener('webkitTransitionEnd',function(e){
+          console.log("transition callback");
           self.slice.addClass("cpb-gt50");
           self.fill.show();
           self.pieElement.style.cssText+="-webkit-transform: rotate(360deg);";

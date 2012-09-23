@@ -19,7 +19,8 @@ package com.cubeia.games.poker.cache;
 
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.GameDataAction;
-import com.cubeia.games.poker.tournament.util.RealDateFetcher;
+import com.cubeia.games.poker.common.DefaultSystemTime;
+
 import org.junit.Test;
 
 import java.util.List;
@@ -30,7 +31,7 @@ import static org.junit.Assert.assertThat;
 
 public class ActionCacheTest {
 
-    private ActionCache cache = new ActionCache(new RealDateFetcher());
+    private ActionCache cache = new ActionCache(new DefaultSystemTime());
 
     @Test
     public void testPublicActions() throws Exception {

@@ -43,5 +43,8 @@ public enum PokerLobbyAttributes {
     VARIANT,
     MIN_BUY_IN,
     MAX_BUY_IN,
-    DECK_SIZE
+    DECK_SIZE,
+    TABLE_TEMPLATE, // table template ID
+    TABLE_EXTERNAL_ID
+    
 }

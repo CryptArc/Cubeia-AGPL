@@ -17,43 +17,49 @@
 
 package com.cubeia.games.poker.adapter;
 
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
 import com.cubeia.backend.cashgame.TableId;
 import com.cubeia.backend.cashgame.dto.BatchHandRequest;
-import com.cubeia.backend.cashgame.dto.Money;
+import com.cubeia.firebase.guice.inject.Service;
+import com.cubeia.game.poker.config.api.PokerConfigurationService;
+import com.cubeia.games.poker.common.Money;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
-import org.apache.log4j.Logger;
-
-import java.util.Map;
-
-import static com.cubeia.games.poker.handler.BackendPlayerSessionHandler.DEFAULT_ZERO_MONEY;
+import com.google.common.annotations.VisibleForTesting;
 
 public class HandResultBatchFactory {
+	
+	@Service
+	@VisibleForTesting
+    protected PokerConfigurationService configService;
 
-    private final Logger log = Logger.getLogger(getClass());
+    private final Logger log = Logger.getLogger(getClass()); 
 
     public BatchHandRequest createAndValidateBatchHandRequest(HandResult handResult, String handId, TableId tableId) {
         long totalBet = 0;
         long totalNet = 0;
         long totalRake = 0;
         BatchHandRequest bhr = new BatchHandRequest(handId, tableId,
-                DEFAULT_ZERO_MONEY.add(handResult.getTotalRake()));
+        		configService.createSystemMoney(handResult.getTotalRake()));
         for (Map.Entry<PokerPlayer, Result> resultEntry : handResult.getResults().entrySet()) {
             PokerPlayerImpl player = (PokerPlayerImpl) resultEntry.getKey();
             Result result = resultEntry.getValue();
-            Money bets = DEFAULT_ZERO_MONEY.add(result.getWinningsIncludingOwnBets() - result.getNetResult());
-            Money wins = DEFAULT_ZERO_MONEY.add(result.getWinningsIncludingOwnBets());
-            Money rake = DEFAULT_ZERO_MONEY.add(handResult.getRakeContributionByPlayer(player));
-            Money net = DEFAULT_ZERO_MONEY.add(result.getNetResult());
-            Money startingBalanceMoney = DEFAULT_ZERO_MONEY.add(player.getStartingBalance());
+            Money bets = configService.createSystemMoney(result.getWinningsIncludingOwnBets() - result.getNetResult());
+            Money wins = configService.createSystemMoney(result.getWinningsIncludingOwnBets());
+            Money rake = configService.createSystemMoney(handResult.getRakeContributionByPlayer(player));
+            Money net = configService.createSystemMoney(result.getNetResult());
+            Money startingBalanceMoney = configService.createSystemMoney(player.getStartingBalance());
             log.debug("Result for player " + player.getId() + " -> Bets: " + bets + "; Wins: " + wins + "; Rake: " + rake + "; Net: " + net);
             com.cubeia.backend.cashgame.dto.HandResult hr = new com.cubeia.backend.cashgame.dto.HandResult(
                     player.getPlayerSessionId(), bets, wins, rake, player.getSeatId(), startingBalanceMoney); // TODO Add initial balance?
             bhr.addHandResult(hr);
             totalBet += bets.getAmount();
-            totalNet += net.getAmount();
+            totalNet += net.getAmount(); 
             totalRake += rake.getAmount();
         }
         if ((totalNet + totalRake) != 0) {

@@ -30,6 +30,7 @@ import com.cubeia.firebase.api.game.lobby.LobbyTableAttributeAccessor;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.adapter.FirebaseServerAdapter;
+import com.cubeia.games.poker.common.Money;
 import com.cubeia.games.poker.io.protocol.BuyInResponse;
 import com.cubeia.games.poker.io.protocol.Enums;
 import com.cubeia.games.poker.io.protocol.ErrorPacket;

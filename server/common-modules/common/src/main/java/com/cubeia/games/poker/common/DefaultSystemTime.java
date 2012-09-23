@@ -15,16 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.tournament.guice;
+package com.cubeia.games.poker.common;
 
-import com.google.inject.Inject;
-import com.google.inject.persist.PersistService;
+import org.joda.time.DateTime;
 
-public class PersistInitializer {
+import com.google.inject.Singleton;
 
-    @Inject
-    public PersistInitializer(PersistService service) {
-        service.start();
+@Singleton
+public class DefaultSystemTime implements SystemTime {
+
+    @Override
+    public DateTime date() {
+        return new DateTime();
     }
-
+    
+    @Override
+    public long now() {
+    	return System.currentTimeMillis();
+    }
 }

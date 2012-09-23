@@ -29,18 +29,19 @@
     position:absolute;
     width:50%;
     height:100%;
-    top:0;
+    top:-45%;
     left:0;
+
+
 }
 .cards-container-player .player-card-container {
     position:absolute;
     left:0;
     width:50%;
     height:150%;
-    top:-25%;
-    -webkit-transform: scale(0.75);
-    -webkit-transition:-webkit-transform 0.5s linear;
+    top:0;
 }
+
 
 .cards-container {
     position: absolute;
@@ -52,7 +53,7 @@
 .my-player-seat .cards-container {
     width: 100%;
     height: 75%;
-    top: 25%;
+    top:0;
     left: 0;
 }
 .player-card-container:last-child {
@@ -87,9 +88,9 @@ img.player-card {
     width: 45%;
     height: 100%;
     left: 3%;
+    top:30%;
 }
 .my-player-seat .player-card-container:last-child {
-;
     left:51%;
 }
 .circular-progress-bar {
@@ -100,7 +101,7 @@ img.player-card {
     padding-bottom:10%;
 }
 
-.action-text {
+.action-text, .player-status {
     color:#9aba00;
     font-weight: bold;
     background-color: #262626;
@@ -115,14 +116,16 @@ img.player-card {
     padding:2% 0;
 }
 .seat-balance {
-    font-size: 120%;
+    font-weight: bold;
+    font-size: 100%;
     position: absolute;
+    color:#ddd;
     top: 77%;
     width:100%;
     text-align: center;
 }
 .action-amount {
-    font-size: 180%;
+    font-size: 160%;
     position: absolute;
     top: 88%;
     font-weight: bold;
@@ -149,6 +152,12 @@ img.player-card {
 .action-raise.action-inactive, .action-bet.action-inactive {
     background-image: url("../images/table/raise-arrow-inactive.png");
 }
+.action-big-blind {
+    display:none;
+}
+.action-small-blind {
+    display:none;
+}
 .open-seat {
     position: absolute;
     width:100%;
@@ -158,7 +167,7 @@ img.player-card {
     font-weight: bold;
 }
 .hand-strength {
-    font-size: 180%;
+    font-size: 150%;
     position: absolute;
     top: 88%;
     font-weight: bold;
@@ -174,9 +183,9 @@ img.player-card {
     background-image: -webkit-linear-gradient(bottom, #9EBA02 26%, #C0E00B 100%);
     background-image: -ms-linear-gradient(bottom, #9EBA02 26%, #C0E00B 100%);
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#9EBA02', endColorstr='#C0E00B',GradientType=0 ); /* IE6-9 */
-    width:40%;
-    height: 50%;
-    left:30%;
+    width:42%;
+    height: 52%;
+    left:29%;
     top:8%;
     margin-left:1px;
 }

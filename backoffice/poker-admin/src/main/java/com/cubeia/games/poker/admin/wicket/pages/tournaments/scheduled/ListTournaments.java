@@ -24,7 +24,9 @@ import java.util.List;
 
 import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.games.poker.admin.wicket.pages.history.ShowHand;
+import com.cubeia.games.poker.admin.wicket.pages.tables.ListTables;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled.EditTournament;
+import com.cubeia.games.poker.admin.wicket.util.DeleteLinkPanel;
 import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
 import com.cubeia.games.poker.admin.wicket.util.ParamBuilder;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
@@ -44,6 +46,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import com.cubeia.games.poker.admin.db.AdminDAO;
+import com.cubeia.games.poker.entity.TableConfigTemplate;
 import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
 
 /**
@@ -91,6 +94,23 @@ public class ListTournaments extends BasePage {
         columns.add(new PropertyColumn(new Model("Seats"), "configuration.seatsPerTable"));
         columns.add(new PropertyColumn(new Model("Min"), "configuration.minPlayers"));
         columns.add(new PropertyColumn(new Model("Max"), "configuration.maxPlayers"));
+        
+        columns.add(new AbstractColumn<ScheduledTournamentConfiguration>(new Model<String>("Delete")) {
+        	
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void populateItem(Item<ICellPopulator<ScheduledTournamentConfiguration>> item, String componentId, IModel<ScheduledTournamentConfiguration> model) {
+            	ScheduledTournamentConfiguration table = model.getObject();
+                Component panel = new DeleteLinkPanel(componentId, ScheduledTournamentConfiguration.class, table.getId(), ListTournaments.class);
+                item.add(panel);
+            }
+
+            @Override
+            public boolean isSortable() {
+                return false;
+            }
+        });
 
         DefaultDataTable userTable = new DefaultDataTable("tournamentTable", columns, dataProvider, 20);
         add(userTable);

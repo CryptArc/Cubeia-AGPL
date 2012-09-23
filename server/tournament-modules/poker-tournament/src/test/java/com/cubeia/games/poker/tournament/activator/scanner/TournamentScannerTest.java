@@ -23,6 +23,7 @@ import com.cubeia.firebase.api.mtt.activator.ActivatorContext;
 import com.cubeia.firebase.api.mtt.lobby.MttLobbyObject;
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.firebase.io.protocol.Enums;
+import com.cubeia.games.poker.common.SystemTime;
 import com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes;
 import com.cubeia.games.poker.tournament.activator.ScheduledTournamentCreationParticipant;
 import com.cubeia.games.poker.tournament.activator.SitAndGoCreationParticipant;
@@ -34,7 +35,6 @@ import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
 import com.cubeia.games.poker.tournament.configuration.provider.SitAndGoConfigurationProvider;
 import com.cubeia.games.poker.tournament.configuration.provider.TournamentScheduleProvider;
 import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
-import com.cubeia.games.poker.tournament.util.DateFetcher;
 import com.google.common.collect.Maps;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -68,7 +68,7 @@ public class TournamentScannerTest {
     private ActivatorContext context;
 
     @Mock
-    private DateFetcher dateFetcher;
+    private SystemTime dateFetcher;
 
     @Mock
     private MttFactory factory;
@@ -95,7 +95,7 @@ public class TournamentScannerTest {
         when(tournamentScheduleProvider.getTournamentSchedule()).thenReturn(singletonList(tournament));
 
         // When we scan tournaments at 14.00.
-        when(dateFetcher.now()).thenReturn(new DateTime(2012, 7, 5, 14, 0, 2));
+        when(dateFetcher.date()).thenReturn(new DateTime(2012, 7, 5, 14, 0, 2));
         scanner.checkTournamentsNow();
 
         // Then we should create a tournament.
@@ -113,7 +113,7 @@ public class TournamentScannerTest {
         when(tournamentScheduleProvider.getTournamentSchedule()).thenReturn(singletonList(tournament));
 
         // When we scan tournaments at 14:00.02 and 14:00.03.
-        when(dateFetcher.now()).thenReturn(new DateTime(2012, 7, 5, 14, 0, 2)).thenReturn(new DateTime(2012, 7, 5, 14, 0, 3));
+        when(dateFetcher.date()).thenReturn(new DateTime(2012, 7, 5, 14, 0, 2)).thenReturn(new DateTime(2012, 7, 5, 14, 0, 3));
         scanner.checkTournamentsNow();
 
         // We should create one tournament.
