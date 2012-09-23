@@ -97,7 +97,6 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         this.addEmptySeatContent(seat.seatId,-1,(this.myPlayerSeatId==-1));
     },
 
-
     /**
      * Retrieves the seat by player id
      * @param id  of the player
