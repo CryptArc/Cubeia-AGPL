@@ -1,11 +1,17 @@
 "use strict";
 var Poker = Poker || {};
-
+/**
+ * Handles the lobby UI
+ * @type {Poker.LobbyLayoutManager}
+ */
 Poker.LobbyLayoutManager = Class.extend({
     lobbyData : [],
     listItemTemplate : null,
     filters : [],
     currentScroll : null,
+    /**
+     * @constructor
+     */
     init : function() {
         var templateManager = new Poker.TemplateManager();
         this.listItemTemplate = templateManager.getTemplate("tableListItemTemplate");

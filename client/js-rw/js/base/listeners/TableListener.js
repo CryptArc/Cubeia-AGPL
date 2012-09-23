@@ -60,28 +60,59 @@ Poker.TableListener = Class.extend({
      * @param {int} timeToAct - the time the player has to act
      */
     onRequestPlayerAction : function(player,allowedActions,timeToAct, mainPot){
-
+        console.log("Poker.TableListener.onRequestPlayerAction");
     },
+    /**
+     * Notifies when a community card is dealt
+     * @param cardId - the id of the card
+     * @param cardString - the card string for the card being dealt
+     */
     onDealCommunityCard : function(cardId,cardString) {
-
+        console.log("Poker.TableListener.onDealCommunityCard");
     },
+    /**
+     * Notifies when a card should be exposed
+     * @param cardId id of the card to expose
+     * @param cardString the card string to use
+     */
     onExposePrivateCard : function(cardId,cardString) {
-
+        console.log("Poker.TableListener.onExposePrivateCard");
     },
+    /**
+     * Notifies when a hand strength for a specific player should be displayed
+     * @param player the player to display the hand strength for
+     * @param hand the hand to display
+     */
     onPlayerHandStrength : function(player, hand) {
-
+        console.log("Poker.TableListener.onPlayerHandStrength");
     },
+    /**
+     * Notifies when you left a table successfully,
+     * used to clean up the UI
+     */
     onLeaveTableSuccess : function() {
-
+        console.log("Poker.TableListener.onLeaveTableSuccess");
     },
+    /**
+     * Notifies when a betting round is complete.
+     * When a betting round is complete the bets are collected and put in the pot
+     */
     onBettingRoundComplete : function() {
-
+        console.log("Poker.TableListener.onBettingRoundComplete");
     },
+    /**
+     * When a player is removed from the table
+     * @param playerId the id of the player that was removed
+     */
     onPlayerRemoved : function(playerId) {
-
+        console.log("Poker.TableListener.onPlayerRemoved");
     },
+    /**
+     * When the dealer button should be moved to a new seat
+     * @param seatId which seat id to move the dealer button
+     */
     onMoveDealerButton : function(seatId) {
-
+        console.log("Poker.TableListener.onMoveDealerButton");
     }
 
 });
