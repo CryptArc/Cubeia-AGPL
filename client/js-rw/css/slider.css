@@ -1,0 +1,84 @@
+#raiseValue {
+   color: white;
+}
+
+#betSlider {
+    position: absolute;
+    height: 70%;
+    right:3%;
+    bottom:20%;
+    border-radius: 4px;
+
+}
+
+.marker {
+    position: absolute;
+    left: -110%;
+    width: 100%;
+    font-weight: bold;
+    font-family: Arial;
+    font-size: 130%;
+    text-align: right;
+    color: #FFFFFF;
+    cursor: pointer;
+}
+
+.ui-slider {
+    width: 10%;
+    background: #444;
+
+}
+.ui-slider-range {
+    bottom: 0%;
+    position: absolute;
+    width: 100%;
+}
+
+.ui-slider-vertical {
+
+ }
+
+.ui-widget {
+
+}
+
+.ui-widget-content {
+
+}
+
+
+.poker-slider .ui-slider-handle {
+    width:108%;
+    height:5%;
+    position:absolute;
+    margin-left:-4%;
+    margin-bottom: 0px;
+    z-index:200;
+    background: #808080;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    border: 0px;
+}
+
+.ui-state-default {
+
+}
+
+.ui-corner-all {
+
+}
+
+.ui-widget-header {
+    border: 0px;
+    background: #9bba00;
+    border-radius: 0 0 4px 4px;
+    background-image: linear-gradient(bottom, #9BBA00 0%, #C3E30C 100%);
+    background-image: -o-linear-gradient(bottom, #9BBA00 0%, #C3E30C 100%);
+    background-image: -moz-linear-gradient(bottom, #9BBA00 0%, #C3E30C 100%);
+    background-image: -webkit-linear-gradient(bottom, #9BBA00 0%, #C3E30C 100%);
+    background-image: -ms-linear-gradient(bottom, #9BBA00 0%, #C3E30C 100%);
+}
+
+
+

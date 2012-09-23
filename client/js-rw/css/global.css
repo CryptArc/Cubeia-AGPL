@@ -1,0 +1,11 @@
+body {
+    margin: 0;
+    padding: 0;
+    color:#fff;
+    font-family: Arial, san-serif;
+    width: 100%;
+    height:100%;
+    background: #1a1a1a url("../images/table/table-background.jpg") no-repeat fixed;
+    background-size: contain;
+    overflow: hidden;
+}
