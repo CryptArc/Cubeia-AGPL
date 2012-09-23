@@ -75,6 +75,36 @@ Poker.LobbyLayoutManager = Class.extend({
                 }
             },this);
         this.filters.push(noLimitFilter);
+
+        var highStakes = new Poker.LobbyFilter("highStakes",true,
+            function(enabled,lobbyData){
+                if(!enabled) {
+                    return lobbyData.ante > 1000;
+                } else {
+                    return true;
+                }
+            },this);
+        this.filters.push(highStakes);
+
+        var mediumStakes = new Poker.LobbyFilter("mediumStakes",true,
+            function(enabled,lobbyData){
+                if(!enabled) {
+                    return lobbyData.ante > 1000 || lobbyData.ante < 50;
+                } else {
+                    return true;
+                }
+            },this);
+        this.filters.push(mediumStakes);
+
+        var lowStakes = new Poker.LobbyFilter("lowStakes",true,
+            function(enabled,lobbyData){
+                if(!enabled) {
+                    return lobbyData.ante > 50;
+                } else {
+                    return true;
+                }
+            },this);
+        this.filters.push(lowStakes);
     },
     handleTableSnapshotList: function(tableSnapshotList) {
         for (var i = 0; i < tableSnapshotList.length; i ++) {
@@ -97,7 +127,8 @@ Poker.LobbyLayoutManager = Class.extend({
                 seated: tableSnapshot.seated,
                 blinds : (Poker.Utils.formatBlinds(ante)+"/"+Poker.Utils.formatBlinds(ante*2)),
                 type : this.getBettingModel(bettingModel),
-                tableStatus : this.getTableStatus(tableSnapshot.seated,tableSnapshot.capacity)
+                tableStatus : this.getTableStatus(tableSnapshot.seated,tableSnapshot.capacity),
+                ante : ante
             };
             var i = this.lobbyData.push(data);
 

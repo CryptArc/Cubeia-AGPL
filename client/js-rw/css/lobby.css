@@ -226,6 +226,9 @@
     width:100%;
     clear:both;
     display: block;
+    position: absolute;
+    top:8%;
+    right: 0%;
 }
 .filter-button {
     display: block;
@@ -250,7 +253,14 @@
     display:block;
     margin-right:1%;
     float:right;
-    width:25%;
+    width:20%;
+}
+.filter-group.stakes{
+    width:27%;
+    font-size:100%;
+}
+.filter-group.stakes .filter-button {
+    padding:5%;
 }
 #tableListContainerWrapper {
     position: absolute;
