@@ -300,12 +300,9 @@ Poker.LobbyFilter = Class.extend({
             self.enabled=!self.enabled;
             $(this).toggleClass("active");
             Poker.Utils.store(self.id,self.enabled);
-            console.log("Filter: " + self.id + " = " + self.enabled);
             self.filterUpdated();
 
         });
-        console.log("this.enabled = " + this.enabled);
-        console.log(this.enabled);
         if(this.enabled==true) {
             $("#"+this.id).addClass("active");
         } else {
