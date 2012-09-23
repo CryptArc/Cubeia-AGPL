@@ -47,64 +47,24 @@ Poker.LobbyLayoutManager = Class.extend({
 
         this.filters.push(emptyTablesFilter);
 
-        var noLimitFilter = new Poker.LobbyFilter("noLimit",true,
-            function(enabled,lobbyData){
-                if(!enabled) {
-                    return lobbyData.type != "NL";
-                } else {
-                    return true;
-                }
-            },this);
-        this.filters.push(noLimitFilter);
 
-        var noLimitFilter = new Poker.LobbyFilter("potLimit",true,
-            function(enabled,lobbyData){
-                if(!enabled) {
-                    return lobbyData.type != "PL";
-                } else {
-                    return true;
-                }
-            },this);
-        this.filters.push(noLimitFilter);
+        var noLimit = new Poker.PropertyStringFilter("noLimit",true,this,"type","NL");
+        this.filters.push(noLimit);
 
-        var noLimitFilter = new Poker.LobbyFilter("fixedLimit",true,
-            function(enabled,lobbyData){
-                if(!enabled) {
-                    return lobbyData.type != "FL";
-                } else {
-                    return true;
-                }
-            },this);
-        this.filters.push(noLimitFilter);
+        var potLimit = new Poker.PropertyStringFilter("potLimit",true,this,"type","PL");
+        this.filters.push(potLimit);
 
-        var highStakes = new Poker.LobbyFilter("highStakes",true,
-            function(enabled,lobbyData){
-                if(!enabled) {
-                    return lobbyData.ante < 1000;
-                } else {
-                    return true;
-                }
-            },this);
+        var fixedLimit = new Poker.PropertyStringFilter("fixedLimit",true,this,"type","FL");
+        this.filters.push(fixedLimit);
+
+        var highStakes = new Poker.PropertyMinMaxFilter("highStakes",true,this,"ante",1000,-1);
+
         this.filters.push(highStakes);
 
-        var mediumStakes = new Poker.LobbyFilter("mediumStakes",true,
-            function(enabled,lobbyData){
-                if(!enabled) {
-                    return lobbyData.ante > 1000 || lobbyData.ante < 50;
-                } else {
-                    return true;
-                }
-            },this);
+        var mediumStakes = new Poker.PropertyMinMaxFilter("mediumStakes",true,this,"ante",50,1000);
         this.filters.push(mediumStakes);
 
-        var lowStakes = new Poker.LobbyFilter("lowStakes",true,
-            function(enabled,lobbyData){
-                if(!enabled) {
-                    return lobbyData.ante > 50;
-                } else {
-                    return true;
-                }
-            },this);
+        var lowStakes = new Poker.PropertyMinMaxFilter("lowStakes",true,this,"ante",-1,50);
         this.filters.push(lowStakes);
     },
     handleTableSnapshotList: function(tableSnapshotList) {
@@ -162,6 +122,10 @@ Poker.LobbyLayoutManager = Class.extend({
     handleTableUpdate : function(tableUpdate) {
         var tableData = this.findTable(tableUpdate.tableid);
         if (tableData) {
+            if(tableData.seated ==  tableData.seated) {
+                console.log("on update, seated players the same, skipping update");
+                return;
+            }
             tableData.seated = tableUpdate.seated;
             //it might be filtered out
             var item = $("#tableItem"+tableData.id);
@@ -322,6 +286,66 @@ Poker.LobbyFilter = Class.extend({
         return this.filterFunction(this.enabled,lobbyData);
     }
 });
+
+Poker.PropertyMinMaxFilter = Poker.LobbyFilter.extend({
+    min :-1,
+    max : -1,
+    property : null,
+    init : function(id,enabled,lobbyLayoutManager,property,min,max) {
+        this.min = min;
+        this.max = max;
+        this.property = property;
+        var self = this;
+        this._super(id,enabled,function(enabled,lobbyData){
+            return self.doFilter(enabled,lobbyData);
+        },lobbyLayoutManager);
+
+    },
+    doFilter : function(enabled, lobbyData) {
+        var p = lobbyData[this.property];
+        if(typeof(p)!="undefined" && !this.enabled) {
+            if(this.max!=-1 && this.min!=-1) {
+                return p > this.max || p < this.min;
+            } else if(this.max!=-1) {
+                return p>this.max;
+            } else if(this.min!=-1) {
+                return p<this.min;
+            } else {
+                console.log("PropertyFilter: neither min or max is defined");
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+});
+
+Poker.PropertyStringFilter = Poker.LobbyFilter.extend({
+    str : null,
+    property : null,
+    init : function(id,enabled,lobbyLayoutManager,property,str) {
+        this.property = property;
+        this.str = str;
+        var self = this;
+        this._super(id,enabled,function(enabled,lobbyData){
+            return self.doFilter(enabled,lobbyData);
+        },lobbyLayoutManager);
+
+    },
+    doFilter : function(enabled, lobbyData) {
+        var p = lobbyData[this.property];
+        if(typeof(p)!="undefined" && !this.enabled) {
+            if(p !== this.str) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return true;
+        }
+    }
+});
+
 
 
 
