@@ -21,6 +21,7 @@
     text-align: right;
     color: #FFFFFF;
     cursor: pointer;
+
 }
 
 .ui-slider {
@@ -50,7 +51,7 @@
 .poker-slider .ui-slider-handle {
 
     width:108%;
-    height:5%;
+    height:6%;
     position:absolute;
     margin-left:-4%;
     margin-bottom: 0px;
@@ -60,6 +61,20 @@
     -moz-border-radius: 4px;
     border-radius: 4px;
     border: 0px;
+    -webkit-box-shadow: 0px 1px 4px 0px #222222;
+    box-shadow: 0px 1px 4px 0px #222222;
+
+    background: #a8a8a8; /* Old browsers */
+    background: -moz-linear-gradient(top,  #a8a8a8 0%, #848484 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#a8a8a8), color-stop(100%,#848484)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #a8a8a8 0%,#848484 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #a8a8a8 0%,#848484 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #a8a8a8 0%,#848484 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #a8a8a8 0%,#848484 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a8a8a8', endColorstr='#848484',GradientType=0 ); /* IE6-9 */
+
+
+
 }
 
 .ui-state-default {
