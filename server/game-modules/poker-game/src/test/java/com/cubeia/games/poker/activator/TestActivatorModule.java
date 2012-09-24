@@ -41,6 +41,7 @@ class TestActivatorModule extends FirebaseModule {
         bind(ParticipantFactory.class).to(ParticipantFactoryImpl.class);
         bind(LobbyDomainSelector.class).to(LobbyDomainSelectorImpl.class);
         bind(PokerStateCreator.class).to(InjectorPokerStateCreator.class);
+        bind(TableNameManager.class).to(MapTableNameManager.class);
         super.configure(); 
 	} 
 }

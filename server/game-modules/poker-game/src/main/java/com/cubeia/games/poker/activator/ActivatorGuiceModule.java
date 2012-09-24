@@ -61,6 +61,7 @@ public class ActivatorGuiceModule extends FirebaseModule {
         bind(ActivatorTableManager.class).to(ActivatorTableManagerImpl.class);
         bind(LobbyTableInspector.class).to(LobbyTableInspectorImpl.class); 
         bind(MttTableCreationHandler.class).to(MttTableCreationHandlerImpl.class);
+        bind(TableNameManager.class).to(MapTableNameManager.class);
         if(!useDatabase) {
         	// bind dummy configuration
         	bind(TableConfigTemplateProvider.class).to(SimpleTableConfigTemplateProvider.class); // TODO: Read from DB

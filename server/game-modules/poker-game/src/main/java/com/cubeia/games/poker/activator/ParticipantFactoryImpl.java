@@ -38,6 +38,9 @@ public class ParticipantFactoryImpl implements ParticipantFactory {
     
     @Inject
     private LobbyDomainSelector domainSelector;
+
+	@Inject
+	private TableNameManager tableNamer;
 	
 	@Override 
 	public PokerParticipant createParticipantFor(TableConfigTemplate template) {
@@ -46,6 +49,7 @@ public class ParticipantFactoryImpl implements ParticipantFactory {
 					template == null ? null : domainSelector.selectLobbyDomainFor(template), 
 					stateCreator, 
 					rngProvider, 
-					backend);
+					backend,
+					tableNamer);
 	}
 }
