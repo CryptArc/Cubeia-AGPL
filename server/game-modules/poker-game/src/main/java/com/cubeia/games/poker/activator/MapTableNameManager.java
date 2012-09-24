@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+
+import javax.print.attribute.standard.MediaSize.NA;
 
 import org.apache.log4j.Logger;
 
@@ -25,22 +28,25 @@ public class MapTableNameManager implements TableNameManager {
 	private final List<Name> orderList = new ArrayList<Name>();
 	
 	private final Logger log = Logger.getLogger(getClass());
+	private final Random random = new Random();
 	
 	private final String listName;
+	private final boolean randomName;
 	
 	public MapTableNameManager() {
-		this("table_names.txt");
+		this("table_names.txt", true);
 	}
 	
-	public MapTableNameManager(String listName) {
+	public MapTableNameManager(String listName, boolean randomName) {
 		this.listName = listName;
+		this.randomName = randomName;
 		initNamesFromClassPath();
 		resort();
 	}
 
 	@Override
 	public String tableCreated(Table table) {
-		Name name = orderList.get(0);
+		Name name = selectName();
 		String tmp = name.get();
 		tableToName.put(table.getId(), name);
 		name.count++;
@@ -59,6 +65,23 @@ public class MapTableNameManager implements TableNameManager {
 	
 	
 	// --- PRIVATE METHODS --- //
+	
+	private Name selectName() {
+		if(!randomName) {
+			return orderList.get(0);
+		} else {
+			int index = 0;
+			int count = orderList.get(0).count;
+			for (Name n : orderList) {
+				index++;
+				if(n.count > count) {
+					break;
+				}
+			}
+			index = random.nextInt(index);
+			return orderList.get(index);
+		}
+	}
 	
 	private void resort() {
 		Collections.sort(orderList);
