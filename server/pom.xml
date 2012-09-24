@@ -288,6 +288,51 @@
 		</dependencies>
 	</dependencyManagement>
 
+	<profiles>
+	  <profile>
+	    <!-- Disable this profile to skip license check, for example
+		 on automated builds -->
+	    <id>check-license</id>
+	    <activation>
+	      <activeByDefault>true</activeByDefault>
+	      <property>
+		<name>check-license</name>
+	      </property>
+	    </activation>
+	    <build>
+	      <plugins>
+		<plugin>
+		  <groupId>com.mycila.maven-license-plugin</groupId>
+		  <artifactId>maven-license-plugin</artifactId>
+		  <version>1.8.0</version>
+		  <configuration>
+		    <header>src/etc/header.txt</header>
+		    <failIfMissing>true</failIfMissing>
+		    <aggregate>true</aggregate>
+		    <includes>
+		      <include>src/**/*.java</include>
+		    </includes>
+		    <properties>
+		      <owner>Cubeia Ltd</owner>
+		      <year>2010</year>
+		      <email>info@cubeia.com</email>
+		    </properties>
+		  </configuration>
+		  <executions>
+		    <execution>
+		      <id>check-headers</id>
+		      <phase>deploy</phase>
+		      <goals>
+			<goal>check</goal>
+		      </goals>
+		    </execution>
+		  </executions>
+		</plugin>
+	      </plugins>
+	    </build>
+	  </profile>
+	</profiles>
+	
 	<!-- Build config -->
 	<build>
 		<plugins>
@@ -305,35 +350,6 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
-
-			<plugin>
-				<groupId>com.mycila.maven-license-plugin</groupId>
-				<artifactId>maven-license-plugin</artifactId>
-				<version>1.8.0</version>
-				<configuration>
-					<header>src/etc/header.txt</header>
-					<failIfMissing>true</failIfMissing>
-					<aggregate>true</aggregate>
-					<includes>
-						<include>src/**/*.java</include>
-					</includes>
-					<properties>
-						<owner>Cubeia Ltd</owner>
-						<year>2010</year>
-						<email>info@cubeia.com</email>
-					</properties>
-				</configuration>
-				<executions>
-					<execution>
-						<id>check-headers</id>
-						<phase>deploy</phase>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
 			<plugin>
 				<artifactId>maven-remote-resources-plugin</artifactId>
 				<version>1.1</version>
