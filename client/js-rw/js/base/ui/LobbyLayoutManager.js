@@ -133,7 +133,7 @@ Poker.LobbyLayoutManager = Class.extend({
     handleTableUpdate : function(tableUpdate) {
         var tableData = this.findTable(tableUpdate.tableid);
         if (tableData) {
-            if(tableData.seated ==  tableData.seated) {
+            if(tableData.seated == tableUpdate.seated) {
                 console.log("on update, seated players the same, skipping update");
                 return;
             }

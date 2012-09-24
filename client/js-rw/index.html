@@ -12,6 +12,7 @@
     <link rel="stylesheet" type="text/css" href="css/CircularProgressBar.css"/>
 
     <!-- All less files is imported in this base.less-->
+
     <link rel="stylesheet/less" type="text/css" href="less/base.less">
 
     <script type="text/javascript"  src="js/lib/less-1.3.0.min.js"></script>
@@ -66,14 +67,6 @@
     <script type="text/javascript" src="js/base/ui/DealerButton.js"></script>
 
 
-
-    <script type="text/javascript">
-        $(document).ready(function(){
-            //less.watch(); //only for debug, auto reloading of less css files
-        });
-    </script>
-
-
     <script type="text/javascript">
         var comHandler = null;
         function handleKeyUp(keyCode) {
@@ -83,7 +76,13 @@
         }
         $(document).ready(function(){
 
+             setTimeout(
+                function(){
 
+                    less.watch(); //only for debug, auto reloading of less css files
+                },
+                2000
+             );
 
 
             $(".describe").describe();
@@ -152,10 +151,9 @@
                 </div>
             </div>
             <div class="status-label">Status: <span class="connect-status"></span></div>
-
         </div>
-
     </div>
+
     <div id="lobbyView" class="lobby-container"  style="display:none;">
         <div id="lobby" class="lobby-list">
 
@@ -328,14 +326,16 @@
         </div>
     </div>
     <div id="seatTemplate" style="display: none;">
-        <div class="player-name">
-            {{name}}
-        </div>
+
         <div class="avatar-base">
 
         </div>
+
         <div class="progress-bar">
 
+        </div>
+        <div class="player-name">
+            {{name}}
         </div>
         <div class="avatar">
 
@@ -344,14 +344,15 @@
 
 
         </div>
-        <div class="action-text">
-            Small Blind
-        </div>
+
         <div class="player-status">
             Sitting out
         </div>
         <div class="seat-balance balance">
 
+        </div>
+        <div class="action-text">
+            Small Blind
         </div>
         <div class="action-amount balance">
 
