@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import javax.print.attribute.standard.MediaSize.NA;
-
 import org.apache.log4j.Logger;
 
 import com.cubeia.firebase.api.game.table.Table;
@@ -142,7 +140,11 @@ public class MapTableNameManager implements TableNameManager {
 		}
 		
 		public String get() {
-			return name + " " + count;
+			if(count > 1) {
+				return name + " " + count;
+			} else {
+				return name;
+			}
 		}
 
 		@Override

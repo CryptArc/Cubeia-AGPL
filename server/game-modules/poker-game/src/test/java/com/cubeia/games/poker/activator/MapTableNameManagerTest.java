@@ -13,9 +13,9 @@ public class MapTableNameManagerTest {
 	public void testAddAndRemove() {
 		TableNameManager man = new MapTableNameManager("test_table_names.txt", false);
 		// test 3 first
-		assertEquals("A 1", man.tableCreated(table(1)));
-		assertEquals("B 1", man.tableCreated(table(2)));
-		assertEquals("C 1", man.tableCreated(table(3)));
+		assertEquals("A", man.tableCreated(table(1)));
+		assertEquals("B", man.tableCreated(table(2)));
+		assertEquals("C", man.tableCreated(table(3)));
 		// new 3 more
 		assertEquals("A 2", man.tableCreated(table(4)));
 		assertEquals("B 2", man.tableCreated(table(5)));
