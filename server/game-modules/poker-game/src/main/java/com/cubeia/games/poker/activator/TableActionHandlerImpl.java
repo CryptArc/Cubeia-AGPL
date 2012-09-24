@@ -43,6 +43,9 @@ public class TableActionHandlerImpl implements TableActionHandler {
 	@Inject
 	private ActivatorRouter router;
 	
+	@Inject
+	private TableNameManager tableNamer;
+	
 	@Override
 	public void handleAction(TableModifierAction action) {
 		switch(action.getType()) {
@@ -72,6 +75,7 @@ public class TableActionHandlerImpl implements TableActionHandler {
 	private void doDestroy(int tableId) {
 		log.debug("Remove lobby attribute is set for table[" + tableId + "] so it will be destroyed.");
 		tables.destroyTable(tableId, true);
+		tableNamer.tableDestroyed(tableId);
 	}
 
 	private void doClose(int tableId) {

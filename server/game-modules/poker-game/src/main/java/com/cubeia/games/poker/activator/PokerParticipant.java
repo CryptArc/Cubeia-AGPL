@@ -70,12 +70,15 @@ public class PokerParticipant extends DefaultCreationParticipant {
     private final CashGamesBackendContract cashGameBackendService;
     private final TableConfigTemplate template;
 
-    public PokerParticipant(TableConfigTemplate template, String domain, PokerStateCreator stateCreator, RNGProvider rngProvider, CashGamesBackendContract cashGameBackendService) {
+	private final TableNameManager tableNamer;
+
+    public PokerParticipant(TableConfigTemplate template, String domain, PokerStateCreator stateCreator, RNGProvider rngProvider, CashGamesBackendContract cashGameBackendService, TableNameManager tableNamer) {
         this.domain = domain;
         this.template = template;
 		this.stateCreator = stateCreator;
         this.cashGameBackendService = cashGameBackendService;
         this.rngProvider = rngProvider;
+		this.tableNamer = tableNamer;
     }
 
     @Override
@@ -139,7 +142,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
 
     @Override
     public String getTableName(GameDefinition def, Table t) {
-        return template.getVariant().name() + "<" + t.getId() + ">";
+        return tableNamer.tableCreated(t);
     }
 
     public int getSeats() {
