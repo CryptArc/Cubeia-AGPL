@@ -1,0 +1,45 @@
+.table-10 .seat {
+    position: absolute;
+    width:19%;
+    height:30%;
+}
+.table-10 .seat-pos-1 {
+    top:67%;
+    left:0%;
+}
+.table-10 .seat-pos-2 {
+    top:35%;
+    left:0%;
+}
+.table-10 .seat-pos-3 {
+    top:3%;
+    left:0%;
+}
+.table-10 .seat-pos-4 {
+    top:3%;
+    left:20%;
+}
+.table-10 .seat-pos-5 {
+    top:3%;
+    left:40.5%;
+}
+.table-10 .seat-pos-6 {
+    top:3%;
+    left:61%;
+}
+.table-10 .seat-pos-7 {
+    top:3%;
+    left:81%;
+}
+.table-10 .seat-pos-8 {
+    top:35%;
+    left:81%;
+}
+.table-10 .seat-pos-9 {
+    top:67%;
+    left:81%;
+}
+.table-10 .seat-pos-0 {
+    top:67%;
+    left:40%;
+}
