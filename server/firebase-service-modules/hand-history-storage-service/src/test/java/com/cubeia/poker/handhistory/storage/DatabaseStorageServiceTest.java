@@ -73,7 +73,7 @@ public class DatabaseStorageServiceTest {
 
     @BeforeClass
     public static void initDb() throws Exception {
-        MongodConfig config = new MongodConfig(Version.V2_0_1, PORT, Network.localhostIsIPv6());
+        MongodConfig config = new MongodConfig(Version.V2_1_1, PORT, Network.localhostIsIPv6());
         MongodExecutable prepared = MongoDBRuntime.getDefaultInstance().prepare(config);
         mongod = prepared.start();
     }
