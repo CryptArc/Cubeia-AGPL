@@ -212,6 +212,81 @@ public class TexasHoldemTest {
         assertEquals(90, context.getTotalPotSize());
     }
 
+    @Test
+    public void testDeadSmallBlind() {
+        PokerContext context = prepareContext(4);
+        startHand(context);
+
+        // First play a normal hand.
+        act(p[1], SMALL_BLIND);
+        act(p[2], BIG_BLIND);
+        act(p[3], CALL);
+        act(p[0], RAISE, 40);
+
+        act(p[1], FOLD);
+        act(p[2], FOLD);
+        act(p[3], FOLD);
+
+        // Then the small blind rejects
+        startHand(context);
+        act(p[2], DECLINE_ENTRY_BET);
+        act(p[3], BIG_BLIND);
+        act(p[0], FOLD);
+
+        act(p[1], RAISE, 40);
+        act(p[0], FOLD);
+        act(p[3], FOLD);
+
+        assertEquals(MissedBlindsStatus.MISSED_SMALL_BLIND, p[2].getMissedBlindsStatus());
+        assertFalse(p[2].hasPostedEntryBet());
+
+        // The guy who missed the big comes back.
+        p[2].sitIn();
+        p[2].setSitOutNextRound(false);
+
+        // He can't play this hand though, because you can't sit in on the dealer button.
+        startHand(context);
+
+        act(p[3], SMALL_BLIND);
+        act(p[0], BIG_BLIND);
+
+        act(p[1], RAISE, 40);
+        act(p[3], FOLD);
+        act(p[0], FOLD);
+
+        // This hand he can play.
+        startHand(context);
+
+        act(p[0], SMALL_BLIND);
+        act(p[1], BIG_BLIND);
+
+        long balanceBefore = p[2].getBalance();
+
+        // Player 2 posts the dead small.
+        act(p[2], DEAD_SMALL_BLIND);
+
+        // He should have sb less in his account.
+        int sbCost = context.getSettings().getSmallBlindAmount();
+        assertTrue(sbCost > 0);
+        assertEquals(balanceBefore - sbCost, p[2].getBalance());
+
+        // The small blind should be dead meaning p2 has to call a full bb.
+        assertEquals(context.getSettings().getBigBlindAmount(), p[2].getActionRequest().getOption(CALL).getMinAmount());
+        act(p[2], CALL);
+
+        act(p[3], RAISE, 40);
+        act(p[0], FOLD);
+        act(p[1], FOLD);
+        act(p[2], CALL);
+
+        // Now he should have no missed blinds.
+        assertEquals(MissedBlindsStatus.NO_MISSED_BLINDS, p[3].getMissedBlindsStatus());
+
+        // Pot should be 2 * 40 + blinds + dead small blind = 2 * 40 + 20 + 10 + 10 = 120.
+        assertEquals(120, context.getTotalPotSize());
+    }
+
+
     /**
      * If you miss the big blind, you need to pay bb+dead sb to re-enter the game.
      *

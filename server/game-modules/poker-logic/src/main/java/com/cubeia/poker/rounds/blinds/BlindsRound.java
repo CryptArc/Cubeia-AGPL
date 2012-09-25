@@ -211,6 +211,9 @@ public class BlindsRound implements Round {
             case BIG_BLIND_PLUS_DEAD_SMALL_BLIND:
                 handled = currentState.bigBlindPlusDeadSmallBlind(action.getPlayerId(), context, this);
                 break;
+            case DEAD_SMALL_BLIND:
+                handled = currentState.deadSmallBlind(action.getPlayerId(), context, this);
+                break;
             default:
                 log.info(action.getActionType() + " is not legal here");
                 return false;
