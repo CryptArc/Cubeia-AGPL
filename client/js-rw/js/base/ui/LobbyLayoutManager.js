@@ -109,14 +109,14 @@ Poker.LobbyLayoutManager = Class.extend({
             console.log("duplicate found - tableid: " + tableSnapshot.tableid);
         }
     },
-    handleSitAndGoSnapshotList: function(sitAndGoSnapshotList) {
+    handleTournamentSnapshotList: function(sitAndGoSnapshotList) {
         for (var i = 0; i < sitAndGoSnapshotList.length; i ++) {
-            this.handleSitAndGoSnapshot(sitAndGoSnapshotList[i]);
+            this.handleTournamentSnapshot(sitAndGoSnapshotList[i]);
         }
         this.createGrid();
     },
 
-    handleSitAndGoSnapshot : function(snapshot) {
+    handleTournamentSnapshot : function(snapshot) {
         if (this.findSitAndGo(snapshot.mttid) === null) {
 
             var speedParam = "N/A";
@@ -141,11 +141,33 @@ Poker.LobbyLayoutManager = Class.extend({
         }
     },
 
-    getTournamentSnapshotParameter : function(snapshot, parameterName) {
-        console.log("Looking for param " + parameterName + " in");
-        console.log(snapshot);
-//        return "Name";
-        return this.readParam(parameterName, snapshot.params);
+    handleTournamentUpdates : function(tournamentUpdateList) {
+        for (var i = 0; i < tournamentUpdateList.length; i ++) {
+            this.handleTournamentUpdate(tournamentUpdateList[i]);
+        }
+
+    },
+
+    handleTournamentUpdate : function(tournamentUpdate) {
+        var tournamentData = this.findTournament(tournamentUpdate.tableid);
+        if (tournamentData) {
+            var registered = this.readParam("REGISTERED", tournamentUpdate.params);
+            if(tournamentData.seated == registered) {
+                console.log("on update, registered players the same, skipping update");
+                return;
+            }
+            tournamentData.seated = registered;
+            //it might be filtered out
+            var item = $("#tableItem"+tournamentData.id);
+            if (item.length > 0) {
+                item.unbind().replaceWith(this.getTableItemHtml(tournamentData));
+                var item = $("#tableItem"+tournamentData.id);  //need to pick it up again to be able to bind to it
+                item.click(function(e){
+                    comHandler.openTable(tournamentData.id, tournamentData.capacity);
+                });
+            }
+            console.log("table " + tournamentData.id +"  updated, registered = "+ tournamentData.seated);
+        }
     },
 
     getTableStatus : function(seated,capacity) {
@@ -190,6 +212,7 @@ Poker.LobbyLayoutManager = Class.extend({
             console.log("table " + tableData.id +"  updated, seated = "+ tableData.seated);
         }
     },
+
     handleTableRemoved : function(tableid) {
         console.debug("removing table " + tableid);
         this.removeTable(tableid);
@@ -210,6 +233,16 @@ Poker.LobbyLayoutManager = Class.extend({
         for (var i = 0; i < this.lobbyData.length; i ++) {
             var object = this.lobbyData[i];
             if (object.id == tableid) {
+                return object;
+            }
+        }
+        return null;
+    },
+
+    findTournament : function(tournamentId) {
+        for (var i = 0; i < this.lobbyData.length; i ++) {
+            var object = this.lobbyData[i];
+            if (object.id == tournamentId) {
                 return object;
             }
         }
