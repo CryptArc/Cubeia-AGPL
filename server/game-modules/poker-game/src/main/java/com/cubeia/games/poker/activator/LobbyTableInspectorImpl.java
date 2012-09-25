@@ -62,8 +62,9 @@ public class LobbyTableInspectorImpl implements LobbyTableInspector {
     @Override
     public List<TableModifierAction> match(List<TableConfigTemplate> templates) {
         List<TableModifierAction> result = new ArrayList<TableModifierAction>();
+        List<LobbyTable> allTables = getAllTables();
         // first pass: check for destruction
-        List<LobbyTable> allTables = checkDestruction(result);
+        checkDestruction(allTables, result);
         // divide into groups by template
         Map<Integer, List<LobbyTable>> tables = partitionTables(allTables);
         log.debug("Found " + allTables.size() + " tables in " + tables.size() + " templates");
@@ -74,11 +75,18 @@ public class LobbyTableInspectorImpl implements LobbyTableInspector {
         return result;
     }
 
+	// --- PRIVATE METHODS --- //
+    
+    private List<LobbyTable> getAllTables() {
+    	LobbyTable[] arr = factory.listTables();
+    	List<LobbyTable> list = new LinkedList<LobbyTable>();
+    	for (LobbyTable t : arr) {
+    		list.add(t);
+    	}
+		return list;
+	}
 
-    // --- PRIVATE METHODS --- //
-
-    private void checkMissingTemplates(List<TableConfigTemplate> templates, List<LobbyTable> allTables, Map<Integer, List<LobbyTable>> tables,
-            List<TableModifierAction> result) {
+    private void checkMissingTemplates(List<TableConfigTemplate> templates, List<LobbyTable> allTables, Map<Integer, List<LobbyTable>> tables, List<TableModifierAction> result) {
         Set<Integer> templateIds = collectTemplateIds(templates);
         for (Integer id : tables.keySet()) {
             if (!templateIds.contains(id)) {
@@ -158,17 +166,15 @@ public class LobbyTableInspectorImpl implements LobbyTableInspector {
     /*
      * Check for tables to be destroyed, regardless of template, and return all other tables
      */
-    private List<LobbyTable> checkDestruction(List<TableModifierAction> result) {
-        List<LobbyTable> all = new LinkedList<LobbyTable>();
-        for (LobbyTable table : factory.listTables()) {
+    private void checkDestruction(List<LobbyTable> allTables, List<TableModifierAction> result) {
+        for (Iterator<LobbyTable> it = allTables.iterator(); it.hasNext(); ) {
+        	LobbyTable table = it.next();
             if (isClosed(table)) {
                 log.debug("Table[" + table.getTableId() + "] is closed, will be destroyed.");
                 result.add(TableModifierAction.destroy(table.getTableId()));
-            } else {
-                all.add(table);
+                it.remove();
             }
         }
-        return all;
     }
 
     private boolean isClosed(LobbyTable table) {
