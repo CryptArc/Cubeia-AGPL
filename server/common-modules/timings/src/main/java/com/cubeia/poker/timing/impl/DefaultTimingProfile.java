@@ -37,15 +37,15 @@ public class DefaultTimingProfile implements TimingProfile {
     public long getTime(Periods period) {
         switch (period) {
             case POCKET_CARDS:
-                return 3000;
+                return 1000;
             case FLOP:
-                return 3000;
+                return 1000;
             case TURN:
-                return 3000;
+                return 1000;
             case RIVER:
-                return 3000;
+                return 1000;
             case START_NEW_HAND:
-                return 8000;
+                return 3000;
             case ACTION_TIMEOUT:
                 return 15000;
             case AUTO_POST_BLIND_DELAY:

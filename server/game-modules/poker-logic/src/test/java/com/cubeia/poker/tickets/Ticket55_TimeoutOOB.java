@@ -65,6 +65,9 @@ public class Ticket55_TimeoutOOB extends AbstractTexasHandTester {
         assertTrue(mp[2].isAllIn());
         assertTrue(mp[3].isAllIn());
 
+        // Trigger timeout after exposing showdown cards.
+        state.timeout();
+
         // Trigger deal community cards
         state.timeout();
         // FLOP

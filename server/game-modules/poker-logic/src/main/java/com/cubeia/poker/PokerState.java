@@ -44,7 +44,7 @@ import java.util.*;
  * Also, the current state of the game can be queried from this class, to be able to send a snapshot
  * view of the game to new players.
  * <p/>
- * NOTE: The name of the class should really be Poker Game.
+ * NOTE: The name of the class should really be PokerGame.
  */
 public class PokerState implements Serializable, IPokerState {
 

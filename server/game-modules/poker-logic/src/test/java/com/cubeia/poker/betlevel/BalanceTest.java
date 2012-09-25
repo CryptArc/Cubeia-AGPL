@@ -333,6 +333,9 @@ public class BalanceTest extends AbstractTexasHandTester {
         assertEquals(900, mockServerAdapter.getLastActionRequest().getOption(PokerActionType.CALL).getMaxAmount());
         act(p[0], PokerActionType.CALL, 900);
 
+        // Timeout after pocket cards have been flipped open.
+        state.timeout();
+
         // Trigger deal community cards
         state.timeout();
 
@@ -343,7 +346,6 @@ public class BalanceTest extends AbstractTexasHandTester {
         state.timeout();
 
         assertTrue(state.isFinished());
-
     }
 
     /**
@@ -394,6 +396,9 @@ public class BalanceTest extends AbstractTexasHandTester {
         assertEquals(1800, mp[1].getBalance()); // remember that this gut betted 1100 (smallblind 100 + raise 1000) but it was a overbet and only 200 was used of the initial 2000
         assertEquals(0, mp[2].getBalance());
         assertEquals(0, mp[3].getBalance());
+
+        // Timeout after pocket cards have been exposed
+        state.timeout();
 
         // Trigger deal community cards
         state.timeout();

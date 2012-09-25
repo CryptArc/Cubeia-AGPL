@@ -259,7 +259,6 @@ public class PokerContext implements Serializable {
     }
 
     public boolean haveAllPlayersExposedCards() {
-
         if (countNonFoldedPlayers() > 1) {
             for (PokerPlayer p : getCurrentHandSeatingMap().values()) {
                 if (!p.hasFolded() && !p.isExposingPocketCards()) {
@@ -267,7 +266,6 @@ public class PokerContext implements Serializable {
                 }
             }
         }
-
         return true;
     }
 

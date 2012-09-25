@@ -159,12 +159,14 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
 
     @Override
     public void dealExposedPocketCards() {
-        dealCommunityCards();
+        currentRound = new DealCommunityCardsRound(this);
+        // Schedule timeout for the community cards round
+        scheduleRoundTimeout();
     }
 
     @Override
     public void dealInitialPocketCards() {
-        // Not used yet.
+        // This is used in Telesina but not Hold'em, please unify.
     }
 
     private void handleCanceledHand() {
@@ -220,6 +222,10 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
 
         if (isHandFinished()) {
             handleFinishedHand();
+        } else if (allInShowdown()) {
+            log.debug("All-in showdown, exposing pocket cards.");
+            currentRound = new ExposePrivateCardsRound(this, calculateRevealOrder());
+            scheduleRoundTimeout();
         } else {
             // Start deal community cards round
             currentRound = new DealCommunityCardsRound(this);
@@ -228,11 +234,13 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
         }
     }
 
+    private boolean allInShowdown() {
+        return (context.isAtLeastAllButOneAllIn() && !context.haveAllPlayersExposedCards());
+    }
+
     @VisibleForTesting
     void handleFinishedHand() {
-        PokerPlayer playerAtDealerButton = context.getPlayerInDealerSeat();
-
-        List<Integer> playerRevealOrder = revealOrderCalculator.calculateRevealOrder(context.getCurrentHandSeatingMap(), context.getLastPlayerToBeCalled(), playerAtDealerButton, context.countNonFoldedPlayers());
+        List<Integer> playerRevealOrder = calculateRevealOrder();
 
         exposeShowdownCards(playerRevealOrder);
         Set<PokerPlayer> muckingPlayers = context.getMuckingPlayers();
@@ -242,9 +250,15 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
         context.getPotHolder().clearPots();
     }
 
+    private List<Integer> calculateRevealOrder() {
+        PokerPlayer playerAtDealerButton = context.getPlayerInDealerSeat();
+        return revealOrderCalculator.calculateRevealOrder(context.getCurrentHandSeatingMap(), context.getLastPlayerToBeCalled(), playerAtDealerButton, context.countNonFoldedPlayers());
+    }
+
     @Override
     public void visit(ExposePrivateCardsRound exposePrivateCardsRound) {
-        throw new UnsupportedOperationException("not implemented");
+        currentRound = new DealCommunityCardsRound(this);
+        scheduleRoundTimeout();
     }
 
     @Override

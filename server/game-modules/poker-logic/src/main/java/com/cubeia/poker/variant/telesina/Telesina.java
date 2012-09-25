@@ -313,6 +313,7 @@ public class Telesina extends AbstractGameType implements RoundVisitor, Dealer {
             handleFinishedHand();
         } else {
             if (context.isAtLeastAllButOneAllIn() && !context.haveAllPlayersExposedCards()) {
+                // All-in showdown.
                 setCurrentRound(roundFactory.createExposePrivateCardsRound(this, calculateRevealOrder()));
                 scheduleRoundTimeout();
             } else {

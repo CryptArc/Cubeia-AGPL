@@ -155,9 +155,6 @@ public class BettingRound implements Round, BettingRoundContext {
 
         log.debug("first player to act = {}", p == null ? null : p.getId());
 
-        // boolean everyoneIsSittingOut = context.isEveryoneSittingOut();
-
-        // if (p == null  ||  allOtherNonFoldedPlayersAreAllIn(p)  ||  everyoneIsSittingOut) {
         if (p == null || allOtherNonFoldedPlayersAreAllIn(p)) {
             // No or only one player can act. We are currently in an all-in show down scenario
             log.debug("No players left to act. We are in an all-in show down scenario");
