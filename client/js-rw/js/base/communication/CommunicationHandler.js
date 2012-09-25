@@ -43,6 +43,11 @@ Poker.CommunicationHandler = Poker.AbstractConnectorHandler.extend({
             case FB_PROTOCOL.TableRemovedPacket.CLASSID :
                 this.lobbyLayoutManager.handleTableRemoved(protocolObject.tableid);
                 break;
+            case FB_PROTOCOL.TournamentSnapshotListPacket.CLASSID :
+                console.log("Address: " + protocolObject.address);
+                this.lobbyLayoutManager.handleSitAndGoSnapshotList(protocolObject.snapshots);
+                break;
+            // TODO: update and remove, separate s&go and tourney
 
         }
     },
@@ -58,7 +63,7 @@ Poker.CommunicationHandler = Poker.AbstractConnectorHandler.extend({
             $('#loginView').hide();
             $("#lobbyView").show();
             document.location.hash="#";
-            this.subscribeToLobby();
+            this.subscribeToCashGames();
         }
     },
     retryCount : 0,
@@ -96,11 +101,29 @@ Poker.CommunicationHandler = Poker.AbstractConnectorHandler.extend({
     doLogin : function(username,password) {
         this.connector.login(username, password, 0);
     },
-    subscribeToLobby : function() {
+
+    subscribeToCashGames : function() {
         this.lobbyLayoutManager.createGrid();
         this.connector.lobbySubscribe(1, "/");
+    },
 
+    subscribeToSitAndGos : function() {
+        this.subscribeToTournamentsWithPath("/sitandgo")
+    },
 
+    subscribeToTournaments : function() {
+        this.subscribeToTournamentsWithPath("/scheduled");
+    },
+
+    subscribeToTournamentsWithPath : function(path) {
+        this.lobbyLayoutManager.clearLobby();
+        this.lobbyLayoutManager.createGrid();
+        console.log("Subscribing to tournaments with path " + path);
+        var subscribeRequest = new FB_PROTOCOL.LobbySubscribePacket();
+        subscribeRequest.type = FB_PROTOCOL.LobbyTypeEnum.MTT;
+        subscribeRequest.gameid = 1;
+        subscribeRequest.address = path;
+        this.connector.sendProtocolObject(subscribeRequest)
     }
 
 });

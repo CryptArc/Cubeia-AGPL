@@ -68,7 +68,7 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
         return this.tableManager.getTableId();
     },
     onOpenTable : function(tableId,capacity){
-        console.log("ON OPEN TABLE")
+        console.log("ON OPEN TABLE");
         this.onOpenTableAccepted(tableId,capacity);
         this.connector.watchTable(tableId);
     },
@@ -131,8 +131,8 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
     unwatchTable : function() {
         var unwatchRequest = new FB_PROTOCOL.UnwatchRequestPacket();
         unwatchRequest.tableid = this.tableId;
-        this.connector.sendProtocolObject(unwatchRequest)
-        comHandler.subscribeToLobby();
+        this.connector.sendProtocolObject(unwatchRequest);
+        comHandler.subscribeToCashGames();
     },
     handlePacket : function(protocolObject) {
         switch (protocolObject.classId) {
@@ -181,6 +181,6 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
     },
     showLobby : function() {
         $("#lobbyView").show(); //should be somewhere else
-        comHandler.subscribeToLobby();
+        comHandler.subscribeToCashGames();
     }
 });

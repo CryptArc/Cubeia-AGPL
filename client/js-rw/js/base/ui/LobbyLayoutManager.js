@@ -24,10 +24,12 @@ Poker.LobbyLayoutManager = Class.extend({
         $("#sitAndGoMenu").click(function(e){
             $(".main-menu .selected").removeClass("selected");
             $(this).addClass("selected");
+            comHandler.subscribeToSitAndGos();
         });
         $("#tournamentMenu").click(function(e){
             $(".main-menu .selected").removeClass("selected");
             $(this).addClass("selected");
+            comHandler.subscribeToTournaments();
         });
 
         $(".show-filters").click(function(){
@@ -40,7 +42,7 @@ Poker.LobbyLayoutManager = Class.extend({
         var fullTablesFilter = new Poker.LobbyFilter("fullTables",true,
             function(enabled,lobbyData){
                 if(!enabled) {
-                    return lobbyData.seated<lobbyData.capacity;
+                    return lobbyData.seated < lobbyData.capacity;
                 } else {
                     return true;
                 }
@@ -57,7 +59,6 @@ Poker.LobbyLayoutManager = Class.extend({
             },this);
 
         this.filters.push(emptyTablesFilter);
-
 
         var noLimit = new Poker.PropertyStringFilter("noLimit",true,this,"type","NL");
         this.filters.push(noLimit);
@@ -108,8 +109,47 @@ Poker.LobbyLayoutManager = Class.extend({
             console.log("duplicate found - tableid: " + tableSnapshot.tableid);
         }
     },
+    handleSitAndGoSnapshotList: function(sitAndGoSnapshotList) {
+        for (var i = 0; i < sitAndGoSnapshotList.length; i ++) {
+            this.handleSitAndGoSnapshot(sitAndGoSnapshotList[i]);
+        }
+        this.createGrid();
+    },
+
+    handleSitAndGoSnapshot : function(snapshot) {
+        if (this.findSitAndGo(snapshot.mttid) === null) {
+
+            var speedParam = "N/A";
+            var bettingModel = "N/A";
+            var ante = "N/A";
+            var params = snapshot.params;
+
+            var data = {id:snapshot.mttid,
+                name:this.readParam("NAME", params),
+                speed:speedParam,
+                capacity: this.readParam("CAPACITY", params),
+                seated: this.readParam("REGISTERED", params),
+                blinds : "N/A",
+                type : "NL",
+                tableStatus : "open",
+                ante : ante
+            };
+            var i = this.lobbyData.push(data);
+
+        } else {
+            console.log("duplicate found - tableid: " + snapshot.tableid);
+        }
+    },
+
+    getTournamentSnapshotParameter : function(snapshot, parameterName) {
+        console.log("Looking for param " + parameterName + " in");
+        console.log(snapshot);
+//        return "Name";
+        return this.readParam(parameterName, snapshot.params);
+    },
+
     getTableStatus : function(seated,capacity) {
-        if(seated == capacity) {
+        if (seated == capacity) {
             return "full";
         }
         return "open";
@@ -175,12 +215,26 @@ Poker.LobbyLayoutManager = Class.extend({
         }
         return null;
     },
+
+    findSitAndGo : function(tournamentId) {
+        for (var i = 0; i < this.lobbyData.length; i ++) {
+            var object = this.lobbyData[i];
+            if (object.id == tournamentId) {
+                return object;
+            }
+        }
+        return null;
+    },
+
     reSort : function() {
 
     },
+    clearLobby : function() {
+        this.lobbyData = [];
+        $("#tableListItemContainer").empty();
+    },
 
     createGrid : function() {
-
         $('#lobby').show();
         $("#tableListItemContainer").empty();
 
@@ -201,10 +255,33 @@ Poker.LobbyLayoutManager = Class.extend({
         }
         console.debug("grid created");
     },
+
+    createSitAndGoGrid : function() {
+        $('#lobby').show();
+        $("#tableListItemContainer").empty();
+
+        var self = this;
+        var count = 0;
+        $.each(this.lobbyData, function(i, data) {
+            if(self.includeData(data)) {
+                count++;
+                $("#tableListItemContainer").append(self.getTableItemHtml(data));
+                $("#tableItem"+data.id).click(function(e){
+                    $("#tableListItemContainer").empty();
+                    comHandler.openTable(data.id,data.capacity);
+                });
+            }
+        });
+        if(count==0) {
+            $("#tableListItemContainer").append($("<div/>").addClass("no-tables").html("Currently no tables matching your criteria"));
+        }
+        console.debug("grid created");
+    },
+
     includeData : function(tableData) {
-      for(var i = 0; i<this.filters.length; i++) {
+      for (var i = 0; i < this.filters.length; i++) {
           var filter = this.filters[i];
-          if(filter.filter(tableData) == false) {
+          if (filter.filter(tableData) == false) {
               return false;
           }
       }
@@ -214,6 +291,7 @@ Poker.LobbyLayoutManager = Class.extend({
         var item =  Mustache.render(this.listItemTemplate,t);
         return item;
     },
+
     readParam : function(key, params) {
 
         for (var i = 0; i < params.length; i ++) {
@@ -239,10 +317,12 @@ Poker.LobbyLayoutManager = Class.extend({
             }
         }
     },
+
     getCapacity : function(id) {
         var tableData = this.findTable(id);
         return tableData.capacity;
     },
+
     showLogin : function() {
         $('#dialog1').fadeIn(1000);
 

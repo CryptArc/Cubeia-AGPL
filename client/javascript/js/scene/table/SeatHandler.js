@@ -63,8 +63,7 @@ SeatHandler.prototype.getPidByOccupiedSeatNumber = function(occupiedSeatNr) {
     console.log(seatEntity);
     var playerEntityId = seatEntity.occupant.id;
     var playerEntity = entityHandler.getEntityById(playerEntityId);
-    var pid = playerEntity.pid;
-    return pid;
+    return playerEntity.pid;
 };
 
 SeatHandler.prototype.createSeatNumberOnTableEntityAtXY = function(seatNr, tableEntity, x, y) {
@@ -163,10 +162,6 @@ SeatHandler.prototype.addHandStrength = function(seatEntity) {
     uiElementHandler.setDivElementParent(uiEntity.ui.divId, uiEntity.spatial.transform.anchorId);
     uiElementHandler.setDivElementParent(uiEntity.spatial.transform.anchorId, seatEntity.ui.divId);
     view.spatialManager.positionVisualEntityAtSpatial(uiEntity);
-
-
-
-
 };
 
 SeatHandler.prototype.addPlayerTimerProgressBar = function(seatEntity) {
