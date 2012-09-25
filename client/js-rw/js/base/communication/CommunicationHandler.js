@@ -18,12 +18,12 @@ Poker.CommunicationHandler = Poker.AbstractConnectorHandler.extend({
     showConnectStatus : function(text) {
       $(".connect-status").html(text);
     },
-    openTable : function(tableId,capacity){
+    openTable : function(tableId, capacity){
         console.log("CommunicationHandler.openTable");
         $("#lobbyView").hide();
         $("#tableView").show();
         this.tableComManager = new Poker.TableComHandler(this.connector);
-        this.tableComManager.onOpenTable(tableId,capacity);
+        this.tableComManager.onOpenTable(tableId, capacity);
     },
     packetCallback : function(protocolObject){
         this.tableComManager.handlePacket(protocolObject);
@@ -44,11 +44,12 @@ Poker.CommunicationHandler = Poker.AbstractConnectorHandler.extend({
                 this.lobbyLayoutManager.handleTableRemoved(protocolObject.tableid);
                 break;
             case FB_PROTOCOL.TournamentSnapshotListPacket.CLASSID :
-                console.log("Address: " + protocolObject.address);
-                this.lobbyLayoutManager.handleSitAndGoSnapshotList(protocolObject.snapshots);
+                console.log(protocolObject);
+                this.lobbyLayoutManager.handleTournamentSnapshotList(protocolObject.snapshots);
                 break;
-            // TODO: update and remove, separate s&go and tourney
-
+            case FB_PROTOCOL.TournamentUpdateListPacket.CLASSID :
+                this.lobbyLayoutManager.handleTournamentUpdates(protocolObject.updates);
+                break;
         }
     },
     watchTable : function(tableId) {
