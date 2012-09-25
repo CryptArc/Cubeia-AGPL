@@ -208,5 +208,9 @@ Poker.Seat = Class.extend({
    },
    isMySeat : function() {
        return false;
+   },
+   onPotWon : function(potId,amount) {
+    console.log("player " + this.player.name + " wom " + amount);
+    this.handStrength.addClass("won");
    }
 });

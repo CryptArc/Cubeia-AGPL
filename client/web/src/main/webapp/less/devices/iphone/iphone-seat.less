@@ -1,4 +1,4 @@
-@seat-bg:#666;
+@seat-bg:#333;
 @player-base-height:65%;
 @base-top: 40%;
 @base-content-top:@base-top+4%;
@@ -17,6 +17,12 @@
     position: absolute;
     .border-radius(2px);
     z-index: 10;
+}
+.seat-empty {
+    .avatar-base {
+        background: none;
+        border:none;
+    }
 }
 .avatar {
     display: none;

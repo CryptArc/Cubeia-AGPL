@@ -16,7 +16,6 @@ CircularProgressBar.prototype = {
 			containerId = "#" + containerId;
 		}
 		var c = $(containerId);
-		c.css({fontSize:c.width()+"px"});
 		this.containerId = containerId;
 		this._addContent();
 	},

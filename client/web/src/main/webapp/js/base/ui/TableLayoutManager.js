@@ -290,5 +290,13 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         for(var s in seats) {
             seats[s].moveAmountToPot();
         }
+    },
+    onPlayerToPotTransfer : function(playerId,potId,amount) {
+        var s = this.getSeatByPlayerId(playerId);
+        if(amount>0){
+            s.onPotWon(potId,amount);
+        }
     }
+
+
 });

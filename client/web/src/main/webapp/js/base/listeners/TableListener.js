@@ -113,6 +113,9 @@ Poker.TableListener = Class.extend({
      */
     onMoveDealerButton : function(seatId) {
         console.log("Poker.TableListener.onMoveDealerButton");
+    },
+    onPlayerToPotTransfer : function(playerId,potId,amount) {
+        console.log("Poker.TableListener.onPlayerToPotTransfer");
     }
 
 });

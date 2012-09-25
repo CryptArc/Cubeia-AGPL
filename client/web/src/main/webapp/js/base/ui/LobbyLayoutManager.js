@@ -153,7 +153,7 @@ Poker.LobbyLayoutManager = Class.extend({
         if (tournamentData) {
             var registered = this.readParam("REGISTERED", tournamentUpdate.params);
             if(tournamentData.seated == registered) {
-                console.log("on update, registered players the same, skipping update");
+                //console.log("on update, registered players the same, skipping update");
                 return;
             }
             tournamentData.seated = registered;
@@ -196,7 +196,7 @@ Poker.LobbyLayoutManager = Class.extend({
         var tableData = this.findTable(tableUpdate.tableid);
         if (tableData) {
             if(tableData.seated == tableUpdate.seated) {
-                console.log("on update, seated players the same, skipping update");
+                //console.log("on update, seated players the same, skipping update");
                 return;
             }
             tableData.seated = tableUpdate.seated;

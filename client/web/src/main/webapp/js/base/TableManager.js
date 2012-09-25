@@ -40,12 +40,27 @@ Poker.TableManager = Class.extend({
                 hands[h].player,
                 Poker.Hand.fromId(hands[h].handType));
         }
+        console.log("pot transfers:");
+        console.log(potTransfers);
         var count = this.handCount;
         var self = this;
+
+        if(potTransfers.fromPlayerToPot == false ){
+            this._notifyPotToPlayerTransfer(potTransfers.transfers);
+        }
+
         setTimeout(function(){
             //if no new hand has started in the next 15 secs we clear the table
             self.clearTable(count);
         },15000);
+    },
+    _notifyPotToPlayerTransfer : function(transfer) {
+        for(var t in transfer) {
+            var trans = transfer[t];
+            for(var l in this.tableListeners) {
+                this.tableListeners[l].onPlayerToPotTransfer(trans.playerId,trans.potId, trans.amount);
+            }
+        }
     },
     clearTable : function(handCount) {
         if(this.handCount==handCount) {
