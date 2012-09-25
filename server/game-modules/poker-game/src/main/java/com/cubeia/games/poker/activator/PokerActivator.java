@@ -50,93 +50,92 @@ import com.google.inject.name.Named;
  * @author Fredrik Johansson, Cubeia Ltd
  */
 public class PokerActivator implements GameActivator, MttAwareActivator, PokerActivatorMBean {
- 
+
     private static final String JMX_BIND_NAME = "com.cubeia.poker:type=PokerActivator";
 
     @Log4j
     private Logger log;
 
     @Inject
-    private ActivatorTableManager modifier;
-    
+    private ActivatorTableManager tableManager;
+
     @Inject
     @Named("activatorThreads")
-    private ScheduledExecutorService exec;
-    
+    private ScheduledExecutorService executor;
+
     @Inject
     @Named("activatorInterval")
     private long interval;
-    
+
     @Inject
     private MttTableCreationHandler mttTables;
-    
+
     @Inject
     private ParticipantFactory participantFactory;
-    
+
     @Inject
     private TableFactory tableFactory;
-    
+
     @Override
     public void init(ActivatorContext context) throws SystemException {
         new JmxUtil().mountBean(JMX_BIND_NAME, this);
         boolean useDatabase = !useMockIntegrations(context);
         Injector inj = Guice.createInjector(
-        		new ActivatorGuiceModule(context, useDatabase),
-                new PokerGuiceModule()
-        );
+                new ActivatorGuiceModule(context, useDatabase),
+                new PokerGuiceModule());
         inj.injectMembers(this);
         log.debug("Init called.");
-        if(useDatabase) {
-        	log.debug("Initializing JPA.");
-        	inj.getInstance(JpaInitializer.class);
+        if (useDatabase) {
+            log.debug("Initializing JPA.");
+            inj.getInstance(JpaInitializer.class);
         }
     }
-    
+
     @Override
     public void start() {
-    	exec.scheduleWithFixedDelay(modifier, interval, interval, MILLISECONDS);
+        executor.scheduleWithFixedDelay(tableManager, interval, interval, MILLISECONDS);
     }
-    
+
     @Override
     public void createTable(String domain, int seats, int anteLevel, PokerVariant variant) {
-    	TableConfigTemplate t = createNewTemplate(seats, anteLevel, variant);
-    	PokerParticipant p = participantFactory.createParticipantFor(t);
-    	tableFactory.createTable(seats, p);
+        TableConfigTemplate t = createNewTemplate(seats, anteLevel, variant);
+        PokerParticipant p = participantFactory.createParticipantFor(t);
+        tableFactory.createTable(seats, p);
     }
-    
-	@Override
+
+    @Override
     public void destroyTable(int id) {
-		tableFactory.destroyTable(id, true);
+        tableFactory.destroyTable(id, true);
     }
 
     @Override
     public void mttTableCreated(Table table, int mttId, Object commandAttachment, LobbyAttributeAccessor acc) {
-    	log.debug("Created poker tournament table: " + table.getId());
-    	mttTables.tableCreated(table, mttId, commandAttachment, acc);
+        log.debug("Created poker tournament table: " + table.getId());
+        mttTables.tableCreated(table, mttId, commandAttachment, acc);
     }
-    
+
     @Override
     public void stop() {
-    	exec.shutdown();
+        executor.shutdown();
     }
 
     @Override
     public void destroy() {
         new JmxUtil().unmountBean(JMX_BIND_NAME);
     }
-  
+
     // --- PRIVATE METHODS ---- //
-    
+
     private boolean useMockIntegrations(ActivatorContext context) {
-		return context.getServices().getServiceInstance(PokerConfigurationService.class).getActivatorConfig().useMockIntegrations();
-	}
-    
+        return context.getServices().getServiceInstance(PokerConfigurationService.class).getActivatorConfig().useMockIntegrations();
+    }
+
     private TableConfigTemplate createNewTemplate(int seats, int anteLevel, PokerVariant variant) {
-    	TableConfigTemplate t = new TableConfigTemplate();
-    	t.setAnte(anteLevel);
-    	t.setSeats(seats);
-    	t.setVariant(variant);
-    	t.setTiming(DEFAULT);
-    	return t;
-	}
+        TableConfigTemplate t = new TableConfigTemplate();
+        t.setAnte(anteLevel);
+        t.setSeats(seats);
+        t.setVariant(variant);
+        t.setTiming(DEFAULT);
+        return t;
+    }
 }

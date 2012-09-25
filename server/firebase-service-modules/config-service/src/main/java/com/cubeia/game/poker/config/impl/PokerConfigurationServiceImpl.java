@@ -37,58 +37,61 @@ import com.google.inject.Singleton;
 
 @Singleton
 public class PokerConfigurationServiceImpl implements com.cubeia.firebase.api.service.Service, PokerConfigurationService {
-	
-	@Service(proxy=true)
-	private ClusterConfigProviderContract clusterConfig;
-	
-	private final AtomicReference<Money> defZeroMoney = new AtomicReference<Money>();
-	
-	@Log4j
-	private Logger log;
-	
-	public void init(ServiceContext con) throws SystemException { }
 
-	public void start() { }
-	
-	@Override
-	public PokerActivatorConfig getActivatorConfig() {
-		return config(PokerActivatorConfig.class);
-	}
-	
-	@Override
-	public Money createSystemMoney(long amount) {
-		Money m = defZeroMoney.get();
-		if(m != null) {
-			return m.add(amount);
-		} else {
-			PokerSystemConfig con = getSystemConfig();
-			m = new Money(0, con.getSystemCurrencyCode(), con.getSystemCurrencyFractions());
-			defZeroMoney.set(m);
-			return m.add(amount);
-		}
-	}
-	
-	@Override
-	public PokerSystemConfig getSystemConfig() {
-		return config(PokerSystemConfig.class);
-	}
-	
-	
+    @Service(proxy = true)
+    private ClusterConfigProviderContract clusterConfig;
 
-	public void stop() {}
-	
-	public void destroy() {}
+    private final AtomicReference<Money> defZeroMoney = new AtomicReference<Money>();
 
-	
-	// --- PRIVATE METHODS --- //
-	
-	private <T extends Configurable> T config(Class<T> clazz) {
-		try {
-			return clusterConfig.getConfiguration(clazz, null);
-		} catch (ConfigurationException e) {
-			log.error("Failed to read configuration", e);
-			return null; // Er...
-		}
-	}
-	
+    @Log4j
+    private Logger log;
+
+    public void init(ServiceContext con) throws SystemException {
+    }
+
+    public void start() {
+    }
+
+    @Override
+    public PokerActivatorConfig getActivatorConfig() {
+        return config(PokerActivatorConfig.class);
+    }
+
+    @Override
+    public Money createSystemMoney(long amount) {
+        Money m = defZeroMoney.get();
+        if (m != null) {
+            return m.add(amount);
+        } else {
+            PokerSystemConfig con = getSystemConfig();
+            m = new Money(0, con.getSystemCurrencyCode(), con.getSystemCurrencyFractions());
+            defZeroMoney.set(m);
+            return m.add(amount);
+        }
+    }
+
+    @Override
+    public PokerSystemConfig getSystemConfig() {
+        return config(PokerSystemConfig.class);
+    }
+
+
+    public void stop() {
+    }
+
+    public void destroy() {
+    }
+
+
+    // --- PRIVATE METHODS --- //
+
+    private <T extends Configurable> T config(Class<T> clazz) {
+        try {
+            return clusterConfig.getConfiguration(clazz, null);
+        } catch (ConfigurationException e) {
+            log.error("Failed to read configuration", e);
+            return null; // Er...
+        }
+    }
+
 }

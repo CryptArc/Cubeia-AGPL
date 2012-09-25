@@ -46,193 +46,194 @@ import com.google.inject.Singleton;
 
 @Singleton
 public class LobbyTableInspectorImpl implements LobbyTableInspector {
-	
-	@Log4j
-	private Logger log;
-	
-	@Inject
-	private TableFactory factory;
-	
-	@Inject
-	private SystemTime time;
-	
-	@Service
-	private PokerConfigurationService config;
-	
-	@Override
-	public List<TableModifierAction> match(List<TableConfigTemplate> templates) {
-		List<TableModifierAction> result = new ArrayList<TableModifierAction>();
-		// first pass: check for destruction
-		List<LobbyTable> allTables = checkDestruction(result);
-		// divide into groups by template
-		Map<Integer, List<LobbyTable>> tables = partitionTables(allTables);
-		log.debug("Found " + allTables.size() + " tables in " + tables.size() + " templates");		
-		// now check all templates for closure or creation
-		checkTemplates(templates, tables, result);
-		// now check if any template is missing
-		checkMissingTemplates(templates, allTables, tables, result);
-		return result;
-	}
+
+    @Log4j
+    private Logger log;
+
+    @Inject
+    private TableFactory factory;
+
+    @Inject
+    private SystemTime time;
+
+    @Service
+    private PokerConfigurationService config;
+
+    @Override
+    public List<TableModifierAction> match(List<TableConfigTemplate> templates) {
+        List<TableModifierAction> result = new ArrayList<TableModifierAction>();
+        // first pass: check for destruction
+        List<LobbyTable> allTables = checkDestruction(result);
+        // divide into groups by template
+        Map<Integer, List<LobbyTable>> tables = partitionTables(allTables);
+        log.debug("Found " + allTables.size() + " tables in " + tables.size() + " templates");
+        // now check all templates for closure or creation
+        checkTemplates(templates, tables, result);
+        // now check if any templates are missing
+        checkMissingTemplates(templates, allTables, tables, result);
+        return result;
+    }
 
 
-	// --- PRIVATE METHDOS --- //
+    // --- PRIVATE METHODS --- //
 
-	private void checkMissingTemplates(List<TableConfigTemplate> templates, List<LobbyTable> allTables, Map<Integer, List<LobbyTable>> tables, List<TableModifierAction> result) {
-		Set<Integer> templateIds = collectTemplateIds(templates);
-		for (Integer id : tables.keySet()) {
-			if(!templateIds.contains(id)) {
-				// missing template, check if empty and close immediately if so
-				for (LobbyTable t : tables.get(id)) {
-					boolean b = isEmpty(t);
-					log.debug("Table[" + t.getTableId() + "] is registered on missing template " + id + ", will close if empty: " + b);
-					if(b) {
-						result.add(TableModifierAction.close(t.getTableId()));
-					}
-				}
-			}
-		}
-	}
-
-
-	private Set<Integer> collectTemplateIds(List<TableConfigTemplate> templates) {
-		Set<Integer> templateIds = new HashSet<Integer>(templates.size());
-		for (TableConfigTemplate t : templates) {
-			templateIds.add(t.getId());
-		}
-		return templateIds;
-	}
-	
-	private void checkTemplates(List<TableConfigTemplate> templates, Map<Integer, List<LobbyTable>> tables, List<TableModifierAction> result) {
-		// for each template
-		for (TableConfigTemplate config : templates) {
-			List<LobbyTable> list = tables.get(config.getId());
-			// create a list if it doesn't exist
-			if(list == null) {
-				list = new ArrayList<LobbyTable>();
-				tables.put(config.getId(), list);
-			}
-			/*
-			 * Now, if "all" is less then minimum, add. If "empty
-			 * is less then mininim empty, add. Otherwise, check for
-			 * closure.
-			 */
-			int all = list.size();
-			int empty = countEmptyTables(list);
-			int min = config.getMinTables();
-			int minEmpty = config.getMinEmptyTables();
-			if(all < min) {
-				createTables(config, result, min - all);
-			} else if(empty < minEmpty) {
-				createTables(config, result, minEmpty - empty);
-			} else {
-				if(empty >= min) {
-					// remove all above "min"
-					checkClosure(config, list, result, empty - min);
-				} else if(empty > minEmpty) {
-					// remove all above "minEmpty"
-					checkClosure(config, list, result, empty - minEmpty);
-				}
-			}
-		}
-	}
-
-	private void createTables(TableConfigTemplate config, List<TableModifierAction> result, int num) {
-		for (int i = 0; i < num; i++) {
-			log.debug("Adding new table for config: " + config.getId());
-			result.add(TableModifierAction.create(config));
-		}
-	}
-
-	private int countEmptyTables(List<LobbyTable> list) {
-		int i = 0;
-		for (LobbyTable t : list) {
-			if(isEmpty(t)) {
-				i++;
-			}
-		}
-		return i;
-	}
+    private void checkMissingTemplates(List<TableConfigTemplate> templates, List<LobbyTable> allTables, Map<Integer, List<LobbyTable>> tables,
+            List<TableModifierAction> result) {
+        Set<Integer> templateIds = collectTemplateIds(templates);
+        for (Integer id : tables.keySet()) {
+            if (!templateIds.contains(id)) {
+                // missing template, check if empty and close immediately if so
+                for (LobbyTable t : tables.get(id)) {
+                    boolean b = isEmpty(t);
+                    log.debug("Table[" + t.getTableId() + "] is registered on missing template " + id + ", will close if empty: " + b);
+                    if (b) {
+                        result.add(TableModifierAction.close(t.getTableId()));
+                    }
+                }
+            }
+        }
+    }
 
 
-	/*
-	 * Check for tables to be destroyed, regardless of template, and return all other tables
-	 */
-	private List<LobbyTable> checkDestruction(List<TableModifierAction> result) {
-		List<LobbyTable> all = new LinkedList<LobbyTable>();
-		for (LobbyTable table : factory.listTables()) {
-			if(isClosed(table)) {
-				log.debug("Table[" + table.getTableId() + "] is closed, will be destroyed.");
-				result.add(TableModifierAction.destroy(table.getTableId()));
-			} else {
-				all.add(table);
-			}
-		}
-		return all;
-	}
+    private Set<Integer> collectTemplateIds(List<TableConfigTemplate> templates) {
+        Set<Integer> templateIds = new HashSet<Integer>(templates.size());
+        for (TableConfigTemplate t : templates) {
+            templateIds.add(t.getId());
+        }
+        return templateIds;
+    }
 
-	private boolean isClosed(LobbyTable table) {
-		AttributeValue val = table.getAttributes().get(PokerLobbyAttributes.TABLE_READY_FOR_CLOSE.name());
-		boolean b = (val != null && val.getIntValue() > 0);
-		if (log.isTraceEnabled()) {
-			log.trace("Table " + table.getTableId() + " is closed: " + b + " (attribute: " + (val == null ? "null" : val.getIntValue()) + ")");
-		}
-		return b;
-	}
+    private void checkTemplates(List<TableConfigTemplate> templates, Map<Integer, List<LobbyTable>> tables, List<TableModifierAction> result) {
+        // for each template
+        for (TableConfigTemplate config : templates) {
+            List<LobbyTable> list = tables.get(config.getId());
+            // create a list if it doesn't exist
+            if (list == null) {
+                list = new ArrayList<LobbyTable>();
+                tables.put(config.getId(), list);
+            }
+            /*
+             * Now, if "all" is less than minimum, add. If "empty
+             * is less then minimum empty, add. Otherwise, check for
+             * closure.
+             */
+            int all = list.size();
+            int empty = countEmptyTables(list);
+            int min = config.getMinTables();
+            int minEmpty = config.getMinEmptyTables();
+            if (all < min) {
+                createTables(config, result, min - all);
+            } else if (empty < minEmpty) {
+                createTables(config, result, minEmpty - empty);
+            } else {
+                if (empty >= min) {
+                    // remove all above "min"
+                    checkClosure(config, list, result, empty - min);
+                } else if (empty > minEmpty) {
+                    // remove all above "minEmpty"
+                    checkClosure(config, list, result, empty - minEmpty);
+                }
+            }
+        }
+    }
 
-	private void checkClosure(TableConfigTemplate config, List<LobbyTable> list, List<TableModifierAction> result, int maxRemove) {
-		if(maxRemove < 1) {
-			return; // NOTHING TO DO
-		}
-		int check = 0;
-		for (Iterator<LobbyTable> it = list.iterator(); it.hasNext(); ) {
-			LobbyTable table = it.next();
-			if(isEmpty(table) && isStale(table, config)) {
-				check++;
-				log.debug("Table[" + table.getTableId() + "] is empty, will send close request.");
-				result.add(TableModifierAction.close(table.getTableId()));
-				it.remove(); // do not do anything else on table
-				if(check == maxRemove) {
-					log.debug("Short-cutting the closure process, have marked " + check + " tables");
-					break;
-				}
-			}
-		}
-	}
+    private void createTables(TableConfigTemplate config, List<TableModifierAction> result, int num) {
+        for (int i = 0; i < num; i++) {
+            log.debug("Adding new table for config: " + config.getId());
+            result.add(TableModifierAction.create(config));
+        }
+    }
 
-	private boolean isStale(LobbyTable table, TableConfigTemplate templ) {
-		String tmp = table.getAttributes().get(_LAST_MODIFIED.name()).getStringValue();
-		long timestamp = Long.valueOf(tmp);
-		long ttl = templ.getTTL();
-		if(ttl <= 0) {
-			// fall back on configuration
-			ttl = config.getActivatorConfig().getDefaultTableTTL();
-		}
-		boolean b = (time.now() - timestamp) > ttl;
-		if (log.isTraceEnabled()) {
-			log.trace("Table " + table.getTableId() + " is stale: " + b);
-		}
-		return b;
-	}
+    private int countEmptyTables(List<LobbyTable> list) {
+        int i = 0;
+        for (LobbyTable t : list) {
+            if (isEmpty(t)) {
+                i++;
+            }
+        }
+        return i;
+    }
 
-	private boolean isEmpty(LobbyTable table) {
-		boolean b = table.getAttributes().get(_SEATED.name()).getIntValue() == 0;
-		if (log.isTraceEnabled()) {
-			log.trace("Table " + table.getTableId() + " is empty: " + b);
-		}
-		return b;
-	}
 
-	private Map<Integer, List<LobbyTable>> partitionTables(List<LobbyTable> tables) {
-		Map<Integer, List<LobbyTable>> map = new HashMap<Integer, List<LobbyTable>>();
-		for (LobbyTable t : tables) {
-			int template = t.getAttributes().get(TABLE_TEMPLATE.name()).getIntValue();
-			List<LobbyTable> list = map.get(template);
-			if(list == null) {
-				list = new ArrayList<LobbyTable>();
-				map.put(template, list);
-			}
-			list.add(t);
-		}
-		return map;
-	}
+    /*
+     * Check for tables to be destroyed, regardless of template, and return all other tables
+     */
+    private List<LobbyTable> checkDestruction(List<TableModifierAction> result) {
+        List<LobbyTable> all = new LinkedList<LobbyTable>();
+        for (LobbyTable table : factory.listTables()) {
+            if (isClosed(table)) {
+                log.debug("Table[" + table.getTableId() + "] is closed, will be destroyed.");
+                result.add(TableModifierAction.destroy(table.getTableId()));
+            } else {
+                all.add(table);
+            }
+        }
+        return all;
+    }
+
+    private boolean isClosed(LobbyTable table) {
+        AttributeValue val = table.getAttributes().get(PokerLobbyAttributes.TABLE_READY_FOR_CLOSE.name());
+        boolean b = (val != null && val.getIntValue() > 0);
+        if (log.isTraceEnabled()) {
+            log.trace("Table " + table.getTableId() + " is closed: " + b + " (attribute: " + (val == null ? "null" : val.getIntValue()) + ")");
+        }
+        return b;
+    }
+
+    private void checkClosure(TableConfigTemplate config, List<LobbyTable> list, List<TableModifierAction> result, int maxRemove) {
+        if (maxRemove < 1) {
+            return; // NOTHING TO DO
+        }
+        int check = 0;
+        for (Iterator<LobbyTable> it = list.iterator(); it.hasNext(); ) {
+            LobbyTable table = it.next();
+            if (isEmpty(table) && isStale(table, config)) {
+                check++;
+                log.debug("Table[" + table.getTableId() + "] is empty, will send close request.");
+                result.add(TableModifierAction.close(table.getTableId()));
+                it.remove(); // do not do anything else on table
+                if (check == maxRemove) {
+                    log.debug("Short-cutting the closure process, have marked " + check + " tables");
+                    break;
+                }
+            }
+        }
+    }
+
+    private boolean isStale(LobbyTable table, TableConfigTemplate templ) {
+        String tmp = table.getAttributes().get(_LAST_MODIFIED.name()).getStringValue();
+        long timestamp = Long.valueOf(tmp);
+        long ttl = templ.getTTL();
+        if (ttl <= 0) {
+            // fall back on configuration
+            ttl = config.getActivatorConfig().getDefaultTableTTL();
+        }
+        boolean b = (time.now() - timestamp) > ttl;
+        if (log.isTraceEnabled()) {
+            log.trace("Table " + table.getTableId() + " is stale: " + b);
+        }
+        return b;
+    }
+
+    private boolean isEmpty(LobbyTable table) {
+        boolean b = table.getAttributes().get(_SEATED.name()).getIntValue() == 0;
+        if (log.isTraceEnabled()) {
+            log.trace("Table " + table.getTableId() + " is empty: " + b);
+        }
+        return b;
+    }
+
+    private Map<Integer, List<LobbyTable>> partitionTables(List<LobbyTable> tables) {
+        Map<Integer, List<LobbyTable>> map = new HashMap<Integer, List<LobbyTable>>();
+        for (LobbyTable t : tables) {
+            int template = t.getAttributes().get(TABLE_TEMPLATE.name()).getIntValue();
+            List<LobbyTable> list = map.get(template);
+            if (list == null) {
+                list = new ArrayList<LobbyTable>();
+                map.put(template, list);
+            }
+            list.add(t);
+        }
+        return map;
+    }
 }

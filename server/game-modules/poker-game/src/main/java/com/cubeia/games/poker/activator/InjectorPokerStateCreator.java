@@ -25,11 +25,11 @@ import com.google.inject.Singleton;
 @Singleton
 public class InjectorPokerStateCreator implements PokerStateCreator {
 
-	@Inject
-	private Injector injector;
-	
-	@Override
-	public PokerState newPokerState() {
-		return injector.getInstance(PokerState.class); 
-	}
+    @Inject
+    private Injector injector;
+
+    @Override
+    public PokerState newPokerState() {
+        return injector.getInstance(PokerState.class);
+    }
 }

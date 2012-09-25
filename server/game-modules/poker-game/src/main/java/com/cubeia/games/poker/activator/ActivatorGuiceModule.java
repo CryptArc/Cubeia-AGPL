@@ -36,15 +36,15 @@ import com.google.inject.persist.jpa.JpaPersistModule;
 public class ActivatorGuiceModule extends FirebaseModule {
 
     private final ActivatorContext context;
-	private final boolean useDatabase;
-	
-	private final Logger log = Logger.getLogger(getClass());
+    private final boolean useDatabase;
 
-	public ActivatorGuiceModule(ActivatorContext context, boolean useDatabase) {
+    private final Logger log = Logger.getLogger(getClass());
+
+    public ActivatorGuiceModule(ActivatorContext context, boolean useDatabase) {
         super(context.getServices());
-		this.context = context;
-		this.useDatabase = useDatabase;
-    } 
+        this.context = context;
+        this.useDatabase = useDatabase;
+    }
 
     @Override
     protected void configure() {
@@ -57,30 +57,30 @@ public class ActivatorGuiceModule extends FirebaseModule {
         bind(LobbyDomainSelector.class).to(LobbyDomainSelectorImpl.class);
         bind(PokerStateCreator.class).to(InjectorPokerStateCreator.class);
         bind(TableActionHandler.class).to(TableActionHandlerImpl.class);
-        bind(ActivatorRouter.class).toInstance(context.getActivatorRouter()); 
+        bind(ActivatorRouter.class).toInstance(context.getActivatorRouter());
         bind(ActivatorTableManager.class).to(ActivatorTableManagerImpl.class);
-        bind(LobbyTableInspector.class).to(LobbyTableInspectorImpl.class); 
+        bind(LobbyTableInspector.class).to(LobbyTableInspectorImpl.class);
         bind(MttTableCreationHandler.class).to(MttTableCreationHandlerImpl.class);
         bind(TableNameManager.class).to(MapTableNameManager.class);
-        if(!useDatabase) {
-        	// bind dummy configuration
-        	bind(TableConfigTemplateProvider.class).to(SimpleTableConfigTemplateProvider.class); // TODO: Read from DB
-        	log.info("Using dummy table template configuration.");
+        if (!useDatabase) {
+            // bind dummy configuration
+            bind(TableConfigTemplateProvider.class).to(SimpleTableConfigTemplateProvider.class); // TODO: Read from DB
+            log.info("Using dummy table template configuration.");
         } else {
-        	// install JPA and bind DB access
-        	install(new JpaPersistModule("pokerGameUnit"));
-        	bind(TableConfigTemplateProvider.class).to(DatabaseTableConfigTemplateProvider.class);
-        	log.info("Using table template configuration from database.");
+            // install JPA and bind DB access
+            install(new JpaPersistModule("pokerGameUnit"));
+            bind(TableConfigTemplateProvider.class).to(DatabaseTableConfigTemplateProvider.class);
+            log.info("Using table template configuration from database.");
         }
         bind(Long.class).annotatedWith(Names.named("activatorInterval")).toProvider(new Provider<Long>() {
-        	
-        	@Service
-        	private PokerConfigurationService serv;
-        	
-        	@Override
-        	public Long get() {
-        		return serv.getActivatorConfig().getActivatorInterval();
-        	}
-		});
+
+            @Service
+            private PokerConfigurationService serv;
+
+            @Override
+            public Long get() {
+                return serv.getActivatorConfig().getActivatorInterval();
+            }
+        });
     }
 }

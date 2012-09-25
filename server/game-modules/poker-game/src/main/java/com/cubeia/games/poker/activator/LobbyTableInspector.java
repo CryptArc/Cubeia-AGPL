@@ -21,8 +21,12 @@ import java.util.List;
 
 import com.cubeia.games.poker.entity.TableConfigTemplate;
 
+/**
+ * Used for inspecting a table configuration list to see which tables should be created and removed.
+ *
+ */
 public interface LobbyTableInspector {
 
-	public List<TableModifierAction> match(List<TableConfigTemplate> templates);
-	
+    public List<TableModifierAction> match(List<TableConfigTemplate> templates);
+
 }

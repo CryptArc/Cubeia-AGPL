@@ -24,14 +24,14 @@ import com.cubeia.game.poker.config.api.PokerConfigurationService;
 
 public class PokerConfigurationServiceHandler extends GuiceServiceHandler {
 
-	@Override
-	protected Configuration getConfiguration() {
-		return new Configuration() {
-			
-			@Override
-			public ContractsConfig getServiceContract() {
-				return new ContractsConfig(PokerConfigurationServiceImpl.class, PokerConfigurationService.class);
-			}
-		};
-	}
+    @Override
+    protected Configuration getConfiguration() {
+        return new Configuration() {
+
+            @Override
+            public ContractsConfig getServiceContract() {
+                return new ContractsConfig(PokerConfigurationServiceImpl.class, PokerConfigurationService.class);
+            }
+        };
+    }
 }

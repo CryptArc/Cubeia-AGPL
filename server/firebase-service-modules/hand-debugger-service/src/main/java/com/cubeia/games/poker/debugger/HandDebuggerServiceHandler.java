@@ -23,7 +23,7 @@ import com.cubeia.firebase.guice.service.GuiceServiceHandler;
 
 public class HandDebuggerServiceHandler extends GuiceServiceHandler {
 
-	@Override
+    @Override
     public Configuration getConfiguration() {
         return new Configuration() {
             public ContractsConfig getServiceContract() {

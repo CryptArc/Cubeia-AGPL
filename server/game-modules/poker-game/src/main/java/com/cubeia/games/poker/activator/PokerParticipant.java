@@ -63,22 +63,23 @@ public class PokerParticipant extends DefaultCreationParticipant {
     private static Logger log = LoggerFactory.getLogger(PokerParticipant.class);
 
     public static final int GAME_ID = 1;
- 
+
     private final String domain;
     private final RNGProvider rngProvider; // should be removed...
     private final PokerStateCreator stateCreator;
     private final CashGamesBackendContract cashGameBackendService;
     private final TableConfigTemplate template;
 
-	private final TableNameManager tableNamer;
+    private final TableNameManager tableNamer;
 
-    public PokerParticipant(TableConfigTemplate template, String domain, PokerStateCreator stateCreator, RNGProvider rngProvider, CashGamesBackendContract cashGameBackendService, TableNameManager tableNamer) {
+    public PokerParticipant(TableConfigTemplate template, String domain, PokerStateCreator stateCreator, RNGProvider rngProvider,
+            CashGamesBackendContract cashGameBackendService, TableNameManager tableNamer) {
         this.domain = domain;
         this.template = template;
-		this.stateCreator = stateCreator;
+        this.stateCreator = stateCreator;
         this.cashGameBackendService = cashGameBackendService;
         this.rngProvider = rngProvider;
-		this.tableNamer = tableNamer;
+        this.tableNamer = tableNamer;
     }
 
     @Override
@@ -93,7 +94,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
         // create state
         PokerState pokerState = stateCreator.newPokerState();
         GameType gameType = GameTypeFactory.createGameType(variant, rngProvider);
-        PokerSettings settings = createSettings(table, variant);
+        PokerSettings settings = createSettings(table);
         pokerState.init(gameType, settings);
         pokerState.setAdapterState(new FirebaseState());
         pokerState.setTableId(table.getId());
@@ -115,29 +116,29 @@ public class PokerParticipant extends DefaultCreationParticipant {
         cashGameBackendService.announceTable(announceRequest, callbackFactory.createAnnounceTableCallback(table));
     }
 
-    private PokerSettings createSettings(Table table, PokerVariant variant) {
-        int minBuyIn = template.getAnte() * template.getMinBuyInMultiplyer();
-        int maxBuyIn = template.getAnte() * template.getMaxBuyInMultiplyer();
+    private PokerSettings createSettings(Table table) {
+        int minBuyIn = template.getAnte() * template.getMinBuyInMultiplier();
+        int maxBuyIn = template.getAnte() * template.getMaxBuyInMultiplier();
         int seats = table.getPlayerSet().getSeatingMap().getNumberOfSeats();
         RakeSettings rake = new RakeSettings(template.getRakeFraction(), template.getRakeLimit(), template.getRakeHeadsUpLimit());
         BetStrategyName limit = BetStrategyName.NO_LIMIT;
         // Map<Serializable,Serializable> attributes = Collections.emptyMap();
-        Map<Serializable,Serializable> attributes = Collections.<Serializable, Serializable>singletonMap(TABLE_EXTERNAL_ID.name(), "MOCK::" + table.getId());
+        Map<Serializable, Serializable> attributes = Collections.<Serializable, Serializable>singletonMap(TABLE_EXTERNAL_ID.name(), "MOCK::" + table.getId());
         // TODO: Make this configurable.
         int smallBlindAmount = template.getAnte();
         int bigBlindAmount = 2 * smallBlindAmount;
         TimingProfile profile = TimingFactory.getRegistry().getTimingProfile(template.getTiming());
         return new PokerSettings(
-        				template.getAnte(), 
-        				smallBlindAmount, 
-        				bigBlindAmount, 
-        				minBuyIn, 
-        				maxBuyIn, 
-        				profile, 
-        				seats, 
-        				limit, 
-        				rake, 
-        				attributes);
+                template.getAnte(),
+                smallBlindAmount,
+                bigBlindAmount,
+                minBuyIn,
+                maxBuyIn,
+                profile,
+                seats,
+                limit,
+                rake,
+                attributes);
     }
 
     @Override
@@ -149,21 +150,17 @@ public class PokerParticipant extends DefaultCreationParticipant {
         return template.getSeats();
     }
 
-    public String getDomain() {
-        return domain;
-    }
-    
     public CashGamesBackendContract getCashGameBackendService() {
-		return cashGameBackendService;
-	}
-    
+        return cashGameBackendService;
+    }
+
     public RNGProvider getRngProvider() {
-		return rngProvider;
-	}
-    
+        return rngProvider;
+    }
+
     public TableConfigTemplate getTemplate() {
-		return template;
-	}
+        return template;
+    }
 
     @Override
     public String toString() {

@@ -28,11 +28,11 @@ import com.google.inject.Singleton;
 @Singleton
 public class TableConfigTemplateDao {
 
-	@Inject
-	private Provider<EntityManager> em;
-	
-	@SuppressWarnings("unchecked")
-	public List<TableConfigTemplate> get() {
-		return em.get().createQuery("from TableConfigTemplate").getResultList();
-	}
+    @Inject
+    private Provider<EntityManager> em;
+
+    @SuppressWarnings("unchecked")
+    public List<TableConfigTemplate> get() {
+        return em.get().createQuery("from TableConfigTemplate").getResultList();
+    }
 }

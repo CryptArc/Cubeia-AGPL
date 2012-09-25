@@ -31,57 +31,57 @@ import com.google.inject.Singleton;
 @Singleton
 public class TableActionHandlerImpl implements TableActionHandler {
 
-	@Inject
-	private TableFactory tables;
-	
-	@Inject
-	private ParticipantFactory participants;
-	
-	@Log4j
-	private Logger log;
-	
-	@Inject
-	private ActivatorRouter router;
-	
-	@Inject
-	private TableNameManager tableNamer;
-	
-	@Override
-	public void handleAction(TableModifierAction action) {
-		switch(action.getType()) {
-			case CLOSE : {
-				doClose(action.getTableId());
-				break;
-			}
-			case CREATE : {
-				doCreate(action.getTemplate());
-				break;
-			}
-			case DESTROY : {
-				doDestroy(action.getTableId());
-				break;
-			}
-		}
-	}
+    @Inject
+    private TableFactory tables;
 
-	
-	// --- PRIVATE METHODS --- //
-	
-	private void doCreate(TableConfigTemplate template) {
-		log.debug("Creating table for template: " + template.getId());
-		tables.createTable(template.getSeats(), participants.createParticipantFor(template));
-	}
+    @Inject
+    private ParticipantFactory participants;
 
-	private void doDestroy(int tableId) {
-		log.debug("Remove lobby attribute is set for table[" + tableId + "] so it will be destroyed.");
-		tables.destroyTable(tableId, true);
-		tableNamer.tableDestroyed(tableId);
-	}
+    @Log4j
+    private Logger log;
 
-	private void doClose(int tableId) {
-		log.debug("Table[" + tableId + "] is elegible for closure, sending close request.");
-		GameObjectAction action = new GameObjectAction(tableId);
-		action.setAttachment(new CloseTableRequest());
-		router.dispatchToGame(tableId, action);
-	}
+    @Inject
+    private ActivatorRouter router;
+
+    @Inject
+    private TableNameManager tableNamer;
+
+    @Override
+    public void handleAction(TableModifierAction action) {
+        switch (action.getType()) {
+            case CLOSE: {
+                doClose(action.getTableId());
+                break;
+            }
+            case CREATE: {
+                doCreate(action.getTemplate());
+                break;
+            }
+            case DESTROY: {
+                doDestroy(action.getTableId());
+                break;
+            }
+        }
+    }
+
+
+    // --- PRIVATE METHODS --- //
+
+    private void doCreate(TableConfigTemplate template) {
+        log.debug("Creating table for template: " + template.getId());
+        tables.createTable(template.getSeats(), participants.createParticipantFor(template));
+    }
+
+    private void doDestroy(int tableId) {
+        log.debug("Remove lobby attribute is set for table[" + tableId + "] so it will be destroyed.");
+        tables.destroyTable(tableId, true);
+        tableNamer.tableDestroyed(tableId);
+    }
+
+    private void doClose(int tableId) {
+        log.debug("Table[" + tableId + "] is elegible for closure, sending close request.");
+        GameObjectAction action = new GameObjectAction(tableId);
+        action.setAttachment(new CloseTableRequest());
+        router.dispatchToGame(tableId, action);
+    }
 }

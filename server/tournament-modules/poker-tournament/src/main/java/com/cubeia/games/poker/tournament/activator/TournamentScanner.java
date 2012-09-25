@@ -112,7 +112,6 @@ public class TournamentScanner implements PokerActivator, Runnable {
         }
     }
 
-
     public void setMttFactory(MttFactory factory) {
         this.factory = factory;
     }

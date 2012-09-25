@@ -43,8 +43,6 @@ public class PokerTournamentActivatorImpl implements MttActivator, Startable, Po
 
     public static final int POKER_GAME_ID = 1;
 
-    public static int POKER_TOURNAMENT_ID = 77;
-
     private static transient Logger log = Logger.getLogger(PokerTournamentActivatorImpl.class);
 
     private PokerActivator activator;
@@ -58,7 +56,7 @@ public class PokerTournamentActivatorImpl implements MttActivator, Startable, Po
     }
 
     private JMXActivator jmxInterface;
-	private ActivatorContext context;
+    private ActivatorContext context;
 
     /*------------------------------------------------
 
@@ -110,7 +108,7 @@ public class PokerTournamentActivatorImpl implements MttActivator, Startable, Po
     }
 
     public void init(ActivatorContext context) throws SystemException {
-    	this.context = context;
+        this.context = context;
         if (useMockIntegrations()) {
             log.warn("Using mock activator module.");
             injector = Guice.createInjector(new MockActivatorModule());
@@ -124,7 +122,7 @@ public class PokerTournamentActivatorImpl implements MttActivator, Startable, Po
         activator.init(context);
     }
 
-	public void start() {
+    public void start() {
         activator.setMttFactory(factory);
         activator.start();
         jmxInterface = new JMXActivator(this);
@@ -134,10 +132,10 @@ public class PokerTournamentActivatorImpl implements MttActivator, Startable, Po
         activator.stop();
     }
 
-    
+
     // --- PRIVATE METHODS --- //
-    
+
     private boolean useMockIntegrations() {
-		return context.getServices().getServiceInstance(PokerConfigurationService.class).getActivatorConfig().useMockIntegrations();
-	}
+        return context.getServices().getServiceInstance(PokerConfigurationService.class).getActivatorConfig().useMockIntegrations();
+    }
 }

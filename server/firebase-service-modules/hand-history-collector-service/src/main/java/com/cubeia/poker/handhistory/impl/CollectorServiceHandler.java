@@ -24,14 +24,14 @@ import com.cubeia.poker.handhistory.api.HandHistoryCollectorService;
 
 public class CollectorServiceHandler extends GuiceServiceHandler {
 
-	@Override
-	protected Configuration getConfiguration() {
-		return new Configuration() {
+    @Override
+    protected Configuration getConfiguration() {
+        return new Configuration() {
 
             @Override
             public ContractsConfig getServiceContract() {
                 return new ContractsConfig(CollectorServiceImpl.class, HandHistoryCollectorService.class);
             }
         };
-	}
+    }
 }

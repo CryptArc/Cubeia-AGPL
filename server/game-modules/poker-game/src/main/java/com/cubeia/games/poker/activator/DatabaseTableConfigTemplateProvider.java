@@ -27,11 +27,11 @@ import com.google.inject.Singleton;
 @Singleton
 public class DatabaseTableConfigTemplateProvider implements TableConfigTemplateProvider {
 
-	@Inject
-	private TableConfigTemplateDao dao;
-	
-	@Override
-	public List<TableConfigTemplate> getTemplates() {
-		return dao.get();
-	}
+    @Inject
+    private TableConfigTemplateDao dao;
+
+    @Override
+    public List<TableConfigTemplate> getTemplates() {
+        return dao.get();
+    }
 }

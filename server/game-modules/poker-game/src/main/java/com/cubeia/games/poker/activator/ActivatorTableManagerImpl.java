@@ -29,27 +29,27 @@ import com.google.inject.Singleton;
 @Singleton
 public class ActivatorTableManagerImpl implements ActivatorTableManager {
 
-	@Inject
-	private TableConfigTemplateProvider provider;
-	
-	@Inject
-	private LobbyTableInspector inspector;
-	
-	@Inject
-	private TableActionHandler handler;
-	
-	@Log4j
-	private Logger log;
-	
-	@Override 
-	public void run() {
-		log.debug("Table manager executing.");
-		List<TableConfigTemplate> templs = provider.getTemplates();
-		log.debug("Found " + templs.size() + " templates."); 
-		List<TableModifierAction> actions = inspector.match(templs);
-		log.debug("Inspector resports " + actions.size() + " actions.");
-		for (TableModifierAction a : actions) {
-			handler.handleAction(a);
-		}
-	}
+    @Inject
+    private TableConfigTemplateProvider provider;
+
+    @Inject
+    private LobbyTableInspector inspector;
+
+    @Inject
+    private TableActionHandler handler;
+
+    @Log4j
+    private Logger log;
+
+    @Override
+    public void run() {
+        log.debug("Table manager executing.");
+        List<TableConfigTemplate> templates = provider.getTemplates();
+        log.debug("Found " + templates.size() + " templates.");
+        List<TableModifierAction> actions = inspector.match(templates);
+        log.debug("Inspector reports " + actions.size() + " actions.");
+        for (TableModifierAction a : actions) {
+            handler.handleAction(a);
+        }
+    }
 }

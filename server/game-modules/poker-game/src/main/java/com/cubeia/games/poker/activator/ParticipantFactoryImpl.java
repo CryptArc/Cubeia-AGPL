@@ -29,27 +29,27 @@ public class ParticipantFactoryImpl implements ParticipantFactory {
 
     @Inject
     private RNGProvider rngProvider;
-    
+
     @Inject
     private PokerStateCreator stateCreator;
-    
+
     @Service
     private CashGamesBackendContract backend;
-    
+
     @Inject
     private LobbyDomainSelector domainSelector;
 
-	@Inject
-	private TableNameManager tableNamer;
-	
-	@Override 
-	public PokerParticipant createParticipantFor(TableConfigTemplate template) {
-		return new PokerParticipant(
-					template, 
-					template == null ? null : domainSelector.selectLobbyDomainFor(template), 
-					stateCreator, 
-					rngProvider, 
-					backend,
-					tableNamer);
-	}
+    @Inject
+    private TableNameManager tableNamer;
+
+    @Override
+    public PokerParticipant createParticipantFor(TableConfigTemplate template) {
+        return new PokerParticipant(
+                template,
+                template == null ? null : domainSelector.selectLobbyDomainFor(template),
+                stateCreator,
+                rngProvider,
+                backend,
+                tableNamer);
+    }
 }

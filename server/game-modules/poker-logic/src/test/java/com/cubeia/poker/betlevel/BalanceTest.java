@@ -383,7 +383,7 @@ public class BalanceTest extends AbstractTexasHandTester {
 
         assertTrue(mp[1].isActionPossible(PokerActionType.RAISE));
 
-        act(p[1], PokerActionType.RAISE, 1000); // 100 will be added. The rest is a overbet and will be returned to balance
+        act(p[1], PokerActionType.RAISE, 1000); // 100 will be added. The rest is an over bet and will be returned to balance
         act(p[2], PokerActionType.CALL); // ALL IN = 0
         act(p[3], PokerActionType.CALL); // ALL IN = 0
         act(p[0], PokerActionType.CALL); // ALL IN = 0
@@ -393,7 +393,7 @@ public class BalanceTest extends AbstractTexasHandTester {
         // Family pot, everyone is all in
         assertEquals(800, state.getPotHolder().getTotalPotSize()); // each of the four players payed 200.
         assertEquals(0, mp[0].getBalance());
-        assertEquals(1800, mp[1].getBalance()); // remember that this gut betted 1100 (smallblind 100 + raise 1000) but it was a overbet and only 200 was used of the initial 2000
+        assertEquals(1800, mp[1].getBalance()); // remember that this guy bet 1100 (small blind 100 + raise 1000) but it was a over bet and only 200 was used of the initial 2000
         assertEquals(0, mp[2].getBalance());
         assertEquals(0, mp[3].getBalance());
 

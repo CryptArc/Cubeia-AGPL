@@ -17,4 +17,9 @@
 
 package com.cubeia.games.poker.activator;
 
+/**
+ * This interface will called with a fixed delay by the poker activator.
+ *
+ * On each call, it should figure out which tables to create and remove.
+ */
 public interface ActivatorTableManager extends Runnable { }
