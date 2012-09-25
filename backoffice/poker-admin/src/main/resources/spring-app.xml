@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+   http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+   http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+   http://www.springframework.org/schema/data/mongo
+   http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd">
+
+    <context:component-scan base-package="com.cubeia.games.poker.admin"/>
+    <context:property-placeholder location="classpath:/admin.properties"/>
+    <!--<util:properties id="adminProperties" location="classpath:/admin.properties"/>-->
+
+    <mongo:mongo host="${mongo.host}" port="${mongo.port}" />
+
+    <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+        <constructor-arg ref="mongo"/>
+        <constructor-arg name="databaseName" value="hands"/>
+    </bean>
+    
+    <bean id="webConfig" class="com.cubeia.games.poker.admin.Configuration">
+    	<property name="networkUrl" value="${network.bo-base-url}" />
+    </bean>
+
+    <bean id="adminDAO" class="com.cubeia.games.poker.admin.db.AbstractDAO">
+      <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+
+    <!-- DataSource -->
+<!--
+    <bean id="dataSource" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="org.h2.Driver"/>
+        <property name="url" value="jdbc:h2:file:"/>
+        <property name="username" value="sa"/>
+        <property name="password" value=""/>
+    </bean>
+-->
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${jdbc.driverClassName}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+    <!-- JPA Entitymanager support -->
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="persistenceUnitName" value="adminPersistenceUnit"/>
+        <property name="persistenceXmlLocation" value="classpath:/META-INF/persistence.xml"/>
+        <property name="jpaVendorAdapter">
+           <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+              <property name="showSql" value="false" />
+              <property name="generateDdl" value="true" />
+              <property name="databasePlatform" value="org.hibernate.dialect.MySQLDialect" />
+           </bean>
+        </property>
+    </bean>
+
+    <!-- Transaction manager -->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+
+    <!-- Enables @Transactional -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+</beans>
