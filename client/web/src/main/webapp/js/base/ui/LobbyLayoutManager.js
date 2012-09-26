@@ -85,7 +85,7 @@ Poker.LobbyLayoutManager = Class.extend({
         for (var i = 0; i < tableSnapshotList.length; i++) {
             this.handleTableSnapshot(tableSnapshotList[i]);
         }
-        this.createGrid();
+        this.createGrid(true);
     },
     handleTableSnapshot:function (tableSnapshot) {
         if (this.findTable(tableSnapshot.tableid) === null) {
@@ -117,7 +117,7 @@ Poker.LobbyLayoutManager = Class.extend({
         for (var i = 0; i < sitAndGoSnapshotList.length; i++) {
             this.handleTournamentSnapshot(sitAndGoSnapshotList[i]);
         }
-        this.createGrid();
+        this.createGrid(false);
     },
 
     handleTournamentSnapshot:function (snapshot) {
@@ -294,6 +294,7 @@ Poker.LobbyLayoutManager = Class.extend({
 
     createClickFunction:function (tables, data) {
         var self = this;
+        console.log("CREATING CLICK FUNCITON TABLES:" + tables);
         function click(e) {
             if (tables) {
                 $("#tableListItemContainer").empty();
@@ -397,7 +398,8 @@ Poker.LobbyFilter = Class.extend({
         }
     },
     filterUpdated:function () {
-        this.lobbyLayoutManager.createGrid();
+        // TODO: Need to know if this is tournaments.
+        this.lobbyLayoutManager.createGrid(true);
     },
     /**
      * Returns true if it should be included in the lobby and

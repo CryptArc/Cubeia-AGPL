@@ -117,7 +117,7 @@ Poker.CommunicationHandler = Poker.AbstractConnectorHandler.extend({
 
     subscribeToCashGames : function() {
         this.lobbyLayoutManager.clearLobby();
-        this.lobbyLayoutManager.createGrid();
+        this.lobbyLayoutManager.createGrid(true);
         this.connector.lobbySubscribe(1, "/");
     },
 
@@ -131,7 +131,7 @@ Poker.CommunicationHandler = Poker.AbstractConnectorHandler.extend({
 
     subscribeToTournamentsWithPath : function(path) {
         this.lobbyLayoutManager.clearLobby();
-        this.lobbyLayoutManager.createGrid();
+        this.lobbyLayoutManager.createGrid(false);
         console.log("Subscribing to tournaments with path " + path);
         var subscribeRequest = new FB_PROTOCOL.LobbySubscribePacket();
         subscribeRequest.type = FB_PROTOCOL.LobbyTypeEnum.MTT;
