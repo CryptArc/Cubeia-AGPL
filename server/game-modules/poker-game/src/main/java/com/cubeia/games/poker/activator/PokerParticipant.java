@@ -91,7 +91,8 @@ public class PokerParticipant extends DefaultCreationParticipant {
     public void tableCreated(Table table, LobbyTableAttributeAccessor acc) {
         super.tableCreated(table, acc);
         PokerVariant variant = template.getVariant();
-        // create state
+
+        // Create state.
         PokerState pokerState = stateCreator.newPokerState();
         GameType gameType = GameTypeFactory.createGameType(variant, rngProvider);
         PokerSettings settings = createSettings(table);
@@ -99,10 +100,13 @@ public class PokerParticipant extends DefaultCreationParticipant {
         pokerState.setAdapterState(new FirebaseState());
         pokerState.setTableId(table.getId());
         table.getGameState().setState(pokerState);
-        // set lobby attributes
+
+        // Set lobby attributes
         acc.setIntAttribute(PokerLobbyAttributes.VISIBLE_IN_LOBBY.name(), 0);
         acc.setStringAttribute(PokerLobbyAttributes.SPEED.name(), template.getTiming().name());
-        acc.setIntAttribute(PokerLobbyAttributes.BETTING_GAME_ANTE.name(), template.getAnte());
+        acc.setIntAttribute(PokerLobbyAttributes.ANTE.name(), template.getAnte());
+        acc.setIntAttribute(PokerLobbyAttributes.SMALL_BLIND.name(), settings.getSmallBlindAmount());
+        acc.setIntAttribute(PokerLobbyAttributes.BIG_BLIND.name(), settings.getBigBlindAmount());
         acc.setStringAttribute(PokerLobbyAttributes.BETTING_GAME_BETTING_MODEL.name(), "NO_LIMIT");
         acc.setStringAttribute(PokerLobbyAttributes.MONETARY_TYPE.name(), "REAL_MONEY");
         acc.setStringAttribute(PokerLobbyAttributes.VARIANT.name(), variant.name());
@@ -110,7 +114,8 @@ public class PokerParticipant extends DefaultCreationParticipant {
         acc.setIntAttribute(PokerLobbyAttributes.MAX_BUY_IN.name(), pokerState.getMaxBuyIn());
         int deckSize = TELESINA_DECK_UTIL.createDeckCards(pokerState.getTableSize()).size();
         acc.setIntAttribute(PokerLobbyAttributes.DECK_SIZE.name(), deckSize);
-        // announce table
+
+        // Announce table
         FirebaseCallbackFactory callbackFactory = cashGameBackendService.getCallbackFactory();
         AnnounceTableRequest announceRequest = new AnnounceTableRequest(table.getId());   // TODO: this should be the id from the table record
         cashGameBackendService.announceTable(announceRequest, callbackFactory.createAnnounceTableCallback(table));

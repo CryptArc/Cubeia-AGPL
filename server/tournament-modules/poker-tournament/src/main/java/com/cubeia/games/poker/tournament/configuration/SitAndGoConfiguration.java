@@ -17,6 +17,7 @@
 
 package com.cubeia.games.poker.tournament.configuration;
 
+import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructureFactory;
 import com.cubeia.poker.timing.Timings;
 
 import javax.persistence.*;
@@ -50,6 +51,7 @@ public class SitAndGoConfiguration implements Serializable {
         configuration.setMaxPlayers(capacity);
         configuration.setSeatsPerTable(10);
         configuration.setTimingType(timings.ordinal());
+        configuration.setBlindsStructure(BlindsStructureFactory.createDefaultBlindsStructure());
     }
 
     public SitAndGoConfiguration(String name, int capacity) {

@@ -183,7 +183,6 @@ public class PokerTournament implements Serializable {
         Integer table = state.getTables().iterator().next();
         Collection<Integer> winners = state.getPlayersAtTable(table);
         sendTournamentOutToPlayers(winners, instance);
-
     }
 
     private boolean isTournamentFinished() {
@@ -234,8 +233,10 @@ public class PokerTournament implements Serializable {
             }
         }
 
-        log.debug("Sending explicit start to tables[" + tablesToStart.toArray() + "] due to low number of players.");
-        mttSupport.sendRoundStartActionToTables(state, tablesToStart);
+        if (!tablesToStart.isEmpty()) {
+            log.debug("Sending explicit start to tables[" + tablesToStart.toArray() + "] due to low number of players.");
+            mttSupport.sendRoundStartActionToTables(state, tablesToStart);
+        }
 
         return closeTableIfEmpty(sourceTableId);
     }
