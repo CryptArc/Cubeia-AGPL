@@ -54,7 +54,7 @@ public class DatabaseStorageServiceTest {
     @Mock
     private DatabaseStorageConfiguration configuration;
 
-    @Before
+    //@Before
     public void setup() throws SystemException {
         initMocks(this);
         service = new DatabaseStorageService() {
@@ -71,19 +71,19 @@ public class DatabaseStorageServiceTest {
         service.start();
     }
 
-    @BeforeClass
+    //@BeforeClass
     public static void initDb() throws Exception {
         MongodConfig config = new MongodConfig(Version.V2_1_1, PORT, Network.localhostIsIPv6());
         MongodExecutable prepared = MongoDBRuntime.getDefaultInstance().prepare(config);
         mongod = prepared.start();
     }
 
-    @AfterClass
+    //@AfterClass
     public static void shutdownDb() {
         if (mongod != null) mongod.stop();
     }
 
-    @Test
+    //@Test
     public void testSimplePersist() throws Exception {
         HistoricHand historicHand = new HistoricHand(new HandIdentification(12, "table-12", "hand-67"));
         historicHand.getEvents().add(new PlayerAction(99, PlayerAction.Type.ANTE));
