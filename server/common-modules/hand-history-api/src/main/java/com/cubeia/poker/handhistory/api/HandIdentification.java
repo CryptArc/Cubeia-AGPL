@@ -17,8 +17,12 @@
 
 package com.cubeia.poker.handhistory.api;
 
-public class HandIdentification {
+import java.io.Serializable;
 
+public class HandIdentification implements Serializable {
+
+    private static final long serialVersionUID = -3874240518028155212L;
+	
     private int tableId;
     private String tableIntegrationId;
     private String handId;

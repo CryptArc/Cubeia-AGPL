@@ -17,15 +17,19 @@
 
 package com.cubeia.poker.handhistory.api;
 
+import java.io.Serializable;
+
 /**
  * This is the hand result of a single player. It contains
  * winnings, rake contribution and bet size.
  *
  * @author Lars J. Nilsson
  */
-public class HandResult {
+public class HandResult implements Serializable {
 
-    private int playerId;
+    private static final long serialVersionUID = 7495444478185154491L;
+
+	private int playerId;
 
     private long netWin;
     private long totalWin;

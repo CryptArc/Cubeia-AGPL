@@ -17,12 +17,15 @@
 
 package com.cubeia.poker.handhistory.api;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Results {
+public class Results implements Serializable {
 
-    private long totalRake;
+    private static final long serialVersionUID = 5742358497502861176L;
+
+	private long totalRake;
 
     private final Map<Integer, HandResult> results = new HashMap<Integer, HandResult>();
 
