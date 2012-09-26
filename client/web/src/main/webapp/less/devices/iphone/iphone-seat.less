@@ -1,0 +1,107 @@
+@seat-bg:#333;
+@player-base-height:65%;
+@base-top: 40%;
+@base-content-top:@base-top+4%;
+.seat {
+    position: absolute;
+    width:19%;
+    padding-bottom: 12%;
+    z-index: 10;
+}
+.avatar-base {
+    background-color:@seat-bg;
+    width:90%;
+    height: @player-base-height;
+    left:10%;
+    top:@base-top;
+    position: absolute;
+    .border-radius(2px);
+    z-index: 10;
+}
+.seat-empty {
+    .avatar-base {
+        background: none;
+        border:none;
+    }
+}
+.avatar {
+    display: none;
+}
+.player-name {
+    width:75%;
+    text-align: left;
+    position: absolute;
+    font-size:180%;
+    color:#bbb;
+    top:@base-content-top;
+    left:14%;
+    display: block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    font-weight: bold;
+    z-index: 10;
+}
+.seat-balance {
+    font-weight: bold;
+    font-size: 180%;
+    position: absolute;
+    color:#ddd;
+    top: @base-content-top+31;
+    width:75%;
+    left:14%;
+    text-align: left;
+    z-index: 10;
+}
+.action-text, .player-status {
+    font-weight: bold;
+    top:@base-content-top;
+    width:75%;
+    left:14%;
+    padding:2% 0;
+    text-align: left;
+    font-size: 180%;
+    background-color: @seat-bg;
+    opacity:1;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    font-weight: bold;
+    z-index: 10;
+}
+
+.progress-bar {
+    position: absolute;
+    background: @mainGreen;
+    .linear-gradient(bottom, #9EBA02 26%, #C0E00B 100%);
+    width:90%;
+    height: @player-base-height+3;
+    left:10%;
+    top:@base-content-top;
+    margin-left:1px;
+    z-index: 10;
+}
+
+.action-amount {
+    font-size:250%;
+    top:105%;
+    z-index: 10;
+}
+
+.hand-strength {
+    font-size: 200%;
+    position: absolute;
+    top: 104%;
+    z-index: 10;
+}
+.cards-container-player {
+    z-index: 5;
+    left: 14%;
+    width: 72%;
+    height: 72%;
+    top: 8%;
+}
+.cards-container-player .player-card-container {
+    width: 60%;
+    height: 150%;
+}
