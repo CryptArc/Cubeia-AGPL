@@ -22,10 +22,9 @@ import java.util.List;
 
 public class TableCardsDealt extends HandHistoryEvent {
 
+    private static final long serialVersionUID = 3105147087617166251L;
+	
     private final List<GameCard> cards = new LinkedList<GameCard>();
-
-    public TableCardsDealt() {
-    }
 
     public List<GameCard> getCards() {
         return cards;

@@ -22,6 +22,8 @@ import java.util.List;
 
 public class PotUpdate extends HandHistoryEvent {
 
+    private static final long serialVersionUID = -5809886423688004437L;
+	
     private final List<GamePot> pots = new LinkedList<GamePot>();
 
     public PotUpdate() {

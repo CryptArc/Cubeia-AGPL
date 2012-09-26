@@ -17,10 +17,14 @@
 
 package com.cubeia.poker.handhistory.api;
 
+import java.io.Serializable;
+
 import com.cubeia.poker.handhistory.api.GameCard.Rank;
 
-public class DeckInfo {
+public class DeckInfo implements Serializable {
 
+    private static final long serialVersionUID = 8729177028359067170L;
+	
     private int size;
     private Rank lowRank;
 

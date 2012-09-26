@@ -17,9 +17,13 @@
 
 package com.cubeia.poker.handhistory.api;
 
-public class GameCard {
+import java.io.Serializable;
 
-    public enum Rank {
+public class GameCard implements Serializable {
+
+    private static final long serialVersionUID = 4211159123208593152L;
+
+	public enum Rank {
         TWO("2"),
         THREE("3"),
         FOUR("4"),
