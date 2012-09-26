@@ -19,7 +19,9 @@ package com.cubeia.poker.handhistory.api;
 
 public class PlayerAction extends HandHistoryEvent {
 
-    public enum Type {
+    private static final long serialVersionUID = 2633660241901849321L;
+
+	public enum Type {
         SMALL_BLIND, BIG_BLIND, CALL, CHECK, BET, RAISE, FOLD, DECLINE_ENTRY_BET, ANTE, BIG_BLIND_PLUS_DEAD_SMALL_BLIND, DEAD_SMALL_BLIND;
     }
 

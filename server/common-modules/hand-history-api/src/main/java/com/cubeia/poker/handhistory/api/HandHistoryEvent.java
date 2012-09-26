@@ -21,6 +21,8 @@ import java.io.Serializable;
 
 public abstract class HandHistoryEvent implements Serializable {
 
+    private static final long serialVersionUID = 7429903140165014580L;
+	
     private final String type;
     private long time;
 

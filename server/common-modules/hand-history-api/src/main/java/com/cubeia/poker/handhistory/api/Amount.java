@@ -17,9 +17,13 @@
 
 package com.cubeia.poker.handhistory.api;
 
-public class Amount {
+import java.io.Serializable;
 
-    public static enum Type {
+public class Amount implements Serializable {
+
+    private static final long serialVersionUID = -1731897823595502084L;
+
+	public static enum Type {
         BET,
         RAISE,
         STACK,

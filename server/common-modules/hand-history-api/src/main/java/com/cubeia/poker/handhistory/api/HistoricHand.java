@@ -23,7 +23,9 @@ import java.util.List;
 
 public class HistoricHand implements Serializable {
 
-    private HandIdentification handId;
+    private static final long serialVersionUID = 6433976199796752600L;
+
+	private HandIdentification handId;
 
     /** This is not the hand id! Only here for json de-serialization. (TODO: Fixable?) */
     private String id;

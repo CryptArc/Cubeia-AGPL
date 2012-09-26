@@ -17,11 +17,14 @@
 
 package com.cubeia.poker.handhistory.api;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-public class GamePot {
+public class GamePot implements Serializable {
 
+    private static final long serialVersionUID = -5210827391459111003L;
+	
     private int potId;
     private Set<Integer> players = new HashSet<Integer>();
 

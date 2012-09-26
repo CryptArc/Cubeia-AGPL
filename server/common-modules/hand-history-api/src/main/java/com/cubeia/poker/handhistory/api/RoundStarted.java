@@ -19,10 +19,9 @@ package com.cubeia.poker.handhistory.api;
 
 public class RoundStarted extends HandHistoryEvent {
 
-    public RoundStarted() {
-    }
+    private static final long serialVersionUID = 8634217495648381990L;
 
-    @Override
+	@Override
     public String toString() {
         return "RoundStarted []";
     }

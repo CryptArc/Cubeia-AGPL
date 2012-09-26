@@ -22,6 +22,8 @@ import java.util.List;
 
 public class PlayerCardsExposed extends HandHistoryEvent {
 
+    private static final long serialVersionUID = 4854057494381657518L;
+	
     private int playerId;
     private final List<GameCard> cards = new LinkedList<GameCard>();
 
