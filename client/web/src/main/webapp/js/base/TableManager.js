@@ -45,7 +45,7 @@ Poker.TableManager = Class.extend({
         var count = this.handCount;
         var self = this;
 
-        if(potTransfers.fromPlayerToPot == false ){
+        if(potTransfers.fromPlayerToPot === false ){
             this._notifyPotToPlayerTransfer(potTransfers.transfers);
         }
 
@@ -54,12 +54,10 @@ Poker.TableManager = Class.extend({
             self.clearTable(count);
         },15000);
     },
-    _notifyPotToPlayerTransfer : function(transfer) {
-        for(var t in transfer) {
-            var trans = transfer[t];
-            for(var l in this.tableListeners) {
-                this.tableListeners[l].onPlayerToPotTransfer(trans.playerId,trans.potId, trans.amount);
-            }
+    _notifyPotToPlayerTransfer : function(transfers) {
+
+        for(var l in this.tableListeners) {
+            this.tableListeners[l].onPlayerToPotTransfers(transfers);
         }
     },
     clearTable : function(handCount) {

@@ -21,6 +21,33 @@ Poker.Utils = {
         }
         return str;
     },
+    /**
+     * Calculates the distance in percent for two elements based on
+     * a containers dimensions, if the container isn't specified
+     * window dimensions will be used
+     * @param src
+     * @param target
+     * @param container
+     * @return {Object}
+     */
+    calculateDistance : function(src,target) {
+        var srcOffset = src.offset();
+        var targetOffset = target.offset();
+        var leftPx = targetOffset.left - srcOffset.left;
+        var topPx =  targetOffset.top - srcOffset.top;
+        var distLeft = 100 * (leftPx/src.width());
+        var distTop = 100 * (topPx/src.height());
+
+        console.log("target.left = "+ targetOffset.left);
+        console.log("src.left = "+ srcOffset.left);
+        console.log("diff =  target.left - src.left" + leftPx );
+        console.log("src.width = " + src.width());
+        console.log("dist% = diff/leftPx =" +  distLeft);
+
+
+        return { left : distLeft, top : distTop };
+
+    },
     store : function(name,value) {
          var store = Poker.Utils.getStorage();
          if(store!=null) {

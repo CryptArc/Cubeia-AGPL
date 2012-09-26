@@ -97,7 +97,8 @@ Poker.LobbyLayoutManager = Class.extend({
             var smallBlind = this.readParam("SMALL_BLIND", tableSnapshot.params);
             var bigBlind = this.readParam("BIG_BLIND", tableSnapshot.params);
 
-            var data = {id:tableSnapshot.tableid,
+            var data = {
+                id:tableSnapshot.tableid,
                 name:tableSnapshot.name,
                 speed:speedParam,
                 capacity:tableSnapshot.capacity,

@@ -19,6 +19,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
     seats : new Poker.Map(),
     dealerButton : null,
     currentDealer : -1,
+    potTransferTemplate : null,
     init : function(tableContainer,templateManager,tableComHandler,capacity){
         if(!tableContainer) {
             throw "TableLayoutManager requires a tableContainer";
@@ -35,6 +36,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         this.tableContainer = tableContainer;
         this.seatTemplate = $("#seatTemplate").html();
         this.emptySeatTemplate = templateManager.getTemplate("emptySeatTemplate");
+        this.potTransferTemplate = templateManager.getTemplate("potTransferTemplate");
         for(var i = 0; i<this.capacity; i++){
                this.addEmptySeatContent(i,i,true);
         };
@@ -291,12 +293,51 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
             seats[s].moveAmountToPot();
         }
     },
-    onPlayerToPotTransfer : function(playerId,potId,amount) {
+    onPlayerToPotTransfers : function(transfers) {
+        for(var t in transfers) {
+            var trans = transfers[t];
+            this.displayPlayerToPotTransfer(trans.playerId,trans.potId, trans.amount);
+        }
+    },
+    displayPlayerToPotTransfer : function(playerId,potId,amount) {
         var s = this.getSeatByPlayerId(playerId);
         if(amount>0){
             s.onPotWon(potId,amount);
+            this.displayPotTransfer(s.actionAmount ,amount, s.seatId);
         }
+
+    },
+    displayPotTransfer : function(targetElement,amount,seatId) {
+
+        var html = Mustache.render(this.potTransferTemplate,{ id : seatId, amount: Poker.Utils.formatCurrency(amount)});
+
+        $("#seatContainer").append(html);
+        var div = $("#potTransfer" + seatId);
+
+        console.log("targetElement");
+        console.log(targetElement);
+        var self = this;
+        this.cssAnimator.addTransitionCallback(div.get(0), function(){
+          setTimeout(function(){
+              div.remove();
+          },1000);
+        });
+
+        setTimeout(
+
+            function() {
+                var offset =  Poker.Utils.calculateDistance(div,targetElement);
+                div.css("visibility","visible");
+                console.log("moving to offset : left = " + offset.left + " ,top="+offset.top);
+                setTimeout(function(){
+                    self.cssAnimator.addTransform(div.get(0),"translate3d("+offset.left+"%,"+offset.top+"%,0)");
+                },50);
+            }
+        ,1000);
+
+
     }
+
 
 
 });

@@ -62,6 +62,9 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
         }
     },
     joinTable:function (tableId) {
+        if(!tableId)  {
+            tableId = this.tableManager.getTableId();
+        }
         this.connector.joinTable(tableId, -1);
     },
     getTableId:function () {

@@ -76,8 +76,6 @@
         }
         $(document).ready(function(){
 
-
-
             $(".describe").describe();
 
             $("body").bind("touchmove", function(e){
@@ -355,7 +353,6 @@
         </div>
 
     </div>
-
     <div id="playerCardTemplate" style="display: none;">
         <div id="playerCard-{{domId}}" class="player-card-container">
             <img src="images/cards/{{cardString}}.svg" class="player-card"/>
@@ -394,5 +391,11 @@
             <div class="full-text">Full</div>
         </div>
     </div>
+    <div id="potTransferTemplate" style="display: none;">
+        <div id="potTransfer{{id}}" class="pot-transfer" style="visibility: hidden;">
+            <div class="balance">&euro;{{amount}}</div>
+        </div>
+    </div>
+
 </body>
 </html>

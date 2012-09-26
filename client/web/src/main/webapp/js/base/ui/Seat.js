@@ -17,6 +17,7 @@ Poker.Seat = Class.extend({
    actionAmount : null,
    actionText : null,
    handStrength : null,
+   seatBalance : null,
    init : function(seatId, player, templateManager) {
        this.seatId = seatId
        this.player = player;
@@ -39,8 +40,7 @@ Poker.Seat = Class.extend({
        this.cardsContainer = this.seatElement.find(".cards-container");
        this.actionAmount = this.seatElement.find(".action-amount");
        this.actionText = this.seatElement.find(".action-text");
-       var self = this;
-
+       this.seatBalance = this.seatElement.find(".seat-balance");
        this.handStrength = this.seatElement.find(".hand-strength");
 
        this.reset();
@@ -53,7 +53,7 @@ Poker.Seat = Class.extend({
    },
    updatePlayer : function(player) {
        this.player = player;
-       var balanceDiv = this.seatElement.find(".seat-balance");
+       var balanceDiv = this.seatBalance;
        if (this.player.balance == 0) {
            balanceDiv.html("All in");
            balanceDiv.removeClass("balance");
@@ -84,7 +84,7 @@ Poker.Seat = Class.extend({
    hideActionInfo : function() {
        this.hideActionText();
        if(this.actionAmount!=null) {
-           this.actionAmount.html("").hide();
+           this.actionAmount.html("");
        }
    },
    hideActionText : function() {
@@ -156,7 +156,7 @@ Poker.Seat = Class.extend({
        },50);
    },
    showHandStrength : function(hand) {
-       this.actionAmount.html("").hide();
+       this.actionAmount.html("");
        this.actionText.html("").hide();
        if(hand.id != Poker.Hand.UNKNOWN.id) {
            this.handStrength.html(hand.text).show();
@@ -212,5 +212,6 @@ Poker.Seat = Class.extend({
    onPotWon : function(potId,amount) {
     console.log("player " + this.player.name + " wom " + amount);
     this.handStrength.addClass("won");
+    this.hideActionInfo();
    }
 });
