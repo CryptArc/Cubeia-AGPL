@@ -302,6 +302,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
     displayPlayerToPotTransfer : function(playerId,potId,amount) {
         var s = this.getSeatByPlayerId(playerId);
         if(amount>0){
+            console.log("pot tranfer playerId = " + playerId + ", amount="+amount);
             s.onPotWon(potId,amount);
             this.displayPotTransfer(s.actionAmount ,amount, s.seatId);
         }
@@ -310,12 +311,9 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
     displayPotTransfer : function(targetElement,amount,seatId) {
 
         var html = Mustache.render(this.potTransferTemplate,{ id : seatId, amount: Poker.Utils.formatCurrency(amount)});
-
         $("#seatContainer").append(html);
         var div = $("#potTransfer" + seatId);
 
-        console.log("targetElement");
-        console.log(targetElement);
         var self = this;
         this.cssAnimator.addTransitionCallback(div.get(0), function(){
           setTimeout(function(){
@@ -328,7 +326,6 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
             function() {
                 var offset =  Poker.Utils.calculateDistance(div,targetElement);
                 div.css("visibility","visible");
-                console.log("moving to offset : left = " + offset.left + " ,top="+offset.top);
                 setTimeout(function(){
                     self.cssAnimator.addTransform(div.get(0),"translate3d("+offset.left+"%,"+offset.top+"%,0)");
                 },50);

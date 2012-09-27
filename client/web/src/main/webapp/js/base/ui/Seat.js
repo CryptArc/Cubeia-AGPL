@@ -74,7 +74,7 @@ Poker.Seat = Class.extend({
    },
    reset : function() {
        this.hideActionInfo();
-       this.handStrength.html("").hide();
+       this.handStrength.html("").removeClass("won").hide();
        this.clearProgressBar();
        if(this.cardsContainer) {
            this.cardsContainer.empty();

@@ -89,14 +89,14 @@ img.player-card {
         top:0;
         left:0;
     }
-    .hand-strength {
-        top:0;
-        left:0;
-    }
-    .action-text {
+    .action-text, .hand-strength {
         left:0;
         width:100%;
+        &.won {
+            color:#eecc00;
+        }
     }
+
     .player-card-container {
         width: 45%;
         height: 100%;
@@ -120,7 +120,7 @@ img.player-card {
 
 }
 
-.action-text, .player-status {
+.action-text, .player-status, .hand-strength {
     color:@mainGreen;
     font-weight: bold;
     background-color: #1a1a1a;
@@ -133,6 +133,12 @@ img.player-card {
     font-size:120%;
     text-transform: uppercase;
     padding:2% 0;
+}
+.hand-strength {
+    color:#fff;
+    &.won {
+        color: #eecc00;
+    }
 }
 .seat-balance {
     font-weight: bold;
@@ -184,18 +190,6 @@ img.player-card {
     top:40%;
     color:#555;
     font-weight: bold;
-}
-.hand-strength {
-    font-size: 150%;
-    position: absolute;
-    top: 88%;
-    font-weight: bold;
-    width:100%;
-    text-align: center;
-
-    &.won {
-        color: #eecc00;
-    }
 }
 .progress-bar {
     position: absolute;

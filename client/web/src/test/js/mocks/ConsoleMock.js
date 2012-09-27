@@ -1,4 +1,4 @@
 var console = {};
-console.log = function() {
+console.log = function(str) {
     //TODO: write to console
 }
