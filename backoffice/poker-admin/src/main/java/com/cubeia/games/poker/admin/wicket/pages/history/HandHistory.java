@@ -17,11 +17,13 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.history;
 
-import com.cubeia.games.poker.admin.service.history.HandHistoryService;
-import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
-import com.cubeia.games.poker.admin.wicket.util.ParamBuilder;
-import com.cubeia.poker.handhistory.api.HistoricHand;
+import static com.google.common.collect.Lists.newArrayList;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
@@ -41,12 +43,12 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
-import static com.google.common.collect.Lists.newArrayList;
+import com.cubeia.games.poker.admin.service.history.HandHistoryService;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.games.poker.admin.wicket.util.DatePanel;
+import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
+import com.cubeia.games.poker.admin.wicket.util.ParamBuilder;
+import com.cubeia.poker.handhistory.api.HistoricHand;
 
 /**
  * Page for searching for and viewing hand histories.
@@ -77,7 +79,7 @@ public class HandHistory extends BasePage {
         List<IColumn<HistoricHand>> columns = new ArrayList<IColumn<HistoricHand>>();
 
         // Add column with clickable hand ids.
-        columns.add(new AbstractColumn<HistoricHand>(new Model<String>("User id")) {
+        columns.add(new AbstractColumn<HistoricHand>(new Model<String>("Hand id")) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -94,10 +96,36 @@ public class HandHistory extends BasePage {
             }
 
         });
-        columns.add(new PropertyColumn<HistoricHand>(Model.of("Hand id"), "handId.handId"));
+        // columns.add(new PropertyColumn<HistoricHand>(Model.of("Hand id"), "handId.handId"));
         columns.add(new PropertyColumn<HistoricHand>(Model.of("Table id"), "handId.tableIntegrationId"));
-        columns.add(new PropertyColumn<HistoricHand>(Model.of("Start date"), "startTime"));
-        columns.add(new PropertyColumn<HistoricHand>(Model.of("End date"), "endTime"));
+        columns.add(new AbstractColumn<HistoricHand>(new Model<String>("Start date")) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void populateItem(Item<ICellPopulator<HistoricHand>> item, String componentId, IModel<HistoricHand> model) {
+                HistoricHand hand = model.getObject();
+                item.add(new DatePanel(componentId, hand.getStartTime()));
+            }
+
+            @Override
+            public boolean isSortable() {
+                return false;
+            }
+        });
+        columns.add(new AbstractColumn<HistoricHand>(new Model<String>("End date")) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void populateItem(Item<ICellPopulator<HistoricHand>> item, String componentId, IModel<HistoricHand> model) {
+                HistoricHand hand = model.getObject();
+                item.add(new DatePanel(componentId, hand.getEndTime()));
+            }
+
+            @Override
+            public boolean isSortable() {
+                return false;
+            }
+        });
         columns.add(new PropertyColumn<HistoricHand>(Model.of("Total rake"), "results.totalRake"));
 
         return columns;

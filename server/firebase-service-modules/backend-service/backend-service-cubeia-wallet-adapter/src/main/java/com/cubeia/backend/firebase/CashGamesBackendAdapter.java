@@ -272,9 +272,11 @@ public class CashGamesBackendAdapter implements CashGamesBackendContract, Servic
             }
 
             txBuilder.entry(rakeAccountId, convertToWalletMoney(request.getTotalRake()).getAmount());
-            txBuilder.comment("hand result: game = " + GAME_ID + ", hand id = " + request.getHandId()
-                    + ", table id = " + request.getTableId());
-
+            txBuilder.comment("poker hand result"); //: game = " + GAME_ID + ", hand id = " + request.getHandId() + ", table id = " + request.getTableId());
+            txBuilder.attribute("pokerTableId", String.valueOf(((TableIdImpl)request.getTableId()).getId()))
+            			.attribute("pokerGameId", String.valueOf(GAME_ID))
+            			.attribute("pokerHandId", request.getHandId());
+            
             TransactionRequest txRequest = txBuilder.toTransactionRequest();
 
             log.debug("sending tx request to wallet: {}", txRequest);
