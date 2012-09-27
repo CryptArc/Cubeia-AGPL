@@ -125,8 +125,6 @@
                     <preloadSources>
                         <!--testing sources -->
                         <source>${project.basedir}/src/test/js/mocks/ConsoleMock.js</source>
-                        <source>${project.basedir}/src/test/js/lib/jshamcrest-0.5.2.js</source>
-                        <source>${project.basedir}/src/test/js/lib/jsmockito-1.0.4.js</source>
                         <!-- external libs -->
                         <source>${project.basedir}/src/main/webapp/js/lib/classjs.js</source>
 
