@@ -151,8 +151,9 @@ Poker.Seat = Class.extend({
        var div = this.progressBarElement.get(0);
        this.cssAnimator.addTransition(div,"transform " + timeToAct/1000+"s linear");
        var self = this;
+       //div.css({width : div.width()+"px", height : div.height()+"px"});
        setTimeout(function(){
-            self.cssAnimator.addTransform(div,"scale3d(1,0.01,0)","bottom");
+            self.cssAnimator.addTransform(div,"scale3d(1,0.01,1)","bottom");
        },50);
    },
    showHandStrength : function(hand) {
@@ -204,13 +205,12 @@ Poker.Seat = Class.extend({
         var mainPotOffset = $("#mainPotContainer").offset();
         var left = mainPotOffset.left - amountOffset.left;
         var top = mainPotOffset.top - amountOffset.top;
-        return { top : Math.round(top) +"px", left :Math.round(left)+"px" };
+        return { top : Math.round(top) +"px", left : Math.round(left)+"px" };
    },
    isMySeat : function() {
        return false;
    },
    onPotWon : function(potId,amount) {
-    console.log("player " + this.player.name + " wom " + amount);
     this.handStrength.addClass("won");
     this.hideActionInfo();
    }
