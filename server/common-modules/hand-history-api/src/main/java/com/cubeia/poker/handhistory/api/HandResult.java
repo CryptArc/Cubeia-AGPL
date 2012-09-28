@@ -35,9 +35,10 @@ public class HandResult implements Serializable {
     private long totalWin;
     private long rake;
     private long totalBet;
+    
+    private String transactionId;
 
-    public HandResult() {
-    }
+    public HandResult() { }
 
     public HandResult(int playerId, long netWin, long totalWin, long rake, long totalBet) {
         this.playerId = playerId;
@@ -50,6 +51,18 @@ public class HandResult implements Serializable {
     public HandResult(int playerId) {
         this.playerId = playerId;
     }
+    
+    public String getTransactionId() {
+		return transactionId;
+	}
+    
+    public void setTransactionId(String transactionId) {
+		this.transactionId = transactionId;
+	}
+    
+    public void setPlayerId(int playerId) {
+		this.playerId = playerId;
+	}
 
     public int getPlayerId() {
         return playerId;
@@ -88,43 +101,43 @@ public class HandResult implements Serializable {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (int) (netWin ^ (netWin >>> 32));
-        result = prime * result + playerId;
-        result = prime * result + (int) (rake ^ (rake >>> 32));
-        result = prime * result + (int) (totalBet ^ (totalBet >>> 32));
-        result = prime * result + (int) (totalWin ^ (totalWin >>> 32));
-        return result;
-    }
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (netWin ^ (netWin >>> 32));
+		result = prime * result + playerId;
+		result = prime * result + (int) (rake ^ (rake >>> 32));
+		result = prime * result + (int) (totalBet ^ (totalBet >>> 32));
+		result = prime * result + (int) (totalWin ^ (totalWin >>> 32));
+		return result;
+	}
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        HandResult other = (HandResult) obj;
-        if (netWin != other.netWin)
-            return false;
-        if (playerId != other.playerId)
-            return false;
-        if (rake != other.rake)
-            return false;
-        if (totalBet != other.totalBet)
-            return false;
-        if (totalWin != other.totalWin)
-            return false;
-        return true;
-    }
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		HandResult other = (HandResult) obj;
+		if (netWin != other.netWin)
+			return false;
+		if (playerId != other.playerId)
+			return false;
+		if (rake != other.rake)
+			return false;
+		if (totalBet != other.totalBet)
+			return false;
+		if (totalWin != other.totalWin)
+			return false;
+		return true;
+	}
 
     @Override
-    public String toString() {
-        return "HandResult [playerId=" + playerId + ", netWin=" + netWin
-                + ", totalWin=" + totalWin + ", rake=" + rake + ", totalBet="
-                + totalBet + "]";
-    }
+	public String toString() {
+		return "HandResult [playerId=" + playerId + ", netWin=" + netWin
+				+ ", totalWin=" + totalWin + ", rake=" + rake + ", totalBet="
+				+ totalBet + "]";
+	}
 }

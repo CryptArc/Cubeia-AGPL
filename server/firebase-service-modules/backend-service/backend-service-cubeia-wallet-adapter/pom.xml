@@ -26,7 +26,6 @@
         <dependency>
             <groupId>com.cubeia.network.wallet.firebase</groupId>
             <artifactId>generic-wallet-service</artifactId>
-            <version>1.2.4-SNAPSHOT</version>
         </dependency>
 
         <dependency>

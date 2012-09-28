@@ -17,26 +17,9 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.history;
 
-import com.cubeia.games.poker.admin.Configuration;
-import com.cubeia.games.poker.admin.service.history.HandHistoryService;
-import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled.EditTournament;
-import com.cubeia.games.poker.admin.wicket.util.ExternalLinkPanel;
-import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
-import com.cubeia.games.poker.admin.wicket.util.ParamBuilder;
-import com.cubeia.poker.handhistory.api.Amount;
-import com.cubeia.poker.handhistory.api.GameCard;
-import com.cubeia.poker.handhistory.api.GamePot;
-import com.cubeia.poker.handhistory.api.HandHistoryEvent;
-import com.cubeia.poker.handhistory.api.HistoricHand;
-import com.cubeia.poker.handhistory.api.Player;
-import com.cubeia.poker.handhistory.api.PlayerAction;
-import com.cubeia.poker.handhistory.api.PlayerCardsDealt;
-import com.cubeia.poker.handhistory.api.PlayerCardsExposed;
-import com.cubeia.poker.handhistory.api.PotUpdate;
-import com.cubeia.poker.handhistory.api.TableCardsDealt;
+import java.util.Date;
+import java.util.List;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.ContextImage;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -47,10 +30,24 @@ import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.springframework.beans.factory.annotation.Value;
 
-import java.util.Date;
-import java.util.List;
+import com.cubeia.games.poker.admin.Configuration;
+import com.cubeia.games.poker.admin.service.history.HandHistoryService;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.games.poker.admin.wicket.util.ExternalLinkPanel;
+import com.cubeia.poker.handhistory.api.Amount;
+import com.cubeia.poker.handhistory.api.GameCard;
+import com.cubeia.poker.handhistory.api.GamePot;
+import com.cubeia.poker.handhistory.api.HandHistoryEvent;
+import com.cubeia.poker.handhistory.api.HandResult;
+import com.cubeia.poker.handhistory.api.HistoricHand;
+import com.cubeia.poker.handhistory.api.Player;
+import com.cubeia.poker.handhistory.api.PlayerAction;
+import com.cubeia.poker.handhistory.api.PlayerCardsDealt;
+import com.cubeia.poker.handhistory.api.PlayerCardsExposed;
+import com.cubeia.poker.handhistory.api.PotUpdate;
+import com.cubeia.poker.handhistory.api.Results;
+import com.cubeia.poker.handhistory.api.TableCardsDealt;
 
 public class ShowHand extends BasePage {
 
@@ -76,21 +73,38 @@ public class ShowHand extends BasePage {
 			@Override
             protected void populateItem(Item<Player> item) {
                 Player player = item.getModelObject();
+                Results results = hand.getResults();
                 // item.add(new Label("playerName", player.getName()));
                 item.add(new ExternalLinkPanel("playerName", player.getName(), createPlayerLink(player)));
                 item.add(new Label("playerId", String.valueOf(player.getPlayerId())));
                 item.add(new Label("seat", String.valueOf(player.getSeatId())));
-                item.add(new Label("bet", formatAmount(hand.getResults().getResults().get(player.getPlayerId()).getTotalBet())));
-                item.add(new Label("net", formatAmount(hand.getResults().getResults().get(player.getPlayerId()).getNetWin())));
-
+                item.add(new Label("bet", formatAmount(results.getResults().get(player.getPlayerId()).getTotalBet())));
+                String net = formatAmount(results.getResults().get(player.getPlayerId()).getNetWin());
+                HandResult handResult = results.getResults().get(player.getPlayerId());
+                if(handResult.getTransactionId() != null) {
+                	item.add(new ExternalLinkPanel("net", net, createTransactionLink(handResult)));
+                } else {
+                	item.add(new Label("net", net));
+                }
             }
 
+			private String createTransactionLink(HandResult handResult) {
+				String tmp = normalizeBaseUrl();
+				tmp += "wicket/bookmarkable/com.cubeia.backoffice.web.wallet.TransactionInfo?transactionId=" + handResult.getTransactionId();
+				return tmp;
+			}
+
 			private String createPlayerLink(Player player) {
+				String tmp = normalizeBaseUrl();
+				tmp += "wicket/bookmarkable/com.cubeia.backoffice.web.user.UserSummary?userId=" + player.getPlayerId();
+				return tmp;
+			}
+
+			private String normalizeBaseUrl() {
 				String tmp = config.getNetworkUrl();
 				if(!tmp.endsWith("/")) {
 					tmp += "/";
 				}
-				tmp += "wicket/bookmarkable/com.cubeia.backoffice.web.user.UserSummary?userId=" + player.getPlayerId();
 				return tmp;
 			}
         };

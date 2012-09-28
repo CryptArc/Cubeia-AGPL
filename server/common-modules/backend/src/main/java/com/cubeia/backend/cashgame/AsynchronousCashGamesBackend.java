@@ -22,6 +22,8 @@ import com.cubeia.backend.cashgame.callback.OpenSessionCallback;
 import com.cubeia.backend.cashgame.callback.ReserveCallback;
 import com.cubeia.backend.cashgame.dto.*;
 import com.cubeia.backend.cashgame.exceptions.*;
+import com.cubeia.games.poker.common.Money;
+
 import org.apache.log4j.Logger;
 
 import java.util.concurrent.Callable;
@@ -147,7 +149,7 @@ public class AsynchronousCashGamesBackend implements CashGamesBackend {
         return backingImpl.batchHand(request);
     }
 
-    public long getMainAccountBalance(int playerId) throws GetBalanceFailedException {
+    public Money getMainAccountBalance(int playerId) throws GetBalanceFailedException {
         return backingImpl.getMainAccountBalance(playerId);
     }
 

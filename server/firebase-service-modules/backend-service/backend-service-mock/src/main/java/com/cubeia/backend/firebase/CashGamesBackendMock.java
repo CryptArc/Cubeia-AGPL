@@ -18,6 +18,7 @@
 package com.cubeia.backend.firebase;
 
 import com.cubeia.backend.cashgame.AllowJoinResponse;
+import com.cubeia.backend.cashgame.LongTransactionId;
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.PlayerSessionIdImpl;
 import com.cubeia.backend.cashgame.TableIdImpl;
@@ -192,13 +193,13 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
         int totalBets = 0;
         int totalWins = 0;
         int totalRakes = 0;
-        List<BalanceUpdate> resultingBalances = new ArrayList<BalanceUpdate>();
+        List<TransactionUpdate> resultingBalances = new ArrayList<TransactionUpdate>();
         for (HandResult hr : request.getHandResults()) {
             log.debug("recording hand result: handId = {}, sessionId = {}, bets = {}, wins = {}, rake = {}",
                     new Object[]{request.getHandId(), hr.getPlayerSession(), hr.getAggregatedBet(), hr.getWin(), hr.getRake()});
             long amount = hr.getWin().getAmount() - hr.getAggregatedBet().getAmount();
             sessionTransactions.put(hr.getPlayerSession(), new Money(amount, hr.getWin().getCurrencyCode(), hr.getWin().getFractionalDigits()));
-            resultingBalances.add(new BalanceUpdate(hr.getPlayerSession(), getBalance(hr.getPlayerSession()), -1));
+            resultingBalances.add(new TransactionUpdate(new LongTransactionId(-1), new BalanceUpdate(hr.getPlayerSession(), getBalance(hr.getPlayerSession()), -1)));
 
             totalBets += hr.getAggregatedBet().getAmount();
             totalWins += hr.getWin().getAmount();
@@ -220,9 +221,9 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
     }
 
     @Override
-    public long getMainAccountBalance(int playerId) {
+    public Money getMainAccountBalance(int playerId) {
         log.debug("getMainAccountBalance is not implemented yet! Returning hardcoded value of 1337000");
-        return 1337000;
+        return new Money(1337000, "EUR", 2);
     }
 
     private Money getBalance(PlayerSessionId sid) {

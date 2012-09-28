@@ -18,6 +18,7 @@
 package com.cubeia.backend.firebase;
 
 import com.cubeia.backend.cashgame.AllowJoinResponse;
+import com.cubeia.backend.cashgame.LongTransactionId;
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.PlayerSessionIdImpl;
 import com.cubeia.backend.cashgame.TableIdImpl;
@@ -271,20 +272,23 @@ public class CashGamesBackendAdapter implements CashGamesBackendContract, Servic
             }
 
             txBuilder.entry(rakeAccountId, convertToWalletMoney(request.getTotalRake()).getAmount());
-            txBuilder.comment("hand result: game = " + GAME_ID + ", hand id = " + request.getHandId()
-                    + ", table id = " + request.getTableId());
-
+            txBuilder.comment("poker hand result"); //: game = " + GAME_ID + ", hand id = " + request.getHandId() + ", table id = " + request.getTableId());
+            txBuilder.attribute("pokerTableId", String.valueOf(((TableIdImpl)request.getTableId()).getId()))
+            			.attribute("pokerGameId", String.valueOf(GAME_ID))
+            			.attribute("pokerHandId", request.getHandId());
+            
             TransactionRequest txRequest = txBuilder.toTransactionRequest();
 
             log.debug("sending tx request to wallet: {}", txRequest);
             TransactionResult txResult = walletService.doTransaction(txRequest);
 
-            List<BalanceUpdate> resultingBalances = new ArrayList<BalanceUpdate>();
+            List<TransactionUpdate> resultingBalances = new ArrayList<TransactionUpdate>();
             for (AccountBalanceResult sb : txResult.getBalances()) {
                 if (sb.getAccountId() != rakeAccountId) {
                     PlayerSessionIdImpl playerSessionId = sessionToPlayerSessionMap.get(sb.getAccountId());
                     Money balance = convertFromWalletMoney(sb.getBalance());
-                    resultingBalances.add(new BalanceUpdate(playerSessionId, balance, nextId()));
+                    BalanceUpdate balanceUpdate = new BalanceUpdate(playerSessionId, balance, nextId());
+                    resultingBalances.add(new TransactionUpdate(new LongTransactionId(txResult.getTransactionId()), balanceUpdate));
                 }
             }
             return new BatchHandResponse(resultingBalances);
@@ -297,9 +301,12 @@ public class CashGamesBackendAdapter implements CashGamesBackendContract, Servic
     }
 
     @Override
-    public long getMainAccountBalance(int playerId) {
-        log.warn("getting main account balance not implemented, returning bogus balance");
-        return 500000;
+    public Money getMainAccountBalance(int playerId) {
+    	long accountId = this.accountLookupUtil.lookupMainAccountIdForPLayer(walletService, playerId);
+    	log.debug("Found account ID {} for player {}", accountId, playerId);
+    	Money m = convertFromWalletMoney(walletService.getBalance(accountId).getBalance());
+    	log.debug("Found balance {} for player {}", m, playerId);
+    	return m;
     }
 
     @Override

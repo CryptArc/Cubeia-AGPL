@@ -32,12 +32,14 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.cubeia.backend.cashgame.LongTransactionId;
 import com.cubeia.backend.cashgame.TableId;
 import com.cubeia.backend.cashgame.callback.ReserveCallback;
 import com.cubeia.backend.cashgame.dto.BalanceUpdate;
 import com.cubeia.backend.cashgame.dto.BatchHandRequest;
 import com.cubeia.backend.cashgame.dto.BatchHandResponse;
 import com.cubeia.backend.cashgame.dto.ReserveRequest;
+import com.cubeia.backend.cashgame.dto.TransactionUpdate;
 import com.cubeia.backend.cashgame.exceptions.BatchHandFailedException;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
@@ -407,7 +409,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
             resp.mandatoryBuyin = mandatoryBuyin;
 
             try {
-                resp.balanceInWallet = (int) backend.getMainAccountBalance(playerId);
+                resp.balanceInWallet = (int) backend.getMainAccountBalance(playerId).getAmount();
             } catch (GetBalanceFailedException e) {
                 log.error("error getting balance", e);
                 resp.resultCode = BuyInInfoResultCode.UNSPECIFIED_ERROR;
@@ -453,6 +455,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
             TableId externalTableId = getIntegrationTableId();
             BatchHandResponse batchHandResult = batchHand(handResult, handId, externalTableId);
             validateAndUpdateBalances(batchHandResult);
+            setTransactionIds(batchHandResult);
 
             PotTransfers potTransfers = new PotTransfers(false, transfers, null);
 
@@ -481,11 +484,23 @@ public class FirebaseServerAdapter implements ServerAdapter {
         ThreadLocalProfiler.add("FirebaseServerAdapter.notifyHandEnd.stop");
     }
 
-    private BatchHandResponse batchHand(HandResult handResult, String handId, TableId externalTableId) {
+    
+    /*
+     * HACK!!! We're setting the transactions ids on a thread local in order
+     * for the hand history to get to them. Ugly! /LJN
+     */
+    private void setTransactionIds(BatchHandResponse batchHandResult) {
+		for (TransactionUpdate u : batchHandResult.getResultingBalances()) {
+			long transactionId = ((LongTransactionId)u.getTransactionId()).getTransactionId();
+			long userId = u.getBalance().getPlayerSessionId().getPlayerId();
+			UberAdapterHack.set(String.valueOf(userId), String.valueOf(transactionId));
+		}
+	}
+
+	private BatchHandResponse batchHand(HandResult handResult, String handId, TableId externalTableId) {
         BatchHandRequest batchHandRequest = handResultBatchFactory.createAndValidateBatchHandRequest(handResult, handId, externalTableId);
         batchHandRequest.setStartTime(state.getStartTime());
         batchHandRequest.setEndTime(System.currentTimeMillis());
-
         return doBatchHandResult(batchHandRequest);
     }
 
@@ -510,8 +525,9 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
     @VisibleForTesting
     protected void validateAndUpdateBalances(BatchHandResponse batchHandResult) {
-        for (BalanceUpdate bup : batchHandResult.getResultingBalances()) {
+        for (TransactionUpdate tup : batchHandResult.getResultingBalances()) {
             PokerPlayerImpl pokerPlayer = null;
+            BalanceUpdate bup = tup.getBalance();
             for (PokerPlayer pp : state.getCurrentHandPlayerMap().values()) {
                 if (((PokerPlayerImpl) pp).getPlayerSessionId().equals(bup.getPlayerSessionId())) {
                     pokerPlayer = (PokerPlayerImpl) pp;

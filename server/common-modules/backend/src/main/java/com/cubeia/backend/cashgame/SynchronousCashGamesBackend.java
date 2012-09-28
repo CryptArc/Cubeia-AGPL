@@ -19,6 +19,7 @@ package com.cubeia.backend.cashgame;
 
 import com.cubeia.backend.cashgame.dto.*;
 import com.cubeia.backend.cashgame.exceptions.*;
+import com.cubeia.games.poker.common.Money;
 
 public interface SynchronousCashGamesBackend {
 
@@ -38,7 +39,7 @@ public interface SynchronousCashGamesBackend {
 
     BatchHandResponse batchHand(BatchHandRequest request) throws BatchHandFailedException;
 
-    long getMainAccountBalance(int playerId) throws GetBalanceFailedException;
+    Money getMainAccountBalance(int playerId) throws GetBalanceFailedException;
 
     BalanceUpdate getSessionBalance(PlayerSessionId sessionId) throws GetBalanceFailedException;
 

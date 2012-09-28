@@ -133,9 +133,11 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
 
     @Override
     public void notifyHandEnd(HandResult handResult, HandEndStatus handEndStatus) {
+    	UberAdapterHack.prepare();
         super.notifyHandEnd(handResult, handEndStatus);
         ThreadLocalProfiler.add("HandHistoryReportAdapter.notifyHandEnd.start");
         if (!checkHasService()) {
+        	UberAdapterHack.clear();
             return; // SANITY CHECK
         }
         if (handEndStatus == CANCELED_TOO_FEW_PLAYERS) {
@@ -144,8 +146,12 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
             Map<PokerPlayer, Result> map = handResult.getResults();
             Results res = new Results();
             for (PokerPlayer pl : map.keySet()) {
-                // translate results
-                res.getResults().put(pl.getId(), translate(pl.getId(), map.get(pl)));
+            	// translate results
+            	com.cubeia.poker.handhistory.api.HandResult hr = translate(pl.getId(), map.get(pl));
+                // HACK!!! Use the über hack to get the transaction ID
+            	String transactionId = UberAdapterHack.get(String.valueOf(pl.getId()));
+            	hr.setTransactionId(transactionId);
+                res.getResults().put(pl.getId(), hr);
                 // get player rake and add
                 long playerRake = handResult.getRakeContributionByPlayer(pl);
                 res.getResults().get(pl.getId()).setRake(playerRake);
@@ -154,6 +160,7 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
             service.reportResults(table.getId(), res);
             service.stopHand(table.getId());
         }
+        UberAdapterHack.clear();
         ThreadLocalProfiler.add("HandHistoryReportAdapter.notifyHandEnd.stop");
     }
 

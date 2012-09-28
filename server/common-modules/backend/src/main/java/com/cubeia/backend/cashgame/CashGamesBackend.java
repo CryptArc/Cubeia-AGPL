@@ -24,6 +24,7 @@ import com.cubeia.backend.cashgame.dto.*;
 import com.cubeia.backend.cashgame.exceptions.BatchHandFailedException;
 import com.cubeia.backend.cashgame.exceptions.CloseSessionFailedException;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
+import com.cubeia.games.poker.common.Money;
 
 /**
  * Cash game backend abstraction.
@@ -116,7 +117,7 @@ public interface CashGamesBackend {
      * @return
      * @throws GetBalanceFailedException
      */
-    long getMainAccountBalance(int playerId) throws GetBalanceFailedException;
+    Money getMainAccountBalance(int playerId) throws GetBalanceFailedException;
 
     /**
      * Returns the balance of the given session.

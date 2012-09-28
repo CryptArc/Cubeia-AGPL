@@ -15,31 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.backend.cashgame.dto;
+package com.cubeia.backend.cashgame;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
-@SuppressWarnings("serial")
-public class BatchHandResponse implements Serializable {
-
-    private final List<TransactionUpdate> resultingBalances;
-
-    public BatchHandResponse() {
-        this(new LinkedList<TransactionUpdate>());
-    }
-
-    public BatchHandResponse(List<TransactionUpdate> resultingBalances) {
-        this.resultingBalances = resultingBalances;
-    }
-
-    public void addResultEntry(TransactionUpdate balanceUpdate) {
-        resultingBalances.add(balanceUpdate);
-    }
-
-    public List<TransactionUpdate> getResultingBalances() {
-        return new ArrayList<TransactionUpdate>(resultingBalances);
-    }
+/**
+ * A strongly typed identifier for a backend table identifier.
+ * <p/>
+ * All implementations must be Serializable and should have reliable hashCode and equals methods.
+ */
+public interface TransactionId extends Serializable {
 }

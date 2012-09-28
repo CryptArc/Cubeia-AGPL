@@ -17,11 +17,13 @@
 
 package com.cubeia.games.poker.adapter;
 
+import com.cubeia.backend.cashgame.LongTransactionId;
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.callback.ReserveCallback;
 import com.cubeia.backend.cashgame.dto.BalanceUpdate;
 import com.cubeia.backend.cashgame.dto.BatchHandResponse;
 import com.cubeia.backend.cashgame.dto.ReserveRequest;
+import com.cubeia.backend.cashgame.dto.TransactionUpdate;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
 import com.cubeia.backend.firebase.FirebaseCallbackFactory;
@@ -139,7 +141,7 @@ public class FirebaseServerAdapterTest {
         when(pokerPlayer.getBalance()).thenReturn((long) playerBalanceOnTable);
         when(pokerPlayer.getPendingBalanceSum()).thenReturn(playerBalanceOnTableOutsideHand + playerRequestedBalance);
         long mainAccountBalance = 500000L;
-        when(fsa.backend.getMainAccountBalance(playerId)).thenReturn(mainAccountBalance);
+        when(fsa.backend.getMainAccountBalance(playerId)).thenReturn(new Money(mainAccountBalance, "EUR", 2));
 
         fsa.notifyBuyInInfo(pokerPlayer.getId(), true);
 
@@ -190,7 +192,7 @@ public class FirebaseServerAdapterTest {
         when(pokerPlayer.getBalance()).thenReturn((long) playerBalanceOnTable);
         when(pokerPlayer.getPendingBalanceSum()).thenReturn(playerBalanceOnTableOutsideHand + playerRequestedBalance);
         long mainAccountBalance = 500000L;
-        when(fsa.backend.getMainAccountBalance(playerId)).thenReturn(mainAccountBalance);
+        when(fsa.backend.getMainAccountBalance(playerId)).thenReturn(new Money(mainAccountBalance, "EUR", 2));
 
         fsa.notifyBuyInInfo(pokerPlayer.getId(), true);
 
@@ -322,7 +324,7 @@ public class FirebaseServerAdapterTest {
         when(pokerPlayer.getBalance()).thenReturn((long) playerBalanceOnTable);
         when(pokerPlayer.getBalanceNotInHand()).thenReturn((long) playerPendingBalanceOnTable);
         long mainAccountBalance = 500000L;
-        when(fsa.backend.getMainAccountBalance(playerId)).thenReturn(mainAccountBalance);
+        when(fsa.backend.getMainAccountBalance(playerId)).thenReturn(new Money(mainAccountBalance, "EUR", 2));
 
         fsa.notifyBuyInInfo(pokerPlayer.getId(), true);
 
@@ -348,7 +350,7 @@ public class FirebaseServerAdapterTest {
 
         BatchHandResponse batchHandResult = new BatchHandResponse();
         BalanceUpdate balanceUpdate = mock(BalanceUpdate.class);
-        batchHandResult.addResultEntry(balanceUpdate);
+        batchHandResult.addResultEntry(new TransactionUpdate(new LongTransactionId(-1), balanceUpdate));
 
         serverAdapter.validateAndUpdateBalances(batchHandResult);
 
@@ -382,9 +384,7 @@ public class FirebaseServerAdapterTest {
         long balanceVersionNumber = 1L;
         BalanceUpdate balanceUpdate = new BalanceUpdate(playerSessionId, backendBalance, balanceVersionNumber);
 
-        batchHandResult.addResultEntry(balanceUpdate);
-
-
+        batchHandResult.addResultEntry(new TransactionUpdate(new LongTransactionId(-1), balanceUpdate));
         serverAdapter.validateAndUpdateBalances(batchHandResult);
 
     }
