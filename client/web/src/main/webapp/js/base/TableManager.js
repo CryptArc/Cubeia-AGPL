@@ -26,6 +26,9 @@ Poker.TableManager = Class.extend({
     removeEventListener : function() {
       this.tableListeners = [];
     },
+    getTable : function() {
+        return this.table;
+    },
     getTableId : function() {
       return this.table.id;
     },
@@ -115,11 +118,7 @@ Poker.TableManager = Class.extend({
         }
     },
     addTableListener : function(listener) {
-        if(listener instanceof Poker.TableListener) {
-            this.tableListeners.push(listener);
-        } else {
-            throw "listener not instance of Poker.TableListener";
-        }
+        this.tableListeners.push(listener);
     },
     updatePlayerBalance : function(playerId, balance) {
         var p = this.table.getPlayerById(playerId);

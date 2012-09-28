@@ -5,7 +5,9 @@ var Poker = Poker || {};
  */
 Poker.TableListener = Class.extend({
     init : function() {},
-    onTableCreated : function() {},
+    onTableCreated : function() {
+        console.log("Poker.TableListener.onTableCreated");
+    },
     /**
      * When a player is added to the table
      * @param seat  - the seat Number

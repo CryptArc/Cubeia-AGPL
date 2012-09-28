@@ -1,3 +1,4 @@
+"use strict";
 var Poker = Poker || {};
 
 /**
@@ -42,7 +43,11 @@ Poker.Map = Class.extend({
            existing = this.holder[key];
        }
        this.holder[key] = val;
-       this.length++;
+
+        if(existing==null) {
+            this.length++;
+        }
+
 
        return existing;
    },
