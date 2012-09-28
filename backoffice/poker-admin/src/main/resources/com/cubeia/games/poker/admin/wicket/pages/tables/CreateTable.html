@@ -1,0 +1,84 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+</head>
+<body>
+<wicket:extend>
+    <div class="page-header">
+        <h1>Create Table Template</h1>
+    </div>
+
+    <span wicket:id="feedback">feedback messages will be put here</span>
+
+    <form wicket:id="tableForm">
+        <table class="table table-striped">
+            <tr>
+                <td>
+                    <label for="name">Name</label>
+                </td>
+                <td class="span4">
+                    <input wicket:id="name" id="name" type="text" size="10"/>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <label for="seats">Seats Per Table</label>
+                </td>
+                <td>
+                    <input wicket:id="seats" id="seats" type="text" size="20"/>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>
+                    <label for="ante">Ante</label>
+                </td>
+                <td>
+                    <input wicket:id="ante" id="ante" type="text" size="20"/>
+                </td>
+            </tr>
+
+            <!-- tr>
+                <td>
+                    <label for="timingType">Timing [0(def)|1|2(expr)|3]</label>
+                </td>
+                <td>
+                    <input wicket:id="timingType" id="timingType" type="text" size="20"/>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>
+                    <label for="variant">Variant [TELESINA|TEXAS_HOLDEM]]</label>
+                </td>
+                <td>
+                    <input wicket:id="variant" id="variant" type="text" size="20"/>
+                </td>
+            </tr -->
+
+            <tr>
+                <td>
+                    <label for="minTables">Min. Tables</label>
+                </td>
+                <td>
+                    <input wicket:id="minTables" id="minTables" type="text" size="20"/>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <label for="minEmptyTables">Min. Empty Tables</label>
+                </td>
+                <td>
+                    <input wicket:id="minEmptyTables" id="minEmptyTables" type="text" size="20"/>
+                </td>
+            </tr>
+        </table>
+
+        <input type="submit" value="Create"/>
+    </form>
+
+</wicket:extend>
+</body>
+</html>
+
