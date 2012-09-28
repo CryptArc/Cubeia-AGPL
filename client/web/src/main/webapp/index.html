@@ -108,21 +108,41 @@
             $("#pwd").keyup(function(e){
                 handleKeyUp(e.keyCode);
             });
-
-            setFontSize();
+            setPokerSize();
 
         });
+        var tableView = null;
+        var baseWidth = 1024;
 
+        function setPokerSize(){
+            var w = $(window);
+            if(tableView==null) {
+                tableView = $("#tableView");
+            }
+            //iphone - statusbar = 8/5
+            var maxAspectRatio = 8/5;
+
+            if(w.width()/ w.height() > maxAspectRatio) {
+                var width = w.height() * maxAspectRatio;
+                tableView.css({
+                    width: Math.round(width) +  "px",
+                    height :Math.round(w.height())+"px",
+                    marginLeft :Math.round((w.width()-width)/2)  + "px"
+                });
+
+                var targetFontSize =  Math.round(90* width / baseWidth);
+                $("body").css({fontSize : targetFontSize+"%"});
+            } else {
+                tableView.css({width:"100%",height:"100%", marginLeft : 0+"px"});
+                var targetFontSize =  Math.round(90* w.width() / baseWidth);
+                $("body").css({fontSize : targetFontSize+"%"});
+            }
+        }
 
         $(window).resize(function(){
-           setFontSize();
+            setPokerSize();
         });
-        var baseWidth = 1024;
-        function setFontSize() {
-            var targetFontSize =  Math.round(90*$(window).width() / baseWidth);
-            $("body").css({fontSize : targetFontSize+"%"});
 
-        }
     </script>
 
 </head>
