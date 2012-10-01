@@ -261,9 +261,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         for(var i = 0; i<this.capacity; i++){
             var seat = $("#seat"+i);
             if(seat.hasClass("seat-empty")){
-               if(this.myPlayerSeatId!=i) {
-                   seat.removeClass("seat-pos-"+i).addClass("seat-inactive").addClass("seat-pos-"+this._getNormalizedSeatPosition(i));
-               }
+                seat.removeClass("seat-pos-"+i).addClass("seat-inactive").addClass("seat-pos-"+this._getNormalizedSeatPosition(i));
             }
         }
     },
