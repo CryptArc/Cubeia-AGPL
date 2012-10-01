@@ -171,9 +171,8 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         var off = seat.getDealerButtonOffsetElement().offset();
         var leftC  = $("#tableView").offset().left;
 
-        console.log("LEFT POST: " + off.left + leftC + seat.getDealerButtonOffsetElement().width()*0.85);
         var pos = {
-            left : Math.round(off.left + leftC + seat.getDealerButtonOffsetElement().width()*0.85),
+            left : Math.round(off.left  - leftC +  seat.getDealerButtonOffsetElement().width()*0.85),
             top : Math.round(off.top)
         };
         this.dealerButton.move(pos.top,pos.left);
