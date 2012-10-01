@@ -387,16 +387,16 @@
         </div>
 
     </div>
-    <div id="playerCardTemplate" style="display: none;">
+    <script type="text/mustache" id="playerCardTemplate" style="display: none;">
         <div id="playerCard-{{domId}}" class="player-card-container">
             <img src="images/cards/{{cardString}}.svg" class="player-card"/>
         </div>
-    </div>
-    <div id="communityCardTemplate" style="display: none;">
+    </script>
+    <script type="text/mustache" id="communityCardTemplate" style="display: none;">
         <div id="communityCard-{{domId}}" class="community-card-container">
             <img src="images/cards/{{cardString}}.svg" class="player-card"/>
         </div>
-    </div>
+    </script>
     <div id="mainPotTemplate" style="display: none;">
         <span>Pot:</span> <div class="balance">&euro;{{amount}}</div>
     </div>
