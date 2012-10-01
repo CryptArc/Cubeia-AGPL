@@ -32,6 +32,7 @@
                     </webResources>
                 </configuration>
             </plugin>
+            <!--
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>webminifier-maven-plugin</artifactId>
@@ -44,8 +45,8 @@
                     </execution>
                 </executions>
             </plugin>
+            -->
           <plugin>
-
               <groupId>com.google.code.maven-replacer-plugin</groupId>
               <artifactId>replacer</artifactId>
               <version>1.5.1</version>
