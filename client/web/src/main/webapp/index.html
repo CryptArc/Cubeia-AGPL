@@ -71,7 +71,7 @@
                 $("#loginButton").click();
             }
         }
-
+        var isIphone = false;
         $(document).ready(function(){
 
             $(".describe").describe();
@@ -108,6 +108,8 @@
             $("#pwd").keyup(function(e){
                 handleKeyUp(e.keyCode);
             });
+
+
             setPokerSize();
 
         });
@@ -115,12 +117,26 @@
         var baseWidth = 1024;
 
         function setPokerSize(){
+            if(window.matchMedia) {
+                var mq1 = window.matchMedia("(max-width:700px)")
+                var mq2 = window.matchMedia("(max-height: 400px)");
+                if(mq1.matches || mq2.matches) {
+                    isIphone = true;
+                    console.log("IPHONE!!!!!!!!!!!");
+                }
+            } else {
+                isIphone = false;
+            }
+
             var w = $(window);
             if(tableView==null) {
                 tableView = $("#tableView");
             }
             //iphone - statusbar = 8/5
-            var maxAspectRatio = 8/5;
+            var maxAspectRatio = 4/3;
+            if(isIphone) {
+                maxAspectRatio = 8/5;
+            }
 
             if(w.width()/ w.height() > maxAspectRatio) {
                 var width = w.height() * maxAspectRatio;
@@ -226,7 +242,7 @@
     </div>
 
     <div id="tableView" style="display:none;" class="table-container">
-
+        <div class="table-logo"></div>
         <div id="seatContainer" class="default-table table-10">
             <div class="seat" id="seat0">
 

@@ -32,8 +32,20 @@
                     </webResources>
                 </configuration>
             </plugin>
-
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>webminifier-maven-plugin</artifactId>
+                <version>1.0.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>minify-js</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
           <plugin>
+
               <groupId>com.google.code.maven-replacer-plugin</groupId>
               <artifactId>replacer</artifactId>
               <version>1.5.1</version>
