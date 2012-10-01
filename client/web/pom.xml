@@ -147,6 +147,8 @@
                         <source>${project.basedir}/src/main/webapp/js/base/TableManager.js</source>
                         <source>${project.basedir}/src/main/webapp/js/base/ui/TableLayoutManager.js</source>
                         <source>${project.basedir}/src/main/webapp/js/base/Table.js</source>
+                        <source>${project.basedir}/src/main/webapp/js/base/Player.js</source>
+                        <source>${project.basedir}/src/main/webapp/js/base/PlayerTableStatus.js</source>
                     </preloadSources>
                     <jsTestSrcDir>${project.basedir}/src/test/js</jsTestSrcDir>
                     <specIncludes>
