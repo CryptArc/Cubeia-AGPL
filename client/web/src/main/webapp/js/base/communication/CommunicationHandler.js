@@ -124,7 +124,7 @@ Poker.CommunicationHandler = Poker.AbstractConnectorHandler.extend({
     subscribeToCashGames : function() {
         this.lobbyLayoutManager.clearLobby();
         this.lobbyLayoutManager.createGrid(true);
-        this.connector.lobbySubscribe(1, "/");
+        this.connector.lobbySubscribe(1, "/texas");
     },
 
     subscribeToSitAndGos : function() {
