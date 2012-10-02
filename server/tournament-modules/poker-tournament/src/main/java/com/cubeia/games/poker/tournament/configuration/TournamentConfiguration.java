@@ -114,7 +114,7 @@ public class TournamentConfiguration implements Serializable {
             log.warn("No blinds structure defined, using default structure.");
             blindsStructure = BlindsStructureFactory.createDefaultBlindsStructure();
         }
-        return blindsStructure.copy();
+        return blindsStructure;
     }
 
     public void setBlindsStructure(BlindsStructure blindsStructure) {

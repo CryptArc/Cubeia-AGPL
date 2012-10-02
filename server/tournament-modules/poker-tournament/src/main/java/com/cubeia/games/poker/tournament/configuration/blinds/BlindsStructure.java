@@ -32,10 +32,6 @@ public class BlindsStructure implements Serializable {
 
     private long timePerLevel;
 
-    private BlindsLevel currentLevel;
-
-    private final Iterator<BlindsLevel> blindsLevelIterator;
-
     private List<BlindsLevel> blindsLevels;
 
     public BlindsStructure(long millisPerLevel, List<BlindsLevel> blindsLevels) {
@@ -45,34 +41,13 @@ public class BlindsStructure implements Serializable {
 
         this.timePerLevel = millisPerLevel;
         this.blindsLevels = blindsLevels;
-        blindsLevelIterator = blindsLevels.iterator();
-        currentLevel = blindsLevelIterator.next();
     }
 
     public long getTimeToNextLevel() {
         return timePerLevel;
     }
 
-    public BlindsLevel getCurrentLevel() {
-        return currentLevel;
-    }
-
-    public void increaseLevel() {
-        log.debug("Increasing blinds level.");
-        if (blindsLevelIterator.hasNext()) {
-            currentLevel = blindsLevelIterator.next();
-            log.debug("Blinds level is now: " + currentLevel);
-        } else {
-            log.warn("No more blinds levels, staying on level " + currentLevel);
-        }
-    }
-
-    public BlindsStructure copy() {
-        return new BlindsStructure(timePerLevel, blindsLevels);
-    }
-
-    @Override
-    public String toString() {
-        return "current level: " + currentLevel + " id: " + super.toString();
+    public Iterator<BlindsLevel> getLevelIterator() {
+        return blindsLevels.iterator();
     }
 }

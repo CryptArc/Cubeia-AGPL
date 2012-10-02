@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class PokerTournamentState implements Serializable {
@@ -51,6 +52,10 @@ public class PokerTournamentState implements Serializable {
     private Map<Integer, Long> balances = new HashMap<Integer, Long>();
 
     private BlindsStructure blindsStructure;
+
+    private Iterator<BlindsLevel> blindsLevelIterator;
+
+    private BlindsLevel currentLevel;
 
     public boolean allTablesHaveBeenCreated(int tablesCreated) {
         return tablesCreated >= tablesToCreate;
@@ -101,26 +106,38 @@ public class PokerTournamentState implements Serializable {
     }
 
     public int getSmallBlindAmount() {
-        return blindsStructure.getCurrentLevel().getSmallBlindAmount();
+        return getCurrentLevel().getSmallBlindAmount();
     }
 
     public int getBigBlindAmount() {
-        return blindsStructure.getCurrentLevel().getBigBlindAmount();
+        return getCurrentLevel().getBigBlindAmount();
     }
 
     public void setBlindsStructure(BlindsStructure blindsStructure) {
         this.blindsStructure = blindsStructure;
+        blindsLevelIterator = blindsStructure.getLevelIterator();
+        currentLevel = blindsLevelIterator.next();
     }
 
     public BlindsStructure getBlindsStructure() {
         return blindsStructure;
     }
 
-    public void increaseBindsLevel() {
-        blindsStructure.increaseLevel();
+    public BlindsLevel getCurrentBlindsLevel() {
+        return currentLevel;
     }
 
-    public BlindsLevel getCurrentBlindsLevel() {
-        return blindsStructure.getCurrentLevel();
+    public BlindsLevel getCurrentLevel() {
+        return currentLevel;
+    }
+
+    public void increaseBlindsLevel() {
+        log.debug("Increasing blinds level.");
+        if (blindsLevelIterator.hasNext()) {
+            currentLevel = blindsLevelIterator.next();
+            log.debug("Blinds level is now: " + currentLevel);
+        } else {
+            log.warn("No more blinds levels, staying on level " + currentLevel);
+        }
     }
 }

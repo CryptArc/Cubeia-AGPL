@@ -19,7 +19,6 @@ package com.cubeia.games.poker.tournament;
 
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.SeatPlayersMttAction;
-import com.cubeia.firebase.api.action.UnseatPlayersMttAction;
 import com.cubeia.firebase.api.action.mtt.MttAction;
 import com.cubeia.firebase.api.action.mtt.MttObjectAction;
 import com.cubeia.firebase.api.action.mtt.MttRoundReportAction;
@@ -34,7 +33,6 @@ import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.firebase.api.mtt.support.MttNotifierAdapter;
 import com.cubeia.firebase.api.scheduler.Scheduler;
 import com.cubeia.firebase.api.service.mttplayerreg.TournamentPlayerRegistry;
-import com.cubeia.firebase.guice.tournament.TournamentAssist;
 import com.cubeia.games.poker.tournament.activator.PokerTournamentCreationParticipant;
 import com.cubeia.games.poker.tournament.activator.ScheduledTournamentCreationParticipant;
 import com.cubeia.games.poker.tournament.activator.SitAndGoCreationParticipant;
@@ -48,16 +46,17 @@ import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.ANNOUNCED;
 import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.REGISTERING;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 

@@ -447,7 +447,7 @@ public class PokerTournament implements Serializable {
     }
 
     private void increaseBlindsLevel() {
-        pokerState.increaseBindsLevel();
+        pokerState.increaseBlindsLevel();
     }
 
     private void openRegistration() {
