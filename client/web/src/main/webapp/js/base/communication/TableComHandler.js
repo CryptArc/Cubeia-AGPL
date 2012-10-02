@@ -176,6 +176,12 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
             case FB_PROTOCOL.MttUnregisterResponsePacket.CLASSID:
                 this.handleUnregistrationResponse(packet);
                 break;
+            case FB_PROTOCOL.MttTransportPacket.CLASSID:
+                this.handleTournamentTransport(packet);
+                break;
+            case FB_PROTOCOL.MttPickedUpPacket.CLASSID:
+                this.handleRemovedFromTournamentTable(packet);
+                break;
             default :
                 console.log("NO HANDLER");
                 console.log(packet);
@@ -191,6 +197,36 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
     },
     handleGameDataPacket:function (packet) {
         this.pokerProtocolHandler.handleGameTransportPacket(packet);
+    },
+    handleTournamentTransport:function (packet) {
+        console.log("Got tournament transport");
+        console.log(packet);
+        var valueArray =  FIREBASE.ByteArray.fromBase64String(packet.mttdata);
+        var gameData = new FIREBASE.ByteArray(valueArray);
+        var length = gameData.readInt();
+        var classId = gameData.readUnsignedByte();
+
+        var tournamentPacket = com.cubeia.games.poker.io.protocol.ProtocolObjectFactory.create(classId, gameData);
+        console.log(tournamentPacket);
+        switch (tournamentPacket.classId()) {
+            case com.cubeia.games.poker.io.protocol.TournamentOut.CLASSID:
+                this.handleTournamentOut(tournamentPacket);
+                break;
+            default:
+                console.log("Unhandled tournament packet");
+        }
+    },
+    handleTournamentOut: function (packet) {
+        console.log("Tournament out:");
+        console.log(packet);
+        if (packet.position == 1) {
+            alert("Congratulations, you won the tournament!");
+        } else {
+            alert("You finished " + packet.position + " in the tournament.");
+        }
+    },
+    handleRemovedFromTournamentTable:function (packet) {
+        console.log("Removed from table " + packet.tableid + " in tournament " + packet.mttid + " keep watching? " + packet.keepWatching);
     },
     joinGame:function () {
         this.connector.joinTable(this.tableManager.getTableId(), -1);

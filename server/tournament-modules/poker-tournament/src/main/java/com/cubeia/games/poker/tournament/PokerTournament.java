@@ -102,8 +102,8 @@ public class PokerTournament implements Serializable {
         updateBalances(report);
         Set<Integer> playersOut = getPlayersOut(report);
         log.info("Players out of tournament[" + instance.getId() + "] : " + playersOut);
-        handlePlayersOut(action.getTableId(), playersOut);
         sendTournamentOutToPlayers(playersOut, instance);
+        handlePlayersOut(action.getTableId(), playersOut);
         boolean tableClosed = balanceTables(action.getTableId());
 
         if (isTournamentFinished()) {
@@ -173,6 +173,8 @@ public class PokerTournament implements Serializable {
         for (int pid : playersOut) {
             TournamentOut packet = new TournamentOut();
             packet.position = instance.getState().getRemainingPlayerCount();
+            packet.player = pid;
+            log.debug("Telling player " + pid + " that he finished in position " + packet.position);
             MttDataAction action = ProtocolFactory.createMttAction(packet, pid, instance.getId());
             notifier.notifyPlayer(pid, action);
             // instance.getMttNotifier().notifyPlayer(pid, action);

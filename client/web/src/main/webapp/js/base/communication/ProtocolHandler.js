@@ -8,51 +8,51 @@ var Poker = Poker || {};
  */
 Poker.PokerProtocolHandler = function(tableManager,tableComHandler) {
 
-	this.tableManager = tableManager;
+    this.tableManager = tableManager;
     this.tableComHandler = tableComHandler;
     this.seq = -1;
     this.packetCount = 0;
-	this.handleGameTransportPacket = function(gameTransportPacket) {
+    this.handleGameTransportPacket = function(gameTransportPacket) {
         if(this.tableManager.getTableId()!=-1 && this.tableManager.getTableId() != gameTransportPacket.tableid) {
             console.log("Recieved packet for table ("+gameTransportPacket.tableid+") you're not viewing (yours="+this.tableManager.getTableId()+")");
             return;
         }
-		var valueArray =  FIREBASE.ByteArray.fromBase64String(gameTransportPacket.gamedata);
-		var gameData = new FIREBASE.ByteArray(valueArray);
-		var length = gameData.readInt();
-		var classId = gameData.readUnsignedByte();
+        var valueArray =  FIREBASE.ByteArray.fromBase64String(gameTransportPacket.gamedata);
+        var gameData = new FIREBASE.ByteArray(valueArray);
+        var length = gameData.readInt();
+        var classId = gameData.readUnsignedByte();
 
-		var protocolObject = com.cubeia.games.poker.io.protocol.ProtocolObjectFactory.create(classId, gameData);
+        var protocolObject = com.cubeia.games.poker.io.protocol.ProtocolObjectFactory.create(classId, gameData);
 
         console.log("Received packet: ");
         console.log(protocolObject);
 
         switch (protocolObject.classId() ) {
-			case com.cubeia.games.poker.io.protocol.BestHand.CLASSID:
+            case com.cubeia.games.poker.io.protocol.BestHand.CLASSID:
                 console.log("UNHANDLED PO BestHand");
                 console.log(protocolObject);
-				break;
-			case com.cubeia.games.poker.io.protocol.BuyInInfoRequest.CLASSID:
+                break;
+            case com.cubeia.games.poker.io.protocol.BuyInInfoRequest.CLASSID:
                 console.log("UNHANDLED PO BuyInInfoRequest");
                 console.log(protocolObject);
-				break;
-			case com.cubeia.games.poker.io.protocol.BuyInInfoResponse.CLASSID:
+                break;
+            case com.cubeia.games.poker.io.protocol.BuyInInfoResponse.CLASSID:
                 //TODO let the user input the buy-in amount
-              this.handleBuyIn(protocolObject);
+                this.handleBuyIn(protocolObject);
 
-				break;
-			case com.cubeia.games.poker.io.protocol.BuyInResponse.CLASSID:
+                break;
+            case com.cubeia.games.poker.io.protocol.BuyInResponse.CLASSID:
                 console.log("UNHANDLED PO BuyInResponse");
-				console.log(protocolObject);
-				break;
-			case com.cubeia.games.poker.io.protocol.CardToDeal.CLASSID:
+                console.log(protocolObject);
+                break;
+            case com.cubeia.games.poker.io.protocol.CardToDeal.CLASSID:
                 console.log("UNHANDLED PO CardToDeal");
-				console.log(protocolObject);
-				break;
-			case com.cubeia.games.poker.io.protocol.DealerButton.CLASSID:
+                console.log(protocolObject);
+                break;
+            case com.cubeia.games.poker.io.protocol.DealerButton.CLASSID:
                 this.tableManager.setDealerButton(protocolObject.seat);
-				break;
-			case com.cubeia.games.poker.io.protocol.DealPrivateCards.CLASSID:
+                break;
+            case com.cubeia.games.poker.io.protocol.DealPrivateCards.CLASSID:
                 var cardsToDeal = protocolObject.cards;
 
                 for(var c in cardsToDeal) {
@@ -60,8 +60,8 @@ Poker.PokerProtocolHandler = function(tableManager,tableComHandler) {
                     this.tableManager.dealPlayerCard(cardsToDeal[c].player,cardsToDeal[c].card.cardId,cardString);
                 }
 
-				break;
-			case com.cubeia.games.poker.io.protocol.DealPublicCards.CLASSID:
+                break;
+            case com.cubeia.games.poker.io.protocol.DealPublicCards.CLASSID:
                 this.tableManager.bettingRoundComplete();
                 for ( var i = 0; i < protocolObject.cards.length; i ++ ) {
                     this.tableManager.dealCommunityCard(protocolObject.cards[i].cardId,
@@ -69,15 +69,15 @@ Poker.PokerProtocolHandler = function(tableManager,tableComHandler) {
                 }
 
                 break;
-			case com.cubeia.games.poker.io.protocol.DeckInfo.CLASSID:
+            case com.cubeia.games.poker.io.protocol.DeckInfo.CLASSID:
                 console.log("UNHANDLED PO DeckInfo");
                 console.log(protocolObject);
-				break;
-			case com.cubeia.games.poker.io.protocol.ErrorPacket.CLASSID:
+                break;
+            case com.cubeia.games.poker.io.protocol.ErrorPacket.CLASSID:
                 console.log("UNHANDLED PO ErrorPacket");
                 console.log(protocolObject);
-				break;
-			case com.cubeia.games.poker.io.protocol.ExposePrivateCards.CLASSID:
+                break;
+            case com.cubeia.games.poker.io.protocol.ExposePrivateCards.CLASSID:
                 this.tableManager.bettingRoundComplete();
                 for ( var i = 0; i < protocolObject.cards.length; i ++ ) {
                     this.tableManager.exposePrivateCard(protocolObject.cards[i].card.cardId,
@@ -89,56 +89,56 @@ Poker.PokerProtocolHandler = function(tableManager,tableComHandler) {
             case com.cubeia.games.poker.io.protocol.ExternalSessionInfoPacket.CLASSID:
                 console.log("UNHANDLED PO ExternalSessionInfoPacket");
                 console.log(protocolObject);
-				break;
-			case com.cubeia.games.poker.io.protocol.FuturePlayerAction.CLASSID:
+                break;
+            case com.cubeia.games.poker.io.protocol.FuturePlayerAction.CLASSID:
                 console.log("UNHANDLED PO FuturePlayerAction");
                 console.log(protocolObject);
-				break;
-			case com.cubeia.games.poker.io.protocol.GameCard.CLASSID:
+                break;
+            case com.cubeia.games.poker.io.protocol.GameCard.CLASSID:
                 console.log("UNHANDLED PO GameCard");
                 console.log(protocolObject);
-				break;
-			case com.cubeia.games.poker.io.protocol.HandCanceled.CLASSID:
+                break;
+            case com.cubeia.games.poker.io.protocol.HandCanceled.CLASSID:
                 console.log("UNHANDLED PO HandCanceled");
                 console.log(protocolObject);
-				break;
-			case com.cubeia.games.poker.io.protocol.HandEnd.CLASSID:
+                break;
+            case com.cubeia.games.poker.io.protocol.HandEnd.CLASSID:
                 this.tableManager.endHand(protocolObject.hands,protocolObject.potTransfers);
 
-				break;
-			case com.cubeia.games.poker.io.protocol.InformFutureAllowedActions.CLASSID:
+                break;
+            case com.cubeia.games.poker.io.protocol.InformFutureAllowedActions.CLASSID:
                 console.log("UNHANDLED PO InformFutureAllowedActions");
                 console.log(protocolObject);
-				break;
-			case com.cubeia.games.poker.io.protocol.PerformAction.CLASSID:
-				this.handlePerformAction(protocolObject);
-				break;
-			case com.cubeia.games.poker.io.protocol.PingPacket.CLASSID:
+                break;
+            case com.cubeia.games.poker.io.protocol.PerformAction.CLASSID:
+                this.handlePerformAction(protocolObject);
+                break;
+            case com.cubeia.games.poker.io.protocol.PingPacket.CLASSID:
                 console.log("UNHANDLED PO PingPacket");
                 console.log(protocolObject);
-				break;
-			case com.cubeia.games.poker.io.protocol.PlayerAction.CLASSID:
+                break;
+            case com.cubeia.games.poker.io.protocol.PlayerAction.CLASSID:
                 console.log("UNHANDLED PO PlayerAction");
                 console.log(protocolObject);
-				break;
-			case com.cubeia.games.poker.io.protocol.PlayerBalance.CLASSID:
+                break;
+            case com.cubeia.games.poker.io.protocol.PlayerBalance.CLASSID:
                 this.tableManager.updatePlayerBalance(
                     protocolObject.player,
                     Poker.Utils.formatCurrency(protocolObject.balance)
-                    );
-    			break;
-			case com.cubeia.games.poker.io.protocol.PlayerDisconnectedPacket.CLASSID:
+                );
+                break;
+            case com.cubeia.games.poker.io.protocol.PlayerDisconnectedPacket.CLASSID:
                 console.log("UNHANDLED PO PlayerDisconnectedPacket");
                 console.log(protocolObject);
-				break;
-			case com.cubeia.games.poker.io.protocol.PlayerHandStartStatus.CLASSID:
+                break;
+            case com.cubeia.games.poker.io.protocol.PlayerHandStartStatus.CLASSID:
                 var status = Poker.PlayerTableStatus.SITTING_OUT;
                 if(protocolObject.status == com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.SITIN){
                     status = Poker.PlayerTableStatus.SITTING_IN;
                 }
                 this.tableManager.updatePlayerStatus(protocolObject.player, status);
                 break;
-			case com.cubeia.games.poker.io.protocol.PlayerPokerStatus.CLASSID:
+            case com.cubeia.games.poker.io.protocol.PlayerPokerStatus.CLASSID:
                 var status = protocolObject.status;
                 switch (status) {
                     case com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.SITIN :
@@ -148,19 +148,19 @@ Poker.PokerProtocolHandler = function(tableManager,tableComHandler) {
                         this.tableManager.updatePlayerStatus(protocolObject.player, Poker.PlayerTableStatus.SITTING_OUT);
                         break;
                 }
-				break;
-			case com.cubeia.games.poker.io.protocol.PlayerReconnectedPacket.CLASSID:
+                break;
+            case com.cubeia.games.poker.io.protocol.PlayerReconnectedPacket.CLASSID:
                 console.log("UNHANDLED PO PlayerReconnectedPacket");
                 console.log(protocolObject);
-				break;
-			case com.cubeia.games.poker.io.protocol.PlayerState.CLASSID:
+                break;
+            case com.cubeia.games.poker.io.protocol.PlayerState.CLASSID:
                 console.log("UNHANDLED PO PlayerState");
                 console.log(protocolObject);
-				break;
-			case com.cubeia.games.poker.io.protocol.PongPacket.CLASSID:
+                break;
+            case com.cubeia.games.poker.io.protocol.PongPacket.CLASSID:
                 console.log("UNHANDLED PO PongPacket");
                 console.log(protocolObject);
-				break;
+                break;
             case com.cubeia.games.poker.io.protocol.PotTransfers.CLASSID:
 
                 var pots = [];
@@ -176,37 +176,37 @@ Poker.PokerProtocolHandler = function(tableManager,tableComHandler) {
                     this.tableManager.updatePots(pots);
                 }
                 break;
-			case com.cubeia.games.poker.io.protocol.RakeInfo.CLASSID:
+            case com.cubeia.games.poker.io.protocol.RakeInfo.CLASSID:
                 console.log("UNHANDLED PO RakeInfo");
                 console.log(protocolObject);
-				break;
-			case com.cubeia.games.poker.io.protocol.RequestAction.CLASSID:
-				this.handleRequestAction(protocolObject);
-				break;
-			case com.cubeia.games.poker.io.protocol.StartHandHistory.CLASSID:
+                break;
+            case com.cubeia.games.poker.io.protocol.RequestAction.CLASSID:
+                this.handleRequestAction(protocolObject);
+                break;
+            case com.cubeia.games.poker.io.protocol.StartHandHistory.CLASSID:
                 console.log("UNHANDLED PO StartHandHistory");
                 console.log(protocolObject);
-				break;
-			case com.cubeia.games.poker.io.protocol.StartNewHand.CLASSID:
-				this.tableManager.startNewHand(protocolObject.handId,protocolObject.dealerSeatId);
-				break;
-			case com.cubeia.games.poker.io.protocol.StopHandHistory.CLASSID:
+                break;
+            case com.cubeia.games.poker.io.protocol.StartNewHand.CLASSID:
+                this.tableManager.startNewHand(protocolObject.handId,protocolObject.dealerSeatId);
+                break;
+            case com.cubeia.games.poker.io.protocol.StopHandHistory.CLASSID:
                 console.log("UNHANDLED PO StopHandHistory");
                 console.log(protocolObject);
-				break;
-			case com.cubeia.games.poker.io.protocol.TakeBackUncalledBet.CLASSID:
+                break;
+            case com.cubeia.games.poker.io.protocol.TakeBackUncalledBet.CLASSID:
                 console.log("UNHANDLED PO TakeBackUncalledBet");
                 console.log(protocolObject);
-				break;
-			case com.cubeia.games.poker.io.protocol.TournamentOut.CLASSID:
+                break;
+            case com.cubeia.games.poker.io.protocol.TournamentOut.CLASSID:
                 console.log("UNHANDLED PO TournamentOut");
                 console.log(protocolObject);
-				break;
+                break;
             default:
                 console.log("Ignoring packet: " + protocolObject);
                 break;
-		}
-	};
+        }
+    };
     this.handleBuyIn = function(protocolObject) {
         var buyInRequest = new com.cubeia.games.poker.io.protocol.BuyInRequest();
         buyInRequest.amount = protocolObject.maxAmount;
