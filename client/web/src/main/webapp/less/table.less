@@ -1,0 +1,127 @@
+
+.table-container {
+    width:100%;
+    height:100%;
+    background-size: 100%;
+    position: absolute;
+    overflow: hidden;
+    margin: 0 auto;
+}
+.default-table {
+    width:100%;
+    height:80%;
+    background: #1a1a1a url("../images/table/table-background.jpg") no-repeat;
+    background-size: 100% 100%;
+    position: absolute;
+}
+.bottom-bar {
+    background-color:#1a1a1a;
+    border-top: 1px solid @mainGreen;
+    bottom: 0;
+    height: 16%;
+    width: 94%;
+    margin: 0% 3%;
+    position: absolute;
+    padding-top:2%;
+}
+#circularProgressBar {
+    background-color:#1a1a1a;
+}
+.own-player {
+    width:30%;
+    display: inline-block;
+
+    .name {
+        font-size:250%;
+    }
+
+    .balance {
+        font-size:350%;
+        font-weight: bold;
+    }
+}
+.balance:first-letter {
+    color:@mainGreen;
+}
+
+.user-actions {
+    width:35%;
+    height:80%;
+    display: inline-block;
+    float:right;
+    position: relative;
+
+    .action-button {
+        width:31%;
+        padding-bottom: 31%;
+
+        &:first-child {
+            margin-left: 1%;
+        }
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+}
+.main-pot, .pot-transfer {
+    font-size: 160%;
+    position: absolute;
+    width: auto;
+    top: 60%;
+    left: 25%;
+
+    span, div {
+        display: inline-block;
+    }
+    span {
+        color:@mainGreen;
+    }
+}
+.pot-transfer {
+    width:19%;
+    text-align: center;
+}
+.community-cards {
+    position: absolute;
+    width: 50%;
+    height: 22%;
+    left: 25%;
+    top: 37%;
+}
+.community-card-container {
+    position: relative;
+    height: 100%;
+    width: 18%;
+    display: inline-block;
+    margin-right: 1%;
+
+    .transform(translate3d(0,30%,0));
+    .transition-transform(0.5s ease-out);
+
+}
+
+.dealer-button {
+    border-radius:100px;
+    width:3%;
+    height:0;
+    padding-bottom: 3%;
+    position: absolute;
+    left:0;
+    top:0;
+    background-color:@mainGreen;
+
+    .transition-transform(1s ease-out);
+
+    div {
+        height: 70%;
+        left: 14%;
+        top: 18%;
+        position: absolute;
+        font-weight: bold;
+        font-size: 120%;
+        display: block;
+        width: 70%;
+        text-align: center;
+    }
+
+}
