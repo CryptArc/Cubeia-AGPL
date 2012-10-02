@@ -159,7 +159,6 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         card.exposeCard(cardString);
 
         var self = this;
-       // this.cssAnimator.addTransforms(card.getDOMElement(),["scale3d(1,1,0)", "translate3d(0,-30%,0)"],"center bottom");
         setTimeout(function(){
             card.getJQElement().removeClass("dealt").addClass("exposed");
         },100);
@@ -170,11 +169,12 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         this.currentDealer = seatId;
         var seat = this.seats.get(seatId);
         var off = seat.getDealerButtonOffsetElement().offset();
-        var pos = {
-            left : Math.round(off.left + seat.getDealerButtonOffsetElement().width()*0.85),
-            top : Math.round(off.top )
-        };
+        var leftC  = $("#tableView").offset().left;
 
+        var pos = {
+            left : Math.round(off.left  - leftC +  seat.getDealerButtonOffsetElement().width()*0.85),
+            top : Math.round(off.top)
+        };
         this.dealerButton.move(pos.top,pos.left);
 
     },
@@ -247,7 +247,6 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
             seats[s].reset();
         }
     },
-
     _storeCard : function(card){
         this.cardElements[card.id]=card;
     },
@@ -262,13 +261,9 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         for(var i = 0; i<this.capacity; i++){
             var seat = $("#seat"+i);
             if(seat.hasClass("seat-empty")){
-               if(this.myPlayerSeatId!=i) {
-                   seat.removeClass("seat-pos-"+i).addClass("seat-inactive").addClass("seat-pos-"+this._getNormalizedSeatPosition(i));
-               }
+                seat.removeClass("seat-pos-"+i).addClass("seat-inactive").addClass("seat-pos-"+this._getNormalizedSeatPosition(i));
             }
         }
-
-
     },
     _getNormalizedSeatPosition : function(seatId){
         if(this.myPlayerSeatId != -1) {
@@ -322,7 +317,6 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         });
 
         setTimeout(
-
             function() {
                 var offset =  Poker.Utils.calculateDistance(div,targetElement);
                 div.css("visibility","visible");

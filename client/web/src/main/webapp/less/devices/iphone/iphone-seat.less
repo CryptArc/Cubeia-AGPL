@@ -51,9 +51,9 @@
     width:75%;
     left:14%;
     text-align: left;
-    z-index: 10;
+    z-index: 13;
 }
-.action-text, .player-status,.hand-strength {
+.action-text, .player-status, .hand-strength {
     font-weight: bold;
     top:@base-content-top;
     width:75%;
@@ -67,17 +67,15 @@
     white-space: nowrap;
     overflow: hidden;
     font-weight: bold;
-    z-index: 8;
+    z-index: 10;
+}
+.hand-strength {
+    z-index: 12;
 }
 
 .progress-bar {
-    position: absolute;
-    background: @mainGreen;
-    width:91%;
-    height: @player-base-height;
-    left:9%;
-    top:@base-content-top;
-    z-index: 10;
+    z-index: 11;
+    .border-radius(0 0 0 0);
 }
 
 .action-amount {
@@ -100,7 +98,7 @@
     font-size: 200%;
 }
 .my-player-seat {
-    .action-text, .player-status {
+    .action-text, .player-status, .hand-strength {
         text-align: center;
         background-color:#1a1a1a;
         opacity: 1;
