@@ -195,8 +195,8 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
         if (backend.isSystemShuttingDown()) {
             /*
-                * This will be caught by the processors.
-                */
+             * This will be caught by the processors.
+             */
             throw new SystemShutdownException();
         }
 
@@ -441,36 +441,15 @@ public class FirebaseServerAdapter implements ServerAdapter {
     }
 
     @Override
-    public void notifyHandEnd(HandResult handResult, HandEndStatus handEndStatus) {
+    public void notifyHandEnd(HandResult handResult, HandEndStatus handEndStatus, boolean tournamentTable) {
         ThreadLocalProfiler.add("FirebaseServerAdapter.notifyHandEnd.start");
+
         if (handEndStatus.equals(HandEndStatus.NORMAL) && handResult != null) {
-
-            List<PotTransfer> transfers = new ArrayList<PotTransfer>();
-            for (PotTransition pt : handResult.getPotTransitions()) {
-                log.debug("--> sending winner pot transfer to client: {}", pt);
-                transfers.add(actionTransformer.createPotTransferPacket(pt));
+            sendHandEndPacket(handResult);
+            if (!tournamentTable) {
+                performBackEndTransactions(handResult);
             }
-
-            String handId = getIntegrationHandId();
-            TableId externalTableId = getIntegrationTableId();
-            BatchHandResponse batchHandResult = batchHand(handResult, handId, externalTableId);
-            validateAndUpdateBalances(batchHandResult);
-            setTransactionIds(batchHandResult);
-
-            PotTransfers potTransfers = new PotTransfers(false, transfers, null);
-
-            Collection<RatedPlayerHand> hands = handResult.getPlayerHands();
-            log.debug("--> handResult.getPlayerRevealOrder: {}", handResult.getPlayerRevealOrder());
-            HandEnd packet = actionTransformer.createHandEndPacket(hands, potTransfers, handResult.getPlayerRevealOrder());
-            GameDataAction action = protocolFactory.createGameAction(packet, 0, table.getId());
-
-            log.debug("--> Send HandEnd[" + packet + "] to everyone");
-            sendPublicPacket(action, -1);
-
-            PokerStats.getInstance().reportHandEnd();
-
-            // increment hand count
-            getFirebaseState().incrementHandCount();
+            updateHandEndStatistics();
         } else {
             log.info("The hand was cancelled on table: " + table.getId() + " - " + table.getMetaData().getName());
             cleanupPlayers(new SitoutCalculator());
@@ -484,20 +463,48 @@ public class FirebaseServerAdapter implements ServerAdapter {
         ThreadLocalProfiler.add("FirebaseServerAdapter.notifyHandEnd.stop");
     }
 
-    
-    /*
-     * HACK!!! We're setting the transactions ids on a thread local in order
-     * for the hand history to get to them. Ugly! /LJN
-     */
-    private void setTransactionIds(BatchHandResponse batchHandResult) {
-		for (TransactionUpdate u : batchHandResult.getResultingBalances()) {
-			long transactionId = ((LongTransactionId)u.getTransactionId()).getTransactionId();
-			long userId = u.getBalance().getPlayerSessionId().getPlayerId();
-			UberAdapterHack.set(String.valueOf(userId), String.valueOf(transactionId));
-		}
-	}
+    private void updateHandEndStatistics() {
+        PokerStats.getInstance().reportHandEnd();
+        getFirebaseState().incrementHandCount();
+    }
 
-	private BatchHandResponse batchHand(HandResult handResult, String handId, TableId externalTableId) {
+    private void sendHandEndPacket(HandResult handResult) {
+        Collection<RatedPlayerHand> hands = handResult.getPlayerHands();
+        List<PotTransfer> transfers = new ArrayList<PotTransfer>();
+        PotTransfers potTransfers = new PotTransfers(false, transfers, null);
+
+        for (PotTransition pt : handResult.getPotTransitions()) {
+            log.debug("--> sending winner pot transfer to client: {}", pt);
+            transfers.add(actionTransformer.createPotTransferPacket(pt));
+        }
+        HandEnd packet = actionTransformer.createHandEndPacket(hands, potTransfers, handResult.getPlayerRevealOrder());
+        GameDataAction action = protocolFactory.createGameAction(packet, 0, table.getId());
+        log.debug("--> Send HandEnd[" + packet + "] to everyone");
+        log.debug("--> handResult.getPlayerRevealOrder: {}", handResult.getPlayerRevealOrder());
+        sendPublicPacket(action, -1);
+    }
+
+    private void performBackEndTransactions(HandResult handResult) {
+        String handId = getIntegrationHandId();
+        TableId externalTableId = getIntegrationTableId();
+        BatchHandResponse batchHandResult = batchHand(handResult, handId, externalTableId);
+        validateAndUpdateBalances(batchHandResult);
+        setTransactionIds(batchHandResult);
+    }
+
+    /*
+    * HACK!!! We're setting the transactions ids on a thread local in order
+    * for the hand history to get to them. Ugly! /LJN
+    */
+    private void setTransactionIds(BatchHandResponse batchHandResult) {
+        for (TransactionUpdate u : batchHandResult.getResultingBalances()) {
+            long transactionId = ((LongTransactionId)u.getTransactionId()).getTransactionId();
+            long userId = u.getBalance().getPlayerSessionId().getPlayerId();
+            UberAdapterHack.set(String.valueOf(userId), String.valueOf(transactionId));
+        }
+    }
+
+    private BatchHandResponse batchHand(HandResult handResult, String handId, TableId externalTableId) {
         BatchHandRequest batchHandRequest = handResultBatchFactory.createAndValidateBatchHandRequest(handResult, handId, externalTableId);
         batchHandRequest.setStartTime(state.getStartTime());
         batchHandRequest.setEndTime(System.currentTimeMillis());

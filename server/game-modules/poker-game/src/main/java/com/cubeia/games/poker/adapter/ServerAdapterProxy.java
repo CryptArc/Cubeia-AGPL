@@ -127,9 +127,9 @@ public abstract class ServerAdapterProxy implements ServerAdapter {
     }
 
     @Override
-    public void notifyHandEnd(HandResult handResult, HandEndStatus handEndStatus) {
+    public void notifyHandEnd(HandResult handResult, HandEndStatus handEndStatus, boolean tournamentTable) {
         if (getAdaptee() != null) {
-            getAdaptee().notifyHandEnd(handResult, handEndStatus);
+            getAdaptee().notifyHandEnd(handResult, handEndStatus, tournamentTable);
         }
     }
 

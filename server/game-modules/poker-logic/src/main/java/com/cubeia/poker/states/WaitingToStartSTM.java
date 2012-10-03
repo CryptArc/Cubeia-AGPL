@@ -47,9 +47,10 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
 
     @Override
     public void enterState() {
-        long timeout = context.getSettings().getTiming().getTime(Periods.START_NEW_HAND);
+        log.info("Entered waiting to start state.");
         if (!context.isTournamentTable()) {
-            log.info("Entered waiting to start state. Scheduling timeout in " + timeout + " millis.");
+            long timeout = context.getSettings().getTiming().getTime(Periods.START_NEW_HAND);
+            log.info("Scheduling timeout in " + timeout + " millis.");
             getServerAdapterHolder().scheduleTimeout(timeout);
         }
     }
@@ -59,21 +60,17 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
         if (!context.isTournamentTable()) {
             getServerAdapterHolder().performPendingBuyIns(context.getSeatedPlayers());
             context.commitPendingBalances();
-
             setPlayersWithoutMoneyAsSittingOut();
-
             context.sitOutPlayersMarkedForSitOutNextRound();
             getServerAdapterHolder().cleanupPlayers(new SitoutCalculator());
+        }
 
-            if (getPlayersReadyToStartHand().size() > 1) {
-                startHand();
-            } else {
-                context.setHandFinished(true);
-                log.info("WILL NOT START NEW HAND, TOO FEW PLAYERS SEATED: " + getPlayersReadyToStartHand().size() + " sitting in of " + context.getSeatedPlayers().size());
-                changeState(new NotStartedSTM());
-            }
+        if (getPlayersReadyToStartHand().size() > 1) {
+            startHand();
         } else {
-            log.debug("Ignoring timeout in waiting to start state, since tournament hands are started by the tournament manager.");
+            context.setHandFinished(true);
+            log.info("WILL NOT START NEW HAND, TOO FEW PLAYERS SEATED: " + getPlayersReadyToStartHand().size() + " sitting in of " + context.getSeatedPlayers().size());
+            changeState(new NotStartedSTM());
         }
     }
 

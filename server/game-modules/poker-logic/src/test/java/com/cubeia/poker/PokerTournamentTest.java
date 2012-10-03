@@ -36,7 +36,7 @@ public class PokerTournamentTest extends GuiceTest {
         assertEquals(4, state.getSeatedPlayers().size());
 
         // Force start
-        state.startHand();
+        state.timeout();
 
         // Blinds are auto.
         state.timeout();
@@ -79,7 +79,7 @@ public class PokerTournamentTest extends GuiceTest {
         markPlayersAsHavingPostedEntryBet(mp);
 
         // Force start
-        state.startHand();
+        state.timeout();
 
         // Blinds are auto.
         state.timeout();

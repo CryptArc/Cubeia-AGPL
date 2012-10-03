@@ -434,7 +434,7 @@ public class PokerLogicTest extends GuiceTest {
             }
 
             @Override
-            public void notifyHandEnd(HandResult result, HandEndStatus status) {
+            public void notifyHandEnd(HandResult result, HandEndStatus status, boolean tournamentTable) {
                 if (!foldActionReceived) {
                     fail();
                 }

@@ -177,7 +177,6 @@ public class PokerTournament implements Serializable {
             log.debug("Telling player " + pid + " that he finished in position " + packet.position);
             MttDataAction action = ProtocolFactory.createMttAction(packet, pid, instance.getId());
             notifier.notifyPlayer(pid, action);
-            // instance.getMttNotifier().notifyPlayer(pid, action);
         }
     }
 

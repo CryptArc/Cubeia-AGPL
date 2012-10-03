@@ -116,7 +116,7 @@ public class MockServerAdapter implements ServerAdapter {
         this.requests.addAll(requests);
     }
 
-    public void notifyHandEnd(HandResult result, HandEndStatus status) {
+    public void notifyHandEnd(HandResult result, HandEndStatus status, boolean tournamentTable) {
         this.result = result;
         this.hands = result != null ? result.getPlayerHands() : null;
         this.handEndStatus = status;

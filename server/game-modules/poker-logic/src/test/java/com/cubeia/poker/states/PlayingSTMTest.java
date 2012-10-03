@@ -132,7 +132,7 @@ public class PlayingSTMTest {
         verify(player1).addChips(winningsIncludingOwnBets);
 
         InOrder inOrder = Mockito.inOrder(serverAdapter);
-        inOrder.verify(serverAdapter).notifyHandEnd(result, HandEndStatus.NORMAL);
+        inOrder.verify(serverAdapter).notifyHandEnd(result, HandEndStatus.NORMAL, context.isTournamentTable());
         inOrder.verify(serverAdapter).performPendingBuyIns(context.playerMap.values());
 
         assertThat(context.isFinished(), is(true));

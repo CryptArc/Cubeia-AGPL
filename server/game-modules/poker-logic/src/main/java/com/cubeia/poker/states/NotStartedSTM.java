@@ -53,10 +53,10 @@ public class NotStartedSTM extends AbstractPokerGameSTM {
     }
 
     @Override
-    public void startHand() {
-        log.debug("Starting hand.");
-        // This should only really happen from tournaments.
+    public void timeout() {
         if (context.isTournamentTable()) {
+            // This should only really happen from tournaments.
+            log.debug("Starting hand.");
             doStartHand();
         }
     }

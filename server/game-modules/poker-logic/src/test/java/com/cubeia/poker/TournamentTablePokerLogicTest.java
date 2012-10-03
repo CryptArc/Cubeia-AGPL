@@ -42,7 +42,7 @@ public class TournamentTablePokerLogicTest extends GuiceTest {
         assertEquals(4, state.getSeatedPlayers().size());
 
         // Force start
-        state.startHand();
+        state.timeout();
 
         // Blinds
         state.timeout();
@@ -183,7 +183,7 @@ public class TournamentTablePokerLogicTest extends GuiceTest {
         addPlayers(state, mp, 2);
 
         // Force start
-        state.startHand();
+        state.timeout();
 
         state.timeout();
         state.timeout();

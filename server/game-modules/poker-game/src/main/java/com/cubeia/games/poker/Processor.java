@@ -194,7 +194,6 @@ public class Processor implements GameProcessor, TournamentProcessor {
      * @param command
      */
     private void handleCommand(Table table, Trigger command) {
-
         switch (command.getType()) {
             case TIMEOUT:
                 boolean verified = pokerHandler.verifySequence(command);
@@ -229,7 +228,6 @@ public class Processor implements GameProcessor, TournamentProcessor {
         }
     }
 
-
     public void startRound(Table table) {
         stateInjector.injectAdapter(table);
         if (actionCache != null) {
@@ -238,7 +236,7 @@ public class Processor implements GameProcessor, TournamentProcessor {
         log.debug(
                 "Start Hand on table: " + table + " (" + table.getPlayerSet().getPlayerCount() + ":" + state.getSeatedPlayers().size() + ")");
         state.sitOutPlayersMarkedForSitOutNextRound();
-        state.startHand();
+        state.scheduleTournamentHandStart();
 
         updatePlayerDebugInfo(table);
     }

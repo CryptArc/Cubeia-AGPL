@@ -112,8 +112,9 @@ public interface ServerAdapter {
      *
      * @param handResult    Summary of the results or null if hand was cancelled
      * @param handEndStatus the way the hand ended, for example normal or canceled
+     * @param tournamentTable indicates if the hand was part of a tournament
      */
-    void notifyHandEnd(HandResult handResult, HandEndStatus handEndStatus);
+    void notifyHandEnd(HandResult handResult, HandEndStatus handEndStatus, boolean tournamentTable);
 
     /**
      * Notify players about updated player balance.

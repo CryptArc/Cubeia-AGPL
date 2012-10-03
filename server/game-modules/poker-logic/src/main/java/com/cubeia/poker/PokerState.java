@@ -27,6 +27,7 @@ import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.states.*;
+import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.variant.GameType;
 import com.google.common.annotations.VisibleForTesting;
@@ -184,6 +185,13 @@ public class PokerState implements Serializable, IPokerState {
 
     public void startHand() {
         getCurrentState().startHand();
+    }
+
+    public void scheduleTournamentHandStart() {
+        log.debug("Received start hand signal. Scheduling a timeout so the hand doesn't start too quickly.");
+        long timeout = getSettings().getTiming().getTime(Periods.START_NEW_HAND);
+        log.debug("Scheduling timeout in " + timeout + " millis.");
+        serverAdapterHolder.get().scheduleTimeout(timeout);
     }
 
     public long getStartTime() {

@@ -59,7 +59,6 @@ public interface HandHistoryCollectorService extends Contract {
      */
     public void stopHand(int tableId);
 
-
     /**
      * @param tableId Firebase table id
      */

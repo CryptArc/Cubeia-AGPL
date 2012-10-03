@@ -68,26 +68,21 @@ public class PlayingSTM extends AbstractPokerGameSTM implements HandFinishedList
 
     @Override
     public void handFinished(HandResult result, HandEndStatus status) {
+        log.debug("Hand finished.");
         context.setHandFinished(true);
-
         awardWinners(result.getResults());
-
+        getServerAdapterHolder().notifyHandEnd(result, status, context.isTournamentTable());
+        for (PokerPlayer player : context.getPlayerMap().values()) {
+            getServerAdapterHolder().notifyPlayerBalance(player);
+        }
         if (context.isTournamentTable()) {
             // Report round to tournament coordinator and wait for notification
             sendTournamentRoundReport();
         } else {
-            getServerAdapterHolder().notifyHandEnd(result, status);
-
-            for (PokerPlayer player : context.getPlayerMap().values()) {
-                getServerAdapterHolder().notifyPlayerBalance(player);
-            }
-
             getServerAdapterHolder().performPendingBuyIns(context.getPlayerMap().values());
 
             // clean up players here and make leaving players leave and so on also update the lobby
             getServerAdapterHolder().cleanupPlayers(new SitoutCalculator());
-
-//            setPlayersWithoutMoneyAsSittingOut();
             sendBuyinInfoToPlayersWithoutMoney();
         }
 
