@@ -71,14 +71,14 @@ Poker.LobbyLayoutManager = Class.extend({
         var fixedLimit = new Poker.PropertyStringFilter("fixedLimit", true, this, "type", "FL");
         this.filters.push(fixedLimit);
 
-        var highStakes = new Poker.PropertyMinMaxFilter("highStakes", true, this, "ante", 1000, -1);
+        var highStakes = new Poker.PropertyMinMaxFilter("highStakes", true, this, "smallBlind", 1000, -1);
 
         this.filters.push(highStakes);
 
-        var mediumStakes = new Poker.PropertyMinMaxFilter("mediumStakes", true, this, "ante", 50, 1000);
+        var mediumStakes = new Poker.PropertyMinMaxFilter("mediumStakes", true, this, "smallBlind", 50, 1000);
         this.filters.push(mediumStakes);
 
-        var lowStakes = new Poker.PropertyMinMaxFilter("lowStakes", true, this, "ante", -1, 50);
+        var lowStakes = new Poker.PropertyMinMaxFilter("lowStakes", true, this, "smallBlind", -1, 50);
         this.filters.push(lowStakes);
     },
     handleTableSnapshotList:function (tableSnapshotList) {
@@ -106,7 +106,7 @@ Poker.LobbyLayoutManager = Class.extend({
                 blinds:(Poker.Utils.formatBlinds(smallBlind) + "/" + Poker.Utils.formatBlinds(bigBlind)),
                 type:this.getBettingModel(bettingModel),
                 tableStatus:this.getTableStatus(tableSnapshot.seated, tableSnapshot.capacity),
-                ante:ante
+                smallBlind:smallBlind
             };
             var i = this.lobbyData.push(data);
 
