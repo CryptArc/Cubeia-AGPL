@@ -4,6 +4,7 @@ Poker.CommunicationHandler = Poker.AbstractConnectorHandler.extend({
     webSocketUrl : null,
     webSocketPort : null,
     tableComManager : null,
+    unsubscribeFunction : null,
     lobbyLayoutManager : null,
     init : function(webSocketUrl, webSocketPort) {
         this.webSocketUrl = webSocketUrl;
@@ -121,10 +122,28 @@ Poker.CommunicationHandler = Poker.AbstractConnectorHandler.extend({
         this.connector.login(username, password, 0);
     },
 
+    unsubscribe : function() {
+       if (this.unsubscribeFunction) {
+           this.unsubscribeFunction();
+       } else {
+           console.log("No unsubscribe function defined.");
+       }
+    },
+
     subscribeToCashGames : function() {
+        this.unsubscribe();
         this.lobbyLayoutManager.clearLobby();
         this.lobbyLayoutManager.createGrid(true);
         this.connector.lobbySubscribe(1, "/texas");
+
+        this.unsubscribeFunction = function() {
+            console.log("Unsubscribing from cash games.");
+            var unsubscribeRequest = new FB_PROTOCOL.LobbyUnsubscribePacket();
+            unsubscribeRequest.type = FB_PROTOCOL.LobbyTypeEnum.REGULAR;
+            unsubscribeRequest.gameid = 1;
+            unsubscribeRequest.address = "/texas";
+            this.connector.sendProtocolObject(unsubscribeRequest);
+        }
     },
 
     subscribeToSitAndGos : function() {
@@ -136,6 +155,7 @@ Poker.CommunicationHandler = Poker.AbstractConnectorHandler.extend({
     },
 
     subscribeToTournamentsWithPath : function(path) {
+        this.unsubscribe();
         this.lobbyLayoutManager.clearLobby();
         this.lobbyLayoutManager.createGrid(false);
         console.log("Subscribing to tournaments with path " + path);
@@ -143,7 +163,16 @@ Poker.CommunicationHandler = Poker.AbstractConnectorHandler.extend({
         subscribeRequest.type = FB_PROTOCOL.LobbyTypeEnum.MTT;
         subscribeRequest.gameid = 1;
         subscribeRequest.address = path;
-        this.connector.sendProtocolObject(subscribeRequest)
+        this.connector.sendProtocolObject(subscribeRequest);
+
+        this.unsubscribeFunction = function() {
+            console.log("Unsubscribing from tournaments, path  = " + path);
+            var unsubscribeRequest = new FB_PROTOCOL.LobbyUnsubscribePacket();
+            unsubscribeRequest.type = FB_PROTOCOL.LobbyTypeEnum.MTT;
+            unsubscribeRequest.gameid = 1;
+            unsubscribeRequest.address = path;
+            this.connector.sendProtocolObject(unsubscribeRequest);
+        }
     },
 
     notifyRegisteredToTournament: function(mttid) {
