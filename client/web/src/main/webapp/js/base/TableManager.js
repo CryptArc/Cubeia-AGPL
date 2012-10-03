@@ -38,10 +38,8 @@ Poker.TableManager = Class.extend({
         this._notifyNewHand(dealerSeatId);
     },
     endHand : function(hands,potTransfers) {
-        for(var h in hands) {
-            this.showHandStrength(
-                hands[h].player,
-                Poker.Hand.fromId(hands[h].handType));
+        for (var hand in hands) {
+            this.updateHandStrength(hands[hand]);
         }
         console.log("pot transfers:");
         console.log(potTransfers);
@@ -56,6 +54,9 @@ Poker.TableManager = Class.extend({
             //if no new hand has started in the next 15 secs we clear the table
             self.clearTable(count);
         },15000);
+    },
+    updateHandStrength : function(bestHand) {
+        this.showHandStrength(bestHand.player, Poker.Hand.fromId(bestHand.handType));
     },
     _notifyPotToPlayerTransfer : function(transfers) {
 

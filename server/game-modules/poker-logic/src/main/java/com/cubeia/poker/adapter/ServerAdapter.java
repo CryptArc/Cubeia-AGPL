@@ -69,7 +69,7 @@ public interface ServerAdapter {
     void notifyPrivateCards(int playerId, List<Card> cards);
 
     /**
-     * Notify the user of his best possible hand using both pocket (hidden and exposted) and community cards.
+     * Notify the user of his best possible hand using both pocket (hidden and exposed) and community cards.
      *
      * @param playerId    player id
      * @param handType    hand type classification

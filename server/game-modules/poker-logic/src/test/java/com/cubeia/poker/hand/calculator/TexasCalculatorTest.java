@@ -41,8 +41,9 @@ public class TexasCalculatorTest {
         hand = new Hand("2C 3C 4C 5C AC");
         assertNotNull(calc.checkFlush(hand));
 
+        // This is not a proper flush...
         hand = new Hand("2C KC");
-        assertNotNull(calc.checkFlush(hand));
+        assertNull(calc.checkFlush(hand));
 
         hand = new Hand("2C 3C 4C 5C AC TC");
         HandStrength strength = calc.checkFlush(hand);

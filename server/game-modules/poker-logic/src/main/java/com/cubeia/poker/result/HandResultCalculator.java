@@ -35,7 +35,6 @@ public class HandResultCalculator implements Serializable {
 
     private final HandTypeEvaluator handEvaluator;
 
-
     public HandResultCalculator(HandTypeEvaluator handEvaluator) {
         this.handEvaluator = handEvaluator;
     }

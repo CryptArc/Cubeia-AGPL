@@ -29,8 +29,7 @@ Poker.PokerProtocolHandler = function(tableManager,tableComHandler) {
 
         switch (protocolObject.classId() ) {
             case com.cubeia.games.poker.io.protocol.BestHand.CLASSID:
-                console.log("UNHANDLED PO BestHand");
-                console.log(protocolObject);
+                this.tableManager.updateHandStrength(protocolObject);
                 break;
             case com.cubeia.games.poker.io.protocol.BuyInInfoRequest.CLASSID:
                 console.log("UNHANDLED PO BuyInInfoRequest");
@@ -104,7 +103,6 @@ Poker.PokerProtocolHandler = function(tableManager,tableComHandler) {
                 break;
             case com.cubeia.games.poker.io.protocol.HandEnd.CLASSID:
                 this.tableManager.endHand(protocolObject.hands,protocolObject.potTransfers);
-
                 break;
             case com.cubeia.games.poker.io.protocol.InformFutureAllowedActions.CLASSID:
                 console.log("UNHANDLED PO InformFutureAllowedActions");

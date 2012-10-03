@@ -38,7 +38,11 @@ public class TexasHoldemHandCalculator implements HandCalculator, HandTypeEvalua
 
     @Override
     public HandInfo getBestHandInfo(Hand hand) {
-        return getBestCombinationHandStrength(hand, 5);
+        int minCards = 5;
+        if (hand.getCards().size() == 2) {
+            minCards = 2;
+        }
+        return getBestCombinationHandStrength(hand, minCards);
     }
 
     @Override
@@ -61,7 +65,7 @@ public class TexasHoldemHandCalculator implements HandCalculator, HandTypeEvalua
         }
 
         if (allPossibleHands.isEmpty()) {
-            throw new IllegalStateException("calculated 0 possible hands from cards: " + hand.toString());
+            throw new IllegalArgumentException("calculated 0 possible hands from cards: " + hand.toString());
         }
 
         Collections.sort(allPossibleHands, new HandStrengthComparator());

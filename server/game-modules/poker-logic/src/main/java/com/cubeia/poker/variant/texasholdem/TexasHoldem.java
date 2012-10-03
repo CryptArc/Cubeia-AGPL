@@ -63,7 +63,9 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
 
     private final RNGProvider rngProvider;
 
-    private HandResultCalculator handResultCalculator = new HandResultCalculator(new TexasHoldemHandCalculator());
+    private final TexasHoldemHandCalculator handEvaluator = new TexasHoldemHandCalculator();
+
+    private HandResultCalculator handResultCalculator = new HandResultCalculator(handEvaluator);
 
     private RevealOrderCalculator revealOrderCalculator;
 
@@ -279,7 +281,18 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
 
     @Override
     public void visit(DealCommunityCardsRound round) {
+        updateHandStrengths();
         startBettingRound();
+    }
+
+    private void updateHandStrengths() {
+        for (PokerPlayer player : context.getCurrentHandSeatingMap().values()) {
+            Hand hand = new Hand();
+            hand.addCards(player.getPocketCards().getCards());
+            hand.addCards(context.getCommunityCards());
+            HandInfo handInfo = handEvaluator.getBestHandInfo(hand);
+            serverAdapterHolder.get().notifyBestHand(player.getPlayerId(), handInfo.getHandType(), handInfo.getCards(), false);
+        }
     }
 
     @Override
@@ -306,6 +319,7 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
                 dealPocketCards(p, 2);
             }
         }
+        updateHandStrengths();
     }
 
     @Override

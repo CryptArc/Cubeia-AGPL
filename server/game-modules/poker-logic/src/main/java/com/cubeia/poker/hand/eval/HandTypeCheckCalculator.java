@@ -85,7 +85,7 @@ public class HandTypeCheckCalculator {
      * @return HandStrength, null if not flush.
      */
     public HandStrength checkFlush(Hand hand) {
-        return checkFlush(hand, 1);
+        return checkFlush(hand, 5);
     }
 
     /**
@@ -149,7 +149,7 @@ public class HandTypeCheckCalculator {
     @SuppressWarnings("unchecked")
     public HandStrength checkStraight(Hand hand, boolean acesAreLow) {
 
-        if (hand.getCards().isEmpty() || hand.getNumberOfCards() < 2) {
+        if (hand.getCards().isEmpty() || hand.getNumberOfCards() < 5) {
             return null;
         }
 
