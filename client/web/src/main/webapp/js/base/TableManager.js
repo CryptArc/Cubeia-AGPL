@@ -31,7 +31,7 @@ Poker.TableManager = Class.extend({
             for(var l in this.tableListeners) {
                 this.tableListeners[l].onBuyInCompleted();
             }
-        } else {
+        } else if(status != com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.PENDING){
             this.handleBuyInError(status);
         }
     },
