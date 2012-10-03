@@ -7,9 +7,10 @@ Poker.BuyInDialog = Class.extend({
         this.tableComHandler = tableComHandler;
     },
     show : function(tableName, balanceInWallet, maxAmount, minAmount) {
-        $(".buyin-balance").html("&euro;").append(Poker.Utils.formatCurrency(balanceInWallet));
-        $(".buyin-min-amount").html("&euro;").append(Poker.Utils.formatCurrency(minAmount));
-        $(".buyin-max-amount").html("&euro;").append(Poker.Utils.formatCurrency(maxAmount));
+        var formattedMinAmount = Poker.Utils.formatCurrency(minAmount);
+        $(".buyin-balance").html(Poker.Utils.formatCurrencyString(balanceInWallet));
+        $(".buyin-min-amount").html(Poker.Utils.formatCurrencyString(minAmount));
+        $(".buyin-max-amount").html(Poker.Utils.formatCurrencyString(maxAmount));
         $(".buyin-table-name").html(tableName);
         var self = this;
 
@@ -32,7 +33,7 @@ Poker.BuyInDialog = Class.extend({
             if(e.keyCode == 13) {
                 $("#facebox .dialog-ok-button").click();
             }
-        }).focus();
+        }).val(formattedMinAmount).select();
     },
     onError : function(msg) {
         $(".buyin-error").html(msg).show();

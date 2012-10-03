@@ -2,8 +2,12 @@
 var Poker = Poker || {};
 
 Poker.Utils = {
+    currencySymbol : "&euro;",
     formatCurrency : function(amount) {
         return parseFloat(amount/100).toFixed(2);
+    },
+    formatCurrencyString : function(amount) {
+        return Poker.Utils.currencySymbol + Poker.Utils.formatCurrency(amount);
     },
     getCardString : function(gamecard) {
         var ranks = "23456789tjqka ";
