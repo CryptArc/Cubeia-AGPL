@@ -13,7 +13,7 @@ Poker.DialogManager = Class.extend({
         this.container = $("#genericDialogContainer");
 
         var self = this;
-        $(document).bind("close.facebox",function(){
+        $(document).bind("afterClose.facebox",function(){
             if(self.currentCloseCallback!=null) {
                 self.currentCloseCallback();
             }
@@ -25,7 +25,7 @@ Poker.DialogManager = Class.extend({
         if(this.dialogQueue.length>0) {
             var d = this.dialogQueue[0];
             this.dialogQueue.splice(0,1);
-            self.displayDialog(d.dialogId, d.okCallback, d.closeCallback);
+            this.displayDialog(d.dialogId, d.okCallback, d.closeCallback);
         }
     },
     queueDialog : function(dialogId,okCallback,closeCallback) {
@@ -34,6 +34,28 @@ Poker.DialogManager = Class.extend({
            okCallback : okCallback,
            closeCallback : closeCallback
         });
+    },
+    /**
+     * Displays a generic dialog with a header, message and a continue button
+     * example
+     * displayManager.displayGenericDialog({header : "header" , message:"message"});
+     * @param content
+     */
+    displayGenericDialog : function(content) {
+          if(content.header) {
+             $("#genericDialog h1").html(content.header);
+          } else {
+              $("#genericDialog h1").hide();
+          }
+          if(content.message) {
+              $("#genericDialog .message").html(content.message);
+          } else {
+              $("#genericDialog .message").hide();
+          }
+         var self = this;
+         this.displayDialog("genericDialog",function(){self.close();},null);
+
+
     },
     /**
      * Display a dialog by passing a DOM element id you want to be placed in
