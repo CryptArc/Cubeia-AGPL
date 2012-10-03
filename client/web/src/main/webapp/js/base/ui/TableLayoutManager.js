@@ -20,6 +20,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
     dealerButton : null,
     currentDealer : -1,
     potTransferTemplate : null,
+    buyInDialog : null,
     init : function(tableContainer,templateManager,tableComHandler,capacity){
         if(!tableContainer) {
             throw "TableLayoutManager requires a tableContainer";
@@ -29,6 +30,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         var actionCallback = function(actionType,amount){
           self.tableComHandler.onMyPlayerAction(actionType,amount);
         };
+        this.buyInDialog = new Poker.BuyInDialog(tableComHandler);
         this.myActionsManager = new Poker.MyActionsManager(actionCallback);
         this.cssAnimator = new Poker.CSSAnimator();
         this.templateManager = templateManager;
@@ -60,6 +62,15 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         if(!active) {
             seat.addClass("seat-inactive");
         }
+    },
+    onBuyInCompleted : function() {
+        this.buyInDialog.close();
+    },
+    onBuyInError : function(msg) {
+        this.buyInDialog.onError(msg);
+    },
+    onBuyInInfo : function(tableName,balanceInWallet, balanceOnTable, maxAmount, minAmount, mandatory) {
+        this.buyInDialog.show(tableName,balanceInWallet,maxAmount,minAmount);
     },
     /**
      * Called when a player is added to the table

@@ -41,8 +41,9 @@ Poker.PokerProtocolHandler = function(tableManager,tableComHandler) {
 
                 break;
             case com.cubeia.games.poker.io.protocol.BuyInResponse.CLASSID:
-                console.log("UNHANDLED PO BuyInResponse");
+                console.log("BUY-IN RESPONSE ");
                 console.log(protocolObject);
+                this.tableManager.handleBuyInResponse(protocolObject.resultCode);
                 break;
             case com.cubeia.games.poker.io.protocol.CardToDeal.CLASSID:
                 console.log("UNHANDLED PO CardToDeal");
@@ -206,11 +207,10 @@ Poker.PokerProtocolHandler = function(tableManager,tableComHandler) {
         }
     };
     this.handleBuyIn = function(protocolObject) {
-        var buyInRequest = new com.cubeia.games.poker.io.protocol.BuyInRequest();
-        buyInRequest.amount = protocolObject.maxAmount;
-        console.log("buying in = " + protocolObject.maxAmount);
-        buyInRequest.sitInIfSuccessful = true;
-        this.tableComHandler.sendGameTransportPacket(buyInRequest);
+        var po = protocolObject;
+        console.log("BUY-IN:");
+        console.log(protocolObject);
+        this.tableManager.handleBuyInInfo(po.balanceInWallet, po.balanceOnTable, po.maxAmount, po.minAmount,po.mandatoryBuyin);
     };
     this.handlePerformAction = function(performAction){
         var actionType = this.getActionType(performAction.action.type);

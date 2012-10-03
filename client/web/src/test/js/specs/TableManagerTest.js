@@ -7,7 +7,7 @@ describe("Poker.TableManager Test", function(){
     it("test create table", function(){
         var mockTableListener = jasmine.createSpyObj('mockTableListener',['onTableCreated']);
 
-        tableManager.createTable(1,10, [mockTableListener]);
+        tableManager.createTable(1,10, "tableName", [mockTableListener]);
         expect(tableManager.getTableId()).toEqual(1);
         expect(tableManager.getTable().capacity).toEqual(10);
         expect(mockTableListener.onTableCreated).toHaveBeenCalled();
@@ -15,7 +15,7 @@ describe("Poker.TableManager Test", function(){
 
     it("test add player", function(){
         var mockTableListener = jasmine.createSpyObj('mockTableListener',['onTableCreated','onPlayerAdded']);
-        tableManager.createTable(1,10,[mockTableListener]);
+        tableManager.createTable(1,10,"tableName", [mockTableListener]);
 
         tableManager.addPlayer(1,1,"name1");
         var table = tableManager.getTable();

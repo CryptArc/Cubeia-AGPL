@@ -6,8 +6,10 @@ Poker.Table = Class.extend({
     id : -1,
     players : null,
     myPlayerSeat : null,
-    init : function(id,capacity) {
+    name : null,
+    init : function(id,capacity,name) {
         this.id = id;
+        this.name = name;
         this.capacity = capacity;
         this.players = new Poker.Map();
     },

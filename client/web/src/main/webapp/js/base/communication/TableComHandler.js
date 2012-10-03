@@ -40,6 +40,13 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
         sitIn.player = Poker.MyPlayer.id;
         this.sendGameTransportPacket(sitIn);
     },
+    buyIn : function(amount) {
+        var buyInRequest = new com.cubeia.games.poker.io.protocol.BuyInRequest();
+        buyInRequest.amount = amount;
+
+        buyInRequest.sitInIfSuccessful = true;
+        this.sendGameTransportPacket(buyInRequest);
+    },
     getActionEnumType:function (actionType) {
         switch (actionType.id) {
             case Poker.ActionType.SMALL_BLIND.id:
@@ -84,7 +91,7 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
 
         this.tableId = tableId;
         this.inTableView = true;
-        this.tableManager.createTable(tableId, capacity, [tableLayoutManager]);
+        this.tableManager.createTable(tableId, capacity, comHandler.tableNames.get(tableId), [tableLayoutManager]);
         this.pokerProtocolHandler = new Poker.PokerProtocolHandler(this.tableManager, this);
     },
     handleSeatInfo:function (seatInfoPacket) {

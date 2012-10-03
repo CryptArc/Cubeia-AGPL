@@ -10,8 +10,8 @@ Poker.TableManager = Class.extend({
     init : function() {
 
     },
-    createTable : function(tableId,capacity, tableListeners) {
-        this.table = new Poker.Table(tableId,capacity);
+    createTable : function(tableId,capacity,name, tableListeners) {
+        this.table = new Poker.Table(tableId,capacity,name);
 
         this.tableListeners = [];
         if(tableListeners) {
@@ -25,6 +25,25 @@ Poker.TableManager = Class.extend({
     },
     removeEventListener : function() {
       this.tableListeners = [];
+    },
+    handleBuyInResponse : function(status) {
+        if(status == com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.OK) {
+            for(var l in this.tableListeners) {
+                this.tableListeners[l].onBuyInCompleted();
+            }
+        } else {
+            this.handleBuyInError(status);
+        }
+    },
+    handleBuyInError : function(status) {
+        for(var l in this.tableListeners) {
+            this.tableListeners[l].onBuyInError("Unable to buy in");
+        }
+    },
+    handleBuyInInfo : function(balanceInWallet, balanceOnTable, maxAmount, minAmount,mandatory) {
+        for(var l in this.tableListeners) {
+            this.tableListeners[l].onBuyInInfo(this.table.name,balanceInWallet,balanceOnTable,maxAmount,minAmount,mandatory);
+        }
     },
     getTable : function() {
         return this.table;

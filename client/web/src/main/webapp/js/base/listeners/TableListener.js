@@ -118,6 +118,15 @@ Poker.TableListener = Class.extend({
     },
     onPlayerToPotTransfers : function(transfers) {
         console.log("Poker.TableListener.onPlayerToPotTransfers");
+    },
+    onBuyInInfo : function(tableName,balanceInWallet, balanceOnTable, maxAmount, minAmount,mandatory) {
+        console.log("Poker.TableListener.handleBuyInInfo");
+    },
+    onBuyInCompleted : function() {
+        console.log("Poker.TableListener.onBuyInCompleted");
+    },
+    onBuyInError : function(msg) {
+
     }
 
 });

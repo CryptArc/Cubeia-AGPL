@@ -6,7 +6,9 @@ Poker.CommunicationHandler = Poker.AbstractConnectorHandler.extend({
     tableComManager : null,
     unsubscribeFunction : null,
     lobbyLayoutManager : null,
+    tableNames : null,
     init : function(webSocketUrl, webSocketPort) {
+        this.tableNames = new Poker.Map();
         this.webSocketUrl = webSocketUrl;
         this.webSocketPort = webSocketPort;
 
@@ -25,7 +27,8 @@ Poker.CommunicationHandler = Poker.AbstractConnectorHandler.extend({
     showConnectStatus : function(text) {
       $(".connect-status").html(text);
     },
-    openTable : function(tableId, capacity){
+    openTable : function(tableId, capacity,name){
+        this.tableNames.put(tableId,name);
         console.log("CommunicationHandler.openTable");
         $("#lobbyView").hide();
         $("#tableView").show();

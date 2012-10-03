@@ -1,5 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-        "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 <html>
 <head>
     <title>Cubeia Poker</title>
@@ -10,7 +9,6 @@
     <link rel="apple-touch-icon" href="images/lobby/icon.png" />
 
     <link rel="stylesheet" type="text/css" href="css/CircularProgressBar.css"/>
-
     <!-- All less files is imported in this base.less-->
     <link rel="stylesheet/less" type="text/css" href="less/base.less">
 
@@ -25,6 +23,12 @@
     <script type="text/javascript" src="js/lib/jquery.jqGrid.min.js"></script>
     <script type="text/javascript" src="js/lib/json2.js"></script>
 
+
+    <script type="text/javascript" src="js/lib/facebox/facebox.js"></script>
+    <script type="text/javascript">
+        $.facebox.settings.closeImage = 'images/global/close.png';
+        $.facebox.settings.loadingImage = 'images/global/close.png';
+    </script>
 
     <script type="text/javascript" src="js/base/ui/CircularProgressBar.js"></script>
 
@@ -62,10 +66,12 @@
     <script type="text/javascript" src="js/base/ui/describe.js"></script>
     <script type="text/javascript" src="js/base/ui/CSSAnimator.js"></script>
     <script type="text/javascript" src="js/base/ui/DealerButton.js"></script>
-
+    <script type="text/javascript" src="js/base/ui/DialogManager.js"></script>
+    <script type="text/javascript" src="js/base/ui/BuyInDialog.js"></script>
 
     <script type="text/javascript">
         var comHandler = null;
+        var dialogManager = null;
         function handleKeyUp(keyCode) {
             if(keyCode == 13) {
                 $("#loginButton").click();
@@ -74,10 +80,13 @@
         var isIphone = false;
         $(document).ready(function(){
 
+            dialogManager = new Poker.DialogManager();
+
             $(".describe").describe();
 
             $("body").bind("touchmove", function(e){
-                if(comHandler.isInTableView() && !$(e.target).hasClass("ui-slider-handle")) {
+                var target = !$(e.target);
+                if(comHandler.isInTableView() && (target.hasClass("ui-slider-handle") || dialogManager.open == true)) {
                    e.preventDefault();
                 }
             });
@@ -431,6 +440,36 @@
         <div id="potTransfer{{id}}" class="pot-transfer" style="visibility: hidden;">
             <div class="balance">&euro;{{amount}}</div>
         </div>
+    </div>
+
+    <div id="buyinDialog" style="display: none;">
+        <h1>Buy-in at table <span class="buyin-table-name">Table</span></h1>
+        <div class="buy-in-row">
+            <span class="desc">Your balance:</span>  <span class="balance buyin-balance">&euro;1023.00</span>
+        </div>
+        <div class="buy-in-row">
+            <span class="desc">Max amount:</span>  <span class="balance buyin-max-amount">&euro;1023.00</span>
+        </div>
+        <div class="buy-in-row">
+            <span class="desc">Min amount:</span>  <span class="balance buyin-min-amount">&euro;1023.00</span>
+        </div>
+        <div class="buy-in-row">
+            <span class="desc">Buy-in amount:</span> <input type="text" class="buyin-amount dialog-input" value="" />
+        </div>
+        <div class="buy-in-row">
+            <span class="buyin-error" style="display: none;"></span>
+        </div>
+
+
+        <p class="dialog-buttons">
+            <a href="#" class="dialog-cancel-button">
+                Cancel
+            </a>
+            <a href="#" class="dialog-ok-button">
+                Buy in
+            </a>
+        </p>
+
     </div>
 
 </body>

@@ -120,7 +120,6 @@ Poker.LobbyLayoutManager = Class.extend({
         }
         this.createGrid(false);
     },
-
     handleTournamentSnapshot:function (snapshot) {
         if (this.findSitAndGo(snapshot.mttid) === null) {
 
@@ -300,7 +299,7 @@ Poker.LobbyLayoutManager = Class.extend({
         var click = function(e) {
             if (tables) {
                 $("#tableListItemContainer").empty();
-                comHandler.openTable(data.id, data.capacity);
+                comHandler.openTable(data.id, data.capacity,data.name);
             } else {
                 console.log("ON CLICK REGISTER / UNREGISTER");
                 if (self.registeredTournaments[data.id]) {
