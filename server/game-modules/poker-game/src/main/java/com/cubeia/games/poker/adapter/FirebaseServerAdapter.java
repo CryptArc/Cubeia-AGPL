@@ -26,7 +26,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -180,6 +182,10 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
     @Inject
     private HandResultBatchFactory handResultBatchFactory;
+    
+    @Inject
+    @VisibleForTesting
+    HandHistoryReporter handHistory;
 
     /*------------------------------------------------
 
@@ -199,7 +205,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
              */
             throw new SystemShutdownException();
         }
-
+        
         String handId = backend.generateHandId();
         HandIdentifier playedHand = new HandIdentifier();
         playedHand.setIntegrationId(handId);
@@ -211,6 +217,8 @@ public class FirebaseServerAdapter implements ServerAdapter {
         sendPublicPacket(action, -1);
 
         log.debug("Starting new hand with ID '" + handId + "'. FBPlayers: " + table.getPlayerSet().getPlayerCount() + ", PokerPlayers: " + state.getSeatedPlayers().size());
+    
+        handHistory.notifyNewHand();
     }
 
     /**
@@ -240,6 +248,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
     @Override
     public void notifyNewRound() {
+    	handHistory.notifyNewRound();
     }
 
     @Override
@@ -295,6 +304,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
         GameDataAction action = protocolFactory.createGameAction(packet, pokerAction.getPlayerId(), table.getId());
         log.debug("--> Send PerformAction[" + packet + "] to everyone");
         sendPublicPacket(action, -1);
+        handHistory.notifyActionPerformed(pokerAction, pokerPlayer);
     }
 
     @Override
@@ -322,6 +332,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
         GameDataAction action = protocolFactory.createGameAction(packet, 0, table.getId());
         log.debug("--> Send DealPublicCards[" + packet + "] to everyone");
         sendPublicPacket(action, -1);
+        handHistory.notifyCommunityCards(cards);
     }
 
     @Override
@@ -337,6 +348,8 @@ public class FirebaseServerAdapter implements ServerAdapter {
         GameDataAction ntfyAction = protocolFactory.createGameAction(hiddenCardsPacket, playerId, table.getId());
         log.debug("--> Send DealPrivateCards(hidden)[" + hiddenCardsPacket + "] to everyone");
         sendPublicPacket(ntfyAction, playerId);
+        
+        handHistory.notifyPrivateCards(playerId, cards);
     }
 
     @Override
@@ -359,6 +372,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
         GameDataAction ntfyAction = protocolFactory.createGameAction(hiddenCardsPacket, playerId, table.getId());
         log.debug("--> Send DealPrivateCards(exposed)[" + hiddenCardsPacket + "] to everyone");
         sendPublicPacket(ntfyAction, -1);
+        handHistory.notifyPrivateExposedCards(playerId, cards);
     }
 
     @Override
@@ -367,6 +381,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
         GameDataAction action = protocolFactory.createGameAction(packet, 0, table.getId());
         log.debug("--> Send ExposePrivateCards[" + packet + "] to everyone");
         sendPublicPacket(action, -1);
+        handHistory.exposePrivateCards(holder);
     }
 
     @Override
@@ -447,7 +462,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
         if (handEndStatus.equals(HandEndStatus.NORMAL) && handResult != null) {
             sendHandEndPacket(handResult);
             if (!tournamentTable) {
-                performBackEndTransactions(handResult);
+                performBackEndTransactions(handResult, handEndStatus);
             }
             updateHandEndStatistics();
         } else {
@@ -462,6 +477,16 @@ public class FirebaseServerAdapter implements ServerAdapter {
         clearActionCache();
         ThreadLocalProfiler.add("FirebaseServerAdapter.notifyHandEnd.stop");
     }
+   
+    private Map<Integer, String> getTransactionIds(BatchHandResponse batchHandResult) {
+    	Map<Integer, String> transIds = new HashMap<Integer, String>();
+    	for (TransactionUpdate u : batchHandResult.getResultingBalances()) {
+			long transactionId = ((LongTransactionId)u.getTransactionId()).getTransactionId();
+			int userId = u.getBalance().getPlayerSessionId().getPlayerId();
+			transIds.put(userId, String.valueOf(transactionId));
+		}
+    	return transIds;
+	}
 
     private void updateHandEndStatistics() {
         PokerStats.getInstance().reportHandEnd();
@@ -484,24 +509,13 @@ public class FirebaseServerAdapter implements ServerAdapter {
         sendPublicPacket(action, -1);
     }
 
-    private void performBackEndTransactions(HandResult handResult) {
+    private void performBackEndTransactions(HandResult handResult, HandEndStatus handEndStatus) {
         String handId = getIntegrationHandId();
         TableId externalTableId = getIntegrationTableId();
         BatchHandResponse batchHandResult = batchHand(handResult, handId, externalTableId);
         validateAndUpdateBalances(batchHandResult);
-        setTransactionIds(batchHandResult);
-    }
-
-    /*
-    * HACK!!! We're setting the transactions ids on a thread local in order
-    * for the hand history to get to them. Ugly! /LJN
-    */
-    private void setTransactionIds(BatchHandResponse batchHandResult) {
-        for (TransactionUpdate u : batchHandResult.getResultingBalances()) {
-            long transactionId = ((LongTransactionId)u.getTransactionId()).getTransactionId();
-            long userId = u.getBalance().getPlayerSessionId().getPlayerId();
-            UberAdapterHack.set(String.valueOf(userId), String.valueOf(transactionId));
-        }
+        Map<Integer, String> transactionIds = getTransactionIds(batchHandResult);
+        handHistory.notifyHandEnd(handResult, handEndStatus, transactionIds);
     }
 
     private BatchHandResponse batchHand(HandResult handResult, String handId, TableId externalTableId) {
@@ -598,7 +612,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
 
     public void notifyPotUpdates(Collection<com.cubeia.poker.pot.Pot> pots, Collection<PotTransition> potTransitions) {
-        boolean fromPlayerToPot = !potTransitions.isEmpty() && potTransitions.iterator().next().isFromPlayerToPot();
+    	boolean fromPlayerToPot = !potTransitions.isEmpty() && potTransitions.iterator().next().isFromPlayerToPot();
         List<Pot> clientPots = new ArrayList<Pot>();
         List<PotTransfer> transfers = new ArrayList<PotTransfer>();
 
@@ -626,6 +640,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
         GameDataAction action = protocolFactory.createGameAction(potTransfers, 0, table.getId());
         sendPublicPacket(action, -1);
 
+        handHistory.notifyPotUpdates(pots, potTransitions);
     }
 
 
@@ -680,16 +695,8 @@ public class FirebaseServerAdapter implements ServerAdapter {
         sendPublicPacket(action, -1);
     }
 
-    /*------------------------------------------------
-
-         PRIVATE METHODS
-
-      ------------------------------------------------*/
-
     /**
      * Schedule a player timeout trigger command.
-     *
-     * @param seq
      */
     public void schedulePlayerTimeout(long millis, int pid, int seq) {
         GameObjectAction action = new GameObjectAction(table.getId());
@@ -787,6 +794,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
         DeckInfo deckInfoPacket = new DeckInfo(size, actionTransformer.convertRankToProtocolEnum(rankLow));
         GameDataAction action = protocolFactory.createGameAction(deckInfoPacket, 0, table.getId());
         sendPublicPacket(action, -1);
+        handHistory.notifyDeckInfo(size, rankLow);
     }
 
     @Override

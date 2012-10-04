@@ -18,7 +18,7 @@
 package com.cubeia.games.poker;
 
 import com.cubeia.firebase.api.game.table.Table;
-import com.cubeia.games.poker.adapter.HandHistoryReportAdapter;
+import com.cubeia.games.poker.adapter.FirebaseServerAdapter;
 import com.cubeia.poker.PokerState;
 import com.google.inject.Inject;
 
@@ -31,7 +31,7 @@ import com.google.inject.Inject;
 public class StateInjector {
 
     @Inject
-    HandHistoryReportAdapter adapter;
+    FirebaseServerAdapter adapter;
 
     /**
      * Inject the server adapter to the game logic.
