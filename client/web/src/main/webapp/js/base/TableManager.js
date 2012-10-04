@@ -27,6 +27,7 @@ Poker.TableManager = Class.extend({
       this.tableListeners = [];
     },
     handleBuyInResponse : function(status) {
+
         if(status == com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.PENDING) {
             for(var l in this.tableListeners) {
                 this.tableListeners[l].onBuyInCompleted();
