@@ -38,7 +38,7 @@ public class IntegrationGuiceModule extends AbstractModule {
     protected void configure() {
         bind(StateInjector.class).in(EventScoped.class);
         bind(ActionCache.class).in(Singleton.class);
-        bind(HandHistoryReportAdapter.class).in(EventScoped.class);
+        bind(HandHistoryReporter.class).in(EventScoped.class);
         bind(FirebaseServerAdapter.class).in(EventScoped.class);
         bind(GameStateSender.class).in(Singleton.class);
         bind(BackendCallHandler.class).in(EventScoped.class);

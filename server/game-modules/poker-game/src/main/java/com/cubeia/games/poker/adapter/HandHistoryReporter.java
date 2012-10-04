@@ -38,7 +38,6 @@ import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
-import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.ExposeCardsHolder;
 import com.cubeia.poker.hand.ExposedCards;
@@ -62,18 +61,13 @@ import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
 import com.cubeia.poker.util.ThreadLocalProfiler;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 /**
- * Adapter between logic and game which captures significant events
- * to the hand history collector. This is a proxy adapter and will first
- * forward the event to its proxied member before executing itself.
- *
  * @author Lars J. Nilsson
  */
-public class HandHistoryReportAdapter extends ServerAdapterProxy {
-
-    @Inject
-    private FirebaseServerAdapter next;
+@Singleton
+public class HandHistoryReporter {
 
     @Service
     private HandHistoryCollectorService service;
@@ -84,29 +78,18 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
     @Inject
     private PokerState state;
 
-    @Override
-    public ServerAdapter getAdaptee() {
-        return next;
-    }
-
-    @Override
     public void notifyPotUpdates(Collection<Pot> iterable, Collection<PotTransition> potTransitions) {
-        super.notifyPotUpdates(iterable, potTransitions);
         PotUpdate ev = new PotUpdate();
         ev.getPots().addAll(translate(iterable));
         post(ev);
     }
 
-    @Override
     public void notifyActionPerformed(PokerAction action, PokerPlayer pokerPlayer) {
-        super.notifyActionPerformed(action, pokerPlayer);
         PlayerAction ev = translate(action);
         post(ev);
     }
 
-    @Override
     public void exposePrivateCards(ExposeCardsHolder holder) {
-        super.exposePrivateCards(holder);
         for (ExposedCards exposedCards : holder.getExposedCards()) {
             PlayerCardsExposed ev = new PlayerCardsExposed(exposedCards.getPlayerId());
             ev.getCards().addAll(translateCards(exposedCards.getCards()));
@@ -114,43 +97,35 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
         }
     }
 
-    @Override
     public void notifyCommunityCards(List<Card> cards) {
-        super.notifyCommunityCards(cards);
         TableCardsDealt ev = new TableCardsDealt();
         ev.getCards().addAll(translateCards(cards));
         post(ev);
     }
 
-    @Override
     public void notifyDeckInfo(int size, Rank rankLow) {
-        super.notifyDeckInfo(size, rankLow);
         if (!checkHasService()) {
             return; // SANITY CHECK
         }
         service.reportDeckInfo(table.getId(), new DeckInfo(size, translate(rankLow)));
     }
 
-    @Override
-    public void notifyHandEnd(HandResult handResult, HandEndStatus handEndStatus, boolean tournamentTable) {
-        UberAdapterHack.prepare();
-        super.notifyHandEnd(handResult, handEndStatus, tournamentTable);
+    public void notifyHandEnd(HandResult handResult, HandEndStatus handEndStatus, Map<Integer, String> playerTransactions) {
         ThreadLocalProfiler.add("HandHistoryReportAdapter.notifyHandEnd.start");
         if (!checkHasService()) {
-            UberAdapterHack.clear();
             return; // SANITY CHECK
         }
+    	ThreadLocalProfiler.add("HandHistoryReportAdapter.notifyHandEnd.start");
         if (handEndStatus == CANCELED_TOO_FEW_PLAYERS) {
             service.cancelHand(table.getId());
         } else {
             Map<PokerPlayer, Result> map = handResult.getResults();
             Results res = new Results();
             for (PokerPlayer pl : map.keySet()) {
-                // translate results
-                com.cubeia.poker.handhistory.api.HandResult hr = translate(pl.getId(), map.get(pl));
-                // HACK!!! Use the über hack to get the transaction ID
-                String transactionId = UberAdapterHack.get(String.valueOf(pl.getId()));
-                hr.setTransactionId(transactionId);
+            	// translate results
+            	com.cubeia.poker.handhistory.api.HandResult hr = translate(pl.getId(), map.get(pl));
+                String transactionId = playerTransactions.get(pl.getId());
+            	hr.setTransactionId(transactionId);
                 res.getResults().put(pl.getId(), hr);
                 // get player rake and add
                 long playerRake = handResult.getRakeContributionByPlayer(pl);
@@ -160,13 +135,10 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
             service.reportResults(table.getId(), res);
             service.stopHand(table.getId());
         }
-        UberAdapterHack.clear();
         ThreadLocalProfiler.add("HandHistoryReportAdapter.notifyHandEnd.stop");
     }
 
-    @Override
     public void notifyNewHand() {
-        super.notifyNewHand();
         if (!checkHasService()) {
             return; // SANITY CHECK
         }
@@ -177,23 +149,17 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
         this.service.startHand(id, seats);
     }
 
-    @Override
     public void notifyNewRound() {
-        super.notifyNewRound();
         post(new RoundStarted());
     }
 
-    @Override
     public void notifyPrivateCards(int playerId, List<Card> cards) {
-        super.notifyPrivateCards(playerId, cards);
         PlayerCardsDealt ev = new PlayerCardsDealt(playerId, false);
         ev.getCards().addAll(translateCards(cards));
         post(ev);
     }
 
-    @Override
     public void notifyPrivateExposedCards(int playerId, List<Card> cards) {
-        super.notifyPrivateExposedCards(playerId, cards);
         PlayerCardsDealt ev = new PlayerCardsDealt(playerId, true);
         ev.getCards().addAll(translateCards(cards));
         post(ev);
@@ -205,8 +171,7 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
         return (FirebaseState) state.getAdapterState();
     }
 
-    @Override
-    public String getIntegrationHandId() {
+    private String getIntegrationHandId() {
         HandIdentifier id = getFirebaseState().getCurrentHandIdentifier();
         return (id == null ? null : id.getIntegrationId());
     }
@@ -250,16 +215,4 @@ public class HandHistoryReportAdapter extends ServerAdapterProxy {
         TablePlayerSet set = table.getPlayerSet();
         return set.getPlayer(id).getName();
     }
-
-    @Override
-    public void unseatPlayer(int playerId, boolean setAsWatcher) {
-        super.unseatPlayer(playerId, setAsWatcher);
-    }
-
-    @Override
-    public void notifyDisconnected(int playerId) {
-        super.notifyDisconnected(playerId);
-    }
-
-
 }

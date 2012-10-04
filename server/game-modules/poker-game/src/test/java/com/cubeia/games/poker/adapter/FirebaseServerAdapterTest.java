@@ -77,6 +77,7 @@ public class FirebaseServerAdapterTest {
     @Test
     public void testUpdatePots() {
         FirebaseServerAdapter fsa = new FirebaseServerAdapter();
+        fsa.handHistory = mock(HandHistoryReporter.class);
         fsa.actionTransformer = new ActionTransformer();
 
         fsa.protocolFactory = mock(ProtocolFactory.class);
