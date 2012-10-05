@@ -32,6 +32,7 @@ public class SimpleTableConfigTemplateProvider implements TableConfigTemplatePro
     @Override
     public List<TableConfigTemplate> getTemplates() {
         TableConfigTemplate t = new TableConfigTemplate();
+        t.setId(0);
         t.setAnte(100);
         t.setSeats(10);
         t.setVariant(TEXAS_HOLDEM);
