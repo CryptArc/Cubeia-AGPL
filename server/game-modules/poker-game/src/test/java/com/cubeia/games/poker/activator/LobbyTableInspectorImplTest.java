@@ -135,7 +135,7 @@ public class LobbyTableInspectorImplTest {
 		 */
 		TableConfigTemplate templ = createTemplate(0, 0);
 		LobbyTable table = mockTableForTempl(templ, 666, 0, 10);
-		table.getAttributes().put(TABLE_READY_FOR_CLOSE.name(), AttributeValue.wrap(1)); // MARK CLOSE
+		table.getAttributes().put(TABLE_READY_FOR_CLOSE.name(), new AttributeValue(1)); // MARK CLOSE
 		Mockito.when(factory.listTables()).thenReturn(new LobbyTable[] { table });
 		List<TableModifierAction> result = handler.match(Collections.singletonList(templ));
 		Assert.assertEquals(1, result.size());
