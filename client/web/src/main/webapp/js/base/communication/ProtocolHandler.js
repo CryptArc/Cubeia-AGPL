@@ -36,7 +36,6 @@ Poker.PokerProtocolHandler = function(tableManager,tableComHandler) {
                 console.log(protocolObject);
                 break;
             case com.cubeia.games.poker.io.protocol.BuyInInfoResponse.CLASSID:
-                //TODO let the user input the buy-in amount
                 this.handleBuyIn(protocolObject);
 
                 break;

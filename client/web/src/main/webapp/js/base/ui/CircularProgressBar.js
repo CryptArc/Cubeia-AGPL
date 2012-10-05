@@ -56,7 +56,9 @@ CircularProgressBar.prototype = {
     endTime : null,
     running : false,
 	render : function(time) {
+
         var self = this;
+
 
         this.pieElement.style.cssText="-webkit-transition:-webkit-transform "+(time/2000)+"s linear;";
         this.pieElement.addEventListener('webkitTransitionEnd',function(e){
