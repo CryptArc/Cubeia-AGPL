@@ -17,6 +17,10 @@
 
 package com.cubeia.poker;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Random;
+
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
@@ -33,14 +37,8 @@ import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.pot.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
-import com.cubeia.poker.util.SitoutCalculator;
 import com.cubeia.poker.tournament.RoundReport;
-
-import java.util.Collection;
-import java.util.List;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import com.cubeia.poker.util.SitoutCalculator;
 
 /**
  * Integration test for poker logic.
@@ -421,6 +419,11 @@ public class PokerLogicTest extends GuiceTest {
 
         state.setServerAdapter(new ServerAdapter() {
             boolean foldActionReceived = false;
+            
+            @Override
+            public Random getSystemRNG() {
+            	return new Random();
+            }
 
             @Override
             public void exposePrivateCards(ExposeCardsHolder holder) {

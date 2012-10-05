@@ -24,7 +24,9 @@ import java.util.Map;
 
 public class PokerSettings implements Serializable {
 
-    private int anteAmount;
+    private static final long serialVersionUID = -8524532061876453809L;
+
+	private int anteAmount;
 
     private int smallBlindAmount;
 

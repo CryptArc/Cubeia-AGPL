@@ -17,17 +17,30 @@
 
 package com.cubeia.poker.variant.texasholdem;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.blinds.BlindsCalculator;
-import com.cubeia.poker.hand.*;
+import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.Deck;
+import com.cubeia.poker.hand.Hand;
+import com.cubeia.poker.hand.HandInfo;
+import com.cubeia.poker.hand.IndexCardIdGenerator;
+import com.cubeia.poker.hand.Shuffler;
+import com.cubeia.poker.hand.StandardDeck;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.HandResultCalculator;
 import com.cubeia.poker.result.RevealOrderCalculator;
-import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
 import com.cubeia.poker.rounds.ante.AnteRound;
@@ -36,15 +49,16 @@ import com.cubeia.poker.rounds.betting.BettingRound;
 import com.cubeia.poker.rounds.betting.DefaultPlayerToActCalculator;
 import com.cubeia.poker.rounds.betting.NoLimitBetStrategy;
 import com.cubeia.poker.rounds.blinds.BlindsRound;
-import com.cubeia.poker.rounds.dealing.*;
+import com.cubeia.poker.rounds.dealing.DealCommunityCardsRound;
+import com.cubeia.poker.rounds.dealing.DealExposedPocketCardsRound;
+import com.cubeia.poker.rounds.dealing.DealInitialPocketCardsRound;
+import com.cubeia.poker.rounds.dealing.Dealer;
+import com.cubeia.poker.rounds.dealing.ExposePrivateCardsRound;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.variant.AbstractGameType;
 import com.cubeia.poker.variant.HandResultCreator;
 import com.google.common.annotations.VisibleForTesting;
-import org.apache.log4j.Logger;
-
-import java.util.*;
 
 public class TexasHoldem extends AbstractGameType implements RoundVisitor, Dealer {
 
@@ -61,16 +75,13 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
      */
     private int roundId;
 
-    private final RNGProvider rngProvider;
-
     private final TexasHoldemHandCalculator handEvaluator = new TexasHoldemHandCalculator();
 
     private HandResultCalculator handResultCalculator = new HandResultCalculator(handEvaluator);
 
     private RevealOrderCalculator revealOrderCalculator;
 
-    public TexasHoldem(RNGProvider rngProvider) {
-        this.rngProvider = rngProvider;
+    public TexasHoldem() {
         revealOrderCalculator = new RevealOrderCalculator();
     }
 
@@ -85,8 +96,7 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
     }
 
     private void initHand() {
-        deck = new StandardDeck(new Shuffler<Card>(rngProvider.getRNG()), new IndexCardIdGenerator());
-
+        deck = new StandardDeck(new Shuffler<Card>(getServerAdapter().getSystemRNG()), new IndexCardIdGenerator());
         currentRound = new BlindsRound(context, serverAdapterHolder, new BlindsCalculator(new NonRandomSeatProvider()));
         roundId = 0;
     }

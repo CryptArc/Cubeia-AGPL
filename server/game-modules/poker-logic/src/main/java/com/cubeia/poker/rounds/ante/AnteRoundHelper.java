@@ -17,20 +17,18 @@
 
 package com.cubeia.poker.rounds.ante;
 
-import com.cubeia.poker.adapter.ServerAdapter;
-import com.cubeia.poker.adapter.ServerAdapterHolder;
-import com.cubeia.poker.context.PokerContext;
+import java.util.ArrayList;
+import java.util.Collection;
+
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.rounds.RoundHelper;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * Testable helper class for the ante round.
@@ -39,6 +37,8 @@ import java.util.Collection;
  */
 public class AnteRoundHelper extends RoundHelper {
 
+    private static final long serialVersionUID = 1101877161161688793L;
+	
     private PokerContext context;
 
     public AnteRoundHelper(PokerContext context, ServerAdapterHolder serverAdapter) {

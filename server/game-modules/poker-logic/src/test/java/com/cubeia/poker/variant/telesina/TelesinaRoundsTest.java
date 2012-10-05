@@ -17,22 +17,20 @@
 
 package com.cubeia.poker.variant.telesina;
 
-import com.cubeia.poker.DummyRNGProvider;
-import com.cubeia.poker.adapter.ServerAdapterHolder;
-import com.cubeia.poker.context.PokerContext;
-import com.cubeia.poker.adapter.ServerAdapter;
-import com.cubeia.poker.hand.Card;
-import com.cubeia.poker.model.BlindsInfo;
-import com.cubeia.poker.player.DefaultPokerPlayer;
-import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.pot.Pot;
-import com.cubeia.poker.pot.PotHolder;
-import com.cubeia.poker.rounds.dealing.DealCommunityCardsRound;
-import com.cubeia.poker.rounds.dealing.DealExposedPocketCardsRound;
-import com.cubeia.poker.rounds.ante.AnteRound;
-import com.cubeia.poker.rounds.betting.BettingRound;
-import com.cubeia.poker.rounds.dealing.DealInitialPocketCardsRound;
-import com.cubeia.poker.timing.impl.DefaultTimingProfile;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,11 +40,21 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import java.util.*;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.*;
+import com.cubeia.poker.adapter.ServerAdapter;
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
+import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.model.BlindsInfo;
+import com.cubeia.poker.player.DefaultPokerPlayer;
+import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.pot.Pot;
+import com.cubeia.poker.pot.PotHolder;
+import com.cubeia.poker.rounds.ante.AnteRound;
+import com.cubeia.poker.rounds.betting.BettingRound;
+import com.cubeia.poker.rounds.dealing.DealCommunityCardsRound;
+import com.cubeia.poker.rounds.dealing.DealExposedPocketCardsRound;
+import com.cubeia.poker.rounds.dealing.DealInitialPocketCardsRound;
+import com.cubeia.poker.timing.impl.DefaultTimingProfile;
 
 
 public class TelesinaRoundsTest {
@@ -96,6 +104,7 @@ public class TelesinaRoundsTest {
         when(context.getTimingProfile()).thenReturn(new DefaultTimingProfile());
         when(context.getPotHolder()).thenReturn(potHolder);
         when(deckFactory.createNewDeck(Mockito.any(Random.class), Mockito.anyInt())).thenReturn(deck);
+        when(serverAdapter.getSystemRNG()).thenReturn(new Random());
 
         // just return enough cards to make tests happy...
         when(deck.deal()).thenReturn(
@@ -113,7 +122,7 @@ public class TelesinaRoundsTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testRoundSequence() {
-        Telesina telesina = new Telesina(new DummyRNGProvider(), deckFactory, roundFactory, dealerButtonCalculator);
+        Telesina telesina = new Telesina(deckFactory, roundFactory, dealerButtonCalculator);
         telesina.setPokerContextAndServerAdapter(context, serverAdapterHolder);
 
 

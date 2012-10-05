@@ -20,6 +20,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>com.cubeia.firebase</groupId>
+			<artifactId>firebase-protocol</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>com.cubeia.games</groupId>
 			<artifactId>poker-protocol</artifactId>
 		</dependency>
@@ -33,8 +39,12 @@
 			<groupId>com.cubeia.game.poker.config</groupId>
 			<artifactId>config-service</artifactId>
 			<type>jar</type>
-			<version>${project.version}</version>
 			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.cubeia</groupId>
+			<artifactId>utilities</artifactId>
 		</dependency>
 
 		<dependency>
@@ -59,11 +69,8 @@
 			<artifactId>poker-tournament</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>com.cubeia.firebase.client</groupId>
-			<artifactId>firebase-java-textclient</artifactId>
-			<version>1.7.0-CE</version>
-		</dependency>
+		<!-- dependency> <groupId>com.cubeia.firebase.client</groupId> <artifactId>firebase-java-textclient</artifactId> 
+			<version>1.7.0-CE</version> </dependency -->
 
 		<dependency>
 			<groupId>com.cubeia.firebase</groupId>
@@ -89,6 +96,13 @@
 		</dependency>
 
 		<dependency>
+			<groupId>com.cubeia.firebase.service</groupId>
+			<artifactId>mt-random</artifactId>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
 		</dependency>
@@ -96,7 +110,7 @@
 		<dependency>
 			<groupId>com.cubeia.games.handhistory</groupId>
 			<artifactId>hand-history-api</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>${project.version}</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
@@ -104,7 +118,6 @@
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<version>1.5</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
@@ -119,7 +132,6 @@
 			<groupId>com.cubeia.games.poker</groupId>
 			<artifactId>hand-debugger-service</artifactId>
 			<scope>provided</scope>
-			<version>1.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 

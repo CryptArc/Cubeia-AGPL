@@ -17,27 +17,30 @@
 
 package com.cubeia.poker.variant.telesina;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+
+import java.util.Random;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.adapter.ServerAdapterHolder;
 import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.model.BlindsInfo;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.ante.AnteRound;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-
-import java.util.Random;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 public class TelesinaStartHandTest {
 
@@ -52,9 +55,6 @@ public class TelesinaStartHandTest {
 
     @Mock
     private TelesinaDeckFactory deckFactory;
-
-    @Mock
-    private RNGProvider rngProvider;
 
     @Mock
     private ServerAdapter serverAdapter;
@@ -80,7 +80,7 @@ public class TelesinaStartHandTest {
     public void init() {
         initMocks(this);
 
-        when(rngProvider.getRNG()).thenReturn(rng);
+        when(serverAdapter.getSystemRNG()).thenReturn(rng);
         when(context.getTableSize()).thenReturn(4);
         when(context.getAnteAmount()).thenReturn(1000);
         when(deck.getTotalNumberOfCardsInDeck()).thenReturn(40);
@@ -90,7 +90,7 @@ public class TelesinaStartHandTest {
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
         when(context.getBlindsInfo()).thenReturn(blindsInfo);
 
-        telesina = new Telesina(rngProvider, deckFactory, roundFactory, dealerButtonCalculator);
+        telesina = new Telesina(deckFactory, roundFactory, dealerButtonCalculator);
         telesina.setPokerContextAndServerAdapter(context, serverAdapterHolder);
     }
 

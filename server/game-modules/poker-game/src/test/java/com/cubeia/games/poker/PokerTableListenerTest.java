@@ -17,6 +17,18 @@
 
 package com.cubeia.games.poker;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+
+import org.junit.Test;
+
 import com.cubeia.firebase.api.game.GameNotifier;
 import com.cubeia.firebase.api.game.player.GenericPlayer;
 import com.cubeia.firebase.api.game.table.Table;
@@ -27,15 +39,6 @@ import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.blinds.MissedBlindsStatus;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.player.SitOutStatus;
-import org.junit.Test;
-
-import java.io.IOException;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.*;
 
 public class PokerTableListenerTest {
 

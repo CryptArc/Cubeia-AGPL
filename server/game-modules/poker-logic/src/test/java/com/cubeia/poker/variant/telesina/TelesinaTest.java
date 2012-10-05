@@ -17,7 +17,19 @@
 
 package com.cubeia.poker.variant.telesina;
 
-import com.cubeia.poker.DummyRNGProvider;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.Random;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+
 import com.cubeia.poker.MockServerAdapter;
 import com.cubeia.poker.adapter.ServerAdapterHolder;
 import com.cubeia.poker.context.PokerContext;
@@ -27,18 +39,6 @@ import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.rounds.dealing.DealExposedPocketCardsRound;
 import com.cubeia.poker.timing.impl.DefaultTimingProfile;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-
-import java.util.Random;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class TelesinaTest {
 
@@ -78,7 +78,7 @@ public class TelesinaTest {
                 new Card(7, "8D"), new Card(7, "9D"), new Card(7, "JD"), new Card(7, "QD"), new Card(7, "KD"), new Card(7, "AD"));
         when(context.getBlindsInfo()).thenReturn(blindsInfo);
 
-        telesina = new TelesinaForTesting(new DummyRNGProvider(), deckFactory, roundFactory, dealerButtonCalculator);
+        telesina = new TelesinaForTesting(deckFactory, roundFactory, dealerButtonCalculator);
         telesina.setPokerContextAndServerAdapter(context, serverAdapterHolder);
     }
 

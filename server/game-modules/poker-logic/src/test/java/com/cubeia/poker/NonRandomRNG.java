@@ -15,16 +15,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.poker.rng;
+package com.cubeia.poker;
 
-import java.io.Serializable;
 import java.util.Random;
 
-/**
- * Provides a random number generator.
- *
- * @author w
- */
-public interface RNGProvider extends Serializable {
-    public Random getRNG();
+@SuppressWarnings("serial")
+public class NonRandomRNG extends Random {
+
+    @Override
+    public int nextInt() {
+        return 1;
+    }
+
+    @Override
+    public int nextInt(int n) {
+        return 1;
+    }
+
+    @Override
+    public boolean nextBoolean() {
+        return true;
+    }
 }

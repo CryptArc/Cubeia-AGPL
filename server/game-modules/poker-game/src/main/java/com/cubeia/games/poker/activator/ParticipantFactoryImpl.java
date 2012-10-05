@@ -20,15 +20,11 @@ package com.cubeia.games.poker.activator;
 import com.cubeia.backend.firebase.CashGamesBackendContract;
 import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.games.poker.entity.TableConfigTemplate;
-import com.cubeia.poker.rng.RNGProvider;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 @Singleton
 public class ParticipantFactoryImpl implements ParticipantFactory {
-
-    @Inject
-    private RNGProvider rngProvider;
 
     @Inject
     private PokerStateCreator stateCreator;
@@ -48,7 +44,6 @@ public class ParticipantFactoryImpl implements ParticipantFactory {
                 template,
                 template == null ? null : domainSelector.selectLobbyDomainFor(template),
                 stateCreator,
-                rngProvider,
                 backend,
                 tableNamer);
     }

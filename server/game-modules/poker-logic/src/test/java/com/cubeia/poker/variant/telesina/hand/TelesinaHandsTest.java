@@ -42,7 +42,7 @@ public class TelesinaHandsTest extends AbstractTelesinaHandTester {
 
     @Override
     protected void setUp() throws Exception {
-        super.setUpTelesina(new NonRandomRNGProvider(), new TelesinaDeckFactory(), 10);
+        super.setUpTelesina(new TelesinaDeckFactory(), 10);
     }
 
     @Test
@@ -195,7 +195,7 @@ public class TelesinaHandsTest extends AbstractTelesinaHandTester {
                 new Card(18, "7D"), new Card(19, "8D"), new Card(20, "9D"),
                 new Card(21, "JD"), new Card(22, "QD"), new Card(23, "KD"), new Card(24, "AD"));
 
-        super.setUpTelesina(new NonRandomRNGProvider(), deckFactory, 2, new RakeSettings(new BigDecimal("0.01"), 500L, 150L));
+        super.setUpTelesina(deckFactory, 2, new RakeSettings(new BigDecimal("0.01"), 500L, 150L));
 
         MockPlayer[] mp = TestUtils.createMockPlayers(5);
         setBalanceAndPlayerId(0, mp, 1995583417, 170);

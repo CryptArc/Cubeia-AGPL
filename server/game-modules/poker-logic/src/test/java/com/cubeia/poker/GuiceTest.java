@@ -17,23 +17,23 @@
 
 package com.cubeia.poker;
 
-import com.cubeia.poker.rng.RNGProvider;
+import static com.cubeia.poker.timing.Timings.MINIMUM_DELAY;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
+
+import junit.framework.TestCase;
+
 import com.cubeia.poker.settings.BetStrategyName;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.variant.GameType;
-import com.cubeia.poker.variant.factory.GameTypeFactory;
 import com.cubeia.poker.variant.PokerVariant;
+import com.cubeia.poker.variant.factory.GameTypeFactory;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import junit.framework.TestCase;
-
-import java.util.LinkedList;
-import java.util.List;
-
-import static com.cubeia.poker.timing.Timings.MINIMUM_DELAY;
-import static org.mockito.Mockito.mock;
 
 public abstract class GuiceTest extends TestCase {
 
@@ -45,7 +45,7 @@ public abstract class GuiceTest extends TestCase {
 
     protected PokerVariant variant = PokerVariant.TEXAS_HOLDEM;
 
-    protected RNGProvider rng = new DummyRNGProvider();
+    protected Random rng = new Random();
 
     /**
      * Defaults to 10 seconds
@@ -62,8 +62,9 @@ public abstract class GuiceTest extends TestCase {
 
     protected void setupDefaultGame() {
         mockServerAdapter = new MockServerAdapter();
+        mockServerAdapter.random = rng;
         state = injector.getInstance(PokerState.class);
-        GameType gameType = GameTypeFactory.createGameType(variant, rng);
+        GameType gameType = GameTypeFactory.createGameType(variant);
         state.init(gameType, createPokerSettings(100));
         state.setServerAdapter(mockServerAdapter);
     }

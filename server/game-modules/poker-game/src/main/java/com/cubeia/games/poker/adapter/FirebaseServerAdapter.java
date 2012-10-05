@@ -57,6 +57,7 @@ import com.cubeia.firebase.api.util.UnmodifiableSet;
 import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
+import com.cubeia.firebase.service.random.api.RandomService;
 import com.cubeia.game.poker.config.api.PokerConfigurationService;
 import com.cubeia.games.poker.adapter.BuyInCalculator.MinAndMaxBuyInResult;
 import com.cubeia.games.poker.cache.ActionCache;
@@ -186,6 +187,10 @@ public class FirebaseServerAdapter implements ServerAdapter {
     @Inject
     @VisibleForTesting
     HandHistoryReporter handHistory;
+    
+    @Service
+    @VisibleForTesting
+    RandomService randomService;
 
     /*------------------------------------------------
 
@@ -195,6 +200,10 @@ public class FirebaseServerAdapter implements ServerAdapter {
          implementations
 
       ------------------------------------------------*/
+    
+    public java.util.Random getSystemRNG() {
+    	return randomService.getSystemDefaultRandom();
+    };
 
     @Override
     public void notifyNewHand() throws SystemShutdownException {

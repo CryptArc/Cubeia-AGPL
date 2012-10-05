@@ -33,7 +33,9 @@ import java.util.Collection;
 
 public class RoundHelper implements Serializable {
 
-    private PokerContext context;
+    private static final long serialVersionUID = -7509025431185267942L;
+
+	private PokerContext context;
 
     private ServerAdapterHolder serverAdapter;
 

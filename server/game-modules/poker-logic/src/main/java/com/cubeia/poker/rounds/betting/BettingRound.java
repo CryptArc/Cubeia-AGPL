@@ -95,6 +95,8 @@ public class BettingRound implements Round, BettingRoundContext {
 
     private Predicate<PokerPlayer> nonFolded = new PokerPredicate() {
 
+		private static final long serialVersionUID = -2668212962504220510L;
+
     };
 
     private static class  PokerPredicate implements Predicate<PokerPlayer>, Serializable {

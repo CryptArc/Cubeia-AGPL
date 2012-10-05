@@ -17,14 +17,15 @@
 
 package com.cubeia.poker.variant.telesina;
 
-import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.settings.PokerSettings;
-import org.junit.Test;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import org.junit.Test;
+
+import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.settings.PokerSettings;
 
 public class TelesinaCanPlayerBuyInTest {
 
@@ -32,7 +33,7 @@ public class TelesinaCanPlayerBuyInTest {
     public void testCanPlayerAffordEntryBet() {
         PokerPlayer player = mock(PokerPlayer.class);
 
-        Telesina telesina = new Telesina(null, null, null, null);
+        Telesina telesina = new Telesina(null, null, null);
 
         int anteLevel = 20;
         PokerSettings settings = new PokerSettings(anteLevel, anteLevel, anteLevel * 2, 0, 0, null, 0, null, null, null);
@@ -51,7 +52,7 @@ public class TelesinaCanPlayerBuyInTest {
     public void testCanPlayerAffordEntryBetWithPending() {
         PokerPlayer player = mock(PokerPlayer.class);
 
-        Telesina telesina = new Telesina(null, null, null, null);
+        Telesina telesina = new Telesina(null, null, null);
 
         int anteLevel = 20;
         PokerSettings settings = new PokerSettings(anteLevel, anteLevel, anteLevel * 2, 0, 0, null, 0, null, null, null);
@@ -74,7 +75,7 @@ public class TelesinaCanPlayerBuyInTest {
     public void testCanPlayerAffordEntryBetWithBothPendingAndNormal() {
         PokerPlayer player = mock(PokerPlayer.class);
 
-        Telesina telesina = new Telesina(null, null, null, null);
+        Telesina telesina = new Telesina(null, null, null);
 
         int anteLevel = 20;
         PokerSettings settings = new PokerSettings(anteLevel, anteLevel, anteLevel * 2, 0, 0, null, 0, null, null, null);
