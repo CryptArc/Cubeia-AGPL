@@ -17,10 +17,8 @@
 
 package com.cubeia.poker.variant.telesina;
 
-import com.cubeia.poker.PokerState;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.variant.telesina.hand.TelesinaHandStrengthEvaluator;
 
 public class TelesinaForTesting extends Telesina {
@@ -30,8 +28,8 @@ public class TelesinaForTesting extends Telesina {
     private int numberOfSentBestHands = 0;
     public int currentRoundId = 0;
 
-    public TelesinaForTesting(RNGProvider rng, TelesinaDeckFactory deckFactory, TelesinaRoundFactory roundFactory, TelesinaDealerButtonCalculator dealerButtonCalculator) {
-        super(rng, deckFactory, roundFactory, dealerButtonCalculator);
+    public TelesinaForTesting(TelesinaDeckFactory deckFactory, TelesinaRoundFactory roundFactory, TelesinaDealerButtonCalculator dealerButtonCalculator) {
+        super(deckFactory, roundFactory, dealerButtonCalculator);
     }
 
     @Override

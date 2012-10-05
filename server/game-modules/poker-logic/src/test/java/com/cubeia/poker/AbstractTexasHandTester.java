@@ -33,7 +33,7 @@ public abstract class AbstractTexasHandTester extends GuiceTest {
     }
 
     protected void setAnteLevel(int anteLevel) {
-        GameType gameType = GameTypeFactory.createGameType(variant, rng);
+        GameType gameType = GameTypeFactory.createGameType(variant);
         state.init(gameType, createPokerSettings(anteLevel));
     }
 

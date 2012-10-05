@@ -17,27 +17,30 @@
 
 package com.cubeia.poker.variant.telesina;
 
-import com.cubeia.poker.adapter.ServerAdapterHolder;
-import com.cubeia.poker.context.PokerContext;
-import com.cubeia.poker.adapter.HandEndStatus;
-import com.cubeia.poker.adapter.ServerAdapter;
-import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.pot.PotHolder;
-import com.cubeia.poker.pot.RakeInfoContainer;
-import com.cubeia.poker.pot.RakeInfoContainer;
-import com.cubeia.poker.result.HandResult;
-import com.cubeia.poker.variant.HandFinishedListener;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+
+import java.util.SortedMap;
+import java.util.TreeMap;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import java.util.SortedMap;
-import java.util.TreeMap;
-
-import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
+import com.cubeia.poker.adapter.HandEndStatus;
+import com.cubeia.poker.adapter.ServerAdapter;
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
+import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.pot.PotHolder;
+import com.cubeia.poker.pot.RakeInfoContainer;
+import com.cubeia.poker.result.HandResult;
+import com.cubeia.poker.variant.HandFinishedListener;
 
 public class TelesinaCancelHandTest {
 
@@ -63,7 +66,7 @@ public class TelesinaCancelHandTest {
         initMocks(this);
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
         when(context.getPotHolder()).thenReturn(potHolder);
-        telesina = new Telesina(null, null, null, null);
+        telesina = new Telesina(null, null, null);
         telesina.setPokerContextAndServerAdapter(context, serverAdapterHolder);
         telesina.addHandFinishedListener(handFinishedListener);
     }

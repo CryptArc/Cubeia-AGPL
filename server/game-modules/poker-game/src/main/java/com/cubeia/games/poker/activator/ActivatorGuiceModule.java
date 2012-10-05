@@ -28,7 +28,6 @@ import com.cubeia.firebase.api.routing.ActivatorRouter;
 import com.cubeia.firebase.guice.inject.FirebaseModule;
 import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.game.poker.config.api.PokerConfigurationService;
-import com.cubeia.poker.rng.RNGProvider;
 import com.google.inject.Provider;
 import com.google.inject.name.Names;
 import com.google.inject.persist.jpa.JpaPersistModule;
@@ -49,7 +48,6 @@ public class ActivatorGuiceModule extends FirebaseModule {
     @Override
     protected void configure() {
         super.configure();
-        bind(RNGProvider.class).to(DummyRNGProvider.class); // TODO: Change for Cubeia RNG
         bind(ScheduledExecutorService.class).annotatedWith(Names.named("activatorThreads")).toInstance(Executors.newSingleThreadScheduledExecutor());
         bind(TableFactory.class).toInstance(context.getTableFactory());
         bind(ActivatorContext.class).toInstance(context);

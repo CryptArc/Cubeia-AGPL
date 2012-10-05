@@ -6,10 +6,8 @@
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.cubeia.games</groupId>
 	<artifactId>poker-uar</artifactId>
 	<name>Poker Unified Archive</name>
-	<version>1.0-SNAPSHOT</version>
 	<packaging>firebase-uar</packaging>
 
 	<dependencies>
@@ -33,14 +31,18 @@
 		<dependency>
 			<groupId>com.cubeia.games.handhistory</groupId>
 			<artifactId>hand-history-collector-service</artifactId>
-			<version>${project.version}</version>
+			<type>firebase-sar</type>
+		</dependency>
+
+		<dependency>
+			<groupId>com.cubeia.firebase.service</groupId>
+			<artifactId>mt-random</artifactId>
 			<type>firebase-sar</type>
 		</dependency>
 
 		<dependency>
 			<groupId>com.cubeia.games.poker</groupId>
 			<artifactId>hand-debugger-service</artifactId>
-			<version>${project.version}</version>
 			<type>firebase-sar</type>
 		</dependency>
 

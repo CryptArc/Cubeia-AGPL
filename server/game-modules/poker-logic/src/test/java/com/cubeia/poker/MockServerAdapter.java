@@ -53,7 +53,13 @@ public class MockServerAdapter implements ServerAdapter {
     public Map<Integer, List<Card>> exposedCards = new HashMap<Integer, List<Card>>();
     public HandResult result;
     public Map<Integer, PokerPlayerStatus> playerStatus = new HashMap<Integer, PokerPlayerStatus>();
-
+    public Random random;
+    
+    @Override
+    public Random getSystemRNG() {
+    	return random;
+    }
+    
     public void clear() {
         handEndStatus = null;
         allActions.clear();

@@ -17,10 +17,19 @@
 
 package com.cubeia.poker;
 
+import static com.cubeia.poker.timing.Timings.MINIMUM_DELAY;
+
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
+
+import junit.framework.TestCase;
+
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.settings.BetStrategyName;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.settings.RakeSettings;
@@ -32,24 +41,13 @@ import com.cubeia.poker.variant.telesina.TelesinaRoundFactory;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import junit.framework.TestCase;
-
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
-import static com.cubeia.poker.timing.Timings.MINIMUM_DELAY;
 
 public abstract class AbstractTelesinaHandTester extends TestCase {
 
     protected Injector injector;
-
     protected MockServerAdapter mockServerAdapter;
-
     protected PokerState game;
-
-    protected RNGProvider rng = new DummyRNGProvider();
+    protected Random rng;
 
     /**
      * Defaults to 10 seconds
@@ -57,8 +55,8 @@ public abstract class AbstractTelesinaHandTester extends TestCase {
     protected long sitoutTimeLimitMilliseconds = 10000;
 
 
-    protected void setUpTelesina(RNGProvider rngProvider, TelesinaDeckFactory telesinaDeckFactory, int anteLevel) throws Exception {
-        setUpTelesina(rngProvider, telesinaDeckFactory, anteLevel, TestUtils.createZeroRakeSettings());
+    protected void setUpTelesina(TelesinaDeckFactory telesinaDeckFactory, int anteLevel) throws Exception {
+        setUpTelesina(telesinaDeckFactory, anteLevel, TestUtils.createZeroRakeSettings());
     }
 
     /**
@@ -67,22 +65,22 @@ public abstract class AbstractTelesinaHandTester extends TestCase {
      * @param anteLevel
      * @throws Exception
      */
-    protected void setUpTelesina(RNGProvider rngProvider, TelesinaDeckFactory telesinaDeckFactory, int anteLevel, RakeSettings rakeSettings) throws Exception {
-        rng = new NonRandomRNGProvider();
-
+    protected void setUpTelesina(TelesinaDeckFactory telesinaDeckFactory, int anteLevel, RakeSettings rakeSettings) throws Exception {
+        rng = new NonRandomRNG();
         List<Module> list = new LinkedList<Module>();
         list.add(new PokerGuiceModule());
         injector = Guice.createInjector(list);
-        setupDefaultGame(rngProvider, telesinaDeckFactory, anteLevel, rakeSettings);
+        setupDefaultGame(rng, telesinaDeckFactory, anteLevel, rakeSettings);
     }
 
 
-    private void setupDefaultGame(RNGProvider rngProvider, TelesinaDeckFactory deckFactory, int anteLevel, RakeSettings rakeSettings) {
+    private void setupDefaultGame(Random random, TelesinaDeckFactory deckFactory, int anteLevel, RakeSettings rakeSettings) {
         mockServerAdapter = new MockServerAdapter();
+        mockServerAdapter.random = random;
         game = injector.getInstance(PokerState.class);
         game.setServerAdapter(mockServerAdapter);
         PokerSettings settings = createPokerSettings(anteLevel, rakeSettings);
-        Telesina gameType = new Telesina(rngProvider, deckFactory, new TelesinaRoundFactory(), new TelesinaDealerButtonCalculator());
+        Telesina gameType = new Telesina(deckFactory, new TelesinaRoundFactory(), new TelesinaDealerButtonCalculator());
         game.init(gameType, settings);
     }
 

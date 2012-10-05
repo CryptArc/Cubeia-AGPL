@@ -35,6 +35,7 @@ import com.cubeia.poker.tournament.RoundReport;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Random;
 
 public interface ServerAdapter {
 
@@ -220,8 +221,10 @@ public interface ServerAdapter {
     /**
      * Returns the identifier of the hand that was provided by the backend.
      *
-     * @return backen integration hand id
+     * @return backend integration hand id
      */
     String getIntegrationHandId();
+    
+    Random getSystemRNG();
 
 }

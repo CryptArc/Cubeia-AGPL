@@ -17,10 +17,27 @@
 
 package com.cubeia.poker.variant.telesina;
 
-import com.cubeia.poker.DummyRNGProvider;
+import static java.util.Arrays.asList;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+
+import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.adapter.ServerAdapterHolder;
 import com.cubeia.poker.context.PokerContext;
-import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.hand.HandStrength;
@@ -30,16 +47,6 @@ import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.timing.impl.DefaultTimingProfile;
 import com.cubeia.poker.variant.telesina.hand.TelesinaHandStrengthEvaluator;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-
-import java.util.*;
-
-import static java.util.Arrays.asList;
-import static org.mockito.Mockito.*;
 
 public class TelesinaSendBestHandTest {
 
@@ -82,8 +89,9 @@ public class TelesinaSendBestHandTest {
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
         when(context.getPotHolder()).thenReturn(potHolder);
         when(deckFactory.createNewDeck(Mockito.any(Random.class), Mockito.anyInt())).thenReturn(deck);
+        when(serverAdapter.getSystemRNG()).thenReturn(new Random());
 
-        telesina = new Telesina(new DummyRNGProvider(), deckFactory, roundFactory, dealerButtonCalculator);
+        telesina = new Telesina(deckFactory, roundFactory, dealerButtonCalculator);
         telesina.setPokerContextAndServerAdapter(context, serverAdapterHolder);
     }
 

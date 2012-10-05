@@ -17,6 +17,17 @@
 
 package com.cubeia.poker.variant.telesina;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.hand.Card;
@@ -29,13 +40,16 @@ import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.HandResultCalculator;
 import com.cubeia.poker.result.RevealOrderCalculator;
-import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
 import com.cubeia.poker.rounds.ante.AnteRound;
 import com.cubeia.poker.rounds.betting.BettingRound;
 import com.cubeia.poker.rounds.blinds.BlindsRound;
-import com.cubeia.poker.rounds.dealing.*;
+import com.cubeia.poker.rounds.dealing.DealCommunityCardsRound;
+import com.cubeia.poker.rounds.dealing.DealExposedPocketCardsRound;
+import com.cubeia.poker.rounds.dealing.DealInitialPocketCardsRound;
+import com.cubeia.poker.rounds.dealing.Dealer;
+import com.cubeia.poker.rounds.dealing.ExposePrivateCardsRound;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.util.ThreadLocalProfiler;
@@ -43,10 +57,6 @@ import com.cubeia.poker.variant.AbstractGameType;
 import com.cubeia.poker.variant.HandResultCreator;
 import com.cubeia.poker.variant.telesina.hand.TelesinaHandStrengthEvaluator;
 import com.google.common.annotations.VisibleForTesting;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.*;
 
 /**
  * Telesina game.
@@ -87,14 +97,10 @@ public class Telesina extends AbstractGameType implements RoundVisitor, Dealer {
      */
     private int bettingRoundId;
 
-    private final RNGProvider rngProvider;
-
     private final TelesinaDeckFactory deckFactory;
-
     private final TelesinaRoundFactory roundFactory;
 
-    public Telesina(RNGProvider rng, TelesinaDeckFactory deckFactory, TelesinaRoundFactory roundFactory, TelesinaDealerButtonCalculator dealerButtonCalculator) {
-        this.rngProvider = rng;
+    public Telesina(TelesinaDeckFactory deckFactory, TelesinaRoundFactory roundFactory, TelesinaDealerButtonCalculator dealerButtonCalculator) {
         this.deckFactory = deckFactory;
         this.roundFactory = roundFactory;
         this.dealerButtonCalculator = dealerButtonCalculator;
@@ -114,9 +120,7 @@ public class Telesina extends AbstractGameType implements RoundVisitor, Dealer {
     private void initHand() {
         log.debug("init hand");
         resetPlayerPostedEntryBets();
-
-        deck = deckFactory.createNewDeck(rngProvider.getRNG(), context.getTableSize());
-
+        deck = deckFactory.createNewDeck(getServerAdapter().getSystemRNG(), context.getTableSize());
         try {
             getServerAdapter().notifyDeckInfo(deck.getTotalNumberOfCardsInDeck(), deck.getDeckLowestRank());
         } catch (Throwable th) {

@@ -42,7 +42,9 @@ import java.util.*;
  */
 public class PokerContext implements Serializable {
 
-    /**
+    private static final long serialVersionUID = 2254110286904967882L;
+
+	/**
      * Will be set to true if this is a tournament table.
      */
     private boolean tournamentTable = false;

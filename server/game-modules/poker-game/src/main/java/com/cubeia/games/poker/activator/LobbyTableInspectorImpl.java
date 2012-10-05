@@ -232,7 +232,7 @@ public class LobbyTableInspectorImpl implements LobbyTableInspector {
     private Map<Integer, List<LobbyTable>> partitionTables(List<LobbyTable> tables) {
         Map<Integer, List<LobbyTable>> map = new HashMap<Integer, List<LobbyTable>>();
         for (LobbyTable t : tables) {
-            int template = t.getAttributes().get(TABLE_TEMPLATE.name()).getIntValue();
+            int template = getTemplateId(t);
             List<LobbyTable> list = map.get(template);
             if (list == null) {
                 list = new ArrayList<LobbyTable>();
@@ -242,4 +242,9 @@ public class LobbyTableInspectorImpl implements LobbyTableInspector {
         }
         return map;
     }
+
+	private int getTemplateId(LobbyTable t) {
+		Map<String, AttributeValue> map = t.getAttributes();
+		return (map.containsKey(TABLE_TEMPLATE.name()) ? map.get(TABLE_TEMPLATE.name()).getIntValue() : -1);
+	}
 }

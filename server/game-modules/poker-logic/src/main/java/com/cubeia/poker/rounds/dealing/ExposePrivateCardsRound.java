@@ -17,14 +17,14 @@
 
 package com.cubeia.poker.rounds.dealing;
 
-import com.cubeia.poker.action.PokerAction;
-import com.cubeia.poker.rounds.Round;
-import com.cubeia.poker.rounds.RoundVisitor;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.List;
+import com.cubeia.poker.action.PokerAction;
+import com.cubeia.poker.rounds.Round;
+import com.cubeia.poker.rounds.RoundVisitor;
 
 /**
  * Telesina specific round for dealing vela card.

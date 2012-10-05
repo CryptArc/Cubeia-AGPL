@@ -44,7 +44,6 @@ public class ParticipantFactoryImplTest {
 		TableConfigTemplate templ = createTemplate();
 		PokerParticipant part = fact.createParticipantFor(templ);
 		Assert.assertNotNull(part);
-		Assert.assertNotNull(part.getRngProvider());
 		Assert.assertNotNull(part.getCashGameBackendService());
 		Assert.assertEquals(templ, part.getTemplate());
 		Assert.assertEquals(6, part.getSeats());

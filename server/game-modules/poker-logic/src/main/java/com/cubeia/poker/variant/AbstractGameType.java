@@ -17,6 +17,13 @@
 
 package com.cubeia.poker.variant;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
@@ -31,16 +38,12 @@ import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.rounds.RoundHelper;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.util.SitoutCalculator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
 
 public abstract class AbstractGameType implements GameType {
 
-    protected ServerAdapterHolder serverAdapterHolder;
+    private static final long serialVersionUID = -6519559952200204899L;
+
+	protected ServerAdapterHolder serverAdapterHolder;
 
     protected PokerContext context;
 

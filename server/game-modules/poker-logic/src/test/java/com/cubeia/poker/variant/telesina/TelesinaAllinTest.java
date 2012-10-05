@@ -19,7 +19,7 @@ package com.cubeia.poker.variant.telesina;
 
 import com.cubeia.poker.AbstractTexasHandTester;
 import com.cubeia.poker.MockPlayer;
-import com.cubeia.poker.NonRandomRNGProvider;
+import com.cubeia.poker.NonRandomRNG;
 import com.cubeia.poker.TestUtils;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
@@ -36,7 +36,7 @@ public class TelesinaAllinTest extends AbstractTexasHandTester {
     @Override
     protected void setUp() throws Exception {
         variant = PokerVariant.TELESINA;
-        rng = new NonRandomRNGProvider();
+        rng = new NonRandomRNG();
         super.setUp();
         setAnteLevel(20);
     }

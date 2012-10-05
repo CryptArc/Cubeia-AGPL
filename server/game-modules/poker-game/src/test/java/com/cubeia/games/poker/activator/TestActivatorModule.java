@@ -19,7 +19,6 @@ package com.cubeia.games.poker.activator;
 
 import com.cubeia.firebase.api.service.ServiceRegistry;
 import com.cubeia.firebase.guice.inject.FirebaseModule;
-import com.cubeia.poker.rng.RNGProvider;
 
 class TestActivatorModule extends FirebaseModule {
 
@@ -37,7 +36,6 @@ class TestActivatorModule extends FirebaseModule {
     @Override
     protected void configure() {
         bind(ServiceRegistry.class).toInstance(registry);
-        bind(RNGProvider.class).to(DummyRNGProvider.class);
         bind(ParticipantFactory.class).to(ParticipantFactoryImpl.class);
         bind(LobbyDomainSelector.class).to(LobbyDomainSelectorImpl.class);
         bind(PokerStateCreator.class).to(InjectorPokerStateCreator.class);

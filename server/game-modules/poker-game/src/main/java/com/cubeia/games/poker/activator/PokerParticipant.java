@@ -18,6 +18,7 @@
 package com.cubeia.games.poker.activator;
 
 import static com.cubeia.games.poker.lobby.PokerLobbyAttributes.TABLE_EXTERNAL_ID;
+import static com.cubeia.games.poker.lobby.PokerLobbyAttributes.TABLE_TEMPLATE;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -38,7 +39,6 @@ import com.cubeia.games.poker.entity.TableConfigTemplate;
 import com.cubeia.games.poker.lobby.PokerLobbyAttributes;
 import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.poker.PokerState;
-import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.settings.BetStrategyName;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.settings.RakeSettings;
@@ -65,20 +65,18 @@ public class PokerParticipant extends DefaultCreationParticipant {
     public static final int GAME_ID = 1;
 
     private final String domain;
-    private final RNGProvider rngProvider; // should be removed...
     private final PokerStateCreator stateCreator;
     private final CashGamesBackendContract cashGameBackendService;
     private final TableConfigTemplate template;
 
     private final TableNameManager tableNamer;
 
-    public PokerParticipant(TableConfigTemplate template, String domain, PokerStateCreator stateCreator, RNGProvider rngProvider,
+    public PokerParticipant(TableConfigTemplate template, String domain, PokerStateCreator stateCreator,
             CashGamesBackendContract cashGameBackendService, TableNameManager tableNamer) {
         this.domain = domain;
         this.template = template;
         this.stateCreator = stateCreator;
         this.cashGameBackendService = cashGameBackendService;
-        this.rngProvider = rngProvider;
         this.tableNamer = tableNamer;
     }
 
@@ -94,7 +92,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
 
         // Create state.
         PokerState pokerState = stateCreator.newPokerState();
-        GameType gameType = GameTypeFactory.createGameType(variant, rngProvider);
+        GameType gameType = GameTypeFactory.createGameType(variant);
         PokerSettings settings = createSettings(table);
         pokerState.init(gameType, settings);
         pokerState.setAdapterState(new FirebaseState());
@@ -102,6 +100,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
         table.getGameState().setState(pokerState);
 
         // Set lobby attributes
+        acc.setIntAttribute(TABLE_TEMPLATE.name(), template.getId());
         acc.setIntAttribute(PokerLobbyAttributes.VISIBLE_IN_LOBBY.name(), 0);
         acc.setStringAttribute(PokerLobbyAttributes.SPEED.name(), template.getTiming().name());
         acc.setIntAttribute(PokerLobbyAttributes.ANTE.name(), template.getAnte());
@@ -157,10 +156,6 @@ public class PokerParticipant extends DefaultCreationParticipant {
 
     public CashGamesBackendContract getCashGameBackendService() {
         return cashGameBackendService;
-    }
-
-    public RNGProvider getRngProvider() {
-        return rngProvider;
     }
 
     public TableConfigTemplate getTemplate() {

@@ -17,26 +17,25 @@
 
 package com.cubeia.poker.variant.telesina;
 
+import static com.cubeia.poker.action.PokerActionType.ANTE;
+import static com.cubeia.poker.action.PokerActionType.BET;
+import static com.cubeia.poker.action.PokerActionType.CHECK;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import junit.framework.Assert;
+
+import org.apache.log4j.Logger;
+
 import com.cubeia.poker.AbstractTexasHandTester;
 import com.cubeia.poker.MockPlayer;
-import com.cubeia.poker.NonRandomRNGProvider;
+import com.cubeia.poker.NonRandomRNG;
 import com.cubeia.poker.TestUtils;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.variant.PokerVariant;
-import junit.framework.Assert;
-import org.apache.log4j.Logger;
-import org.hamcrest.CoreMatchers;
-import org.mockito.Mockito;
-
-import static com.cubeia.poker.action.PokerActionType.*;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 public class TelesinaSitoutTest extends AbstractTexasHandTester {
 
@@ -47,7 +46,7 @@ public class TelesinaSitoutTest extends AbstractTexasHandTester {
     @Override
     protected void setUp() throws Exception {
         variant = PokerVariant.TELESINA;
-        rng = new NonRandomRNGProvider();
+        rng = new NonRandomRNG();
         sitoutTimeLimitMilliseconds = 1;
         super.setUp();
         setAnteLevel(10);

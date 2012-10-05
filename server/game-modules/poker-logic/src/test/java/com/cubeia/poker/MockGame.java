@@ -17,19 +17,23 @@
 
 package com.cubeia.poker;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.ServerAdapterHolder;
 import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.model.BlindsInfo;
-import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.variant.GameType;
 import com.cubeia.poker.variant.HandFinishedListener;
-
-import java.util.*;
 
 public class MockGame implements GameType {
 
@@ -47,7 +51,7 @@ public class MockGame implements GameType {
 
     public boolean blindsCanceled = false;
 
-    private MockServerAdapter mockServerAdapter = new MockServerAdapter();
+    // private MockServerAdapter mockServerAdapter = new MockServerAdapter();
 
     public MockGame() {
     }
@@ -95,12 +99,6 @@ public class MockGame implements GameType {
 
     public IPokerState getState() {
         return new IPokerState() {
-
-            private PokerPlayer player1 = new DefaultPokerPlayer(1000);
-            private PokerPlayer player2 = new DefaultPokerPlayer(1001);
-            private PokerPlayer player3 = new DefaultPokerPlayer(1002);
-            private PokerPlayer player4 = new DefaultPokerPlayer(1003);
-
 
             @Override
             public void init(GameType gameType, PokerSettings settings) {

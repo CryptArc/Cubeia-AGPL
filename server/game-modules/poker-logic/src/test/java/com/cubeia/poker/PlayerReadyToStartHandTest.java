@@ -17,22 +17,22 @@
 
 package com.cubeia.poker;
 
-import com.cubeia.poker.adapter.ServerAdapterHolder;
-import com.cubeia.poker.context.PokerContext;
-import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.settings.PokerSettings;
-import com.cubeia.poker.states.PlayingSTM;
-import com.cubeia.poker.states.StateChanger;
-import com.cubeia.poker.states.WaitingToStartSTM;
-import com.cubeia.poker.variant.GameType;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
+import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.settings.PokerSettings;
+import com.cubeia.poker.states.StateChanger;
+import com.cubeia.poker.states.WaitingToStartSTM;
+import com.cubeia.poker.variant.GameType;
 
 public class PlayerReadyToStartHandTest {
 

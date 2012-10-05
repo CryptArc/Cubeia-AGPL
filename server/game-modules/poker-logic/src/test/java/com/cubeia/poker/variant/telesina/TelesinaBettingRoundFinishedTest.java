@@ -17,30 +17,38 @@
 
 package com.cubeia.poker.variant.telesina;
 
-import com.cubeia.poker.DummyRNGProvider;
-import com.cubeia.poker.adapter.ServerAdapterHolder;
-import com.cubeia.poker.context.PokerContext;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+import org.hamcrest.CoreMatchers;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Matchers;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.model.BlindsInfo;
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.pot.RakeInfoContainer;
-import com.cubeia.poker.pot.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.rounds.betting.BettingRound;
 import com.cubeia.poker.variant.HandFinishedListener;
-import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.*;
-
-import java.util.*;
-
-import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 
 public class TelesinaBettingRoundFinishedTest {
@@ -84,7 +92,8 @@ public class TelesinaBettingRoundFinishedTest {
         when(context.getPotHolder()).thenReturn(potHolder);
         when(context.getBlindsInfo()).thenReturn(blindsInfo);
         when(deckFactory.createNewDeck(Mockito.any(Random.class), Mockito.anyInt())).thenReturn(deck);
-        telesina = new TelesinaForTesting(new DummyRNGProvider(), deckFactory, roundFactory, dealerButtonCalculator);
+        when(serverAdapter.getSystemRNG()).thenReturn(new Random());
+        telesina = new TelesinaForTesting(deckFactory, roundFactory, dealerButtonCalculator);
         telesina.setPokerContextAndServerAdapter(context, serverAdapterHolder);
         telesina.addHandFinishedListener(handFinishedListener);
     }
@@ -154,7 +163,6 @@ public class TelesinaBettingRoundFinishedTest {
         Assert.assertThat(hr.getPlayerHands().size(), CoreMatchers.is(2));
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testClearBetStacksOnFoldedPlayersWhenRoundFinishes() {
         telesina.startHand();

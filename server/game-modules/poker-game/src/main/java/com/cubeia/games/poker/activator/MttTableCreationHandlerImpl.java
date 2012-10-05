@@ -33,7 +33,6 @@ import com.cubeia.firebase.guice.inject.Log4j;
 import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.games.poker.tournament.configuration.TournamentTableSettings;
 import com.cubeia.poker.PokerState;
-import com.cubeia.poker.rng.RNGProvider;
 import com.cubeia.poker.settings.BetStrategyName;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.settings.RakeSettings;
@@ -52,9 +51,6 @@ public class MttTableCreationHandlerImpl implements MttTableCreationHandler {
 
     @Inject
     private PokerStateCreator stateCreator;
-
-    @Inject
-    private RNGProvider rngProvider;
 
     @Override
     public void tableCreated(Table table, int mttId, Object commandAttachment, LobbyAttributeAccessor acc) {
@@ -83,7 +79,7 @@ public class MttTableCreationHandlerImpl implements MttTableCreationHandler {
         Map<Serializable, Serializable> attributes = Collections.<Serializable, Serializable>singletonMap(TABLE_EXTERNAL_ID.name(),"MOCK_TRN::" + table.getId());
         PokerSettings settings = new PokerSettings(anteAmount, smallBlindAmount, bigBlindAmount, -1, -1, timing, numberOfSeats,
                                                    noLimit, rakeSettings, attributes);
-        GameType gameType = GameTypeFactory.createGameType(TEXAS_HOLDEM, rngProvider);
+        GameType gameType = GameTypeFactory.createGameType(TEXAS_HOLDEM);
         pokerState.init(gameType, settings);
         pokerState.setTableId(table.getId());
         pokerState.setTournamentTable(true);

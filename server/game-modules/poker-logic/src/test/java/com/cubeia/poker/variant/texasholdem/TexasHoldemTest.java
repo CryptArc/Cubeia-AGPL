@@ -17,7 +17,42 @@
 
 package com.cubeia.poker.variant.texasholdem;
 
-import com.cubeia.poker.DummyRNGProvider;
+import static com.cubeia.poker.action.PokerActionType.BET;
+import static com.cubeia.poker.action.PokerActionType.BIG_BLIND;
+import static com.cubeia.poker.action.PokerActionType.BIG_BLIND_PLUS_DEAD_SMALL_BLIND;
+import static com.cubeia.poker.action.PokerActionType.CALL;
+import static com.cubeia.poker.action.PokerActionType.CHECK;
+import static com.cubeia.poker.action.PokerActionType.DEAD_SMALL_BLIND;
+import static com.cubeia.poker.action.PokerActionType.DECLINE_ENTRY_BET;
+import static com.cubeia.poker.action.PokerActionType.FOLD;
+import static com.cubeia.poker.action.PokerActionType.RAISE;
+import static com.cubeia.poker.action.PokerActionType.SMALL_BLIND;
+import static com.cubeia.poker.util.TestHelpers.assertSameListsDisregardingOrder;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+import javax.annotation.Nullable;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Matchers;
+import org.mockito.Mock;
+
 import com.cubeia.poker.MockPlayer;
 import com.cubeia.poker.TestUtils;
 import com.cubeia.poker.action.PokerAction;
@@ -37,8 +72,6 @@ import com.cubeia.poker.rake.LinearRakeWithLimitCalculator;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
 import com.cubeia.poker.result.RevealOrderCalculator;
-import com.cubeia.poker.rng.RNGProvider;
-import com.cubeia.poker.rounds.betting.BettingRound;
 import com.cubeia.poker.settings.BetStrategyName;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.settings.RakeSettings;
@@ -46,25 +79,6 @@ import com.cubeia.poker.timing.impl.DefaultTimingProfile;
 import com.cubeia.poker.variant.HandFinishedListener;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Matchers;
-import org.mockito.Mock;
-
-import javax.annotation.Nullable;
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
-import static com.cubeia.poker.action.PokerActionType.*;
-import static com.cubeia.poker.util.TestHelpers.assertSameListsDisregardingOrder;
-import static junit.framework.Assert.*;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 public class TexasHoldemTest {
 
@@ -74,11 +88,8 @@ public class TexasHoldemTest {
     private PokerContext context;
 
     @Mock
-    private RNGProvider rngProvider;
-
-    @Mock
-    private BettingRound bettingRound;
-
+    private Random random;
+    
     @Mock
     private ServerAdapterHolder serverAdapterHolder;
 
@@ -119,8 +130,9 @@ public class TexasHoldemTest {
         potHolder = new PotHolder(new LinearRakeWithLimitCalculator(rakeSettings));
         when(context.getPotHolder()).thenReturn(potHolder);
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
+        when(serverAdapter.getSystemRNG()).thenReturn(random);
 
-        texas = new TexasHoldem(new DummyRNGProvider());
+        texas = new TexasHoldem();
         texas.setPokerContextAndServerAdapter(context, serverAdapterHolder);
         texas.addHandFinishedListener(listener);
 

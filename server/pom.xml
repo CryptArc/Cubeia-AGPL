@@ -149,6 +149,32 @@
 			</dependency>
 
 			<dependency>
+				<groupId>com.cubeia.game.poker.config</groupId>
+				<artifactId>config-service</artifactId>
+				<version>${project.version}</version>
+				<type>jar</type>
+			</dependency>
+
+			<dependency>
+				<groupId>com.cubeia</groupId>
+				<artifactId>utilities</artifactId>
+				<version>1.2.0</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.cubeia.firebase.service</groupId>
+				<artifactId>mt-random</artifactId>
+				<version>1.0</version>
+			</dependency>
+			
+			<dependency>
+                <groupId>com.cubeia.firebase.service</groupId>
+                <artifactId>mt-random</artifactId>
+                <type>firebase-sar</type>
+                <version>1.0</version>
+            </dependency>
+
+			<dependency>
 				<groupId>com.cubeia.firebase</groupId>
 				<artifactId>guice-support</artifactId>
 				<version>1.4-SNAPSHOT</version>
@@ -171,12 +197,26 @@
 				<artifactId>hand-history-collector-service</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			
+			<dependency>
+                <groupId>com.cubeia.games.handhistory</groupId>
+                <artifactId>hand-history-collector-service</artifactId>
+                <version>${project.version}</version>
+                <type>firebase-sar</type>
+            </dependency>
 
 			<dependency>
 				<groupId>com.cubeia.games.poker</groupId>
 				<artifactId>hand-debugger-service</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			
+			<dependency>
+                <groupId>com.cubeia.games.poker</groupId>
+                <artifactId>hand-debugger-service</artifactId>
+                <version>${project.version}</version>
+                <type>firebase-sar</type>
+            </dependency>
 
 			<dependency>
 				<groupId>com.cubeia.games</groupId>
@@ -290,6 +330,11 @@
 				<groupId>com.google.inject.extensions</groupId>
 				<artifactId>guice-persist</artifactId>
 				<version>3.0</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-codec</groupId>
+				<artifactId>commons-codec</artifactId>
+				<version>1.5</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
