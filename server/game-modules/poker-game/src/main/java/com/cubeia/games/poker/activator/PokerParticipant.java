@@ -18,6 +18,7 @@
 package com.cubeia.games.poker.activator;
 
 import static com.cubeia.games.poker.lobby.PokerLobbyAttributes.TABLE_EXTERNAL_ID;
+import static com.cubeia.games.poker.lobby.PokerLobbyAttributes.TABLE_TEMPLATE;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -102,6 +103,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
         table.getGameState().setState(pokerState);
 
         // Set lobby attributes
+        acc.setIntAttribute(TABLE_TEMPLATE.name(), template.getId());
         acc.setIntAttribute(PokerLobbyAttributes.VISIBLE_IN_LOBBY.name(), 0);
         acc.setStringAttribute(PokerLobbyAttributes.SPEED.name(), template.getTiming().name());
         acc.setIntAttribute(PokerLobbyAttributes.ANTE.name(), template.getAnte());
