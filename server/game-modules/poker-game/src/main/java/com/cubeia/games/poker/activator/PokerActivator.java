@@ -38,6 +38,7 @@ import com.cubeia.games.poker.common.jmx.JmxUtil;
 import com.cubeia.games.poker.entity.TableConfigTemplate;
 import com.cubeia.poker.PokerGuiceModule;
 import com.cubeia.poker.variant.PokerVariant;
+import com.cubeia.util.threads.SafeRunnable;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -93,7 +94,13 @@ public class PokerActivator implements GameActivator, MttAwareActivator, PokerAc
 
     @Override
     public void start() {
-        executor.scheduleWithFixedDelay(tableManager, interval, interval, MILLISECONDS);
+        executor.scheduleWithFixedDelay(new SafeRunnable() {
+			
+			@Override
+			protected void innerRun() {
+				tableManager.run();
+			}
+		}, interval, interval, MILLISECONDS);
     }
 
     @Override
