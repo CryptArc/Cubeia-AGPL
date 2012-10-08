@@ -60,11 +60,11 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import static com.cubeia.poker.action.PokerActionType.*;
-import static com.cubeia.poker.util.TestHelpers.assertSameListsDisregardingOrder;
-import static junit.framework.Assert.*;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.junit.Assert.*;
+import static org.hamcrest.core.Is.is;
 
 public class TexasHoldemTest {
 
@@ -390,7 +390,7 @@ public class TexasHoldemTest {
 
         assertEquals(1200L, result.getWinningsIncludingOwnBets());
         assertEquals(Integer.valueOf(102), ratedPlayerHand.getPlayerId());
-        assertSameListsDisregardingOrder(new Hand("6C 8C 9C AC 5C").getCards(), ratedPlayerHand.getBestHandCards());
+        assertThat(ratedPlayerHand.getBestHandCards(), is(new Hand("AC 9C 8C 6C 5C").getCards()));
         assertEquals(HandType.FLUSH, ratedPlayerHand.getBestHandType());
     }
 

@@ -33,9 +33,9 @@ import com.cubeia.poker.result.Result;
 import com.google.common.annotations.VisibleForTesting;
 
 public class HandResultBatchFactory {
-	
-	@Service
-	@VisibleForTesting
+
+    @Service
+    @VisibleForTesting
     protected PokerConfigurationService configService;
 
     private final Logger log = Logger.getLogger(getClass()); 
@@ -45,7 +45,7 @@ public class HandResultBatchFactory {
         long totalNet = 0;
         long totalRake = 0;
         BatchHandRequest bhr = new BatchHandRequest(handId, tableId,
-        		configService.createSystemMoney(handResult.getTotalRake()));
+                                                    configService.createSystemMoney(handResult.getTotalRake()));
         for (Map.Entry<PokerPlayer, Result> resultEntry : handResult.getResults().entrySet()) {
             PokerPlayerImpl player = (PokerPlayerImpl) resultEntry.getKey();
             Result result = resultEntry.getValue();
