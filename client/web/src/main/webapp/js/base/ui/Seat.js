@@ -18,6 +18,7 @@ Poker.Seat = Class.extend({
    actionText : null,
    handStrength : null,
    seatBalance : null,
+   seatBase : null,
    init : function(seatId, player, templateManager) {
        this.seatId = seatId
        this.player = player;
@@ -42,11 +43,12 @@ Poker.Seat = Class.extend({
        this.actionText = this.seatElement.find(".action-text");
        this.seatBalance = this.seatElement.find(".seat-balance");
        this.handStrength = this.seatElement.find(".hand-strength");
+       this.seatBase = this.seatElement.find(".avatar-base");
 
        this.reset();
    },
    getDealerButtonOffsetElement : function() {
-       return this.avatarElement;
+       return this.seatBase;
    },
    clearSeat : function() {
        this.seatElement.html("");
