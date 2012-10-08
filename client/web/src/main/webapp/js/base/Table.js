@@ -39,7 +39,6 @@ Poker.Table = Class.extend({
      * @return {Poker.Player} the player at the seat
      */
     getPlayerAtPosition : function(seat) {
-
         return this.players.get(seat);
     },
     /**
@@ -49,7 +48,7 @@ Poker.Table = Class.extend({
      */
     getPlayerById : function(playerId) {
         var players = this.players.values();
-        for(var i = 0; i<players.length; i++) {
+        for (var i = 0; i<players.length; i++) {
             if(players[i].id == playerId) {
                 return players[i];
             }
