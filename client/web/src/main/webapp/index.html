@@ -132,6 +132,8 @@
                 var mq2 = window.matchMedia("(max-height: 400px)");
                 if(mq1.matches || mq2.matches) {
                     isIphone = true;
+                } else {
+                    isIphone = false;
                 }
             } else {
                 isIphone = false;
