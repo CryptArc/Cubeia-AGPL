@@ -73,11 +73,16 @@
 
     <script type="text/javascript" src="js/base/ui/DialogManager.js"></script>
     <script type="text/javascript" src="js/base/ui/BuyInDialog.js"></script>
+    <script type="text/javascript" src="js/base/ui/views/View.js"></script>
+    <script type="text/javascript" src="js/base/ui/views/ViewManager.js"></script>
+    <script type="text/javascript" src="js/base/ui/views/MainMenuManager.js"></script>
 
     <script type="text/javascript">
         var comHandler = null;
         var soundRepository = new Poker.SoundRepository();
         var dialogManager = null;
+        var viewManager = null;
+        var mainMenuManager = null;
         function handleKeyUp(keyCode) {
             if(keyCode == 13) {
                 $("#loginButton").click();
@@ -87,6 +92,8 @@
         $(document).ready(function(){
 
             dialogManager = new Poker.DialogManager();
+            viewManager = new Poker.ViewManager("tabItems");
+            mainMenuManager = new Poker.MainMenuManager(viewManager);
 
             $(".describe").describe();
 
@@ -158,7 +165,7 @@
                 var width = w.height() * maxAspectRatio;
                 tableView.css({
                     width: Math.round(width) +  "px",
-                    height :Math.round(w.height())+"px",
+                    height :Math.round(w.height()-40)+"px",
                     marginLeft :Math.round((w.width()-width)/2)  + "px"
                 });
 
@@ -185,182 +192,213 @@
 
 </head>
 <body>
-    <div id="loginView" class="login-view">
-        <div id="dialog1" class="login-dialog">
-            <div class="logo-container"><img src="images/lobby/logo.png"/></div>
-            <div class="login-container">
-                <div class="login-input-container">
-                    <input name="user" class="describe" id="user" type="text" title="Username" value="" />
-                    <input name="pwd" class="describe" id="pwd" type="password" title="Password" value=""/>
-                </div>
-                <div id="loginButton" class="login-button">
-                    <span>login</span>
-                </div>
-            </div>
-            <div class="status-label">Status: <span class="connect-status"></span></div>
+    <div id="toolbar">
+        <div class="main-menu-button">
         </div>
+        <ul id="tabItems" class="tabs">
+
+        </ul>
     </div>
-
-    <div id="lobbyView" class="lobby-container"  style="display:none;">
-        <div id="lobby" class="lobby-list">
-
-            <div class="left-column">
-                <div class="logo-container">
-                    <img src="images/lobby/logo.png"/>
-                </div>
-                <ul class="main-menu">
-                    <li><a class="selected" id="cashGameMenu"  href="#table-list">Cash Games</a></li>
-                    <li><a id="sitAndGoMenu" href="#table-list">Sit &amp; Go's</a></li>
-                    <li><a  id="tournamentMenu" href="#table-list">Tournaments</a></li>
-                </ul>
-            </div>
-            <div class="right-column">
-                <div class="top-panel" id="table-list">
-                    <div class="user-panel">
-                        <span class="status">Logged in: </span><span id="username"></span> (<span id="userId"></span>)
-                    </div>
-                    <div class="show-filters">
-                        <a>Show filters</a>
-                    </div>
-                    <div class="table-filter">
-                        <div class="filter-group tables">
-                            <div class="filter-label">Show tables:</div>
-                            <div class="filter-button" id="fullTables">Full</div>
-                            <div class="filter-button" id="emptyTables">Empty</div>
-                        </div>
-                        <div class="filter-group limits">
-                            <div class="filter-label">Show Limits:</div>
-                            <div class="filter-button" id="noLimit">NL</div>
-                            <div class="filter-button" id="potLimit">PL</div>
-                            <div class="filter-button" id="fixedLimit">FL</div>
-                        </div>
-                        <div class="filter-group stakes">
-                            <div class="filter-label">Stakes:</div>
-                            <div class="filter-button" id="lowStakes">Low</div>
-                            <div class="filter-button" id="mediumStakes">Mid</div>
-                            <div class="filter-button" id="highStakes">High</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="lobby-tab">
-                        <div id="tableListContainer">
-                            <div class="table-item-header">
-                                <div class="table-name">name</div>
-                                <div class="seated">seated</div>
-                                <div class="blinds">blinds</div>
-                                <div class="type">type</div>
-                                <div class="play"></div>
-                            </div>
-
-                            <div id="tableListItemContainer">
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-        </div>
-
+    <div class="main-menu-container" style="">
+        <ul>
+            <li>
+                Cashier
+                <span class="description">Manage your funds</span>
+            </li>
+            <li class="active">
+                Help &amp; Rules
+                <span class="description">Manage your funds</span>
+            </li>
+            <li>
+                Game play settings
+                <span class="description">Manage your funds</span>
+            </li>
+            <li>
+                Sound settings
+                <span class="description">Manage your funds</span>
+            </li>
+        </ul>
     </div>
+    <div class="view-container">
 
-    <div id="tableView" style="display:none;" class="table-container">
-        <div class="table-logo"></div>
-        <div id="seatContainer" class="default-table table-10">
-            <div class="seat" id="seat0">
-
-            </div>
-            <div class="seat" id="seat1">
-
-            </div>
-            <div class="seat" id="seat2">
-
-            </div>
-            <div class="seat" id="seat3">
-
-            </div>
-            <div class="seat" id="seat4">
-
-            </div>
-            <div class="seat" id="seat5">
-
-            </div>
-            <div class="seat" id="seat6">
-
-            </div>
-            <div class="seat" id="seat7">
-
-            </div>
-            <div class="seat" id="seat8">
-
-            </div>
-            <div class="seat" id="seat9">
-
-            </div>
-            <div class="my-player-seat" id="myPlayerSeat">
-
-            </div>
-            <div id="communityCards" class="community-cards">
-
-            </div>
-            <div id="mainPotContainer" class="main-pot">
-
-            </div>
-            <div id="dealerButton" class="dealer-button" style="display:none;">
-               <img src="images/table/dealer-button.svg"/>
+        <div id="loginView" class="login-view slidable">
+            <div id="dialog1" class="login-dialog">
+                <div class="logo-container"><img src="images/lobby/logo.png"/></div>
+                <div class="login-container">
+                    <div class="login-input-container">
+                        <input name="user" class="describe" id="user" type="text" title="Username" value="" />
+                        <input name="pwd" class="describe" id="pwd" type="password" title="Password" value=""/>
+                    </div>
+                    <div id="loginButton" class="login-button">
+                        <span>login</span>
+                    </div>
+                </div>
+                <div class="status-label">Status: <span class="connect-status"></span></div>
             </div>
         </div>
-        <div id="myPlayerContainer" class="bottom-bar">
-            <div class="action-button" id="actionSitOut" style="display: none;">
-                <span>Sit-out</span>
-            </div>
-            <div class="own-player" id="myPlayer" style="display:none;">
-                <div class="name" id="myPlayerName"></div>
-                <div class="balance" id="myPlayerBalance"></div>
+
+        <div id="lobbyView" class="lobby-container slidable"  style="display:none;">
+            <div id="lobby" class="lobby-list">
+
+                <div class="left-column">
+                    <div class="logo-container">
+                        <img src="images/lobby/logo.png"/>
+                    </div>
+                    <ul class="main-menu">
+                        <li><a class="selected" id="cashGameMenu"  href="#table-list">Cash Games</a></li>
+                        <li><a id="sitAndGoMenu" href="#table-list">Sit &amp; Go's</a></li>
+                        <li><a  id="tournamentMenu" href="#table-list">Tournaments</a></li>
+                    </ul>
+                </div>
+                <div class="right-column">
+                    <div class="top-panel" id="table-list">
+                        <div class="user-panel">
+                            <span class="status">Logged in: </span><span id="username"></span> (<span id="userId"></span>)
+                        </div>
+                        <div class="show-filters">
+                            <a>Show filters</a>
+                        </div>
+                        <div class="table-filter">
+                            <div class="filter-group tables">
+                                <div class="filter-label">Show tables:</div>
+                                <div class="filter-button" id="fullTables">Full</div>
+                                <div class="filter-button" id="emptyTables">Empty</div>
+                            </div>
+                            <div class="filter-group limits">
+                                <div class="filter-label">Show Limits:</div>
+                                <div class="filter-button" id="noLimit">NL</div>
+                                <div class="filter-button" id="potLimit">PL</div>
+                                <div class="filter-button" id="fixedLimit">FL</div>
+                            </div>
+                            <div class="filter-group stakes">
+                                <div class="filter-label">Stakes:</div>
+                                <div class="filter-button" id="lowStakes">Low</div>
+                                <div class="filter-button" id="mediumStakes">Mid</div>
+                                <div class="filter-button" id="highStakes">High</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lobby-tab">
+                            <div id="tableListContainer">
+                                <div class="table-item-header">
+                                    <div class="table-name">name</div>
+                                    <div class="seated">seated</div>
+                                    <div class="blinds">blinds</div>
+                                    <div class="type">type</div>
+                                    <div class="play"></div>
+                                </div>
+
+                                <div id="tableListItemContainer">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
             </div>
 
-            <div id="userActActions" class="user-actions">
-                <div class="action-button" id="actionFold" style="display: none;">
-                    <span>Fold</span>
-                </div>
-                <div class="action-button" id="actionCall" style="display: none;">
-                    <span class="amount"></span>
-                    <span>Call</span>
-                </div>
-                <div class="action-button" id="actionCheck" style="display: none;">
-                    <span>Check</span>
-                </div>
-                <div class="action-button" id="actionRaise" style="display: none;">
-                    <span class="amount"></span>
-                    <span>Raise</span>
-                </div>
-                <div class="action-button" id="actionBet" style="display: none;">
-                    <span class="amount"></span>
-                    <span>Bet</span>
-                </div>
-                <div class="action-button" id="actionCancelBet" style="display:none;">
-                    <span>Cancel</span>
-                </div>
-                <div class="action-button" id="doActionBet" style="display:none;">
-                    <span class="slider-value amount"></span>
-                    <span>Bet</span>
-                </div>
-                <div class="action-button" id="doActionRaise" style="display:none;">
-                    <span class="slider-value amount"></span>
-                    <span>Raise</span>
-                </div>
-                <div class="action-button" id="actionJoin" style="display: none;">
-                    <span>Join</span>
-                </div>
-                <div class="action-button" id="actionLeave" style="display: none;">
-                    <span>Leave</span>
-                </div>
-                <div class="action-button" id="actionSitIn" style="display: none;">
-                    <span>Sit-in</span>
-                </div>
-
-            </div>
         </div>
-        <div id="circularProgressBar" class="circular-progress-bar">
+
+        <div id="tableView" style="display:none;" class="table-container slidable">
+            <div class="table-logo"></div>
+            <div id="seatContainer" class="default-table table-10">
+                <div class="seat" id="seat0">
+
+                </div>
+                <div class="seat" id="seat1">
+
+                </div>
+                <div class="seat" id="seat2">
+
+                </div>
+                <div class="seat" id="seat3">
+
+                </div>
+                <div class="seat" id="seat4">
+
+                </div>
+                <div class="seat" id="seat5">
+
+                </div>
+                <div class="seat" id="seat6">
+
+                </div>
+                <div class="seat" id="seat7">
+
+                </div>
+                <div class="seat" id="seat8">
+
+                </div>
+                <div class="seat" id="seat9">
+
+                </div>
+                <div class="my-player-seat" id="myPlayerSeat">
+
+                </div>
+                <div id="communityCards" class="community-cards">
+
+                </div>
+                <div id="mainPotContainer" class="main-pot">
+
+                </div>
+                <div id="dealerButton" class="dealer-button" style="display:none;">
+                   <img src="images/table/dealer-button.svg"/>
+                </div>
+            </div>
+            <div id="myPlayerContainer" class="bottom-bar">
+                <div class="action-button" id="actionSitOut" style="display: none;">
+                    <span>Sit-out</span>
+                </div>
+                <div class="own-player" id="myPlayer" style="display:none;">
+                    <div class="name" id="myPlayerName"></div>
+                    <div class="balance" id="myPlayerBalance"></div>
+                </div>
+
+                <div id="userActActions" class="user-actions">
+                    <div class="action-button" id="actionFold" style="display: none;">
+                        <span>Fold</span>
+                    </div>
+                    <div class="action-button" id="actionCall" style="display: none;">
+                        <span class="amount"></span>
+                        <span>Call</span>
+                    </div>
+                    <div class="action-button" id="actionCheck" style="display: none;">
+                        <span>Check</span>
+                    </div>
+                    <div class="action-button" id="actionRaise" style="display: none;">
+                        <span class="amount"></span>
+                        <span>Raise</span>
+                    </div>
+                    <div class="action-button" id="actionBet" style="display: none;">
+                        <span class="amount"></span>
+                        <span>Bet</span>
+                    </div>
+                    <div class="action-button" id="actionCancelBet" style="display:none;">
+                        <span>Cancel</span>
+                    </div>
+                    <div class="action-button" id="doActionBet" style="display:none;">
+                        <span class="slider-value amount"></span>
+                        <span>Bet</span>
+                    </div>
+                    <div class="action-button" id="doActionRaise" style="display:none;">
+                        <span class="slider-value amount"></span>
+                        <span>Raise</span>
+                    </div>
+                    <div class="action-button" id="actionJoin" style="display: none;">
+                        <span>Join</span>
+                    </div>
+                    <div class="action-button" id="actionLeave" style="display: none;">
+                        <span>Leave</span>
+                    </div>
+                    <div class="action-button" id="actionSitIn" style="display: none;">
+                        <span>Sit-in</span>
+                    </div>
+
+                </div>
+            </div>
+            <div id="circularProgressBar" class="circular-progress-bar">
+
+            </div>
 
         </div>
 

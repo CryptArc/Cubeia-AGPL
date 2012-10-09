@@ -316,7 +316,7 @@ Poker.LobbyLayoutManager = Class.extend({
         var click = function(e) {
             if (tables) {
                 $("#tableListItemContainer").empty();
-                comHandler.openTable(data.id, data.capacity,data.name);
+                comHandler.openTable(data.id, data.capacity,self.getTableDescription(data));
             } else {
                 console.log("On click. Register / unregister.");
                 if (self.registeredTournaments[data.id]) {
@@ -329,7 +329,19 @@ Poker.LobbyLayoutManager = Class.extend({
         }
         return click;
     },
-
+    /* id:tableSnapshot.tableid,
+     name:tableSnapshot.name,
+     speed:speedParam,
+     capacity:tableSnapshot.capacity,
+     seated:tableSnapshot.seated,
+     blinds:(Poker.Utils.formatBlinds(smallBlind) + "/" + Poker.Utils.formatBlinds(bigBlind)),
+     type:this.getBettingModel(bettingModel),
+     tableStatus:this.getTableStatus(tableSnapshot.seated, tableSnapshot.capacity),
+     smallBlind:smallBlind
+    * */
+    getTableDescription : function(data) {
+        return data.name  + " " + data.blinds + " " + data.type + " " + data.capacity;
+    },
     includeData:function (tableData) {
         for (var i = 0; i < this.filters.length; i++) {
             var filter = this.filters[i];

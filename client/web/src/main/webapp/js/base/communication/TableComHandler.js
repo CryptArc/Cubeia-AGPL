@@ -240,7 +240,6 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
     },
     showLobby:function () {
         this.inTableView = false;
-        $("#lobbyView").show(); //should be somewhere else
         comHandler.subscribeToCashGames();
     },
     handleSeatedAtTournamentTable:function (seated) {

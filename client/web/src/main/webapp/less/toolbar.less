@@ -1,0 +1,61 @@
+#toolbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height:40px;
+    z-index: 100000;
+    .linear-gradient(bottom, #222 40%, #444 100%);
+    font-size:16px;
+
+    * {
+        .user-select(none);
+    }
+
+    .tabs {
+        list-style-type: none;
+        width:auto;
+        margin:0;
+        padding:0;
+        margin-left:50px;
+
+
+        li {
+            cursor: pointer;
+            width:20%;
+            max-width: 200px;
+
+            padding: 5px 10px;
+            height: 28px;
+            margin: 3px 2px 0 0;
+            background-color: #464645;
+            padding-top:2px;
+            .border-radius(3px);
+            line-height: 2;
+            .box-shadow(inset 0px 0px 2px #999);
+            display: inline-block;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+
+            &.active {
+                background-color: #95bb07;
+                .box-shadow(inset 0px 0px 2px #fff);
+            }
+
+        }
+    }
+}
+.main-menu-button {
+    background-image: url("../images/menu/menu-button.svg");
+    width: 28px;
+    float: left;
+    padding-bottom:28px;
+    margin:5px;
+    background-size: 100%;
+    position: relative;
+    background-repeat: no-repeat;
+}
+
+
+

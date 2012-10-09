@@ -30,8 +30,7 @@ Poker.CommunicationHandler = Poker.AbstractConnectorHandler.extend({
     openTable : function(tableId, capacity,name){
         this.tableNames.put(tableId,name);
         console.log("CommunicationHandler.openTable");
-        $("#lobbyView").hide();
-        $("#tableView").show();
+        viewManager.addTableView("#tableView",name);
         this.tableComManager = new Poker.TableComHandler(this.connector);
         this.tableComManager.onOpenTable(tableId, capacity);
     },
@@ -85,6 +84,7 @@ Poker.CommunicationHandler = Poker.AbstractConnectorHandler.extend({
             $('#loginView').hide();
             $("#lobbyView").show();
             document.location.hash="#";
+            viewManager.onLogin();
             this.subscribeToCashGames();
         }
     },
