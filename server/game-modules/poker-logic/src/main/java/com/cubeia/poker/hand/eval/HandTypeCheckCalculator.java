@@ -75,6 +75,9 @@ public class HandTypeCheckCalculator {
         if (checkFlush(hand) != null && checkStraight(hand) != null) {
             strength = new HandStrength(HandType.STRAIGHT_FLUSH);
             strength.setHighestRank(hand.sort().getCards().get(0).getRank());
+            List<Card> sorted = new ArrayList<Card>(hand.getCards());
+            Collections.sort(sorted, ByRankCardComparator.ACES_HIGH_DESC);
+            strength.setCardsUsedInHand(sorted);
         }
         return strength;
     }
