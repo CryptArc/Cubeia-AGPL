@@ -312,13 +312,13 @@ Poker.LobbyLayoutManager = Class.extend({
 
     createClickFunction:function (tables, data) {
         var self = this;
-        console.log("CREATING CLICK FUNCITON TABLES:" + tables);
+        console.log("Creating click function. Tables?: " + tables);
         var click = function(e) {
             if (tables) {
                 $("#tableListItemContainer").empty();
                 comHandler.openTable(data.id, data.capacity,data.name);
             } else {
-                console.log("ON CLICK REGISTER / UNREGISTER");
+                console.log("On click. Register / unregister.");
                 if (self.registeredTournaments[data.id]) {
                     console.log("Already registered to tournament " + data.id + ". Unregistering");
                     comHandler.unregisterFromTournament(data.id);

@@ -17,12 +17,9 @@
 
 package com.cubeia.poker.util;
 
-import junitx.framework.ListAssert;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-
-import java.util.List;
 
 public class TestHelpers {
 
@@ -49,10 +46,4 @@ public class TestHelpers {
     public static Matcher<Integer> isLessThan(int i) {
         return new IsLessThanMatcher(i);
     }
-
-    public static void assertSameListsDisregardingOrder(List expected, List actual) {
-        ListAssert.assertEquals(expected, actual);
-    }
-
-
 }

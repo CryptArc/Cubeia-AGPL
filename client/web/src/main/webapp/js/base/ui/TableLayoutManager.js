@@ -20,11 +20,15 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
     dealerButton : null,
     currentDealer : -1,
     potTransferTemplate : null,
+    soundManager : null,
+    tableId : -1,
     buyInDialog : null,
-    init : function(tableContainer,templateManager,tableComHandler,capacity){
-        if(!tableContainer) {
+    init : function(tableId, tableContainer, templateManager, tableComHandler, capacity) {
+        if (!tableContainer) {
             throw "TableLayoutManager requires a tableContainer";
         }
+        this.tableId = tableId;
+        this.soundManager = new Poker.SoundManager(soundRepository, tableId);
         this.tableComHandler = tableComHandler;
         var self = this;
         var actionCallback = function(actionType,amount){
@@ -156,6 +160,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         seat.onAction(actionType,amount);
     },
     onDealPlayerCard : function(player,cardId,cardString) {
+        this.playSound(Poker.Sounds.DEAL);
         var seat = this.getSeatByPlayerId(player.id);
         var card = new Poker.Card(cardId,cardString,this.templateManager);
         seat.dealCard(card);
@@ -195,6 +200,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         seat.showHandStrength(hand);
     },
     onDealCommunityCard : function(cardId, cardString) {
+        this.playSound(Poker.Sounds.DEAL);
         var card = new Poker.CommunityCard(cardId,cardString,this.templateManager);
         var html = card.render();
         $("#communityCards").append(html);
@@ -319,16 +325,12 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         new Poker.TransformAnimation(div).
             addTransform("translate3d("+offset.left+"%,"+offset.top+"%,0)").
             addCallback(
-                function(){
-                    setTimeout(function(){div.remove();},1000);
-                }
-            ).start();
-
-
-
-
+            function(){
+                setTimeout(function(){div.remove();},1000);
+            }
+        ).start();
+    },
+    playSound : function(soundName) {
+        this.soundManager.playSound(soundName);
     }
-
-
-
 });

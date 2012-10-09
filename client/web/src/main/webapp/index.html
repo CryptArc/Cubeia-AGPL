@@ -67,11 +67,16 @@
     <script type="text/javascript" src="js/base/ui/CSSAnimator.js"></script>
     <script type="text/javascript" src="js/base/ui/AnimationManager.js"></script>
     <script type="text/javascript" src="js/base/ui/DealerButton.js"></script>
+    <script type="text/javascript" src="js/base/sound/SoundManager.js"></script>
+    <script type="text/javascript" src="js/base/sound/SoundRepository.js"></script>
+    <script type="text/javascript" src="js/base/sound/Sounds.js"></script>
+
     <script type="text/javascript" src="js/base/ui/DialogManager.js"></script>
     <script type="text/javascript" src="js/base/ui/BuyInDialog.js"></script>
 
     <script type="text/javascript">
         var comHandler = null;
+        var soundRepository = new Poker.SoundRepository();
         var dialogManager = null;
         function handleKeyUp(keyCode) {
             if(keyCode == 13) {
@@ -339,7 +344,6 @@
                     <span class="slider-value amount"></span>
                     <span>Bet</span>
                 </div>
-
                 <div class="action-button" id="doActionRaise" style="display:none;">
                     <span class="slider-value amount"></span>
                     <span>Raise</span>
