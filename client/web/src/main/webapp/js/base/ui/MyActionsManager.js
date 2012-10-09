@@ -13,32 +13,32 @@ Poker.MyActionsManager  = Class.extend({
     allActions : [],
     cancelBetActionButton : null,
     slider : null,
-    init : function(actionCallback) {
+    init : function(view,actionCallback) {
         var self = this;
-        this._addTableButton("actionJoin",Poker.ActionType.JOIN,actionCallback);
-        this._addTableButton("actionLeave",Poker.ActionType.LEAVE,actionCallback);
-        this._addTableButton("actionSitIn",Poker.ActionType.SIT_IN,actionCallback);
-        this._addTableButton("actionSitOut",Poker.ActionType.SIT_OUT,actionCallback);
+        this._addTableButton($(".action-join",view),Poker.ActionType.JOIN,actionCallback);
+        this._addTableButton($(".action-leave",view),Poker.ActionType.LEAVE,actionCallback);
+        this._addTableButton($(".action-sit-in",view),Poker.ActionType.SIT_IN,actionCallback);
+        this._addTableButton($(".action-sit-put",view),Poker.ActionType.SIT_OUT,actionCallback);
 
         var cb = function(minAmount,maxAmount,mainPot){
             self.onClickBetButton(minAmount,maxAmount,mainPot);
         };
-        this._addActionButton("actionBet",Poker.ActionType.BET,cb ,false);
+        this._addActionButton($(".action-bet",view),Poker.ActionType.BET,cb ,false);
 
         var cr = function(minAmount,maxAmount,mainPot) {
             self.onClickRaiseButton(minAmount,maxAmount,mainPot);
         };
 
-        this._addActionButton("actionRaise",Poker.ActionType.RAISE,cr,false);
+        this._addActionButton($(".action-raise",view),Poker.ActionType.RAISE,cr,false);
 
-        this._addActionButton("actionCheck",Poker.ActionType.CHECK,actionCallback,false);
-        this._addActionButton("actionFold",Poker.ActionType.FOLD,actionCallback,false);
-        this._addActionButton("actionCall",Poker.ActionType.CALL,actionCallback,true);
+        this._addActionButton($(".action-check",view),Poker.ActionType.CHECK,actionCallback,false);
+        this._addActionButton($(".action-fold",view),Poker.ActionType.FOLD,actionCallback,false);
+        this._addActionButton($(".action-call",view),Poker.ActionType.CALL,actionCallback,true);
 
         //we can't put it in actionButtons since it's a duplicate action
-        this.doBetActionButton = new Poker.BetAmountButton("doActionBet",Poker.ActionType.BET,actionCallback,true);
-        this.doRaiseActionButton = new Poker.BetAmountButton("doActionRaise",Poker.ActionType.RAISE,actionCallback,true);
-        this.cancelBetActionButton = new Poker.ActionButton("actionCancelBet",null,function(){
+        this.doBetActionButton = new Poker.BetAmountButton($(".do-action-bet",view),Poker.ActionType.BET,actionCallback,true);
+        this.doRaiseActionButton = new Poker.BetAmountButton($(".do-action-raise",view),Poker.ActionType.RAISE,actionCallback,true);
+        this.cancelBetActionButton = new Poker.ActionButton($(".action-cancel-bet",view),null,function(){
                 self.onClickCancelButton();
             },false);
 
@@ -165,9 +165,9 @@ Poker.ActionButton = Class.extend({
     minAmount : 0,
     maxAmount : 0,
     mainPot : 0,
-    init : function(elId,actionType,callback,showAmount){
+    init : function(el,actionType,callback,showAmount){
         var self = this;
-        this.el = $("#"+elId);
+        this.el = el;
         if(!this.el) {
             console.log("Unable to find action button DOM element with id " + elId);
         }
@@ -218,8 +218,8 @@ Poker.ActionButton = Class.extend({
     }
 });
 Poker.BetAmountButton = Poker.ActionButton.extend({
-    init : function(elId,actionType,callback,showAmount){
-        this._super(elId,actionType,callback,showAmount);
+    init : function(el,actionType,callback,showAmount){
+        this._super(el,actionType,callback,showAmount);
     },
     bindCallBack : function() {
         var self = this;
@@ -229,8 +229,8 @@ Poker.BetAmountButton = Poker.ActionButton.extend({
     }
 });
 Poker.BetSliderButton = Poker.ActionButton.extend({
-    init : function(elId,actionType,callback,showAmount){
-        this._super(elId,actionType,callback,showAmount);
+    init : function(el,actionType,callback,showAmount){
+        this._super(el,actionType,callback,showAmount);
     },
     bindCallBack : function() {
         var self = this;

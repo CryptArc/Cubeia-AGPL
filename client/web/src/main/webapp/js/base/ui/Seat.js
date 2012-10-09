@@ -19,11 +19,13 @@ Poker.Seat = Class.extend({
    handStrength : null,
    seatBalance : null,
    seatBase : null,
-   init : function(seatId, player, templateManager) {
+   init : function(elementId, seatId, player, templateManager) {
        this.seatId = seatId
        this.player = player;
        this.templateManager = templateManager;
-       this.seatElement =  $("#seat"+this.seatId);
+       this.seatElement =  $("#"+elementId);
+       console.log("seatElement = " + elementId);
+       console.log(this.seatElement);
        this.cssAnimator = new Poker.CSSAnimator();
        this.renderSeat();
 
@@ -37,7 +39,8 @@ Poker.Seat = Class.extend({
        this.progressBarElement = this.seatElement.find(".progress-bar");
        this.avatarElement = this.seatElement.find(".avatar");
        this.avatarElement.addClass("avatar"+(this.player.id%9));
-
+       console.log("RENDER SEAT");
+       console.log(this.seatElement);
        this.cardsContainer = this.seatElement.find(".cards-container");
        this.actionAmount = this.seatElement.find(".action-amount");
        this.actionText = this.seatElement.find(".action-text");
@@ -119,9 +122,12 @@ Poker.Seat = Class.extend({
    },
    dealCard : function(card) {
        this.cardsContainer.append(card.render());
+       console.log(card);
        this.animateDealCard(card.getJQElement());
    },
    animateDealCard : function(div) {
+       console.log("card:");
+       console.log(div);
        new Poker.CSSClassAnimation(div).addClass("dealt").start();
    },
    inactivateSeat : function() {

@@ -20,6 +20,10 @@ Poker.Map = Class.extend({
    size : function() {
      return this.length;
    },
+   contains : function(key) {
+     var key = this._key(key);
+     return key!=null;
+   },
    _key : function(key) {
         if(key===undefined) {
              throw "Key must not be undefined";

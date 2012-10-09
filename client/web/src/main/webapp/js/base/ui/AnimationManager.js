@@ -11,6 +11,9 @@ Poker.AnimationManager = Class.extend({
         if(typeof(delay) == "undefined") {
             delay = 50;
         }
+        if(typeof(animation.element)=="undefined") {
+            console.log(animation);
+        }
         this.cssAnimator.removeTransitionCallback(animation.element);
         animation.prepare();
 
@@ -44,7 +47,7 @@ Poker.Animation = Class.extend({
         if(typeof(element)=="undefined") {
             throw "Poker.Animation requires an element";
         }
-        if(element.length) {
+        if(typeof(element.length)!="undefined") {
            element = element.get(0);
         }
         this.element = element;

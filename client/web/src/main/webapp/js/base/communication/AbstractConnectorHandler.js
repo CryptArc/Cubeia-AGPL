@@ -6,10 +6,10 @@ Poker.AbstractConnectorHandler = Class.extend({
     init : function() {
 
     },
-    sendGameTransportPacket :function(gamedata) {
-        this.connector.sendStyxGameData(0, this.tableId, gamedata);
+    sendGameTransportPacket :function(tableId,gamedata) {
+        this.connector.sendStyxGameData(0, tableId, gamedata);
     },
-    sendAction : function(seq, actionType, betAmount, raiseAmount) {
+    sendAction : function(tableId,seq, actionType, betAmount, raiseAmount) {
         var performAction = new com.cubeia.games.poker.io.protocol.PerformAction();
         performAction.player = Poker.MyPlayer.id;
         performAction.action = new com.cubeia.games.poker.io.protocol.PlayerAction();
@@ -22,6 +22,6 @@ Poker.AbstractConnectorHandler = Class.extend({
         performAction.timeOut = 0;
         performAction.seq = seq;
 
-        this.sendGameTransportPacket(performAction);
+        this.sendGameTransportPacket(tableId,performAction);
     }
 });

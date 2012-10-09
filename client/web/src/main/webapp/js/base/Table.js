@@ -7,11 +7,29 @@ Poker.Table = Class.extend({
     players : null,
     myPlayerSeat : null,
     name : null,
+    listeners : null,
+    handCount: 0,
+    dealerSeatId : -1,
+    mainPot : 0,
     init : function(id,capacity,name) {
         this.id = id;
         this.name = name;
         this.capacity = capacity;
         this.players = new Poker.Map();
+        this.listeners = [];
+    },
+    leave : function() {
+        this.tableListeners = [];
+    },
+    /**
+     * Adds a listeners associated to this table
+     * @param listeners
+     */
+    addListener : function(listener) {
+        this.listeners.push(listener);
+    },
+    getListeners : function() {
+        return this.listeners;
     },
     /**
      *

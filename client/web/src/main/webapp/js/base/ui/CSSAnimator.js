@@ -84,6 +84,9 @@ Poker.CSSAnimator = Class.extend({
         element.addEventListener("msTransitionEnd",func,false);
     },
     removeTransitionCallback : function(element) {
+        if(!element.removeEventListener) {
+            console.log(element);
+        }
         element.removeEventListener("webkitTransitionEnd");
         element.removeEventListener("transitionend");
         element.removeEventListener("oanimationend");

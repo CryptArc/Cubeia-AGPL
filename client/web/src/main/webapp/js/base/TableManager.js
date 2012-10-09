@@ -2,127 +2,151 @@
 var Poker = Poker || {};
 
 Poker.TableManager = Class.extend({
-    table : null,
+    tables : null,
     tableListeners : [],
-    handCount: 0,
-    dealerSeatId : -1,
-    mainPot : 0,
-    init : function() {
 
+    init : function() {
+        this.tables = new Poker.Map();
+    },
+    tableExist : function(tableId) {
+        return this.tables.contains(tableId)
     },
     createTable : function(tableId,capacity,name, tableListeners) {
-        this.table = new Poker.Table(tableId,capacity,name);
+        var table = new Poker.Table(tableId,capacity,name);
+        this.tables.put(tableId,table);
 
         this.tableListeners = [];
         if(tableListeners) {
             for(var x in tableListeners)   {
-                this.addTableListener(tableListeners[x]);
+                table.addListener(tableListeners[x]);
                 tableListeners[x].onTableCreated();
             }
         }
-        console.log("Creating table with listeners = " + this.tableListeners.length);
-        console.log(this.tableListeners);
+
+        console.log("Creating table " + tableId + " with listeners = " + table.getListeners().length);
     },
-    removeEventListener : function() {
-      this.tableListeners = [];
+    getTableListeners : function(tableId) {
+        var table = this.tables.get(tableId);
+        if(table==null) {
+           throw "Table not found " + tableId;
+        }
+        return table.getListeners();
     },
-    handleBuyInResponse : function(status) {
+    removeEventListener : function(tableId) {
+      console.log("REMOVE EVENT LISTENER NO OP");
+    },
+    handleBuyInResponse : function(tableId,status) {
         if(status == com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.PENDING) {
-            for(var l in this.tableListeners) {
-                this.tableListeners[l].onBuyInCompleted();
+            var listeners = this.getTableListeners(tableId);
+            for(var l in listeners) {
+                listeners[l].onBuyInCompleted();
             }
         } else if(status != com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.OK){
-            this.handleBuyInError(status);
+            this.handleBuyInError(tableId,status);
         }
     },
-    handleBuyInError : function(status) {
-        for(var l in this.tableListeners) {
-            this.tableListeners[l].onBuyInError("Unable to buy in");
+    handleBuyInError : function(tableId,status) {
+        var listeners = this.getTableListeners(tableId);
+        for(var l in listeners) {
+            listeners[l].onBuyInError("Unable to buy in");
         }
     },
-    handleBuyInInfo : function(balanceInWallet, balanceOnTable, maxAmount, minAmount,mandatory) {
-        for(var l in this.tableListeners) {
-            this.tableListeners[l].onBuyInInfo(this.table.name,balanceInWallet,balanceOnTable,maxAmount,minAmount,mandatory);
+    handleBuyInInfo : function(tableId,balanceInWallet, balanceOnTable, maxAmount, minAmount,mandatory) {
+        var listeners = this.getTableListeners(tableId);
+        var name = this.tables.get(tableId).name;
+        for(var l in listeners) {
+            listeners[l].onBuyInInfo(name,balanceInWallet,balanceOnTable,maxAmount,minAmount,mandatory);
         }
     },
-    getTable : function() {
-        return this.table;
+    getTable : function(tableId) {
+        return this.tables.get(tableId);
     },
     getTableId : function() {
       return this.table.id;
     },
-    startNewHand : function(handId, dealerSeatId) {
-        this.handCount++;
-        this.dealerSeatId = dealerSeatId;
-        this._notifyNewHand(dealerSeatId);
+    startNewHand : function(tableId,handId, dealerSeatId) {
+        var table = this.tables.get(tableId);
+        table.handCount++;
+        table.dealerSeatId = dealerSeatId;
+        this._notifyNewHand(tableId,dealerSeatId);
     },
-    endHand : function(hands,potTransfers) {
+    endHand : function(tableId,hands,potTransfers) {
         for (var hand in hands) {
-            this.updateHandStrength(hands[hand]);
+            this.updateHandStrength(tableId,hands[hand]);
         }
+        var table = this.tables.get(tableId);
         console.log("pot transfers:");
         console.log(potTransfers);
-        var count = this.handCount;
+        var count = table.handCount;
         var self = this;
 
         if(potTransfers.fromPlayerToPot === false ){
-            this._notifyPotToPlayerTransfer(potTransfers.transfers);
+            this._notifyPotToPlayerTransfer(tableId,potTransfers.transfers);
         }
 
         setTimeout(function(){
             //if no new hand has started in the next 15 secs we clear the table
-            self.clearTable(count);
+            self.clearTable(tableId,count);
         },15000);
     },
-    updateHandStrength : function(bestHand) {
-        this.showHandStrength(bestHand.player, Poker.Hand.fromId(bestHand.handType));
+    updateHandStrength : function(tableId,bestHand) {
+        this.showHandStrength(tableId,bestHand.player, Poker.Hand.fromId(bestHand.handType));
     },
-    _notifyPotToPlayerTransfer : function(transfers) {
-
-        for(var l in this.tableListeners) {
-            this.tableListeners[l].onPlayerToPotTransfers(transfers);
+    _notifyPotToPlayerTransfer : function(tableId,transfers) {
+        var listeners = this.getTableListeners(tableId);
+        for(var l in listeners) {
+            listeners[l].onPlayerToPotTransfers(transfers);
         }
     },
-    clearTable : function(handCount) {
-        if(this.handCount==handCount) {
+    clearTable : function(tableId,handCount) {
+        var table = this.tables.get(tableId);
+        if(table.handCount==handCount) {
             console.log("No hand started clearing table");
-            this._notifyNewHand(this.dealerSeatId);
+            this._notifyNewHand(tableId,this.dealerSeatId);
         } else {
             console.log("new hand started, skipping clear table")
         }
     },
-    showHandStrength : function(playerId,hand) {
-        var player = this.table.getPlayerById(playerId);
-        for(var x in this.tableListeners)   {
-            this.tableListeners[x].onPlayerHandStrength(player,hand);
+    showHandStrength : function(tableId,playerId,hand) {
+        var table = this.tables.get(tableId);
+        var player = table.getPlayerById(playerId);
+        var listeners = table.getListeners();
+        for(var x in listeners)   {
+            listeners[x].onPlayerHandStrength(player,hand);
         }
     },
-    handlePlayerAction : function(playerId,actionType,amount){
-        var player = this.table.getPlayerById(playerId);
-        for(var x in this.tableListeners) {
-            this.tableListeners[x].onPlayerActed(player,actionType,amount);
+    handlePlayerAction : function(tableId,playerId,actionType,amount){
+        var table = this.tables.get(tableId);
+        var player = table.getPlayerById(playerId);
+        var listeners = table.getListeners();
+        for(var x in listeners) {
+            listeners[x].onPlayerActed(player,actionType,amount);
         }
     },
-    _notifyNewHand : function(dealerSeatId) {
-        for(var x in this.tableListeners)   {
-            this.tableListeners[x].onStartHand(dealerSeatId);
+    _notifyNewHand : function(tableId,dealerSeatId) {
+        var listeners = this.getTableListeners(tableId);
+        for(var x in listeners)   {
+            listeners[x].onStartHand(dealerSeatId);
         }
     },
-    setDealerButton : function(seatId) {
-        for(var x in this.tableListeners)   {
-            this.tableListeners[x].onMoveDealerButton(seatId);
+    setDealerButton : function(tableId,seatId) {
+        var listeners = this.getTableListeners(tableId);
+        for(var x in listeners)   {
+            listeners[x].onMoveDealerButton(seatId);
         }
     },
-    addPlayer : function(seat,playerId, playerName) {
+    addPlayer : function(tableId,seat,playerId, playerName) {
         console.log("adding player " + playerName + " at seat" + seat);
+        var table = this.tables.get(tableId);
         var p = new Poker.Player(playerId, playerName);
-        this.table.addPlayer(seat,p);
-        this._notifyPlayerAdded(seat,p);
+        table.addPlayer(seat,p);
+        this._notifyPlayerAdded(tableId,seat,p);
     },
-    removePlayer : function(playerId) {
+    removePlayer : function(tableId,playerId) {
         console.log("removing player with playerId " + playerId);
-        this.table.removePlayer(playerId);
-        this._notifyPlayerRemoved(playerId);
+        var table = this.tables.get(tableId);
+        table.removePlayer(playerId);
+        this._notifyPlayerRemoved(tableId,playerId);
     },
     /**
      * handle deal cards, passes a card string as parameter
@@ -131,94 +155,106 @@ Poker.TableManager = Class.extend({
      * @param {int} cardId id of the card
      * @param {string} cardString the card string identifier
      */
-    dealPlayerCard : function(playerId,cardId,cardString) {
-        var player = this.table.getPlayerById(playerId);
-        for(var x in this.tableListeners)   {
-            this.tableListeners[x].onDealPlayerCard(player,cardId, cardString);
+    dealPlayerCard : function(tableId,playerId,cardId,cardString) {
+        var table = this.tables.get(tableId);
+        var player = table.getPlayerById(playerId);
+        var listeners = table.getListeners();
+        for(var x in listeners)   {
+            listeners[x].onDealPlayerCard(player,cardId, cardString);
         }
     },
-    addTableListener : function(listener) {
-        this.tableListeners.push(listener);
-    },
-    updatePlayerBalance : function(playerId, balance) {
-        var p = this.table.getPlayerById(playerId);
+    updatePlayerBalance : function(tableId,playerId, balance) {
+        var table = this.tables.get(tableId);
+        var p = table.getPlayerById(playerId);
         if(p == null) {
             throw "Unable to find player to update balance pid = " + playerId;
         }
         p.balance = balance;
-        this._notifyPlayerUpdated(p);
+        this._notifyPlayerUpdated(tableId,p);
 
     },
-    updatePlayerStatus : function(playerId, status) {
-        var p = this.table.getPlayerById(playerId);
+    updatePlayerStatus : function(tableId, playerId, status) {
+        var table = this.tables.get(tableId);
+        var p = table.getPlayerById(playerId);
         if(p==null) {
             throw "Player with id " + playerId + " not found";
         }
 
         p.tableStatus = status;
-        this._notifyPlayerUpdated(p);
+        this._notifyPlayerUpdated(tableId,p);
     },
-    handleRequestPlayerAction : function(playerId,allowedActions,timeToAct) {
-        var player = this.table.getPlayerById(playerId);
-        for(var x in this.tableListeners)   {
-            this.tableListeners[x].onRequestPlayerAction(player,allowedActions,timeToAct,this.mainPot);
+    handleRequestPlayerAction : function(tableId,playerId,allowedActions,timeToAct) {
+        var table = this.tables.get(tableId);
+        var player = table.getPlayerById(playerId);
+        var listeners = table.getListeners();
+        for(var x in listeners)   {
+            listeners[x].onRequestPlayerAction(player,allowedActions,timeToAct,this.mainPot);
         }
 
     },
-    updateMainPot : function(amount){
-        this.mainPot = amount;
-        this._notifyMainPotUpdated(amount);
+    updateMainPot : function(tableId,amount){
+        this.tables.get(tableId).mainPot = amount;
+        this._notifyMainPotUpdated(tableId,amount);
     },
-    dealCommunityCard : function(cardId,cardString) {
-        for(var x in this.tableListeners)   {
-            this.tableListeners[x].onDealCommunityCard(cardId,cardString);
+    dealCommunityCard : function(tableId,cardId,cardString) {
+        var listeners = this.getTableListeners(tableId);
+        for(var x in listeners)   {
+            listeners[x].onDealCommunityCard(cardId,cardString);
         }
     },
-    updatePots : function(pots) {
+    updatePots : function(tableId,pots) {
+        var table = this.tables.get(tableId);
+
         for(var p in pots) {
             if(pots[p].type == Poker.PotType.MAIN) {
                 console.log("updating main pot");
-                this.mainPot = pots[p].amount;
-                this._notifyMainPotUpdated(pots[p].amount);
+                table.mainPot = pots[p].amount;
+                this._notifyMainPotUpdated(tableId,pots[p].amount);
                 break;
             }
         }
     },
-    exposePrivateCard : function(cardId,cardString) {
-        for(var x in this.tableListeners)   {
-            this.tableListeners[x].onExposePrivateCard(cardId,cardString);
+    exposePrivateCard : function(tableId,cardId,cardString) {
+        var listeners = this.getTableListeners(tableId);
+        for(var x in listeners)   {
+            listeners[x].onExposePrivateCard(cardId,cardString);
         }
     },
-    bettingRoundComplete : function() {
-        for(var x in this.tableListeners)   {
-            this.tableListeners[x].onBettingRoundComplete();
+    bettingRoundComplete : function(tableId) {
+        var listeners = this.getTableListeners(tableId);
+        for(var x in listeners)   {
+            listeners[x].onBettingRoundComplete();
         }
     },
-    leaveTable : function() {
-        for(var x in this.tableListeners)   {
-            this.tableListeners[x].onLeaveTableSuccess();
+    leaveTable : function(tableId) {
+        var listeners = this.getTableListeners(tableId);
+        for(var x in listeners)   {
+            listeners[x].onLeaveTableSuccess();
         }
-        this.tableListeners = [];
-        this.table = null;
+        this.tables.remove(tableId).leave();
     },
-    _notifyMainPotUpdated : function(amount) {
-        for(var x in this.tableListeners)   {
-            this.tableListeners[x].onMainPotUpdate(amount);
-        }
-    },
-    _notifyPlayerUpdated : function(player) {
-        for(var x in this.tableListeners)   {
-            this.tableListeners[x].onPlayerUpdated(player);
+    _notifyMainPotUpdated : function(tableId,amount) {
+        var listeners = this.getTableListeners(tableId);
+        for(var x in listeners)   {
+            listeners[x].onMainPotUpdate(amount);
         }
     },
-    _notifyPlayerAdded : function(seat,player) {
-        for(var l in this.tableListeners){
-            this.tableListeners[l].onPlayerAdded(seat,player);
+    _notifyPlayerUpdated : function(tableId,player) {
+        var listeners = this.getTableListeners(tableId);
+        for(var x in listeners)   {
+            listeners[x].onPlayerUpdated(player);
         }
     },
-    _notifyPlayerRemoved : function(playerId) {
-        for(var l in this.tableListeners){
-            this.tableListeners[l].onPlayerRemoved(playerId);
+    _notifyPlayerAdded : function(tableId,seat,player) {
+        var listeners = this.getTableListeners(tableId);
+        for(var l in listeners){
+            listeners[l].onPlayerAdded(seat,player);
+        }
+    },
+    _notifyPlayerRemoved : function(tableId,playerId) {
+        var listeners = this.getTableListeners(tableId);
+        for(var l in listeners){
+            listeners[l].onPlayerRemoved(playerId);
         }
     }
 });

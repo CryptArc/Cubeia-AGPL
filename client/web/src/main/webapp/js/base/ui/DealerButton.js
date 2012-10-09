@@ -4,9 +4,9 @@ Poker.DealerButton = Class.extend({
     element : null,
     showing : false,
     cssAnimator : null,
-    init : function() {
+    init : function(element) {
         this.cssAnimator = new Poker.CSSAnimator();
-        this.element = $("#dealerButton");
+        this.element = element;
         this.hide();
     },
     show : function() {

@@ -45,8 +45,8 @@ CircularProgressBar.prototype = {
                 + '</div>';
 
         $(this.containerId).append(backgroundHTML).append(progressBarHTML);
-        this.slice = $(".cpb-animated .cpb-slice", self.containerId);
-        this.fill = $(".cpb-animated .cpb-fill", self.containerId);
+        this.slice = $(".cpb-animated .cpb-slice", this.containerId);
+        this.fill = $(".cpb-animated .cpb-fill", this.containerId);
         this.pie = $('.cpb-animated .cpb-pie', this.containerId);
         this.pieElement = this.pie.get(0);
 	},

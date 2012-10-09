@@ -8,44 +8,44 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
     init:function (connector) {
         this.connector = connector;
     },
-    onMyPlayerAction:function (actionType, amount) {
+    onMyPlayerAction : function (tableId,actionType, amount) {
         console.log("onMyPlayerAction:" + actionType.text + " amount = " + amount);
         if (actionType.id == Poker.ActionType.JOIN.id) {
-            this.joinTable();
+            this.joinTable(tableId);
         } else if (actionType.id == Poker.ActionType.LEAVE.id) {
             if (this.isSeated) {
-                this.leaveTable();
+                this.leaveTable(tableId);
             } else {
-                this.unwatchTable();
+                this.unwatchTable(tableId);
             }
         } else if (actionType.id == Poker.ActionType.SIT_IN.id) {
-            this.sitIn();
+            this.sitIn(tableId);
         } else if (actionType.id == Poker.ActionType.SIT_OUT.id) {
-            this.sitOut();
+            this.sitOut(tableId);
         } else {
             if (actionType.id == Poker.ActionType.RAISE.id) {
-                this.sendAction(this.pokerProtocolHandler.seq, this.getActionEnumType(actionType), amount, 0);
+                this.sendAction(tableId,this.pokerProtocolHandler.seq, this.getActionEnumType(actionType), amount, 0);
             } else {
-                this.sendAction(this.pokerProtocolHandler.seq, this.getActionEnumType(actionType), amount, 0);
+                this.sendAction(tableId,this.pokerProtocolHandler.seq, this.getActionEnumType(actionType), amount, 0);
             }
         }
     },
-    sitOut:function () {
+    sitOut:function (tableId) {
         var sitOut = new com.cubeia.games.poker.io.protocol.PlayerSitoutRequest();
         sitOut.player = Poker.MyPlayer.id;
-        this.sendGameTransportPacket(sitOut);
+        this.sendGameTransportPacket(tableId,sitOut);
     },
-    sitIn:function () {
+    sitIn:function (tableId) {
         var sitIn = new com.cubeia.games.poker.io.protocol.PlayerSitinRequest();
         sitIn.player = Poker.MyPlayer.id;
-        this.sendGameTransportPacket(sitIn);
+        this.sendGameTransportPacket(tableId,sitIn);
     },
-    buyIn : function(amount) {
+    buyIn : function(tableId,amount) {
         var buyInRequest = new com.cubeia.games.poker.io.protocol.BuyInRequest();
         buyInRequest.amount = amount;
 
         buyInRequest.sitInIfSuccessful = true;
-        this.sendGameTransportPacket(buyInRequest);
+        this.sendGameTransportPacket(tableId,buyInRequest);
     },
     getActionEnumType:function (actionType) {
         switch (actionType.id) {
@@ -70,13 +70,7 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
         }
     },
     joinTable:function (tableId) {
-        if(!tableId)  {
-            tableId = this.tableManager.getTableId();
-        }
         this.connector.joinTable(tableId, -1);
-    },
-    getTableId:function () {
-        return this.tableManager.getTableId();
     },
     onOpenTable:function (tableId, capacity) {
         console.log("ON OPEN TABLE");
@@ -84,9 +78,9 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
         this.connector.watchTable(tableId);
     },
     onOpenTableAccepted:function (tableId, capacity) {
-        var tableContainer = $("#tableView").get(0);
+        var tableViewContainer = $("#tableViewContainer");
         var templateManager = new Poker.TemplateManager();
-        var tableLayoutManager = new Poker.TableLayoutManager(tableId, tableContainer, templateManager, this, capacity);
+        var tableLayoutManager = new Poker.TableLayoutManager(tableId, tableViewContainer, templateManager, this, capacity);
         this.tableManager = new Poker.TableManager();
 
         this.tableId = tableId;
@@ -98,7 +92,7 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
         console.log(seatInfoPacket);
         console.log("seatInfo pid[" + seatInfoPacket.player.pid + "]  seat[" + seatInfoPacket.seat + "]");
         console.log(seatInfoPacket);
-        this.tableManager.addPlayer(seatInfoPacket.seat, seatInfoPacket.player.pid, seatInfoPacket.player.nick);
+        this.tableManager.addPlayer(seatInfoPacket.tableid,seatInfoPacket.seat, seatInfoPacket.player.pid, seatInfoPacket.player.nick);
         //seatPlayer(seatInfoPacket.player.pid, seatInfoPacket.seat, seatInfoPacket.player.nick);
     },
     handleNotifyLeave:function (notifyLeavePacket) {
@@ -112,13 +106,13 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
     },
     handleNotifyJoin:function (notifyJoinPacket) {
         console.log("NOTIFY JOIN!!");
-        this.tableManager.addPlayer(notifyJoinPacket.seat, notifyJoinPacket.pid, notifyJoinPacket.nick);
+        this.tableManager.addPlayer(notifyJoinPacket.tableid,notifyJoinPacket.seat, notifyJoinPacket.pid, notifyJoinPacket.nick);
     },
     handleJoinResponse:function (joinResponsePacket) {
         console.log(joinResponsePacket);
         console.log("join response seat = " + joinResponsePacket.seat + " player id = " + Poker.MyPlayer.id);
         if (joinResponsePacket.status == "OK") {
-            this.tableManager.addPlayer(joinResponsePacket.seat, Poker.MyPlayer.id, Poker.MyPlayer.name);
+            this.tableManager.addPlayer(joinResponsePacket.tableid,joinResponsePacket.seat, Poker.MyPlayer.id, Poker.MyPlayer.name);
             this.isSeated = true;
         } else {
             console.log("Join failed. Status: " + joinResponsePacket.status);
@@ -128,27 +122,29 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
     handleUnwatchResponse:function (unwatchResponse) {
         console.log("Unwatch response = ");
         console.log(unwatchResponse);
-        this.tableManager.leaveTable();
+        this.tableManager.leaveTable(unwatchResponse.tableid);
         this.showLobby();
 
     },
     handleLeaveResponse:function (leaveResponse) {
         console.log("leave response: ");
         console.log(leaveResponse);
-        this.tableManager.leaveTable();
+        this.tableManager.leaveTable(leaveResponse.tableid);
         this.showLobby();
 
     },
-    leaveTable:function () {
-        this.connector.leaveTable(this.tableManager.getTableId());
+    leaveTable:function (tableId) {
+        this.connector.leaveTable(tableId);
     },
-    unwatchTable:function () {
+    unwatchTable:function (tableId) {
         var unwatchRequest = new FB_PROTOCOL.UnwatchRequestPacket();
-        unwatchRequest.tableid = this.tableId;
+        unwatchRequest.tableid = tableId;
         this.connector.sendProtocolObject(unwatchRequest);
         comHandler.subscribeToCashGames();
     },
     handlePacket:function (packet) {
+        console.log("HANDLE PACKET TAAAAAAAAABLE");
+        console.log(packet);
         switch (packet.classId) {
             case FB_PROTOCOL.NotifyJoinPacket.CLASSID :
                 this.handleNotifyJoin(packet);

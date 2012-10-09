@@ -4,15 +4,15 @@ var Poker = Poker || {};
 Poker.MyPlayerSeat = Poker.Seat.extend({
     myActionsManager : null,
     circularProgressBar : null,
-    init : function(seatId, player, templateManager, myActionsManager) {
-        this._super(seatId, player, templateManager);
+    init : function(elementId, seatId, player, templateManager, myActionsManager) {
+        this._super(elementId,seatId, player, templateManager);
         this.myActionsManager = myActionsManager;
-        this.seatElement = $("#myPlayerSeat");
+        this.seatElement = $("#"+elementId);
         this.renderSeat();
 
-        $("#myPlayer").show();
+        $(elementId+"Info").show();
         this.myActionsManager.onSitIn();
-        this.circularProgressBar = new CircularProgressBar("circularProgressBar");
+        this.circularProgressBar = new CircularProgressBar(elementId+"Progressbar");
         this.circularProgressBar.hide();
     },
     setSeatPos : function(prev,pos) {
