@@ -210,7 +210,7 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
         console.log(packet);
         var valueArray =  FIREBASE.ByteArray.fromBase64String(packet.mttdata);
         var gameData = new FIREBASE.ByteArray(valueArray);
-        var length = gameData.readInt();
+        var length = gameData.readInt(); // drugs.
         var classId = gameData.readUnsignedByte();
 
         var tournamentPacket = com.cubeia.games.poker.io.protocol.ProtocolObjectFactory.create(classId, gameData);
@@ -227,9 +227,9 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
         console.log("Tournament out:");
         console.log(packet);
         if (packet.position == 1) {
-            alert("Congratulations, you won the tournament!");
+            dialogManager.displayGenericDialog({header:"Message", message:"Congratulations, you won the tournament!"});
         } else {
-            alert("You finished " + packet.position + " in the tournament.");
+            dialogManager.displayGenericDialog({header:"Message", message:"You finished " + packet.position + " in the tournament."});
         }
     },
     handleRemovedFromTournamentTable:function (packet) {
@@ -256,9 +256,10 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
         console.log(registrationResponse);
         if (registrationResponse.status == "OK") {
             comHandler.notifyRegisteredToTournament(registrationResponse.mttid);
-            alert("You successfully registered to tournament " + registrationResponse.mttid);
+            dialogManager.displayGenericDialog({header:"Message", message:"You successfully registered to tournament " + registrationResponse.mttid});
         } else {
-            alert("Your registration attempt to tournament " + registrationResponse.mttid + " was denied.");
+            dialogManager.displayGenericDialog({header:"Message",
+                message:"Your registration attempt to tournament " + registrationResponse.mttid + " was denied."});
         }
     },
     handleUnregistrationResponse:function (unregistrationResponse) {
@@ -266,9 +267,11 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
         console.log(unregistrationResponse);
         if (unregistrationResponse.status == "OK") {
             comHandler.notifyUnregisteredFromTournament(unregistrationResponse.mttid);
-            alert("You successfully unregistered from tournament " + unregistrationResponse.mttid);
+            dialogManager.displayGenericDialog({header:"Message",
+                message:"You successfully unregistered from tournament " + unregistrationResponse.mttid});
         } else {
-            alert("Your unregistration attempt from tournament " + unregistrationResponse.mttid + " was denied.");
+            dialogManager.displayGenericDialog({header:"Message",
+                message:"Your unregistration attempt from tournament " + unregistrationResponse.mttid + " was denied."});
         }
     }
 
