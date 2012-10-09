@@ -1,0 +1,49 @@
+.action-button {
+    border-radius: 10%;
+    background-color:@mainGreen;
+    width:10%;
+    height: 0;
+    padding-bottom:10%;
+    display: block;
+    float:left;
+    position: relative;
+    cursor: pointer;
+
+    span {
+        bottom:0;
+        right:0;
+        position: absolute;
+        margin: 0 6% 6% 0;
+        font-size:150%;
+        font-weight: bold;
+    }
+
+    .amount {
+        bottom:20%;
+        right:0;
+        position: absolute;
+        margin: 0 6% 6% 0;
+        font-size:150%;
+        font-weight: bold;
+    }
+}
+#actionSitOut {
+    margin-right: 2%;
+}
+
+#actionSitIn, #actionBet, #actionRaise, #actionDoBet, #doActionBet, #doActionRaise, #actionJoin {
+    position: absolute;
+    right:0;
+    top: 0;
+
+}
+#actionLeave, #actionCancelBet, #actionCall, #actionCheck {
+    position: absolute;
+    right:36%;
+    top: 0;
+}
+#actionFold{
+    position: absolute;
+    right:72%;
+    top: 0;
+}
