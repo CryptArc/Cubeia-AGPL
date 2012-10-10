@@ -19,6 +19,7 @@ package com.cubeia.poker.blinds;
 
 import org.slf4j.Logger;
 
+import java.io.Serializable;
 import java.util.*;
 
 import static com.cubeia.poker.blinds.utils.PokerUtils.*;
@@ -30,7 +31,7 @@ import static com.cubeia.poker.blinds.utils.PokerUtils.*;
  *
  * @author viktor
  */
-public class BlindsCalculator {
+public class BlindsCalculator implements Serializable {
 
     /**
      * The blinds info from last hand.

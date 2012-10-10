@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -75,25 +76,26 @@ public class LobbyTableInspectorImpl implements LobbyTableInspector {
         return result;
     }
 
-	// --- PRIVATE METHODS --- //
-    
-    private List<LobbyTable> getAllTables() {
-    	LobbyTable[] arr = factory.listTables();
-    	List<LobbyTable> list = new LinkedList<LobbyTable>();
-    	for (LobbyTable t : arr) {
-    		list.add(t);
-    	}
-		return list;
-	}
+    // --- PRIVATE METHODS --- //
 
-    private void checkMissingTemplates(List<TableConfigTemplate> templates, List<LobbyTable> allTables, Map<Integer, List<LobbyTable>> tables, List<TableModifierAction> result) {
+    private List<LobbyTable> getAllTables() {
+        LobbyTable[] arr = factory.listTables();
+        List<LobbyTable> list = new LinkedList<LobbyTable>();
+        for (LobbyTable t : arr) {
+            list.add(t);
+        }
+        return list;
+    }
+
+    private void checkMissingTemplates(List<TableConfigTemplate> templates, List<LobbyTable> allTables, Map<Integer, List<LobbyTable>> tables,
+            List<TableModifierAction> result) {
         Set<Integer> templateIds = collectTemplateIds(templates);
-        for (Integer id : tables.keySet()) {
-            if (!templateIds.contains(id)) {
+        for (Entry<Integer, List<LobbyTable>> entry : tables.entrySet()) {
+            if (!templateIds.contains(entry.getKey())) {
                 // missing template, check if empty and close immediately if so
-                for (LobbyTable t : tables.get(id)) {
+                for (LobbyTable t : entry.getValue()) {
                     boolean b = isEmpty(t);
-                    log.debug("Table[" + t.getTableId() + "] is registered on missing template " + id + ", will close if empty: " + b);
+                    log.debug("Table[" + t.getTableId() + "] is registered on missing template " + entry.getKey() + ", will close if empty: " + b);
                     if (b) {
                         result.add(TableModifierAction.close(t.getTableId()));
                     }
@@ -168,7 +170,7 @@ public class LobbyTableInspectorImpl implements LobbyTableInspector {
      */
     private void checkDestruction(List<LobbyTable> allTables, List<TableModifierAction> result) {
         for (Iterator<LobbyTable> it = allTables.iterator(); it.hasNext(); ) {
-        	LobbyTable table = it.next();
+            LobbyTable table = it.next();
             if (isClosed(table)) {
                 log.debug("Table[" + table.getTableId() + "] is closed, will be destroyed.");
                 result.add(TableModifierAction.destroy(table.getTableId()));
@@ -243,8 +245,8 @@ public class LobbyTableInspectorImpl implements LobbyTableInspector {
         return map;
     }
 
-	private int getTemplateId(LobbyTable t) {
-		Map<String, AttributeValue> map = t.getAttributes();
-		return (map.containsKey(TABLE_TEMPLATE.name()) ? map.get(TABLE_TEMPLATE.name()).getIntValue() : -1);
-	}
+    private int getTemplateId(LobbyTable t) {
+        Map<String, AttributeValue> map = t.getAttributes();
+        return (map.containsKey(TABLE_TEMPLATE.name()) ? map.get(TABLE_TEMPLATE.name()).getIntValue() : -1);
+    }
 }

@@ -17,9 +17,10 @@
 
 package com.cubeia.poker.variant.telesina;
 
+import java.io.Serializable;
 import java.util.Random;
 
-public class TelesinaDeckFactory {
+public class TelesinaDeckFactory implements Serializable {
 
     public TelesinaDeck createNewDeck(Random rng, int tableSize) {
         return new TelesinaDeck(new TelesinaDeckUtil(), rng, tableSize);

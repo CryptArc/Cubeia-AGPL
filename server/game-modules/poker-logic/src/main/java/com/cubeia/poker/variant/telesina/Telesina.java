@@ -98,6 +98,7 @@ public class Telesina extends AbstractGameType implements RoundVisitor, Dealer {
     private int bettingRoundId;
 
     private final TelesinaDeckFactory deckFactory;
+
     private final TelesinaRoundFactory roundFactory;
 
     public Telesina(TelesinaDeckFactory deckFactory, TelesinaRoundFactory roundFactory, TelesinaDealerButtonCalculator dealerButtonCalculator) {

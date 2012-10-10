@@ -46,11 +46,20 @@ public class DatabaseStorageConfiguration {
     private Properties loadProperties(ServiceContext context) {
         String fileName = context.getServerConfigDirectory().getAbsolutePath();
         Properties properties = new Properties();
+        FileInputStream stream = null;
         try {
-            FileInputStream stream = new FileInputStream(new File(fileName + "/poker.properties"));
+            stream = new FileInputStream(new File(fileName + "/poker.properties"));
             properties.load(stream);
         } catch (IOException e) {
             log.warn("Could not load properties from " + fileName + ". Using defaults.");
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                    log.debug("Failed closing stream.");
+                }
+            }
         }
         return properties;
     }

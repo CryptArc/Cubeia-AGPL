@@ -20,12 +20,13 @@ package com.cubeia.poker.variant.telesina;
 import com.cubeia.poker.player.PokerPlayer;
 import com.google.common.collect.Iterators;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.SortedMap;
 
-public class TelesinaDealerButtonCalculator {
+public class TelesinaDealerButtonCalculator implements Serializable {
 
     public int getNextDealerSeat(SortedMap<Integer, PokerPlayer> currentSeatingMap, int currentDealerSeatId, boolean wasHandCancelled) {
 

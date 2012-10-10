@@ -31,6 +31,7 @@ import com.cubeia.poker.rounds.betting.NoLimitBetStrategy;
 import com.cubeia.poker.rounds.dealing.ExposePrivateCardsRound;
 import com.cubeia.poker.variant.telesina.hand.TelesinaPlayerToActCalculator;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -40,7 +41,7 @@ import java.util.List;
  *
  * @author w
  */
-public class TelesinaRoundFactory {
+public class TelesinaRoundFactory implements Serializable {
 
     AnteRound createAnteRound(PokerContext context, ServerAdapterHolder serverAdapterHolder) {
         return new AnteRound(context, serverAdapterHolder, new AnteRoundHelper(context, serverAdapterHolder));

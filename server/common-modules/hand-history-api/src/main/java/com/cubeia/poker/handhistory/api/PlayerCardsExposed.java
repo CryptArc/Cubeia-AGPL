@@ -43,30 +43,34 @@ public class PlayerCardsExposed extends HandHistoryEvent {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((cards == null) ? 0 : cards.hashCode());
-        result = prime * result + (int) (playerId ^ (playerId >>> 32));
-        return result;
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+
+        PlayerCardsExposed that = (PlayerCardsExposed) o;
+
+        if (playerId != that.playerId) {
+            return false;
+        }
+        if (cards != null ? !cards.equals(that.cards) : that.cards != null) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        PlayerCardsExposed other = (PlayerCardsExposed) obj;
-        if (cards == null) {
-            if (other.cards != null)
-                return false;
-        } else if (!cards.equals(other.cards))
-            return false;
-        if (playerId != other.playerId)
-            return false;
-        return true;
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + playerId;
+        result = 31 * result + (cards != null ? cards.hashCode() : 0);
+        return result;
     }
 }

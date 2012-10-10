@@ -17,12 +17,14 @@
 
 package com.cubeia.poker.blinds;
 
+import java.io.Serializable;
+
 /**
  * Class for describing the blinds info of a hand.
  *
  * @author viktor
  */
-public class BlindsInfo {
+public class BlindsInfo implements Serializable {
 
     private int dealerSeatId;
 

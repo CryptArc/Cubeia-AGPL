@@ -21,8 +21,10 @@ import org.joda.time.DateTime;
 
 import com.google.inject.Singleton;
 
+import java.io.Serializable;
+
 @Singleton
-public class DefaultSystemTime implements SystemTime {
+public class DefaultSystemTime implements SystemTime, Serializable {
 
     @Override
     public DateTime date() {

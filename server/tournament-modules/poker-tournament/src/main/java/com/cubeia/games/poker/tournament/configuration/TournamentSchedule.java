@@ -57,8 +57,8 @@ public class TournamentSchedule implements Serializable {
 
     public TournamentSchedule(Date startDate, Date endDate, String cronSchedule, int minutesInAnnounced, int minutesInRegistering, int minutesVisibleAfterFinished) {
         log.debug("Created tournament schedule. Start date: " + startDate + " End date: " + endDate);
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.startDate = new Date(startDate.getTime());
+        this.endDate = new Date(endDate.getTime());
         this.cronSchedule = cronSchedule;
         this.minutesInAnnounced = minutesInAnnounced;
         this.minutesInRegistering = minutesInRegistering;
@@ -124,19 +124,19 @@ public class TournamentSchedule implements Serializable {
     }
 
     public Date getStartDate() {
-        return startDate;
+        return new Date(startDate.getTime());
     }
 
     public void setStartDate(Date startDate) {
-        this.startDate = startDate;
+        this.startDate = new Date(startDate.getTime());
     }
 
     public Date getEndDate() {
-        return endDate;
+        return new Date(endDate.getTime());
     }
 
     public void setEndDate(Date endDate) {
-        this.endDate = endDate;
+        this.endDate = new Date(endDate.getTime());
     }
 
     public String getCronSchedule() {

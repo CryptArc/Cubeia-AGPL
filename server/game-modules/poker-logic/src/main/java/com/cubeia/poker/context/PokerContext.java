@@ -32,7 +32,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * This class contains all the game data for a poker game, including players, cards and pots.
@@ -169,10 +178,10 @@ public class PokerContext implements Serializable {
     @VisibleForTesting
     protected SortedMap<Integer, PokerPlayer> createCopyWithNotReadyPlayersExcluded(Map<Integer, PokerPlayer> map, Predicate<PokerPlayer> readyPlayerFilter) {
         TreeMap<Integer, PokerPlayer> treeMap = new TreeMap<Integer, PokerPlayer>();
-        for (Integer pid : map.keySet()) {
-            PokerPlayer pokerPlayer = map.get(pid);
+        for (Entry<Integer, PokerPlayer> entry : map.entrySet()) {
+            PokerPlayer pokerPlayer = entry.getValue();
             if (readyPlayerFilter.apply(pokerPlayer)) {
-                treeMap.put(pid, pokerPlayer);
+                treeMap.put(entry.getKey(), pokerPlayer);
             }
         }
         return treeMap;

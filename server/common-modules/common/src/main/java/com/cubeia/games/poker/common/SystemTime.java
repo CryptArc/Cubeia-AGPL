@@ -21,6 +21,8 @@ import org.joda.time.DateTime;
 
 import com.google.inject.ImplementedBy;
 
+import java.io.Serializable;
+
 @ImplementedBy(DefaultSystemTime.class)
 public interface SystemTime {
 

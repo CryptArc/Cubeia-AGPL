@@ -109,8 +109,8 @@ public class MapTableNameManager implements TableNameManager {
                 return null;
             }
         } else {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             try {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
                 List<String> list = new LinkedList<String>();
                 String line;
                 while ((line = reader.readLine()) != null) {
@@ -121,8 +121,9 @@ public class MapTableNameManager implements TableNameManager {
                 throw new IllegalStateException("Failed to read name list", e);
             } finally {
                 try {
-                    in.close();
+                    reader.close();
                 } catch (IOException e) {
+                    log.debug("Failed closing stream.");
                 }
             }
         }
@@ -155,6 +156,34 @@ public class MapTableNameManager implements TableNameManager {
             } else {
                 return count < o.count ? -1 : 1;
             }
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            Name name1 = (Name) o;
+
+            if (count != name1.count) {
+                return false;
+            }
+            if (name != null ? !name.equals(name1.name) : name1.name != null) {
+                return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = name != null ? name.hashCode() : 0;
+            result = 31 * result + count;
+            return result;
         }
     }
 }

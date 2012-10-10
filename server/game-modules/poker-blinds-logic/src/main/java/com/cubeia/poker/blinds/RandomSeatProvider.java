@@ -17,6 +17,7 @@
 
 package com.cubeia.poker.blinds;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -24,7 +25,7 @@ import java.util.List;
  * <p/>
  * Used when moving the dealer button to a random seat.
  */
-public interface RandomSeatProvider {
+public interface RandomSeatProvider extends Serializable {
 
     /**
      * Returns a random seat id of the given seat ids.

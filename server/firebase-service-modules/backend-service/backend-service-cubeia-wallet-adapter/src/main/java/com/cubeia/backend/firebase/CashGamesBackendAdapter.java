@@ -96,7 +96,7 @@ public class CashGamesBackendAdapter implements CashGamesBackendContract, Servic
      * Grace delay before callback is called. If called immediately some messages seems to be dropped. :-(
      */
     @VisibleForTesting
-    protected static int CALLBACK_GRACE_DELAY_MS = 500;
+    protected static final int CALLBACK_GRACE_DELAY_MS = 500;
 
     private long nextId() {
         return idSequence.getAndIncrement();
@@ -358,7 +358,6 @@ public class CashGamesBackendAdapter implements CashGamesBackendContract, Servic
         log.debug("system rake account id = {}", rakeAccountId);
 
         log.debug("initializing jmx stuff");
-        MockController mockController = new MockController(this);
     }
 
     @Override

@@ -20,6 +20,7 @@ package com.cubeia.poker.hand.eval;
 import com.cubeia.poker.hand.*;
 import com.cubeia.poker.hand.calculator.ByRankCardComparator;
 
+import java.io.Serializable;
 import java.util.*;
 
 import static com.cubeia.poker.hand.HandType.*;
@@ -37,7 +38,7 @@ import static com.cubeia.poker.hand.HandType.*;
  *
  * @author Fredrik Johansson, Cubeia Ltd
  */
-public class HandTypeCheckCalculator {
+public class HandTypeCheckCalculator implements Serializable {
 
     /**
      * Some poker variants (e.g. Telesina) allows for different deck sizes.
@@ -298,6 +299,7 @@ public class HandTypeCheckCalculator {
                     strength = new HandStrength(FULL_HOUSE);
                 }
 
+                assert(firstPair != null);
                 strength.setHighestRank(firstPair.getHighestRank());
                 strength.setSecondRank(secondPair.getHighestRank());
 

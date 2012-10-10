@@ -47,7 +47,11 @@ public class BlindsStructure implements Serializable {
         return timePerLevel;
     }
 
-    public Iterator<BlindsLevel> getLevelIterator() {
-        return blindsLevels.iterator();
+    public BlindsLevel getBlindsLevel(int blindsLevel) {
+        if (blindsLevel >= blindsLevels.size()) {
+            log.debug("blindsLevel " + blindsLevel + " requested, but we only have " + blindsLevels.size() + " levels. Returning last one.");
+            return blindsLevels.get(blindsLevels.size() - 1);
+        }
+        return blindsLevels.get(blindsLevel);
     }
 }

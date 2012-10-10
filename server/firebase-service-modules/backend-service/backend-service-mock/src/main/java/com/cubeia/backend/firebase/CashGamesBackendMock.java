@@ -275,8 +275,6 @@ public class CashGamesBackendMock implements CashGamesBackendContract, Service, 
         log.debug("service init");
 
         log.debug("initializing jmx stuff");
-        MockController mockController = new MockController(this);
-
     }
 
     @Override

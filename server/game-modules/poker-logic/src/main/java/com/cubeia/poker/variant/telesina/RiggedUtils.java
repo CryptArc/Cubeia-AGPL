@@ -34,14 +34,15 @@ public class RiggedUtils {
     /**
      * Loads the specified .properties file into the specified Properties object
      *
-     * @param file          the file to load
-     * @param oldProperties the Properties to load the file into
-     * @return the Properties
+     * @param file       the file to load
+     * @param properties the old properties
+     * @return the new properties
      */
     private static Properties loadPropertiesFromFile(File file, Properties properties) {
+        InputStream is = null;
         try {
             if (file.exists()) {
-                InputStream is = new FileInputStream(file);
+                is = new FileInputStream(file);
                 properties.load(is);
                 is.close();
             } else {
@@ -51,6 +52,14 @@ public class RiggedUtils {
             logger.debug("File " + file + " not found");
         } catch (IOException e) {
             logger.debug("Can't read " + file + "");
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    logger.debug("Failed closing stream.");
+                }
+            }
         }
         return properties;
     }

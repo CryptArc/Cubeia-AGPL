@@ -20,6 +20,7 @@ package com.cubeia.poker.variant.telesina.hand;
 import com.cubeia.poker.hand.*;
 import com.cubeia.poker.variant.telesina.TelesinaCardComparator;
 
+import java.io.Serializable;
 import java.util.*;
 
 import static com.cubeia.poker.hand.HandType.ROYAL_STRAIGHT_FLUSH;
@@ -28,7 +29,7 @@ import static com.cubeia.poker.hand.HandType.ROYAL_STRAIGHT_FLUSH;
  * This class is a specialization of HandStrengthComparator for Telesina rules
  * which differs from the vanilla poker rules.
  */
-public class TelesinaHandComparator implements Comparator<Hand> {
+public class TelesinaHandComparator implements Comparator<Hand>, Serializable {
 
     private TelesinaHandStrengthEvaluator evaluator;
 

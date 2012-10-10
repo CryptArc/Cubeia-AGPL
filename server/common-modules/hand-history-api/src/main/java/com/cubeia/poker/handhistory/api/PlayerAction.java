@@ -78,37 +78,43 @@ public class PlayerAction extends HandHistoryEvent {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((action == null) ? 0 : action.hashCode());
-        result = prime * result + ((amount == null) ? 0 : amount.hashCode());
-        result = prime * result + (playerId ^ (playerId >>> 32));
-        result = prime * result + (timeout ? 1231 : 1237);
-        return result;
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+
+        PlayerAction that = (PlayerAction) o;
+
+        if (playerId != that.playerId) {
+            return false;
+        }
+        if (timeout != that.timeout) {
+            return false;
+        }
+        if (action != that.action) {
+            return false;
+        }
+        if (amount != null ? !amount.equals(that.amount) : that.amount != null) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        PlayerAction other = (PlayerAction) obj;
-        if (action != other.action)
-            return false;
-        if (amount == null) {
-            if (other.amount != null)
-                return false;
-        } else if (!amount.equals(other.amount))
-            return false;
-        if (playerId != other.playerId)
-            return false;
-        if (timeout != other.timeout)
-            return false;
-        return true;
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (action != null ? action.hashCode() : 0);
+        result = 31 * result + (amount != null ? amount.hashCode() : 0);
+        result = 31 * result + (timeout ? 1 : 0);
+        result = 31 * result + playerId;
+        return result;
     }
 
     @Override

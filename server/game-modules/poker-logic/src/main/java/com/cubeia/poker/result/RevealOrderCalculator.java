@@ -20,12 +20,13 @@ package com.cubeia.poker.result;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.util.PokerUtils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 
-public class RevealOrderCalculator {
+public class RevealOrderCalculator implements Serializable {
 
     /**
      * Calculate the order in which the players should reveal their hidden card(s).

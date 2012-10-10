@@ -21,6 +21,7 @@ import com.cubeia.poker.hand.*;
 import com.cubeia.poker.hand.calculator.HandCalculator;
 import com.cubeia.poker.hand.eval.HandTypeCheckCalculator;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -32,7 +33,7 @@ import java.util.List;
  *
  * @author Fredrik Johansson, Cubeia Ltd
  */
-public class TexasHoldemHandCalculator implements HandCalculator, HandTypeEvaluator {
+public class TexasHoldemHandCalculator implements HandCalculator, HandTypeEvaluator, Serializable {
 
     private HandTypeCheckCalculator typeCalculator = new HandTypeCheckCalculator();
 

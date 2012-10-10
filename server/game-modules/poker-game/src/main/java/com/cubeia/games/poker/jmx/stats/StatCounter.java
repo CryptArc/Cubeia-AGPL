@@ -33,6 +33,8 @@ public class StatCounter {
 
     private final ConcurrentLinkedQueue<Hit> cache = new ConcurrentLinkedQueue<Hit>();
 
+    private final Object lock = new Object();
+
     private final long window;
 
 
@@ -43,7 +45,7 @@ public class StatCounter {
      */
     public void register() {
         cache.add(new Hit());
-        synchronized (cache) {
+        synchronized (lock) {
             if (System.currentTimeMillis() > cache.peek().time + window) {
                 cache.remove();
             }
@@ -57,7 +59,7 @@ public class StatCounter {
 
 
     private void cleanAllOldObjects() {
-        synchronized (cache) {
+        synchronized (lock) {
             while (cache.size() > 0) {
                 if (System.currentTimeMillis() > cache.peek().time + window) {
                     cache.remove();
@@ -74,7 +76,7 @@ public class StatCounter {
     }
 
 
-    private class Hit {
+    private static class Hit {
         public long time = System.currentTimeMillis();
     }
 

@@ -17,6 +17,7 @@
 
 package com.cubeia.poker.hand;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -29,7 +30,7 @@ import java.util.List;
  * <p/>
  * This ordering is contrary to the contract specified by Comparator so take care!
  */
-public class HandStrengthComparator implements Comparator<HandStrength> {
+public class HandStrengthComparator implements Comparator<HandStrength>, Serializable {
 
     @Override
     public int compare(HandStrength hs1, HandStrength hs2) {

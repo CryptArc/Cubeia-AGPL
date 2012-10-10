@@ -48,6 +48,7 @@ import org.joda.time.Duration;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -60,6 +61,8 @@ import static java.util.Collections.singleton;
 public class PokerTournament implements Serializable {
 
     private static final Logger log = Logger.getLogger(PokerTournament.class);
+
+    private static final long serialVersionUID = 0L;
 
     private PokerTournamentState pokerState;
 
@@ -240,7 +243,7 @@ public class PokerTournament implements Serializable {
         }
 
         if (!tablesToStart.isEmpty()) {
-            log.debug("Sending explicit start to tables[" + tablesToStart.toArray() + "] due to low number of players.");
+            log.debug("Sending explicit start to tables[" + Arrays.toString(tablesToStart.toArray()) + "] due to low number of players.");
             mttSupport.sendRoundStartActionToTables(state, tablesToStart);
         }
 

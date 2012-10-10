@@ -25,7 +25,6 @@ import org.apache.log4j.Logger;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 public class PokerTournamentState implements Serializable {
@@ -53,9 +52,9 @@ public class PokerTournamentState implements Serializable {
 
     private BlindsStructure blindsStructure;
 
-    private Iterator<BlindsLevel> blindsLevelIterator;
+    private int currentBlindsLevelNr;
 
-    private BlindsLevel currentLevel;
+    private BlindsLevel currentBlindsLevel;
 
     public boolean allTablesHaveBeenCreated(int tablesCreated) {
         return tablesCreated >= tablesToCreate;
@@ -106,17 +105,17 @@ public class PokerTournamentState implements Serializable {
     }
 
     public int getSmallBlindAmount() {
-        return getCurrentLevel().getSmallBlindAmount();
+        return getCurrentBlindsLevel().getSmallBlindAmount();
     }
 
     public int getBigBlindAmount() {
-        return getCurrentLevel().getBigBlindAmount();
+        return getCurrentBlindsLevel().getBigBlindAmount();
     }
 
     public void setBlindsStructure(BlindsStructure blindsStructure) {
         this.blindsStructure = blindsStructure;
-        blindsLevelIterator = blindsStructure.getLevelIterator();
-        currentLevel = blindsLevelIterator.next();
+        currentBlindsLevelNr = 0;
+        currentBlindsLevel = blindsStructure.getBlindsLevel(currentBlindsLevelNr);
     }
 
     public BlindsStructure getBlindsStructure() {
@@ -124,20 +123,12 @@ public class PokerTournamentState implements Serializable {
     }
 
     public BlindsLevel getCurrentBlindsLevel() {
-        return currentLevel;
-    }
-
-    public BlindsLevel getCurrentLevel() {
-        return currentLevel;
+        return currentBlindsLevel;
     }
 
     public void increaseBlindsLevel() {
         log.debug("Increasing blinds level.");
-        if (blindsLevelIterator.hasNext()) {
-            currentLevel = blindsLevelIterator.next();
-            log.debug("Blinds level is now: " + currentLevel);
-        } else {
-            log.warn("No more blinds levels, staying on level " + currentLevel);
-        }
+        currentBlindsLevel = blindsStructure.getBlindsLevel(currentBlindsLevelNr++);
+        log.debug("Blinds level is now: " + currentBlindsLevelNr + ": " + currentBlindsLevel);
     }
 }

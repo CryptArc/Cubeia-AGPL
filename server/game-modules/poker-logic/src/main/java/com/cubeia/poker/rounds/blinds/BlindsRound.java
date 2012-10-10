@@ -38,6 +38,7 @@ import com.cubeia.poker.rounds.RoundVisitor;
 import com.cubeia.poker.settings.PokerSettings;
 import org.apache.log4j.Logger;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -45,7 +46,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.SortedMap;
 
-public class BlindsRound implements Round {
+public class BlindsRound implements Round, Serializable {
 
     private static final long serialVersionUID = -6452364533249060511L;
 

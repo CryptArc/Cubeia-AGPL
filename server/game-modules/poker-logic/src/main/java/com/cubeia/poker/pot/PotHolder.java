@@ -94,12 +94,12 @@ public class PotHolder implements Serializable {
         }
 
         // The remaining chips are placed in the active pot.
-        for (PokerPlayer player : playerToBetMap.keySet()) {
-            long stack = playerToBetMap.get(player);
+        for (Map.Entry<PokerPlayer, Long> entry : playerToBetMap.entrySet()) {
+            long stack = entry.getValue();
             if (stack > 0) {
-                potTransitions.add(new PotTransition(player, getActivePot(), stack));
-                getActivePot().bet(player, stack);
-                player.removeFromBetStack(stack);
+                potTransitions.add(new PotTransition(entry.getKey(), getActivePot(), stack));
+                getActivePot().bet(entry.getKey(), stack);
+                entry.getKey().removeFromBetStack(stack);
             }
         }
 
@@ -170,11 +170,11 @@ public class PotHolder implements Serializable {
                     ;
                 });
                 log.debug("  pot {}: bets = {}, rake = {}, open = {}, players: {}",
-                        new Object[]{pot.getId(), pot.getPotSize(), rake, pot.isOpen(), playerIds});
+                          new Object[]{pot.getId(), pot.getPotSize(), rake, pot.isOpen(), playerIds});
             }
 
             log.debug("{}, total pot size = {}, total rake = {}",
-                    new Object[]{rakeCalculator, rakeInfoContainer.getTotalPot(), rakeInfoContainer.getTotalRake()});
+                      new Object[]{rakeCalculator, rakeInfoContainer.getTotalPot(), rakeInfoContainer.getTotalRake()});
         }
     }
 
@@ -258,8 +258,9 @@ public class PotHolder implements Serializable {
             long diff = allInLevel - currentLevel;
 
             Pot activePot = getActivePot();
-            for (PokerPlayer player : betMap.keySet()) {
-                long stack = betMap.get(player);
+            for (Map.Entry<PokerPlayer, Long> entry : betMap.entrySet()) {
+                PokerPlayer player = entry.getKey();
+                long stack = entry.getValue();
                 if (stack >= diff) {
                     potTransitions.add(new PotTransition(player, activePot, diff));
                     activePot.bet(player, diff);
@@ -267,13 +268,13 @@ public class PotHolder implements Serializable {
                     betMap.put(player, (stack - diff));
                 } else if (stack > 0) {
                     /*
-                          * If a player has folded, he might not have enough chips,
-                          * add the remaining chips in this pot.
-                          */
+                     * If a player has folded, he might not have enough chips,
+                     * add the remaining chips in this pot.
+                     */
                     potTransitions.add(new PotTransition(player, activePot, stack));
                     activePot.bet(player, stack);
                     player.removeFromBetStack(stack);
-                    betMap.put(player, new Long(0));
+                    betMap.put(player, 0L);
                 }
             }
             // Close the pot, so no more bets can be placed in the pot.
@@ -340,10 +341,11 @@ public class PotHolder implements Serializable {
      * @return the i:th pot
      */
     public Pot getPot(int i) {
-        if (pots.size() > i)
+        if (pots.size() > i) {
             return pots.get(i);
-        else
+        } else {
             return new Pot(i);
+        }
     }
 
     /**

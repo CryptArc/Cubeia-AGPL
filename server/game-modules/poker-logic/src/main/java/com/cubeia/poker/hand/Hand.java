@@ -67,7 +67,7 @@ public class Hand implements Serializable {
 
     @Override
     public String toString() {
-        String s = new String();
+        String s = "";
         for (Card card : cards) {
             s += card.toString() + " ";
         }

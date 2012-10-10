@@ -56,10 +56,10 @@ public class ThreadLocalProfiler {
         Long start = map.get("start");
 
         String result = "Profiled Calls:\n";
-        for (String key : map.keySet()) {
-            Long time = map.get(key);
+        for (Map.Entry<String, Long> entry : map.entrySet()) {
+            Long time = entry.getValue();
             Long timeSinceStart = time - start;
-            result += "\t" + key + "\t" + timeSinceStart + "\n";
+            result += "\t" + entry.getKey() + "\t" + timeSinceStart + "\n";
         }
 
         return result;

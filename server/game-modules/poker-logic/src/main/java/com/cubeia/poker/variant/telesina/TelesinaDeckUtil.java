@@ -57,7 +57,11 @@ public class TelesinaDeckUtil {
         int firstRankIndex = Math.max(0, 11 - participants - 2);
         int deckLength = 52 - firstRankIndex * 4;
 
-        if (deck == null || deck.length() != deckLength * 2) {
+        if (deck == null) {
+            throw new NullPointerException("Deck is null.");
+        }
+
+        if (deck.length() != deckLength * 2) {
             throw new RuntimeException("deck file doesn't contain the correct amount of cards! is " + (deck.length() / 2) + " and should be " + deckLength + " for " + participants + " participants");
         }
 

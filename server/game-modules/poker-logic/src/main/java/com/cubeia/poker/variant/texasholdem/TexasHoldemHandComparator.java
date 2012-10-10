@@ -17,6 +17,7 @@
 
 package com.cubeia.poker.variant.texasholdem;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 import com.cubeia.poker.hand.Hand;
@@ -33,7 +34,7 @@ import com.cubeia.poker.hand.HandStrengthComparator;
  *
  * @author w
  */
-public class TexasHoldemHandComparator implements Comparator<Hand> {
+public class TexasHoldemHandComparator implements Comparator<Hand>, Serializable {
 
     private HandStrengthComparator hsc;
     private TexasHoldemHandCalculator calc = new TexasHoldemHandCalculator();

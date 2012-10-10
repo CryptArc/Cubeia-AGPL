@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 
 import org.apache.log4j.Logger;
@@ -115,17 +116,18 @@ public class HandHistoryReporter {
         if (!checkHasService()) {
             return; // SANITY CHECK
         }
-    	ThreadLocalProfiler.add("HandHistoryReportAdapter.notifyHandEnd.start");
+        ThreadLocalProfiler.add("HandHistoryReportAdapter.notifyHandEnd.start");
         if (handEndStatus == CANCELED_TOO_FEW_PLAYERS) {
             service.cancelHand(table.getId());
         } else {
             Map<PokerPlayer, Result> map = handResult.getResults();
             Results res = new Results();
-            for (PokerPlayer pl : map.keySet()) {
-            	// translate results
-            	com.cubeia.poker.handhistory.api.HandResult hr = translate(pl.getId(), map.get(pl));
+            for (Entry<PokerPlayer,Result> entry : map.entrySet()) {
+                // translate results
+                PokerPlayer pl = entry.getKey();
+                com.cubeia.poker.handhistory.api.HandResult hr = translate(pl.getId(), entry.getValue());
                 String transactionId = playerTransactions.get(pl.getId());
-            	hr.setTransactionId(transactionId);
+                hr.setTransactionId(transactionId);
                 res.getResults().put(pl.getId(), hr);
                 // get player rake and add
                 long playerRake = handResult.getRakeContributionByPlayer(pl);

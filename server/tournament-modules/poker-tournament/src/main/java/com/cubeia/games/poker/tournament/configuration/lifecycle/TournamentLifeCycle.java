@@ -20,7 +20,9 @@ package com.cubeia.games.poker.tournament.configuration.lifecycle;
 import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 import org.joda.time.DateTime;
 
-public interface TournamentLifeCycle {
+import java.io.Serializable;
+
+public interface TournamentLifeCycle extends Serializable {
 
     public boolean shouldStartTournament(DateTime now, int nrRegistered, int capacity);
 
