@@ -5,39 +5,49 @@ Poker.ViewManager = Class.extend({
     tabsContainer: null,
     lobbyView : null,
     loginView : null,
+    cssAnimator : null,
+    swiper : null,
     init : function(tabsContainerId) {
+        var self = this;
         this.tabsContainer = $("#"+tabsContainerId);
         this.views = [];
         this.loginView = this.addView(new Poker.View("#loginView","Login"));
         this.lobbyView = this.addView(new Poker.View("#lobbyView","Lobby"));
+        this.cssAnimator = new Poker.CSSAnimator();
+
         this.activateView(this.loginView);
-        var self = this;
-
-        $$(".view-container").swiping(function(e){
-
-        });
 
     },
-    nextView : function() {
+    getNextView : function() {
         for(var i = 0; i<this.views.length; i++) {
             if(this.views[i] == this.activeView) {
-                this.activateView(this.views[(i-1+this.views.length)%this.views.length]);
-                break;
+                return this.views[(i-1+this.views.length)%this.views.length];
+            }
+        }
+    },
+    nextView : function() {
+        this.activateView(this.getNextView());
+    },
+    getPreviousView : function() {
+        for(var i = 0; i<this.views.length; i++) {
+            if(this.views[i] == this.activeView) {
+                return this.views[(i+1)%this.views.length];
             }
         }
     },
     previousView : function() {
-      for(var i = 0; i<this.views.length; i++) {
-          if(this.views[i] == this.activeView) {
-            this.activateView(this.views[(i+1)%this.views.length]);
-            break;
-          }
-      }
+        this.activateView(this.getPreviousView());
     },
     onLogin : function(){
         this.activateView(this.lobbyView);
         this.loginView.close();
         this.views.splice(0,1);
+        this.swiper = new Poker.ViewSwiper($(".view-container"),function(){
+                self.nextView();
+            },
+            function(){
+                self.previousView();
+            });
     },
     requestTableFocus : function(tableId) {
        var v = this.findViewByTableId(tableId);
@@ -80,6 +90,15 @@ Poker.ViewManager = Class.extend({
         }
         this.activeView = view;
         view.activate();
+
+        if(this.swiper!=null) {
+            this.swiper.setElements(
+                this.getPreviousView().viewElement,
+                this.activeView.viewElement,
+                this.getNextView().viewElement
+            );
+        }
+
     },
     addView : function(view) {
         this.views.push(view);
