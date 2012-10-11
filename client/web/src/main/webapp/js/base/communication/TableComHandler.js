@@ -107,7 +107,6 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
         if (notifyLeavePacket.pid === Poker.MyPlayer.id) {
             console.log("I left this table, closing it.");
             this.tableManager.leaveTable(notifyLeavePacket.tableid);
-            Poker.ApplicationContext.viewManager.removeTableView(notifyLeavePacket.tableid);
         } else {
             this.tableManager.removePlayer(notifyLeavePacket.tableid,notifyLeavePacket.pid);
         }
@@ -140,6 +139,7 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
         console.log(leaveResponse);
         this.tableManager.leaveTable(leaveResponse.tableid);
         this.showLobby();
+        Poker.ApplicationContext.viewManager.removeTableView(leaveResponse.tableid);
 
     },
     leaveTable:function (tableId) {
