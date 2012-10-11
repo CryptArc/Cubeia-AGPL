@@ -19,6 +19,7 @@ Poker.Seat = Class.extend({
    seatBalance : null,
    seatBase : null,
    animationManager : null,
+   currentProgressBarAnimation : null,
    init : function(elementId, seatId, player, templateManager, animationManager) {
        this.animationManager = animationManager;
        this.seatId = seatId;
@@ -119,8 +120,10 @@ Poker.Seat = Class.extend({
        console.log(card);
        this.animateDealCard(card.getJQElement());
    },
+
    animateDealCard : function(div) {
        new Poker.CSSClassAnimation(div).addClass("dealt").start(this.animationManager);
+
    },
    inactivateSeat : function() {
         this.seatElement.removeClass("active-seat");
@@ -129,6 +132,11 @@ Poker.Seat = Class.extend({
    clearProgressBar : function() {
        if(this.progressBarElement) {
            this.progressBarElement.attr("style","").hide();
+       }
+
+       if(this.currentProgressBarAnimation!=null){
+           this.animationManager.removeAnimation(this.currentProgressBarAnimation);
+           this.currentProgressBarAnimation = null;
        }
    },
     /**
@@ -142,9 +150,11 @@ Poker.Seat = Class.extend({
    activateSeat : function(allowedActions, timeToAct,mainPot) {
        this.seatElement.addClass("active-seat");
        this.progressBarElement.show();
-       new Poker.TransformAnimation(this.progressBarElement)
+       this.currentProgressBarAnimation = new Poker.TransformAnimation(this.progressBarElement)
            .addTransition("transform",timeToAct/1000,"linear")
-           .addTransform("scale3d(1,0.01,1)").addOrigin("bottom").start(this.animationManager);
+           .addTransform("scale3d(1,0.01,1)").addOrigin("bottom")
+           .setTimed(true)
+           .start(this.animationManager);
 
    },
    showHandStrength : function(hand) {

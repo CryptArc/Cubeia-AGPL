@@ -39,6 +39,12 @@ Poker.ViewManager = Class.extend({
         this.loginView.close();
         this.views.splice(0,1);
     },
+    requestTableFocus : function(tableId) {
+       var v = this.findViewByTableId(tableId);
+       if(v!=null) {
+           v.requestFocus();
+       }
+    },
     removeTableView : function(tableId) {
         for(var i = 0; i<this.views.length; i++) {
             var v = this.views[i];

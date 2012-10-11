@@ -53,27 +53,27 @@ CircularProgressBar.prototype = {
         this.pieElement = this.pie.get(0);
 	},
     animation : null,
-    startTime : null,
-    animationTime : null,
-    endTime : null,
-    running : false,
 	render : function(time) {
 
         var self = this;
 
-        var anim = new Poker.TransformAnimation(this.pieElement);
-        anim.addTransition("transform",(time/2000),"linear")
+        this.animation = new Poker.TransformAnimation(this.pieElement);
+        this.animation.addTransition("transform",(time/2000),"linear")
             .addTransform("rotate(180deg)").addCallback(function(){
                 self.slice.addClass("cpb-gt50");
                 self.fill.show();
             }).next().addTransform("rotate(360deg)");
-        anim.start(this.animationManager);
+        this.animation.setTimed(true);
+        this.animation.start(this.animationManager);
 
         return;
 
 
     },
     detach : function() {
+        if(this.animation!=null) {
+            this.animationManager.removeAnimation(this.animation);
+        }
         $(this.containerId).empty();
     }
 };

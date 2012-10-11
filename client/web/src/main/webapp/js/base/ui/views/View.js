@@ -15,6 +15,12 @@ Poker.View = Class.extend({
         this.activateView();
         this.activateTab();
     },
+    requestFocus : function() {
+        if(!this.tabElement.hasClass("active")) {
+            this.tabElement.addClass("focus");
+
+        }
+    },
     activateView : function() {
         this.viewElement.show();
     },
@@ -24,6 +30,7 @@ Poker.View = Class.extend({
     },
     activateTab : function() {
         this.tabElement.addClass("active");
+        this.tabElement.removeClass("focus");
     },
     deactivate : function() {
         this.deactivateView();
