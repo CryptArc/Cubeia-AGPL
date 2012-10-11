@@ -209,9 +209,6 @@ Poker.LobbyLayoutManager = Class.extend({
 
     },
     handleTableUpdate:function (tableUpdate) {
-        console.log("table update");
-        console.log(tableUpdate);
-
         var showInLobby = this.readParam("VISIBLE_IN_LOBBY",tableUpdate.params);
         if(showInLobby!=null && parseInt(showInLobby) == 0 ) {
             this.handleTableRemoved(tableUpdate.tableid);
@@ -315,7 +312,7 @@ Poker.LobbyLayoutManager = Class.extend({
         console.log("Creating click function. Tables?: " + tables);
         var click = function(e) {
             if (tables) {
-                $("#tableListItemContainer").empty();
+
                 comHandler.openTable(data.id, data.capacity,self.getTableDescription(data));
             } else {
                 console.log("On click. Register / unregister.");
@@ -329,16 +326,6 @@ Poker.LobbyLayoutManager = Class.extend({
         }
         return click;
     },
-    /* id:tableSnapshot.tableid,
-     name:tableSnapshot.name,
-     speed:speedParam,
-     capacity:tableSnapshot.capacity,
-     seated:tableSnapshot.seated,
-     blinds:(Poker.Utils.formatBlinds(smallBlind) + "/" + Poker.Utils.formatBlinds(bigBlind)),
-     type:this.getBettingModel(bettingModel),
-     tableStatus:this.getTableStatus(tableSnapshot.seated, tableSnapshot.capacity),
-     smallBlind:smallBlind
-    * */
     getTableDescription : function(data) {
         return data.name  + " " + data.blinds + " " + data.type + " " + data.capacity;
     },

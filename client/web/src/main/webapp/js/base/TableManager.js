@@ -3,7 +3,6 @@ var Poker = Poker || {};
 
 Poker.TableManager = Class.extend({
     tables : null,
-    tableListeners : [],
 
     init : function() {
         this.tables = new Poker.Map();
@@ -12,10 +11,10 @@ Poker.TableManager = Class.extend({
         return this.tables.contains(tableId)
     },
     createTable : function(tableId,capacity,name, tableListeners) {
+        console.log("Creating table " + tableId + " with name = " + name);
         var table = new Poker.Table(tableId,capacity,name);
         this.tables.put(tableId,table);
 
-        this.tableListeners = [];
         if(tableListeners) {
             for(var x in tableListeners)   {
                 table.addListener(tableListeners[x]);
@@ -24,6 +23,7 @@ Poker.TableManager = Class.extend({
         }
 
         console.log("Creating table " + tableId + " with listeners = " + table.getListeners().length);
+        console.log("Nr of tables open = " + this.tables.size());
     },
     getTableListeners : function(tableId) {
         var table = this.tables.get(tableId);
@@ -60,9 +60,6 @@ Poker.TableManager = Class.extend({
     },
     getTable : function(tableId) {
         return this.tables.get(tableId);
-    },
-    getTableId : function() {
-      return this.table.id;
     },
     startNewHand : function(tableId,handId, dealerSeatId) {
         var table = this.tables.get(tableId);
@@ -136,7 +133,7 @@ Poker.TableManager = Class.extend({
         }
     },
     addPlayer : function(tableId,seat,playerId, playerName) {
-        console.log("adding player " + playerName + " at seat" + seat);
+        console.log("adding player " + playerName + " at seat" + seat + " on table " + tableId);
         var table = this.tables.get(tableId);
         var p = new Poker.Player(playerId, playerName);
         table.addPlayer(seat,p);

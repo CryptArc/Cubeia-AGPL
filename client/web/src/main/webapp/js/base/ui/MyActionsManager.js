@@ -6,19 +6,23 @@ var Poker = Poker || {};
  * @type {*}
  */
 Poker.MyActionsManager  = Class.extend({
-    actionButtons : [],
-    tableButtons : [],
+    actionButtons : null,
+    tableButtons : null,
     doBetActionButton : null,
-    currentActions : [],
-    allActions : [],
+    currentActions : null,
+    allActions : null,
     cancelBetActionButton : null,
     slider : null,
     init : function(view,actionCallback) {
         var self = this;
+        this.actionButtons = [];
+        this.tableButtons = [];
+        this.currentActions = [];
+        this.allActions = [];
         this._addTableButton($(".action-join",view),Poker.ActionType.JOIN,actionCallback);
         this._addTableButton($(".action-leave",view),Poker.ActionType.LEAVE,actionCallback);
         this._addTableButton($(".action-sit-in",view),Poker.ActionType.SIT_IN,actionCallback);
-        this._addTableButton($(".action-sit-put",view),Poker.ActionType.SIT_OUT,actionCallback);
+        this._addTableButton($(".action-sit-out",view),Poker.ActionType.SIT_OUT,actionCallback);
 
         var cb = function(minAmount,maxAmount,mainPot){
             self.onClickBetButton(minAmount,maxAmount,mainPot);
@@ -169,7 +173,7 @@ Poker.ActionButton = Class.extend({
         var self = this;
         this.el = el;
         if(!this.el) {
-            console.log("Unable to find action button DOM element with id " + elId);
+            console.log("Unable to find action button DOM element with id " + el);
         }
         this.showAmount = showAmount;
         if(this.showAmount==false){

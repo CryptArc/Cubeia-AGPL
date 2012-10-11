@@ -1,18 +1,25 @@
 "use strict";
 var Poker = Poker || {};
 
+var freezeCommunication = false;
+function freeze() {
+    freezeCommunication = true;
+}
 /**
  * Construct a poker protocol object handler
  * @constructor
  * @param {Poker.TableManager} tableManager
  */
-Poker.PokerProtocolHandler = function(tableManager,tableComHandler) {
+Poker.PokerProtocolHandler = function() {
 
-    this.tableManager = tableManager;
-    this.tableComHandler = tableComHandler;
+    this.tableManager = Poker.ApplicationContext.tableManager;
+    this.actionSender = Poker.ApplicationContext.actionSender;
     this.seq = -1;
     this.packetCount = 0;
     this.handleGameTransportPacket = function(gameTransportPacket) {
+        if(freezeCommunication==true) {
+            return;
+        }
         if(!this.tableManager.tableExist(gameTransportPacket.tableid)) {
             console.log("Received packet for table ("+gameTransportPacket.tableid+") you're not viewing");
             return;
@@ -275,7 +282,7 @@ Poker.PokerProtocolHandler = function(tableManager,tableComHandler) {
         if(acts.length>0 && (acts[0].type.id == Poker.ActionType.BIG_BLIND.id || acts[0].type.id == Poker.ActionType.SMALL_BLIND.id)) {
             //for now auto post blinds
             console.log("Auto posting " + acts[0].type.text);
-            this.tableComHandler.sendAction(tableId,requestAction.seq, requestAction.allowedActions[0].type, requestAction.allowedActions[0].minAmount);
+            this.actionSender.sendAction(tableId,requestAction.seq, requestAction.allowedActions[0].type, requestAction.allowedActions[0].minAmount);
             return;
         }
         this.tableManager.handleRequestPlayerAction(

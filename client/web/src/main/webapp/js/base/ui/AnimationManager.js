@@ -2,6 +2,7 @@ var Poker = Poker || {};
 
 Poker.AnimationManager = Class.extend({
     cssAnimator : null,
+    active : true,
     init : function() {
         this.cssAnimator = new Poker.CSSAnimator();
     },
@@ -10,9 +11,6 @@ Poker.AnimationManager = Class.extend({
         animation.build();
         if(typeof(delay) == "undefined") {
             delay = 50;
-        }
-        if(typeof(animation.element)=="undefined") {
-            console.log(animation);
         }
         this.cssAnimator.removeTransitionCallback(animation.element);
         animation.prepare();
@@ -26,18 +24,28 @@ Poker.AnimationManager = Class.extend({
                     self.animate(animation.nextAnimation,0);
                 }
             });
-        if(delay==0) {
+        if(this.active==false) {
+            animation.animate();
+            if(animation.callback!=null) {
+                animation.callback();
+            }
+            if(animation.nextAnimation!=null) {
+                this.animate(animation.nextAnimation,0);
+            }
+
+        } else if(delay==0) {
             animation.animate();
         } else {
             setTimeout(function(){
                 animation.animate();
             },delay);
         }
-
-
+    },
+    setActive : function(active) {
+        this.active = active;
     }
 });
-Poker.AnimationManager = new Poker.AnimationManager();
+
 
 Poker.Animation = Class.extend({
     element : null,
@@ -47,9 +55,12 @@ Poker.Animation = Class.extend({
         if(typeof(element)=="undefined") {
             throw "Poker.Animation requires an element";
         }
-        if(typeof(element.length)!="undefined") {
-           element = element.get(0);
+        if(typeof(element.length)!="undefined" && element.length==0) {
+            throw "Poker.Animation requires an element";
+        } else if(typeof(element.length)!="undefined") {
+            element = element.get(0);
         }
+
         this.element = element;
     },
     addCallback : function(callback) {
@@ -68,8 +79,8 @@ Poker.Animation = Class.extend({
     build : function() {
 
     },
-    start : function() {
-       Poker.AnimationManager.animate(this);
+    start : function(animationManager) {
+        animationManager.animate(this);
     }
 });
 Poker.CSSClassAnimation = Poker.Animation.extend({

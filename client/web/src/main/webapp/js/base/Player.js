@@ -10,8 +10,9 @@ Poker.Player = Class.extend({
     balance : 0,
     tableStatus : null,
     lastActionType : null,
-    cards : [],
+    cards : null,
     init : function(id,name) {
+        this.cards = [];
         this.name = name;
         this.id = id;
         this.tableStatus = Poker.PlayerTableStatus.SITTING_IN;

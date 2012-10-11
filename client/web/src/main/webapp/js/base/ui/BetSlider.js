@@ -21,11 +21,12 @@ Poker.BetSlider = Class.extend({
     minBet : 0,
     maxBet : 0,
     delta : 5,
-    markers : [],
+    markers : null,
     slider : null,
     valueOutputs : null,
     containerId : null,
     init : function(containerId) {
+       this.markers = [];
        this.valueOutputs =  $(".slider-value");
        this.containerId = containerId;
     },

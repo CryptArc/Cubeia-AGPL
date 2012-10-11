@@ -5,11 +5,15 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
     pokerProtocolHandler:null,
     isSeated:false,
     inTableView : false,
+    actionSender : null,
     init:function (connector) {
         this.connector = connector;
+        this.tableManager = Poker.ApplicationContext.tableManager;
+        this.pokerProtocolHandler = Poker.ApplicationContext.pokerProtocolHandler;
+        this.actionSender = Poker.ApplicationContext.actionSender;
     },
     onMyPlayerAction : function (tableId,actionType, amount) {
-        console.log("onMyPlayerAction:" + actionType.text + " amount = " + amount);
+        console.log("onMyPlayerAction:" + actionType.text + " amount = " + amount + " tableId = " + tableId);
         if (actionType.id == Poker.ActionType.JOIN.id) {
             this.joinTable(tableId);
         } else if (actionType.id == Poker.ActionType.LEAVE.id) {
@@ -24,9 +28,9 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
             this.sitOut(tableId);
         } else {
             if (actionType.id == Poker.ActionType.RAISE.id) {
-                this.sendAction(tableId,this.pokerProtocolHandler.seq, this.getActionEnumType(actionType), amount, 0);
+                this.actionSender.sendAction(tableId,this.pokerProtocolHandler.seq, this.getActionEnumType(actionType), amount, 0);
             } else {
-                this.sendAction(tableId,this.pokerProtocolHandler.seq, this.getActionEnumType(actionType), amount, 0);
+                this.actionSender.sendAction(tableId,this.pokerProtocolHandler.seq, this.getActionEnumType(actionType), amount, 0);
             }
         }
     },
@@ -74,19 +78,23 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
     },
     onOpenTable:function (tableId, capacity) {
         console.log("ON OPEN TABLE");
-        this.onOpenTableAccepted(tableId, capacity);
-        this.connector.watchTable(tableId);
+        var t = this.tableManager.getTable(tableId);
+        if(t!=null) {
+            Poker.ApplicationContext.viewManager.activateViewByTableId(tableId);
+        } else {
+            this.onOpenTableAccepted(tableId, capacity);
+            this.connector.watchTable(tableId);
+        }
+
     },
     onOpenTableAccepted:function (tableId, capacity) {
+        var name = comHandler.tableNames.get(tableId);
         var tableViewContainer = $("#tableViewContainer");
         var templateManager = new Poker.TemplateManager();
         var tableLayoutManager = new Poker.TableLayoutManager(tableId, tableViewContainer, templateManager, this, capacity);
-        this.tableManager = new Poker.TableManager();
-
-        this.tableId = tableId;
         this.inTableView = true;
-        this.tableManager.createTable(tableId, capacity, comHandler.tableNames.get(tableId), [tableLayoutManager]);
-        this.pokerProtocolHandler = new Poker.PokerProtocolHandler(this.tableManager, this);
+        this.tableManager.createTable(tableId, capacity, name , [tableLayoutManager]);
+        Poker.ApplicationContext.viewManager.addTableView(tableLayoutManager,name);
     },
     handleSeatInfo:function (seatInfoPacket) {
         console.log(seatInfoPacket);
@@ -98,10 +106,10 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
     handleNotifyLeave:function (notifyLeavePacket) {
         if (notifyLeavePacket.pid === Poker.MyPlayer.id) {
             console.log("I left this table, closing it.");
-            this.tableManager.leaveTable();
-            this.showLobby();
+            this.tableManager.leaveTable(notifyLeavePacket.tableid);
+            Poker.ApplicationContext.viewManager.removeTableView(notifyLeavePacket.tableid);
         } else {
-            this.tableManager.removePlayer(notifyLeavePacket.pid);
+            this.tableManager.removePlayer(notifyLeavePacket.tableid,notifyLeavePacket.pid);
         }
     },
     handleNotifyJoin:function (notifyJoinPacket) {
@@ -123,6 +131,7 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
         console.log("Unwatch response = ");
         console.log(unwatchResponse);
         this.tableManager.leaveTable(unwatchResponse.tableid);
+        Poker.ApplicationContext.viewManager.removeTableView(unwatchResponse.tableid);
         this.showLobby();
 
     },
@@ -143,8 +152,6 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
         comHandler.subscribeToCashGames();
     },
     handlePacket:function (packet) {
-        console.log("HANDLE PACKET TAAAAAAAAABLE");
-        console.log(packet);
         switch (packet.classId) {
             case FB_PROTOCOL.NotifyJoinPacket.CLASSID :
                 this.handleNotifyJoin(packet);
@@ -193,7 +200,7 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
     },
     handleWatchResponse:function (watchResponse) {
         if (watchResponse.status == "DENIED_ALREADY_SEATED") {
-            this.joinTable(this.tableManager.getTableId());
+            this.joinTable(watchResponse.tableid);
         } else if (watchResponse.status == "CONNECTED") {
         }
 
@@ -241,8 +248,6 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
     handleSeatedAtTournamentTable:function (seated) {
         console.log("I was seated in a tournament, opening table");
         console.log(seated)
-        $("#lobbyView").hide();
-        $("#tableView").show();
         this.onOpenTableAccepted(seated.tableid, 10)
         this.joinTable(seated.tableid);
     },

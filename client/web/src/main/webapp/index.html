@@ -35,16 +35,19 @@
     <script src="js/lib/cubeia/firebase-js-api-1.8.0-CE-javascript.js" type="text/javascript"></script>
     <script src="js/lib/cubeia/firebase-protocol-1.8.0-CE-javascript.js" type="text/javascript"></script>
     <script src="js/lib/poker-protocol-1.0-SNAPSHOT.js" type="text/javascript"></script>
+    <script src="js/lib/quo.js" type="text/javascript"></script>
 
     <script src="js/base/Utils.js" type="text/javascript"></script>
 
     <script type="text/javascript" src="js/base/MyPlayer.js"></script>
     <script type="text/javascript" src="js/base/PlayerTableStatus.js"></script>
 
-    <script src="js/base/communication/ProtocolHandler.js" type="text/javascript"></script>
+    <script src="js/base/communication/ActionSender.js" type="text/javascript"></script>
+    <script src="js/base/communication/PokerProtocolHandler.js" type="text/javascript"></script>
     <script src="js/base/communication/AbstractConnectorHandler.js" type="text/javascript"></script>
     <script src="js/base/communication/TableComHandler.js" type="text/javascript"></script>
     <script src="js/base/communication/CommunicationHandler.js" type="text/javascript"></script>
+
     <script type="text/javascript" src="js/base/data/Map.js"></script>
     <script type="text/javascript" src="js/base/ui/BetSlider.js"></script>
     <script type="text/javascript" src="js/base/Action.js"></script>
@@ -76,13 +79,14 @@
     <script type="text/javascript" src="js/base/ui/views/View.js"></script>
     <script type="text/javascript" src="js/base/ui/views/ViewManager.js"></script>
     <script type="text/javascript" src="js/base/ui/views/MainMenuManager.js"></script>
-
+    <script type="text/javascript" src="js/base/ApplicationContext.js"></script>
     <script type="text/javascript">
         var comHandler = null;
-        var soundRepository = new Poker.SoundRepository();
+        var soundRepository = null;
         var dialogManager = null;
         var viewManager = null;
         var mainMenuManager = null;
+
         function handleKeyUp(keyCode) {
             if(keyCode == 13) {
                 $("#loginButton").click();
@@ -90,10 +94,6 @@
         }
         var isIphone = false;
         $(document).ready(function(){
-
-            dialogManager = new Poker.DialogManager();
-            viewManager = new Poker.ViewManager("tabItems");
-            mainMenuManager = new Poker.MainMenuManager(viewManager);
 
             $(".describe").describe();
 
@@ -112,8 +112,16 @@
             var tableComManager = null;
             //handles the lobby UI
 
+            Poker.ApplicationContext.wire({ webSocketUrl : webSocketUrl, webSocketPort : webSocketPort});
+
+            //TODO: refactor dependent classes and remove these
+            soundRepository = Poker.ApplicationContext.soundsRepository;
+            dialogManager = Poker.ApplicationContext.dialogManager;
+            viewManager = Poker.ApplicationContext.viewManager;
+            mainMenuManager = Poker.ApplicationContext.mainMenuManager;
+
             //wraps Firebase communication
-            comHandler = new Poker.CommunicationHandler(webSocketUrl, webSocketPort);
+            comHandler = Poker.ApplicationContext.comHandler;
 
             $("#loginButton").click(function(e){
                 console.log("logging in");
@@ -175,8 +183,8 @@
                 }
                 $("body").css({fontSize : targetFontSize+"%"});
             } else {
-                tableView.css({width:"100%",height:"100%", marginLeft : 0+"px"});
-                var targetFontSize =  Math.round(90* w.width() / baseWidth);
+                tableView.css({width:"100%", height: (w.height()-40)+"px", marginLeft : 0+"px"});
+                var targetFontSize =  Math.round(90 * w.width() / baseWidth);
                 if(targetFontSize>130) {
                     targetFontSize=130;
                 }
@@ -195,9 +203,12 @@
     <div id="toolbar">
         <div class="main-menu-button">
         </div>
-        <ul id="tabItems" class="tabs">
+        <div class="tabs-container">
+            <ul id="tabItems" class="tabs">
 
-        </ul>
+            </ul>
+        </div>
+
     </div>
     <div class="main-menu-container" style="">
         <ul>
@@ -216,6 +227,10 @@
             <li>
                 Sound settings
                 <span class="description">Manage your funds</span>
+            </li>
+            <li onclick="javascript:freezeCommunication=true; $(this).addClass('active');">
+                Freeze communication
+                <span class="description">Debug setting to freeze communication</span>
             </li>
         </ul>
     </div>
@@ -393,7 +408,7 @@
         <div id="tableView-{{tableId}}" class="table-container">
             <div class="table-logo"></div>
             <div id="seatContainer-{{tableId}}" class="default-table table-10">
-                <div class="seat" id="seat0">
+                <div class="seat" id="seat0-{{tableId}}">
 
                 </div>
                 <div class="seat" id="seat1-{{tableId}}">
@@ -437,12 +452,12 @@
                 </div>
             </div>
             <div class="bottom-bar">
-                <div class="action-button" id="actionSitOut" style="display: none;">
+                <div class="action-button action-sit-out" style="display: none;">
                     <span>Sit-out</span>
                 </div>
                 <div class="own-player" id="myPlayerSeat-{{tableId}}Info" style="display:none;">
-                    <div class="name" id="myPlayerName"></div>
-                    <div class="balance" id="myPlayerBalance"></div>
+                    <div class="name" id="myPlayerName-{{tableId}}"></div>
+                    <div class="balance" id="myPlayerBalance-{{tableId}}"></div>
                 </div>
 
                 <div id="userActActions-{{tableId}}" class="user-actions">

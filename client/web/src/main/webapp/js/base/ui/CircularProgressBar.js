@@ -1,5 +1,5 @@
-var CircularProgressBar = function(containerId) {
-	this._initialize(containerId);
+var CircularProgressBar = function(containerId,animationManager) {
+	this._initialize(containerId,animationManager);
 };
 CircularProgressBar.prototype = {
 	containerId : null,
@@ -8,7 +8,8 @@ CircularProgressBar.prototype = {
     fill : null,
     pie : null,
     pieElement : null,
-	_initialize : function(containerId) {
+    animationManager : null,
+	_initialize : function(containerId,animationManager) {
 		if (containerId == null) {
 			throw "CircularProgressBar: containerId must be set";
 		}
@@ -18,6 +19,7 @@ CircularProgressBar.prototype = {
 		var c = $(containerId);
 		this.containerId = containerId;
 		this._addContent();
+        this.animationManager = animationManager;
 	},
 	show : function() {
 		$(this.containerId).show();
@@ -65,7 +67,7 @@ CircularProgressBar.prototype = {
                 self.slice.addClass("cpb-gt50");
                 self.fill.show();
             }).next().addTransform("rotate(360deg)");
-        anim.start();
+        anim.start(this.animationManager);
 
         return;
 
