@@ -89,7 +89,7 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
     },
     onOpenTableAccepted:function (tableId, capacity) {
         var name = comHandler.tableNames.get(tableId);
-        var tableViewContainer = $("#tableViewContainer");
+        var tableViewContainer = $(".view-container");
         var templateManager = new Poker.TemplateManager();
         var tableLayoutManager = new Poker.TableLayoutManager(tableId, tableViewContainer, templateManager, this, capacity);
         this.inTableView = true;

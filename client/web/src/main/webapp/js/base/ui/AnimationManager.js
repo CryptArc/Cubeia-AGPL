@@ -48,8 +48,9 @@ Poker.AnimationManager = Class.extend({
         if(animation.id == null) {
             animation.id = this.nextId();
         }
-        //if it's a timed animation (time sensitive) and the animation manager isn't active
-        //  we need to store it for later activation
+        console.log("ANIMATING START " + animation.id + " active = " + this.active);
+        // if it's a timed animation (time sensitive) and the animation manager isn't active
+        // we need to store it for later activation
         if(this.active === false && animation.timed === true ) {
             this.pendingAnimations.push(animation);
             return;
@@ -70,10 +71,12 @@ Poker.AnimationManager = Class.extend({
 
         //add the transition properties to the element
         animation.prepare();
-
+        var called = false;
         //setup the animation callbacks
         this.cssAnimator.addTransitionCallback(animation.element,
             function(){
+                console.log("CALLBACK for " + animation.id);
+                self.cssAnimator.removeTransitionCallback(animation.element);
                 if(animation.timed==true) {
                     self.removeCurrentAnimation(animation);
                 }
@@ -85,6 +88,7 @@ Poker.AnimationManager = Class.extend({
                 }
 
             });
+        console.log("adding callback for " + animation.id);
         //if the animation manager is NOT active (view not showing)
         if(this.active==false) {
             animation.animate(); //add the transforms right away
@@ -131,6 +135,7 @@ Poker.Animation = Class.extend({
     callback : null,
     nextAnimation : null,
     timed : false,
+    defaultStyle : "",
     init : function(element) {
         if(typeof(element)=="undefined") {
             throw "Poker.Animation requires an element";
@@ -140,8 +145,11 @@ Poker.Animation = Class.extend({
         } else if(typeof(element.length)!="undefined") {
             element = element.get(0);
         }
-
         this.element = element;
+    },
+    addDefaultStyle : function(style){
+        this.defaultStyle = style;
+        return this;
     },
     cancel : function () {
         this.element.style.cssText = "";
@@ -210,7 +218,7 @@ Poker.TransformAnimation = Poker.Animation.extend({
     },
     prepare : function() {
         if(this.transitionStr!=null) {
-            this.element.style.cssText = this.transitionStr;
+            this.element.style.cssText= this.defaultStyle + this.transitionStr;
         }
     },
     animate : function() {

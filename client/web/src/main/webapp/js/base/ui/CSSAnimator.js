@@ -12,7 +12,7 @@ Poker.CSSAnimator = Class.extend({
         var transitionsStr = "";
         for(var j = 0; j<this.prefix.length; j++) {
             var p = this.prefix[j];
-            transitionsStr+=p+"transition:"
+            transitionsStr+=p+"transition:";
             for(var i=0; i<transitions.length; i++) {
                 if(transitions[i].indexOf("transform")==0) {
                     transitionsStr+=p;
@@ -47,6 +47,12 @@ Poker.CSSAnimator = Class.extend({
         var arr = new Array(transform);
         this.addTransforms(el,arr,origin)
     },
+    createTranslatePx: function(x,y,z,orig)  {
+        if(typeof(orig)=="undefined") {
+            orig = "center";
+        }
+        return this.createTransformString(["translate3d("+x+"px,"+y+"px,"+z+"px)"],orig);
+    },
     createTransformString : function(transforms,origin) {
         var transformStr = "";
         for(var j = 0; j<this.prefix.length; j++) {
@@ -78,6 +84,7 @@ Poker.CSSAnimator = Class.extend({
         if(!element || !func) {
            throw "Poker.CSSAnimator: Illegal argument, element and callback function must be set";
         }
+        this.removeTransitionCallback(element);
         element.addEventListener("webkitTransitionEnd", func,false);
         element.addEventListener("transitionend", func,false);
         element.addEventListener("oanimationend", func,false);
@@ -91,5 +98,7 @@ Poker.CSSAnimator = Class.extend({
         element.removeEventListener("transitionend");
         element.removeEventListener("oanimationend");
         element.removeEventListener("msTransitionEnd");
+
+
     }
 });

@@ -5,28 +5,28 @@ Poker.ViewSwiper = Class.extend({
     startXPos : 0,
     centerElement : null,
     leftElement : null,
+    leftStyle : null,
+    centerStyle : null,
+    rightStyle : null,
     rightElement : null,
     cssAnimator : null,
     nextCallback : null,
     previousCallback : null,
-    switchNext : false,
-    switchPrevious : false,
-    setElements : function(left,center,right) {
-        this.leftElement = left;
+    completeRight : false,
+    completeLeft: false,
+    moved : false,
+    animationManager : null,
 
-        this.centerElement = center;
-
-        this.rightElement = right;
-
-    },
     init : function(swipeElement,nextCallback,previousCallback) {
         var self = this;
         this.cssAnimator = new Poker.CSSAnimator();
         this.nextCallback = nextCallback;
         this.previousCallback = previousCallback;
         swipeElement.bind("touchstart",function(e){
-            if(e.originalEvent.touches.length==1){
 
+            if(e.originalEvent.touches.length==1){
+                this.moved = false;
+                console.log("start");
                 var touch = e.originalEvent.touches[0];
                 self.start(touch.pageX);
                 self.switchNext=false;
@@ -35,66 +35,193 @@ Poker.ViewSwiper = Class.extend({
         });
         swipeElement.bind("touchmove",function(e){
             if(e.originalEvent.touches.length==1){
-                e.preventDefault();
                 var touch = e.originalEvent.touches[0];
                 var moveX = touch.pageX-self.startXPos;
+                e.preventDefault();
+                if(Math.abs(moveX)>0) {
+                    this.moved = true;
+                }
                 if(moveX>0) {
                     self.moveRight(moveX);
-                } else {
+                } else if(moveX<0){
                     self.moveLeft(-moveX);
                 }
             }
         });
         swipeElement.bind("touchend",function(e){
+                if(this.moved==true) {
+                    console.log("ending");
+                    self.end();
+                }
 
-            if(this.switchNext==true) {
-                this.nextCallback();
-            } else if(this.switchPrevious==true) {
-                this.previousCallback();
-            }
-
-            var left = self.leftElement.width();
-            var right = self.rightElement.width();
-            if(self.leftElement.attr("id")!=self.centerElement.attr("id")) {
-                self.leftElement.attr("style",self.cssAnimator.createTransformString(["translate3d(-"+left+"px,0,0)"],"center"));
-            }
-            if(self.rightElement.attr("id")!=self.centerElement.attr("id")) {
-                self.rightElement.attr("style",self.cssAnimator.createTransformString(["translate3d("+right+"px,0,0)"],"center"));
-            }
-
-            var trans = self.cssAnimator.createTransformString(["translate3d(0,0,0)"],"center");
-            self.centerElement.attr("style",trans);
         });
+    },
+    setElements : function(left,center,right) {
+
+        console.log(left);
+        console.log(center);
+        console.log(right);
+        this.called = false;
+        this.animationManager = new Poker.AnimationManager();
+        this.leftElement = left!=null ? left.viewElement : null;
+        this.centerElement = center!=null ? center.viewElement : null;
+        this.rightElement = right!=null ? right.viewElement : null;
+
+        if(this.leftElement!=null) {
+            this.leftStyle = this.leftElement.show().attr("style");
+            this.leftElement.hide();
+        } else {
+            this.leftStyle = "";
+        }
+        if(this.centerElement!=null) {
+            console.log(this.centerElement);
+            var self = this;
+            setTimeout(function(){
+                self.centerStyle = self.centerElement.attr("style");
+            },50);
+        } else {
+            this.centerStyle = "";
+        }
+
+        if(this.rightElement!=null) {
+            this.rightStyle  = this.rightElement.show().attr("style");
+            this.rightElement.hide();
+        } else {
+            this.rightStyle = "";
+        }
+
+    },
+    end : function() {
+        this.startXPos = 0;
+        if(this.completeRight==true) {
+            this.completeRight=false;
+            this.finishRight();
+            return;
+        } else if(this.completeLeft==true) {
+            this.completeLeft=false;
+            this.finishLeft();
+            return;
+        }
+
+
+        this.setRightStyle("");
+        if(this.rightElement!=null) {
+            this.rightElement.hide();
+        }
+        this.setCenterStyle("");
+        this.setLeftStyle("");
+        if(this.leftElement!=null) {
+            this.leftElement.hide();
+        }
+        return;
+    },
+    reset : function() {
+        this.setRightStyle("");
+        this.setLeftStyle("");
+        this.setCenterStyle("");
+    },
+    finishRight : function() {
+        console.log("FINNISH RIGHT");
+        var self = this;
+        new Poker.TransformAnimation(this.leftElement).
+            addDefaultStyle(this.leftStyle).
+            addTransition("transform",0.5,"ease-out").
+            addTransform("translate3d(0,0,0)").
+            start(this.animationManager);
+
+
+
+        var anim = new Poker.TransformAnimation(this.centerElement).
+            addDefaultStyle(this.centerStyle).
+            addTransition("transform",0.5,"ease-out").
+            addTransform("translate3d("+this.centerElement.width()+"px,0,0)");
+
+        setTimeout(function(){self.rightCallBack();},600);
+
+        anim.start(this.animationManager);
+
+    },
+    called : false,
+    rightCallBack : function() {
+        console.log("right callback");
+        this.called = true;
+        this.reset();
+        this.previousCallback();
+
+    },
+    finishLeft : function() {
+        var self = this;
+        console.log("FINISH LEFT");
+
+        new Poker.TransformAnimation(this.centerElement).
+            addDefaultStyle(this.centerStyle).
+            addTransition("transform",0.5,"ease-out").
+            addTransform("translate3d(-"+this.centerElement.width()+"px,0,0)").
+            start(this.animationManager);
+
+        setTimeout(function(){self.rightCallBack();},600);
+
+        new Poker.TransformAnimation(this.rightElement).
+            addDefaultStyle(this.rightStyle).
+            addTransition("transform",0.5,"ease-out").
+            addTransform("translate3d(0,0,0)").
+            start(this.animationManager);
     },
     start : function(x) {
         this.startXPos = x;
     },
     moveLeft : function(distance) {
-        if(distance>(this.centerElement.width()/3)) {
-            this.switchPrevious = true;
-        } else {
-            this.switchPrevious = false;
+        var transform = this.cssAnimator.createTranslatePx(-distance,0,0);
+        this.setCenterStyle(transform);
+        if(this.rightElement==null) {
+            return;
         }
-        var transform = this.cssAnimator.createTransformString(["translate3d(-"+distance+"px,0,0)"],"center");
-        this.centerElement.attr("style",transform);
+        if(distance>(this.centerElement.width()/3)) {
+            this.completeLeft = true;
+        } else {
+            this.completeLeft  = false;
+        }
+
         if(this.rightElement.attr("id")!=this.centerElement.attr("id")){
             var pos = this.rightElement.width() - distance;
-            var rt = this.cssAnimator.createTransformString(["translate3d("+pos+"px,0,0)"],"center");
-            this.rightElement.show().attr("style",rt);
+            this.rightElement.show();
+            this.setRightStyle(this.cssAnimator.createTranslatePx(pos,0,0));
+
+        }
+    },
+    setRightStyle : function(str) {
+        if(this.rightElement!=null) {
+            this.rightElement.attr("style",this.rightStyle + " "+ str);
+        }
+    },
+    setLeftStyle : function(str) {
+        if(this.leftElement!=null) {
+            this.leftElement.attr("style",this.leftStyle + " "+ str);
+        }
+    },
+    setCenterStyle : function(str) {
+        if(this.centerElement!=null) {
+            this.centerElement.attr("style",this.centerStyle + " "+ str);
         }
     },
     moveRight : function(distance) {
-        if(distance>(this.centerElement.width()/3)) {
-            this.switchNext = true;
-        } else {
-            this.switchNext = false;
+
+        var transform = this.cssAnimator.createTranslatePx(distance,0,0);
+        this.setCenterStyle(transform);
+        if(this.leftElement==null) {
+            return;
         }
-        var transform = this.cssAnimator.createTransformString(["translate3d("+distance+"px,0,0)"],"center");
-        this.centerElement.attr("style",transform);
+        if(distance>(this.centerElement.width()/3)) {
+            this.completeRight = true;
+        } else {
+            this.completeLeft= false;
+        }
+
         if(this.leftElement.attr("id")!=this.centerElement.attr("id")) {
             var pos = -this.leftElement.width()+distance;
-            var rt = this.cssAnimator.createTransformString(["translate3d("+pos+"px,0,0)"],"center");
-            this.leftElement.show().attr("style",rt);
+            this.leftElement.show();
+            this.setLeftStyle(this.cssAnimator.createTranslatePx(pos,0,0));
+
         }
 
     }

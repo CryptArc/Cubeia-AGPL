@@ -1,5 +1,6 @@
 var Poker = Poker || {};
 Poker.ViewManager = Class.extend({
+    currentId : 0,
     views : null,
     activeView : null,
     tabsContainer: null,
@@ -20,29 +21,37 @@ Poker.ViewManager = Class.extend({
     },
     getNextView : function() {
         for(var i = 0; i<this.views.length; i++) {
-            if(this.views[i] == this.activeView) {
-                return this.views[(i-1+this.views.length)%this.views.length];
+            if(this.views[i].id == this.activeView.id) {
+                return this.views[(i+1)%this.views.length];
             }
         }
+        return null;
     },
     nextView : function() {
         this.activateView(this.getNextView());
     },
     getPreviousView : function() {
         for(var i = 0; i<this.views.length; i++) {
-            if(this.views[i] == this.activeView) {
-                return this.views[(i+1)%this.views.length];
+            if(this.views[i].id == this.activeView.id) {
+                return this.views[(i-1+this.views.length)%this.views.length];
             }
         }
+        return null;
     },
     previousView : function() {
         this.activateView(this.getPreviousView());
     },
+    nextId : function() {
+        return this.currentId++;
+    },
     onLogin : function(){
+        var self = this;
         this.activateView(this.lobbyView);
         this.loginView.close();
         this.views.splice(0,1);
-        this.swiper = new Poker.ViewSwiper($(".view-container"),function(){
+
+        this.swiper = new Poker.ViewSwiper($(".view-container"),
+            function(){
                 self.nextView();
             },
             function(){
@@ -83,8 +92,11 @@ Poker.ViewManager = Class.extend({
     addTableView : function(tableLayoutManager,name) {
       var view = this.addView(new Poker.TableView(tableLayoutManager,name));
       this.activateView(view);
+      //TODO: move code to this class
+      updateTableViews();
     },
     activateView : function(view) {
+        console.log("ACTIVATING VIEW");
         if(this.activeView!=null) {
             this.activeView.deactivate();
         }
@@ -93,14 +105,17 @@ Poker.ViewManager = Class.extend({
 
         if(this.swiper!=null) {
             this.swiper.setElements(
-                this.getPreviousView().viewElement,
-                this.activeView.viewElement,
-                this.getNextView().viewElement
+                this.getPreviousView(),
+                this.activeView,
+                this.getNextView()
             );
         }
 
     },
     addView : function(view) {
+        if(view.id==null) {
+            view.id = this.nextId();
+        }
         this.views.push(view);
         this.tabsContainer.append(view.tabElement);
         var self = this;

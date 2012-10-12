@@ -98,12 +98,13 @@
 
             $(".describe").describe();
 
+            /*
             $("body").bind("touchmove", function(e){
                 var target = !$(e.target);
                 if(comHandler.isInTableView() && (target.hasClass("ui-slider-handle") || dialogManager.open == true)) {
                    e.preventDefault();
                 }
-            });
+            });*/
             var requestHost = window.location.hostname;
             var webSocketUrl = requestHost ? requestHost : "localhost";
             var webSocketPort = 9191;
@@ -162,7 +163,7 @@
 
             var w = $(window);
             if(tableView==null) {
-                tableView = $("#tableViewContainer");
+                tableView = $(".table-container");
             }
             //iphone - statusbar = 8/5
             var maxAspectRatio = 4/3;
@@ -191,6 +192,10 @@
                 }
                 $("body").css({fontSize : targetFontSize+"%"});
             }
+        }
+        function updateTableViews() {
+            tableView = $(".table-container");
+            setPokerSize();
         }
 
         $(window).resize(function(){
@@ -314,11 +319,6 @@
             </div>
 
         </div>
-        <div id="tableViewContainer" style="display: none;">
-
-        </div>
-
-
     </div>
 
     <div id="emptySeatTemplate" style="display: none;">

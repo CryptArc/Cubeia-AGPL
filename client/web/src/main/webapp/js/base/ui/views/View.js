@@ -5,6 +5,7 @@ Poker.View = Class.extend({
     viewElement : null,
     selectable : true,
     tabElement : null,
+    id : null,
     init : function(viewElementId,name) {
         this.viewElement = $(viewElementId);
         var item = $("<div/>").append($("<span/>").html(name));
@@ -60,7 +61,6 @@ Poker.TableView = Poker.View.extend({
         this.layoutManager = layoutManager;
     },
     activate : function() {
-        $("#tableViewContainer").show();
         this.layoutManager.onActivateView();
         this.activateView();
         this.activateTab();
