@@ -22,7 +22,11 @@ Poker.ViewManager = Class.extend({
     getNextView : function() {
         for(var i = 0; i<this.views.length; i++) {
             if(this.views[i].id == this.activeView.id) {
-                return this.views[(i+1)%this.views.length];
+                if(i==(this.views.length-1)){
+                    return null;
+                } else {
+                    return this.views[i+1];
+                }
             }
         }
         return null;
@@ -33,7 +37,11 @@ Poker.ViewManager = Class.extend({
     getPreviousView : function() {
         for(var i = 0; i<this.views.length; i++) {
             if(this.views[i].id == this.activeView.id) {
-                return this.views[(i-1+this.views.length)%this.views.length];
+                if(i==0) {
+                    return null;
+                } else {
+                    return this.views[i-1];
+                }
             }
         }
         return null;
@@ -106,11 +114,14 @@ Poker.ViewManager = Class.extend({
         if(this.swiper!=null) {
             this.swiper.setElements(
                 this.getPreviousView(),
-                this.activeView,
+                this.getActiveView(),
                 this.getNextView()
             );
         }
 
+    },
+    getActiveView : function() {
+        return this.activeView;
     },
     addView : function(view) {
         if(view.id==null) {

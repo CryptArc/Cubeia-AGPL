@@ -133,7 +133,6 @@ Poker.Seat = Class.extend({
        if(this.progressBarElement) {
            this.progressBarElement.attr("style","").hide();
        }
-
        if(this.currentProgressBarAnimation!=null){
            this.animationManager.removeAnimation(this.currentProgressBarAnimation);
            this.currentProgressBarAnimation = null;

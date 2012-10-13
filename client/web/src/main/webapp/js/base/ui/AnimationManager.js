@@ -48,7 +48,6 @@ Poker.AnimationManager = Class.extend({
         if(animation.id == null) {
             animation.id = this.nextId();
         }
-        console.log("ANIMATING START " + animation.id + " active = " + this.active);
         // if it's a timed animation (time sensitive) and the animation manager isn't active
         // we need to store it for later activation
         if(this.active === false && animation.timed === true ) {
@@ -75,8 +74,6 @@ Poker.AnimationManager = Class.extend({
         //setup the animation callbacks
         this.cssAnimator.addTransitionCallback(animation.element,
             function(){
-                console.log("CALLBACK for " + animation.id);
-                self.cssAnimator.removeTransitionCallback(animation.element);
                 if(animation.timed==true) {
                     self.removeCurrentAnimation(animation);
                 }
@@ -88,7 +85,6 @@ Poker.AnimationManager = Class.extend({
                 }
 
             });
-        console.log("adding callback for " + animation.id);
         //if the animation manager is NOT active (view not showing)
         if(this.active==false) {
             animation.animate(); //add the transforms right away
@@ -135,7 +131,6 @@ Poker.Animation = Class.extend({
     callback : null,
     nextAnimation : null,
     timed : false,
-    defaultStyle : "",
     init : function(element) {
         if(typeof(element)=="undefined") {
             throw "Poker.Animation requires an element";
@@ -147,12 +142,9 @@ Poker.Animation = Class.extend({
         }
         this.element = element;
     },
-    addDefaultStyle : function(style){
-        this.defaultStyle = style;
-        return this;
-    },
     cancel : function () {
-        this.element.style.cssText = "";
+        var cssAnimator = new Poker.CSSAnimator();
+        cssAnimator.clear(this.element);
     },
     setTimed : function(timed) {
         this.timed = timed;
@@ -175,7 +167,6 @@ Poker.Animation = Class.extend({
 
     },
     start : function(animationManager) {
-
         animationManager.animate(this);
         return this;
 
@@ -209,26 +200,29 @@ Poker.TransformAnimation = Poker.Animation.extend({
     transitionProperty : null,
     transitionEasing : null,
     origin : null,
-    transitionStr : null,
-    transformStr : null,
     created : null,
     init : function(element) {
         this._super(element);
         this.created = new Date().getTime();
     },
     prepare : function() {
-        if(this.transitionStr!=null) {
-            this.element.style.cssText= this.defaultStyle + this.transitionStr;
+        var cssAnimator = new Poker.CSSAnimator();
+        if(this.transitionProperty!=null) {
+            cssAnimator.addTransition(this.element,this.getCalculatedTransition());
         }
     },
     animate : function() {
-        if(this.transformStr!=null) {
-            this.element.style.cssText+=this.transformStr;
+        var cssAnimator = new Poker.CSSAnimator();
+        if(this.transform!=null) {
+           cssAnimator.addTransform(this.element,this.transform,this.origin);
         }
     },
     addTransform : function(transform) {
         this.transform = transform;
         return this;
+    },
+    addTranslate3dPx : function(x,y,z){
+       return this.addTransform("translate3d("+x+"px,"+y+"px,"+z+"px)");
     },
     addTransition : function(property, time, easing) {
         this.transitionProperty = property;
@@ -244,6 +238,9 @@ Poker.TransformAnimation = Poker.Animation.extend({
         this.origin = origin;
         return this;
     },
+    getCalculatedTransition : function() {
+        return this.transitionProperty + " " + this.getCalculatedTransitionTime() + "s " + this.transitionEasing;
+    },
     getCalculatedTransitionTime : function() {
         if(this.timed === true) {
             var now = new Date().getTime();
@@ -258,14 +255,6 @@ Poker.TransformAnimation = Poker.Animation.extend({
 
     },
     build : function() {
-        var cssAnimator = new Poker.CSSAnimator();
-        if(this.transitionProperty!= null ) {
-            var t = this.transitionProperty + " " + this.getCalculatedTransitionTime() + "s " + this.transitionEasing;
-            this.transitionStr = cssAnimator.createTransitionString([t]);
-        }
-        if(this.transform!=null) {
-            this.transformStr = cssAnimator.createTransformString([this.transform],this.origin);
-        }
         if(this.nextAnimation!=null) {
             this.nextAnimation.build();
         }
