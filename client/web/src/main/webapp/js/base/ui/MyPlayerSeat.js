@@ -37,7 +37,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.myActionsManager.onRequestPlayerAction(allowedActions,mainPot);
         this.circularProgressBar.show();
         this.circularProgressBar.render(timeToAct);
-        Poker.ApplicationContext.viewManager.requestTableFocus(this.tableId);
+        Poker.AppCtx.getViewManager().requestTableFocus(this.tableId);
     },
     onAction : function(actionType,amount){
         this.running = false;

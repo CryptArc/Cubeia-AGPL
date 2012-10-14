@@ -42,7 +42,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         this.tableView = $(viewId);
 
         this.tableId = tableId;
-        this.soundManager = new Poker.SoundManager(Poker.ApplicationContext.soundsRepository, tableId);
+        this.soundManager = new Poker.SoundManager(Poker.AppCtx.getSoundRepository(), tableId);
         this.tableComHandler = tableComHandler;
         var self = this;
         var actionCallback = function(actionType,amount){

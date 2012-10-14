@@ -8,8 +8,8 @@ var Poker = Poker || {};
  */
 Poker.PokerProtocolHandler = function() {
 
-    this.tableManager = Poker.ApplicationContext.tableManager;
-    this.actionSender = Poker.ApplicationContext.actionSender;
+    this.tableManager = Poker.AppCtx.getTableManager();
+    this.actionSender = Poker.AppCtx.getActionSender();
     this.seq = -1;
     this.packetCount = 0;
     this.handleGameTransportPacket = function(gameTransportPacket) {

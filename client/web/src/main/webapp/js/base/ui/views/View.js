@@ -3,7 +3,7 @@ var Poker = Poker || {};
 
 Poker.View = Class.extend({
     viewElement : null,
-
+    fixedSizeView : false,
     id : null,
     init : function(viewElementId,name) {
         this.viewElement = $(viewElementId);
@@ -32,9 +32,12 @@ Poker.TabView = Poker.View.extend({
     selectable : true,
     tabElement : null,
     init : function(viewElement,name) {
+
         this._super(viewElement,name);
-        var item = $("<div/>").append($("<span/>").html(name));
-        this.tabElement = $("<li/>").append(item);
+        var t = Poker.AppCtx.getTemplateManager().getTemplate("tabTemplate");
+
+        var item = $(Mustache.render(t,{name:name}));
+        this.tabElement = item;
     },
     setSelectable : function (selectable) {
         if(selectable == false) {

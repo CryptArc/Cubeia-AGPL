@@ -127,11 +127,13 @@
     height:auto;
     background-color: #555;
     width:61%;
+    height:100%;
     position: absolute;
     z-index: @overlay-z-index+1;
     padding:1% 2%;
     background-image: url("../images/menu/settings-background.gif");
     .box-shadow(inset 1px 0px 5px #444);
+    .user-select(none);
     h1 {
         font-weight: normal;
     }
@@ -144,15 +146,18 @@
     .group {
         background-color: #999;
         .border-radius(0.5em);
-        border:1px solid #454545;
+        border:1px solid #676767;
         font-size:140%;
+        .box-shadow(inset 0px -1px 1px #bbb);
+
 
     }
 
     .item {
-       border-bottom:1px solid #777;
-       border-top:1px solid #bbb;
-       padding:0.5em;
+        border-bottom:1px solid #777;
+        border-top:1px solid #bbb;
+        padding:0.5em;
+        cursor: pointer;
     }
     .item:first-child {
         border-top:none;
@@ -162,6 +167,11 @@
     }
     .toggle {
 
+    }
+    label, span {
+        font-size:110%;
+        cursor: pointer;
+        text-shadow: 1px 1px 0px #777;
     }
 }
 

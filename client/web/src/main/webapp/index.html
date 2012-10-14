@@ -9,7 +9,6 @@
     <link rel="apple-touch-icon" href="images/lobby/icon.png" />
 
     <link rel="stylesheet" type="text/css" href="css/CircularProgressBar.css"/>
-    <link rel="stylesheet" type="text/css" href="css/toggle-switch.css"/>
 
     <!-- All less files is imported in this base.less-->
     <link rel="stylesheet/less" type="text/css" href="less/base.less">
@@ -97,7 +96,6 @@
                 $("#loginButton").click();
             }
         }
-        var isIphone = false;
         $(document).ready(function(){
 
             $(".describe").describe();
@@ -118,16 +116,16 @@
             var tableComManager = null;
             //handles the lobby UI
 
-            Poker.ApplicationContext.wire({ webSocketUrl : webSocketUrl, webSocketPort : webSocketPort});
+            Poker.AppCtx.wire({ webSocketUrl : webSocketUrl, webSocketPort : webSocketPort});
 
             //TODO: refactor dependent classes and remove these
-            soundRepository = Poker.ApplicationContext.soundsRepository;
-            dialogManager = Poker.ApplicationContext.dialogManager;
-            viewManager = Poker.ApplicationContext.viewManager;
-            mainMenuManager = Poker.ApplicationContext.mainMenuManager;
+            soundRepository = Poker.AppCtx.getSoundRepository();
+            dialogManager = Poker.AppCtx.getDialogManager();
+            viewManager = Poker.AppCtx.getViewManager();
+            mainMenuManager = Poker.AppCtx.getMainMenuManager();
 
             //wraps Firebase communication
-            comHandler = Poker.ApplicationContext.comHandler;
+            comHandler = Poker.AppCtx.getComHandler();
 
             $("#loginButton").click(function(e){
                 console.log("logging in");
@@ -144,67 +142,12 @@
             $("#pwd").keyup(function(e){
                 handleKeyUp(e.keyCode);
             });
-
-
-            setPokerSize();
-
         });
-        var tableView = null;
-        var baseWidth = 1024;
 
-        function setPokerSize(){
-            if(window.matchMedia) {
-                var mq1 = window.matchMedia("(max-width:700px)")
-                var mq2 = window.matchMedia("(max-height: 400px)");
-                if(mq1.matches || mq2.matches) {
-                    isIphone = true;
-                } else {
-                    isIphone = false;
-                }
-            } else {
-                isIphone = false;
-            }
 
-            var w = $(window);
-            if(tableView==null) {
-                tableView = $(".table-container");
-            }
-            //iphone - statusbar = 8/5
-            var maxAspectRatio = 4/3;
-            if(isIphone) {
-                maxAspectRatio = 8/5;
-            }
 
-            if(w.width()/ w.height() > maxAspectRatio) {
-                var width = w.height() * maxAspectRatio;
-                tableView.css({
-                    width: Math.round(width) +  "px",
-                    height :Math.round(w.height()-40)+"px",
-                    marginLeft :Math.round((w.width()-width)/2)  + "px"
-                });
 
-                var targetFontSize =  Math.round(90* width / baseWidth);
-                if(targetFontSize>130) {
-                    targetFontSize=130;
-                }
-                $("body").css({fontSize : targetFontSize+"%"});
-            } else {
-                tableView.css({width:"100%", height: (w.height()-40)+"px", marginLeft : 0+"px"});
-                var targetFontSize =  Math.round(90 * w.width() / baseWidth);
-                if(targetFontSize>130) {
-                    targetFontSize=130;
-                }
-                $("body").css({fontSize : targetFontSize+"%"});
-            }
-        }
-        function updateTableViews() {
-            tableView = $(".table-container");
-            setPokerSize();
-        }
 
-        $(window).resize(function(){
-            setPokerSize();
-        });
 
     </script>
 
@@ -572,6 +515,14 @@
             </div>
         </li>
 
+    </script>
+    <script type="text/mustache" id="tabTemplate">
+        <li>
+            <div>
+                <span class="mini-cards"></span>
+                <span>{{name}}</span>
+            </div>
+        </li>
     </script>
 
 

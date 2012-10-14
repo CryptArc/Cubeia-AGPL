@@ -8,9 +8,9 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
     actionSender : null,
     init:function (connector) {
         this.connector = connector;
-        this.tableManager = Poker.ApplicationContext.tableManager;
-        this.pokerProtocolHandler = Poker.ApplicationContext.pokerProtocolHandler;
-        this.actionSender = Poker.ApplicationContext.actionSender;
+        this.tableManager = Poker.AppCtx.getTableManager();
+        this.pokerProtocolHandler = Poker.AppCtx.getProtocolHandler();
+        this.actionSender = Poker.AppCtx.getActionSender();
     },
     onMyPlayerAction : function (tableId,actionType, amount) {
         console.log("onMyPlayerAction:" + actionType.text + " amount = " + amount + " tableId = " + tableId);
@@ -80,7 +80,7 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
         console.log("ON OPEN TABLE");
         var t = this.tableManager.getTable(tableId);
         if(t!=null) {
-            Poker.ApplicationContext.viewManager.activateViewByTableId(tableId);
+            Poker.AppCtx.getViewManager().activateViewByTableId(tableId);
         } else {
             this.onOpenTableAccepted(tableId, capacity);
             this.connector.watchTable(tableId);
@@ -94,7 +94,7 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
         var tableLayoutManager = new Poker.TableLayoutManager(tableId, tableViewContainer, templateManager, this, capacity);
         this.inTableView = true;
         this.tableManager.createTable(tableId, capacity, name , [tableLayoutManager]);
-        Poker.ApplicationContext.viewManager.addTableView(tableLayoutManager,name);
+        Poker.AppCtx.getViewManager().addTableView(tableLayoutManager,name);
     },
     handleSeatInfo:function (seatInfoPacket) {
         console.log(seatInfoPacket);
@@ -130,7 +130,7 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
         console.log("Unwatch response = ");
         console.log(unwatchResponse);
         this.tableManager.leaveTable(unwatchResponse.tableid);
-        Poker.ApplicationContext.viewManager.removeTableView(unwatchResponse.tableid);
+        Poker.AppCtx.getViewManager().removeTableView(unwatchResponse.tableid);
         this.showLobby();
 
     },
@@ -139,7 +139,7 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
         console.log(leaveResponse);
         this.tableManager.leaveTable(leaveResponse.tableid);
         this.showLobby();
-        Poker.ApplicationContext.viewManager.removeTableView(leaveResponse.tableid);
+        Poker.AppCtx.getViewManager().removeTableView(leaveResponse.tableid);
 
     },
     leaveTable:function (tableId) {

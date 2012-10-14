@@ -1,12 +1,11 @@
 "use strict";
 var Poker = Poker || {};
 Poker.ActionSender = Class.extend({
-    connector : null,
-    init : function(connector) {
-        this.connector = connector;
+    init : function() {
     },
     sendGameTransportPacket :function(tableId,gamedata) {
-        this.connector.sendStyxGameData(0, tableId, gamedata);
+        var connector = Poker.AppCtx.getConnector();
+        connector.sendStyxGameData(0, tableId, gamedata);
     },
     sendAction : function(tableId,seq, actionType, betAmount, raiseAmount) {
         var performAction = new com.cubeia.games.poker.io.protocol.PerformAction();
