@@ -1,0 +1,109 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.cubeia.games.poker</groupId>
+    <artifactId>hand-debugger-service</artifactId>
+    <name>Hand Debugger Service</name>
+    <packaging>firebase-sar</packaging>
+
+    <parent>
+        <groupId>com.cubeia.games</groupId>
+        <artifactId>firebase-service-modules</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <properties>
+        <jersey-version>1.9.1</jersey-version>
+        <guice-version>3.0</guice-version>
+        <jackson-version>1.7.3</jackson-version>
+        <jetty.version>8.0.0.M2</jetty.version>
+    </properties>
+
+    <dependencies>
+
+        <!-- FIREBASE -->
+        <dependency>
+            <groupId>com.cubeia.firebase</groupId>
+            <artifactId>firebase-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.cubeia.firebase</groupId>
+            <artifactId>guice-support</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.cubeia.firebase</groupId>
+            <artifactId>styx</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.cubeia.games</groupId>
+            <artifactId>poker-protocol</artifactId>
+        </dependency>
+
+        <!-- LOGGING -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
+
+
+        <!-- JETTY/JERSEY/JSON FRAMEWORK -->
+        <dependency>
+            <groupId>com.sun.jersey.contribs</groupId>
+            <artifactId>jersey-guice</artifactId>
+            <version>${jersey-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-json</artifactId>
+            <version>${jersey-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <version>${jetty.version}</version>
+        </dependency>
+
+        <!--<dependency>
+              <groupId>org.codehaus.jackson</groupId>
+              <artifactId>jackson-core-asl</artifactId>
+              <version>${jackson-version}</version>
+          </dependency>
+          <dependency>
+              <groupId>org.codehaus.jackson</groupId>
+              <artifactId>jackson-mapper-asl</artifactId>
+              <version>${jackson-version}</version>
+          </dependency>
+          <dependency>
+              <groupId>org.codehaus.jackson</groupId>
+              <artifactId>jackson-jaxrs</artifactId>
+              <version>${jackson-version}</version>
+          </dependency>-->
+
+
+        <!-- MISC -->
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>10.0.1</version>
+        </dependency>
+    </dependencies>
+</project>

@@ -1,0 +1,46 @@
+.progressbar-first {
+    .transform(rotate(179deg));
+}
+
+/* default state of player cards */
+.cards-container-player .player-card-container {
+    .transition-transform(0.5s ease-out);
+    .transform(scale3d(0.75,0.75,1) translate3d(0,1%,0));
+}
+
+/* player cards dealt */
+.cards-container-player .player-card-container.dealt {
+    .transform(scale3d(0.75,0.75,1) translate3d(0,-18%,0));
+}
+
+/* player cards exposed */
+.cards-container-player .player-card-container.exposed {
+    .transform(scale3d(1,1,1) translate3d(0,-30%,0));
+}
+
+.my-player-seat .player-card-container {
+    .transition-transform(0.5s ease-out);
+    .transform(translate3d(0,30%,0));
+}
+
+.my-player-seat .player-card-container.dealt {
+    .transform(translate3d(0,0,0));
+}
+.my-player-seat .action-amount {
+    .transition-transform(0.5s ease-out);
+    .transform(translate3d(0,50%,0));
+}
+.my-player-seat .action-amount.placed {
+    .transform(translate3d(0,0,0));
+}
+.seat .action-amount {
+    .transition-transform(0.5s ease-out);
+    .transform(translate3d(0,-50%,0));
+}
+.seat .action-amount.placed {
+    .transform(translate3d(0,0,0));
+}
+
+.pot-transfer {
+    .transition-transform(1s ease-out);
+}
