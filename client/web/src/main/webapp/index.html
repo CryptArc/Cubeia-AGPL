@@ -9,8 +9,12 @@
     <link rel="apple-touch-icon" href="images/lobby/icon.png" />
 
     <link rel="stylesheet" type="text/css" href="css/CircularProgressBar.css"/>
+    <link rel="stylesheet" type="text/css" href="css/toggle-switch.css"/>
+
     <!-- All less files is imported in this base.less-->
     <link rel="stylesheet/less" type="text/css" href="less/base.less">
+
+
 
     <script type="text/javascript"  src="js/lib/less-1.3.0.min.js"></script>
 
@@ -206,7 +210,7 @@
 
 </head>
 <body>
-    <div id="toolbar">
+    <div id="toolbar" style="display:none;">
         <div class="main-menu-button">
         </div>
         <div class="tabs-container">
@@ -217,28 +221,38 @@
 
     </div>
     <div class="main-menu-container" style="">
-        <ul>
-            <li>
-                Cashier
-                <span class="description">Manage your funds</span>
-            </li>
-            <li class="active">
-                Help &amp; Rules
-                <span class="description">Manage your funds</span>
-            </li>
-            <li>
-                Game play settings
-                <span class="description">Manage your funds</span>
-            </li>
-            <li>
-                Sound settings
-                <span class="description">Manage your funds</span>
-            </li>
-            <li onclick="javascript:freezeCommunication=true; $(this).addClass('active');">
-                Freeze communication
-                <span class="description">Debug setting to freeze communication</span>
-            </li>
+        <ul id="mainMenuList">
+
         </ul>
+    </div>
+    <div class="menu-overlay slidable" style="display: none;">
+
+    </div>
+    <div id="devSettingsView" class="settings-view" style="display: none;">
+        <h1>Development settings</h1>
+        <h2>Communication</h2>
+        <div class="group">
+            <div class="item">
+                <fieldset class="toggle">
+                    <input id="freezeComSetting" type="checkbox">
+                    <label for="freezeComSetting">Freeze communication</label>
+                    <span class="toggle-button"></span>
+                </fieldset>
+            </div>
+        </div>
+        <h2>Experimental features</h2>
+        <div class="group">
+            <div class="item">
+                <fieldset class="toggle">
+                    <input id="swipeSetting" type="checkbox">
+                    <label for="swipeSetting">Swipe to change tabs</label>
+                    <span class="toggle-button"></span>
+                </fieldset>
+            </div>
+            <div class="item">
+                <span>Something else goes here</span>
+            </div>
+        </div>
     </div>
     <div class="view-container slidable">
 
@@ -358,7 +372,6 @@
         <div class="hand-strength">
 
         </div>
-
     </div>
     <script type="text/mustache" id="playerCardTemplate" style="display: none;">
         <div id="playerCard-{{domId}}" class="player-card-container">
@@ -548,6 +561,19 @@
         </p>
 
     </div>
+    <script type="text/mustache" id="menuItemTemplate">
+        <li class="{{cssClass}}">
+            <div class="icon">
+
+            </div>
+            <div class="text">
+                {{title}}
+                <span class="description">{{description}}</span>
+            </div>
+        </li>
+
+    </script>
+
 
 </body>
 </html>

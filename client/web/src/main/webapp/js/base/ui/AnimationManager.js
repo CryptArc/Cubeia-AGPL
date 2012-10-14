@@ -132,6 +132,7 @@ Poker.Animation = Class.extend({
     nextAnimation : null,
     timed : false,
     init : function(element) {
+
         if(typeof(element)=="undefined") {
             throw "Poker.Animation requires an element";
         }

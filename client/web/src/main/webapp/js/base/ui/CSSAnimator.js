@@ -16,15 +16,20 @@ Poker.CSSAnimator = Class.extend({
         }
     },
     clear : function(el) {
+
+
+        this.clearTransition(el);
+        this.clearTransform(el);
+
+
+    },
+    clearTransform : function(el) {
         if(el == null) {
             return;
         }
         el = this.getElement(el);
-
         for(var i = 0; i<this.prefix.length; i++) {
-            if(typeof(el.style[this.prefix[i]+"transition"])!="undefined"){
-                el.style[this.prefix[i]+"transition"] = "";
-            }
+
             if(typeof(el.style[this.prefix[i]+"transform"])!="undefined") {
                 el.style[this.prefix[i]+"transform"] = "";
             }
@@ -32,6 +37,18 @@ Poker.CSSAnimator = Class.extend({
                 el.style[this.prefix[i]+"transform-origin"]= "";
             }
 
+        }
+    },
+    clearTransition : function(el){
+        if(el == null) {
+            return;
+        }
+        el = this.getElement(el);
+        for(var i = 0; i<this.prefix.length; i++) {
+            var property = this.prefix[i]+"transition";
+            if(typeof(el.style[property])!="undefined"){
+                el.style[property] = "";
+            }
         }
     },
     setTranslate3dPx : function(el,x,y,z,orig) {

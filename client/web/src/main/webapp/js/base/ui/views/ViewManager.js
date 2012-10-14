@@ -8,14 +8,15 @@ Poker.ViewManager = Class.extend({
     loginView : null,
     cssAnimator : null,
     swiper : null,
+    toolbar : null,
     init : function(tabsContainerId) {
         var self = this;
         this.tabsContainer = $("#"+tabsContainerId);
         this.views = [];
-        this.loginView = this.addView(new Poker.View("#loginView","Login"));
-        this.lobbyView = this.addView(new Poker.View("#lobbyView","Lobby"));
+        this.loginView = this.addView(new Poker.TabView("#loginView","Login"));
+        this.lobbyView = this.addView(new Poker.TabView("#lobbyView","Lobby"));
         this.cssAnimator = new Poker.CSSAnimator();
-
+        this.toolbar = $("#toolbar");
         this.activateView(this.loginView);
 
     },
@@ -54,6 +55,7 @@ Poker.ViewManager = Class.extend({
     },
     onLogin : function(){
         var self = this;
+        this.toolbar.show();
         this.activateView(this.lobbyView);
         this.loginView.close();
         this.views.splice(0,1);
@@ -76,9 +78,11 @@ Poker.ViewManager = Class.extend({
         for(var i = 0; i<this.views.length; i++) {
             var v = this.views[i];
             if(typeof(v.getTableId)!="undefined" && v.getTableId()==tableId) {
-                this.activateView(this.lobbyView);
+                var pv = this.getPreviousView();
                 v.close();
                 this.views.splice(i,1);
+                this.activeView = null;
+                this.activateView(pv);
             }
         }
     },
