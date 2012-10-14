@@ -8,12 +8,14 @@ var Poker = Poker || {};
 Poker.Card = Class.extend({
     cardString:null,
     id:-1,
+    tableId : -1,
     templateManager:null,
     cardImage : null,
     cardElement : null,
-    init:function (id, cardString, templateManager) {
+    init:function (id, tableId, cardString, templateManager) {
         this.templateManager = templateManager;
         this.id = id;
+        this.tableId = tableId;
         if (cardString == "  ") {
             cardString = "back";
         }
@@ -26,7 +28,7 @@ Poker.Card = Class.extend({
      */
     render : function () {
         var t = this.getTemplate();
-        var output = Mustache.render(t, {domId:this.id, cardString:this.cardString});
+        var output = Mustache.render(t, {domId:this.id + "-" + this.tableId, cardString:this.cardString});
         return output;
     },
     /**
@@ -43,11 +45,11 @@ Poker.Card = Class.extend({
      * @return {*}
      */
     getJQElement:function () {
-        if(this.cardElement==null) {
+        if(this.cardImage==null) {
             this.cardElement =  $("#" + this.getCardDivId());
             this.cardImage = this.cardElement.find("img");
         }
-        return this.cardElement;
+        return $("#" + this.getCardDivId());
     },
     getDOMElement : function() {
       return this.getJQElement().get(0);
@@ -56,6 +58,6 @@ Poker.Card = Class.extend({
         return this.templateManager.getTemplate("playerCardTemplate");
     },
     getCardDivId:function () {
-        return "playerCard-" + this.id;
+        return "playerCard-" + this.id + "-" + this.tableId;
     }
 });

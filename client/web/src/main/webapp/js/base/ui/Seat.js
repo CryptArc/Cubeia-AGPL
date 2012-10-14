@@ -10,7 +10,6 @@ Poker.Seat = Class.extend({
    player : null,
    seatElement : null,
    progressBarElement : null,
-   cssAnimator : null,
    cards : null,
    cardsContainer : null,
    avatarElement : null,
@@ -19,14 +18,15 @@ Poker.Seat = Class.extend({
    handStrength : null,
    seatBalance : null,
    seatBase : null,
-   init : function(seatId, player, templateManager) {
-       this.seatId = seatId
+   animationManager : null,
+   currentProgressBarAnimation : null,
+   init : function(elementId, seatId, player, templateManager, animationManager) {
+       this.animationManager = animationManager;
+       this.seatId = seatId;
        this.player = player;
        this.templateManager = templateManager;
-       this.seatElement =  $("#seat"+this.seatId);
-       this.cssAnimator = new Poker.CSSAnimator();
+       this.seatElement =  $("#"+elementId);
        this.renderSeat();
-
    },
    setSeatPos : function(previousPos, position) {
      this.seatElement.removeClass("seat-empty").removeClass("seat-pos-"+previousPos).removeClass("seat-inactive").addClass("seat-pos-"+position);
@@ -37,7 +37,6 @@ Poker.Seat = Class.extend({
        this.progressBarElement = this.seatElement.find(".progress-bar");
        this.avatarElement = this.seatElement.find(".avatar");
        this.avatarElement.addClass("avatar"+(this.player.id%9));
-
        this.cardsContainer = this.seatElement.find(".cards-container");
        this.actionAmount = this.seatElement.find(".action-amount");
        this.actionText = this.seatElement.find(".action-text");
@@ -101,16 +100,15 @@ Poker.Seat = Class.extend({
    },
    showActionData : function(actionType,amount) {
        this.actionText.html(actionType.text).show();
-       var icon = $("<div/>").addClass("player-action-icon").addClass(actionType.id);
+       var icon = $("<div/>").addClass("player-action-icon").addClass(actionType.id+"-icon");
        if(amount>0) {
            this.actionAmount.removeClass("placed");
-           this.actionAmount.empty().append("&euro;").append(amount).append(icon).show();
+           this.actionAmount.empty().append("&euro;"+amount).append(icon).show();
            this.animateActionAmount();
        }
    },
    animateActionAmount : function() {
-       var self = this;
-       new Poker.CSSClassAnimation(self.actionAmount).addClass("placed").start();
+       new Poker.CSSClassAnimation(this.actionAmount).addClass("placed").start(this.animationManager);
    },
    fold : function() {
        this.seatElement.addClass("seat-folded");
@@ -119,10 +117,13 @@ Poker.Seat = Class.extend({
    },
    dealCard : function(card) {
        this.cardsContainer.append(card.render());
+       console.log(card);
        this.animateDealCard(card.getJQElement());
    },
+
    animateDealCard : function(div) {
-       new Poker.CSSClassAnimation(div).addClass("dealt").start();
+       new Poker.CSSClassAnimation(div).addClass("dealt").start(this.animationManager);
+
    },
    inactivateSeat : function() {
         this.seatElement.removeClass("active-seat");
@@ -131,6 +132,10 @@ Poker.Seat = Class.extend({
    clearProgressBar : function() {
        if(this.progressBarElement) {
            this.progressBarElement.attr("style","").hide();
+       }
+       if(this.currentProgressBarAnimation!=null){
+           this.animationManager.removeAnimation(this.currentProgressBarAnimation);
+           this.currentProgressBarAnimation = null;
        }
    },
     /**
@@ -144,9 +149,11 @@ Poker.Seat = Class.extend({
    activateSeat : function(allowedActions, timeToAct,mainPot) {
        this.seatElement.addClass("active-seat");
        this.progressBarElement.show();
-       new Poker.TransformAnimation(this.progressBarElement)
+       this.currentProgressBarAnimation = new Poker.TransformAnimation(this.progressBarElement)
            .addTransition("transform",timeToAct/1000,"linear")
-           .addTransform("scale3d(1,0.01,1)").addOrigin("bottom").start();
+           .addTransform("scale3d(1,0.01,1)").addOrigin("bottom")
+           .setTimed(true)
+           .start(this.animationManager);
 
    },
    showHandStrength : function(hand) {
@@ -160,17 +167,17 @@ Poker.Seat = Class.extend({
    clear : function() {
 
    },
-   moveAmountToPot : function() {
+   moveAmountToPot : function(view,mainPotContainer) {
        this.hideActionInfo();
        return;
        //before enabling animations for bet amounts going into the pot we need a better
        //handling of animations
        var self = this;
        var amount = this.actionAmount.get(0);
-       var pos = self.calculatePotOffset();
+       var pos = self.calculatePotOffset(view,mainPotContainer);
 
        this.moveToPotComplete = false;
-       var trans = new Poker.TransformAnimation(this.actionAmount).
+       var trans = new Poker.TransformAnimation(amount).
            addTransform("translate3d("+pos.left+","+pos.top+",0)").
            addCallback(function(){
               self.onMoveToPotEnd();
@@ -182,15 +189,14 @@ Poker.Seat = Class.extend({
            this.moveToPotComplete = true;
            this.hideActionInfo();
            this.actionAmount.attr("style","");
-           this.cssAnimator.removeTransitionCallback(this.actionAmount.get(0))
        }
    },
-   calculatePotOffset : function(){
-        var c = $("#tableView");
-        var width = c.width();
-        var height = c.height();
+   calculatePotOffset : function(view,mainPotContainer){
+
+        var width = view.width();
+        var height = view.height();
         var amountOffset = this.actionAmount.offset();
-        var mainPotOffset = $("#mainPotContainer").offset();
+        var mainPotOffset = mainPotContainer.offset();
         var left = mainPotOffset.left - amountOffset.left;
         var top = mainPotOffset.top - amountOffset.top;
         return { top : Math.round(top) +"px", left : Math.round(left)+"px" };

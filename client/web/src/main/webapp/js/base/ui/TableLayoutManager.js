@@ -11,43 +11,68 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
     seatTemplate : null,
     emptySeatTemplate : null,
     templateManager : null,
-    cardElements : [],
+    cardElements : null,
     myActionsManager : null,
     tableComHandler : null,
     myPlayerSeatId : -1,
     cssAnimator : null,
-    seats : new Poker.Map(),
+    seats : null,
     dealerButton : null,
     currentDealer : -1,
     potTransferTemplate : null,
     soundManager : null,
     tableId : -1,
     buyInDialog : null,
-    init : function(tableId, tableContainer, templateManager, tableComHandler, capacity) {
-        if (!tableContainer) {
-            throw "TableLayoutManager requires a tableContainer";
+    communityCardsContainer : null,
+    mainPotContainer : null,
+    tableView : null,
+    animationManager : null,
+
+    init : function(tableId, tableViewContainer, templateManager, tableComHandler, capacity) {
+        if (!tableViewContainer) {
+            throw "TableLayoutManager requires a tableViewContainer";
         }
+        this.seats = new Poker.Map();
+        this.animationManager = new Poker.AnimationManager();
+        var tableViewTemplate = templateManager.getTemplate("tableViewTemplate");
+        var tableViewHtml = Mustache.render(tableViewTemplate,{tableId : tableId});
+
+        tableViewContainer.append(tableViewHtml);
+        var viewId = "#tableView-"+tableId;
+        this.tableView = $(viewId);
+
         this.tableId = tableId;
-        this.soundManager = new Poker.SoundManager(soundRepository, tableId);
+        this.soundManager = new Poker.SoundManager(Poker.ApplicationContext.soundsRepository, tableId);
         this.tableComHandler = tableComHandler;
         var self = this;
         var actionCallback = function(actionType,amount){
-          self.tableComHandler.onMyPlayerAction(actionType,amount);
+          self.tableComHandler.onMyPlayerAction(self.tableId,actionType,amount);
         };
         this.buyInDialog = new Poker.BuyInDialog(tableComHandler);
-        this.myActionsManager = new Poker.MyActionsManager(actionCallback);
+        this.myActionsManager = new Poker.MyActionsManager(this.tableView,actionCallback);
         this.cssAnimator = new Poker.CSSAnimator();
         this.templateManager = templateManager;
         this.capacity = capacity || this.capacity;
-        this.tableContainer = tableContainer;
         this.seatTemplate = $("#seatTemplate").html();
         this.emptySeatTemplate = templateManager.getTemplate("emptySeatTemplate");
         this.potTransferTemplate = templateManager.getTemplate("potTransferTemplate");
+
         for(var i = 0; i<this.capacity; i++){
-               this.addEmptySeatContent(i,i,true);
-        };
-        this.dealerButton = new Poker.DealerButton();
-        $(this.tableContainer).show();
+            this.addEmptySeatContent(i,i,true);
+        }
+
+        this.dealerButton = new Poker.DealerButton(this.tableView.find(".dealer-button"),this.animationManager);
+        $(this.tableView).show();
+        this.communityCardsContainer = this.tableView.find(".community-cards");
+        this.mainPotContainer = this.tableView.find(".main-pot");
+        tableViewContainer.show();
+        this.cardElements = new Poker.Map();
+    },
+    onActivateView : function() {
+        this.animationManager.setActive(true);
+    },
+    onDeactivateView : function() {
+        this.animationManager.setActive(false);
     },
     /**
      * Adds an empty seat div to a seat id and if position supplied
@@ -57,7 +82,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
      */
     addEmptySeatContent : function(seatId,pos,active) {
         console.log("addEmptySeatContent seatId="+seatId);
-        var seat = $("#seat"+seatId);
+        var seat = $("#seat"+seatId+"-"+this.tableId);
         seat.addClass("seat-empty").html(Mustache.render(this.emptySeatTemplate,{}));
         seat.removeClass("seat-sit-out").removeClass("seat-folded");
         if(typeof(pos)!="undefined" && pos!=-1) {
@@ -74,7 +99,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         this.buyInDialog.onError(msg);
     },
     onBuyInInfo : function(tableName,balanceInWallet, balanceOnTable, maxAmount, minAmount, mandatory) {
-        this.buyInDialog.show(tableName,balanceInWallet,maxAmount,minAmount);
+        this.buyInDialog.show(this.tableId,tableName,balanceInWallet,maxAmount,minAmount);
     },
     /**
      * Called when a player is added to the table
@@ -85,15 +110,18 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         console.log("Player " + player.name + " added at seat " + seatId);
         var seat = null;
         if (player.id == Poker.MyPlayer.id) {
-            seat = new Poker.MyPlayerSeat(seatId,player,this.templateManager,this.myActionsManager);
+            var elementId = "myPlayerSeat-"+this.tableId;
+            seat = new Poker.MyPlayerSeat(this.tableId,elementId,seatId,player,this.templateManager,this.myActionsManager,this.animationManager);
             this.myPlayerSeatId = seatId;
             this._calculateSeatPositions();
             if(this.currentDealer!=-1) {
                 this.onMoveDealerButton(this.currentDealer);
             }
             this.seats.put(seatId,seat);
+            this.tableView.find(".seat-pos-0").hide();
         } else {
-            seat = new Poker.Seat(seatId,player,this.templateManager);
+            var elementId = "seat"+seatId+"-"+this.tableId;
+            seat = new Poker.Seat(elementId, seatId,player,this.templateManager,this.animationManager);
             seat.setSeatPos(-1,this._getNormalizedSeatPosition(seatId));
             this.seats.put(seatId,seat);
         }
@@ -145,7 +173,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
     onStartHand : function(dealerSeatId) {
         this._resetSeats();
         this._resetCommunity();
-        this.cardElements = [];
+        this.cardElements = new Poker.Map();
     },
     onPlayerActed : function(player,actionType,amount) {
         var seat = this.getSeatByPlayerId(player.id);
@@ -162,25 +190,25 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
     onDealPlayerCard : function(player,cardId,cardString) {
         this.playSound(Poker.Sounds.DEAL);
         var seat = this.getSeatByPlayerId(player.id);
-        var card = new Poker.Card(cardId,cardString,this.templateManager);
+        var card = new Poker.Card(cardId,this.tableId,cardString,this.templateManager);
         seat.dealCard(card);
         this._storeCard(card);
     },
     onExposePrivateCard : function(cardId,cardString){
-        var card = this.cardElements[cardId];
+        var card = this.cardElements.get(cardId);
         if(cardString == card.cardString) {
             return;
         }
 
         card.exposeCard(cardString);
-        new Poker.CSSClassAnimation(card.getJQElement()).addClass("exposed").start();
+        new Poker.CSSClassAnimation(card.getJQElement()).addClass("exposed").start(this.animationManager);
 
     },
     onMoveDealerButton : function(seatId) {
         this.currentDealer = seatId;
         var seat = this.seats.get(seatId);
         var off = seat.getDealerButtonOffsetElement().offset();
-        var leftC  = $("#tableView").offset().left;
+        var leftC  = this.tableView.offset().left;
 
         var pos = {
             left : Math.round(off.left  - leftC +  seat.getDealerButtonOffsetElement().width()*0.95),
@@ -201,22 +229,22 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
     },
     onDealCommunityCard : function(cardId, cardString) {
         this.playSound(Poker.Sounds.DEAL);
-        var card = new Poker.CommunityCard(cardId,cardString,this.templateManager);
+        var card = new Poker.CommunityCard(cardId,this.tableId,cardString,this.templateManager);
         var html = card.render();
-        $("#communityCards").append(html);
+        this.communityCardsContainer.append(html);
 
         // Animate the cards.
         var div = $('#' + card.getCardDivId());
         //this.cssAnimator.addTransition(div.get(0),"transform 0.5s ease-out",false);
 
-        new Poker.TransformAnimation(div).addTransform("translate3d(0,0,0)").start();
+        new Poker.TransformAnimation(div).addTransform("translate3d(0,0,0)").start(this.animationManager);
 
         this._storeCard(card);
         this._moveToPot();
     },
     onMainPotUpdate : function(amount) {
         var t = this.templateManager.getTemplate("mainPotTemplate");
-        $("#mainPotContainer").html(Mustache.render(t,{amount : Poker.Utils.formatCurrency(amount)}));
+        this.mainPotContainer.html(Mustache.render(t,{amount : Poker.Utils.formatCurrency(amount)}));
     },
     onRequestPlayerAction : function(player,allowedActions,timeToAct,mainPot){
         var seats = this.seats.values();
@@ -227,9 +255,9 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         seat.activateSeat(allowedActions,timeToAct,mainPot);
     },
     onLeaveTableSuccess : function() {
-        $(this.tableContainer).hide();
+        $(this.tableView).hide();
         for(var i = 0; i<this.capacity; i++) {
-            var s = $("#seat"+i);
+            var s = $("#seat"+i+"-"+this.tableId);
             s.empty();
             s.attr("class","seat");
         }
@@ -238,8 +266,9 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         }
         this.myPlayerSeatId=-1;
         this._resetCommunity();
-        for(var x in this.cardElements) {
-            $("#"+this.cardElements[x].getCardDivId()).remove();
+        var cards = this.cardElements.values();
+        for(var x in cards) {
+            $("#"+cards[x].getCardDivId()).remove();
         }
         this.myActionsManager.clear();
     },
@@ -256,7 +285,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         }
     },
     _storeCard : function(card){
-        this.cardElements[card.id]=card;
+        this.cardElements.put(card.id,card);
     },
     _calculateSeatPositions : function() {
         //my player seat position should always be 0
@@ -267,11 +296,12 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         }
         //do empty seats, question is if we want them or not, looked a bit empty without them
         for(var i = 0; i<this.capacity; i++){
-            var seat = $("#seat"+i);
+            var seat = $("#seat"+i+"-"+this.tableId);
             if(seat.hasClass("seat-empty")){
                 seat.removeClass("seat-pos-"+i).addClass("seat-inactive").addClass("seat-pos-"+this._getNormalizedSeatPosition(i));
             }
         }
+
     },
     _getNormalizedSeatPosition : function(seatId){
         if(this.myPlayerSeatId != -1) {
@@ -281,8 +311,8 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         }
     },
     _resetCommunity : function() {
-        $("#communityCards").empty();
-        $("#mainPotContainer").empty();
+        this.communityCardsContainer.empty();
+        this.mainPotContainer.empty();
     },
     _hideSeatActionInfo : function() {
         var seats = this.seats.values();
@@ -293,7 +323,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
     _moveToPot : function() {
         var seats = this.seats.values();
         for(var s in seats) {
-            seats[s].moveAmountToPot();
+            seats[s].moveAmountToPot(this.tableView, this.mainPotContainer);
         }
     },
     onPlayerToPotTransfers : function(transfers) {
@@ -313,9 +343,9 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
     },
     displayPotTransfer : function(targetElement,amount,seatId) {
 
-        var html = Mustache.render(this.potTransferTemplate,{ id : seatId, amount: Poker.Utils.formatCurrency(amount)});
-        $("#seatContainer").append(html);
-        var div = $("#potTransfer" + seatId);
+        var html = Mustache.render(this.potTransferTemplate,{ id : seatId + "-" + this.tableId, amount: Poker.Utils.formatCurrency(amount)});
+        $("#seatContainer-"+this.tableId).append(html);
+        var div = $("#potTransfer" + seatId + "-"+this.tableId);
 
         var self = this;
 
@@ -328,7 +358,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
             function(){
                 setTimeout(function(){div.remove();},1000);
             }
-        ).start();
+        ).start(this.animationManager);
     },
     playSound : function(soundName) {
         this.soundManager.playSound(soundName);

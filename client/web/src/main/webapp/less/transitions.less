@@ -1,3 +1,6 @@
+.no-transitions * {
+    .transition(none);
+}
 .progressbar-first {
     .transform(rotate(179deg));
 }
@@ -40,7 +43,23 @@
 .seat .action-amount.placed {
     .transform(translate3d(0,0,0));
 }
-
 .pot-transfer {
     .transition-transform(1s ease-out);
+}
+
+.main-menu-container {
+    .transition-transform(0.3s ease-out);
+    .transform(translate3d(-105%,0,0));
+
+    &.visible {
+        .transform(translate3d(0,0,0));
+    }
+}
+.slidable {
+    .transition-transform(0.3s ease-out);
+    .transform(translate3d(0,0,0));
+
+    &.slided {
+        .transform(translate3d(35%,0,0));
+    }
 }

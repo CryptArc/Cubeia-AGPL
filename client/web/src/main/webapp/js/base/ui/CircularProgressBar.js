@@ -1,5 +1,5 @@
-var CircularProgressBar = function(containerId) {
-	this._initialize(containerId);
+var CircularProgressBar = function(containerId,animationManager) {
+	this._initialize(containerId,animationManager);
 };
 CircularProgressBar.prototype = {
 	containerId : null,
@@ -8,7 +8,8 @@ CircularProgressBar.prototype = {
     fill : null,
     pie : null,
     pieElement : null,
-	_initialize : function(containerId) {
+    animationManager : null,
+	_initialize : function(containerId,animationManager) {
 		if (containerId == null) {
 			throw "CircularProgressBar: containerId must be set";
 		}
@@ -18,6 +19,7 @@ CircularProgressBar.prototype = {
 		var c = $(containerId);
 		this.containerId = containerId;
 		this._addContent();
+        this.animationManager = animationManager;
 	},
 	show : function() {
 		$(this.containerId).show();
@@ -45,33 +47,33 @@ CircularProgressBar.prototype = {
                 + '</div>';
 
         $(this.containerId).append(backgroundHTML).append(progressBarHTML);
-        this.slice = $(".cpb-animated .cpb-slice", self.containerId);
-        this.fill = $(".cpb-animated .cpb-fill", self.containerId);
+        this.slice = $(".cpb-animated .cpb-slice", this.containerId);
+        this.fill = $(".cpb-animated .cpb-fill", this.containerId);
         this.pie = $('.cpb-animated .cpb-pie', this.containerId);
         this.pieElement = this.pie.get(0);
 	},
     animation : null,
-    startTime : null,
-    animationTime : null,
-    endTime : null,
-    running : false,
 	render : function(time) {
 
         var self = this;
 
-        var anim = new Poker.TransformAnimation(this.pieElement);
-        anim.addTransition("transform",(time/2000),"linear")
+        this.animation = new Poker.TransformAnimation(this.pieElement);
+        this.animation.addTransition("transform",(time/2000),"linear")
             .addTransform("rotate(180deg)").addCallback(function(){
                 self.slice.addClass("cpb-gt50");
                 self.fill.show();
             }).next().addTransform("rotate(360deg)");
-        anim.start();
+        this.animation.setTimed(true);
+        this.animation.start(this.animationManager);
 
         return;
 
 
     },
     detach : function() {
+        if(this.animation!=null) {
+            this.animationManager.removeAnimation(this.animation);
+        }
         $(this.containerId).empty();
     }
 };

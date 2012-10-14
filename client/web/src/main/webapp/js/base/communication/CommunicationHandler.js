@@ -1,6 +1,7 @@
 var Poker = Poker || {};
 
-Poker.CommunicationHandler = Poker.AbstractConnectorHandler.extend({
+Poker.CommunicationHandler = Class.extend({
+    connector : null,
     webSocketUrl : null,
     webSocketPort : null,
     tableComManager : null,
@@ -16,7 +17,9 @@ Poker.CommunicationHandler = Poker.AbstractConnectorHandler.extend({
         this.lobbyLayoutManager = new Poker.LobbyLayoutManager();
         this.connect();
 
-
+    },
+    getConnector : function() {
+        return this.connector;
     },
     isInTableView : function() {
         if(this.tableComManager!=null) {
@@ -30,8 +33,7 @@ Poker.CommunicationHandler = Poker.AbstractConnectorHandler.extend({
     openTable : function(tableId, capacity,name){
         this.tableNames.put(tableId,name);
         console.log("CommunicationHandler.openTable");
-        $("#lobbyView").hide();
-        $("#tableView").show();
+
         this.tableComManager = new Poker.TableComHandler(this.connector);
         this.tableComManager.onOpenTable(tableId, capacity);
     },
@@ -85,6 +87,7 @@ Poker.CommunicationHandler = Poker.AbstractConnectorHandler.extend({
             $('#loginView').hide();
             $("#lobbyView").show();
             document.location.hash="#";
+            viewManager.onLogin();
             this.subscribeToCashGames();
         }
     },
