@@ -41,6 +41,7 @@ Poker.ViewSwiper = Class.extend({
                 var moveX = touch.pageX-self.startXPos;
 
                 if(Math.abs(moveX)>5) {
+                    e.preventDefault();
                     self.swiped = true;
                 } else {
                     return;
