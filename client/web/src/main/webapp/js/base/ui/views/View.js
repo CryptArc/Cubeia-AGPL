@@ -10,16 +10,18 @@ Poker.View = Class.extend({
         var self = this;
     },
     activate : function() {
-        this.activateView();
+        this.viewElement.show();
+        this.onViewActivated();
     },
     deactivate : function() {
-        this.deactivateView();
-    },
-    activateView : function() {
-        this.viewElement.show();
-    },
-    deactivateView : function() {
         this.viewElement.hide();
+        this.onViewDeactivated();
+    },
+    onViewActivated : function() {
+
+    },
+    onViewDeactivated : function() {
+
     },
     close : function() {
         this.viewElement.remove();
@@ -54,12 +56,10 @@ Poker.TabView = Poker.View.extend({
     deactivateTab : function() {
         this.tabElement.removeClass("active");
     },
-    activate : function() {
-        this.activateView();
+    onViewActivated : function() {
         this.activateTab();
     },
-    deactivate : function() {
-        this.deactivateView();
+    onViewDeactivated : function() {
         this.deactivateTab();
     },
     close : function(){
@@ -75,16 +75,13 @@ Poker.TableView = Poker.TabView.extend({
         this._super("#"+layoutManager.tableView.attr("id"),name);
         this.layoutManager = layoutManager;
     },
-    activate : function() {
+    onViewActivated : function() {
         this.layoutManager.onActivateView();
-        this.activateView();
         this.activateTab();
         this.viewElement.removeClass("no-transitions");
     },
-    deactivate : function() {
-
+    onViewDeactivated : function() {
         $("#tableViewContainer").hide();
-        this.deactivateView();
         this.deactivateTab();
         this.viewElement.addClass("no-transitions");
         this.layoutManager.onDeactivateView();
@@ -93,4 +90,18 @@ Poker.TableView = Poker.TabView.extend({
         return this.layoutManager.tableId;
     }
 
+});
+
+Poker.DevSettingsView = Poker.View.extend({
+    init : function(viewElementId,name) {
+        this._super(viewElementId,name);
+    },
+    onViewActivated : function() {
+        Poker.Settings.bindSettingToggle($("#swipeEnabled"),Poker.Settings.Param.SWIPE_ENABLED);
+        Poker.Settings.bindSettingToggle($("#freezeComEnabled"),Poker.Settings.Param.FREEZE_COMMUNICATION);
+    },
+    onDeactivateView : function() {
+        $("#swipeEnabled").unbind();
+        $("#freezeComEnabled").unbind();
+    }
 });

@@ -23,6 +23,9 @@ Poker.ViewSwiper = Class.extend({
         this.nextCallback = nextCallback;
         this.previousCallback = previousCallback;
         swipeElement.bind("touchstart",function(e){
+            if(!Poker.Settings.isEnabled(Poker.Settings.Param.SWIPE_ENABLED)){
+                return;
+            }
             if(e.originalEvent.touches.length==1 && self.running==false){
                 self.running = true;
                 var touch = e.originalEvent.touches[0];
@@ -78,11 +81,6 @@ Poker.ViewSwiper = Class.extend({
             this.cssAnimator.clearTransition(this.centerElement);
             this.cssAnimator.setTranslate3dPx(this.centerElement,0,0,0);
         }
-
-        console.log(this.leftElement);
-        console.log(this.centerElement);
-        console.log(this.rightElement);
-
 
     },
     end : function() {

@@ -108,7 +108,6 @@ Poker.ViewManager = Class.extend({
       updateTableViews();
     },
     activateView : function(view) {
-        console.log("ACTIVATING VIEW");
         if(this.activeView!=null) {
             this.activeView.deactivate();
         }

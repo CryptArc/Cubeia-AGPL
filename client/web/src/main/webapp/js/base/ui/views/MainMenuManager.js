@@ -19,7 +19,7 @@ Poker.MainMenuManager = Class.extend({
         this.addMenuItem(new Poker.MenuItem("Gameplay settings","Muck loosing cards, Muck winning cards","gameplay"),null);
         this.addMenuItem(new Poker.MenuItem("Sound settings","Turn sound on/off","sound"),null);
         var devSettings = new Poker.MenuItem("Development settings","Settings only shown in development","development");
-        this.addMenuItem(devSettings,new Poker.View("#devSettingsView",""));
+        this.addMenuItem(devSettings,new Poker.DevSettingsView("#devSettingsView",""));
 
     },
     activeView : null,

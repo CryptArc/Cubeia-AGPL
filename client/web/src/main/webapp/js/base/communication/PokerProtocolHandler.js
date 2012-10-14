@@ -1,10 +1,6 @@
 "use strict";
 var Poker = Poker || {};
 
-var freezeCommunication = false;
-function freeze() {
-    freezeCommunication = true;
-}
 /**
  * Construct a poker protocol object handler
  * @constructor
@@ -17,7 +13,7 @@ Poker.PokerProtocolHandler = function() {
     this.seq = -1;
     this.packetCount = 0;
     this.handleGameTransportPacket = function(gameTransportPacket) {
-        if(freezeCommunication==true) {
+        if(Poker.Settings.isEnabled(Poker.Settings.Param.FREEZE_COMMUNICATION)==true) {
             return;
         }
         if(!this.tableManager.tableExist(gameTransportPacket.tableid)) {
