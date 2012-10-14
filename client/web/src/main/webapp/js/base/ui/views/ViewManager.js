@@ -118,6 +118,12 @@ Poker.ViewManager = Class.extend({
            v.requestFocus();
        }
     },
+    updateTableInfo : function(tableId,data)  {
+        var v = this.findViewByTableId(tableId);
+        if(v!=null) {
+            v.updateInfo(data);
+        }
+    },
     /**
      * Removes a table view and activates the previous view
      * @param tableId - the id for the table who's view to close

@@ -10,8 +10,13 @@ Poker.PokerProtocolHandler = function() {
 
     this.tableManager = Poker.AppCtx.getTableManager();
     this.actionSender = Poker.AppCtx.getActionSender();
-    this.seq = -1;
+    this.seqs = new Poker.Map();
     this.packetCount = 0;
+
+    this.getSeq = function(tableId) {
+        return this.seqs.get(tableId);
+    };
+
     this.handleGameTransportPacket = function(gameTransportPacket) {
         if(Poker.Settings.isEnabled(Poker.Settings.Param.FREEZE_COMMUNICATION)==true) {
             return;
@@ -272,7 +277,9 @@ Poker.PokerProtocolHandler = function() {
     this.handleRequestAction = function(tableId,requestAction) {
 
         this.tableManager.updateMainPot(tableId,requestAction.currentPotSize);
-        this.seq = requestAction.seq;
+
+        this.seqs.put(tableId,requestAction.seq);
+
         var acts = this.getPokerActions(requestAction.allowedActions);
 
         if(acts.length>0 && (acts[0].type.id == Poker.ActionType.BIG_BLIND.id || acts[0].type.id == Poker.ActionType.SMALL_BLIND.id)) {

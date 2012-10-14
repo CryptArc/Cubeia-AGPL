@@ -65,8 +65,8 @@
     <script type="text/javascript" src="js/base/ui/TemplateManager.js"></script>
     <script type="text/javascript" src="js/base/ui/Seat.js"></script>
     <script type="text/javascript" src="js/base/ui/MyPlayerSeat.js"></script>
-    <script type="text/javascript" src="js/base/ui/Card.js"></script>
-    <script type="text/javascript" src="js/base/ui/CommunityCard.js"></script>
+    <script type="text/javascript" src="js/base/ui/cards/Card.js"></script>
+    <script type="text/javascript" src="js/base/ui/cards/CommunityCard.js"></script>
     <script type="text/javascript" src="js/base/Pot.js"></script>
     <script type="text/javascript" src="js/base/Hand.js"></script>
     <script type="text/javascript" src="js/base/ui/describe.js"></script>
@@ -518,11 +518,16 @@
     </script>
     <script type="text/mustache" id="tabTemplate">
         <li>
-            <div>
-                <span class="mini-cards"></span>
+            <div class="tab-content">
+                <div class="mini-cards"></div>
                 <span>{{name}}</span>
             </div>
         </li>
+    </script>
+    <script type="text/mustache" id="miniCardTemplate" style="display: none;">
+        <div id="miniCard-{{domId}}" class="mini-card-container">
+            <img src="images/cards/{{cardString}}.svg"/>
+        </div>
     </script>
 
 

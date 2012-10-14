@@ -12,6 +12,7 @@ Poker.Card = Class.extend({
     templateManager:null,
     cardImage : null,
     cardElement : null,
+
     init:function (id, tableId, cardString, templateManager) {
         this.templateManager = templateManager;
         this.id = id;

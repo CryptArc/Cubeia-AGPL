@@ -43,7 +43,7 @@ Poker.MainMenuManager = Class.extend({
     toggle : function() {
         $('.main-menu-container').toggleClass('visible');
         $(".view-container").toggleClass("slided");
-        $(".menu-overlay").toggle().toggleClass("slided");
+        $(".menu-overlay").toggle();
         $("#mainMenuList").find("li").removeClass("active");
         if(this.activeView!=null){
             this.activeView.deactivate();

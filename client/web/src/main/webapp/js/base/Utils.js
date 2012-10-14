@@ -42,12 +42,6 @@ Poker.Utils = {
         var distLeft = 100 * (leftPx/src.width());
         var distTop = 100 * (topPx/src.height());
 
-        console.log("target.left = "+ targetOffset.left);
-        console.log("src.left = "+ srcOffset.left);
-        console.log("diff =  target.left - src.left" + leftPx );
-        console.log("src.width = " + src.width());
-        console.log("dist% = diff/leftPx =" +  distLeft);
-
 
         return { left : distLeft, top : distTop };
 
@@ -56,9 +50,7 @@ Poker.Utils = {
          var store = Poker.Utils.getStorage();
          if(store!=null) {
             store.removeItem(name);
-
             store.setItem(name,value);
-             console.log("storing " + name + " = " + value);
          }
     },
     load : function(name,defaultValue) {

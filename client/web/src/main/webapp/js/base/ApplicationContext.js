@@ -51,7 +51,7 @@ Poker.AppCtx = Class.extend({
         };
 
         this.getConnector = function() {
-            this.getComHandler().getConnector();
+            return comHandler.getConnector();
         };
 
 

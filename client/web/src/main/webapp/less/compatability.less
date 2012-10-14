@@ -12,6 +12,13 @@
     -o-border-radius: @radius;
     border-radius: @radius;
 }
+.box-shadow-both(@params:inset 1px 1px 3px #999,@second:1px 1px 3px #999) {
+    -moz-box-shadow:@params, @second;
+    -webkit-box-shadow: @params, @second;
+    -ms-box-shadow: @params, @second;
+    -o-box-shadow: @params,@second;
+    box-shadow: @params,@second;
+}
 .box-shadow(@params:inset 1px 1px 3px #999) {
     -moz-box-shadow:@params;
     -webkit-box-shadow: @params;

@@ -81,6 +81,10 @@ Poker.Seat = Class.extend({
            this.cardsContainer.empty();
        }
        this.seatElement.removeClass("seat-folded");
+       this.onReset();
+   },
+   onReset : function() {
+
    },
    hideActionInfo : function() {
        this.hideActionText();
@@ -118,10 +122,11 @@ Poker.Seat = Class.extend({
    dealCard : function(card) {
        this.cardsContainer.append(card.render());
        console.log(card);
-       this.animateDealCard(card.getJQElement());
+       this.onCardDealt(card);
    },
-
-   animateDealCard : function(div) {
+   onCardDealt : function(card) {
+       var div = card.getJQElement();
+       //animate deal card
        new Poker.CSSClassAnimation(div).addClass("dealt").start(this.animationManager);
 
    },

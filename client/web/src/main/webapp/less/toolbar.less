@@ -5,7 +5,8 @@
     width: 100%;
     height:40px;
     z-index: 100000;
-    .linear-gradient(bottom, #222 40%, #444 100%);
+    .linear-gradient(bottom, #1d1d1d 0%, #3e3e3e 100%);
+    .box-shadow-both(inset 0px 0px 6px #333, 0px 0px 3px #222);
     font-size:16px;
 
     * {
@@ -33,8 +34,8 @@
             max-width: 200px;
             width:20%;
             display: inline-block;
-            div {
-                width:100%;
+
+            .tab-content {
 
                 text-overflow: ellipsis;
                 white-space: nowrap;
@@ -42,11 +43,12 @@
 
                 height: 34px;
                 .border-radius(3px);
-                margin: 3px 0 0 0;
+                margin: 3px 1px 0 0;
                 .box-shadow(inset 0px 0px 2px #999);
                 background-color: #464645;
                 display: block;
-                width:100%;
+                width:99%;
+
                 span {
                     text-overflow: ellipsis;
                     white-space: nowrap;
@@ -55,17 +57,41 @@
                     margin: 8px 10px;
                     display: block;
                 }
+                .mini-cards {
+                    overflow: hidden;
+                    width: 30px;
+                    height: 30px;
+                    display: inline-block;
+                    float: left;
+                    margin-right:5px;
+
+                    .mini-card-container  {
+                        position: relative;
+                        display: inline-block;
+                        margin-left:-17px;
+                        img {
+                            width:25px;
+                        }
+                        &:first-child {
+                            width: 25px;
+                            overflow: hidden;
+                            margin-left:0;
+                            margin: 4px 0px 0px 4px;
+                        }
+                    }
+                }
             }
 
 
             &.active {
-                div {
+                .tab-content {
+
                     background-color: #95bb07;
                     .box-shadow(inset 0px 0px 2px #fff);
                 }
             }
             &.focus {
-                div {
+                .tab-content {
                     background-color: #ff9000;
                     .box-shadow(inset 0px 0px 2px #fff);
                 }

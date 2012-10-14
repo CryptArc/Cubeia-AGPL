@@ -34,6 +34,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         $("#myPlayerName-"+this.tableId).html(this.player.name);
     },
     activateSeat : function(allowedActions, timeToAct,mainPot) {
+        console.log("ON REQUEST ACTION FOR table = " + this.tableId);
         this.myActionsManager.onRequestPlayerAction(allowedActions,mainPot);
         this.circularProgressBar.show();
         this.circularProgressBar.render(timeToAct);
@@ -47,6 +48,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.clearProgressBar();
         if(actionType == Poker.ActionType.FOLD) {
             this.fold();
+            Poker.AppCtx.getViewManager().updateTableInfo(this.tableId,{});
         }
     },
     updatePlayer : function(player) {
@@ -61,9 +63,13 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
             this.myActionsManager.onSitIn();
         }
     },
-    animateDealCard : function(div) {
-        var self = this;
+    onCardDealt : function(card) {
+        var div = card.getJQElement();
         new Poker.CSSClassAnimation(div).addClass("dealt").start(this.animationManager);
+        Poker.AppCtx.getViewManager().updateTableInfo(this.tableId,{card:card});
+    },
+    onReset : function() {
+        Poker.AppCtx.getViewManager().updateTableInfo(this.tableId,{});
     },
     fold : function() {
         this.seatElement.addClass("seat-folded");
