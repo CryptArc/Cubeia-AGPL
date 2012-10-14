@@ -156,7 +156,7 @@ Poker.Seat = Class.extend({
        this.progressBarElement.show();
        this.currentProgressBarAnimation = new Poker.TransformAnimation(this.progressBarElement)
            .addTransition("transform",timeToAct/1000,"linear")
-           .addTransform("scale3d(1,0.01,1)").addOrigin("bottom")
+           .addScale3d(1,0.01,1).addOrigin("bottom")
            .setTimed(true)
            .start(this.animationManager);
 

@@ -7,6 +7,7 @@ Poker.ActionSender = Class.extend({
         var connector = Poker.AppCtx.getConnector();
         connector.sendStyxGameData(0, tableId, gamedata);
         console.log("package sent to table " + tableId);
+        console.log(gamedata);
 
     },
     sendAction : function(tableId,seq, actionType, betAmount, raiseAmount) {

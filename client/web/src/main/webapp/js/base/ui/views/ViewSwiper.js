@@ -105,21 +105,21 @@ Poker.ViewSwiper = Class.extend({
         new Poker.TransformAnimation(this.centerElement).
             addTransition("transform",0.2,"ease-out").
             addCallback(function(){self.running=false;}).
-            addTranslate3dPx(0,0,0).
+            addTranslate3d(0,0,0,"px").
             start(this.animationManager);
 
 
         if(this.rightElement!=null) {
             new Poker.TransformAnimation(this.rightElement).
                 addTransition("transform",0.2,"ease-out").
-                addTranslate3dPx(this.centerElement.width(),0,0).
+                addTranslate3d(this.centerElement.width(),0,0,"px").
                 start(this.animationManager);
         }
 
         if(this.leftElement!=null) {
             new Poker.TransformAnimation(this.leftElement).
                 addTransition("transform",0.2,"ease-out").
-                addTranslate3dPx(-this.centerElement.width(),0,0).
+                addTranslate3d(-this.centerElement.width(),0,0,"px").
                 start(this.animationManager);
         }
     },
@@ -132,13 +132,13 @@ Poker.ViewSwiper = Class.extend({
         var self = this;
         new Poker.TransformAnimation(this.leftElement).
             addTransition("transform",0.5,"ease-out").
-            addTranslate3dPx(0,0,0).
+            addTranslate3d(0,0,0,"px").
             start(this.animationManager);
 
         new Poker.TransformAnimation(this.centerElement).
             addCallback(function(){self.rightCallBack();}).
             addTransition("transform",0.5,"ease-out").
-            addTranslate3dPx(this.centerElement.width(),0,0).
+            addTranslate3d(this.centerElement.width(),0,0,"px").
             start(this.animationManager);
 
 

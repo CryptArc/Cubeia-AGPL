@@ -197,6 +197,8 @@ Poker.CSSClassAnimation = Poker.Animation.extend({
 
 Poker.TransformAnimation = Poker.Animation.extend({
     transform : null,
+    scale : null,
+    translate : null,
     transitionTime : 0,
     transitionProperty : null,
     transitionEasing : null,
@@ -211,19 +213,67 @@ Poker.TransformAnimation = Poker.Animation.extend({
         if(this.transitionProperty!=null) {
             cssAnimator.addTransition(this.element,this.getCalculatedTransition());
         }
+
+    },
+    getTimedTransformStart : function() {
+        //TODO: FIX!
+        var currentTransitionTime = this.getCalculatedTransitionTime();
+        var originalTransitionTime = this.transitionTime;
+        var remaining = currentTransitionTime / originalTransitionTime;
+        var transform = "";
+
+        if(this.scale!=null) {
+            var s = this.scale;
+            transform+=this.toScale3dString();
+        }
     },
     animate : function() {
         var cssAnimator = new Poker.CSSAnimator();
-        if(this.transform!=null) {
-           cssAnimator.addTransform(this.element,this.transform,this.origin);
+        if(this.getTransform()!=null) {
+           cssAnimator.addTransform(this.element,this.getTransform(),this.origin);
         }
     },
     addTransform : function(transform) {
         this.transform = transform;
         return this;
     },
-    addTranslate3dPx : function(x,y,z){
-       return this.addTransform("translate3d("+x+"px,"+y+"px,"+z+"px)");
+    toScale3dString : function(x,y,z) {
+       return "scale3d("+x+","+y+","+z+") ";
+    },
+    toTranslate3dString : function(x,y,z,unit) {
+        return "translate3d("+x+unit+","+y+unit+","+z+unit+") ";
+    },
+    getTransform : function() {
+        if(this.transform!=null) {
+            return this.transform;
+        }
+        var transform = "";
+        if(this.scale!=null) {
+            var s = this.scale;
+            transform+= this.toScale3dString(s.x, s.y, s.z, s.unit);
+        }
+        if(this.translate!=null) {
+            var t = this.translate;
+            transform+=this.toTranslate3dString(t.x, t.y, t.z, t.unit);
+        }
+
+        if(transform=="") {
+            return null;
+        } else {
+            return transform;
+        }
+
+    },
+    addScale3d : function(x,y,z) {
+        this.scale = {x:x,y:y,z:z};
+        return this;
+    },
+    addTranslate3d : function(x,y,z,unit){
+        if(unit!=null) {
+            unit = "%";
+        }
+        this.translate = {x:x,y:y,z:z,unit:unit};
+        return this;
     },
     addTransition : function(property, time, easing) {
         this.transitionProperty = property;
