@@ -4,15 +4,17 @@ var Poker = Poker || {};
 Poker.MyPlayerSeat = Poker.Seat.extend({
     myActionsManager : null,
     circularProgressBar : null,
-    init : function(seatId, player, templateManager, myActionsManager) {
-        this._super(seatId, player, templateManager);
+    tableId : null,
+    init : function(tableId,elementId, seatId, player, templateManager, myActionsManager, animationManager) {
+        this._super(elementId,seatId, player, templateManager,animationManager);
+        this.tableId = tableId;
         this.myActionsManager = myActionsManager;
-        this.seatElement = $("#myPlayerSeat");
+        this.seatElement = $("#"+elementId);
         this.renderSeat();
-
-        $("#myPlayer").show();
+        console.log(elementId+"Info");
+        $("#"+elementId+"Info").show();
         this.myActionsManager.onSitIn();
-        this.circularProgressBar = new CircularProgressBar("circularProgressBar");
+        this.circularProgressBar = new CircularProgressBar("#"+elementId+"Progressbar",this.animationManager);
         this.circularProgressBar.hide();
     },
     setSeatPos : function(prev,pos) {
@@ -29,12 +31,13 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.handStrength = this.seatElement.find(".hand-strength");
 
         this.reset();
-        $("#myPlayerName").html(this.player.name);
+        $("#myPlayerName-"+this.tableId).html(this.player.name);
     },
     activateSeat : function(allowedActions, timeToAct,mainPot) {
         this.myActionsManager.onRequestPlayerAction(allowedActions,mainPot);
         this.circularProgressBar.show();
         this.circularProgressBar.render(timeToAct);
+        Poker.ApplicationContext.viewManager.requestTableFocus(this.tableId);
     },
     onAction : function(actionType,amount){
         this.running = false;
@@ -48,7 +51,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
     },
     updatePlayer : function(player) {
         this.player = player;
-        $("#myPlayerBalance").html("&euro;"+this.player.balance);
+        $("#myPlayerBalance-"+this.tableId).html("&euro;"+this.player.balance);
         this.handlePlayerStatus();
     },
     handlePlayerStatus : function() {
@@ -60,7 +63,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
     },
     animateDealCard : function(div) {
         var self = this;
-        new Poker.CSSClassAnimation(div).addClass("dealt").start();
+        new Poker.CSSClassAnimation(div).addClass("dealt").start(this.animationManager);
     },
     fold : function() {
         this.seatElement.addClass("seat-folded");
@@ -70,7 +73,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
     },
     clear : function() {
         this.seatElement.empty();
-        $("#myPlayer").hide();
+        $("#myPlayer-"+this.tableId).hide();
         this.circularProgressBar.detach();
     },
     getDealerButtonOffsetElement : function() {

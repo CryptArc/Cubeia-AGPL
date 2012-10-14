@@ -7,9 +7,10 @@ var Poker = Poker || {};
  * @type {*}
  */
 Poker.SoundRepository = Class.extend({
-    sounds: [],
+    sounds: null,
 
     init:function () {
+        this.sounds = [];
         this.loadSounds();
     },
 

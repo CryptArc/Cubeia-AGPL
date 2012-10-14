@@ -5,8 +5,9 @@ Poker.DialogManager = Class.extend({
     container : null,
     currentCloseCallback : null,
     open : false,
-    dialogQueue : [],
+    dialogQueue : null,
     init : function()  {
+        this.dialogQueue = [];
         this.templateManager = new Poker.TemplateManager();
         var c = $("<div/>").attr("id","genericDialogContainer");
         $("body").append(c);

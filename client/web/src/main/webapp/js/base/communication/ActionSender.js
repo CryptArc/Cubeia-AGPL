@@ -1,9 +1,9 @@
+"use strict";
 var Poker = Poker || {};
-
-Poker.AbstractConnectorHandler = Class.extend({
+Poker.ActionSender = Class.extend({
     connector : null,
-    init : function() {
-
+    init : function(connector) {
+        this.connector = connector;
     },
     sendGameTransportPacket :function(tableId,gamedata) {
         this.connector.sendStyxGameData(0, tableId, gamedata);

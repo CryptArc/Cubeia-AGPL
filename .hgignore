@@ -13,6 +13,7 @@ target
 *.hsp
 *.db
 .idea
+*~
 glob:client/lobby/.actionScriptProperties
 glob:client/flex/assembly/
 glob:client/flex/styles/bin/
