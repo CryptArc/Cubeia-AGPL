@@ -296,7 +296,7 @@ Poker.ViewManager = Class.extend({
         });
 
         var count = this.getVisibleTabCount();
-        this.tabsContainer.find("li").css({width : (100/count) + "%" });
+        this.tabsContainer.find("li").css({width : (100/count)-2 + "%" });
 
         return view;
     },

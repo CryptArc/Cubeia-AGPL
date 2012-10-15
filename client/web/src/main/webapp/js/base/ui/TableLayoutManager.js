@@ -237,7 +237,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         var div = $('#' + card.getCardDivId());
         //this.cssAnimator.addTransition(div.get(0),"transform 0.5s ease-out",false);
 
-        new Poker.TransformAnimation(div).addTransform("translate3d(0,0,0)").start(this.animationManager);
+        new Poker.TransformAnimation(div).addTranslate3d(0,0,0,"").start(this.animationManager);
 
         this._storeCard(card);
         this._moveToPot();
@@ -353,7 +353,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         div.css("visibility","visible");
 
         new Poker.TransformAnimation(div).
-            addTransform("translate3d("+offset.left+"%,"+offset.top+"%,0)").
+            addTranslate3d(offset.left,offset.top,0,"%").
             addCallback(
             function(){
                 setTimeout(function(){div.remove();},1000);

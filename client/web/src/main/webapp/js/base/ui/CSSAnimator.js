@@ -16,12 +16,8 @@ Poker.CSSAnimator = Class.extend({
         }
     },
     clear : function(el) {
-
-
         this.clearTransition(el);
         this.clearTransform(el);
-
-
     },
     clearTransform : function(el) {
         if(el == null) {
@@ -51,7 +47,27 @@ Poker.CSSAnimator = Class.extend({
             }
         }
     },
-    setTranslate3dPx : function(el,x,y,z,orig) {
+    toScale3dString : function(x,y,z) {
+        return "scale3d("+x+","+y+","+z+")";
+    },
+    toTranslate3dString : function(x,y,z,unit) {
+        return "translate3d("+this.withUnit(x,unit)+","+this.withUnit(y,unit)+","+this.withUnit(z,unit)+")";
+    },
+    withUnit : function(val,unit)  {
+        if(val!=0) {
+            if(unit == "px") {
+                val = Math.round(val);
+            }
+            return val+unit;
+        } else {
+            return 0;
+        }
+
+    },
+    toRotateString : function(angle) {
+        return "rotate("+angle+"deg)";
+    },
+    setScale3d : function(el,x,y,z,orig) {
         if(typeof(el)=="undefined") {
             return;
         }
@@ -59,7 +75,23 @@ Poker.CSSAnimator = Class.extend({
             orig = "center";
         }
 
-        this.addTransform(el,"translate3d("+x+"px,"+y+"px,"+z+"px)",orig);
+        this.addTransform(el,this.toScale3dString(x,y,z),orig);
+    },
+    setRotate : function(el,angle) {
+        if(typeof(el)=="undefined") {
+            return;
+        }
+        this.addTransform(el,this.toRotateString(angle));
+    },
+    setTranslate3d : function(el,x,y,z,unit,orig) {
+        if(typeof(el)=="undefined") {
+            return;
+        }
+        if(typeof(orig)=="undefined") {
+            orig = "center";
+        }
+
+        this.addTransform(el,this.toTranslate3dString(x,y,z,unit),orig);
     },
     addTransform : function(el,transform,origin)  {
         if(!el || !transform) {

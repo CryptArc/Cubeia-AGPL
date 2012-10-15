@@ -184,7 +184,7 @@ Poker.Seat = Class.extend({
 
        this.moveToPotComplete = false;
        var trans = new Poker.TransformAnimation(amount).
-           addTransform("translate3d("+pos.left+","+pos.top+",0)").
+           addTranslate3d(pos.left,pos.top,0,"px").
            addCallback(function(){
               self.onMoveToPotEnd();
            });
@@ -198,7 +198,6 @@ Poker.Seat = Class.extend({
        }
    },
    calculatePotOffset : function(view,mainPotContainer){
-
         var width = view.width();
         var height = view.height();
         var amountOffset = this.actionAmount.offset();

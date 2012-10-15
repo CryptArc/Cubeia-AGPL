@@ -22,6 +22,6 @@ Poker.DealerButton = Class.extend({
     },
     move : function(top,left) {
         this.show();
-        new Poker.TransformAnimation(this.element).addTransform("translate3d("+left+"px,"+top+"px,0)").start(this.animationManager);
+        new Poker.TransformAnimation(this.element).addTranslate3d(left,top,0,"px").start(this.animationManager);
     }
 });

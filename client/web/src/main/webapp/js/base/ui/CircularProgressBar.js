@@ -59,10 +59,10 @@ CircularProgressBar.prototype = {
 
         this.animation = new Poker.TransformAnimation(this.pieElement);
         this.animation.addTransition("transform",(time/2000),"linear")
-            .addTransform("rotate(180deg)").addCallback(function(){
+            .addRotate(180).addCallback(function(){
                 self.slice.addClass("cpb-gt50");
                 self.fill.show();
-            }).next().addTransform("rotate(360deg)");
+            }).next().addStartRotate(180).addRotate(360);
         this.animation.setTimed(true);
         this.animation.start(this.animationManager);
 
