@@ -224,6 +224,7 @@ Poker.TableManager = Class.extend({
         }
     },
     leaveTable : function(tableId) {
+        console.log("REMOVING TABLE = " + tableId);
         var listeners = this.getTableListeners(tableId);
         for(var x in listeners)   {
             listeners[x].onLeaveTableSuccess();

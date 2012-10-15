@@ -65,7 +65,7 @@ Poker.CSSAnimator = Class.extend({
 
     },
     toRotateString : function(angle) {
-        return "rotate("+angle+"deg)";
+        return "rotate("+Math.round(angle)+"deg)";
     },
     setScale3d : function(el,x,y,z,orig) {
         if(typeof(el)=="undefined") {

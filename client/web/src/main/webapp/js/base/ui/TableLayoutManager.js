@@ -67,6 +67,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         this.mainPotContainer = this.tableView.find(".main-pot");
         tableViewContainer.show();
         this.cardElements = new Poker.Map();
+
     },
     onActivateView : function() {
         this.animationManager.setActive(true);

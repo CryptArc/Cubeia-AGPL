@@ -10,6 +10,7 @@ CircularProgressBar.prototype = {
     pieElement : null,
     animationManager : null,
 	_initialize : function(containerId,animationManager) {
+        this.i = Math.random();
 		if (containerId == null) {
 			throw "CircularProgressBar: containerId must be set";
 		}
@@ -53,8 +54,8 @@ CircularProgressBar.prototype = {
         this.pieElement = this.pie.get(0);
 	},
     animation : null,
-	render : function(time) {
 
+	render : function(time) {
         var self = this;
 
         this.animation = new Poker.TransformAnimation(this.pieElement);
@@ -62,11 +63,13 @@ CircularProgressBar.prototype = {
             .addRotate(180).addCallback(function(){
                 self.slice.addClass("cpb-gt50");
                 self.fill.show();
-            }).next().addStartRotate(180).addRotate(360);
+            }).next().addTransition("transform",(time/2000),"linear")
+                .setTimed(true)
+                .addStartRotate(180)
+                .addRotate(360);
         this.animation.setTimed(true);
         this.animation.start(this.animationManager);
 
-        return;
 
 
     },
