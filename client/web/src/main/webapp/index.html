@@ -101,7 +101,7 @@
             }
         }
         $(document).ready(function(){
-
+            less.watch();
             $(".describe").describe();
 
             /*
@@ -156,15 +156,19 @@
     </script>
 
 </head>
-<body>
+<body class="skin-classic">
     <div class="view-port">
         <div id="toolbar" style="display:none;">
             <div class="main-menu-button">
             </div>
             <div class="tabs-container">
                 <ul id="tabItems" class="tabs">
-
                 </ul>
+            </div>
+            <div class="skin-button" >
+                Skin:
+                <div id="classic">Classic</div>
+                <div id="modern" style="display:none;">Modern</div>
             </div>
         </div>
         <div class="main-menu-container" style="">
@@ -334,6 +338,12 @@
         <span>Pot:</span> <div class="balance">&euro;{{amount}}</div>
     </div>
     <div id="myPlayerSeatTemplate" style="display:none;">
+        <div class="avatar-base">
+
+        </div>
+        <div class="avatar">
+
+        </div>
         <div class="action-amount balance">
 
         </div>
