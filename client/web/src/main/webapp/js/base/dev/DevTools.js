@@ -72,7 +72,7 @@ Poker.DevTools = Class.extend({
             self.clearStyle();
         });
 
-        $(document).bind('keyup',function(e){
+        $(document).bind('keydown',function(e){
             if(self.selectedElement==null) {
                 return null;
             }
