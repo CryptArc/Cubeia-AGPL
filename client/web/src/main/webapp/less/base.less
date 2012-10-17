@@ -91,3 +91,44 @@ body {
 .skin-classic {
     @import "classic-table.less";
 }
+
+.dev-style-selected {
+    border:1px solid #ff0000;
+}
+.dev-div-selector {
+    position: absolute;
+    top:0;
+    left:0;
+    border:1px solid #777;
+    z-index: 100000000;
+    background-color: #444;
+    width:auto;
+    span {
+        display: block;
+        padding:2%;
+    }
+    ul {
+        padding: 0;
+        margin: 0;
+    }
+    li {
+        cursor:pointer;
+        list-style-type:none;
+        padding:2%;
+        margin:0;
+        display:block;
+        background-color:#444;
+        border-top:1px solid #999;
+        &:nth-child(even){
+            background-color: #333;
+        }
+        &:hover {
+            background-color:#555;
+        }
+    }
+}
+
+#devClearDiv {
+    cursor: pointer;
+    text-decoration: underline;
+}
