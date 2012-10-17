@@ -94,7 +94,15 @@ Poker.DevTools = Class.extend({
             else if(e.keyCode == 37) {
                 //left
                 moveX = -0.5;
+            } else if(e.keyCode == 27) {
+                if(self.selectedElement!=null) {
+                    self.selectedElement.removeClass("dev-style-selected");
+                    self.selectedElement = null;
+                }
+                return;
             }
+
+
 
             var left = self.selectedElement.css("left").replace("%","");
             var top = self.selectedElement.css("top").replace("%","");
