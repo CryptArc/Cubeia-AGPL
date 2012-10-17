@@ -104,7 +104,7 @@
 						<contextPath>/</contextPath>
 					</webApp>
 					<connectors>
-						<connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+						<connector implementation="org.eclipse.jetty.server.bio.SocketConnector">
 							<port>8181</port>
 							<maxIdleTime>60000</maxIdleTime>
 						</connector>

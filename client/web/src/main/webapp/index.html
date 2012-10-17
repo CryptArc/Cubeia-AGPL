@@ -104,6 +104,13 @@
             less.watch();
             $(".describe").describe();
 
+            $("#skinButton").click(function(e){
+                console.log("TOGGLE");
+                $("body").toggleClass("skin-classic");
+                $("#classic").toggle();
+                $("#modern").toggle();
+            });
+
             /*
             $("body").bind("touchmove", function(e){
                 var target = !$(e.target);
@@ -156,7 +163,7 @@
     </script>
 
 </head>
-<body class="skin-classic">
+<body>
     <div class="view-port">
         <div id="toolbar" style="display:none;">
             <div class="main-menu-button">
@@ -165,10 +172,9 @@
                 <ul id="tabItems" class="tabs">
                 </ul>
             </div>
-            <div class="skin-button" >
-                Skin:
-                <div id="classic">Classic</div>
-                <div id="modern" style="display:none;">Modern</div>
+            <div class="skin-button" id="skinButton">
+                <div id="classic" style="display:none;">Classic</div>
+                <div id="modern">Modern</div>
             </div>
         </div>
         <div class="main-menu-container" style="">
