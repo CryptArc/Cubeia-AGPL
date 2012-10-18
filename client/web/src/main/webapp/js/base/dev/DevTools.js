@@ -22,7 +22,7 @@ Poker.DevTools = Class.extend({
         setTimeout(function(){
             self.createTable();
         },1000);
-        new Poker.PositionEditor("#tableView-"+this.tableId);
+
 
     },
 
@@ -40,6 +40,7 @@ Poker.DevTools = Class.extend({
                 templateManager, null, 10);
             self.tableManager.createTable(self.tableId, 10, tableName , [tableLayoutManager]);
             Poker.AppCtx.getViewManager().addTableView(tableLayoutManager,tableName);
+            new Poker.PositionEditor("#tableView-"+self.tableId);
         };
 
         var cleanUpFunction = function() {

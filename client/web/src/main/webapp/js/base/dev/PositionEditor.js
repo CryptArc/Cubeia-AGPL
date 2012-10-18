@@ -26,11 +26,14 @@ Poker.PositionEditor = Class.extend({
     initHighlight : function() {
 
         var self = this;
-        $("body").append('<div class="dev-div-selector" id="divSelector"><ul></ul></div>');
-        $("body").append('<div class="dev-div-selector" id="devElementStyles" style="display:none;"><a id="devClearDiv">clear style</a><div class="style-container"></div></div>');
+        if($("#divSelector").length==0) {
+            $("body").append('<div class="dev-div-selector" id="divSelector"><ul></ul></div>');
+            $("body").append('<div class="dev-div-selector" id="devElementStyles" style="display:none;"><a id="devClearDiv">clear style</a><div class="style-container"></div></div>');
+        }
+
         $("#devClearDiv").click(function(e){
             self.clearStyle();
-        });
+        }).hide();
 
         $(document).bind('keydown',function(e){
 
@@ -102,12 +105,12 @@ Poker.PositionEditor = Class.extend({
 
 
         });
+
         $(this.elementsSelector).click(function(e){
             console.log(e);
             var x = e.pageX;
             var y = e.pageY;
             $("#divSelector").show();
-            console.log("cliced at "+x+","+y);
             self.elements = new Poker.Map();
             var children = $(self.elementsSelector).children();
 
@@ -149,14 +152,6 @@ Poker.PositionEditor = Class.extend({
                     el.attr("id",id);
                 }
                 self.elements.put(id,el);
-            } else {
-                if(el.hasClass("seat")){
-                    console.log(el);
-                    console.log(el.offset());
-                    console.log(el.width());
-                    console.log(el.height());
-
-                }
             }
 
             var children = el.children();
