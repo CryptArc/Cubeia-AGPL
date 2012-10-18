@@ -182,7 +182,7 @@ Poker.PositionEditor = Class.extend({
     },
     addAttr : function(attr){
         if(this.selectedElement.css(attr)!="auto") {
-            $("#devElementStyles .style-container").append($("<span/>").append(attr+":"+this.selectedElement.css(attr)));
+            $("#devElementStyles .style-container").append($("<span/>").append(attr+":"+this.selectedElement.css(attr)+";"));
         }
 
     }
