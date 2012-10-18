@@ -33,9 +33,8 @@ Poker.PositionEditor = Class.extend({
         });
 
         $(document).bind('keydown',function(e){
-            if(self.selectedElement==null) {
-                return null;
-            }
+
+
             $("#devElementStyles").show();
             var moveX = 0;
             var moveY = 0;
@@ -55,6 +54,8 @@ Poker.PositionEditor = Class.extend({
                 //left
                 moveX = -0.5;
             } else if(e.keyCode == 27) {    //esc
+
+                $("#divSelector").hide();
                 if(self.selectedElement!=null) {
                     self.selectedElement.removeClass("dev-style-selected");
                     self.selectedElement = null;
@@ -62,7 +63,9 @@ Poker.PositionEditor = Class.extend({
                 return;
             }
 
-
+            if(self.selectedElement==null) {
+                return null;
+            }
 
             var left = self.selectedElement.css("left").replace("%","");
             var top = self.selectedElement.css("top").replace("%","");
@@ -99,43 +102,82 @@ Poker.PositionEditor = Class.extend({
 
 
         });
-        $(this.elementsSelector).bind("mouseenter",function(e){
+        $(this.elementsSelector).click(function(e){
+            console.log(e);
+            var x = e.pageX;
+            var y = e.pageY;
+            $("#divSelector").show();
+            console.log("cliced at "+x+","+y);
+            self.elements = new Poker.Map();
+            var children = $(self.elementsSelector).children();
 
-            var el = $(e.target);
-            if(el.attr("id")==null) {
-                el.attr("id","develementid"+(self.elementIdSeq++));
-            }
-            self.elements.put(el.attr("id"),el);
-            var cursor = el.css("cursor");
+            self.storeChildren(children,x,y);
 
-            el.css("cursor","pointer").click(function(ce){
+            var selectedElements = self.elements.values();
+            var selector =  $("#divSelector ul");
+            selector.empty();
+            $.each(selectedElements,function(i,element){
+                var li = $("<li>").append(element.attr("id")+ ".["+element.attr("class")+"]");
+                selector.append(li);
 
-                $("#divSelector").css({top:ce.pageY + "px",left:ce.pageX + "px"});
-                var selector =  $("#divSelector ul");
-                selector.empty();
-                $.each(self.elements.values(),function(i,e){
-                    var element = e;
-                    var elId = element.attr("id") || "";
-                    var li = $("<li>").append(elId+ ".["+element.attr("class")+"]");
-                    selector.append(li);
-                    $("#divSelector").show();
-                    li.click(function(){
-                        if(self.selectedElement!=null) {
-                            self.selectedElement.removeClass("dev-style-selected");
-                        }
-                        self.selectedElement = element;
-                        element.addClass("dev-style-selected");
-                        self.elements.put(el.attr("id"),el);
-                        $("#divSelector").hide();
-                    });
+                li.click(function(){
+
+                    if(self.selectedElement!=null) {
+                        self.selectedElement.removeClass("dev-style-selected");
+                    }
+                    self.selectedElement = element;
+                    element.addClass("dev-style-selected");
+                    $("#divSelector").hide();
                 });
             });
-        }).bind("mouseleave",function(e){
-                var id = $(this).attr("id");
-                if(id!=null) {
-                    self.elements.remove(id);
+            $("#divSelector").css({top:y,left:x});
+
+
+        });
+
+
+    },
+    storeChildren : function(elements,x,y){
+        var self = this;
+        $.each(elements,function(i,el){
+            el = $(el);
+
+            if(self.isElementAt(el,x,y)){
+                var id = el.attr("id");
+                if(typeof(id)=="undefined") {
+                    id = "devel-"+self.elementIdSeq++;
+                    el.attr("id",id);
                 }
-            });
+                self.elements.put(id,el);
+            } else {
+                if(el.hasClass("seat")){
+                    console.log(el);
+                    console.log(el.offset());
+                    console.log(el.width());
+                    console.log(el.height());
+
+                }
+            }
+
+            var children = el.children();
+
+            if(children.length>0) {
+                self.storeChildren(children,x,y);
+            }
+        });
+    },
+    isElementAt : function(el,x,y){
+        el = $(el);
+        var offset = el.offset();
+        var position = el.css("position");
+        if(position=="absolute"){
+            if(x>=offset.left && x<=(offset.left+el.outerWidth())){
+                if(y>=offset.top && y<=(offset.top+el.outerHeight())) {
+                    return true;
+                }
+            }
+        }
+        return false;
 
     },
     addAttr : function(attr){

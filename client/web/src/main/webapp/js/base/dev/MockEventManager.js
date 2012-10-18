@@ -143,6 +143,7 @@ Poker.MockEventManager = Class.extend({
         }
         if(this.events.length<=this.currentPosition) {
             this.playing = false;
+            $(".player-panel").find(".active").removeClass("active");
             return;
         }
         if(this.stopAt == this.currentPosition) {

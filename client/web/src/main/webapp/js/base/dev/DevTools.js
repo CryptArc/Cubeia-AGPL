@@ -22,7 +22,7 @@ Poker.DevTools = Class.extend({
         setTimeout(function(){
             self.createTable();
         },1000);
-        new Poker.PositionEditor("#tableView-"+this.tableId+" *");
+        new Poker.PositionEditor("#tableView-"+this.tableId);
 
     },
 
@@ -119,28 +119,21 @@ Poker.DevTools = Class.extend({
         );
 
         this.mockEventManager.addEvent(
-            mockEvent("Deal community cards", function(){
+            mockEvent("Deal flop", function(){
                 self.tableManager.dealCommunityCard(self.tableId,self.cardIdSeq++,"as");
-            })
-        );
-
-        this.mockEventManager.addEvent(
-            mockEvent("Deal community cards", function(){
                 self.tableManager.dealCommunityCard(self.tableId,self.cardIdSeq++,"ad");
-            })
-        );
-        this.mockEventManager.addEvent(
-            mockEvent("Deal community cards", function(){
                 self.tableManager.dealCommunityCard(self.tableId,self.cardIdSeq++,"ks");
             })
         );
+
+
         this.mockEventManager.addEvent(
-            mockEvent("Deal community cards", function(){
+            mockEvent("Deal turn", function(){
                 self.tableManager.dealCommunityCard(self.tableId,self.cardIdSeq++,"qs");
             })
         );
         this.mockEventManager.addEvent(
-            mockEvent("Deal community cards", function(){
+            mockEvent("Deal river", function(){
                 self.tableManager.dealCommunityCard(self.tableId,self.cardIdSeq++,"ac");
             })
         );
