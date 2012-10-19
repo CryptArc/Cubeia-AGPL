@@ -98,4 +98,33 @@ describe("Poker.TableManager Test", function(){
 
     });
 
+    it("Deal cards", function(){
+        var mockTableListener = jasmine.createSpyObj('mockTableListener',
+            ['onTableCreated','onPlayerAdded','onPlayerUpdated','onDealPlayerCard']);
+
+        tableManager.createTable(1,10,"tableName", [mockTableListener]);
+        tableManager.addPlayer(1,1,1,"name1");
+        table = tableManager.getTable(1);
+        tableManager.addPlayer(1,2,2,"name2");
+        tableManager.updatePlayerBalance(1,1,1000);
+        tableManager.updatePlayerBalance(1,2,2000);
+
+        tableManager.dealPlayerCard(1,1,1,"  ");
+        tableManager.dealPlayerCard(1,1,2,"  ");
+
+        tableManager.dealPlayerCard(1,2,3,"  ");
+        tableManager.dealPlayerCard(1,2,4,"  ");
+
+
+        expect(table.getPlayerById(1).cards[0].id).toEqual(1);
+        expect(table.getPlayerById(1).cards[0].cardString).toEqual("back");
+        expect(table.getPlayerById(1).cards[1].id).toEqual(2);
+        expect(table.getPlayerById(1).cards[1].cardString).toEqual("back");
+
+        expect(mockTableListener.onDealPlayerCard).toHaveBeenCalled();
+        expect(mockTableListener.onPlayerAdded).toHaveBeenCalled();
+        expect(mockTableListener.onPlayerUpdated).toHaveBeenCalled();
+
+    });
+
 });
