@@ -12,8 +12,7 @@ Poker.Utils = {
     getCardString : function(gamecard) {
         var ranks = "23456789tjqka ";
         var suits = "cdhs ";
-        var cardString = ranks.charAt(gamecard.rank) + suits.charAt(gamecard.suit);
-        return cardString;
+        return ranks.charAt(gamecard.rank) + suits.charAt(gamecard.suit);
     },
     formatBlinds : function(amount) {
         var str = ""+ Poker.Utils.formatCurrency(amount);
@@ -31,7 +30,6 @@ Poker.Utils = {
      * window dimensions will be used
      * @param src
      * @param target
-     * @param container
      * @return {Object}
      */
     calculateDistance : function(src,target) {

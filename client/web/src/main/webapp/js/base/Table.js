@@ -19,11 +19,11 @@ Poker.Table = Class.extend({
         this.listeners = [];
     },
     leave : function() {
-        this.tableListeners = [];
+        this.listeners = [];
     },
     /**
      * Adds a listeners associated to this table
-     * @param listeners
+     * @param listener
      */
     addListener : function(listener) {
         this.listeners.push(listener);
@@ -33,7 +33,7 @@ Poker.Table = Class.extend({
     },
     /**
      *
-     * @param position at the table
+     * @param seat position at the table
      * @param player to add to the table
      */
     addPlayer : function(seat,player) {
@@ -52,15 +52,6 @@ Poker.Table = Class.extend({
            }
        }
        console.log("player not found when trying to remove");
-    },
-    /**
-     * Get player at a specific position
-     * @param seat of the player
-     * @return {Poker.Player} the player at the seat
-     */
-    getPlayerAtPosition : function(seat) {
-
-        return this.players.get(seat);
     },
     /**
      * Get a player by its player id

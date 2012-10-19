@@ -38,7 +38,7 @@ Poker.Settings = {
      */
     bindSettingToggle : function(checkbox,param) {
         var self = this;
-        var enabled = this.isEnabled(param);
+        var enabled = this.isEnabled(param,null);
         checkbox.attr("checked",enabled);
         checkbox.change(function(){
             if(checkbox.is(":checked")) {

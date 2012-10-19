@@ -33,9 +33,9 @@ Poker.TableManager = Class.extend({
         this.tables.put(tableId,table);
 
         if(tableListeners) {
-            for(var x in tableListeners)   {
-                table.addListener(tableListeners[x]);
-                tableListeners[x].onTableCreated();
+            for(var l = 0; l<tableListeners.length; l++){
+                table.addListener(tableListeners[l]);
+                tableListeners[l].onTableCreated();
             }
         }
 
@@ -55,7 +55,7 @@ Poker.TableManager = Class.extend({
         return table.getListeners();
     },
     removeEventListener : function(tableId) {
-      console.log("REMOVE EVENT LISTENER NO OP");
+      console.log("REMOVE EVENT LISTENER NO OP "+tableId);
     },
     /**
      * Handles a buy-in response and notifies the table listeners
@@ -65,7 +65,7 @@ Poker.TableManager = Class.extend({
     handleBuyInResponse : function(tableId,status) {
         if(status == com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.PENDING) {
             var listeners = this.getTableListeners(tableId);
-            for(var l in listeners) {
+            for(var l = 0; l<listeners.length; l++){
                 listeners[l].onBuyInCompleted();
             }
         } else if(status != com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.OK){
@@ -73,15 +73,16 @@ Poker.TableManager = Class.extend({
         }
     },
     handleBuyInError : function(tableId,status) {
+        console.log("buy-in status = " + status);
         var listeners = this.getTableListeners(tableId);
-        for(var l in listeners) {
+        for(var l = 0; l<listeners.length; l++){
             listeners[l].onBuyInError("Unable to buy in");
         }
     },
     handleBuyInInfo : function(tableId,balanceInWallet, balanceOnTable, maxAmount, minAmount,mandatory) {
         var listeners = this.getTableListeners(tableId);
         var name = this.tables.get(tableId).name;
-        for(var l in listeners) {
+        for(var l = 0; l<listeners.length; l++){
             listeners[l].onBuyInInfo(name,balanceInWallet,balanceOnTable,maxAmount,minAmount,mandatory);
         }
     },
@@ -97,14 +98,14 @@ Poker.TableManager = Class.extend({
     /**
      * Called when a hand is complete and notifies the table listeners
      * This method will trigger a tableManager.clearTable after
-     * 15 seconds (so it clears the table if no new hand starts)
+     * 15 seconds (us
      * @param tableId
      * @param hands
      * @param potTransfers
      */
     endHand : function(tableId,hands,potTransfers) {
-        for (var hand in hands) {
-            this.updateHandStrength(tableId,hands[hand]);
+        for (var i = 0; i<hands.length; i++) {
+            this.updateHandStrength(tableId,hands[i]);
         }
         var table = this.tables.get(tableId);
         console.log("pot transfers:");
@@ -126,7 +127,7 @@ Poker.TableManager = Class.extend({
     },
     _notifyPotToPlayerTransfer : function(tableId,transfers) {
         var listeners = this.getTableListeners(tableId);
-        for(var l in listeners) {
+        for(var l = 0; l<listeners.length; l++){
             listeners[l].onPlayerToPotTransfers(transfers);
         }
     },
@@ -143,28 +144,28 @@ Poker.TableManager = Class.extend({
         var table = this.tables.get(tableId);
         var player = table.getPlayerById(playerId);
         var listeners = table.getListeners();
-        for(var x in listeners)   {
-            listeners[x].onPlayerHandStrength(player,hand);
+        for(var l = 0; l<listeners.length; l++){
+            listeners[l].onPlayerHandStrength(player,hand);
         }
     },
     handlePlayerAction : function(tableId,playerId,actionType,amount){
         var table = this.tables.get(tableId);
         var player = table.getPlayerById(playerId);
         var listeners = table.getListeners();
-        for(var x in listeners) {
-            listeners[x].onPlayerActed(player,actionType,amount);
+        for(var l = 0; l<listeners.length; l++){
+            listeners[l].onPlayerActed(player,actionType,amount);
         }
     },
     _notifyNewHand : function(tableId,dealerSeatId) {
         var listeners = this.getTableListeners(tableId);
-        for(var x in listeners)   {
-            listeners[x].onStartHand(dealerSeatId);
+        for(var l = 0; l<listeners.length; l++){
+            listeners[l].onStartHand(dealerSeatId);
         }
     },
     setDealerButton : function(tableId,seatId) {
         var listeners = this.getTableListeners(tableId);
-        for(var x in listeners)   {
-            listeners[x].onMoveDealerButton(seatId);
+        for(var l = 0; l<listeners.length; l++){
+            listeners[l].onMoveDealerButton(seatId);
         }
     },
     addPlayer : function(tableId,seat,playerId, playerName) {
@@ -191,8 +192,8 @@ Poker.TableManager = Class.extend({
         var table = this.tables.get(tableId);
         var player = table.getPlayerById(playerId);
         var listeners = table.getListeners();
-        for(var x in listeners)   {
-            listeners[x].onDealPlayerCard(player,cardId, cardString);
+        for(var l = 0; l<listeners.length; l++){
+            listeners[l].onDealPlayerCard(player,cardId, cardString);
         }
     },
     updatePlayerBalance : function(tableId,playerId, balance) {
@@ -219,7 +220,7 @@ Poker.TableManager = Class.extend({
         var table = this.tables.get(tableId);
         var player = table.getPlayerById(playerId);
         var listeners = table.getListeners();
-        for(var x in listeners)   {
+        for(var l = 0; l<listeners.length; l++){
             listeners[x].onRequestPlayerAction(player,allowedActions,timeToAct,this.mainPot);
         }
 
@@ -230,14 +231,14 @@ Poker.TableManager = Class.extend({
     },
     dealCommunityCard : function(tableId,cardId,cardString) {
         var listeners = this.getTableListeners(tableId);
-        for(var x in listeners)   {
+        for(var l = 0; l<listeners.length; l++){
             listeners[x].onDealCommunityCard(cardId,cardString);
         }
     },
     updatePots : function(tableId,pots) {
         var table = this.tables.get(tableId);
 
-        for(var p in pots) {
+        for(var p = 0; p<pots.length; p++) {
             if(pots[p].type == Poker.PotType.MAIN) {
                 console.log("updating main pot");
                 table.mainPot = pots[p].amount;
@@ -248,45 +249,45 @@ Poker.TableManager = Class.extend({
     },
     exposePrivateCard : function(tableId,cardId,cardString) {
         var listeners = this.getTableListeners(tableId);
-        for(var x in listeners)   {
-            listeners[x].onExposePrivateCard(cardId,cardString);
+        for(var l = 0; l<listeners.length; l++){
+            listeners[l].onExposePrivateCard(cardId,cardString);
         }
     },
     bettingRoundComplete : function(tableId) {
         var listeners = this.getTableListeners(tableId);
-        for(var x in listeners)   {
-            listeners[x].onBettingRoundComplete();
+        for(var l = 0; l<listeners.length; l++){
+            listeners[l].onBettingRoundComplete();
         }
     },
     leaveTable : function(tableId) {
         console.log("REMOVING TABLE = " + tableId);
         var listeners = this.getTableListeners(tableId);
-        for(var x in listeners)   {
-            listeners[x].onLeaveTableSuccess();
+        for(var l = 0; l<listeners.length; l++){
+            listeners[l].onLeaveTableSuccess();
         }
         this.tables.remove(tableId).leave();
     },
     _notifyMainPotUpdated : function(tableId,amount) {
         var listeners = this.getTableListeners(tableId);
-        for(var x in listeners)   {
+        for(var l = 0; l<listeners.length; l++){
             listeners[x].onMainPotUpdate(amount);
         }
     },
     _notifyPlayerUpdated : function(tableId,player) {
         var listeners = this.getTableListeners(tableId);
-        for(var x in listeners)   {
+        for(var l = 0; l<listeners.length; l++){
             listeners[x].onPlayerUpdated(player);
         }
     },
     _notifyPlayerAdded : function(tableId,seat,player) {
         var listeners = this.getTableListeners(tableId);
-        for(var l in listeners){
+        for(var l = 0; l<listeners.length; l++){
             listeners[l].onPlayerAdded(seat,player);
         }
     },
     _notifyPlayerRemoved : function(tableId,playerId) {
         var listeners = this.getTableListeners(tableId);
-        for(var l in listeners){
+        for(var l = 0; l<listeners.length; l++){
             listeners[l].onPlayerRemoved(playerId);
         }
     }
