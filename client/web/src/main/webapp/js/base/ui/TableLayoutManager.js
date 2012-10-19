@@ -1,7 +1,7 @@
 "use strict";
 var Poker = Poker || {};
 /**
- * Handles the table UI extends the Poker.TableListener
+ * Handles the table UI, extends the Poker.TableListener
  * interface to receive events about the table
  * @type {Poker.TableLayoutManager}
  */
@@ -15,7 +15,6 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
     myActionsManager : null,
     tableComHandler : null,
     myPlayerSeatId : -1,
-    cssAnimator : null,
     seats : null,
     dealerButton : null,
     currentDealer : -1,
@@ -50,7 +49,6 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         };
         this.buyInDialog = new Poker.BuyInDialog(tableComHandler);
         this.myActionsManager = new Poker.MyActionsManager(this.tableView,actionCallback);
-        this.cssAnimator = new Poker.CSSAnimator();
         this.templateManager = templateManager;
         this.capacity = capacity || this.capacity;
         this.seatTemplate = $("#seatTemplate").html();
@@ -236,7 +234,6 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
 
         // Animate the cards.
         var div = $('#' + card.getCardDivId());
-        //this.cssAnimator.addTransition(div.get(0),"transform 0.5s ease-out",false);
 
         new Poker.TransformAnimation(div).addTranslate3d(0,0,0,"").start(this.animationManager);
 

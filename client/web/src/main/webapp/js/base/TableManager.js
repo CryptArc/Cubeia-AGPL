@@ -1,15 +1,32 @@
 "use strict";
 var Poker = Poker || {};
 
+/**
+ * Main entry point for table events.
+ * Handles all table state objects and notifies
+ * the table listeners of all the events
+ * @type {Poker.TableManager}
+ */
 Poker.TableManager = Class.extend({
     tables : null,
-
     init : function() {
         this.tables = new Poker.Map();
     },
+    /**
+     * Checks whether a table exist
+     * @param tableId to check
+     * @return {Boolean}
+     */
     tableExist : function(tableId) {
         return this.tables.contains(tableId)
     },
+    /**
+     * Creates a table and notifies it's table listeners
+     * @param tableId - id of the table
+     * @param capacity - nr of players
+     * @param name  - name of the table
+     * @param tableListeners - table listeners to add to that specific table
+     */
     createTable : function(tableId,capacity,name, tableListeners) {
         console.log("Creating table " + tableId + " with name = " + name);
         var table = new Poker.Table(tableId,capacity,name);
@@ -25,6 +42,11 @@ Poker.TableManager = Class.extend({
         console.log("Creating table " + tableId + " with listeners = " + table.getListeners().length);
         console.log("Nr of tables open = " + this.tables.size());
     },
+    /**
+     * Retrieves the table listeners for a specific table
+     * @param tableId
+     * @return {Array}
+     */
     getTableListeners : function(tableId) {
         var table = this.tables.get(tableId);
         if(table==null) {
@@ -35,6 +57,11 @@ Poker.TableManager = Class.extend({
     removeEventListener : function(tableId) {
       console.log("REMOVE EVENT LISTENER NO OP");
     },
+    /**
+     * Handles a buy-in response and notifies the table listeners
+     * @param tableId to handle buy-in response for
+     * @param status buy-in result code
+     */
     handleBuyInResponse : function(tableId,status) {
         if(status == com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.PENDING) {
             var listeners = this.getTableListeners(tableId);
@@ -67,6 +94,14 @@ Poker.TableManager = Class.extend({
         table.dealerSeatId = dealerSeatId;
         this._notifyNewHand(tableId,dealerSeatId);
     },
+    /**
+     * Called when a hand is complete and notifies the table listeners
+     * This method will trigger a tableManager.clearTable after
+     * 15 seconds (so it clears the table if no new hand starts)
+     * @param tableId
+     * @param hands
+     * @param potTransfers
+     */
     endHand : function(tableId,hands,potTransfers) {
         for (var hand in hands) {
             this.updateHandStrength(tableId,hands[hand]);

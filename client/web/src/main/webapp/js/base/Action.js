@@ -1,6 +1,10 @@
 "use strict";
 var Poker = Poker || {};
 
+/**
+ * Action that a player does, such as Call, Raise etc.
+ * @type {Poker.Action}
+ */
 Poker.Action = Class.extend({
     type : null,
     minAmount : 0,

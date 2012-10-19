@@ -149,6 +149,7 @@
                         <source>${project.basedir}/src/main/webapp/js/base/Table.js</source>
                         <source>${project.basedir}/src/main/webapp/js/base/Player.js</source>
                         <source>${project.basedir}/src/main/webapp/js/base/PlayerTableStatus.js</source>
+                        <source>${project.basedir}/src/main/webapp/js/base/PlayerStatus.js</source>
                     </preloadSources>
                     <jsTestSrcDir>${project.basedir}/src/test/js</jsTestSrcDir>
                     <specIncludes>

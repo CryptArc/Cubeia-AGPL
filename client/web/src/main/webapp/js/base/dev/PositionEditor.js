@@ -33,7 +33,7 @@ Poker.PositionEditor = Class.extend({
 
         $("#devClearDiv").click(function(e){
             self.clearStyle();
-        }).hide();
+        });
 
         $(document).bind('keydown',function(e){
 

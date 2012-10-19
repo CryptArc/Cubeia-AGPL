@@ -3,7 +3,9 @@ var Poker = Poker || {};
 
 Poker.BuyInDialog = Class.extend({
     tableComHandler : null,
+    dialogManager : null,
     init : function(tableComHandler) {
+        this.dialogManager = Poker.AppCtx.getDialogManager();
         this.tableComHandler = tableComHandler;
     },
     show : function(tableId,tableName, balanceInWallet, maxAmount, minAmount) {
@@ -16,7 +18,7 @@ Poker.BuyInDialog = Class.extend({
 
         $(".buyin-amount").val(Poker.Utils.formatCurrency(minAmount));
 
-        dialogManager.displayDialog(
+        this.dialogManager.displayDialog(
             "buyinDialog",
             function(){
                 var val = $("#facebox .buyin-amount").val();
@@ -42,6 +44,6 @@ Poker.BuyInDialog = Class.extend({
         return true;
     },
     close : function() {
-        dialogManager.close();
+        this.dialogManager.close();
     }
 });
