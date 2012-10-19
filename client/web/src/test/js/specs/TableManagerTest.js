@@ -115,12 +115,6 @@ describe("Poker.TableManager Test", function(){
         tableManager.dealPlayerCard(1,2,3,"  ");
         tableManager.dealPlayerCard(1,2,4,"  ");
 
-
-        expect(table.getPlayerById(1).cards[0].id).toEqual(1);
-        expect(table.getPlayerById(1).cards[0].cardString).toEqual("back");
-        expect(table.getPlayerById(1).cards[1].id).toEqual(2);
-        expect(table.getPlayerById(1).cards[1].cardString).toEqual("back");
-
         expect(mockTableListener.onDealPlayerCard).toHaveBeenCalled();
         expect(mockTableListener.onPlayerAdded).toHaveBeenCalled();
         expect(mockTableListener.onPlayerUpdated).toHaveBeenCalled();
