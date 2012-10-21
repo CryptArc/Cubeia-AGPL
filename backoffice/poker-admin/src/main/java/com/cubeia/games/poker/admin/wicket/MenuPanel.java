@@ -17,6 +17,7 @@
 
 package com.cubeia.games.poker.admin.wicket;
 
+import com.cubeia.games.poker.admin.wicket.pages.tournaments.history.SearchTournamentHistory;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -41,6 +42,7 @@ public class MenuPanel extends Panel {
         add(createNavMenuItem("sitAndGo", ListSitAndGoTournaments.class, currentPageClass));
         add(createNavMenuItem("scheduled", ListTournaments.class, currentPageClass));
         add(createNavMenuItem("clients", Clients.class, currentPageClass));
+        add(createNavMenuItem("tournamentHistory", SearchTournamentHistory.class, currentPageClass));
     }
 
     private NavMenuItem<String> createNavMenuItem(String id, Class<? extends Page> pageClass, Class<? extends BasePage> currentPageClass) {
