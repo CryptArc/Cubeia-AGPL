@@ -59,7 +59,8 @@ public class ListTables extends BasePage {
      * @param parameters Page parameters
      */
     public ListTables(final PageParameters parameters) {
-        SortableDataProviderExtension dataProvider = new SortableDataProviderExtension();
+    	super(parameters);
+    	SortableDataProviderExtension dataProvider = new SortableDataProviderExtension();
         ArrayList<AbstractColumn<TableConfigTemplate>> columns = new ArrayList<AbstractColumn<TableConfigTemplate>>();
         columns.add(new AbstractColumn<TableConfigTemplate>(new Model<String>("Id")) {
         	

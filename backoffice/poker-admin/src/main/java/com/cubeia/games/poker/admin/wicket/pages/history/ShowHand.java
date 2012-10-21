@@ -58,6 +58,7 @@ public class ShowHand extends BasePage {
     private Configuration config;
     
     public ShowHand(PageParameters parameters) {
+    	super(parameters);
         String handId = parameters.get("handId").toString();
         HistoricHand hand = historyService.findById(handId);
         addSummary(hand);
@@ -112,9 +113,9 @@ public class ShowHand extends BasePage {
     }
 
     private void addSummary(HistoricHand hand) {
-        add(new Label("handId", hand.getHandId().getHandId()));
-        add(new Label("tableId", String.valueOf(hand.getHandId().getTableId())));
-        add(new Label("tableIntegrationId", hand.getHandId().getTableIntegrationId()));
+        add(new Label("handId", hand.getId()));
+        add(new Label("tableId", String.valueOf(hand.getTable().getTableId())));
+        add(new Label("tableIntegrationId", hand.getTable().getTableIntegrationId()));
         add(new Label("startTime", new Date(hand.getStartTime()).toString()));
         add(new Label("endTime", new Date(hand.getEndTime()).toString()));
         add(new Label("totalRake", formatAmount(hand.getResults().getTotalRake())));

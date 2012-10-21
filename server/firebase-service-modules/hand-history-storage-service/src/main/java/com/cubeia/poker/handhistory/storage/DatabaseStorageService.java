@@ -17,106 +17,69 @@
 
 package com.cubeia.poker.handhistory.storage;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.firebase.api.service.Service;
 import com.cubeia.firebase.api.service.ServiceContext;
+import com.cubeia.firebase.api.service.ServiceRegistry;
+import com.cubeia.game.poker.config.api.HandHistoryConfig;
+import com.cubeia.game.poker.config.api.PokerConfigurationService;
 import com.cubeia.poker.handhistory.api.HandHistoryPersistenceService;
 import com.cubeia.poker.handhistory.api.HistoricHand;
-import com.cubeia.poker.handhistory.impl.JsonHandHistoryLogger;
-import com.mongodb.DB;
-import com.mongodb.DBObject;
-import com.mongodb.Mongo;
-import com.mongodb.util.JSON;
-import org.apache.log4j.Logger;
-
-import java.net.UnknownHostException;
+import com.cubeia.util.threads.SafeRunnable;
 
 /**
  * A database based implementation of the hand history persistence service, which stores the hand
- * history in a Mongo database.
- *
+ * history in a MongoDB database.
  */
 public class DatabaseStorageService implements HandHistoryPersistenceService, Service {
 
-    private static final Logger log = Logger.getLogger(DatabaseStorageService.class);
-    private Mongo db;
-    private String host;
-    private int port;
-    private String databaseName;
-    private JsonHandHistoryLogger jsonLogger;
-
-    private static final String HANDS_COLLECTION = "hands";
+    private MongoPersister mongoPersister;
+	private HandHistoryConfig configuration;
+	private JsonPoster jsonPoster;
+	
+	private ExecutorService exec = Executors.newCachedThreadPool();
 
     @Override
     public void init(ServiceContext context) throws SystemException {
-        initConfig(context);
-        jsonLogger = new JsonHandHistoryLogger();
+    	ServiceRegistry registry = context.getParentRegistry();
+    	PokerConfigurationService configService = registry.getServiceInstance(PokerConfigurationService.class);
+        configuration = configService.getHandHistoryConfig();
+    	mongoPersister = new MongoPersister(context); // TODO Switch config method?
+    	jsonPoster = new JsonPoster(configuration);
     }
 
     @Override
     public void start() {
-        try {
-            db = connectToMongo(host, port);
-        } catch (UnknownHostException e) {
-            log.warn("Could not connect to mongo on host " + host + " and port " + port);
-        }
-    }
-
-    private void initConfig(ServiceContext context) {
-        DatabaseStorageConfiguration configuration = getConfiguration().load(context);
-        host = configuration.getHost();
-        port = configuration.getPort();
-        databaseName = configuration.getDatabaseName();
-    }
-
-    protected DatabaseStorageConfiguration getConfiguration() {
-        return new DatabaseStorageConfiguration();
+        mongoPersister.start();
     }
 
     @Override
     public void persist(HistoricHand hand) {
-        log.info("Persisting hand to mongo");
-
-        try {
-            persistToMongo(hand);
-        } catch (Exception e) {
-            log.warn("Failed persisting hand history to mondodb. Please start a mongodb server on host " + host + " and port " + port, e);
-            jsonLogger.persist(hand);
-        }
+    	exec(mongoPersister, hand);
+    	exec(jsonPoster, hand);
     }
 
-    private void persistToMongo(HistoricHand hand) {
-        DBObject dbObject = (DBObject) JSON.parse(jsonLogger.convertToJson(hand));
-        db().getCollection(HANDS_COLLECTION).insert(dbObject);
-        log.info("Done persisting hand to mongo");
-    }
-
-    private DB db() {
-        try {
-            if (db == null) {
-                db = connectToMongo(host, port);
-            }
-            return db.getDB(databaseName);
-        } catch (Exception e) {
-            log.warn("Could not connect to mongo on host " + host + " port " + port, e);
-            return null;
-        }
-    }
-
-    private Mongo connectToMongo(String host, int port) throws UnknownHostException {
-        return new Mongo(host.trim(), port);
-    }
-
-    @Override
+	@Override
     public void stop() {
-        if (db != null) {
-            log.info("Closing mongo.");
-            db.close();
-        }
+    	mongoPersister.stop();
     }
 
     @Override
-    public void destroy() {
-
-    }
+    public void destroy() { }
+    
+    
+    // --- PRIVATE METHODS --- //
+    
+    private void exec(final HandHistoryPersistenceService service, final HistoricHand hand) {
+		this.exec.submit(new SafeRunnable() {
+			
+			@Override
+			protected void innerRun() {
+				service.persist(hand);
+			}
+		});
+	}
 }

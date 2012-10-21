@@ -166,13 +166,13 @@
 				<artifactId>mt-random</artifactId>
 				<version>1.0</version>
 			</dependency>
-			
+
 			<dependency>
-                <groupId>com.cubeia.firebase.service</groupId>
-                <artifactId>mt-random</artifactId>
-                <type>firebase-sar</type>
-                <version>1.0</version>
-            </dependency>
+				<groupId>com.cubeia.firebase.service</groupId>
+				<artifactId>mt-random</artifactId>
+				<type>firebase-sar</type>
+				<version>1.0</version>
+			</dependency>
 
 			<dependency>
 				<groupId>com.cubeia.firebase</groupId>
@@ -197,26 +197,26 @@
 				<artifactId>hand-history-collector-service</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-			
+
 			<dependency>
-                <groupId>com.cubeia.games.handhistory</groupId>
-                <artifactId>hand-history-collector-service</artifactId>
-                <version>${project.version}</version>
-                <type>firebase-sar</type>
-            </dependency>
+				<groupId>com.cubeia.games.handhistory</groupId>
+				<artifactId>hand-history-collector-service</artifactId>
+				<version>${project.version}</version>
+				<type>firebase-sar</type>
+			</dependency>
 
 			<dependency>
 				<groupId>com.cubeia.games.poker</groupId>
 				<artifactId>hand-debugger-service</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-			
+
 			<dependency>
-                <groupId>com.cubeia.games.poker</groupId>
-                <artifactId>hand-debugger-service</artifactId>
-                <version>${project.version}</version>
-                <type>firebase-sar</type>
-            </dependency>
+				<groupId>com.cubeia.games.poker</groupId>
+				<artifactId>hand-debugger-service</artifactId>
+				<version>${project.version}</version>
+				<type>firebase-sar</type>
+			</dependency>
 
 			<dependency>
 				<groupId>com.cubeia.games</groupId>
@@ -335,6 +335,16 @@
 				<groupId>commons-codec</groupId>
 				<artifactId>commons-codec</artifactId>
 				<version>1.5</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpclient</artifactId>
+				<version>4.1.2</version>
+			</dependency>
+			<dependency>
+				<groupId>org.codehaus.jackson</groupId>
+				<artifactId>jackson-mapper-lgpl</artifactId>
+				<version>1.9.3</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

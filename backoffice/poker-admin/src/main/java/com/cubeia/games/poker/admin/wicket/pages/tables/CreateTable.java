@@ -42,6 +42,7 @@ public class CreateTable extends BasePage {
     private TableConfigTemplate table;
     
     public CreateTable(final PageParameters parameters) {
+    	super(parameters);
         table = new TableConfigTemplate();
         table.setVariant(TEXAS_HOLDEM); // TODO: Add to form
     	table.setTiming(DEFAULT); // TODO: Add to form

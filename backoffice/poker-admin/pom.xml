@@ -190,10 +190,13 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>12.0</version>
 		</dependency>
 
-
+		<dependency>
+			<groupId>org.elasticsearch</groupId>
+			<artifactId>elasticsearch</artifactId>
+			<version>0.19.10</version>
+		</dependency>
 	</dependencies>
 
 	<build>

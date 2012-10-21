@@ -66,6 +66,7 @@ public class ListTournaments extends BasePage {
      * @param parameters Page parameters
      */
     public ListTournaments(final PageParameters parameters) {
+    	super(parameters);
         SortableDataProviderExtension dataProvider = new SortableDataProviderExtension();
         ArrayList<AbstractColumn> columns = new ArrayList<AbstractColumn>();
 

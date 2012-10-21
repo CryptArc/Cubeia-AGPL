@@ -59,17 +59,18 @@ public class CollectorServiceImpl implements HandHistoryCollectorService, Servic
     private JsonHandHistoryLogger jsonPersist;
 
     @Override
-    public void startHand(HandIdentification id, List<Player> seats) {
-        log.debug("Start hand on table: " + id.getTableId());
-        if (cache.containsKey(id.getTableId())) {
-            log.warn("Starting new hand, but cache is not empty, for table: " + id.getTableId());
+    public void startHand(String id, Table table, List<Player> seats) {
+    	log.debug("Start hand on table: " + id);
+        if (cache.containsKey(table.getTableId())) {
+            log.warn("Starting new hand, but cache is not empty, for table: " + table.getTableId());
         }
         HistoricHand hand = new HistoricHand(id);
+        hand.setTable(table);
         hand.setStartTime(new DateTime().getMillis());
         hand.getSeats().addAll(seats);
-        cache.put(id.getTableId(), hand);
+        cache.put(table.getTableId(), hand);	
     }
-
+    
     @Override
     public void reportEvent(int tableId, HandHistoryEvent event) {
         HistoricHand hand = getCurrent(tableId);
