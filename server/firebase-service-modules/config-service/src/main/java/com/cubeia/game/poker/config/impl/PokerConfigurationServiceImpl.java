@@ -29,6 +29,7 @@ import com.cubeia.firebase.api.service.config.ClusterConfigProviderContract;
 import com.cubeia.firebase.guice.inject.Log4j;
 import com.cubeia.firebase.guice.inject.Service;
 
+import com.cubeia.game.poker.config.api.HandHistoryConfig;
 import com.cubeia.game.poker.config.api.PokerConfigurationService;
 import com.cubeia.game.poker.config.api.PokerActivatorConfig;
 import com.cubeia.game.poker.config.api.PokerSystemConfig;
@@ -50,6 +51,11 @@ public class PokerConfigurationServiceImpl implements com.cubeia.firebase.api.se
     }
 
     public void start() {
+    }
+    
+    @Override
+    public HandHistoryConfig getHandHistoryConfig() {
+    	return config(HandHistoryConfig.class);
     }
 
     @Override

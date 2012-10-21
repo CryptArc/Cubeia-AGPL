@@ -46,6 +46,7 @@ public class CreateTournament extends BasePage {
     private AdminDAO adminDAO;
 
     public CreateTournament(final PageParameters parameters) {
+    	super(parameters);
         Form<ScheduledTournamentForm> tournamentForm = new Form<ScheduledTournamentForm>("tournamentForm",
                                 new CompoundPropertyModel<ScheduledTournamentForm>(new ScheduledTournamentForm())) {
             
