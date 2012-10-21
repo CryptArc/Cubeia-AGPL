@@ -3,7 +3,6 @@ var Poker = Poker || {};
 Poker.DealerButton = Class.extend({
     element : null,
     showing : false,
-    cssAnimator : null,
     animationManager : null,
     init : function(element,animationManager) {
         this.animationManager = animationManager;

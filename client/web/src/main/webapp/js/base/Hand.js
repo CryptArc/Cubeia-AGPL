@@ -1,6 +1,10 @@
 "use strict";
 var Poker = Poker || {};
 
+/**
+ * The poker hands that a player can get
+ * @type {Poker.Hand}
+ */
 Poker.Hand = {
     UNKNOWN : { text: "Unknown", id : 0},
     HIGH_CARD : { text: "High card", id : 1},

@@ -24,9 +24,9 @@ Poker.ViewManager = Class.extend({
         var self = this;
         this.tabsContainer = $("#"+tabsContainerId);
         this.views = [];
-        this.loginView = this.addView(new Poker.TabView("#loginView","Login"));
+        this.loginView = this.addView(new Poker.LoginView("#loginView","Login"));
         this.lobbyView = this.addView(new Poker.TabView("#lobbyView","Lobby"));
-        this.cssAnimator = new Poker.CSSAnimator();
+        this.cssAnimator = new Poker.CSSUtils();
         this.toolbar = $("#toolbar");
         this.activateView(this.loginView);
 

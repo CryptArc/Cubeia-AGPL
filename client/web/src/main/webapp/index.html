@@ -58,7 +58,6 @@
     <script type="text/javascript" src="js/base/ui/LobbyLayoutManager.js"></script>
     <script type="text/javascript" src="js/base/listeners/TableListener.js"></script>
     <script type="text/javascript" src="js/base/Player.js"></script>
-    <script type="text/javascript" src="js/base/PlayerManager.js"></script>
     <script type="text/javascript" src="js/base/Table.js"></script>
     <script type="text/javascript" src="js/base/TableManager.js"></script>
     <script type="text/javascript" src="js/base/ui/TableLayoutManager.js"></script>
@@ -70,7 +69,7 @@
     <script type="text/javascript" src="js/base/Pot.js"></script>
     <script type="text/javascript" src="js/base/Hand.js"></script>
     <script type="text/javascript" src="js/base/ui/describe.js"></script>
-    <script type="text/javascript" src="js/base/ui/CSSAnimator.js"></script>
+    <script type="text/javascript" src="js/base/ui/CSSUtils.js"></script>
     <script type="text/javascript" src="js/base/ui/animation/Transform.js"></script>
     <script type="text/javascript" src="js/base/ui/animation/Animation.js"></script>
     <script type="text/javascript" src="js/base/ui/animation/CSSClassAnimation.js"></script>
@@ -84,10 +83,20 @@
     <script type="text/javascript" src="js/base/ui/DialogManager.js"></script>
     <script type="text/javascript" src="js/base/ui/BuyInDialog.js"></script>
     <script type="text/javascript" src="js/base/ui/views/View.js"></script>
+    <script type="text/javascript" src="js/base/ui/views/TabView.js"></script>
+    <script type="text/javascript" src="js/base/ui/views/LoginView.js"></script>
+    <script type="text/javascript" src="js/base/ui/views/TableView.js"></script>
+    <script type="text/javascript" src="js/base/ui/views/DevSettingsView.js"></script>
     <script type="text/javascript" src="js/base/ui/views/ViewManager.js"></script>
     <script type="text/javascript" src="js/base/ui/views/MainMenuManager.js"></script>
     <script type="text/javascript" src="js/base/ApplicationContext.js"></script>
     <script type="text/javascript" src="js/base/ui/views/ViewSwiper.js"></script>
+
+    <script type="text/javascript" src="js/base/dev/MockEventManager.js"></script>
+    <script type="text/javascript" src="js/base/dev/PositionEditor.js"></script>
+    <script type="text/javascript" src="js/base/dev/DevTools.js"></script>
+
+
     <script type="text/javascript">
         var comHandler = null;
         var soundRepository = null;
@@ -95,22 +104,16 @@
         var viewManager = null;
         var mainMenuManager = null;
 
-        function handleKeyUp(keyCode) {
-            if(keyCode == 13) {
-                $("#loginButton").click();
-            }
-        }
         $(document).ready(function(){
-
+            less.watch();
             $(".describe").describe();
 
-            /*
-            $("body").bind("touchmove", function(e){
-                var target = !$(e.target);
-                if(comHandler.isInTableView() && (target.hasClass("ui-slider-handle") || dialogManager.open == true)) {
-                   e.preventDefault();
-                }
-            });*/
+            $("#skinButton").click(function(e){
+                $("body").toggleClass("skin-classic");
+                $("#classic").toggle();
+                $("#modern").toggle();
+            });
+
             var requestHost = window.location.hostname;
             var webSocketUrl = requestHost ? requestHost : "localhost";
             var webSocketPort = 9191;
@@ -131,21 +134,7 @@
             //wraps Firebase communication
             comHandler = Poker.AppCtx.getComHandler();
 
-            $("#loginButton").click(function(e){
-                console.log("logging in");
-                if ($('#user').val() != "username" && $('#pwd').val() != "Password") {
-                    var usr = $('#user').val();
-                    var pwd = $('#pwd').val();
-                    comHandler.doLogin(usr,pwd);
 
-                }
-            });
-            $("#user").keyup(function(e){
-               handleKeyUp(e.keyCode);
-            });
-            $("#pwd").keyup(function(e){
-                handleKeyUp(e.keyCode);
-            });
         });
 
 
@@ -163,8 +152,11 @@
             </div>
             <div class="tabs-container">
                 <ul id="tabItems" class="tabs">
-
                 </ul>
+            </div>
+            <div class="skin-button" id="skinButton">
+                <div id="classic" style="display:none;">Classic</div>
+                <div id="modern">Modern</div>
             </div>
         </div>
         <div class="main-menu-container" style="">
@@ -334,6 +326,12 @@
         <span>Pot:</span> <div class="balance">&euro;{{amount}}</div>
     </div>
     <div id="myPlayerSeatTemplate" style="display:none;">
+        <div class="avatar-base">
+
+        </div>
+        <div class="avatar">
+
+        </div>
         <div class="action-amount balance">
 
         </div>

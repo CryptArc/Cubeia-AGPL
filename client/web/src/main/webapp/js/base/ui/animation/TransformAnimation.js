@@ -22,10 +22,10 @@ Poker.TransformAnimation = Poker.Animation.extend({
     transitionEasing : null,
     origin : null,
 
-    cssAnimator : null,
+    cssUtils : null,
     init : function(element) {
         this._super(element);
-        this.cssAnimator = new Poker.CSSAnimator();
+        this.cssUtils = new Poker.CSSUtils();
         this.transform = new Poker.Transform();
         this.startTransform = new Poker.Transform();
         this.startTransform.scale(1,1,1);
@@ -40,13 +40,13 @@ Poker.TransformAnimation = Poker.Animation.extend({
 
 
         if(this.transitionProperty!=null) {
-            this.cssAnimator.addTransition(this.element,this.getCalculatedTransition());
+            this.cssUtils.addTransition(this.element,this.getCalculatedTransition());
 
         }
     },
     prepareElement : function() {
         if(this.timed==true) {
-            this.cssAnimator.clear(this.element);
+            this.cssUtils.clear(this.element);
             this.setTimedStartTransform();
         }
     },
@@ -62,7 +62,7 @@ Poker.TransformAnimation = Poker.Animation.extend({
             var x = (start.x - s.x) * remaining + s.x;
             var y = (start.y - s.y) * remaining + s.y;
             var z = (start.z - s.z) * remaining + s.z;
-            this.cssAnimator.setScale3d(this.element,x,y,z,this.origin);
+            this.cssUtils.setScale3d(this.element,x,y,z,this.origin);
 
         } else if(this.transform.getTranslate()!=null) {
 
@@ -71,14 +71,14 @@ Poker.TransformAnimation = Poker.Animation.extend({
             var x = (start.x - t.x) * remaining + t.x;
             var y = (start.y - t.y) * remaining + t.y;
             var z = (start.z - t.z) * remaining + t.z;
-            this.cssAnimator.setTranslate3d(this.element,x,y,z,start.unit,this.origin);
+            this.cssUtils.setTranslate3d(this.element,x,y,z,start.unit,this.origin);
 
         } else if(this.transform.getRotate()!=null) {
             var r = this.transform.getRotate();
             var start = this.startTransform.getRotate();
             var angle = (start - r) * remaining + r;
 
-            this.cssAnimator.setRotate(this.element,angle);
+            this.cssUtils.setRotate(this.element,angle);
         }
 
     },
@@ -87,7 +87,7 @@ Poker.TransformAnimation = Poker.Animation.extend({
      */
     animate : function() {
         if(this.getTransform()!=null) {
-            this.cssAnimator.addTransform(this.element,this.getTransform(),this.origin);
+            this.cssUtils.addTransform(this.element,this.getTransform(),this.origin);
         }
     },
     addTransform : function(transform) {
@@ -99,14 +99,14 @@ Poker.TransformAnimation = Poker.Animation.extend({
         var transform = "";
         if(this.transform.getScale()!=null) {
             var s = this.transform.getScale();
-            transform+= this.cssAnimator.toScale3dString(s.x, s.y, s.z);
+            transform+= this.cssUtils.toScale3dString(s.x, s.y, s.z);
         }
         if(this.transform.getTranslate()!=null) {
             var t = this.transform.getTranslate();
-            transform+=this.cssAnimator.toTranslate3dString(t.x, t.y, t.z, t.unit);
+            transform+=this.cssUtils.toTranslate3dString(t.x, t.y, t.z, t.unit);
         }
         if(this.transform.getRotate()!=null){
-            transform+=this.cssAnimator.toRotateString(this.transform.getRotate());
+            transform+=this.cssUtils.toRotateString(this.transform.getRotate());
         }
 
         if(transform=="") {

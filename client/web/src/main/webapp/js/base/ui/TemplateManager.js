@@ -6,7 +6,7 @@ Poker.TemplateManager = Class.extend({
     init : function(preCacheTemplates) {
         this.templates = new Poker.Map();
         if(preCacheTemplates && preCacheTemplates.length>0) {
-            for(var i in preCacheTemplates) {
+            for(var i = 0; i<preCacheTemplates.length; i++) {
                 this.getTemplate(preCacheTemplates[i]);
             }
         }

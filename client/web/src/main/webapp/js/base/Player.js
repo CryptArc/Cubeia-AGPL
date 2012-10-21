@@ -10,18 +10,9 @@ Poker.Player = Class.extend({
     balance : 0,
     tableStatus : null,
     lastActionType : null,
-    cards : null,
     init : function(id,name) {
-        this.cards = [];
         this.name = name;
         this.id = id;
         this.tableStatus = Poker.PlayerTableStatus.SITTING_IN;
-    },
-    /**
-     * Adds a card to the player
-     * @param card to add
-     */
-    addCard : function(card) {
-        this.cards.push(card);
     }
 });

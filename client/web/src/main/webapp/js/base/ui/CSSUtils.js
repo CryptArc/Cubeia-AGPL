@@ -1,7 +1,11 @@
 "use strict";
 var Poker = Poker || {};
-
-Poker.CSSAnimator = Class.extend({
+/**
+ * Util class for adding css3 transforms and transition
+ * attributes to DOM elements with browser specific prefixes
+ * @type {*}
+ */
+Poker.CSSUtils = Class.extend({
     prefix : ["-moz-","-webkit-","-o-", ""],
     jsPropertyPrefix : ["moz","webkit","o",""],
     addTransition : function(el,transition) {
@@ -95,7 +99,7 @@ Poker.CSSAnimator = Class.extend({
     },
     addTransform : function(el,transform,origin)  {
         if(!el || !transform) {
-            throw "Poker.CSSAnimator: Illegal argument, element and transforms must be set";
+            throw "Poker.CSSUtils: Illegal argument, element and transforms must be set";
         }
         el = this.getElement(el);
         for(var i = 0; i<this.prefix.length; i++) {
@@ -118,7 +122,7 @@ Poker.CSSAnimator = Class.extend({
     },
     addTransitionCallback : function(element,func) {
         if(!element || !func) {
-           throw "Poker.CSSAnimator: Illegal argument, element and callback function must be set";
+           throw "Poker.CSSUtils: Illegal argument, element and callback function must be set";
         }
         this.removeTransitionCallback(element);
         $(element).bind('webkitTransitionEnd',func);

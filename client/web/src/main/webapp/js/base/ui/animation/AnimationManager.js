@@ -6,7 +6,7 @@ var Poker = Poker || {};
  * @type {Poker.AnimationManager}
  */
 Poker.AnimationManager = Class.extend({
-    cssAnimator : null,
+    cssUtils : null,
     active : true,
     pendingAnimations : null,
     currentAnimations : null,
@@ -14,7 +14,7 @@ Poker.AnimationManager = Class.extend({
     init : function() {
         this.pendingAnimations = [];
         this.currentAnimations = [];
-        this.cssAnimator = new Poker.CSSAnimator();
+        this.cssUtils = new Poker.CSSUtils();
     },
     activate : function() {
         this.active = true;
@@ -92,7 +92,7 @@ Poker.AnimationManager = Class.extend({
             delay = 50;
         }
         //be sure it's no crap
-        this.cssAnimator.removeTransitionCallback(animation.element);
+        this.cssUtils.removeTransitionCallback(animation.element);
 
         animation.prepareElement();
 
@@ -101,7 +101,7 @@ Poker.AnimationManager = Class.extend({
             animation.prepare();
 
             //setup the animation callbacks
-            self.cssAnimator.addTransitionCallback(animation.element,callback);
+            self.cssUtils.addTransitionCallback(animation.element,callback);
             //if the animation manager is NOT active (view not showing)
             if(self.active==false) {
                 animation.animate(); //add the transforms right away
@@ -136,7 +136,7 @@ Poker.AnimationManager = Class.extend({
     },
     deactivate : function() {
         for(var x in this.currentAnimations) {
-            this.cssAnimator.removeTransitionCallback(this.currentAnimations[x].element);
+            this.cssUtils.removeTransitionCallback(this.currentAnimations[x].element);
             this.currentAnimations[x].cancel();
             this.pendingAnimations.push(this.currentAnimations[x]);
         }

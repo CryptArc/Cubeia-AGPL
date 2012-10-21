@@ -1,7 +1,7 @@
 "use strict";
 var Poker = Poker || {};
 /**
- * Handles the table UI extends the Poker.TableListener
+ * Handles the table UI, extends the Poker.TableListener
  * interface to receive events about the table
  * @type {Poker.TableLayoutManager}
  */
@@ -15,7 +15,6 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
     myActionsManager : null,
     tableComHandler : null,
     myPlayerSeatId : -1,
-    cssAnimator : null,
     seats : null,
     dealerButton : null,
     currentDealer : -1,
@@ -50,7 +49,6 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         };
         this.buyInDialog = new Poker.BuyInDialog(tableComHandler);
         this.myActionsManager = new Poker.MyActionsManager(this.tableView,actionCallback);
-        this.cssAnimator = new Poker.CSSAnimator();
         this.templateManager = templateManager;
         this.capacity = capacity || this.capacity;
         this.seatTemplate = $("#seatTemplate").html();
@@ -110,8 +108,9 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
     onPlayerAdded : function(seatId,player) {
         console.log("Player " + player.name + " added at seat " + seatId);
         var seat = null;
+        var elementId = null;
         if (player.id == Poker.MyPlayer.id) {
-            var elementId = "myPlayerSeat-"+this.tableId;
+            elementId = "myPlayerSeat-"+this.tableId;
             seat = new Poker.MyPlayerSeat(this.tableId,elementId,seatId,player,this.templateManager,this.myActionsManager,this.animationManager);
             this.myPlayerSeatId = seatId;
             this._calculateSeatPositions();
@@ -121,7 +120,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
             this.seats.put(seatId,seat);
             this.tableView.find(".seat-pos-0").hide();
         } else {
-            var elementId = "seat"+seatId+"-"+this.tableId;
+            elementId = "seat"+seatId+"-"+this.tableId;
             seat = new Poker.Seat(elementId, seatId,player,this.templateManager,this.animationManager);
             seat.setSeatPos(-1,this._getNormalizedSeatPosition(seatId));
             this.seats.put(seatId,seat);
@@ -220,7 +219,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
     },
     onBettingRoundComplete :function() {
         var seats =  this.seats.values();
-        for(var x in seats) {
+        for(var x = 0; x<seats.length; x++) {
             seats[x].onBettingRoundComplete();
         }
     },
@@ -236,7 +235,6 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
 
         // Animate the cards.
         var div = $('#' + card.getCardDivId());
-        //this.cssAnimator.addTransition(div.get(0),"transform 0.5s ease-out",false);
 
         new Poker.TransformAnimation(div).addTranslate3d(0,0,0,"").start(this.animationManager);
 
@@ -249,7 +247,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
     },
     onRequestPlayerAction : function(player,allowedActions,timeToAct,mainPot){
         var seats = this.seats.values();
-        for (var s in seats) {
+        for (var s = 0; s<seats.length; s++) {
             seats[s].inactivateSeat();
         }
         var seat = this.getSeatByPlayerId(player.id);
@@ -268,7 +266,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         this.myPlayerSeatId=-1;
         this._resetCommunity();
         var cards = this.cardElements.values();
-        for(var x in cards) {
+        for(var x = 0; x<cards.length; x++) {
             $("#"+cards[x].getCardDivId()).remove();
         }
         this.myActionsManager.clear();
@@ -317,13 +315,13 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
     },
     _hideSeatActionInfo : function() {
         var seats = this.seats.values();
-        for(var s in seats) {
+        for(var s = 0; s<seats.length; s++) {
             seats[s].hideActionInfo();
         }
     },
     _moveToPot : function() {
         var seats = this.seats.values();
-        for(var s in seats) {
+        for(var s=0; s<seats.length; s++) {
             seats[s].moveAmountToPot(this.tableView, this.mainPotContainer);
         }
     },
@@ -347,8 +345,6 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         var html = Mustache.render(this.potTransferTemplate,{ id : seatId + "-" + this.tableId, amount: Poker.Utils.formatCurrency(amount)});
         $("#seatContainer-"+this.tableId).append(html);
         var div = $("#potTransfer" + seatId + "-"+this.tableId);
-
-        var self = this;
 
         var offset =  Poker.Utils.calculateDistance(div,targetElement);
         div.css("visibility","visible");

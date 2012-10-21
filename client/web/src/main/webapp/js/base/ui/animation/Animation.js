@@ -43,8 +43,8 @@ Poker.Animation = Class.extend({
 
     },
     cancel : function () {
-        var cssAnimator = new Poker.CSSAnimator();
-        cssAnimator.clear(this.element);
+        var cssUtils = new Poker.CSSUtils();
+        cssUtils.clear(this.element);
     },
     setTimed : function(timed) {
         this.timed = timed;

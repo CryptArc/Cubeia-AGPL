@@ -116,15 +116,37 @@ Poker.TableListener = Class.extend({
     onMoveDealerButton : function(seatId) {
         console.log("Poker.TableListener.onMoveDealerButton");
     },
+    /**
+     * Called when a player recieves money from a pot
+     * @param transfers
+     */
     onPlayerToPotTransfers : function(transfers) {
         console.log("Poker.TableListener.onPlayerToPotTransfers");
     },
+    /**
+     * Called when a player is supposed to do a buy-in with the
+     * info about max and min amounts and the player balance
+     *
+     * @param tableName
+     * @param balanceInWallet
+     * @param balanceOnTable
+     * @param maxAmount
+     * @param minAmount
+     * @param mandatory
+     */
     onBuyInInfo : function(tableName,balanceInWallet, balanceOnTable, maxAmount, minAmount,mandatory) {
         console.log("Poker.TableListener.handleBuyInInfo");
     },
+    /**
+     * Called when a buy-in was completed
+     */
     onBuyInCompleted : function() {
         console.log("Poker.TableListener.onBuyInCompleted");
     },
+    /**
+     * Called when there was an error with the buy-in
+     * @param msg
+     */
     onBuyInError : function(msg) {
 
     }

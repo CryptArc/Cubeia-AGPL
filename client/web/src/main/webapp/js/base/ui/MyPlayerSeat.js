@@ -1,6 +1,13 @@
 "use strict";
 var Poker = Poker || {};
 
+/**
+ * Handles the UI for the logged in player
+ *
+ * extends Poker.Seat
+ *
+ * @type {Poker.MyPlayerSeat}
+ */
 Poker.MyPlayerSeat = Poker.Seat.extend({
     myActionsManager : null,
     circularProgressBar : null,

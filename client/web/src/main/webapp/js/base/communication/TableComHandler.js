@@ -29,7 +29,7 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
             this.sitOut(tableId);
         } else {
             if (actionType.id == Poker.ActionType.RAISE.id) {
-                this.actionSender.sendAction(tableId,this.pokerProtocolHandler.seq, this.getActionEnumType(actionType), amount, 0);
+                this.actionSender.sendAction(tableId,this.pokerProtocolHandler.getSeq(tableId), this.getActionEnumType(actionType), amount, 0);
             } else {
                 this.actionSender.sendAction(tableId,this.pokerProtocolHandler.getSeq(tableId), this.getActionEnumType(actionType), amount, 0);
             }
