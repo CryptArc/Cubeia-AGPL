@@ -129,6 +129,9 @@ public class CreateUser {
 		u.setUserInformation(ui);
 		u.setOperatorId(0L);
 		u.setExternalUserId("");
+		u.getAttributes().put("user.userName", username);
+		u.getAttributes().put("user.firstName", firstname);
+		u.getAttributes().put("user.lastName", lastname);
 		// System.out.println(userService);
 		UserServiceClientHTTP userClient = new UserServiceClientHTTP(userService);
 		CreateUserResponse resp = userClient.createUser(new CreateUserRequest(u, password));

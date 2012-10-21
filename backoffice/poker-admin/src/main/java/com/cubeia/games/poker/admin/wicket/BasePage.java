@@ -17,21 +17,53 @@
 
 package com.cubeia.games.poker.admin.wicket;
 
+import static com.cubeia.games.poker.admin.wicket.util.ParamBuilder.start;
+
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.StatelessForm;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.PackageResourceReference;
+
+import com.cubeia.games.poker.admin.wicket.util.ParamBuilder;
 
 public abstract class BasePage extends WebPage {
 
 	private static final long serialVersionUID = -913606276144395037L;
 
-	public BasePage() {
+	private String query;
+
+	public BasePage(PageParameters p) {
 		add(new MenuPanel("menuPanel", this.getClass()));
 		// defer setting the title model object as the title may not be generated now
 		add(new Label("title", new Model<String>()));
+		
+		/*Form form = new Form("global.searchform") {
+			
+			protected void onSubmit() {
+				if(query != null) {
+					setResponsePage(SearchPage.class, start("query", query).end());
+				}
+			};
+		};
+		
+		form.add(new TextField<String>("global.searchbox", new PropertyModel<String>(this, "query")));
+		add(form);*/
 	}
+	
+	public String getQuery() {
+		return query;
+	}
+	
+	public void setQuery(String query) {
+		this.query = query;
+	}
+	
 	public void renderHead(IHeaderResponse resp) {
 		resp.renderJavaScriptReference(new PackageResourceReference(BasePage.class,"jquery-1.7.2.min.js"));
 		resp.renderJavaScriptReference(new PackageResourceReference(BasePage.class,"jquery-tmpl-1.4.2.min.js"));

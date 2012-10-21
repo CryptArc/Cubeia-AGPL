@@ -39,6 +39,7 @@ public class Clients extends BasePage {
     private transient StateClientRegistryMBean mbeanProxy;
     
     public Clients(final PageParameters parameters) {
+    	super(parameters);
         FirebaseJMXFactory jmxFactory = new FirebaseJMXFactory();
         mbeanProxy = jmxFactory.createClientRegistryProxy();
 

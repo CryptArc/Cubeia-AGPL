@@ -59,6 +59,7 @@ public class ListSitAndGoTournaments extends BasePage {
      * @param parameters Page parameters
      */
     public ListSitAndGoTournaments(final PageParameters parameters) {
+    	super(parameters);
         SortableDataProviderExtension dataProvider = new SortableDataProviderExtension();
         ArrayList<AbstractColumn> columns = new ArrayList<AbstractColumn>();
 

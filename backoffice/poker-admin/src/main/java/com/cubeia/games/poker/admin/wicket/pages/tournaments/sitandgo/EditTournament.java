@@ -41,6 +41,7 @@ public class EditTournament extends BasePage {
     private SitAndGoConfiguration tournament;
     
     public EditTournament(final PageParameters parameters) {
+    	super(parameters);
         final Integer tournamentId = parameters.get("tournamentId").toInt();
         
         loadFormData(tournamentId);

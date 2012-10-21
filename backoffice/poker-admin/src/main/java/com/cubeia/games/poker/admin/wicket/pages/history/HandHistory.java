@@ -41,6 +41,7 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import com.cubeia.games.poker.admin.service.history.HandHistoryService;
@@ -64,7 +65,8 @@ public class HandHistory extends BasePage {
 
     private final HandHistory.HandProvider handProvider = new HandProvider();;
 
-    public HandHistory() {
+    public HandHistory(PageParameters parameters) {
+    	super(parameters);
         addForm();
         addResultsTable();
         add(new FeedbackPanel("feedback"));
@@ -85,7 +87,7 @@ public class HandHistory extends BasePage {
             @Override
             public void populateItem(Item<ICellPopulator<HistoricHand>> item, String componentId, IModel<HistoricHand> model) {
                 HistoricHand hand = model.getObject();
-                String handId = hand.getHandId().getHandId();
+                String handId = hand.getId();
                 Component panel = new LabelLinkPanel(componentId, "" + handId, ShowHand.class, ParamBuilder.params("handId", handId));
                 item.add(panel);
             }

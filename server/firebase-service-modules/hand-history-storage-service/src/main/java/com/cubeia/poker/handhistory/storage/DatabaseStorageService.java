@@ -17,6 +17,9 @@
 
 package com.cubeia.poker.handhistory.storage;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.firebase.api.service.Service;
 import com.cubeia.firebase.api.service.ServiceContext;
@@ -31,8 +34,7 @@ import org.apache.log4j.Logger;
 
 /**
  * A database based implementation of the hand history persistence service, which stores the hand
- * history in a Mongo database.
- *
+ * history in a MongoDB database.
  */
 public class DatabaseStorageService implements HandHistoryPersistenceService, Service {
 
@@ -46,7 +48,6 @@ public class DatabaseStorageService implements HandHistoryPersistenceService, Se
 
     private static final String HANDS_COLLECTION = "hands";
 
-    @Override
     public void persist(HistoricHand hand) {
         log.info("Persisting hand to mongo");
 

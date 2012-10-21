@@ -41,6 +41,7 @@ public class CreateSitAndGo extends BasePage {
     private SitAndGoConfiguration tournament;
     
     public CreateSitAndGo(final PageParameters parameters) {
+    	super(parameters);
         resetFormData();
         
         Form tournamentForm = new Form("tournamentForm") {
