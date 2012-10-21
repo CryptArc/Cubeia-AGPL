@@ -221,7 +221,7 @@ Poker.TableManager = Class.extend({
         var player = table.getPlayerById(playerId);
         var listeners = table.getListeners();
         for(var l = 0; l<listeners.length; l++){
-            listeners[x].onRequestPlayerAction(player,allowedActions,timeToAct,this.mainPot);
+            listeners[l].onRequestPlayerAction(player,allowedActions,timeToAct,this.mainPot);
         }
 
     },
@@ -232,7 +232,7 @@ Poker.TableManager = Class.extend({
     dealCommunityCard : function(tableId,cardId,cardString) {
         var listeners = this.getTableListeners(tableId);
         for(var l = 0; l<listeners.length; l++){
-            listeners[x].onDealCommunityCard(cardId,cardString);
+            listeners[l].onDealCommunityCard(cardId,cardString);
         }
     },
     updatePots : function(tableId,pots) {
@@ -270,13 +270,13 @@ Poker.TableManager = Class.extend({
     _notifyMainPotUpdated : function(tableId,amount) {
         var listeners = this.getTableListeners(tableId);
         for(var l = 0; l<listeners.length; l++){
-            listeners[x].onMainPotUpdate(amount);
+            listeners[l].onMainPotUpdate(amount);
         }
     },
     _notifyPlayerUpdated : function(tableId,player) {
         var listeners = this.getTableListeners(tableId);
         for(var l = 0; l<listeners.length; l++){
-            listeners[x].onPlayerUpdated(player);
+            listeners[l].onPlayerUpdated(player);
         }
     },
     _notifyPlayerAdded : function(tableId,seat,player) {
