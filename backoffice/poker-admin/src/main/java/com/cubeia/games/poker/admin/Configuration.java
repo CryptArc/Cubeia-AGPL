@@ -23,6 +23,15 @@ import org.springframework.stereotype.Component;
 public class Configuration {
 
 	private String networkUrl;
+	private String searchUrl;
+	
+	public String getSearchUrl() {
+		return searchUrl;
+	}
+	
+	public void setSearchUrl(String searchUrl) {
+		this.searchUrl = searchUrl;
+	}
 	
 	public String getNetworkUrl() {
 		return networkUrl;
@@ -34,6 +43,7 @@ public class Configuration {
 
 	@Override
 	public String toString() {
-		return "Configuration [networkUrl=" + networkUrl + "]";
+		return "Configuration [networkUrl=" + networkUrl + ", searchUrl="
+				+ searchUrl + "]";
 	}
 }

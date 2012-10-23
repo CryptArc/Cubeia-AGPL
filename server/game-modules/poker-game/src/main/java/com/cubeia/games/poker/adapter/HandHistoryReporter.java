@@ -46,7 +46,6 @@ import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.handhistory.api.DeckInfo;
 import com.cubeia.poker.handhistory.api.HandHistoryCollectorService;
 import com.cubeia.poker.handhistory.api.HandHistoryEvent;
-import com.cubeia.poker.handhistory.api.HandIdentification;
 import com.cubeia.poker.handhistory.api.Player;
 import com.cubeia.poker.handhistory.api.PlayerAction;
 import com.cubeia.poker.handhistory.api.PlayerCardsDealt;
@@ -147,8 +146,11 @@ public class HandHistoryReporter {
         List<Player> seats = getSeatsFromState();
         String tableExtId = getIntegrationTableId();
         String handExtId = getIntegrationHandId();
-        HandIdentification id = new HandIdentification(table.getId(), tableExtId, handExtId);
-        this.service.startHand(id, seats);
+        com.cubeia.poker.handhistory.api.Table table = new com.cubeia.poker.handhistory.api.Table();
+        table.setTableId(this.table.getId());
+        table.setTableIntegrationId(tableExtId);
+        table.setTableName(this.table.getMetaData().getName());
+        this.service.startHand(handExtId, table, seats);
     }
 
     public void notifyNewRound() {

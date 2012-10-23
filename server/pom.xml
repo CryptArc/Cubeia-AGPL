@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.cubeia.games</groupId>
     <artifactId>poker</artifactId>
@@ -190,7 +190,6 @@
                 <artifactId>hand-history-collector-service</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>com.cubeia.games.handhistory</groupId>
                 <artifactId>hand-history-collector-service</artifactId>
@@ -340,13 +339,23 @@
                 <version>${project.version}</version>
                 <type>firebase-sar</type>
             </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>4.1.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-mapper-lgpl</artifactId>
+                <version>1.9.3</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <profiles>
         <profile>
-            <!-- Disable this profile to skip license check, for example on automated
-                   builds -->
+            <!-- Disable this profile to skip license check, for example 
+                on automated builds -->
             <id>check-license</id>
             <activation>
                 <activeByDefault>true</activeByDefault>

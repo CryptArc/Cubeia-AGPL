@@ -34,7 +34,7 @@ public interface HandHistoryCollectorService extends Contract {
      * @param id    Hand id, must not be null
      * @param seats Players in hand, must not be null
      */
-    public void startHand(HandIdentification id, List<Player> seats);
+    public void startHand(String id, Table table, List<Player> seats);
 
     /**
      * @param tableId Firebase table id

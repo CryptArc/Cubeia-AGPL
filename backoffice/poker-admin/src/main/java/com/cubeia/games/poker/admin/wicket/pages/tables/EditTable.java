@@ -40,6 +40,7 @@ public class EditTable extends BasePage {
     private TableConfigTemplate table;
     
     public EditTable(final PageParameters parameters) {
+    	super(parameters);
         final Integer templateId = parameters.get("templateId").toInt();
         loadFormData(templateId);
         Form<TableConfigTemplate> tableForm = new Form<TableConfigTemplate>("tableForm", new CompoundPropertyModel<TableConfigTemplate>(table)) {
