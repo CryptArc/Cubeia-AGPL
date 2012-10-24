@@ -87,6 +87,7 @@ Poker.CommunicationHandler = Class.extend({
             $('#loginView').hide();
             $("#lobbyView").show();
             document.location.hash="#";
+            var viewManager = Poker.AppCtx.getViewManager();
             viewManager.onLogin();
             this.subscribeToCashGames();
         }

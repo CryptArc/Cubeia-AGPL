@@ -5,15 +5,19 @@ var Poker = Poker || {};
  * @type {Poker.LobbyLayoutManager}
  */
 Poker.LobbyLayoutManager = Class.extend({
-    lobbyData:[],
+    lobbyData:null,
     listItemTemplate:null,
-    filters:[],
+    filters:null,
     currentScroll:null,
-    registeredTournaments:[],
+    registeredTournaments:null,
+    comHandler : null,
     /**
      * @constructor
      */
-    init:function () {
+    init: function () {
+        this.lobbyData = [];
+        this.filters = [];
+        this.registeredTournaments = [];
         var templateManager = new Poker.TemplateManager();
         this.listItemTemplate = templateManager.getTemplate("tableListItemTemplate");
         var self = this;
@@ -310,9 +314,9 @@ Poker.LobbyLayoutManager = Class.extend({
     createClickFunction:function (tables, data) {
         var self = this;
         console.log("Creating click function. Tables?: " + tables);
+        var comHandler = Poker.AppCtx.getComHandler();
         var click = function(e) {
             if (tables) {
-
                 comHandler.openTable(data.id, data.capacity,self.getTableDescription(data));
             } else {
                 console.log("On click. Register / unregister.");
