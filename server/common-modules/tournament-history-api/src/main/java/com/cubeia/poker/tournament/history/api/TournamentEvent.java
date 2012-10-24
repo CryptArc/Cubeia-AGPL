@@ -17,31 +17,35 @@
 
 package com.cubeia.poker.tournament.history.api;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class TournamentEvent {
+public class TournamentEvent implements Serializable {
 
-    private Date timestamp;
+    private long timestamp;
 
     private String event;
 
     private String details;
 
-    public TournamentEvent(Date timestamp, String event, String details) {
+    public TournamentEvent() {
+    }
+
+    public TournamentEvent(long timestamp, String event, String details) {
         this.timestamp = timestamp;
         this.event = event;
         this.details = details;
     }
 
-    public TournamentEvent(Date timestamp, String event) {
+    public TournamentEvent(long timestamp, String event) {
         this(timestamp, event, "");
     }
 
-    public Date getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Date timestamp) {
+    public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 

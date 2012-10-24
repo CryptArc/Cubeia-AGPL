@@ -21,7 +21,6 @@ import com.cubeia.poker.tournament.history.api.HistoricTournament;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
 import org.apache.log4j.Logger;
 
-import java.util.Date;
 import java.util.UUID;
 
 public class LoggingHistoryPersister implements TournamentHistoryPersistenceService {
@@ -39,22 +38,37 @@ public class LoggingHistoryPersister implements TournamentHistoryPersistenceServ
     }
 
     @Override
-    public void playerOut(int playerId, int position, String historicId, Date now) {
+    public void playerOut(int playerId, int position, String historicId, long now) {
         log.info("Tournament[ " + historicId + "]. Player " + playerId +  " finished in place " + position);
     }
 
     @Override
-    public void playerMoved(int playerId, int tableId, String historicId, Date now) {
+    public void playerMoved(int playerId, int tableId, String historicId, long now) {
         log.info("Tournament[ " + historicId + "]. Player " + playerId +  " was moved to table " + tableId);
     }
 
     @Override
-    public void statusChanged(String status, String historicId, Date now) {
+    public void statusChanged(String status, String historicId, long now) {
         log.info("Tournament[ " + historicId + "]. Status updated to " + status);
     }
 
     @Override
-    public void blindsUpdated(String historicId, int ante, int smallBlind, int bigBlind, Date now) {
+    public void blindsUpdated(String historicId, int ante, int smallBlind, int bigBlind, long now) {
         log.info("Tournament[ " + historicId + "]. Blinds updated to " + ante + " / " + smallBlind + " / " + bigBlind);
+    }
+
+    @Override
+    public void setStartTime(String historicId, long date) {
+        log.info("Tournament[ " + historicId + "]. Start time " + date);
+    }
+
+    @Override
+    public void setEndTime(String historicId, long date) {
+        log.info("Tournament[ " + historicId + "]. End time " + date);
+    }
+
+    @Override
+    public void setName(String historicId, String name) {
+        log.info("Tournament[ " + historicId + "]. Name " + name);
     }
 }

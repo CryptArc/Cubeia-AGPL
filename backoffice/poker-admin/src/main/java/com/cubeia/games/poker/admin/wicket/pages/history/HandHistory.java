@@ -44,7 +44,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import com.cubeia.games.poker.admin.service.history.HandHistoryService;
+import com.cubeia.games.poker.admin.service.history.HistoryService;
 import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.games.poker.admin.wicket.util.DatePanel;
 import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
@@ -61,7 +61,7 @@ public class HandHistory extends BasePage {
     private static final long serialVersionUID = 1L;
 
     @SpringBean
-    private HandHistoryService historyService;
+    private HistoryService historyService;
 
     private final HandHistory.HandProvider handProvider = new HandProvider();;
 
@@ -99,7 +99,7 @@ public class HandHistory extends BasePage {
 
         });
         // columns.add(new PropertyColumn<HistoricHand>(Model.of("Hand id"), "handId.handId"));
-        columns.add(new PropertyColumn<HistoricHand>(Model.of("Table id"), "handId.tableIntegrationId"));
+        columns.add(new PropertyColumn<HistoricHand>(Model.of("Table id"), "table.tableIntegrationId"));
         columns.add(new AbstractColumn<HistoricHand>(new Model<String>("Start date")) {
             private static final long serialVersionUID = 1L;
 
@@ -170,7 +170,8 @@ public class HandHistory extends BasePage {
 
         @Override
         public IModel<HistoricHand> model(HistoricHand historicHand) {
-            return Model.of(historicHand);
+            Model<HistoricHand> of = Model.of(historicHand);
+            return of;
         }
 
         public void search(HandHistorySearch params) {

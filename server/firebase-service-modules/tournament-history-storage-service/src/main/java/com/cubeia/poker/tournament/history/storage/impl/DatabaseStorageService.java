@@ -34,8 +34,6 @@ import com.mongodb.util.JSON;
 import org.apache.log4j.Logger;
 import org.bson.types.ObjectId;
 
-import java.util.Date;
-
 public class DatabaseStorageService implements TournamentHistoryPersistenceService, Service {
 
     private static final Logger log = Logger.getLogger(DatabaseStorageService.class);
@@ -64,24 +62,46 @@ public class DatabaseStorageService implements TournamentHistoryPersistenceServi
     }
 
     @Override
-    public void playerOut(int playerId, int position, String historicId, Date now) {
+    public void playerOut(int playerId, int position, String historicId, long now) {
         addEvent(historicId, new TournamentEvent(now, "player " + playerId + " out", "" + position));
         addPlayerPosition(historicId, playerId, position);
     }
 
     @Override
-    public void playerMoved(int playerId, int tableId, String historicId, Date now) {
+    public void playerMoved(int playerId, int tableId, String historicId, long now) {
         addEvent(historicId, new TournamentEvent(now, "player " + playerId + " moved", "" + tableId));
     }
 
     @Override
-    public void statusChanged(String status, String historicId, Date now) {
+    public void statusChanged(String status, String historicId, long now) {
         addEvent(historicId, new TournamentEvent(now, "status changed", status));
     }
 
     @Override
-    public void blindsUpdated(String historicId, int ante, int smallBlind, int bigBlind, Date now) {
+    public void blindsUpdated(String historicId, int ante, int smallBlind, int bigBlind, long now) {
         addEvent(historicId, new TournamentEvent(now, "blinds updated", ante + "/" + smallBlind + "/" + bigBlind));
+    }
+
+    @Override
+    public void setStartTime(String historicId, long date) {
+        setProperty(historicId, "startTime", date);
+    }
+
+    @Override
+    public void setEndTime(String historicId, long date) {
+        setProperty(historicId, "endTime", date);
+    }
+
+    @Override
+    public void setName(String historicId, String name) {
+        setProperty(historicId, "name", name);
+    }
+
+    private void setProperty(String historicId, String propertyName, Object value) {
+        BasicDBObject tournamentId = new BasicDBObject().append("_id", new ObjectId(historicId));
+        DBObject update = new BasicDBObject().append(propertyName, value);
+        log.debug("Storing property " + propertyName + " to " + value + " for " + historicId);
+        mongoStorage.update(tournamentId, update, TOURNAMENT_COLLECTION);
     }
 
     private void addEvent(String historicId, TournamentEvent event) {

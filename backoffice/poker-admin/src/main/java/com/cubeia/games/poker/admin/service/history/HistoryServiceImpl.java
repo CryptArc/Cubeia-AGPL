@@ -18,6 +18,7 @@
 package com.cubeia.games.poker.admin.service.history;
 
 import com.cubeia.poker.handhistory.api.HistoricHand;
+import com.cubeia.poker.tournament.history.api.HistoricTournament;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -31,9 +32,9 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
 @Service
-public class HandHistoryServiceImpl implements HandHistoryService {
+public class HistoryServiceImpl implements HistoryService {
 
-    private static final Logger log = Logger.getLogger(HandHistoryServiceImpl.class);
+    private static final Logger log = Logger.getLogger(HistoryServiceImpl.class);
 
     @Autowired
     MongoTemplate template;
@@ -50,8 +51,16 @@ public class HandHistoryServiceImpl implements HandHistoryService {
 
     @Override
     public HistoricHand findById(String handId) {
-        Query query = query(where("handId.handId").is(handId));
+        Query query = query(where("id").is(handId));
         return template.findOne(query, HistoricHand.class, "hands");
     }
 
+    @Override
+    public List<HistoricTournament> findTournaments(Date fromDate, Date toDate) {
+        log.info("Finding tournaments by query: from: " + fromDate + " to: " + toDate);
+        Query query = new Query();
+        if (fromDate != null) query.addCriteria(where("startTime").gt(fromDate.getTime()));
+        if (toDate != null) query.addCriteria(where("startTime").lt(toDate.getTime()));
+        return template.find(query, HistoricTournament.class, "tournaments");
+    }
 }
