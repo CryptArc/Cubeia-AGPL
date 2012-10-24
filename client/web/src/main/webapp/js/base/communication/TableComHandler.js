@@ -89,6 +89,7 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
 
     },
     onOpenTableAccepted:function (tableId, capacity) {
+        var comHandler = Poker.AppCtx.getComHandler();
         var name = comHandler.tableNames.get(tableId);
         var tableViewContainer = $(".view-container");
         var templateManager = new Poker.TemplateManager();
@@ -147,6 +148,7 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
         this.connector.leaveTable(tableId);
     },
     unwatchTable:function (tableId) {
+        var comHandler = Poker.AppCtx.getComHandler();
         var unwatchRequest = new FB_PROTOCOL.UnwatchRequestPacket();
         unwatchRequest.tableid = tableId;
         this.connector.sendProtocolObject(unwatchRequest);
@@ -230,6 +232,7 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
     handleTournamentOut: function (packet) {
         console.log("Tournament out:");
         console.log(packet);
+        var dialogManager = Poker.AppCtx.getDialogManager();
         if (packet.position == 1) {
             dialogManager.displayGenericDialog({header:"Message", message:"Congratulations, you won the tournament!"});
         } else {
@@ -244,6 +247,7 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
     },
     showLobby:function () {
         this.inTableView = false;
+        var comHandler = Poker.AppCtx.getComHandler();
         comHandler.subscribeToCashGames();
     },
     handleSeatedAtTournamentTable:function (seated) {
@@ -255,6 +259,8 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
     handleRegistrationResponse:function (registrationResponse) {
         console.log("Registration response:");
         console.log(registrationResponse);
+        var dialogManager = Poker.AppCtx.getDialogManager();
+        var comHandler = Poker.AppCtx.getComHandler();
         if (registrationResponse.status == "OK") {
             comHandler.notifyRegisteredToTournament(registrationResponse.mttid);
             dialogManager.displayGenericDialog({header:"Message", message:"You successfully registered to tournament " + registrationResponse.mttid});
@@ -266,6 +272,8 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
     handleUnregistrationResponse:function (unregistrationResponse) {
         console.log("Unregistration response:");
         console.log(unregistrationResponse);
+        var dialogManager = Poker.AppCtx.getDialogManager();
+        var comHandler = Poker.AppCtx.getComHandler();
         if (unregistrationResponse.status == "OK") {
             comHandler.notifyUnregisteredFromTournament(unregistrationResponse.mttid);
             dialogManager.displayGenericDialog({header:"Message",

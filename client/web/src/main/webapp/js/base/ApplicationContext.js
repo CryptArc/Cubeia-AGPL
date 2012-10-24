@@ -22,6 +22,8 @@ Poker.AppCtx = Class.extend({
 
         //this
 
+
+
         var templateManager = new Poker.TemplateManager();
         this.getTemplateManager = function() {
             return templateManager;
@@ -62,15 +64,16 @@ Poker.AppCtx = Class.extend({
         this.getProtocolHandler = function() {
             return pokerProtocolHandler;
         };
-
         var comHandler = new Poker.CommunicationHandler(settings.webSocketUrl, settings.webSocketPort);
         this.getComHandler = function() {
-          return comHandler;
+            return comHandler;
         };
 
         this.getConnector = function() {
             return comHandler.getConnector();
         };
+
+
 
     }
 });

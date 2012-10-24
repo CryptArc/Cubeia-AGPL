@@ -97,15 +97,12 @@
 
     <script type="text/javascript">
         var comHandler = null;
-        var soundRepository = null;
-        var dialogManager = null;
-        var viewManager = null;
-        var mainMenuManager = null;
 
         $(document).ready(function(){
-            less.watch();
+            less.watch(); //development only
             $(".describe").describe();
 
+            //TODO: remove later, probably wont be a button in the toolbar
             $("#skinButton").click(function(e){
                 $("body").toggleClass("skin-classic");
                 $("#classic").toggle();
@@ -123,12 +120,8 @@
 
             Poker.AppCtx.wire({ webSocketUrl : webSocketUrl, webSocketPort : webSocketPort});
 
-            //TODO: refactor dependent classes and remove these
-            soundRepository = Poker.AppCtx.getSoundRepository();
-            dialogManager = Poker.AppCtx.getDialogManager();
-            viewManager = Poker.AppCtx.getViewManager();
-            mainMenuManager = Poker.AppCtx.getMainMenuManager();
 
+            //TODO: refactor dependent classes and remove these
             //wraps Firebase communication
             comHandler = Poker.AppCtx.getComHandler();
 
