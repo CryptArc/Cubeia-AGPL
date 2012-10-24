@@ -99,7 +99,7 @@ public class HandHistory extends BasePage {
 
         });
         // columns.add(new PropertyColumn<HistoricHand>(Model.of("Hand id"), "handId.handId"));
-        columns.add(new PropertyColumn<HistoricHand>(Model.of("Table id"), "handId.tableIntegrationId"));
+        columns.add(new PropertyColumn<HistoricHand>(Model.of("Table id"), "table.tableIntegrationId"));
         columns.add(new AbstractColumn<HistoricHand>(new Model<String>("Start date")) {
             private static final long serialVersionUID = 1L;
 
