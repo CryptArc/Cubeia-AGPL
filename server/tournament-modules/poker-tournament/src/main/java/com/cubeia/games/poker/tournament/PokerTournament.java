@@ -192,6 +192,7 @@ public class PokerTournament implements Serializable {
 
     private void handleFinishedTournament() {
         log.info("Tournament [" + instance.getId() + ":" + instance.getState().getName() + "] was finished.");
+        historyPersister.tournamentFinished();
         util.setTournamentStatus(instance, PokerTournamentStatus.FINISHED);
 
         // Find winner
@@ -374,6 +375,7 @@ public class PokerTournament implements Serializable {
         TournamentTableSettings settings = getTableSettings();
         log.debug("Creating tables for tournament [" + instance + "] . State.getID: " + state.getId());
         mttSupport.createTables(state, tablesToCreate, "mtt", settings);
+        historyPersister.tournamentStarted(state.getName());
     }
 
     private boolean tournamentShouldStart() {
@@ -465,6 +467,7 @@ public class PokerTournament implements Serializable {
 
     private void increaseBlindsLevel() {
         pokerState.increaseBlindsLevel();
+        historyPersister.blindsIncreased(pokerState.getCurrentBlindsLevel());
     }
 
     private void openRegistration() {

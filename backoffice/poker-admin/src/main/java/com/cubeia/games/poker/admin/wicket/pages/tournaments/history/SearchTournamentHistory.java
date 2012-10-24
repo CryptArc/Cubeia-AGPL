@@ -1,12 +1,11 @@
 package com.cubeia.games.poker.admin.wicket.pages.tournaments.history;
 
-import com.cubeia.games.poker.admin.service.history.HandHistoryService;
+import com.cubeia.games.poker.admin.service.history.HistoryService;
 import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.games.poker.admin.wicket.pages.history.ShowHand;
-import com.cubeia.games.poker.admin.wicket.util.DatePanel;
 import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
 import com.cubeia.games.poker.admin.wicket.util.ParamBuilder;
-import com.cubeia.poker.handhistory.api.HistoricHand;
+import com.cubeia.poker.tournament.history.api.HistoricTournament;
 import org.apache.log4j.Logger;
 import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
@@ -18,7 +17,6 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColu
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.extensions.yui.calendar.DateField;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.CompoundPropertyModel;
@@ -41,34 +39,34 @@ public class SearchTournamentHistory extends BasePage {
     private static final long serialVersionUID = 1L;
 
     @SpringBean
-    private HandHistoryService historyService;
+    private HistoryService historyService;
 
     private final TournamentProvider tournamentProvider = new TournamentProvider();
 
     public SearchTournamentHistory(PageParameters p) {
-    	super(p);
+        super(p);
         addForm();
         addResultsTable();
         add(new FeedbackPanel("feedback"));
     }
 
     private void addResultsTable() {
-        List<IColumn<HistoricHand>> columns = createColumns();
-        add(new AjaxFallbackDefaultDataTable<HistoricHand>("tournaments", columns, tournamentProvider, 8));
+        List<IColumn<HistoricTournament>> columns = createColumns();
+        add(new AjaxFallbackDefaultDataTable<HistoricTournament>("tournaments", columns, tournamentProvider, 8));
     }
 
-    private List<IColumn<HistoricHand>> createColumns() {
-        List<IColumn<HistoricHand>> columns = new ArrayList<IColumn<HistoricHand>>();
+    private List<IColumn<HistoricTournament>> createColumns() {
+        List<IColumn<HistoricTournament>> columns = new ArrayList<IColumn<HistoricTournament>>();
 
         // Add column with clickable hand ids.
-        columns.add(new AbstractColumn<HistoricHand>(new Model<String>("Tournament id")) {
+        columns.add(new AbstractColumn<HistoricTournament>(new Model<String>("Tournament id")) {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public void populateItem(Item<ICellPopulator<HistoricHand>> item, String componentId, IModel<HistoricHand> model) {
-                HistoricHand hand = model.getObject();
-                String handId = hand.getId();
-                Component panel = new LabelLinkPanel(componentId, "" + handId, ShowHand.class, ParamBuilder.params("handId", handId));
+            public void populateItem(Item<ICellPopulator<HistoricTournament>> item, String componentId, IModel<HistoricTournament> model) {
+                HistoricTournament tournament = model.getObject();
+                int tournamentId = tournament.getTournamentId();
+                Component panel = new LabelLinkPanel(componentId, "" + tournamentId, ShowHand.class, ParamBuilder.params("tournamentId", tournamentId));
                 item.add(panel);
             }
 
@@ -78,48 +76,47 @@ public class SearchTournamentHistory extends BasePage {
             }
 
         });
-        // columns.add(new PropertyColumn<HistoricHand>(Model.of("Hand id"), "handId.handId"));
-        columns.add(new PropertyColumn<HistoricHand>(Model.of("Name"), "handId.tableIntegrationId"));
-        columns.add(new AbstractColumn<HistoricHand>(new Model<String>("Start date")) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void populateItem(Item<ICellPopulator<HistoricHand>> item, String componentId, IModel<HistoricHand> model) {
-                HistoricHand hand = model.getObject();
-                item.add(new DatePanel(componentId, hand.getStartTime()));
-            }
-
-            @Override
-            public boolean isSortable() {
-                return false;
-            }
-        });
-        columns.add(new AbstractColumn<HistoricHand>(new Model<String>("End date")) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void populateItem(Item<ICellPopulator<HistoricHand>> item, String componentId, IModel<HistoricHand> model) {
-                HistoricHand hand = model.getObject();
-                item.add(new DatePanel(componentId, hand.getEndTime()));
-            }
-
-            @Override
-            public boolean isSortable() {
-                return false;
-            }
-        });
+        // columns.add(new PropertyColumn<HistoricTournament>(Model.of("Hand id"), "handId.handId"));
+        columns.add(new PropertyColumn<HistoricTournament>(Model.of("Name"), "tournamentName"));
+//        columns.add(new AbstractColumn<HistoricTournament>(new Model<String>("Start date")) {
+//            private static final long serialVersionUID = 1L;
+//
+//            @Override
+//            public void populateItem(Item<ICellPopulator<HistoricTournament>> item, String componentId, IModel<HistoricTournament> model) {
+//                HistoricTournament tournament = model.getObject();
+//                item.add(new DatePanel(componentId, tournament.getStartDate()));
+//            }
+//
+//            @Override
+//            public boolean isSortable() {
+//                return false;
+//            }
+//        });
+//        columns.add(new AbstractColumn<HistoricTournament>(new Model<String>("End date")) {
+//            private static final long serialVersionUID = 1L;
+//
+//            @Override
+//            public void populateItem(Item<ICellPopulator<HistoricTournament>> item, String componentId, IModel<HistoricTournament> model) {
+//                HistoricTournament hand = model.getObject();
+//                item.add(new DatePanel(componentId, hand.getEndDate()));
+//            }
+//
+//            @Override
+//            public boolean isSortable() {
+//                return false;
+//            }
+//        });
 
         return columns;
     }
 
     private void addForm() {
-        Form<HandHistorySearch> form = new Form<HandHistorySearch>("form",  new CompoundPropertyModel<HandHistorySearch>(new HandHistorySearch())) {
+        Form<TournamentSearch> form = new Form<TournamentSearch>("form",  new CompoundPropertyModel<TournamentSearch>(new TournamentSearch())) {
             @Override
             protected void onSubmit() {
                 tournamentProvider.search(getModel().getObject());
             }
         };
-        form.add(new TextField<Integer>("playerId").setRequired(false));
         form.add(new DateField("fromDate"));
         form.add(new DateField("toDate"));
         add(form);
@@ -130,35 +127,34 @@ public class SearchTournamentHistory extends BasePage {
         return "Search Tournament History";
     }
 
-    private class TournamentProvider extends SortableDataProvider<HistoricHand> {
+    private class TournamentProvider extends SortableDataProvider<HistoricTournament> {
 
-        private List<HistoricHand> hands = newArrayList();
+        private List<HistoricTournament> tournaments = newArrayList();
 
         private TournamentProvider() {
         }
 
         @Override
-        public Iterator<? extends HistoricHand> iterator(int first, int count) {
-            return hands.iterator();
+        public Iterator<? extends HistoricTournament> iterator(int first, int count) {
+            return tournaments.iterator();
         }
 
         @Override
         public int size() {
-            return hands.size();
+            return tournaments.size();
         }
 
         @Override
-        public IModel<HistoricHand> model(HistoricHand historicHand) {
-            return Model.of(historicHand);
+        public IModel<HistoricTournament> model(HistoricTournament historicTournament) {
+            return Model.of(historicTournament);
         }
 
-        public void search(HandHistorySearch params) {
-            hands = historyService.findHandHistory(params.playerId, params.fromDate, params.toDate);
+        public void search(TournamentSearch params) {
+            tournaments = historyService.findTournaments(params.fromDate, params.toDate);
         }
     }
 
-    private class HandHistorySearch implements IClusterable {
-        Integer playerId;
+    private class TournamentSearch implements IClusterable {
         Date fromDate;
         Date toDate;
     }

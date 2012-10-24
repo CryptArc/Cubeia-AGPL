@@ -32,7 +32,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import com.cubeia.games.poker.admin.Configuration;
-import com.cubeia.games.poker.admin.service.history.HandHistoryService;
+import com.cubeia.games.poker.admin.service.history.HistoryService;
 import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.games.poker.admin.wicket.util.ExternalLinkPanel;
 import com.cubeia.poker.handhistory.api.Amount;
@@ -52,7 +52,7 @@ import com.cubeia.poker.handhistory.api.TableCardsDealt;
 public class ShowHand extends BasePage {
 
     @SpringBean
-    private HandHistoryService historyService;
+    private HistoryService historyService;
 
     @SpringBean(name="webConfig")
     private Configuration config;

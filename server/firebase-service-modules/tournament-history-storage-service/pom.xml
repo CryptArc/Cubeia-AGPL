@@ -14,7 +14,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.cubeia.games.handhistory</groupId>
+            <groupId>com.cubeia.poker</groupId>
             <artifactId>tournament-history-api</artifactId>
             <version>${project.version}</version>
         </dependency>

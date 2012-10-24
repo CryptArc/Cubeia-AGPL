@@ -34,7 +34,7 @@ import static junit.framework.Assert.assertTrue;
 
 public class HandHistoryServiceImplTest {
 
-//    private HandHistoryServiceImpl service;
+//    private HistoryServiceImpl service;
 //
 //    private static MongodProcess mongod;
 //
@@ -55,7 +55,7 @@ public class HandHistoryServiceImplTest {
 //
 //    @Before
 //    public void setup() {
-////        service = new HandHistoryServiceImpl(HOST, PORT);
+////        service = new HistoryServiceImpl(HOST, PORT);
 ////        service.init();
 //    }
 //

@@ -43,14 +43,14 @@ public class HistoricHand implements Serializable {
     public HistoricHand(String id) {
         this.id = id;
     }
-    
+
     public Table getTable() {
-		return table;
-	}
+        return table;
+    }
     
     public void setTable(Table table) {
-		this.table = table;
-	}
+        this.table = table;
+    }
 
     public Results getResults() {
         return results;

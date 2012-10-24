@@ -18,6 +18,7 @@
 package com.cubeia.games.poker.tournament.history;
 
 import com.cubeia.games.poker.common.SystemTime;
+import com.cubeia.games.poker.tournament.configuration.blinds.BlindsLevel;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
 import org.apache.log4j.Logger;
 
@@ -43,15 +44,15 @@ public class HistoryPersister {
     }
 
     public void playerOut(int playerId, int position) {
-        storageService.playerOut(playerId, position, historicId, dateFetcher.date().toDate());
+        storageService.playerOut(playerId, position, historicId, dateFetcher.now());
     }
 
     public void playerMoved(int playerId, int tableId) {
-        storageService.playerMoved(playerId, tableId, historicId, dateFetcher.date().toDate());
+        storageService.playerMoved(playerId, tableId, historicId, dateFetcher.now());
     }
 
     public void statusChanged(String status) {
-        storageService.statusChanged(status, historicId, dateFetcher.date().toDate());
+        storageService.statusChanged(status, historicId, dateFetcher.now());
     }
 
     public String createHistoricId() {
@@ -61,4 +62,18 @@ public class HistoryPersister {
     public void setHistoricId(String historicId) {
         this.historicId = historicId;
     }
+
+    public void tournamentStarted(String name) {
+        storageService.setStartTime(historicId, dateFetcher.now());
+        storageService.setName(historicId, name);
+    }
+
+    public void tournamentFinished() {
+        storageService.setEndTime(historicId, dateFetcher.now());
+    }
+
+    public void blindsIncreased(BlindsLevel level) {
+        storageService.blindsUpdated(historicId, level.getAnteAmount(), level.getSmallBlindAmount(), level.getBigBlindAmount(), dateFetcher.now());
+    }
+
 }

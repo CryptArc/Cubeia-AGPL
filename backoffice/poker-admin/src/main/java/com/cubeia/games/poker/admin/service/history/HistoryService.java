@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012 Cubeia Ltd <info@cubeia.com>
+ * Copyright (C) 2010 Cubeia Ltd <info@cubeia.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -15,8 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.poker.tournament.history.api;
+package com.cubeia.games.poker.admin.service.history;
 
-public interface TournamentHistoryRepository {
+import com.cubeia.poker.handhistory.api.HistoricHand;
+import com.cubeia.poker.tournament.history.api.HistoricTournament;
 
+import java.util.Date;
+import java.util.List;
+
+public interface HistoryService {
+
+    public List<HistoricHand> findHandHistory(Integer playerId, Date fromDate, Date toDate);
+
+    HistoricHand findById(String handId);
+
+    public List<HistoricTournament> findTournaments(Date fromDate, Date toDate);
 }

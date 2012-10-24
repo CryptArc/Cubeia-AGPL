@@ -17,9 +17,14 @@
 
 package com.cubeia.poker.tournament.history.api;
 
-public class PlayerPosition {
+import java.io.Serializable;
+
+public class PlayerPosition implements Serializable {
     private int playerId;
     private int position;
+
+    public PlayerPosition() {
+    }
 
     public PlayerPosition(int playerId, int position) {
         this.playerId = playerId;
