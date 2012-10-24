@@ -2,7 +2,6 @@ package com.cubeia.poker.tournament.history.api;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -32,13 +31,17 @@ public class HistoricTournament implements Serializable {
 
     private String tournamentName;
 
-    private Date startDate;
+    private long startTime;
 
-    private Date endDate;
+    private long endTime;
 
     private List<TournamentEvent> events = new ArrayList<TournamentEvent>();
 
     private List<PlayerPosition> positions = new ArrayList<PlayerPosition>();
+
+    public HistoricTournament() {
+
+    }
 
     public String getId() {
         return id;
@@ -72,20 +75,20 @@ public class HistoricTournament implements Serializable {
         this.tournamentName = tournamentName;
     }
 
-    public Date getStartDate() {
-        return startDate;
+    public long getStartTime() {
+        return startTime;
     }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
     }
 
-    public Date getEndDate() {
-        return endDate;
+    public long getEndTime() {
+        return endTime;
     }
 
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
+    public void setEndTime(long endTime) {
+        this.endTime = endTime;
     }
 
     public List<TournamentEvent> getEvents() {

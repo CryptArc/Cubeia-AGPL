@@ -20,8 +20,6 @@ package com.cubeia.poker.tournament.history.storage.api;
 import com.cubeia.firebase.api.service.Contract;
 import com.cubeia.poker.tournament.history.api.HistoricTournament;
 
-import java.util.Date;
-
 public interface TournamentHistoryPersistenceService extends Contract {
 
     /**
@@ -33,11 +31,17 @@ public interface TournamentHistoryPersistenceService extends Contract {
 
     public HistoricTournament getHistoricTournament(String id);
 
-    void playerOut(int playerId, int position, String historicId, Date now);
+    void playerOut(int playerId, int position, String historicId, long now);
 
-    void playerMoved(int playerId, int tableId, String historicId, Date now);
+    void playerMoved(int playerId, int tableId, String historicId, long now);
 
-    void statusChanged(String status, String historicId, Date now);
+    void statusChanged(String status, String historicId, long now);
 
-    void blindsUpdated(String historicId, int ante, int smallBlind, int bigBlind, Date now);
+    void blindsUpdated(String historicId, int ante, int smallBlind, int bigBlind, long now);
+
+    void setStartTime(String historicId, long date);
+
+    void setEndTime(String historicId, long date);
+
+    void setName(String historicId, String name);
 }

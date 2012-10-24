@@ -17,16 +17,7 @@
 
 package com.cubeia.games.poker.admin.wicket;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-
-import org.apache.wicket.extensions.markup.html.repeater.data.table.DefaultDataTable;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
+import com.cubeia.games.poker.admin.Configuration;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
@@ -40,27 +31,26 @@ import org.apache.wicket.util.string.StringValue;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.settings.ImmutableSettings;
-import org.elasticsearch.common.settings.ImmutableSettings.Builder;
-import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.QueryStringQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 
-import com.cubeia.games.poker.admin.Configuration;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class SearchPage extends BasePage {
-	
-	private static final String APPLICATION_JSON = "application/json";
+
+    private static final String APPLICATION_JSON = "application/json";
 
     private static final long serialVersionUID = 1L;
 
     // TODO Add any page properties or variables here
 
-    @SpringBean(name="webConfig")
+    @SpringBean(name = "webConfig")
     private Configuration config;
 
     /**
@@ -69,150 +59,151 @@ public class SearchPage extends BasePage {
      * @param parameters Page parameters
      */
     public SearchPage(PageParameters p) {
-    	super(p);
-    	
-    	// Builder b = ImmutableSettings.settingsBuilder();
-    	// Settings s = b.put("compress.default.type", "lzf").build();
-    	
-    	
-    	// TODO Fix config
-    	Client client = new TransportClient().addTransportAddress(new InetSocketTransportAddress("localhost", 9300));
-    	
-    	StringValue value = p.get("query");
-    	String[] parts = (value.isEmpty() ? new String[0] : value.toString().split(" "));
-    	
-    	BoolQueryBuilder root = QueryBuilders.boolQuery();
-    	
-    	for (String s : parts) {
-    		if(s.endsWith("*")) {
-    			s = s.substring(0, s.length() - 1).toLowerCase();
-    			System.out.println("KKKKKKK: " + s);
-    			root.must(QueryBuilders.prefixQuery("_all", s));
-    		} else {
-    			root.must(QueryBuilders.matchQuery("_all", s));
-    		}
-    	}
-    	
-    	SearchResponse resp;
-		try {
-			resp = client.prepareSearch("network").setQuery(root).execute().get();
-			List<User> users = new ArrayList<SearchPage.User>();
-			
-			for (SearchHit h : resp.getHits().getHits()) {
-	    		System.out.println(">>>>>>>>> ");
-	    		System.out.println(h.sourceAsString());
-	    		System.out.println(">>>>>>>>> ");
-	    		if(h.getType().equals("users")) {
-	    			users.add(new User(h));
-	    		}
-			}
-	    	
-			UserProvider provider = new UserProvider(users);
-			UserView view = new UserView("userresults", provider);
-			
-			add(view);
-			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-    	
-    	
-    	client.close();
-    	
+        super(p);
+
+        // Builder b = ImmutableSettings.settingsBuilder();
+        // Settings s = b.put("compress.default.type", "lzf").build();
+
+
+        // TODO Fix config
+        Client client = new TransportClient().addTransportAddress(new InetSocketTransportAddress("localhost", 9300));
+
+        StringValue value = p.get("query");
+        String[] parts = (value.isEmpty() ? new String[0] : value.toString().split(" "));
+
+        BoolQueryBuilder root = QueryBuilders.boolQuery();
+
+        for (String s : parts) {
+            if (s.endsWith("*")) {
+                s = s.substring(0, s.length() - 1).toLowerCase();
+                System.out.println("KKKKKKK: " + s);
+                root.must(QueryBuilders.prefixQuery("_all", s));
+            } else {
+                root.must(QueryBuilders.matchQuery("_all", s));
+            }
+        }
+
+        SearchResponse resp;
+        try {
+            resp = client.prepareSearch("network").setQuery(root).execute().get();
+            List<User> users = new ArrayList<SearchPage.User>();
+
+            for (SearchHit h : resp.getHits().getHits()) {
+                System.out.println(">>>>>>>>> ");
+                System.out.println(h.sourceAsString());
+                System.out.println(">>>>>>>>> ");
+                if (h.getType().equals("users")) {
+                    users.add(new User(h));
+                }
+            }
+
+            UserProvider provider = new UserProvider(users);
+            UserView view = new UserView("userresults", provider);
+
+            add(view);
+
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+
+        client.close();
+
     }
 
     @Override
     public String getPageTitle() {
         return "Search";
     }
-    
+
     // --- PRIVATE METHODS --- //
 
-    
+
     // --- PRIVATE CLASSES --- //
-    
+
     private static class UserView extends DataView<User> {
 
-		protected UserView(String id, IDataProvider<User> dataProvider) {
-			super(id, dataProvider);
-		}
+        protected UserView(String id, IDataProvider<User> dataProvider) {
+            super(id, dataProvider);
+        }
 
-		@Override
-		protected void populateItem(Item<User> item) {
-			User user = item.getModelObject();
-			item.setModel(new CompoundPropertyModel<SearchPage.User>(user));
-			item.add(new Label("username"));
-			item.add(new Label("firstname"));
-			item.add(new Label("lastname"));
-		}
+        @Override
+        protected void populateItem(Item<User> item) {
+            User user = item.getModelObject();
+            item.setModel(new CompoundPropertyModel<SearchPage.User>(user));
+            item.add(new Label("username"));
+            item.add(new Label("firstname"));
+            item.add(new Label("lastname"));
+        }
     }
-    
+
     private static class UserProvider implements IDataProvider<User> {
 
-    	private final List<User> list;
+        private final List<User> list;
 
-		private UserProvider(List<User> list) {
-			this.list = list;
-    	}
-    	
-		@Override
-		public void detach() { }
+        private UserProvider(List<User> list) {
+            this.list = list;
+        }
 
-		@Override
-		public Iterator<? extends User> iterator(int first, int count) {
-			return list.subList(first, first + count).iterator();
-		}
+        @Override
+        public void detach() {
+        }
 
-		@Override
-		public int size() {
-			return list.size();
-		}
+        @Override
+        public Iterator<? extends User> iterator(int first, int count) {
+            return list.subList(first, first + count).iterator();
+        }
 
-		@Override
-		public IModel<User> model(User object) {
-			return Model.of(object);
-		}
+        @Override
+        public int size() {
+            return list.size();
+        }
+
+        @Override
+        public IModel<User> model(User object) {
+            return Model.of(object);
+        }
     }
-    
+
     private static class User implements Serializable {
-    	
-    	private static final long serialVersionUID = 1191176946462071998L;
-		
-    	private String username;
-    	private String firstname;
-    	private String lastname;
-    	
-    	@SuppressWarnings("unchecked")
-		private User(SearchHit h) {
-    		username = h.getSource().get("userName").toString();
-    		// TODO: Check for null
-    		firstname = ((Map<String, Object>)h.getSource().get("userInformation")).get("firstName").toString();
-    		lastname = ((Map<String, Object>)h.getSource().get("userInformation")).get("lastName").toString();
-    	}
 
-		public String getUsername() {
-			return username;
-		}
+        private static final long serialVersionUID = 1191176946462071998L;
 
-		public void setUsername(String username) {
-			this.username = username;
-		}
+        private String username;
+        private String firstname;
+        private String lastname;
 
-		public String getFirstname() {
-			return firstname;
-		}
+        @SuppressWarnings("unchecked")
+        private User(SearchHit h) {
+            username = h.getSource().get("userName").toString();
+            // TODO: Check for null
+            firstname = ((Map<String, Object>) h.getSource().get("userInformation")).get("firstName").toString();
+            lastname = ((Map<String, Object>) h.getSource().get("userInformation")).get("lastName").toString();
+        }
 
-		public void setFirstname(String firstname) {
-			this.firstname = firstname;
-		}
+        public String getUsername() {
+            return username;
+        }
 
-		public String getLastname() {
-			return lastname;
-		}
+        public void setUsername(String username) {
+            this.username = username;
+        }
 
-		public void setLastname(String lastName) {
-			this.lastname = lastName;
-		}
+        public String getFirstname() {
+            return firstname;
+        }
+
+        public void setFirstname(String firstname) {
+            this.firstname = firstname;
+        }
+
+        public String getLastname() {
+            return lastname;
+        }
+
+        public void setLastname(String lastName) {
+            this.lastname = lastName;
+        }
     }
 }

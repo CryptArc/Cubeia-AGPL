@@ -21,7 +21,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.cubeia.games.handhistory</groupId>
+            <groupId>com.cubeia.poker</groupId>
             <artifactId>tournament-history-api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>

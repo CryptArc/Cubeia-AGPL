@@ -34,6 +34,7 @@ import de.flapdoodle.embedmongo.config.MongodConfig;
 import de.flapdoodle.embedmongo.distribution.Version;
 import de.flapdoodle.embedmongo.runtime.Network;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -44,6 +45,7 @@ import java.util.Date;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
@@ -113,8 +115,8 @@ public class DatabaseStorageServiceTest {
     public void testUpdateTournament() throws Exception {
         String id = service.createHistoricTournament();
 
-        service.statusChanged("ANNOUNCED", id, new Date());
-        service.statusChanged("REGISTERING", id, new Date());
+        service.statusChanged("ANNOUNCED", id, new Date().getTime());
+        service.statusChanged("REGISTERING", id, new Date().getTime());
 
         Mongo mongo = new Mongo(HOST, PORT);
         DB db = mongo.getDB("poker");
@@ -129,6 +131,16 @@ public class DatabaseStorageServiceTest {
 
         HistoricTournament tournament = service.getHistoricTournament(id);
         assertThat(tournament.getEvents().size(), is(2));
+    }
+
+    //@Test
+    public void testSetStartDate() throws Exception {
+        String id = service.createHistoricTournament();
+        service.setStartTime(id, new DateTime().getMillis());
+
+        HistoricTournament tournament = service.getHistoricTournament(id);
+        log.debug("Start date: " + new Date(tournament.getStartTime()));
+        assertThat(tournament.getStartTime(), not(0L));
     }
 
 }
