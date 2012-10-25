@@ -16,6 +16,7 @@
     <modules>
         <module>backend</module>
         <module>hand-history-api</module>
+	<module>integration-api</module>
         <module>tournament-history-api</module>
         <module>timings</module>
         <module>common</module>
