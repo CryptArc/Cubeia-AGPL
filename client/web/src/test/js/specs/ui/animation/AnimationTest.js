@@ -32,7 +32,7 @@ describe("Poker.Utils Test", function(){
         animation.getNow = function(){ return 500 };// mock "now" time to be 100
         animation.setTimed(true);
         animation.addTransition("transform",1,"linear");
-        animation.addScale3d(0.0,0.0,1);
+        animation.addScale3d(0,0,1);
         animation.prepareElement();
 
         //start transform after 500 ms
@@ -48,17 +48,20 @@ describe("Poker.Utils Test", function(){
 
         var animation = new Poker.TransformAnimation(mockEl);
         animation.startTime = 0; //mock start time to 0
-        animation.getNow = function(){ return 500 };// mock "now" time to be 100
+        animation.getNow = function(){ return 500 }; //mock "now"
         animation.setTimed(true);
-        //animation.addStartTranslate(0,0,0,"%");
+        //start values at time 0
+        animation.addStartTranslate(0,0,0,"%");
         animation.addTransition("transform",1,"linear");
         animation.addTranslate3d(100,100,0,"%");
+        //calculate the start values at time 500
         animation.prepareElement();
 
         //start transform after 500 ms
-        //expect(mockEl.style["-webkit-transform"]).toEqual("translate3d(50%,50%,0%)");
+        expect(mockEl.style["-webkit-transform"]).toEqual("translate3d(50%,50%,0)");
         animation.prepare();
         animation.animate();
+        //check complete values at time 1000 (transition complete)
         expect(mockEl.style["-webkit-transition"]).toEqual("-webkit-transform 0.5s linear");
         expect(mockEl.style["-webkit-transform"]).toEqual("translate3d(100%,100%,0)");
 

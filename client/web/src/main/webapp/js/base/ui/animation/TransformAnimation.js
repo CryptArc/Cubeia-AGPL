@@ -53,6 +53,7 @@ Poker.TransformAnimation = Poker.Animation.extend({
         var remaining = currentTransitionTime / originalTransitionTime;
         var transform = "";
 
+
         if(this.transform.getScale()!=null) {
             var s = this.transform.getScale();
             var start = this.startTransform.getScale();
@@ -62,12 +63,14 @@ Poker.TransformAnimation = Poker.Animation.extend({
             this.cssUtils.setScale3d(this.element,x,y,z,this.origin);
 
         } else if(this.transform.getTranslate()!=null) {
+            //throw " currentTT = " + currentTransitionTime + ", originalTT="+originalTransitionTime + ", remaining="+remaining;
 
             var t = this.transform.getTranslate();
-            var start = this.startTransform.getScale();
+            var start = this.startTransform.getTranslate();
             var x = (start.x - t.x) * remaining + t.x;
             var y = (start.y - t.y) * remaining + t.y;
             var z = (start.z - t.z) * remaining + t.z;
+
             this.cssUtils.setTranslate3d(this.element,x,y,z,start.unit,this.origin);
 
         } else if(this.transform.getRotate()!=null) {
