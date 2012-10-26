@@ -1,8 +1,8 @@
 <service auto-start="true">
-    <name>Mock wallet service</name>
+    <name>Cubeia Wallet Adapter</name>
     <public-id>ns://www.cubeia.com/backend/cashgame/service</public-id>
-    <contract>com.cubeia.backend.firebase.CashGamesBackendContract</contract>
-    <service>com.cubeia.backend.firebase.CashGamesBackendAdapter</service>
+    <contract>com.cubeia.backend.firebase.CashGamesBackendService</contract>
+    <service>com.cubeia.backend.firebase.CachGamesBackendServiceImpl</service>
     <description/>
 
     <dependencies>
