@@ -22,13 +22,14 @@ import com.cubeia.games.poker.common.Money;
 
 import java.io.Serializable;
 
-@SuppressWarnings("serial")
 public class OpenSessionRequest implements Serializable {
 
-    private final int playerId;
-    private final Money openingBalance;
-    private final TableId tableId;
-    private final int roundNumber; // holds a counter of number of played hands at table
+    private static final long serialVersionUID = 74126213720786784L;
+	
+    public final int playerId;
+    public final Money openingBalance;
+    public final TableId tableId;
+    public final int roundNumber; // holds a counter of number of played hands at table
 
     public OpenSessionRequest(int playerId, TableId tableId, Money openingBalance, int roundNumber) {
         this.playerId = playerId;

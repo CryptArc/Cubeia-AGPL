@@ -17,14 +17,16 @@
 
 package com.cubeia.backend.firebase.jmx;
 
-import com.cubeia.backend.firebase.CashGamesBackendAdapter;
-import com.cubeia.firebase.api.action.GameObjectAction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.lang.management.ManagementFactory;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import java.lang.management.ManagementFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.cubeia.firebase.api.action.GameObjectAction;
+import com.cubeia.firebase.api.service.ServiceRouter;
 
 public class MockController implements MockControllerMBean {
 
@@ -32,17 +34,15 @@ public class MockController implements MockControllerMBean {
 
     private Logger log = LoggerFactory.getLogger(MockController.class);
 
-    private final CashGamesBackendAdapter cashGamesBackendMock;
-
     private final String CLOSE_TABLE_MSG = "CLOSE_TABLE";
     private final String CLOSE_TABLE_HINT_MSG = "CLOSE_TABLE_HINT";
 
-    public MockController(CashGamesBackendAdapter cashGamesBackendMock) {
-        this.cashGamesBackendMock = cashGamesBackendMock;
-        initJmx();
-    }
+	private final ServiceRouter router;
 
-    ;
+    public MockController(ServiceRouter router) {
+        this.router = router;
+		initJmx();
+    }
 
     @Override
     public void closeTableByGameIdAndTableId(int gameId, int tableId) {
@@ -59,7 +59,7 @@ public class MockController implements MockControllerMBean {
                 new Object[]{gameId, tableId, object});
         GameObjectAction action = new GameObjectAction(tableId);
         action.setAttachment(object);
-        cashGamesBackendMock.getRouter().dispatchToGame(gameId, action);
+        router.dispatchToGame(gameId, action);
     }
 
     private void initJmx() {

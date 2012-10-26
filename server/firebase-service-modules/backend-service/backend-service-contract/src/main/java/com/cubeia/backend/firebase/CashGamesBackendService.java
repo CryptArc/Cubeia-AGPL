@@ -17,14 +17,23 @@
 
 package com.cubeia.backend.firebase;
 
+import com.cubeia.backend.cashgame.Asynchronous;
 import com.cubeia.backend.cashgame.CashGamesBackend;
 import com.cubeia.firebase.api.service.Contract;
 
-public interface CashGamesBackendContract extends CashGamesBackend, Contract {
+/**
+ * This contract mimics the {@link CashGamesBackend} with 
+ * the exception of announce, open session and reserve which
+ * are all asynchronous and to which the answer will be sent
+ * as an object action to the tables. All such action are
+ * marched as {@link Asynchronous} below.
+ * 
+ * @see CashGamesBackend
+ */
+public interface CashGamesBackendService extends AsynchronousCashGamesBackend, Contract {
 
     public static final String MARKET_TABLE_REFERENCE_KEY = "MARKET_TABLE_REFERENCE";
 
     public static final String MARKET_TABLE_SESSION_REFERENCE_KEY = "MARKET_TABLE_SESSION_REFERENCE";
 
-    public FirebaseCallbackFactory getCallbackFactory();
 }

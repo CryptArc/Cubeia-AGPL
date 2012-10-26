@@ -19,7 +19,7 @@ package com.cubeia.games.poker.handler;
 
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.dto.*;
-import com.cubeia.backend.firebase.CashGamesBackendContract;
+import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.game.lobby.LobbyTableAttributeAccessor;
 import com.cubeia.firebase.api.game.table.Table;
@@ -45,7 +45,7 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.Map;
 
-import static com.cubeia.backend.firebase.CashGamesBackendContract.MARKET_TABLE_REFERENCE_KEY;
+import static com.cubeia.backend.firebase.CashGamesBackendService.MARKET_TABLE_REFERENCE_KEY;
 import static com.cubeia.games.poker.model.PokerPlayerImpl.ATTR_PLAYER_EXTERNAL_SESSION_ID;
 
 public class BackendCallHandler {
@@ -70,7 +70,7 @@ public class BackendCallHandler {
 
     public void handleReserveSuccessfulResponse(ReserveResponse reserveResponse) {
         // TODO: A lot of ask don't tell going on here.
-        int playerId = reserveResponse.getPlayerSessionId().getPlayerId();
+        int playerId = reserveResponse.getPlayerSessionId().playerId;
         PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) state.getPokerPlayer(playerId);
         Money amountReserved = reserveResponse.getAmountReserved();
         log.debug("handle reserve response: session = {}, amount = {}, pId = {}, properties = {}",
@@ -80,7 +80,7 @@ public class BackendCallHandler {
         pokerPlayer.addNotInHandAmount(amountReserved.getAmount());
 
         String externalPlayerSessionReference = reserveResponse.getReserveProperties().get(
-                CashGamesBackendContract.MARKET_TABLE_SESSION_REFERENCE_KEY);
+                CashGamesBackendService.MARKET_TABLE_SESSION_REFERENCE_KEY);
         pokerPlayer.getAttributes().put(ATTR_PLAYER_EXTERNAL_SESSION_ID, externalPlayerSessionReference);
 
         pokerPlayer.clearRequestedBuyInAmountAndRequest();
@@ -113,7 +113,7 @@ public class BackendCallHandler {
     }
 
     public void handleReserveFailedResponse(ReserveFailedResponse response) {
-        int playerId = response.getSessionId().getPlayerId();
+        int playerId = response.getSessionId().playerId;
 
 
         BuyInResultCode errorCode;
@@ -176,7 +176,7 @@ public class BackendCallHandler {
 
     public void handleOpenSessionSuccessfulResponse(OpenSessionResponse openSessionResponse) {
         PlayerSessionId playerSessionId = openSessionResponse.getSessionId();
-        int playerId = playerSessionId.getPlayerId();
+        int playerId = playerSessionId.playerId;
 
         // TODO: This ain't pretty. Either make PokerPlayer know about sessions or hold the session in some wrapper.
         PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) state.getPokerPlayer(playerId);

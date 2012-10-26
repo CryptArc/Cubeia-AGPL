@@ -27,9 +27,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.cubeia.backend.cashgame.TableId;
 import com.cubeia.backend.cashgame.dto.AnnounceTableRequest;
-import com.cubeia.backend.firebase.CashGamesBackendContract;
-import com.cubeia.backend.firebase.FirebaseCallbackFactory;
+import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.firebase.api.game.GameDefinition;
 import com.cubeia.firebase.api.game.activator.DefaultCreationParticipant;
 import com.cubeia.firebase.api.game.lobby.LobbyTableAttributeAccessor;
@@ -66,13 +66,13 @@ public class PokerParticipant extends DefaultCreationParticipant {
 
     private final String domain;
     private final PokerStateCreator stateCreator;
-    private final CashGamesBackendContract cashGameBackendService;
+    private final CashGamesBackendService cashGameBackendService;
     private final TableConfigTemplate template;
 
     private final TableNameManager tableNamer;
 
     public PokerParticipant(TableConfigTemplate template, String domain, PokerStateCreator stateCreator,
-            CashGamesBackendContract cashGameBackendService, TableNameManager tableNamer) {
+            CashGamesBackendService cashGameBackendService, TableNameManager tableNamer) {
         this.domain = domain;
         this.template = template;
         this.stateCreator = stateCreator;
@@ -115,9 +115,9 @@ public class PokerParticipant extends DefaultCreationParticipant {
         acc.setIntAttribute(PokerLobbyAttributes.DECK_SIZE.name(), deckSize);
 
         // Announce table
-        FirebaseCallbackFactory callbackFactory = cashGameBackendService.getCallbackFactory();
-        AnnounceTableRequest announceRequest = new AnnounceTableRequest(table.getId());   // TODO: this should be the id from the table record
-        cashGameBackendService.announceTable(announceRequest, callbackFactory.createAnnounceTableCallback(table));
+        // FirebaseCallbackFactory callbackFactory = cashGameBackendService.getCallbackFactory();
+        AnnounceTableRequest announceRequest = new AnnounceTableRequest(new TableId(table.getMetaData().getGameId(), table.getId()));   // TODO: this should be the id from the table record
+        cashGameBackendService.announceTable(announceRequest);
     }
 
     private PokerSettings createSettings(Table table) {
@@ -154,7 +154,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
         return template.getSeats();
     }
 
-    public CashGamesBackendContract getCashGameBackendService() {
+    public CashGamesBackendService getCashGameBackendService() {
         return cashGameBackendService;
     }
 

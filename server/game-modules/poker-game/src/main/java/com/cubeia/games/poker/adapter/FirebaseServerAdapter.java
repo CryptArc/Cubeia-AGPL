@@ -34,9 +34,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.cubeia.backend.cashgame.LongTransactionId;
 import com.cubeia.backend.cashgame.TableId;
-import com.cubeia.backend.cashgame.callback.ReserveCallback;
 import com.cubeia.backend.cashgame.dto.BalanceUpdate;
 import com.cubeia.backend.cashgame.dto.BatchHandRequest;
 import com.cubeia.backend.cashgame.dto.BatchHandResponse;
@@ -44,7 +42,7 @@ import com.cubeia.backend.cashgame.dto.ReserveRequest;
 import com.cubeia.backend.cashgame.dto.TransactionUpdate;
 import com.cubeia.backend.cashgame.exceptions.BatchHandFailedException;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
-import com.cubeia.backend.firebase.CashGamesBackendContract;
+import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.action.GameObjectAction;
@@ -140,7 +138,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
     @Service
     @VisibleForTesting
-    CashGamesBackendContract backend;
+    CashGamesBackendService backend;
 
     @Inject
     @VisibleForTesting
@@ -412,12 +410,11 @@ public class FirebaseServerAdapter implements ServerAdapter {
                     log.debug("sending reserve request to backend: player id = {}, amount = {}, amount requested by player = {}",
                             new Object[]{player.getId(), amountToBuyIn, player.getRequestedBuyInAmount()});
 
-                    ReserveCallback callback = backend.getCallbackFactory().createReserveCallback(table);
+                    // ReserveCallback callback = backend.getCallbackFactory().createReserveCallback(table);
                     Money amountToBuyInMoney = configService.createSystemMoney(amountToBuyIn);
-                    ReserveRequest reserveRequest = new ReserveRequest(
-                            pokerPlayer.getPlayerSessionId(), getFirebaseState().getHandCount(), amountToBuyInMoney); 
+                    ReserveRequest reserveRequest = new ReserveRequest(pokerPlayer.getPlayerSessionId(), getFirebaseState().getHandCount(), amountToBuyInMoney, new TableId(table.getMetaData().getGameId(), table.getId())); 
                     player.setRequestedBuyInAmount(amountToBuyIn);
-                    backend.reserve(reserveRequest, callback); 
+                    backend.reserve(reserveRequest); 
                     player.buyInRequestActive();
                 } else {
                     log.debug("wont reserve money, max reached: player id = {}, amount wanted = {}", player.getId(), player.getRequestedBuyInAmount());
@@ -495,8 +492,8 @@ public class FirebaseServerAdapter implements ServerAdapter {
     private Map<Integer, String> getTransactionIds(BatchHandResponse batchHandResult) {
     	Map<Integer, String> transIds = new HashMap<Integer, String>();
     	for (TransactionUpdate u : batchHandResult.getResultingBalances()) {
-			long transactionId = ((LongTransactionId)u.getTransactionId()).getTransactionId();
-			int userId = u.getBalance().getPlayerSessionId().getPlayerId();
+			long transactionId = u.getTransactionId().transactionId;
+			int userId = u.getBalance().getPlayerSessionId().playerId;
 			transIds.put(userId, String.valueOf(transactionId));
 		}
     	return transIds;

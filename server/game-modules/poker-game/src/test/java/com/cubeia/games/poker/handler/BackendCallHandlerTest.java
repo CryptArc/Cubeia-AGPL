@@ -17,13 +17,36 @@
 
 package com.cubeia.games.poker.handler;
 
+import static java.util.Collections.singletonMap;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.Map;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+
 import com.cubeia.backend.cashgame.PlayerSessionId;
-import com.cubeia.backend.cashgame.PlayerSessionIdImpl;
 import com.cubeia.backend.cashgame.TableId;
-import com.cubeia.backend.cashgame.dto.*;
+import com.cubeia.backend.cashgame.dto.AnnounceTableResponse;
+import com.cubeia.backend.cashgame.dto.BalanceUpdate;
+import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
+import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;
 import com.cubeia.backend.cashgame.dto.ReserveFailedResponse.ErrorCode;
-import com.cubeia.backend.firebase.CashGamesBackendContract;
-import com.cubeia.backend.firebase.FirebaseCallbackFactory;
+import com.cubeia.backend.cashgame.dto.ReserveResponse;
+import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.game.GameNotifier;
 import com.cubeia.firebase.api.game.lobby.LobbyTableAttributeAccessor;
@@ -37,28 +60,10 @@ import com.cubeia.games.poker.io.protocol.ErrorPacket;
 import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.games.poker.state.FirebaseState;
-import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.variant.telesina.Telesina;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.Map;
-
-import static java.util.Collections.singletonMap;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
 
 public class BackendCallHandlerTest {
 
@@ -75,10 +80,10 @@ public class BackendCallHandlerTest {
     private GameNotifier notifier;
     @Mock
     private PokerPlayerImpl pokerPlayer;
+    /*@Mock
+    private CashGamesBackendService backend;
     @Mock
-    private CashGamesBackendContract backend;
-    @Mock
-    private FirebaseCallbackFactory callbackFactory;
+    private FirebaseCallbackFactory callbackFactory;*/
     @Mock
     private FirebaseServerAdapter serverAdapter;
     @Mock
@@ -92,7 +97,7 @@ public class BackendCallHandlerTest {
         callHandler = new BackendCallHandler(state, table, backendPlayerSessionHandler);
         when(table.getNotifier()).thenReturn(notifier);
         when(state.getPokerPlayer(playerId)).thenReturn(pokerPlayer);
-        when(backend.getCallbackFactory()).thenReturn(callbackFactory);
+        // when(backend.getCallbackFactory()).thenReturn(callbackFactory);
         when(state.getServerAdapter()).thenReturn(serverAdapter);
         when(state.getMaxBuyIn()).thenReturn(maxBuyIn);
         when(pokerPlayer.getId()).thenReturn(playerId);
@@ -110,13 +115,13 @@ public class BackendCallHandlerTest {
     @SuppressWarnings("unchecked")
     private void setupForHandleReserveSuccessfulResponse(boolean isSitInAfterBuyIn) throws IOException {
         tableReference = "tableRef";
-        when(state.getExternalTableProperties()).thenReturn(singletonMap(CashGamesBackendContract.MARKET_TABLE_REFERENCE_KEY, (Serializable) tableReference));
+        when(state.getExternalTableProperties()).thenReturn(singletonMap(CashGamesBackendService.MARKET_TABLE_REFERENCE_KEY, (Serializable) tableReference));
         amountRequested = 500;
-        playerSessionId = new PlayerSessionIdImpl(playerId);
+        playerSessionId = new PlayerSessionId(playerId, null);
         int balanceOnRemoteWallet = 10000;
         BalanceUpdate balanceUpdate = new BalanceUpdate(playerSessionId, new Money(balanceOnRemoteWallet, "USD", 2), -1);
         reserveResponse = new ReserveResponse(balanceUpdate, new Money(amountRequested, "USD", 2));
-        reserveResponse.setProperty(CashGamesBackendContract.MARKET_TABLE_SESSION_REFERENCE_KEY, tableSessionReference);
+        reserveResponse.setProperty(CashGamesBackendService.MARKET_TABLE_SESSION_REFERENCE_KEY, tableSessionReference);
 
         when(pokerPlayer.getPendingBalanceSum()).thenReturn(balanceNotInHand + amountRequested);
         when(pokerPlayer.isSitInAfterSuccessfulBuyIn()).thenReturn(isSitInAfterBuyIn);
@@ -142,8 +147,7 @@ public class BackendCallHandlerTest {
 
     @Test
     public void testHandleReserveFailed() throws IOException {
-        PlayerSessionId sessionId = mock(PlayerSessionId.class);
-        when(sessionId.getPlayerId()).thenReturn(playerId);
+        PlayerSessionId sessionId = new PlayerSessionId(playerId, null);
         ReserveFailedResponse response = new ReserveFailedResponse(sessionId, ErrorCode.MAX_LIMIT_REACHED, "fallör", false);
 
         callHandler.handleReserveFailedResponse(response);
@@ -163,8 +167,7 @@ public class BackendCallHandlerTest {
     public void testHandleReserveFailedWithSessionCloseForced() throws IOException {
         int roundNumber = 43434;
         String handId = "h1111";
-        PlayerSessionId sessionId = mock(PlayerSessionId.class);
-        when(sessionId.getPlayerId()).thenReturn(playerId);
+        PlayerSessionId sessionId = new PlayerSessionId(playerId, null);
         when(firebaseState.getHandCount()).thenReturn(roundNumber);
         when(serverAdapter.getIntegrationHandId()).thenReturn(handId);
         ReserveFailedResponse response = new ReserveFailedResponse(sessionId, ErrorCode.MAX_LIMIT_REACHED, "fallör", true);
@@ -223,22 +226,21 @@ public class BackendCallHandlerTest {
     @Test
     public void testHandleOpenSessionSuccessfulResponse() {
         when(gameType.canPlayerAffordEntryBet(any(PokerPlayer.class), any(PokerSettings.class), Mockito.eq(true))).thenReturn(false);
-        PlayerSessionId playerSessionId = new PlayerSessionIdImpl(playerId);
+        PlayerSessionId playerSessionId = new PlayerSessionId(playerId, null);
         OpenSessionResponse openSessionResponse = new OpenSessionResponse(playerSessionId, Collections.<String, String>emptyMap());
         callHandler.handleOpenSessionSuccessfulResponse(openSessionResponse);
         verify(pokerPlayer).setPlayerSessionId(playerSessionId);
     }
 
-    @SuppressWarnings({"serial", "unchecked"})
     @Test
-    public void testHandleAnnounceTableSuccessfulResponse() {
+    @SuppressWarnings("unchecked")
+	public void testHandleAnnounceTableSuccessfulResponse() {
         Map<String, Serializable> extProps = Mockito.mock(Map.class);
         when(state.getExternalTableProperties()).thenReturn(extProps);
         LobbyTableAttributeAccessor attributeAccessor = mock(LobbyTableAttributeAccessor.class);
         when(table.getAttributeAccessor()).thenReturn(attributeAccessor);
 
-        TableId tableId = new TableId() {
-        };
+        TableId tableId = new TableId(1, 1);
         AnnounceTableResponse announceTableResponse = new AnnounceTableResponse(tableId);
         announceTableResponse.setProperty("test", "klyka");
         callHandler.handleAnnounceTableSuccessfulResponse(announceTableResponse);

@@ -177,7 +177,7 @@ public class HandHistoryReporter {
 
     private String getIntegrationHandId() {
         HandIdentifier id = getFirebaseState().getCurrentHandIdentifier();
-        return (id == null ? null : id.getIntegrationId());
+        return id.getIntegrationId();
     }
 
     private String getIntegrationTableId() {

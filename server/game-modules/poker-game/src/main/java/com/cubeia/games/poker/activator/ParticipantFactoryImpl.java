@@ -17,7 +17,7 @@
 
 package com.cubeia.games.poker.activator;
 
-import com.cubeia.backend.firebase.CashGamesBackendContract;
+import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.games.poker.entity.TableConfigTemplate;
 import com.google.inject.Inject;
@@ -30,7 +30,7 @@ public class ParticipantFactoryImpl implements ParticipantFactory {
     private PokerStateCreator stateCreator;
 
     @Service
-    private CashGamesBackendContract backend;
+    private CashGamesBackendService backend;
 
     @Inject
     private LobbyDomainSelector domainSelector;

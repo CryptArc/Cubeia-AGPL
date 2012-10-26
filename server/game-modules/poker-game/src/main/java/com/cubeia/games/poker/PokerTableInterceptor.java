@@ -17,7 +17,7 @@
 
 package com.cubeia.games.poker;
 
-import com.cubeia.backend.cashgame.AllowJoinResponse;
+import com.cubeia.backend.cashgame.dto.AllowJoinResponse;
 import com.cubeia.firebase.api.game.table.InterceptionResponse;
 import com.cubeia.firebase.api.game.table.SeatRequest;
 import com.cubeia.firebase.api.game.table.Table;

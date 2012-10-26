@@ -17,15 +17,17 @@
 
 package com.cubeia.backend.firebase;
 
+import com.cubeia.backend.cashgame.TableId;
 import com.cubeia.backend.cashgame.callback.AnnounceTableCallback;
 import com.cubeia.backend.cashgame.callback.OpenSessionCallback;
 import com.cubeia.backend.cashgame.callback.ReserveCallback;
-import com.cubeia.firebase.api.game.table.Table;
 
 public interface FirebaseCallbackFactory {
-    public OpenSessionCallback createOpenSessionCallback(Table table);
+	
+    public OpenSessionCallback createOpenSessionCallback(TableId table);
 
-    public ReserveCallback createReserveCallback(Table table);
+    public ReserveCallback createReserveCallback(TableId table);
 
-    public AnnounceTableCallback createAnnounceTableCallback(Table table);
+    public AnnounceTableCallback createAnnounceTableCallback(TableId table);
+
 }

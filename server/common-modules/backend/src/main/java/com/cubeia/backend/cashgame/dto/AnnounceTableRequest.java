@@ -19,17 +19,15 @@ package com.cubeia.backend.cashgame.dto;
 
 import java.io.Serializable;
 
-@SuppressWarnings("serial")
+import com.cubeia.backend.cashgame.TableId;
+
 public class AnnounceTableRequest implements Serializable {
 
-    private final int platformTableId;
+    private static final long serialVersionUID = 507967877958616737L;
+	
+    public final TableId tableId;
 
-    public AnnounceTableRequest(int platformTableId) {
-        this.platformTableId = platformTableId;
+    public AnnounceTableRequest(TableId tableId) {
+        this.tableId = tableId;
     }
-
-    public int getPlatformTableId() {
-        return platformTableId;
-    }
-
 }
