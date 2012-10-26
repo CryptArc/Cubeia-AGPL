@@ -27,7 +27,7 @@ import com.cubeia.firebase.api.service.ServiceRouter;
 
 public class CashGamesBackendMock extends CashGamesBackendServiceBase implements CashGamesBackendService, Service, RoutableService {
 
-	protected CashGamesBackendMock() {
+	public CashGamesBackendMock() {
 		super(20, 500);
 	}
 

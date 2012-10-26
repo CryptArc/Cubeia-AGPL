@@ -14,7 +14,7 @@ public class CachGamesBackendServiceImpl extends CashGamesBackendServiceBase imp
 	private CashGamesBackendAdapter adapter;
 	private ServiceRouter router;
 
-	protected CachGamesBackendServiceImpl() {
+	public CachGamesBackendServiceImpl() {
 		super(20, 500);
 	}
 
