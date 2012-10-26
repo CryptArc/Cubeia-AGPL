@@ -22,13 +22,13 @@ import static com.cubeia.games.poker.handler.BackendCallHandler.EXT_PROP_KEY_TAB
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.cubeia.backend.cashgame.AllowJoinResponse;
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.TableId;
+import com.cubeia.backend.cashgame.dto.AllowJoinResponse;
 import com.cubeia.backend.cashgame.dto.CloseSessionRequest;
 import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
 import com.cubeia.backend.cashgame.exceptions.CloseSessionFailedException;
-import com.cubeia.backend.firebase.CashGamesBackendContract;
+import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.game.poker.config.api.PokerConfigurationService;
@@ -43,7 +43,7 @@ public class BackendPlayerSessionHandler {
 
     @Service
     @VisibleForTesting
-    protected CashGamesBackendContract cashGameBackend;
+    protected CashGamesBackendService cashGameBackend;
     
     @Service
     @VisibleForTesting
@@ -90,7 +90,7 @@ public class BackendPlayerSessionHandler {
         } else {
             OpenSessionRequest openSessionRequest = new OpenSessionRequest(
                     playerId, tableId, configService.createSystemMoney(0), roundNumber);
-            cashGameBackend.openSession(openSessionRequest, cashGameBackend.getCallbackFactory().createOpenSessionCallback(table));
+            cashGameBackend.openSession(openSessionRequest);
         }
 
     }

@@ -17,362 +17,277 @@
 
 package com.cubeia.backend.firebase;
 
-import com.cubeia.backend.cashgame.AllowJoinResponse;
-import com.cubeia.backend.cashgame.LongTransactionId;
+import static com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse.ErrorCode.UNSPECIFIED_ERROR;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.cubeia.backend.cashgame.CashGamesBackend;
 import com.cubeia.backend.cashgame.PlayerSessionId;
-import com.cubeia.backend.cashgame.PlayerSessionIdImpl;
-import com.cubeia.backend.cashgame.TableIdImpl;
-import com.cubeia.backend.cashgame.callback.AnnounceTableCallback;
-import com.cubeia.backend.cashgame.callback.OpenSessionCallback;
-import com.cubeia.backend.cashgame.callback.ReserveCallback;
-import com.cubeia.backend.cashgame.dto.*;
+import com.cubeia.backend.cashgame.TableId;
+import com.cubeia.backend.cashgame.TransactionId;
+import com.cubeia.backend.cashgame.dto.AllowJoinResponse;
+import com.cubeia.backend.cashgame.dto.AnnounceTableRequest;
+import com.cubeia.backend.cashgame.dto.AnnounceTableResponse;
+import com.cubeia.backend.cashgame.dto.BalanceUpdate;
+import com.cubeia.backend.cashgame.dto.BatchHandRequest;
+import com.cubeia.backend.cashgame.dto.BatchHandResponse;
+import com.cubeia.backend.cashgame.dto.CloseSessionRequest;
+import com.cubeia.backend.cashgame.dto.HandResult;
+import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
+import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
+import com.cubeia.backend.cashgame.dto.ReserveFailedResponse.ErrorCode;
+import com.cubeia.backend.cashgame.dto.ReserveRequest;
+import com.cubeia.backend.cashgame.dto.ReserveResponse;
+import com.cubeia.backend.cashgame.dto.TransactionUpdate;
 import com.cubeia.backend.cashgame.exceptions.BatchHandFailedException;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
-import com.cubeia.backend.firebase.impl.FirebaseCallbackFactoryImpl;
-import com.cubeia.backend.firebase.jmx.MockController;
+import com.cubeia.backend.cashgame.exceptions.OpenSessionFailedException;
+import com.cubeia.backend.cashgame.exceptions.ReserveFailedException;
 import com.cubeia.backoffice.accounting.api.UnbalancedTransactionException;
 import com.cubeia.backoffice.wallet.api.dto.AccountBalanceResult;
 import com.cubeia.backoffice.wallet.api.dto.report.TransactionRequest;
 import com.cubeia.backoffice.wallet.api.dto.report.TransactionResult;
-import com.cubeia.firebase.api.action.service.ServiceAction;
 import com.cubeia.firebase.api.server.SystemException;
-import com.cubeia.firebase.api.service.RoutableService;
-import com.cubeia.firebase.api.service.Service;
-import com.cubeia.firebase.api.service.ServiceContext;
-import com.cubeia.firebase.api.service.ServiceRouter;
 import com.cubeia.games.poker.common.Money;
 import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
 import com.cubeia.network.wallet.firebase.domain.TransactionBuilder;
 import com.google.common.annotations.VisibleForTesting;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.atomic.AtomicLong;
-
-import static com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse.ErrorCode.UNSPECIFIED_ERROR;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 /**
  * Adapter from the Backend Service Contract to the Cubeia Wallet Service.
- *
+ * 
  * @author w
  */
-public class CashGamesBackendAdapter implements CashGamesBackendContract, Service, RoutableService {
+public class CashGamesBackendAdapter implements CashGamesBackend {
 
-    /**
-     * Hardcoded licensee id, should be part of the open session request
-     */
-    public static final int LICENSEE_ID = 0;
+	/**
+	 * Hardcoded licensee id, should be part of the open session request
+	 */
+	public static final int LICENSEE_ID = 0;
 
-    /**
-     * Hardcoded game id, should be configurable or part of requests
-     */
-    public static final int GAME_ID = 1;
+	/**
+	 * Hardcoded game id, should be configurable or part of requests
+	 */
+	public static final int GAME_ID = 1;
 
-    static final Long RAKE_ACCOUNT_USER_ID = -1000L;
+	static final Long RAKE_ACCOUNT_USER_ID = -1000L;
 
-    private Logger log = LoggerFactory.getLogger(CashGamesBackendAdapter.class);
+	private Logger log = LoggerFactory.getLogger(CashGamesBackendAdapter.class);
 
-    @VisibleForTesting
-    protected ScheduledExecutorService executor = Executors.newScheduledThreadPool(20);
+	private final AtomicLong idSequence = new AtomicLong(0);
 
-    private ServiceRouter router;
+	@VisibleForTesting
+	protected WalletServiceContract walletService;
 
-    private final AtomicLong idSequence = new AtomicLong(0);
+	protected AccountLookupUtil accountLookupUtil;
 
-    @VisibleForTesting
-    protected WalletServiceContract walletService;
+	@VisibleForTesting
+	protected long rakeAccountId;
+	
+	public CashGamesBackendAdapter(WalletServiceContract walletService, AccountLookupUtil accountLookupUtil) throws SystemException {
+		this.walletService = walletService;
+		rakeAccountId = accountLookupUtil.lookupRakeAccountId(walletService);
+		log.debug("system rake account id = {}", rakeAccountId);
+		this.accountLookupUtil = accountLookupUtil;
+	}
+	
+	@Override
+	public boolean isSystemShuttingDown() {
+		return false;
+	}
 
-    protected AccountLookupUtil accountLookupUtil = new AccountLookupUtil();
+	private long nextId() {
+		return idSequence.getAndIncrement();
+	}
 
-    @VisibleForTesting
-    protected long rakeAccountId;
+	@Override
+	public String generateHandId() {
+		return UUID.randomUUID().toString();
+	}
 
-    /**
-     * Grace delay before callback is called. If called immediately some messages seems to be dropped. :-(
-     */
-    @VisibleForTesting
-    protected static final int CALLBACK_GRACE_DELAY_MS = 500;
+	@Override
+	public AllowJoinResponse allowJoinTable(int playerId) {
+		log.warn("allow join not implemented, will always return ok");
+		return new AllowJoinResponse(true, -1);
+	}
 
-    private long nextId() {
-        return idSequence.getAndIncrement();
-    }
+	@Override
+	public AnnounceTableResponse announceTable(AnnounceTableRequest request) {
+		String extid = UUID.randomUUID().toString();
+		final AnnounceTableResponse response = new AnnounceTableResponse(new TableId(request.tableId, extid));
+		response.setProperty(
+				CashGamesBackendService.MARKET_TABLE_REFERENCE_KEY,
+				"CUBEIA-TABLE-ID::" + extid);
+		return response;
+	}
 
-    @Override
-    public String generateHandId() {
-        return UUID.randomUUID().toString();
-    }
+	@Override
+	public OpenSessionResponse openSession(final OpenSessionRequest request) throws OpenSessionFailedException {
+		try {
+			Long walletSessionId = walletService.startSession(request
+					.getOpeningBalance().getCurrencyCode(), LICENSEE_ID,
+					request.getPlayerId(), request.getTableId().tableId,
+					GAME_ID, "unknown-" + request.getPlayerId());
 
-    @Override
-    public boolean isSystemShuttingDown() {
-        log.warn("shutting down check not implemented");
-        return false;
-    }
+			PlayerSessionId sessionId = new PlayerSessionId(request.playerId, String.valueOf(walletSessionId));
+			OpenSessionResponse response = new OpenSessionResponse(sessionId, Collections.<String, String> emptyMap());
+			log.debug("new session opened, tId = {}, pId = {}, sId = {}", new Object[] { request.getTableId(), request.getPlayerId(), response.getSessionId() });
+			return response;
+		} catch (Exception e) {
+			String msg = "error opening session for player " + request.getPlayerId() + ": " + e.getMessage();
+			throw new OpenSessionFailedException(msg, UNSPECIFIED_ERROR);
+		}
+	}
 
-    @Override
-    public AllowJoinResponse allowJoinTable(int playerId) {
-        log.warn("allow join not implemented, will always return ok");
-        return new AllowJoinResponse(true, -1);
-    }
+	@Override
+	public void closeSession(CloseSessionRequest request) {
+		PlayerSessionId sid = request.getPlayerSessionId();
+		long walletSessionId = getWalletSessionIdByPlayerSessionId(sid);
+		com.cubeia.backoffice.accounting.api.Money amountDeposited = walletService
+				.endSessionAndDepositAll(LICENSEE_ID, walletSessionId,
+						"session ended by game " + GAME_ID + ", player id = "
+								+ sid.playerId);
 
-    @Override
-    public FirebaseCallbackFactory getCallbackFactory() {
-        return new FirebaseCallbackFactoryImpl(router);
-    }
+		log.debug("wallet session {} closed for player {}, amount deposited: {}",
+				new Object[] { walletSessionId, sid.playerId,
+						amountDeposited });
+	}
 
-    @Override
-    public void announceTable(AnnounceTableRequest request, final AnnounceTableCallback callback) {
-        final AnnounceTableResponse response = new AnnounceTableResponse(new TableIdImpl());
-        response.setProperty(MARKET_TABLE_REFERENCE_KEY, "CUBEIA-TABLE-ID::" + UUID.randomUUID());
+	private long getWalletSessionIdByPlayerSessionId(PlayerSessionId sid) {
+		return Long.valueOf(sid.integrationSessionId);
+	}
 
-        Runnable announceTask = new Runnable() {
-            @Override
-            public void run() {
-                callback.requestSucceeded(response);
-            }
-        };
-        scheduleCallback(announceTask);
-    }
+	@Override
+	public ReserveResponse reserve(final ReserveRequest request) throws ReserveFailedException {
+		Money amount = request.getAmount();
+		PlayerSessionId sid = request.getPlayerSessionId();
+		Long walletSessionId = getWalletSessionIdByPlayerSessionId(sid);
+		com.cubeia.backoffice.accounting.api.Money walletAmount = convertToWalletMoney(amount);
+		try {
+			walletService.withdraw(walletAmount, LICENSEE_ID,
+					walletSessionId.longValue(), "reserve " + amount
+					+ " to game " + GAME_ID + " by player "
+					+ sid.playerId);
 
-    private void scheduleCallback(Runnable runnable) {
-        executor.schedule(wrapWithTryCatch(runnable), CALLBACK_GRACE_DELAY_MS, MILLISECONDS);
-    }
+			AccountBalanceResult sessionBalance = walletService.getBalance(walletSessionId);
+			Money newBalance = convertFromWalletMoney(sessionBalance.getBalance());
 
-    @Override
-    public void openSession(final OpenSessionRequest request, final OpenSessionCallback callback) {
-        Runnable openSessionTask = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Long walletSessionId = walletService.startSession(
-                            request.getOpeningBalance().getCurrencyCode(),
-                            LICENSEE_ID,
-                            request.getPlayerId(),
-                            (int) ((TableIdImpl) request.getTableId()).getId(),
-                            GAME_ID,
-                            "unknown-" + request.getPlayerId());
+			BalanceUpdate balanceUpdate = new BalanceUpdate(request.getPlayerSessionId(), newBalance, nextId());
+			ReserveResponse response = new ReserveResponse(balanceUpdate, amount);
+			log.debug("reserve successful: sId = {}, amount = {}, new balance = {}", new Object[] { sid, amount, newBalance });
+			response.setProperty(CashGamesBackendService.MARKET_TABLE_SESSION_REFERENCE_KEY, "CUBEIA-MARKET-SID-" + sid.hashCode());
+			return response;
+		} catch (Exception e) {
+			String msg = "error reserving " + amount + " to session "
+							+ walletSessionId + " for player "
+							+ sid.playerId + ": " + e.getMessage();
 
-                    PlayerSessionId sessionId = new PlayerSessionIdImpl(request.getPlayerId(), walletSessionId);
-                    OpenSessionResponse response = new OpenSessionResponse(sessionId, Collections.<String, String>emptyMap());
-                    log.debug("new session opened, tId = {}, pId = {}, sId = {}",
-                            new Object[]{request.getTableId(), request.getPlayerId(), response.getSessionId()});
-                    callback.requestSucceeded(response);
-                } catch (Exception e) {
-                    String msg = "error opening session for player " + request.getPlayerId() + ": "
-                            + e.getMessage();
-                    OpenSessionFailedResponse failResponse = new OpenSessionFailedResponse(UNSPECIFIED_ERROR, msg, request.getPlayerId());
-                    callback.requestFailed(failResponse);
-                }
-            }
-        };
+			throw new ReserveFailedException(msg, ErrorCode.UNSPECIFIED_FAILURE, true);
+		}
+}
 
-        scheduleCallback(openSessionTask);
-    }
+	/**
+	 * Convert from wallet money type to backend money type.
+	 * 
+	 * @param amount
+	 *            wallet money amount
+	 * @return converted amount
+	 */
+	private Money convertFromWalletMoney(com.cubeia.backoffice.accounting.api.Money amount) {
+		Money backendMoney = new Money(amount.getAmount()
+				.movePointRight(amount.getFractionalDigits()).longValueExact(),
+				amount.getCurrencyCode(), amount.getFractionalDigits());
+		return backendMoney;
+	}
 
-    @Override
-    public void closeSession(CloseSessionRequest request) {
-        PlayerSessionId sid = request.getPlayerSessionId();
+	/**
+	 * Convert from backend money type to wallet money type.
+	 * 
+	 * @param amount
+	 *            amount to convert
+	 * @return converted amount
+	 */
+	private com.cubeia.backoffice.accounting.api.Money convertToWalletMoney(Money amount) {
+		return new com.cubeia.backoffice.accounting.api.Money(
+				amount.getCurrencyCode(), amount.getFractionalDigits(),
+				new BigDecimal(amount.getAmount()).movePointLeft(amount.getFractionalDigits()));
+	}
 
-        long walletSessionId = getWalletSessionIdByPlayerSessionId(sid);
+	@Override
+	public BatchHandResponse batchHand(BatchHandRequest request) throws BatchHandFailedException {
 
-        com.cubeia.backoffice.accounting.api.Money amountDeposited = walletService
-                .endSessionAndDepositAll(LICENSEE_ID, walletSessionId, "session ended by game " + GAME_ID +
-                        ", player id = " + sid.getPlayerId());
+		try {
+			String currencyCode = request.getTotalRake().getCurrencyCode();
+			int fractionalDigits = request.getTotalRake().getFractionalDigits();
+			TransactionBuilder txBuilder = new TransactionBuilder(currencyCode, fractionalDigits);
 
-        log.debug("wallet session {} closed for player {}, amount deposited: {}",
-                new Object[]{walletSessionId, sid.getPlayerId(), amountDeposited});
-    }
+			HashMap<Long, PlayerSessionId> sessionToPlayerSessionMap = new HashMap<Long, PlayerSessionId>();
 
-    private long getWalletSessionIdByPlayerSessionId(PlayerSessionId sid) {
-        return ((PlayerSessionIdImpl) sid).getSessionId();
-    }
+			for (HandResult hr : request.getHandResults()) {
+				log.debug("recording hand result: handId = {}, sessionId = {}, bets = {}, wins = {}, rake = {}",
+						new Object[] { request.getHandId(),
+								hr.getPlayerSession(), hr.getAggregatedBet(),
+								hr.getWin(), hr.getRake() });
 
-    @Override
-    public void reserve(final ReserveRequest request, final ReserveCallback callback) {
-        Runnable task = new Runnable() {
-            @Override
-            public void run() {
-                Money amount = request.getAmount();
-                PlayerSessionId sid = request.getPlayerSessionId();
-                Long walletSessionId = getWalletSessionIdByPlayerSessionId(sid);
+				Money resultingAmount = hr.getWin().subtract(hr.getAggregatedBet());
 
-                com.cubeia.backoffice.accounting.api.Money walletAmount = convertToWalletMoney(amount);
-                try {
-                    walletService.withdraw(walletAmount, LICENSEE_ID, walletSessionId.longValue(),
-                            "reserve " + amount + " to game " + GAME_ID + " by player " + sid.getPlayerId());
+				Long walletSessionId = getWalletSessionIdByPlayerSessionId(hr.getPlayerSession());
+				sessionToPlayerSessionMap.put(walletSessionId, hr.getPlayerSession());
+				txBuilder.entry(walletSessionId, convertToWalletMoney(resultingAmount).getAmount());
+			}
 
-                    AccountBalanceResult sessionBalance = walletService.getBalance(walletSessionId);
-                    Money newBalance = convertFromWalletMoney(sessionBalance.getBalance());
+			txBuilder.entry(rakeAccountId, convertToWalletMoney(request.getTotalRake()).getAmount());
+			txBuilder.comment("poker hand result"); 
+			txBuilder.attribute("pokerTableId", String.valueOf((request.getTableId()).tableId))
+					.attribute("pokerGameId", String.valueOf(GAME_ID))
+					.attribute("pokerHandId", request.getHandId());
 
-                    BalanceUpdate balanceUpdate = new BalanceUpdate(request.getPlayerSessionId(), newBalance, nextId());
-                    ReserveResponse response = new ReserveResponse(balanceUpdate, amount);
-                    log.debug("reserve successful: sId = {}, amount = {}, new balance = {}", new Object[]{sid, amount, newBalance});
-                    response.setProperty(MARKET_TABLE_SESSION_REFERENCE_KEY, "CUBEIA-MARKET-SID-" + sid.hashCode());
-                    callback.requestSucceeded(response);
-                } catch (Exception e) {
-                    String msg = "error reserving " + amount + " to session " + walletSessionId + " for player " + sid.getPlayerId() + ": "
-                            + e.getMessage();
+			TransactionRequest txRequest = txBuilder.toTransactionRequest();
+			log.debug("sending tx request to wallet: {}", txRequest);
+			TransactionResult txResult = walletService.doTransaction(txRequest);
 
-                    ReserveFailedResponse failResponse = new ReserveFailedResponse(request.getPlayerSessionId(),
-                            ReserveFailedResponse.ErrorCode.UNSPECIFIED_FAILURE, msg, true);
-                    callback.requestFailed(failResponse);
-                }
-            }
-        };
+			List<TransactionUpdate> resultingBalances = new ArrayList<TransactionUpdate>();
+			for (AccountBalanceResult sb : txResult.getBalances()) {
+				if (sb.getAccountId() != rakeAccountId) {
+					PlayerSessionId playerSessionId = sessionToPlayerSessionMap.get(sb.getAccountId());
+					Money balance = convertFromWalletMoney(sb.getBalance());
+					BalanceUpdate balanceUpdate = new BalanceUpdate(playerSessionId, balance, nextId());
+					resultingBalances.add(new TransactionUpdate(new TransactionId(txResult.getTransactionId()),
+							balanceUpdate));
+				}
+			}
+			return new BatchHandResponse(resultingBalances);
 
-        scheduleCallback(task);
-    }
+		} catch (UnbalancedTransactionException ute) {
+			throw new BatchHandFailedException("error reporting hand result",
+					ute);
+		} catch (Exception e) {
+			throw new BatchHandFailedException("error reporting hand result", e);
+		}
+	}
 
-    /**
-     * Convert from wallet money type to backend money type.
-     *
-     * @param amount wallet money amount
-     * @return converted amount
-     */
-    private Money convertFromWalletMoney(com.cubeia.backoffice.accounting.api.Money amount) {
-        Money backendMoney = new Money(amount.getAmount().movePointRight(amount.getFractionalDigits()).longValueExact(),
-                amount.getCurrencyCode(), amount.getFractionalDigits());
-        return backendMoney;
-    }
+	@Override
+	public Money getMainAccountBalance(int playerId) {
+		long accountId = this.accountLookupUtil.lookupMainAccountIdForPLayer(walletService, playerId);
+		log.debug("Found account ID {} for player {}", accountId, playerId);
+		Money m = convertFromWalletMoney(walletService.getBalance(accountId).getBalance());
+		log.debug("Found balance {} for player {}", m, playerId);
+		return m;
+	}
 
-    /**
-     * Convert from backend money type to wallet money type.
-     *
-     * @param amount amount to convert
-     * @return converted amount
-     */
-    private com.cubeia.backoffice.accounting.api.Money convertToWalletMoney(Money amount) {
-        return new com.cubeia.backoffice.accounting.api.Money(amount.getCurrencyCode(), amount.getFractionalDigits(),
-                new BigDecimal(amount.getAmount()).movePointLeft(amount.getFractionalDigits()));
-    }
-
-    @Override
-    public BatchHandResponse batchHand(BatchHandRequest request) throws BatchHandFailedException {
-
-        try {
-            String currencyCode = request.getTotalRake().getCurrencyCode();
-            int fractionalDigits = request.getTotalRake().getFractionalDigits();
-            TransactionBuilder txBuilder = new TransactionBuilder(currencyCode, fractionalDigits);
-
-            HashMap<Long, PlayerSessionIdImpl> sessionToPlayerSessionMap = new HashMap<Long, PlayerSessionIdImpl>();
-
-            for (HandResult hr : request.getHandResults()) {
-                log.debug("recording hand result: handId = {}, sessionId = {}, bets = {}, wins = {}, rake = {}",
-                        new Object[]{request.getHandId(), hr.getPlayerSession(), hr.getAggregatedBet(), hr.getWin(), hr.getRake()});
-
-                Money resultingAmount = hr.getWin().subtract(hr.getAggregatedBet());
-
-                Long walletSessionId = getWalletSessionIdByPlayerSessionId(hr.getPlayerSession());
-                sessionToPlayerSessionMap.put(walletSessionId, (PlayerSessionIdImpl) hr.getPlayerSession());
-                txBuilder.entry(walletSessionId, convertToWalletMoney(resultingAmount).getAmount());
-            }
-
-            txBuilder.entry(rakeAccountId, convertToWalletMoney(request.getTotalRake()).getAmount());
-            txBuilder.comment("poker hand result"); //: game = " + GAME_ID + ", hand id = " + request.getHandId() + ", table id = " + request.getTableId());
-            txBuilder.attribute("pokerTableId", String.valueOf(((TableIdImpl)request.getTableId()).getId()))
-            			.attribute("pokerGameId", String.valueOf(GAME_ID))
-            			.attribute("pokerHandId", request.getHandId());
-            
-            TransactionRequest txRequest = txBuilder.toTransactionRequest();
-
-            log.debug("sending tx request to wallet: {}", txRequest);
-            TransactionResult txResult = walletService.doTransaction(txRequest);
-
-            List<TransactionUpdate> resultingBalances = new ArrayList<TransactionUpdate>();
-            for (AccountBalanceResult sb : txResult.getBalances()) {
-                if (sb.getAccountId() != rakeAccountId) {
-                    PlayerSessionIdImpl playerSessionId = sessionToPlayerSessionMap.get(sb.getAccountId());
-                    Money balance = convertFromWalletMoney(sb.getBalance());
-                    BalanceUpdate balanceUpdate = new BalanceUpdate(playerSessionId, balance, nextId());
-                    resultingBalances.add(new TransactionUpdate(new LongTransactionId(txResult.getTransactionId()), balanceUpdate));
-                }
-            }
-            return new BatchHandResponse(resultingBalances);
-
-        } catch (UnbalancedTransactionException ute) {
-            throw new BatchHandFailedException("error reporting hand result", ute);
-        } catch (Exception e) {
-            throw new BatchHandFailedException("error reporting hand result", e);
-        }
-    }
-
-    @Override
-    public Money getMainAccountBalance(int playerId) {
-        long accountId = this.accountLookupUtil.lookupMainAccountIdForPLayer(walletService, playerId);
-        log.debug("Found account ID {} for player {}", accountId, playerId);
-        Money m = convertFromWalletMoney(walletService.getBalance(accountId).getBalance());
-        log.debug("Found balance {} for player {}", m, playerId);
-        return m;
-    }
-
-    @Override
-    public BalanceUpdate getSessionBalance(PlayerSessionId sessionId) throws GetBalanceFailedException {
-        AccountBalanceResult sessionBalance = walletService.getBalance(getWalletSessionIdByPlayerSessionId(sessionId));
-        Money balanceMoney = convertFromWalletMoney(sessionBalance.getBalance());
-        return new BalanceUpdate(sessionId, balanceMoney, nextId());
-    }
-
-    @Override
-    public void setRouter(ServiceRouter router) {
-        this.router = router;
-    }
-
-    public ServiceRouter getRouter() {
-        return router;
-    }
-
-    @Override
-    public void onAction(ServiceAction e) {
-        // nothing should arrive here
-    }
-
-    /**
-     * Wrap the given runnable with a catch all block.
-     */
-    public Runnable wrapWithTryCatch(final Runnable delegateRunnable) {
-        return new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    delegateRunnable.run();
-                } catch (Throwable t) {
-                    log.error("wrapped runnable throw uncaught throwable", t);
-                }
-            }
-        };
-    }
-
-    @SuppressWarnings("unused")
-    @Override
-    public void init(ServiceContext con) throws SystemException {
-        log.debug("backend wallet adapter service init");
-
-        walletService = con.getParentRegistry().getServiceInstance(WalletServiceContract.class);
-        log.debug("found wallet service: {}", walletService.getClass().getSimpleName());
-
-        rakeAccountId = accountLookupUtil.lookupRakeAccountId(walletService);
-        log.debug("system rake account id = {}", rakeAccountId);
-
-        log.debug("initializing jmx stuff");
-    }
-
-    @Override
-    public void destroy() {
-        log.debug("backend wallet adapter service  destroy");
-    }
-
-    @Override
-    public void start() {
-        log.debug("backend wallet adapter service  start");
-    }
-
-    @Override
-    public void stop() {
-        log.debug("backend wallet adapter service  stop");
-    }
-
+	@Override
+	public BalanceUpdate getSessionBalance(PlayerSessionId sessionId) throws GetBalanceFailedException {
+		AccountBalanceResult sessionBalance = walletService.getBalance(getWalletSessionIdByPlayerSessionId(sessionId));
+		Money balanceMoney = convertFromWalletMoney(sessionBalance.getBalance());
+		return new BalanceUpdate(sessionId, balanceMoney, nextId());
+	}
 }

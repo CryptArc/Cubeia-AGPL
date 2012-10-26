@@ -32,9 +32,7 @@ import java.util.Map;
 import org.junit.Test;
 
 import com.cubeia.backend.cashgame.PlayerSessionId;
-import com.cubeia.backend.cashgame.PlayerSessionIdImpl;
 import com.cubeia.backend.cashgame.TableId;
-import com.cubeia.backend.cashgame.TableIdImpl;
 import com.cubeia.backend.cashgame.dto.BatchHandRequest;
 import com.cubeia.games.poker.PokerConfigServiceMock;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
@@ -55,18 +53,18 @@ public class HandResultBatchFactoryTest {
         String handId = "55555";
 
         int playerId1 = 22;
-        PlayerSessionId playerSessionId1 = new PlayerSessionIdImpl(playerId1);
+        PlayerSessionId playerSessionId1 = new PlayerSessionId(playerId1);
         PokerPlayerImpl pokerPlayer1 = mock(PokerPlayerImpl.class);
         when(pokerPlayer1.getId()).thenReturn(playerId1);
         when(pokerPlayer1.getPlayerSessionId()).thenReturn(playerSessionId1);
 
         int playerId2 = 33; 
-        PlayerSessionId playerSessionId2 = new PlayerSessionIdImpl(playerId2);
+        PlayerSessionId playerSessionId2 = new PlayerSessionId(playerId2);
         PokerPlayerImpl pokerPlayer2 = mock(PokerPlayerImpl.class);
         when(pokerPlayer2.getId()).thenReturn(playerId2); 
         when(pokerPlayer2.getPlayerSessionId()).thenReturn(playerSessionId2);
 
-        TableId tableId = new TableIdImpl();
+        TableId tableId = new TableId(1, 1);
 
         Map<PokerPlayer, Result> results = new HashMap<PokerPlayer, Result>();
         Result result1 = new Result(980, 1000, Collections.<Pot, Long>emptyMap());
@@ -100,18 +98,18 @@ public class HandResultBatchFactoryTest {
         String handId = "55555";
 
         int playerId1 = 22;
-        PlayerSessionId playerSessionId1 = new PlayerSessionIdImpl(playerId1);
+        PlayerSessionId playerSessionId1 = new PlayerSessionId(playerId1);
         PokerPlayerImpl pokerPlayer1 = mock(PokerPlayerImpl.class);
         when(pokerPlayer1.getId()).thenReturn(playerId1);
         when(pokerPlayer1.getPlayerSessionId()).thenReturn(playerSessionId1);
 
         int playerId2 = 33;
-        PlayerSessionId playerSessionId2 = new PlayerSessionIdImpl(playerId2);
+        PlayerSessionId playerSessionId2 = new PlayerSessionId(playerId2);
         PokerPlayerImpl pokerPlayer2 = mock(PokerPlayerImpl.class);
         when(pokerPlayer2.getId()).thenReturn(playerId2);
         when(pokerPlayer2.getPlayerSessionId()).thenReturn(playerSessionId2);
 
-        TableId tableId = new TableIdImpl();
+        TableId tableId = new TableId(1, 1);
 
         Map<PokerPlayer, Result> results = new HashMap<PokerPlayer, Result>();
         Result result1 = new Result(981, 1000, Collections.<Pot, Long>emptyMap());
@@ -138,7 +136,7 @@ public class HandResultBatchFactoryTest {
         PokerPlayerImpl pokerPlayer5 = createMockPlayer(5);
         PokerPlayerImpl pokerPlayer9 = createMockPlayer(9);
 
-        TableId tableId = new TableIdImpl();
+        TableId tableId = new TableId(1, 1);
 
         Map<PokerPlayer, Result> results = new HashMap<PokerPlayer, Result>();
         Result result8 = new Result(-26, 26, Collections.<Pot, Long>emptyMap());
@@ -172,7 +170,7 @@ public class HandResultBatchFactoryTest {
     }
 
     private PokerPlayerImpl createMockPlayer(int playerId) {
-        PlayerSessionId playerSessionId = new PlayerSessionIdImpl(playerId);
+        PlayerSessionId playerSessionId = new PlayerSessionId(playerId);
         PokerPlayerImpl pokerPlayer1 = mock(PokerPlayerImpl.class);
         when(pokerPlayer1.getId()).thenReturn(playerId);
         when(pokerPlayer1.getPlayerSessionId()).thenReturn(playerSessionId);

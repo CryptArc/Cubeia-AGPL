@@ -19,9 +19,11 @@ package com.cubeia.backend.cashgame.dto;
 
 import java.io.Serializable;
 
-@SuppressWarnings("serial")
 public class OpenSessionFailedResponse implements Serializable {
-    private final ErrorCode errorCode;
+    
+	private static final long serialVersionUID = -4319217503234073741L;
+	
+	private final ErrorCode errorCode;
     private final String message;
     private final int playerId;
 
@@ -31,7 +33,7 @@ public class OpenSessionFailedResponse implements Serializable {
         this.playerId = playerId;
     }
 
-    public ErrorCode getErrorCode() {
+	public ErrorCode getErrorCode() {
         return errorCode;
     }
 

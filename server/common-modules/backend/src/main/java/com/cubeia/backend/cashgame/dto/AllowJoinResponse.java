@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.backend.cashgame;
+package com.cubeia.backend.cashgame.dto;
 
 public class AllowJoinResponse {
 

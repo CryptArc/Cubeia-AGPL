@@ -19,14 +19,54 @@ package com.cubeia.backend.cashgame;
 
 import java.io.Serializable;
 
-/**
- * A strongly typed backend player session identifier.
- * <p/>
- * An implementation must hold the playerId of the player this session belongs to.
- * <p/>
- * All implementations should have reliable hashCode and equals methods.
- */
-public interface PlayerSessionId extends Serializable {
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
-    int getPlayerId();
+public class PlayerSessionId implements Serializable {
+
+	private static final long serialVersionUID = 6096309763354995789L;
+	
+	/**
+	 * Firebase player ID.
+	 */
+	public final int playerId;
+	
+	/**
+	 * Optional ID for the session, may be null.
+	 */
+	public final String integrationSessionId;
+	
+	/**
+	 * @param platformPlayerId Firebase player ID, mandatory
+	 * @param integrationSessionId Session ID, mey be null
+	 */
+	public PlayerSessionId(int platformPlayerId, String integrationSessionId) {
+		this.playerId = platformPlayerId;
+		this.integrationSessionId = integrationSessionId;
+	}
+	
+	/**
+	 * This creates a session ID without an integration ID. 
+	 * @param playerId1 Firebase player ID, mandatory
+	 */
+	public PlayerSessionId(int playerId) {
+		this(playerId, null);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return EqualsBuilder.reflectionEquals(this, obj);
+	}
+
+	@Override
+	public int hashCode() {
+		return HashCodeBuilder.reflectionHashCode(this);
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+	}
 }

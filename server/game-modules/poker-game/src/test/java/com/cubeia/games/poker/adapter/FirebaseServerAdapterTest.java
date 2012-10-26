@@ -17,21 +17,44 @@
 
 package com.cubeia.games.poker.adapter;
 
-import com.cubeia.backend.cashgame.LongTransactionId;
+import static com.cubeia.poker.action.PokerActionType.ANTE;
+import static com.cubeia.poker.action.PokerActionType.DECLINE_ENTRY_BET;
+import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.UUID;
+
+import org.junit.Ignore;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
+
 import com.cubeia.backend.cashgame.PlayerSessionId;
-import com.cubeia.backend.cashgame.callback.ReserveCallback;
+import com.cubeia.backend.cashgame.TransactionId;
 import com.cubeia.backend.cashgame.dto.BalanceUpdate;
 import com.cubeia.backend.cashgame.dto.BatchHandResponse;
 import com.cubeia.backend.cashgame.dto.ReserveRequest;
 import com.cubeia.backend.cashgame.dto.TransactionUpdate;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
-import com.cubeia.backend.firebase.CashGamesBackendContract;
-import com.cubeia.backend.firebase.FirebaseCallbackFactory;
+import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.action.GameObjectAction;
 import com.cubeia.firebase.api.game.GameNotifier;
 import com.cubeia.firebase.api.game.table.Table;
+import com.cubeia.firebase.api.game.table.TableMetaData;
 import com.cubeia.firebase.api.game.table.TableScheduler;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.PokerConfigServiceMock;
@@ -39,9 +62,14 @@ import com.cubeia.games.poker.common.Money;
 import com.cubeia.games.poker.handler.ActionTransformer;
 import com.cubeia.games.poker.handler.Trigger;
 import com.cubeia.games.poker.handler.TriggerType;
-import com.cubeia.games.poker.io.protocol.*;
+import com.cubeia.games.poker.io.protocol.BuyInInfoResponse;
 import com.cubeia.games.poker.io.protocol.Enums.BuyInInfoResultCode;
 import com.cubeia.games.poker.io.protocol.Enums.PlayerTableStatus;
+import com.cubeia.games.poker.io.protocol.PlayerBalance;
+import com.cubeia.games.poker.io.protocol.PlayerPokerStatus;
+import com.cubeia.games.poker.io.protocol.PotTransfers;
+import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
+import com.cubeia.games.poker.io.protocol.RequestAction;
 import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.games.poker.state.FirebaseState;
@@ -57,20 +85,6 @@ import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.timing.TimingProfile;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
-
-import java.io.IOException;
-import java.util.*;
-
-import static com.cubeia.poker.action.PokerActionType.ANTE;
-import static com.cubeia.poker.action.PokerActionType.DECLINE_ENTRY_BET;
-import static java.util.Arrays.asList;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.*;
 
 public class FirebaseServerAdapterTest {
 
@@ -115,7 +129,7 @@ public class FirebaseServerAdapterTest {
         fsa.actionTransformer = new ActionTransformer();
         fsa.buyInCalculator = new BuyInCalculator();
         fsa.table = mock(Table.class);
-        fsa.backend = mock(CashGamesBackendContract.class);
+        fsa.backend = mock(CashGamesBackendService.class);
         GameNotifier tableNotifier = mock(GameNotifier.class);
         when(fsa.table.getNotifier()).thenReturn(tableNotifier);
 
@@ -166,7 +180,7 @@ public class FirebaseServerAdapterTest {
 
         FirebaseServerAdapter fsa = new FirebaseServerAdapter();
         fsa.table = mock(Table.class);
-        fsa.backend = mock(CashGamesBackendContract.class);
+        fsa.backend = mock(CashGamesBackendService.class);
         fsa.buyInCalculator = new BuyInCalculator();
         GameNotifier tableNotifier = mock(GameNotifier.class);
         when(fsa.table.getNotifier()).thenReturn(tableNotifier);
@@ -217,18 +231,22 @@ public class FirebaseServerAdapterTest {
         FirebaseServerAdapter fsa = new FirebaseServerAdapter();
         fsa.configService = new PokerConfigServiceMock();
         fsa.table = mock(Table.class);
-        fsa.backend = mock(CashGamesBackendContract.class);
+        fsa.backend = mock(CashGamesBackendService.class);
         fsa.buyInCalculator = mock(BuyInCalculator.class);
         fsa.state = mock(PokerState.class);
 
         FirebaseState adapterState = mock(FirebaseState.class);
         when(fsa.state.getAdapterState()).thenReturn(adapterState);
 
-        FirebaseCallbackFactory callbackFactory = mock(FirebaseCallbackFactory.class);
-        when(fsa.backend.getCallbackFactory()).thenReturn(callbackFactory);
-        ReserveCallback callback = mock(ReserveCallback.class);
-        when(callbackFactory.createReserveCallback(fsa.table)).thenReturn(callback);
+        // FirebaseCallbackFactory callbackFactory = mock(FirebaseCallbackFactory.class);
+        // when(fsa.backend.getCallbackFactory()).thenReturn(callbackFactory);
+        // ReserveCallback callback = mock(ReserveCallback.class);
+        // when(callbackFactory.createReserveCallback(fsa.table)).thenReturn(callback);
 
+        TableMetaData tmd = mock(TableMetaData.class);
+        when(tmd.getGameId()).thenReturn(1);
+        when(fsa.table.getMetaData()).thenReturn(tmd);
+        
         PokerPlayer player1 = mock(PokerPlayerImpl.class);
         PokerPlayer player2 = mock(PokerPlayerImpl.class);
         PokerPlayer player3 = mock(PokerPlayerImpl.class);
@@ -245,7 +263,7 @@ public class FirebaseServerAdapterTest {
         fsa.performPendingBuyIns(players);
 
         verify(fsa.state, times(2)).getMaxBuyIn();
-        verify(fsa.backend).reserve(Mockito.any(ReserveRequest.class), Mockito.eq(callback));
+        verify(fsa.backend).reserve(Mockito.any(ReserveRequest.class));
         verify(player1).buyInRequestActive();
         verify(player1).setRequestedBuyInAmount(2500L);
         verify(player2).clearRequestedBuyInAmountAndRequest();
@@ -255,7 +273,7 @@ public class FirebaseServerAdapterTest {
     public void testNotifyBuyInInfoErrorGettingWalletBalance() throws IOException, GetBalanceFailedException {
         FirebaseServerAdapter fsa = new FirebaseServerAdapter();
         fsa.table = mock(Table.class);
-        fsa.backend = mock(CashGamesBackendContract.class);
+        fsa.backend = mock(CashGamesBackendService.class);
         fsa.buyInCalculator = new BuyInCalculator();
         GameNotifier tableNotifier = mock(GameNotifier.class);
         when(fsa.table.getNotifier()).thenReturn(tableNotifier);
@@ -298,7 +316,7 @@ public class FirebaseServerAdapterTest {
 
         FirebaseServerAdapter fsa = new FirebaseServerAdapter();
         fsa.table = mock(Table.class);
-        fsa.backend = mock(CashGamesBackendContract.class);
+        fsa.backend = mock(CashGamesBackendService.class);
         fsa.buyInCalculator = new BuyInCalculator();
         GameNotifier tableNotifier = mock(GameNotifier.class);
         when(fsa.table.getNotifier()).thenReturn(tableNotifier);
@@ -351,7 +369,7 @@ public class FirebaseServerAdapterTest {
 
         BatchHandResponse batchHandResult = new BatchHandResponse();
         BalanceUpdate balanceUpdate = mock(BalanceUpdate.class);
-        batchHandResult.addResultEntry(new TransactionUpdate(new LongTransactionId(-1), balanceUpdate));
+        batchHandResult.addResultEntry(new TransactionUpdate(new TransactionId(-1), balanceUpdate));
 
         serverAdapter.validateAndUpdateBalances(batchHandResult);
 
@@ -385,7 +403,7 @@ public class FirebaseServerAdapterTest {
         long balanceVersionNumber = 1L;
         BalanceUpdate balanceUpdate = new BalanceUpdate(playerSessionId, backendBalance, balanceVersionNumber);
 
-        batchHandResult.addResultEntry(new TransactionUpdate(new LongTransactionId(-1), balanceUpdate));
+        batchHandResult.addResultEntry(new TransactionUpdate(new TransactionId(-1), balanceUpdate));
         serverAdapter.validateAndUpdateBalances(batchHandResult);
 
     }
@@ -395,7 +413,7 @@ public class FirebaseServerAdapterTest {
     public void testNotifyPlayerStatusInHandSittingIn() throws IOException {
         FirebaseServerAdapter serverAdapter = new FirebaseServerAdapter();
         serverAdapter.table = mock(Table.class);
-        serverAdapter.backend = mock(CashGamesBackendContract.class);
+        serverAdapter.backend = mock(CashGamesBackendService.class);
         serverAdapter.state = mock(PokerState.class);
         GameNotifier tableNotifier = mock(GameNotifier.class);
         when(serverAdapter.table.getNotifier()).thenReturn(tableNotifier);
@@ -424,7 +442,7 @@ public class FirebaseServerAdapterTest {
     public void testNotifyPlayerStatusInHandSittingOut() throws IOException {
         FirebaseServerAdapter serverAdapter = new FirebaseServerAdapter();
         serverAdapter.table = mock(Table.class);
-        serverAdapter.backend = mock(CashGamesBackendContract.class);
+        serverAdapter.backend = mock(CashGamesBackendService.class);
         serverAdapter.state = mock(PokerState.class);
         GameNotifier tableNotifier = mock(GameNotifier.class);
         when(serverAdapter.table.getNotifier()).thenReturn(tableNotifier);
@@ -453,7 +471,7 @@ public class FirebaseServerAdapterTest {
     public void testNotifyPlayerStatusOutOfHandSittingIn() throws IOException {
         FirebaseServerAdapter serverAdapter = new FirebaseServerAdapter();
         serverAdapter.table = mock(Table.class);
-        serverAdapter.backend = mock(CashGamesBackendContract.class);
+        serverAdapter.backend = mock(CashGamesBackendService.class);
         serverAdapter.state = mock(PokerState.class);
         GameNotifier tableNotifier = mock(GameNotifier.class);
         when(serverAdapter.table.getNotifier()).thenReturn(tableNotifier);
@@ -481,7 +499,7 @@ public class FirebaseServerAdapterTest {
     public void testNotifyPlayerStatusOutOfHandSittingOut() throws IOException {
         FirebaseServerAdapter serverAdapter = new FirebaseServerAdapter();
         serverAdapter.table = mock(Table.class);
-        serverAdapter.backend = mock(CashGamesBackendContract.class);
+        serverAdapter.backend = mock(CashGamesBackendService.class);
         serverAdapter.state = mock(PokerState.class);
         GameNotifier tableNotifier = mock(GameNotifier.class);
         when(serverAdapter.table.getNotifier()).thenReturn(tableNotifier);

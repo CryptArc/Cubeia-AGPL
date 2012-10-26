@@ -27,6 +27,6 @@ import java.lang.annotation.Target;
  * @author w
  */
 @Target({ElementType.METHOD})
-public @interface Async {
+public @interface Asynchronous {
 
 }
