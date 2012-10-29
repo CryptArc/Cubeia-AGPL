@@ -2,12 +2,12 @@
 var Poker = Poker || {};
 
 Poker.Utils = {
-    currencySymbol : "&euro;",
+    CURRENCY_SYMBOL : "&euro;",
     formatCurrency : function(amount) {
         return parseFloat(amount/100).toFixed(2);
     },
     formatCurrencyString : function(amount) {
-        return Poker.Utils.currencySymbol + Poker.Utils.formatCurrency(amount);
+        return Poker.Utils.CURRENCY_SYMBOL + Poker.Utils.formatCurrency(amount);
     },
     getCardString : function(gamecard) {
         var ranks = "23456789tjqka ";
@@ -77,6 +77,28 @@ Poker.Utils = {
         else {
             return null;
         }
+    },
+    readParam : function(key,params) {
+        for (var i = 0; i < params.length; i++) {
+            var object = params[i];
+
+            if (object.key == key) {
+
+                var p = null;
+                var valueArray = FIREBASE.ByteArray.fromBase64String(object.value);
+                var byteArray = new FIREBASE.ByteArray(valueArray);
+                if (object.type == 1) {
+                    p = byteArray.readInt();
+                } else {
+                    p = byteArray.readString();
+                }
+
+                //shouldn't this work?
+                //  var p =  FIREBASE.Styx.readParam(object);
+                return p;
+            }
+        }
+        return null;
     }
 
 };

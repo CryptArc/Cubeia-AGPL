@@ -32,7 +32,7 @@ Poker.BetSlider = Class.extend({
     },
     displayOutput : function(value) {
         Poker.MyPlayer.betAmount = value;
-        this.valueOutputs.html("&euro;").append(Poker.Utils.formatCurrency(value));
+        this.valueOutputs.html(Poker.Utils.formatCurrencyString(value));
     },
     /**
      * Draws the bet slider in the container with the id

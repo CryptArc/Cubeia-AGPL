@@ -96,17 +96,17 @@ Poker.LobbyLayoutManager = Class.extend({
         console.log(tableSnapshot);
         if (this.findTable(tableSnapshot.tableid) === null) {
 
-            var showInLobby = this.readParam("VISIBLE_IN_LOBBY",tableSnapshot.params);
+            var showInLobby = Poker.Utils.readParam("VISIBLE_IN_LOBBY",tableSnapshot.params);
             if(parseInt(showInLobby) == 0 ) {
                 return;
             }
 
-            var speedParam = this.readParam("SPEED", tableSnapshot.params);
+            var speedParam = Poker.Utils.readParam("SPEED", tableSnapshot.params);
             //var variant = this.readParam("VARIANT", tableSnapshot.params);
-            var bettingModel = this.readParam("BETTING_GAME_BETTING_MODEL", tableSnapshot.params);
-            var ante = this.readParam("BETTING_GAME_ANTE", tableSnapshot.params);
-            var smallBlind = this.readParam("SMALL_BLIND", tableSnapshot.params);
-            var bigBlind = this.readParam("BIG_BLIND", tableSnapshot.params);
+            var bettingModel = Poker.Utils.readParam("BETTING_GAME_BETTING_MODEL", tableSnapshot.params);
+            var ante = Poker.Utils.readParam("BETTING_GAME_ANTE", tableSnapshot.params);
+            var smallBlind = Poker.Utils.readParam("SMALL_BLIND", tableSnapshot.params);
+            var bigBlind = Poker.Utils.readParam("BIG_BLIND", tableSnapshot.params);
 
 
             var data = {
@@ -141,10 +141,10 @@ Poker.LobbyLayoutManager = Class.extend({
             var params = snapshot.params;
 
             var data = {id:snapshot.mttid,
-                name:this.readParam("NAME", params),
+                name:Poker.Utils.readParam("NAME", params),
                 speed:speedParam,
-                capacity:this.readParam("CAPACITY", params),
-                seated:this.readParam("REGISTERED", params),
+                capacity:Poker.Utils.readParam("CAPACITY", params),
+                seated:Poker.Utils.readParam("REGISTERED", params),
                 blinds:"N/A",
                 type:"NL",
                 tableStatus:"open",
@@ -169,13 +169,13 @@ Poker.LobbyLayoutManager = Class.extend({
         console.log("Updating tournament: " + tournamentUpdate.mttid);
         var tournamentData = this.findTournament(tournamentUpdate.mttid);
         if (tournamentData) {
-            var registered = this.readParam("REGISTERED", tournamentUpdate.params);
+            var registered = Poker.Utils.readParam("REGISTERED", tournamentUpdate.params);
             if (tournamentData.seated == registered) {
                 //console.log("on update, registered players the same, skipping update");
                 return;
             }
             if (registered != undefined) tournamentData.seated = registered;
-            var status = this.readParam("STATUS", tournamentUpdate.params);
+            var status = Poker.Utils.readParam("STATUS", tournamentUpdate.params);
             console.log("New mtt status: " + status);
             //it might be filtered out
             var item = $("#tableItem" + tournamentData.id);
@@ -213,7 +213,7 @@ Poker.LobbyLayoutManager = Class.extend({
 
     },
     handleTableUpdate:function (tableUpdate) {
-        var showInLobby = this.readParam("VISIBLE_IN_LOBBY",tableUpdate.params);
+        var showInLobby = Poker.Utils.readParam("VISIBLE_IN_LOBBY",tableUpdate.params);
         if(showInLobby!=null && parseInt(showInLobby) == 0 ) {
             this.handleTableRemoved(tableUpdate.tableid);
             return;
@@ -308,7 +308,7 @@ Poker.LobbyLayoutManager = Class.extend({
         if (count == 0) {
             $("#tableListItemContainer").append($("<div/>").addClass("no-tables").html("Currently no tables matching your criteria"));
         }
-        console.debug("grid created");
+        console.log("grid created");
     },
 
     createClickFunction:function (tables, data) {
@@ -345,33 +345,6 @@ Poker.LobbyLayoutManager = Class.extend({
     getTableItemHtml:function (t) {
         var item = Mustache.render(this.listItemTemplate, t);
         return item;
-    },
-
-    readParam:function (key, params) {
-
-        for (var i = 0; i < params.length; i++) {
-            var object = params[i];
-
-            if (object.key == key) {
-                //console.log("'"+object.key+"' val = " + object.value);
-                //var valueArray = FIREBASE.ByteArray.fromBase64String(object);
-                //console.log(object);
-
-                var p = null;
-                var valueArray = FIREBASE.ByteArray.fromBase64String(object.value);
-                var byteArray = new FIREBASE.ByteArray(valueArray);
-                if (object.type == 1) {
-                    p = byteArray.readInt();
-                } else {
-                    p = byteArray.readString();
-                }
-
-                //shouldn't this work?
-                //  var p =  FIREBASE.Styx.readParam(object);
-                return p;
-            }
-        }
-        return null;
     },
 
     getCapacity:function (id) {

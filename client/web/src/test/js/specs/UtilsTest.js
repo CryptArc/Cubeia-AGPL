@@ -48,8 +48,8 @@ describe("Poker.Utils Test", function(){
         expect(c.top).toEqual(400); //400% of src elements height
 
         c = Poker.Utils.calculateDistance(elementB,elementA);
-        expect(c.left).toEqual(-200); //200% of src elements width
-        expect(c.top).toEqual(-400); //400% of src elements height
+        expect(c.left).toEqual(-200); //-200% of src elements width
+        expect(c.top).toEqual(-400); //-400% of src elements height
 
     });
 
