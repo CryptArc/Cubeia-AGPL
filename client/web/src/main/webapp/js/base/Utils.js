@@ -25,9 +25,10 @@ Poker.Utils = {
         return str;
     },
     /**
-     * Calculates the distance in percent for two elements based on
-     * a containers dimensions, if the container isn't specified
-     * window dimensions will be used
+     * Calculates the distance in percent (of the src elements width) between two elements.
+     *
+     * Used together with css translate transforms.
+     *
      * @param src
      * @param target
      * @return {Object}
