@@ -31,4 +31,26 @@ describe("Poker.Utils Test", function(){
         c = Poker.Utils.formatBlinds(25);
         expect(c).toEqual("0.25");
     });
+
+    it("Calculate distance", function(){
+        var elementA = {
+            offset : function(){ return {top : 100, left : 200} },
+            height : function() { return 25; },
+            width : function(){ return 50; }
+        };
+        var elementB = {
+            height : function() { return 25; },
+            width : function(){ return 50; },
+            offset : function(){ return { top : 200, left : 300 } }
+        };
+        var c = Poker.Utils.calculateDistance(elementA,elementB);
+        expect(c.left).toEqual(200); //200% of src elements width
+        expect(c.top).toEqual(400); //400% of src elements height
+
+        c = Poker.Utils.calculateDistance(elementB,elementA);
+        expect(c.left).toEqual(-200); //200% of src elements width
+        expect(c.top).toEqual(-400); //400% of src elements height
+
+    });
+
 });

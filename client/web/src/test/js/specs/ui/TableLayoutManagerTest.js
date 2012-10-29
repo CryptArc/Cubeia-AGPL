@@ -100,7 +100,6 @@ describe("Poker.TableLayoutManager Test", function(){
         Poker.MyPlayer.id = 13;
         tableLayoutManager.onPlayerAdded(0,new Poker.Player(10,"TestPlayer10"));
 
-
         tableLayoutManager.onPlayerAdded(1,new Poker.Player(11,"TestPlayer11"));
 
         tableLayoutManager.onPlayerAdded(4,new Poker.Player(13,"TestPlayer13"));
