@@ -178,7 +178,7 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
 					+ " to game " + GAME_ID + " by player "
 					+ sid.playerId);
 
-			AccountBalanceResult sessionBalance = walletService.getBalance(walletSessionId);
+			AccountBalanceResult sessionBalance = walletService.getSessionBalance(walletSessionId);
 			Money newBalance = convertFromWalletMoney(sessionBalance.getBalance());
 
 			BalanceUpdate balanceUpdate = new BalanceUpdate(request.getPlayerSessionId(), newBalance, nextId());
@@ -253,7 +253,7 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
 
 			TransactionRequest txRequest = txBuilder.toTransactionRequest();
 			log.debug("sending tx request to wallet: {}", txRequest);
-			TransactionResult txResult = walletService.doTransaction(txRequest);
+			TransactionResult txResult = walletService.doTableTransaction(txRequest);
 
 			List<TransactionUpdate> resultingBalances = new ArrayList<TransactionUpdate>();
 			for (AccountBalanceResult sb : txResult.getBalances()) {
@@ -286,7 +286,7 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
 
 	@Override
 	public BalanceUpdate getSessionBalance(PlayerSessionId sessionId) throws GetBalanceFailedException {
-		AccountBalanceResult sessionBalance = walletService.getBalance(getWalletSessionIdByPlayerSessionId(sessionId));
+		AccountBalanceResult sessionBalance = walletService.getSessionBalance(getWalletSessionIdByPlayerSessionId(sessionId));
 		Money balanceMoney = convertFromWalletMoney(sessionBalance.getBalance());
 		return new BalanceUpdate(sessionId, balanceMoney, nextId());
 	}

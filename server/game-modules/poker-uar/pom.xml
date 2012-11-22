@@ -61,7 +61,7 @@
             <plugin>
                 <groupId>com.cubeia.tools</groupId>
                 <artifactId>firebase-maven-plugin</artifactId>
-                <version>2.0-LJN-SNAPSHOT</version>
+                <version>1.9.1-CE</version>
                 <!-- version>1.9.0-CE</version -->
                 <configuration>
                     <!-- enable copy of overlay files -->
@@ -110,7 +110,7 @@
                 </dependency>
                 <dependency>
                     <groupId>com.cubeia.network.wallet.firebase</groupId>
-                    <artifactId>cubeia-wallet-service</artifactId>
+                    <artifactId>cubeia-wallet-service-shards</artifactId>
                     <version>${cubeia.network.version}</version>
                     <type>firebase-sar</type>
                 </dependency>

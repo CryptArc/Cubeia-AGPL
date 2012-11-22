@@ -150,7 +150,7 @@ public class CashGamesBackendAdapterTest {
         AccountBalanceResult sessionBalance = mock(AccountBalanceResult.class);
         com.cubeia.backoffice.accounting.api.Money sessionBalanceMoney = new com.cubeia.backoffice.accounting.api.Money("EUR", 2, new BigDecimal("500"));
         when(sessionBalance.getBalance()).thenReturn(sessionBalanceMoney);
-        when(walletService.getBalance(sessionId)).thenReturn(sessionBalance);
+        when(walletService.getSessionBalance(sessionId)).thenReturn(sessionBalance);
 
         ReserveResponse response = backend.reserve(request);
 
@@ -188,7 +188,7 @@ public class CashGamesBackendAdapterTest {
         AccountBalanceResult rakeAccountBalance = new AccountBalanceResult(backend.rakeAccountId, walletMoney("1232322.22"));
         when(txResult.getBalances()).thenReturn(Arrays.asList(sessionBalance1, sessionBalance2, rakeAccountBalance));
 
-        when(walletService.doTransaction(txCaptor.capture())).thenReturn(txResult);
+        when(walletService.doTableTransaction(txCaptor.capture())).thenReturn(txResult);
 
         BatchHandResponse batchHandResponse = backend.batchHand(request);
 
@@ -242,6 +242,7 @@ public class CashGamesBackendAdapterTest {
 
         com.cubeia.backoffice.accounting.api.Money balance = new com.cubeia.backoffice.accounting.api.Money("SEK", 2, new BigDecimal("343434"));
         AccountBalanceResult sessionBalance = new AccountBalanceResult(sessionId, balance);
+        when(walletService.getSessionBalance(sessionId)).thenReturn(sessionBalance);
         when(walletService.getBalance(sessionId)).thenReturn(sessionBalance);
 
         BalanceUpdate balanceUpdate = backend.getSessionBalance(playerSessionId);
