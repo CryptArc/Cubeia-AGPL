@@ -17,17 +17,10 @@
 
 package com.cubeia.game.poker.bot;
 
-import com.cubeia.firebase.api.util.ParameterUtil;
-import com.cubeia.firebase.bot.BotGroupConfig;
-import com.cubeia.firebase.bot.model.Table;
-import org.apache.log4j.Logger;
-
-public class DiceArenaGroupConfig implements BotGroupConfig {
+public class DiceArenaGroupConfig extends DefaultGroupConfig {
 
     private static final int DA_MIN_LENGTH = 6;
     private static final int DA_MAX_LENGTH = 12;
-
-    private static transient Logger log = Logger.getLogger(DiceArenaGroupConfig.class);
 
     public String createBotScreenName(int id) {
         String s = "Bot_" + id;
@@ -40,20 +33,5 @@ public class DiceArenaGroupConfig implements BotGroupConfig {
             s = s.substring(1);
         }
         return s;
-    }
-
-    public String createLobbyBotScreenName(int id) {
-        return createBotScreenName(id);
-    }
-
-    public boolean isTableJoinable(Table table) {
-        for (String key : table.getAttributes().keySet()) {
-            if (key.equals("VISIBLE_IN_LOBBY")) {
-                int visible = ParameterUtil.convertAsInt(table.getAttributes().get(key)).getValue().intValue();
-                return (visible == 1);
-            }
-        }
-        log.debug("Not joinable table: " + table);
-        return false;
     }
 }
