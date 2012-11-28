@@ -17,8 +17,23 @@
 
 package com.cubeia.games.poker.handler;
 
+import static com.cubeia.backend.firebase.CashGamesBackendService.MARKET_TABLE_REFERENCE_KEY;
+import static com.cubeia.games.poker.model.PokerPlayerImpl.ATTR_PLAYER_EXTERNAL_SESSION_ID;
+
+import java.io.Serializable;
+import java.nio.ByteBuffer;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cubeia.backend.cashgame.PlayerSessionId;
-import com.cubeia.backend.cashgame.dto.*;
+import com.cubeia.backend.cashgame.dto.AnnounceTableFailedResponse;
+import com.cubeia.backend.cashgame.dto.AnnounceTableResponse;
+import com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse;
+import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
+import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;
+import com.cubeia.backend.cashgame.dto.ReserveResponse;
 import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.game.lobby.LobbyTableAttributeAccessor;
@@ -37,16 +52,6 @@ import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.player.PokerPlayer;
 import com.google.inject.Inject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.io.Serializable;
-import java.nio.ByteBuffer;
-import java.util.Map;
-
-import static com.cubeia.backend.firebase.CashGamesBackendService.MARKET_TABLE_REFERENCE_KEY;
-import static com.cubeia.games.poker.model.PokerPlayerImpl.ATTR_PLAYER_EXTERNAL_SESSION_ID;
 
 public class BackendCallHandler {
     public static final String EXT_PROP_KEY_TABLE_ID = "tableId";
@@ -238,23 +243,15 @@ public class BackendCallHandler {
         ErrorPacket errorPacket = new ErrorPacket(errorCode, handId);
         GameDataAction errorAction = new GameDataAction(player.getId(), table.getId());
         ByteBuffer packetBuffer;
-        try {
-            packetBuffer = styx.pack(errorPacket);
-            errorAction.setData(packetBuffer);
-            table.getNotifier().notifyPlayer(player.getId(), errorAction);
-        } catch (IOException e) {
-            log.error("failed to send error message to client", e);
-        }
+        packetBuffer = styx.pack(errorPacket);
+        errorAction.setData(packetBuffer);
+        table.getNotifier().notifyPlayer(player.getId(), errorAction);
     }
 
 
     private void sendGameData(int playerId, ProtocolObject resp) {
         GameDataAction action = new GameDataAction(playerId, table.getId());
-        try {
-            action.setData(styx.pack(resp));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        action.setData(styx.pack(resp));
 
         table.getNotifier().notifyPlayer(playerId, action);
     }

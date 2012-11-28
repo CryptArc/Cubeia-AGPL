@@ -23,7 +23,6 @@ import static com.cubeia.games.poker.handler.BackendCallHandler.EXT_PROP_KEY_TAB
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -454,11 +453,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
             GameDataAction gda = new GameDataAction(playerId, table.getId());
             StyxSerializer styx = new StyxSerializer(null);
-            try {
-                gda.setData(styx.pack(resp));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            gda.setData(styx.pack(resp));
 
             table.getNotifier().notifyPlayer(playerId, gda);
         } catch (Exception e) {

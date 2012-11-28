@@ -65,10 +65,10 @@
             </dependency>
 
             <dependency>
-                <groupId>com.cubeia.firebase</groupId>
-                <artifactId>styx</artifactId>
-                <version>1.6.0</version>
-            </dependency>
+	            <groupId>com.cubeia.styx</groupId>
+            	<artifactId>styx-core</artifactId>
+	            <version>1.13</version>
+	        </dependency>
 
             <dependency>
                 <groupId>com.cubeia.firebase.bots</groupId>

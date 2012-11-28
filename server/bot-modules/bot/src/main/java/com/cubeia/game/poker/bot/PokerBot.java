@@ -17,12 +17,17 @@
 
 package com.cubeia.game.poker.bot;
 
+import java.util.concurrent.TimeUnit;
+
+import org.apache.log4j.Logger;
+
 import com.cubeia.firebase.bot.Bot;
+import com.cubeia.firebase.bot.action.Action;
 import com.cubeia.firebase.bot.ai.BasicAI;
+import com.cubeia.firebase.bot.ai.Delays;
 import com.cubeia.firebase.io.protocol.GameTransportPacket;
 import com.cubeia.firebase.io.protocol.ProbePacket;
 import com.cubeia.games.poker.io.protocol.BuyInInfoRequest;
-import org.apache.log4j.Logger;
 
 /**
  * Poker Bot.
@@ -40,7 +45,7 @@ public class PokerBot extends BasicAI {
         super(bot);
         handler = new GameHandler(this);
     }
-
+    
     public synchronized void handleGamePacket(GameTransportPacket packet) {
         if (table.getId() != packet.tableid) {
             log.fatal("I received wrong table id! I am seated at: " + table.getId() + ". I got packet from: " + packet.tableid + " Packet: " + handler.unpack(packet));

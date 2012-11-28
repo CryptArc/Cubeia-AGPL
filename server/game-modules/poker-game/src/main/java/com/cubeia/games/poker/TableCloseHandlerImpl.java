@@ -17,6 +17,14 @@
 
 package com.cubeia.games.poker;
 
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cubeia.firebase.api.action.AbstractGameAction;
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.GameDataAction;
@@ -43,14 +51,6 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 public class TableCloseHandlerImpl implements TableCloseHandler {
 
@@ -173,13 +173,9 @@ public class TableCloseHandlerImpl implements TableCloseHandler {
             log.debug("Sending {} message to player: {}", errorCode, playerId);
             GameDataAction errorAction = new GameDataAction(playerId, table.getId());
             ByteBuffer packetBuffer;
-            try {
-                packetBuffer = serializer.pack(errorPacket);
-                errorAction.setData(packetBuffer);
-                table.getNotifier().notifyPlayer(playerId, errorAction);
-            } catch (IOException e) {
-                log.error("failed to send error message to client", e);
-            }
+            packetBuffer = serializer.pack(errorPacket);
+            errorAction.setData(packetBuffer);
+            table.getNotifier().notifyPlayer(playerId, errorAction);
         }
     }
 
@@ -228,11 +224,7 @@ public class TableCloseHandlerImpl implements TableCloseHandler {
         if (action instanceof GameDataAction) {
             GameDataAction gda = (GameDataAction) action;
             ProtocolObject packet = null;
-            try {
-                packet = serializer.unpack(gda.getData());
-            } catch (IOException e) {
-                log.warn("error unpacking action for diagnostics", e);
-            }
+            packet = serializer.unpack(gda.getData());
             printActionsToErrorLog(throwable, "error handling game action: " + action + " Table: " + table.getId() + " Packet: " + packet, table);
         } else if (action instanceof GameObjectAction) {
             printActionsToErrorLog(throwable, "error handling command action: " + action + " on table: " + table, table);

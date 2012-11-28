@@ -17,6 +17,13 @@
 
 package com.cubeia.games.poker.debugger.cache;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.io.ProtocolObject;
@@ -24,17 +31,13 @@ import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.debugger.HandDebuggerContract;
 import com.cubeia.games.poker.debugger.json.EventType;
 import com.cubeia.games.poker.io.protocol.Enums.PlayerTableStatus;
-import com.cubeia.games.poker.io.protocol.*;
+import com.cubeia.games.poker.io.protocol.PerformAction;
+import com.cubeia.games.poker.io.protocol.PlayerBalance;
+import com.cubeia.games.poker.io.protocol.PlayerPokerStatus;
+import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
+import com.cubeia.games.poker.io.protocol.RequestAction;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * This class will leak memory if used in production. Previous events are never
@@ -118,7 +121,7 @@ public class TableEventCache {
     private ProtocolObject unpack(GameDataAction action) {
         try {
             return serializer.unpack(action.getData());
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }

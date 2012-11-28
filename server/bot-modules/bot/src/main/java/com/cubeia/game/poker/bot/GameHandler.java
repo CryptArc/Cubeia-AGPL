@@ -17,6 +17,13 @@
 
 package com.cubeia.game.poker.bot;
 
+import static com.cubeia.game.poker.util.Arithmetic.gaussianAverage;
+
+import java.nio.ByteBuffer;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import com.cubeia.firebase.bot.BotState;
 import com.cubeia.firebase.bot.action.Action;
 import com.cubeia.firebase.bot.ai.AbstractAI;
@@ -25,21 +32,53 @@ import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.firebase.io.protocol.GameTransportPacket;
 import com.cubeia.firebase.io.protocol.MttTransportPacket;
-import com.cubeia.games.poker.io.protocol.*;
+import com.cubeia.games.poker.io.protocol.BestHand;
+import com.cubeia.games.poker.io.protocol.BuyInInfoRequest;
+import com.cubeia.games.poker.io.protocol.BuyInInfoResponse;
+import com.cubeia.games.poker.io.protocol.BuyInRequest;
+import com.cubeia.games.poker.io.protocol.BuyInResponse;
+import com.cubeia.games.poker.io.protocol.CardToDeal;
+import com.cubeia.games.poker.io.protocol.DealPrivateCards;
+import com.cubeia.games.poker.io.protocol.DealPublicCards;
+import com.cubeia.games.poker.io.protocol.DealerButton;
+import com.cubeia.games.poker.io.protocol.DeckInfo;
 import com.cubeia.games.poker.io.protocol.Enums.PlayerTableStatus;
-import org.apache.log4j.Logger;
-
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import static com.cubeia.game.poker.util.Arithmetic.gaussianAverage;
+import com.cubeia.games.poker.io.protocol.ErrorPacket;
+import com.cubeia.games.poker.io.protocol.ExposePrivateCards;
+import com.cubeia.games.poker.io.protocol.ExternalSessionInfoPacket;
+import com.cubeia.games.poker.io.protocol.FuturePlayerAction;
+import com.cubeia.games.poker.io.protocol.GameCard;
+import com.cubeia.games.poker.io.protocol.HandCanceled;
+import com.cubeia.games.poker.io.protocol.HandEnd;
+import com.cubeia.games.poker.io.protocol.InformFutureAllowedActions;
+import com.cubeia.games.poker.io.protocol.PacketVisitor;
+import com.cubeia.games.poker.io.protocol.PerformAction;
+import com.cubeia.games.poker.io.protocol.PingPacket;
+import com.cubeia.games.poker.io.protocol.PlayerAction;
+import com.cubeia.games.poker.io.protocol.PlayerBalance;
+import com.cubeia.games.poker.io.protocol.PlayerDisconnectedPacket;
+import com.cubeia.games.poker.io.protocol.PlayerHandStartStatus;
+import com.cubeia.games.poker.io.protocol.PlayerPokerStatus;
+import com.cubeia.games.poker.io.protocol.PlayerReconnectedPacket;
+import com.cubeia.games.poker.io.protocol.PlayerSitinRequest;
+import com.cubeia.games.poker.io.protocol.PlayerSitoutRequest;
+import com.cubeia.games.poker.io.protocol.PlayerState;
+import com.cubeia.games.poker.io.protocol.PongPacket;
+import com.cubeia.games.poker.io.protocol.Pot;
+import com.cubeia.games.poker.io.protocol.PotTransfer;
+import com.cubeia.games.poker.io.protocol.PotTransfers;
+import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
+import com.cubeia.games.poker.io.protocol.RakeInfo;
+import com.cubeia.games.poker.io.protocol.RequestAction;
+import com.cubeia.games.poker.io.protocol.StartHandHistory;
+import com.cubeia.games.poker.io.protocol.StartNewHand;
+import com.cubeia.games.poker.io.protocol.StopHandHistory;
+import com.cubeia.games.poker.io.protocol.TakeBackUncalledBet;
+import com.cubeia.games.poker.io.protocol.TournamentOut;
 
 public class GameHandler implements PacketVisitor {
 
-    private static transient Logger log = Logger.getLogger(GameHandler.class);
+    // private static transient Logger log = Logger.getLogger(GameHandler.class);
 
     private static final StyxSerializer styxDecoder = new StyxSerializer(new ProtocolObjectFactory());
 
@@ -56,32 +95,20 @@ public class GameHandler implements PacketVisitor {
     public void handleGamePacket(GameTransportPacket packet) {
         // Create the user packet
         ProtocolObject gamePacket;
-        try {
-            gamePacket = styxDecoder.unpack(ByteBuffer.wrap(packet.gamedata));
-            gamePacket.accept(this);
-        } catch (IOException e) {
-            log.error("Could not unpack gamedata", e);
-        }
+        gamePacket = styxDecoder.unpack(ByteBuffer.wrap(packet.gamedata));
+        gamePacket.accept(this);
     }
 
     public void handleTournamentPacket(MttTransportPacket packet) {
         ProtocolObject gamePacket;
-        try {
-            gamePacket = styxDecoder.unpack(ByteBuffer.wrap(packet.mttdata));
-            gamePacket.accept(this);
-        } catch (IOException e) {
-            log.error("Could not unpack mttdata", e);
-        }
+        gamePacket = styxDecoder.unpack(ByteBuffer.wrap(packet.mttdata));
+        gamePacket.accept(this);
     }
 
     public ProtocolObject unpack(GameTransportPacket packet) {
         // Create the user packet
         ProtocolObject gamePacket = null;
-        try {
-            gamePacket = styxDecoder.unpack(ByteBuffer.wrap(packet.gamedata));
-        } catch (IOException e) {
-            log.error("Could not unpack gamedata", e);
-        }
+        gamePacket = styxDecoder.unpack(ByteBuffer.wrap(packet.gamedata));
         return gamePacket;
     }
 
