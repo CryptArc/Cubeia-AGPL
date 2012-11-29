@@ -136,3 +136,26 @@ Poker.CSSUtils = Class.extend({
         $(element).unbind("msTransitionEnd");
     }
 });
+
+var CompatibilityChecker = {
+    prefix : ["Moz","Webkit","O", ""],
+    isSupported : function(el,propertyName) {
+        if(typeof(el.length)!="undefined") {
+            el = el.get(0);
+        }
+        var prefix = CompatibilityChecker.prefix;
+        for(var i = 0; i<prefix.length; i++) {
+            var property = prefix[i]+propertyName;
+            if(prefix[i]=="") {
+                property = propertyName.charAt(0).toLowerCase() + propertyName.slice(1);
+            }
+            if(typeof(el.style[property])!="undefined"){
+                return true;
+            }
+        }
+        return false;
+    },
+    isTransitionSupported : function(el) {
+        return CompatibilityChecker.isSupported(el,"Transition");
+    }
+};

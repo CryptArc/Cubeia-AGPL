@@ -43,7 +43,11 @@ public class AnnounceTableFailedResponse implements Serializable {
 
     @Override
     public String toString() {
-        return "AnnounceTableFailedResponse [errorCode=" + getErrorCode()
-                + ", message=" + getMessage() + "]";
+        final StringBuilder sb = new StringBuilder();
+        sb.append("AnnounceTableFailedResponse");
+        sb.append("{errorCode=").append(errorCode);
+        sb.append(", message='").append(message).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
 }

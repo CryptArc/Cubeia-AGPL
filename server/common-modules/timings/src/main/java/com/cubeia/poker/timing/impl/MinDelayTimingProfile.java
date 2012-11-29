@@ -28,7 +28,7 @@ import com.cubeia.poker.timing.TimingProfile;
  *
  * @author Fredrik Johansson, Cubeia Ltd
  */
-public class MinDelayTimingProfile implements TimingProfile {
+public class MinDelayTimingProfile extends TimingProfile {
 
     private static final long serialVersionUID = 5616827479149407827L;
 
@@ -43,4 +43,8 @@ public class MinDelayTimingProfile implements TimingProfile {
         }
     }
 
+    @Override
+    public String getName() {
+        return "MINIMUM_DELAY";
+    }
 }

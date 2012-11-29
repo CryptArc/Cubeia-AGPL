@@ -27,6 +27,9 @@ import org.bson.types.ObjectId;
 
 import java.net.UnknownHostException;
 
+/**
+ * Used for storing stuff to a mongo database. Configured in admin.properties.
+ */
 public class MongoStorage {
 
     private static final Logger log = Logger.getLogger(MongoStorage.class);

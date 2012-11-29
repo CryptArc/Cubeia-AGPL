@@ -186,7 +186,7 @@ public class PokerTableListener implements TournamentTableListener {
 
         if (!tournamentPlayer) {
             log.debug("Start wallet session for player: " + player);
-            backendPlayerSessionHandler.startWalletSession(state, table, player.getPlayerId(), getCurrentRoundNumber());
+            backendPlayerSessionHandler.startWalletSession(state, table, player.getPlayerId());
             pokerPlayer.setMissedBlindsStatus(MissedBlindsStatus.NOT_ENTERED_YET);
         }
 

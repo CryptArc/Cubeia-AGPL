@@ -25,18 +25,19 @@ import java.io.Serializable;
 public class CloseSessionRequest implements Serializable {
 
     private final PlayerSessionId playerSessionId;
-    private final int roundNumber;
 
-    public CloseSessionRequest(PlayerSessionId playerSessionId, int roundNumber) {
+    public CloseSessionRequest(PlayerSessionId playerSessionId) {
         this.playerSessionId = playerSessionId;
-        this.roundNumber = roundNumber;
     }
 
     public PlayerSessionId getPlayerSessionId() {
         return playerSessionId;
     }
 
-    public int getRoundNumber() {
-        return roundNumber;
+    @Override
+    public String toString() {
+        return "CloseSessionRequest{" +
+                "playerSessionId=" + playerSessionId +
+                '}';
     }
 }

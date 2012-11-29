@@ -19,6 +19,7 @@ package com.cubeia.games.poker.handler;
 
 import static com.cubeia.games.poker.handler.BackendCallHandler.EXT_PROP_KEY_TABLE_ID;
 
+import com.cubeia.backend.cashgame.dto.OpenTableSessionRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +27,6 @@ import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.TableId;
 import com.cubeia.backend.cashgame.dto.AllowJoinResponse;
 import com.cubeia.backend.cashgame.dto.CloseSessionRequest;
-import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
 import com.cubeia.backend.cashgame.exceptions.CloseSessionFailedException;
 import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.firebase.api.game.table.Table;
@@ -67,8 +67,7 @@ public class BackendPlayerSessionHandler {
 
         log.debug("Handle session end for player[" + pokerPlayer.getId() + "], sessionid[" + sessionId + "]");
         if (sessionId != null) {
-            // TODO: table round number is mocked!
-            CloseSessionRequest closeSessionRequest = new CloseSessionRequest(sessionId, roundNumber);
+            CloseSessionRequest closeSessionRequest = new CloseSessionRequest(sessionId);
             try {
                 cashGameBackend.closeSession(closeSessionRequest);
             } catch (CloseSessionFailedException e) {
@@ -80,17 +79,16 @@ public class BackendPlayerSessionHandler {
         }
     }
 
-    public void startWalletSession(PokerState state, Table table, int playerId, int roundNumber) {
+    public void startWalletSession(PokerState state, Table table, int playerId) {
         log.debug("starting wallet session: tId = {}, pId = {}", table.getId(), playerId);
         TableId tableId = (TableId) state.getExternalTableProperties().get(EXT_PROP_KEY_TABLE_ID);
         if (tableId == null) {
-            log.error("No table ID found in external properties; Table must be anounced first; tId = {}", table.getId());
+            log.error("No table ID found in external properties; Table must be announced first; tId = {}", table.getId());
             log.debug("Crashing table " + table.getId());
             closeHandler.tableCrashed(table);
         } else {
-            OpenSessionRequest openSessionRequest = new OpenSessionRequest(
-                    playerId, tableId, configService.createSystemMoney(0), roundNumber);
-            cashGameBackend.openSession(openSessionRequest);
+            OpenTableSessionRequest openSessionRequest = new OpenTableSessionRequest(playerId, tableId, configService.createSystemMoney(0));
+            cashGameBackend.openTableSession(openSessionRequest);
         }
 
     }

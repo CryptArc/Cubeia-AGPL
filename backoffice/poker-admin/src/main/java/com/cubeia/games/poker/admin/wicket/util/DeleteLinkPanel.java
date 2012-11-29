@@ -17,6 +17,7 @@
 
 package com.cubeia.games.poker.admin.wicket.util;
 
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
@@ -26,7 +27,7 @@ import com.cubeia.games.poker.admin.db.AdminDAO;
 import com.cubeia.games.poker.admin.wicket.BasePage;
 
 public class DeleteLinkPanel extends Panel {
-	
+
     private static final long serialVersionUID = 1L;
 
     @SpringBean(name = "adminDAO")
@@ -34,15 +35,15 @@ public class DeleteLinkPanel extends Panel {
 
     public DeleteLinkPanel(String id, final Class<?> entityClass, final int entityId, final Class<? extends BasePage> responsePage) {
         super(id);
-        add(new Link<String>("link", Model.of("delete")) {
-        	
-        	private static final long serialVersionUID = 1L;
+        Link<String> delete = new Link<String>("link", Model.of("delete")) {
 
-			@Override
-        	public void onClick() {
-        		adminDAO.removeItem(entityClass, entityId);
-        		setResponsePage(responsePage);
-        	}
-		});
+            @Override
+            public void onClick() {
+                adminDAO.removeItem(entityClass, entityId);
+                setResponsePage(responsePage);
+            }
+        };
+        delete.add(new AttributeAppender("class","btn btn-danger btn-mini"));
+        add(delete);
     }
 }

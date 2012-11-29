@@ -26,4 +26,14 @@ public class AllowJoinResponse {
         this.allowed = allowed;
         this.responseCode = responseCode;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("AllowJoinResponse");
+        sb.append("{allowed=").append(allowed);
+        sb.append(", responseCode=").append(responseCode);
+        sb.append('}');
+        return sb.toString();
+    }
 }

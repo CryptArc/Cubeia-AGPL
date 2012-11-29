@@ -20,6 +20,7 @@ package com.cubeia.games.poker.admin.service.history;
 import com.cubeia.poker.handhistory.api.HistoricHand;
 import com.cubeia.poker.tournament.history.api.HistoricTournament;
 import org.apache.log4j.Logger;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
@@ -40,17 +41,18 @@ public class HistoryServiceImpl implements HistoryService {
     MongoTemplate template;
 
     @Override
-    public List<HistoricHand> findHandHistory(Integer playerId, Date fromDate, Date toDate) {
+    public List<HistoricHand> findHandHistory(Integer playerId, String tableId, Date fromDate, Date toDate) {
         log.info("Finding hand histories by query: playerId = " + playerId + " from: " + fromDate + " to: " + toDate);
         Query query = new Query();
         if (playerId != null) query.addCriteria(where("seats.playerId").is(playerId));
+        if (tableId != null) query.addCriteria(where("table.tableIntegrationId").is(tableId));
         if (fromDate != null) query.addCriteria(where("startTime").gt(fromDate.getTime()));
         if (toDate != null) query.addCriteria(where("startTime").lt(toDate.getTime()));
         return template.find(query, HistoricHand.class, "hands");
     }
 
     @Override
-    public HistoricHand findById(String handId) {
+    public HistoricHand findHandById(String handId) {
         Query query = query(where("id").is(handId));
         return template.findOne(query, HistoricHand.class, "hands");
     }
@@ -62,5 +64,10 @@ public class HistoryServiceImpl implements HistoryService {
         if (fromDate != null) query.addCriteria(where("startTime").gt(fromDate.getTime()));
         if (toDate != null) query.addCriteria(where("startTime").lt(toDate.getTime()));
         return template.find(query, HistoricTournament.class, "tournaments");
+    }
+
+    @Override
+    public HistoricTournament findTournamentByHistoricId(String id) {
+        return template.findById(new ObjectId(id), HistoricTournament.class, "tournaments");
     }
 }

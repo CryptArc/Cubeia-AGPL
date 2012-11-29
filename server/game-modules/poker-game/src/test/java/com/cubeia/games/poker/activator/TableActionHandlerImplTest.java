@@ -19,6 +19,8 @@ package com.cubeia.games.poker.activator;
 
 import static com.cubeia.poker.timing.Timings.EXPRESS;
 import static com.cubeia.poker.variant.PokerVariant.TELESINA;
+
+import com.cubeia.poker.timing.TimingFactory;
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -105,7 +107,7 @@ public class TableActionHandlerImplTest {
 		TableConfigTemplate templ = new TableConfigTemplate();
 		templ.setAnte(10);
 		templ.setSeats(6);
-		templ.setTiming(EXPRESS);
+		templ.setTiming(TimingFactory.getRegistry().getTimingProfile("EXPRESS"));
 		templ.setVariant(TELESINA);
 		return templ;
 	}

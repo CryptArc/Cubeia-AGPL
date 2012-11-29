@@ -22,8 +22,8 @@ import static com.cubeia.firebase.api.game.lobby.DefaultTableAttributes._SEATED;
 import static com.cubeia.games.poker.activator.TableModifierActionType.CLOSE;
 import static com.cubeia.games.poker.activator.TableModifierActionType.CREATE;
 import static com.cubeia.games.poker.activator.TableModifierActionType.DESTROY;
-import static com.cubeia.games.poker.lobby.PokerLobbyAttributes.TABLE_READY_FOR_CLOSE;
-import static com.cubeia.games.poker.lobby.PokerLobbyAttributes.TABLE_TEMPLATE;
+import static com.cubeia.games.poker.common.lobby.PokerLobbyAttributes.TABLE_READY_FOR_CLOSE;
+import static com.cubeia.games.poker.common.lobby.PokerLobbyAttributes.TABLE_TEMPLATE;
 import static com.cubeia.poker.timing.Timings.EXPRESS;
 import static com.cubeia.poker.variant.PokerVariant.TELESINA;
 
@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.cubeia.poker.timing.TimingFactory;
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -259,7 +260,7 @@ public class LobbyTableInspectorImplTest {
         TableConfigTemplate templ = new TableConfigTemplate();
         templ.setAnte(10);
         templ.setSeats(6);
-        templ.setTiming(EXPRESS);
+        templ.setTiming(TimingFactory.getRegistry().getTimingProfile("EXPRESS"));
         templ.setVariant(TELESINA);
         templ.setMinEmptyTables(minEmpty);
         templ.setMinTables(min);

@@ -17,23 +17,6 @@
 
 package com.cubeia.games.poker.adapter;
 
-import static com.cubeia.firebase.api.game.player.PlayerStatus.DISCONNECTED;
-import static com.cubeia.firebase.api.game.player.PlayerStatus.LEAVING;
-import static com.cubeia.games.poker.handler.BackendCallHandler.EXT_PROP_KEY_TABLE_ID;
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.cubeia.backend.cashgame.TableId;
 import com.cubeia.backend.cashgame.dto.BalanceUpdate;
 import com.cubeia.backend.cashgame.dto.BatchHandRequest;
@@ -65,6 +48,7 @@ import com.cubeia.games.poker.handler.ActionTransformer;
 import com.cubeia.games.poker.handler.Trigger;
 import com.cubeia.games.poker.handler.TriggerType;
 import com.cubeia.games.poker.io.protocol.BestHand;
+import com.cubeia.games.poker.io.protocol.BlindsAreUpdated;
 import com.cubeia.games.poker.io.protocol.BuyInInfoResponse;
 import com.cubeia.games.poker.io.protocol.DealPrivateCards;
 import com.cubeia.games.poker.io.protocol.DealPublicCards;
@@ -89,12 +73,13 @@ import com.cubeia.games.poker.io.protocol.RakeInfo;
 import com.cubeia.games.poker.io.protocol.RequestAction;
 import com.cubeia.games.poker.io.protocol.StartNewHand;
 import com.cubeia.games.poker.io.protocol.TakeBackUncalledBet;
+import com.cubeia.games.poker.io.protocol.WaitingToStartBreak;
 import com.cubeia.games.poker.jmx.PokerStats;
 import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.games.poker.tournament.PokerTournamentRoundReport;
-import com.cubeia.games.poker.tournament.configuration.blinds.BlindsLevel;
+import com.cubeia.games.poker.tournament.configuration.blinds.Level;
 import com.cubeia.games.poker.util.ProtocolFactory;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.ActionRequest;
@@ -118,6 +103,22 @@ import com.cubeia.poker.util.SitoutCalculator;
 import com.cubeia.poker.util.ThreadLocalProfiler;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import static com.cubeia.firebase.api.game.player.PlayerStatus.DISCONNECTED;
+import static com.cubeia.firebase.api.game.player.PlayerStatus.LEAVING;
+import static com.cubeia.games.poker.handler.BackendCallHandler.EXT_PROP_KEY_TABLE_ID;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Firebase implementation of the poker logic's server adapter.
@@ -200,8 +201,18 @@ public class FirebaseServerAdapter implements ServerAdapter {
       ------------------------------------------------*/
     
     public java.util.Random getSystemRNG() {
-    	return randomService.getSystemDefaultRandom();
-    };
+        return randomService.getSystemDefaultRandom();
+    }
+
+    @Override
+    public void notifyBlindsLevelUpdated(int smallBlindAmount, int bigBlindAmount, int ante, boolean isBreak, int durationInMinutes) {
+        sendPublicPacket(new BlindsAreUpdated(smallBlindAmount, bigBlindAmount, ante, isBreak, durationInMinutes));
+    }
+
+    @Override
+    public void notifyWaitingToStartBreak() {
+        sendPublicPacket(new WaitingToStartBreak());
+    }
 
     @Override
     public void notifyNewHand() throws SystemShutdownException {
@@ -412,12 +423,12 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
                     // ReserveCallback callback = backend.getCallbackFactory().createReserveCallback(table);
                     Money amountToBuyInMoney = configService.createSystemMoney(amountToBuyIn);
-                    ReserveRequest reserveRequest = new ReserveRequest(pokerPlayer.getPlayerSessionId(), getFirebaseState().getHandCount(), amountToBuyInMoney, new TableId(table.getMetaData().getGameId(), table.getId())); 
+                    ReserveRequest reserveRequest = new ReserveRequest(pokerPlayer.getPlayerSessionId(), amountToBuyInMoney);
                     player.setRequestedBuyInAmount(amountToBuyIn);
-                    backend.reserve(reserveRequest); 
+                    backend.reserveMoneyForTable(reserveRequest, new TableId(table.getMetaData().getGameId(), table.getId()));
                     player.buyInRequestActive();
                 } else {
-                    log.debug("wont reserve money, max reached: player id = {}, amount wanted = {}", player.getId(), player.getRequestedBuyInAmount());
+                    log.debug("Won't reserve money, max reached: player id = {}, amount wanted = {}", player.getId(), player.getRequestedBuyInAmount());
                     player.clearRequestedBuyInAmountAndRequest();
                 }
             }
@@ -472,9 +483,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
         if (handEndStatus.equals(HandEndStatus.NORMAL) && handResult != null) {
             sendHandEndPacket(handResult);
-            if (!tournamentTable) {
-                performBackEndTransactions(handResult, handEndStatus);
-            }
+            performBackEndTransactions(handResult, handEndStatus, tournamentTable);
             updateHandEndStatistics();
         } else {
             log.info("The hand was cancelled on table: " + table.getId() + " - " + table.getMetaData().getName());
@@ -490,14 +499,14 @@ public class FirebaseServerAdapter implements ServerAdapter {
     }
    
     private Map<Integer, String> getTransactionIds(BatchHandResponse batchHandResult) {
-    	Map<Integer, String> transIds = new HashMap<Integer, String>();
-    	for (TransactionUpdate u : batchHandResult.getResultingBalances()) {
-			long transactionId = u.getTransactionId().transactionId;
-			int userId = u.getBalance().getPlayerSessionId().playerId;
-			transIds.put(userId, String.valueOf(transactionId));
-		}
-    	return transIds;
-	}
+        Map<Integer, String> transIds = new HashMap<Integer, String>();
+        for (TransactionUpdate u : batchHandResult.getResultingBalances()) {
+            long transactionId = u.getTransactionId().transactionId;
+            int userId = u.getBalance().getPlayerSessionId().playerId;
+            transIds.put(userId, String.valueOf(transactionId));
+        }
+        return transIds;
+    }
 
     private void updateHandEndStatistics() {
         PokerStats.getInstance().reportHandEnd();
@@ -520,12 +529,15 @@ public class FirebaseServerAdapter implements ServerAdapter {
         sendPublicPacket(action, -1);
     }
 
-    private void performBackEndTransactions(HandResult handResult, HandEndStatus handEndStatus) {
+    private void performBackEndTransactions(HandResult handResult, HandEndStatus handEndStatus, boolean isTournament) {
         String handId = getIntegrationHandId();
         TableId externalTableId = getIntegrationTableId();
-        BatchHandResponse batchHandResult = batchHand(handResult, handId, externalTableId);
-        validateAndUpdateBalances(batchHandResult);
-        Map<Integer, String> transactionIds = getTransactionIds(batchHandResult);
+        Map<Integer, String> transactionIds = new HashMap<Integer, String>();
+        if (!isTournament) {
+            BatchHandResponse batchHandResult = batchHand(handResult, handId, externalTableId);
+            transactionIds = getTransactionIds(batchHandResult);
+            validateAndUpdateBalances(batchHandResult);
+        }
         handHistory.notifyHandEnd(handResult, handEndStatus, transactionIds);
     }
 
@@ -613,7 +625,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
         PokerStats.getInstance().reportHandEnd();
 
         // Map the report to a server specific round report
-        BlindsLevel currentLevel = new BlindsLevel(report.getSmallBlindAmount(), report.getBigBlindAmount(), report.getAnteAmount());
+        Level currentLevel = new Level(report.getSmallBlindAmount(), report.getBigBlindAmount(), report.getAnteAmount());
         PokerTournamentRoundReport pokerReport = new PokerTournamentRoundReport(report.getBalanceMap(), currentLevel);
         MttRoundReportAction action = new MttRoundReportAction(table.getMetaData().getMttId(), table.getId());
         action.setAttachment(pokerReport);
@@ -773,6 +785,15 @@ public class FirebaseServerAdapter implements ServerAdapter {
         if (cache != null) {
             cache.addPublicActionWithExclusion(table.getId(), action, skipPlayerId);
         }
+    }
+
+    private void sendPublicPacket(ProtocolObject packet, int skipPlayerId) {
+        GameDataAction action = protocolFactory.createGameAction(packet, 0, table.getId());
+        sendPublicPacket(action, skipPlayerId);
+    }
+
+    private void sendPublicPacket(ProtocolObject packet) {
+        sendPublicPacket(packet, -1);
     }
 
     /**

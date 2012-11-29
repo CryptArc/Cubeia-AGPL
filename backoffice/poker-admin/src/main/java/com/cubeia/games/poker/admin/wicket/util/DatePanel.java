@@ -17,20 +17,20 @@
 
 package com.cubeia.games.poker.admin.wicket.util;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class DatePanel extends Panel {
-	
+
     private static final long serialVersionUID = 1L;
 
     public DatePanel(String id, long timestamp) {
         this(id, new Date(timestamp));
     }
-    
+
     public DatePanel(String id, Date d) {
         super(id);
         add(new Label("label", new SimpleDateFormat("yyyy/MM/dd HH:mm").format(d)));

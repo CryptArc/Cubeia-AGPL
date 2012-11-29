@@ -23,7 +23,7 @@ public class Player implements Serializable {
 
     private static final long serialVersionUID = -4641892328326525634L;
 
-	private int playerId;
+    private int playerId;
 
     private long initialBalance;
     private int seatId;

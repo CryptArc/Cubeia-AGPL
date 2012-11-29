@@ -22,6 +22,7 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import java.util.concurrent.ScheduledExecutorService;
 
+import com.cubeia.poker.timing.TimingFactory;
 import org.apache.log4j.Logger;
 
 import com.cubeia.firebase.api.game.activator.ActivatorContext;
@@ -142,7 +143,7 @@ public class PokerActivator implements GameActivator, MttAwareActivator, PokerAc
         t.setAnte(anteLevel);
         t.setSeats(seats);
         t.setVariant(variant);
-        t.setTiming(DEFAULT);
+        t.setTiming(TimingFactory.getRegistry().getDefaultTimingProfile());
         return t;
     }
 }

@@ -26,26 +26,26 @@ import org.apache.commons.lang.builder.ToStringStyle;
 
 public class TransactionId implements Serializable {
 
-	private static final long serialVersionUID = 6577447243653378650L;
-	
-	public final long transactionId;
+    private static final long serialVersionUID = 6577447243653378650L;
 
-	public TransactionId(long transactionId) {
-		this.transactionId = transactionId;
-	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		return EqualsBuilder.reflectionEquals(this, obj);
-	}
+    public final long transactionId;
 
-	@Override
-	public int hashCode() {
-		return HashCodeBuilder.reflectionHashCode(this);
-	}
+    public TransactionId(long transactionId) {
+        this.transactionId = transactionId;
+    }
 
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
-	}
+    @Override
+    public boolean equals(Object obj) {
+        return EqualsBuilder.reflectionEquals(this, obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
 }

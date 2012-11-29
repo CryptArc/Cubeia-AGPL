@@ -11,7 +11,6 @@ Poker.PokerProtocolHandler = function() {
     this.tableManager = Poker.AppCtx.getTableManager();
     this.actionSender = Poker.AppCtx.getActionSender();
     this.seqs = new Poker.Map();
-    this.packetCount = 0;
 
     this.getSeq = function(tableId) {
         return this.seqs.get(tableId);
@@ -206,6 +205,12 @@ Poker.PokerProtocolHandler = function() {
             case com.cubeia.games.poker.io.protocol.TournamentOut.CLASSID:
                 console.log("UNHANDLED PO TournamentOut");
                 console.log(protocolObject);
+                break;
+            case com.cubeia.games.poker.io.protocol.WaitingToStartBreak:
+                this.tableManager.notifyWaitingToStartBreak();
+                break;
+            case com.cubeia.games.poker.io.protocol.BlindsAreUpdated.CLASSID:
+                this.tableManager.notifyBlindsUpdated(protocolObject);
                 break;
             default:
                 console.log("Ignoring packet: " + protocolObject);

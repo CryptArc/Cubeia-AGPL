@@ -20,7 +20,7 @@ package com.cubeia.poker.timing.impl;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.timing.TimingProfile;
 
-public class ExpressTimingProfile implements TimingProfile {
+public class ExpressTimingProfile extends TimingProfile {
 
     private static final long serialVersionUID = 4317305784161455439L;
 
@@ -53,4 +53,8 @@ public class ExpressTimingProfile implements TimingProfile {
         }
     }
 
+    @Override
+    public String getName() {
+        return "EXPRESS";
+    }
 }

@@ -36,6 +36,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.UUID;
 
+import com.cubeia.backend.cashgame.TableId;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -263,7 +264,7 @@ public class FirebaseServerAdapterTest {
         fsa.performPendingBuyIns(players);
 
         verify(fsa.state, times(2)).getMaxBuyIn();
-        verify(fsa.backend).reserve(Mockito.any(ReserveRequest.class));
+        verify(fsa.backend).reserveMoneyForTable(Mockito.any(ReserveRequest.class), Mockito.<TableId>any());
         verify(player1).buyInRequestActive();
         verify(player1).setRequestedBuyInAmount(2500L);
         verify(player2).clearRequestedBuyInAmountAndRequest();

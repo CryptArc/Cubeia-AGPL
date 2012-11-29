@@ -17,12 +17,12 @@
 
 package com.cubeia.poker.rounds.betting;
 
-import com.cubeia.poker.adapter.ServerAdapterHolder;
-import com.cubeia.poker.variant.GameType;
-import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.adapter.ServerAdapter;
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.timing.impl.DefaultTimingProfile;
+import com.cubeia.poker.variant.GameType;
 import com.cubeia.poker.variant.texasholdem.TexasHoldemFutureActionsCalculator;
 import com.google.common.base.Predicate;
 import org.junit.Before;
@@ -36,6 +36,7 @@ import java.util.TreeMap;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyCollectionOf;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -80,6 +81,7 @@ public class BettingRoundFinishedTest {
     @Test
     public void testNotFinishedWhenNoOneHasActed() {
         when(context.getPlayersReadyToStartHand(Matchers.<Predicate<PokerPlayer>>any())).thenReturn(asList(player1, player2, player3));
+        when(context.countNonFoldedPlayers(anyCollectionOf(PokerPlayer.class))).thenReturn(3);
         when(player1.hasActed()).thenReturn(false);
         when(player2.hasActed()).thenReturn(false);
         when(player3.hasActed()).thenReturn(false);
@@ -89,6 +91,7 @@ public class BettingRoundFinishedTest {
     @Test
     public void testFinishedWhenEverybodyHasActed() {
         when(context.getPlayersReadyToStartHand(Matchers.<Predicate<PokerPlayer>>any())).thenReturn(asList(player1, player2, player3));
+        when(context.countNonFoldedPlayers(anyCollectionOf(PokerPlayer.class))).thenReturn(3);
         when(player1.hasActed()).thenReturn(true);
         when(player2.hasActed()).thenReturn(true);
         when(player3.hasActed()).thenReturn(true);
@@ -97,8 +100,7 @@ public class BettingRoundFinishedTest {
 
     @Test
     public void testFinishedWhenAllButOneFolded() {
-        when(player1.hasFolded()).thenReturn(true);
-        when(player2.hasFolded()).thenReturn(true);
+        when(context.countNonFoldedPlayers(anyCollectionOf(PokerPlayer.class))).thenReturn(1);
 
         when(context.getPlayersReadyToStartHand(Matchers.<Predicate<PokerPlayer>>any())).thenReturn(asList(player1, player2, player3));
         assertThat(round.calculateIfRoundFinished(), is(true));
@@ -107,6 +109,7 @@ public class BettingRoundFinishedTest {
     @Test
     public void testFinishedWhenAllButOneSittingOut() {
         when(context.getPlayersReadyToStartHand(Matchers.<Predicate<PokerPlayer>>any())).thenReturn(asList(player3));
+        when(context.countNonFoldedPlayers(anyCollectionOf(PokerPlayer.class))).thenReturn(3);
         when(player1.isSittingOut()).thenReturn(true);
         when(player2.isSittingOut()).thenReturn(true);
         when(player3.isSittingOut()).thenReturn(false);
@@ -116,6 +119,7 @@ public class BettingRoundFinishedTest {
     @Test
     public void testNotFinishedWhenAllSittingOut() {
         when(context.isEveryoneSittingOut()).thenReturn(true);
+        when(context.countNonFoldedPlayers(anyCollectionOf(PokerPlayer.class))).thenReturn(3);
         when(player1.isSittingOut()).thenReturn(true);
         when(player2.isSittingOut()).thenReturn(true);
         when(player3.isSittingOut()).thenReturn(true);
@@ -125,6 +129,7 @@ public class BettingRoundFinishedTest {
     @Test
     public void testFinished3PlayersAllInAndFoldedCombo() {
         when(context.getPlayersReadyToStartHand(Matchers.<Predicate<PokerPlayer>>any())).thenReturn(asList(player1, player2, player3));
+        when(context.countNonFoldedPlayers(anyCollectionOf(PokerPlayer.class))).thenReturn(2);
 
         when(player1.isAllIn()).thenReturn(true);
         when(player2.hasFolded()).thenReturn(true);

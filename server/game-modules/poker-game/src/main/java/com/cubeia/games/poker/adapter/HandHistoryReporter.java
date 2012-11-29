@@ -19,7 +19,7 @@ package com.cubeia.games.poker.adapter;
 
 import static com.cubeia.games.poker.adapter.HandHistoryTranslator.translate;
 import static com.cubeia.games.poker.adapter.HandHistoryTranslator.translateCards;
-import static com.cubeia.games.poker.lobby.PokerLobbyAttributes.TABLE_EXTERNAL_ID;
+import static com.cubeia.games.poker.common.lobby.PokerLobbyAttributes.TABLE_EXTERNAL_ID;
 import static com.cubeia.poker.adapter.HandEndStatus.CANCELED_TOO_FEW_PLAYERS;
 
 import java.util.ArrayList;
@@ -124,10 +124,10 @@ public class HandHistoryReporter {
             for (Entry<PokerPlayer,Result> entry : map.entrySet()) {
                 // translate results
                 PokerPlayer pl = entry.getKey();
-                com.cubeia.poker.handhistory.api.HandResult hr = translate(pl.getId(), entry.getValue());
+                com.cubeia.poker.handhistory.api.HandResult translatedHandResult = translate(pl.getId(), entry.getValue());
                 String transactionId = playerTransactions.get(pl.getId());
-                hr.setTransactionId(transactionId);
-                res.getResults().put(pl.getId(), hr);
+                translatedHandResult.setTransactionId(transactionId);
+                res.getResults().put(pl.getId(), translatedHandResult);
                 // get player rake and add
                 long playerRake = handResult.getRakeContributionByPlayer(pl);
                 res.getResults().get(pl.getId()).setRake(playerRake);

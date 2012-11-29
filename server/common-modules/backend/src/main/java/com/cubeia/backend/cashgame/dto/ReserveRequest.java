@@ -18,36 +18,40 @@
 package com.cubeia.backend.cashgame.dto;
 
 import com.cubeia.backend.cashgame.PlayerSessionId;
-import com.cubeia.backend.cashgame.TableId;
 import com.cubeia.games.poker.common.Money;
 
 import java.io.Serializable;
 
+/**
+ * This is request for reserving money at a table.
+ */
 public class ReserveRequest implements Serializable {
 
-	private static final long serialVersionUID = -5456254904252608864L;
-	
-	public final PlayerSessionId playerSessionId;
-    public final int roundNumber;
-    public final Money amount;
-    public final TableId tableId;
+    private static final long serialVersionUID = -5456254904252608864L;
 
-    public ReserveRequest(PlayerSessionId playerSessionId, int roundNumber, Money amount, TableId tableId) {
+    public final PlayerSessionId playerSessionId;
+    public final Money amount;
+
+    public ReserveRequest(PlayerSessionId playerSessionId, Money amount) {
         this.playerSessionId = playerSessionId;
-        this.roundNumber = roundNumber;
         this.amount = amount;
-		this.tableId = tableId; 
     }
 
     public PlayerSessionId getPlayerSessionId() {
         return playerSessionId;
     }
 
-    public int getRoundNumber() {
-        return roundNumber;
-    }
-
     public Money getAmount() {
         return amount;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("ReserveRequest");
+        sb.append("{playerSessionId=").append(playerSessionId);
+        sb.append(", amount=").append(amount);
+        sb.append('}');
+        return sb.toString();
     }
 }

@@ -21,6 +21,6 @@ import java.io.Serializable;
 
 public class CloseTableRequest implements Serializable {
 
-	private static final long serialVersionUID = 4343845180631285556L; 
-	
+    private static final long serialVersionUID = 4343845180631285556L;
+
 }

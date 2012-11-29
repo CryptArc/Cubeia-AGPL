@@ -49,4 +49,14 @@ public class OpenSessionResponse implements Serializable {
     public Map<String, String> getSessionProperties() {
         return new HashMap<String, String>(sessionProperties);
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("OpenSessionResponse");
+        sb.append("{sessionId=").append(sessionId);
+        sb.append(", sessionProperties=").append(sessionProperties);
+        sb.append('}');
+        return sb.toString();
+    }
 }

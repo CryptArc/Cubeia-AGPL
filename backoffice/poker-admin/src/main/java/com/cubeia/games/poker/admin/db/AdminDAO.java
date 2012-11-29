@@ -22,6 +22,9 @@ import java.util.List;
 import com.cubeia.games.poker.entity.TableConfigTemplate;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
+import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
+import com.cubeia.poker.timing.TimingProfile;
+import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
 
 public interface AdminDAO {
 
@@ -31,17 +34,18 @@ public interface AdminDAO {
 
     public abstract void save(Object entity);
 
-    /**
-     * Gets a list of all tournaments.
-     *
-     * @return null if not found
-     */
     public List<SitAndGoConfiguration> getSitAndGoConfigurations();
 
     public List<ScheduledTournamentConfiguration> getScheduledTournamentConfigurations();
     
     public List<TableConfigTemplate> getTableConfigTemplates();
 
-	public abstract <T> void removeItem(Class<T> class1, int templateId);
+    public List<TimingProfile> getTimingProfiles();
+
+    public List<BlindsStructure> getBlindsStructures();
+
+    List<PayoutStructure> getPayoutStructures();
+
+    public <T> void removeItem(Class<T> class1, int templateId);
 
 }

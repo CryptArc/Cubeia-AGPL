@@ -54,13 +54,13 @@ public class ShowHand extends BasePage {
     @SpringBean
     private HistoryService historyService;
 
-    @SpringBean(name="webConfig")
+    @SpringBean(name = "webConfig")
     private Configuration config;
-    
+
     public ShowHand(PageParameters parameters) {
-    	super(parameters);
+        super(parameters);
         String handId = parameters.get("handId").toString();
-        HistoricHand hand = historyService.findById(handId);
+        HistoricHand hand = historyService.findHandById(handId);
         addSummary(hand);
         addPlayerList(hand);
         addEvents(hand);
@@ -71,43 +71,46 @@ public class ShowHand extends BasePage {
 
             private static final long serialVersionUID = 1908334758912501993L;
 
-			@Override
+            @Override
             protected void populateItem(Item<Player> item) {
                 Player player = item.getModelObject();
                 Results results = hand.getResults();
+                HandResult resultsForPlayer = results.getResults().get(player.getPlayerId());
                 // item.add(new Label("playerName", player.getName()));
                 item.add(new ExternalLinkPanel("playerName", player.getName(), createPlayerLink(player)));
                 item.add(new Label("playerId", String.valueOf(player.getPlayerId())));
                 item.add(new Label("seat", String.valueOf(player.getSeatId())));
-                item.add(new Label("bet", formatAmount(results.getResults().get(player.getPlayerId()).getTotalBet())));
-                String net = formatAmount(results.getResults().get(player.getPlayerId()).getNetWin());
-                HandResult handResult = results.getResults().get(player.getPlayerId());
-                if(handResult.getTransactionId() != null) {
-                	item.add(new ExternalLinkPanel("net", net, createTransactionLink(handResult)));
+                item.add(new Label("bet", formatAmount(resultsForPlayer.getTotalBet())));
+                String net = formatAmount(resultsForPlayer.getNetWin());
+                HandResult handResult = resultsForPlayer;
+                if (handResult.getTransactionId() != null) {
+                    item.add(new ExternalLinkPanel("net", net, createTransactionLink(handResult)));
                 } else {
-                	item.add(new Label("net", net));
+                    item.add(new Label("net", net));
                 }
+                item.add(new Label("initialBalance", formatAmount(player.getInitialBalance())));
+                item.add(new Label("finalBalance", formatAmount(player.getInitialBalance() + resultsForPlayer.getNetWin())));
             }
 
-			private String createTransactionLink(HandResult handResult) {
-				String tmp = normalizeBaseUrl();
-				tmp += "wicket/bookmarkable/com.cubeia.backoffice.web.wallet.TransactionInfo?transactionId=" + handResult.getTransactionId();
-				return tmp;
-			}
+            private String createTransactionLink(HandResult handResult) {
+                String tmp = normalizeBaseUrl();
+                tmp += "wicket/bookmarkable/com.cubeia.backoffice.web.wallet.TransactionInfo?transactionId=" + handResult.getTransactionId();
+                return tmp;
+            }
 
-			private String createPlayerLink(Player player) {
-				String tmp = normalizeBaseUrl();
-				tmp += "wicket/bookmarkable/com.cubeia.backoffice.web.user.UserSummary?userId=" + player.getPlayerId();
-				return tmp;
-			}
+            private String createPlayerLink(Player player) {
+                String tmp = normalizeBaseUrl();
+                tmp += "wicket/bookmarkable/com.cubeia.backoffice.web.user.UserSummary?userId=" + player.getPlayerId();
+                return tmp;
+            }
 
-			private String normalizeBaseUrl() {
-				String tmp = config.getNetworkUrl();
-				if(!tmp.endsWith("/")) {
-					tmp += "/";
-				}
-				return tmp;
-			}
+            private String normalizeBaseUrl() {
+                String tmp = config.getNetworkUrl();
+                if (!tmp.endsWith("/")) {
+                    tmp += "/";
+                }
+                return tmp;
+            }
         };
         add(players);
     }
@@ -141,7 +144,7 @@ public class ShowHand extends BasePage {
 
                 if (event instanceof PlayerAction) {
                     PlayerAction playerAction = (PlayerAction) event;
-                    action.setObject(playerAction.getAction() .toString());
+                    action.setObject(playerAction.getAction().toString());
                     playerId.setObject(String.valueOf(playerAction.getPlayerId()));
                     amount.setObject(formatAmount(playerAction.getAmount()));
                 } else if (event instanceof PotUpdate) {
@@ -166,7 +169,7 @@ public class ShowHand extends BasePage {
 
     @Override
     public String getPageTitle() {
-        return "Hand History";
+        return "Show Hand";
     }
 
     private String formatAmount(Amount amount) {
@@ -184,18 +187,18 @@ public class ShowHand extends BasePage {
     }
 
     private String stringRepresentation(PotUpdate potUpdate) {
-        String result = "";
+        StringBuilder result = new StringBuilder();
         List<GamePot> pots = potUpdate.getPots();
         if (pots.size() > 0) {
-            result += "Pot: " + formatAmount(pots.get(0).getPotSize());
+            result.append("Pot: " + formatAmount(pots.get(0).getPotSize()));
         }
         for (int i = 1; i < pots.size(); i++) {
-            result += "\nSide pot " + i + ": " + formatAmount(pots.get(i).getPotSize());
+            result.append("\nSide pot " + i + ": " + formatAmount(pots.get(i).getPotSize()));
         }
-        return result;
+        return result.toString();
     }
 
-    private class CardList extends ListView<GameCard> {
+    private static class CardList extends ListView<GameCard> {
 
         public CardList(String id) {
             super(id);
@@ -205,7 +208,7 @@ public class ShowHand extends BasePage {
         protected void populateItem(ListItem<GameCard> item) {
             GameCard card = item.getModelObject();
             String imageName = card.getRank().getAbbreviation() + card.getSuit().name().charAt(0);
-            item.add(new ContextImage("cardImage", "images/cards/" + imageName + ".png"));
+            item.add(new ContextImage("cardImage", "images/cards/" + imageName.toLowerCase() + ".svg"));
         }
 
     }

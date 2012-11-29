@@ -17,7 +17,7 @@
 
 package com.cubeia.games.poker.tournament;
 
-import com.cubeia.games.poker.tournament.configuration.blinds.BlindsLevel;
+import com.cubeia.games.poker.tournament.configuration.blinds.Level;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -34,13 +34,13 @@ public class PokerTournamentRoundReport implements Serializable {
 
     private Map<Integer, Long> balanceMap = new HashMap<Integer, Long>();
 
-    private BlindsLevel currentBlindsLevel;
+    private Level currentBlindsLevel;
 
-    public PokerTournamentRoundReport(BlindsLevel blindsLevel) {
+    public PokerTournamentRoundReport(Level blindsLevel) {
         currentBlindsLevel = blindsLevel;
     }
 
-    public PokerTournamentRoundReport(Map<Integer, Long> balanceMap, BlindsLevel currentLevel) {
+    public PokerTournamentRoundReport(Map<Integer, Long> balanceMap, Level currentLevel) {
         this.balanceMap = balanceMap;
         this.currentBlindsLevel = currentLevel;
     }
@@ -53,11 +53,11 @@ public class PokerTournamentRoundReport implements Serializable {
         return balanceMap.entrySet();
     }
 
-    public BlindsLevel getCurrentBlindsLevel() {
+    public Level getCurrentBlindsLevel() {
         return currentBlindsLevel;
     }
 
-    public void setCurrentBlindsLevel(BlindsLevel currentBlindsLevel) {
+    public void setCurrentBlindsLevel(Level currentBlindsLevel) {
         this.currentBlindsLevel = currentBlindsLevel;
     }
 }

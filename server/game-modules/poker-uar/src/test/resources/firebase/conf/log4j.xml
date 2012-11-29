@@ -172,7 +172,6 @@
         <appender-ref ref="ERROR_LOG"/>
     </category>
 
-
     <!-- ****** LIBRARY CATEGORIES ****** -->
 
     <category name="org.jboss" additivity="false">

@@ -18,7 +18,10 @@
 package com.cubeia.games.poker.tournament.configuration;
 
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructureFactory;
+import com.cubeia.poker.timing.TimingFactory;
+import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.timing.Timings;
+import org.apache.log4j.Logger;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -26,12 +29,14 @@ import java.io.Serializable;
 @Entity
 public class SitAndGoConfiguration implements Serializable {
 
+    private static final Logger log = Logger.getLogger(SitAndGoConfiguration.class);
+
     @Id
     @GeneratedValue
     private Integer id;
 
     @ManyToOne(cascade = {CascadeType.ALL})
-    private TournamentConfiguration configuration;
+    private TournamentConfiguration configuration = new TournamentConfiguration();
 
     public SitAndGoConfiguration() {
     }
@@ -44,18 +49,18 @@ public class SitAndGoConfiguration implements Serializable {
         this.configuration = configuration;
     }
 
-    public SitAndGoConfiguration(String name, int capacity, Timings timings) {
+    public SitAndGoConfiguration(String name, int capacity, TimingProfile timings) {
         configuration = new TournamentConfiguration();
         configuration.setName(name);
         configuration.setMinPlayers(capacity);
         configuration.setMaxPlayers(capacity);
         configuration.setSeatsPerTable(10);
-        configuration.setTimingType(timings.ordinal());
+        configuration.setTimingType(timings);
         configuration.setBlindsStructure(BlindsStructureFactory.createDefaultBlindsStructure());
     }
 
     public SitAndGoConfiguration(String name, int capacity) {
-        this(name, capacity, Timings.DEFAULT);
+        this(name, capacity, TimingFactory.getRegistry().getDefaultTimingProfile());
     }
 
     public Integer getId() {

@@ -19,7 +19,7 @@ package com.cubeia.games.poker.activator;
 
 import static com.cubeia.firebase.api.game.lobby.DefaultTableAttributes._LAST_MODIFIED;
 import static com.cubeia.firebase.api.game.lobby.DefaultTableAttributes._SEATED;
-import static com.cubeia.games.poker.lobby.PokerLobbyAttributes.TABLE_TEMPLATE;
+import static com.cubeia.games.poker.common.lobby.PokerLobbyAttributes.TABLE_TEMPLATE;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,7 +41,7 @@ import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.game.poker.config.api.PokerConfigurationService;
 import com.cubeia.games.poker.common.SystemTime;
 import com.cubeia.games.poker.entity.TableConfigTemplate;
-import com.cubeia.games.poker.lobby.PokerLobbyAttributes;
+import com.cubeia.games.poker.common.lobby.PokerLobbyAttributes;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -68,7 +68,7 @@ public class LobbyTableInspectorImpl implements LobbyTableInspector {
         checkDestruction(allTables, result);
         // divide into groups by template
         Map<Integer, List<LobbyTable>> tables = partitionTables(allTables);
-        log.debug("Found " + allTables.size() + " tables in " + tables.size() + " templates");
+        log.trace("Found " + allTables.size() + " tables in " + tables.size() + " templates");
         // now check all templates for closure or creation
         checkTemplates(templates, tables, result);
         // now check if any templates are missing

@@ -15,7 +15,11 @@ Poker.MainMenuManager = Class.extend({
         })
         var cashier = new Poker.MenuItem("Cashier","Manage your funds","cashier")
         this.addMenuItem(cashier,null);
-        this.addMenuItem(new Poker.MenuItem("Help & rules","Learn how to play poker","help"),null);
+        var helpMenuItem = new Poker.MenuItem("Help & rules","Learn how to play poker","help");
+        this.addExternalMenuItem(helpMenuItem,function(){
+            console.log(Poker.OperatorConfig.getClientHelpUrl());
+            window.open(Poker.OperatorConfig.getClientHelpUrl());
+        });
         this.addMenuItem(new Poker.MenuItem("Gameplay settings","Muck loosing cards, Muck winning cards","gameplay"),null);
         this.addMenuItem(new Poker.MenuItem("Sound settings","Turn sound on/off","sound"),null);
         var devSettings = new Poker.MenuItem("Development settings","Settings only shown in development","development");
@@ -23,6 +27,14 @@ Poker.MainMenuManager = Class.extend({
 
     },
     activeView : null,
+    addExternalMenuItem : function(item,activateFunc){
+        var self = this;
+        item.setActivateFunction(activateFunc);
+        item.appendTo("#mainMenuList",this.menuItemTemplate);
+        if(self.activeView!=null) {
+            self.activeView.deactivate();
+        }
+    },
     addMenuItem : function(item,view) {
         var self = this;
         item.setActivateFunction(function(){

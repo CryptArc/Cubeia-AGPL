@@ -17,6 +17,12 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.tables;
 
+import com.cubeia.games.poker.admin.db.AdminDAO;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.games.poker.entity.TableConfigTemplate;
+import com.cubeia.poker.timing.TimingProfile;
+import org.apache.wicket.markup.html.form.ChoiceRenderer;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
@@ -26,30 +32,26 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import com.cubeia.games.poker.admin.db.AdminDAO;
-import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.games.poker.entity.TableConfigTemplate;
-
 public class EditTable extends BasePage {
 
     private static final long serialVersionUID = 6896786450236805072L;
 
-	@SpringBean(name="adminDAO")
+    @SpringBean(name="adminDAO")
     private AdminDAO adminDAO;
     
     private TableConfigTemplate table;
     
     public EditTable(final PageParameters parameters) {
-    	super(parameters);
+        super(parameters);
         final Integer templateId = parameters.get("templateId").toInt();
         loadFormData(templateId);
         Form<TableConfigTemplate> tableForm = new Form<TableConfigTemplate>("tableForm", new CompoundPropertyModel<TableConfigTemplate>(table)) {
             
-        	private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
             
-        	@Override
+            @Override
             protected void onSubmit() {
-        		TableConfigTemplate object = getModel().getObject();
+                TableConfigTemplate object = getModel().getObject();
                 adminDAO.save(object);
                 // info("Table template updated, id = " + templateId);
                 setResponsePage(ListTables.class);
@@ -61,7 +63,9 @@ public class EditTable extends BasePage {
         tableForm.add(new RequiredTextField<Integer>("seatsPerTable", new PropertyModel<Integer>(this, "table.seats")));
         tableForm.add(new TextField<Integer>("minTables", new PropertyModel<Integer>(this, "table.minTables")));
         tableForm.add(new TextField<Integer>("minEmptyTables", new PropertyModel<Integer>(this, "table.minEmptyTables")));
-        
+        tableForm.add(new DropDownChoice<TimingProfile>("timing", new PropertyModel<TimingProfile>(this, "table.timing"), adminDAO.getTimingProfiles(),
+                choiceRenderer()));
+
         add(tableForm);
 
         add(new FeedbackPanel("feedback"));
@@ -70,7 +74,7 @@ public class EditTable extends BasePage {
     private void loadFormData(final Integer templateId) {
         table = adminDAO.getItem(TableConfigTemplate.class, templateId);
     }
-    
+
     @Override
     public String getPageTitle() {
         return "Edit Table";

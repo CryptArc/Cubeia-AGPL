@@ -204,7 +204,7 @@ Poker.ActionButton = Class.extend({
     },
     setAmount : function(minAmount,maxAmount,mainPot){
         if(this.showAmount){
-            this.el.find(".amount").html(Poker.Utils.formatCurrencyString(minAmount)).show();
+            this.el.find(".amount").html("&euro;").append(Poker.Utils.formatCurrency(minAmount)).show();
         }
         if(maxAmount) {
             this.maxAmount = maxAmount;

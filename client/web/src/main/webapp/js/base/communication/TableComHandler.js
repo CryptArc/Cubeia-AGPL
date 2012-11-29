@@ -108,7 +108,6 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
     handleNotifyLeave:function (notifyLeavePacket) {
         if (notifyLeavePacket.pid === Poker.MyPlayer.id) {
             console.log("I left this table, closing it.");
-            console.log(notifyLeavePacket);
             this.tableManager.leaveTable(notifyLeavePacket.tableid);
         } else {
             this.tableManager.removePlayer(notifyLeavePacket.tableid,notifyLeavePacket.pid);
@@ -156,6 +155,7 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
         comHandler.subscribeToCashGames();
     },
     handlePacket:function (packet) {
+        console.log(packet);
         switch (packet.classId) {
             case FB_PROTOCOL.NotifyJoinPacket.CLASSID :
                 this.handleNotifyJoin(packet);
@@ -196,11 +196,22 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
             case FB_PROTOCOL.MttPickedUpPacket.CLASSID:
                 this.handleRemovedFromTournamentTable(packet);
                 break;
+            case FB_PROTOCOL.LocalServiceTransportPacket.CLASSID:
+                this.handleLocalServiceTransport(packet);
+                break;
             default :
                 console.log("NO HANDLER");
                 console.log(packet);
                 break;
         }
+    },
+    handleLocalServiceTransport : function(packet) {
+        var byteArray = FIREBASE.ByteArray.fromBase64String(packet.servicedata);
+        var message = utf8.fromByteArray(byteArray);
+        var config = JSON.parse(message);
+        Poker.OperatorConfig.populate(config);
+        console.log(config);
+
     },
     handleWatchResponse:function (watchResponse) {
         if (watchResponse.status == "DENIED_ALREADY_SEATED") {

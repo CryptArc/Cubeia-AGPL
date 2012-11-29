@@ -53,7 +53,7 @@ public class PokerContext implements Serializable {
 
     private static final long serialVersionUID = 2254110286904967882L;
 
-	/**
+    /**
      * Will be set to true if this is a tournament table.
      */
     private boolean tournamentTable = false;
@@ -182,6 +182,9 @@ public class PokerContext implements Serializable {
             PokerPlayer pokerPlayer = entry.getValue();
             if (readyPlayerFilter.apply(pokerPlayer)) {
                 treeMap.put(entry.getKey(), pokerPlayer);
+            } else {
+                log.debug("Setting player " + pokerPlayer + " to sitting out");
+                pokerPlayer.setSitOutStatus(SitOutStatus.SITTING_OUT);
             }
         }
         return treeMap;
@@ -216,8 +219,12 @@ public class PokerContext implements Serializable {
     }
 
     public int countNonFoldedPlayers() {
+        return countNonFoldedPlayers(getCurrentHandPlayerMap().values());
+    }
+
+    public int countNonFoldedPlayers(Collection<PokerPlayer> players) {
         int nonFolded = 0;
-        for (PokerPlayer p : getCurrentHandPlayerMap().values()) {
+        for (PokerPlayer p : players) {
             if (!p.hasFolded()) {
                 nonFolded++;
             }
@@ -283,7 +290,7 @@ public class PokerContext implements Serializable {
     /**
      * takes all players bet stacks and sums it to the pot
      *
-     * @return sum of the size of all pots commited to the main or side pots
+     * @return sum of the size of all pots committed to the main or side pots
      */
     @VisibleForTesting
     public long getTotalPotSize() {

@@ -394,7 +394,11 @@ public class PokerState implements Serializable, IPokerState {
         stateHolder.get().playerOpenedSession(playerId);
     }
 
-    public void setBlindsLevels(int smallBlindAmount, int bigBlindAmount, int ante) {
+    public void setBlindsLevels(int smallBlindAmount, int bigBlindAmount, int ante, boolean isBreak, int durationInMinutes) {
         pokerContext.setBlindsLevels(smallBlindAmount, bigBlindAmount, ante);
+        if (isBreak) {
+            log.debug("We are now on a break for " + durationInMinutes + " minutes.");
+        }
+        serverAdapter.notifyBlindsLevelUpdated(smallBlindAmount, bigBlindAmount, ante, isBreak, durationInMinutes);
     }
 }

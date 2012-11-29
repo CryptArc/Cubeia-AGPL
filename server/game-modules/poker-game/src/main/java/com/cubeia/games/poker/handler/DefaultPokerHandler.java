@@ -114,6 +114,16 @@ public class DefaultPokerHandler implements PacketVisitor {
     }
 
     @Override
+    public void visit(WaitingToStartBreak packet) {
+
+    }
+
+    @Override
+    public void visit(BlindsAreUpdated packet) {
+
+    }
+
+    @Override
     public void visit(PotTransfer packet) {
     }
 

@@ -26,7 +26,7 @@ import com.cubeia.poker.timing.TimingProfile;
  *
  * @author Fredrik Johansson, Cubeia Ltd
  */
-public class DefaultTimingProfile implements TimingProfile {
+public class DefaultTimingProfile extends TimingProfile {
 
     private static final long serialVersionUID = -3621659377668490319L;
 
@@ -59,4 +59,8 @@ public class DefaultTimingProfile implements TimingProfile {
         }
     }
 
+    @Override
+    public String getName() {
+        return "DEFAULT";
+    }
 }

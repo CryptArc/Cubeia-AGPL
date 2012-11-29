@@ -17,26 +17,17 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+import com.cubeia.games.poker.admin.db.AdminDAO;
 import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.games.poker.admin.wicket.pages.history.ShowHand;
-import com.cubeia.games.poker.admin.wicket.pages.tables.ListTables;
-import com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled.EditTournament;
 import com.cubeia.games.poker.admin.wicket.util.DeleteLinkPanel;
 import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
 import com.cubeia.games.poker.admin.wicket.util.ParamBuilder;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
-import com.cubeia.poker.handhistory.api.HistoricHand;
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DefaultDataTable;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.markup.repeater.Item;
@@ -45,20 +36,17 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import com.cubeia.games.poker.admin.db.AdminDAO;
-import com.cubeia.games.poker.entity.TableConfigTemplate;
-import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Page for listing all tournaments. Currently lists sit&go tournaments.
  */
 public class ListTournaments extends BasePage {
 
-    private static final long serialVersionUID = 1L;
-
     @SpringBean(name = "adminDAO")
     private AdminDAO adminDAO;
-
 
     /**
      * Constructor that is invoked when page is invoked without a session.
@@ -66,13 +54,11 @@ public class ListTournaments extends BasePage {
      * @param parameters Page parameters
      */
     public ListTournaments(final PageParameters parameters) {
-    	super(parameters);
+        super(parameters);
         SortableDataProviderExtension dataProvider = new SortableDataProviderExtension();
         ArrayList<AbstractColumn> columns = new ArrayList<AbstractColumn>();
 
-        columns.add(new AbstractColumn<ScheduledTournamentConfiguration>(new Model<String>("Id")) {
-            private static final long serialVersionUID = 1L;
-
+        columns.add(new AbstractColumn<ScheduledTournamentConfiguration,String>(new Model<String>("Id")) {
             @Override
             public void populateItem(Item<ICellPopulator<ScheduledTournamentConfiguration>> item, String componentId, IModel<ScheduledTournamentConfiguration> model) {
                 ScheduledTournamentConfiguration tournament = model.getObject();
@@ -90,19 +76,18 @@ public class ListTournaments extends BasePage {
             }
         });
 
-//        columns.add(new PropertyColumn(new Model("Id"), "id"));
-        columns.add(new PropertyColumn(new Model("Name"), "configuration.name"));
-        columns.add(new PropertyColumn(new Model("Seats"), "configuration.seatsPerTable"));
-        columns.add(new PropertyColumn(new Model("Min"), "configuration.minPlayers"));
-        columns.add(new PropertyColumn(new Model("Max"), "configuration.maxPlayers"));
+        columns.add(new PropertyColumn(new Model<String>("Name"), "configuration.name"));
+        columns.add(new PropertyColumn(new Model<String>("Seats"), "configuration.seatsPerTable"));
+        columns.add(new PropertyColumn(new Model<String>("Min"), "configuration.minPlayers"));
+        columns.add(new PropertyColumn(new Model<String>("Max"), "configuration.maxPlayers"));
+        columns.add(new PropertyColumn(new Model<String>("Buy-in"), "configuration.buyIn"));
+        columns.add(new PropertyColumn(new Model<String>("Fee"), "configuration.fee"));
         
-        columns.add(new AbstractColumn<ScheduledTournamentConfiguration>(new Model<String>("Delete")) {
-        	
-            private static final long serialVersionUID = 1L;
+        columns.add(new AbstractColumn<ScheduledTournamentConfiguration,String>(new Model<String>("Delete")) {
 
             @Override
             public void populateItem(Item<ICellPopulator<ScheduledTournamentConfiguration>> item, String componentId, IModel<ScheduledTournamentConfiguration> model) {
-            	ScheduledTournamentConfiguration table = model.getObject();
+                ScheduledTournamentConfiguration table = model.getObject();
                 Component panel = new DeleteLinkPanel(componentId, ScheduledTournamentConfiguration.class, table.getId(), ListTournaments.class);
                 item.add(panel);
             }
@@ -113,7 +98,7 @@ public class ListTournaments extends BasePage {
             }
         });
 
-        DefaultDataTable userTable = new DefaultDataTable("tournamentTable", columns, dataProvider, 20);
+        DefaultDataTable<ScheduledTournamentConfiguration,String> userTable = new DefaultDataTable("tournamentTable", columns, dataProvider, 20);
         add(userTable);
     }
 
@@ -121,7 +106,7 @@ public class ListTournaments extends BasePage {
         return adminDAO.getScheduledTournamentConfigurations();
     }
 
-    private final class SortableDataProviderExtension extends SortableDataProvider<ScheduledTournamentConfiguration> {
+    private final class SortableDataProviderExtension extends SortableDataProvider<ScheduledTournamentConfiguration,String> {
         private static final long serialVersionUID = 1L;
 
         public SortableDataProviderExtension() {
@@ -129,8 +114,8 @@ public class ListTournaments extends BasePage {
         }
 
         @Override
-        public Iterator<ScheduledTournamentConfiguration> iterator(int first, int count) {
-            return getTournamentList().subList(first, count + first).iterator();
+        public Iterator<ScheduledTournamentConfiguration> iterator(long first, long count) {
+            return getTournamentList().subList((int)first, (int)(count + first)).iterator();
         }
 
         @Override
@@ -139,13 +124,13 @@ public class ListTournaments extends BasePage {
         }
 
         @Override
-        public int size() {
+        public long size() {
             return getTournamentList().size();
         }
     }
 
     @Override
     public String getPageTitle() {
-        return "Tournaments";
+        return "Scheduled Tournaments";
     }
 }

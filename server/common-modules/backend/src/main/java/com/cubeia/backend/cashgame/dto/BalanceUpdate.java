@@ -35,12 +35,6 @@ public class BalanceUpdate implements Serializable {
         this.balanceVersionNumber = balanceVersionNumber;
     }
 
-    @Override
-    public String toString() {
-        return "BalanceUpdate [playerSessionId=" + getPlayerSessionId() + ", balance=" + getBalance() + ", balanceVersionNumber="
-                + getBalanceVersionNumber() + "]";
-    }
-
     public PlayerSessionId getPlayerSessionId() {
         return playerSessionId;
     }
@@ -53,5 +47,14 @@ public class BalanceUpdate implements Serializable {
         return balanceVersionNumber;
     }
 
-
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("BalanceUpdate");
+        sb.append("{playerSessionId=").append(playerSessionId);
+        sb.append(", balance=").append(balance);
+        sb.append(", balanceVersionNumber=").append(balanceVersionNumber);
+        sb.append('}');
+        return sb.toString();
+    }
 }

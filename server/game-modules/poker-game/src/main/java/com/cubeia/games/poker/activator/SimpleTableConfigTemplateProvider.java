@@ -24,6 +24,7 @@ import static java.util.Collections.singletonList;
 import java.util.List;
 
 import com.cubeia.games.poker.entity.TableConfigTemplate;
+import com.cubeia.poker.timing.TimingFactory;
 import com.google.inject.Singleton;
 
 @Singleton
@@ -36,7 +37,7 @@ public class SimpleTableConfigTemplateProvider implements TableConfigTemplatePro
         t.setAnte(100);
         t.setSeats(10);
         t.setVariant(TEXAS_HOLDEM);
-        t.setTiming(DEFAULT);
+        t.setTiming(TimingFactory.getRegistry().getDefaultTimingProfile());
         t.setTTL(60000);
         t.setMinEmptyTables(5);
         t.setMinTables(10);

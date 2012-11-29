@@ -18,18 +18,33 @@
 package com.cubeia.games.poker.tournament.configuration;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.quartz.CronTrigger;
 
 import java.util.Date;
+import java.util.TimeZone;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
-import static org.quartz.CronScheduleBuilder.cronSchedule;
-import static org.quartz.CronScheduleBuilder.dailyAtHourAndMinute;
-import static org.quartz.TriggerBuilder.newTrigger;
 
 public class TournamentScheduleTest {
+
+    private TimeZone originalTimeZone;
+
+    @Before
+    public void setup() {
+        originalTimeZone = TimeZone.getDefault();
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
+        DateTimeZone.setDefault(DateTimeZone.forTimeZone(TimeZone.getTimeZone("GMT")));
+    }
+
+    @After
+    public void after() {
+        TimeZone.setDefault(originalTimeZone);
+        DateTimeZone.setDefault(DateTimeZone.forTimeZone(originalTimeZone));
+    }
 
     @Test
     public void testNextAnnounceTime() {

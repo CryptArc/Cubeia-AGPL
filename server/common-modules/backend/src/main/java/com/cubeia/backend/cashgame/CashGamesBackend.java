@@ -17,7 +17,6 @@
 
 package com.cubeia.backend.cashgame;
 
-import com.cubeia.backend.cashgame.callback.OpenSessionCallback;
 import com.cubeia.backend.cashgame.dto.AllowJoinResponse;
 import com.cubeia.backend.cashgame.dto.AnnounceTableRequest;
 import com.cubeia.backend.cashgame.dto.AnnounceTableResponse;
@@ -29,6 +28,7 @@ import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
 import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
 import com.cubeia.backend.cashgame.dto.ReserveRequest;
 import com.cubeia.backend.cashgame.dto.ReserveResponse;
+import com.cubeia.backend.cashgame.dto.TransferMoneyRequest;
 import com.cubeia.backend.cashgame.exceptions.AnnounceTableFailedException;
 import com.cubeia.backend.cashgame.exceptions.BatchHandFailedException;
 import com.cubeia.backend.cashgame.exceptions.CloseSessionFailedException;
@@ -39,18 +39,18 @@ import com.cubeia.games.poker.common.Money;
 
 /**
  * Cash game backend abstraction.
- * 
- * <p>This interface contains methods needed by a cash game (poker 
+ * <p/>
+ * <p>This interface contains methods needed by a cash game (poker
  * for example) when interacting with a backend system (wallet). <p/>
- * 
+ *
  * @author w
  */
 public interface CashGamesBackend {
-	
-	/**
-	 * Method used to stop tables from starting new hands.
-	 */
-	boolean isSystemShuttingDown();
+
+    /**
+     * Method used to stop tables from starting new hands.
+     */
+    boolean isSystemShuttingDown();
 
     /**
      * Generate a new hand ID. This method is synchronous and
@@ -70,26 +70,26 @@ public interface CashGamesBackend {
     AllowJoinResponse allowJoinTable(int playerId);
 
     /**
-     * Announce a table created by the game.
+     * Announces a table created by the game.
      * This call can be used if tables needs to be populated with external
      * data (external table ids for example) before use.
      */
     AnnounceTableResponse announceTable(AnnounceTableRequest request) throws AnnounceTableFailedException;
 
     /**
-     * Open a player session.
+     * Opens a table session for a player.
      */
     OpenSessionResponse openSession(OpenSessionRequest request) throws OpenSessionFailedException;
 
     /**
-     * Close a player session previously opened with {@link #openSession(OpenSessionRequest, OpenSessionCallback)}.
+     * Closes a table session previously opened with {@link #openSession(OpenSessionRequest)}.
      */
     void closeSession(CloseSessionRequest request) throws CloseSessionFailedException;
 
     /**
      * Reserve currency for a game. An open session is needed.
      */
-    ReserveResponse reserve(ReserveRequest request) throws ReserveFailedException; 
+    ReserveResponse reserve(ReserveRequest request) throws ReserveFailedException;
 
     /**
      * Report the result of a hand.
@@ -107,4 +107,18 @@ public interface CashGamesBackend {
      */
     BalanceUpdate getSessionBalance(PlayerSessionId sessionId) throws GetBalanceFailedException;
 
+    /**
+     * Transfers money between the two given session accounts.
+     *
+     */
+    void transfer(TransferMoneyRequest request);
+
+    /**
+     * Transfers money from the given account to the rake account.
+     *
+     * @param fromAccount
+     * @param money
+     * @param comment
+     */
+    void transferMoneyToRakeAccount(PlayerSessionId fromAccount, Money money, String comment);
 }

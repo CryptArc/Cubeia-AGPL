@@ -42,4 +42,13 @@ public class BatchHandResponse implements Serializable {
     public List<TransactionUpdate> getResultingBalances() {
         return new ArrayList<TransactionUpdate>(resultingBalances);
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("BatchHandResponse");
+        sb.append("{resultingBalances=").append(resultingBalances);
+        sb.append('}');
+        return sb.toString();
+    }
 }

@@ -100,7 +100,9 @@ Poker.CommunicationHandler = Class.extend({
         if (status === FIREBASE.ConnectionStatus.CONNECTED) {
             this.retryCount = 0;
             this.showConnectStatus("Connected");
+            this.initOperatorConfig();
             this.lobbyLayoutManager.showLogin();
+
         } else if (status === FIREBASE.ConnectionStatus.DISCONNECTED) {
             this.retryCount++;
             this.showConnectStatus("Disconnected, retrying (count " +this.retryCount+")");
@@ -110,6 +112,14 @@ Poker.CommunicationHandler = Class.extend({
             },500);
         } else if(status === FIREBASE.ConnectionStatus.CONNECTING){
             this.showConnectStatus("Connecting");
+        }
+    },
+    initOperatorConfig : function() {
+        if(!Poker.OperatorConfig.isPopulated()) {
+            var packet = new FB_PROTOCOL.LocalServiceTransportPacket();
+            packet.seq = 0;
+            packet.servicedata = utf8.toByteArray("0");
+            this.connector.sendProtocolObject(packet);
         }
     },
     connect : function () {

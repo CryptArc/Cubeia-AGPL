@@ -219,7 +219,7 @@ public class TournamentScanner implements PokerActivator, Runnable {
     }
 
     private void checkScheduledTournaments() {
-        log.info("Checking scheduled tournaments.");
+        log.trace("Checking scheduled tournaments.");
         Collection<ScheduledTournamentConfiguration> tournamentSchedule = tournamentScheduleProvider.getTournamentSchedule();
 
         Set<String> existingTournaments = getExistingTournaments();
@@ -242,7 +242,7 @@ public class TournamentScanner implements PokerActivator, Runnable {
         for (MttLobbyObject tournament : tournamentInstances) {
             String identifier = getStringAttribute(tournament, IDENTIFIER.name());
             if (!isNullOrEmpty(identifier)) {
-                log.debug("Found tournament with identifier " + identifier);
+                log.trace("Found tournament with identifier " + identifier);
                 existingTournaments.add(identifier);
             }
         }
@@ -259,7 +259,7 @@ public class TournamentScanner implements PokerActivator, Runnable {
     }
 
     private void checkSitAndGos() {
-        log.debug("Checking sit and gos.");
+        log.trace("Checking sit and gos.");
         MttLobbyObject[] tournamentInstances = factory.listTournamentInstances();
         Set<String> missingTournaments = new HashSet<String>();
         Map<String, SitAndGoConfiguration> requestedConfigurations = mapToName(sitAndGoConfigurationProvider.getConfigurations());
@@ -295,6 +295,7 @@ public class TournamentScanner implements PokerActivator, Runnable {
         }
 
         public void run() {
+            log.debug("Destroying tournament with game id " + PokerTournamentActivatorImpl.POKER_GAME_ID + " and mttid " + mttid);
             factory.destroyMtt(PokerTournamentActivatorImpl.POKER_GAME_ID, mttid);
         }
     }

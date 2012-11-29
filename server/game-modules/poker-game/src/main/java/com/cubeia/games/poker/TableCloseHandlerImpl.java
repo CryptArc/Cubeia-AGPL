@@ -34,7 +34,7 @@ import com.cubeia.games.poker.handler.TableCloseHandler;
 import com.cubeia.games.poker.io.protocol.Enums;
 import com.cubeia.games.poker.io.protocol.ErrorPacket;
 import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
-import com.cubeia.games.poker.lobby.PokerLobbyAttributes;
+import com.cubeia.games.poker.common.lobby.PokerLobbyAttributes;
 import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.adapter.SystemShutdownException;

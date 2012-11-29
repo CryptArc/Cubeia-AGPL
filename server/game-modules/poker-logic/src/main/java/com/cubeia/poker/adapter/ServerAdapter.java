@@ -227,4 +227,7 @@ public interface ServerAdapter {
     
     Random getSystemRNG();
 
+    void notifyBlindsLevelUpdated(int smallBlindAmount, int bigBlindAmount, int ante, boolean aBreak, int durationInMinutes);
+
+    void notifyWaitingToStartBreak();
 }

@@ -19,8 +19,14 @@ package com.cubeia.games.poker.tournament.configuration;
 
 import org.joda.time.DateTime;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.io.Serializable;
+
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.EAGER;
 
 /**
  * This is the configuration for one stream of scheduled tournaments.
@@ -34,10 +40,10 @@ public class ScheduledTournamentConfiguration implements Serializable {
     @GeneratedValue
     private Integer id;
 
-    @ManyToOne(cascade = {CascadeType.ALL})
+    @ManyToOne(fetch = EAGER, cascade = ALL)
     private TournamentSchedule schedule;
 
-    @ManyToOne(cascade = {CascadeType.ALL})
+    @ManyToOne(fetch = EAGER, cascade = ALL)
     private TournamentConfiguration configuration;
 
     public ScheduledTournamentConfiguration() {

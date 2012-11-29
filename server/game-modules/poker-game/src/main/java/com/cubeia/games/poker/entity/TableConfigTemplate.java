@@ -20,12 +20,9 @@ package com.cubeia.games.poker.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
-import com.cubeia.poker.timing.Timings;
+import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.variant.PokerVariant;
 
 @Entity
@@ -69,8 +66,8 @@ public class TableConfigTemplate implements Serializable {
     @Column(nullable = false)
     private int seats;
 
-    @Column(nullable = false)
-    private Timings timing;
+    @ManyToOne(cascade = {CascadeType.ALL})
+    private TimingProfile timing;
 
     @Column(nullable = false)
     private long rakeLimit = DEF_RAKE_LIMIT;
@@ -116,11 +113,11 @@ public class TableConfigTemplate implements Serializable {
         this.rakeFraction = rakeFraction;
     }
 
-    public Timings getTiming() {
+    public TimingProfile getTiming() {
         return timing;
     }
 
-    public void setTiming(Timings timing) {
+    public void setTiming(TimingProfile timing) {
         this.timing = timing;
     }
 
@@ -271,7 +268,11 @@ public class TableConfigTemplate implements Serializable {
         if (seats != other.seats) {
             return false;
         }
-        if (timing != other.timing) {
+        if (timing == null) {
+            if (other.timing != null) {
+                return false;
+            }
+        } else if (!timing.equals(other.timing)) {
             return false;
         }
         if (variant != other.variant) {

@@ -25,6 +25,7 @@ import com.cubeia.firebase.guice.inject.Log4j;
 import com.cubeia.games.poker.entity.TableConfigTemplate;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.joda.time.DateTime;
 
 @Singleton
 public class ActivatorTableManagerImpl implements ActivatorTableManager {
@@ -43,11 +44,12 @@ public class ActivatorTableManagerImpl implements ActivatorTableManager {
 
     @Override
     public void run() {
-        log.debug("Table manager executing.");
+
+        log.trace("Table manager executing.");
         List<TableConfigTemplate> templates = provider.getTemplates();
-        log.debug("Found " + templates.size() + " templates.");
+        log.trace("Found " + templates.size() + " templates.");
         List<TableModifierAction> actions = inspector.match(templates);
-        log.debug("Inspector reports " + actions.size() + " actions.");
+        log.trace("Inspector reports " + actions.size() + " actions.");
         for (TableModifierAction a : actions) {
             handler.handleAction(a);
         }

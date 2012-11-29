@@ -20,6 +20,9 @@ package com.cubeia.backend.firebase;
 import com.cubeia.backend.cashgame.Asynchronous;
 import com.cubeia.backend.cashgame.CashGamesBackend;
 import com.cubeia.backend.cashgame.PlayerSessionId;
+import com.cubeia.backend.cashgame.TableId;
+import com.cubeia.backend.cashgame.TournamentId;
+import com.cubeia.backend.cashgame.TournamentSessionId;
 import com.cubeia.backend.cashgame.dto.AllowJoinResponse;
 import com.cubeia.backend.cashgame.dto.AnnounceTableRequest;
 import com.cubeia.backend.cashgame.dto.BalanceUpdate;
@@ -27,7 +30,10 @@ import com.cubeia.backend.cashgame.dto.BatchHandRequest;
 import com.cubeia.backend.cashgame.dto.BatchHandResponse;
 import com.cubeia.backend.cashgame.dto.CloseSessionRequest;
 import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
+import com.cubeia.backend.cashgame.dto.OpenTableSessionRequest;
+import com.cubeia.backend.cashgame.dto.OpenTournamentSessionRequest;
 import com.cubeia.backend.cashgame.dto.ReserveRequest;
+import com.cubeia.backend.cashgame.dto.TransferMoneyRequest;
 import com.cubeia.backend.cashgame.exceptions.BatchHandFailedException;
 import com.cubeia.backend.cashgame.exceptions.CloseSessionFailedException;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
@@ -50,7 +56,6 @@ public interface AsynchronousCashGamesBackend {
      */
     boolean isSystemShuttingDown();
 
-    
     /**
      * This is an asynchronous call, the response
      * will be sent as object action to the table. 
@@ -65,40 +70,74 @@ public interface AsynchronousCashGamesBackend {
      * This is an asynchronous call, the response
      * will be sent as object action to the table. 
      * 
-     * <p>See {@link CashGamesBackend} for more 
+     * <p>See {@link CashGamesBackend#openSession(OpenSessionRequest)} for more
      * documentation.</p> 
      */
     @Asynchronous
-    void openSession(OpenSessionRequest request);
+    void openTableSession(OpenTableSessionRequest request);
 
     /**
-     * See {@link CashGamesBackend} for documentation. 
+     * This is an asynchronous call, the response
+     * will be sent as object action to the tournament.
+     *
+     */
+    @Asynchronous
+    void openTournamentSession(OpenTournamentSessionRequest request);
+
+    /**
+     * This is an asynchronous call, the response
+     * will be sent as object action to the tournament.
+     *
+     * The opening balance will be transferred to the tournament account
+     * directly after the session has been openend.
+     *
+     */
+    @Asynchronous
+    void openTournamentPlayerSession(OpenTournamentSessionRequest request, TournamentSessionId tournamentSessionId);
+
+    /**
+     * See {@link CashGamesBackend#closeSession(CloseSessionRequest)} for documentation.
      */
     void closeSession(CloseSessionRequest request) throws CloseSessionFailedException;
+
+    /**
+     * See {@link CashGamesBackend#closeSession(CloseSessionRequest)} for documentation.
+     */
+    @Asynchronous
+    void closeTournamentSession(CloseSessionRequest request, TournamentId tournamentId);
 
     /**
      * This is an asynchronous call, the response
      * will be sent as object action to the table. 
      * 
-     * <p>See {@link CashGamesBackend} for more 
+     * <p>See {@link CashGamesBackend#reserve(ReserveRequest)} for more
      * documentation.</p> 
      */
     @Asynchronous
-    void reserve(ReserveRequest request);
+    void reserveMoneyForTable(ReserveRequest request, TableId tableId);
 
     /**
-     * See {@link CashGamesBackend} for documentation. 
+     * See {@link CashGamesBackend#transfer(TransferMoneyRequest)} for documentation.
+     */
+    public void transfer(TransferMoneyRequest request);
+
+    /**
+     * See {@link CashGamesBackend#batchHand(BatchHandRequest)} for documentation.
      */
     BatchHandResponse batchHand(BatchHandRequest request) throws BatchHandFailedException;
 
     /**
-     * See {@link CashGamesBackend} for documentation. 
+     * See {@link CashGamesBackend#getMainAccountBalance(int)} for documentation.
      */
     Money getMainAccountBalance(int playerId) throws GetBalanceFailedException;
 
     /**
-     * See {@link CashGamesBackend} for documentation. 
+     * See {@link CashGamesBackend#getSessionBalance(PlayerSessionId)} for documentation.
      */    
     BalanceUpdate getSessionBalance(PlayerSessionId sessionId) throws GetBalanceFailedException;
 
+    /**
+     * See {@link CashGamesBackend#transferMoneyToRakeAccount(PlayerSessionId, Money, String)} for documentation.
+     */
+    void transferMoneyToRakeAccount(PlayerSessionId sessionAccountToTransferFrom, Money moneyToTransferToRakeAccount, String comment);
 }

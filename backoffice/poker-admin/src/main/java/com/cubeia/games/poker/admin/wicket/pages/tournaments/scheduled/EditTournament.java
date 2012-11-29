@@ -17,9 +17,12 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled;
 
+import com.cubeia.games.poker.admin.db.AdminDAO;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.games.poker.admin.wicket.pages.tournaments.configuration.TournamentConfigurationPanel;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
+import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
 import org.apache.wicket.extensions.yui.calendar.DateField;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
@@ -29,20 +32,15 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import com.cubeia.games.poker.admin.db.AdminDAO;
-import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
-import com.cubeia.games.poker.admin.wicket.BasePage;
-
 public class EditTournament extends BasePage {
 
     @SpringBean(name="adminDAO")
     private AdminDAO adminDAO;
     
-    @SuppressWarnings("unused")
     private ScheduledTournamentConfiguration tournament;
     
     public EditTournament(final PageParameters parameters) {
-    	super(parameters);
+        super(parameters);
         final Integer tournamentId = parameters.get("tournamentId").toInt();
         
         loadFormData(tournamentId);
@@ -52,26 +50,21 @@ public class EditTournament extends BasePage {
             private static final long serialVersionUID = 1L;
             @Override
             protected void onSubmit() {
-                // TODO: Update tournament configuration here
-                ScheduledTournamentConfiguration object = getModel().getObject();
-                adminDAO.save(object);
+                ScheduledTournamentConfiguration configuration = getModel().getObject();
+                adminDAO.save(configuration);
                 info("Tournament updated, id = " + tournamentId);
                 setResponsePage(ListTournaments.class);
             }
         };
-        
-        tournamentForm.add(new TextField("name", new PropertyModel(this, "tournament.configuration.name")));
+
+        tournamentForm.add(new TournamentConfigurationPanel("configuration", new PropertyModel<TournamentConfiguration>(tournament, "configuration")));
         tournamentForm.add(new DateField("startDate", new PropertyModel(this, "tournament.schedule.startDate")));
         tournamentForm.add(new DateField("endDate", new PropertyModel(this, "tournament.schedule.endDate")));
         tournamentForm.add(new RequiredTextField("schedule", new PropertyModel(this, "tournament.schedule.cronSchedule")));
         tournamentForm.add(new TextField<Integer>("minutesInAnnounced", new PropertyModel(this, "tournament.schedule.minutesInAnnounced")));
         tournamentForm.add(new TextField<Integer>("minutesInRegistering", new PropertyModel(this, "tournament.schedule.minutesInRegistering")));
         tournamentForm.add(new TextField<Integer>("minutesVisibleAfterFinished", new PropertyModel(this, "tournament.schedule.minutesVisibleAfterFinished")));
-        tournamentForm.add(new TextField<Integer>("seatsPerTable", new PropertyModel(this, "tournament.configuration.seatsPerTable")));
-        tournamentForm.add(new TextField<Integer>("timingType", new PropertyModel(this, "tournament.configuration.timingType")));
-        tournamentForm.add(new TextField<Integer>("minPlayers", new PropertyModel(this, "tournament.configuration.minPlayers")));
-        tournamentForm.add(new TextField<Integer>("maxPlayers", new PropertyModel(this, "tournament.configuration.maxPlayers")));
-        
+
         add(tournamentForm);
 
         add(new FeedbackPanel("feedback"));
@@ -85,5 +78,4 @@ public class EditTournament extends BasePage {
     public String getPageTitle() {
         return "Edit Tournament";
     }
-
 }

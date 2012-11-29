@@ -28,6 +28,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
 
+import com.cubeia.backend.cashgame.dto.OpenTableSessionRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -79,7 +80,6 @@ public class BackendPlayerSessionHandlerTest {
         verify(cashGamesBackendContract).closeSession(requestCaptor.capture());
         CloseSessionRequest closeSessionRequest = requestCaptor.getValue();
         assertThat(closeSessionRequest.getPlayerSessionId(), is(sessionId));
-        assertThat(closeSessionRequest.getRoundNumber(), is(-1));
     }
 
     @Test(expected = IllegalStateException.class)
@@ -93,28 +93,23 @@ public class BackendPlayerSessionHandlerTest {
         TableId tableId = new TableId(1, 1);
         Map<String, Serializable> extProps = Collections.singletonMap(EXT_PROP_KEY_TABLE_ID, (Serializable) tableId);
         when(state.getExternalTableProperties()).thenReturn(extProps);
-        // FirebaseCallbackFactory callbackFactory = mock(FirebaseCallbackFactory.class);
-        // when(cashGamesBackendContract.getCallbackFactory()).thenReturn(callbackFactory);
-        // OpenSessionCallback openSessionCallback = mock(OpenSessionCallback.class);
-        // when(callbackFactory.createOpenSessionCallback(table)).thenReturn(openSessionCallback);
 
         int playerId = 234989;
-        backendPlayerSessionHandler.startWalletSession(state, table, playerId, -1);
+        backendPlayerSessionHandler.startWalletSession(state, table, playerId);
 
         // verify(callbackFactory).createOpenSessionCallback(table);
-        ArgumentCaptor<OpenSessionRequest> requestCaptor = ArgumentCaptor.forClass(OpenSessionRequest.class);
-        verify(cashGamesBackendContract).openSession(requestCaptor.capture());
-        OpenSessionRequest openSessionRequest = requestCaptor.getValue();
+        ArgumentCaptor<OpenTableSessionRequest> requestCaptor = ArgumentCaptor.forClass(OpenTableSessionRequest.class);
+        verify(cashGamesBackendContract).openTableSession(requestCaptor.capture());
+        OpenTableSessionRequest openSessionRequest = requestCaptor.getValue();
         assertThat(openSessionRequest.getPlayerId(), is(playerId));
         assertThat(openSessionRequest.getTableId(), is(tableId));
-        assertThat(openSessionRequest.getRoundNumber(), is(-1));
     }
 
     @Test(expected = NullPointerException.class)
     public void testStartWalletSessionFailIfTableNotAnnounced() {
         Map<String, Serializable> extProps = Collections.emptyMap();
         when(state.getExternalTableProperties()).thenReturn(extProps);
-        backendPlayerSessionHandler.startWalletSession(state, table, 234989, -1);
+        backendPlayerSessionHandler.startWalletSession(state, table, 234989);
     }
 
 }

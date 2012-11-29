@@ -17,67 +17,68 @@
 
 package com.cubeia.games.poker.admin.wicket;
 
-import static com.cubeia.games.poker.admin.wicket.util.ParamBuilder.start;
-
-import org.apache.wicket.markup.html.IHeaderResponse;
+import com.cubeia.network.shared.web.wicket.navigation.Breadcrumbs;
+import com.cubeia.network.shared.web.wicket.navigation.MenuPanel;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.StatelessForm;
-import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
-import com.cubeia.games.poker.admin.wicket.util.ParamBuilder;
-
 public abstract class BasePage extends WebPage {
 
-	private static final long serialVersionUID = -913606276144395037L;
+    private static final long serialVersionUID = -913606276144395037L;
 
-	private String query;
+    private String query;
 
-	public BasePage(PageParameters p) {
-		add(new MenuPanel("menuPanel", this.getClass()));
-		// defer setting the title model object as the title may not be generated now
-		add(new Label("title", new Model<String>()));
-		
-		/*Form form = new Form("global.searchform") {
-			
-			protected void onSubmit() {
-				if(query != null) {
-					setResponsePage(SearchPage.class, start("query", query).end());
-				}
-			};
-		};
-		
-		form.add(new TextField<String>("global.searchbox", new PropertyModel<String>(this, "query")));
-		add(form);*/
-	}
-	
-	public String getQuery() {
-		return query;
-	}
-	
-	public void setQuery(String query) {
-		this.query = query;
-	}
-	
-	public void renderHead(IHeaderResponse resp) {
-		resp.renderJavaScriptReference(new PackageResourceReference(BasePage.class,"jquery-1.7.2.min.js"));
-		resp.renderJavaScriptReference(new PackageResourceReference(BasePage.class,"jquery-tmpl-1.4.2.min.js"));
-		resp.renderCSSReference(new PackageResourceReference(BasePage.class,"style.css"));
-		resp.renderCSSReference(new PackageResourceReference(BasePage.class,"bootstrap-responsive.min.css"));
-		resp.renderCSSReference(new PackageResourceReference(BasePage.class,"bootstrap.min.css"));
-	}
-	
-	@Override
-	protected void onBeforeRender() {
-	    super.onBeforeRender();
-	    
-	    get("title").setDefaultModelObject(getPageTitle());
-	}
-	
-	public abstract String getPageTitle();
+    public BasePage(PageParameters p) {
+        add(new MenuPanel("menuPanel", SiteMap.getPages(), this.getClass()));
+        add(new Breadcrumbs("breadcrumb", SiteMap.getPages(), this.getClass()));
+        // defer setting the title model object as the title may not be generated now
+        add(new Label("title", new Model<String>()));
+
+        /*Form form = new Form("global.searchform") {
+
+              protected void onSubmit() {
+                  if(query != null) {
+                      setResponsePage(SearchPage.class, start("query", query).end());
+                  }
+              };
+          };
+
+          form.add(new TextField<String>("global.searchbox", new PropertyModel<String>(this, "query")));
+          add(form);*/
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
+    }
+
+    public void renderHead(IHeaderResponse resp) {
+        resp.render(JavaScriptHeaderItem.forReference(new PackageResourceReference(BasePage.class, "jquery-1.7.2.min.js")));
+        resp.render(JavaScriptHeaderItem.forReference(new PackageResourceReference(BasePage.class, "jquery-tmpl-1.4.2.min.js")));
+    }
+
+    protected <T>ChoiceRenderer<T> choiceRenderer() {
+        return choiceRenderer("name");
+    }
+
+    protected <T>ChoiceRenderer<T> choiceRenderer(String property) {
+        return new ChoiceRenderer<T>(property);
+    }
+
+    @Override
+    protected void onBeforeRender() {
+        super.onBeforeRender();
+        get("title").setDefaultModelObject(getPageTitle());
+    }
+
+    public abstract String getPageTitle();
 }

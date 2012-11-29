@@ -148,8 +148,6 @@ public class PokerLogicTest extends GuiceTest {
     }
 
     private void act(int playerId, PokerActionType actionType) {
-//		System.out.println("Options: "+mockServerAdapter.getActionRequest().getOptions());
-//		System.out.println("Option["+actionType+"]: "+mockServerAdapter.getActionRequest().getOption(actionType));
         act(playerId, actionType, mockServerAdapter.getLastActionRequest().getOption(actionType).getMinAmount());
     }
 
@@ -417,16 +415,12 @@ public class PokerLogicTest extends GuiceTest {
         addPlayers(state, mp);
 
 
-        state.setServerAdapter(new ServerAdapter() {
+        state.setServerAdapter(new MockServerAdapter() {
             boolean foldActionReceived = false;
-            
-            @Override
-            public Random getSystemRNG() {
-            	return new Random();
-            }
 
             @Override
-            public void exposePrivateCards(ExposeCardsHolder holder) {
+            public Random getSystemRNG() {
+                return new Random();
             }
 
             @Override
@@ -443,110 +437,6 @@ public class PokerLogicTest extends GuiceTest {
                 }
             }
 
-            @Override
-            public void notifyNewRound() {
-            }
-
-            @Override
-            public void notifyCommunityCards(List<Card> cards) {
-            }
-
-            @Override
-            public void notifyDealerButton(int seatId) {
-            }
-
-            @Override
-            public void notifyBuyInInfo(int playerId, boolean mandatoryBuyin) {
-            }
-
-            @Override
-            public void notifyPrivateCards(int playerId, List<Card> cards) {
-            }
-
-            @Override
-            public void notifyPrivateExposedCards(int playerId, List<Card> cards) {
-            }
-
-            @Override
-            public void requestAction(ActionRequest request) {
-            }
-
-            @Override
-            public void requestMultipleActions(Collection<ActionRequest> requests) {
-            }
-
-            @Override
-            public void scheduleTimeout(long millis) {
-            }
-
-            @Override
-            public void reportTournamentRound(RoundReport report) {
-            }
-
-            @Override
-            public void cleanupPlayers(SitoutCalculator sitoutCalculator) {
-            }
-
-            @Override
-            public void notifyPlayerBalance(PokerPlayer p) {
-            }
-
-            @Override
-            public void notifyNewHand() {
-            }
-
-            @Override
-            public void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status, boolean isInCurrentHand) {
-            }
-
-            @Override
-            public void notifyDeckInfo(int size, Rank rankLow) {
-            }
-
-            @Override
-            public void notifyPotUpdates(Collection<Pot> pots, Collection<PotTransition> potTransitions) {
-            }
-
-            @Override
-            public void notifyBestHand(int playerId, HandType handType, List<Card> cardsInHand, boolean publicHand) {
-            }
-
-            @Override
-            public void notifyRakeInfo(RakeInfoContainer rakeInfoContainer) {
-            }
-
-            @Override
-            public void unseatPlayer(int playerId, boolean setAsWatcher) {
-            }
-
-            @Override
-            public void notifyTakeBackUncalledBet(int playerId, int amount) {
-            }
-
-            @Override
-            public void notifyExternalSessionReferenceInfo(int playerId, String externalTableReference, String externalTableSessionReference) {
-            }
-
-            @Override
-            public void notifyFutureAllowedActions(PokerPlayer player, List<PokerActionType> optionList) {
-            }
-
-            @Override
-            public void performPendingBuyIns(Collection<PokerPlayer> players) {
-            }
-
-            @Override
-            public void notifyHandStartPlayerStatus(int playerId, PokerPlayerStatus status) {
-            }
-
-            @Override
-            public void notifyDisconnected(int playerId) {
-            }
-
-            @Override
-            public String getIntegrationHandId() {
-                return "hid";
-            }
         });
         state.timeout();
         act(p[0], PokerActionType.SMALL_BLIND, 10);

@@ -17,6 +17,9 @@
 
 package com.cubeia.games.poker.tournament;
 
+import com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse;
+import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
+import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.firebase.api.action.mtt.MttObjectAction;
 import com.cubeia.firebase.api.action.mtt.MttRoundReportAction;
 import com.cubeia.firebase.api.action.mtt.MttTablesCreatedAction;
@@ -29,7 +32,9 @@ import com.cubeia.firebase.api.mtt.support.registry.PlayerListener;
 import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.firebase.guice.tournament.TournamentAssist;
 import com.cubeia.firebase.guice.tournament.TournamentHandler;
+import com.cubeia.games.poker.common.SystemTime;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import org.apache.log4j.Logger;
 import org.apache.log4j.MDC;
@@ -44,10 +49,16 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
     private PokerTournamentUtil util = new PokerTournamentUtil();
 
     @Inject
+    private SystemTime dateFetcher;
+
+    @Inject
     private TournamentAssist support;
 
     @Service
     private TournamentHistoryPersistenceService historyService;
+
+    @Service
+    private CashGamesBackendService backend;
 
     @Override
     public PlayerInterceptor getPlayerInterceptor(MTTStateSupport state) {
@@ -61,6 +72,7 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
 
     @Override
     public void process(MttRoundReportAction action, MttInstance instance) {
+        log.debug("Date fetcher: " + dateFetcher);
         try {
             MDC.put(MDC_TAG, "Tournament[" + instance.getId() + "]");
             prepareTournament(instance).processRoundReport(action);
@@ -75,7 +87,7 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
         log.info("Tables created: " + action + " instance: " + instance);
         try {
             MDC.put(MDC_TAG, "Tournament[" + instance.getId() + "]");
-            prepareTournament(instance).handleTablesCreated();
+            prepareTournament(instance).handleTablesCreated(action);
         } finally {
             MDC.remove(MDC_TAG);
         }
@@ -85,10 +97,18 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
     public void process(MttObjectAction action, MttInstance instance) {
         try {
             MDC.put(MDC_TAG, "Tournament[" + instance.getId() + "]");
-            Object command = action.getAttachment();
-            if (command instanceof TournamentTrigger) {
-                TournamentTrigger trigger = (TournamentTrigger) command;
-                prepareTournament(instance).handleTrigger(trigger);
+            Object object = action.getAttachment();
+            PokerTournament tournament = prepareTournament(instance);
+            log.debug("Received mtt object action: " + object);
+            if (object instanceof TournamentTrigger) {
+                TournamentTrigger trigger = (TournamentTrigger) object;
+                tournament.handleTrigger(trigger);
+            } else if (object instanceof OpenSessionResponse) {
+                tournament.handleOpenSessionResponse((OpenSessionResponse) object);
+            } else if (object instanceof OpenSessionFailedResponse) {
+                tournament.handleOpenSessionResponseFailed((OpenSessionFailedResponse) object);
+            } else {
+                log.warn("Unexpected attachment: " + object);
             }
         } finally {
             MDC.remove(MDC_TAG);
@@ -160,7 +180,11 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
         if (historyService == null) {
             historyService = instance.getServiceRegistry().getServiceInstance(TournamentHistoryPersistenceService.class);
         }
-        tournament.injectTransientDependencies(instance, support, util.getStateSupport(instance), instance.getMttNotifier(), historyService);
+        if (backend == null) {
+            backend = instance.getServiceRegistry().getServiceInstance(CashGamesBackendService.class);
+        }
+        tournament.injectTransientDependencies(instance, support, util.getStateSupport(instance),
+                instance.getMttNotifier(), historyService, backend, dateFetcher);
     }
 
     private PokerTournament prepareTournament(MttInstance instance) {
@@ -171,5 +195,14 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
 
     public void setHistoryService(TournamentHistoryPersistenceService historyService) {
         this.historyService = historyService;
+    }
+
+    public void setBackend(CashGamesBackendService backend) {
+        this.backend = backend;
+    }
+
+    @VisibleForTesting
+    void setDateFetcher(SystemTime dateFetcher) {
+        this.dateFetcher = dateFetcher;
     }
 }

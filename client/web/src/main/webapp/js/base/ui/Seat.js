@@ -59,7 +59,7 @@ Poker.Seat = Class.extend({
            balanceDiv.html("All in");
            balanceDiv.removeClass("balance");
        } else {
-           balanceDiv.html(Poker.Utils.CURRENCY_SYMBOL + this.player.balance);
+           balanceDiv.html("&euro;"+this.player.balance);
            balanceDiv.addClass("balance");
        }
        this.handlePlayerStatus();
@@ -107,7 +107,7 @@ Poker.Seat = Class.extend({
        var icon = $("<div/>").addClass("player-action-icon").addClass(actionType.id+"-icon");
        if(amount>0) {
            this.actionAmount.removeClass("placed");
-           this.actionAmount.empty().append(Poker.Utils.CURRENCY_SYMBOL + amount).append(icon).show();
+           this.actionAmount.empty().append("&euro;"+amount).append(icon).show();
            this.animateActionAmount();
        }
    },

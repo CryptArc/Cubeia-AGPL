@@ -25,9 +25,11 @@ import java.util.List;
 
 public interface HistoryService {
 
-    public List<HistoricHand> findHandHistory(Integer playerId, Date fromDate, Date toDate);
+    public List<HistoricHand> findHandHistory(Integer playerId, String tableId, Date fromDate, Date toDate);
 
-    HistoricHand findById(String handId);
+    public HistoricHand findHandById(String handId);
 
     public List<HistoricTournament> findTournaments(Date fromDate, Date toDate);
+
+    public HistoricTournament findTournamentByHistoricId(String id);
 }

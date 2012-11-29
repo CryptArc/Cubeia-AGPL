@@ -31,4 +31,4 @@ web-client-bind-address=0.0.0.0\:9191
 # ssl-key-store-password=
 # ssl-key-store-type=jks
 
-com.cubeia.network.userservice.base-url=http://user-service:8080/user-service
+com.cubeia.network.userservice.base-url=http://localhost:8080/user-service

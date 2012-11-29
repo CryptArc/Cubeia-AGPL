@@ -48,7 +48,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
           self.tableComHandler.onMyPlayerAction(self.tableId,actionType,amount);
         };
         this.buyInDialog = new Poker.BuyInDialog(tableComHandler);
-        this.myActionsManager = new Poker.MyActionsManager(this.tableView,actionCallback);
+        this.myActionsManager = new Poker.MyActionsManager(this.tableView, actionCallback);
         this.templateManager = templateManager;
         this.capacity = capacity || this.capacity;
         this.seatTemplate = $("#seatTemplate").html();

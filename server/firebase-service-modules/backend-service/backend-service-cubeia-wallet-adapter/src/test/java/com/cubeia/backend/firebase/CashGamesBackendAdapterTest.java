@@ -21,10 +21,12 @@ import static com.cubeia.backend.firebase.CashGamesBackendAdapter.GAME_ID;
 import static com.cubeia.backend.firebase.CashGamesBackendAdapter.LICENSEE_ID;
 import static com.cubeia.backend.firebase.CashGamesBackendService.MARKET_TABLE_REFERENCE_KEY;
 import static com.cubeia.backend.firebase.CashGamesBackendService.MARKET_TABLE_SESSION_REFERENCE_KEY;
+import static java.lang.String.valueOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -32,8 +34,10 @@ import static org.mockito.Mockito.when;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Currency;
 import java.util.UUID;
 
+import com.cubeia.backend.cashgame.dto.OpenTableSessionRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -51,7 +55,6 @@ import com.cubeia.backend.cashgame.dto.BatchHandRequest;
 import com.cubeia.backend.cashgame.dto.BatchHandResponse;
 import com.cubeia.backend.cashgame.dto.CloseSessionRequest;
 import com.cubeia.backend.cashgame.dto.HandResult;
-import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
 import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
 import com.cubeia.backend.cashgame.dto.ReserveRequest;
 import com.cubeia.backend.cashgame.dto.ReserveResponse;
@@ -114,14 +117,18 @@ public class CashGamesBackendAdapterTest {
     public void testOpenSession() throws OpenSessionFailedException {
         int playerId = 3434;
         int tableIdInt = 8888;
-        TableId tableId = new TableId(1, tableIdInt);
+        String integrationId = "tableIntegrationId1234";
+        TableId tableId = new TableId(1, tableIdInt, integrationId);
         Money openingBalance = new Money(100, "EUR", 2);
-        int roundNumber = 4;
-        OpenSessionRequest request = new OpenSessionRequest(playerId, tableId, openingBalance, roundNumber);
+        OpenTableSessionRequest request = new OpenTableSessionRequest(playerId, tableId, openingBalance);
         long walletSessionId = 12234444L;
-        when(walletService.startSession(openingBalance.getCurrencyCode(), LICENSEE_ID, playerId, tableIdInt, GAME_ID, "unknown-" + playerId)).thenReturn(walletSessionId);
-        OpenSessionResponse respons = backend.openSession(request);
-        PlayerSessionId playerSessionIdImpl = respons.getSessionId();
+        when(walletService.startSession(openingBalance.getCurrencyCode(), LICENSEE_ID, playerId, integrationId, GAME_ID, "unknown-" + playerId))
+                .thenReturn(walletSessionId);
+        AccountBalanceResult balance = mock(AccountBalanceResult.class);
+        when(balance.getBalance()).thenReturn(new com.cubeia.backoffice.accounting.api.Money(Currency.getInstance("EUR"), BigDecimal.valueOf(10)));
+        when(walletService.getBalance(anyLong())).thenReturn(balance);
+        OpenSessionResponse response = backend.openSession(request);
+        PlayerSessionId playerSessionIdImpl = response.getSessionId();
         assertThat(playerSessionIdImpl.playerId, is(playerId));
         assertThat(playerSessionIdImpl.integrationSessionId, is("" + walletSessionId));
     }
@@ -130,9 +137,8 @@ public class CashGamesBackendAdapterTest {
     public void testCloseSession() {
         int playerId = 5555;
         long sessionId = 3939393L;
-        PlayerSessionId playerSessionId = new PlayerSessionId(playerId, String.valueOf(sessionId));
-        int roundNumber = 43;
-        CloseSessionRequest request = new CloseSessionRequest(playerSessionId, roundNumber);
+        PlayerSessionId playerSessionId = new PlayerSessionId(playerId, valueOf(sessionId));
+        CloseSessionRequest request = new CloseSessionRequest(playerSessionId);
         backend.closeSession(request);
         verify(walletService).endSessionAndDepositAll(Mockito.eq(LICENSEE_ID), Mockito.eq(sessionId), Mockito.anyString());
     }
@@ -141,11 +147,9 @@ public class CashGamesBackendAdapterTest {
     public void testReserve() throws ReserveFailedException {
         int playerId = 5555;
         long sessionId = 3939393L;
-        PlayerSessionId playerSessionId = new PlayerSessionId(playerId, String.valueOf(sessionId));
-        int roundNumber = 43;
+        PlayerSessionId playerSessionId = new PlayerSessionId(playerId, valueOf(sessionId));
         Money amount = new Money(223, "EUR", 2);
-        // com.cubeia.backoffice.accounting.api.Money walletAmount = new com.cubeia.backoffice.accounting.api.Money("EUR", 2, new BigDecimal("2.23"));
-        ReserveRequest request = new ReserveRequest(playerSessionId, roundNumber, amount, new TableId(1, 1));
+        ReserveRequest request = new ReserveRequest(playerSessionId, amount);
 
         AccountBalanceResult sessionBalance = mock(AccountBalanceResult.class);
         com.cubeia.backoffice.accounting.api.Money sessionBalanceMoney = new com.cubeia.backoffice.accounting.api.Money("EUR", 2, new BigDecimal("500"));
@@ -154,7 +158,7 @@ public class CashGamesBackendAdapterTest {
 
         ReserveResponse response = backend.reserve(request);
 
-        assertThat(response.getPlayerSessionId(), is((PlayerSessionId) playerSessionId));
+        assertThat(response.getPlayerSessionId(), is(playerSessionId));
         assertThat(response.getAmountReserved().getAmount(), is(amount.getAmount()));
         assertThat(response.getBalanceUpdate().getBalance().getAmount(), is(50000L));
         assertThat(response.getReserveProperties().get(MARKET_TABLE_SESSION_REFERENCE_KEY), containsString("CUBEIA-MARKET-SID-"));

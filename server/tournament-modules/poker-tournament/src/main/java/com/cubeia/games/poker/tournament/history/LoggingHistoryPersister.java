@@ -53,7 +53,7 @@ public class LoggingHistoryPersister implements TournamentHistoryPersistenceServ
     }
 
     @Override
-    public void blindsUpdated(String historicId, int ante, int smallBlind, int bigBlind, long now) {
+    public void blindsUpdated(String historicId, Integer ante, Integer smallBlind, Integer bigBlind, long now) {
         log.info("Tournament[ " + historicId + "]. Blinds updated to " + ante + " / " + smallBlind + " / " + bigBlind);
     }
 
@@ -70,5 +70,35 @@ public class LoggingHistoryPersister implements TournamentHistoryPersistenceServ
     @Override
     public void setName(String historicId, String name) {
         log.info("Tournament[ " + historicId + "]. Name " + name);
+    }
+
+    @Override
+    public void addTable(String historicId, String externalTableId) {
+        log.info("Tournament[ " + historicId + "]. Table created " + externalTableId);
+    }
+
+    @Override
+    public void playerRegistered(String historicId, int playerId, long now) {
+        log.info("Tournament[ " + historicId + "]. Player registered " + playerId);
+    }
+
+    @Override
+    public void playerUnregistered(String historicId, int playerId, long now) {
+        log.info("Tournament[ " + historicId + "]. Player un-registered " + playerId);
+    }
+
+    @Override
+    public void playerFailedUnregistering(String historicId, int playerId, String message, long now) {
+        log.info("Tournament[ " + historicId + "]. Player failed un-registering " + playerId);
+    }
+
+    @Override
+    public void playerOpenedSession(String historicId, int playerId, String sessionId, long now) {
+        log.info("Tournament[ " + historicId + "]. Player opened session " + playerId + " session: " + sessionId);
+    }
+
+    @Override
+    public void playerFailedOpeningSession(String historicId, int playerId, String message, long now) {
+        log.info("Tournament[ " + historicId + "]. Player failed opening session " + playerId + " message: " + message);
     }
 }

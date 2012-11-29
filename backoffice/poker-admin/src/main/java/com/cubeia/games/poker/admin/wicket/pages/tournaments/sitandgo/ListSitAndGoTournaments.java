@@ -19,11 +19,9 @@ package com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo;
 
 import com.cubeia.games.poker.admin.db.AdminDAO;
 import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.games.poker.admin.wicket.pages.tables.ListTables;
 import com.cubeia.games.poker.admin.wicket.util.DeleteLinkPanel;
 import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
 import com.cubeia.games.poker.admin.wicket.util.ParamBuilder;
-import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
@@ -59,11 +57,11 @@ public class ListSitAndGoTournaments extends BasePage {
      * @param parameters Page parameters
      */
     public ListSitAndGoTournaments(final PageParameters parameters) {
-    	super(parameters);
+        super(parameters);
         SortableDataProviderExtension dataProvider = new SortableDataProviderExtension();
         ArrayList<AbstractColumn> columns = new ArrayList<AbstractColumn>();
 
-        columns.add(new AbstractColumn<SitAndGoConfiguration>(new Model<String>("Id")) {
+        columns.add(new AbstractColumn<SitAndGoConfiguration,String>(new Model<String>("Id")) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -72,7 +70,7 @@ public class ListSitAndGoTournaments extends BasePage {
                 Component panel = new LabelLinkPanel(
                     componentId,
                     "" + tournament.getId(),
-                    EditTournament.class,
+                    EditSitAndGo.class,
                     ParamBuilder.params("tournamentId", tournament.getId()));
                 item.add(panel);
             }
@@ -83,19 +81,18 @@ public class ListSitAndGoTournaments extends BasePage {
             }
         });
 
-//        columns.add(new PropertyColumn(new Model("Id"), "id"));
         columns.add(new PropertyColumn(new Model("Name"), "configuration.name"));
         columns.add(new PropertyColumn(new Model("Seats"), "configuration.seatsPerTable"));
         columns.add(new PropertyColumn(new Model("Min"), "configuration.minPlayers"));
         columns.add(new PropertyColumn(new Model("Max"), "configuration.maxPlayers"));
+        columns.add(new PropertyColumn(new Model<String>("Buy-in"), "configuration.buyIn"));
+        columns.add(new PropertyColumn(new Model<String>("Fee"), "configuration.fee"));
         
-        columns.add(new AbstractColumn<SitAndGoConfiguration>(new Model<String>("Delete")) {
-        	
-            private static final long serialVersionUID = 1L;
+        columns.add(new AbstractColumn<SitAndGoConfiguration,String>(new Model<String>("Delete")) {
 
             @Override
             public void populateItem(Item<ICellPopulator<SitAndGoConfiguration>> item, String componentId, IModel<SitAndGoConfiguration> model) {
-            	SitAndGoConfiguration table = model.getObject();
+                SitAndGoConfiguration table = model.getObject();
                 Component panel = new DeleteLinkPanel(componentId, SitAndGoConfiguration.class, table.getId(), ListSitAndGoTournaments.class);
                 item.add(panel);
             }
@@ -114,7 +111,7 @@ public class ListSitAndGoTournaments extends BasePage {
         return adminDAO.getSitAndGoConfigurations();
     }
 
-    private final class SortableDataProviderExtension extends SortableDataProvider<SitAndGoConfiguration> {
+    private final class SortableDataProviderExtension extends SortableDataProvider<SitAndGoConfiguration,String> {
         private static final long serialVersionUID = 1L;
 
         public SortableDataProviderExtension() {
@@ -122,8 +119,8 @@ public class ListSitAndGoTournaments extends BasePage {
         }
 
         @Override
-        public Iterator<SitAndGoConfiguration> iterator(int first, int count) {
-            return getTournamentList().subList(first, count + first).iterator();
+        public Iterator<SitAndGoConfiguration> iterator(long first, long count) {
+            return getTournamentList().subList((int)first, (int)(count + first)).iterator();
         }
 
         @Override
@@ -132,13 +129,13 @@ public class ListSitAndGoTournaments extends BasePage {
         }
 
         @Override
-        public int size() {
+        public long size() {
             return getTournamentList().size();
         }
     }
 
     @Override
     public String getPageTitle() {
-        return "Sit and Go Tournaments";
+        return "Sit & Go Tournaments";
     }
 }

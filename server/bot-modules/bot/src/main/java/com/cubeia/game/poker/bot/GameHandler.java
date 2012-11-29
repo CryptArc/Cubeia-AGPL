@@ -274,6 +274,12 @@ public class GameHandler implements PacketVisitor {
     public void visit(DeckInfo packet) {
     }
 
+    public void visit(WaitingToStartBreak packet) {
+    }
+
+    public void visit(BlindsAreUpdated packet) {
+    }
+
     public void visit(ErrorPacket packet) {
     }
 

@@ -93,21 +93,6 @@ public class BettingRound implements Round, BettingRoundContext {
      */
     private long minBet;
 
-    private Predicate<PokerPlayer> nonFolded = new PokerPredicate() {
-
-		private static final long serialVersionUID = -2668212962504220510L;
-
-    };
-
-    private static class  PokerPredicate implements Predicate<PokerPlayer>, Serializable {
-        private static final long serialVersionUID = 3189327257295089272L;
-        @Override
-        public boolean apply(PokerPlayer player) {
-            return !player.hasFolded();
-        }
-    }
-
-
     // TODO: Would probably be nice if the playerToActCalculator knew all it needs to know, so we don't need to pass "seatIdToStart.." as well.
     public BettingRound(int seatIdToStartBettingAfter,
                         PokerContext context,
@@ -276,7 +261,7 @@ public class BettingRound implements Round, BettingRoundContext {
 
     @VisibleForTesting
     protected boolean calculateIfRoundFinished() {
-        if (Sets.filter(playersInPlayAtRoundStart, nonFolded).size() < 2) {
+        if (context.countNonFoldedPlayers(playersInPlayAtRoundStart) < 2) {
             return true;
         }
         for (PokerPlayer p : context.getPlayersInHand()) {

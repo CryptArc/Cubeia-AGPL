@@ -315,12 +315,12 @@
 
     <!-- A player has requested to sit in again (Client -> Server) -->
     <struct name="player_sitin_request">
-    	<var name="player" type="int32"/>
+        <var name="player" type="int32"/>
     </struct>
 
     <!-- A player has requested to sit out (Client -> Server) -->
     <struct name="player_sitout_request">
-	<var name="player" type="int32"/>
+        <var name="player" type="int32"/>
     </struct>
 
     <!-- Deck information -->
@@ -329,6 +329,18 @@
         <var name="rank_low" type="rank"/>
     </struct>
 
+    <!-- Sent when a table has finished its hand, but no new hand will start because we
+         are waiting for all tables to finish their hands, before the break starts. -->
+    <struct name="waiting_to_start_break" />
+
+    <!-- Sent when a new blinds level starts at a tournament table. Could be a break. -->
+    <struct name="blinds_are_updated">
+        <var name="small_blind" type="int32" />
+        <var name="big_blind" type="int32" />
+        <var name="ante" type="int32" />
+        <var name="is_break" type="bool" />
+        <var name="duration_in_minutes" type="int32" />
+    </struct>
 
     <!-- ==========  Misc Structs ========== -->
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010 Cubeia Ltd <info@cubeia.com>
+ * Copyright (C) 2012 Cubeia Ltd <info@cubeia.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,24 +17,19 @@
 
 package com.cubeia.backend.cashgame.dto;
 
-import com.cubeia.backend.cashgame.TableId;
 import com.cubeia.games.poker.common.Money;
 
 import java.io.Serializable;
 
 public class OpenSessionRequest implements Serializable {
-
     private static final long serialVersionUID = 74126213720786784L;
-	
     public final int playerId;
+    public final String objectId;
     public final Money openingBalance;
-    public final TableId tableId;
-    public final int roundNumber; // holds a counter of number of played hands at table
 
-    public OpenSessionRequest(int playerId, TableId tableId, Money openingBalance, int roundNumber) {
+    public OpenSessionRequest(int playerId, String objectId, Money openingBalance) {
         this.playerId = playerId;
-        this.tableId = tableId;
-        this.roundNumber = roundNumber;
+        this.objectId = objectId;
         this.openingBalance = openingBalance;
     }
 
@@ -46,11 +41,18 @@ public class OpenSessionRequest implements Serializable {
         return openingBalance;
     }
 
-    public TableId getTableId() {
-        return tableId;
+    public String getObjectId() {
+        return objectId;
     }
 
-    public int getRoundNumber() {
-        return roundNumber;
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("OpenSessionRequest");
+        sb.append("{playerId=").append(playerId);
+        sb.append(", objectId='").append(objectId).append('\'');
+        sb.append(", openingBalance=").append(openingBalance);
+        sb.append('}');
+        return sb.toString();
     }
 }

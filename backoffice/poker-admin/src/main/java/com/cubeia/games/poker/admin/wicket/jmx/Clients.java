@@ -39,7 +39,7 @@ public class Clients extends BasePage {
     private transient StateClientRegistryMBean mbeanProxy;
     
     public Clients(final PageParameters parameters) {
-    	super(parameters);
+        super(parameters);
         FirebaseJMXFactory jmxFactory = new FirebaseJMXFactory();
         mbeanProxy = jmxFactory.createClientRegistryProxy();
 
@@ -87,10 +87,9 @@ public class Clients extends BasePage {
         return "Live Players";
     }
     
-    private class ClientCounter implements Serializable {
-        
-        private static final long serialVersionUID = 1L;
-        
+    private static class ClientCounter implements Serializable {
+
+        private static final long serialVersionUID = -5839627487831074669L;
         private int clients = 0;
 
         public int getClients() {

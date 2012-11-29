@@ -17,16 +17,14 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.history;
 
-import static com.google.common.collect.Lists.newArrayList;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
+import com.cubeia.games.poker.admin.service.history.HistoryService;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.games.poker.admin.wicket.util.DatePanel;
+import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
+import com.cubeia.games.poker.admin.wicket.util.ParamBuilder;
+import com.cubeia.poker.handhistory.api.HistoricHand;
 import org.apache.log4j.Logger;
 import org.apache.wicket.Component;
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackDefaultDataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
@@ -43,13 +41,15 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.apache.wicket.util.io.IClusterable;
 
-import com.cubeia.games.poker.admin.service.history.HistoryService;
-import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.games.poker.admin.wicket.util.DatePanel;
-import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
-import com.cubeia.games.poker.admin.wicket.util.ParamBuilder;
-import com.cubeia.poker.handhistory.api.HistoricHand;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+import static com.cubeia.games.poker.admin.wicket.util.WicketHelpers.*;
+import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * Page for searching for and viewing hand histories.
@@ -63,25 +63,27 @@ public class HandHistory extends BasePage {
     @SpringBean
     private HistoryService historyService;
 
-    private final HandHistory.HandProvider handProvider = new HandProvider();;
+    private final HandHistory.HandProvider handProvider;
 
     public HandHistory(PageParameters parameters) {
-    	super(parameters);
+        super(parameters);
+        log.debug("Params: " + parameters);
+        handProvider = new HandProvider(parameters);
         addForm();
         addResultsTable();
         add(new FeedbackPanel("feedback"));
     }
 
     private void addResultsTable() {
-        List<IColumn<HistoricHand>> columns = createColumns();
-        add(new AjaxFallbackDefaultDataTable<HistoricHand>("hands", columns, handProvider, 8));
+        List<IColumn<HistoricHand,String>> columns = createColumns();
+        add(new AjaxFallbackDefaultDataTable<HistoricHand,String>("hands", columns, handProvider, 8));
     }
 
-    private List<IColumn<HistoricHand>> createColumns() {
-        List<IColumn<HistoricHand>> columns = new ArrayList<IColumn<HistoricHand>>();
+    private List<IColumn<HistoricHand,String>> createColumns() {
+        List<IColumn<HistoricHand,String>> columns = new ArrayList<IColumn<HistoricHand,String>>();
 
         // Add column with clickable hand ids.
-        columns.add(new AbstractColumn<HistoricHand>(new Model<String>("Hand id")) {
+        columns.add(new AbstractColumn<HistoricHand,String>(new Model<String>("Hand id")) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -99,8 +101,8 @@ public class HandHistory extends BasePage {
 
         });
         // columns.add(new PropertyColumn<HistoricHand>(Model.of("Hand id"), "handId.handId"));
-        columns.add(new PropertyColumn<HistoricHand>(Model.of("Table id"), "table.tableIntegrationId"));
-        columns.add(new AbstractColumn<HistoricHand>(new Model<String>("Start date")) {
+        columns.add(new PropertyColumn<HistoricHand,String>(Model.of("Table id"), "table.tableIntegrationId"));
+        columns.add(new AbstractColumn<HistoricHand,String>(new Model<String>("Start date")) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -114,7 +116,7 @@ public class HandHistory extends BasePage {
                 return false;
             }
         });
-        columns.add(new AbstractColumn<HistoricHand>(new Model<String>("End date")) {
+        columns.add(new AbstractColumn<HistoricHand,String>(new Model<String>("End date")) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -128,7 +130,7 @@ public class HandHistory extends BasePage {
                 return false;
             }
         });
-        columns.add(new PropertyColumn<HistoricHand>(Model.of("Total rake"), "results.totalRake"));
+        columns.add(new PropertyColumn<HistoricHand,String>(Model.of("Total rake"), "results.totalRake"));
 
         return columns;
     }
@@ -141,6 +143,7 @@ public class HandHistory extends BasePage {
             }
         };
         form.add(new TextField<Integer>("playerId").setRequired(false));
+        form.add(new TextField<String>("tableId"));
         form.add(new DateField("fromDate"));
         form.add(new DateField("toDate"));
         add(form);
@@ -151,20 +154,30 @@ public class HandHistory extends BasePage {
         return "Hand History";
     }
 
-    private class HandProvider extends SortableDataProvider<HistoricHand> {
+    private class HandProvider extends SortableDataProvider<HistoricHand,String> {
 
-        private List<HistoricHand> hands = newArrayList();
+        private List<HistoricHand> hands;
 
-        private HandProvider() {
+        private HandProvider(PageParameters parameters) {
+            if (parameters.isEmpty()) {
+                hands = newArrayList();
+            } else {
+                HandHistorySearch search = new HandHistorySearch();
+                search.playerId = toIntOrNull(parameters.get("playerId"));
+                search.tableId = toStringOrNull(parameters.get("tableId"));
+                search.fromDate = toDateOrNull(parameters.get("startDate"));
+                search.toDate = toDateOrNull(parameters.get("toDate"));
+                search(search);
+            }
         }
 
         @Override
-        public Iterator<? extends HistoricHand> iterator(int first, int count) {
-            return hands.iterator();
+        public Iterator<? extends HistoricHand> iterator(long first, long count) {
+            return hands.subList((int)first, (int)(first + count)).iterator();
         }
 
         @Override
-        public int size() {
+        public long size() {
             return hands.size();
         }
 
@@ -175,13 +188,14 @@ public class HandHistory extends BasePage {
         }
 
         public void search(HandHistorySearch params) {
-            hands = historyService.findHandHistory(params.playerId, params.fromDate, params.toDate);
+            hands = historyService.findHandHistory(params.playerId, params.tableId, params.fromDate, params.toDate);
         }
     }
 
-    private class HandHistorySearch implements IClusterable {
+    private static class HandHistorySearch implements IClusterable {
         Integer playerId;
         Date fromDate;
         Date toDate;
+        String tableId;
     }
 }

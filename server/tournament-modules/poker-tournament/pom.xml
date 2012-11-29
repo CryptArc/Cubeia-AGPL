@@ -39,6 +39,10 @@
             <artifactId>tournament-history-storage-service</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.cubeia.games</groupId>
+            <artifactId>backend-service-contract</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>

@@ -19,22 +19,42 @@ package com.cubeia.games.poker.tournament.configuration.blinds;
 
 import org.apache.log4j.Logger;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import java.io.Serializable;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.EAGER;
 
+@Entity
 public class BlindsStructure implements Serializable {
 
     private static final Logger log = Logger.getLogger(BlindsStructure.class);
 
+    @Id
+    @GeneratedValue
+    private Integer id = 0;
+
     private long timePerLevel;
 
-    private List<BlindsLevel> blindsLevels;
+    private String name;
 
-    public BlindsStructure(long millisPerLevel, List<BlindsLevel> blindsLevels) {
+    @OneToMany(fetch = EAGER, cascade = ALL)
+    @OrderColumn
+    private List<Level> blindsLevels = new ArrayList<Level>();
+
+    // For Hibernate
+    public BlindsStructure() {
+    }
+
+    public BlindsStructure(long millisPerLevel, List<Level> blindsLevels) {
         checkNotNull(blindsLevels, "List of blinds levels can't be null");
         checkArgument(millisPerLevel > 0, "Time per level must be > 0");
         checkArgument(!blindsLevels.isEmpty(), "List of blinds levels can't be empty.");
@@ -43,15 +63,50 @@ public class BlindsStructure implements Serializable {
         this.blindsLevels = blindsLevels;
     }
 
-    public long getTimeToNextLevel() {
-        return timePerLevel;
-    }
-
-    public BlindsLevel getBlindsLevel(int blindsLevel) {
+    public Level getBlindsLevel(int blindsLevel) {
         if (blindsLevel >= blindsLevels.size()) {
             log.debug("blindsLevel " + blindsLevel + " requested, but we only have " + blindsLevels.size() + " levels. Returning last one.");
             return blindsLevels.get(blindsLevels.size() - 1);
         }
         return blindsLevels.get(blindsLevel);
     }
+
+    public Level getFirstBlindsLevel() {
+        return blindsLevels.get(0);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<Level> getBlindsLevels() {
+        return blindsLevels;
+    }
+
+    public void setBlindsLevels(List<Level> blindsLevels) {
+        this.blindsLevels = blindsLevels;
+    }
+
+    @Override
+    public String toString() {
+        return "BlindsStructure{" +
+                "id=" + id +
+                ", timePerLevel=" + timePerLevel +
+                ", name='" + name + '\'' +
+                ", blindsLevels=" + blindsLevels +
+                '}';
+    }
+
 }

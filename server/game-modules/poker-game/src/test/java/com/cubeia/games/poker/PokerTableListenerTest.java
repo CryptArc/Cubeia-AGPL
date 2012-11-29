@@ -61,7 +61,7 @@ public class PokerTableListenerTest {
         when(table.getMetaData()).thenReturn(tableMetaData);
         GameNotifier gameNotifier = mock(GameNotifier.class);
         when(table.getNotifier()).thenReturn(gameNotifier);
-        GenericPlayer player = new GenericPlayer(playerId, "plajah");
+        GenericPlayer player = new GenericPlayer(playerId, "player");
         int balance = 40000;
         when(ptl.state.getBalance(playerId)).thenReturn(balance);
 
@@ -71,7 +71,7 @@ public class PokerTableListenerTest {
         assertThat(((PokerPlayerImpl) pokerPlayer).getPlayerSessionId(), nullValue());
         verify(ptl.gameStateSender).sendGameState(table, playerId);
         verify(ptl.state).addPlayer(pokerPlayer);
-        verify(ptl.backendPlayerSessionHandler).startWalletSession(ptl.state, table, playerId, 0);
+        verify(ptl.backendPlayerSessionHandler).startWalletSession(ptl.state, table, playerId);
         verify(ptl.state, never()).getBalance(playerId);
 
         assertThat(pokerPlayer.isSittingOut(), is(false));

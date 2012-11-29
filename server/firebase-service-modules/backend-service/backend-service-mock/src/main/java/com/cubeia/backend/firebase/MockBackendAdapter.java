@@ -17,14 +17,6 @@
 
 package com.cubeia.backend.firebase;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.cubeia.backend.cashgame.CashGamesBackend;
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.TableId;
@@ -43,6 +35,7 @@ import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;
 import com.cubeia.backend.cashgame.dto.ReserveRequest;
 import com.cubeia.backend.cashgame.dto.ReserveResponse;
 import com.cubeia.backend.cashgame.dto.TransactionUpdate;
+import com.cubeia.backend.cashgame.dto.TransferMoneyRequest;
 import com.cubeia.backend.cashgame.exceptions.BatchHandFailedException;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
 import com.cubeia.backend.cashgame.exceptions.ReserveFailedException;
@@ -50,6 +43,13 @@ import com.cubeia.games.poker.common.Money;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class MockBackendAdapter implements CashGamesBackend {
 
@@ -98,7 +98,7 @@ public class MockBackendAdapter implements CashGamesBackend {
         sessionTransactions.put(sessionId, request.getOpeningBalance());
 
         OpenSessionResponse response = new OpenSessionResponse(sessionId, Collections.<String, String>emptyMap());
-        log.debug("new session opened, tId = {}, pId = {}, sId = {}", new Object[]{request.getTableId(), request.getPlayerId(), response.getSessionId()});
+        log.debug("new session opened, tId = {}, pId = {}, sId = {}", new Object[]{request.getObjectId(), request.getPlayerId(), response.getSessionId()});
         log.debug("currently open sessions: {}", sessionTransactions.size());
         printDiagnostics();
         
@@ -200,7 +200,33 @@ public class MockBackendAdapter implements CashGamesBackend {
         printDiagnostics();
         return new BalanceUpdate(sessionId, getBalance(sessionId), nextId());
     }
-    
+
+    @Override
+    public void transfer(TransferMoneyRequest request) {
+        Money amount = request.amount;
+        Money negativeAmount = request.amount.negate();
+
+        PlayerSessionId fromSession = request.fromSession;
+        PlayerSessionId toSession = request.toSession;
+
+        verifySessionsExist(fromSession,toSession);
+        sessionTransactions.put(fromSession, negativeAmount);
+        sessionTransactions.put(toSession, amount);
+    }
+
+    @Override
+    public void transferMoneyToRakeAccount(PlayerSessionId fromAccount, Money money, String comment) {
+        log.debug("Transferring " + money + " from " + fromAccount + " to rake account with comment " + comment);
+    }
+
+    private void verifySessionsExist(PlayerSessionId ... sessions) {
+        for (PlayerSessionId sessionId : sessions) {
+            if (sessionTransactions.containsKey(sessionId)) {
+                throw new IllegalArgumentException("Session " + sessionId + " does not exist or is not open.");
+            }
+        }
+    }
+
     private void printDiagnostics() {
 //      log.debug("wallet session transactions: ");
 //      for (PlayerSessionId session : sessionTransactions.keys()) {

@@ -37,24 +37,29 @@ import com.cubeia.games.poker.tournament.configuration.provider.TournamentSchedu
 import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 import com.google.common.collect.Maps;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.quartz.CronTrigger;
 
 import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
+import java.util.TimeZone;
 
 import static java.util.Collections.singletonList;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
-import static org.quartz.CronScheduleBuilder.dailyAtHourAndMinute;
-import static org.quartz.TriggerBuilder.newTrigger;
 
 public class TournamentScannerTest {
 
@@ -75,14 +80,25 @@ public class TournamentScannerTest {
 
     private TournamentScanner scanner;
 
+    private TimeZone originalTimeZone;
+
     @Before
     public void setup() throws SystemException {
         initMocks(this);
+        originalTimeZone = TimeZone.getDefault();
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
+        DateTimeZone.setDefault(DateTimeZone.forTimeZone(TimeZone.getTimeZone("GMT")));
         scanner = new TournamentScanner(sitAndGoProvider, tournamentScheduleProvider, dateFetcher);
         scanner.init(context);
         scanner.setMttFactory(factory);
 
         when(factory.listTournamentInstances()).thenReturn(new MttLobbyObject[]{});
+    }
+
+    @After
+    public void after() {
+        TimeZone.setDefault(originalTimeZone);
+        DateTimeZone.setDefault(DateTimeZone.forTimeZone(originalTimeZone));
     }
 
     @Test

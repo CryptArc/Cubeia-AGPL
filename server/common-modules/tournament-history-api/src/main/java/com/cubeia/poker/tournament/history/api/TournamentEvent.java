@@ -64,4 +64,13 @@ public class TournamentEvent implements Serializable {
     public void setDetails(String details) {
         this.details = details;
     }
+
+    @Override
+    public String toString() {
+        return "TournamentEvent{" +
+                "timestamp=" + timestamp +
+                ", event='" + event + '\'' +
+                ", details='" + details + '\'' +
+                '}';
+    }
 }

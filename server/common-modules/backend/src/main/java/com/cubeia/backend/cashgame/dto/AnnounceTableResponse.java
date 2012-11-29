@@ -44,8 +44,12 @@ public class AnnounceTableResponse implements Serializable {
 
     @Override
     public String toString() {
-        return "AnnounceTableResponse [tableProperties=" + getTableProperties()
-                + ", tableId=" + getTableId() + "]";
+        final StringBuilder sb = new StringBuilder();
+        sb.append("AnnounceTableResponse");
+        sb.append("{tableProperties=").append(tableProperties);
+        sb.append(", tableId=").append(tableId);
+        sb.append('}');
+        return sb.toString();
     }
 
     /**

@@ -48,7 +48,6 @@ public class Shuffler<T> {
      * Returns a new shuffled copy of the given list.
      *
      * @param list list to be shuffled
-     * @param rng  random number generator
      * @return shuffled list
      */
     public List<T> shuffle(List<T> list) {

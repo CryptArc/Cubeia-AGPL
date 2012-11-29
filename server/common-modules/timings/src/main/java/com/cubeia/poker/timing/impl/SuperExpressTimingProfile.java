@@ -19,8 +19,9 @@ package com.cubeia.poker.timing.impl;
 
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.timing.TimingProfile;
+import com.cubeia.poker.timing.Timings;
 
-public class SuperExpressTimingProfile implements TimingProfile {
+public class SuperExpressTimingProfile extends TimingProfile {
 
     private static final long serialVersionUID = 5998534828390461865L;
 
@@ -51,6 +52,11 @@ public class SuperExpressTimingProfile implements TimingProfile {
             default:
                 return 500;
         }
+    }
+
+    @Override
+    public String getName() {
+        return "SUPER_EXPRESS";
     }
 
 }

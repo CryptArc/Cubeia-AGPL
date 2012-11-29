@@ -2,12 +2,12 @@
 var Poker = Poker || {};
 
 Poker.Utils = {
-    CURRENCY_SYMBOL : "&euro;",
+    currencySymbol : "&euro;",
     formatCurrency : function(amount) {
         return parseFloat(amount/100).toFixed(2);
     },
     formatCurrencyString : function(amount) {
-        return Poker.Utils.CURRENCY_SYMBOL + Poker.Utils.formatCurrency(amount);
+        return Poker.Utils.currencySymbol + Poker.Utils.formatCurrency(amount);
     },
     getCardString : function(gamecard) {
         var ranks = "23456789tjqka ";
@@ -25,10 +25,9 @@ Poker.Utils = {
         return str;
     },
     /**
-     * Calculates the distance in percent (of the src elements width) between two elements.
-     *
-     * Used together with css translate transforms.
-     *
+     * Calculates the distance in percent for two elements based on
+     * a containers dimensions, if the container isn't specified
+     * window dimensions will be used
      * @param src
      * @param target
      * @return {Object}
@@ -78,28 +77,6 @@ Poker.Utils = {
         else {
             return null;
         }
-    },
-    readParam : function(key,params) {
-        for (var i = 0; i < params.length; i++) {
-            var object = params[i];
-
-            if (object.key == key) {
-
-                var p = null;
-                var valueArray = FIREBASE.ByteArray.fromBase64String(object.value);
-                var byteArray = new FIREBASE.ByteArray(valueArray);
-                if (object.type == 1) {
-                    p = byteArray.readInt();
-                } else {
-                    p = byteArray.readString();
-                }
-
-                //shouldn't this work?
-                //  var p =  FIREBASE.Styx.readParam(object);
-                return p;
-            }
-        }
-        return null;
     }
 
 };

@@ -17,12 +17,11 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.tables;
 
-import static com.cubeia.poker.timing.Timings.DEFAULT;
 import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
 
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.RequiredTextField;
-import org.apache.wicket.markup.html.form.TextField;
+import com.cubeia.poker.timing.TimingFactory;
+import com.cubeia.poker.timing.TimingProfile;
+import org.apache.wicket.markup.html.form.*;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -36,43 +35,44 @@ public class CreateTable extends BasePage {
 
     private static final long serialVersionUID = 6896786450236805072L;
 
-	@SpringBean(name="adminDAO")
+    @SpringBean(name="adminDAO")
     private AdminDAO adminDAO;
-    
+
     private TableConfigTemplate table;
-    
+
     public CreateTable(final PageParameters parameters) {
-    	super(parameters);
+        super(parameters);
         table = new TableConfigTemplate();
         table.setVariant(TEXAS_HOLDEM); // TODO: Add to form
-    	table.setTiming(DEFAULT); // TODO: Add to form
-    	table.setSeats(10);
-    	table.setMinTables(10);
-    	table.setMinEmptyTables(5);
+        table.setTiming(TimingFactory.getRegistry().getDefaultTimingProfile());
+        table.setSeats(10);
+        table.setMinTables(10);
+        table.setMinEmptyTables(5);
         Form<TableConfigTemplate> tableForm = new Form<TableConfigTemplate>("tableForm", new CompoundPropertyModel<TableConfigTemplate>(table)) {
-            
-        	private static final long serialVersionUID = 1L;
-            
-        	@Override
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
             protected void onSubmit() {
-        		TableConfigTemplate object = getModel().getObject();
-                adminDAO.persist(object);
+                TableConfigTemplate object = getModel().getObject();
+                adminDAO.save(object);
                 // info("Table template created: " + object);
                 setResponsePage(ListTables.class);
             }
         };
-        
+
         tableForm.add(new RequiredTextField<String>("name"));
         tableForm.add(new RequiredTextField<Integer>("ante"));
         tableForm.add(new RequiredTextField<Integer>("seats"));
         tableForm.add(new TextField<Integer>("minTables"));
         tableForm.add(new TextField<Integer>("minEmptyTables"));
-        
+        tableForm.add(new DropDownChoice<TimingProfile>("timing", adminDAO.getTimingProfiles(), choiceRenderer()));
+
         add(tableForm);
 
         add(new FeedbackPanel("feedback"));
     }
-    
+
     @Override
     public String getPageTitle() {
         return "Create Table";

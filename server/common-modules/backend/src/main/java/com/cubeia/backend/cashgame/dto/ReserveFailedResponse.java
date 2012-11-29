@@ -56,4 +56,17 @@ public class ReserveFailedResponse implements Serializable {
     public enum ErrorCode {
         AMOUNT_TOO_HIGH, UNSPECIFIED_FAILURE, SESSION_NOT_OPEN, MAX_LIMIT_REACHED;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("ReserveFailedResponse");
+        sb.append("{errorCode=").append(errorCode);
+        sb.append(", message='").append(message).append('\'');
+        sb.append(", sessionId=").append(sessionId);
+        sb.append(", playerSessionNeedsToBeClosed=").append(playerSessionNeedsToBeClosed);
+        sb.append('}');
+        return sb.toString();
+    }
+
 }

@@ -20,26 +20,30 @@ package com.cubeia.games.poker.admin.wicket;
 import org.apache.wicket.Page;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
+import org.apache.wicket.util.time.Duration;
 
 
 public class WebApp extends WebApplication {
 
-	/** Constructor */
+    /**
+     * Constructor
+     */
     public WebApp() {
-    	
+
     }
-    
+
     @Override
-    protected void init()
-    {
-        // initialize Spring
+    protected void init() {
+        getResourceSettings().setResourcePollFrequency(Duration.ONE_SECOND); // For dev only, delete when ready for production.
+        getMarkupSettings().setStripWicketTags(true);
+        // Initialize Spring
         getComponentInstantiationListeners().add(new SpringComponentInjector(this));
     }
 
-	@Override
-	public Class<? extends Page> getHomePage() {
-		return HomePage.class;
-	}
+    @Override
+    public Class<? extends Page> getHomePage() {
+        return HomePage.class;
+    }
 
-   
+
 }

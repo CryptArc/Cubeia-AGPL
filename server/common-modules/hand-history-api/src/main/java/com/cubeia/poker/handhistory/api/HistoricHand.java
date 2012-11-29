@@ -25,10 +25,12 @@ public class HistoricHand implements Serializable {
 
     private static final long serialVersionUID = 6433976199796752600L;
 
-    /** This is not the hand id! Only here for json de-serialization. (TODO: Fixable?) */
+    /**
+     * This is not the hand id! Only here for json de-serialization. (TODO: Fixable?)
+     */
     private String id;
     private Table table;
-    
+
     private long startTime;
     private long endTime;
 
@@ -36,9 +38,10 @@ public class HistoricHand implements Serializable {
     private Results results;
 
     private final List<HandHistoryEvent> events = new ArrayList<HandHistoryEvent>();
-    private final  List<Player> seats = new ArrayList<Player>(6);
+    private final List<Player> seats = new ArrayList<Player>(6);
 
-    public HistoricHand() { }
+    public HistoricHand() {
+    }
 
     public HistoricHand(String id) {
         this.id = id;
@@ -47,7 +50,7 @@ public class HistoricHand implements Serializable {
     public Table getTable() {
         return table;
     }
-    
+
     public void setTable(Table table) {
         this.table = table;
     }
@@ -101,72 +104,89 @@ public class HistoricHand implements Serializable {
     }
 
     @Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((deckInfo == null) ? 0 : deckInfo.hashCode());
-		result = prime * result + (int) (endTime ^ (endTime >>> 32));
-		result = prime * result + ((events == null) ? 0 : events.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((results == null) ? 0 : results.hashCode());
-		result = prime * result + ((seats == null) ? 0 : seats.hashCode());
-		result = prime * result + (int) (startTime ^ (startTime >>> 32));
-		result = prime * result + ((table == null) ? 0 : table.hashCode());
-		return result;
-	}
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                 + ((deckInfo == null) ? 0 : deckInfo.hashCode());
+        result = prime * result + (int) (endTime ^ (endTime >>> 32));
+        result = prime * result + ((events == null) ? 0 : events.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((results == null) ? 0 : results.hashCode());
+        result = prime * result + ((seats == null) ? 0 : seats.hashCode());
+        result = prime * result + (int) (startTime ^ (startTime >>> 32));
+        result = prime * result + ((table == null) ? 0 : table.hashCode());
+        return result;
+    }
 
     @Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		HistoricHand other = (HistoricHand) obj;
-		if (deckInfo == null) {
-			if (other.deckInfo != null)
-				return false;
-		} else if (!deckInfo.equals(other.deckInfo))
-			return false;
-		if (endTime != other.endTime)
-			return false;
-		if (events == null) {
-			if (other.events != null)
-				return false;
-		} else if (!events.equals(other.events))
-			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (results == null) {
-			if (other.results != null)
-				return false;
-		} else if (!results.equals(other.results))
-			return false;
-		if (seats == null) {
-			if (other.seats != null)
-				return false;
-		} else if (!seats.equals(other.seats))
-			return false;
-		if (startTime != other.startTime)
-			return false;
-		if (table == null) {
-			if (other.table != null)
-				return false;
-		} else if (!table.equals(other.table))
-			return false;
-		return true;
-	}
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        HistoricHand other = (HistoricHand) obj;
+        if (deckInfo == null) {
+            if (other.deckInfo != null) {
+                return false;
+            }
+        } else if (!deckInfo.equals(other.deckInfo)) {
+            return false;
+        }
+        if (endTime != other.endTime) {
+            return false;
+        }
+        if (events == null) {
+            if (other.events != null) {
+                return false;
+            }
+        } else if (!events.equals(other.events)) {
+            return false;
+        }
+        if (id == null) {
+            if (other.id != null) {
+                return false;
+            }
+        } else if (!id.equals(other.id)) {
+            return false;
+        }
+        if (results == null) {
+            if (other.results != null) {
+                return false;
+            }
+        } else if (!results.equals(other.results)) {
+            return false;
+        }
+        if (seats == null) {
+            if (other.seats != null) {
+                return false;
+            }
+        } else if (!seats.equals(other.seats)) {
+            return false;
+        }
+        if (startTime != other.startTime) {
+            return false;
+        }
+        if (table == null) {
+            if (other.table != null) {
+                return false;
+            }
+        } else if (!table.equals(other.table)) {
+            return false;
+        }
+        return true;
+    }
 
     @Override
-	public String toString() {
-		return "HistoricHand [id=" + id + ", table=" + table + ", startTime="
-				+ startTime + ", endTime=" + endTime + ", deckInfo=" + deckInfo
-				+ ", results=" + results + ", events=" + events + ", seats="
-				+ seats + "]";
-	}
+    public String toString() {
+        return "HistoricHand [id=" + id + ", table=" + table + ", startTime="
+               + startTime + ", endTime=" + endTime + ", deckInfo=" + deckInfo
+               + ", results=" + results + ", events=" + events + ", seats="
+               + seats + "]";
+    }
 }

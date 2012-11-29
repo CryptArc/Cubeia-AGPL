@@ -26,47 +26,48 @@ import org.apache.commons.lang.builder.ToStringStyle;
 
 public class PlayerSessionId implements Serializable {
 
-	private static final long serialVersionUID = 6096309763354995789L;
-	
-	/**
-	 * Firebase player ID.
-	 */
-	public final int playerId;
-	
-	/**
-	 * Optional ID for the session, may be null.
-	 */
-	public final String integrationSessionId;
-	
-	/**
-	 * @param platformPlayerId Firebase player ID, mandatory
-	 * @param integrationSessionId Session ID, mey be null
-	 */
-	public PlayerSessionId(int platformPlayerId, String integrationSessionId) {
-		this.playerId = platformPlayerId;
-		this.integrationSessionId = integrationSessionId;
-	}
-	
-	/**
-	 * This creates a session ID without an integration ID. 
-	 * @param playerId1 Firebase player ID, mandatory
-	 */
-	public PlayerSessionId(int playerId) {
-		this(playerId, null);
-	}
+    private static final long serialVersionUID = 6096309763354995789L;
 
-	@Override
-	public boolean equals(Object obj) {
-		return EqualsBuilder.reflectionEquals(this, obj);
-	}
+    /**
+     * Firebase player ID.
+     */
+    public final int playerId;
 
-	@Override
-	public int hashCode() {
-		return HashCodeBuilder.reflectionHashCode(this);
-	}
+    /**
+     * Optional ID for the session, may be null.
+     */
+    public final String integrationSessionId;
 
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
-	}
+    /**
+     * @param platformPlayerId     Firebase player ID, mandatory
+     * @param integrationSessionId Session ID, mey be null
+     */
+    public PlayerSessionId(int platformPlayerId, String integrationSessionId) {
+        this.playerId = platformPlayerId;
+        this.integrationSessionId = integrationSessionId;
+    }
+
+    /**
+     * This creates a session ID without an integration ID.
+     *
+     * @param playerId Firebase player ID, mandatory
+     */
+    public PlayerSessionId(int playerId) {
+        this(playerId, null);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return EqualsBuilder.reflectionEquals(this, obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
 }

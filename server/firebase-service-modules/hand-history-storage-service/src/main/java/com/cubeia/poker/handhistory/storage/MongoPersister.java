@@ -35,66 +35,66 @@ import com.mongodb.util.JSON;
 public class MongoPersister implements HandHistoryPersistenceService, Startable {
 
     private static final String HANDS_COLLECTION = "hands";
-    
+
     private Mongo db;
     private String host;
     private int port;
     private String databaseName;
-    
+
     private final Logger log = Logger.getLogger(getClass());
     private JsonHandHistoryLogger jsonLogger = new JsonHandHistoryLogger();
 
     // TODO Fix configuration...
     public MongoPersister(ServiceContext con) {
-    	DatabaseStorageConfiguration configuration = null; // = getConfiguration().load(con);
+        DatabaseStorageConfiguration configuration = null; // = getConfiguration().load(con);
         host = configuration.getHost();
         port = configuration.getPort();
         databaseName = configuration.getDatabaseName();
     }
-    
+
     @Override
     public void start() {
-    	try {
-    		log.info("Opening connection to MongoDB.");
+        try {
+            log.info("Opening connection to MongoDB.");
             db = connectToMongo(host, port);
         } catch (UnknownHostException e) {
             log.warn("Could not connect to mongo on host " + host + " and port " + port);
         }
     }
-    
+
     @Override
     public void stop() {
-    	 if (db != null) {
-             log.info("Closing connection to MongoDB.");
-             db.close();
-         }
+        if (db != null) {
+            log.info("Closing connection to MongoDB.");
+            db.close();
+        }
     }
-	
-	@Override
-	public void persist(HistoricHand hand) {
-		// log.debug("Persisting hand " + hand.getId() + " to mongo");
-		if (db != null) {
-			try {
-	            persistToMongo(hand);
-	        } catch (Exception e) {
-	            log.warn("Failed persisting hand history to mondodb. Please start a mongodb server on host " + host + " and port " + port, e);
-	            jsonLogger.persist(hand);
-	        }
-		} else {
-			jsonLogger.persist(hand);
-		}
-	}
-	
-	
-	// --- PROTECTED METHODS --- //
-	
-	protected DatabaseStorageConfiguration getConfiguration() {
+
+    @Override
+    public void persist(HistoricHand hand) {
+        // log.debug("Persisting hand " + hand.getId() + " to mongo");
+        if (db != null) {
+            try {
+                persistToMongo(hand);
+            } catch (Exception e) {
+                log.warn("Failed persisting hand history to mondodb. Please start a mongodb server on host " + host + " and port " + port, e);
+                jsonLogger.persist(hand);
+            }
+        } else {
+            jsonLogger.persist(hand);
+        }
+    }
+
+
+    // --- PROTECTED METHODS --- //
+
+    protected DatabaseStorageConfiguration getConfiguration() {
         return new DatabaseStorageConfiguration();
     }
-	
-	
-	// --- PRIVATE METHODS --- //
-	
+
+
+    // --- PRIVATE METHODS --- //
+
     private void persistToMongo(HistoricHand hand) {
         DBObject dbObject = (DBObject) JSON.parse(jsonLogger.convertToJson(hand));
         db().getCollection(HANDS_COLLECTION).insert(dbObject);

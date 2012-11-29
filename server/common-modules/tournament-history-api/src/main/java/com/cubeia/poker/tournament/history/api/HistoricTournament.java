@@ -39,6 +39,8 @@ public class HistoricTournament implements Serializable {
 
     private List<PlayerPosition> positions = new ArrayList<PlayerPosition>();
 
+    private List<String> tables = new ArrayList<String>();
+
     public HistoricTournament() {
 
     }
@@ -105,5 +107,13 @@ public class HistoricTournament implements Serializable {
 
     public void setPositions(List<PlayerPosition> positions) {
         this.positions = positions;
+    }
+
+    public List<String> getTables() {
+        return tables;
+    }
+
+    public void setTables(List<String> tables) {
+        this.tables = tables;
     }
 }

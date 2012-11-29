@@ -95,7 +95,7 @@ public class BettingRoundInitTest {
     }
 
     @Test
-    public void testSimple() {
+    public void testNormalBettingRoundInit() {
         when(playertoActCalculator.getFirstPlayerToAct(Mockito.eq(dealerSeatId), Mockito.eq(currentHandSeatingMap), Mockito.anyListOf(Card.class))).thenReturn(player2);
         when(context.getPlayersReadyToStartHand(Matchers.<Predicate<PokerPlayer>>any())).thenReturn(asList(player1, player2, player3));
 
@@ -111,7 +111,7 @@ public class BettingRoundInitTest {
     }
 
     @Test
-    public void testShortcutWhenShowdown() {
+    public void testRoundFinishedWhenAllInShowdown() {
         when(playertoActCalculator.getFirstPlayerToAct(Mockito.eq(dealerSeatId), Mockito.eq(currentHandSeatingMap),
                 Mockito.anyListOf(Card.class))).thenReturn(player2);
         when(context.getPlayersReadyToStartHand(Matchers.<Predicate<PokerPlayer>>any())).thenReturn(asList(player1, player2, player3));
@@ -121,16 +121,4 @@ public class BettingRoundInitTest {
         verify(serverAdapter).scheduleTimeout(anyLong());
         assertThat(round.isFinished(), is(true));
     }
-
-    @Test
-    @Ignore // This test is incorrect(?), a betting round should not end due to sit outs
-    public void testShortcutWhenAllIsSittingOut() {
-        when(playertoActCalculator.getFirstPlayerToAct(Mockito.eq(dealerSeatId), Mockito.eq(currentHandSeatingMap),
-                Mockito.anyListOf(Card.class))).thenReturn(player2);
-        when(context.isEveryoneSittingOut()).thenReturn(true);
-
-        verify(serverAdapter).scheduleTimeout(Matchers.<Long>any());
-        assertThat(round.isFinished(), is(true));
-    }
-
 }

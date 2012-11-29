@@ -39,7 +39,7 @@ public class ScheduledTournamentInstance {
     }
 
     public String getIdentifier() {
-        log.debug("Configuration " + configuration.getConfiguration().getId() + " has startTimeMillis: " + startTime.getMillis() + " start time: " + startTime);
+        log.trace("Configuration " + configuration.getConfiguration().getId() + " has startTimeMillis: " + startTime.getMillis() + " start time: " + startTime);
         return "" + configuration.getConfiguration().getId() + startTime.getMillis();
     }
 

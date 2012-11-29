@@ -61,8 +61,7 @@
             <plugin>
                 <groupId>com.cubeia.tools</groupId>
                 <artifactId>firebase-maven-plugin</artifactId>
-                <version>2.0-LJN-SNAPSHOT</version>
-                <!-- version>1.9.0-CE</version -->
+                <version>1.9.0-CE-RC.3</version>
                 <configuration>
                     <!-- enable copy of overlay files -->
                     <overlaysEnabled>true</overlaysEnabled>
@@ -96,12 +95,12 @@
                 </property>
             </activation>
             <dependencies>
-                <!-- dependency>
+                <dependency>
                     <groupId>com.cubeia.games.handhistory</groupId>
                     <artifactId>hand-history-storage-service</artifactId>
                     <version>1.0-SNAPSHOT</version>
                     <type>firebase-sar</type>
-                </dependency -->
+                </dependency>
                 <dependency>
                     <groupId>com.cubeia.network.users</groupId>
                     <artifactId>fb-user-service</artifactId>
@@ -123,6 +122,12 @@
                 <dependency>
                     <groupId>com.cubeia.games.poker</groupId>
                     <artifactId>tournament-history-storage-service</artifactId>
+                    <type>firebase-sar</type>
+                </dependency>
+                <dependency>
+                    <groupId>com.cubeia.network.operator</groupId>
+                    <artifactId>fb-operator-service</artifactId>
+                    <version>${cubeia.network.version}</version>
                     <type>firebase-sar</type>
                 </dependency>
             </dependencies>
@@ -147,6 +152,14 @@
                     <version>${cubeia.network.version}</version>
                     <type>firebase-sar</type>
                 </dependency>
+
+                <dependency>
+                    <groupId>com.cubeia.network.operator</groupId>
+                    <artifactId>fb-operator-service-mock</artifactId>
+                    <version>${cubeia.network.version}</version>
+                    <type>firebase-sar</type>
+                </dependency>
+
             </dependencies>
         </profile>
     </profiles>

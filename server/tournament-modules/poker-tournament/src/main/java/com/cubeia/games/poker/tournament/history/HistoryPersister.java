@@ -18,7 +18,7 @@
 package com.cubeia.games.poker.tournament.history;
 
 import com.cubeia.games.poker.common.SystemTime;
-import com.cubeia.games.poker.tournament.configuration.blinds.BlindsLevel;
+import com.cubeia.games.poker.tournament.configuration.blinds.Level;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
 import org.apache.log4j.Logger;
 
@@ -72,8 +72,31 @@ public class HistoryPersister {
         storageService.setEndTime(historicId, dateFetcher.now());
     }
 
-    public void blindsIncreased(BlindsLevel level) {
+    public void blindsIncreased(Level level) {
         storageService.blindsUpdated(historicId, level.getAnteAmount(), level.getSmallBlindAmount(), level.getBigBlindAmount(), dateFetcher.now());
     }
 
+    public void addTable(String externalTableId) {
+        storageService.addTable(historicId, externalTableId);
+    }
+
+    public void playerRegistered(int playerId) {
+        storageService.playerRegistered(historicId, playerId, dateFetcher.now());
+    }
+
+    public void playerUnregistered(int playerId) {
+        storageService.playerUnregistered(historicId, playerId, dateFetcher.now());
+    }
+
+    public void playerFailedUnregistering(int playerId, String message) {
+        storageService.playerFailedUnregistering(historicId, playerId, message, dateFetcher.now());
+    }
+
+    public void playerFailedOpeningSession(int playerId, String message) {
+        storageService.playerFailedOpeningSession(historicId, playerId, message, dateFetcher.now());
+    }
+
+    public void playerOpenedSession(int playerId, String integrationSessionId) {
+        storageService.playerOpenedSession(historicId, playerId, integrationSessionId, dateFetcher.now());
+    }
 }

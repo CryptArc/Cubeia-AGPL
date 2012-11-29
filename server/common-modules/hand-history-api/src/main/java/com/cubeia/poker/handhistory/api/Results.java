@@ -25,15 +25,16 @@ public class Results implements Serializable {
 
     private static final long serialVersionUID = 5742358497502861176L;
 
-	private long totalRake;
+    private long totalRake;
     private final Map<Integer, HandResult> results = new HashMap<Integer, HandResult>();
 
     public Results(long totalRake) {
         this.totalRake = totalRake;
     }
 
-    public Results() { }
-    
+    public Results() {
+    }
+
     public Map<Integer, HandResult> getResults() {
         return results;
     }
@@ -47,35 +48,41 @@ public class Results implements Serializable {
     }
 
     @Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((results == null) ? 0 : results.hashCode());
-		result = prime * result + (int) (totalRake ^ (totalRake >>> 32));
-		return result;
-	}
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((results == null) ? 0 : results.hashCode());
+        result = prime * result + (int) (totalRake ^ (totalRake >>> 32));
+        return result;
+    }
 
     @Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Results other = (Results) obj;
-		if (results == null) {
-			if (other.results != null)
-				return false;
-		} else if (!results.equals(other.results))
-			return false;
-		if (totalRake != other.totalRake)
-			return false;
-		return true;
-	}
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        Results other = (Results) obj;
+        if (results == null) {
+            if (other.results != null) {
+                return false;
+            }
+        } else if (!results.equals(other.results)) {
+            return false;
+        }
+        if (totalRake != other.totalRake) {
+            return false;
+        }
+        return true;
+    }
 
     @Override
-	public String toString() {
-		return "Results [totalRake=" + totalRake + ", results=" + results + "]";
-	}
+    public String toString() {
+        return "Results [totalRake=" + totalRake + ", results=" + results + "]";
+    }
 }

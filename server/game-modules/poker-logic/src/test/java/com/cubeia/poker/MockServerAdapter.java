@@ -57,9 +57,18 @@ public class MockServerAdapter implements ServerAdapter {
     
     @Override
     public Random getSystemRNG() {
-    	return random;
+        return random;
     }
-    
+
+    @Override
+    public void notifyBlindsLevelUpdated(int smallBlindAmount, int bigBlindAmount, int ante, boolean aBreak, int durationInMinutes) {
+    }
+
+    @Override
+    public void notifyWaitingToStartBreak() {
+
+    }
+
     public void clear() {
         handEndStatus = null;
         allActions.clear();

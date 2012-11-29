@@ -20,10 +20,10 @@ package com.cubeia.backend.cashgame.dto;
 import java.io.Serializable;
 
 public class OpenSessionFailedResponse implements Serializable {
-    
-	private static final long serialVersionUID = -4319217503234073741L;
-	
-	private final ErrorCode errorCode;
+
+    private static final long serialVersionUID = -4319217503234073741L;
+
+    private final ErrorCode errorCode;
     private final String message;
     private final int playerId;
 
@@ -33,7 +33,7 @@ public class OpenSessionFailedResponse implements Serializable {
         this.playerId = playerId;
     }
 
-	public ErrorCode getErrorCode() {
+    public ErrorCode getErrorCode() {
         return errorCode;
     }
 
@@ -47,5 +47,16 @@ public class OpenSessionFailedResponse implements Serializable {
 
     public enum ErrorCode {
         UNKOWN_PLATFORM_TABLE_ID, WALLET_CALL_FAILED, UNSPECIFIED_ERROR;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("OpenSessionFailedResponse");
+        sb.append("{errorCode=").append(errorCode);
+        sb.append(", message='").append(message).append('\'');
+        sb.append(", playerId=").append(playerId);
+        sb.append('}');
+        return sb.toString();
     }
 }

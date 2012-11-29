@@ -55,8 +55,9 @@ public class TournamentSchedule implements Serializable {
 
     }
 
-    public TournamentSchedule(Date startDate, Date endDate, String cronSchedule, int minutesInAnnounced, int minutesInRegistering, int minutesVisibleAfterFinished) {
-        log.debug("Created tournament schedule. Start date: " + startDate + " End date: " + endDate);
+    public TournamentSchedule(Date startDate, Date endDate, String cronSchedule, int minutesInAnnounced, int minutesInRegistering,
+            int minutesVisibleAfterFinished) {
+        log.trace("Created tournament schedule. Start date: " + startDate + " End date: " + endDate);
         this.startDate = new Date(startDate.getTime());
         this.endDate = new Date(endDate.getTime());
         this.cronSchedule = cronSchedule;
@@ -78,14 +79,14 @@ public class TournamentSchedule implements Serializable {
     }
 
     public DateTime getNextAnnounceTime(DateTime now) {
-        log.debug("Getting next announce time after " + now + ". Start date = " + getSchedule().getStartTime());
+        log.trace("Getting next announce time after " + now + ". Start date = " + getSchedule().getStartTime());
         DateTime nextStartTime = getNextStartTime(now);
-        log.debug("Next startTime: " + nextStartTime);
+        log.trace("Next startTime: " + nextStartTime);
         if (nextStartTime == null) {
             return null;
         } else {
             DateTime nextAnnounceTime = new DateTime(nextStartTime).minusMinutes(minutesInRegistering).minusMinutes(minutesInAnnounced);
-            log.debug("Next announce time: " + nextAnnounceTime);
+            log.trace("Next announce time: " + nextAnnounceTime);
             return nextAnnounceTime;
         }
     }

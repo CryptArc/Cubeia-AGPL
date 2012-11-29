@@ -24,9 +24,8 @@ import com.cubeia.games.poker.tournament.configuration.provider.TournamentSchedu
 import com.google.common.collect.Lists;
 import org.joda.time.DateTime;
 
+import java.math.BigDecimal;
 import java.util.Collection;
-
-import static org.quartz.CronScheduleBuilder.cronSchedule;
 
 /**
  * This is a mock provider for providing the tournament schedule. A real implementation would fetch the tournament
@@ -41,6 +40,8 @@ public class MockTournamentScheduleProvider implements TournamentScheduleProvide
         everyTenMinutes.getConfiguration().setMinPlayers(2);
         everyTenMinutes.getConfiguration().setMaxPlayers(100);
         everyTenMinutes.getConfiguration().setBlindsStructure(BlindsStructureFactory.createDefaultBlindsStructure());
+        everyTenMinutes.getConfiguration().setBuyIn(BigDecimal.valueOf(10));
+        everyTenMinutes.getConfiguration().setFee(BigDecimal.valueOf(1));
         tournamentConfigurations.add(everyTenMinutes);
         return tournamentConfigurations;
     }

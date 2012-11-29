@@ -34,23 +34,25 @@ public class TimingRegistryImpl implements TimingRegistry {
         return defaultProfile;
     }
 
-    public TimingProfile getTimingProfile(Timings profile) {
-        switch (profile) {
-            case SLOW:
-                return new SlowTimingProfile();
-
-            case MINIMUM_DELAY:
-                return new MinDelayTimingProfile();
-
-            case EXPRESS:
-                return new ExpressTimingProfile();
-
-            case SUPER_EXPRESS:
-                return new SuperExpressTimingProfile();
-
-            default:
-                return getDefaultTimingProfile();
+    public TimingProfile getTimingProfile(String profile) {
+        if (profile.equals("SLOW")) {
+            return new SlowTimingProfile();
+        } else if (profile.equals("DEFAULT")) {
+            return getDefaultTimingProfile();
+        } else if (profile.equals("MINIMUM_DELAY")) {
+            return new MinDelayTimingProfile();
+        } else if (profile.equals("EXPRESS")) {
+            return new ExpressTimingProfile();
+        } else if (profile.equals("SUPER_EXPRESS")) {
+            return new SuperExpressTimingProfile();
+        } else {
+            return findCustomProfile(profile);
         }
+    }
+
+    private TimingProfile findCustomProfile(String profile) {
+
+        return getDefaultTimingProfile();
     }
 
 }

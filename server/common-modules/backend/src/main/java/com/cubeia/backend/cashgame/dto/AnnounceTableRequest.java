@@ -24,10 +24,19 @@ import com.cubeia.backend.cashgame.TableId;
 public class AnnounceTableRequest implements Serializable {
 
     private static final long serialVersionUID = 507967877958616737L;
-	
+
     public final TableId tableId;
 
     public AnnounceTableRequest(TableId tableId) {
         this.tableId = tableId;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("AnnounceTableRequest");
+        sb.append("{tableId=").append(tableId);
+        sb.append('}');
+        return sb.toString();
     }
 }

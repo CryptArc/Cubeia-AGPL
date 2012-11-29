@@ -19,9 +19,12 @@ package com.cubeia.games.poker.tournament.configuration.provider.mock;
 
 import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
 import com.cubeia.games.poker.tournament.configuration.provider.SitAndGoConfigurationProvider;
+import com.cubeia.poker.timing.TimingFactory;
+import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.timing.Timings;
 import org.apache.log4j.Logger;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Map;
 
@@ -46,15 +49,23 @@ public class MockSitAndGoConfigurationProvider implements SitAndGoConfigurationP
     ------------------------------------------------*/
 
     public MockSitAndGoConfigurationProvider() {
-        requestedTournaments.put("Heads up", new SitAndGoConfiguration("Heads up", 2));
-        requestedTournaments.put("5 Players", new SitAndGoConfiguration("5 Players", 5, Timings.SUPER_EXPRESS));
-        requestedTournaments.put("10 Players", new SitAndGoConfiguration("10 Players", 10, Timings.SUPER_EXPRESS));
-        requestedTournaments.put("20 Players", new SitAndGoConfiguration("20 Players", 20));
-        requestedTournaments.put("100 Players", new SitAndGoConfiguration("100 Players", 100, Timings.SUPER_EXPRESS));
-        requestedTournaments.put("1000 Players", new SitAndGoConfiguration("1000 Players", 1000, Timings.SUPER_EXPRESS));
-        requestedTournaments.put("2000 Players", new SitAndGoConfiguration("2000 Players", 2000));
-        requestedTournaments.put("5000 Players", new SitAndGoConfiguration("5000 Players", 5000, Timings.EXPRESS));
-        requestedTournaments.put("10000 Players", new SitAndGoConfiguration("10000 Players", 10000, Timings.EXPRESS));
+        requestedTournaments.put("Heads up", createSitAndGoConfiguration("Heads up", 2, TimingFactory.getRegistry().getTimingProfile("DEFAULT")));
+        requestedTournaments.put("5 Players", createSitAndGoConfiguration("5 Players", 5, TimingFactory.getRegistry().getTimingProfile("SUPER_EXPRESS")));
+        requestedTournaments.put("10 Players", createSitAndGoConfiguration("10 Players", 10, TimingFactory.getRegistry().getTimingProfile("SUPER_EXPRESS")));
+        requestedTournaments.put("20 Players", createSitAndGoConfiguration("20 Players", 20, TimingFactory.getRegistry().getTimingProfile("DEFAULT")));
+        requestedTournaments.put("100 Players", createSitAndGoConfiguration("100 Players", 100, TimingFactory.getRegistry().getTimingProfile("SUPER_EXPRESS")));
+        requestedTournaments.put("1000 Players", createSitAndGoConfiguration("1000 Players", 1000, TimingFactory.getRegistry().getTimingProfile("SUPER_EXPRESS")));
+        requestedTournaments.put("2000 Players", createSitAndGoConfiguration("2000 Players", 2000, TimingFactory.getRegistry().getTimingProfile("DEFAULT")));
+        requestedTournaments.put("5000 Players", createSitAndGoConfiguration("5000 Players", 5000, TimingFactory.getRegistry().getTimingProfile("EXPRESS")));
+        requestedTournaments.put("10000 Players", createSitAndGoConfiguration("10000 Players", 10000, TimingFactory.getRegistry().getTimingProfile("EXPRESS")));
+    }
+
+    private SitAndGoConfiguration createSitAndGoConfiguration(String name, int capacity, TimingProfile timings) {
+        SitAndGoConfiguration configuration = new SitAndGoConfiguration(name, capacity, timings);
+        configuration.getConfiguration().setBuyIn(BigDecimal.valueOf(10));
+        configuration.getConfiguration().setFee(BigDecimal.valueOf(1));
+
+        return configuration;
     }
 
     public Collection<SitAndGoConfiguration> getConfigurations() {

@@ -17,12 +17,12 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.tables;
 
-import static com.cubeia.games.poker.admin.wicket.util.ParamBuilder.params;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+import com.cubeia.games.poker.admin.db.AdminDAO;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.games.poker.admin.wicket.util.DeleteLinkPanel;
+import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
+import com.cubeia.games.poker.entity.TableConfigTemplate;
+import com.cubeia.poker.timing.TimingProfile;
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
@@ -30,17 +30,18 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColu
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DefaultDataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import com.cubeia.games.poker.admin.db.AdminDAO;
-import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.games.poker.admin.wicket.util.DeleteLinkPanel;
-import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
-import com.cubeia.games.poker.entity.TableConfigTemplate;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import static com.cubeia.games.poker.admin.wicket.util.ParamBuilder.params;
 
 /**
  * Page for listing all tournaments. Currently lists sit&go tournaments.
@@ -59,21 +60,19 @@ public class ListTables extends BasePage {
      * @param parameters Page parameters
      */
     public ListTables(final PageParameters parameters) {
-    	super(parameters);
-    	SortableDataProviderExtension dataProvider = new SortableDataProviderExtension();
-        ArrayList<AbstractColumn<TableConfigTemplate>> columns = new ArrayList<AbstractColumn<TableConfigTemplate>>();
-        columns.add(new AbstractColumn<TableConfigTemplate>(new Model<String>("Id")) {
-        	
-            private static final long serialVersionUID = 1L;
+        super(parameters);
+        SortableDataProviderExtension dataProvider = new SortableDataProviderExtension();
+        ArrayList<AbstractColumn<TableConfigTemplate,String>> columns = new ArrayList<AbstractColumn<TableConfigTemplate,String>>();
+        columns.add(new AbstractColumn<TableConfigTemplate,String>(new Model<String>("Id")) {
 
             @Override
             public void populateItem(Item<ICellPopulator<TableConfigTemplate>> item, String componentId, IModel<TableConfigTemplate> model) {
-            	TableConfigTemplate table = model.getObject();
+                TableConfigTemplate table = model.getObject();
                 Component panel = new LabelLinkPanel(
-                    componentId,
-                    "" + table.getId(),
-                    EditTable.class,
-                    params("templateId", table.getId()));
+                        componentId,
+                        "" + table.getId(),
+                        EditTable.class,
+                        params("templateId", table.getId()));
                 item.add(panel);
             }
 
@@ -83,19 +82,35 @@ public class ListTables extends BasePage {
             }
         });
 
-//        columns.add(new PropertyColumn(new Model("Id"), "id"));
-        columns.add(new PropertyColumn<TableConfigTemplate>(new Model<String>("Name"), "name"));
-        columns.add(new PropertyColumn<TableConfigTemplate>(new Model<String>("Seats"), "seats"));
-        columns.add(new PropertyColumn<TableConfigTemplate>(new Model<String>("Ante"), "ante"));
-        columns.add(new PropertyColumn<TableConfigTemplate>(new Model<String>("Variant"), "variant"));
-        
-        columns.add(new AbstractColumn<TableConfigTemplate>(new Model<String>("Delete")) {
-        	
+        columns.add(new PropertyColumn<TableConfigTemplate,String>(new Model<String>("Name"), "name"));
+        columns.add(new PropertyColumn<TableConfigTemplate,String>(new Model<String>("Seats"), "seats"));
+        columns.add(new PropertyColumn<TableConfigTemplate,String>(new Model<String>("Ante"), "ante"));
+        columns.add(new PropertyColumn<TableConfigTemplate,String>(new Model<String>("Variant"), "variant"));
+        columns.add(new AbstractColumn<TableConfigTemplate,String>(new Model<String>("Timing")) {
+
             private static final long serialVersionUID = 1L;
 
             @Override
             public void populateItem(Item<ICellPopulator<TableConfigTemplate>> item, String componentId, IModel<TableConfigTemplate> model) {
-            	TableConfigTemplate table = model.getObject();
+                TableConfigTemplate table = model.getObject();
+                TimingProfile profile = table.getTiming();
+                Component panel = new Label(componentId, profile.getName());
+                item.add(panel);
+            }
+
+            @Override
+            public boolean isSortable() {
+                return false;
+            }
+        });
+
+        columns.add(new AbstractColumn<TableConfigTemplate,String>(new Model<String>("Delete")) {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void populateItem(Item<ICellPopulator<TableConfigTemplate>> item, String componentId, IModel<TableConfigTemplate> model) {
+                TableConfigTemplate table = model.getObject();
                 Component panel = new DeleteLinkPanel(componentId, TableConfigTemplate.class, table.getId(), ListTables.class);
                 item.add(panel);
             }
@@ -105,10 +120,8 @@ public class ListTables extends BasePage {
                 return false;
             }
         });
-        
-        
-        @SuppressWarnings({ "rawtypes", "unchecked" })
-		DefaultDataTable userTable = new DefaultDataTable("tableTable", columns, dataProvider, 20);
+
+        DefaultDataTable userTable = new DefaultDataTable("tableTable", columns, dataProvider, 20);
         add(userTable);
     }
 
@@ -118,14 +131,14 @@ public class ListTables extends BasePage {
 
     @Override
     public String getPageTitle() {
-        return "Tournaments";
+        return "Table Templates";
     }
     
     
     //  --- PRIVATE CLASSES --- //
     
-    private final class SortableDataProviderExtension extends SortableDataProvider<TableConfigTemplate> {
-    	
+    private final class SortableDataProviderExtension extends SortableDataProvider<TableConfigTemplate,String> {
+
         private static final long serialVersionUID = 1L;
 
         public SortableDataProviderExtension() {
@@ -133,8 +146,8 @@ public class ListTables extends BasePage {
         }
 
         @Override
-        public Iterator<TableConfigTemplate> iterator(int first, int count) {
-            return getTableTemplateList().subList(first, count + first).iterator();
+        public Iterator<TableConfigTemplate> iterator(long first, long count) {
+            return getTableTemplateList().subList((int)first, (int)(count + first)).iterator();
         }
 
         @Override
@@ -143,7 +156,7 @@ public class ListTables extends BasePage {
         }
 
         @Override
-        public int size() {
+        public long size() {
             return getTableTemplateList().size();
         }
     }

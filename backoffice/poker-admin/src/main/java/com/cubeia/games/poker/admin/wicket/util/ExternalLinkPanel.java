@@ -23,14 +23,20 @@ import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 
+import static com.cubeia.games.poker.admin.wicket.util.WicketHelpers.createPlayerLink;
+
 public class ExternalLinkPanel extends Panel {
     
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     public ExternalLinkPanel(String id, String text, String url) {
         this(id, text, null, url);
     }
-    
+
+    public static ExternalLinkPanel externalLinkForPlayer(int playerId, String networkUrl) {
+        return new ExternalLinkPanel("player", String.valueOf(playerId), createPlayerLink(networkUrl, playerId));
+    }
+
     public ExternalLinkPanel(String id, String text, String toolTip, String url) {
         super(id);
         

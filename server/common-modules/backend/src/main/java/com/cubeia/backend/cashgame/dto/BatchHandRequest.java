@@ -82,4 +82,19 @@ public class BatchHandRequest implements Serializable {
     public void setEndTime(long endTime) {
         this.endTime = endTime;
     }
+
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("BatchHandRequest");
+        sb.append("{handId='").append(handId).append('\'');
+        sb.append(", tableId=").append(tableId);
+        sb.append(", handResults=").append(handResults);
+        sb.append(", totalRake=").append(totalRake);
+        sb.append(", startTime=").append(startTime);
+        sb.append(", endTime=").append(endTime);
+        sb.append('}');
+        return sb.toString();
+    }
 }

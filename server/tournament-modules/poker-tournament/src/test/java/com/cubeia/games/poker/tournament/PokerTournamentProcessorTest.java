@@ -17,6 +17,9 @@
 
 package com.cubeia.games.poker.tournament;
 
+import com.cubeia.backend.cashgame.PlayerSessionId;
+import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
+import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.SeatPlayersMttAction;
 import com.cubeia.firebase.api.action.mtt.MttAction;
@@ -33,14 +36,17 @@ import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.firebase.api.mtt.support.MttNotifierAdapter;
 import com.cubeia.firebase.api.scheduler.Scheduler;
 import com.cubeia.firebase.api.service.mttplayerreg.TournamentPlayerRegistry;
+import com.cubeia.games.poker.common.DefaultSystemTime;
+import com.cubeia.games.poker.common.SystemTime;
 import com.cubeia.games.poker.tournament.activator.PokerTournamentCreationParticipant;
 import com.cubeia.games.poker.tournament.activator.ScheduledTournamentCreationParticipant;
 import com.cubeia.games.poker.tournament.activator.SitAndGoCreationParticipant;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentInstance;
 import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
 import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
-import com.cubeia.games.poker.tournament.configuration.blinds.BlindsLevel;
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructureFactory;
+import com.cubeia.games.poker.tournament.configuration.blinds.Level;
+import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructureParserTest;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
@@ -49,6 +55,7 @@ import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.mockito.Mock;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -58,6 +65,9 @@ import java.util.Set;
 
 import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.ANNOUNCED;
 import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.REGISTERING;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -102,6 +112,14 @@ public class PokerTournamentProcessorTest extends TestCase {
     @Mock
     private TournamentHistoryPersistenceService historyService;
 
+    @Mock
+    private LobbyAttributeAccessor tableLobbyAccessor;
+
+    @Mock
+    private CashGamesBackendService backend;
+
+    private SystemTime dateFetcher = new DefaultSystemTime();
+
     private MockTournamentAssist support;
 
     private LobbyAttributeAccessor lobbyAccessor = new LobbyAttributeAccessorAdapter();
@@ -117,6 +135,8 @@ public class PokerTournamentProcessorTest extends TestCase {
         support = new MockTournamentAssist();
         tournamentProcessor.setSupport(support);
         tournamentProcessor.setHistoryService(historyService);
+        tournamentProcessor.setBackend(backend);
+        tournamentProcessor.setDateFetcher(dateFetcher);
 
         state = new MTTStateSupport(1, 1);
         when(configuration.getBlindsStructure()).thenReturn(BlindsStructureFactory.createDefaultBlindsStructure());
@@ -125,6 +145,7 @@ public class PokerTournamentProcessorTest extends TestCase {
         when(instance.getLobbyAccessor()).thenReturn(lobbyAccessor);
         when(instance.getScheduler()).thenReturn(scheduler);
         when(instance.getMttNotifier()).thenReturn(notifier);
+        when(instance.getTableLobbyAccessor(anyInt())).thenReturn(tableLobbyAccessor);
         when(instanceConfig.getConfiguration()).thenReturn(configuration);
         support.setTableCreator(new MockTableCreator(tournamentProcessor, instance));
         support.setMttNotifier(new MttNotifierAdapter());
@@ -135,6 +156,9 @@ public class PokerTournamentProcessorTest extends TestCase {
         part.tournamentCreated(state, instance.getLobbyAccessor());
 
         pokerState = new PokerTournamentUtil().getPokerState(instance);
+        pokerState.setBuyIn(BigDecimal.valueOf(10));
+        pokerState.setFee(BigDecimal.valueOf(1));
+        pokerState.setPayoutStructure(PayoutStructureParserTest.createTestStructure());
     }
 
     public void testRegister() {
@@ -146,8 +170,7 @@ public class PokerTournamentProcessorTest extends TestCase {
                 instance.getLobbyAccessor().getStringAttribute(PokerTournamentLobbyAttributes.STATUS.name()));
         assertEquals(20, state.getMinPlayers());
         fillTournament();
-        assertEquals(PokerTournamentStatus.RUNNING.name(),
-                instance.getLobbyAccessor().getStringAttribute(PokerTournamentLobbyAttributes.STATUS.name()));
+        assertThat(instance.getLobbyAccessor().getStringAttribute(PokerTournamentLobbyAttributes.STATUS.name()), is(PokerTournamentStatus.RUNNING.name()));
         assertEquals(2, state.getTables().size());
         assertEquals(10, state.getPlayersAtTable(0).size());
     }
@@ -194,7 +217,7 @@ public class PokerTournamentProcessorTest extends TestCase {
 
         // Another table finishes a hand.
         int playersAtTableTwo = state.getPlayersAtTable(1).size();
-        sendRoundReport(1, new PokerTournamentRoundReport(new BlindsLevel(10, 20, 0)));
+        sendRoundReport(1, new PokerTournamentRoundReport(new Level(10, 20, 0, 60, false)));
         assertEquals(playersAtTableTwo - 1, state.getPlayersAtTable(1).size());
     }
 
@@ -240,7 +263,7 @@ public class PokerTournamentProcessorTest extends TestCase {
     }
 
     private PokerTournamentRoundReport createRoundReport(int tableId) {
-        PokerTournamentRoundReport report = new PokerTournamentRoundReport(new BlindsLevel(10, 20, 0));
+        PokerTournamentRoundReport report = new PokerTournamentRoundReport(new Level(10, 20, 0, 60, false));
         Collection<Integer> playersAtTable = state.getPlayersAtTable(tableId);
         int playersInTournament = state.getRemainingPlayerCount();
 
@@ -284,7 +307,7 @@ public class PokerTournamentProcessorTest extends TestCase {
     }
 
     private PokerTournamentRoundReport createPlayersOutRoundReport(int... playerIds) {
-        PokerTournamentRoundReport roundReport = new PokerTournamentRoundReport(new BlindsLevel(10, 20, 0));
+        PokerTournamentRoundReport roundReport = new PokerTournamentRoundReport(new Level(10, 20, 0, 60, false));
         for (int playerId : playerIds) {
             roundReport.setBalance(playerId, 0);
         }
@@ -304,5 +327,7 @@ public class PokerTournamentProcessorTest extends TestCase {
         state.getPlayerRegistry().register(instance, request);
         tournamentProcessor.getPlayerListener(state).playerRegistered(instance, request);
         assertEquals(before + 1, state.getRegisteredPlayersCount());
+        OpenSessionResponse response = new OpenSessionResponse(new PlayerSessionId(playerId), null);
+        tournamentProcessor.process(new MttObjectAction(state.getId(), response), instance);
     }
 }

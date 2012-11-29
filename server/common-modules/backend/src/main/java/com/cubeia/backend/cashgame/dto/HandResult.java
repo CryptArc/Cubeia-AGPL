@@ -74,4 +74,18 @@ public class HandResult implements Serializable {
     public Money getStartingBalance() {
         return startingBalance;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("HandResult");
+        sb.append("{playerSession=").append(playerSession);
+        sb.append(", aggregatedBet=").append(aggregatedBet);
+        sb.append(", win=").append(win);
+        sb.append(", rake=").append(rake);
+        sb.append(", seat=").append(seat);
+        sb.append(", startingBalance=").append(startingBalance);
+        sb.append('}');
+        return sb.toString();
+    }
 }

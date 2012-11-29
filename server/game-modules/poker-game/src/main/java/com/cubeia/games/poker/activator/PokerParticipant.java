@@ -17,8 +17,8 @@
 
 package com.cubeia.games.poker.activator;
 
-import static com.cubeia.games.poker.lobby.PokerLobbyAttributes.TABLE_EXTERNAL_ID;
-import static com.cubeia.games.poker.lobby.PokerLobbyAttributes.TABLE_TEMPLATE;
+import static com.cubeia.games.poker.common.lobby.PokerLobbyAttributes.TABLE_EXTERNAL_ID;
+import static com.cubeia.games.poker.common.lobby.PokerLobbyAttributes.TABLE_TEMPLATE;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -36,7 +36,7 @@ import com.cubeia.firebase.api.game.lobby.LobbyTableAttributeAccessor;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.lobby.LobbyPath;
 import com.cubeia.games.poker.entity.TableConfigTemplate;
-import com.cubeia.games.poker.lobby.PokerLobbyAttributes;
+import com.cubeia.games.poker.common.lobby.PokerLobbyAttributes;
 import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.settings.BetStrategyName;
@@ -93,7 +93,8 @@ public class PokerParticipant extends DefaultCreationParticipant {
         // Create state.
         PokerState pokerState = stateCreator.newPokerState();
         GameType gameType = GameTypeFactory.createGameType(variant);
-        PokerSettings settings = createSettings(table);
+        String externalTableId = "MOCK::" + table.getId();
+        PokerSettings settings = createSettings(table, externalTableId);
         pokerState.init(gameType, settings);
         pokerState.setAdapterState(new FirebaseState());
         pokerState.setTableId(table.getId());
@@ -102,7 +103,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
         // Set lobby attributes
         acc.setIntAttribute(TABLE_TEMPLATE.name(), template.getId());
         acc.setIntAttribute(PokerLobbyAttributes.VISIBLE_IN_LOBBY.name(), 0);
-        acc.setStringAttribute(PokerLobbyAttributes.SPEED.name(), template.getTiming().name());
+        acc.setStringAttribute(PokerLobbyAttributes.SPEED.name(), template.getTiming().getName());
         acc.setIntAttribute(PokerLobbyAttributes.ANTE.name(), template.getAnte());
         acc.setIntAttribute(PokerLobbyAttributes.SMALL_BLIND.name(), settings.getSmallBlindAmount());
         acc.setIntAttribute(PokerLobbyAttributes.BIG_BLIND.name(), settings.getBigBlindAmount());
@@ -113,6 +114,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
         acc.setIntAttribute(PokerLobbyAttributes.MAX_BUY_IN.name(), pokerState.getMaxBuyIn());
         int deckSize = TELESINA_DECK_UTIL.createDeckCards(pokerState.getTableSize()).size();
         acc.setIntAttribute(PokerLobbyAttributes.DECK_SIZE.name(), deckSize);
+        acc.setStringAttribute(PokerLobbyAttributes.TABLE_EXTERNAL_ID.name(), externalTableId);
 
         // Announce table
         // FirebaseCallbackFactory callbackFactory = cashGameBackendService.getCallbackFactory();
@@ -120,25 +122,24 @@ public class PokerParticipant extends DefaultCreationParticipant {
         cashGameBackendService.announceTable(announceRequest);
     }
 
-    private PokerSettings createSettings(Table table) {
+    private PokerSettings createSettings(Table table, String externalTableId) {
         int minBuyIn = template.getAnte() * template.getMinBuyInMultiplier();
         int maxBuyIn = template.getAnte() * template.getMaxBuyInMultiplier();
         int seats = table.getPlayerSet().getSeatingMap().getNumberOfSeats();
         RakeSettings rake = new RakeSettings(template.getRakeFraction(), template.getRakeLimit(), template.getRakeHeadsUpLimit());
         BetStrategyName limit = BetStrategyName.NO_LIMIT;
         // Map<Serializable,Serializable> attributes = Collections.emptyMap();
-        Map<Serializable, Serializable> attributes = Collections.<Serializable, Serializable>singletonMap(TABLE_EXTERNAL_ID.name(), "MOCK::" + table.getId());
+        Map<Serializable, Serializable> attributes = Collections.<Serializable, Serializable>singletonMap(TABLE_EXTERNAL_ID.name(), externalTableId);
         // TODO: Make this configurable.
         int smallBlindAmount = template.getAnte();
         int bigBlindAmount = 2 * smallBlindAmount;
-        TimingProfile profile = TimingFactory.getRegistry().getTimingProfile(template.getTiming());
         return new PokerSettings(
                 template.getAnte(),
                 smallBlindAmount,
                 bigBlindAmount,
                 minBuyIn,
                 maxBuyIn,
-                profile,
+                template.getTiming(),
                 seats,
                 limit,
                 rake,

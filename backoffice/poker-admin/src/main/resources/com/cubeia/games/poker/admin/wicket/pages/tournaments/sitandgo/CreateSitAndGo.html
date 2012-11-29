@@ -4,63 +4,26 @@
 <body>
 <wicket:extend>
 
-    <div class="page-header">
-        <h1>Create Sit and Go</h1>
+    <span wicket:id="feedback">feedback messages will be put here</span>
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="widget-box">
+                <div class="widget-title">
+                    <h5>Create Sit & Go</h5>
+                </div>
+                <div class="widget-content nopadding">
+                    <form wicket:id="tournamentForm" class="form-horizontal">
+                        <div wicket:id="configuration"></div>
+                        <div class="form-actions">
+                            <input type="submit" class="btn btn-primary" value="Create"/>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
     </div>
 
-    <span wicket:id="feedback">feedback messages will be put here</span>
-
-    <form wicket:id="tournamentForm">
-        <table class="table table-striped">
-            <tr>
-                <td>
-                    <label for="name">Name</label>
-                </td>
-                <td>
-                    <input wicket:id="name" id="name" type="text" size="10"/>
-                </td>
-            </tr>
-
-            <tr>
-                <td>
-                    <label for="seatsPerTable">Seats Per Table</label>
-                </td>
-                <td>
-                    <input wicket:id="seatsPerTable" id="seatsPerTable" type="text" size="20"/>
-                </td>
-            </tr>
-
-            <tr>
-                <td>
-                    <label for="timingType">Timing [0(def)|1|2(expr)|3]</label>
-                </td>
-                <td>
-                    <input wicket:id="timingType" id="timingType" type="text" size="20"/>
-                </td>
-            </tr>
-
-            <tr>
-                <td>
-                    <label for="minPlayers">Min Players</label>
-                </td>
-                <td>
-                    <input wicket:id="minPlayers" id="minPlayers" type="text" size="20"/>
-                </td>
-            </tr>
-
-            <tr>
-                <td>
-                    <label for="maxPlayers">Max Players</label>
-                </td>
-                <td>
-                    <input wicket:id="maxPlayers" id="maxPlayers" type="text" size="20"/>
-                </td>
-            </tr>
-
-        </table>
-
-        <input type="submit" value="Create"/>
-    </form>
 
 </wicket:extend>
 </body>

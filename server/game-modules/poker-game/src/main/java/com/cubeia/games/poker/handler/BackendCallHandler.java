@@ -31,7 +31,7 @@ import com.cubeia.games.poker.io.protocol.Enums;
 import com.cubeia.games.poker.io.protocol.Enums.BuyInResultCode;
 import com.cubeia.games.poker.io.protocol.Enums.ErrorCode;
 import com.cubeia.games.poker.io.protocol.ErrorPacket;
-import com.cubeia.games.poker.lobby.PokerLobbyAttributes;
+import com.cubeia.games.poker.common.lobby.PokerLobbyAttributes;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.poker.PokerState;
@@ -185,7 +185,7 @@ public class BackendCallHandler {
     }
 
     public void handleAnnounceTableSuccessfulResponse(AnnounceTableResponse attachment) {
-        log.debug("handle announce table success, tId = {}, intTableId = {}, tableProperties = {}", new Object[]{Integer.valueOf(table.getId()), attachment.getTableId(), attachment.getTableProperties()});
+        log.trace("handle announce table success, tId = {}, intTableId = {}, tableProperties = {}", new Object[]{Integer.valueOf(table.getId()), attachment.getTableId(), attachment.getTableProperties()});
         if (attachment.getTableId() == null) {
             log.error("got announce successful callback but the external table id is null! Attachment: {}", attachment);
             LobbyTableAttributeAccessor attributeAccessor = table.getAttributeAccessor();
@@ -227,7 +227,7 @@ public class BackendCallHandler {
 
         sendBuyInResponseToPlayer(playerId, buyInResultCode);
 
-        // Unseat player and optinally set as watcher
+        // Unseat player and optionally set as watcher
         state.unseatPlayer(playerId, setAsWatcher);
     }
 

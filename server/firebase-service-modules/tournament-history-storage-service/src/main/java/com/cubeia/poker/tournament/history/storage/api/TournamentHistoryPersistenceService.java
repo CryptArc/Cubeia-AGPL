@@ -37,11 +37,23 @@ public interface TournamentHistoryPersistenceService extends Contract {
 
     void statusChanged(String status, String historicId, long now);
 
-    void blindsUpdated(String historicId, int ante, int smallBlind, int bigBlind, long now);
+    void blindsUpdated(String historicId, Integer ante, Integer smallBlind, Integer bigBlind, long now);
 
     void setStartTime(String historicId, long date);
 
     void setEndTime(String historicId, long date);
 
     void setName(String historicId, String name);
+
+    void addTable(String historicId, String externalTableId);
+
+    void playerRegistered(String historicId, int playerId, long now);
+
+    void playerUnregistered(String historicId, int playerId, long now);
+
+    void playerFailedUnregistering(String historicId, int playerId, String message, long now);
+
+    void playerOpenedSession(String historicId, int playerId, String sessionId, long now);
+
+    void playerFailedOpeningSession(String historicId, int playerId, String message, long now);
 }

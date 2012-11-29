@@ -15,6 +15,9 @@ Poker.SoundRepository = Class.extend({
     },
 
     loadSounds:function () {
+        if(typeof(Audio)=="undefined") {
+            return;
+        }
         for (var sound in Poker.Sounds) {
             console.log("Loading sound " + sound + " from file " + Poker.Sounds[sound]);
             var audio = new Audio("sounds/" + Poker.Sounds[sound]);

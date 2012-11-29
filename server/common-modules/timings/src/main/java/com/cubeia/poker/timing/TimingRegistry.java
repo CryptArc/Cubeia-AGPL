@@ -50,7 +50,7 @@ public interface TimingRegistry {
      * @param profile
      * @return
      */
-    public TimingProfile getTimingProfile(Timings profile);
+    public TimingProfile getTimingProfile(String profile);
 
 
 }

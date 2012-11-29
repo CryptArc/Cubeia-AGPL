@@ -17,7 +17,7 @@
 
 package com.cubeia.games.poker.activator;
 
-import static com.cubeia.games.poker.lobby.PokerLobbyAttributes.TABLE_EXTERNAL_ID;
+import static com.cubeia.games.poker.common.lobby.PokerLobbyAttributes.TABLE_EXTERNAL_ID;
 import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
 
 import java.io.Serializable;
@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Map;
 
+import com.cubeia.games.poker.common.lobby.PokerLobbyAttributes;
 import org.apache.log4j.Logger;
 
 import com.cubeia.firebase.api.game.table.Table;
@@ -76,7 +77,8 @@ public class MttTableCreationHandlerImpl implements MttTableCreationHandler {
         int numberOfSeats = table.getPlayerSet().getSeatingMap().getNumberOfSeats();
         BetStrategyName noLimit = BetStrategyName.NO_LIMIT;
         RakeSettings rakeSettings = new RakeSettings(new BigDecimal(0), 0, 0); // No rake in tournaments.
-        Map<Serializable, Serializable> attributes = Collections.<Serializable, Serializable>singletonMap(TABLE_EXTERNAL_ID.name(),"MOCK_TRN::" + table.getId());
+        String externalTableId = "MOCK_TRN::" + table.getId();
+        Map<Serializable, Serializable> attributes = Collections.<Serializable, Serializable>singletonMap(TABLE_EXTERNAL_ID.name(), externalTableId);
         PokerSettings settings = new PokerSettings(anteAmount, smallBlindAmount, bigBlindAmount, -1, -1, timing, numberOfSeats,
                                                    noLimit, rakeSettings, attributes);
         GameType gameType = GameTypeFactory.createGameType(TEXAS_HOLDEM);
@@ -86,6 +88,7 @@ public class MttTableCreationHandlerImpl implements MttTableCreationHandler {
         pokerState.setTournamentId(mttId);
         pokerState.setAdapterState(new FirebaseState());
         table.getGameState().setState(pokerState);
+        acc.setStringAttribute(PokerLobbyAttributes.TABLE_EXTERNAL_ID.name(), externalTableId);
     }
 
 }

@@ -23,6 +23,6 @@ import com.cubeia.games.poker.entity.TableConfigTemplate;
 
 public interface TableConfigTemplateProvider {
 
-	public List<TableConfigTemplate> getTemplates();
-	
+    public List<TableConfigTemplate> getTemplates();
+
 }

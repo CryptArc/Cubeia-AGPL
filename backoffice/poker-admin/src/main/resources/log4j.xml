@@ -35,7 +35,7 @@
     </category>
 
     <category name="org.hibernate" additivity="false">
-        <priority value="warn"/>
+        <priority value="debug"/>
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="LOG"/>
     </category>

@@ -78,7 +78,7 @@ public class DatabaseStorageService implements TournamentHistoryPersistenceServi
     }
 
     @Override
-    public void blindsUpdated(String historicId, int ante, int smallBlind, int bigBlind, long now) {
+    public void blindsUpdated(String historicId, Integer ante, Integer smallBlind, Integer bigBlind, long now) {
         addEvent(historicId, new TournamentEvent(now, "blinds updated", ante + "/" + smallBlind + "/" + bigBlind));
     }
 
@@ -97,9 +97,39 @@ public class DatabaseStorageService implements TournamentHistoryPersistenceServi
         setProperty(historicId, "name", name);
     }
 
+    @Override
+    public void addTable(String historicId, String externalTableId) {
+        pushObject(historicId, externalTableId, "tables");
+    }
+
+    @Override
+    public void playerRegistered(String historicId, int playerId, long now) {
+        addEvent(historicId, new TournamentEvent(now, "player registered", String.valueOf(playerId)));
+    }
+
+    @Override
+    public void playerUnregistered(String historicId, int playerId, long now) {
+        addEvent(historicId, new TournamentEvent(now, "player un-registered", String.valueOf(playerId)));
+    }
+
+    @Override
+    public void playerFailedUnregistering(String historicId, int playerId, String message, long now) {
+        addEvent(historicId, new TournamentEvent(now, "player failed un-registering: " + message, String.valueOf(playerId)));
+    }
+
+    @Override
+    public void playerOpenedSession(String historicId, int playerId, String sessionId, long now) {
+        addEvent(historicId, new TournamentEvent(now, "player opened session: " + sessionId, String.valueOf(playerId)));
+    }
+
+    @Override
+    public void playerFailedOpeningSession(String historicId, int playerId, String message, long now) {
+        addEvent(historicId, new TournamentEvent(now, "player failed opening session: " + message, String.valueOf(playerId)));
+    }
+
     private void setProperty(String historicId, String propertyName, Object value) {
         BasicDBObject tournamentId = new BasicDBObject().append("_id", new ObjectId(historicId));
-        DBObject update = new BasicDBObject().append(propertyName, value);
+        DBObject update = new BasicDBObject().append("$set", new BasicDBObject(propertyName, value));
         log.debug("Storing property " + propertyName + " to " + value + " for " + historicId);
         mongoStorage.update(tournamentId, update, TOURNAMENT_COLLECTION);
     }
@@ -113,9 +143,9 @@ public class DatabaseStorageService implements TournamentHistoryPersistenceServi
     }
 
     private void pushObject(String historicId, Object object, String array) {
+        log.debug("Pushing " + object + " to " + array + " for tournament " + historicId);
         BasicDBObject tournamentId = new BasicDBObject().append("_id", new ObjectId(historicId));
-        DBObject dbObject = (DBObject) JSON.parse(gson.toJson(object));
-        BasicDBObject updateCommand = new BasicDBObject().append("$push", new BasicDBObject(array, dbObject));
+        BasicDBObject updateCommand = new BasicDBObject().append("$push", new BasicDBObject(array, JSON.parse(gson.toJson(object))));
         mongoStorage.update(tournamentId, updateCommand, TOURNAMENT_COLLECTION);
     }
 

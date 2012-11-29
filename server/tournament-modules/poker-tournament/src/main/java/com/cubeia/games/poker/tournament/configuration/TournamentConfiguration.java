@@ -19,12 +19,18 @@ package com.cubeia.games.poker.tournament.configuration;
 
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructureFactory;
+import com.cubeia.poker.timing.TimingFactory;
+import com.cubeia.poker.timing.TimingProfile;
+import com.cubeia.poker.timing.TimingRegistry;
+import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
 import org.apache.log4j.Logger;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * This class represents the configuration of a tournament.
@@ -44,13 +50,22 @@ public class TournamentConfiguration implements Serializable {
 
     private int seatsPerTable = 10;
 
-    private int timingType = 0;
+    @ManyToOne
+    private TimingProfile timingType;
 
     private int minPlayers = 0;
 
     private int maxPlayers = 0;
 
+    @ManyToOne
     private BlindsStructure blindsStructure;
+
+    private BigDecimal buyIn;
+
+    private BigDecimal fee;
+
+    @ManyToOne
+    private PayoutStructure payoutStructure;
 
     public TournamentConfiguration() {
     }
@@ -83,11 +98,11 @@ public class TournamentConfiguration implements Serializable {
         this.seatsPerTable = seatsPerTable;
     }
 
-    public int getTimingType() {
+    public TimingProfile getTimingType() {
         return timingType;
     }
 
-    public void setTimingType(int timingType) {
+    public void setTimingType(TimingProfile timingType) {
         this.timingType = timingType;
     }
 
@@ -120,5 +135,29 @@ public class TournamentConfiguration implements Serializable {
     public void setBlindsStructure(BlindsStructure blindsStructure) {
         log.debug("Setting blinds structure to " + blindsStructure);
         this.blindsStructure = blindsStructure;
+    }
+
+    public void setBuyIn(BigDecimal buyIn) {
+        this.buyIn = buyIn;
+    }
+
+    public void setFee(BigDecimal fee) {
+        this.fee = fee;
+    }
+
+    public BigDecimal getBuyIn() {
+        return buyIn;
+    }
+
+    public BigDecimal getFee() {
+        return fee;
+    }
+
+    public PayoutStructure getPayoutStructure() {
+        return payoutStructure;
+    }
+
+    public void setPayoutStructure(PayoutStructure payoutStructure) {
+        this.payoutStructure = payoutStructure;
     }
 }

@@ -2,7 +2,7 @@
     <name>Cubeia Wallet Adapter</name>
     <public-id>ns://www.cubeia.com/backend/cashgame/service</public-id>
     <contract>com.cubeia.backend.firebase.CashGamesBackendService</contract>
-    <service>com.cubeia.backend.firebase.CachGamesBackendServiceImpl</service>
+    <service>com.cubeia.backend.firebase.CashGamesBackendServiceImpl</service>
     <description/>
 
     <dependencies>

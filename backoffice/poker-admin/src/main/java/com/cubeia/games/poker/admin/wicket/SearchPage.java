@@ -58,8 +58,8 @@ public class SearchPage extends BasePage {
      *
      * @param parameters Page parameters
      */
-    public SearchPage(PageParameters p) {
-        super(p);
+    public SearchPage(PageParameters parameters) {
+        super(parameters);
 
         // Builder b = ImmutableSettings.settingsBuilder();
         // Settings s = b.put("compress.default.type", "lzf").build();
@@ -68,7 +68,7 @@ public class SearchPage extends BasePage {
         // TODO Fix config
         Client client = new TransportClient().addTransportAddress(new InetSocketTransportAddress("localhost", 9300));
 
-        StringValue value = p.get("query");
+        StringValue value = parameters.get("query");
         String[] parts = (value.isEmpty() ? new String[0] : value.toString().split(" "));
 
         BoolQueryBuilder root = QueryBuilders.boolQuery();
@@ -76,7 +76,6 @@ public class SearchPage extends BasePage {
         for (String s : parts) {
             if (s.endsWith("*")) {
                 s = s.substring(0, s.length() - 1).toLowerCase();
-                System.out.println("KKKKKKK: " + s);
                 root.must(QueryBuilders.prefixQuery("_all", s));
             } else {
                 root.must(QueryBuilders.matchQuery("_all", s));
@@ -151,12 +150,12 @@ public class SearchPage extends BasePage {
         }
 
         @Override
-        public Iterator<? extends User> iterator(int first, int count) {
-            return list.subList(first, first + count).iterator();
+        public Iterator<? extends User> iterator(long first, long count) {
+            return list.subList((int)first, (int) (first + count)).iterator();
         }
 
         @Override
-        public int size() {
+        public long size() {
             return list.size();
         }
 

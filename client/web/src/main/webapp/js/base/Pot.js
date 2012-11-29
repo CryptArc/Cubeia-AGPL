@@ -25,5 +25,6 @@ Poker.Pot = Class.extend({
         this.id = id;
         this.type = type;
         this.amount = amount;
+
     }
 });

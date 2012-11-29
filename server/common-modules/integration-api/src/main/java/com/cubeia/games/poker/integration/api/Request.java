@@ -21,8 +21,8 @@ import com.cubeia.games.poker.common.Money;
 
 public class Request {
 
-	private long playerId; // player
-	private Money amount; // amount to withdraw or deposit
-	private Session session; // table or tournament
-	
+    private long playerId; // player
+    private Money amount; // amount to withdraw or deposit
+    private Session session; // table or tournament
+    private RequestType requestType; // the type of the request
 }

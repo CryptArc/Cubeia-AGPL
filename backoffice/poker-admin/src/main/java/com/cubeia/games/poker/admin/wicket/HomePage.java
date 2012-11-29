@@ -35,7 +35,7 @@ public class HomePage extends BasePage {
      * @param parameters Page parameters
      */
     public HomePage(final PageParameters parameters) {
-    	super(parameters);
+        super(parameters);
     }
 
     @Override

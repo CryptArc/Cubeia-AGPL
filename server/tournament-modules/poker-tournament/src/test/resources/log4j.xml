@@ -13,5 +13,4 @@
         <priority value="debug"/>
         <appender-ref ref="STDOUT"/>
     </category>
-
 </log4j:configuration>

@@ -60,7 +60,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
     },
     updatePlayer : function(player) {
         this.player = player;
-        $("#myPlayerBalance-"+this.tableId).html(Poker.Utils.CURRENCY_SYMBOL + this.player.balance);
+        $("#myPlayerBalance-"+this.tableId).html("&euro;"+this.player.balance);
         this.handlePlayerStatus();
     },
     handlePlayerStatus : function() {

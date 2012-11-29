@@ -253,6 +253,18 @@ Poker.TableManager = Class.extend({
             listeners[l].onExposePrivateCard(cardId,cardString);
         }
     },
+    notifyWaitingToStartBreak : function() {
+        var dialogManager = Poker.AppCtx.getDialogManager();
+        dialogManager.displayGenericDialog({header:"Message",
+            message:"Break is about to start, waiting for other tables to finish."});
+    },
+    notifyBlindsUpdated : function(newBlinds) {
+        if (newBlinds.isBreak) {
+            var dialogManager = Poker.AppCtx.getDialogManager();
+            dialogManager.displayGenericDialog({header:"Message",
+                message:"We are now on a break. Game will resume in " + newBlinds.durationInMinutes + " minutes."});
+        }
+    },
     bettingRoundComplete : function(tableId) {
         var listeners = this.getTableListeners(tableId);
         for(var l = 0; l<listeners.length; l++){

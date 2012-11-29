@@ -22,7 +22,6 @@ import com.cubeia.firebase.api.lobby.LobbyPath;
 import com.cubeia.firebase.api.mtt.MTTState;
 import com.cubeia.firebase.api.mtt.activator.CreationParticipant;
 import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
-import com.cubeia.games.poker.common.DefaultSystemTime;
 import com.cubeia.games.poker.tournament.PokerTournament;
 import com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes;
 import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
@@ -59,9 +58,13 @@ public abstract class PokerTournamentCreationParticipant implements CreationPart
         stateSupport.setMinPlayers(config.getMinPlayers());
 
         PokerTournamentState pokerState = new PokerTournamentState();
-        pokerState.setTiming(Timings.values()[config.getTimingType()]);
+        pokerState.setTiming(config.getTimingType());
         pokerState.setBlindsStructure(config.getBlindsStructure());
-        PokerTournament tournament = new PokerTournament(pokerState, new DefaultSystemTime(), getTournamentLifeCycle());
+        pokerState.setBuyIn(config.getBuyIn());
+        pokerState.setFee(config.getFee());
+        pokerState.setPayoutStructure(config.getPayoutStructure());
+        pokerState.setLifecycle(getTournamentLifeCycle());
+        PokerTournament tournament = new PokerTournament(pokerState);
         stateSupport.setState(tournament);
 
         acc.setStringAttribute("SPEED", timing.name());

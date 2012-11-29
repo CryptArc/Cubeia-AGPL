@@ -45,12 +45,6 @@ public class ReserveResponse implements Serializable {
         reserveProperties.put(key, value);
     }
 
-    @Override
-    public String toString() {
-        return "ReserveResponse [balanceUpdate=" + getBalanceUpdate() + ", amountReserved=" + getAmountReserved()
-                + ", reserveProperties=" + getReserveProperties() + "]";
-    }
-
     public BalanceUpdate getBalanceUpdate() {
         return balanceUpdate;
     }
@@ -63,5 +57,14 @@ public class ReserveResponse implements Serializable {
         return new HashMap<String, String>(reserveProperties);
     }
 
-
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("ReserveResponse");
+        sb.append("{balanceUpdate=").append(balanceUpdate);
+        sb.append(", amountReserved=").append(amountReserved);
+        sb.append(", reserveProperties=").append(reserveProperties);
+        sb.append('}');
+        return sb.toString();
+    }
 }

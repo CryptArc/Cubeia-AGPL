@@ -26,63 +26,63 @@ import org.apache.commons.lang.builder.ToStringStyle;
 
 public class TableId implements Serializable {
 
-	private static final long serialVersionUID = 4377559096783591987L;
-	
-	/**
-	 * Firebase game ID. Mandatory.
-	 */
-	public final int gameId;
-	
-	/**
-	 * Firebase table ID. Mandatory.
-	 */
-	public final int tableId;
-	
-	/**
-	 * Optional ID produced by integration, 
-	 * may be null.
-	 */
-	public final String integrationId;
-	
-	/**
-	 * @param gameId Firebase game ID, must not be null
-	 * @param tableId Firebase table ID, must not be null
-	 * @param integrationId Optional integration ID, may be null
-	 */
-	public TableId(int gameId, int tableId, String integrationId) {
-		this.gameId = gameId;
-		this.tableId = tableId;
-		this.integrationId = integrationId;
-	}
-	
-	/**
-	 * @param tableId Firebase table ID, must not be null
-	 * @param integrationId Optional integration ID, may be null
-	 */
-	public TableId(TableId tableId, String integrationId) {
-		this(tableId.gameId, tableId.tableId, integrationId);
-	}
-	
-	/**
-	 * @param gameId Firebase game ID, must not be null
-	 * @param tableId Firebase table ID, must not be null
-	 */
-	public TableId(int gameId, int tableId) {
-		this(gameId, tableId, null);
-	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		return EqualsBuilder.reflectionEquals(this, obj);
-	}
+    private static final long serialVersionUID = 4377559096783591987L;
 
-	@Override
-	public int hashCode() {
-		return HashCodeBuilder.reflectionHashCode(this);
-	}
+    /**
+     * Firebase game ID. Mandatory.
+     */
+    public final int gameId;
 
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
-	}
+    /**
+     * Firebase table ID. Mandatory.
+     */
+    public final int tableId;
+
+    /**
+     * Optional ID produced by integration,
+     * may be null.
+     */
+    public final String integrationId;
+
+    /**
+     * @param gameId        Firebase game ID, must not be null
+     * @param tableId       Firebase table ID, must not be null
+     * @param integrationId Optional integration ID, may be null
+     */
+    public TableId(int gameId, int tableId, String integrationId) {
+        this.gameId = gameId;
+        this.tableId = tableId;
+        this.integrationId = integrationId;
+    }
+
+    /**
+     * @param tableId       Firebase table ID, must not be null
+     * @param integrationId Optional integration ID, may be null
+     */
+    public TableId(TableId tableId, String integrationId) {
+        this(tableId.gameId, tableId.tableId, integrationId);
+    }
+
+    /**
+     * @param gameId  Firebase game ID, must not be null
+     * @param tableId Firebase table ID, must not be null
+     */
+    public TableId(int gameId, int tableId) {
+        this(gameId, tableId, null);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return EqualsBuilder.reflectionEquals(this, obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
 }

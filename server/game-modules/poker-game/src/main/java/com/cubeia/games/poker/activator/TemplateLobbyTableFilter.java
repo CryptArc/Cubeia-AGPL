@@ -17,7 +17,7 @@
 
 package com.cubeia.games.poker.activator;
 
-import static com.cubeia.games.poker.lobby.PokerLobbyAttributes.TABLE_TEMPLATE;
+import static com.cubeia.games.poker.common.lobby.PokerLobbyAttributes.TABLE_TEMPLATE;
 
 import java.util.Map;
 
