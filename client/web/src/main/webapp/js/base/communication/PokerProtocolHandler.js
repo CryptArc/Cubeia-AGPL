@@ -213,7 +213,8 @@ Poker.PokerProtocolHandler = function() {
                 this.tableManager.notifyBlindsUpdated(protocolObject);
                 break;
             case com.cubeia.games.poker.io.protocol.AchievementNotificationPacket.CLASSID:
-                alert("Achievement Alert! "+protocolObject);
+                handleAchievementEvent(protocolObject);
+            //    alert("Achievement Alert! "+protocolObject);
                 break;
             default:
                 console.log("Ignoring packet: " + protocolObject);

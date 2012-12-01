@@ -156,9 +156,13 @@
             achievementPresenter.visible = false
             achievementPresenter.clearAchievementList(parentElement);
         }
-
     };
 
+    handleAchievementEvent = function(protObj) {
+        var message = JSON.parse(protObj.message)
+        console.log("Event Message: ",message);
+        achievementPresenter.handleSocketEvent(message);
+    }
 
 </script>
 
@@ -215,7 +219,7 @@
         </div>
         <div class="view-container slidable">
 
-            <div id="achievement-display" style="position:absolute; z-index: 9999; display: block; right: 0px; width: 400px; top:0px; bottom: 0px; overflow:auto;">
+            <div id="achievement-display" style="position:absolute; pointer-events: none; z-index: 9999; display: block; right: 0px; width: 400px; top:0px; bottom: 0px; overflow:auto;">
 
             </div>
 
