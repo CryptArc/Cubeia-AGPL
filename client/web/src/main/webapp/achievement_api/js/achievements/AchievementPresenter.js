@@ -239,7 +239,7 @@ AchievementPresenter.prototype.animateGainAchievement = function(container, achi
     var instance = this;
     achievement = achievement;
     setTimeout(function(){
-        container.style.bottom = instance.gainAnimations*110+40+"px";
+        container.style.bottom = instance.gainAnimations*110+140+"px";
         container.style.opacity = 1;
         instance.gainAnimations += 1;
     }, 100)
@@ -248,14 +248,14 @@ AchievementPresenter.prototype.animateGainAchievement = function(container, achi
 
     setTimeout(function(){
         instance.showAchievementAsCompleted(achievement);
-    }, 1200)
+    }, 1600)
 
 
     setTimeout(function(){
         container.style.bottom = "1px";
         container.style.opacity = 0;
         instance.gainAnimations -= 1;
-    }, 3000)
+    }, 6000)
 
 
 
@@ -263,6 +263,7 @@ AchievementPresenter.prototype.animateGainAchievement = function(container, achi
         instance.achievementUiBuilder.domHandler.removeElement(container);
         achievement.divs = {};
 
-    }, 4000)
+    }, 8000)
+
 
 }
