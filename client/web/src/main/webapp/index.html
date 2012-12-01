@@ -160,7 +160,6 @@
 
     handleAchievementEvent = function(protObj) {
         var message = JSON.parse(protObj.message)
-        console.log("Event Message: ",message);
         achievementPresenter.handleSocketEvent(message);
     }
 

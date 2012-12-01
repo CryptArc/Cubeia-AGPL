@@ -5,7 +5,6 @@ AchievementPresenter = function() {
 
 AchievementPresenter.prototype.fileLoadComplete = function(path) {
     this.loadQueue.splice(this.loadQueue.indexOf(path), 1);
-    console.log(this.loadQueue);
     if (this.loadQueue.length == 0) this.initScript();
 }
 
@@ -63,7 +62,6 @@ AchievementPresenter.prototype.updateUserInParentElement = function(user, parent
 };
 
 AchievementPresenter.prototype.handleSocketEvent = function(message) {
-    console.log("Message event: ",message)
     if (message.type == "achievement") {
         achievement = message.achievement;
         achievement.achieved = message.attributes.achieved;
@@ -212,9 +210,7 @@ AchievementPresenter.prototype.showAchievementInProgress = function(achievement)
 };
 
 AchievementPresenter.prototype.updateAchievementProgress = function(message) {
-    console.log("Update Progress",message)
     var achievement = this.localAchievements.getListedAchievement(message.achievementNameId);
-    console.log("match: ",achievement)
     if (!achievement) return
     achievement.currentCount = message.currentCount;
     this.showAchievementProgress(achievement)
@@ -226,7 +222,6 @@ AchievementPresenter.prototype.showAchievementProgress = function(achievement) {
 }
 
 AchievementPresenter.prototype.showAchievementAsCompleted = function(achievement) {
-    console.log(achievement)
     var divs = achievement.divs;
     var idForUi = achievement.achievementNameId;
     divs.time = this.achievementUiBuilder.builUiComponent(divs.frame, idForUi+"_time", "achievement_timestamp_label")

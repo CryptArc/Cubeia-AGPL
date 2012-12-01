@@ -33,7 +33,6 @@ LocalAchievements.prototype.createFakeAchievements = function(amount) {
 
 LocalAchievements.prototype.addAchievement = function(achievement) {
     this.achievementList[achievement.achievementNameId] = achievement;
-    console.log(this.achievementList)
 };
 
 LocalAchievements.prototype.addAchievementArray = function(achievementArray) {

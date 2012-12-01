@@ -14,7 +14,6 @@ AchievementLoader.prototype.setGame = function(game) {
 };
 
 AchievementLoader.prototype.setUserId = function(userId) {
-    console.log("Set userId "+userId)
     this.userId = userId;
 };
 
@@ -25,7 +24,6 @@ AchievementLoader.prototype.updateUrl = function() {
 };
 
 AchievementLoader.prototype.setUrl = function(url) {
-    console.log("Set Url: "+url)
     this.url = url;
 };
 
@@ -42,8 +40,6 @@ AchievementLoader.prototype.loadAchievementData = function(url, onLoad) {
         var url = "http://"+url;
         var instance = this;
         var xobj = new XMLHttpRequest();
-     //   xobj.overrideMimeType("application/json");
-     //   xobj.responseType = "json";
         xobj.open('GET', url, true);
         xobj.onreadystatechange = function () {
             if (xobj.readyState == 4) {
