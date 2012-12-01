@@ -17,6 +17,23 @@
 
 package com.cubeia.games.poker.adapter;
 
+import static com.cubeia.firebase.api.game.player.PlayerStatus.DISCONNECTED;
+import static com.cubeia.firebase.api.game.player.PlayerStatus.LEAVING;
+import static com.cubeia.games.poker.handler.BackendCallHandler.EXT_PROP_KEY_TABLE_ID;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cubeia.backend.cashgame.TableId;
 import com.cubeia.backend.cashgame.dto.BalanceUpdate;
 import com.cubeia.backend.cashgame.dto.BatchHandRequest;
@@ -41,6 +58,7 @@ import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.firebase.service.random.api.RandomService;
 import com.cubeia.game.poker.config.api.PokerConfigurationService;
 import com.cubeia.games.poker.adapter.BuyInCalculator.MinAndMaxBuyInResult;
+import com.cubeia.games.poker.adapter.achievement.AchievementAdapter;
 import com.cubeia.games.poker.cache.ActionCache;
 import com.cubeia.games.poker.common.Money;
 import com.cubeia.games.poker.entity.HandIdentifier;
@@ -103,22 +121,6 @@ import com.cubeia.poker.util.SitoutCalculator;
 import com.cubeia.poker.util.ThreadLocalProfiler;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import static com.cubeia.firebase.api.game.player.PlayerStatus.DISCONNECTED;
-import static com.cubeia.firebase.api.game.player.PlayerStatus.LEAVING;
-import static com.cubeia.games.poker.handler.BackendCallHandler.EXT_PROP_KEY_TABLE_ID;
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Firebase implementation of the poker logic's server adapter.
@@ -190,6 +192,9 @@ public class FirebaseServerAdapter implements ServerAdapter {
     @Service
     @VisibleForTesting
     RandomService randomService;
+    
+    @Inject
+    AchievementAdapter achievements;
 
     /*------------------------------------------------
 
@@ -493,7 +498,9 @@ public class FirebaseServerAdapter implements ServerAdapter {
             log.debug("--> Send HandCanceled[" + handCanceledPacket + "] to everyone");
             sendPublicPacket(action, -1);
         }
-
+        
+        achievements.notifyHandEnd(handResult, handEndStatus, tournamentTable);
+        
         clearActionCache();
         ThreadLocalProfiler.add("FirebaseServerAdapter.notifyHandEnd.stop");
     }
