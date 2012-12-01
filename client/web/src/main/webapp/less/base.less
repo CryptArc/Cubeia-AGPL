@@ -19,8 +19,7 @@
 @import "main-menu.less";
 @import "toggle-switch.less";
 @import "circular-progressbar.less";
-
-
+@import "jquery.gritter.less";
 
 body {
     margin: 0;
@@ -54,9 +53,34 @@ body {
     padding:5%;
     border:none;
     font-size:130%;
-    .border-radius(4px);
+
     .box-shadow(inset 1px 1px 3px #999);
 }
+
+.context-menu {
+    position:absolute;
+    z-index: 99999999;
+    width:150px;
+
+}
+.context-menu ul {
+    padding:0;
+    margin:0;
+    width:100%;
+}
+
+.context-menu li {
+    padding:5%;
+    list-style-type: none;
+    .border-radius(4px);
+    background-color: #333;
+    cursor: pointer;
+}
+.context-menu li:hover {
+    background-color: #444;
+}
+
+
 
 @media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
     @import "devices/ipad/ipad-base.less";

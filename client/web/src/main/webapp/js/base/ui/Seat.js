@@ -26,10 +26,20 @@ Poker.Seat = Class.extend({
        this.player = player;
        this.templateManager = templateManager;
        this.seatElement =  $("#"+elementId);
+       var self = this;
+       this.seatElement.click(function(e){
+           console.log("clicked seat element");
+           new Poker.ContextMenu(e,[{ title : "Challenge player", callback : function(){
+               console.log("CLIIIIIIIIICK");
+               Poker.AppCtx.getChallengeManager().challengePlayer(self.player.id);
+           }}]);
+
+       });
        this.renderSeat();
    },
    setSeatPos : function(previousPos, position) {
      this.seatElement.removeClass("seat-empty").removeClass("seat-pos-"+previousPos).removeClass("seat-inactive").addClass("seat-pos-"+position);
+
    },
    renderSeat : function() {
        var output = Mustache.render(this.templateManager.getTemplate("seatTemplate"),this.player);

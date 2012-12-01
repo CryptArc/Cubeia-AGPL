@@ -17,18 +17,41 @@
 
 package com.cubeia.games.poker.tournament.activator;
 
+import com.cubeia.firebase.api.action.mtt.MttRegisterPlayerAction;
+import com.cubeia.firebase.api.common.Attribute;
 import com.cubeia.firebase.api.mtt.MttFactory;
 import com.cubeia.firebase.api.mtt.activator.ActivatorContext;
 import com.cubeia.firebase.api.mtt.activator.MttActivator;
+import com.cubeia.firebase.api.mtt.lobby.MttLobbyObject;
+import com.cubeia.firebase.api.mtt.model.MttPlayer;
+import com.cubeia.firebase.api.mtt.model.MttRegistrationRequest;
+import com.cubeia.firebase.api.routing.ActivatorAction;
+import com.cubeia.firebase.api.routing.RoutableActivator;
 import com.cubeia.firebase.api.server.Startable;
 import com.cubeia.firebase.api.server.SystemException;
+import com.cubeia.firebase.api.service.clientregistry.PublicClientRegistryService;
+import com.cubeia.firebase.api.service.router.RouterService;
+import com.cubeia.game.poker.challenge.api.Challenge;
+import com.cubeia.game.poker.challenge.api.ChallengeService;
 import com.cubeia.game.poker.config.api.PokerConfigurationService;
 import com.cubeia.games.poker.common.guice.JpaInitializer;
+import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
+import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
+import com.cubeia.games.poker.tournament.configuration.payouts.IntRange;
+import com.cubeia.games.poker.tournament.configuration.payouts.Payout;
+import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
+import com.cubeia.games.poker.tournament.configuration.payouts.Payouts;
 import com.cubeia.games.poker.tournament.guice.ActivatorModule;
 import com.cubeia.games.poker.tournament.guice.MockActivatorModule;
+import com.cubeia.poker.timing.TimingFactory;
+import com.cubeia.poker.timing.TimingProfile;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.apache.log4j.Logger;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Base class for the tournament activator.
@@ -38,7 +61,7 @@ import org.apache.log4j.Logger;
  *
  * @author Fredrik Johansson, Cubeia Ltd
  */
-public class PokerTournamentActivatorImpl implements MttActivator, Startable, PokerTournamentActivator {
+public class PokerTournamentActivatorImpl implements MttActivator, Startable, PokerTournamentActivator, RoutableActivator {
 
     public static final int POKER_GAME_ID = 1;
 
@@ -136,5 +159,39 @@ public class PokerTournamentActivatorImpl implements MttActivator, Startable, Po
 
     private boolean useMockIntegrations() {
         return context.getServices().getServiceInstance(PokerConfigurationService.class).getActivatorConfig().useMockIntegrations();
+    }
+
+    @Override
+    public void onAction(ActivatorAction<?> e) {
+        log.debug("On action tournament activator");
+        if(e.getData() instanceof Challenge) {
+            Challenge c = (Challenge)e.getData();
+
+            SitAndGoConfiguration config = new SitAndGoConfiguration("Private Challenge",2, TimingFactory.getRegistry().getTimingProfile("DEFAULT"));
+
+            config.getConfiguration().setBuyIn(BigDecimal.valueOf(1));
+            config.getConfiguration().setFee(BigDecimal.valueOf(0));
+            config.getConfiguration().setPayoutStructure(new PayoutStructure(Arrays.asList(new Payouts[]{new Payouts(new IntRange(1,2),
+                    Arrays.asList(new Payout[]{new Payout(new IntRange(1,1),BigDecimal.ONE)}))})));
+            SitAndGoCreationParticipant participant =  new SitAndGoCreationParticipant(config);
+            MttLobbyObject mtt = factory.createMtt(context.getMttId(), "Private Challenge", participant);
+
+            ChallengeService cs = context.getServices().getServiceInstance(ChallengeService.class);
+            PublicClientRegistryService publicClientRegistryService = context.getServices().getServiceInstance(PublicClientRegistryService.class);
+            cs.startChallenge(mtt.getTournamentId(),c.getId());
+
+            RouterService routerService = context.getServices().getServiceInstance(RouterService.class);
+
+            MttRegisterPlayerAction player1 = new MttRegisterPlayerAction(mtt.getTournamentId(),c.getCreator());
+            player1.setScreenname(publicClientRegistryService.getScreenname(c.getCreator()));
+
+            MttRegisterPlayerAction player2 = new MttRegisterPlayerAction(mtt.getTournamentId(),c.getInvited());
+            player2.setScreenname(publicClientRegistryService.getScreenname(c.getInvited()));
+
+            routerService.getRouter().dispatchToTournament(mtt.getTournamentId(),player1);
+            routerService.getRouter().dispatchToTournament(mtt.getTournamentId(),player2);
+        }
+
+
     }
 }

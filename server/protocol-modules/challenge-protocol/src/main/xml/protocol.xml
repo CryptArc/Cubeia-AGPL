@@ -1,0 +1,16 @@
+<protocol version="$Revision: 1 $">
+
+    <struct name="challenge_request">
+        <var name="playerId" type="int32"/>
+    </struct>
+    <struct name="accept_challenge_request">
+        <var name="challengeId" type="string"/>
+    </struct>
+
+    <struct name="challenge_invite">
+        <var name="challengeId" type="string"/>
+        <var name="creatorName" type="string"/>
+    </struct>
+
+</protocol>
+

@@ -73,6 +73,11 @@ Poker.AppCtx = Class.extend({
             return comHandler.getConnector();
         };
 
+        var challengeManager = new Poker.ChallengeManager();
+        this.getChallengeManager = function(){
+            return challengeManager;
+        };
+
 
 
     }

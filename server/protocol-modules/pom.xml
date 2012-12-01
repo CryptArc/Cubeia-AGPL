@@ -15,6 +15,7 @@
 
     <modules>
         <module>poker-protocol</module>
+        <module>challenge-protocol</module>
     </modules>
 
 </project>

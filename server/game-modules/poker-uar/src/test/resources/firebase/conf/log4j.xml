@@ -80,7 +80,7 @@
          Base package for all cubeia sub-packages
      -->
     <category name="com.cubeia" additivity="false">
-        <priority value="info"/>
+        <priority value="debug"/>
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="SERVER_LOG"/>
         <appender-ref ref="ERROR_LOG"/>
@@ -182,7 +182,7 @@
     </category>
 
     <category name="org.hibernate" additivity="false">
-        <priority value="warn"/>
+        <priority value="debug"/>
         <appender-ref ref="SERVER_LOG"/>
         <appender-ref ref="ERROR_LOG"/>
         <!-- appender-ref ref="STDOUT" -->
@@ -192,7 +192,7 @@
     <!-- ****** ROOT ****** -->
 
     <root>
-        <priority value="error"/>
+        <priority value="debug"/>
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="SERVER_LOG"/>
         <appender-ref ref="ERROR_LOG"/>
