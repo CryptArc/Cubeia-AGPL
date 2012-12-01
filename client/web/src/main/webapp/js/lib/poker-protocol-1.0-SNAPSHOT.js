@@ -8,7 +8,32 @@ com.cubeia.games.poker.io = com.cubeia.games.poker.io || {};
 com.cubeia.games.poker.io.protocol = com.cubeia.games.poker.io.protocol || {};
 
 
-com.cubeia.games.poker.io.protocol.ActionTypeEnum=function(){};
+com.cubeia.games.poker.io.protocol.AchievementNotificationPacket=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.AchievementNotificationPacket.CLASSID
+};
+this.playerId={};
+this.broadcast={};
+this.message={};
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeInt(this.playerId);
+a.writeBoolean(this.broadcast);
+a.writeString(this.message);
+return a
+};
+this.load=function(a){this.playerId=a.readInt();
+this.broadcast=a.readBoolean();
+this.message=a.readString()
+};
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.AchievementNotificationPacket";
+a.details={};
+a.details.playerId=this.playerId;
+a.details.broadcast=this.broadcast;
+a.details.message=this.message;
+return a
+}
+};
+com.cubeia.games.poker.io.protocol.AchievementNotificationPacket.CLASSID=43;com.cubeia.games.poker.io.protocol.ActionTypeEnum=function(){};
 com.cubeia.games.poker.io.protocol.ActionTypeEnum.SMALL_BLIND=0;
 com.cubeia.games.poker.io.protocol.ActionTypeEnum.BIG_BLIND=1;
 com.cubeia.games.poker.io.protocol.ActionTypeEnum.CALL=2;
@@ -1215,6 +1240,9 @@ case com.cubeia.games.poker.io.protocol.PingPacket.CLASSID:b=new com.cubeia.game
 b.load(a);
 return b;
 case com.cubeia.games.poker.io.protocol.PongPacket.CLASSID:b=new com.cubeia.games.poker.io.protocol.PongPacket();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.AchievementNotificationPacket.CLASSID:b=new com.cubeia.games.poker.io.protocol.AchievementNotificationPacket();
 b.load(a);
 return b
 }return null

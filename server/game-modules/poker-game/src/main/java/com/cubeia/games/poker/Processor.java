@@ -17,6 +17,9 @@
 
 package com.cubeia.games.poker;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cubeia.backend.cashgame.dto.AnnounceTableFailedResponse;
 import com.cubeia.backend.cashgame.dto.AnnounceTableResponse;
 import com.cubeia.backend.cashgame.dto.CloseTableRequest;
@@ -24,6 +27,7 @@ import com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse;
 import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
 import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;
 import com.cubeia.backend.cashgame.dto.ReserveResponse;
+import com.cubeia.bonus.firebase.api.BonusEventWrapper;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.action.GameObjectAction;
 import com.cubeia.firebase.api.game.GameProcessor;
@@ -38,21 +42,19 @@ import com.cubeia.games.poker.debugger.HandDebuggerContract;
 import com.cubeia.games.poker.handler.BackendCallHandler;
 import com.cubeia.games.poker.handler.PokerHandler;
 import com.cubeia.games.poker.handler.Trigger;
+import com.cubeia.games.poker.io.protocol.AchievementNotificationPacket;
 import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
 import com.cubeia.games.poker.jmx.PokerStats;
 import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.games.poker.tournament.WaitingForTablesToFinishBeforeBreak;
 import com.cubeia.games.poker.tournament.configuration.blinds.Level;
+import com.cubeia.games.poker.util.ProtocolFactory;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.adapter.SystemShutdownException;
 import com.cubeia.poker.player.PokerPlayer;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static org.joda.time.Duration.standardMinutes;
 
 
 /**
@@ -156,6 +158,8 @@ public class Processor implements GameProcessor, TournamentProcessor {
                 handleWaitingForBreak();
             } else if (attachment instanceof Level) {
                 handleBlindsLevel((Level) attachment);
+            } else if (attachment instanceof BonusEventWrapper) {
+                handleBonusEvent((BonusEventWrapper) attachment, table);
             } else if ("CLOSE_TABLE_HINT".equals(attachment.toString())) {
                 log.debug("got CLOSE_TABLE_HINT");
                 tableCloseHandler.closeTable(table, false);
@@ -176,7 +180,24 @@ public class Processor implements GameProcessor, TournamentProcessor {
         updatePlayerDebugInfo(table);
     }
 
-    private void handleWaitingForBreak() {
+    private void handleBonusEvent(BonusEventWrapper wrapper, Table table) {
+    	log.warn("On Bonus Event wrapper: "+wrapper);
+		int playerId = wrapper.playerId;
+		int tableId = table.getId();
+		
+		AchievementNotificationPacket notification = new AchievementNotificationPacket();
+		notification.playerId = playerId;
+		notification.broadcast = wrapper.broadcast;
+		notification.message = wrapper.event;
+		
+		ProtocolFactory factory = new ProtocolFactory();
+		GameDataAction action = factory.createGameAction(notification, playerId, tableId);
+		
+		log.warn("Notify player["+playerId+"] at table["+tableId+"] with event ["+wrapper.event+"]");
+		table.getNotifier().notifyPlayer(playerId, action);
+	}
+
+	private void handleWaitingForBreak() {
         log.debug("We are waiting for all other tables to finish and the we'll start the break.");
         // TODO: Notify players.
     }

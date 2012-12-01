@@ -1,6 +1,5 @@
 package com.cubeia.games.poker.adapter.achievement;
 
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jetty.util.log.Log;
@@ -9,7 +8,6 @@ import com.cubeia.bonus.event.GameEvent;
 import com.cubeia.bonus.firebase.api.AchievementsService;
 import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.poker.adapter.HandEndStatus;
-import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;

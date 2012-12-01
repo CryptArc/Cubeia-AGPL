@@ -131,7 +131,7 @@ POKER_PROTOCOL.PokerProtocolHandler = function(pokerGameHandler) {
 			case com.cubeia.games.poker.io.protocol.TournamentOut.CLASSID:
 				this.pokerGameHandler.handleTournamentOut(protocolObject);
 				break;
-            default:
+             default:
                 console.log("Ignoring packet: " + protocolObject);
                 break;
 		}
