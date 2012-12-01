@@ -1,0 +1,92 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+</head>
+<body>
+<wicket:extend>
+
+
+
+    <span wicket:id="feedback">feedback messages will be put here</span>
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="widget-box">
+                <div class="widget-title"><h5>Edit</h5></div>
+                <div class="widget-content">
+
+                    <form wicket:id="tableForm" class="form-horizontal">
+                        <div class="control-group">
+                            <label class="control-label" for="name">Name</label>
+                            <div class="controls">
+                                <input wicket:id="name" id="name" type="text" size="10"/>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="seatsPerTable">Seats Per Table</label>
+                            <div class="controls">
+                                <input wicket:id="seatsPerTable" id="seatsPerTable" type="text" size="20"/>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="ante">Ante</label>
+                            <div class="controls">
+                                <input wicket:id="ante" id="ante" type="text" size="20"/>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="minTables">Min tables</label>
+                            <div class="controls">
+                                <input wicket:id="minTables" id="minTables" type="text" size="20"/>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="minEmptyTables">Min empty tables</label>
+                            <div class="controls">
+                                <input wicket:id="minEmptyTables" id="minEmptyTables" type="text" size="20"/>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="timingType">Table timing</label>
+                            <div class="controls">
+                                <select wicket:id="timing" id="timingType"></select>
+                            </div>
+                        </div>
+
+
+                        <!-- tr>
+                           <td>
+                               <label for="timingType">Timing [0(def)|1|2(expr)|3]</label>
+                           </td>
+                           <td>
+                               <input wicket:id="timingType" id="timingType" type="text" size="20"/>
+                           </td>
+                       </tr>
+
+                       <tr>
+                           <td>
+                               <label for="variant">Variant [TELESINA|TEXAS_HOLDEM]]</label>
+                           </td>
+                           <td>
+                               <input wicket:id="variant" id="variant" type="text" size="20"/>
+                           </td>
+                       </tr -->
+                        <div class="form-actions">
+                            <input type="submit" class="btn btn-primary" value="Save"/>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</wicket:extend>
+</body>
+</html>
+

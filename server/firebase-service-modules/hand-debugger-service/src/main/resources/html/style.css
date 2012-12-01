@@ -1,0 +1,89 @@
+/*
+Design by Free CSS Templates
+http://www.freecsstemplates.org
+Released for free under a Creative Commons Attribution 2.5 License
+*/
+
+body {
+    background-color: #FFFFFF;
+    padding: 20px;
+    margin: 2px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    color: #444444;
+}
+
+h1, h2, h3 {
+    margin: 4;
+    padding: 10;
+    font-weight: normal;
+    color: #f6853a;
+}
+
+h1 {
+    font-size: 2.5em;
+    color: #666666;
+}
+
+h2 {
+    font-size: 2.0em;
+}
+
+h3 {
+    font-size: 2.0em;
+    border-bottom-style: solid;
+    border-width: 1px;
+    border-color: #DDDDDD;
+}
+
+p, ul, ol {
+    margin-top: 0;
+    line-height: 180%;
+}
+
+ul, ol {
+}
+
+a {
+    text-decoration: none;
+    color: #C25700;
+}
+
+a:hover {
+}
+
+.header {
+    background-color: #ECECEC;
+}
+
+.tableEvent {
+    font-size: 16px;
+    padding: 10px;
+}
+
+.tableEvent:hover {
+    background-color: #ECECEC;
+}
+
+.handHistory {
+}
+
+.request {
+    color: #b9a615;
+}
+
+.action {
+    color: #0b8425;
+}
+
+.status {
+    color: #2883c8;
+}
+
+.hidden {
+    color: #980b0b;
+}
+
+.table {
+    color: #444444;
+}
