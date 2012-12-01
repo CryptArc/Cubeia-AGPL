@@ -8,6 +8,7 @@ import com.cubeia.bonus.event.GameEvent;
 import com.cubeia.bonus.firebase.api.AchievementsService;
 import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.poker.adapter.HandEndStatus;
+import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
@@ -45,8 +46,22 @@ public class AchievementAdapter {
 			event.attributes.put("lost", "true");
 		}
 
+		RatedPlayerHand hand = getRatedPlayerHand(player, handResult);
+		if (hand != null) {
+			event.attributes.put("handType", hand.getBestHandType().name());
+		}
+		
 		Log.debug("Send game event: "+event);
 		service.sendEvent(event);
+	}
+
+	private RatedPlayerHand getRatedPlayerHand(PokerPlayer player, HandResult handResult) {
+		for (RatedPlayerHand rphand : handResult.getPlayerHands()) {
+			if (rphand.getPlayerId() == player.getId()) {
+				return rphand;
+			}
+		}
+		return null;
 	}
 
 	private boolean calculateIsWin(Result result) {
