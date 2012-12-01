@@ -10,6 +10,8 @@
 }
 
 div.achievement_gained_container {
+    pointer-events: auto;
+    -webkit-user-select: none;
     font-family: verdana;
     position: absolute;
     opacity: 0;
@@ -27,6 +29,8 @@ div.achievement_gained_container {
 }
 
 div.achievement_list_container {
+    pointer-events: auto;
+    -webkit-user-select: none;
     font-family: verdana;
     position: relative;
     padding: 4px;
