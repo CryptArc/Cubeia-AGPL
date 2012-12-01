@@ -1,5 +1,9 @@
 AchievementLoader = function() {
-    this.setBaseUrl("localhost:8080/rest/player");
+    var location = window.location;
+    var host = location.hostname;
+    var port = 8080;
+//    console.log("window location",location)
+    this.setBaseUrl(host+":"+port+"/rest/player");
     this.setUserId("UserId");
     this.setGame("poker");
     this.updateUrl();
@@ -19,6 +23,7 @@ AchievementLoader.prototype.setUserId = function(userId) {
 
 AchievementLoader.prototype.updateUrl = function() {
     var url = this.baseUrl+"/"+this.userId+"/achievements/"+this.game;
+    console.log(url)
     this.setUrl(url);
     return url;
 };
