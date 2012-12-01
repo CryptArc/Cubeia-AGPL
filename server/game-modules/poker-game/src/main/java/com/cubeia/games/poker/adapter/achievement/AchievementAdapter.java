@@ -43,15 +43,18 @@ public class AchievementAdapter {
 		event.attributes.put("stake", calculateStake(result)+"");
 		event.attributes.put("winAmount", result.getWinningsIncludingOwnBets()+"");
 		
-		if (calculateIsWin(result)) {
+		boolean isWin = calculateIsWin(result);
+		if (isWin) {
 			event.attributes.put("win", "true");
 		} else {
 			event.attributes.put("lost", "true");
 		}
 
-		RatedPlayerHand hand = getRatedPlayerHand(player, handResult);
-		if (hand != null) {
-			event.attributes.put("handType", hand.getBestHandType().name());
+		if (isWin) {
+			RatedPlayerHand hand = getRatedPlayerHand(player, handResult);
+			if (hand != null) {
+				event.attributes.put("handType", hand.getBestHandType().name());
+			}
 		}
 		
 		log.warn(" --------  Send game event: "+event);
