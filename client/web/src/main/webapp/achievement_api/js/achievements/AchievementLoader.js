@@ -1,6 +1,8 @@
 AchievementLoader = function() {
     var location = window.location;
     var host = location.hostname;
+    console.log(host);
+    if (!host) host = "localhost";
     var port = 8080;
 //    console.log("window location",location)
     this.setBaseUrl(host+":"+port+"/rest/player");
