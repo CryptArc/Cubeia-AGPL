@@ -145,11 +145,21 @@
     var achievementPresenter = new AchievementPresenter();
     var baseUrl = "achievement_api";
     achievementPresenter.load(baseUrl)
-    updateUser = function(user) {
-        var parentElement = document.body // document.getElementById("view_port");
-        console.log(parentElement)
-        achievementPresenter.updateUserInParentElement(user, parentElement);
+    achievementPresenter.visible = false;
+    updateUserAchievements = function() {
+        var parentElement = document.getElementById("achievement-display");
+        if(achievementPresenter.visible == false) {
+            id = Poker.MyPlayer.id;
+            achievementPresenter.updateUserInParentElement(id, parentElement);
+            achievementPresenter.visible = true;
+        } else {
+            achievementPresenter.visible = false
+            achievementPresenter.clearAchievementList(parentElement);
+        }
+
     };
+
+
 </script>
 
     <div class="view-port">
@@ -159,6 +169,7 @@
             <div class="tabs-container">
                 <ul id="tabItems" class="tabs">
                 </ul>
+                <button type="button" style="position: absolute; top: 0px; right:5px; width:auto;" class="skin-button" onclick="updateUserAchievements()">Achievements</button>
             </div>
             <div class="skin-button" id="skinButton">
                 <div id="classic" style="display:none;">Classic</div>
@@ -170,6 +181,9 @@
 
             </ul>
         </div>
+
+
+
         <div class="menu-overlay slidable" style="display: none;">
 
         </div>
@@ -200,6 +214,10 @@
             </div>
         </div>
         <div class="view-container slidable">
+
+            <div id="achievement-display" style="position:absolute; z-index: 9999; display: block; right: 0px; width: 400px; top:0px; bottom: 0px; overflow:auto;">
+
+            </div>
 
             <div id="loginView" class="login-view">
                 <div id="dialog1" class="login-dialog">
