@@ -61,6 +61,7 @@ AchievementPresenter.prototype.updateUserInParentElement = function(user, parent
     this.loadAchievementList(onLoad);
 };
 
+// Replace this with some Client specific Integration Method
 AchievementPresenter.prototype.handleSocketEvent = function(message) {
     if (message.type == "achievement") {
         achievement = message.achievement;
@@ -102,14 +103,14 @@ AchievementPresenter.prototype.showAchievementGained = function(achievement, var
         divs.frame.className = "achievement_container_frame_tiny"
         console.log("--------->> build tiny achievement", achievement)
         this.buildTinyAchievement(achievement)
-        this.animateGainAchievement(container, achievement);
+        this.animateGainAchievement(container, achievement, variant);
     } else {
 
         this.buildBaseAchievement(achievement)
         if (achievement.currentCount) {
             this.showAchievementInProgress(achievement);
         }
-        this.animateGainAchievement(container, achievement);
+        this.animateGainAchievement(container, achievement, variant);
     }
 
 
@@ -252,12 +253,18 @@ AchievementPresenter.prototype.showAchievementAsCompleted = function(achievement
     if (divs.reward) this.achievementUiBuilder.addClass(divs.reward, "achievement_reward_label_achieved")
 }
 
-AchievementPresenter.prototype.animateGainAchievement = function(container, achievement) {
+AchievementPresenter.prototype.animateGainAchievement = function(container, achievement, variant) {
+    var height = 140;
+    var animHeight = 110;
+    if (variant == "tiny") {
+        height = 46;
+        animHeight = 110;
+    };
 
     var instance = this;
     achievement = achievement;
     setTimeout(function(){
-        container.style.bottom = instance.gainAnimations*110+140+"px";
+        container.style.bottom = instance.gainAnimations*height+animHeight+"px";
         container.style.opacity = 1;
         instance.gainAnimations += 1;
     }, 100)
@@ -268,7 +275,7 @@ AchievementPresenter.prototype.animateGainAchievement = function(container, achi
         instance.showAchievementAsCompleted(achievement);
     }, 1600)
 
- /*
+
     setTimeout(function(){
         container.style.bottom = "1px";
         container.style.opacity = 0;
@@ -282,7 +289,6 @@ AchievementPresenter.prototype.animateGainAchievement = function(container, achi
         achievement.divs = {};
 
     }, 8000)
-    */
 }
 
 
