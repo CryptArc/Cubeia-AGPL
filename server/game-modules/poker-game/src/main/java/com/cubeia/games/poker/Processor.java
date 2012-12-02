@@ -187,16 +187,16 @@ public class Processor implements GameProcessor, TournamentProcessor {
 		
 		AchievementNotificationPacket notification = new AchievementNotificationPacket();
 		notification.playerId = playerId;
-		notification.broadcast = wrapper.broadcast;
 		notification.message = wrapper.event;
 		
 		ProtocolFactory factory = new ProtocolFactory();
 		GameDataAction action = factory.createGameAction(notification, playerId, tableId);
 		
-		log.warn("Notify player["+playerId+"] at table["+tableId+"] with event ["+wrapper.event+"]");
 		if (wrapper.broadcast) {
+			log.warn("Notify all players at table["+tableId+"] with event ["+wrapper.event+"] for player["+playerId+"]");
 			table.getNotifier().notifyAllPlayers(action);
 		} else {
+			log.warn("Notify player["+playerId+"] at table["+tableId+"] with event ["+wrapper.event+"]");
 			table.getNotifier().notifyPlayer(playerId, action);
 		}
 	}
