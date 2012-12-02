@@ -15,10 +15,7 @@ import com.cubeia.game.poker.challenge.api.Challenge;
 import com.cubeia.game.poker.challenge.api.ChallengeManager;
 import com.cubeia.game.poker.challenge.api.ChallengeNotFoundException;
 import com.cubeia.game.poker.challenge.api.ChallengeService;
-import com.cubeia.games.challenge.io.protocol.AcceptChallengeRequest;
-import com.cubeia.games.challenge.io.protocol.ChallengeInvite;
-import com.cubeia.games.challenge.io.protocol.ChallengeRequest;
-import com.cubeia.games.challenge.io.protocol.ProtocolObjectFactory;
+import com.cubeia.games.challenge.io.protocol.*;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -52,10 +49,28 @@ public class ChallengeServiceImpl implements ChallengeService, Service {
                 handleChallenge((ChallengeRequest)po,a.getPlayerId());
             } else if(po instanceof AcceptChallengeRequest) {
                 handleAcceptChallenge((AcceptChallengeRequest)po,a.getPlayerId());
+            } else if(po instanceof DeclineChallengeRequest) {
+                handleDeclineChallenge((DeclineChallengeRequest)po,a.getPlayerId());
             }
         } catch (Exception e) {
             log.error("unable to unpack service action data",e);
         }
+    }
+
+    private void handleDeclineChallenge(DeclineChallengeRequest declineRequest, int playerId) {
+        try {
+            Challenge c = challengeManager.removeChallenge(UUID.fromString(declineRequest.challengeId));
+            if(c!=null) {
+                ChallengeResponse res = new ChallengeResponse(c.getId().toString(),Enums.ChallengeRequestStatus.PLAYER_DECLINED);
+                ServiceAction a = new ClientServiceAction(c.getCreator(),0,getData(res));
+                router.dispatchToPlayer(c.getCreator(),a);
+            } else {
+                log.info("Unable to find challenge to decline " + declineRequest.challengeId);
+            }
+        } catch (IOException e) {
+            log.error("Unable to marshal decline response",e);
+        }
+
     }
 
     public void handleAcceptChallenge(AcceptChallengeRequest po, int playerId) {
@@ -72,16 +87,18 @@ public class ChallengeServiceImpl implements ChallengeService, Service {
 
     public void handleChallenge(ChallengeRequest packet, int creator) {
 
-        log.debug("Challenge request packet recieved playerId  = " + packet.playerId);
+        log.debug("Challenge request packet recieved playerId  = " + packet.challengedPlayerId);
 
         try {
-            UUID challengeID = challengeManager.createChallenge(creator, packet.playerId);
+            UUID challengeID = challengeManager.createChallenge(creator, packet.challengedPlayerId);
 
             ChallengeInvite invite = new ChallengeInvite(challengeID.toString(),clientRegistryService.getScreenname(creator));
+            ServiceAction a = new ClientServiceAction(packet.challengedPlayerId,0,getData(invite));
+            router.dispatchToPlayer(packet.challengedPlayerId,a);
 
-            ServiceAction a = new ClientServiceAction(packet.playerId,0,getData(invite));
-
-            router.dispatchToPlayer(packet.playerId,a);
+            ChallengeResponse challengeResponse = new ChallengeResponse(challengeID.toString(),Enums.ChallengeRequestStatus.WAITING_FOR_ACCEPT);
+            ServiceAction responseAction = new ClientServiceAction(creator,0,getData(challengeResponse));
+            router.dispatchToPlayer(creator,responseAction);
 
         } catch (IOException e) {
             log.error("unable to marshal invite",e);

@@ -97,7 +97,7 @@
 
     <script type="text/javascript" src="js/base/challenge/ChallengeManager.js"></script>
     <script type="text/javascript" src="js/base/ui/ContextMenu.js"></script>
-
+    <script type="text/javascript" src="js/base/ui/NotificationsManager.js"></script>
 
     <script type="text/javascript">
         var comHandler = null;
@@ -524,6 +524,12 @@
     <script type="text/mustache" id="miniCardTemplate" style="display: none;">
         <div id="miniCard-{{domId}}" class="mini-card-container">
             <img src="images/cards/{{cardString}}.svg"/>
+        </div>
+    </script>
+
+    <script type="text/mustache" id="notificationTemplate" style="display: none;">
+        {{text}}
+        <div class="notification-actions">
         </div>
     </script>
 

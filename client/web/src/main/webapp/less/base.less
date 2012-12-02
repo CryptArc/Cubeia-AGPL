@@ -79,6 +79,30 @@ body {
 .context-menu li:hover {
     background-color: #444;
 }
+.notification-actions {
+     display:block;
+    margin-top:20px;
+     a {
+        .border-radius(5px);
+        background-color: @mainGreen;
+        padding:0.5em 1em;
+        color: #fff;
+        font-size:130%;
+        font-weight: bold;
+        cursor: pointer;
+        margin-right: 2px;
+    }
+}
+/* for the light (white) version of the gritter notice */
+.gritter-dark .gritter-item,
+.gritter-dark .gritter-bottom,
+.gritter-dark .gritter-top,
+.gritter-dark .gritter-close {
+    color: #fff;
+}
+.gritter-light .gritter-title {
+    text-shadow: none;
+}
 
 
 

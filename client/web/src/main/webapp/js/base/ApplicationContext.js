@@ -78,6 +78,11 @@ Poker.AppCtx = Class.extend({
             return challengeManager;
         };
 
+        var notificationsManager = new Poker.NotificationsManager();
+        this.getNotificationsManager = function() {
+            return notificationsManager;
+        }
+
 
 
     }

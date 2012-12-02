@@ -8,7 +8,7 @@ Poker.ContextMenu = Class.extend({
             container = $("#contextMenuContainer");
         }
         container.empty();
-        var left = event.pageX - container.outerWidth();
+        var left = Math.max(0,event.pageX - container.outerWidth());
         container.css("top",event.pageY).css("left",left);
         var menuList = $("<ul/>")
         $.each(items,function(i,e){
@@ -21,7 +21,7 @@ Poker.ContextMenu = Class.extend({
         container.append(menuList);
         event.stopPropagation();
         $("body").click(function(e){
-           container.hide();
+           container.remove();
         });
 
     }

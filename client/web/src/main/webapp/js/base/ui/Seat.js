@@ -28,9 +28,7 @@ Poker.Seat = Class.extend({
        this.seatElement =  $("#"+elementId);
        var self = this;
        this.seatElement.click(function(e){
-           console.log("clicked seat element");
            new Poker.ContextMenu(e,[{ title : "Challenge player", callback : function(){
-               console.log("CLIIIIIIIIICK");
                Poker.AppCtx.getChallengeManager().challengePlayer(self.player.id);
            }}]);
 
