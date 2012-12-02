@@ -43,6 +43,8 @@ Poker.Seat = Class.extend({
        this.seatBalance = this.seatElement.find(".seat-balance");
        this.handStrength = this.seatElement.find(".hand-strength");
        this.seatBase = this.seatElement.find(".avatar-base");
+       
+       this.avatarElement.css("background-image", "url(http://localhost:9090/rest/avatar/" + this.player.id + "/SIZE_256)");
 
        this.reset();
    },
