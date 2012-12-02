@@ -1,0 +1,51 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+</head>
+<body>
+  <wicket:extend>
+
+      <div class="row-fluid">
+          <div class="span12">
+              <span wicket:id="feedback"></span>
+
+              <div class="widget-box">
+                  <div class="widget-title">
+                      <h5>Clients</h5>
+                  </div>
+                  <div class="widget-content nopadding">
+                      <div class="control-group">
+                          <label  class="control-label" for="clientsOnline"> Clients online:</label>
+                          <div class="controls">
+                              <span class="form-inline" wicket:id="clientsOnline" id="clientsOnline"></span>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="widget-box">
+                  <div class="widget-title">
+                      <h5>Send system messages</h5>
+                  </div>
+                  <div class="widget-content nopadding">
+
+                      <form wicket:id="systemMessageForm" class="form-horizontal">
+                          <div class="control-group">
+                              <label class="control-label" for="message">System Message</label>
+                              <div class="controls">
+                                  <input wicket:id="message" id="message" type="text" size="20"/>
+                              </div>
+                          </div>
+                          <div class="form-actions">
+                              <input type="submit" class="btn btn-primary" value="Send"/>
+                          </div>
+
+                      </form>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+  </wicket:extend>
+</body>
+</html>
+
