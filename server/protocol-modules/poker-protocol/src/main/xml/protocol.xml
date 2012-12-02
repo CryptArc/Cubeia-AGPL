@@ -376,7 +376,6 @@
     <!-- Achievement Notification, send out to one or all players -->
     <struct name="achievement_notification_packet">
         <var name="player_id" type="int32"/>
-        <var name="broadcast" type="bool"/>
         <var name="message" type="string"/>
     </struct>
 
