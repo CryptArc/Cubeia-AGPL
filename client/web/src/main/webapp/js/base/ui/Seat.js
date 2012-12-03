@@ -28,8 +28,20 @@ Poker.Seat = Class.extend({
        this.seatElement =  $("#"+elementId);
        var self = this;
        this.seatElement.click(function(e){
-           new Poker.ContextMenu(e,[{ title : "Challenge player", callback : function(){
-               Poker.AppCtx.getChallengeManager().challengePlayer(self.player.id);
+           new Poker.ContextMenu(e,[{ title : "Challenge player", callback : function(evt){
+                new Poker.ContextMenu(evt,
+                    [
+                        {title : "1+0.1 Challenge",callback : function(){
+                            Poker.AppCtx.getChallengeManager().challengePlayer(self.player.id,1);
+                            }
+                        },
+                        {title : "10+1 Challenge", callback : function(){
+                            Poker.AppCtx.getChallengeManager().challengePlayer(self.player.id,3);
+                        }},
+                        {title : "20+2 Challenge", callback : function(){
+                            Poker.AppCtx.getChallengeManager().challengePlayer(self.player.id,4);
+                        }}
+                    ]);
            }}]);
 
        });

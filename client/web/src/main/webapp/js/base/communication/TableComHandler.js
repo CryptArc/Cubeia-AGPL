@@ -229,7 +229,7 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
         var protocolObject = com.cubeia.games.challenge.io.protocol.ProtocolObjectFactory.create(classId, gameData);
         var challengeManager =  Poker.AppCtx.getChallengeManager();
         if(classId == com.cubeia.games.challenge.io.protocol.ChallengeInvite.CLASSID) {
-            challengeManager.challengeReceived(protocolObject.challengeId,protocolObject.creatorName);
+            challengeManager.challengeReceived(protocolObject.challengeId,protocolObject.creatorName,protocolObject.configuration);
         } else if(classId == com.cubeia.games.challenge.io.protocol.ChallengeResponse.CLASSID ) {
             challengeManager.challengeResponse(protocolObject.challengeId,protocolObject.status);
         }

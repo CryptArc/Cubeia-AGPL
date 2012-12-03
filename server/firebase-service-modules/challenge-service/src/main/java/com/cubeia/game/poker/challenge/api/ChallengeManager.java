@@ -13,7 +13,7 @@ public interface ChallengeManager {
      * @param invited - the playerId of the player invited to the challenge
      * @return the challenge id that was created
      */
-    UUID createChallenge(int creator, int invited);
+    UUID createChallenge(int creator, int invited, ChallengeConfiguration config);
 
 
     Challenge acceptChallenge(UUID challengeId,int invited) throws ChallengeNotFoundException;

@@ -5,13 +5,14 @@ Poker.ChallengeManager = Class.extend({
     init : function() {
 
     },
-    challengePlayer : function(playerId) {
+    challengePlayer : function(playerId,configId) {
         console.log("Challenge Player = " + playerId);
         var connector = Poker.AppCtx.getConnector();
         var pack = this.getServicePacket();
        // pack.service = "com.cubeia.game.poker.challenge.api.ChallengeService";
         var cr = new com.cubeia.games.challenge.io.protocol.ChallengeRequest();
         cr.challengedPlayerId = playerId;
+        cr.configurationId = configId;
         pack.servicedata = FIREBASE.ByteArray.toBase64String(cr.save().createGameDataArray(cr.classId()));
         connector.sendProtocolObject(pack);
         console.log("pack sent");
@@ -25,6 +26,16 @@ Poker.ChallengeManager = Class.extend({
         pack.service = "com.cubeia.game.poker.challenge:challenge-service";
 
         return pack;
+    },
+    requestChallengeConfig : function() {
+        var pack = this.getServicePacket();
+        var cr = new com.cubeia.games.challenge.io.protocol.ChallengeConfigurationsRequest();
+        cr.playerId = Poker.MyPlayer.id;
+        pack.servicedata = FIREBASE.ByteArray.toBase64String(cr.save().createGameDataArray(cr.classId()));
+        connector.sendProtocolObject(pack);
+    },
+    handleChallengeConfiguration : function(configurations) {
+
     },
     declineChallenge : function(challengeId) {
         console.log("DECLINING C " + challengeId);
@@ -47,10 +58,11 @@ Poker.ChallengeManager = Class.extend({
         console.log("pack sent");
         console.log(pack);
     },
-    challengeReceived : function(challengeId,challengerScreenName) {
+    challengeReceived : function(challengeId,challengerScreenName,config) {
         console.log("challenge received from " + challengerScreenName);
         var self = this;
-        var notification = new Poker.Notification("Challenge Received!",challengerScreenName+' has challenged you for a heads up!');
+        var notification = new Poker.Notification("Challenge Received!",
+            challengerScreenName + ' has challenged you in a '+config.challengeName+' heads up Sit & Go!');
         notification.addAction("Accept",function(){
             self.acceptChallenge(challengeId);
         });

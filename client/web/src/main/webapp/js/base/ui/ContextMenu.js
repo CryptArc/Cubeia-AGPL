@@ -14,7 +14,7 @@ Poker.ContextMenu = Class.extend({
         $.each(items,function(i,e){
             var li = $("<li/>").append(e.title);
             li.click(function(evt){
-                e.callback();
+                e.callback(evt);
             });
             menuList.append(li);
         });

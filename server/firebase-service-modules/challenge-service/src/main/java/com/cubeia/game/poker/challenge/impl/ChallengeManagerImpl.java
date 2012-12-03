@@ -1,6 +1,7 @@
 package com.cubeia.game.poker.challenge.impl;
 
 import com.cubeia.game.poker.challenge.api.Challenge;
+import com.cubeia.game.poker.challenge.api.ChallengeConfiguration;
 import com.cubeia.game.poker.challenge.api.ChallengeManager;
 import com.cubeia.game.poker.challenge.api.ChallengeNotFoundException;
 import com.google.inject.Singleton;
@@ -16,8 +17,8 @@ public class ChallengeManagerImpl implements ChallengeManager {
 
 
     @Override
-    public UUID createChallenge(int creator, int invited) {
-        Challenge c = new Challenge(UUID.randomUUID(),creator,invited);
+    public UUID createChallenge(int creator, int invited ,ChallengeConfiguration config) {
+        Challenge c = new Challenge(UUID.randomUUID(),creator,invited,config);
         challenges.put(c.getId(),c);
         return c.getId();
     }

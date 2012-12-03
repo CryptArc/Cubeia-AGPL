@@ -10,10 +10,12 @@ import com.cubeia.firebase.api.service.config.ClusterConfigProviderContractAdapt
 import com.cubeia.firebase.guice.inject.FirebaseModule;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.game.poker.challenge.api.Challenge;
+import com.cubeia.game.poker.challenge.api.ChallengeConfiguration;
 import com.cubeia.game.poker.challenge.api.ChallengeManager;
 import com.cubeia.game.poker.challenge.api.ChallengeNotFoundException;
 import com.cubeia.games.challenge.io.protocol.AcceptChallengeRequest;
 import com.cubeia.games.challenge.io.protocol.ChallengeRequest;
+import com.cubeia.games.challenge.io.protocol.DeclineChallengeRequest;
 import com.cubeia.games.challenge.io.protocol.ProtocolObjectFactory;
 import com.google.inject.Binder;
 import com.google.inject.Guice;
@@ -25,6 +27,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
@@ -47,6 +50,8 @@ public class ChallengeServiceImplTest {
     @Mock
     private ServiceRouter router;
 
+    ChallengeConfiguration config = new ChallengeConfiguration(1,"t", BigDecimal.ONE,BigDecimal.ONE);
+
 
     @Before
     public void setup() {
@@ -61,12 +66,12 @@ public class ChallengeServiceImplTest {
 
     @Test
     public void testHandleAction() throws IOException {
-        ChallengeRequest req = new ChallengeRequest(1);
+        ChallengeRequest req = new ChallengeRequest(1,1);
         StyxSerializer ss = new StyxSerializer(new ProtocolObjectFactory());
         ByteBuffer bf = ss.pack(req);
         when(action.getData()).thenReturn(bf.array());
         when(publicClientRegistryService.getScreenname(anyInt())).thenReturn("aScreenName");
-        when(challengeManager.createChallenge(anyInt(),anyInt())).thenReturn(UUID.randomUUID());
+        when(challengeManager.createChallenge(anyInt(),anyInt(),any(ChallengeConfiguration.class))).thenReturn(UUID.randomUUID());
         service.onAction(action);
     }
     @Test
@@ -77,8 +82,24 @@ public class ChallengeServiceImplTest {
         ByteBuffer bf = ss.pack(acr);
         when(action.getData()).thenReturn(bf.array());
         when(publicClientRegistryService.getScreenname(anyInt())).thenReturn("aScreenName");
-        when(challengeManager.acceptChallenge(any(UUID.class),anyInt())).thenReturn(new Challenge(uuid,1,2));
+        when(challengeManager.acceptChallenge(any(UUID.class),anyInt())).thenReturn(new Challenge(uuid,1,2,config));
         service.onAction(action);
         verify(challengeManager,times(1)).acceptChallenge(any(UUID.class),anyInt());
     }
+    @Test
+    public void testHandleDeclineChallenge() throws IOException {
+        UUID id = UUID.randomUUID();
+        DeclineChallengeRequest req = new DeclineChallengeRequest(id.toString());
+        StyxSerializer ss = new StyxSerializer(new ProtocolObjectFactory());
+        ByteBuffer bf = ss.pack(req);
+        when(action.getData()).thenReturn(bf.array());
+        when(action.getPlayerId()).thenReturn(2); //decliner
+        when(challengeManager.removeChallenge(any(UUID.class))).thenReturn(new Challenge(id,1,2,config));
+        service.onAction(action);
+
+        verify(challengeManager,times(1)).removeChallenge(eq(id));
+        verify(router, times(1)).dispatchToPlayer(eq(1), any(ServiceAction.class));
+
+    }
+
 }

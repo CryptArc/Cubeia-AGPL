@@ -32,6 +32,7 @@ import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.firebase.api.service.clientregistry.PublicClientRegistryService;
 import com.cubeia.firebase.api.service.router.RouterService;
 import com.cubeia.game.poker.challenge.api.Challenge;
+import com.cubeia.game.poker.challenge.api.ChallengeConfiguration;
 import com.cubeia.game.poker.challenge.api.ChallengeService;
 import com.cubeia.game.poker.config.api.PokerConfigurationService;
 import com.cubeia.games.poker.common.guice.JpaInitializer;
@@ -165,20 +166,24 @@ public class PokerTournamentActivatorImpl implements MttActivator, Startable, Po
     public void onAction(ActivatorAction<?> e) {
         log.debug("On action tournament activator");
         if(e.getData() instanceof Challenge) {
+
             Challenge c = (Challenge)e.getData();
 
-            SitAndGoConfiguration config = new SitAndGoConfiguration("Private Challenge",2, TimingFactory.getRegistry().getTimingProfile("DEFAULT"));
+            ChallengeConfiguration cc = c.getConfiguration();
 
-            config.getConfiguration().setBuyIn(BigDecimal.valueOf(1));
-            config.getConfiguration().setFee(BigDecimal.valueOf(0));
-            config.getConfiguration().setPayoutStructure(new PayoutStructure(Arrays.asList(new Payouts[]{new Payouts(new IntRange(1,2),
-                    Arrays.asList(new Payout[]{new Payout(new IntRange(1,1),BigDecimal.ONE)}))})));
-            SitAndGoCreationParticipant participant =  new SitAndGoCreationParticipant(config);
-            MttLobbyObject mtt = factory.createMtt(context.getMttId(), "Private Challenge", participant);
+            //create sit and go participant from ChallengeConfiguration
+            SitAndGoCreationParticipant participant = createSitAndGoConfig(cc);
 
+            //create the sit and go
+            MttLobbyObject mtt = factory.createMtt(context.getMttId(), cc.getName(), participant);
+
+            //notify that the challenge has started
             ChallengeService cs = context.getServices().getServiceInstance(ChallengeService.class);
-            PublicClientRegistryService publicClientRegistryService = context.getServices().getServiceInstance(PublicClientRegistryService.class);
             cs.startChallenge(mtt.getTournamentId(),c.getId());
+
+
+            //register the players for the sit and go
+            PublicClientRegistryService publicClientRegistryService = context.getServices().getServiceInstance(PublicClientRegistryService.class);
 
             RouterService routerService = context.getServices().getServiceInstance(RouterService.class);
 
@@ -193,5 +198,16 @@ public class PokerTournamentActivatorImpl implements MttActivator, Startable, Po
         }
 
 
+    }
+
+    private SitAndGoCreationParticipant createSitAndGoConfig(ChallengeConfiguration cc) {
+        SitAndGoConfiguration config = new SitAndGoConfiguration(cc.getName(),2, TimingFactory.getRegistry().getTimingProfile("DEFAULT"));
+
+        config.getConfiguration().setBuyIn(cc.getBuyIn());
+        config.getConfiguration().setFee(cc.getFee());
+        config.getConfiguration().setPayoutStructure(new PayoutStructure(Arrays.asList(new Payouts[]{new Payouts(new IntRange(1, 2),
+                Arrays.asList(new Payout[]{new Payout(new IntRange(1, 1), BigDecimal.ONE)}))})));
+
+        return new SitAndGoCreationParticipant(config);
     }
 }

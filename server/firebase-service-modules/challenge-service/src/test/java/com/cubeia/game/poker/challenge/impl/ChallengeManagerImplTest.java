@@ -17,15 +17,18 @@ public class ChallengeManagerImplTest {
     @Inject
     private ChallengeManagerImpl challengeManager;
 
+    private ChallengeConfigurationManager cfg = new ChallengeConfigurationManagerImpl();
+
     @Before
     public void setup() {
         Guice.createInjector(new ChallengeModule()).injectMembers(this);
+
         MockitoAnnotations.initMocks(this);
     }
 
     @Test
     public void testCreateChallenge() throws ChallengeNotFoundException {
-        UUID id = challengeManager.createChallenge(1, 2);
+        UUID id = challengeManager.createChallenge(1, 2,cfg.getConfiguration(1));
 
         Challenge c = challengeManager.acceptChallenge(id, 2);
         assertEquals(c.getCreator(),1);
@@ -36,7 +39,7 @@ public class ChallengeManagerImplTest {
 
     @Test
     public void testIncorrectInviteID() {
-        challengeManager.createChallenge(1,2);
+        challengeManager.createChallenge(1,2,cfg.getConfiguration(1));
         try {
             challengeManager.acceptChallenge(UUID.randomUUID(),2);
             fail("exception should have been thrown");
@@ -48,7 +51,7 @@ public class ChallengeManagerImplTest {
 
     @Test
     public void testIncorrectPlayerId() {
-        challengeManager.createChallenge(1,2);
+        challengeManager.createChallenge(1,2,cfg.getConfiguration(1));
         try {
             challengeManager.acceptChallenge(UUID.randomUUID(),3);
             fail("exception should have been thrown");

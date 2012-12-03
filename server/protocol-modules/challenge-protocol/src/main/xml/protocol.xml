@@ -1,13 +1,17 @@
 <protocol version="$Revision: 1 $">
 
+
     <struct name="challenge_request">
         <var name="challengedPlayerId" type="int32"/>
+        <var name="configurationId" type="int32"/>
     </struct>
+
     <enum name="challenge_request_status">
         <value>PLAYER_NOT_FOUND</value>
         <value>WAITING_FOR_ACCEPT</value>
         <value>PLAYER_DECLINED</value>
     </enum>
+
     <struct name="challenge_response">
         <var name="challengeId" type="string"/>
         <var name="status" type="challenge_request_status"/>
@@ -16,6 +20,7 @@
     <struct name="accept_challenge_request">
         <var name="challengeId" type="string"/>
     </struct>
+
     <struct name="decline_challenge_request">
         <var name="challengeId" type="string"/>
     </struct>
@@ -23,6 +28,20 @@
     <struct name="challenge_invite">
         <var name="challengeId" type="string"/>
         <var name="creatorName" type="string"/>
+        <var name="configuration" type="configuration"/>
+    </struct>
+
+    <struct name="challenge_configurations_request">
+        <var name="playerId" type="int32"/>
+    </struct>
+
+    <struct name="configuration">
+        <var name="configurationId" type="int32"/>
+        <var name="challengeName" type="string"/>
+    </struct>
+
+    <struct name="challenge_configuration_list">
+        <list name="configurations" type="configuration"/>
     </struct>
 
 </protocol>
