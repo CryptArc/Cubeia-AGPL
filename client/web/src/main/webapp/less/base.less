@@ -60,21 +60,39 @@ body {
 .context-menu {
     position:absolute;
     z-index: 99999999;
-    width:150px;
-
+    display:inline-block;
+    width: 220px;
 }
 .context-menu ul {
     padding:0;
     margin:0;
-    width:100%;
+    width:auto;
+    display:inline-block;
+    background-color: #333;
+    .border-radius(4px);
+    border: 1px solid #444;
+    .box-shadow(2px 2px 8px #000);
+
 }
 
 .context-menu li {
     padding:5%;
+    margin:0;
+    text-overflow: ellipsis;
+    overflow:hidden;
+    width:90%;
+    display:inline-block;
     list-style-type: none;
-    .border-radius(4px);
-    background-color: #333;
+    border-bottom: 1px solid #444;
     cursor: pointer;
+    &:last-child {
+        border-bottom: none;
+        .border-radius(0 0 4px 4px);
+        white-space: nowrap;
+    }
+    &:first-child {
+        .border-radius(4px 4px 0 0);
+    }
 }
 .context-menu li:hover {
     background-color: #444;

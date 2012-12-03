@@ -1,5 +1,6 @@
 var Poker = Poker || {};
 Poker.ContextMenu = Class.extend({
+    container : null,
     init : function(event,items) {
         var container = $("#contextMenuContainer");
         if(container.length==0){
@@ -7,22 +8,36 @@ Poker.ContextMenu = Class.extend({
             $("body").append(container);
             container = $("#contextMenuContainer");
         }
-        container.empty();
+        this.container = container;
+        ;
         var left = Math.max(0,event.pageX - container.outerWidth());
         container.css("top",event.pageY).css("left",left);
-        var menuList = $("<ul/>")
-        $.each(items,function(i,e){
-            var li = $("<li/>").append(e.title);
-            li.click(function(evt){
-                e.callback(evt);
-            });
-            menuList.append(li);
-        });
-        container.append(menuList);
+
+        this.addItems(items);
         event.stopPropagation();
         $("body").click(function(e){
            container.remove();
         });
+    },
+    addItems : function(items) {
 
+        var self = this;
+        this.container.empty();
+        var menuList = $("<ul/>")
+
+        $.each(items,function(i,item){
+            var li = $("<li/>").append("&raquo; ").append(item.title);
+            li.click(function(evt){
+                if(item.items) {
+                    self.addItems(item.items);
+                    evt.stopPropagation();
+                } else {
+                    item.callback(evt);
+                }
+            });
+            menuList.append(li);
+        });
+        this.container.append(menuList);
     }
+
 });
