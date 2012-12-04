@@ -6,6 +6,6 @@ com.cubeia.network.userservice.base-url=http://localhost:9090/user-service-rest/
 
 com.cubeia.network.walletservice.base-url=http://localhost:9091/wallet-service-rest/rest
 
-com.cubeia.network.walletservice.session-urls=http://localhost:10081/wallet-service-rest/rest
+com.cubeia.network.walletservice.session-urls=http://localhost:9091/wallet-service-rest/rest
 
 use-mock-integrations=true
