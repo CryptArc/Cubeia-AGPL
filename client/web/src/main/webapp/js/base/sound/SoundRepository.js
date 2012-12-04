@@ -19,7 +19,7 @@ Poker.SoundRepository = Class.extend({
             return;
         }
         for (var sound in Poker.Sounds) {
-            console.log("Loading sound " + sound + " from file " + Poker.Sounds[sound]);
+        //    console.log("Loading sound " + sound + " from file " + Poker.Sounds[sound]);
             var audio = new Audio("sounds/" + Poker.Sounds[sound]);
             this.sounds[Poker.Sounds[sound]] = audio;
         }

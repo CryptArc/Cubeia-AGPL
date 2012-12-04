@@ -155,7 +155,7 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
         comHandler.subscribeToCashGames();
     },
     handlePacket:function (packet) {
-        console.log(packet);
+    //    console.log(packet);
         switch (packet.classId) {
             case FB_PROTOCOL.NotifyJoinPacket.CLASSID :
                 this.handleNotifyJoin(packet);

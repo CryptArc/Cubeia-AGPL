@@ -121,7 +121,7 @@ Poker.Seat = Class.extend({
    },
    dealCard : function(card) {
        this.cardsContainer.append(card.render());
-       console.log(card);
+   //    console.log(card);
        this.onCardDealt(card);
    },
    onCardDealt : function(card) {

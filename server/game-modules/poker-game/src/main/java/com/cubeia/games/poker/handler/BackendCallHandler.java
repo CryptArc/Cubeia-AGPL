@@ -238,23 +238,15 @@ public class BackendCallHandler {
         ErrorPacket errorPacket = new ErrorPacket(errorCode, handId);
         GameDataAction errorAction = new GameDataAction(player.getId(), table.getId());
         ByteBuffer packetBuffer;
-        try {
-            packetBuffer = styx.pack(errorPacket);
-            errorAction.setData(packetBuffer);
-            table.getNotifier().notifyPlayer(player.getId(), errorAction);
-        } catch (IOException e) {
-            log.error("failed to send error message to client", e);
-        }
+        packetBuffer = styx.pack(errorPacket);
+        errorAction.setData(packetBuffer);
+        table.getNotifier().notifyPlayer(player.getId(), errorAction);
     }
 
 
     private void sendGameData(int playerId, ProtocolObject resp) {
         GameDataAction action = new GameDataAction(playerId, table.getId());
-        try {
-            action.setData(styx.pack(resp));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        action.setData(styx.pack(resp));
 
         table.getNotifier().notifyPlayer(playerId, action);
     }

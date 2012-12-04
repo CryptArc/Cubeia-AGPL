@@ -80,7 +80,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
      * @param pos - position if supplied adds the corresponding position css class
      */
     addEmptySeatContent : function(seatId,pos,active) {
-        console.log("addEmptySeatContent seatId="+seatId);
+        //console.log("addEmptySeatContent seatId="+seatId);
         var seat = $("#seat"+seatId+"-"+this.tableId);
         seat.addClass("seat-empty").html(Mustache.render(this.emptySeatTemplate,{}));
         seat.removeClass("seat-sit-out").removeClass("seat-folded");

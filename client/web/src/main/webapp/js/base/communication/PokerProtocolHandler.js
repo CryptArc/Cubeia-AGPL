@@ -24,16 +24,18 @@ Poker.PokerProtocolHandler = function() {
             console.log("Received packet for table ("+gameTransportPacket.tableid+") you're not viewing");
             return;
         }
+
         var tableId = gameTransportPacket.tableid;
         var valueArray =  FIREBASE.ByteArray.fromBase64String(gameTransportPacket.gamedata);
         var gameData = new FIREBASE.ByteArray(valueArray);
+
         var length = gameData.readInt();
         var classId = gameData.readUnsignedByte();
 
         var protocolObject = com.cubeia.games.poker.io.protocol.ProtocolObjectFactory.create(classId, gameData);
 
-        console.log("Received packet: ");
-        console.log(protocolObject);
+        //console.log("Received packet: ");
+       // console.log(protocolObject);
 
         switch (protocolObject.classId() ) {
             case com.cubeia.games.poker.io.protocol.BestHand.CLASSID:
@@ -48,8 +50,8 @@ Poker.PokerProtocolHandler = function() {
 
                 break;
             case com.cubeia.games.poker.io.protocol.BuyInResponse.CLASSID:
-                console.log("BUY-IN RESPONSE ");
-                console.log(protocolObject);
+             //   console.log("BUY-IN RESPONSE ");
+             //   console.log(protocolObject);
                 this.tableManager.handleBuyInResponse(tableId,protocolObject.resultCode);
                 break;
             case com.cubeia.games.poker.io.protocol.CardToDeal.CLASSID:
@@ -111,8 +113,8 @@ Poker.PokerProtocolHandler = function() {
                 this.tableManager.endHand(tableId,protocolObject.hands,protocolObject.potTransfers);
                 break;
             case com.cubeia.games.poker.io.protocol.InformFutureAllowedActions.CLASSID:
-                console.log("UNHANDLED PO InformFutureAllowedActions");
-                console.log(protocolObject);
+    //            console.log("UNHANDLED PO InformFutureAllowedActions");
+    //            console.log(protocolObject);
                 break;
             case com.cubeia.games.poker.io.protocol.PerformAction.CLASSID:
                 this.handlePerformAction(tableId,protocolObject);
@@ -211,6 +213,9 @@ Poker.PokerProtocolHandler = function() {
                 break;
             case com.cubeia.games.poker.io.protocol.BlindsAreUpdated.CLASSID:
                 this.tableManager.notifyBlindsUpdated(protocolObject);
+                break;
+            case com.cubeia.games.poker.io.protocol.AchievementNotificationPacket.CLASSID:
+                handleAchievementEvent(protocolObject);
                 break;
             default:
                 console.log("Ignoring packet: " + protocolObject);

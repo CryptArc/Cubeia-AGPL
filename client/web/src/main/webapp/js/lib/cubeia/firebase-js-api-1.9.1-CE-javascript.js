@@ -65,7 +65,9 @@ for(i=0;
 i<byteArray.length;
 i++){this.writeUnsignedByte(byteArray[i])
 }};
-this.writeInt=function(value){this.buffer.push((value&4278190080)>>24);
+this.writeInt=function(value){var byte1=(value&4278190080)>>24;
+if(byte1<0){byte1+=256
+}this.buffer.push(byte1);
 this.buffer.push((value&16711680)>>16);
 this.buffer.push((value&65280)>>8);
 this.buffer.push(value&255)
@@ -88,14 +90,29 @@ if(value<0){value+=MAX_BYTE
 };
 this.createServiceDataArray=function(classId){return this.createGameDataArray(classId)
 };
+this.createDataArray=function(){var adata=new FIREBASE.ByteArray();
+adata.writeUnsignedInt(this.buffer.length);
+var arrayToSend=adata.buffer.concat(this.buffer);
+return arrayToSend
+};
 this.createGameDataArray=function(classId){var header=new FIREBASE.ByteArray();
 header.writeUnsignedInt(this.buffer.length);
 header.writeUnsignedByte(classId);
 var arrayToSend=header.buffer.concat(this.buffer);
 return arrayToSend
 };
-this.writeArray=function(byteArray){var newBuffer=this.buffer.concat(byteArray.buffer);
+this.writeArray=function(byteArray){var source;
+source=(byteArray instanceof Array&&byteArray.length>0)?new FIREBASE.ByteArray(byteArray):byteArray;
+var newBuffer=this.buffer.concat(source.buffer);
 this.buffer=newBuffer
+};
+this.readArray=function(count){var i,len,element,target=[];
+len=count||this.remaining();
+for(i=0;
+i<len;
+i++){element=this.readUnsignedByte();
+if(typeof element!=="undefined"){target.push(element)
+}}return target
 }
 };
 FIREBASE.ByteArray.fromBase64String=function(input){var result=[];
@@ -243,7 +260,10 @@ var _handleConnect=function(){if(_reconnecting){_statusCallback(FIREBASE.Connect
 _reconnecting=false
 }_statusCallback(FIREBASE.ConnectionStatus.CONNECTED,0,"Connected")
 };
-var _handlePacket=function(protocolObject){switch(protocolObject.classId){case FB_PROTOCOL.LoginResponsePacket.CLASSID:_handleLoginResponse(protocolObject);
+var _handlePacket=function(protocolObject){switch(protocolObject.classId){case FB_PROTOCOL.PingPacket.CLASSID:console.log("received ping from firebase");
+_ioAdapter.send(protocolObject);
+break;
+case FB_PROTOCOL.LoginResponsePacket.CLASSID:_handleLoginResponse(protocolObject);
 break;
 case FB_PROTOCOL.TableQueryResponsePacket.CLASSID:case FB_PROTOCOL.TableSnapshotPacket.CLASSID:case FB_PROTOCOL.TableUpdatePacket.CLASSID:case FB_PROTOCOL.TableRemovedPacket.CLASSID:case FB_PROTOCOL.TableSnapshotListPacket.CLASSID:case FB_PROTOCOL.TableUpdateListPacket.CLASSID:case FB_PROTOCOL.TournamentRemovedPacket.CLASSID:case FB_PROTOCOL.TournamentSnapshotPacket.CLASSID:case FB_PROTOCOL.TournamentUpdatePacket.CLASSID:case FB_PROTOCOL.TournamentSnapshotListPacket.CLASSID:case FB_PROTOCOL.TournamentUpdateListPacket.CLASSID:if(_lobbyCallback){_lobbyCallback(protocolObject)
 }else{if(_packetCallback){_packetCallback(protocolObject)
@@ -281,9 +301,13 @@ this.send=function(packet){if(_ioAdapter){_ioAdapter.send(packet)
 this.login=function(user,pwd,operatorid,credentials){var loginRequest=new FB_PROTOCOL.LoginRequestPacket();
 loginRequest.user=user;
 loginRequest.password=pwd;
-loginRequest.operatorid=operatorid === undefined ? 1 : operatorid;
-loginRequest.credentials=credentials||[];
-this.sendProtocolObject(loginRequest)
+loginRequest.operatorid=operatorid||1;
+if(credentials){if(credentials instanceof FIREBASE.ByteArray){loginRequest.credentials=FIREBASE.ByteArray.toBase64String(credentials.createDataArray())
+}else{if(typeof(credentials.classId)==="function"){var byteArray=credentials.save();
+loginRequest.credentials=FIREBASE.ByteArray.toBase64String(byteArray.createGameDataArray(credentials.classId()))
+}else{loginRequest.credentials=credentials
+}}}else{loginRequest.credentials=[]
+}this.sendProtocolObject(loginRequest)
 };
 this.logout=function(leaveTables){this.cancel();
 var logoutRequest=new FB_PROTOCOL.LogoutPacket();

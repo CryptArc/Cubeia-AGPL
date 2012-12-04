@@ -6,7 +6,7 @@ var Poker = Poker || {};
 Poker.TableListener = Class.extend({
     init : function() {},
     onTableCreated : function() {
-        console.log("Poker.TableListener.onTableCreated");
+    //    console.log("Poker.TableListener.onTableCreated");
     },
     /**
      * When a player is added to the table
@@ -21,14 +21,14 @@ Poker.TableListener = Class.extend({
      * @param player - the updated Poker.Player
      */
     onPlayerUpdated : function(player){
-        console.log("Poker.TableListener.onPlayerUpdated");
+    //    console.log("Poker.TableListener.onPlayerUpdated");
     },
     /**
      * Notifies when a new hand is about to start
      * @param dealerSeatId what seat will be the dealer of the new hand
      */
     onStartHand : function(dealerSeatId) {
-        console.log("Poker.TableListener.onStartHand");
+    //    console.log("Poker.TableListener.onStartHand");
     },
     /**
      * Notifies when a player has made an action
@@ -37,7 +37,7 @@ Poker.TableListener = Class.extend({
      * @param {Number} amount - the amount related to the action
      */
     onPlayerActed : function(player,actionType,amount){
-        console.log("Poker.TableListener.onPlayerAction");
+    //    console.log("Poker.TableListener.onPlayerAction");
     },
     /**
      * Notifies when a player gets a card dealt
@@ -45,14 +45,14 @@ Poker.TableListener = Class.extend({
      * @param {String} cardString - the card string
      */
     onDealPlayerCard : function(player,cardId,cardString) {
-        console.log("Poker.TableListener.onDealPlayerCard");
+    //    console.log("Poker.TableListener.onDealPlayerCard");
     },
     /**
      * Notifies when the main pot is updated
      * @param {Poker.Pot} pot the main pot
      */
     onMainPotUpdate : function(pot) {
-        console.log("Poker.TableListener.onMainPotUpdate");
+    //    console.log("Poker.TableListener.onMainPotUpdate");
     },
     /**
      * Notifies that a player has been requested to act
@@ -62,7 +62,7 @@ Poker.TableListener = Class.extend({
      * @param {int} timeToAct - the time the player has to act
      */
     onRequestPlayerAction : function(player,allowedActions,timeToAct, mainPot){
-        console.log("Poker.TableListener.onRequestPlayerAction");
+    //    console.log("Poker.TableListener.onRequestPlayerAction");
     },
     /**
      * Notifies when a community card is dealt
@@ -70,7 +70,7 @@ Poker.TableListener = Class.extend({
      * @param cardString - the card string for the card being dealt
      */
     onDealCommunityCard : function(cardId,cardString) {
-        console.log("Poker.TableListener.onDealCommunityCard");
+    //    console.log("Poker.TableListener.onDealCommunityCard");
     },
     /**
      * Notifies when a card should be exposed
@@ -78,7 +78,7 @@ Poker.TableListener = Class.extend({
      * @param cardString the card string to use
      */
     onExposePrivateCard : function(cardId,cardString) {
-        console.log("Poker.TableListener.onExposePrivateCard");
+     //   console.log("Poker.TableListener.onExposePrivateCard");
     },
     /**
      * Notifies when a hand strength for a specific player should be displayed
@@ -86,7 +86,7 @@ Poker.TableListener = Class.extend({
      * @param hand the hand to display
      */
     onPlayerHandStrength : function(player, hand) {
-        console.log("Poker.TableListener.onPlayerHandStrength");
+   //     console.log("Poker.TableListener.onPlayerHandStrength");
     },
     /**
      * Notifies when you left a table successfully,
@@ -100,7 +100,7 @@ Poker.TableListener = Class.extend({
      * When a betting round is complete the bets are collected and put in the pot
      */
     onBettingRoundComplete : function() {
-        console.log("Poker.TableListener.onBettingRoundComplete");
+  //      console.log("Poker.TableListener.onBettingRoundComplete");
     },
     /**
      * When a player is removed from the table
@@ -114,14 +114,14 @@ Poker.TableListener = Class.extend({
      * @param seatId which seat id to move the dealer button
      */
     onMoveDealerButton : function(seatId) {
-        console.log("Poker.TableListener.onMoveDealerButton");
+//        console.log("Poker.TableListener.onMoveDealerButton");
     },
     /**
      * Called when a player recieves money from a pot
      * @param transfers
      */
     onPlayerToPotTransfers : function(transfers) {
-        console.log("Poker.TableListener.onPlayerToPotTransfers");
+ //       console.log("Poker.TableListener.onPlayerToPotTransfers");
     },
     /**
      * Called when a player is supposed to do a buy-in with the

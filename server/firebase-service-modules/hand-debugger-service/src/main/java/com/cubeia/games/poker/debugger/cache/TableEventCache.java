@@ -116,12 +116,7 @@ public class TableEventCache {
     }
 
     private ProtocolObject unpack(GameDataAction action) {
-        try {
-            return serializer.unpack(action.getData());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return serializer.unpack(action.getData());
     }
 
     private EventType getEventType(ProtocolObject protocol) {

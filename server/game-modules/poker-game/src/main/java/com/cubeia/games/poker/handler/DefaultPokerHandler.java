@@ -190,4 +190,7 @@ public class DefaultPokerHandler implements PacketVisitor {
     @Override
     public void visit(PongPacket packet) {
     }
+
+	@Override
+	public void visit(AchievementNotificationPacket packet) {}
 }

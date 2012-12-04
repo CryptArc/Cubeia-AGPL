@@ -1,0 +1,341 @@
+@font-face {
+    font-family: header_font;
+    src: url('../css/fonts/JungleFeverNF.ttf');
+}
+
+@font-face {
+    font-family: rich_font;
+    src: url('../css/fonts/kimbalt_.ttf');
+
+}
+
+div.achievement_gained_container_tiny {
+    font-family: verdana;
+    position: absolute;
+    opacity: 0;
+    bottom: 1px;
+    width: 160px;
+    height: 50px;
+    padding: 0px;
+    padding-bottom: 4px;
+    color: #fff;
+    overflow: visible;
+    -webkit-transition: all 1s, opacity 0.5s;
+    transition:all 1s, opacity 0.5s;
+
+}
+
+div.achievement_gained_container_base {
+    font-family: verdana;
+    position: absolute;
+    opacity: 0;
+    bottom: 1px;
+    right: 100px;
+    width: 400px;
+    height: 110px;
+    padding: 0px;
+    padding-bottom: 4px;
+    color: #fff;
+    overflow: visible;
+    -webkit-transition: all 1s, opacity 0.5s;
+    transition:all 1s, opacity 0.5s;
+
+}
+
+div.achievement_list_container {
+    pointer-events: auto;
+    -webkit-user-select: none;
+    font-family: verdana;
+    position: relative;
+    padding: 4px;
+    padding-bottom: 8px;
+    color: #fff;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+div.achievement_container_frame {
+    position: relative;
+    display: block;
+    left: 0px;
+    right: 0px;
+    height: 99px;
+    border-radius: 6px;
+    margin-top: 4px;
+    box-shadow: 0px 0px 2px #000;
+    border: 1px solid #657f8f;
+    background: #576f7f; /* Old browsers */
+    -webkit-transition: inherit;
+}
+
+div.achievement_container_frame_tiny {
+    position: relative;
+    display: block;
+    left: 0px;
+    right: 0px;
+    height: 40px;
+    border-radius: 2px;
+    margin-top: 2px;
+    box-shadow: 0px 0px 2px #000;
+    border: 1px solid #657f8f;
+    background: #84cace; /* Old browsers */
+    -webkit-transition: inherit;
+}
+
+div.achievement_container_frame_achieved {
+    border: 1px solid #9dd;
+    background: #84cace; /* Old browsers */
+    -webkit-transition: inherit;
+}
+
+div.achievement_name_label {
+    font-family: header_font;
+    letter-spacing: 1px;
+    font-size: 18px;
+    position: absolute;
+    top: 3px;
+    height: 20px;
+    color: #303a4b;
+    text-shadow: 0px 0px 4px #9ab;
+    left: 114px;
+    -webkit-transition: inherit;
+}
+
+div.achievement_name_label_tiny {
+    font-family: verdana;
+    letter-spacing: -1px;
+    font-size: 10px;
+    font-weight: bold;
+    position: absolute;
+    top: 2px;
+    height: 20px;
+    color: #303a4b;
+    text-shadow: 0px 0px 3px #9ab;
+    left: 42px;
+    right: 3px;
+    -webkit-transition: inherit;
+}
+div.achievement_name_label_achieved {
+    color: #f4fcff;
+    text-shadow: 0px 0px 5px #530;
+    -webkit-transition: inherit;
+}
+div.achievement_description_text {
+    font-family: header_font;
+    letter-spacing: 1px;
+    position: absolute;
+    font-size: 13px;
+    line-height: 0.9;
+    top: 26px;
+    height: 80px;
+    color: #303a4b;
+    text-shadow: 0px 0px 4px #9ab;
+    left: 104px;
+    right: 68px;
+    -webkit-transition: inherit;
+}
+div.achievement_description_text_achieved {
+    color: #f9fdff;
+    text-shadow: 0px 0px 4px #530;
+}
+div.achievement_timestamp_label {
+    position: absolute;
+    left:auto;
+    right: auto;
+    color: #434e6e;
+    letter-spacing: -1px;
+    top: 2px;
+    right: 52px;
+    height: 14px;
+    text-align: right;
+    font-size: 8px;
+    text-shadow: 0px 0px 3px #f1f2C0
+}
+
+
+div.achievement_reward_label {
+    position: absolute;
+    font-weight: normal;
+    font-size: 10px;
+    text-align: right;
+    bottom: 18px;
+    height: 14px;
+    color: #9499A3;
+    text-shadow: 0px 0px 4px #040C14;
+    right: 22px;
+    left: 100px;
+    -webkit-transition: inherit;
+}
+
+div.achievement_reward_label_achieved {
+    color: #f1fdff;
+    text-shadow: 0px 0px 4px #89a;
+}
+div.achievement_progress_label {
+    position: absolute;
+    left:0px;
+    right: 0px;
+    color: #dcfff1;
+    top: -2px;
+    bottom: 1px;
+    text-align: center;
+    font-size: 10px;
+    text-shadow: 1px 1px 1px #000;
+    -webkit-transition: inherit;
+}
+div.achievement_image_frame {
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    height: 85px;
+    width: 85px;
+    background-color: #000;
+    border: 2px solid #000;
+    box-shadow: 0px 0px 3px #fff;
+    border-radius: 6px;
+}
+
+div.achievement_image_frame_tiny {
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    height: 33px;
+    width: 33px;
+    background-color: #000;
+    border: 1px solid #000;
+    box-shadow: 0px 0px 3px #fff;
+    border-radius: 2px;
+}
+
+div.achievement_value_label {
+    position: absolute;
+    font-family: rich_font;
+    top: 4px;
+    left: 0px;
+    right: 0px;
+    font-size: 28px;
+    text-align: center;
+    color: #000;
+    text-shadow: 0px 0px 17px #fff8f6;
+    opacity: 0.5;
+}
+
+div.achievement_value_label_tiny {
+    position: absolute;
+    font-family: rich_font;
+    top: -0px;
+    left: 0px;
+    right: 0px;
+    font-size: 16px;
+    text-align: center;
+    color: #000;
+    text-shadow: 0px 0px 4px #fff8f6;
+    opacity: 0.7;
+}
+
+div.achievement_rank_frame {
+    position: absolute;
+    text-align: center;
+    top: 4px;
+    right: 4px;
+    height: 40px;
+    width: 40px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 3px #fff;
+    border: 2px solid #000;
+    background-color: #333;
+}
+
+div.achievement_rank_frame_tiny {
+    position: absolute;
+    text-align: center;
+    bottom: 4px;
+    right: 4px;
+    height: 20px;
+    width: 20px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 3px #fff;
+    border: 1px solid #000;
+    background-color: #333;
+}
+
+div.achievement_rank_frame_1 {
+    background: #b2866b; /* Old browsers */
+    background: -moz-linear-gradient(-45deg,  #b2866b 0%, #ad8529 14%, #917022 15%, #ad8529 28%, #7f5516 29%, #ad8529 44%, #56300b 46%, #684319 51%, #56370b 56%, #ad8529 58%, #7f5516 73%, #ad8529 75%, #917022 87%, #ad8529 88%, #b2866b 99%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,#b2866b), color-stop(14%,#ad8529), color-stop(15%,#917022), color-stop(28%,#ad8529), color-stop(29%,#7f5516), color-stop(44%,#ad8529), color-stop(46%,#56300b), color-stop(51%,#684319), color-stop(56%,#56370b), color-stop(58%,#ad8529), color-stop(73%,#7f5516), color-stop(75%,#ad8529), color-stop(87%,#917022), color-stop(88%,#ad8529), color-stop(99%,#b2866b)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(-45deg,  #b2866b 0%,#ad8529 14%,#917022 15%,#ad8529 28%,#7f5516 29%,#ad8529 44%,#56300b 46%,#684319 51%,#56370b 56%,#ad8529 58%,#7f5516 73%,#ad8529 75%,#917022 87%,#ad8529 88%,#b2866b 99%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(-45deg,  #b2866b 0%,#ad8529 14%,#917022 15%,#ad8529 28%,#7f5516 29%,#ad8529 44%,#56300b 46%,#684319 51%,#56370b 56%,#ad8529 58%,#7f5516 73%,#ad8529 75%,#917022 87%,#ad8529 88%,#b2866b 99%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(-45deg,  #b2866b 0%,#ad8529 14%,#917022 15%,#ad8529 28%,#7f5516 29%,#ad8529 44%,#56300b 46%,#684319 51%,#56370b 56%,#ad8529 58%,#7f5516 73%,#ad8529 75%,#917022 87%,#ad8529 88%,#b2866b 99%); /* IE10+ */
+    background: linear-gradient(135deg,  #b2866b 0%,#ad8529 14%,#917022 15%,#ad8529 28%,#7f5516 29%,#ad8529 44%,#56300b 46%,#684319 51%,#56370b 56%,#ad8529 58%,#7f5516 73%,#ad8529 75%,#917022 87%,#ad8529 88%,#b2866b 99%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b2866b', endColorstr='#b2866b',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+
+}
+
+div.achievement_rank_frame_2 {
+    background: #e3f0f7; /* Old browsers */
+    background: -moz-linear-gradient(-45deg,  #e3f0f7 0%, #deedf7 13%, #8fc6d6 15%, #eaf2f9 29%, #5da0bf 31%, #eaf2f9 44%, #496596 46%, #5696af 51%, #475f91 56%, #eaf2f9 58%, #5da0bf 71%, #eaf2f9 73%, #8fc6d6 86%, #eaf2f9 88%, #dae9f2 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,#e3f0f7), color-stop(13%,#deedf7), color-stop(15%,#8fc6d6), color-stop(29%,#eaf2f9), color-stop(31%,#5da0bf), color-stop(44%,#eaf2f9), color-stop(46%,#496596), color-stop(51%,#5696af), color-stop(56%,#475f91), color-stop(58%,#eaf2f9), color-stop(71%,#5da0bf), color-stop(73%,#eaf2f9), color-stop(86%,#8fc6d6), color-stop(88%,#eaf2f9), color-stop(100%,#dae9f2)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(-45deg,  #e3f0f7 0%,#deedf7 13%,#8fc6d6 15%,#eaf2f9 29%,#5da0bf 31%,#eaf2f9 44%,#496596 46%,#5696af 51%,#475f91 56%,#eaf2f9 58%,#5da0bf 71%,#eaf2f9 73%,#8fc6d6 86%,#eaf2f9 88%,#dae9f2 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(-45deg,  #e3f0f7 0%,#deedf7 13%,#8fc6d6 15%,#eaf2f9 29%,#5da0bf 31%,#eaf2f9 44%,#496596 46%,#5696af 51%,#475f91 56%,#eaf2f9 58%,#5da0bf 71%,#eaf2f9 73%,#8fc6d6 86%,#eaf2f9 88%,#dae9f2 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(-45deg,  #e3f0f7 0%,#deedf7 13%,#8fc6d6 15%,#eaf2f9 29%,#5da0bf 31%,#eaf2f9 44%,#496596 46%,#5696af 51%,#475f91 56%,#eaf2f9 58%,#5da0bf 71%,#eaf2f9 73%,#8fc6d6 86%,#eaf2f9 88%,#dae9f2 100%); /* IE10+ */
+    background: linear-gradient(135deg,  #e3f0f7 0%,#deedf7 13%,#8fc6d6 15%,#eaf2f9 29%,#5da0bf 31%,#eaf2f9 44%,#496596 46%,#5696af 51%,#475f91 56%,#eaf2f9 58%,#5da0bf 71%,#eaf2f9 73%,#8fc6d6 86%,#eaf2f9 88%,#dae9f2 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e3f0f7', endColorstr='#dae9f2',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+
+}
+
+div.achievement_rank_frame_3 {
+    background: #fff7d8; /* Old browsers */
+    background: -moz-linear-gradient(-45deg,  #fff7d8 0%, #f7f4de 13%, #f9d970 14%, #fffadd 27%, #f7ca00 28%, #fcf4b0 44%, #fc9905 46%, #f99304 51%, #fc9905 56%, #fffa6b 58%, #fcc500 73%, #fff8d1 74%, #f9cd7a 87%, #f7f6e8 88%, #f9f3cf 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,#fff7d8), color-stop(13%,#f7f4de), color-stop(14%,#f9d970), color-stop(27%,#fffadd), color-stop(28%,#f7ca00), color-stop(44%,#fcf4b0), color-stop(46%,#fc9905), color-stop(51%,#f99304), color-stop(56%,#fc9905), color-stop(58%,#fffa6b), color-stop(73%,#fcc500), color-stop(74%,#fff8d1), color-stop(87%,#f9cd7a), color-stop(88%,#f7f6e8), color-stop(100%,#f9f3cf)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(-45deg,  #fff7d8 0%,#f7f4de 13%,#f9d970 14%,#fffadd 27%,#f7ca00 28%,#fcf4b0 44%,#fc9905 46%,#f99304 51%,#fc9905 56%,#fffa6b 58%,#fcc500 73%,#fff8d1 74%,#f9cd7a 87%,#f7f6e8 88%,#f9f3cf 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(-45deg,  #fff7d8 0%,#f7f4de 13%,#f9d970 14%,#fffadd 27%,#f7ca00 28%,#fcf4b0 44%,#fc9905 46%,#f99304 51%,#fc9905 56%,#fffa6b 58%,#fcc500 73%,#fff8d1 74%,#f9cd7a 87%,#f7f6e8 88%,#f9f3cf 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(-45deg,  #fff7d8 0%,#f7f4de 13%,#f9d970 14%,#fffadd 27%,#f7ca00 28%,#fcf4b0 44%,#fc9905 46%,#f99304 51%,#fc9905 56%,#fffa6b 58%,#fcc500 73%,#fff8d1 74%,#f9cd7a 87%,#f7f6e8 88%,#f9f3cf 100%); /* IE10+ */
+    background: linear-gradient(135deg,  #fff7d8 0%,#f7f4de 13%,#f9d970 14%,#fffadd 27%,#f7ca00 28%,#fcf4b0 44%,#fc9905 46%,#f99304 51%,#fc9905 56%,#fffa6b 58%,#fcc500 73%,#fff8d1 74%,#f9cd7a 87%,#f7f6e8 88%,#f9f3cf 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fff7d8', endColorstr='#f9f3cf',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+
+}
+
+
+div.achievement_game_frame {
+    position: absolute;
+    bottom: 2px;
+    left: 2px;
+    height: 20px;
+    width: 20px;
+    border-radius: 4px;
+    border-color: #9ab;
+    background-color: #69d;
+}
+
+div.achievement_progress_frame {
+    position: absolute;
+    bottom: 5px;
+    left: 104px;
+    height: 10px;
+    right: 12px;
+    border-radius: 5px;
+    border: 1px solid #000;
+    box-shadow: 0px 0px 3px #fff;
+    background: #1b3047; /* Old browsers */
+    -webkit-transition: inherit;
+}
+
+div.achievement_progress_bar {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    top: 0px;
+    border-radius:4px;
+    width: 0%;
+    background: #73b1d1; /* Old browsers */
+    -webkit-transition: inherit;
+}
+
+div.achievement_progress_bar_achieved {
+    background: #97eade; /* Old browsers */
+    -webkit-transition: inherit;
+}
