@@ -64,7 +64,7 @@ Table.prototype.createTableOfSize = function(numberOfSeats, containerId) {
         tableEntity.seats[seatNr] = seatEntity;
     }
    
-	console.log(entityHandler.entities);
+//	console.log(entityHandler.entities);
 
     /*
     * Now we can use the generic "positionVisualEntityAtSpatial" method in the SpatialManager to

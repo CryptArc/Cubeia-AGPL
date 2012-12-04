@@ -92,8 +92,8 @@ Poker.LobbyLayoutManager = Class.extend({
         this.createGrid(true);
     },
     handleTableSnapshot:function (tableSnapshot) {
-        console.log("tableSnapshot:")
-        console.log(tableSnapshot);
+    //    console.log("tableSnapshot:")
+    //    console.log(tableSnapshot);
         if (this.findTable(tableSnapshot.tableid) === null) {
 
             var showInLobby = this.readParam("VISIBLE_IN_LOBBY",tableSnapshot.params);
@@ -158,7 +158,7 @@ Poker.LobbyLayoutManager = Class.extend({
     },
 
     handleTournamentUpdates:function (tournamentUpdateList) {
-        console.log("Received tournament updates");
+    //    console.log("Received tournament updates");
         for (var i = 0; i < tournamentUpdateList.length; i++) {
             this.handleTournamentUpdate(tournamentUpdateList[i]);
         }
@@ -166,7 +166,7 @@ Poker.LobbyLayoutManager = Class.extend({
     },
 
     handleTournamentUpdate:function (tournamentUpdate) {
-        console.log("Updating tournament: " + tournamentUpdate.mttid);
+    //    console.log("Updating tournament: " + tournamentUpdate.mttid);
         var tournamentData = this.findTournament(tournamentUpdate.mttid);
         if (tournamentData) {
             var registered = this.readParam("REGISTERED", tournamentUpdate.params);
@@ -234,12 +234,12 @@ Poker.LobbyLayoutManager = Class.extend({
                 var item = $("#tableItem" + tableData.id);  //need to pick it up again to be able to bind to it
                 item.click(self.createClickFunction(true, tableData));
             }
-            console.log("table " + tableData.id + "  updated, seated = " + tableData.seated);
+        //    console.log("table " + tableData.id + "  updated, seated = " + tableData.seated);
         }
     },
 
     handleTableRemoved:function (tableid) {
-        console.debug("removing table " + tableid);
+    //    console.debug("removing table " + tableid);
         this.removeTable(tableid);
         $("#tableItem" + tableid).remove();
 
@@ -308,12 +308,12 @@ Poker.LobbyLayoutManager = Class.extend({
         if (count == 0) {
             $("#tableListItemContainer").append($("<div/>").addClass("no-tables").html("Currently no tables matching your criteria"));
         }
-        console.debug("grid created");
+    //    console.debug("grid created");
     },
 
     createClickFunction:function (tables, data) {
         var self = this;
-        console.log("Creating click function. Tables?: " + tables);
+ //       console.log("Creating click function. Tables?: " + tables);
         var comHandler = Poker.AppCtx.getComHandler();
         var click = function(e) {
             if (tables) {

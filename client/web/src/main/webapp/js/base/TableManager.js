@@ -108,8 +108,8 @@ Poker.TableManager = Class.extend({
             this.updateHandStrength(tableId,hands[i]);
         }
         var table = this.tables.get(tableId);
-        console.log("pot transfers:");
-        console.log(potTransfers);
+    //    console.log("pot transfers:");
+    //    console.log(potTransfers);
         var count = table.handCount;
         var self = this;
 
@@ -134,10 +134,10 @@ Poker.TableManager = Class.extend({
     clearTable : function(tableId,handCount) {
         var table = this.tables.get(tableId);
         if(table.handCount==handCount) {
-            console.log("No hand started clearing table");
+    //        console.log("No hand started clearing table");
             this._notifyNewHand(tableId,this.dealerSeatId);
         } else {
-            console.log("new hand started, skipping clear table")
+        //    console.log("new hand started, skipping clear table")
         }
     },
     showHandStrength : function(tableId,playerId,hand) {
@@ -169,14 +169,14 @@ Poker.TableManager = Class.extend({
         }
     },
     addPlayer : function(tableId,seat,playerId, playerName) {
-        console.log("adding player " + playerName + " at seat" + seat + " on table " + tableId);
+    //    console.log("adding player " + playerName + " at seat" + seat + " on table " + tableId);
         var table = this.tables.get(tableId);
         var p = new Poker.Player(playerId, playerName);
         table.addPlayer(seat,p);
         this._notifyPlayerAdded(tableId,seat,p);
     },
     removePlayer : function(tableId,playerId) {
-        console.log("removing player with playerId " + playerId);
+    //    console.log("removing player with playerId " + playerId);
         var table = this.tables.get(tableId);
         table.removePlayer(playerId);
         this._notifyPlayerRemoved(tableId,playerId);
@@ -240,7 +240,7 @@ Poker.TableManager = Class.extend({
 
         for(var p = 0; p<pots.length; p++) {
             if(pots[p].type == Poker.PotType.MAIN) {
-                console.log("updating main pot");
+            //    console.log("updating main pot");
                 table.mainPot = pots[p].amount;
                 this._notifyMainPotUpdated(tableId,pots[p].amount);
                 break;

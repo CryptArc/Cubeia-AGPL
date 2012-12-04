@@ -59,8 +59,8 @@
         </dependency>
 
         <dependency>
-            <groupId>com.cubeia.firebase</groupId>
-            <artifactId>styx</artifactId>
+            <groupId>com.cubeia.styx</groupId>
+            <artifactId>styx-core</artifactId>
         </dependency>
     </dependencies>
 </project>

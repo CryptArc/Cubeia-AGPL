@@ -173,13 +173,9 @@ public class TableCloseHandlerImpl implements TableCloseHandler {
             log.debug("Sending {} message to player: {}", errorCode, playerId);
             GameDataAction errorAction = new GameDataAction(playerId, table.getId());
             ByteBuffer packetBuffer;
-            try {
-                packetBuffer = serializer.pack(errorPacket);
-                errorAction.setData(packetBuffer);
-                table.getNotifier().notifyPlayer(playerId, errorAction);
-            } catch (IOException e) {
-                log.error("failed to send error message to client", e);
-            }
+            packetBuffer = serializer.pack(errorPacket);
+            errorAction.setData(packetBuffer);
+            table.getNotifier().notifyPlayer(playerId, errorAction);
         }
     }
 
@@ -228,11 +224,7 @@ public class TableCloseHandlerImpl implements TableCloseHandler {
         if (action instanceof GameDataAction) {
             GameDataAction gda = (GameDataAction) action;
             ProtocolObject packet = null;
-            try {
-                packet = serializer.unpack(gda.getData());
-            } catch (IOException e) {
-                log.warn("error unpacking action for diagnostics", e);
-            }
+            packet = serializer.unpack(gda.getData());
             printActionsToErrorLog(throwable, "error handling game action: " + action + " Table: " + table.getId() + " Packet: " + packet, table);
         } else if (action instanceof GameObjectAction) {
             printActionsToErrorLog(throwable, "error handling command action: " + action + " on table: " + table, table);

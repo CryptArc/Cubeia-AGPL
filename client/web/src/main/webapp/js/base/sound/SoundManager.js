@@ -20,12 +20,12 @@ Poker.SoundManager = Class.extend({
 
     playSound:function (soundName) {
         if (this.soundsEnabled()) {
-            console.log("Playing sound: " + soundName);
+        //    console.log("Playing sound: " + soundName);
             var sound = this.soundsRepository.getSound(soundName);
             if (sound) {
                 sound.play();
             } else {
-                console.log("No sound found.");
+            //    console.log("No sound found.");
             }
         }
     },

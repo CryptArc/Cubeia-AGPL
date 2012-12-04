@@ -112,6 +112,9 @@
 
 <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
+<!-- Load the Achievement Presenter Script -->
+<script type="text/javascript" src="./achievement_api/js/achievements/AchievementPresenter.js"></script>
+
 <script src="js/jquery.js" type="text/javascript"></script>
 
 <link rel="stylesheet" type="text/css" href="css/frames.css"/>
@@ -193,6 +196,14 @@
 </style>
 
 <script>
+    // Initiate the Achievement Presenter
+    var achievementPresenter = new AchievementPresenter();
+    var baseUrl = ".";
+    achievementPresenter.load(baseUrl)
+    updateUser = function(user) {
+        var parentElement = document.getElementById("view_port");
+        achievementPresenter.updateUserInParentElement(user, parentElement);
+    };
 
 
 	var connector;

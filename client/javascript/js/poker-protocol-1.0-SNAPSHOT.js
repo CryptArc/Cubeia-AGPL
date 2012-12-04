@@ -8,7 +8,32 @@ com.cubeia.games.poker.io = com.cubeia.games.poker.io || {};
 com.cubeia.games.poker.io.protocol = com.cubeia.games.poker.io.protocol || {};
 
 
-com.cubeia.games.poker.io.protocol.ActionTypeEnum=function(){};
+com.cubeia.games.poker.io.protocol.AchievementNotificationPacket=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.AchievementNotificationPacket.CLASSID
+};
+this.playerId={};
+this.broadcast={};
+this.message={};
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeInt(this.playerId);
+a.writeBoolean(this.broadcast);
+a.writeString(this.message);
+return a
+};
+this.load=function(a){this.playerId=a.readInt();
+this.broadcast=a.readBoolean();
+this.message=a.readString()
+};
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.AchievementNotificationPacket";
+a.details={};
+a.details.playerId=this.playerId;
+a.details.broadcast=this.broadcast;
+a.details.message=this.message;
+return a
+}
+};
+com.cubeia.games.poker.io.protocol.AchievementNotificationPacket.CLASSID=43;com.cubeia.games.poker.io.protocol.ActionTypeEnum=function(){};
 com.cubeia.games.poker.io.protocol.ActionTypeEnum.SMALL_BLIND=0;
 com.cubeia.games.poker.io.protocol.ActionTypeEnum.BIG_BLIND=1;
 com.cubeia.games.poker.io.protocol.ActionTypeEnum.CALL=2;
@@ -85,7 +110,40 @@ b++){a.details.cards.push(this.cards[b].getNormalizedObject())
 }return a
 }
 };
-com.cubeia.games.poker.io.protocol.BestHand.CLASSID=5;com.cubeia.games.poker.io.protocol.BuyInInfoRequest=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.BuyInInfoRequest.CLASSID
+com.cubeia.games.poker.io.protocol.BestHand.CLASSID=5;com.cubeia.games.poker.io.protocol.BlindsAreUpdated=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.BlindsAreUpdated.CLASSID
+};
+this.smallBlind={};
+this.bigBlind={};
+this.ante={};
+this.isBreak={};
+this.durationInMinutes={};
+this.save=function(){var a=new FIREBASE.ByteArray();
+a.writeInt(this.smallBlind);
+a.writeInt(this.bigBlind);
+a.writeInt(this.ante);
+a.writeBoolean(this.isBreak);
+a.writeInt(this.durationInMinutes);
+return a
+};
+this.load=function(a){this.smallBlind=a.readInt();
+this.bigBlind=a.readInt();
+this.ante=a.readInt();
+this.isBreak=a.readBoolean();
+this.durationInMinutes=a.readInt()
+};
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.BlindsAreUpdated";
+a.details={};
+a.details.smallBlind=this.smallBlind;
+a.details.bigBlind=this.bigBlind;
+a.details.ante=this.ante;
+a.details.isBreak=this.isBreak;
+a.details.durationInMinutes=this.durationInMinutes;
+return a
+}
+};
+com.cubeia.games.poker.io.protocol.BlindsAreUpdated.CLASSID=37;com.cubeia.games.poker.io.protocol.BuyInInfoRequest=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.BuyInInfoRequest.CLASSID
 };
 this.save=function(){return[]
 };
@@ -439,7 +497,7 @@ a.details.externalTableSessionReference=this.externalTableSessionReference;
 return a
 }
 };
-com.cubeia.games.poker.io.protocol.ExternalSessionInfoPacket.CLASSID=36;com.cubeia.games.poker.io.protocol.FuturePlayerAction=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.FuturePlayerAction.CLASSID
+com.cubeia.games.poker.io.protocol.ExternalSessionInfoPacket.CLASSID=38;com.cubeia.games.poker.io.protocol.FuturePlayerAction=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.FuturePlayerAction.CLASSID
 };
 this.action={};
 this.save=function(){var a=new FIREBASE.ByteArray();
@@ -704,7 +762,7 @@ a.details.identifier=this.identifier;
 return a
 }
 };
-com.cubeia.games.poker.io.protocol.PingPacket.CLASSID=39;com.cubeia.games.poker.io.protocol.PlayerAction=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.PlayerAction.CLASSID
+com.cubeia.games.poker.io.protocol.PingPacket.CLASSID=41;com.cubeia.games.poker.io.protocol.PlayerAction=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.PlayerAction.CLASSID
 };
 this.type={};
 this.minAmount={};
@@ -779,7 +837,7 @@ a.details.timebank=this.timebank;
 return a
 }
 };
-com.cubeia.games.poker.io.protocol.PlayerDisconnectedPacket.CLASSID=37;com.cubeia.games.poker.io.protocol.PlayerHandStartStatus=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.PlayerHandStartStatus.CLASSID
+com.cubeia.games.poker.io.protocol.PlayerDisconnectedPacket.CLASSID=39;com.cubeia.games.poker.io.protocol.PlayerHandStartStatus=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.PlayerHandStartStatus.CLASSID
 };
 this.player={};
 this.status={};
@@ -842,7 +900,7 @@ a.details.playerId=this.playerId;
 return a
 }
 };
-com.cubeia.games.poker.io.protocol.PlayerReconnectedPacket.CLASSID=38;com.cubeia.games.poker.io.protocol.PlayerSitinRequest=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.PlayerSitinRequest.CLASSID
+com.cubeia.games.poker.io.protocol.PlayerReconnectedPacket.CLASSID=40;com.cubeia.games.poker.io.protocol.PlayerSitinRequest=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.PlayerSitinRequest.CLASSID
 };
 this.player={};
 this.save=function(){var a=new FIREBASE.ByteArray();
@@ -943,7 +1001,7 @@ a.details.identifier=this.identifier;
 return a
 }
 };
-com.cubeia.games.poker.io.protocol.PongPacket.CLASSID=40;com.cubeia.games.poker.io.protocol.Pot=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.Pot.CLASSID
+com.cubeia.games.poker.io.protocol.PongPacket.CLASSID=42;com.cubeia.games.poker.io.protocol.Pot=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.Pot.CLASSID
 };
 this.id={};
 this.type={};
@@ -1163,6 +1221,12 @@ return b;
 case com.cubeia.games.poker.io.protocol.DeckInfo.CLASSID:b=new com.cubeia.games.poker.io.protocol.DeckInfo();
 b.load(a);
 return b;
+case com.cubeia.games.poker.io.protocol.WaitingToStartBreak.CLASSID:b=new com.cubeia.games.poker.io.protocol.WaitingToStartBreak();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.BlindsAreUpdated.CLASSID:b=new com.cubeia.games.poker.io.protocol.BlindsAreUpdated();
+b.load(a);
+return b;
 case com.cubeia.games.poker.io.protocol.ExternalSessionInfoPacket.CLASSID:b=new com.cubeia.games.poker.io.protocol.ExternalSessionInfoPacket();
 b.load(a);
 return b;
@@ -1176,6 +1240,9 @@ case com.cubeia.games.poker.io.protocol.PingPacket.CLASSID:b=new com.cubeia.game
 b.load(a);
 return b;
 case com.cubeia.games.poker.io.protocol.PongPacket.CLASSID:b=new com.cubeia.games.poker.io.protocol.PongPacket();
+b.load(a);
+return b;
+case com.cubeia.games.poker.io.protocol.AchievementNotificationPacket.CLASSID:b=new com.cubeia.games.poker.io.protocol.AchievementNotificationPacket();
 b.load(a);
 return b
 }return null
@@ -1400,4 +1467,16 @@ a.details.position=this.position;
 return a
 }
 };
-com.cubeia.games.poker.io.protocol.TournamentOut.CLASSID=20;
+com.cubeia.games.poker.io.protocol.TournamentOut.CLASSID=20;com.cubeia.games.poker.io.protocol.WaitingToStartBreak=function(){this.classId=function(){return com.cubeia.games.poker.io.protocol.WaitingToStartBreak.CLASSID
+};
+this.save=function(){return[]
+};
+this.load=function(a){};
+this.getNormalizedObject=function(){var a={};
+var b;
+a.summary="com.cubeia.games.poker.io.protocol.WaitingToStartBreak";
+a.details={};
+return a
+}
+};
+com.cubeia.games.poker.io.protocol.WaitingToStartBreak.CLASSID=36;

@@ -58,7 +58,7 @@ com.cubeia.games.poker.PokerGameHandler = function(callbackInstance) {
 	 * @param {POKER_PROTOCOL.DealPrivateCards} dealPrivateCards
 	 */
 	this.handleDealPrivateCards= function(dealPrivateCards) {
-		console.log("handleDealPrivateCards");
+	//	console.log("handleDealPrivateCards");
 		for ( var i = 0; i < dealPrivateCards.cards.length; i ++ ) {
 		 	pokerDealer.dealCardIdToPid(dealPrivateCards.cards[i]);
 		}
@@ -93,8 +93,8 @@ com.cubeia.games.poker.PokerGameHandler = function(callbackInstance) {
 	 * @param {POKER_PROTOCOL.ExposePrivateCards} exposePrivateCards
 	 */
 	this.handleExposePrivateCards= function(exposePrivateCards) {
-		console.log("handleExposePrivateCards");
-		console.log(exposePrivateCards);
+	//	console.log("handleExposePrivateCards");
+	//	console.log(exposePrivateCards);
 		for ( var i = 0; i < exposePrivateCards.cards.length; i ++ ) {
 		 	pokerDealer.exposePrivateCards(exposePrivateCards.cards[i]);
 		}
