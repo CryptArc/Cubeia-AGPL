@@ -16,8 +16,4 @@ public class ChallengeNotFoundException extends Exception {
     public ChallengeNotFoundException(Throwable cause) {
         super(cause);
     }
-
-    public ChallengeNotFoundException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }
