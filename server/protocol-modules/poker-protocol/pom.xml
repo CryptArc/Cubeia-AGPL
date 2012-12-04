@@ -15,8 +15,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.cubeia.firebase</groupId>
-            <artifactId>styx</artifactId>
+            <groupId>com.cubeia.styx</groupId>
+            <artifactId>styx-core</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -24,9 +24,9 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>com.cubeia</groupId>
+                <groupId>com.cubeia.styx</groupId>
                 <artifactId>protocol-generator-plugin</artifactId>
-                <version>1.9-SNAPSHOT</version>
+                <version>1.13</version>
                 <configuration>
                     <protocol_file>src/main/xml/protocol.xml</protocol_file>
                     <language>all</language>

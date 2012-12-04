@@ -26,7 +26,7 @@
     </licenses>
 
     <properties>
-        <firebase.version>1.9.0-CE-RC.1</firebase.version>
+        <firebase.version>1.9.1-CE</firebase.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <cubeia.network.version>1.4.0-RC2-SNAPSHOT</cubeia.network.version>
     </properties>
@@ -66,9 +66,9 @@
             </dependency>
 
             <dependency>
-                <groupId>com.cubeia.firebase</groupId>
-                <artifactId>styx</artifactId>
-                <version>1.6.0</version>
+                <groupId>com.cubeia.styx</groupId>
+                <artifactId>styx-core</artifactId>
+                <version>1.13</version>
             </dependency>
 
             <dependency>

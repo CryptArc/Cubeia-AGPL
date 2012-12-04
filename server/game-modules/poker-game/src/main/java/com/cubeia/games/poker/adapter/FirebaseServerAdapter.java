@@ -470,11 +470,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
             GameDataAction gda = new GameDataAction(playerId, table.getId());
             StyxSerializer styx = new StyxSerializer(null);
-            try {
-                gda.setData(styx.pack(resp));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            gda.setData(styx.pack(resp));
 
             table.getNotifier().notifyPlayer(playerId, gda);
         } catch (Exception e) {

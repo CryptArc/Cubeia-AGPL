@@ -193,10 +193,10 @@ public class Processor implements GameProcessor, TournamentProcessor {
 		GameDataAction action = factory.createGameAction(notification, playerId, tableId);
 		
 		if (wrapper.broadcast) {
-			log.warn("Notify all players at table["+tableId+"] with event ["+wrapper.event+"] for player["+playerId+"]");
+			log.warn("Notify all players at table["+tableId+"] with event ["+notification.message+"] for player["+playerId+"]");
 			table.getNotifier().notifyAllPlayers(action);
 		} else {
-			log.warn("Notify player["+playerId+"] at table["+tableId+"] with event ["+wrapper.event+"]");
+			log.warn("Notify player["+playerId+"] at table["+tableId+"] with event ["+notification.message+"]");
 			table.getNotifier().notifyPlayer(playerId, action);
 		}
 	}

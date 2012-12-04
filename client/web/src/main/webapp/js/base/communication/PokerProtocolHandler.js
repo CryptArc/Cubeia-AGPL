@@ -24,9 +24,11 @@ Poker.PokerProtocolHandler = function() {
             console.log("Received packet for table ("+gameTransportPacket.tableid+") you're not viewing");
             return;
         }
+
         var tableId = gameTransportPacket.tableid;
         var valueArray =  FIREBASE.ByteArray.fromBase64String(gameTransportPacket.gamedata);
         var gameData = new FIREBASE.ByteArray(valueArray);
+
         var length = gameData.readInt();
         var classId = gameData.readUnsignedByte();
 
@@ -214,7 +216,6 @@ Poker.PokerProtocolHandler = function() {
                 break;
             case com.cubeia.games.poker.io.protocol.AchievementNotificationPacket.CLASSID:
                 handleAchievementEvent(protocolObject);
-            //    alert("Achievement Alert! "+protocolObject);
                 break;
             default:
                 console.log("Ignoring packet: " + protocolObject);

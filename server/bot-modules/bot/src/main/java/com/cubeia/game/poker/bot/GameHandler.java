@@ -101,32 +101,20 @@ public class GameHandler implements PacketVisitor {
     public void handleGamePacket(GameTransportPacket packet) {
         // Create the user packet
         ProtocolObject gamePacket;
-        try {
-            gamePacket = styxDecoder.unpack(ByteBuffer.wrap(packet.gamedata));
-            gamePacket.accept(this);
-        } catch (IOException e) {
-            log.error("Could not unpack gamedata", e);
-        }
+        gamePacket = styxDecoder.unpack(ByteBuffer.wrap(packet.gamedata));
+        gamePacket.accept(this);
     }
 
     public void handleTournamentPacket(MttTransportPacket packet) {
         ProtocolObject gamePacket;
-        try {
-            gamePacket = styxDecoder.unpack(ByteBuffer.wrap(packet.mttdata));
-            gamePacket.accept(this);
-        } catch (IOException e) {
-            log.error("Could not unpack mttdata", e);
-        }
+        gamePacket = styxDecoder.unpack(ByteBuffer.wrap(packet.mttdata));
+        gamePacket.accept(this);
     }
 
     public ProtocolObject unpack(GameTransportPacket packet) {
         // Create the user packet
         ProtocolObject gamePacket = null;
-        try {
-            gamePacket = styxDecoder.unpack(ByteBuffer.wrap(packet.gamedata));
-        } catch (IOException e) {
-            log.error("Could not unpack gamedata", e);
-        }
+        gamePacket = styxDecoder.unpack(ByteBuffer.wrap(packet.gamedata));
         return gamePacket;
     }
 
