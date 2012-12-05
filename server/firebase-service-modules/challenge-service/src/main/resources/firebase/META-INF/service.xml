@@ -1,0 +1,15 @@
+<service auto-start="true">
+    <name>challenge-service</name>
+    <public-id>com.cubeia.game.poker.challenge:challenge-service</public-id>
+    <contract>com.cubeia.game.poker.challenge.api.ChallengeService</contract>
+    <service>com.cubeia.game.poker.challenge.impl.ChallengeServiceImpl</service>
+    <!--
+
+    <invocation-handler>com.cubeia.game.poker.challenge.impl.ChallengeServiceHandler</invocation-handler>
+        -->
+    <dependencies />
+    <description />
+    <exported>
+        <package>com.cubeia.game.poker.challenge.api.*</package>
+    </exported>
+</service>

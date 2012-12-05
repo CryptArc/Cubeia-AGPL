@@ -91,6 +91,9 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
     onOpenTableAccepted:function (tableId, capacity) {
         var comHandler = Poker.AppCtx.getComHandler();
         var name = comHandler.tableNames.get(tableId);
+        if(name==null) {
+            name = "Table " + tableId; //TODO: fix sit & gos/tournament names
+        }
         var tableViewContainer = $(".view-container");
         var templateManager = new Poker.TemplateManager();
         var tableLayoutManager = new Poker.TableLayoutManager(tableId, tableViewContainer, templateManager, this, capacity);
@@ -199,6 +202,9 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
             case FB_PROTOCOL.LocalServiceTransportPacket.CLASSID:
                 this.handleLocalServiceTransport(packet);
                 break;
+            case FB_PROTOCOL.ServiceTransportPacket.CLASSID:
+                this.handleServiceTransportPacket(packet);
+                break;
             default :
                 console.log("NO HANDLER");
                 console.log(packet);
@@ -212,6 +218,21 @@ Poker.TableComHandler = Poker.AbstractConnectorHandler.extend({
         Poker.OperatorConfig.populate(config);
         console.log(config);
 
+    },
+    handleServiceTransportPacket : function(packet){
+        console.log("Challenge packet");
+        var valueArray =  FIREBASE.ByteArray.fromBase64String(packet.servicedata);
+        var gameData = new FIREBASE.ByteArray(valueArray);
+        var length = gameData.readInt();
+        var classId = gameData.readUnsignedByte();
+
+        var protocolObject = com.cubeia.games.challenge.io.protocol.ProtocolObjectFactory.create(classId, gameData);
+        var challengeManager =  Poker.AppCtx.getChallengeManager();
+        if(classId == com.cubeia.games.challenge.io.protocol.ChallengeInvite.CLASSID) {
+            challengeManager.challengeReceived(protocolObject.challengeId,protocolObject.creatorName,protocolObject.configuration);
+        } else if(classId == com.cubeia.games.challenge.io.protocol.ChallengeResponse.CLASSID ) {
+            challengeManager.challengeResponse(protocolObject.challengeId,protocolObject.status);
+        }
     },
     handleWatchResponse:function (watchResponse) {
         if (watchResponse.status == "DENIED_ALREADY_SEATED") {

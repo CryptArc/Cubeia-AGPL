@@ -19,8 +19,7 @@
 @import "main-menu.less";
 @import "toggle-switch.less";
 @import "circular-progressbar.less";
-
-
+@import "jquery.gritter.less";
 
 body {
     margin: 0;
@@ -54,9 +53,76 @@ body {
     padding:5%;
     border:none;
     font-size:130%;
-    .border-radius(4px);
+
     .box-shadow(inset 1px 1px 3px #999);
 }
+
+.context-menu {
+    position:absolute;
+    z-index: 99999999;
+    display:inline-block;
+    width: 220px;
+}
+.context-menu ul {
+    padding:0;
+    margin:0;
+    width:auto;
+    display:inline-block;
+    background-color: #333;
+    .border-radius(4px);
+    border: 1px solid #444;
+    .box-shadow(2px 2px 8px #000);
+
+}
+
+.context-menu li {
+    padding:5%;
+    margin:0;
+    text-overflow: ellipsis;
+    overflow:hidden;
+    width:90%;
+    display:inline-block;
+    list-style-type: none;
+    border-bottom: 1px solid #444;
+    cursor: pointer;
+    &:last-child {
+        border-bottom: none;
+        .border-radius(0 0 4px 4px);
+        white-space: nowrap;
+    }
+    &:first-child {
+        .border-radius(4px 4px 0 0);
+    }
+}
+.context-menu li:hover {
+    background-color: #444;
+}
+.notification-actions {
+     display:block;
+    margin-top:20px;
+     a {
+        .border-radius(5px);
+        background-color: @mainGreen;
+        padding:0.5em 1em;
+        color: #fff;
+        font-size:130%;
+        font-weight: bold;
+        cursor: pointer;
+        margin-right: 2px;
+    }
+}
+/* for the light (white) version of the gritter notice */
+.gritter-dark .gritter-item,
+.gritter-dark .gritter-bottom,
+.gritter-dark .gritter-top,
+.gritter-dark .gritter-close {
+    color: #fff;
+}
+.gritter-light .gritter-title {
+    text-shadow: none;
+}
+
+
 
 @media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
     @import "devices/ipad/ipad-base.less";

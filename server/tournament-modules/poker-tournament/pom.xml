@@ -18,6 +18,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.cubeia.games</groupId>
+            <artifactId>challenge-service</artifactId>
+            <type>jar</type>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.cubeia.firebase</groupId>
             <artifactId>firebase-protocol</artifactId>
             <scope>provided</scope>

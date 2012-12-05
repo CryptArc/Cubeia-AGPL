@@ -26,10 +26,25 @@ Poker.Seat = Class.extend({
        this.player = player;
        this.templateManager = templateManager;
        this.seatElement =  $("#"+elementId);
+       var self = this;
+       this.seatElement.click(function(e){
+           var cm = Poker.AppCtx.getChallengeManager();
+           new Poker.ContextMenu(e,
+               [{ title : "Challenge player " + player.name,
+                   items : [
+                       { title :  "1+0.1 Challenge", callback : function(){ cm.challengePlayer(self.player.id,1); }},
+                       { title : "10+1 Challenge", callback : function(){ cm.challengePlayer(self.player.id,3); }},
+                       { title : "20+2 Challenge", callback : function(){ cm.challengePlayer(self.player.id,4); }}
+                    ]
+               }]);
+
+
+       });
        this.renderSeat();
    },
    setSeatPos : function(previousPos, position) {
      this.seatElement.removeClass("seat-empty").removeClass("seat-pos-"+previousPos).removeClass("seat-inactive").addClass("seat-pos-"+position);
+
    },
    renderSeat : function() {
        var output = Mustache.render(this.templateManager.getTemplate("seatTemplate"),this.player);
