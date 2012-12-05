@@ -17,12 +17,12 @@
         <dependency>
             <groupId>com.cubeia.firebase.client</groupId>
             <artifactId>firebase-java-textclient</artifactId>
-            <version>1.8.0-CE</version>
+            <version>1.9.1-CE</version>
         </dependency>
         <dependency>
             <groupId>com.cubeia.firebase</groupId>
             <artifactId>firebase-protocol</artifactId>
-            <version>1.8.0-CE</version>
+            <version>1.9.1-CE</version>
         </dependency>
         <dependency>
             <groupId>com.cubeia.games</groupId>

@@ -20,8 +20,8 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.cubeia.firebase</groupId>
-            <artifactId>styx</artifactId>
+            <groupId>com.cubeia.styx</groupId>
+            <artifactId>styx-core</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>

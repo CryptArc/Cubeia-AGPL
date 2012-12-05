@@ -55,7 +55,7 @@
             <plugin>
                 <groupId>com.cubeia.firebase.bots</groupId>
                 <artifactId>firebase-bots-maven-plugin</artifactId>
-                <version>1.9-SNAPSHOT</version>
+                <version>1.10-SNAPSHOT</version>
                 <configuration>
                     <botControlFile>bot.html</botControlFile>
                     <botMenuName>Poker Bot</botMenuName>

@@ -1,7 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.cubeia.games</groupId>
     <artifactId>poker-protocol</artifactId>
     <name>Poker Protocol</name>
     <packaging>jar</packaging>
@@ -188,6 +187,25 @@
                                     <action>
                                         <ignore></ignore>
                                     </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                	<pluginExecutionFilter>
+                                		<groupId>
+                                			com.cubeia.styx
+                                		</groupId>
+                                		<artifactId>
+                                			protocol-generator-plugin
+                                		</artifactId>
+                                		<versionRange>
+                                			[1.13,)
+                                		</versionRange>
+                                		<goals>
+                                			<goal>generate</goal>
+                                		</goals>
+                                	</pluginExecutionFilter>
+                                	<action>
+                                		<ignore></ignore>
+                                	</action>
                                 </pluginExecution>
                             </pluginExecutions>
                         </lifecycleMappingMetadata>

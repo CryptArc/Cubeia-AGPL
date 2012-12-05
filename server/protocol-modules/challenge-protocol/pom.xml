@@ -1,11 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.cubeia.games</groupId>
     <artifactId>challenge-protocol</artifactId>
     <name>Challenge Protocol</name>
     <packaging>jar</packaging>
-
 
     <parent>
         <groupId>com.cubeia.games</groupId>
@@ -15,8 +13,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.cubeia.firebase</groupId>
-            <artifactId>styx</artifactId>
+            <groupId>com.cubeia.styx</groupId>
+            <artifactId>styx-core</artifactId>
             <scope>provided</scope>
         </dependency>
 
