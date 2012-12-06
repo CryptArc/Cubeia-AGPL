@@ -17,8 +17,11 @@
 
 package com.cubeia.game.poker.bot;
 
+import java.util.Random;
+
 import com.cubeia.firebase.bot.Bot;
 import com.cubeia.firebase.bot.ai.BasicAI;
+import com.cubeia.firebase.bot.ai.Delays;
 import com.cubeia.firebase.io.protocol.GameTransportPacket;
 import com.cubeia.firebase.io.protocol.ProbePacket;
 import com.cubeia.games.poker.io.protocol.BuyInInfoRequest;
@@ -32,13 +35,50 @@ import org.apache.log4j.Logger;
  */
 public class PokerBot extends BasicAI {
 
+	private static transient Random RAND = new Random();
     private static transient Logger log = Logger.getLogger(PokerBot.class);
 
     private GameHandler handler;
+    private int loginDelay;
+    private long calculatedLoginDelay;
+    private long calculatedJoinDelay;
+    private int joinDelay;
    
     public PokerBot(Bot bot) {
         super(bot);
         handler = new GameHandler(this);
+        setLoginDelay(0);
+        setJoinDelay(0);
+    }
+    
+    public void setLoginDelay(int loginDelay) {
+		this.loginDelay = loginDelay;
+		if(loginDelay > 0) {
+			calculatedLoginDelay = RAND.nextInt(loginDelay * 1000);
+			getBot().logDebug("Calculated login delay in millis: " + calculatedLoginDelay);
+		} else {
+			calculatedLoginDelay = Delays.LOGIN_DELAY_SECONDS * 1000;
+		}
+	}
+    
+    public void setJoinDelay(int joinDelay) {
+		this.joinDelay = joinDelay;
+		if(joinDelay > 0) {
+			calculatedJoinDelay = RAND.nextInt(joinDelay * 1000);
+			getBot().logDebug("Calculated join delay in millis: " + calculatedLoginDelay);
+		} else {
+			calculatedJoinDelay = Delays.SEAT_DELAY_SECONDS * 1000;
+		}
+	}
+    
+    @Override
+    protected long getJoinDelay() {
+    	return calculatedJoinDelay;
+    }
+    
+    @Override
+    protected long getLoginDelay() {
+    	return calculatedLoginDelay;
     }
     
     @Override
