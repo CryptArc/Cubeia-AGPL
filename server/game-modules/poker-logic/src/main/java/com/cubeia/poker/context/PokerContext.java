@@ -182,6 +182,9 @@ public class PokerContext implements Serializable {
             PokerPlayer pokerPlayer = entry.getValue();
             if (readyPlayerFilter.apply(pokerPlayer)) {
                 treeMap.put(entry.getKey(), pokerPlayer);
+            } else {
+                log.debug("Setting player " + pokerPlayer + " to sitting out");
+                pokerPlayer.setSitOutStatus(SitOutStatus.SITTING_OUT);
             }
         }
         return treeMap;
@@ -283,7 +286,7 @@ public class PokerContext implements Serializable {
     /**
      * takes all players bet stacks and sums it to the pot
      *
-     * @return sum of the size of all pots commited to the main or side pots
+     * @return sum of the size of all pots committed to the main or side pots
      */
     @VisibleForTesting
     public long getTotalPotSize() {

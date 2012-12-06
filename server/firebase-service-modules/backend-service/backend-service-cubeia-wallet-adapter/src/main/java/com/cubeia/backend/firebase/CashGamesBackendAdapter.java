@@ -178,12 +178,12 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
 					+ " to game " + GAME_ID + " by player "
 					+ sid.playerId);
 
-			AccountBalanceResult sessionBalance = walletService.getBalance(walletSessionId);
-			Money newBalance = convertFromWalletMoney(sessionBalance.getBalance());
+			// AccountBalanceResult sessionBalance = walletService.getBalance(walletSessionId);
+			// Money newBalance = convertFromWalletMoney(sessionBalance.getBalance());
 
-			BalanceUpdate balanceUpdate = new BalanceUpdate(request.getPlayerSessionId(), newBalance, nextId());
-			ReserveResponse response = new ReserveResponse(balanceUpdate, amount);
-			log.debug("reserve successful: sId = {}, amount = {}, new balance = {}", new Object[] { sid, amount, newBalance });
+			// BalanceUpdate balanceUpdate = new BalanceUpdate(request.getPlayerSessionId(), newBalance, nextId());
+			ReserveResponse response = new ReserveResponse(request.getPlayerSessionId(), amount);
+			log.debug("reserve successful: sId = {}, amount = {}", new Object[] { sid, amount });
 			response.setProperty(CashGamesBackendService.MARKET_TABLE_SESSION_REFERENCE_KEY, "CUBEIA-MARKET-SID-" + sid.hashCode());
 			return response;
 		} catch (Exception e) {

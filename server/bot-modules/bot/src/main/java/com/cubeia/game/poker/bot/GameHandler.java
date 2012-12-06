@@ -25,12 +25,15 @@ import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.firebase.io.protocol.GameTransportPacket;
 import com.cubeia.firebase.io.protocol.MttTransportPacket;
+import com.cubeia.firebase.io.protocol.ProbePacket;
+import com.cubeia.firebase.io.protocol.ProbeStamp;
 import com.cubeia.games.poker.io.protocol.*;
 import com.cubeia.games.poker.io.protocol.Enums.PlayerTableStatus;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -38,6 +41,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static com.cubeia.game.poker.util.Arithmetic.gaussianAverage;
 
 public class GameHandler implements PacketVisitor {
+	
+	private final static Random PROBE_RAND = new Random();
 
     private static transient Logger log = Logger.getLogger(GameHandler.class);
 
@@ -46,11 +51,25 @@ public class GameHandler implements PacketVisitor {
     private static Random rng = new Random();
 
     private final AbstractAI bot;
-
+    // private boolean doProbe = true;
     private AtomicBoolean historicActionsAreBeingSent = new AtomicBoolean(false);
-
+    // private int probeCount = 0;
+    
     public GameHandler(AbstractAI bot) {
         this.bot = bot;
+    }
+    
+    /*public void setDoProbe(boolean doProbe) {
+		this.doProbe = doProbe;
+		if(doProbe)
+	}*/
+    
+    public void handleProbePacket(ProbePacket packet) {
+    	// log.debug("Received probe: " + packet);
+    	ProbeStamp stamp = newProbeStamp();
+    	packet.stamps.add(stamp);
+    	PokerBotStats stats = PokerBotStats.getInstance();
+    	stats.report(packet);
     }
 
     public void handleGamePacket(GameTransportPacket packet) {
@@ -93,6 +112,10 @@ public class GameHandler implements PacketVisitor {
     @SuppressWarnings("static-access")
     public void visit(final RequestAction request) {
         if (request.player == bot.getBot().getPid() && !historicActionsAreBeingSent.get()) {
+        	if(bot instanceof PokerBot) {
+        		((PokerBot)bot).setDisableLeaveTable(false); // I'm now in a hand, enable leave again
+        	}
+        	
             Action action = new Action(bot.getBot()) {
                 public void run() {
                     try {
@@ -110,11 +133,29 @@ public class GameHandler implements PacketVisitor {
 
                         // bot.getBot().logInfo("Request("+request+") -> Response("+response+")");
                        bot.getBot().sendGameData(bot.getTable().getId(), bot.getBot().getPid(), response);
+                       
+                       checkDoProbe();
                     } catch (Throwable th) {
                         th.printStackTrace();
                     }
                 }
 
+				private void checkDoProbe() {
+					int test = PROBE_RAND.nextInt(9);
+					if(test < 1) { // 10%
+						doProbe();
+					}
+				}
+
+				private void doProbe() {
+					ProbePacket probePacket = new ProbePacket();
+					probePacket.tableid = bot.getTable().getId();
+					ProbeStamp stamp = newProbeStamp();
+			        probePacket.stamps = new ArrayList<ProbeStamp>();
+			        probePacket.stamps.add(stamp);
+			        // log.debug("Sending probe: "+probePacket);
+			        bot.getBot().sendPacket(probePacket);
+				}
             };
 
             int wait = 0;
@@ -128,6 +169,13 @@ public class GameHandler implements PacketVisitor {
             bot.executor.schedule(action, wait, TimeUnit.MILLISECONDS);
         }
     }
+    
+    private ProbeStamp newProbeStamp() {
+		ProbeStamp stamp = new ProbeStamp();
+        stamp.clazz = GameHandler.this.getClass().toString();
+        stamp.timestamp = System.currentTimeMillis();
+		return stamp;
+	}
 
     private int getRandomBetAmount(PlayerAction playerAction) {
         if (playerAction.maxAmount <= 0) {

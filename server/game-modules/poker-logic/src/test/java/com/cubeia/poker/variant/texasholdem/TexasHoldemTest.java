@@ -74,6 +74,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -492,13 +493,63 @@ public class TexasHoldemTest {
         assertEquals(20, p[3].getActionRequest().getOption(CALL).getMinAmount());
     }
 
+    /**
+     * Tests the case where a player has a pending buy-in request when the hand starts.
+     *
+     * The bug is that a player with a pending request can become the big blind, but he would
+     * be filtered out by the readyPlayersFilter and then things would go bad.
+     */
+    @Test
+    public void testPlayerWhoHasPendingBuyInRequestShouldNotBecomeBigBlind() {
+        PokerContext context = prepareContext(4);
+        startHand(context);
+
+        // First play a normal hand.
+        act(p[1], SMALL_BLIND);
+        act(p[2], BIG_BLIND);
+        act(p[3], CALL);
+        act(p[0], RAISE, 40);
+
+        act(p[1], FOLD);
+        act(p[2], FOLD);
+        act(p[3], FOLD);
+
+        verify(listener, times(1)).handFinished(Matchers.<HandResult>any(), Matchers.<HandEndStatus>any());
+
+        // Then player 3 tries to add some chips, but it takes a while.
+        p[3].buyInRequestActive();
+
+        Predicate<PokerPlayer> readyPlayersFilter = mockFilterThatAllows(p[0], p[1], p[2]);
+
+        startHand(context, readyPlayersFilter);
+        act(p[2], SMALL_BLIND);
+        act(p[0], BIG_BLIND);
+
+        act(p[1], FOLD);
+        act(p[2], FOLD);
+
+        verify(listener, times(2)).handFinished(Matchers.<HandResult>any(), Matchers.<HandEndStatus>any());
+    }
+
+    private Predicate<PokerPlayer> mockFilterThatAllows(MockPlayer... players) {
+        Predicate<PokerPlayer> filter = mock(Predicate.class);
+        for (PokerPlayer player : players) {
+            when(filter.apply(player)).thenReturn(true);
+        }
+        return filter;
+    }
+
     private void createPot() {
         potHolder.getActivePot().bet(player1, 600L);
         potHolder.getActivePot().bet(player2, 600L);
     }
 
     private void startHand(PokerContext context) {
-        context.prepareHand(readyPlayersFilter);
+        startHand(context, readyPlayersFilter);
+    }
+
+    private void startHand(PokerContext context, Predicate<PokerPlayer> filter) {
+        context.prepareHand(filter);
         texas.startHand();
     }
 

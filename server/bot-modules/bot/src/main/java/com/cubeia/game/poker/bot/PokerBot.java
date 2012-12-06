@@ -35,12 +35,19 @@ public class PokerBot extends BasicAI {
     private static transient Logger log = Logger.getLogger(PokerBot.class);
 
     private GameHandler handler;
-
+   
     public PokerBot(Bot bot) {
         super(bot);
         handler = new GameHandler(this);
     }
-
+    
+    @Override
+    public void handleProbePacket(ProbePacket packet) {
+        // if (table.getId() == packet.tableid) {
+        	handler.handleProbePacket(packet);
+        // }
+    }
+    
     public synchronized void handleGamePacket(GameTransportPacket packet) {
         if (table.getId() != packet.tableid) {
             log.fatal("I received wrong table id! I am seated at: " + table.getId() + ". I got packet from: " + packet.tableid + " Packet: " + handler.unpack(packet));
@@ -51,13 +58,6 @@ public class PokerBot extends BasicAI {
     @Override
     protected void handleLoggedin() {
         super.handleLoggedin();
-    }
-
-    /**
-     * I don't care, said Pierre,
-     * cause I am from France
-     */
-    public void handleProbePacket(ProbePacket packet) {
     }
 
     public void stop() {
@@ -72,6 +72,7 @@ public class PokerBot extends BasicAI {
      */
     @Override
     protected void handleSeated() {
+    	super.setDisableLeaveTable(true); // enable after entered first hand (on first action request)
         super.handleSeated();
         BuyInInfoRequest buyInInfoRequest = new BuyInInfoRequest();
         getBot().sendGameData(getTable().getId(), getBot().getPid(), buyInInfoRequest);
