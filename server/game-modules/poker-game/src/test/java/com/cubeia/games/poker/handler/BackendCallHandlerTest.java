@@ -118,9 +118,9 @@ public class BackendCallHandlerTest {
         when(state.getExternalTableProperties()).thenReturn(singletonMap(CashGamesBackendService.MARKET_TABLE_REFERENCE_KEY, (Serializable) tableReference));
         amountRequested = 500;
         playerSessionId = new PlayerSessionId(playerId, null);
-        int balanceOnRemoteWallet = 10000;
-        BalanceUpdate balanceUpdate = new BalanceUpdate(playerSessionId, new Money(balanceOnRemoteWallet, "USD", 2), -1);
-        reserveResponse = new ReserveResponse(balanceUpdate, new Money(amountRequested, "USD", 2));
+        // int balanceOnRemoteWallet = 10000;
+        // BalanceUpdate balanceUpdate = new BalanceUpdate(playerSessionId, new Money(balanceOnRemoteWallet, "USD", 2), -1);
+        reserveResponse = new ReserveResponse(playerSessionId, new Money(amountRequested, "USD", 2));
         reserveResponse.setProperty(CashGamesBackendService.MARKET_TABLE_SESSION_REFERENCE_KEY, tableSessionReference);
 
         when(pokerPlayer.getPendingBalanceSum()).thenReturn(balanceNotInHand + amountRequested);

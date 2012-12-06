@@ -135,7 +135,7 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
 		try {
 			Long walletSessionId = walletService.startSession(request
 					.getOpeningBalance().getCurrencyCode(), LICENSEE_ID,
-					request.getPlayerId(), request.getTableId().tableId,
+					request.getPlayerId(), String.valueOf(request.getTableId().tableId),
 					GAME_ID, "unknown-" + request.getPlayerId());
 
 			PlayerSessionId sessionId = new PlayerSessionId(request.playerId, String.valueOf(walletSessionId));
