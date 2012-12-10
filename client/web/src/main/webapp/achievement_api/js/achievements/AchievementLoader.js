@@ -1,10 +1,10 @@
 AchievementLoader = function() {
     var location = window.location;
     var host = location.hostname;
-    var port = 8080;
+    var port = location.port;
+    // var port = 8080;
     if (!host) host = "localhost";
-    console.log("window location",location)
-    this.setBaseUrl(host+":"+port+"/rest/player");
+    this.setBaseUrl(host+":"+port+"/achievements/rest/player");
     this.setUserId("UserId");
     this.setGame("poker");
     this.updateUrl();

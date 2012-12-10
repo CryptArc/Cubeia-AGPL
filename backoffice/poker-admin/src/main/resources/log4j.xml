@@ -35,19 +35,19 @@
     </category>
 
     <category name="org.hibernate" additivity="false">
-        <priority value="debug"/>
+        <priority value="warn"/>
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="LOG"/>
     </category>
 
     <category name="org.springframework.data.document.mongodb">
-        <priority value="debug"/>
+        <priority value="warn"/>
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="LOG"/>
     </category>
 
     <category name="org.springframework" additivity="false">
-        <priority value="debug"/>
+        <priority value="warn"/>
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="LOG"/>
     </category>
@@ -66,7 +66,7 @@
 
 
     <root>
-        <priority value="debug"/>
+        <priority value="info"/>
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="LOG"/>
     </root>
