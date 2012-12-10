@@ -47,7 +47,7 @@ public class HistoryServiceImpl implements HistoryService {
         if (playerId != null) query.addCriteria(where("seats.playerId").is(playerId));
         if (tableId != null) query.addCriteria(where("table.tableIntegrationId").is(tableId));
         if (fromDate != null) query.addCriteria(where("startTime").gt(fromDate.getTime()));
-        if (toDate != null) query.addCriteria(where("startTime").lt(toDate.getTime()));
+        if (toDate != null) query.addCriteria(where("endTime").lt(toDate.getTime()));
         return template.find(query, HistoricHand.class, "hands");
     }
 

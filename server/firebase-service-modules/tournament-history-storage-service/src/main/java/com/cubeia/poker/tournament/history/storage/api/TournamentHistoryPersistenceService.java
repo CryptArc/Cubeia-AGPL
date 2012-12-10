@@ -31,7 +31,7 @@ public interface TournamentHistoryPersistenceService extends Contract {
 
     public HistoricTournament getHistoricTournament(String id);
 
-    void playerOut(int playerId, int position, String historicId, long now);
+    void playerOut(int playerId, int position, int payoutInCents, String historicId, long now);
 
     void playerMoved(int playerId, int tableId, String historicId, long now);
 

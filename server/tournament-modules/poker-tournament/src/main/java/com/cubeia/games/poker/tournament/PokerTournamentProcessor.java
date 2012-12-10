@@ -20,8 +20,10 @@ package com.cubeia.games.poker.tournament;
 import com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse;
 import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
 import com.cubeia.backend.firebase.CashGamesBackendService;
+import com.cubeia.firebase.api.action.mtt.MttDataAction;
 import com.cubeia.firebase.api.action.mtt.MttObjectAction;
 import com.cubeia.firebase.api.action.mtt.MttRoundReportAction;
+import com.cubeia.firebase.api.action.mtt.MttSeatingFailedAction;
 import com.cubeia.firebase.api.action.mtt.MttTablesCreatedAction;
 import com.cubeia.firebase.api.mtt.MttInstance;
 import com.cubeia.firebase.api.mtt.model.MttRegisterResponse;
@@ -32,12 +34,22 @@ import com.cubeia.firebase.api.mtt.support.registry.PlayerListener;
 import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.firebase.guice.tournament.TournamentAssist;
 import com.cubeia.firebase.guice.tournament.TournamentHandler;
+import com.cubeia.firebase.io.ProtocolObject;
+import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.common.SystemTime;
+import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
+import com.cubeia.games.poker.io.protocol.RequestBlindsStructure;
+import com.cubeia.games.poker.io.protocol.RequestPayoutInfo;
+import com.cubeia.games.poker.io.protocol.RequestTournamentLobbyData;
+import com.cubeia.games.poker.io.protocol.RequestTournamentPlayerList;
+import com.cubeia.games.poker.tournament.lobby.TournamentLobby;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import org.apache.log4j.Logger;
 import org.apache.log4j.MDC;
+
+import java.io.IOException;
 
 public class PokerTournamentProcessor implements TournamentHandler, PlayerInterceptor, PlayerListener {
 
@@ -50,6 +62,10 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
 
     @Inject
     private SystemTime dateFetcher;
+
+    /** Used for serializing and de-serializing packets to / from the client, with this protocol: {@link ProtocolObjectFactory}. */
+    @Inject
+    private StyxSerializer serializer;
 
     @Inject
     private TournamentAssist support;
@@ -80,7 +96,6 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
             MDC.remove(MDC_TAG);
         }
     }
-
 
     @Override
     public void process(MttTablesCreatedAction action, MttInstance instance) {
@@ -113,7 +128,31 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
         } finally {
             MDC.remove(MDC_TAG);
         }
+    }
 
+    @Override
+    public void process(MttDataAction action, MttInstance instance) {
+        StyxSerializer serializer = new StyxSerializer(new ProtocolObjectFactory());
+        try {
+            ProtocolObject packet = serializer.unpack(action.getData());
+            int playerId = action.getPlayerId();
+            if (packet instanceof RequestTournamentPlayerList) {
+                prepareTournamentLobby(instance).sendPlayerListTo(playerId);
+            } else if (packet instanceof RequestBlindsStructure) {
+                prepareTournamentLobby(instance).sendBlindsStructureTo(playerId);
+            } else if (packet instanceof RequestPayoutInfo) {
+                prepareTournamentLobby(instance).sendPayoutInfoTo(playerId);
+            } else if (packet instanceof RequestTournamentLobbyData) {
+                prepareTournamentLobby(instance).sendTournamentLobbyDataTo(playerId);
+            }
+        } catch (IOException e) {
+            log.warn("Failed de-serializing " + action, e);
+        }
+    }
+
+    @Override
+    public void process(MttSeatingFailedAction mttSeatingFailedAction, MttInstance instance) {
+        log.error("Seating failed: " + mttSeatingFailedAction);
     }
 
     @Override
@@ -136,7 +175,7 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
     public MttRegisterResponse register(MttInstance instance, MttRegistrationRequest request) {
         try {
             MDC.put(MDC_TAG, "Tournament[" + instance.getId() + "]");
-            return prepareTournament(instance).register(request);
+            return prepareTournament(instance).checkRegistration(request);
         } finally {
             MDC.remove(MDC_TAG);
         }
@@ -146,7 +185,7 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
     public MttRegisterResponse unregister(MttInstance instance, int pid) {
         try {
             MDC.put(MDC_TAG, "Tournament[" + instance.getId() + "]");
-            return prepareTournament(instance).unregister(pid);
+            return prepareTournament(instance).checkUnregistration(pid);
         } finally {
             MDC.remove(MDC_TAG);
         }
@@ -183,14 +222,18 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
         if (backend == null) {
             backend = instance.getServiceRegistry().getServiceInstance(CashGamesBackendService.class);
         }
-        tournament.injectTransientDependencies(instance, support, util.getStateSupport(instance),
-                instance.getMttNotifier(), historyService, backend, dateFetcher);
+        TournamentLobby tournamentLobby = prepareTournamentLobby(instance);
+        tournament.injectTransientDependencies(instance, support, util.getStateSupport(instance), historyService, backend, dateFetcher, tournamentLobby);
     }
 
     private PokerTournament prepareTournament(MttInstance instance) {
         PokerTournament tournament = (PokerTournament) instance.getState().getState();
         injectDependencies(tournament, instance);
         return tournament;
+    }
+
+    private TournamentLobby prepareTournamentLobby(MttInstance instance) {
+        return new TournamentLobby(instance, serializer, util.getStateSupport(instance), util.getPokerState(instance), dateFetcher);
     }
 
     public void setHistoryService(TournamentHistoryPersistenceService historyService) {

@@ -7,9 +7,10 @@
 		<non-jta-data-source>java:comp/env/jdbc/poker</non-jta-data-source>
 		<class>com.cubeia.games.poker.entity.TableConfigTemplate</class>
         <class>com.cubeia.poker.timing.TimingProfile</class>
+        <class>com.cubeia.poker.settings.RakeSettings</class>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
-            <property name="hibernate.hmb2ddl.auto" value="update"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
         </properties>
 	</persistence-unit>
 </persistence>

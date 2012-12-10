@@ -329,19 +329,6 @@
         <var name="rank_low" type="rank"/>
     </struct>
 
-    <!-- Sent when a table has finished its hand, but no new hand will start because we
-         are waiting for all tables to finish their hands, before the break starts. -->
-    <struct name="waiting_to_start_break" />
-
-    <!-- Sent when a new blinds level starts at a tournament table. Could be a break. -->
-    <struct name="blinds_are_updated">
-        <var name="small_blind" type="int32" />
-        <var name="big_blind" type="int32" />
-        <var name="ante" type="int32" />
-        <var name="is_break" type="bool" />
-        <var name="duration_in_minutes" type="int32" />
-    </struct>
-
     <!-- ==========  Misc Structs ========== -->
 
     <!-- server notifies client about this tables Market reference refs -->
@@ -350,7 +337,7 @@
         <var name="external_table_session_reference" type="string"/>
     </struct>
 
-    <!-- =========== Disconnect related ============ -->
+    <!-- =========== Disconnect Related ============ -->
 
     <!-- server announces that a player disconnected but we are waitng for their return -->
     <struct name="player_disconnected_packet">
@@ -370,6 +357,127 @@
     <struct name="pong_packet">
         <var name="identifier" type="int32"/>
     </struct>
+
+    <!-- ============ Tournament Packets =========== -->
+
+    <!-- Sent when a table has finished its hand, but no new hand will start because we
+         are waiting for all tables to finish their hands, before the break starts. -->
+    <struct name="waiting_to_start_break" />
+
+    <!-- Sent when a player is sitting by himself at a table, and will have to wait until another
+         player is moved to his table before the next hand will start. -->
+    <struct name="waiting_for_players" />
+
+    <!-- Sent when a new blinds level starts at a tournament table. Could be a break. -->
+    <struct name="blinds_are_updated">
+        <var name="level" type="blinds_level" />
+    </struct>
+
+    <struct name="blinds_level">
+        <var name="small_blind" type="int32" />
+        <var name="big_blind" type="int32" />
+        <var name="ante" type="int32" />
+        <var name="is_break" type="bool" />
+        <var name="duration_in_minutes" type="int32" />
+    </struct>
+
+    <!-- ============ Tournament Lobby Packets ======= -->
+
+    <!-- Sent by a player who wants to get the list of players in a tournament. -->
+    <struct name="request_tournament_player_list" />
+
+    <!-- List of players in a tournament. -->
+    <struct name="tournament_player_list">
+        <!-- List of all players in the tournament, ordered by increasing position. -->
+        <list name="players" type="tournament_player" />
+    </struct>
+
+    <struct name="tournament_player">
+        <!-- The name of the player. -->
+        <var name="name" type="string" />
+        <!-- The number of chips (in cents). 0 if the player is out. String because longs don't work in JS. -->
+        <var name="stack_size" type="string" />
+        <!-- The position in the tournament, if the player is out. -->
+        <var name="position" type="int32" />
+        <!-- The amount that the player won, in cents, if the player is out. -->
+        <var name="winnings" type="int32" />
+        <var name="table_id" type="int32" />
+    </struct>
+
+    <struct name="request_blinds_structure" />
+
+    <struct name="blinds_structure">
+        <list name="blinds_levels" type="blinds_level" />
+    </struct>
+
+    <struct name="request_payout_info" />
+
+    <struct name="payout_info">
+        <var name="prize_pool" type="int32" />
+        <list name="payouts" type="payout"/>
+    </struct>
+
+    <struct name="payout">
+        <var name="position" type="int32" />
+        <!-- The payout, in cents. -->
+        <var name="payout_amount" type="int32" />
+    </struct>
+
+    <struct name="request_tournament_statistics" />
+
+    <struct name="chip_statistics">
+        <var name="min_stack" type="string" />
+        <var name="max_stack" type="string" />
+        <var name="average_stack" type="string" />
+    </struct>
+
+    <struct name="level_info">
+        <var name="current_level" type="int32" />
+        <!-- Time to next level, in seconds. -->
+        <var name="time_to_next_level" type="int32" />
+    </struct>
+
+    <struct name="players_left">
+        <var name="remaining_players" type="int32" />
+        <var name="registered_players" type="int32" />
+    </struct>
+
+    <struct name="tournament_statistics">
+        <var name="chip_statistics" type="chip_statistics" />
+        <var name="level_info" type="level_info" />
+        <var name="players_left" type="players_left" />
+    </struct>
+
+    <struct name="tournament_info">
+        <var name="tournament_name" type="string" />
+        <var name="game_type" type="string" />
+        <!-- Start time in millis since 1970, as string because longs don't work well. -->
+        <var name="start_time" type="string" />
+        <var name="buy_in" type="string" />
+        <var name="fee" type="string" />
+        <var name="min_players" type="int32" />
+        <var name="max_players" type="int32" />
+        <var name="tournament_status" type="tournament_status" />
+    </struct>
+
+    <!-- Used for requesting all tournament lobby data at once. -->
+    <struct name="request_tournament_lobby_data" />
+
+    <struct name="tournament_lobby_data">
+        <var name="players" type="tournament_player_list" />
+        <var name="blinds_structure" type="blinds_structure" />
+        <var name="payout_info" type="payout_info" />
+        <var name="tournament_statistics" type="tournament_statistics" />
+        <var name="tournament_info" type="tournament_info" />
+    </struct>
+
+    <enum name="tournament_status">
+        <value>ANNOUNCED</value>
+        <value>REGISTERING</value>
+        <value>RUNNING</value>
+        <value>FINISHED</value>
+        <value>CANCELLED</value>
+    </enum>
 
 </protocol>
 

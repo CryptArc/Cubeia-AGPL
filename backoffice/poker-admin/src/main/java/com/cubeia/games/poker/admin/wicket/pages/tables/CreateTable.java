@@ -19,6 +19,7 @@ package com.cubeia.games.poker.admin.wicket.pages.tables;
 
 import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
 
+import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
 import org.apache.wicket.markup.html.form.*;
@@ -45,6 +46,7 @@ public class CreateTable extends BasePage {
         table = new TableConfigTemplate();
         table.setVariant(TEXAS_HOLDEM); // TODO: Add to form
         table.setTiming(TimingFactory.getRegistry().getDefaultTimingProfile());
+        table.setRakeSettings(new RakeSettings());
         table.setSeats(10);
         table.setMinTables(10);
         table.setMinEmptyTables(5);
@@ -67,6 +69,7 @@ public class CreateTable extends BasePage {
         tableForm.add(new TextField<Integer>("minTables"));
         tableForm.add(new TextField<Integer>("minEmptyTables"));
         tableForm.add(new DropDownChoice<TimingProfile>("timing", adminDAO.getTimingProfiles(), choiceRenderer()));
+        tableForm.add(new DropDownChoice<RakeSettings>("rakeSettings", adminDAO.getRakeSettings(), choiceRenderer()));
 
         add(tableForm);
 

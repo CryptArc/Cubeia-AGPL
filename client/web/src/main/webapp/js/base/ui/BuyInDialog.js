@@ -2,11 +2,10 @@
 var Poker = Poker || {};
 
 Poker.BuyInDialog = Class.extend({
-    tableComHandler : null,
     dialogManager : null,
-    init : function(tableComHandler) {
+    init : function() {
         this.dialogManager = Poker.AppCtx.getDialogManager();
-        this.tableComHandler = tableComHandler;
+
     },
     show : function(tableId,tableName, balanceInWallet, maxAmount, minAmount) {
         var formattedMinAmount = Poker.Utils.formatCurrency(minAmount);
@@ -23,7 +22,7 @@ Poker.BuyInDialog = Class.extend({
             function(){
                 var val = $("#facebox .buyin-amount").val();
                 if(self.validateAmount(val)) {
-                    self.tableComHandler.buyIn(tableId,Math.round(parseFloat(val)*100));
+                    new Poker.TableRequestHandler(tableId).buyIn(Math.round(parseFloat(val)*100))
                 }
                 return false; //don't close the dialog, need to wait for response
             },

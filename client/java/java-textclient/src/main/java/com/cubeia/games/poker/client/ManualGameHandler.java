@@ -178,6 +178,23 @@ public class ManualGameHandler implements PacketVisitor {
     }
 
     @Override
+    public void visit(WaitingToStartBreak packet) {
+
+    }
+
+    @Override
+    public void visit(WaitingForPlayers packet) {
+    }
+
+    @Override
+    public void visit(BlindsAreUpdated packet) {
+    }
+
+    @Override
+    public void visit(BlindsLevel packet) {
+    }
+
+    @Override
     public void visit(ErrorPacket packet) {
     }
 
@@ -215,6 +232,61 @@ public class ManualGameHandler implements PacketVisitor {
 
     @Override
     public void visit(PongPacket packet) {
+    }
+
+    @Override
+    public void visit(RequestTournamentPlayerList packet) {
+
+    }
+
+    @Override
+    public void visit(TournamentPlayerList packet) {
+        System.out.println("Received tour player list: " + packet);
+    }
+
+    @Override
+    public void visit(TournamentPlayer packet) {
+    }
+
+    @Override
+    public void visit(RequestBlindsStructure packet) {
+    }
+
+    @Override
+    public void visit(BlindsStructure packet) {
+        System.out.println("Received blinds structure: " + packet);
+    }
+
+    @Override
+    public void visit(RequestPayoutInfo packet) {
+    }
+
+    @Override
+    public void visit(PayoutInfo packet) {
+        System.out.println("Received payout info: " + packet);
+    }
+
+    @Override
+    public void visit(Payout packet) {
+    }
+
+    @Override
+    public void visit(RequestTournamentStatistics packet) {
+
+    }
+
+    @Override
+    public void visit(TournamentStatistics packet) {
+
+    }
+
+    @Override
+    public void visit(RequestTournamentLobbyData packet) {
+    }
+
+    @Override
+    public void visit(TournamentLobbyData packet) {
+        System.out.println("Received tournament lobby data: " + packet);
     }
 
 }

@@ -18,6 +18,7 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColu
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DefaultDataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -97,6 +98,7 @@ public class ListTimings extends BasePage {
         DefaultDataTable userTable = new DefaultDataTable("timingTable", columns, dataProvider, 20);
         add(userTable);
 
+        add(new FeedbackPanel("feedback"));
     }
 
     private List<TimingProfile> getTimingProfileList() {

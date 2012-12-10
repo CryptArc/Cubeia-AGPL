@@ -11,8 +11,6 @@
     <!-- All less files is imported in this base.less-->
     <link rel="stylesheet/less" type="text/css" href="less/base.less">
 
-
-
     <script type="text/javascript"  src="js/lib/less-1.3.0.min.js"></script>
 
     <script type="text/javascript" src="js/lib/classjs.js"></script>
@@ -39,22 +37,37 @@
     <script src="js/lib/quo.js" type="text/javascript"></script>
 
     <script src="js/base/Utils.js" type="text/javascript"></script>
+    <script src="js/base/ProtocolUtils.js" type="text/javascript"></script>
+
     <script type="text/javascript" src="js/base/data/Map.js"></script>
+    <script type="text/javascript" src="js/base/PeriodicalUpdater.js"></script>
     <script type="text/javascript" src="js/base/OperatorConfig.js"></script>
     <script type="text/javascript" src="js/base/MyPlayer.js"></script>
     <script type="text/javascript" src="js/base/PlayerTableStatus.js"></script>
 
     <script src="js/base/communication/ActionSender.js" type="text/javascript"></script>
-    <script src="js/base/communication/PokerProtocolHandler.js" type="text/javascript"></script>
-    <script src="js/base/communication/AbstractConnectorHandler.js" type="text/javascript"></script>
-    <script src="js/base/communication/TableComHandler.js" type="text/javascript"></script>
-    <script src="js/base/communication/CommunicationHandler.js" type="text/javascript"></script>
+
+    <script src="js/base/communication/poker-game/ActionUtils.js" type="text/javascript"></script>
+    <script src="js/base/communication/poker-game/PokerPacketHandler.js" type="text/javascript"></script>
+    <script src="js/base/communication/poker-game/PokerSequence.js" type="text/javascript"></script>
+
+    <script src="js/base/communication/lobby/LobbyPacketHandler.js" type="text/javascript"></script>
+    <script src="js/base/communication/lobby/LobbyRequestHandler.js" type="text/javascript"></script>
+
+    <script type="text/javascript" src="js/base/communication/tournament/TournamentPacketHandler.js"></script>
+    <script type="text/javascript" src="js/base/communication/tournament/TournamentRequestHandler.js"></script>
+
+    <script type="text/javascript" src="js/base/communication/table/TableRequestHandler.js"></script>
+    <script type="text/javascript" src="js/base/communication/table/TablePacketHandler.js"></script>
+
+    <script src="js/base/communication/CommunicationManager.js" type="text/javascript"></script>
     <script type="text/javascript" src="js/base/Settings.js"></script>
 
     <script type="text/javascript" src="js/base/ui/BetSlider.js"></script>
     <script type="text/javascript" src="js/base/Action.js"></script>
     <script type="text/javascript" src="js/base/ui/MyActionsManager.js"></script>
     <script type="text/javascript" src="js/base/ui/LobbyLayoutManager.js"></script>
+    <script type="text/javascript" src="js/base/LobbyManager.js"></script>
     <script type="text/javascript" src="js/base/listeners/TableListener.js"></script>
     <script type="text/javascript" src="js/base/Player.js"></script>
     <script type="text/javascript" src="js/base/Table.js"></script>
@@ -85,20 +98,28 @@
     <script type="text/javascript" src="js/base/ui/views/TabView.js"></script>
     <script type="text/javascript" src="js/base/ui/views/LoginView.js"></script>
     <script type="text/javascript" src="js/base/ui/views/TableView.js"></script>
+    <script type="text/javascript" src="js/base/ui/views/TournamentView.js"></script>
     <script type="text/javascript" src="js/base/ui/views/DevSettingsView.js"></script>
     <script type="text/javascript" src="js/base/ui/views/ViewManager.js"></script>
     <script type="text/javascript" src="js/base/ui/views/MainMenuManager.js"></script>
     <script type="text/javascript" src="js/base/ApplicationContext.js"></script>
     <script type="text/javascript" src="js/base/ui/views/ViewSwiper.js"></script>
+    <script type="text/javascript" src="js/base/tournaments/Tournament.js"></script>
+    <script type="text/javascript" src="js/base/ui/tournaments/TournamentLayoutManager.js"></script>
+    <script type="text/javascript" src="js/base/tournaments/TournamentManager.js"></script>
+
+    <script type="text/javascript" src="js/base/communication/lobby/Unsubscribe.js"></script>
+
 
     <script type="text/javascript" src="js/base/dev/MockEventManager.js"></script>
     <script type="text/javascript" src="js/base/dev/PositionEditor.js"></script>
     <script type="text/javascript" src="js/base/dev/DevTools.js"></script>
 
 
-    <script type="text/javascript">
-        var comHandler = null;
 
+    <script type="text/javascript">
+
+        var comHandler = null;
         $(document).ready(function(){
             less.watch(); //development only
             $(".describe").describe();
@@ -116,16 +137,18 @@
 
             console.log("connecting to WS: " + webSocketUrl + ":" + webSocketPort);
 
-            var tableComManager = null;
             //handles the lobby UI
 
-            Poker.AppCtx.wire({ webSocketUrl : webSocketUrl, webSocketPort : webSocketPort});
+            Poker.AppCtx.wire({
+                webSocketUrl : webSocketUrl,
+                webSocketPort : webSocketPort,
+                tournamentLobbyUpdateInterval : 10000
+            });
 
 
             //TODO: refactor dependent classes and remove these
             //wraps Firebase communication
-            comHandler = Poker.AppCtx.getComHandler();
-
+            comHandler = Poker.AppCtx.getCommunicationManager();
 
         });
 
@@ -355,6 +378,7 @@
     </div>
 
 
+
     <script type="text/mustache" id="tableViewTemplate" style="display:none;">
         <div id="tableView-{{tableId}}" class="table-container">
             <div class="table-logo"></div>
@@ -523,7 +547,116 @@
             <img src="images/cards/{{cardString}}.svg"/>
         </div>
     </script>
+    <script type="text/mustache" id="tournamentTemplate" style="display:none;">
+        <div id="tournamentView{{tournamentId}}" class="tournament-view">
+            <div class="top-row">
+                <h3>
+                    {{name}}
+                    <span>18:00 CET 2012-12-08</span>
+                </h3>
+                <a class="register-button leave-action">Close</a>
+                <a class="register-button register-action">Register</a>
+                <a class="register-button unregister-action">Unregister</a>
+                <a class="register-button loading-action">Please wait...</a>
+            </div>
+            <div class="lobby-data-container">
+                <div class="column column-3">
+                    <div class="tournament-info-container">
+                        <div class="info-section tournament-info"></div>
+                        <div class="info-section tournament-stats"></div>
+                        <div class="info-section payout-structure"></div>
+                        <div class="info-section blinds-structure"></div>
 
+                    </div>
+                </div>
+                <div class="column column-3-2">
+                    <div class="tournament-info-container">
+                        <div class="info-section registered-players">
+                            <h4>Registered Players</h4>
+                            <table class="player-list">
+                                <thead>
+                                <tr>
+                                    <th colspan="2">Player</th>
+                                    <th>Stack</th>
+                                    <th>Winnings</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td colspan="4">Loading Players...</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+    <script type="text/mustache" id="tournamentInfoTemplate">
+        <h4>Tournament Info</h4>
+        <div class="stats-item"><span>{{gameType}}</span></div>
+        <div class="stats-item">Buy-in: <span>{{buyIn}}</span></div>
+        <div class="stats-item">Fee: <span>{{fee}}</span></div>
+        <div class="stats-item">Max Players: <span>{{maxPlayers}}</span></div>
+        <div class="stats-item">Min Players: <span>{{minPlayers}}</span></div>
+        <div class="stats-item">
+            Status: <span class="status-registering">REGISTERING</span>
+        </div>
 
+    </script>
+    <script type="text/mustache" id="tournamentStatsTemplate">
+            <h4>Statistics</h4>
+            <div class="stats-item">Max Stack: <span>{{chipStatistics.maxStack}}</span></div>
+            <div class="stats-item">Min Stack: <span>{{chipStatistics.minStack}}</span></div>
+            <div class="stats-item">Average Stack: <span>{{chipStatistics.averageStack}}</span></div>
+            <div class="stats-item">Current Level: <span>{{chipStatistics.currentLevel}}</span></div>
+        <div class="stats-item">Players Left: <span>{{playersLeft.remainingPlayers}}/{{playersLeft.registeredPlayers}}</span></div>
+    </script>
+    <script type="text/mustache" id="tournamentPayoutStructureTemplate" style="display:none;">
+        <h4>Payouts</h4>
+        <div class="prize-pool">Prize pool: <span>{{prizePool}}</span></div>
+        <div class="payouts">
+            <div class="payout info-list-item header">
+                Position <span>Amount</span>
+            </div>
+            <div class="info-list">
+                {{#payouts}}
+                <div class="payout info-list-item">
+                    {{position}} <span>{{payoutAmount}}</span>
+                </div>
+                {{/payouts}}
+            </div>
+        </div>
+    </script>
+    <script type="text/mustache" id="tournamentBlindsStructureTemplate" style="display:none;">
+        <h4>Blinds Structure</h4>
+        <div class="blinds-level info-list-item header">
+            Blinds
+            <span>Duration</span>
+        </div>
+        <div class="info-list">
+            {{#blindsLevels}}
+            <div class="blinds-level info-list-item">
+                {{#isBreak}}
+                    Break
+                {{/isBreak}}
+                {{^isBreak}}
+                   {{smallBlind}}/{{bigBlind}}
+                {{/ isBreak}}
+                <span>{{durationInMinutes}}</span>
+            </div>
+            {{/blindsLevels}}
+        </div>
+        </script>
+
+    <script type="text/mustache" id="tournamentPlayerListItem" style="display:none;">
+        <tr>
+            <td>{{position}}</td>
+            <td>{{name}}</td>
+            <td>{{stackSize}}</td>
+            <td>{{winnings}}</td>
+        </tr>
+    </script>
 </body>
 </html>

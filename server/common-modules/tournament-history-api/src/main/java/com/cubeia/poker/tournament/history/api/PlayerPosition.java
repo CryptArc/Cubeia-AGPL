@@ -22,13 +22,15 @@ import java.io.Serializable;
 public class PlayerPosition implements Serializable {
     private int playerId;
     private int position;
+    private int payoutInCents;
 
     public PlayerPosition() {
     }
 
-    public PlayerPosition(int playerId, int position) {
+    public PlayerPosition(int playerId, int position, int payoutInCents) {
         this.playerId = playerId;
         this.position = position;
+        this.payoutInCents = payoutInCents;
     }
 
     public int getPlayerId() {
@@ -45,5 +47,13 @@ public class PlayerPosition implements Serializable {
 
     public void setPosition(int position) {
         this.position = position;
+    }
+
+    public int getPayoutInCents() {
+        return payoutInCents;
+    }
+
+    public void setPayoutInCents(int payoutInCents) {
+        this.payoutInCents = payoutInCents;
     }
 }

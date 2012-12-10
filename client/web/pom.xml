@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.cubeia.games</groupId>
-	<artifactId>poker-client-web</artifactId>	
-	<packaging>war</packaging>
-	<name>web</name>
-	
-	<version>1.0-SNAPSHOT</version>
-	<build>
-		<plugins>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.cubeia.games</groupId>
+    <artifactId>poker-client-web</artifactId>
+    <packaging>war</packaging>
+    <name>web</name>
+
+    <version>1.0-SNAPSHOT</version>
+    <build>
+        <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -18,15 +18,15 @@
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.5.1</version>
-				<configuration>
-					<encoding>UTF-8</encoding>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.5.1</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
@@ -54,33 +54,33 @@
                 </executions>
             </plugin>
             -->
-          <plugin>
-              <groupId>com.google.code.maven-replacer-plugin</groupId>
-              <artifactId>replacer</artifactId>
-              <version>1.5.1</version>
-              <executions>
-                  <execution>
-                      <phase>generate-resources</phase>
-                      <goals>
-                          <goal>replace</goal>
-                      </goals>
-                  </execution>
-              </executions>
-              <configuration>
-                  <file>/src/main/webapp/index.html</file>
-                  <outputFile>${project.build.directory}/filtered-resources/index.html</outputFile>
-                  <replacements>
-                      <replacement>
-                          <token>rel=\"stylesheet/less\"</token>
-                          <value>rel=\"stylesheet\"</value>
-                      </replacement>
-                      <replacement>
-                          <token>href="less/([a-zA-Z0-9_]*)\.less</token>
-                          <value>href="lcss/$1\.css"</value>
-                      </replacement>
-                  </replacements>
-              </configuration>
-          </plugin>
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.1</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <file>/src/main/webapp/index.html</file>
+                    <outputFile>${project.build.directory}/filtered-resources/index.html</outputFile>
+                    <replacements>
+                        <replacement>
+                            <token>rel=\"stylesheet/less\"</token>
+                            <value>rel=\"stylesheet\"</value>
+                        </replacement>
+                        <replacement>
+                            <token>href="less/([a-zA-Z0-9_]*)\.less</token>
+                            <value>href="lcss/$1\.css"</value>
+                        </replacement>
+                    </replacements>
+                </configuration>
+            </plugin>
 
             <plugin>
                 <groupId>net.achingbrain</groupId>
@@ -103,28 +103,28 @@
             </plugin>
 
 
-			<plugin>
-				<groupId>org.mortbay.jetty</groupId>
-				<artifactId>jetty-maven-plugin</artifactId>
-				<version>${jetty.version}</version>
-				<configuration>
-					<webApp>
-						<contextPath>/</contextPath>
-					</webApp>
-					<connectors>
-						<connector implementation="org.eclipse.jetty.server.bio.SocketConnector">
-							<port>8181</port>
-							<maxIdleTime>60000</maxIdleTime>
-						</connector>
-					</connectors>
-				</configuration>
-			</plugin>
+            <plugin>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>${jetty.version}</version>
+                <configuration>
+                    <webApp>
+                        <contextPath>/</contextPath>
+                    </webApp>
+                    <connectors>
+                        <connector implementation="org.eclipse.jetty.server.bio.SocketConnector">
+                            <port>8181</port>
+                            <maxIdleTime>60000</maxIdleTime>
+                        </connector>
+                    </connectors>
+                </configuration>
+            </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>2.8</version>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.8</version>
+            </plugin>
             <plugin>
                 <groupId>com.github.searls</groupId>
                 <artifactId>jasmine-maven-plugin</artifactId>
@@ -174,6 +174,7 @@
                         <source>${project.basedir}/src/main/webapp/js/base/sound/SoundRepository.js</source>
                         <source>${project.basedir}/src/main/webapp/js/base/sound/SoundManager.js</source>
                         <source>${project.basedir}/src/main/webapp/js/base/MyPlayer.js</source>
+                        <source>${project.basedir}/src/main/webapp/js/base/OperatorConfig.js</source>
                     </preloadSources>
                     <jsTestSrcDir>${project.basedir}/src/test/js</jsTestSrcDir>
                     <specIncludes>
@@ -182,14 +183,14 @@
 
                 </configuration>
             </plugin>
-    </plugins>
+        </plugins>
 
-	</build>
+    </build>
 
 
-	<dependencies>
+    <dependencies>
 
-	</dependencies>
+    </dependencies>
 
 
     <repositories>
@@ -233,8 +234,8 @@
         </snapshotRepository>
     </distributionManagement>
 
-	<properties>
-		<jetty.version>8.1.3.v20120416</jetty.version>
-	</properties>
+    <properties>
+        <jetty.version>8.1.3.v20120416</jetty.version>
+    </properties>
 
 </project>

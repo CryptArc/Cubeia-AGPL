@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Map;
+import java.util.UUID;
 
 import com.cubeia.games.poker.common.lobby.PokerLobbyAttributes;
 import org.apache.log4j.Logger;
@@ -77,7 +78,7 @@ public class MttTableCreationHandlerImpl implements MttTableCreationHandler {
         int numberOfSeats = table.getPlayerSet().getSeatingMap().getNumberOfSeats();
         BetStrategyName noLimit = BetStrategyName.NO_LIMIT;
         RakeSettings rakeSettings = new RakeSettings(new BigDecimal(0), 0, 0); // No rake in tournaments.
-        String externalTableId = "MOCK_TRN::" + table.getId();
+        String externalTableId = "TOUR_TABLE::" + UUID.randomUUID();
         Map<Serializable, Serializable> attributes = Collections.<Serializable, Serializable>singletonMap(TABLE_EXTERNAL_ID.name(), externalTableId);
         PokerSettings settings = new PokerSettings(anteAmount, smallBlindAmount, bigBlindAmount, -1, -1, timing, numberOfSeats,
                                                    noLimit, rakeSettings, attributes);

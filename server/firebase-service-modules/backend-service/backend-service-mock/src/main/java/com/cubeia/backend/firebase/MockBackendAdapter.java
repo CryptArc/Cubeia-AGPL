@@ -209,7 +209,7 @@ public class MockBackendAdapter implements CashGamesBackend {
         PlayerSessionId fromSession = request.fromSession;
         PlayerSessionId toSession = request.toSession;
 
-        verifySessionsExist(fromSession,toSession);
+        verifySessionsExist(fromSession, toSession);
         sessionTransactions.put(fromSession, negativeAmount);
         sessionTransactions.put(toSession, amount);
     }
@@ -221,7 +221,7 @@ public class MockBackendAdapter implements CashGamesBackend {
 
     private void verifySessionsExist(PlayerSessionId ... sessions) {
         for (PlayerSessionId sessionId : sessions) {
-            if (sessionTransactions.containsKey(sessionId)) {
+            if (!sessionTransactions.containsKey(sessionId)) {
                 throw new IllegalArgumentException("Session " + sessionId + " does not exist or is not open.");
             }
         }

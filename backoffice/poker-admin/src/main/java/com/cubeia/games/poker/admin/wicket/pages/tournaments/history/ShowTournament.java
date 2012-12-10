@@ -23,6 +23,7 @@ import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.games.poker.admin.wicket.pages.history.HandHistory;
 import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
 import com.cubeia.games.poker.admin.wicket.util.ParamBuilder;
+import com.cubeia.games.poker.common.MoneyFormat;
 import com.cubeia.poker.tournament.history.api.HistoricTournament;
 import com.cubeia.poker.tournament.history.api.PlayerPosition;
 import com.cubeia.poker.tournament.history.api.TournamentEvent;
@@ -76,7 +77,7 @@ public class ShowTournament extends BasePage {
                 PlayerPosition position = item.getModelObject();
                 item.add(externalLinkForPlayer(position.getPlayerId(), config.getNetworkUrl()));
                 item.add(new Label("position", String.valueOf(position.getPosition())));
-                item.add(new Label("payout", "TODO"));
+                item.add(new Label("payout", MoneyFormat.format("", position.getPayoutInCents())));
             }
         };
 

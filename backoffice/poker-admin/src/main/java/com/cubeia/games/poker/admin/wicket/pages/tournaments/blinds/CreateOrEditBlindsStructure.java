@@ -24,17 +24,14 @@ import com.cubeia.games.poker.tournament.configuration.blinds.Level;
 import com.cubeia.network.shared.web.wicket.list.EditableListItem;
 import com.cubeia.network.shared.web.wicket.list.ListEditor;
 import com.cubeia.network.shared.web.wicket.list.RemoveButton;
-import org.apache.log4j.Logger;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -42,13 +39,10 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.util.string.StringValue;
 
 import java.util.Iterator;
-import java.util.List;
 
 import static com.cubeia.games.poker.admin.wicket.util.WicketHelpers.isEmpty;
 
 public class CreateOrEditBlindsStructure extends BasePage {
-
-    private static final Logger log = Logger.getLogger(CreateOrEditBlindsStructure.class);
 
     @SpringBean(name = "adminDAO")
     private AdminDAO adminDAO;
@@ -129,29 +123,5 @@ public class CreateOrEditBlindsStructure extends BasePage {
     @Override
     public String getPageTitle() {
         return "Create Blinds Structure";
-    }
-
-    private class LevelModel implements IModel<List<? extends Level>> {
-
-        private List<? extends Level> levels;
-
-        public LevelModel(List<Level> blindsLevels) {
-            this.levels = blindsLevels;
-        }
-
-        @Override
-        public List<? extends Level> getObject() {
-            return levels;
-        }
-
-        @Override
-        public void setObject(List<? extends Level> object) {
-            levels = object;
-        }
-
-        @Override
-        public void detach() {
-
-        }
     }
 }

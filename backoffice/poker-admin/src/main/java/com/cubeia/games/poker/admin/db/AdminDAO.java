@@ -23,6 +23,7 @@ import com.cubeia.games.poker.entity.TableConfigTemplate;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
+import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
 
@@ -42,10 +43,12 @@ public interface AdminDAO {
 
     public List<TimingProfile> getTimingProfiles();
 
+    public List<RakeSettings> getRakeSettings();
+
     public List<BlindsStructure> getBlindsStructures();
 
     List<PayoutStructure> getPayoutStructures();
 
-    public <T> void removeItem(Class<T> class1, int templateId);
+    public <T> void removeItem(Class<T> class1, int templateId) throws org.springframework.dao.DataAccessException;
 
 }

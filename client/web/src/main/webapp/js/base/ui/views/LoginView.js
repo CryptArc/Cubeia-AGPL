@@ -10,7 +10,7 @@ Poker.LoginView = Poker.TabView.extend({
             if ($('#user').val() != "username" && $('#pwd').val() != "Password") {
                 var usr = $('#user').val();
                 var pwd = $('#pwd').val();
-                Poker.AppCtx.getComHandler().doLogin(usr,pwd);
+                Poker.AppCtx.getCommunicationManager().doLogin(usr,pwd);
             }
         });
         $("#user").keyup(function(e){

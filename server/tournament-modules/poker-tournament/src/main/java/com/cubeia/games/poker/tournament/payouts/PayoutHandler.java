@@ -27,7 +27,6 @@ import java.util.Set;
 import java.util.SortedMap;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.newTreeMap;
 
 public class PayoutHandler implements Serializable {
@@ -48,13 +47,14 @@ public class PayoutHandler implements Serializable {
      * If two or more players had the same balance at the start of the hand, they will share the same
      * position and share those prizes.
      *
+     *
      * @param playerIds
      * @param playersLeft
      * @return a map mapping playerIds to the number of cents that player should get
      */
-    public Map<Integer, Long> calculatePayouts(Set<Integer> playerIds, Map<Integer, Long> balancesAtStartOfHand, int playersLeft) {
+    public List<ConcretePayout> calculatePayouts(Set<Integer> playerIds, Map<Integer, Long> balancesAtStartOfHand, int playersLeft) {
         log.debug("Players out: " + playerIds + ". Players left: " + playersLeft + ". Balances at start of hand: " + balancesAtStartOfHand);
-        Map<Integer, Long> playerIdToCentsWon = newHashMap();
+        List<ConcretePayout> concretePayouts = newArrayList();
 
         SortedMap<Long, List<Integer>> groupedByStartingChips = groupPlayersByChipsAtStartOfHand(balancesAtStartOfHand);
         log.debug("Grouped by starting chips: " + groupedByStartingChips);
@@ -62,46 +62,45 @@ public class PayoutHandler implements Serializable {
             List<Integer> players = playersWithBalance.getValue();
 
             if (players.size() == 1) {
-                long payoutsForPosition = payouts.getPayoutsForPosition(playersLeft);
+                int payoutsForPosition = payouts.getPayoutsForPosition(playersLeft);
                 Integer playerId = players.iterator().next();
                 log.debug("Player " + playerId + " finished in position " + playersLeft + " and won " + payoutsForPosition);
-                playerIdToCentsWon.put(playerId, payoutsForPosition);
+                concretePayouts.add(new ConcretePayout(playerId, playersLeft, payoutsForPosition));
                 playersLeft--;
             } else {
-                playerIdToCentsWon.putAll(splitPrizesBetween(players, playersLeft));
+                concretePayouts.addAll(splitPrizesBetween(players, playersLeft));
                 playersLeft -= players.size();
             }
         }
-        return playerIdToCentsWon;
+        return concretePayouts;
     }
 
-    private Map<Integer, Long> splitPrizesBetween(List<Integer> players, int playersLeft) {
-        Map<Integer, Long> playerIdToPrize = newHashMap();
-        long totalPrizeToShare = 0;
+    private List<ConcretePayout> splitPrizesBetween(List<Integer> players, int playersLeft) {
+        List<ConcretePayout> playerIdToPrize = newArrayList();
+        int totalPrizeToShare = 0;
         for (int i = 0; i < players.size(); i++) {
             totalPrizeToShare += payouts.getPayoutsForPosition(playersLeft--);
         }
         log.debug("Total prize to share: " + totalPrizeToShare);
-        long prizePerPlayer = totalPrizeToShare / players.size();
+        int prizePerPlayer = totalPrizeToShare / players.size();
         log.debug("Prize per player: " + prizePerPlayer);
+        int sharedPosition = playersLeft + 1;
         for (Integer playerId : players) {
-            log.debug("Player " + playerId + " finished in split position " + (playersLeft + 1) + " and won " + prizePerPlayer);
-            playerIdToPrize.put(playerId, prizePerPlayer);
+            log.debug("Player " + playerId + " finished in split position " + sharedPosition + " and won " + prizePerPlayer);
+            playerIdToPrize.add(new ConcretePayout(playerId, sharedPosition, prizePerPlayer));
         }
         long remainder = totalPrizeToShare - prizePerPlayer * players.size();
-        distributeRemainder(remainder, playerIdToPrize, players);
+        distributeRemainder(remainder, playerIdToPrize);
         return playerIdToPrize;
     }
 
-    private void distributeRemainder(long remainder, Map<Integer, Long> playerIdToPrize, List<Integer> players) {
+    private void distributeRemainder(long remainder, List<ConcretePayout> payouts) {
         while (remainder > 0) {
-            int playerIndex = (int) remainder % players.size();
-            log.debug("Player index to get part of the remainder: " + playerIndex);
-            Integer playerId = players.get(playerIndex);
-            long currentPrize = playerIdToPrize.get(playerId);
-            currentPrize++;
+            int index = (int) remainder % payouts.size();
+            log.debug("Player index to get part of the remainder: " + index);
+            ConcretePayout payout = payouts.get(index);
+            payout.setPayoutInCents(payout.getPayoutInCents() + 1);
             remainder--;
-            playerIdToPrize.put(playerId, currentPrize);
         }
     }
 

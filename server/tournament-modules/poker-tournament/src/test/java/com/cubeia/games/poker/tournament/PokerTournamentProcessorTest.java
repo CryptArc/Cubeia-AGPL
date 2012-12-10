@@ -30,6 +30,7 @@ import com.cubeia.firebase.api.lobby.LobbyAttributeAccessor;
 import com.cubeia.firebase.api.mtt.MttInstance;
 import com.cubeia.firebase.api.mtt.MttNotifier;
 import com.cubeia.firebase.api.mtt.model.MttPlayer;
+import com.cubeia.firebase.api.mtt.model.MttPlayerStatus;
 import com.cubeia.firebase.api.mtt.model.MttRegistrationRequest;
 import com.cubeia.firebase.api.mtt.support.LobbyAttributeAccessorAdapter;
 import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
@@ -63,6 +64,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.STATUS;
 import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.ANNOUNCED;
 import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.REGISTERING;
 import static org.hamcrest.core.Is.is;
@@ -147,18 +149,21 @@ public class PokerTournamentProcessorTest extends TestCase {
         when(instance.getMttNotifier()).thenReturn(notifier);
         when(instance.getTableLobbyAccessor(anyInt())).thenReturn(tableLobbyAccessor);
         when(instanceConfig.getConfiguration()).thenReturn(configuration);
+        when(configuration.getBuyIn()).thenReturn(BigDecimal.valueOf(10));
+        when(configuration.getPayoutStructure()).thenReturn(PayoutStructureParserTest.createTestStructure());
+
         support.setTableCreator(new MockTableCreator(tournamentProcessor, instance));
         support.setMttNotifier(new MttNotifierAdapter());
 
         SitAndGoConfiguration config = new SitAndGoConfiguration("test", 20);
+        config.getConfiguration().setBuyIn(BigDecimal.valueOf(10));
+        config.getConfiguration().setFee(BigDecimal.valueOf(1));
         config.getConfiguration().setBlindsStructure(BlindsStructureFactory.createDefaultBlindsStructure());
+        config.getConfiguration().setPayoutStructure(PayoutStructureParserTest.createTestStructure());
         PokerTournamentCreationParticipant part = new SitAndGoCreationParticipant(config);
         part.tournamentCreated(state, instance.getLobbyAccessor());
 
         pokerState = new PokerTournamentUtil().getPokerState(instance);
-        pokerState.setBuyIn(BigDecimal.valueOf(10));
-        pokerState.setFee(BigDecimal.valueOf(1));
-        pokerState.setPayoutStructure(PayoutStructureParserTest.createTestStructure());
     }
 
     public void testRegister() {
@@ -166,11 +171,10 @@ public class PokerTournamentProcessorTest extends TestCase {
     }
 
     public void testSitAndGo() {
-        assertEquals(REGISTERING.name(),
-                instance.getLobbyAccessor().getStringAttribute(PokerTournamentLobbyAttributes.STATUS.name()));
+        assertEquals(REGISTERING.name(), instance.getLobbyAccessor().getStringAttribute(STATUS.name()));
         assertEquals(20, state.getMinPlayers());
         fillTournament();
-        assertThat(instance.getLobbyAccessor().getStringAttribute(PokerTournamentLobbyAttributes.STATUS.name()), is(PokerTournamentStatus.RUNNING.name()));
+        assertThat(instance.getLobbyAccessor().getStringAttribute(STATUS.name()), is(PokerTournamentStatus.RUNNING.name()));
         assertEquals(2, state.getTables().size());
         assertEquals(10, state.getPlayersAtTable(0).size());
     }
@@ -202,6 +206,8 @@ public class PokerTournamentProcessorTest extends TestCase {
     private void prepareScheduledTournament() {
         when(instanceConfig.getStartTime()).thenReturn(new DateTime());
         when(instanceConfig.getOpenRegistrationTime()).thenReturn(new DateTime());
+        when(instanceConfig.getConfiguration()).thenReturn(configuration);
+
         PokerTournamentCreationParticipant participant = new ScheduledTournamentCreationParticipant(instanceConfig);
         participant.tournamentCreated(state, instance.getLobbyAccessor());
         pokerState = new PokerTournamentUtil().getPokerState(instance);
@@ -246,6 +252,8 @@ public class PokerTournamentProcessorTest extends TestCase {
         forceBalancing();
     }
 
+    // Note, this test can fail randomly, because it can simulate that the final x players all suddenly have zero chips (who took them? :).
+    // Don't chase that goose.
     public void testStartToEnd() {
         fillTournament();
 
@@ -259,6 +267,10 @@ public class PokerTournamentProcessorTest extends TestCase {
             if (i++ > 1000) {
                 fail("Tournament should have been finished by now.");
             }
+        }
+
+        for (MttPlayer player : state.getPlayerRegistry().getPlayers()) {
+            assertThat(player.getStatus(), is(MttPlayerStatus.OUT));
         }
     }
 

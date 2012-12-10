@@ -30,6 +30,7 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.apache.wicket.util.file.Files;
 import org.apache.wicket.util.lang.Bytes;
 
 import java.io.File;
@@ -94,19 +95,24 @@ public class CreateOrEditPayoutStructure extends BasePage {
                     File newFile = new File(getUploadFolder(), upload.getClientFileName());
 
                     // Check new file, delete if it already existed
+                    checkFileExists(newFile);
                     try {
                         // Save to new file
-                        newFile.createNewFile();
-                        upload.writeTo(newFile);
+                        boolean creationOK = newFile.createNewFile();
+                        if (creationOK) {
+                            upload.writeTo(newFile);
 
-                        log.debug("Verifying payout " + upload.getClientFileName());
-                        PayoutStructureParser parser = new PayoutStructureParser();
-                        PayoutStructure structure = parser.parsePayouts(newFile);
-                        structure.verify();
-                        structure.setName(name.getModel().getObject());
-                        info("Structure verified: " + upload.getClientFileName());
-                        CreateOrEditPayoutStructure.this.adminDAO.persist(structure);
-                        setResponsePage(ListPayoutStructures.class);
+                            log.debug("Verifying payout " + upload.getClientFileName());
+                            PayoutStructureParser parser = new PayoutStructureParser();
+                            PayoutStructure structure = parser.parsePayouts(newFile);
+                            structure.verify();
+                            structure.setName(name.getModel().getObject());
+                            info("Structure verified: " + upload.getClientFileName());
+                            CreateOrEditPayoutStructure.this.adminDAO.persist(structure);
+                            setResponsePage(ListPayoutStructures.class);
+                        } else {
+                            warn("Failed saving file " + upload.getClientFileName());
+                        }
                     } catch (NumberFormatException e) {
                         error("Payout structure is invalid: " + e.getMessage());
                     } catch (IllegalStateException e) {
@@ -114,6 +120,20 @@ public class CreateOrEditPayoutStructure extends BasePage {
                     } catch (Exception e) {
                         throw new RuntimeException("Failed uploading file: " + e.getMessage(), e);
                     }
+                }
+            }
+        }
+
+        /**
+         * Check whether the file already exists, and if so, try to delete it.
+         *
+         * @param newFile the file to check
+         */
+        private void checkFileExists(File newFile) {
+            if (newFile.exists()) {
+                // Try to delete the file
+                if (!Files.remove(newFile)) {
+                    throw new IllegalStateException("Unable to overwrite " + newFile.getAbsolutePath());
                 }
             }
         }

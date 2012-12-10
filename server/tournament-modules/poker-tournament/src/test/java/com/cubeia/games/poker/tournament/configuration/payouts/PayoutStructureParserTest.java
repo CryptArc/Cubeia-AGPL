@@ -35,7 +35,7 @@ public class PayoutStructureParserTest {
         PayoutStructureParser parser = new PayoutStructureParser();
         PayoutStructure structure = parser.parsePayouts("simple.csv");
         Payouts payouts = structure.getPayoutsForEntrantsAndPrizePool(2, 100);
-        assertThat(payouts.getPayoutsForPosition(1), is(100L));
+        assertThat(payouts.getPayoutsForPosition(1), is(100));
     }
 
     @Test
@@ -44,9 +44,9 @@ public class PayoutStructureParserTest {
         PayoutStructureParser parser = new PayoutStructureParser();
         PayoutStructure structure = parser.parsePayouts("simple.csv");
         Payouts payouts = structure.getPayoutsForEntrantsAndPrizePool(10, 10);
-        assertThat(payouts.getPayoutsForPosition(1), is(6L));
-        assertThat(payouts.getPayoutsForPosition(2), is(3L));
-        assertThat(payouts.getPayoutsForPosition(3), is(1L));
+        assertThat(payouts.getPayoutsForPosition(1), is(6));
+        assertThat(payouts.getPayoutsForPosition(2), is(3));
+        assertThat(payouts.getPayoutsForPosition(3), is(1));
     }
 
     @Test

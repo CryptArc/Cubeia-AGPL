@@ -17,7 +17,67 @@
 
 package com.cubeia.games.poker.handler;
 
-import com.cubeia.games.poker.io.protocol.*;
+import com.cubeia.games.poker.io.protocol.BestHand;
+import com.cubeia.games.poker.io.protocol.BlindsAreUpdated;
+import com.cubeia.games.poker.io.protocol.BlindsLevel;
+import com.cubeia.games.poker.io.protocol.BlindsStructure;
+import com.cubeia.games.poker.io.protocol.BuyInInfoRequest;
+import com.cubeia.games.poker.io.protocol.BuyInInfoResponse;
+import com.cubeia.games.poker.io.protocol.BuyInRequest;
+import com.cubeia.games.poker.io.protocol.BuyInResponse;
+import com.cubeia.games.poker.io.protocol.CardToDeal;
+import com.cubeia.games.poker.io.protocol.ChipStatistics;
+import com.cubeia.games.poker.io.protocol.DealPrivateCards;
+import com.cubeia.games.poker.io.protocol.DealPublicCards;
+import com.cubeia.games.poker.io.protocol.DealerButton;
+import com.cubeia.games.poker.io.protocol.DeckInfo;
+import com.cubeia.games.poker.io.protocol.ErrorPacket;
+import com.cubeia.games.poker.io.protocol.ExposePrivateCards;
+import com.cubeia.games.poker.io.protocol.ExternalSessionInfoPacket;
+import com.cubeia.games.poker.io.protocol.FuturePlayerAction;
+import com.cubeia.games.poker.io.protocol.GameCard;
+import com.cubeia.games.poker.io.protocol.HandCanceled;
+import com.cubeia.games.poker.io.protocol.HandEnd;
+import com.cubeia.games.poker.io.protocol.InformFutureAllowedActions;
+import com.cubeia.games.poker.io.protocol.LevelInfo;
+import com.cubeia.games.poker.io.protocol.PacketVisitor;
+import com.cubeia.games.poker.io.protocol.Payout;
+import com.cubeia.games.poker.io.protocol.PayoutInfo;
+import com.cubeia.games.poker.io.protocol.PerformAction;
+import com.cubeia.games.poker.io.protocol.PingPacket;
+import com.cubeia.games.poker.io.protocol.PlayerAction;
+import com.cubeia.games.poker.io.protocol.PlayerBalance;
+import com.cubeia.games.poker.io.protocol.PlayerDisconnectedPacket;
+import com.cubeia.games.poker.io.protocol.PlayerHandStartStatus;
+import com.cubeia.games.poker.io.protocol.PlayerPokerStatus;
+import com.cubeia.games.poker.io.protocol.PlayerReconnectedPacket;
+import com.cubeia.games.poker.io.protocol.PlayerSitinRequest;
+import com.cubeia.games.poker.io.protocol.PlayerSitoutRequest;
+import com.cubeia.games.poker.io.protocol.PlayerState;
+import com.cubeia.games.poker.io.protocol.PlayersLeft;
+import com.cubeia.games.poker.io.protocol.PongPacket;
+import com.cubeia.games.poker.io.protocol.Pot;
+import com.cubeia.games.poker.io.protocol.PotTransfer;
+import com.cubeia.games.poker.io.protocol.PotTransfers;
+import com.cubeia.games.poker.io.protocol.RakeInfo;
+import com.cubeia.games.poker.io.protocol.RequestAction;
+import com.cubeia.games.poker.io.protocol.RequestBlindsStructure;
+import com.cubeia.games.poker.io.protocol.RequestPayoutInfo;
+import com.cubeia.games.poker.io.protocol.RequestTournamentLobbyData;
+import com.cubeia.games.poker.io.protocol.RequestTournamentPlayerList;
+import com.cubeia.games.poker.io.protocol.RequestTournamentStatistics;
+import com.cubeia.games.poker.io.protocol.StartHandHistory;
+import com.cubeia.games.poker.io.protocol.StartNewHand;
+import com.cubeia.games.poker.io.protocol.StopHandHistory;
+import com.cubeia.games.poker.io.protocol.TakeBackUncalledBet;
+import com.cubeia.games.poker.io.protocol.TournamentInfo;
+import com.cubeia.games.poker.io.protocol.TournamentLobbyData;
+import com.cubeia.games.poker.io.protocol.TournamentOut;
+import com.cubeia.games.poker.io.protocol.TournamentPlayer;
+import com.cubeia.games.poker.io.protocol.TournamentPlayerList;
+import com.cubeia.games.poker.io.protocol.TournamentStatistics;
+import com.cubeia.games.poker.io.protocol.WaitingForPlayers;
+import com.cubeia.games.poker.io.protocol.WaitingToStartBreak;
 
 public class DefaultPokerHandler implements PacketVisitor {
 
@@ -119,6 +179,11 @@ public class DefaultPokerHandler implements PacketVisitor {
     }
 
     @Override
+    public void visit(WaitingForPlayers packet) {
+
+    }
+
+    @Override
     public void visit(BlindsAreUpdated packet) {
 
     }
@@ -189,5 +254,90 @@ public class DefaultPokerHandler implements PacketVisitor {
 
     @Override
     public void visit(PongPacket packet) {
+    }
+
+    @Override
+    public void visit(RequestTournamentPlayerList packet) {
+
+    }
+
+    @Override
+    public void visit(TournamentPlayerList packet) {
+
+    }
+
+    @Override
+    public void visit(TournamentPlayer packet) {
+
+    }
+
+    @Override
+    public void visit(RequestBlindsStructure packet) {
+
+    }
+
+    @Override
+    public void visit(BlindsStructure packet) {
+
+    }
+
+    @Override
+    public void visit(BlindsLevel packet) {
+
+    }
+
+    @Override
+    public void visit(RequestPayoutInfo packet) {
+
+    }
+
+    @Override
+    public void visit(PayoutInfo packet) {
+
+    }
+
+    @Override
+    public void visit(Payout packet) {
+
+    }
+
+    @Override
+    public void visit(RequestTournamentStatistics packet) {
+
+    }
+
+    @Override
+    public void visit(ChipStatistics packet) {
+
+    }
+
+    @Override
+    public void visit(LevelInfo packet) {
+
+    }
+
+    @Override
+    public void visit(PlayersLeft packet) {
+
+    }
+
+    @Override
+    public void visit(TournamentStatistics packet) {
+
+    }
+
+    @Override
+    public void visit(TournamentInfo packet) {
+
+    }
+
+    @Override
+    public void visit(RequestTournamentLobbyData packet) {
+
+    }
+
+    @Override
+    public void visit(TournamentLobbyData packet) {
+
     }
 }

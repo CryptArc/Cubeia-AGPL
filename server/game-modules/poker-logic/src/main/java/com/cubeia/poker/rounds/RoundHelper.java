@@ -35,7 +35,7 @@ public class RoundHelper implements Serializable {
 
     private static final long serialVersionUID = -7509025431185267942L;
 
-	private PokerContext context;
+    private PokerContext context;
 
     private ServerAdapterHolder serverAdapter;
 
@@ -55,7 +55,7 @@ public class RoundHelper implements Serializable {
 
     public void requestAction(ActionRequest request) {
         addTimeoutAndPotSize(request);
-        log.debug("Send player action request [" + request + "]");
+        log.trace("Send player action request [" + request + "]");
         serverAdapter.get().requestAction(request);
     }
 
@@ -69,7 +69,7 @@ public class RoundHelper implements Serializable {
     }
 
     public void scheduleRoundTimeout(PokerContext context, ServerAdapter serverAdapter) {
-        log.debug("scheduleRoundTimeout in: " + context.getTimingProfile().getTime(Periods.RIVER));
+        log.trace("scheduleRoundTimeout in: " + context.getTimingProfile().getTime(Periods.RIVER));
         serverAdapter.scheduleTimeout(context.getTimingProfile().getTime(Periods.RIVER));
     }
 

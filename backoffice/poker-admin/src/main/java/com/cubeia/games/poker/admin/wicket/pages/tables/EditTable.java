@@ -20,8 +20,8 @@ package com.cubeia.games.poker.admin.wicket.pages.tables;
 import com.cubeia.games.poker.admin.db.AdminDAO;
 import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.games.poker.entity.TableConfigTemplate;
+import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.timing.TimingProfile;
-import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
@@ -64,6 +64,8 @@ public class EditTable extends BasePage {
         tableForm.add(new TextField<Integer>("minTables", new PropertyModel<Integer>(this, "table.minTables")));
         tableForm.add(new TextField<Integer>("minEmptyTables", new PropertyModel<Integer>(this, "table.minEmptyTables")));
         tableForm.add(new DropDownChoice<TimingProfile>("timing", new PropertyModel<TimingProfile>(this, "table.timing"), adminDAO.getTimingProfiles(),
+                choiceRenderer()));
+        tableForm.add(new DropDownChoice<RakeSettings>("rakeSettings", new PropertyModel<RakeSettings>(this, "table.rakeSettings"), adminDAO.getRakeSettings(),
                 choiceRenderer()));
 
         add(tableForm);

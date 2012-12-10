@@ -17,5 +17,11 @@
 
 package com.cubeia.games.poker.tournament;
 
-public class WaitingForTablesToFinishBeforeBreak {
+import java.io.Serializable;
+
+/**
+ * Message sent when we are not starting a hand because we are waiting for the break to start,
+ * which will happen when all other tables have finished their hands.
+ */
+public class WaitingForTablesToFinishBeforeBreak implements Serializable {
 }

@@ -56,7 +56,7 @@ public class FirebaseJMXFactory {
                 properties.load(resourceAsStream);
                 serverurl = properties.getProperty("firebase.gateway");
                 log.debug("Loaded gameserver url, 'firebase.gateway', as: "+serverurl);
-                
+                resourceAsStream.close();
             } else {
                 throw new RuntimeException("Could not find gameserver.properties in classpath");
             }

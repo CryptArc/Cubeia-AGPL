@@ -30,7 +30,6 @@ import com.google.common.base.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Set;
 
@@ -246,7 +245,7 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
     private Predicate<PokerPlayer> getReadyPlayerFilter() {
         return new Predicate<PokerPlayer>() {
             @Override
-            public boolean apply(@Nullable PokerPlayer pokerPlayer) {
+            public boolean apply(PokerPlayer pokerPlayer) {
                 boolean canAffordEntryBet = gameType.canPlayerAffordEntryBet(pokerPlayer, context.getSettings(), false);
                 boolean isSittingIn = !pokerPlayer.isSittingOut();
                 boolean buyInActive = pokerPlayer.isBuyInRequestActive();

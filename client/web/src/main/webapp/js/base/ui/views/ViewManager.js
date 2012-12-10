@@ -140,6 +140,18 @@ Poker.ViewManager = Class.extend({
             }
         }
     },
+    removeTournamentView : function(tournamentId) {
+        for(var i = 0; i<this.views.length; i++) {
+            var v = this.views[i];
+            if(v instanceof Poker.TournamentView && v.getTournamentId()==tournamentId) {
+                var pv = this.getPreviousView();
+                v.close();
+                this.views.splice(i,1);
+                this.activeView = null;
+                this.activateView(pv);
+            }
+        }
+    },
     /**
      * Activates a Poker.TableView by it's table id
      * @param tableId
@@ -148,6 +160,20 @@ Poker.ViewManager = Class.extend({
         var v = this.findViewByTableId(tableId);
         if(v!=null) {
             this.activateView(v);
+        }
+    },
+    activateViewByTournamentId : function(tournamentId) {
+        var v = this.findViewByTournamentId(tournamentId);
+        if(v!=null) {
+            this.activateView(v);
+        }
+    },
+    findViewByTournamentId : function(tournamentId) {
+        for(var i = 0; i<this.views.length; i++) {
+            var v = this.views[i];
+            if(v instanceof Poker.TournamentView && v.getTournamentId()==tournamentId) {
+                return v;
+            }
         }
     },
     /**
@@ -174,6 +200,10 @@ Poker.ViewManager = Class.extend({
       view.fixedSizeView = true;
       this.activateView(view);
       this.setViewDimensions();
+    },
+    addTournamentView : function(viewElementId,name,layoutManager) {
+        var view = this.addView(new Poker.TournamentView(viewElementId,name,layoutManager));
+        this.activateView(view);
     },
     /**
      * Sets the dimensions of all views that are set to fixedSizedViews

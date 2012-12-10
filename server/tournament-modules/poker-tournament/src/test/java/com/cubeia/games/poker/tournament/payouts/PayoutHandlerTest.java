@@ -51,8 +51,8 @@ public class PayoutHandlerTest {
         // Simple case, player finishes in place 4.
         // 9.09% of $200 is $18.18
         Map<Integer, Long> balanceAtStart = of(7, 70L);
-        Map<Integer,Long> playerIdToCentsWon = payoutHandler.calculatePayouts(ImmutableSet.<Integer>of(7), balanceAtStart, 4);
-        assertThat(playerIdToCentsWon.get(7), is(1818L));
+        List<ConcretePayout> payouts = payoutHandler.calculatePayouts(ImmutableSet.<Integer>of(7), balanceAtStart, 4);
+        assertThat(payouts.get(0).getPayoutInCents(), is(1818));
     }
 
     @Test
@@ -60,9 +60,9 @@ public class PayoutHandlerTest {
         // Two players are out and they had different amounts of chips when the hand started.
         // 15.15% of $200 is $30.30
         Map<Integer, Long> balanceAtStart = of(7, 70L, 8, 80L);
-        Map<Integer,Long> playerIdToCentsWon = payoutHandler.calculatePayouts(ImmutableSet.<Integer>of(7, 8), balanceAtStart, 4);
-        assertThat(playerIdToCentsWon.get(7), is(1818L));
-        assertThat(playerIdToCentsWon.get(8), is(3030L));
+        List<ConcretePayout> payouts = payoutHandler.calculatePayouts(ImmutableSet.<Integer>of(7, 8), balanceAtStart, 4);
+        assertThat(payouts.get(0).getPayoutInCents(), is(1818));
+        assertThat(payouts.get(1).getPayoutInCents(), is(3030));
     }
 
     @Test
@@ -72,11 +72,11 @@ public class PayoutHandlerTest {
         // 63.64 / 3 = 21.21
         // 21.21 * 3 = 63.63 => 1 cent remainder
         Map<Integer, Long> balanceAtStart = of(7, 70L, 8, 70L, 9, 70L);
-        Map<Integer, Long> playerIdToCentsWon = payoutHandler.calculatePayouts(ImmutableSet.<Integer>of(7, 8, 9), balanceAtStart, 5);
+        List<ConcretePayout> payouts = payoutHandler.calculatePayouts(ImmutableSet.<Integer>of(7, 8, 9), balanceAtStart, 5);
 
-        assertThat(playerIdToCentsWon.get(7), is(2121L));
-        assertThat(playerIdToCentsWon.get(8), is(2122L));
-        assertThat(playerIdToCentsWon.get(9), is(2121L));
+        assertThat(payouts.get(0).getPayoutInCents(), is(2121));
+        assertThat(payouts.get(1).getPayoutInCents(), is(2122));
+        assertThat(payouts.get(2).getPayoutInCents(), is(2121));
     }
 
     @Test
@@ -86,12 +86,12 @@ public class PayoutHandlerTest {
         // 33.34 / 2 = 16.67
         // 6.12% of $200 = 12.24
         Map<Integer, Long> balanceAtStart = of(7, 70L, 8, 70L, 9, 80L, 10, 20L);
-        Map<Integer, Long> playerIdToCentsWon = payoutHandler.calculatePayouts(ImmutableSet.<Integer>of(7, 8, 10), balanceAtStart, 6);
+        List<ConcretePayout> payouts = payoutHandler.calculatePayouts(ImmutableSet.<Integer>of(7, 8, 10), balanceAtStart, 6);
 
-        assertThat(playerIdToCentsWon.get(7), is(1667L));
-        assertThat(playerIdToCentsWon.get(8), is(1667L));
-        assertThat(playerIdToCentsWon.get(9), is(3030L));
-        assertThat(playerIdToCentsWon.get(10), is(1224L));
+        assertThat(payouts.get(0).getPayoutInCents(), is(1224));
+        assertThat(payouts.get(1).getPayoutInCents(), is(1667));
+        assertThat(payouts.get(2).getPayoutInCents(), is(1667));
+        assertThat(payouts.get(3).getPayoutInCents(), is(3030));
     }
 
     private List<Payout> list(double ... percentages) {

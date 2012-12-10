@@ -27,25 +27,34 @@ import static org.junit.Assert.assertThat;
 public class PayoutsTest {
 
     private Payouts payouts;
+
     private Payouts sitAndGoPayouts;
+    private Payouts payoutsWithRange;
 
     @Before
     public void setup() {
         PayoutStructure structure = PayoutStructureParserTest.createTestStructure();
         this.payouts = structure.getPayoutsForEntrantsAndPrizePool(56, 20000);
         this.sitAndGoPayouts = structure.getPayoutsForEntrantsAndPrizePool(10, 1000);
+        this.payoutsWithRange = structure.getPayoutsForEntrantsAndPrizePool(235, 500000);
     }
 
     @Test
     public void testPlayerNotInTheMoneyGetsZero() {
-        assertThat(payouts.getPayoutsForPosition(56), is(0L));
+        assertThat(payouts.getPayoutsForPosition(56), is(0));
     }
 
     @Test
     public void testBubbleGetsBubble() {
         assertThat(sitAndGoPayouts.getPayoutList().size(), is(3));
-        assertThat(sitAndGoPayouts.getPayoutsForPosition(3), not(0L));
-        assertThat(sitAndGoPayouts.getPayoutsForPosition(4), is(0L));
+        assertThat(sitAndGoPayouts.getPayoutsForPosition(3), not(0));
+        assertThat(sitAndGoPayouts.getPayoutsForPosition(4), is(0));
+    }
+
+    @Test
+    public void testRangedPayouts() {
+        // 0.72% of $5000 = 36
+        assertThat(payoutsWithRange.getPayoutsForPosition(36), is(3600));
     }
 
 }

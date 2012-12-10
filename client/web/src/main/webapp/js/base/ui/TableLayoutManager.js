@@ -13,7 +13,6 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
     templateManager : null,
     cardElements : null,
     myActionsManager : null,
-    tableComHandler : null,
     myPlayerSeatId : -1,
     seats : null,
     dealerButton : null,
@@ -27,7 +26,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
     tableView : null,
     animationManager : null,
 
-    init : function(tableId, tableViewContainer, templateManager, tableComHandler, capacity) {
+    init : function(tableId, tableViewContainer, templateManager, capacity) {
         if (!tableViewContainer) {
             throw "TableLayoutManager requires a tableViewContainer";
         }
@@ -42,12 +41,15 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
 
         this.tableId = tableId;
         this.soundManager = new Poker.SoundManager(Poker.AppCtx.getSoundRepository(), tableId);
-        this.tableComHandler = tableComHandler;
         var self = this;
         var actionCallback = function(actionType,amount){
-          self.tableComHandler.onMyPlayerAction(self.tableId,actionType,amount);
+            console.log("ACTION = ");
+            console.log(actionType);
+            console.log(amount);
+            console.log(self.tableId);
+            new Poker.TableRequestHandler(self.tableId).onMyPlayerAction(actionType,amount);
         };
-        this.buyInDialog = new Poker.BuyInDialog(tableComHandler);
+        this.buyInDialog = new Poker.BuyInDialog();
         this.myActionsManager = new Poker.MyActionsManager(this.tableView, actionCallback);
         this.templateManager = templateManager;
         this.capacity = capacity || this.capacity;

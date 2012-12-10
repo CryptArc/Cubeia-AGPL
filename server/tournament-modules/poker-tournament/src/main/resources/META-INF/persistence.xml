@@ -12,7 +12,7 @@
         <class>com.cubeia.poker.timing.TimingProfile</class>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
-            <property name="hibernate.hmb2ddl.auto" value="update"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="show_sql" value="true"/>
         </properties>
     </persistence-unit>

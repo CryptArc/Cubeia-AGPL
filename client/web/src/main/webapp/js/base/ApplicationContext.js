@@ -21,9 +21,6 @@ Poker.AppCtx = Class.extend({
     wire : function(settings) {
 
         //this
-
-
-
         var templateManager = new Poker.TemplateManager();
         this.getTemplateManager = function() {
             return templateManager;
@@ -49,6 +46,20 @@ Poker.AppCtx = Class.extend({
             return mainMenuManager;
         };
 
+
+        var lobbyLayoutManager = new Poker.LobbyLayoutManager();
+        this.getLobbyLayoutManager = function() {
+            return lobbyLayoutManager;
+        };
+        /*
+         * The only layout manager we only need (?) one instance of,
+         * since you only are able to have one lobby open at once
+         */
+        var lobbyManager = new Poker.LobbyManager();
+        this.getLobbyManager = function() {
+            return lobbyManager;
+        };
+
         var soundsRepository = new Poker.SoundRepository();
         this.getSoundRepository = function() {
             return soundsRepository;
@@ -60,18 +71,21 @@ Poker.AppCtx = Class.extend({
             return actionSender;
         };
 
-        var pokerProtocolHandler = new Poker.PokerProtocolHandler();
-        this.getProtocolHandler = function() {
-            return pokerProtocolHandler;
-        };
-        var comHandler = new Poker.CommunicationHandler(settings.webSocketUrl, settings.webSocketPort);
-        this.getComHandler = function() {
+        var comHandler = new Poker.CommunicationManager(settings.webSocketUrl, settings.webSocketPort);
+        this.getCommunicationManager = function() {
             return comHandler;
         };
 
         this.getConnector = function() {
             return comHandler.getConnector();
         };
+
+        var tournamentManager = new Poker.TournamentManager(settings.tournamentLobbyUpdateInterval);
+        this.getTournamentManager = function() {
+            return tournamentManager;
+        };
+
+
 
 
 

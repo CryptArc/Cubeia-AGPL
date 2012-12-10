@@ -17,7 +17,10 @@
 
 package com.cubeia.games.poker.admin.wicket.util;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
@@ -25,6 +28,8 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import com.cubeia.games.poker.admin.db.AdminDAO;
 import com.cubeia.games.poker.admin.wicket.BasePage;
+
+import java.awt.*;
 
 public class DeleteLinkPanel extends Panel {
 
@@ -39,8 +44,13 @@ public class DeleteLinkPanel extends Panel {
 
             @Override
             public void onClick() {
-                adminDAO.removeItem(entityClass, entityId);
-                setResponsePage(responsePage);
+                try {
+                    adminDAO.removeItem(entityClass, entityId);
+                    setResponsePage(responsePage);
+                }
+                catch (Exception ex) {
+                    this.getPage().error("Could not delete: " + ex.getMessage());
+                }
             }
         };
         delete.add(new AttributeAppender("class","btn btn-danger btn-mini"));

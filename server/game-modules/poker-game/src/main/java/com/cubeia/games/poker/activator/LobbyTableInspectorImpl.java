@@ -18,6 +18,7 @@
 package com.cubeia.games.poker.activator;
 
 import static com.cubeia.firebase.api.game.lobby.DefaultTableAttributes._LAST_MODIFIED;
+import static com.cubeia.firebase.api.game.lobby.DefaultTableAttributes._MTT_ID;
 import static com.cubeia.firebase.api.game.lobby.DefaultTableAttributes._SEATED;
 import static com.cubeia.games.poker.common.lobby.PokerLobbyAttributes.TABLE_TEMPLATE;
 
@@ -72,7 +73,7 @@ public class LobbyTableInspectorImpl implements LobbyTableInspector {
         // now check all templates for closure or creation
         checkTemplates(templates, tables, result);
         // now check if any templates are missing
-        checkMissingTemplates(templates, allTables, tables, result);
+        checkMissingTemplates(templates, tables, result);
         return result;
     }
 
@@ -87,7 +88,7 @@ public class LobbyTableInspectorImpl implements LobbyTableInspector {
         return list;
     }
 
-    private void checkMissingTemplates(List<TableConfigTemplate> templates, List<LobbyTable> allTables, Map<Integer, List<LobbyTable>> tables,
+    private void checkMissingTemplates(List<TableConfigTemplate> templates, Map<Integer, List<LobbyTable>> tables,
             List<TableModifierAction> result) {
         Set<Integer> templateIds = collectTemplateIds(templates);
         for (Entry<Integer, List<LobbyTable>> entry : tables.entrySet()) {
@@ -234,6 +235,10 @@ public class LobbyTableInspectorImpl implements LobbyTableInspector {
     private Map<Integer, List<LobbyTable>> partitionTables(List<LobbyTable> tables) {
         Map<Integer, List<LobbyTable>> map = new HashMap<Integer, List<LobbyTable>>();
         for (LobbyTable t : tables) {
+            if (t.getAttributes().containsKey(_MTT_ID.name())) {
+                // Skip tournament tables.
+                continue;
+            }
             int template = getTemplateId(t);
             List<LobbyTable> list = map.get(template);
             if (list == null) {

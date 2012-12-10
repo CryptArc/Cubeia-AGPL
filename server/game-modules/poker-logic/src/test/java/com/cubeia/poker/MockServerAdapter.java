@@ -69,6 +69,11 @@ public class MockServerAdapter implements ServerAdapter {
 
     }
 
+    @Override
+    public void notifyWaitingForPlayers() {
+
+    }
+
     public void clear() {
         handEndStatus = null;
         allActions.clear();
@@ -238,8 +243,6 @@ public class MockServerAdapter implements ServerAdapter {
 
     @Override
     public void notifyDisconnected(int playerId) {
-        // TODO Auto-generated method stub
-
     }
 
 }

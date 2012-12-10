@@ -6,17 +6,27 @@ var Poker = Poker || {};
  * @type {*}
  */
 Poker.CSSUtils = Class.extend({
-    prefix : ["-moz-","-webkit-","-o-", ""],
+    prefix : ["Moz","Webkit","O", ""],
+    cssPrefix : ["-moz-","-webkit-","-o-",""],
     addTransition : function(el,transition) {
         if(typeof(el)=="undefined") {
             return;
         }
         el = this.getElement(el);
         for(var i = 0; i<this.prefix.length;i++){
-            if(typeof(el.style[this.prefix[i]+"transition"])!="undefined"){
-                el.style[this.prefix[i]+"transition"] = this.prefix[i] + transition;
+            var property = this.getProperty(this.prefix[i],"Transition");
+
+            if(typeof(el.style[property])!="undefined"){
+                el.style[property] = this.cssPrefix[i] + transition;
             }
         }
+    },
+    getProperty : function(prefix,prop) {
+        var propertyName = prefix + prop;
+        if(prefix=="") {
+            propertyName =  prop.charAt(0).toLowerCase() + prop.slice(1);
+        }
+        return propertyName;
     },
     clear : function(el) {
         this.clearTransition(el);
@@ -28,12 +38,13 @@ Poker.CSSUtils = Class.extend({
         }
         el = this.getElement(el);
         for(var i = 0; i<this.prefix.length; i++) {
-
-            if(typeof(el.style[this.prefix[i]+"transform"])!="undefined") {
-                el.style[this.prefix[i]+"transform"] = "";
+            var property = this.getProperty(this.prefix[i],"Transform");
+            if(typeof(el.style[property])!="undefined") {
+                el.style[property] = "";
             }
-            if(typeof(el.style[this.prefix+"transform-origin"])!="undefined") {
-                el.style[this.prefix[i]+"transform-origin"]="";
+            property = this.getProperty(this.prefix[i],"TransformOrigin");
+            if(typeof(el.style[property])!="undefined") {
+                el.style[property]="";
             }
 
         }
@@ -44,7 +55,7 @@ Poker.CSSUtils = Class.extend({
         }
         el = this.getElement(el);
         for(var i = 0; i<this.prefix.length; i++) {
-            var property = this.prefix[i]+"transition";
+            var property = this.getProperty(this.prefix[i],"Transition");
             if(typeof(el.style[property])!="undefined"){
                 el.style[property] = "";
             }
@@ -102,12 +113,13 @@ Poker.CSSUtils = Class.extend({
         }
         el = this.getElement(el);
         for(var i = 0; i<this.prefix.length; i++) {
-
-            if(typeof(el.style[this.prefix[i]+"transform"])!="undefined") {
-                el.style[this.prefix[i]+"transform"]=transform;
+            var property = this.getProperty(this.prefix[i],"Transform");
+            if(typeof(el.style[property])!="undefined") {
+                el.style[property]=transform;
             }
-            if(origin!=null && typeof(el.style[this.prefix[i]+"transform-origin"])!="undefined") {
-                el.style[this.prefix[i]+"transform-origin"]=origin;
+            property = this.getProperty(this.prefix[i],"TransformOrigin");
+            if(origin!=null && typeof(el.style[property])!="undefined") {
+                el.style[property]=origin;
             }
         }
     },
@@ -136,26 +148,3 @@ Poker.CSSUtils = Class.extend({
         $(element).unbind("msTransitionEnd");
     }
 });
-
-var CompatibilityChecker = {
-    prefix : ["Moz","Webkit","O", ""],
-    isSupported : function(el,propertyName) {
-        if(typeof(el.length)!="undefined") {
-            el = el.get(0);
-        }
-        var prefix = CompatibilityChecker.prefix;
-        for(var i = 0; i<prefix.length; i++) {
-            var property = prefix[i]+propertyName;
-            if(prefix[i]=="") {
-                property = propertyName.charAt(0).toLowerCase() + propertyName.slice(1);
-            }
-            if(typeof(el.style[property])!="undefined"){
-                return true;
-            }
-        }
-        return false;
-    },
-    isTransitionSupported : function(el) {
-        return CompatibilityChecker.isSupported(el,"Transition");
-    }
-};

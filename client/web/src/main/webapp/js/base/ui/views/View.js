@@ -6,6 +6,9 @@ Poker.View = Class.extend({
     fixedSizeView : false,
     id : null,
     init : function(viewElementId,name) {
+        if(viewElementId.charAt(0)!="#") {
+            viewElementId= "#" + viewElementId;
+        }
         this.viewElement = $(viewElementId);
         var self = this;
     },

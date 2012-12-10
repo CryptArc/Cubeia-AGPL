@@ -43,10 +43,9 @@ describe("Poker.TableLayoutManager Test", function(){
         Poker.MockUtils.mock("DealerButton",MockDealerButton);
         Poker.MockUtils.mock("MyPlayerSeat",MockMyPlayerSeat);
 
-        mockTableComHandler = jasmine.createSpyObj('mockTableComHandler',['']);
 
         tableLayoutManager = new Poker.TableLayoutManager(1, $("#testTable"),
-            new Poker.TemplateManager(), mockTableComHandler, 10);
+            new Poker.TemplateManager(), 10);
     });
     afterEach(function(){
         Poker.MockUtils.resetMocks();

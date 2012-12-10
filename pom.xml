@@ -171,7 +171,7 @@
             <dependency>
                 <groupId>com.cubeia.firebase</groupId>
                 <artifactId>guice-support</artifactId>
-                <version>1.4-SNAPSHOT</version>
+                <version>1.5-SNAPSHOT</version>
             </dependency>
 
             <dependency>
@@ -468,7 +468,6 @@
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
-
     <scm>
         <connection>
             scm:svn:https://212.63.204.145/svn/NEW_ROOT/game/java/trunk/poker/
@@ -477,7 +476,7 @@
             scm:svn:https://212.63.204.145/svn/NEW_ROOT/game/java/trunk/poker/
         </developerConnection>
     </scm>
-    <distributionManagement>
+     <distributionManagement>
         <repository>
             <id>cubeia-nexus</id>
             <name>Cubeia Internal Release Repo</name>

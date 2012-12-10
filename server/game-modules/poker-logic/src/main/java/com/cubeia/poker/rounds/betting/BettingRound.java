@@ -30,13 +30,10 @@ import com.cubeia.poker.rounds.RoundHelper;
 import com.cubeia.poker.rounds.RoundVisitor;
 import com.cubeia.poker.util.ThreadLocalProfiler;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -282,7 +279,7 @@ public class BettingRound implements Round, BettingRoundContext {
                 action.setBetAmount(amountToCall);
                 break;
             case CHECK:
-                handled = check(player);
+                handled = check();
                 break;
             case FOLD:
                 handled = fold(player);
@@ -369,13 +366,15 @@ public class BettingRound implements Round, BettingRoundContext {
     @VisibleForTesting
     boolean bet(PokerPlayer player, long amount) {
         long minAmount = player.getActionRequest().getOption(PokerActionType.BET).getMinAmount();
+        highBet = highBet + amount;
+        long cost = highBet - player.getBetStack();
         if (amount < minAmount) {
-            log.warn("PokerPlayer[" + player.getId() + "] - " + String.format("Bet (%d) is smaller than minAmount (%d)", amount, minAmount));
+            log.warn("PokerPlayer[" + player.getId() + "] - " + String.format("Bet (%d) (which costs (%d) is invalid. minAmount (%d) balance (%d)",
+                    amount, cost, minAmount, player.getBalance()));
             return false;
         }
         lastBetSize = amount;
         nextValidRaiseLevel = 2 * lastBetSize;
-        highBet = highBet + amount;
         lastPlayerToPlaceABet = player;
         player.addBet(highBet - player.getBetStack());
         player.setLastRaiseLevel(getNextValidRaiseLevel());
@@ -398,7 +397,7 @@ public class BettingRound implements Round, BettingRoundContext {
         return true;
     }
 
-    private boolean check(PokerPlayer player) {
+    private boolean check() {
         // Nothing to do.
         return true;
     }

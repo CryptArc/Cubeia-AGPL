@@ -43,8 +43,8 @@ public class HistoryPersister {
         }
     }
 
-    public void playerOut(int playerId, int position) {
-        storageService.playerOut(playerId, position, historicId, dateFetcher.now());
+    public void playerOut(int playerId, int position, int payoutInCents) {
+        storageService.playerOut(playerId, position, payoutInCents, historicId, dateFetcher.now());
     }
 
     public void playerMoved(int playerId, int tableId) {

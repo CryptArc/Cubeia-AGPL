@@ -22,7 +22,6 @@ import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.games.poker.admin.wicket.util.DeleteLinkPanel;
 import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
 import com.cubeia.games.poker.entity.TableConfigTemplate;
-import com.cubeia.poker.timing.TimingProfile;
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
@@ -30,7 +29,7 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColu
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DefaultDataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
-import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -86,43 +85,27 @@ public class ListTables extends BasePage {
         columns.add(new PropertyColumn<TableConfigTemplate,String>(new Model<String>("Seats"), "seats"));
         columns.add(new PropertyColumn<TableConfigTemplate,String>(new Model<String>("Ante"), "ante"));
         columns.add(new PropertyColumn<TableConfigTemplate,String>(new Model<String>("Variant"), "variant"));
-        columns.add(new AbstractColumn<TableConfigTemplate,String>(new Model<String>("Timing")) {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void populateItem(Item<ICellPopulator<TableConfigTemplate>> item, String componentId, IModel<TableConfigTemplate> model) {
-                TableConfigTemplate table = model.getObject();
-                TimingProfile profile = table.getTiming();
-                Component panel = new Label(componentId, profile.getName());
-                item.add(panel);
-            }
-
-            @Override
-            public boolean isSortable() {
-                return false;
-            }
-        });
+        columns.add(new PropertyColumn<TableConfigTemplate,String>(new Model<String>("Timing"), "timing.name"));
+        columns.add(new PropertyColumn<TableConfigTemplate,String>(new Model<String>("Rake system"), "rakeSettings.name"));
 
         columns.add(new AbstractColumn<TableConfigTemplate,String>(new Model<String>("Delete")) {
-
             private static final long serialVersionUID = 1L;
-
             @Override
             public void populateItem(Item<ICellPopulator<TableConfigTemplate>> item, String componentId, IModel<TableConfigTemplate> model) {
                 TableConfigTemplate table = model.getObject();
                 Component panel = new DeleteLinkPanel(componentId, TableConfigTemplate.class, table.getId(), ListTables.class);
                 item.add(panel);
             }
-
             @Override
             public boolean isSortable() {
                 return false;
             }
         });
 
-        DefaultDataTable userTable = new DefaultDataTable("tableTable", columns, dataProvider, 20);
-        add(userTable);
+        DefaultDataTable table = new DefaultDataTable("tableTable", columns, dataProvider, 20);
+        add(table);
+
+        add(new FeedbackPanel("feedback"));
     }
 
     private List<TableConfigTemplate> getTableTemplateList() {

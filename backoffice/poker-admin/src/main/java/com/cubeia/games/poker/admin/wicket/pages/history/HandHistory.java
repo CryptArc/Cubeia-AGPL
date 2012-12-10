@@ -183,8 +183,7 @@ public class HandHistory extends BasePage {
 
         @Override
         public IModel<HistoricHand> model(HistoricHand historicHand) {
-            Model<HistoricHand> of = Model.of(historicHand);
-            return of;
+            return Model.of(historicHand);
         }
 
         public void search(HandHistorySearch params) {

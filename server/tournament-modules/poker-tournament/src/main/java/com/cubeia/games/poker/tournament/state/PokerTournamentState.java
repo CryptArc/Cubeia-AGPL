@@ -19,7 +19,12 @@ package com.cubeia.games.poker.tournament.state;
 
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.TournamentSessionId;
+import com.cubeia.firebase.api.mtt.model.MttPlayer;
+import com.cubeia.firebase.api.mtt.model.MttPlayerStatus;
+import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.games.poker.common.Money;
+import com.cubeia.games.poker.io.protocol.TournamentPlayerList;
+import com.cubeia.games.poker.io.protocol.TournamentStatistics;
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
 import com.cubeia.games.poker.tournament.configuration.blinds.Level;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.TournamentLifeCycle;
@@ -35,14 +40,15 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
 import static com.google.common.collect.Sets.union;
+import static java.lang.Math.max;
 import static java.math.BigDecimal.valueOf;
+import static org.joda.time.Seconds.secondsBetween;
 
 public class PokerTournamentState implements Serializable {
 
@@ -50,6 +56,7 @@ public class PokerTournamentState implements Serializable {
 
     private static transient Logger log = Logger.getLogger(PokerTournamentState.class);
 
+    // TODO: Make configurable.
     public static final Long STARTING_CHIPS = 100000L;
 
     private TimingProfile timing = TimingFactory.getRegistry().getDefaultTimingProfile();
@@ -63,9 +70,7 @@ public class PokerTournamentState implements Serializable {
 
     private long lastRegisteredTime = 0;
 
-    /**
-     * Maps playerId to balance
-     */
+    /** Maps playerId to balance */
     private Map<Integer, Long> balances = new HashMap<Integer, Long>();
 
     private Set<Integer> pendingRegistrations = newHashSet();
@@ -98,10 +103,27 @@ public class PokerTournamentState implements Serializable {
 
     private BigDecimal prizePool = BigDecimal.ZERO;
 
-    // This is a session for the actual tournament. (Please ignore the bad type of it).
+    // This is a session for the actual tournament. Used for transferring money from the users to the tournament account.
     private TournamentSessionId tournamentSessionId;
 
     private TournamentLifeCycle tournamentLifeCycle;
+
+    private DateTime nextLevelStartTime = new DateTime(0);
+
+    private DateTime startTime = new DateTime(0);
+
+    // Maps playerId -> MttPlayer. Transient to reduce serialized size.
+    private transient Map<Integer, MttPlayer> playerMap;
+
+    // Sorted player list which is shown in the tournament lobby. Transient to reduce serialized size.
+    private transient TournamentPlayerList playerList;
+
+    // Maps playerId -> tableId where he sits. Transient to reduce serialized size.
+    private transient Map<Integer, Integer> playerToTableMap;
+
+    private transient TournamentStatistics tournamentStatistics;
+
+    private transient com.cubeia.games.poker.io.protocol.BlindsStructure blindsStructurePacket;
 
     public boolean allTablesHaveBeenCreated(int tablesCreated) {
         return tablesCreated >= tablesToCreate;
@@ -112,6 +134,7 @@ public class PokerTournamentState implements Serializable {
     }
 
     public Long getPlayerBalance(int playerId) {
+        if (!balances.containsKey(playerId)) return 0L;
         return balances.get(playerId);
     }
 
@@ -163,10 +186,6 @@ public class PokerTournamentState implements Serializable {
         this.blindsStructure = blindsStructure;
         currentBlindsLevelNr = 0;
         currentBlindsLevel = blindsStructure.getFirstBlindsLevel();
-    }
-
-    public BlindsStructure getBlindsStructure() {
-        return blindsStructure;
     }
 
     public Level getCurrentBlindsLevel() {
@@ -260,17 +279,18 @@ public class PokerTournamentState implements Serializable {
         tablesReadyForBreak.clear();
     }
 
-    public void setPayoutStructure(PayoutStructure payoutStructure) {
+    public void setPayoutStructure(PayoutStructure payoutStructure, int minPlayers) {
         this.payoutStructure = payoutStructure;
+        // Init the payouts assuming that there will be at least minPlayers players.
+        setPayouts(minPlayers);
     }
 
     /**
      * Sets the payouts to use given the number of players that participate in the tournament.
      *
-     * @param registeredPlayersCount
      */
     public void setPayouts(int registeredPlayersCount) {
-        long totalPrizePoolAsLong = prizePool.movePointRight(2).longValue();
+        long totalPrizePoolAsLong = buyIn.multiply(BigDecimal.valueOf(registeredPlayersCount)).movePointRight(2).longValue();
         log.debug("Total prize pool as long: " + totalPrizePoolAsLong);
         this.payouts = payoutStructure.getPayoutsForEntrantsAndPrizePool(registeredPlayersCount, totalPrizePoolAsLong);
     }
@@ -321,6 +341,14 @@ public class PokerTournamentState implements Serializable {
         return tournamentLifeCycle.getTimeToTournamentStart(now);
     }
 
+    public DateTime getStartTime() {
+        if (status == PokerTournamentStatus.RUNNING) {
+            return startTime;
+        } else {
+            return tournamentLifeCycle.getStartTime();
+        }
+    }
+
     public long getTimeUntilRegistrationStart(DateTime now) {
         return tournamentLifeCycle.getTimeToRegistrationStart(now);
     }
@@ -340,5 +368,104 @@ public class PokerTournamentState implements Serializable {
 
     public boolean shouldScheduleRegistrationOpening(DateTime now) {
         return tournamentLifeCycle.shouldScheduleRegistrationOpening(getStatus(), now);
+    }
+
+    public int getWinningsFor(MttPlayer player) {
+        if (player.getStatus() == MttPlayerStatus.OUT) {
+            return payouts.getPayoutsForPosition(player.getPosition());
+        }
+        return 0;
+    }
+
+    public BlindsStructure getBlindsStructure() {
+        return blindsStructure;
+    }
+
+    public MttPlayer getTournamentPlayer(int playerId, MTTStateSupport support) {
+        if (playerMap == null) {
+            createPlayerMap(support);
+        }
+        return playerMap.get(playerId);
+    }
+
+    public void invalidatePlayerMap() {
+        playerMap = null;
+        playerList = null;
+    }
+
+    private void createPlayerMap(MTTStateSupport support) {
+        playerMap = newHashMap();
+        for (MttPlayer player : support.getPlayerRegistry().getPlayers()) {
+            playerMap.put(player.getPlayerId(), player);
+        }
+    }
+
+    public BigDecimal getPrizePool() {
+        return prizePool;
+    }
+
+    public void setPlayerList(TournamentPlayerList playerList) {
+        this.playerList = playerList;
+    }
+
+    public TournamentPlayerList getPlayerList() {
+        return playerList;
+    }
+
+    public void invalidatePlayerList() {
+        playerList = null;
+    }
+
+    public int getTableFor(int playerId, MTTStateSupport state) {
+        if (playerToTableMap == null) {
+            createPlayerToTableMap(state);
+        }
+        Integer tableId = playerToTableMap.get(playerId);
+        return tableId == null ? -1 : tableId;
+    }
+
+    private void createPlayerToTableMap(MTTStateSupport state) {
+        playerToTableMap = newHashMap();
+        for (Integer tableId : state.getTables()) {
+            for (Integer playerId : state.getPlayersAtTable(tableId)) {
+                playerToTableMap.put(playerId, tableId);
+            }
+        }
+    }
+
+    public void invalidatePlayerToTableMap() {
+        playerToTableMap = null;
+    }
+
+    public TournamentStatistics getTournamentStatistics() {
+        return tournamentStatistics;
+    }
+
+    public void setTournamentStatistics(TournamentStatistics tournamentStatistics) {
+        this.tournamentStatistics = tournamentStatistics;
+    }
+
+    public com.cubeia.games.poker.io.protocol.BlindsStructure getBlindsStructurePacket() {
+        return blindsStructurePacket;
+    }
+
+    public void setBlindsStructurePacket(com.cubeia.games.poker.io.protocol.BlindsStructure blindsStructurePacket) {
+        this.blindsStructurePacket = blindsStructurePacket;
+    }
+
+    public int getCurrentBlindsLevelNr() {
+        return currentBlindsLevelNr;
+    }
+
+    public int getTimeToNextLevel(DateTime now) {
+        return max(0, secondsBetween(now, nextLevelStartTime).getSeconds());
+    }
+
+    public void setNextLevelStartTime(DateTime time) {
+        nextLevelStartTime = time;
+    }
+
+    public void setStartTime(DateTime now) {
+        this.startTime = now;
     }
 }

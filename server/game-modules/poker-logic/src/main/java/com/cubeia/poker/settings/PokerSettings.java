@@ -26,7 +26,7 @@ public class PokerSettings implements Serializable {
 
     private static final long serialVersionUID = -8524532061876453809L;
 
-	private int anteAmount;
+    private int anteAmount;
 
     private int smallBlindAmount;
 

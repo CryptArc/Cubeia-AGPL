@@ -1,13 +1,13 @@
-describe("Poker.Utils Test", function(){
+describe("Poker.Animation Test", function(){
     var mockEl = null;
     beforeEach(function() {
         mockEl = {
             style : {}
         };
         //eq to a webkit browser
-        mockEl.style["-webkit-transition"]="";
-        mockEl.style["-webkit-transform"]="";
-        mockEl.style["-webkit-transform-origin"]="";
+        mockEl.style["WebkitTransition"]="";
+        mockEl.style["WebkitTransform"]="";
+        mockEl.style["WebkitTransformOrigin"]="";
     });
 
     it("Remaining time test", function(){
@@ -36,11 +36,11 @@ describe("Poker.Utils Test", function(){
         animation.prepareElement();
 
         //start transform after 500 ms
-        expect(mockEl.style["-webkit-transform"]).toEqual("scale3d(0.5,0.5,1)");
+        expect(mockEl.style["WebkitTransform"]).toEqual("scale3d(0.5,0.5,1)");
         animation.prepare();
         animation.animate();
-        expect(mockEl.style["-webkit-transition"]).toEqual("-webkit-transform 0.5s linear");
-        expect(mockEl.style["-webkit-transform"]).toEqual("scale3d(0,0,1)");
+        expect(mockEl.style["WebkitTransition"]).toEqual("-webkit-transform 0.5s linear");
+        expect(mockEl.style["WebkitTransform"]).toEqual("scale3d(0,0,1)");
 
 
     });
@@ -58,12 +58,12 @@ describe("Poker.Utils Test", function(){
         animation.prepareElement();
 
         //start transform after 500 ms
-        expect(mockEl.style["-webkit-transform"]).toEqual("translate3d(50%,50%,0)");
+        expect(mockEl.style["WebkitTransform"]).toEqual("translate3d(50%,50%,0)");
         animation.prepare();
         animation.animate();
         //check complete values at time 1000 (transition complete)
-        expect(mockEl.style["-webkit-transition"]).toEqual("-webkit-transform 0.5s linear");
-        expect(mockEl.style["-webkit-transform"]).toEqual("translate3d(100%,100%,0)");
+        expect(mockEl.style["WebkitTransition"]).toEqual("-webkit-transform 0.5s linear");
+        expect(mockEl.style["WebkitTransform"]).toEqual("translate3d(100%,100%,0)");
 
 
     });
@@ -82,12 +82,12 @@ describe("Poker.Utils Test", function(){
         animation.prepareElement();
 
         //start transform after 500 ms
-        expect(mockEl.style["-webkit-transform"]).toEqual("rotate(150deg)");
+        expect(mockEl.style["WebkitTransform"]).toEqual("rotate(150deg)");
         animation.prepare();
         animation.animate();
         //check complete values at time 1000 (transition complete)
-        expect(mockEl.style["-webkit-transition"]).toEqual("-webkit-transform 0.5s linear");
-        expect(mockEl.style["-webkit-transform"]).toEqual("rotate(200deg)");
+        expect(mockEl.style["WebkitTransition"]).toEqual("-webkit-transform 0.5s linear");
+        expect(mockEl.style["WebkitTransform"]).toEqual("rotate(200deg)");
 
 
     });

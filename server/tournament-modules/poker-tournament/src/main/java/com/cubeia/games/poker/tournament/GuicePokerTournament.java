@@ -20,6 +20,9 @@ package com.cubeia.games.poker.tournament;
 import com.cubeia.firebase.guice.tournament.Configuration;
 import com.cubeia.firebase.guice.tournament.GuiceTournament;
 import com.cubeia.firebase.guice.tournament.TournamentHandler;
+import com.google.inject.Module;
+
+import java.util.List;
 
 public class GuicePokerTournament extends GuiceTournament {
 
@@ -33,4 +36,8 @@ public class GuicePokerTournament extends GuiceTournament {
         };
     }
 
+    @Override
+    protected void preInjectorCreation(List<Module> modules) {
+        modules.add(new PokerTournamentBindings());
+    }
 }

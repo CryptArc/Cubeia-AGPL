@@ -35,21 +35,18 @@ import java.util.*;
 @SuppressWarnings("serial")
 public class LinearRakeWithLimitCalculator implements RakeCalculator {
 
-    private final BigDecimal rakeFraction;
-    private final long rakeLimit;
-    private final long rakeLimitHeadsUp;
+    private RakeSettings settings;
 
     public LinearRakeWithLimitCalculator(RakeSettings rakeSettings) {
-        this.rakeFraction = rakeSettings.getRakeFraction();
-        this.rakeLimit = rakeSettings.getRakeLimit();
-        this.rakeLimitHeadsUp = rakeSettings.getRakeLimitHeadsUp();
+        this.settings = rakeSettings;
     }
 
     @Override
     public RakeInfoContainer calculateRakes(Collection<Pot> pots, boolean tableHasSeenAction) {
         Map<Pot, Long> potRake = new HashMap<Pot, Long>();
 
-        long limit = countPlayers(pots) == 2 ? rakeLimitHeadsUp : rakeLimit;
+        int playersCount = countPlayers(pots);
+        long limit = settings.getRakeLimit(playersCount);
 
         List<Pot> potsSortedById = sortPotsInIdOrder(pots);
 
@@ -61,7 +58,7 @@ public class LinearRakeWithLimitCalculator implements RakeCalculator {
 
             long rake = 0L;
             if (tableHasSeenAction) {
-                rake = rakeFraction.multiply(new BigDecimal(potSize)).longValue();
+                rake = settings.getRakeFraction(playersCount).multiply(new BigDecimal(potSize)).longValue();
                 if (willRakeAdditionBreakLimit(totalRake, rake, limit)) {
                     rake = limit - totalRake;
                 }
@@ -104,9 +101,10 @@ public class LinearRakeWithLimitCalculator implements RakeCalculator {
         return totalRake + rakeAddition > limit;
     }
 
-
     @Override
     public String toString() {
-        return "rake fraction = " + rakeFraction + ", rake limit = " + rakeLimit;
+        return "LinearRakeWithLimitCalculator{" +
+                "settings=" + settings +
+                '}';
     }
 }

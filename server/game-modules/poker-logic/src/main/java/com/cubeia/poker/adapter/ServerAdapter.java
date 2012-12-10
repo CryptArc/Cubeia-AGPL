@@ -230,4 +230,6 @@ public interface ServerAdapter {
     void notifyBlindsLevelUpdated(int smallBlindAmount, int bigBlindAmount, int ante, boolean aBreak, int durationInMinutes);
 
     void notifyWaitingToStartBreak();
+
+    void notifyWaitingForPlayers();
 }

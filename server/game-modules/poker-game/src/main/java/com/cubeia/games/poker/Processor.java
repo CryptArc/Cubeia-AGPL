@@ -42,6 +42,7 @@ import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
 import com.cubeia.games.poker.jmx.PokerStats;
 import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.games.poker.state.FirebaseState;
+import com.cubeia.games.poker.tournament.WaitingForPlayers;
 import com.cubeia.games.poker.tournament.WaitingForTablesToFinishBeforeBreak;
 import com.cubeia.games.poker.tournament.configuration.blinds.Level;
 import com.cubeia.poker.PokerState;
@@ -51,8 +52,6 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.joda.time.Duration.standardMinutes;
 
 
 /**
@@ -154,6 +153,8 @@ public class Processor implements GameProcessor, TournamentProcessor {
                 tableCloseHandler.closeTable(table, false);
             } else if (attachment instanceof WaitingForTablesToFinishBeforeBreak) {
                 handleWaitingForBreak();
+            } else if (attachment instanceof WaitingForPlayers) {
+                handleWaitingForPlayers();
             } else if (attachment instanceof Level) {
                 handleBlindsLevel((Level) attachment);
             } else if ("CLOSE_TABLE_HINT".equals(attachment.toString())) {
@@ -177,8 +178,11 @@ public class Processor implements GameProcessor, TournamentProcessor {
     }
 
     private void handleWaitingForBreak() {
-        log.debug("We are waiting for all other tables to finish and the we'll start the break.");
-        // TODO: Notify players.
+        state.notifyWaitingToStartBreak();
+    }
+
+    private void handleWaitingForPlayers() {
+        state.notifyWaitingForPlayers();
     }
 
     private void handleBlindsLevel(Level blindsLevel) {

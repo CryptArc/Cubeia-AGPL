@@ -49,6 +49,7 @@ import com.cubeia.games.poker.handler.Trigger;
 import com.cubeia.games.poker.handler.TriggerType;
 import com.cubeia.games.poker.io.protocol.BestHand;
 import com.cubeia.games.poker.io.protocol.BlindsAreUpdated;
+import com.cubeia.games.poker.io.protocol.BlindsLevel;
 import com.cubeia.games.poker.io.protocol.BuyInInfoResponse;
 import com.cubeia.games.poker.io.protocol.DealPrivateCards;
 import com.cubeia.games.poker.io.protocol.DealPublicCards;
@@ -74,6 +75,7 @@ import com.cubeia.games.poker.io.protocol.RequestAction;
 import com.cubeia.games.poker.io.protocol.StartNewHand;
 import com.cubeia.games.poker.io.protocol.TakeBackUncalledBet;
 import com.cubeia.games.poker.io.protocol.WaitingToStartBreak;
+import com.cubeia.games.poker.io.protocol.WaitingForPlayers;
 import com.cubeia.games.poker.jmx.PokerStats;
 import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
@@ -206,12 +208,17 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
     @Override
     public void notifyBlindsLevelUpdated(int smallBlindAmount, int bigBlindAmount, int ante, boolean isBreak, int durationInMinutes) {
-        sendPublicPacket(new BlindsAreUpdated(smallBlindAmount, bigBlindAmount, ante, isBreak, durationInMinutes));
+        sendPublicPacket(new BlindsAreUpdated(new BlindsLevel(smallBlindAmount, bigBlindAmount, ante, isBreak, durationInMinutes)));
     }
 
     @Override
     public void notifyWaitingToStartBreak() {
         sendPublicPacket(new WaitingToStartBreak());
+    }
+
+    @Override
+    public void notifyWaitingForPlayers() {
+        sendPublicPacket(new WaitingForPlayers());
     }
 
     @Override

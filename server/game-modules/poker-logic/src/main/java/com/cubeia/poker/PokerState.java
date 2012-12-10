@@ -401,4 +401,15 @@ public class PokerState implements Serializable, IPokerState {
         }
         serverAdapter.notifyBlindsLevelUpdated(smallBlindAmount, bigBlindAmount, ante, isBreak, durationInMinutes);
     }
+
+    public void notifyWaitingToStartBreak() {
+        log.debug("We are waiting for all other tables to finish and the we'll start the break.");
+        serverAdapter.notifyWaitingToStartBreak();
+    }
+
+    public void notifyWaitingForPlayers() {
+        log.debug("We are waiting for all other tables to finish and the we'll start the break.");
+        serverAdapter.notifyWaitingForPlayers();
+    }
+
 }

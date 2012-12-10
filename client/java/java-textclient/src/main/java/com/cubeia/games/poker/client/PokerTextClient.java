@@ -17,13 +17,15 @@
 
 package com.cubeia.games.poker.client;
 
+import com.cubeia.firebase.clients.java.connector.text.Player;
 import com.cubeia.firebase.clients.java.connector.text.SimpleTextClient;
 import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
-import com.cubeia.games.poker.io.protocol.BuyInRequest;
+import com.cubeia.firebase.io.protocol.LoginRequestPacket;
+import com.cubeia.firebase.io.protocol.MttTransportPacket;
+import com.cubeia.games.poker.io.protocol.*;
 import com.cubeia.games.poker.io.protocol.Enums.ActionType;
-import com.cubeia.games.poker.io.protocol.PerformAction;
-import com.cubeia.games.poker.io.protocol.PlayerAction;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -38,9 +40,10 @@ public class PokerTextClient extends SimpleTextClient {
 
     public PokerTextClient(String host, int port) {
         super(host, port);
-        ManualPacketHandler handler = new ManualPacketHandler(context);
+        ManualPacketHandler handler = new ManualPacketHandler();
         handler.setTestHandler(new ManualGameHandler(context));
         context.getConnector().addPacketHandler(handler);
+        commandNotifier = new PatchedCommandNotifier(context, this, true);
     }
 
     /**
@@ -75,15 +78,27 @@ public class PokerTextClient extends SimpleTextClient {
         }
     }
 
-    private boolean handleGenericPokerCommand(String[] args) {
-        int tableid = Integer.parseInt(args[1]);
-
-        if (args[0].equals("buyin")) {
+    private boolean handleGenericPokerCommand(String[] args) throws IOException {
+        if (args[0].equals("ologin")) {
+            String username = args[1];
+            String password = args[2];
+            int operatorId = Integer.parseInt(args[3]);
+            LoginRequestPacket loginRequest = new LoginRequestPacket();
+            loginRequest.operatorid = operatorId;
+            loginRequest.user = username;
+            loginRequest.password = password;
+            send(loginRequest);
+            context.setPlayer(new Player(username, -1));
+        } else if (args[0].equals("buyin")) {
+            int tableId = Integer.parseInt(args[1]);
             BuyInRequest packet = new BuyInRequest();
             packet.amount = Integer.parseInt(args[2]);
             packet.sitInIfSuccessful = true;
-            send(tableid, packet);
-
+            send(tableId, packet);
+        } else if (args[0].equals("tourlobby")) {
+            int tournamentId = Integer.parseInt(args[1]);
+            RequestTournamentLobbyData request = new RequestTournamentLobbyData();
+            sendTournamentDataPacket(tournamentId, context.getPlayerId(), styxEncoder.pack(request));
         } else {
             return false;
         }
@@ -145,28 +160,39 @@ public class PokerTextClient extends SimpleTextClient {
             PlayerAction type = new PlayerAction();
             type.type = ActionType.FOLD;
             packet.action = type;
-
         }
 
-        int tableid = Integer.parseInt(args[1]);
-        send(tableid, packet);
+        int tableId = Integer.parseInt(args[1]);
+        send(tableId, packet);
     }
 
     /**
      * Sends data wrapped in a GameTransportPacket
      * the context attribute is supplied by the super class
      *
-     * @param tableid
+     * @param tableId
      * @param packet
      */
-    private void send(int tableid, ProtocolObject packet) {
+    private void send(int tableId, ProtocolObject packet) {
         ByteBuffer buffer;
         try {
             buffer = styxEncoder.pack(packet);
-            context.getConnector().sendDataPacket(tableid, context.getPlayerId(), buffer);
+            context.getConnector().sendDataPacket(tableId, context.getPlayerId(), buffer);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void send(ProtocolObject packet) {
+        context.getConnector().sendPacket(packet);
+    }
+
+    private void sendTournamentDataPacket(int tournamentId, int playerId, ByteBuffer buffer) {
+        MttTransportPacket packet = new MttTransportPacket();
+        packet.mttid = tournamentId;
+        packet.pid = playerId;
+        packet.mttdata = buffer.array();
+        context.getConnector().sendPacket(packet);
     }
 
     /**

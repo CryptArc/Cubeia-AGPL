@@ -34,6 +34,7 @@ import com.mongodb.util.JSON;
 import org.apache.log4j.Logger;
 import org.bson.types.ObjectId;
 
+// Use Morphia instead.
 public class DatabaseStorageService implements TournamentHistoryPersistenceService, Service {
 
     private static final Logger log = Logger.getLogger(DatabaseStorageService.class);
@@ -57,14 +58,13 @@ public class DatabaseStorageService implements TournamentHistoryPersistenceServi
     @Override
     public HistoricTournament getHistoricTournament(String id) {
         DBObject dbObject = mongoStorage.getById(new ObjectId(id), TOURNAMENT_COLLECTION);
-        HistoricTournament historicTournament = createGson().fromJson(dbObject.toString(), HistoricTournament.class);
-        return historicTournament;
+        return createGson().fromJson(dbObject.toString(), HistoricTournament.class);
     }
 
     @Override
-    public void playerOut(int playerId, int position, String historicId, long now) {
+    public void playerOut(int playerId, int position, int payoutInCents, String historicId, long now) {
         addEvent(historicId, new TournamentEvent(now, "player " + playerId + " out", "" + position));
-        addPlayerPosition(historicId, playerId, position);
+        addPlayerPosition(historicId, playerId, position, payoutInCents);
     }
 
     @Override
@@ -138,8 +138,8 @@ public class DatabaseStorageService implements TournamentHistoryPersistenceServi
         pushObject(historicId, event, "events");
     }
 
-    private void addPlayerPosition(String historicId, int playerId, int position) {
-        pushObject(historicId, new PlayerPosition(playerId, position), "positions");
+    private void addPlayerPosition(String historicId, int playerId, int position, int payoutInCents) {
+        pushObject(historicId, new PlayerPosition(playerId, position, payoutInCents), "positions");
     }
 
     private void pushObject(String historicId, Object object, String array) {

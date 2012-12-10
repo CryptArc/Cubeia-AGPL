@@ -36,10 +36,12 @@ import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.firebase.api.mtt.support.registry.PlayerRegistry;
 import com.cubeia.firebase.api.scheduler.Scheduler;
 import com.cubeia.firebase.guice.tournament.TournamentAssist;
+import com.cubeia.games.poker.common.DefaultSystemTime;
 import com.cubeia.games.poker.common.SystemTime;
 import com.cubeia.games.poker.tournament.configuration.blinds.Level;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.ScheduledTournamentLifeCycle;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.TournamentLifeCycle;
+import com.cubeia.games.poker.tournament.lobby.TournamentLobby;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
@@ -118,6 +120,9 @@ public class PokerTournamentTest {
     @Mock
     private PokerTournamentState mockPokerState;
 
+    @Mock
+    private TournamentLobby tournamentLobby;
+
     private PokerTournament tournament;
 
     private TournamentLifeCycle lifeCycle;
@@ -128,7 +133,7 @@ public class PokerTournamentTest {
         pokerState = new PokerTournamentState();
         pokerState.setBuyIn(BigDecimal.valueOf(10));
         pokerState.setFee(BigDecimal.valueOf(1));
-        pokerState.setPayoutStructure(createTestStructure());
+        pokerState.setPayoutStructure(createTestStructure(), 10);
         pokerState.setLifecycle(mockLifeCycle);
         when(instance.getScheduler()).thenReturn(scheduler);
         when(instance.getLobbyAccessor()).thenReturn(lobbyAccessor);
@@ -158,7 +163,7 @@ public class PokerTournamentTest {
     public void shouldScheduleTournamentStartAfterOpeningRegistration() {
         // Given a scheduled tournament
         prepareTournamentWithLifecycle();
-        when(dateFetcher.date()).thenReturn(new DateTime(2011, 7, 5, 14, 00, 1));
+        when(dateFetcher.date()).thenReturn(new DateTime(2011, 7, 5, 14, 0, 1));
 
         // When registration is opened
         tournament.handleTrigger(TournamentTrigger.OPEN_REGISTRATION);
@@ -178,7 +183,7 @@ public class PokerTournamentTest {
         pokerState.setTournamentSessionId(new TournamentSessionId("test"));
 
         // When we register a player
-        tournament.register(new MttRegistrationRequest(new MttPlayer(1), null));
+        tournament.checkRegistration(new MttRegistrationRequest(new MttPlayer(1), null));
 
         // A call to the backend should be made with 1100 cents.
         ArgumentCaptor<OpenTournamentSessionRequest> captor = ArgumentCaptor.forClass(OpenTournamentSessionRequest.class);
@@ -195,7 +200,7 @@ public class PokerTournamentTest {
         pokerState.setStatus(PokerTournamentStatus.ANNOUNCED);
 
         // When we register a player
-        tournament.register(new MttRegistrationRequest(new MttPlayer(1), null));
+        tournament.checkRegistration(new MttRegistrationRequest(new MttPlayer(1), null));
 
         // A call to the backend should be made with 1100 cents.
         verify(backend, never()).openTournamentSession(Mockito.<OpenTournamentSessionRequest>any());
@@ -206,7 +211,7 @@ public class PokerTournamentTest {
         // Given a tournament with one registered (but pending) player.
         prepareTournamentWithLifecycle();
         pokerState.setStatus(PokerTournamentStatus.REGISTERING);
-        tournament.register(new MttRegistrationRequest(new MttPlayer(1), null));
+        tournament.checkRegistration(new MttRegistrationRequest(new MttPlayer(1), null));
         assertThat(pokerState.hasPendingRegistrations(), is(true));
 
         // When the tournament is supposed to start.
@@ -221,7 +226,7 @@ public class PokerTournamentTest {
         // Given a tournament with one registered (but pending) player and that it's time to start the tournament.
         prepareTournamentWithMockLifecycle();
         pokerState.setStatus(PokerTournamentStatus.REGISTERING);
-        tournament.register(new MttRegistrationRequest(new MttPlayer(1), null));
+        tournament.checkRegistration(new MttRegistrationRequest(new MttPlayer(1), null));
         assertThat(pokerState.hasPendingRegistrations(), is(true));
         tournament.handleTrigger(TournamentTrigger.START_TOURNAMENT);
         when(mockLifeCycle.shouldStartTournament(Mockito.<DateTime>any(), anyInt(), anyInt())).thenReturn(true);
@@ -238,7 +243,7 @@ public class PokerTournamentTest {
         // Given a tournament with one registered (but pending) player and that it's time to start the tournament.
         prepareTournamentWithMockLifecycle();
         pokerState.setStatus(PokerTournamentStatus.REGISTERING);
-        tournament.register(new MttRegistrationRequest(new MttPlayer(1), null));
+        tournament.checkRegistration(new MttRegistrationRequest(new MttPlayer(1), null));
         assertThat(pokerState.hasPendingRegistrations(), is(true));
         tournament.handleTrigger(TournamentTrigger.START_TOURNAMENT);
         when(mockLifeCycle.shouldStartTournament(Mockito.<DateTime>any(), anyInt(), anyInt())).thenReturn(false);
@@ -375,26 +380,31 @@ public class PokerTournamentTest {
         verify(support, never()).sendRoundStartActionToTables(state, of(1));
     }
 
+    @Test
+    public void testPlayerListWhenTournamentIsFinished() {
+
+    }
+
     private TournamentLifeCycle prepareTournamentWithLifecycle() {
         DateTime startTime = new DateTime(2011, 7, 5, 14, 30, 0);
         DateTime openRegistrationTime = new DateTime(2011, 7, 5, 14, 0, 0);
         lifeCycle = new ScheduledTournamentLifeCycle(startTime, openRegistrationTime);
         pokerState.setLifecycle(lifeCycle);
         tournament = new PokerTournament(pokerState);
-        tournament.injectTransientDependencies(instance, support, state, notifier, historyService, backend, dateFetcher);
+        tournament.injectTransientDependencies(instance, support, state, historyService, backend, dateFetcher, tournamentLobby);
         return lifeCycle;
     }
 
     private void prepareTournamentWithMockLifecycle() {
-        pokerState.setLifecycle(mockLifeCycle);;
+        pokerState.setLifecycle(mockLifeCycle);
         tournament = new PokerTournament(pokerState);
-        tournament.injectTransientDependencies(instance, support, state, notifier, historyService, backend, dateFetcher);
+        tournament.injectTransientDependencies(instance, support, state, historyService, backend, dateFetcher, tournamentLobby);
         pokerState.setBlindsStructure(createDefaultBlindsStructure());
     }
 
     private void prepareTournamentWithMockTournamentState() {
         tournament = new PokerTournament(mockPokerState);
-        tournament.injectTransientDependencies(instance, support, state, notifier, historyService, backend, dateFetcher);
+        tournament.injectTransientDependencies(instance, support, state, historyService, backend, new DefaultSystemTime(), tournamentLobby);
         pokerState.setBlindsStructure(createDefaultBlindsStructure());
     }
 }

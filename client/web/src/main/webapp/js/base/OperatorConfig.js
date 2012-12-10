@@ -20,12 +20,12 @@ Poker.OperatorConfig = Class.extend({
       return this.getValue("CLIENT_HELP_URL","http://www.cubeia.com");
     },
     getValue : function(param,def) {
-      var value =  this.configMap.get(param);
-      if(value==null) {
+        var value =  this.configMap.get(param);
+        if(value==null) {
           console.log("Value for param " + param + " not available, returning default " + def);
           value = def;
       }
-      return def;
+      return value;
     }
 });
 Poker.OperatorConfig = new Poker.OperatorConfig();

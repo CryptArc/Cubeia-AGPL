@@ -25,5 +25,22 @@ Poker.TemplateManager = Class.extend({
             return template;
 
         }
+    },
+    /**
+     * Retrieves a "Render template" by a template id
+     * that wraps the Mustache.render(template,data) call.
+     *
+     * Usage:
+     * var rt = templateManager.getRenderTemplate("templateId");
+     * var output = rt.render(jsonData);
+     *
+     * @param id
+     * @return {Object}
+     */
+    getRenderTemplate : function(id) {
+        var self = this;
+        return { render : function(data) {
+            return Mustache.render(self.getTemplate(id),data);
+        }};
     }
 });

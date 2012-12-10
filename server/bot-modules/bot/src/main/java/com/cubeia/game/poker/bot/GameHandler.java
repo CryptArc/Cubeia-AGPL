@@ -157,15 +157,18 @@ public class GameHandler implements PacketVisitor {
         return cappedBet;
     }
 
+    @Override
     public void visit(StartHandHistory packet) {
         historicActionsAreBeingSent.set(true);
     }
 
+    @Override
     public void visit(StopHandHistory packet) {
         historicActionsAreBeingSent.set(false);
     }
 
 
+    @Override
     public void visit(TournamentOut packet) {
         bot.getBot().logDebug("I was out from tournament. Position: " + packet.position);
         if (bot instanceof MttAI) {
@@ -173,6 +176,7 @@ public class GameHandler implements PacketVisitor {
         }
     }
 
+    @Override
     public void visit(PlayerPokerStatus packet) {
         if (packet.player == bot.getBot().getPid() && packet.status.equals(PlayerTableStatus.SITOUT)) {
             // I am in sitout state, schedule a sitin again
@@ -191,6 +195,7 @@ public class GameHandler implements PacketVisitor {
     /**
      * Handle buy in
      */
+    @Override
     public void visit(BuyInInfoResponse packet) {
         bot.getBot().logInfo("I will make a buy in with the maximum amount of " + packet.maxAmount);
         BuyInRequest request = new BuyInRequest();
@@ -199,108 +204,219 @@ public class GameHandler implements PacketVisitor {
         bot.getBot().sendGameData(bot.getTable().getId(), bot.getBot().getPid(), request);
     }
 
+    @Override
     public void visit(TakeBackUncalledBet packet) {
     }
 
+    @Override
     public void visit(GameCard packet) {
     }
 
+    @Override
     public void visit(BestHand packet) {
     }
 
+    @Override
     public void visit(DealPublicCards packet) {
     }
 
+    @Override
     public void visit(DealPrivateCards packet) {
     }
 
+    @Override
     public void visit(ExposePrivateCards packet) {
     }
 
+    @Override
     public void visit(HandEnd packet) {
     }
 
+    @Override
     public void visit(PlayerState packet) {
     }
 
+    @Override
     public void visit(PerformAction packet) {
     }
 
+    @Override
     public void visit(PlayerAction packet) {
     }
 
+    @Override
     public void visit(DealerButton packet) {
     }
 
+    @Override
     public void visit(PlayerBalance packet) {
     }
 
+    @Override
     public void visit(Pot packet) {
     }
 
+    @Override
     public void visit(PlayerSitinRequest packet) {
     }
 
+    @Override
     public void visit(PlayerSitoutRequest arg0) {
     }
 
+    @Override
     public void visit(CardToDeal packet) {
     }
 
+    @Override
     public void visit(ExternalSessionInfoPacket packet) {
     }
 
+    @Override
     public void visit(HandCanceled packet) {
     }
 
+    @Override
     public void visit(BuyInInfoRequest packet) {
     }
 
+    @Override
     public void visit(BuyInRequest packet) {
     }
 
+    @Override
     public void visit(BuyInResponse packet) {
     }
 
+    @Override
     public void visit(PotTransfer packet) {
     }
 
+    @Override
     public void visit(PotTransfers packet) {
     }
 
+    @Override
     public void visit(RakeInfo packet) {
     }
 
+    @Override
     public void visit(DeckInfo packet) {
     }
 
+    @Override
     public void visit(WaitingToStartBreak packet) {
     }
 
+    @Override
+    public void visit(WaitingForPlayers packet) {
+    }
+
+    @Override
     public void visit(BlindsAreUpdated packet) {
     }
 
+    @Override
     public void visit(ErrorPacket packet) {
     }
 
+    @Override
     public void visit(FuturePlayerAction packet) {
     }
 
+    @Override
     public void visit(InformFutureAllowedActions packet) {
     }
 
+    @Override
     public void visit(PlayerHandStartStatus packet) {
     }
 
+    @Override
     public void visit(PlayerDisconnectedPacket packet) {
     }
 
+    @Override
     public void visit(PlayerReconnectedPacket packet) {
     }
 
+    @Override
     public void visit(PingPacket packet) {
     }
 
+    @Override
     public void visit(PongPacket packet) {
+    }
+
+    @Override
+    public void visit(RequestTournamentPlayerList packet) {
+    }
+
+    @Override
+    public void visit(TournamentPlayerList packet) {
+    }
+
+    @Override
+    public void visit(TournamentPlayer packet) {
+    }
+
+    @Override
+    public void visit(RequestBlindsStructure packet) {
+    }
+
+    @Override
+    public void visit(BlindsStructure packet) {
+    }
+
+    @Override
+    public void visit(BlindsLevel packet) {
+    }
+
+    @Override
+    public void visit(RequestPayoutInfo packet) {
+    }
+
+    @Override
+    public void visit(PayoutInfo packet) {
+    }
+
+    @Override
+    public void visit(Payout packet) {
+    }
+
+    @Override
+    public void visit(RequestTournamentStatistics packet) {
+    }
+
+    @Override
+    public void visit(ChipStatistics packet) {
+
+    }
+
+    @Override
+    public void visit(LevelInfo packet) {
+
+    }
+
+    @Override
+    public void visit(PlayersLeft packet) {
+
+    }
+
+    @Override
+    public void visit(TournamentStatistics packet) {
+    }
+
+    @Override
+    public void visit(TournamentInfo packet) {
+
+    }
+
+    @Override
+    public void visit(RequestTournamentLobbyData packet) {
+    }
+
+    @Override
+    public void visit(TournamentLobbyData packet) {
     }
 }

@@ -21,6 +21,7 @@ import com.cubeia.games.poker.entity.TableConfigTemplate;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
+import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
 import org.apache.log4j.Logger;
@@ -50,7 +51,7 @@ public class AbstractDAO extends JpaDaoSupport implements AdminDAO {
     }
 
     @Override
-    public <T> void removeItem(Class<T> class1, int id) {
+    public <T> void removeItem(Class<T> class1, int id) throws org.springframework.dao.DataAccessException {
         T item = getItem(class1, id);
         if (item != null) {
             getJpaTemplate().remove(item);
@@ -90,6 +91,12 @@ public class AbstractDAO extends JpaDaoSupport implements AdminDAO {
     @SuppressWarnings({"unchecked"})
     public List<TimingProfile> getTimingProfiles() {
         return getJpaTemplate().find("from TimingProfile");
+    }
+
+    @Override
+    @SuppressWarnings({"unchecked"})
+    public List<RakeSettings> getRakeSettings() {
+        return getJpaTemplate().find("from RakeSettings");
     }
 
     @Override

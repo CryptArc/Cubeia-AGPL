@@ -38,8 +38,8 @@ public class LoggingHistoryPersister implements TournamentHistoryPersistenceServ
     }
 
     @Override
-    public void playerOut(int playerId, int position, String historicId, long now) {
-        log.info("Tournament[ " + historicId + "]. Player " + playerId +  " finished in place " + position);
+    public void playerOut(int playerId, int position, int payoutInCents, String historicId, long now) {
+        log.info("Tournament[ " + historicId + "]. Player " + playerId +  " finished in place " + position + " and won: " + payoutInCents + " cents.");
     }
 
     @Override

@@ -80,12 +80,13 @@ public class Payouts implements Serializable {
         return new Payouts(entrantsRange, payoutList, prizePool);
     }
 
-    public long getPayoutsForPosition(int position) {
-        if (position > payoutList.size()) {
-            return 0;
-        } else {
-            return payoutList.get(position - 1).getTotalPayoutPercentage().multiply(new BigDecimal(prizePool).divide(new BigDecimal(100))).longValue();
+    public int getPayoutsForPosition(int position) {
+        for (Payout payout : payoutList) {
+            if (payout.getPositionRange().contains(position)) {
+                return payout.getPercentage().multiply(new BigDecimal(prizePool).divide(new BigDecimal(100))).intValue();
+            }
         }
+        return 0;
     }
 
     public IntRange getEntrantsRange() {
@@ -106,6 +107,17 @@ public class Payouts implements Serializable {
 
     public List<Payout> getPayoutList() {
         return payoutList;
+    }
+
+    public int getNumberOfPlacesInTheMoney() {
+        int max = 0;
+        for (Payout payout : payoutList) {
+            int upperBound = payout.getPositionRange().getStop();
+            if (upperBound > max) {
+                max = upperBound;
+            }
+        }
+        return max;
     }
 
     public void setPayoutList(List<Payout> payoutList) {
