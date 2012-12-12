@@ -2,7 +2,6 @@ AchievementLoader = function() {
     var location = window.location;
     var host = location.hostname;
     var port = location.port;
-    // var port = 8080;
     if (!host) host = "localhost";
     this.setBaseUrl(host+":"+port+"/achievements/rest/player");
     this.setUserId("UserId");
@@ -11,7 +10,7 @@ AchievementLoader = function() {
 };
 
 AchievementLoader.prototype.setBaseUrl = function(baseUrl) {
-    console.log("Base url set: ", baseUrl)
+    console.log("Achievement base url set: ", baseUrl)
     this.baseUrl = baseUrl;
 };
 
@@ -29,7 +28,7 @@ AchievementLoader.prototype.getUserId = function() {
 
 AchievementLoader.prototype.updateUrl = function() {
     var url = this.baseUrl+"/"+this.userId+"/achievements/"+this.game;
-    console.log(url)
+    console.log("Update URL: "+url);
     this.setUrl(url);
     return url;
 };
