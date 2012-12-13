@@ -116,7 +116,7 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
 
 	@Override
 	public AllowJoinResponse allowJoinTable(int playerId) {
-		log.warn("allow join not implemented, will always return ok");
+		log.trace("allow join not implemented, will always return ok");
 		return new AllowJoinResponse(true, -1);
 	}
 
@@ -252,12 +252,14 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
 					.attribute("pokerHandId", request.getHandId());
 
 			TransactionRequest txRequest = txBuilder.toTransactionRequest();
+			txRequest.getExcludeReturnBalanceForAcconds().add(rakeAccountId); // exclude the rake account
+			
 			log.debug("sending tx request to wallet: {}", txRequest);
 			TransactionResult txResult = walletService.doTransaction(txRequest);
 
 			List<TransactionUpdate> resultingBalances = new ArrayList<TransactionUpdate>();
 			for (AccountBalanceResult sb : txResult.getBalances()) {
-				if (sb.getAccountId() != rakeAccountId) {
+				if (sb.getAccountId() != rakeAccountId) { // shouldn't be needed (excluded above)
 					PlayerSessionId playerSessionId = sessionToPlayerSessionMap.get(sb.getAccountId());
 					Money balance = convertFromWalletMoney(sb.getBalance());
 					BalanceUpdate balanceUpdate = new BalanceUpdate(playerSessionId, balance, nextId());

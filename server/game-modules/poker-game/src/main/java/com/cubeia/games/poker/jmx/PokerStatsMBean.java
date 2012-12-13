@@ -32,4 +32,7 @@ public interface PokerStatsMBean {
     public void setStateTrackingEnabled(boolean enabled);
 
     public boolean isStateTrackingEnabled();
+
+	public int getSessionCount();
+
 }

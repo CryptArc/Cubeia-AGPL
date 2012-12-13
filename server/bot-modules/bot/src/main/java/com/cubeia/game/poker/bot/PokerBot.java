@@ -114,8 +114,9 @@ public class PokerBot extends BasicAI {
     protected void handleSeated() {
     	super.setDisableLeaveTable(true); // enable after entered first hand (on first action request)
         super.handleSeated();
-        BuyInInfoRequest buyInInfoRequest = new BuyInInfoRequest();
-        getBot().sendGameData(getTable().getId(), getBot().getPid(), buyInInfoRequest);
+        // Do not send buying request, we'll get that when the session opens
+        // BuyInInfoRequest buyInInfoRequest = new BuyInInfoRequest();
+        // getBot().sendGameData(getTable().getId(), getBot().getPid(), buyInInfoRequest);
     }
 
 }

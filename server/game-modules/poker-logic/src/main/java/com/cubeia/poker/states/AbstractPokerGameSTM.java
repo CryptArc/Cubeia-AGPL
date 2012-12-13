@@ -152,11 +152,12 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
 
     @Override
     public void playerOpenedSession(int playerId) {
-        boolean enoughMoney = gameType.canPlayerAffordEntryBet(context.getPlayer(playerId), context.getSettings(), false);
-        log.debug("Player {} opened session. Sending buy-in request if he doesn't have enough money for an entry bet: {}", playerId, enoughMoney);
-        if (!enoughMoney) {
-            getServerAdapterHolder().notifyBuyInInfo(playerId, false);
-        }
+        // boolean enoughMoney = gameType.canPlayerAffordEntryBet(context.getPlayer(playerId), context.getSettings(), false);
+        // log.debug("Player {} opened session. Sending buy-in request if he doesn't have enough money for an entry bet: {}", playerId, enoughMoney);
+        // if (!enoughMoney) {
+        // send buy-in info here -> you cannot open a session with money -> you *must* buy-in    
+        getServerAdapterHolder().notifyBuyInInfo(playerId, false);
+        // }
     }
 
     private void notifyPlayerSittingIn(int playerId) {

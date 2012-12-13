@@ -91,6 +91,7 @@ import com.cubeia.games.poker.io.protocol.StartNewHand;
 import com.cubeia.games.poker.io.protocol.TakeBackUncalledBet;
 import com.cubeia.games.poker.jmx.PokerStats;
 import com.cubeia.games.poker.logic.TimeoutCache;
+import com.cubeia.games.poker.model.GamePokerPlayer;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.games.poker.tournament.PokerTournamentRoundReport;
@@ -426,14 +427,16 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
     @Override
     public void notifyBuyInInfo(int playerId, boolean mandatoryBuyin) {
-        try {
-            PokerPlayer player = state.getPokerPlayer(playerId);
+    	GamePokerPlayer player = (GamePokerPlayer) state.getPokerPlayer(playerId);
+        if(player.getPlayerSessionId() == null) {
+        	log.debug("skipping buy-in information for player " + playerId + " as the session is not yet open");
+        	return; 
+        }
+    	try {
             BuyInInfoResponse resp = new BuyInInfoResponse();
-
             int playerBalance = player == null ? 0 : (int) (player.getBalance() + player.getPendingBalanceSum());
             resp.balanceOnTable = playerBalance;
             resp.mandatoryBuyin = mandatoryBuyin;
-
             try {
                 resp.balanceInWallet = (int) backend.getMainAccountBalance(playerId).getAmount();
             } catch (GetBalanceFailedException e) {
@@ -441,7 +444,6 @@ public class FirebaseServerAdapter implements ServerAdapter {
                 resp.resultCode = BuyInInfoResultCode.UNSPECIFIED_ERROR;
                 resp.balanceInWallet = -1;
             }
-
             if (resp.resultCode != BuyInInfoResultCode.UNSPECIFIED_ERROR) {
                 MinAndMaxBuyInResult buyInRange = buyInCalculator.calculateBuyInLimits(
                         state.getMinBuyIn(), state.getMaxBuyIn(), state.getAnteLevel(), playerBalance);
@@ -449,7 +451,6 @@ public class FirebaseServerAdapter implements ServerAdapter {
                 resp.maxAmount = buyInRange.getMaxBuyIn();
                 resp.resultCode = buyInRange.isBuyInPossible() ? BuyInInfoResultCode.OK : BuyInInfoResultCode.MAX_LIMIT_REACHED;
             }
-
             log.debug("Sending buyin information to player[" + playerId + "]: " + resp);
 
             GameDataAction gda = new GameDataAction(playerId, table.getId());

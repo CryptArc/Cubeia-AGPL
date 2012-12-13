@@ -71,6 +71,7 @@ import com.cubeia.games.poker.io.protocol.PotTransfers;
 import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
 import com.cubeia.games.poker.io.protocol.RequestAction;
 import com.cubeia.games.poker.logic.TimeoutCache;
+import com.cubeia.games.poker.model.GamePokerPlayer;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.games.poker.util.ProtocolFactory;
@@ -133,8 +134,11 @@ public class FirebaseServerAdapterTest {
         GameNotifier tableNotifier = mock(GameNotifier.class);
         when(fsa.table.getNotifier()).thenReturn(tableNotifier);
 
-        PokerPlayer pokerPlayer = mock(PokerPlayer.class);
+        GamePokerPlayer pokerPlayer = mock(GamePokerPlayer.class);
+        PlayerSessionId sesId = mock(PlayerSessionId.class);
+        when(pokerPlayer.getPlayerSessionId()).thenReturn(sesId);
         int playerId = 1337;
+        
         when(pokerPlayer.getId()).thenReturn(playerId);
 
         // fsa.protocolFactory = mock(ProtocolFactory.class);
@@ -185,7 +189,9 @@ public class FirebaseServerAdapterTest {
         GameNotifier tableNotifier = mock(GameNotifier.class);
         when(fsa.table.getNotifier()).thenReturn(tableNotifier);
 
-        PokerPlayer pokerPlayer = mock(PokerPlayer.class);
+        GamePokerPlayer pokerPlayer = mock(GamePokerPlayer.class);
+        PlayerSessionId sesId = mock(PlayerSessionId.class);
+        when(pokerPlayer.getPlayerSessionId()).thenReturn(sesId);
         int playerId = 1337;
         when(pokerPlayer.getId()).thenReturn(playerId);
 
@@ -278,7 +284,9 @@ public class FirebaseServerAdapterTest {
         GameNotifier tableNotifier = mock(GameNotifier.class);
         when(fsa.table.getNotifier()).thenReturn(tableNotifier);
 
-        PokerPlayer pokerPlayer = mock(PokerPlayer.class);
+        GamePokerPlayer pokerPlayer = mock(GamePokerPlayer.class);
+        PlayerSessionId sesId = mock(PlayerSessionId.class);
+        when(pokerPlayer.getPlayerSessionId()).thenReturn(sesId);
         int playerId = 1337;
         when(pokerPlayer.getId()).thenReturn(playerId);
 
@@ -321,7 +329,9 @@ public class FirebaseServerAdapterTest {
         GameNotifier tableNotifier = mock(GameNotifier.class);
         when(fsa.table.getNotifier()).thenReturn(tableNotifier);
 
-        PokerPlayer pokerPlayer = mock(PokerPlayer.class);
+        GamePokerPlayer pokerPlayer = mock(GamePokerPlayer.class);
+        PlayerSessionId sesId = mock(PlayerSessionId.class);
+        when(pokerPlayer.getPlayerSessionId()).thenReturn(sesId);
         int playerId = 1337;
         when(pokerPlayer.getId()).thenReturn(playerId);
 

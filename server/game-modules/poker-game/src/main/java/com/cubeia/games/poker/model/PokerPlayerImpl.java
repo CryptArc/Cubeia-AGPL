@@ -34,7 +34,8 @@ import java.util.Map;
  *
  * @author Fredrik Johansson, Cubeia Ltd
  */
-public class PokerPlayerImpl extends DefaultPokerPlayer implements Serializable {
+public class PokerPlayerImpl extends DefaultPokerPlayer implements Serializable, GamePokerPlayer {
+	
     public static final String ATTR_PLAYER_EXTERNAL_SESSION_ID = "PLAYER_EXTERNAL_SESSION_ID";
 
     private static final Logger log = LoggerFactory.getLogger(PokerPlayerImpl.class);
@@ -83,6 +84,7 @@ public class PokerPlayerImpl extends DefaultPokerPlayer implements Serializable 
      *
      * @return the session id, null if not in a session
      */
+    @Override
     public PlayerSessionId getPlayerSessionId() {
         return playerSessionId;
     }

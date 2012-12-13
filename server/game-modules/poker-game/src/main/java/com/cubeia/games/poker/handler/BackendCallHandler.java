@@ -31,6 +31,7 @@ import com.cubeia.games.poker.io.protocol.Enums;
 import com.cubeia.games.poker.io.protocol.Enums.BuyInResultCode;
 import com.cubeia.games.poker.io.protocol.Enums.ErrorCode;
 import com.cubeia.games.poker.io.protocol.ErrorPacket;
+import com.cubeia.games.poker.jmx.PokerStats;
 import com.cubeia.games.poker.lobby.PokerLobbyAttributes;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.games.poker.state.FirebaseState;
@@ -173,12 +174,13 @@ public class BackendCallHandler {
     }
 
     public void handleOpenSessionSuccessfulResponse(OpenSessionResponse openSessionResponse) {
-        PlayerSessionId playerSessionId = openSessionResponse.getSessionId();
+    	PlayerSessionId playerSessionId = openSessionResponse.getSessionId();
         int playerId = playerSessionId.playerId;
-
+        log.debug("handle open session success, tId = {}, pId = {}, sId = {}", new Object[]{ Integer.valueOf(table.getId()), playerId, playerSessionId });
         // TODO: This ain't pretty. Either make PokerPlayer know about sessions or hold the session in some wrapper.
         PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) state.getPokerPlayer(playerId);
         pokerPlayer.setPlayerSessionId(playerSessionId);
+        PokerStats.getInstance().increaseSessionCount();
         state.playerOpenedSession(playerId);
     }
 
