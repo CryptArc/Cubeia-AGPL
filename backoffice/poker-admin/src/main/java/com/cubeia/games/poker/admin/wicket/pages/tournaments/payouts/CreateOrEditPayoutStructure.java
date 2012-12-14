@@ -34,6 +34,7 @@ import org.apache.wicket.util.file.Files;
 import org.apache.wicket.util.lang.Bytes;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 public class CreateOrEditPayoutStructure extends BasePage {
@@ -138,8 +139,26 @@ public class CreateOrEditPayoutStructure extends BasePage {
             }
         }
 
-        private String getUploadFolder() {
-            return "/tmp/";
+        private File getUploadFolder() {
+            // return "/tmp/"; // Seems to fail on Windows
+            try {
+            	final File temp;
+				temp = File.createTempFile("temp", Long.toString(System.nanoTime()));
+
+	            if(!(temp.delete()))
+	            {
+	                throw new RuntimeException("Could not delete temp file: " + temp.getAbsolutePath());
+	            }
+	
+	            if(!(temp.mkdir()))
+	            {
+	                throw new RuntimeException("Could not create temp directory: " + temp.getAbsolutePath());
+	            }
+
+	            return temp;
+            } catch (IOException e) {
+            	throw new RuntimeException("Failed to create temporary file.", e);
+            }
         }
     }
 }

@@ -289,4 +289,28 @@ public class ManualGameHandler implements PacketVisitor {
         System.out.println("Received tournament lobby data: " + packet);
     }
 
+	@Override
+	public void visit(ChipStatistics packet) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(LevelInfo packet) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(PlayersLeft packet) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(TournamentInfo packet) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

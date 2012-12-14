@@ -61,7 +61,7 @@
             <plugin>
                 <groupId>com.cubeia.tools</groupId>
                 <artifactId>firebase-maven-plugin</artifactId>
-                <version>1.9.0-CE-RC.3</version>
+                <version>1.9.1-CE</version>
                 <configuration>
                     <!-- enable copy of overlay files -->
                     <overlaysEnabled>true</overlaysEnabled>
@@ -124,12 +124,21 @@
                     <artifactId>tournament-history-storage-service</artifactId>
                     <type>firebase-sar</type>
                 </dependency>
+                
                 <dependency>
                     <groupId>com.cubeia.network.operator</groupId>
                     <artifactId>fb-operator-service</artifactId>
                     <version>${cubeia.network.version}</version>
                     <type>firebase-sar</type>
                 </dependency>
+                <!-- 
+                <dependency>
+                    <groupId>com.cubeia.network.operator</groupId>
+                    <artifactId>fb-operator-service-mock</artifactId>
+                    <version>${cubeia.network.version}</version>
+                    <type>firebase-sar</type>
+                </dependency>
+                 -->
             </dependencies>
         </profile>
         <profile>

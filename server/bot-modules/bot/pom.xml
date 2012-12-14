@@ -25,9 +25,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.cubeia.tools</groupId>
+            <groupId>com.cubeia.firebase.bots</groupId>
             <artifactId>firebase-bots</artifactId>
-            <version>1.7.3-SNAPSHOT</version>
+            <version>1.9-SNAPSHOT</version>
         </dependency>
 
     </dependencies>

@@ -197,7 +197,7 @@ public class GameHandler implements PacketVisitor {
      */
     @Override
     public void visit(BuyInInfoResponse packet) {
-        bot.getBot().logInfo("I will make a buy in with the maximum amount of " + packet.maxAmount);
+        bot.getBot().logDebug("I will make a buy in with the maximum amount of " + packet.maxAmount);
         BuyInRequest request = new BuyInRequest();
         request.amount = packet.maxAmount;
         request.sitInIfSuccessful = true;

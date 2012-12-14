@@ -116,6 +116,7 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>1.0.72</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>commons-dbcp</groupId>
@@ -224,6 +225,12 @@
                     </excludes>
                 </configuration>
             </plugin>
+            <plugin>
+		        <artifactId>maven-war-plugin</artifactId>
+		        <configuration>
+		          <warName>poker-admin</warName>
+		        </configuration>
+		      </plugin>       
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
