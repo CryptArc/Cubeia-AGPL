@@ -6,21 +6,6 @@ Poker.Utils = {
     formatCurrency : function(amount) {
         return parseFloat(amount/100).toFixed(2);
     },
-    formatCentString : function(str) {
-        var length = str.length;
-        if(str=="0" || length==0) {
-            return "-";
-        } else if(length<3) {
-            return "0.00".substr(0,(4-length)) + str;
-        } else {
-            var val =  str.substr(0,length-2)
-            var decimals = str.substr(length-2,length);
-            if(parseInt(decimals)>0) {
-                val = "." + decimals;
-            }
-            return val;
-        }
-    },
     formatCurrencyString : function(amount) {
         return Poker.Utils.currencySymbol + Poker.Utils.formatCurrency(amount);
     },

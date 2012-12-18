@@ -402,6 +402,45 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <!-- Prevents Maven from downloading the internet every time you perform a build. -->
+            <id>skip-downloads</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <repositories>
+                <repository>
+                    <id>cubeia-nexus</id>
+                    <name>Public Cubeia Nexus</name>
+                    <url>http://m2.cubeia.com/nexus/content/groups/public/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                        <updatePolicy>never</updatePolicy>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                        <updatePolicy>never</updatePolicy>
+                    </snapshots>
+                </repository>
+            </repositories>
+
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>cubeia-nexus</id>
+                    <name>Public Cubeia Nexus</name>
+                    <url>http://m2.cubeia.com/nexus/content/groups/public/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                        <updatePolicy>never</updatePolicy>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                        <updatePolicy>never</updatePolicy>
+                    </snapshots>
+                </pluginRepository>
+            </pluginRepositories>
+
+        </profile>
     </profiles>
 
     <!-- Build config -->
@@ -448,13 +487,16 @@
             <url>http://m2.cubeia.com/nexus/content/groups/public/</url>
             <releases>
                 <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
             </releases>
             <snapshots>
                 <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
             </snapshots>
         </repository>
     </repositories>
 
+    <!-- TODO: SWITCH TO BC -->
     <pluginRepositories>
         <pluginRepository>
             <id>cubeia-nexus</id>
@@ -462,9 +504,11 @@
             <url>http://m2.cubeia.com/nexus/content/groups/public/</url>
             <releases>
                 <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
             </releases>
             <snapshots>
                 <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
@@ -489,4 +533,5 @@
         </snapshotRepository>
     </distributionManagement>
 
+    <!-- TODO: SWITCH TO BC -->
 </project>

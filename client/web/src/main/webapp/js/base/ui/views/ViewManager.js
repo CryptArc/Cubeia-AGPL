@@ -202,7 +202,7 @@ Poker.ViewManager = Class.extend({
       this.setViewDimensions();
     },
     addTournamentView : function(viewElementId,name,layoutManager) {
-        var view = this.addView(new Poker.TournamentView(viewElementId,name,layoutManager));
+        var view = this.addView(new Poker.TournamentView(viewElementId, name, layoutManager));
         this.activateView(view);
     },
     /**

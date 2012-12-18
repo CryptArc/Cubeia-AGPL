@@ -263,6 +263,7 @@ public class PokerTournamentTest {
         prepareTournamentWithMockTournamentState();
         when(mockPokerState.isOnBreak()).thenReturn(true);
         when(mockPokerState.getCurrentBlindsLevel()).thenReturn(new Level(20, 40, 0, 5, true));
+        when(mockPokerState.getNextLevelStartTime()).thenReturn(new DateTime());
 
         // And that there is one table (so that the balancing doesn't crash)
         when(state.getPlayersAtTable(1)).thenReturn(of(1));
@@ -312,6 +313,7 @@ public class PokerTournamentTest {
         when(mockPokerState.isOnBreak()).thenReturn(true);
         when(mockPokerState.getCurrentBlindsLevel()).thenReturn(new Level(20, 40, 0, 5, false));
         when(mockPokerState.increaseBlindsLevel()).thenReturn(new Level(20, 40, 0, 5, true));
+        when(mockPokerState.getNextLevelStartTime()).thenReturn(new DateTime());
         when(state.getTables()).thenReturn(of(1, 2));
         when(state.getPlayersAtTable(1)).thenReturn(of(1));
         when(state.getPlayersAtTable(2)).thenReturn(of(2, 3));
@@ -381,8 +383,13 @@ public class PokerTournamentTest {
     }
 
     @Test
-    public void testPlayerListWhenTournamentIsFinished() {
+    public void testNumberOfTablesToCreate() {
+        prepareTournamentWithMockTournamentState();
+        when(state.getRegisteredPlayersCount()).thenReturn(75);
+        when(state.getSeats()).thenReturn(10);
 
+        // We need 8 tables.
+        assertThat(tournament.numberOfTablesToCreate(), is(8));
     }
 
     private TournamentLifeCycle prepareTournamentWithLifecycle() {
@@ -391,20 +398,20 @@ public class PokerTournamentTest {
         lifeCycle = new ScheduledTournamentLifeCycle(startTime, openRegistrationTime);
         pokerState.setLifecycle(lifeCycle);
         tournament = new PokerTournament(pokerState);
-        tournament.injectTransientDependencies(instance, support, state, historyService, backend, dateFetcher, tournamentLobby);
+        tournament.injectTransientDependencies(instance, support, state, historyService, backend, dateFetcher);
         return lifeCycle;
     }
 
     private void prepareTournamentWithMockLifecycle() {
         pokerState.setLifecycle(mockLifeCycle);
         tournament = new PokerTournament(pokerState);
-        tournament.injectTransientDependencies(instance, support, state, historyService, backend, dateFetcher, tournamentLobby);
+        tournament.injectTransientDependencies(instance, support, state, historyService, backend, dateFetcher);
         pokerState.setBlindsStructure(createDefaultBlindsStructure());
     }
 
     private void prepareTournamentWithMockTournamentState() {
         tournament = new PokerTournament(mockPokerState);
-        tournament.injectTransientDependencies(instance, support, state, historyService, backend, new DefaultSystemTime(), tournamentLobby);
+        tournament.injectTransientDependencies(instance, support, state, historyService, backend, new DefaultSystemTime());
         pokerState.setBlindsStructure(createDefaultBlindsStructure());
     }
 }

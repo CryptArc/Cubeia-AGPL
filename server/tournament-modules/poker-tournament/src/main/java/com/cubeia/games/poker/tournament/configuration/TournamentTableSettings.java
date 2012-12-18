@@ -28,44 +28,12 @@ public class TournamentTableSettings implements Serializable {
 
     private TimingProfile timingProfile = TimingFactory.getRegistry().getDefaultTimingProfile();
 
-    private int anteAmount;
-    private int smallBlindAmount;
-    private int bigBlindAmount;
-
-    public TournamentTableSettings(int smallBlindAmount, int bigBlindAmount) {
-        this.smallBlindAmount = smallBlindAmount;
-        this.bigBlindAmount = bigBlindAmount; 
-    }
-
-    public TournamentTableSettings(int anteAmount) {
-        this.anteAmount = anteAmount;
+    public TournamentTableSettings(TimingProfile timingProfile) {
+        this.timingProfile = timingProfile;
     }
 
     public TimingProfile getTimingProfile() {
         return timingProfile;
     }
 
-    public void setTimingProfile(TimingProfile timingProfile) {
-        this.timingProfile = timingProfile;
-    }
-
-    public int getAnteAmount() {
-        return anteAmount;
-    }
-
-    public int getSmallBlindAmount() {
-        return smallBlindAmount;
-    }
-
-    public int getBigBlindAmount() {
-        return bigBlindAmount;
-    }
-
-    public void setSmallBlindAmount(int smallBlindAmount) {
-        this.smallBlindAmount = smallBlindAmount;
-    }
-
-    public void setBigBlindAmount(int bigBlindAmount) {
-        this.bigBlindAmount = bigBlindAmount;
-    }
 }

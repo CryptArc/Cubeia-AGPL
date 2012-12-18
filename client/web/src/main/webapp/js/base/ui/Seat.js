@@ -5,6 +5,9 @@ var Poker = Poker || {};
  * @type {Poker.Seat}
  */
 Poker.Seat = Class.extend({
+    /**
+     * @type Poker.TemplateManager
+     */
    templateManager : null,
    seatId : -1,
    player : null,

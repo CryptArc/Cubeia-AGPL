@@ -34,6 +34,7 @@ import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.cache.ActionCache;
+import com.cubeia.games.poker.common.SystemTime;
 import com.cubeia.games.poker.debugger.HandDebuggerContract;
 import com.cubeia.games.poker.handler.BackendCallHandler;
 import com.cubeia.games.poker.handler.PokerHandler;
@@ -42,11 +43,14 @@ import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
 import com.cubeia.games.poker.jmx.PokerStats;
 import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.games.poker.state.FirebaseState;
-import com.cubeia.games.poker.tournament.WaitingForPlayers;
-import com.cubeia.games.poker.tournament.WaitingForTablesToFinishBeforeBreak;
 import com.cubeia.games.poker.tournament.configuration.blinds.Level;
+import com.cubeia.games.poker.tournament.messages.BlindsWithDeadline;
+import com.cubeia.games.poker.tournament.messages.TournamentDestroyed;
+import com.cubeia.games.poker.tournament.messages.WaitingForPlayers;
+import com.cubeia.games.poker.tournament.messages.WaitingForTablesToFinishBeforeBreak;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.adapter.SystemShutdownException;
+import com.cubeia.poker.model.BlindsLevel;
 import com.cubeia.poker.player.PokerPlayer;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
@@ -99,6 +103,10 @@ public class Processor implements GameProcessor, TournamentProcessor {
     @Service
     @VisibleForTesting
     HandDebuggerContract handDebugger;
+
+    @Inject
+    @VisibleForTesting
+    SystemTime dateFetcher;
 
     /**
      * Handles a wrapped game packet.
@@ -155,8 +163,10 @@ public class Processor implements GameProcessor, TournamentProcessor {
                 handleWaitingForBreak();
             } else if (attachment instanceof WaitingForPlayers) {
                 handleWaitingForPlayers();
-            } else if (attachment instanceof Level) {
-                handleBlindsLevel((Level) attachment);
+            } else if (attachment instanceof BlindsWithDeadline) {
+                handleBlindsLevel((BlindsWithDeadline) attachment);
+            } else if (attachment instanceof TournamentDestroyed) {
+                handleTournamentDestroyed();
             } else if ("CLOSE_TABLE_HINT".equals(attachment.toString())) {
                 log.debug("got CLOSE_TABLE_HINT");
                 tableCloseHandler.closeTable(table, false);
@@ -177,6 +187,10 @@ public class Processor implements GameProcessor, TournamentProcessor {
         updatePlayerDebugInfo(table);
     }
 
+    private void handleTournamentDestroyed() {
+        state.notifyTournamentDestroyed();
+    }
+
     private void handleWaitingForBreak() {
         state.notifyWaitingToStartBreak();
     }
@@ -185,9 +199,11 @@ public class Processor implements GameProcessor, TournamentProcessor {
         state.notifyWaitingForPlayers();
     }
 
-    private void handleBlindsLevel(Level blindsLevel) {
-        state.setBlindsLevels(blindsLevel.getSmallBlindAmount(), blindsLevel.getBigBlindAmount(), blindsLevel.getAnteAmount(),
-                blindsLevel.isBreak(), blindsLevel.getDurationInMinutes());
+    private void handleBlindsLevel(BlindsWithDeadline blindsWithDeadline) {
+        Level level = blindsWithDeadline.getLevel();
+        BlindsLevel blindsLevel = new BlindsLevel(level.getSmallBlindAmount(), level.getBigBlindAmount(), level.getAnteAmount(), level.isBreak(),
+                                                  level.getDurationInMinutes(), blindsWithDeadline.getDeadline());
+        state.setBlindsLevels(blindsLevel);
     }
 
     private void updatePlayerDebugInfo(Table table) {
@@ -208,8 +224,6 @@ public class Processor implements GameProcessor, TournamentProcessor {
     /**
      * Basic switch and response for command types.
      *
-     * @param table
-     * @param command
      */
     private void handleCommand(Table table, Trigger command) {
         switch (command.getType()) {
@@ -235,13 +249,11 @@ public class Processor implements GameProcessor, TournamentProcessor {
     /**
      * Verify sequence number before timeout
      *
-     * @param table
-     * @param command
      */
     private void handlePlayerTimeoutCommand(Table table, Trigger command) {
         if (pokerHandler.verifySequence(command)) {
             timeoutCache.removeTimeout(table.getId(), command.getPid(), table.getScheduler());
-            clearRequestSequence(table);
+            clearRequestSequence();
             state.timeout();
         }
     }
@@ -251,8 +263,7 @@ public class Processor implements GameProcessor, TournamentProcessor {
         if (actionCache != null) {
             actionCache.clear(table.getId());
         }
-        log.debug(
-                "Start Hand on table: " + table + " (" + table.getPlayerSet().getPlayerCount() + ":" + state.getSeatedPlayers().size() + ")");
+        log.debug("Start Hand on table: " + table + " (" + table.getPlayerSet().getPlayerCount() + ":" + state.getSeatedPlayers().size() + ")");
         state.sitOutPlayersMarkedForSitOutNextRound();
         state.scheduleTournamentHandStart();
 
@@ -263,7 +274,7 @@ public class Processor implements GameProcessor, TournamentProcessor {
         stateInjector.injectAdapter(table);
     }
 
-    private void clearRequestSequence(Table table) {
+    private void clearRequestSequence() {
         FirebaseState fbState = (FirebaseState) state.getAdapterState();
         fbState.setCurrentRequestSequence(-1);
     }

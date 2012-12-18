@@ -1,6 +1,10 @@
 "use strict";
 var Poker = Poker || {};
 Poker.LobbyLayoutManager = Class.extend({
+
+    /**
+     * @type Poker.TemplateManager
+     */
     templateManager : null,
     filters:null,
     init : function() {
@@ -80,40 +84,43 @@ Poker.LobbyLayoutManager = Class.extend({
         return true;
     },
     createTableList : function(tables) {
-        var self = this;
         this.createLobbyList(tables,"tableListItemTemplate", this.getTableItemCallback());
 
     },
     createTournamentList : function(tournaments) {
-        var self = this;
         this.createLobbyList(tournaments,"tableListItemTemplate", this.getTournamentItemCallback());
     },
 
     getTableItemCallback : function() {
         var self = this;
-        var comHandler = Poker.AppCtx.getCommunicationManager();
-        var func = function(listItem){
-            comHandler.openTable(listItem.id, listItem.capacity, self.getTableDescription(listItem));
-        }
-        return func;
+        return function(listItem){
+            new Poker.TableRequestHandler(listItem.id).openTableWithName(
+                listItem.capacity,self.getTableDescription(listItem));
+        };
     },
     getTournamentItemCallback  : function() {
-        var self = this;
-        var comHandler = Poker.AppCtx.getCommunicationManager();
-        var func = function(listItem){
-            comHandler.openTournamentLobby(listItem.id,listItem.name);
+        return function(listItem){
+            var tournamentManager = Poker.AppCtx.getTournamentManager();
+            tournamentManager.createTournament(listItem.id,listItem.name);
         };
-        return func;
     },
     getTableDescription : function(data) {
         return data.name  + " " + data.blinds + " " + data.type + " " + data.capacity;
     },
     tableRemoved : function(tableId) {
-        console.log("remove = " + tableId);
-        //$("#tableItem" + tableId).remove();
+       this.removeListItem(tableId);
+    },
+    tournamentRemoved : function(tournamentId) {
+        this.removeListItem(tournamentId);
+    },
+    removeListItem : function(id) {
+        console.log("REMOVING LIST ITEM WITH ID " + id);
+        $("#tableItem" + id).remove();
     },
     updateListItem : function(listItem, callbackFunction) {
         var self = this;
+        console.log("updating list item = ");
+        console.log(listItem);
         var item = $("#tableItem" + listItem.id);
         if (item.length > 0) {
             item.unbind().replaceWith(this.getTableItemHtml("tableListItemTemplate",listItem));
@@ -152,7 +159,7 @@ Poker.LobbyLayoutManager = Class.extend({
             $("#tableListItemContainer").append($("<div/>").addClass("no-tables").html("Currently no tables matching your criteria"));
         }
     },
-    getTableItemHtml:function (templateId, data) {
+    getTableItemHtml : function (templateId, data) {
         var listItemTemplate = this.templateManager.getTemplate(templateId);
         var item = Mustache.render(listItemTemplate, data);
         return item;

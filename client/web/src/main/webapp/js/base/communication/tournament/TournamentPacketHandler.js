@@ -1,9 +1,32 @@
 "use strict";
 var Poker = Poker || {};
+/**
+ *
+ * @type {Poker.TournamentPacketHandler}
+ */
 Poker.TournamentPacketHandler = Class.extend({
+
+    /**
+     * @type Poker.TournamentManager
+     */
     tournamentManager : null,
+
+    /**
+     * @type Poker.TableManager
+     */
+    tableManager : null,
+
+    /**
+     * @type Number
+     */
+    tournamentId : null,
+
+    /**
+     * @constructor
+     */
     init : function() {
         this.tournamentManager = Poker.AppCtx.getTournamentManager();
+        this.tableManager = Poker.AppCtx.getTableManager();
     },
     handleTournamentTransport : function(packet) {
         console.log("Got tournament transport");
@@ -22,9 +45,16 @@ Poker.TournamentPacketHandler = Class.extend({
             case com.cubeia.games.poker.io.protocol.TournamentLobbyData.CLASSID:
                 tournamentManager.handleTournamentLobbyData(packet.mttid, tournamentPacket);
                 break;
+            case com.cubeia.games.poker.io.protocol.TournamentTable.CLASSID:
+                this.handleTournamentTable(tournamentPacket);
+                break;
             default:
                 console.log("Unhandled tournament packet");
         }
+    },
+    handleTournamentTable : function(tournamentPacket) {
+        console.log("Tournament table!!!");
+        console.log(tournamentPacket);
     },
     handleTournamentOut: function (packet) {
         var dialogManager = Poker.AppCtx.getDialogManager();
@@ -33,14 +63,18 @@ Poker.TournamentPacketHandler = Class.extend({
         } else {
             dialogManager.displayGenericDialog({header:"Message", message:"You finished " + packet.position + " in the tournament."});
         }
+
     },
     handleRemovedFromTournamentTable:function (packet) {
         console.log("Removed from table " + packet.tableid + " in tournament " + packet.mttid + " keep watching? " + packet.keepWatching);
+        this.tournamentManager.onRemovedFromTournament(packet.tableid, Poker.MyPlayer.id);
     },
     handleSeatedAtTournamentTable:function (seated) {
         console.log("I was seated in a tournament, opening table");
         console.log(seated);
+        this.tournamentManager.setTournamentTable(seated.mttid,seated.tableid);
         new Poker.TableRequestHandler(seated.tableid).joinTable();
+        this.tableManager.handleOpenTableAccepted(seated.tableid, 10); //TODO: FIX!
     },
     handleRegistrationResponse : function (registrationResponse) {
         console.log("Registration response:");
@@ -64,6 +98,7 @@ Poker.TournamentPacketHandler = Class.extend({
     },
     handleNotifyRegistered : function(packet) {
         this.tournamentManager.openTournamentLobbies(packet.tournaments);
-
     }
+
+
 });

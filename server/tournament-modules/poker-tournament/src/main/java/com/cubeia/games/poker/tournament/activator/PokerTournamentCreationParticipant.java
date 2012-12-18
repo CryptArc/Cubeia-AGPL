@@ -31,6 +31,10 @@ import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 import com.cubeia.poker.timing.Timings;
 import org.apache.log4j.Logger;
 
+import static com.cubeia.games.poker.common.MoneyFormatter.format;
+import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.BUY_IN;
+import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.FEE;
+
 public abstract class PokerTournamentCreationParticipant implements CreationParticipant {
 
     protected final TournamentConfiguration config;
@@ -64,6 +68,7 @@ public abstract class PokerTournamentCreationParticipant implements CreationPart
         pokerState.setFee(config.getFee());
         pokerState.setPayoutStructure(config.getPayoutStructure(), config.getMinPlayers());
         pokerState.setLifecycle(getTournamentLifeCycle());
+        pokerState.setMinutesVisibleAfterFinished(getMinutesVisibleAfterFinished());
         PokerTournament tournament = new PokerTournament(pokerState);
         stateSupport.setState(tournament);
 
@@ -81,8 +86,14 @@ public abstract class PokerTournamentCreationParticipant implements CreationPart
 
     protected abstract TournamentLifeCycle getTournamentLifeCycle();
 
-    protected abstract void tournamentCreated(PokerTournamentState pokerState, LobbyAttributeAccessor lobbyAttributeAccessor);
+    protected void tournamentCreated(PokerTournamentState pokerState, LobbyAttributeAccessor lobbyAttributeAccessor) {
+//        lobbyAttributeAccessor.setStringAttribute(IDENTIFIER.name(), config.getIdentifier());
+        lobbyAttributeAccessor.setStringAttribute(BUY_IN.name(), format(config.getBuyIn()));
+        lobbyAttributeAccessor.setStringAttribute(FEE.name(), format(config.getFee()));
+    }
 
     protected abstract String getType();
+
+    protected abstract int getMinutesVisibleAfterFinished();
 
 }

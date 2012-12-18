@@ -112,6 +112,8 @@ public class PokerTournamentState implements Serializable {
 
     private DateTime startTime = new DateTime(0);
 
+    private int minutesVisibleAfterFinished;
+
     // Maps playerId -> MttPlayer. Transient to reduce serialized size.
     private transient Map<Integer, MttPlayer> playerMap;
 
@@ -441,6 +443,10 @@ public class PokerTournamentState implements Serializable {
         return tournamentStatistics;
     }
 
+    public void invalidateTournamentStatistics() {
+        tournamentStatistics = null;
+    }
+
     public void setTournamentStatistics(TournamentStatistics tournamentStatistics) {
         this.tournamentStatistics = tournamentStatistics;
     }
@@ -467,5 +473,17 @@ public class PokerTournamentState implements Serializable {
 
     public void setStartTime(DateTime now) {
         this.startTime = now;
+    }
+
+    public int getMinutesVisibleAfterFinished() {
+        return minutesVisibleAfterFinished;
+    }
+
+    public void setMinutesVisibleAfterFinished(int minutesVisibleAfterFinished) {
+        this.minutesVisibleAfterFinished = minutesVisibleAfterFinished;
+    }
+
+    public DateTime getNextLevelStartTime() {
+        return nextLevelStartTime;
     }
 }

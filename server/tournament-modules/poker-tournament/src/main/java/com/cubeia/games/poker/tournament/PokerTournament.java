@@ -29,6 +29,7 @@ import com.cubeia.backend.cashgame.exceptions.CloseSessionFailedException;
 import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.firebase.api.action.GameObjectAction;
 import com.cubeia.firebase.api.action.UnseatPlayersMttAction;
+import com.cubeia.firebase.api.action.mtt.MttAction;
 import com.cubeia.firebase.api.action.mtt.MttDataAction;
 import com.cubeia.firebase.api.action.mtt.MttObjectAction;
 import com.cubeia.firebase.api.action.mtt.MttRoundReportAction;
@@ -51,7 +52,11 @@ import com.cubeia.games.poker.io.protocol.TournamentOut;
 import com.cubeia.games.poker.tournament.configuration.TournamentTableSettings;
 import com.cubeia.games.poker.tournament.configuration.blinds.Level;
 import com.cubeia.games.poker.tournament.history.HistoryPersister;
-import com.cubeia.games.poker.tournament.lobby.TournamentLobby;
+import com.cubeia.games.poker.tournament.messages.BlindsWithDeadline;
+import com.cubeia.games.poker.tournament.messages.CloseTournament;
+import com.cubeia.games.poker.tournament.messages.TournamentDestroyed;
+import com.cubeia.games.poker.tournament.messages.WaitingForPlayers;
+import com.cubeia.games.poker.tournament.messages.WaitingForTablesToFinishBeforeBreak;
 import com.cubeia.games.poker.tournament.payouts.ConcretePayout;
 import com.cubeia.games.poker.tournament.payouts.PayoutHandler;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
@@ -73,7 +78,9 @@ import java.util.Set;
 
 import static com.cubeia.firebase.api.mtt.model.MttPlayerStatus.OUT;
 import static com.cubeia.firebase.api.mtt.model.MttPlayerStatus.PLAYING;
-import static com.cubeia.games.poker.tournament.lobby.TournamentLobbyAttributes.PLAYERS_LEFT;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.CLOSED;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.ON_BREAK;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.PREPARING_BREAK;
 import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.RUNNING;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
@@ -97,6 +104,8 @@ public class PokerTournament implements Serializable {
 
     private static final long serialVersionUID = 0L;
 
+    private static final int MILLIS_PER_MINUTE = 60 * 1000;
+
     private PokerTournamentState pokerState;
 
     private transient SystemTime dateFetcher;
@@ -113,15 +122,12 @@ public class PokerTournament implements Serializable {
 
     private transient CashGamesBackendService backend;
 
-    private transient TournamentLobby tournamentLobby;
-
     public PokerTournament(PokerTournamentState pokerState) {
         this.pokerState = pokerState;
     }
 
     public void injectTransientDependencies(MttInstance instance, TournamentAssist support, MTTStateSupport state,
-            TournamentHistoryPersistenceService historyService, CashGamesBackendService backend,
-            SystemTime dateFetcher, TournamentLobby tournamentLobby) {
+            TournamentHistoryPersistenceService historyService, CashGamesBackendService backend, SystemTime dateFetcher) {
         this.instance = instance;
         this.mttSupport = support;
         this.state = state;
@@ -129,7 +135,6 @@ public class PokerTournament implements Serializable {
         this.historyPersister = new HistoryPersister(pokerState.getHistoricId(), historyService, dateFetcher);
         this.backend = backend;
         this.dateFetcher = dateFetcher;
-        this.tournamentLobby = tournamentLobby;
     }
 
     public void processRoundReport(MttRoundReportAction action) {
@@ -158,8 +163,8 @@ public class PokerTournament implements Serializable {
         if (log.isDebugEnabled()) {
             log.debug("Remaining players: " + state.getRemainingPlayerCount() + " Remaining tables: " + state.getTables());
         }
-        tournamentLobby.getTournamentStatistics();
         pokerState.invalidatePlayerList();
+        pokerState.invalidateTournamentStatistics();
         updatePlayersLeft();
     }
 
@@ -170,12 +175,14 @@ public class PokerTournament implements Serializable {
                 // start break
                 startBreak();
             } else {
+                setTournamentStatus(PREPARING_BREAK);
                 notifyWaitingForOtherTablesToFinishBeforeBreak(tableId);
             }
         }
     }
 
     private void startBreak() {
+        setTournamentStatus(ON_BREAK);
         notifyAllTablesThatBreakStarted();
         scheduleNextBlindsLevel();
     }
@@ -187,9 +194,13 @@ public class PokerTournament implements Serializable {
     private void notifyAllTablesOfNewBlinds() {
         for (Integer tableId : state.getTables()) {
             GameObjectAction action = new GameObjectAction(tableId);
-            action.setAttachment(pokerState.getCurrentBlindsLevel());
+            action.setAttachment(createBlindsWithDeadline());
             instance.getMttNotifier().notifyTable(tableId, action);
         }
+    }
+
+    private BlindsWithDeadline createBlindsWithDeadline() {
+        return new BlindsWithDeadline(pokerState.getCurrentBlindsLevel(), pokerState.getNextLevelStartTime().getMillis());
     }
 
     private void notifyWaitingForOtherTablesToFinishBeforeBreak(int tableId) {
@@ -215,7 +226,7 @@ public class PokerTournament implements Serializable {
     private void increaseBlindsIfNeeded(Level currentBlindsLevel, int tableId) {
         if (currentBlindsLevel.getBigBlindAmount() < pokerState.getBigBlindAmount()) {
             GameObjectAction action = new GameObjectAction(tableId);
-            action.setAttachment(pokerState.getCurrentBlindsLevel());
+            action.setAttachment(createBlindsWithDeadline());
             instance.getMttNotifier().notifyTable(tableId, action);
         }
     }
@@ -264,7 +275,7 @@ public class PokerTournament implements Serializable {
     }
 
     private void updatePlayersLeft() {
-        instance.getLobbyAccessor().setIntAttribute(PLAYERS_LEFT.name(), state.getRemainingPlayerCount());
+        instance.getLobbyAccessor().setIntAttribute(PokerTournamentLobbyAttributes.PLAYERS_LEFT.name(), state.getRemainingPlayerCount());
     }
 
     private void unseatPlayers(int tableId, Set<Integer> playersOut) {
@@ -331,9 +342,17 @@ public class PokerTournament implements Serializable {
         MTTStateSupport state = (MTTStateSupport) instance.getState();
         Integer table = state.getTables().iterator().next();
         Collection<Integer> winners = state.getPlayersAtTable(table);
-        payWinner(winners.iterator().next());
+        Integer winner = winners.iterator().next();
+        payWinner(winner);
+        unseatPlayers(table, singleton(winner));
 
         closeMainTournamentSession();
+        scheduleTournamentClosing();
+    }
+
+    private void scheduleTournamentClosing() {
+        MttAction action = new MttObjectAction(instance.getId(), new CloseTournament());
+        instance.getScheduler().scheduleAction(action, pokerState.getMinutesVisibleAfterFinished() * MILLIS_PER_MINUTE);
     }
 
     private void closeMainTournamentSession() {
@@ -509,6 +528,10 @@ public class PokerTournament implements Serializable {
     }
 
     private void setTournamentStatus(PokerTournamentStatus status) {
+        if (status == pokerState.getStatus()) {
+            log.debug("Status is already " + status + ". Ignoring.");
+            return;
+        }
         historyPersister.statusChanged(status.name());
         instance.getLobbyAccessor().setStringAttribute(PokerTournamentLobbyAttributes.STATUS.name(), status.name());
         pokerState.setStatus(status);
@@ -526,15 +549,16 @@ public class PokerTournament implements Serializable {
     private void startTournament() {
         long registrationElapsedTime = pokerState.getLastRegisteredTime() - pokerState.getFirstRegisteredTime();
         log.debug("Starting tournament [" + instance.getId() + " : " + instance.getState().getName() + "]. Registration time was " + registrationElapsedTime + " ms");
+        transferBuyInsToTournamentSession();
 
         setTournamentStatus(RUNNING);
         updatePlayerStatuses(PLAYING);
         pokerState.setStartTime(dateFetcher.date());
         updatePayouts();
         createTables();
-        transferBuyInsToTournamentSession();
         transferFeesToRakeAccount();
         historyPersister.tournamentStarted(state.getName());
+        pokerState.invalidatePlayerToTableMap();
     }
 
     private void updatePlayerStatuses(MttPlayerStatus status) {
@@ -567,16 +591,15 @@ public class PokerTournament implements Serializable {
     }
 
     private void createTables() {
-        int tablesToCreate = state.getRegisteredPlayersCount() / state.getSeats();
-
-        // Not sure why we do this?
-        if (state.getRegisteredPlayersCount() % state.getSeats() > 0) {
-            tablesToCreate++;
-        }
+        int tablesToCreate = numberOfTablesToCreate();
         pokerState.setTablesToCreate(tablesToCreate);
         TournamentTableSettings settings = getTableSettings();
         log.debug("Creating tables for tournament [" + instance + "] . State.getID: " + state.getId());
         mttSupport.createTables(state, tablesToCreate, "mtt", settings);
+    }
+
+    int numberOfTablesToCreate() {
+        return (int) Math.ceil(state.getRegisteredPlayersCount() / (double) state.getSeats());
     }
 
     private boolean tournamentShouldStart() {
@@ -588,10 +611,7 @@ public class PokerTournament implements Serializable {
     }
 
     private TournamentTableSettings getTableSettings() {
-        log.debug("Getting table settings. Small = " + pokerState.getSmallBlindAmount() + " big = " + pokerState.getBigBlindAmount());
-        TournamentTableSettings settings = new TournamentTableSettings(pokerState.getSmallBlindAmount(), pokerState.getBigBlindAmount());
-        settings.setTimingProfile(pokerState.getTiming());
-        return settings;
+        return new TournamentTableSettings(pokerState.getTiming());
     }
     
     public void playerRegistered(MttRegistrationRequest request) {
@@ -681,8 +701,8 @@ public class PokerTournament implements Serializable {
                 scheduleTournamentStart();
                 break;
             case SEND_START_TO_TABLES:
-                sendRoundStartToAllTables();
                 scheduleNextBlindsLevel();
+                sendRoundStartToAllTables();
                 break;
             case INCREASE_LEVEL:
                 increaseBlindsLevel();
@@ -721,6 +741,7 @@ public class PokerTournament implements Serializable {
             notifyAllTablesOfNewBlinds();
             sendRoundStartToAllTables();
             pokerState.breakFinished();
+            setTournamentStatus(RUNNING);
         }
 
         if (!pokerState.isOnBreak()) {
@@ -754,6 +775,7 @@ public class PokerTournament implements Serializable {
 
     private void sendRoundStartToAllTables() {
         log.debug("Sending round start to all tables.");
+        notifyAllTablesOfNewBlinds();
         mttSupport.sendRoundStartActionToTables(state, state.getTables());
     }
 
@@ -792,6 +814,30 @@ public class PokerTournament implements Serializable {
         } else if (tournamentShouldBeCancelled()) {
             log.debug("Tournament should be cancelled.");
             cancelTournament();
+        }
+    }
+
+    public void closeTournament() {
+        log.debug("Closing tournament.");
+
+        /*
+         * To future debuggers: there's a (very small) chance that this will cause the tournament to be removed
+         * before the "tournament destroyed" messages have been sent to the tables (in which case the tables won't exist).
+         * For that to happen the TournamentScanner must run exactly at the same time as this code. To avoid this, we
+         * could add some grace time between those events, but for now I've decided it's not that critical if it happens.
+         */
+        setTournamentStatus(CLOSED);
+        notifyTournamentClosed();
+    }
+
+    private void notifyTournamentClosed() {
+        log.debug("Notifying all tables that tournament is being destroyed.");
+        for (Integer tableId : state.getTables()) {
+            log.debug("Notifying table " + tableId + " that tournament is being destroyed.");
+            TournamentDestroyed destroyed = new TournamentDestroyed();
+            GameObjectAction action = new GameObjectAction(tableId);
+            action.setAttachment(destroyed);
+            notifier.notifyTable(tableId, action);
         }
     }
 }

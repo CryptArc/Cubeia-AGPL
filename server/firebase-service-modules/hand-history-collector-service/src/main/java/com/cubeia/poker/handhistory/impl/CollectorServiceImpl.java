@@ -60,7 +60,7 @@ public class CollectorServiceImpl implements HandHistoryCollectorService, Servic
 
     @Override
     public void startHand(String id, Table table, List<Player> seats) {
-    	log.debug("Start hand on table: " + id);
+        log.debug("Start hand on table: " + id);
         if (cache.containsKey(table.getTableId())) {
             log.warn("Starting new hand, but cache is not empty, for table: " + table.getTableId());
         }
@@ -68,7 +68,7 @@ public class CollectorServiceImpl implements HandHistoryCollectorService, Servic
         hand.setTable(table);
         hand.setStartTime(new DateTime().getMillis());
         hand.getSeats().addAll(seats);
-        cache.put(table.getTableId(), hand);	
+        cache.put(table.getTableId(), hand);
     }
     
     @Override

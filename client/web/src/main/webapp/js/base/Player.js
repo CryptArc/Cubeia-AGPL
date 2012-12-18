@@ -8,6 +8,9 @@ Poker.Player = Class.extend({
     name : null,
     id :-1,
     balance : 0,
+    /**
+     * @type Poker.PlayerTableStatus
+     */
     tableStatus : null,
     lastActionType : null,
     init : function(id,name) {

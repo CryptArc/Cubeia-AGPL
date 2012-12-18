@@ -36,8 +36,10 @@ import com.cubeia.games.poker.io.protocol.ExposePrivateCards;
 import com.cubeia.games.poker.io.protocol.ExternalSessionInfoPacket;
 import com.cubeia.games.poker.io.protocol.FuturePlayerAction;
 import com.cubeia.games.poker.io.protocol.GameCard;
+import com.cubeia.games.poker.io.protocol.GameState;
 import com.cubeia.games.poker.io.protocol.HandCanceled;
 import com.cubeia.games.poker.io.protocol.HandEnd;
+import com.cubeia.games.poker.io.protocol.HandStartInfo;
 import com.cubeia.games.poker.io.protocol.InformFutureAllowedActions;
 import com.cubeia.games.poker.io.protocol.LevelInfo;
 import com.cubeia.games.poker.io.protocol.PacketVisitor;
@@ -66,16 +68,18 @@ import com.cubeia.games.poker.io.protocol.RequestPayoutInfo;
 import com.cubeia.games.poker.io.protocol.RequestTournamentLobbyData;
 import com.cubeia.games.poker.io.protocol.RequestTournamentPlayerList;
 import com.cubeia.games.poker.io.protocol.RequestTournamentStatistics;
+import com.cubeia.games.poker.io.protocol.RequestTournamentTable;
 import com.cubeia.games.poker.io.protocol.StartHandHistory;
-import com.cubeia.games.poker.io.protocol.StartNewHand;
 import com.cubeia.games.poker.io.protocol.StopHandHistory;
 import com.cubeia.games.poker.io.protocol.TakeBackUncalledBet;
+import com.cubeia.games.poker.io.protocol.TournamentDestroyed;
 import com.cubeia.games.poker.io.protocol.TournamentInfo;
 import com.cubeia.games.poker.io.protocol.TournamentLobbyData;
 import com.cubeia.games.poker.io.protocol.TournamentOut;
 import com.cubeia.games.poker.io.protocol.TournamentPlayer;
 import com.cubeia.games.poker.io.protocol.TournamentPlayerList;
 import com.cubeia.games.poker.io.protocol.TournamentStatistics;
+import com.cubeia.games.poker.io.protocol.TournamentTable;
 import com.cubeia.games.poker.io.protocol.WaitingForPlayers;
 import com.cubeia.games.poker.io.protocol.WaitingToStartBreak;
 
@@ -98,7 +102,7 @@ public class DefaultPokerHandler implements PacketVisitor {
     }
 
     @Override
-    public void visit(StartNewHand packet) {
+    public void visit(HandStartInfo packet) {
     }
 
     @Override
@@ -233,6 +237,11 @@ public class DefaultPokerHandler implements PacketVisitor {
     }
 
     @Override
+    public void visit(GameState packet) {
+
+    }
+
+    @Override
     public void visit(InformFutureAllowedActions packet) {
     }
 
@@ -338,6 +347,21 @@ public class DefaultPokerHandler implements PacketVisitor {
 
     @Override
     public void visit(TournamentLobbyData packet) {
+
+    }
+
+    @Override
+    public void visit(RequestTournamentTable packet) {
+
+    }
+
+    @Override
+    public void visit(TournamentTable packet) {
+
+    }
+
+    @Override
+    public void visit(TournamentDestroyed packet) {
 
     }
 }

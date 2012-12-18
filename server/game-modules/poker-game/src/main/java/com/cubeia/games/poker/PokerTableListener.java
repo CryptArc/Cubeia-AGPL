@@ -141,6 +141,7 @@ public class PokerTableListener implements TournamentTableListener {
     private void sendGameStateToWatcherIfNeeded(PokerState state, Table table, int playerId) {
         if (state.getPlayerInCurrentHand(playerId) == null) {
             gameStateSender.sendGameState(table, playerId);
+            state.sendGameStateTo(playerId);
         }
     }
 

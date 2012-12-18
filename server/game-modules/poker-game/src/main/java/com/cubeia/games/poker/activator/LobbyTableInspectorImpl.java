@@ -150,7 +150,7 @@ public class LobbyTableInspectorImpl implements LobbyTableInspector {
 
     private void createTables(TableConfigTemplate config, List<TableModifierAction> result, int num) {
         for (int i = 0; i < num; i++) {
-            log.debug("Adding new table for config: " + config.getId());
+            log.trace("Adding new table for config: " + config.getId());
             result.add(TableModifierAction.create(config));
         }
     }

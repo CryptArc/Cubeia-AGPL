@@ -9,8 +9,20 @@ var Poker = Poker || {};
  * @type {Poker.MyPlayerSeat}
  */
 Poker.MyPlayerSeat = Poker.Seat.extend({
+
+    /**
+     * @type Poker.MyActionsManager
+     */
     myActionsManager : null,
+
+    /**
+     * @type CircularProgressBar
+     */
     circularProgressBar : null,
+
+    /**
+     * @type Number
+     */
     tableId : null,
     init : function(tableId,elementId, seatId, player, templateManager, myActionsManager, animationManager) {
         this._super(elementId,seatId, player, templateManager,animationManager);
@@ -66,6 +78,8 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
     handlePlayerStatus : function() {
         if(this.player.tableStatus == Poker.PlayerTableStatus.SITTING_OUT) {
             this.myActionsManager.onSitOut();
+        } else if(this.player.tableStatus == Poker.PlayerTableStatus.TOURNAMENT_OUT){
+            this.myActionsManager.onTournamentOut();
         } else {
             this.myActionsManager.onSitIn();
         }

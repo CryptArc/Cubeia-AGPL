@@ -6,9 +6,20 @@ var Poker = Poker || {};
  * @type {Poker.Action}
  */
 Poker.Action = Class.extend({
+
+    /**
+     * @type Poker.ActionType
+     */
     type : null,
     minAmount : 0,
     maxAmount : 0,
+
+    /**
+     *
+     * @param {Poker.ActionType} type
+     * @param {Number} minAmount
+     * @param {Number} maxAmount
+     */
     init : function(type,minAmount,maxAmount){
         this.type = type;
         this.minAmount = minAmount;

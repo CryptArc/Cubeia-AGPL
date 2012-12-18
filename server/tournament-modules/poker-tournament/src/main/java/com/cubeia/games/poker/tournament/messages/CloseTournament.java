@@ -15,13 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.tournament;
+package com.cubeia.games.poker.tournament.messages;
 
 import java.io.Serializable;
 
-/**
- * Message sent when we are not starting a hand because we are waiting for the break to start,
- * which will happen when all other tables have finished their hands.
- */
-public class WaitingForTablesToFinishBeforeBreak implements Serializable {
+public class CloseTournament implements Serializable {
 }

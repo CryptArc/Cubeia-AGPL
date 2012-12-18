@@ -38,6 +38,7 @@ import com.cubeia.games.poker.io.protocol.TournamentLobbyData;
 import com.cubeia.games.poker.io.protocol.TournamentPlayer;
 import com.cubeia.games.poker.io.protocol.TournamentPlayerList;
 import com.cubeia.games.poker.io.protocol.TournamentStatistics;
+import com.cubeia.games.poker.io.protocol.TournamentTable;
 import com.cubeia.games.poker.tournament.configuration.blinds.Level;
 import com.cubeia.games.poker.tournament.configuration.payouts.Payouts;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
@@ -51,6 +52,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static com.cubeia.firebase.api.mtt.model.MttPlayerStatus.OUT;
+import static com.cubeia.games.poker.common.MoneyFormatter.format;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.reverseOrder;
 import static java.util.Collections.sort;
@@ -106,7 +108,7 @@ public class TournamentLobby {
         List<Payout> payouts = newArrayList();
         Payouts payoutStructure = pokerState.getPayouts();
         for (int i = 1; i <= payoutStructure.getNumberOfPlacesInTheMoney(); i++) {
-            payouts.add(new Payout(i, payoutStructure.getPayoutsForPosition(i)));
+            payouts.add(new Payout(i, format(payoutStructure.getPayoutsForPosition(i))));
         }
         payoutInfo.payouts = payouts;
         payoutInfo.prizePool = pokerState.getPrizePool().intValue();
@@ -115,16 +117,24 @@ public class TournamentLobby {
 
     BlindsStructure getBlindsStructurePacket() {
         if (pokerState.getBlindsStructurePacket() == null) {
-            BlindsStructure packet = new BlindsStructure();
-            List<BlindsLevel> list = newArrayList();
-            for (Level level : pokerState.getBlindsStructure().getBlindsLevels()) {
-                list.add(new BlindsLevel(level.getSmallBlindAmount(), level.getBigBlindAmount(), level.getAnteAmount(), level.isBreak(),
-                        level.getDurationInMinutes()));
-            }
-            packet.blindsLevels = list;
-            pokerState.setBlindsStructurePacket(packet);
+            pokerState.setBlindsStructurePacket(createBlindsStructurePacket());
         }
         return pokerState.getBlindsStructurePacket();
+    }
+
+    BlindsStructure createBlindsStructurePacket() {
+        BlindsStructure packet = new BlindsStructure();
+        List<BlindsLevel> list = newArrayList();
+        for (Level level : pokerState.getBlindsStructure().getBlindsLevels()) {
+            list.add(new BlindsLevel(
+                    format(level.getSmallBlindAmount()),
+                    format(level.getBigBlindAmount()),
+                    format(level.getAnteAmount()),
+                    level.isBreak(),
+                    level.getDurationInMinutes()));
+        }
+        packet.blindsLevels = list;
+        return packet;
     }
 
     private void sendPacketToPlayer(ProtocolObject packet, int playerId) {
@@ -166,7 +176,7 @@ public class TournamentLobby {
 
             int position = player.getStatus() == OUT ? player.getPosition() : runningPosition;
 
-            players.add(new TournamentPlayer(player.getScreenname(), "" + stackSize, position, getWinningsFor(playerId), getTableFor(playerId)));
+            players.add(new TournamentPlayer(player.getScreenname(), format(stackSize), position, format(getWinningsFor(playerId)), getTableFor(playerId)));
             lastChipStack = stackSize;
         }
 
@@ -200,13 +210,16 @@ public class TournamentLobby {
         return pokerState.getTournamentStatistics();
     }
 
-    private ChipStatistics getChipStatistics() {
+    ChipStatistics getChipStatistics() {
         long smallestStack = Integer.MAX_VALUE;
         long biggestStack = 0;
         long totalChips = 0;
         double averageStack = 0;
         for (MttPlayer player : state.getPlayerRegistry().getPlayers()) {
             long chipStack = pokerState.getPlayerBalance(player.getPlayerId());
+            if (chipStack == 0) {
+                continue;
+            }
             if (chipStack < smallestStack) {
                 smallestStack = chipStack;
             }
@@ -222,7 +235,7 @@ public class TournamentLobby {
             averageStack = totalChips / (double) state.getRemainingPlayerCount();
         }
         log.debug("Total chips: " + totalChips + " Players still in: " + state.getRemainingPlayerCount() + " Average: " + averageStack);
-        return new ChipStatistics(formatAmount(smallestStack), formatAmount(biggestStack), formatAmount(averageStack));
+        return new ChipStatistics(format(smallestStack), format(biggestStack), format(averageStack));
     }
 
     private PlayersLeft getPlayerLeft() {
@@ -231,14 +244,6 @@ public class TournamentLobby {
 
     private LevelInfo getLevelInfo() {
         return new LevelInfo(pokerState.getCurrentBlindsLevelNr() + 1, pokerState.getTimeToNextLevel(dateFetcher.date()));
-    }
-
-    private String formatAmount(long amount) {
-        return "" + amount / 100.0;
-    }
-
-    private String formatAmount(double amount) {
-        return "" + amount / 100.0;
     }
 
     public void sendTournamentLobbyDataTo(int playerId) {
@@ -253,31 +258,23 @@ public class TournamentLobby {
 
     private TournamentInfo getTournamentInfo() {
         TournamentInfo tournamentInfo = new TournamentInfo();
-        tournamentInfo.buyIn = pokerState.getBuyInAsMoney().toString();
-        tournamentInfo.fee = pokerState.getFeeAsMoney().toString();
+        tournamentInfo.buyIn = format(pokerState.getBuyInAsMoney().getAmount());
+        tournamentInfo.fee = format(pokerState.getFeeAsMoney().getAmount());
         tournamentInfo.gameType = "No Limit Hold'em"; // TODO: Change when we actually support anything other than NL Hold'em..
-        tournamentInfo.maxPlayers = state.getMinPlayers();
-        tournamentInfo.minPlayers = state.getCapacity();
+        tournamentInfo.maxPlayers = state.getCapacity();
+        tournamentInfo.minPlayers = state.getMinPlayers();
         tournamentInfo.startTime = String.valueOf(pokerState.getStartTime().getMillis());
         tournamentInfo.tournamentName = state.getName();
-        tournamentInfo.tournamentStatus = convertEnum(pokerState.getStatus());
+        tournamentInfo.tournamentStatus = convertTournamentStatus(pokerState.getStatus());
         return tournamentInfo;
     }
 
-    private Enums.TournamentStatus convertEnum(PokerTournamentStatus status) {
-        switch (status) {
-            case ANNOUNCED:
-                return Enums.TournamentStatus.ANNOUNCED;
-            case REGISTERING:
-                return Enums.TournamentStatus.REGISTERING;
-            case RUNNING:
-                return Enums.TournamentStatus.RUNNING;
-            case FINISHED:
-                return Enums.TournamentStatus.FINISHED;
-            case CANCELLED:
-                return Enums.TournamentStatus.CANCELLED;
-            default:
-                return Enums.TournamentStatus.ANNOUNCED;
-        }
+    public void sendTournamentTableTo(int playerId) {
+        TournamentTable tournamentTable = new TournamentTable(pokerState.getTableFor(playerId, state));
+        sendPacketToPlayer(tournamentTable, playerId);
+    }
+
+    Enums.TournamentStatus convertTournamentStatus(PokerTournamentStatus status) {
+        return Enums.TournamentStatus.valueOf(status.name());
     }
 }

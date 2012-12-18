@@ -19,6 +19,8 @@ package com.cubeia.poker.context;
 
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.model.BlindsInfo;
+import com.cubeia.poker.model.BlindsLevel;
+import com.cubeia.poker.model.GameStateSnapshot;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.pot.PotHolder;
@@ -172,8 +174,6 @@ public class PokerContext implements Serializable {
     /**
      * Take a copy of the supplied map where all players that are not ready to start a hand excluded.
      *
-     * @param map
-     * @return
      */
     @VisibleForTesting
     protected SortedMap<Integer, PokerPlayer> createCopyWithNotReadyPlayersExcluded(Map<Integer, PokerPlayer> map, Predicate<PokerPlayer> readyPlayerFilter) {
@@ -534,8 +534,8 @@ public class PokerContext implements Serializable {
         prepareReadyPlayers(readyPlayersFilter);
     }
 
-    public void setBlindsLevels(int smallBlindAmount, int bigBlindAmount, int ante) {
-        settings.setBlindsLevels(smallBlindAmount, bigBlindAmount, ante);
+    public void setBlindsLevels(BlindsLevel level) {
+        settings.setBlindsLevels(level);
     }
 
     public int getSmallBlindAmount() {
@@ -549,4 +549,14 @@ public class PokerContext implements Serializable {
     public int getAnteAmount() {
         return settings.getAnteAmount();
     }
+
+    public GameStateSnapshot createGameStateSnapshot() {
+        return new GameStateSnapshot(getTournamentId(), getBlindsLevel());
+    }
+
+    private BlindsLevel getBlindsLevel() {
+        return settings.getBlindsLevel();
+    }
+
+
 }

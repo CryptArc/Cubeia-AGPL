@@ -21,6 +21,33 @@
 @import "circular-progressbar.less";
 @import "tournament-lobby.less";
 
+
+.table-info {
+    left:25%;
+    top:32%;
+    position: absolute;
+    width:50%;
+    display: block;
+    color:#777;
+    font-size:120%;
+    .blinds {
+        display: inline-block;
+    }
+    .value {
+        color:#aaa;
+        font-weight: bold;
+    }
+    .tournament-info {
+        display: inline-block;
+        .blinds-level {
+            display: inline-block;
+        }
+        .time-to-next-level {
+            display: inline-block;
+        }
+    }
+}
+
 body {
     margin: 0;
     padding: 0;

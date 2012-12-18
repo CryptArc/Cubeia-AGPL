@@ -1,8 +1,22 @@
 "use strict";
 var Poker = Poker || {};
 Poker.TournamentRequestHandler = Class.extend({
+
+    /**
+     * @type FIREBASE.Connector
+     */
     connector : null,
+
+    /**
+     * @type Number
+     */
     tournamentId : null,
+
+    /**
+     *
+     * @param {Number} tournamentId
+     * @constructor
+     */
     init : function(tournamentId) {
         this.tournamentId = tournamentId;
         this.connector = Poker.AppCtx.getConnector();
@@ -39,5 +53,15 @@ Poker.TournamentRequestHandler = Class.extend({
     leaveTournamentLobby : function() {
         Poker.AppCtx.getTournamentManager().removeTournament(this.tournamentId);
         Poker.AppCtx.getViewManager().removeTournamentView(this.tournamentId);
+    },
+    takeSeat : function() {
+        var mtt = this.createMttPacket();
+        var requestTournamentTable = new com.cubeia.games.poker.io.protocol.RequestTournamentTable();
+        var byteArray = new FIREBASE.ByteArray();//not using  playerListRequest.save() cos of a styx bug
+        var data = FIREBASE.ByteArray.toBase64String(byteArray.createGameDataArray(requestTournamentTable.classId()));
+        mtt.mttdata  = data;
+        console.log("sending request tournament table");
+        console.log(mtt);
+        this.connector.sendProtocolObject(mtt);
     }
 });

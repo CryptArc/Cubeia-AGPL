@@ -17,6 +17,7 @@
 
 package com.cubeia.poker.settings;
 
+import com.cubeia.poker.model.BlindsLevel;
 import com.cubeia.poker.timing.TimingProfile;
 
 import java.io.Serializable;
@@ -26,11 +27,13 @@ public class PokerSettings implements Serializable {
 
     private static final long serialVersionUID = -8524532061876453809L;
 
-    private int anteAmount;
+    private BlindsLevel blindsLevel;
 
-    private int smallBlindAmount;
+//    private int anteAmount;
 
-    private int bigBlindAmount;
+//    private int smallBlindAmount;
+
+//    private int bigBlindAmount;
 
     private final int minBuyIn;
 
@@ -49,9 +52,7 @@ public class PokerSettings implements Serializable {
     private long sitoutTimeLimitMilliseconds = 1 * 60 * 1000;
 
     public PokerSettings(
-            int anteAmount,
-            int smallBlindAmount,
-            int bigBlindAmount,
+            BlindsLevel blindsLevel,
             int minBuyIn,
             int maxBuyIn,
             TimingProfile timing,
@@ -60,9 +61,7 @@ public class PokerSettings implements Serializable {
             RakeSettings rakeSettings,
             Map<Serializable, Serializable> attributes) {
 
-        this.anteAmount = anteAmount;
-        this.smallBlindAmount = smallBlindAmount;
-        this.bigBlindAmount = bigBlindAmount;
+        this.blindsLevel = blindsLevel;
         this.minBuyIn = minBuyIn;
         this.maxBuyIn = maxBuyIn;
         this.timing = timing;
@@ -77,7 +76,7 @@ public class PokerSettings implements Serializable {
     }
 
     public int getAnteAmount() {
-        return anteAmount;
+        return blindsLevel.getAnteAmount();
     }
 
     public int getMaxBuyIn() {
@@ -113,16 +112,18 @@ public class PokerSettings implements Serializable {
     }
 
     public int getSmallBlindAmount() {
-        return smallBlindAmount;
+        return blindsLevel.getSmallBlindAmount();
     }
 
     public int getBigBlindAmount() {
-        return bigBlindAmount;
+        return blindsLevel.getBigBlindAmount();
     }
 
-    public void setBlindsLevels(int smallBlindAmount, int bigBlindAmount, int ante) {
-        this.smallBlindAmount = smallBlindAmount;
-        this.bigBlindAmount = bigBlindAmount;
-        this.anteAmount = ante;
+    public void setBlindsLevels(BlindsLevel level) {
+        this.blindsLevel = level;
+    }
+
+    public BlindsLevel getBlindsLevel() {
+        return blindsLevel;
     }
 }

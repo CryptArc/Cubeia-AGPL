@@ -19,13 +19,12 @@ package com.cubeia.games.poker.tournament.configuration;
 
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructureFactory;
-import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
-import com.cubeia.poker.timing.TimingRegistry;
 import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
 import org.apache.log4j.Logger;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -64,7 +63,7 @@ public class TournamentConfiguration implements Serializable {
 
     private BigDecimal fee;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private PayoutStructure payoutStructure;
 
     public TournamentConfiguration() {
@@ -133,7 +132,6 @@ public class TournamentConfiguration implements Serializable {
     }
 
     public void setBlindsStructure(BlindsStructure blindsStructure) {
-        log.debug("Setting blinds structure to " + blindsStructure);
         this.blindsStructure = blindsStructure;
     }
 

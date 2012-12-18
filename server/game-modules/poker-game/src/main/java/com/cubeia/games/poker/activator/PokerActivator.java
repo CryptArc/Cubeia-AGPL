@@ -96,12 +96,12 @@ public class PokerActivator implements GameActivator, MttAwareActivator, PokerAc
     @Override
     public void start() {
         executor.scheduleWithFixedDelay(new SafeRunnable() {
-			
-			@Override
-			protected void innerRun() {
-				tableManager.run();
-			}
-		}, interval, interval, MILLISECONDS);
+
+            @Override
+            protected void innerRun() {
+                tableManager.run();
+            }
+        }, interval, interval, MILLISECONDS);
     }
 
     @Override

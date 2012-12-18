@@ -45,6 +45,7 @@ import com.cubeia.games.poker.tournament.activator.SitAndGoCreationParticipant;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentInstance;
 import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
 import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
+import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructureFactory;
 import com.cubeia.games.poker.tournament.configuration.blinds.Level;
 import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructureParserTest;
@@ -119,6 +120,9 @@ public class PokerTournamentProcessorTest extends TestCase {
 
     @Mock
     private CashGamesBackendService backend;
+
+    @Mock
+    private TournamentSchedule schedule;
 
     private SystemTime dateFetcher = new DefaultSystemTime();
 
@@ -207,6 +211,7 @@ public class PokerTournamentProcessorTest extends TestCase {
         when(instanceConfig.getStartTime()).thenReturn(new DateTime());
         when(instanceConfig.getOpenRegistrationTime()).thenReturn(new DateTime());
         when(instanceConfig.getConfiguration()).thenReturn(configuration);
+        when(instanceConfig.getSchedule()).thenReturn(schedule);
 
         PokerTournamentCreationParticipant participant = new ScheduledTournamentCreationParticipant(instanceConfig);
         participant.tournamentCreated(state, instance.getLobbyAccessor());

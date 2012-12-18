@@ -153,13 +153,13 @@
 
                         <!-- sources -->
                         <source>${project.basedir}/src/main/webapp/js/base/data/Map.js</source>
-                        <source>${project.basedir}/src/main/webapp/js/base/listeners/TableListener.js</source>
                         <source>${project.basedir}/src/main/webapp/js/base/TableManager.js</source>
+                        <source>${project.basedir}/src/main/webapp/js/base/PeriodicalUpdater.js</source>
+                        <source>${project.basedir}/src/main/webapp/js/base/ui/Clock.js</source>
                         <source>${project.basedir}/src/main/webapp/js/base/ui/TableLayoutManager.js</source>
                         <source>${project.basedir}/src/main/webapp/js/base/Table.js</source>
                         <source>${project.basedir}/src/main/webapp/js/base/Player.js</source>
                         <source>${project.basedir}/src/main/webapp/js/base/PlayerTableStatus.js</source>
-                        <source>${project.basedir}/src/main/webapp/js/base/PlayerStatus.js</source>
                         <source>${project.basedir}/src/main/webapp/js/base/Utils.js</source>
                         <source>${project.basedir}/src/main/webapp/js/base/ui/CSSUtils.js</source>
                         <source>${project.basedir}/src/main/webapp/js/base/ui/animation/Animation.js</source>

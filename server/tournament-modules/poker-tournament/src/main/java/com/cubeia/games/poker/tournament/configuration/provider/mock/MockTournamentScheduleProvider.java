@@ -18,12 +18,16 @@
 package com.cubeia.games.poker.tournament.configuration.provider.mock;
 
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
+import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructureFactory;
+import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
+import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructureParser;
 import com.cubeia.games.poker.tournament.configuration.provider.TournamentScheduleProvider;
 import com.google.common.collect.Lists;
 import org.joda.time.DateTime;
 
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.Collection;
 
@@ -35,13 +39,17 @@ public class MockTournamentScheduleProvider implements TournamentScheduleProvide
 
     @Override
     public Collection<ScheduledTournamentConfiguration> getTournamentSchedule() {
+        InputStream resourceAsStream = getClass().getResourceAsStream("default_payouts.csv");
+        PayoutStructure payouts = new PayoutStructureParser().parsePayouts(resourceAsStream);
         Collection<ScheduledTournamentConfiguration> tournamentConfigurations = Lists.newArrayList();
         ScheduledTournamentConfiguration everyTenMinutes = everyTenMinutes();
-        everyTenMinutes.getConfiguration().setMinPlayers(2);
-        everyTenMinutes.getConfiguration().setMaxPlayers(100);
-        everyTenMinutes.getConfiguration().setBlindsStructure(BlindsStructureFactory.createDefaultBlindsStructure());
-        everyTenMinutes.getConfiguration().setBuyIn(BigDecimal.valueOf(10));
-        everyTenMinutes.getConfiguration().setFee(BigDecimal.valueOf(1));
+        TournamentConfiguration configuration = everyTenMinutes.getConfiguration();
+        configuration.setMinPlayers(2);
+        configuration.setMaxPlayers(100);
+        configuration.setBlindsStructure(BlindsStructureFactory.createDefaultBlindsStructure());
+        configuration.setBuyIn(BigDecimal.valueOf(10));
+        configuration.setFee(BigDecimal.valueOf(1));
+        configuration.setPayoutStructure(payouts);
         tournamentConfigurations.add(everyTenMinutes);
         return tournamentConfigurations;
     }

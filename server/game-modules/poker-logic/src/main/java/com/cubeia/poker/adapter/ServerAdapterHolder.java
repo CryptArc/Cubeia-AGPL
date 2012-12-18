@@ -17,14 +17,12 @@
 
 package com.cubeia.poker.adapter;
 
-import com.cubeia.poker.adapter.ServerAdapter;
-
 import java.io.Serializable;
 
 public class ServerAdapterHolder implements Serializable {
 
     private static final long serialVersionUID = -4046205916300285197L;
-	
+
     private transient ServerAdapter serverAdapter;
 
     public ServerAdapter get() {

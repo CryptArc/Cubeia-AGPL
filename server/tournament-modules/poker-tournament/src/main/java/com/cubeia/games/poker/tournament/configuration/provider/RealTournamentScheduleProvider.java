@@ -18,7 +18,7 @@
 package com.cubeia.games.poker.tournament.configuration.provider;
 
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
-import com.cubeia.games.poker.tournament.dao.TournamentConfigurationDao;
+import com.cubeia.games.poker.tournament.configuration.dao.TournamentConfigurationDao;
 import com.google.inject.Inject;
 
 import java.util.Collection;

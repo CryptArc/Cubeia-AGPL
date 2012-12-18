@@ -29,6 +29,7 @@ import com.cubeia.games.poker.common.lobby.PokerLobbyAttributes;
 import com.cubeia.games.poker.entity.TableConfigTemplate;
 import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.poker.PokerState;
+import com.cubeia.poker.model.BlindsLevel;
 import com.cubeia.poker.settings.BetStrategyName;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.settings.RakeSettings;
@@ -133,17 +134,8 @@ public class PokerParticipant extends DefaultCreationParticipant {
         Map<Serializable, Serializable> attributes = Collections.<Serializable, Serializable>singletonMap(TABLE_EXTERNAL_ID.name(), externalTableId);
         int smallBlindAmount = template.getAnte();
         int bigBlindAmount = 2 * smallBlindAmount;
-        return new PokerSettings(
-                template.getAnte(),
-                smallBlindAmount,
-                bigBlindAmount,
-                minBuyIn,
-                maxBuyIn,
-                template.getTiming(),
-                seats,
-                limit,
-                rake,
-                attributes);
+        BlindsLevel level = new BlindsLevel(smallBlindAmount, bigBlindAmount, template.getAnte());
+        return new PokerSettings(level, minBuyIn, maxBuyIn, template.getTiming(), seats, limit, rake, attributes);
     }
 
     @Override

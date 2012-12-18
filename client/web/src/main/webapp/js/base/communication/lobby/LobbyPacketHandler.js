@@ -1,7 +1,12 @@
 "use strict";
 var Poker = Poker || {};
 Poker.LobbyPacketHandler = Class.extend({
+
+    /**
+     * @type Poker.LobbyManager
+     */
     lobbyManager : null,
+
     init : function() {
         this.lobbyManager = Poker.AppCtx.getLobbyManager();
     },
@@ -15,6 +20,7 @@ Poker.LobbyPacketHandler = Class.extend({
         this.lobbyManager.handleTableRemoved(tableId);
     },
     handleTournamentSnapshotList : function(snapshots){
+
         if(snapshots.length>0 && snapshots[0].address.indexOf("/sitandgo")!=-1) {
             this.lobbyManager.handleSitAndGoSnapshotList(snapshots);
         } else {
@@ -23,6 +29,9 @@ Poker.LobbyPacketHandler = Class.extend({
     },
     handleTournamentUpdates : function(updates) {
         this.lobbyManager.handleTournamentUpdates(updates);
+    },
+    handleTournamentRemoved : function(tournamentId) {
+        this.lobbyManager.handleTournamentRemoved(tournamentId);
     }
 
 });

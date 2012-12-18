@@ -123,6 +123,15 @@
 
     <!-- ==========  Game Structs ========== -->
 
+    <struct name="game_state">
+        <var name="tournament_id" type="int32" />
+        <var name="hand_info" type="hand_start_info" />
+        <var name="current_level" type="blinds_level" />
+        <var name="seconds_to_next_level" type="int32" />
+        <!--<var name="current_player_in_turn" type="player_in_turn" />-->
+        <!--<var name="dealer_seat_id" type="int32" />-->
+    </struct>
+
     <struct name="game_card">
         <var name="card_id" type="int32"/>
         <var name="suit" type="suit"/>
@@ -159,18 +168,16 @@
         <var name="time_to_act" type="int32"/>
     </struct>
 
-    <!-- inform about comming possible actions. This can be check next. Fold next and so on -->
+    <!-- inform about coming possible actions. This can be check next. Fold next and so on -->
     <struct name="inform_future_allowed_actions">
         <list name="actions" type="future_player_action"/>
     </struct>
-
 
     <!--
      This is sent when a new hand is started.
      Dealer is the seat id that should have the dealer button.
      -->
-    <struct name="start_new_hand">
-        <var name="dealerSeatId" type="int32"/>
+    <struct name="hand_start_info">
         <var name="handId" type="string"/>
     </struct>
 
@@ -300,7 +307,6 @@
         <var name="total_rake" type="int32"/>
     </struct>
 
-
     <!-- A player's status at the table has changed (Server -> Client)-->
     <struct name="player_poker_status">
         <var name="player" type="int32"/>
@@ -339,7 +345,7 @@
 
     <!-- =========== Disconnect Related ============ -->
 
-    <!-- server announces that a player disconnected but we are waitng for their return -->
+    <!-- server announces that a player disconnected but we are waiting for their return -->
     <struct name="player_disconnected_packet">
         <var name="player_id" type="int32"/>
         <var name="timebank" type="int32"/>
@@ -371,12 +377,13 @@
     <!-- Sent when a new blinds level starts at a tournament table. Could be a break. -->
     <struct name="blinds_are_updated">
         <var name="level" type="blinds_level" />
+        <var name="seconds_to_next_level" type="int32" />
     </struct>
 
     <struct name="blinds_level">
-        <var name="small_blind" type="int32" />
-        <var name="big_blind" type="int32" />
-        <var name="ante" type="int32" />
+        <var name="small_blind" type="string" />
+        <var name="big_blind" type="string" />
+        <var name="ante" type="string" />
         <var name="is_break" type="bool" />
         <var name="duration_in_minutes" type="int32" />
     </struct>
@@ -395,12 +402,12 @@
     <struct name="tournament_player">
         <!-- The name of the player. -->
         <var name="name" type="string" />
-        <!-- The number of chips (in cents). 0 if the player is out. String because longs don't work in JS. -->
+        <!-- The number of chips (formatted). 0 if the player is out. -->
         <var name="stack_size" type="string" />
         <!-- The position in the tournament, if the player is out. -->
         <var name="position" type="int32" />
-        <!-- The amount that the player won, in cents, if the player is out. -->
-        <var name="winnings" type="int32" />
+        <!-- The amount that the player won, formatted, if the player is out. -->
+        <var name="winnings" type="string" />
         <var name="table_id" type="int32" />
     </struct>
 
@@ -419,8 +426,8 @@
 
     <struct name="payout">
         <var name="position" type="int32" />
-        <!-- The payout, in cents. -->
-        <var name="payout_amount" type="int32" />
+        <!-- The payout, formatted and ready to go. -->
+        <var name="payout_amount" type="string" />
     </struct>
 
     <struct name="request_tournament_statistics" />
@@ -471,13 +478,26 @@
         <var name="tournament_info" type="tournament_info" />
     </struct>
 
+    <!-- Requests the player's table in this tournament. -->
+    <struct name="request_tournament_table" />
+
+    <struct name="tournament_table">
+        <!-- The player's tableId in the tournament, or -1 if the player is not seated at a table in this tournament. -->
+        <var name="table_id" type="int32" />
+    </struct>
+
     <enum name="tournament_status">
         <value>ANNOUNCED</value>
         <value>REGISTERING</value>
         <value>RUNNING</value>
+        <value>ON_BREAK</value>
+        <value>PREPARING_BREAK</value>
         <value>FINISHED</value>
         <value>CANCELLED</value>
+        <value>CLOSED</value>
     </enum>
+
+    <struct name="tournament_destroyed" />
 
 </protocol>
 

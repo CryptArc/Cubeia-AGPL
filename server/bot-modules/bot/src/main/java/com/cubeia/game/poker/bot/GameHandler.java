@@ -86,8 +86,8 @@ public class GameHandler implements PacketVisitor {
     }
 
 
-    public void visit(StartNewHand packet) {
-        bot.getBot().logDebug("New Hand starting. Dealer seat: " + packet.dealerSeatId);
+    public void visit(HandStartInfo packet) {
+        bot.getBot().logDebug("New Hand starting. Hand id: " + packet.handId);
     }
 
     @SuppressWarnings("static-access")
@@ -314,6 +314,7 @@ public class GameHandler implements PacketVisitor {
 
     @Override
     public void visit(BlindsAreUpdated packet) {
+
     }
 
     @Override
@@ -322,6 +323,11 @@ public class GameHandler implements PacketVisitor {
 
     @Override
     public void visit(FuturePlayerAction packet) {
+    }
+
+    @Override
+    public void visit(GameState packet) {
+
     }
 
     @Override
@@ -418,5 +424,20 @@ public class GameHandler implements PacketVisitor {
 
     @Override
     public void visit(TournamentLobbyData packet) {
+    }
+
+    @Override
+    public void visit(RequestTournamentTable packet) {
+
+    }
+
+    @Override
+    public void visit(TournamentTable packet) {
+
+    }
+
+    @Override
+    public void visit(TournamentDestroyed packet) {
+
     }
 }

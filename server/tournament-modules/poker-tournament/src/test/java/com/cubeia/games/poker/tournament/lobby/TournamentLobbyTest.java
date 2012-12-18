@@ -25,18 +25,26 @@ import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.firebase.api.mtt.support.registry.PlayerRegistry;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.common.SystemTime;
+import com.cubeia.games.poker.io.protocol.ChipStatistics;
+import com.cubeia.games.poker.io.protocol.Enums;
 import com.cubeia.games.poker.io.protocol.TournamentPlayerList;
+import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
+import com.cubeia.games.poker.tournament.configuration.blinds.Level;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
+import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 import com.google.common.collect.ImmutableList;
 import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static com.cubeia.firebase.api.mtt.model.MttPlayerStatus.OUT;
 import static com.cubeia.firebase.api.mtt.model.MttPlayerStatus.PLAYING;
+import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
@@ -105,6 +113,54 @@ public class TournamentLobbyTest {
         assertThat(list.players.get(4).position, is(5));
 
         // A message to the "one assertion per test case" camp: sue me!
+    }
+
+    @Test
+    public void testRounding() {
+        when(state.getPlayerRegistry()).thenReturn(playerRegistry);
+        when(playerRegistry.getPlayers()).thenReturn(players(1, 2, 3));
+        when(pokerState.getPlayerBalance(1)).thenReturn(33L);
+        when(pokerState.getPlayerBalance(2)).thenReturn(33L);
+        when(pokerState.getPlayerBalance(3)).thenReturn(34L);
+        when(state.getRemainingPlayerCount()).thenReturn(3);
+        ChipStatistics statistics = lobby.getChipStatistics();
+        assertThat(statistics.averageStack, is("0.33"));
+    }
+
+    @Test
+    public void testExcludeZeroStacks() {
+        when(state.getPlayerRegistry()).thenReturn(playerRegistry);
+        when(playerRegistry.getPlayers()).thenReturn(players(1, 2, 3));
+        when(pokerState.getPlayerBalance(1)).thenReturn(33L);
+        when(pokerState.getPlayerBalance(2)).thenReturn(0L);
+        when(pokerState.getPlayerBalance(3)).thenReturn(34L);
+        when(state.getRemainingPlayerCount()).thenReturn(3);
+        ChipStatistics statistics = lobby.getChipStatistics();
+        assertThat(statistics.minStack, is("0.33"));
+    }
+
+    @Test
+    public void testBlindsStructureAmountFormatting() {
+        Level level = new Level(1000, 2000, 0, 1, false);
+        BlindsStructure structure = new BlindsStructure(Collections.singletonList(level));
+        when(pokerState.getBlindsStructure()).thenReturn(structure);
+        assertThat(lobby.createBlindsStructurePacket().blindsLevels.get(0).smallBlind, is("10"));
+    }
+
+    @Test
+    public void testConvertStatus() {
+        for (PokerTournamentStatus status : PokerTournamentStatus.values()) {
+            Enums.TournamentStatus convertedStatus = lobby.convertTournamentStatus(status);
+            assertThat(convertedStatus.name(), is(status.name()));
+        }
+    }
+
+    private Collection<MttPlayer> players(int ... playerIds) {
+        Collection<MttPlayer> players = newArrayList();
+        for (int playerId : playerIds) {
+            players.add(new MttPlayer(playerId, "" + playerId));
+        }
+        return players;
     }
 
     public MttPlayer createPlayer(int playerId, String name, long balance, int position, MttPlayerStatus status) {

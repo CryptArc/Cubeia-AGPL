@@ -1,6 +1,12 @@
 "user strict";
+var Poker = Poker || {};
+/**
+ *
+ * @type {Poker.ProtocolUtils}
+ */
 Poker.ProtocolUtils = Class.extend({
     init : function(){},
+
     readParam : function(key,params) {
         for (var i = 0; i < params.length; i++) {
             var object = params[i];
@@ -88,31 +94,6 @@ Poker.ProtocolUtils = Class.extend({
             return "FL";
         }
         return model;
-    },
-    getProtocolObject : function() {
-
-    },
-    getActionEnumType : function (actionType) {
-        switch (actionType.id) {
-            case Poker.ActionType.SMALL_BLIND.id:
-                return com.cubeia.games.poker.io.protocol.ActionTypeEnum.SMALL_BLIND;
-            case Poker.ActionType.BIG_BLIND.id:
-                return com.cubeia.games.poker.io.protocol.ActionTypeEnum.BIG_BLIND;
-            case Poker.ActionType.CALL.id:
-                return com.cubeia.games.poker.io.protocol.ActionTypeEnum.CALL;
-            case Poker.ActionType.CHECK.id:
-                return com.cubeia.games.poker.io.protocol.ActionTypeEnum.CHECK;
-            case Poker.ActionType.BET.id:
-                return com.cubeia.games.poker.io.protocol.ActionTypeEnum.BET;
-            case Poker.ActionType.RAISE.id:
-                return com.cubeia.games.poker.io.protocol.ActionTypeEnum.RAISE;
-            case Poker.ActionType.FOLD.id:
-                return com.cubeia.games.poker.io.protocol.ActionTypeEnum.FOLD;
-            default:
-                console.log("Unhandled action " + actionType.text);
-                return null;
-
-        }
     }
 });
 Poker.ProtocolUtils = new Poker.ProtocolUtils();

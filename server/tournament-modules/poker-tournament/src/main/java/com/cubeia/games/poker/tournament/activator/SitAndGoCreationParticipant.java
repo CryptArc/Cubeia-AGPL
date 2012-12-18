@@ -31,12 +31,18 @@ public class SitAndGoCreationParticipant extends PokerTournamentCreationParticip
     }
 
     @Override
+    protected int getMinutesVisibleAfterFinished() {
+        return 1;
+    }
+
+    @Override
     protected TournamentLifeCycle getTournamentLifeCycle() {
         return new SitAndGoLifeCycle();
     }
 
     @Override
     protected void tournamentCreated(PokerTournamentState pokerState, LobbyAttributeAccessor lobbyAttributeAccessor) {
+        super.tournamentCreated(pokerState, lobbyAttributeAccessor);
         // Sit and go tournaments start in registering mode.
         setStatus(pokerState, lobbyAttributeAccessor, PokerTournamentStatus.REGISTERING);
     }

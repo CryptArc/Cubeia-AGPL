@@ -29,6 +29,7 @@ import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.hand.ExposeCardsHolder;
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.hand.HandType;
+import com.cubeia.poker.model.BlindsLevel;
 import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.PotHolder;
@@ -562,7 +563,8 @@ public class TexasHoldemTest {
     }
 
     private PokerContext prepareContext(int numberOfPlayers) {
-        PokerSettings settings = new PokerSettings(10, 10, 20, 100, 5000, new DefaultTimingProfile(), 6, BetStrategyName.NO_LIMIT, rakeSettings, null);
+        BlindsLevel level = new BlindsLevel(10, 20, 10);
+        PokerSettings settings = new PokerSettings(level, 100, 5000, new DefaultTimingProfile(), 6, BetStrategyName.NO_LIMIT, rakeSettings, null);
         PokerContext context = new PokerContext(settings);
         texas.setPokerContextAndServerAdapter(context, serverAdapterHolder);
         p = TestUtils.createMockPlayers(numberOfPlayers);

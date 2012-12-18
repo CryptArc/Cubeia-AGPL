@@ -19,6 +19,7 @@ package com.cubeia.games.poker.tournament.activator;
 
 import com.cubeia.firebase.api.lobby.LobbyAttributeAccessor;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentInstance;
+import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -44,6 +45,9 @@ public class ScheduledTournamentCreationParticipantTest {
     @Mock
     private LobbyAttributeAccessor accessor;
 
+    @Mock
+    private TournamentConfiguration configuration;
+
     @Before
     public void setup() {
         initMocks(this);
@@ -55,6 +59,7 @@ public class ScheduledTournamentCreationParticipantTest {
         DateTime startTime = new DateTime(2012, 6, 4, 13, 10, 0);
         when(config.getStartTime()).thenReturn(startTime);
         when(config.getOpenRegistrationTime()).thenReturn(registrationTime);
+        when(config.getConfiguration()).thenReturn(configuration);
         ScheduledTournamentCreationParticipant participant = new ScheduledTournamentCreationParticipant(config);
         participant.tournamentCreated(pokerState, accessor);
 

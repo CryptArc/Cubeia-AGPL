@@ -1,25 +1,34 @@
 "use strict";
 var Poker = Poker || {};
 
+/**
+ * @type {Poker.Table}
+ */
 Poker.Table = Class.extend({
     capacity : 0,
     id : -1,
     players : null,
     myPlayerSeat : null,
     name : null,
-    listeners : null,
     handCount: 0,
     dealerSeatId : -1,
     mainPot : 0,
+
+    /**
+     * @type Poker.TableLayoutManager
+     */
+    layoutManager : null,
+
+    tournamentClosed : false, // True means that this table belongs to a tournament that is closed.
+
     init : function(id,capacity,name) {
         this.id = id;
         this.name = name;
         this.capacity = capacity;
         this.players = new Poker.Map();
-        this.listeners = [];
     },
     leave : function() {
-        this.listeners = [];
+        this.layoutManager.onLeaveTableSuccess();
     },
     /**
      * Adds a listeners associated to this table
@@ -74,5 +83,13 @@ Poker.Table = Class.extend({
     getNrOfPlayers : function() {
         return this.players.size();
 
+    },
+
+    /**
+     *
+     * @return {Poker.TableLayoutManager}
+     */
+    getLayoutManager : function() {
+        return this.layoutManager;
     }
 });

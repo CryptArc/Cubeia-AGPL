@@ -22,11 +22,11 @@ Poker.PeriodicalUpdater = Class.extend({
     },
     startUpdating : function() {
         var self = this;
-        if(this.running == true) {
+        if (this.running == true) {
             this.currentTimeout = setTimeout(function(){
                 self.updateFunction();
                 self.startUpdating();
-            },this.time);
+            }, this.time);
         }
     },
     stop : function() {

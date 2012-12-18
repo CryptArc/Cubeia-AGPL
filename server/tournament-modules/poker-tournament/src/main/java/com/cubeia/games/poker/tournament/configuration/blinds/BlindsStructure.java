@@ -42,8 +42,6 @@ public class BlindsStructure implements Serializable {
     @GeneratedValue
     private Integer id = 0;
 
-    private long timePerLevel;
-
     private String name;
 
     @OneToMany(fetch = EAGER, cascade = ALL)
@@ -54,12 +52,10 @@ public class BlindsStructure implements Serializable {
     public BlindsStructure() {
     }
 
-    public BlindsStructure(long millisPerLevel, List<Level> blindsLevels) {
+    public BlindsStructure(List<Level> blindsLevels) {
         checkNotNull(blindsLevels, "List of blinds levels can't be null");
-        checkArgument(millisPerLevel > 0, "Time per level must be > 0");
         checkArgument(!blindsLevels.isEmpty(), "List of blinds levels can't be empty.");
 
-        this.timePerLevel = millisPerLevel;
         this.blindsLevels = blindsLevels;
     }
 
@@ -103,7 +99,6 @@ public class BlindsStructure implements Serializable {
     public String toString() {
         return "BlindsStructure{" +
                 "id=" + id +
-                ", timePerLevel=" + timePerLevel +
                 ", name='" + name + '\'' +
                 ", blindsLevels=" + blindsLevels +
                 '}';

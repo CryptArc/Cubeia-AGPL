@@ -18,7 +18,6 @@
 package com.cubeia.games.poker.tournament.configuration.payouts;
 
 import org.apache.log4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,7 +28,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
 
 /**
  * A PayoutStructure holds information about how much of the pot each player should get, given how may players were in the tournament.
@@ -45,7 +44,7 @@ public class PayoutStructure implements Serializable {
     @GeneratedValue
     private int id;
 
-    @OneToMany(fetch = EAGER, cascade = ALL)
+    @OneToMany(fetch = LAZY, cascade = ALL)
     @OrderColumn
     private List<Payouts> payoutsPerEntryRange;
 

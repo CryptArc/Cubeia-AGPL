@@ -43,6 +43,7 @@ import com.cubeia.game.poker.config.api.PokerConfigurationService;
 import com.cubeia.games.poker.adapter.BuyInCalculator.MinAndMaxBuyInResult;
 import com.cubeia.games.poker.cache.ActionCache;
 import com.cubeia.games.poker.common.Money;
+import com.cubeia.games.poker.common.SystemTime;
 import com.cubeia.games.poker.entity.HandIdentifier;
 import com.cubeia.games.poker.handler.ActionTransformer;
 import com.cubeia.games.poker.handler.Trigger;
@@ -60,8 +61,10 @@ import com.cubeia.games.poker.io.protocol.Enums.BuyInInfoResultCode;
 import com.cubeia.games.poker.io.protocol.ExposePrivateCards;
 import com.cubeia.games.poker.io.protocol.ExternalSessionInfoPacket;
 import com.cubeia.games.poker.io.protocol.FuturePlayerAction;
+import com.cubeia.games.poker.io.protocol.GameState;
 import com.cubeia.games.poker.io.protocol.HandCanceled;
 import com.cubeia.games.poker.io.protocol.HandEnd;
+import com.cubeia.games.poker.io.protocol.HandStartInfo;
 import com.cubeia.games.poker.io.protocol.InformFutureAllowedActions;
 import com.cubeia.games.poker.io.protocol.PerformAction;
 import com.cubeia.games.poker.io.protocol.PlayerDisconnectedPacket;
@@ -72,8 +75,8 @@ import com.cubeia.games.poker.io.protocol.PotTransfer;
 import com.cubeia.games.poker.io.protocol.PotTransfers;
 import com.cubeia.games.poker.io.protocol.RakeInfo;
 import com.cubeia.games.poker.io.protocol.RequestAction;
-import com.cubeia.games.poker.io.protocol.StartNewHand;
 import com.cubeia.games.poker.io.protocol.TakeBackUncalledBet;
+import com.cubeia.games.poker.io.protocol.TournamentDestroyed;
 import com.cubeia.games.poker.io.protocol.WaitingToStartBreak;
 import com.cubeia.games.poker.io.protocol.WaitingForPlayers;
 import com.cubeia.games.poker.jmx.PokerStats;
@@ -93,6 +96,7 @@ import com.cubeia.poker.adapter.SystemShutdownException;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.ExposeCardsHolder;
 import com.cubeia.poker.hand.HandType;
+import com.cubeia.poker.model.GameStateSnapshot;
 import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
@@ -105,6 +109,8 @@ import com.cubeia.poker.util.SitoutCalculator;
 import com.cubeia.poker.util.ThreadLocalProfiler;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
+import org.joda.time.DateTime;
+import org.joda.time.Seconds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,6 +124,7 @@ import java.util.UUID;
 
 import static com.cubeia.firebase.api.game.player.PlayerStatus.DISCONNECTED;
 import static com.cubeia.firebase.api.game.player.PlayerStatus.LEAVING;
+import static com.cubeia.games.poker.common.MoneyFormatter.format;
 import static com.cubeia.games.poker.handler.BackendCallHandler.EXT_PROP_KEY_TABLE_ID;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -177,21 +184,25 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
     @VisibleForTesting
     ProtocolFactory protocolFactory = new ProtocolFactory();
-    
+
     @Service
     @VisibleForTesting
     PokerConfigurationService configService;
 
     @Inject
     private HandResultBatchFactory handResultBatchFactory;
-    
+
     @Inject
     @VisibleForTesting
     HandHistoryReporter handHistory;
-    
+
     @Service
     @VisibleForTesting
     RandomService randomService;
+
+    @Inject
+    @VisibleForTesting
+    SystemTime dateFetcher;
 
     /*------------------------------------------------
 
@@ -201,14 +212,9 @@ public class FirebaseServerAdapter implements ServerAdapter {
          implementations
 
       ------------------------------------------------*/
-    
+
     public java.util.Random getSystemRNG() {
         return randomService.getSystemDefaultRandom();
-    }
-
-    @Override
-    public void notifyBlindsLevelUpdated(int smallBlindAmount, int bigBlindAmount, int ante, boolean isBreak, int durationInMinutes) {
-        sendPublicPacket(new BlindsAreUpdated(new BlindsLevel(smallBlindAmount, bigBlindAmount, ante, isBreak, durationInMinutes)));
     }
 
     @Override
@@ -222,6 +228,28 @@ public class FirebaseServerAdapter implements ServerAdapter {
     }
 
     @Override
+    public void notifyTournamentDestroyed() {
+        sendPublicPacket(new TournamentDestroyed());
+    }
+
+    @Override
+    public void notifyBlindsLevelUpdated(com.cubeia.poker.model.BlindsLevel level) {
+        sendPublicPacket(new BlindsAreUpdated(createBlindsLevelPacket(level), secondsToNextLevel(level)));
+    }
+
+    private int secondsToNextLevel(com.cubeia.poker.model.BlindsLevel level) {
+        return Seconds.secondsBetween(dateFetcher.date(), new DateTime(level.getNextLevelStartTime())).getSeconds();
+    }
+
+    @Override
+    public void sendGameStateTo(GameStateSnapshot snapshot, int playerId) {
+        HandStartInfo handStartInfo = new HandStartInfo(getIntegrationHandId());
+        BlindsLevel blindsLevel = createBlindsLevelPacket(snapshot.getBlindsLevel());
+        GameState state = new GameState(snapshot.getTournamentId(), handStartInfo, blindsLevel, secondsToNextLevel(snapshot.getBlindsLevel()));
+        sendPrivatePacket(playerId, state);
+    }
+
+    @Override
     public void notifyNewHand() throws SystemShutdownException {
 
         if (backend.isSystemShuttingDown()) {
@@ -230,29 +258,31 @@ public class FirebaseServerAdapter implements ServerAdapter {
              */
             throw new SystemShutdownException();
         }
-        
+
         String handId = backend.generateHandId();
         HandIdentifier playedHand = new HandIdentifier();
         playedHand.setIntegrationId(handId);
         getFirebaseState().setCurrentHandIdentifier(playedHand);
 
-        StartNewHand packet = new StartNewHand();
-        packet.handId = handId;
-        GameDataAction action = protocolFactory.createGameAction(packet, 0, table.getId());
-        sendPublicPacket(action, -1);
+        sendPublicPacket(new HandStartInfo(handId), -1);
 
         log.debug("Starting new hand with ID '" + handId + "'. FBPlayers: " + table.getPlayerSet().getPlayerCount() + ", PokerPlayers: " + state.getSeatedPlayers().size());
-    
+
         handHistory.notifyNewHand();
+    }
+
+    private BlindsLevel createBlindsLevelPacket(com.cubeia.poker.model.BlindsLevel level) {
+
+        return new BlindsLevel(format(level.getSmallBlindAmount()),
+                               format(level.getBigBlindAmount()),
+                               format(level.getAnteAmount()),
+                               level.isBreak(),
+                               level.getDurationInMinutes());
     }
 
     /**
      * Notify about market references.
      * If any reference is null then it is replaced by a minus sign.
-     *
-     * @param playerId
-     * @param externalTableReference        the tables reference
-     * @param externalTableSessionReference the players table reference
      */
     @Override
     public void notifyExternalSessionReferenceInfo(int playerId, String externalTableReference, String externalTableSessionReference) {
@@ -273,7 +303,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
     @Override
     public void notifyNewRound() {
-    	handHistory.notifyNewRound();
+        handHistory.notifyNewRound();
     }
 
     @Override
@@ -373,7 +403,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
         GameDataAction ntfyAction = protocolFactory.createGameAction(hiddenCardsPacket, playerId, table.getId());
         log.debug("--> Send DealPrivateCards(hidden)[" + hiddenCardsPacket + "] to everyone");
         sendPublicPacket(ntfyAction, playerId);
-        
+
         handHistory.notifyPrivateCards(playerId, cards);
     }
 
@@ -504,7 +534,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
         clearActionCache();
         ThreadLocalProfiler.add("FirebaseServerAdapter.notifyHandEnd.stop");
     }
-   
+
     private Map<Integer, String> getTransactionIds(BatchHandResponse batchHandResult) {
         Map<Integer, String> transIds = new HashMap<Integer, String>();
         for (TransactionUpdate u : batchHandResult.getResultingBalances()) {
@@ -779,8 +809,6 @@ public class FirebaseServerAdapter implements ServerAdapter {
      * <p/>
      * If skipPlayerId is -1 then no player will be skipped.
      *
-     * @param action
-     * @param skipPlayerId
      */
     private void sendPublicPacket(GameAction action, int skipPlayerId) {
         if (skipPlayerId < 0) {
@@ -818,6 +846,10 @@ public class FirebaseServerAdapter implements ServerAdapter {
         }
     }
 
+    private void sendPrivatePacket(int playerId, ProtocolObject packet) {
+        GameDataAction action = protocolFactory.createGameAction(packet, playerId, table.getId());
+        sendPrivatePacket(playerId, action);
+    }
 
     private FirebaseState getFirebaseState() {
         return (FirebaseState) state.getAdapterState();

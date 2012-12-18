@@ -14,16 +14,22 @@ Poker.Map = Class.extend({
         this.length = 0;
    },
     /**
-     * retrieves the number  of elements the Map
+     * Retrieves the number of elements the Map
      * @return {Number}
      */
    size : function() {
      return this.length;
    },
    contains : function(key) {
-     var key = this._key(key);
-     return key!=null;
+       var key = this._key(key);
+       return this.get(key)!=null;
    },
+    /**
+     *
+     * @param key
+     * @return {*}
+     * @private
+     */
    _key : function(key) {
         if(key===undefined) {
              throw "Key must not be undefined";

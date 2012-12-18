@@ -17,9 +17,10 @@
 
 package com.cubeia.games.poker.common;
 
+import java.math.BigDecimal;
 import java.util.Locale;
 
-public class MoneyFormat {
+public class MoneyFormatter {
 
     /**
      * Formats an amount in cents as (CURRENCY)amount/100, rounding to an integer if the amount is divisible
@@ -33,7 +34,7 @@ public class MoneyFormat {
      * @param moneyInCents the amount, in cents
      * @return a string representation of the money, nicely formatted
      */
-    public static String format(String currency, int moneyInCents) {
+    public static String format(String currency, long moneyInCents) {
         String format;
         Number value;
         if (moneyInCents % 100 == 0) {
@@ -44,5 +45,18 @@ public class MoneyFormat {
             value = moneyInCents / 100.0;
         }
         return String.format(Locale.US, format, currency, value);
+    }
+
+    public static String format(long moneyInCents) {
+        return format("", moneyInCents);
+    }
+
+    public static String format(BigDecimal valueInCurrency) {
+        if (valueInCurrency == null) return "";
+        return format(valueInCurrency.movePointRight(2).intValue());
+    }
+
+    public static String format(double amountInCents) {
+        return format(BigDecimal.valueOf(amountInCents).movePointLeft(2));
     }
 }

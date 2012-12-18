@@ -51,6 +51,10 @@ public class ScheduledTournamentInstance {
         return configuration.getConfiguration();
     }
 
+    public TournamentSchedule getSchedule() {
+        return configuration.getSchedule();
+    }
+
     public DateTime getStartTime() {
         return startTime;
     }

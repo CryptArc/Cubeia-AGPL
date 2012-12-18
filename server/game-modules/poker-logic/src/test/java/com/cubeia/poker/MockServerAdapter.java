@@ -26,6 +26,8 @@ import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.ExposeCardsHolder;
 import com.cubeia.poker.hand.HandType;
 import com.cubeia.poker.hand.Rank;
+import com.cubeia.poker.model.BlindsLevel;
+import com.cubeia.poker.model.GameStateSnapshot;
 import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
@@ -33,17 +35,19 @@ import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.pot.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
-import com.cubeia.poker.result.Result;
-import com.cubeia.poker.util.SitoutCalculator;
 import com.cubeia.poker.tournament.RoundReport;
-import org.apache.log4j.Logger;
+import com.cubeia.poker.util.SitoutCalculator;
 
-import java.util.*;
-import java.util.Map.Entry;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 public class MockServerAdapter implements ServerAdapter {
-
-    Logger log = Logger.getLogger(this.getClass());
 
     private int timeoutCounter = 0;
     private Deque<ActionRequest> requests = new LinkedList<ActionRequest>();
@@ -61,16 +65,27 @@ public class MockServerAdapter implements ServerAdapter {
     }
 
     @Override
-    public void notifyBlindsLevelUpdated(int smallBlindAmount, int bigBlindAmount, int ante, boolean aBreak, int durationInMinutes) {
-    }
-
-    @Override
     public void notifyWaitingToStartBreak() {
 
     }
 
     @Override
     public void notifyWaitingForPlayers() {
+
+    }
+
+    @Override
+    public void notifyTournamentDestroyed() {
+
+    }
+
+    @Override
+    public void notifyBlindsLevelUpdated(BlindsLevel level) {
+
+    }
+
+    @Override
+    public void sendGameStateTo(GameStateSnapshot snapshot, int playerId) {
 
     }
 
@@ -93,10 +108,6 @@ public class MockServerAdapter implements ServerAdapter {
 
     public int getTimeoutRequests() {
         return timeoutCounter;
-    }
-
-    public int decrementScheduledTimeouts() {
-        return timeoutCounter--;
     }
 
     public PokerAction getLatestActionPerformed() {
@@ -152,9 +163,6 @@ public class MockServerAdapter implements ServerAdapter {
     public void notifyPrivateCards(int playerId, List<Card> cards) {
     }
 
-    public void notifyHandCanceled() {
-    }
-
     public void notifyPrivateExposedCards(int playerId, List<Card> cards) {
     }
 
@@ -168,9 +176,6 @@ public class MockServerAdapter implements ServerAdapter {
     }
 
     public void cleanupPlayers(SitoutCalculator sitoutCalculator) {
-    }
-
-    public void updatePot(Integer sum) {
     }
 
     public void notifyPlayerBalance(PokerPlayer p) {
@@ -213,16 +218,6 @@ public class MockServerAdapter implements ServerAdapter {
     public void notifyHandStartPlayerStatus(int playerId, PokerPlayerStatus status) {
         // TODO Auto-generated method stub
 
-    }
-
-    public List<PokerPlayer> getWinners() {
-        List<PokerPlayer> winners = new ArrayList<PokerPlayer>();
-        for (Entry<PokerPlayer, Result> entry : result.getResults().entrySet()) {
-            if (entry.getValue().getNetResult() > 0) {
-                winners.add(entry.getKey());
-            }
-        }
-        return winners;
     }
 
     public PokerPlayerStatus getPokerPlayerStatus(int playerId) {

@@ -5,13 +5,14 @@ var Poker = Poker || {};
  * interface to receive events about the table
  * @type {Poker.TableLayoutManager}
  */
-Poker.TableLayoutManager = Poker.TableListener.extend({
+Poker.TableLayoutManager = Class.extend({
     tableContainer : null,
     capacity : 10,
     seatTemplate : null,
     emptySeatTemplate : null,
     templateManager : null,
     cardElements : null,
+    tableInfoElement : null,
     myActionsManager : null,
     myPlayerSeatId : -1,
     seats : null,
@@ -25,7 +26,19 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
     mainPotContainer : null,
     tableView : null,
     animationManager : null,
+    /**
+     * @type Poker.Clock
+     */
+    clock : null,
 
+    /**
+     *
+     * @param {Number} tableId
+     * @param tableViewContainer
+     * @param {Poker.TemplateManager} templateManager
+     * @param {Number} capacity
+     * @constructor
+     */
     init : function(tableId, tableViewContainer, templateManager, capacity) {
         if (!tableViewContainer) {
             throw "TableLayoutManager requires a tableViewContainer";
@@ -47,7 +60,7 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
             console.log(actionType);
             console.log(amount);
             console.log(self.tableId);
-            new Poker.TableRequestHandler(self.tableId).onMyPlayerAction(actionType,amount);
+            new Poker.PokerRequestHandler(self.tableId).onMyPlayerAction(actionType,amount);
         };
         this.buyInDialog = new Poker.BuyInDialog();
         this.myActionsManager = new Poker.MyActionsManager(this.tableView, actionCallback);
@@ -65,8 +78,10 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         $(this.tableView).show();
         this.communityCardsContainer = this.tableView.find(".community-cards");
         this.mainPotContainer = this.tableView.find(".main-pot");
+        this.tableInfoElement = this.tableView.find(".table-info")
         tableViewContainer.show();
         this.cardElements = new Poker.Map();
+        this.clock = new Poker.Clock(this.tableInfoElement.find(".time-to-next-level-value"));
 
     },
     onActivateView : function() {
@@ -141,6 +156,9 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
      */
     onPlayerRemoved : function(playerId) {
         var seat = this.getSeatByPlayerId(playerId);
+        if (this.myPlayerSeatId == seat.seatId) {
+            this.myPlayerSeatId = -1;
+        }
         seat.clearSeat();
         this.seats.remove(seat.seatId);
         this.addEmptySeatContent(seat.seatId,-1,(this.myPlayerSeatId==-1));
@@ -172,12 +190,34 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
         this.currentDealer = -1;
         this.dealerButton.move(0,0);
         this.dealerButton.hide();
-
     },
-    onStartHand : function(dealerSeatId) {
+    /**
+     *
+     * @param {String} handId
+     */
+    onStartHand : function(handId) {
         this._resetSeats();
         this._resetCommunity();
         this.cardElements = new Poker.Map();
+        console.log("Hand " + handId + " started");
+    },
+    /**
+     * Updates the blinds info given a new level.
+     *
+     * @param {com.cubeia.games.poker.io.protocol.BlindsLevel} level
+     * @param {Number} secondsToNextLevel
+     */
+    onBlindsLevel : function(level, secondsToNextLevel) {
+        if (level.smallBlind != null && level.bigBlind != null) {
+            this.tableInfoElement.show();
+            this.tableInfoElement.find(".table-blinds-value").html(level.smallBlind + "/" + level.bigBlind);
+
+            if (secondsToNextLevel >= 0){
+                this.clock.sync(secondsToNextLevel);
+            } else {
+                this.tableInfoElement.find(".time-to-next-level").hide();
+            }
+        }
     },
     onPlayerActed : function(player,actionType,amount) {
         var seat = this.getSeatByPlayerId(player.id);
@@ -264,10 +304,10 @@ Poker.TableLayoutManager = Poker.TableListener.extend({
             s.empty();
             s.attr("class","seat");
         }
-        if(this.myPlayerSeatId!=-1) {
+        if(this.myPlayerSeatId != -1) {
             this.seats.get(this.myPlayerSeatId).clear();
         }
-        this.myPlayerSeatId=-1;
+        this.myPlayerSeatId = -1;
         this._resetCommunity();
         var cards = this.cardElements.values();
         for(var x = 0; x<cards.length; x++) {

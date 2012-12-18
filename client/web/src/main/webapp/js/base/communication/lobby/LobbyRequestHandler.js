@@ -1,7 +1,16 @@
 "use strict";
 var Poker = Poker || {};
+/**
+ * Handles lobby related requests
+ * @type {Poker.LobbyRequestHandler}
+ */
 Poker.LobbyRequestHandler = Class.extend({
+
+    /**
+     * @type FIREBASE.Connector
+     */
     connector : null,
+
     init : function() {
         this.connector = Poker.AppCtx.getConnector();
     },
@@ -13,12 +22,10 @@ Poker.LobbyRequestHandler = Class.extend({
             console.log("No unsubscribe function defined.");
         }
     },
-
     subscribeToCashGames : function() {
         this.unsubscribe();
 
         this.connector.lobbySubscribe(1, "/texas");
-
 
         Poker.Unsubscribe  = function() {
             console.log("Unsubscribing from cash games.");
@@ -46,7 +53,7 @@ Poker.LobbyRequestHandler = Class.extend({
         subscribeRequest.gameid = 1;
         subscribeRequest.address = path;
         Poker.AppCtx.getConnector().sendProtocolObject(subscribeRequest);
-
+        console.log(subscribeRequest);
         Poker.Unsubscribe  = function() {
             console.log("Unsubscribing from tournaments, path  = " + path);
             var unsubscribeRequest = new FB_PROTOCOL.LobbyUnsubscribePacket();

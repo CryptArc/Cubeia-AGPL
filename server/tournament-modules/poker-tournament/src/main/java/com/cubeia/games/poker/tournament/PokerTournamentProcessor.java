@@ -42,7 +42,9 @@ import com.cubeia.games.poker.io.protocol.RequestBlindsStructure;
 import com.cubeia.games.poker.io.protocol.RequestPayoutInfo;
 import com.cubeia.games.poker.io.protocol.RequestTournamentLobbyData;
 import com.cubeia.games.poker.io.protocol.RequestTournamentPlayerList;
+import com.cubeia.games.poker.io.protocol.RequestTournamentTable;
 import com.cubeia.games.poker.tournament.lobby.TournamentLobby;
+import com.cubeia.games.poker.tournament.messages.CloseTournament;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
@@ -122,6 +124,8 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
                 tournament.handleOpenSessionResponse((OpenSessionResponse) object);
             } else if (object instanceof OpenSessionFailedResponse) {
                 tournament.handleOpenSessionResponseFailed((OpenSessionFailedResponse) object);
+            } else if (object instanceof CloseTournament) {
+                tournament.closeTournament();
             } else {
                 log.warn("Unexpected attachment: " + object);
             }
@@ -144,6 +148,8 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
                 prepareTournamentLobby(instance).sendPayoutInfoTo(playerId);
             } else if (packet instanceof RequestTournamentLobbyData) {
                 prepareTournamentLobby(instance).sendTournamentLobbyDataTo(playerId);
+            } else if (packet instanceof RequestTournamentTable) {
+                prepareTournamentLobby(instance).sendTournamentTableTo(playerId);
             }
         } catch (IOException e) {
             log.warn("Failed de-serializing " + action, e);
@@ -167,8 +173,8 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
     }
 
     @Override
-    public void tournamentDestroyed(MttInstance mttInstance) {
-        log.debug("Tournament " + mttInstance + " destroyed.");
+    public void tournamentDestroyed(MttInstance instance) {
+        log.debug("Tournament " + instance + " destroyed.");
     }
 
     @Override
@@ -222,8 +228,7 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
         if (backend == null) {
             backend = instance.getServiceRegistry().getServiceInstance(CashGamesBackendService.class);
         }
-        TournamentLobby tournamentLobby = prepareTournamentLobby(instance);
-        tournament.injectTransientDependencies(instance, support, util.getStateSupport(instance), historyService, backend, dateFetcher, tournamentLobby);
+        tournament.injectTransientDependencies(instance, support, util.getStateSupport(instance), historyService, backend, dateFetcher);
     }
 
     private PokerTournament prepareTournament(MttInstance instance) {

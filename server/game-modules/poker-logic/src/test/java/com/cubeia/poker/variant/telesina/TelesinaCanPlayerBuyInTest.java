@@ -22,6 +22,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.cubeia.poker.model.BlindsLevel;
 import org.junit.Test;
 
 import com.cubeia.poker.player.PokerPlayer;
@@ -36,7 +37,8 @@ public class TelesinaCanPlayerBuyInTest {
         Telesina telesina = new Telesina(null, null, null);
 
         int anteLevel = 20;
-        PokerSettings settings = new PokerSettings(anteLevel, anteLevel, anteLevel * 2, 0, 0, null, 0, null, null, null);
+        BlindsLevel level = new BlindsLevel(anteLevel, anteLevel * 2, anteLevel);
+        PokerSettings settings = new PokerSettings(level, 0, 0, null, 0, null, null, null);
 
         when(player.getBalance()).thenReturn((long) anteLevel + 1);
         assertThat(telesina.canPlayerAffordEntryBet(player, settings, true), is(true));
@@ -55,7 +57,8 @@ public class TelesinaCanPlayerBuyInTest {
         Telesina telesina = new Telesina(null, null, null);
 
         int anteLevel = 20;
-        PokerSettings settings = new PokerSettings(anteLevel, anteLevel, anteLevel * 2, 0, 0, null, 0, null, null, null);
+        BlindsLevel level = new BlindsLevel(anteLevel, anteLevel * 2, anteLevel);
+        PokerSettings settings = new PokerSettings(level, 0, 0, null, 0, null, null, null);
 
         when(player.getPendingBalanceSum()).thenReturn((long) anteLevel + 1);
         assertThat(telesina.canPlayerAffordEntryBet(player, settings, true), is(true));
@@ -78,7 +81,8 @@ public class TelesinaCanPlayerBuyInTest {
         Telesina telesina = new Telesina(null, null, null);
 
         int anteLevel = 20;
-        PokerSettings settings = new PokerSettings(anteLevel, anteLevel, anteLevel * 2, 0, 0, null, 0, null, null, null);
+        BlindsLevel level = new BlindsLevel(anteLevel, anteLevel * 2, anteLevel);
+        PokerSettings settings = new PokerSettings(level, 0, 0, null, 0, null, null, null);
 
         when(player.getBalance()).thenReturn((long) anteLevel / 2);
         when(player.getPendingBalanceSum()).thenReturn((long) anteLevel / 2);

@@ -49,6 +49,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MockBackendAdapter implements CashGamesBackend {
@@ -71,7 +72,7 @@ public class MockBackendAdapter implements CashGamesBackend {
     
     @Override
     public boolean isSystemShuttingDown() {
-    	return false;
+        return false;
     }
 
     @Override
@@ -94,7 +95,7 @@ public class MockBackendAdapter implements CashGamesBackend {
 
     @Override
     public OpenSessionResponse openSession(OpenSessionRequest request) {
-        PlayerSessionId sessionId = new PlayerSessionId(request.playerId, null);
+        PlayerSessionId sessionId = new PlayerSessionId(request.playerId, UUID.randomUUID().toString());
         sessionTransactions.put(sessionId, request.getOpeningBalance());
 
         OpenSessionResponse response = new OpenSessionResponse(sessionId, Collections.<String, String>emptyMap());

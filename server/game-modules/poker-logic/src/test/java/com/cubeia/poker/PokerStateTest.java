@@ -19,6 +19,7 @@ package com.cubeia.poker;
 
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.context.PokerContext;
+import com.cubeia.poker.model.BlindsLevel;
 import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.Pot;
@@ -238,7 +239,8 @@ public class PokerStateTest {
         PotHolder oldPotHolder = new PotHolder(null);
         state.pokerContext.potHolder = oldPotHolder;
         RakeSettings rakeSettings = TestUtils.createOnePercentRakeSettings();
-        PokerSettings settings = new PokerSettings(0, 0, 0, 0, 0, null, 4, null, rakeSettings, null);
+        BlindsLevel level = new BlindsLevel(0, 0, 0);
+        PokerSettings settings = new PokerSettings(level, 0, 0, null, 4, null, rakeSettings, null);
         state.pokerContext.settings = settings;
 
         state.pokerContext.playerMap = new HashMap<Integer, PokerPlayer>();

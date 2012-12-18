@@ -21,12 +21,18 @@ import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.adapter.ServerAdapterHolder;
 import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.model.BlindsLevel;
+import com.cubeia.poker.model.GameStateSnapshot;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.settings.PokerSettings;
-import com.cubeia.poker.states.*;
+import com.cubeia.poker.states.NotStartedSTM;
+import com.cubeia.poker.states.PlayingSTM;
+import com.cubeia.poker.states.PokerGameSTM;
+import com.cubeia.poker.states.ShutdownSTM;
+import com.cubeia.poker.states.StateChanger;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.variant.GameType;
@@ -35,7 +41,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
 
 import static java.util.Collections.singleton;
 
@@ -394,12 +404,12 @@ public class PokerState implements Serializable, IPokerState {
         stateHolder.get().playerOpenedSession(playerId);
     }
 
-    public void setBlindsLevels(int smallBlindAmount, int bigBlindAmount, int ante, boolean isBreak, int durationInMinutes) {
-        pokerContext.setBlindsLevels(smallBlindAmount, bigBlindAmount, ante);
-        if (isBreak) {
-            log.debug("We are now on a break for " + durationInMinutes + " minutes.");
+    public void setBlindsLevels(BlindsLevel level) {
+        pokerContext.setBlindsLevels(level);
+        if (level.isBreak()) {
+            log.debug("We are now on a break for " + level.getNextLevelStartTime() + " minutes.");
         }
-        serverAdapter.notifyBlindsLevelUpdated(smallBlindAmount, bigBlindAmount, ante, isBreak, durationInMinutes);
+        serverAdapter.notifyBlindsLevelUpdated(level);
     }
 
     public void notifyWaitingToStartBreak() {
@@ -410,6 +420,16 @@ public class PokerState implements Serializable, IPokerState {
     public void notifyWaitingForPlayers() {
         log.debug("We are waiting for all other tables to finish and the we'll start the break.");
         serverAdapter.notifyWaitingForPlayers();
+    }
+
+    public void notifyTournamentDestroyed() {
+        log.debug("Notifying everyone that tournament is destroyed.");
+        serverAdapter.notifyTournamentDestroyed();
+    }
+
+    public void sendGameStateTo(int playerId) {
+        GameStateSnapshot snapshot = getContext().createGameStateSnapshot();
+        serverAdapter.sendGameStateTo(snapshot, playerId);
     }
 
 }

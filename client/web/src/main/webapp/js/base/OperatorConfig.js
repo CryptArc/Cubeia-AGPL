@@ -1,8 +1,19 @@
 "use strict";
 var Poker = Poker || {};
 
+/**
+ *
+ * @type {Poker.OperatorConfig}
+ */
 Poker.OperatorConfig = Class.extend({
+    /**
+     * @type Poker.Map
+     */
     configMap : null,
+
+    /**
+     * @type Boolean
+     */
     populated : false,
     init : function() {
         this.configMap = new Poker.Map();

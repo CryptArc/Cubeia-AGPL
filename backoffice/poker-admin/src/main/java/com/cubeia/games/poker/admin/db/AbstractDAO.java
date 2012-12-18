@@ -47,7 +47,7 @@ public class AbstractDAO extends JpaDaoSupport implements AdminDAO {
      * @see com.cubeia.games.poker.admin.db.AdminDAO#getItem(java.lang.Class, java.lang.Integer)
      */
     public <T> T getItem(Class<T> class1, Integer id) {
-        return (T) getJpaTemplate().find(class1, id);
+        return getJpaTemplate().find(class1, id);
     }
 
     @Override
@@ -99,11 +99,13 @@ public class AbstractDAO extends JpaDaoSupport implements AdminDAO {
         return getJpaTemplate().find("from RakeSettings");
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<BlindsStructure> getBlindsStructures() {
         return getJpaTemplate().find("from BlindsStructure");
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<PayoutStructure> getPayoutStructures() {
         return getJpaTemplate().find("from PayoutStructure");

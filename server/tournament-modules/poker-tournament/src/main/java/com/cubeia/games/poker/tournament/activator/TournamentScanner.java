@@ -59,8 +59,6 @@ public class TournamentScanner implements PokerActivator, Runnable {
 
     public static final long SHUTDOWN_WAIT_TIME = 10000;
 
-    public static final long DELAY_BEFORE_REMOVING_FINISHED_TOURNAMENTS = 30; // Seconds
-
     private static final transient Logger log = Logger.getLogger(TournamentScanner.class);
 
     protected MttFactory factory;
@@ -129,7 +127,7 @@ public class TournamentScanner implements PokerActivator, Runnable {
             try {
                 executorService.awaitTermination(SHUTDOWN_WAIT_TIME, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
-                log.error("interrupted waiting for checktable executor to terminate.", e);
+                log.error("interrupted waiting for check tournament executor to terminate.", e);
             }
 
             if (!executorService.isTerminated()) {
@@ -165,12 +163,12 @@ public class TournamentScanner implements PokerActivator, Runnable {
         MttLobbyObject[] tournamentInstances = factory.listTournamentInstances();
         Set<Integer> removed = new HashSet<Integer>();
 
-        for (MttLobbyObject t : tournamentInstances) {
-            String status = getStringAttribute(t, STATUS.name());
+        for (MttLobbyObject tournament : tournamentInstances) {
+            String status = getStringAttribute(tournament, STATUS.name());
 
-            if (status.equalsIgnoreCase(FINISHED.name()) || status.equalsIgnoreCase(CANCELLED.name())) {
-                executorService.schedule(new Destroyer(t.getTournamentId()), DELAY_BEFORE_REMOVING_FINISHED_TOURNAMENTS, TimeUnit.SECONDS);
-                removed.add(t.getTournamentId());
+            if (status.equalsIgnoreCase(CLOSED.name())) {
+                factory.destroyMtt(PokerTournamentActivatorImpl.POKER_GAME_ID, tournament.getTournamentId());
+                removed.add(tournament.getTournamentId());
             }
         }
         return removed;
@@ -284,20 +282,6 @@ public class TournamentScanner implements PokerActivator, Runnable {
             map.put(sitAndGo.getConfiguration().getName(), sitAndGo);
         }
         return map;
-    }
-
-    protected class Destroyer implements Runnable {
-
-        private final int mttid;
-
-        public Destroyer(int mttid) {
-            this.mttid = mttid;
-        }
-
-        public void run() {
-            log.debug("Destroying tournament with game id " + PokerTournamentActivatorImpl.POKER_GAME_ID + " and mttid " + mttid);
-            factory.destroyMtt(PokerTournamentActivatorImpl.POKER_GAME_ID, mttid);
-        }
     }
 
     public void run() {

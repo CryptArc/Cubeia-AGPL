@@ -113,6 +113,11 @@ Poker.MyActionsManager  = Class.extend({
           this.actionButtons[act.type.id].show();
       }
     },
+    onTournamentOut : function(){
+        this.hideAllTableButtons();
+        this.hideAllActionButtons();
+        this.display(Poker.ActionType.LEAVE);
+    },
     onSitIn : function() {
         this.hideAllTableButtons();
         this.display(Poker.ActionType.SIT_OUT);

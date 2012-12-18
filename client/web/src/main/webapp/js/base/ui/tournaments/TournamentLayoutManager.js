@@ -1,9 +1,19 @@
 "use strict";
 var Poker = Poker || {};
+
+/**
+ *
+ * @type {Poker.TournamentManager}
+ */
 Poker.TournamentLayoutManager = Class.extend({
     viewContainer : null,
     tournamentId :-1,
+
+    /**
+     * @type Poker.TemplateManager
+     */
     templateManager : null,
+
     viewElement : null,
     playerListBody : null,
     registerButton : null,
@@ -11,6 +21,7 @@ Poker.TournamentLayoutManager = Class.extend({
     loadingButton : null,
     leaveButton : null,
     leaveFunction : null,
+    takeSeatButton : null,
 
     init : function(tournamentId, name, registered, viewContainer,leaveFunction) {
         this.leaveFunction = leaveFunction;
@@ -44,13 +55,21 @@ Poker.TournamentLayoutManager = Class.extend({
 
     },
     updateTournamentInfo : function(info) {
+        console.log("Tournament info");
+        console.log(info);
+        if(info.maxPlayers == info.minPlayers) {
+            $.extend(info,{sitAndGo : true});
+        }
         var infoTemplate = this.templateManager.getRenderTemplate("tournamentInfoTemplate");
         this.viewElement.find(".tournament-info").html(infoTemplate.render(info));
 
     },
     updateTournamentStatistics : function(statistics) {
         var statsTemplate = this.templateManager.getRenderTemplate("tournamentStatsTemplate");
-        this.viewElement.find(".tournament-stats").html(statsTemplate.render(statistics));
+        this.viewElement.find(".tournament-stats").show().html(statsTemplate.render(statistics));
+    },
+    hideTournamentStatistics : function()  {
+        this.viewElement.find(".tournament-stats").hide();
     },
     updatePayoutInfo : function(payoutInfo) {
         var payoutTemplate = this.templateManager.getRenderTemplate("tournamentPayoutStructureTemplate");
@@ -61,6 +80,7 @@ Poker.TournamentLayoutManager = Class.extend({
         this.registerButton = this.viewElement.find(".register-action");
         this.unregisterButton = this.viewElement.find(".unregister-action");
         this.loadingButton =  this.viewElement.find(".loading-action").hide();
+        this.takeSeatButton =  this.viewElement.find(".take-seat-action").hide();
         var tournamentRequestHandler = new Poker.TournamentRequestHandler(this.tournamentId);
         var self = this;
         this.leaveButton.click(function(e){
@@ -77,12 +97,26 @@ Poker.TournamentLayoutManager = Class.extend({
             tournamentRequestHandler.unregisterFromTournament();
 
         });
+        this.takeSeatButton.click(function(e){
+            tournamentRequestHandler.takeSeat();
+        });
     },
+
     onFailedRegistration : function() {
         this.setPlayerUnregisteredState();
     },
     onFailedUnregistraion : function() {
         this.setPlayerRegisteredState();
+    },
+    setTournamentNotRegisteringState : function(registered){
+        if(registered) {
+            this.takeSeatButton.show();
+        } else {
+            this.takeSeatButton.hide();
+        }
+        this.loadingButton.hide();
+        this.registerButton.hide();
+        this.unregisterButton.hide();
     },
     setPlayerRegisteredState : function() {
         this.loadingButton.hide();

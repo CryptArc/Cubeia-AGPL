@@ -5,16 +5,23 @@ var Poker = Poker || {};
  * @type {Poker.LobbyManager}
  */
 Poker.LobbyManager = Class.extend({
-    lobbyTableData:null,
+
+    lobbyListData:null,
+
     listItemTemplate:null,
+
     currentScroll:null,
+
+    /**
+     * @type Poker.LobbyLayoutManager
+     */
     lobbyLayoutManager : null,
+
     /**
      * @constructor
      */
     init: function () {
-        this.lobbyTableData = [];
-        var templateManager = new Poker.TemplateManager();
+        this.lobbyListData = [];
         this.lobbyLayoutManager = Poker.AppCtx.getLobbyLayoutManager();
 
     },
@@ -23,21 +30,21 @@ Poker.LobbyManager = Class.extend({
         for (var i = 0; i < tableSnapshotList.length; i++) {
             this.handleTableSnapshot(tableSnapshotList[i]);
         }
-        this.lobbyLayoutManager.createTableList(this.lobbyTableData);
+        this.lobbyLayoutManager.createTableList(this.lobbyListData);
 
     },
     handleTableSnapshot : function (tableSnapshot) {
-        console.log("tableSnapshot:")
+        console.log("tableSnapshot:");
         console.log(tableSnapshot);
         if (this.findTable(tableSnapshot.tableid) === null) {
 
             var showInLobby = Poker.ProtocolUtils.readParam("VISIBLE_IN_LOBBY",tableSnapshot.params);
-            console.log("handle table snapshot show in lobby = " + showInLobby)
+            console.log("handle table snapshot show in lobby = " + showInLobby);
             if(parseInt(showInLobby) == 0 ) {
                 return;
             }
             var data = Poker.ProtocolUtils.extractTableData(tableSnapshot);
-            var i = this.lobbyTableData.push(data);
+            this.lobbyListData.push(data);
 
         } else {
             console.log("duplicate found - tableid: " + tableSnapshot.tableid);
@@ -47,19 +54,19 @@ Poker.LobbyManager = Class.extend({
         for (var i = 0; i < sitAndGoSnapshotList.length; i++) {
             this.handleTournamentSnapshot(sitAndGoSnapshotList[i]);
         }
-        this.lobbyLayoutManager.createTournamentList(this.lobbyTableData);
+        this.lobbyLayoutManager.createTournamentList(this.lobbyListData);
     },
-    handleTournamentSnapshotList:function (sitAndGoSnapshotList) {
-        for (var i = 0; i < sitAndGoSnapshotList.length; i++) {
-            this.handleTournamentSnapshot(sitAndGoSnapshotList[i]);
+    handleTournamentSnapshotList:function (tournamentSnapshotList) {
+
+        for (var i = 0; i < tournamentSnapshotList.length; i++) {
+            this.handleTournamentSnapshot(tournamentSnapshotList[i]);
         }
-        this.lobbyLayoutManager.createTournamentList(this.lobbyTableData);
+        this.lobbyLayoutManager.createTournamentList(this.lobbyListData);
     },
     handleTournamentSnapshot:function (snapshot) {
         if (this.findSitAndGo(snapshot.mttid) === null) {
             var data = Poker.ProtocolUtils.extractTournamentData(snapshot);
-            var i = this.lobbyTableData.push(data);
-
+            this.lobbyListData.push(data);
         } else {
             console.log("duplicate found - mttid: " + snapshot.mttid);
         }
@@ -86,6 +93,10 @@ Poker.LobbyManager = Class.extend({
             var status = Poker.ProtocolUtils.readParam("STATUS", tournamentUpdate.params);
             this.lobbyLayoutManager.updateTournamentItem(tournamentData);
             console.log("Tournament " + tournamentData.id + "  updated, registered = " + tournamentData.seated);
+            console.log("Tournament update status = " + status);
+            if (status == "FINISHED") {
+                Poker.AppCtx.getTournamentManager().tournamentFinished(tournamentUpdate.mttid);
+            }
         } else {
             console.log("Ignored tournament update, mtt not found: " + tournamentUpdate.mttid);
         }
@@ -116,16 +127,14 @@ Poker.LobbyManager = Class.extend({
         var showInLobby = Poker.ProtocolUtils.readParam("VISIBLE_IN_LOBBY",tableUpdate.params);
 
         if(showInLobby!=null && parseInt(showInLobby) == 0 ) {
-
             this.handleTableRemoved(tableUpdate.tableid);
             return;
         }
-        var self = this;
         var tableData = this.findTable(tableUpdate.tableid);
         if (tableData) {
             console.log("updating table " + tableData.name);
             if (tableData.seated == tableUpdate.seated) {
-                //console.log("on update, seated players the same, skipping update");
+                console.log("on update, seated players the same, skipping update");
                 return;
             }
             tableData.seated = tableUpdate.seated;
@@ -135,25 +144,28 @@ Poker.LobbyManager = Class.extend({
         }
     },
 
-    handleTableRemoved : function (tableid) {
-        this.removeTable(tableid);
-        this.lobbyLayoutManager.tableRemoved(tableid);
-
+    handleTableRemoved : function (tableId) {
+        this.removeListItem(tableId);
+        this.lobbyLayoutManager.tableRemoved(tableId);
     },
-    removeTable : function (tableid) {
-        for (var i = 0; i < this.lobbyTableData.length; i++) {
-            var object = this.lobbyTableData[i];
-            if (object.id == tableid) {
-                this.lobbyTableData.splice(i, 1);
+    handleTournamentRemoved : function(tournamentId) {
+        this.removeListItem(tournamentId);
+        this.lobbyLayoutManager.tournamentRemoved(tournamentId);
+    },
+    removeListItem : function (itemId) {
+        for (var i = 0; i < this.lobbyListData.length; i++) {
+            var object = this.lobbyListData[i];
+            if (object.id == itemId) {
+                this.lobbyListData.splice(i, 1);
                 return;
             }
         }
     },
 
-    findTable:function (tableid) {
-        for (var i = 0; i < this.lobbyTableData.length; i++) {
-            var object = this.lobbyTableData[i];
-            if (object.id == tableid) {
+    findTable:function (tableId) {
+        for (var i = 0; i < this.lobbyListData.length; i++) {
+            var object = this.lobbyListData[i];
+            if (object.id == tableId) {
                 return object;
             }
         }
@@ -161,8 +173,8 @@ Poker.LobbyManager = Class.extend({
     },
 
     findTournament:function (tournamentId) {
-        for (var i = 0; i < this.lobbyTableData.length; i++) {
-            var object = this.lobbyTableData[i];
+        for (var i = 0; i < this.lobbyListData.length; i++) {
+            var object = this.lobbyListData[i];
             if (object.id == tournamentId) {
                 return object;
             }
@@ -171,8 +183,8 @@ Poker.LobbyManager = Class.extend({
     },
 
     findSitAndGo:function (tournamentId) {
-        for (var i = 0; i < this.lobbyTableData.length; i++) {
-            var object = this.lobbyTableData[i];
+        for (var i = 0; i < this.lobbyListData.length; i++) {
+            var object = this.lobbyListData[i];
             if (object.id == tournamentId) {
                 return object;
             }
@@ -183,24 +195,10 @@ Poker.LobbyManager = Class.extend({
 
     },
     clearLobby : function () {
-        this.lobbyTableData = [];
+        this.lobbyListData = [];
         $("#tableListItemContainer").empty();
     },
 
-    createClickFunction:function (tables, data) {
-        var self = this;
-        console.log("Creating click function. Tables?: " + tables);
-        var comHandler = Poker.AppCtx.getCommunicationManager();
-        var click = function(e) {
-            if (tables) {
-                comHandler.openTable(data.id, data.capacity,self.getTableDescription(data));
-            } else {
-                comHandler.openTournamentLobby(data.id,data.name);
-
-            }
-        }
-        return click;
-    },
     getCapacity:function (id) {
         var tableData = this.findTable(id);
         return tableData.capacity;
@@ -215,7 +213,6 @@ Poker.LobbyFilter = Class.extend({
     lobbyLayoutManager:null,
     init : function (id, enabled, filterFunction, lobbyLayoutManager) {
         this.enabled = Poker.Utils.loadBoolean(id, true);
-
         this.id = id;
         this.filterFunction = filterFunction;
         this.lobbyLayoutManager = lobbyLayoutManager;
@@ -235,7 +232,7 @@ Poker.LobbyFilter = Class.extend({
         }
     },
     filterUpdated:function () {
-        this.lobbyLayoutManager.createTableList(Poker.AppCtx.getLobbyManager().lobbyTableData);
+        this.lobbyLayoutManager.createTableList(Poker.AppCtx.getLobbyManager().lobbyListData);
     },
     /**
      * Returns true if it should be included in the lobby and
@@ -296,11 +293,7 @@ Poker.PropertyStringFilter = Poker.LobbyFilter.extend({
     doFilter : function (enabled, lobbyData) {
         var p = lobbyData[this.property];
         if (typeof(p) != "undefined" && !this.enabled) {
-            if (p !== this.str) {
-                return true;
-            } else {
-                return false;
-            }
+            return (p !== this.str);
         } else {
             return true;
         }

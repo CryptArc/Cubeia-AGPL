@@ -7,18 +7,18 @@ describe("Poker.TableManager Test", function(){
     });
 
     it("test create table", function(){
-        var mockTableListener = jasmine.createSpyObj('mockTableListener',['onTableCreated']);
+        var mockTableLayoutManager = jasmine.createSpyObj('mockTableLayoutManager',['onTableCreated']);
 
-        tableManager.createTable(1,10, "tableName", [mockTableListener]);
+        tableManager.createTable(1,10, "tableName", mockTableLayoutManager);
         table = tableManager.getTable(1);
         expect(table.id).toEqual(1);
         expect(tableManager.getTable(1).capacity).toEqual(10);
-        expect(mockTableListener.onTableCreated).toHaveBeenCalled();
+        expect(mockTableLayoutManager.onTableCreated).toHaveBeenCalled();
     });
 
     it("test add player", function(){
-        var mockTableListener = jasmine.createSpyObj('mockTableListener',['onTableCreated','onPlayerAdded']);
-        tableManager.createTable(1,10,"tableName", [mockTableListener]);
+        var mockTableLayoutManager = jasmine.createSpyObj('mockTableLayoutManager',['onTableCreated','onPlayerAdded']);
+        tableManager.createTable(1,10,"tableName", mockTableLayoutManager);
 
         tableManager.addPlayer(1,1,1,"name1");
         table = tableManager.getTable(1);
@@ -31,21 +31,21 @@ describe("Poker.TableManager Test", function(){
         var player1 = table.getPlayerById(2);
         expect(player1.id).toEqual(2);
         expect(player1.name).toEqual("name2");
-        expect(mockTableListener.onPlayerAdded).toHaveBeenCalled();
-        return mockTableListener;
+        expect(mockTableLayoutManager.onPlayerAdded).toHaveBeenCalled();
+        return mockTableLayoutManager;
 
     });
 
-    var setUpTableAnPlayers = function(mockTableListener) {
+    var setUpTableAnPlayers = function(mockTableLayoutManager) {
 
 
     };
 
     it("test remove player", function(){
-        var mockTableListener = jasmine.createSpyObj('mockTableListener',
+        var mockTableLayoutManager = jasmine.createSpyObj('mockTableLayoutManager',
             ['onTableCreated','onPlayerAdded','onPlayerRemoved']);
 
-        tableManager.createTable(1,10,"tableName", [mockTableListener]);
+        tableManager.createTable(1,10,"tableName", mockTableLayoutManager);
         tableManager.addPlayer(1,1,1,"name1");
         table = tableManager.getTable(1);
         tableManager.addPlayer(1,2,2,"name2");
@@ -55,35 +55,35 @@ describe("Poker.TableManager Test", function(){
         expect(table.getNrOfPlayers()).toEqual(1);
         expect(table.getPlayerById(1)).toEqual(null);
 
-        expect(mockTableListener.onPlayerAdded).toHaveBeenCalled();
-        expect(mockTableListener.onPlayerRemoved).toHaveBeenCalled();
+        expect(mockTableLayoutManager.onPlayerAdded).toHaveBeenCalled();
+        expect(mockTableLayoutManager.onPlayerRemoved).toHaveBeenCalled();
     });
 
 
     it("Update player status", function(){
-        var mockTableListener = jasmine.createSpyObj('mockTableListener',
+        var mockTableLayoutManager = jasmine.createSpyObj('mockTableLayoutManager',
             ['onTableCreated','onPlayerAdded','onPlayerRemoved','onPlayerUpdated']);
 
-        tableManager.createTable(1,10,"tableName", [mockTableListener]);
+        tableManager.createTable(1,10,"tableName", mockTableLayoutManager);
         tableManager.addPlayer(1,1,1,"name1");
         table = tableManager.getTable(1);
         tableManager.addPlayer(1,2,2,"name2");
         tableManager.updatePlayerStatus(1,1,Poker.PlayerTableStatus.SITTING_IN);
         tableManager.updatePlayerStatus(1,2,Poker.PlayerTableStatus.SITTING_IN);
 
-        expect(table.getPlayerById(1).tableStatus.id).toEqual(Poker.PlayerStatus.SITTING_IN.id);
-        expect(table.getPlayerById(2).tableStatus.id).toEqual(Poker.PlayerStatus.SITTING_IN.id);
+        expect(table.getPlayerById(1).tableStatus.id).toEqual(Poker.PlayerTableStatus.SITTING_IN.id);
+        expect(table.getPlayerById(2).tableStatus.id).toEqual(Poker.PlayerTableStatus.SITTING_IN.id);
 
-        expect(mockTableListener.onPlayerAdded).toHaveBeenCalled();
-        expect(mockTableListener.onPlayerUpdated).toHaveBeenCalled();
+        expect(mockTableLayoutManager.onPlayerAdded).toHaveBeenCalled();
+        expect(mockTableLayoutManager.onPlayerUpdated).toHaveBeenCalled();
 
     });
 
     it("Update player balance", function(){
-        var mockTableListener = jasmine.createSpyObj('mockTableListener',
+        var mockTableLayoutManager = jasmine.createSpyObj('mockTableLayoutManager',
             ['onTableCreated','onPlayerAdded','onPlayerRemoved','onPlayerUpdated']);
 
-        tableManager.createTable(1,10,"tableName", [mockTableListener]);
+        tableManager.createTable(1,10,"tableName", mockTableLayoutManager);
         tableManager.addPlayer(1,1,1,"name1");
         table = tableManager.getTable(1);
         tableManager.addPlayer(1,2,2,"name2");
@@ -93,16 +93,16 @@ describe("Poker.TableManager Test", function(){
         expect(table.getPlayerById(1).balance).toEqual(1000);
         expect(table.getPlayerById(2).balance).toEqual(2000);
 
-        expect(mockTableListener.onPlayerAdded).toHaveBeenCalled();
-        expect(mockTableListener.onPlayerUpdated).toHaveBeenCalled();
+        expect(mockTableLayoutManager.onPlayerAdded).toHaveBeenCalled();
+        expect(mockTableLayoutManager.onPlayerUpdated).toHaveBeenCalled();
 
     });
 
     it("Deal cards", function(){
-        var mockTableListener = jasmine.createSpyObj('mockTableListener',
+        var mockTableLayoutManager = jasmine.createSpyObj('mockTableLayoutManager',
             ['onTableCreated','onPlayerAdded','onPlayerUpdated','onDealPlayerCard']);
 
-        tableManager.createTable(1,10,"tableName", [mockTableListener]);
+        tableManager.createTable(1,10,"tableName", mockTableLayoutManager);
         tableManager.addPlayer(1,1,1,"name1");
         table = tableManager.getTable(1);
         tableManager.addPlayer(1,2,2,"name2");
@@ -115,9 +115,9 @@ describe("Poker.TableManager Test", function(){
         tableManager.dealPlayerCard(1,2,3,"  ");
         tableManager.dealPlayerCard(1,2,4,"  ");
 
-        expect(mockTableListener.onDealPlayerCard).toHaveBeenCalled();
-        expect(mockTableListener.onPlayerAdded).toHaveBeenCalled();
-        expect(mockTableListener.onPlayerUpdated).toHaveBeenCalled();
+        expect(mockTableLayoutManager.onDealPlayerCard).toHaveBeenCalled();
+        expect(mockTableLayoutManager.onPlayerAdded).toHaveBeenCalled();
+        expect(mockTableLayoutManager.onPlayerUpdated).toHaveBeenCalled();
 
     });
 

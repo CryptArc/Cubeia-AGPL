@@ -25,7 +25,7 @@ public class BlindsStructureFactory {
 
     public static BlindsStructure createDefaultBlindsStructure() {
         List<Level> blindsLevelList = createBlindsLevels();
-        return new BlindsStructure(60 * 1000, blindsLevelList);
+        return new BlindsStructure(blindsLevelList);
     }
 
     private static List<Level> createBlindsLevels() {
@@ -34,7 +34,7 @@ public class BlindsStructureFactory {
         int bigBlind = 20;
         int ante = 0;
         for (int i = 0; i < 20; i++) {
-            levels.add(new Level(smallBlind, bigBlind, ante, 60, false));
+            levels.add(new Level(smallBlind, bigBlind, ante, 1, false));
             smallBlind *= 2;
             bigBlind *= 2;
         }

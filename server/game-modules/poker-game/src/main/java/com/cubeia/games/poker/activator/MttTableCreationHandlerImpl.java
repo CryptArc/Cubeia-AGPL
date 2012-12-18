@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.cubeia.games.poker.common.lobby.PokerLobbyAttributes;
+import com.cubeia.poker.model.BlindsLevel;
 import org.apache.log4j.Logger;
 
 import com.cubeia.firebase.api.game.table.Table;
@@ -56,40 +57,46 @@ public class MttTableCreationHandlerImpl implements MttTableCreationHandler {
 
     @Override
     public void tableCreated(Table table, int mttId, Object commandAttachment, LobbyAttributeAccessor acc) {
-        /*
-         * TODO 1: Cleanup this method, it isn't very beautiful
-         *
-         * TODO 2: Add poker variant to tournament table settings etc
-         */
-        log.debug("Created poker tournament table: " + table.getId());
-        int anteAmount = -1;
-        int smallBlindAmount = -1;
-        int bigBlindAmount = -1;
-        TimingProfile timing = TimingFactory.getRegistry().getDefaultTimingProfile();
-        if (commandAttachment instanceof TournamentTableSettings) {
-            TournamentTableSettings settings = (TournamentTableSettings) commandAttachment;
-            timing = settings.getTimingProfile();
-            anteAmount = settings.getAnteAmount();
-            smallBlindAmount = settings.getSmallBlindAmount();
-            bigBlindAmount = settings.getBigBlindAmount();
-        }
-        log.debug("Created tournament table[" + table.getId() + "] with timing profile: " + timing + " MTT ID: " + mttId);
-        PokerState pokerState = stateCreator.newPokerState();
-        int numberOfSeats = table.getPlayerSet().getSeatingMap().getNumberOfSeats();
-        BetStrategyName noLimit = BetStrategyName.NO_LIMIT;
-        RakeSettings rakeSettings = new RakeSettings(new BigDecimal(0), 0, 0); // No rake in tournaments.
         String externalTableId = "TOUR_TABLE::" + UUID.randomUUID();
-        Map<Serializable, Serializable> attributes = Collections.<Serializable, Serializable>singletonMap(TABLE_EXTERNAL_ID.name(), externalTableId);
-        PokerSettings settings = new PokerSettings(anteAmount, smallBlindAmount, bigBlindAmount, -1, -1, timing, numberOfSeats,
-                                                   noLimit, rakeSettings, attributes);
+        table.getGameState().setState(createGameState(table, mttId, commandAttachment, externalTableId));
+        setLobbyData(acc, externalTableId);
+        log.debug("Created tournament table[" + table.getId() + "] MTT ID: " + mttId);
+    }
+
+    private PokerState createGameState(Table table, int mttId, Object commandAttachment, String externalTableId) {
+        PokerSettings settings = createSettings(table, commandAttachment, externalTableId);
+
+        PokerState pokerState = stateCreator.newPokerState();
         GameType gameType = GameTypeFactory.createGameType(TEXAS_HOLDEM);
         pokerState.init(gameType, settings);
         pokerState.setTableId(table.getId());
         pokerState.setTournamentTable(true);
         pokerState.setTournamentId(mttId);
         pokerState.setAdapterState(new FirebaseState());
-        table.getGameState().setState(pokerState);
-        acc.setStringAttribute(PokerLobbyAttributes.TABLE_EXTERNAL_ID.name(), externalTableId);
+        return pokerState;
     }
 
+    private PokerSettings createSettings(Table table, Object commandAttachment, String externalTableId) {
+        TimingProfile timing = getTimingProfile(commandAttachment);
+        int numberOfSeats = table.getPlayerSet().getSeatingMap().getNumberOfSeats();
+        BetStrategyName noLimit = BetStrategyName.NO_LIMIT;
+        RakeSettings rakeSettings = new RakeSettings(new BigDecimal(0), 0, 0); // No rake in tournaments.
+        BlindsLevel level = new BlindsLevel(-1, -1, -1); // Blinds will be sent later.
+        Map<Serializable, Serializable> attributes = Collections.<Serializable, Serializable>singletonMap(TABLE_EXTERNAL_ID.name(), externalTableId);
+        return new PokerSettings(level, -1, -1, timing, numberOfSeats, noLimit, rakeSettings, attributes);
+    }
+
+    private TimingProfile getTimingProfile(Object commandAttachment) {
+        TimingProfile timing = TimingFactory.getRegistry().getDefaultTimingProfile();
+        if (commandAttachment instanceof TournamentTableSettings) {
+            TournamentTableSettings settings = (TournamentTableSettings) commandAttachment;
+            timing = settings.getTimingProfile();
+        }
+        log.debug("Timing for mtt table: " + timing);
+        return timing;
+    }
+
+    private void setLobbyData(LobbyAttributeAccessor acc, String externalTableId) {
+        acc.setStringAttribute(PokerLobbyAttributes.TABLE_EXTERNAL_ID.name(), externalTableId);
+    }
 }

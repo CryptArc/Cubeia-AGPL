@@ -15,13 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.tournament;
+package com.cubeia.games.poker.tournament.configuration.provider.mock;
 
-import java.io.Serializable;
+import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
+import org.junit.Test;
 
-/**
- * Message sent when a player is sitting by himself at a table, and will have to wait until another
- * player is moved to his table before the next hand will start.
- */
-public class WaitingForPlayers implements Serializable {
+import java.util.Collection;
+
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
+
+public class MockTournamentScheduleProviderTest {
+
+    @Test
+    public void testPayoutsNotNull() {
+        Collection<ScheduledTournamentConfiguration> schedule = new MockTournamentScheduleProvider().getTournamentSchedule();
+        assertThat(schedule.iterator().next().getConfiguration().getPayoutStructure(), notNullValue());
+    }
 }

@@ -35,6 +35,18 @@ import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.Double.parseDouble;
 import static java.math.BigDecimal.valueOf;
 
+/**
+ * Parser for parsing payout structures.
+ *
+ * The format is:
+ *
+ * First line: position ranges, for example 1, 2, 3, 4-5, 6-7 (means that position 4-5 get the same prize and 6-7 get the same prize).
+ * Following lines: number of players in tournament followed by payouts in percent.
+ * Example: 2-2 100
+ *          3-5 67, 33
+ * Means, for two players, winner gets all, for 3-7 players, 1st place gets 67% and second place gets 33%.
+ *
+ */
 public class PayoutStructureParser {
 
     private static final Logger log = Logger.getLogger(PayoutStructureParser.class);
@@ -52,6 +64,14 @@ public class PayoutStructureParser {
             return parse(new BufferedReader(new FileReader(file)));
         } catch (IOException e) {
             throw new RuntimeException("Failed parsing file " + file.getAbsolutePath(), e);
+        }
+    }
+
+    public PayoutStructure parsePayouts(InputStream stream) {
+        try {
+            return parse(new BufferedReader(new InputStreamReader(stream)));
+        } catch (IOException e) {
+            throw new RuntimeException("Failed parsing stream.", e);
         }
     }
 
@@ -133,8 +153,9 @@ public class PayoutStructureParser {
         return string.replaceAll("\"", "").replaceAll("%", "").trim();
     }
 
+    // Checks if the range is either just a number or a number followed by a dash and a number. (I.e. 15 is valid and 15-17 is valid)
     private boolean validRange(String entrants) {
-        return Pattern.compile("[0-9]+|[0-9]+-[0-9]+").matcher(entrants).matches();
+        return Pattern.compile("[0-9]+(-[0-9]*)?").matcher(entrants).matches();
     }
 
     private IntRange parseRange(String entrants) {

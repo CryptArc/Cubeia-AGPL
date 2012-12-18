@@ -23,6 +23,7 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import com.cubeia.poker.model.BlindsLevel;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -56,7 +57,8 @@ public class GameStateInitialization {
     public void init() {
         TimingProfile timing = Mockito.mock(TimingProfile.class);
         int anteLevel = 1234;
-        PokerSettings settings = new PokerSettings(anteLevel, anteLevel, anteLevel * 2, 100, 1000, timing, 6, BetStrategyName.NO_LIMIT,
+        BlindsLevel level = new BlindsLevel(anteLevel, anteLevel * 2, anteLevel);
+        PokerSettings settings = new PokerSettings(level, 100, 1000, timing, 6, BetStrategyName.NO_LIMIT,
         TestUtils.createOnePercentRakeSettings(), null);
         PokerState state = new PokerState();
         GameType gt = GameTypeFactory.createGameType(TELESINA);

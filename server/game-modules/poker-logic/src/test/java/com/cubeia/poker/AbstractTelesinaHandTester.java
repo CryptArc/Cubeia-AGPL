@@ -17,18 +17,9 @@
 
 package com.cubeia.poker;
 
-import static com.cubeia.poker.timing.Timings.MINIMUM_DELAY;
-
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
-
-import junit.framework.TestCase;
-
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
+import com.cubeia.poker.model.BlindsLevel;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.settings.BetStrategyName;
 import com.cubeia.poker.settings.PokerSettings;
@@ -41,6 +32,13 @@ import com.cubeia.poker.variant.telesina.TelesinaRoundFactory;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import junit.framework.TestCase;
+
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 
 public abstract class AbstractTelesinaHandTester extends TestCase {
 
@@ -59,12 +57,6 @@ public abstract class AbstractTelesinaHandTester extends TestCase {
         setUpTelesina(telesinaDeckFactory, anteLevel, TestUtils.createZeroRakeSettings());
     }
 
-    /**
-     * @param rngProvider
-     * @param telesinaDeckFactory
-     * @param anteLevel
-     * @throws Exception
-     */
     protected void setUpTelesina(TelesinaDeckFactory telesinaDeckFactory, int anteLevel, RakeSettings rakeSettings) throws Exception {
         rng = new NonRandomRNG();
         List<Module> list = new LinkedList<Module>();
@@ -85,7 +77,8 @@ public abstract class AbstractTelesinaHandTester extends TestCase {
     }
 
     protected PokerSettings createPokerSettings(int anteLevel, RakeSettings rakeSettings) {
-        PokerSettings settings = new PokerSettings(anteLevel, anteLevel, anteLevel * 2, 1000, 10000,
+        BlindsLevel level = new BlindsLevel(anteLevel, anteLevel * 2, anteLevel);
+        PokerSettings settings = new PokerSettings(level, 1000, 10000,
                 TimingFactory.getRegistry().getTimingProfile("MINIMUM_DELAY"), 6,
                 BetStrategyName.NO_LIMIT, rakeSettings,
                 Collections.<Serializable, Serializable>singletonMap("EXTERNAL_TABLE_ID", "xyz"));

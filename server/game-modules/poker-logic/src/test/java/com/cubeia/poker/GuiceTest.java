@@ -17,14 +17,7 @@
 
 package com.cubeia.poker;
 
-import static com.cubeia.poker.timing.Timings.MINIMUM_DELAY;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
-
-import junit.framework.TestCase;
-
+import com.cubeia.poker.model.BlindsLevel;
 import com.cubeia.poker.settings.BetStrategyName;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.timing.TimingFactory;
@@ -34,6 +27,11 @@ import com.cubeia.poker.variant.factory.GameTypeFactory;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import junit.framework.TestCase;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 
 public abstract class GuiceTest extends TestCase {
 
@@ -70,7 +68,8 @@ public abstract class GuiceTest extends TestCase {
     }
 
     protected PokerSettings createPokerSettings(int anteLevel) {
-        PokerSettings settings = new PokerSettings(anteLevel, anteLevel / 2, anteLevel, 1000, 10000,
+        BlindsLevel blinds = new BlindsLevel(anteLevel / 2, anteLevel, anteLevel);
+        PokerSettings settings = new PokerSettings(blinds, 1000, 10000,
                 TimingFactory.getRegistry().getTimingProfile("MINIMUM_DELAY"), 6,
                 BetStrategyName.NO_LIMIT, TestUtils.createZeroRakeSettings(), null);
 

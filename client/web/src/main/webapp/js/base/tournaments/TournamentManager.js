@@ -6,43 +6,89 @@ var Poker = Poker || {};
  * @type {Poker.TournamentManager}
  */
 Poker.TournamentManager = Class.extend({
+
+    /**
+     * @type Poker.Map
+     */
     tournaments : null,
+
+    /**
+     * @type Poker.Map
+     */
     registeredTournaments : null,
+
+    /**
+     *  @type Poker.Map
+     */
+    tournamentTables : null,
+
+    /**
+     * @type Poker.DialogManager
+     */
     dialogManager : null,
+
+    /**
+     * @type Poker.PeriodicalUpdater
+     */
     tournamentUpdater : null,
+
+    /**
+     * @type Poker.TableManager
+     */
+    tableManager : null,
+
+    /**
+     *
+     * @param {Number} tournamentLobbyUpdateInterval
+     * @constructor
+     */
     init : function(tournamentLobbyUpdateInterval) {
         this.tournaments = new Poker.Map();
+        this.tournamentTables = new Poker.Map();
         this.registeredTournaments = new Poker.Map();
         this.dialogManager = Poker.AppCtx.getDialogManager();
+        this.tableManager = Poker.AppCtx.getTableManager();
         var self = this;
         this.tournamentUpdater = new Poker.PeriodicalUpdater(function(){
             self.updateTournamentData();
         },tournamentLobbyUpdateInterval);
     },
-    createTournament : function(id,name) {
+    createTournament : function(id, name) {
         var viewManager = Poker.AppCtx.getViewManager();
         if(this.getTournamentById(id)!=null) {
             viewManager.activateViewByTournamentId(id);
         } else {
             var viewContainer = $(".view-container");
 
-            var layoutManager = new Poker.TournamentLayoutManager(id,name, this.isRegisteredForTournament(id),
+            var layoutManager = new Poker.TournamentLayoutManager(id, name, this.isRegisteredForTournament(id),
                 viewContainer,function(){
                         this.removeTournament(id);
                     }
             );
-            viewManager.addTournamentView(layoutManager.getViewElementId(),name, layoutManager);
+            viewManager.addTournamentView(layoutManager.getViewElementId(), name, layoutManager);
 
-            this.tournaments.put(id,new Poker.Tournament(id,name,layoutManager));
+            this.tournaments.put(id,new Poker.Tournament(id, name, layoutManager));
             new Poker.TournamentRequestHandler(id).requestTournamentInfo();
             this.activateTournamentUpdates(id);
             this.tournamentUpdater.start();
         }
     },
+    onRemovedFromTournament : function(tableId, playerId) {
+        this.tableManager.updatePlayerStatus(tableId,playerId,
+            Poker.PlayerTableStatus.TOURNAMENT_OUT);
+        this.tableManager.removePlayer(tableId, playerId);
+    },
+    setTournamentTable : function(tournamentId, tableId) {
+        this.tournamentTables.put(tournamentId,tableId);
+    },
+    getTableByTournament : function(tournamentId) {
+        return this.tournamentTables.get(tournamentId);
+    },
     removeTournament : function(tournamentId) {
         var tournament = this.tournaments.remove(tournamentId);
-        if(tournament!=null) {
-            if(this.tournaments.size()==0) {
+        if (tournament!=null) {
+            if (this.tournaments.size() == 0) {
+                console.log("Stopping updates of lobby for tournament: " + tournamentId);
                 this.tournamentUpdater.stop();
             }
         }
@@ -50,6 +96,11 @@ Poker.TournamentManager = Class.extend({
     getTournamentById : function(id) {
         return this.tournaments.get(id);
     },
+    /**
+     *
+     * @param {Number} tournamentId
+     * @param {com.cubeia.games.poker.io.protocol.TournamentLobbyData} tournamentData
+     */
     handleTournamentLobbyData : function(tournamentId, tournamentData) {
         console.log("tournament lobby data received");
         console.log(tournamentData);
@@ -57,8 +108,12 @@ Poker.TournamentManager = Class.extend({
         this.handlePlayerList(tournament,tournamentData.players);
         this.handleBlindsStructure(tournament,tournamentData.blindsStructure);
         this.handlePayoutInfo(tournament,tournamentData.payoutInfo);
-        this.handleTournamentStatistics(tournament,tournamentData.tournamentStatistics);
-        this.handleTournamentInfo(tournament,tournamentData.tournamentInfo);
+        this.handleTournamentInfo(tournament, tournamentData.tournamentInfo);
+        if (this.isTournamentRunning(tournamentData.tournamentInfo.tournamentStatus)) {
+            this.handleTournamentStatistics(tournament, tournamentData.tournamentStatistics);
+        } else {
+            tournament.tournamentLayoutManager.hideTournamentStatistics();
+        }
     },
     handlePlayerList : function(tournament,playerList) {
         var players = [];
@@ -85,8 +140,25 @@ Poker.TournamentManager = Class.extend({
         this.dialogManager.displayGenericDialog({header:"Message", message:"You successfully registered to tournament " + tournamentId});
 
     },
-    handleTournamentInfo : function(tournament,info){
+    /**
+     * @param {Poker.Tournament} tournament
+     * @param {com.cubeia.games.poker.io.protocol.TournamentInfo} info
+     */
+    handleTournamentInfo : function(tournament, info) {
+        console.log("registered tournaments " + this.registeredTournaments.contains(tournament.id));
+        console.log(this.registeredTournaments);
         tournament.tournamentLayoutManager.updateTournamentInfo(info);
+        var registered = this.registeredTournaments.contains(tournament.id);
+        if (info.tournamentStatus != com.cubeia.games.poker.io.protocol.TournamentStatusEnum.REGISTERING) {
+            tournament.tournamentLayoutManager.setTournamentNotRegisteringState(registered);
+
+        } else if (registered == true) {
+            tournament.tournamentLayoutManager.setPlayerRegisteredState();
+        } else {
+            tournament.tournamentLayoutManager.setPlayerUnregisteredState();
+        }
+        // Todo: we could update the name here, at least if it's the dummy name (Tourney). (I tried, but didn't figure out the Mustache stuff.)
+        // tournament.tournamentLayoutManager.updateName(info.tournamentName);
     },
     handleRegistrationFailure : function(tournamentId) {
         this.dialogManager.displayGenericDialog({header:"Message",
@@ -106,25 +178,25 @@ Poker.TournamentManager = Class.extend({
             message:"Your unregistration attempt from tournament " + tournamentId + " was denied."});
     },
     isRegisteredForTournament : function(tournamentId) {
-        return this.registeredTournaments.get(tournamentId)!=null ? true : false;
+        return this.registeredTournaments.get(tournamentId) != null;
     },
     activateTournamentUpdates : function(tournamentId) {
         var tournament = this.tournaments.get(tournamentId);
-        if(tournament!=null) {
+        if (tournament != null) {
             tournament.updating = true;
         }
         this.tournamentUpdater.rushUpdate();
     },
     deactivateTournamentUpdates : function(tournamentId) {
         var tournament = this.tournaments.get(tournamentId);
-        if(tournament!=null) {
+        if (tournament != null) {
             tournament.updating = false;
         }
     },
     updateTournamentData : function() {
         var tournaments =  this.tournaments.values();
-        for(var i = 0; i<tournaments.length; i++) {
-            if(tournaments[i].updating==true) {
+        for (var i = 0; i < tournaments.length; i++) {
+            if (tournaments[i].updating == true && tournaments[i].finished == false) {
                 console.log("found updating tournament retrieving tournament data");
                 new Poker.TournamentRequestHandler(tournaments[i].id).requestTournamentInfo();
             }
@@ -132,9 +204,30 @@ Poker.TournamentManager = Class.extend({
     },
     openTournamentLobbies : function(tournamentIds) {
         //TODO: the name of the tournament needs to be fetched from somewhere!
-        for(var i = 0; i<tournamentIds.length; i++) {
+        for (var i = 0; i < tournamentIds.length; i++) {
             this.registeredTournaments.put(tournamentIds[i],true);
             this.createTournament(tournamentIds[i],"Tourney");
         }
+    },
+    tournamentFinished : function(tournamentId) {
+        var tournament = this.tournaments.get(tournamentId);
+        if(tournament!=null){
+            console.log("Tournament finished rushing update");
+            tournament.finished = true;
+            new Poker.TournamentRequestHandler(tournamentId).requestTournamentInfo();
+        } else {
+            console.log("Tournament finished but not found");
+        }
+    },
+    /**
+     * Checks if this tournament is running (which it is if the status is running, on_break or preparing_break).
+     * @param {Number} status
+     * @return {boolean}
+     */
+    isTournamentRunning : function(status) {
+        var running = com.cubeia.games.poker.io.protocol.TournamentStatusEnum.RUNNING;
+        var onBreak = com.cubeia.games.poker.io.protocol.TournamentStatusEnum.ON_BREAK;
+        var preparingForBreak = com.cubeia.games.poker.io.protocol.TournamentStatusEnum.PREPARING_BREAK;
+        return status == running || status == onBreak || status == preparingForBreak;
     }
 });

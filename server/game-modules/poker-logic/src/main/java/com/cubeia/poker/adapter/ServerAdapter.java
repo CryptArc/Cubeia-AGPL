@@ -24,6 +24,8 @@ import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.ExposeCardsHolder;
 import com.cubeia.poker.hand.HandType;
 import com.cubeia.poker.hand.Rank;
+import com.cubeia.poker.model.BlindsLevel;
+import com.cubeia.poker.model.GameStateSnapshot;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.pot.Pot;
@@ -46,7 +48,6 @@ public interface ServerAdapter {
     /**
      * Requests multiple actions sharing the same sequence number and timeout.
      *
-     * @param requests
      */
     void requestMultipleActions(Collection<ActionRequest> requests);
 
@@ -56,7 +57,6 @@ public interface ServerAdapter {
     /**
      * Notify all players who is dealer.
      *
-     * @param seatId
      */
     void notifyDealerButton(int seatId);
 
@@ -64,8 +64,6 @@ public interface ServerAdapter {
      * Sends the private cards to the given player and notify
      * all other players with hidden cards.
      *
-     * @param playerId
-     * @param cards
      */
     void notifyPrivateCards(int playerId, List<Card> cards);
 
@@ -75,7 +73,7 @@ public interface ServerAdapter {
      * @param playerId    player id
      * @param handType    hand type classification
      * @param cardsInHand cards used in best hand
-     * @param publicHand  if the bestHand should be broadcasted to all players or just the owner
+     * @param publicHand  if the bestHand should be broadcast to all players or just the owner
      */
     void notifyBestHand(int playerId, HandType handType, List<Card> cardsInHand, boolean publicHand);
 
@@ -83,8 +81,6 @@ public interface ServerAdapter {
      * Sends the private cards to the given player and notify
      * all other players with exposed cards.
      *
-     * @param playerId
-     * @param cards
      */
     void notifyPrivateExposedCards(int playerId, List<Card> cards);
 
@@ -100,9 +96,6 @@ public interface ServerAdapter {
      * Notify about market references.
      * If any reference is null then it is replaced by a minus sign.
      *
-     * @param playerId
-     * @param externalTableReference        the tables reference
-     * @param externalTableSessionReference the players table reference
      */
     void notifyExternalSessionReferenceInfo(int playerId, String externalTableReference, String externalTableSessionReference);
 
@@ -120,7 +113,6 @@ public interface ServerAdapter {
     /**
      * Notify players about updated player balance.
      *
-     * @param player
      */
     void notifyPlayerBalance(PokerPlayer player);
 
@@ -168,12 +160,9 @@ public interface ServerAdapter {
     void notifyNewRound();
 
     /**
-     * Send information to client about buyins
+     * Send information to client about buy-ins.
      *
-     * @param playerId
-     * @param mandatoryBuyin TODO
      */
-
     void notifyBuyInInfo(int playerId, boolean mandatoryBuyin);
 
     /**
@@ -186,33 +175,26 @@ public interface ServerAdapter {
     public void unseatPlayer(int playerId, boolean setAsWatcher);
 
     /**
-     * Notify that a bet was taken back from betstack to balance since it was uncalled
+     * Notify that a bet was taken back from bet stack to balance since it was uncalled
      *
-     * @param playerId
-     * @param amount
      */
     void notifyTakeBackUncalledBet(int playerId, int amount);
 
     /**
      * Notify that the player will be able to do this actions later when it is the players turn
      *
-     * @param player
-     * @param optionList
      */
     void notifyFutureAllowedActions(PokerPlayer player, List<PokerActionType> optionList);
 
     /**
      * Request buy in:s for the given players that has {@link PokerPlayer#getRequestedBuyInAmount()} > 0.
      *
-     * @param players
      */
     void performPendingBuyIns(Collection<PokerPlayer> players);
 
     /**
      * Send out a player status for a new hand starting
      *
-     * @param playerId
-     * @param status
      */
     void notifyHandStartPlayerStatus(int playerId, PokerPlayerStatus status);
 
@@ -227,9 +209,13 @@ public interface ServerAdapter {
     
     Random getSystemRNG();
 
-    void notifyBlindsLevelUpdated(int smallBlindAmount, int bigBlindAmount, int ante, boolean aBreak, int durationInMinutes);
-
     void notifyWaitingToStartBreak();
 
     void notifyWaitingForPlayers();
+
+    void notifyTournamentDestroyed();
+
+    void notifyBlindsLevelUpdated(BlindsLevel level);
+
+    void sendGameStateTo(GameStateSnapshot snapshot, int playerId);
 }

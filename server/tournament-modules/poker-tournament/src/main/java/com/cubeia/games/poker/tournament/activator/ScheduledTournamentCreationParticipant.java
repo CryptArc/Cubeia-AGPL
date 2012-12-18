@@ -37,12 +37,18 @@ public class ScheduledTournamentCreationParticipant extends PokerTournamentCreat
     }
 
     @Override
+    protected int getMinutesVisibleAfterFinished() {
+        return instanceConfiguration.getSchedule().getMinutesVisibleAfterFinished();
+    }
+
+    @Override
     protected TournamentLifeCycle getTournamentLifeCycle() {
         return new ScheduledTournamentLifeCycle(instanceConfiguration.getStartTime(), instanceConfiguration.getOpenRegistrationTime());
     }
 
     @Override
     protected void tournamentCreated(PokerTournamentState pokerState, LobbyAttributeAccessor lobbyAttributeAccessor) {
+        super.tournamentCreated(pokerState, lobbyAttributeAccessor);
         setStatus(pokerState, lobbyAttributeAccessor, PokerTournamentStatus.ANNOUNCED);
         lobbyAttributeAccessor.setStringAttribute(IDENTIFIER.name(), instanceConfiguration.getIdentifier());
         lobbyAttributeAccessor.setStringAttribute(START_TIME.name(), instanceConfiguration.getStartTime().toString(pattern));

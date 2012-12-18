@@ -8,8 +8,17 @@ var Poker = Poker || {};
  * @type {Object}
  */
 Poker.MyPlayer = {
+    /**
+     * @type Number
+     */
     id : -1,
+    /**
+     * @type String
+     */
     name : null,
+    /**
+     * type Number
+     */
     betAmount : 0,
     onLogin : function(playerId, name) {
         Poker.MyPlayer.id = playerId;

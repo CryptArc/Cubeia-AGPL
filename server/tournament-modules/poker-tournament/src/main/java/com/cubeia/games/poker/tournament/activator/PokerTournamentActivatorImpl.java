@@ -24,8 +24,6 @@ import com.cubeia.firebase.api.server.Startable;
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.game.poker.config.api.PokerConfigurationService;
 import com.cubeia.games.poker.common.guice.JpaInitializer;
-import com.cubeia.games.poker.tournament.guice.ActivatorModule;
-import com.cubeia.games.poker.tournament.guice.MockActivatorModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.apache.log4j.Logger;

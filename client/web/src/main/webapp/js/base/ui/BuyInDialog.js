@@ -22,7 +22,7 @@ Poker.BuyInDialog = Class.extend({
             function(){
                 var val = $("#facebox .buyin-amount").val();
                 if(self.validateAmount(val)) {
-                    new Poker.TableRequestHandler(tableId).buyIn(Math.round(parseFloat(val)*100))
+                    new Poker.PokerRequestHandler(tableId).buyIn(Math.round(parseFloat(val)*100))
                 }
                 return false; //don't close the dialog, need to wait for response
             },
