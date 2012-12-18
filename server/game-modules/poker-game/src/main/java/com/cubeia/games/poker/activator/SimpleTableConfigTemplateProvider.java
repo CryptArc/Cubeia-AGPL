@@ -39,8 +39,8 @@ public class SimpleTableConfigTemplateProvider implements TableConfigTemplatePro
         t.setVariant(TEXAS_HOLDEM);
         t.setTiming(TimingFactory.getRegistry().getDefaultTimingProfile());
         t.setTTL(60000);
-        t.setMinEmptyTables(2000);
-        t.setMinTables(2000);
+        t.setMinEmptyTables(5);
+        t.setMinTables(10);
         return singletonList(t);
     }
 }
