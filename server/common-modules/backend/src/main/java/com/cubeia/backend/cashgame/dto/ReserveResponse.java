@@ -27,18 +27,21 @@ import java.util.Map;
 @SuppressWarnings("serial")
 public class ReserveResponse implements Serializable {
 
-    private final BalanceUpdate balanceUpdate;
-    private final Money amountReserved;
+    // private final BalanceUpdate balanceUpdate;
+    
+	private final PlayerSessionId playerSessionId;
+	private final Money amountReserved;
     private final Map<String, String> reserveProperties;
 
-    public ReserveResponse(BalanceUpdate balanceUpdate, Money amountReserved) {
-        this.balanceUpdate = balanceUpdate;
+    public ReserveResponse(PlayerSessionId playerSessionId, Money amountReserved) {
+        this.playerSessionId = playerSessionId;
+		// this.balanceUpdate = balanceUpdate;
         this.amountReserved = amountReserved;
         this.reserveProperties = new HashMap<String, String>();
     }
 
     public PlayerSessionId getPlayerSessionId() {
-        return getBalanceUpdate().getPlayerSessionId();
+        return playerSessionId; // getBalanceUpdate().getPlayerSessionId();
     }
 
     public void setProperty(String key, String value) {
@@ -47,13 +50,13 @@ public class ReserveResponse implements Serializable {
 
     @Override
     public String toString() {
-        return "ReserveResponse [balanceUpdate=" + getBalanceUpdate() + ", amountReserved=" + getAmountReserved()
+        return "ReserveResponse [playerSessionId=" + getPlayerSessionId() + ", amountReserved=" + getAmountReserved()
                 + ", reserveProperties=" + getReserveProperties() + "]";
     }
 
-    public BalanceUpdate getBalanceUpdate() {
+    /*public BalanceUpdate getBalanceUpdate() {
         return balanceUpdate;
-    }
+    }*/
 
     public Money getAmountReserved() {
         return amountReserved;

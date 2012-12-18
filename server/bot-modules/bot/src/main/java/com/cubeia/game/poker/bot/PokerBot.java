@@ -17,17 +17,15 @@
 
 package com.cubeia.game.poker.bot;
 
-import java.util.concurrent.TimeUnit;
+import java.util.Random;
 
 import org.apache.log4j.Logger;
 
 import com.cubeia.firebase.bot.Bot;
-import com.cubeia.firebase.bot.action.Action;
 import com.cubeia.firebase.bot.ai.BasicAI;
 import com.cubeia.firebase.bot.ai.Delays;
 import com.cubeia.firebase.io.protocol.GameTransportPacket;
 import com.cubeia.firebase.io.protocol.ProbePacket;
-import com.cubeia.games.poker.io.protocol.BuyInInfoRequest;
 
 /**
  * Poker Bot.
@@ -37,13 +35,57 @@ import com.cubeia.games.poker.io.protocol.BuyInInfoRequest;
  */
 public class PokerBot extends BasicAI {
 
+	private static transient Random RAND = new Random();
     private static transient Logger log = Logger.getLogger(PokerBot.class);
 
     private GameHandler handler;
-
+    // private int loginDelay;
+    private long calculatedLoginDelay;
+    private long calculatedJoinDelay;
+    // private int joinDelay;
+   
     public PokerBot(Bot bot) {
         super(bot);
         handler = new GameHandler(this);
+        setLoginDelay(0);
+        setJoinDelay(0);
+    }
+    
+    public void setLoginDelay(int loginDelay) {
+		// this.loginDelay = loginDelay;
+		if(loginDelay > 0) {
+			calculatedLoginDelay = RAND.nextInt(loginDelay * 1000);
+			getBot().logDebug("Calculated login delay in millis: " + calculatedLoginDelay);
+		} else {
+			calculatedLoginDelay = Delays.LOGIN_DELAY_SECONDS * 1000;
+		}
+	}
+    
+    public void setJoinDelay(int joinDelay) {
+		// this.joinDelay = joinDelay;
+		if(joinDelay > 0) {
+			calculatedJoinDelay = RAND.nextInt(joinDelay * 1000);
+			getBot().logDebug("Calculated join delay in millis: " + calculatedLoginDelay);
+		} else {
+			calculatedJoinDelay = Delays.SEAT_DELAY_SECONDS * 1000;
+		}
+	}
+    
+    @Override
+    protected long getJoinDelay() {
+    	return calculatedJoinDelay;
+    }
+    
+    @Override
+    protected long getLoginDelay() {
+    	return calculatedLoginDelay;
+    }
+    
+    @Override
+    public void handleProbePacket(ProbePacket packet) {
+        // if (table.getId() == packet.tableid) {
+        	handler.handleProbePacket(packet);
+        // }
     }
     
     public synchronized void handleGamePacket(GameTransportPacket packet) {
@@ -58,13 +100,6 @@ public class PokerBot extends BasicAI {
         super.handleLoggedin();
     }
 
-    /**
-     * I don't care, said Pierre,
-     * cause I am from France
-     */
-    public void handleProbePacket(ProbePacket packet) {
-    }
-
     public void stop() {
     }
 
@@ -77,9 +112,11 @@ public class PokerBot extends BasicAI {
      */
     @Override
     protected void handleSeated() {
+    	super.setDisableLeaveTable(true); // enable after entered first hand (on first action request)
         super.handleSeated();
-        BuyInInfoRequest buyInInfoRequest = new BuyInInfoRequest();
-        getBot().sendGameData(getTable().getId(), getBot().getPid(), buyInInfoRequest);
+        // Do not send buying request, we'll get that when the session opens
+        // BuyInInfoRequest buyInInfoRequest = new BuyInInfoRequest();
+        // getBot().sendGameData(getTable().getId(), getBot().getPid(), buyInInfoRequest);
     }
 
 }

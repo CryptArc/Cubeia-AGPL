@@ -63,7 +63,7 @@
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>yuicompressor-maven-plugin</artifactId>
-                <executions>
+                <executions> 
                     <execution>
                         <goals>
                             <goal>compress</goal>

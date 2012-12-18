@@ -168,7 +168,11 @@ public class BlindsRound implements Round, Serializable {
     }
 
     private void requestBigBlind(PokerPlayer bigBlind) {
-        bigBlind.enableOption(new PossibleAction(PokerActionType.BIG_BLIND, settings.getBigBlindAmount()));
+    	if(bigBlind == null) {
+    		throw new IllegalStateException("Attempting to request big blind from null seat: " + blindsInfo.getBigBlindSeatId());
+    	}
+    	int bigBlindAmount = settings.getBigBlindAmount();
+        bigBlind.enableOption(new PossibleAction(PokerActionType.BIG_BLIND, bigBlindAmount));
         bigBlind.enableOption(new PossibleAction(PokerActionType.DECLINE_ENTRY_BET));
         if (isTournamentBlinds()) {
             roundHelper.scheduleTimeoutForAutoAction();

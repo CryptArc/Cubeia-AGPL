@@ -25,6 +25,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Singleton implementation of a statistics holder.
@@ -157,5 +158,20 @@ public class PokerStats implements PokerStatsMBean {
         } catch (Exception e) {
             log.error("failed to start mbean server", e);
         }
+    }
+
+    private final AtomicInteger sessionCount = new AtomicInteger();
+    
+	public void decreaseSessionCount() {
+		sessionCount.decrementAndGet();
+	}
+    
+    public void increaseSessionCount() {
+		sessionCount.incrementAndGet();
+	}
+    
+    @Override
+    public int getSessionCount() {
+    	return sessionCount.get();
     }
 }

@@ -116,7 +116,7 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
 
 	@Override
 	public AllowJoinResponse allowJoinTable(int playerId) {
-		log.warn("allow join not implemented, will always return ok");
+		log.trace("allow join not implemented, will always return ok");
 		return new AllowJoinResponse(true, -1);
 	}
 
@@ -135,7 +135,7 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
 		try {
 			Long walletSessionId = walletService.startSession(request
 					.getOpeningBalance().getCurrencyCode(), LICENSEE_ID,
-					request.getPlayerId(), request.getTableId().tableId,
+					request.getPlayerId(), String.valueOf(request.getTableId().tableId),
 					GAME_ID, "unknown-" + request.getPlayerId());
 
 			PlayerSessionId sessionId = new PlayerSessionId(request.playerId, String.valueOf(walletSessionId));
@@ -178,12 +178,11 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
 					+ " to game " + GAME_ID + " by player "
 					+ sid.playerId);
 
-			AccountBalanceResult sessionBalance = walletService.getSessionBalance(walletSessionId);
-			Money newBalance = convertFromWalletMoney(sessionBalance.getBalance());
-
-			BalanceUpdate balanceUpdate = new BalanceUpdate(request.getPlayerSessionId(), newBalance, nextId());
-			ReserveResponse response = new ReserveResponse(balanceUpdate, amount);
-			log.debug("reserve successful: sId = {}, amount = {}, new balance = {}", new Object[] { sid, amount, newBalance });
+			// AccountBalanceResult sessionBalance = walletService.getSessionBalance(walletSessionId);
+			// Money newBalance = convertFromWalletMoney(sessionBalance.getBalance());
+			// BalanceUpdate balanceUpdate = new BalanceUpdate(request.getPlayerSessionId(), newBalance, nextId());
+			ReserveResponse response = new ReserveResponse(request.getPlayerSessionId(), amount);
+			log.debug("reserve successful: sId = {}, amount = {}", new Object[] { sid, amount });
 			response.setProperty(CashGamesBackendService.MARKET_TABLE_SESSION_REFERENCE_KEY, "CUBEIA-MARKET-SID-" + sid.hashCode());
 			return response;
 		} catch (Exception e) {
@@ -252,12 +251,14 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
 					.attribute("pokerHandId", request.getHandId());
 
 			TransactionRequest txRequest = txBuilder.toTransactionRequest();
+			txRequest.getExcludeReturnBalanceForAcconds().add(rakeAccountId); // exclude the rake account
+			
 			log.debug("sending tx request to wallet: {}", txRequest);
 			TransactionResult txResult = walletService.doTableTransaction(txRequest);
 
 			List<TransactionUpdate> resultingBalances = new ArrayList<TransactionUpdate>();
 			for (AccountBalanceResult sb : txResult.getBalances()) {
-				if (sb.getAccountId() != rakeAccountId) {
+				if (sb.getAccountId() != rakeAccountId) { // shouldn't be needed (excluded above)
 					PlayerSessionId playerSessionId = sessionToPlayerSessionMap.get(sb.getAccountId());
 					Money balance = convertFromWalletMoney(sb.getBalance());
 					BalanceUpdate balanceUpdate = new BalanceUpdate(playerSessionId, balance, nextId());

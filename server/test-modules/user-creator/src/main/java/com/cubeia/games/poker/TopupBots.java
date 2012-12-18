@@ -6,10 +6,10 @@ import java.util.concurrent.Executors;
 import com.sampullara.cli.Args;
 import com.sampullara.cli.Argument;
 
-public class CreateBots {
+public class TopupBots {
 	
 	public static void main(String[] args) {
-		CreateBots action = new CreateBots();
+		TopupBots action = new TopupBots();
 		try {
 			Args.parse(action, args);
 			action.execute();
@@ -71,7 +71,7 @@ public class CreateBots {
 			req.setBankaccount(bankaccount);
 			req.setCurrency(currency);
 			try {
-				con.createUser(req);
+				con.topupUser(req);
 			} catch (Exception e) {
 				throw new RuntimeException("Failed to create bot", e);
 			}

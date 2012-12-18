@@ -32,6 +32,7 @@ import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.game.poker.config.api.PokerConfigurationService;
+import com.cubeia.games.poker.jmx.PokerStats;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.player.PokerPlayer;
@@ -70,6 +71,7 @@ public class BackendPlayerSessionHandler {
             // TODO: table round number is mocked!
             CloseSessionRequest closeSessionRequest = new CloseSessionRequest(sessionId, roundNumber);
             try {
+            	PokerStats.getInstance().decreaseSessionCount();
                 cashGameBackend.closeSession(closeSessionRequest);
             } catch (CloseSessionFailedException e) {
                 log.error("error ending wallet session: " + sessionId, e);

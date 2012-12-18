@@ -134,8 +134,8 @@ public class MockBackendAdapter implements CashGamesBackend {
         } else {
             sessionTransactions.put(sid, amount);
             Money newBalance = getBalance(sid);
-            BalanceUpdate balanceUpdate = new BalanceUpdate(request.getPlayerSessionId(), newBalance, nextId());
-            final ReserveResponse response = new ReserveResponse(balanceUpdate, amount);
+            // BalanceUpdate balanceUpdate = new BalanceUpdate(request.getPlayerSessionId(), newBalance, nextId());
+            final ReserveResponse response = new ReserveResponse(request.getPlayerSessionId(), amount);
             log.debug("reserve successful: sId = {}, amount = {}, new balance = {}", new Object[]{sid, amount, newBalance});
             response.setProperty(CashGamesBackendService.MARKET_TABLE_SESSION_REFERENCE_KEY, "MOCK-MARKET-SID-" + sid.hashCode());
             printDiagnostics();

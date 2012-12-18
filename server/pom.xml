@@ -31,7 +31,7 @@
     </licenses>
 
     <properties>
-        <firebase.version>1.9.0-CE</firebase.version>
+        <firebase.version>2.0-LJN-SNAPSHOT</firebase.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <cubeia.network.version>1.4.0-RC2-SNAPSHOT</cubeia.network.version>
     </properties>
@@ -438,6 +438,41 @@
                 </executions>
             </plugin>
         </plugins>
+        <pluginManagement>
+        	<plugins>
+        		<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+        		<plugin>
+        			<groupId>org.eclipse.m2e</groupId>
+        			<artifactId>lifecycle-mapping</artifactId>
+        			<version>1.0.0</version>
+        			<configuration>
+        				<lifecycleMappingMetadata>
+        					<pluginExecutions>
+        						<pluginExecution>
+        							<pluginExecutionFilter>
+        								<groupId>
+        									net.alchim31.maven
+        								</groupId>
+        								<artifactId>
+        									yuicompressor-maven-plugin
+        								</artifactId>
+        								<versionRange>
+        									[1.3.0,)
+        								</versionRange>
+        								<goals>
+        									<goal>compress</goal>
+        								</goals>
+        							</pluginExecutionFilter>
+        							<action>
+        								<ignore></ignore>
+        							</action>
+        						</pluginExecution>
+        					</pluginExecutions>
+        				</lifecycleMappingMetadata>
+        			</configuration>
+        		</plugin>
+        	</plugins>
+        </pluginManagement>
     </build>
 
     <repositories>
