@@ -265,7 +265,6 @@ public class BettingRound implements Round, BettingRoundContext {
      * @param excludePlayer player that should get no actions
      */
     private void notifyAllPlayersOfPossibleFutureActions(PokerPlayer excludePlayer) {
-
         for (PokerPlayer player : context.getCurrentHandPlayerMap().values()) {
 
             if (player.getId() != excludePlayer.getId()) {
@@ -274,7 +273,6 @@ public class BettingRound implements Round, BettingRoundContext {
                 getServerAdapter().notifyFutureAllowedActions(player, Lists.<PokerActionType>newArrayList());
             }
         }
-
     }
 
     /**

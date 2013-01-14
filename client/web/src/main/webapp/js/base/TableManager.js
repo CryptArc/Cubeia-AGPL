@@ -301,8 +301,6 @@ Poker.TableManager = Class.extend({
     handleRequestPlayerAction : function(tableId,playerId,allowedActions,timeToAct) {
         var table = this.tables.get(tableId);
         var player = table.getPlayerById(playerId);
-        console.log("table.betStrategy = " + table.betStrategy);
-        console.log("enum = " + com.cubeia.games.poker.io.protocol.BetStrategyEnum.FIXED_LIMIT);
         var fixedLimit = table.betStrategy === com.cubeia.games.poker.io.protocol.BetStrategyEnum.FIXED_LIMIT;
         table.getLayoutManager().onRequestPlayerAction(player,allowedActions,timeToAct,this.mainPot,fixedLimit);
     },
