@@ -428,6 +428,15 @@ FIREBASE.Connector = function (packetCallback, lobbyCallback, loginCallback, sta
     this.getIOAdapter = function () {
         return _ioAdapter
     };
+    this.close = function() {
+        try {
+            this.cancel();
+            _ioAdapter.close();
+        } catch(e) {
+            console.log("exception thrown when closing connection");
+        }
+    };
+
     this.cancel = function () {
         if (_reconnecting) {
             clearTimeout(_reconnectTimer)
@@ -486,7 +495,7 @@ FIREBASE.Connector = function (packetCallback, lobbyCallback, loginCallback, sta
         var loginRequest = new FB_PROTOCOL.LoginRequestPacket();
         loginRequest.user = user;
         loginRequest.password = pwd;
-        loginRequest.operatorid = operatorid || 1;
+        loginRequest.operatorid = operatorid === undefined ? 0 : operatorid;
         if (credentials) {
             if (credentials instanceof FIREBASE.ByteArray) {
                 loginRequest.credentials = FIREBASE.ByteArray.toBase64String(credentials.createDataArray())
@@ -1054,11 +1063,16 @@ FIREBASE.WebSocketAdapter = function (hostname, port, endpoint, secure, config) 
             _statusCallback(FIREBASE.ConnectionStatus.CONNECTED)
         };
         _socket.onmessage = function (msg) {
-            _dataCallback(msg)
+            _dataCallback(msg);
         };
         _socket.onclose = function () {
             _statusCallback(FIREBASE.ConnectionStatus.DISCONNECTED)
         }
+    };
+    this.unregisterHandlers  = function() {
+        _socket.onopen = null;
+        _socket.onmessage = null;
+        _socket.onclose = null;
     };
     this.connect = function (statusCallback, dataCallback) {
         _statusCallback = statusCallback;
@@ -1070,5 +1084,5 @@ FIREBASE.WebSocketAdapter = function (hostname, port, endpoint, secure, config) 
     };
     this.send = function (message) {
         _socket.send(message)
-    }
+    };
 };

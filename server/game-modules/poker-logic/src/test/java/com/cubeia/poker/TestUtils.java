@@ -33,27 +33,27 @@ public class TestUtils {
     private TestUtils() {
     }
 
-    public static MockPlayer[] createMockPlayers(int n) {
-        return createMockPlayers(n, 5000);
+    public static MockPlayer[] createMockPlayers(int numberOfPlayers) {
+        return createMockPlayers(numberOfPlayers, 5000);
     }
 
-    public static MockPlayer[] createMockPlayers(int n, long balance) {
-        MockPlayer[] r = new MockPlayer[n];
+    public static MockPlayer[] createMockPlayers(int numberOfPlayers, long balance) {
+        MockPlayer[] players = new MockPlayer[numberOfPlayers];
 
-        for (int i = 0; i < n; i++) {
-            r[i] = new MockPlayer(i);
-            r[i].setSeatId(i);
-            r[i].setBalance(balance);
+        for (int i = 0; i < numberOfPlayers; i++) {
+            players[i] = new MockPlayer(i);
+            players[i].setSeatId(i);
+            players[i].setBalance(balance);
         }
 
-        return r;
+        return players;
     }
 
-    public static int[] createPlayerIdArray(MockPlayer[] mp) {
-        int[] ids = new int[mp.length];
+    public static int[] createPlayerIdArray(MockPlayer[] players) {
+        int[] ids = new int[players.length];
 
-        for (int i = 0; i < mp.length; i++) {
-            ids[i] = mp[i].getId();
+        for (int i = 0; i < players.length; i++) {
+            ids[i] = players[i].getId();
         }
 
         return ids;

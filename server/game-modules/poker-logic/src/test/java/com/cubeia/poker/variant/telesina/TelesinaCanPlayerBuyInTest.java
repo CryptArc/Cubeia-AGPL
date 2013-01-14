@@ -17,16 +17,16 @@
 
 package com.cubeia.poker.variant.telesina;
 
+import com.cubeia.poker.betting.BetStrategyType;
+import com.cubeia.poker.model.BlindsLevel;
+import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.settings.PokerSettings;
+import org.junit.Test;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
-import com.cubeia.poker.model.BlindsLevel;
-import org.junit.Test;
-
-import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.settings.PokerSettings;
 
 public class TelesinaCanPlayerBuyInTest {
 
@@ -38,7 +38,8 @@ public class TelesinaCanPlayerBuyInTest {
 
         int anteLevel = 20;
         BlindsLevel level = new BlindsLevel(anteLevel, anteLevel * 2, anteLevel);
-        PokerSettings settings = new PokerSettings(level, 0, 0, null, 0, null, null, null);
+        BetStrategyType betStrategy = BetStrategyType.NO_LIMIT;
+        PokerSettings settings = new PokerSettings(level, betStrategy, 0, 0, null, 0, null, null);
 
         when(player.getBalance()).thenReturn((long) anteLevel + 1);
         assertThat(telesina.canPlayerAffordEntryBet(player, settings, true), is(true));
@@ -58,7 +59,8 @@ public class TelesinaCanPlayerBuyInTest {
 
         int anteLevel = 20;
         BlindsLevel level = new BlindsLevel(anteLevel, anteLevel * 2, anteLevel);
-        PokerSettings settings = new PokerSettings(level, 0, 0, null, 0, null, null, null);
+        BetStrategyType betStrategy = BetStrategyType.NO_LIMIT;
+        PokerSettings settings = new PokerSettings(level, betStrategy, 0, 0, null, 0, null, null);
 
         when(player.getPendingBalanceSum()).thenReturn((long) anteLevel + 1);
         assertThat(telesina.canPlayerAffordEntryBet(player, settings, true), is(true));
@@ -82,7 +84,8 @@ public class TelesinaCanPlayerBuyInTest {
 
         int anteLevel = 20;
         BlindsLevel level = new BlindsLevel(anteLevel, anteLevel * 2, anteLevel);
-        PokerSettings settings = new PokerSettings(level, 0, 0, null, 0, null, null, null);
+        BetStrategyType betStrategy = BetStrategyType.NO_LIMIT;
+        PokerSettings settings = new PokerSettings(level, betStrategy, 0, 0, null, 0, null, null);
 
         when(player.getBalance()).thenReturn((long) anteLevel / 2);
         when(player.getPendingBalanceSum()).thenReturn((long) anteLevel / 2);

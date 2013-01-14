@@ -13,6 +13,8 @@ Poker.Table = Class.extend({
     handCount: 0,
     dealerSeatId : -1,
     mainPot : 0,
+    handId : -1,
+    betStrategy : null,
 
     /**
      * @type Poker.TableLayoutManager

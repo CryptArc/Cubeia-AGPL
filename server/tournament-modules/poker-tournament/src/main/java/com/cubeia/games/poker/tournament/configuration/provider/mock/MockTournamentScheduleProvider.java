@@ -54,6 +54,11 @@ public class MockTournamentScheduleProvider implements TournamentScheduleProvide
         return tournamentConfigurations;
     }
 
+    @Override
+    public ScheduledTournamentConfiguration getTournamentConfiguration(int id) {
+        return null;
+    }
+
     private ScheduledTournamentConfiguration everyTenMinutes() {
         TournamentSchedule tournamentSchedule = new TournamentSchedule(new DateTime(2011, 7, 5, 9, 0, 0).toDate(), new DateTime(2022, 7, 5, 9, 0, 0).toDate(),
                 "0 */10 * * * ?", 3, 5, 5);

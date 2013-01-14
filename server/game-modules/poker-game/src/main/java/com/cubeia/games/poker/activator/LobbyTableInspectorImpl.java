@@ -40,7 +40,7 @@ import com.cubeia.firebase.api.game.lobby.LobbyTable;
 import com.cubeia.firebase.guice.inject.Log4j;
 import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.game.poker.config.api.PokerConfigurationService;
-import com.cubeia.games.poker.common.SystemTime;
+import com.cubeia.games.poker.common.time.SystemTime;
 import com.cubeia.games.poker.entity.TableConfigTemplate;
 import com.cubeia.games.poker.common.lobby.PokerLobbyAttributes;
 import com.google.inject.Inject;

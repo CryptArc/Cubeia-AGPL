@@ -17,8 +17,10 @@
 
 package com.cubeia.poker.settings;
 
+import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.model.BlindsLevel;
 import com.cubeia.poker.timing.TimingProfile;
+
 
 import java.io.Serializable;
 import java.util.Map;
@@ -29,21 +31,15 @@ public class PokerSettings implements Serializable {
 
     private BlindsLevel blindsLevel;
 
-//    private int anteAmount;
-
-//    private int smallBlindAmount;
-
-//    private int bigBlindAmount;
-
     private final int minBuyIn;
 
     private final int maxBuyIn;
 
+    private final BetStrategyType betStrategyType;
+
     private final TimingProfile timing;
 
     private final int tableSize;
-
-    private final BetStrategyName betStrategy;
 
     private final RakeSettings rakeSettings;
 
@@ -51,22 +47,14 @@ public class PokerSettings implements Serializable {
 
     private long sitoutTimeLimitMilliseconds = 1 * 60 * 1000;
 
-    public PokerSettings(
-            BlindsLevel blindsLevel,
-            int minBuyIn,
-            int maxBuyIn,
-            TimingProfile timing,
-            int tableSize,
-            BetStrategyName betStrategy,
-            RakeSettings rakeSettings,
-            Map<Serializable, Serializable> attributes) {
-
+    public PokerSettings(BlindsLevel blindsLevel, BetStrategyType betStrategyType, int minBuyIn, int maxBuyIn, TimingProfile timing,
+            int tableSize, RakeSettings rakeSettings, Map<Serializable, Serializable> attributes) {
         this.blindsLevel = blindsLevel;
         this.minBuyIn = minBuyIn;
         this.maxBuyIn = maxBuyIn;
+        this.betStrategyType = betStrategyType;
         this.timing = timing;
         this.tableSize = tableSize;
-        this.betStrategy = betStrategy;
         this.rakeSettings = rakeSettings;
         this.attributes = attributes;
     }
@@ -79,6 +67,10 @@ public class PokerSettings implements Serializable {
         return blindsLevel.getAnteAmount();
     }
 
+    public BetStrategyType getBetStrategyType() {
+        return betStrategyType;
+    }
+
     public int getMaxBuyIn() {
         return maxBuyIn;
     }
@@ -89,10 +81,6 @@ public class PokerSettings implements Serializable {
 
     public int getTableSize() {
         return tableSize;
-    }
-
-    public BetStrategyName getBetStrategy() {
-        return betStrategy;
     }
 
     public int getMinBuyIn() {

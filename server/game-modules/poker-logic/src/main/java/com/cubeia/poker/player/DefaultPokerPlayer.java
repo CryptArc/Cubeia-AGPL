@@ -23,7 +23,6 @@ import com.cubeia.poker.blinds.MissedBlindsStatus;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Hand;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,11 +89,6 @@ public class DefaultPokerPlayer implements PokerPlayer {
 
     private Long sitOutTimestamp;
 
-    /**
-     * The next valid raise level for the last performed action
-     */
-    private long lastRaiseLevel = 0;
-
     private boolean buyInRequestActive;
 
     /**
@@ -147,6 +141,12 @@ public class DefaultPokerPlayer implements PokerPlayer {
 
     public int getSeatId() {
         return seatId;
+    }
+
+    @Override
+    public int getOperatorId() {
+        //TODO implement
+        return 0;
     }
 
     @Override
@@ -439,16 +439,6 @@ public class DefaultPokerPlayer implements PokerPlayer {
         setHasActed(false);
         setHasFolded(false);
         setDisconnectTimeoutUsed(false);
-    }
-
-    @Override
-    public void setLastRaiseLevel(long amount) {
-        this.lastRaiseLevel = amount;
-    }
-
-    @Override
-    public long getLastRaiseLevel() {
-        return lastRaiseLevel;
     }
 
     @Override

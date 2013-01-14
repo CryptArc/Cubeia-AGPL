@@ -105,6 +105,8 @@ Poker.ActionUtils = Class.extend({
                 return com.cubeia.games.poker.io.protocol.ActionTypeEnum.RAISE;
             case Poker.ActionType.FOLD.id:
                 return com.cubeia.games.poker.io.protocol.ActionTypeEnum.FOLD;
+            case Poker.ActionType.DECLINE_ENTRY_BET.id:
+                return com.cubeia.games.poker.io.protocol.ActionTypeEnum.DECLINE_ENTRY_BET;
             default:
                 console.log("Unhandled action " + actionType.text);
                 return null;

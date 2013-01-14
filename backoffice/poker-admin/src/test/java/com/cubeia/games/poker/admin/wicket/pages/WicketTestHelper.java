@@ -17,6 +17,7 @@
 
 package com.cubeia.games.poker.admin.wicket.pages;
 
+import com.cubeia.games.poker.admin.db.AdminDAO;
 import com.cubeia.games.poker.admin.service.history.HistoryService;
 import com.cubeia.poker.handhistory.api.HistoricHand;
 import com.cubeia.poker.handhistory.api.Results;
@@ -25,11 +26,22 @@ import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.apache.wicket.spring.test.ApplicationContextMock;
 import org.apache.wicket.util.tester.WicketTester;
 
+import static org.mockito.Mockito.mock;
+
 public class WicketTestHelper {
 
+    public static WicketTester createWicketTester(AdminDAO adminDAO) {
+        return createWicketTester(mock(HistoryService.class), adminDAO);
+    }
+
     public static WicketTester createWicketTester(HistoryService historyService) {
+        return createWicketTester(historyService, mock(AdminDAO.class));
+    }
+
+    public static WicketTester createWicketTester(HistoryService historyService, AdminDAO adminDAO) {
         ApplicationContextMock context = new ApplicationContextMock();
         context.putBean("historyService", historyService);
+        context.putBean("adminDAO", adminDAO);
         WicketTester tester = new WicketTester();
         tester.getApplication().getComponentInstantiationListeners().add(new SpringComponentInjector(tester.getApplication(), context));
         return tester;

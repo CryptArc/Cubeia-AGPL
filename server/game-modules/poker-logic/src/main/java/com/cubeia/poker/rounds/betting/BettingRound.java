@@ -19,6 +19,7 @@ package com.cubeia.poker.rounds.betting;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
+import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.adapter.ServerAdapterHolder;
 import com.cubeia.poker.context.PokerContext;
@@ -37,6 +38,8 @@ import org.slf4j.LoggerFactory;
 import java.util.HashSet;
 import java.util.Set;
 
+import static java.lang.Math.max;
+
 public class BettingRound implements Round, BettingRoundContext {
 
     private static final long serialVersionUID = -8666356150075950974L;
@@ -52,28 +55,25 @@ public class BettingRound implements Round, BettingRoundContext {
     @VisibleForTesting
     protected long highBet = 0;
 
+    /*
+     * The currently highest (complete) bet in this betting round. Note that the highest complete bet can be greater than the current high bet
+     * in the case of an all-in bet that counts as a complete bet.
+     */
+    protected long highestCompleteBet = 0;
+
     @VisibleForTesting
     protected Integer playerToAct = null;
-
-    /**
-     * Placeholder for the next valid raise level in the game.
-     * This may very well be 0 in cases where it is not set.
-     */
-    @VisibleForTesting
-    protected long nextValidRaiseLevel = 0;
 
     private final ActionRequestFactory actionRequestFactory;
 
     private boolean isFinished = false;
 
-    /**
-     * Last highest bet that any raise must match
-     */
-    private long lastBetSize = 0;
+    // The amount that the last player to bet or raise for a complete bet raised with.
+    private long sizeOfLastCompleteBetOrRaise = 0;
 
     private final PlayerToActCalculator playerToActCalculator;
 
-    private PokerPlayer lastPlayerToPlaceABet;
+    private PokerPlayer lastPlayerToPlaceBet;
 
     private PokerPlayer lastPlayerToBeCalled;
 
@@ -85,10 +85,12 @@ public class BettingRound implements Round, BettingRoundContext {
     @VisibleForTesting
     protected Set<PokerPlayer> playersInPlayAtRoundStart;
 
-    /**
-     * The minimum betting amount in this round.
-     */
-    private long minBet;
+    // Keeps track of the number of bets or raises in this betting round.
+    private int numberOfBetsAndRaises = 0;
+
+    private final BetStrategy betStrategy;
+
+    private boolean bettingCapped = false;
 
     // TODO: Would probably be nice if the playerToActCalculator knew all it needs to know, so we don't need to pass "seatIdToStart.." as well.
     public BettingRound(int seatIdToStartBettingAfter,
@@ -97,43 +99,43 @@ public class BettingRound implements Round, BettingRoundContext {
                         PlayerToActCalculator playerToActCalculator,
                         ActionRequestFactory actionRequestFactory,
                         FutureActionsCalculator futureActionsCalculator,
-                        int minBet) {
+                        BetStrategy betStrategy) {
         this.context = context;
         this.serverAdapterHolder = serverAdapterHolder;
         this.futureActionsCalculator = futureActionsCalculator;
         this.playerToActCalculator = playerToActCalculator;
         this.actionRequestFactory = actionRequestFactory;
         this.roundHelper = new RoundHelper(context, serverAdapterHolder);
-        this.minBet = minBet;
-        this.lastBetSize = minBet;
+        this.betStrategy = betStrategy;
         initBettingRound(seatIdToStartBettingAfter);
     }
 
     private void initBettingRound(int seatIdToStartBettingAfter) {
-        log.debug("Init new betting round");
-        for (PokerPlayer p : context.getPlayersInHand()) {
-            /*
-             * Initialize the highBet to the highest bet stack of the incoming players.
-             * This will be zero on all rounds except when blinds have been posted.
-             */
-            if (p.getBetStack() > highBet) {
-                highBet = p.getBetStack();
-            }
-            p.clearActionRequest();
-            p.setLastRaiseLevel(0);
-        }
-        makeSureHighBetIsNotSmallerThanBigBlind();
+        log.debug("Initializing new betting round.");
+        initializeHighBet();
+        initializeHighestCompleteBetAndSizeOfLastCompleteBet();
+        initializePlayersInPlayAtRoundStart();
+        requestFirstActionOrFinishRound(seatIdToStartBettingAfter);
+    }
 
-        playersInPlayAtRoundStart = new HashSet<PokerPlayer>();
-        for (PokerPlayer player : context.getPlayersInHand()) {
-            log.debug("player {}: folded {}, allIn: {}, hasActed: {}", new Object[]{player.getId(), player.hasFolded(), player.isAllIn(), player.hasActed()});
+    private void initializeHighestCompleteBetAndSizeOfLastCompleteBet() {
+        /*
+         * If there are blinds in this round, the highest bet should be the big blind and the
+         * size of the last bet should be the big blind as well. This is regardless of whether
+         * the player on the big blind could actually afford the big blind.
+         *
+         * For example, if the big blind is $10 but the player on the big blind only has $3, then
+         * the highest complete bet will be $10 and the size of the last complete bet will be $10.
+         * This means that the next raise needs to be to $20.
+         *
+         * For rounds without blinds, the highest complete bet and the size of the last complete bet
+         * will be $0.
+         */
+        highestCompleteBet = highBet;
+        sizeOfLastCompleteBetOrRaise = highestCompleteBet;
+    }
 
-            if (!player.isAllIn() && !player.hasFolded()) {
-                playersInPlayAtRoundStart.add(player);
-            }
-        }
-        log.debug("players in play entering round: {}", playersInPlayAtRoundStart);
-
+    private void requestFirstActionOrFinishRound(int seatIdToStartBettingAfter) {
         // Check if we should request actions at all
         PokerPlayer p = playerToActCalculator.getFirstPlayerToAct(seatIdToStartBettingAfter, context.getCurrentHandSeatingMap(), context.getCommunityCards());
 
@@ -147,13 +149,43 @@ public class BettingRound implements Round, BettingRoundContext {
         } else {
             requestAction(p);
         }
-
-        // This can be triggered by the if clause above, but also
-        // by traversing into requestAction and calling default act on
-        // each and every player in sit out scenarios.
+        /*
+         * This can be triggered by the if clause above, but also
+         * by traversing into requestAction and calling default act on
+         * each and every player in sit out scenarios.
+         */
         if (isFinished()) {
             roundHelper.scheduleRoundTimeout(context, getServerAdapter());
         }
+    }
+
+    private void initializePlayersInPlayAtRoundStart() {
+        playersInPlayAtRoundStart = new HashSet<PokerPlayer>();
+        for (PokerPlayer player : context.getPlayersInHand()) {
+            log.debug("player {}: folded {}, allIn: {}, hasActed: {}", new Object[]{player.getId(), player.hasFolded(), player.isAllIn(), player.hasActed()});
+
+            if (!player.isAllIn() && !player.hasFolded()) {
+                playersInPlayAtRoundStart.add(player);
+            }
+        }
+        log.debug("players in play entering round: {}", playersInPlayAtRoundStart);
+    }
+
+    private void initializeHighBet() {
+        for (PokerPlayer p : context.getPlayersInHand()) {
+            /*
+             * Initialize the highBet to the highest bet stack of the incoming players.
+             * This will be zero on all rounds except when blinds have been posted.
+             */
+            if (p.getBetStack() > highBet) {
+                highBet = p.getBetStack();
+            }
+            p.clearActionRequest();
+        }
+        if (highBet > 0) {
+            numberOfBetsAndRaises = 1;
+        }
+        makeSureHighBetIsNotSmallerThanBigBlind();
     }
 
     private void makeSureHighBetIsNotSmallerThanBigBlind() {
@@ -194,7 +226,7 @@ public class BettingRound implements Round, BettingRoundContext {
     private void requestNextAction(int lastSeatId) {
         PokerPlayer player = playerToActCalculator.getNextPlayerToAct(lastSeatId, context.getCurrentHandSeatingMap());
         if (player == null) {
-            log.debug("Setting betting round is finished because there is no player left to act");
+            log.debug("Setting betting round is finished because there is no player left to act.");
             isFinished = true;
             notifyAllPlayersOfNoPossibleFutureActions();
         } else {
@@ -254,7 +286,6 @@ public class BettingRound implements Round, BettingRoundContext {
             getServerAdapter().notifyFutureAllowedActions(player, Lists.<PokerActionType>newArrayList());
         }
     }
-
 
     @VisibleForTesting
     protected boolean calculateIfRoundFinished() {
@@ -322,33 +353,29 @@ public class BettingRound implements Round, BettingRoundContext {
     }
 
     @VisibleForTesting
-    boolean raise(PokerPlayer player, long amount) {
-        if (amount < highBet) {
-            log.warn("PokerPlayer[" + player.getId() + "] incorrect raise amount. Highbet[" + highBet + "] amount[" + amount + "]. " +
-                    "Amounts must be larger than current highest bet");
+    boolean raise(PokerPlayer player, long amountRaisedTo) {
+        PossibleAction raiseOption = player.getActionRequest().getOption(PokerActionType.RAISE);
+        if (amountRaisedTo < raiseOption.getMinAmount() || amountRaisedTo > raiseOption.getMaxAmount()) {
+            log.warn("PokerPlayer[" + player.getId() + "] incorrect raise amount. Options[" + raiseOption + "] amount[" + amountRaisedTo + "].");
             return false;
         }
 
-        boolean allIn = player.getBalance() + player.getBetStack() - amount <= 0;
-        boolean belowMinBet = amount < 2 * lastBetSize;
-
-        // Check if player went all in with a below minimum raise
-        if (belowMinBet && allIn) {
-            log.debug("Player[" + player.getId() + "] made a below min raise but is allin.");
-        } else if (belowMinBet && !allIn) {
-            log.warn("PokerPlayer[" + player.getId() + "] is not allowed to raise below minimum raise. Highbet[" + highBet + "] amount[" + amount + "] balance[" + player.getBalance() + "] betStack[" + player.getBetStack() + "].");
-            return allIn;
-        } else {
-            lastBetSize = amount - highBet;
-            nextValidRaiseLevel = highBet + lastBetSize * 2;
-            player.setLastRaiseLevel(getNextValidRaiseLevel());
+        if (betStrategy.isCompleteBetOrRaise(this, amountRaisedTo)) {
+            // TODO: Test coverage needed here.
+            // We only increase the number of raises and the size of the last raise if the raise is complete.
+            numberOfBetsAndRaises++;
+            long validLevel = betStrategy.getNextValidRaiseToLevel(this);
+            long previousCompleteBet = highestCompleteBet;
+            highestCompleteBet = determineHighestCompleteBet(amountRaisedTo, validLevel);
+            sizeOfLastCompleteBetOrRaise = highestCompleteBet - previousCompleteBet;
         }
 
-        highBet = amount;
-        lastPlayerToBeCalled = lastPlayerToPlaceABet;
+        highBet = amountRaisedTo;
+        lastPlayerToBeCalled = lastPlayerToPlaceBet;
         context.callOrRaise();
-        lastPlayerToPlaceABet = player;
-        player.addBet(highBet - player.getBetStack());
+        lastPlayerToPlaceBet = player;
+        long costToRaise = amountRaisedTo - player.getBetStack();
+        player.addBet(costToRaise);
         resetHasActed();
 
         notifyPotSizeAndRakeInfo();
@@ -365,23 +392,40 @@ public class BettingRound implements Round, BettingRoundContext {
 
     @VisibleForTesting
     boolean bet(PokerPlayer player, long amount) {
-        long minAmount = player.getActionRequest().getOption(PokerActionType.BET).getMinAmount();
-        highBet = highBet + amount;
-        long cost = highBet - player.getBetStack();
-        if (amount < minAmount) {
-            log.warn("PokerPlayer[" + player.getId() + "] - " + String.format("Bet (%d) (which costs (%d) is invalid. minAmount (%d) balance (%d)",
-                    amount, cost, minAmount, player.getBalance()));
+        PossibleAction betOption = player.getActionRequest().getOption(PokerActionType.BET);
+        if (amount < betOption.getMinAmount() || amount > betOption.getMaxAmount()) {
+            log.warn("Bet " + amount + " from player " + player + " is not in bounds. Bet option: " + betOption);
             return false;
         }
-        lastBetSize = amount;
-        nextValidRaiseLevel = 2 * lastBetSize;
-        lastPlayerToPlaceABet = player;
+        if (completeBet(amount)) {
+            // TODO: Test coverage needed here.
+            numberOfBetsAndRaises++;
+            highestCompleteBet = determineHighestCompleteBet(amount, betStrategy.getNextValidRaiseToLevel(this));
+            sizeOfLastCompleteBetOrRaise = highestCompleteBet;
+            bettingCapped = betStrategy.shouldBettingBeCapped(numberOfBetsAndRaises, isHeadsUpBetting());
+        }
+        highBet = highBet + amount;
+        lastPlayerToPlaceBet = player;
         player.addBet(highBet - player.getBetStack());
-        player.setLastRaiseLevel(getNextValidRaiseLevel());
         resetHasActed();
 
         notifyPotSizeAndRakeInfo();
         return true;
+    }
+
+    /**
+     * Determines the highest complete bet or raise, given the amount bet or raised and the next valid raise-to-level.
+     *
+     * Note that if the bet is lower than the next level, we will consider the full next level as the highestCompleteBet.
+     * This is because in fixed limit, if A bets 10, B goes all-in for 18 (which counts as a complete raise), then
+     * C can call 18 or raise to 30.
+     */
+    private long determineHighestCompleteBet(long amount, long nextValidRaiseToLevel) {
+        return max(amount, nextValidRaiseToLevel);
+    }
+
+    private boolean completeBet(long amount) {
+        return betStrategy.isCompleteBetOrRaise(this, amount);
     }
 
     private void resetHasActed() {
@@ -406,10 +450,9 @@ public class BettingRound implements Round, BettingRoundContext {
     protected boolean call(PokerPlayer player) {
         long amountToCall = getAmountToCall(player);
         player.addBet(amountToCall);
-        lastPlayerToBeCalled = lastPlayerToPlaceABet;
+        lastPlayerToBeCalled = lastPlayerToPlaceBet;
         context.callOrRaise();
         notifyPotSizeAndRakeInfo();
-        player.setLastRaiseLevel(getNextValidRaiseLevel());
         return true;
     }
 
@@ -480,24 +523,42 @@ public class BettingRound implements Round, BettingRoundContext {
         return true;
     }
 
+    @Override
+    public long getPotSize() {
+        return context.calculateRakeInfo().getTotalPot();
+    }
+
+    @Override
     public long getHighestBet() {
         return highBet;
     }
 
-    public long getMinBet() {
-        return minBet;
+    @Override
+    public long getHighestCompleteBet() {
+        return highestCompleteBet;
     }
 
-    public long getSizeOfLastBetOrRaise() {
-        return lastBetSize;
+    @Override
+    public boolean isBettingCapped() {
+        return bettingCapped;
+    }
+
+    private boolean isHeadsUpBetting() {
+        int nonFolded = 0;
+        for (PokerPlayer player : context.getCurrentHandSeatingMap().values()) {
+            if (!player.hasFolded()) {
+                nonFolded++;
+            }
+        }
+        return nonFolded < 3;
+    }
+
+    public long getSizeOfLastCompleteBetOrRaise() {
+        return sizeOfLastCompleteBetOrRaise;
     }
 
     public PokerPlayer getLastPlayerToBeCalled() {
         return lastPlayerToBeCalled;
-    }
-
-    public long getNextValidRaiseLevel() {
-        return nextValidRaiseLevel;
     }
 
     @Override

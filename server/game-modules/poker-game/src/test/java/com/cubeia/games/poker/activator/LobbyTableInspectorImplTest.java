@@ -17,28 +17,6 @@
 
 package com.cubeia.games.poker.activator;
 
-import static com.cubeia.firebase.api.game.lobby.DefaultTableAttributes._LAST_MODIFIED;
-import static com.cubeia.firebase.api.game.lobby.DefaultTableAttributes._SEATED;
-import static com.cubeia.games.poker.activator.TableModifierActionType.CLOSE;
-import static com.cubeia.games.poker.activator.TableModifierActionType.CREATE;
-import static com.cubeia.games.poker.activator.TableModifierActionType.DESTROY;
-import static com.cubeia.games.poker.common.lobby.PokerLobbyAttributes.TABLE_READY_FOR_CLOSE;
-import static com.cubeia.games.poker.common.lobby.PokerLobbyAttributes.TABLE_TEMPLATE;
-import static com.cubeia.poker.timing.Timings.EXPRESS;
-import static com.cubeia.poker.variant.PokerVariant.TELESINA;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.cubeia.poker.timing.TimingFactory;
-import junit.framework.Assert;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
-
 import com.cubeia.firebase.api.common.AttributeValue;
 import com.cubeia.firebase.api.game.activator.TableFactory;
 import com.cubeia.firebase.api.game.lobby.LobbyTable;
@@ -47,10 +25,29 @@ import com.cubeia.firebase.api.service.ServiceRegistry;
 import com.cubeia.game.poker.config.api.PokerActivatorConfig;
 import com.cubeia.game.poker.config.api.PokerConfigurationService;
 import com.cubeia.games.poker.common.SystemTestTime;
-import com.cubeia.games.poker.common.SystemTime;
+import com.cubeia.games.poker.common.time.SystemTime;
 import com.cubeia.games.poker.entity.TableConfigTemplate;
+import com.cubeia.poker.timing.TimingFactory;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
+import junit.framework.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.cubeia.firebase.api.game.lobby.DefaultTableAttributes._LAST_MODIFIED;
+import static com.cubeia.firebase.api.game.lobby.DefaultTableAttributes._SEATED;
+import static com.cubeia.games.poker.activator.TableModifierActionType.CLOSE;
+import static com.cubeia.games.poker.activator.TableModifierActionType.CREATE;
+import static com.cubeia.games.poker.activator.TableModifierActionType.DESTROY;
+import static com.cubeia.games.poker.common.lobby.PokerLobbyAttributes.TABLE_READY_FOR_CLOSE;
+import static com.cubeia.games.poker.common.lobby.PokerLobbyAttributes.TABLE_TEMPLATE;
+import static com.cubeia.poker.variant.PokerVariant.TELESINA;
 
 public class LobbyTableInspectorImplTest {
 

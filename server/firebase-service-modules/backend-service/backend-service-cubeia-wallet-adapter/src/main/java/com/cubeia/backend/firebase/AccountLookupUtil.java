@@ -19,6 +19,8 @@ package com.cubeia.backend.firebase;
 
 import static com.cubeia.backoffice.wallet.api.dto.Account.AccountType.STATIC_ACCOUNT;
 import static com.cubeia.backoffice.wallet.api.dto.Account.AccountType.SYSTEM_ACCOUNT;
+import static com.cubeia.backoffice.wallet.api.dto.Account.AccountType.OPERATOR_ACCOUNT;
+
 import static java.util.Arrays.asList;
 
 import com.cubeia.backoffice.wallet.api.dto.Account.AccountStatus;
@@ -54,4 +56,19 @@ public class AccountLookupUtil {
         }
         return accounts.getAccounts().iterator().next().getId();
     }
+
+    public long lookupOperatorAccountId(WalletServiceContract walletService, long operatorId) throws SystemException {
+        ListAccountsRequest request = new ListAccountsRequest();
+        request.setLimit(1);
+        request.setStatus(AccountStatus.OPEN);
+        request.setTypes(asList(OPERATOR_ACCOUNT));
+        request.setUserId(operatorId);
+        AccountQueryResult accounts = walletService.listAccounts(request);
+        if (accounts.getAccounts() == null || accounts.getAccounts().size() != 1 || accounts.getAccounts().iterator().next().getType() != OPERATOR_ACCOUNT) {
+            throw new SystemException("Error getting operator account. Looked for account matching: " + request);
+        }
+        return accounts.getAccounts().iterator().next().getId();
+    }
+
+
 }

@@ -17,20 +17,24 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.tables;
 
-import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
-
+import com.cubeia.games.poker.admin.db.AdminDAO;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.games.poker.entity.TableConfigTemplate;
+import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
-import org.apache.wicket.markup.html.form.*;
+import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.RequiredTextField;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import com.cubeia.games.poker.admin.db.AdminDAO;
-import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.games.poker.entity.TableConfigTemplate;
+import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
+import static java.util.Arrays.asList;
 
 public class CreateTable extends BasePage {
 
@@ -50,6 +54,7 @@ public class CreateTable extends BasePage {
         table.setSeats(10);
         table.setMinTables(10);
         table.setMinEmptyTables(5);
+        table.setBetStrategy(BetStrategyType.NO_LIMIT);
         Form<TableConfigTemplate> tableForm = new Form<TableConfigTemplate>("tableForm", new CompoundPropertyModel<TableConfigTemplate>(table)) {
 
             private static final long serialVersionUID = 1L;
@@ -65,9 +70,12 @@ public class CreateTable extends BasePage {
 
         tableForm.add(new RequiredTextField<String>("name"));
         tableForm.add(new RequiredTextField<Integer>("ante"));
+        tableForm.add(new RequiredTextField<Integer>("smallBlind"));
+        tableForm.add(new RequiredTextField<Integer>("bigBlind"));
         tableForm.add(new RequiredTextField<Integer>("seats"));
         tableForm.add(new TextField<Integer>("minTables"));
         tableForm.add(new TextField<Integer>("minEmptyTables"));
+        tableForm.add(new DropDownChoice<BetStrategyType>("betStrategy", asList(BetStrategyType.values()), choiceRenderer()));
         tableForm.add(new DropDownChoice<TimingProfile>("timing", adminDAO.getTimingProfiles(), choiceRenderer()));
         tableForm.add(new DropDownChoice<RakeSettings>("rakeSettings", adminDAO.getRakeSettings(), choiceRenderer()));
 

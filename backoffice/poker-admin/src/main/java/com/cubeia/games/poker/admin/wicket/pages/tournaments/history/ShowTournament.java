@@ -23,7 +23,7 @@ import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.games.poker.admin.wicket.pages.history.HandHistory;
 import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
 import com.cubeia.games.poker.admin.wicket.util.ParamBuilder;
-import com.cubeia.games.poker.common.MoneyFormatter;
+import com.cubeia.games.poker.common.money.MoneyFormatter;
 import com.cubeia.poker.tournament.history.api.HistoricTournament;
 import com.cubeia.poker.tournament.history.api.PlayerPosition;
 import com.cubeia.poker.tournament.history.api.TournamentEvent;

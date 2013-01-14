@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 
 /**
  * Poker Bot.
+ *
  * Relies on the Cubeia load test framework.
  *
  * @author Fredrik Johansson, Cubeia Ltd

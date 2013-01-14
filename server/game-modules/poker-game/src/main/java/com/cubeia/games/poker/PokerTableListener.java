@@ -99,29 +99,34 @@ public class PokerTableListener implements TournamentTableListener {
     private void sendGameStateToSittingInPlayerIfNeeded(Table table, GenericPlayer player) {
         if (!state.removeAsWatcher(player.getPlayerId())) {
             gameStateSender.sendGameState(table, player.getPlayerId());
+            state.sendGameStateTo(player.getPlayerId());
         }
     }
 
     /**
      * A Player has left our table. =(
      */
+    @Override
     public void playerLeft(Table table, int playerId) {
         log.debug("Player left: " + playerId);
         stateInjector.injectAdapter(table);
         removePlayer(table, playerId, false);
     }
 
+    @Override
     public void tournamentPlayerJoined(Table table, GenericPlayer player, Serializable balance) {
         stateInjector.injectAdapter(table);
         PokerPlayer pokerPlayer = addPlayer(table, player, true);
         pokerPlayer.addChips((Long) balance);
     }
 
+    @Override
     public void tournamentPlayerRejoined(Table table, GenericPlayer player) {
         // log.debug("Tournament player rejoined: "+player);
         // addPlayer(table, player);
     }
 
+    @Override
     public void tournamentPlayerRemoved(Table table, int playerId, Reason reason) {
         stateInjector.injectAdapter(table);
         removePlayer(table, playerId, true);
@@ -130,6 +135,7 @@ public class PokerTableListener implements TournamentTableListener {
     /**
      * Send current game state to the watching player
      */
+    @Override
     public void watcherJoined(Table table, int playerId) {
         log.debug("Player[" + playerId + "] watching Table[" + table.getId() + ":" + table.getMetaData().getName() + "]");
         stateInjector.injectAdapter(table);

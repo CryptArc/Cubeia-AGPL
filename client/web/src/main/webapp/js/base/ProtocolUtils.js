@@ -26,6 +26,7 @@ Poker.ProtocolUtils = Class.extend({
         return null;
     },
     extractTournamentData : function(snapshot) {
+        console.log(snapshot);
         var params = snapshot.params;
         var self = this;
         var param = function(name) {
@@ -37,24 +38,27 @@ Poker.ProtocolUtils = Class.extend({
         };
 
         var data = {
-            id: snapshot.mttid,
-            name: param("NAME"),
-            speed: "N/A",
-            capacity: param("CAPACITY"),
-            seated: param("REGISTERED"),
+            id : snapshot.mttid,
+            name : param("NAME"),
+            speed : param("SPEED"),
+            capacity : param("CAPACITY"),
+            registered : param("REGISTERED"),
             biggestStack : param("BIGGEST_STACK"),
             smallestStack : param("SMALLEST_STACK"),
             averageStack : param("AVERAGE_STACK"),
             playersLeft : param("PLAYERS_LEFT"),
-            blinds:"N/A",
-            type:"NL",
-            tableStatus:"open",
-            ante:"N/A"
+            buyIn : param("BUY_IN"),
+            fee : param("FEE"),
+            status : param("STATUS"),
+            registered : param("REGISTERED"),
+            startTime : param("START_TIME"),
+            identifier : param("IDENTIFIER")
         };
 
         return data;
     },
     extractTableData : function(snapshot) {
+        console.log(snapshot);
         var params = snapshot.params;
         var self = this;
         var param = function(name) {
@@ -69,7 +73,7 @@ Poker.ProtocolUtils = Class.extend({
             id: snapshot.tableid,
             name: snapshot.name,
             speed: param("SPEED"),
-            capacity:snapshot.capacity,
+            capacity: snapshot.capacity,
             seated: snapshot.seated,
             blinds: (Poker.Utils.formatBlinds(param("SMALL_BLIND")) + "/" + Poker.Utils.formatBlinds(param("BIG_BLIND"))),
             type: this.getBettingModel(param("BETTING_GAME_BETTING_MODEL")),

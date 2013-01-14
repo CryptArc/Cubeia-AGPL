@@ -18,8 +18,7 @@
         <module>hand-history-api</module>
         <module>integration-api</module>
         <module>tournament-history-api</module>
-        <module>timings</module>
+        <module>settings</module>
         <module>common</module>
     </modules>
-
 </project>

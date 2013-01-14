@@ -20,6 +20,7 @@ package com.cubeia.games.poker.admin.wicket.pages.tables;
 import com.cubeia.games.poker.admin.db.AdminDAO;
 import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.games.poker.entity.TableConfigTemplate;
+import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.timing.TimingProfile;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -31,6 +32,8 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import static java.util.Arrays.asList;
 
 public class EditTable extends BasePage {
 
@@ -60,9 +63,12 @@ public class EditTable extends BasePage {
         
         tableForm.add(new RequiredTextField<String>("name", new PropertyModel<String>(this, "table.name")));
         tableForm.add(new RequiredTextField<Integer>("ante", new PropertyModel<Integer>(this, "table.ante")));
+        tableForm.add(new RequiredTextField<Integer>("smallBlind"));
+        tableForm.add(new RequiredTextField<Integer>("bigBlind"));
         tableForm.add(new RequiredTextField<Integer>("seatsPerTable", new PropertyModel<Integer>(this, "table.seats")));
         tableForm.add(new TextField<Integer>("minTables", new PropertyModel<Integer>(this, "table.minTables")));
         tableForm.add(new TextField<Integer>("minEmptyTables", new PropertyModel<Integer>(this, "table.minEmptyTables")));
+        tableForm.add(new DropDownChoice<BetStrategyType>("betStrategy", asList(BetStrategyType.values()), choiceRenderer()));
         tableForm.add(new DropDownChoice<TimingProfile>("timing", new PropertyModel<TimingProfile>(this, "table.timing"), adminDAO.getTimingProfiles(),
                 choiceRenderer()));
         tableForm.add(new DropDownChoice<RakeSettings>("rakeSettings", new PropertyModel<RakeSettings>(this, "table.rakeSettings"), adminDAO.getRakeSettings(),

@@ -18,6 +18,7 @@
 package com.cubeia.poker;
 
 import com.cubeia.poker.adapter.ServerAdapter;
+import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.model.BlindsLevel;
 import com.cubeia.poker.player.DefaultPokerPlayer;
@@ -44,11 +45,18 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.mockito.Matchers.anyCollection;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class PokerStateTest {
@@ -240,7 +248,8 @@ public class PokerStateTest {
         state.pokerContext.potHolder = oldPotHolder;
         RakeSettings rakeSettings = TestUtils.createOnePercentRakeSettings();
         BlindsLevel level = new BlindsLevel(0, 0, 0);
-        PokerSettings settings = new PokerSettings(level, 0, 0, null, 4, null, rakeSettings, null);
+        BetStrategyType betStrategy = BetStrategyType.NO_LIMIT;
+        PokerSettings settings = new PokerSettings(level, betStrategy, 0, 0, null, 4, rakeSettings, null);
         state.pokerContext.settings = settings;
 
         state.pokerContext.playerMap = new HashMap<Integer, PokerPlayer>();

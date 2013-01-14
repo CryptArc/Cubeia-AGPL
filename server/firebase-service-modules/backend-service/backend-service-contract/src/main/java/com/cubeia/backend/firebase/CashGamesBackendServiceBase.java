@@ -50,7 +50,7 @@ import com.cubeia.backend.cashgame.exceptions.ReserveFailedException;
 import com.cubeia.firebase.api.action.GameObjectAction;
 import com.cubeia.firebase.api.action.mtt.MttObjectAction;
 import com.cubeia.firebase.api.service.ServiceRouter;
-import com.cubeia.games.poker.common.Money;
+import com.cubeia.games.poker.common.money.Money;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -196,7 +196,11 @@ public abstract class CashGamesBackendServiceBase implements CashGamesBackendSer
 
     @Override
     public void closeSession(CloseSessionRequest request) throws CloseSessionFailedException {
-        getCashGamesBackend().closeSession(request);
+        try {
+            getCashGamesBackend().closeSession(request);
+        } catch (Exception e) {
+            throw new CloseSessionFailedException("Failed closing session for request: " + request, e);
+        }
     }
 
     @Override

@@ -71,6 +71,10 @@ Poker.ActionType = {
     SIT_IN : {
         text : "Sit-in",
         id : "action-sit-in"
+    },
+    DECLINE_ENTRY_BET : {
+        text : "Decline blind",
+        id : "decline-entry-bet"
     }
 
 };

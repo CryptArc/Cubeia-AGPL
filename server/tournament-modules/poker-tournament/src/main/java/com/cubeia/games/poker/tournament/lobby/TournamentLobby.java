@@ -17,14 +17,13 @@
 
 package com.cubeia.games.poker.tournament.lobby;
 
-import com.cubeia.firebase.api.action.mtt.MttDataAction;
-import com.cubeia.firebase.api.mtt.MttInstance;
-import com.cubeia.firebase.api.mtt.MttNotifier;
+import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.firebase.api.mtt.model.MttPlayer;
 import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
+import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.firebase.io.ProtocolObject;
-import com.cubeia.firebase.io.StyxSerializer;
-import com.cubeia.games.poker.common.SystemTime;
+import com.cubeia.games.poker.common.money.Money;
+import com.cubeia.games.poker.common.time.SystemTime;
 import com.cubeia.games.poker.io.protocol.BlindsLevel;
 import com.cubeia.games.poker.io.protocol.BlindsStructure;
 import com.cubeia.games.poker.io.protocol.ChipStatistics;
@@ -37,22 +36,24 @@ import com.cubeia.games.poker.io.protocol.TournamentInfo;
 import com.cubeia.games.poker.io.protocol.TournamentLobbyData;
 import com.cubeia.games.poker.io.protocol.TournamentPlayer;
 import com.cubeia.games.poker.io.protocol.TournamentPlayerList;
+import com.cubeia.games.poker.io.protocol.TournamentRegistrationInfo;
 import com.cubeia.games.poker.io.protocol.TournamentStatistics;
 import com.cubeia.games.poker.io.protocol.TournamentTable;
 import com.cubeia.games.poker.tournament.configuration.blinds.Level;
 import com.cubeia.games.poker.tournament.configuration.payouts.Payouts;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
+import com.cubeia.games.poker.tournament.util.PacketSender;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.inject.assistedinject.Assisted;
 import org.apache.log4j.Logger;
 
-import java.io.IOException;
-import java.util.Arrays;
+import javax.inject.Inject;
 import java.util.Collection;
 import java.util.List;
 
 import static com.cubeia.firebase.api.mtt.model.MttPlayerStatus.OUT;
-import static com.cubeia.games.poker.common.MoneyFormatter.format;
+import static com.cubeia.games.poker.common.money.MoneyFormatter.format;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.reverseOrder;
 import static java.util.Collections.sort;
@@ -68,25 +69,31 @@ public class TournamentLobby {
 
     private static final Logger log = Logger.getLogger(TournamentLobby.class);
 
-    private MttInstance instance;
-
-    private StyxSerializer serializer;
-
+    @Assisted
     private MTTStateSupport state;
 
+    @Assisted
     private PokerTournamentState pokerState;
 
-    private MttNotifier notifier;
-
+    @Inject
     private SystemTime dateFetcher;
 
-    public TournamentLobby(MttInstance instance, StyxSerializer serializer, MTTStateSupport state, PokerTournamentState pokerState, SystemTime dateFetcher) {
-        this.instance = instance;
-        this.serializer = serializer;
+    @Inject
+    private PacketSender sender;
+
+    @Service
+    private transient CashGamesBackendService backend;
+
+    @SuppressWarnings("UnusedDeclaration")
+    public TournamentLobby() {
+    }
+
+    public TournamentLobby(PacketSender sender, SystemTime dateFetcher, CashGamesBackendService backend, MTTStateSupport state, PokerTournamentState pokerState) {
+        this.sender = sender;
         this.dateFetcher = dateFetcher;
-        this.notifier = instance.getMttNotifier();
         this.state = state;
         this.pokerState = pokerState;
+        this.backend = backend;
     }
 
     public void sendPlayerListTo(int playerId) {
@@ -138,13 +145,7 @@ public class TournamentLobby {
     }
 
     private void sendPacketToPlayer(ProtocolObject packet, int playerId) {
-        try {
-            MttDataAction action = new MttDataAction(instance.getId(), playerId);
-            action.setData(serializer.pack(packet));
-            notifier.notifyPlayer(playerId, action);
-        } catch (IOException e) {
-            log.debug("Failed sending player list to player " + playerId, e);
-        }
+        sender.sendPacketToPlayer(packet, playerId);
     }
 
     @VisibleForTesting
@@ -159,9 +160,7 @@ public class TournamentLobby {
         long lastChipStack = -1;
 
         List<MttPlayer> sortedPlayers = sortPlayers(state.getPlayerRegistry().getPlayers());
-        log.debug("Sorted players: " + Arrays.toString(sortedPlayers.toArray()));
         for (MttPlayer player : sortedPlayers) {
-            log.debug("Player status: " + player.getStatus());
             int playerId = player.getPlayerId();
             long stackSize = pokerState.getPlayerBalance(playerId);
 
@@ -274,7 +273,30 @@ public class TournamentLobby {
         sendPacketToPlayer(tournamentTable, playerId);
     }
 
+    @VisibleForTesting
     Enums.TournamentStatus convertTournamentStatus(PokerTournamentStatus status) {
         return Enums.TournamentStatus.valueOf(status.name());
     }
+
+    public void sendRegistrationInfoTo(int playerId) {
+        // TODO: Handle currencies.
+        Money balance = getBalanceFor(playerId);
+        Money buyIn = pokerState.getBuyInAsMoney();
+        Money fee = pokerState.getFeeAsMoney();
+        boolean sufficient = balance.getAmount() > (buyIn.getAmount() + fee.getAmount());
+        TournamentRegistrationInfo registrationInfo = new TournamentRegistrationInfo(format(buyIn), format(fee), "EUR", format(balance), sufficient);
+        sender.sendPacketToPlayer(registrationInfo, playerId);
+    }
+
+    private Money getBalanceFor(int playerId) {
+        Money balance = pokerState.createZeroMoney();
+        try {
+            balance = backend.getMainAccountBalance(playerId);
+        } catch (Exception e) {
+            log.warn("Failed fetching balance for playerId: " + playerId);
+        }
+        // TODO: Return some kind of error instead of 0.
+        return balance;
+    }
+
 }

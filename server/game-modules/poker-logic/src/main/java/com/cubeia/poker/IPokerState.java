@@ -71,6 +71,6 @@ public interface IPokerState {
      * @param pokerPlayer player
      * @param amount      amount requested
      */
-    void handleBuyInRequest(PokerPlayer pokerPlayer, int amount);
+    void handleBuyInRequest(PokerPlayer pokerPlayer, long amount);
 
 }

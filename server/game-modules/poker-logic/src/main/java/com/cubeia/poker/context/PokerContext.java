@@ -81,8 +81,7 @@ public class PokerContext implements Serializable {
      * Maps seatId to player
      */
     @VisibleForTesting
-    public
-    SortedMap<Integer, PokerPlayer> seatingMap = new TreeMap<Integer, PokerPlayer>();
+    public SortedMap<Integer, PokerPlayer> seatingMap = new TreeMap<Integer, PokerPlayer>();
 
     /**
      * Maps seat id to players, but only contains players who participate in the current hand.

@@ -377,7 +377,7 @@ public class PokerState implements Serializable, IPokerState {
     }
 
     @Override
-    public void handleBuyInRequest(PokerPlayer pokerPlayer, int amount) {
+    public void handleBuyInRequest(PokerPlayer pokerPlayer, long amount) {
         pokerPlayer.addRequestedBuyInAmount(amount);
         getCurrentState().performPendingBuyIns(singleton(pokerPlayer));
     }
@@ -407,7 +407,7 @@ public class PokerState implements Serializable, IPokerState {
     public void setBlindsLevels(BlindsLevel level) {
         pokerContext.setBlindsLevels(level);
         if (level.isBreak()) {
-            log.debug("We are now on a break for " + level.getNextLevelStartTime() + " minutes.");
+            log.debug("We are now on a break for " + level.getDurationInMinutes() + " minutes.");
         }
         serverAdapter.notifyBlindsLevelUpdated(level);
     }

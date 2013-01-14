@@ -34,7 +34,7 @@ import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.cache.ActionCache;
-import com.cubeia.games.poker.common.SystemTime;
+import com.cubeia.games.poker.common.time.SystemTime;
 import com.cubeia.games.poker.debugger.HandDebuggerContract;
 import com.cubeia.games.poker.handler.BackendCallHandler;
 import com.cubeia.games.poker.handler.PokerHandler;
@@ -43,7 +43,6 @@ import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
 import com.cubeia.games.poker.jmx.PokerStats;
 import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.games.poker.state.FirebaseState;
-import com.cubeia.games.poker.tournament.configuration.blinds.Level;
 import com.cubeia.games.poker.tournament.messages.BlindsWithDeadline;
 import com.cubeia.games.poker.tournament.messages.TournamentDestroyed;
 import com.cubeia.games.poker.tournament.messages.WaitingForPlayers;
@@ -155,7 +154,7 @@ public class Processor implements GameProcessor, TournamentProcessor {
                 backendHandler.handleAnnounceTableSuccessfulResponse((AnnounceTableResponse) attachment);
             } else if (attachment instanceof AnnounceTableFailedResponse) {
                 log.debug("got announce table failed response: {}", attachment);
-                backendHandler.handleAnnounceTableFailedResponse((AnnounceTableFailedResponse) attachment);
+                backendHandler.handleAnnounceTableFailedResponse();
             } else if (attachment instanceof CloseTableRequest) {
                 log.debug("got close table request: {}", attachment);
                 tableCloseHandler.closeTable(table, false);
@@ -199,10 +198,9 @@ public class Processor implements GameProcessor, TournamentProcessor {
         state.notifyWaitingForPlayers();
     }
 
-    private void handleBlindsLevel(BlindsWithDeadline blindsWithDeadline) {
-        Level level = blindsWithDeadline.getLevel();
+    private void handleBlindsLevel(BlindsWithDeadline level) {
         BlindsLevel blindsLevel = new BlindsLevel(level.getSmallBlindAmount(), level.getBigBlindAmount(), level.getAnteAmount(), level.isBreak(),
-                                                  level.getDurationInMinutes(), blindsWithDeadline.getDeadline());
+                                                  level.getDurationInMinutes(), level.getDeadline());
         state.setBlindsLevels(blindsLevel);
     }
 

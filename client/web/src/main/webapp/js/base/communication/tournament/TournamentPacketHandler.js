@@ -9,29 +9,29 @@ Poker.TournamentPacketHandler = Class.extend({
     /**
      * @type Poker.TournamentManager
      */
-    tournamentManager : null,
+    tournamentManager: null,
 
     /**
      * @type Poker.TableManager
      */
-    tableManager : null,
+    tableManager: null,
 
     /**
      * @type Number
      */
-    tournamentId : null,
+    tournamentId: null,
 
     /**
      * @constructor
      */
-    init : function() {
+    init: function () {
         this.tournamentManager = Poker.AppCtx.getTournamentManager();
         this.tableManager = Poker.AppCtx.getTableManager();
     },
-    handleTournamentTransport : function(packet) {
+    handleTournamentTransport: function (packet) {
         console.log("Got tournament transport");
 
-        var valueArray =  FIREBASE.ByteArray.fromBase64String(packet.mttdata);
+        var valueArray = FIREBASE.ByteArray.fromBase64String(packet.mttdata);
         var gameData = new FIREBASE.ByteArray(valueArray);
         var length = gameData.readInt(); // drugs.
         var classId = gameData.readUnsignedByte();
@@ -48,35 +48,46 @@ Poker.TournamentPacketHandler = Class.extend({
             case com.cubeia.games.poker.io.protocol.TournamentTable.CLASSID:
                 this.handleTournamentTable(tournamentPacket);
                 break;
+            case com.cubeia.games.poker.io.protocol.TournamentRegistrationInfo.CLASSID:
+                this.handleTournamentRegistrationInfo(packet.mttid, tournamentPacket);
+                break;
             default:
                 console.log("Unhandled tournament packet");
+                console.log(tournamentPacket);
         }
     },
-    handleTournamentTable : function(tournamentPacket) {
-        console.log("Tournament table!!!");
-        console.log(tournamentPacket);
+    handleTournamentTable: function (tournamentPacket) {
+        if (tournamentPacket.tableId != -1) {
+            new Poker.TableRequestHandler(tournamentPacket.tableId).openTable();
+        } else {
+            console.log("Unable to find table in tournament");
+        }
+    },
+    handleTournamentRegistrationInfo: function (tournamentId, registrationInfo) {
+        console.log(registrationInfo);
+        new Poker.TournamentPacketHandler().handleTournamentBuyInInfo(tournamentId, registrationInfo);
     },
     handleTournamentOut: function (packet) {
         var dialogManager = Poker.AppCtx.getDialogManager();
         if (packet.position == 1) {
-            dialogManager.displayGenericDialog({header:"Message", message:"Congratulations, you won the tournament!"});
+            dialogManager.displayGenericDialog({header: "Message", message: "Congratulations, you won the tournament!"});
         } else {
-            dialogManager.displayGenericDialog({header:"Message", message:"You finished " + packet.position + " in the tournament."});
+            dialogManager.displayGenericDialog({header: "Message", message: "You finished " + packet.position + " in the tournament."});
         }
 
     },
-    handleRemovedFromTournamentTable:function (packet) {
+    handleRemovedFromTournamentTable: function (packet) {
         console.log("Removed from table " + packet.tableid + " in tournament " + packet.mttid + " keep watching? " + packet.keepWatching);
         this.tournamentManager.onRemovedFromTournament(packet.tableid, Poker.MyPlayer.id);
     },
-    handleSeatedAtTournamentTable:function (seated) {
+    handleSeatedAtTournamentTable: function (seated) {
         console.log("I was seated in a tournament, opening table");
         console.log(seated);
-        this.tournamentManager.setTournamentTable(seated.mttid,seated.tableid);
+        this.tournamentManager.setTournamentTable(seated.mttid, seated.tableid);
         new Poker.TableRequestHandler(seated.tableid).joinTable();
         this.tableManager.handleOpenTableAccepted(seated.tableid, 10); //TODO: FIX!
     },
-    handleRegistrationResponse : function (registrationResponse) {
+    handleRegistrationResponse: function (registrationResponse) {
         console.log("Registration response:");
         console.log(registrationResponse);
 
@@ -86,7 +97,7 @@ Poker.TournamentPacketHandler = Class.extend({
             this.tournamentManager.handleRegistrationFailure(registrationResponse.mttid);
         }
     },
-    handleUnregistrationResponse : function (unregistrationResponse) {
+    handleUnregistrationResponse: function (unregistrationResponse) {
         console.log("Unregistration response:");
         console.log(unregistrationResponse);
         if (unregistrationResponse.status == "OK") {
@@ -96,8 +107,11 @@ Poker.TournamentPacketHandler = Class.extend({
 
         }
     },
-    handleNotifyRegistered : function(packet) {
+    handleNotifyRegistered: function (packet) {
         this.tournamentManager.openTournamentLobbies(packet.tournaments);
+    },
+    handleTournamentBuyInInfo: function (tournamentId, packet) {
+        this.tournamentManager.onBuyInInfo(tournamentId, packet.buyIn, packet.fee, packet.currency, packet.balanceInWallet, packet.sufficientFunds);
     }
 
 

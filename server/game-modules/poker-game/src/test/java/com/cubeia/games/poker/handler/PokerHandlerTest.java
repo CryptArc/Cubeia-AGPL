@@ -57,6 +57,7 @@ import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.player.SitOutStatus;
+import static com.cubeia.games.poker.common.money.MoneyFormatter.format;
 
 public class PokerHandlerTest {
 
@@ -155,15 +156,16 @@ public class PokerHandlerTest {
         long pending = 44L;
         when(pokerPlayer.getPendingBalanceSum()).thenReturn(pending);
 
-        int buyInAmount = 4000;
-        BuyInRequest buyInRequest = new BuyInRequest(buyInAmount, true);
+        String buyInAmountString = "40";
+        long buyInAmountCents = 4000;
+        BuyInRequest buyInRequest = new BuyInRequest(buyInAmountString, true);
         // ReserveCallback reserveCallback = mock(ReserveCallback.class);
         // when(callbackFactory.createReserveCallback(table)).thenReturn(reserveCallback);
 
         pokerHandler.visit(buyInRequest);
 
         verify(backend, never()).reserveMoneyForTable(Mockito.any(ReserveRequest.class), Mockito.<TableId>any());
-        verify(state).handleBuyInRequest(pokerPlayer, buyInAmount);
+        verify(state).handleBuyInRequest(pokerPlayer, buyInAmountCents);
         verify(pokerPlayer).setSitInAfterSuccessfulBuyIn(true);
         verify(state).playerIsSittingIn(playerId);
 
@@ -173,9 +175,9 @@ public class PokerHandlerTest {
 
         StyxSerializer styx = new StyxSerializer(new ProtocolObjectFactory());
         BuyInResponse buyInResponse = (BuyInResponse) styx.unpack(gameDataAction.getData());
-        assertThat(buyInResponse.amountBroughtIn, is(0));
-        assertThat(buyInResponse.balance, is((int) balance));
-        assertThat(buyInResponse.pendingBalance, is((int) pending));
+        assertThat(buyInResponse.amountBroughtIn, is("0"));
+        assertThat(buyInResponse.balance, is(format(balance)));
+        assertThat(buyInResponse.pendingBalance, is(format(pending)));
         assertThat(buyInResponse.resultCode, is(BuyInResultCode.PENDING));
     }
 
@@ -188,7 +190,7 @@ public class PokerHandlerTest {
         when(pokerPlayer.getBalanceNotInHand()).thenReturn(0L);
 
         // Request more money than max buy in
-        BuyInRequest buyInRequest = new BuyInRequest(14000, true);
+        BuyInRequest buyInRequest = new BuyInRequest("140", true);
 
         // ReserveCallback reserveCallback = mock(ReserveCallback.class);
         // when(callbackFactory.createReserveCallback(table)).thenReturn(reserveCallback);
@@ -210,7 +212,7 @@ public class PokerHandlerTest {
         when(pokerPlayer.getBalanceNotInHand()).thenReturn(0L);
 
         // Request more money than max buy in
-        BuyInRequest buyInRequest = new BuyInRequest(10, true);
+        BuyInRequest buyInRequest = new BuyInRequest("61", true);
 
         // ReserveCallback reserveCallback = mock(ReserveCallback.class);
         // when(callbackFactory.createReserveCallback(table)).thenReturn(reserveCallback);
@@ -232,7 +234,7 @@ public class PokerHandlerTest {
         when(pokerPlayer.getBalanceNotInHand()).thenReturn(0L);
 
         // Request more money than allowed, balance + buyin <= max buyin
-        BuyInRequest buyInRequest = new BuyInRequest(3000, true);
+        BuyInRequest buyInRequest = new BuyInRequest("3000", true);
 
         // ReserveCallback reserveCallback = mock(ReserveCallback.class);
         // when(callbackFactory.createReserveCallback(table)).thenReturn(reserveCallback);
@@ -254,7 +256,7 @@ public class PokerHandlerTest {
         when(pokerPlayer.getBalanceNotInHand()).thenReturn(4000L); // pending will make it fail
 
         // Request more money than allowed, pendingBalance + balance + buyin <= max buyin
-        BuyInRequest buyInRequest = new BuyInRequest(3000, true);
+        BuyInRequest buyInRequest = new BuyInRequest("30", true);
 
         // ReserveCallback reserveCallback = mock(ReserveCallback.class);
         // when(callbackFactory.createReserveCallback(table)).thenReturn(reserveCallback);
@@ -277,7 +279,7 @@ public class PokerHandlerTest {
 
         // Request more money than allowed, pendingBalance + balance + buyin <= max buyin
         // the player can actually buy in 1000 but requests 2000
-        BuyInRequest buyInRequest = new BuyInRequest(2000, true);
+        BuyInRequest buyInRequest = new BuyInRequest("20", true);
 
         // ReserveCallback reserveCallback = mock(ReserveCallback.class);
         // when(callbackFactory.createReserveCallback(table)).thenReturn(reserveCallback);

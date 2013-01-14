@@ -42,8 +42,8 @@ import com.cubeia.firebase.service.random.api.RandomService;
 import com.cubeia.game.poker.config.api.PokerConfigurationService;
 import com.cubeia.games.poker.adapter.BuyInCalculator.MinAndMaxBuyInResult;
 import com.cubeia.games.poker.cache.ActionCache;
-import com.cubeia.games.poker.common.Money;
-import com.cubeia.games.poker.common.SystemTime;
+import com.cubeia.games.poker.common.money.Money;
+import com.cubeia.games.poker.common.time.SystemTime;
 import com.cubeia.games.poker.entity.HandIdentifier;
 import com.cubeia.games.poker.handler.ActionTransformer;
 import com.cubeia.games.poker.handler.Trigger;
@@ -77,14 +77,13 @@ import com.cubeia.games.poker.io.protocol.RakeInfo;
 import com.cubeia.games.poker.io.protocol.RequestAction;
 import com.cubeia.games.poker.io.protocol.TakeBackUncalledBet;
 import com.cubeia.games.poker.io.protocol.TournamentDestroyed;
-import com.cubeia.games.poker.io.protocol.WaitingToStartBreak;
 import com.cubeia.games.poker.io.protocol.WaitingForPlayers;
+import com.cubeia.games.poker.io.protocol.WaitingToStartBreak;
 import com.cubeia.games.poker.jmx.PokerStats;
 import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.games.poker.state.FirebaseState;
-import com.cubeia.games.poker.tournament.PokerTournamentRoundReport;
-import com.cubeia.games.poker.tournament.configuration.blinds.Level;
+import com.cubeia.games.poker.tournament.messages.PokerTournamentRoundReport;
 import com.cubeia.games.poker.util.ProtocolFactory;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.ActionRequest;
@@ -93,6 +92,7 @@ import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.adapter.SystemShutdownException;
+import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.ExposeCardsHolder;
 import com.cubeia.poker.hand.HandType;
@@ -124,7 +124,7 @@ import java.util.UUID;
 
 import static com.cubeia.firebase.api.game.player.PlayerStatus.DISCONNECTED;
 import static com.cubeia.firebase.api.game.player.PlayerStatus.LEAVING;
-import static com.cubeia.games.poker.common.MoneyFormatter.format;
+import static com.cubeia.games.poker.common.money.MoneyFormatter.format;
 import static com.cubeia.games.poker.handler.BackendCallHandler.EXT_PROP_KEY_TABLE_ID;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -238,15 +238,22 @@ public class FirebaseServerAdapter implements ServerAdapter {
     }
 
     private int secondsToNextLevel(com.cubeia.poker.model.BlindsLevel level) {
-        return Seconds.secondsBetween(dateFetcher.date(), new DateTime(level.getNextLevelStartTime())).getSeconds();
+        int secondsToNextLevel = Seconds.secondsBetween(dateFetcher.date(), new DateTime(level.getNextLevelStartTime())).getSeconds();
+        log.debug("Now: " + dateFetcher.date() + " Next level starts on: " + new DateTime(level.getNextLevelStartTime()) + " Seconds to next level: " + secondsToNextLevel);
+        return secondsToNextLevel;
     }
 
     @Override
     public void sendGameStateTo(GameStateSnapshot snapshot, int playerId) {
         HandStartInfo handStartInfo = new HandStartInfo(getIntegrationHandId());
         BlindsLevel blindsLevel = createBlindsLevelPacket(snapshot.getBlindsLevel());
-        GameState state = new GameState(snapshot.getTournamentId(), handStartInfo, blindsLevel, secondsToNextLevel(snapshot.getBlindsLevel()));
+        Enums.BetStrategy betStrategy = convertBetStrategy(state.getSettings().getBetStrategyType());
+        GameState state = new GameState(snapshot.getTournamentId(), handStartInfo, blindsLevel, secondsToNextLevel(snapshot.getBlindsLevel()), betStrategy);
         sendPrivatePacket(playerId, state);
+    }
+
+    private Enums.BetStrategy convertBetStrategy(BetStrategyType betStrategyType) {
+        return Enums.BetStrategy.valueOf(betStrategyType.name());
     }
 
     @Override
@@ -400,9 +407,9 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
         // Send the cards as hidden to the other players
         DealPrivateCards hiddenCardsPacket = actionTransformer.createPrivateCardsPacket(playerId, cards, true);
-        GameDataAction ntfyAction = protocolFactory.createGameAction(hiddenCardsPacket, playerId, table.getId());
+        GameDataAction notifyAction = protocolFactory.createGameAction(hiddenCardsPacket, playerId, table.getId());
         log.debug("--> Send DealPrivateCards(hidden)[" + hiddenCardsPacket + "] to everyone");
-        sendPublicPacket(ntfyAction, playerId);
+        sendPublicPacket(notifyAction, playerId);
 
         handHistory.notifyPrivateCards(playerId, cards);
     }
@@ -429,9 +436,9 @@ public class FirebaseServerAdapter implements ServerAdapter {
     public void notifyPrivateExposedCards(int playerId, List<Card> cards) {
         // Send the cards as public to the other players
         DealPrivateCards hiddenCardsPacket = actionTransformer.createPrivateCardsPacket(playerId, cards, false);
-        GameDataAction ntfyAction = protocolFactory.createGameAction(hiddenCardsPacket, playerId, table.getId());
+        GameDataAction action = protocolFactory.createGameAction(hiddenCardsPacket, playerId, table.getId());
         log.debug("--> Send DealPrivateCards(exposed)[" + hiddenCardsPacket + "] to everyone");
-        sendPublicPacket(ntfyAction, -1);
+        sendPublicPacket(action, -1);
         handHistory.notifyPrivateExposedCards(playerId, cards);
     }
 
@@ -450,9 +457,9 @@ public class FirebaseServerAdapter implements ServerAdapter {
             if (!player.isBuyInRequestActive() && player.getRequestedBuyInAmount() > 0) {
                 PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) player;
 
-                int playerBalanceIncludingPending = (int) (pokerPlayer.getBalance() + pokerPlayer.getBalanceNotInHand());
-                int amountToBuyIn = buyInCalculator.calculateAmountToReserve(
-                        state.getMaxBuyIn(), playerBalanceIncludingPending, (int) player.getRequestedBuyInAmount());
+                long playerBalanceIncludingPending = pokerPlayer.getBalance() + pokerPlayer.getBalanceNotInHand();
+                long amountToBuyIn = buyInCalculator.calculateAmountToReserve(state.getMaxBuyIn(), playerBalanceIncludingPending,
+                                                                              player.getRequestedBuyInAmount());
 
                 if (amountToBuyIn > 0) {
                     log.debug("sending reserve request to backend: player id = {}, amount = {}, amount requested by player = {}",
@@ -479,22 +486,24 @@ public class FirebaseServerAdapter implements ServerAdapter {
             BuyInInfoResponse resp = new BuyInInfoResponse();
 
             int playerBalance = player == null ? 0 : (int) (player.getBalance() + player.getPendingBalanceSum());
-            resp.balanceOnTable = playerBalance;
+            resp.balanceOnTable = format(playerBalance);
             resp.mandatoryBuyin = mandatoryBuyin;
 
             try {
-                resp.balanceInWallet = (int) backend.getMainAccountBalance(playerId).getAmount();
+                resp.balanceInWallet = format(backend.getMainAccountBalance(playerId).getAmount());
             } catch (GetBalanceFailedException e) {
                 log.error("error getting balance", e);
                 resp.resultCode = BuyInInfoResultCode.UNSPECIFIED_ERROR;
-                resp.balanceInWallet = -1;
+                resp.balanceInWallet = "N/A";
+                resp.minAmount = "0";
+                resp.maxAmount = "0";
             }
 
             if (resp.resultCode != BuyInInfoResultCode.UNSPECIFIED_ERROR) {
                 MinAndMaxBuyInResult buyInRange = buyInCalculator.calculateBuyInLimits(
                         state.getMinBuyIn(), state.getMaxBuyIn(), state.getAnteLevel(), playerBalance);
-                resp.minAmount = buyInRange.getMinBuyIn();
-                resp.maxAmount = buyInRange.getMaxBuyIn();
+                resp.minAmount = format(buyInRange.getMinBuyIn());
+                resp.maxAmount = format(buyInRange.getMaxBuyIn());
                 resp.resultCode = buyInRange.isBuyInPossible() ? BuyInInfoResultCode.OK : BuyInInfoResultCode.MAX_LIMIT_REACHED;
             }
 
@@ -662,7 +671,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
         PokerStats.getInstance().reportHandEnd();
 
         // Map the report to a server specific round report
-        Level currentLevel = new Level(report.getSmallBlindAmount(), report.getBigBlindAmount(), report.getAnteAmount());
+        PokerTournamentRoundReport.Level currentLevel = new PokerTournamentRoundReport.Level(report.getSmallBlindAmount(), report.getBigBlindAmount(), report.getAnteAmount());
         PokerTournamentRoundReport pokerReport = new PokerTournamentRoundReport(report.getBalanceMap(), currentLevel);
         MttRoundReportAction action = new MttRoundReportAction(table.getMetaData().getMttId(), table.getId());
         action.setAttachment(pokerReport);
@@ -695,7 +704,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
             }
         }
 
-        // notify betstacks to pots
+        // notify bet stacks to pots
         PotTransfers potTransfers = new PotTransfers(fromPlayerToPot, transfers, clientPots);
         GameDataAction action = protocolFactory.createGameAction(potTransfers, 0, table.getId());
         sendPublicPacket(action, -1);

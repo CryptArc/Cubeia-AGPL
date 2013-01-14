@@ -60,6 +60,15 @@ Poker.ViewManager = Class.extend({
     nextView : function() {
         this.activateView(this.getNextView());
     },
+    onForceLogout : function() {
+        $(".view-container").hide();
+        $("#toolbar").hide();
+        Poker.AppCtx.getDialogManager().displayGenericDialog(
+            { header : "You have been logged out", message : "You have logged in from another computer",
+                okButtonText:"Reload" }, function(){
+                document.location.reload();
+            });
+    },
     /**
      * Gets the previous view, null if there are no previous view
      * @return {Poker.View}
@@ -96,9 +105,12 @@ Poker.ViewManager = Class.extend({
     onLogin : function(){
         var self = this;
         this.toolbar.show();
-        this.activateView(this.lobbyView);
-        this.loginView.close();
-        this.views.splice(0,1);
+        if(!this.loginView.isClosed()) {
+            this.activateView(this.lobbyView);
+            this.loginView.close();
+            this.views.splice(0,1);
+        }
+
 
         this.swiper = new Poker.ViewSwiper($(".view-container"),
             function(){
@@ -136,8 +148,20 @@ Poker.ViewManager = Class.extend({
                 v.close();
                 this.views.splice(i,1);
                 this.activeView = null;
-                this.activateView(pv);
+                this.safeActivateView(pv);
+
             }
+        }
+    },
+    /**
+     * Activates the previous view, if it is null it activates the lobby
+     * @param pv
+     */
+    safeActivateView : function(pv) {
+        if(pv!=null) {
+            this.activateView(pv);
+        } else {
+            this.activateView(this.lobbyView);
         }
     },
     removeTournamentView : function(tournamentId) {
@@ -148,7 +172,7 @@ Poker.ViewManager = Class.extend({
                 v.close();
                 this.views.splice(i,1);
                 this.activeView = null;
-                this.activateView(pv);
+                this.safeActivateView(pv);
             }
         }
     },

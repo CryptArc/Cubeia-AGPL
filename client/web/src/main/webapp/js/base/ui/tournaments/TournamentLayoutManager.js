@@ -22,11 +22,13 @@ Poker.TournamentLayoutManager = Class.extend({
     leaveButton : null,
     leaveFunction : null,
     takeSeatButton : null,
+    name : null,
 
     init : function(tournamentId, name, registered, viewContainer,leaveFunction) {
         this.leaveFunction = leaveFunction;
         this.tournamentId = tournamentId;
         this.viewContainer = viewContainer;
+        this.name = name;
         this.templateManager = Poker.AppCtx.getTemplateManager();
         var template = this.templateManager.getTemplate("tournamentTemplate");
         var viewHTML = Mustache.render(template,{tournamentId : tournamentId, name : name});
@@ -87,9 +89,7 @@ Poker.TournamentLayoutManager = Class.extend({
             self.leaveLobby();
         });
         this.registerButton.click(function(e){
-            $(this).hide();
-            self.loadingButton.show();
-            tournamentRequestHandler.registerToTournament();
+            tournamentRequestHandler.requestBuyInInfo();
         });
         this.unregisterButton.hide().click(function(e){
             $(this).hide();
@@ -133,6 +133,10 @@ Poker.TournamentLayoutManager = Class.extend({
     },
     leaveLobby : function() {
         new Poker.TournamentRequestHandler(this.tournamentId).leaveTournamentLobby();
+    },
+    showBuyInInfo : function(buyIn, fee, currency, balanceInWallet) {
+        var buyInDialog = new Poker.TournamentBuyInDialog();
+        buyInDialog.show(this.tournamentId,this.name,buyIn,fee,balanceInWallet);
     }
 
 });

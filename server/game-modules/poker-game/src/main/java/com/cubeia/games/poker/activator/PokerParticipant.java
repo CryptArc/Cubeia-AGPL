@@ -30,7 +30,6 @@ import com.cubeia.games.poker.entity.TableConfigTemplate;
 import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.model.BlindsLevel;
-import com.cubeia.poker.settings.BetStrategyName;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.variant.GameType;
@@ -106,7 +105,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
         acc.setIntAttribute(PokerLobbyAttributes.ANTE.name(), template.getAnte());
         acc.setIntAttribute(PokerLobbyAttributes.SMALL_BLIND.name(), settings.getSmallBlindAmount());
         acc.setIntAttribute(PokerLobbyAttributes.BIG_BLIND.name(), settings.getBigBlindAmount());
-        acc.setStringAttribute(PokerLobbyAttributes.BETTING_GAME_BETTING_MODEL.name(), "NO_LIMIT");
+        acc.setStringAttribute(PokerLobbyAttributes.BETTING_GAME_BETTING_MODEL.name(), settings.getBetStrategyType().name());
         acc.setStringAttribute(PokerLobbyAttributes.MONETARY_TYPE.name(), "REAL_MONEY");
         acc.setStringAttribute(PokerLobbyAttributes.VARIANT.name(), variant.name());
         acc.setIntAttribute(PokerLobbyAttributes.MIN_BUY_IN.name(), pokerState.getMinBuyIn());
@@ -121,7 +120,6 @@ public class PokerParticipant extends DefaultCreationParticipant {
         cashGameBackendService.announceTable(announceRequest);
         
         log.warn("Table created : "+table.getId());
-        
     }
 
     private PokerSettings createSettings(Table table, String externalTableId) {
@@ -129,13 +127,12 @@ public class PokerParticipant extends DefaultCreationParticipant {
         int maxBuyIn = template.getAnte() * template.getMaxBuyInMultiplier();
         int seats = table.getPlayerSet().getSeatingMap().getNumberOfSeats();
         RakeSettings rake = template.getRakeSettings();
-        BetStrategyName limit = BetStrategyName.NO_LIMIT;
         // Map<Serializable,Serializable> attributes = Collections.emptyMap();
         Map<Serializable, Serializable> attributes = Collections.<Serializable, Serializable>singletonMap(TABLE_EXTERNAL_ID.name(), externalTableId);
-        int smallBlindAmount = template.getAnte();
-        int bigBlindAmount = 2 * smallBlindAmount;
+        int smallBlindAmount = template.getSmallBlind();
+        int bigBlindAmount = template.getBigBlind();
         BlindsLevel level = new BlindsLevel(smallBlindAmount, bigBlindAmount, template.getAnte());
-        return new PokerSettings(level, minBuyIn, maxBuyIn, template.getTiming(), seats, limit, rake, attributes);
+        return new PokerSettings(level, template.getBetStrategy(), minBuyIn, maxBuyIn, template.getTiming(), seats, rake, attributes);
     }
 
     @Override

@@ -21,7 +21,7 @@ import com.cubeia.game.poker.config.api.HandHistoryConfig;
 import com.cubeia.game.poker.config.api.PokerActivatorConfig;
 import com.cubeia.game.poker.config.api.PokerConfigurationService;
 import com.cubeia.game.poker.config.api.PokerSystemConfig;
-import com.cubeia.games.poker.common.Money;
+import com.cubeia.games.poker.common.money.Money;
 
 public class PokerConfigServiceMock implements PokerConfigurationService {
 

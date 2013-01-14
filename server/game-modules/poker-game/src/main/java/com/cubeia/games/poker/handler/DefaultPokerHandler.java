@@ -67,6 +67,7 @@ import com.cubeia.games.poker.io.protocol.RequestBlindsStructure;
 import com.cubeia.games.poker.io.protocol.RequestPayoutInfo;
 import com.cubeia.games.poker.io.protocol.RequestTournamentLobbyData;
 import com.cubeia.games.poker.io.protocol.RequestTournamentPlayerList;
+import com.cubeia.games.poker.io.protocol.RequestTournamentRegistrationInfo;
 import com.cubeia.games.poker.io.protocol.RequestTournamentStatistics;
 import com.cubeia.games.poker.io.protocol.RequestTournamentTable;
 import com.cubeia.games.poker.io.protocol.StartHandHistory;
@@ -78,6 +79,7 @@ import com.cubeia.games.poker.io.protocol.TournamentLobbyData;
 import com.cubeia.games.poker.io.protocol.TournamentOut;
 import com.cubeia.games.poker.io.protocol.TournamentPlayer;
 import com.cubeia.games.poker.io.protocol.TournamentPlayerList;
+import com.cubeia.games.poker.io.protocol.TournamentRegistrationInfo;
 import com.cubeia.games.poker.io.protocol.TournamentStatistics;
 import com.cubeia.games.poker.io.protocol.TournamentTable;
 import com.cubeia.games.poker.io.protocol.WaitingForPlayers;
@@ -362,6 +364,16 @@ public class DefaultPokerHandler implements PacketVisitor {
 
     @Override
     public void visit(TournamentDestroyed packet) {
+
+    }
+
+    @Override
+    public void visit(RequestTournamentRegistrationInfo packet) {
+
+    }
+
+    @Override
+    public void visit(TournamentRegistrationInfo packet) {
 
     }
 }

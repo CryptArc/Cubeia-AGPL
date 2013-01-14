@@ -46,10 +46,18 @@ import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static com.cubeia.poker.action.PokerActionType.BET;
+import static com.cubeia.poker.action.PokerActionType.CALL;
+import static com.cubeia.poker.action.PokerActionType.RAISE;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.argThat;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class BettingRoundTest extends TestCase {
@@ -77,7 +85,7 @@ public class BettingRoundTest extends TestCase {
         initMocks(this);
         context = new PokerContext(settings);
         when(settings.getTiming()).thenReturn(new DefaultTimingProfile());
-        when(settings.getRakeSettings()).thenReturn(RakeSettings.createNoLimitRakeSettings(new BigDecimal(0.01)));
+        when(settings.getRakeSettings()).thenReturn(RakeSettings.createDefaultRakeSettings(new BigDecimal(0.01)));
         when(adapterHolder.get()).thenReturn(adapter);
         minBet = 10;
     }
@@ -87,11 +95,9 @@ public class BettingRoundTest extends TestCase {
         MockPlayer[] p = TestUtils.createMockPlayers(2);
 
         preparePlayers(p);
-        round = new BettingRound(0, context, adapterHolder, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator(), minBet);
-
         assertFalse("Round should not be finished.", round.isFinished());
 
-        verifyAndAct(p[1], PokerActionType.BET, 100);
+        verifyAndAct(p[1], BET, 100);
         verifyAndAct(p[0], PokerActionType.FOLD, 100);
 
         assertTrue(round.isFinished());
@@ -102,12 +108,10 @@ public class BettingRoundTest extends TestCase {
         MockPlayer[] p = TestUtils.createMockPlayers(2, 100);
 
         preparePlayers(p);
-        round = new BettingRound(0, context, adapterHolder, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator(), minBet);
-
         assertFalse(round.isFinished());
-        act(p[1], PokerActionType.BET, 70);
+        act(p[1], BET, 70);
 
-        PossibleAction bet = requestedAction.getOption(PokerActionType.CALL);
+        PossibleAction bet = requestedAction.getOption(CALL);
         assertEquals(70, bet.getMaxAmount());
     }
 
@@ -115,7 +119,7 @@ public class BettingRoundTest extends TestCase {
     public void testCallTellsState() {
         PokerPlayer player = Mockito.mock(PokerPlayer.class);
         context = createMockContext();
-        round = new BettingRound(0, context, adapterHolder, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator(), minBet);
+        round = createRound(new NoLimitBetStrategy(minBet));
         round.call(player);
 
         verify(context).callOrRaise();
@@ -129,7 +133,7 @@ public class BettingRoundTest extends TestCase {
         when(player.getBalance()).thenReturn(betStack * 10);
         preparePlayers(player);
 
-        round = new BettingRound(0, context, adapterHolder, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator(), minBet);
+
         round.highBet = 100;
 
         long amountToCall = round.getAmountToCall(player);
@@ -143,7 +147,6 @@ public class BettingRoundTest extends TestCase {
         PokerPlayer player = Mockito.mock(PokerPlayer.class);
         preparePlayers(player);
 
-        round = new BettingRound(0, context, adapterHolder, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator(), minBet);
         round.call(player);
 
         verify(adapter).notifyRakeInfo(Mockito.<RakeInfoContainer>any());
@@ -154,13 +157,12 @@ public class BettingRoundTest extends TestCase {
         PokerPlayer player = Mockito.mock(PokerPlayer.class);
         preparePlayers(player);
 
-        round = new BettingRound(0, context, adapterHolder, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator(), minBet);
         round.highBet = 100;
         long betStack = 75L;
         when(player.getBetStack()).thenReturn(betStack);
         when(player.getBalance()).thenReturn(betStack * 10);
 
-        PokerAction action = new PokerAction(1337, PokerActionType.CALL);
+        PokerAction action = new PokerAction(1337, CALL);
 
         round.handleAction(action, player);
 
@@ -173,22 +175,21 @@ public class BettingRoundTest extends TestCase {
         MockPlayer[] p = TestUtils.createMockPlayers(2);
 
         preparePlayers(p);
-        round = new BettingRound(0, context, adapterHolder, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator(), minBet);
 
         assertFalse(round.isFinished());
+        verifyAndAct(p[1], BET, 100);
 
-        verifyAndAct(p[1], PokerActionType.BET, 100);
-
-        assertTrue(requestedAction.isOptionEnabled(PokerActionType.RAISE));
-        verifyAndAct(p[0], PokerActionType.RAISE, 200);
+        assertTrue(requestedAction.isOptionEnabled(RAISE));
+        verifyAndAct(p[0], RAISE, 200);
     }
 
     @Test
     public void testRaiseNotifiesRakeInfo() {
-        PokerPlayer player = Mockito.mock(PokerPlayer.class);
+        PokerPlayer player = mock(PokerPlayer.class);
+        ActionRequest request = mock(ActionRequest.class);
+        when(player.getActionRequest()).thenReturn(request);
+        when(request.getOption(RAISE)).thenReturn(new PossibleAction(RAISE, 10, 20));
         preparePlayers(player);
-
-        round = new BettingRound(0, context, adapterHolder, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator(), minBet);
 
         round.raise(player, 10L);
 
@@ -199,9 +200,12 @@ public class BettingRoundTest extends TestCase {
     public void testRaiseNotifiesCallOrRaise() {
         PokerPlayer player = Mockito.mock(PokerPlayer.class);
         preparePlayers(player);
-        context = createMockContext();
-        round = new BettingRound(0, context, adapterHolder, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator(), minBet);
+        ActionRequest request = mock(ActionRequest.class);
+        when(player.getActionRequest()).thenReturn(request);
+        when(request.getOption(RAISE)).thenReturn(new PossibleAction(RAISE, 10, 20));
 
+        context = createMockContext();
+        round = createRound(new NoLimitBetStrategy(minBet));
         round.raise(player, 10L);
         verify(context).callOrRaise();
     }
@@ -211,20 +215,18 @@ public class BettingRoundTest extends TestCase {
         MockPlayer[] p = TestUtils.createMockPlayers(2);
         preparePlayers(p);
 
-        round = new BettingRound(0, context, adapterHolder, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator(), minBet);
-
         assertFalse(round.isFinished());
 
-        actMax(PokerActionType.BET);
-        assertFalse(requestedAction.isOptionEnabled(PokerActionType.RAISE));
+        actMax(BET);
+        assertFalse(requestedAction.isOptionEnabled(RAISE));
     }
 
     @Test
     public void testCallSetsLastPlayerToBeCalled() {
-        MockPlayer[] p = createAndGetPlayersAddThemToTheGameAndCreateABettingRound(2);
+        MockPlayer[] p = createAndAddPlayersToBettingRound(2);
 
-        act(p[1], PokerActionType.BET, 100);
-        act(p[0], PokerActionType.CALL, 100);
+        act(p[1], BET, 100);
+        act(p[0], CALL, 100);
 
         PokerPlayer player = p[1];
         assertThat(round.getLastPlayerToBeCalled(), CoreMatchers.is(player));
@@ -232,9 +234,9 @@ public class BettingRoundTest extends TestCase {
 
     @Test
     public void testRaiseAnAllInBetSetsLastCallerToAllInPlayer() {
-        MockPlayer[] p = createAndGetPlayersAddThemToTheGameAndCreateABettingRound(2);
-        act(p[1], PokerActionType.BET, 100);
-        act(p[0], PokerActionType.RAISE, 200);
+        MockPlayer[] p = createAndAddPlayersToBettingRound(2);
+        act(p[1], BET, 100);
+        act(p[0], RAISE, 200);
         PokerPlayer player = p[1];
         assertThat(round.getLastPlayerToBeCalled(), CoreMatchers.is(player));
     }
@@ -244,13 +246,10 @@ public class BettingRoundTest extends TestCase {
         PokerPlayer player = Mockito.mock(PokerPlayer.class);
         preparePlayers(player);
 
-        round = new BettingRound(0, context, adapterHolder, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator(), minBet);
-
         ActionRequest actionRequest = Mockito.mock(ActionRequest.class);
         when(player.getActionRequest()).thenReturn(actionRequest);
-        PossibleAction possibleAction = Mockito.mock(PossibleAction.class);
-        when(actionRequest.getOption(PokerActionType.BET)).thenReturn(possibleAction);
-        when(possibleAction.getMinAmount()).thenReturn(5L);
+        PossibleAction possibleAction = new PossibleAction(BET, 5, 10);
+        when(actionRequest.getOption(BET)).thenReturn(possibleAction);
 
         round.bet(player, 10L);
 
@@ -261,8 +260,6 @@ public class BettingRoundTest extends TestCase {
     public void testTimeoutTwice() {
         MockPlayer[] p = TestUtils.createMockPlayers(2);
         preparePlayers(p);
-
-        round = new BettingRound(0, context, adapterHolder, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator(), minBet);
 
         assertFalse(round.isFinished());
 
@@ -277,11 +274,9 @@ public class BettingRoundTest extends TestCase {
         MockPlayer[] p = TestUtils.createMockPlayers(2);
         preparePlayers(p);
 
-        round = new BettingRound(0, context, adapterHolder, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator(), minBet);
-
         assertFalse(round.isFinished());
 
-        verifyAndAct(p[1], PokerActionType.BET, 100);
+        verifyAndAct(p[1], BET, 100);
         round.timeout();
         assertTrue(round.isFinished());
     }
@@ -290,8 +285,6 @@ public class BettingRoundTest extends TestCase {
     public void testDealerLeft() {
         MockPlayer[] p = TestUtils.createMockPlayers(2);
         preparePlayers(p);
-
-        round = new BettingRound(0, context, adapterHolder, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator(), minBet);
 
         assertFalse(round.isFinished());
 
@@ -307,9 +300,6 @@ public class BettingRoundTest extends TestCase {
         MockPlayer[] p = TestUtils.createMockPlayers(3);
         preparePlayers(p);
 
-        // init round
-        round = new BettingRound(0, context, adapterHolder, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator(), minBet);
-
         // starting player gets empty list the others get check and fold
         verify(adapter).notifyFutureAllowedActions(eq(p[1]), argThat(new IsListOfNElements(0)));
         verify(adapter).notifyFutureAllowedActions(eq(p[0]), argThat(new IsListOfNElements(2)));
@@ -324,7 +314,6 @@ public class BettingRoundTest extends TestCase {
         p[1].forceAllIn(true);
         p[2].forceAllIn(true);
         preparePlayers(p);
-        round = new BettingRound(0, context, adapterHolder, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator(), minBet);
 
         verify(adapter).notifyFutureAllowedActions(eq(p[0]), argThat(new IsListOfNElements(0)));
         verify(adapter).notifyFutureAllowedActions(eq(p[1]), argThat(new IsListOfNElements(0)));
@@ -339,7 +328,6 @@ public class BettingRoundTest extends TestCase {
         p[1].forceAllIn(true);
         p[2].forceAllIn(false);
         preparePlayers(p);
-        round = new BettingRound(0, context, adapterHolder, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator(), minBet);
 
         verify(adapter).notifyFutureAllowedActions(eq(p[0]), argThat(new IsListOfNElements(0)));
         verify(adapter).notifyFutureAllowedActions(eq(p[1]), argThat(new IsListOfNElements(0)));
@@ -351,9 +339,6 @@ public class BettingRoundTest extends TestCase {
     public void testFutureActionsNotifiedWhenPlayerActed() {
         MockPlayer[] p = TestUtils.createMockPlayers(3);
         preparePlayers(p);
-
-        // init round
-        round = new BettingRound(0, context, adapterHolder, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator(), minBet);
 
         // starting player gets empty list the others get check and fold
         verify(adapter).notifyFutureAllowedActions(eq(p[0]), argThat(new IsListOfNElements(2)));
@@ -369,6 +354,59 @@ public class BettingRoundTest extends TestCase {
         verify(adapter).notifyFutureAllowedActions(eq(p[2]), argThat(new IsListOfNElements(0)));
     }
 
+    @Test
+    public void testIncompleteBetShouldNotIncreaseHighestCompleteBet() {
+        MockPlayer[] p = TestUtils.createMockPlayers(3);
+        preparePlayers(p);
+
+        act(p[1], BET, 9);
+        assertThat(round.getHighestCompleteBet(), is(0L));
+        assertThat(round.getSizeOfLastCompleteBetOrRaise(), is(0L));
+    }
+
+    @Test
+    public void testIncompleteRaiseShouldNotIncreaseHighestCompleteBet() {
+        MockPlayer[] p = TestUtils.createMockPlayers(3);
+        p[2].setBalance(49);
+        preparePlayers(p);
+
+        act(p[1], BET, 25);
+        act(p[2], RAISE, 49);
+        assertThat(round.getHighestCompleteBet(), is(25L));
+        assertThat(round.getSizeOfLastCompleteBetOrRaise(), is(25L));
+        assertThat(p[0].getActionRequest().getOption(RAISE).getMinAmount(), is(49L + 25L));
+    }
+
+    /*
+     * In fixed limit, if the big blind is $10 and player A bets $7, it counts as a complete bet
+     * which means that the next raise should be to $20.
+     */
+    @Test
+    public void testCompleteBetShouldIncreaseCompleteBetAllTheWayToTheNextLevel() {
+        MockPlayer[] p = TestUtils.createMockPlayers(3);
+        p[1].setBalance(7L);
+        preparePlayers(new FixedLimitBetStrategy(10, false), p);
+
+        act(p[1], BET, 7);
+        assertThat(round.getHighestCompleteBet(), is(10L));
+        assertThat(round.getSizeOfLastCompleteBetOrRaise(), is(10L)); // (This is a bit undefined, the fixed limit strategy doesn't use this value though)
+        assertThat(p[2].getActionRequest().getOption(RAISE).getMinAmount(), is(20L));
+    }
+
+    @Test
+    public void testCompleteRaiseShouldIncreaseCompleteBetAllTheWayToTheNextLevel() {
+        MockPlayer[] p = TestUtils.createMockPlayers(3);
+        p[2].setBalance(17L);
+        preparePlayers(new FixedLimitBetStrategy(10, false), p);
+
+        act(p[1], BET, 10);
+        act(p[2], RAISE, 17);
+        assertThat(round.getHighestCompleteBet(), is(20L));
+        assertThat(round.getSizeOfLastCompleteBetOrRaise(), is(10L));
+        assertThat(p[0].getActionRequest().getOption(CALL).getMinAmount(), is(17L));
+        assertThat(p[0].getActionRequest().getOption(RAISE).getMinAmount(), is(30L));
+    }
+
     // HELPERS
 
     private void act(MockPlayer player, PokerActionType action, long amount) {
@@ -380,9 +418,8 @@ public class BettingRoundTest extends TestCase {
 
     private void verifyAndAct(MockPlayer player, PokerActionType action, long amount) {
         requestedAction = getRequestedAction();
-        assertTrue("Tried to " + action + " but available actions were: "
-                + player.getActionRequest().getOptions(), player
-                .getActionRequest().isOptionEnabled(action));
+        assertTrue("Tried to " + action + " but available actions were: " + player.getActionRequest().getOptions(),
+                   player.getActionRequest().isOptionEnabled(action));
         assertTrue(requestedAction.isOptionEnabled(action));
         assertEquals(player.getId(), requestedAction.getPlayerId());
         act(player, action, amount);
@@ -400,7 +437,6 @@ public class BettingRoundTest extends TestCase {
 
         public IsListOfNElements(int n) {
             this.n = n;
-
         }
 
         public boolean matches(Object list) {
@@ -413,11 +449,20 @@ public class BettingRoundTest extends TestCase {
         }
     }
 
-    private void preparePlayers(PokerPlayer ... p) {
+    private void preparePlayers(PokerPlayer... p) {
         for (PokerPlayer player : p) {
             context.addPlayer(player);
         }
         context.prepareHand(readyPlayerFilter());
+        round = createRound(new NoLimitBetStrategy(minBet));
+    }
+
+    private void preparePlayers(BetStrategy betStrategy, PokerPlayer... p) {
+        for (PokerPlayer player : p) {
+            context.addPlayer(player);
+        }
+        context.prepareHand(readyPlayerFilter());
+        round = createRound(betStrategy);
     }
 
     private Predicate<PokerPlayer> readyPlayerFilter() {
@@ -435,10 +480,9 @@ public class BettingRoundTest extends TestCase {
         return mock;
     }
 
-    private MockPlayer[] createAndGetPlayersAddThemToTheGameAndCreateABettingRound(int numberOfPlayers) {
+    private MockPlayer[] createAndAddPlayersToBettingRound(int numberOfPlayers) {
         MockPlayer[] p = TestUtils.createMockPlayers(numberOfPlayers);
         preparePlayers(p);
-        round = new BettingRound(0, context, adapterHolder, new DefaultPlayerToActCalculator(), new ActionRequestFactory(new NoLimitBetStrategy()), new TexasHoldemFutureActionsCalculator(), minBet);
         return p;
     }
 
@@ -447,5 +491,11 @@ public class BettingRoundTest extends TestCase {
         PossibleAction option = requestedAction.getOption(action);
         PokerAction a = new PokerAction(requestedAction.getPlayerId(), action, option.getMaxAmount());
         round.act(a);
+    }
+
+    private BettingRound createRound(BetStrategy betStrategy) {
+        ActionRequestFactory actionRequestFactory = new ActionRequestFactory(betStrategy);
+        return new BettingRound(0, context, adapterHolder, new DefaultPlayerToActCalculator(), actionRequestFactory,
+                                new TexasHoldemFutureActionsCalculator(), betStrategy);
     }
 }

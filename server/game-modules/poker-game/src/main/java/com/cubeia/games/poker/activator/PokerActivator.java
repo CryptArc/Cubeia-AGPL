@@ -17,14 +17,6 @@
 
 package com.cubeia.games.poker.activator;
 
-import static com.cubeia.poker.timing.Timings.DEFAULT;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-
-import java.util.concurrent.ScheduledExecutorService;
-
-import com.cubeia.poker.timing.TimingFactory;
-import org.apache.log4j.Logger;
-
 import com.cubeia.firebase.api.game.activator.ActivatorContext;
 import com.cubeia.firebase.api.game.activator.GameActivator;
 import com.cubeia.firebase.api.game.activator.MttAwareActivator;
@@ -38,12 +30,21 @@ import com.cubeia.games.poker.common.guice.JpaInitializer;
 import com.cubeia.games.poker.common.jmx.JmxUtil;
 import com.cubeia.games.poker.entity.TableConfigTemplate;
 import com.cubeia.poker.PokerGuiceModule;
+import com.cubeia.poker.betting.BetStrategyType;
+import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.variant.PokerVariant;
 import com.cubeia.util.threads.SafeRunnable;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.name.Named;
+import org.apache.log4j.Logger;
+
+import java.math.BigDecimal;
+import java.util.concurrent.ScheduledExecutorService;
+
+import static com.cubeia.poker.settings.RakeSettings.createDefaultRakeSettings;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 /**
  * Override the default game activator in order to provide my own
@@ -143,6 +144,8 @@ public class PokerActivator implements GameActivator, MttAwareActivator, PokerAc
         t.setAnte(anteLevel);
         t.setSeats(seats);
         t.setVariant(variant);
+        t.setRakeSettings(createDefaultRakeSettings(BigDecimal.valueOf(0.02)));
+        t.setBetStrategy(BetStrategyType.NO_LIMIT);
         t.setTiming(TimingFactory.getRegistry().getDefaultTimingProfile());
         return t;
     }

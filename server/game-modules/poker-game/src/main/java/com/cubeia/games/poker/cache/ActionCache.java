@@ -19,7 +19,7 @@ package com.cubeia.games.poker.cache;
 
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.guice.inject.Service;
-import com.cubeia.games.poker.common.SystemTime;
+import com.cubeia.games.poker.common.time.SystemTime;
 import com.cubeia.games.poker.debugger.HandDebuggerContract;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
@@ -54,26 +54,22 @@ public class ActionCache {
     @Inject
     public ActionCache(SystemTime dateFetcher) {
         this.dateFetcher = dateFetcher;
-        LinkedListMultimap<Integer, ActionContainer> linkedListMultimap = LinkedListMultimap.<Integer, ActionContainer>create();
+        LinkedListMultimap<Integer, ActionContainer> linkedListMultimap = LinkedListMultimap.create();
         // TODO: this map is fully synchronized but we only need to synchronize on table id (events on the same table are never concurrent)
-        cache = Multimaps.<Integer, ActionContainer>synchronizedListMultimap(linkedListMultimap);
+        cache = Multimaps.synchronizedListMultimap(linkedListMultimap);
     }
 
     /**
-     * Add public action to a table state cache.
+     * Adds public action to a table state cache.
      *
-     * @param tableId
-     * @param action
      */
     public void addPublicAction(int tableId, GameAction action) {
         addPublicActionWithExclusion(tableId, action, -1);
     }
 
     /**
-     * Add public action to a table state cache.
+     * Adds public action to a table state cache.
      *
-     * @param tableId
-     * @param action
      */
     public void addPublicActionWithExclusion(int tableId, GameAction action, int excludedPlayerId) {
         cache.put(tableId, ActionContainer.createPublic(action, excludedPlayerId, dateFetcher.date().getMillis()));
@@ -86,11 +82,8 @@ public class ActionCache {
     }
 
     /**
-     * Add a private action to the cache.
+     * Adds a private action to the cache.
      *
-     * @param tableId
-     * @param playerId
-     * @param action
      */
     public void addPrivateAction(int tableId, int playerId, GameAction action) {
         cache.put(tableId, ActionContainer.createPrivate(playerId, action, dateFetcher.date().getMillis()));
@@ -103,7 +96,7 @@ public class ActionCache {
     }
 
     /**
-     * Retrieve public state from a table. Use this for new players.
+     * Retrieves public state from a table. Use this for new players.
      *
      * @param tableId table id
      * @return list of public actions
@@ -120,7 +113,7 @@ public class ActionCache {
     }
 
     /**
-     * Retrieve all actions, public and private, for the given table and user.
+     * Retrieves all actions, public and private, for the given table and user.
      * This method should be used when reconnecting a seated player to a table.
      *
      * @param tableId  table id
@@ -136,17 +129,6 @@ public class ActionCache {
         }
         return actions;
     }
-
-//    public List<GameAction> getPrivateAndPublicActions(int tableId, int playerId) {
-//        List<GameAction> actions = new LinkedList<GameAction>();
-//        for (ActionContainer ac : cache.get(tableId)) {
-//            if (ac.isPublic()  ||  ac.getPlayerId() == playerId) {
-//                actions.add(ac.getGameAction());
-//            }
-//        }
-//        
-//        return actions;
-//    }
 
     public void clear(int tableId) {
         log.trace("clearing action cache for tableId = {}", tableId);

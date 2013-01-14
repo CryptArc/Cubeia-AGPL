@@ -326,6 +326,7 @@ public class BlindsRound implements Round, Serializable {
     }
 
     private void removePlayerFromCurrentHand(PokerPlayer player) {
+        blindsCalculator.removePlayerFromCurrentHand(player);
         roundHelper.removePlayerFromCurrentHand(player, context);
     }
 

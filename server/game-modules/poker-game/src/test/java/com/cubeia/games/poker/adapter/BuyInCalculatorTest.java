@@ -106,10 +106,10 @@ public class BuyInCalculatorTest {
         int tableMaxBuyIn = 20000;
         BuyInCalculator blc = new BuyInCalculator();
 
-        assertThat(blc.calculateAmountToReserve(tableMaxBuyIn, 5000, 20000), is(20000 - 5000));
-        assertThat(blc.calculateAmountToReserve(tableMaxBuyIn, 5000, 2000), is(2000));
-        assertThat(blc.calculateAmountToReserve(tableMaxBuyIn, 0, 20000), is(20000));
-        assertThat(blc.calculateAmountToReserve(tableMaxBuyIn, 20000, 20000), is(0));
+        assertThat(blc.calculateAmountToReserve(tableMaxBuyIn, 5000, 20000), is(20000L - 5000L));
+        assertThat(blc.calculateAmountToReserve(tableMaxBuyIn, 5000, 2000), is(2000L));
+        assertThat(blc.calculateAmountToReserve(tableMaxBuyIn, 0, 20000), is(20000L));
+        assertThat(blc.calculateAmountToReserve(tableMaxBuyIn, 20000, 20000), is(0L));
     }
 
 }

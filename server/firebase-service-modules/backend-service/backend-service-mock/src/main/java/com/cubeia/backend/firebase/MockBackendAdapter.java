@@ -39,7 +39,7 @@ import com.cubeia.backend.cashgame.dto.TransferMoneyRequest;
 import com.cubeia.backend.cashgame.exceptions.BatchHandFailedException;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
 import com.cubeia.backend.cashgame.exceptions.ReserveFailedException;
-import com.cubeia.games.poker.common.Money;
+import com.cubeia.games.poker.common.money.Money;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;

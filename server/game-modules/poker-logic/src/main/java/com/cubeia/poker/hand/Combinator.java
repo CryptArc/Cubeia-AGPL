@@ -47,7 +47,7 @@ public class Combinator<E> implements Iterator<List<E>>, Iterable<List<E>> {
 
     public Combinator(List<E> set, int minElements) {
         if (minElements < 1 || minElements > set.size()) {
-            throw new IllegalArgumentException("minElements must be > 1 and < set.size(). minElements[" + minElements + "] setSize[" + set.size() + "]");
+            throw new IllegalArgumentException("minElements must be > 1 and < set.size(). minElements[" + minElements + "] set.Size[" + set.size() + "]");
         }
         this.set = new ArrayList<E>(set);
         this.current = new int[minElements];

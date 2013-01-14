@@ -19,14 +19,19 @@ package com.cubeia.games.poker.tournament;
 
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
+import com.cubeia.games.poker.tournament.lobby.TournamentLobbyFactory;
+import com.cubeia.games.poker.tournament.util.PacketSenderFactory;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provider;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 public class PokerTournamentBindings extends AbstractModule {
 
     @Override
     protected void configure() {
         bind(StyxSerializer.class).toProvider(StyxSerializerProvider.class);
+        install(new FactoryModuleBuilder().build(PacketSenderFactory.class));
+        bind(TournamentLobbyFactory.class);
     }
 
     private static class StyxSerializerProvider implements Provider<StyxSerializer> {

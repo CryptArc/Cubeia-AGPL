@@ -14,6 +14,10 @@ Poker.TabView = Poker.View.extend({
         this.tabElement = item;
         this.tabElement.find(".mini-cards").hide();
     },
+    updateName : function(name){
+        this.name = name;
+        this.tabElement.find(".name").html(name);
+    },
     setSelectable : function (selectable) {
         if(selectable == false) {
             this.tabElement.hide();
@@ -53,6 +57,7 @@ Poker.TabView = Poker.View.extend({
     close : function(){
         this.tabElement.remove();
         this.viewElement.remove();
+        this.viewElement = null;
     }
 
 });

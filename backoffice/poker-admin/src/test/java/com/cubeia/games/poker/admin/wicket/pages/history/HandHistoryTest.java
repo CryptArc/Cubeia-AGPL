@@ -25,13 +25,13 @@ import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 
 import java.util.Collections;
 
 import static com.cubeia.games.poker.admin.wicket.pages.WicketTestHelper.createMockHand;
 import static com.cubeia.games.poker.admin.wicket.pages.WicketTestHelper.createWicketTester;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class HandHistoryTest {
@@ -40,7 +40,6 @@ public class HandHistoryTest {
     private HistoryService historyService;
 
     private WicketTester tester;
-
 
     @Before
     public void setup() {
@@ -51,7 +50,7 @@ public class HandHistoryTest {
     @Test
     public void testHandSearch() {
         HistoricHand hand = createMockHand();
-        Mockito.when(historyService.findHandHistory(1, null, null, null)).thenReturn(Collections.singletonList(hand));
+        when(historyService.findHandHistory(1, null, null, null)).thenReturn(Collections.singletonList(hand));
         PageParameters pageParameters = new PageParameters();
         tester.startPage(new HandHistory(pageParameters));
         tester.assertRenderedPage(HandHistory.class);

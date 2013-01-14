@@ -3,6 +3,6 @@
 <properties>
         <entry key="url">jdbc:mysql://localhost:3306/poker</entry>
         <entry key="driver">com.mysql.jdbc.Driver</entry>
-        <entry key="user">cbn</entry>
-        <entry key="password">cbn</entry>
+        <entry key="user">poker</entry>
+        <entry key="password">poker</entry>
 </properties>

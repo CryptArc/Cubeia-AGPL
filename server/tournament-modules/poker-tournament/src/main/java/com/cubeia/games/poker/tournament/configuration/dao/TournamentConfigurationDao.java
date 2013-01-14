@@ -34,21 +34,21 @@ public class TournamentConfigurationDao {
         this.entityManager = entityManager;
     }
 
-    public void saveInNewTransaction(ScheduledTournamentConfiguration object) {
-        entityManager.getTransaction().begin();
-        save(object);
-        entityManager.getTransaction().commit();
-    }
-
     public void save(ScheduledTournamentConfiguration object) {
         entityManager.persist(object);
     }
 
+    @SuppressWarnings("unchecked")
     public List<ScheduledTournamentConfiguration> getScheduledTournamentConfigurations() {
         return entityManager.createQuery("from ScheduledTournamentConfiguration").getResultList();
     }
 
+    @SuppressWarnings("unchecked")
     public Collection<SitAndGoConfiguration> getSitAndGoConfigurations() {
         return entityManager.createQuery("from SitAndGoConfiguration").getResultList();
+    }
+
+    public ScheduledTournamentConfiguration getScheduledTournamentConfiguration(int id) {
+        return entityManager.find(ScheduledTournamentConfiguration.class, id);
     }
 }

@@ -17,14 +17,17 @@
 
 package com.cubeia.games.poker.entity;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-
-import javax.persistence.*;
-
+import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.variant.PokerVariant;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import java.io.Serializable;
 
 @Entity
 public class TableConfigTemplate implements Serializable {
@@ -48,6 +51,12 @@ public class TableConfigTemplate implements Serializable {
     private int ante;
 
     @Column(nullable = false)
+    private int smallBlind;
+
+    @Column(nullable = false)
+    private int bigBlind;
+
+    @Column(nullable = false)
     private int minBuyInMultiplier = DEF_MIN_BUY_IN_ANTE_MULTIPLIER;
 
     @Column(nullable = false)
@@ -61,6 +70,9 @@ public class TableConfigTemplate implements Serializable {
 
     @Column(nullable = false)
     private int seats;
+
+    @Column(nullable = false)
+    private BetStrategyType betStrategy;
 
     @ManyToOne()
     private TimingProfile timing;
@@ -167,25 +179,86 @@ public class TableConfigTemplate implements Serializable {
         this.minTables = minTables;
     }
 
+    public int getSmallBlind() {
+        return smallBlind;
+    }
+
+    public void setSmallBlind(int smallBlind) {
+        this.smallBlind = smallBlind;
+    }
+
+    public int getBigBlind() {
+        return bigBlind;
+    }
+
+    public void setBigBlind(int bigBlind) {
+        this.bigBlind = bigBlind;
+    }
+
+    public BetStrategyType getBetStrategy() {
+        return betStrategy;
+    }
+
+    public void setBetStrategy(BetStrategyType betStrategy) {
+        this.betStrategy = betStrategy;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         TableConfigTemplate that = (TableConfigTemplate) o;
 
-        if (ante != that.ante) return false;
-        if (id != that.id) return false;
-        if (maxBuyInMultiplier != that.maxBuyInMultiplier) return false;
-        if (minBuyInMultiplier != that.minBuyInMultiplier) return false;
-        if (minEmptyTables != that.minEmptyTables) return false;
-        if (minTables != that.minTables) return false;
-        if (seats != that.seats) return false;
-        if (ttl != that.ttl) return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (rakeSettings != null ? !rakeSettings.equals(that.rakeSettings) : that.rakeSettings != null) return false;
-        if (timing != null ? !timing.equals(that.timing) : that.timing != null) return false;
-        if (variant != that.variant) return false;
+        if (ante != that.ante) {
+            return false;
+        }
+        if (bigBlind != that.bigBlind) {
+            return false;
+        }
+        if (id != that.id) {
+            return false;
+        }
+        if (maxBuyInMultiplier != that.maxBuyInMultiplier) {
+            return false;
+        }
+        if (minBuyInMultiplier != that.minBuyInMultiplier) {
+            return false;
+        }
+        if (minEmptyTables != that.minEmptyTables) {
+            return false;
+        }
+        if (minTables != that.minTables) {
+            return false;
+        }
+        if (seats != that.seats) {
+            return false;
+        }
+        if (smallBlind != that.smallBlind) {
+            return false;
+        }
+        if (ttl != that.ttl) {
+            return false;
+        }
+        if (betStrategy != that.betStrategy) {
+            return false;
+        }
+        if (name != null ? !name.equals(that.name) : that.name != null) {
+            return false;
+        }
+        if (rakeSettings != null ? !rakeSettings.equals(that.rakeSettings) : that.rakeSettings != null) {
+            return false;
+        }
+        if (timing != null ? !timing.equals(that.timing) : that.timing != null) {
+            return false;
+        }
+        if (variant != that.variant) {
+            return false;
+        }
 
         return true;
     }
@@ -196,11 +269,14 @@ public class TableConfigTemplate implements Serializable {
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (variant != null ? variant.hashCode() : 0);
         result = 31 * result + ante;
+        result = 31 * result + smallBlind;
+        result = 31 * result + bigBlind;
         result = 31 * result + minBuyInMultiplier;
         result = 31 * result + maxBuyInMultiplier;
         result = 31 * result + minEmptyTables;
         result = 31 * result + minTables;
         result = 31 * result + seats;
+        result = 31 * result + (betStrategy != null ? betStrategy.hashCode() : 0);
         result = 31 * result + (timing != null ? timing.hashCode() : 0);
         result = 31 * result + (rakeSettings != null ? rakeSettings.hashCode() : 0);
         result = 31 * result + (int) (ttl ^ (ttl >>> 32));
@@ -214,11 +290,14 @@ public class TableConfigTemplate implements Serializable {
                 ", name='" + name + '\'' +
                 ", variant=" + variant +
                 ", ante=" + ante +
+                ", smallBlind=" + smallBlind +
+                ", bigBlind=" + bigBlind +
                 ", minBuyInMultiplier=" + minBuyInMultiplier +
                 ", maxBuyInMultiplier=" + maxBuyInMultiplier +
                 ", minEmptyTables=" + minEmptyTables +
                 ", minTables=" + minTables +
                 ", seats=" + seats +
+                ", betStrategy=" + betStrategy +
                 ", timing=" + timing +
                 ", rakeSettings=" + rakeSettings +
                 ", ttl=" + ttl +

@@ -3,18 +3,24 @@ var Poker = Poker || {};
 /**
  * Handles the displaying of user buttons,
  * handles what shows when
- * @type {*}
+ * @type {Poker.MyActionsManager}
  */
 Poker.MyActionsManager  = Class.extend({
     actionButtons : null,
     tableButtons : null,
     doBetActionButton : null,
+    fixedBetActionButton : null,
+    fixedRaiseActionButton : null,
     currentActions : null,
     allActions : null,
     cancelBetActionButton : null,
     slider : null,
-    init : function(view,actionCallback) {
+    tableId : null,
+    noMoreBlinds : false,
+
+    init : function(view,tableId, actionCallback) {
         var self = this;
+        this.tableId = tableId;
         this.actionButtons = [];
         this.tableButtons = [];
         this.currentActions = [];
@@ -35,21 +41,33 @@ Poker.MyActionsManager  = Class.extend({
 
         this._addActionButton($(".action-raise",view),Poker.ActionType.RAISE,cr,false);
 
-        this._addActionButton($(".action-check",view),Poker.ActionType.CHECK,actionCallback,false);
-        this._addActionButton($(".action-fold",view),Poker.ActionType.FOLD,actionCallback,false);
-        this._addActionButton($(".action-call",view),Poker.ActionType.CALL,actionCallback,true);
-
         //we can't put it in actionButtons since it's a duplicate action
         this.doBetActionButton = new Poker.BetAmountButton($(".do-action-bet",view),Poker.ActionType.BET,actionCallback,true);
         this.doRaiseActionButton = new Poker.BetAmountButton($(".do-action-raise",view),Poker.ActionType.RAISE,actionCallback,true);
         this.cancelBetActionButton = new Poker.ActionButton($(".action-cancel-bet",view),null,function(){
-                self.onClickCancelButton();
-            },false);
+            self.onClickCancelButton();
+        },false);
+
+        this.fixedBetActionButton = new Poker.ActionButton($(".fixed-action-bet",view),Poker.ActionType.BET,actionCallback,true);
+        this.fixedRaiseActionButton = new Poker.ActionButton($(".fixed-action-raise",view),Poker.ActionType.RAISE,actionCallback,true);
 
         this.allActions.push(this.doBetActionButton);
         this.allActions.push(this.doRaiseActionButton);
         this.allActions.push(this.cancelBetActionButton);
+
+
+        this._addActionButton($(".action-check",view),Poker.ActionType.CHECK,actionCallback,false);
+        this._addActionButton($(".action-fold",view),Poker.ActionType.FOLD,actionCallback,false);
+        this._addActionButton($(".action-call",view),Poker.ActionType.CALL,actionCallback,true);
+        this._addActionButton($(".action-big-blind",view),Poker.ActionType.BIG_BLIND,actionCallback,true);
+        this._addActionButton($(".action-small-blind",view),Poker.ActionType.SMALL_BLIND,actionCallback,true);
+
         this.onWatchingTable();
+
+    },
+    setNoMoreBlinds : function(enabled) {
+        console.log("setting no more blinds = " + enabled);
+        this.noMoreBlinds = enabled;
     },
     onClickBetButton : function(minAmount,maxAmount,mainPot) {
         this.handleBetSliderButtons(minAmount,maxAmount,mainPot);
@@ -102,16 +120,30 @@ Poker.MyActionsManager  = Class.extend({
         this.tableButtons[actionType.id] = new Poker.ActionButton(elId,actionType,callback,false);
         this.allActions.push(this.tableButtons[actionType.id]);
     },
-    onRequestPlayerAction : function(actions,mainPot){
-      this.currentActions = actions;
-      this.hideAllActionButtons();
-      for(var a in actions){;
+    onRequestPlayerAction : function(actions,mainPot,fixedLimit){
+        console.log("ON REQUEST PLAYER ACTION");
+        this.currentActions = actions;
+        this.hideAllActionButtons();
+
+        for(var a in actions){;
           var act = actions[a];
-          if(act.minAmount>0) {
-              this.actionButtons[act.type.id].setAmount(act.minAmount,act.maxAmount,mainPot);
+          if(fixedLimit==true && act.type.id == Poker.ActionType.BET.id) {
+              if(act.minAmount>0) {
+                this.fixedBetActionButton.setAmount(act.minAmount);
+              }
+              this.fixedBetActionButton.show();
+          } else if(fixedLimit==true && act.type.id == Poker.ActionType.RAISE.id) {
+              if(act.minAmount>0) {
+                  this.fixedRaiseActionButton.setAmount(act.minAmount,act.maxAmount,mainPot);
+              }
+            this.fixedRaiseActionButton.show();
+          } else {
+              if(act.minAmount>0) {
+                  this.actionButtons[act.type.id].setAmount(act.minAmount,act.maxAmount,mainPot);
+              }
+              this.actionButtons[act.type.id].show();
           }
-          this.actionButtons[act.type.id].show();
-      }
+        }
     },
     onTournamentOut : function(){
         this.hideAllTableButtons();
@@ -119,6 +151,7 @@ Poker.MyActionsManager  = Class.extend({
         this.display(Poker.ActionType.LEAVE);
     },
     onSitIn : function() {
+        this.noMoreBlinds = false;
         this.hideAllTableButtons();
         this.display(Poker.ActionType.SIT_OUT);
     },
@@ -156,6 +189,8 @@ Poker.MyActionsManager  = Class.extend({
         this.cancelBetActionButton.hide();
         this.doBetActionButton.hide();
         this.doRaiseActionButton.hide();
+        this.fixedBetActionButton.hide();
+        this.fixedRaiseActionButton.hide();
         this.hideSlider();
 
     },
@@ -199,7 +234,7 @@ Poker.ActionButton = Class.extend({
         var self = this;
         if(this.callback!=null && this.actionType!=null) {
             this.el.click(function(e){
-                self.callback(self.actionType,0);
+                self.callback(self.actionType,self.minAmount);
             });
         } else if(this.callback!=null) {
             this.el.click(function(e){

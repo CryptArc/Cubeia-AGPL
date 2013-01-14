@@ -25,7 +25,7 @@ import com.cubeia.firebase.api.game.lobby.LobbyTableAttributeAccessor;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
-import com.cubeia.games.poker.common.Money;
+import com.cubeia.games.poker.common.money.Money;
 import com.cubeia.games.poker.io.protocol.BuyInResponse;
 import com.cubeia.games.poker.io.protocol.Enums;
 import com.cubeia.games.poker.io.protocol.Enums.BuyInResultCode;
@@ -46,6 +46,7 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 
 import static com.cubeia.backend.firebase.CashGamesBackendService.MARKET_TABLE_REFERENCE_KEY;
+import static com.cubeia.games.poker.common.money.MoneyFormatter.format;
 import static com.cubeia.games.poker.model.PokerPlayerImpl.ATTR_PLAYER_EXTERNAL_SESSION_ID;
 
 public class BackendCallHandler {
@@ -93,9 +94,9 @@ public class BackendCallHandler {
 
         // TODO: response should move to PokerHandler.handleReserveResponse
         BuyInResponse resp = new BuyInResponse();
-        resp.balance = (int) pokerPlayer.getBalance();
-        resp.pendingBalance = (int) pokerPlayer.getPendingBalanceSum();
-        resp.amountBroughtIn = (int) amountReserved.getAmount();
+        resp.balance = format(pokerPlayer.getBalance());
+        resp.pendingBalance = format(pokerPlayer.getPendingBalanceSum());
+        resp.amountBroughtIn = format(amountReserved.getAmount());
         resp.resultCode = Enums.BuyInResultCode.OK;
 
         if (!state.isPlayerInHand(playerId)) {
@@ -163,6 +164,9 @@ public class BackendCallHandler {
     private void sendBuyInResponseToPlayer(int playerId, BuyInResultCode errorCode) {
         BuyInResponse resp = new BuyInResponse();
         resp.resultCode = errorCode;
+        resp.balance = "N/A";
+        resp.amountBroughtIn = "0";
+        resp.pendingBalance = "0";
         sendGameData(playerId, resp);
     }
 
@@ -185,7 +189,7 @@ public class BackendCallHandler {
     }
 
     public void handleAnnounceTableSuccessfulResponse(AnnounceTableResponse attachment) {
-        log.trace("handle announce table success, tId = {}, intTableId = {}, tableProperties = {}", new Object[]{Integer.valueOf(table.getId()), attachment.getTableId(), attachment.getTableProperties()});
+        log.trace("handle announce table success, tId = {}, intTableId = {}, tableProperties = {}", new Object[]{table.getId(), attachment.getTableId(), attachment.getTableProperties()});
         if (attachment.getTableId() == null) {
             log.error("got announce successful callback but the external table id is null! Attachment: {}", attachment);
             LobbyTableAttributeAccessor attributeAccessor = table.getAttributeAccessor();
@@ -207,9 +211,8 @@ public class BackendCallHandler {
      * This table has not been approved by 3rd party (e.g. Italian government).
      * We need to close it asap.
      *
-     * @param attachment
      */
-    public void handleAnnounceTableFailedResponse(AnnounceTableFailedResponse attachment) {
+    public void handleAnnounceTableFailedResponse() {
         log.info("handle Announce Table Failed for table[" + table.getId() + "], will flag for removal");
         LobbyTableAttributeAccessor attributeAccessor = table.getAttributeAccessor();
         attributeAccessor.setIntAttribute(PokerLobbyAttributes.TABLE_READY_FOR_CLOSE.name(), 1);

@@ -19,7 +19,7 @@ package com.cubeia.games.poker.common;
 
 import org.junit.Test;
 
-import static com.cubeia.games.poker.common.MoneyFormatter.format;
+import static com.cubeia.games.poker.common.money.MoneyFormatter.format;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 

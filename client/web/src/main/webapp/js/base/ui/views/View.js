@@ -31,6 +31,10 @@ Poker.View = Class.extend({
     },
     close : function() {
         this.viewElement.remove();
+        this.viewElement = null;
+    },
+    isClosed : function() {
+        return this.viewElement==null;
     }
 
 });

@@ -18,9 +18,12 @@
 package com.cubeia.games.poker.handler;
 
 import static com.cubeia.backend.cashgame.dto.ReserveFailedResponse.ErrorCode.AMOUNT_TOO_HIGH;
+import static com.cubeia.games.poker.common.money.MoneyFormatter.format;
+import static com.cubeia.games.poker.common.money.MoneyParser.parse;
 
 import java.io.IOException;
 
+import com.cubeia.games.poker.common.money.Money;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -144,11 +147,13 @@ public class PokerHandler extends DefaultPokerHandler {
                 if (pokerPlayer.getPlayerSessionId() != null) {
 
                     // Check if the amount is allowed by the table
-                    long sum = packet.amount + pokerPlayer.getBalance() + pokerPlayer.getBalanceNotInHand();
+                    long buyInAmount = parse(packet.amount);
+                    long sum = buyInAmount + pokerPlayer.getBalance() + pokerPlayer.getBalanceNotInHand();
                     if (sum <= state.getMaxBuyIn() && sum >= state.getMinBuyIn()) {
-                        state.handleBuyInRequest(pokerPlayer, packet.amount);
+                        state.handleBuyInRequest(pokerPlayer, buyInAmount);
 
-                        BuyInResponse buyInResponse = new BuyInResponse((int) pokerPlayer.getBalance(), (int) pokerPlayer.getPendingBalanceSum(), 0, BuyInResultCode.PENDING);
+                        BuyInResponse buyInResponse = new BuyInResponse(format(pokerPlayer.getBalance()), format(pokerPlayer.getPendingBalanceSum()),
+                                                                        "0", BuyInResultCode.PENDING);
                         sendBuyInResponseToPlayer(pokerPlayer, buyInResponse);
 
                         // sit in the player
@@ -157,7 +162,8 @@ public class PokerHandler extends DefaultPokerHandler {
                         // sit in the player when the buyin is done
                         pokerPlayer.setSitInAfterSuccessfulBuyIn(true);
                     } else {
-                        ReserveFailedResponse failResponse = new ReserveFailedResponse(pokerPlayer.getPlayerSessionId(), AMOUNT_TOO_HIGH, "Requested buy in plus balance cannot be more than max buy in", false);
+                        ReserveFailedResponse failResponse = new ReserveFailedResponse(pokerPlayer.getPlayerSessionId(), AMOUNT_TOO_HIGH,
+                                                                                       "Requested buy in plus balance cannot be more than max buy in", false);
                         callHandler.handleReserveFailedResponse(failResponse);
                     }
 

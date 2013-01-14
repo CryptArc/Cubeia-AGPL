@@ -23,11 +23,11 @@ Poker.Seat = Class.extend({
    seatBase : null,
    animationManager : null,
    currentProgressBarAnimation : null,
-   init : function(elementId, seatId, player, templateManager, animationManager) {
+   init : function(elementId, seatId, player, animationManager) {
        this.animationManager = animationManager;
        this.seatId = seatId;
        this.player = player;
-       this.templateManager = templateManager;
+       this.templateManager = Poker.AppCtx.getTemplateManager();
        this.seatElement =  $("#"+elementId);
        this.renderSeat();
    },
@@ -106,6 +106,8 @@ Poker.Seat = Class.extend({
        }
    },
    showActionData : function(actionType,amount) {
+       console.log("ON ACTION");
+       console.log(actionType);
        this.actionText.html(actionType.text).show();
        var icon = $("<div/>").addClass("player-action-icon").addClass(actionType.id+"-icon");
        if(amount>0) {
@@ -154,7 +156,7 @@ Poker.Seat = Class.extend({
 
 
    },
-   activateSeat : function(allowedActions, timeToAct,mainPot) {
+   activateSeat : function(allowedActions, timeToAct,mainPot,fixedLimit) {
        this.seatElement.addClass("active-seat");
        this.progressBarElement.show();
        this.currentProgressBarAnimation = new Poker.TransformAnimation(this.progressBarElement)

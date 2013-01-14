@@ -61,12 +61,12 @@
 
         <dependency>
             <groupId>com.cubeia.games.poker</groupId>
-            <artifactId>timings</artifactId>
+            <artifactId>settings</artifactId>
         </dependency>
 
         <dependency>
             <groupId>com.cubeia.games</groupId>
-            <artifactId>poker-tournament</artifactId>
+            <artifactId>tournament-messages</artifactId>
         </dependency>
 
         <dependency>

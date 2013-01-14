@@ -21,17 +21,6 @@ Poker.PokerPacketHandler = Class.extend({
 
         var acts = Poker.ActionUtils.getPokerActions(requestAction.allowedActions);
 
-        if(acts.length>0 && (acts[0].type.id == Poker.ActionType.BIG_BLIND.id || acts[0].type.id == Poker.ActionType.SMALL_BLIND.id)) {
-            //for now auto post blinds
-            console.log("Auto posting " + acts[0].type.text);
-            var action = Poker.ActionUtils.getPlayerAction(this.tableId,requestAction.seq, requestAction.allowedActions[0].type,
-                requestAction.allowedActions[0].minAmount);
-            new Poker.PokerRequestHandler(this.tableId).sendGameTransportPacket(action);
-
-
-
-            return;
-        }
         this.tableManager.handleRequestPlayerAction(
             this.tableId,
             requestAction.player,
@@ -52,6 +41,10 @@ Poker.PokerPacketHandler = Class.extend({
         }
         this.tableManager.updatePlayerStatus(this.tableId,packet.player, status);
     },
+
+    /**
+     * @param {com.cubeia.games.poker.io.protocol.BuyInInfoResponse} protocolObject
+     */
     handleBuyIn : function(protocolObject) {
         var po = protocolObject;
         console.log("BUY-IN:");
@@ -62,8 +55,8 @@ Poker.PokerPacketHandler = Class.extend({
         var actionType = Poker.ActionUtils.getActionType(performAction.action.type);
 
         var amount = 0;
-        if(performAction.betAmount) {
-            amount = Poker.Utils.formatCurrency(performAction.betAmount);
+        if(performAction.stackAmount) {
+            amount = Poker.Utils.formatCurrency(performAction.stackAmount);
         }
         this.tableManager.handlePlayerAction(this.tableId,performAction.player,actionType,amount);
     },

@@ -36,26 +36,28 @@ import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.firebase.api.mtt.support.registry.PlayerRegistry;
 import com.cubeia.firebase.api.scheduler.Scheduler;
 import com.cubeia.firebase.guice.tournament.TournamentAssist;
-import com.cubeia.games.poker.common.DefaultSystemTime;
-import com.cubeia.games.poker.common.SystemTime;
+import com.cubeia.games.poker.common.time.DefaultSystemTime;
+import com.cubeia.games.poker.common.time.SystemTime;
 import com.cubeia.games.poker.tournament.configuration.blinds.Level;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.ScheduledTournamentLifeCycle;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.TournamentLifeCycle;
 import com.cubeia.games.poker.tournament.lobby.TournamentLobby;
+import com.cubeia.games.poker.tournament.messages.PokerTournamentRoundReport;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
+import com.cubeia.games.poker.tournament.util.PacketSender;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
-import com.google.common.collect.ImmutableSet;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.math.BigDecimal;
 import java.util.Collection;
-import java.util.Set;
+import java.util.Collections;
 
 import static com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse.ErrorCode.UNSPECIFIED_ERROR;
 import static com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructureFactory.createDefaultBlindsStructure;
@@ -70,6 +72,7 @@ import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -122,6 +125,12 @@ public class PokerTournamentTest {
 
     @Mock
     private TournamentLobby tournamentLobby;
+
+    @Mock
+    private PacketSender sender;
+
+    @Mock
+    private PlayerRegistry mockRegistry;
 
     private PokerTournament tournament;
 
@@ -226,10 +235,13 @@ public class PokerTournamentTest {
         // Given a tournament with one registered (but pending) player and that it's time to start the tournament.
         prepareTournamentWithMockLifecycle();
         pokerState.setStatus(PokerTournamentStatus.REGISTERING);
-        tournament.checkRegistration(new MttRegistrationRequest(new MttPlayer(1), null));
+        MttPlayer tournamentPlayer = new MttPlayer(1);
+        tournament.checkRegistration(new MttRegistrationRequest(tournamentPlayer, null));
         assertThat(pokerState.hasPendingRegistrations(), is(true));
         tournament.handleTrigger(TournamentTrigger.START_TOURNAMENT);
         when(mockLifeCycle.shouldStartTournament(Mockito.<DateTime>any(), anyInt(), anyInt())).thenReturn(true);
+        when(state.getPlayerRegistry()).thenReturn(mockRegistry);
+        when(mockRegistry.getPlayers()).thenReturn(Collections.singleton(tournamentPlayer));
 
         // When the registration is resolved.
         tournament.handleOpenSessionResponse(new OpenSessionResponse(new PlayerSessionId(1, "1"), null));
@@ -270,7 +282,7 @@ public class PokerTournamentTest {
         when(state.getTables()).thenReturn(of(1));
 
         // When the last table finishes its hand (and all tables are ready)
-        when(mockPokerState.allTablesReadyForBreak(anyInt(), Mockito.<Set<Integer>>any())).thenReturn(true);
+        when(mockPokerState.allTablesReadyForBreak()).thenReturn(true);
         sendRoundReportToTournament(1);
 
         // Then the break should start and we should schedule a timeout to end the break.
@@ -280,7 +292,7 @@ public class PokerTournamentTest {
     private void sendRoundReportToTournament(int tableId) {
         MttRoundReportAction action = mock(MttRoundReportAction.class);
         PokerTournamentRoundReport report = mock(PokerTournamentRoundReport.class);
-        Level level = mock(Level.class);
+        PokerTournamentRoundReport.Level level = mock(PokerTournamentRoundReport.Level.class);
 
         when(action.getTableId()).thenReturn(tableId);
         when(action.getAttachment()).thenReturn(report);
@@ -325,11 +337,11 @@ public class PokerTournamentTest {
         when(mockPokerState.isOnBreak()).thenReturn(true);
 
         // And then the other table finishes its hand. (at this point the allTablesReadyForBreak must return true)
-        when(mockPokerState.allTablesReadyForBreak(2, ImmutableSet.of(1))).thenReturn(true);
+        when(mockPokerState.allTablesReadyForBreak()).thenReturn(true);
         sendRoundReportToTournament(2);
 
         // Then we should include the waiting table when asking if all tables are ready for the break.
-        verify(mockPokerState, times(2)).allTablesReadyForBreak(2, ImmutableSet.of(1));
+        verify(mockPokerState, times(2)).allTablesReadyForBreak();
 
         // Then the break should start.
         verify(scheduler).scheduleAction(Mockito.<MttObjectAction>any(), anyLong());
@@ -392,26 +404,43 @@ public class PokerTournamentTest {
         assertThat(tournament.numberOfTablesToCreate(), is(8));
     }
 
+    @Test
+    public void testSetNextStartTimeCalledBeforeGettingNextStartTimeWhenBreakIsFinished() {
+        // If the call order is reversed, client will get an incorrect time to next level.
+        prepareTournamentWithMockTournamentState();
+        when(mockPokerState.isOnBreak()).thenReturn(false);
+        when(mockPokerState.getCurrentBlindsLevel()).thenReturn(new Level(20, 40, 0, 5, true));
+        when(mockPokerState.increaseBlindsLevel()).thenReturn(new Level(40, 80, 0, 5, false));
+        when(mockPokerState.getNextLevelStartTime()).thenReturn(new DateTime(5000));
+        when(state.getTables()).thenReturn(Collections.singleton(1));
+
+        tournament.increaseBlindsLevel();
+
+        InOrder inOrder = inOrder(mockPokerState);
+        inOrder.verify(mockPokerState).setNextLevelStartTime(isA(DateTime.class));
+        inOrder.verify(mockPokerState).getNextLevelStartTime();
+    }
+
     private TournamentLifeCycle prepareTournamentWithLifecycle() {
         DateTime startTime = new DateTime(2011, 7, 5, 14, 30, 0);
         DateTime openRegistrationTime = new DateTime(2011, 7, 5, 14, 0, 0);
         lifeCycle = new ScheduledTournamentLifeCycle(startTime, openRegistrationTime);
         pokerState.setLifecycle(lifeCycle);
         tournament = new PokerTournament(pokerState);
-        tournament.injectTransientDependencies(instance, support, state, historyService, backend, dateFetcher);
+        tournament.injectTransientDependencies(instance, support, state, historyService, backend, dateFetcher, sender);
         return lifeCycle;
     }
 
     private void prepareTournamentWithMockLifecycle() {
         pokerState.setLifecycle(mockLifeCycle);
         tournament = new PokerTournament(pokerState);
-        tournament.injectTransientDependencies(instance, support, state, historyService, backend, dateFetcher);
+        tournament.injectTransientDependencies(instance, support, state, historyService, backend, dateFetcher, sender);
         pokerState.setBlindsStructure(createDefaultBlindsStructure());
     }
 
     private void prepareTournamentWithMockTournamentState() {
         tournament = new PokerTournament(mockPokerState);
-        tournament.injectTransientDependencies(instance, support, state, historyService, backend, new DefaultSystemTime());
+        tournament.injectTransientDependencies(instance, support, state, historyService, backend, new DefaultSystemTime(), sender);
         pokerState.setBlindsStructure(createDefaultBlindsStructure());
     }
 }

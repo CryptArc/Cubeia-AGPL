@@ -6,5 +6,8 @@
     <description/>
     <exported>
         <package>com.cubeia.poker.tournament.history.api.-</package>
+        <package>org.bson.-</package>
+        <package>org.bson.types.-</package>
+        <package>com.google.code.morphia.annotations.-</package>
     </exported>
 </service>

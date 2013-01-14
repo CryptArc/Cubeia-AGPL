@@ -149,7 +149,7 @@ public class MockGame implements GameType {
             }
 
             @Override
-            public void handleBuyInRequest(PokerPlayer pokerPlayer, int amount) {
+            public void handleBuyInRequest(PokerPlayer pokerPlayer, long amount) {
             }
 
         };

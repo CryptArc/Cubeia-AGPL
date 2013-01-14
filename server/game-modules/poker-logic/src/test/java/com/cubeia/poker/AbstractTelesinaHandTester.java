@@ -19,9 +19,9 @@ package com.cubeia.poker;
 
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
+import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.model.BlindsLevel;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.settings.BetStrategyName;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.timing.TimingFactory;
@@ -78,9 +78,9 @@ public abstract class AbstractTelesinaHandTester extends TestCase {
 
     protected PokerSettings createPokerSettings(int anteLevel, RakeSettings rakeSettings) {
         BlindsLevel level = new BlindsLevel(anteLevel, anteLevel * 2, anteLevel);
-        PokerSettings settings = new PokerSettings(level, 1000, 10000,
-                TimingFactory.getRegistry().getTimingProfile("MINIMUM_DELAY"), 6,
-                BetStrategyName.NO_LIMIT, rakeSettings,
+        BetStrategyType betStrategy = BetStrategyType.NO_LIMIT;
+        PokerSettings settings = new PokerSettings(level, betStrategy, 1000, 10000,
+                TimingFactory.getRegistry().getTimingProfile("MINIMUM_DELAY"), 6, rakeSettings,
                 Collections.<Serializable, Serializable>singletonMap("EXTERNAL_TABLE_ID", "xyz"));
 
         settings.setSitoutTimeLimitMilliseconds(sitoutTimeLimitMilliseconds);

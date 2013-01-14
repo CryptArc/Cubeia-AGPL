@@ -17,10 +17,14 @@
 
 package com.cubeia.games.poker.tournament.history;
 
+import com.cubeia.poker.tournament.history.api.HistoricPlayer;
 import com.cubeia.poker.tournament.history.api.HistoricTournament;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
 import org.apache.log4j.Logger;
 
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 public class LoggingHistoryPersister implements TournamentHistoryPersistenceService {
@@ -28,28 +32,8 @@ public class LoggingHistoryPersister implements TournamentHistoryPersistenceServ
     private static final Logger log = Logger.getLogger(LoggingHistoryPersister.class);
 
     @Override
-    public String createHistoricTournament() {
-        return UUID.randomUUID().toString();
-    }
-
-    @Override
-    public HistoricTournament getHistoricTournament(String id) {
-        return null;
-    }
-
-    @Override
-    public void playerOut(int playerId, int position, int payoutInCents, String historicId, long now) {
-        log.info("Tournament[ " + historicId + "]. Player " + playerId +  " finished in place " + position + " and won: " + payoutInCents + " cents.");
-    }
-
-    @Override
-    public void playerMoved(int playerId, int tableId, String historicId, long now) {
-        log.info("Tournament[ " + historicId + "]. Player " + playerId +  " was moved to table " + tableId);
-    }
-
-    @Override
-    public void statusChanged(String status, String historicId, long now) {
-        log.info("Tournament[ " + historicId + "]. Status updated to " + status);
+    public void addTable(String historicId, String externalTableId) {
+        log.info("Tournament[ " + historicId + "]. Table created " + externalTableId);
     }
 
     @Override
@@ -58,8 +42,58 @@ public class LoggingHistoryPersister implements TournamentHistoryPersistenceServ
     }
 
     @Override
-    public void setStartTime(String historicId, long date) {
-        log.info("Tournament[ " + historicId + "]. Start time " + date);
+    public String createHistoricTournament(String name, int id, int templateId, boolean isSitAndGo) {
+        return UUID.randomUUID().toString();
+    }
+
+    @Override
+    public List<HistoricTournament> findTournamentsToResurrect() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public HistoricTournament getHistoricTournament(String id) {
+        return null;
+    }
+
+    @Override
+    public void playerFailedOpeningSession(String historicId, int playerId, String message, long now) {
+        log.info("Tournament[ " + historicId + "]. Player failed opening session " + playerId + " message: " + message);
+    }
+
+    @Override
+    public void playerFailedUnregistering(String historicId, int playerId, String message, long now) {
+        log.info("Tournament[ " + historicId + "]. Player failed un-registering " + playerId);
+    }
+
+    @Override
+    public void playerMoved(int playerId, int tableId, String historicId, long now) {
+        log.info("Tournament[ " + historicId + "]. Player " + playerId +  " was moved to table " + tableId);
+    }
+
+    @Override
+    public void playerOpenedSession(String historicId, int playerId, String sessionId, long now) {
+        log.info("Tournament[ " + historicId + "]. Player opened session " + playerId + " session: " + sessionId);
+    }
+
+    @Override
+    public void playerOut(int playerId, int position, int payoutInCents, String historicId, long now) {
+        log.info("Tournament[ " + historicId + "]. Player " + playerId +  " finished in place " + position + " and won: " + payoutInCents + " cents.");
+    }
+
+    @Override
+    public void playerReRegistered(String historicId, int playerId, long now) {
+        log.info("Tournament[ " + historicId + "]. Player re-registered " + playerId);
+    }
+
+    @Override
+    public void playerRegistered(String historicId, HistoricPlayer player, long now) {
+        log.info("Tournament[ " + historicId + "]. Player registered " + player);
+    }
+
+    @Override
+    public void playerUnregistered(String historicId, int playerId, long now) {
+        log.info("Tournament[ " + historicId + "]. Player un-registered " + playerId);
     }
 
     @Override
@@ -73,32 +107,17 @@ public class LoggingHistoryPersister implements TournamentHistoryPersistenceServ
     }
 
     @Override
-    public void addTable(String historicId, String externalTableId) {
-        log.info("Tournament[ " + historicId + "]. Table created " + externalTableId);
+    public void setScheduledStartTime(String historicId, Date startTime) {
+        log.info("Tournament[ " + historicId + "]. Scheduled start time " + startTime);
     }
 
     @Override
-    public void playerRegistered(String historicId, int playerId, long now) {
-        log.info("Tournament[ " + historicId + "]. Player registered " + playerId);
+    public void setStartTime(String historicId, long date) {
+        log.info("Tournament[ " + historicId + "]. Start time " + date);
     }
 
     @Override
-    public void playerUnregistered(String historicId, int playerId, long now) {
-        log.info("Tournament[ " + historicId + "]. Player un-registered " + playerId);
-    }
-
-    @Override
-    public void playerFailedUnregistering(String historicId, int playerId, String message, long now) {
-        log.info("Tournament[ " + historicId + "]. Player failed un-registering " + playerId);
-    }
-
-    @Override
-    public void playerOpenedSession(String historicId, int playerId, String sessionId, long now) {
-        log.info("Tournament[ " + historicId + "]. Player opened session " + playerId + " session: " + sessionId);
-    }
-
-    @Override
-    public void playerFailedOpeningSession(String historicId, int playerId, String message, long now) {
-        log.info("Tournament[ " + historicId + "]. Player failed opening session " + playerId + " message: " + message);
+    public void statusChanged(String status, String historicId, long now) {
+        log.info("Tournament[ " + historicId + "]. Status updated to " + status);
     }
 }

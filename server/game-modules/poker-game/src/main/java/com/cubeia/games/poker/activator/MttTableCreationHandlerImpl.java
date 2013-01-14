@@ -17,26 +17,16 @@
 
 package com.cubeia.games.poker.activator;
 
-import static com.cubeia.games.poker.common.lobby.PokerLobbyAttributes.TABLE_EXTERNAL_ID;
-import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.Map;
-import java.util.UUID;
-
-import com.cubeia.games.poker.common.lobby.PokerLobbyAttributes;
-import com.cubeia.poker.model.BlindsLevel;
-import org.apache.log4j.Logger;
-
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.lobby.LobbyAttributeAccessor;
 import com.cubeia.firebase.guice.inject.Log4j;
+import com.cubeia.games.poker.common.lobby.PokerLobbyAttributes;
 import com.cubeia.games.poker.state.FirebaseState;
-import com.cubeia.games.poker.tournament.configuration.TournamentTableSettings;
+import com.cubeia.games.poker.tournament.messages.TournamentTableSettings;
 import com.cubeia.poker.PokerState;
-import com.cubeia.poker.settings.BetStrategyName;
+import com.cubeia.poker.betting.BetStrategyType;
+import com.cubeia.poker.model.BlindsLevel;
+import com.cubeia.poker.rounds.betting.NoLimitBetStrategy;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.timing.TimingFactory;
@@ -45,6 +35,16 @@ import com.cubeia.poker.variant.GameType;
 import com.cubeia.poker.variant.factory.GameTypeFactory;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.apache.log4j.Logger;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.Map;
+import java.util.UUID;
+
+import static com.cubeia.games.poker.common.lobby.PokerLobbyAttributes.TABLE_EXTERNAL_ID;
+import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
 
 @Singleton
 public class MttTableCreationHandlerImpl implements MttTableCreationHandler {
@@ -77,23 +77,21 @@ public class MttTableCreationHandlerImpl implements MttTableCreationHandler {
     }
 
     private PokerSettings createSettings(Table table, Object commandAttachment, String externalTableId) {
-        TimingProfile timing = getTimingProfile(commandAttachment);
+        TournamentTableSettings settings = getTournamentSettings(commandAttachment);
         int numberOfSeats = table.getPlayerSet().getSeatingMap().getNumberOfSeats();
-        BetStrategyName noLimit = BetStrategyName.NO_LIMIT;
         RakeSettings rakeSettings = new RakeSettings(new BigDecimal(0), 0, 0); // No rake in tournaments.
         BlindsLevel level = new BlindsLevel(-1, -1, -1); // Blinds will be sent later.
         Map<Serializable, Serializable> attributes = Collections.<Serializable, Serializable>singletonMap(TABLE_EXTERNAL_ID.name(), externalTableId);
-        return new PokerSettings(level, -1, -1, timing, numberOfSeats, noLimit, rakeSettings, attributes);
+        BetStrategyType betStrategy = settings.getBetStrategyType();
+        return new PokerSettings(level, betStrategy, -1, -1, settings.getTimingProfile(), numberOfSeats, rakeSettings, attributes);
     }
 
-    private TimingProfile getTimingProfile(Object commandAttachment) {
-        TimingProfile timing = TimingFactory.getRegistry().getDefaultTimingProfile();
+    private TournamentTableSettings getTournamentSettings(Object commandAttachment) {
         if (commandAttachment instanceof TournamentTableSettings) {
-            TournamentTableSettings settings = (TournamentTableSettings) commandAttachment;
-            timing = settings.getTimingProfile();
+            return (TournamentTableSettings) commandAttachment;
         }
-        log.debug("Timing for mtt table: " + timing);
-        return timing;
+        log.warn("No settings defined for tournament table");
+        return new TournamentTableSettings(TimingFactory.getRegistry().getDefaultTimingProfile(), BetStrategyType.NO_LIMIT);
     }
 
     private void setLobbyData(LobbyAttributeAccessor acc, String externalTableId) {

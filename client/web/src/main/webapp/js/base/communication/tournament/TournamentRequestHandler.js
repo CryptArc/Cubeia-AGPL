@@ -34,15 +34,7 @@ Poker.TournamentRequestHandler = Class.extend({
         this.connector.sendProtocolObject(unregistrationRequest);
     },
     requestTournamentInfo : function() {
-        var mtt = this.createMttPacket();
-        var playerListRequest = new com.cubeia.games.poker.io.protocol.RequestTournamentLobbyData();
-        var byteArray = new FIREBASE.ByteArray();//not using  playerListRequest.save() cos of a styx bug
-        var data = FIREBASE.ByteArray.toBase64String(byteArray.createGameDataArray(playerListRequest.classId()));
-        mtt.mttdata  = data;
-        this.connector.sendProtocolObject(mtt);
-       // console.log("sending mtt protocol obj");
-       // console.log(mtt);
-
+        this.sendEmptyPacketToTournament(new com.cubeia.games.poker.io.protocol.RequestTournamentLobbyData());
     },
     createMttPacket : function() {
         var mtt = new FB_PROTOCOL.MttTransportPacket();
@@ -55,12 +47,21 @@ Poker.TournamentRequestHandler = Class.extend({
         Poker.AppCtx.getViewManager().removeTournamentView(this.tournamentId);
     },
     takeSeat : function() {
-        var mtt = this.createMttPacket();
-        var requestTournamentTable = new com.cubeia.games.poker.io.protocol.RequestTournamentTable();
-        var byteArray = new FIREBASE.ByteArray();//not using  playerListRequest.save() cos of a styx bug
-        var data = FIREBASE.ByteArray.toBase64String(byteArray.createGameDataArray(requestTournamentTable.classId()));
-        mtt.mttdata  = data;
         console.log("sending request tournament table");
+        this.sendEmptyPacketToTournament(new com.cubeia.games.poker.io.protocol.RequestTournamentTable());
+    },
+    requestBuyInInfo : function() {
+        console.log("sending request for registration info");
+        this.sendEmptyPacketToTournament(new com.cubeia.games.poker.io.protocol.RequestTournamentRegistrationInfo());
+    },
+    /**
+     * Sends an empty packet to a tournament. Because the packet is empty we will only store the classId of the packet (there's a bug in Styx).
+     * @param packet
+     */
+    sendEmptyPacketToTournament : function(packet) {
+        var mtt = this.createMttPacket();
+        var byteArray = new FIREBASE.ByteArray(); //not using  playerListRequest.save() because of a styx bug
+        mtt.mttdata  = FIREBASE.ByteArray.toBase64String(byteArray.createGameDataArray(packet.classId()));
         console.log(mtt);
         this.connector.sendProtocolObject(mtt);
     }

@@ -58,11 +58,12 @@ Poker.TournamentManager = Class.extend({
         if(this.getTournamentById(id)!=null) {
             viewManager.activateViewByTournamentId(id);
         } else {
+            var self = this;
             var viewContainer = $(".view-container");
 
             var layoutManager = new Poker.TournamentLayoutManager(id, name, this.isRegisteredForTournament(id),
                 viewContainer,function(){
-                        this.removeTournament(id);
+                        self.removeTournament(id);
                     }
             );
             viewManager.addTournamentView(layoutManager.getViewElementId(), name, layoutManager);
@@ -93,6 +94,20 @@ Poker.TournamentManager = Class.extend({
             }
         }
     },
+    onPlayerLoggedIn : function() {
+        var tournaments = this.tournaments.values();
+        for(var i = 0; i<tournaments.length; i++){
+            var t = tournaments[i];
+            new Poker.TournamentRequestHandler(t.id).leaveTournamentLobby();
+            this.createTournament(t.id,t.name);
+        }
+
+    },
+    /**
+     *
+     * @param id
+     * @return {Poker.Tournament}
+     */
     getTournamentById : function(id) {
         return this.tournaments.get(id);
     },
@@ -147,11 +162,16 @@ Poker.TournamentManager = Class.extend({
     handleTournamentInfo : function(tournament, info) {
         console.log("registered tournaments " + this.registeredTournaments.contains(tournament.id));
         console.log(this.registeredTournaments);
+        var view = Poker.AppCtx.getViewManager().findViewByTournamentId(tournament.id);
+        if(view!=null){
+            view.updateName(info.tournamentName);
+        }
         tournament.tournamentLayoutManager.updateTournamentInfo(info);
         var registered = this.registeredTournaments.contains(tournament.id);
-        if (info.tournamentStatus != com.cubeia.games.poker.io.protocol.TournamentStatusEnum.REGISTERING) {
+        if(info.tournamentStatus== com.cubeia.games.poker.io.protocol.TournamentStatusEnum.RUNNING) {
             tournament.tournamentLayoutManager.setTournamentNotRegisteringState(registered);
-
+        } else if (info.tournamentStatus != com.cubeia.games.poker.io.protocol.TournamentStatusEnum.REGISTERING) {
+            tournament.tournamentLayoutManager.setTournamentNotRegisteringState(false);
         } else if (registered == true) {
             tournament.tournamentLayoutManager.setPlayerRegisteredState();
         } else {
@@ -229,5 +249,13 @@ Poker.TournamentManager = Class.extend({
         var onBreak = com.cubeia.games.poker.io.protocol.TournamentStatusEnum.ON_BREAK;
         var preparingForBreak = com.cubeia.games.poker.io.protocol.TournamentStatusEnum.PREPARING_BREAK;
         return status == running || status == onBreak || status == preparingForBreak;
+    },
+    onBuyInInfo : function(tournamentId, buyIn, fee, currency, balanceInWallet, sufficientFunds) {
+        console.log("on buy info " + tournamentId);
+        var tournament = this.getTournamentById(tournamentId);
+        console.log(tournament);
+        if(sufficientFunds == true) {
+            tournament.tournamentLayoutManager.showBuyInInfo(buyIn,fee,currency,balanceInWallet);
+        }
     }
 });

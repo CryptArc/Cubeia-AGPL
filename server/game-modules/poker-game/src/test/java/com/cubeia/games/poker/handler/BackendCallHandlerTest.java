@@ -17,27 +17,6 @@
 
 package com.cubeia.games.poker.handler;
 
-import static java.util.Collections.singletonMap;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.Map;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.TableId;
 import com.cubeia.backend.cashgame.dto.AnnounceTableResponse;
@@ -53,7 +32,7 @@ import com.cubeia.firebase.api.game.lobby.LobbyTableAttributeAccessor;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.adapter.FirebaseServerAdapter;
-import com.cubeia.games.poker.common.Money;
+import com.cubeia.games.poker.common.money.Money;
 import com.cubeia.games.poker.io.protocol.BuyInResponse;
 import com.cubeia.games.poker.io.protocol.Enums;
 import com.cubeia.games.poker.io.protocol.ErrorPacket;
@@ -64,6 +43,27 @@ import com.cubeia.poker.PokerState;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.variant.telesina.Telesina;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.Map;
+
+import static com.cubeia.games.poker.common.money.MoneyFormatter.format;
+import static java.util.Collections.singletonMap;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class BackendCallHandlerTest {
 
@@ -139,8 +139,8 @@ public class BackendCallHandlerTest {
         GameDataAction buyInDataAction = buyInResponseCaptor.getValue();
         buyInRespPacket = (BuyInResponse) new StyxSerializer(new ProtocolObjectFactory()).unpack(buyInDataAction.getData());
 
-        assertThat(buyInRespPacket.balance, is(0));
-        assertThat(buyInRespPacket.pendingBalance, is((int) (amountRequested + balanceNotInHand)));
+        assertThat(buyInRespPacket.balance, is("0"));
+        assertThat(buyInRespPacket.pendingBalance, is(format(amountRequested + balanceNotInHand)));
         assertThat(buyInRespPacket.resultCode, is(Enums.BuyInResultCode.OK));
         verify(serverAdapter).notifyPlayerBalance(pokerPlayer);
     }
@@ -148,7 +148,7 @@ public class BackendCallHandlerTest {
     @Test
     public void testHandleReserveFailed() throws IOException {
         PlayerSessionId sessionId = new PlayerSessionId(playerId, null);
-        ReserveFailedResponse response = new ReserveFailedResponse(sessionId, ErrorCode.MAX_LIMIT_REACHED, "fallör", false);
+        ReserveFailedResponse response = new ReserveFailedResponse(sessionId, ErrorCode.MAX_LIMIT_REACHED, "fail", false);
 
         callHandler.handleReserveFailedResponse(response);
 
@@ -158,8 +158,8 @@ public class BackendCallHandlerTest {
 
         GameDataAction action = actionCaptor.getValue();
         BuyInResponse buyInResponse = (BuyInResponse) new StyxSerializer(new ProtocolObjectFactory()).unpack(action.getData());
-        assertThat(buyInResponse.amountBroughtIn, is(0));
-        assertThat(buyInResponse.pendingBalance, is(0));
+        assertThat(buyInResponse.amountBroughtIn, is("0"));
+        assertThat(buyInResponse.pendingBalance, is("0"));
         assertThat(buyInResponse.resultCode, is(Enums.BuyInResultCode.MAX_LIMIT_REACHED));
     }
 
@@ -170,7 +170,7 @@ public class BackendCallHandlerTest {
         PlayerSessionId sessionId = new PlayerSessionId(playerId, null);
         when(firebaseState.getHandCount()).thenReturn(roundNumber);
         when(serverAdapter.getIntegrationHandId()).thenReturn(handId);
-        ReserveFailedResponse response = new ReserveFailedResponse(sessionId, ErrorCode.MAX_LIMIT_REACHED, "fallör", true);
+        ReserveFailedResponse response = new ReserveFailedResponse(sessionId, ErrorCode.MAX_LIMIT_REACHED, "fail", true);
 
         callHandler.handleReserveFailedResponse(response);
 

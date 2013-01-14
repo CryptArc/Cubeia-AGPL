@@ -18,7 +18,7 @@
 package com.cubeia.game.poker.config.api;
 
 import com.cubeia.firebase.api.service.Contract;
-import com.cubeia.games.poker.common.Money;
+import com.cubeia.games.poker.common.money.Money;
 
 public interface PokerConfigurationService extends Contract {
 

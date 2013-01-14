@@ -25,7 +25,7 @@ import com.cubeia.backend.cashgame.TableId;
 import com.cubeia.backend.cashgame.dto.BatchHandRequest;
 import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.game.poker.config.api.PokerConfigurationService;
-import com.cubeia.games.poker.common.Money;
+import com.cubeia.games.poker.common.money.Money;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.result.HandResult;
@@ -56,7 +56,7 @@ public class HandResultBatchFactory {
             Money startingBalanceMoney = configService.createSystemMoney(player.getStartingBalance());
             log.debug("Result for player " + player.getId() + " -> Bets: " + bets + "; Wins: " + wins + "; Rake: " + rake + "; Net: " + net);
             com.cubeia.backend.cashgame.dto.HandResult hr = new com.cubeia.backend.cashgame.dto.HandResult(
-                    player.getPlayerSessionId(), bets, wins, rake, player.getSeatId(), startingBalanceMoney); // TODO Add initial balance?
+                    player.getPlayerSessionId(), bets, wins, rake, player.getSeatId(), player.getOperatorId(), startingBalanceMoney); // TODO Add initial balance?
             bhr.addHandResult(hr);
             totalBet += bets.getAmount();
             totalNet += net.getAmount(); 

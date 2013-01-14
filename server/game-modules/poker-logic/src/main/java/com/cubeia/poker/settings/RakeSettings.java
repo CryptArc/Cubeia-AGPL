@@ -67,7 +67,7 @@ public class RakeSettings implements Serializable {
         rakeLimit3Plus = rakeLimit5Plus = limit;
     }
 
-    public static RakeSettings createNoLimitRakeSettings(BigDecimal rakeFraction) {
+    public static RakeSettings createDefaultRakeSettings(BigDecimal rakeFraction) {
         RakeSettings settings = new RakeSettings();
         settings.rakeFraction2Plus = settings.rakeFraction3Plus = settings.rakeFraction5Plus = rakeFraction;
         settings.rakeLimit2Plus = settings.rakeLimit3Plus = settings.rakeLimit5Plus = Long.MAX_VALUE;

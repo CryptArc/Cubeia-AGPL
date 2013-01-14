@@ -22,8 +22,9 @@ import com.cubeia.firebase.api.mtt.MttFactory;
 import com.cubeia.firebase.api.mtt.activator.ActivatorContext;
 import com.cubeia.firebase.api.mtt.lobby.MttLobbyObject;
 import com.cubeia.firebase.api.server.SystemException;
+import com.cubeia.firebase.api.service.ServiceRegistry;
 import com.cubeia.firebase.io.protocol.Enums;
-import com.cubeia.games.poker.common.SystemTime;
+import com.cubeia.games.poker.common.time.SystemTime;
 import com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes;
 import com.cubeia.games.poker.tournament.activator.ScheduledTournamentCreationParticipant;
 import com.cubeia.games.poker.tournament.activator.SitAndGoCreationParticipant;
@@ -78,6 +79,9 @@ public class TournamentScannerTest {
     @Mock
     private MttFactory factory;
 
+    @Mock
+    private ServiceRegistry serviceRegistry;
+
     private TournamentScanner scanner;
 
     private TimeZone originalTimeZone;
@@ -85,6 +89,7 @@ public class TournamentScannerTest {
     @Before
     public void setup() throws SystemException {
         initMocks(this);
+        when(context.getServices()).thenReturn(serviceRegistry);
         originalTimeZone = TimeZone.getDefault();
         TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
         DateTimeZone.setDefault(DateTimeZone.forTimeZone(TimeZone.getTimeZone("GMT")));

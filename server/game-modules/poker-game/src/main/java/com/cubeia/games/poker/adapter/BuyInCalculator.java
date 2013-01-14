@@ -48,7 +48,7 @@ public class BuyInCalculator {
                 true);
     }
 
-    public int calculateAmountToReserve(int tableMaxBuyIn, int playerBalanceIncludingPending, int amountRequestedByUser) {
+    public long calculateAmountToReserve(long tableMaxBuyIn, long playerBalanceIncludingPending, long amountRequestedByUser) {
         return min(amountRequestedByUser, tableMaxBuyIn - playerBalanceIncludingPending);
     }
 

@@ -19,6 +19,7 @@ package com.cubeia.games.poker.tournament.configuration;
 
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructureFactory;
+import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
 import org.apache.log4j.Logger;
@@ -30,6 +31,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import java.io.Serializable;
 import java.math.BigDecimal;
+
+import static com.cubeia.poker.betting.BetStrategyType.NO_LIMIT;
 
 /**
  * This class represents the configuration of a tournament.
@@ -43,7 +46,7 @@ public class TournamentConfiguration implements Serializable {
     private static final Logger log = Logger.getLogger(TournamentConfiguration.class);
 
     @Id @GeneratedValue
-    private Integer id;
+    private int id;
 
     private String name;
 
@@ -63,6 +66,8 @@ public class TournamentConfiguration implements Serializable {
 
     private BigDecimal fee;
 
+    private BetStrategyType betStrategy = NO_LIMIT;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private PayoutStructure payoutStructure;
 
@@ -73,11 +78,11 @@ public class TournamentConfiguration implements Serializable {
         return "id[" + id + "] name[" + name + "] seats[" + seatsPerTable + "] timing[" + timingType + "] min[" + minPlayers + "] max[" + maxPlayers + "] ";
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -157,5 +162,13 @@ public class TournamentConfiguration implements Serializable {
 
     public void setPayoutStructure(PayoutStructure payoutStructure) {
         this.payoutStructure = payoutStructure;
+    }
+
+    public BetStrategyType getBetStrategy() {
+        return betStrategy;
+    }
+
+    public void setBetStrategy(BetStrategyType betStrategy) {
+        this.betStrategy = betStrategy;
     }
 }

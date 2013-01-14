@@ -17,8 +17,9 @@
 
 package com.cubeia.games.poker.tournament.history;
 
-import com.cubeia.games.poker.common.SystemTime;
+import com.cubeia.games.poker.common.time.SystemTime;
 import com.cubeia.games.poker.tournament.configuration.blinds.Level;
+import com.cubeia.poker.tournament.history.api.HistoricPlayer;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
 import org.apache.log4j.Logger;
 
@@ -55,14 +56,6 @@ public class HistoryPersister {
         storageService.statusChanged(status, historicId, dateFetcher.now());
     }
 
-    public String createHistoricId() {
-        return storageService.createHistoricTournament();
-    }
-
-    public void setHistoricId(String historicId) {
-        this.historicId = historicId;
-    }
-
     public void tournamentStarted(String name) {
         storageService.setStartTime(historicId, dateFetcher.now());
         storageService.setName(historicId, name);
@@ -80,8 +73,12 @@ public class HistoryPersister {
         storageService.addTable(historicId, externalTableId);
     }
 
-    public void playerRegistered(int playerId) {
-        storageService.playerRegistered(historicId, playerId, dateFetcher.now());
+    public void playerRegistered(HistoricPlayer player) {
+        storageService.playerRegistered(historicId, player, dateFetcher.now());
+    }
+
+    public void playerReRegistered(int playerId) {
+        storageService.playerReRegistered(historicId, playerId, dateFetcher.now());
     }
 
     public void playerUnregistered(int playerId) {

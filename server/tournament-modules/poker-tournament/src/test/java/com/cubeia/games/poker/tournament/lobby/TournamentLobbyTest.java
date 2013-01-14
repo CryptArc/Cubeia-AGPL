@@ -17,14 +17,14 @@
 
 package com.cubeia.games.poker.tournament.lobby;
 
+import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.firebase.api.mtt.MttInstance;
 import com.cubeia.firebase.api.mtt.MttNotifier;
 import com.cubeia.firebase.api.mtt.model.MttPlayer;
 import com.cubeia.firebase.api.mtt.model.MttPlayerStatus;
 import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.firebase.api.mtt.support.registry.PlayerRegistry;
-import com.cubeia.firebase.io.StyxSerializer;
-import com.cubeia.games.poker.common.SystemTime;
+import com.cubeia.games.poker.common.time.SystemTime;
 import com.cubeia.games.poker.io.protocol.ChipStatistics;
 import com.cubeia.games.poker.io.protocol.Enums;
 import com.cubeia.games.poker.io.protocol.TournamentPlayerList;
@@ -32,6 +32,7 @@ import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
 import com.cubeia.games.poker.tournament.configuration.blinds.Level;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
+import com.cubeia.games.poker.tournament.util.PacketSender;
 import com.google.common.collect.ImmutableList;
 import org.apache.log4j.Logger;
 import org.junit.Before;
@@ -59,8 +60,6 @@ public class TournamentLobbyTest {
     @Mock
     private MttInstance instance;
 
-    private StyxSerializer serializer = null;
-
     @Mock
     private MttNotifier notifier;
 
@@ -76,11 +75,17 @@ public class TournamentLobbyTest {
     @Mock
     private SystemTime dateFetcher;
 
+    @Mock
+    private PacketSender sender;
+
+    @Mock
+    private CashGamesBackendService backend;
+
     @Before
     public void setup() {
         initMocks(this);
         when(state.getPlayerRegistry()).thenReturn(playerRegistry);
-        lobby = new TournamentLobby(instance, serializer, state, pokerState, dateFetcher);
+        lobby = new TournamentLobby(sender, dateFetcher, backend, state, pokerState);
     }
 
     @Test

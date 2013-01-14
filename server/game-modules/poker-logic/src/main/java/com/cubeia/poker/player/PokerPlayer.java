@@ -69,6 +69,8 @@ public interface PokerPlayer extends BlindsPlayer, Serializable {
 
     public int getSeatId();
 
+    public int getOperatorId();
+
     public long getBetStack();
 
     public void removeFromBetStack(long amount);
@@ -217,10 +219,6 @@ public interface PokerPlayer extends BlindsPlayer, Serializable {
      * Reset all hand/round specific flags to prepare player for a new hand.
      */
     public void resetBeforeNewHand();
-
-    public void setLastRaiseLevel(long amount);
-
-    public long getLastRaiseLevel();
 
     /**
      * Returns the amount of requested buy ins for the player.

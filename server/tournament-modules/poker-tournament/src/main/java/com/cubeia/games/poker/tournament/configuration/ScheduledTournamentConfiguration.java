@@ -38,7 +38,7 @@ public class ScheduledTournamentConfiguration implements Serializable {
 
     @Id
     @GeneratedValue
-    private Integer id;
+    private int id;
 
     @ManyToOne(fetch = EAGER, cascade = ALL)
     private TournamentSchedule schedule;
@@ -61,7 +61,7 @@ public class ScheduledTournamentConfiguration implements Serializable {
         return schedule;
     }
 
-    public ScheduledTournamentInstance spawnConfigurationForNextInstance(DateTime startTime) {
+    public ScheduledTournamentInstance createInstanceWithStartTime(DateTime startTime) {
         return new ScheduledTournamentInstance(this, startTime);
     }
 
@@ -77,11 +77,11 @@ public class ScheduledTournamentConfiguration implements Serializable {
         this.configuration = configuration;
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 }

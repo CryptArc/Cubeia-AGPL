@@ -13,6 +13,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.cubeia.games</groupId>
+            <artifactId>tournament-messages</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.cubeia.firebase</groupId>
             <artifactId>firebase-api</artifactId>
             <scope>provided</scope>
@@ -32,11 +36,15 @@
         </dependency>
         <dependency>
             <groupId>com.cubeia.games.poker</groupId>
-            <artifactId>timings</artifactId>
+            <artifactId>settings</artifactId>
         </dependency>
         <dependency>
             <groupId>com.cubeia.games.poker</groupId>
             <artifactId>tournament-history-storage-service</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.cubeia.poker</groupId>
+            <artifactId>tournament-history-api</artifactId>
         </dependency>
         <dependency>
             <groupId>com.cubeia.games</groupId>
@@ -61,6 +69,11 @@
         <dependency>
             <groupId>com.google.inject.extensions</groupId>
             <artifactId>guice-persist</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject.extensions</groupId>
+            <artifactId>guice-assistedinject</artifactId>
+            <version>3.0</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -89,12 +102,18 @@
             <scope>provided</scope>
             <type>jar</type>
         </dependency>
+        <dependency>
+            <groupId>com.google.code.morphia</groupId>
+            <artifactId>morphia</artifactId>
+            <version>0.99</version>
+        </dependency>
 
         <!-- Test scoped dependencies -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
         </dependency>
+
     </dependencies>
 
     <properties>

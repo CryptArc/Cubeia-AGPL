@@ -1,8 +1,15 @@
 package com.cubeia.poker.tournament.history.api;
 
+import com.google.code.morphia.annotations.Entity;
+import com.google.code.morphia.annotations.Id;
+import org.bson.types.ObjectId;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Copyright (C) 2010 Cubeia Ltd <info@cubeia.com>
@@ -21,12 +28,17 @@ import java.util.List;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@Entity
 public class HistoricTournament implements Serializable {
 
-    private String id;
+    /** This is the unique id of this historic tournament. */
+    @Id
+    private ObjectId id;
 
+    /** This is the id of the tournament in Firebase, might not be unique. */
     private int tournamentId;
 
+    /** This is the id of the template, from which this tournament was spawned. */
     private int tournamentTemplateId;
 
     private String tournamentName;
@@ -41,15 +53,24 @@ public class HistoricTournament implements Serializable {
 
     private List<String> tables = new ArrayList<String>();
 
+    /** The playerIds of all registered players. Will be used for resurrecting tournaments. */
+    private Set<HistoricPlayer> registeredPlayers = new HashSet<HistoricPlayer>();
+
+    private boolean sitAndGo;
+
+    private Date scheduledStartTime;
+
+    private String status;
+
     public HistoricTournament() {
 
     }
 
     public String getId() {
-        return id;
+        return id.toString();
     }
 
-    public void setId(String id) {
+    public void setId(ObjectId id) {
         this.id = id;
     }
 
@@ -115,5 +136,33 @@ public class HistoricTournament implements Serializable {
 
     public void setTables(List<String> tables) {
         this.tables = tables;
+    }
+
+    public Set<HistoricPlayer> getRegisteredPlayers() {
+        return registeredPlayers;
+    }
+
+    public boolean isSitAndGo() {
+        return sitAndGo;
+    }
+
+    public void setSitAndGo(boolean sitAndGo) {
+        this.sitAndGo = sitAndGo;
+    }
+
+    public Date getScheduledStartTime() {
+        return scheduledStartTime;
+    }
+
+    public void setScheduledStartTime(Date scheduledStartTime) {
+        this.scheduledStartTime = scheduledStartTime;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

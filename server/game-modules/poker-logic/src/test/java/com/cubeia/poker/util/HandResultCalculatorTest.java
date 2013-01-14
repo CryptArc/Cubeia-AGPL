@@ -83,7 +83,7 @@ public class HandResultCalculatorTest extends TestCase {
         hands.add(new PlayerHand(3, new Hand("3s 8d " + community)));
 
         rakeFraction = new BigDecimal("0.1");
-        rakeCalculator = new LinearRakeWithLimitCalculator(RakeSettings.createNoLimitRakeSettings(rakeFraction));
+        rakeCalculator = new LinearRakeWithLimitCalculator(RakeSettings.createDefaultRakeSettings(rakeFraction));
     }
 
 
@@ -288,7 +288,7 @@ public class HandResultCalculatorTest extends TestCase {
         players.put(2, p2);
         players.put(3, p3);
 
-        PotHolder potHolder = new PotHolder(new LinearRakeWithLimitCalculator(RakeSettings.createNoLimitRakeSettings(ZERO)));
+        PotHolder potHolder = new PotHolder(new LinearRakeWithLimitCalculator(RakeSettings.createDefaultRakeSettings(ZERO)));
         potHolder.moveChipsToPotAndTakeBackUncalledChips(players.values());
 
         assertEquals(2, potHolder.getNumberOfPots());
@@ -348,7 +348,7 @@ public class HandResultCalculatorTest extends TestCase {
         hands.add(new PlayerHand(2, new Hand("2s 7d" + community)));
         hands.add(new PlayerHand(3, new Hand("3s 8d" + community)));
 
-        PotHolder potHolder = new PotHolder(new LinearRakeWithLimitCalculator(RakeSettings.createNoLimitRakeSettings(ZERO)));
+        PotHolder potHolder = new PotHolder(new LinearRakeWithLimitCalculator(RakeSettings.createDefaultRakeSettings(ZERO)));
         potHolder.moveChipsToPotAndTakeBackUncalledChips(players.values());
 
         assertEquals(1, potHolder.getNumberOfPots());

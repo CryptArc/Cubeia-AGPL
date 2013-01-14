@@ -45,7 +45,7 @@ import com.cubeia.backoffice.wallet.api.dto.AccountBalanceResult;
 import com.cubeia.backoffice.wallet.api.dto.report.TransactionRequest;
 import com.cubeia.backoffice.wallet.api.dto.report.TransactionResult;
 import com.cubeia.firebase.api.server.SystemException;
-import com.cubeia.games.poker.common.Money;
+import com.cubeia.games.poker.common.money.Money;
 import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
 import com.cubeia.network.wallet.firebase.domain.TransactionBuilder;
 import com.google.common.annotations.VisibleForTesting;
@@ -53,11 +53,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse.ErrorCode.UNSPECIFIED_ERROR;
@@ -247,10 +243,28 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
         return new TransactionBuilder(currencyCode, fractionalDigits);
     }
 
-    private void createRakeEntry(BatchHandRequest request, TransactionBuilder txBuilder) {
-        txBuilder.entry(rakeAccountId, convertToWalletMoney(request.getTotalRake()).getAmount());
+    private void createRakeEntry(BatchHandRequest request, TransactionBuilder txBuilder) throws BatchHandFailedException {
+        //txBuilder.entry(rakeAccountId, convertToWalletMoney(request.getTotalRake()).getAmount());
+        TreeMap<Integer, Money> operatorRake = new TreeMap<Integer, Money>();
+        for (HandResult hr : request.getHandResults()) {
+            int operatorId = hr.getOperator();
+            if (operatorRake.containsKey(operatorId)) {
+                operatorRake.put(operatorId, operatorRake.get(operatorId).add(hr.getRake()));
+            } else {
+                operatorRake.put(operatorId, hr.getRake());
+            }
+        }
+        for (Map.Entry<Integer, Money> rakeEntry: operatorRake.entrySet()) {
+            log.debug("transferring rake: operatorId = " + rakeEntry.getKey() + ", amount = " + rakeEntry.getValue());
+            try {
+                txBuilder.entry(accountLookupUtil.lookupOperatorAccountId(walletService, rakeEntry.getKey()), convertToWalletMoney(rakeEntry.getValue()).getAmount());
+            } catch (SystemException e) {
+                txBuilder.entry(rakeAccountId, convertToWalletMoney(rakeEntry.getValue()).getAmount());
+            }
+
+        }
         txBuilder.comment("poker hand result");
-        txBuilder.attribute("pokerTableId", String.valueOf((request.getTableId()).integrationId)).attribute("pokerGameId", String.valueOf(GAME_ID)).attribute(
+        txBuilder.attribute("pokerTableId", String.valueOf(request.getTableId().integrationId)).attribute("pokerGameId", String.valueOf(GAME_ID)).attribute(
                 "pokerHandId", request.getHandId());
     }
 

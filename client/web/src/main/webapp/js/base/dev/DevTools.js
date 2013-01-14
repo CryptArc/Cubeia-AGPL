@@ -37,8 +37,8 @@ Poker.DevTools = Class.extend({
 
         var beforeFunction = function() {
             var tableLayoutManager = new Poker.TableLayoutManager(self.tableId, tableViewContainer,
-                templateManager, null, 10);
-            self.tableManager.createTable(self.tableId, 10, tableName , [tableLayoutManager]);
+                templateManager, null, 10,false);
+            self.tableManager.createTable(self.tableId, 10, tableName , tableLayoutManager);
             Poker.AppCtx.getViewManager().addTableView(tableLayoutManager,tableName);
             new Poker.PositionEditor("#tableView-"+self.tableId);
         };
@@ -53,7 +53,8 @@ Poker.DevTools = Class.extend({
         var mockEvent = function(name,func,delay) {
             return new Poker.MockEvent(name,func,delay);
         };
-
+        Poker.MyPlayer.id = 0;
+        Poker.MyPlayer.name= "test";
         this.mockEventManager.addEvent(
             mockEvent("Add players",function(){
                 for(var i = 0; i<10; i++) {
@@ -136,6 +137,11 @@ Poker.DevTools = Class.extend({
         this.mockEventManager.addEvent(
             mockEvent("Deal river", function(){
                 self.tableManager.dealCommunityCard(self.tableId,self.cardIdSeq++,"ac");
+            })
+        );
+        this.mockEventManager.addEvent(
+            mockEvent("Player 1 bet blind",function(){
+                self.playerAction(0,Poker.ActionType.BET);
             })
         );
 

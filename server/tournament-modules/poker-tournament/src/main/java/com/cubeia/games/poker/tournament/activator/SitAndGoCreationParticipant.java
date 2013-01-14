@@ -18,16 +18,21 @@
 package com.cubeia.games.poker.tournament.activator;
 
 import com.cubeia.firebase.api.lobby.LobbyAttributeAccessor;
+import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.SitAndGoLifeCycle;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.TournamentLifeCycle;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
+import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
 
 public class SitAndGoCreationParticipant extends PokerTournamentCreationParticipant {
 
-    public SitAndGoCreationParticipant(SitAndGoConfiguration config) {
-        super(config.getConfiguration());
+    private final SitAndGoConfiguration template;
+
+    public SitAndGoCreationParticipant(SitAndGoConfiguration config, TournamentHistoryPersistenceService storageService) {
+        super(config.getConfiguration(), storageService);
+        this.template = config;
     }
 
     @Override
@@ -41,10 +46,20 @@ public class SitAndGoCreationParticipant extends PokerTournamentCreationParticip
     }
 
     @Override
-    protected void tournamentCreated(PokerTournamentState pokerState, LobbyAttributeAccessor lobbyAttributeAccessor) {
-        super.tournamentCreated(pokerState, lobbyAttributeAccessor);
+    protected void tournamentCreated(MTTStateSupport stateSupport, PokerTournamentState pokerState, LobbyAttributeAccessor lobbyAttributeAccessor) {
+        super.tournamentCreated(stateSupport, pokerState, lobbyAttributeAccessor);
         // Sit and go tournaments start in registering mode.
         setStatus(pokerState, lobbyAttributeAccessor, PokerTournamentStatus.REGISTERING);
+    }
+
+    @Override
+    protected boolean isSitAndGo() {
+        return true;
+    }
+
+    @Override
+    protected int getConfigurationTemplateId() {
+        return template.getId();
     }
 
     @Override

@@ -37,7 +37,7 @@ import com.cubeia.backend.cashgame.dto.TransferMoneyRequest;
 import com.cubeia.backend.cashgame.exceptions.BatchHandFailedException;
 import com.cubeia.backend.cashgame.exceptions.CloseSessionFailedException;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
-import com.cubeia.games.poker.common.Money;
+import com.cubeia.games.poker.common.money.Money;
 
 public interface AsynchronousCashGamesBackend {
 

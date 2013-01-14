@@ -33,6 +33,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.Collection;
 
 import static com.cubeia.backoffice.wallet.api.dto.Account.AccountStatus.OPEN;
+import static com.cubeia.backoffice.wallet.api.dto.Account.AccountType.OPERATOR_ACCOUNT;
 import static com.cubeia.backoffice.wallet.api.dto.Account.AccountType.SYSTEM_ACCOUNT;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
@@ -70,6 +71,32 @@ public class AccountLookupUtilTest {
         assertThat(lar.getStatuses(), is((Collection<AccountStatus>) asList(OPEN)));
         assertThat(lar.getTypes(), is((Collection<AccountType>) asList(SYSTEM_ACCOUNT)));
         assertThat(lar.getUserId(), is(CashGamesBackendAdapter.RAKE_ACCOUNT_USER_ID));
+    }
+
+    @Test
+    public void testLookupOperatorAccountId() throws SystemException {
+        AccountLookupUtil acl = new AccountLookupUtil();
+
+        ArgumentCaptor<ListAccountsRequest> requestCaptor = ArgumentCaptor.forClass(ListAccountsRequest.class);
+
+        AccountQueryResult accountQueryResult = mock(AccountQueryResult.class);
+        Account operatorAccount = mock(Account.class);
+        Long operatorAccountId = -2000L;
+        Long operatorId = 5L;
+        when(operatorAccount.getId()).thenReturn(operatorAccountId);
+        when(operatorAccount.getUserId()).thenReturn(operatorId);
+        when(operatorAccount.getType()).thenReturn(OPERATOR_ACCOUNT);
+        when(accountQueryResult.getAccounts()).thenReturn(asList(operatorAccount));
+        when(walletService.listAccounts(requestCaptor.capture())).thenReturn(accountQueryResult);
+
+        long lookupRakeAccountId = acl.lookupOperatorAccountId(walletService, operatorId);
+        assertThat(lookupRakeAccountId, is(operatorAccountId));
+
+        ListAccountsRequest lar = requestCaptor.getValue();
+        assertThat(lar.getLimit(), is(1));
+        assertThat(lar.getStatuses(), is((Collection<AccountStatus>) asList(OPEN)));
+        assertThat(lar.getTypes(), is((Collection<AccountType>) asList(OPERATOR_ACCOUNT)));
+        assertThat(lar.getUserId(), is(operatorId));
     }
 
 }

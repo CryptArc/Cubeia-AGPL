@@ -17,7 +17,7 @@
 
 package com.cubeia.games.poker.integration.api;
 
-import com.cubeia.games.poker.common.Money;
+import com.cubeia.games.poker.common.money.Money;
 
 public interface WalletService {
 

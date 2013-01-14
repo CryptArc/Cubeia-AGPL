@@ -18,9 +18,11 @@
 package com.cubeia.games.poker.tournament.activator;
 
 import com.cubeia.firebase.api.lobby.LobbyAttributeAccessor;
+import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentInstance;
 import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
+import com.cubeia.poker.tournament.history.storage.impl.DatabaseStorageService;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,6 +50,12 @@ public class ScheduledTournamentCreationParticipantTest {
     @Mock
     private TournamentConfiguration configuration;
 
+    @Mock
+    private MTTStateSupport state;
+
+    @Mock
+    private DatabaseStorageService storageService;
+
     @Before
     public void setup() {
         initMocks(this);
@@ -60,8 +68,8 @@ public class ScheduledTournamentCreationParticipantTest {
         when(config.getStartTime()).thenReturn(startTime);
         when(config.getOpenRegistrationTime()).thenReturn(registrationTime);
         when(config.getConfiguration()).thenReturn(configuration);
-        ScheduledTournamentCreationParticipant participant = new ScheduledTournamentCreationParticipant(config);
-        participant.tournamentCreated(pokerState, accessor);
+        ScheduledTournamentCreationParticipant participant = new ScheduledTournamentCreationParticipant(config, storageService);
+        participant.tournamentCreated(state, pokerState, accessor);
 
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(accessor).setStringAttribute(eq(START_TIME.name()), captor.capture());

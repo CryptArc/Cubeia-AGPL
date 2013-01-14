@@ -38,11 +38,7 @@ Poker.PokerRequestHandler = Class.extend({
         } else if (actionType.id == Poker.ActionType.SIT_OUT.id) {
             this.sitOut();
         } else {
-            if (actionType.id == Poker.ActionType.RAISE.id) {
-                this.sendAction(Poker.ActionUtils.getActionEnumType(actionType), amount, 0);
-            } else {
-                this.sendAction(Poker.ActionUtils.getActionEnumType(actionType), amount, 0);
-            }
+            this.sendAction(Poker.ActionUtils.getActionEnumType(actionType), amount, 0);
         }
     },
 

@@ -20,6 +20,9 @@ Poker.AppCtx = Class.extend({
      */
     wire : function(settings) {
 
+
+
+
         //this
         var templateManager = new Poker.TemplateManager();
 
@@ -94,6 +97,9 @@ Poker.AppCtx = Class.extend({
         };
 
         var soundsRepository = new Poker.SoundRepository();
+
+
+
         /**
          *
          * @return {Poker.SoundRepository}
@@ -101,6 +107,17 @@ Poker.AppCtx = Class.extend({
         this.getSoundRepository = function() {
             return soundsRepository;
         };
+
+
+
+        var connectionManager = new Poker.ConnectionManager();
+        /**
+         * @return {Poker.ConnectionManager}
+         */
+        this.getConnectionManager = function() {
+            return connectionManager;
+        };
+
 
         var comHandler = new Poker.CommunicationManager(settings.webSocketUrl, settings.webSocketPort);
         /**
@@ -126,6 +143,7 @@ Poker.AppCtx = Class.extend({
         this.getTournamentManager = function() {
             return tournamentManager;
         };
+
 
 
 

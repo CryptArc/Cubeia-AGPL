@@ -21,6 +21,7 @@ import com.cubeia.games.poker.admin.db.AdminDAO;
 import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
 import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
+import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.timing.TimingProfile;
 import org.apache.log4j.Logger;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
@@ -31,6 +32,8 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import java.math.BigDecimal;
+
+import static java.util.Arrays.asList;
 
 public class TournamentConfigurationPanel extends Panel {
 
@@ -47,15 +50,22 @@ public class TournamentConfigurationPanel extends Panel {
 
         add(new TextField("name", new PropertyModel(model, "name")));
         add(new TextField<Integer>("seatsPerTable", new PropertyModel(model, "seatsPerTable")));
-        add(new DropDownChoice<TimingProfile>("timingType", new PropertyModel(model, "timingType"), adminDAO.getTimingProfiles(),
-                new ChoiceRenderer<TimingProfile>("name")));
+        add(new DropDownChoice<TimingProfile>("timingType", model("timingType"), adminDAO.getTimingProfiles(), renderer("name")));
         add(new TextField<Integer>("minPlayers", new PropertyModel(model, "minPlayers")));
         add(new TextField<Integer>("maxPlayers", new PropertyModel(model, "maxPlayers")));
         add(new TextField<BigDecimal>("buyIn", new PropertyModel(model, "buyIn")));
         add(new TextField<BigDecimal>("fee", new PropertyModel(model, "fee")));
-        add(new DropDownChoice<BlindsStructure>("blindsStructure", new PropertyModel(model, "blindsStructure"), adminDAO.getBlindsStructures(),
-                new ChoiceRenderer<BlindsStructure>("name")));
-        add(new DropDownChoice<PayoutStructure>("payoutStructure", new PropertyModel(model, "payoutStructure"), adminDAO.getPayoutStructures(),
-                new ChoiceRenderer<PayoutStructure>("name")));
+        add(new DropDownChoice<BetStrategyType>("betStrategy", new PropertyModel(model, "betStrategy"), asList(BetStrategyType.values()),
+                                                                                         renderer("name")));
+        add(new DropDownChoice<BlindsStructure>("blindsStructure", model("blindsStructure"), adminDAO.getBlindsStructures(), renderer("name")));
+        add(new DropDownChoice<PayoutStructure>("payoutStructure", model("payoutStructure"), adminDAO.getPayoutStructures(), renderer("name")));
+    }
+
+    private PropertyModel model(String expression) {
+        return new PropertyModel(model, expression);
+    }
+
+    private <T> ChoiceRenderer<T> renderer(String name) {
+        return new ChoiceRenderer<T>(name);
     }
 }

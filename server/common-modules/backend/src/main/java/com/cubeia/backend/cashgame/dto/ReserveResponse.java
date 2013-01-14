@@ -18,7 +18,7 @@
 package com.cubeia.backend.cashgame.dto;
 
 import com.cubeia.backend.cashgame.PlayerSessionId;
-import com.cubeia.games.poker.common.Money;
+import com.cubeia.games.poker.common.money.Money;
 
 import java.io.Serializable;
 import java.util.HashMap;

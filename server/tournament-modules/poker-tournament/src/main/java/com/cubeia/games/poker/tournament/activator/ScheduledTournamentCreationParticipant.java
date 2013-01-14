@@ -18,21 +18,26 @@
 package com.cubeia.games.poker.tournament.activator;
 
 import com.cubeia.firebase.api.lobby.LobbyAttributeAccessor;
+import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentInstance;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.ScheduledTournamentLifeCycle;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.TournamentLifeCycle;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
+import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
 
-import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.*;
+import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.IDENTIFIER;
+import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.REGISTRATION_OPENING_TIME;
+import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.START_TIME;
 
 public class ScheduledTournamentCreationParticipant extends PokerTournamentCreationParticipant {
 
     private ScheduledTournamentInstance instanceConfiguration;
+
     private String pattern = "yyyy-MM-dd HH:mm";
 
-    public ScheduledTournamentCreationParticipant(ScheduledTournamentInstance config) {
-        super(config.getConfiguration());
+    public ScheduledTournamentCreationParticipant(ScheduledTournamentInstance config, TournamentHistoryPersistenceService storageService) {
+        super(config.getConfiguration(), storageService);
         instanceConfiguration = config;
     }
 
@@ -47,12 +52,40 @@ public class ScheduledTournamentCreationParticipant extends PokerTournamentCreat
     }
 
     @Override
-    protected void tournamentCreated(PokerTournamentState pokerState, LobbyAttributeAccessor lobbyAttributeAccessor) {
-        super.tournamentCreated(pokerState, lobbyAttributeAccessor);
+    protected void tournamentCreated(MTTStateSupport stateSupport, PokerTournamentState pokerState, LobbyAttributeAccessor lobbyAttributeAccessor) {
+        super.tournamentCreated(stateSupport, pokerState, lobbyAttributeAccessor);
+        pokerState.setResurrectingPlayers(instanceConfiguration.getResurrectingPlayers());
         setStatus(pokerState, lobbyAttributeAccessor, PokerTournamentStatus.ANNOUNCED);
         lobbyAttributeAccessor.setStringAttribute(IDENTIFIER.name(), instanceConfiguration.getIdentifier());
         lobbyAttributeAccessor.setStringAttribute(START_TIME.name(), instanceConfiguration.getStartTime().toString(pattern));
         lobbyAttributeAccessor.setStringAttribute(REGISTRATION_OPENING_TIME.name(), instanceConfiguration.getOpenRegistrationTime().toString(pattern));
+        setScheduledStartTime(pokerState);
+    }
+
+    private void setScheduledStartTime(PokerTournamentState pokerState) {
+        if (storageService != null) {
+            storageService.setScheduledStartTime(pokerState.getHistoricId(), instanceConfiguration.getStartTime().toDate());
+        }
+    }
+
+    // Overriding so we don't create a new historic tournament when resurrecting tournaments.
+    @Override
+    protected void createHistoricTournament(MTTStateSupport state, PokerTournamentState pokerState) {
+        if (instanceConfiguration.getResurrectingPlayers().isEmpty()) {
+            super.createHistoricTournament(state, pokerState);
+        } else {
+            pokerState.setHistoricId(instanceConfiguration.getHistoricId());
+        }
+    }
+
+    @Override
+    protected boolean isSitAndGo() {
+        return false;
+    }
+
+    @Override
+    protected int getConfigurationTemplateId() {
+        return instanceConfiguration.getTemplateId();
     }
 
     @Override

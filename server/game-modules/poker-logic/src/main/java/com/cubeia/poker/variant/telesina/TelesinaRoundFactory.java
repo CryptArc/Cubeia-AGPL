@@ -19,16 +19,18 @@ package com.cubeia.poker.variant.telesina;
 
 import com.cubeia.poker.adapter.ServerAdapterHolder;
 import com.cubeia.poker.context.PokerContext;
-import com.cubeia.poker.rounds.betting.ActionRequestFactory;
 import com.cubeia.poker.hand.Rank;
+import com.cubeia.poker.rounds.ante.AnteRound;
+import com.cubeia.poker.rounds.ante.AnteRoundHelper;
+import com.cubeia.poker.rounds.betting.ActionRequestFactory;
+import com.cubeia.poker.rounds.betting.BetStrategy;
+import com.cubeia.poker.rounds.betting.BetStrategyFactory;
+import com.cubeia.poker.rounds.betting.BettingRound;
 import com.cubeia.poker.rounds.dealing.DealCommunityCardsRound;
 import com.cubeia.poker.rounds.dealing.DealExposedPocketCardsRound;
 import com.cubeia.poker.rounds.dealing.DealInitialPocketCardsRound;
-import com.cubeia.poker.rounds.ante.AnteRound;
-import com.cubeia.poker.rounds.ante.AnteRoundHelper;
-import com.cubeia.poker.rounds.betting.BettingRound;
-import com.cubeia.poker.rounds.betting.NoLimitBetStrategy;
 import com.cubeia.poker.rounds.dealing.ExposePrivateCardsRound;
+import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.variant.telesina.hand.TelesinaPlayerToActCalculator;
 
 import java.io.Serializable;
@@ -48,12 +50,14 @@ public class TelesinaRoundFactory implements Serializable {
     }
 
     BettingRound createBettingRound(PokerContext context, ServerAdapterHolder serverAdapterHolder, Rank lowestRank) {
-        ActionRequestFactory actionRequestFactory = new ActionRequestFactory(new NoLimitBetStrategy());
+        PokerSettings settings = context.getSettings();
+        int betLevel = 2 * context.getSettings().getAnteAmount();
+        BetStrategy betStrategy = BetStrategyFactory.createBetStrategy(settings.getBetStrategyType(), betLevel);
+        ActionRequestFactory actionRequestFactory = new ActionRequestFactory(betStrategy);
         TelesinaPlayerToActCalculator playerToActCalculator = new TelesinaPlayerToActCalculator(lowestRank);
         TelesinaFutureActionsCalculator futureActionsCalculator = new TelesinaFutureActionsCalculator();
         int buttonSeatId = context.getBlindsInfo().getDealerButtonSeatId();
-        int betLevel = 2 * context.getSettings().getAnteAmount();
-        return new BettingRound(buttonSeatId, context, serverAdapterHolder, playerToActCalculator, actionRequestFactory, futureActionsCalculator, betLevel);
+        return new BettingRound(buttonSeatId, context, serverAdapterHolder, playerToActCalculator, actionRequestFactory, futureActionsCalculator, betStrategy);
     }
 
     DealExposedPocketCardsRound createDealExposedPocketCardsRound(Telesina telesina) {

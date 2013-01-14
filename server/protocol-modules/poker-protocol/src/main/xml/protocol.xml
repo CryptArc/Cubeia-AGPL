@@ -128,9 +128,16 @@
         <var name="hand_info" type="hand_start_info" />
         <var name="current_level" type="blinds_level" />
         <var name="seconds_to_next_level" type="int32" />
+        <var name="bet_strategy" type="bet_strategy" />
         <!--<var name="current_player_in_turn" type="player_in_turn" />-->
         <!--<var name="dealer_seat_id" type="int32" />-->
     </struct>
+
+    <enum name="bet_strategy">
+        <value>FIXED_LIMIT</value>
+        <value>NO_LIMIT</value>
+        <value>POT_LIMIT</value>
+    </enum>
 
     <struct name="game_card">
         <var name="card_id" type="int32"/>
@@ -249,26 +256,26 @@
 
     <!-- server tells client on rules for buy in-->
     <struct name="buy_in_info_response">
-        <var name="max_amount" type="int32"/>
-        <var name="min_amount" type="int32"/>
-        <var name="balance_in_wallet" type="int32"/>
-        <var name="balance_on_table" type="int32"/>
+        <var name="max_amount" type="string"/>
+        <var name="min_amount" type="string"/>
+        <var name="balance_in_wallet" type="string"/>
+        <var name="balance_on_table" type="string"/>
         <var name="mandatory_buyin" type="bool"/>
         <var name="result_code" type="buy_in_info_result_code"/>
     </struct>
 
     <struct name="buy_in_request">
-        <var name="amount" type="int32"/>
+        <var name="amount" type="string"/>
         <var name="sit_in_if_successful" type="bool"/>
     </struct>
 
     <struct name="buy_in_response">
         <!-- Balance that is currently in the hand. -->
-        <var name="balance" type="int32"/>
+        <var name="balance" type="string"/>
 
         <!-- Pending balance that will be added after hand is finished. -->
-        <var name="pending_balance" type="int32"/>
-        <var name="amount_brought_in" type="int32"/>
+        <var name="pending_balance" type="string"/>
+        <var name="amount_brought_in" type="string"/>
 
         <var name="result_code" type="buy_in_result_code"/>
     </struct>
@@ -497,7 +504,18 @@
         <value>CLOSED</value>
     </enum>
 
+    <!-- Sent to the players at a tournament table when that tournament is destroyed. -->
     <struct name="tournament_destroyed" />
+
+    <struct name="request_tournament_registration_info" />
+
+    <struct name="tournament_registration_info">
+        <var name="buy_in" type="string"/>
+        <var name="fee" type="string"/>
+        <var name="currency" type="string"/>
+        <var name="balance_in_wallet" type="string"/>
+        <var name="sufficient_funds" type="bool"/>
+    </struct>
 
 </protocol>
 

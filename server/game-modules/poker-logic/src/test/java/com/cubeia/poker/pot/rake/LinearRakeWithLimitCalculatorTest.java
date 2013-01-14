@@ -39,7 +39,7 @@ public class LinearRakeWithLimitCalculatorTest {
     @Test
     public void testCalculateRakeNoLimit() {
         BigDecimal rakeFraction = new BigDecimal("0.1");
-        LinearRakeWithLimitCalculator rc = new LinearRakeWithLimitCalculator(RakeSettings.createNoLimitRakeSettings(rakeFraction));
+        LinearRakeWithLimitCalculator rc = new LinearRakeWithLimitCalculator(RakeSettings.createDefaultRakeSettings(rakeFraction));
 
         PokerPlayer player1 = Mockito.mock(PokerPlayer.class);
         PokerPlayer player2 = Mockito.mock(PokerPlayer.class);
@@ -159,7 +159,7 @@ public class LinearRakeWithLimitCalculatorTest {
     @Test
     public void testCalculateRakeNoRakeBeforeFirstCall() {
         BigDecimal rakeFraction = new BigDecimal("0.1");
-        LinearRakeWithLimitCalculator rc = new LinearRakeWithLimitCalculator(RakeSettings.createNoLimitRakeSettings(rakeFraction));
+        LinearRakeWithLimitCalculator rc = new LinearRakeWithLimitCalculator(RakeSettings.createDefaultRakeSettings(rakeFraction));
 
         PokerPlayer player1 = Mockito.mock(PokerPlayer.class);
         PokerPlayer player2 = Mockito.mock(PokerPlayer.class);

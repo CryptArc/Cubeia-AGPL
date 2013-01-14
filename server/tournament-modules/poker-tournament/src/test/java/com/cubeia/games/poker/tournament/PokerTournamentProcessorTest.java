@@ -30,15 +30,14 @@ import com.cubeia.firebase.api.lobby.LobbyAttributeAccessor;
 import com.cubeia.firebase.api.mtt.MttInstance;
 import com.cubeia.firebase.api.mtt.MttNotifier;
 import com.cubeia.firebase.api.mtt.model.MttPlayer;
-import com.cubeia.firebase.api.mtt.model.MttPlayerStatus;
 import com.cubeia.firebase.api.mtt.model.MttRegistrationRequest;
 import com.cubeia.firebase.api.mtt.support.LobbyAttributeAccessorAdapter;
 import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.firebase.api.mtt.support.MttNotifierAdapter;
 import com.cubeia.firebase.api.scheduler.Scheduler;
 import com.cubeia.firebase.api.service.mttplayerreg.TournamentPlayerRegistry;
-import com.cubeia.games.poker.common.DefaultSystemTime;
-import com.cubeia.games.poker.common.SystemTime;
+import com.cubeia.games.poker.common.time.DefaultSystemTime;
+import com.cubeia.games.poker.common.time.SystemTime;
 import com.cubeia.games.poker.tournament.activator.PokerTournamentCreationParticipant;
 import com.cubeia.games.poker.tournament.activator.ScheduledTournamentCreationParticipant;
 import com.cubeia.games.poker.tournament.activator.SitAndGoCreationParticipant;
@@ -49,13 +48,17 @@ import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructureFactory;
 import com.cubeia.games.poker.tournament.configuration.blinds.Level;
 import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructureParserTest;
+import com.cubeia.games.poker.tournament.messages.PokerTournamentRoundReport;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
+import com.cubeia.games.poker.tournament.util.PacketSender;
+import com.cubeia.games.poker.tournament.util.PacketSenderFactory;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -65,6 +68,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import static com.cubeia.firebase.api.mtt.model.MttPlayerStatus.OUT;
 import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.STATUS;
 import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.ANNOUNCED;
 import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.REGISTERING;
@@ -124,6 +128,12 @@ public class PokerTournamentProcessorTest extends TestCase {
     @Mock
     private TournamentSchedule schedule;
 
+    @Mock
+    private PacketSenderFactory senderFactory;
+
+    @Mock
+    private PacketSender sender;
+
     private SystemTime dateFetcher = new DefaultSystemTime();
 
     private MockTournamentAssist support;
@@ -143,6 +153,7 @@ public class PokerTournamentProcessorTest extends TestCase {
         tournamentProcessor.setHistoryService(historyService);
         tournamentProcessor.setBackend(backend);
         tournamentProcessor.setDateFetcher(dateFetcher);
+        tournamentProcessor.setSenderFactory(senderFactory);
 
         state = new MTTStateSupport(1, 1);
         when(configuration.getBlindsStructure()).thenReturn(BlindsStructureFactory.createDefaultBlindsStructure());
@@ -155,16 +166,18 @@ public class PokerTournamentProcessorTest extends TestCase {
         when(instanceConfig.getConfiguration()).thenReturn(configuration);
         when(configuration.getBuyIn()).thenReturn(BigDecimal.valueOf(10));
         when(configuration.getPayoutStructure()).thenReturn(PayoutStructureParserTest.createTestStructure());
+        when(senderFactory.create(Mockito.<MttNotifier>any(), Mockito.<MttInstance>any())).thenReturn(sender);
 
         support.setTableCreator(new MockTableCreator(tournamentProcessor, instance));
         support.setMttNotifier(new MttNotifierAdapter());
 
         SitAndGoConfiguration config = new SitAndGoConfiguration("test", 20);
+        config.setId(1);
         config.getConfiguration().setBuyIn(BigDecimal.valueOf(10));
         config.getConfiguration().setFee(BigDecimal.valueOf(1));
         config.getConfiguration().setBlindsStructure(BlindsStructureFactory.createDefaultBlindsStructure());
         config.getConfiguration().setPayoutStructure(PayoutStructureParserTest.createTestStructure());
-        PokerTournamentCreationParticipant part = new SitAndGoCreationParticipant(config);
+        PokerTournamentCreationParticipant part = new SitAndGoCreationParticipant(config, historyService);
         part.tournamentCreated(state, instance.getLobbyAccessor());
 
         pokerState = new PokerTournamentUtil().getPokerState(instance);
@@ -213,7 +226,7 @@ public class PokerTournamentProcessorTest extends TestCase {
         when(instanceConfig.getConfiguration()).thenReturn(configuration);
         when(instanceConfig.getSchedule()).thenReturn(schedule);
 
-        PokerTournamentCreationParticipant participant = new ScheduledTournamentCreationParticipant(instanceConfig);
+        PokerTournamentCreationParticipant participant = new ScheduledTournamentCreationParticipant(instanceConfig, historyService);
         participant.tournamentCreated(state, instance.getLobbyAccessor());
         pokerState = new PokerTournamentUtil().getPokerState(instance);
         assertEquals(ANNOUNCED, pokerState.getStatus());
@@ -228,7 +241,7 @@ public class PokerTournamentProcessorTest extends TestCase {
 
         // Another table finishes a hand.
         int playersAtTableTwo = state.getPlayersAtTable(1).size();
-        sendRoundReport(1, new PokerTournamentRoundReport(new Level(10, 20, 0, 60, false)));
+        sendRoundReport(1, new PokerTournamentRoundReport(new PokerTournamentRoundReport.Level(10, 20, 0)));
         assertEquals(playersAtTableTwo - 1, state.getPlayersAtTable(1).size());
     }
 
@@ -275,14 +288,15 @@ public class PokerTournamentProcessorTest extends TestCase {
         }
 
         for (MttPlayer player : state.getPlayerRegistry().getPlayers()) {
-            assertThat(player.getStatus(), is(MttPlayerStatus.OUT));
+            assertThat(player.getStatus(), is(OUT));
         }
     }
 
     private PokerTournamentRoundReport createRoundReport(int tableId) {
-        PokerTournamentRoundReport report = new PokerTournamentRoundReport(new Level(10, 20, 0, 60, false));
+        PokerTournamentRoundReport report = new PokerTournamentRoundReport(new PokerTournamentRoundReport.Level(10, 20, 0));
         Collection<Integer> playersAtTable = state.getPlayersAtTable(tableId);
         int playersInTournament = state.getRemainingPlayerCount();
+        log.debug("REMAINING: " + playersInTournament);
 
         for (Integer playerId : playersAtTable) {
             // Check so we don't kick all players out
@@ -324,7 +338,7 @@ public class PokerTournamentProcessorTest extends TestCase {
     }
 
     private PokerTournamentRoundReport createPlayersOutRoundReport(int... playerIds) {
-        PokerTournamentRoundReport roundReport = new PokerTournamentRoundReport(new Level(10, 20, 0, 60, false));
+        PokerTournamentRoundReport roundReport = new PokerTournamentRoundReport(new PokerTournamentRoundReport.Level(10, 20, 0));
         for (int playerId : playerIds) {
             roundReport.setBalance(playerId, 0);
         }

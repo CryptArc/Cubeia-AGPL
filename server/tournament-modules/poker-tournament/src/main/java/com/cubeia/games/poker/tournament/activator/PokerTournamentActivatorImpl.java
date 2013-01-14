@@ -48,12 +48,13 @@ public class PokerTournamentActivatorImpl implements MttActivator, Startable, Po
 
     private Injector injector;
 
+    private JMXActivator jmxInterface;
+
+    private ActivatorContext context;
+
     public PokerTournamentActivatorImpl() {
 
     }
-
-    private JMXActivator jmxInterface;
-    private ActivatorContext context;
 
     /*------------------------------------------------
 

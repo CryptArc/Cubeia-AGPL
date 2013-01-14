@@ -7,6 +7,24 @@ Poker.LobbyLayoutManager = Class.extend({
      */
     templateManager : null,
     filters:null,
+
+    tournamentListSettings : {
+        prefix : "tournamentItem",
+        listTemplateId : "tournamentLobbyListTemplate",
+        listItemTemplateId : "tournamentListItemTemplate"
+
+    },
+    sitAndGoListSettings : {
+        prefix : "sitAndGoItem",
+        listTemplateId : "sitAndGoLobbyListTemplate",
+        listItemTemplateId : "sitAndGoListItemTemplate"
+    },
+    tableListSettings : {
+        prefix : "tableItem",
+        listTemplateId : "tableLobbyListTemplate",
+        listItemTemplateId : "tableListItemTemplate"
+    },
+
     init : function() {
         this.templateManager = Poker.AppCtx.getTemplateManager();
         this.filters = [];
@@ -84,13 +102,14 @@ Poker.LobbyLayoutManager = Class.extend({
         return true;
     },
     createTableList : function(tables) {
-        this.createLobbyList(tables,"tableListItemTemplate", this.getTableItemCallback());
-
+        this.createLobbyList(tables,this.tableListSettings, this.getTableItemCallback());
     },
     createTournamentList : function(tournaments) {
-        this.createLobbyList(tournaments,"tableListItemTemplate", this.getTournamentItemCallback());
+        this.createLobbyList(tournaments,this.tournamentListSettings, this.getTournamentItemCallback());
     },
-
+    createSitAndGoList : function(sitAndGos) {
+        this.createLobbyList(sitAndGos,this.sitAndGoListSettings, this.getTournamentItemCallback());
+    },
     getTableItemCallback : function() {
         var self = this;
         return function(listItem){
@@ -108,23 +127,25 @@ Poker.LobbyLayoutManager = Class.extend({
         return data.name  + " " + data.blinds + " " + data.type + " " + data.capacity;
     },
     tableRemoved : function(tableId) {
-       this.removeListItem(tableId);
+       this.removeListItem("tableItem",tableId);
     },
     tournamentRemoved : function(tournamentId) {
-        this.removeListItem(tournamentId);
+        this.removeListItem("tournamentItem",tournamentId);
     },
-    removeListItem : function(id) {
+    removeListItem : function(prefix,id) {
         console.log("REMOVING LIST ITEM WITH ID " + id);
-        $("#tableItem" + id).remove();
+        $("#" + prefix + id).remove();
     },
-    updateListItem : function(listItem, callbackFunction) {
+    updateListItem : function(settings, listItem, callbackFunction) {
         var self = this;
-        console.log("updating list item = ");
-        console.log(listItem);
-        var item = $("#tableItem" + listItem.id);
+        var item = $("#" + settings.prefix + listItem.id);
+        console.log(item);
         if (item.length > 0) {
-            item.unbind().replaceWith(this.getTableItemHtml("tableListItemTemplate",listItem));
-            var item = $("#tableItem" + listItem.id);  //need to pick it up again to be able to bind to it
+            console.log("updating list item = ");
+            console.log(listItem);
+            console.log("SEATED = " + listItem.seated);
+            item.unbind().replaceWith(this.getTableItemHtml(settings.listItemTemplateId,listItem));
+            var item = $("#" + settings.prefix + listItem.id);  //need to pick it up again to be able to bind to it
             item.click(function(){
                 callbackFunction(listItem);
             });
@@ -132,23 +153,35 @@ Poker.LobbyLayoutManager = Class.extend({
         console.log("update complete");
     },
     updateTableItem : function(listItem) {
-        this.updateListItem(listItem,this.getTableItemCallback());
+        this.updateListItem(this.tableListSettings,listItem,this.getTableItemCallback());
     },
+
     updateTournamentItem : function(listItem) {
-        this.updateListItem(listItem,this.getTournamentItemCallback());
+        this.updateListItem(this.tournamentListSettings,listItem,this.getTournamentItemCallback());
     },
-    createLobbyList : function(listItems, listItemTemplateId, listItemCallback) {
+    updateSitAndGoItem : function(listItem) {
+        this.updateListItem(this.sitAndGoListSettings,listItem,this.getTournamentItemCallback());
+    },
+    createLobbyList : function(listItems, settings, listItemCallback) {
         $('#lobby').show();
-        $("#tableListItemContainer").empty();
+
+        var container = $("#tableListContainer");
+        container.empty();
+
+        var template = this.templateManager.getRenderTemplate(settings.listTemplateId);
+
+        $("#tableListContainer").html(template.render({}));
+
+        var listContainer =  container.find(".table-list-item-container");
 
         var self = this;
         var count = 0;
         $.each(listItems, function (i, item) {
             if(self.includeData(item)) {
                 count++;
-                var html = self.getTableItemHtml(listItemTemplateId,item);
-                $("#tableListItemContainer").append(html);
-                $("#tableItem" + item.id).click(function(){
+                var html = self.getTableItemHtml(settings.listItemTemplateId,item);
+                listContainer.append(html);
+                $("#" + settings.prefix + item.id).click(function(){
                     listItemCallback(item);
                 });
             }

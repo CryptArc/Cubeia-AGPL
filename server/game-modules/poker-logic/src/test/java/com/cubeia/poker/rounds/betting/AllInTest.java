@@ -73,9 +73,10 @@ public class AllInTest extends TestCase  {
         addPlayers(p);
 
         DefaultPlayerToActCalculator playerToActCalculator = new DefaultPlayerToActCalculator();
-        ActionRequestFactory actionRequestFactory = new ActionRequestFactory(new NoLimitBetStrategy());
+        NoLimitBetStrategy betStrategy = new NoLimitBetStrategy(0);
+        ActionRequestFactory actionRequestFactory = new ActionRequestFactory(betStrategy);
         TexasHoldemFutureActionsCalculator futureActionsCalculator = new TexasHoldemFutureActionsCalculator();
-        round = new BettingRound(0, context, serverAdapterHolder, playerToActCalculator, actionRequestFactory, futureActionsCalculator, 0);
+        round = new BettingRound(0, context, serverAdapterHolder, playerToActCalculator, actionRequestFactory, futureActionsCalculator, betStrategy);
 
         ArgumentCaptor<ActionRequest> captor = ArgumentCaptor.forClass(ActionRequest.class);
         verify(serverAdapter).requestAction(captor.capture());

@@ -21,6 +21,10 @@ Poker.TableLayoutManager = Class.extend({
     potTransferTemplate : null,
     soundManager : null,
     tableId : -1,
+
+    /**
+     * @type {Poker.BuyInDialog}
+     */
     buyInDialog : null,
     communityCardsContainer : null,
     mainPotContainer : null,
@@ -56,14 +60,14 @@ Poker.TableLayoutManager = Class.extend({
         this.soundManager = new Poker.SoundManager(Poker.AppCtx.getSoundRepository(), tableId);
         var self = this;
         var actionCallback = function(actionType,amount){
-            console.log("ACTION = ");
-            console.log(actionType);
-            console.log(amount);
-            console.log(self.tableId);
+            if(actionType.id == Poker.ActionType.SIT_IN.id) {
+                self.handleSitIn();
+            }
             new Poker.PokerRequestHandler(self.tableId).onMyPlayerAction(actionType,amount);
+
         };
         this.buyInDialog = new Poker.BuyInDialog();
-        this.myActionsManager = new Poker.MyActionsManager(this.tableView, actionCallback);
+        this.myActionsManager = new Poker.MyActionsManager(this.tableView, tableId, actionCallback, false);
         this.templateManager = templateManager;
         this.capacity = capacity || this.capacity;
         this.seatTemplate = $("#seatTemplate").html();
@@ -78,10 +82,16 @@ Poker.TableLayoutManager = Class.extend({
         $(this.tableView).show();
         this.communityCardsContainer = this.tableView.find(".community-cards");
         this.mainPotContainer = this.tableView.find(".main-pot");
-        this.tableInfoElement = this.tableView.find(".table-info")
+        this.tableInfoElement = this.tableView.find(".table-info");
         tableViewContainer.show();
         this.cardElements = new Poker.Map();
         this.clock = new Poker.Clock(this.tableInfoElement.find(".time-to-next-level-value"));
+    },
+    handleSitIn : function() {
+        var myPlayerSeat = this.seats.get(this.myPlayerSeatId);
+        if(myPlayerSeat!=null) {
+            myPlayerSeat.postBlinds();
+        }
 
     },
     onActivateView : function() {
@@ -129,7 +139,7 @@ Poker.TableLayoutManager = Class.extend({
         var elementId = null;
         if (player.id == Poker.MyPlayer.id) {
             elementId = "myPlayerSeat-"+this.tableId;
-            seat = new Poker.MyPlayerSeat(this.tableId,elementId,seatId,player,this.templateManager,this.myActionsManager,this.animationManager);
+            seat = new Poker.MyPlayerSeat(this.tableId,elementId,seatId,player,this.myActionsManager,this.animationManager);
             this.myPlayerSeatId = seatId;
             this._calculateSeatPositions();
             if(this.currentDealer!=-1) {
@@ -140,8 +150,7 @@ Poker.TableLayoutManager = Class.extend({
         } else {
 
             elementId = "seat"+seatId+"-"+this.tableId;
-            seat = new Poker.Seat(elementId, seatId,player,this.templateManager,this.animationManager);
-
+            seat = new Poker.Seat(elementId, seatId, player, this.animationManager);
             seat.setSeatPos(-1,this._getNormalizedSeatPosition(seatId));
 
             this.seats.put(seatId,seat);
@@ -289,13 +298,13 @@ Poker.TableLayoutManager = Class.extend({
         var t = this.templateManager.getTemplate("mainPotTemplate");
         this.mainPotContainer.html(Mustache.render(t,{amount : Poker.Utils.formatCurrency(amount)}));
     },
-    onRequestPlayerAction : function(player,allowedActions,timeToAct,mainPot){
+    onRequestPlayerAction : function(player,allowedActions,timeToAct,mainPot,fixedLimit){
         var seats = this.seats.values();
         for (var s = 0; s<seats.length; s++) {
             seats[s].inactivateSeat();
         }
         var seat = this.getSeatByPlayerId(player.id);
-        seat.activateSeat(allowedActions,timeToAct,mainPot);
+        seat.activateSeat(allowedActions,timeToAct,mainPot,fixedLimit);
     },
     onLeaveTableSuccess : function() {
         $(this.tableView).hide();

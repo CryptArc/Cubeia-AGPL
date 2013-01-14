@@ -121,7 +121,7 @@
 
     }
 
-    .type, .seated, .blinds {
+    .type, .seated, .blinds, .status, .buy-in {
         float:left;
         width: 12%;
         font-size:120%;
@@ -158,7 +158,100 @@
     }
 
 }
+.table-item.sit-and-go, .table-item-header.sit-and-go {
+    .table-name {
+        font-size:140%;
+        width:50%;
+        line-height: 1.4;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+    .status {
+        font-weight:normal;
+        &.REGISTERING {
+            color: @mainGreen;
+        }
+        &.RUNNING {
+            color: #ff3333;
+        }
+    }
+    .play-text {
+        float:right;
+        width:8%;
+        text-align: right;
+        font-size:350%;
+        color:@mainGreen;
+        line-height: 0.5;
+    }
+}
+.table-item-header.sit-and-go {
+    .status {
+        font-weight: bold;
+    }
+}
+.table-item.tournament, .table-item-header.tournament {
 
+    .table-name {
+        font-size:140%;
+        width:38%;
+        line-height: 1.7;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+    .group {
+        width:22%;
+        float: left;
+        margin-top:-1%;
+    }
+    .registered {
+        width:15%;
+        float:left;
+        font-size:120%;
+        line-height: 2;
+        text-align: center;
+        font-weight: bold;
+        color:@grayText;
+    }
+    .buy-in {
+        width:15%;
+        float:left;
+        font-size:120%;
+        line-height: 2;
+        text-align: center;
+        font-weight: bold;
+        color:@grayText;
+    }
+    .status {
+        font-weight:normal;
+        &.REGISTERING {
+            color: @mainGreen;
+        }
+        &.RUNNING {
+            color: #ff3333;
+        }
+    }
+
+    .play-text {
+        float:right;
+        width:8%;
+        text-align: right;
+        font-size:350%;
+        color:@mainGreen;
+        line-height: 0.5;
+    }
+    .start-time {
+        font-weight: normal;
+    }
+}
+.table-item-header.tournament {
+    .group {
+        font-size: 120%;
+        line-height: 2;
+        margin-top:0%;
+    }
+}
 .table-item-header {
     padding: 1% 1%;
     color:@grayText;
@@ -200,12 +293,11 @@
     padding-top:1%;
     width:100%;
     clear:both;
-
     display: table;
 }
 .filter-button {
     display: block;
-    background-color:@buttonGrayBg;
+    background-color: @buttonGrayBg;
     padding: 0.5em;
     font-size: 1.6em;
     .border-radius(4px);

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.SortedMap;
 
 public class PokerUtils {
+
     /**
      * Gets the next element after the given element in a sorted map.
      * <p/>
@@ -36,6 +37,7 @@ public class PokerUtils {
      * @return the next element after the given element in a sorted map.
      */
     public static <K, V> V getElementAfter(K fromKey, SortedMap<K, V> sortedMap) {
+        if (sortedMap.isEmpty()) return null;
         SortedMap<K, V> tailMap = sortedMap.tailMap(fromKey);
         V result;
         V fromValue = sortedMap.get(fromKey);

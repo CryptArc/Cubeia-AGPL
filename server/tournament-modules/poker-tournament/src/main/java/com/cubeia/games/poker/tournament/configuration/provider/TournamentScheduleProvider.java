@@ -28,4 +28,6 @@ import java.util.Collection;
 public interface TournamentScheduleProvider {
 
     Collection<ScheduledTournamentConfiguration> getTournamentSchedule();
+
+    ScheduledTournamentConfiguration getTournamentConfiguration(int id);
 }

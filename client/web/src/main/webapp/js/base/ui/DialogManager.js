@@ -39,10 +39,10 @@ Poker.DialogManager = Class.extend({
     /**
      * Displays a generic dialog with a header, message and a continue button
      * example
-     * displayManager.displayGenericDialog({header : "header" , message:"message"});
+     * displayManager.displayGenericDialog({header : "header" , message:"message", okButtonText : "reload"});
      * @param content
      */
-    displayGenericDialog : function(content) {
+    displayGenericDialog : function(content,okCallback) {
           if(content.header) {
              $("#genericDialog h1").html(content.header);
           } else {
@@ -54,7 +54,14 @@ Poker.DialogManager = Class.extend({
               $("#genericDialog .message").hide();
           }
          var self = this;
-         this.displayDialog("genericDialog",function(){self.close();},null);
+         if(content.okButtonText!="undefined") {
+            $("#genericDialog .dialog-ok-button").html(content.okButtonText);
+         }
+         if(okCallback=="undefined") {
+            this.displayDialog("genericDialog",function(){self.close();},null);
+         } else {
+             this.displayDialog("genericDialog",function(){ okCallback(); } , null);
+         }
 
 
     },

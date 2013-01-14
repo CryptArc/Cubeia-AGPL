@@ -36,4 +36,9 @@ public class RealTournamentScheduleProvider implements TournamentScheduleProvide
     public Collection<ScheduledTournamentConfiguration> getTournamentSchedule() {
         return dao.getScheduledTournamentConfigurations();
     }
+
+    @Override
+    public ScheduledTournamentConfiguration getTournamentConfiguration(int id) {
+        return dao.getScheduledTournamentConfiguration(id);
+    }
 }

@@ -35,7 +35,7 @@ import com.cubeia.backend.cashgame.exceptions.CloseSessionFailedException;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
 import com.cubeia.backend.cashgame.exceptions.OpenSessionFailedException;
 import com.cubeia.backend.cashgame.exceptions.ReserveFailedException;
-import com.cubeia.games.poker.common.Money;
+import com.cubeia.games.poker.common.money.Money;
 
 /**
  * Cash game backend abstraction.

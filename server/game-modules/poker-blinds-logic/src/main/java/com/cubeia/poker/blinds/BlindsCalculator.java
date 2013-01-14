@@ -54,7 +54,7 @@ public class BlindsCalculator implements Serializable {
     private Collection<? extends BlindsPlayer> players;
 
     /**
-     * Maps players to seat ids. Only contains seated players.
+     * Maps seat ids to players. Only contains seated players.
      */
     private SortedMap<Integer, BlindsPlayer> seatedPlayers;
 
@@ -107,6 +107,10 @@ public class BlindsCalculator implements Serializable {
         } else {
             return null;
         }
+    }
+
+    public void removePlayerFromCurrentHand(BlindsPlayer player) {
+        seatedPlayers.remove(player.getSeatId());
     }
 
     private void clearLists() {
@@ -593,11 +597,13 @@ public class BlindsCalculator implements Serializable {
             nextBigBlindPlayer = getPlayerInSeat(blindsInfo.getBigBlindSeatId());
         } else {
             nextBigBlindPlayer = getElementAfter(lastAskedSeatId, seatedPlayers);
-            boolean onSmallBlind = nextBigBlindPlayer.getSeatId() == smallBlindSeatId;
-            boolean betweenDealerAndSmall = isBetween(nextBigBlindPlayer.getSeatId(), dealerSeatId, smallBlindSeatId);
-            if (onSmallBlind || betweenDealerAndSmall) {
-                // Small and big blind cannot be the same player, hand should be canceled.
-                nextBigBlindPlayer = null;
+            if (nextBigBlindPlayer != null) {
+                boolean onSmallBlind = nextBigBlindPlayer.getSeatId() == smallBlindSeatId;
+                boolean betweenDealerAndSmall = isBetween(nextBigBlindPlayer.getSeatId(), dealerSeatId, smallBlindSeatId);
+                if (onSmallBlind || betweenDealerAndSmall) {
+                    // Small and big blind cannot be the same player, hand should be canceled.
+                    nextBigBlindPlayer = null;
+                }
             }
         }
 

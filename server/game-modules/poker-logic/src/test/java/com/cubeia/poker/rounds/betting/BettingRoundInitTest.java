@@ -17,17 +17,16 @@
 
 package com.cubeia.poker.rounds.betting;
 
-import com.cubeia.poker.adapter.ServerAdapterHolder;
-import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.adapter.ServerAdapter;
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.timing.impl.DefaultTimingProfile;
 import com.cubeia.poker.variant.texasholdem.TexasHoldemFutureActionsCalculator;
 import com.google.common.base.Predicate;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -39,8 +38,10 @@ import java.util.TreeMap;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class BettingRoundInitTest {
@@ -55,6 +56,8 @@ public class BettingRoundInitTest {
     private PlayerToActCalculator playertoActCalculator;
     @Mock
     private ActionRequestFactory actionRequestFactory;
+    @Mock
+    private BetStrategy betStrategy;
 
     @Mock
     private PokerContext context;
@@ -78,7 +81,6 @@ public class BettingRoundInitTest {
     public void setup() {
         initMocks(this);
 
-        int entryBetLevel = 20;
         when(player2.getId()).thenReturn(player2Id);
 
         currentHandSeatingMap = new TreeMap<Integer, PokerPlayer>();
@@ -91,7 +93,7 @@ public class BettingRoundInitTest {
         when(context.getTimingProfile()).thenReturn(new DefaultTimingProfile());
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
         TexasHoldemFutureActionsCalculator futureActionsCalculator = new TexasHoldemFutureActionsCalculator();
-        round = new BettingRound(dealerSeatId, context, serverAdapterHolder, playertoActCalculator, actionRequestFactory, futureActionsCalculator, entryBetLevel);
+        round = new BettingRound(dealerSeatId, context, serverAdapterHolder, playertoActCalculator, actionRequestFactory, futureActionsCalculator, betStrategy);
     }
 
     @Test
@@ -103,7 +105,8 @@ public class BettingRoundInitTest {
         when(actionRequestFactory.createFoldCheckBetActionRequest(Mockito.any(BettingRound.class), Mockito.eq(player2))).thenReturn(actionRequest);
         when(player2.getActionRequest()).thenReturn(actionRequest);
 
-        round = new BettingRound(dealerSeatId, context, serverAdapterHolder, playertoActCalculator, actionRequestFactory, new TexasHoldemFutureActionsCalculator(), 0);
+        round = new BettingRound(dealerSeatId, context, serverAdapterHolder, playertoActCalculator, actionRequestFactory,
+                                 new TexasHoldemFutureActionsCalculator(), betStrategy);
 
         assertThat(round.playerToAct, is(player2Id));
         verify(player2).setActionRequest(actionRequest);

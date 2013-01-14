@@ -21,44 +21,34 @@ import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.firebase.api.service.Service;
 import com.cubeia.firebase.api.service.ServiceContext;
 import com.cubeia.games.poker.common.mongo.DatabaseStorageConfiguration;
-import com.cubeia.games.poker.common.mongo.MongoStorage;
+import com.cubeia.poker.tournament.history.api.HistoricPlayer;
 import com.cubeia.poker.tournament.history.api.HistoricTournament;
 import com.cubeia.poker.tournament.history.api.PlayerPosition;
 import com.cubeia.poker.tournament.history.api.TournamentEvent;
+import com.cubeia.poker.tournament.history.dao.HistoricTournamentDao;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
-import com.mongodb.util.JSON;
+import com.google.code.morphia.Morphia;
+import com.mongodb.Mongo;
 import org.apache.log4j.Logger;
-import org.bson.types.ObjectId;
 
-// Use Morphia instead.
+import java.net.UnknownHostException;
+import java.util.Date;
+import java.util.List;
+
 public class DatabaseStorageService implements TournamentHistoryPersistenceService, Service {
 
     private static final Logger log = Logger.getLogger(DatabaseStorageService.class);
 
-    private MongoStorage mongoStorage;
-
-    private DatabaseStorageConfiguration configuration;
-
-    private static final String TOURNAMENT_COLLECTION = "tournaments";
-
-    private Gson gson = createGson();
+    private HistoricTournamentDao dao;
 
     @Override
-    public String createHistoricTournament() {
-        HistoricTournament tournament = new HistoricTournament();
-        DBObject dbObject = persist(tournament);
-        Object id = dbObject.get("_id");
-        return id.toString();
+    public String createHistoricTournament(String name, int id, int templateId, boolean isSitAndGo) {
+        return dao.createHistoricTournament(name, id, templateId, isSitAndGo);
     }
 
     @Override
     public HistoricTournament getHistoricTournament(String id) {
-        DBObject dbObject = mongoStorage.getById(new ObjectId(id), TOURNAMENT_COLLECTION);
-        return createGson().fromJson(dbObject.toString(), HistoricTournament.class);
+        return dao.getHistoricTournament(id);
     }
 
     @Override
@@ -75,6 +65,7 @@ public class DatabaseStorageService implements TournamentHistoryPersistenceServi
     @Override
     public void statusChanged(String status, String historicId, long now) {
         addEvent(historicId, new TournamentEvent(now, "status changed", status));
+        dao.setStatus(historicId, status);
     }
 
     @Override
@@ -83,33 +74,41 @@ public class DatabaseStorageService implements TournamentHistoryPersistenceServi
     }
 
     @Override
-    public void setStartTime(String historicId, long date) {
-        setProperty(historicId, "startTime", date);
+    public void setStartTime(String historicId, long now) {
+        dao.setStartTime(historicId, now);
     }
 
     @Override
-    public void setEndTime(String historicId, long date) {
-        setProperty(historicId, "endTime", date);
+    public void setEndTime(String historicId, long now) {
+        dao.setEndTime(historicId, now);
     }
 
     @Override
     public void setName(String historicId, String name) {
-        setProperty(historicId, "name", name);
+        dao.setName(historicId, name);
     }
 
     @Override
     public void addTable(String historicId, String externalTableId) {
-        pushObject(historicId, externalTableId, "tables");
+        dao.addTable(historicId, externalTableId);
     }
 
     @Override
-    public void playerRegistered(String historicId, int playerId, long now) {
-        addEvent(historicId, new TournamentEvent(now, "player registered", String.valueOf(playerId)));
+    public void playerRegistered(String historicId, HistoricPlayer player, long now) {
+        addEvent(historicId, new TournamentEvent(now, "player registered", String.valueOf(player.getId())));
+        dao.addRegisteredPlayer(historicId, player);
+    }
+
+    @Override
+    public void playerReRegistered(String historicId, int playerId, long now) {
+        addEvent(historicId, new TournamentEvent(now, "player re-registered", String.valueOf(playerId)));
     }
 
     @Override
     public void playerUnregistered(String historicId, int playerId, long now) {
         addEvent(historicId, new TournamentEvent(now, "player un-registered", String.valueOf(playerId)));
+        dao.removeRegisteredPlayer(historicId, playerId);
+        removeRegisteredPlayer(historicId, playerId);
     }
 
     @Override
@@ -127,62 +126,51 @@ public class DatabaseStorageService implements TournamentHistoryPersistenceServi
         addEvent(historicId, new TournamentEvent(now, "player failed opening session: " + message, String.valueOf(playerId)));
     }
 
-    private void setProperty(String historicId, String propertyName, Object value) {
-        BasicDBObject tournamentId = new BasicDBObject().append("_id", new ObjectId(historicId));
-        DBObject update = new BasicDBObject().append("$set", new BasicDBObject(propertyName, value));
-        log.debug("Storing property " + propertyName + " to " + value + " for " + historicId);
-        mongoStorage.update(tournamentId, update, TOURNAMENT_COLLECTION);
+    @Override
+    public void setScheduledStartTime(String historicId, Date startTime) {
+        dao.setScheduledStartTime(historicId, startTime);
+    }
+
+    @Override
+    public List<HistoricTournament> findTournamentsToResurrect() {
+        return dao.findTournamentsToResurrect();
+    }
+
+    private void removeRegisteredPlayer(String historicId, int playerId) {
+        dao.removeRegisteredPlayer(historicId, playerId);
     }
 
     private void addEvent(String historicId, TournamentEvent event) {
-        pushObject(historicId, event, "events");
+        dao.addEvent(historicId, event);
     }
 
     private void addPlayerPosition(String historicId, int playerId, int position, int payoutInCents) {
-        pushObject(historicId, new PlayerPosition(playerId, position, payoutInCents), "positions");
-    }
-
-    private void pushObject(String historicId, Object object, String array) {
-        log.debug("Pushing " + object + " to " + array + " for tournament " + historicId);
-        BasicDBObject tournamentId = new BasicDBObject().append("_id", new ObjectId(historicId));
-        BasicDBObject updateCommand = new BasicDBObject().append("$push", new BasicDBObject(array, JSON.parse(gson.toJson(object))));
-        mongoStorage.update(tournamentId, updateCommand, TOURNAMENT_COLLECTION);
-    }
-
-    private DBObject persist(HistoricTournament tournament) {
-        DBObject dbObject = (DBObject) JSON.parse(gson.toJson(tournament));
-        mongoStorage.persist(dbObject, TOURNAMENT_COLLECTION);
-        return dbObject;
-    }
-
-    private Gson createGson() {
-        GsonBuilder b = new GsonBuilder();
-        b.setPrettyPrinting();
-        return b.create();
+        dao.addPlayerPosition(historicId, new PlayerPosition(playerId, position, payoutInCents));
     }
 
     protected DatabaseStorageConfiguration getConfiguration(ServiceContext context) {
         return new DatabaseStorageConfiguration().load(context.getServerConfigDirectory().getAbsolutePath());
     }
 
-    protected MongoStorage getMongoStorage() {
-        return new MongoStorage(configuration);
-    }
-
     @Override
     public void init(ServiceContext context) throws SystemException {
-        configuration = getConfiguration(context);
-        mongoStorage = getMongoStorage();
+        DatabaseStorageConfiguration configuration = getConfiguration(context);
+        try {
+            Mongo mongo = new Mongo(configuration.getHost(), configuration.getPort());
+            dao = new HistoricTournamentDao(new Morphia().createDatastore(mongo, configuration.getDatabaseName()));
+        } catch (UnknownHostException e) {
+            throw new SystemException("Failed initializing datasource", e);
+        }
     }
 
     @Override
     public void start() {
-        mongoStorage.connect();
+        log.debug("Starting DatabaseStorageService.");
     }
 
     @Override
     public void stop() {
-        mongoStorage.disconnect();
+        log.debug("Stopping DatabaseStorageService.");
     }
 
     @Override

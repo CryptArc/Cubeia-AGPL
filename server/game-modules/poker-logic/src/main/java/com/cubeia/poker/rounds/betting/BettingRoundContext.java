@@ -22,11 +22,10 @@ import com.cubeia.poker.player.PokerPlayer;
 public interface BettingRoundContext {
 
     /**
-     * Gets the min bet in this betting round.
+     * Returns true if betting is capped.
      *
-     * @return the min bet
      */
-    public long getMinBet();
+    boolean isBettingCapped();
 
     /**
      * Gets the currently highest bet in this betting round.
@@ -36,18 +35,34 @@ public interface BettingRoundContext {
     public long getHighestBet();
 
     /**
-     * Gets the size of the last bet or raise.
+     * Gets the currently highest (complete) bet in this betting round.
+     *
+     * With a complete bet we mean that an all-in that does not take us to the next bet level does not count.
+     * For example, player A bets $10 and player B goes all-in for $12.
+     *
+     * @return the currently highest bet in this betting round
+     */
+    public long getHighestCompleteBet();
+
+
+    /**
+     * Gets the size of the last complete bet or raise.
      *
      * @return the size of the last bet or raise
      */
-    public long getSizeOfLastBetOrRaise();
+    public long getSizeOfLastCompleteBetOrRaise();
 
     /**
-     * Checks whether all other plahyers in this round are all in.
+     * Checks whether all other players in this round are all in.
      *
      * @return <code>true</code> if so, <code>false</code> otherwise
      */
     public boolean allOtherNonFoldedPlayersAreAllIn(PokerPlayer thisPlayer);
 
-    public long getNextValidRaiseLevel();
+    /**
+     * Gets the pot size including all sides pots
+     * @return the size of the pot
+     */
+    public long getPotSize();
+
 }

@@ -18,7 +18,7 @@
 package com.cubeia.backend.cashgame.dto;
 
 import com.cubeia.backend.cashgame.PlayerSessionId;
-import com.cubeia.games.poker.common.Money;
+import com.cubeia.games.poker.common.money.Money;
 
 import java.io.Serializable;
 
@@ -38,16 +38,18 @@ public class HandResult implements Serializable {
     private final Money rake;
 
     private final int seat;
+    private final int operator;
     private final Money startingBalance;
 
     public HandResult(PlayerSessionId playerSession, Money aggregatedBet,
-                      Money win, Money rake, int seat, Money startingBalance) {
+                      Money win, Money rake, int seat, int operator, Money startingBalance) {
 
         this.playerSession = playerSession;
         this.aggregatedBet = aggregatedBet;
         this.win = win;
         this.rake = rake;
         this.seat = seat;
+        this.operator = operator;
         this.startingBalance = startingBalance;
     }
 
@@ -69,6 +71,10 @@ public class HandResult implements Serializable {
 
     public int getSeat() {
         return seat;
+    }
+
+    public int getOperator() {
+        return operator;
     }
 
     public Money getStartingBalance() {

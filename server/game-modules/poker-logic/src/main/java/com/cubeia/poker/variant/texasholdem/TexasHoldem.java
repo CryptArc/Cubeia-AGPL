@@ -17,16 +17,6 @@
 
 package com.cubeia.poker.variant.texasholdem;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
@@ -47,9 +37,11 @@ import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
 import com.cubeia.poker.rounds.ante.AnteRound;
 import com.cubeia.poker.rounds.betting.ActionRequestFactory;
+import com.cubeia.poker.rounds.betting.BetStrategy;
+import com.cubeia.poker.rounds.betting.BetStrategyFactory;
 import com.cubeia.poker.rounds.betting.BettingRound;
+import com.cubeia.poker.rounds.betting.BettingRoundName;
 import com.cubeia.poker.rounds.betting.DefaultPlayerToActCalculator;
-import com.cubeia.poker.rounds.betting.NoLimitBetStrategy;
 import com.cubeia.poker.rounds.blinds.BlindsRound;
 import com.cubeia.poker.rounds.dealing.DealCommunityCardsRound;
 import com.cubeia.poker.rounds.dealing.DealExposedPocketCardsRound;
@@ -61,6 +53,17 @@ import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.variant.AbstractGameType;
 import com.cubeia.poker.variant.HandResultCreator;
 import com.google.common.annotations.VisibleForTesting;
+import org.apache.log4j.Logger;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import static com.cubeia.poker.rounds.betting.BettingRoundName.NOTHING;
+import static com.cubeia.poker.rounds.betting.BettingRoundName.PRE_FLOP;
+import static com.cubeia.poker.rounds.betting.BettingRoundName.RIVER;
 
 public class TexasHoldem extends AbstractGameType implements RoundVisitor, Dealer {
 
@@ -68,14 +71,11 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
 
     private static transient Logger log = Logger.getLogger(TexasHoldem.class);
 
-    private Round currentRound;
-
     private Deck deck;
 
-    /**
-     * 0 = pre flop 1 = flop 2 = turn 3 = river
-     */
-    private int roundId;
+    private BettingRoundName roundName = NOTHING;
+
+    private Round currentRound;
 
     private final TexasHoldemHandCalculator handEvaluator = new TexasHoldemHandCalculator();
 
@@ -89,7 +89,7 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
 
     @Override
     public String toString() {
-        return "TexasHoldem, current round[" + currentRound + "] roundId[" + roundId + "] ";
+        return "TexasHoldem, current round[" + currentRound + "] round[" + roundName + "] ";
     }
 
     @Override
@@ -100,7 +100,7 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
     private void initHand() {
         deck = new StandardDeck(new Shuffler<Card>(getServerAdapter().getSystemRNG()), new IndexCardIdGenerator());
         currentRound = new BlindsRound(context, serverAdapterHolder, new BlindsCalculator(new NonRandomSeatProvider()));
-        roundId = 0;
+        roundName = NOTHING;
     }
 
     @Override
@@ -116,6 +116,7 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
     }
 
     private void dealPocketCards(PokerPlayer p, int n) {
+        log.debug("Dealing cards to " + p.getId());
         for (int i = 0; i < n; i++) {
             p.addPocketCard(deck.deal(), false);
         }
@@ -139,32 +140,28 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
         notifyPotAndRakeUpdates(Collections.<PotTransition>emptyList());
     }
 
-    private void startBettingRound() {
-        log.trace("Starting new betting round. Round ID: " + (roundId + 1));
-        currentRound = createBettingRound(context.getBlindsInfo().getDealerButtonSeatId());
-        roundId++;
+    private void startBettingRound(int seatIdToStartBettingFrom) {
+        roundName = roundName.next();
+        log.debug("Starting new betting round. Round ID: " + roundName);
+        currentRound = createBettingRound(seatIdToStartBettingFrom);
     }
 
     private BettingRound createBettingRound(int seatIdToStartBettingFrom) {
         DefaultPlayerToActCalculator playerToActCalculator = new DefaultPlayerToActCalculator();
-        ActionRequestFactory requestFactory = new ActionRequestFactory(new NoLimitBetStrategy());
+        PokerSettings settings = context.getSettings();
+        BetStrategy betStrategy = BetStrategyFactory.createBetStrategy(settings.getBetStrategyType(), settings.getBigBlindAmount(),
+                                                                       roundName.isDoubleBetRound());
+        ActionRequestFactory requestFactory = new ActionRequestFactory(betStrategy);
         TexasHoldemFutureActionsCalculator futureActionsCalculator = new TexasHoldemFutureActionsCalculator();
-        int betLevel = getBetLevel(roundId, context.getSettings().getBigBlindAmount());
-        return new BettingRound(seatIdToStartBettingFrom, context, serverAdapterHolder, playerToActCalculator, requestFactory, futureActionsCalculator, betLevel);
-    }
-
-    private int getBetLevel(int roundId, int bigBlindAmount) {
-        int betLevel = (roundId < 2) ? bigBlindAmount : bigBlindAmount * 2;
-        log.debug("Bet level for round " + roundId + " = " + betLevel);
-        return betLevel;
+        return new BettingRound(seatIdToStartBettingFrom, context, serverAdapterHolder, playerToActCalculator, requestFactory, futureActionsCalculator, betStrategy);
     }
 
     private boolean isHandFinished() {
-        return (roundId >= 3 || context.countNonFoldedPlayers() <= 1);
+        return (roundName == RIVER || context.countNonFoldedPlayers() <= 1);
     }
 
     public void dealCommunityCards() {
-        if (roundId == 0) {
+        if (roundName == PRE_FLOP) {
             dealCommunityCards(3);
         } else {
             dealCommunityCards(1);
@@ -287,14 +284,14 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
         } else {
             updateBlindsInfo(blindsRound);
             dealPocketCards();
-            prepareBettingRound();
+            startBettingRound(context.getBlindsInfo().getBigBlindSeatId());
         }
     }
 
     @Override
     public void visit(DealCommunityCardsRound round) {
         updateHandStrengths();
-        startBettingRound();
+        startBettingRound(context.getBlindsInfo().getDealerButtonSeatId());
     }
 
     private void updateHandStrengths() {
@@ -324,19 +321,18 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
         throw new UnsupportedOperationException(round.getClass().getSimpleName() + " round not allowed in Texas Holdem");
     }
 
-    private void prepareBettingRound() {
-        currentRound = createBettingRound(context.getBlindsInfo().getBigBlindSeatId());
-    }
-
     private void updateBlindsInfo(BlindsRound blindsRound) {
         context.setBlindsInfo(blindsRound.getBlindsInfo());
     }
 
     private void dealPocketCards() {
+        log.debug("Dealing pocket cards.");
         for (PokerPlayer p : context.getCurrentHandSeatingMap().values()) {
-            if (!p.isSittingOut()) {
-                dealPocketCards(p, 2);
-            }
+            /*
+             * Note, not checking if the player is sitting in, if he was sitting in at hand start (and thus ended up in the current hand seating map,
+             * he should still be sitting in. Any player who declined the entry bet should also already have been removed from this map.
+             */
+            dealPocketCards(p, 2);
         }
         updateHandStrengths();
     }

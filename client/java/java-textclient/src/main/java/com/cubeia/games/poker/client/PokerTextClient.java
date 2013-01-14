@@ -92,7 +92,7 @@ public class PokerTextClient extends SimpleTextClient {
         } else if (args[0].equals("buyin")) {
             int tableId = Integer.parseInt(args[1]);
             BuyInRequest packet = new BuyInRequest();
-            packet.amount = Integer.parseInt(args[2]);
+            packet.amount = "" + Integer.parseInt(args[2]);
             packet.sitInIfSuccessful = true;
             send(tableId, packet);
         } else if (args[0].equals("tourlobby")) {
@@ -205,7 +205,6 @@ public class PokerTextClient extends SimpleTextClient {
                     "\n\t java PokerTextClient 4123 localhost");
             return;
         }
-
 
         int hostIndex = 0;
         int port = 4123; // Default

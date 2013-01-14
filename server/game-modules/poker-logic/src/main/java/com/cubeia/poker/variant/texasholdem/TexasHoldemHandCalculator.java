@@ -58,6 +58,9 @@ public class TexasHoldemHandCalculator implements HandCalculator, HandTypeEvalua
      * @return the best HandStrength found.
      */
     protected HandStrength getBestCombinationHandStrength(Hand hand, int minElements) {
+        if (hand == null || hand.getCards() == null || hand.getCards().isEmpty()) {
+            return new HandStrength(HandType.NOT_RANKED);
+        }
         List<HandStrength> allPossibleHands = new ArrayList<HandStrength>();
         Combinator<Card> combinator = new Combinator<Card>(hand.getCards(), minElements);
         for (List<Card> cards : combinator) {

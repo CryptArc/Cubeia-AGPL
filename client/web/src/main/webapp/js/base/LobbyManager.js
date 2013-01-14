@@ -12,6 +12,8 @@ Poker.LobbyManager = Class.extend({
 
     currentScroll:null,
 
+    sitAndGoState : false,
+
     /**
      * @type Poker.LobbyLayoutManager
      */
@@ -50,18 +52,19 @@ Poker.LobbyManager = Class.extend({
             console.log("duplicate found - tableid: " + tableSnapshot.tableid);
         }
     },
-    handleSitAndGoSnapshotList : function(sitAndGoSnapshotList) {
-        for (var i = 0; i < sitAndGoSnapshotList.length; i++) {
-            this.handleTournamentSnapshot(sitAndGoSnapshotList[i]);
-        }
-        this.lobbyLayoutManager.createTournamentList(this.lobbyListData);
-    },
     handleTournamentSnapshotList:function (tournamentSnapshotList) {
 
         for (var i = 0; i < tournamentSnapshotList.length; i++) {
             this.handleTournamentSnapshot(tournamentSnapshotList[i]);
+            console.log(tournamentSnapshotList[i]);
         }
-        this.lobbyLayoutManager.createTournamentList(this.lobbyListData);
+        if(tournamentSnapshotList.length>0 && tournamentSnapshotList[0].address.indexOf("/sitandgo")!=-1) {
+            this.sitAndGoState = true;
+            this.lobbyLayoutManager.createSitAndGoList(this.lobbyListData);
+        } else {
+            this.sitAndGoState = true;
+            this.lobbyLayoutManager.createTournamentList(this.lobbyListData);
+        }
     },
     handleTournamentSnapshot:function (snapshot) {
         if (this.findSitAndGo(snapshot.mttid) === null) {
@@ -85,15 +88,16 @@ Poker.LobbyManager = Class.extend({
         var tournamentData = this.findTournament(tournamentUpdate.mttid);
         if (tournamentData) {
             var registered = Poker.ProtocolUtils.readParam("REGISTERED", tournamentUpdate.params);
-            if (tournamentData.seated == registered) {
-                //console.log("on update, registered players the same, skipping update");
+            if (tournamentData.registered == registered) {
                 return;
             }
-            if (registered != undefined) tournamentData.seated = registered;
+            if (registered != undefined) tournamentData.registered = registered;
             var status = Poker.ProtocolUtils.readParam("STATUS", tournamentUpdate.params);
-            this.lobbyLayoutManager.updateTournamentItem(tournamentData);
-            console.log("Tournament " + tournamentData.id + "  updated, registered = " + tournamentData.seated);
-            console.log("Tournament update status = " + status);
+            if(this.sitAndGoState==true) {
+                this.lobbyLayoutManager.updateSitAndGoItem(tournamentData)
+            } else {
+                this.lobbyLayoutManager.updateTournamentItem(tournamentData);
+            }
             if (status == "FINISHED") {
                 Poker.AppCtx.getTournamentManager().tournamentFinished(tournamentUpdate.mttid);
             }
@@ -196,7 +200,7 @@ Poker.LobbyManager = Class.extend({
     },
     clearLobby : function () {
         this.lobbyListData = [];
-        $("#tableListItemContainer").empty();
+        $("#tableListContainer").empty();
     },
 
     getCapacity:function (id) {

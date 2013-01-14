@@ -24,6 +24,7 @@ import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.blinds.MissedBlindsStatus;
 import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.hand.ExposeCardsHolder;
@@ -37,7 +38,6 @@ import com.cubeia.poker.rake.LinearRakeWithLimitCalculator;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
 import com.cubeia.poker.result.RevealOrderCalculator;
-import com.cubeia.poker.settings.BetStrategyName;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.timing.impl.DefaultTimingProfile;
@@ -564,7 +564,8 @@ public class TexasHoldemTest {
 
     private PokerContext prepareContext(int numberOfPlayers) {
         BlindsLevel level = new BlindsLevel(10, 20, 10);
-        PokerSettings settings = new PokerSettings(level, 100, 5000, new DefaultTimingProfile(), 6, BetStrategyName.NO_LIMIT, rakeSettings, null);
+        BetStrategyType betStrategy = BetStrategyType.NO_LIMIT;
+        PokerSettings settings = new PokerSettings(level, betStrategy, 100, 5000, new DefaultTimingProfile(), 6, rakeSettings, null);
         PokerContext context = new PokerContext(settings);
         texas.setPokerContextAndServerAdapter(context, serverAdapterHolder);
         p = TestUtils.createMockPlayers(numberOfPlayers);

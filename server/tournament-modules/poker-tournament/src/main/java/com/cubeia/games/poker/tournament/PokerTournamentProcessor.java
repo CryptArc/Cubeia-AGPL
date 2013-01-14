@@ -36,15 +36,20 @@ import com.cubeia.firebase.guice.tournament.TournamentAssist;
 import com.cubeia.firebase.guice.tournament.TournamentHandler;
 import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
-import com.cubeia.games.poker.common.SystemTime;
+import com.cubeia.games.poker.common.time.SystemTime;
 import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
 import com.cubeia.games.poker.io.protocol.RequestBlindsStructure;
 import com.cubeia.games.poker.io.protocol.RequestPayoutInfo;
 import com.cubeia.games.poker.io.protocol.RequestTournamentLobbyData;
 import com.cubeia.games.poker.io.protocol.RequestTournamentPlayerList;
+import com.cubeia.games.poker.io.protocol.RequestTournamentRegistrationInfo;
 import com.cubeia.games.poker.io.protocol.RequestTournamentTable;
 import com.cubeia.games.poker.tournament.lobby.TournamentLobby;
+import com.cubeia.games.poker.tournament.lobby.TournamentLobbyFactory;
 import com.cubeia.games.poker.tournament.messages.CloseTournament;
+import com.cubeia.games.poker.tournament.messages.PlayerLeft;
+import com.cubeia.games.poker.tournament.util.PacketSender;
+import com.cubeia.games.poker.tournament.util.PacketSenderFactory;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
@@ -53,10 +58,14 @@ import org.apache.log4j.MDC;
 
 import java.io.IOException;
 
+/**
+ * The responsibility of this class is to un-marshal incoming messages and pass them on to the PokerTournament or TournamentLobby.
+ *
+ */
 public class PokerTournamentProcessor implements TournamentHandler, PlayerInterceptor, PlayerListener {
 
-    // Use %X{pokerid} in the layout pattern to include this information.
-    private static final String MDC_TAG = "tableid";
+    // Use %X{tournamentId} in the layout pattern to include this information.
+    private static final String MDC_TAG = "tournamentId";
 
     private static transient Logger log = Logger.getLogger(PokerTournamentProcessor.class);
 
@@ -65,9 +74,11 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
     @Inject
     private SystemTime dateFetcher;
 
-    /** Used for serializing and de-serializing packets to / from the client, with this protocol: {@link ProtocolObjectFactory}. */
     @Inject
-    private StyxSerializer serializer;
+    private PacketSenderFactory senderFactory;
+
+    @Inject
+    private TournamentLobbyFactory lobbyFactory;
 
     @Inject
     private TournamentAssist support;
@@ -126,6 +137,8 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
                 tournament.handleOpenSessionResponseFailed((OpenSessionFailedResponse) object);
             } else if (object instanceof CloseTournament) {
                 tournament.closeTournament();
+            } else if (object instanceof PlayerLeft) {
+                tournament.handlePlayerLeft((PlayerLeft) object);
             } else {
                 log.warn("Unexpected attachment: " + object);
             }
@@ -150,6 +163,8 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
                 prepareTournamentLobby(instance).sendTournamentLobbyDataTo(playerId);
             } else if (packet instanceof RequestTournamentTable) {
                 prepareTournamentLobby(instance).sendTournamentTableTo(playerId);
+            } else if (packet instanceof RequestTournamentRegistrationInfo) {
+                prepareTournamentLobby(instance).sendRegistrationInfoTo(playerId);
             }
         } catch (IOException e) {
             log.warn("Failed de-serializing " + action, e);
@@ -228,7 +243,8 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
         if (backend == null) {
             backend = instance.getServiceRegistry().getServiceInstance(CashGamesBackendService.class);
         }
-        tournament.injectTransientDependencies(instance, support, util.getStateSupport(instance), historyService, backend, dateFetcher);
+        PacketSender sender = senderFactory.create(instance.getMttNotifier(), instance);
+        tournament.injectTransientDependencies(instance, support, util.getStateSupport(instance), historyService, backend, dateFetcher, sender);
     }
 
     private PokerTournament prepareTournament(MttInstance instance) {
@@ -238,7 +254,10 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
     }
 
     private TournamentLobby prepareTournamentLobby(MttInstance instance) {
-        return new TournamentLobby(instance, serializer, util.getStateSupport(instance), util.getPokerState(instance), dateFetcher);
+        if (backend == null) {
+            backend = instance.getServiceRegistry().getServiceInstance(CashGamesBackendService.class);
+        }
+        return lobbyFactory.create(instance, util.getStateSupport(instance), util.getPokerState(instance), backend);
     }
 
     public void setHistoryService(TournamentHistoryPersistenceService historyService) {
@@ -252,5 +271,10 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
     @VisibleForTesting
     void setDateFetcher(SystemTime dateFetcher) {
         this.dateFetcher = dateFetcher;
+    }
+
+    @VisibleForTesting
+    public void setSenderFactory(PacketSenderFactory senderFactory) {
+        this.senderFactory = senderFactory;
     }
 }

@@ -47,5 +47,4 @@ public enum PokerLobbyAttributes {
     DECK_SIZE,
     TABLE_TEMPLATE, // table template ID
     TABLE_EXTERNAL_ID
-    
 }

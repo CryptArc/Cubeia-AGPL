@@ -17,8 +17,11 @@
 
 package com.cubeia.poker.tournament.history.api;
 
+import com.google.code.morphia.annotations.Embedded;
+
 import java.io.Serializable;
 
+@Embedded
 public class PlayerPosition implements Serializable {
     private int playerId;
     private int position;

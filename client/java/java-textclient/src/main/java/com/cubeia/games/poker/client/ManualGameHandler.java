@@ -44,9 +44,9 @@ public class ManualGameHandler implements PacketVisitor {
         }
     }
 
-    public void visit(StartNewHand packet) {
-        System.out.println("Start a new hand. Dealer: " + packet.dealerSeatId);
-    }
+//    public void visit(StartNewHand packet) {
+//        System.out.println("Start a new hand. Dealer: " + packet.dealerSeatId);
+//    }
 
     public void visit(ExposePrivateCards packet) {
         for (CardToDeal card : packet.cards) {
@@ -211,7 +211,17 @@ public class ManualGameHandler implements PacketVisitor {
     }
 
     @Override
+    public void visit(GameState packet) {
+
+    }
+
+    @Override
     public void visit(InformFutureAllowedActions packet) {
+    }
+
+    @Override
+    public void visit(HandStartInfo packet) {
+
     }
 
     @Override
@@ -289,7 +299,32 @@ public class ManualGameHandler implements PacketVisitor {
         System.out.println("Received tournament lobby data: " + packet);
     }
 
-	@Override
+    @Override
+    public void visit(RequestTournamentTable packet) {
+
+    }
+
+    @Override
+    public void visit(TournamentTable packet) {
+
+    }
+
+    @Override
+    public void visit(TournamentDestroyed packet) {
+
+    }
+
+    @Override
+    public void visit(RequestTournamentRegistrationInfo packet) {
+
+    }
+
+    @Override
+    public void visit(TournamentRegistrationInfo packet) {
+
+    }
+
+    @Override
 	public void visit(ChipStatistics packet) {
 		// TODO Auto-generated method stub
 		

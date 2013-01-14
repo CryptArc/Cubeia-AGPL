@@ -24,7 +24,7 @@ import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.cache.ActionCache;
 import com.cubeia.games.poker.cache.ActionContainer;
-import com.cubeia.games.poker.common.SystemTime;
+import com.cubeia.games.poker.common.time.SystemTime;
 import com.cubeia.games.poker.io.protocol.*;
 import com.cubeia.games.poker.util.ProtocolFactory;
 import com.google.common.annotations.VisibleForTesting;

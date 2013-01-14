@@ -17,6 +17,7 @@
 
 package com.cubeia.games.poker.adapter;
 
+import static com.cubeia.games.poker.common.money.MoneyFormatter.format;
 import static com.cubeia.poker.action.PokerActionType.ANTE;
 import static com.cubeia.poker.action.PokerActionType.DECLINE_ENTRY_BET;
 import static java.util.Arrays.asList;
@@ -59,7 +60,7 @@ import com.cubeia.firebase.api.game.table.TableMetaData;
 import com.cubeia.firebase.api.game.table.TableScheduler;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.PokerConfigServiceMock;
-import com.cubeia.games.poker.common.Money;
+import com.cubeia.games.poker.common.money.Money;
 import com.cubeia.games.poker.handler.ActionTransformer;
 import com.cubeia.games.poker.handler.Trigger;
 import com.cubeia.games.poker.handler.TriggerType;
@@ -166,11 +167,11 @@ public class FirebaseServerAdapterTest {
         GameDataAction gda = captor.getValue();
 
         BuyInInfoResponse buyInInfoRespPacket = (BuyInInfoResponse) new StyxSerializer(new ProtocolObjectFactory()).unpack(gda.getData());
-        assertThat(buyInInfoRespPacket.balanceInWallet, is((int) mainAccountBalance));
+        assertThat(buyInInfoRespPacket.balanceInWallet, is(format(mainAccountBalance)));
 
-        assertThat(buyInInfoRespPacket.balanceOnTable, is((int) playerTotalBalanceOnTable));
-        assertThat(buyInInfoRespPacket.minAmount, is(0));
-        assertThat(buyInInfoRespPacket.maxAmount, is((int) (maxBuyIn - playerTotalBalanceOnTable)));
+        assertThat(buyInInfoRespPacket.balanceOnTable, is((format(playerTotalBalanceOnTable))));
+        assertThat(buyInInfoRespPacket.minAmount, is("0"));
+        assertThat(buyInInfoRespPacket.maxAmount, is(format((maxBuyIn - playerTotalBalanceOnTable))));
         assertThat(buyInInfoRespPacket.mandatoryBuyin, is(true));
         assertThat(buyInInfoRespPacket.resultCode, is(BuyInInfoResultCode.OK));
 
@@ -217,11 +218,11 @@ public class FirebaseServerAdapterTest {
         GameDataAction gda = captor.getValue();
 
         BuyInInfoResponse buyInInfoRespPacket = (BuyInInfoResponse) new StyxSerializer(new ProtocolObjectFactory()).unpack(gda.getData());
-        assertThat(buyInInfoRespPacket.balanceInWallet, is((int) mainAccountBalance));
+        assertThat(buyInInfoRespPacket.balanceInWallet, is((format(mainAccountBalance))));
 
-        assertThat(buyInInfoRespPacket.balanceOnTable, is((int) playerTotalBalanceOnTable));
-        assertThat(buyInInfoRespPacket.maxAmount, is(0));
-        assertThat(buyInInfoRespPacket.minAmount, is(0));
+        assertThat(buyInInfoRespPacket.balanceOnTable, is(format(playerTotalBalanceOnTable)));
+        assertThat(buyInInfoRespPacket.maxAmount, is("0"));
+        assertThat(buyInInfoRespPacket.minAmount, is("0"));
         assertThat(buyInInfoRespPacket.mandatoryBuyin, is(true));
         assertThat(buyInInfoRespPacket.resultCode, is(BuyInInfoResultCode.MAX_LIMIT_REACHED));
     }
@@ -239,11 +240,6 @@ public class FirebaseServerAdapterTest {
         FirebaseState adapterState = mock(FirebaseState.class);
         when(fsa.state.getAdapterState()).thenReturn(adapterState);
 
-        // FirebaseCallbackFactory callbackFactory = mock(FirebaseCallbackFactory.class);
-        // when(fsa.backend.getCallbackFactory()).thenReturn(callbackFactory);
-        // ReserveCallback callback = mock(ReserveCallback.class);
-        // when(callbackFactory.createReserveCallback(fsa.table)).thenReturn(callback);
-
         TableMetaData tmd = mock(TableMetaData.class);
         when(tmd.getGameId()).thenReturn(1);
         when(fsa.table.getMetaData()).thenReturn(tmd);
@@ -258,8 +254,8 @@ public class FirebaseServerAdapterTest {
         when(player2.getRequestedBuyInAmount()).thenReturn(25000L);
         when(player3.isBuyInRequestActive()).thenReturn(true);
 
-        when(fsa.buyInCalculator.calculateAmountToReserve(Mockito.anyInt(), Mockito.anyInt(), Mockito.eq(5000))).thenReturn(2500);
-        when(fsa.buyInCalculator.calculateAmountToReserve(Mockito.anyInt(), Mockito.anyInt(), Mockito.eq(25000))).thenReturn(0);
+        when(fsa.buyInCalculator.calculateAmountToReserve(Mockito.anyLong(), Mockito.anyLong(), Mockito.eq(5000L))).thenReturn(2500L);
+        when(fsa.buyInCalculator.calculateAmountToReserve(Mockito.anyLong(), Mockito.anyLong(), Mockito.eq(25000L))).thenReturn(0L);
 
         fsa.performPendingBuyIns(players);
 
@@ -306,9 +302,9 @@ public class FirebaseServerAdapterTest {
         GameDataAction gda = captor.getValue();
 
         BuyInInfoResponse buyInInfoRespPacket = (BuyInInfoResponse) new StyxSerializer(new ProtocolObjectFactory()).unpack(gda.getData());
-        assertThat(buyInInfoRespPacket.balanceInWallet, is(-1));
-        assertThat(buyInInfoRespPacket.maxAmount, is(0));
-        assertThat(buyInInfoRespPacket.minAmount, is(0));
+        assertThat(buyInInfoRespPacket.balanceInWallet, is("N/A"));
+        assertThat(buyInInfoRespPacket.maxAmount, is("0"));
+        assertThat(buyInInfoRespPacket.minAmount, is("0"));
         assertThat(buyInInfoRespPacket.resultCode, is(BuyInInfoResultCode.UNSPECIFIED_ERROR));
     }
 
@@ -353,10 +349,10 @@ public class FirebaseServerAdapterTest {
         GameDataAction gda = captor.getValue();
 
         BuyInInfoResponse buyInInfoRespPacket = (BuyInInfoResponse) new StyxSerializer(new ProtocolObjectFactory()).unpack(gda.getData());
-        assertThat(buyInInfoRespPacket.balanceInWallet, is((int) mainAccountBalance));
-        assertThat(buyInInfoRespPacket.balanceOnTable, is(playerTotalBalanceOnTable));
-        assertThat(buyInInfoRespPacket.maxAmount, is(50));
-        assertThat(buyInInfoRespPacket.minAmount, is(0));
+        assertThat(buyInInfoRespPacket.balanceInWallet, is(format(mainAccountBalance)));
+        assertThat(buyInInfoRespPacket.balanceOnTable, is(format(playerTotalBalanceOnTable)));
+        assertThat(buyInInfoRespPacket.maxAmount, is("0.50"));
+        assertThat(buyInInfoRespPacket.minAmount, is("0"));
         assertThat(buyInInfoRespPacket.mandatoryBuyin, is(true));
         assertThat(buyInInfoRespPacket.resultCode, is(BuyInInfoResultCode.OK));
 

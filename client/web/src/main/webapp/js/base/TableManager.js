@@ -31,7 +31,7 @@ Poker.TableManager = Class.extend({
         return this.tables.contains(tableId)
     },
     /**
-     * Sets that your player is seated at a specific table
+     * Checks if you are seated at a specific table
      * @param {Number} tableId
      */
     isSeated : function(tableId) {
@@ -47,7 +47,6 @@ Poker.TableManager = Class.extend({
      * @param {Number} capacity
      */
     handleOpenTableAccepted : function (tableId, capacity) {
-        //a lot of this should probably be moved in to Poker.TableManager
         var name = this.tableNames.get(tableId);
         if (name == null) {
             name = "Table"; //TODO: fix
@@ -57,6 +56,15 @@ Poker.TableManager = Class.extend({
         var tableLayoutManager = new Poker.TableLayoutManager(tableId, tableViewContainer, templateManager, capacity);
         this.createTable(tableId, capacity, name , tableLayoutManager);
         Poker.AppCtx.getViewManager().addTableView(tableLayoutManager,name);
+    },
+
+    onPlayerLoggedIn : function() {
+       console.log("Checking if there's open tables to reconnect to");
+       var tables =  this.tables.values();
+        for(var i = 0; i<tables.length; i++) {
+            this.leaveTable(tables[i].id);
+            new Poker.TableRequestHandler(tables[i].id).openTable();
+        }
     },
     /**
      * Creates a table and notifies it's table layout manager
@@ -88,7 +96,6 @@ Poker.TableManager = Class.extend({
         }
     },
     /**
-     *
      * @param {Number} tableId
      * @param {Number} status
      */
@@ -98,7 +105,6 @@ Poker.TableManager = Class.extend({
         table.getLayoutManager().onBuyInError("Unable to buy in");
     },
     /**
-     *
      * @param {Number} tableId
      * @param {Number} balanceInWallet
      * @param {Number} balanceOnTable
@@ -120,14 +126,18 @@ Poker.TableManager = Class.extend({
         return this.tables.get(tableId);
     },
     /**
-     *
      * @param {Number} tableId
      * @param {String} handId
      */
     startNewHand : function(tableId, handId) {
         var table = this.tables.get(tableId);
         table.handCount++;
+        table.handId = handId;
         table.layoutManager.onStartHand(handId);
+    },
+    restartHand : function(tableId) {
+        var table = this.tables.get(tableId);
+        this.startNewHand(tableId,table.handId);
     },
     /**
      * Called when a hand is complete and calls the TableLayoutManager
@@ -173,7 +183,7 @@ Poker.TableManager = Class.extend({
         var table = this.tables.get(tableId);
         if(table.handCount==handCount) {
             console.log("No hand started clearing table");
-            table.layoutManager.onStartHand(this.dealerSeatId,null,null,-1);
+            table.layoutManager.onStartHand(this.dealerSeatId);
         } else {
             console.log("new hand started, skipping clear table")
         }
@@ -244,10 +254,10 @@ Poker.TableManager = Class.extend({
     /**
      * handle deal cards, passes a card string as parameter
      * card string i h2 (two of hearts), ck (king of spades)
-     * @param {int} tableId the id of the table
-     * @param {int} playerId  the id of the player
-     * @param {int} cardId id of the card
-     * @param {string} cardString the card string identifier
+     * @param {Number} tableId the id of the table
+     * @param {Number} playerId  the id of the player
+     * @param {Number} cardId id of the card
+     * @param {String} cardString the card string identifier
      */
     dealPlayerCard : function(tableId,playerId,cardId,cardString) {
         var table = this.tables.get(tableId);
@@ -273,7 +283,7 @@ Poker.TableManager = Class.extend({
     /**
      * @param {Number} tableId
      * @param {Number} playerId
-     * @param {Number} status
+     * @param {Poker.PlayerTableStatus} status
      */
     updatePlayerStatus : function(tableId, playerId, status) {
         var table = this.tables.get(tableId);
@@ -284,12 +294,17 @@ Poker.TableManager = Class.extend({
         p.tableStatus = status;
         table.getLayoutManager().onPlayerUpdated(p);
     },
+    setNoMoreBlinds : function(tableId, enable) {
+        var table = this.tables.get(tableId);
+        table.noMoreBlinds = enable;
+    },
     handleRequestPlayerAction : function(tableId,playerId,allowedActions,timeToAct) {
         var table = this.tables.get(tableId);
         var player = table.getPlayerById(playerId);
-        table.getLayoutManager().onRequestPlayerAction(player,allowedActions,timeToAct,this.mainPot);
-
-
+        console.log("table.betStrategy = " + table.betStrategy);
+        console.log("enum = " + com.cubeia.games.poker.io.protocol.BetStrategyEnum.FIXED_LIMIT);
+        var fixedLimit = table.betStrategy === com.cubeia.games.poker.io.protocol.BetStrategyEnum.FIXED_LIMIT;
+        table.getLayoutManager().onRequestPlayerAction(player,allowedActions,timeToAct,this.mainPot,fixedLimit);
     },
     updateMainPot : function(tableId,amount){
         var table = this.tables.get(tableId);
@@ -302,7 +317,6 @@ Poker.TableManager = Class.extend({
     },
     updatePots : function(tableId,pots) {
         var table = this.tables.get(tableId);
-
         for(var p = 0; p<pots.length; p++) {
             if(pots[p].type == Poker.PotType.MAIN) {
                 console.log("updating main pot");
@@ -327,7 +341,15 @@ Poker.TableManager = Class.extend({
      * @param {com.cubeia.games.poker.io.protocol.BlindsLevel} newBlinds
      * @param {Number} secondsToNextLevel
      */
+    notifyGameStateUpdate : function(tableId, newBlinds, secondsToNextLevel,betStrategy) {
+        console.log("Seconds to next level: " + secondsToNextLevel);
+        console.log("notifyGameStateUpdate = " + betStrategy);
+        var table = this.getTable(tableId);
+        table.betStrategy = betStrategy;
+        this.notifyBlindsUpdated(tableId, newBlinds, secondsToNextLevel);
+    },
     notifyBlindsUpdated : function(tableId, newBlinds, secondsToNextLevel) {
+        console.log("Seconds to next level: " + secondsToNextLevel);
         if (newBlinds.isBreak) {
             var dialogManager = Poker.AppCtx.getDialogManager();
             dialogManager.displayGenericDialog({header:"Message",

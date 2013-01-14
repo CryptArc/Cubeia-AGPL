@@ -27,7 +27,7 @@ import com.cubeia.firebase.api.service.config.ClusterConfigProviderContract;
 import com.cubeia.firebase.api.service.config.ClusterConfigProviderContractAdapter;
 import com.cubeia.firebase.guice.inject.FirebaseModule;
 import com.cubeia.game.poker.config.api.PokerSystemConfig;
-import com.cubeia.games.poker.common.Money;
+import com.cubeia.games.poker.common.money.Money;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 

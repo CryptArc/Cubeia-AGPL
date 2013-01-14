@@ -22,11 +22,6 @@ import com.cubeia.firebase.api.service.ServiceContext;
 import com.cubeia.games.poker.common.mongo.DatabaseStorageConfiguration;
 import com.cubeia.poker.tournament.history.api.HistoricTournament;
 import com.cubeia.poker.tournament.history.storage.impl.DatabaseStorageService;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.mongodb.Mongo;
 import de.flapdoodle.embedmongo.MongoDBRuntime;
 import de.flapdoodle.embedmongo.MongodExecutable;
 import de.flapdoodle.embedmongo.MongodProcess;
@@ -59,7 +54,7 @@ public class EmbeddedMongoDatabaseStorageServiceTest {
 
     private static String HOST = "localhost";
 
-    private static MongodProcess mongod;
+    private static MongodProcess mongoProcess;
 
     private DatabaseStorageService service;
 
@@ -88,24 +83,28 @@ public class EmbeddedMongoDatabaseStorageServiceTest {
     public static void initDb() throws Exception {
         MongodConfig config = new MongodConfig(Version.V2_1_1, PORT, Network.localhostIsIPv6());
         MongodExecutable prepared = MongoDBRuntime.getDefaultInstance().prepare(config);
-        mongod = prepared.start();
+        mongoProcess = prepared.start();
     }
 
     @AfterClass
     public static void shutdownDb() {
-        if (mongod != null) mongod.stop();
+        if (mongoProcess != null) mongoProcess.stop();
     }
 
     @Test
     public void testCreateHistoricTournament() throws Exception {
-        String id = service.createHistoricTournament();
+        String id = createHistoricTournament();
         log.info("Id = " + id);
         assertThat(id, notNullValue());
     }
 
+    private String createHistoricTournament() {
+        return service.createHistoricTournament("name", 1, 11, false);
+    }
+
     @Test
     public void testFindHistoricTournament() throws Exception {
-        String id = service.createHistoricTournament();
+        String id = createHistoricTournament();
 
         HistoricTournament tournament = service.getHistoricTournament(id);
         assertThat(tournament, notNullValue());
@@ -113,21 +112,10 @@ public class EmbeddedMongoDatabaseStorageServiceTest {
 
     @Test
     public void testUpdateTournament() throws Exception {
-        String id = service.createHistoricTournament();
+        String id = createHistoricTournament();
 
         service.statusChanged("ANNOUNCED", id, new Date().getTime());
         service.statusChanged("REGISTERING", id, new Date().getTime());
-
-        Mongo mongo = new Mongo(HOST, PORT);
-        DB db = mongo.getDB("poker");
-        DBCollection collection = db.getCollection("tournaments");
-        log.info("COUNT: " + collection.count());
-
-        DBCursor cursorDoc = collection.find();
-        while (cursorDoc.hasNext()) {
-            DBObject object = cursorDoc.next();
-            log.debug("OBJECT: " + object);
-        }
 
         HistoricTournament tournament = service.getHistoricTournament(id);
         assertThat(tournament.getEvents().size(), is(2));
@@ -135,7 +123,7 @@ public class EmbeddedMongoDatabaseStorageServiceTest {
 
     @Test
     public void testSetStartDate() throws Exception {
-        String id = service.createHistoricTournament();
+        String id = createHistoricTournament();
         service.setStartTime(id, new DateTime().getMillis());
 
         HistoricTournament tournament = service.getHistoricTournament(id);
@@ -145,7 +133,7 @@ public class EmbeddedMongoDatabaseStorageServiceTest {
 
     @Test
     public void testAddTable() throws Exception {
-        String id = service.createHistoricTournament();
+        String id = createHistoricTournament();
         service.addTable(id, "ext1");
 
         HistoricTournament tournament = service.getHistoricTournament(id);

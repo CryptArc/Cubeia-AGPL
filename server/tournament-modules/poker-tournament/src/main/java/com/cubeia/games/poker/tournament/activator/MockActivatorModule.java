@@ -17,8 +17,8 @@
 
 package com.cubeia.games.poker.tournament.activator;
 
-import com.cubeia.games.poker.common.SystemTime;
-import com.cubeia.games.poker.common.DefaultSystemTime;
+import com.cubeia.games.poker.common.time.SystemTime;
+import com.cubeia.games.poker.common.time.DefaultSystemTime;
 import com.cubeia.games.poker.tournament.activator.PokerActivator;
 import com.cubeia.games.poker.tournament.activator.TournamentScanner;
 import com.cubeia.games.poker.tournament.configuration.provider.SitAndGoConfigurationProvider;

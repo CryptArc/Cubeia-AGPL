@@ -67,7 +67,7 @@ import com.cubeia.backoffice.wallet.api.dto.report.TransactionEntry;
 import com.cubeia.backoffice.wallet.api.dto.report.TransactionRequest;
 import com.cubeia.backoffice.wallet.api.dto.report.TransactionResult;
 import com.cubeia.firebase.api.server.SystemException;
-import com.cubeia.games.poker.common.Money;
+import com.cubeia.games.poker.common.money.Money;
 import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
 
 public class CashGamesBackendAdapterTest {
@@ -179,8 +179,8 @@ public class CashGamesBackendAdapterTest {
         long session2Id = 2002L;
         PlayerSessionId playerSession2 = new PlayerSessionId(player2Id, "" + session2Id);
 
-        HandResult handResult1 = new HandResult(playerSession1, money(5000), money(10000 - 1000), money(1000), 1, money(5000));
-        HandResult handResult2 = new HandResult(playerSession2, money(5000), money(0), money(0), 2, money(5000));
+        HandResult handResult1 = new HandResult(playerSession1, money(5000), money(10000 - 1000), money(1000), 1, 0, money(5000));
+        HandResult handResult2 = new HandResult(playerSession2, money(5000), money(0), money(0), 2, 0, money(5000));
 
         request.addHandResult(handResult1);
         request.addHandResult(handResult2);
@@ -193,7 +193,7 @@ public class CashGamesBackendAdapterTest {
         when(txResult.getBalances()).thenReturn(Arrays.asList(sessionBalance1, sessionBalance2, rakeAccountBalance));
 
         when(walletService.doTransaction(txCaptor.capture())).thenReturn(txResult);
-
+        when(accountLookupUtil.lookupOperatorAccountId(walletService, 0)).thenReturn(backend.rakeAccountId);
         BatchHandResponse batchHandResponse = backend.batchHand(request);
 
         TransactionRequest txRequest = txCaptor.getValue();

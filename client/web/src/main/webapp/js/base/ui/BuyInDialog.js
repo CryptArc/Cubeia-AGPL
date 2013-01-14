@@ -3,30 +3,41 @@ var Poker = Poker || {};
 
 Poker.BuyInDialog = Class.extend({
     dialogManager : null,
+    templateManager : null,
     init : function() {
         this.dialogManager = Poker.AppCtx.getDialogManager();
-
+        this.templateManager = Poker.AppCtx.getTemplateManager();
     },
     show : function(tableId,tableName, balanceInWallet, maxAmount, minAmount) {
-        var formattedMinAmount = Poker.Utils.formatCurrency(minAmount);
-        $(".buyin-balance").html(Poker.Utils.formatCurrencyString(balanceInWallet));
-        $(".buyin-min-amount").html(Poker.Utils.formatCurrencyString(minAmount));
-        $(".buyin-max-amount").html(Poker.Utils.formatCurrencyString(maxAmount));
-        $(".buyin-table-name").html(tableName);
+
+        var data = {
+            tableId : tableId,
+            title : tableName,
+            balance : balanceInWallet,
+            maxAmount : maxAmount,
+            minAmount : minAmount
+        };
         var self = this;
+        this.render(data,function(){
+            var buyIn = $("#facebox .buyin-amount").val();
+            if (self.validateAmount(buyIn)) {
+                new Poker.PokerRequestHandler(data.tableId).buyIn(buyIn)
+            }
+            return false; //don't close the dialog, need to wait for response
+        });
+        $(".buyin-amount").val(data.minAmount);
 
-        $(".buyin-amount").val(Poker.Utils.formatCurrency(minAmount));
-
+    },
+    render : function(data, okFunction) {
+        var self = this;
+        var template = this.templateManager.getRenderTemplate(this.getTemplateId());
+        $("#buyInDialog").html(template.render(data));
         this.dialogManager.displayDialog(
-            "buyinDialog",
-            function(){
-                var val = $("#facebox .buyin-amount").val();
-                if(self.validateAmount(val)) {
-                    new Poker.PokerRequestHandler(tableId).buyIn(Math.round(parseFloat(val)*100))
-                }
-                return false; //don't close the dialog, need to wait for response
+            "buyInDialog",
+            function() {
+               return okFunction();
             },
-            function(){
+            function() {
                 $(".buyin-error").hide();
 
             });
@@ -34,7 +45,7 @@ Poker.BuyInDialog = Class.extend({
             if(e.keyCode == 13) {
                 $("#facebox .dialog-ok-button").click();
             }
-        }).val(formattedMinAmount).select();
+        }).val(data.minAmount).select();
     },
     onError : function(msg) {
         $(".buyin-error").html(msg).show();
@@ -44,5 +55,8 @@ Poker.BuyInDialog = Class.extend({
     },
     close : function() {
         this.dialogManager.close();
+    },
+    getTemplateId : function() {
+        return "cashGamesBuyInContent";
     }
 });

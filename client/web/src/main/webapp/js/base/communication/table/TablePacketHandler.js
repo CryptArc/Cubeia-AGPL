@@ -60,9 +60,11 @@ Poker.TablePacketHandler = Class.extend({
 
     },
     handleWatchResponse:function (watchResponse) {
+        console.log("WATCH RESPONSE = " + watchResponse);
         if (watchResponse.status == "DENIED_ALREADY_SEATED") {
             new Poker.TableRequestHandler(this.tableId).joinTable();
         } else if (watchResponse.status == "CONNECTED") {
+            this.tableManager.clearTable()
         }
     }
 });

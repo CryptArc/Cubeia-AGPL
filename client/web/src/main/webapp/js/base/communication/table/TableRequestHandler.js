@@ -51,6 +51,9 @@ Poker.TableRequestHandler = Class.extend({
             this.connector.watchTable(this.tableId);
         }
     },
+    reactivateTable : function() {
+        this.connector.watchTable(this.tableId);
+    },
     leaveTable : function () {
         this.connector.leaveTable(this.tableId);
     },

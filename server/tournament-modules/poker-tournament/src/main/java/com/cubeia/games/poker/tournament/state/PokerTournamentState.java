@@ -22,17 +22,20 @@ import com.cubeia.backend.cashgame.TournamentSessionId;
 import com.cubeia.firebase.api.mtt.model.MttPlayer;
 import com.cubeia.firebase.api.mtt.model.MttPlayerStatus;
 import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
-import com.cubeia.games.poker.common.Money;
+import com.cubeia.games.poker.common.money.Money;
 import com.cubeia.games.poker.io.protocol.TournamentPlayerList;
 import com.cubeia.games.poker.io.protocol.TournamentStatistics;
+import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
 import com.cubeia.games.poker.tournament.configuration.blinds.Level;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.TournamentLifeCycle;
 import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
 import com.cubeia.games.poker.tournament.configuration.payouts.Payouts;
 import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
+import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
+import com.cubeia.poker.tournament.history.api.HistoricPlayer;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 
@@ -40,12 +43,12 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
-import static com.google.common.collect.Sets.union;
 import static java.lang.Math.max;
 import static java.math.BigDecimal.valueOf;
 import static org.joda.time.Seconds.secondsBetween;
@@ -93,10 +96,6 @@ public class PokerTournamentState implements Serializable {
     /**  Maps playerId to PlayerSessionId */
     private Map<Integer, PlayerSessionId> playerSessions = newHashMap();
 
-    private boolean onBreak = false;
-
-    private Set<Integer> tablesReadyForBreak = newHashSet();
-
     private PayoutStructure payoutStructure;
 
     private Payouts payouts;
@@ -127,8 +126,38 @@ public class PokerTournamentState implements Serializable {
 
     private transient com.cubeia.games.poker.io.protocol.BlindsStructure blindsStructurePacket;
 
+    private int templateId;
+
+    private Set<HistoricPlayer> resurrectingPlayers = new HashSet<HistoricPlayer>();
+
+    private Set<Integer> tablesNotReadyForBreak = new HashSet<Integer>();
+
+    private boolean sitAndGo;
+
+    private BetStrategyType betStrategy;
+
     public boolean allTablesHaveBeenCreated(int tablesCreated) {
         return tablesCreated >= tablesToCreate;
+    }
+
+    public BetStrategyType getBetStrategy() {
+        return betStrategy;
+    }
+
+    public boolean isSitAndGo() {
+        return sitAndGo;
+    }
+
+    public void prepareBreak(Set<Integer> tables) {
+        tablesNotReadyForBreak.addAll(tables);
+    }
+
+    public void setBetStrategy(BetStrategyType betStrategy) {
+        this.betStrategy = betStrategy;
+    }
+
+    public void setSitAndGo(boolean sitAndGo) {
+        this.sitAndGo = sitAndGo;
     }
 
     public void setTablesToCreate(int tablesToCreate) {
@@ -198,9 +227,6 @@ public class PokerTournamentState implements Serializable {
         log.debug("Increasing blinds level.");
         currentBlindsLevel = blindsStructure.getBlindsLevel(++currentBlindsLevelNr);
         log.debug("Blinds level is now: " + currentBlindsLevelNr + ": " + currentBlindsLevel);
-        if (currentBlindsLevel.isBreak()) {
-            onBreak = true;
-        }
         return currentBlindsLevel;
     }
 
@@ -257,28 +283,29 @@ public class PokerTournamentState implements Serializable {
     }
 
     public boolean isOnBreak() {
-        return onBreak;
+        return currentBlindsLevel.isBreak();
     }
 
     public void addTableReadyForBreak(int tableId) {
-        tablesReadyForBreak.add(tableId);
+        tablesNotReadyForBreak.remove(tableId);
+    }
+
+    public void addTablesReadyForBreak(Set<Integer> tables) {
+        tablesNotReadyForBreak.removeAll(tables);
     }
 
     /**
      * Checks if all tables are ready to start the break. A table is ready for break if it has finished
      * a hand after the break was supposed to start, or if it has only one player.
      *
-     * @param totalTables the total number of tables in the tournament
-     * @param tablesWithLonelyPlayer a set of all tables with only one player, cannot be null
      * @return true if all tables are ready to start the break, false otherwise
      */
-    public boolean allTablesReadyForBreak(int totalTables, Set<Integer> tablesWithLonelyPlayer) {
-        return union(tablesReadyForBreak, tablesWithLonelyPlayer).size() == totalTables;
+    public boolean allTablesReadyForBreak() {
+        return tablesNotReadyForBreak.isEmpty();
     }
 
     public void breakFinished() {
-        onBreak = false;
-        tablesReadyForBreak.clear();
+        tablesNotReadyForBreak.clear();
     }
 
     public void setPayoutStructure(PayoutStructure payoutStructure, int minPlayers) {
@@ -485,5 +512,21 @@ public class PokerTournamentState implements Serializable {
 
     public DateTime getNextLevelStartTime() {
         return nextLevelStartTime;
+    }
+
+    public int getTemplateId() {
+        return templateId;
+    }
+
+    public void setTemplateId(int templateId) {
+        this.templateId = templateId;
+    }
+
+    public void setResurrectingPlayers(Set<HistoricPlayer> resurrectingPlayers) {
+        this.resurrectingPlayers = resurrectingPlayers;
+    }
+
+    public Set<HistoricPlayer> getResurrectingPlayers() {
+        return resurrectingPlayers;
     }
 }

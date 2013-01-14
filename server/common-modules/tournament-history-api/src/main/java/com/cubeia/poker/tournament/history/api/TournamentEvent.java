@@ -17,9 +17,12 @@
 
 package com.cubeia.poker.tournament.history.api;
 
+import com.google.code.morphia.annotations.Embedded;
+
 import java.io.Serializable;
 import java.util.Date;
 
+@Embedded
 public class TournamentEvent implements Serializable {
 
     private long timestamp;

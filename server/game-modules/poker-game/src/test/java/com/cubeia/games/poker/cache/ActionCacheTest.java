@@ -19,7 +19,7 @@ package com.cubeia.games.poker.cache;
 
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.GameDataAction;
-import com.cubeia.games.poker.common.DefaultSystemTime;
+import com.cubeia.games.poker.common.time.DefaultSystemTime;
 
 import org.junit.Test;
 

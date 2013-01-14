@@ -69,6 +69,13 @@ Poker.CommunicationManager = Class.extend({
                 break;
         }
     },
+    forceLogout : function(packet) {
+        console.log("Forcing log out");
+        new Poker.ConnectionPacketHandler().handleForceLogout(packet.code,packet.message);
+        this.getConnector().close();
+
+
+    },
     /**
      * Login callback
      * @param {FIREBASE.ConnectionStatus} status
@@ -76,7 +83,7 @@ Poker.CommunicationManager = Class.extend({
      * @param {String} name
      */
     loginCallback : function(status,playerId,name) {
-       new Poker.UserPacketHandler().handleLogin(status,playerId,name);
+       new Poker.ConnectionPacketHandler().handleLogin(status,playerId,name);
     },
     retryCount : 0,
     /**
@@ -84,21 +91,26 @@ Poker.CommunicationManager = Class.extend({
      * @param {FIREBASE.ConnectionStatus} status
      */
     statusCallback : function(status) {
-        console.log("Status recevied: " + status);
-        var self = this;
-        new Poker.UserPacketHandler().handleStatus(function(){self.connect();},status);
+
+        new Poker.ConnectionPacketHandler().handleStatus(status);
     },
+
+
     /**
      * Sets up callbacks and connects to Firebase
      */
     connect : function () {
+        if(this.connector!=null) {
+            this.connector.getIOAdapter().unregisterHandlers();
+        }
         var self = this;
-
         this.connector = new FIREBASE.Connector(
             function(po) {
+                Poker.AppCtx.getConnectionManager().onPacketReceived();
                 self.handlePacket(po);
             },
             function(po){
+                Poker.AppCtx.getConnectionManager().onPacketReceived();
                 self.lobbyCallback(po);
             },
             function(status, playerId, name){
@@ -108,6 +120,7 @@ Poker.CommunicationManager = Class.extend({
                 self.statusCallback(status);
             });
 
+
         this.connector.connect("FIREBASE.WebSocketAdapter", this.webSocketUrl, this.webSocketPort, "socket");
     },
     /**
@@ -116,7 +129,9 @@ Poker.CommunicationManager = Class.extend({
      * @param {String} password
      */
     doLogin : function(username,password) {
-        this.connector.login(username, password, 0);
+        var operatorId = 0;
+        Poker.MyPlayer.password = password;
+        this.connector.login(username, password, operatorId);
     },
     handlePacket : function (packet) {
 
@@ -176,6 +191,12 @@ Poker.CommunicationManager = Class.extend({
             case FB_PROTOCOL.NotifyRegisteredPacket.CLASSID:
                 tournamentPacketHandler.handleNotifyRegistered(packet);
                 break;
+            case FB_PROTOCOL.PingPacket.CLASSID:
+                console.log("PING PACKET RECEIVED");
+                break;
+            case FB_PROTOCOL.ForcedLogoutPacket.CLASSID:
+                this.forceLogout(packet);
+                break;
             default :
                 console.log("NO HANDLER");
                 console.log(packet);
@@ -211,7 +232,7 @@ Poker.CommunicationManager = Class.extend({
 
         switch (protocolObject.classId() ) {
             case com.cubeia.games.poker.io.protocol.GameState.CLASSID:
-                this.tableManager.notifyBlindsUpdated(tableId, protocolObject.currentLevel, protocolObject.secondsToNextLevel);
+                this.tableManager.notifyGameStateUpdate(tableId, protocolObject.currentLevel, protocolObject.secondsToNextLevel,protocolObject.betStrategy);
                 break;
             case com.cubeia.games.poker.io.protocol.BestHand.CLASSID:
                 this.tableManager.updateHandStrength(tableId,protocolObject);

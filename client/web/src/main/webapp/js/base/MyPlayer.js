@@ -16,6 +16,12 @@ Poker.MyPlayer = {
      * @type String
      */
     name : null,
+
+    /**
+     * @type String
+     */
+    password : null,
+
     /**
      * type Number
      */

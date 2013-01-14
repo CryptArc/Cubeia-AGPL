@@ -23,6 +23,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.apache.wicket.spring.test.ApplicationContextMock;
 import org.apache.wicket.util.tester.WicketTester;
+import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -50,6 +51,7 @@ public class ShowTournamentTest {
         PageParameters pageParameters = new PageParameters();
         pageParameters.set("historicTournamentId", "someId");
         HistoricTournament tournament = new HistoricTournament();
+        tournament.setId(new ObjectId());
         when(historyService.findTournamentByHistoricId("someId")).thenReturn(tournament);
         tester.startPage(new ShowTournament(pageParameters));
         tester.assertRenderedPage(ShowTournament.class);

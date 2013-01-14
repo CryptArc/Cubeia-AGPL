@@ -23,13 +23,15 @@ import com.cubeia.firebase.api.mtt.activator.ActivatorContext;
 import com.cubeia.firebase.api.mtt.activator.CreationParticipant;
 import com.cubeia.firebase.api.mtt.lobby.MttLobbyObject;
 import com.cubeia.firebase.api.server.SystemException;
-import com.cubeia.games.poker.common.SystemTime;
+import com.cubeia.games.poker.common.time.SystemTime;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentInstance;
 import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
 import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
 import com.cubeia.games.poker.tournament.configuration.provider.SitAndGoConfigurationProvider;
 import com.cubeia.games.poker.tournament.configuration.provider.TournamentScheduleProvider;
+import com.cubeia.poker.tournament.history.api.HistoricTournament;
+import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import org.apache.log4j.Logger;
@@ -37,6 +39,7 @@ import org.joda.time.DateTime;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -47,7 +50,8 @@ import java.util.concurrent.TimeUnit;
 import static com.cubeia.firebase.io.protocol.Enums.TournamentAttributes.NAME;
 import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.IDENTIFIER;
 import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.STATUS;
-import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.*;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.CLOSED;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.REGISTERING;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Sets.newHashSet;
 
@@ -73,6 +77,9 @@ public class TournamentScanner implements PokerActivator, Runnable {
 
     private ScheduledFuture<?> checkTablesFuture = null;
 
+    /** Used for finding tournaments to resurrect. */
+    private TournamentHistoryPersistenceService databaseStorageService;
+
     /**
      * Lock to synchronize reading and creation of tournament instances
      */
@@ -96,6 +103,7 @@ public class TournamentScanner implements PokerActivator, Runnable {
 
     public void init(ActivatorContext context) throws SystemException {
         this.context = context;
+        this.databaseStorageService = context.getServices().getServiceInstance(TournamentHistoryPersistenceService.class);
     }
 
 
@@ -106,7 +114,37 @@ public class TournamentScanner implements PokerActivator, Runnable {
             }
 
             executorService = Executors.newScheduledThreadPool(1);
+            resurrectTournaments();
             checkTablesFuture = executorService.scheduleAtFixedRate(this, INITIAL_TOURNAMENT_CHECK_DELAY, TOURNAMENT_CHECK_INTERVAL, TimeUnit.MILLISECONDS);
+        }
+    }
+
+    private void resurrectTournaments() {
+        if (databaseStorageService == null) {
+            log.info("No database storage service found, won't resurrect tournaments.");
+            return;
+        }
+        List<HistoricTournament> tournamentsToResurrect = databaseStorageService.findTournamentsToResurrect();
+        log.debug("Number of tournaments to resurrect: " + tournamentsToResurrect.size());
+        for (HistoricTournament historicTournament : tournamentsToResurrect) {
+            resurrectTournament(historicTournament);
+        }
+    }
+
+    private void resurrectTournament(HistoricTournament historicTournament) {
+        if (historicTournament.isSitAndGo()) {
+            // For sit&go tournaments, we just return the buy-in to the players.
+        } else {
+            ScheduledTournamentConfiguration configuration = tournamentScheduleProvider.getTournamentConfiguration(historicTournament.getTournamentTemplateId());
+            if (configuration != null) {
+                ScheduledTournamentInstance instance = configuration.createInstanceWithStartTime(new DateTime(historicTournament.getScheduledStartTime()));
+                instance.setResurrectingPlayers(historicTournament.getRegisteredPlayers());
+                instance.setHistoricId(historicTournament.getId());
+                factory.createMtt(context.getMttId(), configuration.getConfiguration().getName(), createParticipant(instance));
+            } else {
+                log.fatal("Cannot resurrect historic tournament " + historicTournament.getId() + " because no template with id "
+                                  + historicTournament.getTournamentTemplateId() + " could be found.");
+            }
         }
     }
 
@@ -204,11 +242,11 @@ public class TournamentScanner implements PokerActivator, Runnable {
     }
 
     private CreationParticipant createParticipant(SitAndGoConfiguration configuration) {
-        return new SitAndGoCreationParticipant(configuration);
+        return new SitAndGoCreationParticipant(configuration, databaseStorageService);
     }
 
     private CreationParticipant createParticipant(ScheduledTournamentInstance configuration) {
-        return new ScheduledTournamentCreationParticipant(configuration);
+        return new ScheduledTournamentCreationParticipant(configuration, databaseStorageService);
     }
 
     private void checkTournaments() {
@@ -226,7 +264,7 @@ public class TournamentScanner implements PokerActivator, Runnable {
             TournamentSchedule schedule = configuration.getSchedule();
             DateTime nextAnnounceTime = schedule.getNextAnnounceTime(dateFetcher.date());
             if (dateFetcher.date().isAfter(nextAnnounceTime)) {
-                ScheduledTournamentInstance instance = configuration.spawnConfigurationForNextInstance(schedule.getNextStartTime(dateFetcher.date()));
+                ScheduledTournamentInstance instance = configuration.createInstanceWithStartTime(schedule.getNextStartTime(dateFetcher.date()));
                 if (!existingTournaments.contains(instance.getIdentifier())) {
                     createScheduledTournament(instance);
                 }

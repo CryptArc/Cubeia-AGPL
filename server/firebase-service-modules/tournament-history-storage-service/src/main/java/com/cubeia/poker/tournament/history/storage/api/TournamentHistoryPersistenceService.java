@@ -18,42 +18,53 @@
 package com.cubeia.poker.tournament.history.storage.api;
 
 import com.cubeia.firebase.api.service.Contract;
+import com.cubeia.poker.tournament.history.api.HistoricPlayer;
 import com.cubeia.poker.tournament.history.api.HistoricTournament;
 
+import java.util.Date;
+import java.util.List;
+
 public interface TournamentHistoryPersistenceService extends Contract {
+
+    void addTable(String historicId, String externalTableId);
+
+    void blindsUpdated(String historicId, Integer ante, Integer smallBlind, Integer bigBlind, long now);
 
     /**
      * Creates a new historic tournament in preparation for storing information about a new tournament.
      *
      * @return the id of the new historic tournament
      */
-    public String createHistoricTournament();
+    String createHistoricTournament(String name, int id, int templateId, boolean isSitAndGo);
 
-    public HistoricTournament getHistoricTournament(String id);
+    List<HistoricTournament> findTournamentsToResurrect();
 
-    void playerOut(int playerId, int position, int payoutInCents, String historicId, long now);
+    HistoricTournament getHistoricTournament(String id);
+
+    void playerFailedOpeningSession(String historicId, int playerId, String message, long now);
+
+    void playerFailedUnregistering(String historicId, int playerId, String message, long now);
 
     void playerMoved(int playerId, int tableId, String historicId, long now);
 
-    void statusChanged(String status, String historicId, long now);
+    void playerOpenedSession(String historicId, int playerId, String sessionId, long now);
 
-    void blindsUpdated(String historicId, Integer ante, Integer smallBlind, Integer bigBlind, long now);
+    void playerOut(int playerId, int position, int payoutInCents, String historicId, long now);
 
-    void setStartTime(String historicId, long date);
+    void playerReRegistered(String historicId, int playerId, long now);
+
+    void playerRegistered(String historicId, HistoricPlayer player, long now);
+
+    void playerUnregistered(String historicId, int playerId, long now);
 
     void setEndTime(String historicId, long date);
 
     void setName(String historicId, String name);
 
-    void addTable(String historicId, String externalTableId);
+    void setScheduledStartTime(String historicId, Date startTime);
 
-    void playerRegistered(String historicId, int playerId, long now);
+    void setStartTime(String historicId, long date);
 
-    void playerUnregistered(String historicId, int playerId, long now);
+    void statusChanged(String status, String historicId, long now);
 
-    void playerFailedUnregistering(String historicId, int playerId, String message, long now);
-
-    void playerOpenedSession(String historicId, int playerId, String sessionId, long now);
-
-    void playerFailedOpeningSession(String historicId, int playerId, String message, long now);
 }

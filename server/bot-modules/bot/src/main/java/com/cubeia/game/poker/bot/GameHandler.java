@@ -440,4 +440,14 @@ public class GameHandler implements PacketVisitor {
     public void visit(TournamentDestroyed packet) {
 
     }
+
+    @Override
+    public void visit(RequestTournamentRegistrationInfo packet) {
+
+    }
+
+    @Override
+    public void visit(TournamentRegistrationInfo packet) {
+
+    }
 }

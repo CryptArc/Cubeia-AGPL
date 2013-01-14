@@ -20,10 +20,13 @@ package com.cubeia.games.poker.tournament.configuration;
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructureFactory;
 import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
-import com.cubeia.poker.timing.Timings;
 import org.apache.log4j.Logger;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.io.Serializable;
 
 @Entity
@@ -33,7 +36,7 @@ public class SitAndGoConfiguration implements Serializable {
 
     @Id
     @GeneratedValue
-    private Integer id;
+    private int id;
 
     @ManyToOne(cascade = {CascadeType.ALL})
     private TournamentConfiguration configuration = new TournamentConfiguration();
@@ -63,11 +66,11 @@ public class SitAndGoConfiguration implements Serializable {
         this(name, capacity, TimingFactory.getRegistry().getDefaultTimingProfile());
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 }

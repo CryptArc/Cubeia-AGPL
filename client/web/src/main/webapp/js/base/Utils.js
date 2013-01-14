@@ -44,12 +44,26 @@ Poker.Utils = {
         return { left : distLeft, top : distTop };
 
     },
+    storeUser : function(username,password) {
+        Poker.Utils.store("username",username);
+        Poker.Utils.store("password",password);
+    },
+    removeStoredUser : function() {
+        Poker.Utils.remove("username");
+        Poker.Utils.remove("password");
+    },
     store : function(name,value) {
          var store = Poker.Utils.getStorage();
          if(store!=null) {
             store.removeItem(name);
             store.setItem(name,value);
          }
+    },
+    remove : function(name) {
+        var store = Poker.Utils.getStorage();
+        if(store!=null) {
+            store.removeItem(name);
+        }
     },
     load : function(name,defaultValue) {
         var store = Poker.Utils.getStorage();

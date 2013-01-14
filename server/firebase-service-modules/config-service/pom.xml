@@ -10,7 +10,7 @@
 	<groupId>com.cubeia.games.poker.config</groupId>
 	<artifactId>config-service</artifactId>
 	<packaging>firebase-sar</packaging>
-	<name>config-service (service)</name>
+	<name>Config Service</name>
 
 	<dependencies>
 		<dependency>
