@@ -63,6 +63,12 @@ public class TableConfigTemplate implements Serializable {
     private int maxBuyInMultiplier = DEF_MAX_BUY_IN_ANTE_MULTIPLIER;
 
     @Column(nullable = false)
+    private int minBuyIn;
+
+    @Column(nullable = true)
+    private int maxBuyIn;
+
+    @Column(nullable = false)
     private int minEmptyTables;
 
     @Column(nullable = false)
@@ -302,5 +308,21 @@ public class TableConfigTemplate implements Serializable {
                 ", rakeSettings=" + rakeSettings +
                 ", ttl=" + ttl +
                 '}';
+    }
+
+    public int getMinBuyIn() {
+        return minBuyIn;
+    }
+
+    public void setMinBuyIn(int minBuyIn) {
+        this.minBuyIn = minBuyIn;
+    }
+
+    public int getMaxBuyIn() {
+        return maxBuyIn;
+    }
+
+    public void setMaxBuyIn(int maxBuyIn) {
+        this.maxBuyIn = maxBuyIn;
     }
 }

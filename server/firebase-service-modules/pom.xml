@@ -22,6 +22,7 @@
         <!-- module>poker-cep-service</module -->
         <module>config-service</module>
         <module>post-login-service</module>
+        <module>hand-history-provider-service</module>
   </modules>
 
 </project>

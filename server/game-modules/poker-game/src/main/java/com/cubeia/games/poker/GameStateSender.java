@@ -74,7 +74,6 @@ public class GameStateSender {
         }
     }
 
-
     /**
      * 1. Filter the game actions list by removing all GameDataActions containing RequestAction packets
      * that have been answered by a PerformAction.

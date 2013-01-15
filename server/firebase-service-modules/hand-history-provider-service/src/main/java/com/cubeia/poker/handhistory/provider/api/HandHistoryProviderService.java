@@ -15,24 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.game.poker.config.api;
+package com.cubeia.poker.handhistory.provider.api;
 
-import static com.cubeia.firebase.api.server.conf.Inheritance.ALLOW;
+import com.cubeia.firebase.api.service.Contract;
 
-import com.cubeia.firebase.api.server.conf.Configurable;
-import com.cubeia.firebase.api.server.conf.Configurated;
-import com.cubeia.firebase.api.server.conf.Property;
+import java.lang.String;
+import java.util.List;
 
-@Configurated(inheritance = ALLOW, namespace = "com.cubeia.game.poker.activator")
-public interface PokerActivatorConfig extends Configurable {
+public interface HandHistoryProviderService extends Contract {
 
-    @Property(defaultValue = "true")
-    public boolean useMockIntegrations();
-
-    @Property(defaultValue = "60000", property = "default-table-ttl")
-    public long getDefaultTableTTL();
-
-    @Property(defaultValue = "15000")
-    public long getActivatorInterval();
+    public String getHandHistory(String handId);
 
 }

@@ -54,10 +54,10 @@ Poker.DialogManager = Class.extend({
               $("#genericDialog .message").hide();
           }
          var self = this;
-         if(content.okButtonText!="undefined") {
+         if(typeof(content.okButtonText)!="undefined") {
             $("#genericDialog .dialog-ok-button").html(content.okButtonText);
          }
-         if(okCallback=="undefined") {
+         if(typeof(okCallback)=="undefined") {
             this.displayDialog("genericDialog",function(){self.close();},null);
          } else {
              this.displayDialog("genericDialog",function(){ okCallback(); } , null);

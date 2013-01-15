@@ -122,8 +122,9 @@ public class PokerTableListener implements TournamentTableListener {
 
     @Override
     public void tournamentPlayerRejoined(Table table, GenericPlayer player) {
-        // log.debug("Tournament player rejoined: "+player);
-        // addPlayer(table, player);
+        stateInjector.injectAdapter(table);
+        log.debug("Tournament player rejoined: " + player);
+        sendGameStateToSittingInPlayerIfNeeded(table, player);
     }
 
     @Override
