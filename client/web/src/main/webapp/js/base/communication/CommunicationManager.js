@@ -197,6 +197,9 @@ Poker.CommunicationManager = Class.extend({
             case FB_PROTOCOL.ForcedLogoutPacket.CLASSID:
                 this.forceLogout(packet);
                 break;
+            case FB_PROTOCOL.ServiceTransportPacket.CLASSID:
+                new Poker.HandHistoryPacketHandler().handleServiceTransportPacket(packet);
+                break;
             default :
                 console.log("NO HANDLER");
                 console.log(packet);

@@ -26,6 +26,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
+import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -49,6 +50,10 @@ public class CreateOrEditPayoutStructure extends BasePage {
     public CreateOrEditPayoutStructure(PageParameters p) {
         super(p);
         add(new FileUploadForm("upload"));
+
+        ExternalLink csvLink = new ExternalLink("csvLink", "/payouts/default_payouts.csv");
+        csvLink.setContextRelative(true);
+        add(csvLink);
     }
 
     @Override

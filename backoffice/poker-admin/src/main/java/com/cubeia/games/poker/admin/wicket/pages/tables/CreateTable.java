@@ -45,6 +45,7 @@ public class CreateTable extends BasePage {
 
     private TableConfigTemplate table;
 
+
     public CreateTable(final PageParameters parameters) {
         super(parameters);
         table = new TableConfigTemplate();
@@ -55,29 +56,17 @@ public class CreateTable extends BasePage {
         table.setMinTables(10);
         table.setMinEmptyTables(5);
         table.setBetStrategy(BetStrategyType.NO_LIMIT);
-        Form<TableConfigTemplate> tableForm = new Form<TableConfigTemplate>("tableForm", new CompoundPropertyModel<TableConfigTemplate>(table)) {
+
+        TableForm tableForm = new TableForm("tableForm", table) {
 
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void onSubmit() {
-                TableConfigTemplate object = getModel().getObject();
-                adminDAO.save(object);
-                // info("Table template created: " + object);
+            protected void onSubmit(TableConfigTemplate config) {
+                adminDAO.save(config);
                 setResponsePage(ListTables.class);
             }
         };
-
-        tableForm.add(new RequiredTextField<String>("name"));
-        tableForm.add(new RequiredTextField<Integer>("ante"));
-        tableForm.add(new RequiredTextField<Integer>("smallBlind"));
-        tableForm.add(new RequiredTextField<Integer>("bigBlind"));
-        tableForm.add(new RequiredTextField<Integer>("seats"));
-        tableForm.add(new TextField<Integer>("minTables"));
-        tableForm.add(new TextField<Integer>("minEmptyTables"));
-        tableForm.add(new DropDownChoice<BetStrategyType>("betStrategy", asList(BetStrategyType.values()), choiceRenderer()));
-        tableForm.add(new DropDownChoice<TimingProfile>("timing", adminDAO.getTimingProfiles(), choiceRenderer()));
-        tableForm.add(new DropDownChoice<RakeSettings>("rakeSettings", adminDAO.getRakeSettings(), choiceRenderer()));
 
         add(tableForm);
 

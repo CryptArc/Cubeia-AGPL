@@ -29,6 +29,7 @@ import com.cubeia.games.poker.common.lobby.PokerLobbyAttributes;
 import com.cubeia.games.poker.entity.TableConfigTemplate;
 import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.poker.PokerState;
+import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.model.BlindsLevel;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.settings.RakeSettings;
@@ -123,8 +124,13 @@ public class PokerParticipant extends DefaultCreationParticipant {
     }
 
     private PokerSettings createSettings(Table table, String externalTableId) {
-        int minBuyIn = template.getAnte() * template.getMinBuyInMultiplier();
-        int maxBuyIn = template.getAnte() * template.getMaxBuyInMultiplier();
+        int minBuyIn = template.getMinBuyIn();
+        int maxBuyIn = template.getMaxBuyIn();
+
+        if (template.getBetStrategy() == BetStrategyType.FIXED_LIMIT) {
+            maxBuyIn = Integer.MAX_VALUE;
+        }
+
         int seats = table.getPlayerSet().getSeatingMap().getNumberOfSeats();
         RakeSettings rake = template.getRakeSettings();
         // Map<Serializable,Serializable> attributes = Collections.emptyMap();

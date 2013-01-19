@@ -36,7 +36,10 @@ public class SimpleTableConfigTemplateProvider implements TableConfigTemplatePro
     public List<TableConfigTemplate> getTemplates() {
         TableConfigTemplate t = new TableConfigTemplate();
         t.setId(0);
-        t.setAnte(100);
+        t.setSmallBlind(50);
+        t.setBigBlind(100);
+        t.setMinBuyIn(1000);
+        t.setMaxBuyIn(10000);
         t.setSeats(10);
         t.setVariant(TEXAS_HOLDEM);
         t.setTiming(TimingFactory.getRegistry().getDefaultTimingProfile());

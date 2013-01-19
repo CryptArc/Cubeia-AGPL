@@ -48,31 +48,19 @@ public class EditTable extends BasePage {
         super(parameters);
         final Integer templateId = parameters.get("templateId").toInt();
         loadFormData(templateId);
-        Form<TableConfigTemplate> tableForm = new Form<TableConfigTemplate>("tableForm", new CompoundPropertyModel<TableConfigTemplate>(table)) {
-            
-            private static final long serialVersionUID = 1L;
-            
+        TableForm tableForm = new TableForm("tableForm",table) {
             @Override
-            protected void onSubmit() {
-                TableConfigTemplate object = getModel().getObject();
-                adminDAO.save(object);
+            protected void onSubmit(TableConfigTemplate config) {
+                adminDAO.save(config);
                 // info("Table template updated, id = " + templateId);
                 setResponsePage(ListTables.class);
             }
+
+            @Override
+            public String getActionLabel() {
+                return "Save";
+            }
         };
-        
-        tableForm.add(new RequiredTextField<String>("name", new PropertyModel<String>(this, "table.name")));
-        tableForm.add(new RequiredTextField<Integer>("ante", new PropertyModel<Integer>(this, "table.ante")));
-        tableForm.add(new RequiredTextField<Integer>("smallBlind"));
-        tableForm.add(new RequiredTextField<Integer>("bigBlind"));
-        tableForm.add(new RequiredTextField<Integer>("seatsPerTable", new PropertyModel<Integer>(this, "table.seats")));
-        tableForm.add(new TextField<Integer>("minTables", new PropertyModel<Integer>(this, "table.minTables")));
-        tableForm.add(new TextField<Integer>("minEmptyTables", new PropertyModel<Integer>(this, "table.minEmptyTables")));
-        tableForm.add(new DropDownChoice<BetStrategyType>("betStrategy", asList(BetStrategyType.values()), choiceRenderer()));
-        tableForm.add(new DropDownChoice<TimingProfile>("timing", new PropertyModel<TimingProfile>(this, "table.timing"), adminDAO.getTimingProfiles(),
-                choiceRenderer()));
-        tableForm.add(new DropDownChoice<RakeSettings>("rakeSettings", new PropertyModel<RakeSettings>(this, "table.rakeSettings"), adminDAO.getRakeSettings(),
-                choiceRenderer()));
 
         add(tableForm);
 
