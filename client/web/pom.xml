@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.cubeia.games</groupId>
+    <artifactId>poker-client-web</artifactId>
+    <packaging>war</packaging>
+    <name>web</name>
+
+    <version>1.0-SNAPSHOT</version>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.5.1</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.0.2</version>
+                <configuration>
+                    <webResources>
+                        <resource>
+                            <directory>${project.build.directory}/filtered-resources</directory>
+                            <targetPath>.</targetPath>
+                        </resource>
+                    </webResources>
+                </configuration>
+            </plugin>
+            <!--
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>webminifier-maven-plugin</artifactId>
+                <version>1.0.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>minify-js</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            -->
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.1</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <file>/src/main/webapp/index.html</file>
+                    <outputFile>${project.build.directory}/filtered-resources/index.html</outputFile>
+                    <replacements>
+                        <replacement>
+                            <token>rel=\"stylesheet/less\"</token>
+                            <value>rel=\"stylesheet\"</value>
+                        </replacement>
+                        <replacement>
+                            <token>href="less/([a-zA-Z0-9_]*)\.less</token>
+                            <value>href="lcss/$1\.css"</value>
+                        </replacement>
+                    </replacements>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>net.achingbrain</groupId>
+                <artifactId>less-maven-plugin</artifactId>
+                <version>1.0.3</version>
+                <configuration>
+                    <inputDirectory>${project.basedir}/src/main/webapp/less</inputDirectory>
+                    <includes>
+                        <include>base.less</include>
+                    </includes>
+                    <outputDirectory>${project.build.directory}/${project.artifactId}-${project.version}/lcss</outputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>${jetty.version}</version>
+                <configuration>
+                    <webApp>
+                        <contextPath>/</contextPath>
+                    </webApp>
+                    <connectors>
+                        <connector implementation="org.eclipse.jetty.server.bio.SocketConnector">
+                            <port>8181</port>
+                            <maxIdleTime>60000</maxIdleTime>
+                        </connector>
+                    </connectors>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.8</version>
+            </plugin>
+            <plugin>
+                <groupId>com.github.searls</groupId>
+                <artifactId>jasmine-maven-plugin</artifactId>
+                <version>1.2.0.0</version>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <customRunnerTemplate>
+                        ${project.basedir}/src/test/js/jasmine-template.html
+                    </customRunnerTemplate>
+                    <preloadSources>
+
+                        <!-- external libs -->
+                        <source>${project.basedir}/src/main/webapp/js/lib/classjs.js</source>
+                        <source>${project.basedir}/src/main/webapp/js/lib/jquery-1.7.2.min.js</source>
+
+                        <!--testing sources -->
+                        <source>${project.basedir}/src/test/js/mocks/ConsoleMock.js</source>
+                        <source>${project.basedir}/src/test/js/mocks/MockUtils.js</source>
+
+                        <!-- sources -->
+                        <source>${project.basedir}/src/main/webapp/js/base/data/Map.js</source>
+                        <source>${project.basedir}/src/main/webapp/js/base/TableManager.js</source>
+                        <source>${project.basedir}/src/main/webapp/js/base/PeriodicalUpdater.js</source>
+                        <source>${project.basedir}/src/main/webapp/js/base/ui/Clock.js</source>
+                        <source>${project.basedir}/src/main/webapp/js/base/ui/TableLayoutManager.js</source>
+                        <source>${project.basedir}/src/main/webapp/js/base/Table.js</source>
+                        <source>${project.basedir}/src/main/webapp/js/base/Player.js</source>
+                        <source>${project.basedir}/src/main/webapp/js/base/PlayerTableStatus.js</source>
+                        <source>${project.basedir}/src/main/webapp/js/base/Utils.js</source>
+                        <source>${project.basedir}/src/main/webapp/js/base/ui/CSSUtils.js</source>
+                        <source>${project.basedir}/src/main/webapp/js/base/ui/animation/Animation.js</source>
+                        <source>${project.basedir}/src/main/webapp/js/base/ui/animation/Transform.js</source>
+                        <source>${project.basedir}/src/main/webapp/js/base/ui/animation/TransformAnimation.js</source>
+                        <source>${project.basedir}/src/main/webapp/js/base/ui/animation/CSSClassAnimation.js</source>
+                        <source>${project.basedir}/src/main/webapp/js/lib/mustache.js</source>
+                        <source>${project.basedir}/src/main/webapp/js/base/ui/TemplateManager.js</source>
+                        <source>${project.basedir}/src/main/webapp/js/base/Action.js</source>
+                        <source>${project.basedir}/src/main/webapp/js/base/ui/Seat.js</source>
+                        <source>${project.basedir}/src/main/webapp/js/base/ui/animation/AnimationManager.js</source>
+                        <source>${project.basedir}/src/main/webapp/js/base/sound/SoundRepository.js</source>
+                        <source>${project.basedir}/src/main/webapp/js/base/sound/SoundManager.js</source>
+                        <source>${project.basedir}/src/main/webapp/js/base/MyPlayer.js</source>
+                        <source>${project.basedir}/src/main/webapp/js/base/OperatorConfig.js</source>
+                    </preloadSources>
+                    <jsTestSrcDir>${project.basedir}/src/test/js</jsTestSrcDir>
+                    <specIncludes>
+                        <include>**/specs/**/**.js</include>
+                    </specIncludes>
+
+                </configuration>
+            </plugin>
+        </plugins>
+
+    </build>
+
+
+    <dependencies>
+
+    </dependencies>
+
+
+    <repositories>
+        <repository>
+            <id>cubeia-nexus</id>
+            <name>Public Cubeia Nexus</name>
+            <url>http://m2.cubeia.com/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>cubeia-nexus</id>
+            <name>Public Cubeia Nexus</name>
+            <url>http://m2.cubeia.com/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <distributionManagement>
+        <repository>
+            <id>cubeia-nexus</id>
+            <name>Cubeia Internal Release Repo</name>
+            <url>http://m2.cubeia.com/nexus/content/repositories/foss-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>cubeia-nexus</id>
+            <name>Cubeia Snapshot Repo</name>
+            <url>http://m2.cubeia.com/nexus/content/repositories/foss-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <properties>
+        <jetty.version>8.1.3.v20120416</jetty.version>
+    </properties>
+
+</project>
