@@ -522,7 +522,7 @@
                 <configuration>
                     <forkMode>once</forkMode>
                     <excludes>
-                        <exclude>**/Abstract*</exclude>
+                        <exclude></exclude>
                     </excludes>
                 </configuration>
                 <inherited>true</inherited> 

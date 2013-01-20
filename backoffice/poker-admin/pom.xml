@@ -225,6 +225,16 @@
                 </configuration>
             </plugin>
             <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.13-SONATYPE</version>
+                <configuration>
+                    <forkMode>once</forkMode>
+                    <excludes>
+                        <exclude>**/Abstract*</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>${jetty.version}</version>
