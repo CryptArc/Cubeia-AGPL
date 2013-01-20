@@ -1,0 +1,18 @@
+subsystem		location		status		port
+--------------------------------------------------------------------
+firebase		external		stable		4123
+network			external		stable		8080
+
+POKER APP		/server/game-modules	
+poker-logic		./poker-logic		development
+poker-game		./poker-game		development
+
+poker admin		/backoffice/poker-admin	development	8088/poker-admin
+bot admin		/server/bot-modules/bot	stable		8081
+
+CLIENTS			/client
+- web (HTML5)		./web			development	8181
+- cmd (java, text)	./java			stable
+- flex			./flex			unstable
+- javascript		./javascript		unstable
+

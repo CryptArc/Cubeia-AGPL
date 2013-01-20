@@ -1,14 +1,12 @@
 IMPORTANT
 
-Cubeia Poker is a work in progress. It has not yet reached a stable release.
-Please be aware that you can run into the usual setup problems.
+Cubeia Poker is based on Cubeia Firebase and Cubeia Network. Both components are 
+open sourced, in production and have been certified by various gaming
+legalisations.
 
-LINKS
-
-Info:  https://bitbucket.org/cubeia/cubeia-poker/wiki/Home
-Repo:  https://bitbucket.org/cubeia/cubeia-poker
-Com :  http://cubeia.com
-Org :  http://cubeia.org
+A flavor of poker is running in productions on a high traffic real-money site.
+This modules are currently extended, in order to create the Cubeia Poker
+product, which will include poker flavors like Texas Holdem.
 
 PREREQUISITES
 
@@ -17,29 +15,30 @@ PREREQUISITES
 
 SETUP
 
-Change into "cubeia-poker" directory (or any other directory you've choosen)
+* Change into "cubeia-poker" directory (or any other directory you've choosen)
 
-First follow the README within ./server, in order to run the poker-
-game-server.
+* First follow the README within ./server, in order to run the poker-server.
 
-Next follow the README within ./client/web. This will allow you to
+* Next follow the README within ./client/web. This will allow you to
 play poker with a web-browser.
 
-Follow the README within ./server/bot-modules/bot, in order to test
+* Follow the README within ./server/bot-modules/bot, in order to test
 your current setup with some poker-bots.
 
-Finally see the README within ./backoffice/poker-admin to setup the
+* Finally, see the README within ./backoffice/poker-admin to setup the
 web-application that manages the poker-game.
 
-If you want to try other clients, review the ./client.
+* If you want to try or develope other clients, review the ./client/README.
 
-You will find more information about other subsystems within the source-code,
-usually within a README.TXT file.
+SOFTWARE SUBSYSTEMS
 
-COMMUNITY SUPPORT
+For more information about the software subsystems, please review the 
+./doc/SUBSYSTEMS.TXT file.
 
-http://www.cubeia.org/index.php/forums
+LINKS
 
-COMMERCIAL SUPPORT
+Info   :  https://bitbucket.org/cubeia/cubeia-poker/wiki/Home
+Repo   :  https://bitbucket.org/cubeia/cubeia-poker
+Forum  :  http://www.cubeia.org/index.php/forums
+Service:  http://www.cubeia.com/?page_id=251
 
-Commercial grade support is available from http://cubeia.com.
