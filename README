@@ -1,24 +1,39 @@
-To get started with the poker:
+IMPORTANT
 
-Step 1: Check out the poker from the repo: bitbucket.org/cubeia/cubeia-poker
-Step 2: Run "mvn install" in the server directory.
-Step 3: Run "mvn firebase:run" in the server/game-modules/poker-uar directory.
-Step 4: Connect a client to the server. The JavaScript and Java clients are up to date, the Flash client might be lagging.
-The clients are in the client directory.
-The Java client can be built with Maven or imported into an IDE. The main class is PokerTextClient. First argument should be the host name, so add localhost if the server is running there.
-To start the JavaScript client just open index.html in a browser that support WebSockets (Chrome is good).
+Cubeia Poker is based on Cubeia Firebase and Cubeia Network. Both components are
+open sourced and in production.
 
-Step 5: Log in. Password should be an integer, it will be used as the playerId.
+PREREQUISITES
 
-Client commands in the text client:
+* Java SDK 1.6 or higher
+* Maven 3.0 or higher
 
-* login 1 1 (logs in with user name 1 and password 1)
-* list 1 (lists all tables)
-* join 1 -1 (joins table 1 in the first empty seat)
-* buyin 1 1000 (buys in at table 1 with 1000 chips)
-* small 1 (posts the small blind on table 1)
-* big 1 (big blind)
-* call 1 (duh)
-* bet 1 50 (bets 50 on table 1)
-* raise 1 50
-* fold 1
+SETUP
+
+* Change into "cubeia-poker" directory (or any other directory you've chosen)
+
+* First follow the README within ./server, in order to run the poker-server.
+
+* Next follow the README within ./client/web. This will allow you to
+play poker with a web-browser.
+
+* Follow the README within ./server/bot-modules/bot, in order to test
+your current setup with some poker-bots.
+
+* Finally, see the README within ./backoffice/poker-admin to setup the
+web-application that manages the poker-game.
+
+* If you want to try or develop other clients, review the ./client/README.
+
+SOFTWARE SUBSYSTEMS
+
+For more information about the software subsystems, please review the 
+./doc/SUBSYSTEMS.TXT file.
+
+LINKS
+
+Info   :  https://bitbucket.org/cubeia/cubeia-poker/wiki/Home
+Repo   :  https://bitbucket.org/cubeia/cubeia-poker
+Forum  :  http://www.cubeia.org/index.php/forums
+Service:  http://www.cubeia.com/?page_id=251
+
