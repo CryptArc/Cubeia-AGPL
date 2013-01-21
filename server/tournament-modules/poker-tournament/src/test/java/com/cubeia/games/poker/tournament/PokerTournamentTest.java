@@ -62,6 +62,7 @@ import java.util.Collections;
 import static com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse.ErrorCode.UNSPECIFIED_ERROR;
 import static com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructureFactory.createDefaultBlindsStructure;
 import static com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructureParserTest.createTestStructure;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.ANNOUNCED;
 import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.CANCELLED;
 import static com.google.common.collect.ImmutableSet.of;
 import static junit.framework.Assert.assertEquals;
@@ -155,6 +156,7 @@ public class PokerTournamentTest {
     @Test
     public void registrationStartShouldBeScheduledWhenScheduledTournamentIsCreated() {
         // Given a scheduled tournament
+        pokerState.setStatus(ANNOUNCED);
         prepareTournamentWithLifecycle();
         when(dateFetcher.date()).thenReturn(new DateTime(2011, 7, 5, 13, 30, 1));
 

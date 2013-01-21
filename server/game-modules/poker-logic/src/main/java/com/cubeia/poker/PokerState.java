@@ -432,4 +432,5 @@ public class PokerState implements Serializable, IPokerState {
         serverAdapter.sendGameStateTo(snapshot, playerId);
     }
 
+
 }

@@ -5,11 +5,16 @@ import com.cubeia.games.poker.entity.TableConfigTemplate;
 import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.timing.TimingProfile;
-import org.apache.wicket.markup.html.form.*;
+import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.ChoiceRenderer;
+import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.RequiredTextField;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.ComponentModel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import static java.util.Arrays.asList;
@@ -20,6 +25,8 @@ public abstract class TableForm extends Panel {
     @SpringBean
     private AdminDAO adminDAO;
 
+    private Integer maxBuyIn;
+
     public TableForm(String id, TableConfigTemplate tableTemplate) {
         super(id);
 
@@ -28,7 +35,14 @@ public abstract class TableForm extends Panel {
             @Override
             protected void onSubmit() {
                 TableConfigTemplate config = getModel().getObject();
-                TableForm.this.onSubmit(config);
+                if(config.getBetStrategy() != BetStrategyType.FIXED_LIMIT && maxBuyIn==null) {
+                    error("Max Buy-in must be set for NL and PL");
+                } else {
+                    if(maxBuyIn!=null) {
+                        config.setMaxBuyIn(maxBuyIn); //since int can't be an optional field
+                    }
+                    TableForm.this.onSubmit(config);
+                }
             }
         };
 
@@ -37,7 +51,7 @@ public abstract class TableForm extends Panel {
         tableForm.add(new RequiredTextField<Integer>("smallBlind"));
         tableForm.add(new RequiredTextField<Integer>("bigBlind"));
         tableForm.add(new RequiredTextField<Integer>("minBuyIn"));
-        tableForm.add(new RequiredTextField<Integer>("maxBuyIn"));
+        tableForm.add(new TextField<Integer>("maxBuyIn", new PropertyModel<Integer>(this,"maxBuyIn")));
         tableForm.add(new RequiredTextField<Integer>("seats"));
         tableForm.add(new TextField<Integer>("minTables"));
         tableForm.add(new TextField<Integer>("minEmptyTables"));

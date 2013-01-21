@@ -39,7 +39,6 @@
             <groupId>com.cubeia.games.handhistory</groupId>
             <artifactId>hand-history-provider-service</artifactId>
             <type>firebase-sar</type>
-            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>

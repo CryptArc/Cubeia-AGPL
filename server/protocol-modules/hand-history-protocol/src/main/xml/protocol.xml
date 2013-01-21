@@ -1,0 +1,8 @@
+<protocol version="$Revision: 1 $">
+
+    <struct name="hand_history_provider_request">
+        <var name="table_id" type="int32" />
+        <var name="time" type="string" />
+    </struct>
+
+</protocol>

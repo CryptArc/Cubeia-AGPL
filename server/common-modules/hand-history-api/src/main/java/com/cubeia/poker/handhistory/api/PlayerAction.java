@@ -21,7 +21,7 @@ public class PlayerAction extends HandHistoryEvent {
 
     private static final long serialVersionUID = 2633660241901849321L;
 
-	public enum Type {
+    public enum Type {
         SMALL_BLIND, BIG_BLIND, CALL, CHECK, BET, RAISE, FOLD, DECLINE_ENTRY_BET, ANTE, BIG_BLIND_PLUS_DEAD_SMALL_BLIND, DEAD_SMALL_BLIND;
     }
 

@@ -19,6 +19,7 @@ package com.cubeia.games.poker.tournament.activator;
 
 import com.cubeia.firebase.api.lobby.LobbyAttributeAccessor;
 import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
+import com.cubeia.games.poker.common.time.SystemTime;
 import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.SitAndGoLifeCycle;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.TournamentLifeCycle;
@@ -30,8 +31,8 @@ public class SitAndGoCreationParticipant extends PokerTournamentCreationParticip
 
     private final SitAndGoConfiguration template;
 
-    public SitAndGoCreationParticipant(SitAndGoConfiguration config, TournamentHistoryPersistenceService storageService) {
-        super(config.getConfiguration(), storageService);
+    public SitAndGoCreationParticipant(SitAndGoConfiguration config, TournamentHistoryPersistenceService storageService, SystemTime dateFetcher) {
+        super(config.getConfiguration(), storageService, dateFetcher);
         this.template = config;
     }
 

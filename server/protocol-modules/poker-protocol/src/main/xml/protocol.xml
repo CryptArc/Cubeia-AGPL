@@ -467,6 +467,7 @@
         <var name="game_type" type="string" />
         <!-- Start time in millis since 1970, as string because longs don't work well. -->
         <var name="start_time" type="string" />
+        <var name="registration_start_time" type="string" />
         <var name="buy_in" type="string" />
         <var name="fee" type="string" />
         <var name="min_players" type="int32" />

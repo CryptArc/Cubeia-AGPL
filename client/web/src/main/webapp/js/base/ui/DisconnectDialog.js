@@ -20,7 +20,7 @@ Poker.DisconnectDialog = Class.extend({
             this.dialogManager.displayDialog(
                 "disconnectDialog",
                 function() {
-                    return true;
+                    document.location.reload();
                 },
                 function() {
                     self.open = false;
@@ -28,6 +28,10 @@ Poker.DisconnectDialog = Class.extend({
         }
         this.open  = true;
 
+    },
+    stoppedReconnecting : function() {
+        $(".disconnect-reconnecting").hide();
+        $(".stopped-reconnecting").show();
     },
     close : function() {
         this.dialogManager.close();

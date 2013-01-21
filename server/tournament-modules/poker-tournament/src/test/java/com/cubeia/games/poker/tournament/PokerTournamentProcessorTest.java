@@ -144,6 +144,8 @@ public class PokerTournamentProcessorTest extends TestCase {
 
     private Random rng = new Random();
 
+    private SystemTime systemTime = new DefaultSystemTime();
+
     @Override
     protected void setUp() throws Exception {
         initMocks(this);
@@ -177,7 +179,7 @@ public class PokerTournamentProcessorTest extends TestCase {
         config.getConfiguration().setFee(BigDecimal.valueOf(1));
         config.getConfiguration().setBlindsStructure(BlindsStructureFactory.createDefaultBlindsStructure());
         config.getConfiguration().setPayoutStructure(PayoutStructureParserTest.createTestStructure());
-        PokerTournamentCreationParticipant part = new SitAndGoCreationParticipant(config, historyService);
+        PokerTournamentCreationParticipant part = new SitAndGoCreationParticipant(config, historyService, systemTime);
         part.tournamentCreated(state, instance.getLobbyAccessor());
 
         pokerState = new PokerTournamentUtil().getPokerState(instance);
@@ -226,7 +228,7 @@ public class PokerTournamentProcessorTest extends TestCase {
         when(instanceConfig.getConfiguration()).thenReturn(configuration);
         when(instanceConfig.getSchedule()).thenReturn(schedule);
 
-        PokerTournamentCreationParticipant participant = new ScheduledTournamentCreationParticipant(instanceConfig, historyService);
+        PokerTournamentCreationParticipant participant = new ScheduledTournamentCreationParticipant(instanceConfig, historyService, systemTime);
         participant.tournamentCreated(state, instance.getLobbyAccessor());
         pokerState = new PokerTournamentUtil().getPokerState(instance);
         assertEquals(ANNOUNCED, pokerState.getStatus());

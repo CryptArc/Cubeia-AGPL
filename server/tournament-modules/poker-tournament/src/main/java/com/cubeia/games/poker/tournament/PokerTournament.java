@@ -382,7 +382,7 @@ public class PokerTournament implements Serializable {
     }
 
     private void closeMainTournamentSession() {
-        log.debug("Closing tournament session for tournament " + pokerState.getHistoricId());
+        log.debug("Closing tournament session " + pokerState.getTournamentSession() + " for tournament " + pokerState.getHistoricId());
         backend.closeTournamentSession(new CloseSessionRequest(pokerState.getTournamentSession()), createTournamentId());
     }
 
@@ -630,7 +630,8 @@ public class PokerTournament implements Serializable {
     }
 
     private boolean tournamentShouldBeCancelled() {
-        return pokerState.shouldCancelTournament(dateFetcher.date(), state.getRegisteredPlayersCount(), state.getMinPlayers());
+        boolean resurrectingSitAndGo = pokerState.isResurrectingTournament() && pokerState.isSitAndGo();
+        return resurrectingSitAndGo || pokerState.shouldCancelTournament(dateFetcher.date(), state.getRegisteredPlayersCount(), state.getMinPlayers());
     }
 
     private TournamentTableSettings getTableSettings() {
@@ -715,11 +716,12 @@ public class PokerTournament implements Serializable {
 
     public void tournamentCreated() {
         log.debug("Tournament created. Historic id: " + pokerState.getHistoricId());
-        backend.openTournamentSession(createOpenTournamentSessionRequest());
         log.debug("Resurrecting players: " + pokerState.getResurrectingPlayers());
-        if (!pokerState.getResurrectingPlayers().isEmpty()) {
+        if (pokerState.isResurrectingTournament()) {
             reRegisterPlayers(pokerState.getResurrectingPlayers());
             pokerState.invalidatePlayerMap();
+        } else {
+            backend.openTournamentSession(createOpenTournamentSessionRequest());
         }
         if (tournamentShouldBeCancelled()) {
             cancelTournament();
@@ -825,8 +827,10 @@ public class PokerTournament implements Serializable {
     }
 
     private void cancelTournament() {
+        log.debug("Cancelling tournament " + pokerState.getHistoricId());
         setTournamentStatus(PokerTournamentStatus.CANCELLED);
         refundPlayers();
+        closeMainTournamentSession();
         scheduleTournamentClosing();
     }
 
@@ -846,7 +850,7 @@ public class PokerTournament implements Serializable {
         log.debug("Open session succeeded: " + response);
         PlayerSessionId sessionId = response.getSessionId();
         if (sessionId.playerId == -1) {
-            pokerState.setTournamentSessionId(sessionId);
+            setTournamentSessionId(sessionId);
         } else {
             pokerState.addBuyInToPrizePool();
             pokerState.addPlayerSession(sessionId);
@@ -857,6 +861,11 @@ public class PokerTournament implements Serializable {
 
             checkIfTournamentShouldBetStartedOrCancelled();
         }
+    }
+
+    private void setTournamentSessionId(PlayerSessionId sessionId) {
+        historyPersister.setTournamentSessionId(sessionId.integrationSessionId);
+        pokerState.setTournamentSessionId(sessionId);
     }
 
     public void handleOpenSessionResponseFailed(OpenSessionFailedResponse response) {

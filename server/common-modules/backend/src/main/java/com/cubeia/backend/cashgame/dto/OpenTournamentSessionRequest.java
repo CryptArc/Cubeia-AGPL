@@ -28,8 +28,11 @@ public class OpenTournamentSessionRequest extends OpenSessionRequest implements 
 
     public final TournamentId tournamentId;
 
+    public static final String TOURNAMENT_ACCOUNT = "TOURNAMENT_ACCOUNT";
+
     public OpenTournamentSessionRequest(int playerId, TournamentId tournamentId, Money openingBalance) {
         super(playerId, tournamentId.getIntegrationId(), openingBalance);
+        setAccountName(TOURNAMENT_ACCOUNT);
         this.tournamentId = tournamentId;
     }
 

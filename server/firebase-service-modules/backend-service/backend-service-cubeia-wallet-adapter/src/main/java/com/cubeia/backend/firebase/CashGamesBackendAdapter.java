@@ -129,7 +129,7 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
         OpenSessionResponse response = null;
         try {
             Long walletSessionId = walletService.startSession(request.getOpeningBalance().getCurrencyCode(), LICENSEE_ID, request.getPlayerId(),
-                    request.getObjectId(), GAME_ID, "unknown-" + request.getPlayerId());
+                    request.getObjectId(), GAME_ID, "unknown-" + request.getPlayerId(), request.getAccountName());
 
             PlayerSessionId sessionId = new PlayerSessionId(request.playerId, String.valueOf(walletSessionId));
             response = new OpenSessionResponse(sessionId, Collections.<String, String>emptyMap());
@@ -155,6 +155,7 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
     public void closeSession(CloseSessionRequest request) {
         PlayerSessionId sid = request.getPlayerSessionId();
         long walletSessionId = getWalletSessionIdByPlayerSessionId(sid);
+        log.debug("Closing session " + walletSessionId);
         com.cubeia.backoffice.accounting.api.Money amountDeposited = walletService.endSessionAndDepositAll(LICENSEE_ID, walletSessionId,
                 "session ended by game " + GAME_ID + ", player id = " + sid.playerId);
 

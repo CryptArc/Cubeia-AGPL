@@ -30,6 +30,8 @@ import org.bson.types.ObjectId;
 import java.util.Date;
 import java.util.List;
 
+import static java.util.Arrays.asList;
+
 public class HistoricTournamentDao {
 
     private Datastore datastore;
@@ -55,6 +57,10 @@ public class HistoricTournamentDao {
 
     public HistoricTournament getHistoricTournament(String historicId) {
         return createQuery(historicId).get();
+    }
+
+    public void setTournamentSessionId(String sessionId, String historicId) {
+        setProperty(historicId, "tournamentSessionId", sessionId);
     }
 
     public void setStartTime(String historicId, long date) {
@@ -109,17 +115,18 @@ public class HistoricTournamentDao {
     /**
      * Finds tournaments that need to be resurrected. A tournament needs to be resurrected if:
      *
-     *  - It has been created but has not started.
-     *  - It has at least one registered player.
-     *  - It is not a sit&go.
+     *  - It has been created but has not started (it's announced or registering).
      *
      * Note that once a tournament has started it needs to be resolved rather than resurrected.
      *
      * @return a list of tournaments that need to be resurrected
      */
     public List<HistoricTournament> findTournamentsToResurrect() {
-        return datastore.find(HistoricTournament.class).field("startTime").equal(0).field("status").equal("REGISTERING").
-                field("registeredPlayers").exists().asList();
+        Query<HistoricTournament> query = datastore.createQuery(HistoricTournament.class);
+        // Status should either be "ANNOUNCED | REGISTERING" or "RUNNING" but only if it's a sitAndGo.
+        query.or(query.criteria("status").in(asList("ANNOUNCED", "REGISTERING")),
+                 query.and(query.criteria("status").equal("RUNNING"), query.criteria("sitAndGo").equal(true)));
+        return query.asList();
     }
 
     private void setProperty(String historicId, String property, Object value) {

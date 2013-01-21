@@ -88,11 +88,10 @@ Poker.LobbyManager = Class.extend({
         var tournamentData = this.findTournament(tournamentUpdate.mttid);
         if (tournamentData) {
             var registered = Poker.ProtocolUtils.readParam("REGISTERED", tournamentUpdate.params);
-            if (tournamentData.registered == registered) {
-                return;
-            }
             if (registered != undefined) tournamentData.registered = registered;
             var status = Poker.ProtocolUtils.readParam("STATUS", tournamentUpdate.params);
+            if(status!=undefined) tournamentData.status = status;
+
             if(this.sitAndGoState==true) {
                 this.lobbyLayoutManager.updateSitAndGoItem(tournamentData)
             } else {

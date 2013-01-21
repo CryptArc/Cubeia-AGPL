@@ -18,6 +18,7 @@
 package com.cubeia.games.poker.tournament.configuration.provider.mock;
 
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
+import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
 import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructureFactory;
@@ -55,7 +56,12 @@ public class MockTournamentScheduleProvider implements TournamentScheduleProvide
     }
 
     @Override
-    public ScheduledTournamentConfiguration getTournamentConfiguration(int id) {
+    public ScheduledTournamentConfiguration getScheduledTournamentConfiguration(int id) {
+        return null;
+    }
+
+    @Override
+    public SitAndGoConfiguration getSitAndGoTournamentConfiguration(int id) {
         return null;
     }
 

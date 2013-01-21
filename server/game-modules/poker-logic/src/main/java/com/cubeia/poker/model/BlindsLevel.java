@@ -17,19 +17,27 @@
 
 package com.cubeia.poker.model;
 
-public class BlindsLevel {
+import java.io.Serializable;
 
-    private final int smallBlindAmount;
+public class BlindsLevel implements Serializable {
 
-    private final int bigBlindAmount;
+    private static final long serialVersionUID = 0;
 
-    private final int anteAmount;
+    private int smallBlindAmount;
 
-    private final boolean isBreak;
+    private int bigBlindAmount;
 
-    private final long nextLevelStartTime;
+    private int anteAmount;
 
-    private final int durationInMinutes;
+    private boolean isBreak;
+
+    private long nextLevelStartTime;
+
+    private int durationInMinutes;
+
+    public BlindsLevel() {
+
+    }
 
     public BlindsLevel(int smallBlindAmount, int bigBlindAmount, int anteAmount, boolean isBreak, int durationInMinutes, long nextLevelStartTime) {
         this.smallBlindAmount = smallBlindAmount;

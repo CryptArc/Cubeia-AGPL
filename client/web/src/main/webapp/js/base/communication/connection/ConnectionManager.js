@@ -2,6 +2,9 @@ var Poker = Poker || {};
 
 
 Poker.ConnectionManager = Class.extend({
+
+    MAX_RECONNECT_ATTEMPTS : 30,
+
     retryCount : 0,
 
     /**
@@ -134,10 +137,17 @@ Poker.ConnectionManager = Class.extend({
 
     },
     reconnect : function() {
-        this.onUserReconnecting();
-        Poker.AppCtx.getCommunicationManager().connect();
-        this.scheduleReconnect();
-
+        if(this.retryCount < this.MAX_RECONNECT_ATTEMPTS) {
+            this.onUserReconnecting();
+            Poker.AppCtx.getCommunicationManager().connect();
+            this.scheduleReconnect();
+        } else {
+            this.disconnectDialog.stoppedReconnecting();
+        }
+    },
+    onLogout : function() {
+        document.location = document.location.hash = "clear";
+        document.location.reload();
     },
     scheduleReconnect : function() {
         if(this.reconnectRetryTimeout) {

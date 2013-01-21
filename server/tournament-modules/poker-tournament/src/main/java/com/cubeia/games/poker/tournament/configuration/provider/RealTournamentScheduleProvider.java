@@ -18,6 +18,7 @@
 package com.cubeia.games.poker.tournament.configuration.provider;
 
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
+import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
 import com.cubeia.games.poker.tournament.configuration.dao.TournamentConfigurationDao;
 import com.google.inject.Inject;
 
@@ -38,7 +39,12 @@ public class RealTournamentScheduleProvider implements TournamentScheduleProvide
     }
 
     @Override
-    public ScheduledTournamentConfiguration getTournamentConfiguration(int id) {
+    public ScheduledTournamentConfiguration getScheduledTournamentConfiguration(int id) {
         return dao.getScheduledTournamentConfiguration(id);
+    }
+
+    @Override
+    public SitAndGoConfiguration getSitAndGoTournamentConfiguration(int id) {
+        return dao.getSitAndGoConfiguration(id);
     }
 }

@@ -34,6 +34,7 @@
     <script src="js/lib/cubeia/firebase-js-api-1.9.0-CE-javascript.js" type="text/javascript"></script>
     <script src="js/lib/cubeia/firebase-protocol-1.9.0-CE-javascript.js" type="text/javascript"></script>
     <script src="js/lib/poker-protocol-1.0-SNAPSHOT.js" type="text/javascript"></script>
+    <script src="js/lib/hand-history-protocol-1.0-SNAPSHOT.js" type="text/javascript"></script>
     <script src="js/lib/quo.js" type="text/javascript"></script>
 
     <script src="js/base/Utils.js" type="text/javascript"></script>
@@ -156,7 +157,11 @@
                 tournamentLobbyUpdateInterval : 10000
             });
 
-
+            $(".logout-link").click(function(){
+                Poker.AppCtx.getCommunicationManager().getConnector().logout();
+                document.location = document.location.hash = "clear";
+                document.location.reload();
+            });
 
         });
 
@@ -247,6 +252,7 @@
                             <div class="user-panel">
                                 <span class="status">Logged in: </span>
                                 <span id="username"></span> (<span id="userId"></span>)
+                                <a class="logout-link">Log out</a>
                             </div>
                             <div class="show-filters">
                                 <a>Show filters</a>
@@ -562,6 +568,10 @@
                         <span>Sit-in</span>
                     </div>
 
+                    <div class="action-button action-hhl" style="display: none;">
+                        <span>HHL</span>
+                    </div>
+
                 </div>
             </div>
             <div id="myPlayerSeat-{{tableId}}Progressbar" class="circular-progress-bar">
@@ -571,10 +581,18 @@
     </script>
     <div id="disconnectDialog" style="display: none;">
         <h1>You have been disconnected</h1>
-        <p class="message">
+        <p class="message disconnect-reconnecting">
             Trying to reconnect (attempt <span class="reconnectAttempt"></span>)
             <br/>
             <br/>
+        </p>
+        <p class="stopped-reconnecting" style="display: none;">
+            Unable to reconnect
+        </p>
+        <p class="dialog-buttons stopped-reconnecting" style="display: none;">
+            <a href="#" class="dialog-ok-button">
+                Reload
+            </a>
         </p>
     </div>
     <div id="buyInDialog" style="display: none;">
@@ -665,7 +683,7 @@
             <div class="top-row">
                 <h3>
                     {{name}}
-                    <span>18:00 CET 2012-12-08</span>
+                    <span class="tournament-start-date"></span>
                 </h3>
                 <a class="register-button leave-action">Close</a>
                 <a class="register-button register-action">Register</a>
@@ -711,13 +729,6 @@
         <h4>Tournament Info</h4>
         <div class="stats-item"><span>{{gameType}}</span></div>
         <div class="stats-item">Buy-in: <span>{{buyIn}}+{{fee}}</span></div>
-        {{#sitAndGo}}
-            <div class="stats-item">Players: <span>{{minPlayers}}</span></div>
-        {{/sitAndGo}}
-        {{^sitAndGo}}
-            <div class="stats-item">Max Players: <span>{{maxPlayers}}</span></div>
-            <div class="stats-item">Min Players: <span>{{minPlayers}}</span></div>
-        {{/sitAndGo}}
         <div class="stats-item">
             Status:
             <span class="status-container">
@@ -731,6 +742,15 @@
                 <span class="status-7-{{tournamentStatus}}">CLOSED</span>
             </span>
         </div>
+        {{#sitAndGo}}
+            <div class="stats-item">Players: <span>{{minPlayers}}</span></div>
+        {{/sitAndGo}}
+        {{^sitAndGo}}
+            <div class="stats-item">Max Players: <span>{{maxPlayers}}</span></div>
+            <div class="stats-item">Min Players: <span>{{minPlayers}}</span></div>
+            <div class="stats-item">Registration Starts: <span><br/>{{registrationStartTime}}</span></div>
+        {{/sitAndGo}}
+
 
     </script>
     <script type="text/mustache" id="tournamentStatsTemplate">

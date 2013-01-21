@@ -19,9 +19,9 @@ package com.cubeia.games.poker.common.mongo;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
+import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.Mongo;
-import com.mongodb.WriteResult;
 import org.apache.log4j.Logger;
 import org.bson.types.ObjectId;
 
@@ -60,6 +60,10 @@ public class MongoStorage {
         BasicDBObject query = new BasicDBObject();
         query.put("_id", id);
         return db().getCollection(collection).findOne(query);
+    }
+
+    public DBCursor findByQuery(BasicDBObject query, String collection) {
+        return db().getCollection(collection).find(query);
     }
 
     private DB db() {

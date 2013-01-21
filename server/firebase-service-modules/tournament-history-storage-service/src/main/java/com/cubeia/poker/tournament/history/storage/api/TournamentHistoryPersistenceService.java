@@ -63,6 +63,8 @@ public interface TournamentHistoryPersistenceService extends Contract {
 
     void setScheduledStartTime(String historicId, Date startTime);
 
+    void setTournamentSessionId(String sessionId, String historicId);
+
     void setStartTime(String historicId, long date);
 
     void statusChanged(String status, String historicId, long now);

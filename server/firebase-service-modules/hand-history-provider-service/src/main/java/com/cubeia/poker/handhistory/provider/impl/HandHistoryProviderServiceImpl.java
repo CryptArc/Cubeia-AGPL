@@ -24,18 +24,39 @@ import com.cubeia.firebase.api.service.RoutableService;
 import com.cubeia.firebase.api.service.Service;
 import com.cubeia.firebase.api.service.ServiceContext;
 import com.cubeia.firebase.api.service.ServiceRouter;
+import com.cubeia.games.poker.handhistoryservice.io.protocol.HandHistoryProviderRequest;
+import com.cubeia.firebase.io.StyxSerializer;
+import com.cubeia.games.poker.handhistoryservice.io.protocol.ProtocolObjectFactory;
+import com.cubeia.games.poker.common.mongo.DatabaseStorageConfiguration;
+import com.cubeia.games.poker.common.mongo.MongoStorage;
 import com.cubeia.poker.handhistory.provider.api.HandHistoryProviderService;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCursor;
 import org.apache.log4j.Logger;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
 
 public class HandHistoryProviderServiceImpl implements HandHistoryProviderService, Service, RoutableService {
 
     private static final Logger log = Logger.getLogger(HandHistoryProviderServiceImpl.class);
+    public static final String HANDS_COLLECTION = "hands";
 
     private ServiceRouter router;
+    private MongoStorage mongoStorage;
+    private DatabaseStorageConfiguration configuration;
 
     @Override
-    public String getHandHistory(String handId) {
-        return "{id:'someHandId'}";
+    public String getHandHistory(int tableId, int playerId, long time) {
+        BasicDBObject query = new BasicDBObject();
+        query.put("table.tableId", tableId);
+        query.put("seats", new BasicDBObject("$elemMatch", new BasicDBObject("playerId", playerId)));
+        query.put("startTime", new BasicDBObject("$gte", time));
+
+        DBCursor cursor = mongoStorage.findByQuery(query, HANDS_COLLECTION);
+        String result = cursor.toArray().toString();
+        cursor.close();
+        return result;
     }
 
     @Override
@@ -45,24 +66,49 @@ public class HandHistoryProviderServiceImpl implements HandHistoryProviderServic
 
     @Override
     public void onAction(ServiceAction e) {
-        String handId = String.valueOf(e.getData());
-        log.info("Action received. HandId: : " + handId);
-        ServiceAction action = new ClientServiceAction(e.getPlayerId(), -1, getHandHistory(handId).getBytes());
-        router.dispatchToPlayer(e.getPlayerId(), action);
+        int tableId = -1;
+        int playerId = e.getPlayerId();
+        long time = 0;
+        byte[] data = e.getData();
+        log.debug("Hand history requested for tableId: " + tableId);
+        try {
+            StyxSerializer serializer = new StyxSerializer(new ProtocolObjectFactory());
+            HandHistoryProviderRequest request = (HandHistoryProviderRequest)serializer.unpack(ByteBuffer.wrap(data));
+            time = Long.parseLong(request.time);
+            tableId = request.tableId;
+            log.debug("Request data - TableId: " + tableId + " PlayerId: " + playerId + " Time: " + time);
+            ServiceAction action = new ClientServiceAction(playerId, -1, getHandHistory(tableId, playerId, time).getBytes());
+            router.dispatchToPlayer(e.getPlayerId(), action);
+        } catch (IOException ex) {
+            log.error("Error during the event data processing in handHistoryProviderServiceImpl. Error: " + ex.getMessage());
+        }
     }
 
     @Override
-    public void init(ServiceContext con) throws SystemException {
+    public void init(ServiceContext context) throws SystemException {
         log.debug("HandHistoryProviderService STARTED! ");
+        configuration = getConfiguration(context);
+        mongoStorage = getMongoStorage();
+    }
+
+    protected DatabaseStorageConfiguration getConfiguration(ServiceContext context) {
+        return new DatabaseStorageConfiguration().load(context.getServerConfigDirectory().getAbsolutePath());
+    }
+
+    protected MongoStorage getMongoStorage() {
+        return new MongoStorage(configuration);
     }
 
     @Override
     public void destroy() { }
 
     @Override
-    public void start() { }
+    public void start() {
+        mongoStorage.connect();
+    }
 
     @Override
-    public void stop() { }
-
+    public void stop() {
+        mongoStorage.disconnect();
+    }
 }

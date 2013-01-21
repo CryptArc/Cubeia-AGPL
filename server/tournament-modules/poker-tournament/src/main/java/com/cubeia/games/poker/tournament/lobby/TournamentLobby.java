@@ -262,7 +262,8 @@ public class TournamentLobby {
         tournamentInfo.gameType = "No Limit Hold'em"; // TODO: Change when we actually support anything other than NL Hold'em..
         tournamentInfo.maxPlayers = state.getCapacity();
         tournamentInfo.minPlayers = state.getMinPlayers();
-        tournamentInfo.startTime = String.valueOf(pokerState.getStartTime().getMillis());
+        tournamentInfo.startTime = pokerState.getStartDateString();
+        tournamentInfo.registrationStartTime = pokerState.getRegistrationStartDateString();
         tournamentInfo.tournamentName = state.getName();
         tournamentInfo.tournamentStatus = convertTournamentStatus(pokerState.getStatus());
         return tournamentInfo;

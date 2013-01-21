@@ -122,7 +122,7 @@ public class CashGamesBackendAdapterTest {
         Money openingBalance = new Money(100, "EUR", 2);
         OpenTableSessionRequest request = new OpenTableSessionRequest(playerId, tableId, openingBalance);
         long walletSessionId = 12234444L;
-        when(walletService.startSession(openingBalance.getCurrencyCode(), LICENSEE_ID, playerId, integrationId, GAME_ID, "unknown-" + playerId))
+        when(walletService.startSession(openingBalance.getCurrencyCode(), LICENSEE_ID, playerId, integrationId, GAME_ID, "unknown-" + playerId, null))
                 .thenReturn(walletSessionId);
         AccountBalanceResult balance = mock(AccountBalanceResult.class);
         when(balance.getBalance()).thenReturn(new com.cubeia.backoffice.accounting.api.Money(Currency.getInstance("EUR"), BigDecimal.valueOf(10)));

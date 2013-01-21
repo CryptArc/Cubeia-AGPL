@@ -25,7 +25,6 @@ import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.games.poker.common.money.Money;
 import com.cubeia.games.poker.io.protocol.TournamentPlayerList;
 import com.cubeia.games.poker.io.protocol.TournamentStatistics;
-import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
 import com.cubeia.games.poker.tournament.configuration.blinds.Level;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.TournamentLifeCycle;
@@ -66,7 +65,7 @@ public class PokerTournamentState implements Serializable {
 
     private int tablesToCreate;
 
-    private PokerTournamentStatus status = PokerTournamentStatus.ANNOUNCED;
+    private PokerTournamentStatus status;
 
     // Timestamps for profiling
     private long firstRegisteredTime = 0;
@@ -136,12 +135,24 @@ public class PokerTournamentState implements Serializable {
 
     private BetStrategyType betStrategy;
 
+    private boolean shouldCancel = false;
+
+    private boolean resurrectingTournament;
+
+    private String startDateString;
+
+    private String registrationStartDateString;
+
     public boolean allTablesHaveBeenCreated(int tablesCreated) {
         return tablesCreated >= tablesToCreate;
     }
 
     public BetStrategyType getBetStrategy() {
         return betStrategy;
+    }
+
+    public boolean isResurrectingTournament() {
+        return resurrectingTournament;
     }
 
     public boolean isSitAndGo() {
@@ -154,6 +165,14 @@ public class PokerTournamentState implements Serializable {
 
     public void setBetStrategy(BetStrategyType betStrategy) {
         this.betStrategy = betStrategy;
+    }
+
+    public void setResurrectingTournament(boolean resurrectingTournament) {
+        this.resurrectingTournament = resurrectingTournament;
+    }
+
+    public void setShouldCancel(boolean shouldCancel) {
+        this.shouldCancel = shouldCancel;
     }
 
     public void setSitAndGo(boolean sitAndGo) {
@@ -388,7 +407,7 @@ public class PokerTournamentState implements Serializable {
     }
 
     public boolean shouldCancelTournament(DateTime now, int registeredPlayersCount, int minPlayers) {
-        return tournamentLifeCycle.shouldCancelTournament(now, registeredPlayersCount, minPlayers);
+        return shouldCancel || tournamentLifeCycle.shouldCancelTournament(now, registeredPlayersCount, minPlayers);
     }
 
     public boolean shouldOpenRegistration(DateTime now) {
@@ -528,5 +547,21 @@ public class PokerTournamentState implements Serializable {
 
     public Set<HistoricPlayer> getResurrectingPlayers() {
         return resurrectingPlayers;
+    }
+
+    public void setStartDateString(String dateString) {
+        this.startDateString = dateString;
+    }
+
+    public String getStartDateString() {
+        return startDateString;
+    }
+
+    public void setRegistrationStartDateString(String dateString) {
+        this.registrationStartDateString = dateString;
+    }
+
+    public String getRegistrationStartDateString() {
+        return registrationStartDateString;
     }
 }

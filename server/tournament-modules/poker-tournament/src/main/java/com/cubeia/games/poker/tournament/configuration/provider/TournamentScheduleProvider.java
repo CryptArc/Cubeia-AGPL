@@ -18,6 +18,7 @@
 package com.cubeia.games.poker.tournament.configuration.provider;
 
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
+import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
 
 import java.util.Collection;
 
@@ -29,5 +30,7 @@ public interface TournamentScheduleProvider {
 
     Collection<ScheduledTournamentConfiguration> getTournamentSchedule();
 
-    ScheduledTournamentConfiguration getTournamentConfiguration(int id);
+    ScheduledTournamentConfiguration getScheduledTournamentConfiguration(int id);
+
+    SitAndGoConfiguration getSitAndGoTournamentConfiguration(int id);
 }

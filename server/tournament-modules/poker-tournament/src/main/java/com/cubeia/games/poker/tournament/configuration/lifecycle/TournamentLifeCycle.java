@@ -39,4 +39,6 @@ public interface TournamentLifeCycle extends Serializable {
     public long getTimeToTournamentStart(DateTime now);
 
     public DateTime getStartTime();
+
+    public DateTime getOpenRegistrationTime();
 }

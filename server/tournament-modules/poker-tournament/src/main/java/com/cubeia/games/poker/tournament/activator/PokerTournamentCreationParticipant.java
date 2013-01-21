@@ -17,11 +17,13 @@
 
 package com.cubeia.games.poker.tournament.activator;
 
+import com.cubeia.backend.cashgame.TournamentSessionId;
 import com.cubeia.firebase.api.lobby.LobbyAttributeAccessor;
 import com.cubeia.firebase.api.lobby.LobbyPath;
 import com.cubeia.firebase.api.mtt.MTTState;
 import com.cubeia.firebase.api.mtt.activator.CreationParticipant;
 import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
+import com.cubeia.games.poker.common.time.SystemTime;
 import com.cubeia.games.poker.tournament.PokerTournament;
 import com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes;
 import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
@@ -29,8 +31,12 @@ import com.cubeia.games.poker.tournament.configuration.lifecycle.TournamentLifeC
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 import com.cubeia.poker.timing.Timings;
+import com.cubeia.poker.tournament.history.api.HistoricPlayer;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
 import org.apache.log4j.Logger;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static com.cubeia.games.poker.common.money.MoneyFormatter.format;
 import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.BUY_IN;
@@ -42,15 +48,30 @@ public abstract class PokerTournamentCreationParticipant implements CreationPart
     protected final TournamentConfiguration config;
     protected final TournamentHistoryPersistenceService storageService;
     private Timings timing = Timings.DEFAULT;
+    private Set<HistoricPlayer> resurrectingPlayers = new HashSet<HistoricPlayer>();
+    private boolean isResurrection = false;
+    private String historicId = null;
+    private SystemTime dateFetcher;
+    private String tournamentSessionId;
+    private String datePattern = "yyyy-MM-dd HH:mm";
 
-    public PokerTournamentCreationParticipant(TournamentConfiguration config, TournamentHistoryPersistenceService storageService) {
+    public PokerTournamentCreationParticipant(TournamentConfiguration config, TournamentHistoryPersistenceService storageService, SystemTime dateFetcher) {
         log.debug("Creating tournament participant with config " + config);
+        this.dateFetcher = dateFetcher;
         this.storageService = storageService;
         this.config = config;
     }
 
     public LobbyPath getLobbyPathForTournament(MTTState mtt) {
         return new LobbyPath(mtt.getMttLogicId(), getType());
+    }
+
+    public void setHistoricId(String historicId) {
+        this.historicId = historicId;
+    }
+
+    public void setTournamentSessionId(String tournamentSessionId) {
+        this.tournamentSessionId = tournamentSessionId;
     }
 
     public final void tournamentCreated(MTTState mtt, LobbyAttributeAccessor acc) {
@@ -69,7 +90,10 @@ public abstract class PokerTournamentCreationParticipant implements CreationPart
         pokerState.setBuyIn(config.getBuyIn());
         pokerState.setFee(config.getFee());
         pokerState.setPayoutStructure(config.getPayoutStructure(), config.getMinPlayers());
-        pokerState.setLifecycle(getTournamentLifeCycle());
+        TournamentLifeCycle tournamentLifeCycle = getTournamentLifeCycle();
+        pokerState.setLifecycle(tournamentLifeCycle);
+        pokerState.setStartDateString(tournamentLifeCycle.getStartTime().toString(datePattern));
+        pokerState.setRegistrationStartDateString(tournamentLifeCycle.getOpenRegistrationTime().toString(datePattern));
         pokerState.setMinutesVisibleAfterFinished(getMinutesVisibleAfterFinished());
         pokerState.setTemplateId(getConfigurationTemplateId());
         pokerState.setSitAndGo(isSitAndGo());
@@ -79,24 +103,41 @@ public abstract class PokerTournamentCreationParticipant implements CreationPart
         acc.setStringAttribute("SPEED", timing.name());
         // TODO: Table size should be configurable.
         acc.setIntAttribute(PokerTournamentLobbyAttributes.TABLE_SIZE.name(), 10);
-
+        createHistoricTournament(stateSupport, pokerState);
         tournamentCreated(stateSupport, pokerState, acc);
+    }
+
+    public void setResurrectingPlayers(Set<HistoricPlayer> resurrectingPlayers) {
+        isResurrection = true;
+        if (resurrectingPlayers != null) {
+            this.resurrectingPlayers = resurrectingPlayers;
+        }
     }
 
     protected void setStatus(PokerTournamentState pokerState, LobbyAttributeAccessor lobbyAttributeAccessor, PokerTournamentStatus status) {
         lobbyAttributeAccessor.setStringAttribute(PokerTournamentLobbyAttributes.STATUS.name(), status.name());
         pokerState.setStatus(status);
+        storageService.statusChanged(status.name(), historicId, dateFetcher.now());
     }
 
     protected void tournamentCreated(MTTStateSupport state, PokerTournamentState pokerState, LobbyAttributeAccessor lobbyAttributeAccessor) {
+        pokerState.setResurrectingTournament(isResurrection);
+        log.debug("Tournament created " + pokerState.getHistoricId() + " is resurrections? " + isResurrection);
+        if (isResurrection) {
+            pokerState.setResurrectingPlayers(resurrectingPlayers);
+            pokerState.setTournamentSessionId(new TournamentSessionId(tournamentSessionId));
+            log.debug("Tournament session id: " + tournamentSessionId);
+        }
         setLobbyAttributes(lobbyAttributeAccessor);
-        createHistoricTournament(state, pokerState);
     }
 
     protected void createHistoricTournament(MTTStateSupport state, PokerTournamentState pokerState) {
-        if(storageService!=null) {
-            String historicId = storageService.createHistoricTournament(state.getName(), state.getId(), pokerState.getTemplateId(), isSitAndGo());
+        if (historicId != null) {
             pokerState.setHistoricId(historicId);
+        } else if (storageService != null) {
+            historicId = storageService.createHistoricTournament(state.getName(), state.getId(), pokerState.getTemplateId(), isSitAndGo());
+            pokerState.setHistoricId(historicId);
+            storageService.statusChanged(PokerTournamentStatus.ANNOUNCED.name(), historicId, dateFetcher.now());
         }
     }
 

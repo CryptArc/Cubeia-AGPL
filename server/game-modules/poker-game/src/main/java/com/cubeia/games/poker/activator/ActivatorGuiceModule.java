@@ -62,7 +62,7 @@ public class ActivatorGuiceModule extends FirebaseModule {
         bind(TableNameManager.class).to(MapTableNameManager.class);
         if (!useDatabase) {
             // bind dummy configuration
-            bind(TableConfigTemplateProvider.class).to(SimpleTableConfigTemplateProvider.class); // TODO: Read from DB
+            bind(TableConfigTemplateProvider.class).to(SimpleTableConfigTemplateProvider.class);
             log.info("Using dummy table template configuration.");
         } else {
             // install JPA and bind DB access

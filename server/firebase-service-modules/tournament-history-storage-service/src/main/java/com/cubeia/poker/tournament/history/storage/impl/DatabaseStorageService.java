@@ -132,6 +132,11 @@ public class DatabaseStorageService implements TournamentHistoryPersistenceServi
     }
 
     @Override
+    public void setTournamentSessionId(String sessionId, String historicId) {
+        dao.setTournamentSessionId(sessionId, historicId);
+    }
+
+    @Override
     public List<HistoricTournament> findTournamentsToResurrect() {
         return dao.findTournamentsToResurrect();
     }

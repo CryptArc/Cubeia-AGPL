@@ -97,20 +97,30 @@ public class HistoricTournamentDaoWithEmbeddedMongoTest {
     @Test
     public void testFindTournamentsToResurrect() throws Exception {
         HistoricTournament resurrectMe = new HistoricTournament();
+        HistoricTournament notRegisteringYet = new HistoricTournament();
+        HistoricTournament runningSitAndGo = new HistoricTournament();
         HistoricTournament ignoredBecauseStarted = new HistoricTournament();
-        HistoricTournament ignoredBecauseNoPlayers = new HistoricTournament();
 
         resurrectMe.getRegisteredPlayers().add(player(17, "p1"));
         resurrectMe.setStatus("REGISTERING");
+
+        notRegisteringYet.setStatus("ANNOUNCED");
+
+        runningSitAndGo.setStatus("RUNNING");
+        runningSitAndGo.setSitAndGo(true);
+        runningSitAndGo.setStartTime(new Date().getTime());
+
         ignoredBecauseStarted.getRegisteredPlayers().add(player(18, "p2"));
         ignoredBecauseStarted.setStartTime(new Date().getTime());
+        ignoredBecauseStarted.setStatus("RUNNING");
 
         dao.store(resurrectMe);
+        dao.store(notRegisteringYet);
+        dao.store(runningSitAndGo);
         dao.store(ignoredBecauseStarted);
-        dao.store(ignoredBecauseNoPlayers);
 
         List<HistoricTournament> tournamentsToResurrect = dao.findTournamentsToResurrect();
-        assertThat(tournamentsToResurrect.size(), is(1));
+        assertThat(tournamentsToResurrect.size(), is(3));
     }
 
     private HistoricPlayer player(int id, String name) {

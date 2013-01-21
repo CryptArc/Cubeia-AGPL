@@ -24,6 +24,6 @@ import java.util.List;
 
 public interface HandHistoryProviderService extends Contract {
 
-    public String getHandHistory(String handId);
+    public String getHandHistory(int tableId, int playerId, long time);
 
 }

@@ -62,12 +62,18 @@ public class HistoricTournament implements Serializable {
 
     private String status;
 
+    private String tournamentSessionId;
+
     public HistoricTournament() {
 
     }
 
     public String getId() {
         return id.toString();
+    }
+
+    public String getTournamentSessionId() {
+        return tournamentSessionId;
     }
 
     public void setId(ObjectId id) {
@@ -84,6 +90,10 @@ public class HistoricTournament implements Serializable {
 
     public int getTournamentTemplateId() {
         return tournamentTemplateId;
+    }
+
+    public void setTournamentSessionId(String tournamentSessionId) {
+        this.tournamentSessionId = tournamentSessionId;
     }
 
     public void setTournamentTemplateId(int tournamentTemplateId) {

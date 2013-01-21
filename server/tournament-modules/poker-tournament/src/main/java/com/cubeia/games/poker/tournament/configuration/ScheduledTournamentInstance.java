@@ -17,12 +17,8 @@
 
 package com.cubeia.games.poker.tournament.configuration;
 
-import com.cubeia.poker.tournament.history.api.HistoricPlayer;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * This is the configuration for a specific instance of a scheduled tournament.
@@ -36,10 +32,6 @@ public class ScheduledTournamentInstance {
     private DateTime startTime;
 
     private static final Logger log = Logger.getLogger(ScheduledTournamentInstance.class);
-
-    private Set<HistoricPlayer> resurrectingPlayers = new HashSet<HistoricPlayer>();
-
-    private String historicId;
 
     public ScheduledTournamentInstance(ScheduledTournamentConfiguration configuration, DateTime startTime) {
         this.configuration = configuration;
@@ -73,23 +65,5 @@ public class ScheduledTournamentInstance {
 
     public int getTemplateId() {
         return configuration.getId();
-    }
-
-    public void setResurrectingPlayers(Set<HistoricPlayer> resurrectingPlayers) {
-        if (resurrectingPlayers != null) {
-            this.resurrectingPlayers = resurrectingPlayers;
-        }
-    }
-
-    public Set<HistoricPlayer> getResurrectingPlayers() {
-        return resurrectingPlayers;
-    }
-
-    public String getHistoricId() {
-        return historicId;
-    }
-
-    public void setHistoricId(String historicId) {
-        this.historicId = historicId;
     }
 }

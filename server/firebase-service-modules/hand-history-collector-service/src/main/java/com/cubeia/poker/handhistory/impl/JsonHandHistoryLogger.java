@@ -31,8 +31,6 @@ public class JsonHandHistoryLogger implements HandHistoryPersister {
 
     private static final Logger log = Logger.getLogger(JsonHandHistoryLogger.class);
 
-    private JsonHandHistoryLogger jsonLogger;
-
     @Override
     public void persist(HistoricHand hand) {
         String json = convertToJson(hand);

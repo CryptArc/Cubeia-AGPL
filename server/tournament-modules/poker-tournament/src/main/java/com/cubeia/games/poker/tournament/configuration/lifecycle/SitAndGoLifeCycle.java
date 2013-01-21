@@ -58,6 +58,11 @@ public class SitAndGoLifeCycle implements TournamentLifeCycle {
     }
 
     @Override
+    public DateTime getOpenRegistrationTime() {
+        return new DateTime(0);
+    }
+
+    @Override
     public boolean shouldOpenRegistration(DateTime now) {
         return true;
     }

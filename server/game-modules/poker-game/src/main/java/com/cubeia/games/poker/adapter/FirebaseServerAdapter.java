@@ -128,6 +128,7 @@ import static com.cubeia.games.poker.common.money.MoneyFormatter.format;
 import static com.cubeia.games.poker.handler.BackendCallHandler.EXT_PROP_KEY_TABLE_ID;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.lang.Math.min;
 
 /**
  * Firebase implementation of the poker logic's server adapter.
@@ -486,11 +487,13 @@ public class FirebaseServerAdapter implements ServerAdapter {
             BuyInInfoResponse resp = new BuyInInfoResponse();
 
             int playerBalance = player == null ? 0 : (int) (player.getBalance() + player.getPendingBalanceSum());
+            long balanceInWallet = 0;
             resp.balanceOnTable = format(playerBalance);
             resp.mandatoryBuyin = mandatoryBuyin;
 
             try {
-                resp.balanceInWallet = format(backend.getMainAccountBalance(playerId).getAmount());
+                balanceInWallet = backend.getMainAccountBalance(playerId).getAmount();
+                resp.balanceInWallet = format(balanceInWallet);
             } catch (GetBalanceFailedException e) {
                 log.error("error getting balance", e);
                 resp.resultCode = BuyInInfoResultCode.UNSPECIFIED_ERROR;
@@ -503,7 +506,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
                 MinAndMaxBuyInResult buyInRange = buyInCalculator.calculateBuyInLimits(
                         state.getMinBuyIn(), state.getMaxBuyIn(), state.getAnteLevel(), playerBalance);
                 resp.minAmount = format(buyInRange.getMinBuyIn());
-                resp.maxAmount = format(buyInRange.getMaxBuyIn());
+                resp.maxAmount = format(min(balanceInWallet, buyInRange.getMaxBuyIn()));
                 resp.resultCode = buyInRange.isBuyInPossible() ? BuyInInfoResultCode.OK : BuyInInfoResultCode.MAX_LIMIT_REACHED;
             }
 

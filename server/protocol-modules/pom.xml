@@ -15,6 +15,7 @@
 
     <modules>
         <module>poker-protocol</module>
+        <module>hand-history-protocol</module>
     </modules>
 
 </project>

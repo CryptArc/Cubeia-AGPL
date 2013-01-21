@@ -101,7 +101,7 @@
     </category>
 
     <category name="com.cubeia.backend" additivity="false">
-        <priority value="info"/>
+        <priority value="debug"/>
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="SERVER_LOG"/>
         <appender-ref ref="ERROR_LOG"/>
@@ -194,7 +194,6 @@
         <appender-ref ref="SERVER_LOG"/>
         <appender-ref ref="ERROR_LOG"/>
     </category>
-
 
     <!-- ****** ROOT ****** -->
 

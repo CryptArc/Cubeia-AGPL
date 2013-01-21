@@ -52,6 +52,10 @@ public class HistoryPersister {
         storageService.playerMoved(playerId, tableId, historicId, dateFetcher.now());
     }
 
+    public void setTournamentSessionId(String sessionId) {
+        storageService.setTournamentSessionId(sessionId, historicId);
+    }
+
     public void statusChanged(String status) {
         storageService.statusChanged(status, historicId, dateFetcher.now());
     }

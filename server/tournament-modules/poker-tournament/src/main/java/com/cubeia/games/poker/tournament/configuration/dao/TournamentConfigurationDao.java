@@ -51,4 +51,8 @@ public class TournamentConfigurationDao {
     public ScheduledTournamentConfiguration getScheduledTournamentConfiguration(int id) {
         return entityManager.find(ScheduledTournamentConfiguration.class, id);
     }
+
+    public SitAndGoConfiguration getSitAndGoConfiguration(int id) {
+        return entityManager.find(SitAndGoConfiguration.class, id);
+    }
 }

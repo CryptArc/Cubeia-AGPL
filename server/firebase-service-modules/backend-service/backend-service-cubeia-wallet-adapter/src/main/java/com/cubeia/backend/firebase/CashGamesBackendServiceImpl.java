@@ -26,6 +26,9 @@ import com.cubeia.firebase.api.service.ServiceContext;
 import com.cubeia.firebase.api.service.ServiceRouter;
 import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
 
+import static com.cubeia.backend.cashgame.dto.OpenTournamentSessionRequest.TOURNAMENT_ACCOUNT;
+import static java.util.Collections.singleton;
+
 public class CashGamesBackendServiceImpl extends CashGamesBackendServiceBase implements CashGamesBackendService, Service, RoutableService {
 
     private CashGamesBackendAdapter adapter;
@@ -48,6 +51,7 @@ public class CashGamesBackendServiceImpl extends CashGamesBackendServiceBase imp
     @Override
     public void init(ServiceContext con) throws SystemException {
         WalletServiceContract walletService = con.getParentRegistry().getServiceInstance(WalletServiceContract.class);
+        walletService.closeOpenSessionAccounts(singleton(TOURNAMENT_ACCOUNT));
         adapter = new CashGamesBackendAdapter(walletService, new AccountLookupUtil());
     }
 

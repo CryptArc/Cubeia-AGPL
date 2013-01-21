@@ -112,6 +112,11 @@ public class LoggingHistoryPersister implements TournamentHistoryPersistenceServ
     }
 
     @Override
+    public void setTournamentSessionId(String sessionId, String historicId) {
+        log.info("Tournament[ " + historicId + "]. SessionId: " + sessionId);
+    }
+
+    @Override
     public void setStartTime(String historicId, long date) {
         log.info("Tournament[ " + historicId + "]. Start time " + date);
     }

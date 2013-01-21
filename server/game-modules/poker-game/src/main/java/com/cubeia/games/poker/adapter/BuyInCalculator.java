@@ -34,17 +34,17 @@ public class BuyInCalculator {
      * @param tableMinBuyIn min buy in on table
      * @param tableMaxBuyIn max buy in on table
      * @param anteLevel     ante level on table
-     * @param playerBalance players balance
+     * @param balanceAtTable players balance
      * @return a container for min, max and a buy in possible flag
      */
-    public MinAndMaxBuyInResult calculateBuyInLimits(int tableMinBuyIn, int tableMaxBuyIn, int anteLevel, int playerBalance) {
-        if (playerBalance >= tableMaxBuyIn) {
+    public MinAndMaxBuyInResult calculateBuyInLimits(int tableMinBuyIn, int tableMaxBuyIn, int anteLevel, int balanceAtTable) {
+        if (balanceAtTable >= tableMaxBuyIn) {
             return new MinAndMaxBuyInResult(0, 0, false);
         }
 
         return new MinAndMaxBuyInResult(
-                calculateMinBuyIn(tableMinBuyIn, tableMaxBuyIn, anteLevel, playerBalance),
-                calculateMaxBuyIn(tableMinBuyIn, tableMaxBuyIn, anteLevel, playerBalance),
+                calculateMinBuyIn(tableMinBuyIn, tableMaxBuyIn, anteLevel, balanceAtTable),
+                calculateMaxBuyIn(tableMinBuyIn, tableMaxBuyIn, anteLevel, balanceAtTable),
                 true);
     }
 
@@ -60,8 +60,8 @@ public class BuyInCalculator {
         }
     }
 
-    private int calculateMaxBuyIn(int tableMinBuyIn, int tableMaxBuyIn, int anteLevel, int playerBalance) {
-        return tableMaxBuyIn - playerBalance;
+    private int calculateMaxBuyIn(int tableMinBuyIn, int tableMaxBuyIn, int anteLevel, int balanceAtTable) {
+        return tableMaxBuyIn - balanceAtTable;
     }
 
     /**

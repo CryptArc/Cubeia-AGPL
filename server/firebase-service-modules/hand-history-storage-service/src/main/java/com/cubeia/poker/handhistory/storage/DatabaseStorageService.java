@@ -17,9 +17,6 @@
 
 package com.cubeia.poker.handhistory.storage;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.firebase.api.service.Service;
 import com.cubeia.firebase.api.service.ServiceContext;

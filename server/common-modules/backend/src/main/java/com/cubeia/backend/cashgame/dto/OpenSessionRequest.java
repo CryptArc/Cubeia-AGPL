@@ -26,11 +26,16 @@ public class OpenSessionRequest implements Serializable {
     public final int playerId;
     public final String objectId;
     public final Money openingBalance;
+    private String accountName;
 
     public OpenSessionRequest(int playerId, String objectId, Money openingBalance) {
         this.playerId = playerId;
         this.objectId = objectId;
         this.openingBalance = openingBalance;
+    }
+
+    public String getAccountName() {
+        return accountName;
     }
 
     public int getPlayerId() {
@@ -43,6 +48,10 @@ public class OpenSessionRequest implements Serializable {
 
     public String getObjectId() {
         return objectId;
+    }
+
+    public void setAccountName(String accountName) {
+        this.accountName = accountName;
     }
 
     @Override

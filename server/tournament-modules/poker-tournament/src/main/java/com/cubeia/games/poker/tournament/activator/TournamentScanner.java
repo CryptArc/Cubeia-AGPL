@@ -20,7 +20,6 @@ package com.cubeia.games.poker.tournament.activator;
 import com.cubeia.firebase.api.common.AttributeValue;
 import com.cubeia.firebase.api.mtt.MttFactory;
 import com.cubeia.firebase.api.mtt.activator.ActivatorContext;
-import com.cubeia.firebase.api.mtt.activator.CreationParticipant;
 import com.cubeia.firebase.api.mtt.lobby.MttLobbyObject;
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.games.poker.common.time.SystemTime;
@@ -106,7 +105,6 @@ public class TournamentScanner implements PokerActivator, Runnable {
         this.databaseStorageService = context.getServices().getServiceInstance(TournamentHistoryPersistenceService.class);
     }
 
-
     public void start() {
         synchronized (LOCK) {
             if (checkTablesFuture != null) {
@@ -133,19 +131,47 @@ public class TournamentScanner implements PokerActivator, Runnable {
 
     private void resurrectTournament(HistoricTournament historicTournament) {
         if (historicTournament.isSitAndGo()) {
-            // For sit&go tournaments, we just return the buy-in to the players.
+            resurrectSitAndGoTournament(historicTournament);
         } else {
-            ScheduledTournamentConfiguration configuration = tournamentScheduleProvider.getTournamentConfiguration(historicTournament.getTournamentTemplateId());
-            if (configuration != null) {
-                ScheduledTournamentInstance instance = configuration.createInstanceWithStartTime(new DateTime(historicTournament.getScheduledStartTime()));
-                instance.setResurrectingPlayers(historicTournament.getRegisteredPlayers());
-                instance.setHistoricId(historicTournament.getId());
-                factory.createMtt(context.getMttId(), configuration.getConfiguration().getName(), createParticipant(instance));
-            } else {
-                log.fatal("Cannot resurrect historic tournament " + historicTournament.getId() + " because no template with id "
-                                  + historicTournament.getTournamentTemplateId() + " could be found.");
-            }
+            resurrectScheduledTournament(historicTournament);
         }
+    }
+
+    private void resurrectScheduledTournament(HistoricTournament historicTournament) {
+        int tournamentTemplateId = historicTournament.getTournamentTemplateId();
+        ScheduledTournamentConfiguration configuration = tournamentScheduleProvider.getScheduledTournamentConfiguration(tournamentTemplateId);
+        if (configuration != null) {
+            ScheduledTournamentInstance instance = configuration.createInstanceWithStartTime(new DateTime(historicTournament.getScheduledStartTime()));
+            ScheduledTournamentCreationParticipant participant = createParticipant(instance);
+            setResurrectionParameters(historicTournament, participant);
+            factory.createMtt(context.getMttId(), configuration.getConfiguration().getName(), participant);
+        } else {
+            log.fatal("Cannot resurrect historic tournament " + historicTournament.getId() + " because no template with id "
+                              + tournamentTemplateId + " could be found.");
+        }
+    }
+
+    /**
+     * Resurrects a sit&go. Resurrecting it will lead to any registered player getting the buy-in back.
+     *
+     * @param historicTournament
+     */
+    private void resurrectSitAndGoTournament(HistoricTournament historicTournament) {
+        SitAndGoConfiguration configuration = tournamentScheduleProvider.getSitAndGoTournamentConfiguration(historicTournament.getTournamentTemplateId());
+        if (configuration != null) {
+            SitAndGoCreationParticipant participant = createParticipant(configuration);
+            setResurrectionParameters(historicTournament, participant);
+            factory.createMtt(context.getMttId(), configuration.getConfiguration().getName(), participant);
+        } else {
+            log.fatal("Cannot resurrect historic tournament " + historicTournament.getId() + " because no template with id "
+                              + historicTournament.getTournamentTemplateId() + " could be found.");
+        }
+    }
+
+    private void setResurrectionParameters(HistoricTournament historicTournament, PokerTournamentCreationParticipant participant) {
+        participant.setResurrectingPlayers(historicTournament.getRegisteredPlayers());
+        participant.setHistoricId(historicTournament.getId());
+        participant.setTournamentSessionId(historicTournament.getTournamentSessionId());
     }
 
     public void setMttFactory(MttFactory factory) {
@@ -241,12 +267,12 @@ public class TournamentScanner implements PokerActivator, Runnable {
         factory.createMtt(context.getMttId(), configuration.getName(), createParticipant(configuration));
     }
 
-    private CreationParticipant createParticipant(SitAndGoConfiguration configuration) {
-        return new SitAndGoCreationParticipant(configuration, databaseStorageService);
+    private SitAndGoCreationParticipant createParticipant(SitAndGoConfiguration configuration) {
+        return new SitAndGoCreationParticipant(configuration, databaseStorageService, dateFetcher);
     }
 
-    private CreationParticipant createParticipant(ScheduledTournamentInstance configuration) {
-        return new ScheduledTournamentCreationParticipant(configuration, databaseStorageService);
+    private ScheduledTournamentCreationParticipant createParticipant(ScheduledTournamentInstance configuration) {
+        return new ScheduledTournamentCreationParticipant(configuration, databaseStorageService, dateFetcher);
     }
 
     private void checkTournaments() {
