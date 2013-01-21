@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.cubeia.games</groupId>
     <artifactId>poker-admin</artifactId>
@@ -227,18 +228,20 @@
                 </configuration>
             </plugin>
             <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <warName>poker-admin</warName>
+                </configuration>
+            </plugin>
+            <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.13-SONATYPE</version>
                 <configuration>
                     <forkMode>once</forkMode>
                     <excludes>
                         <exclude>**/Abstract*</exclude>
                     </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-war-plugin</artifactId>
-                <configuration>
-                    <warName>poker-admin</warName>
                 </configuration>
             </plugin>
             <plugin>
