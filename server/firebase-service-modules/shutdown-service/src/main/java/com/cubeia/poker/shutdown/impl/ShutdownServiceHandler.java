@@ -15,23 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.activator;
+package com.cubeia.poker.shutdown.impl;
 
+import com.cubeia.firebase.guice.service.Configuration;
+import com.cubeia.firebase.guice.service.ContractsConfig;
+import com.cubeia.firebase.guice.service.GuiceServiceHandler;
 import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
-import com.cubeia.poker.shutdown.impl.ShutdownService;
-import org.mockito.Mockito;
 
-import com.cubeia.backend.firebase.CashGamesBackendService;
-import com.cubeia.firebase.api.service.ServiceRegistryAdapter;
-import com.cubeia.game.poker.config.api.PokerConfigurationService;
+public class ShutdownServiceHandler extends GuiceServiceHandler {
 
-import static org.mockito.Mockito.mock;
+    @Override
+    protected Configuration getConfiguration() {
+        return new Configuration() {
 
-public class TestServiceRegistry extends ServiceRegistryAdapter {
-
-    public TestServiceRegistry() {
-        super.addImplementation(CashGamesBackendService.class, mock(CashGamesBackendService.class));
-        super.addImplementation(PokerConfigurationService.class, mock(PokerConfigurationService.class));
-        super.addImplementation(ShutdownServiceContract.class, mock(ShutdownServiceContract.class));
+            @Override
+            public ContractsConfig getServiceContract() {
+                return new ContractsConfig(ShutdownService.class, ShutdownServiceContract.class);
+            }
+        };
     }
 }

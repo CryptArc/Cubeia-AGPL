@@ -29,6 +29,7 @@ import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersiste
 
 import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.IDENTIFIER;
 import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.REGISTRATION_OPENING_TIME;
+import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.SIT_AND_GO;
 import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.START_TIME;
 
 public class ScheduledTournamentCreationParticipant extends PokerTournamentCreationParticipant {
@@ -56,6 +57,7 @@ public class ScheduledTournamentCreationParticipant extends PokerTournamentCreat
         super.tournamentCreated(stateSupport, pokerState, lobbyAttributeAccessor);
         setStatus(pokerState, lobbyAttributeAccessor, PokerTournamentStatus.ANNOUNCED);
         lobbyAttributeAccessor.setStringAttribute(IDENTIFIER.name(), instanceConfiguration.getIdentifier());
+        lobbyAttributeAccessor.setStringAttribute(SIT_AND_GO.name(), isSitAndGo() ? "true" : "false");
         lobbyAttributeAccessor.setStringAttribute(START_TIME.name(), pokerState.getStartDateString());
         lobbyAttributeAccessor.setStringAttribute(REGISTRATION_OPENING_TIME.name(), pokerState.getRegistrationStartDateString());
         setScheduledStartTime(pokerState);

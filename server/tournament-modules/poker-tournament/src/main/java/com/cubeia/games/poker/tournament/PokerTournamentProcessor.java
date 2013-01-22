@@ -56,8 +56,6 @@ import com.google.inject.Inject;
 import org.apache.log4j.Logger;
 import org.apache.log4j.MDC;
 
-import java.io.IOException;
-
 /**
  * The responsibility of this class is to un-marshal incoming messages and pass them on to the PokerTournament or TournamentLobby.
  *
@@ -150,24 +148,20 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
     @Override
     public void process(MttDataAction action, MttInstance instance) {
         StyxSerializer serializer = new StyxSerializer(new ProtocolObjectFactory());
-        try {
-            ProtocolObject packet = serializer.unpack(action.getData());
-            int playerId = action.getPlayerId();
-            if (packet instanceof RequestTournamentPlayerList) {
-                prepareTournamentLobby(instance).sendPlayerListTo(playerId);
-            } else if (packet instanceof RequestBlindsStructure) {
-                prepareTournamentLobby(instance).sendBlindsStructureTo(playerId);
-            } else if (packet instanceof RequestPayoutInfo) {
-                prepareTournamentLobby(instance).sendPayoutInfoTo(playerId);
-            } else if (packet instanceof RequestTournamentLobbyData) {
-                prepareTournamentLobby(instance).sendTournamentLobbyDataTo(playerId);
-            } else if (packet instanceof RequestTournamentTable) {
-                prepareTournamentLobby(instance).sendTournamentTableTo(playerId);
-            } else if (packet instanceof RequestTournamentRegistrationInfo) {
-                prepareTournamentLobby(instance).sendRegistrationInfoTo(playerId);
-            }
-        } catch (IOException e) {
-            log.warn("Failed de-serializing " + action, e);
+        ProtocolObject packet = serializer.unpack(action.getData());
+        int playerId = action.getPlayerId();
+        if (packet instanceof RequestTournamentPlayerList) {
+            prepareTournamentLobby(instance).sendPlayerListTo(playerId);
+        } else if (packet instanceof RequestBlindsStructure) {
+            prepareTournamentLobby(instance).sendBlindsStructureTo(playerId);
+        } else if (packet instanceof RequestPayoutInfo) {
+            prepareTournamentLobby(instance).sendPayoutInfoTo(playerId);
+        } else if (packet instanceof RequestTournamentLobbyData) {
+            prepareTournamentLobby(instance).sendTournamentLobbyDataTo(playerId);
+        } else if (packet instanceof RequestTournamentTable) {
+            prepareTournamentLobby(instance).sendTournamentTableTo(playerId);
+        } else if (packet instanceof RequestTournamentRegistrationInfo) {
+            prepareTournamentLobby(instance).sendRegistrationInfoTo(playerId);
         }
     }
 

@@ -51,6 +51,11 @@
             <artifactId>backend-service-contract</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.cubeia.games.shutdown</groupId>
+            <artifactId>shutdown-service</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>

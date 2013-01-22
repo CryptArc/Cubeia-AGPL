@@ -134,7 +134,7 @@ public abstract class PokerTournamentCreationParticipant implements CreationPart
     protected void createHistoricTournament(MTTStateSupport state, PokerTournamentState pokerState) {
         if (historicId != null) {
             pokerState.setHistoricId(historicId);
-        } else if (storageService != null) {
+        } else {
             historicId = storageService.createHistoricTournament(state.getName(), state.getId(), pokerState.getTemplateId(), isSitAndGo());
             pokerState.setHistoricId(historicId);
             storageService.statusChanged(PokerTournamentStatus.ANNOUNCED.name(), historicId, dateFetcher.now());

@@ -130,6 +130,12 @@
             <artifactId>hand-debugger-service</artifactId>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.cubeia.games.shutdown</groupId>
+            <artifactId>shutdown-service</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
 </project>

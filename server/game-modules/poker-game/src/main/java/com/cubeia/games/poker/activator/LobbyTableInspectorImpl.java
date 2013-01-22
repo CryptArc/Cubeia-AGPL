@@ -32,6 +32,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.cubeia.firebase.api.service.sysstate.PublicSystemStateService;
+import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
+import com.cubeia.poker.shutdown.impl.ShutdownService;
 import org.apache.log4j.Logger;
 
 import com.cubeia.firebase.api.common.AttributeValue;
@@ -61,6 +64,9 @@ public class LobbyTableInspectorImpl implements LobbyTableInspector {
     @Service
     private PokerConfigurationService config;
 
+    @Service
+    ShutdownServiceContract shutdownService;
+
     @Override
     public List<TableModifierAction> match(List<TableConfigTemplate> templates) {
         List<TableModifierAction> result = new ArrayList<TableModifierAction>();
@@ -73,8 +79,13 @@ public class LobbyTableInspectorImpl implements LobbyTableInspector {
         // now check all templates for closure or creation
         checkTemplates(templates, tables, result);
         // now check if any templates are missing
-        checkMissingTemplates(templates, tables, result);
+        checkMissingTemplates(templates, tables, result, shuttingDown());
         return result;
+    }
+
+    private boolean shuttingDown() {
+        log.debug("Shutting down? " + shutdownService.isShuttingDown());
+        return shutdownService.isShuttingDown();
     }
 
     // --- PRIVATE METHODS --- //
@@ -89,22 +100,25 @@ public class LobbyTableInspectorImpl implements LobbyTableInspector {
     }
 
     private void checkMissingTemplates(List<TableConfigTemplate> templates, Map<Integer, List<LobbyTable>> tables,
-            List<TableModifierAction> result) {
+            List<TableModifierAction> result, boolean shuttingDown) {
         Set<Integer> templateIds = collectTemplateIds(templates);
         for (Entry<Integer, List<LobbyTable>> entry : tables.entrySet()) {
-            if (!templateIds.contains(entry.getKey())) {
+            if (templateMissing(templateIds, entry) || shuttingDown) {
                 // missing template, check if empty and close immediately if so
-                for (LobbyTable t : entry.getValue()) {
-                    boolean b = isEmpty(t);
-                    log.debug("Table[" + t.getTableId() + "] is registered on missing template " + entry.getKey() + ", will close if empty: " + b);
-                    if (b) {
-                        result.add(TableModifierAction.close(t.getTableId()));
+                for (LobbyTable table : entry.getValue()) {
+                    boolean empty = isEmpty(table);
+                    log.debug("Table[" + table.getTableId() + "] is registered on missing template " + entry.getKey() + ", will close if empty: " + empty);
+                    if (empty) {
+                        result.add(TableModifierAction.close(table.getTableId()));
                     }
                 }
             }
         }
     }
 
+    private boolean templateMissing(Set<Integer> templateIds, Entry<Integer, List<LobbyTable>> entry) {
+        return !templateIds.contains(entry.getKey());
+    }
 
     private Set<Integer> collectTemplateIds(List<TableConfigTemplate> templates) {
         Set<Integer> templateIds = new HashSet<Integer>(templates.size());
@@ -115,6 +129,11 @@ public class LobbyTableInspectorImpl implements LobbyTableInspector {
     }
 
     private void checkTemplates(List<TableConfigTemplate> templates, Map<Integer, List<LobbyTable>> tables, List<TableModifierAction> result) {
+        if (shuttingDown()) {
+            log.debug("System is shutting down, won't check templates.");
+            return;
+        }
+
         // for each template
         for (TableConfigTemplate config : templates) {
             List<LobbyTable> list = tables.get(config.getId());
@@ -164,7 +183,6 @@ public class LobbyTableInspectorImpl implements LobbyTableInspector {
         }
         return i;
     }
-
 
     /*
      * Check for tables to be destroyed, regardless of template, and return all other tables
@@ -254,4 +272,5 @@ public class LobbyTableInspectorImpl implements LobbyTableInspector {
         Map<String, AttributeValue> map = t.getAttributes();
         return (map.containsKey(TABLE_TEMPLATE.name()) ? map.get(TABLE_TEMPLATE.name()).getIntValue() : -1);
     }
+
 }
