@@ -177,6 +177,12 @@
                 document.location = document.location.hash = "clear";
                 document.location.reload();
             });
+            
+            // *** SEMI HACK HERE
+            if(sessionCookie) {
+            	// hide login box for cookie based auth
+            	$(".login-container").hide();
+            }
 
         });
 
