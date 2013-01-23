@@ -27,12 +27,14 @@ import com.cubeia.game.poker.config.api.PokerConfigurationService;
 import com.cubeia.games.poker.common.SystemTestTime;
 import com.cubeia.games.poker.common.time.SystemTime;
 import com.cubeia.games.poker.entity.TableConfigTemplate;
+import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
 import com.cubeia.poker.timing.TimingFactory;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.util.Collections;
@@ -48,6 +50,8 @@ import static com.cubeia.games.poker.activator.TableModifierActionType.DESTROY;
 import static com.cubeia.games.poker.common.lobby.PokerLobbyAttributes.TABLE_READY_FOR_CLOSE;
 import static com.cubeia.games.poker.common.lobby.PokerLobbyAttributes.TABLE_TEMPLATE;
 import static com.cubeia.poker.variant.PokerVariant.TELESINA;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 public class LobbyTableInspectorImplTest {
 
@@ -63,8 +67,12 @@ public class LobbyTableInspectorImplTest {
     @Inject
     private ServiceRegistry services;
 
+    @Mock
+    private ShutdownServiceContract shutdownService;
+
     @Before
     public void setup() throws Exception {
+        initMocks(this);
         Guice.createInjector(new TestActivatorModule() {
 
             @Override
@@ -74,6 +82,7 @@ public class LobbyTableInspectorImplTest {
                 bind(TableActionHandler.class).to(TableActionHandlerImpl.class);
                 bind(LobbyTableInspector.class).to(LobbyTableInspectorImpl.class);
                 bind(SystemTime.class).to(SystemTestTime.class);
+                bind(ShutdownServiceContract.class).toInstance(shutdownService);
                 super.configure();
             }
         }).injectMembers(this);
@@ -100,8 +109,8 @@ public class LobbyTableInspectorImplTest {
     @Test
     public void trivialClose() {
         /*
-           * One table which is old should be closed
-           */
+         * One table which is old should be closed
+         */
         TableConfigTemplate templ = createTemplate(0, 0);
         LobbyTable table = mockTableForTempl(templ, 666, 0, 10);
         Mockito.when(factory.listTables()).thenReturn(new LobbyTable[]{table});

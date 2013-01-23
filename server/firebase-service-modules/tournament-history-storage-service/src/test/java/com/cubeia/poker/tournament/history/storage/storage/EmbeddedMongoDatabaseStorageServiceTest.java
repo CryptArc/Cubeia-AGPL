@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.poker.handhistory.storage;
+package com.cubeia.poker.tournament.history.storage.storage;
 
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.firebase.api.service.ServiceContext;

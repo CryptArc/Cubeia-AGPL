@@ -27,9 +27,7 @@ import com.cubeia.firebase.io.protocol.GameTransportPacket;
 import com.cubeia.firebase.io.protocol.MttTransportPacket;
 import com.cubeia.games.poker.io.protocol.*;
 import com.cubeia.games.poker.io.protocol.Enums.PlayerTableStatus;
-import org.apache.log4j.Logger;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -38,8 +36,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static com.cubeia.game.poker.util.Arithmetic.gaussianAverage;
 
 public class GameHandler implements PacketVisitor {
-
-    private static transient Logger log = Logger.getLogger(GameHandler.class);
 
     private static final StyxSerializer styxDecoder = new StyxSerializer(new ProtocolObjectFactory());
 
@@ -56,32 +52,20 @@ public class GameHandler implements PacketVisitor {
     public void handleGamePacket(GameTransportPacket packet) {
         // Create the user packet
         ProtocolObject gamePacket;
-        try {
-            gamePacket = styxDecoder.unpack(ByteBuffer.wrap(packet.gamedata));
-            gamePacket.accept(this);
-        } catch (IOException e) {
-            log.error("Could not unpack gamedata", e);
-        }
+        gamePacket = styxDecoder.unpack(ByteBuffer.wrap(packet.gamedata));
+        gamePacket.accept(this);
     }
 
     public void handleTournamentPacket(MttTransportPacket packet) {
         ProtocolObject gamePacket;
-        try {
-            gamePacket = styxDecoder.unpack(ByteBuffer.wrap(packet.mttdata));
-            gamePacket.accept(this);
-        } catch (IOException e) {
-            log.error("Could not unpack mttdata", e);
-        }
+        gamePacket = styxDecoder.unpack(ByteBuffer.wrap(packet.mttdata));
+        gamePacket.accept(this);
     }
 
     public ProtocolObject unpack(GameTransportPacket packet) {
         // Create the user packet
-        ProtocolObject gamePacket = null;
-        try {
-            gamePacket = styxDecoder.unpack(ByteBuffer.wrap(packet.gamedata));
-        } catch (IOException e) {
-            log.error("Could not unpack gamedata", e);
-        }
+        ProtocolObject gamePacket;
+        gamePacket = styxDecoder.unpack(ByteBuffer.wrap(packet.gamedata));
         return gamePacket;
     }
 

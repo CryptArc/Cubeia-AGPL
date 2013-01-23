@@ -17,16 +17,21 @@
 
 package com.cubeia.games.poker.activator;
 
+import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
+import com.cubeia.poker.shutdown.impl.ShutdownService;
 import org.mockito.Mockito;
 
 import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.firebase.api.service.ServiceRegistryAdapter;
 import com.cubeia.game.poker.config.api.PokerConfigurationService;
 
+import static org.mockito.Mockito.mock;
+
 public class TestServiceRegistry extends ServiceRegistryAdapter {
-	
-	public TestServiceRegistry() {
-		super.addImplementation(CashGamesBackendService.class, Mockito.mock(CashGamesBackendService.class));
-		super.addImplementation(PokerConfigurationService.class, Mockito.mock(PokerConfigurationService.class));
-	}
+
+    public TestServiceRegistry() {
+        super.addImplementation(CashGamesBackendService.class, mock(CashGamesBackendService.class));
+        super.addImplementation(PokerConfigurationService.class, mock(PokerConfigurationService.class));
+        super.addImplementation(ShutdownServiceContract.class, mock(ShutdownServiceContract.class));
+    }
 }

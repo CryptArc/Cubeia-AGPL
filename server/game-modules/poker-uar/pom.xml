@@ -59,6 +59,18 @@
             <type>firebase-sar</type>
         </dependency>
 
+        <dependency>
+            <groupId>com.cubeia.games.shutdown</groupId>
+            <artifactId>shutdown-service</artifactId>
+            <type>firebase-sar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>com.cubeia.games.poker</groupId>
+            <artifactId>broadcast-service</artifactId>
+            <type>firebase-sar</type>
+        </dependency>
+
 <!--
         <dependency>
             <groupId>com.cubeia.games</groupId>

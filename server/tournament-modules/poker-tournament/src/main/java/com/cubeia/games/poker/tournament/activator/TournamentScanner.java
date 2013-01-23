@@ -22,6 +22,7 @@ import com.cubeia.firebase.api.mtt.MttFactory;
 import com.cubeia.firebase.api.mtt.activator.ActivatorContext;
 import com.cubeia.firebase.api.mtt.lobby.MttLobbyObject;
 import com.cubeia.firebase.api.server.SystemException;
+import com.cubeia.firebase.api.service.sysstate.PublicSystemStateService;
 import com.cubeia.games.poker.common.time.SystemTime;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentInstance;
@@ -29,6 +30,7 @@ import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
 import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
 import com.cubeia.games.poker.tournament.configuration.provider.SitAndGoConfigurationProvider;
 import com.cubeia.games.poker.tournament.configuration.provider.TournamentScheduleProvider;
+import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
 import com.cubeia.poker.tournament.history.api.HistoricTournament;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
 import com.google.common.collect.Maps;
@@ -47,12 +49,15 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import static com.cubeia.firebase.io.protocol.Enums.TournamentAttributes.NAME;
+import static com.cubeia.firebase.io.protocol.Enums.TournamentAttributes.REGISTERED;
 import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.IDENTIFIER;
+import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.SIT_AND_GO;
 import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.STATUS;
 import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.CLOSED;
 import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.REGISTERING;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Sets.newHashSet;
+import static java.lang.Boolean.parseBoolean;
 
 public class TournamentScanner implements PokerActivator, Runnable {
 
@@ -86,6 +91,8 @@ public class TournamentScanner implements PokerActivator, Runnable {
 
     private SystemTime dateFetcher;
 
+    private ShutdownServiceContract shutdownService;
+
     @Inject
     public TournamentScanner(SitAndGoConfigurationProvider sitAndGoConfigurationProvider, TournamentScheduleProvider tournamentScheduleProvider,
                              SystemTime dateFetcher) {
@@ -103,6 +110,11 @@ public class TournamentScanner implements PokerActivator, Runnable {
     public void init(ActivatorContext context) throws SystemException {
         this.context = context;
         this.databaseStorageService = context.getServices().getServiceInstance(TournamentHistoryPersistenceService.class);
+        this.shutdownService = context.getServices().getServiceInstance(ShutdownServiceContract.class);
+        if (databaseStorageService == null) {
+            log.info("No database storage service found, using mock.");
+            databaseStorageService = new NullDatabaseStorageService();
+        }
     }
 
     public void start() {
@@ -118,10 +130,6 @@ public class TournamentScanner implements PokerActivator, Runnable {
     }
 
     private void resurrectTournaments() {
-        if (databaseStorageService == null) {
-            log.info("No database storage service found, won't resurrect tournaments.");
-            return;
-        }
         List<HistoricTournament> tournamentsToResurrect = databaseStorageService.findTournamentsToResurrect();
         log.debug("Number of tournaments to resurrect: " + tournamentsToResurrect.size());
         for (HistoricTournament historicTournament : tournamentsToResurrect) {
@@ -276,8 +284,26 @@ public class TournamentScanner implements PokerActivator, Runnable {
     }
 
     private void checkTournaments() {
-        checkSitAndGos();
-        checkScheduledTournaments();
+        if (shutdownService.isShuttingDown()) {
+            shutDownEmptyTournamentsAndNonStartedSitAndGoTournaments();
+        } else {
+            checkSitAndGos();
+            checkScheduledTournaments();
+        }
+    }
+
+    private void shutDownEmptyTournamentsAndNonStartedSitAndGoTournaments() {
+        MttLobbyObject[] tournamentInstances = factory.listTournamentInstances();
+
+        for (MttLobbyObject tournament : tournamentInstances) {
+            String status = getStringAttribute(tournament, STATUS.name());
+            boolean sitAndGo = parseBoolean(getStringAttribute(tournament, SIT_AND_GO.name()));
+            boolean registering = status.equalsIgnoreCase(REGISTERING.name());
+            boolean noPlayers = getIntAttribute(tournament, REGISTERED.name()) == 0;
+            if ((registering && sitAndGo) || noPlayers) {
+                shutdownService.shutDownTournament(tournament.getTournamentId());
+            }
+        }
     }
 
     private void checkScheduledTournaments() {
@@ -318,6 +344,15 @@ public class TournamentScanner implements PokerActivator, Runnable {
             return "";
         }
         return value.getStringValue();
+    }
+
+    private int getIntAttribute(MttLobbyObject tournament, String attributeName) {
+        AttributeValue value = tournament.getAttributes().get(attributeName);
+
+        if (value == null || value.getType() != AttributeValue.Type.INT) {
+            return -1;
+        }
+        return value.getIntValue();
     }
 
     private void checkSitAndGos() {

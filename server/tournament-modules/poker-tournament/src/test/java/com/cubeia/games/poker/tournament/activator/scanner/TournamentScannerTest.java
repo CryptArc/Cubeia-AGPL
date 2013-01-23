@@ -36,6 +36,7 @@ import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
 import com.cubeia.games.poker.tournament.configuration.provider.SitAndGoConfigurationProvider;
 import com.cubeia.games.poker.tournament.configuration.provider.TournamentScheduleProvider;
 import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
+import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
 import com.google.common.collect.Maps;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -82,6 +83,9 @@ public class TournamentScannerTest {
     @Mock
     private ServiceRegistry serviceRegistry;
 
+    @Mock
+    private ShutdownServiceContract shutdownService;
+
     private TournamentScanner scanner;
 
     private TimeZone originalTimeZone;
@@ -90,6 +94,7 @@ public class TournamentScannerTest {
     public void setup() throws SystemException {
         initMocks(this);
         when(context.getServices()).thenReturn(serviceRegistry);
+        when(serviceRegistry.getServiceInstance(ShutdownServiceContract.class)).thenReturn(shutdownService);
         originalTimeZone = TimeZone.getDefault();
         TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
         DateTimeZone.setDefault(DateTimeZone.forTimeZone(TimeZone.getTimeZone("GMT")));
