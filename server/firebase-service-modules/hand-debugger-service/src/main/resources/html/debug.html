@@ -1,0 +1,23 @@
+<html>
+<head>
+    <script type="text/javascript" src="jquery.js"></script>
+    <link rel=StyleSheet href="style.css" type="text/css">
+
+    <script type="text/javascript">
+
+        $.getJSON('/api/bean', function(data) {
+            $("#message").html(data.message);
+        });
+
+    </script>
+
+</head>
+
+<div id="content">
+    <h2>Debug Page</h2>
+
+    <div id="message"/>
+
+</div>
+
+</html>

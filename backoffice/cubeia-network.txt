@@ -1,0 +1,31 @@
+Cubeia Network, which contains major backoffice functionality, is currently not
+included here.
+
+You can run it easily from the "bundle", which contains a tomcat server and all
+the necessary setup, including a bundled file-based database:
+
+http://m2.cubeia.com/nexus/content/repositories/foss-releases/com/cubeia/network/cubeia-network-bundle
+
+Extract the actual bundle, and follow the instructions.
+
+RUNNING FROM SOURCE
+
+You can of course run Cubeia Network directly from the sources:
+
+hg clone https://mercurial.cubeia.com/network/
+
+You need to start each service (user-service, wallet-service, operator-service,
+backoffice) on its own, via:
+
+cd NETWORK_HOME/<service>/service-rest
+mvn package jetty:run
+
+LINKS
+
+http://www.cubeia.org/index.php/network/network-overview
+http://www.cubeia.org/index.php/network/network-docs
+http://www.cubeia.org/index.php/network/network-downloads
+
+http://cubeia.org/wiki/index.php/Network/network_main
+
+
