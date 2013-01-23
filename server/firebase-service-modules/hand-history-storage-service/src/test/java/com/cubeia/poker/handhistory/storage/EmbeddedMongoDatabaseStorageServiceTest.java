@@ -45,7 +45,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class DatabaseStorageServiceTest {
+public class EmbeddedMongoDatabaseStorageServiceTest {
 
     private static int PORT = 12345;
 
