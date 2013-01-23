@@ -26,5 +26,10 @@
             <artifactId>tournament-messages</artifactId>
             <groupId>com.cubeia.games</groupId>
         </dependency>
+        <dependency>
+            <groupId>com.cubeia.games.poker</groupId>
+            <artifactId>broadcast-service</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 </project>

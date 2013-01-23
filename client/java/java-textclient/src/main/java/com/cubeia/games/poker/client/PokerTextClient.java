@@ -62,7 +62,6 @@ public class PokerTextClient extends SimpleTextClient {
                 return;
             }
 
-
             if (args[0].equalsIgnoreCase("help")) {
                 printHelp();
             } else {
@@ -174,13 +173,8 @@ public class PokerTextClient extends SimpleTextClient {
      * @param packet
      */
     private void send(int tableId, ProtocolObject packet) {
-        ByteBuffer buffer;
-        try {
-            buffer = styxEncoder.pack(packet);
-            context.getConnector().sendDataPacket(tableId, context.getPlayerId(), buffer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        ByteBuffer buffer = styxEncoder.pack(packet);
+        context.getConnector().sendDataPacket(tableId, context.getPlayerId(), buffer);
     }
 
     private void send(ProtocolObject packet) {

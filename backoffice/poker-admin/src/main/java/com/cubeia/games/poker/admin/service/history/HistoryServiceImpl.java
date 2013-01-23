@@ -36,6 +36,7 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 public class HistoryServiceImpl implements HistoryService {
 
     private static final Logger log = Logger.getLogger(HistoryServiceImpl.class);
+    public static final String TOURNAMENT_COLLECTION = "HistoricTournament";
 
     @Autowired
     MongoTemplate template;
@@ -63,11 +64,11 @@ public class HistoryServiceImpl implements HistoryService {
         Query query = new Query();
         if (fromDate != null) query.addCriteria(where("startTime").gt(fromDate.getTime()));
         if (toDate != null) query.addCriteria(where("startTime").lt(toDate.getTime()));
-        return template.find(query, HistoricTournament.class, "tournaments");
+        return template.find(query, HistoricTournament.class, TOURNAMENT_COLLECTION);
     }
 
     @Override
     public HistoricTournament findTournamentByHistoricId(String id) {
-        return template.findById(new ObjectId(id), HistoricTournament.class, "tournaments");
+        return template.findById(new ObjectId(id), HistoricTournament.class, TOURNAMENT_COLLECTION);
     }
 }

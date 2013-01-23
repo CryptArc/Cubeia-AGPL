@@ -18,16 +18,15 @@
 package com.cubeia.poker.shutdown.impl;
 
 import com.cubeia.firebase.api.action.mtt.MttObjectAction;
-import com.cubeia.firebase.api.action.service.ServiceAction;
 import com.cubeia.firebase.api.common.AttributeValue;
 import com.cubeia.firebase.api.server.SystemException;
-import com.cubeia.firebase.api.service.RoutableService;
 import com.cubeia.firebase.api.service.ServiceContext;
-import com.cubeia.firebase.api.service.ServiceRouter;
+import com.cubeia.firebase.api.service.router.RouterService;
 import com.cubeia.firebase.api.service.sysstate.PublicSystemStateService;
 import com.cubeia.firebase.guice.inject.Log4j;
 import com.cubeia.firebase.guice.inject.Service;
-import com.cubeia.games.poker.tournament.messages.CloseTournament;
+import com.cubeia.games.poker.tournament.messages.CancelTournament;
+import com.cubeia.poker.broadcast.api.BroadcastService;
 import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -45,7 +44,7 @@ import javax.management.ObjectName;
  * @author Lars J. Nilsson
  */
 @Singleton
-public class ShutdownService implements ShutdownServiceContract, com.cubeia.firebase.api.service.Service, RoutableService, ShutdownServiceMBean {
+public class ShutdownService implements ShutdownServiceContract, com.cubeia.firebase.api.service.Service, ShutdownServiceMBean {
 
     public static final String POKER_NODE_PATH = "/poker";
     public static final String POKER_SYSTEM_STATUS = "POKER_SYSTEM_STATUS";
@@ -62,7 +61,11 @@ public class ShutdownService implements ShutdownServiceContract, com.cubeia.fire
     @Service
     private PublicSystemStateService systemStateService;
 
-    private ServiceRouter router;
+    @Service
+    private RouterService router;
+
+    @Service(proxy = true)
+    private BroadcastService broadcastService;
 
     @Override
     public void init(ServiceContext con) throws SystemException {
@@ -87,24 +90,15 @@ public class ShutdownService implements ShutdownServiceContract, com.cubeia.fire
 
     @Override
     public void shutDownTournament(int tournamentId) {
-        router.dispatchToTournament(tournamentId, new MttObjectAction(tournamentId, new CloseTournament()));
-    }
-
-    @Override
-    public void onAction(ServiceAction action) {
-        log.info("Action received: " + action);
+        router.getRouter().dispatchToTournament(tournamentId, new MttObjectAction(tournamentId, new CancelTournament()));
     }
 
     @Override
     public boolean prepareShutdown() {
         log.info("Preparing system shutdown.");
+        broadcastService.broadcastMessage("The system will be closing down shortly, please finish your game sessions.");
         setPokerSystemStatus(SHUTTING_DOWN);
         return true;
-    }
-
-    @Override
-    public void setRouter(ServiceRouter router) {
-        this.router = router;
     }
 
     @Override
@@ -116,6 +110,7 @@ public class ShutdownService implements ShutdownServiceContract, com.cubeia.fire
         log.info("Finishing system shutdown");
         if (isShuttingDown()) {
             setPokerSystemStatus(DOWN);
+            broadcastService.broadcastMessage("The system is now down.");
             return true;
         } else {
             return false;

@@ -15,6 +15,7 @@
     <modules>
         <module>backend-service</module>
         <module>bot-service</module>
+        <module>broadcast-service</module>
         <module>hand-debugger-service</module>
         <module>hand-history-collector-service</module>
         <module>hand-history-storage-service</module>

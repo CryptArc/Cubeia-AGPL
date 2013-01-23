@@ -17,12 +17,12 @@
         <dependency>
             <groupId>com.cubeia.firebase.client</groupId>
             <artifactId>firebase-java-textclient</artifactId>
-            <version>1.9.1-CE</version>
+            <version>1.9.2-CE</version>
         </dependency>
         <dependency>
             <groupId>com.cubeia.firebase</groupId>
             <artifactId>firebase-protocol</artifactId>
-            <version>1.9.1-CE</version>
+            <version>1.9.2-CE</version>
         </dependency>
         <dependency>
             <groupId>com.cubeia.games</groupId>
@@ -30,8 +30,7 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
-    
-    
+
     <build>
         <plugins>
             <plugin>
@@ -48,9 +47,17 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
-		</plugins>
-	</build>
-		
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.cubeia.games.poker.client.PokerTextClient</mainClass>
+                    <commandlineArgs>localhost</commandlineArgs>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
     <repositories>
         <repository>
             <id>cubeia-nexus</id>
@@ -64,4 +71,17 @@
             </snapshots>
         </repository>
     </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>cubeia-nexus</id>
+            <name>Public Cubeia Nexus</name>
+            <url>http://m2.cubeia.com/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 </project>

@@ -46,6 +46,7 @@ import com.cubeia.games.poker.io.protocol.RequestTournamentRegistrationInfo;
 import com.cubeia.games.poker.io.protocol.RequestTournamentTable;
 import com.cubeia.games.poker.tournament.lobby.TournamentLobby;
 import com.cubeia.games.poker.tournament.lobby.TournamentLobbyFactory;
+import com.cubeia.games.poker.tournament.messages.CancelTournament;
 import com.cubeia.games.poker.tournament.messages.CloseTournament;
 import com.cubeia.games.poker.tournament.messages.PlayerLeft;
 import com.cubeia.games.poker.tournament.util.PacketSender;
@@ -137,6 +138,8 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
                 tournament.closeTournament();
             } else if (object instanceof PlayerLeft) {
                 tournament.handlePlayerLeft((PlayerLeft) object);
+            } else if (object instanceof CancelTournament) {
+                tournament.cancelTournament();
             } else {
                 log.warn("Unexpected attachment: " + object);
             }
