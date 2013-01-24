@@ -19,8 +19,6 @@ package com.cubeia.poker.shutdown.api;
 
 import com.cubeia.firebase.api.service.Contract;
 
-import java.util.List;
-
 /**
  * Service contract for shutting down the system.
  *
@@ -30,10 +28,23 @@ import java.util.List;
 public interface ShutdownServiceContract extends Contract {
 
     /**
-     * Checks if the system is currently in shutting down mode.
-     * @return true if the system is shutting down and false if not
+     * Checks if the system is currently in shutting down mode or already shut down.
+     * @return true if the system is shutting down or shut down and false if not
      */
-    public boolean isShuttingDown();
+    public boolean isSystemShuttingDown();
 
+    /**
+     * Checks if the system is shut down.
+     *
+     * @return true if the system is shut down, false otherwise
+     */
+    public boolean isSystemShutDown();
+
+    /**
+     * Shuts down a given tournament. The tournament will be cancelled. Should only be called
+     * for tournaments that have not been started.
+     *
+     * @param tournamentId
+     */
     void shutDownTournament(int tournamentId);
 }

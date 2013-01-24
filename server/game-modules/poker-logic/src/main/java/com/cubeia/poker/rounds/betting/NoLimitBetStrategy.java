@@ -66,11 +66,6 @@ public class NoLimitBetStrategy implements BetStrategy {
         return BetStrategyType.NO_LIMIT;
     }
 
-    /**
-     * Special case:
-     *
-     * Big blind is $10. Player A bets $2. Min raise-to for player B should be $12.
-     */
     @Override
     public long getMinRaiseToAmount(BettingRoundContext context, PokerPlayer player) {
         if (context.allOtherNonFoldedPlayersAreAllIn(player) || !canAffordRaise(context, player)) {

@@ -106,7 +106,7 @@ public class TournamentTablePokerLogicTest extends GuiceTest {
         assertTrue(state.isFinished());
 
         // Start next hand.
-        state.startHand();
+        state.timeout();
 
         // Check that we now have 5 players
         assertEquals(5, state.getSeatedPlayers().size());

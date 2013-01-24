@@ -41,6 +41,7 @@ import java.util.Set;
 import static com.cubeia.games.poker.common.money.MoneyFormatter.format;
 import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.BUY_IN;
 import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.FEE;
+import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.SIT_AND_GO;
 
 public abstract class PokerTournamentCreationParticipant implements CreationParticipant {
 
@@ -145,6 +146,7 @@ public abstract class PokerTournamentCreationParticipant implements CreationPart
         //        lobbyAttributeAccessor.setStringAttribute(IDENTIFIER.name(), config.getIdentifier());
         lobbyAttributeAccessor.setStringAttribute(BUY_IN.name(), format(config.getBuyIn()));
         lobbyAttributeAccessor.setStringAttribute(FEE.name(), format(config.getFee()));
+        lobbyAttributeAccessor.setStringAttribute(SIT_AND_GO.name(), isSitAndGo() ? "true" : "false");
     }
 
     protected abstract int getConfigurationTemplateId();

@@ -97,11 +97,6 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
     }
 
     @Override
-    public void startHand() {
-        log.warn("Won't start hand. Current state = " + this);
-    }
-
-    @Override
     public void playerSitsOut(int playerId, SitOutStatus status) {
         log.info("Player with id " + playerId + " sits out");
         if (context.setSitOutStatus(playerId, status)) {
@@ -154,29 +149,29 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
         boolean enoughMoney = gameType.canPlayerAffordEntryBet(context.getPlayer(playerId), context.getSettings(), false);
         log.debug("Player {} opened session. Sending buy-in request if he doesn't have enough money for an entry bet: {}", playerId, enoughMoney);
         if (!enoughMoney) {
-            getServerAdapterHolder().notifyBuyInInfo(playerId, false);
+            getServerAdapter().notifyBuyInInfo(playerId, false);
         }
     }
 
     private void notifyPlayerSittingIn(int playerId) {
         log.debug("notifyPlayerSittingIn() id: " + playerId + " status:" + PokerPlayerStatus.SITIN.name());
         boolean isInCurrentHand = context.isPlayerInHand(playerId);
-        getServerAdapterHolder().notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITIN, isInCurrentHand);
+        getServerAdapter().notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITIN, isInCurrentHand);
     }
 
     private void notifyBuyinInfo(int playerId, boolean mandatoryBuyin) {
-        getServerAdapterHolder().notifyBuyInInfo(playerId, mandatoryBuyin);
+        getServerAdapter().notifyBuyInInfo(playerId, mandatoryBuyin);
     }
 
 
     protected void doPerformPendingBuyIns(Set<PokerPlayer> players) {
-        getServerAdapterHolder().performPendingBuyIns(players);
+        getServerAdapter().performPendingBuyIns(players);
     }
 
     private void notifyPlayerSittingOut(int playerId) {
         log.debug("playerSitsOut() id: " + playerId + " status:" + PokerPlayerStatus.SITOUT.name());
         boolean isInCurrentHand = context.isPlayerInHand(playerId);
-        getServerAdapterHolder().notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITOUT, isInCurrentHand);
+        getServerAdapter().notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITOUT, isInCurrentHand);
     }
 
     protected void changeState(AbstractPokerGameSTM newState) {
@@ -187,11 +182,11 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
         stateChanger.changeState(newState);
     }
 
-    protected ServerAdapter getServerAdapterHolder() {
+    protected ServerAdapter getServerAdapter() {
         return serverAdapterHolder.get();
     }
 
-    protected void doStartHand() {
+    protected void startHand() {
         context.setHandFinished(false);
         Collection<PokerPlayer> playersReadyToStartHand = getPlayersReadyToStartHand();
         if (playersReadyToStartHand.size() > 1) {
@@ -221,15 +216,15 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
     public void notifyAllHandStartPlayerStatus() {
         for (PokerPlayer player : context.getSeatedPlayers()) {
             if (player.isSittingOut()) {
-                getServerAdapterHolder().notifyHandStartPlayerStatus(player.getId(), PokerPlayerStatus.SITOUT);
+                getServerAdapter().notifyHandStartPlayerStatus(player.getId(), PokerPlayerStatus.SITOUT);
             } else {
-                getServerAdapterHolder().notifyHandStartPlayerStatus(player.getId(), PokerPlayerStatus.SITIN);
+                getServerAdapter().notifyHandStartPlayerStatus(player.getId(), PokerPlayerStatus.SITIN);
             }
         }
     }
 
     public void notifyNewHand() {
-        getServerAdapterHolder().notifyNewHand();
+        getServerAdapter().notifyNewHand();
     }
 
     public void notifyAllPlayerBalances() {
@@ -239,7 +234,7 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
     }
 
     public void notifyPlayerBalance(PokerPlayer player) {
-        getServerAdapterHolder().notifyPlayerBalance(player);
+        getServerAdapter().notifyPlayerBalance(player);
     }
 
     private Predicate<PokerPlayer> getReadyPlayerFilter() {

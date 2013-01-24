@@ -51,6 +51,7 @@ import com.cubeia.games.poker.tournament.messages.CloseTournament;
 import com.cubeia.games.poker.tournament.messages.PlayerLeft;
 import com.cubeia.games.poker.tournament.util.PacketSender;
 import com.cubeia.games.poker.tournament.util.PacketSenderFactory;
+import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
@@ -87,6 +88,9 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
 
     @Service
     private CashGamesBackendService backend;
+
+    @Service(proxy = true)
+    private ShutdownServiceContract shutdownService;
 
     @Override
     public PlayerInterceptor getPlayerInterceptor(MTTStateSupport state) {
@@ -234,14 +238,23 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
     }
 
     private void injectDependencies(PokerTournament tournament, MttInstance instance) {
+        initializeServices(instance);
+
+        PacketSender sender = senderFactory.create(instance.getMttNotifier(), instance);
+        tournament.injectTransientDependencies(instance, support, util.getStateSupport(instance), historyService, backend, dateFetcher, shutdownService, sender);
+    }
+
+    private void initializeServices(MttInstance instance) {
+        // Make sure we have the services. Note, this is really only used via tests.
         if (historyService == null) {
             historyService = instance.getServiceRegistry().getServiceInstance(TournamentHistoryPersistenceService.class);
         }
         if (backend == null) {
             backend = instance.getServiceRegistry().getServiceInstance(CashGamesBackendService.class);
         }
-        PacketSender sender = senderFactory.create(instance.getMttNotifier(), instance);
-        tournament.injectTransientDependencies(instance, support, util.getStateSupport(instance), historyService, backend, dateFetcher, sender);
+        if (shutdownService == null) {
+            shutdownService = instance.getServiceRegistry().getServiceInstance(ShutdownServiceContract.class);
+        }
     }
 
     private PokerTournament prepareTournament(MttInstance instance) {
@@ -257,12 +270,19 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
         return lobbyFactory.create(instance, util.getStateSupport(instance), util.getPokerState(instance), backend);
     }
 
+    @VisibleForTesting
     public void setHistoryService(TournamentHistoryPersistenceService historyService) {
         this.historyService = historyService;
     }
 
+    @VisibleForTesting
     public void setBackend(CashGamesBackendService backend) {
         this.backend = backend;
+    }
+
+    @VisibleForTesting
+    public void setShutdownService(ShutdownServiceContract shutdownService) {
+        this.shutdownService = shutdownService;
     }
 
     @VisibleForTesting

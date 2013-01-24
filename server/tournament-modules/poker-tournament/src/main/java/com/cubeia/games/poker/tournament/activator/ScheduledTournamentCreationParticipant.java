@@ -57,7 +57,6 @@ public class ScheduledTournamentCreationParticipant extends PokerTournamentCreat
         super.tournamentCreated(stateSupport, pokerState, lobbyAttributeAccessor);
         setStatus(pokerState, lobbyAttributeAccessor, PokerTournamentStatus.ANNOUNCED);
         lobbyAttributeAccessor.setStringAttribute(IDENTIFIER.name(), instanceConfiguration.getIdentifier());
-        lobbyAttributeAccessor.setStringAttribute(SIT_AND_GO.name(), isSitAndGo() ? "true" : "false");
         lobbyAttributeAccessor.setStringAttribute(START_TIME.name(), pokerState.getStartDateString());
         lobbyAttributeAccessor.setStringAttribute(REGISTRATION_OPENING_TIME.name(), pokerState.getRegistrationStartDateString());
         setScheduledStartTime(pokerState);

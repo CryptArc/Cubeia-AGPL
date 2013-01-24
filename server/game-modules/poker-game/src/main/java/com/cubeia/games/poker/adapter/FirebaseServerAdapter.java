@@ -21,6 +21,7 @@ import com.cubeia.backend.cashgame.TableId;
 import com.cubeia.backend.cashgame.dto.BalanceUpdate;
 import com.cubeia.backend.cashgame.dto.BatchHandRequest;
 import com.cubeia.backend.cashgame.dto.BatchHandResponse;
+import com.cubeia.backend.cashgame.dto.CloseTableRequest;
 import com.cubeia.backend.cashgame.dto.ReserveRequest;
 import com.cubeia.backend.cashgame.dto.TransactionUpdate;
 import com.cubeia.backend.cashgame.exceptions.BatchHandFailedException;
@@ -103,6 +104,7 @@ import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.pot.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
+import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.tournament.RoundReport;
 import com.cubeia.poker.util.SitoutCalculator;
@@ -114,7 +116,6 @@ import org.joda.time.Seconds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -200,6 +201,9 @@ public class FirebaseServerAdapter implements ServerAdapter {
     @Service
     @VisibleForTesting
     RandomService randomService;
+
+    @Service
+    ShutdownServiceContract shutdownService;
 
     @Inject
     @VisibleForTesting
@@ -348,6 +352,11 @@ public class FirebaseServerAdapter implements ServerAdapter {
         GameDataAction action = protocolFactory.createGameAction(packet, request.getPlayerId(), table.getId());
         log.debug("--> Send RequestAction[" + packet + "] to everyone");
         sendPublicPacket(action, -1);
+    }
+
+    @Override
+    public boolean isSystemShutDown() {
+        return shutdownService.isSystemShutDown();
     }
 
     @Override
@@ -541,6 +550,20 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
         clearActionCache();
         ThreadLocalProfiler.add("FirebaseServerAdapter.notifyHandEnd.stop");
+
+        if (isSystemShutDown()) {
+            if (tournamentTable) {
+                log.error("System is shut down but tournament seems to still be running. tableId: " + table.getId());
+            }
+            closeTable();
+        }
+    }
+
+    private void closeTable() {
+        log.debug("Closing table " + table.getId());
+        GameObjectAction action = new GameObjectAction(table.getId());
+        action.setAttachment(new CloseTableRequest(true));
+        table.getScheduler().scheduleAction(action, 200);
     }
 
     private Map<Integer, String> getTransactionIds(BatchHandResponse batchHandResult) {

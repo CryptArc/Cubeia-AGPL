@@ -157,7 +157,8 @@ public class Processor implements GameProcessor, TournamentProcessor {
                 backendHandler.handleAnnounceTableFailedResponse();
             } else if (attachment instanceof CloseTableRequest) {
                 log.debug("got close table request: {}", attachment);
-                tableCloseHandler.closeTable(table, false);
+                CloseTableRequest closeTableRequest = (CloseTableRequest) attachment;
+                tableCloseHandler.closeTable(table, closeTableRequest.isForced());
             } else if (attachment instanceof WaitingForTablesToFinishBeforeBreak) {
                 handleWaitingForBreak();
             } else if (attachment instanceof WaitingForPlayers) {
