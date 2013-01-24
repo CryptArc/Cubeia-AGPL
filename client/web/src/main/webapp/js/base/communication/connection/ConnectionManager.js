@@ -54,11 +54,21 @@ Poker.ConnectionManager = Class.extend({
         this.disconnectDialog.close();
         this.showConnectStatus("Connected");
 
-        var loggedIn = this.handleLoginOnReconnect();
-        if(!loggedIn) {
-            this.handlePersistedLogin();
+        if(Poker.MyPlayer.loginToken!=null) {
+            this.handleTokenLogin();
+        } else {
+            var loggedIn = this.handleLoginOnReconnect();
+            if(!loggedIn) {
+                this.handlePersistedLogin();
+            }
         }
 
+
+
+    },
+    handleTokenLogin : function() {
+        var token = Poker.MyPlayer.loginToken;
+        Poker.AppCtx.getCommunicationManager().doLogin(token, token);
     },
     /**
      * Tries to login with credentials stored in local storage

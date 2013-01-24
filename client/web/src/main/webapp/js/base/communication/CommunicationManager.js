@@ -129,9 +129,8 @@ Poker.CommunicationManager = Class.extend({
      * @param {String} password
      */
     doLogin : function(username,password) {
-        var operatorId = 0;
         Poker.MyPlayer.password = password;
-        this.connector.login(username, password, operatorId);
+        this.connector.login(username, password, Poker.SkinConfiguration.operatorId);
     },
     handlePacket : function (packet) {
 

@@ -44,7 +44,7 @@ Poker.ConnectionPacketHandler = Class.extend({
         if(!Poker.OperatorConfig.isPopulated()) {
             var packet = new FB_PROTOCOL.LocalServiceTransportPacket();
             packet.seq = 0;
-            packet.servicedata = utf8.toByteArray("0");
+            packet.servicedata = utf8.toByteArray("" + Poker.SkinConfiguration.operatorId);
             Poker.AppCtx.getConnector().sendProtocolObject(packet);
         }
     }
