@@ -161,11 +161,6 @@ public class PokerState implements Serializable, IPokerState {
         return pokerContext.getCurrentHandPlayerMap();
     }
 
-    /**
-     * Returns the map of external table properties.
-     *
-     * @return
-     */
     public Map<String, Serializable> getExternalTableProperties() {
         return externalTableProperties;
     }
@@ -193,10 +188,6 @@ public class PokerState implements Serializable, IPokerState {
     @Override
     public boolean isPlayerInHand(int playerId) {
         return stateHolder.get().isPlayerInHand(playerId);
-    }
-
-    public void startHand() {
-        getCurrentState().startHand();
     }
 
     public void scheduleTournamentHandStart() {
@@ -279,13 +270,6 @@ public class PokerState implements Serializable, IPokerState {
 
     public void notifyRakeInfo() {
         serverAdapter.notifyRakeInfo(pokerContext.getPotHolder().calculateRakeIncludingBetStacks(pokerContext.getCurrentHandSeatingMap().values()));
-    }
-
-    /**
-     * TODO: Should not be here. (The user of PokerGame has no interest in calling or seeing this method)
-     */
-    public void notifyDealerButton(int dealerButtonSeatId) {
-        serverAdapter.notifyDealerButton(dealerButtonSeatId);
     }
 
     public ServerAdapter getServerAdapter() {

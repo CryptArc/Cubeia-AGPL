@@ -54,7 +54,7 @@ public class PokerTournamentTest extends GuiceTest {
         assertTrue(state.isFinished());
 
         // Next round starts
-        state.startHand();
+        state.timeout();
         assertAllPlayersHaveCards(mp, 0);
 
         // Blinds
@@ -92,7 +92,7 @@ public class PokerTournamentTest extends GuiceTest {
 
         state.removePlayer(p[2]);
 
-        state.startHand();
+        state.timeout(); // starts next hand
 
         // P3 should post bb here.
         state.timeout();

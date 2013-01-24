@@ -38,7 +38,6 @@
         <dependency>
             <groupId>com.cubeia.games.poker.config</groupId>
             <artifactId>config-service</artifactId>
-            <type>jar</type>
             <scope>provided</scope>
         </dependency>
 

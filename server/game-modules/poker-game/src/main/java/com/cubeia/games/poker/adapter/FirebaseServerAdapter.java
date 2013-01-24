@@ -103,6 +103,7 @@ import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.pot.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
+import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.tournament.RoundReport;
 import com.cubeia.poker.util.SitoutCalculator;
@@ -114,7 +115,6 @@ import org.joda.time.Seconds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -200,6 +200,9 @@ public class FirebaseServerAdapter implements ServerAdapter {
     @Service
     @VisibleForTesting
     RandomService randomService;
+
+    @Service
+    ShutdownServiceContract shutdownService;
 
     @Inject
     @VisibleForTesting
@@ -348,6 +351,11 @@ public class FirebaseServerAdapter implements ServerAdapter {
         GameDataAction action = protocolFactory.createGameAction(packet, request.getPlayerId(), table.getId());
         log.debug("--> Send RequestAction[" + packet + "] to everyone");
         sendPublicPacket(action, -1);
+    }
+
+    @Override
+    public boolean isSystemShutDown() {
+        return shutdownService.isSystemShutDown();
     }
 
     @Override

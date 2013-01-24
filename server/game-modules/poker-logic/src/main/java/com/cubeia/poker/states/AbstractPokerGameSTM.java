@@ -97,11 +97,6 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
     }
 
     @Override
-    public void startHand() {
-        log.warn("Won't start hand. Current state = " + this);
-    }
-
-    @Override
     public void playerSitsOut(int playerId, SitOutStatus status) {
         log.info("Player with id " + playerId + " sits out");
         if (context.setSitOutStatus(playerId, status)) {
@@ -191,7 +186,7 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
         return serverAdapterHolder.get();
     }
 
-    protected void doStartHand() {
+    protected void startHand() {
         context.setHandFinished(false);
         Collection<PokerPlayer> playersReadyToStartHand = getPlayersReadyToStartHand();
         if (playersReadyToStartHand.size() > 1) {

@@ -22,7 +22,6 @@ import com.cubeia.firebase.api.mtt.MttFactory;
 import com.cubeia.firebase.api.mtt.activator.ActivatorContext;
 import com.cubeia.firebase.api.mtt.lobby.MttLobbyObject;
 import com.cubeia.firebase.api.server.SystemException;
-import com.cubeia.firebase.api.service.sysstate.PublicSystemStateService;
 import com.cubeia.games.poker.common.time.SystemTime;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentInstance;
@@ -284,7 +283,7 @@ public class TournamentScanner implements PokerActivator, Runnable {
     }
 
     private void checkTournaments() {
-        if (shutdownService.isShuttingDown()) {
+        if (shutdownService.isSystemShuttingDown()) {
             shutDownEmptyTournamentsAndNonStartedSitAndGoTournaments();
         } else {
             checkSitAndGos();

@@ -45,8 +45,9 @@ public interface BetStrategy extends Serializable {
      * Example 1: Player A bets $10, player B calls and player C raises to $20. Min raise-to for player A is now $30, meaning
      * he can pay $20 to raise the bet by $10, from $20 to $30.
      *
-     * Example 2: Player A bets $10, player B calls and player C goes all-in to $14 (which is an incomplete bet both in no-limit and fixed limit).
-     * Min raise-to for player A is now $20, because C's all-in counts as a call.
+     * Example 2: Player A bets $10, player B calls and player C goes all-in to $14.
+     * Fixed limit: Min raise-to for player A is now $20, because C's all-in counts as a call.
+     * No limit: Min raise-to for player A is $24.
      *
      * If the player cannot afford to raise, 0 should be returned.
      * If the player can afford an incomplete raise, that raise-to amount should be returned.
