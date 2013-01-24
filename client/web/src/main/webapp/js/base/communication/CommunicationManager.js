@@ -15,6 +15,7 @@ Poker.CommunicationManager = Class.extend({
 
     webSocketUrl : null,
     webSocketPort : null,
+    operatorId : 0,
 
     /**
      * @type Poker.TableManager
@@ -27,10 +28,11 @@ Poker.CommunicationManager = Class.extend({
      * @param {Number} webSocketPort
      * @constructor
      */
-    init : function(webSocketUrl, webSocketPort) {
+    init : function(webSocketUrl, webSocketPort, operatorId) {
         this.webSocketUrl = webSocketUrl;
         this.webSocketPort = webSocketPort;
         this.tableManager = Poker.AppCtx.getTableManager();
+        this.operatorId = operatorId;
         this.connect();
     },
     /**
@@ -91,8 +93,7 @@ Poker.CommunicationManager = Class.extend({
      * @param {FIREBASE.ConnectionStatus} status
      */
     statusCallback : function(status) {
-
-        new Poker.ConnectionPacketHandler().handleStatus(status);
+        new Poker.ConnectionPacketHandler().handleStatus(status,this.operatorId);
     },
 
 
@@ -129,9 +130,8 @@ Poker.CommunicationManager = Class.extend({
      * @param {String} password
      */
     doLogin : function(username,password) {
-        var operatorId = 0;
         Poker.MyPlayer.password = password;
-        this.connector.login(username, password, operatorId);
+        this.connector.login(username, password, this.operatorId);
     },
     handlePacket : function (packet) {
 
@@ -212,7 +212,6 @@ Poker.CommunicationManager = Class.extend({
         var config = JSON.parse(message);
         Poker.OperatorConfig.populate(config);
         console.log(config);
-
     },
 
     handleGameDataPacket:function (gameTransportPacket) {

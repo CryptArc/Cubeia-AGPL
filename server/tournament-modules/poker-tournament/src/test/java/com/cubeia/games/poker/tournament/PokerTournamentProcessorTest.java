@@ -227,6 +227,7 @@ public class PokerTournamentProcessorTest extends TestCase {
         when(instanceConfig.getOpenRegistrationTime()).thenReturn(new DateTime());
         when(instanceConfig.getConfiguration()).thenReturn(configuration);
         when(instanceConfig.getSchedule()).thenReturn(schedule);
+        when(instanceConfig.getIdentifier()).thenReturn("identifier");
 
         PokerTournamentCreationParticipant participant = new ScheduledTournamentCreationParticipant(instanceConfig, historyService, systemTime);
         participant.tournamentCreated(state, instance.getLobbyAccessor());

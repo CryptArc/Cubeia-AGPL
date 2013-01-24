@@ -46,12 +46,8 @@ public class PacketSender {
     }
 
     public void sendPacketToPlayer(ProtocolObject packet, int playerId) {
-        try {
-            MttDataAction action = new MttDataAction(instance.getId(), playerId);
-            action.setData(serializer.pack(packet));
-            notifier.notifyPlayer(playerId, action);
-        } catch (IOException e) {
-            log.debug("Failed sending player list to player " + playerId, e);
-        }
+        MttDataAction action = new MttDataAction(instance.getId(), playerId);
+        action.setData(serializer.pack(packet));
+        notifier.notifyPlayer(playerId, action);
     }
 }

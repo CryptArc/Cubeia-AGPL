@@ -22,7 +22,6 @@
     <script type="text/javascript" src="js/lib/jquery.jqGrid.min.js"></script>
     <script type="text/javascript" src="js/lib/json2.js"></script>
 
-
     <script type="text/javascript" src="js/lib/facebox/facebox.js"></script>
     <script type="text/javascript">
         $.facebox.settings.closeImage = 'images/global/close.png';
@@ -122,8 +121,6 @@
     <script type="text/javascript" src="js/base/dev/PositionEditor.js"></script>
     <script type="text/javascript" src="js/base/dev/DevTools.js"></script>
 
-
-
     <script type="text/javascript">
 
 
@@ -147,21 +144,45 @@
             //var webSocketUrl = "10.0.0.11";
             var webSocketUrl = requestHost ? requestHost : "localhost";
             var webSocketPort = 9191;
-
-            console.log("connecting to WS: " + webSocketUrl + ":" + webSocketPort);
+            
+            
+            
+            // *** START MEGA HACK: We'll parse the path, and if 
+            // we think this is an operator connecting we'll attempt to parse it
+            var params = location.search&&location.search.substr(1).replace(/\+/gi," ").split("&");
+			for (var i in params) {
+			    var s = params[i].split("=");
+			    params[i]  = params[unescape(s[0])] = unescape(s[1]);
+			}
+            var operatorId =params["operatorId"];
+            if(!operatorId) {
+            	operatorId = 0;
+            } 
+            var sessionCookie = params["authCookie"];
+            // *** END MEGA HACK 
+             
+            console.log("connecting to WS: " + webSocketUrl + ":" + webSocketPort + "; operatorId: " + operatorId + "; authCookie: " + sessionCookie);
 
             //handles the lobby UI
             Poker.AppCtx.wire({
                 webSocketUrl : webSocketUrl,
                 webSocketPort : webSocketPort,
-                tournamentLobbyUpdateInterval : 10000
+                tournamentLobbyUpdateInterval : 10000,
+                operatorId : operatorId,
+                authCookie : sessionCookie
             });
 
-            $(".logout-link").click(function(){
+            $(".logout-link").click(function() {
                 Poker.AppCtx.getCommunicationManager().getConnector().logout();
                 document.location = document.location.hash = "clear";
                 document.location.reload();
             });
+            
+            // *** SEMI HACK HERE
+            if(sessionCookie) {
+            	// hide login box for cookie based auth
+            	$(".login-container").hide();
+            }
 
         });
 

@@ -127,9 +127,9 @@ public class PokerParticipant extends DefaultCreationParticipant {
         int minBuyIn = template.getMinBuyIn();
         int maxBuyIn = template.getMaxBuyIn();
 
-        if (template.getBetStrategy() == BetStrategyType.FIXED_LIMIT) {
+        /*if (template.getBetStrategy() == BetStrategyType.FIXED_LIMIT) {
             maxBuyIn = Integer.MAX_VALUE;
-        }
+        }*/
 
         int seats = table.getPlayerSet().getSeatingMap().getNumberOfSeats();
         RakeSettings rake = template.getRakeSettings();

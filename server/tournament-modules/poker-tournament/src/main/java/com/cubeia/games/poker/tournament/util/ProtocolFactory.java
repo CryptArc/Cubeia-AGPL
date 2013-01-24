@@ -32,15 +32,11 @@ public class ProtocolFactory {
     private static StyxSerializer serializer = new StyxSerializer(null);
 
     public static MttDataAction createMttAction(ProtocolObject packet, int playerId, int mttId) {
-        try {
-            MttDataAction action = new MttDataAction(mttId, playerId);
-            ByteBuffer buffer;
-            buffer = serializer.pack(packet);
-            action.setData(buffer);
-            return action;
-        } catch (IOException e) {
-            throw new RuntimeException("Could not serialize game packet [" + packet + "]", e);
-        }
+        MttDataAction action = new MttDataAction(mttId, playerId);
+        ByteBuffer buffer;
+        buffer = serializer.pack(packet);
+        action.setData(buffer);
+        return action;
     }
 
 }

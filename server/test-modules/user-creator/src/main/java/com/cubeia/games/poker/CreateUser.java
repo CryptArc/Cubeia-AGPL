@@ -74,8 +74,8 @@ public class CreateUser {
 	@Argument(alias="l", description="last name, option", required=false)
 	private String lastname;
 	
-	@Argument(alias="i", description="initial balance, set to -1 to disable, defaults to 50000", required=false)
-	private long balance = 50000;
+	@Argument(alias="i", description="initial balance, set to -1 to disable, defaults to 500000", required=false)
+	private long balance = 500000;
 	
 	@Argument(alias="b", description="bank account for initial balance, defaults to -3000", required=false)
 	private long bankaccount = -3000;

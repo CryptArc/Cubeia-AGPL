@@ -34,7 +34,6 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBCursor;
 import org.apache.log4j.Logger;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 
 public class HandHistoryProviderServiceImpl implements HandHistoryProviderService, Service, RoutableService {
@@ -68,20 +67,16 @@ public class HandHistoryProviderServiceImpl implements HandHistoryProviderServic
     public void onAction(ServiceAction e) {
         int tableId = -1;
         int playerId = e.getPlayerId();
-        long time = 0;
+        long time;
         byte[] data = e.getData();
         log.debug("Hand history requested for tableId: " + tableId);
-        try {
-            StyxSerializer serializer = new StyxSerializer(new ProtocolObjectFactory());
-            HandHistoryProviderRequest request = (HandHistoryProviderRequest)serializer.unpack(ByteBuffer.wrap(data));
-            time = Long.parseLong(request.time);
-            tableId = request.tableId;
-            log.debug("Request data - TableId: " + tableId + " PlayerId: " + playerId + " Time: " + time);
-            ServiceAction action = new ClientServiceAction(playerId, -1, getHandHistory(tableId, playerId, time).getBytes());
-            router.dispatchToPlayer(e.getPlayerId(), action);
-        } catch (IOException ex) {
-            log.error("Error during the event data processing in handHistoryProviderServiceImpl. Error: " + ex.getMessage());
-        }
+        StyxSerializer serializer = new StyxSerializer(new ProtocolObjectFactory());
+        HandHistoryProviderRequest request = (HandHistoryProviderRequest)serializer.unpack(ByteBuffer.wrap(data));
+        time = Long.parseLong(request.time);
+        tableId = request.tableId;
+        log.debug("Request data - TableId: " + tableId + " PlayerId: " + playerId + " Time: " + time);
+        ServiceAction action = new ClientServiceAction(playerId, -1, getHandHistory(tableId, playerId, time).getBytes());
+        router.dispatchToPlayer(e.getPlayerId(), action);
     }
 
     @Override

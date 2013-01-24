@@ -135,7 +135,7 @@ public class PokerTournament implements Serializable {
      * Invoked when a player has logged out or disconnected. If this is a sit&go, we should
      * un-register the player.
      *
-     * @param playerLeft
+     * @param playerLeft holds information about the player who left, not null
      */
     public void handlePlayerLeft(PlayerLeft playerLeft) {
         if (pokerState.isSitAndGo()) {
@@ -688,7 +688,7 @@ public class PokerTournament implements Serializable {
     private boolean isReRegistration(MttRegistrationRequest request) {
         if (request.getParameters() == null) return false;
         for (Attribute parameter : request.getParameters()) {
-            if (parameter.name == REREGISTRATION) {
+            if (REREGISTRATION.equals(parameter.name)) {
                 return true;
             }
         }
@@ -826,7 +826,7 @@ public class PokerTournament implements Serializable {
         setTournamentStatus(PokerTournamentStatus.REGISTERING);
     }
 
-    private void cancelTournament() {
+    void cancelTournament() {
         log.debug("Cancelling tournament " + pokerState.getHistoricId());
         setTournamentStatus(PokerTournamentStatus.CANCELLED);
         refundPlayers();

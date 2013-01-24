@@ -19,6 +19,8 @@ package com.cubeia.games.poker.activator;
 
 import java.util.List;
 
+import com.cubeia.firebase.api.service.sysstate.PublicSystemStateService;
+import com.cubeia.firebase.guice.inject.Service;
 import org.apache.log4j.Logger;
 
 import com.cubeia.firebase.guice.inject.Log4j;
@@ -39,12 +41,14 @@ public class ActivatorTableManagerImpl implements ActivatorTableManager {
     @Inject
     private TableActionHandler handler;
 
+    @Service
+    private PublicSystemStateService systemStateService;
+
     @Log4j
     private Logger log;
 
     @Override
     public void run() {
-
         log.trace("Table manager executing.");
         List<TableConfigTemplate> templates = provider.getTemplates();
         log.trace("Found " + templates.size() + " templates.");

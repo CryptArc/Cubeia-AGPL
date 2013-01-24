@@ -30,7 +30,7 @@
     </prerequisites>
 
     <properties>
-        <firebase.version>1.9.0-CE-RC.1</firebase.version>
+        <firebase.version>1.9.2-CE</firebase.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <cubeia.network.version>1.4.0-RC2-SNAPSHOT</cubeia.network.version>
     </properties>
@@ -157,6 +157,32 @@
                 <artifactId>config-service</artifactId>
                 <version>${project.version}</version>
                 <type>jar</type>
+            </dependency>
+
+            <dependency>
+                <groupId>com.cubeia.games.shutdown</groupId>
+                <artifactId>shutdown-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.cubeia.games.shutdown</groupId>
+                <artifactId>shutdown-service</artifactId>
+                <version>${project.version}</version>
+                <type>firebase-sar</type>
+            </dependency>
+
+            <dependency>
+                <groupId>com.cubeia.games.poker</groupId>
+                <artifactId>broadcast-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.cubeia.games.poker</groupId>
+                <artifactId>broadcast-service</artifactId>
+                <version>${project.version}</version>
+                <type>firebase-sar</type>
             </dependency>
 
             <dependency>
@@ -391,7 +417,7 @@
             <dependency>
                 <groupId>org.mongodb</groupId>
                 <artifactId>mongo-java-driver</artifactId>
-                <version>2.6.3</version>
+                <version>2.10.1</version>
             </dependency>
             <dependency>
                 <groupId>de.flapdoodle.embedmongo</groupId>
