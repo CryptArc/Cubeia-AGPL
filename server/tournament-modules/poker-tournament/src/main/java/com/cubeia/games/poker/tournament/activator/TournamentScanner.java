@@ -48,10 +48,10 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import static com.cubeia.firebase.io.protocol.Enums.TournamentAttributes.NAME;
-import static com.cubeia.firebase.io.protocol.Enums.TournamentAttributes.REGISTERED;
 import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.IDENTIFIER;
 import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.SIT_AND_GO;
 import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.STATUS;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.CANCELLED;
 import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.CLOSED;
 import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.REGISTERING;
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -298,8 +298,9 @@ public class TournamentScanner implements PokerActivator, Runnable {
             String status = getStringAttribute(tournament, STATUS.name());
             boolean sitAndGo = parseBoolean(getStringAttribute(tournament, SIT_AND_GO.name()));
             boolean registering = status.equalsIgnoreCase(REGISTERING.name());
-            boolean noPlayers = getIntAttribute(tournament, REGISTERED.name()) == 0;
-            if ((registering && sitAndGo) || noPlayers) {
+            boolean closedOrCancelled = CLOSED.equals(status) || CANCELLED.equals(status);
+            boolean registeringSitAndGo = registering && sitAndGo;
+            if (!closedOrCancelled && registeringSitAndGo) {
                 shutdownService.shutDownTournament(tournament.getTournamentId());
             }
         }

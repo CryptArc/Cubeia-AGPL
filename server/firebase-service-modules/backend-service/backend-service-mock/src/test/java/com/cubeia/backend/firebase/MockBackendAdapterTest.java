@@ -34,12 +34,15 @@ public class MockBackendAdapterTest {
 
     @Test
     public void testSomething() {
-        String integrationId = UUID.randomUUID().toString();
-        TournamentId tournamentId = new TournamentId(integrationId, 45);
-        OpenSessionResponse openSessionResponse = adapter.openSession(new OpenTournamentSessionRequest(-1, tournamentId, null));
+        // Open two sessions
+        OpenSessionResponse openSessionResponse = adapter.openSession(new OpenTournamentSessionRequest(-1, new TournamentId(UUID.randomUUID().toString(), 45), null));
+        adapter.openSession(new OpenTournamentSessionRequest(-1, new TournamentId(UUID.randomUUID().toString(), 46), null));
+
+        assertEquals(2, adapter.getSessionCount());
+
+        // Close one of them.
         PlayerSessionId tournamentSessionId = openSessionResponse.getSessionId();
-        assertEquals(1, adapter.getSessionCount());
         adapter.closeSession(new CloseSessionRequest(tournamentSessionId));
-        assertEquals(0, adapter.getSessionCount());
+        assertEquals(1, adapter.getSessionCount());
     }
 }

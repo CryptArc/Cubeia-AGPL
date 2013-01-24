@@ -118,6 +118,7 @@ public class MockBackendAdapter implements CashGamesBackend {
             sessionTransactions.removeAll(sid);
             log.debug("closed session {} with balance: {}", sid, closingBalance);
         }
+        log.debug("currently open sessions (after closing): {}", sessionTransactions.size());
 
         printDiagnostics();
     }

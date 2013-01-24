@@ -79,9 +79,9 @@ public class TableActionHandlerImpl implements TableActionHandler {
     }
 
     private void doClose(int tableId) {
-        log.debug("Table[" + tableId + "] is elegible for closure, sending close request.");
+        log.debug("Table[" + tableId + "] is eligible for closure, sending close request.");
         GameObjectAction action = new GameObjectAction(tableId);
-        action.setAttachment(new CloseTableRequest());
+        action.setAttachment(new CloseTableRequest(false));
         router.dispatchToGame(tableId, action);
     }
 }

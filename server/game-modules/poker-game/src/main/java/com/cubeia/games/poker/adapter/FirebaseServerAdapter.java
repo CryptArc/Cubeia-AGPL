@@ -21,6 +21,7 @@ import com.cubeia.backend.cashgame.TableId;
 import com.cubeia.backend.cashgame.dto.BalanceUpdate;
 import com.cubeia.backend.cashgame.dto.BatchHandRequest;
 import com.cubeia.backend.cashgame.dto.BatchHandResponse;
+import com.cubeia.backend.cashgame.dto.CloseTableRequest;
 import com.cubeia.backend.cashgame.dto.ReserveRequest;
 import com.cubeia.backend.cashgame.dto.TransactionUpdate;
 import com.cubeia.backend.cashgame.exceptions.BatchHandFailedException;
@@ -549,6 +550,20 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
         clearActionCache();
         ThreadLocalProfiler.add("FirebaseServerAdapter.notifyHandEnd.stop");
+
+        if (isSystemShutDown()) {
+            if (tournamentTable) {
+                log.error("System is shut down but tournament seems to still be running. tableId: " + table.getId());
+            }
+            closeTable();
+        }
+    }
+
+    private void closeTable() {
+        log.debug("Closing table " + table.getId());
+        GameObjectAction action = new GameObjectAction(table.getId());
+        action.setAttachment(new CloseTableRequest(true));
+        table.getScheduler().scheduleAction(action, 200);
     }
 
     private Map<Integer, String> getTransactionIds(BatchHandResponse batchHandResult) {

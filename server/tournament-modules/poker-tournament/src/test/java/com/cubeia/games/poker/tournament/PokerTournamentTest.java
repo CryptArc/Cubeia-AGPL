@@ -46,6 +46,7 @@ import com.cubeia.games.poker.tournament.messages.PokerTournamentRoundReport;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 import com.cubeia.games.poker.tournament.util.PacketSender;
+import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -87,6 +88,9 @@ public class PokerTournamentTest {
 
     @Mock
     private SystemTime dateFetcher;
+
+    @Mock
+    private ShutdownServiceContract shutdownService;
 
     @Mock
     private MttInstance instance;
@@ -429,20 +433,20 @@ public class PokerTournamentTest {
         lifeCycle = new ScheduledTournamentLifeCycle(startTime, openRegistrationTime);
         pokerState.setLifecycle(lifeCycle);
         tournament = new PokerTournament(pokerState);
-        tournament.injectTransientDependencies(instance, support, state, historyService, backend, dateFetcher, sender);
+        tournament.injectTransientDependencies(instance, support, state, historyService, backend, dateFetcher, shutdownService, sender);
         return lifeCycle;
     }
 
     private void prepareTournamentWithMockLifecycle() {
         pokerState.setLifecycle(mockLifeCycle);
         tournament = new PokerTournament(pokerState);
-        tournament.injectTransientDependencies(instance, support, state, historyService, backend, dateFetcher, sender);
+        tournament.injectTransientDependencies(instance, support, state, historyService, backend, dateFetcher, shutdownService, sender);
         pokerState.setBlindsStructure(createDefaultBlindsStructure());
     }
 
     private void prepareTournamentWithMockTournamentState() {
         tournament = new PokerTournament(mockPokerState);
-        tournament.injectTransientDependencies(instance, support, state, historyService, backend, new DefaultSystemTime(), sender);
+        tournament.injectTransientDependencies(instance, support, state, historyService, backend, new DefaultSystemTime(), shutdownService, sender);
         pokerState.setBlindsStructure(createDefaultBlindsStructure());
     }
 }

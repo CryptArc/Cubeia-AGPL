@@ -63,6 +63,7 @@ import com.cubeia.games.poker.tournament.payouts.PayoutHandler;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 import com.cubeia.games.poker.tournament.util.PacketSender;
+import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
 import com.cubeia.poker.tournament.history.api.HistoricPlayer;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
 import org.apache.log4j.Logger;
@@ -127,6 +128,8 @@ public class PokerTournament implements Serializable {
 
     private transient PacketSender sender;
 
+    private transient ShutdownServiceContract shutdownService;
+
     public PokerTournament(PokerTournamentState pokerState) {
         this.pokerState = pokerState;
     }
@@ -144,13 +147,15 @@ public class PokerTournament implements Serializable {
     }
 
     public void injectTransientDependencies(MttInstance instance, TournamentAssist support, MTTStateSupport state,
-            TournamentHistoryPersistenceService historyService, CashGamesBackendService backend, SystemTime dateFetcher, PacketSender sender) {
+            TournamentHistoryPersistenceService historyService, CashGamesBackendService backend, SystemTime dateFetcher,
+            ShutdownServiceContract shutdownService, PacketSender sender) {
         this.instance = instance;
         this.mttSupport = support;
         this.state = state;
         this.historyPersister = new HistoryPersister(pokerState.getHistoricId(), historyService, dateFetcher);
         this.backend = backend;
         this.dateFetcher = dateFetcher;
+        this.shutdownService = shutdownService;
         this.sender = sender;
     }
 
@@ -570,6 +575,12 @@ public class PokerTournament implements Serializable {
     }
 
     private void startTournament() {
+        if (shutdownService.isSystemShuttingDown()) {
+            log.info("Won't start tournament, since system is shutting down.");
+            cancelTournament();
+            return;
+        }
+
         long registrationElapsedTime = pokerState.getLastRegisteredTime() - pokerState.getFirstRegisteredTime();
         log.debug("Starting tournament [" + instance.getId() + " : " + instance.getState().getName() + "]. Registration time was " + registrationElapsedTime + " ms");
         transferBuyInsToTournamentSession();

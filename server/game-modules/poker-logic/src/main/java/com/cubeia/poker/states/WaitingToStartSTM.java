@@ -48,21 +48,21 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
     @Override
     public void enterState() {
         log.info("Entered waiting to start state.");
-        if (!context.isTournamentTable()) {
+        if (!context.isTournamentTable() && !getServerAdapter().isSystemShutDown()) {
             long timeout = context.getSettings().getTiming().getTime(Periods.START_NEW_HAND);
             log.info("Scheduling timeout in " + timeout + " millis.");
-            getServerAdapterHolder().scheduleTimeout(timeout);
+            getServerAdapter().scheduleTimeout(timeout);
         }
     }
 
     @Override
     public void timeout() {
         if (!context.isTournamentTable()) {
-            getServerAdapterHolder().performPendingBuyIns(context.getSeatedPlayers());
+            getServerAdapter().performPendingBuyIns(context.getSeatedPlayers());
             context.commitPendingBalances();
             setPlayersWithoutMoneyAsSittingOut();
             context.sitOutPlayersMarkedForSitOutNextRound();
-            getServerAdapterHolder().cleanupPlayers(new SitoutCalculator());
+            getServerAdapter().cleanupPlayers(new SitoutCalculator());
         }
 
         if (getPlayersReadyToStartHand().size() < 2) {
@@ -93,7 +93,7 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
     }
 
     private boolean systemIsShutDown() {
-        return getServerAdapterHolder().isSystemShutDown();
+        return getServerAdapter().isSystemShutDown();
     }
 
     @Override
