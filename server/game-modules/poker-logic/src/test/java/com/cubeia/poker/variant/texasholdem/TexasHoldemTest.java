@@ -532,6 +532,57 @@ public class TexasHoldemTest {
         verify(listener, times(2)).handFinished(Matchers.<HandResult>any(), Matchers.<HandEndStatus>any());
     }
 
+    @Test
+    public void testPlayerWhoHasActedDoesNotGetToRaiseIfThereIsAnIncompleteRaise() {
+        PokerContext context = prepareContext(4);
+        startHand(context);
+        p[0].setBalance(30);
+
+        act(p[1], SMALL_BLIND);
+        act(p[2], BIG_BLIND);
+        act(p[3], CALL);
+        // p0 goes all-in for an incomplete raise (bb is 20, so complete raise would be to 40).
+        act(p[0], RAISE, 30);
+        // p1 and p2 can raise
+        assertThat(p[1].getActionRequest().isOptionEnabled(RAISE), is(true));
+        act(p[1], CALL);
+        assertThat(p[2].getActionRequest().isOptionEnabled(RAISE), is(true));
+        act(p[2], CALL);
+        // But p3 can only call.
+        assertThat(p[3].getActionRequest().isOptionEnabled(RAISE), is(false));
+    }
+
+    @Test
+    public void testPlayerWhoHasActedDoesNotGetToRaiseIfThereIsAnIncompleteBet() {
+        PokerContext context = prepareContext(4);
+        startHand(context);
+        p[0].setBalance(30);
+
+        act(p[1], SMALL_BLIND);
+        act(p[2], BIG_BLIND);
+        act(p[3], CALL);
+        act(p[0], CALL);
+
+        act(p[1], CALL);
+        act(p[2], CHECK);
+
+        texas.timeout(); // flop
+
+        act(p[1], CHECK);
+        act(p[2], CHECK);
+        act(p[3], CHECK);
+
+        // p0 goes all-in for an incomplete bet (bb is 20, so complete bet would be to 20).
+        act(p[0], BET, 10);
+
+        // no one can raise
+        assertThat(p[1].getActionRequest().isOptionEnabled(RAISE), is(false));
+        act(p[1], CALL);
+        assertThat(p[2].getActionRequest().isOptionEnabled(RAISE), is(false));
+        act(p[2], CALL);
+        assertThat(p[3].getActionRequest().isOptionEnabled(RAISE), is(false));
+    }
+
     private Predicate<PokerPlayer> mockFilterThatAllows(MockPlayer... players) {
         Predicate<PokerPlayer> filter = mock(Predicate.class);
         for (PokerPlayer player : players) {
@@ -563,7 +614,7 @@ public class TexasHoldemTest {
     }
 
     private PokerContext prepareContext(int numberOfPlayers) {
-        BlindsLevel level = new BlindsLevel(10, 20, 10);
+        BlindsLevel level = new BlindsLevel(10, 20, 0);
         BetStrategyType betStrategy = BetStrategyType.NO_LIMIT;
         PokerSettings settings = new PokerSettings(level, betStrategy, 100, 5000, new DefaultTimingProfile(), 6, rakeSettings, null);
         PokerContext context = new PokerContext(settings);
