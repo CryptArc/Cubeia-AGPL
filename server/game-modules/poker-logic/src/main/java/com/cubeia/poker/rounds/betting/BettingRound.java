@@ -115,6 +115,7 @@ public class BettingRound implements Round, BettingRoundContext {
         initializeHighBet();
         initializeHighestCompleteBetAndSizeOfLastCompleteBet();
         initializePlayersInPlayAtRoundStart();
+        resetCanRaiseFlag();
         requestFirstActionOrFinishRound(seatIdToStartBettingAfter);
     }
 
@@ -327,6 +328,7 @@ public class BettingRound implements Round, BettingRoundContext {
         }
         if (handled) {
             player.setHasActed(true);
+            player.setCanRaise(false);
         }
         return handled;
     }
@@ -359,13 +361,13 @@ public class BettingRound implements Round, BettingRoundContext {
         }
 
         if (betStrategy.isCompleteBetOrRaise(this, amountRaisedTo)) {
-            // TODO: Test coverage needed here.
             // We only increase the number of raises and the size of the last raise if the raise is complete.
             numberOfBetsAndRaises++;
             long validLevel = betStrategy.getNextValidRaiseToLevel(this);
             long previousCompleteBet = highestCompleteBet;
             highestCompleteBet = determineHighestCompleteBet(amountRaisedTo, validLevel);
             sizeOfLastCompleteBetOrRaise = highestCompleteBet - previousCompleteBet;
+            resetCanRaiseFlag();
         }
 
         highBet = amountRaisedTo;
@@ -401,6 +403,7 @@ public class BettingRound implements Round, BettingRoundContext {
             highestCompleteBet = determineHighestCompleteBet(amount, betStrategy.getNextValidRaiseToLevel(this));
             sizeOfLastCompleteBetOrRaise = highestCompleteBet;
             bettingCapped = betStrategy.shouldBettingBeCapped(numberOfBetsAndRaises, isHeadsUpBetting());
+            resetCanRaiseFlag();
         }
         highBet = highBet + amount;
         lastPlayerToPlaceBet = player;
@@ -430,6 +433,14 @@ public class BettingRound implements Round, BettingRoundContext {
         for (PokerPlayer p : context.getCurrentHandSeatingMap().values()) {
             if (!p.hasFolded()) {
                 p.setHasActed(false);
+            }
+        }
+    }
+
+    private void resetCanRaiseFlag() {
+        for (PokerPlayer p : context.getCurrentHandSeatingMap().values()) {
+            if (!p.hasFolded()) {
+                p.setCanRaise(true);
             }
         }
     }

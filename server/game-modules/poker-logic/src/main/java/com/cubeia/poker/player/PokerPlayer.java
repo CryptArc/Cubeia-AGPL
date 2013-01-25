@@ -58,6 +58,10 @@ public interface PokerPlayer extends BlindsPlayer, Serializable {
 
     public boolean getSitOutNextRound();
 
+    void setCanRaise(boolean canRaise);
+
+    boolean canRaise();
+
     public void setSitOutNextRound(boolean b);
 
     /**
