@@ -14,20 +14,23 @@ public class ClientController {
     @Value("${default.skin}")
     private String defaultSkin;
 
+    private final String SAFE_PATTER = "[a-zA-Z0-9\\.-_]*";
+
     @RequestMapping("/")
     public String handleDefault(HttpServletRequest request, ModelMap modelMap) {
         return "redirect:/poker/" + defaultSkin;
     }
 
     @RequestMapping(value = {"/{skin}"})
-    public String handleStart(HttpServletRequest request, ModelMap modelMap, @PathVariable("skin") String skin) {
+    public String handleStart(HttpServletRequest request, ModelMap modelMap,
+                              @PathVariable("skin") String skin) {
 
         modelMap.addAttribute("cp",request.getContextPath());
 
         if(skin == null) {
             skin = defaultSkin;
-        } else if(skin.matches("[a-zA-Z0-9]*")) {
-            modelMap.addAttribute("skin",skin);
+        } else if(!skin.matches(SAFE_PATTER)) {
+            modelMap.addAttribute("skin","");
         }
         return "index";
     }
@@ -41,8 +44,13 @@ public class ClientController {
 
         modelMap.addAttribute("cp",request.getContextPath());
         modelMap.addAttribute("operatorId",operatorId);
-        modelMap.addAttribute("token",token);
-        modelMap.addAttribute("skin",skin);
+
+        if(token==null || !token.matches(SAFE_PATTER)) {
+            modelMap.addAttribute("token","");
+        }
+        if(skin==null || !skin.matches(SAFE_PATTER)) {
+            modelMap.addAttribute("skin","");
+        }
 
         return "index";
     }
