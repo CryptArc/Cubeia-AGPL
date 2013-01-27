@@ -2,6 +2,6 @@
 var Poker = Poker || {};
 Poker.SkinConfiguration = {
     operatorId : 1,
-    name : "test",
+    name : "cubeia",
     preLoadImages : null
 };
