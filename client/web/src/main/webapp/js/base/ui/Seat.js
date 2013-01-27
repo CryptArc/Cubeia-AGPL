@@ -112,7 +112,8 @@ Poker.Seat = Class.extend({
        var icon = $("<div/>").addClass("player-action-icon").addClass(actionType.id+"-icon");
        if(amount>0) {
            this.actionAmount.removeClass("placed");
-           this.actionAmount.empty().append("&euro;"+amount).append(icon).show();
+           this.actionAmount.empty().append($("<span/>").append("&euro;"+amount));
+           this.actionAmount.append(icon).show();
            this.animateActionAmount();
        }
    },
@@ -122,7 +123,7 @@ Poker.Seat = Class.extend({
    fold : function() {
        this.seatElement.addClass("seat-folded");
        this.seatElement.removeClass("active-seat");
-       this.seatElement.find(".player-card-container img").attr("src","images/cards/gray-back.svg");
+       this.seatElement.find(".player-card-container img").attr("src",contextPath + "/skins/" + Poker.SkinConfiguration.name +"/images/cards/gray-back.svg");
    },
    dealCard : function(card) {
        this.cardsContainer.append(card.render());
