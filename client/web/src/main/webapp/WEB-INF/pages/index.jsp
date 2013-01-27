@@ -146,6 +146,7 @@
 
     <script type="text/javascript">
 
+        var contextPath = "${cp}";
 
         $(document).ready(function(){
             //to clear the stored user add #clear to the url
@@ -207,6 +208,7 @@
                 <div id="modern">Modern</div>
             </div>
         </div>
+        <div class="toolbar-background"></div>
         <div class="main-menu-container" style="">
             <ul id="mainMenuList">
 
@@ -354,7 +356,7 @@
             Small Blind
         </div>
         <div class="action-amount balance">
-
+            <span></span>
         </div>
         <div class="hand-strength">
 
