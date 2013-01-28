@@ -36,9 +36,12 @@ Poker.LobbyManager = Class.extend({
 
     },
     handleTableSnapshot : function (tableSnapshot) {
+        console.log("tableSnapshot:");
+        console.log(tableSnapshot);
         if (this.findTable(tableSnapshot.tableid) === null) {
 
             var showInLobby = Poker.ProtocolUtils.readParam("VISIBLE_IN_LOBBY",tableSnapshot.params);
+            console.log("handle table snapshot show in lobby = " + showInLobby);
             if(parseInt(showInLobby) == 0 ) {
                 return;
             }
@@ -132,7 +135,9 @@ Poker.LobbyManager = Class.extend({
         }
         var tableData = this.findTable(tableUpdate.tableid);
         if (tableData) {
+            console.log("updating table " + tableData.name);
             if (tableData.seated == tableUpdate.seated) {
+                console.log("on update, seated players the same, skipping update");
                 return;
             }
             tableData.seated = tableUpdate.seated;

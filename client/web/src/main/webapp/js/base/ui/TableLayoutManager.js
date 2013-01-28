@@ -207,7 +207,6 @@ Poker.TableLayoutManager = Class.extend({
     onStartHand : function(handId) {
         this._resetSeats();
         this._resetCommunity();
-        this.tableView.find(".pot-transfer").remove();
         this.cardElements = new Poker.Map();
         console.log("Hand " + handId + " started");
     },

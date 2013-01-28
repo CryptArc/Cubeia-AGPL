@@ -19,11 +19,11 @@ Poker.ConnectionPacketHandler = Class.extend({
             this.connectionManager.showConnectStatus("Connected (Login failed with status " + status+ ")");
         }
     },
-    handleStatus : function(status) {
+    handleStatus : function(status,operatorId) {
         //CONNECTING:1,CONNECTED:2,DISCONNECTED:3,RECONNECTING:4,RECONNECTED:5,FAIL:6,CANCELLED:7
         if (status === FIREBASE.ConnectionStatus.CONNECTED) {
             this.connectionManager.onUserConnected();
-            this.initOperatorConfig();
+            this.initOperatorConfig(operatorId);
         } else if (status === FIREBASE.ConnectionStatus.DISCONNECTED) {
             this.connectionManager.onUserDisconnected();
         } else if(status === FIREBASE.ConnectionStatus.CONNECTING){
@@ -40,11 +40,11 @@ Poker.ConnectionPacketHandler = Class.extend({
         console.log(message);
         this.connectionManager.onForcedLogout();
     },
-    initOperatorConfig : function() {
+    initOperatorConfig : function(operatorId) {
         if(!Poker.OperatorConfig.isPopulated()) {
             var packet = new FB_PROTOCOL.LocalServiceTransportPacket();
             packet.seq = 0;
-            packet.servicedata = utf8.toByteArray("" + Poker.SkinConfiguration.operatorId);
+            packet.servicedata = utf8.toByteArray(""+operatorId);
             Poker.AppCtx.getConnector().sendProtocolObject(packet);
         }
     }

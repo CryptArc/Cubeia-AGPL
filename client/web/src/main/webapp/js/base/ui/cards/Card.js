@@ -39,7 +39,7 @@ Poker.Card = Class.extend({
      */
     exposeCard : function(cardString) {
         this.cardString = cardString;
-        this.cardImage.attr("src",contextPath + "/skins/" + Poker.SkinConfiguration.name +"/images/cards/"+this.cardString+".svg");
+        this.cardImage.attr("src","images/cards/"+this.cardString+".svg");
     },
     /**
      * Returns the JQuery card element
