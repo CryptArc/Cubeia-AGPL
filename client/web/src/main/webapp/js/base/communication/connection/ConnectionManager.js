@@ -124,7 +124,6 @@ Poker.ConnectionManager = Class.extend({
         this.scheduleDisconnectCheck();
     },
     scheduleDisconnectCheck : function() {
-        console.log("KEEP ALIVE!");
         this.clearTimeouts();
         var self = this;
         this.disconnectCheckTimeout = setTimeout(function(){

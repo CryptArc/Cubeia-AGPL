@@ -45,8 +45,6 @@ Poker.CommunicationManager = Class.extend({
      * @param protocolObject
      */
     lobbyCallback : function(protocolObject) {
-        console.log("Lobby protocol obj");
-        console.log(protocolObject);
         var lobbyPacketHandler = new Poker.LobbyPacketHandler();
         switch (protocolObject.classId) {
             case FB_PROTOCOL.TableSnapshotListPacket.CLASSID :

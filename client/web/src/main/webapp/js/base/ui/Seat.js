@@ -106,8 +106,6 @@ Poker.Seat = Class.extend({
        }
    },
    showActionData : function(actionType,amount) {
-       console.log("ON ACTION");
-       console.log(actionType);
        this.actionText.html(actionType.text).show();
        var icon = $("<div/>").addClass("player-action-icon").addClass(actionType.id+"-icon");
        if(amount>0) {
