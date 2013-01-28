@@ -103,7 +103,7 @@ public class NoLimitBetStrategyTest extends TestCase {
     }
 
     /**
-     * Big blind is $10. Player A bets $10, Player B goes all-in to $12. Min raise-to for player c should be $22.
+     * Big blind is $10. Player A bets $10, Player B goes all-in to $12. Min raise-to for player C should be $22.
      */
     public void testMinRaiseToAmountWhenThereIsAnIncompleteRaise() {
         strategy = new NoLimitBetStrategy(10);

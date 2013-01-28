@@ -29,6 +29,9 @@ CircularProgressBar.prototype = {
         this.running=false;
 		$(this.containerId).hide();
         $(this.containerId).empty();
+        if(this.pieElement!=null) {
+            new Poker.CSSUtils().removeTransitionCallback(this.pieElement);
+        }
         this._addContent();
 	},
 	_addContent : function() {
@@ -60,6 +63,7 @@ CircularProgressBar.prototype = {
 
         this.animation = new Poker.TransformAnimation(this.pieElement);
         this.animation.addTransition("transform",(time/2000),"linear")
+            .addStartRotate(0)
             .addRotate(180).addCallback(function(){
                 self.slice.addClass("cpb-gt50");
                 self.fill.show();

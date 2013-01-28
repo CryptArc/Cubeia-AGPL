@@ -17,10 +17,19 @@
 
 package com.cubeia.games.poker.activator;
 
-import static com.cubeia.firebase.api.game.lobby.DefaultTableAttributes._LAST_MODIFIED;
-import static com.cubeia.firebase.api.game.lobby.DefaultTableAttributes._MTT_ID;
-import static com.cubeia.firebase.api.game.lobby.DefaultTableAttributes._SEATED;
-import static com.cubeia.games.poker.common.lobby.PokerLobbyAttributes.TABLE_TEMPLATE;
+import com.cubeia.firebase.api.common.AttributeValue;
+import com.cubeia.firebase.api.game.activator.TableFactory;
+import com.cubeia.firebase.api.game.lobby.LobbyTable;
+import com.cubeia.firebase.guice.inject.Log4j;
+import com.cubeia.firebase.guice.inject.Service;
+import com.cubeia.game.poker.config.api.PokerConfigurationService;
+import com.cubeia.games.poker.common.lobby.PokerLobbyAttributes;
+import com.cubeia.games.poker.common.time.SystemTime;
+import com.cubeia.games.poker.entity.TableConfigTemplate;
+import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,22 +41,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.cubeia.firebase.api.service.sysstate.PublicSystemStateService;
-import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
-import com.cubeia.poker.shutdown.impl.ShutdownService;
-import org.apache.log4j.Logger;
-
-import com.cubeia.firebase.api.common.AttributeValue;
-import com.cubeia.firebase.api.game.activator.TableFactory;
-import com.cubeia.firebase.api.game.lobby.LobbyTable;
-import com.cubeia.firebase.guice.inject.Log4j;
-import com.cubeia.firebase.guice.inject.Service;
-import com.cubeia.game.poker.config.api.PokerConfigurationService;
-import com.cubeia.games.poker.common.time.SystemTime;
-import com.cubeia.games.poker.entity.TableConfigTemplate;
-import com.cubeia.games.poker.common.lobby.PokerLobbyAttributes;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+import static com.cubeia.firebase.api.game.lobby.DefaultTableAttributes._LAST_MODIFIED;
+import static com.cubeia.firebase.api.game.lobby.DefaultTableAttributes._MTT_ID;
+import static com.cubeia.firebase.api.game.lobby.DefaultTableAttributes._SEATED;
+import static com.cubeia.games.poker.common.lobby.PokerLobbyAttributes.TABLE_TEMPLATE;
+import static java.util.Collections.addAll;
 
 @Singleton
 public class LobbyTableInspectorImpl implements LobbyTableInspector {
@@ -84,8 +82,8 @@ public class LobbyTableInspectorImpl implements LobbyTableInspector {
     }
 
     private boolean shuttingDown() {
-        log.debug("Shutting down? " + shutdownService.isShuttingDown());
-        return shutdownService.isShuttingDown();
+        log.debug("Shutting down? " + shutdownService.isSystemShuttingDown());
+        return shutdownService.isSystemShuttingDown();
     }
 
     // --- PRIVATE METHODS --- //
@@ -93,9 +91,7 @@ public class LobbyTableInspectorImpl implements LobbyTableInspector {
     private List<LobbyTable> getAllTables() {
         LobbyTable[] arr = factory.listTables();
         List<LobbyTable> list = new LinkedList<LobbyTable>();
-        for (LobbyTable t : arr) {
-            list.add(t);
-        }
+        addAll(list, arr);
         return list;
     }
 

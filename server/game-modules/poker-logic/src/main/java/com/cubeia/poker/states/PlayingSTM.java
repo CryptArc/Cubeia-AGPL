@@ -73,18 +73,18 @@ public class PlayingSTM extends AbstractPokerGameSTM implements HandFinishedList
         log.debug("Hand finished.");
         context.setHandFinished(true);
         awardWinners(result.getResults());
-        getServerAdapterHolder().notifyHandEnd(result, status, context.isTournamentTable());
+        getServerAdapter().notifyHandEnd(result, status, context.isTournamentTable());
         for (PokerPlayer player : context.getPlayerMap().values()) {
-            getServerAdapterHolder().notifyPlayerBalance(player);
+            getServerAdapter().notifyPlayerBalance(player);
         }
         if (context.isTournamentTable()) {
             // Report round to tournament coordinator and wait for notification
             sendTournamentRoundReport();
         } else {
-            getServerAdapterHolder().performPendingBuyIns(context.getPlayerMap().values());
+            getServerAdapter().performPendingBuyIns(context.getPlayerMap().values());
 
             // clean up players here and make leaving players leave and so on also update the lobby
-            getServerAdapterHolder().cleanupPlayers(new SitoutCalculator());
+            getServerAdapter().cleanupPlayers(new SitoutCalculator());
             sendBuyinInfoToPlayersWithoutMoney();
         }
 
@@ -119,7 +119,7 @@ public class PlayingSTM extends AbstractPokerGameSTM implements HandFinishedList
             boolean canPlayerAffordEntryBet = gameType.canPlayerAffordEntryBet(player, context.getSettings(), true);
             if (!canPlayerAffordEntryBet) {
                 if (!player.isBuyInRequestActive()) {
-                    getServerAdapterHolder().notifyBuyInInfo(player.getId(), true);
+                    getServerAdapter().notifyBuyInInfo(player.getId(), true);
                 }
             }
         }
@@ -131,7 +131,7 @@ public class PlayingSTM extends AbstractPokerGameSTM implements HandFinishedList
             report.setSetBalance(player.getId(), player.getBalance());
         }
         log.debug("Sending tournament round report: " + report);
-        getServerAdapterHolder().reportTournamentRound(report);
+        getServerAdapter().reportTournamentRound(report);
     }
 
     private void awardWinners(Map<PokerPlayer, Result> results) {

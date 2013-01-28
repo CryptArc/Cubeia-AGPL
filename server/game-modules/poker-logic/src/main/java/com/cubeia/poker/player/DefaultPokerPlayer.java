@@ -96,6 +96,12 @@ public class DefaultPokerPlayer implements PokerPlayer {
      */
     private MissedBlindsStatus missedBlindsStatus = MissedBlindsStatus.NOT_ENTERED_YET;
 
+    /**
+     * This flag keeps track of whether this player is allowed to raise or not. It's used to cover the
+     * special case where a player who has acted is not allowed to raise when there's an incomplete bet.
+     */
+    private boolean canRaise = false;
+
     public DefaultPokerPlayer(int id) {
         playerId = id;
     }
@@ -366,6 +372,16 @@ public class DefaultPokerPlayer implements PokerPlayer {
     @Override
     public boolean getSitOutNextRound() {
         return isSitOutNextRound;
+    }
+
+    @Override
+    public void setCanRaise(boolean canRaise) {
+        this.canRaise = canRaise;
+    }
+
+    @Override
+    public boolean canRaise() {
+        return canRaise;
     }
 
     @Override

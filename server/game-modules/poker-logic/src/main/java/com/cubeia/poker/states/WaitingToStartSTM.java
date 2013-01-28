@@ -48,30 +48,52 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
     @Override
     public void enterState() {
         log.info("Entered waiting to start state.");
-        if (!context.isTournamentTable()) {
+        if (!context.isTournamentTable() && !getServerAdapter().isSystemShutDown()) {
             long timeout = context.getSettings().getTiming().getTime(Periods.START_NEW_HAND);
             log.info("Scheduling timeout in " + timeout + " millis.");
-            getServerAdapterHolder().scheduleTimeout(timeout);
+            getServerAdapter().scheduleTimeout(timeout);
         }
     }
 
     @Override
     public void timeout() {
         if (!context.isTournamentTable()) {
-            getServerAdapterHolder().performPendingBuyIns(context.getSeatedPlayers());
+            getServerAdapter().performPendingBuyIns(context.getSeatedPlayers());
             context.commitPendingBalances();
             setPlayersWithoutMoneyAsSittingOut();
             context.sitOutPlayersMarkedForSitOutNextRound();
-            getServerAdapterHolder().cleanupPlayers(new SitoutCalculator());
+            getServerAdapter().cleanupPlayers(new SitoutCalculator());
         }
 
-        if (getPlayersReadyToStartHand().size() > 1) {
-            startHand();
-        } else {
+        if (getPlayersReadyToStartHand().size() < 2) {
             context.setHandFinished(true);
             log.info("WILL NOT START NEW HAND, TOO FEW PLAYERS SEATED: " + getPlayersReadyToStartHand().size() + " sitting in of " + context.getSeatedPlayers().size());
             changeState(new NotStartedSTM());
+        } else if (systemIsShutDown()) {
+            log.info("Won't start new hand since system is down.");
+            unseatPlayersAndShutDownTable();
+        } else {
+            startHand();
         }
+    }
+
+    private void unseatPlayersAndShutDownTable() {
+        unseatPlayers();
+        shutDownTable();
+    }
+
+    private void shutDownTable() {
+
+
+    }
+
+    private void unseatPlayers() {
+
+
+    }
+
+    private boolean systemIsShutDown() {
+        return getServerAdapter().isSystemShutDown();
     }
 
     @Override
@@ -98,10 +120,6 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
                 playerSitsOut(player.getId(), SitOutStatus.SITTING_OUT);
             }
         }
-    }
-
-    public void startHand() {
-        doStartHand();
     }
 
     public String toString() {
