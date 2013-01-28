@@ -20,6 +20,9 @@ Poker.AppCtx = Class.extend({
      */
     wire : function(settings) {
 
+
+
+
         //this
         var templateManager = new Poker.TemplateManager();
 
@@ -107,7 +110,7 @@ Poker.AppCtx = Class.extend({
 
 
 
-        var connectionManager = new Poker.ConnectionManager(settings.operatorId, settings.authCookie);
+        var connectionManager = new Poker.ConnectionManager();
         /**
          * @return {Poker.ConnectionManager}
          */
@@ -116,7 +119,7 @@ Poker.AppCtx = Class.extend({
         };
 
 
-        var comHandler = new Poker.CommunicationManager(settings.webSocketUrl, settings.webSocketPort, settings.operatorId);
+        var comHandler = new Poker.CommunicationManager(settings.webSocketUrl, settings.webSocketPort);
         /**
          *
          * @return {Poker.CommunicationManager}

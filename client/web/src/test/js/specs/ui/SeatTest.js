@@ -1,4 +1,11 @@
+var contextPath = "";
+var Poker = Poker || {};
+Poker.SkinConfiguration = {
+    name : "test"
+};
+
 describe("Poker.Seat Test", function(){
+
     var seat = null;
     var mockAnimationManager;
 

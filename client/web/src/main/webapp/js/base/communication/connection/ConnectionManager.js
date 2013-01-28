@@ -24,17 +24,12 @@ Poker.ConnectionManager = Class.extend({
 
     connected : false,
 
-    operatorId : 0,
-    authCookie : null,
-    
     /**
      * @type {Poker.DisconnectDialog}
      */
     disconnectDialog : null,
-    init : function(operatorId, authCookie) {
+    init : function() {
         this.disconnectDialog = new Poker.DisconnectDialog();
-        this.operatorId = operatorId;
-        this.authCookie = authCookie;
     },
     onUserLoggedIn : function(playerId, name) {
         Poker.MyPlayer.onLogin(playerId,name);
@@ -48,10 +43,9 @@ Poker.ConnectionManager = Class.extend({
         new Poker.LobbyRequestHandler().subscribeToCashGames();
         Poker.AppCtx.getTableManager().onPlayerLoggedIn();
         Poker.AppCtx.getTournamentManager().onPlayerLoggedIn();
-        if(!this.authCookie) {
-        	// Only store use if this is a username/password login
-        	Poker.Utils.storeUser(name,Poker.MyPlayer.password);
-        }
+
+        Poker.Utils.storeUser(name,Poker.MyPlayer.password);
+
     },
     onUserConnected : function() {
         this.connected = true;
@@ -59,17 +53,22 @@ Poker.ConnectionManager = Class.extend({
         this.retryCount = 0;
         this.disconnectDialog.close();
         this.showConnectStatus("Connected");
-        if(this.authCookie) {
-	        // We have an auth cookie, so this is an 
-        	// operator user login, we should bypass the login box
-        	Poker.AppCtx.getCommunicationManager().doLogin(this.authCookie, this.authCookie);
+
+        if(Poker.MyPlayer.loginToken!=null) {
+            this.handleTokenLogin();
         } else {
-        	// Ordinary username / pass login
-        	var loggedIn = this.handleLoginOnReconnect();
-	        if(!loggedIn) {
-	            this.handlePersistedLogin();
-	        }
+            var loggedIn = this.handleLoginOnReconnect();
+            if(!loggedIn) {
+                this.handlePersistedLogin();
+            }
         }
+
+
+
+    },
+    handleTokenLogin : function() {
+        var token = Poker.MyPlayer.loginToken;
+        Poker.AppCtx.getCommunicationManager().doLogin(token, token);
     },
     /**
      * Tries to login with credentials stored in local storage
@@ -125,7 +124,6 @@ Poker.ConnectionManager = Class.extend({
         this.scheduleDisconnectCheck();
     },
     scheduleDisconnectCheck : function() {
-        console.log("KEEP ALIVE!");
         this.clearTimeouts();
         var self = this;
         this.disconnectCheckTimeout = setTimeout(function(){
@@ -173,7 +171,7 @@ Poker.ConnectionManager = Class.extend({
         console.log("Sending version packet");
         var versionPacket = new FB_PROTOCOL.VersionPacket();
         versionPacket.game = 1;
-        versionPacket.operatorid = this.operatorId;
+        versionPacket.operatorid = 0;
         versionPacket.protocol = 8559;
         Poker.AppCtx.getCommunicationManager().getConnector().sendProtocolObject(versionPacket);
     }

@@ -26,6 +26,9 @@ Poker.MyPlayer = {
      * type Number
      */
     betAmount : 0,
+
+    loginToken : null,
+
     onLogin : function(playerId, name) {
         Poker.MyPlayer.id = playerId;
         Poker.MyPlayer.name = name;
