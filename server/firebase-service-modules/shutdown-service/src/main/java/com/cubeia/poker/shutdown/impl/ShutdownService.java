@@ -83,9 +83,14 @@ public class ShutdownService implements ShutdownServiceContract, com.cubeia.fire
     }
 
     @Override
-    public boolean isShuttingDown() {
+    public boolean isSystemShuttingDown() {
         String status = getPokerSystemStatus();
         return SHUTTING_DOWN.equals(status) || DOWN.equals(status);
+    }
+
+    @Override
+    public boolean isSystemShutDown() {
+        return DOWN.equals(getPokerSystemStatus());
     }
 
     @Override
@@ -108,7 +113,7 @@ public class ShutdownService implements ShutdownServiceContract, com.cubeia.fire
     @Override
     public boolean finishShutdown() {
         log.info("Finishing system shutdown");
-        if (isShuttingDown()) {
+        if (isSystemShuttingDown()) {
             setPokerSystemStatus(DOWN);
             broadcastService.broadcastMessage("The system is now down.");
             return true;

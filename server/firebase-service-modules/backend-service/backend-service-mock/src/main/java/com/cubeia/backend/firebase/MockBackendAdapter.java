@@ -40,9 +40,9 @@ import com.cubeia.backend.cashgame.exceptions.BatchHandFailedException;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
 import com.cubeia.backend.cashgame.exceptions.ReserveFailedException;
 import com.cubeia.games.poker.common.money.Money;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,14 +52,15 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.google.common.collect.Multimaps.synchronizedListMultimap;
+
 public class MockBackendAdapter implements CashGamesBackend {
 
     private Logger log = LoggerFactory.getLogger(CashGamesBackendMock.class);
 
     private final AtomicInteger idSequence = new AtomicInteger(0);
 
-    private final Multimap<PlayerSessionId, Money> sessionTransactions =
-            Multimaps.<PlayerSessionId, Money>synchronizedListMultimap(LinkedListMultimap.<PlayerSessionId, Money>create());
+    private final Multimap<PlayerSessionId, Money> sessionTransactions = synchronizedListMultimap(LinkedListMultimap.<PlayerSessionId, Money>create());
 
     @Override
     public String generateHandId() {
@@ -117,6 +118,7 @@ public class MockBackendAdapter implements CashGamesBackend {
             sessionTransactions.removeAll(sid);
             log.debug("closed session {} with balance: {}", sid, closingBalance);
         }
+        log.debug("currently open sessions (after closing): {}", sessionTransactions.size());
 
         printDiagnostics();
     }
@@ -228,10 +230,15 @@ public class MockBackendAdapter implements CashGamesBackend {
         }
     }
 
+    @VisibleForTesting
+    int getSessionCount() {
+        return sessionTransactions.size();
+    }
+
     private void printDiagnostics() {
 //      log.debug("wallet session transactions: ");
 //      for (PlayerSessionId session : sessionTransactions.keys()) {
-//          log.debug("{} (balance: {}) -> {}", 
+//          log.debug("{} (balance: {}) -> {}",
 //              new Object[] {session, getBalance(session), sessionTransactions.get(session)});
 //      }
 //      log.debug("---");

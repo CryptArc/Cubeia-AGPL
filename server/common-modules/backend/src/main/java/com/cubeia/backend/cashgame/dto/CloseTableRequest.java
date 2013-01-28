@@ -23,4 +23,13 @@ public class CloseTableRequest implements Serializable {
 
     private static final long serialVersionUID = 4343845180631285556L;
 
+    private boolean forced;
+
+    public CloseTableRequest(boolean forced) {
+        this.forced = forced;
+    }
+
+    public boolean isForced() {
+        return forced;
+    }
 }

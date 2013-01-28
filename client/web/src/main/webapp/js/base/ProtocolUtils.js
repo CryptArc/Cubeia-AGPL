@@ -26,7 +26,6 @@ Poker.ProtocolUtils = Class.extend({
         return null;
     },
     extractTournamentData : function(snapshot) {
-        console.log(snapshot);
         var params = snapshot.params;
         var self = this;
         var param = function(name) {
@@ -58,7 +57,6 @@ Poker.ProtocolUtils = Class.extend({
         return data;
     },
     extractTableData : function(snapshot) {
-        console.log(snapshot);
         var params = snapshot.params;
         var self = this;
         var param = function(name) {

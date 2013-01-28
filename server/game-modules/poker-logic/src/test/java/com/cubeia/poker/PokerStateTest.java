@@ -230,7 +230,7 @@ public class PokerStateTest {
         assertThat(state.pokerContext.getPotHolder(), nullValue());
         state.addPlayer(player1);
         state.addPlayer(player2);
-        state.startHand();
+        state.timeout();
         assertThat(state.pokerContext.getPotHolder(), notNullValue());
     }
 
@@ -244,13 +244,11 @@ public class PokerStateTest {
 
     @Test
     public void testNotifyStatusesAtStartOfHand() {
-        PotHolder oldPotHolder = new PotHolder(null);
-        state.pokerContext.potHolder = oldPotHolder;
+        state.pokerContext.potHolder = new PotHolder(null);
         RakeSettings rakeSettings = TestUtils.createOnePercentRakeSettings();
         BlindsLevel level = new BlindsLevel(0, 0, 0);
         BetStrategyType betStrategy = BetStrategyType.NO_LIMIT;
-        PokerSettings settings = new PokerSettings(level, betStrategy, 0, 0, null, 4, rakeSettings, null);
-        state.pokerContext.settings = settings;
+        state.pokerContext.settings = new PokerSettings(level, betStrategy, 0, 0, null, 4, rakeSettings, null);
 
         state.pokerContext.playerMap = new HashMap<Integer, PokerPlayer>();
         PokerPlayer player1 = mock(PokerPlayer.class);
@@ -277,7 +275,7 @@ public class PokerStateTest {
         state.pokerContext.seatingMap.put(0, player1);
         state.pokerContext.seatingMap.put(1, player2);
 
-        state.startHand();
+        state.timeout();
     }
 
     @SuppressWarnings("unchecked")

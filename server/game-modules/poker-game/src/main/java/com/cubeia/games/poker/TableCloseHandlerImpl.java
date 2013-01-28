@@ -137,7 +137,7 @@ public class TableCloseHandlerImpl implements TableCloseHandler {
         // 5. close player sessions
         closePlayerSessions(table, removedPokerPlayers);
 
-        // 5. mark table as closed and let the activator take care of destroying it
+        // 6. mark table as closed and let the activator take care of destroying it
         markTableReadyForClose(table);
     }
 
