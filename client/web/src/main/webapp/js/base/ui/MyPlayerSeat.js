@@ -27,7 +27,10 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
      */
     tableId : null,
 
+    seatBalance : null,
+
     noMoreBlindsCheckBox : null,
+
     init : function(tableId,elementId, seatId, player, myActionsManager, animationManager) {
         this._super(elementId,seatId, player,animationManager);
         this.tableId = tableId;
@@ -40,6 +43,8 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.circularProgressBar = new CircularProgressBar("#"+elementId+"Progressbar",this.animationManager);
         this.circularProgressBar.hide();
         var self = this;
+
+        this.seatBalance = this.seatElement.find(".seat-balance");
 
         this.noMoreBlindsCheckBox =  $("#noMoreBlinds-"+tableId);
         this.noMoreBlindsCheckBox.change(function(e){
@@ -125,6 +130,8 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
     updatePlayer : function(player) {
         this.player = player;
         $("#myPlayerBalance-"+this.tableId).html("&euro;"+this.player.balance);
+        this.seatBalance.html("&euro;"+this.player.balance);
+
         this.handlePlayerStatus();
     },
     handlePlayerStatus : function() {
