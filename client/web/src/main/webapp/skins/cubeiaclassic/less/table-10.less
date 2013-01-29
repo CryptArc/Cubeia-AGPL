@@ -1,35 +1,9 @@
-@seat-col-1-left:0%;
-@seat-row-1-top:3%;
-@seat-col-5-left:81%;
-@seat-row-2-top:35%;
-@seat-row-3-top:67%;
+.seat{
 
-
-// SEAT
-@base-width:19%;
-@width-factor:1.5;
-.seat {
-//border:1px solid;
-}
-.table-10 .seat-pos-9 {
-    top:70%;
-    width:19%;
-    right:15%;
-
-    .avatar-base {
-        top:auto;
-        bottom:10%;
-    }
-
+    width:28.5%;
     .avatar {
-        top:auto;
-        bottom:10%;
-        left:10%;
-    }
-
-    .cards-container{
-        top:25%;
-        left:-3%;
+        top:0;
+        left:0;
     }
 
     .player-name {
@@ -45,387 +19,218 @@
         top:10%;
         left:-28%;
         width:85%;
-        text-align: center;
+    }
+
+    .progress-bar {
+        left:auto;
+        right:-10%;
+    }
+    .avatar-base {
+        width:55%;
+        top:0;
+        left:0;
+    }
+    .cards-container {
+        width:24%;
     }
     .player-status, .action-text,  .hand-strength {
         top:74%;
         left:40%;
     }
-    .progress-bar {
-        left:auto;
-        right:-10%;
-    }
 }
-.table-10 .seat-pos-7 {
-    top:@seat-row-1-top;
-    left:@seat-col-5-left;
-}
-.table-10 .seat-pos-8 {
-
-    top:50%;
-    right:0;
-    width:@base-width*@width-factor;
-    .avatar-base {
-        width:80%/@width-factor;
-        right:10%;
-        bottom:30%;
-        top:auto;
-        left:auto;
-    }
+.cards-container-pos(@top:0,@left:0) {
     .cards-container {
-        width:24%;
-        left:18.5%;
-        top:40%;
+        top:@top;
+        left:@left;
+    }
+}
+.action-amount-pos(@top:0,@left:0,@align:center) {
+    div.action-amount {
+        top:@top;
+        left:@left;
+        text-align:@align;
+    }
+}
+
+.seat-defaults(@avatar-base-left:45%, @avatar-base-top:65%) {
+    .avatar-base {
+        left: @avatar-base-left;
+        top: @avatar-base-top;
     }
     .avatar {
-        bottom: 30%;
-        top:auto;
-        left:30%;
+        left: @avatar-base-left;
+        top: @avatar-base-top;
     }
     .player-name {
-        top:35%;
-        left:54.5%;
+        left:@avatar-base-left + 18;
+        top: @avatar-base-top + 3;
     }
     .seat-balance {
-        left:55%;
-        top:46%;
+        left:@avatar-base-left + 18;
+        top: @avatar-base-top + 14;
     }
-    .action-amount {
-        left:14%;
-        text-align: left;
-        top:19%;
+    .player-status, .action-text,  .hand-strength {
+        left:@avatar-base-left + 18;
+        top: @avatar-base-top + 22;
     }
-    .player-status, .action-text, .hand-strength {
-        left:55%;
-        top:53%;
-    }
-    .progress-bar {
-        left:auto;
-        right:-10%;
-    }
+}
+.table-10 .seat-pos-9 {
+    top:67%;
+    right:15%;
+    .seat-defaults(45%,65%);
+    .cards-container-pos(25%,40%);
+    .action-amount-pos(9%,10%,center);
+}
 
+.table-10 .seat-pos-8 {
+    top:50%;
+    right:0;
+    .seat-defaults(35%,30%);
+    .cards-container-pos(30%,15%);
+    .action-amount-pos(12%,10%,left);
 }
 
 .table-10 .seat-pos-7 {
     top:20%;
     right:0;
-    left:auto;
-    width:@base-width*@width-factor;
-    .avatar-base {
-        width:80%/@width-factor;
-        left:auto;
-        right:10%;
-        top:30%;
-    }
-    .cards-container {
-        width:24%;
-        left:18%;
-        top:40.5%;
-    }
-    .avatar {
-        top:27%;
-        left:30%;
-    }
-    .player-name {
-        top:33%;
-        left:53%;
-    }
-    .seat-balance {
-        top:44%;
-        left:53.5%;
-    }
-    .action-amount {
-        top:68.5%;
-        left:13.5%;
-        text-align: left;
-    }
-    .player-status, .action-text, .hand-strength {
-        top:50%;
-        left:55%;
-    }
-    .progress-bar {
-        left:auto;
-        right:-10%;
-    }
+    .seat-defaults(35%,30%);
+    .cards-container-pos(40%,15%);
+    .action-amount-pos(69%,10%,left);
 }
 
 .table-10 .seat-pos-6 {
-    width:19%;
-    left:auto;
     right:15%;
-    top:@seat-row-1-top;
-
-    .cards-container {
-        top:50%;
-        left:0%;
-    }
-    .seat-balance {
-        top:13%;
-        left:37%;
-    }
-    .action-amount {
-        left:-31%;
-        top:78%;
-    }
-    .player-status, .action-text,  .hand-strength{
-        top:22%;
-        left:37%;
-    }
-    .progress-bar {
-        left:auto;
-        right:-10%;
-    }
-    .player-name {
-        left:37%;
-        width: 50%;
-    }
+    top:3%;
+    .seat-defaults(45%,0%);
+    .cards-container-pos(55%,50%);
+    .action-amount-pos(83%,10%,center);
 }
 .table-10 .seat-pos-5 {
-    top:@seat-row-1-top;
-    left:40.5%;
-
-    .seat-balance {
-        top:13%;
-        left:37%;
-    }
-    .player-status, .action-text,  .hand-strength {
-        top:22%;
-        left:36%;
-    }
-    .cards-container {
-        left:36.5%;
-        top:47%;
-    }
-    .action-amount {
-        top:75%;
-        left:5.5%;
-    }
-    .player-name {
-        left:37%;
-        width: 50%;
-    }
-    .progress-bar {
-        left:auto;
-        right:-10%;
-    }
-
+    top:3%;
+    left:35.75%;
+    .seat-defaults(20%,0%);
+    .cards-container-pos(50%,40%);
+    .action-amount-pos(79%,10%,center);
 }
 .table-10 .seat-pos-4 {
-    width:19%;
     left:15%;
-    top:@seat-row-1-top;
-    .avatar-base {
-        top:auto;
-        left:0;
-    }
-    .avatar {
-        left:0%;
-    }
-    .cards-container {
-        top:51.5%;
-        left:62.5%;
-    }
-    .player-name {
-        top:2%;
-        left:27.5%;
-        width: 50%;
-    }
-    .seat-balance {
-        top:13.5%;
-        left:30%
-
-    }
-    .action-amount {
-        top:80%;
-        left:31%;
-    }
-    .player-status, .action-text,  .hand-strength{
-        top:22%;
-        left:30%;
-    }
+    top:3%;
+    .seat-defaults(0%,0%);
+    .cards-container-pos(55%,40%);
+    .action-amount-pos(83%,10%,center);
 }
 .table-10 .seat-pos-3 {
     top:20%;
-    left:@seat-col-1-left;
-    width:@base-width*@width-factor;
-    .avatar-base {
-        width:80%/@width-factor;
-        bottom:30%;
-        top:auto;
+    left:0;
+    .seat-defaults(10%,30%);
+    .cards-container-pos(30%,67%);
+    .action-amount-pos(69%,10%,right);
+    .progress-bar {
+        left:-10%;
+        right: auto;
     }
-    .avatar {
-        bottom:30%;
-        top:auto;
-        left:5%;
-    }
-    .cards-container {
-
-        width:24%;
-        right:12%;
-        left:auto;
-        top:43.5%;
-
-    }
-    .player-name {
-        top:35%;
-        left:29%;
-        width:33%;
-    }
-    .seat-balance {
-        top:46%;
-        left:30%
-
-    }
-    .action-amount{
-        top:72.5%;
-        left:65%;
-        text-align: left;
-    }
-    .player-status, .action-text,  .hand-strength {
-        left:30%;
-        top:53%;
-    }
-
 }
 
 .table-10 .seat-pos-2 {
     top:50%;
-    left:@seat-col-1-left;
-    width:@base-width*@width-factor;
-    .avatar-base {
-        width:80%/@width-factor;
-        top:30%;
-    }
-    .avatar {
-        top:25%;
-        left:5%;
-    }
-    .cards-container {
-        width:24%;
-        right:13%;
-        left:auto;
-        top:40%;
-    }
-    .player-name {
-        left:29.5%;
-        top:32%;
-        width:33%;
-    }
-    .seat-balance {
-        top:43%;
-        left:30%
-
-    }
-    .action-amount {
-        top:21.5%;
-        left:65.5%;
-        text-align: left;
-    }
-    .player-status, .action-text,  .hand-strength{
-        top:50%;
-        left:30%;
+    left:0;
+    .seat-defaults(10%,30%);
+    .cards-container-pos(30%,67%);
+    .action-amount-pos(14%,10%,right);
+    .progress-bar {
+        left:-10%;
+        right: auto;
     }
 }
 .table-10 .seat-pos-1 {
-    top:70%;
-    width:19%;
+    top:67%;
     left:15%;
-    .avatar-base {
-        top:auto;
-        bottom:10%;
-        left:0;
-    }
-    .avatar {
-        bottom:10%;
-        top:auto;
-        left:0;
-    }
-    .cards-container {
-        top:30%;
-        right:0;
-        left:auto;
-        bottom:auto;
-    }
-    .player-name {
-        left:29%;
-        top:55%;
-        width:50%;
-    }
-    .seat-balance{
-        top:66%;
-        left:29%
-
-    }
-    .action-amount{
-        top:15%;
-        left:40%;
-    }
-    .player-status, .action-text, .hand-strength {
-        top:73%;
-        left:29%;
-    }
-
-
+    .seat-defaults(0%,65%);
+    .cards-container-pos(22%,35%);
+    .action-amount-pos(7%,10%,center);
 }
 
-.table-10 .seat-pos-0, .my-player-seat {
-    top:70%;
-    width:19%;
-    left:40%;
-
-    .avatar-base {
-        top:auto;
-        bottom:0;
-    }
-    .avatar {
-        left:10%;
-        bottom:0%;
-        top:auto;
-    }
-    .cards-container {
-        top:30%;
-        left:35%;
-    }
-    .player-name {
-        top:65%;
-        left:37%
-    }
-    .seat-balance {
-        left:37%;
-        top:75%;
-    }
-    .action-amount {
-        top:15%;
-        left:4%;
-    }
-    .player-status, .action-text, .hand-strength {
-        top:84%;
-        left:40%;
-        background: none;
-    }
-
-
+.table-10 .seat-pos-0 {
+    top:67%;
+    left:35.75%;
+    .seat-defaults(20%,65%);
+    .cards-container-pos(28%,40%);
+    .action-amount-pos(10%,10%,center);
 }
 
 .my-player-seat {
-    .cards-container {
-        left:32.5%;
-    }
+
+
+    padding-bottom: 17%;
+    width:28.5%;
+    position: absolute;
+    top:67%;
+    left:35.75%;
+
+    .seat-defaults(20%,65%);
+    .cards-container-pos(28%,40%);
+    .action-amount-pos(10%,10%,center);
+
+
     .avatar-base {
-        top:65%;
+        width: 55%;
     }
 
-    .action-amount {
-        top:0%;
-        left:4%;
+
+
+    .progress-bar {
+        left:auto;
+        right:-10%;
     }
-    .hand-strength {
-        top: 110%;
-        left: 8%;
+
+    .cards-container {
+
+    }
+    .player-status, .action-text{
+        top:74%;
+        left:40%;
     }
     .action-text {
         top:90%;
     }
+    .hand-strength {
+        top: 115100%;
+        left: 8%;
+    }
+    .avatar, .player-status, .action-text {
+        z-index: 10;
+    }
 
+    .cards-container {
+        width: 55%;
+        left: 35%;
+        top:40%;
+        z-index: 1;
+    }
+
+    .hand-strength {
+        left:0%;
+        top:96%;
+        font-size:100%;
+        width:95%;
+        text-align: right;
+        color: #fff;
+        font-weight: normal;
+        background-color: transparent;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .player-card-container {
+        width: 45%;
+        height: 100%;
+        left: 3%;
+        top:-10%;
+        margin-left:15%;
+
+
+        &:first-child {
+            margin-left: -15%;
+        }
+    }
 }
-
