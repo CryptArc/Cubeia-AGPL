@@ -377,6 +377,12 @@
     <span>Pot:</span> <div class="balance">&euro;{{amount}}</div>
 </div>
 <div id="myPlayerSeatTemplate" style="display:none;">
+        <div class="player-name">
+            {{name}}
+        </div>
+        <div class="seat-balance balance">
+
+        </div>
     <div class="avatar-base">
 
     </div>
