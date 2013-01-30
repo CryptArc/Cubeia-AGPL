@@ -100,8 +100,12 @@ public class EmbeddedMongoHandHistoryProviderServiceTest {
     @Test
     public void testFindHandHistory() throws Exception {
         createHandHistory(1, 1);
-        String handHistory = service.getHandHistory(1, 1, 0);
-        log.debug("Hand history: " + handHistory);
+        String handHistory = service.getHands(1, 1, 0, 0L);
+        log.debug("Hand history (full): " + handHistory);
+        handHistory = service.getHand("1", 1);
+        log.debug("Hand history (hand by id): " + handHistory);
+        handHistory = service.getHandIds(1, 1, 0, 0L);
+        log.debug("Hand history (hand ids): " + handHistory);
         assertThat(handHistory.length(), greaterThan(3));
     }
 

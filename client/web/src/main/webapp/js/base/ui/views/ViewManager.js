@@ -37,6 +37,28 @@ Poker.ViewManager = Class.extend({
            self.setViewDimensions();
         });
 
+        this.checkMobileDevice();
+
+        var self = this;
+        $(".lobby-link").click(function(){
+            if(self.mobileDevice===true) {
+                $(".view-port").scrollTop($("#tableListAnchor").offset().top + 50);
+            }
+        });
+
+    },
+    checkMobileDevice : function() {
+        if(window.matchMedia) {
+            var mq1 = window.matchMedia("(max-width:700px)")
+            var mq2 = window.matchMedia("(max-height: 400px)");
+            if(mq1.matches || mq2.matches) {
+                this.mobileDevice = true;
+            } else {
+                this.mobileDevice = false;
+            }
+        } else {
+            this.mobileDevice = false;
+        }
     },
     /**
      * Gets the next view null if there are no more views
@@ -234,17 +256,8 @@ Poker.ViewManager = Class.extend({
      * and updates the body's font-size. Usually called on resize window event
      */
     setViewDimensions : function(){
-        if(window.matchMedia) {
-            var mq1 = window.matchMedia("(max-width:700px)")
-            var mq2 = window.matchMedia("(max-height: 400px)");
-            if(mq1.matches || mq2.matches) {
-                this.mobileDevice = true;
-            } else {
-                this.mobileDevice = false;
-            }
-        } else {
-            this.mobileDevice = false;
-        }
+
+        this.checkMobileDevice();
 
         var w = $(window);
 
