@@ -17,24 +17,20 @@
 
 package com.cubeia.poker.handhistory.api;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ShowDownSummary extends HandHistoryEvent {
 
-    private static final long serialVersionUID = 7375924628901677829L;
+    private static final long serialVersionUID = 7280436558262252904L;
 
-    private List<PlayerBestHand> playerBestHand;
+    private List<PlayerBestHand> playerBestHand = new ArrayList<PlayerBestHand>();
 
-    public ShowDownSummary(List<PlayerBestHand> playerBestHand) {
-        this.playerBestHand = playerBestHand;
+    public ShowDownSummary() {
     }
 
     public List<PlayerBestHand> getPlayerBestHand() {
         return playerBestHand;
-    }
-
-    public void setPlayerBestHand(List<PlayerBestHand> playerBestHand) {
-        this.playerBestHand = playerBestHand;
     }
 
     @Override
@@ -56,5 +52,12 @@ public class ShowDownSummary extends HandHistoryEvent {
         int result = super.hashCode();
         result = 31 * result + (playerBestHand != null ? playerBestHand.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "ShowDownSummary{" +
+                "playerBestHand=" + playerBestHand +
+                '}';
     }
 }

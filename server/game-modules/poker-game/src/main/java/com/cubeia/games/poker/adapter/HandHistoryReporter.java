@@ -125,7 +125,9 @@ public class HandHistoryReporter {
             }
             res.setTotalRake(handResult.getTotalRake());
 
-            post(new ShowDownSummary(translateBestHands(handResult.getPlayerHands())));
+            ShowDownSummary summary = new ShowDownSummary();
+            summary.getPlayerBestHand().addAll(translateBestHands(handResult.getPlayerHands()));
+            post(summary);
 
             service.reportResults(table.getId(), res);
             service.stopHand(table.getId());
