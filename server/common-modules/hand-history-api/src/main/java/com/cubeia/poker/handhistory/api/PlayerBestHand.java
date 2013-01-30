@@ -28,6 +28,9 @@ public class PlayerBestHand implements Serializable {
     private BestHandType bestHandType;
     private List<GameCard> bestHandCards;
 
+    public PlayerBestHand() {
+    }
+
     public PlayerBestHand(FullHand fullHand, BestHandType bestHandType, List<GameCard> bestHandCards) {
         this.playerHand = fullHand;
         this.bestHandType = bestHandType;
