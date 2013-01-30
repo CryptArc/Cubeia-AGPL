@@ -27,7 +27,8 @@ Poker.TablePacketHandler = Class.extend({
     },
     handleNotifyLeave:function (notifyLeavePacket) {
         if (notifyLeavePacket.pid === Poker.MyPlayer.id) {
-            console.log("I left this table, closing it.");
+            console.log("I left this table, closing it. myPlayerId =  " + Poker.MyPlayer.id);
+            console.log(notifyLeavePacket);
             this.tableManager.leaveTable(notifyLeavePacket.tableid);
         } else {
             this.tableManager.removePlayer(notifyLeavePacket.tableid,notifyLeavePacket.pid);

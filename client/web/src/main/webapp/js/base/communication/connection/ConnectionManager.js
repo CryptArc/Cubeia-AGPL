@@ -37,7 +37,6 @@ Poker.ConnectionManager = Class.extend({
         $("#userId").html(playerId);
         $('#loginView').hide();
         $("#lobbyView").show();
-        document.location.hash="#";
         var viewManager = Poker.AppCtx.getViewManager();
         viewManager.onLogin();
         new Poker.LobbyRequestHandler().subscribeToCashGames();
