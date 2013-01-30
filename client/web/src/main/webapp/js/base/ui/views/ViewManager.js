@@ -249,39 +249,32 @@ Poker.ViewManager = Class.extend({
         var w = $(window);
 
         //iphone - statusbar = 8/5
-        var maxAspectRatio = 4/3;
+        var maxAspectRatio = 4/3.2;
         if(this.mobileDevice) {
-            maxAspectRatio = 8/5;
+            maxAspectRatio = 4/3;
         }
         var views = this.getFixedSizedViews();
 
-        if(w.width()/ w.height() > maxAspectRatio) {
-            var width = w.height() * maxAspectRatio;
-            for(var i = 0; i<views.length; i++) {
-                views[i].viewElement.css({
-                    width: Math.round(width) +  "px",
-                    height : Math.round(w.height()-40)+"px",
-                    marginLeft :Math.round((w.width()-width)/2)  + "px"
-                });
-            }
-
-            var targetFontSize =  Math.round(90* width / this.baseWidth);
-            if(targetFontSize>130) {
-                targetFontSize=130;
-            }
-            $("body").css({fontSize : targetFontSize+"%"});
-        } else {
-
-            for(var i = 0; i<views.length; i++) {
-                views[i].viewElement.css({width:"100%", height: (w.height()-40)+"px", marginLeft : 0+"px"});
-            }
-
-            var targetFontSize =  Math.round(90 * w.width() / this.baseWidth);
-            if(targetFontSize>130) {
-                targetFontSize=130;
-            }
-            $("body").css({fontSize : targetFontSize+"%"});
+        var width = w.height() * maxAspectRatio;
+        var height = w.height();
+        if(width > w.width()) {
+            height = w.width()/maxAspectRatio;
+            width = w.width();
         }
+        for(var i = 0; i<views.length; i++) {
+            views[i].viewElement.css({
+                width: Math.round(width) +  "px",
+                height : Math.round(height-40)+"px",
+                marginLeft : Math.round((w.width()-width)/2)  + "px"
+            });
+        }
+
+        var targetFontSize =  Math.round(90* width / this.baseWidth);
+        if(targetFontSize>130) {
+            targetFontSize=130;
+        }
+        $("body").css({fontSize : targetFontSize+"%"});
+
     },
     /**
      * Retrieves a array of the views currently available that
