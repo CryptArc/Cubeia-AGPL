@@ -58,7 +58,7 @@ public class Hand implements Serializable {
     /**
      * Copy constructor.
      *
-     * @param pocketCards
+     * @param otherHand
      */
     public Hand(Hand otherHand) {
         this.cards = new ArrayList<Card>(otherHand.getCards());

@@ -631,7 +631,7 @@
         Unable to reconnect
     </p>
     <p class="dialog-buttons stopped-reconnecting" style="display: none;">
-        <a href="#" class="dialog-ok-button">
+            <a class="dialog-ok-button">
             Reload
         </a>
     </p>
@@ -642,7 +642,7 @@
     <h1>Header</h1>
     <p class="message">Message</p>
     <p class="dialog-buttons">
-        <a href="#" class="dialog-ok-button">
+            <a class="dialog-ok-button">
             Continue
         </a>
     </p>
@@ -660,10 +660,10 @@
         <span class="buyin-error" style="display: none;"></span>
     </div>
     <p class="dialog-buttons">
-        <a href="#" class="dialog-cancel-button">
+            <a class="dialog-cancel-button">
             Cancel
         </a>
-        <a href="#" class="dialog-ok-button">
+            <a class="dialog-ok-button">
             Buy in
         </a>
     </p>
@@ -687,10 +687,10 @@
         <span class="buyin-error" style="display: none;"></span>
     </div>
     <p class="dialog-buttons">
-        <a href="#" class="dialog-cancel-button">
+            <a class="dialog-cancel-button">
             Cancel
         </a>
-        <a href="#" class="dialog-ok-button">
+            <a  class="dialog-ok-button">
             Buy in
         </a>
     </p>

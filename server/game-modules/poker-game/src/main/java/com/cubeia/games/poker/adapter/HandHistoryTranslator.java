@@ -20,9 +20,12 @@ package com.cubeia.games.poker.adapter;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.HandType;
 import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.hand.Suit;
 import com.cubeia.poker.handhistory.api.*;
+import com.cubeia.poker.model.PlayerHand;
+import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.result.Result;
@@ -95,6 +98,35 @@ public class HandHistoryTranslator {
         return GameCard.Suit.values()[suit.ordinal()];
     }
 
+    public static BestHandType translate(HandType suit) {
+        return BestHandType.values()[suit.ordinal()];
+    }
+
+    public static FullHand translate(PlayerHand result) {
+        List<Card> cards = result.getHand().getCards();
+        List<GameCard> gameCards = new ArrayList<GameCard>(cards.size());
+        for (Card c : cards) {
+            gameCards.add(translate(c));
+        }
+        return new FullHand(result.getPlayerId(), gameCards);
+    }
+
+    public static PlayerBestHand translate(RatedPlayerHand hand) {
+        List<Card> cards = hand.getBestHandCards();
+        List<GameCard> bestHandCards = new ArrayList<GameCard>(cards.size());
+        for (Card c : cards) {
+            bestHandCards.add(translate(c));
+        }
+        return new PlayerBestHand(translate(hand.getPlayerHand()), translate(hand.getBestHandType()), bestHandCards);
+    }
+
+    public static List<PlayerBestHand> translateBestHands(Collection<RatedPlayerHand> hands) {
+        List<PlayerBestHand> list = new ArrayList<PlayerBestHand>(hands.size());
+        for (RatedPlayerHand c : hands) {
+            list.add(translate(c));
+        }
+        return list;
+    }
 
     // --- PRIVATE METHODS --- //
 

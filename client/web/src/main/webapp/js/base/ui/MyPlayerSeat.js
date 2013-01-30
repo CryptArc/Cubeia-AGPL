@@ -30,6 +30,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
     seatBalance : null,
 
     noMoreBlindsCheckBox : null,
+    avatarElement : null,
 
     init : function(tableId,elementId, seatId, player, myActionsManager, animationManager) {
         this._super(elementId,seatId, player,animationManager);
@@ -62,6 +63,8 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.actionAmount = this.seatElement.find(".action-amount");
         this.actionText = this.seatElement.find(".action-text");
         this.handStrength = this.seatElement.find(".hand-strength");
+        this.avatarElement = this.seatElement.find(".avatar");
+        this.avatarElement.addClass("avatar"+(this.player.id%9));
 
         this.reset();
         $("#myPlayerName-"+this.tableId).html(this.player.name);

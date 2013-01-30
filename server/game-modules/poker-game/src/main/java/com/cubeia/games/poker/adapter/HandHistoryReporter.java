@@ -19,6 +19,7 @@ package com.cubeia.games.poker.adapter;
 
 import static com.cubeia.games.poker.adapter.HandHistoryTranslator.translate;
 import static com.cubeia.games.poker.adapter.HandHistoryTranslator.translateCards;
+import static com.cubeia.games.poker.adapter.HandHistoryTranslator.translateBestHands;
 import static com.cubeia.games.poker.common.lobby.PokerLobbyAttributes.TABLE_EXTERNAL_ID;
 import static com.cubeia.poker.adapter.HandEndStatus.CANCELED_TOO_FEW_PLAYERS;
 
@@ -29,6 +30,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 
+import com.cubeia.poker.handhistory.api.*;
 import org.apache.log4j.Logger;
 
 import com.cubeia.firebase.api.game.table.Table;
@@ -43,17 +45,6 @@ import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.ExposeCardsHolder;
 import com.cubeia.poker.hand.ExposedCards;
 import com.cubeia.poker.hand.Rank;
-import com.cubeia.poker.handhistory.api.DeckInfo;
-import com.cubeia.poker.handhistory.api.HandHistoryCollectorService;
-import com.cubeia.poker.handhistory.api.HandHistoryEvent;
-import com.cubeia.poker.handhistory.api.Player;
-import com.cubeia.poker.handhistory.api.PlayerAction;
-import com.cubeia.poker.handhistory.api.PlayerCardsDealt;
-import com.cubeia.poker.handhistory.api.PlayerCardsExposed;
-import com.cubeia.poker.handhistory.api.PotUpdate;
-import com.cubeia.poker.handhistory.api.Results;
-import com.cubeia.poker.handhistory.api.RoundStarted;
-import com.cubeia.poker.handhistory.api.TableCardsDealt;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.Pot;
 import com.cubeia.poker.pot.PotTransition;
@@ -133,6 +124,9 @@ public class HandHistoryReporter {
                 res.getResults().get(pl.getId()).setRake(playerRake);
             }
             res.setTotalRake(handResult.getTotalRake());
+
+            post(new ShowDownSummary(translateBestHands(handResult.getPlayerHands())));
+
             service.reportResults(table.getId(), res);
             service.stopHand(table.getId());
         }
