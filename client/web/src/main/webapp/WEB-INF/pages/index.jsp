@@ -277,9 +277,9 @@
                             <img src="${cp}/skins/${skin}/images/lobby/poker-logo.png"/>
                         </div>
                         <ul class="main-menu">
-                            <li><a class="selected" id="cashGameMenu"  href="#table-list">Cash Games</a></li>
-                            <li><a id="sitAndGoMenu" href="#table-list">Sit &amp; Go's</a></li>
-                            <li><a  id="tournamentMenu" href="#table-list">Tournaments</a></li>
+                            <li><a class="selected lobby-link" id="cashGameMenu" data->Cash Games</a></li>
+                            <li><a id="sitAndGoMenu" class="lobby-link">Sit &amp; Go's</a></li>
+                            <li><a  id="tournamentMenu" class="lobby-link">Tournaments</a></li>
                         </ul>
                     </div>
                     <div class="right-column">
@@ -312,7 +312,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="lobby-tab">
+                        <div class="lobby-tab"  id="tableListAnchor">
                                 <div id="tableListContainer">
 
                                 </div>
