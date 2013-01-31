@@ -41,13 +41,12 @@ Poker.PokerRequestHandler = Class.extend({
             this.sendAction(Poker.ActionUtils.getActionEnumType(actionType), amount, 0);
         }
     },
-
     sendAction : function(actionType, betAmount, raiseAmount) {
         var action = Poker.ActionUtils.getPlayerAction(this.tableId,Poker.PokerSequence.getSequence(this.tableId),
             actionType, betAmount, raiseAmount);
         this.sendGameTransportPacket(action);
     },
-    sendGameTransportPacket :function(gamedata) {
+    sendGameTransportPacket : function(gamedata) {
         var connector = Poker.AppCtx.getConnector();
         connector.sendStyxGameData(0, this.tableId, gamedata);
         console.log("package sent to table " + this.tableId);
