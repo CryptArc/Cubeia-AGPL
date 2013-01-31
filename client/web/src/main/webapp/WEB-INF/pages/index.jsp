@@ -540,8 +540,8 @@
             </div>
         </div>
         <div class="bottom-bar">
-            <div class="action-button action-sit-out" style="display: none;">
-                <span>Sit-out</span>
+                <div class="action-button action-leave" style="display: none;">
+                    <span>Leave</span>
             </div>
             <div class="own-player" id="myPlayerSeat-{{tableId}}Info" style="display:none;">
                 <div class="name" id="myPlayerName-{{tableId}}"></div>
@@ -550,6 +550,10 @@
                     <input type="checkbox" id="noMoreBlinds-{{tableId}}"/>
                     <label for="noMoreBlinds-{{tableId}}">No more blinds</label>
                 </div>
+                    <div class="sit-out-next-hand-container">
+                        <input type="checkbox" id="sitOutNextHand-{{tableId}}"/>
+                        <label for="sitOutNextHand-{{tableId}}">Sit out next hand</label>
+                    </div>
             </div>
 
 
@@ -602,9 +606,7 @@
                 <div class="action-button action-join"style="display: none;">
                     <span>Join</span>
                 </div>
-                <div class="action-button action-leave" style="display: none;">
-                    <span>Leave</span>
-                </div>
+
                 <div class="action-button action-sit-in" style="display: none;">
                     <span>Sit-in</span>
                 </div>
@@ -647,19 +649,19 @@
         </a>
     </p>
 
-</div>
-<script type="text/mustache" id="tournamentBuyInContent">
-    <h1>Buy-in at {{name}}</h1>
-    <div class="buy-in-row">
-        <span class="desc">Your balance:</span>  <span class="balance buyin-balance">{{balance}}</span>
     </div>
-    <div class="buy-in-row">
-        <span class="desc">Buy-in</span>  <span class="balance buyin-max-amount">{{buyIn}}+{{fee}}</span>
-    </div>
-    <div class="buy-in-row">
-        <span class="buyin-error" style="display: none;"></span>
-    </div>
-    <p class="dialog-buttons">
+    <script type="text/mustache" id="tournamentBuyInContent">
+        <h1>Buy-in at {{name}}</h1>
+        <div class="buy-in-row">
+            <span class="desc">Your balance:</span>  <span class="balance buyin-balance">{{balance}}</span>
+        </div>
+        <div class="buy-in-row">
+            <span class="desc">Buy-in</span>  <span class="balance buyin-max-amount">{{buyIn}}+{{fee}}</span>
+        </div>
+        <div class="buy-in-row">
+            <span class="buyin-error" style="display: none;"></span>
+        </div>
+        <p class="dialog-buttons">
             <a class="dialog-cancel-button">
             Cancel
         </a>

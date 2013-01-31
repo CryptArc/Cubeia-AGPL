@@ -25,6 +25,7 @@ Poker.ViewSwiper = Class.extend({
         this.cssUtils = new Poker.CSSUtils();
         this.nextCallback = nextCallback;
         this.previousCallback = previousCallback;
+       /*
         swipeElement.bind("touchstart",function(e){
             if(!Poker.Settings.isEnabled(Poker.Settings.Param.SWIPE_ENABLED)){
                 return;
@@ -66,6 +67,7 @@ Poker.ViewSwiper = Class.extend({
                 }
             }
         });
+        */
 
     },
     unlock : function() {

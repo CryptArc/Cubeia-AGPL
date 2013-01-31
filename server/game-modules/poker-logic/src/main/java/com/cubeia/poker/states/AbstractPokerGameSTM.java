@@ -83,11 +83,6 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
     }
 
     @Override
-    public boolean isCurrentlyWaitingForPlayer(int playerId) {
-        return false;
-    }
-
-    @Override
     public void playerJoined(PokerPlayer player) {
     }
 
@@ -96,12 +91,32 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
         return false;
     }
 
+    /**
+     * NOTE: A player can NOT sit out during a hand, it defies the concept of sitting out.
+     * Sitting out means that you are not dealt any cards for that hand. If a player already has
+     * cards, he is in the hand and cannot suddenly sit out.
+     *
+     * @param playerId
+     *
+     */
     @Override
-    public void playerSitsOut(int playerId, SitOutStatus status) {
-        log.info("Player with id " + playerId + " sits out");
-        if (context.setSitOutStatus(playerId, status)) {
-            notifyPlayerSittingOut(playerId);
+    public void playerSitsOutNextHand(int playerId) {
+        if (context.isTournamentTable()) {
+            return;
         }
+
+        log.info("Player with id " + playerId + " wants to sit out next hand.");
+        PokerPlayer player = context.getPlayer(playerId);
+        if (player.hasFolded()) {
+            markPlayerAsSittingOut(player);
+        } else {
+            player.setSittingOutNextHand(true);
+        }
+    }
+
+    protected void markPlayerAsSittingOut(PokerPlayer player) {
+        player.setSitOutStatus(SitOutStatus.SITTING_OUT);
+        getServerAdapter().notifyPlayerStatusChanged(player.getId(), PokerPlayerStatus.SITOUT, false);
     }
 
     @Override
@@ -123,7 +138,7 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
             log.debug("Player {} can afford ante. Sit in", player);
 
             player.sitIn();
-            player.setSitOutNextRound(false);
+            player.setSittingOutNextHand(false);
             player.setSitInAfterSuccessfulBuyIn(false);
             notifyPlayerSittingIn(playerId);
 
@@ -163,15 +178,8 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
         getServerAdapter().notifyBuyInInfo(playerId, mandatoryBuyin);
     }
 
-
     protected void doPerformPendingBuyIns(Set<PokerPlayer> players) {
         getServerAdapter().performPendingBuyIns(players);
-    }
-
-    private void notifyPlayerSittingOut(int playerId) {
-        log.debug("playerSitsOut() id: " + playerId + " status:" + PokerPlayerStatus.SITOUT.name());
-        boolean isInCurrentHand = context.isPlayerInHand(playerId);
-        getServerAdapter().notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITOUT, isInCurrentHand);
     }
 
     protected void changeState(AbstractPokerGameSTM newState) {

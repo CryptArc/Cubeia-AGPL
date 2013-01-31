@@ -56,19 +56,14 @@ public interface PokerPlayer extends BlindsPlayer, Serializable {
 
     public void clearHand();
 
-    public boolean getSitOutNextRound();
+    public boolean isSittingOutNextHand();
 
     void setCanRaise(boolean canRaise);
 
     boolean canRaise();
 
-    public void setSitOutNextRound(boolean b);
+    public void setSittingOutNextHand(boolean b);
 
-    /**
-     * Gets the player's id.
-     *
-     * @return
-     */
     public int getId();
 
     public int getSeatId();

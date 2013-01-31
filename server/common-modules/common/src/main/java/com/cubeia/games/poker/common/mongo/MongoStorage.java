@@ -17,11 +17,7 @@
 
 package com.cubeia.games.poker.common.mongo;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.mongodb.Mongo;
+import com.mongodb.*;
 import org.apache.log4j.Logger;
 import org.bson.types.ObjectId;
 
@@ -48,26 +44,31 @@ public class MongoStorage {
         databaseName = configuration.getDatabaseName();
     }
 
+    public DBCollection getCollection(String collection)
+    {
+        return db().getCollection(collection);
+    }
+
     public void persist(DBObject dbObject, String collection) {
-        db().getCollection(collection).insert(dbObject);
+        getCollection(collection).insert(dbObject);
     }
 
     public void update(DBObject objectToUpdate, DBObject update, String collection) {
-        db().getCollection(collection).update(objectToUpdate, update);
+        getCollection(collection).update(objectToUpdate, update);
     }
 
     public DBObject getById(ObjectId id, String collection) {
         BasicDBObject query = new BasicDBObject();
         query.put("_id", id);
-        return db().getCollection(collection).findOne(query);
+        return getCollection(collection).findOne(query);
     }
 
     public DBCursor findByQuery(BasicDBObject query, String collection) {
-        return db().getCollection(collection).find(query);
+        return getCollection(collection).find(query);
     }
 
     public DBCursor findByQuery(BasicDBObject query, String collection, DBObject projectedFields) {
-        return db().getCollection(collection).find(query, projectedFields);
+        return getCollection(collection).find(query, projectedFields);
     }
 
     private DB db() {

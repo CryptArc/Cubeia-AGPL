@@ -38,7 +38,11 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class WaitingToStartSTMTest {
@@ -86,9 +90,7 @@ public class WaitingToStartSTMTest {
 
         verify(serverAdapter).performPendingBuyIns(players);
         verify(context).setHandFinished(false);
-//        verify(stateUnderTest).setPlayersWithoutMoneyAsSittingOut(); TODO. Test this in another way?
         verify(context).commitPendingBalances();
-        verify(context).sitOutPlayersMarkedForSitOutNextRound();
         verify(gameType).startHand();
         verify(serverAdapter).cleanupPlayers(Matchers.<SitoutCalculator>any());
     }
@@ -104,7 +106,6 @@ public class WaitingToStartSTMTest {
 
         verify(serverAdapter).performPendingBuyIns(seatedPlayers);
         verify(context).commitPendingBalances();
-        verify(context).sitOutPlayersMarkedForSitOutNextRound();
         verify(context).setHandFinished(true);
         verify(stateChanger).changeState(isA(NotStartedSTM.class));
         verify(serverAdapter).cleanupPlayers(Matchers.<SitoutCalculator>any());
@@ -138,9 +139,9 @@ public class WaitingToStartSTMTest {
 
         stateUnderTest.setPlayersWithoutMoneyAsSittingOut();
 
-        verify(context, never()).setSitOutStatus(eq(p1.getId()), Mockito.any(SitOutStatus.class));
-        verify(context).setSitOutStatus(p2.getId(), SitOutStatus.SITTING_OUT);
-        verify(context).setSitOutStatus(p3.getId(), SitOutStatus.SITTING_OUT);
+        verify(p1, never()).setSitOutStatus(Mockito.any(SitOutStatus.class));
+        verify(p2).setSitOutStatus(SitOutStatus.SITTING_OUT);
+        verify(p3).setSitOutStatus(SitOutStatus.SITTING_OUT);
     }
 
     private Map<Integer, PokerPlayer> createPlayerMap(PokerPlayer ... players) {

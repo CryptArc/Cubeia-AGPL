@@ -19,7 +19,6 @@ package com.cubeia.poker.states;
 
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.player.SitOutStatus;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -35,29 +34,21 @@ public interface PokerGameSTM extends Serializable {
     /**
      * Invoked when an action has been received.
      *
-     * @param action
+     * @param action the action performed
      */
     public void act(PokerAction action);
 
     /**
-     * TODO: TELL DON'T ASK!
-     *
-     * @param playerId
-     * @return true if we are waiting for this player to act.
-     */
-    public boolean isCurrentlyWaitingForPlayer(int playerId);
-
-    /**
      * Invoked when a new player has joined the table.
      *
-     * @param player
+     * @param player the player who joined
      */
     void playerJoined(PokerPlayer player);
 
     /**
      * Gets a description of the current state.
      *
-     * @return
+     * @return a string describing the state
      */
     public String getStateDescription();
 
@@ -74,12 +65,12 @@ public interface PokerGameSTM extends Serializable {
     /**
      * Checks if the player is currently in a hand.
      *
-     * @param playerId
+     * @param playerId the id of the player to check
      * @return
      */
     boolean isPlayerInHand(int playerId);
 
-    void playerSitsOut(int playerId, SitOutStatus status);
+    void playerSitsOutNextHand(int playerId);
 
     void playerSitsIn(int playerId);
 

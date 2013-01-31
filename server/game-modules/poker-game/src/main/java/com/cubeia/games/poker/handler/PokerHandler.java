@@ -23,7 +23,6 @@ import static com.cubeia.games.poker.common.money.MoneyParser.parse;
 
 import java.io.IOException;
 
-import com.cubeia.games.poker.common.money.Money;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +47,6 @@ import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.PokerAction;
-import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.util.ThreadLocalProfiler;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
@@ -124,7 +122,7 @@ public class PokerHandler extends DefaultPokerHandler {
     // player wants to sit out next hand
     @Override
     public void visit(PlayerSitoutRequest packet) {
-        state.playerSitsOut(playerId, SitOutStatus.SITTING_OUT);
+        state.playerSitsOutNextHand(playerId);
     }
 
     // player wants to sit in again

@@ -307,7 +307,7 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
                 log.warn("Cards in best hand is null for player " + player + " pocket cards: "
                          + player.getPocketCards().getCards() + " community: " + context.getCommunityCards());
             }
-            serverAdapterHolder.get().notifyBestHand(player.getPlayerId(), handInfo.getHandType(), handInfo.getCards(), false);
+            serverAdapterHolder.get().notifyBestHand(player.getId(), handInfo.getHandType(), handInfo.getCards(), false);
         }
     }
 
@@ -329,7 +329,7 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
         log.debug("Dealing pocket cards.");
         for (PokerPlayer p : context.getCurrentHandSeatingMap().values()) {
             /*
-             * Note, not checking if the player is sitting in, if he was sitting in at hand start (and thus ended up in the current hand seating map,
+             * Note, not checking if the player is sitting in. If he was sitting in at hand start (and thus ended up in the current hand seating map),
              * he should still be sitting in. Any player who declined the entry bet should also already have been removed from this map.
              */
             dealPocketCards(p, 2);
@@ -346,11 +346,6 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
     @Override
     public boolean canPlayerAffordEntryBet(PokerPlayer player, PokerSettings settings, boolean includePending) {
         return player.getBalance() + (includePending ? player.getPendingBalanceSum() : 0) >= settings.getBigBlindAmount();
-    }
-
-    @Override
-    public boolean isCurrentlyWaitingForPlayer(int playerId) {
-        return currentRound.isWaitingForPlayer(playerId);
     }
 
     public void setRevealOrderCalculator(RevealOrderCalculator revealOrderCalculator) {

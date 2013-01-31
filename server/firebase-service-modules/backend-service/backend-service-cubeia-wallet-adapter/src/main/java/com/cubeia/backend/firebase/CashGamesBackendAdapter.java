@@ -265,7 +265,7 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
 
         }
         txBuilder.comment("poker hand result");
-        txBuilder.attribute("pokerTableId", String.valueOf(request.getTableId().integrationId)).attribute("pokerGameId", String.valueOf(GAME_ID)).attribute(
+        txBuilder.attribute("pokerTableId", String.valueOf((request.getTableId()).integrationId)).attribute("pokerGameId", String.valueOf(GAME_ID)).attribute(
                 "pokerHandId", request.getHandId());
     }
 

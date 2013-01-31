@@ -17,12 +17,11 @@
 
 package com.cubeia.games.poker.activator;
 
-import static junit.framework.Assert.assertEquals;
-
+import com.cubeia.firebase.api.game.table.Table;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.cubeia.firebase.api.game.table.Table;
+import static junit.framework.Assert.assertEquals;
 
 public class MapTableNameManagerTest {
 

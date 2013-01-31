@@ -52,8 +52,6 @@ public interface GameType extends Serializable {
     // TODO: #AH2 move from here? Or?
     public String getStateDescription();
 
-    public void dealCommunityCards();
-
     public void sendAllNonFoldedPlayersBestHand();
 
     /**
@@ -66,8 +64,6 @@ public interface GameType extends Serializable {
      * @return true if player can buy in, false otherwise
      */
     public boolean canPlayerAffordEntryBet(PokerPlayer player, PokerSettings settings, boolean includePending);
-
-    public boolean isCurrentlyWaitingForPlayer(int playerId);
 
     public void addHandFinishedListener(HandFinishedListener handFinishedListener);
 

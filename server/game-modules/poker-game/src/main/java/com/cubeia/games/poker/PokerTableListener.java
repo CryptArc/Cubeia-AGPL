@@ -30,7 +30,6 @@ import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.blinds.MissedBlindsStatus;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.player.SitOutStatus;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import org.slf4j.Logger;
@@ -157,7 +156,7 @@ public class PokerTableListener implements TournamentTableListener {
         stateInjector.injectAdapter(table);
         if (status.equals(DISCONNECTED) || status.equals(LEAVING) || status.equals(WAITING_REJOIN)) {
             log.debug("Player status changed will be set as sit out, tid[" + table.getId() + "] pid[" + playerId + "] status[" + status + "]");
-            state.playerSitsOut(playerId, SitOutStatus.SITTING_OUT);
+            state.playerSitsOutNextHand(playerId);
         } else if (status.equals(CONNECTED)) {
             log.debug("Player status changed will be set as sit in, tid[" + table.getId() + "] pid[" + playerId + "] status[" + status + "]");
             state.playerIsSittingIn(playerId);
@@ -174,7 +173,6 @@ public class PokerTableListener implements TournamentTableListener {
     public void watcherLeft(Table table, int playerId) {
         state.removeAsWatcher(playerId);
     }
-
 
     private void sitInPlayer(Table table, GenericPlayer player) {
         sendGameStateToSittingInPlayerIfNeeded(table, player);

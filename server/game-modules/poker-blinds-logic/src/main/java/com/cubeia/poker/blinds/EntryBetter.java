@@ -46,6 +46,6 @@ public class EntryBetter implements Serializable {
 
     @Override
     public String toString() {
-        return "[playerId = " + player.getPlayerId() + ", entryBetType = " + entryBetType + "]";
+        return "[playerId = " + player.getId() + ", entryBetType = " + entryBetType + "]";
     }
 }

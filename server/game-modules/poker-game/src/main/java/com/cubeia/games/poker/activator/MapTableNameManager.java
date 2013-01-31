@@ -121,7 +121,7 @@ public class MapTableNameManager implements TableNameManager {
         InputStream in = getClass().getClassLoader().getResourceAsStream(name);
         if (in == null) {
             if (required) {
-                throw new IllegalStateException("Could not find default table file");
+                throw new IllegalStateException("Could not find default table file: " + name);
             } else {
                 return null;
             }

@@ -25,6 +25,8 @@ import com.cubeia.games.poker.common.mongo.MongoStorage;
 import com.cubeia.poker.handhistory.api.HandHistoryPersistenceService;
 import com.cubeia.poker.handhistory.api.HistoricHand;
 import com.cubeia.poker.handhistory.impl.JsonHandHistoryLogger;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 import org.apache.log4j.Logger;
@@ -76,6 +78,7 @@ public class DatabaseStorageService implements HandHistoryPersistenceService, Se
     @Override
     public void start() {
         mongoStorage.connect();
+        initHandsCollection();
     }
 
     @Override
@@ -86,5 +89,13 @@ public class DatabaseStorageService implements HandHistoryPersistenceService, Se
     @Override
     public void destroy() {
 
+    }
+
+    private void initHandsCollection()
+    {
+        DBCollection coll = mongoStorage.getCollection(HANDS_COLLECTION);
+        if(0 == coll.getCount()) {
+            coll.createIndex(new BasicDBObject("startTime", -1));
+        }
     }
 }

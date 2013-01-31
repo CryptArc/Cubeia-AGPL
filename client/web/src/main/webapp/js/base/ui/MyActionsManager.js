@@ -17,6 +17,7 @@ Poker.MyActionsManager  = Class.extend({
     slider : null,
     tableId : null,
     noMoreBlinds : false,
+    bigBlindInCents : 0,
 
     init : function(view,tableId, actionCallback) {
         var self = this;
@@ -28,7 +29,6 @@ Poker.MyActionsManager  = Class.extend({
         this._addTableButton($(".action-join",view),Poker.ActionType.JOIN,actionCallback);
         this._addTableButton($(".action-leave",view),Poker.ActionType.LEAVE,actionCallback);
         this._addTableButton($(".action-sit-in",view),Poker.ActionType.SIT_IN,actionCallback);
-        this._addTableButton($(".action-sit-out",view),Poker.ActionType.SIT_OUT,actionCallback);
 
         var cb = function(minAmount,maxAmount,mainPot){
             self.onClickBetButton(minAmount,maxAmount,mainPot);
@@ -56,11 +56,11 @@ Poker.MyActionsManager  = Class.extend({
         this.allActions.push(this.cancelBetActionButton);
 
 
-        this._addActionButton($(".action-check",view),Poker.ActionType.CHECK,actionCallback,false);
-        this._addActionButton($(".action-fold",view),Poker.ActionType.FOLD,actionCallback,false);
-        this._addActionButton($(".action-call",view),Poker.ActionType.CALL,actionCallback,true);
-        this._addActionButton($(".action-big-blind",view),Poker.ActionType.BIG_BLIND,actionCallback,true);
-        this._addActionButton($(".action-small-blind",view),Poker.ActionType.SMALL_BLIND,actionCallback,true);
+        this._addActionButton($(".action-check", view), Poker.ActionType.CHECK, actionCallback, false);
+        this._addActionButton($(".action-fold", view), Poker.ActionType.FOLD, actionCallback, false);
+        this._addActionButton($(".action-call", view), Poker.ActionType.CALL, actionCallback, true);
+        this._addActionButton($(".action-big-blind", view), Poker.ActionType.BIG_BLIND, actionCallback, true);
+        this._addActionButton($(".action-small-blind", view), Poker.ActionType.SMALL_BLIND, actionCallback, true);
 
         this.onWatchingTable();
 
@@ -90,28 +90,32 @@ Poker.MyActionsManager  = Class.extend({
         this.hideSlider();
     },
     hideSlider : function() {
-        if(this.slider) {
+        if (this.slider) {
             this.slider.remove();
         }
+    },
+    setBigBlind : function(bigBlindInCents) {
+        this.bigBlindInCents = bigBlindInCents;
     },
     showSlider : function(minAmount,maxAmount,mainPot) {
         this.slider = new Poker.BetSlider("betSlider");
         this.slider.clear();
+
         this.slider.setMinBet(minAmount);
         this.slider.setMaxBet(maxAmount);
+        this.slider.setBigBlind(this.bigBlindInCents);
 
         this.slider.addMarker("Min", minAmount);
-        console.log("showing slider mainPot = " + mainPot);
         this.slider.addMarker("All in", maxAmount);
         this.slider.addMarker("Pot",mainPot);
         this.slider.draw();
     },
-    _addActionButton : function(elId, actionType ,callback,showAmount){
+    _addActionButton : function(elId, actionType, callback, showAmount){
         var button = null;
         if(actionType.id == Poker.ActionType.BET.id || actionType.id == Poker.ActionType.RAISE.id ) {
             button = new Poker.BetSliderButton(elId,actionType,callback,showAmount);
         } else {
-            button = new Poker.ActionButton(elId,actionType,callback,showAmount);
+            button = new Poker.ActionButton(elId, actionType, callback, showAmount);
         }
         this.actionButtons[actionType.id] = button;
         this.allActions.push(button);
@@ -125,7 +129,7 @@ Poker.MyActionsManager  = Class.extend({
         this.currentActions = actions;
         this.hideAllActionButtons();
 
-        for(var a in actions){;
+        for (var a in actions){
           var act = actions[a];
           if(fixedLimit==true && act.type.id == Poker.ActionType.BET.id) {
               if(act.minAmount>0) {
@@ -153,7 +157,7 @@ Poker.MyActionsManager  = Class.extend({
     onSitIn : function() {
         this.noMoreBlinds = false;
         this.hideAllTableButtons();
-        this.display(Poker.ActionType.SIT_OUT);
+        this.display(Poker.ActionType.LEAVE);
     },
     onSitOut : function() {
         this.hideAllTableButtons();
@@ -209,8 +213,7 @@ Poker.ActionButton = Class.extend({
     minAmount : 0,
     maxAmount : 0,
     mainPot : 0,
-    init : function(el,actionType,callback,showAmount){
-        var self = this;
+    init : function(el,actionType,callback,showAmount) {
         this.el = el;
         if(!this.el) {
             console.log("Unable to find action button DOM element with id " + el);
@@ -233,7 +236,7 @@ Poker.ActionButton = Class.extend({
 
         var self = this;
         if(this.callback!=null && this.actionType!=null) {
-            this.el.click(function(e){
+            this.el.click(function(e) {
                 self.callback(self.actionType,self.minAmount);
             });
         } else if(this.callback!=null) {
