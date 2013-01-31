@@ -130,7 +130,7 @@ public class BlindsCalculator implements Serializable {
         final BlindsPlayer nextPlayer = getElementAfter(bigBlindSeatId, seatedPlayers);
         final List<BlindsPlayer> playerList = unwrapList(seatedPlayers, nextPlayer.getSeatId());
         for (BlindsPlayer player : playerList) {
-            log.debug("Checking if player " + player.getPlayerId() + " should post an entry bet.");
+            log.debug("Checking if player " + player.getId() + " should post an entry bet.");
             if (!player.hasPostedEntryBet()) {
                 // A player on the dealer button cannot post entry bet.
                 final boolean onDealer = player.getSeatId() == dealerSeatId;
@@ -144,9 +144,9 @@ public class BlindsCalculator implements Serializable {
                      * This should not happen, a player who has not missed any blinds should still
                      * be considered as having paid the entry bet.
                      */
-                    log("WARN: Player with id " + player.getPlayerId() + " has not missed any blinds, but has not posted the entry bet.");
+                    log("WARN: Player with id " + player.getId() + " has not missed any blinds, but has not posted the entry bet.");
                 } else if (!onDealer && !betweenDealerAndBig && !betweenDealerAndSmall) {
-                    log.debug("Adding entry better " + player.getPlayerId());
+                    log.debug("Adding entry better " + player.getId());
                     entryBetters.add(new EntryBetter(player, getEntryBetType(player)));
                 }
             }
@@ -280,7 +280,7 @@ public class BlindsCalculator implements Serializable {
     private void markMissedBlinds() {
         // If small blind is sitting out, mark him as having missed the small blind.
         final BlindsPlayer smallBlind = getPlayerInSeat(blindsInfo.getSmallBlindSeatId());
-        if (smallBlind != null && !smallBlind.isSittingIn() && smallBlind.getPlayerId() == lastHandsBlinds.getBigBlindPlayerId()) {
+        if (smallBlind != null && !smallBlind.isSittingIn() && smallBlind.getId() == lastHandsBlinds.getBigBlindPlayerId()) {
             blindsInfo.setSmallBlindPlayerId(-1);
             addMissedBlind(smallBlind, MissedBlindsStatus.MISSED_SMALL_BLIND);
         }
@@ -468,14 +468,14 @@ public class BlindsCalculator implements Serializable {
     }
 
     private void setSmallBlind(BlindsPlayer smallBlind) {
-        setSmallBlind(smallBlind.getSeatId(), smallBlind.getPlayerId());
+        setSmallBlind(smallBlind.getSeatId(), smallBlind.getId());
     }
 
     private void setSmallBlind(int seatId, int playerId) {
         if (getPlayerInSeat(seatId) == null) {
             log.debug("No one is sitting in the small blind seat {}. Marking it as dead.", seatId);
             blindsInfo.setSmallBlindPlayerId(-1);
-        } else if (getPlayerInSeat(seatId).getPlayerId() != playerId) {
+        } else if (getPlayerInSeat(seatId).getId() != playerId) {
             log.debug("There's a new player {} in the sb seat {}, marking sb as dead. ", playerId, seatId);
             blindsInfo.setSmallBlindPlayerId(-1);
         } else {
@@ -504,9 +504,9 @@ public class BlindsCalculator implements Serializable {
     }
 
     private void setBigBlind(BlindsPlayer bigBlind) {
-        log.debug("Big blind is on player " + bigBlind.getPlayerId() + " in seat " + bigBlind.getSeatId());
+        log.debug("Big blind is on player " + bigBlind.getId() + " in seat " + bigBlind.getSeatId());
         blindsInfo.setBigBlindSeatId(bigBlind.getSeatId());
-        blindsInfo.setBigBlindPlayerId(bigBlind.getPlayerId());
+        blindsInfo.setBigBlindPlayerId(bigBlind.getId());
     }
 
     /**
@@ -642,7 +642,7 @@ public class BlindsCalculator implements Serializable {
 
         for (BlindsPlayer player : seatedPlayers.values()) {
             if (!player.hasPostedEntryBet()) {
-                log.debug("Player " + player.getPlayerId() + " has not posted the entry bet.");
+                log.debug("Player " + player.getId() + " has not posted the entry bet.");
                 continue;
             }
             // Players between the dealer and the small blind are not eligible to play.
@@ -650,7 +650,7 @@ public class BlindsCalculator implements Serializable {
             // Nor are players between the small blind and the big blind.
             final boolean betweenDealerAndBig = isBetween(player.getSeatId(), smallBlindSeatId, bigBlindSeatId);
             // If the player who sits in the small blind seat is not actually the small blind, he's not eligible either.
-            final boolean wrongPlayerOnSmallBlind = player.getSeatId() == smallBlindSeatId && player.getPlayerId() != smallBlindPlayerId;
+            final boolean wrongPlayerOnSmallBlind = player.getSeatId() == smallBlindSeatId && player.getId() != smallBlindPlayerId;
 
             if (!betweenDealerAndBig && !betweenDealerAndSmall && !wrongPlayerOnSmallBlind) {
                 result.add(player);

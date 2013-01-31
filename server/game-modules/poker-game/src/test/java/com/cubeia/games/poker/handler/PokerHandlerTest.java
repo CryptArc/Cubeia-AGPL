@@ -56,7 +56,7 @@ import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.PokerAction;
-import com.cubeia.poker.player.SitOutStatus;
+
 import static com.cubeia.games.poker.common.money.MoneyFormatter.format;
 
 public class PokerHandlerTest {
@@ -134,7 +134,7 @@ public class PokerHandlerTest {
     public void testVisitPlayerSitoutRequest() {
         PlayerSitoutRequest sitOutRequest = new PlayerSitoutRequest();
         pokerHandler.visit(sitOutRequest);
-        verify(pokerHandler.state).playerSitsOut(playerId, SitOutStatus.SITTING_OUT);
+        verify(pokerHandler.state).playerSitsOutNextHand(playerId);
     }
 
     @Test

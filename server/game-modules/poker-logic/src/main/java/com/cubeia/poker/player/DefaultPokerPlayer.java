@@ -55,7 +55,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
 
     protected boolean hasOption;
 
-    protected boolean isSitOutNextRound = false;
+    protected boolean sittingOutNextHand = false;
 
     protected SitOutStatus sitOutStatus;
 
@@ -108,14 +108,13 @@ public class DefaultPokerPlayer implements PokerPlayer {
 
     public String toString() {
         String sitOutSince = sitOutTimestamp == null ? "" : ":" + (System.currentTimeMillis() - sitOutTimestamp + "ms");
-        String value = "pid[" + playerId + "] seat[" + seatId + "] " +
+        return "pid[" + playerId + "] seat[" + seatId + "] " +
                 "balance[" + balance + "] balanceNotInHand[" + balanceNotInHand + "] " +
                 "buyInRequestActive[" + buyInRequestActive + "] " +
                 "requestedBuyInAmount[" + requestedBuyInAmount + "] " +
-                "sitout[" + getSitOutStatus() + sitOutSince + "] sitoutstatus[" + sitOutStatus + "] " +
+                "sitout[" + getSitOutStatus() + sitOutSince + "] sitOutStatus[" + sitOutStatus + "] " +
                 "folded[" + hasFolded + "] hasActed[" + hasActed + "] allIn[" + isAllIn() + "] " +
                 "hasPostedEntryBet[" + hasPostedEntryBet + "]";
-        return value;
     }
 
     public void clearActionRequest() {
@@ -153,11 +152,6 @@ public class DefaultPokerPlayer implements PokerPlayer {
     public int getOperatorId() {
         //TODO implement
         return 0;
-    }
-
-    @Override
-    public int getPlayerId() {
-        return playerId;
     }
 
     @Override
@@ -255,6 +249,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
         this.sitOutStatus = status;
         if (status == SitOutStatus.SITTING_OUT) {
             sitOutTimestamp = System.currentTimeMillis();
+            sittingOutNextHand = false;
         }
     }
 
@@ -289,7 +284,6 @@ public class DefaultPokerPlayer implements PokerPlayer {
     /**
      * Takes chips from the given player, without adding them to his bet stack.
      *
-     * @param amount
      */
     @Override
     public void takeChips(long amount) {
@@ -343,7 +337,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
     @Override
     public void removeFromBetStack(long amount) {
         if (amount > betStack) {
-            throw new IllegalArgumentException("PokerPlayer[" + playerId + "] - " + String.format("Amount to remove from bet (%d) is bigger than betstack (%d)", amount, betStack));
+            throw new IllegalArgumentException("PokerPlayer[" + playerId + "] - " + String.format("Amount to remove from bet (%d) is bigger than bet stack (%d)", amount, betStack));
         }
         betStack -= amount;
     }
@@ -358,7 +352,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
     @Override
     public void returnBetStackAmountToBalance(long amount) {
         if (amount > betStack) {
-            throw new IllegalArgumentException("PokerPlayer[" + playerId + "] - " + String.format("Amount to return from bet (%d) is bigger than betstack (%d)", amount, betStack));
+            throw new IllegalArgumentException("PokerPlayer[" + playerId + "] - " + String.format("Amount to return from bet (%d) is bigger than bet stack (%d)", amount, betStack));
         }
         balance += amount;
         betStack -= amount;
@@ -370,8 +364,8 @@ public class DefaultPokerPlayer implements PokerPlayer {
     }
 
     @Override
-    public boolean getSitOutNextRound() {
-        return isSitOutNextRound;
+    public boolean isSittingOutNextHand() {
+        return sittingOutNextHand;
     }
 
     @Override
@@ -385,9 +379,8 @@ public class DefaultPokerPlayer implements PokerPlayer {
     }
 
     @Override
-    public void setSitOutNextRound(boolean b) {
-        isSitOutNextRound = b;
-
+    public void setSittingOutNextHand(boolean b) {
+        sittingOutNextHand = b;
     }
 
     @Override
@@ -408,10 +401,10 @@ public class DefaultPokerPlayer implements PokerPlayer {
             if (balanceNotInHand > allowedAmount) {
                 balance += allowedAmount;
                 balanceNotInHand -= allowedAmount;
-                log.debug("commiting pending balance for player: " + playerId + " committedValue: " + allowedAmount + " new balance: " + balance + " new pending balance: " + balanceNotInHand);
+                log.debug("committing pending balance for player: " + playerId + " committedValue: " + allowedAmount + " new balance: " + balance + " new pending balance: " + balanceNotInHand);
             } else {
                 balance += balanceNotInHand;
-                log.debug("commiting all pending balance for player: " + playerId + " committedValue: " + balanceNotInHand + " new balance: " + balance + " new pending balance: " + 0);
+                log.debug("committing all pending balance for player: " + playerId + " committedValue: " + balanceNotInHand + " new balance: " + balance + " new pending balance: " + 0);
                 balanceNotInHand = 0;
 
             }

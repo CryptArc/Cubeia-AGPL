@@ -17,17 +17,6 @@
 
 package com.cubeia.games.poker.activator;
 
-import static com.cubeia.poker.timing.Timings.EXPRESS;
-import static com.cubeia.poker.variant.PokerVariant.TELESINA;
-
-import com.cubeia.poker.timing.TimingFactory;
-import junit.framework.Assert;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
-
 import com.cubeia.backend.cashgame.dto.CloseTableRequest;
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.GameObjectAction;
@@ -35,8 +24,16 @@ import com.cubeia.firebase.api.game.activator.CreationParticipant;
 import com.cubeia.firebase.api.game.activator.TableFactory;
 import com.cubeia.firebase.api.routing.ActivatorRouter;
 import com.cubeia.games.poker.entity.TableConfigTemplate;
+import com.cubeia.poker.timing.TimingFactory;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
+import junit.framework.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
+
+import static com.cubeia.poker.variant.PokerVariant.TELESINA;
 
 public class TableActionHandlerImplTest {
 

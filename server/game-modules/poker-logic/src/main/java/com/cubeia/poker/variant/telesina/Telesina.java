@@ -482,10 +482,4 @@ public class Telesina extends AbstractGameType implements RoundVisitor, Dealer {
         System.out.println("Checking if player can afford entry bet. Balance = " + balance + ", ante = " + pokerSettings.getAnteAmount());
         return balance >= pokerSettings.getAnteAmount();
     }
-
-    @Override
-    public boolean isCurrentlyWaitingForPlayer(int playerId) {
-        return getCurrentRound().isWaitingForPlayer(playerId);
-    }
-
 }

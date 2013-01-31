@@ -21,7 +21,6 @@ import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.ServerAdapterHolder;
 import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.util.SitoutCalculator;
 import com.cubeia.poker.util.ThreadLocalProfiler;
@@ -61,7 +60,7 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
             getServerAdapter().performPendingBuyIns(context.getSeatedPlayers());
             context.commitPendingBalances();
             setPlayersWithoutMoneyAsSittingOut();
-            context.sitOutPlayersMarkedForSitOutNextRound();
+            sitOutPlayersMarkedForSitOutNextHand();
             getServerAdapter().cleanupPlayers(new SitoutCalculator());
         }
 
@@ -74,6 +73,17 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
             unseatPlayersAndShutDownTable();
         } else {
             startHand();
+        }
+    }
+
+    public void sitOutPlayersMarkedForSitOutNextHand() {
+        if (context.isTournamentTable()) {
+            return;
+        }
+        for (PokerPlayer player : context.getSeatedPlayers()) {
+            if (player.isSittingOutNextHand()) {
+                markPlayerAsSittingOut(player);
+            }
         }
     }
 
@@ -108,7 +118,7 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
 
     /**
      * If a player has no money left he should be set as sitting out to
-     * prevent him to be included in new games.
+     * prevent him from being included in new hands.
      */
     public void setPlayersWithoutMoneyAsSittingOut() {
         ThreadLocalProfiler.add("setPlayersWithoutMoneyAsSittingOut");
@@ -117,7 +127,7 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
             boolean canPlayerAffordEntryBet = gameType.canPlayerAffordEntryBet(player, context.getSettings(), true);
             if (!canPlayerAffordEntryBet) {
                 log.info("Player with id " + player.getId() + " can not post entry bet.");
-                playerSitsOut(player.getId(), SitOutStatus.SITTING_OUT);
+                markPlayerAsSittingOut(player);
             }
         }
     }

@@ -64,7 +64,7 @@ public class PokerStateSitOutNextRoundTestTest {
         state.playerIsSittingIn(playerId);
 
         verify(player).sitIn();
-        verify(player).setSitOutNextRound(false);
+        verify(player).setSittingOutNextHand(false);
         verify(player).setSitInAfterSuccessfulBuyIn(false);
         verify(serverAdapter).notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITIN, false);
     }
