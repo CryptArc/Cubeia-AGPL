@@ -89,8 +89,9 @@ Poker.TableLayoutManager = Class.extend({
     },
     handleSitIn : function() {
         var myPlayerSeat = this.seats.get(this.myPlayerSeatId);
-        if(myPlayerSeat!=null) {
-            myPlayerSeat.postBlinds();
+        if (myPlayerSeat!=null) {
+            myPlayerSeat.doPostBlinds();
+            myPlayerSeat.setSitOutNextHand(false)
         }
 
     },
@@ -105,16 +106,17 @@ Poker.TableLayoutManager = Class.extend({
      * also the position css class
      * @param seatId - the seat id to add the empty seat div to
      * @param pos - position if supplied adds the corresponding position css class
+     * @param active - {boolean} boolean to indicate if the seat is active or not (active == occupied)
      */
     addEmptySeatContent : function(seatId,pos,active) {
         console.log("addEmptySeatContent seatId="+seatId);
         var seat = $("#seat"+seatId+"-"+this.tableId);
         seat.addClass("seat-empty").html(Mustache.render(this.emptySeatTemplate,{}));
         seat.removeClass("seat-sit-out").removeClass("seat-folded");
-        if(typeof(pos)!="undefined" && pos!=-1) {
+        if (typeof(pos) != "undefined" && pos != -1) {
             seat.addClass("seat-pos-"+pos);
         }
-        if(!active) {
+        if (!active) {
             seat.addClass("seat-inactive");
         }
     },

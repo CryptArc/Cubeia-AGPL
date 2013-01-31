@@ -24,6 +24,7 @@ import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.poker.MockPlayer;
 import com.cubeia.poker.PokerState;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -65,10 +66,11 @@ public class DisconnectHandlerTest {
         when(table.getScheduler()).thenReturn(scheduler);
         when(table.getId()).thenReturn(66);
 
-        when(state.isWaitingForPlayerToAct(1)).thenReturn(true);
         when(state.getPokerPlayer(1)).thenReturn(new MockPlayer(66));
     }
 
+    @Ignore // Ignoring this test. Do we really need to tell the world that a player is having issues with his connection?
+            // Specifically, if I know the player after me is disconnected, I might bet quickly just so that he will auto fold.
     @Test
     public void testWaitRejoin() {
         handler.checkDisconnectTime(table, 1, PlayerStatus.WAITING_REJOIN);

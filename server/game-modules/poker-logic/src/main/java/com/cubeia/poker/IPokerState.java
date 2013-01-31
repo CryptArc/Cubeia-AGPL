@@ -19,7 +19,6 @@ package com.cubeia.poker;
 
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.states.ShutdownSTM;
 import com.cubeia.poker.variant.GameType;
@@ -32,7 +31,7 @@ public interface IPokerState {
 
     void init(GameType gameType, PokerSettings settings);
 
-    void playerSitsOut(int playerId, SitOutStatus sitOutStatus);
+    void playerSitsOutNextHand(int playerId);
 
     int getAnteLevel();
 
@@ -58,12 +57,6 @@ public interface IPokerState {
      * The game will move to the {@link ShutdownSTM} state.
      */
     void shutdown();
-
-    /**
-     * Sit out the players that has been marked for sitout next round.
-     * This method should be called before or after a hand, not in the middle.
-     */
-    void sitOutPlayersMarkedForSitOutNextRound();
 
     /**
      * Handles a buy in request for a player.

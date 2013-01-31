@@ -540,15 +540,16 @@
                 </div>
             </div>
             <div class="bottom-bar">
-                <div class="action-button action-sit-out" style="display: none;">
-                    <span>Sit-out</span>
-                </div>
                 <div class="own-player" id="myPlayerSeat-{{tableId}}Info" style="display:none;">
                     <div class="name" id="myPlayerName-{{tableId}}"></div>
                     <div class="balance" id="myPlayerBalance-{{tableId}}"></div>
                     <div class="no-more-blinds-container">
                         <input type="checkbox" id="noMoreBlinds-{{tableId}}"/>
                         <label for="noMoreBlinds-{{tableId}}">No more blinds</label>
+                    </div>
+                    <div class="sit-out-next-hand-container">
+                        <input type="checkbox" id="sitOutNextHand-{{tableId}}"/>
+                        <label for="sitOutNextHand-{{tableId}}">Sit out next hand</label>
                     </div>
                 </div>
 

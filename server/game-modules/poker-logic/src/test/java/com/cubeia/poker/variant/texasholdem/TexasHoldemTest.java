@@ -182,7 +182,7 @@ public class TexasHoldemTest {
 
         // The guy who missed the big comes back. He can't play this round though, because he's between the dealer button and the small blind.
         p[3].sitIn();
-        p[3].setSitOutNextRound(false);
+        p[3].setSittingOutNextHand(false);
 
         startHand(context);
 
@@ -255,7 +255,7 @@ public class TexasHoldemTest {
 
         // The guy who missed the big comes back.
         p[2].sitIn();
-        p[2].setSitOutNextRound(false);
+        p[2].setSittingOutNextHand(false);
 
         // He can't play this hand though, because you can't sit in on the dealer button.
         startHand(context);
@@ -336,7 +336,7 @@ public class TexasHoldemTest {
 
         // Player 3 sits in again.
         p[3].sitIn();
-        p[3].setSitOutNextRound(false);
+        p[3].setSittingOutNextHand(false);
 
         // But can't play this hand.
         startHand(context);
@@ -365,7 +365,7 @@ public class TexasHoldemTest {
 
         // In the next hand, player 3 is BB. He shouldn't have to post a dead sb.
         p[3].sitIn();
-        p[3].setSitOutNextRound(false);
+        p[3].setSittingOutNextHand(false);
         startHand(context);
         act(p[2], SMALL_BLIND);
         assertTrue(p[3].getActionRequest().isOptionEnabled(PokerActionType.BIG_BLIND));

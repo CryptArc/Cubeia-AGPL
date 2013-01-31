@@ -64,11 +64,6 @@ public class PlayingSTM extends AbstractPokerGameSTM implements HandFinishedList
     }
 
     @Override
-    public boolean isCurrentlyWaitingForPlayer(int playerId) {
-        return gameType.isCurrentlyWaitingForPlayer(playerId);
-    }
-
-    @Override
     public void handFinished(HandResult result, HandEndStatus status) {
         log.debug("Hand finished.");
         context.setHandFinished(true);
