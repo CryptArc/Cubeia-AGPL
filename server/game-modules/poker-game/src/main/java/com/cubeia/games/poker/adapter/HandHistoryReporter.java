@@ -31,6 +31,7 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 
 import com.cubeia.poker.handhistory.api.*;
+import com.cubeia.poker.model.RatedPlayerHand;
 import org.apache.log4j.Logger;
 
 import com.cubeia.firebase.api.game.table.Table;
@@ -125,9 +126,14 @@ public class HandHistoryReporter {
             }
             res.setTotalRake(handResult.getTotalRake());
 
-            ShowDownSummary summary = new ShowDownSummary();
-            summary.getPlayerBestHand().addAll(translateBestHands(handResult.getPlayerHands()));
-            post(summary);
+            //Best hand events
+            for (RatedPlayerHand hand: handResult.getPlayerHands())
+            {
+                post(translate(hand));
+            }
+
+            //empty ShowDownSummary event
+            post(new ShowDownSummary());
 
             service.reportResults(table.getId(), res);
             service.stopHand(table.getId());
