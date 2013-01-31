@@ -17,13 +17,12 @@
 
 package com.cubeia.poker.rounds.betting;
 
-import com.cubeia.poker.adapter.ServerAdapterHolder;
-import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.ServerAdapter;
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.timing.impl.DefaultTimingProfile;
 import com.cubeia.poker.variant.texasholdem.TexasHoldemFutureActionsCalculator;
 import org.junit.Before;
@@ -73,9 +72,9 @@ public class BettingRoundTimeoutTest {
 
         round.timeout();
 
-        verify(context).setSitOutStatus(playerId, SitOutStatus.SITTING_OUT);
         verify(serverAdapter).notifyActionPerformed(Mockito.any(PokerAction.class), Mockito.eq(player));
         verify(serverAdapter).notifyPlayerBalance(player);
+        verify(player).setSittingOutNextHand(true);
         verify(player).setHasFolded(true);
 
     }

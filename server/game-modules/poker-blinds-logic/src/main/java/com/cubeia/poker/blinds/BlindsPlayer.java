@@ -32,11 +32,11 @@ public interface BlindsPlayer {
     public int getSeatId();
 
     /**
-     * Gets the player id of this player.
+     * Gets the id of this player.
      *
-     * @return the player id of this player
+     * @return the id of this player
      */
-    public int getPlayerId();
+    public int getId();
 
     /**
      * Checks whether the player is sitting in.

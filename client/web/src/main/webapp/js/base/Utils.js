@@ -67,19 +67,19 @@ Poker.Utils = {
     },
     load : function(name,defaultValue) {
         var store = Poker.Utils.getStorage();
-        if(store!=null) {
+        if(store != null) {
             return store.getItem(name);
-        } else if(typeof(defaultValue)!=="undefined") {
+        } else if (typeof(defaultValue) !== "undefined") {
             return defaultValue;
         } else {
             return null;
         }
     },
-    loadBoolean : function(name,defaultValue) {
-      var val = Poker.Utils.load(name,defaultValue);
-      if(val!=null){
+    loadBoolean : function(name, defaultValue) {
+      var val = Poker.Utils.load(name, defaultValue);
+      if (val!=null){
           return val == "true";
-      } else if(typeof(defaultValue)!=="undefined") {
+      } else if (typeof(defaultValue) !== "undefined") {
         return defaultValue;
       }
       return false;

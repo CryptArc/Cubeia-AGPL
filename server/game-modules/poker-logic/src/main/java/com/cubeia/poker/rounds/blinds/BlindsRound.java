@@ -30,8 +30,6 @@ import com.cubeia.poker.blinds.MissedBlind;
 import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.model.BlindsInfo;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.player.PokerPlayerStatus;
-import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundHelper;
 import com.cubeia.poker.rounds.RoundVisitor;
@@ -127,8 +125,8 @@ public class BlindsRound implements Round, Serializable {
 
     private void markMissedBlinds(List<MissedBlind> missedBlinds) {
         for (MissedBlind missed : missedBlinds) {
-            log.info("Setting missed blinds status to " + missed.getMissedBlindsStatus() + " for player " + missed.getPlayer().getPlayerId());
-            context.getPlayer(missed.getPlayer().getPlayerId()).setMissedBlindsStatus(missed.getMissedBlindsStatus());
+            log.info("Setting missed blinds status to " + missed.getMissedBlindsStatus() + " for player " + missed.getPlayer().getId());
+            context.getPlayer(missed.getPlayer().getId()).setMissedBlindsStatus(missed.getMissedBlindsStatus());
         }
     }
 
@@ -243,7 +241,6 @@ public class BlindsRound implements Round, Serializable {
 
     public void smallBlindDeclined(PokerPlayer player) {
         markPlayerAsSittingOut(player);
-        notifyPlayerSittingOut(player.getId(), SitOutStatus.SITTING_OUT);
 
         if (numberPlayersSittingIn() >= 2) {
             PokerPlayer bigBlind = getPlayerInSeat(blindsInfo.getBigBlindSeatId());
@@ -251,17 +248,6 @@ public class BlindsRound implements Round, Serializable {
             currentState = WAITING_FOR_BIG_BLIND_STATE;
         } else {
             currentState = CANCELED_STATE;
-        }
-    }
-
-    private void notifyPlayerSittingOut(int playerId, SitOutStatus status) {
-        log.debug("Notify player sitout: " + playerId);
-        if (context != null) {
-            if (context.setSitOutStatus(playerId, status)) {
-                getServerAdapter().notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITOUT, true);
-            }
-        } else {
-            log.warn("Trying to notify sit out pid[" + playerId + "] on NULL state!");
         }
     }
 
@@ -278,7 +264,7 @@ public class BlindsRound implements Round, Serializable {
     private void requestNextEntryBet() {
         if (!entryBetters.isEmpty()) {
             EntryBetter entryBetter = entryBetters.poll();
-            PokerPlayer player = context.getPlayer(entryBetter.getPlayer().getPlayerId());
+            PokerPlayer player = context.getPlayer(entryBetter.getPlayer().getId());
             if (entryBetter.getEntryBetType() == EntryBetType.BIG_BLIND) {
                 log.debug("Requesting entry big blind from " + player);
                 requestBigBlind(player);
@@ -315,7 +301,7 @@ public class BlindsRound implements Round, Serializable {
     private Set<Integer> getSetOfEligiblePlayerIds() {
         Set<Integer> eligiblePlayerIds = new HashSet<Integer>();
         for (BlindsPlayer player : blindsCalculator.getEligiblePlayerList()) {
-            eligiblePlayerIds.add(player.getPlayerId());
+            eligiblePlayerIds.add(player.getId());
         }
         return eligiblePlayerIds;
     }
@@ -355,7 +341,6 @@ public class BlindsRound implements Round, Serializable {
     public void bigBlindDeclined(PokerPlayer player) {
         log.debug(player + " declined big blind.");
         markPlayerAsSittingOut(player);
-        notifyPlayerSittingOut(player.getId(), SitOutStatus.SITTING_OUT);
         BlindsPlayer nextBig = blindsCalculator.getNextBigBlindPlayer(player.getSeatId());
 
         if (nextBig != null) {
@@ -370,7 +355,6 @@ public class BlindsRound implements Round, Serializable {
 
     public void entryBetDeclined(PokerPlayer player) {
         markPlayerAsSittingOut(player);
-        notifyPlayerSittingOut(player.getId(), SitOutStatus.SITTING_OUT);
         askForNextEntryBetOrFinishBlindsRound();
     }
 

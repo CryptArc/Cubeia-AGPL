@@ -66,4 +66,11 @@ public class NotStartedSTM extends AbstractPokerGameSTM {
         doPerformPendingBuyIns(players);
     }
 
+    /*
+     * If we are not playing, a player who wants to sit out can do it straight away.
+     */
+    @Override
+    public void playerSitsOutNextHand(int playerId) {
+        markPlayerAsSittingOut(context.getPlayer(playerId));
+    }
 }

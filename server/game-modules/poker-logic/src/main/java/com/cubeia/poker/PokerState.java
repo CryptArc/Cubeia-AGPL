@@ -24,7 +24,6 @@ import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.model.BlindsLevel;
 import com.cubeia.poker.model.GameStateSnapshot;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.pot.PotHolder;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.settings.PokerSettings;
@@ -144,8 +143,8 @@ public class PokerState implements Serializable, IPokerState {
     }
 
     @Override
-    public void playerSitsOut(int playerId, SitOutStatus sitOutStatus) {
-        getCurrentState().playerSitsOut(playerId, sitOutStatus);
+    public void playerSitsOutNextHand(int playerId) {
+        getCurrentState().playerSitsOutNextHand(playerId);
     }
 
     public boolean isPlayerSeated(int playerId) {
@@ -173,11 +172,6 @@ public class PokerState implements Serializable, IPokerState {
     @Override
     public SortedMap<Integer, PokerPlayer> getCurrentHandSeatingMap() {
         return pokerContext.getCurrentHandSeatingMap();
-    }
-
-    @Override
-    public void sitOutPlayersMarkedForSitOutNextRound() {
-        pokerContext.sitOutPlayersMarkedForSitOutNextRound();
     }
 
     /**
@@ -364,10 +358,6 @@ public class PokerState implements Serializable, IPokerState {
     public void handleBuyInRequest(PokerPlayer pokerPlayer, long amount) {
         pokerPlayer.addRequestedBuyInAmount(amount);
         getCurrentState().performPendingBuyIns(singleton(pokerPlayer));
-    }
-
-    public boolean isWaitingForPlayerToAct(int playerId) {
-        return getCurrentState().isCurrentlyWaitingForPlayer(playerId);
     }
 
     // TODO: Preferably remove this method, or at least replace with code in state class.

@@ -21,15 +21,14 @@ import com.cubeia.poker.AbstractTexasHandTester;
 import com.cubeia.poker.MockPlayer;
 import com.cubeia.poker.NonRandomRNG;
 import com.cubeia.poker.TestUtils;
-import com.cubeia.poker.action.PokerAction;
-import com.cubeia.poker.action.PokerActionType;
-import com.cubeia.poker.player.PokerPlayerStatus;
-import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.variant.PokerVariant;
 import junit.framework.Assert;
 import org.apache.log4j.Logger;
 
-import static com.cubeia.poker.action.PokerActionType.*;
+import static com.cubeia.poker.action.PokerActionType.ANTE;
+import static com.cubeia.poker.action.PokerActionType.BET;
+import static com.cubeia.poker.action.PokerActionType.CALL;
+import static com.cubeia.poker.action.PokerActionType.CHECK;
 
 public class TelesinaDisconnectTest extends AbstractTexasHandTester {
 
@@ -43,86 +42,6 @@ public class TelesinaDisconnectTest extends AbstractTexasHandTester {
         super.setUp();
         setAnteLevel(10);
     }
-
-    public void testDisconnectFolding() throws InterruptedException {
-        MockPlayer[] mp = TestUtils.createMockPlayers(3, 100);
-        int[] p = TestUtils.createPlayerIdArray(mp);
-        addPlayers(state, mp);
-
-        // Force start
-        state.timeout();
-
-        // ANTE
-        act(p[1], ANTE);
-        act(p[2], ANTE);
-        act(p[0], ANTE);
-
-        // 1. Disconnect player 0
-        state.playerSitsOut(p[0], SitOutStatus.SITTING_OUT);
-        assertEquals(PokerPlayerStatus.SITOUT, mockServerAdapter.getPokerPlayerStatus(p[0]));
-
-        // timeout the deal initialCardsRound
-        state.timeout();
-
-        // 2. Place bet
-        act(p[2], BET);
-        // 3. Verify that player 0 is folding
-        Assert.assertTrue(mp[0].hasFolded());
-        state.playerSitsOut(p[0], SitOutStatus.SITTING_OUT);
-        assertEquals(PokerPlayerStatus.SITOUT, mockServerAdapter.getPokerPlayerStatus(p[0]));
-
-    }
-
-
-    public void testDisconnectAndReconnect() throws InterruptedException {
-        MockPlayer[] mp = TestUtils.createMockPlayers(3, 100);
-        int[] p = TestUtils.createPlayerIdArray(mp);
-        addPlayers(state, mp);
-
-        // Force start
-        state.timeout();
-
-        // ANTE
-        act(p[1], ANTE);
-        act(p[2], ANTE);
-        act(p[0], ANTE);
-
-        // TODO
-        // 1. Disconnect player 0
-        state.playerSitsOut(p[0], SitOutStatus.SITTING_OUT);
-        assertEquals(PokerPlayerStatus.SITOUT, mockServerAdapter.getPokerPlayerStatus(p[0]));
-
-        // timeout the dealInitialCardsRound
-        state.timeout();
-
-        // 2. check
-        act(p[2], CHECK);
-        // 3. Verify that player 0 has checked and not folded
-        Assert.assertFalse(mp[0].hasFolded());
-        act(p[1], CHECK);
-
-        state.timeout();
-
-        // 2. Verify that a reconnect lets player 0 act again
-        state.playerIsSittingIn(p[0]);
-        assertEquals(PokerPlayerStatus.SITIN, mockServerAdapter.getPokerPlayerStatus(p[0]));
-        act(p[1], CHECK);
-        act(p[2], CHECK);
-
-        state.timeout();
-
-        act(p[1], CHECK);
-        act(p[2], CHECK);
-        act(p[0], CHECK);
-
-        state.timeout();
-
-        act(p[2], CHECK);
-        act(p[0], CHECK);
-        act(p[1], CHECK);
-
-    }
-
 
     public void testDisconnectBug() throws InterruptedException {
         MockPlayer[] mp = TestUtils.createMockPlayers(3, 100);
@@ -141,22 +60,23 @@ public class TelesinaDisconnectTest extends AbstractTexasHandTester {
 
         // --- NEW BETTING ROUND ---
 
-        //timeout the DealInitalCardsRound
+        //timeout the DealInitialCardsRound
         state.timeout();
 
-        state.playerSitsOut(p[1], SitOutStatus.SITTING_OUT);
-        assertEquals(PokerPlayerStatus.SITOUT, mockServerAdapter.getPokerPlayerStatus(p[1]));
+        // Player says he wants to sit out next hand and then leaves.
+        state.playerSitsOutNextHand(p[1]);
         act(p[2], CHECK);
         act(p[0], CHECK);
-        PokerAction latestActionPerformed = mockServerAdapter.getLatestActionPerformed();
-        assertEquals(p[1], latestActionPerformed.getPlayerId().intValue());
-        assertEquals(PokerActionType.CHECK, latestActionPerformed.getActionType());
+        // And he times out (and checks).
         state.timeout();
 
+        state.timeout(); // start next round
         assertPlayersNumberOfCards(mp, 3, 3, 3);
 
         // --- NEW BETTING ROUND ---
         act(p[0], BET);
+        // And he times out again and folds this time.
+        state.timeout();
         act(p[2], CALL);
         Assert.assertTrue(mp[1].hasFolded());
 
@@ -173,5 +93,4 @@ public class TelesinaDisconnectTest extends AbstractTexasHandTester {
         assertEquals(p1NumberOfCards, mp[1].getPocketCards().getCards().size());
         assertEquals(p2NumberOfCards, mp[2].getPocketCards().getCards().size());
     }
-
 }

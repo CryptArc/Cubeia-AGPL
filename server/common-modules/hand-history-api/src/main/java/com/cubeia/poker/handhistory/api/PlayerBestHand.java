@@ -20,13 +20,16 @@ package com.cubeia.poker.handhistory.api;
 import java.io.Serializable;
 import java.util.List;
 
-public class PlayerBestHand implements Serializable {
+public class PlayerBestHand  extends HandHistoryEvent implements Serializable {
 
     private static final long serialVersionUID = -5814135838873729385L;
 
     private FullHand playerHand;
     private BestHandType bestHandType;
     private List<GameCard> bestHandCards;
+
+    public PlayerBestHand() {
+    }
 
     public PlayerBestHand(FullHand fullHand, BestHandType bestHandType, List<GameCard> bestHandCards) {
         this.playerHand = fullHand;

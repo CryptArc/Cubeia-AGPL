@@ -263,7 +263,6 @@ public class Processor implements GameProcessor, TournamentProcessor {
             actionCache.clear(table.getId());
         }
         log.debug("Start Hand on table: " + table + " (" + table.getPlayerSet().getPlayerCount() + ":" + state.getSeatedPlayers().size() + ")");
-        state.sitOutPlayersMarkedForSitOutNextRound();
         state.scheduleTournamentHandStart();
 
         updatePlayerDebugInfo(table);

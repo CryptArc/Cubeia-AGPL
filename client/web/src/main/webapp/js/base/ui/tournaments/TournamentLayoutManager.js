@@ -64,7 +64,9 @@ Poker.TournamentLayoutManager = Class.extend({
         }
         var infoTemplate = this.templateManager.getRenderTemplate("tournamentInfoTemplate");
         this.viewElement.find(".tournament-info").html(infoTemplate.render(info));
-        this.viewElement.find(".tournament-start-date").html(info.startTime);
+        if(!info.sitAndGo) {
+            this.viewElement.find(".tournament-start-date").html(info.startTime);
+        }
 
     },
     updateTournamentStatistics : function(statistics) {
