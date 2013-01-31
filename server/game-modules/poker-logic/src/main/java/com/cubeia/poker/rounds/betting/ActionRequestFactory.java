@@ -49,7 +49,7 @@ public class ActionRequestFactory implements Serializable {
         PossibleAction raise = new PossibleAction(RAISE, betStrategy.getMinRaiseToAmount(context, p), betStrategy.getMaxRaiseToAmount(context, p));
 
         ActionRequest request = new ActionRequest();
-        if (raise.getMinAmount() > 0) {
+        if (raise.getMinAmount() > 0 && p.canRaise()) {
             request.setOptions(Arrays.asList(fold, call, raise));
         } else {
             request.setOptions(Arrays.asList(fold, call));

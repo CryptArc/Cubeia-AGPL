@@ -41,6 +41,13 @@ import java.util.Random;
 
 public interface ServerAdapter {
 
+    /**
+     * Checks if the system is down.
+     *
+     * @return true if the system is down, false otherwise.
+     */
+    boolean isSystemShutDown();
+
     void scheduleTimeout(long millis);
 
     void requestAction(ActionRequest request);

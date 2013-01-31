@@ -57,7 +57,7 @@ public class NotStartedSTM extends AbstractPokerGameSTM {
         if (context.isTournamentTable()) {
             // This should only really happen from tournaments.
             log.debug("Starting hand.");
-            doStartHand();
+            startHand();
         }
     }
 

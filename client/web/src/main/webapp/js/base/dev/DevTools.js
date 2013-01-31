@@ -1,5 +1,4 @@
 "use strict";
-
 var Poker = Poker || {};
 
 Poker.DevTools = Class.extend({
@@ -8,6 +7,7 @@ Poker.DevTools = Class.extend({
     cards : null,
     cardIdSeq : 0,
     mockEventManager : null,
+
     init : function() {
         var self = this;
         this.initCards();
@@ -22,8 +22,6 @@ Poker.DevTools = Class.extend({
         setTimeout(function(){
             self.createTable();
         },1000);
-
-
     },
 
     createTable : function() {
@@ -83,8 +81,19 @@ Poker.DevTools = Class.extend({
 
 
         this.mockEventManager.addEvent(
-            mockEvent("Player 1 small blind",function(){
+            mockEvent("Player 1 big blind",function(){
                 self.playerAction(1,Poker.ActionType.BIG_BLIND);
+            })
+        );
+
+        this.mockEventManager.addEvent(
+            mockEvent("Activate player 2", function(){
+                self.tableManager.handleRequestPlayerAction(self.tableId,2,
+                    [
+                        new Poker.Action(Poker.ActionType.FOLD,0,0),
+                        new Poker.Action(Poker.ActionType.CALL,10,10),
+                        new Poker.Action(Poker.ActionType.RAISE,10,1000000)
+                    ],15000)
             })
         );
         this.mockEventManager.addEvent(
@@ -137,6 +146,16 @@ Poker.DevTools = Class.extend({
         this.mockEventManager.addEvent(
             mockEvent("Deal river", function(){
                 self.tableManager.dealCommunityCard(self.tableId,self.cardIdSeq++,"ac");
+            })
+        );
+        this.mockEventManager.addEvent(
+            mockEvent("Request Player Action",function(){
+                self.tableManager.handleRequestPlayerAction(self.tableId,0,
+                    [
+                        new Poker.Action(Poker.ActionType.FOLD,0,0),
+                        new Poker.Action(Poker.ActionType.CALL,10,10),
+                        new Poker.Action(Poker.ActionType.RAISE,10,1000000)
+                    ],15000)
             })
         );
         this.mockEventManager.addEvent(

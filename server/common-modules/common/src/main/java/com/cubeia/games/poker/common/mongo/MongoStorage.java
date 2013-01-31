@@ -66,6 +66,10 @@ public class MongoStorage {
         return db().getCollection(collection).find(query);
     }
 
+    public DBCursor findByQuery(BasicDBObject query, String collection, DBObject projectedFields) {
+        return db().getCollection(collection).find(query, projectedFields);
+    }
+
     private DB db() {
         try {
             if (db == null) {

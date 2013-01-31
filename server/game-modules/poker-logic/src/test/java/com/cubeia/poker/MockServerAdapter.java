@@ -102,6 +102,11 @@ public class MockServerAdapter implements ServerAdapter {
     public void notifyNewRound() {
     }
 
+    @Override
+    public boolean isSystemShutDown() {
+        return false;
+    }
+
     public void scheduleTimeout(long millis) {
         timeoutCounter++;
     }

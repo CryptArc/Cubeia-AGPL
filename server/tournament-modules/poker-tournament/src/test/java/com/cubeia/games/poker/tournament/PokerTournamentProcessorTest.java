@@ -46,13 +46,13 @@ import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
 import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructureFactory;
-import com.cubeia.games.poker.tournament.configuration.blinds.Level;
 import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructureParserTest;
 import com.cubeia.games.poker.tournament.messages.PokerTournamentRoundReport;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 import com.cubeia.games.poker.tournament.util.PacketSender;
 import com.cubeia.games.poker.tournament.util.PacketSenderFactory;
+import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
@@ -126,6 +126,9 @@ public class PokerTournamentProcessorTest extends TestCase {
     private CashGamesBackendService backend;
 
     @Mock
+    private ShutdownServiceContract shutdownService;
+
+    @Mock
     private TournamentSchedule schedule;
 
     @Mock
@@ -154,6 +157,7 @@ public class PokerTournamentProcessorTest extends TestCase {
         tournamentProcessor.setSupport(support);
         tournamentProcessor.setHistoryService(historyService);
         tournamentProcessor.setBackend(backend);
+        tournamentProcessor.setShutdownService(shutdownService);
         tournamentProcessor.setDateFetcher(dateFetcher);
         tournamentProcessor.setSenderFactory(senderFactory);
 

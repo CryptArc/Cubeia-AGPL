@@ -27,7 +27,11 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
      */
     tableId : null,
 
+    seatBalance : null,
+
     noMoreBlindsCheckBox : null,
+    avatarElement : null,
+
     init : function(tableId,elementId, seatId, player, myActionsManager, animationManager) {
         this._super(elementId,seatId, player,animationManager);
         this.tableId = tableId;
@@ -40,6 +44,8 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.circularProgressBar = new CircularProgressBar("#"+elementId+"Progressbar",this.animationManager);
         this.circularProgressBar.hide();
         var self = this;
+
+        this.seatBalance = this.seatElement.find(".seat-balance");
 
         this.noMoreBlindsCheckBox =  $("#noMoreBlinds-"+tableId);
         this.noMoreBlindsCheckBox.change(function(e){
@@ -57,6 +63,8 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.actionAmount = this.seatElement.find(".action-amount");
         this.actionText = this.seatElement.find(".action-text");
         this.handStrength = this.seatElement.find(".hand-strength");
+        this.avatarElement = this.seatElement.find(".avatar");
+        this.avatarElement.addClass("avatar"+(this.player.id%9));
 
         this.reset();
         $("#myPlayerName-"+this.tableId).html(this.player.name);
@@ -66,6 +74,10 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         var blindsHandled = this.handleBlinds(allowedActions);
         if(blindsHandled == false) {
             this.myActionsManager.onRequestPlayerAction(allowedActions,mainPot,fixedLimit);
+            if(this.circularProgressBar!=null) {
+                this.circularProgressBar.detach();
+            }
+            this.circularProgressBar = new CircularProgressBar("#"+this.seatElement.attr("id")+"Progressbar",this.animationManager);
             this.circularProgressBar.show();
             this.circularProgressBar.render(timeToAct);
             Poker.AppCtx.getViewManager().requestTableFocus(this.tableId);
@@ -121,6 +133,8 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
     updatePlayer : function(player) {
         this.player = player;
         $("#myPlayerBalance-"+this.tableId).html("&euro;"+this.player.balance);
+        this.seatBalance.html("&euro;"+this.player.balance);
+
         this.handlePlayerStatus();
     },
     handlePlayerStatus : function() {
