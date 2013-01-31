@@ -27,8 +27,10 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
 
     seatBalance : null,
 
-    noMoreBlindsCheckBox : null,
     avatarElement : null,
+
+    noMoreBlindsCheckBox : null,
+
     noMoreBlinds : false,
 
     sitOutNextHand : false,
@@ -72,7 +74,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.actionText = this.seatElement.find(".action-text");
         this.handStrength = this.seatElement.find(".hand-strength");
         this.avatarElement = this.seatElement.find(".avatar");
-        this.avatarElement.addClass("avatar"+(this.player.id%9));
+        this.avatarElement.addClass("avatar" + (this.player.id % 9));
 
         this.reset();
         $("#myPlayerName-"+this.tableId).html(this.player.name);

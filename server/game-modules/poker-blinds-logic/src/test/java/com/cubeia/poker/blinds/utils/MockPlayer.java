@@ -32,14 +32,17 @@ public class MockPlayer implements BlindsPlayer {
         this.playerId = playerId;
     }
 
-    public int getPlayerId() {
+    @Override
+    public int getId() {
         return playerId;
     }
 
+    @Override
     public int getSeatId() {
         return playerId;
     }
 
+    @Override
     public boolean isSittingIn() {
         return isSittingIn;
     }
@@ -48,10 +51,12 @@ public class MockPlayer implements BlindsPlayer {
         this.isSittingIn = isSittingIn;
     }
 
+    @Override
     public boolean hasPostedEntryBet() {
         return hasPostedEntry;
     }
 
+    @Override
     public void setHasPostedEntryBet(boolean hasPostedEntry) {
         this.hasPostedEntry = hasPostedEntry;
     }
@@ -60,6 +65,7 @@ public class MockPlayer implements BlindsPlayer {
         missedBlindsStatus = status;
     }
 
+    @Override
     public MissedBlindsStatus getMissedBlindsStatus() {
         return missedBlindsStatus;
     }

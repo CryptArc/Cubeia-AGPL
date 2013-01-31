@@ -54,7 +54,7 @@ public class MoneyRelatedPokerTests extends GuiceTest {
 
     private MockPlayer getPlayer(int actorId, MockPlayer[] mp) {
         for (MockPlayer player : mp) {
-            if (player.getPlayerId() == actorId) {
+            if (player.getId() == actorId) {
                 return player;
             }
         }
