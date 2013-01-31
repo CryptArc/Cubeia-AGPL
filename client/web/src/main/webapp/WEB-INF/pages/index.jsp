@@ -540,6 +540,9 @@
                 </div>
             </div>
             <div class="bottom-bar">
+                <div class="action-button action-leave" style="display: none;">
+                    <span>Leave</span>
+                </div>
                 <div class="own-player" id="myPlayerSeat-{{tableId}}Info" style="display:none;">
                     <div class="name" id="myPlayerName-{{tableId}}"></div>
                     <div class="balance" id="myPlayerBalance-{{tableId}}"></div>
@@ -603,9 +606,7 @@
                     <div class="action-button action-join"style="display: none;">
                         <span>Join</span>
                     </div>
-                    <div class="action-button action-leave" style="display: none;">
-                        <span>Leave</span>
-                    </div>
+
                     <div class="action-button action-sit-in" style="display: none;">
                         <span>Sit-in</span>
                     </div>
