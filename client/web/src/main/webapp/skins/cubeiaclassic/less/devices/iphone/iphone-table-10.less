@@ -27,34 +27,40 @@
         left:@avatar-base-left + 3;
         top: @avatar-base-top + 3;
     }
+    .action-text {
+        font-size: 120%;
+    }
     .action-amount {
         z-index: 200000;
+    }
+    .progress-bar {
+        right:-5%;
     }
 }
 .table-10 {
     .seat-pos-9 {
         top:75%;
-        .seat-defaults-iphone(45%,65%);
-        .cards-container-pos-iphone(15%,45%);
+        .seat-defaults-iphone(40%,65%);
+        .cards-container-pos-iphone(15%,40%);
         .action-amount-pos(9%,10%,center);
     }
     .seat-pos-8 {
         top:55%;
-        .seat-defaults-iphone(28%,40%);
-        .cards-container-pos-iphone(0%,30%);
+        .seat-defaults-iphone(25%,40%);
+        .cards-container-pos-iphone(0%,25%);
         .action-amount-pos(12%,0%,center);
     }
     .seat-pos-7 {
         top:25%;
-        .seat-defaults-iphone(28%,45%);
-        .cards-container-pos-iphone(0%,30%);
+        .seat-defaults-iphone(25%,45%);
+        .cards-container-pos-iphone(0%,25%);
         .action-amount-pos(90%,0%,center);
     }
 
     .seat-pos-6 {
         top:0;
-        .seat-defaults-iphone(45%,50%);
-        .cards-container-pos-iphone(0%,45%);
+        .seat-defaults-iphone(40%,50%);
+        .cards-container-pos-iphone(0%,40%);
         .action-amount-pos(95%,20%,center);
     }
 
@@ -77,7 +83,7 @@
         .cards-container-pos-iphone(0%,0%);
         .action-amount-pos(85%,25%,center);
         .progress-bar {
-            left:-10%;
+            left:-5%;
             right: auto;
         }
     }
@@ -88,7 +94,7 @@
         .cards-container-pos-iphone(0%,5%);
         .action-amount-pos(14%,25%,center);
         .progress-bar {
-            left:-10%;
+            left:-5%;
             right: auto;
         }
     }
@@ -113,14 +119,23 @@
             display:none;
         }
         div.action-amount {
-            top:-10%;
+            top:-15%;
             z-index: 1;
+            font-size:150%;
         }
         .cards-container {
             top: 25%;
             left: 40%;
             z-index: 0;
             width:30%;
+        }
+        .hand-strength {
+            display: none;
+        }
+        .action-text {
+            z-index: 10000000;
+            top: 72%;
+            font-size: 120%;
         }
         .player-card-container {
             width: 100%;
