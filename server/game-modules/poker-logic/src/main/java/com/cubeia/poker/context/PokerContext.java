@@ -162,14 +162,6 @@ public class PokerContext implements Serializable {
         return currentHandSeatingMap.get(blindsInfo.getDealerButtonSeatId());
     }
 
-    public void sitOutPlayersMarkedForSitOutNextRound() {
-        for (PokerPlayer player : playerMap.values()) {
-            if (player.getSitOutNextRound()) {
-                player.setSitOutStatus(SitOutStatus.SITTING_OUT);
-            }
-        }
-    }
-    
     /**
      * Take a copy of the supplied map where all players that are not ready to start a hand excluded.
      *
@@ -197,24 +189,6 @@ public class PokerContext implements Serializable {
     @VisibleForTesting
     public Collection<PokerPlayer> getPlayersReadyToStartHand(Predicate<PokerPlayer> readyPlayersFilter) {
         return createCopyWithNotReadyPlayersExcluded(playerMap, readyPlayersFilter).values();
-    }
-
-    public boolean setSitOutStatus(int playerId, SitOutStatus status) {
-        if (isTournamentTable()) {
-            log.debug("won't sit out tournament player");
-            return false;
-        }
-
-        log.debug("player {} is sitting out", playerId);
-
-        PokerPlayer player = playerMap.get(playerId);
-        if (player == null || player.isSittingOut()) {
-            return false;
-        }
-
-        player.setSitOutStatus(status);
-        player.setSitOutNextRound(true);
-        return true;
     }
 
     public int countNonFoldedPlayers() {
@@ -246,10 +220,6 @@ public class PokerContext implements Serializable {
         for (PokerPlayer player : playerMap.values()) {
             player.commitBalanceNotInHand(getMaxBuyIn());
         }
-    }
-
-    public void removePlayer(PokerPlayer player) {
-        removePlayer(player.getId());
     }
 
     public void removePlayer(int playerId) {
@@ -300,28 +270,6 @@ public class PokerContext implements Serializable {
         }
 
         return totalPot;
-    }
-
-    /**
-     * Adds chips to a player. If the player is in a hand, the chips will be
-     * added after the hand if finished.
-     *
-     * @param playerId
-     * @param chips
-     * @return <code>true</code> if the chips were added immediately,
-     *         <code>false</code> if they will be added when the hand is
-     *         finished.
-     */
-    public void addChips(int playerId, long chips) {
-        if (!playerMap.containsKey(playerId)) {
-            throw new IllegalArgumentException("Player " + playerId + " tried to add chips, but was not seated.");
-        }
-
-        if (isPlayerInHand(playerId)) {
-            // TODO: Add pending chips request.
-        } else {
-            playerMap.get(playerId).addChips(chips);
-        }
     }
 
     public int getBalance(int playerId) {

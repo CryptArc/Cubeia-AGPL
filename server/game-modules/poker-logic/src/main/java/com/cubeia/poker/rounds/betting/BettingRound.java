@@ -447,7 +447,15 @@ public class BettingRound implements Round, BettingRoundContext {
 
     private boolean fold(PokerPlayer player) {
         player.setHasFolded(true);
+        if (player.isSittingOutNextHand()) {
+            setPlayerSitOut(player);
+        }
         return true;
+    }
+
+    private void setPlayerSitOut(PokerPlayer player) {
+        player.setSitOutStatus(SitOutStatus.SITTING_OUT);
+        getServerAdapter().notifyPlayerStatusChanged(player.getId(), PokerPlayerStatus.SITOUT, false);
     }
 
     private boolean check() {
@@ -481,14 +489,15 @@ public class BettingRound implements Round, BettingRoundContext {
             log.debug("Expected " + playerToAct + " to act, but that player can not be found at the table! I will assume everyone is all in");
             return; // Are we allin?
         }
-        setPlayerSitOut(player);
+        markPlayerForSittingOutNextHand(player);
         performDefaultActionForPlayer(player);
     }
 
-    private void setPlayerSitOut(PokerPlayer player) {
-        if (context.setSitOutStatus(player.getId(), SitOutStatus.SITTING_OUT)) {
-            getServerAdapter().notifyPlayerStatusChanged(player.getId(), PokerPlayerStatus.SITOUT, true);
+    private void markPlayerForSittingOutNextHand(PokerPlayer player) {
+        if (context.isTournamentTable()) {
+            return;
         }
+        player.setSittingOutNextHand(true);
     }
 
     private void performDefaultActionForPlayer(PokerPlayer player) {

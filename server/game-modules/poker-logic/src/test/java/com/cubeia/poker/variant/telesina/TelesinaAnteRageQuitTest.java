@@ -22,7 +22,6 @@ import com.cubeia.poker.MockPlayer;
 import com.cubeia.poker.NonRandomRNG;
 import com.cubeia.poker.TestUtils;
 import com.cubeia.poker.action.PokerActionType;
-import com.cubeia.poker.player.SitOutStatus;
 import com.cubeia.poker.variant.PokerVariant;
 import org.junit.Test;
 
@@ -47,7 +46,7 @@ public class TelesinaAnteRageQuitTest extends AbstractTexasHandTester {
 
         // Antes
         act(p[1], PokerActionType.ANTE);
-        state.playerSitsOut(p[1], SitOutStatus.SITTING_OUT);
+        state.playerSitsOutNextHand(p[1]);
         act(p[0], PokerActionType.ANTE);
 
         state.timeout();

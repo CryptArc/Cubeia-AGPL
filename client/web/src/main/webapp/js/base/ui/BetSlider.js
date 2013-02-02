@@ -103,6 +103,9 @@ Poker.BetSlider = Class.extend({
     setMaxBet : function(maxBet){
         this.maxBet = maxBet;
     },
+    setBigBlind : function(bigBlind) {
+
+    },
     /**
      * Clears the markers of the slider
      */

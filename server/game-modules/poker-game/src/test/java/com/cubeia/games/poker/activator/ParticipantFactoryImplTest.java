@@ -17,18 +17,15 @@
 
 package com.cubeia.games.poker.activator;
 
-import static com.cubeia.poker.timing.Timings.EXPRESS;
-import static com.cubeia.poker.variant.PokerVariant.TELESINA;
-
+import com.cubeia.games.poker.entity.TableConfigTemplate;
 import com.cubeia.poker.timing.TimingFactory;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
 import junit.framework.Assert;
-
 import org.junit.Before;
 import org.junit.Test;
 
-import com.cubeia.games.poker.entity.TableConfigTemplate;
-import com.google.inject.Guice;
-import com.google.inject.Inject;
+import static com.cubeia.poker.variant.PokerVariant.TELESINA;
 
 public class ParticipantFactoryImplTest {
 

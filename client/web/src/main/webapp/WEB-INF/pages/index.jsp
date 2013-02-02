@@ -10,7 +10,7 @@
     <link rel="apple-touch-icon" href="${cp}/skins/${skin}/images/lobby/icon.png" />
 
     <!-- All less files are imported in this base.less-->
-    <link rel="stylesheet/less" type="text/css" href="${cp}/skins/${skin}/less/base.less" />
+    <link id="skinCss" rel="stylesheet/less" type="text/css" href="${cp}/skins/${skin}/less/base.less" />
 
     <script type="text/javascript" src="${cp}/skins/${skin}/skin-config.js"></script>
     <script type="text/javascript" src="${cp}/skins/${skin}/preload-images.js"></script>
@@ -143,7 +143,29 @@
             });
         </script>
     </c:if>
+    <script type="text/javascript">
 
+        <c:set var="CUBEIA_CLASSIC" value="cubeiaclassic"/>
+        <c:choose>
+            <c:when test="${skin eq CUBEIA_CLASSIC}">
+                var currentSkin = "${CUBEIA_CLASSIC}";
+                function changeSkin() {
+                    if(currentSkin == "${CUBEIA_CLASSIC}") {
+                        currentSkin = "cubeia";
+                    } else {
+                        currentSkin = "${CUBEIA_CLASSIC}";
+                    }
+
+                   $("#skinCss").attr("href","${cp}/skins/" + currentSkin + "/lcss/base.css");
+                }
+            </c:when>
+            <c:otherwise>
+                function changeSkin() {
+                    $("body").toggleClass("skin-classic");
+                }
+            </c:otherwise>
+        </c:choose>
+    </script>
     <script type="text/javascript">
 
         var contextPath = "${cp}";
@@ -157,9 +179,10 @@
             less.watch(); //development only
             $(".describe").describe();
 
+
             //TODO: remove later, probably wont be a button in the toolbar
             $("#skinButton").click(function(e){
-                $("body").toggleClass("skin-classic");
+                changeSkin();
                 $("#classic").toggle();
                 $("#modern").toggle();
             });
@@ -540,8 +563,8 @@
             </div>
         </div>
         <div class="bottom-bar">
-            <div class="action-button action-sit-out" style="display: none;">
-                <span>Sit-out</span>
+                <div class="action-button action-leave" style="display: none;">
+                    <span>Leave</span>
             </div>
             <div class="own-player" id="myPlayerSeat-{{tableId}}Info" style="display:none;">
                 <div class="name" id="myPlayerName-{{tableId}}"></div>
@@ -550,6 +573,10 @@
                     <input type="checkbox" id="noMoreBlinds-{{tableId}}"/>
                     <label for="noMoreBlinds-{{tableId}}">No more blinds</label>
                 </div>
+                    <div class="sit-out-next-hand-container">
+                        <input type="checkbox" id="sitOutNextHand-{{tableId}}"/>
+                        <label for="sitOutNextHand-{{tableId}}">Sit out next hand</label>
+                    </div>
             </div>
 
 
@@ -602,9 +629,7 @@
                 <div class="action-button action-join"style="display: none;">
                     <span>Join</span>
                 </div>
-                <div class="action-button action-leave" style="display: none;">
-                    <span>Leave</span>
-                </div>
+
                 <div class="action-button action-sit-in" style="display: none;">
                     <span>Sit-in</span>
                 </div>
@@ -647,19 +672,19 @@
         </a>
     </p>
 
-</div>
-<script type="text/mustache" id="tournamentBuyInContent">
-    <h1>Buy-in at {{name}}</h1>
-    <div class="buy-in-row">
-        <span class="desc">Your balance:</span>  <span class="balance buyin-balance">{{balance}}</span>
     </div>
-    <div class="buy-in-row">
-        <span class="desc">Buy-in</span>  <span class="balance buyin-max-amount">{{buyIn}}+{{fee}}</span>
-    </div>
-    <div class="buy-in-row">
-        <span class="buyin-error" style="display: none;"></span>
-    </div>
-    <p class="dialog-buttons">
+    <script type="text/mustache" id="tournamentBuyInContent">
+        <h1>Buy-in at {{name}}</h1>
+        <div class="buy-in-row">
+            <span class="desc">Your balance:</span>  <span class="balance buyin-balance">{{balance}}</span>
+        </div>
+        <div class="buy-in-row">
+            <span class="desc">Buy-in</span>  <span class="balance buyin-max-amount">{{buyIn}}+{{fee}}</span>
+        </div>
+        <div class="buy-in-row">
+            <span class="buyin-error" style="display: none;"></span>
+        </div>
+        <p class="dialog-buttons">
             <a class="dialog-cancel-button">
             Cancel
         </a>

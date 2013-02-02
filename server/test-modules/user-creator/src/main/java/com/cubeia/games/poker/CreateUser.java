@@ -20,7 +20,10 @@ package com.cubeia.games.poker;
 import static com.cubeia.backoffice.wallet.api.dto.Account.AccountType.STATIC_ACCOUNT;
 
 import java.math.BigDecimal;
+import java.security.MessageDigest;
 import java.util.UUID;
+
+import org.apache.commons.codec.binary.Hex;
 
 import com.cubeia.backoffice.accounting.api.Money;
 import com.cubeia.backoffice.users.api.dto.CreateUserRequest;
@@ -75,10 +78,13 @@ public class CreateUser {
 	private String lastname;
 	
 	@Argument(alias="i", description="initial balance, set to -1 to disable, defaults to 500000", required=false)
-	private long balance = 500000;
+	private Long balance = 500000L;
 	
 	@Argument(alias="b", description="bank account for initial balance, defaults to -3000", required=false)
-	private long bankaccount = -3000;
+	private Long bankaccount = -3000L;
+	
+	@Argument(alias="h", description="hash bot password with md5, defaults to false", required=false)
+	private Boolean hashPassword = false;
 	
 	public void execute() throws Exception {
 		long userId = tryCreateUser();
@@ -97,7 +103,7 @@ public class CreateUser {
 			TransactionRequest req = new TransactionRequest();
 			Money credit = new Money(currency, 2, new BigDecimal(String.valueOf(balance)));
 			req.getEntries().add(new TransactionEntry(accountId, credit));
-			Account acc = client.getAccount(bankaccount, "EUR");
+			Account acc = client.getAccount(bankaccount, currency);
 			req.getEntries().add(new TransactionEntry(acc.getId(), credit.negate()));
 			req.setComment("initial balance for user " + userId);
 			return client.doTransaction(req).getTransactionId();
@@ -134,11 +140,27 @@ public class CreateUser {
 		u.getAttributes().put("user.lastName", lastname);
 		// System.out.println(userService);
 		UserServiceClientHTTP userClient = new UserServiceClientHTTP(userService);
-		CreateUserResponse resp = userClient.createUser(new CreateUserRequest(u, password));
+		CreateUserResponse resp = userClient.createUser(new CreateUserRequest(u, getPassword()));
 		if(resp.getStatus() == CreationStatus.OK) {
 			return resp.getUser().getUserId();
 		} else {
 			throw new IllegalStateException("Failed to create user: " + resp.getStatus());
+		}
+	}
+
+	private String getPassword() {
+		if(hashPassword) {
+			try {
+				MessageDigest md = MessageDigest.getInstance("MD5");
+				md.reset();
+				md.update(password.getBytes("ISO-8859-1"));
+				byte[] bytes = md.digest();
+				return Hex.encodeHexString(bytes);
+			} catch(Exception e) {
+				throw new RuntimeException(e);
+			}
+		} else {
+			return password;
 		}
 	}
 

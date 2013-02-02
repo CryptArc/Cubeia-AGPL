@@ -20,8 +20,6 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
      */
     circularProgressBar : null,
 
-    noMoreBlinds : false,
-
     /**
      * @type Number
      */
@@ -29,8 +27,15 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
 
     seatBalance : null,
 
-    noMoreBlindsCheckBox : null,
     avatarElement : null,
+
+    noMoreBlindsCheckBox : null,
+
+    noMoreBlinds : false,
+
+    sitOutNextHand : false,
+
+    sitOutNextHandCheckBox : null,
 
     init : function(tableId,elementId, seatId, player, myActionsManager, animationManager) {
         this._super(elementId,seatId, player,animationManager);
@@ -48,8 +53,13 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.seatBalance = this.seatElement.find(".seat-balance");
 
         this.noMoreBlindsCheckBox =  $("#noMoreBlinds-"+tableId);
-        this.noMoreBlindsCheckBox.change(function(e){
+        this.noMoreBlindsCheckBox.change(function(e) {
             self.noMoreBlinds = $(this).is(":checked");
+        });
+        this.sitOutNextHandCheckBox =  $("#sitOutNextHand-"+tableId);
+        this.sitOutNextHandCheckBox.change(function(e) {
+            self.sitOutNextHand = $(this).is(":checked");
+            self.onSitOutNextHand();
         });
     },
     setSeatPos : function(prev,pos) {
@@ -64,7 +74,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.actionText = this.seatElement.find(".action-text");
         this.handStrength = this.seatElement.find(".hand-strength");
         this.avatarElement = this.seatElement.find(".avatar");
-        this.avatarElement.addClass("avatar"+(this.player.id%9));
+        this.avatarElement.addClass("avatar" + (this.player.id % 9));
 
         this.reset();
         $("#myPlayerName-"+this.tableId).html(this.player.name);
@@ -85,18 +95,16 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
 
     },
     /**
-     * @param {Poker.Table} table
      * @param {Poker.Action[]} allowedActions
      * @return {Boolean} whether the request action was a blind or not
      */
     handleBlinds : function(allowedActions) {
-
         var requestHandler = new Poker.PokerRequestHandler(this.tableId);
-        for(var i = 0; i<allowedActions.length; i++) {
+        for (var i = 0; i < allowedActions.length; i++) {
             var action = allowedActions[i];
-            if(action.type == Poker.ActionType.BIG_BLIND || action.type == Poker.ActionType.SMALL_BLIND) {
+            if (action.type == Poker.ActionType.BIG_BLIND || action.type == Poker.ActionType.SMALL_BLIND) {
                 console.log("BLIND no more actions = " + this.noMoreBlinds);
-                if(this.noMoreBlinds==true) {
+                if (this.noMoreBlinds) {
                     requestHandler.onMyPlayerAction(Poker.ActionType.DECLINE_ENTRY_BET, 0);
                 } else {
                     requestHandler.onMyPlayerAction(action.type, action.minAmount);
@@ -106,9 +114,23 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         }
         return false;
     },
-    postBlinds : function() {
+    onSitOutNextHand : function() {
+        var requestHandler = new Poker.PokerRequestHandler(this.tableId);
+        if (this.sitOutNextHand) {
+            console.log("Player wants to sit out next hand.");
+            requestHandler.sitOut();
+        } else {
+            console.log("Player no longer wants to sit out next hand.");
+            requestHandler.sitIn();
+        }
+    },
+    doPostBlinds : function() {
         this.noMoreBlinds = false;
         this.noMoreBlindsCheckBox.attr("checked",false);
+    },
+    setSitOutNextHand : function(checked) {
+        this.sitOutNextHand = checked;
+        this.sitOutNextHandCheckBox.attr("checked", checked);
     },
     onAction : function(actionType,amount){
         this.running = false;
@@ -128,7 +150,6 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
             this.handStrength.visible = true;
             this.handStrength.html(hand.text).show();
         }
-
     },
     updatePlayer : function(player) {
         this.player = player;
@@ -138,9 +159,9 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.handlePlayerStatus();
     },
     handlePlayerStatus : function() {
-        if(this.player.tableStatus == Poker.PlayerTableStatus.SITTING_OUT) {
+        if (this.player.tableStatus == Poker.PlayerTableStatus.SITTING_OUT) {
             this.myActionsManager.onSitOut();
-        } else if(this.player.tableStatus == Poker.PlayerTableStatus.TOURNAMENT_OUT){
+        } else if (this.player.tableStatus == Poker.PlayerTableStatus.TOURNAMENT_OUT){
             this.myActionsManager.onTournamentOut();
         } else {
             this.myActionsManager.onSitIn();

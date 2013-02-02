@@ -20,6 +20,7 @@ package com.cubeia.games.poker.admin.wicket.pages.history;
 import java.util.Date;
 import java.util.List;
 
+import com.cubeia.poker.handhistory.api.*;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.ContextImage;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -35,19 +36,6 @@ import com.cubeia.games.poker.admin.Configuration;
 import com.cubeia.games.poker.admin.service.history.HistoryService;
 import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.games.poker.admin.wicket.util.ExternalLinkPanel;
-import com.cubeia.poker.handhistory.api.Amount;
-import com.cubeia.poker.handhistory.api.GameCard;
-import com.cubeia.poker.handhistory.api.GamePot;
-import com.cubeia.poker.handhistory.api.HandHistoryEvent;
-import com.cubeia.poker.handhistory.api.HandResult;
-import com.cubeia.poker.handhistory.api.HistoricHand;
-import com.cubeia.poker.handhistory.api.Player;
-import com.cubeia.poker.handhistory.api.PlayerAction;
-import com.cubeia.poker.handhistory.api.PlayerCardsDealt;
-import com.cubeia.poker.handhistory.api.PlayerCardsExposed;
-import com.cubeia.poker.handhistory.api.PotUpdate;
-import com.cubeia.poker.handhistory.api.Results;
-import com.cubeia.poker.handhistory.api.TableCardsDealt;
 
 public class ShowHand extends BasePage {
 
@@ -161,6 +149,11 @@ public class ShowHand extends BasePage {
                     PlayerCardsExposed exposed = (PlayerCardsExposed) event;
                     playerId.setObject(String.valueOf(exposed.getPlayerId()));
                     cards.setList(exposed.getCards());
+                } else if (event instanceof PlayerBestHand) {
+                    PlayerBestHand bestHand = (PlayerBestHand) event;
+                    playerId.setObject(String.valueOf(bestHand.getPlayerHand().getPlayerId()));
+                    cards.setList(bestHand.getPlayerHand().getCards());
+                    amount.setObject(bestHand.getBestHandType().toString());
                 }
             }
         };
