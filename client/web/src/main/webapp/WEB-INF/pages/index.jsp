@@ -610,11 +610,6 @@
                     <div class="action-button action-sit-in" style="display: none;">
                         <span>Sit-in</span>
                     </div>
-
-                    <div class="action-button action-hhl" style="display: none;">
-                        <span>HHL</span>
-                    </div>
-
                 </div>
             </div>
             <div id="myPlayerSeat-{{tableId}}Progressbar" class="circular-progress-bar">
