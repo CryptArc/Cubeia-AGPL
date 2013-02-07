@@ -32,6 +32,14 @@
       <property name="entityManagerFactory" ref="entityManagerFactory"/>
     </bean>
 
+    <bean id="walletClient" class="com.cubeia.backoffice.wallet.client.WalletServiceClientHTTP">
+        <constructor-arg value="${network.wallet-base-url}"/>
+    </bean>
+
+    <bean id="networkClient" class="com.cubeia.games.poker.admin.network.CubeiaNetworkClient">
+        <property name="walletClient" ref="walletClient" />
+    </bean>
+
     <!-- DataSource -->
 <!--
     <bean id="dataSource" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource">

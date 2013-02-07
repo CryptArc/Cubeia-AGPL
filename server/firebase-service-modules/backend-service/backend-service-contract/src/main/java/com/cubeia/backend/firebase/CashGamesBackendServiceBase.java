@@ -225,8 +225,8 @@ public abstract class CashGamesBackendServiceBase implements CashGamesBackendSer
     }
 
     @Override
-    public Money getMainAccountBalance(int playerId) throws GetBalanceFailedException {
-        return getCashGamesBackend().getMainAccountBalance(playerId);
+    public Money getAccountBalance(int playerId, String currency) throws GetBalanceFailedException {
+        return getCashGamesBackend().getAccountBalance(playerId, currency);
     }
 
     @Override

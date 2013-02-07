@@ -48,6 +48,7 @@ public class SimpleTableConfigTemplateProvider implements TableConfigTemplatePro
         t.setMinEmptyTables(5);
         t.setMinTables(10);
         t.setRakeSettings(createDefaultRakeSettings(new BigDecimal(0.02)));
+        t.setCurrency("EUR");
         return singletonList(t);
     }
 }

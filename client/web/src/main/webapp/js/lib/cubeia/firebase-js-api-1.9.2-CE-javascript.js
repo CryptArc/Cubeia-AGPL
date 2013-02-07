@@ -152,8 +152,23 @@ FIREBASE.ByteArray = function (array) {
         return arrayToSend
     };
     this.writeArray = function (byteArray) {
-        var newBuffer = this.buffer.concat(byteArray.buffer);
+        var source;
+        source = (byteArray instanceof Array && byteArray.length > 0) ? new FIREBASE.ByteArray(byteArray) : byteArray;
+        var newBuffer = this.buffer.concat(source.buffer);
         this.buffer = newBuffer
+    };
+    this.readArray = function (count) {
+        var i, len, element, target = [];
+        len = count || this.remaining();
+        for (i = 0;
+             i < len;
+             i++) {
+            element = this.readUnsignedByte();
+            if (typeof element !== "undefined") {
+                target.push(element)
+            }
+        }
+        return target
     }
 };
 FIREBASE.ByteArray.fromBase64String = function (input) {
@@ -244,7 +259,7 @@ FIREBASE.CometdAdapter = function (hostname, port, endpoint, secure, cometdAcces
         }
     }
     _instance.unregisterTransport("websocket");
-    _instance.configure({url:this.firebaseUrl});
+    _instance.configure({url: this.firebaseUrl});
     var _reportConnected = function () {
         _statusCallback(FIREBASE.ConnectionStatus.CONNECTED);
         _firstConnect = false
@@ -255,7 +270,7 @@ FIREBASE.CometdAdapter = function (hostname, port, endpoint, secure, cometdAcces
     };
     var _subscribe = function () {
         _instance.subscribe("/service/client", function (message) {
-            _dataCallback({data:org.cometd.JSON.toJSON(message.data)})
+            _dataCallback({data: org.cometd.JSON.toJSON(message.data)})
         })
     };
     var _connect = function () {
@@ -303,7 +318,7 @@ FIREBASE.CometdAdapter = function (hostname, port, endpoint, secure, cometdAcces
     }
 };
 var FIREBASE = FIREBASE || {};
-FIREBASE.ConnectionStatus = {CONNECTING:1, CONNECTED:2, DISCONNECTED:3, RECONNECTING:4, RECONNECTED:5, FAIL:6, CANCELLED:7, toString:function (status) {
+FIREBASE.ConnectionStatus = {CONNECTING: 1, CONNECTED: 2, DISCONNECTED: 3, RECONNECTING: 4, RECONNECTED: 5, FAIL: 6, CANCELLED: 7, toString: function (status) {
     var key;
     for (key in this) {
         if (this[key] === status) {
@@ -428,15 +443,6 @@ FIREBASE.Connector = function (packetCallback, lobbyCallback, loginCallback, sta
     this.getIOAdapter = function () {
         return _ioAdapter
     };
-    this.close = function() {
-        try {
-            this.cancel();
-            _ioAdapter.close();
-        } catch(e) {
-            console.log("exception thrown when closing connection");
-        }
-    };
-
     this.cancel = function () {
         if (_reconnecting) {
             clearTimeout(_reconnectTimer)
@@ -573,7 +579,7 @@ FIREBASE.Connector = function (packetCallback, lobbyCallback, loginCallback, sta
     }
 };
 var FIREBASE = FIREBASE || {};
-FIREBASE.ErrorCodes = {INVALID_IO_ADAPTER:1, BUFFER_UNDERRUN:2, RECONNECT_FAILED:3, IO_ADAPTER_ERROR:4};
+FIREBASE.ErrorCodes = {INVALID_IO_ADAPTER: 1, BUFFER_UNDERRUN: 2, RECONNECT_FAILED: 3, IO_ADAPTER_ERROR: 4};
 var FIREBASE = FIREBASE || {};
 FIREBASE.FirebaseException = function (errorCode, errorMessage) {
     this.name = "FIREBASE.FirebaseException";
@@ -600,7 +606,7 @@ if (!JSON) {
             return this.valueOf()
         }
     }
-    var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g, escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g, gap, indent, meta = {"\b":"\\b", "\t":"\\t", "\n":"\\n", "\f":"\\f", "\r":"\\r", '"':'\\"', "\\":"\\\\"}, rep;
+    var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g, escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g, gap, indent, meta = {"\b": "\\b", "\t": "\\t", "\n": "\\n", "\f": "\\f", "\r": "\\r", '"': '\\"', "\\": "\\\\"}, rep;
 
     function quote(string) {
         escapable.lastIndex = 0;
@@ -692,7 +698,7 @@ if (!JSON) {
             if (replacer && typeof replacer !== "function" && (typeof replacer !== "object" || typeof replacer.length !== "number")) {
                 throw new Error("JSON.stringify")
             }
-            return str("", {"":value})
+            return str("", {"": value})
         }
     }
     if (typeof JSON.parse !== "function") {
@@ -725,7 +731,7 @@ if (!JSON) {
             }
             if (/^[\],:{}\s]*$/.test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, "@").replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, "]").replace(/(?:^|:|,)(?:\s*\[)+/g, ""))) {
                 j = eval("(" + text + ")");
-                return typeof reviver === "function" ? walk({"":j}, "") : j
+                return typeof reviver === "function" ? walk({"": j}, "") : j
             }
             throw new SyntaxError("JSON.parse")
         }
@@ -801,7 +807,7 @@ var requirejs, require, define;
         } else {
             name = normalize(name, relName)
         }
-        return{f:prefix ? prefix + "!" + name : name, n:name, p:plugin}
+        return{f: prefix ? prefix + "!" + name : name, n: name, p: plugin}
     }
 
     function main(name, deps, callback, relName) {
@@ -824,7 +830,7 @@ var requirejs, require, define;
                             usingExports = true
                         } else {
                             if (depName === "module") {
-                                cjsModule = args[i] = {id:name, uri:"", exports:defined[name]}
+                                cjsModule = args[i] = {id: name, uri: "", exports: defined[name]}
                             } else {
                                 if (depName in defined) {
                                     args[i] = defined[depName]
@@ -894,7 +900,7 @@ var requirejs, require, define;
     define.amd = {}
 }());
 var FIREBASE = FIREBASE || {};
-FIREBASE.ReconnectStrategy = {MAX_ATTEMPTS:0, RECONNECT_START_INTERVAL:1000, INCREASE_THRESHOLD_COUNT:Infinity, INTERVAL_INCREMENT_STEP:200};
+FIREBASE.ReconnectStrategy = {MAX_ATTEMPTS: 0, RECONNECT_START_INTERVAL: 1000, INCREASE_THRESHOLD_COUNT: Infinity, INTERVAL_INCREMENT_STEP: 200};
 var FIREBASE = FIREBASE || {};
 var FB_PROTOCOL = FB_PROTOCOL || {};
 FIREBASE.Styx = function () {
@@ -1063,16 +1069,11 @@ FIREBASE.WebSocketAdapter = function (hostname, port, endpoint, secure, config) 
             _statusCallback(FIREBASE.ConnectionStatus.CONNECTED)
         };
         _socket.onmessage = function (msg) {
-            _dataCallback(msg);
+            _dataCallback(msg)
         };
         _socket.onclose = function () {
             _statusCallback(FIREBASE.ConnectionStatus.DISCONNECTED)
         }
-    };
-    this.unregisterHandlers  = function() {
-        _socket.onopen = null;
-        _socket.onmessage = null;
-        _socket.onclose = null;
     };
     this.connect = function (statusCallback, dataCallback) {
         _statusCallback = statusCallback;
@@ -1084,5 +1085,5 @@ FIREBASE.WebSocketAdapter = function (hostname, port, endpoint, secure, config) 
     };
     this.send = function (message) {
         _socket.send(message)
-    };
+    }
 };

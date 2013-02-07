@@ -127,9 +127,9 @@ public interface AsynchronousCashGamesBackend {
     BatchHandResponse batchHand(BatchHandRequest request) throws BatchHandFailedException;
 
     /**
-     * See {@link CashGamesBackend#getMainAccountBalance(int)} for documentation.
+     * See {@link CashGamesBackend#getAccountBalance(int, String)} for documentation.
      */
-    Money getMainAccountBalance(int playerId) throws GetBalanceFailedException;
+    Money getAccountBalance(int playerId, String currency) throws GetBalanceFailedException;
 
     /**
      * See {@link CashGamesBackend#getSessionBalance(PlayerSessionId)} for documentation.

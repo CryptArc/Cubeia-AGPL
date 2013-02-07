@@ -13,7 +13,7 @@ Poker.ConnectionPacketHandler = Class.extend({
         this.connectionManager = Poker.AppCtx.getConnectionManager();
     },
     handleLogin : function(status,playerId,name) {
-        if (status == "OK") {
+        if (status == FB_PROTOCOL.ResponseStatusEnum.OK) {
             this.connectionManager.onUserLoggedIn(playerId,name);
         } else {
             this.connectionManager.showConnectStatus("Connected (Login failed with status " + status+ ")");

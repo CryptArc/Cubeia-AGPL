@@ -38,11 +38,10 @@ public class CreateTable extends BasePage {
 
     private TableConfigTemplate table;
 
-
     public CreateTable(final PageParameters parameters) {
         super(parameters);
         table = new TableConfigTemplate();
-        table.setVariant(TEXAS_HOLDEM); // TODO: Add to form
+        table.setVariant(TEXAS_HOLDEM);
         table.setTiming(TimingFactory.getRegistry().getDefaultTimingProfile());
         table.setRakeSettings(new RakeSettings());
         table.setSeats(10);
@@ -60,9 +59,7 @@ public class CreateTable extends BasePage {
                 setResponsePage(ListTables.class);
             }
         };
-
         add(tableForm);
-
         add(new FeedbackPanel("feedback"));
     }
 

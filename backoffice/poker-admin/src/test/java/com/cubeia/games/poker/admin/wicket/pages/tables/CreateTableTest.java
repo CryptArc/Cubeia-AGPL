@@ -18,6 +18,7 @@
 package com.cubeia.games.poker.admin.wicket.pages.tables;
 
 import com.cubeia.games.poker.admin.db.AdminDAO;
+import com.cubeia.games.poker.admin.network.NetworkClient;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
@@ -32,12 +33,15 @@ public class CreateTableTest {
     @Mock
     private AdminDAO adminDao;
 
+    @Mock
+    private NetworkClient networkClient;
+
     private WicketTester tester;
 
     @Before
     public void setup() {
         initMocks(this);
-        tester = createWicketTester(adminDao);
+        tester = createWicketTester(adminDao, networkClient);
     }
 
     @Test

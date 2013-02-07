@@ -179,9 +179,9 @@ public class MockBackendAdapter implements CashGamesBackend {
     }
 
     @Override
-    public Money getMainAccountBalance(int playerId) {
-        log.debug("getMainAccountBalance is not implemented yet! Returning hardcoded value of 1337000");
-        return new Money(1337000, "EUR", 2);
+    public Money getAccountBalance(int playerId, String currency) throws GetBalanceFailedException {
+        log.debug("getAccountBalance is not implemented yet! Returning hardcoded value of 1337000");
+        return new Money(1337000, currency, 2);
     }
 
     private Money getBalance(PlayerSessionId sid) {

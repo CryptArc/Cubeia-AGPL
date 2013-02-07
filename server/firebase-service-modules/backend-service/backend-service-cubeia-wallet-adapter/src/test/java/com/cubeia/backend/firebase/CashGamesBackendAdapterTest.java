@@ -166,7 +166,8 @@ public class CashGamesBackendAdapterTest {
 
     @Test
     public void testBatchHand() throws BatchHandFailedException, SystemException {
-        backend.rakeAccountId = -5000;
+        long rakeAccountId = -5000L;
+        backend.rakeAccounts.put("EUR", rakeAccountId);
         String handId = "xyx";
         TableId tableId = new TableId(1, 344);
         Money totalRake = money(1000);
@@ -189,11 +190,11 @@ public class CashGamesBackendAdapterTest {
         TransactionResult txResult = mock(TransactionResult.class);
         AccountBalanceResult sessionBalance1 = new AccountBalanceResult(session1Id, walletMoney("11.11"));
         AccountBalanceResult sessionBalance2 = new AccountBalanceResult(session2Id, walletMoney("22.22"));
-        AccountBalanceResult rakeAccountBalance = new AccountBalanceResult(backend.rakeAccountId, walletMoney("1232322.22"));
+        AccountBalanceResult rakeAccountBalance = new AccountBalanceResult(rakeAccountId, walletMoney("1232322.22"));
         when(txResult.getBalances()).thenReturn(Arrays.asList(sessionBalance1, sessionBalance2, rakeAccountBalance));
 
         when(walletService.doTransaction(txCaptor.capture())).thenReturn(txResult);
-        when(accountLookupUtil.lookupOperatorAccountId(walletService, 0)).thenReturn(backend.rakeAccountId);
+        when(accountLookupUtil.lookupOperatorAccountId(walletService, 0)).thenReturn(rakeAccountId);
         BatchHandResponse batchHandResponse = backend.batchHand(request);
 
         TransactionRequest txRequest = txCaptor.getValue();
@@ -201,12 +202,12 @@ public class CashGamesBackendAdapterTest {
         assertThat(txEntries.size(), is(3));
         assertThat(findEntryByAccountId(session1Id, txEntries).getAmount().getAmount(), is(new BigDecimal("40.00")));
         assertThat(findEntryByAccountId(session2Id, txEntries).getAmount().getAmount(), is(new BigDecimal("-50.00")));
-        assertThat(findEntryByAccountId(backend.rakeAccountId, txEntries).getAmount().getAmount(), is(new BigDecimal("10.00")));
+        assertThat(findEntryByAccountId(rakeAccountId, txEntries).getAmount().getAmount(), is(new BigDecimal("10.00")));
 
         assertThat(batchHandResponse.getResultingBalances().size(), is(2));
-        assertThat(batchHandResponse.getResultingBalances().get(0).getBalance().getPlayerSessionId(), is((PlayerSessionId) playerSession1));
+        assertThat(batchHandResponse.getResultingBalances().get(0).getBalance().getPlayerSessionId(), is(playerSession1));
         assertThat(batchHandResponse.getResultingBalances().get(0).getBalance().getBalance().getAmount(), is(1111L));
-        assertThat(batchHandResponse.getResultingBalances().get(1).getBalance().getPlayerSessionId(), is((PlayerSessionId) playerSession2));
+        assertThat(batchHandResponse.getResultingBalances().get(1).getBalance().getPlayerSessionId(), is(playerSession2));
         assertThat(batchHandResponse.getResultingBalances().get(1).getBalance().getBalance().getAmount(), is(2222L));
     }
 
@@ -231,13 +232,6 @@ public class CashGamesBackendAdapterTest {
         return new com.cubeia.backoffice.accounting.api.Money("EUR", 2, new BigDecimal(amount));
     }
 
-    /*@Test
-    public void testGetMainAccountBalance() {
-        long mainAccountBalance = backend.getMainAccountBalance(434).getAmount();
-        // note: not implemented, always 500000 
-        assertThat(mainAccountBalance, is(500000L));
-    }*/
-
     @Test
     public void testGetSessionBalance() throws GetBalanceFailedException {
         long sessionId = 3939393L;
@@ -250,6 +244,6 @@ public class CashGamesBackendAdapterTest {
 
         BalanceUpdate balanceUpdate = backend.getSessionBalance(playerSessionId);
         assertThat(balanceUpdate.getBalance(), is(new Money(34343400L, "SEK", 2)));
-        assertThat(balanceUpdate.getPlayerSessionId(), is((PlayerSessionId) playerSessionId));
+        assertThat(balanceUpdate.getPlayerSessionId(), is(playerSessionId));
     }
 }

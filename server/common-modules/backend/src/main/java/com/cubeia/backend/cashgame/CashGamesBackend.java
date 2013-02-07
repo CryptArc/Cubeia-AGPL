@@ -43,6 +43,8 @@ import com.cubeia.games.poker.common.money.Money;
  * <p>This interface contains methods needed by a cash game (poker
  * for example) when interacting with a backend system (wallet). <p/>
  *
+ * TODO: This interface is used for tournament related backend calls as well, so we need to find a better name. Just "Backend" seems a bit vague.. :)
+ *
  * @author w
  */
 public interface CashGamesBackend {
@@ -97,10 +99,13 @@ public interface CashGamesBackend {
     BatchHandResponse batchHand(BatchHandRequest request) throws BatchHandFailedException;
 
     /**
-     * Returns the main account balance for the given player. This amount
+     * Returns the account balance for the given player and currency. This amount
      * does not include currency locked up in open sessions.
+     *
+     * @param playerId the id of the player
+     * @param currency the ISO 4217 code for the currency (a three letter string).
      */
-    Money getMainAccountBalance(int playerId) throws GetBalanceFailedException;
+    Money getAccountBalance(int playerId, String currency) throws GetBalanceFailedException;
 
     /**
      * Returns the balance of the given session.

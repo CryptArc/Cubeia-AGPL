@@ -18,6 +18,7 @@
 package com.cubeia.games.poker.admin.wicket.pages;
 
 import com.cubeia.games.poker.admin.db.AdminDAO;
+import com.cubeia.games.poker.admin.network.NetworkClient;
 import com.cubeia.games.poker.admin.service.history.HistoryService;
 import com.cubeia.poker.handhistory.api.HistoricHand;
 import com.cubeia.poker.handhistory.api.Results;
@@ -31,17 +32,22 @@ import static org.mockito.Mockito.mock;
 public class WicketTestHelper {
 
     public static WicketTester createWicketTester(AdminDAO adminDAO) {
-        return createWicketTester(mock(HistoryService.class), adminDAO);
+        return createWicketTester(mock(HistoryService.class), adminDAO, mock(NetworkClient.class));
+    }
+
+    public static WicketTester createWicketTester(AdminDAO adminDAO, NetworkClient networkClient) {
+        return createWicketTester(mock(HistoryService.class), adminDAO, networkClient);
     }
 
     public static WicketTester createWicketTester(HistoryService historyService) {
-        return createWicketTester(historyService, mock(AdminDAO.class));
+        return createWicketTester(historyService, mock(AdminDAO.class), mock(NetworkClient.class));
     }
 
-    public static WicketTester createWicketTester(HistoryService historyService, AdminDAO adminDAO) {
+    public static WicketTester createWicketTester(HistoryService historyService, AdminDAO adminDAO, NetworkClient networkClient) {
         ApplicationContextMock context = new ApplicationContextMock();
         context.putBean("historyService", historyService);
         context.putBean("adminDAO", adminDAO);
+        context.putBean("networkClient", networkClient);
         WicketTester tester = new WicketTester();
         tester.getApplication().getComponentInstantiationListeners().add(new SpringComponentInjector(tester.getApplication(), context));
         return tester;

@@ -485,9 +485,8 @@ public class BettingRound implements Round, BettingRoundContext {
         PokerPlayer player = playerToAct == null ? null : context.getPlayerInCurrentHand(playerToAct);
 
         if (player == null || player.hasActed()) {
-            // throw new IllegalStateException("Expected " + playerToAct + " to act, but that player can not be found at the table!");
             log.debug("Expected " + playerToAct + " to act, but that player can not be found at the table! I will assume everyone is all in");
-            return; // Are we allin?
+            return;
         }
         markPlayerForSittingOutNextHand(player);
         performDefaultActionForPlayer(player);

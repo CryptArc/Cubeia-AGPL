@@ -89,6 +89,9 @@ public class TableConfigTemplate implements Serializable {
     @Column(nullable = false)
     private long ttl;
 
+    @Column
+    private String currency;
+
     public long getTTL() {
         return ttl;
     }
@@ -324,5 +327,13 @@ public class TableConfigTemplate implements Serializable {
 
     public void setMaxBuyIn(int maxBuyIn) {
         this.maxBuyIn = maxBuyIn;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 }

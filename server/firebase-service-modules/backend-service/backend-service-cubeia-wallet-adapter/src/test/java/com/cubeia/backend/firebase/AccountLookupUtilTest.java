@@ -60,14 +60,14 @@ public class AccountLookupUtilTest {
         Account rakeAccount = mock(Account.class);
         Long rakeAccountId = -2000L;
         when(rakeAccount.getId()).thenReturn(rakeAccountId);
+        when(rakeAccount.getCurrencyCode()).thenReturn("EUR");
         when(accountQueryResult.getAccounts()).thenReturn(asList(rakeAccount));
         when(walletService.listAccounts(requestCaptor.capture())).thenReturn(accountQueryResult);
 
-        long lookupRakeAccountId = acl.lookupRakeAccountId(walletService);
+        long lookupRakeAccountId = acl.lookupRakeAccountId(walletService, "EUR");
         assertThat(lookupRakeAccountId, is(rakeAccountId));
 
         ListAccountsRequest lar = requestCaptor.getValue();
-        assertThat(lar.getLimit(), is(1));
         assertThat(lar.getStatuses(), is((Collection<AccountStatus>) asList(OPEN)));
         assertThat(lar.getTypes(), is((Collection<AccountType>) asList(SYSTEM_ACCOUNT)));
         assertThat(lar.getUserId(), is(CashGamesBackendAdapter.RAKE_ACCOUNT_USER_ID));

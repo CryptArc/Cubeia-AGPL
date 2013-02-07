@@ -2,7 +2,7 @@ This service provides configuration for the poker installation. It is implemente
 easier testing and mocking as well as code reuse. 
 
 The configuration is split up into several interfaces located in the API package. Default
-values can be modified by chaning the "Property" annotation on the getter methods. 
+values can be modified by changing the "Property" annotation on the getter methods.
 
 Real configuration should take place in the cluster configuration. For example, the defaults 
 in PokerActivatorConfig can be overridden by changing (or adding) the following properties in

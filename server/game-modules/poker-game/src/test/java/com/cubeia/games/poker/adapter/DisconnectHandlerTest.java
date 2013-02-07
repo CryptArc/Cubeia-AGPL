@@ -28,9 +28,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 
 import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 
 public class DisconnectHandlerTest {
@@ -58,7 +58,7 @@ public class DisconnectHandlerTest {
      */
     @Before
     public void setup() {
-        MockitoAnnotations.initMocks(this);
+        initMocks(this);
 
         handler.state = state;
         handler.adapter = adapter;

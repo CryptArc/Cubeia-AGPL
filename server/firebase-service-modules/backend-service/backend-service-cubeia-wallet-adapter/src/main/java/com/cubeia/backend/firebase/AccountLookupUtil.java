@@ -23,6 +23,7 @@ import static com.cubeia.backoffice.wallet.api.dto.Account.AccountType.OPERATOR_
 
 import static java.util.Arrays.asList;
 
+import com.cubeia.backoffice.wallet.api.dto.Account;
 import com.cubeia.backoffice.wallet.api.dto.Account.AccountStatus;
 import com.cubeia.backoffice.wallet.api.dto.AccountQueryResult;
 import com.cubeia.backoffice.wallet.api.dto.request.ListAccountsRequest;
@@ -31,22 +32,30 @@ import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
 
 public class AccountLookupUtil {
 
-    public long lookupRakeAccountId(WalletServiceContract walletService) throws SystemException {
+    public long lookupRakeAccountId(WalletServiceContract walletService, String currency) throws SystemException {
         ListAccountsRequest request = new ListAccountsRequest();
-        request.setLimit(1);
         request.setStatus(AccountStatus.OPEN);
         request.setTypes(asList(SYSTEM_ACCOUNT));
         request.setUserId(CashGamesBackendAdapter.RAKE_ACCOUNT_USER_ID);
         AccountQueryResult accounts = walletService.listAccounts(request);
-        if (accounts.getAccounts() == null || accounts.getAccounts().size() < 1) {
-            throw new SystemException("Error getting rake account. Looked for account matching: " + request);
+        for (Account account : accounts.getAccounts()) {
+            if (account.getCurrencyCode().equals(currency)) {
+                return account.getId();
+            }
         }
-        return accounts.getAccounts().iterator().next().getId();
+        throw new SystemException("Error getting rake account for currency " + currency + ". Looked for account matching: " + request);
     }
 
-    public long lookupMainAccountIdForPLayer(WalletServiceContract walletService, long playerId) {
+    /**
+     * Gets the account id for the account with the given playerId and currency code.
+     *
+     * @param walletService the service to use for doing the remote call
+     * @param playerId the id of the player who owns the account
+     * @param currency the currency code that the account should have
+     * @return the accountId of the matching account, or -1 if none found
+     */
+    public long lookupAccountIdForPLayerAndCurrency(WalletServiceContract walletService, long playerId, String currency) {
         ListAccountsRequest request = new ListAccountsRequest();
-        request.setLimit(1);
         request.setStatus(AccountStatus.OPEN);
         request.setTypes(asList(STATIC_ACCOUNT));
         request.setUserId(playerId);
@@ -54,7 +63,13 @@ public class AccountLookupUtil {
         if (accounts.getAccounts() == null || accounts.getAccounts().size() < 1) {
             return -1;
         }
-        return accounts.getAccounts().iterator().next().getId();
+
+        for (Account account : accounts.getAccounts()) {
+            if (account.getCurrencyCode().equals(currency)) {
+                return account.getId();
+            }
+        }
+        return -1;
     }
 
     public long lookupOperatorAccountId(WalletServiceContract walletService, long operatorId) throws SystemException {

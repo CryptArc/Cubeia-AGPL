@@ -49,6 +49,7 @@ import com.cubeia.games.poker.common.money.Money;
 import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
 import com.cubeia.network.wallet.firebase.domain.TransactionBuilder;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,13 +87,14 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
 
     protected AccountLookupUtil accountLookupUtil;
 
+    /**
+     * Maps currency to rake account.
+     */
     @VisibleForTesting
-    protected long rakeAccountId;
+    protected Map<String, Long> rakeAccounts = Maps.newHashMap();
 
     public CashGamesBackendAdapter(WalletServiceContract walletService, AccountLookupUtil accountLookupUtil) throws SystemException {
         this.walletService = walletService;
-        rakeAccountId = accountLookupUtil.lookupRakeAccountId(walletService);
-        log.debug("system rake account id = {}", rakeAccountId);
         this.accountLookupUtil = accountLookupUtil;
     }
 
@@ -118,9 +120,9 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
 
     @Override
     public AnnounceTableResponse announceTable(AnnounceTableRequest request) {
-        String extid = UUID.randomUUID().toString();
-        final AnnounceTableResponse response = new AnnounceTableResponse(new TableId(request.tableId, extid));
-        response.setProperty(CashGamesBackendService.MARKET_TABLE_REFERENCE_KEY, "CUBEIA-TABLE-ID::" + extid);
+        String uniqueId = UUID.randomUUID().toString();
+        final AnnounceTableResponse response = new AnnounceTableResponse(new TableId(request.tableId, uniqueId));
+        response.setProperty(CashGamesBackendService.MARKET_TABLE_REFERENCE_KEY, "CUBEIA-TABLE-ID::" + uniqueId);
         return response;
     }
 
@@ -230,7 +232,8 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
             TransactionResult txResult = walletService.doTransaction(txRequest);
 
             // Return result.
-            return createBatchHandResponse(sessionToPlayerSessionMap, txResult);
+            String currencyCode = request.getTotalRake().getCurrencyCode();
+            return createBatchHandResponse(sessionToPlayerSessionMap, txResult, currencyCode);
         } catch (UnbalancedTransactionException ute) {
             throw new BatchHandFailedException("error reporting hand result", ute);
         } catch (Exception e) {
@@ -260,13 +263,26 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
             try {
                 txBuilder.entry(accountLookupUtil.lookupOperatorAccountId(walletService, rakeEntry.getKey()), convertToWalletMoney(rakeEntry.getValue()).getAmount());
             } catch (SystemException e) {
-                txBuilder.entry(rakeAccountId, convertToWalletMoney(rakeEntry.getValue()).getAmount());
+                txBuilder.entry(getRakeAccount(rakeEntry.getValue().getCurrencyCode()), convertToWalletMoney(rakeEntry.getValue()).getAmount());
             }
 
         }
         txBuilder.comment("poker hand result");
         txBuilder.attribute("pokerTableId", String.valueOf((request.getTableId()).integrationId)).attribute("pokerGameId", String.valueOf(GAME_ID)).attribute(
                 "pokerHandId", request.getHandId());
+    }
+
+    private long getRakeAccount(String currencyCode) {
+        if (!rakeAccounts.containsKey(currencyCode)) {
+            long value;
+            try {
+                value = accountLookupUtil.lookupRakeAccountId(walletService, currencyCode);
+            } catch (SystemException e) {
+                throw new RuntimeException("No rake account found for currency " + currencyCode);
+            }
+            rakeAccounts.put(currencyCode, value);
+        }
+        return rakeAccounts.get(currencyCode);
     }
 
     private void createHandResultEntries(BatchHandRequest request, TransactionBuilder txBuilder, HashMap<Long, PlayerSessionId> sessionToPlayerSessionMap) {
@@ -283,10 +299,10 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
         }
     }
 
-    private BatchHandResponse createBatchHandResponse(HashMap<Long, PlayerSessionId> sessionToPlayerSessionMap, TransactionResult txResult) {
+    private BatchHandResponse createBatchHandResponse(HashMap<Long, PlayerSessionId> sessionToPlayerSessionMap, TransactionResult txResult, String currency) {
         List<TransactionUpdate> resultingBalances = new ArrayList<TransactionUpdate>();
         for (AccountBalanceResult sb : txResult.getBalances()) {
-            if (sb.getAccountId() != rakeAccountId) {
+            if (sb.getAccountId() != getRakeAccount(currency)) {
                 PlayerSessionId playerSessionId = sessionToPlayerSessionMap.get(sb.getAccountId());
                 Money balance = convertFromWalletMoney(sb.getBalance());
                 BalanceUpdate balanceUpdate = new BalanceUpdate(playerSessionId, balance, nextId());
@@ -297,12 +313,16 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
     }
 
     @Override
-    public Money getMainAccountBalance(int playerId) {
-        long accountId = this.accountLookupUtil.lookupMainAccountIdForPLayer(walletService, playerId);
+    public Money getAccountBalance(int playerId, String currency) throws GetBalanceFailedException {
+        long accountId = this.accountLookupUtil.lookupAccountIdForPLayerAndCurrency(walletService, playerId, currency);
         log.debug("Found account ID {} for player {}", accountId, playerId);
-        Money m = convertFromWalletMoney(walletService.getBalance(accountId).getBalance());
-        log.debug("Found balance {} for player {}", m, playerId);
-        return m;
+        if (accountId == -1) {
+            log.warn("No account found for " + playerId + " and currency " + currency + ". Returning zero money.");
+            return new Money(0, currency, 2);
+        }
+        Money money = convertFromWalletMoney(walletService.getBalance(accountId).getBalance());
+        log.debug("Found balance {} for player {}", money, playerId);
+        return money;
     }
 
     @Override
@@ -329,7 +349,7 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
     public void transferMoneyToRakeAccount(PlayerSessionId fromAccount, Money money, String comment) {
         TransactionBuilder txBuilder = new TransactionBuilder(money.getCurrencyCode(), money.getFractionalDigits());
         txBuilder.entry(getWalletSessionIdByPlayerSessionId(fromAccount), convertToWalletMoney(money.negate()).getAmount());
-        txBuilder.entry(rakeAccountId, convertToWalletMoney(money).getAmount());
+        txBuilder.entry(getRakeAccount(money.getCurrencyCode()), convertToWalletMoney(money).getAmount());
         txBuilder.comment(comment);
         TransactionRequest txRequest = txBuilder.toTransactionRequest();
         log.debug("sending tx request to wallet: {}", txRequest);

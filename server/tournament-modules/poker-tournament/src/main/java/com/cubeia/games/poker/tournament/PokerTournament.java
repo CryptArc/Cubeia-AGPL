@@ -612,9 +612,9 @@ public class PokerTournament implements Serializable {
     }
 
     private void transferFeesToRakeAccount() {
+        // TODO: Investigate scaling implications.
         for (PlayerSessionId playerSessionId : pokerState.getPlayerSessions()) {
             Money fee = pokerState.getFeeAsMoney();
-
             backend.transferMoneyToRakeAccount(playerSessionId, fee, "Fee for tournament " + pokerState.getHistoricId());
         }
     }
