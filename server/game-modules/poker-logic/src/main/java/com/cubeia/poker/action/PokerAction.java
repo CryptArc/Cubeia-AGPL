@@ -17,6 +17,9 @@
 
 package com.cubeia.poker.action;
 
+import com.cubeia.poker.handhistory.api.Amount;
+import com.cubeia.poker.handhistory.api.PlayerAction;
+
 import java.io.Serializable;
 
 
@@ -74,6 +77,20 @@ public class PokerAction implements Serializable {
         this.timeout = timeout;
     }
 
+    public PlayerAction translate() {
+        PlayerAction a = new PlayerAction(getPlayerId());
+        a.setAction(getActionType().translate());
+        if (getBetAmount() != -1) {
+            a.setAmount(Amount.bet(getBetAmount()));
+        } else if (getRaiseAmount() != -1) {
+            a.setAmount(Amount.raise(getRaiseAmount()));
+        } else if (getStackAmount() != -1) {
+            a.setAmount(Amount.stack(getStackAmount()));
+        }
+        a.setTimeout(isTimeout());
+        return a;
+    }
+
     public String toString() {
         return "PokerAction - pid[" + playerId + "] type[" + actionType + "] timeout[" + timeout + "] amount[" + betAmount + "]";
     }
@@ -118,6 +135,4 @@ public class PokerAction implements Serializable {
     public void setStackAmount(long stackAmount) {
         this.stackAmount = stackAmount;
     }
-
-
 }

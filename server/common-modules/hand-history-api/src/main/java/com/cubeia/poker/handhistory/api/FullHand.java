@@ -22,15 +22,25 @@ import java.util.*;
 
 public class FullHand implements Serializable {
 
-    private static final long serialVersionUID = -2752469271577019534L;
-    public final static int MAX_CARDS = 7;
+    private static final long serialVersionUID = 2917191829069366555L;
 
-    private final Integer playerId;
+    private Integer playerId;
     private List<GameCard> cards = new ArrayList<GameCard>();
+
+    public FullHand() {
+    }
 
     public FullHand(Integer playerId, List<GameCard> cards) {
         this.playerId = playerId;
         this.cards = cards;
+    }
+
+    public Integer getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(Integer playerId) {
+        this.playerId = playerId;
     }
 
     public List<GameCard> getCards() {
@@ -39,10 +49,6 @@ public class FullHand implements Serializable {
 
     public void setCards(List<GameCard> cards) {
         this.cards = cards;
-    }
-
-    public Integer getPlayerId() {
-        return playerId;
     }
 
     @Override

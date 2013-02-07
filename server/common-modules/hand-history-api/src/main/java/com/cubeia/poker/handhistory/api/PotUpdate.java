@@ -22,9 +22,9 @@ import java.util.List;
 
 public class PotUpdate extends HandHistoryEvent {
 
-    private static final long serialVersionUID = -5809886423688004437L;
-	
-    private final List<GamePot> pots = new LinkedList<GamePot>();
+    private static final long serialVersionUID = -7029713511615986370L;
+
+    private List<GamePot> pots = new LinkedList<GamePot>();
 
     public PotUpdate() {
     }
@@ -39,33 +39,34 @@ public class PotUpdate extends HandHistoryEvent {
         return pots;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((pots == null) ? 0 : pots.hashCode());
-        return result;
+    public void setPots(List<GamePot> pots) {
+        this.pots = pots;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        PotUpdate other = (PotUpdate) obj;
-        if (pots == null) {
-            if (other.pots != null)
-                return false;
-        } else if (!pots.equals(other.pots))
-            return false;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        PotUpdate potUpdate = (PotUpdate) o;
+
+        if (pots != null ? !pots.equals(potUpdate.pots) : potUpdate.pots != null) return false;
+
         return true;
     }
 
     @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (pots != null ? pots.hashCode() : 0);
+        return result;
+    }
+
+    @Override
     public String toString() {
-        return "PotUpdate [pots=" + pots + "]";
+        return "PotUpdate{" +
+                "pots=" + pots +
+                '}';
     }
 }

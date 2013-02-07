@@ -404,7 +404,7 @@ public class TexasHoldemTest {
         assertEquals(1200L, result.getWinningsIncludingOwnBets());
         assertEquals(Integer.valueOf(102), ratedPlayerHand.getPlayerId());
         assertThat(ratedPlayerHand.getBestHandCards(), is(new Hand("AC 9C 8C 6C 5C").getCards()));
-        assertEquals(HandType.FLUSH, ratedPlayerHand.getBestHandType());
+        assertEquals(HandType.FLUSH, ratedPlayerHand.getHandInfo().getHandType());
     }
 
     @Test

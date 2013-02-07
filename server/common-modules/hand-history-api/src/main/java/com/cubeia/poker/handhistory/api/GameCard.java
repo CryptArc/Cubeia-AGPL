@@ -38,7 +38,10 @@ public class GameCard implements Serializable {
         KING("K"),
         ACE("A");
 
-        private final String abbreviation;
+        private String abbreviation;
+
+        private Rank() {
+        }
 
         Rank(String abbreviation) {
             this.abbreviation = abbreviation;
@@ -46,6 +49,17 @@ public class GameCard implements Serializable {
 
         public String getAbbreviation() {
             return abbreviation;
+        }
+
+        public void setAbbreviation(String abbreviation) {
+            this.abbreviation = abbreviation;
+        }
+
+        @Override
+        public String toString() {
+            return "Rank{" +
+                    "abbreviation='" + abbreviation + '\'' +
+                    '}';
         }
     }
 
@@ -67,41 +81,47 @@ public class GameCard implements Serializable {
         this.rank = rank;
     }
 
-    public Rank getRank() {
-        return rank;
-    }
-
     public Suit getSuit() {
         return suit;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((rank == null) ? 0 : rank.hashCode());
-        result = prime * result + ((suit == null) ? 0 : suit.hashCode());
-        return result;
+    public void setSuit(Suit suit) {
+        this.suit = suit;
+    }
+
+    public Rank getRank() {
+        return rank;
+    }
+
+    public void setRank(Rank rank) {
+        this.rank = rank;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        GameCard other = (GameCard) obj;
-        if (rank != other.rank)
-            return false;
-        if (suit != other.suit)
-            return false;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        GameCard gameCard = (GameCard) o;
+
+        if (rank != gameCard.rank) return false;
+        if (suit != gameCard.suit) return false;
+
         return true;
     }
 
     @Override
+    public int hashCode() {
+        int result = suit != null ? suit.hashCode() : 0;
+        result = 31 * result + (rank != null ? rank.hashCode() : 0);
+        return result;
+    }
+
+    @Override
     public String toString() {
-        return "{" + suit + " " + rank + "}";
+        return "GameCard{" +
+                "suit=" + suit +
+                ", rank=" + rank +
+                '}';
     }
 }

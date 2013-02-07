@@ -17,7 +17,13 @@
 
 package com.cubeia.poker.hand;
 
+import com.cubeia.poker.handhistory.api.BestHandType;
+import com.cubeia.poker.handhistory.api.GameCard;
+import com.cubeia.poker.handhistory.api.HandInfoCommon;
+import com.cubeia.poker.handhistory.api.HandStrengthCommon;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -98,7 +104,7 @@ import java.util.List;
  *
  * @author Fredrik Johansson, Cubeia Ltd
  */
-public class HandStrength implements HandInfo {
+public class HandStrength extends HandInfo {
 
     private final HandType type;
 
@@ -134,7 +140,6 @@ public class HandStrength implements HandInfo {
      */
     private List<Card> cardsUsedInHand;
 
-
     /* ----------------------------------------------------
       *
       * 	CONSTRUCTORS
@@ -150,7 +155,6 @@ public class HandStrength implements HandInfo {
         this.cardsUsedInHand = cardsUsedInHand;
         this.groups = groups;
     }
-
 
     /* ----------------------------------------------------
       *
@@ -203,6 +207,20 @@ public class HandStrength implements HandInfo {
         return cardsUsedInHand;
     }
 
+    @Override
+    public HandStrengthCommon translate() {
+        int groupSize = getGroupSize();
+        ArrayList<List<GameCard>> lists = new ArrayList<List<GameCard>>();
+        for(int i = 0; i < groupSize; i++)
+        {
+            lists.add(Card.translateCards(getGroup(i)));
+        }
+        return new HandStrengthCommon(getHandType().translate(), Card.translateCards(getCards()),
+                (getHighestRank() == null) ? null : getHighestRank().translate(),
+                (getSecondRank() == null) ? null : getSecondRank().translate(),
+                Card.translateCards(getKickerCards()), lists);
+    }
+
     public void setCardsUsedInHand(List<Card> cardsUsedInHand) {
         this.cardsUsedInHand = cardsUsedInHand;
     }
@@ -226,5 +244,4 @@ public class HandStrength implements HandInfo {
     public int getGroupSize() {
         return groups.length;
     }
-
 }

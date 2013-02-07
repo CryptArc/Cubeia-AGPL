@@ -17,11 +17,15 @@
 
 package com.cubeia.poker.hand;
 
+import com.cubeia.poker.handhistory.api.HandInfoCommon;
+
 import java.util.List;
 
-public interface HandInfo {
+public abstract class HandInfo {
 
-    HandType getHandType();
+    public abstract HandType getHandType();
 
-    List<Card> getCards();
+    public abstract List<Card> getCards();
+
+    public abstract HandInfoCommon translate();
 }

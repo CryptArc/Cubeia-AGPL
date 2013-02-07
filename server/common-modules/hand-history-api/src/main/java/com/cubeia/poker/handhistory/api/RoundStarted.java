@@ -21,7 +21,10 @@ public class RoundStarted extends HandHistoryEvent {
 
     private static final long serialVersionUID = 8634217495648381990L;
 
-	@Override
+    public RoundStarted() {
+    }
+
+    @Override
     public String toString() {
         return "RoundStarted []";
     }
