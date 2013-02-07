@@ -2,12 +2,11 @@ package com.cubeia.games.poker.admin.wicket;
 
 
 import com.cubeia.games.poker.admin.wicket.jmx.Clients;
+import com.cubeia.games.poker.admin.wicket.pages.history.HandHistory;
+import com.cubeia.games.poker.admin.wicket.pages.history.ShowHand;
 import com.cubeia.games.poker.admin.wicket.pages.rakes.CreateRake;
 import com.cubeia.games.poker.admin.wicket.pages.rakes.EditRake;
 import com.cubeia.games.poker.admin.wicket.pages.rakes.ListRakes;
-import com.cubeia.network.shared.web.wicket.navigation.PageNode;
-import com.cubeia.games.poker.admin.wicket.pages.history.HandHistory;
-import com.cubeia.games.poker.admin.wicket.pages.history.ShowHand;
 import com.cubeia.games.poker.admin.wicket.pages.tables.CreateTable;
 import com.cubeia.games.poker.admin.wicket.pages.tables.EditTable;
 import com.cubeia.games.poker.admin.wicket.pages.tables.ListTables;
@@ -25,12 +24,14 @@ import com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled.ListTourn
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo.CreateSitAndGo;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo.EditSitAndGo;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo.ListSitAndGoTournaments;
-import org.apache.wicket.Page;
+import com.cubeia.network.shared.web.wicket.navigation.PageNode;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.cubeia.network.shared.web.wicket.navigation.PageNodeUtils.*;
+import static com.cubeia.network.shared.web.wicket.navigation.PageNodeUtils.add;
+import static com.cubeia.network.shared.web.wicket.navigation.PageNodeUtils.node;
+import static com.cubeia.network.shared.web.wicket.navigation.PageNodeUtils.nodeWithChildren;
 
 public class SiteMap {
 
@@ -52,7 +53,8 @@ public class SiteMap {
                 nodeWithChildren("Blinds Structures", ListBlindsStructures.class, "icon-list-alt",
                         node("Create/Edit Blinds Structure", CreateOrEditBlindsStructure.class, false)),
                 nodeWithChildren("Payout Structures", ListPayoutStructures.class, "icon-gift",
-                        node("Create/Edit Payout Structure", CreateOrEditPayoutStructure.class, false))
+                        node("Create/Edit Payout Structure", CreateOrEditPayoutStructure.class, false)),
+                node("Tournament History", SearchTournamentHistory.class, "icon-book")
                 );
 
         add(pages,"Table Templates", ListTables.class, "icon-list-alt",
@@ -68,7 +70,7 @@ public class SiteMap {
 
         add(pages,"Live Players", Clients.class, "icon-user");
 
-        add(pages,"Tournament History", SearchTournamentHistory.class, "icon-book");
+
     }
 
 
