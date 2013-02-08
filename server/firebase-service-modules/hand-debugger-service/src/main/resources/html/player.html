@@ -1,0 +1,64 @@
+<html>
+<head>
+    <script type="text/javascript" src="jquery.js"></script>
+    <link rel=StyleSheet href="style.css" type="text/css">
+
+    <script type="text/javascript">
+
+        //var dummyJson = '{"players":[{"tableId":"14","playerId":"3","name":"snubben10","isSittingIn":"true","balance":"100","betstack":"0","timestamp":"2011-10-31T16:58:26.421+01:00"},{"tableId":"14","playerId":"4","name":"snubben11","isSittingIn":"true","balance":"100","betstack":"0","timestamp":"2011-10-31T16:58:26.421+01:00"}]}';
+
+        $.urlParam = function(name) {
+            var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
+            if (!results) {
+                return 0;
+            }
+            return results[1] || 0;
+        }
+
+        // Get table id from URL parameters
+        var tableId = $.urlParam("tableid");
+        //var playerId = $.urlParam("playerid");
+
+
+        function createPlayerList(players, element) {
+            var items = [];
+            $.each(players, function(key, val) {
+                var playerStr = '<p>';
+                $.each(val, function(playerKey, playerVal) {
+                    playerStr += '' + playerKey + ' = ' + playerVal + "<br/>";
+                });
+
+                playerStr += '</p>';
+                items.push(playerStr);
+            });
+
+            $('<div/>', {
+                html: items.join('')
+            }).appendTo(element);
+        }
+
+
+    </script>
+
+</head>
+
+<body>
+<div class="header"><h1 id="tableHeader"></h1></div>
+<br/>
+
+<div id="players"></div>
+<br/>
+
+<script>
+    /*createPlayerList(eval('(' + dummyJson + ')').players, '#players');		*/
+    $.getJSON('/api/player/table/' + tableId, function(data) {
+        $("#tableHeader").html("Poker Table " + tableId);
+        $('#current').append('<h3>Current Hand</h3>');
+        createPlayerList(data.players, '#players');
+    });
+
+</script>
+
+
+</body>
+</html>
