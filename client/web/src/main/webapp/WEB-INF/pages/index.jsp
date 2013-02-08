@@ -10,7 +10,7 @@
     <link rel="apple-touch-icon" href="${cp}/skins/${skin}/images/lobby/icon.png" />
 
     <!-- All less files are imported in this base.less-->
-    <link rel="stylesheet/less" type="text/css" href="${cp}/skins/${skin}/less/base.less" />
+    <link id="skinCss" rel="stylesheet/less" type="text/css" href="${cp}/skins/${skin}/less/base.less" />
 
     <script type="text/javascript" src="${cp}/skins/${skin}/skin-config.js"></script>
     <script type="text/javascript" src="${cp}/skins/${skin}/preload-images.js"></script>
@@ -143,7 +143,29 @@
             });
         </script>
     </c:if>
+    <script type="text/javascript">
 
+        <c:set var="CUBEIA_CLASSIC" value="cubeiaclassic"/>
+        <c:choose>
+            <c:when test="${skin eq CUBEIA_CLASSIC}">
+                var currentSkin = "${CUBEIA_CLASSIC}";
+                function changeSkin() {
+                    if(currentSkin == "${CUBEIA_CLASSIC}") {
+                        currentSkin = "cubeia";
+                    } else {
+                        currentSkin = "${CUBEIA_CLASSIC}";
+                    }
+
+                   $("#skinCss").attr("href","${cp}/skins/" + currentSkin + "/lcss/base.css");
+                }
+            </c:when>
+            <c:otherwise>
+                function changeSkin() {
+                    $("body").toggleClass("skin-classic");
+                }
+            </c:otherwise>
+        </c:choose>
+    </script>
     <script type="text/javascript">
 
         var contextPath = "${cp}";
@@ -157,9 +179,10 @@
             less.watch(); //development only
             $(".describe").describe();
 
+
             //TODO: remove later, probably wont be a button in the toolbar
             $("#skinButton").click(function(e){
-                $("body").toggleClass("skin-classic");
+                changeSkin();
                 $("#classic").toggle();
                 $("#modern").toggle();
             });
