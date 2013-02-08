@@ -70,9 +70,8 @@ public class ShowHand extends BasePage {
                 item.add(new Label("seat", String.valueOf(player.getSeatId())));
                 item.add(new Label("bet", formatAmount(resultsForPlayer.getTotalBet())));
                 String net = formatAmount(resultsForPlayer.getNetWin());
-                HandResult handResult = resultsForPlayer;
-                if (handResult.getTransactionId() != null) {
-                    item.add(new ExternalLinkPanel("net", net, createTransactionLink(handResult)));
+                if (resultsForPlayer.getTransactionId() != null) {
+                    item.add(new ExternalLinkPanel("net", net, createTransactionLink(resultsForPlayer)));
                 } else {
                     item.add(new Label("net", net));
                 }
@@ -152,8 +151,31 @@ public class ShowHand extends BasePage {
                 } else if (event instanceof PlayerBestHand) {
                     PlayerBestHand bestHand = (PlayerBestHand) event;
                     playerId.setObject(String.valueOf(bestHand.getPlayerHand().getPlayerId()));
-                    cards.setList(bestHand.getPlayerHand().getCards());
-                    amount.setObject(bestHand.getBestHandType().toString());
+                    HandStrengthCommon handInfo = null;
+                    //if (bestHand.getHandInfoCommon().getClass().equals(HandStrengthCommon.class))
+                    {
+                        handInfo = (HandStrengthCommon)bestHand.getHandInfoCommon();
+                    }
+                    if (handInfo != null)
+                    {
+                        cards.setList(handInfo.getCardsUsedInHand());
+                        amount.setObject(handInfo.getHandType().toString());
+                        //-----------------------------------------------------------------------------------
+//                        HandHistoryEvent event2 = item.getModelObject();
+//                        Model<String> action2 = new Model<String>();
+//                        Model<String> amount2 = new Model<String>();
+//                        Model<String> playerId2 = new Model<String>();
+//                        CardList cards2 = new CardList("cards");
+//                        item.add(new Label("type", event2.getType()));
+//                        item.add(new Label("time", new Date(event2.getTime()).toString()));
+//                        item.add(new Label("action", action2));
+//                        item.add(new Label("amount", amount2));
+//                        item.add(cards2);
+//                        item.add(new Label("playerId", playerId2));
+//                        playerId2.setObject(String.valueOf(bestHand.getPlayerHand().getPlayerId()));
+//                        cards2.setList(handInfo.getKickerCards());
+                        //-----------------------------------------------------------------------------------
+                    }
                 }
             }
         };

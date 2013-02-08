@@ -22,41 +22,45 @@ import java.util.List;
 
 public class TableCardsDealt extends HandHistoryEvent {
 
-    private static final long serialVersionUID = 3105147087617166251L;
-	
-    private final List<GameCard> cards = new LinkedList<GameCard>();
+    private static final long serialVersionUID = 6322225843634715778L;
+
+    private List<GameCard> cards = new LinkedList<GameCard>();
+
+    public TableCardsDealt() {
+    }
 
     public List<GameCard> getCards() {
         return cards;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((cards == null) ? 0 : cards.hashCode());
-        return result;
+    public void setCards(List<GameCard> cards) {
+        this.cards = cards;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        TableCardsDealt other = (TableCardsDealt) obj;
-        if (cards == null) {
-            if (other.cards != null)
-                return false;
-        } else if (!cards.equals(other.cards))
-            return false;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        TableCardsDealt that = (TableCardsDealt) o;
+
+        if (cards != null ? !cards.equals(that.cards) : that.cards != null) return false;
+
         return true;
     }
 
     @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (cards != null ? cards.hashCode() : 0);
+        return result;
+    }
+
+    @Override
     public String toString() {
-        return "TableCardsDealt [cards=" + cards + "]";
+        return "TableCardsDealt{" +
+                "cards=" + cards +
+                '}';
     }
 }

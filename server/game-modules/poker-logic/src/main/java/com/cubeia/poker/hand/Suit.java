@@ -17,6 +17,8 @@
 
 package com.cubeia.poker.hand;
 
+import com.cubeia.poker.handhistory.api.GameCard;
+
 /**
  * Suits.
  * The order of the enums are ascending rank according to: http://www.pagat.com/poker/rules/ranking.html#suit
@@ -34,6 +36,10 @@ public enum Suit {
 
     private Suit(int telesinaSuitValue) {
         this.telesinaSuitValue = telesinaSuitValue;
+    }
+
+    public GameCard.Suit translate() {
+        return GameCard.Suit.values()[ordinal()];
     }
 
     public String toShortString() {

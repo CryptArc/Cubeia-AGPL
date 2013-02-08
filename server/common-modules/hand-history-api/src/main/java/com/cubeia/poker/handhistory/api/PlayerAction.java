@@ -28,7 +28,6 @@ public class PlayerAction extends HandHistoryEvent {
     private Type action;
     private Amount amount;
     private boolean timeout;
-
     private int playerId;
 
     public PlayerAction() {
@@ -57,52 +56,42 @@ public class PlayerAction extends HandHistoryEvent {
         this.action = action;
     }
 
-    public void setAmount(Amount amount) {
-        this.amount = amount;
-    }
-
     public Amount getAmount() {
         return amount;
     }
 
-    public boolean isTimout() {
+    public void setAmount(Amount amount) {
+        this.amount = amount;
+    }
+
+    public boolean isTimeout() {
         return timeout;
     }
 
-    public void setTimout(boolean timout) {
-        this.timeout = timout;
+    public void setTimeout(boolean timeout) {
+        this.timeout = timeout;
     }
 
     public int getPlayerId() {
         return playerId;
     }
 
+    public void setPlayerId(int playerId) {
+        this.playerId = playerId;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
 
         PlayerAction that = (PlayerAction) o;
 
-        if (playerId != that.playerId) {
-            return false;
-        }
-        if (timeout != that.timeout) {
-            return false;
-        }
-        if (action != that.action) {
-            return false;
-        }
-        if (amount != null ? !amount.equals(that.amount) : that.amount != null) {
-            return false;
-        }
+        if (playerId != that.playerId) return false;
+        if (timeout != that.timeout) return false;
+        if (action != that.action) return false;
+        if (amount != null ? !amount.equals(that.amount) : that.amount != null) return false;
 
         return true;
     }
@@ -119,6 +108,11 @@ public class PlayerAction extends HandHistoryEvent {
 
     @Override
     public String toString() {
-        return "PlayerAction [action=" + action + ", amount=" + amount + ", timeout=" + timeout + ", playerId=" + playerId + "]";
+        return "PlayerAction{" +
+                "action=" + action +
+                ", amount=" + amount +
+                ", timeout=" + timeout +
+                ", playerId=" + playerId +
+                '}';
     }
 }

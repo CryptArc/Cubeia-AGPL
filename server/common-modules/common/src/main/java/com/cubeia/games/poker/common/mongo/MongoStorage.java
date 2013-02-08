@@ -17,9 +17,11 @@
 
 package com.cubeia.games.poker.common.mongo;
 
+import com.google.code.morphia.Datastore;
+import com.google.code.morphia.Morphia;
+import com.google.code.morphia.query.Query;
 import com.mongodb.*;
 import org.apache.log4j.Logger;
-import org.bson.types.ObjectId;
 
 import java.net.UnknownHostException;
 
@@ -29,13 +31,10 @@ import java.net.UnknownHostException;
 public class MongoStorage {
 
     private static final Logger log = Logger.getLogger(MongoStorage.class);
-
-    private Mongo db;
-
+    private Morphia morphia = null;
+    private Datastore datastore = null;
     private String host;
-
     private int port;
-
     private String databaseName;
 
     public MongoStorage(DatabaseStorageConfiguration configuration) {
@@ -44,49 +43,40 @@ public class MongoStorage {
         databaseName = configuration.getDatabaseName();
     }
 
-    public DBCollection getCollection(String collection)
-    {
-        return db().getCollection(collection);
+    public void persist(Object object) {
+        datastore.save(object);
     }
 
-    public void persist(DBObject dbObject, String collection) {
-        getCollection(collection).insert(dbObject);
-    }
-
-    public void update(DBObject objectToUpdate, DBObject update, String collection) {
-        getCollection(collection).update(objectToUpdate, update);
-    }
-
-    public DBObject getById(ObjectId id, String collection) {
-        BasicDBObject query = new BasicDBObject();
-        query.put("_id", id);
-        return getCollection(collection).findOne(query);
-    }
-
-    public DBCursor findByQuery(BasicDBObject query, String collection) {
-        return getCollection(collection).find(query);
-    }
-
-    public DBCursor findByQuery(BasicDBObject query, String collection, DBObject projectedFields) {
-        return getCollection(collection).find(query, projectedFields);
-    }
-
-    private DB db() {
-        try {
-            if (db == null) {
-                db = connectToMongo();
-            }
-            return db.getDB(databaseName);
-        } catch (Exception e) {
-            log.warn("Could not connect to mongo on host " + host + " port " + port, e);
-            return null;
+    public void map(Class classType) {
+        if (morphia != null && datastore != null)
+        {
+            morphia.map(classType);
+//            datastore.ensureIndexes();
         }
     }
 
-    private Mongo connectToMongo() throws UnknownHostException {
-        return new Mongo(host.trim(), port);
+    public DBCollection getCollection(String name)
+    {
+        if (datastore != null && datastore.getMongo() != null)
+        {
+            try {
+                return datastore.getDB().getCollection(name);
+            } catch (Exception e) {
+                log.error("Could not get collection from mongo db. Collection name: " + name);
+            }
+        }
+        return null;
     }
 
+    public Query createQuery(Class classType)
+    {
+        return datastore.createQuery(classType);
+    }
+
+    private void connectToMongo() throws UnknownHostException {
+        morphia = new Morphia();
+        datastore = morphia.createDatastore(new Mongo(host.trim(), port), databaseName);
+    }
 
     public void connect() {
         try {
@@ -97,9 +87,9 @@ public class MongoStorage {
     }
 
     public void disconnect() {
-        if (db != null) {
+        if (datastore != null && datastore.getMongo() != null) {
             log.info("Closing mongo.");
-            db.close();
+            datastore.getMongo().close();
         }
     }
 }

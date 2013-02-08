@@ -17,9 +17,14 @@
 
 package com.cubeia.poker.model;
 
+import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Hand;
+import com.cubeia.poker.handhistory.api.FullHand;
+import com.cubeia.poker.handhistory.api.GameCard;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PlayerHand implements Serializable {
     private static final long serialVersionUID = 8327782333044163208L;
@@ -38,6 +43,15 @@ public class PlayerHand implements Serializable {
 
     public Hand getHand() {
         return hand;
+    }
+
+    public FullHand translate() {
+        List<Card> cards = getHand().getCards();
+        List<GameCard> gameCards = new ArrayList<GameCard>(cards.size());
+        for (Card c : cards) {
+            gameCards.add(c.translate());
+        }
+        return new FullHand(getPlayerId(), gameCards);
     }
 
     @Override

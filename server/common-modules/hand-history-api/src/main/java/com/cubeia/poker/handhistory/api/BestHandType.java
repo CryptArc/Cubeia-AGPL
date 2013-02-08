@@ -30,9 +30,20 @@ public enum BestHandType {
     STRAIGHT_FLUSH(9),
     ROYAL_STRAIGHT_FLUSH(10);
 
-    public final int telesinaHandTypeValue;
+    public int telesinaHandTypeValue;
+
+    private BestHandType() {
+    }
 
     private BestHandType(int telesinaHandTypeValue) {
+        this.telesinaHandTypeValue = telesinaHandTypeValue;
+    }
+
+    public int getTelesinaHandTypeValue() {
+        return telesinaHandTypeValue;
+    }
+
+    public void setTelesinaHandTypeValue(int telesinaHandTypeValue) {
         this.telesinaHandTypeValue = telesinaHandTypeValue;
     }
 }
