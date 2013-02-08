@@ -206,6 +206,8 @@
                         <source>${project.basedir}/src/main/webapp/js/base/sound/SoundManager.js</source>
                         <source>${project.basedir}/src/main/webapp/js/base/MyPlayer.js</source>
                         <source>${project.basedir}/src/main/webapp/js/base/OperatorConfig.js</source>
+                        <source>${project.basedir}/src/main/webapp/js/base/ui/FutureActionType.js</source>
+                        <source>${project.basedir}/src/main/webapp/js/base/ui/FutureActions.js</source>
                     </preloadSources>
                     <jsTestSrcDir>${project.basedir}/src/test/js</jsTestSrcDir>
                     <specIncludes>

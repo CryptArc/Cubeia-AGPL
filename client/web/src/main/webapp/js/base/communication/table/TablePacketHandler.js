@@ -41,7 +41,7 @@ Poker.TablePacketHandler = Class.extend({
     handleJoinResponse:function (joinResponsePacket) {
         console.log(joinResponsePacket);
         console.log("join response seat = " + joinResponsePacket.seat + " player id = " + Poker.MyPlayer.id);
-        if (joinResponsePacket.status == "OK") {
+        if (joinResponsePacket.status === FB_PROTOCOL.JoinResponseStatusEnum.OK) {
             this.tableManager.addPlayer(joinResponsePacket.tableid,joinResponsePacket.seat, Poker.MyPlayer.id, Poker.MyPlayer.name);
         } else {
             console.log("Join failed. Status: " + joinResponsePacket.status);
@@ -62,10 +62,10 @@ Poker.TablePacketHandler = Class.extend({
     },
     handleWatchResponse:function (watchResponse) {
         console.log("WATCH RESPONSE = " + watchResponse);
-        if (watchResponse.status == "DENIED_ALREADY_SEATED") {
+        if (watchResponse.status == FB_PROTOCOL.WatchResponseStatusEnum.DENIED_ALREADY_SEATED) {
             new Poker.TableRequestHandler(this.tableId).joinTable();
-        } else if (watchResponse.status == "CONNECTED") {
-            this.tableManager.clearTable()
+        } else if (watchResponse.status == FB_PROTOCOL.WatchResponseStatusEnum.OK) {
+            //this.tableManager.clearTable()
         }
     }
 });

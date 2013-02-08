@@ -20,6 +20,7 @@ package com.cubeia.poker.rounds.betting;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.PokerPlayer;
@@ -92,7 +93,7 @@ public class BettingRoundInitTest {
         when(context.getPlayersInHand()).thenReturn(currentHandSeatingMap.values());
         when(context.getTimingProfile()).thenReturn(new DefaultTimingProfile());
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
-        TexasHoldemFutureActionsCalculator futureActionsCalculator = new TexasHoldemFutureActionsCalculator();
+        TexasHoldemFutureActionsCalculator futureActionsCalculator = new TexasHoldemFutureActionsCalculator(BetStrategyType.FIXED_LIMIT);
         round = new BettingRound(dealerSeatId, context, serverAdapterHolder, playertoActCalculator, actionRequestFactory, futureActionsCalculator, betStrategy);
     }
 
@@ -106,7 +107,7 @@ public class BettingRoundInitTest {
         when(player2.getActionRequest()).thenReturn(actionRequest);
 
         round = new BettingRound(dealerSeatId, context, serverAdapterHolder, playertoActCalculator, actionRequestFactory,
-                                 new TexasHoldemFutureActionsCalculator(), betStrategy);
+                                 new TexasHoldemFutureActionsCalculator(BetStrategyType.FIXED_LIMIT), betStrategy);
 
         assertThat(round.playerToAct, is(player2Id));
         verify(player2).setActionRequest(actionRequest);

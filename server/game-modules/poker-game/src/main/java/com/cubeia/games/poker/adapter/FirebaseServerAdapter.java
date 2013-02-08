@@ -380,9 +380,12 @@ public class FirebaseServerAdapter implements ServerAdapter {
     }
 
     @Override
-    public void notifyFutureAllowedActions(PokerPlayer player, List<PokerActionType> optionList) {
+    public void notifyFutureAllowedActions(PokerPlayer player, List<PokerActionType> optionList, long callAmount, long minBet) {
 
         InformFutureAllowedActions packet = new InformFutureAllowedActions();
+        packet.callAmount = (int) callAmount;
+        packet.minBetAmount = (int) minBet;
+
 
         List<FuturePlayerAction> options = new ArrayList<FuturePlayerAction>();
 

@@ -18,7 +18,9 @@
 package com.cubeia.poker.variant.texasholdem;
 
 import com.cubeia.poker.action.PokerActionType;
+import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.rounds.betting.BetStrategy;
 import com.cubeia.poker.rounds.betting.FutureActionsCalculator;
 
 import java.util.ArrayList;
@@ -26,6 +28,11 @@ import java.util.List;
 
 public class TexasHoldemFutureActionsCalculator implements FutureActionsCalculator {
 
+    private final BetStrategyType betStrategyType;
+
+    public TexasHoldemFutureActionsCalculator(BetStrategyType betStrategyType) {
+        this.betStrategyType = betStrategyType;
+    }
 
     private static final long serialVersionUID = 6513501780238216186L;
 
@@ -43,6 +50,15 @@ public class TexasHoldemFutureActionsCalculator implements FutureActionsCalculat
 
         if (player.getBetStack() >= highestBet) {
             options.add(PokerActionType.CHECK);
+        }
+
+        if(player.getBetStack() < highestBet) {
+            options.add(PokerActionType.CALL);
+
+            if(betStrategyType == BetStrategyType.FIXED_LIMIT &&
+                    player.getBalance() + player.getBetStack() > highestBet) {
+                options.add(PokerActionType.RAISE);
+            }
         }
 
         options.add(PokerActionType.FOLD);

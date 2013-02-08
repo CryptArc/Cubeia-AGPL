@@ -375,6 +375,44 @@ Poker.TableManager = Class.extend({
         table.getLayoutManager().onLeaveTableSuccess();
         table.leave();
         Poker.AppCtx.getViewManager().removeTableView(tableId);
+    },
+    /**
+     * @param {Number} tableId
+     * @param {Poker.ActionType[]} actions
+     */
+    onFutureAction : function(tableId,actions, callAmount, minBetAmount) {
+        var table = this.getTable(tableId);
+        if(actions.length>0) {
+            var futureActions = this.getFutureActionTypes(actions);
+            table.getLayoutManager().displayFutureActions(futureActions, callAmount, minBetAmount);
+        }
+    },
+    /**
+     *
+     * @param {Poker.ActionType[]} actions
+     */
+    getFutureActionTypes : function(actions) {
+        var futureActions = [];
+        for(var i = 0; i<actions.length; i++) {
+            var act = actions[i];
+            switch (act.id) {
+                case Poker.ActionType.CHECK.id:
+                    futureActions.push(Poker.FutureActionType.CHECK_OR_FOLD)
+                    break;
+                case Poker.ActionType.CALL.id:
+                    futureActions.push(Poker.FutureActionType.CALL_CURRENT_BET);
+                    futureActions.push(Poker.FutureActionType.CHECK_OR_CALL_ANY);
+                    break;
+                case Poker.ActionType.RAISE.id:
+                    futureActions.push(Poker.FutureActionType.RAISE);
+                    futureActions.push(Poker.FutureActionType.RAISE_ANY);
+                    break;
+            };
+        }
+        if(actions.length>0) {
+            futureActions.push(Poker.FutureActionType.FOLD);
+        }
+        return futureActions;
     }
 
 });

@@ -18,14 +18,24 @@ Poker.MyActionsManager  = Class.extend({
     tableId : null,
     noMoreBlinds : false,
     bigBlindInCents : 0,
+    actionCallback : null,
+
+    /**
+     * @type {Poker.FutureActions}
+     */
+    futureActions : null,
+    futureActionsContainer : null,
 
     init : function(view,tableId, actionCallback) {
         var self = this;
+        this.actionCallback = actionCallback;
         this.tableId = tableId;
         this.actionButtons = [];
         this.tableButtons = [];
         this.currentActions = [];
         this.allActions = [];
+        this.futureActionsContainer = $("#futureActions-"+this.tableId);
+        this.futureActions = new Poker.FutureActions(this.futureActionsContainer);
         this._addTableButton($(".action-join",view),Poker.ActionType.JOIN,actionCallback);
         this._addTableButton($(".action-leave",view),Poker.ActionType.LEAVE,actionCallback);
         this._addTableButton($(".action-sit-in",view),Poker.ActionType.SIT_IN,actionCallback);
@@ -125,9 +135,20 @@ Poker.MyActionsManager  = Class.extend({
         this.allActions.push(this.tableButtons[actionType.id]);
     },
     onRequestPlayerAction : function(actions,mainPot,fixedLimit){
-        console.log("ON REQUEST PLAYER ACTION");
+        $("#userActActions-"+this.tableId).show();
+        this.futureActionsContainer.hide();
+
+
         this.currentActions = actions;
         this.hideAllActionButtons();
+
+        var fromFutureAction = this.futureActions.getAction(actions);
+        this.futureActions.clear();
+
+        if(fromFutureAction!=null) {
+            this.actionCallback(fromFutureAction.type,fromFutureAction.minAmount);
+            return;
+        }
 
         for (var a in actions){
           var act = actions[a];
@@ -202,6 +223,13 @@ Poker.MyActionsManager  = Class.extend({
         for(var a in this.tableButtons) {
             this.tableButtons[a].el.hide();
         }
+    },
+    /**
+     * @param {Poker.FutureActionType[]} actions
+     */
+    displayFutureActions : function(actions, callAmount, minBetAmount) {
+        this.futureActions.setFutureActions(actions,callAmount,minBetAmount);
+        $("#userActActions-"+this.tableId).hide();
     }
 });
 

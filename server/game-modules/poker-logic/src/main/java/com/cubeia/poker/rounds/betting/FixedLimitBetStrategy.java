@@ -71,7 +71,7 @@ public class FixedLimitBetStrategy implements BetStrategy {
     public long getCallAmount(BettingRoundContext context, PokerPlayer player) {
         long costToCall = context.getHighestBet() - player.getBetStack();
         if (costToCall <= 0) {
-            throw new IllegalStateException("Nothing to call");
+            return 0;
         }
 
         return min(player.getBalance(), costToCall);

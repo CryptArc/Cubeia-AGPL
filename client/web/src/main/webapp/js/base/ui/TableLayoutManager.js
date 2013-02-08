@@ -86,6 +86,8 @@ Poker.TableLayoutManager = Class.extend({
         tableViewContainer.show();
         this.cardElements = new Poker.Map();
         this.clock = new Poker.Clock(this.tableInfoElement.find(".time-to-next-level-value"));
+
+        $(".future-action").show();
     },
     handleSitIn : function() {
         var myPlayerSeat = this.seats.get(this.myPlayerSeatId);
@@ -415,5 +417,11 @@ Poker.TableLayoutManager = Class.extend({
     },
     playSound : function(soundName) {
         this.soundManager.playSound(soundName);
+    },
+    /**
+     * @param {Poker.FutureActionType[]} actions
+     */
+    displayFutureActions : function(actions,callAmount,minBetAmount) {
+        this.myActionsManager.displayFutureActions(actions,callAmount,minBetAmount);
     }
 });

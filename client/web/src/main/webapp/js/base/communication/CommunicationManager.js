@@ -293,8 +293,7 @@ Poker.CommunicationManager = Class.extend({
                 this.tableManager.endHand(tableId,protocolObject.hands,protocolObject.potTransfers);
                 break;
             case com.cubeia.games.poker.io.protocol.InformFutureAllowedActions.CLASSID:
-                console.log("UNHANDLED PO InformFutureAllowedActions");
-                console.log(protocolObject);
+                pokerPacketHandler.handleFuturePlayerAction(protocolObject);
                 break;
             case com.cubeia.games.poker.io.protocol.PerformAction.CLASSID:
                 pokerPacketHandler.handlePerformAction(protocolObject);

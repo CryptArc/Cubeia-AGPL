@@ -152,7 +152,7 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
         BetStrategy betStrategy = BetStrategyFactory.createBetStrategy(settings.getBetStrategyType(), settings.getBigBlindAmount(),
                                                                        roundName.isDoubleBetRound());
         ActionRequestFactory requestFactory = new ActionRequestFactory(betStrategy);
-        TexasHoldemFutureActionsCalculator futureActionsCalculator = new TexasHoldemFutureActionsCalculator();
+        TexasHoldemFutureActionsCalculator futureActionsCalculator = new TexasHoldemFutureActionsCalculator(betStrategy.getType());
         return new BettingRound(seatIdToStartBettingFrom, context, serverAdapterHolder, playerToActCalculator, requestFactory, futureActionsCalculator, betStrategy);
     }
 

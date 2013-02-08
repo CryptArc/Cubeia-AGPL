@@ -269,9 +269,11 @@ public class BettingRound implements Round, BettingRoundContext {
         for (PokerPlayer player : context.getCurrentHandPlayerMap().values()) {
 
             if (player.getId() != excludePlayer.getId()) {
-                getServerAdapter().notifyFutureAllowedActions(player, futureActionsCalculator.calculateFutureActionOptionList(player, highBet));
+                long callAmount = betStrategy.getCallAmount(this,player);
+                long minRaiseToAmount = betStrategy.getMinRaiseToAmount(this, player);
+                getServerAdapter().notifyFutureAllowedActions(player, futureActionsCalculator.calculateFutureActionOptionList(player, highBet),callAmount,minRaiseToAmount);
             } else {
-                getServerAdapter().notifyFutureAllowedActions(player, Lists.<PokerActionType>newArrayList());
+                getServerAdapter().notifyFutureAllowedActions(player, Lists.<PokerActionType>newArrayList(),0,0);
             }
         }
     }
@@ -282,7 +284,7 @@ public class BettingRound implements Round, BettingRoundContext {
      */
     private void notifyAllPlayersOfNoPossibleFutureActions() {
         for (PokerPlayer player : context.getCurrentHandPlayerMap().values()) {
-            getServerAdapter().notifyFutureAllowedActions(player, Lists.<PokerActionType>newArrayList());
+            getServerAdapter().notifyFutureAllowedActions(player, Lists.<PokerActionType>newArrayList(),0,0);
         }
     }
 

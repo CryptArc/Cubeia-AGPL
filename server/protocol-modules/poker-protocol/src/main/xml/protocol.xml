@@ -178,6 +178,8 @@
     <!-- inform about coming possible actions. This can be check next. Fold next and so on -->
     <struct name="inform_future_allowed_actions">
         <list name="actions" type="future_player_action"/>
+        <var name="call_amount" type="int32"/>
+        <var name="min_bet_amount" type="int32"/>
     </struct>
 
     <!--

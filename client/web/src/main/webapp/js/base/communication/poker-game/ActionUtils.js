@@ -7,7 +7,7 @@ Poker.ActionUtils = Class.extend({
     },
     /**
      *
-     * @param {com.cubeia.games.poker.io.protocol.ActionTypeEnum} actType
+     * @param {Number} actType
      * @return {Poker.ActionType}
      */
     getActionType : function(actType){

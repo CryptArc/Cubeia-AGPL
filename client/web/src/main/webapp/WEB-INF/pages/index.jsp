@@ -104,6 +104,8 @@
     <script type="text/javascript" src="${cp}/js/base/sound/SoundManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/sound/SoundRepository.js"></script>
     <script type="text/javascript" src="${cp}/js/base/sound/Sounds.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/FutureActionType.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/FutureActions.js"></script>
 
     <script type="text/javascript" src="${cp}/js/base/ui/DialogManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/DisconnectDialog.js"></script>
@@ -610,6 +612,43 @@
                     <div class="action-button action-sit-in" style="display: none;">
                         <span>Sit-in</span>
                     </div>
+                </div>
+                <div id="futureActions-{{tableId}}" class="future-actions" style="display:none;">
+                    <div class="future-action check" style="display:none;">
+                        <input type="checkbox" id="future-check-{{tableId}}"/>
+                        <label  for="future-check-{{tableId}}">Fold</label>
+                    </div>
+
+                    <div class="future-action check-or-fold" style="display:none;">
+                        <input type="checkbox" id="future-check-or-fold-{{tableId}}"/>
+                        <label for="future-check-or-fold-{{tableId}}">Check/Fold</label>
+                    </div>
+
+                    <div class="future-action call-current-bet" style="display:none;">
+                        <input type="checkbox" id="future-call-current-bet-{{tableId}}"/>
+                        <label for="future-call-current-bet-{{tableId}}">Call <span class="amount"></span></label>
+                    </div>
+
+                    <div class="future-action check-or-call-any" style="display:none;">
+                        <input type="checkbox" id="future-check-or-call-any-{{tableId}}"/>
+                        <label for="future-check-or-call-any-{{tableId}}">Check/Call any</label>
+                    </div>
+
+                    <div class="future-action fold" style="display:none;">
+                        <input type="checkbox" id="future-fold-{{tableId}}"/>
+                        <label for="future-fold-{{tableId}}">Fold</label>
+                    </div>
+
+                    <div class="future-action raise" style="display:none;">
+                        <input type="checkbox" id="future-raise-{{tableId}}"/>
+                        <label for="future-raise-{{tableId}}">Raise <span class="amount"></span></label>
+                    </div>
+
+                    <div class="future-action raise-any" style="display:none;">
+                        <input type="checkbox" id="future-raise-any-{{tableId}}"/>
+                        <label for="future-raise-any-{{tableId}}">Raise any</label>
+                    </div>
+
                 </div>
             </div>
             <div id="myPlayerSeat-{{tableId}}Progressbar" class="circular-progress-bar">

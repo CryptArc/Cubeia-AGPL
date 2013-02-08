@@ -1093,6 +1093,8 @@ com.cubeia.games.poker.io.protocol.InformFutureAllowedActions = function () {
         return com.cubeia.games.poker.io.protocol.InformFutureAllowedActions.CLASSID
     };
     this.actions = [];
+    this.callAmount = {};
+    this.minBetAmount = {};
     this.save = function () {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.actions.length);
@@ -1100,6 +1102,8 @@ com.cubeia.games.poker.io.protocol.InformFutureAllowedActions = function () {
         for (b = 0; b < this.actions.length; b++) {
             a.writeArray(this.actions[b].save())
         }
+        a.writeInt(this.callAmount);
+        a.writeInt(this.minBetAmount);
         return a
     };
     this.load = function (a) {
@@ -1112,6 +1116,8 @@ com.cubeia.games.poker.io.protocol.InformFutureAllowedActions = function () {
             b.load(a);
             this.actions.push(b)
         }
+        this.callAmount = a.readInt();
+        this.minBetAmount = a.readInt()
     };
     this.getNormalizedObject = function () {
         var a = {};
@@ -1122,6 +1128,8 @@ com.cubeia.games.poker.io.protocol.InformFutureAllowedActions = function () {
         for (b = 0; b < this.actions.length; b++) {
             a.details.actions.push(this.actions[b].getNormalizedObject())
         }
+        a.details.callAmount = this.callAmount;
+        a.details.minBetAmount = this.minBetAmount;
         return a
     }
 };

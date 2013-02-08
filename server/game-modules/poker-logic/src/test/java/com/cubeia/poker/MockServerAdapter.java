@@ -207,7 +207,7 @@ public class MockServerAdapter implements ServerAdapter {
     public void notifyExternalSessionReferenceInfo(int playerId, String externalTableReference, String externalTableSessionReference) {
     }
 
-    public void notifyFutureAllowedActions(PokerPlayer player, List<PokerActionType> optionList) {
+    public void notifyFutureAllowedActions(PokerPlayer player, List<PokerActionType> optionList, long callAmount, long minBet) {
     }
 
     public String getIntegrationHandId() {
