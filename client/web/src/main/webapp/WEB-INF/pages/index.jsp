@@ -21,6 +21,8 @@
     <script type="text/javascript" src="${cp}/js/lib/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/jquery-ui-1.8.21.custom.min.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/jquery.ui.touch-punch.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/touch-click.js"></script>
+
 
     <script type="text/javascript" src="${cp}/js/lib/mustache.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/jquery.jqGrid.min.js"></script>

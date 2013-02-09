@@ -37,14 +37,16 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
 
     sitOutNextHandCheckBox : null,
 
+    infoElement : null,
+
     init : function(tableId,elementId, seatId, player, myActionsManager, animationManager) {
         this._super(elementId,seatId, player,animationManager);
         this.tableId = tableId;
         this.myActionsManager = myActionsManager;
         this.seatElement = $("#"+elementId);
         this.renderSeat();
-        console.log(elementId+"Info");
-        $("#"+elementId+"Info").show();
+
+        this.infoElement = $("#"+elementId+"Info").show();
         this.myActionsManager.onSitIn();
         this.circularProgressBar = new CircularProgressBar("#"+elementId+"Progressbar",this.animationManager);
         this.circularProgressBar.hide();
@@ -146,6 +148,13 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         } else if(actionType.id == Poker.ActionType.SIT_IN.id) {
 
         }
+    },
+    clearSeat : function() {
+        this.seatElement.html("");
+        $("#myPlayerBalance-"+this.tableId).html("");
+        $("#myPlayerName-"+this.tableId).html("");
+        this.myActionsManager.onWatchingTable();
+        this.infoElement.hide();
     },
     showHandStrength : function(hand) {
         if(hand.id != Poker.Hand.UNKNOWN.id) {

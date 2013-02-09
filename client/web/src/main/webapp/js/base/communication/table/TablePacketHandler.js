@@ -26,13 +26,7 @@ Poker.TablePacketHandler = Class.extend({
         this.tableManager.addPlayer(seatInfoPacket.tableid,seatInfoPacket.seat, seatInfoPacket.player.pid, seatInfoPacket.player.nick);
     },
     handleNotifyLeave:function (notifyLeavePacket) {
-        if (notifyLeavePacket.pid === Poker.MyPlayer.id) {
-            console.log("I left this table, closing it. myPlayerId =  " + Poker.MyPlayer.id);
-            console.log(notifyLeavePacket);
-            this.tableManager.leaveTable(notifyLeavePacket.tableid);
-        } else {
-            this.tableManager.removePlayer(notifyLeavePacket.tableid,notifyLeavePacket.pid);
-        }
+        this.tableManager.removePlayer(notifyLeavePacket.tableid,notifyLeavePacket.pid);
     },
 
     handleNotifyJoin:function (notifyJoinPacket) {

@@ -135,9 +135,6 @@ Poker.MyActionsManager  = Class.extend({
         this.allActions.push(this.tableButtons[actionType.id]);
     },
     onRequestPlayerAction : function(actions,mainPot,fixedLimit){
-        this.userActionsContainer.show();
-        this.futureActions.hide();
-
 
         this.currentActions = actions;
         this.hideAllActionButtons();
@@ -149,6 +146,9 @@ Poker.MyActionsManager  = Class.extend({
             this.actionCallback(fromFutureAction.type,fromFutureAction.minAmount);
             return;
         }
+
+        this.userActionsContainer.show();
+        this.futureActions.hide();
 
         for (var a in actions){
           var act = actions[a];
@@ -270,11 +270,11 @@ Poker.ActionButton = Class.extend({
 
         var self = this;
         if(this.callback!=null && this.actionType!=null) {
-            this.el.click(function(e) {
+            this.el.touchSafeClick(function(e) {
                 self.callback(self.actionType,self.minAmount);
             });
         } else if(this.callback!=null) {
-            this.el.click(function(e){
+            this.el.touchSafeClick(function(e){
                 self.callback();
             });
         }
@@ -304,7 +304,7 @@ Poker.BetAmountButton = Poker.ActionButton.extend({
     },
     bindCallBack : function() {
         var self = this;
-        this.el.click(function(){
+        this.el.touchSafeClick(function(){
             self.callback(self.actionType, Poker.MyPlayer.betAmount);
         });
     }
@@ -315,7 +315,7 @@ Poker.BetSliderButton = Poker.ActionButton.extend({
     },
     bindCallBack : function() {
         var self = this;
-        this.el.click(function(){
+        this.el.touchSafeClick(function(){
             self.callback(self.minAmount,self.maxAmount,self.mainPot);
         });
     }

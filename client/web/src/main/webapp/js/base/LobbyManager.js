@@ -216,7 +216,7 @@ Poker.LobbyFilter = Class.extend({
         this.lobbyLayoutManager = lobbyLayoutManager;
         var self = this;
 
-        $("#" + id).click(function () {
+        $("#" + id).touchSafeClick(function () {
             self.enabled = !self.enabled;
             $(this).toggleClass("active");
             Poker.Utils.store(self.id, self.enabled);

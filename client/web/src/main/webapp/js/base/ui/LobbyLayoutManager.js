@@ -28,23 +28,23 @@ Poker.LobbyLayoutManager = Class.extend({
     init : function() {
         this.templateManager = Poker.AppCtx.getTemplateManager();
         this.filters = [];
-        $("#cashGameMenu").click(function (e) {
+        $("#cashGameMenu").touchSafeClick(function (e) {
             $(".main-menu a.selected").removeClass("selected");
             $(this).addClass("selected");
             new Poker.LobbyRequestHandler().subscribeToCashGames();
         });
-        $("#sitAndGoMenu").click(function (e) {
+        $("#sitAndGoMenu").touchSafeClick(function (e) {
             $(".main-menu .selected").removeClass("selected");
             $(this).addClass("selected");
             new Poker.LobbyRequestHandler().subscribeToSitAndGos();
         });
-        $("#tournamentMenu").click(function (e) {
+        $("#tournamentMenu").touchSafeClick(function (e) {
             $(".main-menu .selected").removeClass("selected");
             $(this).addClass("selected");
             new Poker.LobbyRequestHandler().subscribeToTournaments();
         });
 
-        $(".show-filters").click(function () {
+        $(".show-filters").touchSafeClick(function () {
             $(this).toggleClass("selected");
             $(".table-filter").toggle();
         });
@@ -146,7 +146,7 @@ Poker.LobbyLayoutManager = Class.extend({
             console.log("SEATED = " + listItem.seated);
             item.unbind().replaceWith(this.getTableItemHtml(settings.listItemTemplateId,listItem));
             var item = $("#" + settings.prefix + listItem.id);  //need to pick it up again to be able to bind to it
-            item.click(function(){
+            item.touchSafeClick(function(){
                 callbackFunction(listItem);
             });
         }
@@ -181,7 +181,7 @@ Poker.LobbyLayoutManager = Class.extend({
                 count++;
                 var html = self.getTableItemHtml(settings.listItemTemplateId,item);
                 listContainer.append(html);
-                $("#" + settings.prefix + item.id).click(function(){
+                $("#" + settings.prefix + item.id).touchSafeClick(function(){
                     listItemCallback(item);
                 });
             }

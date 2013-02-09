@@ -171,6 +171,8 @@ Poker.TableLayoutManager = Class.extend({
         var seat = this.getSeatByPlayerId(playerId);
         if (this.myPlayerSeatId == seat.seatId) {
             this.myPlayerSeatId = -1;
+            Poker.AppCtx.getDialogManager().displayGenericDialog(
+                {header: "Seating info", message : "You have been removed from table "});
         }
         seat.clearSeat();
         this.seats.remove(seat.seatId);

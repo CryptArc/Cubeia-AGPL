@@ -40,7 +40,7 @@ Poker.ViewManager = Class.extend({
         this.checkMobileDevice();
 
         var self = this;
-        $(".lobby-link").click(function(){
+        $(".lobby-link").touchSafeClick(function(){
             if(self.mobileDevice===true) {
                 $(".view-port").scrollTop($("#tableListAnchor").offset().top + 50);
             }
@@ -351,7 +351,7 @@ Poker.ViewManager = Class.extend({
         this.views.push(view);
         this.tabsContainer.append(view.tabElement);
         var self = this;
-        view.tabElement.click(function(e){
+        view.tabElement.touchSafeClick(function(e){
             self.activateView(view);
         });
 

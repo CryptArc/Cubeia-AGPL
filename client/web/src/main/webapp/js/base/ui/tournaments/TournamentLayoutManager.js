@@ -88,19 +88,19 @@ Poker.TournamentLayoutManager = Class.extend({
         this.takeSeatButton =  this.viewElement.find(".take-seat-action").hide();
         var tournamentRequestHandler = new Poker.TournamentRequestHandler(this.tournamentId);
         var self = this;
-        this.leaveButton.click(function(e){
+        this.leaveButton.touchSafeClick(function(e){
             self.leaveLobby();
         });
-        this.registerButton.click(function(e){
+        this.registerButton.touchSafeClick(function(e){
             tournamentRequestHandler.requestBuyInInfo();
         });
-        this.unregisterButton.hide().click(function(e){
+        this.unregisterButton.hide().touchSafeClick(function(e){
             $(this).hide();
             self.loadingButton.show();
             tournamentRequestHandler.unregisterFromTournament();
 
         });
-        this.takeSeatButton.click(function(e){
+        this.takeSeatButton.touchSafeClick(function(e){
             tournamentRequestHandler.takeSeat();
         });
     },
