@@ -44,6 +44,8 @@ public class TestUtils {
             players[i] = new MockPlayer(i);
             players[i].setSeatId(i);
             players[i].setBalance(balance);
+            players[i].setHasActed(false);
+
         }
 
         return players;

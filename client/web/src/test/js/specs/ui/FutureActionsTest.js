@@ -113,8 +113,16 @@ describe("Poker.FutureActions Test", function(){
         futureActions.setSelectedFutureAction(Poker.FutureActionType.CHECK_OR_CALL_ANY);
         //someone else raises
         futureActions.setFutureActions(types,20,30);
-        //player should still have raise any selected
-        expect(futureActions.selectedFutureActionType).toEqual(Poker.FutureActionType.CHECK_OR_CALL_ANY);
+        //player should now have call any since, check is not available
+        expect(futureActions.selectedFutureActionType).toEqual(Poker.FutureActionType.CALL_ANY);
+
+        var actions = [
+            new Poker.Action(Poker.ActionType.CALL,20,20),
+            new Poker.Action(Poker.ActionType.FOLD,0,0),
+            new Poker.Action(Poker.ActionType.RAISE,40,80)
+        ];
+        var action = futureActions.getAction(actions);
+        expect(action.type.id).toEqual(Poker.ActionType.CALL.id);
 
 
 

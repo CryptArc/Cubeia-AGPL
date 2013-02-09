@@ -75,6 +75,19 @@ Poker.ActionType = {
     DECLINE_ENTRY_BET : {
         text : "Decline blind",
         id : "decline-entry-bet"
+    },
+    ANTE : {
+        text : "Ante",
+        id : "ante"
+    },
+    BIG_BLIND_PLUS_DEAD_SMALL_BLIND : {
+        text : "Big & Small blind",
+        id : "big-and-small-blind"
+    },
+    DEAD_SMALL_BLIND : {
+        text : "Small blind",
+        id : "dead-small-blind"
     }
+
 
 };

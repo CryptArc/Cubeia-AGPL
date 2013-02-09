@@ -24,7 +24,7 @@ Poker.MyActionsManager  = Class.extend({
      * @type {Poker.FutureActions}
      */
     futureActions : null,
-    futureActionsContainer : null,
+    userActionsContainer : null,
 
     init : function(view,tableId, actionCallback) {
         var self = this;
@@ -34,8 +34,8 @@ Poker.MyActionsManager  = Class.extend({
         this.tableButtons = [];
         this.currentActions = [];
         this.allActions = [];
-        this.futureActionsContainer = $("#futureActions-"+this.tableId);
-        this.futureActions = new Poker.FutureActions(this.futureActionsContainer);
+        this.userActionsContainer = $(".user-actions",view);
+        this.futureActions = new Poker.FutureActions($(".future-actions",view));
         this._addTableButton($(".action-join",view),Poker.ActionType.JOIN,actionCallback);
         this._addTableButton($(".action-leave",view),Poker.ActionType.LEAVE,actionCallback);
         this._addTableButton($(".action-sit-in",view),Poker.ActionType.SIT_IN,actionCallback);
@@ -135,8 +135,8 @@ Poker.MyActionsManager  = Class.extend({
         this.allActions.push(this.tableButtons[actionType.id]);
     },
     onRequestPlayerAction : function(actions,mainPot,fixedLimit){
-        $("#userActActions-"+this.tableId).show();
-        this.futureActionsContainer.hide();
+        this.userActionsContainer.show();
+        this.futureActions.hide();
 
 
         this.currentActions = actions;
@@ -152,6 +152,8 @@ Poker.MyActionsManager  = Class.extend({
 
         for (var a in actions){
           var act = actions[a];
+          console.log("Action:");
+          console.log(act);
           if(fixedLimit==true && act.type.id == Poker.ActionType.BET.id) {
               if(act.minAmount>0) {
                 this.fixedBetActionButton.setAmount(act.minAmount);
@@ -169,6 +171,10 @@ Poker.MyActionsManager  = Class.extend({
               this.actionButtons[act.type.id].show();
           }
         }
+    },
+    onStartHand : function() {
+        this.futureActions.clear();
+        this.futureActions.hide();
     },
     onTournamentOut : function(){
         this.hideAllTableButtons();

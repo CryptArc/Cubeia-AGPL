@@ -341,7 +341,7 @@ public class BettingRoundTest extends TestCase {
         MockPlayer[] p = TestUtils.createMockPlayers(3);
         preparePlayers(p);
 
-        // starting player gets empty list the others get check and fold
+        // starting player gets empty list the others get check and fold and raise
         verify(adapter).notifyFutureAllowedActions(eq(p[0]), argThat(new IsListOfNElements(2)),eq(0L),eq(10L));
         verify(adapter).notifyFutureAllowedActions(eq(p[1]), argThat(new IsListOfNElements(0)),eq(0L),eq(0L));
         verify(adapter).notifyFutureAllowedActions(eq(p[2]), argThat(new IsListOfNElements(2)),eq(0L),eq(10L));
@@ -351,7 +351,7 @@ public class BettingRoundTest extends TestCase {
 
         // next player gets empty list the others get check and fold
         verify(adapter, times(2)).notifyFutureAllowedActions(eq(p[0]), argThat(new IsListOfNElements(2)),eq(0L),eq(10L));
-        verify(adapter).notifyFutureAllowedActions(eq(p[1]), argThat(new IsListOfNElements(2)),eq(0L),eq(10L));
+        verify(adapter).notifyFutureAllowedActions(eq(p[1]), argThat(new IsListOfNElements(0)),eq(0L),eq(10L));
         verify(adapter).notifyFutureAllowedActions(eq(p[2]), argThat(new IsListOfNElements(0)),eq(0L),eq(0L));
     }
 
@@ -497,6 +497,6 @@ public class BettingRoundTest extends TestCase {
     private BettingRound createRound(BetStrategy betStrategy) {
         ActionRequestFactory actionRequestFactory = new ActionRequestFactory(betStrategy);
         return new BettingRound(0, context, adapterHolder, new DefaultPlayerToActCalculator(), actionRequestFactory,
-                                new TexasHoldemFutureActionsCalculator(BetStrategyType.FIXED_LIMIT), betStrategy);
+                                new TexasHoldemFutureActionsCalculator(betStrategy.getType()), betStrategy);
     }
 }

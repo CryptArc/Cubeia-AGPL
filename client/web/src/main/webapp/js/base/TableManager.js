@@ -392,27 +392,31 @@ Poker.TableManager = Class.extend({
      * @param {Poker.ActionType[]} actions
      */
     getFutureActionTypes : function(actions) {
-        var futureActions = [];
+        var futureActions = new Poker.Map();
+        var put = function(type){
+            futureActions.put(type.id,type);
+        };
         for(var i = 0; i<actions.length; i++) {
             var act = actions[i];
             switch (act.id) {
                 case Poker.ActionType.CHECK.id:
-                    futureActions.push(Poker.FutureActionType.CHECK_OR_FOLD)
+                    put(Poker.FutureActionType.CHECK_OR_FOLD);
+                    put(Poker.FutureActionType.CHECK_OR_CALL_ANY);
                     break;
                 case Poker.ActionType.CALL.id:
-                    futureActions.push(Poker.FutureActionType.CALL_CURRENT_BET);
-                    futureActions.push(Poker.FutureActionType.CHECK_OR_CALL_ANY);
+                    put(Poker.FutureActionType.CALL_CURRENT_BET);
+                    put(Poker.FutureActionType.CALL_ANY);
                     break;
                 case Poker.ActionType.RAISE.id:
-                    futureActions.push(Poker.FutureActionType.RAISE);
-                    futureActions.push(Poker.FutureActionType.RAISE_ANY);
+                    put(Poker.FutureActionType.RAISE);
+                    put(Poker.FutureActionType.RAISE_ANY);
                     break;
             };
         }
         if(actions.length>0) {
-            futureActions.push(Poker.FutureActionType.FOLD);
+            put(Poker.FutureActionType.FOLD);
         }
-        return futureActions;
+        return futureActions.values();
     }
 
 });

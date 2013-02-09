@@ -36,14 +36,24 @@ Poker.FutureActions = Class.extend({
     setSelectedFutureAction : function(futureActionType) {
         this.selectedFutureActionType = futureActionType;
     },
+    /**
+     * Updates the available future actions handles transitions between future actions that
+     * has disappeared to one related or clears it if no related exist
+     * @param futureActionTypes
+     * @param callAmount
+     * @param raiseAmount
+     */
     setFutureActions : function(futureActionTypes, callAmount, raiseAmount) {
+
         if(this.selectedFutureActionType != null) {
             if(this.selectedFutureActionType.id == Poker.FutureActionType.CHECK_OR_FOLD.id && callAmount>0) {
                 this.setSelectedFutureAction(Poker.FutureActionType.FOLD);
             } else if(this.selectedFutureActionType.id == Poker.FutureActionType.CALL_CURRENT_BET.id && callAmount!=this.currentCallAmount) {
                 this.clear();
-            }   else if(this.selectedFutureActionType.id == Poker.FutureActionType.RAISE.id && raiseAmount!=this.currentRaiseAmount) {
+            } else if(this.selectedFutureActionType.id == Poker.FutureActionType.RAISE.id && raiseAmount!=this.currentRaiseAmount) {
                 this.clear();
+            } else if(this.selectedFutureActionType.id == Poker.FutureActionType.CHECK_OR_CALL_ANY.id && callAmount>0) {
+                this.setSelectedFutureAction(Poker.FutureActionType.CALL_ANY);
             }
         }
         this.displayFutureActions(futureActionTypes,callAmount,raiseAmount);
@@ -56,9 +66,9 @@ Poker.FutureActions = Class.extend({
         for(var i = 0; i<actions.length; i++) {
             var actionContainer = this.container.find("."+actions[i].id).show();
             if(actions[i].id === Poker.FutureActionType.CALL_CURRENT_BET.id) {
-                actionContainer.find(".amount").html(callAmount);
-            } else if(actions[i].id === Poker.FutureActionType.RAISE) {
-                actionContainer.find(".amount").html(raiseAmount);
+                actionContainer.find(".amount").html(Poker.Utils.formatCurrency(callAmount));
+            } else if(actions[i].id === Poker.FutureActionType.RAISE.id) {
+                actionContainer.find(".amount").html(Poker.Utils.formatCurrency(raiseAmount));
             }
         }
     },
@@ -70,8 +80,10 @@ Poker.FutureActions = Class.extend({
         return types;
     },
     /**
-     *
-     * @param {Poker.Action[]} actions
+     * Get the action to send to the server by using the players
+     * selected future action
+     * returns null if the future action don't match any of the available actions
+     * @param {Poker.Action[]} actions - available player actions
      */
     getAction : function(actions) {
         if(this.selectedFutureActionType == null) {
@@ -103,15 +115,25 @@ Poker.FutureActions = Class.extend({
                 var check = this.findAction(Poker.ActionType.CHECK,actions);
                 if(check==null) {
                     var call = this.findAction(Poker.ActionType.CALL,actions);
-                    if(call!=null && this.currentCallAmount == call.minAmount) {
+                    if(call!=null) {
                         return call;
                     }
                 }
                 return check;
+            case Poker.FutureActionType.CALL_ANY.id:
+                return this.findAction(Poker.ActionType.CALL,actions);
 
             case Poker.FutureActionType.RAISE.id:
+
                 var raise = this.findAction(Poker.ActionType.RAISE,actions);
-                if(raise!=null && raise.minAmount == this.raiseAmount) {
+                if(raise==null) {
+                    //if he has selected raise and only the bet action is available
+                    //we do the bet without comparing the amount since it only can be one
+                    //amount otherwise it would be a raise
+                    return this.findAction(Poker.ActionType.BET,actions);
+                }
+
+                if(raise!=null && raise.minAmount == this.currentRaiseAmount) {
                     return raise;
                 } else {
                     return null;
@@ -144,6 +166,9 @@ Poker.FutureActions = Class.extend({
     clear : function() {
         this.setSelectedFutureAction(null);
         this.container.find(".future-action input").attr("checked",false);
+    },
+    hide : function() {
+        this.container.hide();
     }
 
 });

@@ -140,6 +140,15 @@ Poker.DevTools = Class.extend({
             })
         );
         this.mockEventManager.addEvent(
+            mockEvent("Future actions",function(){
+              self.tableManager.onFutureAction(self.tableId,[
+                  new Poker.Action(Poker.ActionType.FOLD,0,0),
+                  new Poker.Action(Poker.ActionType.CALL,10,10),
+                  new Poker.Action(Poker.ActionType.RAISE,20,20)
+              ],100,200);
+            })
+        );
+        this.mockEventManager.addEvent(
             mockEvent("Request Player Action",function(){
                 self.tableManager.handleRequestPlayerAction(self.tableId,0,
                     [

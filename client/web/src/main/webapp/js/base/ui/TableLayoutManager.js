@@ -213,6 +213,7 @@ Poker.TableLayoutManager = Class.extend({
         this._resetCommunity();
         this.tableView.find(".pot-transfer").remove();
         this.cardElements = new Poker.Map();
+        this.myActionsManager.onStartHand();
         console.log("Hand " + handId + " started");
     },
     /**

@@ -99,7 +99,7 @@ Poker.CommunicationManager = Class.extend({
      */
     connect : function () {
         if(this.connector!=null) {
-            this.connector.getIOAdapter().unregisterHandlers();
+            //this.connector.getIOAdapter().unregisterHandlers();
         }
         var self = this;
         this.connector = new FIREBASE.Connector(

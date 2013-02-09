@@ -23,6 +23,7 @@ import com.cubeia.poker.timing.TimingFactory;
 import com.google.inject.Singleton;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.cubeia.poker.settings.RakeSettings.createDefaultRakeSettings;
@@ -49,6 +50,23 @@ public class SimpleTableConfigTemplateProvider implements TableConfigTemplatePro
         t.setMinTables(10);
         t.setRakeSettings(createDefaultRakeSettings(new BigDecimal(0.02)));
         t.setCurrency("EUR");
-        return singletonList(t);
+
+        TableConfigTemplate fl = new TableConfigTemplate();
+        fl.setId(1);
+        fl.setSmallBlind(50);
+        fl.setBigBlind(100);
+        fl.setMinBuyIn(1000);
+        fl.setMaxBuyIn(10000);
+        fl.setSeats(10);
+        fl.setVariant(TEXAS_HOLDEM);
+        fl.setTiming(TimingFactory.getRegistry().getDefaultTimingProfile());
+        fl.setBetStrategy(BetStrategyType.FIXED_LIMIT);
+        fl.setTTL(60000);
+        fl.setMinEmptyTables(5);
+        fl.setMinTables(10);
+        fl.setRakeSettings(createDefaultRakeSettings(new BigDecimal(0.02)));
+        fl.setCurrency("EUR");
+
+        return Arrays.asList(t,fl);
     }
 }

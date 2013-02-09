@@ -633,6 +633,10 @@
                         <input type="checkbox" id="future-check-or-call-any-{{tableId}}"/>
                         <label for="future-check-or-call-any-{{tableId}}">Check/Call any</label>
                     </div>
+                    <div class="future-action call-any" style="display:none;">
+                        <input type="checkbox" id="future-call-any-{{tableId}}"/>
+                        <label for="future-call-any-{{tableId}}">Call any</label>
+                    </div>
 
                     <div class="future-action fold" style="display:none;">
                         <input type="checkbox" id="future-fold-{{tableId}}"/>
@@ -641,7 +645,7 @@
 
                     <div class="future-action raise" style="display:none;">
                         <input type="checkbox" id="future-raise-{{tableId}}"/>
-                        <label for="future-raise-{{tableId}}">Raise <span class="amount"></span></label>
+                        <label for="future-raise-{{tableId}}">Raise to <span class="amount"></span></label>
                     </div>
 
                     <div class="future-action raise-any" style="display:none;">

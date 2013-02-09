@@ -271,7 +271,7 @@ public class BettingRound implements Round, BettingRoundContext {
             if (player.getId() != excludePlayer.getId()) {
                 long callAmount = betStrategy.getCallAmount(this,player);
                 long minRaiseToAmount = betStrategy.getMinRaiseToAmount(this, player);
-                getServerAdapter().notifyFutureAllowedActions(player, futureActionsCalculator.calculateFutureActionOptionList(player, highBet),callAmount,minRaiseToAmount);
+                getServerAdapter().notifyFutureAllowedActions(player, futureActionsCalculator.calculateFutureActionOptionList(player, highBet, bettingCapped),callAmount,minRaiseToAmount);
             } else {
                 getServerAdapter().notifyFutureAllowedActions(player, Lists.<PokerActionType>newArrayList(),0,0);
             }

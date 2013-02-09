@@ -37,23 +37,26 @@
 
                                 //do for each skin
                                 skins.eachWithIndex() { obj, i ->
-                                    println "Compiling base.less for skin ${obj}"
+                                    if(!obj.contains(".")) {
+                                        println "Compiling base.less for skin ${obj}"
 
-                                    def targetDir =  skinsBuildDir + "/${obj}/lcss";
-                                    def skinLessDir = skinsDir + "/${obj}/less"
-                                    def lessScriptFile = project.basedir.toString() + "/src/main/resources/less-rhino-1.4.0.js";
+                                        def targetDir =  skinsBuildDir + "/${obj}/lcss";
+                                        def skinLessDir = skinsDir + "/${obj}/less"
+                                        def lessScriptFile = project.basedir.toString() + "/src/main/resources/less-rhino-1.4.0.js";
 
-                                    //create skin directory
-                                    ant.mkdir(dir : targetDir)
+                                        //create skin directory
+                                        ant.mkdir(dir : targetDir)
 
-                                    //compile less to css with rhino and rhino-less javascript
-                                    ant.exec(dir : skinLessDir, executable : 'java', failonerror : 'true') {
-                                        arg( value : '-jar')
-                                        arg( value : rhinoJar)
-                                        arg( value : lessScriptFile )
-                                        arg( value : 'base.less')
-                                        arg( value : targetDir + '/base.css')
-                                    };
+                                        //compile less to css with rhino and rhino-less javascript
+                                        ant.exec(dir : skinLessDir, executable : 'java', failonerror : 'true') {
+                                            arg( value : '-jar')
+                                            arg( value : rhinoJar)
+                                            arg( value : lessScriptFile )
+                                            arg( value : 'base.less')
+                                            arg( value : targetDir + '/base.css')
+                                        };
+                                    }
+
                                 };
 
                                 //create a list of all images to be used in preloading
@@ -71,13 +74,15 @@
                                 }
 
                                 skins.each() {
-                                    def file = new File(skinsBuildDir + "/${it}/preload-images.js");
-                                    file.createNewFile();
-                                    def imageDir = skinsDir + "/" + it + "/images";
-                                    def targetFile = file.getAbsolutePath();
-                                    ant.echo(file : targetFile, append : "true", message: "Poker.SkinConfiguration.preLoadImages = [");
-                                    findImages(skinsDir.replace("\\","/"), targetFile ,new File(imageDir));
-                                    ant.echo(file : targetFile, append : "true", message: "''];");
+                                    if(!it.contains(".")) {
+                                        def file = new File(skinsBuildDir + "/${it}/preload-images.js");
+                                        file.createNewFile();
+                                        def imageDir = skinsDir + "/" + it + "/images";
+                                        def targetFile = file.getAbsolutePath();
+                                        ant.echo(file : targetFile, append : "true", message: "Poker.SkinConfiguration.preLoadImages = [");
+                                        findImages(skinsDir.replace("\\","/"), targetFile ,new File(imageDir));
+                                        ant.echo(file : targetFile, append : "true", message: "''];");
+                                    }
                                 }
                             </source>
                         </configuration>

@@ -43,7 +43,7 @@ public class TexasHoldemFutureActionsCalculatorTest {
         when(player.isAllIn()).thenReturn(true);
         when(player.hasFolded()).thenReturn(false);
 
-        List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L);
+        List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L,false);
         assertThat(options.isEmpty(), is(true));
     }
 
@@ -56,7 +56,7 @@ public class TexasHoldemFutureActionsCalculatorTest {
         when(player.isAllIn()).thenReturn(false);
         when(player.hasFolded()).thenReturn(false);
 
-        List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L);
+        List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L,false);
         assertThat(options.isEmpty(), not(true));
     }
 
@@ -70,7 +70,7 @@ public class TexasHoldemFutureActionsCalculatorTest {
         when(player.isAllIn()).thenReturn(false);
         when(player.hasFolded()).thenReturn(false);
 
-        List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L);
+        List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L,false);
         assertThat(options.isEmpty(), not(true));
     }
 
@@ -83,7 +83,7 @@ public class TexasHoldemFutureActionsCalculatorTest {
         when(player.isAllIn()).thenReturn(false);
         when(player.hasFolded()).thenReturn(true);
 
-        List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L);
+        List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L,false);
         assertThat(options.isEmpty(), is(true));
     }
 
@@ -96,12 +96,13 @@ public class TexasHoldemFutureActionsCalculatorTest {
         PokerPlayer player = Mockito.mock(PokerPlayer.class);
         when(player.isAllIn()).thenReturn(false);
         when(player.hasFolded()).thenReturn(false);
+        when(player.hasActed()).thenReturn(false);
         when(player.getBetStack()).thenReturn(100L);
         when(player.getBalance()).thenReturn(2000L);
 
-        List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L);
-        assertThat(options, hasItems(PokerActionType.CHECK, PokerActionType.FOLD));
-        assertThat(options.size(), is(2));
+        List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L,false);
+        assertThat(options.size(), is(3));
+        assertThat(options, hasItems(PokerActionType.RAISE,PokerActionType.FOLD,PokerActionType.CHECK));
 
     }
 
@@ -116,9 +117,24 @@ public class TexasHoldemFutureActionsCalculatorTest {
         when(player.getBetStack()).thenReturn(50L);
         when(player.getBalance()).thenReturn(2000L);
 
-        List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L);
+        List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L,false);
         assertThat(options, hasItems(PokerActionType.FOLD,PokerActionType.CALL,PokerActionType.RAISE));
         assertThat(options.size(), is(3));
+    }
+    @Test
+    public void testNotHavingHighestBetAndBettingCapped() {
+
+        FutureActionsCalculator calc = new TexasHoldemFutureActionsCalculator(BetStrategyType.FIXED_LIMIT);
+
+        PokerPlayer player = Mockito.mock(PokerPlayer.class);
+        when(player.isAllIn()).thenReturn(false);
+        when(player.hasFolded()).thenReturn(false);
+        when(player.getBetStack()).thenReturn(50L);
+        when(player.getBalance()).thenReturn(2000L);
+
+        List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L,true);
+        assertThat(options, hasItems(PokerActionType.FOLD,PokerActionType.CALL));
+        assertThat(options.size(), is(2));
     }
 
     @Test
@@ -132,7 +148,7 @@ public class TexasHoldemFutureActionsCalculatorTest {
         when(player.getBetStack()).thenReturn(50L);
         when(player.getBalance()).thenReturn(2000L);
 
-        List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L);
+        List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L,false);
         assertThat(options, hasItems(PokerActionType.FOLD,PokerActionType.CALL));
         assertThat(options.size(), is(2));
     }
@@ -149,9 +165,8 @@ public class TexasHoldemFutureActionsCalculatorTest {
         when(player.getBetStack()).thenReturn(100L);
         when(player.getBalance()).thenReturn(2000L);
 
-        List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L);
-        assertThat(options, hasItems(PokerActionType.CHECK, PokerActionType.FOLD));
-        assertThat(options.size(), is(2));
+        List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L,false);
+        assertThat(options.size(), is(0));
 
     }
 

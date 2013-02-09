@@ -16,6 +16,10 @@ Poker.FutureActionType = {
    },
    CHECK_OR_CALL_ANY : {
       id : "check-or-call-any",
+      text : "Check/Call any"
+  },
+  CALL_ANY : {
+      id : "call-any",
       text : "Call any"
   },
   FOLD : {
@@ -23,11 +27,11 @@ Poker.FutureActionType = {
       text : "Fold"
   },
   RAISE : {
-      id : "bet",
-      text : "Bet {{amount}}"
+      id : "raise",
+      text : "Raise {{amount}}"
   },
   RAISE_ANY : {
-      id : "bet-or-raise-any",
-      text : "Bet/raise any"
+      id : "raise-any",
+      text : "Raise any"
   }
 };
