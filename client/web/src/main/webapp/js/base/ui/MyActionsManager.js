@@ -204,6 +204,7 @@ Poker.MyActionsManager  = Class.extend({
         });
     },
     onFold : function() {
+      this.futureActions.hide();
       this.hideAllActionButtons();
     },
     display : function(actionType) {
