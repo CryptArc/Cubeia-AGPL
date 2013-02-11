@@ -400,7 +400,6 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
     }
 
-
     @Override
     public void notifyCommunityCards(List<Card> cards) {
         DealPublicCards packet = actionTransformer.createPublicCardsPacket(cards);

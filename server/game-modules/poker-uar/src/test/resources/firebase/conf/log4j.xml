@@ -87,14 +87,14 @@
     </category>
 
     <category name="com.cubeia.games" additivity="false">
-        <priority value="info"/>
+        <priority value="debug"/>
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="SERVER_LOG"/>
         <appender-ref ref="ERROR_LOG"/>
     </category>
 
     <category name="com.cubeia.poker" additivity="false">
-        <priority value="info"/>
+        <priority value="debug"/>
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="SERVER_LOG"/>
         <appender-ref ref="ERROR_LOG"/>
