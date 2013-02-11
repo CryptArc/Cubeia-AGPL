@@ -1,6 +1,8 @@
-var InstantClickListener = function(el) {
+var InstantClickListener = function(el,callFunc) {
+    this.callFunc = callFunc;
+    this.moved = false;
     this.element = el;
-    if(window.Touch) this.element.addEventListener('touchstart', this, false);
+    this.element.addEventListener('touchstart', this, false);
 };
 
 InstantClickListener.prototype = {
@@ -13,7 +15,6 @@ InstantClickListener.prototype = {
     },
 
     onTouchStart: function(e) {
-
         this.moved = false;
         this.element.addEventListener('touchmove', this, false);
         this.element.addEventListener('touchend', this, false);
@@ -27,25 +28,25 @@ InstantClickListener.prototype = {
         this.element.removeEventListener('touchmove', this, false);
         this.element.removeEventListener('touchend', this, false);
 
-        if( !this.moved ) {
-            e.preventDefault();
+        if(this.moved == false) {
             var theTarget = document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
             if(theTarget.nodeType == 3) theTarget = theTarget.parentNode;
-
             var theEvent = document.createEvent('MouseEvents');
-            theEvent.initEvent('click', true, true);
-            theTarget.dispatchEvent(theEvent);
+            this.callFunc(theEvent);
+            e.stopPropagation();
+            e.preventDefault();
         }
     }
 };
 
 (function( $ ) {
     $.fn.touchSafeClick = function(func) {
-
         return this.each(function(){
-            new InstantClickListener($(this)[0]);
-            $(this).click(func);
-
+            if("ontouchstart" in window) {
+                new InstantClickListener($(this)[0],func);
+            } else {
+                $(this).click(func);
+            }
         });
     };
 })( jQuery );
