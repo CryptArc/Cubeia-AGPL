@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010 Cubeia Ltd <info@cubeia.com>
+ * Copyright (C) 2012 Cubeia Ltd <info@cubeia.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -25,21 +25,21 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-public class DeleteLinkPanel extends Panel {
-
+public class ArchiveLinkPanel extends Panel {
     private static final long serialVersionUID = 1L;
 
     @SpringBean(name = "adminDAO")
     private AdminDAO adminDAO;
 
-    public DeleteLinkPanel(String id, final Class<?> entityClass, final int entityId, final Class<? extends BasePage> responsePage) {
+    public ArchiveLinkPanel(String id, final Archiver archiver, final Object entity, final Class<? extends BasePage> responsePage) {
         super(id);
         Link<String> delete = new Link<String>("link", Model.of("delete")) {
 
             @Override
             public void onClick() {
                 try {
-                    adminDAO.removeItem(entityClass, entityId);
+                    archiver.archive();
+                    adminDAO.save(entity);
                     setResponsePage(responsePage);
                 }
                 catch (Exception ex) {
@@ -50,4 +50,5 @@ public class DeleteLinkPanel extends Panel {
         delete.add(new AttributeAppender("class","btn btn-danger btn-mini"));
         add(delete);
     }
+
 }
