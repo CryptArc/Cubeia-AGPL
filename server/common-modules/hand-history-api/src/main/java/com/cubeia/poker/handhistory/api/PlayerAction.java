@@ -22,7 +22,27 @@ public class PlayerAction extends HandHistoryEvent {
     private static final long serialVersionUID = 2633660241901849321L;
 
     public enum Type {
-        SMALL_BLIND, BIG_BLIND, CALL, CHECK, BET, RAISE, FOLD, DECLINE_ENTRY_BET, ANTE, BIG_BLIND_PLUS_DEAD_SMALL_BLIND, DEAD_SMALL_BLIND;
+        SMALL_BLIND("Small blind"),
+        BIG_BLIND("Big blind"),
+        CALL("Call"),
+        CHECK("Check"),
+        BET("Bet"),
+        RAISE("Raise"),
+        FOLD("Fold"),
+        DECLINE_ENTRY_BET("Decline entry bet"),
+        ANTE("Ante"),
+        BIG_BLIND_PLUS_DEAD_SMALL_BLIND("Big blind plus dead small blind"),
+        DEAD_SMALL_BLIND("Dead small blind");
+
+        private final String name;
+
+        private Type(String value) {
+            name = value;
+        }
+
+        public String getName() {
+            return name;
+        }
     }
 
     private Type action;

@@ -18,21 +18,27 @@
 package com.cubeia.poker.handhistory.api;
 
 public enum BestHandType {
-    NOT_RANKED(0),
-    HIGH_CARD(1),
-    PAIR(2),
-    TWO_PAIRS(3),
-    THREE_OF_A_KIND(4),
-    STRAIGHT(5),
-    FLUSH(7),
-    FULL_HOUSE(6),
-    FOUR_OF_A_KIND(8),
-    STRAIGHT_FLUSH(9),
-    ROYAL_STRAIGHT_FLUSH(10);
+    NOT_RANKED(0, "Not ranked"),
+    HIGH_CARD(1, "High Card"),
+    PAIR(2, "Pair"),
+    TWO_PAIRS(3, "Two Pairs"),
+    THREE_OF_A_KIND(4, "Three Of A Kind"),
+    STRAIGHT(5, "Straight"),
+    FLUSH(7, "Flush"),
+    FULL_HOUSE(6, "Full House"),
+    FOUR_OF_A_KIND(8, "Four Of A Kind"),
+    STRAIGHT_FLUSH(9, "Straight Flush"),
+    ROYAL_STRAIGHT_FLUSH(10, "Royal Straight Flush");
 
     public int telesinaHandTypeValue;
+    private String name;
 
     private BestHandType() {
+    }
+
+    private BestHandType(int telesinaHandTypeValue, String name) {
+        this.telesinaHandTypeValue = telesinaHandTypeValue;
+        this.name = name;
     }
 
     private BestHandType(int telesinaHandTypeValue) {
@@ -45,5 +51,9 @@ public enum BestHandType {
 
     public void setTelesinaHandTypeValue(int telesinaHandTypeValue) {
         this.telesinaHandTypeValue = telesinaHandTypeValue;
+    }
+
+    public String getName() {
+        return name;
     }
 }
