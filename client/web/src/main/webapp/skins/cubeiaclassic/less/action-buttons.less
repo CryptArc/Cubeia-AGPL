@@ -1,0 +1,94 @@
+.button-gradient {
+    background: #1e5799; /* Old browsers */
+    .linear-gradient(top, #a3a6ad 0%, #797c86 100%);
+}
+
+
+.action-button, .user-actions .action-button {
+
+    top:0;
+    .border-radius(10px);
+    .box-shadow(0 2px 2px #111);
+    height: 0;
+    display: block;
+    cursor: pointer;
+    color:#282d35;
+    font-size:130%;
+    span {
+
+        position: relative;
+        bottom:auto;
+        right:auto;
+        text-align: center;
+        width:100%;
+        display: inline-block;
+        line-height: 2.3;
+        text-shadow: 0px 1px 1px #bbb;
+
+        margin: 0 6% 6% 0;
+        font-weight: bold;
+    }
+
+    .amount {
+        font-size:140%;
+        margin:0;
+        bottom:10%;
+        right:0;
+        position: absolute;
+        font-weight: bold;
+    }
+}
+
+.action-button {
+    width:31%;
+    .button-gradient;
+    padding-bottom: 13%;
+    border:2px solid #d3d5d8;
+
+    &.action-call,
+    &.do-action-raise,
+    &.do-action-bet {
+
+        span {
+            line-height: 1;
+        }
+        .amount {
+            padding-top:5%;
+            font-size:100%;
+        }
+
+    }
+}
+.action-leave {
+    .button-gradient;
+    width: 10%;
+    padding-bottom: 4.5%;
+    top: 35%;
+    position: absolute;
+}
+
+.action-sit-in, .action-bet, .action-raise, .action-do-bet, .do-action-bet, .do-action-raise, .action-join,
+.action-small-blind, .action-big-blind, .fixed-action-bet, .fixed-action-raise {
+    position: absolute;
+    right:0;
+    top: 0;
+
+}
+.action-cancel-bet, .action-call, .action-check,  {
+    position: absolute;
+    right:36%;
+    top: 0;
+}
+.action-small-blind, .action-big-blind  {
+    span {
+        font-size:120%;
+    }
+}
+.action-fold{
+    position: absolute;
+    right:72%;
+    top: 0;
+}
+
+
+
