@@ -179,20 +179,18 @@ public class ShowHand extends BasePage {
                             amount.setObject("Win (" + formatAmount(winAmount) + ")");
                         }
                         List<GameCard> kickerCards = handInfo.getKickerCards();
-                        if (kickerCards != null && kickerCards.size() > 0) {
-                            kickers.setList(kickerCards);
-                        }
                         BestHandType handType = handInfo.getHandType();
                         action.setObject(handType.getName());
                         List<GameCard> list = new ArrayList<GameCard>();
                         switch (handType) {
                             case HIGH_CARD:
                                 list.add(handInfo.getGroups().get(0).get(0));
+                                kickerCards.remove(0);
                                 cards.setList(list);
                                 break;
                             case TWO_PAIRS:
                                 list.addAll(handInfo.getCardsUsedInHand());
-                                cards.setList(list.subList(0, 3));
+                                cards.setList(list.subList(0, 4));
                                 break;
                             case PAIR:
                             case THREE_OF_A_KIND:
@@ -208,6 +206,9 @@ public class ShowHand extends BasePage {
                             default:
                                 cards.setList(handInfo.getCardsUsedInHand());
                                 break;
+                        }
+                        if (kickerCards != null && kickerCards.size() > 0) {
+                            kickers.setList(kickerCards);
                         }
                     }
                 }
