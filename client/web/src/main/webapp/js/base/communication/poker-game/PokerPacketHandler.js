@@ -15,7 +15,7 @@ Poker.PokerPacketHandler = Class.extend({
     },
     handleRequestAction : function(requestAction) {
 
-        this.tableManager.updateMainPot(this.tableId,requestAction.currentPotSize);
+        this.tableManager.updateTotalPot(this.tableId,requestAction.currentPotSize);
 
         Poker.PokerSequence.setSequence(this.tableId,requestAction.seq);
 

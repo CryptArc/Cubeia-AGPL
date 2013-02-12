@@ -378,7 +378,7 @@
         </div>
     </script>
     <div id="mainPotTemplate" style="display: none;">
-        <span>Pot:</span> <div class="balance">&euro;{{amount}}</div>
+        <div class="balance pot-container-{{potId}}">&euro;<span class="pot-value pot-{{potId}}">{{amount}}</span></div>
     </div>
     <div id="myPlayerSeatTemplate" style="display:none;">
         <div class="player-name">
@@ -523,6 +523,9 @@
                 <div class="my-player-seat" id="myPlayerSeat-{{tableId}}">
 
                 </div>
+                <div class="click-area-0">
+
+                </div>
                 <div class="table-info" style="display:none;">
                     <div class="blinds">
                         Blinds: <span class="table-blinds-value value">10/20</span>
@@ -535,6 +538,9 @@
                 </div>
                 <div class="community-cards">
 
+                </div>
+                <div class="total-pot">
+                    Pot: <span>&euro;<span class="amount"></span></span>
                 </div>
                 <div class="main-pot">
 

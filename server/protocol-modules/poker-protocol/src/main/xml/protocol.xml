@@ -254,7 +254,9 @@
     </struct>
 
     <!-- Request that the server returns information on how to buy in-->
-    <struct name="buy_in_info_request"/>
+    <struct name="buy_in_info_request">
+        <var name="dummy" type="int8"/>
+    </struct>
 
     <!-- server tells client on rules for buy in-->
     <struct name="buy_in_info_response">

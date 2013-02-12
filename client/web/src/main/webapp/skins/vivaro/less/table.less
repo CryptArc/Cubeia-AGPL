@@ -85,8 +85,21 @@
         }
     }
 }
+.total-pot {
+    font-size: 120%;
+    position: absolute;
+    width: auto;
+    top: 32%;
+    right: 27%;
+    text-align: right;
+    color:#999;
+    span {
+        color:#fff;
+    }
+}
 .main-pot, .pot-transfer {
-    font-size: 160%;
+    font-size: 120%;
+    font-weight: bold;
     position: absolute;
     width: auto;
     top: 60%;
@@ -98,9 +111,12 @@
     span {
         color:@mainGreen;
     }
+    span.pot-value {
+        color:#fff;
+    }
 }
 .pot-transfer {
-    width:19%;
+    width:auto;
     text-align: center;
 }
 .community-cards {

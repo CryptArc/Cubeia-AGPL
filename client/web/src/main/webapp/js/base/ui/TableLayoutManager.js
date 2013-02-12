@@ -30,6 +30,8 @@ Poker.TableLayoutManager = Class.extend({
     mainPotContainer : null,
     tableView : null,
     animationManager : null,
+    totalPotContainer : null,
+    viewContainerOffsetTop : 0,
     /**
      * @type Poker.Clock
      */
@@ -51,7 +53,7 @@ Poker.TableLayoutManager = Class.extend({
         this.animationManager = new Poker.AnimationManager();
         var tableViewTemplate = templateManager.getTemplate("tableViewTemplate");
         var tableViewHtml = Mustache.render(tableViewTemplate,{tableId : tableId});
-
+        this.viewContainerOffsetTop = tableViewContainer.offset().top;
         tableViewContainer.append(tableViewHtml);
         var viewId = "#tableView-"+tableId;
         this.tableView = $(viewId);
@@ -73,6 +75,7 @@ Poker.TableLayoutManager = Class.extend({
         this.seatTemplate = $("#seatTemplate").html();
         this.emptySeatTemplate = templateManager.getTemplate("emptySeatTemplate");
         this.potTransferTemplate = templateManager.getTemplate("potTransferTemplate");
+        this.totalPotContainer = tableViewContainer.find(".total-pot").hide();
 
         for(var i = 0; i<this.capacity; i++){
             this.addEmptySeatContent(i,i,true);
@@ -151,6 +154,11 @@ Poker.TableLayoutManager = Class.extend({
             }
             this.seats.put(seatId,seat);
             this.tableView.find(".seat-pos-0").hide();
+            var self = this;
+            this.tableView.find(".click-area-0").touchSafeClick(function(){
+                console.log("CLICKING CLICK AREA 0");
+                new Poker.PokerRequestHandler(self.tableId).requestBuyInInfo();
+            });
         } else {
 
             elementId = "seat"+seatId+"-"+this.tableId;
@@ -302,9 +310,27 @@ Poker.TableLayoutManager = Class.extend({
         this._storeCard(card);
         this._moveToPot();
     },
-    onMainPotUpdate : function(amount) {
-        var t = this.templateManager.getTemplate("mainPotTemplate");
-        this.mainPotContainer.html(Mustache.render(t,{amount : Poker.Utils.formatCurrency(amount)}));
+    onTotalPotUpdate : function(amount) {
+       this.totalPotContainer.show().find(".amount").html(Poker.Utils.formatCurrency(amount));
+    },
+    /**
+     *
+     * @param {Poker.Pot[]} pots
+     */
+    onPotUpdate : function(pots) {
+        console.log("POTS:");
+        console.log(pots);
+        for(var i = 0; i<pots.length; i++) {
+            var potElement = this.mainPotContainer.find(".pot-"+pots[i].id);
+            if(potElement.length>0) {
+                potElement.html(Poker.Utils.formatCurrency(pots[i].amount));
+            } else {
+                var t = this.templateManager.getTemplate("mainPotTemplate");
+                this.mainPotContainer.append(Mustache.render(t,
+                    { potId: pots[i].id, amount : Poker.Utils.formatCurrency(pots[i].amount) }));
+            }
+
+        }
     },
     onRequestPlayerAction : function(player,allowedActions,timeToAct,mainPot,fixedLimit){
         var seats = this.seats.values();
@@ -373,6 +399,7 @@ Poker.TableLayoutManager = Class.extend({
     _resetCommunity : function() {
         this.communityCardsContainer.empty();
         this.mainPotContainer.empty();
+        this.totalPotContainer.hide().find(".amount").empty();
     },
     _hideSeatActionInfo : function() {
         var seats = this.seats.values();
@@ -386,9 +413,11 @@ Poker.TableLayoutManager = Class.extend({
             seats[s].moveAmountToPot(this.tableView, this.mainPotContainer);
         }
     },
-    onPlayerToPotTransfers : function(transfers) {
-        for(var t in transfers) {
-            var trans = transfers[t];
+    onPotToPlayerTransfers : function(transfers) {
+        console.log("POT TRANSFERS: ");
+        console.log(transfers);
+        for(var i = 0; i<transfers.length; i++) {
+            var trans = transfers[i];
             this.displayPlayerToPotTransfer(trans.playerId,trans.potId, trans.amount);
         }
     },
@@ -397,17 +426,21 @@ Poker.TableLayoutManager = Class.extend({
         if(amount>0){
             console.log("pot tranfer playerId = " + playerId + ", amount="+amount);
             s.onPotWon(potId,amount);
-            this.displayPotTransfer(s.actionAmount ,amount, s.seatId);
+            this.displayPotTransfer(s.actionAmount ,amount, s.seatId,potId);
         }
 
     },
-    displayPotTransfer : function(targetElement,amount,seatId) {
+    displayPotTransfer : function(targetElement,amount,seatId,potId) {
 
-        var html = Mustache.render(this.potTransferTemplate,{ id : seatId + "-" + this.tableId, amount: Poker.Utils.formatCurrency(amount)});
-        $("#seatContainer-"+this.tableId).append(html);
-        var div = $("#potTransfer" + seatId + "-"+this.tableId);
+        var html = Mustache.render(this.potTransferTemplate,{ id : potId + "-" + this.tableId, amount: Poker.Utils.formatCurrency(amount)});
+        var offset = this.mainPotContainer.find(".pot-container-"+potId).offset();
+        console.log("OFFSET FOR POT: " + potId);
+        console.log(offset);
 
-        var offset =  Poker.Utils.calculateDistance(div,targetElement);
+        $("#seatContainer-"+this.tableId).append($(html).css({ left: offset.left, top: offset.top - this.viewContainerOffsetTop}));
+        var div = $("#potTransfer" + potId + "-"+this.tableId);
+
+        offset =  Poker.Utils.calculateDistance(div,targetElement,true,true);
         div.css("visibility","visible");
 
         new Poker.TransformAnimation(div).

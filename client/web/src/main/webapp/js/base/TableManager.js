@@ -158,7 +158,7 @@ Poker.TableManager = Class.extend({
         var self = this;
 
         if(potTransfers.fromPlayerToPot === false ){
-            table.layoutManager.onPlayerToPotTransfers(potTransfers.transfers);
+            table.layoutManager.onPotToPlayerTransfers(potTransfers.transfers);
         }
 
         setTimeout(function(){
@@ -302,27 +302,30 @@ Poker.TableManager = Class.extend({
         var table = this.tables.get(tableId);
         var player = table.getPlayerById(playerId);
         var fixedLimit = table.betStrategy === com.cubeia.games.poker.io.protocol.BetStrategyEnum.FIXED_LIMIT;
-        table.getLayoutManager().onRequestPlayerAction(player,allowedActions,timeToAct,this.mainPot,fixedLimit);
+        table.getLayoutManager().onRequestPlayerAction(player,allowedActions,timeToAct,this.totalPot,fixedLimit);
     },
-    updateMainPot : function(tableId,amount){
+    updateTotalPot : function(tableId,amount){
         var table = this.tables.get(tableId);
-        table.mainPot = amount;
-        table.getLayoutManager().onMainPotUpdate(amount);
+        table.totalPot = amount;
+        table.getLayoutManager().onTotalPotUpdate(amount);
     },
     dealCommunityCard : function(tableId,cardId,cardString) {
         var table = this.getTable(tableId);
         table.getLayoutManager().onDealCommunityCard(cardId,cardString);
     },
+    /**
+     *
+     * @param {Number} tableId
+     * @param {Poker.Pot[]} pots
+     */
     updatePots : function(tableId,pots) {
         var table = this.tables.get(tableId);
-        for(var p = 0; p<pots.length; p++) {
-            if(pots[p].type == Poker.PotType.MAIN) {
-                console.log("updating main pot");
-                table.mainPot = pots[p].amount;
-                table.getLayoutManager().onMainPotUpdate(pots[p].amount);
-                break;
-            }
+        var totalPot = 0;
+        for(var i = 0; i<pots.length; i++) {
+            totalPot+=pots[i].amount;
         }
+        table.getLayoutManager().onTotalPotUpdate(totalPot);
+        table.getLayoutManager().onPotUpdate(pots);
     },
     exposePrivateCard : function(tableId,cardId,cardString) {
         var table = this.getTable(tableId);

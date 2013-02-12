@@ -77,6 +77,7 @@ Poker.DevTools = Class.extend({
 
         this.mockEventManager.addEvent(
             mockEvent("Update main pots", function(){
+                self.tableManager.updateTotalPot(self.tableId,10000);
                 self.tableManager.updatePots(self.tableId,[{type:Poker.PotType.MAIN, amount:10000}]);
             })
         );
