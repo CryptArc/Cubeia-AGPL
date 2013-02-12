@@ -1,5 +1,4 @@
-
-
+"use strict";
 var InstantClickListener = Class.extend({
     callFunc : null,
     moved : false,

@@ -156,7 +156,6 @@ Poker.TableLayoutManager = Class.extend({
             this.tableView.find(".seat-pos-0").hide();
             var self = this;
             this.tableView.find(".click-area-0").touchSafeClick(function(){
-                console.log("CLICKING CLICK AREA 0");
                 new Poker.PokerRequestHandler(self.tableId).requestBuyInInfo();
             });
         } else {
