@@ -135,10 +135,6 @@ Poker.TableManager = Class.extend({
         table.handId = handId;
         table.layoutManager.onStartHand(handId);
     },
-    restartHand : function(tableId) {
-        var table = this.tables.get(tableId);
-        this.startNewHand(tableId,table.handId);
-    },
     /**
      * Called when a hand is complete and calls the TableLayoutManager
      * This method will trigger a tableManager.clearTable after
@@ -414,7 +410,7 @@ Poker.TableManager = Class.extend({
                     put(Poker.FutureActionType.RAISE);
                     put(Poker.FutureActionType.RAISE_ANY);
                     break;
-            };
+            }
         }
         if(actions.length>0) {
             put(Poker.FutureActionType.FOLD);
