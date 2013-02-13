@@ -18,6 +18,7 @@
 package com.cubeia.games.poker.admin.wicket.pages.tournaments.configuration;
 
 import com.cubeia.games.poker.admin.db.AdminDAO;
+import com.cubeia.games.poker.admin.network.NetworkClient;
 import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
 import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
@@ -42,13 +43,17 @@ public class TournamentConfigurationPanel extends Panel {
     @SpringBean(name="adminDAO")
     private AdminDAO adminDAO;
 
+    @SpringBean
+    private NetworkClient networkClient;
+
     private PropertyModel<TournamentConfiguration> model;
 
     public TournamentConfigurationPanel(String id, PropertyModel<TournamentConfiguration> propertyModel) {
         super(id, propertyModel);
         this.model = propertyModel;
+        new TournamentConfiguration().getCurrency();
 
-        add(new TextField("name", new PropertyModel(model, "name")));
+        add(new TextField<String>("name", new PropertyModel(model, "name")));
         add(new TextField<Integer>("seatsPerTable", new PropertyModel(model, "seatsPerTable")));
         add(new DropDownChoice<TimingProfile>("timingType", model("timingType"), adminDAO.getTimingProfiles(), renderer("name")));
         add(new TextField<Integer>("minPlayers", new PropertyModel(model, "minPlayers")));
@@ -57,6 +62,8 @@ public class TournamentConfigurationPanel extends Panel {
         add(new TextField<BigDecimal>("fee", new PropertyModel(model, "fee")));
         add(new DropDownChoice<BetStrategyType>("betStrategy", new PropertyModel(model, "betStrategy"), asList(BetStrategyType.values()),
                                                                                          renderer("name")));
+
+        add(new DropDownChoice<String>("currency", model("currency"), networkClient.getCurrencies(), new ChoiceRenderer<String>()));
         add(new DropDownChoice<BlindsStructure>("blindsStructure", model("blindsStructure"), adminDAO.getBlindsStructures(), renderer("name")));
         add(new DropDownChoice<PayoutStructure>("payoutStructure", model("payoutStructure"), adminDAO.getPayoutStructures(), renderer("name")));
     }

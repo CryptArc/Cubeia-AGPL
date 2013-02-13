@@ -59,7 +59,7 @@ public class GameStateInitialization {
         int anteLevel = 1234;
         BlindsLevel level = new BlindsLevel(anteLevel, anteLevel * 2, anteLevel);
         BetStrategyType betStrategy = BetStrategyType.NO_LIMIT;
-        PokerSettings settings = new PokerSettings(level, betStrategy, 100, 1000, timing, 6, createOnePercentRakeSettings(), null);
+        PokerSettings settings = new PokerSettings(level, betStrategy, 100, 1000, timing, 6, createOnePercentRakeSettings(), "EUR", null);
         PokerState state = new PokerState();
         GameType gt = GameTypeFactory.createGameType(TELESINA);
         state.init(gt, settings);

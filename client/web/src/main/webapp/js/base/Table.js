@@ -12,7 +12,7 @@ Poker.Table = Class.extend({
     name : null,
     handCount: 0,
     dealerSeatId : -1,
-    mainPot : 0,
+    totalPot : 0,
     handId : -1,
     betStrategy : null,
 

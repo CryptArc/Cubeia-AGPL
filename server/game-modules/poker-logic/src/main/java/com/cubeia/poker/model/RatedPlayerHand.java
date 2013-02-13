@@ -19,9 +19,15 @@ package com.cubeia.poker.model;
 
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Hand;
+import com.cubeia.poker.hand.HandInfo;
 import com.cubeia.poker.hand.HandType;
+import com.cubeia.poker.handhistory.api.BestHandType;
+import com.cubeia.poker.handhistory.api.GameCard;
+import com.cubeia.poker.handhistory.api.PlayerBestHand;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class RatedPlayerHand implements Serializable {
@@ -29,21 +35,38 @@ public class RatedPlayerHand implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private PlayerHand playerHand;
-    private HandType bestHandType;
+    private HandInfo handInfo;
     private List<Card> bestHandCards;
 
-    public RatedPlayerHand(PlayerHand playerHand, HandType bestHandType, List<Card> bestHandCards) {
+    public RatedPlayerHand(PlayerHand playerHand, HandInfo handInfo, List<Card> bestHandCards) {
         this.playerHand = playerHand;
-        this.bestHandType = bestHandType;
+        this.handInfo = handInfo;
         this.bestHandCards = bestHandCards;
+    }
+
+    public static List<PlayerBestHand> translateBestHands(Collection<RatedPlayerHand> hands) {
+        List<PlayerBestHand> list = new ArrayList<PlayerBestHand>(hands.size());
+        for (RatedPlayerHand c : hands) {
+            list.add(c.translate());
+        }
+        return list;
+    }
+
+    public PlayerBestHand translate() {
+        List<Card> cards = getBestHandCards();
+        List<GameCard> bestHandCards = new ArrayList<GameCard>(cards.size());
+        for (Card c : cards) {
+            bestHandCards.add(c.translate());
+        }
+        return new PlayerBestHand(getPlayerHand().translate(), getHandInfo().translate(), bestHandCards);
+    }
+
+    public HandInfo getHandInfo() {
+        return handInfo;
     }
 
     public PlayerHand getPlayerHand() {
         return playerHand;
-    }
-
-    public HandType getBestHandType() {
-        return bestHandType;
     }
 
     public Integer getPlayerId() {
@@ -60,6 +83,10 @@ public class RatedPlayerHand implements Serializable {
 
     @Override
     public String toString() {
-        return "RatedPlayerHand playerHand[" + playerHand + "] bestHandType[" + bestHandType + "] bestHandCards[" + bestHandCards + "]";
+        return "RatedPlayerHand{" +
+                "playerHand=" + playerHand +
+                ", handInfo=" + handInfo +
+                ", bestHandCards=" + bestHandCards +
+                '}';
     }
 }

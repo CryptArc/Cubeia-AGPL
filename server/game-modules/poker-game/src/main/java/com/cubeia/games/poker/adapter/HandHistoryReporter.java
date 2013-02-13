@@ -17,9 +17,6 @@
 
 package com.cubeia.games.poker.adapter;
 
-import static com.cubeia.games.poker.adapter.HandHistoryTranslator.translate;
-import static com.cubeia.games.poker.adapter.HandHistoryTranslator.translateCards;
-import static com.cubeia.games.poker.adapter.HandHistoryTranslator.translateBestHands;
 import static com.cubeia.games.poker.common.lobby.PokerLobbyAttributes.TABLE_EXTERNAL_ID;
 import static com.cubeia.poker.adapter.HandEndStatus.CANCELED_TOO_FEW_PLAYERS;
 
@@ -72,26 +69,26 @@ public class HandHistoryReporter {
 
     public void notifyPotUpdates(Collection<Pot> iterable, Collection<PotTransition> potTransitions) {
         PotUpdate ev = new PotUpdate();
-        ev.getPots().addAll(translate(iterable));
+        ev.getPots().addAll(Pot.translate(iterable));
         post(ev);
     }
 
     public void notifyActionPerformed(PokerAction action, PokerPlayer pokerPlayer) {
-        PlayerAction ev = translate(action);
+        PlayerAction ev = action.translate();
         post(ev);
     }
 
     public void exposePrivateCards(ExposeCardsHolder holder) {
         for (ExposedCards exposedCards : holder.getExposedCards()) {
             PlayerCardsExposed ev = new PlayerCardsExposed(exposedCards.getPlayerId());
-            ev.getCards().addAll(translateCards(exposedCards.getCards()));
+            ev.getCards().addAll(Card.translateCards(exposedCards.getCards()));
             post(ev);
         }
     }
 
     public void notifyCommunityCards(List<Card> cards) {
         TableCardsDealt ev = new TableCardsDealt();
-        ev.getCards().addAll(translateCards(cards));
+        ev.getCards().addAll(Card.translateCards(cards));
         post(ev);
     }
 
@@ -99,7 +96,7 @@ public class HandHistoryReporter {
         if (!checkHasService()) {
             return; // SANITY CHECK
         }
-        service.reportDeckInfo(table.getId(), new DeckInfo(size, translate(rankLow)));
+        service.reportDeckInfo(table.getId(), new DeckInfo(size, rankLow.translate()));
     }
 
     public void notifyHandEnd(HandResult handResult, HandEndStatus handEndStatus, Map<Integer, String> playerTransactions) {
@@ -116,7 +113,7 @@ public class HandHistoryReporter {
             for (Entry<PokerPlayer,Result> entry : map.entrySet()) {
                 // translate results
                 PokerPlayer pl = entry.getKey();
-                com.cubeia.poker.handhistory.api.HandResult translatedHandResult = translate(pl.getId(), entry.getValue());
+                com.cubeia.poker.handhistory.api.HandResult translatedHandResult = entry.getValue().translate(pl.getId());
                 String transactionId = playerTransactions.get(pl.getId());
                 translatedHandResult.setTransactionId(transactionId);
                 res.getResults().put(pl.getId(), translatedHandResult);
@@ -126,14 +123,14 @@ public class HandHistoryReporter {
             }
             res.setTotalRake(handResult.getTotalRake());
 
+            //empty ShowDownSummary event (looks like separator at this moment)
+            post(new ShowDownSummary());
+
             //Best hand events
             for (RatedPlayerHand hand: handResult.getPlayerHands())
             {
-                post(translate(hand));
+                post(hand.translate());
             }
-
-            //empty ShowDownSummary event
-            post(new ShowDownSummary());
 
             service.reportResults(table.getId(), res);
             service.stopHand(table.getId());
@@ -161,13 +158,13 @@ public class HandHistoryReporter {
 
     public void notifyPrivateCards(int playerId, List<Card> cards) {
         PlayerCardsDealt ev = new PlayerCardsDealt(playerId, false);
-        ev.getCards().addAll(translateCards(cards));
+        ev.getCards().addAll(Card.translateCards(cards));
         post(ev);
     }
 
     public void notifyPrivateExposedCards(int playerId, List<Card> cards) {
         PlayerCardsDealt ev = new PlayerCardsDealt(playerId, true);
-        ev.getCards().addAll(translateCards(cards));
+        ev.getCards().addAll(Card.translateCards(cards));
         post(ev);
     }
 

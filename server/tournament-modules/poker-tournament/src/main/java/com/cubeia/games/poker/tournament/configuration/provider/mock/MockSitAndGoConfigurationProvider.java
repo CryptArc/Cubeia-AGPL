@@ -69,6 +69,7 @@ public class MockSitAndGoConfigurationProvider implements SitAndGoConfigurationP
         configuration.getConfiguration().setBuyIn(BigDecimal.valueOf(10));
         configuration.getConfiguration().setFee(BigDecimal.valueOf(1));
         configuration.getConfiguration().setPayoutStructure(payoutStructure);
+        configuration.getConfiguration().setCurrency("EUR");
 
         return configuration;
     }

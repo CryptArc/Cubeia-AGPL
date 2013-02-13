@@ -100,6 +100,7 @@ public class PokerHandler extends DefaultPokerHandler {
             long start = System.currentTimeMillis();
             ThreadLocalProfiler.start();
             try {
+                // TODO: THIS IS BROKEN. IF WE RECEIVE AN INCORRECT ACTION, WE WILL CANCEL THE TIMEOUT SO IF THE REAL PLAYER NEVER ACTS EVERYTHING WILL STOP.
                 timeoutCache.removeTimeout(table.getId(), playerId, table.getScheduler());
                 PokerAction action = new PokerAction(playerId, actionTransformer.transform(packet.action.type));
                 action.setBetAmount(packet.betAmount);

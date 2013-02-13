@@ -99,7 +99,7 @@ Poker.CommunicationManager = Class.extend({
      */
     connect : function () {
         if(this.connector!=null) {
-            this.connector.getIOAdapter().unregisterHandlers();
+            //this.connector.getIOAdapter().unregisterHandlers();
         }
         var self = this;
         this.connector = new FIREBASE.Connector(
@@ -293,8 +293,7 @@ Poker.CommunicationManager = Class.extend({
                 this.tableManager.endHand(tableId,protocolObject.hands,protocolObject.potTransfers);
                 break;
             case com.cubeia.games.poker.io.protocol.InformFutureAllowedActions.CLASSID:
-                console.log("UNHANDLED PO InformFutureAllowedActions");
-                console.log(protocolObject);
+                pokerPacketHandler.handleFuturePlayerAction(protocolObject);
                 break;
             case com.cubeia.games.poker.io.protocol.PerformAction.CLASSID:
                 pokerPacketHandler.handlePerformAction(protocolObject);

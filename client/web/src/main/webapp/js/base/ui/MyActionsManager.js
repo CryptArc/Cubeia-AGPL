@@ -18,14 +18,24 @@ Poker.MyActionsManager  = Class.extend({
     tableId : null,
     noMoreBlinds : false,
     bigBlindInCents : 0,
+    actionCallback : null,
+
+    /**
+     * @type {Poker.FutureActions}
+     */
+    futureActions : null,
+    userActionsContainer : null,
 
     init : function(view,tableId, actionCallback) {
         var self = this;
+        this.actionCallback = actionCallback;
         this.tableId = tableId;
         this.actionButtons = [];
         this.tableButtons = [];
         this.currentActions = [];
         this.allActions = [];
+        this.userActionsContainer = $(".user-actions",view);
+        this.futureActions = new Poker.FutureActions($(".future-actions",view));
         this._addTableButton($(".action-join",view),Poker.ActionType.JOIN,actionCallback);
         this._addTableButton($(".action-leave",view),Poker.ActionType.LEAVE,actionCallback);
         this._addTableButton($(".action-sit-in",view),Poker.ActionType.SIT_IN,actionCallback);
@@ -125,12 +135,25 @@ Poker.MyActionsManager  = Class.extend({
         this.allActions.push(this.tableButtons[actionType.id]);
     },
     onRequestPlayerAction : function(actions,mainPot,fixedLimit){
-        console.log("ON REQUEST PLAYER ACTION");
+
         this.currentActions = actions;
         this.hideAllActionButtons();
 
+        var fromFutureAction = this.futureActions.getAction(actions);
+        this.futureActions.clear();
+
+        if(fromFutureAction!=null) {
+            this.actionCallback(fromFutureAction.type,fromFutureAction.minAmount);
+            return;
+        }
+
+        this.userActionsContainer.show();
+        this.futureActions.hide();
+
         for (var a in actions){
           var act = actions[a];
+          console.log("Action:");
+          console.log(act);
           if(fixedLimit==true && act.type.id == Poker.ActionType.BET.id) {
               if(act.minAmount>0) {
                 this.fixedBetActionButton.setAmount(act.minAmount);
@@ -148,6 +171,10 @@ Poker.MyActionsManager  = Class.extend({
               this.actionButtons[act.type.id].show();
           }
         }
+    },
+    onStartHand : function() {
+        this.futureActions.clear();
+        this.futureActions.hide();
     },
     onTournamentOut : function(){
         this.hideAllTableButtons();
@@ -177,6 +204,7 @@ Poker.MyActionsManager  = Class.extend({
         });
     },
     onFold : function() {
+      this.futureActions.hide();
       this.hideAllActionButtons();
     },
     display : function(actionType) {
@@ -202,6 +230,13 @@ Poker.MyActionsManager  = Class.extend({
         for(var a in this.tableButtons) {
             this.tableButtons[a].el.hide();
         }
+    },
+    /**
+     * @param {Poker.FutureActionType[]} actions
+     */
+    displayFutureActions : function(actions, callAmount, minBetAmount) {
+        this.futureActions.setFutureActions(actions,callAmount,minBetAmount);
+        $("#userActActions-"+this.tableId).hide();
     }
 });
 
@@ -212,7 +247,7 @@ Poker.ActionButton = Class.extend({
     showAmount : false,
     minAmount : 0,
     maxAmount : 0,
-    mainPot : 0,
+    totalPot : 0,
     init : function(el,actionType,callback,showAmount) {
         this.el = el;
         if(!this.el) {
@@ -236,11 +271,11 @@ Poker.ActionButton = Class.extend({
 
         var self = this;
         if(this.callback!=null && this.actionType!=null) {
-            this.el.click(function(e) {
+            this.el.touchSafeClick(function(e) {
                 self.callback(self.actionType,self.minAmount);
             });
         } else if(this.callback!=null) {
-            this.el.click(function(e){
+            this.el.touchSafeClick(function(e){
                 self.callback();
             });
         }
@@ -253,7 +288,7 @@ Poker.ActionButton = Class.extend({
             this.maxAmount = maxAmount;
         }
         if(mainPot) {
-            this.mainPot = mainPot;
+            this.totalPot = mainPot;
         }
         this.minAmount = minAmount;
     },
@@ -270,7 +305,7 @@ Poker.BetAmountButton = Poker.ActionButton.extend({
     },
     bindCallBack : function() {
         var self = this;
-        this.el.click(function(){
+        this.el.touchSafeClick(function(){
             self.callback(self.actionType, Poker.MyPlayer.betAmount);
         });
     }
@@ -281,8 +316,8 @@ Poker.BetSliderButton = Poker.ActionButton.extend({
     },
     bindCallBack : function() {
         var self = this;
-        this.el.click(function(){
-            self.callback(self.minAmount,self.maxAmount,self.mainPot);
+        this.el.touchSafeClick(function(){
+            self.callback(self.minAmount,self.maxAmount,self.totalPot);
         });
     }
 });

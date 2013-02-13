@@ -121,7 +121,7 @@ public class HandResultCreator {
 
         for (PlayerHand hand : hands) {
             HandInfo bestHandInfo = hte.getBestHandInfo(hand.getHand());
-            result.add(new RatedPlayerHand(hand, bestHandInfo.getHandType(), bestHandInfo.getCards()));
+            result.add(new RatedPlayerHand(hand, bestHandInfo, bestHandInfo.getCards()));
         }
 
         return result;

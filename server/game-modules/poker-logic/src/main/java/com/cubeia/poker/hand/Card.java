@@ -17,6 +17,8 @@
 
 package com.cubeia.poker.hand;
 
+import com.cubeia.poker.handhistory.api.GameCard;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -141,6 +143,18 @@ public class Card implements Serializable {
             cardsCopy.add(c.makeCopyWithoutId());
         }
         return cardsCopy;
+    }
+
+    public static List<GameCard> translateCards(Collection<Card> cards) {
+        List<GameCard> list = new ArrayList<GameCard>(cards.size());
+        for (Card c : cards) {
+            list.add(c.translate());
+        }
+        return list;
+    }
+
+    public GameCard translate() {
+        return new GameCard(getSuit().translate(), getRank().translate());
     }
 
     public String toString() {

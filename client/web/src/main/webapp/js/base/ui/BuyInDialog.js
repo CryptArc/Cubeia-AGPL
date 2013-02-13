@@ -25,7 +25,7 @@ Poker.BuyInDialog = Class.extend({
             }
             return false; //don't close the dialog, need to wait for response
         });
-        $(".buyin-amount").val(data.minAmount);
+        $(".buyin-amount").val(data.maxAmount);
 
     },
     render : function(data, okFunction) {
@@ -35,6 +35,7 @@ Poker.BuyInDialog = Class.extend({
         this.dialogManager.displayDialog(
             "buyInDialog",
             function() {
+                $("#facebox .buyin-amount").blur();
                return okFunction();
             },
             function() {

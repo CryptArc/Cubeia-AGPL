@@ -220,7 +220,7 @@ public class BlindsCalculator implements Serializable {
     }
 
     private void initBlinds() {
-        log.debug("Initializing blinds. Last hands blinds: " + lastHandsBlinds);
+        log.debug("Initializing blinds. Last hand's blinds: " + lastHandsBlinds);
         if (firstHandAtTable()) {
             initFirstHandAtTable();
         } else if (onlyOneEnteredPlayer()) {

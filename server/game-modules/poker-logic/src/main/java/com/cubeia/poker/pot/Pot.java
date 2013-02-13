@@ -17,11 +17,11 @@
 
 package com.cubeia.poker.pot;
 
+import com.cubeia.poker.handhistory.api.GamePot;
 import com.cubeia.poker.player.PokerPlayer;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -74,6 +74,22 @@ public class Pot implements Serializable {
         }
     }
 
+    public static List<GamePot> translate(Collection<Pot> pots) {
+        List<GamePot> list = new ArrayList<GamePot>(pots.size());
+        for (Pot p : pots) {
+            list.add(p.translate());
+        }
+        return list;
+    }
+
+    public GamePot translate() {
+        GamePot p = new GamePot(getId());
+        for (PokerPlayer player : getPotContributors().keySet()) {
+            p.getPlayers().add(player.getId());
+        }
+        p.setPotSize(getPotSize());
+        return p;
+    }
 
     @Override
     public String toString() {

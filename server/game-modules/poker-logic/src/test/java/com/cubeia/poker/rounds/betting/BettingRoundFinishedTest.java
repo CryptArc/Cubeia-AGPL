@@ -19,6 +19,7 @@ package com.cubeia.poker.rounds.betting;
 
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.timing.impl.DefaultTimingProfile;
@@ -75,7 +76,7 @@ public class BettingRoundFinishedTest {
 
         NoLimitBetStrategy betStrategy = new NoLimitBetStrategy(0);
         ActionRequestFactory actionRequestFactory = new ActionRequestFactory(betStrategy);
-        TexasHoldemFutureActionsCalculator futureActionsCalculator = new TexasHoldemFutureActionsCalculator();
+        TexasHoldemFutureActionsCalculator futureActionsCalculator = new TexasHoldemFutureActionsCalculator(BetStrategyType.FIXED_LIMIT);
         round = new BettingRound(0, context, serverAdapterHolder, playerToActCalculator, actionRequestFactory, futureActionsCalculator, betStrategy);
     }
 

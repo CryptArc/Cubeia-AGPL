@@ -21,6 +21,8 @@
     <script type="text/javascript" src="${cp}/js/lib/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/jquery-ui-1.8.21.custom.min.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/jquery.ui.touch-punch.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/touch-click.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/relative-offset.js"></script>
 
     <script type="text/javascript" src="${cp}/js/lib/mustache.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/jquery.jqGrid.min.js"></script>
@@ -35,8 +37,8 @@
 
     <script type="text/javascript" src="${cp}/js/base/ui/CircularProgressBar.js"></script>
 
-    <script src="${cp}/js/lib/cubeia/firebase-js-api-1.9.0-CE-javascript.js" type="text/javascript"></script>
-    <script src="${cp}/js/lib/cubeia/firebase-protocol-1.9.0-CE-javascript.js" type="text/javascript"></script>
+    <script src="${cp}/js/lib/cubeia/firebase-js-api-1.9.2-CE-javascript.js" type="text/javascript"></script>
+    <script src="${cp}/js/lib/cubeia/firebase-protocol-1.9.2-CE-javascript.js" type="text/javascript"></script>
     <script src="${cp}/js/lib/poker-protocol-1.0-SNAPSHOT.js" type="text/javascript"></script>
     <script src="${cp}/js/lib/hand-history-protocol-1.0-SNAPSHOT.js" type="text/javascript"></script>
     <script src="${cp}/js/lib/quo.js" type="text/javascript"></script>
@@ -85,6 +87,7 @@
     <script type="text/javascript" src="${cp}/js/base/Table.js"></script>
     <script type="text/javascript" src="${cp}/js/base/TableManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/Clock.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/PotTransferAnimator.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/TableLayoutManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/TemplateManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/Seat.js"></script>
@@ -104,6 +107,8 @@
     <script type="text/javascript" src="${cp}/js/base/sound/SoundManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/sound/SoundRepository.js"></script>
     <script type="text/javascript" src="${cp}/js/base/sound/Sounds.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/FutureActionType.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/FutureActions.js"></script>
 
     <script type="text/javascript" src="${cp}/js/base/ui/DialogManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/DisconnectDialog.js"></script>
@@ -397,7 +402,7 @@
     </div>
 </script>
 <div id="mainPotTemplate" style="display: none;">
-    <span>Pot:</span> <div class="balance">&euro;{{amount}}</div>
+        <div class="balance pot-container-{{potId}}">&euro;<span class="pot-value pot-{{potId}}">{{amount}}</span></div>
 </div>
 <div id="myPlayerSeatTemplate" style="display:none;">
         <div class="player-name">
@@ -500,7 +505,7 @@
     </div>
 </div>
 <div id="potTransferTemplate" style="display: none;">
-    <div id="potTransfer{{id}}" class="pot-transfer" style="visibility: hidden;">
+        <div id="{{ptId}}" class="pot-transfer" style="visibility: hidden;">
         <div class="balance">&euro;{{amount}}</div>
     </div>
 </div>
@@ -542,6 +547,9 @@
             <div class="my-player-seat" id="myPlayerSeat-{{tableId}}">
 
             </div>
+                <div class="click-area-0">
+
+                </div>
             <div class="table-info" style="display:none;">
                 <div class="blinds">
                     Blinds: <span class="table-blinds-value value">10/20</span>
@@ -555,6 +563,9 @@
             <div class="community-cards">
 
             </div>
+                <div class="total-pot">
+                    Pot: <span>&euro;<span class="amount"></span></span>
+                </div>
             <div class="main-pot">
 
             </div>
@@ -633,9 +644,48 @@
                 <div class="action-button action-sit-in" style="display: none;">
                     <span>Sit-in</span>
                 </div>
-
                 <div class="action-button action-hhl" style="display: none;">
                     <span>HHL</span>
+                </div>
+                <div id="futureActions-{{tableId}}" class="future-actions" style="display:none;">
+                    <div class="future-action check" style="display:none;">
+                        <input type="checkbox" id="future-check-{{tableId}}"/>
+                        <label  for="future-check-{{tableId}}">Fold</label>
+                    </div>
+
+                    <div class="future-action check-or-fold" style="display:none;">
+                        <input type="checkbox" id="future-check-or-fold-{{tableId}}"/>
+
+                        <label for="future-check-or-fold-{{tableId}}">Check/Fold</label>
+                    </div>
+
+                    <div class="future-action call-current-bet" style="display:none;">
+                        <input type="checkbox" id="future-call-current-bet-{{tableId}}"/>
+                        <label for="future-call-current-bet-{{tableId}}">Call <span class="amount"></span></label>
+                    </div>
+
+                    <div class="future-action check-or-call-any" style="display:none;">
+                        <input type="checkbox" id="future-check-or-call-any-{{tableId}}"/>
+                        <label for="future-check-or-call-any-{{tableId}}">Check/Call any</label>
+                    </div>
+                    <div class="future-action call-any" style="display:none;">
+                        <input type="checkbox" id="future-call-any-{{tableId}}"/>
+                        <label for="future-call-any-{{tableId}}">Call any</label>
+                    </div>
+
+                    <div class="future-action fold" style="display:none;">
+                        <input type="checkbox" id="future-fold-{{tableId}}"/>
+                        <label for="future-fold-{{tableId}}">Fold</label>
+                    </div>
+
+                    <div class="future-action raise" style="display:none;">
+                        <input type="checkbox" id="future-raise-{{tableId}}"/>
+                        <label for="future-raise-{{tableId}}">Raise to <span class="amount"></span></label>
+                    </div>
+
+                    <div class="future-action raise-any" style="display:none;">
+                        <input type="checkbox" id="future-raise-any-{{tableId}}"/>
+                        <label for="future-raise-any-{{tableId}}">Raise any</label>
                 </div>
 
             </div>

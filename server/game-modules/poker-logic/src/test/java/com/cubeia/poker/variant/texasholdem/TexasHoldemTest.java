@@ -404,7 +404,7 @@ public class TexasHoldemTest {
         assertEquals(1200L, result.getWinningsIncludingOwnBets());
         assertEquals(Integer.valueOf(102), ratedPlayerHand.getPlayerId());
         assertThat(ratedPlayerHand.getBestHandCards(), is(new Hand("AC 9C 8C 6C 5C").getCards()));
-        assertEquals(HandType.FLUSH, ratedPlayerHand.getBestHandType());
+        assertEquals(HandType.FLUSH, ratedPlayerHand.getHandInfo().getHandType());
     }
 
     @Test
@@ -616,7 +616,7 @@ public class TexasHoldemTest {
     private PokerContext prepareContext(int numberOfPlayers) {
         BlindsLevel level = new BlindsLevel(10, 20, 0);
         BetStrategyType betStrategy = BetStrategyType.NO_LIMIT;
-        PokerSettings settings = new PokerSettings(level, betStrategy, 100, 5000, new DefaultTimingProfile(), 6, rakeSettings, null);
+        PokerSettings settings = new PokerSettings(level, betStrategy, 100, 5000, new DefaultTimingProfile(), 6, rakeSettings, "EUR", null);
         PokerContext context = new PokerContext(settings);
         texas.setPokerContextAndServerAdapter(context, serverAdapterHolder);
         p = TestUtils.createMockPlayers(numberOfPlayers);

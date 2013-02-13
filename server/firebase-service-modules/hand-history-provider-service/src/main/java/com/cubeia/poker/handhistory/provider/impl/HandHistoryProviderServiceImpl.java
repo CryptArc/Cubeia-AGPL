@@ -29,27 +29,29 @@ import com.cubeia.games.poker.handhistoryservice.io.protocol.*;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.common.mongo.DatabaseStorageConfiguration;
 import com.cubeia.games.poker.common.mongo.MongoStorage;
+import com.cubeia.poker.handhistory.api.HandHistoryEvent;
+import com.cubeia.poker.handhistory.api.HistoricHand;
 import com.cubeia.poker.handhistory.provider.api.HandHistoryProviderService;
+import com.google.code.morphia.query.Query;
+import com.google.gson.*;
 import com.mongodb.BasicDBObject;
-import com.mongodb.DBCursor;
-import com.mongodb.ReadPreference;
 import org.apache.log4j.Logger;
 
+import java.lang.reflect.Type;
 import java.nio.ByteBuffer;
+import java.util.List;
 
 public class HandHistoryProviderServiceImpl implements HandHistoryProviderService, Service, RoutableService {
 
     private static final Logger log = Logger.getLogger(HandHistoryProviderServiceImpl.class);
     public static final int MAX_HANDS = 500;
     public static final int MAX_HAND_IDS = 500;
-    public static final String HANDS_COLLECTION = "hands";
 
     private ServiceRouter router;
     private MongoStorage mongoStorage;
     private DatabaseStorageConfiguration configuration;
 
-    private enum PacketType
-    {
+    private enum PacketType {
         hand_ids,
         hand,
         hands,
@@ -60,35 +62,23 @@ public class HandHistoryProviderServiceImpl implements HandHistoryProviderServic
     public String getHandIds(int tableId, int playerId, int count, long time) {
         log.debug("GetHandIds request data - TableId: " + tableId + " PlayerId: " + playerId + " Count: " + count + " Time: " + time);
         String result = "[]";
-        if (count > 0)
-        {
-            //db.hands.find({"table.tableId" : 12, "seats" : {$elemMatch : {"playerId" : 2}}}, {"id" : 1, "_id" : 0}).sort({"startTime" : -1}).limit( 6 );
-            if (count > MAX_HAND_IDS)
-            {
+        if (count > 0) {
+            if (count > MAX_HAND_IDS) {
                 count = MAX_HAND_IDS;
             }
-            BasicDBObject query = new BasicDBObject();
-            query.put("table.tableId", tableId);
-            query.put("seats", new BasicDBObject("$elemMatch", new BasicDBObject("playerId", playerId)));
-            BasicDBObject projectedFields = new BasicDBObject();
-            projectedFields.put("id", 1);
-            projectedFields.put("_id", 0);
-            DBCursor cursor = mongoStorage.findByQuery(query, HANDS_COLLECTION, projectedFields);
-            result = cursor.sort(new BasicDBObject("startTime", -1)).limit(count).toArray().toString();
-            cursor.close();
+            Query query = mongoStorage.createQuery(HistoricHand.class);
+            query.field("table.tableId").equal(tableId);
+            query.filter("seats elem", new BasicDBObject("playerId", playerId));
+            query.retrievedFields(true, "id");
+            result = convertToJson(query.order("-startTime").limit(count).asKeyList());
         }
-        else
-        {
-            BasicDBObject query = new BasicDBObject();
-            query.put("table.tableId", tableId);
-            query.put("seats", new BasicDBObject("$elemMatch", new BasicDBObject("playerId", playerId)));
-            query.put("startTime", new BasicDBObject("$gte", time));
-            BasicDBObject projectedFields = new BasicDBObject();
-            projectedFields.put("id", 1);
-            projectedFields.put("_id", 0);
-            DBCursor cursor = mongoStorage.findByQuery(query, HANDS_COLLECTION, projectedFields).limit(MAX_HAND_IDS);
-            result = cursor.toArray().toString();
-            cursor.close();
+        else {
+            Query query = mongoStorage.createQuery(HistoricHand.class);
+            query.field("table.tableId").equal(tableId);
+            query.field("startTime").greaterThanOrEq(time);
+            query.filter("seats elem", new BasicDBObject("playerId", playerId));
+            query.retrievedFields(true, "id").retrievedFields(false, "_id");
+            result = convertToJson(query.order("-startTime").limit(MAX_HAND_IDS).asKeyList());
         }
         return result;
     }
@@ -96,41 +86,31 @@ public class HandHistoryProviderServiceImpl implements HandHistoryProviderServic
     @Override
     public String getHand(String handId, int playerId) {
         log.debug("GetHand request data - HandId: " + handId + " PlayerId: " + playerId);
-        BasicDBObject query = new BasicDBObject();
-        query.put("id", handId);
-        query.put("seats", new BasicDBObject("$elemMatch", new BasicDBObject("playerId", playerId)));
-        DBCursor cursor = mongoStorage.findByQuery(query, HANDS_COLLECTION);
-        String result = cursor.toArray().toString();
-        cursor.close();
-        return result;
+        Query query = mongoStorage.createQuery(HistoricHand.class);
+        query.field("id").equal(handId);
+        query.filter("seats elem", new BasicDBObject("playerId", playerId));
+        return convertToJson(query.asList());
     }
 
     @Override
     public String getHands(int tableId, int playerId, int count, long time) {
         log.debug("GetHands request data - TableId: " + tableId + " PlayerId: " + playerId + " Count: " + count + " Time: " + time);
         String result = "[]";
-        if (count > 0)
-        {
-            if (count > MAX_HANDS)
-            {
+        if (count > 0) {
+            if (count > MAX_HANDS) {
                 count = MAX_HANDS;
             }
-            BasicDBObject query = new BasicDBObject();
-            query.put("table.tableId", tableId);
-            query.put("seats", new BasicDBObject("$elemMatch", new BasicDBObject("playerId", playerId)));
-            DBCursor cursor = mongoStorage.findByQuery(query, HANDS_COLLECTION);
-            result = cursor.sort(new BasicDBObject("startTime", -1)).limit(count).toArray().toString();
-            cursor.close();
+            Query query = mongoStorage.createQuery(HistoricHand.class);
+            query.field("table.tableId").equal(tableId);
+            query.filter("seats elem", new BasicDBObject("playerId", playerId));
+            result = convertToJson(query.order("-startTime").limit(count).asList());
         }
-        else
-        {
-            BasicDBObject query = new BasicDBObject();
-            query.put("table.tableId", tableId);
-            query.put("seats", new BasicDBObject("$elemMatch", new BasicDBObject("playerId", playerId)));
-            query.put("startTime", new BasicDBObject("$gte", time));
-            DBCursor cursor = mongoStorage.findByQuery(query, HANDS_COLLECTION).limit(MAX_HANDS);
-            result = cursor.toArray().toString();
-            cursor.close();
+        else {
+            Query query = mongoStorage.createQuery(HistoricHand.class);
+            query.field("table.tableId").equal(tableId);
+            query.field("startTime").greaterThanOrEq(time);
+            query.filter("seats elem", new BasicDBObject("playerId", playerId));
+            result = convertToJson(query.order("-startTime").limit(MAX_HANDS).asList());
         }
         return result;
     }
@@ -149,18 +129,15 @@ public class HandHistoryProviderServiceImpl implements HandHistoryProviderServic
         PacketType responseType = PacketType.undefined;
         String value = "";
 
-        if (protocolObject.getClass() == HandHistoryProviderRequestHand.class)
-        {
+        if (protocolObject.getClass() == HandHistoryProviderRequestHand.class) {
             HandHistoryProviderRequestHand request = (HandHistoryProviderRequestHand)protocolObject;
             value =  getHand(request.handId, e.getPlayerId());
             responseType = PacketType.hand;
-        } else if (protocolObject.getClass() == HandHistoryProviderRequestHands.class)
-        {
+        } else if (protocolObject.getClass() == HandHistoryProviderRequestHands.class) {
             HandHistoryProviderRequestHands request = (HandHistoryProviderRequestHands)protocolObject;
             value =  getHands(request.tableId, e.getPlayerId(), request.count, getTime(request.time));
             responseType = PacketType.hands;
-        } else if (protocolObject.getClass() == HandHistoryProviderRequestHandIds.class)
-        {
+        } else if (protocolObject.getClass() == HandHistoryProviderRequestHandIds.class) {
             HandHistoryProviderRequestHandIds request = (HandHistoryProviderRequestHandIds)protocolObject;
             value =  getHandIds(request.tableId, e.getPlayerId(), request.count, getTime(request.time));
             responseType = PacketType.hand_ids;
@@ -171,13 +148,10 @@ public class HandHistoryProviderServiceImpl implements HandHistoryProviderServic
         router.dispatchToPlayer(e.getPlayerId(), action);
     }
 
-    private long getTime(String value)
-    {
+    private long getTime(String value) {
         long time = 0L;
-        if (!(value == null || value.isEmpty()))
-        {
-            try
-            {
+        if (!(value == null || value.isEmpty())) {
+            try {
                 time = Long.parseLong(value);
             }
             catch (Throwable t) { }
@@ -200,6 +174,18 @@ public class HandHistoryProviderServiceImpl implements HandHistoryProviderServic
         return new MongoStorage(configuration);
     }
 
+    private String convertToJson(List hands) {
+        Gson gson = createGson();
+        return gson.toJson(hands);
+    }
+
+    private Gson createGson() {
+        GsonBuilder b = new GsonBuilder();
+        b.registerTypeAdapter(HandHistoryEvent.class, new HandHistorySerializer());
+        //b.setPrettyPrinting();
+        return b.create();
+    }
+
     @Override
     public void destroy() { }
 
@@ -211,5 +197,14 @@ public class HandHistoryProviderServiceImpl implements HandHistoryProviderServic
     @Override
     public void stop() {
         mongoStorage.disconnect();
+    }
+
+    private static class HandHistorySerializer implements JsonSerializer<HandHistoryEvent> {
+
+        @Override
+        public JsonElement serialize(HandHistoryEvent src, Type typeOfSrc, JsonSerializationContext context) {
+            Class<? extends HandHistoryEvent> cl = src.getClass();
+            return context.serialize(src, cl);
+        }
     }
 }

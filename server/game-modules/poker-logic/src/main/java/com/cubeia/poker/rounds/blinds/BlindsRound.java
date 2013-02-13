@@ -139,6 +139,7 @@ public class BlindsRound implements Round, Serializable {
             blindsInfo.setHasDeadSmallBlind(true);
         }
         blindsInfo.setSmallBlindPlayerId(newBlindsInfo.getSmallBlindPlayerId());
+        blindsInfo.setSmallBlindSeatId(newBlindsInfo.getSmallBlindSeatId());
 
         // Big blind
         blindsInfo.setBigBlindSeatId(newBlindsInfo.getBigBlindSeatId());

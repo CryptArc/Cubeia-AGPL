@@ -23,13 +23,20 @@ public abstract class HandHistoryEvent implements Serializable {
 
     private static final long serialVersionUID = 7429903140165014580L;
 
-    private final String type;
-
+    private String type;
     private long time;
 
-    protected HandHistoryEvent() {
+    public HandHistoryEvent() {
         this.type = getClass().getSimpleName();
         this.time = System.currentTimeMillis();
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public long getTime() {
@@ -40,40 +47,31 @@ public abstract class HandHistoryEvent implements Serializable {
         this.time = time;
     }
 
-    public String getType() {
-        return type;
-    }
-
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (int) (time ^ (time >>> 32));
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
-        return result;
-    }
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        HandHistoryEvent other = (HandHistoryEvent) obj;
-        if (time != other.time)
-            return false;
-        if (type == null) {
-            if (other.type != null)
-                return false;
-        } else if (!type.equals(other.type))
-            return false;
+        HandHistoryEvent that = (HandHistoryEvent) o;
+
+        if (time != that.time) return false;
+        if (type != null ? !type.equals(that.type) : that.type != null) return false;
+
         return true;
     }
 
     @Override
+    public int hashCode() {
+        int result = type != null ? type.hashCode() : 0;
+        result = 31 * result + (int) (time ^ (time >>> 32));
+        return result;
+    }
+
+    @Override
     public String toString() {
-        return "HandHistoryEvent [type=" + type + ", time=" + time + "]";
+        return "HandHistoryEvent{" +
+                "type='" + type + '\'' +
+                ", time=" + time +
+                '}';
     }
 }

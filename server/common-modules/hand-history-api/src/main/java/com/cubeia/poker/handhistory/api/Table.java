@@ -28,6 +28,9 @@ public class Table implements Serializable {
     private String tableName;
     private int seats;
 
+    public Table() {
+    }
+
     public int getTableId() {
         return tableId;
     }
@@ -52,60 +55,46 @@ public class Table implements Serializable {
         this.tableName = tableName;
     }
 
+    public int getSeats() {
+        return seats;
+    }
+
+    public void setSeats(int seats) {
+        this.seats = seats;
+    }
+
     @Override
-    public String toString() {
-        return "Table [tableId=" + tableId + ", tableIntegrationId="
-               + tableIntegrationId + ", tableName=" + tableName + ", seats="
-               + seats + "]";
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Table table = (Table) o;
+
+        if (seats != table.seats) return false;
+        if (tableId != table.tableId) return false;
+        if (tableIntegrationId != null ? !tableIntegrationId.equals(table.tableIntegrationId) : table.tableIntegrationId != null)
+            return false;
+        if (tableName != null ? !tableName.equals(table.tableName) : table.tableName != null) return false;
+
+        return true;
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + seats;
-        result = prime * result + tableId;
-        result = prime
-                 * result
-                 + ((tableIntegrationId == null) ? 0 : tableIntegrationId
-                .hashCode());
-        result = prime * result
-                 + ((tableName == null) ? 0 : tableName.hashCode());
+        int result = tableId;
+        result = 31 * result + (tableIntegrationId != null ? tableIntegrationId.hashCode() : 0);
+        result = 31 * result + (tableName != null ? tableName.hashCode() : 0);
+        result = 31 * result + seats;
         return result;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Table other = (Table) obj;
-        if (seats != other.seats) {
-            return false;
-        }
-        if (tableId != other.tableId) {
-            return false;
-        }
-        if (tableIntegrationId == null) {
-            if (other.tableIntegrationId != null) {
-                return false;
-            }
-        } else if (!tableIntegrationId.equals(other.tableIntegrationId)) {
-            return false;
-        }
-        if (tableName == null) {
-            if (other.tableName != null) {
-                return false;
-            }
-        } else if (!tableName.equals(other.tableName)) {
-            return false;
-        }
-        return true;
+    public String toString() {
+        return "Table{" +
+                "tableId=" + tableId +
+                ", tableIntegrationId='" + tableIntegrationId + '\'' +
+                ", tableName='" + tableName + '\'' +
+                ", seats=" + seats +
+                '}';
     }
 }

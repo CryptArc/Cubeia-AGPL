@@ -17,6 +17,7 @@
 
 package com.cubeia.poker.result;
 
+import com.cubeia.poker.handhistory.api.*;
 import com.cubeia.poker.pot.Pot;
 
 import java.io.Serializable;
@@ -42,6 +43,11 @@ public class Result implements Serializable {
         this.bets = ownBets;
         this.winningsByPot = winningsByPot;
         this.winningsIncludingOwnBets = netResult + ownBets;
+    }
+
+    public com.cubeia.poker.handhistory.api.HandResult translate(int playerId) {
+        long value = getWinningsIncludingOwnBets() - getNetResult();
+        return new com.cubeia.poker.handhistory.api.HandResult(playerId, getNetResult(), getWinningsIncludingOwnBets(), -1, value);
     }
 
     /**

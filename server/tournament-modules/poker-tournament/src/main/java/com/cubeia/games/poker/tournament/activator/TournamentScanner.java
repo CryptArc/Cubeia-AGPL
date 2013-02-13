@@ -161,7 +161,7 @@ public class TournamentScanner implements PokerActivator, Runnable {
     /**
      * Resurrects a sit&go. Resurrecting it will lead to any registered player getting the buy-in back.
      *
-     * @param historicTournament
+     * @param historicTournament the tournament to resurrect
      */
     private void resurrectSitAndGoTournament(HistoricTournament historicTournament) {
         SitAndGoConfiguration configuration = tournamentScheduleProvider.getSitAndGoTournamentConfiguration(historicTournament.getTournamentTemplateId());
@@ -284,21 +284,26 @@ public class TournamentScanner implements PokerActivator, Runnable {
 
     private void checkTournaments() {
         if (shutdownService.isSystemShuttingDown()) {
-            shutDownEmptyTournamentsAndNonStartedSitAndGoTournaments();
+            shutDownTournamentsThatCanBeShutDown();
         } else {
             checkSitAndGos();
             checkScheduledTournaments();
         }
     }
 
-    private void shutDownEmptyTournamentsAndNonStartedSitAndGoTournaments() {
+    private void shutDownTournamentsThatCanBeShutDown() {
         MttLobbyObject[] tournamentInstances = factory.listTournamentInstances();
 
+        /*
+         * Note, we are not shutting down any scheduled tournaments, since a tournament
+         * might be scheduled to start in a week's time and there's plenty of time
+         * for the system to come back up again in that case.
+         */
         for (MttLobbyObject tournament : tournamentInstances) {
             String status = getStringAttribute(tournament, STATUS.name());
             boolean sitAndGo = parseBoolean(getStringAttribute(tournament, SIT_AND_GO.name()));
             boolean registering = status.equalsIgnoreCase(REGISTERING.name());
-            boolean closedOrCancelled = CLOSED.equals(status) || CANCELLED.equals(status);
+            boolean closedOrCancelled = CLOSED.name().equals(status) || CANCELLED.name().equals(status);
             boolean registeringSitAndGo = registering && sitAndGo;
             if (!closedOrCancelled && registeringSitAndGo) {
                 shutdownService.shutDownTournament(tournament.getTournamentId());
@@ -344,15 +349,6 @@ public class TournamentScanner implements PokerActivator, Runnable {
             return "";
         }
         return value.getStringValue();
-    }
-
-    private int getIntAttribute(MttLobbyObject tournament, String attributeName) {
-        AttributeValue value = tournament.getAttributes().get(attributeName);
-
-        if (value == null || value.getType() != AttributeValue.Type.INT) {
-            return -1;
-        }
-        return value.getIntValue();
     }
 
     private void checkSitAndGos() {

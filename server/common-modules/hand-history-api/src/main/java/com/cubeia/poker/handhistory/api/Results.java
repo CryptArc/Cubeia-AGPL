@@ -26,7 +26,7 @@ public class Results implements Serializable {
     private static final long serialVersionUID = 5742358497502861176L;
 
     private long totalRake;
-    private final Map<Integer, HandResult> results = new HashMap<Integer, HandResult>();
+    private Map<Integer, HandResult> results = new HashMap<Integer, HandResult>();
 
     public Results(long totalRake) {
         this.totalRake = totalRake;
@@ -35,54 +35,47 @@ public class Results implements Serializable {
     public Results() {
     }
 
-    public Map<Integer, HandResult> getResults() {
-        return results;
+    public long getTotalRake() {
+        return totalRake;
     }
 
     public void setTotalRake(long totalRake) {
         this.totalRake = totalRake;
     }
 
-    public long getTotalRake() {
-        return totalRake;
+    public Map<Integer, HandResult> getResults() {
+        return results;
+    }
+
+    public void setResults(Map<Integer, HandResult> results) {
+        this.results = results;
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((results == null) ? 0 : results.hashCode());
-        result = prime * result + (int) (totalRake ^ (totalRake >>> 32));
-        return result;
-    }
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Results other = (Results) obj;
-        if (results == null) {
-            if (other.results != null) {
-                return false;
-            }
-        } else if (!results.equals(other.results)) {
-            return false;
-        }
-        if (totalRake != other.totalRake) {
-            return false;
-        }
+        Results results1 = (Results) o;
+
+        if (totalRake != results1.totalRake) return false;
+        if (results != null ? !results.equals(results1.results) : results1.results != null) return false;
+
         return true;
     }
 
     @Override
+    public int hashCode() {
+        int result = (int) (totalRake ^ (totalRake >>> 32));
+        result = 31 * result + (results != null ? results.hashCode() : 0);
+        return result;
+    }
+
+    @Override
     public String toString() {
-        return "Results [totalRake=" + totalRake + ", results=" + results + "]";
+        return "Results{" +
+                "totalRake=" + totalRake +
+                ", results=" + results +
+                '}';
     }
 }

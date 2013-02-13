@@ -248,7 +248,7 @@ public class PokerStateTest {
         RakeSettings rakeSettings = TestUtils.createOnePercentRakeSettings();
         BlindsLevel level = new BlindsLevel(0, 0, 0);
         BetStrategyType betStrategy = BetStrategyType.NO_LIMIT;
-        state.pokerContext.settings = new PokerSettings(level, betStrategy, 0, 0, null, 4, rakeSettings, null);
+        state.pokerContext.settings = new PokerSettings(level, betStrategy, 0, 0, null, 4, rakeSettings, "EUR", null);
 
         state.pokerContext.playerMap = new HashMap<Integer, PokerPlayer>();
         PokerPlayer player1 = mock(PokerPlayer.class);

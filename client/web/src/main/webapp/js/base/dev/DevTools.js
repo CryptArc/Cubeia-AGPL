@@ -75,7 +75,8 @@ Poker.DevTools = Class.extend({
 
         this.mockEventManager.addEvent(
             mockEvent("Update main pots", function(){
-                self.tableManager.updatePots(self.tableId,[{type:Poker.PotType.MAIN, amount:10000}]);
+                self.tableManager.updateTotalPot(self.tableId,10000);
+                self.tableManager.updatePots(self.tableId,[new Poker.Pot(0,Poker.PotType.MAIN,10000)]);
             })
         );
 
@@ -149,6 +150,15 @@ Poker.DevTools = Class.extend({
             })
         );
         this.mockEventManager.addEvent(
+            mockEvent("Future actions",function(){
+              self.tableManager.onFutureAction(self.tableId,[
+                  new Poker.Action(Poker.ActionType.FOLD,0,0),
+                  new Poker.Action(Poker.ActionType.CALL,10,10),
+                  new Poker.Action(Poker.ActionType.RAISE,20,20)
+              ],100,200);
+            })
+        );
+        this.mockEventManager.addEvent(
             mockEvent("Request Player Action",function(){
                 self.tableManager.handleRequestPlayerAction(self.tableId,0,
                     [
@@ -163,8 +173,40 @@ Poker.DevTools = Class.extend({
                 self.playerAction(0,Poker.ActionType.BET);
             })
         );
+        this.mockEventManager.addEvent(mockEvent("Update pots", function(){
+            self.tableManager.updatePots(self.tableId, [new Poker.Pot(0,Poker.PotType.MAIN,9000),
+                new Poker.Pot(1,Poker.PotType.SIDE,1000)] );
+        }));
+        this.mockEventManager.addEvent(mockEvent("End hand", function(){
+            var bestHands = [];
+
+            var bh = new com.cubeia.games.poker.io.protocol.BestHand();
+            bh.handType =  com.cubeia.games.poker.io.protocol.HandTypeEnum.HIGH_CARD;
+            bh.player = 1;
+            bh.cards = [self.getCard(1,"s"),self.getCard(2,"d")];
+            bestHands.push(bh);
 
 
+            var potTransfers = new com.cubeia.games.poker.io.protocol.PotTransfers();
+            potTransfers.fromPlayerToPot = false;
+
+            potTransfers.transfers = [self.getPotTransfer(0,1,8000),self.getPotTransfer(0,2,1000),self.getPotTransfer(1,2,1000)];
+
+            self.tableManager.endHand(self.tableId,bestHands,potTransfers);
+        }));
+    },
+    getPotTransfer : function(potId,playerId,amount) {
+        var pt = new com.cubeia.games.poker.io.protocol.PotTransfer();
+        pt.amount = amount;
+        pt.playerId = playerId;
+        pt.potId = potId;
+        return pt;
+    },
+    getCard : function(rank,suit) {
+        var card1 = new com.cubeia.games.poker.io.protocol.GameCard();
+        card1.rank = rank;
+        card1.suit = suit;
+        return card1;
     },
 
     addPlayer : function(seat,playerId,name) {

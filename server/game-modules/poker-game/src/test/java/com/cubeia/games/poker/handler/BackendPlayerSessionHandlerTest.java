@@ -17,28 +17,10 @@
 
 package com.cubeia.games.poker.handler;
 
-import static com.cubeia.games.poker.handler.BackendCallHandler.EXT_PROP_KEY_TABLE_ID;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.Map;
-
-import com.cubeia.backend.cashgame.dto.OpenTableSessionRequest;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.TableId;
 import com.cubeia.backend.cashgame.dto.CloseSessionRequest;
-import com.cubeia.backend.cashgame.dto.OpenSessionRequest;
+import com.cubeia.backend.cashgame.dto.OpenTableSessionRequest;
 import com.cubeia.backend.cashgame.exceptions.CloseSessionFailedException;
 import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.firebase.api.game.table.Table;
@@ -46,6 +28,23 @@ import com.cubeia.games.poker.PokerConfigServiceMock;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.settings.PokerSettings;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.Map;
+
+import static com.cubeia.games.poker.handler.BackendCallHandler.EXT_PROP_KEY_TABLE_ID;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class BackendPlayerSessionHandlerTest {
 
@@ -57,7 +56,10 @@ public class BackendPlayerSessionHandlerTest {
     
     @Mock
     PokerState state;
-    
+
+    @Mock
+    private PokerSettings settings;
+
     private BackendPlayerSessionHandler backendPlayerSessionHandler;
 
     @Before
@@ -93,6 +95,8 @@ public class BackendPlayerSessionHandlerTest {
         TableId tableId = new TableId(1, 1);
         Map<String, Serializable> extProps = Collections.singletonMap(EXT_PROP_KEY_TABLE_ID, (Serializable) tableId);
         when(state.getExternalTableProperties()).thenReturn(extProps);
+        when(state.getSettings()).thenReturn(settings);
+        when(settings.getCurrency()).thenReturn("EUR");
 
         int playerId = 234989;
         backendPlayerSessionHandler.startWalletSession(state, table, playerId);

@@ -42,7 +42,7 @@ public class TelesinaFutureActionsCalculatorTest {
         when(player.isAllIn()).thenReturn(true);
         when(player.hasFolded()).thenReturn(false);
 
-        List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L);
+        List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L,false);
         assertThat(options.isEmpty(), is(true));
     }
 
@@ -55,7 +55,7 @@ public class TelesinaFutureActionsCalculatorTest {
         when(player.isAllIn()).thenReturn(false);
         when(player.hasFolded()).thenReturn(false);
 
-        List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L);
+        List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L,false);
         assertThat(options.isEmpty(), not(true));
     }
 
@@ -69,7 +69,7 @@ public class TelesinaFutureActionsCalculatorTest {
         when(player.isAllIn()).thenReturn(false);
         when(player.hasFolded()).thenReturn(false);
 
-        List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L);
+        List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L,false);
         assertThat(options.isEmpty(), not(true));
     }
 
@@ -82,7 +82,7 @@ public class TelesinaFutureActionsCalculatorTest {
         when(player.isAllIn()).thenReturn(false);
         when(player.hasFolded()).thenReturn(true);
 
-        List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L);
+        List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L,false);
         assertThat(options.isEmpty(), is(true));
     }
 
@@ -98,7 +98,7 @@ public class TelesinaFutureActionsCalculatorTest {
         when(player.getBetStack()).thenReturn(100L);
         when(player.getBalance()).thenReturn(2000L);
 
-        List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L);
+        List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L,false);
         assertThat(options, hasItems(PokerActionType.CHECK, PokerActionType.FOLD));
         assertThat(options.size(), is(2));
 
@@ -115,7 +115,7 @@ public class TelesinaFutureActionsCalculatorTest {
         when(player.getBetStack()).thenReturn(50L);
         when(player.getBalance()).thenReturn(2000L);
 
-        List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L);
+        List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L,false);
         assertThat(options, hasItems(PokerActionType.FOLD));
         assertThat(options.size(), is(1));
     }
@@ -132,7 +132,7 @@ public class TelesinaFutureActionsCalculatorTest {
         when(player.getBetStack()).thenReturn(100L);
         when(player.getBalance()).thenReturn(2000L);
 
-        List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L);
+        List<PokerActionType> options = calc.calculateFutureActionOptionList(player, 100L,false);
         assertThat(options, hasItems(PokerActionType.FOLD));
         assertThat(options.size(), is(1));
 

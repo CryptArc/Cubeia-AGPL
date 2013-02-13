@@ -90,7 +90,7 @@ public class PokerTournamentState implements Serializable {
 
     private BigDecimal fee;
 
-    private String currencyCode = "EUR"; // TODO: Make configurable.
+    private String currencyCode;
 
     /**  Maps playerId to PlayerSessionId */
     private Map<Integer, PlayerSessionId> playerSessions = newHashMap();
@@ -151,6 +151,10 @@ public class PokerTournamentState implements Serializable {
         return betStrategy;
     }
 
+    public String getCurrencyCode() {
+        return currencyCode;
+    }
+
     public boolean isResurrectingTournament() {
         return resurrectingTournament;
     }
@@ -165,6 +169,10 @@ public class PokerTournamentState implements Serializable {
 
     public void setBetStrategy(BetStrategyType betStrategy) {
         this.betStrategy = betStrategy;
+    }
+
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = currencyCode;
     }
 
     public void setResurrectingTournament(boolean resurrectingTournament) {

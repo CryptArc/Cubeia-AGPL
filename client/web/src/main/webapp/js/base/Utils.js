@@ -30,15 +30,30 @@ Poker.Utils = {
      * window dimensions will be used
      * @param src
      * @param target
+     * @param [targetCenter]
+     * @param [srcCenter]
      * @return {Object}
      */
-    calculateDistance : function(src,target) {
+    calculateDistance : function(src,target,targetCenter, srcCenter) {
         var srcOffset = src.offset();
         var targetOffset = target.offset();
-        var leftPx = targetOffset.left - srcOffset.left;
+        var targetLeft = targetOffset.left;
+
+        if(targetCenter === true) {
+            console.log("TARGET OWIDTH " + target.outerWidth());
+            targetLeft = targetLeft + (target.outerWidth()/2);
+        }
+
+        var srcLeft = srcOffset.left;
+        if(srcCenter === true) {
+            console.log("SRC OWIDTH " + src.outerWidth());
+            srcLeft = srcLeft + (src.outerWidth()/2);
+        }
+
+        var leftPx = targetLeft - srcLeft;
         var topPx =  targetOffset.top - srcOffset.top;
-        var distLeft = 100 * (leftPx/src.width());
-        var distTop = 100 * (topPx/src.height());
+        var distLeft = 100 * (leftPx/src.outerWidth());
+        var distTop = 100 * (topPx/src.outerHeight());
 
 
         return { left : distLeft, top : distTop };

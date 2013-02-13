@@ -5,7 +5,7 @@
     <groupId>com.cubeia.games.poker</groupId>
     <artifactId>broadcast-service</artifactId>
     <packaging>firebase-sar</packaging>
-    <name>broadcast-service</name>
+    <name>Broadcast Service</name>
 
     <parent>
         <groupId>com.cubeia.games</groupId>

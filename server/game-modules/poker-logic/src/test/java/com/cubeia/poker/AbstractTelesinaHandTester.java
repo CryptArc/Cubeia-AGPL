@@ -80,7 +80,7 @@ public abstract class AbstractTelesinaHandTester extends TestCase {
         BlindsLevel level = new BlindsLevel(anteLevel, anteLevel * 2, anteLevel);
         BetStrategyType betStrategy = BetStrategyType.NO_LIMIT;
         PokerSettings settings = new PokerSettings(level, betStrategy, 1000, 10000,
-                TimingFactory.getRegistry().getTimingProfile("MINIMUM_DELAY"), 6, rakeSettings,
+                TimingFactory.getRegistry().getTimingProfile("MINIMUM_DELAY"), 6, rakeSettings, "EUR",
                 Collections.<Serializable, Serializable>singletonMap("EXTERNAL_TABLE_ID", "xyz"));
 
         settings.setSitoutTimeLimitMilliseconds(sitoutTimeLimitMilliseconds);

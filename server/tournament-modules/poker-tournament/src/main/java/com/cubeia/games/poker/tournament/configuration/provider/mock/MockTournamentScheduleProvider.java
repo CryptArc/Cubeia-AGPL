@@ -51,6 +51,7 @@ public class MockTournamentScheduleProvider implements TournamentScheduleProvide
         configuration.setBuyIn(BigDecimal.valueOf(10));
         configuration.setFee(BigDecimal.valueOf(1));
         configuration.setPayoutStructure(payouts);
+        configuration.setCurrency("EUR");
         tournamentConfigurations.add(everyTenMinutes);
         return tournamentConfigurations;
     }

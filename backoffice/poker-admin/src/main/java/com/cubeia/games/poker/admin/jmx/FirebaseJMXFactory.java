@@ -27,6 +27,7 @@ import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
+import com.cubeia.poker.shutdown.impl.ShutdownServiceMBean;
 import org.apache.log4j.Logger;
 
 import com.cubeia.firebase.service.clientreg.state.StateClientRegistryMBean;
@@ -65,30 +66,33 @@ public class FirebaseJMXFactory {
         }
     }
     
-    /**
-     * 
-     * 
-     * @return null if the connection failed.
-     */
     public StateClientRegistryMBean createClientRegistryProxy() {
+        return getMBean(StateClientRegistryMBean.class, "com.cubeia.firebase.clients:type=ClientRegistry");
+    }
+
+    public ShutdownServiceMBean createShutdownServiceProxy() {
+        return getMBean(ShutdownServiceMBean.class, "com.cubeia.poker.shutdown:type=ShutdownService");
+    }
+
+    private <T> T getMBean(Class<T> interfaceClass, String mbeanName) {
         try {
             JMXServiceURL url = new JMXServiceURL(serverUrl);
+            log.debug("SERVER URL: " + serverUrl);
             JMXConnector jmxc = JMXConnectorFactory.connect(url, null);
-    
+
             // Get an MBeanServerConnection
             MBeanServerConnection mbsc = jmxc.getMBeanServerConnection();
-    
+
             // Construct the ObjectName for the mbean
-            ObjectName mbeanName = new ObjectName("com.cubeia.firebase.clients:type=ClientRegistry");
-    
+            ObjectName objectName = new ObjectName(mbeanName);
+
             // Create a dedicated proxy for the MBean instead of going directly through the MBean server connection
-            return JMX.newMBeanProxy(mbsc, mbeanName, StateClientRegistryMBean.class, true);
-            
+            return JMX.newMBeanProxy(mbsc, objectName, interfaceClass, true);
+
         } catch (Exception e) {
             log.error("Failed to create StateClientRegistryMBean JMX proxy", e);
             return null;
         }
-        
     }
-    
+
 }

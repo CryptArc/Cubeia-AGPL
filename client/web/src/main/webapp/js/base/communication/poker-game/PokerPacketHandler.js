@@ -15,7 +15,7 @@ Poker.PokerPacketHandler = Class.extend({
     },
     handleRequestAction : function(requestAction) {
 
-        this.tableManager.updateMainPot(this.tableId,requestAction.currentPotSize);
+        this.tableManager.updateTotalPot(this.tableId,requestAction.currentPotSize);
 
         Poker.PokerSequence.setSequence(this.tableId,requestAction.seq);
 
@@ -105,5 +105,16 @@ Poker.PokerPacketHandler = Class.extend({
         if(pots.length>0) {
             this.tableManager.updatePots(this.tableId,pots);
         }
+    },
+    handleFuturePlayerAction : function(packet) {
+        var futureActions = [];
+        var actions = packet.actions;
+        console.log("packet handler ACTIONS:");
+        console.log(actions);
+        for(var i = 0; i<actions.length; i++) {
+            var act = Poker.ActionUtils.getActionType(actions[i].action);
+            futureActions.push(act);
+        }
+        this.tableManager.onFutureAction(this.tableId, futureActions,packet.callAmount,packet.minBetAmount);
     }
 });
