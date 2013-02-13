@@ -185,8 +185,6 @@ Poker.DevTools = Class.extend({
 
             self.tableManager.endHand(self.tableId,bestHands,potTransfers);
         }));
-
-
     },
     getPotTransfer : function(potId,playerId,amount) {
         var pt = new com.cubeia.games.poker.io.protocol.PotTransfer();
