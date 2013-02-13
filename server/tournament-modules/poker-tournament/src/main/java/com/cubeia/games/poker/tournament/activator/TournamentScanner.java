@@ -22,6 +22,8 @@ import com.cubeia.firebase.api.mtt.MttFactory;
 import com.cubeia.firebase.api.mtt.activator.ActivatorContext;
 import com.cubeia.firebase.api.mtt.lobby.MttLobbyObject;
 import com.cubeia.firebase.api.server.SystemException;
+import com.cubeia.firebase.guice.inject.Service;
+import com.cubeia.game.poker.config.api.PokerSystemConfig;
 import com.cubeia.games.poker.common.time.SystemTime;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentInstance;
@@ -91,10 +93,12 @@ public class TournamentScanner implements PokerActivator, Runnable {
     private SystemTime dateFetcher;
 
     private ShutdownServiceContract shutdownService;
+    
+    @Service
+    private PokerSystemConfig systemConfig;
 
     @Inject
-    public TournamentScanner(SitAndGoConfigurationProvider sitAndGoConfigurationProvider, TournamentScheduleProvider tournamentScheduleProvider,
-                             SystemTime dateFetcher) {
+    public TournamentScanner(SitAndGoConfigurationProvider sitAndGoConfigurationProvider, TournamentScheduleProvider tournamentScheduleProvider, SystemTime dateFetcher) {
         this.sitAndGoConfigurationProvider = sitAndGoConfigurationProvider;
         this.tournamentScheduleProvider = tournamentScheduleProvider;
         this.dateFetcher = dateFetcher;
@@ -323,7 +327,7 @@ public class TournamentScanner implements PokerActivator, Runnable {
             if (dateFetcher.date().isAfter(nextAnnounceTime)) {
                 ScheduledTournamentInstance instance = configuration.createInstanceWithStartTime(schedule.getNextStartTime(dateFetcher.date()));
                 if (!existingTournaments.contains(instance.getIdentifier())) {
-                    createScheduledTournament(instance);
+                	createScheduledTournament(instance);
                 }
             }
         }

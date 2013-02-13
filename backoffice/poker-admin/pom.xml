@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.cubeia.games</groupId>
     <artifactId>poker-admin</artifactId>
@@ -27,6 +27,11 @@
         <dependency>
             <groupId>com.cubeia.network</groupId>
             <artifactId>backoffice-shared-web</artifactId>
+            <version>1.4.0-RC2-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.cubeia.network.wallet</groupId>
+            <artifactId>wallet-client</artifactId>
             <version>1.4.0-RC2-SNAPSHOT</version>
         </dependency>
         <dependency>
@@ -269,7 +274,8 @@
                         <jettyEnvXml>${basedir}/src/test/resources/jetty-env.xml</jettyEnvXml>
                     </webAppConfig>
                     <connectors>
-                        <connector implementation="org.eclipse.jetty.server.bio.SocketConnector">
+                        <connector
+                            implementation="org.eclipse.jetty.server.bio.SocketConnector">
                             <port>8088</port>
                             <maxIdleTime>60000</maxIdleTime>
                         </connector>
@@ -314,11 +320,8 @@
 
     </repositories>
     <pluginRepositories>
-        <!-- pluginRepository>
-            <id>tlc</id>
-            <name>TLC Repository</name>
-            <url>http://commons.ucalgary.ca/pub/m2</url>
-        </pluginRepository -->
+        <!-- pluginRepository> <id>tlc</id> <name>TLC Repository</name> <url>http://commons.ucalgary.ca/pub/m2</url> 
+            </pluginRepository -->
     </pluginRepositories>
 
     <properties>
