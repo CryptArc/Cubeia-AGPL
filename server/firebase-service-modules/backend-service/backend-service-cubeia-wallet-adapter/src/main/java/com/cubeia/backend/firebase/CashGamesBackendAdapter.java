@@ -143,6 +143,7 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
             return response;
         } catch (Exception e) {
             if (response != null) {
+            	log.error("Failed opening session", e);
                 log.debug("Failed reserving money for newly opened session, closing it again.");
                 closeSession(new CloseSessionRequest(response.getSessionId()));
             }
@@ -173,6 +174,7 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
         Long walletSessionId = getWalletSessionIdByPlayerSessionId(sid);
         com.cubeia.backoffice.accounting.api.Money walletAmount = convertToWalletMoney(amount);
         try {
+        	log.debug("Send withdraw request. "+request);
             walletService.withdraw(walletAmount, LICENSEE_ID, walletSessionId.longValue(),
                     "reserve " + amount + " by player " + sid.playerId);
 
@@ -185,6 +187,7 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
             response.setProperty(CashGamesBackendService.MARKET_TABLE_SESSION_REFERENCE_KEY, "CUBEIA-MARKET-SID-" + sid.hashCode());
             return response;
         } catch (Exception e) {
+        	log.error("Failed reserving money", e);
             String msg = "error reserving " + amount + " to session " + walletSessionId + " for player " + sid.playerId + ": " + e.getMessage();
 
             throw new ReserveFailedException(msg, e, ErrorCode.UNSPECIFIED_FAILURE, true);
