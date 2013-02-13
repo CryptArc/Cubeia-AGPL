@@ -61,6 +61,15 @@ Poker.DevTools = Class.extend({
             })
         );
         this.mockEventManager.addEvent(
+            mockEvent("Update state",function(){
+                var bl = new com.cubeia.games.poker.io.protocol.BlindsLevel();
+                bl.bigBlind = "1";
+                bl.smallBlind = "0.5";
+                bl.isBreak = false;
+                var bs =
+                self.tableManager.notifyGameStateUpdate(self.tableId, bl ,0,com.cubeia.games.poker.io.protocol.BetStrategyEnum.FIXED_LIMIT);
+        }));
+        this.mockEventManager.addEvent(
             mockEvent("Deal cards",function(){
                 for(var i = 0; i<10; i++) {
                     self.dealCards(i,i);

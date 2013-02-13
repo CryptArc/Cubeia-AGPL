@@ -647,7 +647,8 @@
                 <div class="action-button action-hhl" style="display: none;">
                     <span>HHL</span>
                 </div>
-                <div id="futureActions-{{tableId}}" class="future-actions" style="display:none;">
+            </div>
+            <div id="futureActions-{{tableId}}" class="future-actions" style="display:none;">
                     <div class="future-action check" style="display:none;">
                         <input type="checkbox" id="future-check-{{tableId}}"/>
                         <label  for="future-check-{{tableId}}">Fold</label>
@@ -689,11 +690,11 @@
                 </div>
 
             </div>
-        </div>
         <div id="myPlayerSeat-{{tableId}}Progressbar" class="circular-progress-bar">
 
         </div>
     </div>
+</div>
 </script>
 <div id="disconnectDialog" style="display: none;">
     <h1>You have been disconnected</h1>
