@@ -136,7 +136,7 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
             log.debug("new session opened, oId = {}, pId = {}, sId = {}", new Object[]{request.getObjectId(), request.getPlayerId(), response.getSessionId()});
 
             if (request.openingBalance.getAmount() > 0) {
-                log.debug("Opening session is > 0, reserving initial balance.");
+                log.debug("Opening session requests a reservation with amount: " + request.openingBalance.getAmount());
                 reserve(new ReserveRequest(response.getSessionId(), request.getOpeningBalance()));
             }
 
