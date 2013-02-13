@@ -51,8 +51,6 @@ public class TournamentConfigurationPanel extends Panel {
     public TournamentConfigurationPanel(String id, PropertyModel<TournamentConfiguration> propertyModel) {
         super(id, propertyModel);
         this.model = propertyModel;
-        new TournamentConfiguration().getCurrency();
-
         add(new TextField<String>("name", new PropertyModel(model, "name")));
         add(new TextField<Integer>("seatsPerTable", new PropertyModel(model, "seatsPerTable")));
         add(new DropDownChoice<TimingProfile>("timingType", model("timingType"), adminDAO.getTimingProfiles(), renderer("name")));
@@ -60,9 +58,7 @@ public class TournamentConfigurationPanel extends Panel {
         add(new TextField<Integer>("maxPlayers", new PropertyModel(model, "maxPlayers")));
         add(new TextField<BigDecimal>("buyIn", new PropertyModel(model, "buyIn")));
         add(new TextField<BigDecimal>("fee", new PropertyModel(model, "fee")));
-        add(new DropDownChoice<BetStrategyType>("betStrategy", new PropertyModel(model, "betStrategy"), asList(BetStrategyType.values()),
-                                                                                         renderer("name")));
-
+        add(new DropDownChoice<BetStrategyType>("betStrategy", new PropertyModel(model, "betStrategy"), asList(BetStrategyType.values()), renderer("name")));
         add(new DropDownChoice<String>("currency", model("currency"), networkClient.getCurrencies(), new ChoiceRenderer<String>()));
         add(new DropDownChoice<BlindsStructure>("blindsStructure", model("blindsStructure"), adminDAO.getBlindsStructures(), renderer("name")));
         add(new DropDownChoice<PayoutStructure>("payoutStructure", model("payoutStructure"), adminDAO.getPayoutStructures(), renderer("name")));

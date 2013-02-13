@@ -24,6 +24,15 @@ public class Configuration {
 
 	private String networkUrl;
 	private String searchUrl;
+	private String walletServiceUrl;
+	
+	public void setWalletServiceUrl(String walletServiceUrl) {
+		this.walletServiceUrl = walletServiceUrl;
+	}
+	
+	public String getWalletServiceUrl() {
+		return walletServiceUrl;
+	}
 	
 	public String getSearchUrl() {
 		return searchUrl;
