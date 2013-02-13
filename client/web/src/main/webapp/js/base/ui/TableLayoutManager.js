@@ -18,7 +18,6 @@ Poker.TableLayoutManager = Class.extend({
     seats : null,
     dealerButton : null,
     currentDealer : -1,
-    potTransferTemplate : null,
     soundManager : null,
     tableId : -1,
 
@@ -49,6 +48,7 @@ Poker.TableLayoutManager = Class.extend({
         if (!tableViewContainer) {
             throw "TableLayoutManager requires a tableViewContainer";
         }
+        this.tableContainer = tableViewContainer;
         this.seats = new Poker.Map();
         this.animationManager = new Poker.AnimationManager();
         var tableViewTemplate = templateManager.getTemplate("tableViewTemplate");
@@ -74,7 +74,6 @@ Poker.TableLayoutManager = Class.extend({
         this.capacity = capacity || this.capacity;
         this.seatTemplate = $("#seatTemplate").html();
         this.emptySeatTemplate = templateManager.getTemplate("emptySeatTemplate");
-        this.potTransferTemplate = templateManager.getTemplate("potTransferTemplate");
         this.totalPotContainer = tableViewContainer.find(".total-pot").hide();
 
         for(var i = 0; i<this.capacity; i++){
@@ -413,43 +412,24 @@ Poker.TableLayoutManager = Class.extend({
         }
     },
     onPotToPlayerTransfers : function(transfers) {
+
+        var transferAnimator = new Poker.PotTransferAnimator(this.tableId, this.animationManager, $("#seatContainer-"+this.tableId),
+            this.mainPotContainer);
+
         console.log("POT TRANSFERS: ");
         console.log(transfers);
         for(var i = 0; i<transfers.length; i++) {
             var trans = transfers[i];
-            this.displayPlayerToPotTransfer(trans.playerId,trans.potId, trans.amount);
-        }
-    },
-    displayPlayerToPotTransfer : function(playerId,potId,amount) {
-        var s = this.getSeatByPlayerId(playerId);
-        if(amount>0){
-            console.log("pot tranfer playerId = " + playerId + ", amount="+amount);
-            s.onPotWon(potId,amount);
-            this.displayPotTransfer(s.actionAmount ,amount, s.seatId,potId);
-        }
-
-    },
-    displayPotTransfer : function(targetElement,amount,seatId,potId) {
-
-        var html = Mustache.render(this.potTransferTemplate,{ id : potId + "-" + this.tableId, amount: Poker.Utils.formatCurrency(amount)});
-        var offset = this.mainPotContainer.find(".pot-container-"+potId).offset();
-        console.log("OFFSET FOR POT: " + potId);
-        console.log(offset);
-
-        $("#seatContainer-"+this.tableId).append($(html).css({ left: offset.left, top: offset.top - this.viewContainerOffsetTop}));
-        var div = $("#potTransfer" + potId + "-"+this.tableId);
-
-        offset =  Poker.Utils.calculateDistance(div,targetElement,true,true);
-        div.css("visibility","visible");
-
-        new Poker.TransformAnimation(div).
-            addTranslate3d(offset.left,offset.top,0,"%").
-            addCallback(
-            function(){
-                setTimeout(function(){div.remove();},1000);
+            if(trans.amount<=0) {
+                continue;
             }
-        ).start(this.animationManager);
+            var seat = this.getSeatByPlayerId(trans.playerId);
+            seat.onPotWon(trans.potId,trans.amount);
+            transferAnimator.addTransfer(seat, trans.potId, trans.amount);
+        }
+        transferAnimator.start();
     },
+
     playSound : function(soundName) {
         this.soundManager.playSound(soundName);
     },

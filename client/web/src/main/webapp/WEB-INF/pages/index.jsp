@@ -22,7 +22,7 @@
     <script type="text/javascript" src="${cp}/js/lib/jquery-ui-1.8.21.custom.min.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/jquery.ui.touch-punch.js"></script>
     <script type="text/javascript" src="${cp}/js/base/touch-click.js"></script>
-
+    <script type="text/javascript" src="${cp}/js/base/ui/relative-offset.js"></script>
 
     <script type="text/javascript" src="${cp}/js/lib/mustache.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/jquery.jqGrid.min.js"></script>
@@ -87,6 +87,7 @@
     <script type="text/javascript" src="${cp}/js/base/Table.js"></script>
     <script type="text/javascript" src="${cp}/js/base/TableManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/Clock.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/PotTransferAnimator.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/TableLayoutManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/TemplateManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/Seat.js"></script>
@@ -481,7 +482,7 @@
         </div>
     </div>
     <div id="potTransferTemplate" style="display: none;">
-        <div id="potTransfer{{id}}" class="pot-transfer" style="visibility: hidden;">
+        <div id="{{ptId}}" class="pot-transfer" style="visibility: hidden;">
             <div class="balance">&euro;{{amount}}</div>
         </div>
     </div>
