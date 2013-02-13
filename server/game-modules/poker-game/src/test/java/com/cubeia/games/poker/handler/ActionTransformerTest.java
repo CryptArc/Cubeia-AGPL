@@ -64,8 +64,8 @@ public class ActionTransformerTest {
         addIdsToCards(hand2);
 
         List<RatedPlayerHand> hands = new ArrayList<RatedPlayerHand>();
-        hands.add(new RatedPlayerHand(new PlayerHand(11, hand1), HandType.HIGH_CARD, Card.list("As Ks Qs Js Ts")));
-        hands.add(new RatedPlayerHand(new PlayerHand(22, hand2), HandType.HIGH_CARD, Card.list("Qs Js Ts Td Tc")));
+        hands.add(new RatedPlayerHand(new PlayerHand(11, hand1), new HandStrength(HandType.HIGH_CARD), Card.list("As Ks Qs Js Ts")));
+        hands.add(new RatedPlayerHand(new PlayerHand(22, hand2), new HandStrength(HandType.HIGH_CARD), Card.list("Qs Js Ts Td Tc")));
 
         PotTransfers potTransfers = new PotTransfers();
         HandEnd end = actionTransformer.createHandEndPacket(hands, potTransfers, Arrays.asList(1, 2, 10));

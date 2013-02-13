@@ -380,9 +380,12 @@ public class FirebaseServerAdapter implements ServerAdapter {
     }
 
     @Override
-    public void notifyFutureAllowedActions(PokerPlayer player, List<PokerActionType> optionList) {
+    public void notifyFutureAllowedActions(PokerPlayer player, List<PokerActionType> optionList, long callAmount, long minBet) {
 
         InformFutureAllowedActions packet = new InformFutureAllowedActions();
+        packet.callAmount = (int) callAmount;
+        packet.minBetAmount = (int) minBet;
+
 
         List<FuturePlayerAction> options = new ArrayList<FuturePlayerAction>();
 
@@ -396,7 +399,6 @@ public class FirebaseServerAdapter implements ServerAdapter {
         sendPrivatePacket(player.getId(), action);
 
     }
-
 
     @Override
     public void notifyCommunityCards(List<Card> cards) {
@@ -501,7 +503,8 @@ public class FirebaseServerAdapter implements ServerAdapter {
             resp.mandatoryBuyin = mandatoryBuyin;
 
             try {
-                balanceInWallet = backend.getMainAccountBalance(playerId).getAmount();
+                String currency = state.getSettings().getCurrency();
+                balanceInWallet = backend.getAccountBalance(playerId, currency).getAmount();
                 resp.balanceInWallet = format(balanceInWallet);
             } catch (GetBalanceFailedException e) {
                 log.error("error getting balance", e);
@@ -512,8 +515,8 @@ public class FirebaseServerAdapter implements ServerAdapter {
             }
 
             if (resp.resultCode != BuyInInfoResultCode.UNSPECIFIED_ERROR) {
-                MinAndMaxBuyInResult buyInRange = buyInCalculator.calculateBuyInLimits(
-                        state.getMinBuyIn(), state.getMaxBuyIn(), state.getAnteLevel(), playerBalance);
+                MinAndMaxBuyInResult buyInRange = buyInCalculator.calculateBuyInLimits(state.getMinBuyIn(), state.getMaxBuyIn(),
+                        state.getAnteLevel(), playerBalance);
                 resp.minAmount = format(buyInRange.getMinBuyIn());
                 resp.maxAmount = format(min(balanceInWallet, buyInRange.getMaxBuyIn()));
                 resp.resultCode = buyInRange.isBuyInPossible() ? BuyInInfoResultCode.OK : BuyInInfoResultCode.MAX_LIMIT_REACHED;

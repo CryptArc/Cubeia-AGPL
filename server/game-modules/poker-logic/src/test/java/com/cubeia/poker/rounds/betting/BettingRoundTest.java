@@ -25,6 +25,7 @@ import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.RakeInfoContainer;
@@ -301,9 +302,9 @@ public class BettingRoundTest extends TestCase {
         preparePlayers(p);
 
         // starting player gets empty list the others get check and fold
-        verify(adapter).notifyFutureAllowedActions(eq(p[1]), argThat(new IsListOfNElements(0)));
-        verify(adapter).notifyFutureAllowedActions(eq(p[0]), argThat(new IsListOfNElements(2)));
-        verify(adapter).notifyFutureAllowedActions(eq(p[2]), argThat(new IsListOfNElements(2)));
+        verify(adapter).notifyFutureAllowedActions(eq(p[1]), argThat(new IsListOfNElements(0)),eq(0L),eq(0L));
+        verify(adapter).notifyFutureAllowedActions(eq(p[0]), argThat(new IsListOfNElements(2)),eq(0L),eq(10L));
+        verify(adapter).notifyFutureAllowedActions(eq(p[2]), argThat(new IsListOfNElements(2)),eq(0L),eq(10L));
     }
 
     @SuppressWarnings("unchecked")
@@ -315,9 +316,9 @@ public class BettingRoundTest extends TestCase {
         p[2].forceAllIn(true);
         preparePlayers(p);
 
-        verify(adapter).notifyFutureAllowedActions(eq(p[0]), argThat(new IsListOfNElements(0)));
-        verify(adapter).notifyFutureAllowedActions(eq(p[1]), argThat(new IsListOfNElements(0)));
-        verify(adapter).notifyFutureAllowedActions(eq(p[2]), argThat(new IsListOfNElements(0)));
+        verify(adapter).notifyFutureAllowedActions(eq(p[0]), argThat(new IsListOfNElements(0)),eq(0L),eq(0L));
+        verify(adapter).notifyFutureAllowedActions(eq(p[1]), argThat(new IsListOfNElements(0)),eq(0L),eq(0L));
+        verify(adapter).notifyFutureAllowedActions(eq(p[2]), argThat(new IsListOfNElements(0)),eq(0L),eq(0L));
     }
 
     @SuppressWarnings("unchecked")
@@ -329,9 +330,9 @@ public class BettingRoundTest extends TestCase {
         p[2].forceAllIn(false);
         preparePlayers(p);
 
-        verify(adapter).notifyFutureAllowedActions(eq(p[0]), argThat(new IsListOfNElements(0)));
-        verify(adapter).notifyFutureAllowedActions(eq(p[1]), argThat(new IsListOfNElements(0)));
-        verify(adapter).notifyFutureAllowedActions(eq(p[2]), argThat(new IsListOfNElements(0)));
+        verify(adapter).notifyFutureAllowedActions(eq(p[0]), argThat(new IsListOfNElements(0)),eq(0L),eq(0L));
+        verify(adapter).notifyFutureAllowedActions(eq(p[1]), argThat(new IsListOfNElements(0)),eq(0L),eq(0L));
+        verify(adapter).notifyFutureAllowedActions(eq(p[2]), argThat(new IsListOfNElements(0)),eq(0L),eq(0L));
     }
 
     @SuppressWarnings("unchecked")
@@ -340,18 +341,18 @@ public class BettingRoundTest extends TestCase {
         MockPlayer[] p = TestUtils.createMockPlayers(3);
         preparePlayers(p);
 
-        // starting player gets empty list the others get check and fold
-        verify(adapter).notifyFutureAllowedActions(eq(p[0]), argThat(new IsListOfNElements(2)));
-        verify(adapter).notifyFutureAllowedActions(eq(p[1]), argThat(new IsListOfNElements(0)));
-        verify(adapter).notifyFutureAllowedActions(eq(p[2]), argThat(new IsListOfNElements(2)));
+        // starting player gets empty list the others get check and fold and raise
+        verify(adapter).notifyFutureAllowedActions(eq(p[0]), argThat(new IsListOfNElements(2)),eq(0L),eq(10L));
+        verify(adapter).notifyFutureAllowedActions(eq(p[1]), argThat(new IsListOfNElements(0)),eq(0L),eq(0L));
+        verify(adapter).notifyFutureAllowedActions(eq(p[2]), argThat(new IsListOfNElements(2)),eq(0L),eq(10L));
 
         PokerAction action = new PokerAction(p[1].getId(), PokerActionType.CHECK);
         round.act(action);
 
         // next player gets empty list the others get check and fold
-        verify(adapter, times(2)).notifyFutureAllowedActions(eq(p[0]), argThat(new IsListOfNElements(2)));
-        verify(adapter).notifyFutureAllowedActions(eq(p[1]), argThat(new IsListOfNElements(2)));
-        verify(adapter).notifyFutureAllowedActions(eq(p[2]), argThat(new IsListOfNElements(0)));
+        verify(adapter, times(2)).notifyFutureAllowedActions(eq(p[0]), argThat(new IsListOfNElements(2)),eq(0L),eq(10L));
+        verify(adapter).notifyFutureAllowedActions(eq(p[1]), argThat(new IsListOfNElements(0)),eq(0L),eq(10L));
+        verify(adapter).notifyFutureAllowedActions(eq(p[2]), argThat(new IsListOfNElements(0)),eq(0L),eq(0L));
     }
 
     @Test
@@ -496,6 +497,6 @@ public class BettingRoundTest extends TestCase {
     private BettingRound createRound(BetStrategy betStrategy) {
         ActionRequestFactory actionRequestFactory = new ActionRequestFactory(betStrategy);
         return new BettingRound(0, context, adapterHolder, new DefaultPlayerToActCalculator(), actionRequestFactory,
-                                new TexasHoldemFutureActionsCalculator(), betStrategy);
+                                new TexasHoldemFutureActionsCalculator(betStrategy.getType()), betStrategy);
     }
 }

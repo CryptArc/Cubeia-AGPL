@@ -19,56 +19,61 @@ package com.cubeia.games.poker.admin.service.history;
 
 import com.cubeia.poker.handhistory.api.HistoricHand;
 import com.cubeia.poker.tournament.history.api.HistoricTournament;
+import com.google.code.morphia.query.Query;
+import com.mongodb.BasicDBObject;
 import org.apache.log4j.Logger;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-
 import java.util.Date;
 import java.util.List;
-
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-import static org.springframework.data.mongodb.core.query.Query.query;
 
 @Service
 public class HistoryServiceImpl implements HistoryService {
 
     private static final Logger log = Logger.getLogger(HistoryServiceImpl.class);
-    public static final String TOURNAMENT_COLLECTION = "HistoricTournament";
 
+    @Qualifier("mongoStorage")
     @Autowired
-    MongoTemplate template;
+    private MongoStorage mongoStorage;
 
     @Override
     public List<HistoricHand> findHandHistory(Integer playerId, String tableId, Date fromDate, Date toDate) {
         log.info("Finding hand histories by query: playerId = " + playerId + " from: " + fromDate + " to: " + toDate);
-        Query query = new Query();
-        if (playerId != null) query.addCriteria(where("seats.playerId").is(playerId));
-        if (tableId != null) query.addCriteria(where("table.tableIntegrationId").is(tableId));
-        if (fromDate != null) query.addCriteria(where("startTime").gt(fromDate.getTime()));
-        if (toDate != null) query.addCriteria(where("endTime").lt(toDate.getTime()));
-        return template.find(query, HistoricHand.class, "hands");
+        Query query = mongoStorage.createQuery(HistoricHand.class);
+        if (tableId != null) query.field("table.tableId").equal(tableId);
+        if (fromDate != null) query.field("startTime").greaterThanOrEq(fromDate);
+        if (toDate != null) query.field("endTime").lessThanOrEq(toDate);
+        if (playerId != null) query.filter("seats elem", new BasicDBObject("playerId", playerId));
+        return query.order("-startTime").asList();
     }
 
     @Override
     public HistoricHand findHandById(String handId) {
-        Query query = query(where("id").is(handId));
-        return template.findOne(query, HistoricHand.class, "hands");
+        Query query = mongoStorage.createQuery(HistoricHand.class);
+        query.field("id").equal(handId);
+        return (HistoricHand)query.get();
     }
 
     @Override
     public List<HistoricTournament> findTournaments(Date fromDate, Date toDate) {
         log.info("Finding tournaments by query: from: " + fromDate + " to: " + toDate);
-        Query query = new Query();
-        if (fromDate != null) query.addCriteria(where("startTime").gt(fromDate.getTime()));
-        if (toDate != null) query.addCriteria(where("startTime").lt(toDate.getTime()));
-        return template.find(query, HistoricTournament.class, TOURNAMENT_COLLECTION);
+        Query query = mongoStorage.createQuery(HistoricTournament.class);
+        if (fromDate != null) query.field("startTime").greaterThanOrEq(fromDate);
+        if (toDate != null) query.field("startTime").lessThanOrEq(toDate);
+        return query.order("-startTime").asList();
     }
 
     @Override
     public HistoricTournament findTournamentByHistoricId(String id) {
-        return template.findById(new ObjectId(id), HistoricTournament.class, TOURNAMENT_COLLECTION);
+        Query query = mongoStorage.createQuery(HistoricTournament.class);
+        query.field("id").equal(id);
+        return (HistoricTournament)query.get();
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        mongoStorage.disconnect();
+        super.finalize();
     }
 }

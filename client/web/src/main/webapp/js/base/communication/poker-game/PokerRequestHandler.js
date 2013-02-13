@@ -59,6 +59,12 @@ Poker.PokerRequestHandler = Class.extend({
         buyInRequest.sitInIfSuccessful = true;
         this.sendGameTransportPacket(buyInRequest);
     },
+    requestBuyInInfo : function() {
+        console.log("REQUEST BUY-IN INFO!");
+        var buyInInfoRequest = new com.cubeia.games.poker.io.protocol.BuyInInfoRequest();
+        this.sendGameTransportPacket(buyInInfoRequest);
+
+    },
     sitOut : function () {
         var sitOut = new com.cubeia.games.poker.io.protocol.PlayerSitoutRequest();
         sitOut.player = Poker.MyPlayer.id;

@@ -284,7 +284,7 @@ public class ActionTransformer {
                         convertRankToProtocolEnum(card.getRank())));
             }
 
-            BestHand best = new BestHand(ratedHand.getPlayerId(), convertHandTypeToEnum(ratedHand.getBestHandType()), cards);
+            BestHand best = new BestHand(ratedHand.getPlayerId(), convertHandTypeToEnum(ratedHand.getHandInfo().getHandType()), cards);
 
             packet.hands.add(best);
         }

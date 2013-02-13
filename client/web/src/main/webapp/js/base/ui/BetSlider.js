@@ -76,7 +76,7 @@ Poker.BetSlider = Class.extend({
 
             var div = $("<div/>").append(marker).addClass("marker").css("bottom", percent+"%");
             container.append(div);
-            div.click(function(e){
+            div.touchSafeClick(function(e){
                 self.slider.slider("value",value);
             });
         });

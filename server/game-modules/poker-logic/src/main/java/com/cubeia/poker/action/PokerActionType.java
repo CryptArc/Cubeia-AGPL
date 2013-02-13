@@ -17,6 +17,8 @@
 
 package com.cubeia.poker.action;
 
+import com.cubeia.poker.handhistory.api.PlayerAction;
+
 /**
  * NOTE!!!!
  * If you add a definition to this class you must also add to the protocol
@@ -31,4 +33,8 @@ package com.cubeia.poker.action;
  */
 public enum PokerActionType {
     SMALL_BLIND, BIG_BLIND, CALL, CHECK, BET, RAISE, FOLD, DECLINE_ENTRY_BET, ANTE, BIG_BLIND_PLUS_DEAD_SMALL_BLIND, DEAD_SMALL_BLIND;
+
+    public PlayerAction.Type translate() {
+        return PlayerAction.Type.values()[ordinal()];
+    }
 }

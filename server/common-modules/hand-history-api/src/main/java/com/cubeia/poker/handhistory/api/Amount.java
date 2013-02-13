@@ -61,37 +61,43 @@ public class Amount implements Serializable {
         return type;
     }
 
+    public void setType(Type type) {
+        this.type = type;
+    }
+
     public long getAmount() {
         return amount;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (int) (amount ^ (amount >>> 32));
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
-        return result;
+    public void setAmount(long amount) {
+        this.amount = amount;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Amount other = (Amount) obj;
-        if (amount != other.amount)
-            return false;
-        if (type != other.type)
-            return false;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Amount amount1 = (Amount) o;
+
+        if (amount != amount1.amount) return false;
+        if (type != amount1.type) return false;
+
         return true;
     }
 
     @Override
+    public int hashCode() {
+        int result = type != null ? type.hashCode() : 0;
+        result = 31 * result + (int) (amount ^ (amount >>> 32));
+        return result;
+    }
+
+    @Override
     public String toString() {
-        return "Amount [type=" + type + ", amount=" + amount + "]";
+        return "Amount{" +
+                "type=" + type +
+                ", amount=" + amount +
+                '}';
     }
 }

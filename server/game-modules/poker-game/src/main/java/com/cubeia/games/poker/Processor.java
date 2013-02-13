@@ -17,6 +17,9 @@
 
 package com.cubeia.games.poker;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cubeia.backend.cashgame.dto.AnnounceTableFailedResponse;
 import com.cubeia.backend.cashgame.dto.AnnounceTableResponse;
 import com.cubeia.backend.cashgame.dto.CloseTableRequest;
@@ -28,14 +31,11 @@ import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.action.GameObjectAction;
 import com.cubeia.firebase.api.game.GameProcessor;
 import com.cubeia.firebase.api.game.TournamentProcessor;
-import com.cubeia.firebase.api.game.player.GenericPlayer;
 import com.cubeia.firebase.api.game.table.Table;
-import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.cache.ActionCache;
 import com.cubeia.games.poker.common.time.SystemTime;
-import com.cubeia.games.poker.debugger.HandDebuggerContract;
 import com.cubeia.games.poker.handler.BackendCallHandler;
 import com.cubeia.games.poker.handler.PokerHandler;
 import com.cubeia.games.poker.handler.Trigger;
@@ -50,11 +50,8 @@ import com.cubeia.games.poker.tournament.messages.WaitingForTablesToFinishBefore
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.adapter.SystemShutdownException;
 import com.cubeia.poker.model.BlindsLevel;
-import com.cubeia.poker.player.PokerPlayer;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -99,9 +96,9 @@ public class Processor implements GameProcessor, TournamentProcessor {
     @VisibleForTesting
     TableCloseHandlerImpl tableCloseHandler;
 
-    @Service
-    @VisibleForTesting
-    HandDebuggerContract handDebugger;
+//    @Service
+//    @VisibleForTesting
+//    HandDebuggerContract handDebugger;
 
     @Inject
     @VisibleForTesting
@@ -206,18 +203,18 @@ public class Processor implements GameProcessor, TournamentProcessor {
     }
 
     private void updatePlayerDebugInfo(Table table) {
-        if (handDebugger != null) {
-            for (PokerPlayer player : state.getSeatedPlayers()) {
-                try {
-                    GenericPlayer genericPlayer = table.getPlayerSet().getPlayer(player.getId());
-                    handDebugger.updatePlayerInfo(table.getId(), player.getId(),
-                            genericPlayer.getName(), !player.isSittingOut(), player.getBalance(),
-                            player.getBetStack());
-                } catch (Exception e) {
-                    log.warn("unable to fill out debug info for player: " + player.getId());
-                }
-            }
-        }
+//        if (handDebugger != null) {
+//            for (PokerPlayer player : state.getSeatedPlayers()) {
+//                try {
+//                    GenericPlayer genericPlayer = table.getPlayerSet().getPlayer(player.getId());
+//                    handDebugger.updatePlayerInfo(table.getId(), player.getId(),
+//                            genericPlayer.getName(), !player.isSittingOut(), player.getBalance(),
+//                            player.getBetStack());
+//                } catch (Exception e) {
+//                    log.warn("unable to fill out debug info for player: " + player.getId());
+//                }
+//            }
+//        }
     }
 
     /**

@@ -17,6 +17,7 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.history;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -38,6 +39,8 @@ import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.games.poker.admin.wicket.util.ExternalLinkPanel;
 
 public class ShowHand extends BasePage {
+
+    private static final long serialVersionUID = -3963453168151993944L;
 
     @SpringBean
     private HistoryService historyService;
@@ -64,20 +67,27 @@ public class ShowHand extends BasePage {
                 Player player = item.getModelObject();
                 Results results = hand.getResults();
                 HandResult resultsForPlayer = results.getResults().get(player.getPlayerId());
-                // item.add(new Label("playerName", player.getName()));
                 item.add(new ExternalLinkPanel("playerName", player.getName(), createPlayerLink(player)));
                 item.add(new Label("playerId", String.valueOf(player.getPlayerId())));
-                item.add(new Label("seat", String.valueOf(player.getSeatId())));
-                item.add(new Label("bet", formatAmount(resultsForPlayer.getTotalBet())));
-                String net = formatAmount(resultsForPlayer.getNetWin());
-                HandResult handResult = resultsForPlayer;
-                if (handResult.getTransactionId() != null) {
-                    item.add(new ExternalLinkPanel("net", net, createTransactionLink(handResult)));
-                } else {
-                    item.add(new Label("net", net));
+                if (resultsForPlayer == null) {
+                    item.add(new Label("seat", String.valueOf(player.getSeatId()) + " (waiting)"));
+                    item.add(new Label("bet", ""));
+                    item.add(new Label("net", ""));
+                    item.add(new Label("initialBalance", formatAmount(player.getInitialBalance())));
+                    item.add(new Label("finalBalance", formatAmount(player.getInitialBalance())));
                 }
-                item.add(new Label("initialBalance", formatAmount(player.getInitialBalance())));
-                item.add(new Label("finalBalance", formatAmount(player.getInitialBalance() + resultsForPlayer.getNetWin())));
+                else {
+                    item.add(new Label("seat", String.valueOf(player.getSeatId())));
+                    item.add(new Label("bet", formatAmount(resultsForPlayer.getTotalBet())));
+                    String net = formatAmount(resultsForPlayer.getNetWin());
+                    if (resultsForPlayer.getTransactionId() != null) {
+                        item.add(new ExternalLinkPanel("net", net, createTransactionLink(resultsForPlayer)));
+                    } else {
+                        item.add(new Label("net", net));
+                    }
+                    item.add(new Label("initialBalance", formatAmount(player.getInitialBalance())));
+                    item.add(new Label("finalBalance", formatAmount(player.getInitialBalance() + resultsForPlayer.getNetWin())));
+                }
             }
 
             private String createTransactionLink(HandResult handResult) {
@@ -121,39 +131,86 @@ public class ShowHand extends BasePage {
                 Model<String> action = new Model<String>();
                 Model<String> amount = new Model<String>();
                 Model<String> playerId = new Model<String>();
+                CardList kickers = new CardList("kickers");
                 CardList cards = new CardList("cards");
 
-                item.add(new Label("type", event.getType()));
                 item.add(new Label("time", new Date(event.getTime()).toString()));
                 item.add(new Label("action", action));
                 item.add(new Label("amount", amount));
                 item.add(cards);
+                item.add(kickers);
                 item.add(new Label("playerId", playerId));
 
                 if (event instanceof PlayerAction) {
                     PlayerAction playerAction = (PlayerAction) event;
-                    action.setObject(playerAction.getAction().toString());
+                    action.setObject(playerAction.getAction().getName());
                     playerId.setObject(String.valueOf(playerAction.getPlayerId()));
                     amount.setObject(formatAmount(playerAction.getAmount()));
                 } else if (event instanceof PotUpdate) {
                     PotUpdate potUpdate = (PotUpdate) event;
+                    action.setObject("Pot update");
                     amount.setObject(stringRepresentation(potUpdate));
                 } else if (event instanceof PlayerCardsDealt) {
                     PlayerCardsDealt playerCards = (PlayerCardsDealt) event;
+                    action.setObject("Player cards dealt");
                     cards.setList(playerCards.getCards());
                     playerId.setObject(String.valueOf(playerCards.getPlayerId()));
                 } else if (event instanceof TableCardsDealt) {
                     TableCardsDealt playerCards = (TableCardsDealt) event;
+                    action.setObject("Table cards dealt");
                     cards.setList(playerCards.getCards());
                 } else if (event instanceof PlayerCardsExposed) {
                     PlayerCardsExposed exposed = (PlayerCardsExposed) event;
+                    action.setObject("Players cards exposed");
                     playerId.setObject(String.valueOf(exposed.getPlayerId()));
                     cards.setList(exposed.getCards());
+                } else if (event instanceof ShowDownSummary) {
+                    action.setObject("Show down summary");
                 } else if (event instanceof PlayerBestHand) {
                     PlayerBestHand bestHand = (PlayerBestHand) event;
                     playerId.setObject(String.valueOf(bestHand.getPlayerHand().getPlayerId()));
-                    cards.setList(bestHand.getPlayerHand().getCards());
-                    amount.setObject(bestHand.getBestHandType().toString());
+                    HandStrengthCommon handInfo = null;
+                    if (bestHand.getHandInfoCommon() instanceof HandStrengthCommon) {
+                        handInfo = (HandStrengthCommon)bestHand.getHandInfoCommon();
+                    }
+                    if (handInfo != null) {
+                        long winAmount = hand.getResults().getResults().get(bestHand.getPlayerHand().getPlayerId()).getTotalWin();
+                        if (winAmount > 0) {
+                            amount.setObject("Win (" + formatAmount(winAmount) + ")");
+                        }
+                        List<GameCard> kickerCards = handInfo.getKickerCards();
+                        BestHandType handType = handInfo.getHandType();
+                        action.setObject(handType.getName());
+                        List<GameCard> list = new ArrayList<GameCard>();
+                        switch (handType) {
+                            case HIGH_CARD:
+                                list.add(handInfo.getGroups().get(0).get(0));
+                                kickerCards.remove(0);
+                                cards.setList(list);
+                                break;
+                            case TWO_PAIRS:
+                                list.addAll(handInfo.getCardsUsedInHand());
+                                cards.setList(list.subList(0, 4));
+                                break;
+                            case PAIR:
+                            case THREE_OF_A_KIND:
+                            case FOUR_OF_A_KIND:
+                                cards.setList(handInfo.getGroups().get(2));
+                                break;
+                            case NOT_RANKED:
+                            case STRAIGHT:
+                            case FLUSH:
+                            case FULL_HOUSE:
+                            case STRAIGHT_FLUSH:
+                            case ROYAL_STRAIGHT_FLUSH:
+                            default:
+                                cards.setList(handInfo.getCardsUsedInHand());
+                                break;
+                        }
+                        if (kickerCards != null && kickerCards.size() > 0) {
+                            kickers.setList(kickerCards);
+                        }
+                    }
                 }
             }
         };
@@ -203,6 +260,5 @@ public class ShowHand extends BasePage {
             String imageName = card.getRank().getAbbreviation() + card.getSuit().name().charAt(0);
             item.add(new ContextImage("cardImage", "images/cards/" + imageName.toLowerCase() + ".svg"));
         }
-
     }
 }

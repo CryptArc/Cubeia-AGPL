@@ -17,13 +17,15 @@
 
 package com.cubeia.poker.handhistory.api;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ShowDownSummary extends HandHistoryEvent {
 
     private static final long serialVersionUID = 7280436558262252904L;
 
     public ShowDownSummary() {
+    }
+
+    @Override
+    public String toString() {
+        return "ShowDownSummary []";
     }
 }

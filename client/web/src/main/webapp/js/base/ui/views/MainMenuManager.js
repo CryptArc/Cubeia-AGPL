@@ -7,10 +7,10 @@ Poker.MainMenuManager = Class.extend({
         this.templateManager = new Poker.TemplateManager();
         this.menuItemTemplate = this.templateManager.getTemplate("menuItemTemplate");
         var self = this;
-        $(".main-menu-button").click(function(e){
+        $(".main-menu-button").touchSafeClick(function(e){
             self.toggle();
         });
-        $(".menu-overlay").click(function(e){
+        $(".menu-overlay").touchSafeClick(function(e){
             self.toggle();
         })
         var cashier = new Poker.MenuItem("Cashier","Manage your funds","cashier")
@@ -87,7 +87,7 @@ Poker.MenuItem = Class.extend({
                 cssClass : this.cssClass
             });
         $(containerId).append(html);
-        $(containerId).find("."+this.cssClass).click(function(){
+        $(containerId).find("."+this.cssClass).touchSafeClick(function(){
             self.activateFunction();
             $(this).addClass("active");
         });

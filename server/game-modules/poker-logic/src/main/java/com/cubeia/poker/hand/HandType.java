@@ -17,6 +17,8 @@
 
 package com.cubeia.poker.hand;
 
+import com.cubeia.poker.handhistory.api.BestHandType;
+
 public enum HandType {
     NOT_RANKED(0),
     HIGH_CARD(1),
@@ -34,5 +36,9 @@ public enum HandType {
 
     private HandType(int telesinaHandTypeValue) {
         this.telesinaHandTypeValue = telesinaHandTypeValue;
+    }
+
+    public BestHandType translate() {
+        return BestHandType.values()[ordinal()];
     }
 }

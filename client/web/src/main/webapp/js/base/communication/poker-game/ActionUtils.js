@@ -7,7 +7,7 @@ Poker.ActionUtils = Class.extend({
     },
     /**
      *
-     * @param {com.cubeia.games.poker.io.protocol.ActionTypeEnum} actType
+     * @param {Number} actType
      * @return {Poker.ActionType}
      */
     getActionType : function(actType){
@@ -33,6 +33,18 @@ Poker.ActionUtils = Class.extend({
                 break;
             case com.cubeia.games.poker.io.protocol.ActionTypeEnum.BIG_BLIND:
                 type = Poker.ActionType.BIG_BLIND;
+                break;
+            case com.cubeia.games.poker.io.protocol.ActionTypeEnum.DECLINE_ENTRY_BET:
+                type = Poker.ActionType.DECLINE_ENTRY_BET;
+                break;
+            case com.cubeia.games.poker.io.protocol.ActionTypeEnum.ANTE:
+                type = Poker.ActionType.ANTE;
+                break;
+            case com.cubeia.games.poker.io.protocol.ActionTypeEnum.BIG_BLIND_PLUS_DEAD_SMALL_BLIND:
+                type = Poker.ActionType.BIG_BLIND_PLUS_DEAD_SMALL_BLIND;
+                break;
+            case com.cubeia.games.poker.io.protocol.ActionTypeEnum.DEAD_SMALL_BLIND:
+                type = Poker.ActionType.DEAD_SMALL_BLIND;
                 break;
             default:
                 console.log("Unhandled ActionTypeEnum " + actType);
@@ -107,6 +119,10 @@ Poker.ActionUtils = Class.extend({
                 return com.cubeia.games.poker.io.protocol.ActionTypeEnum.FOLD;
             case Poker.ActionType.DECLINE_ENTRY_BET.id:
                 return com.cubeia.games.poker.io.protocol.ActionTypeEnum.DECLINE_ENTRY_BET;
+            case Poker.ActionType.DEAD_SMALL_BLIND.id:
+                return com.cubeia.games.poker.io.protocol.ActionTypeEnum.DEAD_SMALL_BLIND;
+            case Poker.ActionType.BIG_BLIND_PLUS_DEAD_SMALL_BLIND.id:
+                return com.cubeia.games.poker.io.protocol.ActionTypeEnum.BIG_BLIND_PLUS_DEAD_SMALL_BLIND;
             default:
                 console.log("Unhandled action " + actionType.text);
                 return null;

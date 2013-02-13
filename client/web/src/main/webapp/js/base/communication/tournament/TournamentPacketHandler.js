@@ -91,7 +91,7 @@ Poker.TournamentPacketHandler = Class.extend({
         console.log("Registration response:");
         console.log(registrationResponse);
 
-        if (registrationResponse.status == "OK") {
+        if (registrationResponse.status == FB_PROTOCOL.TournamentRegisterResponseStatusEnum.OK) {
             this.tournamentManager.handleRegistrationSuccessful(registrationResponse.mttid);
         } else {
             this.tournamentManager.handleRegistrationFailure(registrationResponse.mttid);
@@ -100,7 +100,7 @@ Poker.TournamentPacketHandler = Class.extend({
     handleUnregistrationResponse: function (unregistrationResponse) {
         console.log("Unregistration response:");
         console.log(unregistrationResponse);
-        if (unregistrationResponse.status == "OK") {
+        if (unregistrationResponse.status == FB_PROTOCOL.TournamentRegisterResponseStatusEnum.OK) {
             this.tournamentManager.handleUnregistrationSuccessful(unregistrationResponse.mttid);
         } else {
             this.tournamentManager.handleUnregistrationFailure(unregistrationResponse.mttid)

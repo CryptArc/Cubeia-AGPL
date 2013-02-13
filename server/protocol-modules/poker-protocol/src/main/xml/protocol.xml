@@ -178,6 +178,8 @@
     <!-- inform about coming possible actions. This can be check next. Fold next and so on -->
     <struct name="inform_future_allowed_actions">
         <list name="actions" type="future_player_action"/>
+        <var name="call_amount" type="int32"/>
+        <var name="min_bet_amount" type="int32"/>
     </struct>
 
     <!--
@@ -252,7 +254,9 @@
     </struct>
 
     <!-- Request that the server returns information on how to buy in-->
-    <struct name="buy_in_info_request"/>
+    <struct name="buy_in_info_request">
+        <var name="dummy" type="int8"/>
+    </struct>
 
     <!-- server tells client on rules for buy in-->
     <struct name="buy_in_info_response">

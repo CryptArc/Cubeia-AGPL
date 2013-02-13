@@ -91,6 +91,7 @@ public abstract class PokerTournamentCreationParticipant implements CreationPart
         pokerState.setBuyIn(config.getBuyIn());
         pokerState.setFee(config.getFee());
         pokerState.setPayoutStructure(config.getPayoutStructure(), config.getMinPlayers());
+        pokerState.setCurrencyCode(config.getCurrency());
         TournamentLifeCycle tournamentLifeCycle = getTournamentLifeCycle();
         pokerState.setLifecycle(tournamentLifeCycle);
         pokerState.setStartDateString(tournamentLifeCycle.getStartTime().toString(datePattern));

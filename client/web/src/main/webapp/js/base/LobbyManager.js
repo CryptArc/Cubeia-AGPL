@@ -59,7 +59,7 @@ Poker.LobbyManager = Class.extend({
             this.sitAndGoState = true;
             this.lobbyLayoutManager.createSitAndGoList(this.lobbyListData);
         } else {
-            this.sitAndGoState = true;
+            this.sitAndGoState = false;
             this.lobbyLayoutManager.createTournamentList(this.lobbyListData);
         }
     },
@@ -71,7 +71,10 @@ Poker.LobbyManager = Class.extend({
             console.log("duplicate found - mttid: " + snapshot.mttid);
         }
     },
-
+    /**
+     *
+     * @param {FB_PROTOCOL.TournamentUpdatePacket[]} tournamentUpdateList
+     */
     handleTournamentUpdates:function (tournamentUpdateList) {
         console.log("Received tournament updates");
         for (var i = 0; i < tournamentUpdateList.length; i++) {
@@ -80,6 +83,10 @@ Poker.LobbyManager = Class.extend({
 
     },
 
+    /**
+     *
+     * @param {FB_PROTOCOL.TournamentUpdatePacket} tournamentUpdate
+     */
     handleTournamentUpdate:function (tournamentUpdate) {
         console.log("Updating tournament: " + tournamentUpdate.mttid);
         var tournamentData = this.findTournament(tournamentUpdate.mttid);
@@ -216,7 +223,7 @@ Poker.LobbyFilter = Class.extend({
         this.lobbyLayoutManager = lobbyLayoutManager;
         var self = this;
 
-        $("#" + id).click(function () {
+        $("#" + id).touchSafeClick(function () {
             self.enabled = !self.enabled;
             $(this).toggleClass("active");
             Poker.Utils.store(self.id, self.enabled);

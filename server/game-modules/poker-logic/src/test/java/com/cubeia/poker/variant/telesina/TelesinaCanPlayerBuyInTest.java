@@ -39,7 +39,7 @@ public class TelesinaCanPlayerBuyInTest {
         int anteLevel = 20;
         BlindsLevel level = new BlindsLevel(anteLevel, anteLevel * 2, anteLevel);
         BetStrategyType betStrategy = BetStrategyType.NO_LIMIT;
-        PokerSettings settings = new PokerSettings(level, betStrategy, 0, 0, null, 0, null, null);
+        PokerSettings settings = new PokerSettings(level, betStrategy, 0, 0, null, 0, null, null, null);
 
         when(player.getBalance()).thenReturn((long) anteLevel + 1);
         assertThat(telesina.canPlayerAffordEntryBet(player, settings, true), is(true));
@@ -60,7 +60,7 @@ public class TelesinaCanPlayerBuyInTest {
         int anteLevel = 20;
         BlindsLevel level = new BlindsLevel(anteLevel, anteLevel * 2, anteLevel);
         BetStrategyType betStrategy = BetStrategyType.NO_LIMIT;
-        PokerSettings settings = new PokerSettings(level, betStrategy, 0, 0, null, 0, null, null);
+        PokerSettings settings = new PokerSettings(level, betStrategy, 0, 0, null, 0, null, null, null);
 
         when(player.getPendingBalanceSum()).thenReturn((long) anteLevel + 1);
         assertThat(telesina.canPlayerAffordEntryBet(player, settings, true), is(true));
@@ -85,7 +85,7 @@ public class TelesinaCanPlayerBuyInTest {
         int anteLevel = 20;
         BlindsLevel level = new BlindsLevel(anteLevel, anteLevel * 2, anteLevel);
         BetStrategyType betStrategy = BetStrategyType.NO_LIMIT;
-        PokerSettings settings = new PokerSettings(level, betStrategy, 0, 0, null, 0, null, null);
+        PokerSettings settings = new PokerSettings(level, betStrategy, 0, 0, null, 0, null, null, null);
 
         when(player.getBalance()).thenReturn((long) anteLevel / 2);
         when(player.getPendingBalanceSum()).thenReturn((long) anteLevel / 2);

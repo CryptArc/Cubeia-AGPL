@@ -17,20 +17,19 @@
 
 package com.cubeia.games.poker.cache;
 
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cubeia.firebase.api.action.GameAction;
-import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.games.poker.common.time.SystemTime;
-import com.cubeia.games.poker.debugger.HandDebuggerContract;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.inject.Inject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * A simple cache for holding actions that composes the game state of the current round.
@@ -48,8 +47,8 @@ public class ActionCache {
 
     private SystemTime dateFetcher;
 
-    @Service
-    HandDebuggerContract handDebugger;
+    //@Service
+    //HandDebuggerContract handDebugger;
 
     @Inject
     public ActionCache(SystemTime dateFetcher) {
@@ -76,9 +75,9 @@ public class ActionCache {
         log.trace("added public action to cache, tableId = {}, action type = {}, new cache size = {}",
                 new Object[]{tableId, action.getClass().getSimpleName(), cache.get(tableId).size()});
 
-        if (handDebugger != null) {
-            handDebugger.addPublicAction(tableId, action);
-        }
+//        if (handDebugger != null) {
+//            handDebugger.addPublicAction(tableId, action);
+//        }
     }
 
     /**
@@ -90,9 +89,9 @@ public class ActionCache {
         log.trace("added private action to cache, tableId = {}, playerId = {}, action type = {}, new cache size = {}",
                 new Object[]{tableId, playerId, action.getClass().getSimpleName(), cache.get(tableId).size()});
 
-        if (handDebugger != null) {
-            handDebugger.addPrivateAction(tableId, playerId, action);
-        }
+//        if (handDebugger != null) {
+//            handDebugger.addPrivateAction(tableId, playerId, action);
+//        }
     }
 
     /**
@@ -133,9 +132,9 @@ public class ActionCache {
     public void clear(int tableId) {
         log.trace("clearing action cache for tableId = {}", tableId);
         cache.removeAll(tableId);
-        if (handDebugger != null) {
-            handDebugger.clearTable(tableId);
-        }
+//        if (handDebugger != null) {
+//            handDebugger.clearTable(tableId);
+//        }
     }
 
 }

@@ -25,7 +25,7 @@ public class PlayerCardsDealt extends HandHistoryEvent {
     private static final long serialVersionUID = 2419782176272291069L;
 	
     private int playerId;
-    private final List<GameCard> cards = new LinkedList<GameCard>();
+    private List<GameCard> cards = new LinkedList<GameCard>();
     private boolean isExposed;
 
     public PlayerCardsDealt() {
@@ -36,42 +36,41 @@ public class PlayerCardsDealt extends HandHistoryEvent {
         this.isExposed = isExposed;
     }
 
-    public boolean isExposed() {
-        return isExposed;
-    }
-
     public int getPlayerId() {
         return playerId;
+    }
+
+    public void setPlayerId(int playerId) {
+        this.playerId = playerId;
     }
 
     public List<GameCard> getCards() {
         return cards;
     }
 
+    public void setCards(List<GameCard> cards) {
+        this.cards = cards;
+    }
+
+    public boolean isExposed() {
+        return isExposed;
+    }
+
+    public void setExposed(boolean exposed) {
+        isExposed = exposed;
+    }
+
     @Override
     public boolean equals(Object o) {
-
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
 
         PlayerCardsDealt that = (PlayerCardsDealt) o;
 
-        if (isExposed != that.isExposed) {
-            return false;
-        }
-        if (playerId != that.playerId) {
-            return false;
-        }
-        if (cards != null ? !cards.equals(that.cards) : that.cards != null) {
-            return false;
-        }
+        if (isExposed != that.isExposed) return false;
+        if (playerId != that.playerId) return false;
+        if (cards != null ? !cards.equals(that.cards) : that.cards != null) return false;
 
         return true;
     }
@@ -83,5 +82,14 @@ public class PlayerCardsDealt extends HandHistoryEvent {
         result = 31 * result + (cards != null ? cards.hashCode() : 0);
         result = 31 * result + (isExposed ? 1 : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "PlayerCardsDealt{" +
+                "playerId=" + playerId +
+                ", cards=" + cards +
+                ", isExposed=" + isExposed +
+                '}';
     }
 }

@@ -191,7 +191,7 @@ public interface ServerAdapter {
      * Notify that the player will be able to do this actions later when it is the players turn
      *
      */
-    void notifyFutureAllowedActions(PokerPlayer player, List<PokerActionType> optionList);
+    void notifyFutureAllowedActions(PokerPlayer player, List<PokerActionType> optionList, long callAmount, long minBet);
 
     /**
      * Request buy in:s for the given players that has {@link PokerPlayer#getRequestedBuyInAmount()} > 0.

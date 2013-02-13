@@ -22,6 +22,8 @@ import com.cubeia.firebase.api.mtt.MttFactory;
 import com.cubeia.firebase.api.mtt.activator.ActivatorContext;
 import com.cubeia.firebase.api.mtt.lobby.MttLobbyObject;
 import com.cubeia.firebase.api.server.SystemException;
+import com.cubeia.firebase.guice.inject.Service;
+import com.cubeia.game.poker.config.api.PokerSystemConfig;
 import com.cubeia.games.poker.common.time.SystemTime;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentInstance;
@@ -91,10 +93,12 @@ public class TournamentScanner implements PokerActivator, Runnable {
     private SystemTime dateFetcher;
 
     private ShutdownServiceContract shutdownService;
+    
+    @Service
+    private PokerSystemConfig systemConfig;
 
     @Inject
-    public TournamentScanner(SitAndGoConfigurationProvider sitAndGoConfigurationProvider, TournamentScheduleProvider tournamentScheduleProvider,
-                             SystemTime dateFetcher) {
+    public TournamentScanner(SitAndGoConfigurationProvider sitAndGoConfigurationProvider, TournamentScheduleProvider tournamentScheduleProvider, SystemTime dateFetcher) {
         this.sitAndGoConfigurationProvider = sitAndGoConfigurationProvider;
         this.tournamentScheduleProvider = tournamentScheduleProvider;
         this.dateFetcher = dateFetcher;
@@ -161,7 +165,7 @@ public class TournamentScanner implements PokerActivator, Runnable {
     /**
      * Resurrects a sit&go. Resurrecting it will lead to any registered player getting the buy-in back.
      *
-     * @param historicTournament
+     * @param historicTournament the tournament to resurrect
      */
     private void resurrectSitAndGoTournament(HistoricTournament historicTournament) {
         SitAndGoConfiguration configuration = tournamentScheduleProvider.getSitAndGoTournamentConfiguration(historicTournament.getTournamentTemplateId());
@@ -284,21 +288,26 @@ public class TournamentScanner implements PokerActivator, Runnable {
 
     private void checkTournaments() {
         if (shutdownService.isSystemShuttingDown()) {
-            shutDownEmptyTournamentsAndNonStartedSitAndGoTournaments();
+            shutDownTournamentsThatCanBeShutDown();
         } else {
             checkSitAndGos();
             checkScheduledTournaments();
         }
     }
 
-    private void shutDownEmptyTournamentsAndNonStartedSitAndGoTournaments() {
+    private void shutDownTournamentsThatCanBeShutDown() {
         MttLobbyObject[] tournamentInstances = factory.listTournamentInstances();
 
+        /*
+         * Note, we are not shutting down any scheduled tournaments, since a tournament
+         * might be scheduled to start in a week's time and there's plenty of time
+         * for the system to come back up again in that case.
+         */
         for (MttLobbyObject tournament : tournamentInstances) {
             String status = getStringAttribute(tournament, STATUS.name());
             boolean sitAndGo = parseBoolean(getStringAttribute(tournament, SIT_AND_GO.name()));
             boolean registering = status.equalsIgnoreCase(REGISTERING.name());
-            boolean closedOrCancelled = CLOSED.equals(status) || CANCELLED.equals(status);
+            boolean closedOrCancelled = CLOSED.name().equals(status) || CANCELLED.name().equals(status);
             boolean registeringSitAndGo = registering && sitAndGo;
             if (!closedOrCancelled && registeringSitAndGo) {
                 shutdownService.shutDownTournament(tournament.getTournamentId());
@@ -318,7 +327,7 @@ public class TournamentScanner implements PokerActivator, Runnable {
             if (dateFetcher.date().isAfter(nextAnnounceTime)) {
                 ScheduledTournamentInstance instance = configuration.createInstanceWithStartTime(schedule.getNextStartTime(dateFetcher.date()));
                 if (!existingTournaments.contains(instance.getIdentifier())) {
-                    createScheduledTournament(instance);
+                	createScheduledTournament(instance);
                 }
             }
         }
@@ -344,15 +353,6 @@ public class TournamentScanner implements PokerActivator, Runnable {
             return "";
         }
         return value.getStringValue();
-    }
-
-    private int getIntAttribute(MttLobbyObject tournament, String attributeName) {
-        AttributeValue value = tournament.getAttributes().get(attributeName);
-
-        if (value == null || value.getType() != AttributeValue.Type.INT) {
-            return -1;
-        }
-        return value.getIntValue();
     }
 
     private void checkSitAndGos() {

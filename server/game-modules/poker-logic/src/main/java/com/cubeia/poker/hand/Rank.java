@@ -18,6 +18,8 @@
 package com.cubeia.poker.hand;
 
 
+import com.cubeia.poker.handhistory.api.GameCard;
+
 public enum Rank {
     TWO,
     THREE,
@@ -32,6 +34,10 @@ public enum Rank {
     QUEEN,
     KING,
     ACE;
+
+    public GameCard.Rank translate() {
+        return GameCard.Rank.values()[ordinal()];
+    }
 
     public String toShortString() {
         switch (this) {

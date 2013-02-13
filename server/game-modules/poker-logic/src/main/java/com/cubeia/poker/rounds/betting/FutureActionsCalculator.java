@@ -32,5 +32,5 @@ public interface FutureActionsCalculator extends Serializable {
      * @param player
      * @return
      */
-    public abstract List<PokerActionType> calculateFutureActionOptionList(PokerPlayer player, Long highestBet);
+    public abstract List<PokerActionType> calculateFutureActionOptionList(PokerPlayer player, Long highestBet,boolean bettingCapped);
 }

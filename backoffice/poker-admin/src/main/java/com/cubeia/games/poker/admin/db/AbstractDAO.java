@@ -78,7 +78,7 @@ public class AbstractDAO extends JpaDaoSupport implements AdminDAO {
     @Override
     @SuppressWarnings({"unchecked"})
     public List<ScheduledTournamentConfiguration> getScheduledTournamentConfigurations() {
-        return getJpaTemplate().find("from ScheduledTournamentConfiguration");
+        return getJpaTemplate().find("from ScheduledTournamentConfiguration where archived is false");
     }
 
     @Override

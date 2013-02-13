@@ -71,7 +71,7 @@ public abstract class GuiceTest extends TestCase {
         BlindsLevel blinds = new BlindsLevel(anteLevel / 2, anteLevel, anteLevel);
         BetStrategyType betStrategy = BetStrategyType.NO_LIMIT;
         PokerSettings settings = new PokerSettings(blinds, betStrategy, 1000, 10000,
-                TimingFactory.getRegistry().getTimingProfile("MINIMUM_DELAY"), 6, TestUtils.createZeroRakeSettings(), null);
+                TimingFactory.getRegistry().getTimingProfile("MINIMUM_DELAY"), 6, TestUtils.createZeroRakeSettings(), "EUR", null);
 
         settings.setSitoutTimeLimitMilliseconds(sitoutTimeLimitMilliseconds);
         return settings;

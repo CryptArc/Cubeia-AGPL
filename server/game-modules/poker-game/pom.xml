@@ -124,11 +124,11 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
+        <!-- dependency>
             <groupId>com.cubeia.games.poker</groupId>
             <artifactId>hand-debugger-service</artifactId>
             <scope>provided</scope>
-        </dependency>
+        </dependency -->
 
         <dependency>
             <groupId>com.cubeia.games.shutdown</groupId>

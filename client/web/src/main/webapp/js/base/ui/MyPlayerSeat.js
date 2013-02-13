@@ -37,14 +37,16 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
 
     sitOutNextHandCheckBox : null,
 
+    infoElement : null,
+
     init : function(tableId,elementId, seatId, player, myActionsManager, animationManager) {
         this._super(elementId,seatId, player,animationManager);
         this.tableId = tableId;
         this.myActionsManager = myActionsManager;
         this.seatElement = $("#"+elementId);
         this.renderSeat();
-        console.log(elementId+"Info");
-        $("#"+elementId+"Info").show();
+
+        this.infoElement = $("#"+elementId+"Info").show();
         this.myActionsManager.onSitIn();
         this.circularProgressBar = new CircularProgressBar("#"+elementId+"Progressbar",this.animationManager);
         this.circularProgressBar.hide();
@@ -102,7 +104,9 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         var requestHandler = new Poker.PokerRequestHandler(this.tableId);
         for (var i = 0; i < allowedActions.length; i++) {
             var action = allowedActions[i];
-            if (action.type == Poker.ActionType.BIG_BLIND || action.type == Poker.ActionType.SMALL_BLIND) {
+            //TODO: add a wait for big blind option
+            if (action.type == Poker.ActionType.BIG_BLIND || action.type == Poker.ActionType.SMALL_BLIND ||
+                action.type == Poker.ActionType.DEAD_SMALL_BLIND || action.type == Poker.ActionType.BIG_BLIND_PLUS_DEAD_SMALL_BLIND) {
                 console.log("BLIND no more actions = " + this.noMoreBlinds);
                 if (this.noMoreBlinds) {
                     requestHandler.onMyPlayerAction(Poker.ActionType.DECLINE_ENTRY_BET, 0);
@@ -144,6 +148,13 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         } else if(actionType.id == Poker.ActionType.SIT_IN.id) {
 
         }
+    },
+    clearSeat : function() {
+        this.seatElement.html("");
+        $("#myPlayerBalance-"+this.tableId).html("");
+        $("#myPlayerName-"+this.tableId).html("");
+        this.myActionsManager.onWatchingTable();
+        this.infoElement.hide();
     },
     showHandStrength : function(hand) {
         if(hand.id != Poker.Hand.UNKNOWN.id) {

@@ -71,6 +71,8 @@ public class TournamentConfiguration implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     private PayoutStructure payoutStructure;
 
+    private String currency;
+
     public TournamentConfiguration() {
     }
 
@@ -170,5 +172,13 @@ public class TournamentConfiguration implements Serializable {
 
     public void setBetStrategy(BetStrategyType betStrategy) {
         this.betStrategy = betStrategy;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 }

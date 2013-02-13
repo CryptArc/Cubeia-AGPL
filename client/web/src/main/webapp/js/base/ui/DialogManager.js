@@ -40,7 +40,11 @@ Poker.DialogManager = Class.extend({
      * Displays a generic dialog with a header, message and a continue button
      * example
      * displayManager.displayGenericDialog({header : "header" , message:"message", okButtonText : "reload"});
-     * @param content
+     * @param {String} content.header - the title
+     * @param {String} content.message - the message content
+     * @param {String} content.okButtonText - the text of the ok button
+     * @param {Function} [okCallback] callback to execute when ok button is clicked
+     *
      */
     displayGenericDialog : function(content,okCallback) {
           if(content.header) {
@@ -85,10 +89,10 @@ Poker.DialogManager = Class.extend({
         if(closeCallback) {
             this.currentCloseCallback = closeCallback;
         }
-        $("#facebox .dialog-cancel-button").click(function(){
+        $("#facebox .dialog-cancel-button").touchSafeClick(function(){
             self.close();
         });
-        $("#facebox .dialog-ok-button").click(function(){
+        $("#facebox .dialog-ok-button").touchSafeClick(function(){
             if(okCallback() || !okCallback) {
                 self.close();
             }

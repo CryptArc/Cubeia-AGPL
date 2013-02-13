@@ -45,10 +45,12 @@ public class PokerSettings implements Serializable {
 
     private final Map<Serializable, Serializable> attributes;
 
+    private final String currency;
+
     private long sitoutTimeLimitMilliseconds = 1 * 60 * 1000;
 
     public PokerSettings(BlindsLevel blindsLevel, BetStrategyType betStrategyType, int minBuyIn, int maxBuyIn, TimingProfile timing,
-            int tableSize, RakeSettings rakeSettings, Map<Serializable, Serializable> attributes) {
+            int tableSize, RakeSettings rakeSettings, String currency, Map<Serializable, Serializable> attributes) {
         this.blindsLevel = blindsLevel;
         this.minBuyIn = minBuyIn;
         this.maxBuyIn = maxBuyIn;
@@ -57,6 +59,7 @@ public class PokerSettings implements Serializable {
         this.tableSize = tableSize;
         this.rakeSettings = rakeSettings;
         this.attributes = attributes;
+        this.currency = currency;
     }
 
     public Map<Serializable, Serializable> getAttributes() {
@@ -113,5 +116,9 @@ public class PokerSettings implements Serializable {
 
     public BlindsLevel getBlindsLevel() {
         return blindsLevel;
+    }
+
+    public String getCurrency() {
+        return currency;
     }
 }

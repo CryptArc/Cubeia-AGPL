@@ -292,7 +292,7 @@ public class TournamentLobby {
     private Money getBalanceFor(int playerId) {
         Money balance = pokerState.createZeroMoney();
         try {
-            balance = backend.getMainAccountBalance(playerId);
+            balance = backend.getAccountBalance(playerId, pokerState.getCurrencyCode());
         } catch (Exception e) {
             log.warn("Failed fetching balance for playerId: " + playerId);
         }

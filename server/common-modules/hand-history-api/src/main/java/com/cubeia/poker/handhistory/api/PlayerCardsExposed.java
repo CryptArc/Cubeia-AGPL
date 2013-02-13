@@ -22,10 +22,10 @@ import java.util.List;
 
 public class PlayerCardsExposed extends HandHistoryEvent {
 
-    private static final long serialVersionUID = 4854057494381657518L;
-	
+    private static final long serialVersionUID = 4056080546087357759L;
+
     private int playerId;
-    private final List<GameCard> cards = new LinkedList<GameCard>();
+    private List<GameCard> cards = new LinkedList<GameCard>();
 
     public PlayerCardsExposed() {
     }
@@ -38,30 +38,28 @@ public class PlayerCardsExposed extends HandHistoryEvent {
         return playerId;
     }
 
+    public void setPlayerId(int playerId) {
+        this.playerId = playerId;
+    }
+
     public List<GameCard> getCards() {
         return cards;
     }
 
+    public void setCards(List<GameCard> cards) {
+        this.cards = cards;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
 
         PlayerCardsExposed that = (PlayerCardsExposed) o;
 
-        if (playerId != that.playerId) {
-            return false;
-        }
-        if (cards != null ? !cards.equals(that.cards) : that.cards != null) {
-            return false;
-        }
+        if (playerId != that.playerId) return false;
+        if (cards != null ? !cards.equals(that.cards) : that.cards != null) return false;
 
         return true;
     }
@@ -72,5 +70,13 @@ public class PlayerCardsExposed extends HandHistoryEvent {
         result = 31 * result + playerId;
         result = 31 * result + (cards != null ? cards.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "PlayerCardsExposed{" +
+                "playerId=" + playerId +
+                ", cards=" + cards +
+                '}';
     }
 }

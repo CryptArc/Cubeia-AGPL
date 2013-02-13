@@ -27,8 +27,6 @@ import com.cubeia.poker.handhistory.api.HistoricHand;
 import com.cubeia.poker.handhistory.impl.JsonHandHistoryLogger;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
-import com.mongodb.util.JSON;
 import org.apache.log4j.Logger;
 
 /**
@@ -39,20 +37,15 @@ public class DatabaseStorageService implements HandHistoryPersistenceService, Se
 
     private static final Logger log = Logger.getLogger(DatabaseStorageService.class);
 
-    private MongoStorage mongoStorage;
-
-    private JsonHandHistoryLogger jsonLogger;
-
     private DatabaseStorageConfiguration configuration;
-
-    private static final String HANDS_COLLECTION = "hands";
+    private MongoStorage mongoStorage;
+    private JsonHandHistoryLogger jsonLogger;
 
     public void persist(HistoricHand hand) {
         log.info("Persisting hand to mongo");
 
         try {
-            DBObject dbObject = (DBObject) JSON.parse(jsonLogger.convertToJson(hand));
-            mongoStorage.persist(dbObject, HANDS_COLLECTION);
+            mongoStorage.persist(hand);
         } catch (Exception e) {
             log.warn("Failed persisting hand history to mondodb. Please start a mongodb server on host " + configuration.getHost()
                      + " and port " + configuration.getPort(), e);
@@ -75,6 +68,16 @@ public class DatabaseStorageService implements HandHistoryPersistenceService, Se
         return new MongoStorage(configuration);
     }
 
+    private void initHandsCollection()
+    {
+        mongoStorage.map(HistoricHand.class);
+        //Indexing
+        DBCollection coll = mongoStorage.getCollection(HistoricHand.class.getSimpleName());
+        if(0 == coll.getCount()) {
+            coll.createIndex(new BasicDBObject("startTime", -1));
+        }
+    }
+
     @Override
     public void start() {
         mongoStorage.connect();
@@ -88,14 +91,5 @@ public class DatabaseStorageService implements HandHistoryPersistenceService, Se
 
     @Override
     public void destroy() {
-
-    }
-
-    private void initHandsCollection()
-    {
-        DBCollection coll = mongoStorage.getCollection(HANDS_COLLECTION);
-        if(0 == coll.getCount()) {
-            coll.createIndex(new BasicDBObject("startTime", -1));
-        }
     }
 }

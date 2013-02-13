@@ -269,9 +269,11 @@ public class BettingRound implements Round, BettingRoundContext {
         for (PokerPlayer player : context.getCurrentHandPlayerMap().values()) {
 
             if (player.getId() != excludePlayer.getId()) {
-                getServerAdapter().notifyFutureAllowedActions(player, futureActionsCalculator.calculateFutureActionOptionList(player, highBet));
+                long callAmount = betStrategy.getCallAmount(this,player);
+                long minRaiseToAmount = betStrategy.getMinRaiseToAmount(this, player);
+                getServerAdapter().notifyFutureAllowedActions(player, futureActionsCalculator.calculateFutureActionOptionList(player, highBet, bettingCapped),callAmount,minRaiseToAmount);
             } else {
-                getServerAdapter().notifyFutureAllowedActions(player, Lists.<PokerActionType>newArrayList());
+                getServerAdapter().notifyFutureAllowedActions(player, Lists.<PokerActionType>newArrayList(),0,0);
             }
         }
     }
@@ -282,7 +284,7 @@ public class BettingRound implements Round, BettingRoundContext {
      */
     private void notifyAllPlayersOfNoPossibleFutureActions() {
         for (PokerPlayer player : context.getCurrentHandPlayerMap().values()) {
-            getServerAdapter().notifyFutureAllowedActions(player, Lists.<PokerActionType>newArrayList());
+            getServerAdapter().notifyFutureAllowedActions(player, Lists.<PokerActionType>newArrayList(),0,0);
         }
     }
 
@@ -485,9 +487,8 @@ public class BettingRound implements Round, BettingRoundContext {
         PokerPlayer player = playerToAct == null ? null : context.getPlayerInCurrentHand(playerToAct);
 
         if (player == null || player.hasActed()) {
-            // throw new IllegalStateException("Expected " + playerToAct + " to act, but that player can not be found at the table!");
             log.debug("Expected " + playerToAct + " to act, but that player can not be found at the table! I will assume everyone is all in");
-            return; // Are we allin?
+            return;
         }
         markPlayerForSittingOutNextHand(player);
         performDefaultActionForPlayer(player);

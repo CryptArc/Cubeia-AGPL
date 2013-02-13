@@ -5,7 +5,7 @@ Poker.LoginView = Poker.TabView.extend({
     init: function(viewElementId,name){
         this._super(viewElementId,name);
         var self = this;
-        $("#loginButton").click(function(e){
+        $("#loginButton").touchSafeClick(function(e){
             console.log("logging in");
             if ($('#user').val() != "username" && $('#pwd').val() != "Password") {
                 var usr = $('#user').val();

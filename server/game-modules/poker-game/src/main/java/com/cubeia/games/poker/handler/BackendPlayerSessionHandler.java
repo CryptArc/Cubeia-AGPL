@@ -20,6 +20,7 @@ package com.cubeia.games.poker.handler;
 import static com.cubeia.games.poker.handler.BackendCallHandler.EXT_PROP_KEY_TABLE_ID;
 
 import com.cubeia.backend.cashgame.dto.OpenTableSessionRequest;
+import com.cubeia.games.poker.common.money.Money;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,32 +88,11 @@ public class BackendPlayerSessionHandler {
             log.debug("Crashing table " + table.getId());
             closeHandler.tableCrashed(table);
         } else {
-            OpenTableSessionRequest openSessionRequest = new OpenTableSessionRequest(playerId, tableId, configService.createSystemMoney(0));
+            String currency = state.getSettings().getCurrency();
+            Money openingBalance = new Money(0, currency, 2);
+            OpenTableSessionRequest openSessionRequest = new OpenTableSessionRequest(playerId, tableId, openingBalance);
             cashGameBackend.openTableSession(openSessionRequest);
         }
 
     }
-
-    /*public void handleCrashOnTable(Table table) {
-        log.info("handling crashed table id = {}, hand id = {}", table.getTableId());
-        
-        // 1. stop table from accepting actions
-        //    Gotcha: client actions should not be accepted but callbacks from backend should.
-        state.shutdown();
-        
-        // 2. set table to invisible in lobby
-        makeTableInvisibleInLobby(table);
-        
-        // 3. mark table as closed and let the activator take care of destroying it
-        markTableReadyForClose(table);
-    }
-    
-    private void makeTableInvisibleInLobby(Table table) {
-        log.debug("setting table {} as invisible in lobby", table.getTableId());
-        table.getAttributeAccessor().setIntAttribute(PokerLobbyAttributes.VISIBLE_IN_LOBBY.name(), 0);
-    }
-    
-    private void markTableReadyForClose(Table table) {
-        table.getAttributeAccessor().setAttribute(PokerLobbyAttributes.TABLE_READY_FOR_CLOSE.name(), new AttributeValue(1));
-    }*/
 }

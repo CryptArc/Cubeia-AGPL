@@ -33,7 +33,7 @@ public class TelesinaFutureActionsCalculator implements FutureActionsCalculator 
     * @see com.cubeia.poker.variant.texasholdem.FutureActionsCalculator#calculateFutureActionOptionList(com.cubeia.poker.player.PokerPlayer, java.lang.Long)
     */
     @Override
-    public List<PokerActionType> calculateFutureActionOptionList(PokerPlayer player, Long highestBet) {
+    public List<PokerActionType> calculateFutureActionOptionList(PokerPlayer player, Long highestBet, boolean bettingCapped) {
         List<PokerActionType> options = new ArrayList<PokerActionType>();
 
         // players that are all in or has folded should not have anything
