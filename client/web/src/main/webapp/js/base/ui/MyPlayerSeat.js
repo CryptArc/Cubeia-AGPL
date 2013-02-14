@@ -85,13 +85,13 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         console.log("ON REQUEST ACTION FOR table = " + this.tableId);
         var blindsHandled = this.handleBlinds(allowedActions);
         if(blindsHandled == false) {
-            this.myActionsManager.onRequestPlayerAction(allowedActions,mainPot,fixedLimit);
+
             if(this.circularProgressBar!=null) {
                 this.circularProgressBar.detach();
             }
             this.circularProgressBar = new CircularProgressBar("#"+this.seatElement.attr("id")+"Progressbar",this.animationManager);
-            this.circularProgressBar.show();
-            this.circularProgressBar.render(timeToAct);
+            this.circularProgressBar.setTime(timeToAct);
+            this.myActionsManager.onRequestPlayerAction(allowedActions,mainPot,fixedLimit,this.circularProgressBar);
             Poker.AppCtx.getViewManager().requestTableFocus(this.tableId);
         }
 

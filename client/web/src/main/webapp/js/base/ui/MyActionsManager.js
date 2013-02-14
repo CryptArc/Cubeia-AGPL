@@ -94,7 +94,8 @@ Poker.MyActionsManager  = Class.extend({
         this.showSlider(minAmount,maxAmount,mainPot);
     },
     onClickCancelButton : function() {
-        this.onRequestPlayerAction(this.currentActions);
+        this.hideAllActionButtons();
+        this.showActionButtons(this.currentActions);
         this.doBetActionButton.hide();
         this.cancelBetActionButton.hide();
         this.hideSlider();
@@ -134,7 +135,7 @@ Poker.MyActionsManager  = Class.extend({
         this.tableButtons[actionType.id] = new Poker.ActionButton(elId,actionType,callback,false);
         this.allActions.push(this.tableButtons[actionType.id]);
     },
-    onRequestPlayerAction : function(actions,mainPot,fixedLimit){
+    onRequestPlayerAction : function(actions,mainPot,fixedLimit,progressBar){
 
         this.currentActions = actions;
         this.hideAllActionButtons();
@@ -146,30 +147,41 @@ Poker.MyActionsManager  = Class.extend({
             this.actionCallback(fromFutureAction.type,fromFutureAction.minAmount);
             return;
         }
+        this.futureActions.hide();
+        var self = this;
+        //to avoid users clicking the action buttons by mistake
+        setTimeout(function(){
+            self.showActionButtons(actions,mainPot,fixedLimit);
+            progressBar.show();
+            progressBar.render();
+        },500);
+
+    },
+    showActionButtons : function(actions,mainPot,fixedLimit) {
 
         this.userActionsContainer.show();
-        this.futureActions.hide();
+
 
         for (var a in actions){
-          var act = actions[a];
-          console.log("Action:");
-          console.log(act);
-          if(fixedLimit==true && act.type.id == Poker.ActionType.BET.id) {
-              if(act.minAmount>0) {
-                this.fixedBetActionButton.setAmount(act.minAmount);
-              }
-              this.fixedBetActionButton.show();
-          } else if(fixedLimit==true && act.type.id == Poker.ActionType.RAISE.id) {
-              if(act.minAmount>0) {
-                  this.fixedRaiseActionButton.setAmount(act.minAmount,act.maxAmount,mainPot);
-              }
-            this.fixedRaiseActionButton.show();
-          } else {
-              if(act.minAmount>0) {
-                  this.actionButtons[act.type.id].setAmount(act.minAmount,act.maxAmount,mainPot);
-              }
-              this.actionButtons[act.type.id].show();
-          }
+            var act = actions[a];
+            console.log("Action:");
+            console.log(act);
+            if(fixedLimit==true && act.type.id == Poker.ActionType.BET.id) {
+                if(act.minAmount>0) {
+                    this.fixedBetActionButton.setAmount(act.minAmount);
+                }
+                this.fixedBetActionButton.show();
+            } else if(fixedLimit==true && act.type.id == Poker.ActionType.RAISE.id) {
+                if(act.minAmount>0) {
+                    this.fixedRaiseActionButton.setAmount(act.minAmount,act.maxAmount,mainPot);
+                }
+                this.fixedRaiseActionButton.show();
+            } else {
+                if(act.minAmount>0) {
+                    this.actionButtons[act.type.id].setAmount(act.minAmount,act.maxAmount,mainPot);
+                }
+                this.actionButtons[act.type.id].show();
+            }
         }
     },
     onStartHand : function() {
