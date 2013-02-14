@@ -25,6 +25,8 @@ import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructureFac
 import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
 import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructureParser;
 import com.cubeia.games.poker.tournament.configuration.provider.TournamentScheduleProvider;
+import com.cubeia.poker.timing.TimingFactory;
+import com.cubeia.poker.timing.TimingProfile;
 import com.google.common.collect.Lists;
 import org.joda.time.DateTime;
 
@@ -52,6 +54,7 @@ public class MockTournamentScheduleProvider implements TournamentScheduleProvide
         configuration.setFee(BigDecimal.valueOf(1));
         configuration.setPayoutStructure(payouts);
         configuration.setCurrency("EUR");
+        configuration.setTimingType(TimingFactory.getRegistry().getDefaultTimingProfile());
         tournamentConfigurations.add(everyTenMinutes);
         return tournamentConfigurations;
     }
