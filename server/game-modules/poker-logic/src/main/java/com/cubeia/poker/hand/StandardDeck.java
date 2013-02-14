@@ -65,6 +65,16 @@ public class StandardDeck implements Deck {
     }
 
     @Override
+    public Rank getDeckLowestRank() {
+        return Rank.TWO;
+    }
+
+    @Override
+    public int getTotalNumberOfCardsInDeck() {
+        return 52;
+    }
+
+    @Override
     public boolean isEmpty() {
         return currentCardIndex >= cards.size();
     }

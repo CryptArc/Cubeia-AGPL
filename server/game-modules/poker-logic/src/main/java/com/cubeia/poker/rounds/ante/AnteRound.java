@@ -64,7 +64,7 @@ public class AnteRound implements Round {
      * <p/>
      * Request ante from all other players.
      *
-     * @param players
+     * @param players the players who should be asked to post ante
      */
     private void handleAnteRequests(Collection<PokerPlayer> players) {
         Collection<PokerPlayer> activePlayers = new ArrayList<PokerPlayer>(players);
@@ -215,12 +215,6 @@ public class AnteRound implements Round {
         return anteRoundHelper.hasAllPlayersActed(players) && anteRoundHelper.numberOfPlayersPayedAnte(players) < 2;
     }
 
-    @Override
-    public boolean isWaitingForPlayer(int playerId) {
-        PokerPlayer pokerPlayer = context.getCurrentHandPlayerMap().get(playerId);
-        return !pokerPlayer.hasActed();
-    }
-    
     private ServerAdapter getServerAdapter() {
         return serverAdapterHolder.get();
     }

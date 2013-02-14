@@ -22,7 +22,7 @@ import com.cubeia.poker.rounds.betting.BettingRound;
 import com.cubeia.poker.rounds.blinds.BlindsRound;
 import com.cubeia.poker.rounds.dealing.DealCommunityCardsRound;
 import com.cubeia.poker.rounds.dealing.DealExposedPocketCardsRound;
-import com.cubeia.poker.rounds.dealing.DealInitialPocketCardsRound;
+import com.cubeia.poker.rounds.dealing.DealPocketCardsRound;
 import com.cubeia.poker.rounds.dealing.ExposePrivateCardsRound;
 
 /**
@@ -41,7 +41,7 @@ public interface RoundVisitor {
 
     void visit(DealExposedPocketCardsRound round);
 
-    void visit(DealInitialPocketCardsRound round);
+    void visit(DealPocketCardsRound round);
 
     void visit(ExposePrivateCardsRound exposePrivateCardsRound);
 

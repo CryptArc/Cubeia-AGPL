@@ -397,12 +397,6 @@ public class BlindsRound implements Round, Serializable {
         visitor.visit(this);
     }
 
-    // FIXME: Actually check who we are waiting for
-    @Override
-    public boolean isWaitingForPlayer(int playerId) {
-        return false;
-    }
-
     public int getPendingEntryBetterId() {
         return pendingEntryBetterId;
     }

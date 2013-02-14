@@ -44,8 +44,6 @@ public class TelesinaTest {
 
     private SortedMap<Integer, PokerPlayer> playerMap = new TreeMap<Integer, PokerPlayer>();
 
-    PokerPlayer dealer;
-
     @Mock
     TelesinaDeckFactory deckFactory;
 
@@ -93,11 +91,13 @@ public class TelesinaTest {
 
         when(context.getCurrentHandSeatingMap()).thenReturn(playerMap);
         when(context.getTimingProfile()).thenReturn(new DefaultTimingProfile());
+        when(context.getDeck()).thenReturn(deck);
         when(serverAdapterHolder.get()).thenReturn(new MockServerAdapter());
 
         telesina.startHand();
 
-        DealExposedPocketCardsRound dealPocketCardsRound = new DealExposedPocketCardsRound(telesina);
+        DealExposedPocketCardsRound dealPocketCardsRound = new DealExposedPocketCardsRound(context, serverAdapterHolder);
+        telesina.visit(dealPocketCardsRound);
 
         //two times when dealing new cards
         int numberOfTimeHandStrengthShouldBeSent = 2;

@@ -17,28 +17,16 @@
 
 package com.cubeia.poker;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
-
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.adapter.HandEndStatus;
-import com.cubeia.poker.adapter.ServerAdapter;
-import com.cubeia.poker.hand.Card;
-import com.cubeia.poker.hand.ExposeCardsHolder;
-import com.cubeia.poker.hand.HandType;
-import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.player.PokerPlayerStatus;
-import com.cubeia.poker.pot.Pot;
-import com.cubeia.poker.pot.PotTransition;
-import com.cubeia.poker.pot.RakeInfoContainer;
 import com.cubeia.poker.result.HandResult;
-import com.cubeia.poker.tournament.RoundReport;
-import com.cubeia.poker.util.SitoutCalculator;
+
+import java.util.Collection;
+import java.util.Random;
 
 /**
  * Integration test for poker logic.
@@ -168,6 +156,7 @@ public class PokerLogicTest extends GuiceTest {
         // Blinds
         act(p[0], PokerActionType.SMALL_BLIND);
         act(p[1], PokerActionType.BIG_BLIND);
+        state.timeout();
 
         // Small blind folds, hand should finish.
         assertFalse(state.isFinished());
@@ -188,6 +177,7 @@ public class PokerLogicTest extends GuiceTest {
         // Blinds
         act(p[1], PokerActionType.DECLINE_ENTRY_BET);
         act(p[2], PokerActionType.BIG_BLIND);
+        state.timeout();
 
         assertEquals(2, mp[0].getPocketCards().getCards().size());
         assertTrue(mp[1].isSittingOut());
@@ -208,6 +198,7 @@ public class PokerLogicTest extends GuiceTest {
         // Blinds
         act(p[0], PokerActionType.SMALL_BLIND);
         act(p[1], PokerActionType.BIG_BLIND);
+        state.timeout();
 
         // Small blind folds, hand should finish.
         assertFalse(state.isFinished());
@@ -241,6 +232,7 @@ public class PokerLogicTest extends GuiceTest {
         // Blinds
         act(p[0], PokerActionType.SMALL_BLIND);
         act(p[1], PokerActionType.BIG_BLIND);
+        state.timeout();
 
         // Small blind folds, hand should finish.
         act(p[0], PokerActionType.CALL);
@@ -264,6 +256,7 @@ public class PokerLogicTest extends GuiceTest {
         // Blinds
         act(p[0], PokerActionType.SMALL_BLIND);
         act(p[1], PokerActionType.BIG_BLIND);
+        state.timeout();
         act(p[0], PokerActionType.FOLD);
 
         // Assertions
@@ -275,6 +268,7 @@ public class PokerLogicTest extends GuiceTest {
         assertFalse(state.isFinished());
         act(p[1], PokerActionType.SMALL_BLIND);
         act(p[0], PokerActionType.BIG_BLIND);
+        state.timeout();
 
         assertAllPlayersHaveCards(mp, 2);
         act(p[1], PokerActionType.CALL);
@@ -294,6 +288,7 @@ public class PokerLogicTest extends GuiceTest {
         state.timeout();
         act(p[0], PokerActionType.SMALL_BLIND);
         act(p[1], PokerActionType.BIG_BLIND);
+        state.timeout();
 
         assertAllPlayersHaveCards(mp, 2);
         act(p[0], PokerActionType.CALL);
@@ -359,6 +354,7 @@ public class PokerLogicTest extends GuiceTest {
         state.timeout();
         act(p[0], PokerActionType.SMALL_BLIND);
         act(p[1], PokerActionType.BIG_BLIND);
+        state.timeout();
         act(p[0], PokerActionType.CALL);
         act(p[1], PokerActionType.CHECK);
 
@@ -479,6 +475,7 @@ public class PokerLogicTest extends GuiceTest {
         // Blinds
         act(p[2], PokerActionType.SMALL_BLIND);
         act(p[3], PokerActionType.BIG_BLIND);
+        state.timeout();
 
         // All players fold, hand should finish.
         assertFalse(state.isFinished());

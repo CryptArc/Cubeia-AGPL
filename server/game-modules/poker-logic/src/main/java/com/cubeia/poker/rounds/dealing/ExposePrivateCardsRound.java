@@ -19,6 +19,11 @@ package com.cubeia.poker.rounds.dealing;
 
 import java.util.List;
 
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
+import com.cubeia.poker.hand.ExposeCardsHolder;
+import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.result.RevealOrderCalculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,18 +31,47 @@ import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundVisitor;
 
-/**
- * Telesina specific round for dealing vela card.
- */
 public class ExposePrivateCardsRound implements Round {
 
     private static final long serialVersionUID = 1L;
 
     private static transient Logger log = LoggerFactory.getLogger(ExposePrivateCardsRound.class);
+    private final PokerContext context;
+    private final ServerAdapterHolder serverAdapterHolder;
 
-    public ExposePrivateCardsRound(Dealer dealer, List<Integer> revealOrder) {
-        dealer.exposeShowdownCards(revealOrder);
-        dealer.sendAllNonFoldedPlayersBestHand();
+    public ExposePrivateCardsRound(PokerContext context, ServerAdapterHolder serverAdapterHolder, RevealOrderCalculator revealOrderCalculator) {
+        this.context = context;
+        this.serverAdapterHolder = serverAdapterHolder;
+        exposeShowdownCards(revealOrderCalculator.calculateRevealOrder(
+                context.getCurrentHandSeatingMap(),
+                context.getLastPlayerToBeCalled(),
+                context.getPlayerInDealerSeat(),
+                context.countNonFoldedPlayers()));
+    }
+
+    /**
+     * Exposes all pocket cards for players still in the hand
+     * i.e. not folded. Will set a flag so that sequential calls
+     * will not generate any outgoing packets.
+     *
+     * @param playerRevealOrder the order in which cards should be revealed.
+     */
+    private void exposeShowdownCards(List<Integer> playerRevealOrder) {
+        ExposeCardsHolder holder = new ExposeCardsHolder();
+        for (int playerId : playerRevealOrder) {
+            PokerPlayer player = context.getPlayer(playerId);
+            if (!player.hasFolded() && !player.isExposingPocketCards()) {
+                holder.setExposedCards(playerId, player.getPrivatePocketCards());
+                player.setExposingPocketCards(true);
+            }
+        }
+        if (holder.hasCards()) {
+            exposePrivateCards(holder);
+        }
+    }
+
+    private void exposePrivateCards(ExposeCardsHolder holder) {
+        serverAdapterHolder.get().exposePrivateCards(holder);
     }
 
     @Override
@@ -63,10 +97,5 @@ public class ExposePrivateCardsRound implements Round {
 
     @Override
     public void timeout() {
-    }
-
-    @Override
-    public boolean isWaitingForPlayer(int playerId) {
-        return false;
     }
 }

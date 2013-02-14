@@ -52,7 +52,7 @@ public interface GameType extends Serializable {
     // TODO: #AH2 move from here? Or?
     public String getStateDescription();
 
-    public void sendAllNonFoldedPlayersBestHand();
+//    public void sendAllNonFoldedPlayersBestHand();
 
     /**
      * Returns true if the player can buy in according to the poker variant. In Telesina for example

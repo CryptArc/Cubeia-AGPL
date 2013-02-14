@@ -23,30 +23,66 @@ import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.rounds.Round;
+import com.cubeia.poker.rounds.RoundHelper;
 import com.cubeia.poker.rounds.RoundVisitor;
+import com.cubeia.poker.timing.Periods;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 
-public class DealExposedPocketCardsRound implements Round {
+/**
+ * Round for dealing pocket cards.
+ *
+ */
+public class DealPocketCardsRound implements Round {
 
     private static final long serialVersionUID = 1L;
 
-    private static transient Logger log = LoggerFactory.getLogger(DealExposedPocketCardsRound.class);
+    private static transient Logger log = LoggerFactory.getLogger(DealPocketCardsRound.class);
     private final PokerContext context;
     private final ServerAdapterHolder serverAdapterHolder;
 
-    public DealExposedPocketCardsRound(PokerContext context, ServerAdapterHolder serverAdapterHolder) {
+    public DealPocketCardsRound(PokerContext context, ServerAdapterHolder serverAdapterHolder, int numberOfFaceDownCards, int numberOfFaceUpCards) {
         this.context = context;
         this.serverAdapterHolder = serverAdapterHolder;
-        dealExposedPocketCards();
+        RoundHelper roundHelper = new RoundHelper(context, serverAdapterHolder);
+        if (numberOfFaceDownCards > 0) {
+            dealFaceDownPocketCards(numberOfFaceDownCards);
+        }
+        if (numberOfFaceUpCards > 0) {
+            dealFaceUpPocketCards(numberOfFaceUpCards);
+        }
+        roundHelper.scheduleRoundTimeout(context, serverAdapterHolder.get(), Periods.POCKET_CARDS);
     }
 
-    private void dealExposedPocketCards() {
+    public DealPocketCardsRound(PokerContext context, ServerAdapterHolder serverAdapterHolder, int numberOfFaceDownCards) {
+        this(context, serverAdapterHolder, numberOfFaceDownCards, 0);
+    }
+
+    private void dealFaceDownPocketCards(int numberOfCardsToDeal) {
+        log.debug("Dealing pocket cards.");
+        for (PokerPlayer p : context.getCurrentHandSeatingMap().values()) {
+            /*
+             * Note, not checking if the player is sitting in. If he was sitting in at hand start (and thus ended up in the current hand seating map),
+             * he should still be sitting in. Any player who declined the entry bet should also already have been removed from this map.
+             */
+            dealPocketCards(p, numberOfCardsToDeal);
+        }
+    }
+
+    private void dealPocketCards(PokerPlayer p, int n) {
+        log.debug("Dealing cards to " + p.getId());
+        for (int i = 0; i < n; i++) {
+            p.addPocketCard(context.getDeck().deal(), false);
+        }
+        serverAdapterHolder.get().notifyPrivateCards(p.getId(), p.getPocketCards().getCards());
+    }
+
+    public void dealFaceUpPocketCards(int cardsToDeal) {
         for (PokerPlayer p : context.getCurrentHandSeatingMap().values()) {
             if (!p.hasFolded()) {
-                dealExposedPocketCards(p, 1);
+                dealExposedPocketCards(p, cardsToDeal);
             }
         }
     }
@@ -64,7 +100,7 @@ public class DealExposedPocketCardsRound implements Round {
 
     @Override
     public boolean act(PokerAction action) {
-        log.info("Perform action not allowed during DealExposedPocketCardsRound. Action received: " + action);
+        log.info("Perform action not allowed during DealInitialPocketCardsRound. Action received: " + action);
         return false;
     }
 
