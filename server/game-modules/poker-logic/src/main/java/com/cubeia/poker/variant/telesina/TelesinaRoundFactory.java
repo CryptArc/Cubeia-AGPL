@@ -20,6 +20,7 @@ package com.cubeia.poker.variant.telesina;
 import com.cubeia.poker.adapter.ServerAdapterHolder;
 import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.hand.Rank;
+import com.cubeia.poker.result.RevealOrderCalculator;
 import com.cubeia.poker.rounds.ante.AnteRound;
 import com.cubeia.poker.rounds.ante.AnteRoundHelper;
 import com.cubeia.poker.rounds.betting.ActionRequestFactory;
@@ -28,13 +29,12 @@ import com.cubeia.poker.rounds.betting.BetStrategyFactory;
 import com.cubeia.poker.rounds.betting.BettingRound;
 import com.cubeia.poker.rounds.dealing.DealCommunityCardsRound;
 import com.cubeia.poker.rounds.dealing.DealExposedPocketCardsRound;
-import com.cubeia.poker.rounds.dealing.DealInitialPocketCardsRound;
+import com.cubeia.poker.rounds.dealing.DealPocketCardsRound;
 import com.cubeia.poker.rounds.dealing.ExposePrivateCardsRound;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.variant.telesina.hand.TelesinaPlayerToActCalculator;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Factory of Telesina game rounds.
@@ -60,21 +60,20 @@ public class TelesinaRoundFactory implements Serializable {
         return new BettingRound(buttonSeatId, context, serverAdapterHolder, playerToActCalculator, actionRequestFactory, futureActionsCalculator, betStrategy);
     }
 
-    DealExposedPocketCardsRound createDealExposedPocketCardsRound(Telesina telesina) {
-        return new DealExposedPocketCardsRound(telesina);
+    DealExposedPocketCardsRound createDealExposedPocketCardsRound(PokerContext context, ServerAdapterHolder serverAdapterHolder) {
+        return new DealExposedPocketCardsRound(context, serverAdapterHolder);
     }
 
-
-    ExposePrivateCardsRound createExposePrivateCardsRound(Telesina telesina, List<Integer> revealOrder) {
-        return new ExposePrivateCardsRound(telesina, revealOrder);
+    ExposePrivateCardsRound createExposePrivateCardsRound(PokerContext context, ServerAdapterHolder serverAdapterHolder, RevealOrderCalculator revealOrderCalculator) {
+        return new ExposePrivateCardsRound(context, serverAdapterHolder, revealOrderCalculator);
     }
 
-    DealCommunityCardsRound createDealCommunityCardsRound(Telesina telesina) {
-        return new DealCommunityCardsRound(telesina);
+    DealCommunityCardsRound createDealCommunityCardsRound(PokerContext context, ServerAdapterHolder serverAdapterHolder) {
+        return new DealCommunityCardsRound(context, serverAdapterHolder, 1);
     }
 
-    DealInitialPocketCardsRound createDealInitialCardsRound(Telesina telesina) {
-        return new DealInitialPocketCardsRound(telesina);
+    DealPocketCardsRound createDealInitialCardsRound(PokerContext context, ServerAdapterHolder serverAdapterHolder) {
+        return new DealPocketCardsRound(context, serverAdapterHolder, 1, 1);
     }
 
 }

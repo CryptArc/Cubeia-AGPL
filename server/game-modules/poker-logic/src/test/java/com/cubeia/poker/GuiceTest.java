@@ -22,8 +22,8 @@ import com.cubeia.poker.model.BlindsLevel;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.variant.GameType;
+import com.cubeia.poker.variant.GameTypes;
 import com.cubeia.poker.variant.PokerVariant;
-import com.cubeia.poker.variant.factory.GameTypeFactory;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -62,7 +62,7 @@ public abstract class GuiceTest extends TestCase {
         mockServerAdapter = new MockServerAdapter();
         mockServerAdapter.random = rng;
         state = injector.getInstance(PokerState.class);
-        GameType gameType = GameTypeFactory.createGameType(variant);
+        GameType gameType = GameTypes.createTexasHoldem();
         state.init(gameType, createPokerSettings(100));
         state.setServerAdapter(mockServerAdapter);
     }

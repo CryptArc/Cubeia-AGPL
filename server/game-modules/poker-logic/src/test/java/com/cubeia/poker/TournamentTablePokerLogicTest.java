@@ -47,6 +47,7 @@ public class TournamentTablePokerLogicTest extends GuiceTest {
         // Blinds
         state.timeout();
         state.timeout();
+        state.timeout();
         assertTrue(mp[2].hasOption());
         assertAllPlayersHaveCards(mp, 2, 4);
 
@@ -115,6 +116,7 @@ public class TournamentTablePokerLogicTest extends GuiceTest {
         // Auto blinds, as usual
         state.timeout();
         state.timeout();
+        state.timeout();
 
         // Run next hand
         act(PokerActionType.FOLD);
@@ -145,6 +147,7 @@ public class TournamentTablePokerLogicTest extends GuiceTest {
         assertTrue(mp[2].isActionPossible(PokerActionType.BIG_BLIND));
         assertEquals(102, mockServerAdapter.getLastActionRequest().getPlayerId());
         act(PokerActionType.BIG_BLIND);
+        state.timeout();
 
         assertTrue(mp[2].hasOption());
         assertAllPlayersHaveCards(mp, 2, 4);
@@ -175,21 +178,6 @@ public class TournamentTablePokerLogicTest extends GuiceTest {
 
         state.removePlayer(p5.getId());
         assertEquals(4, state.getSeatedPlayers().size());
-    }
-
-    public void testSmallBlindTimeoutOnTournamentTable() {
-        state.setTournamentTable(true);
-        MockPlayer[] mp = TestUtils.createMockPlayers(2);
-        addPlayers(state, mp, 2);
-
-        // Force start
-        state.timeout();
-
-        state.timeout();
-        state.timeout();
-        assertEquals(2, mockServerAdapter.getTimeoutRequests()); // 1 for small blind 1 for big blind and one before starting the hand
-
-        assertFalse(mockServerAdapter.getLastActionRequest().isOptionEnabled(PokerActionType.BIG_BLIND));
     }
 
     private void assertAllPlayersHaveCards(PokerPlayer[] p, int expectedNumberOfCards, int count) {

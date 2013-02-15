@@ -45,8 +45,8 @@ public class CreateTable extends BasePage {
         table.setTiming(TimingFactory.getRegistry().getDefaultTimingProfile());
         table.setRakeSettings(new RakeSettings());
         table.setSeats(10);
-        table.setMinTables(10);
-        table.setMinEmptyTables(5);
+        table.setMinTables(1);
+        table.setMinEmptyTables(1);
         table.setBetStrategy(BetStrategyType.NO_LIMIT);
 
         TableForm tableForm = new TableForm("tableForm", table) {

@@ -29,14 +29,28 @@ import java.util.List;
 public interface Deck extends Serializable {
 
     /**
-     * Deal a card. Picks the next card in the deck and removes it.
+     * Deals a card. Picks the next card in the deck and removes it.
      *
      * @return the dealt card, null if deck is empty
      */
     public Card deal();
 
     /**
-     * Returns true if all cards has been dealt.
+     * Gets the lowest rank used in this deck.
+     *
+     * @return the lowest rank used in this deck
+     */
+    Rank getDeckLowestRank();
+
+    /**
+     * Gets the total number of cards in this deck.
+     *
+     * @return the total number of cards in this deck
+     */
+    int getTotalNumberOfCardsInDeck();
+
+    /**
+     * Returns true if all cards have been dealt.
      *
      * @return true if deck is empty
      */

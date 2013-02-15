@@ -9,6 +9,7 @@ CircularProgressBar.prototype = {
     pie : null,
     pieElement : null,
     animationManager : null,
+    time : 0,
 	_initialize : function(containerId,animationManager) {
         this.i = Math.random();
 		if (containerId == null) {
@@ -57,10 +58,12 @@ CircularProgressBar.prototype = {
         this.pieElement = this.pie.get(0);
 	},
     animation : null,
-
-	render : function(time) {
+    setTime : function(time) {
+        this.time = time;
+    },
+	render : function() {
         var self = this;
-
+        var time = this.time;
         this.animation = new Poker.TransformAnimation(this.pieElement);
         this.animation.addTransition("transform",(time/2000),"linear")
             .addStartRotate(0)

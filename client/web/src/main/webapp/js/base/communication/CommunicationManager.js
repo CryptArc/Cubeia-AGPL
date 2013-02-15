@@ -1,7 +1,7 @@
 var Poker = Poker || {};
 
 /**
- * Handles Firebase communications, packages recieved
+ * Handles Firebase communications, packages received
  * are delegated to the different *PacketHandler classes
  *
  * @type {Poker.CommunicationManager}
@@ -71,8 +71,6 @@ Poker.CommunicationManager = Class.extend({
         console.log("Forcing log out");
         new Poker.ConnectionPacketHandler().handleForceLogout(packet.code,packet.message);
         this.getConnector().close();
-
-
     },
     /**
      * Login callback

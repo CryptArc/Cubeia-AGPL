@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010 Cubeia Ltd <info@cubeia.com>
+ * Copyright (C) 2012 Cubeia Ltd <info@cubeia.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,15 +17,20 @@
 
 package com.cubeia.poker.rounds.dealing;
 
-import java.util.List;
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.context.PokerContext;
+import com.cubeia.poker.rounds.Round;
+import com.cubeia.poker.rounds.RoundCreator;
 
-public interface Dealer {
+public class DealPocketCardsRoundCreator implements RoundCreator {
+    private final int numberOfCards;
 
-    void dealExposedPocketCards();
+    public DealPocketCardsRoundCreator(int numberOfCards) {
+        this.numberOfCards = numberOfCards;
+    }
 
-    void dealInitialPocketCards();
-
-    void exposeShowdownCards(List<Integer> playerRevealOrder);
-
-    void sendAllNonFoldedPlayersBestHand();
+    @Override
+    public Round create(PokerContext context, ServerAdapterHolder serverAdapterHolder) {
+        return new DealPocketCardsRound(context, serverAdapterHolder, numberOfCards);
+    }
 }

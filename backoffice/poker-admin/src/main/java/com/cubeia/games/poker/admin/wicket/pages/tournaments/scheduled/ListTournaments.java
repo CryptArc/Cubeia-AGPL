@@ -19,6 +19,7 @@ package com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled;
 
 import com.cubeia.games.poker.admin.db.AdminDAO;
 import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.games.poker.admin.wicket.pages.tournaments.configuration.TournamentArchiver;
 import com.cubeia.games.poker.admin.wicket.util.ArchiveLinkPanel;
 import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
 import com.cubeia.games.poker.admin.wicket.util.ParamBuilder;
@@ -88,7 +89,7 @@ public class ListTournaments extends BasePage {
             @Override
             public void populateItem(Item<ICellPopulator<ScheduledTournamentConfiguration>> item, String componentId, IModel<ScheduledTournamentConfiguration> model) {
                 ScheduledTournamentConfiguration tournament = model.getObject();
-                Component panel = new ArchiveLinkPanel(componentId, new TournamentArchiver(tournament), tournament, ListTournaments.class);
+                Component panel = new ArchiveLinkPanel(componentId, new TournamentArchiver(tournament.getConfiguration()), tournament, ListTournaments.class);
                 item.add(panel);
             }
 

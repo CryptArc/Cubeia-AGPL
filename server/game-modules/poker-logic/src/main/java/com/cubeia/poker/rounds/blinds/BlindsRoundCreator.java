@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010 Cubeia Ltd <info@cubeia.com>
+ * Copyright (C) 2012 Cubeia Ltd <info@cubeia.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -15,17 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.poker.rounds.dealing;
+package com.cubeia.poker.rounds.blinds;
 
-import java.util.List;
+import com.cubeia.poker.adapter.ServerAdapterHolder;
+import com.cubeia.poker.blinds.BlindsCalculator;
+import com.cubeia.poker.context.PokerContext;
+import com.cubeia.poker.rounds.Round;
+import com.cubeia.poker.rounds.RoundCreator;
+import com.cubeia.poker.variant.texasholdem.NonRandomSeatProvider;
 
-public interface Dealer {
+public class BlindsRoundCreator implements RoundCreator {
 
-    void dealExposedPocketCards();
-
-    void dealInitialPocketCards();
-
-    void exposeShowdownCards(List<Integer> playerRevealOrder);
-
-    void sendAllNonFoldedPlayersBestHand();
+    @Override
+    public Round create(PokerContext context, ServerAdapterHolder serverAdapterHolder) {
+        return new BlindsRound(context, serverAdapterHolder, new BlindsCalculator(new NonRandomSeatProvider()));
+    }
 }

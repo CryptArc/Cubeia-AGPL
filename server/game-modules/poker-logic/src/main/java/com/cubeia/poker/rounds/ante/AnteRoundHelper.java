@@ -38,7 +38,7 @@ import com.google.common.collect.Collections2;
 public class AnteRoundHelper extends RoundHelper {
 
     private static final long serialVersionUID = 1101877161161688793L;
-	
+
     private PokerContext context;
 
     public AnteRoundHelper(PokerContext context, ServerAdapterHolder serverAdapter) {
@@ -78,7 +78,7 @@ public class AnteRoundHelper extends RoundHelper {
     /**
      * Setup the given players current action requests as ante requests and send them via the game.
      *
-     * @param players
+     * @param players the players who should be asked to post ante
      */
     public void requestAntes(Collection<PokerPlayer> players) {
         int anteLevel = context.getSettings().getAnteAmount();
