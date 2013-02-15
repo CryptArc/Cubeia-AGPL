@@ -253,7 +253,7 @@ public class BlindsRound implements Round, Serializable {
     }
 
     public void bigBlindPosted() {
-        entryBetters = blindsCalculator.getEntryBetters(blindsInfo.getDealerButtonSeatId(), blindsInfo.getBigBlindSeatId(), blindsInfo.getBigBlindSeatId());
+        entryBetters = blindsCalculator.getEntryBetters(blindsInfo.getDealerButtonSeatId(), blindsInfo.getSmallBlindSeatId(), blindsInfo.getBigBlindSeatId());
         askForNextEntryBetOrFinishBlindsRound();
     }
 

@@ -43,6 +43,7 @@ import org.mockito.Mock;
 import javax.annotation.Nullable;
 import java.util.SortedMap;
 
+import static com.cubeia.poker.TestUtils.createMockPlayers;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -86,7 +87,7 @@ public class BlindsRoundTest extends TestCase {
 
     public void testBasicBlinds() throws Exception {
         // Seat three players.
-        MockPlayer[] p = TestUtils.createMockPlayers(3);
+        MockPlayer[] p = createMockPlayers(3);
         addPlayers(p);
         round = new BlindsRound(context, serverAdapterHolder, blindsCalculator);
         
@@ -117,7 +118,7 @@ public class BlindsRoundTest extends TestCase {
 
     public void testHeadsUpBlinds() throws Exception {
         // Seat two players.
-        MockPlayer[] p = TestUtils.createMockPlayers(2);
+        MockPlayer[] p = createMockPlayers(2);
         addPlayers(p);
         round = new BlindsRound(context, serverAdapterHolder, blindsCalculator);
         
@@ -140,7 +141,7 @@ public class BlindsRoundTest extends TestCase {
 
     public void testHeadsUpBlindsSecondHand() throws Exception {
         // Seat two players.
-        MockPlayer[] p = TestUtils.createMockPlayers(2);
+        MockPlayer[] p = createMockPlayers(2);
         addPlayers(p);
         round = new BlindsRound(context, serverAdapterHolder, blindsCalculator);
 
@@ -155,7 +156,7 @@ public class BlindsRoundTest extends TestCase {
     }
 
     public void testMoveFromHeadsUpToNonHeadsUp() throws Exception {
-        MockPlayer[] p = TestUtils.createMockPlayers(3);
+        MockPlayer[] p = createMockPlayers(3);
         addPlayers(p);
         setPreviousBlindsInfo(0, 0, 1);
         p[0].setHasPostedEntryBet(true);
@@ -168,7 +169,7 @@ public class BlindsRoundTest extends TestCase {
     }
 
     public void testMoveFromNonHeadsUpToHeadsUp() throws Exception {
-        MockPlayer[] p = TestUtils.createMockPlayers(2);
+        MockPlayer[] p = createMockPlayers(2);
         addPlayers(p);
         setPreviousBlindsInfo(0, 1, 2);
         p[0].setHasPostedEntryBet(true);
@@ -180,7 +181,7 @@ public class BlindsRoundTest extends TestCase {
     }
 
     public void testMoveFromNonHeadsUpToHeadsUpSbLeaves() throws Exception {
-        MockPlayer[] p = TestUtils.createMockPlayers(2);
+        MockPlayer[] p = createMockPlayers(2);
         addPlayers(p);
         setPreviousBlindsInfo(1, 2, 0);
         p[0].setHasPostedEntryBet(true);
@@ -193,7 +194,7 @@ public class BlindsRoundTest extends TestCase {
     }
 
     public void testKeepHeadsUpToHeadsUpBbLeaves() throws Exception {
-        MockPlayer[] p = TestUtils.createMockPlayers(2);
+        MockPlayer[] p = createMockPlayers(2);
 
         MockPlayer p2 = new MockPlayer(2);
         p2.setBalance(10000);
@@ -214,7 +215,7 @@ public class BlindsRoundTest extends TestCase {
     }
 
     public void testOutOfOrderActing() throws Exception {
-        MockPlayer[] p = TestUtils.createMockPlayers(3);
+        MockPlayer[] p = createMockPlayers(3);
         addPlayers(p);
         round = new BlindsRound(context, serverAdapterHolder, blindsCalculator);
 
@@ -256,7 +257,7 @@ public class BlindsRoundTest extends TestCase {
 
     public void testDealerButtonPosition() throws Exception {
         // Seat three players.
-        MockPlayer[] p = TestUtils.createMockPlayers(3);
+        MockPlayer[] p = createMockPlayers(3);
         addPlayers(p);
         round = new BlindsRound(context, serverAdapterHolder, blindsCalculator);
         
@@ -264,7 +265,7 @@ public class BlindsRoundTest extends TestCase {
     }
 
     public void testSecondHandsDealerButtonPosition() throws Exception {
-        MockPlayer[] p = TestUtils.createMockPlayers(3);
+        MockPlayer[] p = createMockPlayers(3);
         p[0].setHasPostedEntryBet(true);
         p[1].setHasPostedEntryBet(true);
         p[2].setHasPostedEntryBet(true);
@@ -277,7 +278,7 @@ public class BlindsRoundTest extends TestCase {
     }
 
     public void testDeclineSmallBlindWithTwoPlayersEndsHand() {
-        MockPlayer[] p = TestUtils.createMockPlayers(2);
+        MockPlayer[] p = createMockPlayers(2);
         addPlayers(p);
         round = new BlindsRound(context, serverAdapterHolder, blindsCalculator);
 
@@ -287,7 +288,7 @@ public class BlindsRoundTest extends TestCase {
     }
 
     public void testDeclineSmallBlind() {
-        MockPlayer[] p = TestUtils.createMockPlayers(3);
+        MockPlayer[] p = createMockPlayers(3);
         addPlayers(p);
         round = new BlindsRound(context, serverAdapterHolder, blindsCalculator);
 
@@ -299,7 +300,7 @@ public class BlindsRoundTest extends TestCase {
 
 
     public void testTimeout() {
-        MockPlayer[] p = TestUtils.createMockPlayers(2);
+        MockPlayer[] p = createMockPlayers(2);
         addPlayers(p);
         round = new BlindsRound(context, serverAdapterHolder, blindsCalculator);
 
@@ -308,7 +309,7 @@ public class BlindsRoundTest extends TestCase {
     }
 
     public void testTimeoutBigBlind() {
-        MockPlayer[] p = TestUtils.createMockPlayers(2);
+        MockPlayer[] p = createMockPlayers(2);
         addPlayers(p);
         round = new BlindsRound(context, serverAdapterHolder, blindsCalculator);
 
@@ -318,7 +319,7 @@ public class BlindsRoundTest extends TestCase {
     }
 
     public void testDenyBigBlind() {
-        MockPlayer[] p = TestUtils.createMockPlayers(2);
+        MockPlayer[] p = createMockPlayers(2);
         addPlayers(p);
         round = new BlindsRound(context, serverAdapterHolder, blindsCalculator);
 
@@ -328,7 +329,7 @@ public class BlindsRoundTest extends TestCase {
     }
 
     public void testPlayerAfterDeniedBBGetsAskedForBB() {
-        MockPlayer[] p = TestUtils.createMockPlayers(3);
+        MockPlayer[] p = createMockPlayers(3);
         addPlayers(p);
         round = new BlindsRound(context, serverAdapterHolder, blindsCalculator);
 
@@ -339,7 +340,7 @@ public class BlindsRoundTest extends TestCase {
     }
 
     public void testSamePlayerDeclinesBBThenPostsBB() {
-        MockPlayer[] p = TestUtils.createMockPlayers(3);
+        MockPlayer[] p = createMockPlayers(3);
         addPlayers(p);
         round = new BlindsRound(context, serverAdapterHolder, blindsCalculator);
 
@@ -351,7 +352,7 @@ public class BlindsRoundTest extends TestCase {
     }
 
     public void testNoMoreBigBlinds() {
-        MockPlayer[] p = TestUtils.createMockPlayers(3);
+        MockPlayer[] p = createMockPlayers(3);
         addPlayers(p);
         round = new BlindsRound(context, serverAdapterHolder, blindsCalculator);
 
@@ -362,7 +363,7 @@ public class BlindsRoundTest extends TestCase {
     }
 
     public void testSittingOutPlayerIsNotAskedToPostSmallBlind() {
-        MockPlayer[] p = TestUtils.createMockPlayers(4);
+        MockPlayer[] p = createMockPlayers(4);
         addPlayers(p);
         p[1].setSitOutStatus(SitOutStatus.SITTING_OUT);
         round = new BlindsRound(context, serverAdapterHolder, blindsCalculator);
@@ -378,7 +379,7 @@ public class BlindsRoundTest extends TestCase {
     }
 
     public void testSittingOutPlayerIsNotAskedToPostBigBlind() {
-        MockPlayer[] p = TestUtils.createMockPlayers(4);
+        MockPlayer[] p = createMockPlayers(4);
         addPlayers(p);
 
         p[2].setSitOutStatus(SitOutStatus.SITTING_OUT);
@@ -390,7 +391,7 @@ public class BlindsRoundTest extends TestCase {
     }
 
     public void testSittingOutPlayerIsNotAskedToPostBigBlindAfterInit() {
-        MockPlayer[] p = TestUtils.createMockPlayers(4);
+        MockPlayer[] p = createMockPlayers(4);
         addPlayers(p);
 
         p[3].setSitOutStatus(SitOutStatus.SITTING_OUT);
@@ -403,7 +404,7 @@ public class BlindsRoundTest extends TestCase {
     }
 
     public void testConsiderHandFirstOnTableWhenNoPlayersHavePosted() {
-        MockPlayer[] p = TestUtils.createMockPlayers(4);
+        MockPlayer[] p = createMockPlayers(4);
         addPlayers(p);
         setPreviousBlindsInfo(0, 1, 2);
         round = new BlindsRound(context, serverAdapterHolder, blindsCalculator);
@@ -412,7 +413,7 @@ public class BlindsRoundTest extends TestCase {
     }
 
     public void testNonEnteredPlayerCannotPostSmallBlind() {
-        MockPlayer[] p = TestUtils.createMockPlayers(4);
+        MockPlayer[] p = createMockPlayers(4);
         addPlayers(p);
         setPreviousBlindsInfo(0, 1, 7);
         context.getBlindsInfo().setBigBlindSeatId(2);
@@ -428,7 +429,7 @@ public class BlindsRoundTest extends TestCase {
     }
 
     public void testEntryBet() {
-        MockPlayer[] p = TestUtils.createMockPlayers(4);
+        MockPlayer[] p = createMockPlayers(4);
         addPlayers(p);
         setPreviousBlindsInfo(0, 1, 2);
 
@@ -449,7 +450,7 @@ public class BlindsRoundTest extends TestCase {
     }
 
     public void testDeclineEntryBet() {
-        MockPlayer[] p = TestUtils.createMockPlayers(4);
+        MockPlayer[] p = createMockPlayers(4);
         addPlayers(p);
         setPreviousBlindsInfo(0, 1, 2);
 
@@ -470,7 +471,7 @@ public class BlindsRoundTest extends TestCase {
     }
 
     public void testEntryBetTimeout() {
-        MockPlayer[] p = TestUtils.createMockPlayers(4);
+        MockPlayer[] p = createMockPlayers(4);
         addPlayers(p);
         setPreviousBlindsInfo(0, 1, 2);
 
@@ -490,8 +491,35 @@ public class BlindsRoundTest extends TestCase {
         assertTrue(round.isFinished());
     }
 
+    public void testNoEntryBetBetweenDealerButtonAndSmallBlind() {
+        MockPlayer[] p = createMockPlayers(6);
+        addPlayers(p);
+        setPreviousBlindsInfo(0, 1, 3);
+
+        // Everyone has posted the entry bet, except player 4 and 5.
+        p[0].setHasPostedEntryBet(true);
+        p[1].setHasPostedEntryBet(true);
+        p[2].setHasPostedEntryBet(false);
+        p[2].setMissedBlindsStatus(MissedBlindsStatus.NOT_ENTERED_YET);
+        p[3].setHasPostedEntryBet(true);
+        p[4].setHasPostedEntryBet(true);
+        p[5].setHasPostedEntryBet(true);
+        round = new BlindsRound(context, serverAdapterHolder, blindsCalculator);
+
+        act(p[3], PokerActionType.SMALL_BLIND);
+
+        // Everyone declines bb until the dealer.
+        act(p[4], PokerActionType.DECLINE_ENTRY_BET);
+        act(p[5], PokerActionType.DECLINE_ENTRY_BET);
+        act(p[0], PokerActionType.DECLINE_ENTRY_BET);
+        act(p[1], PokerActionType.BIG_BLIND);
+
+        // Round should be finished (p2 can't post entry bet because he's between dealer and sb.
+        assertTrue(round.isFinished());
+    }
+
     public void testTwoEntryBets() {
-        MockPlayer[] p = TestUtils.createMockPlayers(6);
+        MockPlayer[] p = createMockPlayers(6);
         addPlayers(p);
         setPreviousBlindsInfo(0, 1, 2);
 
@@ -519,7 +547,7 @@ public class BlindsRoundTest extends TestCase {
     }
 
     public void testTwoEntryBetDeclines() {
-        MockPlayer[] p = TestUtils.createMockPlayers(6);
+        MockPlayer[] p = createMockPlayers(6);
         addPlayers(p);
         setPreviousBlindsInfo(0, 1, 2);
 
@@ -542,7 +570,7 @@ public class BlindsRoundTest extends TestCase {
     }
 
     public void testEntryBetOutOfTurn() {
-        MockPlayer[] p = TestUtils.createMockPlayers(6);
+        MockPlayer[] p = createMockPlayers(6);
         addPlayers(p);
         setPreviousBlindsInfo(0, 1, 2);
 
@@ -566,7 +594,7 @@ public class BlindsRoundTest extends TestCase {
     }
 
     public void testTwoEntryBetsWithWrap() {
-        MockPlayer[] p = TestUtils.createMockPlayers(6);
+        MockPlayer[] p = createMockPlayers(6);
         addPlayers(p);
         setPreviousBlindsInfo(1, 2, 3);
 

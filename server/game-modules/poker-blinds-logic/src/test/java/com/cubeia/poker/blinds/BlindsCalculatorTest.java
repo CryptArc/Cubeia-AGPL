@@ -97,7 +97,7 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         BlindsInfo blindsInfo = calc.initializeBlinds(lastHandsBlinds, players);
 
         // Then
-        assertEquals(0, calc.getEntryBetters(blindsInfo.getDealerSeatId(), blindsInfo.getBigBlindSeatId(), blindsInfo.getBigBlindSeatId()).size());
+        assertEquals(0, calc.getEntryBetters(blindsInfo.getDealerSeatId(), blindsInfo.getSmallBlindSeatId(), blindsInfo.getBigBlindSeatId()).size());
     }
 
     public void testPlayerOnDealerButtonDoesNotPostEntryBet() {
