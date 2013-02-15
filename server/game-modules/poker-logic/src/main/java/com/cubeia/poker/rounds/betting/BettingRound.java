@@ -580,11 +580,6 @@ public class BettingRound implements Round, BettingRoundContext {
         return lastPlayerToBeCalled;
     }
 
-    @Override
-    public boolean isWaitingForPlayer(int playerId) {
-        return playerToAct != null && playerId == playerToAct;
-    }
-    
     private ServerAdapter getServerAdapter() {
         return serverAdapterHolder.get();
     }

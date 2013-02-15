@@ -63,7 +63,7 @@ public class WaitingForBigBlindState extends AbstractBlindsState {
     @Override
     public boolean timeout(PokerContext context, BlindsRound round) {
         if (context.isTournamentBlinds()) {
-            log.debug("Big blind timeout on tournament table - auto post big blind for player: " + context.getBlindsInfo().getBigBlindPlayerId());
+            log.debug("Big blind timeout on tournament table - auto post big blind for player: " + round.getBlindsInfo().getBigBlindPlayerId());
             bigBlind(round.getBlindsInfo().getBigBlindPlayerId(), context, round);
         } else {
             int bigBlind = round.getBlindsInfo().getBigBlindPlayerId();

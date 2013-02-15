@@ -253,7 +253,7 @@ public class BlindsRound implements Round, Serializable {
     }
 
     public void bigBlindPosted() {
-        entryBetters = blindsCalculator.getEntryBetters(blindsInfo.getDealerButtonSeatId(), blindsInfo.getBigBlindSeatId(), blindsInfo.getBigBlindSeatId());
+        entryBetters = blindsCalculator.getEntryBetters(blindsInfo.getDealerButtonSeatId(), blindsInfo.getSmallBlindSeatId(), blindsInfo.getBigBlindSeatId());
         askForNextEntryBetOrFinishBlindsRound();
     }
 
@@ -395,12 +395,6 @@ public class BlindsRound implements Round, Serializable {
 
     public void visit(RoundVisitor visitor) {
         visitor.visit(this);
-    }
-
-    // FIXME: Actually check who we are waiting for
-    @Override
-    public boolean isWaitingForPlayer(int playerId) {
-        return false;
     }
 
     public int getPendingEntryBetterId() {

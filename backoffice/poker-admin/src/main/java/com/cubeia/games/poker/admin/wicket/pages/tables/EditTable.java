@@ -20,20 +20,9 @@ package com.cubeia.games.poker.admin.wicket.pages.tables;
 import com.cubeia.games.poker.admin.db.AdminDAO;
 import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.games.poker.entity.TableConfigTemplate;
-import com.cubeia.poker.betting.BetStrategyType;
-import com.cubeia.poker.settings.RakeSettings;
-import com.cubeia.poker.timing.TimingProfile;
-import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.RequiredTextField;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-
-import static java.util.Arrays.asList;
 
 public class EditTable extends BasePage {
 
@@ -48,7 +37,8 @@ public class EditTable extends BasePage {
         super(parameters);
         final Integer templateId = parameters.get("templateId").toInt();
         loadFormData(templateId);
-        TableForm tableForm = new TableForm("tableForm",table) {
+        TableForm tableForm = new TableForm("tableForm", table) {
+
             @Override
             protected void onSubmit(TableConfigTemplate config) {
                 adminDAO.save(config);
@@ -63,7 +53,6 @@ public class EditTable extends BasePage {
         };
 
         add(tableForm);
-
         add(new FeedbackPanel("feedback"));
     }
 

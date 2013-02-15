@@ -114,10 +114,13 @@ public class PokerState implements Serializable, IPokerState {
     }
 
     /**
-     * Adds a player.
-     * <p/>
+     * Adds a player to this game.
      *
-     * @param player
+     * Might trigger the game to start, if we were waiting for one more player.
+     *
+     * If we are in the middle of a hand, the added player will have no effect on that game.
+     *
+     * @param player the player to add
      */
     public void addPlayer(PokerPlayer player) {
         pokerContext.addPlayer(player);

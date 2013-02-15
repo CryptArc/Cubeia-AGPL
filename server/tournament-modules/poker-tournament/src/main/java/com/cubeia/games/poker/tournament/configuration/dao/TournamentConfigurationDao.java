@@ -40,12 +40,12 @@ public class TournamentConfigurationDao {
 
     @SuppressWarnings("unchecked")
     public List<ScheduledTournamentConfiguration> getScheduledTournamentConfigurations() {
-        return entityManager.createQuery("from ScheduledTournamentConfiguration").getResultList();
+        return entityManager.createQuery("from ScheduledTournamentConfiguration where configuration.archived is false").getResultList();
     }
 
     @SuppressWarnings("unchecked")
     public Collection<SitAndGoConfiguration> getSitAndGoConfigurations() {
-        return entityManager.createQuery("from SitAndGoConfiguration").getResultList();
+        return entityManager.createQuery("from SitAndGoConfiguration where configuration.archived is false").getResultList();
     }
 
     public ScheduledTournamentConfiguration getScheduledTournamentConfiguration(int id) {

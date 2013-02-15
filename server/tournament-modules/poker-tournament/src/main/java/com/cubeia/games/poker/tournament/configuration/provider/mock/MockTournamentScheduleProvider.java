@@ -54,6 +54,7 @@ public class MockTournamentScheduleProvider implements TournamentScheduleProvide
         configuration.setFee(BigDecimal.valueOf(1));
         configuration.setPayoutStructure(payouts);
         configuration.setCurrency("EUR");
+        configuration.setStartingChips(100000);
         configuration.setTimingType(TimingFactory.getRegistry().getDefaultTimingProfile());
         tournamentConfigurations.add(everyTenMinutes);
         return tournamentConfigurations;

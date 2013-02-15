@@ -19,7 +19,6 @@ package com.cubeia.poker.rounds.betting;
 
 import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.player.PokerPlayer;
-import org.apache.log4j.Logger;
 
 import static java.lang.Math.min;
 
@@ -42,8 +41,6 @@ import static java.lang.Math.min;
 public class NoLimitBetStrategy implements BetStrategy {
 
     private static final long serialVersionUID = 1L;
-
-    private static final Logger log = Logger.getLogger(NoLimitBetStrategy.class);
 
     private final long minBet;
 
@@ -73,7 +70,6 @@ public class NoLimitBetStrategy implements BetStrategy {
         }
 
         long raiseTo = getNextValidRaiseToLevel(context);
-        log.debug("Next valid raise level: " + raiseTo + ". Highest complete bet: " + context.getHighestCompleteBet());
 
         long cost = raiseTo - player.getBetStack();
         if (cost < 0) {
@@ -82,9 +78,7 @@ public class NoLimitBetStrategy implements BetStrategy {
                                                           context.getHighestCompleteBet(), player.getBetStack(), raiseTo, player.getBalance()));
         }
         long affordableCost = min(player.getBalance(), cost);
-        long minRaiseToAmount = player.getBetStack() + affordableCost;
-        log.debug("Min raise to amount is: " + minRaiseToAmount);
-        return minRaiseToAmount;
+        return player.getBetStack() + affordableCost;
     }
 
     @Override

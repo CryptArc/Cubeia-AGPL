@@ -25,8 +25,6 @@ Poker.PotTransferAnimator = Class.extend({
         var html = Mustache.render(this.potTransferTemplate,{ ptId : transferId, amount: Poker.Utils.formatCurrency(amount)});
         var potElement = this.potContainer.find(".pot-container-" + potId);
         var offset = potElement.relativeOffset(this.tableContainer);
-        console.log("OFFSET FOR POT: " + potId);
-        console.log(offset);
 
         this.tableContainer.append($(html).css({ left: offset.left, top: offset.top}));
         var div = $("#"+transferId);
@@ -45,7 +43,6 @@ Poker.PotTransferAnimator = Class.extend({
     },
     start : function() {
         var self = this;
-        console.log("STARTING TRANSFERS : " + this.transfers.length);
         var animations = [];
         for(var i = 0; i<this.transfers.length; i++) {
             var t = this.transfers[i];

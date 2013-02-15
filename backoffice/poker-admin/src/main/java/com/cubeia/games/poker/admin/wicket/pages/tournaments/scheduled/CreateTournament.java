@@ -71,7 +71,7 @@ public class CreateTournament extends BasePage {
             }
         };
 
-        tournamentForm.add(new TournamentConfigurationPanel("configuration", configuration));
+        tournamentForm.add(new TournamentConfigurationPanel("configuration", configuration, false));
         tournamentForm.add(new DateField("startDate"));
         tournamentForm.add(new DateField("endDate"));
         tournamentForm.add(new RequiredTextField<String>("schedule"));

@@ -16,7 +16,7 @@
 	<!-- STDOUT, minimize the use of this -->
 	<appender name="STDOUT" class="org.apache.log4j.ConsoleAppender">
 		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%-5p %C{1} - %m%n"/>
+			<param name="ConversionPattern" value="%-5p %C - %m%n"/>
 			<!--param name="ConversionPattern" value="%d %-5p [%t] %C{1} (%F:%L) - %m%n"/-->
 		</layout>		
 	</appender>
@@ -35,7 +35,7 @@
 	</category>
 	
 	<category name="org.hibernate" additivity="false">
-		<priority value="debug"/>
+		<priority value="warn"/>
 		<appender-ref ref="STDOUT"/>
 		<appender-ref ref="LOG"/>
 	</category>
@@ -60,7 +60,7 @@
 	
 	
 	<root>
-	  <priority value="debug"/>
+	  <priority value="warn"/>
 	  <appender-ref ref="STDOUT"/>
 	  <appender-ref ref="LOG"/>
 	</root>

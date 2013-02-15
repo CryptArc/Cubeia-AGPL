@@ -20,6 +20,7 @@ var Poker = Poker || {};
 Poker.BetSlider = Class.extend({
     minBet : 0,
     maxBet : 0,
+    bigBlind : 0,
     delta : 5,
     markers : null,
     slider : null,
@@ -40,33 +41,54 @@ Poker.BetSlider = Class.extend({
      * and create a new one
      */
     draw : function() {
+        var self = this;
         var container = $("#"+this.containerId);
         container.remove();
         container = $("<div/>").attr("id",this.containerId).addClass("poker-slider");
 
         $("body").append(container);
 
-        var self = this;
-        this.slider = container.slider({
-            animate: true,
-            range: "min",
-            orientation: "vertical",
-            value: self.minBet,
-            max: self.maxBet,
-            min: 0,
-            step: 50,
+        var sliderMouseDown = function (e) { // disable clicks on track
+            var sliderHandle =  self.slider.find('.ui-slider-handle');
+            if (e.target != sliderHandle[0]) {
+                e.stopImmediatePropagation();
+                e.stopPropagation();
+                e.preventDefault();
+                var val = self.slider.slider("value");
 
-            //this gets a live reading of the value and prints it on the page
-            slide: function(event,ui ) {
-                self.handleChangeValue(ui.value);
-            },
+                if(e.target == self.slider.find(".ui-slider-range")[0]) {
+                    val = val - self.bigBlind;
+                } else {
+                    val = val + self.bigBlind;
+                }
 
-            //this updates the hidden form field so we can submit the data using a form
-            change: function(event, ui) {
-                self.handleChangeValue(ui.value);
+                self.slider.slider("value",val);
             }
+        };
 
-        });
+        container.on('mousedown', sliderMouseDown).on('touchstart', sliderMouseDown);
+
+        this.slider = container.
+            slider({
+                animate: true,
+                range: "min",
+                orientation: "vertical",
+                value: self.minBet,
+                max: self.maxBet,
+                min: 0,
+                step: 50,
+
+                //this gets a live reading of the value and prints it on the page
+                slide: function(event,ui ) {
+                    self.handleChangeValue(ui.value);
+                },
+
+                //this updates the hidden form field so we can submit the data using a form
+                change: function(event, ui) {
+                    self.handleChangeValue(ui.value);
+                }
+
+            });
 
         $.each(this.markers,function(i,m){
             var value = m.value;
@@ -104,7 +126,7 @@ Poker.BetSlider = Class.extend({
         this.maxBet = maxBet;
     },
     setBigBlind : function(bigBlind) {
-
+        this.bigBlind = bigBlind;
     },
     /**
      * Clears the markers of the slider

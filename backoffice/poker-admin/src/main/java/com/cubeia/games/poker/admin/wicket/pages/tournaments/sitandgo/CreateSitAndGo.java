@@ -52,13 +52,14 @@ public class CreateSitAndGo extends BasePage {
 
             @Override
             protected void onSubmit() {
+                tournament.getConfiguration().setMaxPlayers(tournament.getConfiguration().getMinPlayers());
                 adminDAO.save(tournament);
                 log.debug("created tournament config with id = " + tournament);
                 setResponsePage(ListSitAndGoTournaments.class);
             }
         };
 
-        tournamentForm.add(new TournamentConfigurationPanel("configuration", new PropertyModel<TournamentConfiguration>(tournament, "configuration")));
+        tournamentForm.add(new TournamentConfigurationPanel("configuration", new PropertyModel<TournamentConfiguration>(tournament, "configuration"), true));
 
         add(tournamentForm);
         add(new FeedbackPanel("feedback"));

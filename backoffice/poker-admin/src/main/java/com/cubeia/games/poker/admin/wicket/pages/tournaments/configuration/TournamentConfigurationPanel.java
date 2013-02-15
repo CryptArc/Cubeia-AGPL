@@ -31,6 +31,7 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.apache.wicket.validation.validator.RangeValidator;
 
 import java.math.BigDecimal;
 
@@ -48,20 +49,28 @@ public class TournamentConfigurationPanel extends Panel {
 
     private PropertyModel<TournamentConfiguration> model;
 
-    public TournamentConfigurationPanel(String id, PropertyModel<TournamentConfiguration> propertyModel) {
+    public TournamentConfigurationPanel(String id, PropertyModel<TournamentConfiguration> propertyModel, boolean sitAndGo) {
         super(id, propertyModel);
         this.model = propertyModel;
         add(new TextField<String>("name", new PropertyModel(model, "name")));
         add(new TextField<Integer>("seatsPerTable", new PropertyModel(model, "seatsPerTable")));
         add(new DropDownChoice<TimingProfile>("timingType", model("timingType"), adminDAO.getTimingProfiles(), renderer("name")));
         add(new TextField<Integer>("minPlayers", new PropertyModel(model, "minPlayers")));
-        add(new TextField<Integer>("maxPlayers", new PropertyModel(model, "maxPlayers")));
+        TextField<Integer> maxPlayers = new TextField<Integer>("maxPlayers", new PropertyModel(model, "maxPlayers"));
+        add(maxPlayers);
         add(new TextField<BigDecimal>("buyIn", new PropertyModel(model, "buyIn")));
         add(new TextField<BigDecimal>("fee", new PropertyModel(model, "fee")));
-        add(new DropDownChoice<BetStrategyType>("betStrategy", new PropertyModel(model, "betStrategy"), asList(BetStrategyType.values()), renderer("name")));
+        add(new TextField<Integer>("startingChips", new PropertyModel(model, "startingChips")).add(RangeValidator.minimum(1)));
+        add(new DropDownChoice<BetStrategyType>("betStrategy", new PropertyModel(model, "betStrategy"), asList(BetStrategyType.values()),
+                                                                                         renderer("name")));
+
         add(new DropDownChoice<String>("currency", model("currency"), networkClient.getCurrencies(), new ChoiceRenderer<String>()));
         add(new DropDownChoice<BlindsStructure>("blindsStructure", model("blindsStructure"), adminDAO.getBlindsStructures(), renderer("name")));
         add(new DropDownChoice<PayoutStructure>("payoutStructure", model("payoutStructure"), adminDAO.getPayoutStructures(), renderer("name")));
+
+        if (sitAndGo) {
+            maxPlayers.setVisible(false);
+        }
     }
 
     private PropertyModel model(String expression) {
