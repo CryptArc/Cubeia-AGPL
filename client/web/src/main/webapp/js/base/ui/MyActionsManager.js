@@ -247,7 +247,7 @@ Poker.ActionButton = Class.extend({
     showAmount : false,
     minAmount : 0,
     maxAmount : 0,
-    mainPot : 0,
+    totalPot : 0,
     init : function(el,actionType,callback,showAmount) {
         this.el = el;
         if(!this.el) {
@@ -288,7 +288,7 @@ Poker.ActionButton = Class.extend({
             this.maxAmount = maxAmount;
         }
         if(mainPot) {
-            this.mainPot = mainPot;
+            this.totalPot = mainPot;
         }
         this.minAmount = minAmount;
     },
@@ -317,7 +317,7 @@ Poker.BetSliderButton = Poker.ActionButton.extend({
     bindCallBack : function() {
         var self = this;
         this.el.touchSafeClick(function(){
-            self.callback(self.minAmount,self.maxAmount,self.mainPot);
+            self.callback(self.minAmount,self.maxAmount,self.totalPot);
         });
     }
 });

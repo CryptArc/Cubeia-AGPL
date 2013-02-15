@@ -257,16 +257,21 @@ com.cubeia.games.poker.io.protocol.BuyInInfoRequest = function () {
     this.classId = function () {
         return com.cubeia.games.poker.io.protocol.BuyInInfoRequest.CLASSID
     };
+    this.dummy = {};
     this.save = function () {
-        return[]
+        var a = new FIREBASE.ByteArray();
+        a.writeByte(this.dummy);
+        return a
     };
     this.load = function (a) {
+        this.dummy = a.readByte()
     };
     this.getNormalizedObject = function () {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.BuyInInfoRequest";
         a.details = {};
+        a.details.dummy = this.dummy;
         return a
     }
 };

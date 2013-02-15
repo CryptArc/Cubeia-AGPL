@@ -77,20 +77,22 @@
 
                     <table class="table table-striped">
                         <tr>
-                            <th>Event</th>
                             <th>Action</th>
-                            <th>Amount</th>
                             <th>Player</th>
+                            <th>Amount</th>
                             <th>Cards</th>
+                            <th>Kickers</th>
                             <th>Time</th>
                         </tr>
                         <tr wicket:id="events">
-                            <td wicket:id="type">[type]</td>
                             <td wicket:id="action">[action]</td>
-                            <td wicket:id="amount">[amount]</td>
                             <td wicket:id="playerId">[playerId]</td>
+                            <td wicket:id="amount">[amount]</td>
                             <td>
                                 <span wicket:id="cards"><img style="margin-right:1px;" width="30" height="40" wicket:id="cardImage"></span>
+                            </td>
+                            <td>
+                                <span wicket:id="kickers"><img style="margin-right:1px;" width="30" height="40" wicket:id="cardImage"></span>
                             </td>
                             <td wicket:id="time">[time]</td>
                         </tr>
