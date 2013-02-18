@@ -43,7 +43,7 @@ public class MissedBlindsTest extends TestCase {
         sitOut(players, 3); // Small blind is sitting out.
 
         // When
-        BlindsInfo blindsInfo = calc.initializeBlinds(blinds, players);
+        BlindsInfo blindsInfo = calc.initializeBlinds(blinds, players, false);
 
         // Then
         System.out.println(blindsInfo.getSmallBlindPlayerId());
@@ -75,7 +75,7 @@ public class MissedBlindsTest extends TestCase {
         sitOut(players, 2, 3, 4, 5); // Players 2, 3, 4 and 5 sit out.
 
         // When
-        calc.initializeBlinds(blinds, players);
+        calc.initializeBlinds(blinds, players, false);
 
         // Then
         List<MissedBlind> missedBlinds = calc.getMissedBlinds();
@@ -94,7 +94,7 @@ public class MissedBlindsTest extends TestCase {
         sitOut(players, 2, 3, 4); // Players 2, 3, 4 and 5 sit out.
 
         // When
-        calc.initializeBlinds(blinds, players);
+        calc.initializeBlinds(blinds, players, false);
 
         // Then
         List<MissedBlind> missedBlinds = calc.getMissedBlinds();
@@ -109,7 +109,7 @@ public class MissedBlindsTest extends TestCase {
         BlindsInfo blinds = blindsInfo(5, 6, 1);
         List<BlindsPlayer> players = players(1, 2, 3, 4, 5, 6);
         sitOut(players, 2, 3, 4); // Players 2, 3, 4 and 5 sit out.
-        calc.initializeBlinds(blinds, players);
+        calc.initializeBlinds(blinds, players, false);
 
         // When
         List<BlindsPlayer> eligiblePlayerList = calc.getEligiblePlayerList();

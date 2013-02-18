@@ -30,8 +30,8 @@ public class BlindsStructureFactory {
 
     private static List<Level> createBlindsLevels() {
         List<Level> levels = newArrayList();
-        int smallBlind = 10;
-        int bigBlind = 20;
+        int smallBlind = 2000;
+        int bigBlind = 4000;
         int ante = 0;
         for (int i = 0; i < 20; i++) {
             levels.add(new Level(smallBlind, bigBlind, ante, 1, false));

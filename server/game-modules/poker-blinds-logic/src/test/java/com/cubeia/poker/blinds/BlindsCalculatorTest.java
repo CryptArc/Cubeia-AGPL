@@ -50,7 +50,7 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         calc = new BlindsCalculator(randomizer);
 
         // When
-        BlindsInfo result = calc.initializeBlinds(lastHandsBlinds, players);
+        BlindsInfo result = calc.initializeBlinds(lastHandsBlinds, players, false);
 
         // Then
         verify(randomizer).getRandomSeatId(seatIdList);
@@ -62,7 +62,7 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         BlindsInfo lastHandsBlinds = Fixtures.blindsInfo(1, 1, 2);
 
         // When
-        BlindsInfo result = calc.initializeBlinds(lastHandsBlinds, Fixtures.players(1, 2));
+        BlindsInfo result = calc.initializeBlinds(lastHandsBlinds, Fixtures.players(1, 2), false);
 
         // Then
         assertBlindsInfo(result, 2, 2, 1);
@@ -78,7 +78,7 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         players.add(Fixtures.player(5, false));
 
         // When
-        BlindsInfo blindsInfo = calc.initializeBlinds(lastHandsBlinds, players);
+        BlindsInfo blindsInfo = calc.initializeBlinds(lastHandsBlinds, players, false);
 
         // Then
         Queue<EntryBetter> entryBetters = calc.getEntryBetters(blindsInfo.getDealerSeatId(), blindsInfo.getBigBlindSeatId(), blindsInfo.getBigBlindSeatId());
@@ -94,7 +94,7 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         players.add(Fixtures.player(4, false));
 
         // When
-        BlindsInfo blindsInfo = calc.initializeBlinds(lastHandsBlinds, players);
+        BlindsInfo blindsInfo = calc.initializeBlinds(lastHandsBlinds, players, false);
 
         // Then
         assertEquals(0, calc.getEntryBetters(blindsInfo.getDealerSeatId(), blindsInfo.getSmallBlindSeatId(), blindsInfo.getBigBlindSeatId()).size());
@@ -107,7 +107,7 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         players.add(Fixtures.player(3, false));
 
         // When
-        BlindsInfo blindsInfo = calc.initializeBlinds(lastHandsBlinds, players);
+        BlindsInfo blindsInfo = calc.initializeBlinds(lastHandsBlinds, players, false);
 
         // Then
         assertEquals(0, calc.getEntryBetters(blindsInfo.getDealerSeatId(), blindsInfo.getBigBlindSeatId(), blindsInfo.getBigBlindSeatId()).size());
@@ -117,7 +117,7 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         BlindsInfo blinds = Fixtures.blindsInfo(1, 4, 5);
         List<BlindsPlayer> players = Fixtures.players(1, 2, 3, 5, 6, 7);
 
-        BlindsInfo blindsInfo = calc.initializeBlinds(blinds, players);
+        BlindsInfo blindsInfo = calc.initializeBlinds(blinds, players, false);
         assertEquals(0, calc.getEntryBetters(blindsInfo.getDealerSeatId(), blindsInfo.getBigBlindSeatId(), blindsInfo.getBigBlindSeatId()).size());
     }
 
@@ -130,7 +130,7 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         players.add(playerWhoMissedSmallBlind);
 
         // When
-        BlindsInfo blindsInfo = calc.initializeBlinds(lastHandsBlinds, players);
+        BlindsInfo blindsInfo = calc.initializeBlinds(lastHandsBlinds, players, false);
 
         // Then
         Queue<EntryBetter> entryBetters = calc.getEntryBetters(blindsInfo.getDealerSeatId(), blindsInfo.getBigBlindSeatId(), blindsInfo.getBigBlindSeatId());
@@ -148,7 +148,7 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         players.add(playerWhoMissedSmallBlind);
 
         // When
-        BlindsInfo blindsInfo = calc.initializeBlinds(lastHandsBlinds, players);
+        BlindsInfo blindsInfo = calc.initializeBlinds(lastHandsBlinds, players, false);
 
         // Then
         Queue<EntryBetter> entryBetters = calc.getEntryBetters(blindsInfo.getDealerSeatId(), blindsInfo.getBigBlindSeatId(), blindsInfo.getBigBlindSeatId());
@@ -166,7 +166,7 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         players.add(playerWhoMissedNoBlinds);
 
         // When
-        BlindsInfo blindsInfo = calc.initializeBlinds(lastHandsBlinds, players);
+        BlindsInfo blindsInfo = calc.initializeBlinds(lastHandsBlinds, players, false);
 
         // Then
         Queue<EntryBetter> entryBetters = calc.getEntryBetters(blindsInfo.getDealerSeatId(), blindsInfo.getBigBlindSeatId(), blindsInfo.getBigBlindSeatId());
@@ -191,7 +191,7 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         players.add(playerWhoMissedBigBlind);
 
         // When
-        BlindsInfo blindsInfo = calc.initializeBlinds(lastHandsBlinds, players);
+        BlindsInfo blindsInfo = calc.initializeBlinds(lastHandsBlinds, players, false);
 
         // Then
         Queue<EntryBetter> entryBetters = calc.getEntryBetters(blindsInfo.getDealerSeatId(), blindsInfo.getBigBlindSeatId(), blindsInfo.getBigBlindSeatId());
@@ -215,7 +215,7 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         List<BlindsPlayer> players = Fixtures.players(4, 5);
 
         // When
-        BlindsInfo result = calc.initializeBlinds(lastHandsBlinds, players);
+        BlindsInfo result = calc.initializeBlinds(lastHandsBlinds, players, false);
 
         // Then
         assertBlindsInfo(result, 5, 5, 4);
@@ -235,7 +235,7 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         players.add(Fixtures.player(5, true));
 
         // When
-        BlindsInfo result = calc.initializeBlinds(lastHandsBlinds, players);
+        BlindsInfo result = calc.initializeBlinds(lastHandsBlinds, players, false);
 
         // Then
         assertBlindsInfo(result, 5, 4, 5);
@@ -253,7 +253,7 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         calc = new BlindsCalculator(randomizer);
 
         // When
-        BlindsInfo blinds = calc.initializeBlinds(lastHandsBlinds, Fixtures.players(false, 1, 2, 3, 4, 5));
+        BlindsInfo blinds = calc.initializeBlinds(lastHandsBlinds, Fixtures.players(false, 1, 2, 3, 4, 5), false);
 
         // Then
         assertEquals(5, blinds.getDealerSeatId());
@@ -270,7 +270,7 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         players.add(player);
 
         // When
-        BlindsInfo result = calc.initializeBlinds(lastHandsBlinds, players);
+        BlindsInfo result = calc.initializeBlinds(lastHandsBlinds, players, false);
 
         // Then
         assertBlindsInfo(result, 2, 2, 3);
@@ -289,7 +289,7 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         players.addAll(Arrays.asList(player3, player4));
 
         // When
-        BlindsInfo result = calc.initializeBlinds(lastHandsBlinds, players);
+        BlindsInfo result = calc.initializeBlinds(lastHandsBlinds, players, false);
 
         // Then
         assertBlindsInfo(result, 2, 3, 4);
@@ -300,11 +300,10 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         // Given
         BlindsInfo lastHandsBlinds = Fixtures.blindsInfo(2, 0, 0);
         lastHandsBlinds.setHandCanceled(); // This hand was canceled
-        List<BlindsPlayer> players = new ArrayList<BlindsPlayer>();
-        players = Fixtures.players(2, 3);
+        List<BlindsPlayer> players = Fixtures.players(2, 3);
 
         // When
-        BlindsInfo result = calc.initializeBlinds(lastHandsBlinds, players);
+        BlindsInfo result = calc.initializeBlinds(lastHandsBlinds, players, false);
 
         // Then
         assertBlindsInfo(result, 2, 2, 3);
@@ -317,13 +316,12 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         when(randomizer.getRandomSeatId(Mockito.anyListOf(Integer.class))).thenReturn(3);
         BlindsInfo lastHandsBlinds = Fixtures.blindsInfo(2, 0, 0);
         lastHandsBlinds.setHandCanceled();
-        List<BlindsPlayer> players = new ArrayList<BlindsPlayer>();
-        players = Fixtures.players(3, 4, 5);
+        List<BlindsPlayer> players = Fixtures.players(3, 4, 5);
         players.add(Fixtures.player(2, false, false));
         calc = new BlindsCalculator(randomizer);
 
         // When
-        BlindsInfo result = calc.initializeBlinds(lastHandsBlinds, players);
+        BlindsInfo result = calc.initializeBlinds(lastHandsBlinds, players, false);
 
         // Then
         assertBlindsInfo(result, 3, 4, 5);
@@ -333,11 +331,10 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
     public void testReturnNullIfNotEnoughPlayers() {
         // Given
         BlindsInfo lastHandsBlinds = Fixtures.blindsInfo(2, 0, 0); // This hand was canceled
-        List<BlindsPlayer> players = new ArrayList<BlindsPlayer>();
-        players = Fixtures.players(2);
+        List<BlindsPlayer> players = Fixtures.players(2);
 
         // When
-        BlindsInfo result = calc.initializeBlinds(lastHandsBlinds, players);
+        BlindsInfo result = calc.initializeBlinds(lastHandsBlinds, players, false);
 
         // Then
         assertNull(result);
@@ -353,7 +350,7 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
         players.add(player);
 
         // When
-        BlindsInfo result = calc.initializeBlinds(lastHandsBlinds, players);
+        BlindsInfo result = calc.initializeBlinds(lastHandsBlinds, players, false);
 
         // Then
         assertBlindsInfo(result, 3, 3, 2);
@@ -363,11 +360,10 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
     public void testNonFirstHeadsUpButDealerIsGone() {
         // Given
         BlindsInfo lastHandsBlinds = Fixtures.blindsInfo(5, 5, 4); // This hand was cancelled
-        List<BlindsPlayer> players = new ArrayList<BlindsPlayer>();
-        players = Fixtures.players(5, 6);
+        List<BlindsPlayer> players = Fixtures.players(5, 6);
 
         // When
-        BlindsInfo result = calc.initializeBlinds(lastHandsBlinds, players);
+        BlindsInfo result = calc.initializeBlinds(lastHandsBlinds, players, false);
 
         // Then
         assertBlindsInfo(result, 5, 5, 6);
@@ -377,9 +373,8 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
     public void testGetPlayersBetweenDealerAndBig() {
         // Given
         BlindsInfo lastHandsBlinds = Fixtures.blindsInfo(1, 2, 5);
-        List<BlindsPlayer> players = new ArrayList<BlindsPlayer>();
-        players = Fixtures.players(1, 2, 3, 4, 5, 6);
-        calc.initializeBlinds(lastHandsBlinds, players);
+        List<BlindsPlayer> players = Fixtures.players(1, 2, 3, 4, 5, 6);
+        calc.initializeBlinds(lastHandsBlinds, players, false);
 
         // When
         List<BlindsPlayer> playersBetweenDealerAndBig = calc.getPlayersBetweenDealerAndBig();
@@ -391,9 +386,8 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
     public void testGetPlayersBetweenDealerAndBigHeadsUp() {
         // Given
         BlindsInfo lastHandsBlinds = Fixtures.blindsInfo(1, 1, 5);
-        List<BlindsPlayer> players = new ArrayList<BlindsPlayer>();
-        players = Fixtures.players(1, 2, 3, 4, 5, 6);
-        calc.initializeBlinds(lastHandsBlinds, players);
+        List<BlindsPlayer> players = Fixtures.players(1, 2, 3, 4, 5, 6);
+        calc.initializeBlinds(lastHandsBlinds, players, false);
 
         // When
         List<BlindsPlayer> playersBetweenDealerAndBig = calc.getPlayersBetweenDealerAndBig();
@@ -404,9 +398,8 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
 
     public void testGetNextBigBlindPlayer() {
         BlindsInfo lastHandsBlinds = Fixtures.blindsInfo(1, 1, 5);
-        List<BlindsPlayer> players = new ArrayList<BlindsPlayer>();
-        players = Fixtures.players(1, 2, 3, 4, 5, 6);
-        calc.initializeBlinds(lastHandsBlinds, players);
+        List<BlindsPlayer> players = Fixtures.players(1, 2, 3, 4, 5, 6);
+        calc.initializeBlinds(lastHandsBlinds, players, false);
 
         assertEquals(6, calc.getNextBigBlindPlayer(-1).getSeatId());
         assertEquals(6, calc.getNextBigBlindPlayer(-1).getSeatId());

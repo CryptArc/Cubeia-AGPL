@@ -79,7 +79,7 @@ public class RoundHelper implements Serializable {
     }
 
     public void setPlayerSitOut(PokerPlayer player, PokerContext context, ServerAdapter serverAdapter) {
-        if (player.getSitOutStatus() == SitOutStatus.SITTING_OUT) {
+        if (player.getSitOutStatus() == SitOutStatus.SITTING_OUT || context.isTournamentTable()) {
             return;
         }
         player.setSitOutStatus(SitOutStatus.SITTING_OUT);

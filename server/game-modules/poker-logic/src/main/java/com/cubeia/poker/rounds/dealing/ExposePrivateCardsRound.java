@@ -60,7 +60,7 @@ public class ExposePrivateCardsRound implements Round {
         for (int playerId : playerRevealOrder) {
             PokerPlayer player = context.getPlayer(playerId);
             if (player == null) {
-                log.error("PLAYER IS NULL IN EXPOSE SHOWDOWN. playerId: " + playerId + " playerMap: " + context.getPlayerMap().values() + " seatingMap: " +
+                log.error("Player is null in expose showdown! playerId: " + playerId + " playerMap: " + context.getPlayerMap().values() + " seatingMap: " +
                         context.getCurrentHandSeatingMap() + " reveal order: " + playerRevealOrder);
                 continue;
             }

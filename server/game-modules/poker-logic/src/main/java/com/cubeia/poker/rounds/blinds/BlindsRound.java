@@ -107,11 +107,16 @@ public class BlindsRound implements Round, Serializable {
     }
 
     private void initBlinds() {
-        com.cubeia.poker.blinds.BlindsInfo newBlindsInfo = blindsCalculator.initializeBlinds(convertBlindsInfo(), context.getPlayerMap().values());
+        com.cubeia.poker.blinds.BlindsInfo newBlindsInfo = blindsCalculator.initializeBlinds(
+                convertBlindsInfo(),
+                context.getPlayerMap().values(),
+                isTournamentBlinds);
         if (newBlindsInfo != null) {
             setNewBlindsInfo(newBlindsInfo);
             moveDealerButtonToSeatId(newBlindsInfo.getDealerSeatId());
-            markMissedBlinds(blindsCalculator.getMissedBlinds());
+            if (!isTournamentBlinds()) {
+                markMissedBlinds(blindsCalculator.getMissedBlinds());
+            }
 
             if (newBlindsInfo.getSmallBlindPlayerId() != -1) {
                 requestSmallBlind(getPlayerInSeat(newBlindsInfo.getSmallBlindSeatId()));

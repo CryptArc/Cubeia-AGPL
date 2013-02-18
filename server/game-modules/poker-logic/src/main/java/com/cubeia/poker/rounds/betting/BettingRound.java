@@ -456,8 +456,10 @@ public class BettingRound implements Round, BettingRoundContext {
     }
 
     private void setPlayerSitOut(PokerPlayer player) {
-        player.setSitOutStatus(SitOutStatus.SITTING_OUT);
-        getServerAdapter().notifyPlayerStatusChanged(player.getId(), PokerPlayerStatus.SITOUT, false);
+        if (context.isTournamentBlinds()) {
+            player.setSitOutStatus(SitOutStatus.SITTING_OUT);
+            getServerAdapter().notifyPlayerStatusChanged(player.getId(), PokerPlayerStatus.SITOUT, false);
+        }
     }
 
     private boolean check() {

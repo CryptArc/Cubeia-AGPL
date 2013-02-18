@@ -92,14 +92,15 @@ public class BlindsCalculator implements Serializable {
      * @param lastHandsBlinds The blinds info from last hand, cannot be null.
      * @param players         A list of players at the table, cannot be null.
      *                        Should contain all players, including players sitting out.
+     * @param isTournamentBlinds Boolean to indicate if this is tournament blinds.
      * @return the {@link BlindsInfo} for the new hand, or null if no hand could be started
      */
-    public BlindsInfo initializeBlinds(final BlindsInfo lastHandsBlinds, final Collection<? extends BlindsPlayer> players) {
+    public BlindsInfo initializeBlinds(final BlindsInfo lastHandsBlinds, final Collection<? extends BlindsPlayer> players, boolean isTournamentBlinds) {
         this.lastHandsBlinds = lastHandsBlinds;
         this.players = players;
 
         clearLists();
-        initPlayerMap();
+        initPlayerMap(isTournamentBlinds);
         if (enoughPlayers()) {
             initBlinds();
             markMissedBlinds();
@@ -209,11 +210,16 @@ public class BlindsCalculator implements Serializable {
     /**
      * Initializes the player map, by mapping players to their seat ids.
      *
+     * @param tournamentBlinds a boolean to indicate if this is tournament blinds
      */
-    private void initPlayerMap() {
+    private void initPlayerMap(boolean tournamentBlinds) {
         seatedPlayers = new TreeMap<Integer, BlindsPlayer>();
         for (BlindsPlayer player : players) {
-            if (player.isSittingIn()) {
+            if (tournamentBlinds) {
+                // Tournament players have never missed blinds and are always sitting in.
+                player.setHasPostedEntryBet(true);
+                seatedPlayers.put(player.getSeatId(), player);
+            } else if (player.isSittingIn()) {
                 seatedPlayers.put(player.getSeatId(), player);
             }
         }
@@ -315,8 +321,8 @@ public class BlindsCalculator implements Serializable {
     /**
      * Gets the player in the given seat, or null if there is no player in that seat.
      *
-     * @param seatId
-     * @return
+     * @param seatId the id of the seat for which to get the player
+     * @return the player in the given seat or null if there is no player in that seat
      */
     private BlindsPlayer getPlayerInSeat(final int seatId) {
         BlindsPlayer result = null;
@@ -576,7 +582,7 @@ public class BlindsCalculator implements Serializable {
     /**
      * Gets a list of {@link MissedBlind}s, representing who should be marked as having missed blinds.
      *
-     * @return
+     * @return a list of {@link MissedBlind}s, representing who should be marked as having missed blinds
      */
     public List<MissedBlind> getMissedBlinds() {
         return missedBlinds;
@@ -585,7 +591,7 @@ public class BlindsCalculator implements Serializable {
     /**
      * Returns the next player to ask for the big blind.
      *
-     * @param lastAskedSeatId
+     * @param lastAskedSeatId the id of the player who was last asked to post the big blind
      * @return the next player to ask for the big blind, or null if there are no more eligible players
      */
     public BlindsPlayer getNextBigBlindPlayer(final int lastAskedSeatId) {
