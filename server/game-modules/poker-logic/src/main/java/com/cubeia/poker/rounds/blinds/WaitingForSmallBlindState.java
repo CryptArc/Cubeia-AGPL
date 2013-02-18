@@ -35,7 +35,7 @@ public class WaitingForSmallBlindState extends AbstractBlindsState {
         if (smallBlind == playerId) {
             PokerPlayer player = pokerContext.getPlayerInCurrentHand(playerId);
             player.addBetOrGoAllIn(pokerContext.getSettings().getSmallBlindAmount());
-            round.smallBlindPosted();
+            round.smallBlindPosted(playerId);
             return true;
         } else {
             log.info("Expected player " + smallBlind + " to act, but got action from " + playerId);

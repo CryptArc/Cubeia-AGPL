@@ -239,7 +239,10 @@ public class BlindsRound implements Round, Serializable {
         return blindsInfo;
     }
 
-    public void smallBlindPosted() {
+    public void smallBlindPosted(int playerId) {
+        if (isTournamentBlinds) {
+            notifySmallBlindPosted(playerId);
+        }
         this.currentState = WAITING_FOR_BIG_BLIND_STATE;
         PokerPlayer bigBlind = getPlayerInSeat(blindsInfo.getBigBlindSeatId());
         requestBigBlind(bigBlind);
@@ -257,7 +260,10 @@ public class BlindsRound implements Round, Serializable {
         }
     }
 
-    public void bigBlindPosted() {
+    public void bigBlindPosted(int playerId) {
+        if (isTournamentBlinds) {
+            notifyBigBlindPosted(playerId);
+        }
         entryBetters = blindsCalculator.getEntryBetters(blindsInfo.getDealerButtonSeatId(), blindsInfo.getSmallBlindSeatId(), blindsInfo.getBigBlindSeatId());
         askForNextEntryBetOrFinishBlindsRound();
     }
@@ -406,4 +412,19 @@ public class BlindsRound implements Round, Serializable {
         return pendingEntryBetterId;
     }
 
+    private void notifySmallBlindPosted(int playerId) {
+        PokerAction action = new PokerAction(playerId, PokerActionType.SMALL_BLIND, settings.getSmallBlindAmount());
+        notifyActionPerformed(action);
+    }
+
+    private void notifyBigBlindPosted(int playerId) {
+        PokerAction action = new PokerAction(playerId, PokerActionType.BIG_BLIND, settings.getBigBlindAmount());
+        notifyActionPerformed(action);
+    }
+
+    private void notifyActionPerformed(PokerAction action) {
+        PokerPlayer player = context.getPlayerInCurrentHand(action.getPlayerId());
+        serverAdapterHolder.get().notifyActionPerformed(action, player);
+        serverAdapterHolder.get().notifyPlayerBalance(player);
+    }
 }

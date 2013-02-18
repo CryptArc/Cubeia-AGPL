@@ -39,7 +39,7 @@ public class WaitingForBigBlindState extends AbstractBlindsState {
             player.addBetOrGoAllIn(context.getSettings().getBigBlindAmount());
             player.setHasOption(true);
             player.setHasPostedEntryBet(true);
-            blindsRound.bigBlindPosted();
+            blindsRound.bigBlindPosted(playerId);
             return true;
         } else {
             log.info("Player " + player + " is not allowed to post big blind.");
