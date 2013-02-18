@@ -51,9 +51,11 @@ Poker.MyActionsManager  = Class.extend({
 
         this._addActionButton($(".action-raise",view),Poker.ActionType.RAISE,cr,false);
 
+        var amountFunc = function(){return self.slider.getValue();};
         //we can't put it in actionButtons since it's a duplicate action
-        this.doBetActionButton = new Poker.BetAmountButton($(".do-action-bet",view),Poker.ActionType.BET,actionCallback,true);
-        this.doRaiseActionButton = new Poker.BetAmountButton($(".do-action-raise",view),Poker.ActionType.RAISE,actionCallback,true);
+        this.doBetActionButton = new Poker.BetAmountButton($(".do-action-bet",view),
+            Poker.ActionType.BET,actionCallback,true,amountFunc);
+        this.doRaiseActionButton = new Poker.BetAmountButton($(".do-action-raise",view),Poker.ActionType.RAISE,actionCallback,true,amountFunc);
         this.cancelBetActionButton = new Poker.ActionButton($(".action-cancel-bet",view),null,function(){
             self.onClickCancelButton();
         },false);
@@ -84,7 +86,6 @@ Poker.MyActionsManager  = Class.extend({
         this.doBetActionButton.show();
     },
     onClickRaiseButton : function(minAmount,maxAmount,mainPot) {
-        console.log(minAmount);
         this.handleBetSliderButtons(minAmount,maxAmount,mainPot);
         this.doRaiseActionButton.show();
     },
@@ -102,14 +103,14 @@ Poker.MyActionsManager  = Class.extend({
     },
     hideSlider : function() {
         if (this.slider) {
-            this.slider.remove();
+            this.slider.hide();
         }
     },
     setBigBlind : function(bigBlindInCents) {
         this.bigBlindInCents = bigBlindInCents;
     },
     showSlider : function(minAmount,maxAmount,mainPot) {
-        this.slider = new Poker.BetSlider("betSlider");
+        this.slider = new Poker.BetSlider(this.tableId,"betSlider");
         this.slider.clear();
 
         this.slider.setMinBet(minAmount);
@@ -312,13 +313,15 @@ Poker.ActionButton = Class.extend({
     }
 });
 Poker.BetAmountButton = Poker.ActionButton.extend({
-    init : function(el,actionType,callback,showAmount){
+    betAmountFunction : null,
+    init : function(el,actionType,callback,showAmount,betAmountFunction){
         this._super(el,actionType,callback,showAmount);
+        this.betAmountFunction = betAmountFunction;
     },
     bindCallBack : function() {
         var self = this;
         this.el.touchSafeClick(function(){
-            self.callback(self.actionType, Poker.MyPlayer.betAmount);
+            self.callback(self.actionType, self.betAmountFunction());
         });
     }
 });

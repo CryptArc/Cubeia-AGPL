@@ -26,13 +26,14 @@ Poker.BetSlider = Class.extend({
     slider : null,
     valueOutputs : null,
     containerId : null,
-    init : function(containerId) {
+    tableId : 0,
+    init : function(tableId,containerId) {
        this.markers = [];
        this.valueOutputs =  $(".slider-value");
-       this.containerId = containerId;
+       this.containerId = this.containerId + "-" + this.tableId;
+       this.tableId = tableId;
     },
     displayOutput : function(value) {
-        Poker.MyPlayer.betAmount = value;
         this.valueOutputs.html("&euro;").append(Poker.Utils.formatCurrency(value));
     },
     /**
@@ -42,11 +43,12 @@ Poker.BetSlider = Class.extend({
      */
     draw : function() {
         var self = this;
+
         var container = $("#"+this.containerId);
         container.remove();
         container = $("<div/>").attr("id",this.containerId).addClass("poker-slider");
 
-        $("body").append(container);
+        $("#tableView-"+this.tableId).append(container);
 
         var sliderMouseDown = function (e) { // disable clicks on track
             var sliderHandle =  self.slider.find('.ui-slider-handle');
@@ -125,6 +127,9 @@ Poker.BetSlider = Class.extend({
     setMaxBet : function(maxBet){
         this.maxBet = maxBet;
     },
+    getValue : function() {
+        return this.slider.slider("value");
+    },
     setBigBlind : function(bigBlind) {
         this.bigBlind = bigBlind;
     },
@@ -142,6 +147,11 @@ Poker.BetSlider = Class.extend({
           this.slider.slider("destroy");
           $("#"+this.containerId).remove();
       }
+    },
+    hide : function() {
+        if(this.slider) {
+            this.slider.hide();
+        }
     },
     closeValueExist : function(val) {
       for(var x in this.markers) {

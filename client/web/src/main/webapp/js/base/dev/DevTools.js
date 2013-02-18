@@ -29,7 +29,7 @@ Poker.DevTools = Class.extend({
 
         var tableName = "Dev Table";
         this.tableManager = Poker.AppCtx.getTableManager();
-        var tableViewContainer = $(".view-container");
+        var tableViewContainer = $(".table-view-container");
         var templateManager = new Poker.TemplateManager();
 
 
@@ -53,6 +53,7 @@ Poker.DevTools = Class.extend({
         };
         Poker.MyPlayer.id = 0;
         Poker.MyPlayer.name= "test";
+        $(".table-view-container").show();
         this.mockEventManager.addEvent(
             mockEvent("Add players",function(){
                 for(var i = 0; i<10; i++) {
@@ -161,9 +162,9 @@ Poker.DevTools = Class.extend({
         this.mockEventManager.addEvent(
             mockEvent("Future actions",function(){
               self.tableManager.onFutureAction(self.tableId,[
-                  new Poker.Action(Poker.ActionType.FOLD,0,0),
-                  new Poker.Action(Poker.ActionType.CALL,10,10),
-                  new Poker.Action(Poker.ActionType.RAISE,20,20)
+                  Poker.ActionType.FOLD,
+                  Poker.ActionType.CALL,
+                  Poker.ActionType.RAISE
               ],100,200);
             })
         );

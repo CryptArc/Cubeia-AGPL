@@ -21,7 +21,7 @@ Poker.TabView = Poker.View.extend({
     setSelectable : function (selectable) {
         if(selectable == false) {
             this.tabElement.hide();
-            this.viewElement.hide();
+            this.getViewElement().hide();
         } else {
             this.tabElement.show();
         }
@@ -30,6 +30,12 @@ Poker.TabView = Poker.View.extend({
         if(!this.tabElement.hasClass("active")) {
             this.tabElement.addClass("focus");
         }
+    },
+    hideTab : function() {
+        this.tabElement.hide();
+    },
+    showTab : function() {
+        this.tabElement.show();
     },
     updateInfo : function(data) {
         var c = data.card;
@@ -54,10 +60,13 @@ Poker.TabView = Poker.View.extend({
     onViewDeactivated : function() {
         this.deactivateTab();
     },
-    close : function(){
+    removeTab : function() {
         this.tabElement.remove();
-        this.viewElement.remove();
-        this.viewElement = null;
+    },
+    close : function(){
+        this.removeTab();
+        this.getViewElement().remove();
+        this.setViewElement(null);
     }
 
 });

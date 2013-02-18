@@ -51,7 +51,7 @@ Poker.TableManager = Class.extend({
         if (name == null) {
             name = "Table"; //TODO: fix
         }
-        var tableViewContainer = $(".view-container");
+        var tableViewContainer = $(".table-view-container");
         var templateManager = new Poker.TemplateManager();
         var tableLayoutManager = new Poker.TableLayoutManager(tableId, tableViewContainer, templateManager, capacity);
         this.createTable(tableId, capacity, name , tableLayoutManager);

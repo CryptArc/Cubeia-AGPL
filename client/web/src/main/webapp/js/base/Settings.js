@@ -14,7 +14,7 @@ Poker.Settings = {
     /**
      * Check whether a boolean property is set to true
      * @param param
-     * @param def
+     * @param [def]
      * @return {Boolean}
      */
     isEnabled : function(param,def) {

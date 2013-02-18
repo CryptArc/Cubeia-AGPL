@@ -18,13 +18,14 @@ Poker.ViewManager = Class.extend({
     cssAnimator : null,
     swiper : null,
     toolbar : null,
-    baseWidth : 1024,
     mobileDevice : false,
+    multiTableView : null,
     init : function(tabsContainerId) {
         var self = this;
         this.tabsContainer = $("#"+tabsContainerId);
         this.views = [];
         this.loginView = this.addView(new Poker.LoginView("#loginView","Login"));
+        this.loginView.baseWidth=440;
         this.lobbyView = this.addView(new Poker.TabView("#lobbyView","Lobby"));
         this.cssAnimator = new Poker.CSSUtils();
         this.toolbar = $("#toolbar");
@@ -38,7 +39,6 @@ Poker.ViewManager = Class.extend({
         });
 
         this.checkMobileDevice();
-
         var self = this;
         $(".lobby-link").touchSafeClick(function(){
             if(self.mobileDevice===true) {
@@ -46,6 +46,65 @@ Poker.ViewManager = Class.extend({
             }
         });
 
+        $(".multi-view-switch").off().on("click",function(){
+            self.toggleMultiTableView();
+            if(self.multiTableView == null) {
+                $(this).addClass("multi");
+            } else {
+                $(this).removeClass("multi");
+            }
+        });
+
+    },
+    toggleMultiTableView : function() {
+        if(this.multiTableView == null) {
+            var tableViews = this.getTableViews();
+            this.removeTableViews();
+            this.multiTableView = new Poker.MultiTableView();
+            this.multiTableView.addTableViews(tableViews);
+            this.activeView = null;
+            this.addView(this.multiTableView);
+            this.activateView(this.multiTableView);
+        } else {
+            var views = this.multiTableView.getTableViews();
+            this.closeMultiTableView();
+            for(var i = 0; i<views.length; i++) {
+                this.addView(views[i]);
+                views[i].showTab();
+                views[i].deactivate();
+            }
+            if(views.length>0) {
+                this.activateView(views[0]);
+            }
+        }
+
+        this.setViewDimensions();
+
+    },
+    closeMultiTableView : function() {
+        this.removeView(this.multiTableView);
+        this.multiTableView.close();
+        this.multiTableView = null;
+        $(".multi-view-switch").removeClass("multi");
+    },
+    removeTableViews : function() {
+
+        for(var i = this.views.length-1; i>=0; i--) {
+            var v = this.views[i];
+            if(v instanceof Poker.TableView) {
+                this.views.splice(i,1);
+            }
+        }
+    },
+    getTableViews : function() {
+        var tableViews = [];
+        for(var i = 0; i<this.views.length; i++) {
+            var v = this.views[i];
+            if(v instanceof Poker.TableView) {
+                tableViews.push(v);
+            }
+        }
+        return tableViews;
     },
     checkMobileDevice : function() {
         if(window.matchMedia) {
@@ -133,7 +192,7 @@ Poker.ViewManager = Class.extend({
             this.views.splice(0,1);
         }
 
-
+        /*
         this.swiper = new Poker.ViewSwiper($(".view-container"),
             function(){
                 self.nextView();
@@ -141,6 +200,7 @@ Poker.ViewManager = Class.extend({
             function(){
                 self.previousView();
             });
+            */
     },
     /**
      * Will change a views tab to get the users attention
@@ -163,15 +223,41 @@ Poker.ViewManager = Class.extend({
      * @param tableId - the id for the table who's view to close
      */
     removeTableView : function(tableId) {
+        if(this.multiTableView!=null) {
+            this.multiTableView.removeTableView(tableId);
+            if(this.multiTableView.isEmpty()) {
+                var pv = this.getPreviousView();
+                this.closeMultiTableView();
+                $(".multi-view-switch").addClass("multi");
+                $(".table-view-container").hide();
+                this.activeView = null;
+                this.safeActivateView(pv);
+            }
+        } else {
+            for(var i = 0; i<this.views.length; i++) {
+                var v = this.views[i];
+                if(typeof(v.getTableId)!="undefined" && v.getTableId()==tableId) {
+                    var pv = this.getPreviousView();
+                    v.close();
+                    $(".table-view-container").hide();
+                    this.views.splice(i,1);
+                    this.activeView = null;
+                    this.safeActivateView(pv);
+
+                }
+            }
+        }
+
+        this.setViewDimensions();
+    },
+    removeView : function(view) {
         for(var i = 0; i<this.views.length; i++) {
             var v = this.views[i];
-            if(typeof(v.getTableId)!="undefined" && v.getTableId()==tableId) {
+            if(v.id === view.id) {
                 var pv = this.getPreviousView();
                 v.close();
                 this.views.splice(i,1);
                 this.activeView = null;
-                this.safeActivateView(pv);
-
             }
         }
     },
@@ -203,10 +289,15 @@ Poker.ViewManager = Class.extend({
      * @param tableId
      */
     activateViewByTableId : function(tableId) {
-        var v = this.findViewByTableId(tableId);
-        if(v!=null) {
-            this.activateView(v);
+        if(this.multiTableView!=null) {
+            this.activateView(this.multiTableView);
+        } else {
+            var v = this.findViewByTableId(tableId);
+            if(v!=null) {
+                this.activateView(v);
+            }
         }
+
     },
     activateViewByTournamentId : function(tournamentId) {
         var v = this.findViewByTournamentId(tournamentId);
@@ -242,10 +333,17 @@ Poker.ViewManager = Class.extend({
      * @param name - name of the view, to be displayed on the tab
      */
     addTableView : function(tableLayoutManager,name) {
-      var view = this.addView(new Poker.TableView(tableLayoutManager,name));
-      view.fixedSizeView = true;
-      this.activateView(view);
-      this.setViewDimensions();
+        if(this.multiTableView == null) {
+            var view = this.addView(new Poker.TableView(tableLayoutManager,name));
+            view.fixedSizeView = true;
+            this.activateView(view);
+        }  else {
+            var view = this.prepareView(new Poker.TableView(tableLayoutManager,name));
+            this.multiTableView.addTableView(view);
+            this.activateView(this.multiTableView);
+        }
+        var self = this;
+        this.setViewDimensions();
     },
     addTournamentView : function(viewElementId,name,layoutManager) {
         var view = this.addView(new Poker.TournamentView(viewElementId, name, layoutManager));
@@ -266,42 +364,12 @@ Poker.ViewManager = Class.extend({
         if(this.mobileDevice) {
             maxAspectRatio = 4/3;
         }
-        var views = this.getFixedSizedViews();
+        var views = this.views;
 
-        var width = w.height() * maxAspectRatio;
-        var height = w.height();
-        if(width > w.width()) {
-            height = w.width()/maxAspectRatio;
-            width = w.width();
-        }
         for(var i = 0; i<views.length; i++) {
-            views[i].viewElement.css({
-                width: Math.round(width) +  "px",
-                height : Math.round(height-40)+"px",
-                marginLeft : Math.round((w.width()-width)/2)  + "px"
-            });
+            views[i].calculateSize(w.width(), w.height()-40, maxAspectRatio);
+            views[i].calculateFontSize();
         }
-
-        var targetFontSize =  Math.round(90* width / this.baseWidth);
-        if(targetFontSize>130) {
-            targetFontSize=130;
-        }
-        $("body").css({fontSize : targetFontSize+"%"});
-
-    },
-    /**
-     * Retrieves a array of the views currently available that
-     * are fixed size views
-     * @return {Array}
-     */
-    getFixedSizedViews : function() {
-        var views = [];
-        for(var x in this.views) {
-            if(this.views[x].fixedSizeView==true){
-                views.push(this.views[x]);
-            }
-        }
-        return views;
     },
     /**
      * Activate a view.
@@ -317,6 +385,7 @@ Poker.ViewManager = Class.extend({
         }
         this.activeView = view;
         view.activate();
+        view.showTab();
 
         if(view.fixedSizeView==true){
             $(".view-port").scrollTop(0).css("overflow-y","hidden");
@@ -330,7 +399,7 @@ Poker.ViewManager = Class.extend({
                 this.getNextView()
             );
         }
-
+        this.setViewDimensions();
     },
     /**
      * Retrieves the current active view
@@ -339,6 +408,16 @@ Poker.ViewManager = Class.extend({
     getActiveView : function() {
         return this.activeView;
     },
+    prepareView : function(view) {
+        view.id = this.nextId();
+        this.tabsContainer.append(view.tabElement);
+        var self = this;
+        view.tabElement.off().touchSafeClick(function(e){
+            self.activateView(view);
+        });
+        view.showTab();
+        return view;
+    },
     /**
      * Adds and activates a view
      * @param view
@@ -346,15 +425,9 @@ Poker.ViewManager = Class.extend({
      */
     addView : function(view) {
         if(view.id==null) {
-            view.id = this.nextId();
+            this.prepareView(view);
         }
         this.views.push(view);
-        this.tabsContainer.append(view.tabElement);
-        var self = this;
-        view.tabElement.touchSafeClick(function(e){
-            self.activateView(view);
-        });
-
         var count = this.getVisibleTabCount();
         this.tabsContainer.find("li").css({width : (100/count)-2 + "%" });
 
