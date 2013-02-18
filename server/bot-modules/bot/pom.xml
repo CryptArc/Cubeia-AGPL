@@ -39,7 +39,7 @@
                 <artifactId>firebase-bots-maven-plugin</artifactId>
                 <version>1.9-SNAPSHOT</version>
                 <configuration>
-                    <botControlFile>tournament_bot.html</botControlFile>
+                    <botControlFile>bot.html</botControlFile>
                     <botMenuName>Poker Bot</botMenuName>
                     <serverPort>8081</serverPort>
                     <botStartId>100</botStartId>
