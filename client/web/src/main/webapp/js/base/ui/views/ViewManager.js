@@ -392,6 +392,7 @@ Poker.ViewManager = Class.extend({
         } else {
             $(".view-port").css("overflow-y","");
         }
+        this.setViewDimensions();
         if(this.swiper!=null) {
             this.swiper.setElements(
                 this.getPreviousView(),
@@ -399,7 +400,7 @@ Poker.ViewManager = Class.extend({
                 this.getNextView()
             );
         }
-        this.setViewDimensions();
+
     },
     /**
      * Retrieves the current active view

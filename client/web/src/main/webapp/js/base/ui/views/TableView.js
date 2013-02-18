@@ -40,7 +40,7 @@ Poker.TableView = Poker.TabView.extend({
     },
     calculateSize : function(maxWidth,maxHeight, aspectRatio) {
         var dim = Poker.Utils.calculateDimensions(maxWidth, maxHeight, aspectRatio);
-        var marginLeft =  Math.round((maxWidth-this.tableViewContainer.width())/2);
+        var marginLeft =  Math.floor((maxWidth-dim.width)/2);
         this.tableViewContainer.width(dim.width).height(dim.height).css({marginLeft : marginLeft});
         this.getViewElement().css({width:"100%",height:"100%"});
     }
