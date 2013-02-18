@@ -17,6 +17,7 @@
 
 package com.cubeia.poker.variant;
 
+import com.cubeia.poker.rounds.RoundCreator;
 import com.cubeia.poker.rounds.betting.BettingRoundCreator;
 import com.cubeia.poker.rounds.betting.BettingRoundName;
 import com.cubeia.poker.rounds.blinds.BlindsRoundCreator;
@@ -43,6 +44,25 @@ public class GameTypes {
                         bettingRound(RIVER)).build();
     }
 
+    public static GameType createTelesina() {
+        return new PokerGameBuilder().withRounds(
+                        ante(),
+                        dealPocketCards(1, 1),
+                        bettingRound(),
+                        dealPocketCards(0, 1),
+                        bettingRound(),
+                        dealPocketCards(0, 1),
+                        bettingRound(),
+                        dealPocketCards(0, 1),
+                        bettingRound(),
+                        dealCommunityCards(1),
+                        bettingRound()).build();
+    }
+
+    private static RoundCreator dealPocketCards(int faceDownCards, int faceUpCards) {
+        return null;
+    }
+
     private static DealCommunityCardsCreator dealCommunityCards(int numberOfCardsToDeal) {
         return new DealCommunityCardsCreator(numberOfCardsToDeal);
     }
@@ -51,11 +71,19 @@ public class GameTypes {
         return new BettingRoundCreator(roundName);
     }
 
+    private static BettingRoundCreator bettingRound() {
+        return new BettingRoundCreator(null);
+    }
+
     private static DealPocketCardsRoundCreator dealPocketCards(int numberOfCards) {
         return new DealPocketCardsRoundCreator(numberOfCards);
     }
 
     private static BlindsRoundCreator blinds() {
+        return new BlindsRoundCreator();
+    }
+
+    private static BlindsRoundCreator ante() {
         return new BlindsRoundCreator();
     }
 }

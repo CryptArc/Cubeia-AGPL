@@ -361,6 +361,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
     @Override
     public void scheduleTimeout(long millis) {
+        log.debug("Scheduling timeout in " + millis + " millis.");
         GameObjectAction action = new GameObjectAction(table.getId());
         TriggerType type = TriggerType.TIMEOUT;
         Trigger timeout = new Trigger(type);

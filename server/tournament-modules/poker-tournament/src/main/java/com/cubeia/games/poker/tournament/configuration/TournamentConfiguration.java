@@ -73,7 +73,7 @@ public class TournamentConfiguration implements Serializable {
 
     private String currency;
 
-    private int startingChips;
+    private long startingChips;
 
     private boolean archived;
 
@@ -194,11 +194,11 @@ public class TournamentConfiguration implements Serializable {
         this.currency = currency;
     }
 
-    public int getStartingChips() {
+    public long getStartingChips() {
         return startingChips;
     }
 
-    public void setStartingChips(int startingChips) {
+    public void setStartingChips(long startingChips) {
         this.startingChips = startingChips;
     }
 }

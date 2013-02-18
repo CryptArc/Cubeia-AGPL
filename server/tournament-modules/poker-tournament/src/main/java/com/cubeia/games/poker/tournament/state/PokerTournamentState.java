@@ -139,7 +139,7 @@ public class PokerTournamentState implements Serializable {
     private String startDateString;
 
     private String registrationStartDateString;
-    private int startingChips;
+    private long startingChips;
 
     public boolean allTablesHaveBeenCreated(int tablesCreated) {
         return tablesCreated >= tablesToCreate;
@@ -153,7 +153,7 @@ public class PokerTournamentState implements Serializable {
         return currencyCode;
     }
 
-    public int getStartingChips() {
+    public long getStartingChips() {
         return startingChips;
     }
 
@@ -189,7 +189,7 @@ public class PokerTournamentState implements Serializable {
         this.sitAndGo = sitAndGo;
     }
 
-    public void setStartingChips(int startingChips) {
+    public void setStartingChips(long startingChips) {
         this.startingChips = startingChips;
     }
 

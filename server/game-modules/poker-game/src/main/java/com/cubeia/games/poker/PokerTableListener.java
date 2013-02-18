@@ -116,7 +116,7 @@ public class PokerTableListener implements TournamentTableListener {
     public void tournamentPlayerJoined(Table table, GenericPlayer player, Serializable balance) {
         stateInjector.injectAdapter(table);
         PokerPlayer pokerPlayer = addPlayer(table, player, true);
-        pokerPlayer.addChips((Integer) balance);
+        pokerPlayer.addChips((Long) balance);
     }
 
     @Override

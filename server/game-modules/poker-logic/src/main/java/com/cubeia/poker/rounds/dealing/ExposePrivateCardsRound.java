@@ -17,19 +17,18 @@
 
 package com.cubeia.poker.rounds.dealing;
 
-import java.util.List;
-
+import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.ServerAdapterHolder;
 import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.hand.ExposeCardsHolder;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.result.RevealOrderCalculator;
+import com.cubeia.poker.rounds.Round;
+import com.cubeia.poker.rounds.RoundVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.cubeia.poker.action.PokerAction;
-import com.cubeia.poker.rounds.Round;
-import com.cubeia.poker.rounds.RoundVisitor;
+import java.util.List;
 
 public class ExposePrivateCardsRound implements Round {
 
@@ -60,6 +59,11 @@ public class ExposePrivateCardsRound implements Round {
         ExposeCardsHolder holder = new ExposeCardsHolder();
         for (int playerId : playerRevealOrder) {
             PokerPlayer player = context.getPlayer(playerId);
+            if (player == null) {
+                log.error("PLAYER IS NULL IN EXPOSE SHOWDOWN. playerId: " + playerId + " playerMap: " + context.getPlayerMap().values() + " seatingMap: " +
+                        context.getCurrentHandSeatingMap() + " reveal order: " + playerRevealOrder);
+                continue;
+            }
             if (!player.hasFolded() && !player.isExposingPocketCards()) {
                 holder.setExposedCards(playerId, player.getPrivatePocketCards());
                 player.setExposingPocketCards(true);
@@ -76,7 +80,7 @@ public class ExposePrivateCardsRound implements Round {
 
     @Override
     public boolean act(PokerAction action) {
-        log.warn("Perform action not allowed during DealPocketCardsRound. Action received: " + action);
+        log.debug("Perform action not allowed during DealPocketCardsRound. Action received: " + action);
         return false;
     }
 

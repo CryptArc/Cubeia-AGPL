@@ -260,6 +260,7 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
     public void visit(ExposePrivateCardsRound exposePrivateCardsRound) {
         // Cards were flipped, deal next card.
         currentRound = new DealCommunityCardsRound(context, serverAdapterHolder, getCardsToDeal());
+        log.debug("Exposed private cards, scheduling timeout.");
         scheduleRoundTimeout();
     }
 

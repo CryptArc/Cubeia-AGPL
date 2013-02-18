@@ -347,7 +347,7 @@ public class PokerTournament implements Serializable {
         return balances;
     }
 
-    private int getStartingChips() {
+    private long getStartingChips() {
         return pokerState.getStartingChips();
     }
 
