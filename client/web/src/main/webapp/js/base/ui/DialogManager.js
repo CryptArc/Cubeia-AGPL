@@ -89,6 +89,14 @@ Poker.DialogManager = Class.extend({
         if(closeCallback) {
             this.currentCloseCallback = closeCallback;
         }
+
+        var targetFontSize =  Math.round(90* $(window).width()/1024);
+        if(targetFontSize>125) {
+            targetFontSize=125;
+        }
+
+        $("#facebox").css({fontSize : targetFontSize + "%"});
+
         $("#facebox .dialog-cancel-button").touchSafeClick(function(){
             self.close();
         });
