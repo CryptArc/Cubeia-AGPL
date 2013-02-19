@@ -674,6 +674,7 @@ public class PokerTournament implements Serializable {
             pokerState.removePlayerSession(playerId);
             historyPersister.playerUnregistered(playerId);
             pokerState.invalidatePlayerMap();
+            pokerState.removeBuyInFromPrizePool();
         } catch (CloseSessionFailedException e) {
             log.error("Failed closing session for player " + playerId, e);
             historyPersister.playerFailedUnregistering(playerId, e.getMessage());
