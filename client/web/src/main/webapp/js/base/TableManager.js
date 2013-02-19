@@ -368,20 +368,24 @@ Poker.TableManager = Class.extend({
     leaveTable : function(tableId) {
         console.log("REMOVING TABLE = " + tableId);
         var table = this.tables.remove(tableId);
-        if(table==null) {
+        if (table == null) {
             console.log("table not found when removing " + tableId);
+        } else {
+            table.getLayoutManager().onLeaveTableSuccess();
+            table.leave();
         }
-        table.getLayoutManager().onLeaveTableSuccess();
-        table.leave();
         Poker.AppCtx.getViewManager().removeTableView(tableId);
     },
     /**
+     *
      * @param {Number} tableId
      * @param {Poker.ActionType[]} actions
+     * @param {Number} callAmount
+     * @param {Number} minBetAmount
      */
-    onFutureAction : function(tableId,actions, callAmount, minBetAmount) {
+    onFutureAction : function(tableId, actions, callAmount, minBetAmount) {
         var table = this.getTable(tableId);
-        if(actions.length>0) {
+        if (actions.length > 0) {
             var futureActions = this.getFutureActionTypes(actions);
             table.getLayoutManager().displayFutureActions(futureActions, callAmount, minBetAmount);
         }
@@ -395,7 +399,7 @@ Poker.TableManager = Class.extend({
         var put = function(type){
             futureActions.put(type.id,type);
         };
-        for(var i = 0; i<actions.length; i++) {
+        for (var i = 0; i < actions.length; i++) {
             var act = actions[i];
             switch (act.id) {
                 case Poker.ActionType.CHECK.id:
@@ -412,7 +416,7 @@ Poker.TableManager = Class.extend({
                     break;
             }
         }
-        if(actions.length>0) {
+        if (actions.length > 0) {
             put(Poker.FutureActionType.FOLD);
         }
         return futureActions.values();

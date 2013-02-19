@@ -30,8 +30,10 @@ Poker.PokerRequestHandler = Class.extend({
                 this.tableManager.leaveTable(this.tableId);
             } else if (this.tableManager.isSeated(this.tableId)) {
                 tableRequestHandler.leaveTable();
+                this.tableManager.leaveTable(this.tableId);
             } else {
                 tableRequestHandler.unwatchTable();
+                this.tableManager.leaveTable(this.tableId);
             }
         } else if (actionType.id == Poker.ActionType.SIT_IN.id) {
             this.sitIn();
