@@ -25,7 +25,7 @@ Poker.ViewSwiper = Class.extend({
         this.cssUtils = new Poker.CSSUtils();
         this.nextCallback = nextCallback;
         this.previousCallback = previousCallback;
-       /*
+
         swipeElement.bind("touchstart",function(e){
             if(!Poker.Settings.isEnabled(Poker.Settings.Param.SWIPE_ENABLED)){
                 return;
@@ -36,10 +36,9 @@ Poker.ViewSwiper = Class.extend({
                 if(!self.isLocked()) {
                     self.startXPos = startTouch.pageX;
                     self.startYPos = startTouch.pageY;
+
                     $(this).bind("touchmove",function(e){
-
                         var touch = e.originalEvent.touches[0];
-
                         var movedY = touch.pageY - self.startYPos;
                         var movedX = touch.pageX - self.startXPos;
 
@@ -67,7 +66,7 @@ Poker.ViewSwiper = Class.extend({
                 }
             }
         });
-        */
+
 
     },
     unlock : function() {
@@ -88,19 +87,20 @@ Poker.ViewSwiper = Class.extend({
 
     },
     setElements : function(left,center,right) {
+        var width = $(".view-port").width();
         this.animationManager = new Poker.AnimationManager();
-        this.leftElement = left!=null ? left.viewElement : null;
-        this.centerElement = center!=null ? center.viewElement : null;
-        this.rightElement = right!=null ? right.viewElement : null;
+        this.leftElement = left!=null ? left.getViewElement() : null;
+        this.centerElement = center!=null ? center.getViewElement() : null;
+        this.rightElement = right!=null ? right.getViewElement() : null;
 
         if(this.leftElement!=null) {
             this.cssUtils.clearTransition(this.leftElement);
-            this.cssUtils.setTranslate3d(this.leftElement,-this.centerElement.width(),0,0,"px");
+            this.cssUtils.setTranslate3d(this.leftElement,-width,0,0,"px");
         }
 
         if(this.rightElement!=null) {
             this.cssUtils.clearTransition(this.rightElement);
-            this.cssUtils.setTranslate3d(this.rightElement,this.centerElement.width(),0,0,"px");
+            this.cssUtils.setTranslate3d(this.rightElement,width,0,0,"px");
         }
 
         if(this.centerElement!=null) {
@@ -110,7 +110,6 @@ Poker.ViewSwiper = Class.extend({
 
     },
     end : function() {
-
         this.startXPos = 0;
         if(this.completeRight==true) {
             this.completeRight=false;
@@ -122,13 +121,10 @@ Poker.ViewSwiper = Class.extend({
             //when there was no swipe, transition views back to 0
             this.moveToOriginalPositions();
         }
-
-
-
     },
     moveToOriginalPositions : function() {
         var self = this;
-
+        var width = $(".view-port").width();
         new Poker.TransformAnimation(this.centerElement).
             addTransition("transform",0.2,"ease-out").
             addCallback(function(){self.unlock();}).
@@ -139,14 +135,14 @@ Poker.ViewSwiper = Class.extend({
         if(this.rightElement!=null) {
             new Poker.TransformAnimation(this.rightElement).
                 addTransition("transform",0.2,"ease-out").
-                addTranslate3d(this.centerElement.width(),0,0,"px").
+                addTranslate3d(width,0,0,"px").
                 start(this.animationManager);
         }
 
         if(this.leftElement!=null) {
             new Poker.TransformAnimation(this.leftElement).
                 addTransition("transform",0.2,"ease-out").
-                addTranslate3d(-this.centerElement.width(),0,0,"px").
+                addTranslate3d(-width,0,0,"px").
                 start(this.animationManager);
         }
     },
@@ -157,6 +153,7 @@ Poker.ViewSwiper = Class.extend({
     },
     finishRight : function() {
         var self = this;
+        var width = $(".view-port").width();
         new Poker.TransformAnimation(this.leftElement).
             addTransition("transform",0.5,"ease-out").
             addTranslate3d(0,0,0,"px").
@@ -165,7 +162,7 @@ Poker.ViewSwiper = Class.extend({
         new Poker.TransformAnimation(this.centerElement).
             addCallback(function(){self.rightCallBack();}).
             addTransition("transform",0.5,"ease-out").
-            addTranslate3d(this.centerElement.width(),0,0,"px").
+            addTranslate3d(width,0,0,"px").
             start(this.animationManager);
 
 

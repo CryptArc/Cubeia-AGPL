@@ -6,7 +6,7 @@ var Poker = Poker || {};
  * @type {Poker.TableLayoutManager}
  */
 Poker.TableLayoutManager = Class.extend({
-    tableContainer : null,
+    tableViewContainer : null,
     capacity : 10,
     seatTemplate : null,
     emptySeatTemplate : null,
@@ -48,7 +48,7 @@ Poker.TableLayoutManager = Class.extend({
         if (!tableViewContainer) {
             throw "TableLayoutManager requires a tableViewContainer";
         }
-        this.tableContainer = tableViewContainer;
+        this.tableViewContainer = tableViewContainer;
         this.seats = new Poker.Map();
         this.animationManager = new Poker.AnimationManager();
         var tableViewTemplate = templateManager.getTemplate("tableViewTemplate");
@@ -274,11 +274,11 @@ Poker.TableLayoutManager = Class.extend({
     onMoveDealerButton : function(seatId) {
         this.currentDealer = seatId;
         var seat = this.seats.get(seatId);
-        var off = seat.getDealerButtonOffsetElement().offset();
-        var leftC  = this.tableView.offset().left;
+        var off = seat.getDealerButtonOffsetElement().relativeOffset(this.tableView);
+
 
         var pos = {
-            left : Math.round(off.left  - leftC +  seat.getDealerButtonOffsetElement().width()*0.95),
+            left : Math.round(off.left + seat.getDealerButtonOffsetElement().width()*0.95),
             top : Math.round(off.top)
         };
         this.dealerButton.move(pos.top,pos.left);

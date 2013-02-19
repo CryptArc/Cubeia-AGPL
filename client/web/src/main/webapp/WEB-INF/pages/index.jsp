@@ -118,6 +118,7 @@
     <script type="text/javascript" src="${cp}/js/base/ui/views/TabView.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/LoginView.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/TableView.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/views/MultiTableView.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/TournamentView.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/DevSettingsView.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/ViewManager.js"></script>
@@ -272,7 +273,10 @@
         </div>
     </div>
     <div class="view-container slidable">
-
+        <div class="table-view-container" style="display:none;">
+            <div class="multi-view-switch multi">
+            </div>
+        </div>
         <div id="loadingView" class="loading-view">
             <div class="login-dialog">
                 <div class="logo-container"><img src="${cp}/skins/${skin}/images/lobby/poker-logo.png"/></div>
@@ -512,6 +516,7 @@
 
 <script type="text/mustache" id="tableViewTemplate" style="display:none;">
     <div id="tableView-{{tableId}}" class="table-container">
+
         <div class="table-logo"></div>
         <div id="seatContainer-{{tableId}}" class="default-table table-10">
             <div class="seat" id="seat0-{{tableId}}">
@@ -581,12 +586,12 @@
                 <div class="name" id="myPlayerName-{{tableId}}"></div>
                 <div class="balance" id="myPlayerBalance-{{tableId}}"></div>
                 <div class="no-more-blinds-container">
-                    <input type="checkbox" id="noMoreBlinds-{{tableId}}"/>
-                    <label for="noMoreBlinds-{{tableId}}">No more blinds</label>
+                    <input class="checkbox" type="checkbox" id="noMoreBlinds-{{tableId}}"/>
+                    <label class="checkbox-icon-label" for="noMoreBlinds-{{tableId}}">No more blinds</label>
                 </div>
                     <div class="sit-out-next-hand-container">
-                        <input type="checkbox" id="sitOutNextHand-{{tableId}}"/>
-                        <label for="sitOutNextHand-{{tableId}}">Sit out next hand</label>
+                        <input class="checkbox" type="checkbox" id="sitOutNextHand-{{tableId}}"/>
+                        <label class="checkbox-icon-label" for="sitOutNextHand-{{tableId}}">Sit out next hand</label>
                     </div>
             </div>
 
@@ -650,49 +655,49 @@
             </div>
             <div id="futureActions-{{tableId}}" class="future-actions" style="display:none;">
                     <div class="future-action check" style="display:none;">
-                        <input type="checkbox" id="future-check-{{tableId}}"/>
-                        <label  for="future-check-{{tableId}}">Fold</label>
+                        <input class="checkbox" type="checkbox" id="future-check-{{tableId}}"/>
+                        <label class="checkbox-icon-label" for="future-check-{{tableId}}">Fold</label>
                     </div>
 
                     <div class="future-action check-or-fold" style="display:none;">
-                        <input type="checkbox" id="future-check-or-fold-{{tableId}}"/>
-
-                        <label for="future-check-or-fold-{{tableId}}">Check/Fold</label>
+                        <input class="checkbox" type="checkbox" id="future-check-or-fold-{{tableId}}"/>
+                        <label class="checkbox-icon-label" for="future-check-or-fold-{{tableId}}">Check/Fold</label>
                     </div>
 
                     <div class="future-action call-current-bet" style="display:none;">
-                        <input type="checkbox" id="future-call-current-bet-{{tableId}}"/>
-                        <label for="future-call-current-bet-{{tableId}}">Call <span class="amount"></span></label>
+                        <input class="checkbox" type="checkbox" id="future-call-current-bet-{{tableId}}"/>
+                        <label class="checkbox-icon-label" for="future-call-current-bet-{{tableId}}">Call <span class="amount"></span></label>
                     </div>
 
                     <div class="future-action check-or-call-any" style="display:none;">
-                        <input type="checkbox" id="future-check-or-call-any-{{tableId}}"/>
-                        <label for="future-check-or-call-any-{{tableId}}">Check/Call any</label>
+                        <input class="checkbox" type="checkbox" id="future-check-or-call-any-{{tableId}}"/>
+                        <label class="checkbox-icon-label" for="future-check-or-call-any-{{tableId}}">Check/Call any</label>
                     </div>
                     <div class="future-action call-any" style="display:none;">
-                        <input type="checkbox" id="future-call-any-{{tableId}}"/>
-                        <label for="future-call-any-{{tableId}}">Call any</label>
+                        <input class="checkbox" type="checkbox" id="future-call-any-{{tableId}}"/>
+                        <label class="checkbox-icon-label" for="future-call-any-{{tableId}}">Call any</label>
                     </div>
 
                     <div class="future-action fold" style="display:none;">
-                        <input type="checkbox" id="future-fold-{{tableId}}"/>
-                        <label for="future-fold-{{tableId}}">Fold</label>
+                        <input class="checkbox" type="checkbox" id="future-fold-{{tableId}}"/>
+                        <label class="checkbox-icon-label" for="future-fold-{{tableId}}">Fold</label>
                     </div>
 
                     <div class="future-action raise" style="display:none;">
-                        <input type="checkbox" id="future-raise-{{tableId}}"/>
-                        <label for="future-raise-{{tableId}}">Raise to <span class="amount"></span></label>
+                        <input class="checkbox" type="checkbox" id="future-raise-{{tableId}}"/>
+                        <label class="checkbox-icon-label" for="future-raise-{{tableId}}">Raise to <span class="amount"></span></label>
                     </div>
 
                     <div class="future-action raise-any" style="display:none;">
-                        <input type="checkbox" id="future-raise-any-{{tableId}}"/>
-                        <label for="future-raise-any-{{tableId}}">Raise any</label>
-                </div>
+                        <input class="checkbox" type="checkbox" id="future-raise-any-{{tableId}}"/>
+                        <label class="checkbox-icon-label" for="future-raise-any-{{tableId}}">Raise any</label>
+                    </div>
 
             </div>
         <div id="myPlayerSeat-{{tableId}}Progressbar" class="circular-progress-bar">
 
         </div>
+
     </div>
 </div>
 </script>

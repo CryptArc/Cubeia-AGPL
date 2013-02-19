@@ -4,14 +4,14 @@ var Poker = Poker || {};
 Poker.PotTransferAnimator = Class.extend({
 
     transfers : null,
-    tableContainer : null,
+    tableViewContainer : null,
     potContainer : null,
     potTransferTemplate : null,
     animationManager : null,
     tableId : null,
     init : function(tableId, animationManager, tableContainer,potContainer) {
         this.animationManager = animationManager;
-        this.tableContainer = tableContainer;
+        this.tableViewContainer = tableContainer;
         this.potContainer = potContainer;
         this.tableId = tableId;
         this.transfers = [];
@@ -24,9 +24,9 @@ Poker.PotTransferAnimator = Class.extend({
         var transferId = "pt" + potId  + "-" + seatId + "-" + this.tableId;
         var html = Mustache.render(this.potTransferTemplate,{ ptId : transferId, amount: Poker.Utils.formatCurrency(amount)});
         var potElement = this.potContainer.find(".pot-container-" + potId);
-        var offset = potElement.relativeOffset(this.tableContainer);
+        var offset = potElement.relativeOffset(this.tableViewContainer);
 
-        this.tableContainer.append($(html).css({ left: offset.left, top: offset.top}));
+        this.tableViewContainer.append($(html).css({ left: offset.left, top: offset.top}));
         var div = $("#"+transferId);
 
         offset =  Poker.Utils.calculateDistance(div,targetElement,true,true);

@@ -72,12 +72,13 @@
             width: auto;
             margin: 0;
             margin-top: 6%;
-            margin-left: 4%
+            margin-left: 4%;
+            display:none;
         }
         label {
             padding: 4% 2%;
             display: inline-block;
-            width: 72%;
+            width: 96%;
             float:left;
         }
     }
@@ -108,4 +109,28 @@
        left:70%;
        top:30%;
     }
+}
+label.checkbox-icon-label {
+    float:left;
+    display:block;
+
+    &:before {
+        background-image: url("../images/global/checkbox.png");
+        background-size: 100%;
+        width: 1.1em;
+        float: left;
+        display: block;
+        padding-bottom: 1.1em;
+        content: '';
+        background-repeat: no-repeat;
+        margin-right: 0.2em;
+    }
+}
+input.checkbox {
+    display:none;
+
+    &:checked+label.checkbox-icon-label:before {
+        background-image: url("../images/global/checkbox-checked.png");
+    }
+
 }
