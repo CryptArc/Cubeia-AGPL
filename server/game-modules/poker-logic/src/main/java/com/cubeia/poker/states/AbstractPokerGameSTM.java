@@ -33,6 +33,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 import java.util.Set;
 
+import static com.google.common.base.Predicates.alwaysTrue;
+
 public abstract class AbstractPokerGameSTM implements PokerGameSTM {
 
     private static final long serialVersionUID = 1L;
@@ -96,7 +98,7 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
      * Sitting out means that you are not dealt any cards for that hand. If a player already has
      * cards, he is in the hand and cannot suddenly sit out.
      *
-     * @param playerId
+     * @param playerId the id of the player who wants to sit out next hand
      *
      */
     @Override
@@ -115,8 +117,10 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
     }
 
     protected void markPlayerAsSittingOut(PokerPlayer player) {
-        player.setSitOutStatus(SitOutStatus.SITTING_OUT);
-        getServerAdapter().notifyPlayerStatusChanged(player.getId(), PokerPlayerStatus.SITOUT, false);
+        if (!context.isTournamentTable()) {
+            player.setSitOutStatus(SitOutStatus.SITTING_OUT);
+            getServerAdapter().notifyPlayerStatusChanged(player.getId(), PokerPlayerStatus.SITOUT, false);
+        }
     }
 
     @Override
@@ -246,13 +250,22 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
     }
 
     private Predicate<PokerPlayer> getReadyPlayerFilter() {
+        if (context.isTournamentTable()) {
+            return alwaysTrue();
+        } else {
+            return cashGamesReadyPlayerFilter();
+        }
+    }
+
+    private Predicate<PokerPlayer> cashGamesReadyPlayerFilter() {
         return new Predicate<PokerPlayer>() {
             @Override
             public boolean apply(PokerPlayer pokerPlayer) {
                 boolean canAffordEntryBet = gameType.canPlayerAffordEntryBet(pokerPlayer, context.getSettings(), false);
                 boolean isSittingIn = !pokerPlayer.isSittingOut();
                 boolean buyInActive = pokerPlayer.isBuyInRequestActive();
-                return canAffordEntryBet && isSittingIn && !buyInActive;
+                boolean readyToPlay = canAffordEntryBet && isSittingIn && !buyInActive;
+                return readyToPlay;
             }
         };
     }

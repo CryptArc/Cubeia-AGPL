@@ -58,9 +58,6 @@ public class PokerTournamentState implements Serializable {
 
     private static transient Logger log = Logger.getLogger(PokerTournamentState.class);
 
-    // TODO: Make configurable.
-    public static final Long STARTING_CHIPS = 100000L;
-
     private TimingProfile timing = TimingFactory.getRegistry().getDefaultTimingProfile();
 
     private int tablesToCreate;
@@ -142,6 +139,7 @@ public class PokerTournamentState implements Serializable {
     private String startDateString;
 
     private String registrationStartDateString;
+    private long startingChips;
 
     public boolean allTablesHaveBeenCreated(int tablesCreated) {
         return tablesCreated >= tablesToCreate;
@@ -153,6 +151,10 @@ public class PokerTournamentState implements Serializable {
 
     public String getCurrencyCode() {
         return currencyCode;
+    }
+
+    public long getStartingChips() {
+        return startingChips;
     }
 
     public boolean isResurrectingTournament() {
@@ -185,6 +187,10 @@ public class PokerTournamentState implements Serializable {
 
     public void setSitAndGo(boolean sitAndGo) {
         this.sitAndGo = sitAndGo;
+    }
+
+    public void setStartingChips(long startingChips) {
+        this.startingChips = startingChips;
     }
 
     public void setTablesToCreate(int tablesToCreate) {

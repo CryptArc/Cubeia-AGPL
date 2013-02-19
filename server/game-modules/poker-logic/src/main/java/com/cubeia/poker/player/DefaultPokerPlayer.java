@@ -248,6 +248,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
     public void setSitOutStatus(SitOutStatus status) {
         this.sitOutStatus = status;
         if (status == SitOutStatus.SITTING_OUT) {
+            log.debug("Player " + playerId + " is now sitting out.");
             sitOutTimestamp = System.currentTimeMillis();
             sittingOutNextHand = false;
         }

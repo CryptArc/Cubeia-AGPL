@@ -41,6 +41,8 @@ import com.cubeia.poker.result.RevealOrderCalculator;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.timing.impl.DefaultTimingProfile;
+import com.cubeia.poker.variant.GameTypes;
+import com.cubeia.poker.variant.GenericPokerGame;
 import com.cubeia.poker.variant.HandFinishedListener;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
@@ -83,7 +85,9 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 public class TexasHoldemTest {
 
-    private TexasHoldem texas;
+//    private TexasHoldem texas;
+
+    private GenericPokerGame texas;
 
     @Mock
     private PokerContext context;
@@ -133,7 +137,7 @@ public class TexasHoldemTest {
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
         when(serverAdapter.getSystemRNG()).thenReturn(random);
 
-        texas = new TexasHoldem();
+        texas = (GenericPokerGame) GameTypes.createTexasHoldem();
         texas.setPokerContextAndServerAdapter(context, serverAdapterHolder);
         texas.addHandFinishedListener(listener);
 
@@ -160,6 +164,7 @@ public class TexasHoldemTest {
         // First play a normal hand.
         act(p[1], SMALL_BLIND);
         act(p[2], BIG_BLIND);
+        texas.timeout();
         act(p[3], CALL);
         act(p[0], RAISE, 40);
 
@@ -172,6 +177,7 @@ public class TexasHoldemTest {
         act(p[2], SMALL_BLIND);
         act(p[3], PokerActionType.DECLINE_ENTRY_BET);
         act(p[0], BIG_BLIND);
+        texas.timeout();
 
         act(p[1], RAISE, 40);
         act(p[2], FOLD);
@@ -188,6 +194,7 @@ public class TexasHoldemTest {
 
         act(p[0], SMALL_BLIND);
         act(p[1], BIG_BLIND);
+        texas.timeout();
 
         act(p[2], RAISE, 40);
         act(p[0], FOLD);
@@ -202,6 +209,7 @@ public class TexasHoldemTest {
         // Player 3 posts the bb + the dead small.
         long balanceBefore = p[3].getBalance();
         act(p[3], BIG_BLIND_PLUS_DEAD_SMALL_BLIND);
+        texas.timeout();
 
         // Now he should have no missed blinds.
         assertEquals(MissedBlindsStatus.NO_MISSED_BLINDS, p[3].getMissedBlindsStatus());
@@ -233,6 +241,7 @@ public class TexasHoldemTest {
         // First play a normal hand.
         act(p[1], SMALL_BLIND);
         act(p[2], BIG_BLIND);
+        texas.timeout();
         act(p[3], CALL);
         act(p[0], RAISE, 40);
 
@@ -244,6 +253,7 @@ public class TexasHoldemTest {
         startHand(context);
         act(p[2], DECLINE_ENTRY_BET);
         act(p[3], BIG_BLIND);
+        texas.timeout();
         act(p[0], FOLD);
 
         act(p[1], RAISE, 40);
@@ -262,6 +272,7 @@ public class TexasHoldemTest {
 
         act(p[3], SMALL_BLIND);
         act(p[0], BIG_BLIND);
+        texas.timeout();
 
         act(p[1], RAISE, 40);
         act(p[3], FOLD);
@@ -277,6 +288,7 @@ public class TexasHoldemTest {
 
         // Player 2 posts the dead small.
         act(p[2], DEAD_SMALL_BLIND);
+        texas.timeout();
 
         // He should have sb less in his account.
         int sbCost = context.getSettings().getSmallBlindAmount();
@@ -313,6 +325,7 @@ public class TexasHoldemTest {
         // First play a normal hand.
         act(p[1], SMALL_BLIND);
         act(p[2], BIG_BLIND);
+        texas.timeout();
         act(p[3], CALL);
         act(p[0], RAISE, 40);
 
@@ -327,6 +340,7 @@ public class TexasHoldemTest {
         act(p[2], SMALL_BLIND);
         act(p[3], PokerActionType.DECLINE_ENTRY_BET);
         act(p[0], BIG_BLIND);
+        texas.timeout();
 
         act(p[1], RAISE, 40);
         act(p[2], FOLD);
@@ -343,6 +357,7 @@ public class TexasHoldemTest {
 
         act(p[0], SMALL_BLIND);
         act(p[1], BIG_BLIND);
+        texas.timeout();
 
         act(p[2], RAISE, 40);
         act(p[0], FOLD);
@@ -354,6 +369,7 @@ public class TexasHoldemTest {
         startHand(context);
         act(p[1], SMALL_BLIND);
         act(p[2], BIG_BLIND);
+        texas.timeout();
 
         assertTrue(p[3].getActionRequest().isOptionEnabled(PokerActionType.BIG_BLIND_PLUS_DEAD_SMALL_BLIND));
         act(p[3], DECLINE_ENTRY_BET);
@@ -370,6 +386,7 @@ public class TexasHoldemTest {
         act(p[2], SMALL_BLIND);
         assertTrue(p[3].getActionRequest().isOptionEnabled(PokerActionType.BIG_BLIND));
         act(p[3], BIG_BLIND);
+        texas.timeout();
 
         act(p[0], RAISE, 40);
         act(p[1], FOLD);
@@ -490,6 +507,7 @@ public class TexasHoldemTest {
         // First play a normal hand.
         act(p[1], SMALL_BLIND);
         act(p[2], BIG_BLIND);
+        texas.timeout();
 
         assertEquals(20, p[3].getActionRequest().getOption(CALL).getMinAmount());
     }
@@ -508,6 +526,7 @@ public class TexasHoldemTest {
         // First play a normal hand.
         act(p[1], SMALL_BLIND);
         act(p[2], BIG_BLIND);
+        texas.timeout();
         act(p[3], CALL);
         act(p[0], RAISE, 40);
 
@@ -525,6 +544,7 @@ public class TexasHoldemTest {
         startHand(context, readyPlayersFilter);
         act(p[2], SMALL_BLIND);
         act(p[0], BIG_BLIND);
+        texas.timeout();
 
         act(p[1], FOLD);
         act(p[2], FOLD);
@@ -540,6 +560,7 @@ public class TexasHoldemTest {
 
         act(p[1], SMALL_BLIND);
         act(p[2], BIG_BLIND);
+        texas.timeout();
         act(p[3], CALL);
         // p0 goes all-in for an incomplete raise (bb is 20, so complete raise would be to 40).
         act(p[0], RAISE, 30);
@@ -560,6 +581,7 @@ public class TexasHoldemTest {
 
         act(p[1], SMALL_BLIND);
         act(p[2], BIG_BLIND);
+        texas.timeout();
         act(p[3], CALL);
         act(p[0], CALL);
 

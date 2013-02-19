@@ -54,11 +54,22 @@
         </div>
     </div>
 
+    <wicket:enclosure child="maxPlayers">
     <div class="control-group">
         <label class="control-label" for="maxPlayers">Max Players</label>
 
         <div class="controls">
             <input wicket:id="maxPlayers" id="maxPlayers" type="text" size="20"/>
+        </div>
+    </div>
+    </wicket:enclosure>
+
+    <div class="control-group">
+        <label class="control-label" for="maxPlayers">Starting Chips</label>
+
+        <div class="controls">
+            <input wicket:id="startingChips" id="startingChips" type="text" size="20"/>
+            <span class="help-block">Value in cents</span>
         </div>
     </div>
 

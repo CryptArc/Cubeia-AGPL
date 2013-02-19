@@ -347,8 +347,8 @@ public class PokerTournament implements Serializable {
         return balances;
     }
 
-    private Long getStartingChips() {
-        return PokerTournamentState.STARTING_CHIPS;
+    private long getStartingChips() {
+        return pokerState.getStartingChips();
     }
 
     private void sendTournamentOutToPlayers(List<ConcretePayout> playersOut, MttInstance instance) {

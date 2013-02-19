@@ -15,20 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled;
+package com.cubeia.games.poker.admin.wicket.pages.tournaments.configuration;
 
 import com.cubeia.games.poker.admin.wicket.util.Archiver;
-import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
+import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
 
-public class TournamentArchiver implements Archiver {
-    private final ScheduledTournamentConfiguration tournament;
+import java.io.Serializable;
 
-    public TournamentArchiver(ScheduledTournamentConfiguration tournament) {
-        this.tournament = tournament;
+public class TournamentArchiver implements Archiver, Serializable {
+
+    private final TournamentConfiguration configuration;
+
+    public TournamentArchiver(TournamentConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     @Override
     public void archive() {
-        tournament.setArchived(true);
+        configuration.setArchived(true);
     }
 }

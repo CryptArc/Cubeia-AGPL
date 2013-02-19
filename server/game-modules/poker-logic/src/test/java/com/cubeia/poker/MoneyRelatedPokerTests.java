@@ -45,6 +45,7 @@ public class MoneyRelatedPokerTests extends GuiceTest {
         long balance = getPlayer(actorId + 1, mp).getBalance();
         actorId = act(PokerActionType.BIG_BLIND);
         assertEquals(balance - 100, getPlayer(actorId, mp).getBalance());
+        state.timeout();
 
         // Everyone folds and bb wins
         act(PokerActionType.FOLD);

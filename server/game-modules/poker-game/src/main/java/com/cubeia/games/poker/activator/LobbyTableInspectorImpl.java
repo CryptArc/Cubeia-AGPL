@@ -82,7 +82,6 @@ public class LobbyTableInspectorImpl implements LobbyTableInspector {
     }
 
     private boolean shuttingDown() {
-        log.debug("Shutting down? " + shutdownService.isSystemShuttingDown());
         return shutdownService.isSystemShuttingDown();
     }
 

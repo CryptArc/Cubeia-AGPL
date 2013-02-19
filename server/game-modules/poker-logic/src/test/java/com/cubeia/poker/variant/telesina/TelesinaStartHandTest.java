@@ -109,7 +109,7 @@ public class TelesinaStartHandTest {
         assertThat(telesina.getCurrentRound(), is((Round) anteRound));
         assertThat(telesina.getBettingRoundId(), is(0));
         verify(deckFactory).createNewDeck(rng, 4);
-        verify(serverAdapter).notifyDeckInfo(40, Rank.FIVE);
+//        verify(serverAdapter).notifyDeckInfo(40, Rank.FIVE);
     }
 
     @Test

@@ -183,6 +183,7 @@ public class PokerTournamentProcessorTest extends TestCase {
         config.getConfiguration().setFee(BigDecimal.valueOf(1));
         config.getConfiguration().setBlindsStructure(BlindsStructureFactory.createDefaultBlindsStructure());
         config.getConfiguration().setPayoutStructure(PayoutStructureParserTest.createTestStructure());
+        config.getConfiguration().setStartingChips(100000);
         PokerTournamentCreationParticipant part = new SitAndGoCreationParticipant(config, historyService, systemTime);
         part.tournamentCreated(state, instance.getLobbyAccessor());
 

@@ -19,6 +19,8 @@ package com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo;
 
 import com.cubeia.games.poker.admin.db.AdminDAO;
 import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.games.poker.admin.wicket.pages.tournaments.configuration.TournamentArchiver;
+import com.cubeia.games.poker.admin.wicket.util.ArchiveLinkPanel;
 import com.cubeia.games.poker.admin.wicket.util.DeleteLinkPanel;
 import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
 import com.cubeia.games.poker.admin.wicket.util.ParamBuilder;
@@ -92,8 +94,8 @@ public class ListSitAndGoTournaments extends BasePage {
 
             @Override
             public void populateItem(Item<ICellPopulator<SitAndGoConfiguration>> item, String componentId, IModel<SitAndGoConfiguration> model) {
-                SitAndGoConfiguration table = model.getObject();
-                Component panel = new DeleteLinkPanel(componentId, SitAndGoConfiguration.class, table.getId(), ListSitAndGoTournaments.class);
+                SitAndGoConfiguration sitAndGo = model.getObject();
+                Component panel = new ArchiveLinkPanel(componentId, new TournamentArchiver(sitAndGo.getConfiguration()), sitAndGo, ListSitAndGoTournaments.class);
                 item.add(panel);
             }
 

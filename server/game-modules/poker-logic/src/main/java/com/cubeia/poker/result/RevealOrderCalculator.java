@@ -29,8 +29,12 @@ import java.util.SortedMap;
 public class RevealOrderCalculator implements Serializable {
 
     /**
-     * Calculate the order in which the players should reveal their hidden card(s).
+     * Calculates the order in which the players should reveal their hidden card(s).
      * If there's only one non folded player left, an empty list will be returned.
+     *
+     * The general rules is: the last player to be called will be the first player to reveal. The remaining
+     * players reveal clockwise from that player. If there's no "last player to be called" (everyone checked),
+     * then we start revealing from the first player after the dealer.
      *
      * @param currentHandSeatingMap seating map
      * @param lastPlayerToBeCalled  last called player, can be null

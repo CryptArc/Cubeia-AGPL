@@ -74,7 +74,7 @@ Poker.TableLayoutManager = Class.extend({
         this.capacity = capacity || this.capacity;
         this.seatTemplate = $("#seatTemplate").html();
         this.emptySeatTemplate = templateManager.getTemplate("emptySeatTemplate");
-        this.totalPotContainer = tableViewContainer.find(".total-pot").hide();
+        this.totalPotContainer = this.tableView.find(".total-pot").hide();
 
         for(var i = 0; i<this.capacity; i++){
             this.addEmptySeatContent(i,i,true);

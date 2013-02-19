@@ -30,6 +30,10 @@ public class MockTournamentScheduleProviderTest {
     @Test
     public void testPayoutsNotNull() {
         Collection<ScheduledTournamentConfiguration> schedule = new MockTournamentScheduleProvider().getTournamentSchedule();
-        assertThat(schedule.iterator().next().getConfiguration().getPayoutStructure(), notNullValue());
+        ScheduledTournamentConfiguration firstTournament = schedule.iterator().next();
+        
+        System.out.println("First tournament: "+firstTournament.getConfiguration());
+        
+		assertThat(firstTournament.getConfiguration().getPayoutStructure(), notNullValue());
     }
 }

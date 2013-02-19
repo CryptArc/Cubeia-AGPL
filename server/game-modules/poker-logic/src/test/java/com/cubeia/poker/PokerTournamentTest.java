@@ -41,6 +41,7 @@ public class PokerTournamentTest extends GuiceTest {
         // Blinds are auto.
         state.timeout();
         state.timeout();
+        state.timeout();
 
         assertAllPlayersHaveCards(mp, 2);
 
@@ -58,6 +59,7 @@ public class PokerTournamentTest extends GuiceTest {
         assertAllPlayersHaveCards(mp, 0);
 
         // Blinds
+        state.timeout();
         state.timeout();
         state.timeout();
 
@@ -85,6 +87,9 @@ public class PokerTournamentTest extends GuiceTest {
         state.timeout();
         state.timeout();
 
+        // Timeout for dealing pocket cards.
+        state.timeout();
+
         // Check that tournament players don't sit out.
         TestUtils.act(state, p[3], PokerActionType.FOLD);
         TestUtils.act(state, p[0], PokerActionType.FOLD);
@@ -95,6 +100,9 @@ public class PokerTournamentTest extends GuiceTest {
         state.timeout(); // starts next hand
 
         // P3 should post bb here.
+        state.timeout();
+
+        // Deal pocket cards.
         state.timeout();
 
         // Check that p0 is up to act

@@ -17,6 +17,12 @@
 
 package com.cubeia.games.poker.tournament.configuration.provider.mock;
 
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.Collection;
+
+import org.joda.time.DateTime;
+
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
 import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
@@ -26,13 +32,8 @@ import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
 import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructureParser;
 import com.cubeia.games.poker.tournament.configuration.provider.TournamentScheduleProvider;
 import com.cubeia.poker.timing.TimingFactory;
-import com.cubeia.poker.timing.TimingProfile;
+import com.cubeia.poker.timing.Timings;
 import com.google.common.collect.Lists;
-import org.joda.time.DateTime;
-
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.Collection;
 
 /**
  * This is a mock provider for providing the tournament schedule. A real implementation would fetch the tournament
@@ -45,17 +46,35 @@ public class MockTournamentScheduleProvider implements TournamentScheduleProvide
         InputStream resourceAsStream = getClass().getResourceAsStream("default_payouts.csv");
         PayoutStructure payouts = new PayoutStructureParser().parsePayouts(resourceAsStream);
         Collection<ScheduledTournamentConfiguration> tournamentConfigurations = Lists.newArrayList();
+        
         ScheduledTournamentConfiguration everyTenMinutes = everyTenMinutes();
         TournamentConfiguration configuration = everyTenMinutes.getConfiguration();
         configuration.setMinPlayers(2);
-        configuration.setMaxPlayers(100);
+        configuration.setMaxPlayers(1000);
         configuration.setBlindsStructure(BlindsStructureFactory.createDefaultBlindsStructure());
         configuration.setBuyIn(BigDecimal.valueOf(10));
         configuration.setFee(BigDecimal.valueOf(1));
         configuration.setPayoutStructure(payouts);
         configuration.setCurrency("EUR");
-        configuration.setTimingType(TimingFactory.getRegistry().getDefaultTimingProfile());
+        configuration.setStartingChips(100000);
+        configuration.setTimingType(TimingFactory.getRegistry().getTimingProfile(Timings.EXPRESS.name()));
         tournamentConfigurations.add(everyTenMinutes);
+        
+        
+        ScheduledTournamentConfiguration massiveQuickTourny = massiveSpeedTourny();
+        TournamentConfiguration speedCfg = massiveQuickTourny.getConfiguration();
+        speedCfg.setMinPlayers(20);
+        speedCfg.setMaxPlayers(10000);
+        speedCfg.setBlindsStructure(BlindsStructureFactory.createDefaultBlindsStructure());
+        speedCfg.setBuyIn(BigDecimal.valueOf(10));
+        speedCfg.setFee(BigDecimal.valueOf(1));
+        speedCfg.setPayoutStructure(payouts);
+        speedCfg.setCurrency("EUR");
+        speedCfg.setTimingType(TimingFactory.getRegistry().getTimingProfile(Timings.SUPER_EXPRESS.name()));
+        speedCfg.setStartingChips(100000);
+        tournamentConfigurations.add(massiveQuickTourny);
+        
+        
         return tournamentConfigurations;
     }
 
@@ -71,7 +90,13 @@ public class MockTournamentScheduleProvider implements TournamentScheduleProvide
 
     private ScheduledTournamentConfiguration everyTenMinutes() {
         TournamentSchedule tournamentSchedule = new TournamentSchedule(new DateTime(2011, 7, 5, 9, 0, 0).toDate(), new DateTime(2022, 7, 5, 9, 0, 0).toDate(),
+                "0 */5 * * * ?", 2, 3, 5);
+        return new ScheduledTournamentConfiguration(tournamentSchedule, "Every Five Minutes", 1);
+    }
+    
+    private ScheduledTournamentConfiguration massiveSpeedTourny() {
+        TournamentSchedule tournamentSchedule = new TournamentSchedule(new DateTime(2011, 7, 5, 9, 0, 0).toDate(), new DateTime(2022, 7, 5, 9, 0, 0).toDate(),
                 "0 */10 * * * ?", 3, 5, 5);
-        return new ScheduledTournamentConfiguration(tournamentSchedule, "Every Ten Minutes", 1);
+        return new ScheduledTournamentConfiguration(tournamentSchedule, "Massive Speed Tourny", 1);
     }
 }

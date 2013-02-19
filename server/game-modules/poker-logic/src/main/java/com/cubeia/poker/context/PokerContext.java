@@ -18,6 +18,7 @@
 package com.cubeia.poker.context;
 
 import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.Deck;
 import com.cubeia.poker.model.BlindsInfo;
 import com.cubeia.poker.model.BlindsLevel;
 import com.cubeia.poker.model.GameStateSnapshot;
@@ -113,16 +114,18 @@ public class PokerContext implements Serializable {
 
     private static final Logger log = LoggerFactory.getLogger(PokerContext.class);
 
+    private int seatIdToStartBettingFrom;
+
+    private Deck deck;
+
     public PokerContext(PokerSettings settings) {
         this.settings = settings;
     }
 
     /**
-     * Adds a player.
-     * <p/>
-     * TODO: Validation is required. Currently, a player can be seated in two seats. Possibly throw a checked exception.
+     * Adds a player to this game.
      *
-     * @param player
+     * @param player the player to add
      */
     public void addPlayer(PokerPlayer player) {
         playerMap.put(player.getId(), player);
@@ -131,6 +134,14 @@ public class PokerContext implements Serializable {
 
     public List<Card> getCommunityCards() {
         return communityCards;
+    }
+
+    public Deck getDeck() {
+        return deck;
+    }
+
+    public int getSeatIdToStartBettingFrom() {
+        return seatIdToStartBettingFrom;
     }
 
     public boolean isFinished() {
@@ -160,6 +171,14 @@ public class PokerContext implements Serializable {
             throw new IllegalStateException("no current hand seating map when getting player at dealer button");
         }
         return currentHandSeatingMap.get(blindsInfo.getDealerButtonSeatId());
+    }
+
+    public void setDeck(Deck deck) {
+        this.deck = deck;
+    }
+
+    public void setSeatIdToStartBettingFrom(int seatIdToStartBettingFrom) {
+        this.seatIdToStartBettingFrom = seatIdToStartBettingFrom;
     }
 
     /**

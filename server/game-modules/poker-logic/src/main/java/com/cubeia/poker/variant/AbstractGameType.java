@@ -22,7 +22,6 @@ import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.adapter.ServerAdapterHolder;
 import com.cubeia.poker.context.PokerContext;
-import com.cubeia.poker.hand.ExposeCardsHolder;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.player.PokerPlayerStatus;
 import com.cubeia.poker.pot.PotTransition;
@@ -35,7 +34,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 
 public abstract class AbstractGameType implements GameType {
 
@@ -50,31 +48,6 @@ public abstract class AbstractGameType implements GameType {
     private Collection<HandFinishedListener> handFinishedListeners = new HashSet<HandFinishedListener>();
 
     private static final Logger log = LoggerFactory.getLogger(AbstractGameType.class);
-
-    /**
-     * Expose all pocket cards for players still in the hand
-     * i.e. not folded. Will set a flag so that sequential calls
-     * will not generate any outgoing packets.
-
-     * @param playerRevealOrder the order in which cards should be revealed.
-     */
-    public void exposeShowdownCards(List<Integer> playerRevealOrder) {
-        ExposeCardsHolder holder = new ExposeCardsHolder();
-        for (int playerId : playerRevealOrder) {
-            PokerPlayer player = context.getPlayer(playerId);
-            if (!player.hasFolded() && !player.isExposingPocketCards()) {
-                holder.setExposedCards(playerId, player.getPrivatePocketCards());
-                player.setExposingPocketCards(true);
-            }
-        }
-        if (holder.hasCards()) {
-            exposePrivateCards(holder);
-        }
-    }
-
-    private void exposePrivateCards(ExposeCardsHolder holder) {
-        getServerAdapter().exposePrivateCards(holder);
-    }
 
     public void requestMultipleActions(Collection<ActionRequest> requests) {
         for (ActionRequest request : requests) {

@@ -45,7 +45,6 @@ public class ScheduledTournamentConfiguration implements Serializable {
 
     @ManyToOne(fetch = EAGER, cascade = ALL)
     private TournamentConfiguration configuration;
-    private boolean archived;
 
     public ScheduledTournamentConfiguration() {
         this.configuration = new TournamentConfiguration();
@@ -64,14 +63,6 @@ public class ScheduledTournamentConfiguration implements Serializable {
 
     public ScheduledTournamentInstance createInstanceWithStartTime(DateTime startTime) {
         return new ScheduledTournamentInstance(this, startTime);
-    }
-
-    public boolean isArchived() {
-        return archived;
-    }
-
-    public void setArchived(boolean archived) {
-        this.archived = archived;
     }
 
     public void setSchedule(TournamentSchedule schedule) {

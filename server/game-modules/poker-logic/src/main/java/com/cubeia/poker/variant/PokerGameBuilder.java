@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010 Cubeia Ltd <info@cubeia.com>
+ * Copyright (C) 2012 Cubeia Ltd <info@cubeia.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -15,29 +15,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.tournament.configuration.blinds;
+package com.cubeia.poker.variant;
+
+import com.cubeia.poker.rounds.RoundCreator;
 
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 
-public class BlindsStructureFactory {
+public class PokerGameBuilder {
 
-    public static BlindsStructure createDefaultBlindsStructure() {
-        List<Level> blindsLevelList = createBlindsLevels();
-        return new BlindsStructure(blindsLevelList);
+    private List<RoundCreator> rounds;
+
+    public GameType build() {
+        return new GenericPokerGame(rounds);
     }
 
-    private static List<Level> createBlindsLevels() {
-        List<Level> levels = newArrayList();
-        int smallBlind = 2000;
-        int bigBlind = 4000;
-        int ante = 0;
-        for (int i = 0; i < 20; i++) {
-            levels.add(new Level(smallBlind, bigBlind, ante, 1, false));
-            smallBlind *= 2;
-            bigBlind *= 2;
-        }
-        return levels;
+    public PokerGameBuilder withRounds(RoundCreator ... roundCreators) {
+        this.rounds = newArrayList(roundCreators);
+        return this;
     }
 }

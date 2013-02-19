@@ -17,17 +17,6 @@
 
 package com.cubeia.poker.variant.telesina;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
 import com.cubeia.poker.hand.Card;
@@ -47,8 +36,7 @@ import com.cubeia.poker.rounds.betting.BettingRound;
 import com.cubeia.poker.rounds.blinds.BlindsRound;
 import com.cubeia.poker.rounds.dealing.DealCommunityCardsRound;
 import com.cubeia.poker.rounds.dealing.DealExposedPocketCardsRound;
-import com.cubeia.poker.rounds.dealing.DealInitialPocketCardsRound;
-import com.cubeia.poker.rounds.dealing.Dealer;
+import com.cubeia.poker.rounds.dealing.DealPocketCardsRound;
 import com.cubeia.poker.rounds.dealing.ExposePrivateCardsRound;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.timing.Periods;
@@ -57,6 +45,14 @@ import com.cubeia.poker.variant.AbstractGameType;
 import com.cubeia.poker.variant.HandResultCreator;
 import com.cubeia.poker.variant.telesina.hand.TelesinaHandStrengthEvaluator;
 import com.google.common.annotations.VisibleForTesting;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Telesina game.
@@ -73,7 +69,7 @@ import com.google.common.annotations.VisibleForTesting;
  * 9  DealVelaCard, 1 + 4 & 1 community (vela)
  * 10  Betting round
  */
-public class Telesina extends AbstractGameType implements RoundVisitor, Dealer {
+public class Telesina extends AbstractGameType implements RoundVisitor {
 
     private static final int VELA_ROUND_ID = 4;
 
@@ -85,7 +81,7 @@ public class Telesina extends AbstractGameType implements RoundVisitor, Dealer {
 
     private TelesinaDealerButtonCalculator dealerButtonCalculator;
 
-    private TelesinaDeck deck;
+//    private TelesinaDeck deck;
 
     /**
      * Betting round sequence id:
@@ -121,9 +117,10 @@ public class Telesina extends AbstractGameType implements RoundVisitor, Dealer {
     private void initHand() {
         log.debug("init hand");
         resetPlayerPostedEntryBets();
-        deck = deckFactory.createNewDeck(getServerAdapter().getSystemRNG(), context.getTableSize());
+        context.setDeck(deckFactory.createNewDeck(getServerAdapter().getSystemRNG(), context.getTableSize()));
+        // TODO: Why do we need to tell the client how many cards the deck has? Why do we need to do it every hand?
         try {
-            getServerAdapter().notifyDeckInfo(deck.getTotalNumberOfCardsInDeck(), deck.getDeckLowestRank());
+            getServerAdapter().notifyDeckInfo(context.getDeck().getTotalNumberOfCardsInDeck(), context.getDeck().getDeckLowestRank());
         } catch (Throwable th) {
             log.error(th.getMessage(), th);
         }
@@ -152,39 +149,6 @@ public class Telesina extends AbstractGameType implements RoundVisitor, Dealer {
         }
     }
 
-    private void dealHiddenPocketCards(PokerPlayer p, int n) {
-        ArrayList<Card> cardsDealt = new ArrayList<Card>();
-        for (int i = 0; i < n; i++) {
-            Card card = deck.deal();
-            cardsDealt.add(card);
-            p.addPocketCard(card, false);
-        }
-        log.debug("notifying user {} of private cards: {}", p.getId(), cardsDealt);
-        getServerAdapter().notifyPrivateCards(p.getId(), cardsDealt);
-    }
-
-    private void dealExposedPocketCards(PokerPlayer player, int n) {
-        ArrayList<Card> cardsDealt = new ArrayList<Card>();
-        for (int i = 0; i < n; i++) {
-            Card card = deck.deal();
-            cardsDealt.add(card);
-            player.addPocketCard(card, true);
-        }
-        log.debug("notifying all users of private exposed cards to {}: {}", player.getId(), cardsDealt);
-        getServerAdapter().notifyPrivateExposedCards(player.getId(), cardsDealt);
-    }
-
-    private void dealCommunityCards(int n) {
-        List<Card> dealt = new LinkedList<Card>();
-        for (int i = 0; i < n; i++) {
-            dealt.add(deck.deal());
-        }
-        context.getCommunityCards().addAll(dealt);
-        getServerAdapter().notifyCommunityCards(dealt);
-
-        sendAllNonFoldedPlayersBestHand();
-    }
-
     public void handleFinishedRound() {
         ThreadLocalProfiler.add("Telesina.handleFinishedRound");
         log.debug("handle finished round: {}", getCurrentRound());
@@ -205,10 +169,6 @@ public class Telesina extends AbstractGameType implements RoundVisitor, Dealer {
     @VisibleForTesting
     protected boolean isHandFinished() {
         return (getBettingRoundId() >= 5 || context.countNonFoldedPlayers() <= 1);
-    }
-
-    public void dealCommunityCards() {
-        dealCommunityCards(1);
     }
 
     @VisibleForTesting
@@ -301,7 +261,7 @@ public class Telesina extends AbstractGameType implements RoundVisitor, Dealer {
     }
 
     private void startDealInitialCardsRound() {
-        setCurrentRound(roundFactory.createDealInitialCardsRound(this));
+        setCurrentRound(roundFactory.createDealInitialCardsRound(context, serverAdapterHolder));
         scheduleRoundTimeout();
 
     }
@@ -319,7 +279,7 @@ public class Telesina extends AbstractGameType implements RoundVisitor, Dealer {
         } else {
             if (context.isAtLeastAllButOneAllIn() && !context.haveAllPlayersExposedCards()) {
                 // All-in showdown.
-                setCurrentRound(roundFactory.createExposePrivateCardsRound(this, calculateRevealOrder()));
+                setCurrentRound(roundFactory.createExposePrivateCardsRound(context, serverAdapterHolder, new RevealOrderCalculator()));
                 scheduleRoundTimeout();
             } else {
                 startDealPocketOrVelaCardRound();
@@ -328,9 +288,6 @@ public class Telesina extends AbstractGameType implements RoundVisitor, Dealer {
     }
 
     private void handleFinishedHand() {
-        exposeShowdownCards(Collections.<Integer>emptyList());
-
-
         List<Integer> playerRevealOrder = calculateRevealOrder();
         TelesinaHandStrengthEvaluator evaluator = new TelesinaHandStrengthEvaluator(getDeckLowestRank());
         HandResultCreator resultCreator = new HandResultCreator(evaluator);
@@ -360,9 +317,9 @@ public class Telesina extends AbstractGameType implements RoundVisitor, Dealer {
     private void startDealPocketOrVelaCardRound() {
         ThreadLocalProfiler.add("Telesina.startDealPocketOrVelaCardRound");
         if (getBettingRoundId() == VELA_ROUND_ID) {
-            setCurrentRound(roundFactory.createDealCommunityCardsRound(this));
+            setCurrentRound(roundFactory.createDealCommunityCardsRound(context, serverAdapterHolder));
         } else {
-            setCurrentRound(roundFactory.createDealExposedPocketCardsRound(this));
+            setCurrentRound(roundFactory.createDealExposedPocketCardsRound(context, serverAdapterHolder));
         }
         scheduleRoundTimeout();
     }
@@ -391,36 +348,13 @@ public class Telesina extends AbstractGameType implements RoundVisitor, Dealer {
     @Override
     public void visit(DealExposedPocketCardsRound round) {
         log.debug("deal pocked cards round finished (betting round {})", getBettingRoundId());
+        sendAllNonFoldedPlayersBestHand();
         startBettingRound();
     }
 
     @Override
-    public void visit(DealInitialPocketCardsRound round) {
+    public void visit(DealPocketCardsRound round) {
         startBettingRound();
-    }
-
-    public void dealInitialPocketCards() {
-        dealHiddenPocketCards();
-        dealExposedPocketCards();
-    }
-
-    private void dealHiddenPocketCards() {
-        for (PokerPlayer p : context.getCurrentHandSeatingMap().values()) {
-            if (!p.hasFolded()) {
-                dealHiddenPocketCards(p, 1);
-            }
-        }
-    }
-
-    @VisibleForTesting
-    public void dealExposedPocketCards() {
-        for (PokerPlayer p : context.getCurrentHandSeatingMap().values()) {
-            if (!p.hasFolded()) {
-                dealExposedPocketCards(p, 1);
-            }
-        }
-
-        sendAllNonFoldedPlayersBestHand();
     }
 
     public void sendAllNonFoldedPlayersBestHand() {
@@ -431,7 +365,6 @@ public class Telesina extends AbstractGameType implements RoundVisitor, Dealer {
             }
         }
     }
-
 
     /**
      * Calculate the best hand for the player and send it.
@@ -473,7 +406,7 @@ public class Telesina extends AbstractGameType implements RoundVisitor, Dealer {
     }
 
     public Rank getDeckLowestRank() {
-        return deck.getDeckLowestRank();
+        return Rank.SEVEN;
     }
 
     @Override

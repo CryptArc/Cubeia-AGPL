@@ -107,11 +107,16 @@ public class BlindsRound implements Round, Serializable {
     }
 
     private void initBlinds() {
-        com.cubeia.poker.blinds.BlindsInfo newBlindsInfo = blindsCalculator.initializeBlinds(convertBlindsInfo(), context.getPlayerMap().values());
+        com.cubeia.poker.blinds.BlindsInfo newBlindsInfo = blindsCalculator.initializeBlinds(
+                convertBlindsInfo(),
+                context.getPlayerMap().values(),
+                isTournamentBlinds);
         if (newBlindsInfo != null) {
             setNewBlindsInfo(newBlindsInfo);
             moveDealerButtonToSeatId(newBlindsInfo.getDealerSeatId());
-            markMissedBlinds(blindsCalculator.getMissedBlinds());
+            if (!isTournamentBlinds()) {
+                markMissedBlinds(blindsCalculator.getMissedBlinds());
+            }
 
             if (newBlindsInfo.getSmallBlindPlayerId() != -1) {
                 requestSmallBlind(getPlayerInSeat(newBlindsInfo.getSmallBlindSeatId()));
@@ -253,7 +258,7 @@ public class BlindsRound implements Round, Serializable {
     }
 
     public void bigBlindPosted() {
-        entryBetters = blindsCalculator.getEntryBetters(blindsInfo.getDealerButtonSeatId(), blindsInfo.getBigBlindSeatId(), blindsInfo.getBigBlindSeatId());
+        entryBetters = blindsCalculator.getEntryBetters(blindsInfo.getDealerButtonSeatId(), blindsInfo.getSmallBlindSeatId(), blindsInfo.getBigBlindSeatId());
         askForNextEntryBetOrFinishBlindsRound();
     }
 
@@ -395,12 +400,6 @@ public class BlindsRound implements Round, Serializable {
 
     public void visit(RoundVisitor visitor) {
         visitor.visit(this);
-    }
-
-    // FIXME: Actually check who we are waiting for
-    @Override
-    public boolean isWaitingForPlayer(int playerId) {
-        return false;
     }
 
     public int getPendingEntryBetterId() {
