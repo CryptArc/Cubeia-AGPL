@@ -43,6 +43,7 @@ import com.cubeia.firebase.api.mtt.seating.SeatingContainer;
 import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.firebase.api.mtt.support.tables.Move;
 import com.cubeia.firebase.api.mtt.support.tables.TableBalancer;
+import com.cubeia.firebase.api.service.mttplayerreg.TournamentPlayerRegistry;
 import com.cubeia.firebase.guice.tournament.TournamentAssist;
 import com.cubeia.games.poker.common.money.Money;
 import com.cubeia.games.poker.common.time.SystemTime;
@@ -114,6 +115,7 @@ public class PokerTournament implements Serializable {
 
     private PokerTournamentState pokerState;
 
+    // TODO: Move all transient dependencies to a "TransientDependencies" class?
     private transient SystemTime dateFetcher;
 
     private transient MTTStateSupport state;
@@ -130,6 +132,8 @@ public class PokerTournament implements Serializable {
 
     private transient ShutdownServiceContract shutdownService;
 
+    private transient TournamentPlayerRegistry tournamentPlayerRegistry;
+
     public PokerTournament(PokerTournamentState pokerState) {
         this.pokerState = pokerState;
     }
@@ -142,13 +146,16 @@ public class PokerTournament implements Serializable {
      */
     public void handlePlayerLeft(PlayerLeft playerLeft) {
         if (pokerState.isSitAndGo()) {
-            unregisterPlayer(playerLeft.getPlayerId());
+            int playerId = playerLeft.getPlayerId();
+            unregisterPlayer(playerId);
+            tournamentPlayerRegistry.unregister(playerId, instance.getId());
+            state.getPlayerRegistry().removePlayer(playerId);
         }
     }
 
     public void injectTransientDependencies(MttInstance instance, TournamentAssist support, MTTStateSupport state,
             TournamentHistoryPersistenceService historyService, CashGamesBackendService backend, SystemTime dateFetcher,
-            ShutdownServiceContract shutdownService, PacketSender sender) {
+            ShutdownServiceContract shutdownService, TournamentPlayerRegistry tournamentPlayerRegistry, PacketSender sender) {
         this.instance = instance;
         this.mttSupport = support;
         this.state = state;
@@ -156,6 +163,7 @@ public class PokerTournament implements Serializable {
         this.backend = backend;
         this.dateFetcher = dateFetcher;
         this.shutdownService = shutdownService;
+        this.tournamentPlayerRegistry = tournamentPlayerRegistry;
         this.sender = sender;
     }
 

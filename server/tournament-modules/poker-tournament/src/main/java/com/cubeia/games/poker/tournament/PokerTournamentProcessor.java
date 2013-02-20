@@ -31,6 +31,7 @@ import com.cubeia.firebase.api.mtt.model.MttRegistrationRequest;
 import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.firebase.api.mtt.support.registry.PlayerInterceptor;
 import com.cubeia.firebase.api.mtt.support.registry.PlayerListener;
+import com.cubeia.firebase.api.service.mttplayerreg.TournamentPlayerRegistry;
 import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.firebase.guice.tournament.TournamentAssist;
 import com.cubeia.firebase.guice.tournament.TournamentHandler;
@@ -91,6 +92,9 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
 
     @Service(proxy = true)
     private ShutdownServiceContract shutdownService;
+
+    @Service(proxy = true)
+    private TournamentPlayerRegistry tournamentPlayerRegistry;
 
     @Override
     public PlayerInterceptor getPlayerInterceptor(MTTStateSupport state) {
@@ -241,11 +245,11 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
         initializeServices(instance);
 
         PacketSender sender = senderFactory.create(instance.getMttNotifier(), instance);
-        tournament.injectTransientDependencies(instance, support, util.getStateSupport(instance), historyService, backend, dateFetcher, shutdownService, sender);
+        tournament.injectTransientDependencies(instance, support, util.getStateSupport(instance), historyService,
+                backend, dateFetcher, shutdownService, tournamentPlayerRegistry, sender);
     }
 
     private void initializeServices(MttInstance instance) {
-        // Make sure we have the services. Note, this is really only used via tests.
         if (historyService == null) {
             historyService = instance.getServiceRegistry().getServiceInstance(TournamentHistoryPersistenceService.class);
         }
@@ -254,6 +258,9 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
         }
         if (shutdownService == null) {
             shutdownService = instance.getServiceRegistry().getServiceInstance(ShutdownServiceContract.class);
+        }
+        if (tournamentPlayerRegistry == null) {
+            tournamentPlayerRegistry = instance.getServiceRegistry().getServiceInstance(TournamentPlayerRegistry.class);
         }
     }
 
@@ -293,5 +300,10 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
     @VisibleForTesting
     public void setSenderFactory(PacketSenderFactory senderFactory) {
         this.senderFactory = senderFactory;
+    }
+
+    @VisibleForTesting
+    public void setTournamentRegistryService(TournamentPlayerRegistry tournamentPlayerRegistry) {
+        this.tournamentPlayerRegistry = tournamentPlayerRegistry;
     }
 }

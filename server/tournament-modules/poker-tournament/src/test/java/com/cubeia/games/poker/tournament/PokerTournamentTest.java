@@ -35,6 +35,7 @@ import com.cubeia.firebase.api.mtt.model.MttRegistrationRequest;
 import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.firebase.api.mtt.support.registry.PlayerRegistry;
 import com.cubeia.firebase.api.scheduler.Scheduler;
+import com.cubeia.firebase.api.service.mttplayerreg.TournamentPlayerRegistry;
 import com.cubeia.firebase.guice.tournament.TournamentAssist;
 import com.cubeia.games.poker.common.time.DefaultSystemTime;
 import com.cubeia.games.poker.common.time.SystemTime;
@@ -136,6 +137,9 @@ public class PokerTournamentTest {
 
     @Mock
     private PlayerRegistry mockRegistry;
+
+    @Mock
+    private TournamentPlayerRegistry tournamentPlayerRegistry;
 
     private PokerTournament tournament;
 
@@ -433,20 +437,21 @@ public class PokerTournamentTest {
         lifeCycle = new ScheduledTournamentLifeCycle(startTime, openRegistrationTime);
         pokerState.setLifecycle(lifeCycle);
         tournament = new PokerTournament(pokerState);
-        tournament.injectTransientDependencies(instance, support, state, historyService, backend, dateFetcher, shutdownService, sender);
+        tournament.injectTransientDependencies(instance, support, state, historyService, backend, dateFetcher, shutdownService, tournamentPlayerRegistry, sender);
         return lifeCycle;
     }
 
     private void prepareTournamentWithMockLifecycle() {
         pokerState.setLifecycle(mockLifeCycle);
         tournament = new PokerTournament(pokerState);
-        tournament.injectTransientDependencies(instance, support, state, historyService, backend, dateFetcher, shutdownService, sender);
+        tournament.injectTransientDependencies(instance, support, state, historyService, backend, dateFetcher, shutdownService, tournamentPlayerRegistry, sender);
         pokerState.setBlindsStructure(createDefaultBlindsStructure());
     }
 
     private void prepareTournamentWithMockTournamentState() {
         tournament = new PokerTournament(mockPokerState);
-        tournament.injectTransientDependencies(instance, support, state, historyService, backend, new DefaultSystemTime(), shutdownService, sender);
+        tournament.injectTransientDependencies(instance, support, state, historyService, backend, new DefaultSystemTime(), shutdownService,
+                tournamentPlayerRegistry, sender);
         pokerState.setBlindsStructure(createDefaultBlindsStructure());
     }
 }
