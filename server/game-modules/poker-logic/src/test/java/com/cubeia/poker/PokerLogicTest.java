@@ -40,92 +40,82 @@ public class PokerLogicTest extends GuiceTest {
         super.setUp();
     }
 
-//    public void testSimpleHoldemHand() {
-//        MockPlayer[] mp = TestUtils.createMockPlayers(4);
-//        int[] p = TestUtils.createPlayerIdArray(mp);
-//        assertEquals(4, p.length);
-//        addPlayers(state, mp);
-//        assertEquals(4, state.getSeatedPlayers().size());
-//
-//        int chipsInPlay = countChipsAtTable(p);
-//
-//        // Force start
-//        state.timeout();
-//
-//        // Blinds
-//        act(p[1], PokerActionType.SMALL_BLIND);
-//
-//        assertTrue(mp[2].isActionPossible(PokerActionType.BIG_BLIND));
-//        assertEquals(102, mockServerAdapter.getLastActionRequest().getPlayerId());
-//        act(p[2], PokerActionType.BIG_BLIND);
-//
-//        assertTrue(mp[2].hasOption());
-//        assertAllPlayersHaveCards(mp, 2);
-//
-//        assertEquals(0, state.getCommunityCards().size());
-//
-//        // Pre flop round
-//        assertEquals(103, mockServerAdapter.getLastActionRequest().getPlayerId());
-//        act(p[3], PokerActionType.CALL);
-//        assertTrue(mp[3].hasActed());
-//        assertEquals(100, mockServerAdapter.getLastActionRequest().getPlayerId());
-//        act(p[0], PokerActionType.CALL);
-//        act(p[1], PokerActionType.CALL);
-//        act(p[2], PokerActionType.CHECK);
-//        // everyone checked so now we should be in DealCommunityCards round
-//
-//        assertEquals(3, state.getCommunityCards().size());
-//
-//        assertThat(getCurrentRoundId(), is(0));
-//
-//        // Trigger deal community cards
-//        state.timeout(); // timeout deal community cards. Starts a new betting round
-//
-//        assertThat(getCurrentRoundId(), is(1));
-//
-//        assertEquals(3, state.getCommunityCards().size());
-//
-//        // Flop round
-//        act(p[1], PokerActionType.BET);
-//        act(p[2], PokerActionType.CALL);
-//        act(p[3], PokerActionType.CALL);
-//        act(p[0], PokerActionType.CALL);
-//
-//        assertEquals(4, state.getCommunityCards().size());
-//
-//        // Trigger deal community cards
-//        state.timeout();// timeout deal community cards. Starts a new betting round
-//
-//
-//        // Turn round
-//        act(p[1], PokerActionType.CHECK);
-//        act(p[2], PokerActionType.BET);
-//        act(p[3], PokerActionType.FOLD);
-//        act(p[0], PokerActionType.FOLD);
-//        act(p[1], PokerActionType.CALL);
-//
-//        // Trigger deal community cards
-//        state.timeout();
-//
-//        assertEquals(5, state.getCommunityCards().size());
-//
-//        // River round
-//        act(p[1], PokerActionType.CHECK);
-//        act(p[2], PokerActionType.BET);
-//        act(p[1], PokerActionType.FOLD);
-//
-//        // Assertions
-//        assertTrue(state.isFinished());
-//
-//        // Check that we didn't create or lose any chips.
-//        assertEquals(chipsInPlay, countChipsAtTable(p));
-//    }
+    public void testSimpleHoldemHand() {
+        MockPlayer[] mp = TestUtils.createMockPlayers(4);
+        int[] p = TestUtils.createPlayerIdArray(mp);
+        assertEquals(4, p.length);
+        addPlayers(state, mp);
+        assertEquals(4, state.getSeatedPlayers().size());
 
-    // TODO!
-//    private int getCurrentRoundId() {
-//        int roundId = ((TexasHoldem) state.getGameType()).getCurrentRoundId();
-//        return roundId;
-//    }
+        int chipsInPlay = countChipsAtTable(p);
+
+        // Force start
+        state.timeout();
+
+        // Blinds
+        act(p[1], PokerActionType.SMALL_BLIND);
+
+        assertTrue(mp[2].isActionPossible(PokerActionType.BIG_BLIND));
+        assertEquals(102, mockServerAdapter.getLastActionRequest().getPlayerId());
+        act(p[2], PokerActionType.BIG_BLIND);
+
+        assertTrue(mp[2].hasOption());
+        assertAllPlayersHaveCards(mp, 2);
+
+        assertEquals(0, state.getCommunityCards().size());
+        state.timeout();
+
+        // Pre flop round
+        assertEquals(103, mockServerAdapter.getLastActionRequest().getPlayerId());
+        act(p[3], PokerActionType.CALL);
+        assertTrue(mp[3].hasActed());
+        assertEquals(100, mockServerAdapter.getLastActionRequest().getPlayerId());
+        act(p[0], PokerActionType.CALL);
+        act(p[1], PokerActionType.CALL);
+        act(p[2], PokerActionType.CHECK);
+        // everyone checked so now we should be in DealCommunityCards round
+
+        assertEquals(3, state.getCommunityCards().size());
+
+        // Trigger deal community cards
+        state.timeout(); // timeout deal community cards. Starts a new betting round
+
+        assertEquals(3, state.getCommunityCards().size());
+
+        // Flop round
+        act(p[1], PokerActionType.BET);
+        act(p[2], PokerActionType.CALL);
+        act(p[3], PokerActionType.CALL);
+        act(p[0], PokerActionType.CALL);
+
+        assertEquals(4, state.getCommunityCards().size());
+
+        // Trigger deal community cards
+        state.timeout();// timeout deal community cards. Starts a new betting round
+
+        // Turn round
+        act(p[1], PokerActionType.CHECK);
+        act(p[2], PokerActionType.BET);
+        act(p[3], PokerActionType.FOLD);
+        act(p[0], PokerActionType.FOLD);
+        act(p[1], PokerActionType.CALL);
+
+        // Trigger deal community cards
+        state.timeout();
+
+        assertEquals(5, state.getCommunityCards().size());
+
+        // River round
+        act(p[1], PokerActionType.CHECK);
+        act(p[2], PokerActionType.BET);
+        act(p[1], PokerActionType.FOLD);
+
+        // Assertions
+        assertTrue(state.isFinished());
+
+        // Check that we didn't create or lose any chips.
+        assertEquals(chipsInPlay, countChipsAtTable(p));
+    }
 
     private int countChipsAtTable(int[] p) {
         int chipsInPlay = 0;
@@ -305,46 +295,6 @@ public class PokerLogicTest extends GuiceTest {
 
         assertEquals(chipsInPlay, countChipsAtTable(p));
     }
-
-    public void testTimeoutInfiniteLoop() {
-        MockPlayer[] mp = TestUtils.createMockPlayers(2);
-        addPlayers(state, mp);
-
-        // Force start
-        state.timeout();
-
-        // Small blind times out.
-        state.timeout();
-
-        // Start next hand
-        state.timeout();
-
-        // FIXME: This test is correct, but we are currently auto-sitting in people,
-        // see fixme in WaitingToStartState.
-        // assertEquals(PokerState.NOT_STARTED, game.getGameState());
-    }
-
-    // TODO!
-//    public void testStartGame() {
-//        createGame(3);
-//        // Trigger timeout that should start the game
-//        state.timeout();
-//
-//        assertEquals(PokerState.PLAYING, state.getGameState());
-//    }
-
-    // TODO!
-//    public void testSeatTwoPlayersAndLeave() {
-//        createGame(2);
-//
-//        // Remove one player
-//        state.removePlayer(ps[0]);
-//
-//        // Trigger timeout
-//        state.timeout();
-//
-//        assertEquals(PokerState.NOT_STARTED, state.getGameState());
-//    }
 
     public void testEndHandReport() {
         MockPlayer[] mp = TestUtils.createMockPlayers(2);

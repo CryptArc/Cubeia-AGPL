@@ -86,57 +86,8 @@ public class ActionTransformer {
         return packet;
     }
 
-    public PokerActionType transform(ActionType protocol) {
-        PokerActionType type;
-        switch (protocol) {
-            case FOLD:
-                type = PokerActionType.FOLD;
-                break;
-
-            case CHECK:
-                type = PokerActionType.CHECK;
-                break;
-
-            case CALL:
-                type = PokerActionType.CALL;
-                break;
-
-            case BET:
-                type = PokerActionType.BET;
-                break;
-
-            case BIG_BLIND:
-                type = PokerActionType.BIG_BLIND;
-                break;
-
-            case SMALL_BLIND:
-                type = PokerActionType.SMALL_BLIND;
-                break;
-
-            case RAISE:
-                type = PokerActionType.RAISE;
-                break;
-
-            case DECLINE_ENTRY_BET:
-                type = PokerActionType.DECLINE_ENTRY_BET;
-                break;
-
-            case ANTE:
-                type = PokerActionType.ANTE;
-                break;
-
-            case BIG_BLIND_PLUS_DEAD_SMALL_BLIND:
-                type = PokerActionType.BIG_BLIND_PLUS_DEAD_SMALL_BLIND;
-                break;
-
-            case DEAD_SMALL_BLIND:
-                type = PokerActionType.DEAD_SMALL_BLIND;
-                break;
-
-            default:
-                throw new UnsupportedOperationException("unsupported action type: " + protocol.name());
-        }
-        return type;
+    public PokerActionType transform(ActionType actionType) {
+        return PokerActionType.valueOf(actionType.name());
     }
 
     @VisibleForTesting
@@ -148,32 +99,7 @@ public class ActionTransformer {
     }
 
     public ActionType fromPokerActionTypeToProtocolActionType(PokerActionType actionType) {
-        switch (actionType) {
-            case FOLD:
-                return ActionType.FOLD;
-            case CHECK:
-                return ActionType.CHECK;
-            case CALL:
-                return ActionType.CALL;
-            case BET:
-                return ActionType.BET;
-            case BIG_BLIND:
-                return ActionType.BIG_BLIND;
-            case SMALL_BLIND:
-                return ActionType.SMALL_BLIND;
-            case RAISE:
-                return ActionType.RAISE;
-            case DECLINE_ENTRY_BET:
-                return ActionType.DECLINE_ENTRY_BET;
-            case ANTE:
-                return ActionType.ANTE;
-            case BIG_BLIND_PLUS_DEAD_SMALL_BLIND:
-                return ActionType.BIG_BLIND_PLUS_DEAD_SMALL_BLIND;
-            case DEAD_SMALL_BLIND:
-                return ActionType.DEAD_SMALL_BLIND;
-            default:
-                throw new UnsupportedOperationException("unsupported action type: " + actionType.name());
-        }
+        return ActionType.valueOf(actionType.name());
     }
 
     /**

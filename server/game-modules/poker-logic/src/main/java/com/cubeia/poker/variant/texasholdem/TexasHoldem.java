@@ -337,4 +337,8 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
     public boolean canPlayerAffordEntryBet(PokerPlayer player, PokerSettings settings, boolean includePending) {
         return player.getBalance() + (includePending ? player.getPendingBalanceSum() : 0) >= settings.getBigBlindAmount();
     }
+
+    public void setRevealOrderCalculator(RevealOrderCalculator revealOrderCalculator) {
+        this.revealOrderCalculator = revealOrderCalculator;
+    }
 }

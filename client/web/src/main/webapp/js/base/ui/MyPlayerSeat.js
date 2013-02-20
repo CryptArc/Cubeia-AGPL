@@ -84,8 +84,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
     activateSeat : function(allowedActions, timeToAct,mainPot,fixedLimit) {
         console.log("ON REQUEST ACTION FOR table = " + this.tableId);
         var blindsHandled = this.handleBlinds(allowedActions);
-        if(blindsHandled == false) {
-
+        if (!blindsHandled) {
             if(this.circularProgressBar!=null) {
                 this.circularProgressBar.detach();
             }
@@ -106,11 +105,14 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
             var action = allowedActions[i];
             //TODO: add a wait for big blind option
             if (action.type == Poker.ActionType.BIG_BLIND || action.type == Poker.ActionType.SMALL_BLIND ||
-                action.type == Poker.ActionType.DEAD_SMALL_BLIND || action.type == Poker.ActionType.BIG_BLIND_PLUS_DEAD_SMALL_BLIND) {
-                console.log("BLIND no more actions = " + this.noMoreBlinds);
+                action.type == Poker.ActionType.DEAD_SMALL_BLIND || action.type == Poker.ActionType.BIG_BLIND_PLUS_DEAD_SMALL_BLIND ||
+                action.type == Poker.ActionType.ENTRY_BET) {
+                console.log("No more blinds? = " + this.noMoreBlinds);
                 if (this.noMoreBlinds) {
                     requestHandler.onMyPlayerAction(Poker.ActionType.DECLINE_ENTRY_BET, 0);
                 } else {
+                    console.log("Auto posting blind of type: ");
+                    console.log(action.type);
                     requestHandler.onMyPlayerAction(action.type, action.minAmount);
                 }
                 return true;

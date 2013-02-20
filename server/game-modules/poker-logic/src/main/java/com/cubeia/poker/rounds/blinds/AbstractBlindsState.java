@@ -40,6 +40,18 @@ public abstract class AbstractBlindsState implements BlindsState {
     }
 
     @Override
+    public boolean entryBet(int playerId, PokerContext context, BlindsRound blindsRound) {
+        log.debug("Ignoring entryBet from player " + playerId + " in state " + this);
+        return false;
+    }
+
+    @Override
+    public boolean waitForBigBlind(int playerId, PokerContext context, BlindsRound round) {
+        log.debug("Ignoring waitForBigBlind from player " + playerId + " in state " + this);
+        return false;
+    }
+
+    @Override
     public boolean declineEntryBet(int playerId, PokerContext context, BlindsRound blindsRound) {
         log.debug("Ignoring declineEntryBet from player " + playerId + " in state " + this);
         return false;

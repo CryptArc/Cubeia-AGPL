@@ -30,16 +30,16 @@ public class WaitingForEntryBetState extends AbstractBlindsState {
     private static transient Logger log = Logger.getLogger(WaitingForEntryBetState.class);
 
     @Override
-    public boolean bigBlind(int playerId, PokerContext context, BlindsRound blindsRound) {
+    public boolean entryBet(int playerId, PokerContext context, BlindsRound blindsRound) {
         PokerPlayer player = context.getPlayerInCurrentHand(playerId);
         ActionRequest actionRequest = player.getActionRequest();
-        if (actionRequest != null && actionRequest.isOptionEnabled(PokerActionType.BIG_BLIND)) {
+        if (actionRequest != null && actionRequest.isOptionEnabled(PokerActionType.ENTRY_BET)) {
             player.setHasPostedEntryBet(true);
             player.addBetOrGoAllIn(context.getSettings().getBigBlindAmount());
             blindsRound.entryBetPosted();
             return true;
         } else {
-            log.info("Player " + player + " is not allowed to post big blind. Options were " + actionRequest);
+            log.info("Player " + player + " is not allowed to post entry bet. Options were " + actionRequest);
             return false;
         }
     }
@@ -53,6 +53,19 @@ public class WaitingForEntryBetState extends AbstractBlindsState {
             return true;
         } else {
             log.info("Player " + player + " is not allowed to decline entry bet.");
+            return false;
+        }
+    }
+
+    @Override
+    public boolean waitForBigBlind(int playerId, PokerContext context, BlindsRound round) {
+        PokerPlayer player = context.getPlayerInCurrentHand(playerId);
+        ActionRequest actionRequest = player.getActionRequest();
+        if (actionRequest != null && actionRequest.isOptionEnabled(PokerActionType.WAIT_FOR_BIG_BLIND)) {
+            round.askForNextEntryBetOrFinishBlindsRound();
+            return true;
+        } else {
+            log.info("Player " + player + " was not asked to post an entry bet.");
             return false;
         }
     }

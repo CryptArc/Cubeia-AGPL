@@ -67,6 +67,8 @@
         <value>ANTE</value>
         <value>BIG_BLIND_PLUS_DEAD_SMALL_BLIND</value>
         <value>DEAD_SMALL_BLIND</value>
+        <value>ENTRY_BET</value>
+        <value>WAIT_FOR_BIG_BLIND</value>
     </enum>
 
     <enum name="pot_type">

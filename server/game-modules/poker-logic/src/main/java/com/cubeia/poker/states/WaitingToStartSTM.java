@@ -82,6 +82,7 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
         }
         for (PokerPlayer player : context.getSeatedPlayers()) {
             if (player.isSittingOutNextHand()) {
+                log.debug("Player " + player.getId() + " wants to sit out.");
                 markPlayerAsSittingOut(player);
             }
         }

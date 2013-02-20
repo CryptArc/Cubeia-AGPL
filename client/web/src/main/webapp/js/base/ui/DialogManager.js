@@ -91,8 +91,8 @@ Poker.DialogManager = Class.extend({
         }
 
         var targetFontSize =  Math.round(90* $(window).width()/1024);
-        if(targetFontSize>125) {
-            targetFontSize=125;
+        if (targetFontSize > 125) {
+            targetFontSize = 125;
         }
 
         var faceBox = $("#facebox");
@@ -100,7 +100,7 @@ Poker.DialogManager = Class.extend({
         faceBox.find(".dialog-cancel-button").touchSafeClick(function(){
             self.close();
         });
-        $("#facebox .dialog-ok-button").touchSafeClick(function() {
+        faceBox.find(".dialog-ok-button").touchSafeClick(function() {
             if (okCallback() || !okCallback) {
                 self.close();
             }

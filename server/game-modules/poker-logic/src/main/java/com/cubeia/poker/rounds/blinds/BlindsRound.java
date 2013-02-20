@@ -181,6 +181,13 @@ public class BlindsRound implements Round, Serializable {
         }
     }
 
+    private void requestEntryBet(PokerPlayer player) {
+        player.enableOption(new PossibleAction(PokerActionType.ENTRY_BET, settings.getBigBlindAmount()));
+        player.enableOption(new PossibleAction(PokerActionType.DECLINE_ENTRY_BET));
+        player.enableOption(new PossibleAction(PokerActionType.WAIT_FOR_BIG_BLIND));
+        roundHelper.requestAction(player.getActionRequest());
+    }
+
     private void moveDealerButtonToSeatId(int newDealerSeatId) {
         blindsInfo.setDealerButtonSeatId(newDealerSeatId);
         getServerAdapter().notifyDealerButton(blindsInfo.getDealerButtonSeatId());
@@ -222,6 +229,12 @@ public class BlindsRound implements Round, Serializable {
                 break;
             case DEAD_SMALL_BLIND:
                 handled = currentState.deadSmallBlind(action.getPlayerId(), context, this);
+                break;
+            case ENTRY_BET:
+                handled = currentState.entryBet(action.getPlayerId(), context, this);
+                break;
+            case WAIT_FOR_BIG_BLIND:
+                handled = currentState.waitForBigBlind(action.getPlayerId(), context, this);
                 break;
             default:
                 log.debug(action.getActionType() + " is not legal here");
@@ -279,7 +292,7 @@ public class BlindsRound implements Round, Serializable {
             PokerPlayer player = context.getPlayer(entryBetter.getPlayer().getId());
             if (entryBetter.getEntryBetType() == EntryBetType.BIG_BLIND) {
                 log.debug("Requesting entry big blind from " + player);
-                requestBigBlind(player);
+                requestEntryBet(player);
             } else if (entryBetter.getEntryBetType() == EntryBetType.DEAD_SMALL_BLIND) {
                 requestDeadSmallBlind(player);
             } else if (entryBetter.getEntryBetType() == EntryBetType.BIG_BLIND_PLUS_DEAD_SMALL_BLIND) {
@@ -333,6 +346,7 @@ public class BlindsRound implements Round, Serializable {
 
         player.enableOption(new PossibleAction(PokerActionType.BIG_BLIND_PLUS_DEAD_SMALL_BLIND, settings.getBigBlindAmount() + settings.getSmallBlindAmount()));
         player.enableOption(new PossibleAction(PokerActionType.DECLINE_ENTRY_BET));
+        player.enableOption(new PossibleAction(PokerActionType.WAIT_FOR_BIG_BLIND));
         roundHelper.requestAction(player.getActionRequest());
     }
 
@@ -341,6 +355,7 @@ public class BlindsRound implements Round, Serializable {
 
         player.enableOption(new PossibleAction(PokerActionType.DEAD_SMALL_BLIND, settings.getSmallBlindAmount()));
         player.enableOption(new PossibleAction(PokerActionType.DECLINE_ENTRY_BET));
+        player.enableOption(new PossibleAction(PokerActionType.WAIT_FOR_BIG_BLIND));
         roundHelper.requestAction(player.getActionRequest());
     }
 
@@ -374,7 +389,7 @@ public class BlindsRound implements Round, Serializable {
         askForNextEntryBetOrFinishBlindsRound();
     }
 
-    private void askForNextEntryBetOrFinishBlindsRound() {
+    public void askForNextEntryBetOrFinishBlindsRound() {
         if (!isTournamentBlinds() && thereAreUnEnteredPlayersBetweenBigBlindAndDealerButton()) {
             log.debug("There are unentered players, requesting entry bet");
             this.currentState = WAITING_FOR_ENTRY_BET_STATE;

@@ -8,7 +8,7 @@ com.cubeia.games.poker.io = com.cubeia.games.poker.io || {};
 com.cubeia.games.poker.io.protocol = com.cubeia.games.poker.io.protocol || {};
 
 
-com.cubeia.games.poker.io.protocol.ActionTypeEnum = function () {
+com.cubeia.games.poker.io.protocol.ActionTypeEnum = function() {
 };
 com.cubeia.games.poker.io.protocol.ActionTypeEnum.SMALL_BLIND = 0;
 com.cubeia.games.poker.io.protocol.ActionTypeEnum.BIG_BLIND = 1;
@@ -21,7 +21,9 @@ com.cubeia.games.poker.io.protocol.ActionTypeEnum.DECLINE_ENTRY_BET = 7;
 com.cubeia.games.poker.io.protocol.ActionTypeEnum.ANTE = 8;
 com.cubeia.games.poker.io.protocol.ActionTypeEnum.BIG_BLIND_PLUS_DEAD_SMALL_BLIND = 9;
 com.cubeia.games.poker.io.protocol.ActionTypeEnum.DEAD_SMALL_BLIND = 10;
-com.cubeia.games.poker.io.protocol.ActionTypeEnum.makeActionTypeEnum = function (a) {
+com.cubeia.games.poker.io.protocol.ActionTypeEnum.ENTRY_BET = 11;
+com.cubeia.games.poker.io.protocol.ActionTypeEnum.WAIT_FOR_BIG_BLIND = 12;
+com.cubeia.games.poker.io.protocol.ActionTypeEnum.makeActionTypeEnum = function(a) {
     switch (a) {
         case 0:
             return com.cubeia.games.poker.io.protocol.ActionTypeEnum.SMALL_BLIND;
@@ -44,11 +46,15 @@ com.cubeia.games.poker.io.protocol.ActionTypeEnum.makeActionTypeEnum = function 
         case 9:
             return com.cubeia.games.poker.io.protocol.ActionTypeEnum.BIG_BLIND_PLUS_DEAD_SMALL_BLIND;
         case 10:
-            return com.cubeia.games.poker.io.protocol.ActionTypeEnum.DEAD_SMALL_BLIND
+            return com.cubeia.games.poker.io.protocol.ActionTypeEnum.DEAD_SMALL_BLIND;
+        case 11:
+            return com.cubeia.games.poker.io.protocol.ActionTypeEnum.ENTRY_BET;
+        case 12:
+            return com.cubeia.games.poker.io.protocol.ActionTypeEnum.WAIT_FOR_BIG_BLIND
     }
     return -1
 };
-com.cubeia.games.poker.io.protocol.ActionTypeEnum.toString = function (a) {
+com.cubeia.games.poker.io.protocol.ActionTypeEnum.toString = function(a) {
     switch (a) {
         case 0:
             return"SMALL_BLIND";
@@ -71,18 +77,22 @@ com.cubeia.games.poker.io.protocol.ActionTypeEnum.toString = function (a) {
         case 9:
             return"BIG_BLIND_PLUS_DEAD_SMALL_BLIND";
         case 10:
-            return"DEAD_SMALL_BLIND"
+            return"DEAD_SMALL_BLIND";
+        case 11:
+            return"ENTRY_BET";
+        case 12:
+            return"WAIT_FOR_BIG_BLIND"
     }
     return"INVALID_ENUM_VALUE"
 };
-com.cubeia.games.poker.io.protocol.BestHand = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.BestHand = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.BestHand.CLASSID
     };
     this.player = {};
     this.handType = {};
     this.cards = [];
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.player);
         a.writeUnsignedByte(this.handType);
@@ -93,7 +103,7 @@ com.cubeia.games.poker.io.protocol.BestHand = function () {
         }
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.player = a.readInt();
         this.handType = com.cubeia.games.poker.io.protocol.HandTypeEnum.makeHandTypeEnum(a.readUnsignedByte());
         var b;
@@ -106,7 +116,7 @@ com.cubeia.games.poker.io.protocol.BestHand = function () {
             this.cards.push(c)
         }
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.BestHand";
@@ -121,12 +131,12 @@ com.cubeia.games.poker.io.protocol.BestHand = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.BestHand.CLASSID = 6;
-com.cubeia.games.poker.io.protocol.BetStrategyEnum = function () {
+com.cubeia.games.poker.io.protocol.BetStrategyEnum = function() {
 };
 com.cubeia.games.poker.io.protocol.BetStrategyEnum.FIXED_LIMIT = 0;
 com.cubeia.games.poker.io.protocol.BetStrategyEnum.NO_LIMIT = 1;
 com.cubeia.games.poker.io.protocol.BetStrategyEnum.POT_LIMIT = 2;
-com.cubeia.games.poker.io.protocol.BetStrategyEnum.makeBetStrategyEnum = function (a) {
+com.cubeia.games.poker.io.protocol.BetStrategyEnum.makeBetStrategyEnum = function(a) {
     switch (a) {
         case 0:
             return com.cubeia.games.poker.io.protocol.BetStrategyEnum.FIXED_LIMIT;
@@ -137,7 +147,7 @@ com.cubeia.games.poker.io.protocol.BetStrategyEnum.makeBetStrategyEnum = functio
     }
     return -1
 };
-com.cubeia.games.poker.io.protocol.BetStrategyEnum.toString = function (a) {
+com.cubeia.games.poker.io.protocol.BetStrategyEnum.toString = function(a) {
     switch (a) {
         case 0:
             return"FIXED_LIMIT";
@@ -148,24 +158,24 @@ com.cubeia.games.poker.io.protocol.BetStrategyEnum.toString = function (a) {
     }
     return"INVALID_ENUM_VALUE"
 };
-com.cubeia.games.poker.io.protocol.BlindsAreUpdated = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.BlindsAreUpdated = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.BlindsAreUpdated.CLASSID
     };
     this.level = {};
     this.secondsToNextLevel = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeArray(this.level.save());
         a.writeInt(this.secondsToNextLevel);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.level = new com.cubeia.games.poker.io.protocol.BlindsLevel();
         this.level.load(a);
         this.secondsToNextLevel = a.readInt()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.BlindsAreUpdated";
@@ -176,8 +186,8 @@ com.cubeia.games.poker.io.protocol.BlindsAreUpdated = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.BlindsAreUpdated.CLASSID = 44;
-com.cubeia.games.poker.io.protocol.BlindsLevel = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.BlindsLevel = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.BlindsLevel.CLASSID
     };
     this.smallBlind = {};
@@ -185,7 +195,7 @@ com.cubeia.games.poker.io.protocol.BlindsLevel = function () {
     this.ante = {};
     this.isBreak = {};
     this.durationInMinutes = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeString(this.smallBlind);
         a.writeString(this.bigBlind);
@@ -194,14 +204,14 @@ com.cubeia.games.poker.io.protocol.BlindsLevel = function () {
         a.writeInt(this.durationInMinutes);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.smallBlind = a.readString();
         this.bigBlind = a.readString();
         this.ante = a.readString();
         this.isBreak = a.readBoolean();
         this.durationInMinutes = a.readInt()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.BlindsLevel";
@@ -215,12 +225,12 @@ com.cubeia.games.poker.io.protocol.BlindsLevel = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.BlindsLevel.CLASSID = 45;
-com.cubeia.games.poker.io.protocol.BlindsStructure = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.BlindsStructure = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.BlindsStructure.CLASSID
     };
     this.blindsLevels = [];
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.blindsLevels.length);
         var b;
@@ -229,7 +239,7 @@ com.cubeia.games.poker.io.protocol.BlindsStructure = function () {
         }
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         var c;
         var d = a.readInt();
         var b;
@@ -240,7 +250,7 @@ com.cubeia.games.poker.io.protocol.BlindsStructure = function () {
             this.blindsLevels.push(b)
         }
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.BlindsStructure";
@@ -253,20 +263,20 @@ com.cubeia.games.poker.io.protocol.BlindsStructure = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.BlindsStructure.CLASSID = 50;
-com.cubeia.games.poker.io.protocol.BuyInInfoRequest = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.BuyInInfoRequest = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.BuyInInfoRequest.CLASSID
     };
     this.dummy = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeByte(this.dummy);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.dummy = a.readByte()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.BuyInInfoRequest";
@@ -276,8 +286,8 @@ com.cubeia.games.poker.io.protocol.BuyInInfoRequest = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.BuyInInfoRequest.CLASSID = 23;
-com.cubeia.games.poker.io.protocol.BuyInInfoResponse = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.BuyInInfoResponse = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.BuyInInfoResponse.CLASSID
     };
     this.maxAmount = {};
@@ -286,7 +296,7 @@ com.cubeia.games.poker.io.protocol.BuyInInfoResponse = function () {
     this.balanceOnTable = {};
     this.mandatoryBuyin = {};
     this.resultCode = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeString(this.maxAmount);
         a.writeString(this.minAmount);
@@ -296,7 +306,7 @@ com.cubeia.games.poker.io.protocol.BuyInInfoResponse = function () {
         a.writeUnsignedByte(this.resultCode);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.maxAmount = a.readString();
         this.minAmount = a.readString();
         this.balanceInWallet = a.readString();
@@ -304,7 +314,7 @@ com.cubeia.games.poker.io.protocol.BuyInInfoResponse = function () {
         this.mandatoryBuyin = a.readBoolean();
         this.resultCode = com.cubeia.games.poker.io.protocol.BuyInInfoResultCodeEnum.makeBuyInInfoResultCodeEnum(a.readUnsignedByte())
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.BuyInInfoResponse";
@@ -319,12 +329,12 @@ com.cubeia.games.poker.io.protocol.BuyInInfoResponse = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.BuyInInfoResponse.CLASSID = 24;
-com.cubeia.games.poker.io.protocol.BuyInInfoResultCodeEnum = function () {
+com.cubeia.games.poker.io.protocol.BuyInInfoResultCodeEnum = function() {
 };
 com.cubeia.games.poker.io.protocol.BuyInInfoResultCodeEnum.OK = 0;
 com.cubeia.games.poker.io.protocol.BuyInInfoResultCodeEnum.MAX_LIMIT_REACHED = 1;
 com.cubeia.games.poker.io.protocol.BuyInInfoResultCodeEnum.UNSPECIFIED_ERROR = 2;
-com.cubeia.games.poker.io.protocol.BuyInInfoResultCodeEnum.makeBuyInInfoResultCodeEnum = function (a) {
+com.cubeia.games.poker.io.protocol.BuyInInfoResultCodeEnum.makeBuyInInfoResultCodeEnum = function(a) {
     switch (a) {
         case 0:
             return com.cubeia.games.poker.io.protocol.BuyInInfoResultCodeEnum.OK;
@@ -335,7 +345,7 @@ com.cubeia.games.poker.io.protocol.BuyInInfoResultCodeEnum.makeBuyInInfoResultCo
     }
     return -1
 };
-com.cubeia.games.poker.io.protocol.BuyInInfoResultCodeEnum.toString = function (a) {
+com.cubeia.games.poker.io.protocol.BuyInInfoResultCodeEnum.toString = function(a) {
     switch (a) {
         case 0:
             return"OK";
@@ -346,23 +356,23 @@ com.cubeia.games.poker.io.protocol.BuyInInfoResultCodeEnum.toString = function (
     }
     return"INVALID_ENUM_VALUE"
 };
-com.cubeia.games.poker.io.protocol.BuyInRequest = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.BuyInRequest = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.BuyInRequest.CLASSID
     };
     this.amount = {};
     this.sitInIfSuccessful = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeString(this.amount);
         a.writeBoolean(this.sitInIfSuccessful);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.amount = a.readString();
         this.sitInIfSuccessful = a.readBoolean()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.BuyInRequest";
@@ -373,15 +383,15 @@ com.cubeia.games.poker.io.protocol.BuyInRequest = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.BuyInRequest.CLASSID = 25;
-com.cubeia.games.poker.io.protocol.BuyInResponse = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.BuyInResponse = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.BuyInResponse.CLASSID
     };
     this.balance = {};
     this.pendingBalance = {};
     this.amountBroughtIn = {};
     this.resultCode = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeString(this.balance);
         a.writeString(this.pendingBalance);
@@ -389,13 +399,13 @@ com.cubeia.games.poker.io.protocol.BuyInResponse = function () {
         a.writeUnsignedByte(this.resultCode);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.balance = a.readString();
         this.pendingBalance = a.readString();
         this.amountBroughtIn = a.readString();
         this.resultCode = com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.makeBuyInResultCodeEnum(a.readUnsignedByte())
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.BuyInResponse";
@@ -408,7 +418,7 @@ com.cubeia.games.poker.io.protocol.BuyInResponse = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.BuyInResponse.CLASSID = 26;
-com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum = function () {
+com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum = function() {
 };
 com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.OK = 0;
 com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.PENDING = 1;
@@ -418,7 +428,7 @@ com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.MAX_LIMIT_REACHED = 4;
 com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.AMOUNT_TOO_HIGH = 5;
 com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.UNSPECIFIED_ERROR = 6;
 com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.SESSION_NOT_OPEN = 7;
-com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.makeBuyInResultCodeEnum = function (a) {
+com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.makeBuyInResultCodeEnum = function(a) {
     switch (a) {
         case 0:
             return com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.OK;
@@ -439,7 +449,7 @@ com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.makeBuyInResultCodeEnum =
     }
     return -1
 };
-com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.toString = function (a) {
+com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.toString = function(a) {
     switch (a) {
         case 0:
             return"OK";
@@ -460,24 +470,24 @@ com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.toString = function (a) {
     }
     return"INVALID_ENUM_VALUE"
 };
-com.cubeia.games.poker.io.protocol.CardToDeal = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.CardToDeal = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.CardToDeal.CLASSID
     };
     this.player = {};
     this.card = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.player);
         a.writeArray(this.card.save());
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.player = a.readInt();
         this.card = new com.cubeia.games.poker.io.protocol.GameCard();
         this.card.load(a)
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.CardToDeal";
@@ -488,26 +498,26 @@ com.cubeia.games.poker.io.protocol.CardToDeal = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.CardToDeal.CLASSID = 8;
-com.cubeia.games.poker.io.protocol.ChipStatistics = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.ChipStatistics = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.ChipStatistics.CLASSID
     };
     this.minStack = {};
     this.maxStack = {};
     this.averageStack = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeString(this.minStack);
         a.writeString(this.maxStack);
         a.writeString(this.averageStack);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.minStack = a.readString();
         this.maxStack = a.readString();
         this.averageStack = a.readString()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.ChipStatistics";
@@ -519,12 +529,12 @@ com.cubeia.games.poker.io.protocol.ChipStatistics = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.ChipStatistics.CLASSID = 55;
-com.cubeia.games.poker.io.protocol.DealPrivateCards = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.DealPrivateCards = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.DealPrivateCards.CLASSID
     };
     this.cards = [];
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.cards.length);
         var b;
@@ -533,7 +543,7 @@ com.cubeia.games.poker.io.protocol.DealPrivateCards = function () {
         }
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         var b;
         var d = a.readInt();
         var c;
@@ -544,7 +554,7 @@ com.cubeia.games.poker.io.protocol.DealPrivateCards = function () {
             this.cards.push(c)
         }
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.DealPrivateCards";
@@ -557,12 +567,12 @@ com.cubeia.games.poker.io.protocol.DealPrivateCards = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.DealPrivateCards.CLASSID = 14;
-com.cubeia.games.poker.io.protocol.DealPublicCards = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.DealPublicCards = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.DealPublicCards.CLASSID
     };
     this.cards = [];
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.cards.length);
         var b;
@@ -571,7 +581,7 @@ com.cubeia.games.poker.io.protocol.DealPublicCards = function () {
         }
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         var b;
         var d = a.readInt();
         var c;
@@ -582,7 +592,7 @@ com.cubeia.games.poker.io.protocol.DealPublicCards = function () {
             this.cards.push(c)
         }
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.DealPublicCards";
@@ -595,20 +605,20 @@ com.cubeia.games.poker.io.protocol.DealPublicCards = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.DealPublicCards.CLASSID = 13;
-com.cubeia.games.poker.io.protocol.DealerButton = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.DealerButton = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.DealerButton.CLASSID
     };
     this.seat = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeByte(this.seat);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.seat = a.readByte()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.DealerButton";
@@ -618,23 +628,23 @@ com.cubeia.games.poker.io.protocol.DealerButton = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.DealerButton.CLASSID = 12;
-com.cubeia.games.poker.io.protocol.DeckInfo = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.DeckInfo = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.DeckInfo.CLASSID
     };
     this.size = {};
     this.rankLow = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.size);
         a.writeUnsignedByte(this.rankLow);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.size = a.readInt();
         this.rankLow = com.cubeia.games.poker.io.protocol.RankEnum.makeRankEnum(a.readUnsignedByte())
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.DeckInfo";
@@ -645,13 +655,13 @@ com.cubeia.games.poker.io.protocol.DeckInfo = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.DeckInfo.CLASSID = 36;
-com.cubeia.games.poker.io.protocol.ErrorCodeEnum = function () {
+com.cubeia.games.poker.io.protocol.ErrorCodeEnum = function() {
 };
 com.cubeia.games.poker.io.protocol.ErrorCodeEnum.UNSPECIFIED_ERROR = 0;
 com.cubeia.games.poker.io.protocol.ErrorCodeEnum.TABLE_CLOSING = 1;
 com.cubeia.games.poker.io.protocol.ErrorCodeEnum.TABLE_CLOSING_FORCED = 2;
 com.cubeia.games.poker.io.protocol.ErrorCodeEnum.CLOSED_SESSION_DUE_TO_FATAL_ERROR = 3;
-com.cubeia.games.poker.io.protocol.ErrorCodeEnum.makeErrorCodeEnum = function (a) {
+com.cubeia.games.poker.io.protocol.ErrorCodeEnum.makeErrorCodeEnum = function(a) {
     switch (a) {
         case 0:
             return com.cubeia.games.poker.io.protocol.ErrorCodeEnum.UNSPECIFIED_ERROR;
@@ -664,7 +674,7 @@ com.cubeia.games.poker.io.protocol.ErrorCodeEnum.makeErrorCodeEnum = function (a
     }
     return -1
 };
-com.cubeia.games.poker.io.protocol.ErrorCodeEnum.toString = function (a) {
+com.cubeia.games.poker.io.protocol.ErrorCodeEnum.toString = function(a) {
     switch (a) {
         case 0:
             return"UNSPECIFIED_ERROR";
@@ -677,23 +687,23 @@ com.cubeia.games.poker.io.protocol.ErrorCodeEnum.toString = function (a) {
     }
     return"INVALID_ENUM_VALUE"
 };
-com.cubeia.games.poker.io.protocol.ErrorPacket = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.ErrorPacket = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.ErrorPacket.CLASSID
     };
     this.code = {};
     this.referenceId = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeUnsignedByte(this.code);
         a.writeString(this.referenceId);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.code = com.cubeia.games.poker.io.protocol.ErrorCodeEnum.makeErrorCodeEnum(a.readUnsignedByte());
         this.referenceId = a.readString()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.ErrorPacket";
@@ -704,12 +714,12 @@ com.cubeia.games.poker.io.protocol.ErrorPacket = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.ErrorPacket.CLASSID = 2;
-com.cubeia.games.poker.io.protocol.ExposePrivateCards = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.ExposePrivateCards = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.ExposePrivateCards.CLASSID
     };
     this.cards = [];
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.cards.length);
         var b;
@@ -718,7 +728,7 @@ com.cubeia.games.poker.io.protocol.ExposePrivateCards = function () {
         }
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         var b;
         var d = a.readInt();
         var c;
@@ -729,7 +739,7 @@ com.cubeia.games.poker.io.protocol.ExposePrivateCards = function () {
             this.cards.push(c)
         }
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.ExposePrivateCards";
@@ -742,23 +752,23 @@ com.cubeia.games.poker.io.protocol.ExposePrivateCards = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.ExposePrivateCards.CLASSID = 15;
-com.cubeia.games.poker.io.protocol.ExternalSessionInfoPacket = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.ExternalSessionInfoPacket = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.ExternalSessionInfoPacket.CLASSID
     };
     this.externalTableReference = {};
     this.externalTableSessionReference = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeString(this.externalTableReference);
         a.writeString(this.externalTableSessionReference);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.externalTableReference = a.readString();
         this.externalTableSessionReference = a.readString()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.ExternalSessionInfoPacket";
@@ -769,20 +779,20 @@ com.cubeia.games.poker.io.protocol.ExternalSessionInfoPacket = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.ExternalSessionInfoPacket.CLASSID = 37;
-com.cubeia.games.poker.io.protocol.FuturePlayerAction = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.FuturePlayerAction = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.FuturePlayerAction.CLASSID
     };
     this.action = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeUnsignedByte(this.action);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.action = com.cubeia.games.poker.io.protocol.ActionTypeEnum.makeActionTypeEnum(a.readUnsignedByte())
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.FuturePlayerAction";
@@ -792,26 +802,26 @@ com.cubeia.games.poker.io.protocol.FuturePlayerAction = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.FuturePlayerAction.CLASSID = 3;
-com.cubeia.games.poker.io.protocol.GameCard = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.GameCard = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.GameCard.CLASSID
     };
     this.cardId = {};
     this.suit = {};
     this.rank = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.cardId);
         a.writeUnsignedByte(this.suit);
         a.writeUnsignedByte(this.rank);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.cardId = a.readInt();
         this.suit = com.cubeia.games.poker.io.protocol.SuitEnum.makeSuitEnum(a.readUnsignedByte());
         this.rank = com.cubeia.games.poker.io.protocol.RankEnum.makeRankEnum(a.readUnsignedByte())
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.GameCard";
@@ -823,8 +833,8 @@ com.cubeia.games.poker.io.protocol.GameCard = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.GameCard.CLASSID = 5;
-com.cubeia.games.poker.io.protocol.GameState = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.GameState = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.GameState.CLASSID
     };
     this.tournamentId = {};
@@ -832,7 +842,7 @@ com.cubeia.games.poker.io.protocol.GameState = function () {
     this.currentLevel = {};
     this.secondsToNextLevel = {};
     this.betStrategy = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.tournamentId);
         a.writeArray(this.handInfo.save());
@@ -841,7 +851,7 @@ com.cubeia.games.poker.io.protocol.GameState = function () {
         a.writeUnsignedByte(this.betStrategy);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.tournamentId = a.readInt();
         this.handInfo = new com.cubeia.games.poker.io.protocol.HandStartInfo();
         this.handInfo.load(a);
@@ -850,7 +860,7 @@ com.cubeia.games.poker.io.protocol.GameState = function () {
         this.secondsToNextLevel = a.readInt();
         this.betStrategy = com.cubeia.games.poker.io.protocol.BetStrategyEnum.makeBetStrategyEnum(a.readUnsignedByte())
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.GameState";
@@ -864,16 +874,16 @@ com.cubeia.games.poker.io.protocol.GameState = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.GameState.CLASSID = 4;
-com.cubeia.games.poker.io.protocol.HandCanceled = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.HandCanceled = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.HandCanceled.CLASSID
     };
-    this.save = function () {
+    this.save = function() {
         return[]
     };
-    this.load = function (a) {
+    this.load = function(a) {
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.HandCanceled";
@@ -882,14 +892,14 @@ com.cubeia.games.poker.io.protocol.HandCanceled = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.HandCanceled.CLASSID = 17;
-com.cubeia.games.poker.io.protocol.HandEnd = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.HandEnd = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.HandEnd.CLASSID
     };
     this.playerIdRevealOrder = [];
     this.hands = [];
     this.potTransfers = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.playerIdRevealOrder.length);
         var b;
@@ -903,7 +913,7 @@ com.cubeia.games.poker.io.protocol.HandEnd = function () {
         a.writeArray(this.potTransfers.save());
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         var c;
         var b = a.readInt();
         this.playerIdRevealOrder = [];
@@ -921,7 +931,7 @@ com.cubeia.games.poker.io.protocol.HandEnd = function () {
         this.potTransfers = new com.cubeia.games.poker.io.protocol.PotTransfers();
         this.potTransfers.load(a)
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.HandEnd";
@@ -939,13 +949,13 @@ com.cubeia.games.poker.io.protocol.HandEnd = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.HandEnd.CLASSID = 16;
-com.cubeia.games.poker.io.protocol.HandPhase5cardEnum = function () {
+com.cubeia.games.poker.io.protocol.HandPhase5cardEnum = function() {
 };
 com.cubeia.games.poker.io.protocol.HandPhase5cardEnum.BETTING = 0;
 com.cubeia.games.poker.io.protocol.HandPhase5cardEnum.THIRD_STREET = 1;
 com.cubeia.games.poker.io.protocol.HandPhase5cardEnum.FOURTH_STREET = 2;
 com.cubeia.games.poker.io.protocol.HandPhase5cardEnum.FIFTH_STREET = 3;
-com.cubeia.games.poker.io.protocol.HandPhase5cardEnum.makeHandPhase5cardEnum = function (a) {
+com.cubeia.games.poker.io.protocol.HandPhase5cardEnum.makeHandPhase5cardEnum = function(a) {
     switch (a) {
         case 0:
             return com.cubeia.games.poker.io.protocol.HandPhase5cardEnum.BETTING;
@@ -958,7 +968,7 @@ com.cubeia.games.poker.io.protocol.HandPhase5cardEnum.makeHandPhase5cardEnum = f
     }
     return -1
 };
-com.cubeia.games.poker.io.protocol.HandPhase5cardEnum.toString = function (a) {
+com.cubeia.games.poker.io.protocol.HandPhase5cardEnum.toString = function(a) {
     switch (a) {
         case 0:
             return"BETTING";
@@ -971,13 +981,13 @@ com.cubeia.games.poker.io.protocol.HandPhase5cardEnum.toString = function (a) {
     }
     return"INVALID_ENUM_VALUE"
 };
-com.cubeia.games.poker.io.protocol.HandPhaseHoldemEnum = function () {
+com.cubeia.games.poker.io.protocol.HandPhaseHoldemEnum = function() {
 };
 com.cubeia.games.poker.io.protocol.HandPhaseHoldemEnum.PREFLOP = 0;
 com.cubeia.games.poker.io.protocol.HandPhaseHoldemEnum.FLOP = 1;
 com.cubeia.games.poker.io.protocol.HandPhaseHoldemEnum.TURN = 2;
 com.cubeia.games.poker.io.protocol.HandPhaseHoldemEnum.RIVER = 3;
-com.cubeia.games.poker.io.protocol.HandPhaseHoldemEnum.makeHandPhaseHoldemEnum = function (a) {
+com.cubeia.games.poker.io.protocol.HandPhaseHoldemEnum.makeHandPhaseHoldemEnum = function(a) {
     switch (a) {
         case 0:
             return com.cubeia.games.poker.io.protocol.HandPhaseHoldemEnum.PREFLOP;
@@ -990,7 +1000,7 @@ com.cubeia.games.poker.io.protocol.HandPhaseHoldemEnum.makeHandPhaseHoldemEnum =
     }
     return -1
 };
-com.cubeia.games.poker.io.protocol.HandPhaseHoldemEnum.toString = function (a) {
+com.cubeia.games.poker.io.protocol.HandPhaseHoldemEnum.toString = function(a) {
     switch (a) {
         case 0:
             return"PREFLOP";
@@ -1003,20 +1013,20 @@ com.cubeia.games.poker.io.protocol.HandPhaseHoldemEnum.toString = function (a) {
     }
     return"INVALID_ENUM_VALUE"
 };
-com.cubeia.games.poker.io.protocol.HandStartInfo = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.HandStartInfo = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.HandStartInfo.CLASSID
     };
     this.handId = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeString(this.handId);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.handId = a.readString()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.HandStartInfo";
@@ -1026,7 +1036,7 @@ com.cubeia.games.poker.io.protocol.HandStartInfo = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.HandStartInfo.CLASSID = 11;
-com.cubeia.games.poker.io.protocol.HandTypeEnum = function () {
+com.cubeia.games.poker.io.protocol.HandTypeEnum = function() {
 };
 com.cubeia.games.poker.io.protocol.HandTypeEnum.UNKNOWN = 0;
 com.cubeia.games.poker.io.protocol.HandTypeEnum.HIGH_CARD = 1;
@@ -1039,7 +1049,7 @@ com.cubeia.games.poker.io.protocol.HandTypeEnum.FULL_HOUSE = 7;
 com.cubeia.games.poker.io.protocol.HandTypeEnum.FOUR_OF_A_KIND = 8;
 com.cubeia.games.poker.io.protocol.HandTypeEnum.STRAIGHT_FLUSH = 9;
 com.cubeia.games.poker.io.protocol.HandTypeEnum.ROYAL_STRAIGHT_FLUSH = 10;
-com.cubeia.games.poker.io.protocol.HandTypeEnum.makeHandTypeEnum = function (a) {
+com.cubeia.games.poker.io.protocol.HandTypeEnum.makeHandTypeEnum = function(a) {
     switch (a) {
         case 0:
             return com.cubeia.games.poker.io.protocol.HandTypeEnum.UNKNOWN;
@@ -1066,7 +1076,7 @@ com.cubeia.games.poker.io.protocol.HandTypeEnum.makeHandTypeEnum = function (a) 
     }
     return -1
 };
-com.cubeia.games.poker.io.protocol.HandTypeEnum.toString = function (a) {
+com.cubeia.games.poker.io.protocol.HandTypeEnum.toString = function(a) {
     switch (a) {
         case 0:
             return"UNKNOWN";
@@ -1093,14 +1103,14 @@ com.cubeia.games.poker.io.protocol.HandTypeEnum.toString = function (a) {
     }
     return"INVALID_ENUM_VALUE"
 };
-com.cubeia.games.poker.io.protocol.InformFutureAllowedActions = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.InformFutureAllowedActions = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.InformFutureAllowedActions.CLASSID
     };
     this.actions = [];
     this.callAmount = {};
     this.minBetAmount = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.actions.length);
         var b;
@@ -1111,7 +1121,7 @@ com.cubeia.games.poker.io.protocol.InformFutureAllowedActions = function () {
         a.writeInt(this.minBetAmount);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         var c;
         var d = a.readInt();
         var b;
@@ -1124,7 +1134,7 @@ com.cubeia.games.poker.io.protocol.InformFutureAllowedActions = function () {
         this.callAmount = a.readInt();
         this.minBetAmount = a.readInt()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.InformFutureAllowedActions";
@@ -1139,23 +1149,23 @@ com.cubeia.games.poker.io.protocol.InformFutureAllowedActions = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.InformFutureAllowedActions.CLASSID = 10;
-com.cubeia.games.poker.io.protocol.LevelInfo = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.LevelInfo = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.LevelInfo.CLASSID
     };
     this.currentLevel = {};
     this.timeToNextLevel = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.currentLevel);
         a.writeInt(this.timeToNextLevel);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.currentLevel = a.readInt();
         this.timeToNextLevel = a.readInt()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.LevelInfo";
@@ -1166,23 +1176,23 @@ com.cubeia.games.poker.io.protocol.LevelInfo = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.LevelInfo.CLASSID = 56;
-com.cubeia.games.poker.io.protocol.Payout = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.Payout = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.Payout.CLASSID
     };
     this.position = {};
     this.payoutAmount = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.position);
         a.writeString(this.payoutAmount);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.position = a.readInt();
         this.payoutAmount = a.readString()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.Payout";
@@ -1193,13 +1203,13 @@ com.cubeia.games.poker.io.protocol.Payout = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.Payout.CLASSID = 53;
-com.cubeia.games.poker.io.protocol.PayoutInfo = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.PayoutInfo = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.PayoutInfo.CLASSID
     };
     this.prizePool = {};
     this.payouts = [];
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.prizePool);
         a.writeInt(this.payouts.length);
@@ -1209,7 +1219,7 @@ com.cubeia.games.poker.io.protocol.PayoutInfo = function () {
         }
         return a
     };
-    this.load = function (b) {
+    this.load = function(b) {
         this.prizePool = b.readInt();
         var c;
         var a = b.readInt();
@@ -1221,7 +1231,7 @@ com.cubeia.games.poker.io.protocol.PayoutInfo = function () {
             this.payouts.push(d)
         }
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.PayoutInfo";
@@ -1235,8 +1245,8 @@ com.cubeia.games.poker.io.protocol.PayoutInfo = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.PayoutInfo.CLASSID = 52;
-com.cubeia.games.poker.io.protocol.PerformAction = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.PerformAction = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.PerformAction.CLASSID
     };
     this.seq = {};
@@ -1246,7 +1256,7 @@ com.cubeia.games.poker.io.protocol.PerformAction = function () {
     this.raiseAmount = {};
     this.stackAmount = {};
     this.timeout = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.seq);
         a.writeInt(this.player);
@@ -1257,7 +1267,7 @@ com.cubeia.games.poker.io.protocol.PerformAction = function () {
         a.writeBoolean(this.timeout);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.seq = a.readInt();
         this.player = a.readInt();
         this.action = new com.cubeia.games.poker.io.protocol.PlayerAction();
@@ -1267,7 +1277,7 @@ com.cubeia.games.poker.io.protocol.PerformAction = function () {
         this.stackAmount = a.readInt();
         this.timeout = a.readBoolean()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.PerformAction";
@@ -1283,20 +1293,20 @@ com.cubeia.games.poker.io.protocol.PerformAction = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.PerformAction.CLASSID = 20;
-com.cubeia.games.poker.io.protocol.PingPacket = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.PingPacket = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.PingPacket.CLASSID
     };
     this.identifier = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.identifier);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.identifier = a.readInt()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.PingPacket";
@@ -1306,26 +1316,26 @@ com.cubeia.games.poker.io.protocol.PingPacket = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.PingPacket.CLASSID = 40;
-com.cubeia.games.poker.io.protocol.PlayerAction = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.PlayerAction = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.PlayerAction.CLASSID
     };
     this.type = {};
     this.minAmount = {};
     this.maxAmount = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeUnsignedByte(this.type);
         a.writeInt(this.minAmount);
         a.writeInt(this.maxAmount);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.type = com.cubeia.games.poker.io.protocol.ActionTypeEnum.makeActionTypeEnum(a.readUnsignedByte());
         this.minAmount = a.readInt();
         this.maxAmount = a.readInt()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.PlayerAction";
@@ -1337,15 +1347,15 @@ com.cubeia.games.poker.io.protocol.PlayerAction = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.PlayerAction.CLASSID = 1;
-com.cubeia.games.poker.io.protocol.PlayerBalance = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.PlayerBalance = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.PlayerBalance.CLASSID
     };
     this.balance = {};
     this.pendingBalance = {};
     this.player = {};
     this.playersContributionToPot = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.balance);
         a.writeInt(this.pendingBalance);
@@ -1353,13 +1363,13 @@ com.cubeia.games.poker.io.protocol.PlayerBalance = function () {
         a.writeInt(this.playersContributionToPot);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.balance = a.readInt();
         this.pendingBalance = a.readInt();
         this.player = a.readInt();
         this.playersContributionToPot = a.readInt()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.PlayerBalance";
@@ -1372,23 +1382,23 @@ com.cubeia.games.poker.io.protocol.PlayerBalance = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.PlayerBalance.CLASSID = 22;
-com.cubeia.games.poker.io.protocol.PlayerDisconnectedPacket = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.PlayerDisconnectedPacket = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.PlayerDisconnectedPacket.CLASSID
     };
     this.playerId = {};
     this.timebank = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.playerId);
         a.writeInt(this.timebank);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.playerId = a.readInt();
         this.timebank = a.readInt()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.PlayerDisconnectedPacket";
@@ -1399,23 +1409,23 @@ com.cubeia.games.poker.io.protocol.PlayerDisconnectedPacket = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.PlayerDisconnectedPacket.CLASSID = 38;
-com.cubeia.games.poker.io.protocol.PlayerHandStartStatus = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.PlayerHandStartStatus = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.PlayerHandStartStatus.CLASSID
     };
     this.player = {};
     this.status = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.player);
         a.writeUnsignedByte(this.status);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.player = a.readInt();
         this.status = com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.makePlayerTableStatusEnum(a.readUnsignedByte())
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.PlayerHandStartStatus";
@@ -1426,26 +1436,26 @@ com.cubeia.games.poker.io.protocol.PlayerHandStartStatus = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.PlayerHandStartStatus.CLASSID = 33;
-com.cubeia.games.poker.io.protocol.PlayerPokerStatus = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.PlayerPokerStatus = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.PlayerPokerStatus.CLASSID
     };
     this.player = {};
     this.status = {};
     this.inCurrentHand = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.player);
         a.writeUnsignedByte(this.status);
         a.writeBoolean(this.inCurrentHand);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.player = a.readInt();
         this.status = com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.makePlayerTableStatusEnum(a.readUnsignedByte());
         this.inCurrentHand = a.readBoolean()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.PlayerPokerStatus";
@@ -1457,20 +1467,20 @@ com.cubeia.games.poker.io.protocol.PlayerPokerStatus = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.PlayerPokerStatus.CLASSID = 32;
-com.cubeia.games.poker.io.protocol.PlayerReconnectedPacket = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.PlayerReconnectedPacket = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.PlayerReconnectedPacket.CLASSID
     };
     this.playerId = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.playerId);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.playerId = a.readInt()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.PlayerReconnectedPacket";
@@ -1480,20 +1490,20 @@ com.cubeia.games.poker.io.protocol.PlayerReconnectedPacket = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.PlayerReconnectedPacket.CLASSID = 39;
-com.cubeia.games.poker.io.protocol.PlayerSitinRequest = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.PlayerSitinRequest = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.PlayerSitinRequest.CLASSID
     };
     this.player = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.player);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.player = a.readInt()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.PlayerSitinRequest";
@@ -1503,20 +1513,20 @@ com.cubeia.games.poker.io.protocol.PlayerSitinRequest = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.PlayerSitinRequest.CLASSID = 34;
-com.cubeia.games.poker.io.protocol.PlayerSitoutRequest = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.PlayerSitoutRequest = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.PlayerSitoutRequest.CLASSID
     };
     this.player = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.player);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.player = a.readInt()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.PlayerSitoutRequest";
@@ -1526,14 +1536,14 @@ com.cubeia.games.poker.io.protocol.PlayerSitoutRequest = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.PlayerSitoutRequest.CLASSID = 35;
-com.cubeia.games.poker.io.protocol.PlayerState = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.PlayerState = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.PlayerState.CLASSID
     };
     this.player = {};
     this.cards = [];
     this.balance = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.player);
         a.writeInt(this.cards.length);
@@ -1544,7 +1554,7 @@ com.cubeia.games.poker.io.protocol.PlayerState = function () {
         a.writeInt(this.balance);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.player = a.readInt();
         var b;
         var d = a.readInt();
@@ -1557,7 +1567,7 @@ com.cubeia.games.poker.io.protocol.PlayerState = function () {
         }
         this.balance = a.readInt()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.PlayerState";
@@ -1572,11 +1582,11 @@ com.cubeia.games.poker.io.protocol.PlayerState = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.PlayerState.CLASSID = 7;
-com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum = function () {
+com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum = function() {
 };
 com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.SITIN = 0;
 com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.SITOUT = 1;
-com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.makePlayerTableStatusEnum = function (a) {
+com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.makePlayerTableStatusEnum = function(a) {
     switch (a) {
         case 0:
             return com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.SITIN;
@@ -1585,7 +1595,7 @@ com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.makePlayerTableStatusEn
     }
     return -1
 };
-com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.toString = function (a) {
+com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.toString = function(a) {
     switch (a) {
         case 0:
             return"SITIN";
@@ -1594,23 +1604,23 @@ com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.toString = function (a)
     }
     return"INVALID_ENUM_VALUE"
 };
-com.cubeia.games.poker.io.protocol.PlayersLeft = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.PlayersLeft = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.PlayersLeft.CLASSID
     };
     this.remainingPlayers = {};
     this.registeredPlayers = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.remainingPlayers);
         a.writeInt(this.registeredPlayers);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.remainingPlayers = a.readInt();
         this.registeredPlayers = a.readInt()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.PlayersLeft";
@@ -1621,20 +1631,20 @@ com.cubeia.games.poker.io.protocol.PlayersLeft = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.PlayersLeft.CLASSID = 57;
-com.cubeia.games.poker.io.protocol.PongPacket = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.PongPacket = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.PongPacket.CLASSID
     };
     this.identifier = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.identifier);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.identifier = a.readInt()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.PongPacket";
@@ -1644,26 +1654,26 @@ com.cubeia.games.poker.io.protocol.PongPacket = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.PongPacket.CLASSID = 41;
-com.cubeia.games.poker.io.protocol.Pot = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.Pot = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.Pot.CLASSID
     };
     this.id = {};
     this.type = {};
     this.amount = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeByte(this.id);
         a.writeUnsignedByte(this.type);
         a.writeInt(this.amount);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.id = a.readByte();
         this.type = com.cubeia.games.poker.io.protocol.PotTypeEnum.makePotTypeEnum(a.readUnsignedByte());
         this.amount = a.readInt()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.Pot";
@@ -1675,26 +1685,26 @@ com.cubeia.games.poker.io.protocol.Pot = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.Pot.CLASSID = 27;
-com.cubeia.games.poker.io.protocol.PotTransfer = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.PotTransfer = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.PotTransfer.CLASSID
     };
     this.potId = {};
     this.playerId = {};
     this.amount = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeByte(this.potId);
         a.writeInt(this.playerId);
         a.writeInt(this.amount);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.potId = a.readByte();
         this.playerId = a.readInt();
         this.amount = a.readInt()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.PotTransfer";
@@ -1706,14 +1716,14 @@ com.cubeia.games.poker.io.protocol.PotTransfer = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.PotTransfer.CLASSID = 28;
-com.cubeia.games.poker.io.protocol.PotTransfers = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.PotTransfers = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.PotTransfers.CLASSID
     };
     this.fromPlayerToPot = {};
     this.transfers = [];
     this.pots = [];
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeBoolean(this.fromPlayerToPot);
         a.writeInt(this.transfers.length);
@@ -1727,7 +1737,7 @@ com.cubeia.games.poker.io.protocol.PotTransfers = function () {
         }
         return a
     };
-    this.load = function (b) {
+    this.load = function(b) {
         this.fromPlayerToPot = b.readBoolean();
         var e;
         var d = b.readInt();
@@ -1747,7 +1757,7 @@ com.cubeia.games.poker.io.protocol.PotTransfers = function () {
             this.pots.push(c)
         }
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.PotTransfers";
@@ -1765,11 +1775,11 @@ com.cubeia.games.poker.io.protocol.PotTransfers = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.PotTransfers.CLASSID = 29;
-com.cubeia.games.poker.io.protocol.PotTypeEnum = function () {
+com.cubeia.games.poker.io.protocol.PotTypeEnum = function() {
 };
 com.cubeia.games.poker.io.protocol.PotTypeEnum.MAIN = 0;
 com.cubeia.games.poker.io.protocol.PotTypeEnum.SIDE = 1;
-com.cubeia.games.poker.io.protocol.PotTypeEnum.makePotTypeEnum = function (a) {
+com.cubeia.games.poker.io.protocol.PotTypeEnum.makePotTypeEnum = function(a) {
     switch (a) {
         case 0:
             return com.cubeia.games.poker.io.protocol.PotTypeEnum.MAIN;
@@ -1778,7 +1788,7 @@ com.cubeia.games.poker.io.protocol.PotTypeEnum.makePotTypeEnum = function (a) {
     }
     return -1
 };
-com.cubeia.games.poker.io.protocol.PotTypeEnum.toString = function (a) {
+com.cubeia.games.poker.io.protocol.PotTypeEnum.toString = function(a) {
     switch (a) {
         case 0:
             return"MAIN";
@@ -1788,7 +1798,7 @@ com.cubeia.games.poker.io.protocol.PotTypeEnum.toString = function (a) {
     return"INVALID_ENUM_VALUE"
 };
 com.cubeia.games.poker.io.protocol.ProtocolObjectFactory = {};
-com.cubeia.games.poker.io.protocol.ProtocolObjectFactory.create = function (c, a) {
+com.cubeia.games.poker.io.protocol.ProtocolObjectFactory.create = function(c, a) {
     var b;
     switch (c) {
         case com.cubeia.games.poker.io.protocol.PlayerAction.CLASSID:
@@ -2058,23 +2068,23 @@ com.cubeia.games.poker.io.protocol.ProtocolObjectFactory.create = function (c, a
     }
     return null
 };
-com.cubeia.games.poker.io.protocol.RakeInfo = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.RakeInfo = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.RakeInfo.CLASSID
     };
     this.totalPot = {};
     this.totalRake = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.totalPot);
         a.writeInt(this.totalRake);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.totalPot = a.readInt();
         this.totalRake = a.readInt()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.RakeInfo";
@@ -2085,7 +2095,7 @@ com.cubeia.games.poker.io.protocol.RakeInfo = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.RakeInfo.CLASSID = 31;
-com.cubeia.games.poker.io.protocol.RankEnum = function () {
+com.cubeia.games.poker.io.protocol.RankEnum = function() {
 };
 com.cubeia.games.poker.io.protocol.RankEnum.TWO = 0;
 com.cubeia.games.poker.io.protocol.RankEnum.THREE = 1;
@@ -2101,7 +2111,7 @@ com.cubeia.games.poker.io.protocol.RankEnum.QUEEN = 10;
 com.cubeia.games.poker.io.protocol.RankEnum.KING = 11;
 com.cubeia.games.poker.io.protocol.RankEnum.ACE = 12;
 com.cubeia.games.poker.io.protocol.RankEnum.HIDDEN = 13;
-com.cubeia.games.poker.io.protocol.RankEnum.makeRankEnum = function (a) {
+com.cubeia.games.poker.io.protocol.RankEnum.makeRankEnum = function(a) {
     switch (a) {
         case 0:
             return com.cubeia.games.poker.io.protocol.RankEnum.TWO;
@@ -2134,7 +2144,7 @@ com.cubeia.games.poker.io.protocol.RankEnum.makeRankEnum = function (a) {
     }
     return -1
 };
-com.cubeia.games.poker.io.protocol.RankEnum.toString = function (a) {
+com.cubeia.games.poker.io.protocol.RankEnum.toString = function(a) {
     switch (a) {
         case 0:
             return"TWO";
@@ -2167,8 +2177,8 @@ com.cubeia.games.poker.io.protocol.RankEnum.toString = function (a) {
     }
     return"INVALID_ENUM_VALUE"
 };
-com.cubeia.games.poker.io.protocol.RequestAction = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.RequestAction = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.RequestAction.CLASSID
     };
     this.currentPotSize = {};
@@ -2176,7 +2186,7 @@ com.cubeia.games.poker.io.protocol.RequestAction = function () {
     this.player = {};
     this.allowedActions = [];
     this.timeToAct = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.currentPotSize);
         a.writeInt(this.seq);
@@ -2189,7 +2199,7 @@ com.cubeia.games.poker.io.protocol.RequestAction = function () {
         a.writeInt(this.timeToAct);
         return a
     };
-    this.load = function (b) {
+    this.load = function(b) {
         this.currentPotSize = b.readInt();
         this.seq = b.readInt();
         this.player = b.readInt();
@@ -2204,7 +2214,7 @@ com.cubeia.games.poker.io.protocol.RequestAction = function () {
         }
         this.timeToAct = b.readInt()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.RequestAction";
@@ -2221,16 +2231,16 @@ com.cubeia.games.poker.io.protocol.RequestAction = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.RequestAction.CLASSID = 9;
-com.cubeia.games.poker.io.protocol.RequestBlindsStructure = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.RequestBlindsStructure = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.RequestBlindsStructure.CLASSID
     };
-    this.save = function () {
+    this.save = function() {
         return[]
     };
-    this.load = function (a) {
+    this.load = function(a) {
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.RequestBlindsStructure";
@@ -2239,16 +2249,16 @@ com.cubeia.games.poker.io.protocol.RequestBlindsStructure = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.RequestBlindsStructure.CLASSID = 49;
-com.cubeia.games.poker.io.protocol.RequestPayoutInfo = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.RequestPayoutInfo = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.RequestPayoutInfo.CLASSID
     };
-    this.save = function () {
+    this.save = function() {
         return[]
     };
-    this.load = function (a) {
+    this.load = function(a) {
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.RequestPayoutInfo";
@@ -2257,16 +2267,16 @@ com.cubeia.games.poker.io.protocol.RequestPayoutInfo = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.RequestPayoutInfo.CLASSID = 51;
-com.cubeia.games.poker.io.protocol.RequestTournamentLobbyData = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.RequestTournamentLobbyData = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.RequestTournamentLobbyData.CLASSID
     };
-    this.save = function () {
+    this.save = function() {
         return[]
     };
-    this.load = function (a) {
+    this.load = function(a) {
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.RequestTournamentLobbyData";
@@ -2275,16 +2285,16 @@ com.cubeia.games.poker.io.protocol.RequestTournamentLobbyData = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.RequestTournamentLobbyData.CLASSID = 60;
-com.cubeia.games.poker.io.protocol.RequestTournamentPlayerList = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.RequestTournamentPlayerList = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.RequestTournamentPlayerList.CLASSID
     };
-    this.save = function () {
+    this.save = function() {
         return[]
     };
-    this.load = function (a) {
+    this.load = function(a) {
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.RequestTournamentPlayerList";
@@ -2293,16 +2303,16 @@ com.cubeia.games.poker.io.protocol.RequestTournamentPlayerList = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.RequestTournamentPlayerList.CLASSID = 46;
-com.cubeia.games.poker.io.protocol.RequestTournamentRegistrationInfo = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.RequestTournamentRegistrationInfo = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.RequestTournamentRegistrationInfo.CLASSID
     };
-    this.save = function () {
+    this.save = function() {
         return[]
     };
-    this.load = function (a) {
+    this.load = function(a) {
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.RequestTournamentRegistrationInfo";
@@ -2311,16 +2321,16 @@ com.cubeia.games.poker.io.protocol.RequestTournamentRegistrationInfo = function 
     }
 };
 com.cubeia.games.poker.io.protocol.RequestTournamentRegistrationInfo.CLASSID = 65;
-com.cubeia.games.poker.io.protocol.RequestTournamentStatistics = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.RequestTournamentStatistics = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.RequestTournamentStatistics.CLASSID
     };
-    this.save = function () {
+    this.save = function() {
         return[]
     };
-    this.load = function (a) {
+    this.load = function(a) {
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.RequestTournamentStatistics";
@@ -2329,16 +2339,16 @@ com.cubeia.games.poker.io.protocol.RequestTournamentStatistics = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.RequestTournamentStatistics.CLASSID = 54;
-com.cubeia.games.poker.io.protocol.RequestTournamentTable = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.RequestTournamentTable = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.RequestTournamentTable.CLASSID
     };
-    this.save = function () {
+    this.save = function() {
         return[]
     };
-    this.load = function (a) {
+    this.load = function(a) {
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.RequestTournamentTable";
@@ -2347,16 +2357,16 @@ com.cubeia.games.poker.io.protocol.RequestTournamentTable = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.RequestTournamentTable.CLASSID = 62;
-com.cubeia.games.poker.io.protocol.StartHandHistory = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.StartHandHistory = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.StartHandHistory.CLASSID
     };
-    this.save = function () {
+    this.save = function() {
         return[]
     };
-    this.load = function (a) {
+    this.load = function(a) {
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.StartHandHistory";
@@ -2365,16 +2375,16 @@ com.cubeia.games.poker.io.protocol.StartHandHistory = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.StartHandHistory.CLASSID = 18;
-com.cubeia.games.poker.io.protocol.StopHandHistory = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.StopHandHistory = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.StopHandHistory.CLASSID
     };
-    this.save = function () {
+    this.save = function() {
         return[]
     };
-    this.load = function (a) {
+    this.load = function(a) {
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.StopHandHistory";
@@ -2383,14 +2393,14 @@ com.cubeia.games.poker.io.protocol.StopHandHistory = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.StopHandHistory.CLASSID = 19;
-com.cubeia.games.poker.io.protocol.SuitEnum = function () {
+com.cubeia.games.poker.io.protocol.SuitEnum = function() {
 };
 com.cubeia.games.poker.io.protocol.SuitEnum.CLUBS = 0;
 com.cubeia.games.poker.io.protocol.SuitEnum.DIAMONDS = 1;
 com.cubeia.games.poker.io.protocol.SuitEnum.HEARTS = 2;
 com.cubeia.games.poker.io.protocol.SuitEnum.SPADES = 3;
 com.cubeia.games.poker.io.protocol.SuitEnum.HIDDEN = 4;
-com.cubeia.games.poker.io.protocol.SuitEnum.makeSuitEnum = function (a) {
+com.cubeia.games.poker.io.protocol.SuitEnum.makeSuitEnum = function(a) {
     switch (a) {
         case 0:
             return com.cubeia.games.poker.io.protocol.SuitEnum.CLUBS;
@@ -2405,7 +2415,7 @@ com.cubeia.games.poker.io.protocol.SuitEnum.makeSuitEnum = function (a) {
     }
     return -1
 };
-com.cubeia.games.poker.io.protocol.SuitEnum.toString = function (a) {
+com.cubeia.games.poker.io.protocol.SuitEnum.toString = function(a) {
     switch (a) {
         case 0:
             return"CLUBS";
@@ -2420,23 +2430,23 @@ com.cubeia.games.poker.io.protocol.SuitEnum.toString = function (a) {
     }
     return"INVALID_ENUM_VALUE"
 };
-com.cubeia.games.poker.io.protocol.TakeBackUncalledBet = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.TakeBackUncalledBet = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.TakeBackUncalledBet.CLASSID
     };
     this.playerId = {};
     this.amount = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.playerId);
         a.writeInt(this.amount);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.playerId = a.readInt();
         this.amount = a.readInt()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.TakeBackUncalledBet";
@@ -2447,16 +2457,16 @@ com.cubeia.games.poker.io.protocol.TakeBackUncalledBet = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.TakeBackUncalledBet.CLASSID = 30;
-com.cubeia.games.poker.io.protocol.TournamentDestroyed = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.TournamentDestroyed = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.TournamentDestroyed.CLASSID
     };
-    this.save = function () {
+    this.save = function() {
         return[]
     };
-    this.load = function (a) {
+    this.load = function(a) {
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.TournamentDestroyed";
@@ -2465,8 +2475,8 @@ com.cubeia.games.poker.io.protocol.TournamentDestroyed = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.TournamentDestroyed.CLASSID = 64;
-com.cubeia.games.poker.io.protocol.TournamentInfo = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.TournamentInfo = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.TournamentInfo.CLASSID
     };
     this.tournamentName = {};
@@ -2478,7 +2488,7 @@ com.cubeia.games.poker.io.protocol.TournamentInfo = function () {
     this.minPlayers = {};
     this.maxPlayers = {};
     this.tournamentStatus = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeString(this.tournamentName);
         a.writeString(this.gameType);
@@ -2491,7 +2501,7 @@ com.cubeia.games.poker.io.protocol.TournamentInfo = function () {
         a.writeUnsignedByte(this.tournamentStatus);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.tournamentName = a.readString();
         this.gameType = a.readString();
         this.startTime = a.readString();
@@ -2502,7 +2512,7 @@ com.cubeia.games.poker.io.protocol.TournamentInfo = function () {
         this.maxPlayers = a.readInt();
         this.tournamentStatus = com.cubeia.games.poker.io.protocol.TournamentStatusEnum.makeTournamentStatusEnum(a.readUnsignedByte())
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.TournamentInfo";
@@ -2520,8 +2530,8 @@ com.cubeia.games.poker.io.protocol.TournamentInfo = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.TournamentInfo.CLASSID = 59;
-com.cubeia.games.poker.io.protocol.TournamentLobbyData = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.TournamentLobbyData = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.TournamentLobbyData.CLASSID
     };
     this.players = {};
@@ -2529,7 +2539,7 @@ com.cubeia.games.poker.io.protocol.TournamentLobbyData = function () {
     this.payoutInfo = {};
     this.tournamentStatistics = {};
     this.tournamentInfo = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeArray(this.players.save());
         a.writeArray(this.blindsStructure.save());
@@ -2538,7 +2548,7 @@ com.cubeia.games.poker.io.protocol.TournamentLobbyData = function () {
         a.writeArray(this.tournamentInfo.save());
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.players = new com.cubeia.games.poker.io.protocol.TournamentPlayerList();
         this.players.load(a);
         this.blindsStructure = new com.cubeia.games.poker.io.protocol.BlindsStructure();
@@ -2550,7 +2560,7 @@ com.cubeia.games.poker.io.protocol.TournamentLobbyData = function () {
         this.tournamentInfo = new com.cubeia.games.poker.io.protocol.TournamentInfo();
         this.tournamentInfo.load(a)
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.TournamentLobbyData";
@@ -2564,23 +2574,23 @@ com.cubeia.games.poker.io.protocol.TournamentLobbyData = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.TournamentLobbyData.CLASSID = 61;
-com.cubeia.games.poker.io.protocol.TournamentOut = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.TournamentOut = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.TournamentOut.CLASSID
     };
     this.player = {};
     this.position = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.player);
         a.writeInt(this.position);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.player = a.readInt();
         this.position = a.readInt()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.TournamentOut";
@@ -2591,8 +2601,8 @@ com.cubeia.games.poker.io.protocol.TournamentOut = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.TournamentOut.CLASSID = 21;
-com.cubeia.games.poker.io.protocol.TournamentPlayer = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.TournamentPlayer = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.TournamentPlayer.CLASSID
     };
     this.name = {};
@@ -2600,7 +2610,7 @@ com.cubeia.games.poker.io.protocol.TournamentPlayer = function () {
     this.position = {};
     this.winnings = {};
     this.tableId = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeString(this.name);
         a.writeString(this.stackSize);
@@ -2609,14 +2619,14 @@ com.cubeia.games.poker.io.protocol.TournamentPlayer = function () {
         a.writeInt(this.tableId);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.name = a.readString();
         this.stackSize = a.readString();
         this.position = a.readInt();
         this.winnings = a.readString();
         this.tableId = a.readInt()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.TournamentPlayer";
@@ -2630,12 +2640,12 @@ com.cubeia.games.poker.io.protocol.TournamentPlayer = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.TournamentPlayer.CLASSID = 48;
-com.cubeia.games.poker.io.protocol.TournamentPlayerList = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.TournamentPlayerList = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.TournamentPlayerList.CLASSID
     };
     this.players = [];
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.players.length);
         var b;
@@ -2644,7 +2654,7 @@ com.cubeia.games.poker.io.protocol.TournamentPlayerList = function () {
         }
         return a
     };
-    this.load = function (b) {
+    this.load = function(b) {
         var d;
         var a = b.readInt();
         var c;
@@ -2655,7 +2665,7 @@ com.cubeia.games.poker.io.protocol.TournamentPlayerList = function () {
             this.players.push(c)
         }
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.TournamentPlayerList";
@@ -2668,8 +2678,8 @@ com.cubeia.games.poker.io.protocol.TournamentPlayerList = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.TournamentPlayerList.CLASSID = 47;
-com.cubeia.games.poker.io.protocol.TournamentRegistrationInfo = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.TournamentRegistrationInfo = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.TournamentRegistrationInfo.CLASSID
     };
     this.buyIn = {};
@@ -2677,7 +2687,7 @@ com.cubeia.games.poker.io.protocol.TournamentRegistrationInfo = function () {
     this.currency = {};
     this.balanceInWallet = {};
     this.sufficientFunds = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeString(this.buyIn);
         a.writeString(this.fee);
@@ -2686,14 +2696,14 @@ com.cubeia.games.poker.io.protocol.TournamentRegistrationInfo = function () {
         a.writeBoolean(this.sufficientFunds);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.buyIn = a.readString();
         this.fee = a.readString();
         this.currency = a.readString();
         this.balanceInWallet = a.readString();
         this.sufficientFunds = a.readBoolean()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.TournamentRegistrationInfo";
@@ -2707,21 +2717,21 @@ com.cubeia.games.poker.io.protocol.TournamentRegistrationInfo = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.TournamentRegistrationInfo.CLASSID = 66;
-com.cubeia.games.poker.io.protocol.TournamentStatistics = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.TournamentStatistics = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.TournamentStatistics.CLASSID
     };
     this.chipStatistics = {};
     this.levelInfo = {};
     this.playersLeft = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeArray(this.chipStatistics.save());
         a.writeArray(this.levelInfo.save());
         a.writeArray(this.playersLeft.save());
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.chipStatistics = new com.cubeia.games.poker.io.protocol.ChipStatistics();
         this.chipStatistics.load(a);
         this.levelInfo = new com.cubeia.games.poker.io.protocol.LevelInfo();
@@ -2729,7 +2739,7 @@ com.cubeia.games.poker.io.protocol.TournamentStatistics = function () {
         this.playersLeft = new com.cubeia.games.poker.io.protocol.PlayersLeft();
         this.playersLeft.load(a)
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.TournamentStatistics";
@@ -2741,7 +2751,7 @@ com.cubeia.games.poker.io.protocol.TournamentStatistics = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.TournamentStatistics.CLASSID = 58;
-com.cubeia.games.poker.io.protocol.TournamentStatusEnum = function () {
+com.cubeia.games.poker.io.protocol.TournamentStatusEnum = function() {
 };
 com.cubeia.games.poker.io.protocol.TournamentStatusEnum.ANNOUNCED = 0;
 com.cubeia.games.poker.io.protocol.TournamentStatusEnum.REGISTERING = 1;
@@ -2751,7 +2761,7 @@ com.cubeia.games.poker.io.protocol.TournamentStatusEnum.PREPARING_BREAK = 4;
 com.cubeia.games.poker.io.protocol.TournamentStatusEnum.FINISHED = 5;
 com.cubeia.games.poker.io.protocol.TournamentStatusEnum.CANCELLED = 6;
 com.cubeia.games.poker.io.protocol.TournamentStatusEnum.CLOSED = 7;
-com.cubeia.games.poker.io.protocol.TournamentStatusEnum.makeTournamentStatusEnum = function (a) {
+com.cubeia.games.poker.io.protocol.TournamentStatusEnum.makeTournamentStatusEnum = function(a) {
     switch (a) {
         case 0:
             return com.cubeia.games.poker.io.protocol.TournamentStatusEnum.ANNOUNCED;
@@ -2772,7 +2782,7 @@ com.cubeia.games.poker.io.protocol.TournamentStatusEnum.makeTournamentStatusEnum
     }
     return -1
 };
-com.cubeia.games.poker.io.protocol.TournamentStatusEnum.toString = function (a) {
+com.cubeia.games.poker.io.protocol.TournamentStatusEnum.toString = function(a) {
     switch (a) {
         case 0:
             return"ANNOUNCED";
@@ -2793,20 +2803,20 @@ com.cubeia.games.poker.io.protocol.TournamentStatusEnum.toString = function (a) 
     }
     return"INVALID_ENUM_VALUE"
 };
-com.cubeia.games.poker.io.protocol.TournamentTable = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.TournamentTable = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.TournamentTable.CLASSID
     };
     this.tableId = {};
-    this.save = function () {
+    this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.tableId);
         return a
     };
-    this.load = function (a) {
+    this.load = function(a) {
         this.tableId = a.readInt()
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.TournamentTable";
@@ -2816,16 +2826,16 @@ com.cubeia.games.poker.io.protocol.TournamentTable = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.TournamentTable.CLASSID = 63;
-com.cubeia.games.poker.io.protocol.WaitingForPlayers = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.WaitingForPlayers = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.WaitingForPlayers.CLASSID
     };
-    this.save = function () {
+    this.save = function() {
         return[]
     };
-    this.load = function (a) {
+    this.load = function(a) {
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.WaitingForPlayers";
@@ -2834,16 +2844,16 @@ com.cubeia.games.poker.io.protocol.WaitingForPlayers = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.WaitingForPlayers.CLASSID = 43;
-com.cubeia.games.poker.io.protocol.WaitingToStartBreak = function () {
-    this.classId = function () {
+com.cubeia.games.poker.io.protocol.WaitingToStartBreak = function() {
+    this.classId = function() {
         return com.cubeia.games.poker.io.protocol.WaitingToStartBreak.CLASSID
     };
-    this.save = function () {
+    this.save = function() {
         return[]
     };
-    this.load = function (a) {
+    this.load = function(a) {
     };
-    this.getNormalizedObject = function () {
+    this.getNormalizedObject = function() {
         var a = {};
         var b;
         a.summary = "com.cubeia.games.poker.io.protocol.WaitingToStartBreak";

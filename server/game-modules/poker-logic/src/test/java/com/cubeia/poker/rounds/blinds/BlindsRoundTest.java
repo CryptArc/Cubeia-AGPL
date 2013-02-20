@@ -44,6 +44,8 @@ import javax.annotation.Nullable;
 import java.util.SortedMap;
 
 import static com.cubeia.poker.TestUtils.createMockPlayers;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -446,7 +448,40 @@ public class BlindsRoundTest extends TestCase {
         act(p[3], PokerActionType.BIG_BLIND);
 
         assertEquals(100, requestedAction.getPlayerId());
-        assertTrue(requestedAction.isOptionEnabled(PokerActionType.BIG_BLIND));
+        assertThat(requestedAction.isOptionEnabled(PokerActionType.ENTRY_BET), is(true));
+    }
+
+    public void testWaitForBigBlind() {
+        MockPlayer[] p = createMockPlayers(4);
+        addPlayers(p);
+        setPreviousBlindsInfo(0, 1, 2);
+
+        // Everyone has posted the entry bet, except player 0.
+        p[0].setHasPostedEntryBet(false);
+        p[0].setMissedBlindsStatus(MissedBlindsStatus.NOT_ENTERED_YET);
+        p[1].setHasPostedEntryBet(true);
+        p[2].setHasPostedEntryBet(true);
+        p[3].setHasPostedEntryBet(true);
+        round = new BlindsRound(context, serverAdapterHolder, blindsCalculator);
+
+        act(p[2], PokerActionType.SMALL_BLIND);
+        act(p[3], PokerActionType.BIG_BLIND);
+
+        assertEquals(100, requestedAction.getPlayerId());
+        assertThat(requestedAction.isOptionEnabled(PokerActionType.ENTRY_BET), is(true));
+        act(p[0], PokerActionType.WAIT_FOR_BIG_BLIND);
+
+        assertTrue(round.isFinished());
+
+        // Player 0 should now get to post the big blind.
+        BlindsInfo blindsInfo = round.getBlindsInfo();
+        setPreviousBlindsInfo(blindsInfo);
+        context.prepareReadyPlayers(allGood);
+        round = new BlindsRound(context, serverAdapterHolder, blindsCalculator);
+        act(p[3], PokerActionType.SMALL_BLIND);
+        act(p[0], PokerActionType.BIG_BLIND);
+
+        assertTrue(round.isFinished());
     }
 
     public void testDeclineEntryBet() {
@@ -538,12 +573,12 @@ public class BlindsRoundTest extends TestCase {
 
         act(p[3], PokerActionType.BIG_BLIND);
         assertEquals(104, requestedAction.getPlayerId());
-        assertTrue(requestedAction.isOptionEnabled(PokerActionType.BIG_BLIND));
-        act(p[4], PokerActionType.BIG_BLIND);
+        assertThat(requestedAction.isOptionEnabled(PokerActionType.ENTRY_BET), is(true));
+        act(p[4], PokerActionType.ENTRY_BET);
 
         assertEquals(105, requestedAction.getPlayerId());
-        assertTrue(requestedAction.isOptionEnabled(PokerActionType.BIG_BLIND));
-        act(p[5], PokerActionType.BIG_BLIND);
+        assertThat(requestedAction.isOptionEnabled(PokerActionType.ENTRY_BET), is(true));
+        act(p[5], PokerActionType.ENTRY_BET);
     }
 
     public void testTwoEntryBetDeclines() {
@@ -612,13 +647,13 @@ public class BlindsRoundTest extends TestCase {
         act(p[3], PokerActionType.SMALL_BLIND);
         act(p[4], PokerActionType.BIG_BLIND);
         assertEquals(105, requestedAction.getPlayerId());
-        assertTrue(requestedAction.isOptionEnabled(PokerActionType.BIG_BLIND));
-        act(p[5], PokerActionType.BIG_BLIND);
+        assertThat(requestedAction.isOptionEnabled(PokerActionType.ENTRY_BET), is(true));
+        act(p[5], PokerActionType.ENTRY_BET);
 
         assertEquals(101, requestedAction.getPlayerId());
-        assertTrue(requestedAction.isOptionEnabled(PokerActionType.BIG_BLIND));
+        assertThat(requestedAction.isOptionEnabled(PokerActionType.ENTRY_BET), is(true));
         assertFalse(round.isFinished());
-        act(p[1], PokerActionType.BIG_BLIND);
+        act(p[1], PokerActionType.ENTRY_BET);
         assertTrue(round.isFinished());
     }
 
@@ -634,6 +669,10 @@ public class BlindsRoundTest extends TestCase {
         bi.setBigBlindPlayerId(bigSeatId + 100);
 
         context.setBlindsInfo(bi);
+    }
+
+    private void setPreviousBlindsInfo(BlindsInfo blindsInfo) {
+        context.setBlindsInfo(blindsInfo);
     }
 
     private void verifyAndAct(MockPlayer player, PokerActionType action) {
