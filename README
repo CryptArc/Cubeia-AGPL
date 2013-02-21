@@ -25,7 +25,7 @@ your current setup with some poker-bots.
 web-application that manages the poker-game (timings, tables, tournaments).
 
 * To get a complete poker-system (with user management, accounting, wallet), you
-have to install the Cubeia Network, see ./backoffice/cubeia-network.txt. Note
+have to install the Cubeia Network, see ./backoffice/README.TXT. Note
 that this can become a difficult step, due to the ongoing development.
 
 SOFTWARE SUBSYSTEMS
