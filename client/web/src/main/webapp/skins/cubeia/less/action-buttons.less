@@ -111,15 +111,13 @@
     }
 }
 label.checkbox-icon-label {
-    float:left;
-    display:block;
+    display:inline-block;
 
     &:before {
         background-image: url("../images/global/checkbox.png");
         background-size: 100%;
         width: 1.1em;
-        float: left;
-        display: block;
+        display: inline-block;
         padding-bottom: 1.1em;
         content: '';
         background-repeat: no-repeat;
@@ -133,4 +131,20 @@ input.checkbox {
         background-image: url("../images/global/checkbox-checked.png");
     }
 
+}
+
+.wait-for-big-blind {
+    font-size: 120%;
+    position: absolute;
+    top: 20%;
+    right: 10%;
+    width: 20%;
+    height: 70%;
+    text-align:center;
+
+    div {
+        clear:both;
+        font-size: 80%;
+        color:#aaa;
+    }
 }
