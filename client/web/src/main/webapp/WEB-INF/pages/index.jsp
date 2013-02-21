@@ -80,7 +80,7 @@
 
     <script type="text/javascript" src="${cp}/js/base/ui/BetSlider.js"></script>
     <script type="text/javascript" src="${cp}/js/base/Action.js"></script>
-    <script type="text/javascript" src="${cp}/js/base/ui/actions/CheckboxAction.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/actions/CheckBoxAction.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/actions/BlindsActions.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/actions/ActionButton.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/actions/AbstractTableButtons.js"></script>

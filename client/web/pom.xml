@@ -214,7 +214,7 @@
                         <source>${js.dir}/base/ui/FutureActionType.js</source>
                         <source>${js.dir}/base/ui/FutureActions.js</source>
                         <source>${js.dir}/base/communication/poker-game/ActionUtils.js</source>
-                        <source>${js.dir}/base/ui/actions/CheckboxAction.js</source>
+                        <source>${js.dir}/base/ui/actions/CheckBoxAction.js</source>
                         <source>${js.dir}/base/ui/actions/BlindsActions.js</source>
                         <source>${js.dir}/base/ui/actions/ActionButton.js</source>
                         <source>${js.dir}/base/ui/actions/AbstractTableButtons.js</source>
