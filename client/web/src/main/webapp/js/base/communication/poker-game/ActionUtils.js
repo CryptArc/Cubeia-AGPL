@@ -49,6 +49,9 @@ Poker.ActionUtils = Class.extend({
             case com.cubeia.games.poker.io.protocol.ActionTypeEnum.ENTRY_BET:
                 type = Poker.ActionType.ENTRY_BET;
                 break;
+            case com.cubeia.games.poker.io.protocol.ActionTypeEnum.WAIT_FOR_BIG_BLIND:
+                type = Poker.ActionType.WAIT_FOR_BIG_BLIND;
+                break;
             default:
                 console.log("Unhandled ActionTypeEnum " + actType);
                 break;
@@ -135,6 +138,14 @@ Poker.ActionUtils = Class.extend({
                 return null;
 
         }
+    },
+    getActionByType : function(actionType,actions) {
+        for(var i = 0; i<actions.length; i++) {
+            if(actions[i].type.id == actionType.id) {
+                return actions[i];
+            }
+        }
+        return null;
     }
 
 });

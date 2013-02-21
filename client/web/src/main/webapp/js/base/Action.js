@@ -73,7 +73,7 @@ Poker.ActionType = {
         id : "action-sit-in"
     },
     ENTRY_BET : {
-        text : "Entry Bet",
+        text : "Big Blind",
         id : "entry-bet"
     },
     DECLINE_ENTRY_BET : {
@@ -81,7 +81,7 @@ Poker.ActionType = {
         id : "decline-entry-bet"
     },
     WAIT_FOR_BIG_BLIND : {
-        text : "Wait for Big Blind",
+        text : "Waiting",
         id : "wait-for-big-blind"
     },
     ANTE : {

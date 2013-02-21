@@ -270,7 +270,8 @@ Poker.TableManager = Class.extend({
         var table = this.tables.get(tableId);
         var p = table.getPlayerById(playerId);
         if(p == null) {
-            throw "Unable to find player to update balance pid = " + playerId;
+            console.log("Unable to find player to update balance playerId = " + playerId + ", tableId = " + tableId);
+            return;
         }
         p.balance = balance;
         table.getLayoutManager().onPlayerUpdated(p);

@@ -31,6 +31,7 @@ Poker.TableLayoutManager = Class.extend({
     animationManager : null,
     totalPotContainer : null,
     viewContainerOffsetTop : 0,
+
     /**
      * @type Poker.Clock
      */
@@ -92,12 +93,7 @@ Poker.TableLayoutManager = Class.extend({
         $(".future-action").show();
     },
     handleSitIn : function() {
-        var myPlayerSeat = this.seats.get(this.myPlayerSeatId);
-        if (myPlayerSeat!=null) {
-            myPlayerSeat.doPostBlinds();
-            myPlayerSeat.setSitOutNextHand(false)
-        }
-
+        this.myActionsManager.doPostBlinds();
     },
     onActivateView : function() {
         this.animationManager.setActive(true);

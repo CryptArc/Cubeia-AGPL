@@ -80,6 +80,13 @@
 
     <script type="text/javascript" src="${cp}/js/base/ui/BetSlider.js"></script>
     <script type="text/javascript" src="${cp}/js/base/Action.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/actions/CheckboxAction.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/actions/BlindsActions.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/actions/ActionButton.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/actions/AbstractTableButtons.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/actions/ActionButtons.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/actions/TableButtons.js"></script>
+
     <script type="text/javascript" src="${cp}/js/base/ui/MyActionsManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/LobbyLayoutManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/LobbyManager.js"></script>
@@ -585,11 +592,11 @@
             <div class="own-player" id="myPlayerSeat-{{tableId}}Info" style="display:none;">
                 <div class="name" id="myPlayerName-{{tableId}}"></div>
                 <div class="balance" id="myPlayerBalance-{{tableId}}"></div>
-                <div class="no-more-blinds-container">
+                <div class="no-more-blinds">
                     <input class="checkbox" type="checkbox" id="noMoreBlinds-{{tableId}}"/>
                     <label class="checkbox-icon-label" for="noMoreBlinds-{{tableId}}">No more blinds</label>
                 </div>
-                    <div class="sit-out-next-hand-container">
+                    <div class="sit-out-next-hand">
                         <input class="checkbox" type="checkbox" id="sitOutNextHand-{{tableId}}"/>
                         <label class="checkbox-icon-label" for="sitOutNextHand-{{tableId}}">Sit out next hand</label>
                     </div>
@@ -693,6 +700,11 @@
                         <label class="checkbox-icon-label" for="future-raise-any-{{tableId}}">Raise any</label>
                     </div>
 
+            </div>
+            <div id="waitForBigBlind-{{tableId}}" class="wait-for-big-blind" style="display:none;">
+                <input class="checkbox" type="checkbox" id="wait-for-big-blind-cb-{{tableId}}" checked="checked"/>
+                <label class="checkbox-icon-label" for="wait-for-big-blind-cb-{{tableId}}">Wait for Big Blind</label>
+                <div>Uncheck to post the Big Blind and be dealt in next hand </div>
             </div>
         <div id="myPlayerSeat-{{tableId}}Progressbar" class="circular-progress-bar">
 
