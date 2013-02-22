@@ -2,7 +2,6 @@
 var Poker = Poker || {};
 
 /**
- *
  * @type {Poker.OperatorConfig}
  */
 Poker.OperatorConfig = Class.extend({

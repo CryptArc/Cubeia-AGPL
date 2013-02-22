@@ -21,8 +21,8 @@
     <script type="text/javascript" src="${cp}/js/lib/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/jquery-ui-1.8.21.custom.min.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/jquery.ui.touch-punch.js"></script>
-    <script type="text/javascript" src="${cp}/js/base/touch-click.js"></script>
-    <script type="text/javascript" src="${cp}/js/base/ui/relative-offset.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/jquery-plugins/touch-click.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/jquery-plugins/relative-offset.js"></script>
 
     <script type="text/javascript" src="${cp}/js/lib/mustache.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/jquery.jqGrid.min.js"></script>
@@ -103,7 +103,7 @@
     <script type="text/javascript" src="${cp}/js/base/ui/cards/CommunityCard.js"></script>
     <script type="text/javascript" src="${cp}/js/base/Pot.js"></script>
     <script type="text/javascript" src="${cp}/js/base/Hand.js"></script>
-    <script type="text/javascript" src="${cp}/js/base/ui/describe.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/jquery-plugins/describe.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/CSSUtils.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/animation/Transform.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/animation/Animation.js"></script>
@@ -735,9 +735,12 @@
     <h1>Header</h1>
     <p class="message">Message</p>
     <p class="dialog-buttons">
+            <a class="dialog-cancel-button" style="display:none;">
+                Cancel
+            </a>
             <a class="dialog-ok-button">
-            Continue
-        </a>
+                Continue
+            </a>
     </p>
 
     </div>

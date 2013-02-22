@@ -1,5 +1,8 @@
 "use strict";
 var Poker = Poker || {};
+/**
+ * @type {Poker.ActionButton}
+ */
 Poker.ActionButton = Class.extend({
     el : null,
     actionType : null,
@@ -60,6 +63,11 @@ Poker.ActionButton = Class.extend({
     }
 });
 
+/**
+ *
+ * @type {Poker.BetAmountButton}
+ * @extends {Poker.ActionButton}
+ */
 Poker.BetAmountButton = Poker.ActionButton.extend({
     betAmountFunction : null,
     init : function(el,actionType,callback,showAmount,betAmountFunction){
@@ -73,6 +81,12 @@ Poker.BetAmountButton = Poker.ActionButton.extend({
         });
     }
 });
+
+/**
+ *
+ * @type {Poker.BetSliderButton}
+ * @extends {Poker.ActionButton}
+ */
 Poker.BetSliderButton = Poker.ActionButton.extend({
     init : function(el,actionType,callback,showAmount){
         this._super(el,actionType,callback,showAmount);

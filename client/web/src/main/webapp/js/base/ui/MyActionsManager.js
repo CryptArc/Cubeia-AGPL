@@ -90,6 +90,7 @@ Poker.MyActionsManager  = Class.extend({
             if (enabled == true) {
                 requestHandler.sitOut();
             } else {
+                self.onRequestToSitIn();
                 requestHandler.sitIn();
             }
         });
@@ -97,8 +98,10 @@ Poker.MyActionsManager  = Class.extend({
         this.onWatchingTable();
 
     },
-    doPostBlinds : function() {
+    onRequestToSitIn : function() {
+        this.tableButtons.hide(Poker.ActionType.SIT_IN);
         this.blindsActions.noMoreBlinds.setEnabled(false);
+        this.sitOutNextHand.setEnabled(false);
     },
     setNoMoreBlinds : function(enabled) {
         console.log("setting no more blinds = " + enabled);
@@ -221,10 +224,12 @@ Poker.MyActionsManager  = Class.extend({
         this.tableButtons.show(Poker.ActionType.LEAVE);
     },
     onSitOut : function() {
+        console.log("ON SIT OUT");
         this.blindsActions.onSitOut();
         this.tableButtons.hideAll();
         this.sitOutNextHand.setEnabled(true);
         this.hideActionElements();
+        this.userActionsContainer.show();
         this.display(Poker.ActionType.LEAVE);
         this.display(Poker.ActionType.SIT_IN);
     },
@@ -262,6 +267,8 @@ Poker.MyActionsManager  = Class.extend({
      * @param {Poker.FutureActionType[]} actions
      */
     displayFutureActions : function(actions, callAmount, minBetAmount) {
+        console.log("DISPLAY FUTURE ACTIONS");
+        console.log(actions);
         this.futureActions.setFutureActions(actions,callAmount,minBetAmount);
         this.blindsActions.entryBetPosted();
         this.userActionsContainer.hide();

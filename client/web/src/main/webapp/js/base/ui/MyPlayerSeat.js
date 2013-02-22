@@ -4,8 +4,7 @@ var Poker = Poker || {};
 /**
  * Handles the UI for the logged in player
  *
- * extends Poker.Seat
- *
+ * @extends {Poker.Seat}
  * @type {Poker.MyPlayerSeat}
  */
 Poker.MyPlayerSeat = Poker.Seat.extend({
@@ -105,13 +104,22 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         }
     },
     updatePlayer : function(player) {
+        console.log("UPDATE MY PLYAER ");
+        console.log(player);
+        var update = false;
+        if(player.tableStatus.id != this.player.tableStatus.id) {
+            update = true;
+        }
         this.player = player;
         $("#myPlayerBalance-"+this.tableId).html("&euro;"+this.player.balance);
         this.seatBalance.html("&euro;"+this.player.balance);
 
-        this.handlePlayerStatus();
+        if(update===true) {
+            this.handlePlayerStatus();
+        }
     },
     handlePlayerStatus : function() {
+        console.log("HANDLE PLAYER STATUS");
         if (this.player.tableStatus == Poker.PlayerTableStatus.SITTING_OUT) {
             this.myActionsManager.onSitOut();
         } else if (this.player.tableStatus == Poker.PlayerTableStatus.TOURNAMENT_OUT){

@@ -41,6 +41,9 @@ Poker.DialogManager = Class.extend({
      * example
      * displayManager.displayGenericDialog({header : "header" , message:"message", okButtonText : "reload"});
      * @param {Object} content - the content of the dialog, see above for format
+     * @param {String} content.header - header of the dialog
+     * @param {String} content.message - the message to display
+     * @param {Boolean} [content.displayCancelButton] - if you should display a cancel
      * @param {Function} [okCallback] callback to execute when ok button is clicked
      *
      */
@@ -55,6 +58,11 @@ Poker.DialogManager = Class.extend({
         } else {
             $("#genericDialog .message").hide();
         }
+        if(content.displayCancelButton === true) {
+            $("#genericDialog .dialog-cancel-button").show();
+        } else {
+            $("#genericDialog .dialog-cancel-button").hide();
+        }
         var self = this;
         if (typeof(content.okButtonText) != "undefined") {
             $("#genericDialog .dialog-ok-button").html(content.okButtonText);
@@ -65,7 +73,7 @@ Poker.DialogManager = Class.extend({
             }, null);
         } else {
             this.displayDialog("genericDialog", function() {
-                okCallback();
+                return okCallback();
             }, null);
         }
     },

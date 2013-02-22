@@ -20,6 +20,14 @@ Poker.AbstractTableButtons = Class.extend({
             console.log("Trying to show table button for " + actionType.id + " that doesn't exist");
         }
     },
+    hide : function(actionType) {
+        var button = this.buttons.get(actionType.id);
+        if(button!=null) {
+            button.el.hide();
+        } else {
+            console.log("Trying to show table button for " + actionType.id + " that doesn't exist");
+        }
+    },
     contains : function(actionType) {
         return this.buttons.contains(actionType.id);
     },
