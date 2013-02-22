@@ -8,32 +8,31 @@ Poker.FutureActions = Class.extend({
     currentRaiseAmount : 0,
     currentActions : null,
     container : null,
+    allActions : null,
     init : function(container) {
         var self = this;
         this.container = container;
 
-        $.each(this.getFutureActionTypes(),function(i,actionType){
-            container.find("."+actionType.id + " input").on("change",function(e) {
+        this.allActions = new Poker.Map();
 
-                if(self.selectedFutureActionType!=null) {
-                    if(self.selectedFutureActionType.id === actionType.id) {
-                        self.setSelectedFutureAction(null);
-                    } else {
-                        container.find("."+self.selectedFutureActionType.id + " input").attr("checked",false);
-                    }
+        $.each(this.getFutureActionTypes(),function(i,futureActionType){
+            var fa = new Poker.CheckboxAction(container,$("."+futureActionType.id),false);
+            fa.onChange(function(enabled){
+                if(enabled===true) {
+                    self.clear();
+                    self.setSelectedFutureAction(futureActionType);
+                } else {
+                    self.clear();
                 }
-                if($(this).is(":checked")) {
-                    self.setSelectedFutureAction(actionType);
-                }
-
             });
+            self.allActions.put(futureActionType.id,fa);
         });
     },
-    /**
-     *
-     * @param {Poker.FutureActionType} futureActionType
-     */
+
     setSelectedFutureAction : function(futureActionType) {
+        if(futureActionType!=null) {
+            this.allActions.get(futureActionType.id).setEnabled(true);
+        }
         this.selectedFutureActionType = futureActionType;
     },
     /**
@@ -144,7 +143,7 @@ Poker.FutureActions = Class.extend({
                 if(raise!=null) {
                     return raise;
                 } else {
-                    return null;
+                    return this.findAction(Poker.ActionType.BET,actions);
                 }
         }
 
@@ -165,7 +164,10 @@ Poker.FutureActions = Class.extend({
     },
     clear : function() {
         this.setSelectedFutureAction(null);
-        this.container.find(".future-action input").attr("checked",false);
+        var actions = this.allActions.values();
+        for(var i = 0; i<actions.length; i++) {
+            actions[i].setEnabled(false);
+        }
     },
     hide : function() {
         this.container.hide();
