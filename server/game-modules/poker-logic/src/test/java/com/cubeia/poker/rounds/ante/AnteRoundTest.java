@@ -37,6 +37,7 @@ import org.mockito.Mockito;
 
 import java.util.*;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
@@ -102,6 +103,7 @@ public class AnteRoundTest {
 
         when(context.getPlayerInCurrentHand(player1.getId())).thenReturn(player1);
         when(context.getPlayerInCurrentHand(player2.getId())).thenReturn(player2);
+        when(context.getPlayersInHand()).thenReturn(asList(player1, player2));
 
         when(context.getTimingProfile()).thenReturn(new DefaultTimingProfile());
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
@@ -184,7 +186,7 @@ public class AnteRoundTest {
         when(player2.getBalance()).thenReturn(resultingBalance2);
         when(anteRoundHelper.isImpossibleToStartRound(Mockito.anyCollection())).thenReturn(true);
 
-        when(anteRoundHelper.setAllPendingPlayersToDeclineEntryBet(Mockito.anyCollection())).thenReturn(Arrays.asList(player2));
+        when(anteRoundHelper.setAllPendingPlayersToDeclineEntryBet(Mockito.anyCollection())).thenReturn(asList(player2));
 
         PokerAction action1 = new PokerAction(player1.getId(), PokerActionType.DECLINE_ENTRY_BET);
         anteRound.act(action1);
@@ -226,7 +228,7 @@ public class AnteRoundTest {
 
         verify(player1, never()).addBet(anteLevel);
         verify(player1).setHasActed(true);
-        verify(player1).setHasPostedEntryBet(false);
+        verify(player1, times(2)).setHasPostedEntryBet(false);
         verify(serverAdapter).notifyActionPerformed(action, player1);
         verify(serverAdapter).notifyPlayerBalance(player1);
     }
@@ -376,7 +378,7 @@ public class AnteRoundTest {
         verify(player1, never()).setHasActed(true);
         verify(player2).setHasActed(true);
         verify(player2).setHasFolded(true);
-        verify(player2).setHasPostedEntryBet(false);
+        verify(player2, times(2)).setHasPostedEntryBet(false);
         verify(serverAdapter).notifyActionPerformed(Mockito.any(PokerAction.class), Mockito.eq(player2));
         verify(serverAdapter).notifyPlayerBalance(player2);
     }
@@ -397,7 +399,7 @@ public class AnteRoundTest {
         ServerAdapter serverAdapter = mock(ServerAdapter.class);
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
 
-        when(context.getCurrentHandSeatingMap()).thenReturn(playerMap);
+        when(context.getPlayersInHand()).thenReturn(playerMap.values());
 
         AnteRound anteRound = new AnteRound(context, serverAdapterHolder, anteRoundHelper);
 
@@ -419,7 +421,7 @@ public class AnteRoundTest {
         verify(player1).setHasPostedEntryBet(true);
         verify(player2).setHasActed(true);
         verify(player2).setHasFolded(true);
-        verify(player2).setHasPostedEntryBet(false);
+        verify(player2, times(2)).setHasPostedEntryBet(false);
     }
 
 }

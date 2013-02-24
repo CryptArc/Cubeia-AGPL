@@ -42,6 +42,8 @@ public class TelesinaDeck implements Deck {
     private final int deckSize;
 
     private final Rank deckLowestRank;
+
+    // TODO: Made this transient because stuff blows up if you try to serialize the
     private final transient Random rng;
 
     /**
