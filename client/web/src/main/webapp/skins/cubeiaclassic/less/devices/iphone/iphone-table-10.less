@@ -1,0 +1,162 @@
+.cards-container-pos-iphone(@top:0,@left:0) {
+    .cards-container {
+        top:@top;
+        left:@left;
+        z-index: 0;
+    }
+}
+.seat-defaults-iphone(@avatar-base-left:45%, @avatar-base-top:65%) {
+    .avatar-base {
+        left: @avatar-base-left;
+        top: @avatar-base-top;
+    }
+    .avatar {
+        left: @avatar-base-left;
+        top: @avatar-base-top;
+    }
+    .player-name {
+        left:@avatar-base-left + 3;
+        top: @avatar-base-top + 4;
+    }
+    .seat-balance {
+        left:@avatar-base-left + 3;
+        top: @avatar-base-top + 25;
+        font-size:180%;
+    }
+    .player-status, .action-text,  .hand-strength {
+        left:@avatar-base-left + 3;
+        top: @avatar-base-top + 3;
+    }
+    .action-text {
+        font-size: 120%;
+    }
+    .action-amount {
+        z-index: 200000;
+    }
+    .progress-bar {
+        right:-5%;
+    }
+}
+.table-10 {
+    .seat-pos-9 {
+        top:75%;
+        .seat-defaults-iphone(40%,65%);
+        .cards-container-pos-iphone(15%,40%);
+        .action-amount-pos(9%,10%,center);
+    }
+    .seat-pos-8 {
+        top:55%;
+        .seat-defaults-iphone(25%,40%);
+        .cards-container-pos-iphone(0%,25%);
+        .action-amount-pos(12%,0%,center);
+    }
+    .seat-pos-7 {
+        top:25%;
+        .seat-defaults-iphone(25%,45%);
+        .cards-container-pos-iphone(0%,25%);
+        .action-amount-pos(90%,0%,center);
+    }
+
+    .seat-pos-6 {
+        top:0;
+        .seat-defaults-iphone(40%,50%);
+        .cards-container-pos-iphone(0%,40%);
+        .action-amount-pos(95%,20%,center);
+    }
+
+    .seat-pos-5 {
+        top:0%;
+        .seat-defaults-iphone(20%,50%);
+        .cards-container-pos-iphone(0%,20%);
+        .action-amount-pos(95%,10%,center);
+    }
+    .seat-pos-4 {
+        top:0%;
+        .seat-defaults-iphone(0%,50%);
+        .cards-container-pos-iphone(0%,0%);
+        .action-amount-pos(95%,10%,center);
+    }
+
+    .seat-pos-3 {
+        top:25%;
+        .seat-defaults-iphone(5%,45%);
+        .cards-container-pos-iphone(0%,0%);
+        .action-amount-pos(85%,25%,center);
+        .progress-bar {
+            left:-5%;
+            right: auto;
+        }
+    }
+
+    .seat-pos-2 {
+        top:55%;
+        .seat-defaults-iphone(5%,50%);
+        .cards-container-pos-iphone(0%,5%);
+        .action-amount-pos(14%,25%,center);
+        .progress-bar {
+            left:-5%;
+            right: auto;
+        }
+    }
+    .seat-pos-1 {
+        top:75%;
+        .seat-defaults-iphone(0%,70%);
+        .cards-container-pos-iphone(15%,0%);
+        .action-amount-pos(7%,10%,center);
+    }
+    .seat-pos-0, .my-player-seat {
+        top:75%;
+        .seat-defaults-iphone(20%,70%);
+        .cards-container-pos-iphone(15%,20%);
+        .action-amount-pos(10%,10%,center);
+    }
+    .my-player-seat {
+        width:28.5%;
+        position: absolute;
+        left:35.75%;
+        padding-bottom: 0;
+        .hand-strength {
+            display:none;
+        }
+        div.action-amount {
+            top:-15%;
+            z-index: 1;
+            font-size:150%;
+        }
+        .cards-container {
+            top: 25%;
+            left: 40%;
+            z-index: 0;
+            width:30%;
+        }
+        .hand-strength {
+            display: none;
+        }
+        .action-text {
+            z-index: 10000000;
+            top: 72%;
+            font-size: 120%;
+        }
+        .player-card-container {
+            width: 100%;
+            height: 200%;
+            left: 3%;
+            top:-10%;
+            margin-left:15%;
+            z-index: 0;
+
+            &:first-child {
+                margin-left: -30%;
+            }
+            &:last-child {
+                margin-top: 10%;
+            }
+        }
+
+    }
+}
+.player-card-container:last-child {
+    left: 40%;
+    top: 0%;
+}
+
