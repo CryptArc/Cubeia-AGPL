@@ -34,7 +34,8 @@ public class PlayerAction extends HandHistoryEvent {
         BIG_BLIND_PLUS_DEAD_SMALL_BLIND("Big blind plus dead small blind"),
         DEAD_SMALL_BLIND("Dead small blind"),
         ENTRY_BET("Entry bet"),
-        WAIT_FOR_BIG_BLIND("Wait for big blind");
+        WAIT_FOR_BIG_BLIND("Wait for big blind"),
+        DISCARD("Discard cards");
 
         private final String name;
 

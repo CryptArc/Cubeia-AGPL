@@ -24,7 +24,9 @@ import com.cubeia.poker.rounds.RoundCreator;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.variant.texasholdem.TexasHoldemFutureActionsCalculator;
 
-public class BettingRoundCreator implements RoundCreator {
+import java.io.Serializable;
+
+public class BettingRoundCreator implements RoundCreator, Serializable {
 
     private BettingRoundName round;
     private final PlayerToActCalculatorFactory playerToActCalculatorFactory;

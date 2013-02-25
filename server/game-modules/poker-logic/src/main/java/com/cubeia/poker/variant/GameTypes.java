@@ -32,6 +32,7 @@ import static com.cubeia.poker.variant.RoundCreators.dealCommunityCards;
 import static com.cubeia.poker.variant.RoundCreators.dealFaceDownAndFaceUpCards;
 import static com.cubeia.poker.variant.RoundCreators.dealFaceDownCards;
 import static com.cubeia.poker.variant.RoundCreators.dealFaceUpCards;
+import static com.cubeia.poker.variant.RoundCreators.discardRound;
 import static com.cubeia.poker.variant.RoundCreators.fromBestHand;
 import static com.cubeia.poker.variant.RoundCreators.fromBigBlind;
 
@@ -50,11 +51,35 @@ public class GameTypes {
                         bettingRound(RIVER)).build();
     }
 
+    public static GameType createCrazyPineapple() {
+        return new PokerGameBuilder().withRounds(
+                        blinds(),
+                        dealFaceDownCards(3),
+                        bettingRound(PRE_FLOP, fromBigBlind()),
+                        dealCommunityCards(3),
+                        bettingRound(FLOP),
+                        discardRound(1),
+                        dealCommunityCards(1),
+                        bettingRound(TURN),
+                        dealCommunityCards(1),
+                        bettingRound(RIVER)).build();
+    }
+
     public static GenericPokerGame createTelesina() {
         return new PokerGameBuilder().
-                        withRounds(ante(), dealFaceDownAndFaceUpCards(1, 1), bettingRound(fromBestHand()), dealFaceUpCards(1), bettingRound(fromBestHand()),
-                                dealFaceUpCards(1), bettingRound(fromBestHand()), dealFaceUpCards(1), bettingRound(fromBestHand()), dealCommunityCards(1),
-                                bettingRound(fromBestHand())).withDeckProvider(new TelesinaDeckFactory()).
+                        withRounds(
+                                ante(),
+                                dealFaceDownAndFaceUpCards(1, 1),
+                                bettingRound(fromBestHand()),
+                                dealFaceUpCards(1),
+                                bettingRound(fromBestHand()),
+                                dealFaceUpCards(1),
+                                bettingRound(fromBestHand()),
+                                dealFaceUpCards(1),
+                                bettingRound(fromBestHand()),
+                                dealCommunityCards(1),
+                                bettingRound(fromBestHand()))
+                        .withDeckProvider(new TelesinaDeckFactory()).
                         withHandEvaluator(new TelesinaHandStrengthEvaluator(Rank.SEVEN)).build();
     }
 }

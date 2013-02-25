@@ -69,6 +69,7 @@
         <value>DEAD_SMALL_BLIND</value>
         <value>ENTRY_BET</value>
         <value>WAIT_FOR_BIG_BLIND</value>
+        <value>DISCARD</value>
     </enum>
 
     <enum name="pot_type">
@@ -237,6 +238,8 @@
         <var name="raise_amount" type="int32"/>
         <var name="stack_amount" type="int32"/>
         <var name="timeout" type="bool"/>
+        <!-- List of cards to discard, 0 means first card and so on. -->
+        <list name="cards_to_discard" type="int32"/>
     </struct>
 
     <struct name="tournament_out">

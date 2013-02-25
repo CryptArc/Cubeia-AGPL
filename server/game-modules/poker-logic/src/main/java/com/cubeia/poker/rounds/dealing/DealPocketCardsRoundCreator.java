@@ -22,7 +22,9 @@ import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundCreator;
 
-public class DealPocketCardsRoundCreator implements RoundCreator {
+import java.io.Serializable;
+
+public class DealPocketCardsRoundCreator implements RoundCreator, Serializable {
     private final int numberOfFaceDownCards;
     private final int numberOfFaceUpCards;
 

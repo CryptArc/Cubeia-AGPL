@@ -39,6 +39,7 @@ import com.cubeia.poker.rounds.dealing.DealCommunityCardsRound;
 import com.cubeia.poker.rounds.dealing.DealExposedPocketCardsRound;
 import com.cubeia.poker.rounds.dealing.DealPocketCardsRound;
 import com.cubeia.poker.rounds.dealing.ExposePrivateCardsRound;
+import com.cubeia.poker.rounds.discard.DiscardRound;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.variant.texasholdem.TexasHoldemHandCalculator;
@@ -217,6 +218,12 @@ public class GenericPokerGame extends AbstractGameType implements RoundVisitor {
     public void visit(ExposePrivateCardsRound exposePrivateCardsRound) {
         log.debug("Finished exposing private cards.");
         updateHandStrengths();
+    }
+
+    @Override
+    public void visit(DiscardRound discardRound) {
+        log.debug("Discard round finished.");
+        resetHasActed();
     }
 
     @Override

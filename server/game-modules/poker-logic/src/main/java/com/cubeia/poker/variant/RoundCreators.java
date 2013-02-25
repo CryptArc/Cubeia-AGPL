@@ -28,6 +28,7 @@ import com.cubeia.poker.rounds.betting.TelesinaActingOrderFactory;
 import com.cubeia.poker.rounds.blinds.BlindsRoundCreator;
 import com.cubeia.poker.rounds.dealing.DealCommunityCardsCreator;
 import com.cubeia.poker.rounds.dealing.DealPocketCardsRoundCreator;
+import com.cubeia.poker.rounds.discard.DiscardRoundCreator;
 
 import static com.cubeia.poker.rounds.betting.BettingRoundName.FLOP;
 
@@ -42,6 +43,10 @@ public class RoundCreators {
 
     public static DealCommunityCardsCreator dealCommunityCards(int numberOfCardsToDeal) {
         return new DealCommunityCardsCreator(numberOfCardsToDeal);
+    }
+
+    public static DiscardRoundCreator discardRound(int cardsToDiscard) {
+        return new DiscardRoundCreator(cardsToDiscard);
     }
 
     public static BettingRoundCreator bettingRound(BettingRoundName roundName) {

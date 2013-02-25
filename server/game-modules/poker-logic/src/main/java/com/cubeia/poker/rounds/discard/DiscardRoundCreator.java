@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.poker.rounds.ante;
+package com.cubeia.poker.rounds.discard;
 
 import com.cubeia.poker.adapter.ServerAdapterHolder;
 import com.cubeia.poker.context.PokerContext;
@@ -24,10 +24,17 @@ import com.cubeia.poker.rounds.RoundCreator;
 
 import java.io.Serializable;
 
-public class AnteRoundCreator implements RoundCreator, Serializable {
+public class DiscardRoundCreator implements RoundCreator, Serializable {
+
+    private final int cardsToDiscard;
+
+    public DiscardRoundCreator(int cardsToDiscard) {
+        this.cardsToDiscard = cardsToDiscard;
+    }
 
     @Override
     public Round create(PokerContext context, ServerAdapterHolder serverAdapterHolder) {
-        return new AnteRound(context, serverAdapterHolder, new AnteRoundHelper(context, serverAdapterHolder));
+        int dealerSeatId = context.getBlindsInfo().getDealerButtonSeatId();
+        return new DiscardRound(context, serverAdapterHolder, new DiscardOrderCalculator(dealerSeatId), cardsToDiscard, true);
     }
 }

@@ -38,6 +38,7 @@ import com.cubeia.poker.rounds.dealing.DealCommunityCardsRound;
 import com.cubeia.poker.rounds.dealing.DealExposedPocketCardsRound;
 import com.cubeia.poker.rounds.dealing.DealPocketCardsRound;
 import com.cubeia.poker.rounds.dealing.ExposePrivateCardsRound;
+import com.cubeia.poker.rounds.discard.DiscardRound;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.util.ThreadLocalProfiler;
@@ -301,6 +302,10 @@ public class Telesina extends AbstractGameType implements RoundVisitor {
     @Override
     public void visit(ExposePrivateCardsRound exposePrivateCardsRound) {
         startDealPocketOrVelaCardRound();
+    }
+
+    @Override
+    public void visit(DiscardRound discardRound) {
     }
 
     private void startDealPocketOrVelaCardRound() {

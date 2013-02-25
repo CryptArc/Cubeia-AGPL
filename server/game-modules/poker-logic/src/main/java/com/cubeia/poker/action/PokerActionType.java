@@ -44,7 +44,8 @@ public enum PokerActionType {
     BIG_BLIND_PLUS_DEAD_SMALL_BLIND,
     DEAD_SMALL_BLIND,
     ENTRY_BET,
-    WAIT_FOR_BIG_BLIND;
+    WAIT_FOR_BIG_BLIND,
+    DISCARD;
 
     public PlayerAction.Type translate() {
         return PlayerAction.Type.values()[ordinal()];

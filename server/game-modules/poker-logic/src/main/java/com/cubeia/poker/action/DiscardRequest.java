@@ -15,19 +15,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.poker.rounds.ante;
+package com.cubeia.poker.action;
 
-import com.cubeia.poker.adapter.ServerAdapterHolder;
-import com.cubeia.poker.context.PokerContext;
-import com.cubeia.poker.rounds.Round;
-import com.cubeia.poker.rounds.RoundCreator;
+import com.google.common.collect.Range;
+import com.google.common.collect.Ranges;
 
-import java.io.Serializable;
+public class DiscardRequest extends PossibleAction {
 
-public class AnteRoundCreator implements RoundCreator, Serializable {
+    private final Range<Integer> cardsToDiscard;
 
-    @Override
-    public Round create(PokerContext context, ServerAdapterHolder serverAdapterHolder) {
-        return new AnteRound(context, serverAdapterHolder, new AnteRoundHelper(context, serverAdapterHolder));
+    public DiscardRequest(int cardsToDiscard) {
+        super(PokerActionType.DISCARD);
+        this.cardsToDiscard = Ranges.singleton(cardsToDiscard);
+    }
+
+    public DiscardRequest(Range<Integer> numberOfCardsToDiscard) {
+        super(PokerActionType.DISCARD);
+        this.cardsToDiscard = numberOfCardsToDiscard;
+    }
+
+    public Range<Integer> getCardsToDiscard() {
+        return cardsToDiscard;
     }
 }

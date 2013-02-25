@@ -47,6 +47,7 @@ import com.cubeia.poker.rounds.dealing.DealExposedPocketCardsRound;
 import com.cubeia.poker.rounds.dealing.DealPocketCardsRound;
 import com.cubeia.poker.rounds.dealing.Dealer;
 import com.cubeia.poker.rounds.dealing.ExposePrivateCardsRound;
+import com.cubeia.poker.rounds.discard.DiscardRound;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.variant.AbstractGameType;
@@ -263,8 +264,11 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
     }
 
     @Override
+    public void visit(DiscardRound discardRound) {
+    }
+
+    @Override
     public void visit(AnteRound anteRound) {
-        throw new UnsupportedOperationException("not implemented");
     }
 
     @Override

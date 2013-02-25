@@ -24,6 +24,7 @@ import com.cubeia.poker.rounds.dealing.DealCommunityCardsRound;
 import com.cubeia.poker.rounds.dealing.DealExposedPocketCardsRound;
 import com.cubeia.poker.rounds.dealing.DealPocketCardsRound;
 import com.cubeia.poker.rounds.dealing.ExposePrivateCardsRound;
+import com.cubeia.poker.rounds.discard.DiscardRound;
 
 /**
  * Used for inspecting the current round and figuring out where to go next.
@@ -45,5 +46,5 @@ public interface RoundVisitor {
 
     void visit(ExposePrivateCardsRound exposePrivateCardsRound);
 
-
+    void visit(DiscardRound discardRound);
 }
