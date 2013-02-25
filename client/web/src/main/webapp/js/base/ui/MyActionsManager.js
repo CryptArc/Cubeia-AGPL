@@ -72,8 +72,9 @@ Poker.MyActionsManager  = Class.extend({
         this._addActionButton($(".action-fold", view), Poker.ActionType.FOLD, actionCallback, false);
         this._addActionButton($(".action-call", view), Poker.ActionType.CALL, actionCallback, true);
         this._addActionButton($(".action-big-blind", view), Poker.ActionType.BIG_BLIND, actionCallback, true);
-        this._addActionButton($(".action-big-blind", view), Poker.ActionType.ENTRY_BET, actionCallback, true);
+        this._addActionButton($(".action-entry-bet", view), Poker.ActionType.ENTRY_BET, actionCallback, true);
         this._addActionButton($(".action-small-blind", view), Poker.ActionType.SMALL_BLIND, actionCallback, true);
+        this._addActionButton($(".action-ante", view), Poker.ActionType.ANTE, actionCallback, true);
 
         this.onWatchingTable();
 

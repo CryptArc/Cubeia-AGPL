@@ -23,6 +23,7 @@ com.cubeia.games.poker.io.protocol.ActionTypeEnum.BIG_BLIND_PLUS_DEAD_SMALL_BLIN
 com.cubeia.games.poker.io.protocol.ActionTypeEnum.DEAD_SMALL_BLIND = 10;
 com.cubeia.games.poker.io.protocol.ActionTypeEnum.ENTRY_BET = 11;
 com.cubeia.games.poker.io.protocol.ActionTypeEnum.WAIT_FOR_BIG_BLIND = 12;
+com.cubeia.games.poker.io.protocol.ActionTypeEnum.DISCARD = 13;
 com.cubeia.games.poker.io.protocol.ActionTypeEnum.makeActionTypeEnum = function(a) {
     switch (a) {
         case 0:
@@ -50,7 +51,9 @@ com.cubeia.games.poker.io.protocol.ActionTypeEnum.makeActionTypeEnum = function(
         case 11:
             return com.cubeia.games.poker.io.protocol.ActionTypeEnum.ENTRY_BET;
         case 12:
-            return com.cubeia.games.poker.io.protocol.ActionTypeEnum.WAIT_FOR_BIG_BLIND
+            return com.cubeia.games.poker.io.protocol.ActionTypeEnum.WAIT_FOR_BIG_BLIND;
+        case 13:
+            return com.cubeia.games.poker.io.protocol.ActionTypeEnum.DISCARD
     }
     return -1
 };
@@ -81,7 +84,9 @@ com.cubeia.games.poker.io.protocol.ActionTypeEnum.toString = function(a) {
         case 11:
             return"ENTRY_BET";
         case 12:
-            return"WAIT_FOR_BIG_BLIND"
+            return"WAIT_FOR_BIG_BLIND";
+        case 13:
+            return"DISCARD"
     }
     return"INVALID_ENUM_VALUE"
 };
@@ -1256,6 +1261,7 @@ com.cubeia.games.poker.io.protocol.PerformAction = function() {
     this.raiseAmount = {};
     this.stackAmount = {};
     this.timeout = {};
+    this.cardsToDiscard = [];
     this.save = function() {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.seq);
@@ -1265,6 +1271,11 @@ com.cubeia.games.poker.io.protocol.PerformAction = function() {
         a.writeInt(this.raiseAmount);
         a.writeInt(this.stackAmount);
         a.writeBoolean(this.timeout);
+        a.writeInt(this.cardsToDiscard.length);
+        var b;
+        for (b = 0; b < this.cardsToDiscard.length; b++) {
+            a.writeInt(this.cardsToDiscard[b])
+        }
         return a
     };
     this.load = function(a) {
@@ -1275,7 +1286,13 @@ com.cubeia.games.poker.io.protocol.PerformAction = function() {
         this.betAmount = a.readInt();
         this.raiseAmount = a.readInt();
         this.stackAmount = a.readInt();
-        this.timeout = a.readBoolean()
+        this.timeout = a.readBoolean();
+        var c;
+        var b = a.readInt();
+        this.cardsToDiscard = [];
+        for (c = 0; c < b; c++) {
+            this.cardsToDiscard.push(a.readInt())
+        }
     };
     this.getNormalizedObject = function() {
         var a = {};
@@ -1289,6 +1306,10 @@ com.cubeia.games.poker.io.protocol.PerformAction = function() {
         a.details.raiseAmount = this.raiseAmount;
         a.details.stackAmount = this.stackAmount;
         a.details.timeout = this.timeout;
+        a.details.cardsToDiscard = [];
+        for (b = 0; b < this.cardsToDiscard.length; b++) {
+            a.details.cardsToDiscard.push(this.cardsToDiscard[b].getNormalizedObject())
+        }
         return a
     }
 };

@@ -28,6 +28,9 @@ Poker.ActionUtils = Class.extend({
             case com.cubeia.games.poker.io.protocol.ActionTypeEnum.FOLD:
                 type = Poker.ActionType.FOLD;
                 break;
+            case com.cubeia.games.poker.io.protocol.ActionTypeEnum.ANTE:
+                type = Poker.ActionType.ANTE;
+                break;
             case com.cubeia.games.poker.io.protocol.ActionTypeEnum.SMALL_BLIND:
                 type = Poker.ActionType.SMALL_BLIND;
                 break;
@@ -36,9 +39,6 @@ Poker.ActionUtils = Class.extend({
                 break;
             case com.cubeia.games.poker.io.protocol.ActionTypeEnum.DECLINE_ENTRY_BET:
                 type = Poker.ActionType.DECLINE_ENTRY_BET;
-                break;
-            case com.cubeia.games.poker.io.protocol.ActionTypeEnum.ANTE:
-                type = Poker.ActionType.ANTE;
                 break;
             case com.cubeia.games.poker.io.protocol.ActionTypeEnum.BIG_BLIND_PLUS_DEAD_SMALL_BLIND:
                 type = Poker.ActionType.BIG_BLIND_PLUS_DEAD_SMALL_BLIND;
@@ -97,6 +97,7 @@ Poker.ActionUtils = Class.extend({
         performAction.raiseAmount = raiseAmount || 0;
         performAction.timeOut = 0;
         performAction.seq = seq;
+        performAction.cardsToDiscard = [];
         return performAction;
     },
     /**
@@ -106,6 +107,8 @@ Poker.ActionUtils = Class.extend({
      */
     getActionEnumType : function (actionType) {
         switch (actionType.id) {
+            case Poker.ActionType.ANTE.id:
+                return com.cubeia.games.poker.io.protocol.ActionTypeEnum.ANTE;
             case Poker.ActionType.SMALL_BLIND.id:
                 return com.cubeia.games.poker.io.protocol.ActionTypeEnum.SMALL_BLIND;
             case Poker.ActionType.BIG_BLIND.id:

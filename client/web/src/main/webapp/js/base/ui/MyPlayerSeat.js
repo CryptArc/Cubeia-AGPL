@@ -106,7 +106,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
             //TODO: add a wait for big blind option
             if (action.type == Poker.ActionType.BIG_BLIND || action.type == Poker.ActionType.SMALL_BLIND ||
                 action.type == Poker.ActionType.DEAD_SMALL_BLIND || action.type == Poker.ActionType.BIG_BLIND_PLUS_DEAD_SMALL_BLIND ||
-                action.type == Poker.ActionType.ENTRY_BET) {
+                action.type == Poker.ActionType.ENTRY_BET || action.type == Poker.ActionType.ANTE) {
                 console.log("No more blinds? = " + this.noMoreBlinds);
                 if (this.noMoreBlinds) {
                     requestHandler.onMyPlayerAction(Poker.ActionType.DECLINE_ENTRY_BET, 0);
