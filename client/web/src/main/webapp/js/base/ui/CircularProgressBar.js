@@ -26,6 +26,7 @@ CircularProgressBar.prototype = {
 	show : function() {
 		$(this.containerId).show();
 	},
+
 	hide : function() {
         this.running=false;
 		$(this.containerId).hide();

@@ -21,8 +21,8 @@
     <script type="text/javascript" src="${cp}/js/lib/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/jquery-ui-1.8.21.custom.min.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/jquery.ui.touch-punch.js"></script>
-    <script type="text/javascript" src="${cp}/js/base/touch-click.js"></script>
-    <script type="text/javascript" src="${cp}/js/base/ui/relative-offset.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/jquery-plugins/touch-click.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/jquery-plugins/relative-offset.js"></script>
 
     <script type="text/javascript" src="${cp}/js/lib/mustache.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/jquery.jqGrid.min.js"></script>
@@ -80,6 +80,13 @@
 
     <script type="text/javascript" src="${cp}/js/base/ui/BetSlider.js"></script>
     <script type="text/javascript" src="${cp}/js/base/Action.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/actions/CheckBoxAction.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/actions/BlindsActions.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/actions/ActionButton.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/actions/AbstractTableButtons.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/actions/ActionButtons.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/actions/TableButtons.js"></script>
+
     <script type="text/javascript" src="${cp}/js/base/ui/MyActionsManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/LobbyLayoutManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/LobbyManager.js"></script>
@@ -96,7 +103,7 @@
     <script type="text/javascript" src="${cp}/js/base/ui/cards/CommunityCard.js"></script>
     <script type="text/javascript" src="${cp}/js/base/Pot.js"></script>
     <script type="text/javascript" src="${cp}/js/base/Hand.js"></script>
-    <script type="text/javascript" src="${cp}/js/base/ui/describe.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/jquery-plugins/describe.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/CSSUtils.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/animation/Transform.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/animation/Animation.js"></script>
@@ -585,11 +592,11 @@
             <div class="own-player" id="myPlayerSeat-{{tableId}}Info" style="display:none;">
                 <div class="name" id="myPlayerName-{{tableId}}"></div>
                 <div class="balance" id="myPlayerBalance-{{tableId}}"></div>
-                <div class="no-more-blinds-container">
+                <div class="no-more-blinds">
                     <input class="checkbox" type="checkbox" id="noMoreBlinds-{{tableId}}"/>
                     <label class="checkbox-icon-label" for="noMoreBlinds-{{tableId}}">No more blinds</label>
                 </div>
-                    <div class="sit-out-next-hand-container">
+                    <div class="sit-out-next-hand">
                         <input class="checkbox" type="checkbox" id="sitOutNextHand-{{tableId}}"/>
                         <label class="checkbox-icon-label" for="sitOutNextHand-{{tableId}}">Sit out next hand</label>
                     </div>
@@ -694,6 +701,11 @@
                     </div>
 
             </div>
+            <div id="waitForBigBlind-{{tableId}}" class="wait-for-big-blind" style="display:none;">
+                <input class="checkbox" type="checkbox" id="wait-for-big-blind-cb-{{tableId}}" checked="checked"/>
+                <label class="checkbox-icon-label" for="wait-for-big-blind-cb-{{tableId}}">Wait for Big Blind</label>
+                <div>Uncheck to post the Big Blind and be dealt in next hand </div>
+            </div>
         <div id="myPlayerSeat-{{tableId}}Progressbar" class="circular-progress-bar">
 
         </div>
@@ -723,9 +735,12 @@
     <h1>Header</h1>
     <p class="message">Message</p>
     <p class="dialog-buttons">
+            <a class="dialog-cancel-button" style="display:none;">
+                Cancel
+            </a>
             <a class="dialog-ok-button">
-            Continue
-        </a>
+                Continue
+            </a>
     </p>
 
     </div>

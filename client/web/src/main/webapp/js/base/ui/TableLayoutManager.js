@@ -31,6 +31,7 @@ Poker.TableLayoutManager = Class.extend({
     animationManager : null,
     totalPotContainer : null,
     viewContainerOffsetTop : 0,
+
     /**
      * @type Poker.Clock
      */
@@ -61,11 +62,9 @@ Poker.TableLayoutManager = Class.extend({
         this.tableId = tableId;
         this.soundManager = new Poker.SoundManager(Poker.AppCtx.getSoundRepository(), tableId);
         var self = this;
+
         var actionCallback = function(actionType,amount){
-            if(actionType.id == Poker.ActionType.SIT_IN.id) {
-                self.handleSitIn();
-            }
-            new Poker.PokerRequestHandler(self.tableId).onMyPlayerAction(actionType,amount);
+           self.handleAction(actionType,amount);
 
         };
         this.buyInDialog = new Poker.BuyInDialog();
@@ -91,13 +90,34 @@ Poker.TableLayoutManager = Class.extend({
 
         $(".future-action").show();
     },
-    handleSitIn : function() {
-        var myPlayerSeat = this.seats.get(this.myPlayerSeatId);
-        if (myPlayerSeat!=null) {
-            myPlayerSeat.doPostBlinds();
-            myPlayerSeat.setSitOutNextHand(false)
-        }
+    handleAction : function(actionType,amount) {
+        var self = this;
+        if(actionType.id == Poker.ActionType.SIT_IN.id) {
+            this.handleSitIn();
+        } else if(actionType.id == Poker.ActionType.LEAVE.id && this.isConfirmLeave()) {
 
+            Poker.AppCtx.getDialogManager().displayGenericDialog({
+                header : "Leave table", message: "Are you sure you want to leave?",
+                displayCancelButton : true
+            }, function(){
+                new Poker.PokerRequestHandler(self.tableId).onMyPlayerAction(actionType,amount);
+                return true;
+            });
+            return;
+        }
+        new Poker.PokerRequestHandler(this.tableId).onMyPlayerAction(actionType,amount);
+    },
+    isConfirmLeave : function() {
+        if(this.myPlayerSeatId!=-1) {
+            var seat = this.seats.get(this.myPlayerSeatId);
+            if(seat!=null && seat.player.tableStatus == Poker.PlayerTableStatus.SITTING_IN) {
+                return true;
+            }
+        }
+        return false;
+    },
+    handleSitIn : function() {
+        this.myActionsManager.onRequestToSitIn();
     },
     onActivateView : function() {
         this.animationManager.setActive(true);
@@ -222,6 +242,9 @@ Poker.TableLayoutManager = Class.extend({
         this.tableView.find(".pot-transfer").remove();
         this.cardElements = new Poker.Map();
         this.myActionsManager.onStartHand();
+        if(this.myPlayerSeatId!=-1) {
+            this.seats.get(this.myPlayerSeatId).handlePlayerStatus();
+        }
         console.log("Hand " + handId + " started");
     },
     /**
