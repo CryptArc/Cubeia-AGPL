@@ -67,14 +67,14 @@ public class CrazyPineappleTest {
     @Mock
     private HandFinishedListener handFinishedListener;
 
+    @Mock
+    private ServerAdapter serverAdapter;
+
     private GameType crazyPineapple;
 
     private RakeSettings rakeSettings;
 
     private MockPlayer[] p;
-
-    @Mock
-    private ServerAdapter serverAdapter;
 
     private Random randomizer = new Random();
 
@@ -82,8 +82,7 @@ public class CrazyPineappleTest {
     public void setup() {
         initMocks(this);
         rakeSettings = RakeSettings.createDefaultRakeSettings(BigDecimal.valueOf(0));
-//        telesina = new Telesina(new TelesinaDeckFactory(), new TelesinaRoundFactory(), new TelesinaDealerButtonCalculator());
-        crazyPineapple = GameTypes.createCrazyPineapple();
+        crazyPineapple = CrazyPineapple.createGame();
         crazyPineapple.addHandFinishedListener(handFinishedListener);
 
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
