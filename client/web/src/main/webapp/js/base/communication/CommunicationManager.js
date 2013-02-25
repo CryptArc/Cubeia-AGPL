@@ -70,7 +70,7 @@ Poker.CommunicationManager = Class.extend({
     forceLogout : function(packet) {
         console.log("Forcing log out");
         new Poker.ConnectionPacketHandler().handleForceLogout(packet.code,packet.message);
-        this.getConnector().close();
+        this.getConnector().getIOAdapter().unregisterHandlers();
     },
     /**
      * Login callback
@@ -370,4 +370,11 @@ Poker.CommunicationManager = Class.extend({
         }
     }
 });
+
+FIREBASE.WebSocketAdapter.prototype.unregisterHandlers  = function() {
+    var _socket = this.getSocket();
+    _socket.onopen = null;
+    _socket.onmessage = null;
+    _socket.onclose = null;
+};
 

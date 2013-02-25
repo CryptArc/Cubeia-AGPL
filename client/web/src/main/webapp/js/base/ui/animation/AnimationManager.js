@@ -46,7 +46,7 @@ Poker.AnimationManager = Class.extend({
     /**
      * Executes an animation
      * @param animation
-     * @param delay
+     * @param {Number} [delay]
      */
     animate : function(animation,delay) {
         var self = this;
