@@ -58,7 +58,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class TelesinaGamePlayTest {
+public class TelesinaGameplayTest {
 
     @Mock
     private ServerAdapterHolder serverAdapterHolder;
