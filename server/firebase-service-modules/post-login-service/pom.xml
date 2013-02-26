@@ -20,12 +20,6 @@
         <dependency>
             <groupId>com.cubeia.games</groupId>
             <artifactId>tournament-messages</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.cubeia.games.poker</groupId>
-                    <artifactId>settings</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
     </dependencies>
 
