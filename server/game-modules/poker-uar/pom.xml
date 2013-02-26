@@ -71,11 +71,14 @@
             <type>firebase-sar</type>
         </dependency>
 
+	<!--
         <dependency>
             <groupId>com.cubeia.games</groupId>
             <artifactId>post-login-service</artifactId>
             <type>firebase-sar</type>
         </dependency>
+        
+        -->
     </dependencies>
 
     <build>
