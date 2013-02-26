@@ -240,6 +240,12 @@
                 <type>firebase-sar</type>
             </dependency>
             <dependency>
+                <groupId>com.cubeia.games.usermanagement</groupId>
+                <artifactId>user-management-service</artifactId>
+                <version>${project.version}</version>
+                <type>firebase-sar</type>
+            </dependency>
+            <dependency>
                 <groupId>com.cubeia.games</groupId>
                 <artifactId>post-login-service</artifactId>
                 <version>${project.version}</version>

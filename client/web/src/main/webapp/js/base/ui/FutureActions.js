@@ -168,6 +168,7 @@ Poker.FutureActions = Class.extend({
         for(var i = 0; i<actions.length; i++) {
             actions[i].setEnabled(false);
         }
+
     },
     hide : function() {
         this.container.hide();

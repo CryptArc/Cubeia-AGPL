@@ -42,6 +42,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.cubeia.games.usermanagement</groupId>
+            <artifactId>user-management-service</artifactId>
+            <type>firebase-sar</type>
+        </dependency>
+
+        <dependency>
             <groupId>com.cubeia.firebase.service</groupId>
             <artifactId>mt-random</artifactId>
             <type>firebase-sar</type>
@@ -71,11 +77,14 @@
             <type>firebase-sar</type>
         </dependency>
 
+	<!--
         <dependency>
             <groupId>com.cubeia.games</groupId>
             <artifactId>post-login-service</artifactId>
             <type>firebase-sar</type>
         </dependency>
+        
+        -->
     </dependencies>
 
     <build>

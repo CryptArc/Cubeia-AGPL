@@ -141,7 +141,6 @@ Poker.ConnectionManager = Class.extend({
         if(this.reconnectRetryTimeout!=null) {
             clearTimeout(this.reconnectRetryTimeout);
         }
-
     },
     reconnect : function() {
         if(this.retryCount < this.MAX_RECONNECT_ATTEMPTS) {
@@ -174,3 +173,4 @@ Poker.ConnectionManager = Class.extend({
         Poker.AppCtx.getCommunicationManager().getConnector().sendProtocolObject(versionPacket);
     }
 });
+
