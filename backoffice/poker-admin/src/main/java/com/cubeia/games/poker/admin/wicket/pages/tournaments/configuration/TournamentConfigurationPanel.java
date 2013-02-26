@@ -60,7 +60,7 @@ public class TournamentConfigurationPanel extends Panel {
         add(maxPlayers);
         add(new TextField<BigDecimal>("buyIn", new PropertyModel(model, "buyIn")));
         add(new TextField<BigDecimal>("fee", new PropertyModel(model, "fee")));
-        add(new TextField<Integer>("startingChips", new PropertyModel(model, "startingChips")).add(RangeValidator.minimum(1)));
+        add(new TextField<Long>("startingChips", new PropertyModel(model, "startingChips")).add(RangeValidator.minimum(1L)));
         add(new DropDownChoice<BetStrategyType>("betStrategy", new PropertyModel(model, "betStrategy"), asList(BetStrategyType.values()),
                                                                                          renderer("name")));
 

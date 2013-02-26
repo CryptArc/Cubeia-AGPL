@@ -42,6 +42,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.cubeia.games.usermanagement</groupId>
+            <artifactId>user-management-service</artifactId>
+            <type>firebase-sar</type>
+        </dependency>
+
+        <dependency>
             <groupId>com.cubeia.firebase.service</groupId>
             <artifactId>mt-random</artifactId>
             <type>firebase-sar</type>
