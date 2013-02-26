@@ -47,8 +47,8 @@ public class MockTournamentScheduleProvider implements TournamentScheduleProvide
         PayoutStructure payouts = new PayoutStructureParser().parsePayouts(resourceAsStream);
         Collection<ScheduledTournamentConfiguration> tournamentConfigurations = Lists.newArrayList();
         
-        ScheduledTournamentConfiguration everyTenMinutes = everyTenMinutes();
-        TournamentConfiguration configuration = everyTenMinutes.getConfiguration();
+        ScheduledTournamentConfiguration everyFiveMinutes = everyFiveMinutes();
+        TournamentConfiguration configuration = everyFiveMinutes.getConfiguration();
         configuration.setMinPlayers(2);
         configuration.setMaxPlayers(1000);
         configuration.setBlindsStructure(BlindsStructureFactory.createDefaultBlindsStructure());
@@ -58,7 +58,8 @@ public class MockTournamentScheduleProvider implements TournamentScheduleProvide
         configuration.setCurrency("EUR");
         configuration.setStartingChips(100000);
         configuration.setTimingType(TimingFactory.getRegistry().getTimingProfile(Timings.EXPRESS.name()));
-        tournamentConfigurations.add(everyTenMinutes);
+        configuration.setId(1);
+        tournamentConfigurations.add(everyFiveMinutes);
         
         
         ScheduledTournamentConfiguration massiveQuickTourny = massiveSpeedTourny();
@@ -72,6 +73,7 @@ public class MockTournamentScheduleProvider implements TournamentScheduleProvide
         speedCfg.setCurrency("EUR");
         speedCfg.setTimingType(TimingFactory.getRegistry().getTimingProfile(Timings.SUPER_EXPRESS.name()));
         speedCfg.setStartingChips(100000);
+        speedCfg.setId(2);
         tournamentConfigurations.add(massiveQuickTourny);
         
         
@@ -88,15 +90,15 @@ public class MockTournamentScheduleProvider implements TournamentScheduleProvide
         return null;
     }
 
-    private ScheduledTournamentConfiguration everyTenMinutes() {
+    private ScheduledTournamentConfiguration everyFiveMinutes() {
         TournamentSchedule tournamentSchedule = new TournamentSchedule(new DateTime(2011, 7, 5, 9, 0, 0).toDate(), new DateTime(2022, 7, 5, 9, 0, 0).toDate(),
-                "0 */5 * * * ?", 2, 3, 5);
+                "0 */5 * * * ?", 1, 6, 1);
         return new ScheduledTournamentConfiguration(tournamentSchedule, "Every Five Minutes", 1);
     }
     
     private ScheduledTournamentConfiguration massiveSpeedTourny() {
         TournamentSchedule tournamentSchedule = new TournamentSchedule(new DateTime(2011, 7, 5, 9, 0, 0).toDate(), new DateTime(2022, 7, 5, 9, 0, 0).toDate(),
-                "0 */10 * * * ?", 3, 5, 5);
+                "0 */10 * * * ?", 1, 6, 5);
         return new ScheduledTournamentConfiguration(tournamentSchedule, "Massive Speed Tourny", 1);
     }
 }

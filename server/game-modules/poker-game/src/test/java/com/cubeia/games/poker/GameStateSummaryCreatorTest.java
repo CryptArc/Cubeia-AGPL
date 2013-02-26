@@ -39,6 +39,7 @@ import org.mockito.Mockito;
 import java.io.IOException;
 import java.util.*;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -72,7 +73,7 @@ public class GameStateSummaryCreatorTest {
         ActionCache actionCache = mock(ActionCache.class);
         GameStateSender gameStateSender = new GameStateSender(actionCache, dateFetcher);
         JoinRequestAction gameAction = new JoinRequestAction(playerId, 1, 0, "snubbe");
-        Collection<ActionContainer> containers = Arrays.<ActionContainer>asList(createPrivate(1, gameAction));
+        Collection<ActionContainer> containers = asList(createPrivate(1, gameAction));
 
         when(actionCache.getPrivateAndPublicActions(tableId, playerId)).thenReturn(containers);
 
@@ -107,7 +108,7 @@ public class GameStateSummaryCreatorTest {
         gda0.setData(styx.pack(new RequestAction()));
         actions.add(createPrivate(111, gda0));
         GameDataAction gda1 = new GameDataAction(333, 1);
-        gda1.setData(styx.pack(new PerformAction(1, 222, new PlayerAction(), 10, 10, 10, false)));
+        gda1.setData(styx.pack(new PerformAction(1, 222, new PlayerAction(), 10, 10, 10, false, new int[]{})));
         actions.add(createPrivate(111, gda1));
         GameDataAction gda2 = new GameDataAction(222, 1);
         gda2.setData(styx.pack(new DealPublicCards(new ArrayList<GameCard>())));
@@ -135,7 +136,7 @@ public class GameStateSummaryCreatorTest {
         actions.add(createPrivate(222, gda0));
 
         GameDataAction gda1 = new GameDataAction(222, 1);
-        gda1.setData(styx.pack(new PerformAction(1, 222, new PlayerAction(), 10, 10, 10, false)));
+        gda1.setData(styx.pack(new PerformAction(1, 222, new PlayerAction(), 10, 10, 10, false, new int[]{})));
         actions.add(createPrivate(222, gda1));
 
         // Request without perform - this should not be filtered.
@@ -218,7 +219,7 @@ public class GameStateSummaryCreatorTest {
 
         // the other guy sends a perform action
         GameDataAction gda2 = new GameDataAction(player1Id, tableId);
-        gda2.setData(styx.pack(new PerformAction(tableId, player1Id, new PlayerAction(), 10, 10, 10, false)));
+        gda2.setData(styx.pack(new PerformAction(tableId, player1Id, new PlayerAction(), 10, 10, 10, false, new int[]{})));
         actions.add(createPrivate(player1Id, gda2));
 
         assertThat(actions.size(), is(4));
@@ -277,7 +278,7 @@ public class GameStateSummaryCreatorTest {
         actions.add(createPrivate(222, gda0));
 
         GameDataAction gda1 = new GameDataAction(222, 1);
-        gda1.setData(styx.pack(new PerformAction(1, 222, new PlayerAction(), 10, 10, 10, false)));
+        gda1.setData(styx.pack(new PerformAction(1, 222, new PlayerAction(), 10, 10, 10, false, new int[]{})));
         actions.add(createPrivate(222, gda1));
 
         // Request without perform - this should not be filtered.

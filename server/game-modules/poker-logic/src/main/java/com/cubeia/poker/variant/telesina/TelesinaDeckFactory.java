@@ -17,18 +17,15 @@
 
 package com.cubeia.poker.variant.telesina;
 
+import com.cubeia.poker.hand.DeckProvider;
+
 import java.io.Serializable;
 import java.util.Random;
 
-public class TelesinaDeckFactory implements Serializable {
+public class TelesinaDeckFactory implements DeckProvider, Serializable {
 
-    public TelesinaDeck createNewDeck(Random rng, int tableSize) {
-        return new TelesinaDeck(new TelesinaDeckUtil(), rng, tableSize);
+    @Override
+    public TelesinaDeck createNewDeck(Random randomizer, int tableSize) {
+        return new TelesinaDeck(new TelesinaDeckUtil(), randomizer, tableSize);
     }
-
-    //TODO: remove this code once GLI has used the rig deck feature
-    public TelesinaDeck createNewRiggedDeck(int tableSize, String riggedDeck) {
-        return new TelesinaRiggedDeck(new TelesinaDeckUtil(), tableSize, riggedDeck);
-    }
-
 }

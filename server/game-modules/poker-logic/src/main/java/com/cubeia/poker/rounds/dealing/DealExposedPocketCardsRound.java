@@ -23,7 +23,9 @@ import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.rounds.Round;
+import com.cubeia.poker.rounds.RoundHelper;
 import com.cubeia.poker.rounds.RoundVisitor;
+import com.cubeia.poker.timing.Periods;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +43,8 @@ public class DealExposedPocketCardsRound implements Round {
         this.context = context;
         this.serverAdapterHolder = serverAdapterHolder;
         dealExposedPocketCards();
+        RoundHelper roundHelper = new RoundHelper(context, serverAdapterHolder);
+        roundHelper.scheduleRoundTimeout(context, serverAdapterHolder.get(), Periods.POCKET_CARDS);
     }
 
     private void dealExposedPocketCards() {

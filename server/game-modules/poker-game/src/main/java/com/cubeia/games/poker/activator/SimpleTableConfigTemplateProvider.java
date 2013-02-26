@@ -27,46 +27,63 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.cubeia.poker.settings.RakeSettings.createDefaultRakeSettings;
+import static com.cubeia.poker.variant.PokerVariant.TELESINA;
 import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
-import static java.util.Collections.singletonList;
 
 @Singleton
 public class SimpleTableConfigTemplateProvider implements TableConfigTemplateProvider {
 
     @Override
     public List<TableConfigTemplate> getTemplates() {
-        TableConfigTemplate t = new TableConfigTemplate();
-        t.setId(0);
-        t.setSmallBlind(50);
-        t.setBigBlind(100);
-        t.setMinBuyIn(1000);
-        t.setMaxBuyIn(10000);
-        t.setSeats(10);
-        t.setVariant(TEXAS_HOLDEM);
-        t.setTiming(TimingFactory.getRegistry().getDefaultTimingProfile());
-        t.setBetStrategy(BetStrategyType.NO_LIMIT);
-        t.setTTL(60000);
-        t.setMinEmptyTables(5);
-        t.setMinTables(10);
-        t.setRakeSettings(createDefaultRakeSettings(new BigDecimal(0.02)));
-        t.setCurrency("EUR");
+        TableConfigTemplate texasNoLimit = new TableConfigTemplate();
+        texasNoLimit.setId(0);
+        texasNoLimit.setSmallBlind(50);
+        texasNoLimit.setBigBlind(100);
+        texasNoLimit.setMinBuyIn(1000);
+        texasNoLimit.setMaxBuyIn(10000);
+        texasNoLimit.setSeats(10);
+        texasNoLimit.setVariant(TEXAS_HOLDEM);
+        texasNoLimit.setTiming(TimingFactory.getRegistry().getDefaultTimingProfile());
+        texasNoLimit.setBetStrategy(BetStrategyType.NO_LIMIT);
+        texasNoLimit.setTTL(60000);
+        texasNoLimit.setMinEmptyTables(5);
+        texasNoLimit.setMinTables(10);
+        texasNoLimit.setRakeSettings(createDefaultRakeSettings(new BigDecimal(0.02)));
+        texasNoLimit.setCurrency("EUR");
 
-        TableConfigTemplate fl = new TableConfigTemplate();
-        fl.setId(1);
-        fl.setSmallBlind(50);
-        fl.setBigBlind(100);
-        fl.setMinBuyIn(1000);
-        fl.setMaxBuyIn(10000);
-        fl.setSeats(10);
-        fl.setVariant(TEXAS_HOLDEM);
-        fl.setTiming(TimingFactory.getRegistry().getDefaultTimingProfile());
-        fl.setBetStrategy(BetStrategyType.FIXED_LIMIT);
-        fl.setTTL(60000);
-        fl.setMinEmptyTables(5);
-        fl.setMinTables(10);
-        fl.setRakeSettings(createDefaultRakeSettings(new BigDecimal(0.02)));
-        fl.setCurrency("EUR");
+        TableConfigTemplate texasFixedLimit = new TableConfigTemplate();
+        texasFixedLimit.setId(1);
+        texasFixedLimit.setSmallBlind(50);
+        texasFixedLimit.setBigBlind(100);
+        texasFixedLimit.setMinBuyIn(1000);
+        texasFixedLimit.setMaxBuyIn(10000);
+        texasFixedLimit.setSeats(10);
+        texasFixedLimit.setVariant(TEXAS_HOLDEM);
+        texasFixedLimit.setTiming(TimingFactory.getRegistry().getDefaultTimingProfile());
+        texasFixedLimit.setBetStrategy(BetStrategyType.FIXED_LIMIT);
+        texasFixedLimit.setTTL(60000);
+        texasFixedLimit.setMinEmptyTables(5);
+        texasFixedLimit.setMinTables(10);
+        texasFixedLimit.setRakeSettings(createDefaultRakeSettings(new BigDecimal(0.02)));
+        texasFixedLimit.setCurrency("EUR");
 
-        return Arrays.asList(t,fl);
+        TableConfigTemplate telesina = new TableConfigTemplate();
+        telesina.setId(2);
+        telesina.setAnte(100);
+        telesina.setSmallBlind(0);
+        telesina.setBigBlind(0);
+        telesina.setMinBuyIn(1000);
+        telesina.setMaxBuyIn(10000);
+        telesina.setSeats(6);
+        telesina.setVariant(TELESINA);
+        telesina.setTiming(TimingFactory.getRegistry().getDefaultTimingProfile());
+        telesina.setBetStrategy(BetStrategyType.NO_LIMIT);
+        telesina.setTTL(60000);
+        telesina.setMinEmptyTables(1);
+        telesina.setMinTables(1);
+        telesina.setRakeSettings(createDefaultRakeSettings(new BigDecimal(0.02)));
+        telesina.setCurrency("EUR");
+
+        return Arrays.asList(texasNoLimit, texasFixedLimit, telesina);
     }
 }

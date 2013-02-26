@@ -59,7 +59,7 @@ public class BettingRoundTimeoutTest {
         NoLimitBetStrategy betStrategy = new NoLimitBetStrategy(10);
         ActionRequestFactory actionRequestFactory = new ActionRequestFactory(betStrategy);
         TexasHoldemFutureActionsCalculator futureActionsCalculator = new TexasHoldemFutureActionsCalculator(BetStrategyType.FIXED_LIMIT);
-        round = new BettingRound(0, context, serverAdapterHolder, playerToActCalculator, actionRequestFactory, futureActionsCalculator, betStrategy);
+        round = new BettingRound(context, serverAdapterHolder, playerToActCalculator, actionRequestFactory, futureActionsCalculator, betStrategy);
     }
 
     @Test

@@ -32,7 +32,20 @@ import com.cubeia.poker.handhistory.api.PlayerAction;
  * @author Fredrik Johansson, Cubeia Ltd
  */
 public enum PokerActionType {
-    SMALL_BLIND, BIG_BLIND, CALL, CHECK, BET, RAISE, FOLD, DECLINE_ENTRY_BET, ANTE, BIG_BLIND_PLUS_DEAD_SMALL_BLIND, DEAD_SMALL_BLIND;
+    SMALL_BLIND,
+    BIG_BLIND,
+    CALL,
+    CHECK,
+    BET,
+    RAISE,
+    FOLD,
+    DECLINE_ENTRY_BET,
+    ANTE,
+    BIG_BLIND_PLUS_DEAD_SMALL_BLIND,
+    DEAD_SMALL_BLIND,
+    ENTRY_BET,
+    WAIT_FOR_BIG_BLIND,
+    DISCARD;
 
     public PlayerAction.Type translate() {
         return PlayerAction.Type.values()[ordinal()];

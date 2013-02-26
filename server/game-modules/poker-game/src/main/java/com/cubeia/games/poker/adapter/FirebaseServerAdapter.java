@@ -382,23 +382,17 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
     @Override
     public void notifyFutureAllowedActions(PokerPlayer player, List<PokerActionType> optionList, long callAmount, long minBet) {
+        InformFutureAllowedActions packet = new InformFutureAllowedActions(getFuturePlayerActions(optionList), (int) callAmount, (int) minBet);
+        sendPrivatePacket(player.getId(), packet);
+    }
 
-        InformFutureAllowedActions packet = new InformFutureAllowedActions();
-        packet.callAmount = (int) callAmount;
-        packet.minBetAmount = (int) minBet;
-
-
+    private List<FuturePlayerAction> getFuturePlayerActions(List<PokerActionType> optionList) {
         List<FuturePlayerAction> options = new ArrayList<FuturePlayerAction>();
 
         for (PokerActionType actionType : optionList) {
             options.add(new FuturePlayerAction(actionTransformer.fromPokerActionTypeToProtocolActionType(actionType)));
         }
-
-        packet.actions = options;
-
-        GameDataAction action = protocolFactory.createGameAction(packet, player.getId(), table.getId());
-        sendPrivatePacket(player.getId(), action);
-
+        return options;
     }
 
     @Override

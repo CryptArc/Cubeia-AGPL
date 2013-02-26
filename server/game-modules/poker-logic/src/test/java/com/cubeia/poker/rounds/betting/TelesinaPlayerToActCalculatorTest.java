@@ -46,7 +46,7 @@ public class TelesinaPlayerToActCalculatorTest {
         seating.put(1, p1);
         seating.put(2, p2);
 
-        PokerPlayer first = ptac.getFirstPlayerToAct(0, seating, Collections.EMPTY_LIST);
+        PokerPlayer first = ptac.getFirstPlayerToAct(seating, Collections.EMPTY_LIST);
         assertEquals(2, first.getId());
     }
 
@@ -70,7 +70,7 @@ public class TelesinaPlayerToActCalculatorTest {
         seating.put(5, p5);
         seating.put(6, p6);
 
-        PokerPlayer first = ptac.getFirstPlayerToAct(0, seating, Collections.EMPTY_LIST);
+        PokerPlayer first = ptac.getFirstPlayerToAct(seating, Collections.EMPTY_LIST);
         assertEquals(3, first.getId());
     }
 
@@ -88,7 +88,7 @@ public class TelesinaPlayerToActCalculatorTest {
         seating.put(2, p2);
         seating.put(3, p3);
 
-        PokerPlayer first = ptac.getFirstPlayerToAct(0, seating, Collections.EMPTY_LIST);
+        PokerPlayer first = ptac.getFirstPlayerToAct(seating, Collections.EMPTY_LIST);
         assertEquals(1, first.getId());
     }
 
@@ -106,7 +106,7 @@ public class TelesinaPlayerToActCalculatorTest {
         seating.put(2, p2);
         seating.put(3, p3);
 
-        PokerPlayer first = ptac.getFirstPlayerToAct(0, seating, Collections.EMPTY_LIST);
+        PokerPlayer first = ptac.getFirstPlayerToAct(seating, Collections.EMPTY_LIST);
         assertEquals(3, first.getId());
     }
 
@@ -124,7 +124,7 @@ public class TelesinaPlayerToActCalculatorTest {
         seating.put(2, p2);
         seating.put(3, p3);
 
-        PokerPlayer first = ptac.getFirstPlayerToAct(0, seating, Collections.EMPTY_LIST);
+        PokerPlayer first = ptac.getFirstPlayerToAct(seating, Collections.EMPTY_LIST);
         assertEquals(2, first.getId());
     }
 
@@ -143,7 +143,7 @@ public class TelesinaPlayerToActCalculatorTest {
         seating.put(2, p2);
         seating.put(3, p3);
 
-        PokerPlayer first = ptac.getFirstPlayerToAct(0, seating, Collections.EMPTY_LIST);
+        PokerPlayer first = ptac.getFirstPlayerToAct(seating, Collections.EMPTY_LIST);
         assertEquals(3, first.getId());
     }
 
@@ -161,7 +161,7 @@ public class TelesinaPlayerToActCalculatorTest {
         seating.put(2, p2);
         seating.put(3, p3);
 
-        PokerPlayer first = ptac.getFirstPlayerToAct(0, seating, Arrays.asList(new Card("9H")));
+        PokerPlayer first = ptac.getFirstPlayerToAct(seating, Arrays.asList(new Card("9H")));
         assertEquals(1, first.getId());
     }
 
@@ -181,7 +181,7 @@ public class TelesinaPlayerToActCalculatorTest {
 
     @Test
     public void testNextPlayerToAct() {
-        DefaultPlayerToActCalculator pac = new DefaultPlayerToActCalculator();
+        DefaultPlayerToActCalculator pac = new DefaultPlayerToActCalculator(1);
         SortedMap<Integer, PokerPlayer> seatingMap = new TreeMap<Integer, PokerPlayer>();
         PokerPlayer player1 = mock(PokerPlayer.class);
         PokerPlayer player2 = mock(PokerPlayer.class);
@@ -190,10 +190,11 @@ public class TelesinaPlayerToActCalculatorTest {
         seatingMap.put(1, player2);
         seatingMap.put(2, player3);
 
-        PokerPlayer playerToAct = pac.getFirstPlayerToAct(1, seatingMap, Collections.EMPTY_LIST);
+        PokerPlayer playerToAct = pac.getFirstPlayerToAct(seatingMap, Collections.EMPTY_LIST);
         assertThat(playerToAct, is(player3));
 
-        playerToAct = pac.getFirstPlayerToAct(2, seatingMap, Collections.EMPTY_LIST);
+        pac = new DefaultPlayerToActCalculator(2);
+        playerToAct = pac.getFirstPlayerToAct(seatingMap, Collections.EMPTY_LIST);
         assertThat(playerToAct, is(player1));
     }
 

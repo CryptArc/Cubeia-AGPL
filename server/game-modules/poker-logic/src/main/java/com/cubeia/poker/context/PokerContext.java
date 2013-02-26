@@ -86,6 +86,8 @@ public class PokerContext implements Serializable {
 
     /**
      * Maps seat id to players, but only contains players who participate in the current hand.
+     * The definition of "participates in current hand" is: He was not sitting out when the hand started.
+     *                                                      If the player folds during the hand, he remains in this map.
      */
     private SortedMap<Integer, PokerPlayer> currentHandSeatingMap = new TreeMap<Integer, PokerPlayer>();
 
@@ -114,8 +116,6 @@ public class PokerContext implements Serializable {
 
     private static final Logger log = LoggerFactory.getLogger(PokerContext.class);
 
-    private int seatIdToStartBettingFrom;
-
     private Deck deck;
 
     public PokerContext(PokerSettings settings) {
@@ -138,10 +138,6 @@ public class PokerContext implements Serializable {
 
     public Deck getDeck() {
         return deck;
-    }
-
-    public int getSeatIdToStartBettingFrom() {
-        return seatIdToStartBettingFrom;
     }
 
     public boolean isFinished() {
@@ -175,10 +171,6 @@ public class PokerContext implements Serializable {
 
     public void setDeck(Deck deck) {
         this.deck = deck;
-    }
-
-    public void setSeatIdToStartBettingFrom(int seatIdToStartBettingFrom) {
-        this.seatIdToStartBettingFrom = seatIdToStartBettingFrom;
     }
 
     /**
@@ -458,6 +450,10 @@ public class PokerContext implements Serializable {
         setPotHolder(new PotHolder(new LinearRakeWithLimitCalculator(getSettings().getRakeSettings())));
     }
 
+    /**
+     * Gets all players who are part of the current hand (who were not sitting out when it started).
+     * @return all players who are part of the current hand (who were not sitting out when it started)
+     */
     public Collection<PokerPlayer> getPlayersInHand() {
         return currentHandSeatingMap.values();
     }

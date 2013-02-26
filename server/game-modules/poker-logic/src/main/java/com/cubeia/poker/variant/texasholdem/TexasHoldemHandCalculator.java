@@ -27,6 +27,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import static java.lang.Math.min;
+
 /**
  * <p>Texas Holdem implementation of a Hand Calculator. This is probably
  * the common calculations for most poker games, but variations do exist.</p>
@@ -39,10 +41,7 @@ public class TexasHoldemHandCalculator implements HandCalculator, HandTypeEvalua
 
     @Override
     public HandInfo getBestHandInfo(Hand hand) {
-        int minCards = 5;
-        if (hand.getCards().size() == 2) {
-            minCards = 2;
-        }
+        int minCards = min(5, hand.getCards().size());
         return getBestCombinationHandStrength(hand, minCards);
     }
 

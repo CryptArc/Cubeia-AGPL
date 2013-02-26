@@ -24,6 +24,15 @@ Poker.Utils = {
         }
         return str;
     },
+    calculateDimensions : function(availableWidth, availableHeight, aspectRatio) {
+        var width = availableHeight * aspectRatio;
+        var height = availableHeight;
+        if(width > availableWidth) {
+            height = availableWidth/aspectRatio;
+            width = availableWidth;
+        }
+        return { width : width, height : height};
+    },
     /**
      * Calculates the distance in percent for two elements based on
      * a containers dimensions, if the container isn't specified

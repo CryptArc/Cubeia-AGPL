@@ -63,7 +63,7 @@ public class PayoutStructure implements Serializable {
                 return payout.withPrizePool(prizePool);
             }
         }
-        Payouts payouts = payoutsPerEntryRange.get(payoutsPerEntryRange.size() - 1);
+        Payouts payouts = payoutsPerEntryRange.get(payoutsPerEntryRange.size() - 1).withPrizePool(prizePool);
         log.warn("No payouts defined for " + numberOfEntrants + " entrants. Using the last payouts: " + payouts);
         return payouts;
     }

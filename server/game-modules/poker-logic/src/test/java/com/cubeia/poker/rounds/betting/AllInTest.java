@@ -72,11 +72,11 @@ public class AllInTest extends TestCase  {
         MockPlayer[] p = TestUtils.createMockPlayers(2, 500);
         addPlayers(p);
 
-        DefaultPlayerToActCalculator playerToActCalculator = new DefaultPlayerToActCalculator();
+        DefaultPlayerToActCalculator playerToActCalculator = new DefaultPlayerToActCalculator(0);
         NoLimitBetStrategy betStrategy = new NoLimitBetStrategy(0);
         ActionRequestFactory actionRequestFactory = new ActionRequestFactory(betStrategy);
         TexasHoldemFutureActionsCalculator futureActionsCalculator = new TexasHoldemFutureActionsCalculator(betStrategy.getType());
-        round = new BettingRound(0, context, serverAdapterHolder, playerToActCalculator, actionRequestFactory, futureActionsCalculator, betStrategy);
+        round = new BettingRound(context, serverAdapterHolder, playerToActCalculator, actionRequestFactory, futureActionsCalculator, betStrategy);
 
         ArgumentCaptor<ActionRequest> captor = ArgumentCaptor.forClass(ActionRequest.class);
         verify(serverAdapter).requestAction(captor.capture());

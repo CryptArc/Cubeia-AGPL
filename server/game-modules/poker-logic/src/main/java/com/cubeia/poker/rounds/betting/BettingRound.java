@@ -93,8 +93,7 @@ public class BettingRound implements Round, BettingRoundContext {
     private boolean bettingCapped = false;
 
     // TODO: Would probably be nice if the playerToActCalculator knew all it needs to know, so we don't need to pass "seatIdToStart.." as well.
-    public BettingRound(int seatIdToStartBettingAfter,
-                        PokerContext context,
+    public BettingRound(PokerContext context,
                         ServerAdapterHolder serverAdapterHolder,
                         PlayerToActCalculator playerToActCalculator,
                         ActionRequestFactory actionRequestFactory,
@@ -107,16 +106,16 @@ public class BettingRound implements Round, BettingRoundContext {
         this.actionRequestFactory = actionRequestFactory;
         this.roundHelper = new RoundHelper(context, serverAdapterHolder);
         this.betStrategy = betStrategy;
-        initBettingRound(seatIdToStartBettingAfter);
+        initBettingRound();
     }
 
-    private void initBettingRound(int seatIdToStartBettingAfter) {
+    private void initBettingRound() {
         log.debug("Initializing new betting round.");
         initializeHighBet();
         initializeHighestCompleteBetAndSizeOfLastCompleteBet();
         initializePlayersInPlayAtRoundStart();
         resetCanRaiseFlag();
-        requestFirstActionOrFinishRound(seatIdToStartBettingAfter);
+        requestFirstActionOrFinishRound();
     }
 
     private void initializeHighestCompleteBetAndSizeOfLastCompleteBet() {
@@ -136,9 +135,9 @@ public class BettingRound implements Round, BettingRoundContext {
         sizeOfLastCompleteBetOrRaise = highestCompleteBet;
     }
 
-    private void requestFirstActionOrFinishRound(int seatIdToStartBettingAfter) {
+    private void requestFirstActionOrFinishRound() {
         // Check if we should request actions at all
-        PokerPlayer p = playerToActCalculator.getFirstPlayerToAct(seatIdToStartBettingAfter, context.getCurrentHandSeatingMap(), context.getCommunityCards());
+        PokerPlayer p = playerToActCalculator.getFirstPlayerToAct(context.getCurrentHandSeatingMap(), context.getCommunityCards());
 
         log.debug("first player to act = {}", p == null ? null : p.getId());
 

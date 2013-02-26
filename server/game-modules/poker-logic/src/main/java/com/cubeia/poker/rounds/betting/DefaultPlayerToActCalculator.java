@@ -27,10 +27,15 @@ import java.util.SortedMap;
 public class DefaultPlayerToActCalculator implements PlayerToActCalculator {
 
     private static final long serialVersionUID = -6580325428294822478L;
+    private final int seatIdToStartBettingFrom;
+
+    public DefaultPlayerToActCalculator(int seatIdToStartBettingFrom) {
+        this.seatIdToStartBettingFrom = seatIdToStartBettingFrom;
+    }
 
     @Override
-    public PokerPlayer getFirstPlayerToAct(int dealerButtonSeatId, SortedMap<Integer, PokerPlayer> seatingMap, List<Card> communityCards) {
-        return getNextPlayerToAct(dealerButtonSeatId, seatingMap);
+    public PokerPlayer getFirstPlayerToAct(SortedMap<Integer, PokerPlayer> seatingMap, List<Card> communityCards) {
+        return getNextPlayerToAct(seatIdToStartBettingFrom, seatingMap);
     }
 
     @Override

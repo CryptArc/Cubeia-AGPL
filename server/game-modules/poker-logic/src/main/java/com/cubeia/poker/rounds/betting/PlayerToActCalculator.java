@@ -29,11 +29,10 @@ public interface PlayerToActCalculator extends Serializable {
     /**
      * Returns the first player in the round to act.
      *
-     * @param dealerButtonSeatId dealer button position
      * @param seatingMap         seating
      * @return player to act
      */
-    PokerPlayer getFirstPlayerToAct(int dealerButtonSeatId, SortedMap<Integer, PokerPlayer> seatingMap, List<Card> communityCards);
+    PokerPlayer getFirstPlayerToAct(SortedMap<Integer, PokerPlayer> seatingMap, List<Card> communityCards);
 
     /**
      * Returns the next player in the round to act.

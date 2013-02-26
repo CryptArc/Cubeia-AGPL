@@ -33,7 +33,7 @@ public class DefaultPlayerToActCalculatorTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testFirstPlayerToAct() {
-        DefaultPlayerToActCalculator pac = new DefaultPlayerToActCalculator();
+        DefaultPlayerToActCalculator pac = new DefaultPlayerToActCalculator(1);
         SortedMap<Integer, PokerPlayer> seatingMap = new TreeMap<Integer, PokerPlayer>();
         PokerPlayer player1 = mock(PokerPlayer.class);
         PokerPlayer player2 = mock(PokerPlayer.class);
@@ -44,17 +44,18 @@ public class DefaultPlayerToActCalculatorTest {
         seatingMap.put(2, player3);
 
 
-        PokerPlayer playerToAct = pac.getFirstPlayerToAct(1, seatingMap, Collections.EMPTY_LIST);
+        PokerPlayer playerToAct = pac.getFirstPlayerToAct(seatingMap, Collections.EMPTY_LIST);
         assertThat(playerToAct, is(player3));
 
-        playerToAct = pac.getFirstPlayerToAct(2, seatingMap, Collections.EMPTY_LIST);
+        pac = new DefaultPlayerToActCalculator(2);
+        playerToAct = pac.getFirstPlayerToAct(seatingMap, Collections.EMPTY_LIST);
         assertThat(playerToAct, is(player1));
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void testNextPlayerToAct() {
-        DefaultPlayerToActCalculator pac = new DefaultPlayerToActCalculator();
+        DefaultPlayerToActCalculator pac = new DefaultPlayerToActCalculator(1);
         SortedMap<Integer, PokerPlayer> seatingMap = new TreeMap<Integer, PokerPlayer>();
         PokerPlayer player1 = mock(PokerPlayer.class);
         PokerPlayer player2 = mock(PokerPlayer.class);
@@ -63,10 +64,11 @@ public class DefaultPlayerToActCalculatorTest {
         seatingMap.put(1, player2);
         seatingMap.put(2, player3);
 
-        PokerPlayer playerToAct = pac.getFirstPlayerToAct(1, seatingMap, Collections.EMPTY_LIST);
+        PokerPlayer playerToAct = pac.getFirstPlayerToAct(seatingMap, Collections.EMPTY_LIST);
         assertThat(playerToAct, is(player3));
 
-        playerToAct = pac.getFirstPlayerToAct(2, seatingMap, Collections.EMPTY_LIST);
+        pac = new DefaultPlayerToActCalculator(2);
+        playerToAct = pac.getFirstPlayerToAct(seatingMap, Collections.EMPTY_LIST);
         assertThat(playerToAct, is(player1));
     }
 

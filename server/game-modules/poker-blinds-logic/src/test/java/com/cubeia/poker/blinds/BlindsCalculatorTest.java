@@ -261,18 +261,18 @@ public class BlindsCalculatorTest extends TestCase implements LogCallback {
     }
 
     public void testOnlyOneEnteredPlayerDoesNotGetTheBigBlind() {
-        // Given
-        BlindsInfo lastHandsBlinds = Fixtures.blindsInfo(2, 2, 0); // This hand was cancelled
+        // Given that only one player has paid the entry bet.
+        BlindsInfo lastHandsBlinds = Fixtures.blindsInfo(2, 5, 6);
         List<BlindsPlayer> players = new ArrayList<BlindsPlayer>();
         players.add(Fixtures.player(2, true));
         MockPlayer player = Fixtures.player(3, false);
         player.setMissedBlindsStatus(MissedBlindsStatus.MISSED_BIG_BLIND_AND_SMALL_BLIND);
         players.add(player);
 
-        // When
+        // When we initialize the blinds.
         BlindsInfo result = calc.initializeBlinds(lastHandsBlinds, players, false);
 
-        // Then
+        // Then the bb should not be on the already entered player.
         assertBlindsInfo(result, 2, 2, 3);
         assertEquals(0, calc.getEntryBetters(result.getDealerSeatId(), result.getBigBlindSeatId(), result.getBigBlindSeatId()).size());
     }

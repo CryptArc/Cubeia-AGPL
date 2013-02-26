@@ -17,19 +17,6 @@
 
 package com.cubeia.poker.variant.telesina;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.Random;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-
 import com.cubeia.poker.MockServerAdapter;
 import com.cubeia.poker.adapter.ServerAdapterHolder;
 import com.cubeia.poker.context.PokerContext;
@@ -39,6 +26,18 @@ import com.cubeia.poker.player.DefaultPokerPlayer;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.rounds.dealing.DealExposedPocketCardsRound;
 import com.cubeia.poker.timing.impl.DefaultTimingProfile;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+
+import java.util.Random;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class TelesinaTest {
 
@@ -61,7 +60,7 @@ public class TelesinaTest {
 
     @Mock
     private BlindsInfo blindsInfo;
-    
+
     TelesinaForTesting telesina;
 
     private void setup() {

@@ -72,20 +72,28 @@ Poker.ActionType = {
         text : "Sit-in",
         id : "action-sit-in"
     },
+    ENTRY_BET : {
+        text : "Big Blind",
+        id : "entry-bet"
+    },
     DECLINE_ENTRY_BET : {
-        text : "Decline blind",
+        text : "Decline Blind",
         id : "decline-entry-bet"
+    },
+    WAIT_FOR_BIG_BLIND : {
+        text : "Waiting",
+        id : "wait-for-big-blind"
     },
     ANTE : {
         text : "Ante",
         id : "ante"
     },
     BIG_BLIND_PLUS_DEAD_SMALL_BLIND : {
-        text : "Big & Small blind",
+        text : "BB + Dead Small",
         id : "big-and-small-blind"
     },
     DEAD_SMALL_BLIND : {
-        text : "Small blind",
+        text : "Dead Small",
         id : "dead-small-blind"
     }
 

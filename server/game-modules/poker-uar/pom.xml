@@ -71,13 +71,11 @@
             <type>firebase-sar</type>
         </dependency>
 
-<!--    Disabled because of class loading issues. TODO: Fix!
         <dependency>
             <groupId>com.cubeia.games</groupId>
             <artifactId>post-login-service</artifactId>
             <type>firebase-sar</type>
         </dependency>
--->
     </dependencies>
 
     <build>

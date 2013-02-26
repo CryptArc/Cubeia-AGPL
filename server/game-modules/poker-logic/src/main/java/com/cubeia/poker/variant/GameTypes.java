@@ -17,25 +17,32 @@
 
 package com.cubeia.poker.variant;
 
-import com.cubeia.poker.rounds.RoundCreator;
-import com.cubeia.poker.rounds.betting.BettingRoundCreator;
-import com.cubeia.poker.rounds.betting.BettingRoundName;
-import com.cubeia.poker.rounds.blinds.BlindsRoundCreator;
-import com.cubeia.poker.rounds.dealing.DealCommunityCardsCreator;
-import com.cubeia.poker.rounds.dealing.DealPocketCardsRoundCreator;
+import com.cubeia.poker.hand.Rank;
+import com.cubeia.poker.variant.telesina.TelesinaDeckFactory;
+import com.cubeia.poker.variant.telesina.hand.TelesinaHandStrengthEvaluator;
 
 import static com.cubeia.poker.rounds.betting.BettingRoundName.FLOP;
 import static com.cubeia.poker.rounds.betting.BettingRoundName.PRE_FLOP;
 import static com.cubeia.poker.rounds.betting.BettingRoundName.RIVER;
 import static com.cubeia.poker.rounds.betting.BettingRoundName.TURN;
+import static com.cubeia.poker.variant.RoundCreators.ante;
+import static com.cubeia.poker.variant.RoundCreators.bettingRound;
+import static com.cubeia.poker.variant.RoundCreators.blinds;
+import static com.cubeia.poker.variant.RoundCreators.dealCommunityCards;
+import static com.cubeia.poker.variant.RoundCreators.dealFaceDownAndFaceUpCards;
+import static com.cubeia.poker.variant.RoundCreators.dealFaceDownCards;
+import static com.cubeia.poker.variant.RoundCreators.dealFaceUpCards;
+import static com.cubeia.poker.variant.RoundCreators.discardRound;
+import static com.cubeia.poker.variant.RoundCreators.fromBestHand;
+import static com.cubeia.poker.variant.RoundCreators.fromBigBlind;
 
 public class GameTypes {
 
     public static GameType createTexasHoldem() {
         return new PokerGameBuilder().withRounds(
                         blinds(),
-                        dealPocketCards(2),
-                        bettingRound(PRE_FLOP),
+                        dealFaceDownCards(2),
+                        bettingRound(PRE_FLOP, fromBigBlind()),
                         dealCommunityCards(3),
                         bettingRound(FLOP),
                         dealCommunityCards(1),
@@ -44,46 +51,35 @@ public class GameTypes {
                         bettingRound(RIVER)).build();
     }
 
-    public static GameType createTelesina() {
+    public static GameType createCrazyPineapple() {
         return new PokerGameBuilder().withRounds(
-                        ante(),
-                        dealPocketCards(1, 1),
-                        bettingRound(),
-                        dealPocketCards(0, 1),
-                        bettingRound(),
-                        dealPocketCards(0, 1),
-                        bettingRound(),
-                        dealPocketCards(0, 1),
-                        bettingRound(),
+                        blinds(),
+                        dealFaceDownCards(3),
+                        bettingRound(PRE_FLOP, fromBigBlind()),
+                        dealCommunityCards(3),
+                        bettingRound(FLOP),
+                        discardRound(1),
                         dealCommunityCards(1),
-                        bettingRound()).build();
+                        bettingRound(TURN),
+                        dealCommunityCards(1),
+                        bettingRound(RIVER)).build();
     }
 
-    private static RoundCreator dealPocketCards(int faceDownCards, int faceUpCards) {
-        return null;
-    }
-
-    private static DealCommunityCardsCreator dealCommunityCards(int numberOfCardsToDeal) {
-        return new DealCommunityCardsCreator(numberOfCardsToDeal);
-    }
-
-    private static BettingRoundCreator bettingRound(BettingRoundName roundName) {
-        return new BettingRoundCreator(roundName);
-    }
-
-    private static BettingRoundCreator bettingRound() {
-        return new BettingRoundCreator(null);
-    }
-
-    private static DealPocketCardsRoundCreator dealPocketCards(int numberOfCards) {
-        return new DealPocketCardsRoundCreator(numberOfCards);
-    }
-
-    private static BlindsRoundCreator blinds() {
-        return new BlindsRoundCreator();
-    }
-
-    private static BlindsRoundCreator ante() {
-        return new BlindsRoundCreator();
+    public static GenericPokerGame createTelesina() {
+        return new PokerGameBuilder().
+                        withRounds(
+                                ante(),
+                                dealFaceDownAndFaceUpCards(1, 1),
+                                bettingRound(fromBestHand()),
+                                dealFaceUpCards(1),
+                                bettingRound(fromBestHand()),
+                                dealFaceUpCards(1),
+                                bettingRound(fromBestHand()),
+                                dealFaceUpCards(1),
+                                bettingRound(fromBestHand()),
+                                dealCommunityCards(1),
+                                bettingRound(fromBestHand()))
+                        .withDeckProvider(new TelesinaDeckFactory()).
+                        withHandEvaluator(new TelesinaHandStrengthEvaluator(Rank.SEVEN)).build();
     }
 }

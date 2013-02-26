@@ -363,6 +363,12 @@ public class PokerTournamentState implements Serializable {
         log.debug("Prize pool is now: " + prizePool);
     }
 
+    public void removeBuyInFromPrizePool() {
+        log.debug("Removing " + buyIn + " from prize pool.");
+        prizePool = prizePool.subtract(buyIn);
+        log.debug("Prize pool is now: " + prizePool);
+    }
+
     public Payouts getPayouts() {
         return payouts;
     }

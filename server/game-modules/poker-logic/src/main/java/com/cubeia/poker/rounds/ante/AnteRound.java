@@ -32,7 +32,6 @@ import org.apache.log4j.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.SortedMap;
 
 public class AnteRound implements Round {
 
@@ -52,10 +51,7 @@ public class AnteRound implements Round {
         this.serverAdapterHolder = serverAdapterHolder;
 
         clearPlayerActionOptions();
-
-        Collection<PokerPlayer> players = context.getCurrentHandSeatingMap().values();
-
-        handleAnteRequests(players);
+        handleAnteRequests(context.getPlayersInHand());
     }
 
     /**
@@ -87,9 +83,9 @@ public class AnteRound implements Round {
     }
 
     private void clearPlayerActionOptions() {
-        SortedMap<Integer, PokerPlayer> seatingMap = context.getCurrentHandSeatingMap();
-        for (PokerPlayer p : seatingMap.values()) {
-            p.clearActionRequest();
+        for (PokerPlayer player : context.getPlayersInHand()) {
+            player.setHasPostedEntryBet(false);
+            player.clearActionRequest();
         }
     }
 

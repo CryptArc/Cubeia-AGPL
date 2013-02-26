@@ -61,6 +61,6 @@ Poker.TableRequestHandler = Class.extend({
         var unwatchRequest = new FB_PROTOCOL.UnwatchRequestPacket();
         unwatchRequest.tableid = this.tableId;
         this.connector.sendProtocolObject(unwatchRequest);
-        new Poker.LobbyRequestHandler().subscribeToCashGames();
+
     }
 });

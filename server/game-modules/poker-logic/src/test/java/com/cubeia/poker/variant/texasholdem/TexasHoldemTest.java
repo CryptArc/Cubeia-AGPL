@@ -45,6 +45,7 @@ import com.cubeia.poker.variant.GameTypes;
 import com.cubeia.poker.variant.GenericPokerGame;
 import com.cubeia.poker.variant.HandFinishedListener;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,7 +53,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 
-import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
@@ -77,7 +77,6 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -107,6 +106,9 @@ public class TexasHoldemTest {
     @Mock
     private RevealOrderCalculator revealOrderCalculator;
 
+    @Mock
+    private Predicate<PokerPlayer> filter;
+
     private MockPlayer player1;
 
     private MockPlayer player2;
@@ -120,13 +122,6 @@ public class TexasHoldemTest {
     private RakeSettings rakeSettings;
 
     private MockPlayer[] p;
-
-    private Predicate<PokerPlayer> readyPlayersFilter = new Predicate<PokerPlayer>() {
-        @Override
-        public boolean apply(@Nullable PokerPlayer pokerPlayer) {
-            return true;
-        }
-    };
 
     @Before
     public void setup() {
@@ -606,7 +601,6 @@ public class TexasHoldemTest {
     }
 
     private Predicate<PokerPlayer> mockFilterThatAllows(MockPlayer... players) {
-        Predicate<PokerPlayer> filter = mock(Predicate.class);
         for (PokerPlayer player : players) {
             when(filter.apply(player)).thenReturn(true);
         }
@@ -619,7 +613,7 @@ public class TexasHoldemTest {
     }
 
     private void startHand(PokerContext context) {
-        startHand(context, readyPlayersFilter);
+        startHand(context, Predicates.<PokerPlayer>alwaysTrue());
     }
 
     private void startHand(PokerContext context, Predicate<PokerPlayer> filter) {

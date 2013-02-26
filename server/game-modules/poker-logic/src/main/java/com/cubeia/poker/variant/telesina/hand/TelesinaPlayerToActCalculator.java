@@ -23,7 +23,6 @@ import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.rounds.betting.PlayerToActCalculator;
 import com.cubeia.poker.util.PokerUtils;
-import com.cubeia.poker.variant.telesina.hand.TelesinaHandStrengthEvaluator;
 
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -35,7 +34,7 @@ import java.util.SortedMap;
  * the public cards (including the vela in the last betting round).
  * <p/>
  * This implementation must be re-constructed for each round as it needs fresh information
- * about all players public cards and the vela card.
+ * about all players' public cards and the vela card.
  *
  * @author w
  */
@@ -57,7 +56,7 @@ public class TelesinaPlayerToActCalculator implements PlayerToActCalculator {
     }
 
     @Override
-    public PokerPlayer getFirstPlayerToAct(int dealerButtonSeatId, SortedMap<Integer, PokerPlayer> seatingMap, List<Card> communityCards) {
+    public PokerPlayer getFirstPlayerToAct(SortedMap<Integer, PokerPlayer> seatingMap, List<Card> communityCards) {
         Comparator<Hand> thc = evaluator.createHandComparator(seatingMap.size());
         PokerPlayer currentBestPlayer = null;
         Hand currentBestHand = null;

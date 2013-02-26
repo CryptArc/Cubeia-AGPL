@@ -56,8 +56,8 @@ public class TelesinaRoundFactory implements Serializable {
         ActionRequestFactory actionRequestFactory = new ActionRequestFactory(betStrategy);
         TelesinaPlayerToActCalculator playerToActCalculator = new TelesinaPlayerToActCalculator(lowestRank);
         TelesinaFutureActionsCalculator futureActionsCalculator = new TelesinaFutureActionsCalculator();
-        int buttonSeatId = context.getBlindsInfo().getDealerButtonSeatId();
-        return new BettingRound(buttonSeatId, context, serverAdapterHolder, playerToActCalculator, actionRequestFactory, futureActionsCalculator, betStrategy);
+//        int buttonSeatId = context.getBlindsInfo().getDealerButtonSeatId();
+        return new BettingRound(context, serverAdapterHolder, playerToActCalculator, actionRequestFactory, futureActionsCalculator, betStrategy);
     }
 
     DealExposedPocketCardsRound createDealExposedPocketCardsRound(PokerContext context, ServerAdapterHolder serverAdapterHolder) {

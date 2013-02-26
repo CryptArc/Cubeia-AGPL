@@ -24,23 +24,28 @@ import com.cubeia.poker.rounds.RoundCreator;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.variant.texasholdem.TexasHoldemFutureActionsCalculator;
 
-public class BettingRoundCreator implements RoundCreator {
+import java.io.Serializable;
+
+public class BettingRoundCreator implements RoundCreator, Serializable {
 
     private BettingRoundName round;
+    private final PlayerToActCalculatorFactory playerToActCalculatorFactory;
 
-    public BettingRoundCreator(BettingRoundName round) {
+    public BettingRoundCreator(BettingRoundName round, PlayerToActCalculatorFactory playerToActCalculatorFactory) {
         this.round = round;
+        this.playerToActCalculatorFactory = playerToActCalculatorFactory;
     }
 
     @Override
     public Round create(PokerContext context, ServerAdapterHolder serverAdapterHolder) {
-        DefaultPlayerToActCalculator playerToActCalculator = new DefaultPlayerToActCalculator();
+        PlayerToActCalculator playerToActCalculator = playerToActCalculatorFactory.createPlayerToActCalculator(context);
         PokerSettings settings = context.getSettings();
         BetStrategy betStrategy = BetStrategyFactory.createBetStrategy(settings.getBetStrategyType(), settings.getBigBlindAmount(),
                                                                        round.isDoubleBetRound());
         ActionRequestFactory requestFactory = new ActionRequestFactory(betStrategy);
+        // TODO: Future actions must be generic.
         TexasHoldemFutureActionsCalculator futureActionsCalculator = new TexasHoldemFutureActionsCalculator(betStrategy.getType());
-        return new BettingRound(context.getSeatIdToStartBettingFrom(), context, serverAdapterHolder, playerToActCalculator, requestFactory,
+        return new BettingRound(context, serverAdapterHolder, playerToActCalculator, requestFactory,
                 futureActionsCalculator, betStrategy);
     }
 }

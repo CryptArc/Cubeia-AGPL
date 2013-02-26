@@ -254,7 +254,7 @@ Poker.TournamentManager = Class.extend({
         console.log("on buy info " + tournamentId);
         var tournament = this.getTournamentById(tournamentId);
         console.log(tournament);
-        if(sufficientFunds == true) {
+        if (sufficientFunds == true) {
             tournament.tournamentLayoutManager.showBuyInInfo(buyIn,fee,currency,balanceInWallet);
         }
     }

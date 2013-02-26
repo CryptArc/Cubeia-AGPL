@@ -180,39 +180,47 @@
                     <preloadSources>
 
                         <!-- external libs -->
-                        <source>${project.basedir}/src/main/webapp/js/lib/classjs.js</source>
-                        <source>${project.basedir}/src/main/webapp/js/lib/jquery-1.7.2.min.js</source>
-                        <source>${project.basedir}/src/main/webapp/js/base/touch-click.js</source>
+                        <source>${js.dir}/lib/classjs.js</source>
+                        <source>${js.dir}/lib/jquery-1.7.2.min.js</source>
+                        <source>${js.dir}/base/jquery-plugins/touch-click.js</source>
                         <!--testing sources -->
                         <source>${project.basedir}/src/test/js/mocks/ConsoleMock.js</source>
                         <source>${project.basedir}/src/test/js/mocks/MockUtils.js</source>
 
                         <!-- sources -->
-                        <source>${project.basedir}/src/main/webapp/js/base/data/Map.js</source>
-                        <source>${project.basedir}/src/main/webapp/js/base/TableManager.js</source>
-                        <source>${project.basedir}/src/main/webapp/js/base/PeriodicalUpdater.js</source>
-                        <source>${project.basedir}/src/main/webapp/js/base/ui/Clock.js</source>
-                        <source>${project.basedir}/src/main/webapp/js/base/ui/TableLayoutManager.js</source>
-                        <source>${project.basedir}/src/main/webapp/js/base/Table.js</source>
-                        <source>${project.basedir}/src/main/webapp/js/base/Player.js</source>
-                        <source>${project.basedir}/src/main/webapp/js/base/PlayerTableStatus.js</source>
-                        <source>${project.basedir}/src/main/webapp/js/base/Utils.js</source>
-                        <source>${project.basedir}/src/main/webapp/js/base/ui/CSSUtils.js</source>
-                        <source>${project.basedir}/src/main/webapp/js/base/ui/animation/Animation.js</source>
-                        <source>${project.basedir}/src/main/webapp/js/base/ui/animation/Transform.js</source>
-                        <source>${project.basedir}/src/main/webapp/js/base/ui/animation/TransformAnimation.js</source>
-                        <source>${project.basedir}/src/main/webapp/js/base/ui/animation/CSSClassAnimation.js</source>
-                        <source>${project.basedir}/src/main/webapp/js/lib/mustache.js</source>
-                        <source>${project.basedir}/src/main/webapp/js/base/ui/TemplateManager.js</source>
-                        <source>${project.basedir}/src/main/webapp/js/base/Action.js</source>
-                        <source>${project.basedir}/src/main/webapp/js/base/ui/Seat.js</source>
-                        <source>${project.basedir}/src/main/webapp/js/base/ui/animation/AnimationManager.js</source>
-                        <source>${project.basedir}/src/main/webapp/js/base/sound/SoundRepository.js</source>
-                        <source>${project.basedir}/src/main/webapp/js/base/sound/SoundManager.js</source>
-                        <source>${project.basedir}/src/main/webapp/js/base/MyPlayer.js</source>
-                        <source>${project.basedir}/src/main/webapp/js/base/OperatorConfig.js</source>
-                        <source>${project.basedir}/src/main/webapp/js/base/ui/FutureActionType.js</source>
-                        <source>${project.basedir}/src/main/webapp/js/base/ui/FutureActions.js</source>
+                        <source>${js.dir}/base/data/Map.js</source>
+                        <source>${js.dir}/base/TableManager.js</source>
+                        <source>${js.dir}/base/PeriodicalUpdater.js</source>
+                        <source>${js.dir}/base/ui/Clock.js</source>
+                        <source>${js.dir}/base/ui/TableLayoutManager.js</source>
+                        <source>${js.dir}/base/Table.js</source>
+                        <source>${js.dir}/base/Player.js</source>
+                        <source>${js.dir}/base/PlayerTableStatus.js</source>
+                        <source>${js.dir}/base/Utils.js</source>
+                        <source>${js.dir}/base/ui/CSSUtils.js</source>
+                        <source>${js.dir}/base/ui/animation/Animation.js</source>
+                        <source>${js.dir}/base/ui/animation/Transform.js</source>
+                        <source>${js.dir}/base/ui/animation/TransformAnimation.js</source>
+                        <source>${js.dir}/base/ui/animation/CSSClassAnimation.js</source>
+                        <source>${js.dir}/lib/mustache.js</source>
+                        <source>${js.dir}/base/ui/TemplateManager.js</source>
+                        <source>${js.dir}/base/Action.js</source>
+                        <source>${js.dir}/base/ui/Seat.js</source>
+                        <source>${js.dir}/base/ui/animation/AnimationManager.js</source>
+                        <source>${js.dir}/base/sound/SoundRepository.js</source>
+                        <source>${js.dir}/base/sound/SoundManager.js</source>
+                        <source>${js.dir}/base/MyPlayer.js</source>
+                        <source>${js.dir}/base/OperatorConfig.js</source>
+                        <source>${js.dir}/base/ui/FutureActionType.js</source>
+                        <source>${js.dir}/base/ui/FutureActions.js</source>
+                        <source>${js.dir}/base/communication/poker-game/ActionUtils.js</source>
+                        <source>${js.dir}/base/ui/actions/CheckBoxAction.js</source>
+                        <source>${js.dir}/base/ui/actions/BlindsActions.js</source>
+                        <source>${js.dir}/base/ui/actions/ActionButton.js</source>
+                        <source>${js.dir}/base/ui/actions/AbstractTableButtons.js</source>
+                        <source>${js.dir}/base/ui/actions/ActionButtons.js</source>
+                        <source>${js.dir}/base/ui/actions/TableButtons.js</source>
+                        <source>${js.dir}/base/ui/MyActionsManager.js</source>
                     </preloadSources>
                     <jsTestSrcDir>${project.basedir}/src/test/js</jsTestSrcDir>
                     <specIncludes>
@@ -357,6 +365,7 @@
     </distributionManagement>
 
     <properties>
+        <js.dir>${project.basedir}/src/main/webapp/js</js.dir>
         <jetty.version>8.1.3.v20120416</jetty.version>
         <spring.version>3.2.0.RELEASE</spring.version>
         <rhino.verion>1.7R4</rhino.verion>

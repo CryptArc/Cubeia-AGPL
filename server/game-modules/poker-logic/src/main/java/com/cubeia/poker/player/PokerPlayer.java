@@ -25,6 +25,7 @@ import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Hand;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 
 public interface PokerPlayer extends BlindsPlayer, Serializable {
@@ -53,6 +54,8 @@ public interface PokerPlayer extends BlindsPlayer, Serializable {
     public Set<Card> getPrivatePocketCards();
 
     public void addPocketCard(Card card, boolean publicCard);
+
+    void discard(List<Integer> cardsToDiscard);
 
     public void clearHand();
 

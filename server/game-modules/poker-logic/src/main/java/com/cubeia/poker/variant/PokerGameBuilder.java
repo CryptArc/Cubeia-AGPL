@@ -17,7 +17,11 @@
 
 package com.cubeia.poker.variant;
 
+import com.cubeia.poker.hand.DeckProvider;
+import com.cubeia.poker.hand.HandTypeEvaluator;
+import com.cubeia.poker.hand.StandardDeckProvider;
 import com.cubeia.poker.rounds.RoundCreator;
+import com.cubeia.poker.variant.texasholdem.TexasHoldemHandCalculator;
 
 import java.util.List;
 
@@ -27,12 +31,26 @@ public class PokerGameBuilder {
 
     private List<RoundCreator> rounds;
 
-    public GameType build() {
-        return new GenericPokerGame(rounds);
+    private DeckProvider deckProvider = new StandardDeckProvider();
+
+    private HandTypeEvaluator handEvaluator = new TexasHoldemHandCalculator();
+
+    public GenericPokerGame build() {
+        return new GenericPokerGame(rounds, deckProvider, handEvaluator);
     }
 
     public PokerGameBuilder withRounds(RoundCreator ... roundCreators) {
         this.rounds = newArrayList(roundCreators);
+        return this;
+    }
+
+    public PokerGameBuilder withDeckProvider(DeckProvider deckProvider) {
+        this.deckProvider = deckProvider;
+        return this;
+    }
+
+    public PokerGameBuilder withHandEvaluator(HandTypeEvaluator handEvaluator) {
+        this.handEvaluator = handEvaluator;
         return this;
     }
 }

@@ -135,6 +135,9 @@ public class PokerTournamentProcessorTest extends TestCase {
     private PacketSenderFactory senderFactory;
 
     @Mock
+    private TournamentPlayerRegistry tournamentPlayerRegistry;
+
+    @Mock
     private PacketSender sender;
 
     private SystemTime dateFetcher = new DefaultSystemTime();
@@ -160,6 +163,7 @@ public class PokerTournamentProcessorTest extends TestCase {
         tournamentProcessor.setShutdownService(shutdownService);
         tournamentProcessor.setDateFetcher(dateFetcher);
         tournamentProcessor.setSenderFactory(senderFactory);
+        tournamentProcessor.setTournamentRegistryService(tournamentPlayerRegistry);
 
         state = new MTTStateSupport(1, 1);
         when(configuration.getBlindsStructure()).thenReturn(BlindsStructureFactory.createDefaultBlindsStructure());

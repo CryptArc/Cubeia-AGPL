@@ -22,15 +22,23 @@ import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundCreator;
 
-public class DealPocketCardsRoundCreator implements RoundCreator {
-    private final int numberOfCards;
+import java.io.Serializable;
 
-    public DealPocketCardsRoundCreator(int numberOfCards) {
-        this.numberOfCards = numberOfCards;
+public class DealPocketCardsRoundCreator implements RoundCreator, Serializable {
+    private final int numberOfFaceDownCards;
+    private final int numberOfFaceUpCards;
+
+    public DealPocketCardsRoundCreator(int numberOfFaceDownCards, int numberOfFaceUpCards) {
+        this.numberOfFaceDownCards = numberOfFaceDownCards;
+        this.numberOfFaceUpCards = numberOfFaceUpCards;
+    }
+
+    public DealPocketCardsRoundCreator(int numberOfFaceDownCards) {
+        this(numberOfFaceDownCards, 0);
     }
 
     @Override
     public Round create(PokerContext context, ServerAdapterHolder serverAdapterHolder) {
-        return new DealPocketCardsRound(context, serverAdapterHolder, numberOfCards);
+        return new DealPocketCardsRound(context, serverAdapterHolder, numberOfFaceDownCards, numberOfFaceUpCards);
     }
 }

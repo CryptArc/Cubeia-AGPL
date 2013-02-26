@@ -25,7 +25,6 @@ import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
 import com.cubeia.poker.adapter.ServerAdapter;
 import com.cubeia.poker.adapter.ServerAdapterHolder;
-import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.context.PokerContext;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.RakeInfoContainer;
@@ -37,7 +36,6 @@ import com.google.common.base.Predicate;
 import junit.framework.TestCase;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Description;
-import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
@@ -91,7 +89,6 @@ public class BettingRoundTest extends TestCase {
         minBet = 10;
     }
 
-    @Test
     public void testHeadsUpBetting() {
         MockPlayer[] p = TestUtils.createMockPlayers(2);
 
@@ -104,7 +101,6 @@ public class BettingRoundTest extends TestCase {
         assertTrue(round.isFinished());
     }
 
-    @Test
     public void testCallAmount() {
         MockPlayer[] p = TestUtils.createMockPlayers(2, 100);
 
@@ -116,7 +112,6 @@ public class BettingRoundTest extends TestCase {
         assertEquals(70, bet.getMaxAmount());
     }
 
-    @Test
     public void testCallTellsState() {
         PokerPlayer player = Mockito.mock(PokerPlayer.class);
         context = createMockContext();
@@ -126,7 +121,6 @@ public class BettingRoundTest extends TestCase {
         verify(context).callOrRaise();
     }
 
-    @Test
     public void testCall() {
         PokerPlayer player = Mockito.mock(PokerPlayer.class);
         long betStack = 75L;
@@ -143,7 +137,6 @@ public class BettingRoundTest extends TestCase {
         assertThat(amountToCall, is(round.highBet - betStack));
     }
 
-    @Test
     public void testCallNotifiesRakeInfo() {
         PokerPlayer player = Mockito.mock(PokerPlayer.class);
         preparePlayers(player);
@@ -153,7 +146,6 @@ public class BettingRoundTest extends TestCase {
         verify(adapter).notifyRakeInfo(Mockito.<RakeInfoContainer>any());
     }
 
-    @Test
     public void testHandleActionOnCallSetsAmountOnResponse() {
         PokerPlayer player = Mockito.mock(PokerPlayer.class);
         preparePlayers(player);
@@ -171,7 +163,6 @@ public class BettingRoundTest extends TestCase {
         verify(player).setHasActed(true);
     }
 
-    @Test
     public void testRaise() {
         MockPlayer[] p = TestUtils.createMockPlayers(2);
 
@@ -184,7 +175,6 @@ public class BettingRoundTest extends TestCase {
         verifyAndAct(p[0], RAISE, 200);
     }
 
-    @Test
     public void testRaiseNotifiesRakeInfo() {
         PokerPlayer player = mock(PokerPlayer.class);
         ActionRequest request = mock(ActionRequest.class);
@@ -197,7 +187,6 @@ public class BettingRoundTest extends TestCase {
         verify(adapter).notifyRakeInfo(Mockito.<RakeInfoContainer>any());
     }
 
-    @Test
     public void testRaiseNotifiesCallOrRaise() {
         PokerPlayer player = Mockito.mock(PokerPlayer.class);
         preparePlayers(player);
@@ -211,7 +200,6 @@ public class BettingRoundTest extends TestCase {
         verify(context).callOrRaise();
     }
 
-    @Test
     public void testNoRaiseAllowedWhenAllOtherPlayersAreAllIn() {
         MockPlayer[] p = TestUtils.createMockPlayers(2);
         preparePlayers(p);
@@ -222,7 +210,6 @@ public class BettingRoundTest extends TestCase {
         assertFalse(requestedAction.isOptionEnabled(RAISE));
     }
 
-    @Test
     public void testCallSetsLastPlayerToBeCalled() {
         MockPlayer[] p = createAndAddPlayersToBettingRound(2);
 
@@ -233,7 +220,6 @@ public class BettingRoundTest extends TestCase {
         assertThat(round.getLastPlayerToBeCalled(), CoreMatchers.is(player));
     }
 
-    @Test
     public void testRaiseAnAllInBetSetsLastCallerToAllInPlayer() {
         MockPlayer[] p = createAndAddPlayersToBettingRound(2);
         act(p[1], BET, 100);
@@ -242,7 +228,6 @@ public class BettingRoundTest extends TestCase {
         assertThat(round.getLastPlayerToBeCalled(), CoreMatchers.is(player));
     }
 
-    @Test
     public void testBetNotifiesRakeInfo() {
         PokerPlayer player = Mockito.mock(PokerPlayer.class);
         preparePlayers(player);
@@ -257,7 +242,6 @@ public class BettingRoundTest extends TestCase {
         verify(adapter).notifyRakeInfo(Mockito.<RakeInfoContainer>any());
     }
 
-    @Test
     public void testTimeoutTwice() {
         MockPlayer[] p = TestUtils.createMockPlayers(2);
         preparePlayers(p);
@@ -270,7 +254,6 @@ public class BettingRoundTest extends TestCase {
         assertTrue(round.isFinished());
     }
 
-    @Test
     public void testTimeout() {
         MockPlayer[] p = TestUtils.createMockPlayers(2);
         preparePlayers(p);
@@ -282,7 +265,6 @@ public class BettingRoundTest extends TestCase {
         assertTrue(round.isFinished());
     }
 
-    @Test
     public void testDealerLeft() {
         MockPlayer[] p = TestUtils.createMockPlayers(2);
         preparePlayers(p);
@@ -296,7 +278,6 @@ public class BettingRoundTest extends TestCase {
     }
 
     @SuppressWarnings("unchecked")
-    @Test
     public void testFutureActionsNotifiedWhenInitializingVanillaBetRound() {
         MockPlayer[] p = TestUtils.createMockPlayers(3);
         preparePlayers(p);
@@ -308,7 +289,6 @@ public class BettingRoundTest extends TestCase {
     }
 
     @SuppressWarnings("unchecked")
-    @Test
     public void testFutureActionsNotNotifiedWhenInitializingBetRoundAndAllPlayersSittingOut() {
         MockPlayer[] p = TestUtils.createMockPlayers(3);
         p[0].forceAllIn(true);
@@ -322,7 +302,6 @@ public class BettingRoundTest extends TestCase {
     }
 
     @SuppressWarnings("unchecked")
-    @Test
     public void testFutureActionsNotNotifiedWhenAllPlayersButOneAreAllIn() {
         MockPlayer[] p = TestUtils.createMockPlayers(3);
         p[0].forceAllIn(true);
@@ -336,7 +315,6 @@ public class BettingRoundTest extends TestCase {
     }
 
     @SuppressWarnings("unchecked")
-    @Test
     public void testFutureActionsNotifiedWhenPlayerActed() {
         MockPlayer[] p = TestUtils.createMockPlayers(3);
         preparePlayers(p);
@@ -355,7 +333,6 @@ public class BettingRoundTest extends TestCase {
         verify(adapter).notifyFutureAllowedActions(eq(p[2]), argThat(new IsListOfNElements(0)),eq(0L),eq(0L));
     }
 
-    @Test
     public void testIncompleteBetShouldNotIncreaseHighestCompleteBet() {
         MockPlayer[] p = TestUtils.createMockPlayers(3);
         preparePlayers(p);
@@ -365,7 +342,6 @@ public class BettingRoundTest extends TestCase {
         assertThat(round.getSizeOfLastCompleteBetOrRaise(), is(0L));
     }
 
-    @Test
     public void testIncompleteRaiseShouldNotIncreaseHighestCompleteBet() {
         MockPlayer[] p = TestUtils.createMockPlayers(3);
         p[2].setBalance(49);
@@ -382,7 +358,6 @@ public class BettingRoundTest extends TestCase {
      * In fixed limit, if the big blind is $10 and player A bets $7, it counts as a complete bet
      * which means that the next raise should be to $20.
      */
-    @Test
     public void testCompleteBetShouldIncreaseCompleteBetAllTheWayToTheNextLevel() {
         MockPlayer[] p = TestUtils.createMockPlayers(3);
         p[1].setBalance(7L);
@@ -394,7 +369,6 @@ public class BettingRoundTest extends TestCase {
         assertThat(p[2].getActionRequest().getOption(RAISE).getMinAmount(), is(20L));
     }
 
-    @Test
     public void testCompleteRaiseShouldIncreaseCompleteBetAllTheWayToTheNextLevel() {
         MockPlayer[] p = TestUtils.createMockPlayers(3);
         p[2].setBalance(17L);
@@ -496,7 +470,7 @@ public class BettingRoundTest extends TestCase {
 
     private BettingRound createRound(BetStrategy betStrategy) {
         ActionRequestFactory actionRequestFactory = new ActionRequestFactory(betStrategy);
-        return new BettingRound(0, context, adapterHolder, new DefaultPlayerToActCalculator(), actionRequestFactory,
+        return new BettingRound(context, adapterHolder, new DefaultPlayerToActCalculator(0), actionRequestFactory,
                                 new TexasHoldemFutureActionsCalculator(betStrategy.getType()), betStrategy);
     }
 }

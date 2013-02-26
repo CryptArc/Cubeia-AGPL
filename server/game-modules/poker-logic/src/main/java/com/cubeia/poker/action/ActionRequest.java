@@ -55,7 +55,6 @@ public class ActionRequest implements Serializable {
         return isOptionEnabled(action.getActionType());
     }
 
-
     public long getTotalPotSize() {
         return totalPotSize;
     }

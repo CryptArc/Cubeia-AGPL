@@ -20,12 +20,10 @@ package com.cubeia.poker.variant;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.adapter.HandEndStatus;
-import com.cubeia.poker.hand.Card;
+import com.cubeia.poker.hand.DeckProvider;
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.hand.HandInfo;
-import com.cubeia.poker.hand.IndexCardIdGenerator;
-import com.cubeia.poker.hand.Shuffler;
-import com.cubeia.poker.hand.StandardDeck;
+import com.cubeia.poker.hand.HandTypeEvaluator;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.PotTransition;
 import com.cubeia.poker.result.HandResult;
@@ -41,6 +39,7 @@ import com.cubeia.poker.rounds.dealing.DealCommunityCardsRound;
 import com.cubeia.poker.rounds.dealing.DealExposedPocketCardsRound;
 import com.cubeia.poker.rounds.dealing.DealPocketCardsRound;
 import com.cubeia.poker.rounds.dealing.ExposePrivateCardsRound;
+import com.cubeia.poker.rounds.discard.DiscardRound;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.variant.texasholdem.TexasHoldemHandCalculator;
@@ -61,9 +60,9 @@ public class GenericPokerGame extends AbstractGameType implements RoundVisitor {
 
     private Round currentRound;
 
-    private final TexasHoldemHandCalculator handEvaluator = new TexasHoldemHandCalculator();
+    private final HandTypeEvaluator handEvaluator;
 
-    private HandResultCalculator handResultCalculator = new HandResultCalculator(handEvaluator);
+    private HandResultCalculator handResultCalculator;
 
     private RevealOrderCalculator revealOrderCalculator;
 
@@ -78,8 +77,13 @@ public class GenericPokerGame extends AbstractGameType implements RoundVisitor {
      */
     private Iterator<RoundCreator> rounds;
 
-    public GenericPokerGame(List<RoundCreator> roundCreators) {
+    private DeckProvider deckProvider;
+
+    public GenericPokerGame(List<RoundCreator> roundCreators, DeckProvider deckProvider, HandTypeEvaluator handEvaluator) {
         this.roundCreators = roundCreators;
+        this.deckProvider = deckProvider;
+        this.handEvaluator = handEvaluator;
+        handResultCalculator = new HandResultCalculator(handEvaluator);
         revealOrderCalculator = new RevealOrderCalculator();
     }
 
@@ -95,8 +99,7 @@ public class GenericPokerGame extends AbstractGameType implements RoundVisitor {
 
     private void initHand() {
         rounds = roundCreators.iterator();
-        context.setDeck(new StandardDeck(new Shuffler<Card>(getServerAdapter().getSystemRNG()), new IndexCardIdGenerator()));
-
+        context.setDeck(deckProvider.createNewDeck(serverAdapterHolder.get().getSystemRNG(), context.getTableSize()));
         currentRound = rounds.next().create(context, serverAdapterHolder);
     }
 
@@ -136,9 +139,16 @@ public class GenericPokerGame extends AbstractGameType implements RoundVisitor {
         notifyHandFinished(new HandResult(), HandEndStatus.CANCELED_TOO_FEW_PLAYERS);
     }
 
+    private void handleFinishedBetting() {
+        moveChipsToPot();
+        resetHasActed();
+    }
+
     private void moveChipsToPot() {
         context.getPotHolder().moveChipsToPotAndTakeBackUncalledChips(context.getCurrentHandSeatingMap().values());
+    }
 
+    private void resetHasActed() {
         for (PokerPlayer p : context.getCurrentHandSeatingMap().values()) {
             p.setHasActed(false);
             p.clearActionRequest();
@@ -179,9 +189,8 @@ public class GenericPokerGame extends AbstractGameType implements RoundVisitor {
 
     @Override
     public void visit(BettingRound bettingRound) {
-        moveChipsToPot();
+        handleFinishedBetting();
         reportPotUpdate();
-        context.setSeatIdToStartBettingFrom(context.getBlindsInfo().getDealerButtonSeatId());
     }
 
     private boolean allInShowdown() {
@@ -212,10 +221,18 @@ public class GenericPokerGame extends AbstractGameType implements RoundVisitor {
     }
 
     @Override
+    public void visit(DiscardRound discardRound) {
+        log.debug("Discard round finished.");
+        resetHasActed();
+    }
+
+    @Override
     public void visit(AnteRound anteRound) {
         log.debug("Ante round finished.");
         if (anteRound.isCanceled()) {
             handleCanceledHand();
+        } else {
+            handleFinishedBetting();
         }
     }
 
@@ -225,8 +242,6 @@ public class GenericPokerGame extends AbstractGameType implements RoundVisitor {
             handleCanceledHand();
         } else {
             updateBlindsInfo(blindsRound);
-            // TODO: This is not generic enough. Betting might start at the player with the highest / lowest hand, for example.
-            context.setSeatIdToStartBettingFrom(context.getBlindsInfo().getBigBlindSeatId());
         }
     }
 
@@ -254,7 +269,6 @@ public class GenericPokerGame extends AbstractGameType implements RoundVisitor {
 
     @Override
     public void visit(DealExposedPocketCardsRound round) {
-//        throw new UnsupportedOperationException(round.getClass().getSimpleName() + " round not allowed in Texas Holdem");
         updateHandStrengths();
     }
 

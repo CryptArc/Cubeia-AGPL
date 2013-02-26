@@ -18,13 +18,29 @@
 package com.cubeia.games.poker.handler;
 
 import com.cubeia.firebase.api.action.GameDataAction;
-import com.cubeia.games.poker.io.protocol.*;
+import com.cubeia.games.poker.io.protocol.BestHand;
+import com.cubeia.games.poker.io.protocol.CardToDeal;
+import com.cubeia.games.poker.io.protocol.DealPrivateCards;
+import com.cubeia.games.poker.io.protocol.DealPublicCards;
+import com.cubeia.games.poker.io.protocol.Enums;
 import com.cubeia.games.poker.io.protocol.Enums.ActionType;
 import com.cubeia.games.poker.io.protocol.Enums.PotType;
 import com.cubeia.games.poker.io.protocol.Enums.Rank;
 import com.cubeia.games.poker.io.protocol.Enums.Suit;
+import com.cubeia.games.poker.io.protocol.ExposePrivateCards;
+import com.cubeia.games.poker.io.protocol.GameCard;
+import com.cubeia.games.poker.io.protocol.HandEnd;
+import com.cubeia.games.poker.io.protocol.PerformAction;
+import com.cubeia.games.poker.io.protocol.PlayerAction;
+import com.cubeia.games.poker.io.protocol.PlayerBalance;
+import com.cubeia.games.poker.io.protocol.Pot;
+import com.cubeia.games.poker.io.protocol.PotTransfer;
+import com.cubeia.games.poker.io.protocol.PotTransfers;
+import com.cubeia.games.poker.io.protocol.RequestAction;
 import com.cubeia.games.poker.util.ProtocolFactory;
 import com.cubeia.poker.action.ActionRequest;
+import com.cubeia.poker.action.DiscardAction;
+import com.cubeia.poker.action.DiscardRequest;
 import com.cubeia.poker.action.PokerAction;
 import com.cubeia.poker.action.PokerActionType;
 import com.cubeia.poker.action.PossibleAction;
@@ -36,12 +52,16 @@ import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.pot.PotTransition;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.Range;
+import com.google.common.primitives.Ints;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+
+import static com.cubeia.games.poker.io.protocol.Enums.ActionType.DISCARD;
 
 /**
  * Translates poker-logic internal actions to the styx wire-protocol
@@ -62,11 +82,21 @@ public class ActionTransformer {
 
         List<PlayerAction> allowed = new LinkedList<PlayerAction>();
         for (PossibleAction option : request.getOptions()) {
-            PlayerAction playerOption = createPlayerAction(option.getActionType());
-            // FIXME: Casting to integer here since Flash does not support long values!
-            playerOption.minAmount = (int) option.getMinAmount();
-            playerOption.maxAmount = (int) option.getMaxAmount();
-            allowed.add(playerOption);
+            if (option instanceof DiscardRequest) {
+                DiscardRequest discardRequest = (DiscardRequest) option;
+                PlayerAction playerOption = createPlayerAction(PokerActionType.DISCARD);
+                Range<Integer> cardsToDiscard = discardRequest.getCardsToDiscard();
+                // TODO: Consider if this is an ugly hack or if it's OK. (Using minAmount and maxAmount to describe the range of number of cards to discard)
+                playerOption.minAmount = cardsToDiscard.lowerEndpoint();
+                playerOption.maxAmount =  cardsToDiscard.upperEndpoint();
+                allowed.add(playerOption);
+            } else {
+                PlayerAction playerOption = createPlayerAction(option.getActionType());
+                // FIXME: Casting to integer here since Flash does not support long values!
+                playerOption.minAmount = (int) option.getMinAmount();
+                playerOption.maxAmount = (int) option.getMaxAmount();
+                allowed.add(playerOption);
+            }
         }
         packet.allowedActions = allowed;
 
@@ -75,8 +105,7 @@ public class ActionTransformer {
 
     public PerformAction transform(PokerAction pokerAction, PokerPlayer pokerPlayer) {
         PerformAction packet = new PerformAction();
-        PlayerAction action = createPlayerAction(pokerAction.getActionType());
-        packet.action = action;
+        packet.action = createPlayerAction(pokerAction.getActionType());
         // FIXME: Flash does not support longs...
         packet.betAmount = (int) pokerAction.getBetAmount();
         packet.raiseAmount = (int) pokerAction.getRaiseAmount();
@@ -86,57 +115,23 @@ public class ActionTransformer {
         return packet;
     }
 
-    public PokerActionType transform(ActionType protocol) {
-        PokerActionType type;
-        switch (protocol) {
-            case FOLD:
-                type = PokerActionType.FOLD;
-                break;
+    public PokerActionType transform(ActionType actionType) {
+        return PokerActionType.valueOf(actionType.name());
+    }
 
-            case CHECK:
-                type = PokerActionType.CHECK;
-                break;
-
-            case CALL:
-                type = PokerActionType.CALL;
-                break;
-
-            case BET:
-                type = PokerActionType.BET;
-                break;
-
-            case BIG_BLIND:
-                type = PokerActionType.BIG_BLIND;
-                break;
-
-            case SMALL_BLIND:
-                type = PokerActionType.SMALL_BLIND;
-                break;
-
-            case RAISE:
-                type = PokerActionType.RAISE;
-                break;
-
-            case DECLINE_ENTRY_BET:
-                type = PokerActionType.DECLINE_ENTRY_BET;
-                break;
-
-            case ANTE:
-                type = PokerActionType.ANTE;
-                break;
-
-            case BIG_BLIND_PLUS_DEAD_SMALL_BLIND:
-                type = PokerActionType.BIG_BLIND_PLUS_DEAD_SMALL_BLIND;
-                break;
-
-            case DEAD_SMALL_BLIND:
-                type = PokerActionType.DEAD_SMALL_BLIND;
-                break;
-
-            default:
-                throw new UnsupportedOperationException("unsupported action type: " + protocol.name());
+    public PokerAction transform(int playerId, PerformAction packet) {
+        ActionType actionType = packet.action.type;
+        if (actionType == DISCARD) {
+            return convertDiscardAction(playerId, packet);
+        } else {
+            PokerAction converted = new PokerAction(playerId, transform(actionType));
+            converted.setBetAmount(packet.betAmount);
+            return converted;
         }
-        return type;
+    }
+
+    private PokerAction convertDiscardAction(int playerId, PerformAction action) {
+        return new DiscardAction(playerId, Ints.asList(action.cardsToDiscard));
     }
 
     @VisibleForTesting
@@ -148,39 +143,13 @@ public class ActionTransformer {
     }
 
     public ActionType fromPokerActionTypeToProtocolActionType(PokerActionType actionType) {
-        switch (actionType) {
-            case FOLD:
-                return ActionType.FOLD;
-            case CHECK:
-                return ActionType.CHECK;
-            case CALL:
-                return ActionType.CALL;
-            case BET:
-                return ActionType.BET;
-            case BIG_BLIND:
-                return ActionType.BIG_BLIND;
-            case SMALL_BLIND:
-                return ActionType.SMALL_BLIND;
-            case RAISE:
-                return ActionType.RAISE;
-            case DECLINE_ENTRY_BET:
-                return ActionType.DECLINE_ENTRY_BET;
-            case ANTE:
-                return ActionType.ANTE;
-            case BIG_BLIND_PLUS_DEAD_SMALL_BLIND:
-                return ActionType.BIG_BLIND_PLUS_DEAD_SMALL_BLIND;
-            case DEAD_SMALL_BLIND:
-                return ActionType.DEAD_SMALL_BLIND;
-            default:
-                throw new UnsupportedOperationException("unsupported action type: " + actionType.name());
-        }
+        return ActionType.valueOf(actionType.name());
     }
 
     /**
      * @param playerId, the player receiving the cards
      * @param cards,    the cards to be dealt
      * @param hidden,   true if the suit and rank should be of type HIDDEN only
-     * @return
      */
     public DealPrivateCards createPrivateCardsPacket(int playerId, List<Card> cards, boolean hidden) {
         DealPrivateCards packet = new DealPrivateCards();
@@ -257,8 +226,7 @@ public class ActionTransformer {
     public BestHand createBestHandPacket(int playerId, HandType handType, List<Card> cardsInHand) {
         List<GameCard> gameCards = convertCards(cardsInHand);
 
-        BestHand bestHand = new BestHand(playerId, convertHandTypeToEnum(handType), gameCards);
-        return bestHand;
+        return new BestHand(playerId, convertHandTypeToEnum(handType), gameCards);
     }
 
     @VisibleForTesting
@@ -317,10 +285,9 @@ public class ActionTransformer {
     }
 
     public PotTransfer createPotTransferPacket(PotTransition potTransition) {
-        PotTransfer potTransfer = new PotTransfer(
+        return new PotTransfer(
                 (byte) potTransition.getPot().getId(),
                 potTransition.getPlayer().getId(),
                 (int) potTransition.getAmount());
-        return potTransfer;
     }
 }	

@@ -65,6 +65,10 @@ public class Hand implements Serializable {
         //this.handStrength = new HandStrength(otherHand.handStrength);
     }
 
+    public void removeCard(int cardNumber) {
+        cards.remove(cardNumber);
+    }
+
     @Override
     public String toString() {
         String s = "";

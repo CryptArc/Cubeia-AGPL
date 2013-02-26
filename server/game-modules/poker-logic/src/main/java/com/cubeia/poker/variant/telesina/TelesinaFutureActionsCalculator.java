@@ -24,6 +24,7 @@ import com.cubeia.poker.rounds.betting.FutureActionsCalculator;
 import java.util.ArrayList;
 import java.util.List;
 
+// This calculator is also known as the "check or fold" calculator. TODO: Remove this stupidity.
 public class TelesinaFutureActionsCalculator implements FutureActionsCalculator {
 
 

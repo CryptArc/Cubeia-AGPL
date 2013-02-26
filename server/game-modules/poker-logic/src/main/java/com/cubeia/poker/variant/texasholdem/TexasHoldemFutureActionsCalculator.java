@@ -35,19 +35,16 @@ public class TexasHoldemFutureActionsCalculator implements FutureActionsCalculat
 
     private static final long serialVersionUID = 6513501780238216186L;
 
-    /* (non-Javadoc)
-    * @see com.cubeia.poker.variant.texasholdem.FutureActionsCalculator#calculateFutureActionOptionList(com.cubeia.poker.player.PokerPlayer, java.lang.Long)
-    */
     @Override
     public List<PokerActionType> calculateFutureActionOptionList(PokerPlayer player, Long highestBet, boolean bettingCapped) {
         List<PokerActionType> options = new ArrayList<PokerActionType>();
 
-        // players that are all in or has folded should not have anything
+        // Players who are all in or have folded do not have any future actions.
         if (player.hasFolded() || player.isAllIn() || player.isSittingOut() || player.hasActed()) {
             return options;
         }
 
-        if (player.getBetStack() >= highestBet) {
+        if (player.getBetStack() >= highestBet && !player.hasActed()) {
             options.add(PokerActionType.CHECK);
         }
 

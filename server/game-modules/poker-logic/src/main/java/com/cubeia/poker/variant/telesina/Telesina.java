@@ -38,6 +38,7 @@ import com.cubeia.poker.rounds.dealing.DealCommunityCardsRound;
 import com.cubeia.poker.rounds.dealing.DealExposedPocketCardsRound;
 import com.cubeia.poker.rounds.dealing.DealPocketCardsRound;
 import com.cubeia.poker.rounds.dealing.ExposePrivateCardsRound;
+import com.cubeia.poker.rounds.discard.DiscardRound;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.util.ThreadLocalProfiler;
@@ -116,9 +117,7 @@ public class Telesina extends AbstractGameType implements RoundVisitor {
 
     private void initHand() {
         log.debug("init hand");
-        resetPlayerPostedEntryBets();
         context.setDeck(deckFactory.createNewDeck(getServerAdapter().getSystemRNG(), context.getTableSize()));
-        // TODO: Why do we need to tell the client how many cards the deck has? Why do we need to do it every hand?
         try {
             getServerAdapter().notifyDeckInfo(context.getDeck().getTotalNumberOfCardsInDeck(), context.getDeck().getDeckLowestRank());
         } catch (Throwable th) {
@@ -126,12 +125,6 @@ public class Telesina extends AbstractGameType implements RoundVisitor {
         }
         setCurrentRound(roundFactory.createAnteRound(context, serverAdapterHolder));
         resetBettingRoundId();
-    }
-
-    protected void resetPlayerPostedEntryBets() {
-        for (PokerPlayer p : context.getPlayersInHand()) {
-            p.setHasPostedEntryBet(false);
-        }
     }
 
     @Override
@@ -257,13 +250,10 @@ public class Telesina extends AbstractGameType implements RoundVisitor {
 
         getBlindsInfo().setDealerButtonSeatId(newDealerSeat);
         getServerAdapter().notifyDealerButton(newDealerSeat);
-
     }
 
     private void startDealInitialCardsRound() {
         setCurrentRound(roundFactory.createDealInitialCardsRound(context, serverAdapterHolder));
-        scheduleRoundTimeout();
-
     }
 
     @Override
@@ -314,6 +304,10 @@ public class Telesina extends AbstractGameType implements RoundVisitor {
         startDealPocketOrVelaCardRound();
     }
 
+    @Override
+    public void visit(DiscardRound discardRound) {
+    }
+
     private void startDealPocketOrVelaCardRound() {
         ThreadLocalProfiler.add("Telesina.startDealPocketOrVelaCardRound");
         if (getBettingRoundId() == VELA_ROUND_ID) {
@@ -321,7 +315,6 @@ public class Telesina extends AbstractGameType implements RoundVisitor {
         } else {
             setCurrentRound(roundFactory.createDealExposedPocketCardsRound(context, serverAdapterHolder));
         }
-        scheduleRoundTimeout();
     }
 
     private void returnAllBetStacksToBalance() {
@@ -406,7 +399,7 @@ public class Telesina extends AbstractGameType implements RoundVisitor {
     }
 
     public Rank getDeckLowestRank() {
-        return Rank.SEVEN;
+        return context.getDeck().getDeckLowestRank();
     }
 
     @Override

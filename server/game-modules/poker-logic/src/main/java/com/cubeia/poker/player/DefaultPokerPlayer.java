@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -208,6 +209,19 @@ public class DefaultPokerPlayer implements PokerPlayer {
         } else {
             privatePocketCards.add(card);
         }
+    }
+
+    @Override
+    public void discard(List<Integer> cardsToDiscard) {
+        log.debug("Cards before discarding: " + getPocketCards());
+        for (Integer cardNumber : cardsToDiscard) {
+            discardCard(cardNumber);
+        }
+        log.debug("Cards after discarding: " + getPocketCards());
+    }
+
+    private void discardCard(Integer cardNumber) {
+        pocketCards.removeCard(cardNumber);
     }
 
     @Override

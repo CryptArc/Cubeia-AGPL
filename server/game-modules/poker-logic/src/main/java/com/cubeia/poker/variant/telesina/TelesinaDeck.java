@@ -42,13 +42,14 @@ public class TelesinaDeck implements Deck {
     private final int deckSize;
 
     private final Rank deckLowestRank;
-    private final Random rng;
+
+    // TODO: Made this transient because stuff blows up if you try to serialize the
+    private final transient Random rng;
 
     /**
      * Constructs a deck with a size calculated by the number of participants given.
      * The lowest card in the deck will be 11 - <number of participants>.
      *
-     * @param numberOfParticipants
      */
     public TelesinaDeck(TelesinaDeckUtil telesinaDeckUtil, Random rng, int numberOfParticipants) {
         this.rng = rng;

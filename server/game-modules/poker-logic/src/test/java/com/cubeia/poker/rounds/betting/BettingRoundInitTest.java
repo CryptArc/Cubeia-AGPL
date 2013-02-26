@@ -39,6 +39,7 @@ import java.util.TreeMap;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -75,9 +76,6 @@ public class BettingRoundInitTest {
 
     private BettingRound round;
 
-    private int dealerSeatId = 0;
-
-
     @Before
     public void setup() {
         initMocks(this);
@@ -94,19 +92,19 @@ public class BettingRoundInitTest {
         when(context.getTimingProfile()).thenReturn(new DefaultTimingProfile());
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
         TexasHoldemFutureActionsCalculator futureActionsCalculator = new TexasHoldemFutureActionsCalculator(BetStrategyType.FIXED_LIMIT);
-        round = new BettingRound(dealerSeatId, context, serverAdapterHolder, playertoActCalculator, actionRequestFactory, futureActionsCalculator, betStrategy);
+        round = new BettingRound(context, serverAdapterHolder, playertoActCalculator, actionRequestFactory, futureActionsCalculator, betStrategy);
     }
 
     @Test
     public void testNormalBettingRoundInit() {
-        when(playertoActCalculator.getFirstPlayerToAct(Mockito.eq(dealerSeatId), Mockito.eq(currentHandSeatingMap), Mockito.anyListOf(Card.class))).thenReturn(player2);
+        when(playertoActCalculator.getFirstPlayerToAct(eq(currentHandSeatingMap), Mockito.anyListOf(Card.class))).thenReturn(player2);
         when(context.getPlayersReadyToStartHand(Matchers.<Predicate<PokerPlayer>>any())).thenReturn(asList(player1, player2, player3));
 
         ActionRequest actionRequest = mock(ActionRequest.class);
-        when(actionRequestFactory.createFoldCheckBetActionRequest(Mockito.any(BettingRound.class), Mockito.eq(player2))).thenReturn(actionRequest);
+        when(actionRequestFactory.createFoldCheckBetActionRequest(Mockito.any(BettingRound.class), eq(player2))).thenReturn(actionRequest);
         when(player2.getActionRequest()).thenReturn(actionRequest);
 
-        round = new BettingRound(dealerSeatId, context, serverAdapterHolder, playertoActCalculator, actionRequestFactory,
+        round = new BettingRound(context, serverAdapterHolder, playertoActCalculator, actionRequestFactory,
                                  new TexasHoldemFutureActionsCalculator(BetStrategyType.FIXED_LIMIT), betStrategy);
 
         assertThat(round.playerToAct, is(player2Id));
@@ -116,7 +114,7 @@ public class BettingRoundInitTest {
 
     @Test
     public void testRoundFinishedWhenAllInShowdown() {
-        when(playertoActCalculator.getFirstPlayerToAct(Mockito.eq(dealerSeatId), Mockito.eq(currentHandSeatingMap),
+        when(playertoActCalculator.getFirstPlayerToAct(eq(currentHandSeatingMap),
                 Mockito.anyListOf(Card.class))).thenReturn(player2);
         when(context.getPlayersReadyToStartHand(Matchers.<Predicate<PokerPlayer>>any())).thenReturn(asList(player1, player2, player3));
         when(player1.isAllIn()).thenReturn(true);

@@ -117,7 +117,7 @@ public class ActionTransformerTest {
 
     @Test
     public void testTransformActionTypeToPokerActionType() {
-        assertThat("wrong number of action types, something broken?", ActionType.values().length, is(11));
+        assertThat("wrong number of action types, something broken?", ActionType.values().length, is(14));
         assertThat(actionTransformer.transform(ActionType.FOLD), is(PokerActionType.FOLD));
         assertThat(actionTransformer.transform(ActionType.CHECK), is(PokerActionType.CHECK));
         assertThat(actionTransformer.transform(ActionType.CALL), is(PokerActionType.CALL));
@@ -188,7 +188,7 @@ public class ActionTransformerTest {
 
     @Test
     public void testCreatePlayerAction() {
-        assertThat("wrong number of poker action types, something broken?", PokerActionType.values().length, is(11));
+        assertThat("wrong number of poker action types, something broken?", PokerActionType.values().length, is(14));
         assertThat(actionTransformer.createPlayerAction(PokerActionType.FOLD).type, is(ActionType.FOLD));
         assertThat(actionTransformer.createPlayerAction(PokerActionType.CHECK).type, is(ActionType.CHECK));
         assertThat(actionTransformer.createPlayerAction(PokerActionType.CALL).type, is(ActionType.CALL));

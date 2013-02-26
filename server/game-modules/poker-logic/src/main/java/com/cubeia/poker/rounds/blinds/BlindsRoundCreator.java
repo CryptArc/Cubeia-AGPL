@@ -24,7 +24,9 @@ import com.cubeia.poker.rounds.Round;
 import com.cubeia.poker.rounds.RoundCreator;
 import com.cubeia.poker.variant.texasholdem.NonRandomSeatProvider;
 
-public class BlindsRoundCreator implements RoundCreator {
+import java.io.Serializable;
+
+public class BlindsRoundCreator implements RoundCreator, Serializable {
 
     @Override
     public Round create(PokerContext context, ServerAdapterHolder serverAdapterHolder) {

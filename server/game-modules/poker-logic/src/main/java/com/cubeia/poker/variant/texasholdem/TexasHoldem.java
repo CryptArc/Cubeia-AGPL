@@ -47,6 +47,7 @@ import com.cubeia.poker.rounds.dealing.DealExposedPocketCardsRound;
 import com.cubeia.poker.rounds.dealing.DealPocketCardsRound;
 import com.cubeia.poker.rounds.dealing.Dealer;
 import com.cubeia.poker.rounds.dealing.ExposePrivateCardsRound;
+import com.cubeia.poker.rounds.discard.DiscardRound;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.variant.AbstractGameType;
@@ -136,13 +137,13 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
     }
 
     private BettingRound createBettingRound(int seatIdToStartBettingFrom) {
-        DefaultPlayerToActCalculator playerToActCalculator = new DefaultPlayerToActCalculator();
+        DefaultPlayerToActCalculator playerToActCalculator = new DefaultPlayerToActCalculator(seatIdToStartBettingFrom);
         PokerSettings settings = context.getSettings();
         BetStrategy betStrategy = BetStrategyFactory.createBetStrategy(settings.getBetStrategyType(), settings.getBigBlindAmount(),
                                                                        roundName.isDoubleBetRound());
         ActionRequestFactory requestFactory = new ActionRequestFactory(betStrategy);
         TexasHoldemFutureActionsCalculator futureActionsCalculator = new TexasHoldemFutureActionsCalculator(betStrategy.getType());
-        return new BettingRound(seatIdToStartBettingFrom, context, serverAdapterHolder, playerToActCalculator, requestFactory, futureActionsCalculator, betStrategy);
+        return new BettingRound(context, serverAdapterHolder, playerToActCalculator, requestFactory, futureActionsCalculator, betStrategy);
     }
 
     private boolean isHandFinished() {
@@ -263,8 +264,11 @@ public class TexasHoldem extends AbstractGameType implements RoundVisitor, Deale
     }
 
     @Override
+    public void visit(DiscardRound discardRound) {
+    }
+
+    @Override
     public void visit(AnteRound anteRound) {
-        throw new UnsupportedOperationException("not implemented");
     }
 
     @Override

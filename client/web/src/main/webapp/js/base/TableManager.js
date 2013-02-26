@@ -51,7 +51,7 @@ Poker.TableManager = Class.extend({
         if (name == null) {
             name = "Table"; //TODO: fix
         }
-        var tableViewContainer = $(".view-container");
+        var tableViewContainer = $(".table-view-container");
         var templateManager = new Poker.TemplateManager();
         var tableLayoutManager = new Poker.TableLayoutManager(tableId, tableViewContainer, templateManager, capacity);
         this.createTable(tableId, capacity, name , tableLayoutManager);
@@ -270,7 +270,8 @@ Poker.TableManager = Class.extend({
         var table = this.tables.get(tableId);
         var p = table.getPlayerById(playerId);
         if(p == null) {
-            throw "Unable to find player to update balance pid = " + playerId;
+            console.log("Unable to find player to update balance playerId = " + playerId + ", tableId = " + tableId);
+            return;
         }
         p.balance = balance;
         table.getLayoutManager().onPlayerUpdated(p);
@@ -368,20 +369,24 @@ Poker.TableManager = Class.extend({
     leaveTable : function(tableId) {
         console.log("REMOVING TABLE = " + tableId);
         var table = this.tables.remove(tableId);
-        if(table==null) {
+        if (table == null) {
             console.log("table not found when removing " + tableId);
+        } else {
+            table.getLayoutManager().onLeaveTableSuccess();
+            table.leave();
         }
-        table.getLayoutManager().onLeaveTableSuccess();
-        table.leave();
         Poker.AppCtx.getViewManager().removeTableView(tableId);
     },
     /**
+     *
      * @param {Number} tableId
      * @param {Poker.ActionType[]} actions
+     * @param {Number} callAmount
+     * @param {Number} minBetAmount
      */
-    onFutureAction : function(tableId,actions, callAmount, minBetAmount) {
+    onFutureAction : function(tableId, actions, callAmount, minBetAmount) {
         var table = this.getTable(tableId);
-        if(actions.length>0) {
+        if (actions.length > 0) {
             var futureActions = this.getFutureActionTypes(actions);
             table.getLayoutManager().displayFutureActions(futureActions, callAmount, minBetAmount);
         }
@@ -395,7 +400,7 @@ Poker.TableManager = Class.extend({
         var put = function(type){
             futureActions.put(type.id,type);
         };
-        for(var i = 0; i<actions.length; i++) {
+        for (var i = 0; i < actions.length; i++) {
             var act = actions[i];
             switch (act.id) {
                 case Poker.ActionType.CHECK.id:
@@ -412,7 +417,7 @@ Poker.TableManager = Class.extend({
                     break;
             }
         }
-        if(actions.length>0) {
+        if (actions.length > 0) {
             put(Poker.FutureActionType.FOLD);
         }
         return futureActions.values();

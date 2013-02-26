@@ -21,8 +21,8 @@
     <script type="text/javascript" src="${cp}/js/lib/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/jquery-ui-1.8.21.custom.min.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/jquery.ui.touch-punch.js"></script>
-    <script type="text/javascript" src="${cp}/js/base/touch-click.js"></script>
-    <script type="text/javascript" src="${cp}/js/base/ui/relative-offset.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/jquery-plugins/touch-click.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/jquery-plugins/relative-offset.js"></script>
 
     <script type="text/javascript" src="${cp}/js/lib/mustache.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/jquery.jqGrid.min.js"></script>
@@ -80,6 +80,13 @@
 
     <script type="text/javascript" src="${cp}/js/base/ui/BetSlider.js"></script>
     <script type="text/javascript" src="${cp}/js/base/Action.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/actions/CheckBoxAction.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/actions/BlindsActions.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/actions/ActionButton.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/actions/AbstractTableButtons.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/actions/ActionButtons.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/actions/TableButtons.js"></script>
+
     <script type="text/javascript" src="${cp}/js/base/ui/MyActionsManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/LobbyLayoutManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/LobbyManager.js"></script>
@@ -96,7 +103,7 @@
     <script type="text/javascript" src="${cp}/js/base/ui/cards/CommunityCard.js"></script>
     <script type="text/javascript" src="${cp}/js/base/Pot.js"></script>
     <script type="text/javascript" src="${cp}/js/base/Hand.js"></script>
-    <script type="text/javascript" src="${cp}/js/base/ui/describe.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/jquery-plugins/describe.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/CSSUtils.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/animation/Transform.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/animation/Animation.js"></script>
@@ -118,6 +125,7 @@
     <script type="text/javascript" src="${cp}/js/base/ui/views/TabView.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/LoginView.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/TableView.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/views/MultiTableView.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/TournamentView.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/DevSettingsView.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/ViewManager.js"></script>
@@ -272,7 +280,10 @@
         </div>
     </div>
     <div class="view-container slidable">
-
+        <div class="table-view-container" style="display:none;">
+            <div class="multi-view-switch multi">
+            </div>
+        </div>
         <div id="loadingView" class="loading-view">
             <div class="login-dialog">
                 <div class="logo-container"><img src="${cp}/skins/${skin}/images/lobby/poker-logo.png"/></div>
@@ -512,6 +523,7 @@
 
 <script type="text/mustache" id="tableViewTemplate" style="display:none;">
     <div id="tableView-{{tableId}}" class="table-container">
+
         <div class="table-logo"></div>
         <div id="seatContainer-{{tableId}}" class="default-table table-10">
             <div class="seat" id="seat0-{{tableId}}">
@@ -580,13 +592,13 @@
             <div class="own-player" id="myPlayerSeat-{{tableId}}Info" style="display:none;">
                 <div class="name" id="myPlayerName-{{tableId}}"></div>
                 <div class="balance" id="myPlayerBalance-{{tableId}}"></div>
-                <div class="no-more-blinds-container">
-                    <input type="checkbox" id="noMoreBlinds-{{tableId}}"/>
-                    <label for="noMoreBlinds-{{tableId}}">No more blinds</label>
+                <div class="no-more-blinds">
+                    <input class="checkbox" type="checkbox" id="noMoreBlinds-{{tableId}}"/>
+                    <label class="checkbox-icon-label" for="noMoreBlinds-{{tableId}}">No more blinds</label>
                 </div>
-                    <div class="sit-out-next-hand-container">
-                        <input type="checkbox" id="sitOutNextHand-{{tableId}}"/>
-                        <label for="sitOutNextHand-{{tableId}}">Sit out next hand</label>
+                    <div class="sit-out-next-hand">
+                        <input class="checkbox" type="checkbox" id="sitOutNextHand-{{tableId}}"/>
+                        <label class="checkbox-icon-label" for="sitOutNextHand-{{tableId}}">Sit out next hand</label>
                     </div>
             </div>
 
@@ -650,49 +662,54 @@
             </div>
             <div id="futureActions-{{tableId}}" class="future-actions" style="display:none;">
                     <div class="future-action check" style="display:none;">
-                        <input type="checkbox" id="future-check-{{tableId}}"/>
-                        <label  for="future-check-{{tableId}}">Fold</label>
+                        <input class="checkbox" type="checkbox" id="future-check-{{tableId}}"/>
+                        <label class="checkbox-icon-label" for="future-check-{{tableId}}">Fold</label>
                     </div>
 
                     <div class="future-action check-or-fold" style="display:none;">
-                        <input type="checkbox" id="future-check-or-fold-{{tableId}}"/>
-
-                        <label for="future-check-or-fold-{{tableId}}">Check/Fold</label>
+                        <input class="checkbox" type="checkbox" id="future-check-or-fold-{{tableId}}"/>
+                        <label class="checkbox-icon-label" for="future-check-or-fold-{{tableId}}">Check/Fold</label>
                     </div>
 
                     <div class="future-action call-current-bet" style="display:none;">
-                        <input type="checkbox" id="future-call-current-bet-{{tableId}}"/>
-                        <label for="future-call-current-bet-{{tableId}}">Call <span class="amount"></span></label>
+                        <input class="checkbox" type="checkbox" id="future-call-current-bet-{{tableId}}"/>
+                        <label class="checkbox-icon-label" for="future-call-current-bet-{{tableId}}">Call <span class="amount"></span></label>
                     </div>
 
                     <div class="future-action check-or-call-any" style="display:none;">
-                        <input type="checkbox" id="future-check-or-call-any-{{tableId}}"/>
-                        <label for="future-check-or-call-any-{{tableId}}">Check/Call any</label>
+                        <input class="checkbox" type="checkbox" id="future-check-or-call-any-{{tableId}}"/>
+                        <label class="checkbox-icon-label" for="future-check-or-call-any-{{tableId}}">Check/Call any</label>
                     </div>
                     <div class="future-action call-any" style="display:none;">
-                        <input type="checkbox" id="future-call-any-{{tableId}}"/>
-                        <label for="future-call-any-{{tableId}}">Call any</label>
+                        <input class="checkbox" type="checkbox" id="future-call-any-{{tableId}}"/>
+                        <label class="checkbox-icon-label" for="future-call-any-{{tableId}}">Call any</label>
                     </div>
 
                     <div class="future-action fold" style="display:none;">
-                        <input type="checkbox" id="future-fold-{{tableId}}"/>
-                        <label for="future-fold-{{tableId}}">Fold</label>
+                        <input class="checkbox" type="checkbox" id="future-fold-{{tableId}}"/>
+                        <label class="checkbox-icon-label" for="future-fold-{{tableId}}">Fold</label>
                     </div>
 
                     <div class="future-action raise" style="display:none;">
-                        <input type="checkbox" id="future-raise-{{tableId}}"/>
-                        <label for="future-raise-{{tableId}}">Raise to <span class="amount"></span></label>
+                        <input class="checkbox" type="checkbox" id="future-raise-{{tableId}}"/>
+                        <label class="checkbox-icon-label" for="future-raise-{{tableId}}">Raise to <span class="amount"></span></label>
                     </div>
 
                     <div class="future-action raise-any" style="display:none;">
-                        <input type="checkbox" id="future-raise-any-{{tableId}}"/>
-                        <label for="future-raise-any-{{tableId}}">Raise any</label>
-                </div>
+                        <input class="checkbox" type="checkbox" id="future-raise-any-{{tableId}}"/>
+                        <label class="checkbox-icon-label" for="future-raise-any-{{tableId}}">Raise any</label>
+                    </div>
 
+            </div>
+            <div id="waitForBigBlind-{{tableId}}" class="wait-for-big-blind" style="display:none;">
+                <input class="checkbox" type="checkbox" id="wait-for-big-blind-cb-{{tableId}}" checked="checked"/>
+                <label class="checkbox-icon-label" for="wait-for-big-blind-cb-{{tableId}}">Wait for Big Blind</label>
+                <div>Uncheck to post the Big Blind and be dealt in next hand </div>
             </div>
         <div id="myPlayerSeat-{{tableId}}Progressbar" class="circular-progress-bar">
 
         </div>
+
     </div>
 </div>
 </script>
@@ -718,9 +735,12 @@
     <h1>Header</h1>
     <p class="message">Message</p>
     <p class="dialog-buttons">
+            <a class="dialog-cancel-button" style="display:none;">
+                Cancel
+            </a>
             <a class="dialog-ok-button">
-            Continue
-        </a>
+                Continue
+            </a>
     </p>
 
     </div>
