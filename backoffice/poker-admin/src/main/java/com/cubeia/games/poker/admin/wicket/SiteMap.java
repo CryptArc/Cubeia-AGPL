@@ -1,6 +1,8 @@
 package com.cubeia.games.poker.admin.wicket;
 
 
+import com.cubeia.games.poker.admin.wicket.pages.operator.EditOperator;
+import com.cubeia.games.poker.admin.wicket.pages.operator.OperatorList;
 import com.cubeia.games.poker.admin.wicket.pages.system.BroadcastMessage;
 import com.cubeia.games.poker.admin.wicket.pages.system.Clients;
 import com.cubeia.games.poker.admin.wicket.pages.history.HandHistory;
@@ -69,6 +71,9 @@ public class SiteMap {
         add(pages, "Rake Configurations", ListRakes.class, "icon-list-alt",
                 node("Create Rake Configuration", CreateRake.class),
                 node("Edit Rake Configuration", EditRake.class, false));
+
+        add(pages, "Operators", OperatorList.class, "icon-list-alt",
+                node("Edit Operator", EditOperator.class, false));
 
         add(pages,"System Management", SystemManagement.class, "icon-hdd",
                 node("Shutdown Management", SystemManagement.class, "icon-off"),

@@ -25,7 +25,8 @@ public class Configuration {
 	private String networkUrl;
 	private String searchUrl;
 	private String walletServiceUrl;
-	
+    private String operatorServiceUrl;
+
 	public void setWalletServiceUrl(String walletServiceUrl) {
 		this.walletServiceUrl = walletServiceUrl;
 	}
@@ -33,8 +34,16 @@ public class Configuration {
 	public String getWalletServiceUrl() {
 		return walletServiceUrl;
 	}
-	
-	public String getSearchUrl() {
+
+    public void setOperatorServiceUrl(String operatorServiceUrl) {
+        this.operatorServiceUrl = operatorServiceUrl;
+    }
+
+    public String getOperatorServiceUrl() {
+        return operatorServiceUrl;
+    }
+
+    public String getSearchUrl() {
 		return searchUrl;
 	}
 	
