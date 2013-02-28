@@ -32,6 +32,18 @@
       <property name="entityManagerFactory" ref="entityManagerFactory"/>
     </bean>
 
+    <!-- Transaction attribute links, optional -->
+    <bean id="transaction-attribute-link-props" class="org.springframework.beans.factory.config.PropertiesFactoryBean"
+          p:location="classpath:transaction-attribute-links.properties"
+          p:ignoreResourceNotFound="true" />
+
+    <!-- user service -->
+    <bean id="userClient"
+          class="com.cubeia.backoffice.users.client.UserServiceClientHTTP"
+          scope="singleton">
+        <constructor-arg value="${network.user-base-url}"/>
+    </bean>
+
     <bean id="walletClient" class="com.cubeia.backoffice.wallet.client.WalletServiceClientHTTP">
         <constructor-arg value="${network.wallet-base-url}"/>
     </bean>
