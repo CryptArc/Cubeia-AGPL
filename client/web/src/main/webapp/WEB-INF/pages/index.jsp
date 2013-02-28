@@ -64,6 +64,7 @@
     <script src="${cp}/js/base/communication/lobby/LobbyPacketHandler.js" type="text/javascript"></script>
     <script src="${cp}/js/base/communication/lobby/LobbyRequestHandler.js" type="text/javascript"></script>
 
+    <script src="${cp}/js/base/communication/handhistory/HandHistoryRequestHandler.js" type="text/javascript"></script>
     <script src="${cp}/js/base/communication/handhistory/HandHistoryPacketHandler.js" type="text/javascript"></script>
 
     <script src="${cp}/js/base/communication/connection/ConnectionManager.js" type="text/javascript"></script>
@@ -584,6 +585,9 @@
             <div class="dealer-button" style="display:none;">
                 <img src="${cp}/skins/${skin}/images/table/dealer-button.svg"/>
             </div>
+        </div>
+        <div class="hand-history" >
+            Hand History
         </div>
         <div class="bottom-bar">
                 <div class="action-button action-leave" style="display: none;">
