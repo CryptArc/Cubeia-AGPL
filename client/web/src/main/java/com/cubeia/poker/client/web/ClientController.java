@@ -1,15 +1,12 @@
 package com.cubeia.poker.client.web;
 
 import static com.cubeia.backoffice.operator.api.OperatorConfigParamDTO.CSS_URL;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -18,9 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.cubeia.backoffice.operator.api.OperatorConfigParamDTO;
 import com.cubeia.backoffice.operator.client.OperatorServiceClient;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 
 @Controller
 public class ClientController {
@@ -28,22 +22,24 @@ public class ClientController {
     @Value("${default.skin}")
     private String defaultSkin;
 
-    @Value("${operator.config.cache-ttl}")
-    private Long configCacheTtl;
+    // @Value("${operator.config.cache-ttl}")
+    // private Long configCacheTtl;
     
     @Resource(name = "operatorService")
     private OperatorServiceClient operatorService;
     
     private final String SAFE_PATTER = "[a-zA-Z0-9\\.-_]*";
     
-    private final LoadingCache<Long, Map<OperatorConfigParamDTO,String>> operatorConfig = 
-    		CacheBuilder.newBuilder().expireAfterAccess(configCacheTtl, MILLISECONDS).build(new CacheLoader<Long, Map<OperatorConfigParamDTO,String>>() {
+    // TODO: Cache config (see below), we don't want to hit the 
+    // oeprator config too hard /LJN
+    /*private final LoadingCache<Long, Map<OperatorConfigParamDTO,String>> operatorConfig = 
+    		CacheBuilder.newBuilder().expireAfterAccess(30000, MILLISECONDS).build(new CacheLoader<Long, Map<OperatorConfigParamDTO,String>>() {
 				
 				@Override
 				public Map<OperatorConfigParamDTO,String> load(Long id) throws Exception {
 					return operatorService.getConfig(id);
 				}
-			});
+			});*/
 
     @RequestMapping("/")
     public String handleDefault(HttpServletRequest request, ModelMap modelMap) {
@@ -90,12 +86,12 @@ public class ClientController {
     }
 
 	private Map<OperatorConfigParamDTO, String> safeGetOperatorConfig(Long operatorId) {
-		try {
-			return operatorConfig.get(operatorId);
-		} catch (ExecutionException e) {
+		// try {
+			return operatorService.getConfig(operatorId); // operatorConfig.get(operatorId);
+		/*} catch (ExecutionException e) {
 			Logger.getLogger(getClass()).error("failed to retreive operator config", e);
 			return null;
-		}
+		}*/
 	}
 
     @RequestMapping(value = {"/operator/{operatorId}/token/{token}"})

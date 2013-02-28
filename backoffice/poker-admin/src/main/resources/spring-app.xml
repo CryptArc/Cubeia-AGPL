@@ -23,10 +23,6 @@
         <constructor-arg name="databaseName" value="poker"/>
     </bean>
     
-    <bean id="operatorService" class="com.cubeia.backoffice.operator.client.OperatorServiceClientHTTP">
-        <constructor-arg>${operator.service.url}</constructor-arg>
-    </bean>
-    
     <bean id="webConfig" class="com.cubeia.games.poker.admin.Configuration">
         <property name="networkUrl" value="${network.bo-base-url}" />
         <property name="searchUrl" value="${network.search-base-url}" />

@@ -12,7 +12,7 @@
     <!-- All less files are imported in this base.less-->
     <link id="skinCss" rel="stylesheet/less" type="text/css" href="${cp}/skins/${skin}/less/base.less" />
 
-    <c:if test="not empty cssOverride">
+    <c:if test="${not empty cssOverride}">
         <link id="overrideSkinCss" rel="stylesheet/less" type="text/css" href="${cssOverride}" />
     </c:if>
 
