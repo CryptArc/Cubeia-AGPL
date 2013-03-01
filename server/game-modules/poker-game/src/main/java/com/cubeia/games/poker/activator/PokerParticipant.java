@@ -17,6 +17,17 @@
 
 package com.cubeia.games.poker.activator;
 
+import static com.cubeia.games.poker.common.lobby.PokerLobbyAttributes.TABLE_EXTERNAL_ID;
+import static com.cubeia.games.poker.common.lobby.PokerLobbyAttributes.TABLE_TEMPLATE;
+
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.Map;
+import java.util.UUID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cubeia.backend.cashgame.TableId;
 import com.cubeia.backend.cashgame.dto.AnnounceTableRequest;
 import com.cubeia.backend.firebase.CashGamesBackendService;
@@ -29,7 +40,6 @@ import com.cubeia.games.poker.common.lobby.PokerLobbyAttributes;
 import com.cubeia.games.poker.entity.TableConfigTemplate;
 import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.poker.PokerState;
-import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.model.BlindsLevel;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.settings.RakeSettings;
@@ -37,16 +47,6 @@ import com.cubeia.poker.variant.GameType;
 import com.cubeia.poker.variant.PokerVariant;
 import com.cubeia.poker.variant.factory.GameTypeFactory;
 import com.cubeia.poker.variant.telesina.TelesinaDeckUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.Map;
-import java.util.UUID;
-
-import static com.cubeia.games.poker.common.lobby.PokerLobbyAttributes.TABLE_EXTERNAL_ID;
-import static com.cubeia.games.poker.common.lobby.PokerLobbyAttributes.TABLE_TEMPLATE;
 
 
 /**
@@ -119,8 +119,6 @@ public class PokerParticipant extends DefaultCreationParticipant {
         // FirebaseCallbackFactory callbackFactory = cashGameBackendService.getCallbackFactory();
         AnnounceTableRequest announceRequest = new AnnounceTableRequest(new TableId(table.getMetaData().getGameId(), table.getId()));   // TODO: this should be the id from the table record
         cashGameBackendService.announceTable(announceRequest);
-        
-        log.warn("Table created : "+table.getId());
     }
 
     private PokerSettings createSettings(Table table, String externalTableId) {

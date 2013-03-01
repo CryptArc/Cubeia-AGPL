@@ -53,12 +53,6 @@
             <type>firebase-sar</type>
         </dependency>
 
-        <!-- dependency>
-            <groupId>com.cubeia.games.poker</groupId>
-            <artifactId>hand-debugger-service</artifactId>
-            <type>firebase-sar</type>
-        </dependency -->
-
         <dependency>
             <groupId>com.cubeia.games.poker.config</groupId>
             <artifactId>config-service</artifactId>
@@ -77,14 +71,12 @@
             <type>firebase-sar</type>
         </dependency>
 
-	<!--
         <dependency>
             <groupId>com.cubeia.games</groupId>
             <artifactId>post-login-service</artifactId>
             <type>firebase-sar</type>
         </dependency>
         
-        -->
     </dependencies>
 
     <build>

@@ -68,12 +68,10 @@ public class TableActionHandlerImpl implements TableActionHandler {
     // --- PRIVATE METHODS --- //
 
     private void doCreate(TableConfigTemplate template) {
-        log.debug("Creating table for template: " + template.getId());
         tables.createTable(template.getSeats(), participants.createParticipantFor(template));
     }
 
     private void doDestroy(int tableId) {
-        log.debug("Remove lobby attribute is set for table[" + tableId + "] so it will be destroyed.");
         tables.destroyTable(tableId, true);
         tableNamer.tableDestroyed(tableId);
     }
