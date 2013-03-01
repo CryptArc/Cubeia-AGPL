@@ -278,13 +278,14 @@ Poker.TableLayoutManager = Class.extend({
         seat.onAction(actionType,amount);
     },
     onDealPlayerCard : function(player,cardId,cardString) {
-        this.playSound(Poker.Sounds.DEAL);
+        this.playSound(Poker.Sounds.DEAL_PLAYER);
         var seat = this.getSeatByPlayerId(player.id);
         var card = new Poker.Card(cardId,this.tableId,cardString,this.templateManager);
         seat.dealCard(card);
         this._storeCard(card);
     },
     onExposePrivateCard : function(cardId,cardString){
+        this.playSound(Poker.Sounds.REVEAL);
         var card = this.cardElements.get(cardId);
         if(cardString == card.cardString) {
             return;
@@ -318,7 +319,7 @@ Poker.TableLayoutManager = Class.extend({
         seat.showHandStrength(hand);
     },
     onDealCommunityCard : function(cardId, cardString) {
-        this.playSound(Poker.Sounds.DEAL);
+        this.playSound(Poker.Sounds.DEAL_COMMUNITY);
         var card = new Poker.CommunityCard(cardId,this.tableId,cardString,this.templateManager);
         var html = card.render();
         this.communityCardsContainer.append(html);
@@ -453,8 +454,8 @@ Poker.TableLayoutManager = Class.extend({
         transferAnimator.start();
     },
 
-    playSound : function(soundName) {
-        this.soundManager.playSound(soundName);
+    playSound : function(sound) {
+        this.soundManager.playSound(sound);
     },
     /**
      * @param {Poker.FutureActionType[]} actions

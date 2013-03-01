@@ -24,10 +24,10 @@ Poker.SoundManager = Class.extend({
         this.tableId = tableId;
     },
 
-    playSound:function (soundName) {
+    playSound:function (soundData) {
         if (this.soundsEnabled()) {
-            console.log("Playing sound: " + soundName);
-            var sound = this.soundsRepository.getSound(soundName);
+            console.log("Playing sound: " + soundData);
+            var sound = this.soundsRepository.getSound(soundData.id);
             if (sound) {
                 sound.play();
             } else {
