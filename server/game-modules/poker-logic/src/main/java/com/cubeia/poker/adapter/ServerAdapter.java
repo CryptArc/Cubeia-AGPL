@@ -118,11 +118,10 @@ public interface ServerAdapter {
     void notifyHandEnd(HandResult handResult, HandEndStatus handEndStatus, boolean tournamentTable);
 
     /**
-     * Notify players about updated player balance.
+     * Notify all players about an updated player balance.
      *
      */
     void notifyPlayerBalance(PokerPlayer player);
-
 
     /**
      * Called after an action from the player has been successfully

@@ -19,6 +19,9 @@ package com.cubeia.games.poker.tournament;
 
 import com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse;
 import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
+import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;
+import com.cubeia.backend.cashgame.dto.ReserveResponse;
+import com.cubeia.backend.cashgame.exceptions.ReserveFailedException;
 import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.firebase.api.action.mtt.MttDataAction;
 import com.cubeia.firebase.api.action.mtt.MttObjectAction;
@@ -39,6 +42,7 @@ import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.common.time.SystemTime;
 import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
+import com.cubeia.games.poker.io.protocol.RebuyResponse;
 import com.cubeia.games.poker.io.protocol.RequestBlindsStructure;
 import com.cubeia.games.poker.io.protocol.RequestPayoutInfo;
 import com.cubeia.games.poker.io.protocol.RequestTournamentLobbyData;
@@ -50,6 +54,7 @@ import com.cubeia.games.poker.tournament.lobby.TournamentLobbyFactory;
 import com.cubeia.games.poker.tournament.messages.CancelTournament;
 import com.cubeia.games.poker.tournament.messages.CloseTournament;
 import com.cubeia.games.poker.tournament.messages.PlayerLeft;
+import com.cubeia.games.poker.tournament.messages.RebuyTimeout;
 import com.cubeia.games.poker.tournament.util.PacketSender;
 import com.cubeia.games.poker.tournament.util.PacketSenderFactory;
 import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
@@ -142,12 +147,19 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
                 tournament.handleOpenSessionResponse((OpenSessionResponse) object);
             } else if (object instanceof OpenSessionFailedResponse) {
                 tournament.handleOpenSessionResponseFailed((OpenSessionFailedResponse) object);
+            } else if (object instanceof ReserveResponse) {
+                tournament.handleReservationResponse((ReserveResponse) object);
+            } else if (object instanceof ReserveFailedResponse) {
+                tournament.handleReservationFailed((ReserveFailedResponse) object);
             } else if (object instanceof CloseTournament) {
                 tournament.closeTournament();
             } else if (object instanceof PlayerLeft) {
                 tournament.handlePlayerLeft((PlayerLeft) object);
             } else if (object instanceof CancelTournament) {
                 tournament.cancelTournament();
+            } else if (object instanceof RebuyTimeout) {
+                RebuyTimeout timeout = (RebuyTimeout) object;
+                tournament.handleRebuyTimeout(timeout.getTableId());
             } else {
                 log.warn("Unexpected attachment: " + object);
             }
@@ -173,6 +185,8 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
             prepareTournamentLobby(instance).sendTournamentTableTo(playerId);
         } else if (packet instanceof RequestTournamentRegistrationInfo) {
             prepareTournamentLobby(instance).sendRegistrationInfoTo(playerId);
+        } else if (packet instanceof RebuyResponse) {
+            prepareTournament(instance).handleRebuyResponse(playerId, (RebuyResponse) packet);
         }
     }
 

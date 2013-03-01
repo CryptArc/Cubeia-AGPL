@@ -17,6 +17,7 @@
 
 package com.cubeia.games.poker;
 
+import com.cubeia.games.poker.tournament.messages.PlayerAddedChips;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -164,6 +165,8 @@ public class Processor implements GameProcessor, TournamentProcessor {
                 handleBlindsLevel((BlindsWithDeadline) attachment);
             } else if (attachment instanceof TournamentDestroyed) {
                 handleTournamentDestroyed();
+            } else if (attachment instanceof PlayerAddedChips) {
+                handleAddedChips((PlayerAddedChips) attachment);
             } else if ("CLOSE_TABLE_HINT".equals(attachment.toString())) {
                 log.debug("got CLOSE_TABLE_HINT");
                 tableCloseHandler.closeTable(table, false);
@@ -182,6 +185,10 @@ public class Processor implements GameProcessor, TournamentProcessor {
         }
 
         updatePlayerDebugInfo(table);
+    }
+
+    private void handleAddedChips(PlayerAddedChips addedChips) {
+        state.handleAddedChips(addedChips.getPlayerId(), addedChips.getChipsToAdd());
     }
 
     private void handleTournamentDestroyed() {

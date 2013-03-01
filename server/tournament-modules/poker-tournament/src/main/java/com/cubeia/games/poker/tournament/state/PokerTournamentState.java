@@ -54,6 +54,9 @@ import static org.joda.time.Seconds.secondsBetween;
 
 public class PokerTournamentState implements Serializable {
 
+
+    public enum PENDING_REQUEST_TYPE { REBUY, ADD_ON };
+
     private static final long serialVersionUID = 1L;
 
     private static transient Logger log = Logger.getLogger(PokerTournamentState.class);
@@ -128,6 +131,12 @@ public class PokerTournamentState implements Serializable {
 
     private Set<Integer> tablesNotReadyForBreak = new HashSet<Integer>();
 
+    /**
+     * Maps a playerId to the type of request that is pending. Used for knowing what type of request was performed
+     * when an asynchronous call has finished.
+     */
+    private Map<Integer, PENDING_REQUEST_TYPE> pendingRequests = newHashMap();
+
     private boolean sitAndGo;
 
     private BetStrategyType betStrategy;
@@ -139,7 +148,21 @@ public class PokerTournamentState implements Serializable {
     private String startDateString;
 
     private String registrationStartDateString;
+
     private long startingChips;
+
+    private RebuySupport rebuySupport = RebuySupport.NO_REBUYS;
+
+    public void addPendingRequest(int playerId, PENDING_REQUEST_TYPE type) {
+        if (pendingRequests.containsKey(playerId)) {
+            throw new IllegalArgumentException("Player " + playerId + " already has a pending request: " + pendingRequests.get(playerId));
+        }
+        pendingRequests.put(playerId, type);
+    }
+
+    public PENDING_REQUEST_TYPE getAndClearPendingRequest(int playerId) {
+        return pendingRequests.remove(playerId);
+    }
 
     public boolean allTablesHaveBeenCreated(int tablesCreated) {
         return tablesCreated >= tablesToCreate;
@@ -583,5 +606,9 @@ public class PokerTournamentState implements Serializable {
 
     public String getRegistrationStartDateString() {
         return registrationStartDateString;
+    }
+
+    public RebuySupport getRebuySupport() {
+        return rebuySupport;
     }
 }

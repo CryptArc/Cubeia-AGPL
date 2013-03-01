@@ -45,6 +45,7 @@ import com.cubeia.games.poker.tournament.configuration.lifecycle.TournamentLifeC
 import com.cubeia.games.poker.tournament.lobby.TournamentLobby;
 import com.cubeia.games.poker.tournament.messages.PokerTournamentRoundReport;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
+import com.cubeia.games.poker.tournament.state.RebuySupport;
 import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 import com.cubeia.games.poker.tournament.util.PacketSender;
 import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
@@ -282,10 +283,11 @@ public class PokerTournamentTest {
     @Test
     public void tournamentShouldScheduleTimeoutWhenBreakStarts() {
         // Given a tournament that is supposed to go on break.
-        prepareTournamentWithMockTournamentState();
+        when(mockPokerState.getRebuySupport()).thenReturn(RebuySupport.NO_REBUYS);
         when(mockPokerState.isOnBreak()).thenReturn(true);
         when(mockPokerState.getCurrentBlindsLevel()).thenReturn(new Level(20, 40, 0, 5, true));
         when(mockPokerState.getNextLevelStartTime()).thenReturn(new DateTime());
+        prepareTournamentWithMockTournamentState();
 
         // And that there is one table (so that the balancing doesn't crash)
         when(state.getPlayersAtTable(1)).thenReturn(of(1));
@@ -314,6 +316,7 @@ public class PokerTournamentTest {
     public void tournamentShouldStartAgainAfterBreakEnds() {
         // Given a tournament that is on break.
         prepareTournamentWithMockTournamentState();
+        when(mockPokerState.getRebuySupport()).thenReturn(RebuySupport.NO_REBUYS);
         when(mockPokerState.isOnBreak()).thenReturn(true);
         when(mockPokerState.getCurrentBlindsLevel()).thenReturn(new Level(20, 40, 0, 5, true));
         when(mockPokerState.increaseBlindsLevel()).thenReturn(new Level(40, 80, 0, 5, false));
@@ -331,7 +334,7 @@ public class PokerTournamentTest {
     @Test
     public void tournamentShouldGoOnBreakWhenOneTableIsWaitingForPlayersAndTheOtherTableIsFinished() {
         // Given a tournament where the current level is not a break, but the next level is a break.
-        prepareTournamentWithMockTournamentState();
+        when(mockPokerState.getRebuySupport()).thenReturn(RebuySupport.NO_REBUYS);
         when(mockPokerState.isOnBreak()).thenReturn(true);
         when(mockPokerState.getCurrentBlindsLevel()).thenReturn(new Level(20, 40, 0, 5, false));
         when(mockPokerState.increaseBlindsLevel()).thenReturn(new Level(20, 40, 0, 5, true));
@@ -339,6 +342,7 @@ public class PokerTournamentTest {
         when(state.getTables()).thenReturn(of(1, 2));
         when(state.getPlayersAtTable(1)).thenReturn(of(1));
         when(state.getPlayersAtTable(2)).thenReturn(of(2, 3));
+        prepareTournamentWithMockTournamentState();
 
         // Where one table finishes a round, and has only one player left at the table.
         sendRoundReportToTournament(1);
@@ -418,6 +422,7 @@ public class PokerTournamentTest {
     public void testSetNextStartTimeCalledBeforeGettingNextStartTimeWhenBreakIsFinished() {
         // If the call order is reversed, client will get an incorrect time to next level.
         prepareTournamentWithMockTournamentState();
+        when(mockPokerState.getRebuySupport()).thenReturn(RebuySupport.NO_REBUYS);
         when(mockPokerState.isOnBreak()).thenReturn(false);
         when(mockPokerState.getCurrentBlindsLevel()).thenReturn(new Level(20, 40, 0, 5, true));
         when(mockPokerState.increaseBlindsLevel()).thenReturn(new Level(40, 80, 0, 5, false));

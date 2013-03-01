@@ -104,9 +104,10 @@ public class GenericPokerGame extends AbstractGameType implements RoundVisitor {
     }
 
     @Override
-    public void act(PokerAction action) {
-        currentRound.act(action);
+    public boolean act(PokerAction action) {
+        boolean handled = currentRound.act(action);
         checkFinishedRound();
+        return handled;
     }
 
     private void checkFinishedRound() {

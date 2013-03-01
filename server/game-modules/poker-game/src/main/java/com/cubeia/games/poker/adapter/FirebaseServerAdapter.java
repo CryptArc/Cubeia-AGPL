@@ -670,12 +670,12 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
         long playersTotalContributionToPot = state.getPlayersTotalContributionToPot(player);
 
-        // first send private packet to the player
+        // First send public packet to all the other players but exclude the pending balance.
         GameDataAction publicAction = actionTransformer.createPlayerBalanceAction(
                 (int) player.getBalance(), 0, (int) playersTotalContributionToPot, player.getId(), table.getId());
         sendPublicPacket(publicAction, player.getId());
 
-        //	    // then send public packet to all the other players but exclude the pending balance
+        // Then send private packet to the player.
         GameDataAction privateAction = actionTransformer.createPlayerBalanceAction(
                 (int) player.getBalance(), (int) player.getPendingBalanceSum(), (int) playersTotalContributionToPot, player.getId(), table.getId());
         log.debug("Send private PBA: " + privateAction);
@@ -701,7 +701,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
 
     public void notifyPotUpdates(Collection<com.cubeia.poker.pot.Pot> pots, Collection<PotTransition> potTransitions) {
-    	boolean fromPlayerToPot = !potTransitions.isEmpty() && potTransitions.iterator().next().isFromPlayerToPot();
+        boolean fromPlayerToPot = !potTransitions.isEmpty() && potTransitions.iterator().next().isFromPlayerToPot();
         List<Pot> clientPots = new ArrayList<Pot>();
         List<PotTransfer> transfers = new ArrayList<PotTransfer>();
 

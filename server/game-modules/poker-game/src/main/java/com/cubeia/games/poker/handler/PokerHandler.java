@@ -206,12 +206,12 @@ public class PokerHandler extends DefaultPokerHandler {
         table.getNotifier().sendToClient(pokerPlayer.getId(), gameDataAction);
         if (cache != null) {
             /*
-                * We're not adding this to the cache as it will never be removed when finished,
-                * so if you reserve and get "pending" then leave the table and return, it will still
-                * say "pending" in the client as you get the cache. By removing this in the cache
-                * the other version will be true: if you have pending money and reconnect it will
-                * not be shown in the client... /LJN
-                */
+             * We're not adding this to the cache as it will never be removed when finished,
+             * so if you reserve and get "pending" then leave the table and return, it will still
+             * say "pending" in the client as you get the cache. By removing this in the cache
+             * the other version will be true: if you have pending money and reconnect it will
+             * not be shown in the client... /LJN
+             */
             // cache.addPrivateAction(table.getTableId(), playerId, gameDataAction);
         }
     }

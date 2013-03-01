@@ -127,10 +127,10 @@ public class PokerState implements Serializable, IPokerState {
         stateHolder.get().playerJoined(player);
     }
 
-    public void act(PokerAction action) {
+    public boolean act(PokerAction action) {
         // Check sizes of caches and log warnings
         pokerContext.checkWarnings();
-        getCurrentState().act(action);
+        return getCurrentState().act(action);
     }
 
     public List<Card> getCommunityCards() {
@@ -200,7 +200,7 @@ public class PokerState implements Serializable, IPokerState {
 
     @VisibleForTesting
     public void commitPendingBalances() {
-        pokerContext.commitPendingBalances();
+        pokerContext.commitPendingBalances(pokerContext.getMaxBuyIn());
     }
 
     public PokerGameSTM getGameState() {
@@ -409,5 +409,11 @@ public class PokerState implements Serializable, IPokerState {
         serverAdapter.sendGameStateTo(snapshot, playerId);
     }
 
+    public void handleAddedChips(int playerId, long chipsAdded) {
+        PokerPlayer player = getContext().getPlayer(playerId);
+        if (player != null) {
+            player.addNotInHandAmount(chipsAdded);
+        }
+    }
 
 }
