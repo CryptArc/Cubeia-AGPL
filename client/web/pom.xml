@@ -144,6 +144,7 @@
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>${jetty.version}</version>
                 <configuration>
+					<useTestClasspath>true</useTestClasspath>
                     <webApp>
                         <contextPath>/</contextPath>
                     </webApp>
