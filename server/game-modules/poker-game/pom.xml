@@ -61,7 +61,6 @@
         <dependency>
             <groupId>com.cubeia.games.poker</groupId>
             <artifactId>settings</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
