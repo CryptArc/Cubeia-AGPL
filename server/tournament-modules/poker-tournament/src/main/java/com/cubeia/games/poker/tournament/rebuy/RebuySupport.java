@@ -15,16 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.tournament.state;
+package com.cubeia.games.poker.tournament.rebuy;
 
 import com.cubeia.games.poker.common.money.MoneyFormatter;
-import com.cubeia.games.poker.io.protocol.RebuyOffer;
-import com.cubeia.games.poker.tournament.util.PacketSender;
+import com.cubeia.games.poker.tournament.messages.OfferRebuy;
+import com.cubeia.games.poker.tournament.util.TableNotifier;
 import com.google.common.base.Predicate;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -52,7 +53,7 @@ import static java.util.Collections.emptySet;
  */
 public class RebuySupport implements Serializable {
 
-    public static final RebuySupport NO_REBUYS = new RebuySupport(false, 0, 0, 0, false, 0, ZERO, ZERO);
+    public static final RebuySupport NO_REBUYS = new RebuySupport(false, 0, 0, 0, 0, false, 0, ZERO, ZERO);
 
     /**
      * The amount of chips you get when doing a rebuy.
@@ -69,8 +70,14 @@ public class RebuySupport implements Serializable {
      */
     private int maxRebuys = 0;
 
+    /**
+     * The maximum stack allowed when performing a rebuy. Usually equal to the starting stack.
+     */
+    private long maxStackForRebuy;
+
     private boolean rebuysAvailable = false;
 
+    /** Indicates whether this tournament will have an add-on period. */
     private boolean addOnsEnabled = false;
 
     private int numberOfLevelsWithRebuys = 0;
@@ -85,18 +92,29 @@ public class RebuySupport implements Serializable {
     private Map<Integer, Integer> numberOfRebuysPerformed = newHashMap();
 
     /**
+     * Keeps track of the players who have performed an add-on.
+     */
+    private Set<Integer> performedAddOns = new HashSet<Integer>();
+
+    /**
      * Maps a tableId to the players at that table who have been asked to perform a rebuy.
      */
     private Map<Integer, Set<Integer>> rebuyRequestsPerTable = newHashMap();
 
     private boolean inTheMoney;
 
-    public RebuySupport(boolean rebuysAvailable, long rebuyChipsAmount, long addOnChipsAmount, int maxRebuys, boolean addOnsEnabled,
+    private Set<Integer> tablesWaitingForRebuys = new HashSet<Integer>();
+
+    /** Indicates whether the add-on period is active. */
+    private boolean addOnPeriodActive = false;
+
+    public RebuySupport(boolean rebuysAvailable, long rebuyChipsAmount, long addOnChipsAmount, int maxRebuys, long maxStackForRebuy, boolean addOnsEnabled,
                         int numberOfLevelsWithRebuys, BigDecimal rebuyCost, BigDecimal addOnCost) {
         this.rebuysAvailable = rebuysAvailable;
         this.rebuyChipsAmount = rebuyChipsAmount;
         this.addOnChipsAmount = addOnChipsAmount;
         this.maxRebuys = maxRebuys;
+        this.maxStackForRebuy = maxStackForRebuy;
         this.addOnsEnabled = addOnsEnabled;
         this.numberOfLevelsWithRebuys = numberOfLevelsWithRebuys;
         this.rebuyCost = rebuyCost;
@@ -131,8 +149,25 @@ public class RebuySupport implements Serializable {
         }
     }
 
-    public boolean isPlayerAllowedToRebuy(int playerId) {
-        return rebuyAllowed.apply(playerId);
+    public void breakFinished() {
+        finishAddOnPeriod();
+    }
+
+    public BigDecimal getRebuyCost() {
+        return rebuyCost;
+    }
+
+    public void increaseRebuyCount(int playerId) {
+        int numberOfRebuys = numberOfRebuysPerformedBy(playerId);
+        numberOfRebuysPerformed.put(playerId, numberOfRebuys + 1);
+    }
+
+    public boolean isPlayerAllowedToPerformAddOn(int playerId) {
+        return addOnPeriodActive && !performedAddOns.contains(playerId);
+    }
+
+    public boolean isPlayerAllowedToRebuy(int playerId, long playerBalance) {
+        return rebuyAllowed.apply(playerId) && playerBalance < maxStackForRebuy;
     }
 
     public void removeRebuyRequestForTable(int tableId) {
@@ -152,6 +187,27 @@ public class RebuySupport implements Serializable {
         if (currentBlindsLevelNr > numberOfLevelsWithRebuys) {
             rebuysAvailable = false;
         }
+    }
+
+    public void removeTableWaitingForRebuys(int tableId) {
+        tablesWaitingForRebuys.remove(tableId);
+    }
+
+    public void addOnPerformed(int playerId) {
+        performedAddOns.add(playerId);
+    }
+
+    public void startAddOnPeriod() {
+        rebuysAvailable = false;
+        addOnPeriodActive = true;
+    }
+
+    public void finishAddOnPeriod() {
+        addOnPeriodActive = false;
+    }
+
+    public boolean tableIsWaitingForRebuys(int tableId) {
+        return tablesWaitingForRebuys.contains(tableId);
     }
 
     private int numberOfRebuysPerformedBy(Integer playerId) {
@@ -178,13 +234,11 @@ public class RebuySupport implements Serializable {
         return addOnCost;
     }
 
-    public Set<Integer> requestRebuys(int tableId, Set<Integer> playersOut, PacketSender sender) {
+    public Set<Integer> requestRebuys(int tableId, Set<Integer> playersOut, TableNotifier tableNotifier) {
         Set<Integer> playersWithRebuyOption = filter(playersOut, rebuyAllowed);
-        for (Integer playerId : playersWithRebuyOption) {
-            // Might be better to send this to the table, so the table can notify all other players as well.
-            sender.sendPacketToPlayer(new RebuyOffer(MoneyFormatter.format(rebuyCost), MoneyFormatter.format(rebuyChipsAmount)), playerId);
-        }
+        tableNotifier.notifyTable(tableId, new OfferRebuy(playersWithRebuyOption, MoneyFormatter.format(rebuyCost), MoneyFormatter.format(rebuyChipsAmount)));
         addRebuyRequestsForTable(tableId, playersWithRebuyOption);
+        tablesWaitingForRebuys.add(tableId);
         return playersWithRebuyOption;
     }
 

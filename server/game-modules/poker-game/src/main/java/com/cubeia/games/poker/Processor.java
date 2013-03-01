@@ -17,6 +17,9 @@
 
 package com.cubeia.games.poker;
 
+import com.cubeia.games.poker.common.money.MoneyFormatter;
+import com.cubeia.games.poker.tournament.messages.AddOnsAvailableDuringBreak;
+import com.cubeia.games.poker.tournament.messages.OfferRebuy;
 import com.cubeia.games.poker.tournament.messages.PlayerAddedChips;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +56,8 @@ import com.cubeia.poker.adapter.SystemShutdownException;
 import com.cubeia.poker.model.BlindsLevel;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
+
+import static com.cubeia.games.poker.common.money.MoneyFormatter.format;
 
 
 /**
@@ -167,6 +172,10 @@ public class Processor implements GameProcessor, TournamentProcessor {
                 handleTournamentDestroyed();
             } else if (attachment instanceof PlayerAddedChips) {
                 handleAddedChips((PlayerAddedChips) attachment);
+            } else if (attachment instanceof OfferRebuy) {
+                handleOfferRebuy((OfferRebuy) attachment);
+            } else if (attachment instanceof AddOnsAvailableDuringBreak) {
+                handleAddOnsAvailable((AddOnsAvailableDuringBreak) attachment);
             } else if ("CLOSE_TABLE_HINT".equals(attachment.toString())) {
                 log.debug("got CLOSE_TABLE_HINT");
                 tableCloseHandler.closeTable(table, false);
@@ -185,6 +194,14 @@ public class Processor implements GameProcessor, TournamentProcessor {
         }
 
         updatePlayerDebugInfo(table);
+    }
+
+    private void handleAddOnsAvailable(AddOnsAvailableDuringBreak addOns) {
+        state.notifyAddOnsAvailable(format(addOns.getAddOnCost()), format(addOns.getChipsForAddOn()));
+    }
+
+    private void handleOfferRebuy(OfferRebuy offerRebuy) {
+        state.offerRebuys(offerRebuy.getPlayers(), offerRebuy.getRebuyCost(), offerRebuy.getRebuyChips());
     }
 
     private void handleAddedChips(PlayerAddedChips addedChips) {

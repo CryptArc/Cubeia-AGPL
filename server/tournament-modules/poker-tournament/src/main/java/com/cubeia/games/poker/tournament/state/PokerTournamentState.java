@@ -30,6 +30,7 @@ import com.cubeia.games.poker.tournament.configuration.blinds.Level;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.TournamentLifeCycle;
 import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
 import com.cubeia.games.poker.tournament.configuration.payouts.Payouts;
+import com.cubeia.games.poker.tournament.rebuy.RebuySupport;
 import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.timing.TimingFactory;
@@ -54,9 +55,6 @@ import static org.joda.time.Seconds.secondsBetween;
 
 public class PokerTournamentState implements Serializable {
 
-
-    public enum PENDING_REQUEST_TYPE { REBUY, ADD_ON };
-
     private static final long serialVersionUID = 1L;
 
     private static transient Logger log = Logger.getLogger(PokerTournamentState.class);
@@ -75,7 +73,7 @@ public class PokerTournamentState implements Serializable {
     /** Maps playerId to balance */
     private Map<Integer, Long> balances = new HashMap<Integer, Long>();
 
-    private Set<Integer> pendingRegistrations = newHashSet();
+//    private Set<Integer> pendingRegistrations = newHashSet();
 
     private BlindsStructure blindsStructure;
 
@@ -131,11 +129,7 @@ public class PokerTournamentState implements Serializable {
 
     private Set<Integer> tablesNotReadyForBreak = new HashSet<Integer>();
 
-    /**
-     * Maps a playerId to the type of request that is pending. Used for knowing what type of request was performed
-     * when an asynchronous call has finished.
-     */
-    private Map<Integer, PENDING_REQUEST_TYPE> pendingRequests = newHashMap();
+    private PendingBackendRequests pendingRequests = new PendingBackendRequests();
 
     private boolean sitAndGo;
 
@@ -153,17 +147,6 @@ public class PokerTournamentState implements Serializable {
 
     private RebuySupport rebuySupport = RebuySupport.NO_REBUYS;
 
-    public void addPendingRequest(int playerId, PENDING_REQUEST_TYPE type) {
-        if (pendingRequests.containsKey(playerId)) {
-            throw new IllegalArgumentException("Player " + playerId + " already has a pending request: " + pendingRequests.get(playerId));
-        }
-        pendingRequests.put(playerId, type);
-    }
-
-    public PENDING_REQUEST_TYPE getAndClearPendingRequest(int playerId) {
-        return pendingRequests.remove(playerId);
-    }
-
     public boolean allTablesHaveBeenCreated(int tablesCreated) {
         return tablesCreated >= tablesToCreate;
     }
@@ -174,6 +157,10 @@ public class PokerTournamentState implements Serializable {
 
     public String getCurrencyCode() {
         return currencyCode;
+    }
+
+    public PendingBackendRequests getPendingRequests() {
+        return pendingRequests;
     }
 
     public long getStartingChips() {
@@ -306,7 +293,7 @@ public class PokerTournamentState implements Serializable {
         return convertToMoney(buyIn.add(fee));
     }
 
-    private Money convertToMoney(BigDecimal moneyInDecimalForm) {
+    public Money convertToMoney(BigDecimal moneyInDecimalForm) {
         return new Money(moneyInDecimalForm.multiply(valueOf(100)).longValue(), currencyCode, 2);
     }
 
@@ -323,15 +310,15 @@ public class PokerTournamentState implements Serializable {
     }
 
     public void addPendingRegistration(int playerId) {
-        pendingRegistrations.add(playerId);
+        pendingRequests.addPendingRegistration(playerId);
     }
 
     public void removePendingRequest(int playerId) {
-        pendingRegistrations.remove(playerId);
+        pendingRequests.removePendingRegistration(playerId);
     }
 
     public boolean hasPendingRegistrations() {
-        return !pendingRegistrations.isEmpty();
+        return !pendingRequests.isEmpty();
     }
 
     public void addPlayerSession(PlayerSessionId sessionId) {

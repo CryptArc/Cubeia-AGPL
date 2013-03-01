@@ -23,6 +23,8 @@ import static com.cubeia.games.poker.common.money.MoneyParser.parse;
 
 import java.io.IOException;
 
+import com.cubeia.games.poker.io.protocol.PerformAddOn;
+import com.cubeia.games.poker.io.protocol.RebuyResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -173,6 +175,16 @@ public class PokerHandler extends DefaultPokerHandler {
         } catch (Exception e) {
             log.error("Buy in request failed, request[" + packet + "]", e);
         }
+    }
+
+    @Override
+    public void visit(RebuyResponse packet) {
+        state.handleRebuyResponse(playerId, packet.answer);
+    }
+
+    @Override
+    public void visit(PerformAddOn packet) {
+        state.handleAddOnRequest(playerId);
     }
 
     @Override

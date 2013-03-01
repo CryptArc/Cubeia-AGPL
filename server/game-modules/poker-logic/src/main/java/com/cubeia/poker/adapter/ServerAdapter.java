@@ -140,6 +140,17 @@ public interface ServerAdapter {
     void reportTournamentRound(RoundReport report);
 
     /**
+     * Sends a rebuy response to the tournament coordinator.
+     *
+     */
+    void sendRebuyResponseToTournament(int playerId, boolean response);
+
+    /**
+     * Sends a request for performing an add-on to the tournament coordinator.
+     */
+    void sendAddOnRequestToTournament(int playerId);
+
+    /**
      * Remove all players in state LEAVING or DISCONNECTED
      */
     void cleanupPlayers(SitoutCalculator sitoutCalculator);
@@ -223,5 +234,10 @@ public interface ServerAdapter {
 
     void notifyBlindsLevelUpdated(BlindsLevel level);
 
+    void notifyRebuyOffer(Collection<Integer> players, String rebuyCost, String rebuyChips);
+
+    void notifyAddOnsAvailable(String rebuyCost, String rebuyChips);
+
     void sendGameStateTo(GameStateSnapshot snapshot, int playerId);
+
 }

@@ -30,6 +30,8 @@ import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.action.GameObjectAction;
+import com.cubeia.firebase.api.action.mtt.MttAction;
+import com.cubeia.firebase.api.action.mtt.MttObjectAction;
 import com.cubeia.firebase.api.action.mtt.MttRoundReportAction;
 import com.cubeia.firebase.api.game.context.GameContext;
 import com.cubeia.firebase.api.game.player.GenericPlayer;
@@ -49,6 +51,7 @@ import com.cubeia.games.poker.entity.HandIdentifier;
 import com.cubeia.games.poker.handler.ActionTransformer;
 import com.cubeia.games.poker.handler.Trigger;
 import com.cubeia.games.poker.handler.TriggerType;
+import com.cubeia.games.poker.io.protocol.AddOnOffer;
 import com.cubeia.games.poker.io.protocol.BestHand;
 import com.cubeia.games.poker.io.protocol.BlindsAreUpdated;
 import com.cubeia.games.poker.io.protocol.BlindsLevel;
@@ -75,6 +78,7 @@ import com.cubeia.games.poker.io.protocol.Pot;
 import com.cubeia.games.poker.io.protocol.PotTransfer;
 import com.cubeia.games.poker.io.protocol.PotTransfers;
 import com.cubeia.games.poker.io.protocol.RakeInfo;
+import com.cubeia.games.poker.io.protocol.RebuyOffer;
 import com.cubeia.games.poker.io.protocol.RequestAction;
 import com.cubeia.games.poker.io.protocol.TakeBackUncalledBet;
 import com.cubeia.games.poker.io.protocol.TournamentDestroyed;
@@ -84,7 +88,9 @@ import com.cubeia.games.poker.jmx.PokerStats;
 import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.games.poker.state.FirebaseState;
+import com.cubeia.games.poker.tournament.messages.AddOnRequest;
 import com.cubeia.games.poker.tournament.messages.PokerTournamentRoundReport;
+import com.cubeia.games.poker.tournament.messages.RebuyResponse;
 import com.cubeia.games.poker.util.ProtocolFactory;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.ActionRequest;
@@ -240,6 +246,19 @@ public class FirebaseServerAdapter implements ServerAdapter {
     @Override
     public void notifyBlindsLevelUpdated(com.cubeia.poker.model.BlindsLevel level) {
         sendPublicPacket(new BlindsAreUpdated(createBlindsLevelPacket(level), secondsToNextLevel(level)));
+    }
+
+    @Override
+    public void notifyRebuyOffer(Collection<Integer> players, String rebuyCost, String rebuyChips) {
+        for (Integer player : players) {
+            GameDataAction rebuyOffer = protocolFactory.createGameAction(new RebuyOffer(rebuyCost, rebuyChips), player, table.getId());
+            sendPublicPacket(rebuyOffer, -1);
+        }
+    }
+
+    @Override
+    public void notifyAddOnsAvailable(String cost, String chips) {
+        sendPublicPacket(new AddOnOffer(cost, chips));
     }
 
     private int secondsToNextLevel(com.cubeia.poker.model.BlindsLevel level) {
@@ -687,6 +706,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
      *
      * @param report, poker-logic protocol object, not null.
      */
+    @Override
     public void reportTournamentRound(RoundReport report) {
         PokerStats.getInstance().reportHandEnd();
 
@@ -699,6 +719,17 @@ public class FirebaseServerAdapter implements ServerAdapter {
         clearActionCache();
     }
 
+    @Override
+    public void sendRebuyResponseToTournament(int playerId, boolean response) {
+        MttObjectAction action = new MttObjectAction(table.getMetaData().getMttId(), new RebuyResponse(table.getId(), playerId, response));
+        table.getTournamentNotifier().sendToTournament(action);
+    }
+
+    @Override
+    public void sendAddOnRequestToTournament(int playerId) {
+        MttObjectAction action = new MttObjectAction(table.getMetaData().getMttId(), new AddOnRequest(table.getId(), playerId));
+        table.getTournamentNotifier().sendToTournament(action);
+    }
 
     public void notifyPotUpdates(Collection<com.cubeia.poker.pot.Pot> pots, Collection<PotTransition> potTransitions) {
         boolean fromPlayerToPot = !potTransitions.isEmpty() && potTransitions.iterator().next().isFromPlayerToPot();
