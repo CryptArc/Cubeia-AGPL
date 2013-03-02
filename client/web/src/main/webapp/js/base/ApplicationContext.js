@@ -141,6 +141,15 @@ Poker.AppCtx = Class.extend({
             return tournamentManager;
         };
 
+        var handHistoryManager = new Poker.HandHistoryManager();
+
+        /**
+         * @return {Poker.HandHistoryManager}
+         */
+        this.getHandHistoryManager = function() {
+            return handHistoryManager;
+        }
+
 
 
 

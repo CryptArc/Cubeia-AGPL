@@ -135,13 +135,13 @@ public class HandHistoryProviderServiceImpl implements HandHistoryProviderServic
             responseType = PacketType.hand;
         } else if (protocolObject.getClass() == HandHistoryProviderRequestHands.class) {
             HandHistoryProviderRequestHands request = (HandHistoryProviderRequestHands)protocolObject;
+            tableId = request.tableId;
             value =  getHands(request.tableId, e.getPlayerId(), request.count, getTime(request.time));
             responseType = PacketType.hands;
-            tableId = request.tableId;
         } else if (protocolObject.getClass() == HandHistoryProviderRequestHandIds.class) {
             HandHistoryProviderRequestHandIds request = (HandHistoryProviderRequestHandIds)protocolObject;
-            value =  getHandIds(request.tableId, e.getPlayerId(), request.count, getTime(request.time));
             tableId = request.tableId;
+            value =  getHandIds(request.tableId, e.getPlayerId(), request.count, getTime(request.time));
             responseType = PacketType.hand_ids;
         }
 
