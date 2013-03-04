@@ -9,6 +9,7 @@
         <class>com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration</class>
         <class>com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration</class>
         <class>com.cubeia.games.poker.tournament.configuration.TournamentConfiguration</class>
+        <class>com.cubeia.games.poker.tournament.configuration.RebuyConfiguration</class>
         <class>com.cubeia.poker.timing.TimingProfile</class>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>

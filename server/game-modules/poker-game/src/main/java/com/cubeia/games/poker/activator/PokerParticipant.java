@@ -119,8 +119,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
         // FirebaseCallbackFactory callbackFactory = cashGameBackendService.getCallbackFactory();
         AnnounceTableRequest announceRequest = new AnnounceTableRequest(new TableId(table.getMetaData().getGameId(), table.getId()));   // TODO: this should be the id from the table record
         cashGameBackendService.announceTable(announceRequest);
-        
-        log.warn("Table created : "+table.getId());
+        log.debug("Table created : " + table.getId());
     }
 
     private PokerSettings createSettings(Table table, String externalTableId) {

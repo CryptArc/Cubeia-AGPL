@@ -18,6 +18,8 @@
 package com.cubeia.games.poker.tournament.configuration;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.math.BigDecimal;
 
 /**
@@ -26,6 +28,10 @@ import java.math.BigDecimal;
  */
 @Entity
 public class RebuyConfiguration {
+
+    @Id
+    @GeneratedValue
+    private int id;
 
     private int numberOfRebuysAllowed;
 
@@ -54,6 +60,14 @@ public class RebuyConfiguration {
         this.chipsForRebuy = chipsForRebuy;
         this.addOnCost = addOnCost;
         this.chipsForAddOn = chipsForAddOn;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public long getMaxStackForRebuy() {

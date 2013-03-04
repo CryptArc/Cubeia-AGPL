@@ -188,7 +188,11 @@ public class PokerTournamentState implements Serializable {
     }
 
     public void setRebuySupport(RebuySupport rebuySupport) {
-        this.rebuySupport = rebuySupport;
+        if (rebuySupport == null) {
+            this.rebuySupport = RebuySupport.NO_REBUYS;
+        } else {
+            this.rebuySupport = rebuySupport;
+        }
     }
 
     public void setResurrectingTournament(boolean resurrectingTournament) {

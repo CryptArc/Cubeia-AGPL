@@ -77,6 +77,7 @@ public class TournamentConfiguration implements Serializable {
 
     private boolean archived;
 
+    @ManyToOne
     private RebuyConfiguration rebuyConfiguration;
 
     public TournamentConfiguration() {
