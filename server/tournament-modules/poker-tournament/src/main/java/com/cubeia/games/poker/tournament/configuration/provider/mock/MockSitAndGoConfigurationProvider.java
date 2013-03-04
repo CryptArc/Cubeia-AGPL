@@ -17,6 +17,7 @@
 
 package com.cubeia.games.poker.tournament.configuration.provider.mock;
 
+import com.cubeia.games.poker.tournament.configuration.RebuyConfiguration;
 import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
 import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
 import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructureParser;
@@ -53,7 +54,9 @@ public class MockSitAndGoConfigurationProvider implements SitAndGoConfigurationP
     public MockSitAndGoConfigurationProvider() {
         InputStream resourceAsStream = getClass().getResourceAsStream("default_payouts.csv");
         PayoutStructure payouts = new PayoutStructureParser().parsePayouts(resourceAsStream);
-        requestedTournaments.put("Heads up", createSitAndGoConfiguration("Heads up", 2, getRegistry().getTimingProfile("DEFAULT"), payouts));
+        SitAndGoConfiguration headsUp = createSitAndGoConfiguration("Heads up", 2, getRegistry().getTimingProfile("DEFAULT"), payouts);
+        headsUp.getConfiguration().setRebuyConfiguration(new RebuyConfiguration(1000, false, 3, BigDecimal.valueOf(100), 50000, BigDecimal.valueOf(0), 0));
+        requestedTournaments.put("Heads up", headsUp);
         requestedTournaments.put("5 Players", createSitAndGoConfiguration("5 Players", 5, getRegistry().getTimingProfile("SUPER_EXPRESS"), payouts));
         requestedTournaments.put("10 Players", createSitAndGoConfiguration("10 Players", 10, getRegistry().getTimingProfile("SUPER_EXPRESS"), payouts));
         requestedTournaments.put("20 Players", createSitAndGoConfiguration("20 Players", 20, getRegistry().getTimingProfile("DEFAULT"), payouts));

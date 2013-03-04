@@ -77,7 +77,14 @@ public class TournamentConfiguration implements Serializable {
 
     private boolean archived;
 
+    @ManyToOne
+    private RebuyConfiguration rebuyConfiguration;
+
     public TournamentConfiguration() {
+    }
+
+    public RebuyConfiguration getRebuyConfiguration() {
+        return rebuyConfiguration;
     }
 
     public boolean isArchived() {
@@ -86,6 +93,10 @@ public class TournamentConfiguration implements Serializable {
 
     public void setArchived(boolean archived) {
         this.archived = archived;
+    }
+
+    public void setRebuyConfiguration(RebuyConfiguration rebuyConfiguration) {
+        this.rebuyConfiguration = rebuyConfiguration;
     }
 
     public String toString() {

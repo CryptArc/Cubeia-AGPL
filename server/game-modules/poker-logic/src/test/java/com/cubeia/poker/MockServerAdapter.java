@@ -85,6 +85,16 @@ public class MockServerAdapter implements ServerAdapter {
     }
 
     @Override
+    public void notifyRebuyOffer(Collection<Integer> players, String rebuyCost, String rebuyChips) {
+
+    }
+
+    @Override
+    public void notifyAddOnsAvailable(String rebuyCost, String rebuyChips) {
+
+    }
+
+    @Override
     public void sendGameStateTo(GameStateSnapshot snapshot, int playerId) {
 
     }
@@ -178,6 +188,16 @@ public class MockServerAdapter implements ServerAdapter {
     }
 
     public void reportTournamentRound(RoundReport report) {
+    }
+
+    @Override
+    public void sendRebuyResponseToTournament(int playerId, boolean response) {
+
+    }
+
+    @Override
+    public void sendAddOnRequestToTournament(int playerId) {
+
     }
 
     public void cleanupPlayers(SitoutCalculator sitoutCalculator) {

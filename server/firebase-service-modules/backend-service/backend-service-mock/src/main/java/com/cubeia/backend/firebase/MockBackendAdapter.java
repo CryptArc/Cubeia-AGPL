@@ -83,7 +83,7 @@ public class MockBackendAdapter implements CashGamesBackend {
 
     @Override
     public AnnounceTableResponse announceTable(AnnounceTableRequest request) {
-    	String extid = "MOCK-TABLE-ID-" + System.currentTimeMillis();
+        String extid = "MOCK-TABLE-ID-" + System.currentTimeMillis();
         final AnnounceTableResponse response = new AnnounceTableResponse(new TableId(request.tableId, extid));
         response.setProperty(CashGamesBackendService.MARKET_TABLE_REFERENCE_KEY, extid);
         return response;
@@ -220,6 +220,11 @@ public class MockBackendAdapter implements CashGamesBackend {
     @Override
     public void transferMoneyToRakeAccount(PlayerSessionId fromAccount, Money money, String comment) {
         log.debug("Transferring " + money + " from " + fromAccount + " to rake account with comment " + comment);
+    }
+
+    @Override
+    public void transferMoneyFromRakeAccount(PlayerSessionId toAccount, Money money, String comment) {
+        log.debug("Transferring " + money + " from rake account to " + toAccount + " with comment " + comment);
     }
 
     private void verifySessionsExist(PlayerSessionId ... sessions) {

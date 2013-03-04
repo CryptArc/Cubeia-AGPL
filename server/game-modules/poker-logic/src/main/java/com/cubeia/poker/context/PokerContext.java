@@ -46,6 +46,8 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 /**
  * This class contains all the game data for a poker game, including players, cards and pots.
  *
@@ -227,10 +229,14 @@ public class PokerContext implements Serializable {
         }
     }
 
-    public void commitPendingBalances() {
+    public List<PokerPlayer> commitPendingBalances(long maxAllowedBalance) {
+        List<PokerPlayer> playersWithNewBalance = newArrayList();
         for (PokerPlayer player : playerMap.values()) {
-            player.commitBalanceNotInHand(getMaxBuyIn());
+            if (player.commitBalanceNotInHand(maxAllowedBalance)) {
+                playersWithNewBalance.add(player);
+            }
         }
+        return playersWithNewBalance;
     }
 
     public void removePlayer(int playerId) {

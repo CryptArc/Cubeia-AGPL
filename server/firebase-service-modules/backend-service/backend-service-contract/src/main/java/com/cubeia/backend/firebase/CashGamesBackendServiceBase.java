@@ -146,10 +146,6 @@ public abstract class CashGamesBackendServiceBase implements CashGamesBackendSer
         });
     }
 
-    private TransferMoneyRequest createTransferMoneyRequest(Money amount, PlayerSessionId fromAccount, PlayerSessionId toAccount, String comment) {
-        return new TransferMoneyRequest(amount, fromAccount, toAccount, comment);
-    }
-
     @Override
     public void transfer(TransferMoneyRequest request) {
         // TODO: Make async (version)?
@@ -175,6 +171,17 @@ public abstract class CashGamesBackendServiceBase implements CashGamesBackendSer
     @Override
     public void reserveMoneyForTable(final ReserveRequest request, final TableId tableId) {
         reserve(request, new TableCallback(tableId, getServiceRouter()));
+    }
+
+    /**
+     * This will reserve the given amount of money from the given player's account and place
+     * it in the given session.
+     * @param request
+     * @param tournamentId
+     */
+    @Override
+    public void reserveMoneyForTournament(final ReserveRequest request, TournamentId tournamentId) {
+        reserve(request, new TournamentCallback(tournamentId, getServiceRouter()));
     }
 
     private void reserve(final ReserveRequest request, final WalletCallback callback) {
@@ -237,6 +244,11 @@ public abstract class CashGamesBackendServiceBase implements CashGamesBackendSer
     @Override
     public void transferMoneyToRakeAccount(PlayerSessionId sessionAccountToTransferFrom, Money moneyToTransferToRakeAccount, String comment) {
         getCashGamesBackend().transferMoneyToRakeAccount(sessionAccountToTransferFrom, moneyToTransferToRakeAccount, comment);
+    }
+
+    @Override
+    public void transferMoneyFromRakeAccount(PlayerSessionId sessionAccountToTransferFrom, Money moneyToTransferToRakeAccount, String comment) {
+        getCashGamesBackend().transferMoneyFromRakeAccount(sessionAccountToTransferFrom, moneyToTransferToRakeAccount, comment);
     }
 
     // --- PRIVATE METHODS --- //

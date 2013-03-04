@@ -23,6 +23,8 @@ import static com.cubeia.games.poker.common.money.MoneyParser.parse;
 
 import java.io.IOException;
 
+import com.cubeia.games.poker.io.protocol.PerformAddOn;
+import com.cubeia.games.poker.io.protocol.RebuyResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,10 +102,11 @@ public class PokerHandler extends DefaultPokerHandler {
             long start = System.currentTimeMillis();
             ThreadLocalProfiler.start();
             try {
-                // TODO: THIS IS BROKEN. IF WE RECEIVE AN INCORRECT ACTION, WE WILL CANCEL THE TIMEOUT SO IF THE REAL PLAYER NEVER ACTS EVERYTHING WILL STOP.
-                timeoutCache.removeTimeout(table.getId(), playerId, table.getScheduler());
                 PokerAction action = actionTransformer.transform(playerId, packet);
-                state.act(action);
+                boolean handled = state.act(action);
+                if (handled) {
+                    timeoutCache.removeTimeout(table.getId(), playerId, table.getScheduler());
+                }
             } finally {
                 // Report profiling if slow
                 long elapsed = System.currentTimeMillis() - start;
@@ -176,6 +179,16 @@ public class PokerHandler extends DefaultPokerHandler {
     }
 
     @Override
+    public void visit(RebuyResponse packet) {
+        state.handleRebuyResponse(playerId, packet.answer);
+    }
+
+    @Override
+    public void visit(PerformAddOn packet) {
+        state.handleAddOnRequest(playerId);
+    }
+
+    @Override
     public void visit(PingPacket packet) {
         try {
             PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) state.getPokerPlayer(playerId);
@@ -206,12 +219,12 @@ public class PokerHandler extends DefaultPokerHandler {
         table.getNotifier().sendToClient(pokerPlayer.getId(), gameDataAction);
         if (cache != null) {
             /*
-                * We're not adding this to the cache as it will never be removed when finished,
-                * so if you reserve and get "pending" then leave the table and return, it will still
-                * say "pending" in the client as you get the cache. By removing this in the cache
-                * the other version will be true: if you have pending money and reconnect it will
-                * not be shown in the client... /LJN
-                */
+             * We're not adding this to the cache as it will never be removed when finished,
+             * so if you reserve and get "pending" then leave the table and return, it will still
+             * say "pending" in the client as you get the cache. By removing this in the cache
+             * the other version will be true: if you have pending money and reconnect it will
+             * not be shown in the client... /LJN
+             */
             // cache.addPrivateAction(table.getTableId(), playerId, gameDataAction);
         }
     }

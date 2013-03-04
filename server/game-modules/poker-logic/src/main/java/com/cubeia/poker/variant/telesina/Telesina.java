@@ -128,11 +128,12 @@ public class Telesina extends AbstractGameType implements RoundVisitor {
     }
 
     @Override
-    public void act(PokerAction action) {
+    public boolean act(PokerAction action) {
         ThreadLocalProfiler.add("Telesina.act.start");
-        getCurrentRound().act(action);
+        boolean handled = getCurrentRound().act(action);
         checkFinishedRound();
         ThreadLocalProfiler.add("Telesina.act.stop");
+        return handled;
     }
 
     private void checkFinishedRound() {

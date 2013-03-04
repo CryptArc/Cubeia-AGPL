@@ -408,8 +408,16 @@ public class DefaultPokerPlayer implements PokerPlayer {
         balanceNotInHand += amount;
     }
 
+    /**
+     *
+     * @param maxBuyIn, the total resulting balance should not be higher than this
+     * @return true if the player's balance was updated, false otherwise.
+     */
     @Override
     public boolean commitBalanceNotInHand(long maxBuyIn) {
+        // TODO: This is broken. If we allow the player to perform an add-on, but then the player happens to win a lot of chips during that hand,
+        //       these chips will be stuck as "balanceNotInHand" until his balance drops low enough, at which point suddenly the player would get
+        //       those chips. Madness.
         boolean hasPending = balanceNotInHand > 0;
         if (hasPending && balance < maxBuyIn) {
             long allowedAmount = maxBuyIn - balance;
@@ -421,10 +429,10 @@ public class DefaultPokerPlayer implements PokerPlayer {
                 balance += balanceNotInHand;
                 log.debug("committing all pending balance for player: " + playerId + " committedValue: " + balanceNotInHand + " new balance: " + balance + " new pending balance: " + 0);
                 balanceNotInHand = 0;
-
             }
+            return true;
         }
-        return hasPending;
+        return false;
     }
 
     @Override

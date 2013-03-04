@@ -7,7 +7,9 @@
         <!--<jta-data-source>java:comp/env/jdbc/poker</jta-data-source>-->
         <class>com.cubeia.games.poker.tournament.configuration.TournamentSchedule</class>
         <class>com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration</class>
+        <class>com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration</class>
         <class>com.cubeia.games.poker.tournament.configuration.TournamentConfiguration</class>
+        <class>com.cubeia.games.poker.tournament.configuration.RebuyConfiguration</class>
 
         <properties>
             <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>

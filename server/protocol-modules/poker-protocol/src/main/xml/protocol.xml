@@ -503,6 +503,29 @@
         <var name="table_id" type="int32" />
     </struct>
 
+    <!-- Sent from the server when a player can perform a rebuy. -->
+    <struct name="rebuy_offer">
+        <var name="cost" type="string" />
+        <var name="chips" type="string" />
+    </struct>
+
+    <!-- Response from the client, saying yay or nay to doing a rebuy. -->
+    <struct name="rebuy_response">
+        <var name="table_id" type="int32" />
+        <var name="answer" type="bool" />
+    </struct>
+
+    <!-- Sent from the server when players can perform an add-on. -->
+    <struct name="add_on_offer">
+        <var name="cost" type="string" />
+        <var name="chips" type="string" />
+    </struct>
+
+    <!-- Sent from clients who wish to perform an add-on. -->
+    <struct name="perform_add_on">
+        <var name="table_id" type="int32" />
+    </struct>
+
     <enum name="tournament_status">
         <value>ANNOUNCED</value>
         <value>REGISTERING</value>

@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -90,7 +91,7 @@ public class WaitingToStartSTMTest {
 
         verify(serverAdapter).performPendingBuyIns(players);
         verify(context).setHandFinished(false);
-        verify(context).commitPendingBalances();
+        verify(context).commitPendingBalances(anyLong());
         verify(gameType).startHand();
         verify(serverAdapter).cleanupPlayers(Matchers.<SitoutCalculator>any());
     }
@@ -105,7 +106,7 @@ public class WaitingToStartSTMTest {
         stateUnderTest.timeout();
 
         verify(serverAdapter).performPendingBuyIns(seatedPlayers);
-        verify(context).commitPendingBalances();
+        verify(context).commitPendingBalances(anyLong());
         verify(context).setHandFinished(true);
         verify(stateChanger).changeState(isA(NotStartedSTM.class));
         verify(serverAdapter).cleanupPlayers(Matchers.<SitoutCalculator>any());

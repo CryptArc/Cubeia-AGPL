@@ -89,7 +89,7 @@ public interface AsynchronousCashGamesBackend {
      * will be sent as object action to the tournament.
      *
      * The opening balance will be transferred to the tournament account
-     * directly after the session has been openend.
+     * directly after the session has been opened.
      *
      */
     @Asynchronous
@@ -116,6 +116,9 @@ public interface AsynchronousCashGamesBackend {
     @Asynchronous
     void reserveMoneyForTable(ReserveRequest request, TableId tableId);
 
+    @Asynchronous
+    void reserveMoneyForTournament(ReserveRequest request, TournamentId tournamentId);
+
     /**
      * See {@link CashGamesBackend#transfer(TransferMoneyRequest)} for documentation.
      */
@@ -140,4 +143,9 @@ public interface AsynchronousCashGamesBackend {
      * See {@link CashGamesBackend#transferMoneyToRakeAccount(PlayerSessionId, Money, String)} for documentation.
      */
     void transferMoneyToRakeAccount(PlayerSessionId sessionAccountToTransferFrom, Money moneyToTransferToRakeAccount, String comment);
+
+    /**
+     * See {@link CashGamesBackend#transferMoneyFromRakeAccount(PlayerSessionId, Money, String)} for documentation.
+     */
+    void transferMoneyFromRakeAccount(PlayerSessionId sessionAccountToTransferFrom, Money moneyToTransferToRakeAccount, String comment);
 }

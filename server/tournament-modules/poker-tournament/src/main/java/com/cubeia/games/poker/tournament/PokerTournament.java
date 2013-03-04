@@ -24,6 +24,9 @@ import com.cubeia.backend.cashgame.dto.CloseSessionRequest;
 import com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse;
 import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
 import com.cubeia.backend.cashgame.dto.OpenTournamentSessionRequest;
+import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;
+import com.cubeia.backend.cashgame.dto.ReserveRequest;
+import com.cubeia.backend.cashgame.dto.ReserveResponse;
 import com.cubeia.backend.cashgame.dto.TransferMoneyRequest;
 import com.cubeia.backend.cashgame.exceptions.CloseSessionFailedException;
 import com.cubeia.backend.firebase.CashGamesBackendService;
@@ -45,25 +48,33 @@ import com.cubeia.firebase.api.mtt.support.tables.Move;
 import com.cubeia.firebase.api.mtt.support.tables.TableBalancer;
 import com.cubeia.firebase.api.service.mttplayerreg.TournamentPlayerRegistry;
 import com.cubeia.firebase.guice.tournament.TournamentAssist;
+import com.cubeia.games.poker.common.lobby.PokerLobbyAttributes;
 import com.cubeia.games.poker.common.money.Money;
 import com.cubeia.games.poker.common.time.SystemTime;
-import com.cubeia.games.poker.common.lobby.PokerLobbyAttributes;
 import com.cubeia.games.poker.io.protocol.TournamentOut;
-import com.cubeia.games.poker.tournament.messages.TournamentTableSettings;
 import com.cubeia.games.poker.tournament.configuration.blinds.Level;
 import com.cubeia.games.poker.tournament.history.HistoryPersister;
+import com.cubeia.games.poker.tournament.messages.AddOnRequest;
+import com.cubeia.games.poker.tournament.messages.AddOnsAvailableDuringBreak;
 import com.cubeia.games.poker.tournament.messages.BlindsWithDeadline;
 import com.cubeia.games.poker.tournament.messages.CloseTournament;
+import com.cubeia.games.poker.tournament.messages.PlayerAddedChips;
 import com.cubeia.games.poker.tournament.messages.PlayerLeft;
 import com.cubeia.games.poker.tournament.messages.PokerTournamentRoundReport;
+import com.cubeia.games.poker.tournament.messages.RebuyResponse;
+import com.cubeia.games.poker.tournament.messages.RebuyTimeout;
 import com.cubeia.games.poker.tournament.messages.TournamentDestroyed;
+import com.cubeia.games.poker.tournament.messages.TournamentTableSettings;
 import com.cubeia.games.poker.tournament.messages.WaitingForPlayers;
 import com.cubeia.games.poker.tournament.messages.WaitingForTablesToFinishBeforeBreak;
 import com.cubeia.games.poker.tournament.payouts.ConcretePayout;
 import com.cubeia.games.poker.tournament.payouts.PayoutHandler;
+import com.cubeia.games.poker.tournament.rebuy.RebuySupport;
+import com.cubeia.games.poker.tournament.state.PendingBackendRequests;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 import com.cubeia.games.poker.tournament.util.PacketSender;
+import com.cubeia.games.poker.tournament.util.TableNotifier;
 import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
 import com.cubeia.poker.tournament.history.api.HistoricPlayer;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
@@ -71,6 +82,7 @@ import org.apache.log4j.Logger;
 import org.joda.time.Duration;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -83,9 +95,13 @@ import java.util.Set;
 import static com.cubeia.firebase.api.common.AttributeValue.wrap;
 import static com.cubeia.firebase.api.mtt.model.MttPlayerStatus.OUT;
 import static com.cubeia.firebase.api.mtt.model.MttPlayerStatus.PLAYING;
+import static com.cubeia.games.poker.tournament.state.PendingBackendRequests.PendingRequestType;
+import static com.cubeia.games.poker.tournament.state.PendingBackendRequests.PendingRequestType.ADD_ON;
+import static com.cubeia.games.poker.tournament.state.PendingBackendRequests.PendingRequestType.REBUY;
 import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.CLOSED;
 import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.ON_BREAK;
 import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.PREPARING_BREAK;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.REGISTERING;
 import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.RUNNING;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
@@ -103,7 +119,7 @@ import static java.util.Collections.singletonList;
  * 3. That being said, this is becoming a God class. Break it down.
  *
  */
-public class PokerTournament implements Serializable {
+public class PokerTournament implements TableNotifier, Serializable {
 
     private static final Logger log = Logger.getLogger(PokerTournament.class);
 
@@ -112,6 +128,8 @@ public class PokerTournament implements Serializable {
     private static final int MILLIS_PER_MINUTE = 60 * 1000;
 
     private static final String REREGISTRATION = "REREGISTRATION";
+
+    private static final long REBUY_TIMEOUT = 10000;
 
     private PokerTournamentState pokerState;
 
@@ -134,22 +152,141 @@ public class PokerTournament implements Serializable {
 
     private transient TournamentPlayerRegistry tournamentPlayerRegistry;
 
+    private transient RebuySupport rebuySupport = RebuySupport.NO_REBUYS;
+
     public PokerTournament(PokerTournamentState pokerState) {
         this.pokerState = pokerState;
     }
 
     /**
      * Invoked when a player has logged out or disconnected. If this is a sit&go, we should
-     * un-register the player.
+     * un-register the player, it the tournament hasn't started already.
      *
      * @param playerLeft holds information about the player who left, not null
      */
     public void handlePlayerLeft(PlayerLeft playerLeft) {
-        if (pokerState.isSitAndGo()) {
+        if (pokerState.isSitAndGo() && pokerState.getStatus() == REGISTERING) {
             int playerId = playerLeft.getPlayerId();
             unregisterPlayer(playerId);
             tournamentPlayerRegistry.unregister(playerId, instance.getId());
             state.getPlayerRegistry().removePlayer(playerId);
+        }
+    }
+
+    public void handleRebuyTimeout(int tableId) {
+        log.debug("Received rebuy timeout at table " + tableId);
+        if (rebuySupport.tableIsWaitingForRebuys(tableId)) {
+            Set<Integer> playersOut = newHashSet();
+            for (Integer playerId : rebuySupport.getRebuyRequestsForTable(tableId)) {
+                long playerBalance = pokerState.getPlayerBalance(playerId);
+                if (playerBalance == 0) {
+                    playersOut.add(playerId);
+                }
+            }
+            rebuySupport.removeRebuyRequestForTable(tableId);
+            if (!playersOut.isEmpty()) {
+                payAndRemovePlayers(tableId, playersOut);
+
+            }
+            handleEndOfHand(tableId);
+        } else {
+            log.debug("Table " + tableId + " was not waiting for rebuys (they could have all acted), ignoring.");
+        }
+    }
+
+    public void handleRebuyResponse(RebuyResponse rebuyResponse) {
+        int tableId = rebuyResponse.getTableId();
+        int playerId = rebuyResponse.getPlayerId();
+        log.debug("Handling rebuy response on table " + tableId + " from player " + playerId);
+        Set<Integer> rebuyRequests = rebuySupport.getRebuyRequestsForTable(tableId);
+        log.debug("Pending rebuy requests: " + rebuyRequests);
+        if (rebuyRequests.remove(playerId)) {
+            if (rebuyResponse.getAnswer()) {
+                performRebuy(playerId, tableId);
+            } else {
+                payAndRemovePlayers(tableId, singleton(playerId));
+            }
+            // If we have no more pending requests, consider this hand as finished and move on.
+            if (!tableHasPendingRequests(tableId)) {
+                handleEndOfHand(tableId);
+            }
+        } else {
+            log.debug("We have not requested any rebuy from player " + playerId + " Checking if he is eligible to perform a rebuy.");
+            if (rebuySupport.isPlayerAllowedToRebuy(playerId, pokerState.getPlayerBalance(playerId))) {
+                performRebuy(playerId, tableId);
+            }
+        }
+    }
+
+    public void handleAddOnRequest(AddOnRequest request) {
+        int tableId = request.getTableId();
+        int playerId = request.getPlayerId();
+        log.debug("Handling add-on on table " + tableId + " from player " + playerId);
+        if (rebuySupport.isPlayerAllowedToPerformAddOn(playerId)) {
+            performAddOn(playerId, tableId);
+        }
+    }
+
+    public void handleReservationResponse(ReserveResponse response) {
+        // Money has now been reserved from the operator, now we need to transfer it to the tournament.
+        PendingBackendRequests pendingRequests = pokerState.getPendingRequests();
+        Money amountReserved = response.getAmountReserved();
+        PlayerSessionId playerSessionId = response.getPlayerSessionId();
+        int playerId = playerSessionId.playerId;
+        log.debug("Player " + playerId +  " reserved " + amountReserved + ". Moving it to the tournament session.");
+        TournamentSessionId toAccount = pokerState.getTournamentSession();
+        int tableId = pokerState.getTableFor(playerId, state);
+        PendingRequestType pendingRequest = pendingRequests.getAndClearPendingRequest(playerId, tableId);
+        if (pendingRequest == REBUY) {
+            TransferMoneyRequest request = new TransferMoneyRequest(amountReserved, playerSessionId, toAccount, "Rebuy for tournament " + pokerState.getHistoricId());
+            backend.transfer(request);
+            addChipsTo(playerId, tableId, rebuySupport.getRebuyChipsAmount());
+            rebuySupport.increaseRebuyCount(playerId);
+            if (rebuySupport.tableIsWaitingForRebuys(tableId) && !tableHasPendingRequests(tableId)) {
+                handleEndOfHand(tableId);
+            }
+        } else if (pendingRequest == ADD_ON) {
+            TransferMoneyRequest request = new TransferMoneyRequest(amountReserved, playerSessionId, toAccount, "Add-on for tournament " + pokerState.getHistoricId());
+            backend.transfer(request);
+            rebuySupport.addOnPerformed(playerId);
+            addChipsTo(playerId, tableId, rebuySupport.getAddOnChipsAmount());
+        } else {
+            log.error("Player " + playerId + " reserved money but had no pending request.");
+        }
+    }
+
+    public void handleReservationFailed(ReserveFailedResponse response) {
+        int playerId = response.getSessionId().playerId;
+        int tableId = pokerState.getTableFor(playerId, state);
+        PendingBackendRequests pendingRequests = pokerState.getPendingRequests();
+        pendingRequests.getAndClearPendingRequest(playerId, tableId);
+        if (rebuySupport.tableIsWaitingForRebuys(tableId) && !tableHasPendingRequests(tableId)) {
+            handleEndOfHand(tableId);
+        }
+        // TODO: Tell the player something went wrong.
+    }
+
+    private void addChipsTo(int playerId, int tableId, long chipsToAdd) {
+        log.debug("Adding " + chipsToAdd + " chips to " + playerId);
+        notifyTable(tableId, new PlayerAddedChips(playerId, chipsToAdd));
+    }
+
+    private void performRebuy(int playerId, int tableId) {
+        performAddChips(playerId, tableId, rebuySupport.getRebuyCost(), REBUY);
+    }
+
+    private void performAddOn(int playerId, int tableId) {
+        performAddChips(playerId, tableId, rebuySupport.getAddOnCost(), ADD_ON);
+    }
+
+    private void performAddChips(int playerId, int tableId, BigDecimal cost, PendingRequestType type) {
+        PendingBackendRequests pendingRequests = pokerState.getPendingRequests();
+        if (!pendingRequests.playerHasPendingRequests(playerId)) {
+            pendingRequests.addPendingRequest(playerId, tableId, type);
+            ReserveRequest request = new ReserveRequest(pokerState.getPlayerSession(playerId), pokerState.convertToMoney(cost));
+            backend.reserveMoneyForTournament(request, new TournamentId(pokerState.getTournamentSession().integrationSessionId, instance.getId()));
+        } else {
+            log.warn("Player " + playerId + " tried to perform " + type + " when there was already a pending request. Ignoring.");
         }
     }
 
@@ -165,29 +302,39 @@ public class PokerTournament implements Serializable {
         this.shutdownService = shutdownService;
         this.tournamentPlayerRegistry = tournamentPlayerRegistry;
         this.sender = sender;
+        this.rebuySupport = pokerState.getRebuySupport();
     }
 
     public void processRoundReport(MttRoundReportAction action) {
+        int tableId = action.getTableId();
         if (log.isDebugEnabled()) {
-            log.debug("Process round report from table[" + action.getTableId() + "] Report: " + action);
+            log.debug("Process round report from table[" + tableId + "] Report: " + action);
         }
 
         PokerTournamentRoundReport report = (PokerTournamentRoundReport) action.getAttachment();
 
         updateBalances(report);
+        increaseBlindsIfNeeded(report.getCurrentBlindsLevel(), tableId);
         Set<Integer> playersOut = getPlayersOut(report);
         log.info("Players out of tournament[" + instance.getId() + "] : " + playersOut);
-        handlePlayersOut(action.getTableId(), playersOut);
-        boolean tableClosed = balanceTables(action.getTableId());
+        boolean rebuysRequested = handlePlayersOut(tableId, playersOut);
+        if (rebuysRequested) {
+            scheduleRebuyTimeout(tableId);
+        } else {
+            handleEndOfHand(tableId);
+        }
+    }
+
+    private void handleEndOfHand(int tableId) {
+        boolean tableClosed = balanceTables(tableId);
 
         if (isTournamentFinished()) {
             handleFinishedTournament();
         } else {
             if (!tableClosed) {
-                increaseBlindsIfNeeded(report.getCurrentBlindsLevel(), action.getTableId());
-                startNextRoundIfPossible(action.getTableId());
+                startNextRoundIfPossible(tableId);
             }
-            startBreakIfReady(action.getTableId());
+            startBreakIfReady(tableId);
         }
 
         if (log.isDebugEnabled()) {
@@ -196,6 +343,10 @@ public class PokerTournament implements Serializable {
         pokerState.invalidatePlayerList();
         pokerState.invalidateTournamentStatistics();
         updatePlayersLeft();
+    }
+
+    private void scheduleRebuyTimeout(int tableId) {
+        instance.getScheduler().scheduleAction(new MttObjectAction(instance.getId(), new RebuyTimeout(tableId)), REBUY_TIMEOUT);
     }
 
     private void startBreakIfReady(int tableId) {
@@ -217,6 +368,18 @@ public class PokerTournament implements Serializable {
         setTournamentStatus(ON_BREAK);
         scheduleNextBlindsLevel();
         notifyAllTablesThatBreakStarted();
+        
+        rebuySupport.notifyNewLevelStarted(pokerState.getCurrentBlindsLevelNr());
+        if (rebuySupport.addOnsAvailableDuringBreak(pokerState.getCurrentBlindsLevelNr())) {
+            rebuySupport.startAddOnPeriod();
+            notifyAllTablesOfAddOnsAvailableDuringBreak();
+        }
+    }
+
+    private void notifyAllTablesOfAddOnsAvailableDuringBreak() {
+        for (Integer tableId : state.getTables()) {
+            notifyTable(tableId, new AddOnsAvailableDuringBreak(rebuySupport.getAddOnChipsAmount(), rebuySupport.getAddOnCost()));
+        }
     }
 
     private void notifyAllTablesThatBreakStarted() {
@@ -225,9 +388,7 @@ public class PokerTournament implements Serializable {
 
     private void notifyAllTablesOfNewBlinds() {
         for (Integer tableId : state.getTables()) {
-            GameObjectAction action = new GameObjectAction(tableId);
-            action.setAttachment(createBlindsWithDeadline());
-            notifyTable(tableId, action);
+            notifyTable(tableId, createBlindsWithDeadline());
         }
     }
 
@@ -239,13 +400,7 @@ public class PokerTournament implements Serializable {
     }
 
     private void notifyWaitingForOtherTablesToFinishBeforeBreak(int tableId) {
-        GameObjectAction action = new GameObjectAction(tableId);
-        action.setAttachment(new WaitingForTablesToFinishBeforeBreak());
-        notifyTable(tableId, action);
-    }
-
-    private void notifyTable(int tableId, GameObjectAction action) {
-        instance.getMttNotifier().notifyTable(tableId, action);
+        notifyTable(tableId, new WaitingForTablesToFinishBeforeBreak());
     }
 
     private boolean allTablesAreReadyForBreak() {
@@ -264,9 +419,7 @@ public class PokerTournament implements Serializable {
 
     private void increaseBlindsIfNeeded(PokerTournamentRoundReport.Level currentBlindsLevel, int tableId) {
         if (currentBlindsLevel.getBigBlindAmount() < pokerState.getBigBlindAmount()) {
-            GameObjectAction action = new GameObjectAction(tableId);
-            action.setAttachment(createBlindsWithDeadline());
-            notifyTable(tableId, action);
+            notifyTable(tableId, createBlindsWithDeadline());
         }
     }
 
@@ -303,14 +456,26 @@ public class PokerTournament implements Serializable {
         return playersOut;
     }
 
-
-    private void handlePlayersOut(int tableId, Set<Integer> playersOut) {
+    /**
+     * Handles players out by removing them from the tournament or requesting rebuys is they have that option.
+     *
+     * @return true if rebuys were requested
+     */
+    private boolean handlePlayersOut(int tableId, Set<Integer> playersOut) {
         if (!playersOut.isEmpty()) {
-            handlePayouts(playersOut);
-            unseatPlayers(tableId, playersOut);
-            updatePlayersLeft();
-            pokerState.invalidatePlayerToTableMap();
+            Set<Integer> playersWithRebuyOption = pokerState.getRebuySupport().requestRebuys(tableId, playersOut, this);
+            playersOut.removeAll(playersWithRebuyOption);
+            payAndRemovePlayers(tableId, playersOut);
+            return !playersWithRebuyOption.isEmpty();
         }
+        return false;
+    }
+
+    private void payAndRemovePlayers(int tableId, Set<Integer> playersOut) {
+        handlePayouts(playersOut);
+        unseatPlayers(tableId, playersOut);
+        updatePlayersLeft();
+        pokerState.invalidatePlayerToTableMap();
     }
 
     private void updatePlayersLeft() {
@@ -334,6 +499,7 @@ public class PokerTournament implements Serializable {
 
     private void transferMoneyAndCloseSession(PlayerSessionId playerSession, long payoutInCents) {
         if (payoutInCents > 0) {
+            pokerState.getRebuySupport().notifyInTheMoney(); // If we are in the money, close the rebuy period.
             backend.transfer(createPayoutRequest(payoutInCents, playerSession));
         }
         backend.closeTournamentSession(new CloseSessionRequest(playerSession), createTournamentId());
@@ -421,15 +587,27 @@ public class PokerTournament implements Serializable {
 
     private void startNextRoundIfPossible(int tableId) {
         if (!pokerState.isOnBreak()) {
-            if (state.getPlayersAtTable(tableId).size() > 1) {
+            if (tableHasPendingRequests(tableId)) {
+              log.debug("Won't start new hand at table since it has pending requests.");
+            } if (state.getPlayersAtTable(tableId).size() > 1) {
+                rebuySupport.removeTableWaitingForRebuys(tableId);
                 mttSupport.sendRoundStartActionToTables(state, singleton(tableId));
             } else {
                 // Notify table that we are waiting for more players before we can start the next hand.
-                GameObjectAction action = new GameObjectAction(tableId);
-                action.setAttachment(new WaitingForPlayers());
-                notifyTable(tableId, action);
+                notifyTable(tableId, new WaitingForPlayers());
             }
         }
+    }
+
+    private boolean tableHasPendingRequests(int tableId) {
+        if (rebuySupport.getRebuyRequestsForTable(tableId).isEmpty()) {
+            log.debug("There are outstanding rebuy requests at table: " + tableId);
+            return true;
+        }
+        if (pokerState.getPendingRequests().tableHasPendingRequests(tableId)) {
+            log.debug("There are outstanding backend requests at table: " + tableId);
+        }
+        return false;
     }
 
     /**
@@ -591,14 +769,12 @@ public class PokerTournament implements Serializable {
 
         long registrationElapsedTime = pokerState.getLastRegisteredTime() - pokerState.getFirstRegisteredTime();
         log.debug("Starting tournament [" + instance.getId() + " : " + instance.getState().getName() + "]. Registration time was " + registrationElapsedTime + " ms");
-        transferBuyInsToTournamentSession();
 
         setTournamentStatus(RUNNING);
         updatePlayerStatuses(PLAYING);
         pokerState.setStartTime(dateFetcher.date());
         updatePayouts();
         createTables();
-        transferFeesToRakeAccount();
         historyPersister.tournamentStarted(state.getName());
         pokerState.invalidatePlayerToTableMap();
     }
@@ -606,24 +782,6 @@ public class PokerTournament implements Serializable {
     private void updatePlayerStatuses(MttPlayerStatus status) {
         for (MttPlayer player : state.getPlayerRegistry().getPlayers()) {
             player.setStatus(status);
-        }
-    }
-
-    private void transferBuyInsToTournamentSession() {
-        for (PlayerSessionId playerSessionId : pokerState.getPlayerSessions()) {
-            Money buyIn = pokerState.getBuyInAsMoney();
-            TournamentSessionId toAccount = pokerState.getTournamentSession();
-
-            TransferMoneyRequest request = new TransferMoneyRequest(buyIn, playerSessionId, toAccount, "Buy-in for tournament " + pokerState.getHistoricId());
-            backend.transfer(request);
-        }
-    }
-
-    private void transferFeesToRakeAccount() {
-        // TODO: Investigate scaling implications.
-        for (PlayerSessionId playerSessionId : pokerState.getPlayerSessions()) {
-            Money fee = pokerState.getFeeAsMoney();
-            backend.transferMoneyToRakeAccount(playerSessionId, fee, "Fee for tournament " + pokerState.getHistoricId());
         }
     }
 
@@ -678,7 +836,11 @@ public class PokerTournament implements Serializable {
     private void unregisterPlayer(int playerId) {
         try {
             log.debug("Player " + playerId + " unregistered. Closing session.");
-            backend.closeSession(new CloseSessionRequest(pokerState.getPlayerSession(playerId)));
+            // Transfer money back from tournament session to player session.
+            PlayerSessionId playerSession = pokerState.getPlayerSession(playerId);
+            transferMoneyFromTournamentSessionToPlayerSession(playerSession);
+            transferFeeFromRakeAccount(playerSession);
+            backend.closeSession(new CloseSessionRequest(playerSession));
             pokerState.removePlayerSession(playerId);
             historyPersister.playerUnregistered(playerId);
             pokerState.invalidatePlayerMap();
@@ -696,7 +858,7 @@ public class PokerTournament implements Serializable {
             return MttRegisterResponse.ALLOWED;
         }
 
-        if (pokerState.getStatus() != PokerTournamentStatus.REGISTERING) {
+        if (pokerState.getStatus() != REGISTERING) {
             return MttRegisterResponse.DENIED;
         } else {
             backend.openTournamentPlayerSession(createOpenTournamentPlayerSessionRequest(request), pokerState.getTournamentSession());
@@ -727,7 +889,7 @@ public class PokerTournament implements Serializable {
     }
 
     public MttRegisterResponse checkUnregistration(int pid) {
-        if (pokerState.getStatus() == PokerTournamentStatus.REGISTERING && state.getPlayerRegistry().isRegistered(pid)) {
+        if (pokerState.getStatus() == REGISTERING && state.getPlayerRegistry().isRegistered(pid)) {
             return MttRegisterResponse.ALLOWED;
         } else {
             return MttRegisterResponse.DENIED;
@@ -825,14 +987,16 @@ public class PokerTournament implements Serializable {
              * we start the break and schedule next level).
              */
             scheduleNextBlindsLevel();
+            pokerState.getRebuySupport().notifyNewLevelStarted(pokerState.getCurrentBlindsLevelNr());
         }
-
+        
         if (finishedBreak(levelBeforeIncreasing, levelAfterIncreasing)) {
             // The break has finished. Tell all tables about the new blinds and tell them to start.
             log.debug("The break has finished, notifying all tables about new blinds and telling them to start.");
             notifyAllTablesOfNewBlinds();
             sendRoundStartToAllTables();
             pokerState.breakFinished();
+            rebuySupport.breakFinished();
             setTournamentStatus(RUNNING);
         }
     }
@@ -843,7 +1007,7 @@ public class PokerTournament implements Serializable {
 
     private void openRegistration() {
         log.debug("Opening registration.");
-        setTournamentStatus(PokerTournamentStatus.REGISTERING);
+        setTournamentStatus(REGISTERING);
     }
 
     void cancelTournament() {
@@ -872,6 +1036,10 @@ public class PokerTournament implements Serializable {
         if (sessionId.playerId == -1) {
             setTournamentSessionId(sessionId);
         } else {
+            // The player has now reserved money, transfer it to the tournament session.
+            transferMoneyFromPlayerSessionToTournamentSession(sessionId);
+            transferFeeToRakeAccount(response.getSessionId());
+
             pokerState.addBuyInToPrizePool();
             pokerState.addPlayerSession(sessionId);
             pokerState.removePendingRequest(sessionId.playerId);
@@ -879,8 +1047,30 @@ public class PokerTournament implements Serializable {
             MttPlayer tournamentPlayer = pokerState.getTournamentPlayer(sessionId.playerId, state);
             historyPersister.playerRegistered(historicPlayer(tournamentPlayer, sessionId));
 
-            checkIfTournamentShouldBetStartedOrCancelled();
+            checkIfTournamentShouldBeStartedOrCancelled();
         }
+    }
+
+    private void transferFeeToRakeAccount(PlayerSessionId playerSessionId) {
+        backend.transferMoneyToRakeAccount(playerSessionId, pokerState.getFeeAsMoney(), "Fee for tournament " + pokerState.getHistoricId());
+    }
+
+    private void transferFeeFromRakeAccount(PlayerSessionId playerSessionId) {
+        backend.transferMoneyFromRakeAccount(playerSessionId, pokerState.getFeeAsMoney(), "Returning fee for tournament " + pokerState.getHistoricId());
+    }
+
+    private void transferMoneyFromPlayerSessionToTournamentSession(PlayerSessionId sessionId) {
+        Money buyIn = pokerState.getBuyInAsMoney();
+        TournamentSessionId toAccount = pokerState.getTournamentSession();
+        TransferMoneyRequest request = new TransferMoneyRequest(buyIn, sessionId, toAccount, "Buy-in for tournament " + pokerState.getHistoricId());
+        backend.transfer(request);
+    }
+
+    private void transferMoneyFromTournamentSessionToPlayerSession(PlayerSessionId sessionId) {
+        Money buyIn = pokerState.getBuyInAsMoney();
+        TournamentSessionId fromAccount = pokerState.getTournamentSession();
+        TransferMoneyRequest request = new TransferMoneyRequest(buyIn, fromAccount, sessionId, "Returning buy-in for tournament " + pokerState.getHistoricId());
+        backend.transfer(request);
     }
 
     private void setTournamentSessionId(PlayerSessionId sessionId) {
@@ -898,11 +1088,11 @@ public class PokerTournament implements Serializable {
             state.getPlayerRegistry().removePlayer(response.getPlayerId());
             historyPersister.playerFailedOpeningSession(response.getPlayerId(), response.getMessage());
 
-            checkIfTournamentShouldBetStartedOrCancelled();
+            checkIfTournamentShouldBeStartedOrCancelled();
         }
     }
 
-    private void checkIfTournamentShouldBetStartedOrCancelled() {
+    private void checkIfTournamentShouldBeStartedOrCancelled() {
         if (tournamentShouldStart()) {
             log.debug("Tournament should be started.");
             startTournament();
@@ -929,14 +1119,16 @@ public class PokerTournament implements Serializable {
         log.debug("Notifying all tables that tournament is being destroyed.");
         for (Integer tableId : state.getTables()) {
             log.debug("Notifying table " + tableId + " that tournament is being destroyed.");
-            TournamentDestroyed destroyed = new TournamentDestroyed();
-            GameObjectAction action = new GameObjectAction(tableId);
-            action.setAttachment(destroyed);
-            notifyTable(tableId, action);
+            notifyTable(tableId, new TournamentDestroyed());
         }
     }
 
-    private void notifyTable(Integer tableId, GameObjectAction action) {
+    public void notifyTable(int tableId, Object attachment) {
+        if (attachment instanceof GameObjectAction) {
+            throw new IllegalArgumentException("You should send the attachment and not a GameObjectAction.");
+        }
+        GameObjectAction action = new GameObjectAction(tableId);
+        action.setAttachment(attachment);
         instance.getMttNotifier().notifyTable(tableId, action);
     }
 }
