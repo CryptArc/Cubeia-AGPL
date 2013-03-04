@@ -221,6 +221,7 @@ public class ManualGameHandler implements PacketVisitor {
 
     @Override
     public void visit(BuyInInfoRequest packet) {
+        System.out.println("Buy-in info: " + packet);
     }
 
     @Override
