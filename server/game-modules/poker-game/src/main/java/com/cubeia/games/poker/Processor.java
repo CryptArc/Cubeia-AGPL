@@ -117,16 +117,28 @@ public class Processor implements GameProcessor, TournamentProcessor {
         stateInjector.injectAdapter(table);
 
         try {
-            ProtocolObject packet = serializer.unpack(action.getData());
-            pokerHandler.setPlayerId(action.getPlayerId());
-            packet.accept(pokerHandler);
-            PokerStats.getInstance().setState(table.getId(), state.getStateDescription());
+            ProtocolObject packet = safeUnpack(action);
+            if (packet != null) {
+                pokerHandler.setPlayerId(action.getPlayerId());
+                packet.accept(pokerHandler);
+                PokerStats.getInstance().setState(table.getId(), state.getStateDescription());
+            }
         } catch (Throwable t) {
             log.error("Unhandled error on table", t);
             tableCloseHandler.handleUnexpectedExceptionOnTable(action, table, t);
         }
 
         updatePlayerDebugInfo(table);
+    }
+
+    private ProtocolObject safeUnpack(GameDataAction action) {
+        try {
+            ProtocolObject packet = serializer.unpack(action.getData());
+            return packet;
+        } catch (Exception e) {
+            log.warn("Failed unpacking action from player " + action.getPlayerId() + ". Is he using an old version of the protocol?", e);
+        }
+        return null;
     }
 
     /**
