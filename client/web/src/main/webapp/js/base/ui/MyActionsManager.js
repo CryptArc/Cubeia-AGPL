@@ -191,7 +191,6 @@ Poker.MyActionsManager  = Class.extend({
             this.actionCallback(fromFutureAction.type,fromFutureAction.minAmount);
             return true;
         }
-        this.futureActions.hide();
         var self = this;
 
         //to avoid users clicking the action buttons by mistake
