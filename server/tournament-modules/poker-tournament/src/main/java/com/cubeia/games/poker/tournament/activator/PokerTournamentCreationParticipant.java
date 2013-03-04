@@ -26,8 +26,10 @@ import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.games.poker.common.time.SystemTime;
 import com.cubeia.games.poker.tournament.PokerTournament;
 import com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes;
+import com.cubeia.games.poker.tournament.configuration.RebuyConfiguration;
 import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.TournamentLifeCycle;
+import com.cubeia.games.poker.tournament.rebuy.RebuySupport;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 import com.cubeia.poker.timing.Timings;
@@ -100,6 +102,8 @@ public abstract class PokerTournamentCreationParticipant implements CreationPart
         pokerState.setMinutesVisibleAfterFinished(getMinutesVisibleAfterFinished());
         pokerState.setTemplateId(getConfigurationTemplateId());
         pokerState.setSitAndGo(isSitAndGo());
+        pokerState.setRebuySupport(createRebuySupport(config.getRebuyConfiguration()));
+
         PokerTournament tournament = new PokerTournament(pokerState);
         stateSupport.setState(tournament);
 
@@ -108,6 +112,16 @@ public abstract class PokerTournamentCreationParticipant implements CreationPart
         acc.setIntAttribute(PokerTournamentLobbyAttributes.TABLE_SIZE.name(), 10);
         createHistoricTournament(stateSupport, pokerState);
         tournamentCreated(stateSupport, pokerState, acc);
+    }
+
+    private RebuySupport createRebuySupport(RebuyConfiguration config) {
+        if (config == null) {
+            return RebuySupport.NO_REBUYS;
+        } else {
+            boolean rebuysEnabled = config.getNumberOfRebuysAllowed() > 0;
+            return new RebuySupport(rebuysEnabled, config.getChipsForRebuy(), config.getChipsForAddOn(), config.getNumberOfRebuysAllowed(),
+                    config.getMaxStackForRebuy(), config.isAddOnsEnabled(), config.getNumberOfLevelsWithRebuys(), config.getRebuyCost(), config.getAddOnCost());
+        }
     }
 
     public void setResurrectingPlayers(Set<HistoricPlayer> resurrectingPlayers) {

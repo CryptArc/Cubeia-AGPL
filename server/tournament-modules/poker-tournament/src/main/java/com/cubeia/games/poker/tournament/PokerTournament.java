@@ -177,7 +177,7 @@ public class PokerTournament implements TableNotifier, Serializable {
         log.debug("Received rebuy timeout at table " + tableId);
         if (rebuySupport.tableIsWaitingForRebuys(tableId)) {
             Set<Integer> playersOut = newHashSet();
-            for (Integer playerId : rebuySupport.getRebuyRequests(tableId)) {
+            for (Integer playerId : rebuySupport.getRebuyRequestsForTable(tableId)) {
                 long playerBalance = pokerState.getPlayerBalance(playerId);
                 if (playerBalance == 0) {
                     playersOut.add(playerId);
@@ -186,8 +186,9 @@ public class PokerTournament implements TableNotifier, Serializable {
             rebuySupport.removeRebuyRequestForTable(tableId);
             if (!playersOut.isEmpty()) {
                 payAndRemovePlayers(tableId, playersOut);
+
             }
-            startNextRoundIfPossible(tableId);
+            handleEndOfHand(tableId);
         } else {
             log.debug("Table " + tableId + " was not waiting for rebuys (they could have all acted), ignoring.");
         }
@@ -197,7 +198,7 @@ public class PokerTournament implements TableNotifier, Serializable {
         int tableId = rebuyResponse.getTableId();
         int playerId = rebuyResponse.getPlayerId();
         log.debug("Handling rebuy response on table " + tableId + " from player " + playerId);
-        Set<Integer> rebuyRequests = rebuySupport.getRebuyRequests(tableId);
+        Set<Integer> rebuyRequests = rebuySupport.getRebuyRequestsForTable(tableId);
         log.debug("Pending rebuy requests: " + rebuyRequests);
         if (rebuyRequests.remove(playerId)) {
             if (rebuyResponse.getAnswer()) {
@@ -205,7 +206,10 @@ public class PokerTournament implements TableNotifier, Serializable {
             } else {
                 payAndRemovePlayers(tableId, singleton(playerId));
             }
-            startNextRoundIfPossible(tableId);
+            // If we have no more pending requests, consider this hand as finished and move on.
+            if (!tableHasPendingRequests(tableId)) {
+                handleEndOfHand(tableId);
+            }
         } else {
             log.debug("We have not requested any rebuy from player " + playerId + " Checking if he is eligible to perform a rebuy.");
             if (rebuySupport.isPlayerAllowedToRebuy(playerId, pokerState.getPlayerBalance(playerId))) {
@@ -238,8 +242,8 @@ public class PokerTournament implements TableNotifier, Serializable {
             backend.transfer(request);
             addChipsTo(playerId, tableId, rebuySupport.getRebuyChipsAmount());
             rebuySupport.increaseRebuyCount(playerId);
-            if (rebuySupport.tableIsWaitingForRebuys(tableId)) {
-                startNextRoundIfPossible(tableId);
+            if (rebuySupport.tableIsWaitingForRebuys(tableId) && !tableHasPendingRequests(tableId)) {
+                handleEndOfHand(tableId);
             }
         } else if (pendingRequest == ADD_ON) {
             TransferMoneyRequest request = new TransferMoneyRequest(amountReserved, playerSessionId, toAccount, "Add-on for tournament " + pokerState.getHistoricId());
@@ -256,8 +260,8 @@ public class PokerTournament implements TableNotifier, Serializable {
         int tableId = pokerState.getTableFor(playerId, state);
         PendingBackendRequests pendingRequests = pokerState.getPendingRequests();
         pendingRequests.getAndClearPendingRequest(playerId, tableId);
-        if (rebuySupport.tableIsWaitingForRebuys(tableId)) {
-            startNextRoundIfPossible(tableId);
+        if (rebuySupport.tableIsWaitingForRebuys(tableId) && !tableHasPendingRequests(tableId)) {
+            handleEndOfHand(tableId);
         }
         // TODO: Tell the player something went wrong.
     }
@@ -310,21 +314,25 @@ public class PokerTournament implements TableNotifier, Serializable {
         PokerTournamentRoundReport report = (PokerTournamentRoundReport) action.getAttachment();
 
         updateBalances(report);
+        increaseBlindsIfNeeded(report.getCurrentBlindsLevel(), tableId);
         Set<Integer> playersOut = getPlayersOut(report);
         log.info("Players out of tournament[" + instance.getId() + "] : " + playersOut);
         boolean rebuysRequested = handlePlayersOut(tableId, playersOut);
+        if (rebuysRequested) {
+            scheduleRebuyTimeout(tableId);
+        } else {
+            handleEndOfHand(tableId);
+        }
+    }
+
+    private void handleEndOfHand(int tableId) {
         boolean tableClosed = balanceTables(tableId);
 
         if (isTournamentFinished()) {
             handleFinishedTournament();
         } else {
             if (!tableClosed) {
-                increaseBlindsIfNeeded(report.getCurrentBlindsLevel(), tableId);
-                if (rebuysRequested) {
-                    scheduleRebuyTimeout(tableId);
-                } else {
-                    startNextRoundIfPossible(tableId);
-                }
+                startNextRoundIfPossible(tableId);
             }
             startBreakIfReady(tableId);
         }
@@ -370,9 +378,7 @@ public class PokerTournament implements TableNotifier, Serializable {
 
     private void notifyAllTablesOfAddOnsAvailableDuringBreak() {
         for (Integer tableId : state.getTables()) {
-            GameObjectAction action = new GameObjectAction(tableId);
-            action.setAttachment(new AddOnsAvailableDuringBreak(rebuySupport.getAddOnChipsAmount(), rebuySupport.getAddOnCost()));
-            notifyTable(tableId, action);
+            notifyTable(tableId, new AddOnsAvailableDuringBreak(rebuySupport.getAddOnChipsAmount(), rebuySupport.getAddOnCost()));
         }
     }
 
@@ -382,9 +388,7 @@ public class PokerTournament implements TableNotifier, Serializable {
 
     private void notifyAllTablesOfNewBlinds() {
         for (Integer tableId : state.getTables()) {
-            GameObjectAction action = new GameObjectAction(tableId);
-            action.setAttachment(createBlindsWithDeadline());
-            notifyTable(tableId, action);
+            notifyTable(tableId, createBlindsWithDeadline());
         }
     }
 
@@ -398,10 +402,6 @@ public class PokerTournament implements TableNotifier, Serializable {
     private void notifyWaitingForOtherTablesToFinishBeforeBreak(int tableId) {
         notifyTable(tableId, new WaitingForTablesToFinishBeforeBreak());
     }
-
-//    private void notifyTable(int tableId, GameObjectAction action) {
-//        instance.getMttNotifier().notifyTable(tableId, action);
-//    }
 
     private boolean allTablesAreReadyForBreak() {
         return pokerState.allTablesReadyForBreak();
@@ -419,9 +419,7 @@ public class PokerTournament implements TableNotifier, Serializable {
 
     private void increaseBlindsIfNeeded(PokerTournamentRoundReport.Level currentBlindsLevel, int tableId) {
         if (currentBlindsLevel.getBigBlindAmount() < pokerState.getBigBlindAmount()) {
-            GameObjectAction action = new GameObjectAction(tableId);
-            action.setAttachment(createBlindsWithDeadline());
-            notifyTable(tableId, action);
+            notifyTable(tableId, createBlindsWithDeadline());
         }
     }
 
@@ -596,15 +594,13 @@ public class PokerTournament implements TableNotifier, Serializable {
                 mttSupport.sendRoundStartActionToTables(state, singleton(tableId));
             } else {
                 // Notify table that we are waiting for more players before we can start the next hand.
-                GameObjectAction action = new GameObjectAction(tableId);
-                action.setAttachment(new WaitingForPlayers());
-                notifyTable(tableId, action);
+                notifyTable(tableId, new WaitingForPlayers());
             }
         }
     }
 
     private boolean tableHasPendingRequests(int tableId) {
-        if (rebuySupport.getRebuyRequests(tableId).isEmpty()) {
+        if (rebuySupport.getRebuyRequestsForTable(tableId).isEmpty()) {
             log.debug("There are outstanding rebuy requests at table: " + tableId);
             return true;
         }
@@ -1123,14 +1119,14 @@ public class PokerTournament implements TableNotifier, Serializable {
         log.debug("Notifying all tables that tournament is being destroyed.");
         for (Integer tableId : state.getTables()) {
             log.debug("Notifying table " + tableId + " that tournament is being destroyed.");
-            TournamentDestroyed destroyed = new TournamentDestroyed();
-            GameObjectAction action = new GameObjectAction(tableId);
-            action.setAttachment(destroyed);
-            notifyTable(tableId, action);
+            notifyTable(tableId, new TournamentDestroyed());
         }
     }
 
     public void notifyTable(int tableId, Object attachment) {
+        if (attachment instanceof GameObjectAction) {
+            throw new IllegalArgumentException("You should send the attachment and not a GameObjectAction.");
+        }
         GameObjectAction action = new GameObjectAction(tableId);
         action.setAttachment(attachment);
         instance.getMttNotifier().notifyTable(tableId, action);

@@ -17,10 +17,12 @@
 
 package com.cubeia.games.poker.tournament.rebuy;
 
-import com.cubeia.games.poker.common.money.MoneyFormatter;
 import com.cubeia.games.poker.tournament.messages.OfferRebuy;
+import com.cubeia.games.poker.tournament.util.SerializablePredicate;
 import com.cubeia.games.poker.tournament.util.TableNotifier;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
@@ -29,8 +31,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static com.cubeia.games.poker.common.money.MoneyFormatter.format;
+import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.collect.Sets.filter;
+import static com.google.common.collect.Sets.newHashSet;
 import static java.math.BigDecimal.ZERO;
 import static java.util.Collections.emptySet;
 
@@ -121,7 +125,7 @@ public class RebuySupport implements Serializable {
         this.addOnCost = addOnCost;
     }
 
-    private Predicate<Integer> rebuyAllowed = new Predicate<Integer>() {
+    private Predicate<Integer> rebuyAllowed = new SerializablePredicate<Integer>() {
         @Override
         public boolean apply(@Nullable Integer playerId) {
             if (inTheMoney || !rebuysAvailable) {
@@ -145,7 +149,7 @@ public class RebuySupport implements Serializable {
 
     public void addRebuyRequestsForTable(int tableId, Set<Integer> playersWithRebuyOption) {
         if (!playersWithRebuyOption.isEmpty()) {
-            rebuyRequestsPerTable.put(tableId, playersWithRebuyOption);
+            rebuyRequestsPerTable.put(tableId, newHashSet(playersWithRebuyOption));
         }
     }
 
@@ -222,7 +226,7 @@ public class RebuySupport implements Serializable {
         return rebuyChipsAmount;
     }
 
-    public Set<Integer> getRebuyRequests(Integer tableId) {
+    public Set<Integer> getRebuyRequestsForTable(Integer tableId) {
         if (rebuyRequestsPerTable.containsKey(tableId)) {
             return rebuyRequestsPerTable.get(tableId);
         } else {
@@ -235,8 +239,9 @@ public class RebuySupport implements Serializable {
     }
 
     public Set<Integer> requestRebuys(int tableId, Set<Integer> playersOut, TableNotifier tableNotifier) {
-        Set<Integer> playersWithRebuyOption = filter(playersOut, rebuyAllowed);
-        tableNotifier.notifyTable(tableId, new OfferRebuy(playersWithRebuyOption, MoneyFormatter.format(rebuyCost), MoneyFormatter.format(rebuyChipsAmount)));
+        // Note, using Iterables.filter instead of Sets.filter, because the latter is not serializable.
+        Set<Integer> playersWithRebuyOption = newHashSet(filter(playersOut, rebuyAllowed));
+        tableNotifier.notifyTable(tableId, new OfferRebuy(playersWithRebuyOption, format(rebuyCost), format(rebuyChipsAmount)));
         addRebuyRequestsForTable(tableId, playersWithRebuyOption);
         tablesWaitingForRebuys.add(tableId);
         return playersWithRebuyOption;

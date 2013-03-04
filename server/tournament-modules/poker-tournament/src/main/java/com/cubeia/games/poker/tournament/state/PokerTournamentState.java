@@ -187,6 +187,10 @@ public class PokerTournamentState implements Serializable {
         this.currencyCode = currencyCode;
     }
 
+    public void setRebuySupport(RebuySupport rebuySupport) {
+        this.rebuySupport = rebuySupport;
+    }
+
     public void setResurrectingTournament(boolean resurrectingTournament) {
         this.resurrectingTournament = resurrectingTournament;
     }
