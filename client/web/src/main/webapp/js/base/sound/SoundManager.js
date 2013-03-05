@@ -43,18 +43,14 @@ Poker.SoundManager = Class.extend({
 
     handleTableUpdate:function(sound, tableId) {
         if (tableId != this.tableId) return;
-        console.log("Sound List:", sound.soundList)
         var selection = Math.floor(Math.random()*sound.soundList.length);
         this.playSound(sound, selection)
     },
 
     playerAction:function(actionType, tableId, player, amount) {
-        console.log(actionType);
         var sound = Poker.Sounds[actionType.id];
-
         var selection = Math.floor(Math.random()*sound.soundList.length);
         this.playSound(sound, selection)
-    //    console.log("Player Action Sound! ", action, tableId, player, amount)
     }
 
 

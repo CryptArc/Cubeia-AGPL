@@ -44,8 +44,11 @@ Poker.SoundSource = function (url, audioModel, context) {
                 this.source.volume = 1;
                 var source = this.source;
 
+
+
                 this.source.play = function() {
-                    console.log("PLay Context sound!", source);
+                    // TODO: Check behaviour on low bandwidth. May behave unpleasantly.
+                    if (!source.soundBuffer) return;
                     var sourceNode = context.createBufferSource();
                     sourceNode.buffer = source.soundBuffer;
                     sourceNode.gain.value = source.volume;
