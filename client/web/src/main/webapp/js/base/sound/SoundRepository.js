@@ -16,20 +16,33 @@ Poker.SoundRepository = Class.extend({
 
     loadSounds:function () {
         var codec = this.getCodec();
-        var path = "../sounds/"+codec+"/";
 
+
+        var audioModel = "Audio";
+        var context = null;
 
         if(typeof(Audio)=="undefined") {
             return;
         }
+
+
+        if(typeof(webkitAudioContext)!="undefined") {
+            codec = "ogg";
+            var audioModel = "webkitAudioContext";
+            var context = new webkitAudioContext();
+        }
+
+
+        var path = "../sounds/"+codec+"/";
+
         for (var sound in Poker.Sounds) {
 
             var soundList = Poker.Sounds[sound].soundList
                 var soundSources = [];
                 for (var i = 0; i < soundList.length; i++) {
                     var file = path+Poker.Sounds[sound].soundList[i].file+"."+codec;
-                    var audio = new Audio([file]);
-                    audio.volume = Poker.Sounds[sound].soundList[i].gain;
+                    var audio = new Poker.SoundSource(file, audioModel, context);
+                    audio.setGain(Poker.Sounds[sound].soundList[i].gain);
                     console.log("Loading sound " + sound + " from file "+file+" ", audio);
                     soundSources[i] = audio;
                 }

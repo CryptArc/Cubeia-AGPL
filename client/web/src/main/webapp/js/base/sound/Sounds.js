@@ -26,7 +26,7 @@ Poker.Sounds = {
     "entry-bet"                  :{id:"ENTRY_BET"         ,  delay:0,     soundList:[{file:"chipheavy_1" ,gain:1}]    },
     "decline-entry-bet"          :{id:"DECLINE_ENTRY_BET" ,  delay:200,   soundList:[{file:"metaltwang_1",gain:1}]    },
     "wait-for-big-blind"         :{id:"WAIT_FOR_BIG_BLIND",  delay:0,     soundList:[{file:"clocktick_1" ,gain:1}]    },
-    "ante"                       :{id:"ANTE"              ,  delay:0,     soundList:[{file:"chip1_1"     ,gain:1}]    },
+    "ante"                       :{id:"ANTE"              ,  delay:0,     soundList:[{file:"chip_1"     ,gain:1}]    },
     "dead-small-blind"           :{id:"DEAD_SMALL_BLIND"  ,  delay:0,     soundList:[{file:"chip_2"      ,gain:1}]    },
 "big-blind-plus-dead-small-blind":{id:"BIG_BLIND_PLUS_DEAD_SMALL_BLIND", delay:0, soundList:[{file:"chippile_1" ,gain:1}] }
 
