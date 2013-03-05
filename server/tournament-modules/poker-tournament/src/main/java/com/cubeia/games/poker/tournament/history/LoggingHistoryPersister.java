@@ -33,12 +33,12 @@ public class LoggingHistoryPersister implements TournamentHistoryPersistenceServ
 
     @Override
     public void addTable(String historicId, String externalTableId) {
-        log.info("Tournament[ " + historicId + "]. Table created " + externalTableId);
+        log.debug("Tournament[ " + historicId + "]. Table created " + externalTableId);
     }
 
     @Override
     public void blindsUpdated(String historicId, Integer ante, Integer smallBlind, Integer bigBlind, long now) {
-        log.info("Tournament[ " + historicId + "]. Blinds updated to " + ante + " / " + smallBlind + " / " + bigBlind);
+        log.debug("Tournament[ " + historicId + "]. Blinds updated to " + ante + " / " + smallBlind + " / " + bigBlind);
     }
 
     @Override
@@ -58,32 +58,32 @@ public class LoggingHistoryPersister implements TournamentHistoryPersistenceServ
 
     @Override
     public void playerFailedOpeningSession(String historicId, int playerId, String message, long now) {
-        log.info("Tournament[ " + historicId + "]. Player failed opening session " + playerId + " message: " + message);
+        log.warn("Tournament[ " + historicId + "]. Player failed opening session " + playerId + " message: " + message);
     }
 
     @Override
     public void playerFailedUnregistering(String historicId, int playerId, String message, long now) {
-        log.info("Tournament[ " + historicId + "]. Player failed un-registering " + playerId);
+        log.warn("Tournament[ " + historicId + "]. Player failed un-registering " + playerId);
     }
 
     @Override
     public void playerMoved(int playerId, int tableId, String historicId, long now) {
-        log.info("Tournament[ " + historicId + "]. Player " + playerId +  " was moved to table " + tableId);
+        log.debug("Tournament[ " + historicId + "]. Player " + playerId +  " was moved to table " + tableId);
     }
 
     @Override
     public void playerOpenedSession(String historicId, int playerId, String sessionId, long now) {
-        log.info("Tournament[ " + historicId + "]. Player opened session " + playerId + " session: " + sessionId);
+        log.debug("Tournament[ " + historicId + "]. Player opened session " + playerId + " session: " + sessionId);
     }
 
     @Override
     public void playerOut(int playerId, int position, int payoutInCents, String historicId, long now) {
-        log.info("Tournament[ " + historicId + "]. Player " + playerId +  " finished in place " + position + " and won: " + payoutInCents + " cents.");
+        log.debug("Tournament[ " + historicId + "]. Player " + playerId +  " finished in place " + position + " and won: " + payoutInCents + " cents.");
     }
 
     @Override
     public void playerReRegistered(String historicId, int playerId, long now) {
-        log.info("Tournament[ " + historicId + "]. Player re-registered " + playerId);
+        log.debug("Tournament[ " + historicId + "]. Player re-registered " + playerId);
     }
 
     @Override
@@ -98,31 +98,31 @@ public class LoggingHistoryPersister implements TournamentHistoryPersistenceServ
 
     @Override
     public void setEndTime(String historicId, long date) {
-        log.info("Tournament[ " + historicId + "]. End time " + date);
+        log.debug("Tournament[ " + historicId + "]. End time " + date);
     }
 
     @Override
     public void setName(String historicId, String name) {
-        log.info("Tournament[ " + historicId + "]. Name " + name);
+        log.debug("Tournament[ " + historicId + "]. Name " + name);
     }
 
     @Override
     public void setScheduledStartTime(String historicId, Date startTime) {
-        log.info("Tournament[ " + historicId + "]. Scheduled start time " + startTime);
+        log.debug("Tournament[ " + historicId + "]. Scheduled start time " + startTime);
     }
 
     @Override
     public void setTournamentSessionId(String sessionId, String historicId) {
-        log.info("Tournament[ " + historicId + "]. SessionId: " + sessionId);
+        log.debug("Tournament[ " + historicId + "]. SessionId: " + sessionId);
     }
 
     @Override
     public void setStartTime(String historicId, long date) {
-        log.info("Tournament[ " + historicId + "]. Start time " + date);
+        log.debug("Tournament[ " + historicId + "]. Start time " + date);
     }
 
     @Override
     public void statusChanged(String status, String historicId, long now) {
-        log.info("Tournament[ " + historicId + "]. Status updated to " + status);
+        log.debug("Tournament[ " + historicId + "]. Status updated to " + status);
     }
 }

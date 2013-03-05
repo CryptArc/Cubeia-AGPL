@@ -40,7 +40,6 @@ public class StateHolder implements StateChanger, Serializable {
     @Override
     public void changeState(PokerGameSTM newState) {
         if (newState == null) throw new IllegalArgumentException("New state is null");
-        log.debug("Changing state from " + currentState + " to " + newState);
         if (currentState != null) {
             currentState.exitState();
         }

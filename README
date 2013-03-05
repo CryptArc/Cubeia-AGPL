@@ -6,7 +6,7 @@ open sourced and in production.
 PREREQUISITES
 
 * Java SDK 1.6 or higher
-* Maven 3.0 or higher
+* Maven 3.0.4 or higher
 
 SETUP
 
@@ -15,15 +15,18 @@ SETUP
 * First follow the README within ./server, in order to run the poker-server.
 
 * Next follow the README within ./client/web. This will allow you to
-play poker with a web-browser.
+play poker with a web-browser. If you want to try or develop other clients,
+review the ./client/README.
 
 * Follow the README within ./server/bot-modules/bot, in order to test
 your current setup with some poker-bots.
 
 * Finally, see the README within ./backoffice/poker-admin to setup the
-web-application that manages the poker-game.
+web-application that manages the poker-game (timings, tables, tournaments).
 
-* If you want to try or develop other clients, review the ./client/README.
+* To get a complete poker-system (with user management, accounting, wallet), you
+have to install the Cubeia Network, see ./backoffice/README.TXT. Note
+that this can become a difficult step, due to the ongoing development.
 
 SOFTWARE SUBSYSTEMS
 

@@ -6,9 +6,6 @@
     <dependencies/>
     <description/>
     <exported>
-        <package>com.cubeia.games.postlogin.api.-</package>
-        <package>com.cubeia.games.poker.tournament.messages.-</package>
-        <package>com.cubeia.poker.timing.-</package>
-        <package>com.cubeia.poker.betting.-</package>
+    
     </exported>
 </service>
