@@ -31,41 +31,66 @@ import java.math.BigDecimal;
 public class RebuyConfigurationPanel extends Panel {
 
     private static final Logger log = Logger.getLogger(RebuyConfigurationPanel.class);
-
-    private final PropertyModel<RebuyConfiguration> model;
+    private final CheckBox addOnsEnabled;
+    private final TextField<Integer> numberOfLevelsWithRebuys;
+    private final TextField<BigDecimal> rebuyCost;
+    private final TextField<Integer> chipsForRebuy;
+    private final TextField<BigDecimal> addOnCost;
+    private final TextField<Integer> chipsForAddOn;
+    private final TextField<Long> maxStackForRebuy;
 
     @SpringBean(name="adminDAO")
     private AdminDAO adminDAO;
+    private final RebuyConfiguration rebuyConfiguration;
+    private final TextField<Integer> rebuys;
 
-    public RebuyConfigurationPanel(String id, PropertyModel<RebuyConfiguration> propertyModel) {
-        super(id, propertyModel);
-        this.model = propertyModel;
-        this.<Integer>add("numberOfRebuysAllowed");
-        checkBox("addOnsEnabled");
-        this.<Integer>add("numberOfLevelsWithRebuys");
-        this.<BigDecimal>add("rebuyCost");
-        this.<Integer>add("chipsForRebuy");
-        this.<BigDecimal>add("addOnCost");
-        this.<Integer>add("chipsForAddOn");
-        this.<Long>add("maxStackForRebuy");
-        setEnabled(false);
-        log.debug("Setting enabled false.");
+    public RebuyConfigurationPanel(String id, RebuyConfiguration rebuyConfiguration, boolean enabled) {
+        super(id);
+        this.rebuyConfiguration = rebuyConfiguration;
+        rebuys = add("numberOfRebuysAllowed");
+        addOnsEnabled = checkBox("addOnsEnabled");
+        numberOfLevelsWithRebuys = add("numberOfLevelsWithRebuys");
+        rebuyCost = add("rebuyCost");
+        chipsForRebuy = add("chipsForRebuy");
+        addOnCost = add("addOnCost");
+        chipsForAddOn = add("chipsForAddOn");
+        maxStackForRebuy = add("maxStackForRebuy");
+        setEnabled(enabled);
+        log.debug("Setting enabled to: " + enabled);
     }
 
-    private void checkBox(String expression) {
+    public void clear() {
+        rebuys.setModelObject(0);
+        addOnsEnabled.setModelObject(false);
+        numberOfLevelsWithRebuys.setModelObject(0);
+        rebuyCost.setModelObject(BigDecimal.ZERO);
+        chipsForRebuy.setModelObject(0);
+        addOnCost.setModelObject(BigDecimal.ZERO);
+        chipsForAddOn.setModelObject(0);
+        maxStackForRebuy.setModelObject(0L);
+    }
+
+    public void setRebuysEnabled(boolean enabled) {
+        setEnabled(enabled);
+        if (!enabled) {
+            clear();
+        }
+    }
+
+    private CheckBox checkBox(String expression) {
         CheckBox checkBox = new CheckBox(expression, model(expression));
-//        checkBox.setEnabled(false);
         add(checkBox);
+        return checkBox;
     }
 
-    private <T> void add(String expression) {
+    private <T> TextField<T> add(String expression) {
         TextField<T> textField = new TextField<T>(expression, model(expression));
-//        textField.setEnabled(false);
         add(textField);
+        return textField;
     }
 
     private PropertyModel model(String expression) {
-        return new PropertyModel(model, expression);
+        return new PropertyModel(rebuyConfiguration, expression);
     }
 
 }

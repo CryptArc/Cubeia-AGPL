@@ -20,25 +20,36 @@ package com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled;
 import com.cubeia.games.poker.admin.db.AdminDAO;
 import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.configuration.TournamentConfigurationPanel;
+import com.cubeia.games.poker.admin.wicket.pages.tournaments.rebuy.RebuyConfigurationPanel;
+import com.cubeia.games.poker.tournament.configuration.RebuyConfiguration;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
+import org.apache.log4j.Logger;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.extensions.yui.calendar.DateField;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 public class EditTournament extends BasePage {
 
+    private static final Logger log = Logger.getLogger(EditTournament.class);
+
     @SpringBean(name="adminDAO")
     private AdminDAO adminDAO;
     
     private ScheduledTournamentConfiguration tournament;
-    
+    private RebuyConfigurationPanel rebuyConfigurationPanel;
+    private final Model<Boolean> rebuysEnabled = Model.of(Boolean.FALSE);
+
     public EditTournament(final PageParameters parameters) {
         super(parameters);
         final Integer tournamentId = parameters.get("tournamentId").toInt();
@@ -65,9 +76,33 @@ public class EditTournament extends BasePage {
         tournamentForm.add(new TextField<Integer>("minutesInRegistering", new PropertyModel(this, "tournament.schedule.minutesInRegistering")));
         tournamentForm.add(new TextField<Integer>("minutesVisibleAfterFinished", new PropertyModel(this, "tournament.schedule.minutesVisibleAfterFinished")));
 
+        addRebuyPanel(tournamentForm);
+
         add(tournamentForm);
 
         add(new FeedbackPanel("feedback"));
+    }
+
+    private void addRebuyPanel(Form<ScheduledTournamentConfiguration> tournamentForm) {
+        if (tournament.getConfiguration().getRebuyConfiguration() == null) {
+            tournament.getConfiguration().setRebuyConfiguration(new RebuyConfiguration());
+        }
+        boolean enabled = tournament.getConfiguration().getRebuyConfiguration().getNumberOfRebuysAllowed() != 0;
+        rebuysEnabled.setObject(enabled);
+        CheckBox enableRebuys = new CheckBox("rebuysEnabled", rebuysEnabled);
+        enableRebuys.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+                    @Override
+                    protected void onUpdate(AjaxRequestTarget target) {
+                        log.debug("rr " + tournament.getConfiguration().getRebuyConfiguration().getNumberOfRebuysAllowed());
+                        rebuyConfigurationPanel.setRebuysEnabled(!rebuyConfigurationPanel.isEnabled());
+                        target.add(rebuyConfigurationPanel);
+                    }
+                });
+        tournamentForm.add(enableRebuys);
+
+        rebuyConfigurationPanel = new RebuyConfigurationPanel("rebuyConfiguration", tournament.getConfiguration().getRebuyConfiguration(), enabled);
+        rebuyConfigurationPanel.setOutputMarkupId(true);
+        tournamentForm.add(rebuyConfigurationPanel);
     }
 
     private void loadFormData(final Integer tournamentId) {

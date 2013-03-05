@@ -20,6 +20,7 @@ package com.cubeia.games.poker.tournament.configuration;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
@@ -27,7 +28,7 @@ import java.math.BigDecimal;
  *
  */
 @Entity
-public class RebuyConfiguration {
+public class RebuyConfiguration implements Serializable {
 
     @Id
     @GeneratedValue
