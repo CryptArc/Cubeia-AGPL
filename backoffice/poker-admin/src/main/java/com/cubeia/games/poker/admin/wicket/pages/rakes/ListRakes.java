@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.cubeia.games.poker.admin.wicket.util.ArchiveLinkPanel;
 import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.timing.TimingProfile;
 import org.apache.wicket.Component;
@@ -83,7 +84,7 @@ public class ListRakes extends BasePage {
             @Override
             public void populateItem(Item<ICellPopulator<RakeSettings>> item, String componentId, IModel<RakeSettings> model) {
                 RakeSettings rake = model.getObject();
-                Component panel = new DeleteLinkPanel(componentId, RakeSettings.class, rake.getId(), ListRakes.class);
+                Component panel = new ArchiveLinkPanel(componentId, new RakeArchiver(rake), rake, ListRakes.class);
                 item.add(panel);
             }
 

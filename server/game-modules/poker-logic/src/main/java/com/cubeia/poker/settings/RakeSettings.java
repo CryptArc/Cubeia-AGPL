@@ -58,6 +58,8 @@ public class RakeSettings implements Serializable {
     @Column(nullable = false)
     private long rakeLimit5Plus = DEFAULT_RAKE_LIMIT;
 
+    private boolean archived;
+
     public RakeSettings() {
     }
 
@@ -195,41 +197,33 @@ public class RakeSettings implements Serializable {
         }
     }
 
+    public boolean isArchived() {
+        return archived;
+    }
+
+    public void setArchived(boolean archived) {
+        this.archived = archived;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         RakeSettings that = (RakeSettings) o;
 
-        if (id != that.id) {
+        if (archived != that.archived) return false;
+        if (id != that.id) return false;
+        if (rakeLimit2Plus != that.rakeLimit2Plus) return false;
+        if (rakeLimit3Plus != that.rakeLimit3Plus) return false;
+        if (rakeLimit5Plus != that.rakeLimit5Plus) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (rakeFraction2Plus != null ? !rakeFraction2Plus.equals(that.rakeFraction2Plus) : that.rakeFraction2Plus != null)
             return false;
-        }
-        if (rakeLimit2Plus != that.rakeLimit2Plus) {
+        if (rakeFraction3Plus != null ? !rakeFraction3Plus.equals(that.rakeFraction3Plus) : that.rakeFraction3Plus != null)
             return false;
-        }
-        if (rakeLimit3Plus != that.rakeLimit3Plus) {
+        if (rakeFraction5Plus != null ? !rakeFraction5Plus.equals(that.rakeFraction5Plus) : that.rakeFraction5Plus != null)
             return false;
-        }
-        if (rakeLimit5Plus != that.rakeLimit5Plus) {
-            return false;
-        }
-        if (name != null ? !name.equals(that.name) : that.name != null) {
-            return false;
-        }
-        if (rakeFraction2Plus != null ? !rakeFraction2Plus.equals(that.rakeFraction2Plus) : that.rakeFraction2Plus != null) {
-            return false;
-        }
-        if (rakeFraction3Plus != null ? !rakeFraction3Plus.equals(that.rakeFraction3Plus) : that.rakeFraction3Plus != null) {
-            return false;
-        }
-        if (rakeFraction5Plus != null ? !rakeFraction5Plus.equals(that.rakeFraction5Plus) : that.rakeFraction5Plus != null) {
-            return false;
-        }
 
         return true;
     }
@@ -244,6 +238,7 @@ public class RakeSettings implements Serializable {
         result = 31 * result + (int) (rakeLimit3Plus ^ (rakeLimit3Plus >>> 32));
         result = 31 * result + (rakeFraction5Plus != null ? rakeFraction5Plus.hashCode() : 0);
         result = 31 * result + (int) (rakeLimit5Plus ^ (rakeLimit5Plus >>> 32));
+        result = 31 * result + (archived ? 1 : 0);
         return result;
     }
 
@@ -258,6 +253,7 @@ public class RakeSettings implements Serializable {
                 ", rakeLimit3Plus=" + rakeLimit3Plus +
                 ", rakeFraction5Plus=" + rakeFraction5Plus +
                 ", rakeLimit5Plus=" + rakeLimit5Plus +
+                ", archived=" + archived +
                 '}';
     }
 }
