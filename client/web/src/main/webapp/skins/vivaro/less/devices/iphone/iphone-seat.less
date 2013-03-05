@@ -1,23 +1,49 @@
 @seat-bg:#333;
 @player-base-height:45%;
 @base-top: 35%;
-@base-content-top:@base-top+4%;
+@base-content-top:@base-top+2%;
 .seat {
     position: absolute;
-    width:19%;
-    padding-bottom: 16%;
+    width:28%;
+    height:25%;
     z-index: 10;
+    .avatar-base {
+        border-width: 1px;
+        width:70%;
+        .border-radius(0);
+        height:50%;
+        z-index:10;
+    }
+    .action-amount {
+        font-size:170%;
+        top:90%;
+        z-index: 10;
+    }
+    .cards-container {
+        width: 70%;
+        height: 100%;
+    }
 }
-.avatar-base {
-    background-color:@seat-bg;
-    width:90%;
-    height: @player-base-height;
-    left:10%;
-    top:@base-top;
+
+
+.my-player-seat {
     position: absolute;
-    .border-radius(2px);
+    width:28%;
+    height:25%;
     z-index: 10;
+    .avatar-base {
+        border-width: 1px;
+        width:70%;
+        .border-radius(0);
+        height:50%;
+        z-index:10;
+    }
+    .cards-container {
+        width: 40%;
+        height: 70%;
+    }
 }
+
 .seat-empty {
     .avatar-base {
         background: none;
@@ -56,11 +82,11 @@
 .action-text, .player-status, .hand-strength {
     font-weight: bold;
     top:@base-content-top;
-    width:75%;
+    width:68%;
     left:14%;
     padding:2% 0;
     text-align: left;
-    font-size: 180%;
+    font-size: 170%;
     background-color: @seat-bg;
     opacity:1;
     text-overflow: ellipsis;
@@ -78,11 +104,6 @@
     .border-radius(0 0 0 0);
 }
 
-.action-amount {
-    font-size:200%;
-    top:90%;
-    z-index: 10;
-}
 .cards-container-player {
     z-index: 5;
     left: 14%;
@@ -96,17 +117,4 @@
 }
 .main-pot, .pot-transfer {
     font-size: 200%;
-}
-.my-player-seat {
-    .action-text, .player-status, .hand-strength {
-        text-align: center;
-        background-color:#1a1a1a;
-        opacity: 1;
-        top:70%;
-    }
-    .cards-container {
-        top:10%;
-        left: 0;
-        padding-left:10%;
-    }
 }

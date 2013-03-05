@@ -1,4 +1,22 @@
 
+.table-logo {
+    top: 30%;
+    left: 40%;
+    width: 20%;
+    padding-top: 8%;
+    position: absolute;
+    background-size: 100% 100%;
+    opacity:0.5;
+}
+
+#tableViewContainer {
+    width:100%;
+    height:100%;
+    position: absolute;
+    background-size: 100%;
+    margin: 0 auto;
+}
+
 .multi-view-switch {
     background-image: url("../images/table/single-table-button.png");
     background-size: 100%;
@@ -14,30 +32,14 @@
     }
 
 }
+
 .multi-table {
     .table-container {
         float:left;
         position: relative;
     }
 }
-.table-logo {
-    top: 30%;
-    left: 35%;
-    width: 30%;
-    padding-top: 8%;
-    background-image: url("../images/lobby/poker-logo.png");
-    position: absolute;
-    background-size: 100% 100%;
-    opacity:0.5;
-}
 
-#tableViewContainer {
-    width:100%;
-    height:100%;
-    position: absolute;
-    background-size: 100%;
-    margin: 0 auto;
-}
 .table-container {
     width:100%;
     height:100%;
@@ -46,18 +48,17 @@
     overflow: hidden;
     top:0;
     left:0;
-    background-image: url("../images/lobby/fabric-small.png");
-    background-position: center;
+    background-image: url("../images/table/red-table.png");
+    background-position: center 20%;
     background-repeat: no-repeat;
+    background-size: 85% auto;
 }
-
 .default-table {
     width:100%;
     height:80%;
     position: absolute;
 }
 .bottom-bar {
-    border-top: 1px solid @mainGreen;
     bottom: 0;
     height: 16%;
     width: 94%;
@@ -67,22 +68,51 @@
 }
 
 .own-player {
+
+    z-index: 10;
+    position:absolute;
+    left:0%;
+    top:0%;
     width:30%;
+    height:40%;
     display: inline-block;
 
-    .name {
-        font-size:180%;
-    }
 
     .balance {
-        font-size:180%;
+        margin-top:1%;
+        font-weight: bold;
+        color:#ababab;
+        &:first-letter {
+            color:#ababab;
+        }
+    }
+
+    .name, .balance {
+        font-size:100%;
+        display:none;
+    }
+    .name {
+        color:#fff;
+        font-size:90%;
         font-weight: bold;
     }
 }
 .no-more-blinds-container {
+    position: absolute;
     display:inline-block;
     clear:both;
-
+    label {
+        display: inline-block;
+    }
+}
+.sit-out-next-hand-container {
+    position: absolute;
+    display:inline-block;
+    clear:both;
+    top: 40%;
+    label {
+        display: inline-block;
+    }
 }
 .balance:first-letter {
     color:@mainGreen;
@@ -92,61 +122,49 @@
     width:35%;
     height:80%;
     display: inline-block;
-    float:right;
-    position: relative;
-
-    .action-button {
-        width:31%;
-        padding-bottom: 31%;
-
-        &:first-child {
-            margin-left: 1%;
-        }
-        &:last-child {
-            margin-right: 0;
-        }
-    }
+    position: absolute;
+    right: 0;
+    top: 30%;
 }
 .total-pot {
     font-size: 120%;
     position: absolute;
     width: auto;
-    top: 32%;
-    right: 27%;
+    top: 35%;
+    right: 31%;
     text-align: right;
-    color:#999;
+    color:#d46553;
     span {
         color:#fff;
     }
 }
 .main-pot, .pot-transfer {
-    font-size: 120%;
+    font-size:120%;
     font-weight: bold;
-    position: absolute;
-    width: auto;
-    top: 60%;
-    left: 25%;
-
-    span, div {
-        display: inline-block;
-    }
+    left:30%;
+    top:58.5%;
+    position:absolute;
     span {
-        color:@mainGreen;
-    }
-    span.pot-value {
         color:#fff;
+    }
+    div {
+        display:inline-block;
+    }
+    .balance:first-letter {
+        color:#fff;
+
     }
 }
 .pot-transfer {
-    width:auto;
+    width:19%;
     text-align: center;
 }
 .community-cards {
     position: absolute;
-    width: 50%;
+    width: 40%;
     height: 22%;
-    left: 25%;
-    top: 37%;
+    left: 30%;
+    top: 40%;
 }
 .community-card-container {
     position: relative;
@@ -154,6 +172,7 @@
     width: 18%;
     display: inline-block;
     margin-right: 1%;
+
     .transform(translate3d(0,30%,0));
     .transition-transform(0.5s ease-out);
 
@@ -173,14 +192,5 @@
     img {
       max-width: 100%;
     }
-}
 
-.hand-history {
-    cursor: pointer;
-    width: 25%;
-    top: 78%;
-    left: 3%;
-    height: 3%;
-    position: absolute;
 }
-

@@ -13,9 +13,9 @@ Poker.ActionButtons = Poker.AbstractTableButtons.extend({
     fixedBetActionButton : null,
     fixedRaiseActionButton : null,
 
-    init : function(view,actionCallback, raiseCallback, betCallback, amountCallback) {
+    init : function(view,actionCallback, raiseCallback, betCallback, amountCallback, cancelCallback) {
         this._super(view,actionCallback);
-
+        var self = this;
         this._addActionButton($(".action-bet",view),Poker.ActionType.BET,betCallback ,false);
         this._addActionButton($(".action-raise",view),Poker.ActionType.RAISE,raiseCallback,false);
 
@@ -32,7 +32,7 @@ Poker.ActionButtons = Poker.AbstractTableButtons.extend({
         this.doRaiseActionButton = new Poker.BetAmountButton($(".do-action-raise",view),
             Poker.ActionType.RAISE,actionCallback,true,amountCallback);
         this.cancelBetActionButton = new Poker.ActionButton($(".action-cancel-bet",view),null,function(){
-            self.onClickCancelButton();
+            cancelCallback();
         },false);
 
         this.fixedBetActionButton = new Poker.ActionButton($(".fixed-action-bet",view),Poker.ActionType.BET,actionCallback,true);

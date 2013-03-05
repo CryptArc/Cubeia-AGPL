@@ -104,8 +104,13 @@ public abstract class TableForm extends Panel {
             }
 
             private void validateBuyIns(Form<?> form) {
-                if (betStrategy.getModelObject() != BetStrategyType.FIXED_LIMIT && maxBuyIn == null) {
+                Integer minBuyInValue = minBuyIn.getConvertedInput();
+                Integer maxBuyInValue = maxBuyIn.getConvertedInput();
+                if (betStrategy.getModelObject() != BetStrategyType.FIXED_LIMIT && maxBuyInValue == null) {
                     form.error("Max Buy-in must be set for NL and PL.", Collections.<String, Object>emptyMap());
+                }
+                if (maxBuyInValue != null && minBuyInValue != null && maxBuyInValue < minBuyInValue) {
+                    form.error("Max Buy-in must not be less than Min Buy-in.", Collections.<String, Object>emptyMap());
                 }
             }
         });
