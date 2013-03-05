@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.cubeia.games.poker.admin.wicket.util.ArchiveLinkPanel;
 import com.cubeia.poker.timing.TimingProfile;
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
@@ -85,7 +86,7 @@ public class ListTimings extends BasePage {
             @Override
             public void populateItem(Item<ICellPopulator<TimingProfile>> item, String componentId, IModel<TimingProfile> model) {
                 TimingProfile timing = model.getObject();
-                Component panel = new DeleteLinkPanel(componentId, TimingProfile.class, timing.getId(), ListTimings.class);
+                Component panel = new ArchiveLinkPanel(componentId, new TimingArchiver(timing), timing, ListTimings.class);
                 item.add(panel);
             }
 

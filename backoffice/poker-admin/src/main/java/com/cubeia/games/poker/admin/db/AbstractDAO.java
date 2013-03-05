@@ -90,13 +90,13 @@ public class AbstractDAO extends JpaDaoSupport implements AdminDAO {
     @Override
     @SuppressWarnings({"unchecked"})
     public List<TimingProfile> getTimingProfiles() {
-        return getJpaTemplate().find("from TimingProfile");
+        return getJpaTemplate().find("from TimingProfile where archived is false");
     }
 
     @Override
     @SuppressWarnings({"unchecked"})
     public List<RakeSettings> getRakeSettings() {
-        return getJpaTemplate().find("from RakeSettings");
+        return getJpaTemplate().find("from RakeSettings where archived is false");
     }
 
     @SuppressWarnings("unchecked")
