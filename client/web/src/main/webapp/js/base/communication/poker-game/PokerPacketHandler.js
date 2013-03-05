@@ -58,6 +58,7 @@ Poker.PokerPacketHandler = Class.extend({
         if(performAction.stackAmount) {
             amount = Poker.Utils.formatCurrency(performAction.stackAmount);
         }
+
         this.tableManager.handlePlayerAction(this.tableId,performAction.player,actionType,amount);
     },
     handleDealPublicCards : function(packet) {

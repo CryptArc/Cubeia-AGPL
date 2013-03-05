@@ -333,15 +333,12 @@ Poker.TableManager = Class.extend({
 
             this.exposePrivateCard(tableId, cardId, cardstring);
 
-
-
-        //    Poker.Utils.getCardString(cards[i].card));
         }
     },
 
     exposePrivateCard : function(tableId,cardId,cardString) {
         var table = this.getTable(tableId);
-        table.getLayoutManager().onExposePrivateCard(cardId,cardString);
+        table.getLayoutManager().onExposePrivateCard(cardId, cardString);
     },
 
     notifyWaitingToStartBreak : function() {

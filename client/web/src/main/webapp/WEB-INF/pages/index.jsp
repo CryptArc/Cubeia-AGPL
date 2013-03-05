@@ -115,6 +115,7 @@
     <script type="text/javascript" src="${cp}/js/base/ui/animation/TransformAnimation.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/animation/AnimationManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/DealerButton.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/sound/SoundPlayer.js"></script>
     <script type="text/javascript" src="${cp}/js/base/sound/SoundManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/sound/SoundRepository.js"></script>
     <script type="text/javascript" src="${cp}/js/base/sound/Sounds.js"></script>
