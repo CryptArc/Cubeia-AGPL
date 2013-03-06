@@ -153,7 +153,7 @@ public class ShowHand extends BasePage {
                 } else if (event instanceof PlayerCardsDealt) {
                     PlayerCardsDealt playerCards = (PlayerCardsDealt) event;
                     action.setObject("Player cards dealt");
-                    cards.setList(playerCards.getCards());
+                    cards.setList(playerCards.getPrivateCards());
                     playerId.setObject(String.valueOf(playerCards.getPlayerId()));
                 } else if (event instanceof TableCardsDealt) {
                     TableCardsDealt playerCards = (TableCardsDealt) event;

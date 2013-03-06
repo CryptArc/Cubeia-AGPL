@@ -27,4 +27,5 @@ public interface HandHistoryProviderService extends Contract {
     public String getHandIds(int tableId, int playerId, int count, long time);
     public String getHand(String handId, int playerId);
     public String getHands(int tableId, int playerId, int count, long time);
+    public String getHandSummaries(int tableId, int playerId, int count, long time);
 }

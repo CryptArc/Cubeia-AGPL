@@ -23,6 +23,8 @@ Poker.HandHistoryPacketHandler = Class.extend({
             this.handleHands(jsonData.tableId,jsonData.value);
         } else if(jsonData.packetType == "hand") {
             this.handleHand(jsonData.value[0]);
+        } else if(jsonData.packetType == "hand_summaries") {
+            this.handleHandSummaries(jsonData.tableId,jsonData.value);
         }
 
     },
@@ -30,7 +32,10 @@ Poker.HandHistoryPacketHandler = Class.extend({
      * @param {Object[]} handIds
      */
     handleHandIds : function(tableId,handIds){
-        this.handHistoryManager.showHandIds(tableId,handIds);
+
+    },
+    handleHandSummaries : function(tableId, summaries) {
+        this.handHistoryManager.showHandSummaries(tableId,summaries);
     },
     handleHands : function(tableId,hands) {
 

@@ -25,10 +25,10 @@ import com.cubeia.firebase.api.service.Service;
 import com.cubeia.firebase.api.service.ServiceContext;
 import com.cubeia.firebase.api.service.ServiceRouter;
 import com.cubeia.firebase.io.ProtocolObject;
-import com.cubeia.games.poker.handhistoryservice.io.protocol.*;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.common.mongo.DatabaseStorageConfiguration;
 import com.cubeia.games.poker.common.mongo.MongoStorage;
+import com.cubeia.games.poker.handhistoryservice.io.protocol.*;
 import com.cubeia.poker.handhistory.api.HandHistoryEvent;
 import com.cubeia.poker.handhistory.api.HistoricHand;
 import com.cubeia.poker.handhistory.provider.api.HandHistoryProviderService;
@@ -55,29 +55,25 @@ public class HandHistoryProviderServiceImpl implements HandHistoryProviderServic
         hand_ids,
         hand,
         hands,
-        undefined
+        hand_summaries,
+        undefined;
     }
 
     @Override
     public String getHandIds(int tableId, int playerId, int count, long time) {
         log.debug("GetHandIds request data - TableId: " + tableId + " PlayerId: " + playerId + " Count: " + count + " Time: " + time);
         String result = "[]";
+        Query query = this.createHistoricHandQuery(playerId);
+        query.field("table.tableId").equal(tableId);
         if (count > 0) {
             if (count > MAX_HAND_IDS) {
                 count = MAX_HAND_IDS;
             }
-            Query query = mongoStorage.createQuery(HistoricHand.class);
-            query.field("table.tableId").equal(tableId);
-            query.filter("seats elem", new BasicDBObject("playerId", playerId));
-            query.retrievedFields(true, "id");
+
             result = convertToJson(query.order("-startTime").limit(count).asKeyList());
         }
         else {
-            Query query = mongoStorage.createQuery(HistoricHand.class);
-            query.field("table.tableId").equal(tableId);
             query.field("startTime").greaterThanOrEq(time);
-            query.filter("seats elem", new BasicDBObject("playerId", playerId));
-            query.retrievedFields(true, "id").retrievedFields(false, "_id");
             result = convertToJson(query.order("-startTime").limit(MAX_HAND_IDS).asKeyList());
         }
         return result;
@@ -86,11 +82,13 @@ public class HandHistoryProviderServiceImpl implements HandHistoryProviderServic
     @Override
     public String getHand(String handId, int playerId) {
         log.debug("GetHand request data - HandId: " + handId + " PlayerId: " + playerId);
-        Query query = mongoStorage.createQuery(HistoricHand.class);
+        Query query = this.createHistoricHandQuery(playerId);
+
         query.field("id").equal(handId);
-        query.filter("seats elem", new BasicDBObject("playerId", playerId));
+
         return convertToJson(query.asList());
     }
+
 
     @Override
     public String getHands(int tableId, int playerId, int count, long time) {
@@ -100,19 +98,51 @@ public class HandHistoryProviderServiceImpl implements HandHistoryProviderServic
             if (count > MAX_HANDS) {
                 count = MAX_HANDS;
             }
-            Query query = mongoStorage.createQuery(HistoricHand.class);
+            Query query = this.createHistoricHandQuery(playerId);
             query.field("table.tableId").equal(tableId);
-            query.filter("seats elem", new BasicDBObject("playerId", playerId));
+
             result = convertToJson(query.order("-startTime").limit(count).asList());
-        }
-        else {
-            Query query = mongoStorage.createQuery(HistoricHand.class);
+        } else {
+            Query query = this.createHistoricHandQuery(playerId);
             query.field("table.tableId").equal(tableId);
             query.field("startTime").greaterThanOrEq(time);
-            query.filter("seats elem", new BasicDBObject("playerId", playerId));
+
             result = convertToJson(query.order("-startTime").limit(MAX_HANDS).asList());
         }
         return result;
+    }
+
+    @Override
+    public String getHandSummaries(int tableId, int playerId, int count, long time) {
+        log.debug("GetHandSummary request data - TableId: " + tableId + " PlayerId: " + playerId + " Count: " + count + " Time: " + time);
+        String result = "[]";
+        Query query = mongoStorage.createQuery(HistoricHand.class);
+        query.filter("seats elem", new BasicDBObject("playerId", playerId));
+        query.field("table.tableId").equal(tableId);
+        query.retrievedFields(false, "events","seats","results");
+
+        if (count > 0) {
+            if (count > MAX_HANDS) {
+                count = MAX_HANDS;
+            }
+        } else {
+            query.field("startTime").greaterThanOrEq(time);
+            count = MAX_HANDS;
+        }
+
+
+        result = convertToJson(query.order("-startTime").limit(count).asList());
+
+        return result;
+    }
+
+    private Query createHistoricHandQuery(int playerId) {
+        Query query = mongoStorage.createQuery(HistoricHand.class);
+        query.filter("seats elem", new BasicDBObject("playerId", playerId));
+
+        //DO NOT show players private cards
+        query.retrievedFields(false, "events.privateCards");
+        return query;
     }
 
     @Override
@@ -129,20 +159,25 @@ public class HandHistoryProviderServiceImpl implements HandHistoryProviderServic
         PacketType responseType = PacketType.undefined;
         String value = "";
         int tableId = -1;
-        if (protocolObject.getClass() == HandHistoryProviderRequestHand.class) {
+        if (protocolObject instanceof HandHistoryProviderRequestHand) {
             HandHistoryProviderRequestHand request = (HandHistoryProviderRequestHand)protocolObject;
             value =  getHand(request.handId, e.getPlayerId());
             responseType = PacketType.hand;
-        } else if (protocolObject.getClass() == HandHistoryProviderRequestHands.class) {
+        } else if (protocolObject instanceof HandHistoryProviderRequestHands) {
             HandHistoryProviderRequestHands request = (HandHistoryProviderRequestHands)protocolObject;
             tableId = request.tableId;
             value =  getHands(request.tableId, e.getPlayerId(), request.count, getTime(request.time));
             responseType = PacketType.hands;
-        } else if (protocolObject.getClass() == HandHistoryProviderRequestHandIds.class) {
+        } else if (protocolObject instanceof HandHistoryProviderRequestHandIds) {
             HandHistoryProviderRequestHandIds request = (HandHistoryProviderRequestHandIds)protocolObject;
             tableId = request.tableId;
             value =  getHandIds(request.tableId, e.getPlayerId(), request.count, getTime(request.time));
             responseType = PacketType.hand_ids;
+        } else if(protocolObject instanceof HandHistoryProviderRequestHandSummaries) {
+            HandHistoryProviderRequestHandSummaries request = (HandHistoryProviderRequestHandSummaries) protocolObject;
+            tableId = request.tableId;
+            responseType = PacketType.hand_summaries;
+            value = getHandSummaries(request.tableId,e.getPlayerId(),request.count, getTime(request.time));
         }
 
         String protocolValue = "{ \"packetType\" : \"" + responseType + "\" ,\"tableId\" : " + tableId + ", \"value\" : " + value + " }";

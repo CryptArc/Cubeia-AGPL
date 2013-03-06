@@ -158,13 +158,13 @@ public class HandHistoryReporter {
 
     public void notifyPrivateCards(int playerId, List<Card> cards) {
         PlayerCardsDealt ev = new PlayerCardsDealt(playerId, false);
-        ev.getCards().addAll(Card.translateCards(cards));
+        ev.getPrivateCards().addAll(Card.translateCards(cards));
         post(ev);
     }
 
     public void notifyPrivateExposedCards(int playerId, List<Card> cards) {
         PlayerCardsDealt ev = new PlayerCardsDealt(playerId, true);
-        ev.getCards().addAll(Card.translateCards(cards));
+        ev.getPrivateCards().addAll(Card.translateCards(cards));
         post(ev);
     }
 

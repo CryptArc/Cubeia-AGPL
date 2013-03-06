@@ -124,8 +124,11 @@ Poker.Seat = Class.extend({
        this.seatElement.find(".player-card-container img").attr("src",contextPath + "/skins/" + Poker.SkinConfiguration.name +"/images/cards/gray-back.svg");
    },
    dealCard : function(card) {
+       console.log("CARDS!!!");
+       console.log(this.cardsContainer);
        this.cardsContainer.append(card.render());
        console.log(card);
+       console.log(this.cardsContainer.html());
        this.onCardDealt(card);
    },
    onCardDealt : function(card) {
@@ -152,8 +155,6 @@ Poker.Seat = Class.extend({
      */
    onBettingRoundComplete : function(){
        this.inactivateSeat();
-
-
    },
    activateSeat : function(allowedActions, timeToAct,mainPot,fixedLimit) {
        this.seatElement.addClass("active-seat");

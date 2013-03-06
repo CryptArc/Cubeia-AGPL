@@ -920,34 +920,65 @@
     </div>
 </script>
 <script type="text/mustache" id="handHistoryIdsTemplate" style="display:none;">
-   <ul>
-       {{#handIds}}
-        <li id="hand-{{id}}">{{id}}</li>
-       {{/handIds}}
+   <p class="no-hands" style="display:none;">You haven't played any hands at the selected table</p>
+    <ul>
+       {{#summaries}}
+        <li id="hand-{{id}}">
+            <div class="table-name">{{table.tableName}}</div>
+            <div class="hand-id">{{id}}</div>
+            <div class="start-time">{{startTime}}</div>
+        </li>
+       {{/summaries}}
    </ul>
 </script>
 <script type="text/mustache" id="handHistoryLogTemplate" style="display:none;">
     <h2>Hand info</h2>
     <p>
-        Hand Id: <span>{{id}}</span>
-        Table Name : <span>{{table.name}}</span>
+        Hand Id: <span>{{id}}</span><br/>
+        Table Name : <span>{{table.tableName}}</span><br/>
+        Table id : <span>{{table.tableId}}</span><br/>
+        Start time: <span>{{startTime}}</span>
     </p>
     <h2>Seats</h2>
-    <p>
-        {{#seats}}
-            <p class="seat">
-                <div>Name: <span>{{name}}</span></div>
-                <div>Pos: <span>{{seatId}}</span></div>
-                <div>Initial Balance: <span>{{initialBalance}}</span></div>
-            </p>
-        {{/seats}}
-    </p>
-    <h2>Results</h2>
-    <p>
-       {{#results}}
+    {{#seats}}
+        <p class="seat">
+            <div>Name: <span>{{name}}</span></div>
+            <div>Pos: <span>{{seatId}}</span></div>
+            <div>Initial Balance: <span>{{initialBalance}}</span></div>
+        </p>
+    {{/seats}}
 
-       {{/results}}
+    <h2>Events</h2>
+    {{#events}}
+    <p class="event">
+       {{#playerId}}
+            {{name}} {{action}} {{amount.amount}}
+            {{#playerCardsDealt}}
+                was dealt hole cards
+            {{/playerCardsDealt}}
+        {{/playerId}}
+        {{#tableCards}}
+            Community cards:
+        {{/tableCards}}
+        {{#playerCardsExposed}}
+            shows:
+        {{/playerCardsExposed}}
+        {{#cards}}
+            {{text}}
+        {{/cards}}
     </p>
+    {{/events}}
+    <h2>Results</h2>
+   {{#results}}
+        {{#res}}
+        <p class="results">
+            <div>Name: <span>{{name}}</span></div>
+            <div>Total bet: <span>{{totalBet}}</span></div>
+            <div>Total win: <span>{{totalWin}}</span></div>
+        </p>
+       {{/res}}
+    {{/results}}
+
 </script>
 <script type="text/mustache" id="tournamentBlindsStructureTemplate" style="display:none;">
     <h4>Blinds Structure</h4>

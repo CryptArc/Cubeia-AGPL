@@ -20,15 +20,9 @@ package com.cubeia.poker.handhistory.provider.impl;
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.firebase.api.service.ServiceContext;
 import com.cubeia.games.poker.common.mongo.DatabaseStorageConfiguration;
-import com.cubeia.poker.handhistory.api.HistoricHand;
-import com.cubeia.poker.handhistory.api.Player;
-import com.cubeia.poker.handhistory.api.Table;
+import com.cubeia.games.poker.common.mongo.MongoStorage;
+import com.cubeia.poker.handhistory.api.*;
 import com.cubeia.poker.handhistory.impl.JsonHandHistoryLogger;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
-import com.mongodb.Mongo;
-import com.mongodb.util.JSON;
 import de.flapdoodle.embedmongo.MongoDBRuntime;
 import de.flapdoodle.embedmongo.MongodExecutable;
 import de.flapdoodle.embedmongo.MongodProcess;
@@ -36,15 +30,12 @@ import de.flapdoodle.embedmongo.config.MongodConfig;
 import de.flapdoodle.embedmongo.distribution.Version;
 import de.flapdoodle.embedmongo.runtime.Network;
 import org.apache.log4j.Logger;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.mockito.Mock;
 
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
-import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
@@ -67,6 +58,8 @@ public class EmbeddedMongoHandHistoryProviderServiceTest {
     @Mock
     private DatabaseStorageConfiguration configuration;
 
+    MongoStorage storage = null;
+
     @Before
     public void setup() throws SystemException {
         initMocks(this);
@@ -80,7 +73,13 @@ public class EmbeddedMongoHandHistoryProviderServiceTest {
             protected DatabaseStorageConfiguration getConfiguration(ServiceContext context) {
                 return configuration;
             }
+            @Override
+            protected MongoStorage getMongoStorage() {
+                storage = new MongoStorage(configuration);
+                return storage;
+            }
         };
+
         service.init(null);
         service.start();
     }
@@ -98,31 +97,123 @@ public class EmbeddedMongoHandHistoryProviderServiceTest {
     }
 
     @Test
-    public void testFindHandHistory() throws Exception {
-        createHandHistory(1, 1);
-        String handHistory = service.getHands(1, 1, 0, 0L);
-        log.debug("Hand history (full): " + handHistory);
-        handHistory = service.getHand("1", 1);
-        log.debug("Hand history (hand by id): " + handHistory);
-        handHistory = service.getHandIds(1, 1, 0, 0L);
-        log.debug("Hand history (hand ids): " + handHistory);
-        assertThat(handHistory.length(), greaterThan(3));
+    public void testGetHandIds() throws Exception {
+
+        createHandHistory(1,"hand1", 1,2);
+        createHandHistory(1,"hand2", 1,2);
+        createHandHistory(1,"hand3",2,3);
+        createHandHistory(2,"hand4",1,2);
+
+        String handIds = service.getHandIds(1, 1, 10, 0);
+
+        log.debug(handIds);
+
+        Assert.assertTrue(handIds.contains("hand1"));
+        Assert.assertTrue(handIds.contains("hand2"));
+        Assert.assertFalse(handIds.contains("hand3"));
+        Assert.assertFalse(handIds.contains("hand4"));
     }
 
-    private void createHandHistory(int tableId, int playerId) throws UnknownHostException {
+    @Test
+    public void testGetHand() throws Exception {
+
+        createHandHistory(1,"hand1", 1,2);
+        createHandHistory(1,"hand2", 1,2);
+        createHandHistory(1,"hand3",2,3);
+        createHandHistory(2,"hand4",1,2);
+
+        String hand = service.getHand("hand1",1);
+        log.debug(hand);
+        Assert.assertTrue(hand.contains("hand1"));
+        Assert.assertTrue(hand.contains("\"privateCards\":[]"));
+        Assert.assertFalse(hand.contains("\"cards\":[]"));  //expose cards should contain something
+
+    }
+
+    @Test
+    public void testGetHandsByCount() throws Exception {
+        createHandHistory(1,"hand1",100L, 1,2);
+        createHandHistory(1,"hand2",200L, 1,2);
+        createHandHistory(1,"hand3",300L,2,3);
+        createHandHistory(2,"hand4",400L,1,2);
+
+        String hand = service.getHands(1,2,10,System.currentTimeMillis());
+        log.debug(hand);
+        Assert.assertTrue(hand.contains("hand1"));
+        Assert.assertTrue(hand.contains("hand2"));
+
+    }
+
+    @Test
+    public void testGetHandSummaries() throws Exception {
+        createHandHistory(1,"hand1",100L, 1,2);
+        createHandHistory(1,"hand2",200L, 1,2);
+        createHandHistory(1,"hand3",300L,2,3);
+        createHandHistory(2,"hand4",400L,1,2);
+
+        String hand = service.getHandSummaries(1,2,10,System.currentTimeMillis());
+        log.debug(hand);
+        Assert.assertTrue(hand.contains("hand1"));
+        Assert.assertTrue(hand.contains("hand2"));
+        Assert.assertTrue(hand.contains("\"events\":[]"));
+        Assert.assertTrue(hand.contains("\"seats\":[]"));
+        Assert.assertTrue(hand.contains("\"results\":[]"));
+    }
+
+    @Test
+    public void testGetHandsNoResults() throws Exception {
+        createHandHistory(1,"hand1",100L, 1,2);
+        createHandHistory(1,"hand2",200L, 1,2);
+
+        String hands = service.getHands(1,3,10,System.currentTimeMillis());
+        log.debug(hands);
+        Assert.assertFalse(hands.contains("hand1"));
+        Assert.assertFalse(hands.contains("hand2"));
+
+    }
+    @Test
+    public void testGetHandsByTime() throws Exception {
+        createHandHistory(1,"hand1",100L, 1,2);
+        createHandHistory(1,"hand2",200L, 1,2);
+        createHandHistory(1,"hand3",300L,2,3);
+        createHandHistory(2,"hand4",400L,1,2);
+
+        String hand = service.getHands(1,2,0,200L);
+        log.debug(hand);
+        Assert.assertFalse(hand.contains("hand1")); //hand one is not within time range
+        Assert.assertTrue(hand.contains("hand2"));
+
+    }
+
+    private void createHandHistory(int tableId, String handId, int... playerIds) throws UnknownHostException {
+        this.createHandHistory(tableId,handId,System.currentTimeMillis(),playerIds);
+    }
+    private void createHandHistory(int tableId, String handId,long startTime, int... playerIds) throws UnknownHostException {
         // Create a hand history.
         HistoricHand hand = new HistoricHand();
+        hand.setStartTime(startTime);
+        hand.setId(handId);
         Table table = new Table();
         table.setTableId(tableId);
-        hand.setTable(table);
-        Player player = new Player(playerId, 1, 400, "p1");
-        hand.getSeats().add(player);
 
-        // Store it.
-        Mongo mongo = new Mongo(HOST, PORT);
-        DB db = mongo.getDB("poker");
-        DBObject dbObject = (DBObject) JSON.parse(jsonLogger.convertToJson(hand));
-        DBCollection collection = db.getCollection("hands");
-        collection.insert(dbObject);
+        hand.setTable(table);
+        hand.setEvents(new ArrayList<HandHistoryEvent>());
+
+        for(int playerId : playerIds) {
+            Player player = new Player(playerId, 1, 400, "p" +playerId);
+            hand.getSeats().add(player);
+            PlayerCardsDealt pcd = new PlayerCardsDealt();
+            pcd.setPrivateCards(new ArrayList<GameCard>());
+            pcd.getPrivateCards().add(new GameCard(GameCard.Suit.CLUBS, GameCard.Rank.ACE));
+            pcd.setPlayerId(playerId);
+            hand.getEvents().add(pcd);
+            PlayerCardsExposed pce = new PlayerCardsExposed(playerId);
+            pce.setCards(new ArrayList<GameCard>());
+            pce.getCards().add(new GameCard(GameCard.Suit.CLUBS, GameCard.Rank.ACE));
+            hand.getEvents().add(pce);
+        }
+        table.setSeats(hand.getSeats().size());
+        storage.persist(hand);
+
     }
 }

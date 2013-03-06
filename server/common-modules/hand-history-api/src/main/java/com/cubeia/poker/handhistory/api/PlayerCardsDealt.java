@@ -25,7 +25,7 @@ public class PlayerCardsDealt extends HandHistoryEvent {
     private static final long serialVersionUID = 2419782176272291069L;
 	
     private int playerId;
-    private List<GameCard> cards = new LinkedList<GameCard>();
+    private List<GameCard> privateCards = new LinkedList<GameCard>();
     private boolean isExposed;
 
     public PlayerCardsDealt() {
@@ -44,12 +44,12 @@ public class PlayerCardsDealt extends HandHistoryEvent {
         this.playerId = playerId;
     }
 
-    public List<GameCard> getCards() {
-        return cards;
+    public List<GameCard> getPrivateCards() {
+        return privateCards;
     }
 
-    public void setCards(List<GameCard> cards) {
-        this.cards = cards;
+    public void setPrivateCards(List<GameCard> privateCards) {
+        this.privateCards = privateCards;
     }
 
     public boolean isExposed() {
@@ -70,7 +70,7 @@ public class PlayerCardsDealt extends HandHistoryEvent {
 
         if (isExposed != that.isExposed) return false;
         if (playerId != that.playerId) return false;
-        if (cards != null ? !cards.equals(that.cards) : that.cards != null) return false;
+        if (privateCards != null ? !privateCards.equals(that.privateCards) : that.privateCards != null) return false;
 
         return true;
     }
@@ -79,7 +79,7 @@ public class PlayerCardsDealt extends HandHistoryEvent {
     public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + playerId;
-        result = 31 * result + (cards != null ? cards.hashCode() : 0);
+        result = 31 * result + (privateCards != null ? privateCards.hashCode() : 0);
         result = 31 * result + (isExposed ? 1 : 0);
         return result;
     }
@@ -88,7 +88,7 @@ public class PlayerCardsDealt extends HandHistoryEvent {
     public String toString() {
         return "PlayerCardsDealt{" +
                 "playerId=" + playerId +
-                ", cards=" + cards +
+                ", privateCards=" + privateCards +
                 ", isExposed=" + isExposed +
                 '}';
     }
