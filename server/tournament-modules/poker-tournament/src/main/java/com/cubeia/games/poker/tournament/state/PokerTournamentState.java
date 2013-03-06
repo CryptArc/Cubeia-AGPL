@@ -30,6 +30,7 @@ import com.cubeia.games.poker.tournament.configuration.blinds.Level;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.TournamentLifeCycle;
 import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
 import com.cubeia.games.poker.tournament.configuration.payouts.Payouts;
+import com.cubeia.games.poker.tournament.rebuy.RebuySupport;
 import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.timing.TimingFactory;
@@ -72,7 +73,7 @@ public class PokerTournamentState implements Serializable {
     /** Maps playerId to balance */
     private Map<Integer, Long> balances = new HashMap<Integer, Long>();
 
-    private Set<Integer> pendingRegistrations = newHashSet();
+//    private Set<Integer> pendingRegistrations = newHashSet();
 
     private BlindsStructure blindsStructure;
 
@@ -128,6 +129,8 @@ public class PokerTournamentState implements Serializable {
 
     private Set<Integer> tablesNotReadyForBreak = new HashSet<Integer>();
 
+    private PendingBackendRequests pendingRequests = new PendingBackendRequests();
+
     private boolean sitAndGo;
 
     private BetStrategyType betStrategy;
@@ -139,7 +142,10 @@ public class PokerTournamentState implements Serializable {
     private String startDateString;
 
     private String registrationStartDateString;
+
     private long startingChips;
+
+    private RebuySupport rebuySupport = RebuySupport.NO_REBUYS;
 
     public boolean allTablesHaveBeenCreated(int tablesCreated) {
         return tablesCreated >= tablesToCreate;
@@ -151,6 +157,10 @@ public class PokerTournamentState implements Serializable {
 
     public String getCurrencyCode() {
         return currencyCode;
+    }
+
+    public PendingBackendRequests getPendingRequests() {
+        return pendingRequests;
     }
 
     public long getStartingChips() {
@@ -175,6 +185,14 @@ public class PokerTournamentState implements Serializable {
 
     public void setCurrencyCode(String currencyCode) {
         this.currencyCode = currencyCode;
+    }
+
+    public void setRebuySupport(RebuySupport rebuySupport) {
+        if (rebuySupport == null) {
+            this.rebuySupport = RebuySupport.NO_REBUYS;
+        } else {
+            this.rebuySupport = rebuySupport;
+        }
     }
 
     public void setResurrectingTournament(boolean resurrectingTournament) {
@@ -283,7 +301,7 @@ public class PokerTournamentState implements Serializable {
         return convertToMoney(buyIn.add(fee));
     }
 
-    private Money convertToMoney(BigDecimal moneyInDecimalForm) {
+    public Money convertToMoney(BigDecimal moneyInDecimalForm) {
         return new Money(moneyInDecimalForm.multiply(valueOf(100)).longValue(), currencyCode, 2);
     }
 
@@ -300,15 +318,15 @@ public class PokerTournamentState implements Serializable {
     }
 
     public void addPendingRegistration(int playerId) {
-        pendingRegistrations.add(playerId);
+        pendingRequests.addPendingRegistration(playerId);
     }
 
     public void removePendingRequest(int playerId) {
-        pendingRegistrations.remove(playerId);
+        pendingRequests.removePendingRegistration(playerId);
     }
 
     public boolean hasPendingRegistrations() {
-        return !pendingRegistrations.isEmpty();
+        return !pendingRequests.isEmpty();
     }
 
     public void addPlayerSession(PlayerSessionId sessionId) {
@@ -583,5 +601,9 @@ public class PokerTournamentState implements Serializable {
 
     public String getRegistrationStartDateString() {
         return registrationStartDateString;
+    }
+
+    public RebuySupport getRebuySupport() {
+        return rebuySupport;
     }
 }

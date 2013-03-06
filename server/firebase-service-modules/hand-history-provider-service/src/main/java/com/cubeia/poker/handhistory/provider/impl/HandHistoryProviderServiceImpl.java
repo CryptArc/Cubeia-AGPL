@@ -128,22 +128,24 @@ public class HandHistoryProviderServiceImpl implements HandHistoryProviderServic
 
         PacketType responseType = PacketType.undefined;
         String value = "";
-
+        int tableId = -1;
         if (protocolObject.getClass() == HandHistoryProviderRequestHand.class) {
             HandHistoryProviderRequestHand request = (HandHistoryProviderRequestHand)protocolObject;
             value =  getHand(request.handId, e.getPlayerId());
             responseType = PacketType.hand;
         } else if (protocolObject.getClass() == HandHistoryProviderRequestHands.class) {
             HandHistoryProviderRequestHands request = (HandHistoryProviderRequestHands)protocolObject;
+            tableId = request.tableId;
             value =  getHands(request.tableId, e.getPlayerId(), request.count, getTime(request.time));
             responseType = PacketType.hands;
         } else if (protocolObject.getClass() == HandHistoryProviderRequestHandIds.class) {
             HandHistoryProviderRequestHandIds request = (HandHistoryProviderRequestHandIds)protocolObject;
+            tableId = request.tableId;
             value =  getHandIds(request.tableId, e.getPlayerId(), request.count, getTime(request.time));
             responseType = PacketType.hand_ids;
         }
 
-        String protocolValue = "{ \"packetType\" : \"" + responseType + "\" , \"value\" : " + value + " }";
+        String protocolValue = "{ \"packetType\" : \"" + responseType + "\" ,\"tableId\" : " + tableId + ", \"value\" : " + value + " }";
         ServiceAction action = new ClientServiceAction(e.getPlayerId(), -1, protocolValue.getBytes());
         router.dispatchToPlayer(e.getPlayerId(), action);
     }

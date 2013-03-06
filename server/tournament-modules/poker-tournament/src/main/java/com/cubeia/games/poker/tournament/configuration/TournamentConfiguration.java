@@ -19,9 +19,9 @@ package com.cubeia.games.poker.tournament.configuration;
 
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructureFactory;
+import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
 import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.timing.TimingProfile;
-import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
 import org.apache.log4j.Logger;
 
 import javax.persistence.Entity;
@@ -33,6 +33,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import static com.cubeia.poker.betting.BetStrategyType.NO_LIMIT;
+import static javax.persistence.CascadeType.ALL;
 
 /**
  * This class represents the configuration of a tournament.
@@ -77,7 +78,14 @@ public class TournamentConfiguration implements Serializable {
 
     private boolean archived;
 
+    @ManyToOne(cascade = ALL)
+    private RebuyConfiguration rebuyConfiguration = new RebuyConfiguration();
+
     public TournamentConfiguration() {
+    }
+
+    public RebuyConfiguration getRebuyConfiguration() {
+        return rebuyConfiguration;
     }
 
     public boolean isArchived() {
@@ -86,6 +94,10 @@ public class TournamentConfiguration implements Serializable {
 
     public void setArchived(boolean archived) {
         this.archived = archived;
+    }
+
+    public void setRebuyConfiguration(RebuyConfiguration rebuyConfiguration) {
+        this.rebuyConfiguration = rebuyConfiguration;
     }
 
     public String toString() {

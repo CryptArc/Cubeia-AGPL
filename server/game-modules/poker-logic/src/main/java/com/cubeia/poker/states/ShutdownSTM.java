@@ -44,8 +44,9 @@ public class ShutdownSTM extends AbstractPokerGameSTM {
     }
 
     @Override
-    public void act(PokerAction action) {
+    public boolean act(PokerAction action) {
         log.warn("table {} is shut down, dropping incoming action: {}", context.getTableId(), action);
+        return false;
     }
 
     @Override

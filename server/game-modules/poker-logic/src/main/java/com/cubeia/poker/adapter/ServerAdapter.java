@@ -118,11 +118,10 @@ public interface ServerAdapter {
     void notifyHandEnd(HandResult handResult, HandEndStatus handEndStatus, boolean tournamentTable);
 
     /**
-     * Notify players about updated player balance.
+     * Notify all players about an updated player balance.
      *
      */
     void notifyPlayerBalance(PokerPlayer player);
-
 
     /**
      * Called after an action from the player has been successfully
@@ -139,6 +138,17 @@ public interface ServerAdapter {
      * @param report, a report value object. Not null.
      */
     void reportTournamentRound(RoundReport report);
+
+    /**
+     * Sends a rebuy response to the tournament coordinator.
+     *
+     */
+    void sendRebuyResponseToTournament(int playerId, boolean response);
+
+    /**
+     * Sends a request for performing an add-on to the tournament coordinator.
+     */
+    void sendAddOnRequestToTournament(int playerId);
 
     /**
      * Remove all players in state LEAVING or DISCONNECTED
@@ -224,5 +234,10 @@ public interface ServerAdapter {
 
     void notifyBlindsLevelUpdated(BlindsLevel level);
 
+    void notifyRebuyOffer(Collection<Integer> players, String rebuyCost, String rebuyChips);
+
+    void notifyAddOnsAvailable(String rebuyCost, String rebuyChips);
+
     void sendGameStateTo(GameStateSnapshot snapshot, int playerId);
+
 }

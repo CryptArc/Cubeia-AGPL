@@ -35,8 +35,9 @@ public interface PokerGameSTM extends Serializable {
      * Invoked when an action has been received.
      *
      * @param action the action performed
+     * @return true if action was handled, false if the action was ignored
      */
-    public void act(PokerAction action);
+    public boolean act(PokerAction action);
 
     /**
      * Invoked when a new player has joined the table.

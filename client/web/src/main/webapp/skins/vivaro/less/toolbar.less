@@ -1,3 +1,14 @@
+.toolbar-background {
+    .linear-gradient(bottom, #1d1d1d 0%, #3e3e3e 100%);
+    .box-shadow-both(inset 0px 0px 6px #333, 0px 0px 3px #222);
+    z-index: 99999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height:40px;
+    opacity: 0.7;
+}
 #toolbar {
     position: fixed;
     top: 0;
@@ -5,8 +16,7 @@
     width: 100%;
     height:40px;
     z-index: 100000;
-    .linear-gradient(bottom, #1d1d1d 0%, #3e3e3e 100%);
-    .box-shadow-both(inset 0px 0px 6px #333, 0px 0px 3px #222);
+
     font-size:16px;
 
     * {
@@ -43,11 +53,11 @@
                 white-space: nowrap;
                 overflow: hidden;
 
-                height: 34px;
+                height: 32px;
                 .border-radius(3px);
-                margin: 3px 1px 0 0;
+                margin: 4px 1px 0 0;
                 .box-shadow(inset 0px 0px 2px #999);
-                background-color: #464645;
+                .linear-gradient(top, #434444 0%, #303131 100%);
                 display: block;
                 width:99%;
 
@@ -90,13 +100,13 @@
 
             &.active {
                 .tab-content {
-
-                    background-color: #95bb07;
+                    .linear-gradient(top, #d02f2c 0%, #98201e 100%);
                     .box-shadow(inset 0px 0px 2px #fff);
                 }
             }
             &.focus {
                 .tab-content {
+                    background:none;
                     background-color: #ff9000;
                     .box-shadow(inset 0px 0px 2px #fff);
                 }

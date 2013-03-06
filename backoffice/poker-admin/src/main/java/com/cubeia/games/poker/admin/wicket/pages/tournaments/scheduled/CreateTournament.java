@@ -20,17 +20,16 @@ package com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled;
 import com.cubeia.games.poker.admin.db.AdminDAO;
 import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.configuration.TournamentConfigurationPanel;
+import com.cubeia.games.poker.admin.wicket.pages.tournaments.rebuy.RebuyConfigurationPanel;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo.CreateSitAndGo;
 import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
-import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
-import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
-import com.cubeia.poker.timing.TimingProfile;
 import org.apache.log4j.Logger;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.extensions.yui.calendar.DateField;
-import org.apache.wicket.markup.html.form.ChoiceRenderer;
-import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
@@ -41,16 +40,17 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.util.io.IClusterable;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 public class CreateTournament extends BasePage {
 
     private static final transient Logger log = Logger.getLogger(CreateSitAndGo.class);
+    private RebuyConfigurationPanel rebuyConfigurationPanel;
 
     @SpringBean(name = "adminDAO")
     private AdminDAO adminDAO;
     private PropertyModel<TournamentConfiguration> configuration = new PropertyModel<TournamentConfiguration>(new ScheduledTournamentConfiguration(), "configuration");
+
 
     public CreateTournament(final PageParameters parameters) {
         super(parameters);
@@ -78,9 +78,27 @@ public class CreateTournament extends BasePage {
         tournamentForm.add(new TextField<Integer>("minutesInAnnounced"));
         tournamentForm.add(new TextField<Integer>("minutesInRegistering"));
         tournamentForm.add(new TextField<Integer>("minutesVisibleAfterFinished"));
+        addRebuyPanel(tournamentForm);
 
         add(tournamentForm);
         add(new FeedbackPanel("feedback"));
+    }
+
+    private void addRebuyPanel(Form<ScheduledTournamentForm> tournamentForm) {
+        CheckBox enableRebuys = new CheckBox("rebuysEnabled");
+        enableRebuys.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+                    @Override
+                    protected void onUpdate(AjaxRequestTarget target) {
+                        log.debug("Setting enabled " + !rebuyConfigurationPanel.isEnabled());
+                        rebuyConfigurationPanel.setRebuysEnabled(!rebuyConfigurationPanel.isEnabled());
+                        target.add(rebuyConfigurationPanel);
+                    }
+                });
+        tournamentForm.add(enableRebuys);
+
+        rebuyConfigurationPanel = new RebuyConfigurationPanel("rebuyConfiguration", configuration.getObject().getRebuyConfiguration(), false);
+        rebuyConfigurationPanel.setOutputMarkupId(true);
+        tournamentForm.add(rebuyConfigurationPanel);
     }
 
     @Override
@@ -89,6 +107,7 @@ public class CreateTournament extends BasePage {
     }
 
     private static class ScheduledTournamentForm implements IClusterable {
+        boolean rebuysEnabled;
         Date startDate;
         Date endDate;
         String schedule;

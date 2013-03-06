@@ -51,20 +51,6 @@ public class GameTypes {
                         bettingRound(RIVER)).build();
     }
 
-    public static GameType createCrazyPineapple() {
-        return new PokerGameBuilder().withRounds(
-                        blinds(),
-                        dealFaceDownCards(3),
-                        bettingRound(PRE_FLOP, fromBigBlind()),
-                        dealCommunityCards(3),
-                        bettingRound(FLOP),
-                        discardRound(1),
-                        dealCommunityCards(1),
-                        bettingRound(TURN),
-                        dealCommunityCards(1),
-                        bettingRound(RIVER)).build();
-    }
-
     public static GenericPokerGame createTelesina() {
         return new PokerGameBuilder().
                         withRounds(

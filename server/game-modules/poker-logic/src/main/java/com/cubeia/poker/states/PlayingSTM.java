@@ -54,8 +54,8 @@ public class PlayingSTM extends AbstractPokerGameSTM implements HandFinishedList
     }
 
     @Override
-    public void act(PokerAction action) {
-        gameType.act(action);
+    public boolean act(PokerAction action) {
+        return gameType.act(action);
     }
 
     @Override

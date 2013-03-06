@@ -98,6 +98,11 @@ public class PokerTextClient extends SimpleTextClient {
             int tournamentId = Integer.parseInt(args[1]);
             RequestTournamentLobbyData request = new RequestTournamentLobbyData();
             sendTournamentDataPacket(tournamentId, context.getPlayerId(), styxEncoder.pack(request));
+        } else if (args[0].equals("rebuy")) {
+            int tableId = Integer.parseInt(args[1]);
+            System.out.println("Performing rebuy at table " + tableId);
+            RebuyResponse response = new RebuyResponse(tableId, true);
+            send(tableId, response);
         } else {
             return false;
         }

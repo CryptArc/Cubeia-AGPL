@@ -15,6 +15,7 @@
        <class>com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration</class>
        <class>com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration</class>
        <class>com.cubeia.games.poker.tournament.configuration.TournamentConfiguration</class>
+       <class>com.cubeia.games.poker.tournament.configuration.RebuyConfiguration</class>
        <class>com.cubeia.games.poker.entity.TableConfigTemplate</class>
        <class>com.cubeia.poker.timing.TimingProfile</class>
        <class>com.cubeia.poker.settings.RakeSettings</class>

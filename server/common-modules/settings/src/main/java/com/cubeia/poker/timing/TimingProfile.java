@@ -53,6 +53,8 @@ public class TimingProfile implements Serializable {
     @Column(nullable = false)
     private long genericTime = 3 * 15000;
 
+    private boolean archived;
+
     public int getId() {
         return id;
     }
@@ -174,25 +176,34 @@ public class TimingProfile implements Serializable {
         }
     }
 
+    public boolean isArchived() {
+        return archived;
+    }
+
+    public void setArchived(boolean archived) {
+        this.archived = archived;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof TimingProfile)) return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         TimingProfile that = (TimingProfile) o;
 
         if (actionTimeout != that.actionTimeout) return false;
+        if (archived != that.archived) return false;
         if (autoPostBlindDelay != that.autoPostBlindDelay) return false;
         if (disconnectExtraTime != that.disconnectExtraTime) return false;
         if (flopTime != that.flopTime) return false;
+        if (genericTime != that.genericTime) return false;
         if (id != that.id) return false;
         if (latencyGracePeriod != that.latencyGracePeriod) return false;
         if (pocketCardsTime != that.pocketCardsTime) return false;
         if (riverTime != that.riverTime) return false;
         if (startNewHandTime != that.startNewHandTime) return false;
         if (turnTime != that.turnTime) return false;
-        if (!name.equals(that.name)) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
 
         return true;
     }
@@ -200,7 +211,7 @@ public class TimingProfile implements Serializable {
     @Override
     public int hashCode() {
         int result = id;
-        result = 31 * result + name.hashCode();
+        result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (int) (pocketCardsTime ^ (pocketCardsTime >>> 32));
         result = 31 * result + (int) (flopTime ^ (flopTime >>> 32));
         result = 31 * result + (int) (turnTime ^ (turnTime >>> 32));
@@ -210,13 +221,14 @@ public class TimingProfile implements Serializable {
         result = 31 * result + (int) (autoPostBlindDelay ^ (autoPostBlindDelay >>> 32));
         result = 31 * result + (int) (latencyGracePeriod ^ (latencyGracePeriod >>> 32));
         result = 31 * result + (int) (disconnectExtraTime ^ (disconnectExtraTime >>> 32));
-
+        result = 31 * result + (int) (genericTime ^ (genericTime >>> 32));
+        result = 31 * result + (archived ? 1 : 0);
         return result;
     }
 
     @Override
     public String toString() {
-        return "TimingProfile[" +
+        return "TimingProfile{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", pocketCardsTime=" + pocketCardsTime +
@@ -229,6 +241,7 @@ public class TimingProfile implements Serializable {
                 ", latencyGracePeriod=" + latencyGracePeriod +
                 ", disconnectExtraTime=" + disconnectExtraTime +
                 ", genericTime=" + genericTime +
-                ']';
+                ", archived=" + archived +
+                '}';
     }
 }

@@ -1,6 +1,8 @@
 package com.cubeia.games.poker.admin.wicket;
 
 
+import com.cubeia.games.poker.admin.wicket.pages.operator.EditOperator;
+import com.cubeia.games.poker.admin.wicket.pages.operator.OperatorList;
 import com.cubeia.games.poker.admin.wicket.pages.system.BroadcastMessage;
 import com.cubeia.games.poker.admin.wicket.pages.system.Clients;
 import com.cubeia.games.poker.admin.wicket.pages.history.HandHistory;
@@ -26,6 +28,10 @@ import com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled.ListTourn
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo.CreateSitAndGo;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo.EditSitAndGo;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo.ListSitAndGoTournaments;
+import com.cubeia.games.poker.admin.wicket.pages.user.EditUser;
+import com.cubeia.games.poker.admin.wicket.pages.user.UserList;
+import com.cubeia.games.poker.admin.wicket.pages.user.UserSummary;
+import com.cubeia.games.poker.admin.wicket.pages.wallet.*;
 import com.cubeia.network.shared.web.wicket.navigation.PageNode;
 
 import java.util.ArrayList;
@@ -69,6 +75,24 @@ public class SiteMap {
         add(pages, "Rake Configurations", ListRakes.class, "icon-list-alt",
                 node("Create Rake Configuration", CreateRake.class),
                 node("Edit Rake Configuration", EditRake.class, false));
+
+//TODO: define which pages should be visible
+        add(pages, "Users", UserList.class, "icon-list-alt",
+                node("User Summary", UserSummary.class, false),
+                node("Edit User", EditUser.class, false));
+
+        add(pages, "Accounting", AccountList.class, "icon-list-alt",
+                node("Account Details", AccountDetails.class, false),
+                node("List Accounts", AccountList.class),
+                node("Create Account", CreateAccount.class, false),
+                node("Edit Account", EditAccount.class, false),
+                node("List Transactions", TransactionList.class),
+                node("Transaction Info", TransactionInfo.class, false),
+                node("Create Transaction", CreateTransaction.class),
+                node("Supported Currencies", EditCurrencies.class));
+
+        add(pages, "Operators", OperatorList.class, "icon-list-alt",
+                node("Edit Operator", EditOperator.class, false));
 
         add(pages,"System Management", SystemManagement.class, "icon-hdd",
                 node("Shutdown Management", SystemManagement.class, "icon-off"),

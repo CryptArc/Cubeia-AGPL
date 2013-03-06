@@ -17,30 +17,13 @@
 
 package com.cubeia.games.poker.handler;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-
-import com.cubeia.backend.cashgame.TableId;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-
 import com.cubeia.backend.cashgame.PlayerSessionId;
+import com.cubeia.backend.cashgame.TableId;
 import com.cubeia.backend.cashgame.dto.ReserveRequest;
 import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.game.GameNotifier;
 import com.cubeia.firebase.api.game.table.Table;
-import com.cubeia.firebase.api.game.table.TableScheduler;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.io.protocol.BuyInInfoRequest;
 import com.cubeia.games.poker.io.protocol.BuyInRequest;
@@ -56,8 +39,22 @@ import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.games.poker.state.FirebaseState;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.action.PokerAction;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+
+import java.io.IOException;
 
 import static com.cubeia.games.poker.common.money.MoneyFormatter.format;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class PokerHandlerTest {
 
@@ -116,7 +113,6 @@ public class PokerHandlerTest {
 
         pokerHandler.visit(performAction);
 
-        verify(timeoutCache).removeTimeout(Mockito.anyInt(), Mockito.eq(playerId), Mockito.any(TableScheduler.class));
         ArgumentCaptor<PokerAction> captor = ArgumentCaptor.forClass(PokerAction.class);
         verify(state).act(captor.capture());
         PokerAction pokerAction = captor.getValue();

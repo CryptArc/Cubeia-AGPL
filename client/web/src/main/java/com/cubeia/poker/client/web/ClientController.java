@@ -102,6 +102,19 @@ public class ClientController {
         return handleStartWithToken(request,modelMap,defaultSkin,operatorId,token);
     }
 
+    @RequestMapping(value = {"/skin/{skin}/hand-history/{tableId}"})
+    public String handleHansHistory(HttpServletRequest request, ModelMap modelMap,
+                                                     @PathVariable("skin") String skin,
+                                                     @PathVariable("tableId") Integer tableId) {
+
+        if(skin==null || !skin.matches(SAFE_PATTER)) {
+            modelMap.addAttribute("skin","");
+        }
+        modelMap.addAttribute("tableId",tableId);
+        modelMap.addAttribute("cp",request.getContextPath());
+        return "hand-history";
+    }
+
     public void setDefaultSkin(String defaultSkin) {
         this.defaultSkin = defaultSkin;
     }

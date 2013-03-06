@@ -145,8 +145,7 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
             return response;
         } catch (Exception e) {
             if (response != null) {
-            	log.error("Failed opening session", e);
-                log.debug("Failed reserving money for newly opened session, closing it again.");
+                log.error("Failed opening session", e);
                 closeSession(new CloseSessionRequest(response.getSessionId()));
             }
             String msg = "error opening session for player " + request.getPlayerId() + ": " + e.getMessage();
@@ -176,7 +175,7 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
         Long walletSessionId = getWalletSessionIdByPlayerSessionId(sid);
         com.cubeia.backoffice.accounting.api.Money walletAmount = convertToWalletMoney(amount);
         try {
-        	log.debug("Send withdraw request. "+request);
+            log.debug("Sending withdrawal request. " + request);
             walletService.withdraw(walletAmount, LICENSEE_ID, walletSessionId.longValue(),
                     "reserve " + amount + " by player " + sid.playerId);
 
@@ -189,7 +188,7 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
             response.setProperty(CashGamesBackendService.MARKET_TABLE_SESSION_REFERENCE_KEY, "CUBEIA-MARKET-SID-" + sid.hashCode());
             return response;
         } catch (Exception e) {
-        	log.error("Failed reserving money", e);
+            log.error("Failed reserving money", e);
             String msg = "error reserving " + amount + " to session " + walletSessionId + " for player " + sid.playerId + ": " + e.getMessage();
 
             throw new ReserveFailedException(msg, e, ErrorCode.UNSPECIFIED_FAILURE, true);
@@ -353,6 +352,18 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
         TransactionBuilder txBuilder = new TransactionBuilder(money.getCurrencyCode(), money.getFractionalDigits());
         txBuilder.entry(getWalletSessionIdByPlayerSessionId(fromAccount), convertToWalletMoney(money.negate()).getAmount());
         txBuilder.entry(getRakeAccount(money.getCurrencyCode()), convertToWalletMoney(money).getAmount());
+        txBuilder.comment(comment);
+        TransactionRequest txRequest = txBuilder.toTransactionRequest();
+        log.debug("sending tx request to wallet: {}", txRequest);
+        TransactionResult txResult = walletService.doTransaction(txRequest);
+        log.debug("Result: " + txResult);
+    }
+
+    @Override
+    public void transferMoneyFromRakeAccount(PlayerSessionId fromAccount, Money money, String comment) {
+        TransactionBuilder txBuilder = new TransactionBuilder(money.getCurrencyCode(), money.getFractionalDigits());
+        txBuilder.entry(getRakeAccount(money.getCurrencyCode()), convertToWalletMoney(money.negate()).getAmount());
+        txBuilder.entry(getWalletSessionIdByPlayerSessionId(fromAccount), convertToWalletMoney(money).getAmount());
         txBuilder.comment(comment);
         TransactionRequest txRequest = txBuilder.toTransactionRequest();
         log.debug("sending tx request to wallet: {}", txRequest);

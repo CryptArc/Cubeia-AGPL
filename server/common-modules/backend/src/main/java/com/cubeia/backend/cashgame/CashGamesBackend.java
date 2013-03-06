@@ -126,4 +126,14 @@ public interface CashGamesBackend {
      * @param comment
      */
     void transferMoneyToRakeAccount(PlayerSessionId fromAccount, Money money, String comment);
+
+    /**
+     * Returns money from the rake account to teh given player. (Used when unregistering from a tournament,
+     * for example.
+     *
+     * @param toAccount
+     * @param money
+     * @param comment
+     */
+    void transferMoneyFromRakeAccount(PlayerSessionId toAccount, Money money, String comment);
 }

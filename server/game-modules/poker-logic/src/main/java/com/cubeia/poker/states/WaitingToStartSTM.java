@@ -28,6 +28,7 @@ import com.cubeia.poker.variant.GameType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Set;
 
 public class WaitingToStartSTM extends AbstractPokerGameSTM {
@@ -56,9 +57,11 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
 
     @Override
     public void timeout() {
-        if (!context.isTournamentTable()) {
+        if (context.isTournamentTable()) {
+            commitPendingTournamentBalances();
+        } else {
             getServerAdapter().performPendingBuyIns(context.getSeatedPlayers());
-            context.commitPendingBalances();
+            commitPendingBalances(context.getMaxBuyIn());
             setPlayersWithoutMoneyAsSittingOut();
             sitOutPlayersMarkedForSitOutNextHand();
             getServerAdapter().cleanupPlayers(new SitoutCalculator());
@@ -74,6 +77,17 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
         } else {
             startHand();
         }
+    }
+
+    private void commitPendingBalances(long maxBuyIn) {
+        List<PokerPlayer> pokerPlayers = context.commitPendingBalances(maxBuyIn);
+        for (PokerPlayer pokerPlayer : pokerPlayers) {
+            serverAdapterHolder.get().notifyPlayerBalance(pokerPlayer);
+        }
+    }
+
+    private void commitPendingTournamentBalances() {
+        commitPendingBalances(Long.MAX_VALUE);
     }
 
     public void sitOutPlayersMarkedForSitOutNextHand() {
@@ -94,13 +108,11 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
     }
 
     private void shutDownTable() {
-
-
+        // TODO.
     }
 
     private void unseatPlayers() {
-
-
+        // TODO.
     }
 
     private boolean systemIsShutDown() {
@@ -113,8 +125,9 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
     }
 
     @Override
-    public void act(PokerAction action) {
+    public boolean act(PokerAction action) {
         log.info("Discarding out of order action: " + action);
+        return false;
     }
 
     /**
