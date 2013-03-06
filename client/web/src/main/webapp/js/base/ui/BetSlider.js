@@ -57,7 +57,6 @@ Poker.BetSlider = Class.extend({
                 e.stopPropagation();
                 e.preventDefault();
                 var val = self.slider.slider("value");
-
                 if(e.target == self.slider.find(".ui-slider-range")[0]) {
                     val = val - self.bigBlind;
                 } else {
