@@ -34,7 +34,10 @@ Poker.SoundManager = Class.extend({
     },
 
     soundsEnabled:function () {
-        return true;
+        console.log("Sound Enabled: ",Poker.Settings.Param.SOUND_ENABLED)
+            var check = Poker.Settings.isEnabled(Poker.Settings.Param.SOUND_ENABLED)
+            console.log(check);
+        return check;
     },
 
     handleAlert:function(alert) {

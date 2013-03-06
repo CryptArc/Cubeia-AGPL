@@ -8,6 +8,7 @@ var Poker = Poker || {};
  */
 Poker.Settings = {
     Param : {
+        SOUND_ENABLED : "sound.enabled",
         SWIPE_ENABLED : "settings.swipe",
         FREEZE_COMMUNICATION : "swttings.freeze"
     },

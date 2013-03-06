@@ -136,6 +136,7 @@
     <script type="text/javascript" src="${cp}/js/base/ui/views/TableView.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/MultiTableView.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/TournamentView.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/views/SoundSettingsView.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/DevSettingsView.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/ViewManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/MainMenuManager.js"></script>
@@ -262,13 +263,28 @@
     <div class="menu-overlay slidable" style="display: none;">
 
     </div>
+
+    <div id="soundSettingsView" class="config-view" style="display: none;">
+        <h1>Sound Settings</h1>
+        <h2>Configuration</h2>
+        <div class="group">
+            <div class="item">
+                <fieldset class="toggle">
+                    <input id="soundEnabled" type="checkbox">
+                    <label onclick="" for="soundEnabled">Toggle Sounds</label>
+                    <span class="toggle-button"></span>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+
     <div id="devSettingsView" class="config-view" style="display: none;">
         <h1>Development config</h1>
         <h2>Communication</h2>
         <div class="group">
             <div class="item">
                 <fieldset class="toggle">
-                    <input  id="freezeComEnabled" type="checkbox">
+                    <input id="freezeComEnabled" type="checkbox">
                     <label onclick="" for="freezeComEnabled">Freeze communication</label>
                     <span class="toggle-button"></span>
                 </fieldset>
