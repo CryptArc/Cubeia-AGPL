@@ -75,8 +75,9 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
     }
 
     @Override
-    public void act(PokerAction action) {
-        throw new IllegalStateException("PokerState: " + context + " Action: " + action);
+    public boolean act(PokerAction action) {
+        log.warn("Ignoring action. PokerState: " + context + " Action: " + action);
+        return false;
     }
 
     @Override

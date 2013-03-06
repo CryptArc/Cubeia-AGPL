@@ -421,17 +421,35 @@ public class GameHandler implements PacketVisitor {
     }
 
     @Override
+    public void visit(RebuyOffer packet) {
+
+    }
+
+    @Override
+    public void visit(RebuyResponse packet) {
+
+    }
+
+    @Override
+    public void visit(AddOnOffer packet) {
+
+    }
+
+    @Override
+    public void visit(PerformAddOn packet) {
+
+    }
+
+    @Override
     public void visit(TournamentDestroyed packet) {
 
     }
 
     @Override
     public void visit(RequestTournamentRegistrationInfo packet) {
-
     }
 
     @Override
     public void visit(TournamentRegistrationInfo packet) {
-
     }
 }

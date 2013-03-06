@@ -43,7 +43,7 @@ public class ArchiveLinkPanel extends Panel {
                     setResponsePage(responsePage);
                 }
                 catch (Exception ex) {
-                    this.getPage().error("Could not delete: " + ex.getMessage());
+                    this.getPage().error("Could not archive: " + ex.getMessage());
                 }
             }
         };

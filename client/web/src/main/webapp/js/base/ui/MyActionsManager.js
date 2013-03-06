@@ -81,7 +81,9 @@ Poker.MyActionsManager  = Class.extend({
         var amountFunc = function(){return self.slider.getValue();};
 
         this.actionButtons = new Poker.ActionButtons(view,actionCallback,
-            raiseCallback,betCallback, amountFunc);
+            raiseCallback,betCallback, amountFunc, function(){
+                self.onClickCancelButton();
+            });
 
         this.sitOutNextHand =  new Poker.CheckboxAction(view,".sit-out-next-hand",false);
 
@@ -191,7 +193,6 @@ Poker.MyActionsManager  = Class.extend({
             this.actionCallback(fromFutureAction.type,fromFutureAction.minAmount);
             return true;
         }
-        this.futureActions.hide();
         var self = this;
 
         //to avoid users clicking the action buttons by mistake

@@ -127,10 +127,10 @@ public class PokerState implements Serializable, IPokerState {
         stateHolder.get().playerJoined(player);
     }
 
-    public void act(PokerAction action) {
+    public boolean act(PokerAction action) {
         // Check sizes of caches and log warnings
         pokerContext.checkWarnings();
-        getCurrentState().act(action);
+        return getCurrentState().act(action);
     }
 
     public List<Card> getCommunityCards() {
@@ -200,7 +200,7 @@ public class PokerState implements Serializable, IPokerState {
 
     @VisibleForTesting
     public void commitPendingBalances() {
-        pokerContext.commitPendingBalances();
+        pokerContext.commitPendingBalances(pokerContext.getMaxBuyIn());
     }
 
     public PokerGameSTM getGameState() {
@@ -377,6 +377,8 @@ public class PokerState implements Serializable, IPokerState {
         return pokerContext;
     }
 
+    // A lot of tournament related stuff below. Investigate how we can best hide this from the "normal" poker code.
+
     public void playerOpenedSession(int playerId) {
         stateHolder.get().playerOpenedSession(playerId);
     }
@@ -409,5 +411,30 @@ public class PokerState implements Serializable, IPokerState {
         serverAdapter.sendGameStateTo(snapshot, playerId);
     }
 
+    public void handleAddedChips(int playerId, long chipsAdded) {
+        log.debug("Player " + playerId + " added " + chipsAdded + " chips.");
+        PokerPlayer player = pokerContext.getPlayer(playerId);
+        if (player != null) {
+            player.addNotInHandAmount(chipsAdded);
+        } else {
+            log.error("No player with id " + playerId + " found at this table. Players: " + pokerContext.getPlayerMap().values());
+        }
+    }
+
+    public void offerRebuys(Collection<Integer> players, String rebuyCost, String rebuyChips) {
+        serverAdapter.notifyRebuyOffer(players, rebuyCost, rebuyChips);
+    }
+
+    public void notifyAddOnsAvailable(String cost, String chips) {
+        serverAdapter.notifyAddOnsAvailable(cost, chips);
+    }
+
+    public void handleRebuyResponse(int playerId, boolean answer) {
+        serverAdapter.sendRebuyResponseToTournament(playerId, answer);
+    }
+
+    public void handleAddOnRequest(int playerId) {
+        serverAdapter.sendAddOnRequestToTournament(playerId);
+    }
 
 }

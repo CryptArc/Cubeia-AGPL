@@ -17,6 +17,7 @@
 
 package com.cubeia.games.poker.handler;
 
+import com.cubeia.games.poker.io.protocol.AddOnOffer;
 import com.cubeia.games.poker.io.protocol.BestHand;
 import com.cubeia.games.poker.io.protocol.BlindsAreUpdated;
 import com.cubeia.games.poker.io.protocol.BlindsLevel;
@@ -46,6 +47,7 @@ import com.cubeia.games.poker.io.protocol.PacketVisitor;
 import com.cubeia.games.poker.io.protocol.Payout;
 import com.cubeia.games.poker.io.protocol.PayoutInfo;
 import com.cubeia.games.poker.io.protocol.PerformAction;
+import com.cubeia.games.poker.io.protocol.PerformAddOn;
 import com.cubeia.games.poker.io.protocol.PingPacket;
 import com.cubeia.games.poker.io.protocol.PlayerAction;
 import com.cubeia.games.poker.io.protocol.PlayerBalance;
@@ -62,6 +64,8 @@ import com.cubeia.games.poker.io.protocol.Pot;
 import com.cubeia.games.poker.io.protocol.PotTransfer;
 import com.cubeia.games.poker.io.protocol.PotTransfers;
 import com.cubeia.games.poker.io.protocol.RakeInfo;
+import com.cubeia.games.poker.io.protocol.RebuyOffer;
+import com.cubeia.games.poker.io.protocol.RebuyResponse;
 import com.cubeia.games.poker.io.protocol.RequestAction;
 import com.cubeia.games.poker.io.protocol.RequestBlindsStructure;
 import com.cubeia.games.poker.io.protocol.RequestPayoutInfo;
@@ -363,6 +367,11 @@ public class DefaultPokerHandler implements PacketVisitor {
     }
 
     @Override
+    public void visit(RebuyOffer packet) {
+
+    }
+
+    @Override
     public void visit(TournamentDestroyed packet) {
 
     }
@@ -376,4 +385,19 @@ public class DefaultPokerHandler implements PacketVisitor {
     public void visit(TournamentRegistrationInfo packet) {
 
     }
+
+    @Override
+    public void visit(RebuyResponse packet) {
+    }
+
+    @Override
+    public void visit(AddOnOffer packet) {
+
+    }
+
+    @Override
+    public void visit(PerformAddOn packet) {
+
+    }
+
 }

@@ -87,6 +87,9 @@ Poker.TableLayoutManager = Class.extend({
         tableViewContainer.show();
         this.cardElements = new Poker.Map();
         this.clock = new Poker.Clock(this.tableInfoElement.find(".time-to-next-level-value"));
+        this.tableView.find(".hand-history").click(function(){
+            Poker.AppCtx.getHandHistoryManager().requestHandHistory(self.tableId);
+        });
 
         $(".future-action").show();
     },

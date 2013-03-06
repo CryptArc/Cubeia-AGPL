@@ -68,7 +68,9 @@
     <script src="${cp}/js/base/communication/lobby/LobbyPacketHandler.js" type="text/javascript"></script>
     <script src="${cp}/js/base/communication/lobby/LobbyRequestHandler.js" type="text/javascript"></script>
 
+    <script src="${cp}/js/base/communication/handhistory/HandHistoryRequestHandler.js" type="text/javascript"></script>
     <script src="${cp}/js/base/communication/handhistory/HandHistoryPacketHandler.js" type="text/javascript"></script>
+    <script src="${cp}/js/base/HandHistoryManager.js" type="text/javascript"></script>
 
     <script src="${cp}/js/base/communication/connection/ConnectionManager.js" type="text/javascript"></script>
     <script src="${cp}/js/base/communication/connection/ConnectionPacketHandler.js" type="text/javascript"></script>
@@ -592,6 +594,9 @@
                 <img src="${cp}/skins/${skin}/images/table/dealer-button.svg"/>
             </div>
         </div>
+        <div class="hand-history" >
+            Hand History
+        </div>
         <div class="bottom-bar">
                 <div class="action-button action-leave" style="display: none;">
                     <span>Leave</span>
@@ -921,6 +926,36 @@
         </div>
     </div>
 </script>
+<script type="text/mustache" id="handHistoryIdsTemplate" style="display:none;">
+   <ul>
+       {{#handIds}}
+        <li id="hand-{{id}}">{{id}}</li>
+       {{/handIds}}
+   </ul>
+</script>
+<script type="text/mustache" id="handHistoryLogTemplate" style="display:none;">
+    <h2>Hand info</h2>
+    <p>
+        Hand Id: <span>{{id}}</span>
+        Table Name : <span>{{table.name}}</span>
+    </p>
+    <h2>Seats</h2>
+    <p>
+        {{#seats}}
+            <p class="seat">
+                <div>Name: <span>{{name}}</span></div>
+                <div>Pos: <span>{{seatId}}</span></div>
+                <div>Initial Balance: <span>{{initialBalance}}</span></div>
+            </p>
+        {{/seats}}
+    </p>
+    <h2>Results</h2>
+    <p>
+       {{#results}}
+
+       {{/results}}
+    </p>
+</script>
 <script type="text/mustache" id="tournamentBlindsStructureTemplate" style="display:none;">
     <h4>Blinds Structure</h4>
     <div class="blinds-level info-list-item header">
@@ -935,7 +970,7 @@
             {{/isBreak}}
             {{^isBreak}}
             {{smallBlind}}/{{bigBlind}}
-            {{/ isBreak}}
+            {{/isBreak}}
             <span>{{durationInMinutes}}</span>
         </div>
         {{/blindsLevels}}

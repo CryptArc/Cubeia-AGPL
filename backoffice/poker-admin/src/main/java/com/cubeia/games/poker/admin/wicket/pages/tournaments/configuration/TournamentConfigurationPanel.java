@@ -19,6 +19,8 @@ package com.cubeia.games.poker.admin.wicket.pages.tournaments.configuration;
 
 import com.cubeia.games.poker.admin.db.AdminDAO;
 import com.cubeia.games.poker.admin.network.NetworkClient;
+import com.cubeia.games.poker.admin.wicket.pages.tournaments.rebuy.RebuyConfigurationPanel;
+import com.cubeia.games.poker.tournament.configuration.RebuyConfiguration;
 import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
 import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
@@ -70,6 +72,8 @@ public class TournamentConfigurationPanel extends Panel {
 
         if (sitAndGo) {
             maxPlayers.setVisible(false);
+        } else {
+//            add(new RebuyConfigurationPanel("rebuyConfiguration", new PropertyModel<RebuyConfiguration>(model.getObject(), "rebuyConfiguration")));
         }
     }
 

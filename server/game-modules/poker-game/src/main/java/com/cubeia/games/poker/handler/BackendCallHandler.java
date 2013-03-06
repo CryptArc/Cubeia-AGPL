@@ -77,11 +77,9 @@ public class BackendCallHandler {
         log.debug("handle reserve response: session = {}, amount = {}, pId = {}, properties = {}",
                 new Object[]{reserveResponse.getPlayerSessionId(), amountReserved, pokerPlayer.getId(), reserveResponse.getReserveProperties()});
 
-        log.debug("player is in hand, adding reserved amount {} as pending", amountReserved);
         pokerPlayer.addNotInHandAmount(amountReserved.getAmount());
 
-        String externalPlayerSessionReference = reserveResponse.getReserveProperties().get(
-                CashGamesBackendService.MARKET_TABLE_SESSION_REFERENCE_KEY);
+        String externalPlayerSessionReference = reserveResponse.getReserveProperties().get(CashGamesBackendService.MARKET_TABLE_SESSION_REFERENCE_KEY);
         pokerPlayer.getAttributes().put(ATTR_PLAYER_EXTERNAL_SESSION_ID, externalPlayerSessionReference);
 
         pokerPlayer.clearRequestedBuyInAmountAndRequest();

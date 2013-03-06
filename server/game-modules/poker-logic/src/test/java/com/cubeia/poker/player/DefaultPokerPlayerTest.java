@@ -104,9 +104,9 @@ public class DefaultPokerPlayerTest {
         DefaultPokerPlayer player = new DefaultPokerPlayer(1337);
         player.setBalance(balance);
         player.addNotInHandAmount(pending);
-        boolean hadPending = player.commitBalanceNotInHand(maxBuyIn);
+        boolean balanceUpdated = player.commitBalanceNotInHand(maxBuyIn);
 
-        assertThat(hadPending, is(true));
+        assertThat(balanceUpdated, is(true));
         assertThat(player.getBalanceNotInHand(), is(balance + pending - maxBuyIn));
         assertThat(player.getBalance(), is(maxBuyIn));
     }
@@ -120,9 +120,9 @@ public class DefaultPokerPlayerTest {
         DefaultPokerPlayer player = new DefaultPokerPlayer(1337);
         player.setBalance(balance);
         player.addNotInHandAmount(pending);
-        boolean hadPending = player.commitBalanceNotInHand(maxBuyIn);
+        boolean balanceUpdated = player.commitBalanceNotInHand(maxBuyIn);
 
-        assertThat(hadPending, is(true));
+        assertThat(balanceUpdated, is(false));
         assertThat(player.getBalanceNotInHand(), is(pending));
         assertThat(player.getBalance(), is(balance));
     }
@@ -136,9 +136,9 @@ public class DefaultPokerPlayerTest {
         DefaultPokerPlayer player = new DefaultPokerPlayer(1337);
         player.setBalance(balance);
         player.addNotInHandAmount(pending);
-        boolean hadPending = player.commitBalanceNotInHand(maxBuyIn);
+        boolean balanceUpdated = player.commitBalanceNotInHand(maxBuyIn);
 
-        assertThat(hadPending, is(true));
+        assertThat(balanceUpdated, is(false));
         assertThat(player.getBalanceNotInHand(), is(pending));
         assertThat(player.getBalance(), is(balance));
     }

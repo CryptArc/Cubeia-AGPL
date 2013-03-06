@@ -17,9 +17,6 @@
 
 package com.cubeia.games.poker;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.cubeia.backend.cashgame.dto.AnnounceTableFailedResponse;
 import com.cubeia.backend.cashgame.dto.AnnounceTableResponse;
 import com.cubeia.backend.cashgame.dto.CloseTableRequest;
@@ -43,7 +40,10 @@ import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
 import com.cubeia.games.poker.jmx.PokerStats;
 import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.games.poker.state.FirebaseState;
+import com.cubeia.games.poker.tournament.messages.AddOnsAvailableDuringBreak;
 import com.cubeia.games.poker.tournament.messages.BlindsWithDeadline;
+import com.cubeia.games.poker.tournament.messages.OfferRebuy;
+import com.cubeia.games.poker.tournament.messages.PlayerAddedChips;
 import com.cubeia.games.poker.tournament.messages.TournamentDestroyed;
 import com.cubeia.games.poker.tournament.messages.WaitingForPlayers;
 import com.cubeia.games.poker.tournament.messages.WaitingForTablesToFinishBeforeBreak;
@@ -52,6 +52,10 @@ import com.cubeia.poker.adapter.SystemShutdownException;
 import com.cubeia.poker.model.BlindsLevel;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static com.cubeia.games.poker.common.money.MoneyFormatter.format;
 
 
 /**
@@ -111,16 +115,25 @@ public class Processor implements GameProcessor, TournamentProcessor {
         stateInjector.injectAdapter(table);
 
         try {
-            ProtocolObject packet = serializer.unpack(action.getData());
-            pokerHandler.setPlayerId(action.getPlayerId());
-            packet.accept(pokerHandler);
-            PokerStats.getInstance().setState(table.getId(), state.getStateDescription());
+            ProtocolObject packet = safeUnpack(action);
+            if (packet != null) {
+                pokerHandler.setPlayerId(action.getPlayerId());
+                packet.accept(pokerHandler);
+                PokerStats.getInstance().setState(table.getId(), state.getStateDescription());
+            }
         } catch (Throwable t) {
             log.error("Unhandled error on table", t);
             tableCloseHandler.handleUnexpectedExceptionOnTable(action, table, t);
         }
+    }
 
-        updatePlayerDebugInfo(table);
+    private ProtocolObject safeUnpack(GameDataAction action) {
+        try {
+            return serializer.unpack(action.getData());
+        } catch (Exception e) {
+            log.warn("Failed unpacking action from player " + action.getPlayerId() + ". Is he using an old version of the protocol?", e);
+        }
+        return null;
     }
 
     /**
@@ -164,6 +177,12 @@ public class Processor implements GameProcessor, TournamentProcessor {
                 handleBlindsLevel((BlindsWithDeadline) attachment);
             } else if (attachment instanceof TournamentDestroyed) {
                 handleTournamentDestroyed();
+            } else if (attachment instanceof PlayerAddedChips) {
+                handleAddedChips((PlayerAddedChips) attachment);
+            } else if (attachment instanceof OfferRebuy) {
+                handleOfferRebuy((OfferRebuy) attachment);
+            } else if (attachment instanceof AddOnsAvailableDuringBreak) {
+                handleAddOnsAvailable((AddOnsAvailableDuringBreak) attachment);
             } else if ("CLOSE_TABLE_HINT".equals(attachment.toString())) {
                 log.debug("got CLOSE_TABLE_HINT");
                 tableCloseHandler.closeTable(table, false);
@@ -180,8 +199,18 @@ public class Processor implements GameProcessor, TournamentProcessor {
             log.error("Failed handling game object action.", t);
             tableCloseHandler.handleUnexpectedExceptionOnTable(action, table, t);
         }
+    }
 
-        updatePlayerDebugInfo(table);
+    private void handleAddOnsAvailable(AddOnsAvailableDuringBreak addOns) {
+        state.notifyAddOnsAvailable(format(addOns.getAddOnCost()), format(addOns.getChipsForAddOn()));
+    }
+
+    private void handleOfferRebuy(OfferRebuy offerRebuy) {
+        state.offerRebuys(offerRebuy.getPlayers(), offerRebuy.getRebuyCost(), offerRebuy.getRebuyChips());
+    }
+
+    private void handleAddedChips(PlayerAddedChips addedChips) {
+        state.handleAddedChips(addedChips.getPlayerId(), addedChips.getChipsToAdd());
     }
 
     private void handleTournamentDestroyed() {
@@ -200,21 +229,6 @@ public class Processor implements GameProcessor, TournamentProcessor {
         BlindsLevel blindsLevel = new BlindsLevel(level.getSmallBlindAmount(), level.getBigBlindAmount(), level.getAnteAmount(), level.isBreak(),
                                                   level.getDurationInMinutes(), level.getDeadline());
         state.setBlindsLevels(blindsLevel);
-    }
-
-    private void updatePlayerDebugInfo(Table table) {
-//        if (handDebugger != null) {
-//            for (PokerPlayer player : state.getSeatedPlayers()) {
-//                try {
-//                    GenericPlayer genericPlayer = table.getPlayerSet().getPlayer(player.getId());
-//                    handDebugger.updatePlayerInfo(table.getId(), player.getId(),
-//                            genericPlayer.getName(), !player.isSittingOut(), player.getBalance(),
-//                            player.getBetStack());
-//                } catch (Exception e) {
-//                    log.warn("unable to fill out debug info for player: " + player.getId());
-//                }
-//            }
-//        }
     }
 
     /**
@@ -261,8 +275,6 @@ public class Processor implements GameProcessor, TournamentProcessor {
         }
         log.debug("Start Hand on table: " + table + " (" + table.getPlayerSet().getPlayerCount() + ":" + state.getSeatedPlayers().size() + ")");
         state.scheduleTournamentHandStart();
-
-        updatePlayerDebugInfo(table);
     }
 
     public void stopRound(Table table) {

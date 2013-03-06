@@ -39,7 +39,7 @@ public interface GameType extends Serializable {
 
     public void startHand();
 
-    public void act(PokerAction action);
+    public boolean act(PokerAction action);
 
     // TODO: #AH2 remove???
     public void scheduleRoundTimeout();

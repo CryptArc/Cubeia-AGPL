@@ -46,3 +46,4 @@ Poker.TableView = Poker.TabView.extend({
     }
 
 });
+
