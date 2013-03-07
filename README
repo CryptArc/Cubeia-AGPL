@@ -36,11 +36,11 @@ FULL BUILD
 
 To build all relevant sources in one pass, use
 
-mvn3 clean install
+mvn clean install
 
 To build and additionally update all dependencies, use
 
-mvn3 clean install -U
+mvn clean install -U
 
 
 SOFTWARE SUBSYSTEMS
