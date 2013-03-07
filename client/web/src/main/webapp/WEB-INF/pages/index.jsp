@@ -941,33 +941,42 @@
     </p>
     <h2>Seats</h2>
     {{#seats}}
-        <p class="seat">
+        <div class="seat-group">
             <div>Name: <span>{{name}}</span></div>
             <div>Pos: <span>{{seatId}}</span></div>
             <div>Initial Balance: <span>{{initialBalance}}</span></div>
-        </p>
+        </div>
     {{/seats}}
 
     <h2>Events</h2>
-    {{#events}}
-    <p class="event">
-       {{#playerId}}
-            {{name}} {{action}} {{amount.amount}}
-            {{#playerCardsDealt}}
-                was dealt hole cards
-            {{/playerCardsDealt}}
-        {{/playerId}}
-        {{#tableCards}}
-            Community cards:
-        {{/tableCards}}
-        {{#playerCardsExposed}}
-            shows:
-        {{/playerCardsExposed}}
-        {{#cards}}
+    <div class="events">
+        {{#events}}
+        <p class="event">
+           {{#playerId}}
+                {{name}} {{action}} {{amount.amount}}
+                {{#playerCardsDealt}}
+                    was dealt hole cards
+                {{/playerCardsDealt}}
+            {{/playerId}}
+            {{#tableCards}}
+                Community cards:
+            {{/tableCards}}
+            {{#playerCardsExposed}}
+                shows:
+            {{/playerCardsExposed}}
+            {{#playerHand}}
+                {{name}} has {{handDescription}}:
+            {{/playerHand}}
+            {{#bestHandCards}}
+                {{text}}
+            {{/bestHandCards}}
+
+            {{#cards}}
             {{text}}
-        {{/cards}}
-    </p>
-    {{/events}}
+            {{/cards}}
+        </p>
+        {{/events}}
+    </div>
     <h2>Results</h2>
    {{#results}}
         {{#res}}

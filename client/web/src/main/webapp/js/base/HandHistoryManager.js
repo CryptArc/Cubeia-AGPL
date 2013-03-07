@@ -116,6 +116,13 @@ Poker.HandHistoryManager = Class.extend({
                     playerCardsDealt : true
                 });
             }
+            if(event.type == "PlayerBestHand") {
+                event = $.extend(event,{
+                    bestHandCards : this.extractCards(event.bestHandCards),
+                    name : playerMap.get(event.playerHand.playerId),
+                    handDescription : Poker.Hand.fromName(event.handInfoCommon.handType).text
+                });
+            }
 
         }
         var results = [];

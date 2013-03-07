@@ -23,6 +23,8 @@ import com.cubeia.games.poker.common.mongo.DatabaseStorageConfiguration;
 import com.cubeia.games.poker.common.mongo.MongoStorage;
 import com.cubeia.poker.handhistory.api.*;
 import com.cubeia.poker.handhistory.impl.JsonHandHistoryLogger;
+import com.google.code.morphia.Datastore;
+import com.google.code.morphia.Key;
 import de.flapdoodle.embedmongo.MongoDBRuntime;
 import de.flapdoodle.embedmongo.MongodExecutable;
 import de.flapdoodle.embedmongo.MongodProcess;
@@ -31,10 +33,12 @@ import de.flapdoodle.embedmongo.distribution.Version;
 import de.flapdoodle.embedmongo.runtime.Network;
 import org.apache.log4j.Logger;
 import org.junit.*;
+import static org.junit.Assert.*;
 import org.mockito.Mock;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
@@ -83,6 +87,11 @@ public class EmbeddedMongoHandHistoryProviderServiceTest {
         service.init(null);
         service.start();
     }
+    @After
+    public void onTearDown() throws Exception {
+        Datastore datastore = storage.getDatastore();
+        datastore.delete(datastore.createQuery(HistoricHand.class));
+    }
 
     @BeforeClass
     public static void initDb() throws Exception {
@@ -99,48 +108,72 @@ public class EmbeddedMongoHandHistoryProviderServiceTest {
     @Test
     public void testGetHandIds() throws Exception {
 
-        createHandHistory(1,"hand1", 1,2);
-        createHandHistory(1,"hand2", 1,2);
-        createHandHistory(1,"hand3",2,3);
-        createHandHistory(2,"hand4",1,2);
+        createHandHistory(1,"hand1", 100L, 1,2);
+        createHandHistory(1,"hand2", 200L,  1,2);
+        createHandHistory(1,"hand3", 300L, 2,3);
+        createHandHistory(2,"hand4", 400L, 1,2);
 
-        String handIds = service.getHandIds(1, 1, 10, 0);
+        List<Key<HistoricHand>> handIds = service.getHandIds(1, 1, 10, 0);
+        assertEquals(2,handIds.size());
 
-        log.debug(handIds);
+        assertEquals("hand2",handIds.get(0).getId());
+        assertEquals("hand1", handIds.get(1).getId());
 
-        Assert.assertTrue(handIds.contains("hand1"));
-        Assert.assertTrue(handIds.contains("hand2"));
-        Assert.assertFalse(handIds.contains("hand3"));
-        Assert.assertFalse(handIds.contains("hand4"));
+
     }
 
     @Test
     public void testGetHand() throws Exception {
 
-        createHandHistory(1,"hand1", 1,2);
-        createHandHistory(1,"hand2", 1,2);
-        createHandHistory(1,"hand3",2,3);
-        createHandHistory(2,"hand4",1,2);
+        int myPlayerId = 1;
 
-        String hand = service.getHand("hand1",1);
-        log.debug(hand);
-        Assert.assertTrue(hand.contains("hand1"));
-        Assert.assertTrue(hand.contains("\"privateCards\":[]"));
-        Assert.assertFalse(hand.contains("\"cards\":[]"));  //expose cards should contain something
+        createHandHistory(1,"hand1", 100L, myPlayerId,2);
+        createHandHistory(1,"hand2", 200L,  myPlayerId,2);
+        createHandHistory(1,"hand3", 300L, 2,3);
+        createHandHistory(2,"hand4", 400L, myPlayerId,2);
 
+        List<HistoricHand> hand1 = service.getHand("hand1", myPlayerId);
+        assertEquals(1,hand1.size());
+        HistoricHand hand = hand1.get(0);
+
+        assertEquals("hand1",hand.getId());
+
+        verifyOtherPlayersPrivateCardsNotExposed(myPlayerId, hand);
+
+    }
+    private void verifyOtherPlayersPrivateCardsNotExposed(int myPlayerId, List<HistoricHand> hands) {
+        for(HistoricHand h : hands) {
+            verifyOtherPlayersPrivateCardsNotExposed(myPlayerId,h);
+        }
+    }
+    private void verifyOtherPlayersPrivateCardsNotExposed(int myPlayerId, HistoricHand hand) {
+        List<HandHistoryEvent> events = hand.getEvents();
+
+        for(HandHistoryEvent e : events)  {
+            if(e instanceof PlayerCardsDealt) {
+                PlayerCardsDealt pc = (PlayerCardsDealt) e;
+                if(pc.getPlayerId()!=myPlayerId && pc.getCards().size()>0) {
+                    fail("Private cards for other players should not be shown");
+                } else if(pc.getPlayerId()==myPlayerId && pc.getCards().size()==0) {
+                    fail("Private cards for your player should be shown");
+                }
+            }
+        }
     }
 
     @Test
     public void testGetHandsByCount() throws Exception {
-        createHandHistory(1,"hand1",100L, 1,2);
-        createHandHistory(1,"hand2",200L, 1,2);
+        int myPlayerId = 1;
+        createHandHistory(1,"hand1",100L, myPlayerId,2);
+        createHandHistory(1,"hand2",200L, myPlayerId,2);
         createHandHistory(1,"hand3",300L,2,3);
-        createHandHistory(2,"hand4",400L,1,2);
+        createHandHistory(2,"hand4",400L,myPlayerId,2);
+        createHandHistory(1,"hand5",500L, myPlayerId,2);
 
-        String hand = service.getHands(1,2,10,System.currentTimeMillis());
-        log.debug(hand);
-        Assert.assertTrue(hand.contains("hand1"));
-        Assert.assertTrue(hand.contains("hand2"));
+        List<HistoricHand> hands = service.getHands(1, myPlayerId, 2, System.currentTimeMillis());
+        assertEquals(2,hands.size());
+        verifyOtherPlayersPrivateCardsNotExposed(myPlayerId,hands);
+
 
     }
 
@@ -151,13 +184,13 @@ public class EmbeddedMongoHandHistoryProviderServiceTest {
         createHandHistory(1,"hand3",300L,2,3);
         createHandHistory(2,"hand4",400L,1,2);
 
-        String hand = service.getHandSummaries(1,2,10,System.currentTimeMillis());
-        log.debug(hand);
-        Assert.assertTrue(hand.contains("hand1"));
-        Assert.assertTrue(hand.contains("hand2"));
-        Assert.assertTrue(hand.contains("\"events\":[]"));
-        Assert.assertTrue(hand.contains("\"seats\":[]"));
-        Assert.assertTrue(hand.contains("\"results\":[]"));
+        List<HistoricHand> handSummaries = service.getHandSummaries(1, 2, 2, System.currentTimeMillis());
+        assertEquals(2,handSummaries.size());
+        for(HistoricHand h : handSummaries) {
+            assertEquals(0,h.getEvents().size());
+            assertEquals(null,h.getResults());
+            assertEquals(0,h.getSeats().size());
+        }
     }
 
     @Test
@@ -165,23 +198,23 @@ public class EmbeddedMongoHandHistoryProviderServiceTest {
         createHandHistory(1,"hand1",100L, 1,2);
         createHandHistory(1,"hand2",200L, 1,2);
 
-        String hands = service.getHands(1,3,10,System.currentTimeMillis());
-        log.debug(hands);
-        Assert.assertFalse(hands.contains("hand1"));
-        Assert.assertFalse(hands.contains("hand2"));
+        List<HistoricHand> hands = service.getHands(1, 3, 10, System.currentTimeMillis());
+        assertEquals(0,hands.size());
+
 
     }
     @Test
     public void testGetHandsByTime() throws Exception {
-        createHandHistory(1,"hand1",100L, 1,2);
-        createHandHistory(1,"hand2",200L, 1,2);
-        createHandHistory(1,"hand3",300L,2,3);
-        createHandHistory(2,"hand4",400L,1,2);
+        int myPlayerId = 2;
+        createHandHistory(1,"hand1",100L, 1,myPlayerId);
+        createHandHistory(1,"hand2",200L, 1,myPlayerId);
+        createHandHistory(1,"hand3",300L,myPlayerId,3);
+        createHandHistory(2,"hand4",400L,1,myPlayerId);
 
-        String hand = service.getHands(1,2,0,200L);
-        log.debug(hand);
-        Assert.assertFalse(hand.contains("hand1")); //hand one is not within time range
-        Assert.assertTrue(hand.contains("hand2"));
+        List<HistoricHand> hands = service.getHands(1, myPlayerId, 0, 200L);
+        assertEquals(2,hands.size());
+        verifyOtherPlayersPrivateCardsNotExposed(myPlayerId,hands);
+
 
     }
 
@@ -203,8 +236,8 @@ public class EmbeddedMongoHandHistoryProviderServiceTest {
             Player player = new Player(playerId, 1, 400, "p" +playerId);
             hand.getSeats().add(player);
             PlayerCardsDealt pcd = new PlayerCardsDealt();
-            pcd.setPrivateCards(new ArrayList<GameCard>());
-            pcd.getPrivateCards().add(new GameCard(GameCard.Suit.CLUBS, GameCard.Rank.ACE));
+            pcd.setCards(new ArrayList<GameCard>());
+            pcd.getCards().add(new GameCard(GameCard.Suit.CLUBS, GameCard.Rank.ACE));
             pcd.setPlayerId(playerId);
             hand.getEvents().add(pcd);
             PlayerCardsExposed pce = new PlayerCardsExposed(playerId);
