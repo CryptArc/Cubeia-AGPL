@@ -16,4 +16,10 @@
         <var name="time" type="string" />
     </struct>
 
+    <struct name="hand_history_provider_request_hand_summaries">
+        <var name="table_id" type="int32" />
+        <var name="count" type="int32" />
+        <var name="time" type="string" />
+    </struct>
+
 </protocol>

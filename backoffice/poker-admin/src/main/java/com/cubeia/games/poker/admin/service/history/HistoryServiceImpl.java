@@ -38,12 +38,12 @@ public class HistoryServiceImpl implements HistoryService {
     private MongoStorage mongoStorage;
 
     @Override
-    public List<HistoricHand> findHandHistory(Integer playerId, String tableId, Date fromDate, Date toDate) {
-        log.info("Finding hand histories by query: playerId = " + playerId + " from: " + fromDate + " to: " + toDate);
+    public List<HistoricHand> findHandHistory(Integer playerId, Integer tableId, Date fromDate, Date toDate) {
+        log.info("Finding hand histories by query: playerId = " + playerId + " tableId = " + tableId + " from: " + fromDate + " to: " + toDate);
         Query query = mongoStorage.createQuery(HistoricHand.class);
         if (tableId != null) query.field("table.tableId").equal(tableId);
-        if (fromDate != null) query.field("startTime").greaterThanOrEq(fromDate);
-        if (toDate != null) query.field("endTime").lessThanOrEq(toDate);
+        if (fromDate != null) query.field("startTime").greaterThanOrEq(fromDate.getTime());
+        if (toDate != null) query.field("endTime").lessThanOrEq(toDate.getTime());
         if (playerId != null) query.filter("seats elem", new BasicDBObject("playerId", playerId));
         return query.order("-startTime").asList();
     }
