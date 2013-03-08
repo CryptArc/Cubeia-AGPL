@@ -168,7 +168,7 @@ Poker.TournamentManager = Class.extend({
         }
         tournament.tournamentLayoutManager.updateTournamentInfo(info);
         var registered = this.registeredTournaments.contains(tournament.id);
-        if(info.tournamentStatus== com.cubeia.games.poker.io.protocol.TournamentStatusEnum.RUNNING) {
+        if (this.isTournamentRunning(info.tournamentStatus)) {
             tournament.tournamentLayoutManager.setTournamentNotRegisteringState(registered);
         } else if (info.tournamentStatus != com.cubeia.games.poker.io.protocol.TournamentStatusEnum.REGISTERING) {
             tournament.tournamentLayoutManager.setTournamentNotRegisteringState(false);
@@ -177,7 +177,7 @@ Poker.TournamentManager = Class.extend({
         } else {
             tournament.tournamentLayoutManager.setPlayerUnregisteredState();
         }
-        // Todo: we could update the name here, at least if it's the dummy name (Tourney). (I tried, but didn't figure out the Mustache stuff.)
+        // TODO: we could update the name here, at least if it's the dummy name (Tourney). (I tried, but couldn't figure out the Mustache stuff.)
         // tournament.tournamentLayoutManager.updateName(info.tournamentName);
     },
     handleRegistrationFailure : function(tournamentId) {

@@ -197,10 +197,10 @@ Poker.MyActionsManager  = Class.extend({
 
         //to avoid users clicking the action buttons by mistake
         setTimeout(function(){
-            self.showActionButtons(actions,mainPot,fixedLimit);
+            self.showActionButtons(actions, mainPot, fixedLimit);
             progressBar.show();
             progressBar.render();
-        },500);
+        }, 500);
         return false;
     },
     showActionButtons : function(actions, mainPot, fixedLimit) {
@@ -209,6 +209,15 @@ Poker.MyActionsManager  = Class.extend({
     },
     showRebuyButtons : function(rebuyCost, chipsForRebuy) {
         this.actionButtons.showRebuyButtons();
+    },
+    hideRebuyButtons : function() {
+        this.actionButtons.hideRebuyButtons();
+    },
+    showAddOnButton : function(addOnCost, chipsForAddOn) {
+        this.actionButtons.showAddOnButton();
+    },
+    hideAddOnButton : function() {
+        this.actionButtons.hideAddOnButton();
     },
     onStartHand : function() {
         this.futureActions.clear();

@@ -71,8 +71,18 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         Poker.AppCtx.getViewManager().requestTableFocus(this.tableId);
     },
     rebuyRequested : function(rebuyCost, chipsForRebuy, timeToAct) {
+        console.log("Showing timer for " + timeToAct + " millis");
         this.showTimer(timeToAct);
         this.myActionsManager.showRebuyButtons(rebuyCost, chipsForRebuy);
+    },
+    addOnRequested : function(addOnCost, chipsForAddOn) {
+        this.myActionsManager.showAddOnButton(addOnCost, chipsForAddOn);
+    },
+    hideRebuyButtons : function() {
+        this.myActionsManager.hideRebuyButtons();
+    },
+    hideAddOnButton : function() {
+        this.myActionsManager.hideAddOnButton();
     },
     showTimer: function(timeToAct) {
         if (this.circularProgressBar != null) {

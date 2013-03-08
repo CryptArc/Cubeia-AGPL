@@ -215,8 +215,8 @@ Poker.TableLayoutManager = Class.extend({
      */
     getSeatByPlayerId : function(id) {
         var seats = this.seats.values();
-        for(var i = 0; i<seats.length; i++) {
-            if(seats[i].player.id == id) {
+        for (var i = 0; i < seats.length; i++) {
+            if (seats[i].player.id == id) {
                 return seats[i];
             }
         }
@@ -366,12 +366,24 @@ Poker.TableLayoutManager = Class.extend({
         seat.activateSeat(allowedActions,timeToAct,mainPot,fixedLimit);
     },
     onRequestRebuy : function(player, rebuyCost, chipsForRebuy, timeToAct){
-        var seats = this.seats.values();
-        for (var s = 0; s < seats.length; s++) {
-            seats[s].inactivateSeat();
-        }
+//        var seats = this.seats.values();
+//        for (var s = 0; s < seats.length; s++) {
+//            seats[s].inactivateSeat();
+//        }
         var seat = this.getSeatByPlayerId(player.id);
         seat.rebuyRequested(rebuyCost, chipsForRebuy, timeToAct);
+    },
+    onRequestAddOn : function(player, addOnCost, chipsForAddOn){
+        var seat = this.getSeatByPlayerId(player.id);
+        seat.addOnRequested(addOnCost, chipsForAddOn);
+    },
+    hideRebuyButtons : function(player) {
+        var seat = this.getSeatByPlayerId(player.id);
+        seat.hideRebuyButtons();
+    },
+    hideAddOnButton : function(player) {
+        var seat = this.getSeatByPlayerId(player.id);
+        seat.hideAddOnButton();
     },
     onLeaveTableSuccess : function() {
         $(this.tableView).hide();

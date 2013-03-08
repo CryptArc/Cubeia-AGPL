@@ -103,6 +103,10 @@ Poker.ActionType = {
     DECLINE_REBUY : {
         text : "Decline Rebuy",
         id : "decline-rebuy"
+    },
+    ADD_ON : {
+        text : "Add-on",
+        id : "add-on"
     }
 
 

@@ -667,6 +667,9 @@
                 <div class="action-button action-decline-rebuy" style="display: none;">
                     <span>Decline</span>
                 </div>
+                <div class="action-button action-add-on" style="display: none;">
+                    <span>Add-on</span>
+                </div>
                 <div class="action-button action-hhl" style="display: none;">
                     <span>HHL</span>
                 </div>

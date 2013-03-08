@@ -26,6 +26,7 @@ Poker.ActionButtons = Poker.AbstractTableButtons.extend({
 
         this._addActionButton($(".action-rebuy", view), Poker.ActionType.REBUY, actionCallback, true);
         this._addActionButton($(".action-decline-rebuy", view), Poker.ActionType.DECLINE_REBUY, actionCallback, true);
+        this._addActionButton($(".action-add-on", view), Poker.ActionType.ADD_ON, actionCallback, true);
 
 
         //we can't put it in actionButtons since it's a duplicate action
@@ -88,5 +89,18 @@ Poker.ActionButtons = Poker.AbstractTableButtons.extend({
         console.log("Showing rebuy buttons");
         this.show(Poker.ActionType.DECLINE_REBUY);
         this.show(Poker.ActionType.REBUY);
+    },
+    hideRebuyButtons : function() {
+        console.log("Hiding rebuy buttons");
+        this.hide(Poker.ActionType.DECLINE_REBUY);
+        this.hide(Poker.ActionType.REBUY);
+    },
+    showAddOnButton: function() {
+        console.log("Showing add-on button");
+        this.show(Poker.ActionType.ADD_ON);
+    },
+    hideAddOnButton : function() {
+        console.log("Hiding add-on button");
+        this.hide(Poker.ActionType.ADD_ON);
     }
 });

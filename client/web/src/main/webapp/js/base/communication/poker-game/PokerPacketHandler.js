@@ -25,7 +25,11 @@ Poker.PokerPacketHandler = Class.extend({
      */
     handleRebuyOffer : function(rebuyOffer, playerId) {
         console.log("Player " + playerId + " was offered a rebuy.");
-        this.tableManager.handleRebuyOffer(this.tableId, playerId, rebuyOffer.cost, 1000, 15000); // TODO: Un-hard-code
+        this.tableManager.handleRebuyOffer(this.tableId, playerId, rebuyOffer.cost, rebuyOffer.cost, 15000); // TODO: Un-hard-code
+    },
+    handleAddOnOffer : function(addOnOffer, playerId) {
+        console.log("Player " + playerId + " was offered an add-on.");
+        this.tableManager.handleAddOnOffer(this.tableId, playerId, addOnOffer.cost, addOnOffer.chips);
     },
     handlePlayerBalance : function(packet) {
         this.tableManager.updatePlayerBalance(this.tableId,
