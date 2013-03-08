@@ -120,15 +120,15 @@
             </activation>
             <dependencies>
                 <dependency>
-                    <groupId>com.cubeia.games.handhistory</groupId>
-                    <artifactId>hand-history-storage-service</artifactId>
-                    <version>1.0-SNAPSHOT</version>
-                    <type>firebase-sar</type>
-                </dependency>
-                <dependency>
                     <groupId>com.cubeia.network.users</groupId>
                     <artifactId>fb-user-service</artifactId>
                     <version>${cubeia.network.version}</version>
+                    <type>firebase-sar</type>
+                </dependency>
+                <dependency>
+                    <groupId>com.cubeia.games.handhistory</groupId>
+                    <artifactId>hand-history-storage-service</artifactId>
+                    <version>1.0-SNAPSHOT</version>
                     <type>firebase-sar</type>
                 </dependency>
                 <dependency>
@@ -174,6 +174,12 @@
                 </property>
             </activation>
             <dependencies>
+                <dependency>
+                    <groupId>com.cubeia.network.users</groupId>
+                    <artifactId>fb-mock-user-service</artifactId>
+                    <version>${cubeia.network.version}</version>
+                    <type>firebase-sar</type>
+                </dependency>
                 <dependency>
                     <groupId>com.cubeia.games</groupId>
                     <artifactId>backend-service-mock</artifactId>

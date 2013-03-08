@@ -17,6 +17,31 @@
 
 package com.cubeia.games.poker.tournament;
 
+import static com.cubeia.firebase.api.mtt.model.MttPlayerStatus.OUT;
+import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.STATUS;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.ANNOUNCED;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.REGISTERING;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+
+import junit.framework.TestCase;
+
+import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
 import com.cubeia.backend.firebase.CashGamesBackendService;
@@ -52,31 +77,9 @@ import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 import com.cubeia.games.poker.tournament.util.PacketSender;
 import com.cubeia.games.poker.tournament.util.PacketSenderFactory;
+import com.cubeia.network.users.firebase.api.UserServiceContract;
 import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
-import junit.framework.TestCase;
-import org.apache.log4j.Logger;
-import org.joda.time.DateTime;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-
-import static com.cubeia.firebase.api.mtt.model.MttPlayerStatus.OUT;
-import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.STATUS;
-import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.ANNOUNCED;
-import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.REGISTERING;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 /**
  * Tests a poker tournament.
@@ -139,6 +142,9 @@ public class PokerTournamentProcessorTest extends TestCase {
 
     @Mock
     private PacketSender sender;
+    
+    @Mock
+    private UserServiceContract userService;
 
     private SystemTime dateFetcher = new DefaultSystemTime();
 
@@ -164,7 +170,8 @@ public class PokerTournamentProcessorTest extends TestCase {
         tournamentProcessor.setDateFetcher(dateFetcher);
         tournamentProcessor.setSenderFactory(senderFactory);
         tournamentProcessor.setTournamentRegistryService(tournamentPlayerRegistry);
-
+        tournamentProcessor.setUserService(userService);
+        
         state = new MTTStateSupport(1, 1);
         when(configuration.getBlindsStructure()).thenReturn(BlindsStructureFactory.createDefaultBlindsStructure());
         when(instance.getSystemPlayerRegistry()).thenReturn(playerRegistry);
