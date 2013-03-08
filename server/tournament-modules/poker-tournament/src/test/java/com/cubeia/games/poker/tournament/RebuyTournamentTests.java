@@ -25,16 +25,21 @@ import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.firebase.api.action.mtt.MttObjectAction;
 import com.cubeia.firebase.api.action.mtt.MttRoundReportAction;
 import com.cubeia.firebase.api.mtt.MttInstance;
+import com.cubeia.firebase.api.mtt.model.MttPlayer;
 import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
+import com.cubeia.firebase.api.mtt.support.registry.PlayerRegistry;
 import com.cubeia.firebase.api.service.mttplayerreg.TournamentPlayerRegistry;
 import com.cubeia.firebase.guice.tournament.TournamentAssist;
 import com.cubeia.games.poker.common.money.Money;
 import com.cubeia.games.poker.common.time.DefaultSystemTime;
+import com.cubeia.games.poker.io.protocol.TournamentOut;
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructureFactory;
 import com.cubeia.games.poker.tournament.configuration.blinds.Level;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.ScheduledTournamentLifeCycle;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.TournamentLifeCycle;
+import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
+import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructureParser;
 import com.cubeia.games.poker.tournament.messages.PokerTournamentRoundReport;
 import com.cubeia.games.poker.tournament.messages.RebuyResponse;
 import com.cubeia.games.poker.tournament.messages.RebuyTimeout;
@@ -50,6 +55,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
@@ -61,20 +67,16 @@ import static com.google.common.collect.ImmutableSet.of;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Answers.RETURNS_DEEP_STUBS;
+import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-/**
- * Stuff to test:
- * <p/>
- * 2. Don't start break when we are waiting for rebuys.
- * 3. If a spontaneous rebuy is performed while we are waiting for rebuys from players who are out, don't start a new hand.
- * 4. If a rebuy timeout occurs while we are waiting for a rebuy, we should remove any players from the tournament who
- * has not yet answered, but we should wait for any outstanding backend requests before the next hand is started.
- */
 public class RebuyTournamentTests {
 
     private PokerTournamentState pokerState;
@@ -96,14 +98,21 @@ public class RebuyTournamentTests {
     private TournamentPlayerRegistry tournamentPlayerRegistry;
     @Mock
     private PacketSender sender;
+    @Mock
+    private PlayerRegistry registry;
     @Captor
     private ArgumentCaptor<MttObjectAction> actionCaptor;
 
     @Before
     public void setup() {
         initMocks(this);
+        when(state.getPlayerRegistry()).thenReturn(registry);
         pokerState = new PokerTournamentState();
         pokerState.setStatus(RUNNING);
+        pokerState.setBuyIn(BigDecimal.valueOf(10));
+        InputStream resourceAsStream = PayoutStructure.class.getResourceAsStream("simple.csv");
+        PayoutStructure payouts = new PayoutStructureParser().parsePayouts(resourceAsStream);
+        pokerState.setPayoutStructure(payouts, 2);
     }
 
     @Test
@@ -146,6 +155,60 @@ public class RebuyTournamentTests {
         assertThat(pokerState.getStatus(), is(ON_BREAK));
     }
 
+    @Test
+    public void spontaneousRebuyShouldNotTriggerHandStart() {
+        // Given a tournament.
+        when(state.getTables()).thenReturn(of(1));
+        when(state.getPlayersAtTable(1)).thenReturn(of(1, 2, 3));
+        prepareTournament();
+
+        // When someone performs a spontaneous rebuy.
+        tournament.handleRebuyResponse(new RebuyResponse(1, 2, 50, true));
+        tournament.handleReservationResponse(createReserveResponse(2));
+
+        // We should not start a new hand.
+        verify(support, never()).sendRoundStartActionToTables(isA(MTTStateSupport.class), anyListOf(Integer.class));
+    }
+
+    @Test
+    public void doNotStartNewHandWhenRebuyTimeoutOccursIfThereAreOutstandingRequests() {
+        // Given a tournament where one player is out and we are waiting for a backend response.
+        when(state.getTables()).thenReturn(of(1));
+        when(state.getPlayersAtTable(1)).thenReturn(of(1, 2, 3));
+        prepareTournament();
+        sendRoundReportToTournament(1, 1);
+        tournament.handleRebuyResponse(new RebuyResponse(1, 1, 0, true));
+
+        // When the rebuy timeout occurs.
+        tournament.handleRebuyTimeout(1);
+
+        // We should not start a new hand.
+        verify(support, never()).sendRoundStartActionToTables(isA(MTTStateSupport.class), anyListOf(Integer.class));
+
+        // But when the backend response comes.
+        tournament.handleReservationResponse(createReserveResponse(1));
+
+        // We should start the hand.
+        verify(support).sendRoundStartActionToTables(isA(MTTStateSupport.class), anyListOf(Integer.class));
+    }
+
+    @Test
+    public void removePendingRebuyPlayersOnTimeout() {
+        // Given a tournament where one player is out and we are waiting for a backend response.
+        when(state.getTables()).thenReturn(of(1));
+        when(state.getPlayersAtTable(1)).thenReturn(of(1, 2, 3));
+        when(registry.getPlayers()).thenReturn(of(new MttPlayer(1)));
+        prepareTournament();
+        sendRoundReportToTournament(1, 1);
+
+        // When the rebuy timeout occurs.
+        tournament.handleRebuyTimeout(1);
+
+        // We should remove player 1 and start a new hand.
+        verify(sender).sendPacketToPlayer(isA(TournamentOut.class), eq(1));
+        verify(support).sendRoundStartActionToTables(isA(MTTStateSupport.class), anyListOf(Integer.class));
+    }
+
     private ReserveResponse createReserveResponse(int playerId) {
         Money money = new Money(1, "EUR", 2);
         BalanceUpdate balanceUpdate = new BalanceUpdate(new PlayerSessionId(playerId, "1"), money, 1);
@@ -154,7 +217,7 @@ public class RebuyTournamentTests {
 
     private void sendRoundReportToTournament(int tableId, int ... playersOut) {
         MttRoundReportAction action = mock(MttRoundReportAction.class);
-        Map balances = new HashMap<Integer, Long>();
+        Map<Integer, Long> balances = new HashMap<Integer, Long>();
         for (int playerOut : playersOut) {
             balances.put(playerOut, 0L);
         }

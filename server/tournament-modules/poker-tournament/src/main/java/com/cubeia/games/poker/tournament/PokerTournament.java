@@ -110,14 +110,13 @@ import static java.util.Collections.singletonList;
 
 /**
  * Implementation of poker tournaments.
- *
+ * <p/>
  * Please note a few things:
  * 1. This class is serializable, but we'll keep all data in the PokerTournamentState.
  * 2. The reason this class exists is that previously all of this was done in PokerTournamentProcessor, but
- *    since that class has to be thread safe it had no fields, so all parameters (such as MttInstance)
- *    were being passed on as arguments between all methods, which was not very elegant or convenient.
+ * since that class has to be thread safe it had no fields, so all parameters (such as MttInstance)
+ * were being passed on as arguments between all methods, which was not very elegant or convenient.
  * 3. That being said, this is becoming a God class. Break it down.
- *
  */
 public class PokerTournament implements TableNotifier, Serializable {
 
@@ -186,7 +185,6 @@ public class PokerTournament implements TableNotifier, Serializable {
             rebuySupport.removeRebuyRequestsForTable(tableId);
             if (!playersOut.isEmpty()) {
                 payAndRemovePlayers(tableId, playersOut);
-
             }
             handleEndOfHand(tableId);
         } else {
@@ -235,18 +233,20 @@ public class PokerTournament implements TableNotifier, Serializable {
         Money amountReserved = response.getAmountReserved();
         PlayerSessionId playerSessionId = response.getPlayerSessionId();
         int playerId = playerSessionId.playerId;
-        log.debug("Player " + playerId +  " reserved " + amountReserved + ". Moving it to the tournament session.");
+        log.debug("Player " + playerId + " reserved " + amountReserved + ". Moving it to the tournament session.");
         TournamentSessionId toAccount = pokerState.getTournamentSession();
         int tableId = pokerState.getTableFor(playerId, state);
         PendingRequestType pendingRequest = pendingRequests.getAndClearPendingRequest(playerId, tableId);
         if (pendingRequest == REBUY) {
-            TransferMoneyRequest request = new TransferMoneyRequest(amountReserved, playerSessionId, toAccount, "Rebuy for tournament " + pokerState.getHistoricId());
+            TransferMoneyRequest request = new TransferMoneyRequest(amountReserved, playerSessionId, toAccount,
+                    "Rebuy for tournament " + pokerState.getHistoricId());
             backend.transfer(request);
             addChipsTo(playerId, tableId, rebuySupport.getRebuyChipsAmount());
             rebuySupport.increaseRebuyCount(playerId);
             startNextHandIfThisWasLastRebuyQuestionAtTable(tableId);
         } else if (pendingRequest == ADD_ON) {
-            TransferMoneyRequest request = new TransferMoneyRequest(amountReserved, playerSessionId, toAccount, "Add-on for tournament " + pokerState.getHistoricId());
+            TransferMoneyRequest request = new TransferMoneyRequest(amountReserved, playerSessionId, toAccount,
+                    "Add-on for tournament " + pokerState.getHistoricId());
             backend.transfer(request);
             rebuySupport.addOnPerformed(playerId);
             addChipsTo(playerId, tableId, rebuySupport.getAddOnChipsAmount());
@@ -303,8 +303,8 @@ public class PokerTournament implements TableNotifier, Serializable {
     }
 
     public void injectTransientDependencies(MttInstance instance, TournamentAssist support, MTTStateSupport state,
-            TournamentHistoryPersistenceService historyService, CashGamesBackendService backend, SystemTime dateFetcher,
-            ShutdownServiceContract shutdownService, TournamentPlayerRegistry tournamentPlayerRegistry, PacketSender sender) {
+                                            TournamentHistoryPersistenceService historyService, CashGamesBackendService backend, SystemTime dateFetcher,
+                                            ShutdownServiceContract shutdownService, TournamentPlayerRegistry tournamentPlayerRegistry, PacketSender sender) {
         this.instance = instance;
         this.mttSupport = support;
         this.state = state;
@@ -393,7 +393,7 @@ public class PokerTournament implements TableNotifier, Serializable {
         setTournamentStatus(ON_BREAK);
         scheduleNextBlindsLevel();
         notifyAllTablesThatBreakStarted();
-        
+
         rebuySupport.notifyNewLevelStarted(pokerState.getCurrentBlindsLevelNr());
         if (rebuySupport.addOnsAvailableDuringBreak(pokerState.getCurrentBlindsLevelNr())) {
             rebuySupport.startAddOnPeriod();
@@ -420,8 +420,8 @@ public class PokerTournament implements TableNotifier, Serializable {
     private BlindsWithDeadline createBlindsWithDeadline() {
         log.debug("Creating blinds with deadline: " + pokerState.getNextLevelStartTime());
         Level level = pokerState.getCurrentBlindsLevel();
-        return new BlindsWithDeadline(level.getSmallBlindAmount(), level.getBigBlindAmount(), level.getAnteAmount(),
-                                      level.getDurationInMinutes(), level.isBreak(), pokerState.getNextLevelStartTime().getMillis());
+        return new BlindsWithDeadline(level.getSmallBlindAmount(), level.getBigBlindAmount(), level.getAnteAmount(), level.getDurationInMinutes(),
+                level.isBreak(), pokerState.getNextLevelStartTime().getMillis());
     }
 
     private void notifyWaitingForOtherTablesToFinishBeforeBreak(int tableId) {
@@ -434,7 +434,7 @@ public class PokerTournament implements TableNotifier, Serializable {
 
     private Set<Integer> tablesWithLonelyPlayer() {
         Set<Integer> tables = newHashSet();
-        for (int tableId:state.getTables()) {
+        for (int tableId : state.getTables()) {
             if (state.getPlayersAtTable(tableId).size() == 1) {
                 tables.add(tableId);
             }
@@ -449,7 +449,7 @@ public class PokerTournament implements TableNotifier, Serializable {
     }
 
     public void handleTablesCreated(MttTablesCreatedAction action) {
-        for (int tableId: action.getTables()) {
+        for (int tableId : action.getTables()) {
             historyPersister.addTable(getExternalTableId(tableId));
         }
         if (pokerState.allTablesHaveBeenCreated(state.getTables().size())) {
@@ -616,7 +616,6 @@ public class PokerTournament implements TableNotifier, Serializable {
         return state.getRemainingPlayerCount() == 1;
     }
 
-    // TODO: TEST THIS!
     private void startNextRoundIfPossible(int tableId) {
         if (!pokerState.isOnBreak()) {
             if (tableHasPendingRequests(tableId)) {
@@ -664,7 +663,9 @@ public class PokerTournament implements TableNotifier, Serializable {
      * @return true if table is closed
      */
     private boolean applyBalancing(List<Move> moves, int sourceTableId) {
-        if (moves.isEmpty()) return false; // Nothing to do
+        if (moves.isEmpty()) {
+            return false; // Nothing to do
+        }
         Set<Integer> tablesToStart = new HashSet<Integer>();
 
         for (Move move : moves) {
@@ -803,7 +804,8 @@ public class PokerTournament implements TableNotifier, Serializable {
         }
 
         long registrationElapsedTime = pokerState.getLastRegisteredTime() - pokerState.getFirstRegisteredTime();
-        log.debug("Starting tournament [" + instance.getId() + " : " + instance.getState().getName() + "]. Registration time was " + registrationElapsedTime + " ms");
+        log.debug("Starting tournament [" + instance.getId() + " : " + instance.getState()
+                .getName() + "]. Registration time was " + registrationElapsedTime + " ms");
 
         setTournamentStatus(RUNNING);
         updatePlayerStatuses(PLAYING);
@@ -849,7 +851,7 @@ public class PokerTournament implements TableNotifier, Serializable {
     private TournamentTableSettings getTableSettings() {
         return new TournamentTableSettings(pokerState.getTiming(), pokerState.getBetStrategy());
     }
-    
+
     public void playerRegistered(MttRegistrationRequest request) {
         addJoinedTimestamps();
         if (isReRegistration(request)) {
@@ -903,7 +905,9 @@ public class PokerTournament implements TableNotifier, Serializable {
     }
 
     private boolean isReRegistration(MttRegistrationRequest request) {
-        if (request.getParameters() == null) return false;
+        if (request.getParameters() == null) {
+            return false;
+        }
         for (Attribute parameter : request.getParameters()) {
             if (REREGISTRATION.equals(parameter.name)) {
                 return true;
@@ -1024,7 +1028,7 @@ public class PokerTournament implements TableNotifier, Serializable {
             scheduleNextBlindsLevel();
             pokerState.getRebuySupport().notifyNewLevelStarted(pokerState.getCurrentBlindsLevelNr());
         }
-        
+
         if (finishedBreak(levelBeforeIncreasing, levelAfterIncreasing)) {
             // The break has finished. Tell all tables about the new blinds and tell them to start.
             log.debug("The break has finished, notifying all tables about new blinds and telling them to start.");
