@@ -158,29 +158,7 @@
             });
         </script>
     </c:if>
-    <script type="text/javascript">
 
-        <c:set var="CUBEIA_CLASSIC" value="cubeiaclassic"/>
-        <c:choose>
-            <c:when test="${skin eq CUBEIA_CLASSIC}">
-                var currentSkin = "${CUBEIA_CLASSIC}";
-                function changeSkin() {
-                    if(currentSkin == "${CUBEIA_CLASSIC}") {
-                        currentSkin = "cubeia";
-                    } else {
-                        currentSkin = "${CUBEIA_CLASSIC}";
-                    }
-
-                   $("#skinCss").attr("href","${cp}/skins/" + currentSkin + "/lcss/base.css");
-                }
-            </c:when>
-            <c:otherwise>
-                function changeSkin() {
-                    $("body").toggleClass("skin-classic");
-                }
-            </c:otherwise>
-        </c:choose>
-    </script>
     <script type="text/javascript">
 
         var contextPath = "${cp}";
@@ -193,14 +171,6 @@
 
             less.watch(); //development only
             $(".describe").describe();
-
-
-            //TODO: remove later, probably wont be a button in the toolbar
-            $("#skinButton").click(function(e){
-                changeSkin();
-                $("#classic").toggle();
-                $("#modern").toggle();
-            });
 
             var onPreLoadComplete = function() {
                 var requestHost = window.location.hostname;
@@ -241,10 +211,7 @@
             <ul id="tabItems" class="tabs">
             </ul>
         </div>
-        <div class="skin-button" id="skinButton">
-            <div id="classic" style="display:none;">Classic</div>
-            <div id="modern">Modern</div>
-        </div>
+
     </div>
     <div class="toolbar-background"></div>
     <div class="main-menu-container" style="">
@@ -558,6 +525,9 @@
             <div class="seat" id="seat9-{{tableId}}">
 
             </div>
+            <div class="action-button action-leave" style="display: none;">
+                <span>Leave</span>
+            </div>
             <div class="my-player-seat" id="myPlayerSeat-{{tableId}}">
 
             </div>
@@ -591,9 +561,7 @@
             Hand History
         </div>
         <div class="bottom-bar">
-                <div class="action-button action-leave" style="display: none;">
-                    <span>Leave</span>
-            </div>
+
             <div class="own-player" id="myPlayerSeat-{{tableId}}Info" style="display:none;">
                 <div class="name" id="myPlayerName-{{tableId}}"></div>
                 <div class="balance" id="myPlayerBalance-{{tableId}}"></div>
@@ -1008,7 +976,7 @@
         {{#blindsLevels}}
         <div class="blinds-level info-list-item">
             {{#isBreak}}
-            Break
+                Break
             {{/isBreak}}
             {{^isBreak}}
             {{smallBlind}}/{{bigBlind}}
