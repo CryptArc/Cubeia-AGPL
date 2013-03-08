@@ -1,0 +1,8 @@
+<service auto-start="true">
+    <name>Hand Debugger Service</name>
+    <public-id>ns://www.cubeia.com/poker/handdebugger</public-id>
+    <contract>com.cubeia.games.poker.debugger.HandDebuggerContract</contract>
+    <invocation-handler>com.cubeia.games.poker.debugger.HandDebuggerServiceHandler</invocation-handler>
+    <description/>
+    <exported />
+</service>
