@@ -163,12 +163,9 @@ Poker.Seat = Class.extend({
            .addScale3d(1,0.01,1).addOrigin("bottom")
            .setTimed(true)
            .start(this.animationManager);
-        this.moveToPotComplete = false;
-        new Poker.TransformAnimation(amount).
-                addTranslate3d(pos.left, pos.top, 0, "px").
-                addCallback(function() {
-                    self.onMoveToPotEnd();
-                });
+    },
+    moveAmountToPot : function(view,mainPotContainer) {
+
     },
     rebuyRequested: function(rebuyCost, chipsForRebuy, timeToAct) {
         this.showTimer(timeToAct);
