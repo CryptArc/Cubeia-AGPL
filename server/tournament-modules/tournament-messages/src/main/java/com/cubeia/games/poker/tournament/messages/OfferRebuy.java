@@ -19,6 +19,7 @@ package com.cubeia.games.poker.tournament.messages;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashSet;
 
 public class OfferRebuy implements Serializable {
     private final Collection<Integer> players;
@@ -26,7 +27,7 @@ public class OfferRebuy implements Serializable {
     private final String rebuyChips;
 
     public OfferRebuy(Collection<Integer> players, String rebuyCost, String rebuyChips) {
-        this.players = players;
+        this.players = new HashSet(players);
         this.rebuyCost = rebuyCost;
         this.rebuyChips = rebuyChips;
     }

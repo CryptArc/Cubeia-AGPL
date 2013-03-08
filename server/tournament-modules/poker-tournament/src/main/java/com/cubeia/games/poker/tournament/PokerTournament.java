@@ -203,13 +203,14 @@ public class PokerTournament implements TableNotifier, Serializable {
         if (rebuyRequests.contains(playerId)) {
             if (rebuyResponse.getAnswer()) {
                 performRebuy(playerId, tableId);
+                rebuyRequests.remove(playerId);
             } else {
                 rebuyRequests.remove(playerId);
                 payAndRemovePlayers(tableId, singleton(playerId));
-            }
-            // If we have no more pending requests, consider this hand as finished and move on.
-            if (!tableHasPendingRequests(tableId)) {
-                handleEndOfHand(tableId);
+                // If we have no more pending requests, consider this hand as finished and move on.
+                if (!tableHasPendingRequests(tableId)) {
+                    handleEndOfHand(tableId);
+                }
             }
         } else {
             log.debug("We have not requested any rebuy from player " + playerId + " Checking if he is eligible to perform a rebuy.");
@@ -243,7 +244,7 @@ public class PokerTournament implements TableNotifier, Serializable {
             backend.transfer(request);
             addChipsTo(playerId, tableId, rebuySupport.getRebuyChipsAmount());
             rebuySupport.increaseRebuyCount(playerId);
-            endHandIfThisWasLastRebuyQuestionAtTable(playerId, tableId);
+            startNextHandIfThisWasLastRebuyQuestionAtTable(tableId);
         } else if (pendingRequest == ADD_ON) {
             TransferMoneyRequest request = new TransferMoneyRequest(amountReserved, playerSessionId, toAccount, "Add-on for tournament " + pokerState.getHistoricId());
             backend.transfer(request);
@@ -259,17 +260,21 @@ public class PokerTournament implements TableNotifier, Serializable {
         int tableId = pokerState.getTableFor(playerId, state);
         PendingBackendRequests pendingRequests = pokerState.getPendingRequests();
         pendingRequests.getAndClearPendingRequest(playerId, tableId);
-        endHandIfThisWasLastRebuyQuestionAtTable(playerId, tableId);
+        startNextHandIfThisWasLastRebuyQuestionAtTable(tableId);
         // TODO: Tell the player something went wrong.
     }
 
-    private void endHandIfThisWasLastRebuyQuestionAtTable(int playerId, int tableId) {
-        Set<Integer> pendingQuestions = rebuySupport.getRebuyRequestsForTable(tableId);
-        if (pendingQuestions.contains(playerId)) {
-            pendingQuestions.remove(playerId);
-            if (pendingQuestions.isEmpty()) {
-                handleEndOfHand(tableId);
-            }
+    private void startNextHandIfThisWasLastRebuyQuestionAtTable(int tableId) {
+        /*
+         * Here, we check that there are no outstanding backend requests, there are no unanswered
+         * rebuy questions and we are in fact waiting for rebuys to finish until starting the next hand.
+         *
+         * This should cover the case where someone who wasn't asked to perform a rebuy does one spontaneously,
+         * (for example) just before the questions go out.
+         */
+        if (!tableHasPendingRequests(tableId) && rebuySupport.tableIsWaitingForRebuys(tableId)) {
+            log.debug("Table " + tableId + " has no pending requests and was waiting for rebuys, starting next hand.");
+            handleEndOfHand(tableId);
         }
     }
 
@@ -326,8 +331,10 @@ public class PokerTournament implements TableNotifier, Serializable {
         log.info("Players out of tournament[" + instance.getId() + "] : " + playersOut);
         boolean rebuysRequested = handlePlayersOut(tableId, playersOut);
         if (rebuysRequested) {
+            log.debug("Rebuys requested, won't start next hand yet.");
             scheduleRebuyTimeout(tableId);
         } else {
+            log.debug("No rebuys requested, starting next hand.");
             handleEndOfHand(tableId);
         }
     }
@@ -482,14 +489,20 @@ public class PokerTournament implements TableNotifier, Serializable {
     private boolean handlePlayersOut(int tableId, Set<Integer> playersOut) {
         if (!playersOut.isEmpty()) {
             Set<Integer> playersWithRebuyOption = pokerState.getRebuySupport().requestRebuys(tableId, playersOut, this);
+            log.debug("Players with rebuy options " + playersWithRebuyOption);
             playersOut.removeAll(playersWithRebuyOption);
             payAndRemovePlayers(tableId, playersOut);
-            return !playersWithRebuyOption.isEmpty();
+            boolean empty = playersWithRebuyOption.isEmpty();
+            log.debug("Players with rebuy options empty? " + empty + " " + playersWithRebuyOption);
+            return !empty;
         }
         return false;
     }
 
     private void payAndRemovePlayers(int tableId, Set<Integer> playersOut) {
+        if (playersOut.isEmpty()) {
+            return;
+        }
         handlePayouts(playersOut);
         unseatPlayers(tableId, playersOut);
         updatePlayersLeft();
@@ -603,16 +616,19 @@ public class PokerTournament implements TableNotifier, Serializable {
         return state.getRemainingPlayerCount() == 1;
     }
 
+    // TODO: TEST THIS!
     private void startNextRoundIfPossible(int tableId) {
         if (!pokerState.isOnBreak()) {
             if (tableHasPendingRequests(tableId)) {
               log.debug("Won't start new hand at table since it has pending requests.");
-            } if (state.getPlayersAtTable(tableId).size() > 1) {
-                rebuySupport.removeTableWaitingForRebuys(tableId);
-                mttSupport.sendRoundStartActionToTables(state, singleton(tableId));
             } else {
-                // Notify table that we are waiting for more players before we can start the next hand.
-                notifyTable(tableId, new WaitingForPlayers());
+                if (state.getPlayersAtTable(tableId).size() > 1) {
+                    rebuySupport.removeTableWaitingForRebuys(tableId);
+                    mttSupport.sendRoundStartActionToTables(state, singleton(tableId));
+                } else {
+                    // Notify table that we are waiting for more players before we can start the next hand.
+                    notifyTable(tableId, new WaitingForPlayers());
+                }
             }
         }
     }

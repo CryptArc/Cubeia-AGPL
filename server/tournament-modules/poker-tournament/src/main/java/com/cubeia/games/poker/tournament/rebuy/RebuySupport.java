@@ -21,7 +21,6 @@ import com.cubeia.games.poker.tournament.messages.OfferRebuy;
 import com.cubeia.games.poker.tournament.util.SerializablePredicate;
 import com.cubeia.games.poker.tournament.util.TableNotifier;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Sets;
 import org.apache.log4j.Logger;
 
 import javax.annotation.Nullable;
@@ -32,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.cubeia.games.poker.common.money.MoneyFormatter.format;
+import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.math.BigDecimal.ZERO;
@@ -108,6 +108,7 @@ public class RebuySupport implements Serializable {
 
     private boolean inTheMoney;
 
+    /** Keeps track of tables that are waiting to start the next hand until any rebuys are settled. */
     private Set<Integer> tablesWaitingForRebuys = new HashSet<Integer>();
 
     /** Indicates whether the add-on period is active. */
@@ -196,10 +197,6 @@ public class RebuySupport implements Serializable {
         }
     }
 
-    public void removeTableWaitingForRebuys(int tableId) {
-        tablesWaitingForRebuys.remove(tableId);
-    }
-
     public void addOnPerformed(int playerId) {
         performedAddOns.add(playerId);
     }
@@ -219,10 +216,6 @@ public class RebuySupport implements Serializable {
 
     public boolean tableHasPendingRequests(int tableId) {
         return !getRebuyRequestsForTable(tableId).isEmpty();
-    }
-
-    public boolean tableIsWaitingForRebuys(int tableId) {
-        return tablesWaitingForRebuys.contains(tableId);
     }
 
     private int numberOfRebuysPerformedBy(Integer playerId) {
@@ -250,7 +243,7 @@ public class RebuySupport implements Serializable {
     }
 
     public Set<Integer> requestRebuys(int tableId, Set<Integer> playersOut, TableNotifier tableNotifier) {
-        Set<Integer> playersWithRebuyOption = Sets.filter(playersOut, rebuyAllowed);
+        Set<Integer> playersWithRebuyOption = newHashSet(filter(playersOut, rebuyAllowed));
         log.debug("Requesting rebuys from players: " + playersWithRebuyOption);
         tableNotifier.notifyTable(tableId, new OfferRebuy(playersWithRebuyOption, format(rebuyCost), format(rebuyChipsAmount)));
         addRebuyRequestsForTable(tableId, playersWithRebuyOption);
@@ -258,4 +251,11 @@ public class RebuySupport implements Serializable {
         return playersWithRebuyOption;
     }
 
+    public boolean tableIsWaitingForRebuys(int tableId) {
+        return tablesWaitingForRebuys.contains(tableId);
+    }
+
+    public void removeTableWaitingForRebuys(int tableId) {
+        tablesWaitingForRebuys.remove(tableId);
+    }
 }
