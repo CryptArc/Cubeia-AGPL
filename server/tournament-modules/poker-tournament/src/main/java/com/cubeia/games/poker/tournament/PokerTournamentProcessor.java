@@ -57,6 +57,7 @@ import com.cubeia.games.poker.tournament.messages.RebuyResponse;
 import com.cubeia.games.poker.tournament.messages.RebuyTimeout;
 import com.cubeia.games.poker.tournament.util.PacketSender;
 import com.cubeia.games.poker.tournament.util.PacketSenderFactory;
+import com.cubeia.network.users.firebase.api.UserServiceContract;
 import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
 import com.google.common.annotations.VisibleForTesting;
@@ -94,6 +95,9 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
 
     @Service
     private CashGamesBackendService backend;
+    
+    @Service
+    private UserServiceContract userService;
 
     @Service(proxy = true)
     private ShutdownServiceContract shutdownService;
@@ -262,7 +266,7 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
 
         PacketSender sender = senderFactory.create(instance.getMttNotifier(), instance);
         tournament.injectTransientDependencies(instance, support, util.getStateSupport(instance), historyService,
-                backend, dateFetcher, shutdownService, tournamentPlayerRegistry, sender);
+                backend, dateFetcher, shutdownService, tournamentPlayerRegistry, sender, userService);
     }
 
     private void initializeServices(MttInstance instance) {
@@ -297,6 +301,11 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
     public void setHistoryService(TournamentHistoryPersistenceService historyService) {
         this.historyService = historyService;
     }
+    
+    @VisibleForTesting
+    public void setUserService(UserServiceContract userService) {
+		this.userService = userService;
+	}
 
     @VisibleForTesting
     public void setBackend(CashGamesBackendService backend) {

@@ -13,6 +13,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.cubeia.network.users</groupId>
+            <artifactId>fb-user-service</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.cubeia.games</groupId>
             <artifactId>tournament-messages</artifactId>
         </dependency>

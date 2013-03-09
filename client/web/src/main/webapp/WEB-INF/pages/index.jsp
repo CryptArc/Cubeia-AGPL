@@ -159,6 +159,7 @@
 
     <c:if test="${not empty operatorId}">
         <script type="text/javascript">
+            Poker.OperatorConfig.operatorId = ${operatorId};
             Poker.SkinConfiguration.operatorId = ${operatorId};
             Poker.MyPlayer.loginToken = "${token}";
             $(document).ready(function(){

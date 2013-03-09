@@ -17,6 +17,35 @@
 
 package com.cubeia.games.poker.tournament;
 
+import static com.cubeia.firebase.api.common.AttributeValue.wrap;
+import static com.cubeia.firebase.api.mtt.model.MttPlayerStatus.OUT;
+import static com.cubeia.firebase.api.mtt.model.MttPlayerStatus.PLAYING;
+import static com.cubeia.games.poker.tournament.state.PendingBackendRequests.PendingRequestType.ADD_ON;
+import static com.cubeia.games.poker.tournament.state.PendingBackendRequests.PendingRequestType.REBUY;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.CLOSED;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.ON_BREAK;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.PREPARING_BREAK;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.REGISTERING;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.RUNNING;
+import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Sets.newHashSet;
+import static java.util.Collections.singleton;
+import static java.util.Collections.singletonList;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.joda.time.Duration;
+
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.TournamentId;
 import com.cubeia.backend.cashgame.TournamentSessionId;
@@ -30,6 +59,7 @@ import com.cubeia.backend.cashgame.dto.ReserveResponse;
 import com.cubeia.backend.cashgame.dto.TransferMoneyRequest;
 import com.cubeia.backend.cashgame.exceptions.CloseSessionFailedException;
 import com.cubeia.backend.firebase.CashGamesBackendService;
+import com.cubeia.backoffice.users.api.dto.User;
 import com.cubeia.firebase.api.action.GameObjectAction;
 import com.cubeia.firebase.api.action.UnseatPlayersMttAction;
 import com.cubeia.firebase.api.action.mtt.MttAction;
@@ -71,42 +101,15 @@ import com.cubeia.games.poker.tournament.payouts.ConcretePayout;
 import com.cubeia.games.poker.tournament.payouts.PayoutHandler;
 import com.cubeia.games.poker.tournament.rebuy.RebuySupport;
 import com.cubeia.games.poker.tournament.state.PendingBackendRequests;
+import com.cubeia.games.poker.tournament.state.PendingBackendRequests.PendingRequestType;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 import com.cubeia.games.poker.tournament.util.PacketSender;
 import com.cubeia.games.poker.tournament.util.TableNotifier;
+import com.cubeia.network.users.firebase.api.UserServiceContract;
 import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
 import com.cubeia.poker.tournament.history.api.HistoricPlayer;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
-import org.apache.log4j.Logger;
-import org.joda.time.Duration;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static com.cubeia.firebase.api.common.AttributeValue.wrap;
-import static com.cubeia.firebase.api.mtt.model.MttPlayerStatus.OUT;
-import static com.cubeia.firebase.api.mtt.model.MttPlayerStatus.PLAYING;
-import static com.cubeia.games.poker.tournament.state.PendingBackendRequests.PendingRequestType;
-import static com.cubeia.games.poker.tournament.state.PendingBackendRequests.PendingRequestType.ADD_ON;
-import static com.cubeia.games.poker.tournament.state.PendingBackendRequests.PendingRequestType.REBUY;
-import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.CLOSED;
-import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.ON_BREAK;
-import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.PREPARING_BREAK;
-import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.REGISTERING;
-import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.RUNNING;
-import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.collect.Sets.newHashSet;
-import static java.util.Collections.singleton;
-import static java.util.Collections.singletonList;
 
 /**
  * Implementation of poker tournaments.
@@ -145,6 +148,7 @@ public class PokerTournament implements TableNotifier, Serializable {
     private transient HistoryPersister historyPersister;
 
     private transient CashGamesBackendService backend;
+    private transient UserServiceContract userService;
 
     private transient PacketSender sender;
 
@@ -292,7 +296,8 @@ public class PokerTournament implements TableNotifier, Serializable {
 
     public void injectTransientDependencies(MttInstance instance, TournamentAssist support, MTTStateSupport state,
             TournamentHistoryPersistenceService historyService, CashGamesBackendService backend, SystemTime dateFetcher,
-            ShutdownServiceContract shutdownService, TournamentPlayerRegistry tournamentPlayerRegistry, PacketSender sender) {
+            ShutdownServiceContract shutdownService, TournamentPlayerRegistry tournamentPlayerRegistry, PacketSender sender,
+            UserServiceContract userService) {
         this.instance = instance;
         this.mttSupport = support;
         this.state = state;
@@ -303,6 +308,7 @@ public class PokerTournament implements TableNotifier, Serializable {
         this.tournamentPlayerRegistry = tournamentPlayerRegistry;
         this.sender = sender;
         this.rebuySupport = pokerState.getRebuySupport();
+        this.userService = userService;
     }
 
     public void processRoundReport(MttRoundReportAction action) {
@@ -857,6 +863,10 @@ public class PokerTournament implements TableNotifier, Serializable {
         if (isReRegistration(request)) {
             return MttRegisterResponse.ALLOWED;
         }
+        
+        if (isPrivateAndDisallowed(request)) {
+        	return MttRegisterResponse.DENIED;
+        }
 
         if (pokerState.getStatus() != REGISTERING) {
             return MttRegisterResponse.DENIED;
@@ -867,7 +877,22 @@ public class PokerTournament implements TableNotifier, Serializable {
         }
     }
 
-    private boolean isReRegistration(MttRegistrationRequest request) {
+    /**
+     * Check if this is a private tournament for one or more operators, and 
+     * return true if we should block this player.
+     */
+    private boolean isPrivateAndDisallowed(MttRegistrationRequest request) {
+		if(pokerState.isPrivate()) {
+	    	MttPlayer player = request.getPlayer();
+	    	// TODO Remove this remote call?
+			User user = userService.getUserById(player.getPlayerId());
+	    	return !pokerState.isOperatorAllowed(user.getOperatorId());
+		} else {
+			return false;
+		}
+	}
+
+	private boolean isReRegistration(MttRegistrationRequest request) {
         if (request.getParameters() == null) return false;
         for (Attribute parameter : request.getParameters()) {
             if (REREGISTRATION.equals(parameter.name)) {
