@@ -441,6 +441,16 @@ public class GameHandler implements PacketVisitor {
     }
 
     @Override
+    public void visit(PlayerPerformedRebuy packet) {
+
+    }
+
+    @Override
+    public void visit(PlayerPerformedAddOn packet) {
+
+    }
+
+    @Override
     public void visit(TournamentDestroyed packet) {
 
     }

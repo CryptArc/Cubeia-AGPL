@@ -511,7 +511,6 @@
 
     <!-- Response from the client, saying yay or nay to doing a rebuy. -->
     <struct name="rebuy_response">
-        <var name="table_id" type="int32" />
         <var name="answer" type="bool" />
     </struct>
 
@@ -524,6 +523,16 @@
     <!-- Sent from clients who wish to perform an add-on. -->
     <struct name="perform_add_on">
         <var name="table_id" type="int32" />
+    </struct>
+
+    <struct name="player_performed_rebuy">
+        <var name="chips_added" type="string" />
+        <var name="new_balance" type="string" />
+    </struct>
+
+    <struct name="player_performed_add_on">
+        <var name="chips_added" type="string" />
+        <var name="new_balance" type="string" />
     </struct>
 
     <enum name="tournament_status">
