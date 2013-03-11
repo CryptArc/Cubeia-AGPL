@@ -193,8 +193,7 @@ Poker.LobbyLayoutManager = Class.extend({
         }
     },
     getTableItemHtml : function (templateId, data) {
-        var listItemTemplate = this.templateManager.getTemplate(templateId);
-        var item = Mustache.render(listItemTemplate, data);
+        var item = this.templateManager.render(templateId, data);
         return item;
     }
 });

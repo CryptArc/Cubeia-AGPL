@@ -5,7 +5,7 @@ Poker.MainMenuManager = Class.extend({
     menuItemTemplate : null,
     init : function(viewManager) {
         this.templateManager = new Poker.TemplateManager();
-        this.menuItemTemplate = this.templateManager.getTemplate("menuItemTemplate");
+        this.menuItemTemplate = "menuItemTemplate";
         var self = this;
         $(".main-menu-button").touchSafeClick(function(e){
             self.toggle();
@@ -30,7 +30,7 @@ Poker.MainMenuManager = Class.extend({
     addExternalMenuItem : function(item,activateFunc){
         var self = this;
         item.setActivateFunction(activateFunc);
-        item.appendTo("#mainMenuList",this.menuItemTemplate);
+        item.appendTo(this.templateManager, "#mainMenuList",this.menuItemTemplate);
         if(self.activeView!=null) {
             self.activeView.deactivate();
         }
@@ -49,7 +49,7 @@ Poker.MainMenuManager = Class.extend({
 
         });
 
-        item.appendTo("#mainMenuList",this.menuItemTemplate);
+        item.appendTo(this.templateManager, "#mainMenuList",this.menuItemTemplate);
 
     },
     toggle : function() {
@@ -78,9 +78,9 @@ Poker.MenuItem = Class.extend({
     setActivateFunction : function(func) {
         this.activateFunction = func;
     },
-    appendTo : function(containerId,template) {
+    appendTo : function(templateManager,containerId,template) {
         var self = this;
-        var html = Mustache.render(template,
+        var html = templateManager.render(template,
             {
                 title:this.title,
                 description:this.description,

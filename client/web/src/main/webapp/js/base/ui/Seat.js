@@ -35,7 +35,7 @@ Poker.Seat = Class.extend({
         this.seatElement.removeClass("seat-empty").removeClass("seat-pos-" + previousPos).removeClass("seat-inactive").addClass("seat-pos-" + position);
     },
     renderSeat: function() {
-        var output = Mustache.render(this.templateManager.getTemplate("seatTemplate"), this.player);
+        var output = this.templateManager.render("seatTemplate", this.player);
         this.seatElement.html(output);
         this.progressBarElement = this.seatElement.find(".progress-bar");
         this.avatarElement = this.seatElement.find(".avatar");

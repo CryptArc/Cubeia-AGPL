@@ -51,8 +51,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         //do nothing
     },
     renderSeat : function(){
-        var t = this.templateManager.getTemplate("myPlayerSeatTemplate");
-        var output = Mustache.render(t,this.player);
+        var output = this.templateManager.render("myPlayerSeatTemplate",this.player);
         this.seatElement.html(output);
         this.cardsContainer = this.seatElement.find(".cards-container");
         this.actionAmount = this.seatElement.find(".action-amount");

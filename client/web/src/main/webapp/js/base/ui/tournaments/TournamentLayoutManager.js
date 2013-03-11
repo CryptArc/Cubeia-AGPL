@@ -30,8 +30,8 @@ Poker.TournamentLayoutManager = Class.extend({
         this.viewContainer = viewContainer;
         this.name = name;
         this.templateManager = Poker.AppCtx.getTemplateManager();
-        var template = this.templateManager.getTemplate("tournamentTemplate");
-        var viewHTML = Mustache.render(template,{tournamentId : tournamentId, name : name});
+        var viewHTML = this.templateManager.render("tournamentTemplate",{tournamentId : tournamentId, name : name});
+
         viewContainer.append(viewHTML);
         this.viewElement = $("#tournamentView"+tournamentId);
         this.playerListBody = this.viewElement.find(".player-list tbody");
@@ -48,7 +48,8 @@ Poker.TournamentLayoutManager = Class.extend({
             self.playerListBody.append(template.render(p));
         });
         if(players.length==0) {
-            this.playerListBody.append("<td/>").attr("colspan","3").append("No players registered");
+            this.playerListBody.append("<td/>").attr("colspan","3").
+                append(i18n.t("tournament-lobby.players.no-players"));
         }
     },
     updateBlindsStructure : function(blindsStructure) {
