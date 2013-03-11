@@ -49,6 +49,7 @@ import java.util.Set;
 
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
+import static java.lang.Math.log;
 import static java.lang.Math.max;
 import static java.math.BigDecimal.valueOf;
 import static org.joda.time.Seconds.secondsBetween;
@@ -362,22 +363,32 @@ public class PokerTournamentState implements Serializable {
     public void setPayoutStructure(PayoutStructure payoutStructure, int minPlayers) {
         this.payoutStructure = payoutStructure;
         // Init the payouts assuming that there will be at least minPlayers players.
-        setPayouts(minPlayers);
+        setPayouts(minPlayers, 0);
     }
 
     /**
      * Sets the payouts to use given the number of players that participate in the tournament.
      *
      */
-    public void setPayouts(int registeredPlayersCount) {
-        long totalPrizePoolAsLong = buyIn.multiply(BigDecimal.valueOf(registeredPlayersCount)).movePointRight(2).longValue();
+    public void setPayouts(int minPlayers, int registeredPlayersCount) {
+        log.debug("Calculating payouts, minPlayers: " + minPlayers + " registered players: " + registeredPlayersCount);
+        long totalPrizePoolAsLong;
+        if (registeredPlayersCount < minPlayers) {
+            totalPrizePoolAsLong = buyIn.multiply(BigDecimal.valueOf(registeredPlayersCount)).movePointRight(2).longValue();
+        } else {
+            totalPrizePoolAsLong = prizePool.movePointRight(2).longValue();
+        }
         log.debug("Total prize pool as long: " + totalPrizePoolAsLong);
-        this.payouts = payoutStructure.getPayoutsForEntrantsAndPrizePool(registeredPlayersCount, totalPrizePoolAsLong);
+        this.payouts = payoutStructure.getPayoutsForEntrantsAndPrizePool(max(minPlayers, registeredPlayersCount), totalPrizePoolAsLong);
     }
 
     public void addBuyInToPrizePool() {
-        log.debug("Adding " + buyIn + " to prize pool.");
-        prizePool = prizePool.add(buyIn);
+        addMoneyToPrizePool(buyIn);
+    }
+
+    public void addMoneyToPrizePool(BigDecimal money) {
+        log.debug("Adding " + money + " to prize pool.");
+        prizePool = prizePool.add(money);
         log.debug("Prize pool is now: " + prizePool);
     }
 

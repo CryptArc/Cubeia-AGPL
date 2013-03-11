@@ -40,6 +40,7 @@ import com.cubeia.games.poker.tournament.configuration.lifecycle.ScheduledTourna
 import com.cubeia.games.poker.tournament.configuration.lifecycle.TournamentLifeCycle;
 import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
 import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructureParser;
+import com.cubeia.games.poker.tournament.messages.AddOnRequest;
 import com.cubeia.games.poker.tournament.messages.PokerTournamentRoundReport;
 import com.cubeia.games.poker.tournament.messages.RebuyResponse;
 import com.cubeia.games.poker.tournament.messages.RebuyTimeout;
@@ -48,6 +49,7 @@ import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.util.PacketSender;
 import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
+import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -78,7 +80,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class RebuyTournamentTests {
-
+    private static final Logger log = Logger.getLogger(RebuyTournamentTests.class);
     private PokerTournamentState pokerState;
     private PokerTournament tournament;
     private BlindsStructure blindsStructure = BlindsStructureFactory.createDefaultBlindsStructure();
@@ -102,6 +104,7 @@ public class RebuyTournamentTests {
     private PlayerRegistry registry;
     @Captor
     private ArgumentCaptor<MttObjectAction> actionCaptor;
+    private RebuySupport rebuySupport;
 
     @Before
     public void setup() {
@@ -113,6 +116,7 @@ public class RebuyTournamentTests {
         InputStream resourceAsStream = PayoutStructure.class.getResourceAsStream("simple.csv");
         PayoutStructure payouts = new PayoutStructureParser().parsePayouts(resourceAsStream);
         pokerState.setPayoutStructure(payouts, 2);
+        rebuySupport = new RebuySupport(true, 1000, 1000, 1000, 1000, true, 3, BigDecimal.valueOf(10), BigDecimal.valueOf(10));
     }
 
     @Test
@@ -209,6 +213,49 @@ public class RebuyTournamentTests {
         verify(support).sendRoundStartActionToTables(isA(MTTStateSupport.class), anyListOf(Integer.class));
     }
 
+    @Test
+    public void performingRebuyShouldIncreasePrizeMoney() {
+        // Given a rebuy tournament with two registered players (and there money added to the prize pool).
+        prepareTournament();
+        when(state.getRegisteredPlayersCount()).thenReturn(2);
+        when(state.getMinPlayers()).thenReturn(2);
+        pokerState.addBuyInToPrizePool();
+        pokerState.addBuyInToPrizePool();
+        BigDecimal prizePoolBeforeRebuy = pokerState.getPrizePool();
+        int firstPrize = pokerState.getPayouts().getPayoutsForPosition(1);
+
+        // When someone performs a rebuy.
+        tournament.handleRebuyResponse(new RebuyResponse(1, 2, 50, true));
+        tournament.handleReservationResponse(createReserveResponse(2));
+
+        // The prize pool should be updated.
+        BigDecimal prizePoolAfterRebuy = pokerState.getPrizePool();
+        assertThat(prizePoolAfterRebuy.compareTo(prizePoolBeforeRebuy) > 0, is(true));
+        assertThat(pokerState.getPayouts().getPayoutsForPosition(1) > firstPrize, is(true));
+    }
+
+    @Test
+    public void performingAddOnShouldIncreasePrizeMoney() {
+        // Given a rebuy tournament with two registered players (and there money added to the prize pool).
+        prepareTournament();
+        rebuySupport.startAddOnPeriod();
+        when(state.getRegisteredPlayersCount()).thenReturn(2);
+        when(state.getMinPlayers()).thenReturn(2);
+        pokerState.addBuyInToPrizePool();
+        pokerState.addBuyInToPrizePool();
+        BigDecimal prizePoolBeforeRebuy = pokerState.getPrizePool();
+        int firstPrize = pokerState.getPayouts().getPayoutsForPosition(1);
+
+        // When someone performs a rebuy.
+        tournament.handleAddOnRequest(new AddOnRequest(1, 1));
+        tournament.handleReservationResponse(createReserveResponse(1));
+
+        // The prize pool should be updated.
+        BigDecimal prizePoolAfterRebuy = pokerState.getPrizePool();
+        assertThat(prizePoolAfterRebuy.compareTo(prizePoolBeforeRebuy) > 0, is(true));
+        assertThat(pokerState.getPayouts().getPayoutsForPosition(1) > firstPrize, is(true));
+    }
+
     private ReserveResponse createReserveResponse(int playerId) {
         Money money = new Money(1, "EUR", 2);
         BalanceUpdate balanceUpdate = new BalanceUpdate(new PlayerSessionId(playerId, "1"), money, 1);
@@ -234,7 +281,7 @@ public class RebuyTournamentTests {
         DateTime openRegistrationTime = new DateTime(2011, 7, 5, 14, 0, 0);
         ScheduledTournamentLifeCycle lifeCycle = new ScheduledTournamentLifeCycle(startTime, openRegistrationTime);
         pokerState.setLifecycle(lifeCycle);
-        pokerState.setRebuySupport(new RebuySupport(true, 1000, 1000, 1000, 1000, true, 3, BigDecimal.valueOf(10), BigDecimal.valueOf(10)));
+        pokerState.setRebuySupport(rebuySupport);
         pokerState.setBlindsStructure(blindsStructure);
         pokerState.setTournamentSessionId(new TournamentSessionId("4"));
         tournament = new PokerTournament(pokerState);

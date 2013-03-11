@@ -224,6 +224,8 @@ public class PokerTournament implements TableNotifier, Serializable {
         log.debug("Handling add-on on table " + tableId + " from player " + playerId);
         if (rebuySupport.isPlayerAllowedToPerformAddOn(playerId)) {
             performAddOn(playerId, tableId);
+        } else {
+            log.debug("Player " + playerId + " on table " + tableId + " tried to perform an add-on put was not allowed to do that.");
         }
     }
 
@@ -285,10 +287,14 @@ public class PokerTournament implements TableNotifier, Serializable {
 
     private void performRebuy(int playerId, int tableId) {
         performAddChips(playerId, tableId, rebuySupport.getRebuyCost(), REBUY);
+        pokerState.addMoneyToPrizePool(rebuySupport.getRebuyCost());
+        updatePayouts();
     }
 
     private void performAddOn(int playerId, int tableId) {
         performAddChips(playerId, tableId, rebuySupport.getAddOnCost(), ADD_ON);
+        pokerState.addMoneyToPrizePool(rebuySupport.getAddOnCost());
+        updatePayouts();
     }
 
     private void performAddChips(int playerId, int tableId, BigDecimal cost, PendingRequestType type) {
@@ -824,7 +830,7 @@ public class PokerTournament implements TableNotifier, Serializable {
 
     private void updatePayouts() {
         // The tournament will not start unless we have min player registered, so payouts can assume minPlayers participants.
-        pokerState.setPayouts(Math.max(state.getMinPlayers(), state.getRegisteredPlayersCount()));
+        pokerState.setPayouts(state.getMinPlayers(), state.getRegisteredPlayersCount());
     }
 
     private void createTables() {
