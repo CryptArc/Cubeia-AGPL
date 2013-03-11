@@ -364,6 +364,7 @@ public class BettingRound implements Round, BettingRoundContext {
         if (betStrategy.isCompleteBetOrRaise(this, amountRaisedTo)) {
             // We only increase the number of raises and the size of the last raise if the raise is complete.
             numberOfBetsAndRaises++;
+            bettingCapped = betStrategy.shouldBettingBeCapped(numberOfBetsAndRaises, isHeadsUpBetting());
             long validLevel = betStrategy.getNextValidRaiseToLevel(this);
             long previousCompleteBet = highestCompleteBet;
             highestCompleteBet = determineHighestCompleteBet(amountRaisedTo, validLevel);
