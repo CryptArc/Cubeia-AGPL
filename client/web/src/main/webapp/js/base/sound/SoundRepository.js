@@ -52,7 +52,7 @@ Poker.SoundRepository = Class.extend({
     },
 
     getCodec:function()  {
-        return "mp3";
+        return "ogg";
     }
 
 });
