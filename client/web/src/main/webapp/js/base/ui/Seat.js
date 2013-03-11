@@ -103,38 +103,36 @@ Poker.Seat = Class.extend({
         this.showActionData(actionType, amount);
         if (actionType == Poker.ActionType.FOLD) {
             this.fold();
-       }
-   },
-   showActionData : function(actionType,amount) {
-       this.actionText.html(actionType.text).show();
-       var icon = $("<div/>").addClass("player-action-icon").addClass(actionType.id+"-icon");
-       if(amount>0) {
-           this.actionAmount.removeClass("placed");
-           this.actionAmount.empty().append($("<span/>").append("&euro;"+amount));
-           this.actionAmount.append(icon).show();
-           this.animateActionAmount();
-       }
-   },
-   animateActionAmount : function() {
-       new Poker.CSSClassAnimation(this.actionAmount).addClass("placed").start(this.animationManager);
-   },
-   fold : function() {
-       this.seatElement.addClass("seat-folded");
-       this.seatElement.removeClass("active-seat");
-       this.seatElement.find(".player-card-container img").attr("src",contextPath + "/skins/" + Poker.SkinConfiguration.name +"/images/cards/gray-back.svg");
-   },
-   dealCard : function(card) {
-       console.log("CARDS!!!");
-       console.log(this.cardsContainer);
-       this.cardsContainer.append(card.render());
-       console.log(card);
-       console.log(this.cardsContainer.html());
-       this.onCardDealt(card);
-   },
-   onCardDealt : function(card) {
-       var div = card.getJQElement();
-       //animate deal card
-       new Poker.CSSClassAnimation(div).addClass("dealt").start(this.animationManager);
+        }
+    },
+    showActionData: function(actionType, amount) {
+        this.actionText.html(actionType.text).show();
+        var icon = $("<div/>").addClass("player-action-icon").addClass(actionType.id + "-icon");
+        if (amount > 0) {
+            this.actionAmount.removeClass("placed");
+            this.actionAmount.empty().append($("<span/>").append("&euro;" + amount));
+            this.actionAmount.append(icon).show();
+            this.animateActionAmount();
+        }
+    },
+    animateActionAmount: function() {
+        new Poker.CSSClassAnimation(this.actionAmount).addClass("placed").start(this.animationManager);
+    },
+    fold: function() {
+        this.seatElement.addClass("seat-folded");
+        this.seatElement.removeClass("active-seat");
+        this.seatElement.find(".player-card-container img").attr("src", contextPath + "/skins/" + Poker.SkinConfiguration.name + "/images/cards/gray-back.svg");
+    },
+    dealCard: function(card) {
+        this.cardsContainer.append(card.render());
+        console.log(card);
+        this.onCardDealt(card);
+    },
+    onCardDealt: function(card) {
+        var div = card.getJQElement();
+        //animate deal card
+        new Poker.CSSClassAnimation(div).addClass("dealt").start(this.animationManager);
+
     },
     inactivateSeat: function() {
         this.seatElement.removeClass("active-seat");
@@ -155,7 +153,7 @@ Poker.Seat = Class.extend({
    onBettingRoundComplete : function(){
        this.inactivateSeat();
    },
-   activateSeat : function(allowedActions, timeToAct, mainPot, fixedLimit) {
+   activateSeat : function(allowedActions, timeToAct,mainPot,fixedLimit) {
        this.seatElement.addClass("active-seat");
        this.progressBarElement.show();
        this.currentProgressBarAnimation = new Poker.TransformAnimation(this.progressBarElement)
@@ -163,9 +161,6 @@ Poker.Seat = Class.extend({
            .addScale3d(1,0.01,1).addOrigin("bottom")
            .setTimed(true)
            .start(this.animationManager);
-    },
-    moveAmountToPot : function(view,mainPotContainer) {
-
     },
     rebuyRequested: function(rebuyCost, chipsForRebuy, timeToAct) {
         this.showTimer(timeToAct);
@@ -178,6 +173,43 @@ Poker.Seat = Class.extend({
     },
     hideAddOnButton: function() {
         // Nothing to do.
+    },
+    showTimer: function(timeToAct) {
+        this.seatElement.addClass("active-seat");
+        this.progressBarElement.show();
+        this.currentProgressBarAnimation = new Poker.TransformAnimation(this.progressBarElement)
+                .addTransition("transform", timeToAct / 1000, "linear")
+                .addScale3d(1, 0.01, 1).addOrigin("bottom")
+                .setTimed(true)
+                .start(this.animationManager);
+    },
+    showHandStrength: function(hand) {
+        this.actionAmount.html("");
+        this.actionText.html("").hide();
+        if (hand.id != Poker.Hand.UNKNOWN.id) {
+            this.handStrength.visible = true;
+            this.handStrength.html(hand.text).show();
+        }
+
+    },
+    clear: function() {
+
+    },
+    moveAmountToPot: function(view, mainPotContainer) {
+        this.hideActionInfo();
+        return;
+        //before enabling animations for bet amounts going into the pot we need a better
+        //handling of animations
+        var self = this;
+        var amount = this.actionAmount.get(0);
+        var pos = self.calculatePotOffset(view, mainPotContainer);
+
+        this.moveToPotComplete = false;
+        new Poker.TransformAnimation(amount).
+                addTranslate3d(pos.left, pos.top, 0, "px").
+                addCallback(function() {
+                    self.onMoveToPotEnd();
+                });
     },
     moveToPotComplete: true,
     onMoveToPotEnd: function() {
