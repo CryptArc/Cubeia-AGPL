@@ -15,14 +15,15 @@ Poker.PotTransferAnimator = Class.extend({
         this.potContainer = potContainer;
         this.tableId = tableId;
         this.transfers = [];
-        this.potTransferTemplate = Poker.AppCtx.getTemplateManager().getTemplate("potTransferTemplate");
     },
     addTransfer : function(seat, potId, amount) {
         this.transfers.push({seat : seat, potId : potId, amount : amount});
     },
     createAnimation : function(targetElement,amount,seatId,potId) {
         var transferId = "pt" + potId  + "-" + seatId + "-" + this.tableId;
-        var html = Mustache.render(this.potTransferTemplate,{ ptId : transferId, amount: Poker.Utils.formatCurrency(amount)});
+
+        var html = Poker.AppCtx.getTemplateManager().
+            render("potTransferTemplate",{ ptId : transferId, amount: Poker.Utils.formatCurrency(amount)});
         var potElement = this.potContainer.find(".pot-container-" + potId);
         var offset = potElement.relativeOffset(this.tableViewContainer);
 

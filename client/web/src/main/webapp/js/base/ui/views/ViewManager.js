@@ -150,7 +150,7 @@ Poker.ViewManager = Class.extend({
         $(".view-container").hide();
         $("#toolbar").hide();
         Poker.AppCtx.getDialogManager().displayGenericDialog(
-            { header : "You have been logged out", message : "You have logged in from another computer",
+            { translationKey : "force-logged-out",
                 okButtonText:"Reload" }, function(){
                 document.location.reload();
             });
