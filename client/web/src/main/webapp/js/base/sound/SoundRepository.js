@@ -16,7 +16,7 @@ Poker.SoundRepository = Class.extend({
 
     loadSounds:function () {
         var codec = this.getCodec();
-        var path = "../sounds/"+codec+"/";
+        var path = "/poker-client/sounds/"+codec+"/";
 
         var audioModel = "Audio";
         var context = null;
