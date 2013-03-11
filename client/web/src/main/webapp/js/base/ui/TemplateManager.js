@@ -6,8 +6,8 @@ Poker.TemplateManager = Class.extend({
     init : function(preCacheTemplates) {
 
 
-
         this.templates = new Poker.Map();
+
         if(preCacheTemplates && preCacheTemplates.length>0) {
             for(var i = 0; i<preCacheTemplates.length; i++) {
                 this.getTemplate(preCacheTemplates[i]);
@@ -23,7 +23,11 @@ Poker.TemplateManager = Class.extend({
             if(el.length==0) {
                throw "Template " + id + " not found";
             }
-            var template = Handlebars.compile(el.html());
+            var html = el.html();
+            if(html=="") {
+                html =" ";
+            }
+            var template = Handlebars.compile(html);
 
             this.templates.put(id,template);
             return template;
