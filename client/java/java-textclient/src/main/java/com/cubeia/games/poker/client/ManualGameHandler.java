@@ -54,6 +54,8 @@ import com.cubeia.games.poker.io.protocol.PlayerAction;
 import com.cubeia.games.poker.io.protocol.PlayerBalance;
 import com.cubeia.games.poker.io.protocol.PlayerDisconnectedPacket;
 import com.cubeia.games.poker.io.protocol.PlayerHandStartStatus;
+import com.cubeia.games.poker.io.protocol.PlayerPerformedAddOn;
+import com.cubeia.games.poker.io.protocol.PlayerPerformedRebuy;
 import com.cubeia.games.poker.io.protocol.PlayerPokerStatus;
 import com.cubeia.games.poker.io.protocol.PlayerReconnectedPacket;
 import com.cubeia.games.poker.io.protocol.PlayerSitinRequest;
@@ -397,6 +399,16 @@ public class ManualGameHandler implements PacketVisitor {
 
     @Override
     public void visit(PerformAddOn packet) {
+
+    }
+
+    @Override
+    public void visit(PlayerPerformedRebuy packet) {
+
+    }
+
+    @Override
+    public void visit(PlayerPerformedAddOn packet) {
 
     }
 
