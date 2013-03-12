@@ -30,7 +30,6 @@ import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.firebase.api.action.GameAction;
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.firebase.api.action.GameObjectAction;
-import com.cubeia.firebase.api.action.mtt.MttAction;
 import com.cubeia.firebase.api.action.mtt.MttObjectAction;
 import com.cubeia.firebase.api.action.mtt.MttRoundReportAction;
 import com.cubeia.firebase.api.game.context.GameContext;
@@ -52,6 +51,7 @@ import com.cubeia.games.poker.handler.ActionTransformer;
 import com.cubeia.games.poker.handler.Trigger;
 import com.cubeia.games.poker.handler.TriggerType;
 import com.cubeia.games.poker.io.protocol.AddOnOffer;
+import com.cubeia.games.poker.io.protocol.AddOnPeriodClosed;
 import com.cubeia.games.poker.io.protocol.BestHand;
 import com.cubeia.games.poker.io.protocol.BlindsAreUpdated;
 import com.cubeia.games.poker.io.protocol.BlindsLevel;
@@ -73,6 +73,8 @@ import com.cubeia.games.poker.io.protocol.InformFutureAllowedActions;
 import com.cubeia.games.poker.io.protocol.PerformAction;
 import com.cubeia.games.poker.io.protocol.PlayerDisconnectedPacket;
 import com.cubeia.games.poker.io.protocol.PlayerHandStartStatus;
+import com.cubeia.games.poker.io.protocol.PlayerPerformedAddOn;
+import com.cubeia.games.poker.io.protocol.PlayerPerformedRebuy;
 import com.cubeia.games.poker.io.protocol.PlayerPokerStatus;
 import com.cubeia.games.poker.io.protocol.Pot;
 import com.cubeia.games.poker.io.protocol.PotTransfer;
@@ -259,6 +261,23 @@ public class FirebaseServerAdapter implements ServerAdapter {
     @Override
     public void notifyAddOnsAvailable(String cost, String chips) {
         sendPublicPacket(new AddOnOffer(cost, chips));
+    }
+
+    @Override
+    public void notifyRebuyPerformed(int playerId) {
+        GameDataAction rebuyPerformed = protocolFactory.createGameAction(new PlayerPerformedRebuy(), playerId, table.getId());
+        sendPublicPacket(rebuyPerformed, -1);
+    }
+
+    @Override
+    public void notifyAddOnPerformed(int playerId) {
+        GameDataAction addOnPerformed = protocolFactory.createGameAction(new PlayerPerformedAddOn(), playerId, table.getId());
+        sendPublicPacket(addOnPerformed, -1);
+    }
+
+    @Override
+    public void notifyAddOnPeriodClosed() {
+        sendPublicPacket(new AddOnPeriodClosed());
     }
 
     private int secondsToNextLevel(com.cubeia.poker.model.BlindsLevel level) {
@@ -720,8 +739,8 @@ public class FirebaseServerAdapter implements ServerAdapter {
     }
 
     @Override
-    public void sendRebuyResponseToTournament(int playerId, boolean response) {
-        MttObjectAction action = new MttObjectAction(table.getMetaData().getMttId(), new RebuyResponse(table.getId(), playerId, response));
+    public void sendRebuyResponseToTournament(int playerId, boolean response, long chipsAtHandFinish) {
+        MttObjectAction action = new MttObjectAction(table.getMetaData().getMttId(), new RebuyResponse(table.getId(), playerId, chipsAtHandFinish, response));
         table.getTournamentNotifier().sendToTournament(action);
     }
 

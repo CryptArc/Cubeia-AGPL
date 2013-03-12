@@ -63,6 +63,37 @@ com.cubeia.games.poker.handhistoryservice.io.protocol.HandHistoryProviderRequest
     }
 };
 com.cubeia.games.poker.handhistoryservice.io.protocol.HandHistoryProviderRequestHandIds.CLASSID = 1;
+com.cubeia.games.poker.handhistoryservice.io.protocol.HandHistoryProviderRequestHandSummaries = function () {
+    this.classId = function () {
+        return com.cubeia.games.poker.handhistoryservice.io.protocol.HandHistoryProviderRequestHandSummaries.CLASSID
+    };
+    this.tableId = {};
+    this.count = {};
+    this.time = {};
+    this.save = function () {
+        var a = new FIREBASE.ByteArray();
+        a.writeInt(this.tableId);
+        a.writeInt(this.count);
+        a.writeString(this.time);
+        return a
+    };
+    this.load = function (a) {
+        this.tableId = a.readInt();
+        this.count = a.readInt();
+        this.time = a.readString()
+    };
+    this.getNormalizedObject = function () {
+        var a = {};
+        var b;
+        a.summary = "com.cubeia.games.poker.handhistoryservice.io.protocol.HandHistoryProviderRequestHandSummaries";
+        a.details = {};
+        a.details.tableId = this.tableId;
+        a.details.count = this.count;
+        a.details.time = this.time;
+        return a
+    }
+};
+com.cubeia.games.poker.handhistoryservice.io.protocol.HandHistoryProviderRequestHandSummaries.CLASSID = 4;
 com.cubeia.games.poker.handhistoryservice.io.protocol.HandHistoryProviderRequestHands = function () {
     this.classId = function () {
         return com.cubeia.games.poker.handhistoryservice.io.protocol.HandHistoryProviderRequestHands.CLASSID
@@ -108,6 +139,10 @@ com.cubeia.games.poker.handhistoryservice.io.protocol.ProtocolObjectFactory.crea
             return b;
         case com.cubeia.games.poker.handhistoryservice.io.protocol.HandHistoryProviderRequestHands.CLASSID:
             b = new com.cubeia.games.poker.handhistoryservice.io.protocol.HandHistoryProviderRequestHands();
+            b.load(a);
+            return b;
+        case com.cubeia.games.poker.handhistoryservice.io.protocol.HandHistoryProviderRequestHandSummaries.CLASSID:
+            b = new com.cubeia.games.poker.handhistoryservice.io.protocol.HandHistoryProviderRequestHandSummaries();
             b.load(a);
             return b
     }

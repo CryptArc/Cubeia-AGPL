@@ -4,7 +4,10 @@ var Poker = Poker || {};
 Poker.TemplateManager = Class.extend({
     templates : null,
     init : function(preCacheTemplates) {
+
+
         this.templates = new Poker.Map();
+
         if(preCacheTemplates && preCacheTemplates.length>0) {
             for(var i = 0; i<preCacheTemplates.length; i++) {
                 this.getTemplate(preCacheTemplates[i]);
@@ -20,7 +23,12 @@ Poker.TemplateManager = Class.extend({
             if(el.length==0) {
                throw "Template " + id + " not found";
             }
-            var template = el.html();
+            var html = el.html();
+            if(html=="") {
+                html =" ";
+            }
+            var template = Handlebars.compile(html);
+
             this.templates.put(id,template);
             return template;
 
@@ -40,7 +48,10 @@ Poker.TemplateManager = Class.extend({
     getRenderTemplate : function(id) {
         var self = this;
         return { render : function(data) {
-            return Mustache.render(self.getTemplate(id),data);
+            return self.getTemplate(id)(data);
         }};
+    },
+    render : function(templateId,data) {
+        return this.getTemplate(templateId)(data);
     }
 });

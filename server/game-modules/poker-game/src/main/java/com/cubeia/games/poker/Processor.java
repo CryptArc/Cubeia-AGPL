@@ -40,6 +40,7 @@ import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
 import com.cubeia.games.poker.jmx.PokerStats;
 import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.games.poker.state.FirebaseState;
+import com.cubeia.games.poker.tournament.messages.AddOnPeriodClosed;
 import com.cubeia.games.poker.tournament.messages.AddOnsAvailableDuringBreak;
 import com.cubeia.games.poker.tournament.messages.BlindsWithDeadline;
 import com.cubeia.games.poker.tournament.messages.OfferRebuy;
@@ -183,6 +184,8 @@ public class Processor implements GameProcessor, TournamentProcessor {
                 handleOfferRebuy((OfferRebuy) attachment);
             } else if (attachment instanceof AddOnsAvailableDuringBreak) {
                 handleAddOnsAvailable((AddOnsAvailableDuringBreak) attachment);
+            } else if (attachment instanceof AddOnPeriodClosed) {
+                handleAddOnPeriodClosed();
             } else if ("CLOSE_TABLE_HINT".equals(attachment.toString())) {
                 log.debug("got CLOSE_TABLE_HINT");
                 tableCloseHandler.closeTable(table, false);
@@ -201,6 +204,10 @@ public class Processor implements GameProcessor, TournamentProcessor {
         }
     }
 
+    private void handleAddOnPeriodClosed() {
+        state.notifyAddOnPeriodClosed();
+    }
+
     private void handleAddOnsAvailable(AddOnsAvailableDuringBreak addOns) {
         state.notifyAddOnsAvailable(format(addOns.getAddOnCost()), format(addOns.getChipsForAddOn()));
     }
@@ -211,6 +218,11 @@ public class Processor implements GameProcessor, TournamentProcessor {
 
     private void handleAddedChips(PlayerAddedChips addedChips) {
         state.handleAddedChips(addedChips.getPlayerId(), addedChips.getChipsToAdd());
+        if (addedChips.getReason() == PlayerAddedChips.Reason.REBUY) {
+            state.notifyPlayerPerformedRebuy(addedChips.getPlayerId());
+        } else if (addedChips.getReason() == PlayerAddedChips.Reason.ADD_ON) {
+            state.notifyPlayerPerformedAddOn(addedChips.getPlayerId());
+        }
     }
 
     private void handleTournamentDestroyed() {

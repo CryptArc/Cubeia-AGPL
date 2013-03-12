@@ -143,7 +143,7 @@ public interface ServerAdapter {
      * Sends a rebuy response to the tournament coordinator.
      *
      */
-    void sendRebuyResponseToTournament(int playerId, boolean response);
+    void sendRebuyResponseToTournament(int playerId, boolean response, long chipsAtHandFinish);
 
     /**
      * Sends a request for performing an add-on to the tournament coordinator.
@@ -237,6 +237,12 @@ public interface ServerAdapter {
     void notifyRebuyOffer(Collection<Integer> players, String rebuyCost, String rebuyChips);
 
     void notifyAddOnsAvailable(String rebuyCost, String rebuyChips);
+
+    void notifyRebuyPerformed(int playerId);
+
+    void notifyAddOnPerformed(int playerId);
+
+    void notifyAddOnPeriodClosed();
 
     void sendGameStateTo(GameStateSnapshot snapshot, int playerId);
 

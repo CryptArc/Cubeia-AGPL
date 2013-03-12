@@ -36,23 +36,17 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.myActionsManager = myActionsManager;
         this.seatElement = $("#"+elementId);
         this.renderSeat();
-
         this.infoElement = $("#"+elementId+"Info").show();
-
         this.circularProgressBar = new CircularProgressBar("#"+elementId+"Progressbar",this.animationManager);
         this.circularProgressBar.hide();
-        var self = this;
-
         this.seatBalance = this.seatElement.find(".seat-balance");
-
         this.myActionsManager.onSatDown();
     },
     setSeatPos : function(prev,pos) {
         //do nothing
     },
     renderSeat : function(){
-        var t = this.templateManager.getTemplate("myPlayerSeatTemplate");
-        var output = Mustache.render(t,this.player);
+        var output = this.templateManager.render("myPlayerSeatTemplate",this.player);
         this.seatElement.html(output);
         this.cardsContainer = this.seatElement.find(".cards-container");
         this.actionAmount = this.seatElement.find(".action-amount");
@@ -66,15 +60,33 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
     },
     activateSeat : function(allowedActions, timeToAct,mainPot,fixedLimit) {
         console.log("ON REQUEST ACTION FOR table = " + this.tableId);
-        if(this.circularProgressBar!=null) {
+        this.showTimer(timeToAct);
+        this.myActionsManager.onRequestPlayerAction(allowedActions, mainPot, fixedLimit, this.circularProgressBar);
+        Poker.AppCtx.getViewManager().requestTableFocus(this.tableId);
+    },
+    rebuyRequested : function(rebuyCost, chipsForRebuy, timeToAct) {
+        console.log("Showing rebuy timer for " + timeToAct + " millis");
+        this.showTimer(timeToAct);
+        this.circularProgressBar.show();
+        this.circularProgressBar.render();
+        this.myActionsManager.showRebuyButtons(rebuyCost, chipsForRebuy);
+    },
+    addOnRequested : function(addOnCost, chipsForAddOn) {
+        this.myActionsManager.showAddOnButton(addOnCost, chipsForAddOn);
+    },
+    hideRebuyButtons : function() {
+        this.myActionsManager.hideRebuyButtons();
+        this.circularProgressBar.hide();
+    },
+    hideAddOnButton : function() {
+        this.myActionsManager.hideAddOnButton();
+    },
+    showTimer: function(timeToAct) {
+        if (this.circularProgressBar != null) {
             this.circularProgressBar.detach();
         }
-        this.circularProgressBar = new CircularProgressBar("#"+this.seatElement.attr("id")+"Progressbar",this.animationManager);
+        this.circularProgressBar = new CircularProgressBar("#" + this.seatElement.attr("id") + "Progressbar", this.animationManager);
         this.circularProgressBar.setTime(timeToAct);
-        var actionHandled = this.myActionsManager.onRequestPlayerAction(allowedActions,mainPot,fixedLimit,this.circularProgressBar);
-
-        Poker.AppCtx.getViewManager().requestTableFocus(this.tableId);
-
     },
     onAction : function(actionType,amount){
         this.running = false;
@@ -103,17 +115,17 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         }
     },
     updatePlayer : function(player) {
-        console.log("UPDATE MY PLYAER ");
+        console.log("UPDATE MY PLAYER ");
         console.log(player);
-        var update = false;
+        var updated = false;
         if(player.tableStatus.id != this.player.tableStatus.id) {
-            update = true;
+            updated = true;
         }
         this.player = player;
         $("#myPlayerBalance-"+this.tableId).html("&euro;"+this.player.balance);
         this.seatBalance.html("&euro;"+this.player.balance);
 
-        if(update===true) {
+        if (updated) {
             this.handlePlayerStatus();
         }
     },

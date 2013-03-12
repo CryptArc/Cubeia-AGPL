@@ -8,7 +8,7 @@ Poker.CommunityCard = Poker.Card.extend({
         this._super(id,tableId, cardString,templateManager);
     },
     getTemplate : function() {
-        return this.templateManager.getTemplate("communityCardTemplate");
+        return "communityCardTemplate";
     },
     getCardDivId : function() {
         return "communityCard-"+this.id+"-"+this.tableId;

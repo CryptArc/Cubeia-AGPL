@@ -85,7 +85,6 @@ public class DefaultPokerPlayer implements PokerPlayer {
      */
     protected long betStack = 0;
 
-
     private boolean sitInAfterSuccessfulBuyIn;
 
     private Long sitOutTimestamp;
@@ -335,8 +334,8 @@ public class DefaultPokerPlayer implements PokerPlayer {
     }
 
     @Override
-    public void setStartingBalance(long startingBalance) {
-        this.startingBalance = startingBalance;
+    public void saveStartingBalance() {
+        this.startingBalance = balance;
     }
 
     @Override
@@ -415,6 +414,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
      */
     @Override
     public boolean commitBalanceNotInHand(long maxBuyIn) {
+        log.debug("Committing balance not in hand, maxBuyin: " + maxBuyIn);
         // TODO: This is broken. If we allow the player to perform an add-on, but then the player happens to win a lot of chips during that hand,
         //       these chips will be stuck as "balanceNotInHand" until his balance drops low enough, at which point suddenly the player would get
         //       those chips. Madness.
@@ -430,6 +430,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
                 log.debug("committing all pending balance for player: " + playerId + " committedValue: " + balanceNotInHand + " new balance: " + balance + " new pending balance: " + 0);
                 balanceNotInHand = 0;
             }
+            saveStartingBalance();
             return true;
         }
         return false;
@@ -470,7 +471,6 @@ public class DefaultPokerPlayer implements PokerPlayer {
         clearHand();
         setHasActed(false);
         setHasFolded(false);
-        setDisconnectTimeoutUsed(false);
     }
 
     @Override
@@ -506,16 +506,6 @@ public class DefaultPokerPlayer implements PokerPlayer {
     @Override
     public boolean isBuyInRequestActive() {
         return buyInRequestActive;
-    }
-
-    @Override
-    public boolean isDisconnectTimeoutUsed() {
-        return disconnectTimeoutUsed;
-    }
-
-    @Override
-    public void setDisconnectTimeoutUsed(boolean disconnectTimeoutUsed) {
-        this.disconnectTimeoutUsed = disconnectTimeoutUsed;
     }
 
     @Override

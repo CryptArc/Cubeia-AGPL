@@ -24,6 +24,7 @@ import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersiste
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import static java.util.Collections.emptyList;
 
@@ -123,4 +124,50 @@ public class NullDatabaseStorageService implements TournamentHistoryPersistenceS
     public void statusChanged(String status, String historicId, long now) {
 
     }
+
+    @Override
+    public void rebuysRequested(String historicId, Set<Integer> playerIds, long now) {
+
+    }
+
+    @Override
+    public void rebuyPerformed(String historicId, int playerId, long now) {
+
+    }
+
+    @Override
+    public void rebuyDeclined(String historicId, int playerId, long now) {
+
+    }
+
+    @Override
+    public void rebuyFailed(String historicId, int playerId, long now) {
+
+    }
+
+    @Override
+    public void addOnPerformed(String historicId, int playerId, long now) {
+
+    }
+
+    @Override
+    public void addOnFailed(String historicId, int playerId, long now) {
+
+    }
+
+    @Override
+    public void rebuyPeriodFinished(String historicId, long now) {
+
+    }
+
+    @Override
+    public void addOnPeriodStarted(String historicId, long now) {
+
+    }
+
+    @Override
+    public void addOnPeriodFinished(String historicId, long now) {
+
+    }
+
 }

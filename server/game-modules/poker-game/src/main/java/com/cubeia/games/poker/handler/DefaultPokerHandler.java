@@ -18,6 +18,7 @@
 package com.cubeia.games.poker.handler;
 
 import com.cubeia.games.poker.io.protocol.AddOnOffer;
+import com.cubeia.games.poker.io.protocol.AddOnPeriodClosed;
 import com.cubeia.games.poker.io.protocol.BestHand;
 import com.cubeia.games.poker.io.protocol.BlindsAreUpdated;
 import com.cubeia.games.poker.io.protocol.BlindsLevel;
@@ -53,6 +54,8 @@ import com.cubeia.games.poker.io.protocol.PlayerAction;
 import com.cubeia.games.poker.io.protocol.PlayerBalance;
 import com.cubeia.games.poker.io.protocol.PlayerDisconnectedPacket;
 import com.cubeia.games.poker.io.protocol.PlayerHandStartStatus;
+import com.cubeia.games.poker.io.protocol.PlayerPerformedAddOn;
+import com.cubeia.games.poker.io.protocol.PlayerPerformedRebuy;
 import com.cubeia.games.poker.io.protocol.PlayerPokerStatus;
 import com.cubeia.games.poker.io.protocol.PlayerReconnectedPacket;
 import com.cubeia.games.poker.io.protocol.PlayerSitinRequest;
@@ -397,6 +400,21 @@ public class DefaultPokerHandler implements PacketVisitor {
 
     @Override
     public void visit(PerformAddOn packet) {
+
+    }
+
+    @Override
+    public void visit(PlayerPerformedRebuy packet) {
+
+    }
+
+    @Override
+    public void visit(PlayerPerformedAddOn packet) {
+
+    }
+
+    @Override
+    public void visit(AddOnPeriodClosed packet) {
 
     }
 

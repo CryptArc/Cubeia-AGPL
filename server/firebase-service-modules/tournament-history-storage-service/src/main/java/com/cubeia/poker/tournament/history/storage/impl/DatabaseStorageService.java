@@ -32,8 +32,11 @@ import com.mongodb.Mongo;
 import org.apache.log4j.Logger;
 
 import java.net.UnknownHostException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 public class DatabaseStorageService implements TournamentHistoryPersistenceService, Service {
 
@@ -66,6 +69,51 @@ public class DatabaseStorageService implements TournamentHistoryPersistenceServi
     public void statusChanged(String status, String historicId, long now) {
         addEvent(historicId, new TournamentEvent(now, "status changed", status));
         dao.setStatus(historicId, status);
+    }
+
+    @Override
+    public void rebuysRequested(String historicId, Set<Integer> playerIds, long now) {
+        addEvent(historicId, new TournamentEvent(now, "Requested rebuys from players", Arrays.toString(playerIds.toArray())));
+    }
+
+    @Override
+    public void rebuyPerformed(String historicId, int playerId, long now) {
+        addEvent(historicId, new TournamentEvent(now, "Rebuy performed", "" + playerId));
+    }
+
+    @Override
+    public void rebuyDeclined(String historicId, int playerId, long now) {
+        addEvent(historicId, new TournamentEvent(now, "Rebuy declined", "" + playerId));
+    }
+
+    @Override
+    public void rebuyFailed(String historicId, int playerId, long now) {
+        addEvent(historicId, new TournamentEvent(now, "Rebuy failed", "" + playerId));
+    }
+
+    @Override
+    public void addOnPerformed(String historicId, int playerId, long now) {
+        addEvent(historicId, new TournamentEvent(now, "Add-on performed", "" + playerId));
+    }
+
+    @Override
+    public void addOnFailed(String historicId, int playerId, long now) {
+        addEvent(historicId, new TournamentEvent(now, "Add-on failed", "" + playerId));
+    }
+
+    @Override
+    public void rebuyPeriodFinished(String historicId, long now) {
+        addEvent(historicId, new TournamentEvent(now, "Rebuy period finished"));
+    }
+
+    @Override
+    public void addOnPeriodStarted(String historicId, long now) {
+        addEvent(historicId, new TournamentEvent(now, "Add-on period started"));
+    }
+
+    @Override
+    public void addOnPeriodFinished(String historicId, long now) {
+        addEvent(historicId, new TournamentEvent(now, "Add-on period finished"));
     }
 
     @Override

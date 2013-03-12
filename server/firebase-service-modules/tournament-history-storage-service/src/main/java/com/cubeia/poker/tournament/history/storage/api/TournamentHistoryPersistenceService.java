@@ -23,6 +23,7 @@ import com.cubeia.poker.tournament.history.api.HistoricTournament;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 public interface TournamentHistoryPersistenceService extends Contract {
 
@@ -69,4 +70,21 @@ public interface TournamentHistoryPersistenceService extends Contract {
 
     void statusChanged(String status, String historicId, long now);
 
+    void rebuysRequested(String historicId, Set<Integer> playerIds, long now);
+
+    void rebuyPerformed(String historicId, int playerId, long now);
+
+    void rebuyDeclined(String historicId, int playerId, long now);
+
+    void rebuyFailed(String historicId, int playerId, long now);
+
+    void addOnPerformed(String historicId, int playerId, long now);
+
+    void addOnFailed(String historicId, int playerId, long now);
+
+    void rebuyPeriodFinished(String historicId, long now);
+
+    void addOnPeriodStarted(String historicId, long now);
+
+    void addOnPeriodFinished(String historicId, long now);
 }

@@ -17,22 +17,6 @@
 
 package com.cubeia.games.poker.tournament.state;
 
-import static com.google.common.collect.Maps.newHashMap;
-import static java.lang.Math.max;
-import static java.math.BigDecimal.valueOf;
-import static org.joda.time.Seconds.secondsBetween;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.joda.time.DateTime;
-
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.TournamentSessionId;
 import com.cubeia.firebase.api.mtt.model.MttPlayer;
@@ -52,6 +36,21 @@ import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.tournament.history.api.HistoricPlayer;
+import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import static com.google.common.collect.Maps.newHashMap;
+import static java.lang.Math.max;
+import static java.math.BigDecimal.valueOf;
+import static org.joda.time.Seconds.secondsBetween;
 
 public class PokerTournamentState implements Serializable {
 
@@ -153,7 +152,7 @@ public class PokerTournamentState implements Serializable {
      * @return True if this tournament is limited to one or more operators
      */
     public boolean isPrivate() {
-    	return allowedOperators.size() > 0;
+        return allowedOperators.size() > 0;
     }
     
     /**
@@ -161,7 +160,7 @@ public class PokerTournamentState implements Serializable {
      * @return True if the operator is allowed in the tournament
      */
     public boolean isOperatorAllowed(Long operator) {
-    	return (allowedOperators.size() == 0 || operator == null || operator == -1 ? true : allowedOperators.contains(operator));
+        return (allowedOperators.size() == 0 || operator == null || operator == -1 ? true : allowedOperators.contains(operator));
     }
     
     public boolean allTablesHaveBeenCreated(int tablesCreated) {
@@ -169,12 +168,12 @@ public class PokerTournamentState implements Serializable {
     }
     
     public Set<Long> getAllowedOperators() {
-		return allowedOperators;
-	}
+        return allowedOperators;
+    }
     
     public void setAllowedOperators(Set<Long> allowedOperators) {
-		this.allowedOperators = allowedOperators;
-	}
+        this.allowedOperators = allowedOperators;
+    }
 
     public BetStrategyType getBetStrategy() {
         return betStrategy;
@@ -387,22 +386,32 @@ public class PokerTournamentState implements Serializable {
     public void setPayoutStructure(PayoutStructure payoutStructure, int minPlayers) {
         this.payoutStructure = payoutStructure;
         // Init the payouts assuming that there will be at least minPlayers players.
-        setPayouts(minPlayers);
+        setPayouts(minPlayers, 0);
     }
 
     /**
      * Sets the payouts to use given the number of players that participate in the tournament.
      *
      */
-    public void setPayouts(int registeredPlayersCount) {
-        long totalPrizePoolAsLong = buyIn.multiply(BigDecimal.valueOf(registeredPlayersCount)).movePointRight(2).longValue();
+    public void setPayouts(int minPlayers, int registeredPlayersCount) {
+        log.debug("Calculating payouts, minPlayers: " + minPlayers + " registered players: " + registeredPlayersCount);
+        long totalPrizePoolAsLong;
+        if (registeredPlayersCount < minPlayers) {
+            totalPrizePoolAsLong = buyIn.multiply(BigDecimal.valueOf(registeredPlayersCount)).movePointRight(2).longValue();
+        } else {
+            totalPrizePoolAsLong = prizePool.movePointRight(2).longValue();
+        }
         log.debug("Total prize pool as long: " + totalPrizePoolAsLong);
-        this.payouts = payoutStructure.getPayoutsForEntrantsAndPrizePool(registeredPlayersCount, totalPrizePoolAsLong);
+        this.payouts = payoutStructure.getPayoutsForEntrantsAndPrizePool(max(minPlayers, registeredPlayersCount), totalPrizePoolAsLong);
     }
 
     public void addBuyInToPrizePool() {
-        log.debug("Adding " + buyIn + " to prize pool.");
-        prizePool = prizePool.add(buyIn);
+        addMoneyToPrizePool(buyIn);
+    }
+
+    public void addMoneyToPrizePool(BigDecimal money) {
+        log.debug("Adding " + money + " to prize pool.");
+        prizePool = prizePool.add(money);
         log.debug("Prize pool is now: " + prizePool);
     }
 

@@ -101,7 +101,9 @@ public class HandHistory extends BasePage {
 
         });
         // columns.add(new PropertyColumn<HistoricHand>(Model.of("Hand id"), "handId.handId"));
-        columns.add(new PropertyColumn<HistoricHand,String>(Model.of("Table id"), "table.tableIntegrationId"));
+        columns.add(new PropertyColumn<HistoricHand,String>(Model.of("Table id"), "table.tableId"));
+        columns.add(new PropertyColumn<HistoricHand,String>(Model.of("Table integration id"), "table.tableIntegrationId"));
+        columns.add(new PropertyColumn<HistoricHand,String>(Model.of("Table name"), "table.tableName"));
         columns.add(new AbstractColumn<HistoricHand,String>(new Model<String>("Start date")) {
             private static final long serialVersionUID = 1L;
 
@@ -143,7 +145,7 @@ public class HandHistory extends BasePage {
             }
         };
         form.add(new TextField<Integer>("playerId").setRequired(false));
-        form.add(new TextField<String>("tableId"));
+        form.add(new TextField<Integer>("tableId"));
         form.add(new DateField("fromDate"));
         form.add(new DateField("toDate"));
         add(form);

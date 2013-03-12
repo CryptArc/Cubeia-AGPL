@@ -34,5 +34,18 @@ describe("Poker.Map Test", function(){
         expect(arr.length).toEqual(2);
     });
 
+    it("Should return the values", function() {
+        var o1 = {testObj : "val"};
+        var o2 = {testObj : "value2"};
+        map.put("testKey1",o1);
+        map.put("testKey2", o2);
+        console.log("Values:");
+        console.log(map.values());
+
+        var values = new Array();
+        values.push(o1);
+        values.push(o2);
+        expect(map.values()).toEqual(values);
+    });
 
 });

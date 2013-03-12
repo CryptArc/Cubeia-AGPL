@@ -86,10 +86,10 @@ Poker.LobbyLayoutManager = Class.extend({
 
         this.filters.push(highStakes);
 
-        var mediumStakes = new Poker.PropertyMinMaxFilter("mediumStakes", true, this, "smallBlind", 50, 1000);
+        var mediumStakes = new Poker.PropertyMinMaxFilter("mediumStakes", true, this, "smallBlind", 50, 999);
         this.filters.push(mediumStakes);
 
-        var lowStakes = new Poker.PropertyMinMaxFilter("lowStakes", true, this, "smallBlind", -1, 50);
+        var lowStakes = new Poker.PropertyMinMaxFilter("lowStakes", true, this, "smallBlind", -1, 49);
         this.filters.push(lowStakes);
         
         this.filters.push(new Poker.PrivateTournamentFilter());
@@ -195,8 +195,7 @@ Poker.LobbyLayoutManager = Class.extend({
         }
     },
     getTableItemHtml : function (templateId, data) {
-        var listItemTemplate = this.templateManager.getTemplate(templateId);
-        var item = Mustache.render(listItemTemplate, data);
+        var item = this.templateManager.render(templateId, data);
         return item;
     }
 });

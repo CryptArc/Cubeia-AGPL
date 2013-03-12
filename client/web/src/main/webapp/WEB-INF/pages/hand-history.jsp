@@ -16,6 +16,11 @@
 </head>
 <body>
     <div class="hand-history-container">
+        <div class="hand-ids-header">
+            <div class="table-name">Table</div>
+            <div class="hand-id">Hand id</div>
+            <div class="start-time">Start time</div>
+        </div>
         <div class="hand-ids">
 
         </div>

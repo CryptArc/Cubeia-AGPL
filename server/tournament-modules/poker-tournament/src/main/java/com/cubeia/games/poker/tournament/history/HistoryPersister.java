@@ -23,6 +23,8 @@ import com.cubeia.poker.tournament.history.api.HistoricPlayer;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
 import org.apache.log4j.Logger;
 
+import java.util.Set;
+
 public class HistoryPersister {
 
     private static final Logger log = Logger.getLogger(HistoryPersister.class);
@@ -99,5 +101,41 @@ public class HistoryPersister {
 
     public void playerOpenedSession(int playerId, String integrationSessionId) {
         storageService.playerOpenedSession(historicId, playerId, integrationSessionId, dateFetcher.now());
+    }
+
+    public void rebuysRequested(Set<Integer> playerIds) {
+        storageService.rebuysRequested(historicId, playerIds, dateFetcher.now());
+    }
+
+    public void rebuyPerformed(int playerId) {
+        storageService.rebuyPerformed(historicId, playerId, dateFetcher.now());
+    }
+
+    public void rebuyDeclined(int playerId) {
+        storageService.rebuyDeclined(historicId, playerId, dateFetcher.now());
+    }
+
+    public void rebuyFailed(int playerId) {
+        storageService.rebuyFailed(historicId, playerId, dateFetcher.now());
+    }
+
+    public void addOnPerformed(int playerId) {
+        storageService.addOnPerformed(historicId, playerId, dateFetcher.now());
+    }
+
+    public void addOnFailed(int playerId) {
+        storageService.addOnFailed(historicId, playerId, dateFetcher.now());
+    }
+
+    public void rebuyPeriodFinished() {
+        storageService.rebuyPeriodFinished(historicId, dateFetcher.now());
+    }
+
+    public void addOnPeriodStarted() {
+        storageService.addOnPeriodStarted(historicId, dateFetcher.now());
+    }
+
+    public void addOnPeriodFinished() {
+        storageService.addOnPeriodFinished(historicId, dateFetcher.now());
     }
 }

@@ -27,6 +27,7 @@ import com.cubeia.games.poker.common.money.MoneyFormatter;
 import com.cubeia.poker.tournament.history.api.HistoricTournament;
 import com.cubeia.poker.tournament.history.api.PlayerPosition;
 import com.cubeia.poker.tournament.history.api.TournamentEvent;
+import org.apache.log4j.Logger;
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackDefaultDataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
@@ -51,6 +52,8 @@ import static com.cubeia.games.poker.admin.wicket.util.ExternalLinkPanel.externa
 
 public class ShowTournament extends BasePage {
 
+    private static final Logger log = Logger.getLogger(ShowTournament.class);
+
     @SpringBean
     private HistoryService historyService;
 
@@ -60,6 +63,7 @@ public class ShowTournament extends BasePage {
     public ShowTournament(PageParameters parameters) {
         super(parameters);
         String historicTournamentId = parameters.get("historicTournamentId").toString();
+        log.debug("Tourn id " + historicTournamentId);
         HistoricTournament tournament = historyService.findTournamentByHistoricId(historicTournamentId);
         addSummary(tournament);
         addResultList(tournament);
@@ -85,6 +89,7 @@ public class ShowTournament extends BasePage {
     }
 
     private void addSummary(HistoricTournament tournament) {
+        log.debug("Tournament: " + tournament);
         add(new Label("historicTournamentId", tournament.getId()));
         add(new Label("tournamentId", String.valueOf(tournament.getTournamentId())));
         add(new Label("tournamentTemplateId", String.valueOf(tournament.getTournamentTemplateId())));
