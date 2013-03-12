@@ -52,7 +52,17 @@ Poker.SoundRepository = Class.extend({
     },
 
     getCodec:function()  {
-        return "ogg";
+        var checkAudio = new Audio();
+        if (checkAudio.canPlayType('audio/ogg; codecs="vorbis"')) {
+            return "ogg";
+        }
+        if (checkAudio.canPlayType('audio/mpeg;')) {
+            return "mp3";
+        }
+        if (checkAudio.canPlayType('audio/wav; codecs="1"')) {
+            return "wav";
+        }
+        alert("no supported audio codec found");
     }
 
 });
