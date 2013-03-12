@@ -152,7 +152,10 @@ Poker.TournamentManager = Class.extend({
         if(tournament!=null) {
             tournament.tournamentLayoutManager.setPlayerRegisteredState();
         }
-        this.dialogManager.displayGenericDialog({header:"Message", message:"You successfully registered to tournament " + tournamentId});
+        this.dialogManager.displayGenericDialog({
+            header:i18n.t("dialogs.tournament-register-success.header"),
+            message:i18n.t("dialogs.tournament-register-success.message", { sprintf : [tournamentId]})
+        });
 
     },
     /**
@@ -181,8 +184,11 @@ Poker.TournamentManager = Class.extend({
         // tournament.tournamentLayoutManager.updateName(info.tournamentName);
     },
     handleRegistrationFailure : function(tournamentId) {
-        this.dialogManager.displayGenericDialog({header:"Message",
-            message:"Your registration attempt to tournament " + tournamentId + " was denied."});
+        this.dialogManager.displayGenericDialog({
+            header:i18n.t("dialogs.tournament-register-failure.header"),
+            message:i18n.t("dialogs.tournament-register-failure.message", { sprintf : [tournamentId]})
+        });
+
     },
     handleUnregistrationSuccessful : function(tournamentId) {
         this.registeredTournaments.remove(tournamentId);
@@ -190,12 +196,18 @@ Poker.TournamentManager = Class.extend({
         if(tournament!=null) {
             tournament.tournamentLayoutManager.setPlayerUnregisteredState();
         }
-        this.dialogManager.displayGenericDialog({header:"Message",
-            message:"You successfully unregistered from tournament " + tournamentId});
+        this.dialogManager.displayGenericDialog({
+            header:i18n.t("dialogs.tournament-unregister-success.header"),
+            message:i18n.t("dialogs.tournament-unregister-success.message", { sprintf : [tournamentId]})
+        });
+
     },
     handleUnregistrationFailure : function(tournamentId) {
-        this.dialogManager.displayGenericDialog({header:"Message",
-            message:"Your unregistration attempt from tournament " + tournamentId + " was denied."});
+        this.dialogManager.displayGenericDialog({
+            header:i18n.t("dialogs.tournament-unregister-failure.header"),
+            message:i18n.t("dialogs.tournament-unregister-failure.message", { sprintf : [tournamentId]})
+        });
+
     },
     isRegisteredForTournament : function(tournamentId) {
         return this.registeredTournaments.get(tournamentId) != null;
