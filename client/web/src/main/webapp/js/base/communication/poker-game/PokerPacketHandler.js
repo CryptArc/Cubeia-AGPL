@@ -31,6 +31,13 @@ Poker.PokerPacketHandler = Class.extend({
         console.log("Player " + playerId + " was offered an add-on.");
         this.tableManager.handleAddOnOffer(this.tableId, playerId, addOnOffer.cost, addOnOffer.chips);
     },
+    handleRebuyPerformed : function(playerId) {
+        console.log("Player " + playerId + " performed a rebuy.");
+        this.tableManager.handleRebuyPerformed(this.tableId, playerId);
+    },
+    handleAddOnPerformed : function(playerId) {
+        console.log("Player " + playerId + " performed an add-on.");
+    },
     handlePlayerBalance : function(packet) {
         this.tableManager.updatePlayerBalance(this.tableId,
             packet.player,

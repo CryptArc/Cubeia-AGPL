@@ -323,6 +323,11 @@ Poker.TableManager = Class.extend({
         var player = table.getPlayerById(playerId);
         table.getLayoutManager().hideAddOnButton(player);
     },
+    handleRebuyPerformed : function(tableId, playerId, addOnCost, chipsForAddOn) {
+        var table = this.tables.get(tableId);
+        var player = table.getPlayerById(playerId);
+        table.getLayoutManager().onRebuyPerformed(player);
+    },
     updateTotalPot : function(tableId,amount){
         var table = this.tables.get(tableId);
         table.totalPot = amount;

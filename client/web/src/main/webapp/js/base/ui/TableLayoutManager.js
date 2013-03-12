@@ -377,6 +377,10 @@ Poker.TableLayoutManager = Class.extend({
         var seat = this.getSeatByPlayerId(player.id);
         seat.addOnRequested(addOnCost, chipsForAddOn);
     },
+    onRebuyPerformed : function(player, addOnCost, chipsForAddOn){
+        var seat = this.getSeatByPlayerId(player.id);
+        seat.rebuyPerformed();
+    },
     hideRebuyButtons : function(player) {
         var seat = this.getSeatByPlayerId(player.id);
         seat.hideRebuyButtons();

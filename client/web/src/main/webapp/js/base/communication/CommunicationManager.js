@@ -349,6 +349,12 @@ Poker.CommunicationManager = Class.extend({
                 console.log(protocolObject);
                 pokerPacketHandler.handleAddOnOffer(protocolObject, Poker.MyPlayer.id);
                 break;
+            case com.cubeia.games.poker.io.protocol.PlayerPerformedRebuy.CLASSID:
+                pokerPacketHandler.handleRebuyPerformed(playerId);
+                break;
+            case com.cubeia.games.poker.io.protocol.PlayerPerformedAddOn.CLASSID:
+                pokerPacketHandler.handleAddOnPerformed(playerId);
+                break;
             case com.cubeia.games.poker.io.protocol.StartHandHistory.CLASSID:
                 console.log("UNHANDLED PO StartHandHistory");
                 console.log(protocolObject);

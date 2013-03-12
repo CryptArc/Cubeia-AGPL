@@ -174,6 +174,9 @@ Poker.Seat = Class.extend({
     hideAddOnButton: function() {
         // Nothing to do.
     },
+    rebuyPerformed: function() {
+        this.clearProgressBar();
+    },
     showTimer: function(timeToAct) {
         this.seatElement.addClass("active-seat");
         this.progressBarElement.show();
