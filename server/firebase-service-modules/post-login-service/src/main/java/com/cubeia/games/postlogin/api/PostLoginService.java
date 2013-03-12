@@ -50,9 +50,7 @@ public class PostLoginService implements PostLoginProcessor, Service, RoutableSe
     }
 
     @Override
-    public void clientLoggedIn(int playerId, String screenName) {
-    	log.info("Player login "+playerId+" : "+screenName);
-    }
+    public void clientLoggedIn(int playerId, String screenName) {}
 
     @Override
     public void clientLoggedOut(int playerId) {
