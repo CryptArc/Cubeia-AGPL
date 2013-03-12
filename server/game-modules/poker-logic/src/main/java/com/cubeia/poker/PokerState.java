@@ -443,4 +443,11 @@ public class PokerState implements Serializable, IPokerState {
         serverAdapter.sendAddOnRequestToTournament(playerId);
     }
 
+    public void notifyPlayerPerformedRebuy(int playerId) {
+        serverAdapter.notifyRebuyPerformed(playerId);
+    }
+
+    public void notifyPlayerPerformedAddOn(int playerId) {
+        serverAdapter.notifyAddOnPerformed(playerId);
+    }
 }

@@ -240,21 +240,36 @@ public class PokerTournament implements TableNotifier, Serializable {
         int tableId = pokerState.getTableFor(playerId, state);
         PendingRequestType pendingRequest = pendingRequests.getAndClearPendingRequest(playerId, tableId);
         if (pendingRequest == REBUY) {
-            TransferMoneyRequest request = new TransferMoneyRequest(amountReserved, playerSessionId, toAccount,
-                    "Rebuy for tournament " + pokerState.getHistoricId());
-            backend.transfer(request);
-            addChipsTo(playerId, tableId, rebuySupport.getRebuyChipsAmount());
-            rebuySupport.increaseRebuyCount(playerId);
-            startNextHandIfThisWasLastRebuyQuestionAtTable(tableId);
+            handleSuccessfulRebuy(amountReserved, playerSessionId, playerId, toAccount, tableId);
         } else if (pendingRequest == ADD_ON) {
-            TransferMoneyRequest request = new TransferMoneyRequest(amountReserved, playerSessionId, toAccount,
-                    "Add-on for tournament " + pokerState.getHistoricId());
-            backend.transfer(request);
-            rebuySupport.addOnPerformed(playerId);
-            addChipsTo(playerId, tableId, rebuySupport.getAddOnChipsAmount());
+            handleSuccessfulAddOn(amountReserved, playerSessionId, playerId, toAccount, tableId);
         } else {
             log.error("Player " + playerId + " reserved money but had no pending request.");
         }
+    }
+
+    private void handleSuccessfulRebuy(Money amountReserved, PlayerSessionId playerSessionId, int playerId, TournamentSessionId toAccount, int tableId) {
+        TransferMoneyRequest request = new TransferMoneyRequest(amountReserved, playerSessionId, toAccount,
+                "Rebuy for tournament " + pokerState.getHistoricId());
+        backend.transfer(request);
+        addChipsTo(playerId, tableId, rebuySupport.getRebuyChipsAmount(), PlayerAddedChips.Reason.REBUY);
+        addMoneyToPrizePool(amountReserved);
+        rebuySupport.increaseRebuyCount(playerId);
+        startNextHandIfThisWasLastRebuyQuestionAtTable(tableId);
+    }
+
+    private void handleSuccessfulAddOn(Money amountReserved, PlayerSessionId playerSessionId, int playerId, TournamentSessionId toAccount, int tableId) {
+        TransferMoneyRequest request = new TransferMoneyRequest(amountReserved, playerSessionId, toAccount,
+                "Add-on for tournament " + pokerState.getHistoricId());
+        backend.transfer(request);
+        rebuySupport.addOnPerformed(playerId);
+        addChipsTo(playerId, tableId, rebuySupport.getAddOnChipsAmount(), PlayerAddedChips.Reason.ADD_ON);
+        addMoneyToPrizePool(amountReserved);
+    }
+
+    private void addMoneyToPrizePool(Money money) {
+        pokerState.addMoneyToPrizePool(BigDecimal.valueOf(money.getAmount()).movePointLeft(money.getFractionalDigits()));
+        updatePayouts();
     }
 
     public void handleReservationFailed(ReserveFailedResponse response) {
@@ -280,21 +295,17 @@ public class PokerTournament implements TableNotifier, Serializable {
         }
     }
 
-    private void addChipsTo(int playerId, int tableId, long chipsToAdd) {
+    private void addChipsTo(int playerId, int tableId, long chipsToAdd, PlayerAddedChips.Reason reason) {
         log.debug("Adding " + chipsToAdd + " chips to " + playerId);
-        notifyTable(tableId, new PlayerAddedChips(playerId, chipsToAdd));
+        notifyTable(tableId, new PlayerAddedChips(playerId, chipsToAdd, reason));
     }
 
     private void performRebuy(int playerId, int tableId) {
         performAddChips(playerId, tableId, rebuySupport.getRebuyCost(), REBUY);
-        pokerState.addMoneyToPrizePool(rebuySupport.getRebuyCost());
-        updatePayouts();
     }
 
     private void performAddOn(int playerId, int tableId) {
         performAddChips(playerId, tableId, rebuySupport.getAddOnCost(), ADD_ON);
-        pokerState.addMoneyToPrizePool(rebuySupport.getAddOnCost());
-        updatePayouts();
     }
 
     private void performAddChips(int playerId, int tableId, BigDecimal cost, PendingRequestType type) {

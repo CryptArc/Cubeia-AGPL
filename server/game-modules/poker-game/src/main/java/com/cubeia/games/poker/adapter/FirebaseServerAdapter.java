@@ -72,6 +72,8 @@ import com.cubeia.games.poker.io.protocol.InformFutureAllowedActions;
 import com.cubeia.games.poker.io.protocol.PerformAction;
 import com.cubeia.games.poker.io.protocol.PlayerDisconnectedPacket;
 import com.cubeia.games.poker.io.protocol.PlayerHandStartStatus;
+import com.cubeia.games.poker.io.protocol.PlayerPerformedAddOn;
+import com.cubeia.games.poker.io.protocol.PlayerPerformedRebuy;
 import com.cubeia.games.poker.io.protocol.PlayerPokerStatus;
 import com.cubeia.games.poker.io.protocol.Pot;
 import com.cubeia.games.poker.io.protocol.PotTransfer;
@@ -258,6 +260,18 @@ public class FirebaseServerAdapter implements ServerAdapter {
     @Override
     public void notifyAddOnsAvailable(String cost, String chips) {
         sendPublicPacket(new AddOnOffer(cost, chips));
+    }
+
+    @Override
+    public void notifyRebuyPerformed(int playerId) {
+        GameDataAction rebuyPerformed = protocolFactory.createGameAction(new PlayerPerformedRebuy(), playerId, table.getId());
+        sendPublicPacket(rebuyPerformed, -1);
+    }
+
+    @Override
+    public void notifyAddOnPerformed(int playerId) {
+        GameDataAction addOnPerformed = protocolFactory.createGameAction(new PlayerPerformedAddOn(), playerId, table.getId());
+        sendPublicPacket(addOnPerformed, -1);
     }
 
     private int secondsToNextLevel(com.cubeia.poker.model.BlindsLevel level) {

@@ -211,6 +211,11 @@ public class Processor implements GameProcessor, TournamentProcessor {
 
     private void handleAddedChips(PlayerAddedChips addedChips) {
         state.handleAddedChips(addedChips.getPlayerId(), addedChips.getChipsToAdd());
+        if (addedChips.getReason() == PlayerAddedChips.Reason.REBUY) {
+            state.notifyPlayerPerformedRebuy(addedChips.getPlayerId());
+        } else if (addedChips.getReason() == PlayerAddedChips.Reason.ADD_ON) {
+            state.notifyPlayerPerformedAddOn(addedChips.getPlayerId());
+        }
     }
 
     private void handleTournamentDestroyed() {

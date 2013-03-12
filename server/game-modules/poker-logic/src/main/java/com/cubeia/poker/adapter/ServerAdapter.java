@@ -238,6 +238,10 @@ public interface ServerAdapter {
 
     void notifyAddOnsAvailable(String rebuyCost, String rebuyChips);
 
+    void notifyRebuyPerformed(int playerId);
+
+    void notifyAddOnPerformed(int playerId);
+
     void sendGameStateTo(GameStateSnapshot snapshot, int playerId);
 
 }

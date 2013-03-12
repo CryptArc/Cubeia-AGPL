@@ -95,6 +95,16 @@ public class MockServerAdapter implements ServerAdapter {
     }
 
     @Override
+    public void notifyRebuyPerformed(int playerId) {
+
+    }
+
+    @Override
+    public void notifyAddOnPerformed(int playerId) {
+
+    }
+
+    @Override
     public void sendGameStateTo(GameStateSnapshot snapshot, int playerId) {
 
     }

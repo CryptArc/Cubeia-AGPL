@@ -23,13 +23,15 @@ import java.io.Serializable;
  * This is sent from the tournament to a table when a player has added chips via a rebuy or an add-on.
  */
 public class PlayerAddedChips implements Serializable {
-
+    public enum Reason { REBUY, ADD_ON }
     private final int playerId;
     private final long chipsToAdd;
+    private final Reason reason;
 
-    public PlayerAddedChips(int playerId, long chipsToAdd) {
+    public PlayerAddedChips(int playerId, long chipsToAdd, Reason reason) {
         this.playerId = playerId;
         this.chipsToAdd = chipsToAdd;
+        this.reason = reason;
     }
 
     public int getPlayerId() {
@@ -38,5 +40,9 @@ public class PlayerAddedChips implements Serializable {
 
     public long getChipsToAdd() {
         return chipsToAdd;
+    }
+
+    public Reason getReason() {
+        return reason;
     }
 }
