@@ -105,6 +105,10 @@ public class MockServerAdapter implements ServerAdapter {
     }
 
     @Override
+    public void notifyAddOnPeriodClosed() {
+    }
+
+    @Override
     public void sendGameStateTo(GameStateSnapshot snapshot, int playerId) {
 
     }

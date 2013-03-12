@@ -15,11 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.tournament.util;
+package com.cubeia.games.poker.tournament.messages;
 
-public interface TableNotifier {
+import java.io.Serializable;
 
-    void notifyAllTables(Object attachment);
-
-    public void notifyTable(int tableId, Object attachment);
+public class AddOnPeriodClosed implements Serializable {
 }

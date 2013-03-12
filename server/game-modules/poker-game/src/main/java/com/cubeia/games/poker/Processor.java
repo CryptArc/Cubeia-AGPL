@@ -40,6 +40,7 @@ import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
 import com.cubeia.games.poker.jmx.PokerStats;
 import com.cubeia.games.poker.logic.TimeoutCache;
 import com.cubeia.games.poker.state.FirebaseState;
+import com.cubeia.games.poker.tournament.messages.AddOnPeriodClosed;
 import com.cubeia.games.poker.tournament.messages.AddOnsAvailableDuringBreak;
 import com.cubeia.games.poker.tournament.messages.BlindsWithDeadline;
 import com.cubeia.games.poker.tournament.messages.OfferRebuy;
@@ -183,6 +184,8 @@ public class Processor implements GameProcessor, TournamentProcessor {
                 handleOfferRebuy((OfferRebuy) attachment);
             } else if (attachment instanceof AddOnsAvailableDuringBreak) {
                 handleAddOnsAvailable((AddOnsAvailableDuringBreak) attachment);
+            } else if (attachment instanceof AddOnPeriodClosed) {
+                handleAddOnPeriodClosed();
             } else if ("CLOSE_TABLE_HINT".equals(attachment.toString())) {
                 log.debug("got CLOSE_TABLE_HINT");
                 tableCloseHandler.closeTable(table, false);
@@ -199,6 +202,10 @@ public class Processor implements GameProcessor, TournamentProcessor {
             log.error("Failed handling game object action.", t);
             tableCloseHandler.handleUnexpectedExceptionOnTable(action, table, t);
         }
+    }
+
+    private void handleAddOnPeriodClosed() {
+        state.notifyAddOnPeriodClosed();
     }
 
     private void handleAddOnsAvailable(AddOnsAvailableDuringBreak addOns) {

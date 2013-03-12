@@ -17,6 +17,8 @@
 
 package com.cubeia.games.poker.tournament.rebuy;
 
+import com.cubeia.games.poker.tournament.messages.AddOnPeriodClosed;
+import com.cubeia.games.poker.tournament.messages.AddOnsAvailableDuringBreak;
 import com.cubeia.games.poker.tournament.messages.OfferRebuy;
 import com.cubeia.games.poker.tournament.util.SerializablePredicate;
 import com.cubeia.games.poker.tournament.util.TableNotifier;
@@ -156,8 +158,8 @@ public class RebuySupport implements Serializable {
         }
     }
 
-    public void breakFinished() {
-        finishAddOnPeriod();
+    public void breakFinished(TableNotifier tableNotifier) {
+        finishAddOnPeriod(tableNotifier);
     }
 
     public BigDecimal getRebuyCost() {
@@ -190,10 +192,14 @@ public class RebuySupport implements Serializable {
         rebuysAvailable = false;
     }
 
-    public void notifyNewLevelStarted(int currentBlindsLevelNr) {
+    public void notifyNewLevelStarted(int currentBlindsLevelNr, boolean isBreak, TableNotifier tableNotifier) {
         // Adding one since currentBlindsLevelNr is 0 indexed.
         if (currentBlindsLevelNr + 1 > (numberOfLevelsWithRebuys)) {
             rebuysAvailable = false;
+        }
+        if (isBreak && addOnsAvailableDuringBreak(currentBlindsLevelNr)) {
+            startAddOnPeriod();
+            tableNotifier.notifyAllTables(new AddOnsAvailableDuringBreak(getAddOnChipsAmount(), getAddOnCost()));
         }
     }
 
@@ -207,8 +213,9 @@ public class RebuySupport implements Serializable {
         addOnPeriodActive = true;
     }
 
-    public void finishAddOnPeriod() {
+    public void finishAddOnPeriod(TableNotifier tableNotifier) {
         if (addOnPeriodActive) {
+            tableNotifier.notifyAllTables(new AddOnPeriodClosed());
             log.debug("Add-on period finished.");
         }
         addOnPeriodActive = false;

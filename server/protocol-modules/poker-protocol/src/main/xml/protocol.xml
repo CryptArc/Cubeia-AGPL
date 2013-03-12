@@ -529,6 +529,8 @@
 
     <struct name="player_performed_add_on" />
 
+    <struct name="add_on_period_closed" />
+
     <enum name="tournament_status">
         <value>ANNOUNCED</value>
         <value>REGISTERING</value>

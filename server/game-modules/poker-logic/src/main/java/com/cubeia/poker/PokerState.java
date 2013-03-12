@@ -450,4 +450,8 @@ public class PokerState implements Serializable, IPokerState {
     public void notifyPlayerPerformedAddOn(int playerId) {
         serverAdapter.notifyAddOnPerformed(playerId);
     }
+
+    public void notifyAddOnPeriodClosed() {
+        serverAdapter.notifyAddOnPeriodClosed();
+    }
 }

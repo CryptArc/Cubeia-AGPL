@@ -242,6 +242,8 @@ public interface ServerAdapter {
 
     void notifyAddOnPerformed(int playerId);
 
+    void notifyAddOnPeriodClosed();
+
     void sendGameStateTo(GameStateSnapshot snapshot, int playerId);
 
 }

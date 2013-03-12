@@ -51,6 +51,7 @@ import com.cubeia.games.poker.handler.ActionTransformer;
 import com.cubeia.games.poker.handler.Trigger;
 import com.cubeia.games.poker.handler.TriggerType;
 import com.cubeia.games.poker.io.protocol.AddOnOffer;
+import com.cubeia.games.poker.io.protocol.AddOnPeriodClosed;
 import com.cubeia.games.poker.io.protocol.BestHand;
 import com.cubeia.games.poker.io.protocol.BlindsAreUpdated;
 import com.cubeia.games.poker.io.protocol.BlindsLevel;
@@ -272,6 +273,11 @@ public class FirebaseServerAdapter implements ServerAdapter {
     public void notifyAddOnPerformed(int playerId) {
         GameDataAction addOnPerformed = protocolFactory.createGameAction(new PlayerPerformedAddOn(), playerId, table.getId());
         sendPublicPacket(addOnPerformed, -1);
+    }
+
+    @Override
+    public void notifyAddOnPeriodClosed() {
+        sendPublicPacket(new AddOnPeriodClosed());
     }
 
     private int secondsToNextLevel(com.cubeia.poker.model.BlindsLevel level) {

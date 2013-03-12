@@ -225,7 +225,7 @@ public class PokerTournament implements TableNotifier, Serializable {
         if (rebuySupport.isPlayerAllowedToPerformAddOn(playerId)) {
             performAddOn(playerId, tableId);
         } else {
-            log.debug("Player " + playerId + " on table " + tableId + " tried to perform an add-on put was not allowed to do that.");
+            log.debug("Player " + playerId + " on table " + tableId + " tried to perform an add-on but was not allowed to do that.");
         }
     }
 
@@ -411,17 +411,7 @@ public class PokerTournament implements TableNotifier, Serializable {
         scheduleNextBlindsLevel();
         notifyAllTablesThatBreakStarted();
 
-        rebuySupport.notifyNewLevelStarted(pokerState.getCurrentBlindsLevelNr());
-        if (rebuySupport.addOnsAvailableDuringBreak(pokerState.getCurrentBlindsLevelNr())) {
-            rebuySupport.startAddOnPeriod();
-            notifyAllTablesOfAddOnsAvailableDuringBreak();
-        }
-    }
-
-    private void notifyAllTablesOfAddOnsAvailableDuringBreak() {
-        for (Integer tableId : state.getTables()) {
-            notifyTable(tableId, new AddOnsAvailableDuringBreak(rebuySupport.getAddOnChipsAmount(), rebuySupport.getAddOnCost()));
-        }
+        rebuySupport.notifyNewLevelStarted(pokerState.getCurrentBlindsLevelNr(), true, this);
     }
 
     private void notifyAllTablesThatBreakStarted() {
@@ -1043,7 +1033,7 @@ public class PokerTournament implements TableNotifier, Serializable {
              * we start the break and schedule next level).
              */
             scheduleNextBlindsLevel();
-            pokerState.getRebuySupport().notifyNewLevelStarted(pokerState.getCurrentBlindsLevelNr());
+            pokerState.getRebuySupport().notifyNewLevelStarted(pokerState.getCurrentBlindsLevelNr(), false, this);
         }
 
         if (finishedBreak(levelBeforeIncreasing, levelAfterIncreasing)) {
@@ -1052,7 +1042,7 @@ public class PokerTournament implements TableNotifier, Serializable {
             notifyAllTablesOfNewBlinds();
             sendRoundStartToAllTables();
             pokerState.breakFinished();
-            rebuySupport.breakFinished();
+            rebuySupport.breakFinished(this);
             setTournamentStatus(RUNNING);
         }
     }
@@ -1179,6 +1169,17 @@ public class PokerTournament implements TableNotifier, Serializable {
         }
     }
 
+    @Override
+    public void notifyAllTables(Object attachment) {
+        if (attachment instanceof GameObjectAction) {
+            throw new IllegalArgumentException("You should send the attachment and not a GameObjectAction.");
+        }
+        for (Integer tableId : state.getTables()) {
+            notifyTable(tableId, attachment);
+        }
+    }
+
+    @Override
     public void notifyTable(int tableId, Object attachment) {
         if (attachment instanceof GameObjectAction) {
             throw new IllegalArgumentException("You should send the attachment and not a GameObjectAction.");
