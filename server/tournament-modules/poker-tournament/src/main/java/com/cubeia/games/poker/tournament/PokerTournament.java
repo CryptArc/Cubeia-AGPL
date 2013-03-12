@@ -55,7 +55,6 @@ import com.cubeia.games.poker.io.protocol.TournamentOut;
 import com.cubeia.games.poker.tournament.configuration.blinds.Level;
 import com.cubeia.games.poker.tournament.history.HistoryPersister;
 import com.cubeia.games.poker.tournament.messages.AddOnRequest;
-import com.cubeia.games.poker.tournament.messages.AddOnsAvailableDuringBreak;
 import com.cubeia.games.poker.tournament.messages.BlindsWithDeadline;
 import com.cubeia.games.poker.tournament.messages.CloseTournament;
 import com.cubeia.games.poker.tournament.messages.PlayerAddedChips;
@@ -204,6 +203,7 @@ public class PokerTournament implements TableNotifier, Serializable {
                 rebuyRequests.remove(playerId);
             } else {
                 rebuyRequests.remove(playerId);
+                historyPersister.rebuyDeclined(playerId);
                 payAndRemovePlayers(tableId, singleton(playerId));
                 // If we have no more pending requests, consider this hand as finished and move on.
                 if (!tableHasPendingRequests(tableId)) {
@@ -256,6 +256,7 @@ public class PokerTournament implements TableNotifier, Serializable {
         addMoneyToPrizePool(amountReserved);
         rebuySupport.increaseRebuyCount(playerId);
         startNextHandIfThisWasLastRebuyQuestionAtTable(tableId);
+        historyPersister.rebuyPerformed(playerId);
     }
 
     private void handleSuccessfulAddOn(Money amountReserved, PlayerSessionId playerSessionId, int playerId, TournamentSessionId toAccount, int tableId) {
@@ -265,6 +266,7 @@ public class PokerTournament implements TableNotifier, Serializable {
         rebuySupport.addOnPerformed(playerId);
         addChipsTo(playerId, tableId, rebuySupport.getAddOnChipsAmount(), PlayerAddedChips.Reason.ADD_ON);
         addMoneyToPrizePool(amountReserved);
+        historyPersister.addOnPerformed(playerId);
     }
 
     private void addMoneyToPrizePool(Money money) {
@@ -276,7 +278,12 @@ public class PokerTournament implements TableNotifier, Serializable {
         int playerId = response.getSessionId().playerId;
         int tableId = pokerState.getTableFor(playerId, state);
         PendingBackendRequests pendingRequests = pokerState.getPendingRequests();
-        pendingRequests.getAndClearPendingRequest(playerId, tableId);
+        PendingRequestType request = pendingRequests.getAndClearPendingRequest(playerId, tableId);
+        if (request == REBUY) {
+            historyPersister.rebuyFailed(playerId);
+        } else if (request == ADD_ON) {
+            historyPersister.addOnFailed(playerId);
+        }
         startNextHandIfThisWasLastRebuyQuestionAtTable(tableId);
         // TODO: Tell the player something went wrong.
     }
@@ -332,6 +339,7 @@ public class PokerTournament implements TableNotifier, Serializable {
         this.tournamentPlayerRegistry = tournamentPlayerRegistry;
         this.sender = sender;
         this.rebuySupport = pokerState.getRebuySupport();
+        rebuySupport.injectTransientDependencies(this, historyPersister);
     }
 
     public void processRoundReport(MttRoundReportAction action) {
@@ -495,7 +503,7 @@ public class PokerTournament implements TableNotifier, Serializable {
      */
     private boolean handlePlayersOut(int tableId, Set<Integer> playersOut) {
         if (!playersOut.isEmpty()) {
-            Set<Integer> playersWithRebuyOption = pokerState.getRebuySupport().requestRebuys(tableId, playersOut, this);
+            Set<Integer> playersWithRebuyOption = pokerState.getRebuySupport().requestRebuys(tableId, playersOut);
             log.debug("Players with rebuy options " + playersWithRebuyOption);
             playersOut.removeAll(playersWithRebuyOption);
             payAndRemovePlayers(tableId, playersOut);
@@ -1042,7 +1050,7 @@ public class PokerTournament implements TableNotifier, Serializable {
             notifyAllTablesOfNewBlinds();
             sendRoundStartToAllTables();
             pokerState.breakFinished();
-            rebuySupport.breakFinished(this);
+            rebuySupport.breakFinished();
             setTournamentStatus(RUNNING);
         }
     }

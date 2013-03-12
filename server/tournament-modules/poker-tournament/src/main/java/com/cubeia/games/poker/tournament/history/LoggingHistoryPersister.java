@@ -22,9 +22,11 @@ import com.cubeia.poker.tournament.history.api.HistoricTournament;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
 import org.apache.log4j.Logger;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class LoggingHistoryPersister implements TournamentHistoryPersistenceService {
@@ -124,5 +126,50 @@ public class LoggingHistoryPersister implements TournamentHistoryPersistenceServ
     @Override
     public void statusChanged(String status, String historicId, long now) {
         log.info("Tournament[ " + historicId + "]. Status updated to " + status);
+    }
+
+    @Override
+    public void rebuysRequested(String historicId, Set<Integer> playerIds, long now) {
+        log.info("Tournament[ " + historicId + "]. Rebuys requested from " + Arrays.toString(playerIds.toArray()));
+    }
+
+    @Override
+    public void rebuyPerformed(String historicId, int playerId, long now) {
+        log.info("Tournament[ " + historicId + "]. Rebuy performed by " + playerId);
+    }
+
+    @Override
+    public void rebuyDeclined(String historicId, int playerId, long now) {
+        log.info("Tournament[ " + historicId + "]. Rebuy declined by " + playerId);
+    }
+
+    @Override
+    public void rebuyFailed(String historicId, int playerId, long now) {
+        log.info("Tournament[ " + historicId + "]. Rebuy failed for " + playerId);
+    }
+
+    @Override
+    public void addOnPerformed(String historicId, int playerId, long now) {
+        log.info("Tournament[ " + historicId + "]. Add-on performed by " + playerId);
+    }
+
+    @Override
+    public void addOnFailed(String historicId, int playerId, long now) {
+        log.info("Tournament[ " + historicId + "]. Add-on failed for " + playerId);
+    }
+
+    @Override
+    public void rebuyPeriodFinished(String historicId, long now) {
+        log.info("Tournament[ " + historicId + "]. Rebuy period finished");
+    }
+
+    @Override
+    public void addOnPeriodStarted(String historicId, long now) {
+        log.info("Tournament[ " + historicId + "]. Add-on period started");
+    }
+
+    @Override
+    public void addOnPeriodFinished(String historicId, long now) {
+        log.info("Tournament[ " + historicId + "]. Add-on period finished");
     }
 }

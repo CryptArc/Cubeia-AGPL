@@ -166,7 +166,7 @@ public class HandHistory extends BasePage {
             } else {
                 HandHistorySearch search = new HandHistorySearch();
                 search.playerId = toIntOrNull(parameters.get("playerId"));
-                search.tableId = toIntOrNull(parameters.get("tableId"));
+                search.tableId = toStringOrNull(parameters.get("tableId"));
                 search.fromDate = toDateOrNull(parameters.get("startDate"));
                 search.toDate = toDateOrNull(parameters.get("toDate"));
                 search(search);
@@ -197,6 +197,6 @@ public class HandHistory extends BasePage {
         Integer playerId;
         Date fromDate;
         Date toDate;
-        Integer tableId;
+        String tableId;
     }
 }

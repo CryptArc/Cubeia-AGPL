@@ -451,6 +451,11 @@ public class GameHandler implements PacketVisitor {
     }
 
     @Override
+    public void visit(AddOnPeriodClosed packet) {
+
+    }
+
+    @Override
     public void visit(TournamentDestroyed packet) {
 
     }

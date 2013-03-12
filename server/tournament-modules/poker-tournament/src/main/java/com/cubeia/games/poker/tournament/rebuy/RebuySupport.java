@@ -17,9 +17,11 @@
 
 package com.cubeia.games.poker.tournament.rebuy;
 
+import com.cubeia.games.poker.tournament.history.HistoryPersister;
 import com.cubeia.games.poker.tournament.messages.AddOnPeriodClosed;
 import com.cubeia.games.poker.tournament.messages.AddOnsAvailableDuringBreak;
 import com.cubeia.games.poker.tournament.messages.OfferRebuy;
+import com.cubeia.games.poker.tournament.util.PacketSender;
 import com.cubeia.games.poker.tournament.util.SerializablePredicate;
 import com.cubeia.games.poker.tournament.util.TableNotifier;
 import com.google.common.base.Predicate;
@@ -116,6 +118,9 @@ public class RebuySupport implements Serializable {
     /** Indicates whether the add-on period is active. */
     private boolean addOnPeriodActive = false;
 
+    private transient HistoryPersister historyPersister;
+    private transient TableNotifier tableNotifier;
+
     public RebuySupport(boolean rebuysAvailable, long rebuyChipsAmount, long addOnChipsAmount, int maxRebuys, long maxStackForRebuy, boolean addOnsEnabled,
                         int numberOfLevelsWithRebuys, BigDecimal rebuyCost, BigDecimal addOnCost) {
         this.rebuysAvailable = rebuysAvailable;
@@ -158,8 +163,8 @@ public class RebuySupport implements Serializable {
         }
     }
 
-    public void breakFinished(TableNotifier tableNotifier) {
-        finishAddOnPeriod(tableNotifier);
+    public void breakFinished() {
+        finishAddOnPeriod();
     }
 
     public BigDecimal getRebuyCost() {
@@ -196,6 +201,7 @@ public class RebuySupport implements Serializable {
         // Adding one since currentBlindsLevelNr is 0 indexed.
         if (currentBlindsLevelNr + 1 > (numberOfLevelsWithRebuys)) {
             rebuysAvailable = false;
+            historyPersister.rebuyPeriodFinished();
         }
         if (isBreak && addOnsAvailableDuringBreak(currentBlindsLevelNr)) {
             startAddOnPeriod();
@@ -211,11 +217,13 @@ public class RebuySupport implements Serializable {
         log.debug("Starting add-on period.");
         rebuysAvailable = false;
         addOnPeriodActive = true;
+        historyPersister.addOnPeriodStarted();
     }
 
-    public void finishAddOnPeriod(TableNotifier tableNotifier) {
+    public void finishAddOnPeriod() {
         if (addOnPeriodActive) {
             tableNotifier.notifyAllTables(new AddOnPeriodClosed());
+            historyPersister.addOnPeriodFinished();
             log.debug("Add-on period finished.");
         }
         addOnPeriodActive = false;
@@ -249,12 +257,15 @@ public class RebuySupport implements Serializable {
         return addOnCost;
     }
 
-    public Set<Integer> requestRebuys(int tableId, Set<Integer> playersOut, TableNotifier tableNotifier) {
+    public Set<Integer> requestRebuys(int tableId, Set<Integer> playersOut) {
         Set<Integer> playersWithRebuyOption = newHashSet(filter(playersOut, rebuyAllowed));
-        log.debug("Requesting rebuys from players: " + playersWithRebuyOption);
-        tableNotifier.notifyTable(tableId, new OfferRebuy(playersWithRebuyOption, format(rebuyCost), format(rebuyChipsAmount)));
-        addRebuyRequestsForTable(tableId, playersWithRebuyOption);
-        tablesWaitingForRebuys.add(tableId);
+        if (!playersWithRebuyOption.isEmpty()) {
+            log.debug("Requesting rebuys from players: " + playersWithRebuyOption);
+            tableNotifier.notifyTable(tableId, new OfferRebuy(playersWithRebuyOption, format(rebuyCost), format(rebuyChipsAmount)));
+            addRebuyRequestsForTable(tableId, playersWithRebuyOption);
+            tablesWaitingForRebuys.add(tableId);
+            historyPersister.rebuysRequested(playersWithRebuyOption);
+        }
         return playersWithRebuyOption;
     }
 
@@ -264,5 +275,10 @@ public class RebuySupport implements Serializable {
 
     public void removeTableWaitingForRebuys(int tableId) {
         tablesWaitingForRebuys.remove(tableId);
+    }
+
+    public void injectTransientDependencies(TableNotifier tableNotifier, HistoryPersister historyPersister) {
+        this.tableNotifier = tableNotifier;
+        this.historyPersister = historyPersister;
     }
 }

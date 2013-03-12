@@ -56,6 +56,7 @@ import com.google.common.collect.ImmutableMap;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Answers;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
@@ -78,6 +79,7 @@ import static com.google.common.collect.ImmutableSet.of;
 import static junit.framework.Assert.assertEquals;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Answers.RETURNS_DEEP_STUBS;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
@@ -134,7 +136,7 @@ public class PokerTournamentTest {
     @Mock
     private PlayerRegistry playerRegistry;
 
-    @Mock
+    @Mock(answer = RETURNS_DEEP_STUBS)
     private PokerTournamentState mockPokerState;
 
     @Mock

@@ -145,17 +145,17 @@ public class RebuyTournamentTests {
         assertThat(pokerState.isOnBreak(), is(true));
         sendRoundReportToTournament(1, 1);
 
-        // When another table finishes a hand.
+        log.debug("When another table finishes a hand.");
         sendRoundReportToTournament(2);
 
-        // The break should not have started.
+        log.debug("The break should not have started.");
         assertThat(pokerState.getStatus(), is(PREPARING_BREAK));
 
-        // But when the rebuy is finished.
+        log.debug("But when the rebuy is finished.");
         tournament.handleRebuyResponse(new RebuyResponse(1, 1, 0, true));
         tournament.handleReservationResponse(createReserveResponse(1));
 
-        // The break starts.
+        log.debug("The break starts.");
         assertThat(pokerState.getStatus(), is(ON_BREAK));
     }
 

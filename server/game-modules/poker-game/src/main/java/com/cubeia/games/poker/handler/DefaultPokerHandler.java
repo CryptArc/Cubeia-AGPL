@@ -18,6 +18,7 @@
 package com.cubeia.games.poker.handler;
 
 import com.cubeia.games.poker.io.protocol.AddOnOffer;
+import com.cubeia.games.poker.io.protocol.AddOnPeriodClosed;
 import com.cubeia.games.poker.io.protocol.BestHand;
 import com.cubeia.games.poker.io.protocol.BlindsAreUpdated;
 import com.cubeia.games.poker.io.protocol.BlindsLevel;
@@ -409,6 +410,11 @@ public class DefaultPokerHandler implements PacketVisitor {
 
     @Override
     public void visit(PlayerPerformedAddOn packet) {
+
+    }
+
+    @Override
+    public void visit(AddOnPeriodClosed packet) {
 
     }
 
