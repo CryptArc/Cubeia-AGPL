@@ -71,6 +71,7 @@ Poker.PokerPacketHandler = Class.extend({
         if(performAction.stackAmount) {
             amount = Poker.Utils.formatCurrency(performAction.stackAmount);
         }
+
         this.tableManager.handlePlayerAction(this.tableId,performAction.player,actionType,amount);
     },
     handleDealPublicCards : function(packet) {
@@ -89,11 +90,9 @@ Poker.PokerPacketHandler = Class.extend({
     },
     handleExposePrivateCards : function(packet) {
         this.tableManager.bettingRoundComplete(this.tableId);
-        for (var i = 0; i < packet.cards.length; i ++ ) {
-            this.tableManager.exposePrivateCard(this.tableId,packet.cards[i].card.cardId,
-                Poker.Utils.getCardString(packet.cards[i].card));
-        }
+        this.tableManager.exposePrivateCards(this.tableId, packet.cards)
     },
+
     handlePlayerPokerStatus : function(packet) {
         var status = packet.status;
         switch (status) {

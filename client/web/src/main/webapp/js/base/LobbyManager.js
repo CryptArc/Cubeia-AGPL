@@ -305,6 +305,24 @@ Poker.PropertyStringFilter = Poker.LobbyFilter.extend({
     }
 });
 
+Poker.PrivateTournamentFilter = Class.extend({
+	
+	operatorId : Poker.OperatorConfig.operatorId, // shorthand: current player operator ID
+	
+	filter : function (lobbyData) {
+		var stringList = lobbyData["operatorIds"];
+		if(!stringList || stringList.length == 0) {
+			return true; // this is a table, or no operators set
+		} else if(!this.operatorId) {
+			// this is a private tournament, but the player has no operator (?!), deny
+			return false;
+		} else {
+			var stringArr = stringList.split();
+			return $.inArray(this.operatorId.toString(), stringArr) != -1; // allow if in array
+		}
+    }
+});
+
 
 
 

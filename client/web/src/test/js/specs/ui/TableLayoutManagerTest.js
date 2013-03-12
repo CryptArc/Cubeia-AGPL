@@ -9,6 +9,11 @@ describe("Poker.TableLayoutManager Test", function(){
     var MockBuyInDialog = Class.extend({});
     var MockMyActionsManager = Class.extend({});
     var MockDealerButton = Class.extend({});
+    var MockSoundManager = {
+        playerAction:function() {},
+        playSound:function() {}
+    };
+
     var MockSeat = Class.extend({
         mockSeatPos : -1,
         seatId : -1,
@@ -45,7 +50,7 @@ describe("Poker.TableLayoutManager Test", function(){
 
 
         tableLayoutManager = new Poker.TableLayoutManager(1, $("#testTable"),
-            new Poker.TemplateManager(), 10);
+            new Poker.TemplateManager(), 10, MockSoundManager);
     });
     afterEach(function(){
         Poker.MockUtils.resetMocks();

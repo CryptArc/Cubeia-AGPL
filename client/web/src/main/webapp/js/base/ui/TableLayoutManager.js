@@ -44,7 +44,7 @@ Poker.TableLayoutManager = Class.extend({
      * @param {Number} capacity
      * @constructor
      */
-    init : function(tableId, tableViewContainer, templateManager, capacity) {
+    init : function(tableId, tableViewContainer, templateManager, capacity, soundManager) {
         if (!tableViewContainer) {
             throw "TableLayoutManager requires a tableViewContainer";
         }
@@ -58,7 +58,7 @@ Poker.TableLayoutManager = Class.extend({
         this.tableView = $(viewId);
 
         this.tableId = tableId;
-        this.soundManager = new Poker.SoundManager(Poker.AppCtx.getSoundRepository(), tableId);
+        this.soundManager = soundManager;
         var self = this;
 
         var actionCallback = function(actionType,amount){
@@ -177,6 +177,7 @@ Poker.TableLayoutManager = Class.extend({
             this.tableView.find(".click-area-0").touchSafeClick(function(){
                 new Poker.PokerRequestHandler(self.tableId).requestBuyInInfo();
             });
+            this.soundManager.playerAction({id:"action-join"}, this.tableId);
         } else {
 
             elementId = "seat"+seatId+"-"+this.tableId;
@@ -203,6 +204,7 @@ Poker.TableLayoutManager = Class.extend({
         seat.clearSeat();
         this.seats.remove(seat.seatId);
         this.addEmptySeatContent(seat.seatId,-1,(this.myPlayerSeatId==-1));
+        this.soundManager.playerAction({id:"action-leave"}, this.tableId);
     },
 
     /**
@@ -276,16 +278,18 @@ Poker.TableLayoutManager = Class.extend({
              $(".player-action-icon").addClass("action-inactive");
              this._hideSeatActionText();
         }
+        this.soundManager.playerAction(actionType, this.tableId, player, amount);
         seat.onAction(actionType,amount);
     },
     onDealPlayerCard : function(player,cardId,cardString) {
-        this.playSound(Poker.Sounds.DEAL);
+        this.playSound(Poker.Sounds.DEAL_PLAYER);
         var seat = this.getSeatByPlayerId(player.id);
         var card = new Poker.Card(cardId,this.tableId,cardString,this.templateManager);
         seat.dealCard(card);
         this._storeCard(card);
     },
     onExposePrivateCard : function(cardId,cardString){
+        this.playSound(Poker.Sounds.REVEAL);
         var card = this.cardElements.get(cardId);
         if(cardString == card.cardString) {
             return;
@@ -306,7 +310,7 @@ Poker.TableLayoutManager = Class.extend({
             top : Math.round(off.top)
         };
         this.dealerButton.move(pos.top,pos.left);
-
+        this.playSound(Poker.Sounds.MOVE_DEALER_BUTTON);
     },
     onBettingRoundComplete :function() {
         var seats =  this.seats.values();
@@ -319,7 +323,7 @@ Poker.TableLayoutManager = Class.extend({
         seat.showHandStrength(hand);
     },
     onDealCommunityCard : function(cardId, cardString) {
-        this.playSound(Poker.Sounds.DEAL);
+        this.playSound(Poker.Sounds.DEAL_COMMUNITY);
         var card = new Poker.CommunityCard(cardId,this.tableId,cardString,this.templateManager);
         var html = card.render();
         this.communityCardsContainer.append(html);
@@ -359,6 +363,11 @@ Poker.TableLayoutManager = Class.extend({
             seats[s].inactivateSeat();
         }
         var seat = this.getSeatByPlayerId(player.id);
+
+        if (player.id == Poker.MyPlayer.id) {
+            this.playSound(Poker.Sounds.REQUEST_ACTION);
+        }
+
         seat.activateSeat(allowedActions,timeToAct,mainPot,fixedLimit);
     },
     onRequestRebuy : function(player, rebuyCost, chipsForRebuy, timeToAct){
@@ -402,6 +411,7 @@ Poker.TableLayoutManager = Class.extend({
             $("#"+cards[x].getCardDivId()).remove();
         }
         this.myActionsManager.clear();
+        this.soundManager.playerAction({id:"action-leave"}, this.tableId);
     },
     _hideSeatActionText : function() {
         var seats = this.seats.values();
@@ -475,10 +485,11 @@ Poker.TableLayoutManager = Class.extend({
             transferAnimator.addTransfer(seat, trans.potId, trans.amount);
         }
         transferAnimator.start();
+        this.playSound(Poker.Sounds.POT_TO_PLAYERS);
     },
 
-    playSound : function(soundName) {
-        this.soundManager.playSound(soundName);
+    playSound : function(sound) {
+        this.soundManager.handleTableUpdate(sound, this.tableId);
     },
     /**
      * @param {Poker.FutureActionType[]} actions

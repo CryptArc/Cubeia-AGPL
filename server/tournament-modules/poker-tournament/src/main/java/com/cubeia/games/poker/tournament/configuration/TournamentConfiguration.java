@@ -17,23 +17,29 @@
 
 package com.cubeia.games.poker.tournament.configuration;
 
-import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
-import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructureFactory;
-import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
-import com.cubeia.poker.betting.BetStrategyType;
-import com.cubeia.poker.timing.TimingProfile;
-import org.apache.log4j.Logger;
+import static com.cubeia.poker.betting.BetStrategyType.NO_LIMIT;
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.EAGER;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import java.io.Serializable;
-import java.math.BigDecimal;
 
-import static com.cubeia.poker.betting.BetStrategyType.NO_LIMIT;
-import static javax.persistence.CascadeType.ALL;
+import org.apache.log4j.Logger;
+
+import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
+import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructureFactory;
+import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
+import com.cubeia.poker.betting.BetStrategyType;
+import com.cubeia.poker.timing.TimingProfile;
 
 /**
  * This class represents the configuration of a tournament.
@@ -77,12 +83,23 @@ public class TournamentConfiguration implements Serializable {
     private long startingChips;
 
     private boolean archived;
+    
+    @ElementCollection(fetch=EAGER)
+    private Set<Long> operatorIds = new HashSet<Long>(); // > 0 for private tournaments
 
     @ManyToOne(cascade = ALL)
     private RebuyConfiguration rebuyConfiguration = new RebuyConfiguration();
 
     public TournamentConfiguration() {
     }
+    
+    public Set<Long> getOperatorIds() {
+		return operatorIds;
+	}
+    
+    public void setOperatorIds(Set<Long> operatorIds) {
+		this.operatorIds = operatorIds;
+	}
 
     public RebuyConfiguration getRebuyConfiguration() {
         return rebuyConfiguration;

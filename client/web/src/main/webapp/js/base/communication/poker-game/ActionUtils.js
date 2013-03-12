@@ -65,6 +65,8 @@ Poker.ActionUtils = Class.extend({
      * @return {Poker.Action}
      */
     getAction : function(act) {
+
+
         var type = this.getActionType(act.type);
         return new Poker.Action(type,act.minAmount, act.maxAmount);
     },

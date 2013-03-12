@@ -43,6 +43,7 @@ import java.util.Set;
 import static com.cubeia.games.poker.common.money.MoneyFormatter.format;
 import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.BUY_IN;
 import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.FEE;
+import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.OPERATOR_IDS;
 import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.SIT_AND_GO;
 
 public abstract class PokerTournamentCreationParticipant implements CreationParticipant {
@@ -103,6 +104,7 @@ public abstract class PokerTournamentCreationParticipant implements CreationPart
         pokerState.setTemplateId(getConfigurationTemplateId());
         pokerState.setSitAndGo(isSitAndGo());
         pokerState.setRebuySupport(createRebuySupport(config.getRebuyConfiguration()));
+        pokerState.getAllowedOperators().addAll(config.getOperatorIds());
 
         PokerTournament tournament = new PokerTournament(pokerState);
         stateSupport.setState(tournament);
@@ -110,11 +112,25 @@ public abstract class PokerTournamentCreationParticipant implements CreationPart
         acc.setStringAttribute("SPEED", timing.name());
         // TODO: Table size should be configurable.
         acc.setIntAttribute(PokerTournamentLobbyAttributes.TABLE_SIZE.name(), 10);
+        String opString = getOperatorLobbyIdString();
+        acc.setStringAttribute(OPERATOR_IDS.name(), opString);
         createHistoricTournament(stateSupport, pokerState);
         tournamentCreated(stateSupport, pokerState, acc);
     }
 
-    private RebuySupport createRebuySupport(RebuyConfiguration config) {
+    private String getOperatorLobbyIdString() {
+		StringBuilder b = new StringBuilder();
+		for (Long l : config.getOperatorIds()) {
+			b.append(l).append(",");
+		}
+		String s = b.toString();
+		if(s.length() > 0) {
+			s = s.substring(0, s.length() - 1);
+		}
+		return s;
+    }
+
+	private RebuySupport createRebuySupport(RebuyConfiguration config) {
         if (config == null) {
             return RebuySupport.NO_REBUYS;
         } else {

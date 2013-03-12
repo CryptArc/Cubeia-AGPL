@@ -15,18 +15,54 @@ Poker.SoundRepository = Class.extend({
     },
 
     loadSounds:function () {
+        var codec = this.getCodec();
+        var path = "/poker-client/sounds/"+codec+"/";
+
+        var audioModel = "Audio";
+        var context = null;
+
         if(typeof(Audio)=="undefined") {
             return;
         }
+
+        if(typeof(webkitAudioContext)!="undefined") {
+            var audioModel = "webkitAudioContext";
+            var context = new webkitAudioContext();
+        }
+
         for (var sound in Poker.Sounds) {
-            console.log("Loading sound " + sound + " from file " + Poker.Sounds[sound]);
-            var audio = new Audio("sounds/" + Poker.Sounds[sound]);
-            this.sounds[Poker.Sounds[sound]] = audio;
+
+            var soundList = Poker.Sounds[sound].soundList
+                var soundSources = [];
+                for (var i = 0; i < soundList.length; i++) {
+                    var file = path+Poker.Sounds[sound].soundList[i].file+"."+codec;
+                    var audio = new Poker.SoundSource(file, audioModel, context);
+                    audio.setGain(Poker.Sounds[sound].soundList[i].gain);
+                    console.log("Loading to "+audioModel+" from file "+file);
+                    soundSources[i] = audio;
+                }
+            this.sounds[Poker.Sounds[sound].id] = soundSources;
+
         }
     },
 
-    getSound:function (soundName) {
-        return this.sounds[soundName];
+    getSound:function (soundId, selection) {
+        console.log(this.sounds[soundId][selection], soundId, this.sounds)
+        return this.sounds[soundId][selection];
+    },
+
+    getCodec:function()  {
+        var checkAudio = new Audio();
+        if (checkAudio.canPlayType('audio/ogg; codecs="vorbis"')) {
+            return "ogg";
+        }
+        if (checkAudio.canPlayType('audio/mpeg;')) {
+            return "mp3";
+        }
+        if (checkAudio.canPlayType('audio/wav; codecs="1"')) {
+            return "wav";
+        }
+        alert("no supported audio codec found");
     }
 
 });

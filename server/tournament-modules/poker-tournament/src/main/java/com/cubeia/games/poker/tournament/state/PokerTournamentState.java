@@ -48,8 +48,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.collect.Sets.newHashSet;
-import static java.lang.Math.log;
 import static java.lang.Math.max;
 import static java.math.BigDecimal.valueOf;
 import static org.joda.time.Seconds.secondsBetween;
@@ -126,6 +124,8 @@ public class PokerTournamentState implements Serializable {
 
     private int templateId;
 
+    private Set<Long> allowedOperators = new HashSet<Long>();
+    
     private Set<HistoricPlayer> resurrectingPlayers = new HashSet<HistoricPlayer>();
 
     private Set<Integer> tablesNotReadyForBreak = new HashSet<Integer>();
@@ -148,8 +148,31 @@ public class PokerTournamentState implements Serializable {
 
     private RebuySupport rebuySupport = RebuySupport.NO_REBUYS;
 
+    /**
+     * @return True if this tournament is limited to one or more operators
+     */
+    public boolean isPrivate() {
+        return allowedOperators.size() > 0;
+    }
+    
+    /**
+     * @param operator Player operator to check
+     * @return True if the operator is allowed in the tournament
+     */
+    public boolean isOperatorAllowed(Long operator) {
+        return (allowedOperators.size() == 0 || operator == null || operator == -1 ? true : allowedOperators.contains(operator));
+    }
+    
     public boolean allTablesHaveBeenCreated(int tablesCreated) {
         return tablesCreated >= tablesToCreate;
+    }
+    
+    public Set<Long> getAllowedOperators() {
+        return allowedOperators;
+    }
+    
+    public void setAllowedOperators(Set<Long> allowedOperators) {
+        this.allowedOperators = allowedOperators;
     }
 
     public BetStrategyType getBetStrategy() {

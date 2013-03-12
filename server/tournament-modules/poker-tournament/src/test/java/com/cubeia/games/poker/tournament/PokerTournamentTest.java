@@ -23,6 +23,7 @@ import com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse;
 import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
 import com.cubeia.backend.cashgame.dto.OpenTournamentSessionRequest;
 import com.cubeia.backend.firebase.CashGamesBackendService;
+import com.cubeia.backoffice.users.api.dto.User;
 import com.cubeia.firebase.api.action.mtt.MttAction;
 import com.cubeia.firebase.api.action.mtt.MttObjectAction;
 import com.cubeia.firebase.api.action.mtt.MttRoundReportAction;
@@ -31,6 +32,7 @@ import com.cubeia.firebase.api.mtt.MTTState;
 import com.cubeia.firebase.api.mtt.MttInstance;
 import com.cubeia.firebase.api.mtt.MttNotifier;
 import com.cubeia.firebase.api.mtt.model.MttPlayer;
+import com.cubeia.firebase.api.mtt.model.MttRegisterResponse;
 import com.cubeia.firebase.api.mtt.model.MttRegistrationRequest;
 import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.firebase.api.mtt.support.registry.PlayerRegistry;
@@ -50,6 +52,7 @@ import com.cubeia.games.poker.tournament.state.PendingBackendRequests;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 import com.cubeia.games.poker.tournament.util.PacketSender;
+import com.cubeia.network.users.firebase.api.UserServiceContract;
 import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
 import com.google.common.collect.ImmutableMap;
@@ -66,6 +69,8 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+
+import junit.framework.Assert;
 
 import static com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse.ErrorCode.UNSPECIFIED_ERROR;
 import static com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructureFactory.createDefaultBlindsStructure;
@@ -141,6 +146,9 @@ public class PokerTournamentTest {
 
     @Mock
     private TournamentLobby tournamentLobby;
+    
+    @Mock
+    private UserServiceContract userService;
 
     @Mock
     private PacketSender sender;
@@ -252,7 +260,43 @@ public class PokerTournamentTest {
         // Then the tournament should not start.
         verify(support, never()).createTables(Mockito.<MTTStateSupport>any(), anyInt(), anyString(), Mockito.<Object>any());
     }
-
+    
+    @Test
+    public void allowPlayerOnPrivateTournament() {
+    	prepareTournamentWithMockLifecycle();
+    	pokerState.getAllowedOperators().add(666L);
+    	User user = mock(User.class);
+    	when(user.getOperatorId()).thenReturn(666L); // Tournament public, but matching operator
+    	when(userService.getUserById(anyInt())).thenReturn(user);
+    	pokerState.setStatus(PokerTournamentStatus.REGISTERING);
+    	MttRegisterResponse resp = tournament.checkRegistration(new MttRegistrationRequest(new MttPlayer(1), null));
+    	Assert.assertEquals(MttRegisterResponse.ALLOWED, resp);
+    }
+    
+    @Test
+    public void allowPlayerOnPublicTournament() {
+    	prepareTournamentWithMockLifecycle();
+    	User user = mock(User.class);
+    	when(user.getOperatorId()).thenReturn(666L); // Tournament public, the operator ID shouldn't matter
+    	when(userService.getUserById(anyInt())).thenReturn(user);
+    	pokerState.setStatus(PokerTournamentStatus.REGISTERING);
+    	MttRegisterResponse resp = tournament.checkRegistration(new MttRegistrationRequest(new MttPlayer(1), null));
+    	Assert.assertEquals(MttRegisterResponse.ALLOWED, resp);
+    }
+    
+    @Test
+    public void blockPlayerOnPrivateTournament() {
+    	prepareTournamentWithMockLifecycle();
+    	pokerState.getAllowedOperators().add(666L);
+    	pokerState.getAllowedOperators().add(667L);
+    	User user = mock(User.class);
+    	when(user.getOperatorId()).thenReturn(1L); // Tournament public, but wrong operator, should deny
+    	when(userService.getUserById(anyInt())).thenReturn(user);
+    	pokerState.setStatus(PokerTournamentStatus.REGISTERING);
+    	MttRegisterResponse resp = tournament.checkRegistration(new MttRegistrationRequest(new MttPlayer(1), null));
+    	Assert.assertEquals(MttRegisterResponse.DENIED, resp);
+    }
+    
     @Test
     public void tournamentShouldStartOnceAllPendingRegistrationsAreResolved() {
         // Given a tournament with one registered (but pending) player and that it's time to start the tournament.
@@ -510,7 +554,7 @@ public class PokerTournamentTest {
         lifeCycle = new ScheduledTournamentLifeCycle(startTime, openRegistrationTime);
         pokerState.setLifecycle(lifeCycle);
         tournament = new PokerTournament(pokerState);
-        tournament.injectTransientDependencies(instance, support, state, historyService, backend, new DefaultSystemTime(), shutdownService, tournamentPlayerRegistry, sender);
+        tournament.injectTransientDependencies(instance, support, state, historyService, backend, new DefaultSystemTime(), shutdownService, tournamentPlayerRegistry, sender, userService);
         return lifeCycle;
     }
 
@@ -520,21 +564,21 @@ public class PokerTournamentTest {
         lifeCycle = new ScheduledTournamentLifeCycle(startTime, openRegistrationTime);
         pokerState.setLifecycle(lifeCycle);
         tournament = new PokerTournament(pokerState);
-        tournament.injectTransientDependencies(instance, support, state, historyService, backend, dateFetcher, shutdownService, tournamentPlayerRegistry, sender);
+        tournament.injectTransientDependencies(instance, support, state, historyService, backend, dateFetcher, shutdownService, tournamentPlayerRegistry, sender, userService);
         return lifeCycle;
     }
 
     private void prepareTournamentWithMockLifecycle() {
         pokerState.setLifecycle(mockLifeCycle);
         tournament = new PokerTournament(pokerState);
-        tournament.injectTransientDependencies(instance, support, state, historyService, backend, dateFetcher, shutdownService, tournamentPlayerRegistry, sender);
+        tournament.injectTransientDependencies(instance, support, state, historyService, backend, dateFetcher, shutdownService, tournamentPlayerRegistry, sender, userService);
         pokerState.setBlindsStructure(createDefaultBlindsStructure());
     }
 
     private void prepareTournamentWithMockTournamentState() {
         tournament = new PokerTournament(mockPokerState);
         tournament.injectTransientDependencies(instance, support, state, historyService, backend, new DefaultSystemTime(), shutdownService,
-                tournamentPlayerRegistry, sender);
+                tournamentPlayerRegistry, sender, userService);
         pokerState.setBlindsStructure(createDefaultBlindsStructure());
     }
 }

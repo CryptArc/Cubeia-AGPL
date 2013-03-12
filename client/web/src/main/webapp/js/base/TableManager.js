@@ -53,7 +53,8 @@ Poker.TableManager = Class.extend({
         }
         var tableViewContainer = $(".table-view-container");
         var templateManager = new Poker.TemplateManager();
-        var tableLayoutManager = new Poker.TableLayoutManager(tableId, tableViewContainer, templateManager, capacity);
+        var soundManager = new Poker.SoundManager(Poker.AppCtx.getSoundRepository(), tableId);
+        var tableLayoutManager = new Poker.TableLayoutManager(tableId, tableViewContainer, templateManager, capacity, soundManager);
         this.createTable(tableId, capacity, name , tableLayoutManager);
         Poker.AppCtx.getViewManager().addTableView(tableLayoutManager,name);
     },
@@ -356,10 +357,23 @@ Poker.TableManager = Class.extend({
         table.getLayoutManager().onTotalPotUpdate(totalPot);
         table.getLayoutManager().onPotUpdate(pots);
     },
+
+    exposePrivateCards: function(tableId, cards) {
+
+        for (var i = 0; i < cards.length; i ++ ) {
+            var cardId = cards[i].card.cardId;
+            var cardstring = Poker.Utils.getCardString(cards[i].card)
+
+            this.exposePrivateCard(tableId, cardId, cardstring);
+
+        }
+    },
+
     exposePrivateCard : function(tableId,cardId,cardString) {
         var table = this.getTable(tableId);
-        table.getLayoutManager().onExposePrivateCard(cardId,cardString);
+        table.getLayoutManager().onExposePrivateCard(cardId, cardString);
     },
+
     notifyWaitingToStartBreak : function() {
         var dialogManager = Poker.AppCtx.getDialogManager();
         dialogManager.displayGenericDialog({ translationKey : "break-is-starting"});
