@@ -177,7 +177,7 @@ Poker.TableManager = Class.extend({
      */
     clearTable : function(tableId,handCount) {
         var table = this.tables.get(tableId);
-        if(table.handCount==handCount) {
+        if (table.handCount == handCount) {
             console.log("No hand started clearing table");
             table.layoutManager.onStartHand(this.dealerSeatId);
         } else {
@@ -317,6 +317,11 @@ Poker.TableManager = Class.extend({
         var table = this.tables.get(tableId);
         var player = table.getPlayerById(playerId);
         table.getLayoutManager().onRequestAddOn(player, addOnCost, chipsForAddOn);
+    },
+    handleAddOnPeriodClosed : function(tableId, playerId) {
+        var table = this.tables.get(tableId);
+        var player = table.getPlayerById(playerId);
+        table.getLayoutManager().hideAddOnButton(player);
     },
     hideAddOnButton : function(tableId, playerId) {
         var table = this.tables.get(tableId);

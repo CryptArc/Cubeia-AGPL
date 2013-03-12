@@ -52,8 +52,13 @@ Poker.ActionButtons = Poker.AbstractTableButtons.extend({
         this.buttons.put(actionType.id, button);
     },
     hideAll : function() {
+        console.log("Hiding all buttons.")
         var buttons = this.buttons.values();
-        for(var a in buttons) {
+        for (var a in buttons) {
+            if (buttons[a].actionType === Poker.ActionType.ADD_ON) {
+                // Not hiding add-on button because it should be visible during the entire break.
+                continue;
+            }
             buttons[a].el.hide();
         }
         this.cancelBetActionButton.hide();

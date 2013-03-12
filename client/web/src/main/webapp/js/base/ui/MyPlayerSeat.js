@@ -116,17 +116,17 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         }
     },
     updatePlayer : function(player) {
-        console.log("UPDATE MY PLYAER ");
+        console.log("UPDATE MY PLAYER ");
         console.log(player);
-        var update = false;
+        var updated = false;
         if(player.tableStatus.id != this.player.tableStatus.id) {
-            update = true;
+            updated = true;
         }
         this.player = player;
         $("#myPlayerBalance-"+this.tableId).html("&euro;"+this.player.balance);
         this.seatBalance.html("&euro;"+this.player.balance);
 
-        if(update===true) {
+        if (updated) {
             this.handlePlayerStatus();
         }
     },

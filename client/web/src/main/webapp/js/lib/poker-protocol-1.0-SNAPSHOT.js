@@ -117,6 +117,24 @@ com.cubeia.games.poker.io.protocol.AddOnOffer = function() {
     }
 };
 com.cubeia.games.poker.io.protocol.AddOnOffer.CLASSID = 66;
+com.cubeia.games.poker.io.protocol.AddOnPeriodClosed = function() {
+    this.classId = function() {
+        return com.cubeia.games.poker.io.protocol.AddOnPeriodClosed.CLASSID
+    };
+    this.save = function() {
+        return[]
+    };
+    this.load = function(a) {
+    };
+    this.getNormalizedObject = function() {
+        var a = {};
+        var b;
+        a.summary = "com.cubeia.games.poker.io.protocol.AddOnPeriodClosed";
+        a.details = {};
+        return a
+    }
+};
+com.cubeia.games.poker.io.protocol.AddOnPeriodClosed.CLASSID = 70;
 com.cubeia.games.poker.io.protocol.BestHand = function() {
     this.classId = function() {
         return com.cubeia.games.poker.io.protocol.BestHand.CLASSID
@@ -2184,6 +2202,10 @@ com.cubeia.games.poker.io.protocol.ProtocolObjectFactory.create = function(c, a)
             b = new com.cubeia.games.poker.io.protocol.PlayerPerformedAddOn();
             b.load(a);
             return b;
+        case com.cubeia.games.poker.io.protocol.AddOnPeriodClosed.CLASSID:
+            b = new com.cubeia.games.poker.io.protocol.AddOnPeriodClosed();
+            b.load(a);
+            return b;
         case com.cubeia.games.poker.io.protocol.TournamentDestroyed.CLASSID:
             b = new com.cubeia.games.poker.io.protocol.TournamentDestroyed();
             b.load(a);
@@ -2501,7 +2523,7 @@ com.cubeia.games.poker.io.protocol.RequestTournamentRegistrationInfo = function(
         return a
     }
 };
-com.cubeia.games.poker.io.protocol.RequestTournamentRegistrationInfo.CLASSID = 71;
+com.cubeia.games.poker.io.protocol.RequestTournamentRegistrationInfo.CLASSID = 72;
 com.cubeia.games.poker.io.protocol.RequestTournamentStatistics = function() {
     this.classId = function() {
         return com.cubeia.games.poker.io.protocol.RequestTournamentStatistics.CLASSID
@@ -2655,7 +2677,7 @@ com.cubeia.games.poker.io.protocol.TournamentDestroyed = function() {
         return a
     }
 };
-com.cubeia.games.poker.io.protocol.TournamentDestroyed.CLASSID = 70;
+com.cubeia.games.poker.io.protocol.TournamentDestroyed.CLASSID = 71;
 com.cubeia.games.poker.io.protocol.TournamentInfo = function() {
     this.classId = function() {
         return com.cubeia.games.poker.io.protocol.TournamentInfo.CLASSID
@@ -2897,7 +2919,7 @@ com.cubeia.games.poker.io.protocol.TournamentRegistrationInfo = function() {
         return a
     }
 };
-com.cubeia.games.poker.io.protocol.TournamentRegistrationInfo.CLASSID = 72;
+com.cubeia.games.poker.io.protocol.TournamentRegistrationInfo.CLASSID = 73;
 com.cubeia.games.poker.io.protocol.TournamentStatistics = function() {
     this.classId = function() {
         return com.cubeia.games.poker.io.protocol.TournamentStatistics.CLASSID

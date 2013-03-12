@@ -349,6 +349,10 @@ Poker.CommunicationManager = Class.extend({
                 console.log(protocolObject);
                 pokerPacketHandler.handleAddOnOffer(protocolObject, Poker.MyPlayer.id);
                 break;
+            case com.cubeia.games.poker.io.protocol.AddOnPeriodClosed.CLASSID:
+                console.log("Add-on period closed.");
+                pokerPacketHandler.handleAddOnPeriodClosed(Poker.MyPlayer.id);
+                break;
             case com.cubeia.games.poker.io.protocol.PlayerPerformedRebuy.CLASSID:
                 pokerPacketHandler.handleRebuyPerformed(playerId);
                 break;
