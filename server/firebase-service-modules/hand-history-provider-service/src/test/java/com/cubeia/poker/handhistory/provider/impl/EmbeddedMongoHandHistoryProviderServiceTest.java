@@ -114,7 +114,6 @@ public class EmbeddedMongoHandHistoryProviderServiceTest {
 
     @Test
     public void testGetHandIds() throws Exception {
-
         createHandHistory(1, "hand1", 100L, 1, 2);
         createHandHistory(1, "hand2", 200L, 1, 2);
         createHandHistory(1, "hand3", 300L, 2, 3);

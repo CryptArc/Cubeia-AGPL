@@ -34,17 +34,24 @@ public class HistoryServiceImpl implements HistoryService {
 
     private static final Logger log = Logger.getLogger(HistoryServiceImpl.class);
 
-    @Qualifier("mongoStorage")
-    @Autowired
     private MongoStorage mongoStorage;
+
+    @Autowired
+    public HistoryServiceImpl(@Qualifier("mongoStorage") MongoStorage mongoStorage) {
+        this.mongoStorage = mongoStorage;
+    }
 
     @Override
     public List<HistoricHand> findHandHistory(Integer playerId, String tableId, Date fromDate, Date toDate) {
         log.info("Finding hand histories by query: playerId = " + playerId + " tableId = " + tableId + " from: " + fromDate + " to: " + toDate);
         Query query = mongoStorage.createQuery(HistoricHand.class);
         if (tableId != null) query.field("table.tableIntegrationId").equal(tableId);
+        /*
+         * Note, we are searching based on when the hand started, so it's not a bug that startTime is used for both from and to.
+         * That is we are searching for hands for which fromDate < startTime < toDate.
+         */
         if (fromDate != null) query.field("startTime").greaterThanOrEq(fromDate.getTime());
-        if (toDate != null) query.field("endTime").lessThanOrEq(toDate.getTime());
+        if (toDate != null) query.field("startTime").lessThanOrEq(toDate.getTime());
         if (playerId != null) query.filter("seats elem", new BasicDBObject("playerId", playerId));
         return query.order("-startTime").asList();
     }
