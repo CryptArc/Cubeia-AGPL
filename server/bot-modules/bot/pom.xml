@@ -27,7 +27,6 @@
         <dependency>
             <groupId>com.cubeia.firebase.bots</groupId>
             <artifactId>firebase-bots</artifactId>
-            <version>1.10-SNAPSHOT</version>
         </dependency>
 
     </dependencies>
@@ -39,6 +38,8 @@
                 <artifactId>firebase-bots-maven-plugin</artifactId>
                 <version>1.10-SNAPSHOT</version>
                 <configuration>
+                    <botControlFile>bot.html</botControlFile>
+                    <botMenuName>Poker Bot</botMenuName>
                     <serverPort>8081</serverPort>
                     <botStartId>100</botStartId>
                 </configuration>
@@ -46,3 +47,4 @@
         </plugins>
     </build>
 </project>
+
