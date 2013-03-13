@@ -49,7 +49,6 @@ public class SystemManagement extends BasePage {
     }
 
     private void initJmx() {
-//        FirebaseJMXFactory jmxFactory = new FirebaseJMXFactory();
         clientRegistryMBean = jmxFactory.createClientRegistryProxy();
         shutdownServiceMBean = jmxFactory.createShutdownServiceProxy();
     }
