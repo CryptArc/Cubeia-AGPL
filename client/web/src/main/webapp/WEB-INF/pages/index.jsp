@@ -280,7 +280,7 @@
                         <span data-i18n="login.login"></span>
                     </div>
                 </div>
-                <div class="status-label"><span data-i18n="login.status"></span> <span class="connect-status"></span></div>
+                <div class="status-label"> <span data-i18n="login.status"></span> <span class="connect-status"></span></div>
             </div>
         </div>
 
