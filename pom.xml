@@ -78,7 +78,7 @@
             <dependency>
                 <groupId>com.cubeia.firebase.bots</groupId>
                 <artifactId>firebase-bots</artifactId>
-                <version>1.8.0</version>
+                <version>1.10-SNAPSHOT</version>
             </dependency>
 
             <dependency>
