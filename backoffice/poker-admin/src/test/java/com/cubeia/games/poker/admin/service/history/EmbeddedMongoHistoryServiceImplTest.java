@@ -29,7 +29,6 @@ import de.flapdoodle.embedmongo.MongodProcess;
 import de.flapdoodle.embedmongo.config.MongodConfig;
 import de.flapdoodle.embedmongo.distribution.Version;
 import de.flapdoodle.embedmongo.runtime.Network;
-import org.apache.log4j.Logger;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.junit.After;
