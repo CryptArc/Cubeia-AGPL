@@ -190,7 +190,7 @@
                 });
 
                 $(".logout-link").click(function(){
-                    Poker.AppCtx.getCommunicationManager().getConnector().logout();
+                    Poker.AppCtx.getCommunicationManager().getConnector().logout(true);
                     document.location = document.location.hash = "clear";
                     document.location.reload();
                 });
@@ -204,13 +204,6 @@
                 $("body").i18n();
                 new Poker.ResourcePreloader('${cp}',onPreLoadComplete,  Poker.SkinConfiguration.preLoadImages);
             });
-
-
-
-
-
-
-
         });
 
     </script>
@@ -715,18 +708,16 @@
 </div>
 </script>
 <div id="disconnectDialog" style="display: none;">
-    <h1>{{t "disconnect-dialog.title"}}</h1>
+    <h1 data-i18n="disconnect-dialog.title"></h1>
     <p class="message disconnect-reconnecting">
-        {{t "disconnect-dialog.message"}} ({{t "disconnect-dialog.attempt"}} <span class="reconnectAttempt"></span>)
+        <span data-i18n="disconnect-dialog.message"></span> (<span data-i18n="disconnect-dialog.attempt"></span> <span class="reconnectAttempt"></span>)
         <br/>
         <br/>
     </p>
-    <p class="stopped-reconnecting" style="display: none;">
-        {{t "disconnect-dialog.unable-to-reconnect"}}
+    <p class="stopped-reconnecting" style="display: none;" data-i18n="disconnect-dialog.unable-to-reconnect">
     </p>
     <p class="dialog-buttons stopped-reconnecting" style="display: none;">
-        <a class="dialog-ok-button">
-            {{t "disconnect-dialog.reload"}}
+        <a class="dialog-ok-button" data-i18n="disconnect-dialog.reload">
         </a>
     </p>
 </div>

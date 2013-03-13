@@ -46,7 +46,6 @@ Poker.DialogManager = Class.extend({
      * @param {String} [content.translationKey] - optional translation key to use
      * @param {Boolean} [content.displayCancelButton] - if you should display a cancel
      * @param {Function} [okCallback] callback to execute when ok button is clicked
-     *
      */
     displayGenericDialog: function(content, okCallback) {
 

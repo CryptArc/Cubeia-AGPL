@@ -16,7 +16,9 @@ Poker.ConnectionPacketHandler = Class.extend({
         if (status == FB_PROTOCOL.ResponseStatusEnum.OK) {
             this.connectionManager.onUserLoggedIn(playerId,name);
         } else {
-            this.connectionManager.showConnectStatus("Connected (Login failed with status " + status+ ")");
+            this.connectionManager.showConnectStatus(
+                    i18n.t("login.login-failed", {sprintf : [status]})
+                );
         }
     },
     handleStatus : function(status) {

@@ -51,7 +51,7 @@ Poker.ConnectionManager = Class.extend({
         this.scheduleDisconnectCheck();
         this.retryCount = 0;
         this.disconnectDialog.close();
-        this.showConnectStatus("Connected");
+        this.showConnectStatus(i18n.t("login.connected"));
 
         if(Poker.MyPlayer.loginToken!=null) {
             this.handleTokenLogin();
@@ -100,12 +100,12 @@ Poker.ConnectionManager = Class.extend({
     },
     handleDisconnect : function() {
         console.log("DISCONNECTED");
-        this.showConnectStatus("Disconnected, retrying (count " +this.retryCount+")");
+        this.showConnectStatus(i18n.t("login.disconnected", {sprintf : [this.retryCount]}));
         this.clearTimeouts();
         this.reconnect();
     },
     onUserConnecting : function() {
-        this.showConnectStatus("Connecting");
+        this.showConnectStatus(i18n.t("login.connecting"));
     },
     showConnectStatus : function(text) {
         $(".connect-status").html(text);
@@ -113,7 +113,7 @@ Poker.ConnectionManager = Class.extend({
     onUserReconnecting : function() {
         this.retryCount++;
         this.disconnectDialog.show(this.retryCount);
-        this.showConnectStatus("Disconnected, retrying (count " +this.retryCount+")");
+        this.showConnectStatus(i18n.t("login.disconnected", {sprintf : [this.retryCount]}));
     },
     onUserReconnected : function() {
         this.onUserConnected();

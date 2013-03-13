@@ -1,7 +1,14 @@
 {
+    "tabs" : {
+        "lobby" : "Lobby"
+    },
     "login" : {
         "login" : "login",
-        "status" : "Status:"
+        "status" : "Status:",
+        "disconnected" : "Disconnected, retrying (count %s)",
+        "connecting" : "Connecting",
+        "connected" : "Connected",
+        "login-failed" : "Connected (Login failed with status %s)"
     },
     "lobby" : {
         "menu" : {
