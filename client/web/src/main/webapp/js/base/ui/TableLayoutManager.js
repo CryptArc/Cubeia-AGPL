@@ -84,9 +84,7 @@ Poker.TableLayoutManager = Class.extend({
         tableViewContainer.show();
         this.cardElements = new Poker.Map();
         this.clock = new Poker.Clock(this.tableInfoElement.find(".time-to-next-level-value"));
-        this.tableView.find(".hand-history").click(function(){
-            Poker.AppCtx.getHandHistoryManager().requestHandHistory(self.tableId);
-        });
+
 
         $(".future-action").show();
     },
@@ -174,6 +172,9 @@ Poker.TableLayoutManager = Class.extend({
             this.seats.put(seatId,seat);
             this.tableView.find(".seat-pos-0").hide();
             var self = this;
+            this.tableView.find(".hand-history").show().click(function(){
+                Poker.AppCtx.getHandHistoryManager().requestHandHistory(self.tableId);
+            });
             this.tableView.find(".click-area-0").touchSafeClick(function(){
                 new Poker.PokerRequestHandler(self.tableId).requestBuyInInfo();
             });

@@ -568,7 +568,7 @@
                 <img src="${cp}/skins/${skin}/images/table/dealer-button.svg"/>
             </div>
         </div>
-        <div class="hand-history" >
+        <div class="hand-history" style="display:none;">
             {{t "table.hand-history" }}
         </div>
         <div class="bottom-bar">

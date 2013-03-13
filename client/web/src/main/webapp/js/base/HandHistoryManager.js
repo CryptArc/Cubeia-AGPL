@@ -27,7 +27,6 @@ Poker.HandHistoryManager = Class.extend({
         var self = this;
         var popup = this.popups.get(tableId);
         summaries.reverse();
-        console.log(popup.container);
         $.each(summaries,function(i,e){
             e.startTime = self.formatDateTime(e.startTime);
         });
