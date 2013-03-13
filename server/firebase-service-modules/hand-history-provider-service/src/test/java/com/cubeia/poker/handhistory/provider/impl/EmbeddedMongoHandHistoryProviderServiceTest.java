@@ -187,6 +187,7 @@ public class EmbeddedMongoHandHistoryProviderServiceTest {
         List<HistoricHand> handSummaries = service.getHandSummaries(1, 2, 2, System.currentTimeMillis());
         assertEquals(2,handSummaries.size());
         for(HistoricHand h : handSummaries) {
+            assertTrue(h.getId().startsWith("hand"));
             assertEquals(0,h.getEvents().size());
             assertEquals(null,h.getResults());
             assertEquals(0,h.getSeats().size());
