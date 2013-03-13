@@ -20,28 +20,24 @@ Poker.SoundManager = Class.extend({
     tableId:null,
 
     init:function (soundRepository, tableId) {
-        this.soundPlayer = new Poker.SoundPlayer(soundRepository)
+        this.soundPlayer = new Poker.SoundPlayer(soundRepository);
         this.tableId = tableId;
     },
 
     playSound:function (sound, selection) {
         if (this.soundsEnabled()) {
             var soundPlayer = this.soundPlayer;
-            var playTimeout = setTimeout(function() {
+            setTimeout(function() {
                 soundPlayer.play(sound, selection);
             }, sound.delay);
         }
     },
 
     soundsEnabled:function () {
-        console.log("Sound Enabled: ",Poker.Settings.Param.SOUND_ENABLED)
-            var check = Poker.Settings.isEnabled(Poker.Settings.Param.SOUND_ENABLED)
-            console.log(check);
+        console.log("Sound Enabled: ",Poker.Settings.Param.SOUND_ENABLED);
+        var check = Poker.Settings.isEnabled(Poker.Settings.Param.SOUND_ENABLED);
+        console.log(check);
         return check;
-    },
-
-    handleAlert:function(alert) {
-
     },
 
     handleTableUpdate:function(sound, tableId) {
