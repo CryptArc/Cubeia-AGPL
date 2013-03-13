@@ -31,7 +31,9 @@ import com.cubeia.poker.shutdown.impl.ShutdownServiceMBean;
 import org.apache.log4j.Logger;
 
 import com.cubeia.firebase.service.clientreg.state.StateClientRegistryMBean;
+import org.springframework.stereotype.Component;
 
+@Component
 public class FirebaseJMXFactory {
     
     private static final transient Logger log = Logger.getLogger(FirebaseJMXFactory.class);

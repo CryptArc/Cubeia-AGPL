@@ -17,6 +17,8 @@
 
 package com.cubeia.games.postlogin.api;
 
+import org.apache.log4j.Logger;
+
 import com.cubeia.firebase.api.action.mtt.MttAction;
 import com.cubeia.firebase.api.action.mtt.MttObjectAction;
 import com.cubeia.firebase.api.action.service.ServiceAction;
@@ -28,7 +30,7 @@ import com.cubeia.firebase.api.service.ServiceContext;
 import com.cubeia.firebase.api.service.ServiceRouter;
 import com.cubeia.firebase.api.service.mttplayerreg.TournamentPlayerRegistry;
 import com.cubeia.games.poker.tournament.messages.PlayerLeft;
-import org.apache.log4j.Logger;
+import com.cubeia.network.users.firebase.api.UserServiceContract;
 
 public class PostLoginService implements PostLoginProcessor, Service, RoutableService {
 
@@ -38,31 +40,34 @@ public class PostLoginService implements PostLoginProcessor, Service, RoutableSe
 
     private ServiceRouter router;
 
+	private ServiceContext context;
+
     @Override
     public void clientDisconnected(int playerId) {
-        log.debug("Player " + playerId + " disconnected.");
+        log.info("Player " + playerId + " disconnected.");
         unregisterFromSitAndGoTournaments(playerId);
+        invalidatePlayerSession(playerId);
     }
 
     @Override
-    public void clientLoggedIn(int playerId, String screenName) {
-
-    }
+    public void clientLoggedIn(int playerId, String screenName) {}
 
     @Override
     public void clientLoggedOut(int playerId) {
-        log.debug("Player " + playerId + " logged out.");
+        log.info("Player " + playerId + " logged out.");
         unregisterFromSitAndGoTournaments(playerId);
+        invalidatePlayerSession(playerId);
     }
 
-    @Override
+	@Override
     public void destroy() {
 
     }
 
     @Override
     public void init(ServiceContext context) throws SystemException {
-        tournamentPlayerRegistry = context.getParentRegistry().getServiceInstance(TournamentPlayerRegistry.class);
+        this.context = context;
+		tournamentPlayerRegistry = context.getParentRegistry().getServiceInstance(TournamentPlayerRegistry.class);
     }
 
     @Override
@@ -93,4 +98,19 @@ public class PostLoginService implements PostLoginProcessor, Service, RoutableSe
             router.dispatchToTournament(tournamentId, unregisterAction);
         }
     }
+    
+    private void invalidatePlayerSession(int playerId) {
+    	try {
+			UserServiceContract userService = context.getParentRegistry().getServiceInstance(UserServiceContract.class);
+			if (userService != null) {
+				log.debug("Invalidate player session ("+playerId+") now");
+				userService.invalidateUserSession(playerId);
+				log.info("Invalidated player session ("+playerId+")");
+			} else {
+				log.warn("User service is null so I will skip remote session invalidation");
+			}
+    	} catch (Throwable e) {
+    		log.error("Failed to invalidate player session against remote User Service. If you are running locally with firebase:run this is expected. PlayerId("+playerId+"). Exception: " +e);
+    	}
+	}
 }

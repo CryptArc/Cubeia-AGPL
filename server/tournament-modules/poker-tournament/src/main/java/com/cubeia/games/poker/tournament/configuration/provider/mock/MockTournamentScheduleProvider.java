@@ -59,8 +59,8 @@ public class MockTournamentScheduleProvider implements TournamentScheduleProvide
         configuration.setStartingChips(100000);
         configuration.setTimingType(TimingFactory.getRegistry().getTimingProfile(Timings.EXPRESS.name()));
         configuration.setId(1);
+        // configuration.getOperatorIds().add(666L);
         tournamentConfigurations.add(everyFiveMinutes);
-        
         
         ScheduledTournamentConfiguration massiveQuickTourny = massiveSpeedTourny();
         TournamentConfiguration speedCfg = massiveQuickTourny.getConfiguration();
@@ -74,6 +74,7 @@ public class MockTournamentScheduleProvider implements TournamentScheduleProvide
         speedCfg.setTimingType(TimingFactory.getRegistry().getTimingProfile(Timings.SUPER_EXPRESS.name()));
         speedCfg.setStartingChips(100000);
         speedCfg.setId(2);
+        
         tournamentConfigurations.add(massiveQuickTourny);
         
         

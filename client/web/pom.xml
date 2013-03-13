@@ -144,6 +144,7 @@
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>${jetty.version}</version>
                 <configuration>
+					<useTestClasspath>true</useTestClasspath>
                     <webApp>
                         <contextPath>/</contextPath>
                     </webApp>
@@ -281,6 +282,25 @@
         								<ignore></ignore>
         							</action>
         						</pluginExecution>
+        						<pluginExecution>
+        						    <pluginExecutionFilter>
+        						        <groupId>
+        						            org.codehaus.groovy.maven
+        						        </groupId>
+        						        <artifactId>
+        						            gmaven-plugin
+        						        </artifactId>
+        						        <versionRange>
+        						            [1.0,)
+        						        </versionRange>
+        						        <goals>
+        						            <goal>execute</goal>
+        						        </goals>
+        						    </pluginExecutionFilter>
+        						    <action>
+        						        <ignore></ignore>
+        						    </action>
+        						</pluginExecution>
         					</pluginExecutions>
         				</lifecycleMappingMetadata>
         			</configuration>
@@ -292,9 +312,21 @@
 
     <dependencies>
         <dependency>
+    <groupId>com.google.guava</groupId>
+    <artifactId>guava</artifactId>
+    <version>14.0</version>
+</dependency>
+    
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
             <version>${spring.version}</version>
+        </dependency>
+        
+                <dependency>
+            <groupId>com.cubeia.network.operator</groupId>
+            <artifactId>operator-client</artifactId>
+            <version>1.4.0-RC2-SNAPSHOT</version>
         </dependency>
 
         <dependency>

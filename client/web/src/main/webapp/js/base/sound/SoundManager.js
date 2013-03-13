@@ -11,32 +11,46 @@ var Poker = Poker || {};
  */
 Poker.SoundManager = Class.extend({
     /**
-     * @type Poker.SoundRepository
+     * @type Poker.SoundPlayer
      */
-    soundsRepository:null,
+    soundPlayer:null,
     /**
      * @type Number
      */
     tableId:null,
 
     init:function (soundRepository, tableId) {
-        this.soundsRepository = soundRepository;
+        this.soundPlayer = new Poker.SoundPlayer(soundRepository);
         this.tableId = tableId;
     },
 
-    playSound:function (soundName) {
+    playSound:function (sound, selection) {
         if (this.soundsEnabled()) {
-            console.log("Playing sound: " + soundName);
-            var sound = this.soundsRepository.getSound(soundName);
-            if (sound) {
-                sound.play();
-            } else {
-                console.log("No sound found.");
-            }
+            var soundPlayer = this.soundPlayer;
+            setTimeout(function() {
+                soundPlayer.play(sound, selection);
+            }, sound.delay);
         }
     },
 
     soundsEnabled:function () {
-        return true;
+        console.log("Sound Enabled: ",Poker.Settings.Param.SOUND_ENABLED);
+        var check = Poker.Settings.isEnabled(Poker.Settings.Param.SOUND_ENABLED);
+        console.log(check);
+        return check;
+    },
+
+    handleTableUpdate:function(sound, tableId) {
+        if (tableId != this.tableId) return;
+        var selection = Math.floor(Math.random()*sound.soundList.length);
+        this.playSound(sound, selection)
+    },
+
+    playerAction:function(actionType, tableId, player, amount) {
+        var sound = Poker.Sounds[actionType.id];
+        var selection = Math.floor(Math.random()*sound.soundList.length);
+        this.playSound(sound, selection)
     }
+
+
 });

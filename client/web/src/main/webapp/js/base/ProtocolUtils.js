@@ -51,7 +51,8 @@ Poker.ProtocolUtils = Class.extend({
             status : param("STATUS"),
             registered : param("REGISTERED"),
             startTime : param("START_TIME"),
-            identifier : param("IDENTIFIER")
+            identifier : param("IDENTIFIER"),
+            operatorIds : param("OPERATOR_IDS")
         };
 
         return data;

@@ -33,14 +33,13 @@ public class StateHolder implements StateChanger, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-	private PokerGameSTM currentState;
+    private PokerGameSTM currentState;
 
     private static final Logger log = LoggerFactory.getLogger(StateHolder.class);
 
     @Override
     public void changeState(PokerGameSTM newState) {
         if (newState == null) throw new IllegalArgumentException("New state is null");
-        log.debug("Changing state from " + currentState + " to " + newState);
         if (currentState != null) {
             currentState.exitState();
         }

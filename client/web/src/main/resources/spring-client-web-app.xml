@@ -25,5 +25,8 @@
         <property name="suffix" value=".jsp"/>
     </bean>
 
+    <bean id="operatorService" class="com.cubeia.backoffice.operator.client.OperatorServiceClientHTTP">
+        <constructor-arg value="${operator.service.url}" />
+    </bean>
 
 </beans>

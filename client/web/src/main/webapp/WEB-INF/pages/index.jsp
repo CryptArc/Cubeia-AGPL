@@ -12,6 +12,10 @@
     <!-- All less files are imported in this base.less-->
     <link id="skinCss" rel="stylesheet/less" type="text/css" href="${cp}/skins/${skin}/less/base.less" />
 
+    <c:if test="${not empty cssOverride}">
+        <link id="overrideSkinCss" rel="stylesheet/less" type="text/css" href="${cssOverride}" />
+    </c:if>
+
     <script type="text/javascript" src="${cp}/skins/${skin}/skin-config.js"></script>
     <script type="text/javascript" src="${cp}/skins/${skin}/preload-images.js"></script>
 
@@ -116,6 +120,9 @@
     <script type="text/javascript" src="${cp}/js/base/ui/animation/TransformAnimation.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/animation/AnimationManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/DealerButton.js"></script>
+
+    <script type="text/javascript" src="${cp}/js/base/sound/SoundSource.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/sound/SoundPlayer.js"></script>
     <script type="text/javascript" src="${cp}/js/base/sound/SoundManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/sound/SoundRepository.js"></script>
     <script type="text/javascript" src="${cp}/js/base/sound/Sounds.js"></script>
@@ -132,6 +139,7 @@
     <script type="text/javascript" src="${cp}/js/base/ui/views/TableView.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/MultiTableView.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/TournamentView.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/views/SoundSettingsView.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/DevSettingsView.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/ViewManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/MainMenuManager.js"></script>
@@ -154,6 +162,7 @@
 
     <c:if test="${not empty operatorId}">
         <script type="text/javascript">
+            Poker.OperatorConfig.operatorId = ${operatorId};
             Poker.SkinConfiguration.operatorId = ${operatorId};
             Poker.MyPlayer.loginToken = "${token}";
             $(document).ready(function(){
@@ -231,13 +240,28 @@
     <div class="menu-overlay slidable" style="display: none;">
 
     </div>
+
+    <div id="soundSettingsView" class="config-view" style="display: none;">
+        <h1>Sound Settings</h1>
+        <h2>Configuration</h2>
+        <div class="group">
+            <div class="item">
+                <fieldset class="toggle">
+                    <input id="soundEnabled" type="checkbox">
+                    <label onclick="" for="soundEnabled">Toggle Sounds</label>
+                    <span class="toggle-button"></span>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+
     <div id="devSettingsView" class="config-view" style="display: none;">
         <h1>Development config</h1>
         <h2>Communication</h2>
         <div class="group">
             <div class="item">
                 <fieldset class="toggle">
-                    <input  id="freezeComEnabled" type="checkbox">
+                    <input id="freezeComEnabled" type="checkbox">
                     <label onclick="" for="freezeComEnabled">Freeze communication</label>
                     <span class="toggle-button"></span>
                 </fieldset>

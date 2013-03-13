@@ -276,6 +276,12 @@
                 <artifactId>generic-wallet-service</artifactId>
                 <version>${cubeia.network.version}</version>
             </dependency>
+            
+            <dependency>
+                <groupId>com.cubeia.network.users</groupId>
+            		<artifactId>fb-user-service</artifactId>
+                <version>${cubeia.network.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>com.cubeia.games</groupId>
