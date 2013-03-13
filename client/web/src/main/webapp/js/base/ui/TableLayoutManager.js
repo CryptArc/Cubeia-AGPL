@@ -31,6 +31,8 @@ Poker.TableLayoutManager = Class.extend({
     totalPotContainer : null,
     viewContainerOffsetTop : 0,
 
+    tableLog : null,
+
     /**
      * @type Poker.Clock
      */
@@ -84,6 +86,8 @@ Poker.TableLayoutManager = Class.extend({
         tableViewContainer.show();
         this.cardElements = new Poker.Map();
         this.clock = new Poker.Clock(this.tableInfoElement.find(".time-to-next-level-value"));
+
+        this.tableLog = new Poker.TableEventLog(this.tableView.find(".table-event-log"));
 
 
         $(".future-action").show();
@@ -278,6 +282,8 @@ Poker.TableLayoutManager = Class.extend({
              this._hideSeatActionText();
         }
         seat.onAction(actionType,amount);
+
+        this.tableLog.appendAction(player,actionType,amount);
     },
     onDealPlayerCard : function(player,cardId,cardString) {
         this.playSound(Poker.Sounds.DEAL);

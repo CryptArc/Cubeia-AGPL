@@ -98,6 +98,8 @@
     <script type="text/javascript" src="${cp}/js/base/TableManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/Clock.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/PotTransferAnimator.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/Log.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/TableEventLog.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/TableLayoutManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/TemplateManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/Seat.js"></script>
@@ -558,9 +560,9 @@
             <div class="community-cards">
 
             </div>
-                <div class="total-pot">
-                    {{t "table.pot"}} <span>&euro;<span class="amount"></span></span>
-                </div>
+            <div class="total-pot">
+                {{t "table.pot" }} <span>&euro;<span class="amount"></span></span>
+            </div>
             <div class="main-pot">
 
             </div>
@@ -572,7 +574,10 @@
             {{t "table.hand-history" }}
         </div>
         <div class="bottom-bar">
-
+            <div class="table-log-container">
+                <div class="table-event-log">
+                </div>
+            </div>
             <div class="own-player" id="myPlayerSeat-{{tableId}}Info" style="display:none;">
                 <div class="name" id="myPlayerName-{{tableId}}"></div>
                 <div class="balance" id="myPlayerBalance-{{tableId}}"></div>
@@ -1006,6 +1011,11 @@
         <td>{{stackSize}}</td>
         <td>{{winnings}}</td>
     </tr>
+</script>
+
+<script type="text/mustache" id="playerActionLogTemplate" style="display:none;">
+   <div>{{name}} {{action}} {{#showAmount}} {{amount}} {{/showAmount}}
+   </div>
 </script>
 </body>
 </html>
