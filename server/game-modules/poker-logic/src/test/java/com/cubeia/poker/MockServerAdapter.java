@@ -95,6 +95,20 @@ public class MockServerAdapter implements ServerAdapter {
     }
 
     @Override
+    public void notifyRebuyPerformed(int playerId) {
+
+    }
+
+    @Override
+    public void notifyAddOnPerformed(int playerId) {
+
+    }
+
+    @Override
+    public void notifyAddOnPeriodClosed() {
+    }
+
+    @Override
     public void sendGameStateTo(GameStateSnapshot snapshot, int playerId) {
 
     }
@@ -135,10 +149,6 @@ public class MockServerAdapter implements ServerAdapter {
 
     public PokerAction getNthAction(int n) {
         return allActions.get(n);
-    }
-
-    public int getPerformedActionCount() {
-        return allActions.size();
     }
 
     public ActionRequest getLastActionRequest() {
@@ -191,8 +201,7 @@ public class MockServerAdapter implements ServerAdapter {
     }
 
     @Override
-    public void sendRebuyResponseToTournament(int playerId, boolean response) {
-
+    public void sendRebuyResponseToTournament(int playerId, boolean response, long balance) {
     }
 
     @Override

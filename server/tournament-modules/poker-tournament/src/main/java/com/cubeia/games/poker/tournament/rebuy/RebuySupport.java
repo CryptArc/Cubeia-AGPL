@@ -17,12 +17,15 @@
 
 package com.cubeia.games.poker.tournament.rebuy;
 
+import com.cubeia.games.poker.tournament.history.HistoryPersister;
+import com.cubeia.games.poker.tournament.messages.AddOnPeriodClosed;
+import com.cubeia.games.poker.tournament.messages.AddOnsAvailableDuringBreak;
 import com.cubeia.games.poker.tournament.messages.OfferRebuy;
+import com.cubeia.games.poker.tournament.util.PacketSender;
 import com.cubeia.games.poker.tournament.util.SerializablePredicate;
 import com.cubeia.games.poker.tournament.util.TableNotifier;
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
+import org.apache.log4j.Logger;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
@@ -58,6 +61,8 @@ import static java.util.Collections.emptySet;
 public class RebuySupport implements Serializable {
 
     public static final RebuySupport NO_REBUYS = new RebuySupport(false, 0, 0, 0, 0, false, 0, ZERO, ZERO);
+
+    private static final Logger log = Logger.getLogger(RebuySupport.class);
 
     /**
      * The amount of chips you get when doing a rebuy.
@@ -107,10 +112,14 @@ public class RebuySupport implements Serializable {
 
     private boolean inTheMoney;
 
+    /** Keeps track of tables that are waiting to start the next hand until any rebuys are settled. */
     private Set<Integer> tablesWaitingForRebuys = new HashSet<Integer>();
 
     /** Indicates whether the add-on period is active. */
     private boolean addOnPeriodActive = false;
+
+    private transient HistoryPersister historyPersister;
+    private transient TableNotifier tableNotifier;
 
     public RebuySupport(boolean rebuysAvailable, long rebuyChipsAmount, long addOnChipsAmount, int maxRebuys, long maxStackForRebuy, boolean addOnsEnabled,
                         int numberOfLevelsWithRebuys, BigDecimal rebuyCost, BigDecimal addOnCost) {
@@ -144,7 +153,8 @@ public class RebuySupport implements Serializable {
      * should be a break and during this break add-ons will be available.
      */
     public boolean addOnsAvailableDuringBreak(int currentBlindsLevelNr) {
-        return !inTheMoney && addOnsEnabled && currentBlindsLevelNr == numberOfLevelsWithRebuys + 1;
+        // This works because currentBlindsLevelNr is zero indexed.
+        return !inTheMoney && addOnsEnabled && currentBlindsLevelNr == numberOfLevelsWithRebuys;
     }
 
     public void addRebuyRequestsForTable(int tableId, Set<Integer> playersWithRebuyOption) {
@@ -174,7 +184,7 @@ public class RebuySupport implements Serializable {
         return rebuyAllowed.apply(playerId) && playerBalance < maxStackForRebuy;
     }
 
-    public void removeRebuyRequestForTable(int tableId) {
+    public void removeRebuyRequestsForTable(int tableId) {
         rebuyRequestsPerTable.remove(tableId);
     }
 
@@ -187,14 +197,16 @@ public class RebuySupport implements Serializable {
         rebuysAvailable = false;
     }
 
-    public void notifyNewLevelStarted(int currentBlindsLevelNr) {
-        if (currentBlindsLevelNr > numberOfLevelsWithRebuys) {
+    public void notifyNewLevelStarted(int currentBlindsLevelNr, boolean isBreak, TableNotifier tableNotifier) {
+        // Adding one since currentBlindsLevelNr is 0 indexed.
+        if (currentBlindsLevelNr + 1 > (numberOfLevelsWithRebuys)) {
             rebuysAvailable = false;
+            historyPersister.rebuyPeriodFinished();
         }
-    }
-
-    public void removeTableWaitingForRebuys(int tableId) {
-        tablesWaitingForRebuys.remove(tableId);
+        if (isBreak && addOnsAvailableDuringBreak(currentBlindsLevelNr)) {
+            startAddOnPeriod();
+            tableNotifier.notifyAllTables(new AddOnsAvailableDuringBreak(getAddOnChipsAmount(), getAddOnCost()));
+        }
     }
 
     public void addOnPerformed(int playerId) {
@@ -202,16 +214,23 @@ public class RebuySupport implements Serializable {
     }
 
     public void startAddOnPeriod() {
+        log.debug("Starting add-on period.");
         rebuysAvailable = false;
         addOnPeriodActive = true;
+        historyPersister.addOnPeriodStarted();
     }
 
     public void finishAddOnPeriod() {
+        if (addOnPeriodActive) {
+            tableNotifier.notifyAllTables(new AddOnPeriodClosed());
+            historyPersister.addOnPeriodFinished();
+            log.debug("Add-on period finished.");
+        }
         addOnPeriodActive = false;
     }
 
-    public boolean tableIsWaitingForRebuys(int tableId) {
-        return tablesWaitingForRebuys.contains(tableId);
+    public boolean tableHasPendingRequests(int tableId) {
+        return !getRebuyRequestsForTable(tableId).isEmpty();
     }
 
     private int numberOfRebuysPerformedBy(Integer playerId) {
@@ -238,13 +257,28 @@ public class RebuySupport implements Serializable {
         return addOnCost;
     }
 
-    public Set<Integer> requestRebuys(int tableId, Set<Integer> playersOut, TableNotifier tableNotifier) {
-        // Note, using Iterables.filter instead of Sets.filter, because the latter is not serializable.
+    public Set<Integer> requestRebuys(int tableId, Set<Integer> playersOut) {
         Set<Integer> playersWithRebuyOption = newHashSet(filter(playersOut, rebuyAllowed));
-        tableNotifier.notifyTable(tableId, new OfferRebuy(playersWithRebuyOption, format(rebuyCost), format(rebuyChipsAmount)));
-        addRebuyRequestsForTable(tableId, playersWithRebuyOption);
-        tablesWaitingForRebuys.add(tableId);
+        if (!playersWithRebuyOption.isEmpty()) {
+            log.debug("Requesting rebuys from players: " + playersWithRebuyOption);
+            tableNotifier.notifyTable(tableId, new OfferRebuy(playersWithRebuyOption, format(rebuyCost), format(rebuyChipsAmount)));
+            addRebuyRequestsForTable(tableId, playersWithRebuyOption);
+            tablesWaitingForRebuys.add(tableId);
+            historyPersister.rebuysRequested(playersWithRebuyOption);
+        }
         return playersWithRebuyOption;
     }
 
+    public boolean tableIsWaitingForRebuys(int tableId) {
+        return tablesWaitingForRebuys.contains(tableId);
+    }
+
+    public void removeTableWaitingForRebuys(int tableId) {
+        tablesWaitingForRebuys.remove(tableId);
+    }
+
+    public void injectTransientDependencies(TableNotifier tableNotifier, HistoryPersister historyPersister) {
+        this.tableNotifier = tableNotifier;
+        this.historyPersister = historyPersister;
+    }
 }

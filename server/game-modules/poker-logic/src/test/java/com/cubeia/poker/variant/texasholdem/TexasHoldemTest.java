@@ -306,7 +306,6 @@ public class TexasHoldemTest {
         assertEquals(120, context.getTotalPotSize());
     }
 
-
     /**
      * If you miss the big blind, you need to pay bb+dead sb to re-enter the game.
      *

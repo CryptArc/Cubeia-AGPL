@@ -47,7 +47,7 @@ public class PokerSettings implements Serializable {
 
     private final String currency;
 
-    private long sitoutTimeLimitMilliseconds = 1 * 60 * 1000;
+    private long sitoutTimeLimitMilliseconds = 5 * 60 * 1000;
 
     public PokerSettings(BlindsLevel blindsLevel, BetStrategyType betStrategyType, int minBuyIn, int maxBuyIn, TimingProfile timing,
             int tableSize, RakeSettings rakeSettings, String currency, Map<Serializable, Serializable> attributes) {

@@ -13,6 +13,14 @@ Poker.HandHistoryRequestHandler = Class.extend({
         handIdRequest.time = "" + new Date().getTime();
         this.sendPacket(handIdRequest);
     },
+    requestHandSummaries : function(count) {
+        console.log("Requesting hands for table " + this.tableId);
+        var handIdRequest = new com.cubeia.games.poker.handhistoryservice.io.protocol.HandHistoryProviderRequestHandSummaries();
+        handIdRequest.tableId = this.tableId;
+        handIdRequest.count = count;
+        handIdRequest.time = "" + new Date().getTime();
+        this.sendPacket(handIdRequest);
+    },
     requestHands : function(count) {
         var handsRequest = new com.cubeia.games.poker.handhistoryservice.io.protocol.HandHistoryProviderRequestHands();
         handsRequest.tableId = this.tableId;

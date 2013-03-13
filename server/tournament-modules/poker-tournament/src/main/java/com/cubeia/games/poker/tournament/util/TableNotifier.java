@@ -19,5 +19,7 @@ package com.cubeia.games.poker.tournament.util;
 
 public interface TableNotifier {
 
+    void notifyAllTables(Object attachment);
+
     public void notifyTable(int tableId, Object attachment);
 }

@@ -118,6 +118,7 @@ public class PokerTableListener implements TournamentTableListener {
         PokerPlayer pokerPlayer = addPlayer(table, player, true);
         pokerPlayer.setHasPostedEntryBet(true);
         pokerPlayer.addChips((Long) balance);
+        pokerPlayer.saveStartingBalance();
     }
 
     @Override

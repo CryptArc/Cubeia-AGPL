@@ -173,9 +173,9 @@ Poker.MyActionsManager  = Class.extend({
      * @param {CircularProgressBar} progressBar
      * @return {Boolean} whether the action was handled automatically
      */
-    onRequestPlayerAction : function(actions,mainPot,fixedLimit,progressBar){
+    onRequestPlayerAction : function(actions, mainPot, fixedLimit, progressBar){
 
-        if(this.blindsActions.handleBlindsAndEntryBet(actions)) {
+        if (this.blindsActions.handleBlindsAndEntryBet(actions)) {
             return true;
         }
 
@@ -189,7 +189,7 @@ Poker.MyActionsManager  = Class.extend({
         this.futureActions.clear();
         this.futureActions.hide();
 
-        if(fromFutureAction!=null) {
+        if (fromFutureAction!=null) {
             this.actionCallback(fromFutureAction.type,fromFutureAction.minAmount);
             return true;
         }
@@ -197,15 +197,27 @@ Poker.MyActionsManager  = Class.extend({
 
         //to avoid users clicking the action buttons by mistake
         setTimeout(function(){
-            self.showActionButtons(actions,mainPot,fixedLimit);
+            self.showActionButtons(actions, mainPot, fixedLimit);
             progressBar.show();
             progressBar.render();
-        },500);
+        }, 500);
         return false;
     },
-    showActionButtons : function(actions,mainPot,fixedLimit) {
+    showActionButtons : function(actions, mainPot, fixedLimit) {
         this.userActionsContainer.show();
-        this.actionButtons.showButtons(actions,mainPot,fixedLimit);
+        this.actionButtons.showButtons(actions, mainPot, fixedLimit);
+    },
+    showRebuyButtons : function(rebuyCost, chipsForRebuy) {
+        this.actionButtons.showRebuyButtons();
+    },
+    hideRebuyButtons : function() {
+        this.actionButtons.hideRebuyButtons();
+    },
+    showAddOnButton : function(addOnCost, chipsForAddOn) {
+        this.actionButtons.showAddOnButton();
+    },
+    hideAddOnButton : function() {
+        this.actionButtons.hideAddOnButton();
     },
     onStartHand : function() {
         this.futureActions.clear();

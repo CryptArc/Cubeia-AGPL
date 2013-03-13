@@ -101,6 +101,9 @@ public abstract class TableForm extends Panel {
                         form.error("Blinds must be defined if ante is 0.", Collections.<String, Object>emptyMap());
                     }
                 }
+                if (smallBlind != 0 && smallBlind >= bigBlind) {
+                    form.error("Small blind must be less than big blind.", Collections.<String, Object>emptyMap());
+                }
             }
 
             private void validateBuyIns(Form<?> form) {

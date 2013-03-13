@@ -28,6 +28,17 @@ import com.cubeia.poker.result.HandResult;
 import java.util.Collection;
 import java.util.Random;
 
+import static com.cubeia.poker.action.PokerActionType.BET;
+import static com.cubeia.poker.action.PokerActionType.BIG_BLIND;
+import static com.cubeia.poker.action.PokerActionType.CALL;
+import static com.cubeia.poker.action.PokerActionType.CHECK;
+import static com.cubeia.poker.action.PokerActionType.DECLINE_ENTRY_BET;
+import static com.cubeia.poker.action.PokerActionType.FOLD;
+import static com.cubeia.poker.action.PokerActionType.RAISE;
+import static com.cubeia.poker.action.PokerActionType.SMALL_BLIND;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+
 /**
  * Integration test for poker logic.
  */
@@ -53,11 +64,11 @@ public class PokerLogicTest extends GuiceTest {
         state.timeout();
 
         // Blinds
-        act(p[1], PokerActionType.SMALL_BLIND);
+        act(p[1], SMALL_BLIND);
 
-        assertTrue(mp[2].isActionPossible(PokerActionType.BIG_BLIND));
+        assertTrue(mp[2].isActionPossible(BIG_BLIND));
         assertEquals(102, mockServerAdapter.getLastActionRequest().getPlayerId());
-        act(p[2], PokerActionType.BIG_BLIND);
+        act(p[2], BIG_BLIND);
 
         assertTrue(mp[2].hasOption());
         assertAllPlayersHaveCards(mp, 2);
@@ -67,12 +78,12 @@ public class PokerLogicTest extends GuiceTest {
 
         // Pre flop round
         assertEquals(103, mockServerAdapter.getLastActionRequest().getPlayerId());
-        act(p[3], PokerActionType.CALL);
+        act(p[3], CALL);
         assertTrue(mp[3].hasActed());
         assertEquals(100, mockServerAdapter.getLastActionRequest().getPlayerId());
-        act(p[0], PokerActionType.CALL);
-        act(p[1], PokerActionType.CALL);
-        act(p[2], PokerActionType.CHECK);
+        act(p[0], CALL);
+        act(p[1], CALL);
+        act(p[2], CHECK);
         // everyone checked so now we should be in DealCommunityCards round
 
         assertEquals(3, state.getCommunityCards().size());
@@ -83,10 +94,10 @@ public class PokerLogicTest extends GuiceTest {
         assertEquals(3, state.getCommunityCards().size());
 
         // Flop round
-        act(p[1], PokerActionType.BET);
-        act(p[2], PokerActionType.CALL);
-        act(p[3], PokerActionType.CALL);
-        act(p[0], PokerActionType.CALL);
+        act(p[1], BET);
+        act(p[2], CALL);
+        act(p[3], CALL);
+        act(p[0], CALL);
 
         assertEquals(4, state.getCommunityCards().size());
 
@@ -94,11 +105,11 @@ public class PokerLogicTest extends GuiceTest {
         state.timeout();// timeout deal community cards. Starts a new betting round
 
         // Turn round
-        act(p[1], PokerActionType.CHECK);
-        act(p[2], PokerActionType.BET);
-        act(p[3], PokerActionType.FOLD);
-        act(p[0], PokerActionType.FOLD);
-        act(p[1], PokerActionType.CALL);
+        act(p[1], CHECK);
+        act(p[2], BET);
+        act(p[3], FOLD);
+        act(p[0], FOLD);
+        act(p[1], CALL);
 
         // Trigger deal community cards
         state.timeout();
@@ -106,15 +117,33 @@ public class PokerLogicTest extends GuiceTest {
         assertEquals(5, state.getCommunityCards().size());
 
         // River round
-        act(p[1], PokerActionType.CHECK);
-        act(p[2], PokerActionType.BET);
-        act(p[1], PokerActionType.FOLD);
+        act(p[1], CHECK);
+        act(p[2], BET);
+        act(p[1], FOLD);
 
         // Assertions
         assertTrue(state.isFinished());
 
         // Check that we didn't create or lose any chips.
         assertEquals(chipsInPlay, countChipsAtTable(p));
+    }
+
+    public void testSmallBlindShouldBeAbleToRaiseAfterBigMinRaises() {
+        MockPlayer[] mp = TestUtils.createMockPlayers(2);
+        int[] p = TestUtils.createPlayerIdArray(mp);
+        addPlayers(state, mp);
+
+        state.timeout();
+        // Blinds
+        act(p[0], SMALL_BLIND);
+        act(p[1], BIG_BLIND);
+
+        state.timeout();
+
+        // Pre flop round
+        act(p[0], CALL);
+        act(p[1], BET, 100);
+        assertThat(mp[0].isActionPossible(RAISE), is(true));
     }
 
     private int countChipsAtTable(int[] p) {
@@ -144,13 +173,13 @@ public class PokerLogicTest extends GuiceTest {
         state.timeout();
 
         // Blinds
-        act(p[0], PokerActionType.SMALL_BLIND);
-        act(p[1], PokerActionType.BIG_BLIND);
+        act(p[0], SMALL_BLIND);
+        act(p[1], BIG_BLIND);
         state.timeout();
 
         // Small blind folds, hand should finish.
         assertFalse(state.isFinished());
-        act(p[0], PokerActionType.FOLD);
+        act(p[0], FOLD);
 
         // Assertions
         assertTrue(state.isFinished());
@@ -165,15 +194,15 @@ public class PokerLogicTest extends GuiceTest {
         state.timeout();
 
         // Blinds
-        act(p[1], PokerActionType.DECLINE_ENTRY_BET);
-        act(p[2], PokerActionType.BIG_BLIND);
+        act(p[1], DECLINE_ENTRY_BET);
+        act(p[2], BIG_BLIND);
         state.timeout();
 
         assertEquals(2, mp[0].getPocketCards().getCards().size());
         assertTrue(mp[1].isSittingOut());
         assertEquals(0, mp[1].getPocketCards().getCards().size());
 
-        act(p[0], PokerActionType.FOLD);
+        act(p[0], FOLD);
         assertTrue(state.isFinished());
     }
 
@@ -186,8 +215,8 @@ public class PokerLogicTest extends GuiceTest {
         state.timeout();
 
         // Blinds
-        act(p[0], PokerActionType.SMALL_BLIND);
-        act(p[1], PokerActionType.BIG_BLIND);
+        act(p[0], SMALL_BLIND);
+        act(p[1], BIG_BLIND);
         state.timeout();
 
         // Small blind folds, hand should finish.
@@ -208,7 +237,7 @@ public class PokerLogicTest extends GuiceTest {
         // Blinds
         state.timeout();
 
-        assertFalse(mockServerAdapter.getLastActionRequest().isOptionEnabled(PokerActionType.BIG_BLIND));
+        assertFalse(mockServerAdapter.getLastActionRequest().isOptionEnabled(BIG_BLIND));
     }
 
     public void testPostBlindsCallAndFold() {
@@ -220,14 +249,14 @@ public class PokerLogicTest extends GuiceTest {
         state.timeout();
 
         // Blinds
-        act(p[0], PokerActionType.SMALL_BLIND);
-        act(p[1], PokerActionType.BIG_BLIND);
+        act(p[0], SMALL_BLIND);
+        act(p[1], BIG_BLIND);
         state.timeout();
 
         // Small blind folds, hand should finish.
-        act(p[0], PokerActionType.CALL);
+        act(p[0], CALL);
         assertFalse(state.isFinished());
-        act(p[1], PokerActionType.FOLD);
+        act(p[1], FOLD);
 
         // Assertions
         assertTrue(state.isFinished());
@@ -244,10 +273,10 @@ public class PokerLogicTest extends GuiceTest {
         state.timeout();
 
         // Blinds
-        act(p[0], PokerActionType.SMALL_BLIND);
-        act(p[1], PokerActionType.BIG_BLIND);
+        act(p[0], SMALL_BLIND);
+        act(p[1], BIG_BLIND);
         state.timeout();
-        act(p[0], PokerActionType.FOLD);
+        act(p[0], FOLD);
 
         // Assertions
         assertTrue(state.isFinished());
@@ -256,40 +285,40 @@ public class PokerLogicTest extends GuiceTest {
         // Second hand, check that pocket cards have been cleared.
         state.timeout();
         assertFalse(state.isFinished());
-        act(p[1], PokerActionType.SMALL_BLIND);
-        act(p[0], PokerActionType.BIG_BLIND);
+        act(p[1], SMALL_BLIND);
+        act(p[0], BIG_BLIND);
         state.timeout();
 
         assertAllPlayersHaveCards(mp, 2);
-        act(p[1], PokerActionType.CALL);
-        act(p[0], PokerActionType.CHECK);
+        act(p[1], CALL);
+        act(p[0], CHECK);
 
         // Trigger deal community cards
         state.timeout();
 
         assertEquals(3, state.getCommunityCards().size());
-        act(p[0], PokerActionType.BET);
-        act(p[1], PokerActionType.FOLD);
+        act(p[0], BET);
+        act(p[1], FOLD);
 
         assertTrue(state.isFinished());
         assertEquals(chipsInPlay, countChipsAtTable(p));
 
         // Third hand, check that community cards have been cleared.
         state.timeout();
-        act(p[0], PokerActionType.SMALL_BLIND);
-        act(p[1], PokerActionType.BIG_BLIND);
+        act(p[0], SMALL_BLIND);
+        act(p[1], BIG_BLIND);
         state.timeout();
 
         assertAllPlayersHaveCards(mp, 2);
-        act(p[0], PokerActionType.CALL);
-        act(p[1], PokerActionType.CHECK);
+        act(p[0], CALL);
+        act(p[1], CHECK);
 
         // Trigger deal community cards
         state.timeout();
 
         assertEquals(3, state.getCommunityCards().size());
-        act(p[1], PokerActionType.BET);
-        act(p[0], PokerActionType.FOLD);
+        act(p[1], BET);
+        act(p[0], FOLD);
 
         assertTrue(state.isFinished());
 
@@ -302,29 +331,29 @@ public class PokerLogicTest extends GuiceTest {
         addPlayers(state, mp);
 
         state.timeout();
-        act(p[0], PokerActionType.SMALL_BLIND);
-        act(p[1], PokerActionType.BIG_BLIND);
+        act(p[0], SMALL_BLIND);
+        act(p[1], BIG_BLIND);
         state.timeout();
-        act(p[0], PokerActionType.CALL);
-        act(p[1], PokerActionType.CHECK);
+        act(p[0], CALL);
+        act(p[1], CHECK);
 
         // Trigger deal community cards
         state.timeout();
 
-        act(p[1], PokerActionType.CHECK);
-        act(p[0], PokerActionType.CHECK);
+        act(p[1], CHECK);
+        act(p[0], CHECK);
 
         // Trigger deal community cards
         state.timeout();
 
-        act(p[1], PokerActionType.CHECK);
-        act(p[0], PokerActionType.CHECK);
+        act(p[1], CHECK);
+        act(p[0], CHECK);
 
         // Trigger deal community cards
         state.timeout();
 
-        act(p[1], PokerActionType.CHECK);
-        act(p[0], PokerActionType.CHECK);
+        act(p[1], CHECK);
+        act(p[0], CHECK);
 
         assertEquals(7, findByPlayerId(p[0], mockServerAdapter.hands).getHand().getCards().size());
     }
@@ -371,7 +400,7 @@ public class PokerLogicTest extends GuiceTest {
 
             @Override
             public void notifyActionPerformed(PokerAction action, PokerPlayer pokerPlayer) {
-                if (action.getActionType() == PokerActionType.FOLD) {
+                if (action.getActionType() == FOLD) {
                     foldActionReceived = true;
                 }
             }
@@ -385,9 +414,9 @@ public class PokerLogicTest extends GuiceTest {
 
         });
         state.timeout();
-        act(p[0], PokerActionType.SMALL_BLIND, 10);
-        act(p[1], PokerActionType.BIG_BLIND, 20);
-        act(p[0], PokerActionType.FOLD, 0);
+        act(p[0], SMALL_BLIND, 10);
+        act(p[1], BIG_BLIND, 20);
+        act(p[0], FOLD, 0);
     }
 
     public void testBlindsActionPerformedNotification() {
@@ -397,7 +426,7 @@ public class PokerLogicTest extends GuiceTest {
 
         state.timeout();
 
-        act(p[0], PokerActionType.SMALL_BLIND);
+        act(p[0], SMALL_BLIND);
         assertNotNull(mockServerAdapter.getLatestActionPerformed());
     }
 
@@ -408,7 +437,7 @@ public class PokerLogicTest extends GuiceTest {
 
         state.timeout();
         mockServerAdapter.hands = null;
-        act(p[0], PokerActionType.DECLINE_ENTRY_BET);
+        act(p[0], DECLINE_ENTRY_BET);
         assertEquals(HandEndStatus.CANCELED_TOO_FEW_PLAYERS, mockServerAdapter.handEndStatus);
     }
 
@@ -423,14 +452,14 @@ public class PokerLogicTest extends GuiceTest {
         state.timeout();
 
         // Blinds
-        act(p[2], PokerActionType.SMALL_BLIND);
-        act(p[3], PokerActionType.BIG_BLIND);
+        act(p[2], SMALL_BLIND);
+        act(p[3], BIG_BLIND);
         state.timeout();
 
         // All players fold, hand should finish.
         assertFalse(state.isFinished());
-        act(p[0], PokerActionType.FOLD);
-        act(p[2], PokerActionType.FOLD);
+        act(p[0], FOLD);
+        act(p[2], FOLD);
 
         // Assertions
         assertTrue(state.isFinished());
@@ -446,7 +475,7 @@ public class PokerLogicTest extends GuiceTest {
 
         // Blinds
         mockServerAdapter.clearActionRequest();
-        act(p[1], PokerActionType.DECLINE_ENTRY_BET, 0);
+        act(p[1], DECLINE_ENTRY_BET, 0);
         assertNotNull("The next player should be asked to post big blind.", mockServerAdapter.getLastActionRequest());
     }
 

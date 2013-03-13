@@ -198,7 +198,7 @@
     </struct>
 
     <!--
-     Deal out the given cards as community cards.
+     Deal out the given privateCards as community privateCards.
      -->
     <struct name="deal_public_cards">
         <list name="cards" type="game_card"/>
@@ -238,7 +238,7 @@
         <var name="raise_amount" type="int32"/>
         <var name="stack_amount" type="int32"/>
         <var name="timeout" type="bool"/>
-        <!-- List of cards to discard, 0 means first card and so on. -->
+        <!-- List of privateCards to discard, 0 means first card and so on. -->
         <list name="cards_to_discard" type="int32"/>
     </struct>
 
@@ -511,7 +511,6 @@
 
     <!-- Response from the client, saying yay or nay to doing a rebuy. -->
     <struct name="rebuy_response">
-        <var name="table_id" type="int32" />
         <var name="answer" type="bool" />
     </struct>
 
@@ -525,6 +524,12 @@
     <struct name="perform_add_on">
         <var name="table_id" type="int32" />
     </struct>
+
+    <struct name="player_performed_rebuy" />
+
+    <struct name="player_performed_add_on" />
+
+    <struct name="add_on_period_closed" />
 
     <enum name="tournament_status">
         <value>ANNOUNCED</value>

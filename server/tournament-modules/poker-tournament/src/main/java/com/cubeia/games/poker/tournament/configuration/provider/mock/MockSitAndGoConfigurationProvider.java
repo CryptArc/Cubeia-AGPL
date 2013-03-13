@@ -19,6 +19,7 @@ package com.cubeia.games.poker.tournament.configuration.provider.mock;
 
 import com.cubeia.games.poker.tournament.configuration.RebuyConfiguration;
 import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
+import com.cubeia.games.poker.tournament.configuration.blinds.Level;
 import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
 import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructureParser;
 import com.cubeia.games.poker.tournament.configuration.provider.SitAndGoConfigurationProvider;
@@ -52,11 +53,16 @@ public class MockSitAndGoConfigurationProvider implements SitAndGoConfigurationP
     ------------------------------------------------*/
 
     public MockSitAndGoConfigurationProvider() {
+        log.debug("Creating mock configuration.");
         InputStream resourceAsStream = getClass().getResourceAsStream("default_payouts.csv");
         PayoutStructure payouts = new PayoutStructureParser().parsePayouts(resourceAsStream);
         SitAndGoConfiguration headsUp = createSitAndGoConfiguration("Heads up", 2, getRegistry().getTimingProfile("DEFAULT"), payouts);
-        headsUp.getConfiguration().setRebuyConfiguration(new RebuyConfiguration(1000, false, 3, BigDecimal.valueOf(100), 50000, BigDecimal.valueOf(0), 0));
+
+        // Temporarily making this a rebuy tournament.
+        headsUp.getConfiguration().setRebuyConfiguration(new RebuyConfiguration(1000, true, 1, BigDecimal.valueOf(100), 200000, BigDecimal.valueOf(100), 200000));
+        headsUp.getConfiguration().getBlindsStructure().insertLevel(1, new Level(20, 40, 0, 2, true));
         requestedTournaments.put("Heads up", headsUp);
+
         requestedTournaments.put("5 Players", createSitAndGoConfiguration("5 Players", 5, getRegistry().getTimingProfile("SUPER_EXPRESS"), payouts));
         requestedTournaments.put("10 Players", createSitAndGoConfiguration("10 Players", 10, getRegistry().getTimingProfile("SUPER_EXPRESS"), payouts));
         requestedTournaments.put("20 Players", createSitAndGoConfiguration("20 Players", 20, getRegistry().getTimingProfile("DEFAULT"), payouts));

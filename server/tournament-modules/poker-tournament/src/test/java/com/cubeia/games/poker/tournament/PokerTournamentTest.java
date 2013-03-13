@@ -41,21 +41,25 @@ import com.cubeia.firebase.api.service.mttplayerreg.TournamentPlayerRegistry;
 import com.cubeia.firebase.guice.tournament.TournamentAssist;
 import com.cubeia.games.poker.common.time.DefaultSystemTime;
 import com.cubeia.games.poker.common.time.SystemTime;
+import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
 import com.cubeia.games.poker.tournament.configuration.blinds.Level;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.ScheduledTournamentLifeCycle;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.TournamentLifeCycle;
 import com.cubeia.games.poker.tournament.lobby.TournamentLobby;
 import com.cubeia.games.poker.tournament.messages.PokerTournamentRoundReport;
-import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.rebuy.RebuySupport;
+import com.cubeia.games.poker.tournament.state.PendingBackendRequests;
+import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 import com.cubeia.games.poker.tournament.util.PacketSender;
 import com.cubeia.network.users.firebase.api.UserServiceContract;
 import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
+import com.google.common.collect.ImmutableMap;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Answers;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
@@ -64,6 +68,7 @@ import org.mockito.Mockito;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
 import junit.framework.Assert;
 
@@ -72,10 +77,14 @@ import static com.cubeia.games.poker.tournament.configuration.blinds.BlindsStruc
 import static com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructureParserTest.createTestStructure;
 import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.ANNOUNCED;
 import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.CANCELLED;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.ON_BREAK;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.PREPARING_BREAK;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.RUNNING;
 import static com.google.common.collect.ImmutableSet.of;
 import static junit.framework.Assert.assertEquals;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Answers.RETURNS_DEEP_STUBS;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
@@ -132,7 +141,7 @@ public class PokerTournamentTest {
     @Mock
     private PlayerRegistry playerRegistry;
 
-    @Mock
+    @Mock(answer = RETURNS_DEEP_STUBS)
     private PokerTournamentState mockPokerState;
 
     @Mock
@@ -149,6 +158,9 @@ public class PokerTournamentTest {
 
     @Mock
     private TournamentPlayerRegistry tournamentPlayerRegistry;
+
+    @Mock
+    private PendingBackendRequests pendingRequests;
 
     private PokerTournament tournament;
 
@@ -327,6 +339,7 @@ public class PokerTournamentTest {
     @Test
     public void tournamentShouldScheduleTimeoutWhenBreakStarts() {
         // Given a tournament that is supposed to go on break.
+        when(mockPokerState.getStatus()).thenReturn(RUNNING);
         when(mockPokerState.getRebuySupport()).thenReturn(RebuySupport.NO_REBUYS);
         when(mockPokerState.isOnBreak()).thenReturn(true);
         when(mockPokerState.getCurrentBlindsLevel()).thenReturn(new Level(20, 40, 0, 5, true));
@@ -424,6 +437,7 @@ public class PokerTournamentTest {
     @Test
     public void startRoundAtWaitingTableIfPlayerIsMovedThere() {
         // Given a tournament where one table only has one player.
+        when(mockPokerState.getPendingRequests()).thenReturn(pendingRequests);
         when(mockPokerState.getRebuySupport()).thenReturn(RebuySupport.NO_REBUYS);
         when(state.getTables()).thenReturn(of(1, 2));
         when(state.getPlayersAtTable(1)).thenReturn(of(1));
@@ -479,6 +493,69 @@ public class PokerTournamentTest {
         InOrder inOrder = inOrder(mockPokerState);
         inOrder.verify(mockPokerState).setNextLevelStartTime(isA(DateTime.class));
         inOrder.verify(mockPokerState).getNextLevelStartTime();
+    }
+
+    @Test
+    public void testBreakWithFourTables() {
+        // Given a tournament where the break should start.
+        BlindsStructure blindsStructure = createDefaultBlindsStructure();
+        blindsStructure.insertLevel(1, new Level(0, 0, 0, 1, true));
+        pokerState.setBlindsStructure(blindsStructure);
+        pokerState.increaseBlindsLevel();
+        when(state.getTables()).thenReturn(of(1, 2, 3, 4));
+        when(state.getPlayersAtTable(1)).thenReturn(of(1,2,3));
+        when(state.getPlayersAtTable(2)).thenReturn(of(4,5,6));
+        when(state.getPlayersAtTable(3)).thenReturn(of(7,8,9));
+        when(state.getPlayersAtTable(4)).thenReturn(of(10,11,12));
+        prepareTournament();
+
+        // When each table sends its round report.
+        pokerState.setStatus(RUNNING);
+        sendRoundReportToTournament(1);
+        assertThat(pokerState.getStatus(), is(PREPARING_BREAK));
+        sendRoundReportToTournament(2);
+        assertThat(pokerState.getStatus(), is(PREPARING_BREAK));
+        sendRoundReportToTournament(3);
+        assertThat(pokerState.getStatus(), is(PREPARING_BREAK));
+
+        // The break should start after the last table sends the report.
+        sendRoundReportToTournament(4);
+        assertThat(pokerState.getStatus(), is(ON_BREAK));
+    }
+
+    @Test
+    public void testBreakShouldOnlyStartOnceWhenThereIsARebuyJustWhenBreakStarts() {
+        // Given a tournament where the current level is not a break, but the next level is a break.
+        BlindsStructure blindsStructure = createDefaultBlindsStructure();
+        blindsStructure.insertLevel(1, new Level(0, 0, 0, 1, true));
+        pokerState.setBlindsStructure(blindsStructure);
+        pokerState.increaseBlindsLevel();
+        when(state.getTables()).thenReturn(of(1, 2, 3, 4));
+        when(state.getPlayersAtTable(1)).thenReturn(of(1,2,3));
+        when(state.getPlayersAtTable(2)).thenReturn(of(4,5,6));
+        when(state.getPlayersAtTable(3)).thenReturn(of(7,8,9));
+        when(state.getPlayersAtTable(4)).thenReturn(of(10,11,12));
+        prepareTournament();
+
+        pokerState.setStatus(RUNNING);
+        sendRoundReportToTournament(1);
+        assertThat(pokerState.getStatus(), is(PREPARING_BREAK));
+        sendRoundReportToTournament(2);
+        assertThat(pokerState.getStatus(), is(PREPARING_BREAK));
+        sendRoundReportToTournament(3);
+        assertThat(pokerState.getStatus(), is(PREPARING_BREAK));
+        sendRoundReportToTournament(4);
+        assertThat(pokerState.getStatus(), is(ON_BREAK));
+    }
+
+    private TournamentLifeCycle prepareTournament() {
+        DateTime startTime = new DateTime(2011, 7, 5, 14, 30, 0);
+        DateTime openRegistrationTime = new DateTime(2011, 7, 5, 14, 0, 0);
+        lifeCycle = new ScheduledTournamentLifeCycle(startTime, openRegistrationTime);
+        pokerState.setLifecycle(lifeCycle);
+        tournament = new PokerTournament(pokerState);
+        tournament.injectTransientDependencies(instance, support, state, historyService, backend, new DefaultSystemTime(), shutdownService, tournamentPlayerRegistry, sender, userService);
+        return lifeCycle;
     }
 
     private TournamentLifeCycle prepareTournamentWithLifecycle() {

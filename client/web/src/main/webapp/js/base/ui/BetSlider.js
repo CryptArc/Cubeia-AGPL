@@ -57,7 +57,6 @@ Poker.BetSlider = Class.extend({
                 e.stopPropagation();
                 e.preventDefault();
                 var val = self.slider.slider("value");
-
                 if(e.target == self.slider.find(".ui-slider-range")[0]) {
                     val = val - self.bigBlind;
                 } else {
@@ -78,10 +77,10 @@ Poker.BetSlider = Class.extend({
                 value: self.minBet,
                 max: self.maxBet,
                 min: 0,
-                step: 50,
+                step: 1,
 
                 //this gets a live reading of the value and prints it on the page
-                slide: function(event,ui ) {
+                slide : function(event,ui) {
                     self.handleChangeValue(ui.value);
                 },
 

@@ -133,6 +133,7 @@ public class PlayingSTM extends AbstractPokerGameSTM implements HandFinishedList
         for (Map.Entry<PokerPlayer, Result> entry : results.entrySet()) {
             PokerPlayer player = entry.getKey();
             player.addChips(entry.getValue().getWinningsIncludingOwnBets());
+            player.saveStartingBalance();
         }
     }
 

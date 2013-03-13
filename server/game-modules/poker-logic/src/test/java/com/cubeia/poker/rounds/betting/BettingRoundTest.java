@@ -47,6 +47,7 @@ import java.util.List;
 
 import static com.cubeia.poker.action.PokerActionType.BET;
 import static com.cubeia.poker.action.PokerActionType.CALL;
+import static com.cubeia.poker.action.PokerActionType.FOLD;
 import static com.cubeia.poker.action.PokerActionType.RAISE;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -96,7 +97,7 @@ public class BettingRoundTest extends TestCase {
         assertFalse("Round should not be finished.", round.isFinished());
 
         verifyAndAct(p[1], BET, 100);
-        verifyAndAct(p[0], PokerActionType.FOLD, 100);
+        verifyAndAct(p[0], FOLD, 100);
 
         assertTrue(round.isFinished());
     }
@@ -127,7 +128,6 @@ public class BettingRoundTest extends TestCase {
         when(player.getBetStack()).thenReturn(betStack);
         when(player.getBalance()).thenReturn(betStack * 10);
         preparePlayers(player);
-
 
         round.highBet = 100;
 
@@ -367,6 +367,50 @@ public class BettingRoundTest extends TestCase {
         assertThat(round.getHighestCompleteBet(), is(10L));
         assertThat(round.getSizeOfLastCompleteBetOrRaise(), is(10L)); // (This is a bit undefined, the fixed limit strategy doesn't use this value though)
         assertThat(p[2].getActionRequest().getOption(RAISE).getMinAmount(), is(20L));
+    }
+
+    /*
+     * In fixed limit, the betting should be capped after 4 bets.
+     */
+    public void testBettingCappedAfterFourBets() {
+        MockPlayer[] p = TestUtils.createMockPlayers(3);
+        preparePlayers(new FixedLimitBetStrategy(10, false), p);
+
+        act(p[1], BET, 10);
+        act(p[2], RAISE, 20);
+        act(p[0], RAISE, 30);
+        act(p[1], RAISE, 40);
+        assertThat(requestedAction.isOptionEnabled(RAISE), is(false));
+    }
+
+    /*
+     * There's no cap in fixed limit if betting is two-handed (heads up).
+     */
+    public void testBettingNoCappedAfterFourBetsWhenHeadsUp() {
+        MockPlayer[] p = TestUtils.createMockPlayers(3);
+        preparePlayers(new FixedLimitBetStrategy(10, false), p);
+
+        act(p[1], BET, 10);
+        act(p[2], RAISE, 20);
+        act(p[0], RAISE, 30);
+        act(p[1], FOLD, 0);
+        act(p[2], RAISE, 40);
+        act(p[0], RAISE, 50);
+        assertThat(requestedAction.isOptionEnabled(RAISE), is(true));
+    }
+    /*
+     * Once the betting is capped, it does not up again even if the round becomes heads up.
+     */
+    public void testCapStillActiveEvenIfBettingBecomesHeadsUp() {
+        MockPlayer[] p = TestUtils.createMockPlayers(3);
+        preparePlayers(new FixedLimitBetStrategy(10, false), p);
+
+        act(p[1], BET, 10);
+        act(p[2], RAISE, 20);
+        act(p[0], RAISE, 30);
+        act(p[1], RAISE, 40);
+        act(p[2], FOLD, 0);
+        assertThat(requestedAction.isOptionEnabled(RAISE), is(false));
     }
 
     public void testCompleteRaiseShouldIncreaseCompleteBetAllTheWayToTheNextLevel() {

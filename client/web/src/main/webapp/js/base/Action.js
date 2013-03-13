@@ -95,6 +95,18 @@ Poker.ActionType = {
     DEAD_SMALL_BLIND : {
         text : "Dead Small",
         id : "dead-small-blind"
+    },
+    REBUY : {
+        text : "Rebuy",
+        id : "rebuy"
+    },
+    DECLINE_REBUY : {
+        text : "Decline Rebuy",
+        id : "decline-rebuy"
+    },
+    ADD_ON : {
+        text : "Add-on",
+        id : "add-on"
     }
 
 

@@ -30,7 +30,7 @@ import java.util.NoSuchElementException;
  * <p/>
  * Usage example:
  * <pre>
- * List<Card> set = new Hand("2s 3s 4s 5s").getCards();
+ * List<Card> set = new Hand("2s 3s 4s 5s").getPrivateCards();
  * Combinator<Card> cg = new Combinator<Card>(set, 3);
  * for(List<Card> combination : cg) {
  *     System.out.println(combination);

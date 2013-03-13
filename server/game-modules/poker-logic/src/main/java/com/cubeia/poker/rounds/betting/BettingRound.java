@@ -364,6 +364,7 @@ public class BettingRound implements Round, BettingRoundContext {
         if (betStrategy.isCompleteBetOrRaise(this, amountRaisedTo)) {
             // We only increase the number of raises and the size of the last raise if the raise is complete.
             numberOfBetsAndRaises++;
+            bettingCapped = betStrategy.shouldBettingBeCapped(numberOfBetsAndRaises, isHeadsUpBetting());
             long validLevel = betStrategy.getNextValidRaiseToLevel(this);
             long previousCompleteBet = highestCompleteBet;
             highestCompleteBet = determineHighestCompleteBet(amountRaisedTo, validLevel);
@@ -398,7 +399,8 @@ public class BettingRound implements Round, BettingRoundContext {
             log.warn("Bet " + amount + " from player " + player + " is not in bounds. Bet option: " + betOption);
             return false;
         }
-        if (completeBet(amount)) {
+        long totalBet = player.getBetStack() + amount; // The current stack can be > 0 in case of blinds.
+        if (isCompleteBet(totalBet)) {
             // TODO: Test coverage needed here.
             numberOfBetsAndRaises++;
             highestCompleteBet = determineHighestCompleteBet(amount, betStrategy.getNextValidRaiseToLevel(this));
@@ -426,7 +428,7 @@ public class BettingRound implements Round, BettingRoundContext {
         return max(amount, nextValidRaiseToLevel);
     }
 
-    private boolean completeBet(long amount) {
+    private boolean isCompleteBet(long amount) {
         return betStrategy.isCompleteBetOrRaise(this, amount);
     }
 
