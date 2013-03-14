@@ -17,6 +17,7 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.tournaments.configuration;
 
+import com.cubeia.backoffice.operator.api.OperatorDTO;
 import com.cubeia.games.poker.admin.db.AdminDAO;
 import com.cubeia.games.poker.admin.network.NetworkClient;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.rebuy.RebuyConfigurationPanel;
@@ -29,6 +30,8 @@ import com.cubeia.poker.timing.TimingProfile;
 import org.apache.log4j.Logger;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.IChoiceRenderer;
+import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
@@ -36,6 +39,9 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.validation.validator.RangeValidator;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
 
@@ -63,9 +69,21 @@ public class TournamentConfigurationPanel extends Panel {
         add(new TextField<BigDecimal>("buyIn", new PropertyModel(model, "buyIn")));
         add(new TextField<BigDecimal>("fee", new PropertyModel(model, "fee")));
         add(new TextField<Long>("startingChips", new PropertyModel(model, "startingChips")).add(RangeValidator.minimum(1L)));
-        add(new DropDownChoice<BetStrategyType>("betStrategy", new PropertyModel(model, "betStrategy"), asList(BetStrategyType.values()),
-                                                                                         renderer("name")));
+        add(new DropDownChoice<BetStrategyType>("betStrategy", new PropertyModel(model, "betStrategy"), asList(BetStrategyType.values()), renderer("name")));
 
+        add(new ListMultipleChoice<Long>("operatorIds", model("operatorIds"), getOperatorIds(), new IChoiceRenderer<Long>() {
+        	
+        	@Override
+        	public Object getDisplayValue(Long id) {
+        		return getOperatorName(id);
+        	}
+
+			@Override
+			public String getIdValue(Long object, int index) {
+				return object.toString();
+			}
+        }));
+        
         add(new DropDownChoice<String>("currency", model("currency"), networkClient.getCurrencies(), new ChoiceRenderer<String>()));
         add(new DropDownChoice<BlindsStructure>("blindsStructure", model("blindsStructure"), adminDAO.getBlindsStructures(), renderer("name")));
         add(new DropDownChoice<PayoutStructure>("payoutStructure", model("payoutStructure"), adminDAO.getPayoutStructures(), renderer("name")));
@@ -76,8 +94,25 @@ public class TournamentConfigurationPanel extends Panel {
 //            add(new RebuyConfigurationPanel("rebuyConfiguration", new PropertyModel<RebuyConfiguration>(model.getObject(), "rebuyConfiguration")));
         }
     }
+    
+	private List<Long> getOperatorIds() {
+		List<Long> l = new ArrayList<Long>();
+		for (OperatorDTO op : networkClient.getOperators()) {
+			l.add(op.getId());
+		}
+		return l;
+	}
 
-    private PropertyModel model(String expression) {
+	private String getOperatorName(Long id) {
+		for (OperatorDTO op : networkClient.getOperators()) {
+			if(op.getId() == id) {
+				return op.getName();
+			}
+		}
+		return "n/a";
+	}
+
+	private PropertyModel model(String expression) {
         return new PropertyModel(model, expression);
     }
 
