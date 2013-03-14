@@ -225,7 +225,13 @@
             "header" : "Leave table",
             "message": "Are you sure you want to leave?"
         }
-
+    },
+    "table-log" : {
+        "community-cards" : "Community cards:",
+        "shows" : "shows",
+        "has" : "has",
+        "wins" : "wins",
+        "hand-started" : "Hand started:"
     }
 
 }

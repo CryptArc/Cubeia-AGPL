@@ -1038,8 +1038,23 @@
 </script>
 
 <script type="text/mustache" id="playerActionLogTemplate" style="display:none;">
-   <div>{{name}} {{action}} {{#showAmount}} {{amount}} {{/showAmount}}
-   </div>
+   <div>{{name}} {{action}} {{#showAmount}} {{amount}} {{/showAmount}}</div>
 </script>
+<script type="text/mustache" id="communityCardsLogTemplate" style="display:none;">
+    <div>{{t "table-log.community-cards"}} {{#cards}}&nbsp;{{cardString}}{{/cards}}</div>
+</script>
+<script type="text/mustache" id="playerCardsExposedLogTemplate" style="display:none;">
+    <div>{{player.name}} {{t "table-log.shows"}} {{#cards}}&nbsp;{{cardString}}{{/cards}}</div>
+</script>
+<script type="text/mustache" id="playerHandStrengthLogTemplate" style="display:none;">
+    <div>{{player.name}} {{t "table-log.has"}} {{#hand}}&nbsp;{{text}}{{/hand}} ({{#cardStrings}}&nbsp;{{.}}{{/cardStrings}}&nbsp;)</div>
+</script>
+<script type="text/mustache" id="potTransferLogTemplate" style="display:none;">
+    <div>{{player.name}} {{t "table-log.wins"}} {{amount}}</div>
+</script>
+<script type="text/mustache" id="newHandLogTemplate" style="display:none;">
+    <div class="hand-started">{{t "table-log.hand-started"}}{{handId}} </div>
+</script>
+
 </body>
 </html>

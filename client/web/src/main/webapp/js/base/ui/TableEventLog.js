@@ -17,5 +17,20 @@ Poker.TableEventLog = Poker.Log.extend({
             showAmount : (amount!="0")
         };
         this.appendTemplate("playerActionLogTemplate",data);
+    },
+    appendCommunityCards : function(cards) {
+        this.appendTemplate("communityCardsLogTemplate", { cards : cards });
+    },
+    appendExposedCards : function(playerCards) {
+        this.appendTemplate("playerCardsExposedLogTemplate", playerCards);
+    },
+    appendHandStrength : function(player,hand,cardStrings) {
+        this.appendTemplate("playerHandStrengthLogTemplate", {player : player, hand : hand, cardStrings : cardStrings});
+    },
+    appendPotTransfer : function(player, potId, amount) {
+        this.appendTemplate("potTransferLogTemplate", {player : player, potId : potId, amount : Poker.Utils.formatCurrency(amount) });
+    },
+    appendNewHand : function(handId) {
+        this.appendTemplate("newHandLogTemplate", {handId : handId});
     }
 });
