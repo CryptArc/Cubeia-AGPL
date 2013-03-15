@@ -108,8 +108,8 @@ public class CreateTournament extends BasePage {
 
     private static class ScheduledTournamentForm implements IClusterable {
         boolean rebuysEnabled;
-        Date startDate;
-        Date endDate;
+        Date startDate = new Date();
+        Date endDate = new Date();
         String schedule;
         Integer minutesInAnnounced;
         Integer minutesInRegistering;

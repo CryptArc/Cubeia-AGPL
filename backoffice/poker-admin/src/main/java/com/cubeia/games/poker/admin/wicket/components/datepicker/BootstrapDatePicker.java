@@ -78,7 +78,6 @@ public class BootstrapDatePicker extends DateTextField implements IJQueryWidget 
         this(id, model, new Options());
     }
 
-
     /**
      * Constructor
      *

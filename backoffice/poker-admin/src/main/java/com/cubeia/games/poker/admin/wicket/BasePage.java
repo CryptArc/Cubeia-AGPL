@@ -19,17 +19,16 @@ package com.cubeia.games.poker.admin.wicket;
 
 import com.cubeia.network.shared.web.wicket.navigation.Breadcrumbs;
 import com.cubeia.network.shared.web.wicket.navigation.MenuPanel;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 public abstract class BasePage extends WebPage {
 
     private static final long serialVersionUID = -913606276144395037L;
-
-    private String query;
 
     public BasePage(PageParameters p) {
         add(new MenuPanel("menuPanel", SiteMap.getPages(), this.getClass()));
@@ -38,14 +37,16 @@ public abstract class BasePage extends WebPage {
         add(new Label("title", new Model<String>()));
     }
 
-    protected <T>ChoiceRenderer<T> choiceRenderer(String property) {
-        return new ChoiceRenderer<T>(property);
-    }
-
     @Override
     protected void onBeforeRender() {
         super.onBeforeRender();
         get("title").setDefaultModelObject(getPageTitle());
+    }
+
+    @Override
+    public void renderHead(IHeaderResponse response) {
+        super.renderHead(response);
+        response.render(JavaScriptHeaderItem.forReference(getApplication().getJavaScriptLibrarySettings().getJQueryReference()));
     }
 
     public abstract String getPageTitle();

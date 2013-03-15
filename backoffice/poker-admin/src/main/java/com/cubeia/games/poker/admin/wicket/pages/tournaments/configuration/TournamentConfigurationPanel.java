@@ -72,8 +72,6 @@ public class TournamentConfigurationPanel extends Panel {
 
         if (sitAndGo) {
             maxPlayers.setVisible(false);
-        } else {
-//            add(new RebuyConfigurationPanel("rebuyConfiguration", new PropertyModel<RebuyConfiguration>(model.getObject(), "rebuyConfiguration")));
         }
     }
 

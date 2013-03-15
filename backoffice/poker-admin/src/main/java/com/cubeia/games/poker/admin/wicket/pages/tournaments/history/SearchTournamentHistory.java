@@ -3,10 +3,10 @@ package com.cubeia.games.poker.admin.wicket.pages.tournaments.history;
 import com.cubeia.games.poker.admin.service.history.HistoryService;
 import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.games.poker.admin.wicket.components.datepicker.BootstrapDatePicker;
+import com.cubeia.games.poker.admin.wicket.components.timepicker.TimePickerBehaviour;
 import com.cubeia.games.poker.admin.wicket.util.DatePanel;
 import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
 import com.cubeia.games.poker.admin.wicket.util.ParamBuilder;
-import com.cubeia.games.poker.admin.wicket.components.timepicker.TimePickerBehaviour;
 import com.cubeia.poker.tournament.history.api.HistoricTournament;
 import com.googlecode.wicket.jquery.ui.Options;
 import org.apache.log4j.Logger;
@@ -177,9 +177,9 @@ public class SearchTournamentHistory extends BasePage {
     }
 
     private static class TournamentSearch implements IClusterable {
-        Date fromDate;
-        String fromTime;
-        Date toDate;
-        String toTime;
+        Date fromDate = new Date();
+        String fromTime = "00:00";
+        Date toDate = DateTime.now().plusDays(1).toDate();
+        String toTime = "00:00";
     }
 }
