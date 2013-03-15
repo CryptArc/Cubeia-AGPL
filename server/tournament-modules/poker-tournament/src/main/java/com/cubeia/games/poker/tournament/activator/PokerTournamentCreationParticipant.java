@@ -134,7 +134,7 @@ public abstract class PokerTournamentCreationParticipant implements CreationPart
         if (config == null) {
             return RebuySupport.NO_REBUYS;
         } else {
-            boolean rebuysEnabled = config.getNumberOfRebuysAllowed() > 0;
+            boolean rebuysEnabled = config.getNumberOfRebuysAllowed() != -1;
             return new RebuySupport(rebuysEnabled, config.getChipsForRebuy(), config.getChipsForAddOn(), config.getNumberOfRebuysAllowed(),
                     config.getMaxStackForRebuy(), config.isAddOnsEnabled(), config.getNumberOfLevelsWithRebuys(), config.getRebuyCost(), config.getAddOnCost());
         }

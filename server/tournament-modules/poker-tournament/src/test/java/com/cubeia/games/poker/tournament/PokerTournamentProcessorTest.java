@@ -194,7 +194,7 @@ public class PokerTournamentProcessorTest extends TestCase {
         config.getConfiguration().setFee(BigDecimal.valueOf(1));
         config.getConfiguration().setBlindsStructure(BlindsStructureFactory.createDefaultBlindsStructure());
         config.getConfiguration().setPayoutStructure(PayoutStructureParserTest.createTestStructure());
-        config.getConfiguration().setStartingChips(100000);
+        config.getConfiguration().setStartingChips(2000);
         PokerTournamentCreationParticipant part = new SitAndGoCreationParticipant(config, historyService, systemTime);
         part.tournamentCreated(state, instance.getLobbyAccessor());
 
@@ -266,7 +266,7 @@ public class PokerTournamentProcessorTest extends TestCase {
 
     public void testStartingBalance() {
         fillTournament();
-        assertEquals(Long.valueOf(100000), pokerState.getPlayerBalance(1));
+        assertEquals(Long.valueOf(200000), pokerState.getPlayerBalance(1));
     }
 
     public void testBalanceAfterMove() {
@@ -281,7 +281,7 @@ public class PokerTournamentProcessorTest extends TestCase {
                 log.debug("Received action: " + action);
                 if (action instanceof SeatPlayersMttAction) {
                     SeatPlayersMttAction seat = (SeatPlayersMttAction) action;
-                    assertEquals(Long.valueOf(100000), seat.getPlayers().iterator().next().getPlayerData());
+                    assertEquals(Long.valueOf(200000), seat.getPlayers().iterator().next().getPlayerData());
                 }
             }
 

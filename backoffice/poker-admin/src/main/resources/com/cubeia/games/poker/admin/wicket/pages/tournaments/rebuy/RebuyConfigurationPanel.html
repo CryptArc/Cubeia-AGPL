@@ -8,7 +8,7 @@
         <label class="control-label" for="numberOfRebuysAllowed">Number of Rebuys Allowed</label>
         <div class="controls">
             <input wicket:id="numberOfRebuysAllowed" id="numberOfRebuysAllowed" type="text" size="20"/>
-            <span class="help-block">0 for unlimited rebuys</span>
+            <span class="help-block">-1 for unlimited rebuys</span>
         </div>
     </div>
 
@@ -35,7 +35,7 @@
         <label class="control-label" for="rebuyCost">Rebuy Cost</label>
         <div class="controls">
             <input wicket:id="rebuyCost" id="rebuyCost" type="text" size="20"/>
-            <span class="help-block">Value in cents?</span>
+            <span class="help-block">Example: 10 for a rebuy cost of €10, usually the same as the buy-in.</span>
         </div>
     </div>
 
@@ -43,7 +43,7 @@
         <label class="control-label" for="chipsForRebuy">Chips for Rebuy</label>
         <div class="controls">
             <input wicket:id="chipsForRebuy" id="chipsForRebuy" type="text" size="20"/>
-            <span class="help-block">Number of chips received when doing a rebuy.</span>
+            <span class="help-block">Example: 2000 means players receive 2000 chips when doing a rebuy, usually the same as the starting chips.</span>
         </div>
     </div>
 
@@ -51,7 +51,7 @@
         <label class="control-label" for="addOnCost">Add-on Cost</label>
         <div class="controls">
             <input wicket:id="addOnCost" id="addOnCost" type="text" size="20"/>
-            <span class="help-block">Value in cents?</span>
+            <span class="help-block">Example: 10 for a add-on cost of €10, usually (but not always) the same as the buy-in.</span>
         </div>
     </div>
 
@@ -59,7 +59,7 @@
         <label class="control-label" for="chipsForAddOn">Chips for Add-on</label>
         <div class="controls">
             <input wicket:id="chipsForAddOn" id="chipsForAddOn" type="text" size="20"/>
-            <span class="help-block">Number of chips received when doing an add-on.</span>
+            <span class="help-block">Example: 2000 means players receive 2000 chips when doing a add-on, usually (but not always) the same as the starting chips.</span>
         </div>
     </div>
 

@@ -140,7 +140,7 @@ public class RebuySupport implements Serializable {
             if (inTheMoney || !rebuysAvailable) {
                 return false;
             } else {
-                return numberOfRebuysPerformedBy(playerId) < maxRebuys;
+                return maxRebuys == -1 || numberOfRebuysPerformedBy(playerId) < maxRebuys;
             }
         }
     };

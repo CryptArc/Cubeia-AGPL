@@ -306,9 +306,15 @@ public class PokerTournament implements TableNotifier, Serializable {
         }
     }
 
+    /**
+     * Adds chips to the given player, buy sending a message to the table where he sits.
+     *
+     * @param chipsToAdd Chips to add, in number of chips (will be converted to cents). For 2000 chips, pass 2000 in.
+     */
     private void addChipsTo(int playerId, int tableId, long chipsToAdd, PlayerAddedChips.Reason reason) {
-        log.debug("Adding " + chipsToAdd + " chips to " + playerId);
-        notifyTable(tableId, new PlayerAddedChips(playerId, chipsToAdd, reason));
+        long chipsInCents = chipsToAdd * 100;
+        log.debug("Adding " + chipsToAdd + " chips (" + chipsInCents + " cents) to " + playerId + " who sits at table " + tableId);
+        notifyTable(tableId, new PlayerAddedChips(playerId, chipsInCents, reason));
     }
 
     private void performRebuy(int playerId, int tableId) {
@@ -573,8 +579,8 @@ public class PokerTournament implements TableNotifier, Serializable {
         return balances;
     }
 
-    private long getStartingChips() {
-        return pokerState.getStartingChips();
+    private long getStartingChipsInCents() {
+        return pokerState.getStartingChips() * 100;
     }
 
     private void sendTournamentOutToPlayers(List<ConcretePayout> playersOut, MttInstance instance) {
@@ -783,7 +789,7 @@ public class PokerTournament implements TableNotifier, Serializable {
 
         int i = 0;
         for (MttPlayer player : players) {
-            pokerState.setBalance(player.getPlayerId(), getStartingChips());
+            pokerState.setBalance(player.getPlayerId(), getStartingChipsInCents());
             initialSeating.add(createSeating(player.getPlayerId(), tableIdArray[i++ % tableIdArray.length]));
         }
 
@@ -791,7 +797,7 @@ public class PokerTournament implements TableNotifier, Serializable {
     }
 
     private SeatingContainer createSeating(int playerId, int tableId) {
-        return new SeatingContainer(playerId, tableId, getStartingChips());
+        return new SeatingContainer(playerId, tableId, getStartingChipsInCents());
     }
 
     public PokerTournamentState getPokerTournamentState() {
