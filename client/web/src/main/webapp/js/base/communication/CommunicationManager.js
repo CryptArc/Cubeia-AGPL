@@ -234,7 +234,7 @@ Poker.CommunicationManager = Class.extend({
                 this.tableManager.notifyGameStateUpdate(tableId, protocolObject.currentLevel, protocolObject.secondsToNextLevel,protocolObject.betStrategy);
                 break;
             case com.cubeia.games.poker.io.protocol.BestHand.CLASSID:
-                this.tableManager.updateHandStrength(tableId,protocolObject);
+                this.tableManager.updateHandStrength(tableId,protocolObject,false);
                 break;
             case com.cubeia.games.poker.io.protocol.BuyInInfoRequest.CLASSID:
                 console.log("UNHANDLED PO BuyInInfoRequest");

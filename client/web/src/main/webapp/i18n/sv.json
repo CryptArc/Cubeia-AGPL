@@ -225,6 +225,13 @@
             "message": "Är du säker på att du vill lämna bordet?"
         }
 
+    },
+    "table-log" : {
+        "community-cards" : "Community cards:",
+        "shows" : "shows",
+        "has" : "has",
+        "wins" : "wins",
+        "hand-started" : "Hand started:"
     }
 
 }

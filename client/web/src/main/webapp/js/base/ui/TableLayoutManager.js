@@ -123,9 +123,13 @@ Poker.TableLayoutManager = Class.extend({
     },
     onActivateView : function() {
         this.animationManager.setActive(true);
+        this.tableLog.scrollDown();
     },
     onDeactivateView : function() {
         this.animationManager.setActive(false);
+    },
+    onBestHands : function(hands) {
+
     },
     /**
      * Adds an empty seat div to a seat id and if position supplied
@@ -253,6 +257,7 @@ Poker.TableLayoutManager = Class.extend({
             this.seats.get(this.myPlayerSeatId).handlePlayerStatus();
         }
         console.log("Hand " + handId + " started");
+        this.tableLog.appendNewHand(handId);
     },
     /**
      * Updates the blinds info given a new level.
@@ -295,13 +300,21 @@ Poker.TableLayoutManager = Class.extend({
         seat.dealCard(card);
         this._storeCard(card);
     },
+    exposePrivateCards : function(playerCards) {
+        for(var i = 0; i<playerCards.length; i++) {
+            var cards = playerCards[i].cards;
+            for(var j = 0; j<cards.length; j++) {
+                this.onExposePrivateCard(cards[j].id, cards[j].cardString);
+            }
+            this.tableLog.appendExposedCards(playerCards[i]);
+        }
+    },
     onExposePrivateCard : function(cardId,cardString){
         this.playSound(Poker.Sounds.REVEAL);
         var card = this.cardElements.get(cardId);
         if(cardString == card.cardString) {
             return;
         }
-
         card.exposeCard(cardString);
         new Poker.CSSClassAnimation(card.getJQElement()).addClass("exposed").start(this.animationManager);
 
@@ -325,9 +338,18 @@ Poker.TableLayoutManager = Class.extend({
             seats[x].onBettingRoundComplete();
         }
     },
-    onPlayerHandStrength : function(player, hand) {
+    onPlayerHandStrength : function(player, hand,cardStrings, handEnded) {
         var seat = this.getSeatByPlayerId(player.id);
         seat.showHandStrength(hand);
+        if(handEnded == true) {
+            this.tableLog.appendHandStrength(player,hand,cardStrings);
+        }
+    },
+    onDealCommunityCards : function(cards) {
+        for(var i = 0; i<cards.length; i++) {
+            this.onDealCommunityCard(cards[i].id, cards[i].cardString);
+        }
+        this.tableLog.appendCommunityCards(cards);
     },
     onDealCommunityCard : function(cardId, cardString) {
         this.playSound(Poker.Sounds.DEAL_COMMUNITY);
@@ -490,6 +512,7 @@ Poker.TableLayoutManager = Class.extend({
             var seat = this.getSeatByPlayerId(trans.playerId);
             seat.onPotWon(trans.potId,trans.amount);
             transferAnimator.addTransfer(seat, trans.potId, trans.amount);
+            this.tableLog.appendPotTransfer(seat.player,trans.potId, trans.amount);
         }
         transferAnimator.start();
         this.playSound(Poker.Sounds.POT_TO_PLAYERS);
