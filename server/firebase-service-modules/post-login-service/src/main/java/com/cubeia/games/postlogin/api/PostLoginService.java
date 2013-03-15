@@ -100,17 +100,17 @@ public class PostLoginService implements PostLoginProcessor, Service, RoutableSe
     }
     
     private void invalidatePlayerSession(int playerId) {
-    	try {
-			UserServiceContract userService = context.getParentRegistry().getServiceInstance(UserServiceContract.class);
-			if (userService != null) {
-				log.debug("Invalidate player session ("+playerId+") now");
-				userService.invalidateUserSession(playerId);
-				log.info("Invalidated player session ("+playerId+")");
-			} else {
-				log.warn("User service is null so I will skip remote session invalidation");
-			}
-    	} catch (Throwable e) {
-    		log.error("Failed to invalidate player session against remote User Service. If you are running locally with firebase:run this is expected. PlayerId("+playerId+"). Exception: " +e);
-    	}
-	}
+        try {
+            UserServiceContract userService = context.getParentRegistry().getServiceInstance(UserServiceContract.class);
+            if (userService != null) {
+                log.debug("Invalidate player session ("+playerId+") now");
+                userService.invalidateUserSession(playerId);
+                log.info("Invalidated player session ("+playerId+")");
+            } else {
+                log.warn("User service is null so I will skip remote session invalidation");
+            }
+        } catch (Throwable e) {
+            log.error("Failed to invalidate player session against remote User Service. If you are running locally with firebase:run this is expected. PlayerId("+playerId+"). Exception: " +e);
+        }
+    }
 }
