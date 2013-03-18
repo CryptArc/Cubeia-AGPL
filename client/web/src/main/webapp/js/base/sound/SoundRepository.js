@@ -16,7 +16,7 @@ Poker.SoundRepository = Class.extend({
 
     loadSounds:function () {
         var codec = this.getCodec();
-        var path = "../sounds/" + codec + "/";
+        var path = contextPath+"/sounds/" + codec + "/";
 
         var audioModel = "Audio";
         var context = null;
@@ -42,6 +42,7 @@ Poker.SoundRepository = Class.extend({
             }
             this.sounds[Poker.Sounds[sound].id] = soundSources;
         }
+        console.log(this.sounds)
     },
 
     getSound:function (soundId, selection) {
