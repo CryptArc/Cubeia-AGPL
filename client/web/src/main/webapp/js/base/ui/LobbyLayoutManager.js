@@ -28,20 +28,25 @@ Poker.LobbyLayoutManager = Class.extend({
     init : function() {
         this.templateManager = Poker.AppCtx.getTemplateManager();
         this.filters = [];
+        var self = this;
         $("#cashGameMenu").touchSafeClick(function (e) {
+            self.goToList();
             $(".main-menu a.selected").removeClass("selected");
             $(this).addClass("selected");
             new Poker.LobbyRequestHandler().subscribeToCashGames();
+
         });
         $("#sitAndGoMenu").touchSafeClick(function (e) {
             $(".main-menu .selected").removeClass("selected");
             $(this).addClass("selected");
             new Poker.LobbyRequestHandler().subscribeToSitAndGos();
+            self.goToList();
         });
         $("#tournamentMenu").touchSafeClick(function (e) {
             $(".main-menu .selected").removeClass("selected");
             $(this).addClass("selected");
             new Poker.LobbyRequestHandler().subscribeToTournaments();
+            self.goToList();
         });
 
         $(".show-filters").touchSafeClick(function () {
@@ -49,7 +54,13 @@ Poker.LobbyLayoutManager = Class.extend({
             $(".table-filter").toggle();
         });
         this.initFilters();
+    },
+    goToList : function() {
 
+        if(Poker.AppCtx.getViewManager().mobileDevice==true) {
+
+            $('html, body').scrollTop($("#tableListAnchor").offset().top + 50);
+        }
     },
     initFilters:function () {
         var fullTablesFilter = new Poker.LobbyFilter("fullTables", true,

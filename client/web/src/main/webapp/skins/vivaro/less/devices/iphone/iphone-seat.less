@@ -15,9 +15,12 @@
         z-index:10;
     }
     .action-amount {
-        font-size:170%;
+        font-size:150%;
         top:90%;
         z-index: 10;
+        span {
+            padding: 3px 6px;
+        }
     }
     .cards-container {
         width: 70%;
@@ -44,12 +47,8 @@
     }
 }
 
-.seat-empty {
-    .avatar-base {
-        background: none;
-        border:none;
-    }
-}
+
+
 .avatar {
     display: none;
 }
@@ -82,7 +81,7 @@
 .action-text, .player-status, .hand-strength {
     font-weight: bold;
     top:@base-content-top;
-    width:68%;
+    width:67%;
     left:14%;
     padding:2% 0;
     text-align: left;

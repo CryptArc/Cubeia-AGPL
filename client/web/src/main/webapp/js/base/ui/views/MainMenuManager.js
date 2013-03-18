@@ -55,6 +55,8 @@ Poker.MainMenuManager = Class.extend({
 
     },
     toggle : function() {
+        $(".view-container").toggleClass("no-overflow");
+        $(".view-port").toggleClass("no-overflow-x")
         $('.main-menu-container').toggleClass('visible');
         $(".view-container").toggleClass("slided");
         $(".menu-overlay").toggle();

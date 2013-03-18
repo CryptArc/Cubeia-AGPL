@@ -4,7 +4,7 @@ Poker.TableView = Poker.TabView.extend({
     layoutManager : null,
     tableViewContainer : null,
     init : function(layoutManager,name) {
-        this._super("#"+layoutManager.tableView.attr("id"),name);
+        this._super("#"+layoutManager.tableView.attr("id"),name,"");
         this.layoutManager = layoutManager;
         this.tableViewContainer = $(".table-view-container");
     },

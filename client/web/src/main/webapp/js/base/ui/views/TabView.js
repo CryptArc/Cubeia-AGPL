@@ -5,7 +5,7 @@ Poker.TabView = Poker.View.extend({
     tabElement : null,
     cardTemplate : null,
     templateManager : null,
-    init : function(viewElement,name) {
+    init : function(viewElement,name,tabIndex) {
 
         this._super(viewElement,name);
         this.templateManager = Poker.AppCtx.getTemplateManager();
@@ -15,6 +15,10 @@ Poker.TabView = Poker.View.extend({
         var item = $(this.templateManager.render(t,{name:name}));
         this.tabElement = item;
         this.tabElement.find(".mini-cards").hide();
+        this.tabElement.find(".tab-index").html(tabIndex)
+    },
+    updateTabIndex : function(index) {
+        this.tabElement.find(".tab-index").html(index);
     },
     updateName : function(name){
         this.name = name;

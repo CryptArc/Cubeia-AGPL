@@ -827,6 +827,7 @@
 <script type="text/mustache" id="tabTemplate">
     <li>
         <div class="tab-content">
+            <div class="tab-index"></div>
             <div class="mini-cards"></div>
             <span class="name">{{name}}</span>
         </div>
