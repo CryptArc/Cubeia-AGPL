@@ -8,10 +8,13 @@ import java.io.Serializable;
 @Entity
 public class Level implements Serializable {
 
+    /** Small blind amount, in number of chips, not cents. */
     private int smallBlindAmount;
 
+    /** Big blind amount, in number of chips, not cents. */
     private int bigBlindAmount;
 
+    /** Ante amount, in number of chips, not cents. */
     private int anteAmount;
 
     private int durationInMinutes;

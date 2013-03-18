@@ -94,12 +94,12 @@ public class TournamentConfiguration implements Serializable {
     }
     
     public Set<Long> getOperatorIds() {
-		return operatorIds;
-	}
+        return operatorIds;
+    }
     
     public void setOperatorIds(Set<Long> operatorIds) {
-		this.operatorIds = operatorIds;
-	}
+        this.operatorIds = operatorIds;
+    }
 
     public RebuyConfiguration getRebuyConfiguration() {
         return rebuyConfiguration;

@@ -146,7 +146,7 @@ public class TournamentLobbyTest {
 
     @Test
     public void testBlindsStructureAmountFormatting() {
-        Level level = new Level(1000, 2000, 0, 1, false);
+        Level level = new Level(10, 20, 0, 1, false);
         BlindsStructure structure = new BlindsStructure(Collections.singletonList(level));
         when(pokerState.getBlindsStructure()).thenReturn(structure);
         assertThat(lobby.createBlindsStructurePacket().blindsLevels.get(0).smallBlind, is("10"));

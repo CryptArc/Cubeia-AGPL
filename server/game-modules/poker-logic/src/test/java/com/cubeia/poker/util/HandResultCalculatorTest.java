@@ -30,6 +30,7 @@ import com.cubeia.poker.result.Result;
 import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.variant.texasholdem.TexasHoldemHandCalculator;
 import junit.framework.TestCase;
+import org.apache.log4j.Logger;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -43,6 +44,8 @@ import static org.junit.Assert.assertThat;
 
 public class HandResultCalculatorTest extends TestCase {
 
+    private static final Logger log = Logger.getLogger(HandResultCalculatorTest.class);
+
     private Map<Integer, PokerPlayer> players;
 
     HandResultCalculator calc = new HandResultCalculator(new TexasHoldemHandCalculator());
@@ -55,7 +58,6 @@ public class HandResultCalculatorTest extends TestCase {
     private int player1Bets = 10;
     private int player2Bets = 20;
     private int player3Bets = 40;
-
 
     @Override
     protected void setUp() throws Exception {
@@ -137,7 +139,7 @@ public class HandResultCalculatorTest extends TestCase {
 
         assertThat(potHolder.getNumberOfPots(), is(1));
         long pot0Size = potHolder.getPotSize(0);
-        assertThat(pot0Size, is(50L)); // one of the players had a overbet so player 3 actually only bet whan player 2 did.
+        assertThat(pot0Size, is(50L)); // one of the players had an over bet so player 3 actually only bet what player 2 did.
         Pot pot0 = potHolder.getPot(0);
         int pot0Rake = (int) (pot0Size * 0.1);
 
@@ -172,6 +174,44 @@ public class HandResultCalculatorTest extends TestCase {
         assertThat(result3.getWinningsByPot().size(), is(0));
 
         assertThat(playerResults.size(), is(3));
+    }
+
+    public void testTwoPairs() {
+        // All players have 100 and bet 10 each.
+        players = new HashMap<Integer, PokerPlayer>();
+        PokerPlayer p1 = new DefaultPokerPlayer(1);
+        p1.addChips(100);
+        p1.addBet(10);
+        PokerPlayer p2 = new DefaultPokerPlayer(2);
+        p2.addChips(100);
+        p2.addBet(10);
+        PokerPlayer p3 = new DefaultPokerPlayer(3);
+        p3.addChips(100);
+        p3.addBet(10);
+
+        players.put(1, p1);
+        players.put(2, p2);
+        players.put(3, p3);
+
+        hands = new ArrayList<PlayerHand>();
+        String community = "Kc 7s 3s 3c 7h";
+        hands.add(new PlayerHand(1, new Hand("9d Js " + community)));
+        hands.add(new PlayerHand(2, new Hand("As 8h " + community))); // Winner because the Ace kicker plays.
+        hands.add(new PlayerHand(3, new Hand("Qs 6h " + community)));
+
+        PotHolder potHolder = new PotHolder(new LinearRakeWithLimitCalculator(RakeSettings.createDefaultRakeSettings(ZERO)));
+        potHolder.callOrRaise();
+        potHolder.moveChipsToPotAndTakeBackUncalledChips(players.values());
+
+        assertEquals(1, potHolder.getNumberOfPots());
+        Map<PokerPlayer, Result> playerResults = calc.getPlayerResults(hands, potHolder, potHolder.calculateRake(), players);
+        Result result1 = playerResults.get(players.get(1));
+        Result result2 = playerResults.get(players.get(2));
+        Result result3 = playerResults.get(players.get(3));
+        log.debug("r1: " + result1);
+        log.debug("r2: " + result2);
+        log.debug("r3: " + result3);
+        assertThat(result2.getNetResult(), is(20L));
     }
 
     public void testMultiplePotsWithRake() {

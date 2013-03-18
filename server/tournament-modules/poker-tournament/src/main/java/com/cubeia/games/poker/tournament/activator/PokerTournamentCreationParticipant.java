@@ -119,22 +119,23 @@ public abstract class PokerTournamentCreationParticipant implements CreationPart
     }
 
     private String getOperatorLobbyIdString() {
-		StringBuilder b = new StringBuilder();
-		for (Long l : config.getOperatorIds()) {
-			b.append(l).append(",");
-		}
-		String s = b.toString();
-		if(s.length() > 0) {
-			s = s.substring(0, s.length() - 1);
-		}
-		return s;
+        StringBuilder b = new StringBuilder();
+        for (Long l : config.getOperatorIds()) {
+            b.append(l).append(",");
+        }
+        String s = b.toString();
+        if(s.length() > 0) {
+            s = s.substring(0, s.length() - 1);
+        }
+        return s;
     }
 
-	private RebuySupport createRebuySupport(RebuyConfiguration config) {
+    private RebuySupport createRebuySupport(RebuyConfiguration config) {
         if (config == null) {
             return RebuySupport.NO_REBUYS;
         } else {
-            boolean rebuysEnabled = config.getNumberOfRebuysAllowed() != -1;
+            log.debug("Setting rebuy support. Rebuys allowed: " + config.getNumberOfRebuysAllowed());
+            boolean rebuysEnabled = config.getNumberOfRebuysAllowed() != 0;
             return new RebuySupport(rebuysEnabled, config.getChipsForRebuy(), config.getChipsForAddOn(), config.getNumberOfRebuysAllowed(),
                     config.getMaxStackForRebuy(), config.isAddOnsEnabled(), config.getNumberOfLevelsWithRebuys(), config.getRebuyCost(), config.getAddOnCost());
         }

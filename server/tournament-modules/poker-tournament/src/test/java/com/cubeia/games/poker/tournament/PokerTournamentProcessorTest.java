@@ -39,6 +39,7 @@ import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
+import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -116,7 +117,7 @@ public class PokerTournamentProcessorTest extends TestCase {
     @Mock
     private ScheduledTournamentInstance instanceConfig;
 
-    @Mock
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private TournamentConfiguration configuration;
 
     @Mock
