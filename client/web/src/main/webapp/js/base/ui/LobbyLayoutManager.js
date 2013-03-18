@@ -29,20 +29,20 @@ Poker.LobbyLayoutManager = Class.extend({
         this.templateManager = Poker.AppCtx.getTemplateManager();
         this.filters = [];
         var self = this;
-        $("#cashGameMenu").touchSafeClick(function (e) {
+        $("#cashGameMenu").click(function (e) {
             self.goToList();
             $(".main-menu a.selected").removeClass("selected");
             $(this).addClass("selected");
             new Poker.LobbyRequestHandler().subscribeToCashGames();
 
         });
-        $("#sitAndGoMenu").touchSafeClick(function (e) {
+        $("#sitAndGoMenu").click(function (e) {
             $(".main-menu .selected").removeClass("selected");
             $(this).addClass("selected");
             new Poker.LobbyRequestHandler().subscribeToSitAndGos();
             self.goToList();
         });
-        $("#tournamentMenu").touchSafeClick(function (e) {
+        $("#tournamentMenu").click(function (e) {
             $(".main-menu .selected").removeClass("selected");
             $(this).addClass("selected");
             new Poker.LobbyRequestHandler().subscribeToTournaments();
