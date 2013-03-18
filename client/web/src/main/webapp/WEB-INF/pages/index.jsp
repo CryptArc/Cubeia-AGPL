@@ -141,6 +141,7 @@
     <script type="text/javascript" src="${cp}/js/base/ui/views/DevSettingsView.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/ViewManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/MainMenuManager.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/views/AccountPageManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ApplicationContext.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/ViewSwiper.js"></script>
     <script type="text/javascript" src="${cp}/js/base/tournaments/Tournament.js"></script>
@@ -246,6 +247,10 @@
     </div>
     <div class="menu-overlay slidable" style="display: none;">
 
+    </div>
+
+    <div class="account-overlay" style="display: none; background-color:rgba(0, 0, 0, 0.5); width:100%; height: 100%">
+         <iframe id="account_iframe" style="position: absolute; top:45px; left:10%; width:80%; height:75%"></iframe>
     </div>
 
     <div id="soundSettingsView" class="config-view" style="display: none;">

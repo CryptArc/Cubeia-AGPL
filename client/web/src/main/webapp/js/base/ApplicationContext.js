@@ -68,6 +68,16 @@ Poker.AppCtx = Class.extend({
             return mainMenuManager;
         };
 
+        var accountPageManager = new Poker.AccountPageManager();
+
+        /**
+         *
+         * @return {Poker.AccountPageManager}
+         */
+        this.getAccountPageManager = function() {
+            return accountPageManager;
+        };
+
 
         var lobbyLayoutManager = new Poker.LobbyLayoutManager();
 
