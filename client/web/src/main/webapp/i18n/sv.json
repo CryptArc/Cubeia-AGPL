@@ -76,7 +76,8 @@
     },
     "user" : {
         "logged-in" : "Inloggad:",
-        "log-out" : "Logga ut"
+        "log-out" : "Logga ut",
+        "my-page" : "Min sida"
     },
     "disconnect-dialog" : {
         "title" : "Du har blivit frånkopplad",

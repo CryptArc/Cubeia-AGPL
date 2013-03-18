@@ -233,6 +233,8 @@
         <div class="tabs-container">
             <ul id="tabItems" class="tabs">
             </ul>
+            <ul class="my-page-button" data-i18n="user.my-page">
+            </ul>
         </div>
 
     </div>
