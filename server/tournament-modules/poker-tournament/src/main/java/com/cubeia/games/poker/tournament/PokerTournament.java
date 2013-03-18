@@ -555,7 +555,7 @@ public class PokerTournament implements TableNotifier, Serializable {
             transferMoneyAndCloseSession(pokerState.getPlayerSession(payout.getPlayerId()), payout.getPayoutInCents());
             setPlayerOutInPosition(payout.getPlayerId(), payout.getPosition());
         }
-        sendTournamentOutToPlayers(payouts, instance);
+        sendTournamentOutToPlayers(payouts);
     }
 
     private void transferMoneyAndCloseSession(PlayerSessionId playerSession, long payoutInCents) {
@@ -587,10 +587,10 @@ public class PokerTournament implements TableNotifier, Serializable {
         return pokerState.getStartingChips() * 100;
     }
 
-    private void sendTournamentOutToPlayers(List<ConcretePayout> playersOut, MttInstance instance) {
+    private void sendTournamentOutToPlayers(List<ConcretePayout> playersOut) {
         for (ConcretePayout payout : playersOut) {
             TournamentOut packet = new TournamentOut();
-            packet.position = instance.getState().getRemainingPlayerCount();
+            packet.position = payout.getPosition();
             int playerId = payout.getPlayerId();
             packet.player = playerId;
             log.debug("Telling player " + playerId + " that he finished in position " + packet.position);
@@ -631,7 +631,7 @@ public class PokerTournament implements TableNotifier, Serializable {
         log.debug("Paying winner: " + playerId);
         int payout = pokerState.getPayouts().getPayoutsForPosition(1);
         setPlayerOutInPosition(playerId, 1);
-        sendTournamentOutToPlayers(singletonList(new ConcretePayout(playerId, 1, payout)), instance);
+        sendTournamentOutToPlayers(singletonList(new ConcretePayout(playerId, 1, payout)));
 
         PlayerSessionId playerSession = pokerState.getPlayerSession(playerId);
         transferMoneyAndCloseSession(playerSession, payout);
