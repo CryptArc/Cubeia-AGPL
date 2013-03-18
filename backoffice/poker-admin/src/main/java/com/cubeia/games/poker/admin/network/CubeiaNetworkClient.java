@@ -17,27 +17,42 @@
 
 package com.cubeia.games.poker.admin.network;
 
+import com.cubeia.backoffice.operator.api.OperatorDTO;
+import com.cubeia.backoffice.operator.client.OperatorServiceClient;
 import com.cubeia.backoffice.wallet.api.dto.Currency;
 import com.cubeia.backoffice.wallet.api.dto.CurrencyListResult;
 import com.cubeia.backoffice.wallet.client.WalletServiceClientHTTP;
 
 import java.util.List;
 
+import org.apache.wicket.spring.injection.annot.SpringBean;
+
 import static com.google.common.collect.Lists.newArrayList;
 
 public class CubeiaNetworkClient implements NetworkClient {
 
     private WalletServiceClientHTTP walletClient;
+    
+    private OperatorServiceClient operatorService;
 
     @Override
+    public List<OperatorDTO> getOperators() {
+    	return operatorService.getOperators();
+    }
+    
+    @Override
     public List<String> getCurrencies() {
-        List<String> currencies = newArrayList();
+    	List<String> currencies = newArrayList();
         CurrencyListResult supportedCurrencies = walletClient.getSupportedCurrencies();
         for (Currency currency : supportedCurrencies.getCurrencies()) {
             currencies.add(currency.getCode());
         }
         return currencies;
     }
+    
+    public void setOperatorService(OperatorServiceClient operatorService) {
+		this.operatorService = operatorService;
+	}
 
     public void setWalletClient(WalletServiceClientHTTP walletClient) {
         this.walletClient = walletClient;

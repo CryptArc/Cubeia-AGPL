@@ -22,6 +22,7 @@ import com.cubeia.poker.tournament.history.api.HistoricTournament;
 import com.google.code.morphia.query.Query;
 import com.mongodb.BasicDBObject;
 import org.apache.log4j.Logger;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -39,11 +40,11 @@ public class HistoryServiceImpl implements HistoryService {
 
     @Override
     public List<HistoricHand> findHandHistory(Integer playerId, String tableId, Date fromDate, Date toDate) {
-        log.info("Finding hand histories by query: playerId = " + playerId + " from: " + fromDate + " to: " + toDate);
+        log.info("Finding hand histories by query: playerId = " + playerId + " tableId = " + tableId + " from: " + fromDate + " to: " + toDate);
         Query query = mongoStorage.createQuery(HistoricHand.class);
-        if (tableId != null) query.field("table.tableId").equal(tableId);
-        if (fromDate != null) query.field("startTime").greaterThanOrEq(fromDate);
-        if (toDate != null) query.field("endTime").lessThanOrEq(toDate);
+        if (tableId != null) query.field("table.tableIntegrationId").equal(tableId);
+        if (fromDate != null) query.field("startTime").greaterThanOrEq(fromDate.getTime());
+        if (toDate != null) query.field("endTime").lessThanOrEq(toDate.getTime());
         if (playerId != null) query.filter("seats elem", new BasicDBObject("playerId", playerId));
         return query.order("-startTime").asList();
     }
@@ -51,7 +52,7 @@ public class HistoryServiceImpl implements HistoryService {
     @Override
     public HistoricHand findHandById(String handId) {
         Query query = mongoStorage.createQuery(HistoricHand.class);
-        query.field("id").equal(handId);
+        query.field("_id").equal(handId);
         return (HistoricHand)query.get();
     }
 
@@ -59,15 +60,15 @@ public class HistoryServiceImpl implements HistoryService {
     public List<HistoricTournament> findTournaments(Date fromDate, Date toDate) {
         log.info("Finding tournaments by query: from: " + fromDate + " to: " + toDate);
         Query query = mongoStorage.createQuery(HistoricTournament.class);
-        if (fromDate != null) query.field("startTime").greaterThanOrEq(fromDate);
-        if (toDate != null) query.field("startTime").lessThanOrEq(toDate);
+        if (fromDate != null) query.field("startTime").greaterThanOrEq(fromDate.getTime());
+        if (toDate != null) query.field("startTime").lessThanOrEq(toDate.getTime());
         return query.order("-startTime").asList();
     }
 
     @Override
     public HistoricTournament findTournamentByHistoricId(String id) {
         Query query = mongoStorage.createQuery(HistoricTournament.class);
-        query.field("id").equal(id);
+        query.field("id").equal(new ObjectId(id));
         return (HistoricTournament)query.get();
     }
 

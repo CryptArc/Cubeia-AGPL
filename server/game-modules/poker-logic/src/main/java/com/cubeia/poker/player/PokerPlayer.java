@@ -143,7 +143,7 @@ public interface PokerPlayer extends BlindsPlayer, Serializable {
 
     public long getBalance();
 
-    public void setStartingBalance(long startingBalance);
+    public void saveStartingBalance();
 
     public long getStartingBalance();
 
@@ -255,13 +255,6 @@ public interface PokerPlayer extends BlindsPlayer, Serializable {
     public void buyInRequestActive();
 
     public boolean isBuyInRequestActive();
-
-    /**
-     * @return true if the player has used up his available disconnect extra time
-     */
-    public boolean isDisconnectTimeoutUsed();
-
-    public void setDisconnectTimeoutUsed(boolean disconnectTimeoutUsed);
 
     public void setMissedBlindsStatus(MissedBlindsStatus missedBlindsStatus);
 

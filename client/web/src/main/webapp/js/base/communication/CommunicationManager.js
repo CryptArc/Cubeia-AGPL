@@ -215,10 +215,11 @@ Poker.CommunicationManager = Class.extend({
             return;
         }
         if(!this.tableManager.tableExist(gameTransportPacket.tableid)) {
-            console.log("Received packet for table ("+gameTransportPacket.tableid+") you're not viewing");
+            console.log("Received packet for table (" + gameTransportPacket.tableid + ") you're not viewing");
             return;
         }
         var tableId = gameTransportPacket.tableid;
+        var playerId = gameTransportPacket.pid;
         var valueArray =  FIREBASE.ByteArray.fromBase64String(gameTransportPacket.gamedata);
         var gameData = new FIREBASE.ByteArray(valueArray);
         var length = gameData.readInt();
@@ -338,6 +339,25 @@ Poker.CommunicationManager = Class.extend({
                 break;
             case com.cubeia.games.poker.io.protocol.RequestAction.CLASSID:
                 pokerPacketHandler.handleRequestAction(protocolObject);
+                break;
+            case com.cubeia.games.poker.io.protocol.RebuyOffer.CLASSID:
+                console.log("Received rebuy offer!");
+                pokerPacketHandler.handleRebuyOffer(protocolObject, playerId);
+                break;
+            case com.cubeia.games.poker.io.protocol.AddOnOffer.CLASSID:
+                console.log("Add-ons offered.");
+                console.log(protocolObject);
+                pokerPacketHandler.handleAddOnOffer(protocolObject, Poker.MyPlayer.id);
+                break;
+            case com.cubeia.games.poker.io.protocol.AddOnPeriodClosed.CLASSID:
+                console.log("Add-on period closed.");
+                pokerPacketHandler.handleAddOnPeriodClosed(Poker.MyPlayer.id);
+                break;
+            case com.cubeia.games.poker.io.protocol.PlayerPerformedRebuy.CLASSID:
+                pokerPacketHandler.handleRebuyPerformed(playerId);
+                break;
+            case com.cubeia.games.poker.io.protocol.PlayerPerformedAddOn.CLASSID:
+                pokerPacketHandler.handleAddOnPerformed(playerId);
                 break;
             case com.cubeia.games.poker.io.protocol.StartHandHistory.CLASSID:
                 console.log("UNHANDLED PO StartHandHistory");

@@ -43,21 +43,30 @@ Poker.DialogManager = Class.extend({
      * @param {Object} content - the content of the dialog, see above for format
      * @param {String} content.header - header of the dialog
      * @param {String} content.message - the message to display
+     * @param {String} [content.translationKey] - optional translation key to use
      * @param {Boolean} [content.displayCancelButton] - if you should display a cancel
      * @param {Function} [okCallback] callback to execute when ok button is clicked
      *
      */
     displayGenericDialog: function(content, okCallback) {
+
+        if(typeof(content.translationKey)!="undefined") {
+            content = $.extend(content,{ header : i18n.t("dialogs." + content.translationKey + ".header"),
+                message : i18n.t("dialogs." + content.translationKey + ".message")});
+        }
+
         if (content.header) {
             $("#genericDialog h1").html(content.header);
         } else {
             $("#genericDialog h1").hide();
         }
+
         if (content.message) {
             $("#genericDialog .message").html(content.message);
         } else {
             $("#genericDialog .message").hide();
         }
+
         if(content.displayCancelButton === true) {
             $("#genericDialog .dialog-cancel-button").show();
         } else {

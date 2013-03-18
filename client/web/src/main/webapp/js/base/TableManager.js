@@ -103,7 +103,7 @@ Poker.TableManager = Class.extend({
     handleBuyInError : function(tableId,status) {
         console.log("buy-in status = " + status);
         var table = this.getTable(tableId);
-        table.getLayoutManager().onBuyInError("Unable to buy in");
+        table.getLayoutManager().onBuyInError(i18n.t("buy-in.error"));
     },
     /**
      * @param {Number} tableId
@@ -178,7 +178,7 @@ Poker.TableManager = Class.extend({
      */
     clearTable : function(tableId,handCount) {
         var table = this.tables.get(tableId);
-        if(table.handCount==handCount) {
+        if (table.handCount == handCount) {
             console.log("No hand started clearing table");
             table.layoutManager.onStartHand(this.dealerSeatId);
         } else {
@@ -300,7 +300,39 @@ Poker.TableManager = Class.extend({
         var table = this.tables.get(tableId);
         var player = table.getPlayerById(playerId);
         var fixedLimit = table.betStrategy === com.cubeia.games.poker.io.protocol.BetStrategyEnum.FIXED_LIMIT;
-        table.getLayoutManager().onRequestPlayerAction(player,allowedActions,timeToAct,this.totalPot,fixedLimit);
+        table.getLayoutManager().onRequestPlayerAction(player, allowedActions, timeToAct, this.totalPot, fixedLimit);
+    },
+    handleRebuyOffer : function(tableId, playerId, rebuyCost, chipsForRebuy, timeToAct) {
+        var table = this.tables.get(tableId);
+        var player = table.getPlayerById(playerId);
+        table.getLayoutManager().onRequestRebuy(player, rebuyCost, chipsForRebuy, timeToAct);
+    },
+    hideRebuyButtons : function(tableId, playerId) {
+        console.log("Getting table " + tableId);
+        var table = this.tables.get(tableId);
+        var player = table.getPlayerById(playerId);
+        console.log("Player " + player);
+        table.getLayoutManager().hideRebuyButtons(player);
+    },
+    handleAddOnOffer : function(tableId, playerId, addOnCost, chipsForAddOn) {
+        var table = this.tables.get(tableId);
+        var player = table.getPlayerById(playerId);
+        table.getLayoutManager().onRequestAddOn(player, addOnCost, chipsForAddOn);
+    },
+    handleAddOnPeriodClosed : function(tableId, playerId) {
+        var table = this.tables.get(tableId);
+        var player = table.getPlayerById(playerId);
+        table.getLayoutManager().hideAddOnButton(player);
+    },
+    hideAddOnButton : function(tableId, playerId) {
+        var table = this.tables.get(tableId);
+        var player = table.getPlayerById(playerId);
+        table.getLayoutManager().hideAddOnButton(player);
+    },
+    handleRebuyPerformed : function(tableId, playerId, addOnCost, chipsForAddOn) {
+        var table = this.tables.get(tableId);
+        var player = table.getPlayerById(playerId);
+        table.getLayoutManager().onRebuyPerformed(player);
     },
     updateTotalPot : function(tableId,amount){
         var table = this.tables.get(tableId);
@@ -344,14 +376,13 @@ Poker.TableManager = Class.extend({
 
     notifyWaitingToStartBreak : function() {
         var dialogManager = Poker.AppCtx.getDialogManager();
-        dialogManager.displayGenericDialog({header:"Message",
-            message:"Break is about to start, waiting for other tables to finish."});
+        dialogManager.displayGenericDialog({ translationKey : "break-is-starting"});
     },
     /**
-     *
      * @param {Number} tableId
      * @param {com.cubeia.games.poker.io.protocol.BlindsLevel} newBlinds
      * @param {Number} secondsToNextLevel
+     * @param {com.cubeia.games.poker.io.protocol.BetStrategyEnum} betStrategy
      */
     notifyGameStateUpdate : function(tableId, newBlinds, secondsToNextLevel,betStrategy) {
         console.log("Seconds to next level: " + secondsToNextLevel);
@@ -364,15 +395,17 @@ Poker.TableManager = Class.extend({
         console.log("Seconds to next level: " + secondsToNextLevel);
         if (newBlinds.isBreak) {
             var dialogManager = Poker.AppCtx.getDialogManager();
-            dialogManager.displayGenericDialog({header:"Message",
-                message:"We are now on a break. Game will resume in " + secondsToNextLevel + " seconds."});
+            dialogManager.displayGenericDialog({
+                header: i18n.t("dialogs.on-break.header"),
+                message: i18n.t("dialogs.on-break.message", {sprintf : [secondsToNextLevel]})
+            });
         }
         var table = this.getTable(tableId);
         table.getLayoutManager().onBlindsLevel(newBlinds, secondsToNextLevel);
     },
     notifyTournamentDestroyed : function(tableId) {
         var dialogManager = Poker.AppCtx.getDialogManager();
-        dialogManager.displayGenericDialog({header:"Message", message:"This tournament is now closed."});
+        dialogManager.displayGenericDialog({translationKey : "tournament-closed"});
         this.tables.get(tableId).tournamentClosed = true;
     },
     bettingRoundComplete : function(tableId) {

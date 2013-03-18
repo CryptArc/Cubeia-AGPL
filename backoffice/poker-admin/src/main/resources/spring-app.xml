@@ -57,6 +57,7 @@
 
     <bean id="networkClient" class="com.cubeia.games.poker.admin.network.CubeiaNetworkClient">
         <property name="walletClient" ref="walletClient" />
+        <property name="operatorService" ref="operatorClient" />
     </bean>
 
     <!-- DataSource -->

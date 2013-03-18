@@ -416,6 +416,12 @@ public class PokerState implements Serializable, IPokerState {
         PokerPlayer player = pokerContext.getPlayer(playerId);
         if (player != null) {
             player.addNotInHandAmount(chipsAdded);
+            log.debug("Checking if player is in hand.");
+            if (!isPlayerInHand(playerId)) {
+                log.debug("Not in hand, committing balance.");
+                player.commitBalanceNotInHand(Long.MAX_VALUE);
+            }
+            serverAdapter.notifyPlayerBalance(player);
         } else {
             log.error("No player with id " + playerId + " found at this table. Players: " + pokerContext.getPlayerMap().values());
         }
@@ -430,11 +436,22 @@ public class PokerState implements Serializable, IPokerState {
     }
 
     public void handleRebuyResponse(int playerId, boolean answer) {
-        serverAdapter.sendRebuyResponseToTournament(playerId, answer);
+        serverAdapter.sendRebuyResponseToTournament(playerId, answer, pokerContext.getPlayer(playerId).getStartingBalance());
     }
 
     public void handleAddOnRequest(int playerId) {
         serverAdapter.sendAddOnRequestToTournament(playerId);
     }
 
+    public void notifyPlayerPerformedRebuy(int playerId) {
+        serverAdapter.notifyRebuyPerformed(playerId);
+    }
+
+    public void notifyPlayerPerformedAddOn(int playerId) {
+        serverAdapter.notifyAddOnPerformed(playerId);
+    }
+
+    public void notifyAddOnPeriodClosed() {
+        serverAdapter.notifyAddOnPeriodClosed();
+    }
 }

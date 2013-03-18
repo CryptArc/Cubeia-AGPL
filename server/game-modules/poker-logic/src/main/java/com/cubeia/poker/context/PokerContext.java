@@ -89,7 +89,7 @@ public class PokerContext implements Serializable {
     /**
      * Maps seat id to players, but only contains players who participate in the current hand.
      * The definition of "participates in current hand" is: He was not sitting out when the hand started.
-     *                                                      If the player folds during the hand, he remains in this map.
+     *                                                      If a player folds during the hand, he remains in this map.
      */
     private SortedMap<Integer, PokerPlayer> currentHandSeatingMap = new TreeMap<Integer, PokerPlayer>();
 
@@ -225,7 +225,7 @@ public class PokerContext implements Serializable {
 
     private void saveStartingBalances() {
         for (PokerPlayer p : playerMap.values()) {
-            p.setStartingBalance(p.getBalance());
+            p.saveStartingBalance();
         }
     }
 

@@ -14,19 +14,32 @@ Poker.PokerPacketHandler = Class.extend({
         this.tableManager = Poker.AppCtx.getTableManager();
     },
     handleRequestAction : function(requestAction) {
-
         this.tableManager.updateTotalPot(this.tableId,requestAction.currentPotSize);
-
         Poker.PokerSequence.setSequence(this.tableId,requestAction.seq);
-
         var acts = Poker.ActionUtils.getPokerActions(requestAction.allowedActions);
-
-        this.tableManager.handleRequestPlayerAction(
-            this.tableId,
-            requestAction.player,
-            acts,
-            requestAction.timeToAct);
-
+        this.tableManager.handleRequestPlayerAction(this.tableId, requestAction.player, acts, requestAction.timeToAct);
+    },
+    /**
+     * @param rebuyOffer {RebuyOffer}
+     * @param playerId {int}
+     */
+    handleRebuyOffer : function(rebuyOffer, playerId) {
+        console.log("Player " + playerId + " was offered a rebuy.");
+        this.tableManager.handleRebuyOffer(this.tableId, playerId, rebuyOffer.cost, rebuyOffer.cost, 15000); // TODO: Un-hard-code
+    },
+    handleAddOnOffer : function(addOnOffer, playerId) {
+        console.log("Player " + playerId + " was offered an add-on.");
+        this.tableManager.handleAddOnOffer(this.tableId, playerId, addOnOffer.cost, addOnOffer.chips);
+    },
+    handleAddOnPeriodClosed : function(playerId) {
+        this.tableManager.handleAddOnPeriodClosed(this.tableId, playerId);
+    },
+    handleRebuyPerformed : function(playerId) {
+        console.log("Player " + playerId + " performed a rebuy.");
+        this.tableManager.handleRebuyPerformed(this.tableId, playerId);
+    },
+    handleAddOnPerformed : function(playerId) {
+        console.log("Player " + playerId + " performed an add-on.");
     },
     handlePlayerBalance : function(packet) {
         this.tableManager.updatePlayerBalance(this.tableId,

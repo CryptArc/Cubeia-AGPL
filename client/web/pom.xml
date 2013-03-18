@@ -204,7 +204,7 @@
                         <source>${js.dir}/base/ui/animation/Transform.js</source>
                         <source>${js.dir}/base/ui/animation/TransformAnimation.js</source>
                         <source>${js.dir}/base/ui/animation/CSSClassAnimation.js</source>
-                        <source>${js.dir}/lib/mustache.js</source>
+                        <source>${js.dir}/lib/handlebars.js</source>
                         <source>${js.dir}/base/ui/TemplateManager.js</source>
                         <source>${js.dir}/base/Action.js</source>
                         <source>${js.dir}/base/ui/Seat.js</source>

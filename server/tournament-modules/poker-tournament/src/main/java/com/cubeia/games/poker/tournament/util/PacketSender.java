@@ -26,7 +26,6 @@ import com.google.inject.assistedinject.Assisted;
 import org.apache.log4j.Logger;
 
 import javax.inject.Inject;
-import java.io.IOException;
 
 public class PacketSender {
 

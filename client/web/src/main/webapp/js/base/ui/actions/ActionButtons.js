@@ -13,9 +13,8 @@ Poker.ActionButtons = Poker.AbstractTableButtons.extend({
     fixedBetActionButton : null,
     fixedRaiseActionButton : null,
 
-    init : function(view,actionCallback, raiseCallback, betCallback, amountCallback, cancelCallback) {
+    init : function(view, actionCallback, raiseCallback, betCallback, amountCallback, cancelCallback) {
         this._super(view,actionCallback);
-        var self = this;
         this._addActionButton($(".action-bet",view),Poker.ActionType.BET,betCallback ,false);
         this._addActionButton($(".action-raise",view),Poker.ActionType.RAISE,raiseCallback,false);
 
@@ -24,6 +23,10 @@ Poker.ActionButtons = Poker.AbstractTableButtons.extend({
         this._addActionButton($(".action-call", view), Poker.ActionType.CALL, actionCallback, true);
         this._addActionButton($(".action-big-blind", view), Poker.ActionType.BIG_BLIND, actionCallback, true);
         this._addActionButton($(".action-small-blind", view), Poker.ActionType.SMALL_BLIND, actionCallback, true);
+
+        this._addActionButton($(".action-rebuy", view), Poker.ActionType.REBUY, actionCallback, true);
+        this._addActionButton($(".action-decline-rebuy", view), Poker.ActionType.DECLINE_REBUY, actionCallback, true);
+        this._addActionButton($(".action-add-on", view), Poker.ActionType.ADD_ON, actionCallback, true);
 
 
         //we can't put it in actionButtons since it's a duplicate action
@@ -49,8 +52,13 @@ Poker.ActionButtons = Poker.AbstractTableButtons.extend({
         this.buttons.put(actionType.id, button);
     },
     hideAll : function() {
+        console.log("Hiding all buttons.")
         var buttons = this.buttons.values();
-        for(var a in buttons) {
+        for (var a in buttons) {
+            if (buttons[a].actionType === Poker.ActionType.ADD_ON) {
+                // Not hiding add-on button because it should be visible during the entire break.
+                continue;
+            }
             buttons[a].el.hide();
         }
         this.cancelBetActionButton.hide();
@@ -59,28 +67,45 @@ Poker.ActionButtons = Poker.AbstractTableButtons.extend({
         this.fixedBetActionButton.hide();
         this.fixedRaiseActionButton.hide();
     },
-
     showButtons : function(actions, mainPot, fixedLimit) {
-        for (var a in actions){
+        for (var a in actions) {
             var act = actions[a];
             console.log("Action:");
             console.log(act);
-            if(fixedLimit==true && act.type.id == Poker.ActionType.BET.id) {
-                if(act.minAmount>0) {
+            if (fixedLimit && act.type.id == Poker.ActionType.BET.id) {
+                if (act.minAmount > 0) {
                     this.fixedBetActionButton.setAmount(act.minAmount);
                 }
                 this.fixedBetActionButton.show();
-            } else if(fixedLimit==true && act.type.id == Poker.ActionType.RAISE.id) {
-                if(act.minAmount>0) {
+            } else if (fixedLimit && act.type.id == Poker.ActionType.RAISE.id) {
+                if (act.minAmount > 0) {
                     this.fixedRaiseActionButton.setAmount(act.minAmount,act.maxAmount,mainPot);
                 }
                 this.fixedRaiseActionButton.show();
             } else {
-                if(act.minAmount>0) {
+                if (act.minAmount > 0) {
                     this.getButton(act.type).setAmount(act.minAmount,act.maxAmount,mainPot);
                 }
                 this.show(act.type);
             }
         }
+    },
+    showRebuyButtons: function() {
+        console.log("Showing rebuy buttons");
+        this.show(Poker.ActionType.DECLINE_REBUY);
+        this.show(Poker.ActionType.REBUY);
+    },
+    hideRebuyButtons : function() {
+        console.log("Hiding rebuy buttons");
+        this.hide(Poker.ActionType.DECLINE_REBUY);
+        this.hide(Poker.ActionType.REBUY);
+    },
+    showAddOnButton: function() {
+        console.log("Showing add-on button");
+        this.show(Poker.ActionType.ADD_ON);
+    },
+    hideAddOnButton : function() {
+        console.log("Hiding add-on button");
+        this.hide(Poker.ActionType.ADD_ON);
     }
 });

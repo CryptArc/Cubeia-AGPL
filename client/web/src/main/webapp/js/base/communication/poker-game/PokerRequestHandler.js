@@ -39,6 +39,17 @@ Poker.PokerRequestHandler = Class.extend({
             this.sitIn();
         } else if (actionType.id == Poker.ActionType.SIT_OUT.id) {
             this.sitOut();
+        } else if (actionType.id == Poker.ActionType.REBUY.id) {
+            this.sendRebuyResponse(true);
+            console.log("Hiding rebuy buttons for player " + Poker.MyPlayer.id + " table " + this.tableId);
+            this.tableManager.hideRebuyButtons(this.tableId, Poker.MyPlayer.id);
+        } else if (actionType.id == Poker.ActionType.DECLINE_REBUY.id) {
+            this.sendRebuyResponse(false);
+            console.log("Hiding rebuy buttons for player " + Poker.MyPlayer.id + " table " + this.tableId);
+            this.tableManager.hideRebuyButtons(this.tableId, Poker.MyPlayer.id);
+        } else if (actionType.id == Poker.ActionType.ADD_ON.id) {
+            this.sendAddOnRequest();
+            this.tableManager.hideAddOnButton(this.tableId, Poker.MyPlayer.id);
         } else {
             this.sendAction(Poker.ActionUtils.getActionEnumType(actionType), amount, 0);
         }
@@ -76,5 +87,13 @@ Poker.PokerRequestHandler = Class.extend({
         var sitIn = new com.cubeia.games.poker.io.protocol.PlayerSitinRequest();
         sitIn.player = Poker.MyPlayer.id;
         this.sendGameTransportPacket(sitIn);
+    },
+    sendRebuyResponse : function(answer) {
+        var rebuy = new com.cubeia.games.poker.io.protocol.RebuyResponse();
+        rebuy.answer = answer;
+        this.sendGameTransportPacket(rebuy);
+    },
+    sendAddOnRequest : function() {
+        this.sendGameTransportPacket(new com.cubeia.games.poker.io.protocol.PerformAddOn());
     }
 });

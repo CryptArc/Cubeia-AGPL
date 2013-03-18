@@ -29,7 +29,7 @@ Poker.Card = Class.extend({
      */
     render : function () {
         var t = this.getTemplate();
-        var output = Mustache.render(t, {domId:this.id + "-" + this.tableId, cardString:this.cardString});
+        var output = this.templateManager.render(t, {domId:this.id + "-" + this.tableId, cardString:this.cardString});
         return output;
     },
     /**
@@ -56,7 +56,7 @@ Poker.Card = Class.extend({
       return this.getJQElement().get(0);
     },
     getTemplate:function () {
-        return this.templateManager.getTemplate("playerCardTemplate");
+        return "playerCardTemplate";
     },
     getCardDivId:function () {
         return "playerCard-" + this.id + "-" + this.tableId;

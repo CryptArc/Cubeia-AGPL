@@ -75,6 +75,10 @@ public class BlindsStructure implements Serializable {
         return id;
     }
 
+    public void insertLevel(int index, Level level) {
+        blindsLevels.add(index, level);
+    }
+
     public void setId(int id) {
         this.id = id;
     }

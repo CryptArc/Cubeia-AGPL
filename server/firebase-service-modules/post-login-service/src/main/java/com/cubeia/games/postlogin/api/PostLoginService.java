@@ -44,19 +44,17 @@ public class PostLoginService implements PostLoginProcessor, Service, RoutableSe
 
     @Override
     public void clientDisconnected(int playerId) {
-        log.debug("Player " + playerId + " disconnected.");
+        log.info("Player " + playerId + " disconnected.");
         unregisterFromSitAndGoTournaments(playerId);
         invalidatePlayerSession(playerId);
     }
 
     @Override
-    public void clientLoggedIn(int playerId, String screenName) {
-
-    }
+    public void clientLoggedIn(int playerId, String screenName) {}
 
     @Override
     public void clientLoggedOut(int playerId) {
-        log.debug("Player " + playerId + " logged out.");
+        log.info("Player " + playerId + " logged out.");
         unregisterFromSitAndGoTournaments(playerId);
         invalidatePlayerSession(playerId);
     }

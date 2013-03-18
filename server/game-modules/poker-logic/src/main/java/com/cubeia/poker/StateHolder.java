@@ -33,7 +33,7 @@ public class StateHolder implements StateChanger, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-	private PokerGameSTM currentState;
+    private PokerGameSTM currentState;
 
     private static final Logger log = LoggerFactory.getLogger(StateHolder.class);
 

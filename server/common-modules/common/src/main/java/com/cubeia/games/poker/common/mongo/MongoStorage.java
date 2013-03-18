@@ -54,6 +54,9 @@ public class MongoStorage {
 //            datastore.ensureIndexes();
         }
     }
+    public Datastore getDatastore() {
+        return this.datastore;
+    }
 
     public DBCollection getCollection(String name)
     {

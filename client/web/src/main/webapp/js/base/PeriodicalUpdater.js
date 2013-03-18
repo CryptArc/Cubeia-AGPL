@@ -14,7 +14,7 @@ Poker.PeriodicalUpdater = Class.extend({
         this.time = time
     },
     start : function() {
-        if(this.running==true) {
+        if (this.running==true) {
             return;
         }
         this.running = true;

@@ -57,14 +57,18 @@ Poker.ViewManager = Class.extend({
 
     },
     toggleMultiTableView : function() {
+
         if(this.multiTableView == null) {
             var tableViews = this.getTableViews();
             this.removeTableViews();
             this.multiTableView = new Poker.MultiTableView();
             this.multiTableView.addTableViews(tableViews);
+
             this.activeView = null;
             this.addView(this.multiTableView);
             this.activateView(this.multiTableView);
+
+
         } else {
             var views = this.multiTableView.getTableViews();
             this.closeMultiTableView();
@@ -76,6 +80,7 @@ Poker.ViewManager = Class.extend({
             if(views.length>0) {
                 this.activateView(views[0]);
             }
+
         }
 
         this.setViewDimensions();
@@ -145,7 +150,7 @@ Poker.ViewManager = Class.extend({
         $(".view-container").hide();
         $("#toolbar").hide();
         Poker.AppCtx.getDialogManager().displayGenericDialog(
-            { header : "You have been logged out", message : "You have logged in from another computer",
+            { translationKey : "force-logged-out",
                 okButtonText:"Reload" }, function(){
                 document.location.reload();
             });

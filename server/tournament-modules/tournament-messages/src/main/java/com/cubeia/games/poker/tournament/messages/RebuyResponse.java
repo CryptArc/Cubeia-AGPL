@@ -22,12 +22,18 @@ import java.io.Serializable;
 public class RebuyResponse implements Serializable {
 
     private final int playerId;
+    private final long chipsAtHandFinish;
     private final boolean answer;
     private int tableId;
 
-    public RebuyResponse(int tableId, int playerId, boolean answer) {
+    /**
+     * @param chipsAtHandFinish the amount of chips when the last hand finished (if no hands are finished, pass the starting stack)
+     * @param answer true if player wants to perform a rebuy
+     */
+    public RebuyResponse(int tableId, int playerId, long chipsAtHandFinish, boolean answer) {
         this.tableId = tableId;
         this.playerId = playerId;
+        this.chipsAtHandFinish = chipsAtHandFinish;
         this.answer = answer;
     }
 
@@ -41,5 +47,9 @@ public class RebuyResponse implements Serializable {
 
     public int getTableId() {
         return tableId;
+    }
+
+    public long getChipsAtHandFinish() {
+        return chipsAtHandFinish;
     }
 }

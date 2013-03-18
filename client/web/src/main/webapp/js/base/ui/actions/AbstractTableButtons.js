@@ -14,7 +14,7 @@ Poker.AbstractTableButtons = Class.extend({
     },
     show : function(actionType) {
         var button = this.buttons.get(actionType.id);
-        if(button!=null) {
+        if (button!=null) {
             button.el.show();
         } else {
             console.log("Trying to show table button for " + actionType.id + " that doesn't exist");

@@ -9,7 +9,6 @@ Poker.TableLayoutManager = Class.extend({
     tableViewContainer : null,
     capacity : 10,
     seatTemplate : null,
-    emptySeatTemplate : null,
     templateManager : null,
     cardElements : null,
     tableInfoElement : null,
@@ -52,8 +51,7 @@ Poker.TableLayoutManager = Class.extend({
         this.tableViewContainer = tableViewContainer;
         this.seats = new Poker.Map();
         this.animationManager = new Poker.AnimationManager();
-        var tableViewTemplate = templateManager.getTemplate("tableViewTemplate");
-        var tableViewHtml = Mustache.render(tableViewTemplate,{tableId : tableId});
+        var tableViewHtml = templateManager.render("tableViewTemplate",{tableId : tableId});
         this.viewContainerOffsetTop = tableViewContainer.offset().top;
         tableViewContainer.append(tableViewHtml);
         var viewId = "#tableView-"+tableId;
@@ -72,7 +70,6 @@ Poker.TableLayoutManager = Class.extend({
         this.templateManager = templateManager;
         this.capacity = capacity || this.capacity;
         this.seatTemplate = $("#seatTemplate").html();
-        this.emptySeatTemplate = templateManager.getTemplate("emptySeatTemplate");
         this.totalPotContainer = this.tableView.find(".total-pot").hide();
 
         for(var i = 0; i<this.capacity; i++){
@@ -95,12 +92,12 @@ Poker.TableLayoutManager = Class.extend({
     },
     handleAction : function(actionType,amount) {
         var self = this;
-        if(actionType.id == Poker.ActionType.SIT_IN.id) {
+        if (actionType.id == Poker.ActionType.SIT_IN.id) {
             this.handleSitIn();
-        } else if(actionType.id == Poker.ActionType.LEAVE.id && this.isConfirmLeave()) {
+        } else if (actionType.id == Poker.ActionType.LEAVE.id && this.isConfirmLeave()) {
 
             Poker.AppCtx.getDialogManager().displayGenericDialog({
-                header : "Leave table", message: "Are you sure you want to leave?",
+                translationKey : "leave-table",
                 displayCancelButton : true
             }, function(){
                 new Poker.PokerRequestHandler(self.tableId).onMyPlayerAction(actionType,amount);
@@ -138,7 +135,7 @@ Poker.TableLayoutManager = Class.extend({
     addEmptySeatContent : function(seatId,pos,active) {
         console.log("addEmptySeatContent seatId="+seatId);
         var seat = $("#seat"+seatId+"-"+this.tableId);
-        seat.addClass("seat-empty").html(Mustache.render(this.emptySeatTemplate,{}));
+        seat.addClass("seat-empty").html(this.templateManager.render("emptySeatTemplate",{}));
         seat.removeClass("seat-sit-out").removeClass("seat-folded");
         if (typeof(pos) != "undefined" && pos != -1) {
             seat.addClass("seat-pos-"+pos);
@@ -217,8 +214,8 @@ Poker.TableLayoutManager = Class.extend({
      */
     getSeatByPlayerId : function(id) {
         var seats = this.seats.values();
-        for(var i = 0; i<seats.length; i++) {
-            if(seats[i].player.id == id) {
+        for (var i = 0; i < seats.length; i++) {
+            if (seats[i].player.id == id) {
                 return seats[i];
             }
         }
@@ -265,6 +262,7 @@ Poker.TableLayoutManager = Class.extend({
             this.myActionsManager.setBigBlind(Math.floor(parseFloat(level.bigBlind)*100));
             if (secondsToNextLevel >= 0){
                 this.clock.sync(secondsToNextLevel);
+                this.tableInfoElement.find(".time-to-next-level").show();
             } else {
                 this.tableInfoElement.find(".time-to-next-level").hide();
             }
@@ -272,7 +270,7 @@ Poker.TableLayoutManager = Class.extend({
     },
     onPlayerActed : function(player,actionType,amount) {
         var seat = this.getSeatByPlayerId(player.id);
-        if(seat==null){
+        if (seat == null) {
             throw "unable to find seat for player " + player.id;
         }
         //make icons gray and hide the action text
@@ -353,8 +351,7 @@ Poker.TableLayoutManager = Class.extend({
             if(potElement.length>0) {
                 potElement.html(Poker.Utils.formatCurrency(pots[i].amount));
             } else {
-                var t = this.templateManager.getTemplate("mainPotTemplate");
-                this.mainPotContainer.append(Mustache.render(t,
+                this.mainPotContainer.append(this.templateManager.render("mainPotTemplate",
                     { potId: pots[i].id, amount : Poker.Utils.formatCurrency(pots[i].amount) }));
             }
 
@@ -372,6 +369,30 @@ Poker.TableLayoutManager = Class.extend({
         }
 
         seat.activateSeat(allowedActions,timeToAct,mainPot,fixedLimit);
+    },
+    onRequestRebuy : function(player, rebuyCost, chipsForRebuy, timeToAct){
+//        var seats = this.seats.values();
+//        for (var s = 0; s < seats.length; s++) {
+//            seats[s].inactivateSeat();
+//        }
+        var seat = this.getSeatByPlayerId(player.id);
+        seat.rebuyRequested(rebuyCost, chipsForRebuy, timeToAct);
+    },
+    onRequestAddOn : function(player, addOnCost, chipsForAddOn){
+        var seat = this.getSeatByPlayerId(player.id);
+        seat.addOnRequested(addOnCost, chipsForAddOn);
+    },
+    onRebuyPerformed : function(player, addOnCost, chipsForAddOn){
+        var seat = this.getSeatByPlayerId(player.id);
+        seat.rebuyPerformed();
+    },
+    hideRebuyButtons : function(player) {
+        var seat = this.getSeatByPlayerId(player.id);
+        seat.hideRebuyButtons();
+    },
+    hideAddOnButton : function(player) {
+        var seat = this.getSeatByPlayerId(player.id);
+        seat.hideAddOnButton();
     },
     onLeaveTableSuccess : function() {
         $(this.tableView).hide();
