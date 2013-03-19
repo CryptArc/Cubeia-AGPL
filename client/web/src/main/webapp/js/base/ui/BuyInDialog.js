@@ -20,33 +20,33 @@ Poker.BuyInDialog = Class.extend({
         };
         var self = this;
         this.render(data,function(){
-            var buyIn =  self.dialog.find(".buyin-amount").val();
+            var buyIn =  self.dialog.getElement().find(".buyin-amount").val();
             if (self.validateAmount(buyIn)) {
                 new Poker.PokerRequestHandler(data.tableId).buyIn(buyIn)
             }
             return false; //don't close the dialog, need to wait for response
         });
-        this.dialog.find(".buyin-amount").val(data.maxAmount);
+        this.dialog.getElement().find(".buyin-amount").val(data.maxAmount);
 
     },
     render : function(data, okFunction) {
         var self = this;
         var template = this.templateManager.getRenderTemplate(this.getTemplateId());
         $("#buyInDialog").html(template.render(data));
-
-        var dialog = this.dialogManager.displayDialog(
-            "buyInDialog",
-            function(dialogElement) {
-                dialogElement.find(".buyin-amount").blur();
+        var dialog = new Poker.Dialog($("body"), $("#buyInDialog"));
+        this.dialogManager.display(
+            dialog,
+            function() {
+                dialog.getElement().find(".buyin-amount").blur();
                return okFunction();
             },
-            function(dialogElement) {
-                dialogElement.find(".buyin-error").hide();
+            function() {
+                dialog.getElement().find(".buyin-error").hide();
 
             });
-            dialog.find(".buyin-amount").bind("keyup",function(e){
+        dialog.getElement().find(".buyin-amount").bind("keyup",function(e){
             if(e.keyCode == 13) {
-                dialog.find(".dialog-ok-button").click();
+                dialog.getElement().find(".dialog-ok-button").click();
             }
         }).val(data.minAmount).select();
         this.dialog = dialog;

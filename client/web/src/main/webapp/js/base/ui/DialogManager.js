@@ -86,6 +86,31 @@ Poker.DialogManager = Class.extend({
             }, null);
         }
     },
+
+    display : function(dialog,okCallback,closeCallback) {
+        if (closeCallback) {
+            this.currentCloseCallback = closeCallback;
+        }
+
+        var targetFontSize =  Math.round(90* $(window).width()/1024);
+        if (targetFontSize > 125) {
+            targetFontSize = 125;
+        }
+
+        var dialogElement = dialog.getElement();
+        dialogElement.css({fontSize : targetFontSize + "%"});
+        dialogElement.find(".dialog-cancel-button").touchSafeClick(function(){
+            dialog.close();
+        });
+        dialogElement.find(".dialog-ok-button").touchSafeClick(function() {
+            if (okCallback() || !okCallback) {
+                dialog.close();
+            }
+        });
+
+        this.currentDialog = dialog;
+    },
+
     /**
      * Display a dialog by passing a DOM element id you want to be placed in
      * the dialog, if a dialog is open it will be queued and showed when
@@ -103,32 +128,10 @@ Poker.DialogManager = Class.extend({
 
         var self = this;
         var dialog = new Poker.Dialog($("body"), $("#"+dialogId));
-
-        if (closeCallback) {
-            this.currentCloseCallback = closeCallback;
-        }
-
-        var targetFontSize =  Math.round(90* $(window).width()/1024);
-        if (targetFontSize > 125) {
-            targetFontSize = 125;
-        }
-
-        var dialogElement = dialog.getElement();
-        dialogElement.css({fontSize : targetFontSize + "%"});
-        dialogElement.find(".dialog-cancel-button").touchSafeClick(function(){
-            self.close();
-        });
-        dialogElement.find(".dialog-ok-button").touchSafeClick(function() {
-            if (okCallback(dialogElement) || !okCallback) {
-                self.close();
-            }
-        });
-
-        this.currentDialog = dialog;
+        this.display(dialog,okCallback,closeCallback);
         return dialog;
-
     },
-    close: function() {
+    close : function() {
         if(this.currentDialog!=null) {
             this.currentDialog.close();
         }
