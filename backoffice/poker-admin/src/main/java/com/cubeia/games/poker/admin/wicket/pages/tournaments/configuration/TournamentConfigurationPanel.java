@@ -63,9 +63,7 @@ public class TournamentConfigurationPanel extends Panel {
         add(new TextField<BigDecimal>("buyIn", new PropertyModel(model, "buyIn")));
         add(new TextField<BigDecimal>("fee", new PropertyModel(model, "fee")));
         add(new TextField<Long>("startingChips", new PropertyModel(model, "startingChips")).add(RangeValidator.minimum(1L)));
-        add(new DropDownChoice<BetStrategyType>("betStrategy", new PropertyModel(model, "betStrategy"), asList(BetStrategyType.values()),
-                                                                                         renderer("name")));
-
+        add(new DropDownChoice<BetStrategyType>("betStrategy", model("betStrategy"), asList(BetStrategyType.values()), renderer("name")));
         add(new DropDownChoice<String>("currency", model("currency"), networkClient.getCurrencies(), new ChoiceRenderer<String>()));
         add(new DropDownChoice<BlindsStructure>("blindsStructure", model("blindsStructure"), adminDAO.getBlindsStructures(), renderer("name")));
         add(new DropDownChoice<PayoutStructure>("payoutStructure", model("payoutStructure"), adminDAO.getPayoutStructures(), renderer("name")));

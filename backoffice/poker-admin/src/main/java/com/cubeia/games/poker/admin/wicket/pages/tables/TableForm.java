@@ -6,7 +6,6 @@ import com.cubeia.games.poker.entity.TableConfigTemplate;
 import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.timing.TimingProfile;
-import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -18,7 +17,6 @@ import org.apache.wicket.markup.html.form.validation.AbstractFormValidator;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,22 +35,15 @@ public abstract class TableForm extends Panel {
     @SpringBean
     private NetworkClient networkClient;
 
-    private Integer maxBuyIn = null;
-
     private static final Logger logger = LoggerFactory.getLogger(TableForm.class);
 
     public TableForm(String id, TableConfigTemplate tableTemplate) {
         super(id);
-        maxBuyIn = tableTemplate.getMaxBuyIn();
-        
         Form<TableConfigTemplate> tableForm = new Form<TableConfigTemplate>("tableForm",
                 new CompoundPropertyModel<TableConfigTemplate>(tableTemplate)){
             @Override
             protected void onSubmit() {
                 TableConfigTemplate config = getModelObject();
-                if (maxBuyIn != null) {
-                    config.setMaxBuyIn(maxBuyIn); //since int can't be an optional field
-                }
                 TableForm.this.onSubmit(config);
             }
         };
@@ -60,8 +51,8 @@ public abstract class TableForm extends Panel {
         final RequiredTextField<Integer> smallBlindField = new RequiredTextField<Integer>("smallBlind");
         final RequiredTextField<Integer> bigBlindField = new RequiredTextField<Integer>("bigBlind");
         final DropDownChoice<BetStrategyType> betStrategy = new DropDownChoice<BetStrategyType>("betStrategy", asList(BetStrategyType.values()), choiceRenderer());
-        final RequiredTextField<Integer> minBuyIn = new RequiredTextField<Integer>("minBuyIn");
-        final TextField<Integer> maxBuyIn = new TextField<Integer>("maxBuyIn", new PropertyModel<Integer>(this, "maxBuyIn"));
+        final FormComponent<Integer> minBuyIn = new RequiredTextField<Integer>("minBuyIn").setRequired(true);
+        final FormComponent<Integer> maxBuyIn = new RequiredTextField<Integer>("maxBuyIn").setRequired(true);
 
         tableForm.add(new RequiredTextField<String>("name"));
         tableForm.add(anteField);
@@ -81,7 +72,7 @@ public abstract class TableForm extends Panel {
 
             @Override
             public FormComponent<?>[] getDependentFormComponents() {
-                return new FormComponent<?>[0];
+                return new FormComponent[] { anteField, smallBlindField, bigBlindField, minBuyIn, maxBuyIn};
             }
 
             @Override
@@ -101,18 +92,16 @@ public abstract class TableForm extends Panel {
                         form.error("Blinds must be defined if ante is 0.", Collections.<String, Object>emptyMap());
                     }
                 }
-                if (smallBlind != 0 && smallBlind >= bigBlind) {
-                    form.error("Small blind must be less than big blind.", Collections.<String, Object>emptyMap());
+                if (bigBlind < smallBlind) {
+                    form.error("Big blind must not be less than small blind.", Collections.<String, Object>emptyMap());
                 }
             }
 
             private void validateBuyIns(Form<?> form) {
-                Integer minBuyInValue = minBuyIn.getConvertedInput();
-                Integer maxBuyInValue = maxBuyIn.getConvertedInput();
-                if (betStrategy.getModelObject() != BetStrategyType.FIXED_LIMIT && maxBuyInValue == null) {
-                    form.error("Max Buy-in must be set for NL and PL.", Collections.<String, Object>emptyMap());
-                }
-                if (maxBuyInValue != null && minBuyInValue != null && maxBuyInValue < minBuyInValue) {
+                int minBuyInValue = minBuyIn.getConvertedInput();
+                int maxBuyInValue = maxBuyIn.getConvertedInput();
+                logger.debug("min: " + minBuyInValue + " max : " + maxBuyInValue);
+                if (maxBuyInValue < minBuyInValue) {
                     form.error("Max Buy-in must not be less than Min Buy-in.", Collections.<String, Object>emptyMap());
                 }
             }
