@@ -8,8 +8,11 @@
     position: relative;
     height: auto;
     font-size:120%;
-    max-width: 400px;
+
     margin: 0 auto;
+}
+.lobby-list {
+    font-size: 200%;
 }
 .logo-container {
     width: 100%;
@@ -64,6 +67,7 @@
 .lobby-list .logo-container {
     width:90%;
     padding:0% 5%;
+
 }
 .filter-group {
 
@@ -89,9 +93,14 @@
     padding:3%;
     display: block;
     cursor: pointer;
+    &.hidden {
+        display: none;
+    }
 }
 .table-filter {
-    display:none;
+    &.hidden {
+        display: none;
+    }
 }
 #tableListContainer {
     padding-top:4%;

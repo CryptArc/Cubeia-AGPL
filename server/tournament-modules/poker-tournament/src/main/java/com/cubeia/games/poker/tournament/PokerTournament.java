@@ -408,7 +408,10 @@ public class PokerTournament implements TableNotifier, Serializable {
                 setTournamentStatus(PREPARING_BREAK);
                 pokerState.prepareBreak(state.getTables());
                 pokerState.addTablesReadyForBreak(tablesWithLonelyPlayer());
-                notifyWaitingForOtherTablesToFinishBeforeBreak(tableId);
+                pokerState.addTableReadyForBreak(tableId);
+                if (!allTablesAreReadyForBreak()) {
+                    notifyWaitingForOtherTablesToFinishBeforeBreak(tableId);
+                }
             }
 
             if (pokerState.getStatus() == PREPARING_BREAK) {
@@ -447,7 +450,7 @@ public class PokerTournament implements TableNotifier, Serializable {
     private BlindsWithDeadline createBlindsWithDeadline() {
         log.debug("Creating blinds with deadline: " + pokerState.getNextLevelStartTime());
         Level level = pokerState.getCurrentBlindsLevel();
-        return new BlindsWithDeadline(level.getSmallBlindAmount(), level.getBigBlindAmount(), level.getAnteAmount(), level.getDurationInMinutes(),
+        return new BlindsWithDeadline(level.getSmallBlindAmount() * 100, level.getBigBlindAmount() * 100, level.getAnteAmount() * 100, level.getDurationInMinutes(),
                 level.isBreak(), pokerState.getNextLevelStartTime().getMillis());
     }
 
@@ -470,7 +473,7 @@ public class PokerTournament implements TableNotifier, Serializable {
     }
 
     private void increaseBlindsIfNeeded(PokerTournamentRoundReport.Level currentBlindsLevel, int tableId) {
-        if (currentBlindsLevel.getBigBlindAmount() < pokerState.getBigBlindAmount()) {
+        if (currentBlindsLevel.getBigBlindAmount() < pokerState.getBigBlindAmountInCents() && !pokerState.getCurrentBlindsLevel().isBreak()) {
             notifyTable(tableId, createBlindsWithDeadline());
         }
     }
@@ -552,13 +555,14 @@ public class PokerTournament implements TableNotifier, Serializable {
             transferMoneyAndCloseSession(pokerState.getPlayerSession(payout.getPlayerId()), payout.getPayoutInCents());
             setPlayerOutInPosition(payout.getPlayerId(), payout.getPosition());
         }
-        sendTournamentOutToPlayers(payouts, instance);
+        sendTournamentOutToPlayers(payouts);
     }
 
     private void transferMoneyAndCloseSession(PlayerSessionId playerSession, long payoutInCents) {
         if (payoutInCents > 0) {
             pokerState.getRebuySupport().notifyInTheMoney(); // If we are in the money, close the rebuy period.
             backend.transfer(createPayoutRequest(payoutInCents, playerSession));
+            pokerState.setPayout(playerSession.playerId, payoutInCents);
         }
         backend.closeTournamentSession(new CloseSessionRequest(playerSession), createTournamentId());
     }
@@ -583,10 +587,10 @@ public class PokerTournament implements TableNotifier, Serializable {
         return pokerState.getStartingChips() * 100;
     }
 
-    private void sendTournamentOutToPlayers(List<ConcretePayout> playersOut, MttInstance instance) {
+    private void sendTournamentOutToPlayers(List<ConcretePayout> playersOut) {
         for (ConcretePayout payout : playersOut) {
             TournamentOut packet = new TournamentOut();
-            packet.position = instance.getState().getRemainingPlayerCount();
+            packet.position = payout.getPosition();
             int playerId = payout.getPlayerId();
             packet.player = playerId;
             log.debug("Telling player " + playerId + " that he finished in position " + packet.position);
@@ -627,7 +631,7 @@ public class PokerTournament implements TableNotifier, Serializable {
         log.debug("Paying winner: " + playerId);
         int payout = pokerState.getPayouts().getPayoutsForPosition(1);
         setPlayerOutInPosition(playerId, 1);
-        sendTournamentOutToPlayers(singletonList(new ConcretePayout(playerId, 1, payout)), instance);
+        sendTournamentOutToPlayers(singletonList(new ConcretePayout(playerId, 1, payout)));
 
         PlayerSessionId playerSession = pokerState.getPlayerSession(playerId);
         transferMoneyAndCloseSession(playerSession, payout);
@@ -885,7 +889,6 @@ public class PokerTournament implements TableNotifier, Serializable {
             historyPersister.playerReRegistered(request.getPlayer().getPlayerId());
         }
         pokerState.invalidatePlayerMap();
-        updatePayouts();
     }
 
     private HistoricPlayer historicPlayer(MttPlayer player, PlayerSessionId sessionId) {
@@ -1126,6 +1129,7 @@ public class PokerTournament implements TableNotifier, Serializable {
             transferFeeToRakeAccount(response.getSessionId());
 
             pokerState.addBuyInToPrizePool();
+            updatePayouts();
             pokerState.addPlayerSession(sessionId);
             pokerState.removePendingRequest(sessionId.playerId);
             historyPersister.playerOpenedSession(sessionId.playerId, sessionId.integrationSessionId);

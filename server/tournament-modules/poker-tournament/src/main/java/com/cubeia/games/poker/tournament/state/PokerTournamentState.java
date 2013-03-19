@@ -20,7 +20,6 @@ package com.cubeia.games.poker.tournament.state;
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.TournamentSessionId;
 import com.cubeia.firebase.api.mtt.model.MttPlayer;
-import com.cubeia.firebase.api.mtt.model.MttPlayerStatus;
 import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.games.poker.common.money.Money;
 import com.cubeia.games.poker.io.protocol.TournamentPlayerList;
@@ -108,6 +107,9 @@ public class PokerTournamentState implements Serializable {
     private DateTime startTime = new DateTime(0);
 
     private int minutesVisibleAfterFinished;
+
+    /** Maps playerId to amount won, in cents. */
+    private Map<Integer, Long> winMap = newHashMap();
 
     // Maps playerId -> MttPlayer. Transient to reduce serialized size.
     private transient Map<Integer, MttPlayer> playerMap;
@@ -211,6 +213,10 @@ public class PokerTournamentState implements Serializable {
         this.currencyCode = currencyCode;
     }
 
+    public void setPayout(int playerId, long payoutInCents) {
+        winMap.put(playerId, payoutInCents);
+    }
+
     public void setRebuySupport(RebuySupport rebuySupport) {
         if (rebuySupport == null) {
             this.rebuySupport = RebuySupport.NO_REBUYS;
@@ -284,8 +290,8 @@ public class PokerTournamentState implements Serializable {
         return getCurrentBlindsLevel().getSmallBlindAmount();
     }
 
-    public int getBigBlindAmount() {
-        return getCurrentBlindsLevel().getBigBlindAmount();
+    public int getBigBlindAmountInCents() {
+        return getCurrentBlindsLevel().getBigBlindAmount() * 100;
     }
 
     public void setBlindsStructure(BlindsStructure blindsStructure) {
@@ -397,7 +403,7 @@ public class PokerTournamentState implements Serializable {
         log.debug("Calculating payouts, minPlayers: " + minPlayers + " registered players: " + registeredPlayersCount);
         long totalPrizePoolAsLong;
         if (registeredPlayersCount < minPlayers) {
-            totalPrizePoolAsLong = buyIn.multiply(BigDecimal.valueOf(registeredPlayersCount)).movePointRight(2).longValue();
+            totalPrizePoolAsLong = buyIn.multiply(BigDecimal.valueOf(minPlayers)).movePointRight(2).longValue();
         } else {
             totalPrizePoolAsLong = prizePool.movePointRight(2).longValue();
         }
@@ -490,9 +496,9 @@ public class PokerTournamentState implements Serializable {
         return tournamentLifeCycle.shouldScheduleRegistrationOpening(getStatus(), now);
     }
 
-    public int getWinningsFor(MttPlayer player) {
-        if (player.getStatus() == MttPlayerStatus.OUT) {
-            return payouts.getPayoutsForPosition(player.getPosition());
+    public long getWinningsFor(MttPlayer player) {
+        if (winMap.containsKey(player.getPlayerId())) {
+            return winMap.get(player.getPlayerId());
         }
         return 0;
     }

@@ -118,7 +118,7 @@ public class TournamentLobby {
             payouts.add(new Payout(i, format(payoutStructure.getPayoutsForPosition(i))));
         }
         payoutInfo.payouts = payouts;
-        payoutInfo.prizePool = pokerState.getPrizePool().intValue();
+        payoutInfo.prizePool = pokerState.getPrizePool().toString();
         return payoutInfo;
     }
 
@@ -134,9 +134,9 @@ public class TournamentLobby {
         List<BlindsLevel> list = newArrayList();
         for (Level level : pokerState.getBlindsStructure().getBlindsLevels()) {
             list.add(new BlindsLevel(
-                    format(level.getSmallBlindAmount()),
-                    format(level.getBigBlindAmount()),
-                    format(level.getAnteAmount()),
+                    "" + level.getSmallBlindAmount(),
+                    "" + level.getBigBlindAmount(),
+                    "" + level.getAnteAmount(),
                     level.isBreak(),
                     level.getDurationInMinutes()));
         }
@@ -194,7 +194,7 @@ public class TournamentLobby {
         return list;
     }
 
-    private int getWinningsFor(int playerId) {
+    private long getWinningsFor(int playerId) {
         return pokerState.getWinningsFor(pokerState.getTournamentPlayer(playerId, state));
     }
 

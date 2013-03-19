@@ -13,19 +13,18 @@
 .main-menu-container {
     z-index: @overlay-z-index+1;
     top: 0;
-
     width:35%;
     background-color: #3d4143;
     background: url("../images/menu/menu-background.gif") repeat;
-    height: 100%;
+    min-height: 100%;
     left:0;
-    position: fixed;
-
+    position: absolute;
+    padding:0;
 
     ul {
         list-style-type: none;
         font-size:170%;
-        width:100%;
+        width:90%;
         padding:0%;
         .user-select(none);
     }
@@ -40,7 +39,6 @@
         width:92%;
 
         &:first-child {
-
             margin-top:40px;
         }
         .icon {
@@ -61,8 +59,8 @@
 
         &.active {
             margin:0;
-            padding: 4% 5%;
-            width:100%;
+            padding: 4% 0%;
+            width:92%;
             color: #484d4f;
             .linear-gradient(bottom, #dbdbdb 0%, #ffffff 100%);
 

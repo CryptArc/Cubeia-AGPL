@@ -29,6 +29,8 @@ import com.google.common.collect.Collections2;
 import java.io.Serializable;
 import java.util.*;
 
+import static java.util.Arrays.asList;
+
 public class HandResultCalculator implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -188,24 +190,25 @@ public class HandResultCalculator implements Serializable {
 
     private List<Integer> getWinners(Collection<PlayerHand> hands) {
         List<Integer> winners = new ArrayList<Integer>();
-
         List<PlayerHand> copy = new LinkedList<PlayerHand>(hands);
-        Comparator<PlayerHand> phComparator = Collections.reverseOrder(new PlayerHandComparator(handEvaluator.createHandComparator(hands.size())));
-        Collections.sort(copy, phComparator);
+        Comparator<PlayerHand> handComparator = Collections.reverseOrder(new PlayerHandComparator(handEvaluator.createHandComparator(hands.size())));
+        Collections.sort(copy, handComparator);
 
-        PlayerHand previousHand = null;
+        if (copy.size() == 1) {
+            // Only one hand, there can be only one winner.
+            return asList(copy.get(0).getPlayerId());
+        } else {
+            PlayerHand strongestHand = copy.get(0);
 
-        for (PlayerHand hand : copy) {
-            Integer pid = hand.getPlayerId();
+            for (PlayerHand hand : copy) {
+                Integer pid = hand.getPlayerId();
 
-            if (previousHand == null || phComparator.compare(previousHand, hand) == 0) {
-                // split pot
-                winners.add(pid);
+                if (handComparator.compare(strongestHand, hand) == 0) {
+                    winners.add(pid);
+                }
             }
 
-            previousHand = hand;
+            return winners;
         }
-
-        return winners;
     }
 }

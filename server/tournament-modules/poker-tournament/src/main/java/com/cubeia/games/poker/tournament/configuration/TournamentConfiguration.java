@@ -94,12 +94,12 @@ public class TournamentConfiguration implements Serializable {
     }
     
     public Set<Long> getOperatorIds() {
-		return operatorIds;
-	}
+        return operatorIds;
+    }
     
     public void setOperatorIds(Set<Long> operatorIds) {
-		this.operatorIds = operatorIds;
-	}
+        this.operatorIds = operatorIds;
+    }
 
     public RebuyConfiguration getRebuyConfiguration() {
         return rebuyConfiguration;
@@ -170,8 +170,6 @@ public class TournamentConfiguration implements Serializable {
     }
 
     public BlindsStructure getBlindsStructure() {
-        // NOTE: If you don't copy this instance, all tournaments of this configuration will share the same instance of the blinds => bad.
-        log.debug("Returning copy of blinds structure: " + blindsStructure);
         if (blindsStructure == null) {
             log.warn("No blinds structure defined, using default structure.");
             blindsStructure = BlindsStructureFactory.createDefaultBlindsStructure();

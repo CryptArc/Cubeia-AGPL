@@ -384,6 +384,7 @@ public class PokerState implements Serializable, IPokerState {
     }
 
     public void setBlindsLevels(BlindsLevel level) {
+        log.debug("Setting blinds level: sb = " + level.getSmallBlindAmount() + " bb = " + level.getBigBlindAmount());
         pokerContext.setBlindsLevels(level);
         if (level.isBreak()) {
             log.debug("We are now on a break for " + level.getDurationInMinutes() + " minutes.");

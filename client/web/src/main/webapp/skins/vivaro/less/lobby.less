@@ -33,7 +33,7 @@
     width:20%;
     padding: 1% 5%;
     float:left;
-    position: fixed;
+    position: absolute;
     top:0;
     left:0;
 
@@ -273,8 +273,8 @@
 
 }
 .top-panel {
-    position: fixed;
-    width:65%;
+    position: relative;
+    width:100%;
     padding:1% 0;
 }
 .user-panel {
@@ -291,6 +291,11 @@
     width:100%;
     clear:both;
     display: table;
+
+    &.cash-games {
+        display: block;
+    }
+
 }
 .filter-button {
     display: block;
@@ -334,7 +339,6 @@
 #tableListContainer {
     display: block;
     width:100%;
-    padding-top:20%;
 
 }
 
@@ -345,6 +349,5 @@
     padding:2%;
 }
 .table-list-item-container {
-
     padding-bottom: 2%;
 }

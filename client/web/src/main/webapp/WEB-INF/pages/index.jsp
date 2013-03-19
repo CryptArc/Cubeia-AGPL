@@ -2,7 +2,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <title>Cubeia Poker</title>
+    <title></title>
 
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -184,6 +184,7 @@
             less.watch(); //development only
             $(".describe").describe();
 
+            $("title").html(Poker.SkinConfiguration.title);
 
 
             var onPreLoadComplete = function() {
@@ -826,6 +827,7 @@
 <script type="text/mustache" id="tabTemplate">
     <li>
         <div class="tab-content">
+            <div class="tab-index"></div>
             <div class="mini-cards"></div>
             <span class="name">{{name}}</span>
         </div>

@@ -1261,7 +1261,7 @@ com.cubeia.games.poker.io.protocol.PayoutInfo = function() {
     this.payouts = [];
     this.save = function() {
         var a = new FIREBASE.ByteArray();
-        a.writeInt(this.prizePool);
+        a.writeString(this.prizePool);
         a.writeInt(this.payouts.length);
         var b;
         for (b = 0; b < this.payouts.length; b++) {
@@ -1270,7 +1270,7 @@ com.cubeia.games.poker.io.protocol.PayoutInfo = function() {
         return a
     };
     this.load = function(b) {
-        this.prizePool = b.readInt();
+        this.prizePool = b.readString();
         var c;
         var a = b.readInt();
         var d;

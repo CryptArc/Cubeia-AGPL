@@ -2,7 +2,7 @@ var Poker = Poker || {};
 Poker.TournamentView = Poker.TabView.extend({
     layoutManager : null,
     init :function(viewElementId,name,layoutManager) {
-        this._super(viewElementId,name);
+        this._super(viewElementId,name, "T");
         this.layoutManager = layoutManager;
     },
     getTournamentId : function() {
