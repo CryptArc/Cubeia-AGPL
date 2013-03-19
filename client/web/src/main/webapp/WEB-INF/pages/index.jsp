@@ -249,8 +249,8 @@
 
     </div>
 
-    <div class="account-overlay" style="display: none; background-color:rgba(0, 0, 0, 0.5); width:100%; height: 100%">
-         <iframe id="account_iframe" style="position: absolute; top:45px; left:10%; width:80%; height:75%"></iframe>
+    <div class="account-overlay" style="display: none;">
+         <iframe id="account_iframe" class="account_iframe" style=></iframe>
     </div>
 
     <div id="soundSettingsView" class="config-view" style="display: none;">

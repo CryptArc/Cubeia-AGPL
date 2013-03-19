@@ -15,7 +15,7 @@ Poker.AccountPageManager = Class.extend({
             self.toggle();
         });
 
-        $("#account_iframe").attr("src", "http://www.cubeiapoker.com");
+        $("#account_iframe").attr("src", "http://www.cubeiasocial.com");
 
     },
 
