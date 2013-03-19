@@ -18,7 +18,7 @@ Poker.DisconnectDialog = Class.extend({
         $(".reconnectAttempt").html(count);
         if(this.open==false) {
             this.dialogManager.displayDialog(
-                "disconnectDialog",
+                new Poker.Dialog($("body"),$("#disconnectDialog")),
                 function() {
                     document.location.reload();
                 },

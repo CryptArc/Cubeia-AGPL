@@ -25,9 +25,9 @@ Poker.Dialog = Class.extend({
         this.templateManager = Poker.AppCtx.getTemplateManager();
         this.parentContainer = parentContainer;
         this.id = "dialog-" + Poker.DialogSequence++;
-        this.show();
+        this.render();
     },
-    show : function() {
+    render : function() {
         var self = this;
         var html = this.templateManager.render("overLayDialogTemplate",{ dialogId : this.id });
         this.parentContainer.append(html);
@@ -42,6 +42,10 @@ Poker.Dialog = Class.extend({
         var top = 30 * ( height - content.outerHeight() ) / height;
         console.log("height = " + height + ", ch="+ content.outerHeight());
         content.css("top",top + "%");
+        this.dialogElement.hide();
+    },
+    show : function() {
+        this.dialogElement.show();
     },
     close : function() {
         $("#"+this.id).remove();

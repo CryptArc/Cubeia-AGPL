@@ -27,12 +27,12 @@ Poker.DialogManager = Class.extend({
         if (this.dialogQueue.length > 0) {
             var d = this.dialogQueue[0];
             this.dialogQueue.splice(0, 1);
-            this.displayDialog(d.dialogId, d.okCallback, d.closeCallback);
+            this.displayDialog(d.dialog, d.okCallback, d.closeCallback);
         }
     },
-    queueDialog: function(dialogId, okCallback, closeCallback) {
+    queueDialog: function(dialog, okCallback, closeCallback) {
         this.dialogQueue.push({
-            dialogId: dialogId,
+            dialog : dialog,
             okCallback: okCallback,
             closeCallback: closeCallback
         });
@@ -54,40 +54,57 @@ Poker.DialogManager = Class.extend({
             content = $.extend(content,{ header : i18n.t("dialogs." + content.translationKey + ".header"),
                 message : i18n.t("dialogs." + content.translationKey + ".message")});
         }
-
+        var genericDialog = new Poker.Dialog($("body"),$("#genericDialog"))
+        var element = genericDialog.getElement();
         if (content.header) {
-            $("#genericDialog h1").html(content.header);
+            element.find("h1").html(content.header);
         } else {
-            $("#genericDialog h1").hide();
+            element.find("h1").hide();
         }
 
         if (content.message) {
-            $("#genericDialog .message").html(content.message);
+            element.find(".message").html(content.message);
         } else {
-            $("#genericDialog .message").hide();
+            element.find(".message").hide();
         }
 
         if(content.displayCancelButton === true) {
-            $("#genericDialog .dialog-cancel-button").show();
+            element.find(".dialog-cancel-button").show();
         } else {
-            $("#genericDialog .dialog-cancel-button").hide();
+            element.find(".dialog-cancel-button").hide();
         }
         var self = this;
         if (typeof(content.okButtonText) != "undefined") {
-            $("#genericDialog .dialog-ok-button").html(content.okButtonText);
+            element.find(".dialog-ok-button").html(content.okButtonText);
         }
         if (typeof(okCallback) == "undefined") {
-            this.displayDialog("genericDialog", function() {
+            this.displayDialog(genericDialog, function() {
                 self.close();
             }, null);
         } else {
-            this.displayDialog("genericDialog", function() {
+            this.displayDialog(genericDialog, function() {
                 return okCallback();
             }, null);
         }
     },
 
-    display : function(dialog,okCallback,closeCallback) {
+    /**
+     * Display a dialog by passing a DOM element id you want to be placed in
+     * the dialog, if a dialog is open it will be queued and showed when
+     * previous dialog is closed
+     * @param {Poker.Dialog} dialog
+     * @param okCallback
+     * @param closeCallback
+     */
+    displayDialog: function(dialog, okCallback, closeCallback) {
+        if (this.open == true) {
+            this.queueDialog(dialog, okCallback, closeCallback);
+            return;
+        }
+        this.open = true;
+
+        var self = this;
+
         if (closeCallback) {
             this.currentCloseCallback = closeCallback;
         }
@@ -101,37 +118,20 @@ Poker.DialogManager = Class.extend({
         dialogElement.css({fontSize : targetFontSize + "%"});
         dialogElement.find(".dialog-cancel-button").touchSafeClick(function(){
             dialog.close();
+            self.open = false;
         });
         dialogElement.find(".dialog-ok-button").touchSafeClick(function() {
             if (okCallback() || !okCallback) {
                 dialog.close();
+                self.open = false;
             }
         });
-
+        dialog.show();
         this.currentDialog = dialog;
-    },
 
-    /**
-     * Display a dialog by passing a DOM element id you want to be placed in
-     * the dialog, if a dialog is open it will be queued and showed when
-     * previous dialog is closed
-     * @param dialogId
-     * @param okCallback
-     * @param closeCallback
-     */
-    displayDialog: function(dialogId, okCallback, closeCallback) {
-        if (this.open == true) {
-            this.queueDialog(dialogId, okCallback, closeCallback);
-            return;
-        }
-        this.open = true;
-
-        var self = this;
-        var dialog = new Poker.Dialog($("body"), $("#"+dialogId));
-        this.display(dialog,okCallback,closeCallback);
-        return dialog;
     },
     close : function() {
+        this.open=false;
         if(this.currentDialog!=null) {
             this.currentDialog.close();
         }

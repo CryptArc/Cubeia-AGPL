@@ -34,7 +34,7 @@ Poker.BuyInDialog = Class.extend({
         var template = this.templateManager.getRenderTemplate(this.getTemplateId());
         $("#buyInDialog").html(template.render(data));
         var dialog = new Poker.Dialog($("body"), $("#buyInDialog"));
-        this.dialogManager.display(
+        this.dialogManager.displayDialog(
             dialog,
             function() {
                 dialog.getElement().find(".buyin-amount").blur();
