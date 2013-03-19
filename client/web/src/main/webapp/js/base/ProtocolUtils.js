@@ -35,7 +35,8 @@ Poker.ProtocolUtils = Class.extend({
             }
             return val;
         };
-
+        console.log("SNAPSHOT!:");
+        console.log(snapshot.params);
         var data = {
             id : snapshot.mttid,
             name : param("NAME"),

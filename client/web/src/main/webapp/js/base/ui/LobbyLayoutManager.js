@@ -7,6 +7,8 @@ Poker.LobbyLayoutManager = Class.extend({
      */
     templateManager : null,
     filters:null,
+    filtersEnabled : true,
+    state : null,
 
     tournamentListSettings : {
         prefix : "tournamentItem",
@@ -51,22 +53,33 @@ Poker.LobbyLayoutManager = Class.extend({
 
         $(".show-filters").touchSafeClick(function () {
             $(this).toggleClass("selected");
-            $(".table-filter").toggle();
+            $(".table-filter").toggleClass("hidden");
         });
         this.initFilters();
     },
     goToList : function() {
 
         if(Poker.AppCtx.getViewManager().mobileDevice==true) {
-
             $('html, body').scrollTop($("#tableListAnchor").offset().top + 50);
+        }
+    },
+    filterUpdated : function(lobbyListData) {
+        if(this.state == Poker.LobbyLayoutManager.SIT_AND_GO_STATE) {
+            this.createSitAndGoList(lobbyListData);
+        } else if(this.state == Poker.LobbyLayoutManager.TOURNAMENT_STATE) {
+            this.createTournamentList(lobbyListData);
+        } else {
+            this.createTableList(lobbyListData);
         }
     },
     initFilters:function () {
         var fullTablesFilter = new Poker.LobbyFilter("fullTables", true,
             function (enabled, lobbyData) {
+
+                var seated = lobbyData.seated || lobbyData.registered;
+
                 if (!enabled) {
-                    return lobbyData.seated < lobbyData.capacity;
+                    return seated < lobbyData.capacity;
                 } else {
                     return true;
                 }
@@ -106,6 +119,7 @@ Poker.LobbyLayoutManager = Class.extend({
         this.filters.push(new Poker.PrivateTournamentFilter());
     },
     includeData:function (tableData) {
+        console.log(tableData);
         for (var i = 0; i < this.filters.length; i++) {
             var filter = this.filters[i];
             if (filter.filter(tableData) == false) {
@@ -115,12 +129,34 @@ Poker.LobbyLayoutManager = Class.extend({
         return true;
     },
     createTableList : function(tables) {
+        this.state = Poker.LobbyLayoutManager.CASH_STATE;
+        this.filtersEnabled = true;
+        $(".table-filter").addClass("cash-games");
+        $(".table-filter").removeClass("hidden");
+        if($(".show-filters").is(":visible")) {
+            if(!$(".show-filters").hasClass("selected")) {
+                $(".table-filter").addClass("hidden");
+            }
+        }
+
+        $(".show-filters").removeClass("hidden");
+
         this.createLobbyList(tables,this.tableListSettings, this.getTableItemCallback());
     },
     createTournamentList : function(tournaments) {
+        this.state = Poker.LobbyLayoutManager.TOURNAMENT_STATE;
+        $(".table-filter").removeClass("cash-games");
+        $(".table-filter").addClass("hidden");
+        $(".show-filters").addClass("hidden");
+        this.filtersEnabled = false;
         this.createLobbyList(tournaments,this.tournamentListSettings, this.getTournamentItemCallback());
     },
     createSitAndGoList : function(sitAndGos) {
+        this.state = Poker.LobbyLayoutManager.SIT_AND_GO_STATE;
+        this.filtersEnabled = false;
+        $(".table-filter").removeClass("cash-games");
+        $(".table-filter").addClass("hidden");
+        $(".show-filters").addClass("hidden");
         this.createLobbyList(sitAndGos,this.sitAndGoListSettings, this.getTournamentItemCallback());
     },
     getTableItemCallback : function() {
@@ -190,7 +226,7 @@ Poker.LobbyLayoutManager = Class.extend({
         var self = this;
         var count = 0;
         $.each(listItems, function (i, item) {
-            if(self.includeData(item)) {
+            if( self.filtersEnabled==false || self.includeData(item)) {
                 count++;
                 var html = self.getTableItemHtml(settings.listItemTemplateId,item);
                 listContainer.append(html);
@@ -210,3 +246,6 @@ Poker.LobbyLayoutManager = Class.extend({
         return item;
     }
 });
+Poker.LobbyLayoutManager.CASH_STATE = 1;
+Poker.LobbyLayoutManager.TOURNAMENT_STATE = 2;
+Poker.LobbyLayoutManager.SIT_AND_GO_STATE = 3;

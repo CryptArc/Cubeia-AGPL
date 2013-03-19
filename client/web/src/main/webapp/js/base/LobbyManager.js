@@ -236,8 +236,10 @@ Poker.LobbyFilter = Class.extend({
             $("#" + this.id).removeClass("active");
         }
     },
-    filterUpdated:function () {
-        this.lobbyLayoutManager.createTableList(Poker.AppCtx.getLobbyManager().lobbyListData);
+    filterUpdated : function () {
+        console.log("FILTER UPDATED");
+        console.log(Poker.AppCtx.getLobbyManager().lobbyListData);
+        this.lobbyLayoutManager.filterUpdated(Poker.AppCtx.getLobbyManager().lobbyListData);
     },
     /**
      * Returns true if it should be included in the lobby and
