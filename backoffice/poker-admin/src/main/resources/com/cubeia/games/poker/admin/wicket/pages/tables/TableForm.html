@@ -10,10 +10,10 @@
 
             $("#betStrategy").on("change",function(){
                 if ($(this).val() == "0") {
-                    $("#maxBuyIn").val("");
-                    $("#maxBuyIn").attr("disabled",true);
+                    $("#maxBuyIn").val("1000000");
+                    $("#maxBuyIn").attr("readonly",true);
                 } else {
-                    $("#maxBuyIn").attr("disabled",false);
+                    $("#maxBuyIn").attr("readonly",false);
                 }
             });
             $("#betStrategy").trigger("change");
