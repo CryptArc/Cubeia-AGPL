@@ -338,7 +338,7 @@
                         <div class="show-filters">
                             <a data-i18n="lobby.filters.show-filters">Show filters</a>
                         </div>
-                        <div class="table-filter">
+                        <div class="table-filter hidden cash-game">
                             <div class="filter-group tables">
                                 <div class="filter-label" data-i18n="lobby.filters.show-tables">Show tables:</div>
                                 <div class="filter-button" id="fullTables" data-i18n="lobby.filters.full">Full</div>

@@ -137,13 +137,13 @@ Poker.LobbyLayoutManager = Class.extend({
         this.state = Poker.LobbyLayoutManager.CASH_STATE;
         this.filtersEnabled = true;
         $(".table-filter").addClass("cash-games");
-        $(".table-filter").removeClass("hidden");
-        if($(".show-filters").hasClass(":visible")) {
-            if(!$(".show-filters").hasClass("selected")) {
-                $(".table-filter").addClass("hidden");
-            }
-        }
         $(".show-filters").removeClass("hidden");
+        if($(".table-filter").is(":visible")) {
+            $(".show-filters").addClass("selected");
+        } else {
+            $(".show-filters").removeClass("selected");
+        }
+
 
         this.createLobbyList(tables,this.tableListSettings, this.getTableItemCallback());
     },
