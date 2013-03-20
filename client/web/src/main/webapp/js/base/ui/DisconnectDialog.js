@@ -9,16 +9,17 @@ Poker.DisconnectDialog = Class.extend({
     dialogManager : null,
     templateManager : null,
     open : false,
+    dialog : null,
     init : function() {
         this.dialogManager = Poker.AppCtx.getDialogManager();
         this.templateManager = Poker.AppCtx.getTemplateManager();
+        this.dialog =  new Poker.Dialog($("body"),$("#disconnectDialog"));
     },
     show : function(count) {
         var self = this;
         $(".reconnectAttempt").html(count);
         if(this.open==false) {
-            this.dialogManager.displayDialog(
-                "disconnectDialog",
+            this.dialogManager.displayDialog(this.dialog,
                 function() {
                     document.location.reload();
                 },
@@ -34,7 +35,7 @@ Poker.DisconnectDialog = Class.extend({
         $(".stopped-reconnecting").show();
     },
     close : function() {
-        this.dialogManager.close();
+        this.dialog.close();
         this.open = false;
     },
     getTemplateId : function() {

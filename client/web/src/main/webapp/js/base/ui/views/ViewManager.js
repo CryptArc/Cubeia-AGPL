@@ -388,7 +388,6 @@ Poker.ViewManager = Class.extend({
         if(targetFontSize>125) {
             targetFontSize=125;
         }
-        console.log("TARGET FONTSIZE : " + targetFontSize);
         $(".config-view").css({fontSize : targetFontSize+"%"});
         $(".main-menu-container").css({fontSize : targetFontSize+"%"});
     },

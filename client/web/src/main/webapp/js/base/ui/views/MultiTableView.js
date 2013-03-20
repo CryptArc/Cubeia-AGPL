@@ -9,7 +9,7 @@ Poker.MultiTableView = Poker.TabView.extend({
     columns : 1,
     tableViewContainer : null,
     init : function() {
-        this._super(null,"");
+        this._super(null,"","M");
         this.tableViews = [];
         this.fixedSizeView = true;
         this.tableViewContainer = $(".table-view-container");

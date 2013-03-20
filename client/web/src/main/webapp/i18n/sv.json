@@ -76,7 +76,7 @@
         "wait-for-big-blind" : "Vänta på Big Blind",
         "wait-for-big-blind-description" : "Avmarkera för att lägga Big Blind och spela nästa hand",
         "blinds" : "Blinds:",
-        "level" : "Tid till nästa nivå:",
+        "level" : "Nästa nivå:",
         "pot" : "Pot:",
         "hand-history" : "Handhistorik",
         "open" : "Ledig"

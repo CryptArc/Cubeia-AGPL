@@ -158,8 +158,6 @@ Poker.TableManager = Class.extend({
             table.layoutManager.onPotToPlayerTransfers(potTransfers.transfers);
         }
 
-
-
         setTimeout(function(){
             //if no new hand has started in the next 15 secs we clear the table
             self.clearTable(tableId,count);
@@ -389,9 +387,9 @@ Poker.TableManager = Class.extend({
         table.getLayoutManager().exposePrivateCards(playerCardMap.values());
     },
 
-    notifyWaitingToStartBreak : function() {
+    notifyWaitingToStartBreak : function(tableId) {
         var dialogManager = Poker.AppCtx.getDialogManager();
-        dialogManager.displayGenericDialog({ translationKey : "break-is-starting"});
+        dialogManager.displayGenericDialog({tableId : tableId, translationKey : "break-is-starting"});
     },
     /**
      * @param {Number} tableId
@@ -411,6 +409,7 @@ Poker.TableManager = Class.extend({
         if (newBlinds.isBreak) {
             var dialogManager = Poker.AppCtx.getDialogManager();
             dialogManager.displayGenericDialog({
+                tableId : tableId,
                 header: i18n.t("dialogs.on-break.header"),
                 message: i18n.t("dialogs.on-break.message", {sprintf : [secondsToNextLevel]})
             });
@@ -420,7 +419,7 @@ Poker.TableManager = Class.extend({
     },
     notifyTournamentDestroyed : function(tableId) {
         var dialogManager = Poker.AppCtx.getDialogManager();
-        dialogManager.displayGenericDialog({translationKey : "tournament-closed"});
+        dialogManager.displayGenericDialog({tableId : tableId, translationKey : "tournament-closed"});
         this.tables.get(tableId).tournamentClosed = true;
     },
     bettingRoundComplete : function(tableId) {

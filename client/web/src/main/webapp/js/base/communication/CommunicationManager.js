@@ -375,7 +375,7 @@ Poker.CommunicationManager = Class.extend({
                 console.log(protocolObject);
                 break;
             case com.cubeia.games.poker.io.protocol.WaitingToStartBreak:
-                this.tableManager.notifyWaitingToStartBreak();
+                this.tableManager.notifyWaitingToStartBreak(tableId);
                 break;
             case com.cubeia.games.poker.io.protocol.BlindsAreUpdated.CLASSID:
                 this.tableManager.notifyBlindsUpdated(tableId, protocolObject.level, protocolObject.secondsToNextLevel);
