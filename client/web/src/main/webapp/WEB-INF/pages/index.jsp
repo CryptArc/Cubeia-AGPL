@@ -128,7 +128,7 @@
     <script type="text/javascript" src="${cp}/js/base/sound/Sounds.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/FutureActionType.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/FutureActions.js"></script>
-
+    <script type="text/javascript" src="${cp}/js/base/ui/Dialog.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/DialogManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/DisconnectDialog.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/BuyInDialog.js"></script>
@@ -1056,6 +1056,12 @@
 </script>
 <script type="text/mustache" id="newHandLogTemplate" style="display:none;">
     <div class="hand-started">{{t "table-log.hand-started"}}{{handId}} </div>
+</script>
+<script type="text/mustache" id="overLayDialogTemplate" style="display:none;">
+    <div class="dialog-overlay" id="{{dialogId}}">
+        <div class="dialog-content">
+        </div>
+    </div>
 </script>
 
 </body>

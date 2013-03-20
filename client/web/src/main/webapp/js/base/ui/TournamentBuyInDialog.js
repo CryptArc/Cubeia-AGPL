@@ -13,7 +13,9 @@ Poker.TournamentBuyInDialog = Poker.BuyInDialog.extend({
             balance : balance,
             name : name
         };
-        this.render(data, function(){
+        var tournament = Poker.AppCtx.getTournamentManager().getTournamentById(tournamentId);
+        var viewContainer = tournament.tournamentLayoutManager.viewContainer;
+        this.render(data, viewContainer ,function(){
             new Poker.TournamentRequestHandler(tournamentId).registerToTournament();
             return true;
         });

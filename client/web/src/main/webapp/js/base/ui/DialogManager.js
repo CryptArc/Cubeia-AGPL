@@ -6,6 +6,7 @@ Poker.DialogManager = Class.extend({
     currentCloseCallback: null,
     open: false,
     dialogQueue: null,
+    currentDialog : null,
     init: function() {
         this.dialogQueue = [];
         this.templateManager = new Poker.TemplateManager();
@@ -14,24 +15,17 @@ Poker.DialogManager = Class.extend({
         this.container = $("#genericDialogContainer");
 
         var self = this;
-        $(document).bind("afterClose.facebox", function() {
-            if (self.currentCloseCallback != null) {
-                self.currentCloseCallback();
-            }
-            self.open = false;
-            self.openQueuedDialog();
-        });
     },
     openQueuedDialog: function() {
         if (this.dialogQueue.length > 0) {
             var d = this.dialogQueue[0];
             this.dialogQueue.splice(0, 1);
-            this.displayDialog(d.dialogId, d.okCallback, d.closeCallback);
+            this.displayDialog(d.dialog, d.okCallback, d.closeCallback);
         }
     },
-    queueDialog: function(dialogId, okCallback, closeCallback) {
+    queueDialog: function(dialog, okCallback, closeCallback) {
         this.dialogQueue.push({
-            dialogId: dialogId,
+            dialog : dialog,
             okCallback: okCallback,
             closeCallback: closeCallback
         });
@@ -43,6 +37,8 @@ Poker.DialogManager = Class.extend({
      * @param {Object} content - the content of the dialog, see above for format
      * @param {String} content.header - header of the dialog
      * @param {String} content.message - the message to display
+     * @param {Number} content.tableId - the id of the table to use as context
+     * @param {Number} content.tournamentId - the id of the tournament to use as context
      * @param {String} [content.translationKey] - optional translation key to use
      * @param {Boolean} [content.displayCancelButton] - if you should display a cancel
      * @param {Function} [okCallback] callback to execute when ok button is clicked
@@ -54,54 +50,87 @@ Poker.DialogManager = Class.extend({
                 message : i18n.t("dialogs." + content.translationKey + ".message")});
         }
 
-        if (content.header) {
-            $("#genericDialog h1").html(content.header);
+        var container = null;
+
+        if(typeof(content.tableId)!="undefined") {
+            container = this.getTableContainer(content.tableId);
+        }
+
+        if(container==null && typeof(content.tournamentId)!="undefined") {
+            container = this.getTableContainer(content.tournamentId);
+        }
+
+        if(container==null && typeof(content.container)!="undefined") {
+            container = content.container;
         } else {
-            $("#genericDialog h1").hide();
+            container= $("body");
+        }
+
+        var genericDialog = new Poker.Dialog(container,$("#genericDialog"))
+        var element = genericDialog.getElement();
+        if (content.header) {
+            element.find("h1").html(content.header);
+        } else {
+            element.find("h1").hide();
         }
 
         if (content.message) {
-            $("#genericDialog .message").html(content.message);
+            element.find(".message").html(content.message);
         } else {
-            $("#genericDialog .message").hide();
+            element.find(".message").hide();
         }
 
         if(content.displayCancelButton === true) {
-            $("#genericDialog .dialog-cancel-button").show();
+            element.find(".dialog-cancel-button").show();
         } else {
-            $("#genericDialog .dialog-cancel-button").hide();
+            element.find(".dialog-cancel-button").hide();
         }
         var self = this;
         if (typeof(content.okButtonText) != "undefined") {
-            $("#genericDialog .dialog-ok-button").html(content.okButtonText);
+            element.find(".dialog-ok-button").html(content.okButtonText);
         }
         if (typeof(okCallback) == "undefined") {
-            this.displayDialog("genericDialog", function() {
+            this.displayDialog(genericDialog, function() {
                 self.close();
             }, null);
         } else {
-            this.displayDialog("genericDialog", function() {
+            this.displayDialog(genericDialog, function() {
                 return okCallback();
             }, null);
         }
     },
+    getTableContainer : function(tableId) {
+        var table = Poker.AppCtx.getTableManager().getTable(tableId);
+        if(table!=null) {
+            return table.getLayoutManager().tableView;
+        }
+        return null;
+    },
+    getTournamentLobbyContainer : function(tournamentId) {
+        var tournament = Poker.AppCtx.getTournamentManager().getTournamentById(tournamentId);
+        if(tournament!=null) {
+            return tournament.tournamentLayoutManager.getViewElementId();
+        }
+        return null;
+    },
+
     /**
      * Display a dialog by passing a DOM element id you want to be placed in
      * the dialog, if a dialog is open it will be queued and showed when
      * previous dialog is closed
-     * @param dialogId
+     * @param {Poker.Dialog} dialog
      * @param okCallback
      * @param closeCallback
      */
-    displayDialog: function(dialogId, okCallback, closeCallback) {
+    displayDialog: function(dialog, okCallback, closeCallback) {
         if (this.open == true) {
-            this.queueDialog(dialogId, okCallback, closeCallback);
+            this.queueDialog(dialog, okCallback, closeCallback);
             return;
         }
         this.open = true;
 
         var self = this;
-        $.facebox({div : "#" + dialogId, opacity:0.6});
+
         if (closeCallback) {
             this.currentCloseCallback = closeCallback;
         }
@@ -111,18 +140,35 @@ Poker.DialogManager = Class.extend({
             targetFontSize = 125;
         }
 
-        var faceBox = $("#facebox");
-        faceBox.css({fontSize : targetFontSize + "%"});
-        faceBox.find(".dialog-cancel-button").touchSafeClick(function(){
-            self.close();
+        var dialogElement = dialog.getElement();
+        dialogElement.css({fontSize : targetFontSize + "%"});
+        dialogElement.find(".dialog-cancel-button").touchSafeClick(function(){
+            dialog.close();
+            self.onClose();
+            self.open = false;
         });
-        faceBox.find(".dialog-ok-button").touchSafeClick(function() {
+        dialogElement.find(".dialog-ok-button").touchSafeClick(function() {
             if (okCallback() || !okCallback) {
-                self.close();
+                dialog.close();
+                self.onClose();
+                self.open = false;
             }
         });
+        dialog.show();
+        this.currentDialog = dialog;
+
     },
-    close: function() {
-        $.facebox.close();
+    onClose : function() {
+        if (this.currentCloseCallback != null) {
+            this.currentCloseCallback();
+        }
+        this.openQueuedDialog();
+    },
+    close : function() {
+        this.open=false;
+        if(this.currentDialog!=null) {
+            this.currentDialog.close();
+        }
+        this.onClose();
     }
 });
