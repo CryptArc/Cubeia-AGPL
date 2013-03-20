@@ -19,7 +19,9 @@ Poker.BuyInDialog = Class.extend({
             minAmount : minAmount
         };
         var self = this;
-        this.render(data,function(){
+        var table = Poker.AppCtx.getTableManager().getTable(tableId);
+        var viewContainer = table.getLayoutManager().tableView;
+        this.render(data,viewContainer, function(){
             var buyIn =  self.dialog.getElement().find(".buyin-amount").val();
             if (self.validateAmount(buyIn)) {
                 new Poker.PokerRequestHandler(data.tableId).buyIn(buyIn)
@@ -29,11 +31,11 @@ Poker.BuyInDialog = Class.extend({
         this.dialog.getElement().find(".buyin-amount").val(data.maxAmount);
 
     },
-    render : function(data, okFunction) {
+    render : function(data, viewContainer,okFunction) {
         var self = this;
         var template = this.templateManager.getRenderTemplate(this.getTemplateId());
         $("#buyInDialog").html(template.render(data));
-        var dialog = new Poker.Dialog($("body"), $("#buyInDialog"));
+        var dialog = new Poker.Dialog(viewContainer, $("#buyInDialog"));
         this.dialogManager.displayDialog(
             dialog,
             function() {

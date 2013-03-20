@@ -99,6 +99,7 @@ Poker.TableLayoutManager = Class.extend({
         } else if (actionType.id == Poker.ActionType.LEAVE.id && this.isConfirmLeave()) {
 
             Poker.AppCtx.getDialogManager().displayGenericDialog({
+                container : self.tableView,
                 translationKey : "leave-table",
                 displayCancelButton : true
             }, function(){
