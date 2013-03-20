@@ -18,10 +18,12 @@
 package com.cubeia.games.poker;
 
 import com.cubeia.backend.cashgame.dto.AllowJoinResponse;
+import com.cubeia.firebase.api.common.AttributeValue;
 import com.cubeia.firebase.api.game.table.InterceptionResponse;
 import com.cubeia.firebase.api.game.table.SeatRequest;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TableInterceptor;
+import com.cubeia.games.poker.common.lobby.PokerLobbyAttributes;
 import com.cubeia.games.poker.handler.BackendPlayerSessionHandler;
 import com.cubeia.poker.PokerState;
 import com.cubeia.poker.player.PokerPlayer;
@@ -47,9 +49,12 @@ public class PokerTableInterceptor implements TableInterceptor {
     public InterceptionResponse allowJoin(Table table, SeatRequest request) {
         stateInjector.injectAdapter(table);
 
-        AllowJoinResponse allowResponse = backendPlayerSessionHandler.allowJoinTable(request.getPlayerId());
-
-        return new InterceptionResponse(allowResponse.allowed, allowResponse.responseCode);
+        if (state.isShutDown()) {
+            return new InterceptionResponse(false, 0);
+        } else {
+            AllowJoinResponse allowResponse = backendPlayerSessionHandler.allowJoinTable(request.getPlayerId());
+            return new InterceptionResponse(allowResponse.allowed, allowResponse.responseCode);
+        }
     }
 
     /**
