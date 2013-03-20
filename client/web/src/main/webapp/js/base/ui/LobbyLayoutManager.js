@@ -7,6 +7,7 @@ Poker.LobbyLayoutManager = Class.extend({
      */
     templateManager : null,
     filters:null,
+    requiredFilters : null,
     filtersEnabled : true,
     state : null,
 
@@ -30,6 +31,7 @@ Poker.LobbyLayoutManager = Class.extend({
     init : function() {
         this.templateManager = Poker.AppCtx.getTemplateManager();
         this.filters = [];
+        this.requiredFilters = [];
         var self = this;
         $("#cashGameMenu").click(function (e) {
             self.goToList();
@@ -58,7 +60,6 @@ Poker.LobbyLayoutManager = Class.extend({
         this.initFilters();
     },
     goToList : function() {
-
         if(Poker.AppCtx.getViewManager().mobileDevice==true) {
             $('html, body').scrollTop($("#tableListAnchor").offset().top + 50);
         }
@@ -75,11 +76,8 @@ Poker.LobbyLayoutManager = Class.extend({
     initFilters:function () {
         var fullTablesFilter = new Poker.LobbyFilter("fullTables", true,
             function (enabled, lobbyData) {
-
-                var seated = lobbyData.seated || lobbyData.registered;
-
                 if (!enabled) {
-                    return seated < lobbyData.capacity;
+                    return lobbyData.seated < lobbyData.capacity;
                 } else {
                     return true;
                 }
@@ -116,16 +114,23 @@ Poker.LobbyLayoutManager = Class.extend({
         var lowStakes = new Poker.PropertyMinMaxFilter("lowStakes", true, this, "smallBlind", -1, 49);
         this.filters.push(lowStakes);
         
-        this.filters.push(new Poker.PrivateTournamentFilter());
+        this.requiredFilters.push(new Poker.PrivateTournamentFilter());
     },
-    includeData:function (tableData) {
+    includeData : function (tableData) {
         console.log(tableData);
         for (var i = 0; i < this.filters.length; i++) {
             var filter = this.filters[i];
+            if (this.filtersEnabled == true && filter.filter(tableData) == false) {
+                return false;
+            }
+        }
+        for (var i = 0; i < this.requiredFilters.length; i++) {
+            var filter = this.requiredFilters[i];
             if (filter.filter(tableData) == false) {
                 return false;
             }
         }
+
         return true;
     },
     createTableList : function(tables) {
@@ -133,12 +138,11 @@ Poker.LobbyLayoutManager = Class.extend({
         this.filtersEnabled = true;
         $(".table-filter").addClass("cash-games");
         $(".table-filter").removeClass("hidden");
-        if($(".show-filters").is(":visible")) {
+        if($(".show-filters").hasClass(":visible")) {
             if(!$(".show-filters").hasClass("selected")) {
                 $(".table-filter").addClass("hidden");
             }
         }
-
         $(".show-filters").removeClass("hidden");
 
         this.createLobbyList(tables,this.tableListSettings, this.getTableItemCallback());
@@ -226,7 +230,7 @@ Poker.LobbyLayoutManager = Class.extend({
         var self = this;
         var count = 0;
         $.each(listItems, function (i, item) {
-            if( self.filtersEnabled==false || self.includeData(item)) {
+            if(self.includeData(item)) {
                 count++;
                 var html = self.getTableItemHtml(settings.listItemTemplateId,item);
                 listContainer.append(html);

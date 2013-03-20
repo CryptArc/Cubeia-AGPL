@@ -13,8 +13,8 @@ Poker.Dialog = Class.extend({
     settings : {
         closeOnBackgroundClick : true
     },
+
     /**
-     *
      * @param parentContainer
      * @param dialogId
      * @param settings.closeOnBackgroundClick
@@ -32,16 +32,15 @@ Poker.Dialog = Class.extend({
         var html = this.templateManager.render("overLayDialogTemplate",{ dialogId : this.id });
         this.parentContainer.append(html);
         this.dialogElement = $("#"+this.id);
-        var content = this.dialogElement.find(".dialog-content");
 
+        var content = this.dialogElement.find(".dialog-content");
         content.append(this.dialogContent.html());
-        var height = this.parentContainer.height();
-        if(height == 0) {
-            height = $(window).height();
-        }
-        var top = 30 * ( height - content.outerHeight() ) / height;
-        console.log("height = " + height + ", ch="+ content.outerHeight());
-        content.css("top",top + "%");
+
+        var top = Math.round(0.15 * Math.min($(window).height(),this.dialogElement.height()));
+
+        content.css("top",top + "px");
+
+        this.dialogElement.height(this.parentContainer.height());
         this.dialogElement.hide();
     },
     show : function() {

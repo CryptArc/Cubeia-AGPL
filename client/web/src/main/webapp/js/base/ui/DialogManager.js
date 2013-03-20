@@ -50,23 +50,9 @@ Poker.DialogManager = Class.extend({
                 message : i18n.t("dialogs." + content.translationKey + ".message")});
         }
 
-        var container = null;
+        var container = this.getContainer(content);
 
-        if(typeof(content.tableId)!="undefined") {
-            container = this.getTableContainer(content.tableId);
-        }
-
-        if(container==null && typeof(content.tournamentId)!="undefined") {
-            container = this.getTableContainer(content.tournamentId);
-        }
-
-        if(container==null && typeof(content.container)!="undefined") {
-            container = content.container;
-        } else {
-            container= $("body");
-        }
-
-        var genericDialog = new Poker.Dialog(container,$("#genericDialog"))
+        var genericDialog = new Poker.Dialog(container,$("#genericDialog"));
         var element = genericDialog.getElement();
         if (content.header) {
             element.find("h1").html(content.header);
@@ -91,13 +77,38 @@ Poker.DialogManager = Class.extend({
         }
         if (typeof(okCallback) == "undefined") {
             this.displayDialog(genericDialog, function() {
-                self.close();
+                genericDialog.close();
             }, null);
         } else {
             this.displayDialog(genericDialog, function() {
                 return okCallback();
             }, null);
         }
+    },
+    getContainer : function(content) {
+
+        console.log("displaying dialog content = ");
+        console.log(content);
+        console.log("TABLE ID = " + content.tableId);
+
+        var container = null;
+
+        if(typeof(content.tableId)!="undefined") {
+            container = this.getTableContainer(content.tableId);
+        }
+
+        if(container==null && typeof(content.tournamentId)!="undefined") {
+            container = this.getTournamentLobbyContainer(content.tournamentId);
+        }
+
+        if(container==null && typeof(content.container)!="undefined") {
+            container = content.container;
+        }
+
+        if(container==null) {
+            container = $("body");
+        }
+        return container;
     },
     getTableContainer : function(tableId) {
         var table = Poker.AppCtx.getTableManager().getTable(tableId);
@@ -108,8 +119,11 @@ Poker.DialogManager = Class.extend({
     },
     getTournamentLobbyContainer : function(tournamentId) {
         var tournament = Poker.AppCtx.getTournamentManager().getTournamentById(tournamentId);
+        console.log("table container for tournament = " + tournamentId);
+
         if(tournament!=null) {
-            return tournament.tournamentLayoutManager.getViewElementId();
+            console.log(tournament.tournamentLayoutManager.viewElement);
+            return tournament.tournamentLayoutManager.viewElement;
         }
         return null;
     },
@@ -123,52 +137,28 @@ Poker.DialogManager = Class.extend({
      * @param closeCallback
      */
     displayDialog: function(dialog, okCallback, closeCallback) {
-        if (this.open == true) {
-            this.queueDialog(dialog, okCallback, closeCallback);
-            return;
-        }
-        this.open = true;
-
         var self = this;
-
         if (closeCallback) {
             this.currentCloseCallback = closeCallback;
         }
-
-        var targetFontSize =  Math.round(90* $(window).width()/1024);
-        if (targetFontSize > 125) {
-            targetFontSize = 125;
+        if(dialog.parentContainer==$("body")) {
+            var targetFontSize =  Math.round(90* $(window).width()/1024);
+            if (targetFontSize > 125) {
+                targetFontSize = 125;
+            }
         }
-
         var dialogElement = dialog.getElement();
         dialogElement.css({fontSize : targetFontSize + "%"});
         dialogElement.find(".dialog-cancel-button").touchSafeClick(function(){
             dialog.close();
-            self.onClose();
-            self.open = false;
         });
         dialogElement.find(".dialog-ok-button").touchSafeClick(function() {
             if (okCallback() || !okCallback) {
                 dialog.close();
-                self.onClose();
-                self.open = false;
             }
         });
         dialog.show();
         this.currentDialog = dialog;
 
-    },
-    onClose : function() {
-        if (this.currentCloseCallback != null) {
-            this.currentCloseCallback();
-        }
-        this.openQueuedDialog();
-    },
-    close : function() {
-        this.open=false;
-        if(this.currentDialog!=null) {
-            this.currentDialog.close();
-        }
-        this.onClose();
     }
 });

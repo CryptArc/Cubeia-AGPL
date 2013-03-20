@@ -60,7 +60,7 @@ Poker.BuyInDialog = Class.extend({
         return true;
     },
     close : function() {
-        this.dialogManager.close();
+        this.dialog.close();
     },
     getTemplateId : function() {
         return "cashGamesBuyInContent";
