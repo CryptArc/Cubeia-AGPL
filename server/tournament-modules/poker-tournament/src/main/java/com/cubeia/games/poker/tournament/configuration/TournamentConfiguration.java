@@ -90,13 +90,27 @@ public class TournamentConfiguration implements Serializable {
     @ManyToOne(cascade = ALL)
     private RebuyConfiguration rebuyConfiguration = new RebuyConfiguration();
 
+    /**
+     * By specifying a guaranteed prize pool, the poker network will add money up to that level,
+     * if the prize pool from registration entries does not reach that level.
+     */
+    private BigDecimal guaranteedPrizePool = BigDecimal.ZERO;
+
     public TournamentConfiguration() {
     }
-    
+
     public Set<Long> getOperatorIds() {
         return operatorIds;
     }
-    
+
+    public BigDecimal getGuaranteedPrizePool() {
+        return guaranteedPrizePool;
+    }
+
+    public void setGuaranteedPrizePool(BigDecimal guaranteedPrizePool) {
+        this.guaranteedPrizePool = guaranteedPrizePool;
+    }
+
     public void setOperatorIds(Set<Long> operatorIds) {
         this.operatorIds = operatorIds;
     }

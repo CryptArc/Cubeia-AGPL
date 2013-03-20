@@ -78,6 +78,8 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
 
     static final Long RAKE_ACCOUNT_USER_ID = -1000L;
 
+    static final Long PROMOTIONS_ACCOUNT_USER_ID = -2000L;
+
     private Logger log = LoggerFactory.getLogger(CashGamesBackendAdapter.class);
 
     private final AtomicLong idSequence = new AtomicLong(0);
@@ -92,6 +94,11 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
      */
     @VisibleForTesting
     protected Map<String, Long> rakeAccounts = Maps.newHashMap();
+
+    /**
+     * Maps currency to promotions account.
+     */
+    protected Map<String, Long> promotionsAccounts = Maps.newHashMap();
 
     public CashGamesBackendAdapter(WalletServiceContract walletService, AccountLookupUtil accountLookupUtil) throws SystemException {
         this.walletService = walletService;
@@ -287,6 +294,19 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
         return rakeAccounts.get(currencyCode);
     }
 
+    private long getPromotionsAccount(String currencyCode) {
+        if (!promotionsAccounts.containsKey(currencyCode)) {
+            long value;
+            try {
+                value = accountLookupUtil.lookupPromotionsAccountId(walletService, currencyCode);
+            } catch (SystemException e) {
+                throw new RuntimeException("No rake account found for currency " + currencyCode);
+            }
+            promotionsAccounts.put(currencyCode, value);
+        }
+        return promotionsAccounts.get(currencyCode);
+    }
+
     private void createHandResultEntries(BatchHandRequest request, TransactionBuilder txBuilder, HashMap<Long, PlayerSessionId> sessionToPlayerSessionMap) {
         // Add one entry for each hand result.
         for (HandResult hr : request.getHandResults()) {
@@ -316,7 +336,7 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
 
     @Override
     public Money getAccountBalance(int playerId, String currency) throws GetBalanceFailedException {
-        long accountId = this.accountLookupUtil.lookupAccountIdForPLayerAndCurrency(walletService, playerId, currency);
+        long accountId = this.accountLookupUtil.lookupAccountIdForPlayerAndCurrency(walletService, playerId, currency);
         log.debug("Found account ID {} for player {}", accountId, playerId);
         if (accountId == -1) {
             log.warn("No account found for " + playerId + " and currency " + currency + ". Returning zero money.");
@@ -341,6 +361,18 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
         txBuilder.entry(getWalletSessionIdByPlayerSessionId(request.toSession), convertToWalletMoney(request.amount).getAmount());
         txBuilder.toTransactionRequest();
         txBuilder.comment(request.comment);
+        TransactionRequest txRequest = txBuilder.toTransactionRequest();
+        log.debug("sending tx request to wallet: {}", txRequest);
+        TransactionResult txResult = walletService.doTransaction(txRequest);
+        log.debug("Result: " + txResult);
+    }
+
+    @Override
+    public void transferMoneyFromPromotionsAccount(PlayerSessionId toAccount, Money money, String comment) {
+        TransactionBuilder txBuilder = new TransactionBuilder(money.getCurrencyCode(), money.getFractionalDigits());
+        txBuilder.entry(getPromotionsAccount(money.getCurrencyCode()), convertToWalletMoney(money.negate()).getAmount());
+        txBuilder.entry(getWalletSessionIdByPlayerSessionId(toAccount), convertToWalletMoney(money).getAmount());
+        txBuilder.comment(comment);
         TransactionRequest txRequest = txBuilder.toTransactionRequest();
         log.debug("sending tx request to wallet: {}", txRequest);
         TransactionResult txResult = walletService.doTransaction(txRequest);

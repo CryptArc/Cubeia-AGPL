@@ -218,6 +218,11 @@ public class MockBackendAdapter implements CashGamesBackend {
     }
 
     @Override
+    public void transferMoneyFromPromotionsAccount(PlayerSessionId toAccount, Money amount, String comment) {
+        log.debug("Taking " + amount + " from the promo account. (mocked)");
+    }
+
+    @Override
     public void transferMoneyToRakeAccount(PlayerSessionId fromAccount, Money money, String comment) {
         log.debug("Transferring " + money + " from " + fromAccount + " to rake account with comment " + comment);
     }

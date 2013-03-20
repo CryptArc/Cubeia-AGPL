@@ -139,6 +139,8 @@ public interface AsynchronousCashGamesBackend {
      */    
     BalanceUpdate getSessionBalance(PlayerSessionId sessionId) throws GetBalanceFailedException;
 
+    void transferMoneyFromPromotionsAccount(PlayerSessionId toAccount, Money amount, String comment);
+
     /**
      * See {@link CashGamesBackend#transferMoneyToRakeAccount(PlayerSessionId, Money, String)} for documentation.
      */

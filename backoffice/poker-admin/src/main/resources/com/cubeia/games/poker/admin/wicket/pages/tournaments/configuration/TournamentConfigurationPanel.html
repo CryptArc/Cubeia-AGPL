@@ -31,6 +31,17 @@
     </div>
 
     <div class="control-group">
+        <label class="control-label" for="guaranteedPrizePool">Guaranteed Prize Pool</label>
+
+        <div class="controls">
+            <input wicket:id="guaranteedPrizePool" id="guaranteedPrizePool" type="text" size="20"/>
+            <span class="help-block">Prize pool to guarantee in this tournament. Cost will be taken from promotions account (userId: -2000), make sure that the
+                promotions account exists! Example: 1000 will guarantee that there prize pool will be €1000. If the buy-in is €80, and there are 10 players,
+                this means that €200 will be taken from the promotions account.</span>
+        </div>
+    </div>
+
+    <div class="control-group">
         <label class="control-label" for="seatsPerTable">Seats Per Table</label>
 
         <div class="controls">

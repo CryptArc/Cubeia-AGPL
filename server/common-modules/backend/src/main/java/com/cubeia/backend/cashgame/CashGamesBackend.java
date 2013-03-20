@@ -118,6 +118,8 @@ public interface CashGamesBackend {
      */
     void transfer(TransferMoneyRequest request);
 
+    void transferMoneyFromPromotionsAccount(PlayerSessionId toAccount, Money amount, String comment);
+
     /**
      * Transfers money from the given account to the rake account.
      *

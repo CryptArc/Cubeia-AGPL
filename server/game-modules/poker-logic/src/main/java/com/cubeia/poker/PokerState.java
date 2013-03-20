@@ -368,17 +368,15 @@ public class PokerState implements Serializable, IPokerState {
         return getCurrentState() instanceof PlayingSTM;
     }
 
+    public boolean isShutDown() {
+        return getCurrentState() instanceof ShutdownSTM;
+    }
+
     public void notifyBuyinInfo(int playerId, boolean mandatoryBuyin) {
         serverAdapter.notifyBuyInInfo(playerId, mandatoryBuyin);
     }
 
-    // TODO: Remove, this is only used from one test.
-    public PokerContext getContext() {
-        return pokerContext;
-    }
-
     // A lot of tournament related stuff below. Investigate how we can best hide this from the "normal" poker code.
-
     public void playerOpenedSession(int playerId) {
         stateHolder.get().playerOpenedSession(playerId);
     }
@@ -408,7 +406,7 @@ public class PokerState implements Serializable, IPokerState {
     }
 
     public void sendGameStateTo(int playerId) {
-        GameStateSnapshot snapshot = getContext().createGameStateSnapshot();
+        GameStateSnapshot snapshot = pokerContext.createGameStateSnapshot();
         serverAdapter.sendGameStateTo(snapshot, playerId);
     }
 

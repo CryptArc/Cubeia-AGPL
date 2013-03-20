@@ -560,11 +560,27 @@ public class PokerTournament implements TableNotifier, Serializable {
 
     private void transferMoneyAndCloseSession(PlayerSessionId playerSession, long payoutInCents) {
         if (payoutInCents > 0) {
-            pokerState.getRebuySupport().notifyInTheMoney(); // If we are in the money, close the rebuy period.
+            notifyInTheMoney();
             backend.transfer(createPayoutRequest(payoutInCents, playerSession));
             pokerState.setPayout(playerSession.playerId, payoutInCents);
         }
         backend.closeTournamentSession(new CloseSessionRequest(playerSession), createTournamentId());
+    }
+
+    private void notifyInTheMoney() {
+        if (!pokerState.inTheMoney()) {
+            pokerState.setInTheMoney(true);
+            transferGuaranteedMoney();
+            rebuySupport.notifyInTheMoney();
+        }
+    }
+
+    private void transferGuaranteedMoney() {
+        Money guaranteedPrizePoolUsed = pokerState.getGuaranteedPrizePoolUsedAsMoney();
+        log.debug("Transferring guaranteed money " + guaranteedPrizePoolUsed + " from promo account to tournament.");
+        TournamentSessionId toAccount = pokerState.getTournamentSession();
+        backend.transferMoneyFromPromotionsAccount(toAccount, guaranteedPrizePoolUsed,
+                "Adding money to reach guaranteed prize pool" + pokerState.getHistoricId());
     }
 
     private TransferMoneyRequest createPayoutRequest(long amount, PlayerSessionId playerSession) {
