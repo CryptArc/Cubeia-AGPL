@@ -31,19 +31,15 @@ Poker.AccountPageManager = Class.extend({
     activeView : null,
 
     toggle : function() {
-    //    $('.main-menu-container').toggleClass('visible');
-    //    $(".view-container").toggleClass("slided");
-    //    $("#account_iframe").alert($("#account_iframe").loginToken);
-    //    var iframe =window.frames["account_iframe"];
         var iframe = document.getElementById("account_iframe");
-        var testurl = "file:///C:/projects/operator-api/player-api/server/src/main/webapp/html/test.html"
-        var testurl2 = "http://www.cubeiasocial.com"
-           var testurl3 = "https://dl.dropbox.com/u/5300639/test.html"
-        iframe.setAttribute("src", testurl )
+    //    var testurl = "file:///C:/projects/operator-api/player-api/server/src/main/webapp/html/test.html"
+    //    var testurl2 = "http://www.cubeiasocial.com"
+           var testurl3 = "https://dl.dropbox.com/u/5300639/player-api/index.html"
+        iframe.setAttribute("src", testurl3 )
 
-    //    iframe.ready(function() {
-    //        iframe.refresh("something");
-    //    });
+        iframe.ready(function() {
+            iframe.setToken("here comes token");
+        });
 
         $(".account-overlay").toggle();
         $("#mainMenuList").find("li").removeClass("active");

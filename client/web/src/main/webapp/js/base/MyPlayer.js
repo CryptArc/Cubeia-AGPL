@@ -38,11 +38,8 @@ Poker.MyPlayer = {
 
 
     onLogin : function(playerId, name, credentials) {
-        console.log("undecoded credentials at MyPlayer: ", credentials);
-        Poker.MyPlayer.sessionToken = decodeURIComponent(credentials);
-
-        console.log("Parsed session token ---------> ", Poker.MyPlayer.sessionToken);
-
+        console.log("credentials at MyPlayer: ", credentials);
+        Poker.MyPlayer.sessionToken = credentials;
         Poker.MyPlayer.id = playerId;
         Poker.MyPlayer.name = name;
     },
