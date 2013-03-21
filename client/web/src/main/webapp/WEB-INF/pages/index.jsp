@@ -199,6 +199,9 @@
                     tournamentLobbyUpdateInterval : 10000
                 });
 
+
+
+
                 $(".logout-link").click(function(){
                     Poker.AppCtx.getCommunicationManager().getConnector().logout();
                     document.location = document.location.hash = "clear";

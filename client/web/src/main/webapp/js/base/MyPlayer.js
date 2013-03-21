@@ -23,13 +23,25 @@ Poker.MyPlayer = {
     password : null,
 
     /**
+     * @type String
+     */
+
+    sessionToken : null,
+
+    /**
      * type Number
      */
     betAmount : 0,
 
     loginToken : null,
 
-    onLogin : function(playerId, name) {
+
+
+    onLogin : function(playerId, name, credentials) {
+        Poker.MyPlayer.sessionToken = decodeURIComponent(credentials);
+
+        console.log("Parsed session token ---------> ", Poker.MyPlayer.sessionToken);
+
         Poker.MyPlayer.id = playerId;
         Poker.MyPlayer.name = name;
     },

@@ -78,8 +78,8 @@ Poker.CommunicationManager = Class.extend({
      * @param {Number} playerId
      * @param {String} name
      */
-    loginCallback : function(status,playerId,name) {
-       new Poker.ConnectionPacketHandler().handleLogin(status,playerId,name);
+    loginCallback : function(status,playerId,name, credentials) {
+       new Poker.ConnectionPacketHandler().handleLogin(status,playerId,name,credentials);
     },
     retryCount : 0,
     /**
@@ -116,7 +116,7 @@ Poker.CommunicationManager = Class.extend({
                 self.statusCallback(status);
             });
 
-
+        console.log("Connector connect: ", this.webSocketUrl, this.webSocketPort);
         this.connector.connect("FIREBASE.WebSocketAdapter", this.webSocketUrl, this.webSocketPort, "socket");
     },
     /**

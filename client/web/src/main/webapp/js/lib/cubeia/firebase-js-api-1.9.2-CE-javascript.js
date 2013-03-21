@@ -362,7 +362,7 @@ FIREBASE.Connector = function (packetCallback, lobbyCallback, loginCallback, sta
     };
     var _handleLoginResponse = function (loginResponse) {
         if (_loginCallback) {
-            _loginCallback(loginResponse.status, loginResponse.pid, loginResponse.screenname)
+            _loginCallback(loginResponse.status, loginResponse.pid, loginResponse.screenname, loginResponse.credentials);
         }
     };
     var _handleDisconnect = function () {

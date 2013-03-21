@@ -31,8 +31,8 @@ Poker.ConnectionManager = Class.extend({
     init : function() {
         this.disconnectDialog = new Poker.DisconnectDialog();
     },
-    onUserLoggedIn : function(playerId, name) {
-        Poker.MyPlayer.onLogin(playerId,name);
+    onUserLoggedIn : function(playerId, name, credentials) {
+        Poker.MyPlayer.onLogin(playerId,name, credentials);
         $("#username").html(name);
         $("#userId").html(playerId);
         $('#loginView').hide();
