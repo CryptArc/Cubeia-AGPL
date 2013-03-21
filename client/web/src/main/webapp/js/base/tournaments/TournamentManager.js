@@ -82,6 +82,9 @@ Poker.TournamentManager = Class.extend({
     setTournamentTable : function(tournamentId, tableId) {
         this.tournamentTables.put(tournamentId,tableId);
     },
+    isTournamentTable : function(tableId) {
+        return this.tournamentTables.get(tableId)!=null;
+    },
     getTableByTournament : function(tournamentId) {
         return this.tournamentTables.get(tournamentId);
     },

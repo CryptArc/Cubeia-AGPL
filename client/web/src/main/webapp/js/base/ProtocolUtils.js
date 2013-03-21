@@ -31,10 +31,11 @@ Poker.ProtocolUtils = Class.extend({
         var param = function(name) {
             var val = self.readParam(name,params);
             if(val == null) {
-                val = "N/A";
+                val = null;
             }
             return val;
         };
+
         console.log("SNAPSHOT!:");
         console.log(snapshot.params);
         var data = {
@@ -63,27 +64,45 @@ Poker.ProtocolUtils = Class.extend({
         var self = this;
         var param = function(name) {
             var val = self.readParam(name,params);
-            if(val == null) {
-                val = "N/A";
+            if(typeof(val)=="undefined" || val == null) {
+                val = null;
             }
             return val;
         };
+        var val = function(val) {
+            if(typeof(val)!="undefined") {
+                return val;
+            } else {
+                return null;
+            }
+        }
 
         var data = {
-            id: snapshot.tableid,
-            name: snapshot.name,
+            id: val(snapshot.tableid),
+            name: val(snapshot.name),
             speed: param("SPEED"),
-            capacity: snapshot.capacity,
-            seated: snapshot.seated,
-            blinds: (Poker.Utils.formatBlinds(param("SMALL_BLIND")) + "/" + Poker.Utils.formatBlinds(param("BIG_BLIND"))),
+            capacity: val(snapshot.capacity),
+            seated: val(snapshot.seated),
+            blinds: this.getBlinds(param),
             type: this.getBettingModel(param("BETTING_GAME_BETTING_MODEL")),
             tableStatus: this.getTableStatus(snapshot.seated, snapshot.capacity),
-            smallBlind: param("SMALL_BLIND")
+            smallBlind: param("SMALL_BLIND"),
+            showInLobby : param("VISIBLE_IN_LOBBY")
         };
 
         return data;
     },
+    getBlinds : function(param) {
+        var sb = param("SMALL_BLIND");
+        if(sb!=null) {
+            return (Poker.Utils.formatBlinds(sb) + "/" + Poker.Utils.formatBlinds(param("BIG_BLIND")))
+        }
+        return null;
+    },
     getTableStatus:function (seated, capacity) {
+        if(typeof(seated)=="undefined" || typeof(capacity)=="undefined") {
+            return null;
+        }
         if (seated == capacity) {
             return "full";
         }
@@ -97,7 +116,7 @@ Poker.ProtocolUtils = Class.extend({
         } else if (model == "FIXED_LIMIT") {
             return "FL";
         }
-        return model;
+        return null;
     }
 });
 Poker.ProtocolUtils = new Poker.ProtocolUtils();

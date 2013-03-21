@@ -117,7 +117,6 @@ Poker.LobbyLayoutManager = Class.extend({
         this.requiredFilters.push(new Poker.PrivateTournamentFilter());
     },
     includeData : function (tableData) {
-        console.log(tableData);
         for (var i = 0; i < this.filters.length; i++) {
             var filter = this.filters[i];
             if (this.filtersEnabled == true && filter.filter(tableData) == false) {
@@ -194,9 +193,6 @@ Poker.LobbyLayoutManager = Class.extend({
         var item = $("#" + settings.prefix + listItem.id);
         console.log(item);
         if (item.length > 0) {
-            console.log("updating list item = ");
-            console.log(listItem);
-            console.log("SEATED = " + listItem.seated);
             item.unbind().replaceWith(this.getTableItemHtml(settings.listItemTemplateId,listItem));
             var item = $("#" + settings.prefix + listItem.id);  //need to pick it up again to be able to bind to it
             item.touchSafeClick(function(){

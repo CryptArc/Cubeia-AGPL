@@ -95,6 +95,7 @@
     <script type="text/javascript" src="${cp}/js/base/ui/actions/TableButtons.js"></script>
 
     <script type="text/javascript" src="${cp}/js/base/ui/MyActionsManager.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/data/LobbyData.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/LobbyLayoutManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/LobbyManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/Player.js"></script>
