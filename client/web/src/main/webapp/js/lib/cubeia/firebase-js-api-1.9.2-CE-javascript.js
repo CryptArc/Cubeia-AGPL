@@ -361,9 +361,12 @@ FIREBASE.Connector = function (packetCallback, lobbyCallback, loginCallback, sta
         return classConstructor
     };
     var _handleLoginResponse = function (loginResponse) {
-        console.log("Login Response Packet :", loginResponse);
+
         if (_loginCallback) {
-            _loginCallback(loginResponse.status, loginResponse.pid, loginResponse.screenname, loginResponse.credentials);
+            console.log("Login Response Credentials :",loginResponse.credentials);
+            var sessionToken = utf8.fromByteArray(loginResponse.credentials);
+            console.log(sessionToken);
+            _loginCallback(loginResponse.status, loginResponse.pid, loginResponse.screenname, sessionToken);
         }
     };
     var _handleDisconnect = function () {
