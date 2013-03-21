@@ -35,11 +35,7 @@ Poker.AccountPageManager = Class.extend({
     //    var testurl = "file:///C:/projects/operator-api/player-api/server/src/main/webapp/html/test.html"
     //    var testurl2 = "http://www.cubeiasocial.com"
            var testurl3 = "https://dl.dropbox.com/u/5300639/player-api/index.html"
-        iframe.setAttribute("src", testurl3 )
-
-        iframe.ready(function() {
-            iframe.setToken("here comes token");
-        });
+        iframe.setAttribute("src", testurl3);
 
         $(".account-overlay").toggle();
         $("#mainMenuList").find("li").removeClass("active");
