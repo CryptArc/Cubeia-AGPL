@@ -117,6 +117,8 @@ Poker.LobbyManager = Class.extend({
         this.lobbyLayoutManager.tournamentRemoved(tournamentId);
     },
     clearLobby : function () {
+        this.cashGamesLobbyData.clear();
+        this.tournamentLobbyData.clear();
         $("#tableListContainer").empty();
     },
 

@@ -9,6 +9,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link rel="apple-touch-icon" href="${cp}/skins/${skin}/images/lobby/icon.png" />
 
+    <link id="defaultSkinCss" rel="stylesheet/less" type="text/css" href="${cp}/skins/default/less/base.less" />
+
     <!-- All less files are imported in this base.less-->
     <link id="skinCss" rel="stylesheet/less" type="text/css" href="${cp}/skins/${skin}/less/base.less" />
 
@@ -182,7 +184,7 @@
                 Poker.Utils.removeStoredUser();
             }
 
-            less.watch(); //development only
+            //less.watch(); //development only
             $(".describe").describe();
 
             $("title").html(Poker.SkinConfiguration.title);

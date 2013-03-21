@@ -2,6 +2,11 @@
 
 var Poker = Poker || {};
 
+/**
+ * Handles lobby data (for tables/tournaments)
+ * Automatically merges existing items with snapshot updates
+ * @type {Poker.LobbyData}
+ */
 Poker.LobbyData = Class.extend({
     items : null,
     validator : null,
@@ -13,6 +18,7 @@ Poker.LobbyData = Class.extend({
      * @param {Poker.LobbyDataValidator} validator
      * @param {Function} onUpdate
      * @param {Function} onItemRemoved
+     * @constructor
      */
     init : function(validator,onUpdate,onItemRemoved){
         this.items = new Poker.Map();
@@ -34,7 +40,7 @@ Poker.LobbyData = Class.extend({
         this.onItemRemoved(id);
     },
     clear : function() {
-        this.items.clear();
+        this.items = new Poker.Map();
         this.notifyUpdate = false;
     },
     /**
@@ -46,8 +52,7 @@ Poker.LobbyData = Class.extend({
             console.log("No id in item, don't know what to do");
             return;
         }
-        if(typeof(item.showInLobby)!="undefined" && item.showInLobby == 0) {
-
+        if(item.showInLobby!=null && item.showInLobby == 0) {
             this.remove(item.id);
         } else {
             var current = this.items.get(item.id);
@@ -73,6 +78,11 @@ Poker.LobbyData = Class.extend({
 
         return current;
     },
+    /**
+     * Returns items that passes the Poker.LobbyDataValidator
+     * validation step
+     * @return {Array}
+     */
     getFilteredItems : function() {
         var items = this.items.values();
         var filtered = [];
