@@ -79,6 +79,7 @@ Poker.CommunicationManager = Class.extend({
      * @param {String} name
      */
     loginCallback : function(status,playerId,name, credentials) {
+       console.log("Login Callback credentials: ", credentials);
        new Poker.ConnectionPacketHandler().handleLogin(status,playerId,name,credentials);
     },
     retryCount : 0,
@@ -109,8 +110,8 @@ Poker.CommunicationManager = Class.extend({
                 Poker.AppCtx.getConnectionManager().onPacketReceived();
                 self.lobbyCallback(po);
             },
-            function(status, playerId, name){
-                self.loginCallback(status,playerId,name);
+            function(status, playerId, name, credentials){
+                self.loginCallback(status,playerId,name,credentials);
             },
             function(status){
                 self.statusCallback(status);
