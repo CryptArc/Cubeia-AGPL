@@ -43,6 +43,7 @@ Poker.TableView = Poker.TabView.extend({
         var marginLeft =  Math.floor((maxWidth-dim.width)/2);
         this.tableViewContainer.width(dim.width).height(dim.height).css({marginLeft : marginLeft});
         this.getViewElement().css({width:"100%",height:"100%"});
+        this.layoutManager.positionDealerButton();
     }
 
 });

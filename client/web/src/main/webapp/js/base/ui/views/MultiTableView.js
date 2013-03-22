@@ -65,6 +65,7 @@ Poker.MultiTableView = Poker.TabView.extend({
         for(var i = 0; i<views.length; i++) {
             var ve = views[i].getViewElement();
             ve.css({ width : dim.width, height : dim.height, fontSize : 100/columns + "%", marginLeft: 0}).show();
+            views[i].layoutManager.positionDealerButton();
         }
     },
     getColumns : function(nr) {

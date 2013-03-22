@@ -321,17 +321,30 @@ Poker.TableLayoutManager = Class.extend({
 
     },
     onMoveDealerButton : function(seatId) {
+        var newDealer = this.currentDealer!=seatId;
         this.currentDealer = seatId;
-        var seat = this.seats.get(seatId);
+        this.positionDealerButton(newDealer);
+        this.playSound(Poker.Sounds.MOVE_DEALER_BUTTON);
+    },
+    positionDealerButton : function(newDealer) {
+        if(this.currentDealer==-1) {
+            return;
+        }
+        if(typeof(newDealer)=="undefined") {
+            newDealer = false;
+        }
+        var seat = this.seats.get(this.currentDealer);
         var off = seat.getDealerButtonOffsetElement().relativeOffset(this.tableView);
-
 
         var pos = {
             left : Math.round(off.left + seat.getDealerButtonOffsetElement().width()*0.95),
             top : Math.round(off.top)
         };
-        this.dealerButton.move(pos.top,pos.left);
-        this.playSound(Poker.Sounds.MOVE_DEALER_BUTTON);
+        if(newDealer==true) {
+            this.dealerButton.move(pos.top,pos.left);
+        } else {
+            this.dealerButton.instantMove(pos.top,pos.left);
+        }
     },
     onBettingRoundComplete :function() {
         var seats =  this.seats.values();

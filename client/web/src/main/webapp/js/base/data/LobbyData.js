@@ -87,7 +87,7 @@ Poker.LobbyData = Class.extend({
         var items = this.items.values();
         var filtered = [];
         for(var i = 0; i<items.length; i++) {
-            if(this.validator.validate(items[i])) {
+            if(this.validator.validate(items[i])==true) {
                 filtered.push(items[i]);
             }
         }
@@ -108,9 +108,6 @@ Poker.LobbyDataValidator = Class.extend({
      */
     validate : function(item) {
         return false;
-    },
-    exist : function(prop) {
-        return typeof(prop)!=null;
     }
 });
 
@@ -123,7 +120,7 @@ Poker.TableLobbyDataValidator = Poker.LobbyDataValidator.extend({
 
     },
     validate : function(item) {
-        return this.exist(item.name) && this.exist(item.capacity);
+        return item.name!=null && item.capacity!=null;
     }
 
 });
@@ -137,7 +134,7 @@ Poker.TournamentLobbyDataValidator = Poker.LobbyDataValidator.extend({
 
     },
     validate : function(item) {
-        return this.exist(item.name) && this.exist(item.capacity) && this.exist(item.status) && this.exist(item.buyIn) ;
+        return item.name!=null && item.capacity!=null && item.status!=null && item.buyIn!=null ;
     }
 
 });
