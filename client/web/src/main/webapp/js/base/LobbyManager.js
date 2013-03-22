@@ -6,7 +6,12 @@ var Poker = Poker || {};
  */
 Poker.LobbyManager = Class.extend({
 
-    lobbyListData:null,
+    /**
+     * @type {Poker.LobbyData}
+     */
+    cashGamesLobbyData : null,
+
+    tournamentLobbyData : null,
 
     listItemTemplate:null,
 
@@ -23,90 +28,62 @@ Poker.LobbyManager = Class.extend({
      * @constructor
      */
     init: function () {
-        this.lobbyListData = [];
+        var self = this;
         this.lobbyLayoutManager = Poker.AppCtx.getLobbyLayoutManager();
+        this.cashGamesLobbyData = this.cashGamesLobbyData = new Poker.LobbyData(new Poker.TableLobbyDataValidator(),
+            function(items) {
+                self.lobbyLayoutManager.createTableList(items);
+            },
+            function(itemId) {
+                self.lobbyLayoutManager.tableRemoved(itemId);
+            });
+
+
+        this.tournamentLobbyData = new Poker.LobbyData(new Poker.TournamentLobbyDataValidator(),
+            function(items) {
+                self.lobbyLayoutManager.createTournamentList(items);
+            },
+            function(itemId) {
+                self.lobbyLayoutManager.tournamentRemoved(itemId);
+            });
 
     },
 
     handleTableSnapshotList : function (tableSnapshotList) {
+        var self = this;
+        var items = [];
         for (var i = 0; i < tableSnapshotList.length; i++) {
-            this.handleTableSnapshot(tableSnapshotList[i]);
+            items.push(Poker.ProtocolUtils.extractTableData(tableSnapshotList[i]));
         }
-        this.lobbyLayoutManager.createTableList(this.lobbyListData);
-
+        this.cashGamesLobbyData.addOrUpdateItems(items);
     },
-    handleTableSnapshot : function (tableSnapshot) {
-        if (this.findTable(tableSnapshot.tableid) === null) {
-
-            var showInLobby = Poker.ProtocolUtils.readParam("VISIBLE_IN_LOBBY",tableSnapshot.params);
-            if(parseInt(showInLobby) == 0 ) {
-                return;
-            }
-            var data = Poker.ProtocolUtils.extractTableData(tableSnapshot);
-            this.lobbyListData.push(data);
-
-        } else {
-            console.log("duplicate found - tableid: " + tableSnapshot.tableid);
-        }
-    },
-    handleTournamentSnapshotList:function (tournamentSnapshotList) {
-
-        for (var i = 0; i < tournamentSnapshotList.length; i++) {
-            this.handleTournamentSnapshot(tournamentSnapshotList[i]);
-            console.log(tournamentSnapshotList[i]);
-        }
+    handleTournamentSnapshotList : function (tournamentSnapshotList) {
+        var self = this;
         if(tournamentSnapshotList.length>0 && tournamentSnapshotList[0].address.indexOf("/sitandgo")!=-1) {
             this.sitAndGoState = true;
-            this.lobbyLayoutManager.createSitAndGoList(this.lobbyListData);
         } else {
             this.sitAndGoState = false;
-            this.lobbyLayoutManager.createTournamentList(this.lobbyListData);
         }
-    },
-    handleTournamentSnapshot:function (snapshot) {
-        if (this.findSitAndGo(snapshot.mttid) === null) {
-            var data = Poker.ProtocolUtils.extractTournamentData(snapshot);
-            this.lobbyListData.push(data);
-        } else {
-            console.log("duplicate found - mttid: " + snapshot.mttid);
+
+        var items = [];
+        for (var i = 0; i < tournamentSnapshotList.length; i++) {
+            items.push(Poker.ProtocolUtils.extractTournamentData(tournamentSnapshotList[i]));
         }
+        this.tournamentLobbyData.addOrUpdateItems(items);
+
+
     },
+
     /**
      *
      * @param {FB_PROTOCOL.TournamentUpdatePacket[]} tournamentUpdateList
      */
-    handleTournamentUpdates:function (tournamentUpdateList) {
-        console.log("Received tournament updates");
+    handleTournamentUpdates : function (tournamentUpdateList) {
+        var items = [];
         for (var i = 0; i < tournamentUpdateList.length; i++) {
-            this.handleTournamentUpdate(tournamentUpdateList[i]);
+            items.push(Poker.ProtocolUtils.extractTournamentData(tournamentUpdateList[i]));
         }
-
-    },
-
-    /**
-     *
-     * @param {FB_PROTOCOL.TournamentUpdatePacket} tournamentUpdate
-     */
-    handleTournamentUpdate:function (tournamentUpdate) {
-        console.log("Updating tournament: " + tournamentUpdate.mttid);
-        var tournamentData = this.findTournament(tournamentUpdate.mttid);
-        if (tournamentData) {
-            var registered = Poker.ProtocolUtils.readParam("REGISTERED", tournamentUpdate.params);
-            if (registered != undefined) tournamentData.registered = registered;
-            var status = Poker.ProtocolUtils.readParam("STATUS", tournamentUpdate.params);
-            if(status!=undefined) tournamentData.status = status;
-
-            if(this.sitAndGoState==true) {
-                this.lobbyLayoutManager.updateSitAndGoItem(tournamentData)
-            } else {
-                this.lobbyLayoutManager.updateTournamentItem(tournamentData);
-            }
-            if (status == "FINISHED") {
-                Poker.AppCtx.getTournamentManager().tournamentFinished(tournamentUpdate.mttid);
-            }
-        } else {
-            console.log("Ignored tournament update, mtt not found: " + tournamentUpdate.mttid);
-        }
+        this.tournamentLobbyData.addOrUpdateItems(items);
     },
 
     getTableStatus:function (seated, capacity) {
@@ -115,7 +92,7 @@ Poker.LobbyManager = Class.extend({
         }
         return "open";
     },
-    getBettingModel:function (model) {
+    getBettingModel : function (model) {
         if (model == "NO_LIMIT") {
             return "NL"
         } else if (model == "POT_LIMIT") {
@@ -125,87 +102,28 @@ Poker.LobbyManager = Class.extend({
         }
         return model;
     },
-    handleTableUpdateList:function (tableUpdateList) {
+    handleTableUpdateList : function (tableUpdateList) {
+        var items = [];
         for (var i = 0; i < tableUpdateList.length; i++) {
-            this.handleTableUpdate(tableUpdateList[i]);
+            items.push(Poker.ProtocolUtils.extractTableData(tableUpdateList[i]));
         }
+        this.cashGamesLobbyData.addOrUpdateItems(items);
     },
-    handleTableUpdate:function (tableUpdate) {
-        var showInLobby = Poker.ProtocolUtils.readParam("VISIBLE_IN_LOBBY",tableUpdate.params);
-
-        if(showInLobby!=null && parseInt(showInLobby) == 0 ) {
-            this.handleTableRemoved(tableUpdate.tableid);
-            return;
-        }
-        var tableData = this.findTable(tableUpdate.tableid);
-        if (tableData) {
-            if (tableData.seated == tableUpdate.seated) {
-                return;
-            }
-            tableData.seated = tableUpdate.seated;
-
-            this.lobbyLayoutManager.updateTableItem(tableData);
-            console.log("table " + tableData.id + "  updated, seated = " + tableData.seated);
-        }
-    },
-
-    handleTableRemoved : function (tableId) {
-        this.removeListItem(tableId);
-        this.lobbyLayoutManager.tableRemoved(tableId);
+    handleTableRemoved : function(tableId) {
+        this.cashGamesLobbyData.addOrUpdateItem({ id: tableId, showInLobby: 0});
     },
     handleTournamentRemoved : function(tournamentId) {
         this.removeListItem(tournamentId);
         this.lobbyLayoutManager.tournamentRemoved(tournamentId);
     },
-    removeListItem : function (itemId) {
-        for (var i = 0; i < this.lobbyListData.length; i++) {
-            var object = this.lobbyListData[i];
-            if (object.id == itemId) {
-                this.lobbyListData.splice(i, 1);
-                return;
-            }
-        }
-    },
-
-    findTable:function (tableId) {
-        for (var i = 0; i < this.lobbyListData.length; i++) {
-            var object = this.lobbyListData[i];
-            if (object.id == tableId) {
-                return object;
-            }
-        }
-        return null;
-    },
-
-    findTournament:function (tournamentId) {
-        for (var i = 0; i < this.lobbyListData.length; i++) {
-            var object = this.lobbyListData[i];
-            if (object.id == tournamentId) {
-                return object;
-            }
-        }
-        return null;
-    },
-
-    findSitAndGo:function (tournamentId) {
-        for (var i = 0; i < this.lobbyListData.length; i++) {
-            var object = this.lobbyListData[i];
-            if (object.id == tournamentId) {
-                return object;
-            }
-        }
-        return null;
-    },
-    reSort : function () {
-
-    },
     clearLobby : function () {
-        this.lobbyListData = [];
+        this.cashGamesLobbyData.clear();
+        this.tournamentLobbyData.clear();
         $("#tableListContainer").empty();
     },
 
     getCapacity:function (id) {
-        var tableData = this.findTable(id);
+        var tableData = this.cashGamesLobbyData.getItem(id);
         return tableData.capacity;
     }
 
@@ -236,8 +154,8 @@ Poker.LobbyFilter = Class.extend({
             $("#" + this.id).removeClass("active");
         }
     },
-    filterUpdated:function () {
-        this.lobbyLayoutManager.createTableList(Poker.AppCtx.getLobbyManager().lobbyListData);
+    filterUpdated : function () {
+        this.lobbyLayoutManager.filterUpdated(Poker.AppCtx.getLobbyManager().cashGamesLobbyData.getFilteredItems());
     },
     /**
      * Returns true if it should be included in the lobby and

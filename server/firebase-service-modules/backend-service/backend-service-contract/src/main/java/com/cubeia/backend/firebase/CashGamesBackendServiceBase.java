@@ -251,6 +251,11 @@ public abstract class CashGamesBackendServiceBase implements CashGamesBackendSer
         getCashGamesBackend().transferMoneyFromRakeAccount(sessionAccountToTransferFrom, moneyToTransferToRakeAccount, comment);
     }
 
+    @Override
+    public void transferMoneyFromPromotionsAccount(PlayerSessionId toAccount, Money amount, String comment) {
+        getCashGamesBackend().transferMoneyFromPromotionsAccount(toAccount, amount, comment);
+    }
+
     // --- PRIVATE METHODS --- //
 
     private void scheduleCallback(Runnable runnable) {

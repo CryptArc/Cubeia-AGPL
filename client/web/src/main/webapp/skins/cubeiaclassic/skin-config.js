@@ -3,5 +3,6 @@ var Poker = Poker || {};
 Poker.SkinConfiguration = {
     operatorId : 1,
     name : "cubeiaclassic",
-    preLoadImages : null
+    preLoadImages : null,
+    title : "Cubeia Poker"
 };

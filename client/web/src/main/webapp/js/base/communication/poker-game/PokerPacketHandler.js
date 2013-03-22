@@ -76,10 +76,11 @@ Poker.PokerPacketHandler = Class.extend({
     },
     handleDealPublicCards : function(packet) {
         this.tableManager.bettingRoundComplete(this.tableId);
+        var cards = [];
         for ( var i = 0; i < packet.cards.length; i ++ ) {
-            this.tableManager.dealCommunityCard(this.tableId,packet.cards[i].cardId,
-                Poker.Utils.getCardString(packet.cards[i]));
+            cards.push({id : packet.cards[i].cardId, cardString : Poker.Utils.getCardString(packet.cards[i])});
         }
+        this.tableManager.dealCommunityCards(this.tableId,cards);
     },
     handleDealPrivateCards : function(protocolObject) {
         var cardsToDeal = protocolObject.cards;

@@ -20,8 +20,6 @@ package com.cubeia.games.poker.admin.wicket.pages.tournaments.configuration;
 import com.cubeia.backoffice.operator.api.OperatorDTO;
 import com.cubeia.games.poker.admin.db.AdminDAO;
 import com.cubeia.games.poker.admin.network.NetworkClient;
-import com.cubeia.games.poker.admin.wicket.pages.tournaments.rebuy.RebuyConfigurationPanel;
-import com.cubeia.games.poker.tournament.configuration.RebuyConfiguration;
 import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
 import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
@@ -68,6 +66,7 @@ public class TournamentConfigurationPanel extends Panel {
         add(maxPlayers);
         add(new TextField<BigDecimal>("buyIn", new PropertyModel(model, "buyIn")));
         add(new TextField<BigDecimal>("fee", new PropertyModel(model, "fee")));
+        add(new TextField<BigDecimal>("guaranteedPrizePool", new PropertyModel(model, "guaranteedPrizePool")));
         add(new TextField<Long>("startingChips", new PropertyModel(model, "startingChips")).add(RangeValidator.minimum(1L)));
         add(new DropDownChoice<BetStrategyType>("betStrategy", new PropertyModel(model, "betStrategy"), asList(BetStrategyType.values()), renderer("name")));
 
@@ -90,11 +89,9 @@ public class TournamentConfigurationPanel extends Panel {
 
         if (sitAndGo) {
             maxPlayers.setVisible(false);
-        } else {
-//            add(new RebuyConfigurationPanel("rebuyConfiguration", new PropertyModel<RebuyConfiguration>(model.getObject(), "rebuyConfiguration")));
         }
     }
-    
+
 	private List<Long> getOperatorIds() {
 		List<Long> l = new ArrayList<Long>();
 		for (OperatorDTO op : networkClient.getOperators()) {
@@ -112,7 +109,7 @@ public class TournamentConfigurationPanel extends Panel {
 		return "n/a";
 	}
 
-	private PropertyModel model(String expression) {
+    private PropertyModel model(String expression) {
         return new PropertyModel(model, expression);
     }
 

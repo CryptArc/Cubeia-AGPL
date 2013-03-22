@@ -20,7 +20,6 @@ package com.cubeia.games.poker.tournament.state;
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.TournamentSessionId;
 import com.cubeia.firebase.api.mtt.model.MttPlayer;
-import com.cubeia.firebase.api.mtt.model.MttPlayerStatus;
 import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.games.poker.common.money.Money;
 import com.cubeia.games.poker.io.protocol.TournamentPlayerList;
@@ -49,7 +48,6 @@ import java.util.Set;
 
 import static com.google.common.collect.Maps.newHashMap;
 import static java.lang.Math.max;
-import static java.math.BigDecimal.valueOf;
 import static org.joda.time.Seconds.secondsBetween;
 
 public class PokerTournamentState implements Serializable {
@@ -87,6 +85,8 @@ public class PokerTournamentState implements Serializable {
 
     private BigDecimal fee;
 
+    private BigDecimal guaranteedPrizePool = BigDecimal.ZERO;
+
     private String currencyCode;
 
     /**  Maps playerId to PlayerSessionId */
@@ -108,6 +108,9 @@ public class PokerTournamentState implements Serializable {
     private DateTime startTime = new DateTime(0);
 
     private int minutesVisibleAfterFinished;
+
+    /** Maps playerId to amount won, in cents. */
+    private Map<Integer, Long> winMap = newHashMap();
 
     // Maps playerId -> MttPlayer. Transient to reduce serialized size.
     private transient Map<Integer, MttPlayer> playerMap;
@@ -147,6 +150,8 @@ public class PokerTournamentState implements Serializable {
     private long startingChips;
 
     private RebuySupport rebuySupport = RebuySupport.NO_REBUYS;
+
+    private boolean inTheMoney = false;
 
     /**
      * @return True if this tournament is limited to one or more operators
@@ -209,6 +214,18 @@ public class PokerTournamentState implements Serializable {
 
     public void setCurrencyCode(String currencyCode) {
         this.currencyCode = currencyCode;
+    }
+
+    public boolean inTheMoney() {
+        return inTheMoney;
+    }
+
+    public void setInTheMoney(boolean inTheMoney) {
+        this.inTheMoney = inTheMoney;
+    }
+
+    public void setPayout(int playerId, long payoutInCents) {
+        winMap.put(playerId, payoutInCents);
     }
 
     public void setRebuySupport(RebuySupport rebuySupport) {
@@ -284,8 +301,8 @@ public class PokerTournamentState implements Serializable {
         return getCurrentBlindsLevel().getSmallBlindAmount();
     }
 
-    public int getBigBlindAmount() {
-        return getCurrentBlindsLevel().getBigBlindAmount();
+    public int getBigBlindAmountInCents() {
+        return getCurrentBlindsLevel().getBigBlindAmount() * 100;
     }
 
     public void setBlindsStructure(BlindsStructure blindsStructure) {
@@ -326,7 +343,7 @@ public class PokerTournamentState implements Serializable {
     }
 
     public Money convertToMoney(BigDecimal moneyInDecimalForm) {
-        return new Money(moneyInDecimalForm.multiply(valueOf(100)).longValue(), currencyCode, 2);
+        return new Money(moneyInDecimalForm.movePointRight(2).longValue(), currencyCode, 2);
     }
 
     public Money convertToMoney(Long moneyInCents) {
@@ -395,14 +412,11 @@ public class PokerTournamentState implements Serializable {
      */
     public void setPayouts(int minPlayers, int registeredPlayersCount) {
         log.debug("Calculating payouts, minPlayers: " + minPlayers + " registered players: " + registeredPlayersCount);
-        long totalPrizePoolAsLong;
-        if (registeredPlayersCount < minPlayers) {
-            totalPrizePoolAsLong = buyIn.multiply(BigDecimal.valueOf(registeredPlayersCount)).movePointRight(2).longValue();
-        } else {
-            totalPrizePoolAsLong = prizePool.movePointRight(2).longValue();
-        }
-        log.debug("Total prize pool as long: " + totalPrizePoolAsLong);
-        this.payouts = payoutStructure.getPayoutsForEntrantsAndPrizePool(max(minPlayers, registeredPlayersCount), totalPrizePoolAsLong);
+        BigDecimal minRegPrizePool = buyIn.multiply(BigDecimal.valueOf(minPlayers));
+        // Total prize pool is the maximum of the current prize pool and the prize pool we will have if at least minPlayers players register.
+        long totalPrizePoolInCents = minRegPrizePool.max(getPrizePool()).movePointRight(2).longValue();
+        log.debug("Total prize pool as long: " + totalPrizePoolInCents);
+        this.payouts = payoutStructure.getPayoutsForEntrantsAndPrizePool(max(minPlayers, registeredPlayersCount), totalPrizePoolInCents);
     }
 
     public void addBuyInToPrizePool() {
@@ -443,10 +457,6 @@ public class PokerTournamentState implements Serializable {
 
     public void removePlayerSession(int playerId) {
         playerSessions.remove(playerId);
-    }
-
-    public Collection<PlayerSessionId> getPlayerSessions() {
-        return playerSessions.values();
     }
 
     public void setLifecycle(TournamentLifeCycle tournamentLifeCycle) {
@@ -490,9 +500,9 @@ public class PokerTournamentState implements Serializable {
         return tournamentLifeCycle.shouldScheduleRegistrationOpening(getStatus(), now);
     }
 
-    public int getWinningsFor(MttPlayer player) {
-        if (player.getStatus() == MttPlayerStatus.OUT) {
-            return payouts.getPayoutsForPosition(player.getPosition());
+    public long getWinningsFor(MttPlayer player) {
+        if (winMap.containsKey(player.getPlayerId())) {
+            return winMap.get(player.getPlayerId());
         }
         return 0;
     }
@@ -521,7 +531,7 @@ public class PokerTournamentState implements Serializable {
     }
 
     public BigDecimal getPrizePool() {
-        return prizePool;
+        return prizePool.max(guaranteedPrizePool);
     }
 
     public void setPlayerList(TournamentPlayerList playerList) {
@@ -639,5 +649,14 @@ public class PokerTournamentState implements Serializable {
 
     public RebuySupport getRebuySupport() {
         return rebuySupport;
+    }
+
+    public void setGuaranteedPrizePool(BigDecimal guaranteedPrizePool) {
+        this.guaranteedPrizePool = guaranteedPrizePool;
+    }
+
+    public Money getGuaranteedPrizePoolUsedAsMoney() {
+        // The guaranteed prize pool used is GUARANTEED - PRIZE POOL, or zero if PRIZE POOL > GUARANTEED.
+        return convertToMoney(BigDecimal.ZERO.max(guaranteedPrizePool.subtract(prizePool)));
     }
 }

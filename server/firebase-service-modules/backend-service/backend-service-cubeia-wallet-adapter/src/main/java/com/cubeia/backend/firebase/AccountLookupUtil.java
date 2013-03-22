@@ -32,11 +32,19 @@ import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
 
 public class AccountLookupUtil {
 
+    public long lookupPromotionsAccountId(WalletServiceContract walletService, String currencyCode) throws SystemException {
+        return lookupSystemAccount(walletService, currencyCode, CashGamesBackendAdapter.PROMOTIONS_ACCOUNT_USER_ID);
+    }
+
     public long lookupRakeAccountId(WalletServiceContract walletService, String currency) throws SystemException {
+        return lookupSystemAccount(walletService, currency, CashGamesBackendAdapter.RAKE_ACCOUNT_USER_ID);
+    }
+
+    private long lookupSystemAccount(WalletServiceContract walletService, String currency, Long accountUserId) throws SystemException {
         ListAccountsRequest request = new ListAccountsRequest();
         request.setStatus(AccountStatus.OPEN);
         request.setTypes(asList(SYSTEM_ACCOUNT));
-        request.setUserId(CashGamesBackendAdapter.RAKE_ACCOUNT_USER_ID);
+        request.setUserId(accountUserId);
         AccountQueryResult accounts = walletService.listAccounts(request);
         for (Account account : accounts.getAccounts()) {
             if (account.getCurrencyCode().equals(currency)) {
@@ -54,7 +62,7 @@ public class AccountLookupUtil {
      * @param currency the currency code that the account should have
      * @return the accountId of the matching account, or -1 if none found
      */
-    public long lookupAccountIdForPLayerAndCurrency(WalletServiceContract walletService, long playerId, String currency) {
+    public long lookupAccountIdForPlayerAndCurrency(WalletServiceContract walletService, long playerId, String currency) {
         ListAccountsRequest request = new ListAccountsRequest();
         request.setStatus(AccountStatus.OPEN);
         request.setTypes(asList(STATIC_ACCOUNT));

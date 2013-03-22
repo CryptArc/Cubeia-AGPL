@@ -21,7 +21,6 @@ import com.cubeia.games.poker.tournament.history.HistoryPersister;
 import com.cubeia.games.poker.tournament.messages.AddOnPeriodClosed;
 import com.cubeia.games.poker.tournament.messages.AddOnsAvailableDuringBreak;
 import com.cubeia.games.poker.tournament.messages.OfferRebuy;
-import com.cubeia.games.poker.tournament.util.PacketSender;
 import com.cubeia.games.poker.tournament.util.SerializablePredicate;
 import com.cubeia.games.poker.tournament.util.TableNotifier;
 import com.google.common.base.Predicate;
@@ -140,7 +139,7 @@ public class RebuySupport implements Serializable {
             if (inTheMoney || !rebuysAvailable) {
                 return false;
             } else {
-                return numberOfRebuysPerformedBy(playerId) < maxRebuys;
+                return maxRebuys == -1 || numberOfRebuysPerformedBy(playerId) < maxRebuys;
             }
         }
     };
@@ -193,6 +192,7 @@ public class RebuySupport implements Serializable {
     }
 
     public void notifyInTheMoney() {
+        // If we are in the money, close the rebuy period.
         inTheMoney = true;
         rebuysAvailable = false;
     }

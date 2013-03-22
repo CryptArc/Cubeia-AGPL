@@ -25,12 +25,14 @@ import com.cubeia.firebase.api.service.Service;
 import com.cubeia.firebase.api.service.ServiceContext;
 import com.cubeia.firebase.api.service.ServiceRouter;
 import com.cubeia.network.wallet.firebase.api.WalletServiceContract;
+import org.apache.log4j.Logger;
 
 import static com.cubeia.backend.cashgame.dto.OpenTournamentSessionRequest.TOURNAMENT_ACCOUNT;
 import static java.util.Collections.singleton;
 
 public class CashGamesBackendServiceImpl extends CashGamesBackendServiceBase implements CashGamesBackendService, Service, RoutableService {
 
+    private static final Logger log = Logger.getLogger(CashGamesBackendServiceImpl.class);
     private CashGamesBackendAdapter adapter;
     private ServiceRouter router;
 
@@ -51,8 +53,17 @@ public class CashGamesBackendServiceImpl extends CashGamesBackendServiceBase imp
     @Override
     public void init(ServiceContext con) throws SystemException {
         WalletServiceContract walletService = con.getParentRegistry().getServiceInstance(WalletServiceContract.class);
-        walletService.closeOpenSessionAccounts(singleton(TOURNAMENT_ACCOUNT));
+        closeOpenSessionAccounts(walletService);
         adapter = new CashGamesBackendAdapter(walletService, new AccountLookupUtil());
+    }
+
+    private void closeOpenSessionAccounts(WalletServiceContract walletService) {
+        log.debug("Attempting to close open accounts.");
+        try {
+            walletService.closeOpenSessionAccounts(singleton(TOURNAMENT_ACCOUNT));
+        } catch (Exception e) {
+            log.error("Failed closing open session accounts due to: " + e + ". This could be because the wallet service is not running.");
+        }
     }
 
     @Override

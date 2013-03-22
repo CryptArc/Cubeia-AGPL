@@ -1,7 +1,14 @@
 {
+    "tabs" : {
+        "lobby" : "Lobby"
+    },
     "login" : {
         "login" : "login",
-        "status" : "Status:"
+        "status" : "Status:",
+        "disconnected" : "Disconnected, retrying (count %s)",
+        "connecting" : "Connecting",
+        "connected" : "Connected",
+        "login-failed" : "Connected (Login failed with status %s)"
     },
     "lobby" : {
         "menu" : {
@@ -76,7 +83,8 @@
     },
     "user" : {
         "logged-in" : "Logged in:",
-        "log-out" : "Log out"
+        "log-out" : "Log out",
+        "my-page" : "My page"
     },
     "disconnect-dialog" : {
         "title" : "You have been disconnected",
@@ -218,7 +226,13 @@
             "header" : "Leave table",
             "message": "Are you sure you want to leave?"
         }
-
+    },
+    "table-log" : {
+        "community-cards" : "Community cards:",
+        "shows" : "shows",
+        "has" : "has",
+        "wins" : "wins",
+        "hand-started" : "Hand started:"
     }
 
 }

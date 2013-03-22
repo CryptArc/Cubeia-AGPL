@@ -78,8 +78,9 @@ Poker.CommunicationManager = Class.extend({
      * @param {Number} playerId
      * @param {String} name
      */
-    loginCallback : function(status,playerId,name) {
-       new Poker.ConnectionPacketHandler().handleLogin(status,playerId,name);
+    loginCallback : function(status,playerId,name, credentials) {
+       console.log("Login Callback credentials: ", credentials);
+       new Poker.ConnectionPacketHandler().handleLogin(status,playerId,name,credentials);
     },
     retryCount : 0,
     /**
@@ -109,14 +110,14 @@ Poker.CommunicationManager = Class.extend({
                 Poker.AppCtx.getConnectionManager().onPacketReceived();
                 self.lobbyCallback(po);
             },
-            function(status, playerId, name){
-                self.loginCallback(status,playerId,name);
+            function(status, playerId, name, credentials){
+                self.loginCallback(status,playerId,name,credentials);
             },
             function(status){
                 self.statusCallback(status);
             });
 
-
+        console.log("Connector connect: ", this.webSocketUrl, this.webSocketPort);
         this.connector.connect("FIREBASE.WebSocketAdapter", this.webSocketUrl, this.webSocketPort, "socket");
     },
     /**
@@ -234,7 +235,7 @@ Poker.CommunicationManager = Class.extend({
                 this.tableManager.notifyGameStateUpdate(tableId, protocolObject.currentLevel, protocolObject.secondsToNextLevel,protocolObject.betStrategy);
                 break;
             case com.cubeia.games.poker.io.protocol.BestHand.CLASSID:
-                this.tableManager.updateHandStrength(tableId,protocolObject);
+                this.tableManager.updateHandStrength(tableId,protocolObject,false);
                 break;
             case com.cubeia.games.poker.io.protocol.BuyInInfoRequest.CLASSID:
                 console.log("UNHANDLED PO BuyInInfoRequest");
@@ -375,7 +376,7 @@ Poker.CommunicationManager = Class.extend({
                 console.log(protocolObject);
                 break;
             case com.cubeia.games.poker.io.protocol.WaitingToStartBreak:
-                this.tableManager.notifyWaitingToStartBreak();
+                this.tableManager.notifyWaitingToStartBreak(tableId);
                 break;
             case com.cubeia.games.poker.io.protocol.BlindsAreUpdated.CLASSID:
                 this.tableManager.notifyBlindsUpdated(tableId, protocolObject.level, protocolObject.secondsToNextLevel);

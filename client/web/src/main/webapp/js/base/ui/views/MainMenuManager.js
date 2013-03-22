@@ -12,7 +12,7 @@ Poker.MainMenuManager = Class.extend({
         });
         $(".menu-overlay").touchSafeClick(function(e){
             self.toggle();
-        })
+        });
         var cashier = new Poker.MenuItem("Cashier","Manage your funds","cashier")
         this.addMenuItem(cashier,null);
         var helpMenuItem = new Poker.MenuItem("Help & rules","Learn how to play poker","help");
@@ -55,6 +55,8 @@ Poker.MainMenuManager = Class.extend({
 
     },
     toggle : function() {
+        $(".view-container").toggleClass("no-overflow");
+        $(".view-port").toggleClass("no-overflow-x")
         $('.main-menu-container').toggleClass('visible');
         $(".view-container").toggleClass("slided");
         $(".menu-overlay").toggle();

@@ -26,9 +26,12 @@ public class MongoStorage {
         }
     }
 
+    public Datastore getDatastore() {
+        return datastore;
+    }
+
     public void map(Class classType) {
-        if (morphia != null && datastore != null)
-        {
+        if (morphia != null && datastore != null) {
             morphia.map(classType);
         }
     }

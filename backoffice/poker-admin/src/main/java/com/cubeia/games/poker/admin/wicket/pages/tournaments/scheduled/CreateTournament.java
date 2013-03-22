@@ -39,6 +39,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.util.io.IClusterable;
+import org.joda.time.DateTime;
 
 import java.util.Date;
 
@@ -108,8 +109,8 @@ public class CreateTournament extends BasePage {
 
     private static class ScheduledTournamentForm implements IClusterable {
         boolean rebuysEnabled;
-        Date startDate;
-        Date endDate;
+        Date startDate = new Date();
+        Date endDate = new DateTime().plusYears(5).toDate();
         String schedule;
         Integer minutesInAnnounced;
         Integer minutesInRegistering;

@@ -27,8 +27,12 @@ import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.spring.injection.annot.SpringBean;
 
 public class SystemManagement extends BasePage {
+
+    @SpringBean
+    private FirebaseJMXFactory jmxFactory;
 
     private transient StateClientRegistryMBean clientRegistryMBean;
 
@@ -45,7 +49,6 @@ public class SystemManagement extends BasePage {
     }
 
     private void initJmx() {
-        FirebaseJMXFactory jmxFactory = new FirebaseJMXFactory();
         clientRegistryMBean = jmxFactory.createClientRegistryProxy();
         shutdownServiceMBean = jmxFactory.createShutdownServiceProxy();
     }

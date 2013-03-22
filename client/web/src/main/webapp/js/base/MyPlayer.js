@@ -23,13 +23,24 @@ Poker.MyPlayer = {
     password : null,
 
     /**
+     * @type String
+     */
+
+    sessionToken : null,
+
+    /**
      * type Number
      */
     betAmount : 0,
 
     loginToken : null,
 
-    onLogin : function(playerId, name) {
+
+
+    onLogin : function(playerId, name, credentials) {
+        console.log("credentials at MyPlayer: ", credentials);
+        if (!credentials) credentials = "No Token Here..."
+        Poker.MyPlayer.sessionToken = credentials;
         Poker.MyPlayer.id = playerId;
         Poker.MyPlayer.name = name;
     },

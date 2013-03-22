@@ -9,17 +9,14 @@
     <link rel="stylesheet" href="theme/css/unicorn.grey.css" class="skin-color" />
     <link rel="stylesheet" href="css/unicorn.extended.css" class="skin-color" />
     <link rel="stylesheet" href="css/poker-styles.css" class="skin-color" />
-    <script src="js/jquery-1.8.3.min.js"></script>
     <script src="js/multiplier.jquery.js" type="text/javascript"></script>
-
-
 </wicket:head>
 <body>
-	<div id="header">
-		<h1>
-			Poker Admin
-		</h1>
-	</div>
+    <div id="header">
+        <h1>
+            Poker Admin
+        </h1>
+    </div>
     <div id="search">
         <input type="text" placeholder="Search here..."/>
             <button type="submit" class="tip-right" title="Search">
@@ -33,17 +30,11 @@
             <li class="btn btn-inverse"><a title="" href="login.html"><i class="icon icon-share-alt"></i> <span class="text">Logout</span></a></li>
         </ul>
     </div>
-	<div id="sidebar">
+    <div id="sidebar">
         <ul wicket:id="menuPanel"></ul>
-	</div>
+    </div>
 
-	<div id="content">
-
-		<!-- form wicket:id="global.searchform" class="form-search" style="padding-top: 20px">
-			<input wicket:id="global.searchbox" type="text" class="search-query input-block-level" placeholder="Global Search... ">
-		</form -->
-
-
+    <div id="content">
         <div id="content-header">
             <h1><span wicket:id="title"></span></h1>
         </div>
@@ -52,7 +43,7 @@
             <wicket:child />
         </div>
 
-	</div>
+    </div>
 
 </body>
 </html>

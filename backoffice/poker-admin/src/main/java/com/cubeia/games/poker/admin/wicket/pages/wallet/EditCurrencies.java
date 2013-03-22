@@ -44,10 +44,8 @@ import org.apache.wicket.validation.validator.StringValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.*;
 
 @AuthorizeInstantiation({"SUPER_USER", "WALLET_ADMIN"})
 public class EditCurrencies extends BasePage {
@@ -103,7 +101,7 @@ public class EditCurrencies extends BasePage {
             }
         });
         
-        final CompoundPropertyModel<Currency> newCurrencyModel = new CompoundPropertyModel<Currency>(new Currency(null, 2));
+        final CompoundPropertyModel<Currency> newCurrencyModel = new CompoundPropertyModel<Currency>(new Currency(null, 2, new BigDecimal(1), Calendar.getInstance()));
         
         Form<Currency> addForm = new Form<Currency>("addForm", newCurrencyModel) {
             @Override
@@ -119,7 +117,7 @@ public class EditCurrencies extends BasePage {
                 }
                 
                 info("Added currency " + cur.getCode() + " with " + cur.getFractionalDigits() + " fractional digits");
-                newCurrencyModel.setObject(new Currency(null, 2));
+                newCurrencyModel.setObject(new Currency(null, 2, new BigDecimal(1), Calendar.getInstance()));
             }  
         };
         

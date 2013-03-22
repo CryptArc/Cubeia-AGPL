@@ -146,7 +146,7 @@ Poker.TableManager = Class.extend({
      */
     endHand : function(tableId,hands,potTransfers) {
         for (var i = 0; i<hands.length; i++) {
-            this.updateHandStrength(tableId,hands[i]);
+            this.updateHandStrength(tableId,hands[i],true);
         }
         var table = this.tables.get(tableId);
         console.log("pot transfers:");
@@ -168,8 +168,18 @@ Poker.TableManager = Class.extend({
      * @param {Number} tableId
      * @param {com.cubeia.games.poker.io.protocol.BestHand} bestHand
      */
-    updateHandStrength : function(tableId,bestHand) {
-        this.showHandStrength(tableId,bestHand.player, Poker.Hand.fromId(bestHand.handType));
+    updateHandStrength : function(tableId,bestHand,handEnded) {
+        this.showHandStrength(tableId,bestHand.player,
+            Poker.Hand.fromId(bestHand.handType),
+            this.getCardStrings(bestHand.cards),
+            handEnded);
+    },
+    getCardStrings : function(cards) {
+        var converted = [];
+        for(var i = 0; i<cards.length; i++) {
+            converted.push(Poker.Utils.getCardString(cards[i]));
+        }
+        return converted;
     },
     /**
      * calls the layout manager to clear the table UI
@@ -191,10 +201,10 @@ Poker.TableManager = Class.extend({
      * @param {Number} playerId
      * @param {Poker.Hand} hand
      */
-    showHandStrength : function(tableId,playerId,hand) {
+    showHandStrength : function(tableId,playerId,hand,cardStrings,handEnded) {
         var table = this.tables.get(tableId);
         var player = table.getPlayerById(playerId);
-        table.getLayoutManager().onPlayerHandStrength(player,hand);
+        table.getLayoutManager().onPlayerHandStrength(player,hand,cardStrings,handEnded);
     },
     /**
      *
@@ -339,9 +349,9 @@ Poker.TableManager = Class.extend({
         table.totalPot = amount;
         table.getLayoutManager().onTotalPotUpdate(amount);
     },
-    dealCommunityCard : function(tableId,cardId,cardString) {
+    dealCommunityCards : function(tableId,cards) {
         var table = this.getTable(tableId);
-        table.getLayoutManager().onDealCommunityCard(cardId,cardString);
+        table.getLayoutManager().onDealCommunityCards(cards);
     },
     /**
      *
@@ -359,24 +369,27 @@ Poker.TableManager = Class.extend({
     },
 
     exposePrivateCards: function(tableId, cards) {
-
-        for (var i = 0; i < cards.length; i ++ ) {
-            var cardId = cards[i].card.cardId;
-            var cardstring = Poker.Utils.getCardString(cards[i].card)
-
-            this.exposePrivateCard(tableId, cardId, cardstring);
-
-        }
-    },
-
-    exposePrivateCard : function(tableId,cardId,cardString) {
+        var playerCardMap = new Poker.Map();
         var table = this.getTable(tableId);
-        table.getLayoutManager().onExposePrivateCard(cardId, cardString);
+        for (var i = 0; i < cards.length; i ++ ) {
+
+            var playerCards = playerCardMap.get(cards[i].player);
+            if(playerCards==null) {
+                var player = table.getPlayerById(cards[i].player);
+                playerCards = { player : player, cards : [] };
+                playerCardMap.put(cards[i].player,playerCards);
+            }
+            var cardString = Poker.Utils.getCardString(cards[i].card);
+            var cardId = cards[i].card.cardId;
+            playerCards.cards.push({id : cardId, cardString : cardString });
+        }
+
+        table.getLayoutManager().exposePrivateCards(playerCardMap.values());
     },
 
-    notifyWaitingToStartBreak : function() {
+    notifyWaitingToStartBreak : function(tableId) {
         var dialogManager = Poker.AppCtx.getDialogManager();
-        dialogManager.displayGenericDialog({ translationKey : "break-is-starting"});
+        dialogManager.displayGenericDialog({tableId : tableId, translationKey : "break-is-starting"});
     },
     /**
      * @param {Number} tableId
@@ -396,6 +409,7 @@ Poker.TableManager = Class.extend({
         if (newBlinds.isBreak) {
             var dialogManager = Poker.AppCtx.getDialogManager();
             dialogManager.displayGenericDialog({
+                tableId : tableId,
                 header: i18n.t("dialogs.on-break.header"),
                 message: i18n.t("dialogs.on-break.message", {sprintf : [secondsToNextLevel]})
             });
@@ -405,7 +419,7 @@ Poker.TableManager = Class.extend({
     },
     notifyTournamentDestroyed : function(tableId) {
         var dialogManager = Poker.AppCtx.getDialogManager();
-        dialogManager.displayGenericDialog({translationKey : "tournament-closed"});
+        dialogManager.displayGenericDialog({tableId : tableId, translationKey : "tournament-closed"});
         this.tables.get(tableId).tournamentClosed = true;
     },
     bettingRoundComplete : function(tableId) {

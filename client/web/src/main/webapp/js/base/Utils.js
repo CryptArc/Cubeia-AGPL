@@ -49,13 +49,11 @@ Poker.Utils = {
         var targetLeft = targetOffset.left;
 
         if(targetCenter === true) {
-            console.log("TARGET OWIDTH " + target.outerWidth());
             targetLeft = targetLeft + (target.outerWidth()/2);
         }
 
         var srcLeft = srcOffset.left;
         if(srcCenter === true) {
-            console.log("SRC OWIDTH " + src.outerWidth());
             srcLeft = srcLeft + (src.outerWidth()/2);
         }
 

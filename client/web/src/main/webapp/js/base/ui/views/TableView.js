@@ -4,7 +4,7 @@ Poker.TableView = Poker.TabView.extend({
     layoutManager : null,
     tableViewContainer : null,
     init : function(layoutManager,name) {
-        this._super("#"+layoutManager.tableView.attr("id"),name);
+        this._super("#"+layoutManager.tableView.attr("id"),name,"");
         this.layoutManager = layoutManager;
         this.tableViewContainer = $(".table-view-container");
     },
@@ -43,6 +43,7 @@ Poker.TableView = Poker.TabView.extend({
         var marginLeft =  Math.floor((maxWidth-dim.width)/2);
         this.tableViewContainer.width(dim.width).height(dim.height).css({marginLeft : marginLeft});
         this.getViewElement().css({width:"100%",height:"100%"});
+        this.layoutManager.positionDealerButton();
     }
 
 });

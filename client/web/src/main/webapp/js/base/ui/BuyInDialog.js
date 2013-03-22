@@ -3,6 +3,7 @@ var Poker = Poker || {};
 
 Poker.BuyInDialog = Class.extend({
     dialogManager : null,
+    dialog : null,
     templateManager : null,
     init : function() {
         this.dialogManager = Poker.AppCtx.getDialogManager();
@@ -18,35 +19,39 @@ Poker.BuyInDialog = Class.extend({
             minAmount : minAmount
         };
         var self = this;
-        this.render(data,function(){
-            var buyIn = $("#facebox .buyin-amount").val();
+        var table = Poker.AppCtx.getTableManager().getTable(tableId);
+        var viewContainer = table.getLayoutManager().tableView;
+        this.render(data,viewContainer, function(){
+            var buyIn =  self.dialog.getElement().find(".buyin-amount").val();
             if (self.validateAmount(buyIn)) {
                 new Poker.PokerRequestHandler(data.tableId).buyIn(buyIn)
             }
             return false; //don't close the dialog, need to wait for response
         });
-        $(".buyin-amount").val(data.maxAmount);
+        this.dialog.getElement().find(".buyin-amount").val(data.maxAmount);
 
     },
-    render : function(data, okFunction) {
+    render : function(data, viewContainer,okFunction) {
         var self = this;
         var template = this.templateManager.getRenderTemplate(this.getTemplateId());
         $("#buyInDialog").html(template.render(data));
+        var dialog = new Poker.Dialog(viewContainer, $("#buyInDialog"));
         this.dialogManager.displayDialog(
-            "buyInDialog",
+            dialog,
             function() {
-                $("#facebox .buyin-amount").blur();
+                dialog.getElement().find(".buyin-amount").blur();
                return okFunction();
             },
             function() {
-                $(".buyin-error").hide();
+                dialog.getElement().find(".buyin-error").hide();
 
             });
-        $("#facebox .buyin-amount").bind("keyup",function(e){
+        dialog.getElement().find(".buyin-amount").bind("keyup",function(e){
             if(e.keyCode == 13) {
-                $("#facebox .dialog-ok-button").click();
+                dialog.getElement().find(".dialog-ok-button").click();
             }
         }).val(data.minAmount).select();
+        this.dialog = dialog;
     },
     onError : function(msg) {
         $(".buyin-error").html(msg).show();
@@ -55,7 +60,7 @@ Poker.BuyInDialog = Class.extend({
         return true;
     },
     close : function() {
-        this.dialogManager.close();
+        this.dialog.close();
     },
     getTemplateId : function() {
         return "cashGamesBuyInContent";

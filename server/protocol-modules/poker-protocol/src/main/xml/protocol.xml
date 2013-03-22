@@ -436,7 +436,7 @@
     <struct name="request_payout_info" />
 
     <struct name="payout_info">
-        <var name="prize_pool" type="int32" />
+        <var name="prize_pool" type="string" />
         <list name="payouts" type="payout"/>
     </struct>
 

@@ -293,7 +293,7 @@ public class PokerStateTest {
         assertTrue(state.isPlaying());
         int amount = 1234;
 
-        state.getContext().getCurrentHandPlayerMap().put(1, player1);
+        context.getCurrentHandPlayerMap().put(1, player1);
         state.handleBuyInRequest(player1, amount);
 
         verify(player1).addRequestedBuyInAmount(amount);

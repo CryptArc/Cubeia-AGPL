@@ -35,7 +35,8 @@ Poker.DevTools = Class.extend({
 
         var beforeFunction = function() {
             var tableLayoutManager = new Poker.TableLayoutManager(self.tableId, tableViewContainer,
-                templateManager, null, 10,false);
+                templateManager,10,new Poker.SoundManager());
+
             self.tableManager.createTable(self.tableId, 10, tableName , tableLayoutManager);
             Poker.AppCtx.getViewManager().addTableView(tableLayoutManager,tableName);
             new Poker.PositionEditor("#tableView-"+self.tableId);
@@ -142,21 +143,25 @@ Poker.DevTools = Class.extend({
 
         this.mockEventManager.addEvent(
             mockEvent("Deal flop", function(){
-                self.tableManager.dealCommunityCard(self.tableId,self.cardIdSeq++,"as");
-                self.tableManager.dealCommunityCard(self.tableId,self.cardIdSeq++,"ad");
-                self.tableManager.dealCommunityCard(self.tableId,self.cardIdSeq++,"ks");
+                self.tableManager.dealCommunityCards(self.tableId,[
+                    { id : self.cardIdSeq++, cardString : "as" },
+                    { id : self.cardIdSeq++, cardString : "ad" },
+                    { id : self.cardIdSeq++, cardString : "ks" }
+
+                ]);
             })
         );
 
 
         this.mockEventManager.addEvent(
             mockEvent("Deal turn", function(){
-                self.tableManager.dealCommunityCard(self.tableId,self.cardIdSeq++,"qs");
+                self.tableManager.dealCommunityCards(self.tableId,
+                [{ id : self.cardIdSeq++, cardString : "qs" }]);
             })
         );
         this.mockEventManager.addEvent(
             mockEvent("Deal river", function(){
-                self.tableManager.dealCommunityCard(self.tableId,self.cardIdSeq++,"ac");
+                self.tableManager.dealCommunityCards(self.tableId,[{ id : self.cardIdSeq++, cardString : "js" }]);
             })
         );
         this.mockEventManager.addEvent(

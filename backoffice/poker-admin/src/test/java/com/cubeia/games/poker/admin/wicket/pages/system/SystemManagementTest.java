@@ -18,8 +18,11 @@
 package com.cubeia.games.poker.admin.wicket.pages.system;
 
 import com.cubeia.games.poker.admin.db.AdminDAO;
+import com.cubeia.games.poker.admin.jmx.FirebaseJMXFactory;
 import com.cubeia.games.poker.admin.network.NetworkClient;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
+import org.apache.wicket.spring.test.ApplicationContextMock;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,12 +39,19 @@ public class SystemManagementTest {
     @Mock
     private NetworkClient networkClient;
 
+    @Mock
+    private FirebaseJMXFactory jmxFactory;
+
     private WicketTester tester;
 
     @Before
     public void setup() {
         initMocks(this);
-        tester = createWicketTester(adminDao, networkClient);
+        ApplicationContextMock context = new ApplicationContextMock();
+        context.putBean("networkClient", networkClient);
+        context.putBean("jmxFactory", jmxFactory);
+        tester = new WicketTester();
+        tester.getApplication().getComponentInstantiationListeners().add(new SpringComponentInjector(tester.getApplication(), context));
     }
 
     @Test

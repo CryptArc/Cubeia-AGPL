@@ -82,6 +82,9 @@ Poker.TournamentManager = Class.extend({
     setTournamentTable : function(tournamentId, tableId) {
         this.tournamentTables.put(tournamentId,tableId);
     },
+    isTournamentTable : function(tableId) {
+        return this.tournamentTables.get(tableId)!=null;
+    },
     getTableByTournament : function(tournamentId) {
         return this.tournamentTables.get(tournamentId);
     },
@@ -104,7 +107,6 @@ Poker.TournamentManager = Class.extend({
 
     },
     /**
-     *
      * @param id
      * @return {Poker.Tournament}
      */
@@ -112,13 +114,10 @@ Poker.TournamentManager = Class.extend({
         return this.tournaments.get(id);
     },
     /**
-     *
      * @param {Number} tournamentId
      * @param {com.cubeia.games.poker.io.protocol.TournamentLobbyData} tournamentData
      */
     handleTournamentLobbyData : function(tournamentId, tournamentData) {
-        console.log("tournament lobby data received");
-        console.log(tournamentData);
         var tournament = this.getTournamentById(tournamentId);
         this.handlePlayerList(tournament,tournamentData.players);
         this.handleBlindsStructure(tournament,tournamentData.blindsStructure);
@@ -153,6 +152,7 @@ Poker.TournamentManager = Class.extend({
             tournament.tournamentLayoutManager.setPlayerRegisteredState();
         }
         this.dialogManager.displayGenericDialog({
+            tournamentId : tournamentId,
             header:i18n.t("dialogs.tournament-register-success.header"),
             message:i18n.t("dialogs.tournament-register-success.message", { sprintf : [tournamentId]})
         });
@@ -185,8 +185,9 @@ Poker.TournamentManager = Class.extend({
     },
     handleRegistrationFailure : function(tournamentId) {
         this.dialogManager.displayGenericDialog({
-            header:i18n.t("dialogs.tournament-register-failure.header"),
-            message:i18n.t("dialogs.tournament-register-failure.message", { sprintf : [tournamentId]})
+            tournamentId : tournamentId,
+            header: i18n.t("dialogs.tournament-register-failure.header"),
+            message: i18n.t("dialogs.tournament-register-failure.message", { sprintf : [tournamentId]})
         });
 
     },
@@ -197,6 +198,7 @@ Poker.TournamentManager = Class.extend({
             tournament.tournamentLayoutManager.setPlayerUnregisteredState();
         }
         this.dialogManager.displayGenericDialog({
+            tournamentId : tournamentId,
             header:i18n.t("dialogs.tournament-unregister-success.header"),
             message:i18n.t("dialogs.tournament-unregister-success.message", { sprintf : [tournamentId]})
         });
@@ -204,6 +206,7 @@ Poker.TournamentManager = Class.extend({
     },
     handleUnregistrationFailure : function(tournamentId) {
         this.dialogManager.displayGenericDialog({
+            tournamentId : tournamentId,
             header:i18n.t("dialogs.tournament-unregister-failure.header"),
             message:i18n.t("dialogs.tournament-unregister-failure.message", { sprintf : [tournamentId]})
         });

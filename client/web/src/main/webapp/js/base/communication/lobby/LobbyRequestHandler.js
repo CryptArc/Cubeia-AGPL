@@ -26,7 +26,7 @@ Poker.LobbyRequestHandler = Class.extend({
         this.unsubscribe();
 
         this.connector.lobbySubscribe(1, "/texas");
-
+        Poker.AppCtx.getLobbyManager().clearLobby();
         Poker.Unsubscribe  = function() {
             console.log("Unsubscribing from cash games.");
             var unsubscribeRequest = new FB_PROTOCOL.LobbyUnsubscribePacket();
@@ -38,10 +38,12 @@ Poker.LobbyRequestHandler = Class.extend({
     },
 
     subscribeToSitAndGos : function() {
+        Poker.AppCtx.getLobbyManager().clearLobby();
         this.subscribeToTournamentsWithPath("/sitandgo")
     },
 
     subscribeToTournaments : function() {
+        Poker.AppCtx.getLobbyManager().clearLobby();
         this.subscribeToTournamentsWithPath("/scheduled");
     },
 

@@ -1,7 +1,14 @@
 {
+    "tabs" : {
+        "lobby" : "Lobby"
+    },
     "login" : {
         "login" : "login",
-        "status" : "Status:"
+        "status" : "Status:",
+        "disconnected" : "Frånkopplad, försöker igen (försök %s)",
+        "connecting" : "Ansluter",
+        "connected" : "Ansluten",
+        "login-failed" : "Ansluten (Inloggningen misslyckades med status %s)"
     },
     "lobby" : {
         "menu" : {
@@ -39,7 +46,7 @@
         "buttons" : {
             "leave" : "Lämna",
             "no-more-blinds" : "Inga fler blinds",
-            "sit-out-next" : "Sit ute nästa hand",
+            "sit-out-next" : "Sitt ute nästa hand",
             "fold" :"Fold",
             "call" : "Call",
             "check" : "Check",
@@ -69,14 +76,15 @@
         "wait-for-big-blind" : "Vänta på Big Blind",
         "wait-for-big-blind-description" : "Avmarkera för att lägga Big Blind och spela nästa hand",
         "blinds" : "Blinds:",
-        "level" : "Tid till nästa nivå:",
+        "level" : "Nästa nivå:",
         "pot" : "Pot:",
         "hand-history" : "Handhistorik",
-        "open" : "Öppna"
+        "open" : "Ledig"
     },
     "user" : {
         "logged-in" : "Inloggad:",
-        "log-out" : "Logga ut"
+        "log-out" : "Logga ut",
+        "my-page" : "Min sida"
     },
     "disconnect-dialog" : {
         "title" : "Du har blivit frånkopplad",
@@ -218,6 +226,13 @@
             "message": "Är du säker på att du vill lämna bordet?"
         }
 
+    },
+    "table-log" : {
+        "community-cards" : "Community cards:",
+        "shows" : "shows",
+        "has" : "has",
+        "wins" : "wins",
+        "hand-started" : "Hand started:"
     }
 
 }

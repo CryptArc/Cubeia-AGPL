@@ -2,12 +2,14 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <title>Cubeia Poker</title>
+    <title></title>
 
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link rel="apple-touch-icon" href="${cp}/skins/${skin}/images/lobby/icon.png" />
+
+    <link id="defaultSkinCss" rel="stylesheet/less" type="text/css" href="${cp}/skins/default/less/base.less" />
 
     <!-- All less files are imported in this base.less-->
     <link id="skinCss" rel="stylesheet/less" type="text/css" href="${cp}/skins/${skin}/less/base.less" />
@@ -95,6 +97,7 @@
     <script type="text/javascript" src="${cp}/js/base/ui/actions/TableButtons.js"></script>
 
     <script type="text/javascript" src="${cp}/js/base/ui/MyActionsManager.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/data/LobbyData.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/LobbyLayoutManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/LobbyManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/Player.js"></script>
@@ -102,6 +105,8 @@
     <script type="text/javascript" src="${cp}/js/base/TableManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/Clock.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/PotTransferAnimator.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/Log.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/TableEventLog.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/TableLayoutManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/TemplateManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/Seat.js"></script>
@@ -126,7 +131,7 @@
     <script type="text/javascript" src="${cp}/js/base/sound/Sounds.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/FutureActionType.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/FutureActions.js"></script>
-
+    <script type="text/javascript" src="${cp}/js/base/ui/Dialog.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/DialogManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/DisconnectDialog.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/BuyInDialog.js"></script>
@@ -141,6 +146,7 @@
     <script type="text/javascript" src="${cp}/js/base/ui/views/DevSettingsView.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/ViewManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/MainMenuManager.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/views/AccountPageManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ApplicationContext.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/ViewSwiper.js"></script>
     <script type="text/javascript" src="${cp}/js/base/tournaments/Tournament.js"></script>
@@ -179,9 +185,10 @@
                 Poker.Utils.removeStoredUser();
             }
 
-            less.watch(); //development only
+            //less.watch(); //development only
             $(".describe").describe();
 
+            $("title").html(Poker.SkinConfiguration.title);
 
 
             var onPreLoadComplete = function() {
@@ -198,8 +205,11 @@
                     tournamentLobbyUpdateInterval : 10000
                 });
 
+
+
+
                 $(".logout-link").click(function(){
-                    Poker.AppCtx.getCommunicationManager().getConnector().logout();
+                    Poker.AppCtx.getCommunicationManager().getConnector().logout(true);
                     document.location = document.location.hash = "clear";
                     document.location.reload();
                 });
@@ -213,13 +223,6 @@
                 $("body").i18n();
                 new Poker.ResourcePreloader('${cp}',onPreLoadComplete,  Poker.SkinConfiguration.preLoadImages);
             });
-
-
-
-
-
-
-
         });
 
     </script>
@@ -233,6 +236,8 @@
         <div class="tabs-container">
             <ul id="tabItems" class="tabs">
             </ul>
+            <ul class="my-page-button" data-i18n="user.my-page">
+            </ul>
         </div>
 
     </div>
@@ -244,6 +249,10 @@
     </div>
     <div class="menu-overlay slidable" style="display: none;">
 
+    </div>
+
+    <div class="account-overlay" style="display: none;">
+         <iframe id="account_iframe" class="account_iframe" style=></iframe>
     </div>
 
     <div id="soundSettingsView" class="config-view" style="display: none;">
@@ -311,7 +320,7 @@
                         <span data-i18n="login.login"></span>
                     </div>
                 </div>
-                <div class="status-label"><span data-i18n="login.status"></span> <span class="connect-status"></span></div>
+                <div class="status-label"> <span data-i18n="login.status"></span> <span class="connect-status"></span></div>
             </div>
         </div>
 
@@ -342,7 +351,7 @@
                         <div class="show-filters">
                             <a data-i18n="lobby.filters.show-filters">Show filters</a>
                         </div>
-                        <div class="table-filter">
+                        <div class="table-filter hidden cash-game">
                             <div class="filter-group tables">
                                 <div class="filter-label" data-i18n="lobby.filters.show-tables">Show tables:</div>
                                 <div class="filter-button" id="fullTables" data-i18n="lobby.filters.full">Full</div>
@@ -589,9 +598,9 @@
             <div class="community-cards">
 
             </div>
-                <div class="total-pot">
-                    {{t "table.pot"}} <span>&euro;<span class="amount"></span></span>
-                </div>
+            <div class="total-pot">
+                {{t "table.pot" }} <span>&euro;<span class="amount"></span></span>
+            </div>
             <div class="main-pot">
 
             </div>
@@ -599,11 +608,14 @@
                 <img src="${cp}/skins/${skin}/images/table/dealer-button.svg"/>
             </div>
         </div>
-        <div class="hand-history" >
+        <div class="hand-history" style="display:none;">
             {{t "table.hand-history" }}
         </div>
         <div class="bottom-bar">
-
+            <div class="table-log-container">
+                <div class="table-event-log">
+                </div>
+            </div>
             <div class="own-player" id="myPlayerSeat-{{tableId}}Info" style="display:none;">
                 <div class="name" id="myPlayerName-{{tableId}}"></div>
                 <div class="balance" id="myPlayerBalance-{{tableId}}"></div>
@@ -739,18 +751,16 @@
 </div>
 </script>
 <div id="disconnectDialog" style="display: none;">
-    <h1>{{t "disconnect-dialog.title"}}</h1>
+    <h1 data-i18n="disconnect-dialog.title"></h1>
     <p class="message disconnect-reconnecting">
-        {{t "disconnect-dialog.message"}} ({{t "disconnect-dialog.attempt"}} <span class="reconnectAttempt"></span>)
+        <span data-i18n="disconnect-dialog.message"></span> (<span data-i18n="disconnect-dialog.attempt"></span> <span class="reconnectAttempt"></span>)
         <br/>
         <br/>
     </p>
-    <p class="stopped-reconnecting" style="display: none;">
-        {{t "disconnect-dialog.unable-to-reconnect"}}
+    <p class="stopped-reconnecting" style="display: none;" data-i18n="disconnect-dialog.unable-to-reconnect">
     </p>
     <p class="dialog-buttons stopped-reconnecting" style="display: none;">
-        <a class="dialog-ok-button">
-            {{t "disconnect-dialog.reload"}}
+        <a class="dialog-ok-button" data-i18n="disconnect-dialog.reload">
         </a>
     </p>
 </div>
@@ -830,6 +840,7 @@
 <script type="text/mustache" id="tabTemplate">
     <li>
         <div class="tab-content">
+            <div class="tab-index"></div>
             <div class="mini-cards"></div>
             <span class="name">{{name}}</span>
         </div>
@@ -1040,5 +1051,31 @@
         <td>{{winnings}}</td>
     </tr>
 </script>
+
+<script type="text/mustache" id="playerActionLogTemplate" style="display:none;">
+   <div>{{name}} {{action}} {{#showAmount}} {{amount}} {{/showAmount}}</div>
+</script>
+<script type="text/mustache" id="communityCardsLogTemplate" style="display:none;">
+    <div>{{t "table-log.community-cards"}} {{#cards}}&nbsp;{{cardString}}{{/cards}}</div>
+</script>
+<script type="text/mustache" id="playerCardsExposedLogTemplate" style="display:none;">
+    <div>{{player.name}} {{t "table-log.shows"}} {{#cards}}&nbsp;{{cardString}}{{/cards}}</div>
+</script>
+<script type="text/mustache" id="playerHandStrengthLogTemplate" style="display:none;">
+    <div>{{player.name}} {{t "table-log.has"}} {{#hand}}&nbsp;{{text}}{{/hand}} ({{#cardStrings}}&nbsp;{{.}}{{/cardStrings}}&nbsp;)</div>
+</script>
+<script type="text/mustache" id="potTransferLogTemplate" style="display:none;">
+    <div>{{player.name}} {{t "table-log.wins"}} {{amount}}</div>
+</script>
+<script type="text/mustache" id="newHandLogTemplate" style="display:none;">
+    <div class="hand-started">{{t "table-log.hand-started"}}{{handId}} </div>
+</script>
+<script type="text/mustache" id="overLayDialogTemplate" style="display:none;">
+    <div class="dialog-overlay" id="{{dialogId}}">
+        <div class="dialog-content">
+        </div>
+    </div>
+</script>
+
 </body>
 </html>
