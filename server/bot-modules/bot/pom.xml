@@ -27,7 +27,7 @@
         <dependency>
             <groupId>com.cubeia.firebase.bots</groupId>
             <artifactId>firebase-bots</artifactId>
-            <version>1.9</version>
+            <version>1.10-SNAPSHOT</version>
         </dependency>
 
     </dependencies>
@@ -37,7 +37,7 @@
             <plugin>
                 <groupId>com.cubeia.firebase.bots</groupId>
                 <artifactId>firebase-bots-maven-plugin</artifactId>
-                <version>1.10-SNAPSHOT</version>
+                <version>1.9-SNAPSHOT</version>
                 <configuration>
                     <botControlFile>bot.html</botControlFile>
                     <botMenuName>Poker Bot</botMenuName>
