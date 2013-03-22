@@ -32,10 +32,9 @@ Poker.AccountPageManager = Class.extend({
 
     toggle : function() {
         var iframe = document.getElementById("account_iframe");
-    //    var testurl = "file:///C:/projects/operator-api/player-api/server/src/main/webapp/html/test.html"
-    //    var testurl2 = "http://www.cubeiasocial.com"
-           var testurl3 = "https://dl.dropbox.com/u/5300639/player-api/index.html"
-        iframe.setAttribute("src", testurl3);
+        // TODO: get this URL from operator configuration
+        var temporaryHardcodedUrl = "http://csobe1.cubeia.com/player-api/html/index.html";
+        iframe.setAttribute("src", temporaryHardcodedUrl);
 
         $(".account-overlay").toggle();
         $("#mainMenuList").find("li").removeClass("active");
