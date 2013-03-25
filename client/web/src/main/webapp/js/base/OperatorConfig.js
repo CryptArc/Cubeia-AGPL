@@ -33,7 +33,7 @@ Poker.OperatorConfig = Class.extend({
     },
 
     getProfilePageUrl:function() {
-        return this.getValue("OPERATOR_PROFILE_URL", "http://csobe1.cubeia.com/player-api/html/index.html");
+        return this.getValue("PROFILE_PAGE_URL", "http://www.cubeia.com");
     },
 
     getValue : function(param,def) {
