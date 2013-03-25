@@ -17,6 +17,16 @@
             <groupId>com.cubeia.firebase</groupId>
             <artifactId>firebase-protocol</artifactId>
             <scope>provided</scope>
+            <exclusions>
+				<exclusion>
+					<artifactId>slf4j-api</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>slf4j-simple</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+			</exclusions>
         </dependency>
 
         <dependency>
@@ -27,8 +37,13 @@
         <dependency>
             <groupId>com.cubeia.firebase.bots</groupId>
             <artifactId>firebase-bots</artifactId>
-            <version>1.10-SNAPSHOT</version>
         </dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>1.6.1</version>
+		</dependency>
 
     </dependencies>
 
@@ -37,7 +52,7 @@
             <plugin>
                 <groupId>com.cubeia.firebase.bots</groupId>
                 <artifactId>firebase-bots-maven-plugin</artifactId>
-                <version>1.9-SNAPSHOT</version>
+                <version>1.10-SNAPSHOT</version>
                 <configuration>
                     <botControlFile>bot.html</botControlFile>
                     <botMenuName>Poker Bot</botMenuName>
