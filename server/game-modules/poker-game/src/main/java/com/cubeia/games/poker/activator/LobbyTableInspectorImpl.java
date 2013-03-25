@@ -146,17 +146,29 @@ public class LobbyTableInspectorImpl implements LobbyTableInspector {
             int empty = countEmptyTables(list);
             int min = config.getMinTables();
             int minEmpty = config.getMinEmptyTables();
+            if(log.isTraceEnabled()) {
+            	log.trace("Vars: All: " + all + "; Empty: " + empty + "; Config min: " + min + "; Config min empty: " + minEmpty);
+            }
             if (all < min) {
-                createTables(config, result, min - all);
+            	int create = min - all;
+            	log.debug("We don't have enough tables, will create " + create);
+                createTables(config, result, create);
             } else if (empty < minEmpty) {
-                createTables(config, result, minEmpty - empty);
+            	int create = minEmpty - empty;
+            	log.debug("We don't have enough empty tables, will create " + create);
+                createTables(config, result, create);
             } else {
-                if (empty >= min) {
-                    // remove all above "min"
-                    checkClosure(config, list, result, empty - min);
-                } else if (empty > minEmpty) {
-                    // remove all above "minEmpty"
-                    checkClosure(config, list, result, empty - minEmpty);
+            	if (empty > minEmpty && all > min) {
+                    int destroy = empty - minEmpty;
+                    if(all - destroy  < min) {
+                    	destroy = all - min;
+                    }
+            		log.debug("We have too many empty tables; will close " + (all - minEmpty));
+                    checkClosure(config, list, result, destroy);
+                } else {
+                	if(log.isTraceEnabled()) {
+                    	log.trace("Table are just right, won't do anything.");
+                    }
                 }
             }
         }

@@ -244,6 +244,23 @@ public class LobbyTableInspectorImplTest {
         result = handler.match(Collections.singletonList(templ));
         Assert.assertEquals(2, result.size()); // 7 stale, but min 5 tables (7 - 5)
     }
+    
+    @Test
+    public void twoNonEmtpyAndTenEmpty() {
+        /*
+           * With min=10, and minEmtpy=5, create 12 tables of which 2 are non-empty
+           */
+        TableConfigTemplate templ = createTemplate(10, 5);
+        LobbyTable[] tables = mockTablesForTempl(12, templ, 0, 10);
+        setNonEmptyTables(tables, 2);
+        Mockito.when(factory.listTables()).thenReturn(tables);
+        time.set(500); // NOT STALE YET
+        List<TableModifierAction> result = handler.match(Collections.singletonList(templ));
+        Assert.assertEquals(0, result.size()); // no stale tables
+        time.set(70000); // STALE
+        result = handler.match(Collections.singletonList(templ));
+        Assert.assertEquals(2, result.size()); // 10 stale, but min 10 tables
+    }
 
 
     // --- PRIVATE METHODS --- //
