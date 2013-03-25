@@ -17,11 +17,11 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.wallet;
 
-import com.cubeia.backoffice.wallet.api.dto.Currency;
-import com.cubeia.backoffice.wallet.api.dto.CurrencyListResult;
-import com.cubeia.backoffice.wallet.client.WalletServiceClient;
-import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.games.poker.admin.wicket.pages.util.ConfirmOnclickAttributeModifier;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.feedback.ComponentFeedbackMessageFilter;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
@@ -44,8 +44,11 @@ import org.apache.wicket.validation.validator.StringValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.math.BigDecimal;
-import java.util.*;
+import com.cubeia.backoffice.wallet.api.dto.Currency;
+import com.cubeia.backoffice.wallet.api.dto.CurrencyListResult;
+import com.cubeia.backoffice.wallet.client.WalletServiceClient;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.games.poker.admin.wicket.pages.util.ConfirmOnclickAttributeModifier;
 
 @AuthorizeInstantiation({"SUPER_USER", "WALLET_ADMIN"})
 public class EditCurrencies extends BasePage {
@@ -101,7 +104,7 @@ public class EditCurrencies extends BasePage {
             }
         });
         
-        final CompoundPropertyModel<Currency> newCurrencyModel = new CompoundPropertyModel<Currency>(new Currency(null, 2, new BigDecimal(1), Calendar.getInstance()));
+        final CompoundPropertyModel<Currency> newCurrencyModel = new CompoundPropertyModel<Currency>(new Currency(null, 2));
         
         Form<Currency> addForm = new Form<Currency>("addForm", newCurrencyModel) {
             @Override
@@ -117,7 +120,7 @@ public class EditCurrencies extends BasePage {
                 }
                 
                 info("Added currency " + cur.getCode() + " with " + cur.getFractionalDigits() + " fractional digits");
-                newCurrencyModel.setObject(new Currency(null, 2, new BigDecimal(1), Calendar.getInstance()));
+                newCurrencyModel.setObject(new Currency(null, 2));
             }  
         };
         
