@@ -14,33 +14,22 @@ Poker.AccountPageManager = Class.extend({
         $(".account-overlay").touchSafeClick(function(){
             self.toggle();
         });
-
-        var token = "TOKENSTUFF";
-
-    //    var iframe = $("#account_iframe");
-
-    //    var testurl = "file:///C:/projects/operator-api/player-api/server/src/main/webapp/html/test.html"
-
-
-    //    iframe.attr("src", testurl);
-
-    //    var iframe = document.getElementById("account_iframe");
-
     },
 
     activeView : null,
 
     toggle : function() {
         var iframe = document.getElementById("account_iframe");
-        // TODO: get this URL from operator configuration
-        var temporaryHardcodedUrl = "http://csobe1.cubeia.com/player-api/html/index.html";
-        iframe.setAttribute("src", temporaryHardcodedUrl);
+        var url = Poker.OperatorConfig.getProfilePageUrl();
+        iframe.setAttribute("src", url);
 
         $(".account-overlay").toggle();
+        /*
         $("#mainMenuList").find("li").removeClass("active");
         if(this.activeView!=null){
             this.activeView.deactivate();
         }
+        */
     }
 });
 
