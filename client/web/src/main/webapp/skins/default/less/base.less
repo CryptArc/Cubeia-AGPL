@@ -1,0 +1,293 @@
+/* global colors definitions */
+@mainGreen: #a04c93;
+@grayText: #999;
+@buttonGrayBg:#45484c;
+@main-background-color:#09090b;
+
+@import "compatability.less";
+@import "action-buttons.less";
+@import "lobby.less";
+@import "login.less";
+@import "seat.less";
+@import "table.less";
+@import "table-10.less";
+@import "slider.less";
+@import "transitions.less";
+@import "avatars.less";
+@import "dialog.less";
+@import "toolbar.less";
+@import "main-menu.less";
+@import "toggle-switch.less";
+@import "circular-progressbar.less";
+@import "tournament-lobby.less";
+@import "hand-history.less";
+@import "table-log.less";
+
+
+a {
+    cursor: pointer;
+}
+
+.account-overlay {
+    background-color:rgba(0, 0, 0, 0.5);
+    width:100%;
+    height: 100%;
+}
+
+.account_iframe {
+    position: absolute;
+    top:45px;
+    left:10%;
+    width:80%;
+    height:75%;
+}
+.no-overflow {
+    overflow: hidden;
+}
+
+.loading-view {
+    width:400px;
+    margin:0 auto;
+    margin-top:15%;
+}
+.loading-progressbar {
+    width:99%;
+    display: block;
+    height:25px;
+    padding: 0.5%;
+    .border-radius(5px);
+    background-color:#222;
+    .progress {
+        display: block;
+        width:0%;
+        background-color:@mainGreen;
+        height:99%;
+        .border-radius(3px);
+    }
+}
+.logout-link {
+    cursor: pointer;
+    text-decoration: underline;
+}
+.table-info {
+    left:30%;
+    top:35%;
+    position: absolute;
+    width:40%;
+    display: block;
+    color:#ef53a3;
+    font-size:120%;
+    .blinds {
+        display: inline-block;
+    }
+    .value {
+        font-weight: bold;
+    }
+    .tournament-info {
+        display: inline-block;
+        .blinds-level {
+            display: inline-block;
+        }
+        .time-to-next-level {
+            display: inline-block;
+        }
+    }
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    color:#fff;
+    font-family: Arial, san-serif;
+    width: 100%;
+    height:100%;
+    background-repeat: repeat;
+}
+.view-port {
+    width:100%;
+    height:100%;
+    top:0;
+    left:0;
+    position: absolute;
+}
+.view-container {
+    margin-top:40px;
+    width:100%;
+    left:0;
+    position: absolute;
+    height: 100%;
+}
+
+.basic-input {
+    padding:5%;
+    border:none;
+    font-size:130%;
+    .border-radius(4px);
+    .box-shadow(inset 1px 1px 3px #999);
+}
+
+
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+    @import "devices/ipad/ipad-base.less";
+}
+@media only screen and (max-width:700px), only screen and (max-height: 400px){
+    @import "devices/iphone/iphone-base.less";
+    .user-panel {
+        display:none;
+    }
+    .action-leave {
+        width: 10%;
+        padding-bottom: 5%;
+        font-size: 150%;
+    }
+    .table-view-container {
+        .seat-empty {
+            .avatar-base {
+                height: 50%;
+                .border-radius(4px);
+                .open-seat {
+                    position: relative;
+                    top: auto;
+                    height: auto;
+                    margin-top:10%;
+                }
+            }
+        }
+        .wait-for-big-blind {
+            font-size: 180%;
+            top: 10%;
+            width: 30%;
+
+        }
+        .multi-view-switch {
+            display:none;
+        }
+        .table-log-container, .hand-history {
+            display: none;
+        }
+        .default-table {
+            height:70%;
+
+            .community-cards {
+                top:45%;
+            }
+            .table-info, .total-pot {
+                top:40%;
+            }
+            .main-pot {
+                top:65%;
+                font-size: 130%;
+            }
+            .pot-transfer {
+                font-size: 130%;
+            }
+        }
+        .bottom.bar {
+            height: 26%;
+        }
+        .user-actions {
+            width:50%;
+            top:10%;
+            font-size: 140%;
+        }
+        .future-actions {
+            top:0%;
+            width:70%;
+            font-size:140%;
+            left:30%;
+
+            .call-any, .raise-any, .check-or-call-any, .check-or-fold {
+                top: 50%;
+            }
+        }
+        .circular-progress-bar {
+            left:30%;
+            top:5%;
+        }
+    }
+    .own-player {
+        left:0;
+        top:10%;
+    }
+    .no-more-blinds, .sit-out-next-hand {
+        font-size: 150%;
+    }
+    .sit-out-next-hand {
+        margin-top:5%;
+    }
+
+    .portrait {
+        .view-container {
+            margin-top:0;
+            margin-left: 40px;
+            width:90%;
+        }
+
+        #toolbar, .toolbar-background {
+            width:40px;
+            height:100%;
+        }
+        #toolbar {
+            .main-menu-button {
+                float: none;
+                margin: 2px 3px;
+
+            }
+            .tabs-container {
+                float: none;
+                display: block;
+                margin-left:3px;
+                position:relative;
+
+                .tabs {
+                    display:block;
+                    li {
+                        display: block;
+                        .tab-content {
+                            .name, .mini-cards {
+                                display: none;
+                            }
+                            .tab-index {
+                                text-align: center;
+                                width:34px;
+                                display: block;
+                                line-height: 150%;
+                                font-size: 130%;
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
+    #toolbar {
+        .tabs-container {
+            .tabs {
+                li {
+                    .tab-content {
+                        .name, .mini-cards {
+                            display: none;
+                        }
+                        .tab-index {
+                            text-align: center;
+                            width:40px;
+                            display: block;
+                            line-height: 150%;
+                            font-size: 130%;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+
+
+}
+
+
+
+@import "dev.less";
