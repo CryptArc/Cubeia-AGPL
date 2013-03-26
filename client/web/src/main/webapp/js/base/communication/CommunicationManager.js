@@ -87,7 +87,6 @@ Poker.CommunicationManager = Class.extend({
      * @param {FIREBASE.ConnectionStatus} status
      */
     statusCallback : function(status) {
-
         new Poker.ConnectionPacketHandler().handleStatus(status);
     },
 
@@ -164,6 +163,13 @@ Poker.CommunicationManager = Class.extend({
                 break;
             case FB_PROTOCOL.WatchResponsePacket.CLASSID:
                 tablePacketHandler.handleWatchResponse(packet);
+                break;
+            case FB_PROTOCOL.NotifySeatedPacket.CLASSID:
+                if(packet.mttid==-1) {
+                    tablePacketHandler.handleSeatedAtTable(packet);
+                } else {
+                    tournamentPacketHandler.handleSeatedAtTournamentTable(packet);
+                }
                 break;
             case FB_PROTOCOL.MttSeatedPacket.CLASSID:
                 tournamentPacketHandler.handleSeatedAtTournamentTable(packet);

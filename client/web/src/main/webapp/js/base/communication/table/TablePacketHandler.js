@@ -28,7 +28,16 @@ Poker.TablePacketHandler = Class.extend({
     handleNotifyLeave:function (notifyLeavePacket) {
         this.tableManager.removePlayer(notifyLeavePacket.tableid,notifyLeavePacket.pid);
     },
-
+    /**
+     * When you are notified that you are already sitting at a table when logging in
+     * @param packet
+     */
+    handleSeatedAtTable : function(packet){
+        new Poker.TableRequestHandler(packet.tableid).joinTable();
+        var data = Poker.ProtocolUtils.extractTableData(packet.snapshot);
+        this.tableManager.tableNames.put(packet.tableid,Poker.ProtocolUtils.getTableName(data));
+        this.tableManager.handleOpenTableAccepted(packet.tableid, 10); //TODO: FIX!
+    },
     handleNotifyJoin:function (notifyJoinPacket) {
         this.tableManager.addPlayer(notifyJoinPacket.tableid,notifyJoinPacket.seat, notifyJoinPacket.pid, notifyJoinPacket.nick);
     },

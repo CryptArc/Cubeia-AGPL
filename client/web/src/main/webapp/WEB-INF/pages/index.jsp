@@ -171,6 +171,7 @@
             $(document).ready(function(){
                 $(".login-container").hide();
             });
+
         </script>
     </c:if>
 
@@ -184,7 +185,7 @@
                 Poker.Utils.removeStoredUser();
             }
 
-            //less.watch(); //development only
+            less.watch(); //development only
             $(".describe").describe();
 
             $("title").html(Poker.SkinConfiguration.title);
@@ -219,6 +220,7 @@
                 $("body").i18n();
                 new Poker.ResourcePreloader('${cp}',onPreLoadComplete,  Poker.SkinConfiguration.preLoadImages);
             });
+
         });
 
     </script>
@@ -233,9 +235,14 @@
             <ul id="tabItems" class="tabs">
             </ul>
         </div>
-
+        <div class="user-panel">
+            <div class="user-panel-name username"></div>
+            <div class="user-panel-avatar"></div>
+        </div>
     </div>
+
     <div class="toolbar-background"></div>
+
     <div class="main-menu-container" style="">
         <ul id="mainMenuList">
 
@@ -333,11 +340,6 @@
                 </div>
                 <div class="right-column">
                     <div class="top-panel" id="table-list">
-                        <div class="user-panel">
-                            <span class="status" data-i18n="user.logged-in">Logged in: </span>
-                            <span id="username"></span> (<span id="userId"></span>)
-                            <a class="logout-link" data-i18n="user.log-out">Log out</a>
-                        </div>
                         <div class="show-filters">
                             <a data-i18n="lobby.filters.show-filters">Show filters</a>
                         </div>
@@ -367,11 +369,36 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
+        </div>
+        <div class="user-overlay-container" style="display: none;">
+            <h1>Account</h1>
+            <div class="account-button logout-link">
+                <span data-i18n="user.log-out"></span>
+            </div>
+            <div class="account-block">
+                <h3>User info</h3>
+                <div class="account-row">
+                    User: <div><span class="username"></span> (<span class="user-id"></span>)</div>
+                </div>
+            </div>
+            <div class="account-block">
+                <h3>Balance</h3>
+                <div class="account-row">
+                    Balance: <div>&euro;2323.20</div>
+                </div>
+                <div class="account-row">
+                    Balance at tables: <div>&euro;233.20</div>
+                </div>
+            </div>
+            <div class="account-button deposit-link">
+                <span>Deposit</span>
             </div>
 
         </div>
     </div>
+
 </div>
 <div id="emptySeatTemplate" style="display: none;">
     <div class="avatar-base">
