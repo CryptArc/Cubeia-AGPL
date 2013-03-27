@@ -46,7 +46,7 @@
         </dependency>
         <dependency>
             <groupId>com.cubeia.games</groupId>
-            <artifactId>hand-history-protocol</artifactId>
+            <artifactId>routing-service-protocol</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

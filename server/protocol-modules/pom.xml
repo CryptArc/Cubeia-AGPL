@@ -15,7 +15,7 @@
 
     <modules>
         <module>poker-protocol</module>
-        <module>hand-history-protocol</module>
+        <module>routing-service-protocol</module>
     </modules>
 
 </project>

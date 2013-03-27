@@ -46,7 +46,7 @@
     <script src="${cp}/js/lib/cubeia/firebase-js-api-1.9.2-CE-javascript.js" type="text/javascript"></script>
     <script src="${cp}/js/lib/cubeia/firebase-protocol-1.9.2-CE-javascript.js" type="text/javascript"></script>
     <script src="${cp}/js/lib/poker-protocol-1.0-SNAPSHOT.js" type="text/javascript"></script>
-    <script src="${cp}/js/lib/hand-history-protocol-1.0-SNAPSHOT.js" type="text/javascript"></script>
+    <script src="${cp}/js/lib/routing-service-protocol-1.0-SNAPSHOT.js" type="text/javascript"></script>
     <script src="${cp}/js/lib/quo.js" type="text/javascript"></script>
     <script src="${cp}/js/lib/i18next-1.6.0.js" type="text/javascript"></script>
 
