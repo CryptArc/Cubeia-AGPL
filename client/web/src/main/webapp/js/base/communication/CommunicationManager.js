@@ -87,7 +87,6 @@ Poker.CommunicationManager = Class.extend({
      * @param {FIREBASE.ConnectionStatus} status
      */
     statusCallback : function(status) {
-
         new Poker.ConnectionPacketHandler().handleStatus(status);
     },
 
@@ -115,10 +114,9 @@ Poker.CommunicationManager = Class.extend({
             function(status){
                 self.statusCallback(status);
             });
-
-
         this.connector.connect("FIREBASE.WebSocketAdapter", this.webSocketUrl, this.webSocketPort, "socket");
     },
+
     /**
      * Calls the connectors login function
      * @param {String} username
@@ -128,8 +126,8 @@ Poker.CommunicationManager = Class.extend({
         Poker.MyPlayer.password = password;
         this.connector.login(username, password, Poker.SkinConfiguration.operatorId);
     },
-    handlePacket : function (packet) {
 
+    handlePacket : function (packet) {
         var tournamentId = -1;
         if(packet.mttid) {
             tournamentId = packet.mttid;
@@ -165,6 +163,13 @@ Poker.CommunicationManager = Class.extend({
             case FB_PROTOCOL.WatchResponsePacket.CLASSID:
                 tablePacketHandler.handleWatchResponse(packet);
                 break;
+            case FB_PROTOCOL.NotifySeatedPacket.CLASSID:
+                if(packet.mttid==-1) {
+                    tablePacketHandler.handleSeatedAtTable(packet);
+                } else {
+                    tournamentPacketHandler.handleSeatedAtTournamentTable(packet);
+                }
+                break;
             case FB_PROTOCOL.MttSeatedPacket.CLASSID:
                 tournamentPacketHandler.handleSeatedAtTournamentTable(packet);
                 break;
@@ -193,7 +198,7 @@ Poker.CommunicationManager = Class.extend({
                 this.forceLogout(packet);
                 break;
             case FB_PROTOCOL.ServiceTransportPacket.CLASSID:
-                new Poker.HandHistoryPacketHandler().handleServiceTransportPacket(packet);
+                this.handleServicePacket(packet);
                 break;
             default :
                 console.log("NO HANDLER");
@@ -201,13 +206,36 @@ Poker.CommunicationManager = Class.extend({
                 break;
         }
     },
+
     handleLocalServiceTransport : function(packet) {
         var byteArray = FIREBASE.ByteArray.fromBase64String(packet.servicedata);
         var message = utf8.fromByteArray(byteArray);
         var config = JSON.parse(message);
         Poker.OperatorConfig.populate(config);
         console.log(config);
+    },
 
+    handleServicePacket:function (servicePacket) {
+        var valueArray =  FIREBASE.ByteArray.fromBase64String(servicePacket.servicedata);
+        var serviceData = new FIREBASE.ByteArray(valueArray);
+        var length = serviceData.readInt();
+        var classId = serviceData.readUnsignedByte();
+        var protocolObject = com.cubeia.games.poker.routing.service.io.protocol.ProtocolObjectFactory.create(classId, serviceData);
+
+        switch (protocolObject.classId() ) {
+            case com.cubeia.games.poker.routing.service.io.protocol.HandHistoryProviderResponseHandIds.CLASSID:
+                new Poker.ServicePacketHandler().handleHandIds(protocolObject.tableId, protocolObject.handIds);
+                break;
+            case com.cubeia.games.poker.routing.service.io.protocol.HandHistoryProviderResponseHandSummaries.CLASSID:
+                new Poker.ServicePacketHandler().handleHandSummaries(protocolObject.tableId, protocolObject.handSummaries);
+                break;
+            case com.cubeia.games.poker.routing.service.io.protocol.HandHistoryProviderResponseHands.CLASSID:
+                new Poker.ServicePacketHandler().handleHands(protocolObject.tableId, protocolObject.hands);
+                break;
+            case com.cubeia.games.poker.routing.service.io.protocol.HandHistoryProviderResponseHand.CLASSID:
+                new Poker.ServicePacketHandler().handleHand(protocolObject.hand);
+                break;
+        }
     },
 
     handleGameDataPacket:function (gameTransportPacket) {

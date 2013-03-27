@@ -2,8 +2,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.cubeia.games</groupId>
-    <artifactId>hand-history-protocol</artifactId>
-    <name>Hand History Protocol</name>
+    <artifactId>routing-service-protocol</artifactId>
+    <name>Routing Service Protocol</name>
     <packaging>jar</packaging>
 
 
@@ -30,7 +30,7 @@
                 <configuration>
                     <protocol_file>src/main/xml/protocol.xml</protocol_file>
                     <language>all</language>
-                    <package_name>com.cubeia.games.poker.handhistoryservice.io.protocol</package_name>
+                    <package_name>com.cubeia.games.poker.routing.service.io.protocol</package_name>
                     <generate_visitors>true</generate_visitors>
                     <fail_on_bad_packet_order>false</fail_on_bad_packet_order>
                 </configuration>

@@ -36,8 +36,6 @@ Poker.ProtocolUtils = Class.extend({
             return val;
         };
 
-        console.log("SNAPSHOT!:");
-        console.log(snapshot.params);
         var data = {
             id : snapshot.mttid,
             name : param("NAME"),
@@ -98,6 +96,9 @@ Poker.ProtocolUtils = Class.extend({
             return (Poker.Utils.formatBlinds(sb) + "/" + Poker.Utils.formatBlinds(param("BIG_BLIND")))
         }
         return null;
+    },
+    getTableName : function(data) {
+        return data.name  + " " + data.blinds + " " + data.type + " " + data.capacity;
     },
     getTableStatus:function (seated, capacity) {
         if(typeof(seated)=="undefined" || typeof(capacity)=="undefined") {

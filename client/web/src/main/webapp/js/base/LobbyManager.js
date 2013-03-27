@@ -30,7 +30,7 @@ Poker.LobbyManager = Class.extend({
     init: function () {
         var self = this;
         this.lobbyLayoutManager = Poker.AppCtx.getLobbyLayoutManager();
-        this.cashGamesLobbyData = this.cashGamesLobbyData = new Poker.LobbyData(new Poker.TableLobbyDataValidator(),
+        this.cashGamesLobbyData = new Poker.LobbyData(new Poker.TableLobbyDataValidator(),
             function(items) {
                 self.lobbyLayoutManager.createTableList(items);
             },
