@@ -946,20 +946,19 @@
 <script type="text/mustache" id="handHistoryViewTemplate">
 
     <div id="handHistoryView{{id}}" class="hand-history-container" style="display:none;">
-        <h1>Hand History <a class="close-button">Close</a></h1>
+        <h1>{{t "hand-history.title"}}<a class="close-button">{{t "hand-history.close"}}</a></h1>
 
         <div class="hand-ids-container">
             <div class="hand-ids-header">
-                <div class="start-time">Start time</div>
-                <div class="table-name">Table</div>
+                <div class="start-time">{{t "hand-history.start-time"}}</div>
+                <div class="table-name">{{t "hand-history.table-name"}}</div>
             </div>
             <div class="hand-ids">
-
             </div>
         </div>
         <div class="paging-container">
-            <div class="previous">Previous</div>
-            <div class="next">Next</div>
+            <div class="previous">{{t "hand-history.previous"}}</div>
+            <div class="next">{{t "hand-history.next"}}</div>
         </div>
         <div class="hand-log">
 

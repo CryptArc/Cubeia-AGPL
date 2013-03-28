@@ -164,7 +164,7 @@
         "no-history" : "Du har inte spelat några händer vid detta bord",
         "hand-info" : "Handinfo",
         "hand-id" : "Hand-id:",
-        "table-name" : "Bordsnam:",
+        "table-name" : "Bordsnamn:",
         "table-id" : "Bordsid:",
         "start-time" : "Starttid:",
         "seats" : "Seats",
@@ -177,7 +177,11 @@
         "shows" : "shows:",
         "has" : "has",
         "total-bet" : "Total bet:",
-        "total-win" : "Total win"
+        "total-win" : "Total win",
+        "previous" : "Förgående",
+        "next" : "Nästa",
+        "close" : "Close",
+        "title" : "Handhistorik"
     },
     "dialogs" : {
         "tournament-won" : {
