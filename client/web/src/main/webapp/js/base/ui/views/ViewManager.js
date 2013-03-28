@@ -55,7 +55,6 @@ Poker.ViewManager = Class.extend({
                 $(this).removeClass("multi");
             }
         });
-
         this.setupUserPanel();
 
 
@@ -172,7 +171,7 @@ Poker.ViewManager = Class.extend({
         $(".view-container").hide();
         $("#toolbar").hide();
         Poker.AppCtx.getDialogManager().displayGenericDialog(
-            { translationKey : "force-logged-out",
+            {   translationKey : "force-logged-out",
                 okButtonText:"Reload" }, function(){
                 document.location.reload();
             });
@@ -275,6 +274,7 @@ Poker.ViewManager = Class.extend({
                 v.close();
                 this.views.splice(i,1);
                 this.activeView = null;
+                this.safeActivateView(pv);
             }
         }
     },
