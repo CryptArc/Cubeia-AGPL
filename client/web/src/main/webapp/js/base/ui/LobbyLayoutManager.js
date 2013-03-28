@@ -142,8 +142,6 @@ Poker.LobbyLayoutManager = Class.extend({
         } else {
             $(".show-filters").removeClass("selected");
         }
-
-
         this.createLobbyList(tables,this.tableListSettings, this.getTableItemCallback());
     },
     createTournamentList : function(tournaments) {
@@ -176,7 +174,7 @@ Poker.LobbyLayoutManager = Class.extend({
         };
     },
     getTableDescription : function(data) {
-        return data.name  + " " + data.blinds + " " + data.type + " " + data.capacity;
+        return Poker.ProtocolUtils.getTableName(data);
     },
     tableRemoved : function(tableId) {
        this.removeListItem("tableItem",tableId);

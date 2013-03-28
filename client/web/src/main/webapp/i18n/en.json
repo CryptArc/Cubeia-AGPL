@@ -179,7 +179,11 @@
         "shows" : "shows:",
         "has" : "has",
         "total-bet" : "Total bet:",
-        "total-win" : "Total win"
+        "total-win" : "Total win",
+        "previous" : "Previous",
+        "next" : "Next",
+        "close" : "Close",
+        "title" : "Hand History"
     },
     "dialogs" : {
         "tournament-won" : {

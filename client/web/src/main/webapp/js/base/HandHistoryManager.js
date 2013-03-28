@@ -2,68 +2,59 @@
 var Poker = Poker || {};
 
 Poker.HandHistoryManager = Class.extend({
-    popups : null,
-    handIdsTemplate : null,
-    handLogTemplate : null,
+    handHistoryLayouts : null,
+    view : null,
     init : function() {
-        this.popups = new Poker.Map();
-        this.handIdToTableMap = new Poker.Map();
-        var templateManager = Poker.AppCtx.getTemplateManager();
-        this.handIdsTemplate = templateManager.getRenderTemplate("handHistoryIdsTemplate");
-        this.handLogTemplate = templateManager.getRenderTemplate("handHistoryLogTemplate");
+        this.handHistoryLayouts = new Poker.Map();
+    },
+    close : function() {
+        Poker.AppCtx.getViewManager().removeView(this.view);
+
     },
     requestHandHistory : function(tableId) {
-        var popup = this.popups.get(tableId);
-        if(popup!=null && !popup.window.closed) {
-            popup.window.location.reload();
-            popup.window.focus();
+        var self = this;
+        var layout = this.handHistoryLayouts.get(tableId);
+        if(layout==null) {
+            layout = new Poker.HandHistoryLayout($(".view-container"),tableId, function(tableId){
+                self.handHistoryLayouts.remove(tableId);
+            });
+            this.handHistoryLayouts.put(tableId,layout);
         } else {
-            popup = window.open(contextPath + "/poker/skin/" + Poker.SkinConfiguration.name + "/hand-history/" + tableId,"Hand history for " + tableId,
-                "width=500,height=600,directories=no,menubar=no",false);
-            this.popups.put(tableId,{window : popup, container : null });
+            layout.activate();
         }
+        new Poker.HandHistoryRequestHandler(tableId).requestHandSummaries(30);
     },
     showHandSummaries : function(tableId,summaries) {
-        var self = this;
-        var popup = this.popups.get(tableId);
-        summaries.reverse();
-        $.each(summaries,function(i,e){
-            e.startTime = self.formatDateTime(e.startTime);
-        });
-        var html = this.handIdsTemplate.render({summaries : summaries});
-        var handIdsContainer = popup.container.find(".hand-ids");
-        handIdsContainer.html(html);
-        var self = this;
-        if(summaries.length>0) {
+        var layout = this.handHistoryLayouts.get(tableId);
+        if(layout!=null) {
+            var self = this;
             $.each(summaries,function(i,e){
-                popup.container.find("#hand-"+ e.id).click(function(el){
-                    new Poker.HandHistoryRequestHandler(tableId).requestHand(e.id);
-                });
+                e.startTime = self.formatDateTime(e.startTime);
             });
-            handIdsContainer.scrollTop(handIdsContainer[0].scrollHeight);
-            new Poker.HandHistoryRequestHandler(tableId).requestHand(summaries[summaries.length-1].id);
-            popup.container.find(".no-hands").hide();
+            layout.showHandSummaries(summaries);
         } else {
-            popup.container.find(".no-hands").show();
+            console.log("undable to find layout");
         }
 
     },
     showHand : function(hand) {
-        hand = this.prepareHand(hand);
-        console.log("hand = ");
+        var layout = this.handHistoryLayouts.get(hand.table.tableId);
         console.log(hand);
-        var container = this.popups.get(hand.table.tableId).container;
-        var log = container.find(".hand-log");
-        container.find(".hand-ids .active").removeClass("active");
-        container.find("#hand-"+hand.id).addClass("active");
-        log.empty();
-        log.append(this.handLogTemplate.render(hand));
-        log.scrollTop(0);
+        hand = this.prepareHand(hand);
+        layout.showHand(hand);
 
     },
     formatDateTime : function(milis) {
         var date = new Date(milis);
-        return  date.toLocaleDateString() + " " + date.toLocaleTimeString();
+        var val = function(value) {
+            value = ""+value;
+            if(value.length==1) {
+                value="0"+value;
+            }
+            return value;
+        };
+        return  date.getFullYear() +"-" + val((date.getMonth()+1)) + "-"
+            + val(date.getDay()) + " " + val(date.getHours()) + ":" + val(date.getMinutes());
     },
 
     prepareHand : function(hand) {
@@ -74,11 +65,12 @@ Poker.HandHistoryManager = Class.extend({
             playerMap.put(seat.playerId,seat.name);
             $.extend(seat,{initialBalance : this.formatAmount(seat.initialBalance)});
         }
+        hand.startTime = this.formatDateTime(hand.startTime);
         for(var i = 0; i<hand.events.length; i++) {
-            var event = hand.events[i]
-            hand.startTime = this.formatDateTime(hand.startTime);
+            var event = hand.events[i];
+
             if(typeof(event.playerId)!="undefined") {
-                event = $.extend(event,{name : playerMap.get(event.playerId)});
+                event = $.extend(event,{name : playerMap.get(event.playerId), player : true});
             }
             if(typeof(event.action)!="undefined") {
                 event = $.extend(event,{
@@ -148,12 +140,6 @@ Poker.HandHistoryManager = Class.extend({
         } else {
             return Poker.Utils.formatCurrency(amount);
         }
-    },
-    ready : function(tableId,container) {
-        this.popups.get(tableId).container = container;
-        console.log("Hand history popup for table " + tableId + " is ready");
-        new Poker.HandHistoryRequestHandler(tableId).requestHandSummaries(10);
-
     },
     getAction : function(actionEnumString) {
         var act = Poker.ActionType[actionEnumString];

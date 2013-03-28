@@ -31,28 +31,19 @@
     <script type="text/javascript" src="${cp}/js/base/jquery-plugins/relative-offset.js"></script>
 
     <script type="text/javascript" src="${cp}/js/lib/handlebars.js"></script>
-    <script type="text/javascript" src="${cp}/js/lib/jquery.jqGrid.min.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/json2.js"></script>
-
-
-    <script type="text/javascript" src="${cp}/js/lib/facebox/facebox.js"></script>
-    <script type="text/javascript">
-        $.facebox.settings.closeImage = '${cp}/skins/${skin}/images/global/close.png';
-        $.facebox.settings.loadingImage = '${cp}/skins/${skin}/images/global/close.png';
-    </script>
 
     <script type="text/javascript" src="${cp}/js/base/ui/CircularProgressBar.js"></script>
 
     <script src="${cp}/js/lib/cubeia/firebase-js-api-1.9.2-CE-javascript.js" type="text/javascript"></script>
     <script src="${cp}/js/lib/cubeia/firebase-protocol-1.9.2-CE-javascript.js" type="text/javascript"></script>
     <script src="${cp}/js/lib/poker-protocol-1.0-SNAPSHOT.js" type="text/javascript"></script>
-    <script src="${cp}/js/lib/hand-history-protocol-1.0-SNAPSHOT.js" type="text/javascript"></script>
+    <script src="${cp}/js/lib/routing-service-protocol-1.0-SNAPSHOT.js" type="text/javascript"></script>
     <script src="${cp}/js/lib/quo.js" type="text/javascript"></script>
     <script src="${cp}/js/lib/i18next-1.6.0.js" type="text/javascript"></script>
 
     <script type="text/javascript" src="${cp}/js/lib/PxLoader-0.1.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/PxLoaderImage-0.1.js"></script>
-
 
     <script src="${cp}/js/base/Utils.js" type="text/javascript"></script>
     <script src="${cp}/js/base/ProtocolUtils.js" type="text/javascript"></script>
@@ -73,6 +64,7 @@
 
     <script src="${cp}/js/base/communication/handhistory/HandHistoryRequestHandler.js" type="text/javascript"></script>
     <script src="${cp}/js/base/communication/handhistory/HandHistoryPacketHandler.js" type="text/javascript"></script>
+    <script src="${cp}/js/base/ui/HandHistoryLayout.js" type="text/javascript"></script>
     <script src="${cp}/js/base/HandHistoryManager.js" type="text/javascript"></script>
 
     <script src="${cp}/js/base/communication/connection/ConnectionManager.js" type="text/javascript"></script>
@@ -172,11 +164,11 @@
             $(document).ready(function(){
                 $(".login-container").hide();
             });
+
         </script>
     </c:if>
 
     <script type="text/javascript">
-
         var contextPath = "${cp}";
 
         $(document).ready(function(){
@@ -185,7 +177,7 @@
                 Poker.Utils.removeStoredUser();
             }
 
-            //less.watch(); //development only
+            less.watch(); //development only
             $(".describe").describe();
 
             $("title").html(Poker.SkinConfiguration.title);
@@ -238,6 +230,7 @@
                 $("body").i18n();
                 new Poker.ResourcePreloader('${cp}',onPreLoadComplete,  Poker.SkinConfiguration.preLoadImages);
             });
+
         });
 
     </script>
@@ -254,9 +247,14 @@
             <ul class="my-page-button" data-i18n="user.my-page">
             </ul>
         </div>
-
+        <div class="user-panel">
+            <div class="user-panel-name username"></div>
+            <div class="user-panel-avatar"></div>
+        </div>
     </div>
+
     <div class="toolbar-background"></div>
+
     <div class="main-menu-container" style="">
         <ul id="mainMenuList">
 
@@ -315,6 +313,7 @@
             <div class="multi-view-switch multi">
             </div>
         </div>
+
         <div id="loadingView" class="loading-view">
             <div class="login-dialog">
                 <div class="logo-container"><img src="${cp}/skins/${skin}/images/lobby/poker-logo.png"/></div>
@@ -358,11 +357,6 @@
                 </div>
                 <div class="right-column">
                     <div class="top-panel" id="table-list">
-                        <div class="user-panel">
-                            <span class="status" data-i18n="user.logged-in">Logged in: </span>
-                            <span id="username"></span> (<span id="userId"></span>)
-                            <a class="logout-link" data-i18n="user.log-out">Log out</a>
-                        </div>
                         <div class="show-filters">
                             <a data-i18n="lobby.filters.show-filters">Show filters</a>
                         </div>
@@ -392,11 +386,36 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
+        </div>
+        <div class="user-overlay-container" style="display: none;">
+            <h1>Account</h1>
+            <div class="account-button logout-link">
+                <span data-i18n="user.log-out"></span>
+            </div>
+            <div class="account-block">
+                <h3>User info</h3>
+                <div class="account-row">
+                    User: <div><span class="username"></span> (<span class="user-id"></span>)</div>
+                </div>
+            </div>
+            <div class="account-block">
+                <h3>Balance</h3>
+                <div class="account-row">
+                    Balance: <div>&euro;2323.20</div>
+                </div>
+                <div class="account-row">
+                    Balance at tables: <div>&euro;233.20</div>
+                </div>
+            </div>
+            <div class="account-button deposit-link">
+                <span>Deposit</span>
             </div>
 
         </div>
     </div>
+
 </div>
 <div id="emptySeatTemplate" style="display: none;">
     <div class="avatar-base">
@@ -949,6 +968,29 @@
     <div class="stats-item">{{t "tournament-lobby.stats.current-level" }} <span>{{levelInfo.currentLevel}}</span></div>
     <div class="stats-item">{{t "tournament-lobby.stats.players-left" }}<span>{{playersLeft.remainingPlayers}}/{{playersLeft.registeredPlayers}}</span></div>
 </script>
+<script type="text/mustache" id="handHistoryViewTemplate">
+
+    <div id="handHistoryView{{id}}" class="hand-history-container" style="display:none;">
+        <h1>{{t "hand-history.title"}}<a class="close-button">{{t "hand-history.close"}}</a></h1>
+
+        <div class="hand-ids-container">
+            <div class="hand-ids-header">
+                <div class="start-time">{{t "hand-history.start-time"}}</div>
+                <div class="table-name">{{t "hand-history.table-name"}}</div>
+            </div>
+            <div class="hand-ids">
+            </div>
+        </div>
+        <div class="paging-container">
+            <div class="previous">{{t "hand-history.previous"}}</div>
+            <div class="next">{{t "hand-history.next"}}</div>
+        </div>
+        <div class="hand-log">
+
+        </div>
+    </div>
+
+</script>
 <script type="text/mustache" id="tournamentPayoutStructureTemplate" style="display:none;">
     <h4>{{t "tournament-lobby.payouts.title" }}</h4>
     <div class="prize-pool">{{t "tournament-lobby.payouts.prize-pool" }} <span>{{prizePool}}</span></div>
@@ -972,9 +1014,9 @@
     <ul>
        {{#summaries}}
         <li id="hand-{{id}}">
-            <div class="table-name">{{table.tableName}}</div>
-            <div class="hand-id">{{id}}</div>
             <div class="start-time">{{startTime}}</div>
+            <div class="table-name">{{table.tableName}}</div>
+
         </li>
        {{/summaries}}
    </ul>
@@ -1000,12 +1042,12 @@
     <div class="events">
         {{#events}}
         <p class="event">
-           {{#playerId}}
+           {{#player}}
                 {{name}} {{action}} {{amount.amount}}
                 {{#playerCardsDealt}}
                 {{t "hand-history.was-dealt" }}
                 {{/playerCardsDealt}}
-            {{/playerId}}
+            {{/player}}
             {{#tableCards}}
                 {{t "hand-history.community-cards" }}
             {{/tableCards}}

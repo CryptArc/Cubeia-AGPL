@@ -28,17 +28,28 @@ import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.common.mongo.DatabaseStorageConfiguration;
 import com.cubeia.games.poker.common.mongo.MongoStorage;
-import com.cubeia.games.poker.handhistoryservice.io.protocol.*;
+import com.cubeia.games.poker.routing.service.io.protocol.HandHistoryProviderRequestHand;
+import com.cubeia.games.poker.routing.service.io.protocol.HandHistoryProviderRequestHandIds;
+import com.cubeia.games.poker.routing.service.io.protocol.HandHistoryProviderRequestHandSummaries;
+import com.cubeia.games.poker.routing.service.io.protocol.HandHistoryProviderRequestHands;
+import com.cubeia.games.poker.routing.service.io.protocol.HandHistoryProviderResponseHand;
+import com.cubeia.games.poker.routing.service.io.protocol.HandHistoryProviderResponseHandIds;
+import com.cubeia.games.poker.routing.service.io.protocol.HandHistoryProviderResponseHandSummaries;
+import com.cubeia.games.poker.routing.service.io.protocol.HandHistoryProviderResponseHands;
+import com.cubeia.games.poker.routing.service.io.protocol.ProtocolObjectFactory;
 import com.cubeia.poker.handhistory.api.HandHistoryEvent;
 import com.cubeia.poker.handhistory.api.HistoricHand;
 import com.cubeia.poker.handhistory.api.PlayerCardsDealt;
 import com.cubeia.poker.handhistory.provider.api.HandHistoryProviderService;
 import com.google.code.morphia.Key;
 import com.google.code.morphia.query.Query;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import com.mongodb.BasicDBObject;
 import org.apache.log4j.Logger;
-
 import java.lang.reflect.Type;
 import java.nio.ByteBuffer;
 import java.util.List;
@@ -52,16 +63,6 @@ public class HandHistoryProviderServiceImpl implements HandHistoryProviderServic
     private ServiceRouter router;
     private MongoStorage mongoStorage;
     private DatabaseStorageConfiguration configuration;
-
-    private enum PacketType {
-        hand_ids,
-        hand,
-        hands,
-        hand_summaries,
-        undefined;
-    }
-
-
 
     @Override
     public String getHandIdsAsJson(int tableId, int playerId, int count, long time) {
@@ -118,7 +119,6 @@ public class HandHistoryProviderServiceImpl implements HandHistoryProviderServic
         }
         return list;
     }
-
 
     @Override
     public String getHandsAsJson(int tableId, int playerId, int count, long time) {
@@ -190,35 +190,30 @@ public class HandHistoryProviderServiceImpl implements HandHistoryProviderServic
     public void onAction(ServiceAction e) {
         log.debug("Hand history requested.");
         StyxSerializer serializer = new StyxSerializer(new ProtocolObjectFactory());
-        ProtocolObject protocolObject = serializer.unpack(ByteBuffer.wrap(e.getData()));
+        ProtocolObject protocolRequestObject = serializer.unpack(ByteBuffer.wrap(e.getData()));
+        ProtocolObject protocolResponseObject = null;
 
-        PacketType responseType = PacketType.undefined;
-        String value = "";
-        int tableId = -1;
-        if (protocolObject instanceof HandHistoryProviderRequestHand) {
-            HandHistoryProviderRequestHand request = (HandHistoryProviderRequestHand)protocolObject;
-            value =  getHandAsJson(request.handId, e.getPlayerId());
-            responseType = PacketType.hand;
-        } else if (protocolObject instanceof HandHistoryProviderRequestHands) {
-            HandHistoryProviderRequestHands request = (HandHistoryProviderRequestHands)protocolObject;
-            tableId = request.tableId;
-            value =  getHandsAsJson(request.tableId, e.getPlayerId(), request.count, getTime(request.time));
-            responseType = PacketType.hands;
-        } else if (protocolObject instanceof HandHistoryProviderRequestHandIds) {
-            HandHistoryProviderRequestHandIds request = (HandHistoryProviderRequestHandIds)protocolObject;
-            tableId = request.tableId;
-            value =  getHandIdsAsJson(request.tableId, e.getPlayerId(), request.count, getTime(request.time));
-            responseType = PacketType.hand_ids;
-        } else if(protocolObject instanceof HandHistoryProviderRequestHandSummaries) {
-            HandHistoryProviderRequestHandSummaries request = (HandHistoryProviderRequestHandSummaries) protocolObject;
-            tableId = request.tableId;
-            responseType = PacketType.hand_summaries;
-            value = getHandSummariesAsJson(request.tableId, e.getPlayerId(), request.count, getTime(request.time));
+        log.debug("Class is: " + protocolRequestObject.getClass().getName());
+
+        if (protocolRequestObject instanceof HandHistoryProviderRequestHand) {
+            HandHistoryProviderRequestHand request = (HandHistoryProviderRequestHand)protocolRequestObject;
+            protocolResponseObject = new HandHistoryProviderResponseHand(getHandAsJson(request.handId, e.getPlayerId()));
+        } else if (protocolRequestObject instanceof HandHistoryProviderRequestHands) {
+            HandHistoryProviderRequestHands request = (HandHistoryProviderRequestHands)protocolRequestObject;
+            protocolResponseObject = new HandHistoryProviderResponseHands(request.tableId, getHandsAsJson(request.tableId, e.getPlayerId(), request.count, getTime(request.time)));
+        } else if (protocolRequestObject instanceof HandHistoryProviderRequestHandIds) {
+            HandHistoryProviderRequestHandIds request = (HandHistoryProviderRequestHandIds)protocolRequestObject;
+            protocolResponseObject = new HandHistoryProviderResponseHandIds(request.tableId, getHandIdsAsJson(request.tableId, e.getPlayerId(), request.count, getTime(request.time)));
+        } else if(protocolRequestObject instanceof HandHistoryProviderRequestHandSummaries) {
+            HandHistoryProviderRequestHandSummaries request = (HandHistoryProviderRequestHandSummaries)protocolRequestObject;
+            protocolResponseObject = new HandHistoryProviderResponseHandSummaries(request.tableId, getHandSummariesAsJson(request.tableId, e.getPlayerId(), request.count, getTime(request.time)));
         }
 
-        String protocolValue = "{ \"packetType\" : \"" + responseType + "\" ,\"tableId\" : " + tableId + ", \"value\" : " + value + " }";
-        ServiceAction action = new ClientServiceAction(e.getPlayerId(), -1, protocolValue.getBytes());
-        router.dispatchToPlayer(e.getPlayerId(), action);
+        if (protocolResponseObject != null) {
+            byte[] responseData = serializer.pack(protocolResponseObject).array();
+            ServiceAction action = new ClientServiceAction(e.getPlayerId(), -1, responseData);
+            router.dispatchToPlayer(e.getPlayerId(), action);
+        }
     }
 
     private long getTime(String value) {

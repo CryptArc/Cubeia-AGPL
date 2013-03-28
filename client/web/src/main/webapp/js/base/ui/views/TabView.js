@@ -71,7 +71,11 @@ Poker.TabView = Poker.View.extend({
     },
     close : function(){
         this.removeTab();
-        this.getViewElement().remove();
+        if(this.removeElementOnClose==true) {
+            this.getViewElement().remove();
+        } else {
+            this.getViewElement().hide();
+        }
         this.setViewElement(null);
     }
 

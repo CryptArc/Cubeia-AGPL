@@ -21,9 +21,15 @@ Poker.ViewManager = Class.extend({
     mobileDevice : false,
     portrait : false,
     multiTableView : null,
+    tabsElement : null,
+    userPanel : null,
+    userOverlay : null,
     init : function(tabsContainerId) {
         var self = this;
         this.tabsContainer = $("#"+tabsContainerId);
+        this.tabsElement = $(".tabs-container");
+        this.userPanel = $(".user-panel");
+        this.userOverlay = $(".user-overlay-container");
         this.views = [];
         this.loginView = this.addView(new Poker.LoginView("#loginView","Login"));
         this.loginView.baseWidth=440;
@@ -49,7 +55,26 @@ Poker.ViewManager = Class.extend({
                 $(this).removeClass("multi");
             }
         });
+        this.setupUserPanel();
 
+
+    },
+    toggleAccountingOverlay : function() {
+        this.userOverlay.toggle();
+        this.userPanel.toggleClass("active");
+    },
+    setupUserPanel : function() {
+        var self = this;
+        this.userPanel.click(function(e){
+            self.toggleAccountingOverlay();
+            $(document).mouseup(function(e){
+                if(self.userPanel.has(e.target).length===0
+                    && self.userOverlay.has(e.target).length === 0) {
+                    self.toggleAccountingOverlay();
+                    $(document).off("mouseup");
+                }
+            });
+        });
     },
     toggleMultiTableView : function() {
 
@@ -146,7 +171,7 @@ Poker.ViewManager = Class.extend({
         $(".view-container").hide();
         $("#toolbar").hide();
         Poker.AppCtx.getDialogManager().displayGenericDialog(
-            { translationKey : "force-logged-out",
+            {   translationKey : "force-logged-out",
                 okButtonText:"Reload" }, function(){
                 document.location.reload();
             });
@@ -249,6 +274,7 @@ Poker.ViewManager = Class.extend({
                 v.close();
                 this.views.splice(i,1);
                 this.activeView = null;
+                this.safeActivateView(pv);
             }
         }
     },
@@ -361,11 +387,17 @@ Poker.ViewManager = Class.extend({
         var maxAspectRatio = 4/3.2;
         if(this.mobileDevice) {
             maxAspectRatio = 4/3;
+            this.tabsElement.width("auto");
+            this.tabsElement.find("li").css("width","");
+        } else {
+            var count = this.getVisibleTabCount();
+            var userPanelWidth = this.userPanel.outerWidth();
+            this.tabsElement.width(( $(window).width() - 55 - userPanelWidth ) + "px");
+            this.tabsElement.find("li").width((100/count) + "%");
         }
         var views = this.views;
         var topMargin = 40;
         var leftMargin = 0;
-
 
         if(this.mobileDevice==true && this.portrait == true) {
             leftMargin = 40;
@@ -379,7 +411,7 @@ Poker.ViewManager = Class.extend({
             views[i].calculateSize(w.width()-leftMargin, w.height()-topMargin, maxAspectRatio);
             views[i].calculateFontSize();
         }
-        this.updateTabsSize();
+
         this.calculateSettingsFontSize();
     },
     calculateSettingsFontSize : function() {
@@ -449,17 +481,7 @@ Poker.ViewManager = Class.extend({
             this.prepareView(view);
         }
         this.views.push(view);
-        this.updateTabsSize();
-
         return view;
-    },
-    updateTabsSize : function() {
-        var count = this.getVisibleTabCount();
-        if(this.mobileDevice == false) {
-            this.tabsContainer.find("li").css({width : (100/count)-2 + "%" });
-        } else {
-            this.tabsContainer.find("li").css({width : "auto"});
-        }
     },
     /**
      * Get the the nr of views that has a visible tab

@@ -7,8 +7,9 @@ Poker.View = Class.extend({
     id : null,
     active : false,
     baseWidth : 1024,
+    removeElementOnClose : true,
     init : function(viewElementId,name) {
-        if(viewElementId!=null && viewElementId.charAt(0)!="#") {
+        if(viewElementId!=null &&  viewElementId.charAt(0)!="#") {
             viewElementId= "#" + viewElementId;
         }
         if(viewElementId!=null) {
@@ -38,7 +39,9 @@ Poker.View = Class.extend({
 
     },
     close : function() {
-        this.getViewElement().remove();
+        if(this.removeElementOnClose==true) {
+            this.getViewElement().remove();
+        }
         this.setViewElement(null);
         this.onDeactivateView();
     },

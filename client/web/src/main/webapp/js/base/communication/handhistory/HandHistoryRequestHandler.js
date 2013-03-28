@@ -7,7 +7,7 @@ Poker.HandHistoryRequestHandler = Class.extend({
     },
     requestHandIds : function(count) {
         console.log("Requesting hands for table " + this.tableId);
-        var handIdRequest = new com.cubeia.games.poker.handhistoryservice.io.protocol.HandHistoryProviderRequestHandIds();
+        var handIdRequest = new com.cubeia.games.poker.routing.service.io.protocol.HandHistoryProviderRequestHandIds();
         handIdRequest.tableId = this.tableId;
         handIdRequest.count = count;
         handIdRequest.time = "" + new Date().getTime();
@@ -15,21 +15,21 @@ Poker.HandHistoryRequestHandler = Class.extend({
     },
     requestHandSummaries : function(count) {
         console.log("Requesting hands for table " + this.tableId);
-        var handIdRequest = new com.cubeia.games.poker.handhistoryservice.io.protocol.HandHistoryProviderRequestHandSummaries();
+        var handIdRequest = new com.cubeia.games.poker.routing.service.io.protocol.HandHistoryProviderRequestHandSummaries();
         handIdRequest.tableId = this.tableId;
         handIdRequest.count = count;
         handIdRequest.time = "" + new Date().getTime();
         this.sendPacket(handIdRequest);
     },
     requestHands : function(count) {
-        var handsRequest = new com.cubeia.games.poker.handhistoryservice.io.protocol.HandHistoryProviderRequestHands();
+        var handsRequest = new com.cubeia.games.poker.routing.service.io.protocol.HandHistoryProviderRequestHands();
         handsRequest.tableId = this.tableId;
         handsRequest.count = count;
         handsRequest.time = "" + new Date().getTime();
         this.sendPacket(handsRequest);
     },
     requestHand : function(handId) {
-        var handRequest = new com.cubeia.games.poker.handhistoryservice.io.protocol.HandHistoryProviderRequestHand();
+        var handRequest = new com.cubeia.games.poker.routing.service.io.protocol.HandHistoryProviderRequestHand();
         handRequest.handId = handId;
         this.sendPacket(handRequest);
     },
@@ -42,5 +42,4 @@ Poker.HandHistoryRequestHandler = Class.extend({
         packet.servicedata = FIREBASE.ByteArray.toBase64String(historyRequest.save().createGameDataArray(historyRequest.classId()));
         Poker.AppCtx.getConnector().sendProtocolObject(packet);
     }
-
 });
