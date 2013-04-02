@@ -50,6 +50,7 @@ Poker.TableLayoutManager = Class.extend({
         if (!tableViewContainer) {
             throw "TableLayoutManager requires a tableViewContainer";
         }
+        var self = this;
         this.tableViewContainer = tableViewContainer;
         this.seats = new Poker.Map();
         this.animationManager = new Poker.AnimationManager();
@@ -59,9 +60,14 @@ Poker.TableLayoutManager = Class.extend({
         var viewId = "#tableView-"+tableId;
         this.tableView = $(viewId);
 
+        new Poker.ChatInput(this.tableView.find(".chat-input"),function(message){
+            new Poker.TableRequestHandler(tableId).sendChatMessage(message);
+            console.log("Message : " + message);
+        });
+
         this.tableId = tableId;
         this.soundManager = soundManager;
-        var self = this;
+
 
         var actionCallback = function(actionType,amount){
            self.handleAction(actionType,amount);
@@ -87,10 +93,12 @@ Poker.TableLayoutManager = Class.extend({
         this.cardElements = new Poker.Map();
         this.clock = new Poker.Clock(this.tableInfoElement.find(".time-to-next-level-value"));
 
-        this.tableLog = new Poker.TableEventLog(this.tableView.find(".table-event-log"));
-
+        this.tableLog = new Poker.TableEventLog(this.tableView.find(".table-log-container"));
 
         $(".future-action").show();
+    },
+    onChatMessage : function(player, message) {
+        this.tableLog.appendChatMessage(player,message);
     },
     handleAction : function(actionType,amount) {
         var self = this;

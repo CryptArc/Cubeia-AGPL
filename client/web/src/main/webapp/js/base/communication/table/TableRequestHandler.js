@@ -61,6 +61,16 @@ Poker.TableRequestHandler = Class.extend({
         var unwatchRequest = new FB_PROTOCOL.UnwatchRequestPacket();
         unwatchRequest.tableid = this.tableId;
         this.connector.sendProtocolObject(unwatchRequest);
+    },
+    sendChatMessage : function(message) {
+        message = Poker.Utils.filterMessage(message);
+        if(message!=null && $.trim(message).length>0) {
+            var chatPacket = new FB_PROTOCOL.TableChatPacket();
+            chatPacket.pid = Poker.MyPlayer.id;
+            chatPacket.message = message;
+            chatPacket.tableid = this.tableId;
+            Poker.AppCtx.getConnector().sendProtocolObject(chatPacket);
+        }
 
     }
 });

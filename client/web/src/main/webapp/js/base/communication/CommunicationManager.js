@@ -142,6 +142,9 @@ Poker.CommunicationManager = Class.extend({
         }
         var tablePacketHandler = new Poker.TablePacketHandler(tableId);
         switch (packet.classId) {
+            case FB_PROTOCOL.TableChatPacket.CLASSID:
+                tablePacketHandler.handleChatMessage(packet);
+                break;
             case FB_PROTOCOL.NotifyJoinPacket.CLASSID :
                 tablePacketHandler.handleNotifyJoin(packet);
                 break;

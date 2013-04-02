@@ -79,7 +79,15 @@
         "level" : "Time to next level:",
         "pot" : "Pot:",
         "hand-history" : "Hand History",
-        "open" : "Open"
+        "open" : "Open",
+
+        "log" : {
+            "chat-input-desc" : "Send a message",
+            "hide-chat" : "Hide chat messages",
+            "show-chat" : "Show chat messages",
+            "hide-events" : "Hide table events",
+            "show-events" : "Show table events"
+        }
     },
     "user" : {
         "logged-in" : "Logged in:",

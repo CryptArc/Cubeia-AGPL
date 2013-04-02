@@ -79,7 +79,14 @@
         "level" : "Nästa nivå:",
         "pot" : "Pot:",
         "hand-history" : "Handhistorik",
-        "open" : "Ledig"
+        "open" : "Ledig",
+        "log" : {
+            "chat-input-desc" : "Skicka ett meddelande",
+            "hide-chat" : "Dölj chat-meddelanden",
+            "show-chat" : "Visa chat-meddelanden",
+            "hide-events" : "Dölj händelser",
+            "show-events" : "Visa händelser"
+        }
     },
     "user" : {
         "logged-in" : "Inloggad:",

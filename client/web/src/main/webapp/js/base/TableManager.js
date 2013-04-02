@@ -482,6 +482,18 @@ Poker.TableManager = Class.extend({
             put(Poker.FutureActionType.FOLD);
         }
         return futureActions.values();
+    },
+    onChatMessage : function(tableId, playerId, message) {
+        var table = this.getTable(tableId);
+        if(table!=null) {
+            var player = table.getPlayerById(playerId);
+            if(player!=null) {
+                message = Poker.Utils.filterMessage(message);
+                table.getLayoutManager().onChatMessage(player,message);
+            } else {
+                console.log("onChatMessage: player not found at table");
+            }
+        }
     }
 
 });

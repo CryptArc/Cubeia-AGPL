@@ -99,6 +99,7 @@
     <script type="text/javascript" src="${cp}/js/base/ui/PotTransferAnimator.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/Log.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/TableEventLog.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/ChatInput.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/TableLayoutManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/TemplateManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/Seat.js"></script>
@@ -141,6 +142,7 @@
     <script type="text/javascript" src="${cp}/js/base/ui/views/AccountPageManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ApplicationContext.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/ViewSwiper.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/ContextMenu.js"></script>
     <script type="text/javascript" src="${cp}/js/base/tournaments/Tournament.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/tournaments/TournamentLayoutManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/tournaments/TournamentManager.js"></script>
@@ -647,8 +649,11 @@
         </div>
         <div class="bottom-bar">
             <div class="table-log-container">
+                <div class="table-event-log-settings"></div>
                 <div class="table-event-log">
                 </div>
+                <input type="text" class="chat-input describe" title="{{t 'table.log.chat-input-desc'}}"/>
+
             </div>
             <div class="own-player" id="myPlayerSeat-{{tableId}}Info" style="display:none;">
                 <div class="name" id="myPlayerName-{{tableId}}"></div>
@@ -1126,6 +1131,9 @@
 </script>
 <script type="text/mustache" id="newHandLogTemplate" style="display:none;">
     <div class="hand-started">{{t "table-log.hand-started"}}{{handId}} </div>
+</script>
+<script type="text/mustache" id="chatMessageTemplate" style="display:none;">
+    <div class="chat-message"><span class="chat-player-name">{{player.name}}:</span> {{message}} </div>
 </script>
 <script type="text/mustache" id="overLayDialogTemplate" style="display:none;">
     <div class="dialog-overlay" id="{{dialogId}}">

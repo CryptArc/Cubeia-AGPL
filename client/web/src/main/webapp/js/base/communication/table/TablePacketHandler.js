@@ -70,5 +70,10 @@ Poker.TablePacketHandler = Class.extend({
         } else if (watchResponse.status == FB_PROTOCOL.WatchResponseStatusEnum.OK) {
             //this.tableManager.clearTable()
         }
+    },
+    handleChatMessage : function(chatPacket) {
+        console.log("Handle chat message");
+        console.log(chatPacket);
+        this.tableManager.onChatMessage(this.tableId, chatPacket.pid, chatPacket.message);
     }
 });
