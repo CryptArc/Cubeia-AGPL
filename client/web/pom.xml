@@ -190,10 +190,13 @@
                         <source>${project.basedir}/src/test/js/mocks/MockUtils.js</source>
 
                         <!-- sources -->
+                        <source>${js.dir}/base/jquery-plugins/describe.js</source>
                         <source>${js.dir}/base/data/Map.js</source>
                         <source>${js.dir}/base/TableManager.js</source>
                         <source>${js.dir}/base/PeriodicalUpdater.js</source>
                         <source>${js.dir}/base/ui/Clock.js</source>
+                        <source>${js.dir}/base/ui/ChatInput.js</source>
+                        <source>${js.dir}/base/ui/ContextMenu.js</source>
                         <source>${js.dir}/base/ui/Log.js</source>
                         <source>${js.dir}/base/ui/TableEventLog.js</source>
                         <source>${js.dir}/base/ui/TableLayoutManager.js</source>
