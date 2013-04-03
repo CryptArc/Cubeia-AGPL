@@ -127,7 +127,7 @@ public class EditCurrencies extends BasePage {
         addForm.add(new RequiredTextField<String>("code", newCurrencyModel.<String>bind("code"))
             .add(StringValidator.exactLength(3)));
         addForm.add(new RequiredTextField<Integer>("digits", newCurrencyModel.<Integer>bind("fractionalDigits"))
-            .add(new RangeValidator<Integer>(0, 5)));
+            .add(new RangeValidator<Integer>(0, 8)));
         addForm.add(new FeedbackPanel("feedback", new ContainerFeedbackMessageFilter(addForm)));
         addForm.add(new WebMarkupContainer("submitButton").add(new ConfirmOnclickAttributeModifier("Are you sure you want to add this currency?")));
         add(addForm);
