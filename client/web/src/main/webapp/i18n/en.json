@@ -45,6 +45,8 @@
     "table" : {
         "buttons" : {
             "leave" : "Leave",
+            "logout" : "Log out",
+            "logout-warning" : "Are you sure you want to leave the poker client?",
             "no-more-blinds" : "No more blinds",
             "sit-out-next" : "Sit out next hand",
             "fold" :"Fold",
