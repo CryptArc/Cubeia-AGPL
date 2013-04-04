@@ -94,22 +94,21 @@ Poker.MultiTableView = Poker.TabView.extend({
         return viewElements;
     },
     activate : function() {
+        this.activateTab();
         this.active = true;
         this.tableViewContainer.addClass("multi-table");
         var views = this.tableViews;
         for(var i = 0; i<views.length; i++) {
             var ve = views[i].activate();
         }
-
-        this.onViewActivated();
     },
     deactivate : function() {
+        this.deactivateTab();
         this.active = false;
         var views = this.tableViews;
         for(var i = 0; i<views.length; i++) {
             var ve = views[i].deactivate();
         }
-        this.deactivateTab();
     },
     close : function() {
         this.tableViewContainer.css({width:"",height:"",marginLeft:""});

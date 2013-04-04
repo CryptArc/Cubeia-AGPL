@@ -19,7 +19,6 @@ Poker.View = Class.extend({
     activate : function() {
         this.active = true;
         this.getViewElement().show();
-        this.onViewActivated();
     },
     isActive : function() {
         return this.active;
@@ -27,13 +26,6 @@ Poker.View = Class.extend({
     deactivate : function() {
         this.active = false;
         this.getViewElement().hide();
-        this.onViewDeactivated();
-    },
-    onViewActivated : function() {
-
-    },
-    onViewDeactivated : function() {
-
     },
     updateInfo : function(data) {
 

@@ -60,10 +60,12 @@ Poker.TabView = Poker.View.extend({
     deactivateTab : function() {
         this.tabElement.removeClass("active");
     },
-    onViewActivated : function() {
+    activate : function() {
+        this._super();
         this.activateTab();
     },
-    onViewDeactivated : function() {
+    deactivate : function() {
+        this._super();
         this.deactivateTab();
     },
     removeTab : function() {
