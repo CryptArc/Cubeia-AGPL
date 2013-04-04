@@ -213,24 +213,6 @@
                     tournamentLobbyUpdateInterval : 10000
                 });
 
-                $(".logout-link").click(function() {
-                    Poker.AppCtx.getCommunicationManager().getConnector().logout(true);
-                    var logout_url = Poker.OperatorConfig.getLogoutUrl();
-                    if(!logout_url) {
-                        document.location = document.location.hash = "clear";
-                        document.location.reload();
-                    } else {
-                        var dialogManager = Poker.AppCtx.getDialogManager();
-                        dialogManager.displayGenericDialog({
-                          container:  Poker.AppCtx.getViewManager().getActiveView().getViewElement(),
-                          header: i18n.t("table.buttons.logout"), 
-                          message: i18n.t("table.buttons.logout-warning"),
-                          displayCancelButton: true
-                        }, function() {
-                            document.location = logout_url;
-                        });
-                    } 
-                });
             };
             Handlebars.registerHelper('t', function(i18n_key) {
                 var result = i18n.t(i18n_key);
