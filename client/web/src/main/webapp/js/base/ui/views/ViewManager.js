@@ -24,12 +24,12 @@ Poker.ViewManager = Class.extend({
     tabsElement : null,
     userPanel : null,
     userOverlay : null,
+    userPanel : null,
     init : function(tabsContainerId) {
         var self = this;
         this.tabsContainer = $("#"+tabsContainerId);
         this.tabsElement = $(".tabs-container");
         this.userPanel = $(".user-panel");
-        this.userOverlay = $(".user-overlay-container");
         this.views = [];
         this.loginView = this.addView(new Poker.LoginView("#loginView","Login"));
         this.loginView.baseWidth=440;
@@ -55,27 +55,8 @@ Poker.ViewManager = Class.extend({
                 $(this).removeClass("multi");
             }
         });
-        this.setupUserPanel();
+    },
 
-
-    },
-    toggleAccountingOverlay : function() {
-        this.userOverlay.toggle();
-        this.userPanel.toggleClass("active");
-    },
-    setupUserPanel : function() {
-        var self = this;
-        this.userPanel.click(function(e){
-            self.toggleAccountingOverlay();
-            $(document).mouseup(function(e){
-                if(self.userPanel.has(e.target).length===0
-                    && self.userOverlay.has(e.target).length === 0) {
-                    self.toggleAccountingOverlay();
-                    $(document).off("mouseup");
-                }
-            });
-        });
-    },
     toggleMultiTableView : function() {
 
         if(this.multiTableView == null) {

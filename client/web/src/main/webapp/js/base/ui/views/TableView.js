@@ -8,17 +8,15 @@ Poker.TableView = Poker.TabView.extend({
         this.layoutManager = layoutManager;
         this.tableViewContainer = $(".table-view-container");
     },
-    onViewActivated : function() {
-
+    activate : function() {
+        this._super();
         this.tableViewContainer.show();
         this.layoutManager.onActivateView();
-        this.activateTab();
         this.getViewElement().removeClass("no-transitions");
     },
-    onViewDeactivated : function() {
-
+    deactivate : function() {
+        this._super();
         this.tableViewContainer.hide();
-        this.deactivateTab();
         this.getViewElement().addClass("no-transitions");
         this.layoutManager.onDeactivateView();
 
