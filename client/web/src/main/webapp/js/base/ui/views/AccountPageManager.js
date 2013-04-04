@@ -40,25 +40,28 @@ Poker.AccountPageManager = Class.extend({
         });
 
         $(".logout-link").click(function() {
-            Poker.AppCtx.getCommunicationManager().getConnector().logout(true);
-            var logout_url = Poker.OperatorConfig.getLogoutUrl();
-            if(!logout_url) {
-                document.location = document.location.hash = "clear";
-                document.location.reload();
-            } else {
-                var dialogManager = Poker.AppCtx.getDialogManager();
-                dialogManager.displayGenericDialog({
-                    container:  Poker.AppCtx.getViewManager().getActiveView().getViewElement(),
-                    header: i18n.t("account.logout"),
-                    message: i18n.t("account.logout-warning"),
-                    displayCancelButton: true
-                }, function() {
-                    document.location = logout_url;
-                });
-            }
+            self.toggleAccountingOverlay();
+            self.logout();
         });
 
-
+    },
+    logout : function() {
+        Poker.AppCtx.getCommunicationManager().getConnector().logout(true);
+        var logout_url = Poker.OperatorConfig.getLogoutUrl();
+        if(!logout_url) {
+            document.location = document.location.hash = "clear";
+            document.location.reload();
+        } else {
+            var dialogManager = Poker.AppCtx.getDialogManager();
+            dialogManager.displayGenericDialog({
+                container:  Poker.AppCtx.getViewManager().getActiveView().getViewElement(),
+                header: i18n.t("account.logout"),
+                message: i18n.t("account.logout-warning"),
+                displayCancelButton: true
+            }, function() {
+                document.location = logout_url;
+            });
+        }
     },
     addToken : function(url) {
         return url + "?token="+Poker.MyPlayer.sessionToken+"&playerId="+Poker.MyPlayer.id + "&r="+Math.random();
