@@ -15,22 +15,33 @@ Poker.AccountPageManager = Class.extend({
         this.userOverlay = $(".user-overlay-container");
         this.setupUserPanel();
         var self = this;
+        var vm =  Poker.AppCtx.getViewManager();
+
         $("#editProfileButton").click(function(e){
-            self.toggleAccountingOverlay();
+            self.closeAccountOverlay();
             if(self.editProfileView==null) {
                 var url = Poker.OperatorConfig.getProfilePageUrl();
-                self.editProfileView = new Poker.ExternalPageView("editProfileView","Edit Profile","C",self.addToken(url));
+                self.editProfileView = new Poker.ExternalPageView(
+                    "editProfileView","Edit Profile","C",self.addToken(url),function(){
+                        vm.removeView(self.editProfileView);
+                        self.editProfileView = null;
+                    });
                 self.editProfileView.fixedSizeView = true;
-                Poker.AppCtx.getViewManager().addView(self.editProfileView);
+               vm.addView(self.editProfileView);
 
             }
             Poker.AppCtx.getViewManager().activateView(self.editProfileView);
         });
         $("#buyCreditsButton").click(function(e){
-            self.toggleAccountingOverlay();
+            self.closeAccountOverlay();
             if(self.buyCreditsView==null) {
                 var url = Poker.OperatorConfig.getBuyCreditsUrl();
-                self.buyCreditsView = new Poker.ExternalPageView("buyCreditsView","Buy credits","C",self.addToken(url));
+                self.buyCreditsView = new Poker.ExternalPageView(
+                    "buyCreditsView","Buy credits","C",self.addToken(url),
+                    function(){
+                        vm.removeView(self.buyCreditsView);
+                        self.buyCreditsView = null;
+                    });
                 self.buyCreditsView.fixedSizeView = true;
                 Poker.AppCtx.getViewManager().addView(self.buyCreditsView);
 
@@ -40,7 +51,7 @@ Poker.AccountPageManager = Class.extend({
         });
 
         $(".logout-link").click(function() {
-            self.toggleAccountingOverlay();
+            self.closeAccountOverlay();
             self.logout();
         });
 
@@ -66,25 +77,34 @@ Poker.AccountPageManager = Class.extend({
     addToken : function(url) {
         return url + "?token="+Poker.MyPlayer.sessionToken+"&playerId="+Poker.MyPlayer.id + "&r="+Math.random();
     },
-    toggleAccountingOverlay : function() {
-        this.userOverlay.toggle();
-        this.userPanel.toggleClass("active");
-        this.toggle();
+    closeAccountOverlay : function() {
+        this.userOverlay.hide();
+        this.userPanel.removeClass("active");
+    },
+    openAccountOverlay : function() {
+        this.userOverlay.show();
+        this.userPanel.addClass("active");
+        this.openAccountFrame();
     },
     setupUserPanel : function() {
         var self = this;
         this.userPanel.click(function(e){
-            self.toggleAccountingOverlay();
+            if(self.userOverlay.is(":visible")) {
+                self.closeAccountOverlay();
+                $(document).off("mouseup");
+            } else {
+                self.openAccountOverlay();
+            }
             $(document).mouseup(function(e){
                 if(self.userPanel.has(e.target).length === 0
                     && self.userOverlay.has(e.target).length === 0) {
-                    self.toggleAccountingOverlay();
+                    self.closeAccountOverlay();
                     $(document).off("mouseup");
                 }
             });
         });
     },
-    toggle : function() {
+    openAccountFrame : function() {
         var iframe = $("#accountIframe");
         var url = Poker.OperatorConfig.getAccountInfoUrl();
         iframe.attr("src",this.addToken(url));

@@ -394,9 +394,11 @@
 
         <div class="profile-view" id="editProfileView" style="display: none;">
             <iframe class="external-view-iframe"></iframe>
+            <a class="close-button">Close</a>
         </div>
         <div class="buy-credits-view" id="buyCreditsView"  style="display: none;">
             <iframe class="external-view-iframe"></iframe>
+            <a class="close-button">Close</a>
         </div>
     </div>
 

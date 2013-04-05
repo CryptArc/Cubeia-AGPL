@@ -4,9 +4,14 @@ var Poker = Poker || {};
 
 Poker.ExternalPageView = Poker.TabView.extend({
     url : null,
-    init : function(viewElementId,name,tabIndex,url) {
+    init : function(viewElementId,name,tabIndex,url,closeFunction) {
         this._super(viewElementId,name,tabIndex);
         this.url = url;
+        var self = this;
+        this.removeElementOnClose = false;
+        this.getViewElement().find(".close-button").click(function(){
+            closeFunction();
+        });
     },
     activate : function() {
         this._super();
@@ -18,6 +23,9 @@ Poker.ExternalPageView = Poker.TabView.extend({
     },
     calculateSize : function(maxWidth,maxHeight, aspectRatio) {
         this.getViewElement().width(maxWidth).height(maxHeight);
+    },
+    calculateFontSize : function() {
+
     }
 
 
