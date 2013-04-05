@@ -48,6 +48,8 @@ public class OperatorList extends BasePage {
                 item.add(new Label("id", "" + operator.getId()));
                 item.add(new Label("name", operator.getName()));
                 item.add(new Label("enabled", operator.isEnabled() ? "Enabled" : "Disabled"));
+                String status = operator.getAccountStatus() == null ? "" : operator.getAccountStatus().toString();
+                item.add(new Label("accountStatus", status));
                 PageParameters parameters = new PageParameters();
                 parameters.add("id", operator.getId());
                 item.add(new BookmarkablePageLink<Void>("editLink", EditOperator.class, parameters));

@@ -16,14 +16,16 @@
  */
 package com.cubeia.games.poker.admin.wicket.pages.operator;
 
-import com.cubeia.backoffice.operator.api.OperatorConfigParamDTO;
-import com.cubeia.backoffice.operator.api.OperatorDTO;
-import com.cubeia.backoffice.operator.client.OperatorServiceClient;
-import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.network.shared.web.wicket.list.EditableListItem;
-import com.cubeia.network.shared.web.wicket.list.ListEditor;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
@@ -33,11 +35,13 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.util.string.StringValue;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.cubeia.backoffice.operator.api.OperatorAccountStatus;
+import com.cubeia.backoffice.operator.api.OperatorConfigParamDTO;
+import com.cubeia.backoffice.operator.api.OperatorDTO;
+import com.cubeia.backoffice.operator.client.OperatorServiceClient;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.network.shared.web.wicket.list.EditableListItem;
+import com.cubeia.network.shared.web.wicket.list.ListEditor;
 
 
 public class EditOperator extends BasePage {
@@ -60,6 +64,7 @@ public class EditOperator extends BasePage {
         editOperatorForm.add(new Label("id"));
         editOperatorForm.add(new RequiredTextField<String>("name"));
         editOperatorForm.add(new CheckBox("enabled"));
+        editOperatorForm.add(new DropDownChoice<OperatorAccountStatus>("accountStatus", Arrays.asList(OperatorAccountStatus.values())));
         add(editOperatorForm);
 
         final Map<OperatorConfigParamDTO,String> config = operatorService.getConfig(operatorId);
