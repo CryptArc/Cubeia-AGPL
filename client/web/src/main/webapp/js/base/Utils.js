@@ -2,7 +2,7 @@
 var Poker = Poker || {};
 
 Poker.Utils = {
-    currencySymbol : "&euro;",
+    currencySymbol : "",
     formatCurrency : function(amount) {
         return parseFloat(amount/100).toFixed(2);
     },

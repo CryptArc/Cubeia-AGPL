@@ -138,7 +138,9 @@
     <script type="text/javascript" src="${cp}/js/base/ui/views/SoundSettingsView.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/DevSettingsView.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/ViewManager.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/views/ExternalPageView.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/MainMenuManager.js"></script>
+
     <script type="text/javascript" src="${cp}/js/base/ui/views/AccountPageManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ApplicationContext.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/ViewSwiper.js"></script>
@@ -151,12 +153,9 @@
 
     <script type="text/javascript" src="${cp}/js/base/communication/lobby/Unsubscribe.js"></script>
 
-
     <script type="text/javascript" src="${cp}/js/base/dev/MockEventManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/dev/PositionEditor.js"></script>
     <script type="text/javascript" src="${cp}/js/base/dev/DevTools.js"></script>
-
-
 
     <c:if test="${not empty operatorId}">
         <script type="text/javascript">
@@ -214,24 +213,6 @@
                     tournamentLobbyUpdateInterval : 10000
                 });
 
-                $(".logout-link").click(function() {
-                    Poker.AppCtx.getCommunicationManager().getConnector().logout(true);
-                    var logout_url = Poker.OperatorConfig.getLogoutUrl();
-                    if(!logout_url) {
-                        document.location = document.location.hash = "clear";
-                        document.location.reload();
-                    } else {
-                        var dialogManager = Poker.AppCtx.getDialogManager();
-                        dialogManager.displayGenericDialog({
-                          container:  Poker.AppCtx.getViewManager().getActiveView().getViewElement(),
-                          header: i18n.t("table.buttons.logout"), 
-                          message: i18n.t("table.buttons.logout-warning"),
-                          displayCancelButton: true
-                        }, function() {
-                            document.location = logout_url;
-                        });
-                    } 
-                });
             };
             Handlebars.registerHelper('t', function(i18n_key) {
                 var result = i18n.t(i18n_key);
@@ -256,8 +237,6 @@
         <div class="tabs-container">
             <ul id="tabItems" class="tabs">
             </ul>
-            <ul class="my-page-button" data-i18n="user.my-page">
-            </ul>
         </div>
         <div class="user-panel">
             <div class="user-panel-name username"></div>
@@ -274,10 +253,6 @@
     </div>
     <div class="menu-overlay slidable" style="display: none;">
 
-    </div>
-
-    <div class="account-overlay" style="display: none;">
-         <iframe id="account_iframe" class="account_iframe" style=></iframe>
     </div>
 
     <div id="soundSettingsView" class="config-view" style="display: none;">
@@ -406,25 +381,24 @@
             <div class="account-button logout-link">
                 <span data-i18n="user.log-out"></span>
             </div>
-            <div class="account-block">
-                <h3>User info</h3>
-                <div class="account-row">
-                    User: <div><span class="username"></span> (<span class="user-id"></span>)</div>
+            <iframe id="accountIframe" class="account-iframe" scrolling="no"></iframe>
+            <div class="account-buttons">
+                <div class="account-button" id="editProfileButton">
+                    Edit Profile
+                </div>
+                <div class="account-button" id="buyCreditsButton">
+                    Buy Credits
                 </div>
             </div>
-            <div class="account-block">
-                <h3>Balance</h3>
-                <div class="account-row">
-                    Balance: <div>&euro;2323.20</div>
-                </div>
-                <div class="account-row">
-                    Balance at tables: <div>&euro;233.20</div>
-                </div>
-            </div>
-            <div class="account-button deposit-link">
-                <span>Deposit</span>
-            </div>
+        </div>
 
+        <div class="profile-view" id="editProfileView" style="display: none;">
+            <iframe class="external-view-iframe"></iframe>
+            <a class="close-button">Close</a>
+        </div>
+        <div class="buy-credits-view" id="buyCreditsView"  style="display: none;">
+            <iframe class="external-view-iframe"></iframe>
+            <a class="close-button">Close</a>
         </div>
     </div>
 
@@ -479,7 +453,7 @@
     </div>
 </script>
 <div id="mainPotTemplate" style="display: none;">
-        <div class="balance pot-container-{{potId}}">&euro;<span class="pot-value pot-{{potId}}">{{amount}}</span></div>
+        <div class="balance pot-container-{{potId}}"><span class="pot-value pot-{{potId}}">{{amount}}</span></div>
 </div>
 <div id="myPlayerSeatTemplate" style="display:none;">
         <div class="player-name">
@@ -583,7 +557,7 @@
 </div>
 <div id="potTransferTemplate" style="display: none;">
         <div id="{{ptId}}" class="pot-transfer" style="visibility: hidden;">
-        <div class="balance">&euro;{{amount}}</div>
+        <div class="balance">{{amount}}</div>
     </div>
 </div>
 
@@ -645,7 +619,7 @@
 
             </div>
             <div class="total-pot">
-                {{t "table.pot" }} <span>&euro;<span class="amount"></span></span>
+                {{t "table.pot" }} <span><span class="amount"></span></span>
             </div>
             <div class="main-pot">
 

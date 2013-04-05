@@ -8,12 +8,12 @@ Poker.TournamentView = Poker.TabView.extend({
     getTournamentId : function() {
         return this.layoutManager.tournamentId;
     },
-    onViewActivated : function() {
+    activate : function() {
+        this._super();
         Poker.AppCtx.getTournamentManager().activateTournamentUpdates(this.layoutManager.tournamentId);
-        this.activateTab();
     },
-    onViewDeactivated : function() {
+    deactivate : function() {
+        this._super();
         Poker.AppCtx.getTournamentManager().deactivateTournamentUpdates(this.layoutManager.tournamentId);
-        this.deactivateTab();
     }
 });

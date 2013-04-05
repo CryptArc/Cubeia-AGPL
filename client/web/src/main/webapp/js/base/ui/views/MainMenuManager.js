@@ -13,25 +13,23 @@ Poker.MainMenuManager = Class.extend({
         $(".menu-overlay").touchSafeClick(function(e){
             self.toggle();
         });
-        var cashier = new Poker.MenuItem("Cashier","Manage your funds","cashier")
-        this.addMenuItem(cashier,null);
         var helpMenuItem = new Poker.MenuItem("Help & rules","Learn how to play poker","help");
         this.addExternalMenuItem(helpMenuItem,function(){
-            console.log(Poker.OperatorConfig.getClientHelpUrl());
             window.open(Poker.OperatorConfig.getClientHelpUrl());
         });
-        this.addMenuItem(new Poker.MenuItem("Gameplay settings","Muck loosing cards, Muck winning cards","gameplay"),null);
         var soundSettings = new Poker.MenuItem("Sound settings","Turn sound on/off","sound");
 
         this.addMenuItem(soundSettings,new Poker.SoundSettingsView("#soundSettingsView","sound"));
         var devSettings = new Poker.MenuItem("Development settings","Settings only shown in development","development");
-        this.addMenuItem(devSettings,new Poker.DevSettingsView("#devSettingsView",""));
+
+        //this.addMenuItem(devSettings,new Poker.DevSettingsView("#devSettingsView",""));
 
     },
     activeView : null,
     addExternalMenuItem : function(item,activateFunc){
         var self = this;
         item.setActivateFunction(activateFunc);
+        item.external = true;
         item.appendTo(this.templateManager, "#mainMenuList",this.menuItemTemplate);
         if(self.activeView!=null) {
             self.activeView.deactivate();
@@ -72,6 +70,7 @@ Poker.MenuItem = Class.extend({
     description : null,
     cssClass : null,
     activateFunction : null,
+    external : false,
 
     init : function(title,description,cssClass){
 
@@ -93,7 +92,9 @@ Poker.MenuItem = Class.extend({
         $(containerId).append(html);
         $(containerId).find("."+this.cssClass).touchSafeClick(function(){
             self.activateFunction();
-            $(this).addClass("active");
+            if(self.external != true) {
+                $(this).addClass("active");
+            }
         });
     }
 });

@@ -27,22 +27,18 @@
         }
     }
 
-    .my-page-button {
-        margin:0;
-        padding:6px;
-        width: auto;
-        right: 5px;
-        bottom: 0px;
-        height: auto;
-        position: absolute;
-        cursor: pointer;
+   .user-panel {
+       &.active {
+           .linear-gradient(top, #d02f2c 0%, #98201e 100%);
 
-        .border-radius(3px);
-        margin: 4px 1px 0 0;
-        .linear-gradient(top, #d02f2c 0%, #98201e 100%);
-        .box-shadow(inset 0px 0px 2px #fff);
-    }
+           .user-panel-name {
+               &:before {
+                   border-top-color: #fff;
+               }
+           }
+       }
 
+   }
 }
 .main-menu-button {
     background-image: url("../images/menu/menu-button.png");

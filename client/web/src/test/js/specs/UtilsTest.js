@@ -1,7 +1,7 @@
 describe("Poker.Utils Test", function(){
 
     beforeEach(function() {
-
+        Poker.Utils.currencySymbol="&euro;";
     });
 
     it("Format currency", function(){
@@ -13,6 +13,7 @@ describe("Poker.Utils Test", function(){
     });
 
     it("Format currency string", function(){
+
         var c = Poker.Utils.formatCurrencyString(100);
         expect(c).toEqual("&euro;1.00");
     });

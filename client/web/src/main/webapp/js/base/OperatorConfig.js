@@ -36,9 +36,14 @@ Poker.OperatorConfig = Class.extend({
     },
 
     getProfilePageUrl:function() {
-        return this.getValue("PROFILE_PAGE_URL", "http://www.cubeia.com");
+        return this.getValue("PROFILE_PAGE_URL", "http://localhost:8083/player-api/html/profile.html");
     },
-
+    getBuyCreditsUrl : function() {
+        return this.getValue("BUY_CREDITS_URL", "http://localhost:8083/player-api/html/buy-credits.html");
+    },
+    getAccountInfoUrl : function() {
+        return this.getValue("ACCOUNT_INFO_URL", "http://localhost:8083/player-api/html/");
+    },
     getValue : function(param,def) {
         var value =  this.configMap.get(param);
         if(value==null) {

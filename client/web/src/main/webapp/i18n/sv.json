@@ -2,6 +2,11 @@
     "tabs" : {
         "lobby" : "Lobby"
     },
+    "account" : {
+        "logout" : "Logga ut",
+        "logout-warning" : "Är du säker på att du vill lämna pokern?"
+
+    },
     "login" : {
         "login" : "login",
         "status" : "Status:",
