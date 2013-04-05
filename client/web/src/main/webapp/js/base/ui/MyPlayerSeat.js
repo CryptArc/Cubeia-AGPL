@@ -122,8 +122,8 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
             updated = true;
         }
         this.player = player;
-        $("#myPlayerBalance-"+this.tableId).html("&euro;"+this.player.balance);
-        this.seatBalance.html("&euro;"+this.player.balance);
+        $("#myPlayerBalance-"+this.tableId).html(this.player.balance);
+        this.seatBalance.html(this.player.balance);
 
         if (updated) {
             this.handlePlayerStatus();

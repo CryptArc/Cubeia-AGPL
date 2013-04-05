@@ -62,7 +62,7 @@ Poker.Seat = Class.extend({
             balanceDiv.html("All in");
             balanceDiv.removeClass("balance");
         } else {
-            balanceDiv.html("&euro;" + this.player.balance);
+            balanceDiv.html(this.player.balance);
             balanceDiv.addClass("balance");
         }
         this.handlePlayerStatus();
@@ -110,7 +110,7 @@ Poker.Seat = Class.extend({
         var icon = $("<div/>").addClass("player-action-icon").addClass(actionType.id + "-icon");
         if (amount > 0) {
             this.actionAmount.removeClass("placed");
-            this.actionAmount.empty().append($("<span/>").append("&euro;" + amount));
+            this.actionAmount.empty().append($("<span/>").append(amount));
             this.actionAmount.append(icon).show();
             this.animateActionAmount();
         }
