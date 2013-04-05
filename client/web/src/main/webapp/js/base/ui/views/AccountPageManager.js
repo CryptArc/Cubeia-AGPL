@@ -75,7 +75,8 @@ Poker.AccountPageManager = Class.extend({
         }
     },
     addToken : function(url) {
-        return url + "?token="+Poker.MyPlayer.sessionToken+"&playerId="+Poker.MyPlayer.id + "&r="+Math.random();
+        return url + "?userSessionToken="+Poker.MyPlayer.sessionToken+"&playerId="+Poker.MyPlayer.id + "&skin=" + Poker.SkinConfiguration.name
+            +"&operatorId=" + Poker.SkinConfiguration.operatorId + "&operatorAuthToken=" + Poker.MyPlayer.loginToken + "&r="+Math.random();
     },
     closeAccountOverlay : function() {
         this.userOverlay.hide();
