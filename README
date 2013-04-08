@@ -42,6 +42,27 @@ To build and additionally update all dependencies, use
 
 mvn clean install -U
 
+REQUIRED ACCOUNTS
+=================
+
+For the poker system to start with all integrations in place, ie. with
+Cubeia Network and a full poker admin, you need to create 3 different 
+wallet accounts for each supported currency in the system. The accounts 
+uses dummy user ID's:
+
+ * User -1000 is the system rake account
+ * User -2000 is for promotions (such as free-rolls etc)
+ * User -3000 is a general bank for internal transfers
+
+You need one of the above for each currency and with the type 
+SYSTEM_ACCOUNT. So for example, if you only support American dollars,
+you'd go to the Cubeia Network and create 3 wallet accounts (you do not
+have to create the correponding users): 
+
+ * SYSTEM_ACCOUNT | USD | OPEN | UserID -1000
+ * SYSTEM_ACCOUNT | USD | OPEN | UserID -2000
+ * SYSTEM_ACCOUNT | USD | OPEN | UserID -3000
+
 
 SOFTWARE SUBSYSTEMS
 ===================
