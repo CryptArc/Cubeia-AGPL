@@ -45,7 +45,13 @@ Poker.ConnectionManager = Class.extend({
         Poker.AppCtx.getTournamentManager().onPlayerLoggedIn();
 
         Poker.Utils.storeUser(name,Poker.MyPlayer.password);
-
+        
+        // check deposit return...
+        var depositType = purl().fparam("deposit");
+        if(depositType) {
+            document.location.hash = "";
+            Poker.Utils.depositReturn(depositType);
+        } 
     },
     onUserConnected : function() {
         this.connected = true;

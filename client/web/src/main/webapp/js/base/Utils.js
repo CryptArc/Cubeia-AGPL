@@ -14,6 +14,16 @@ Poker.Utils = {
         var suits = "cdhs ";
         return ranks.charAt(gamecard.rank) + suits.charAt(gamecard.suit);
     },
+    depositReturn : function(type) {
+    	var dialogManager = Poker.AppCtx.getDialogManager();
+    	if(type == "success" || type == "cancel") {
+	    	dialogManager.displayGenericDialog({
+	            container:  Poker.AppCtx.getViewManager().getActiveView().getViewElement(),
+	            translationKey: "deposit-" + type,
+	            displayCancelButton: false
+	        });
+    	}
+    },
     formatBlinds : function(amount) {
         var str = ""+ Poker.Utils.formatCurrency(amount);
         if(str.charAt(str.length-1)=="0") {
