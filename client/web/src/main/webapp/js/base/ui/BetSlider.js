@@ -30,7 +30,7 @@ Poker.BetSlider = Class.extend({
     init : function(tableId,containerId) {
        this.markers = [];
        this.valueOutputs =  $(".slider-value");
-       this.containerId = this.containerId + "-" + this.tableId;
+       this.containerId = containerId + "-" + this.tableId;
        this.tableId = tableId;
     },
     displayOutput : function(value) {
