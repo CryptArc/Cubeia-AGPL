@@ -5,7 +5,7 @@
     "account" : {
         "logout" : "Log out",
         "logout-warning" : "Are you sure you want to leave the poker client?"
-
+        
     },
     "login" : {
         "login" : "login",
@@ -199,6 +199,14 @@
         "title" : "Hand History"
     },
     "dialogs" : {
+        "deposit-cancel" : {
+            "header" : "Deposit Failed",
+            "message" : "Your deposit failed, please try again."
+        },
+        "deposit-success" : {
+            "header" : "Deposit Successful",
+            "message" : "Your deposit was successful. You new chips should appear in your account shortly."
+        },
         "tournament-won" : {
             "header" : "Message",
             "message" : "Congratulations, you won the tournament!"

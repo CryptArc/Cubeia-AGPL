@@ -45,6 +45,8 @@
     <script type="text/javascript" src="${cp}/js/lib/PxLoader-0.1.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/PxLoaderImage-0.1.js"></script>
 
+    <script type="text/javascript" src="${cp}/js/lib/purl.js"></script>
+
     <script src="${cp}/js/base/Utils.js" type="text/javascript"></script>
     <script src="${cp}/js/base/ProtocolUtils.js" type="text/javascript"></script>
 
@@ -174,7 +176,7 @@
 
         $(document).ready(function(){
             //to clear the stored user add #clear to the url
-            if(document.location.hash.indexOf("clear")!=-1){
+            if(document.location.hash.indexOf("clear") != -1){
                 Poker.Utils.removeStoredUser();
             }
 
