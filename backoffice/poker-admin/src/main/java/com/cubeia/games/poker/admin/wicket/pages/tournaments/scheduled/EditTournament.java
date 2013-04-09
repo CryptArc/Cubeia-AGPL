@@ -68,7 +68,7 @@ public class EditTournament extends BasePage {
             }
         };
 
-        tournamentForm.add(new TournamentConfigurationPanel("configuration", new PropertyModel<TournamentConfiguration>(tournament, "configuration"), false));
+        tournamentForm.add(new TournamentConfigurationPanel("configuration", tournamentForm,new PropertyModel<TournamentConfiguration>(tournament, "configuration"), false));
         tournamentForm.add(new DateField("startDate", new PropertyModel(this, "tournament.schedule.startDate")));
         tournamentForm.add(new DateField("endDate", new PropertyModel(this, "tournament.schedule.endDate")));
         tournamentForm.add(new RequiredTextField("schedule", new PropertyModel(this, "tournament.schedule.cronSchedule")));

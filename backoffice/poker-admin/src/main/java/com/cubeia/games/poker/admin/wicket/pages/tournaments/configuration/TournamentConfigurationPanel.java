@@ -20,21 +20,19 @@ package com.cubeia.games.poker.admin.wicket.pages.tournaments.configuration;
 import com.cubeia.backoffice.operator.api.OperatorDTO;
 import com.cubeia.games.poker.admin.db.AdminDAO;
 import com.cubeia.games.poker.admin.network.NetworkClient;
+import com.cubeia.games.poker.admin.wicket.components.TournamentPlayersValidator;
 import com.cubeia.games.poker.tournament.configuration.TournamentConfiguration;
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
 import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
 import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.timing.TimingProfile;
 import org.apache.log4j.Logger;
-import org.apache.wicket.markup.html.form.ChoiceRenderer;
-import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.IChoiceRenderer;
-import org.apache.wicket.markup.html.form.ListMultipleChoice;
-import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.form.*;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.validation.validator.RangeValidator;
+import org.apache.wicket.validation.validator.StringValidator;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -55,37 +53,51 @@ public class TournamentConfigurationPanel extends Panel {
 
     private PropertyModel<TournamentConfiguration> model;
 
-    public TournamentConfigurationPanel(String id, PropertyModel<TournamentConfiguration> propertyModel, boolean sitAndGo) {
+    public TournamentConfigurationPanel(String id, Form<?> form, PropertyModel<TournamentConfiguration> propertyModel, boolean sitAndGo) {
         super(id, propertyModel);
         this.model = propertyModel;
-        add(new TextField<String>("name", new PropertyModel(model, "name")));
-        add(new TextField<Integer>("seatsPerTable", new PropertyModel(model, "seatsPerTable")));
-        add(new DropDownChoice<TimingProfile>("timingType", model("timingType"), adminDAO.getTimingProfiles(), renderer("name")));
-        add(new TextField<Integer>("minPlayers", new PropertyModel(model, "minPlayers")));
+        add(new RequiredTextField<String>("name", new PropertyModel(model, "name")));
+        add(new RequiredTextField<Integer>("seatsPerTable", new PropertyModel(model, "seatsPerTable")));
+        DropDownChoice<TimingProfile> timing = new DropDownChoice<TimingProfile>("timingType", model("timingType"), adminDAO.getTimingProfiles(), renderer("name"));
+        timing.setRequired(true);
+        add(timing);
+        TextField<Integer> minPlayers = new TextField<Integer>("minPlayers", new PropertyModel(model, "minPlayers"));
+        minPlayers.add(RangeValidator.minimum(2));
+        add(minPlayers);
         TextField<Integer> maxPlayers = new TextField<Integer>("maxPlayers", new PropertyModel(model, "maxPlayers"));
+        maxPlayers.add(RangeValidator.minimum(2));
         add(maxPlayers);
-        add(new TextField<BigDecimal>("buyIn", new PropertyModel(model, "buyIn")));
-        add(new TextField<BigDecimal>("fee", new PropertyModel(model, "fee")));
-        add(new TextField<BigDecimal>("guaranteedPrizePool", new PropertyModel(model, "guaranteedPrizePool")));
-        add(new TextField<Long>("startingChips", new PropertyModel(model, "startingChips")).add(RangeValidator.minimum(1L)));
-        add(new DropDownChoice<BetStrategyType>("betStrategy", new PropertyModel(model, "betStrategy"), asList(BetStrategyType.values()), renderer("name")));
+        add(new RequiredTextField<BigDecimal>("buyIn", new PropertyModel(model, "buyIn")));
+        add(new RequiredTextField<BigDecimal>("fee", new PropertyModel(model, "fee")));
+        add(new RequiredTextField<BigDecimal>("guaranteedPrizePool", new PropertyModel(model, "guaranteedPrizePool")));
+        add(new RequiredTextField<Long>("startingChips", new PropertyModel(model, "startingChips")).add(RangeValidator.minimum(1L)));
+        DropDownChoice<BetStrategyType> strategy = new DropDownChoice<BetStrategyType>("betStrategy", new PropertyModel(model, "betStrategy"), asList(BetStrategyType.values()), renderer("name"));
+        strategy.setRequired(true);
+        add(strategy);
+        form.add(new TournamentPlayersValidator(minPlayers,maxPlayers));
 
         add(new ListMultipleChoice<Long>("operatorIds", model("operatorIds"), getOperatorIds(), new IChoiceRenderer<Long>() {
-        	
-        	@Override
-        	public Object getDisplayValue(Long id) {
-        		return getOperatorName(id);
-        	}
 
-			@Override
-			public String getIdValue(Long object, int index) {
-				return object.toString();
-			}
+            @Override
+            public Object getDisplayValue(Long id) {
+                return getOperatorName(id);
+            }
+
+            @Override
+            public String getIdValue(Long object, int index) {
+                return object.toString();
+            }
         }));
-        
-        add(new DropDownChoice<String>("currency", model("currency"), networkClient.getCurrencies(), new ChoiceRenderer<String>()));
-        add(new DropDownChoice<BlindsStructure>("blindsStructure", model("blindsStructure"), adminDAO.getBlindsStructures(), renderer("name")));
-        add(new DropDownChoice<PayoutStructure>("payoutStructure", model("payoutStructure"), adminDAO.getPayoutStructures(), renderer("name")));
+
+        DropDownChoice<String> currency = new DropDownChoice<String>("currency", model("currency"), networkClient.getCurrencies(), new ChoiceRenderer<String>());
+        currency.setRequired(true);
+        add(currency);
+        DropDownChoice<BlindsStructure> blindsStructure = new DropDownChoice<BlindsStructure>("blindsStructure", model("blindsStructure"), adminDAO.getBlindsStructures(), renderer("name"));
+        blindsStructure.setRequired(true);
+        add(blindsStructure);
+        DropDownChoice<PayoutStructure> payoutStructure = new DropDownChoice<PayoutStructure>("payoutStructure", model("payoutStructure"), adminDAO.getPayoutStructures(), renderer("name"));
+        payoutStructure.setRequired(true);
+        add(payoutStructure);
 
         if (sitAndGo) {
             maxPlayers.setVisible(false);

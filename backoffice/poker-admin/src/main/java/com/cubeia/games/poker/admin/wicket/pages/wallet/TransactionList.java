@@ -152,7 +152,7 @@ public class TransactionList extends BasePage {
             return getTransactionList(
                 getId1(), getId1Direction().boolValue, getId1ByUserId(),
                 getId2(), getId2Direction().boolValue, getId2ByUserId(),
-                getStartDate(), getEndDate(), 0, 0, null, true).getTotalQueryResultSize();
+                getStartDate(), getEndDate(), 0, 1, null, true).getTotalQueryResultSize();
         }
     }
 

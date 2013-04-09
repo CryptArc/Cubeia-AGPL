@@ -300,7 +300,7 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
             try {
                 value = accountLookupUtil.lookupPromotionsAccountId(walletService, currencyCode);
             } catch (SystemException e) {
-                throw new RuntimeException("No rake account found for currency " + currencyCode);
+                throw new RuntimeException("No promotions account found for currency " + currencyCode);
             }
             promotionsAccounts.put(currencyCode, value);
         }

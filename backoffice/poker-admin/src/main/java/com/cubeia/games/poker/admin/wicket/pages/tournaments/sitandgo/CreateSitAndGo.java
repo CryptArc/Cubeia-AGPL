@@ -60,7 +60,7 @@ public class CreateSitAndGo extends BasePage {
             }
         };
 
-        tournamentForm.add(new TournamentConfigurationPanel("configuration", new PropertyModel<TournamentConfiguration>(tournament, "configuration"), true));
+        tournamentForm.add(new TournamentConfigurationPanel("configuration", tournamentForm,new PropertyModel<TournamentConfiguration>(tournament, "configuration"), true));
 
         add(tournamentForm);
         add(new FeedbackPanel("feedback"));

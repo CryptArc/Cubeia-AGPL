@@ -29,10 +29,10 @@ import org.apache.log4j.Logger;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.extensions.yui.calendar.DateField;
-import org.apache.wicket.markup.html.form.CheckBox;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.RequiredTextField;
-import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.form.*;
+import org.apache.wicket.markup.html.form.validation.AbstractFormValidator;
+import org.apache.wicket.markup.html.form.validation.FormValidatorAdapter;
+import org.apache.wicket.markup.html.form.validation.IFormValidator;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.PropertyModel;
@@ -58,11 +58,13 @@ public class CreateTournament extends BasePage {
         Form<ScheduledTournamentForm> tournamentForm = new Form<ScheduledTournamentForm>("tournamentForm",
             new CompoundPropertyModel<ScheduledTournamentForm>(new ScheduledTournamentForm())) {
 
+
             @Override
             protected void onSubmit() {
                 ScheduledTournamentForm form = getModel().getObject();
                 TournamentSchedule schedule = new TournamentSchedule(form.startDate, form.endDate, form.schedule, form.minutesInAnnounced,
-                                                                     form.minutesInRegistering, form.minutesVisibleAfterFinished);
+                                                                    form.minutesInRegistering, form.minutesVisibleAfterFinished);
+
                 ScheduledTournamentConfiguration tournament = new ScheduledTournamentConfiguration();
                 tournament.setConfiguration(configuration.getObject());
                 tournament.setSchedule(schedule);
@@ -72,13 +74,13 @@ public class CreateTournament extends BasePage {
             }
         };
 
-        tournamentForm.add(new TournamentConfigurationPanel("configuration", configuration, false));
-        tournamentForm.add(new DateField("startDate"));
-        tournamentForm.add(new DateField("endDate"));
+        tournamentForm.add(new TournamentConfigurationPanel("configuration",tournamentForm, configuration, false));
+        tournamentForm.add(new DateField("startDate").setRequired(true));
+        tournamentForm.add(new DateField("endDate").setRequired(true));
         tournamentForm.add(new RequiredTextField<String>("schedule"));
-        tournamentForm.add(new TextField<Integer>("minutesInAnnounced"));
-        tournamentForm.add(new TextField<Integer>("minutesInRegistering"));
-        tournamentForm.add(new TextField<Integer>("minutesVisibleAfterFinished"));
+        tournamentForm.add(new RequiredTextField<Integer>("minutesInAnnounced"));
+        tournamentForm.add(new RequiredTextField<Integer>("minutesInRegistering"));
+        tournamentForm.add(new RequiredTextField<Integer>("minutesVisibleAfterFinished"));
         addRebuyPanel(tournamentForm);
 
         add(tournamentForm);

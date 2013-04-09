@@ -92,15 +92,15 @@ Poker.AccountPageManager = Class.extend({
         this.userPanel.click(function(e){
             if(self.userOverlay.is(":visible")) {
                 self.closeAccountOverlay();
-                $(document).off("mouseup");
+                $(document).off("mouseup.account");
             } else {
                 self.openAccountOverlay();
             }
-            $(document).mouseup(function(e){
+            $(document).on("mouseup.account",function(e){
                 if(self.userPanel.has(e.target).length === 0
                     && self.userOverlay.has(e.target).length === 0) {
                     self.closeAccountOverlay();
-                    $(document).off("mouseup");
+                    $(document).off("mouseup.account");
                 }
             });
         });
