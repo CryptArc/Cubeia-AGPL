@@ -75,12 +75,12 @@ public class CreateTournament extends BasePage {
         };
 
         tournamentForm.add(new TournamentConfigurationPanel("configuration",tournamentForm, configuration, false));
-        tournamentForm.add(new DateField("startDate"));
-        tournamentForm.add(new DateField("endDate"));
+        tournamentForm.add(new DateField("startDate").setRequired(true));
+        tournamentForm.add(new DateField("endDate").setRequired(true));
         tournamentForm.add(new RequiredTextField<String>("schedule"));
-        tournamentForm.add(new TextField<Integer>("minutesInAnnounced"));
-        tournamentForm.add(new TextField<Integer>("minutesInRegistering"));
-        tournamentForm.add(new TextField<Integer>("minutesVisibleAfterFinished"));
+        tournamentForm.add(new RequiredTextField<Integer>("minutesInAnnounced"));
+        tournamentForm.add(new RequiredTextField<Integer>("minutesInRegistering"));
+        tournamentForm.add(new RequiredTextField<Integer>("minutesVisibleAfterFinished"));
         addRebuyPanel(tournamentForm);
 
         add(tournamentForm);
