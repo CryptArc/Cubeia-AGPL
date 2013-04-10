@@ -1,6 +1,8 @@
 This directory contains not the firebase server itself, but all the poker code
 which is executed in context of the firebase server.
 
+You *don't* need to install firebase separately, it is fetched by the build.
+
 == SETUP ==
 
 mvn install # or mvn clean install

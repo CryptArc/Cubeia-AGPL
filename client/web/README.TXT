@@ -8,8 +8,18 @@ mvn package jetty:run
 Access:
 http://localhost:8181
 
-There is no user registration at this point. Use any name, and the password
-should be an integer, it will be used as the playerId.
+
+LOGIN
+=====
+
+Use any username and any integer as password (best: user integers > 1000 to not 
+collide with test bots).
+
+If you have already integrated with Cubeia Network, use the credentials provided
+at Cubeia Network.
+
+TESTING
+=======
 
 In order to test the client quickly, login from 2 different browsers. Then sit
 the 2 players at one table and buy-in. The game starts.

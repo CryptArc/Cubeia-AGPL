@@ -4,64 +4,10 @@ IMPORTANT
 Cubeia Poker is based on Cubeia Firebase and Cubeia Network. Both products are
 open sourced and in production.
 
-PREREQUISITES
-=============
-
-* Java SDK 1.6 or higher
-* Maven 3.0.4 or higher
-
 BUILD & START
 =============
 
-* Change into "cubeia-poker" directory (or any other directory you've chosen)
-
-* First follow the README within ./server, in order to run the poker-server.
-
-* Next follow the README within ./client/web. This will allow you to
-play poker with a web-browser. If you want to try or develop other clients,
-review the ./client/README.
-
-* Follow the README within ./server/bot-modules/bot, in order to test
-your current setup with some poker-bots.
-
-* Finally, see the README within ./backoffice/poker-admin to setup the
-web-application that manages the poker-game (timings, tables, tournaments).
-
-* To get a complete poker-system (with user management, accounting, wallet), you
-have to install the Cubeia Network, see ./backoffice/README.TXT. Note
-that this can become a difficult step, due to the ongoing development.
-
-FULL BUILD
-==========
-
-To build all relevant sources in one pass, use
-
-mvn clean install
-
-To build and additionally update all dependencies, use
-
-mvn clean install -U
-
-REQUIRED ACCOUNTS
-=================
-
-For the poker system to start with all integrations in place, ie. with
-Cubeia Network and a full poker admin, you need to create 3 different 
-wallet accounts for each supported currency in the system. The accounts 
-uses dummy user ID's:
-
- * User -1000 is the system rake account
- * User -2000 is for promotions (such as free-rolls etc)
- * User -3000 is a general bank for internal transfers
-
-You need one of the above for each currency and with the type 
-SYSTEM_ACCOUNT. So for example, if you only support American dollars,
-you'd go to the Cubeia Network and create 3 wallet accounts (you do not
-have to create the correponding users): 
-
- * SYSTEM_ACCOUNT | USD | OPEN | UserID -1000
- * SYSTEM_ACCOUNT | USD | OPEN | UserID -2000
- * SYSTEM_ACCOUNT | USD | OPEN | UserID -3000
+See INSTALL.TXT
 
 
 SOFTWARE SUBSYSTEMS
