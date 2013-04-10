@@ -25,8 +25,10 @@ import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import java.util.Collections;
+import java.util.Date;
 
 import static com.cubeia.games.poker.admin.wicket.pages.WicketTestHelper.createMockHand;
 import static com.cubeia.games.poker.admin.wicket.pages.WicketTestHelper.createWicketTester;
@@ -57,7 +59,7 @@ public class HandHistoryTest {
         FormTester form = tester.newFormTester("form");
         form.setValue("playerId", "1");
         form.submit();
-        verify(historyService).findHandHistory(1, null, null, null);
+        verify(historyService).findHandHistory(Mockito.eq(1), Mockito.anyString(), Mockito.any(Date.class), Mockito.any(Date.class));
     }
 
 }
