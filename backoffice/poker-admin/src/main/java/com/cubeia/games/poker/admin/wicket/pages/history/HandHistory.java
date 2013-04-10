@@ -42,6 +42,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.util.io.IClusterable;
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -141,7 +142,12 @@ public class HandHistory extends BasePage {
         Form<HandHistorySearch> form = new Form<HandHistorySearch>("form",  new CompoundPropertyModel<HandHistorySearch>(new HandHistorySearch())) {
             @Override
             protected void onSubmit() {
-                handProvider.search(getModel().getObject());
+            	HandHistorySearch hs = getModel().getObject();
+                if(hs.isEmpty()) {
+                	error("Please provide at least one field to search on.");
+                } else {
+                	handProvider.search(hs);
+                }
             }
         };
         form.add(new TextField<Integer>("playerId").setRequired(false));
@@ -194,9 +200,13 @@ public class HandHistory extends BasePage {
     }
 
     private static class HandHistorySearch implements IClusterable {
-        Integer playerId;
-        Date fromDate;
-        Date toDate;
+        private static final long serialVersionUID = 7373912948187005605L;
+		Integer playerId;
+        Date fromDate = new DateTime().minusDays(7).toDate();
+        Date toDate = new DateTime().plusDays(1).toDate();
         String tableId;
+		public boolean isEmpty() {
+			return playerId == null && fromDate == null && toDate == null && tableId == null;
+		}
     }
 }
