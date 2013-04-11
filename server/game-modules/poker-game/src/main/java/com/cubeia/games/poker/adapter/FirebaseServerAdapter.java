@@ -800,7 +800,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
     }
 
     @Override
-    public void notifyHandStartPlayerStatus(int playerId, PokerPlayerStatus status) {
+    public void notifyHandStartPlayerStatus(int playerId, PokerPlayerStatus status, boolean away, boolean sitOutNextHand) {
         log.debug("Notify hand start player status: " + playerId + " -> " + status);
         PlayerHandStartStatus packet = new PlayerHandStartStatus();
         packet.player = playerId;
@@ -812,12 +812,15 @@ public class FirebaseServerAdapter implements ServerAdapter {
                 packet.status = Enums.PlayerTableStatus.SITOUT;
                 break;
         }
+        packet.away = away;
+        packet.sitOutNextHand = sitOutNextHand;
         GameDataAction action = protocolFactory.createGameAction(packet, playerId, table.getId());
         sendPublicPacket(action, -1);
     }
 
     @Override
-    public void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status, boolean inCurrentHand) {
+    public void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status, boolean inCurrentHand,
+                                          boolean away, boolean sitOutNextHand) {
         log.debug("Notify player status changed: " + playerId + " -> " + status);
         PlayerPokerStatus packet = new PlayerPokerStatus();
         packet.player = playerId;
@@ -830,6 +833,8 @@ public class FirebaseServerAdapter implements ServerAdapter {
                 break;
         }
         packet.inCurrentHand = inCurrentHand;
+        packet.away = away;
+        packet.sitOutNextHand = sitOutNextHand;
         GameDataAction action = protocolFactory.createGameAction(packet, playerId, table.getId());
         sendPublicPacket(action, -1);
     }

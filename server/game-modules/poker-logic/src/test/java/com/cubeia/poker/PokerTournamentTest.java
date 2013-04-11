@@ -41,16 +41,32 @@ public class PokerTournamentTest extends GuiceTest {
         // Blinds are auto.
         state.timeout();
         state.timeout();
+
+
+        //cards
         state.timeout();
 
         assertAllPlayersHaveCards(mp, 2);
 
         assertEquals(0, state.getCommunityCards().size());
 
-        // Check that tournament players don't sit out.
-        state.timeout();
-        state.timeout();
-        state.timeout();
+        // Check that tournament players don't sit out but is set to away.
+        state.timeout(); //fold -> away
+        state.timeout(); //fold -> away
+        state.timeout(); //fold -> away
+
+        assertFalse(mp[0].isSittingOut());
+        assertFalse(mp[1].isSittingOut());
+        assertFalse(mp[2].isSittingOut());
+        assertFalse(mp[3].isSittingOut());
+
+        assertTrue(mp[0].isAway());
+        assertTrue(mp[1].isAway());
+
+        //BB wins and isn't timed out since he didn't have to act
+        assertFalse(mp[2].isAway());
+
+        assertTrue(mp[3].isAway());
 
         assertTrue(state.isFinished());
 
@@ -61,17 +77,42 @@ public class PokerTournamentTest extends GuiceTest {
         // Blinds
         state.timeout();
         state.timeout();
+
+        //cards
         state.timeout();
 
         assertAllPlayersHaveCards(mp, 2);
 
+        assertTrue(mp[0].isAway());
+        assertTrue(mp[1].isAway());
+        assertFalse(mp[2].isAway()); //not away was BB in previous hand
+        assertTrue(mp[3].isAway());
+
         // No response again.
-        state.timeout();
-        state.timeout();
-        state.timeout();
+        state.timeout(); //since all players now are away, all but BB will be folded
+
+        assertTrue(mp[2].isAway()); //auto folded and set to away
+        assertTrue(mp[2].hasFolded());
 
         assertTrue(state.isFinished());
+
+        state.timeout();
+
+        assertFalse(state.isFinished());
+
+        assertFalse(mp[0].isSittingOut());
+        assertFalse(mp[1].isSittingOut());
+        assertFalse(mp[2].isSittingOut());
+        assertFalse(mp[3].isSittingOut());
+
+        assertTrue(mp[0].isAway());
+        assertTrue(mp[1].isAway());
+        assertTrue(mp[2].isAway());
+        assertTrue(mp[3].isAway());
+
     }
+
+
 
     public void testBigBlindMovedFromTheTable() {
         MockPlayer[] mp = TestUtils.createMockPlayers(4);

@@ -67,7 +67,7 @@ public class TelesinaDisconnectTest extends AbstractTexasHandTester {
         state.playerSitsOutNextHand(p[1]);
         act(p[2], CHECK);
         act(p[0], CHECK);
-        // And he times out (and checks).
+        // And he times out (and checks) and set to away
         state.timeout();
 
         state.timeout(); // start next round
@@ -75,8 +75,7 @@ public class TelesinaDisconnectTest extends AbstractTexasHandTester {
 
         // --- NEW BETTING ROUND ---
         act(p[0], BET);
-        // And he times out again and folds this time.
-        state.timeout();
+        // player 1 will now be away and will be folded automatically
         act(p[2], CALL);
         Assert.assertTrue(mp[1].hasFolded());
 

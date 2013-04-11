@@ -293,14 +293,16 @@ Poker.TableManager = Class.extend({
      * @param {Number} playerId
      * @param {Poker.PlayerTableStatus} status
      */
-    updatePlayerStatus : function(tableId, playerId, status) {
+    updatePlayerStatus : function(tableId, playerId, status, away, sitOutNextHand) {
         var table = this.tables.get(tableId);
         var p = table.getPlayerById(playerId);
         if(p==null) {
             throw "Player with id " + playerId + " not found";
         }
         p.tableStatus = status;
-        table.getLayoutManager().onPlayerUpdated(p);
+        p.away = away;
+        p.sitOutNextHand = sitOutNextHand;
+        table.getLayoutManager().onPlayerStatusUpdated(p);
     },
     setNoMoreBlinds : function(tableId, enable) {
         var table = this.tables.get(tableId);

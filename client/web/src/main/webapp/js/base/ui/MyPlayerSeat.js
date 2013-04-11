@@ -118,7 +118,8 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         console.log("UPDATE MY PLAYER ");
         console.log(player);
         var updated = false;
-        if(player.tableStatus.id != this.player.tableStatus.id) {
+        if(player.tableStatus.id != this.player.tableStatus.id || player.away != this.player.away ||
+            player.sitOutNextHand != this.player.sitOutNextHand) {
             updated = true;
         }
         this.player = player;
@@ -129,14 +130,23 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
             this.handlePlayerStatus();
         }
     },
+    updatePlayerStatus : function(player) {
+        this.player = player;
+        this.handlePlayerStatus();
+    },
     handlePlayerStatus : function() {
-        console.log("HANDLE PLAYER STATUS");
-        if (this.player.tableStatus == Poker.PlayerTableStatus.SITTING_OUT) {
+        console.log("player status update");
+        console.log(this.player);
+        if(this.player.tableStatus == Poker.PlayerTableStatus.SITTING_OUT) {
             this.myActionsManager.onSitOut();
         } else if (this.player.tableStatus == Poker.PlayerTableStatus.TOURNAMENT_OUT){
             this.myActionsManager.onTournamentOut();
         } else if(this.player.tableStatus == Poker.PlayerTableStatus.SITTING_IN){
-            this.myActionsManager.onSitIn();
+            if(this.player.away == true || this.player.sitOutNextHand == true) {
+                this.myActionsManager.setSitOutNextHand(true);
+            } else {
+                this.myActionsManager.onSitIn();
+            }
         }
     },
     onCardDealt : function(card) {

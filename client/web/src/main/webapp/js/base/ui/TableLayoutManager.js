@@ -196,6 +196,7 @@ Poker.TableLayoutManager = Class.extend({
                 new Poker.PokerRequestHandler(self.tableId).requestBuyInInfo();
             });
             this.soundManager.playerAction({id:"action-join"}, this.tableId);
+
         } else {
 
             elementId = "seat"+seatId+"-"+this.tableId;
@@ -246,6 +247,14 @@ Poker.TableLayoutManager = Class.extend({
             return;
         }
         seat.updatePlayer(p);
+    },
+    onPlayerStatusUpdated : function(p) {
+        var seat = this.getSeatByPlayerId(p.id);
+        if(seat==null) {
+            console.log("Unable to find player " + p.name + " seat");
+            return;
+        }
+        seat.updatePlayerStatus(p);
     },
     onTableCreated : function() {
         this.currentDealer = -1;

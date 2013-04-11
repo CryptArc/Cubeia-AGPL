@@ -1504,15 +1504,21 @@ com.cubeia.games.poker.io.protocol.PlayerHandStartStatus = function () {
     };
     this.player = {};
     this.status = {};
+    this.away = {};
+    this.sitOutNextHand = {};
     this.save = function () {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.player);
         a.writeUnsignedByte(this.status);
+        a.writeBoolean(this.away);
+        a.writeBoolean(this.sitOutNextHand);
         return a
     };
     this.load = function (a) {
         this.player = a.readInt();
-        this.status = com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.makePlayerTableStatusEnum(a.readUnsignedByte())
+        this.status = com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.makePlayerTableStatusEnum(a.readUnsignedByte());
+        this.away = a.readBoolean();
+        this.sitOutNextHand = a.readBoolean()
     };
     this.getNormalizedObject = function () {
         var a = {};
@@ -1521,6 +1527,8 @@ com.cubeia.games.poker.io.protocol.PlayerHandStartStatus = function () {
         a.details = {};
         a.details.player = this.player;
         a.details.status = com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.toString(this.status);
+        a.details.away = this.away;
+        a.details.sitOutNextHand = this.sitOutNextHand;
         return a
     }
 };
@@ -1568,17 +1576,23 @@ com.cubeia.games.poker.io.protocol.PlayerPokerStatus = function () {
     this.player = {};
     this.status = {};
     this.inCurrentHand = {};
+    this.sitOutNextHand = {};
+    this.away = {};
     this.save = function () {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.player);
         a.writeUnsignedByte(this.status);
         a.writeBoolean(this.inCurrentHand);
+        a.writeBoolean(this.sitOutNextHand);
+        a.writeBoolean(this.away);
         return a
     };
     this.load = function (a) {
         this.player = a.readInt();
         this.status = com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.makePlayerTableStatusEnum(a.readUnsignedByte());
-        this.inCurrentHand = a.readBoolean()
+        this.inCurrentHand = a.readBoolean();
+        this.sitOutNextHand = a.readBoolean();
+        this.away = a.readBoolean()
     };
     this.getNormalizedObject = function () {
         var a = {};
@@ -1588,6 +1602,8 @@ com.cubeia.games.poker.io.protocol.PlayerPokerStatus = function () {
         a.details.player = this.player;
         a.details.status = com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.toString(this.status);
         a.details.inCurrentHand = this.inCurrentHand;
+        a.details.sitOutNextHand = this.sitOutNextHand;
+        a.details.away = this.away;
         return a
     }
 };

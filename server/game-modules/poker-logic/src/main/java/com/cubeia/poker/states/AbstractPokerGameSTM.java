@@ -99,29 +99,36 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
      * Sitting out means that you are not dealt any cards for that hand. If a player already has
      * cards, he is in the hand and cannot suddenly sit out.
      *
+     * In tournaments when selecting sit out next hand the player will be marked
+     * as away after the hand finishes or when he folds
+     *
+     * next hand
+     *
      * @param playerId the id of the player who wants to sit out next hand
      *
      */
     @Override
-    public void playerSitsOutNextHand(int playerId) {
-        if (context.isTournamentTable()) {
-            return;
-        }
-
-        log.info("Player with id " + playerId + " wants to sit out next hand.");
+    public void setPlayerSitOutNextHand(int playerId) {
         PokerPlayer player = context.getPlayer(playerId);
+        log.info("Player with id " + playerId + " wants to sit out next hand.");
         if (player.hasFolded()) {
-            markPlayerAsSittingOut(player);
+            markPlayerAsSittingOutOrAway(player);
         } else {
             player.setSittingOutNextHand(true);
         }
     }
 
-    protected void markPlayerAsSittingOut(PokerPlayer player) {
+    protected void markPlayerAsSittingOutOrAway(PokerPlayer player) {
+        PokerPlayerStatus status = PokerPlayerStatus.SITIN;
         if (!context.isTournamentTable()) {
             player.setSitOutStatus(SitOutStatus.SITTING_OUT);
-            getServerAdapter().notifyPlayerStatusChanged(player.getId(), PokerPlayerStatus.SITOUT, false);
+            status = PokerPlayerStatus.SITOUT;
+        } else {
+            player.setAway(true);
         }
+        getServerAdapter().notifyPlayerStatusChanged(player.getId(), status,
+                false, player.isAway(),player.isSittingOutNextHand());
+
     }
 
     @Override
@@ -135,7 +142,9 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
         }
 
         if (!player.isSittingOut()) {
-            log.debug("sit in status has not changed");
+            //in tournaments you're not allowed to sit out but be away
+            player.setSittingOutNextHand(false);
+            player.setAway(false);
             return;
         }
 
@@ -144,6 +153,7 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
 
             player.sitIn();
             player.setSittingOutNextHand(false);
+            player.setAway(false);
             player.setSitInAfterSuccessfulBuyIn(false);
             notifyPlayerSittingIn(playerId);
 
@@ -177,7 +187,9 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
     private void notifyPlayerSittingIn(int playerId) {
         log.debug("notifyPlayerSittingIn() id: " + playerId + " status:" + PokerPlayerStatus.SITIN.name());
         boolean isInCurrentHand = context.isPlayerInHand(playerId);
-        getServerAdapter().notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITIN, isInCurrentHand);
+        PokerPlayer player = context.getPlayer(playerId);
+        getServerAdapter().notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITIN, isInCurrentHand,
+                player.isAway(), player.isSittingOutNextHand());
     }
 
     private void notifyBuyinInfo(int playerId, boolean mandatoryBuyin) {
@@ -230,9 +242,11 @@ public abstract class AbstractPokerGameSTM implements PokerGameSTM {
     public void notifyAllHandStartPlayerStatus() {
         for (PokerPlayer player : context.getSeatedPlayers()) {
             if (player.isSittingOut()) {
-                getServerAdapter().notifyHandStartPlayerStatus(player.getId(), PokerPlayerStatus.SITOUT);
+                getServerAdapter().notifyHandStartPlayerStatus(player.getId(), PokerPlayerStatus.SITOUT,
+                        player.isAway(), player.isSittingOutNextHand());
             } else {
-                getServerAdapter().notifyHandStartPlayerStatus(player.getId(), PokerPlayerStatus.SITIN);
+                getServerAdapter().notifyHandStartPlayerStatus(player.getId(), PokerPlayerStatus.SITIN, player.isAway(),
+                        player.isSittingOutNextHand());
             }
         }
     }

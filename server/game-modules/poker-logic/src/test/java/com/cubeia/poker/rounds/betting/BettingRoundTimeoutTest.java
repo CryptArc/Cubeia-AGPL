@@ -49,6 +49,7 @@ public class BettingRoundTimeoutTest {
     private ServerAdapterHolder serverAdapterHolder;
     @Mock
     private ServerAdapter serverAdapter;
+
     private BettingRound round;
 
     @Before
@@ -79,5 +80,7 @@ public class BettingRoundTimeoutTest {
         verify(player).setHasFolded(true);
 
     }
+
+
 
 }

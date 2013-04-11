@@ -49,10 +49,10 @@ Poker.PokerPacketHandler = Class.extend({
     },
     handlePlayerHandStartStatus : function(packet) {
         var status = Poker.PlayerTableStatus.SITTING_OUT;
-        if(packet.status == com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.SITIN){
+        if(packet.status === com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.SITIN){
             status = Poker.PlayerTableStatus.SITTING_IN;
         }
-        this.tableManager.updatePlayerStatus(this.tableId,packet.player, status);
+        this.tableManager.updatePlayerStatus(this.tableId,packet.player, status, packet.away, packet.sitOutNextHand);
     },
 
     /**
@@ -96,14 +96,11 @@ Poker.PokerPacketHandler = Class.extend({
 
     handlePlayerPokerStatus : function(packet) {
         var status = packet.status;
-        switch (status) {
-            case com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.SITIN :
-                this.tableManager.updatePlayerStatus(this.tableId,packet.player, Poker.PlayerTableStatus.SITTING_IN);
-                break;
-            case com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.SITOUT :
-                this.tableManager.updatePlayerStatus(this.tableId,packet.player, Poker.PlayerTableStatus.SITTING_OUT);
-                break;
+        var tableStatus = Poker.PlayerTableStatus.SITTING_IN;
+        if(status == com.cubeia.games.poker.io.protocol.PlayerTableStatusEnum.SITOUT) {
+            tableStatus = Poker.PlayerTableStatus.SITTING_OUT;
         }
+        this.tableManager.updatePlayerStatus(this.tableId,packet.player, tableStatus, packet.away, packet.sitOutNextHand);
     },
     handlePotTransfers : function(packet) {
         var pots = [];

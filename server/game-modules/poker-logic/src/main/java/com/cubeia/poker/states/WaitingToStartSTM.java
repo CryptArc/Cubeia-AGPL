@@ -63,9 +63,10 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
             getServerAdapter().performPendingBuyIns(context.getSeatedPlayers());
             commitPendingBalances(context.getMaxBuyIn());
             setPlayersWithoutMoneyAsSittingOut();
-            sitOutPlayersMarkedForSitOutNextHand();
             getServerAdapter().cleanupPlayers(new SitoutCalculator());
         }
+
+        sitOutPlayersMarkedForSitOutNextHand();
 
         if (getPlayersReadyToStartHand().size() < 2) {
             context.setHandFinished(true);
@@ -91,13 +92,10 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
     }
 
     public void sitOutPlayersMarkedForSitOutNextHand() {
-        if (context.isTournamentTable()) {
-            return;
-        }
         for (PokerPlayer player : context.getSeatedPlayers()) {
             if (player.isSittingOutNextHand()) {
                 log.debug("Player " + player.getId() + " wants to sit out.");
-                markPlayerAsSittingOut(player);
+                markPlayerAsSittingOutOrAway(player);
             }
         }
     }
@@ -141,7 +139,7 @@ public class WaitingToStartSTM extends AbstractPokerGameSTM {
             boolean canPlayerAffordEntryBet = gameType.canPlayerAffordEntryBet(player, context.getSettings(), true);
             if (!canPlayerAffordEntryBet) {
                 log.info("Player with id " + player.getId() + " can not post entry bet.");
-                markPlayerAsSittingOut(player);
+                markPlayerAsSittingOutOrAway(player);
             }
         }
     }

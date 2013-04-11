@@ -146,6 +146,89 @@ public class PokerLogicTest extends GuiceTest {
         assertThat(mp[0].isActionPossible(RAISE), is(true));
     }
 
+    public void testPlayerTimingOut() {
+        MockPlayer[] mp = TestUtils.createMockPlayers(4);
+        int[] p = TestUtils.createPlayerIdArray(mp);
+        assertEquals(4, p.length);
+        addPlayers(state, mp);
+        assertEquals(4, state.getSeatedPlayers().size());
+
+        int chipsInPlay = countChipsAtTable(p);
+
+        // Force start
+        state.timeout();
+
+        // Blinds
+        act(p[1], SMALL_BLIND);
+
+        assertTrue(mp[2].isActionPossible(BIG_BLIND));
+        assertEquals(102, mockServerAdapter.getLastActionRequest().getPlayerId());
+        act(p[2], BIG_BLIND);
+
+        assertTrue(mp[2].hasOption());
+        assertAllPlayersHaveCards(mp, 2);
+
+        assertEquals(0, state.getCommunityCards().size());
+        state.timeout();
+
+        // Pre flop round
+        assertEquals(103, mockServerAdapter.getLastActionRequest().getPlayerId());
+        act(p[3], CALL);
+        assertTrue(mp[3].hasActed());
+        assertEquals(100, mockServerAdapter.getLastActionRequest().getPlayerId());
+        act(p[0], CALL);
+        act(p[1], CALL);
+        state.timeout(); // p[2] will auto check
+
+        // everyone checked so now we should be in DealCommunityCards round
+
+        assertEquals(3, state.getCommunityCards().size());
+
+        // Trigger deal community cards
+        state.timeout(); // timeout deal community cards. Starts a new betting round
+
+        assertEquals(3, state.getCommunityCards().size());
+
+        // Flop round
+        act(p[1], BET);
+        //p[2] is away = autofolded
+        assertTrue(mp[2].isAway());
+        assertTrue(mp[2].hasFolded());
+        assertFalse(mp[2].isSittingOutNextHand());
+        assertTrue(mp[2].isSittingOut());
+        act(p[3], CALL);
+        act(p[0], CALL);
+
+        assertEquals(4, state.getCommunityCards().size());
+
+        // Trigger deal community cards
+        state.timeout();// timeout deal community cards. Starts a new betting round
+
+        // Turn round
+        act(p[1], BET);
+        act(p[3], CALL);
+        act(p[0], FOLD);
+
+        // Trigger deal community cards
+        state.timeout();
+
+        assertEquals(5, state.getCommunityCards().size());
+
+        // River round
+        act(p[1], BET);
+        act(p[3], FOLD);
+
+        // Assertions
+        assertTrue(state.isFinished());
+
+        // Check that we didn't create or lose any chips.
+        assertEquals(chipsInPlay, countChipsAtTable(p));
+
+        state.timeout();
+        assertTrue(mp[2].isSittingOut());
+
+    }
+
     private int countChipsAtTable(int[] p) {
         int chipsInPlay = 0;
         for (int pid : p) {

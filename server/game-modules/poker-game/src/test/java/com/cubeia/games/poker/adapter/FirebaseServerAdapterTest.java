@@ -402,7 +402,7 @@ public class FirebaseServerAdapterTest {
         PokerPlayerStatus status = PokerPlayerStatus.SITIN;
 
         when(serverAdapter.state.isPlayerInHand(playerId)).thenReturn(inCurrentHand);
-        serverAdapter.notifyPlayerStatusChanged(playerId, status, true);
+        serverAdapter.notifyPlayerStatusChanged(playerId, status, true, false,false);
 
         ArgumentCaptor<GameDataAction> captor = ArgumentCaptor.forClass(GameDataAction.class);
         verify(tableNotifier).notifyAllPlayers(captor.capture());
@@ -431,7 +431,7 @@ public class FirebaseServerAdapterTest {
         PokerPlayerStatus status = PokerPlayerStatus.SITOUT;
 
         when(serverAdapter.state.isPlayerInHand(playerId)).thenReturn(inCurrentHand);
-        serverAdapter.notifyPlayerStatusChanged(playerId, status, false);
+        serverAdapter.notifyPlayerStatusChanged(playerId, status, false,false,false);
 
         ArgumentCaptor<GameDataAction> captor = ArgumentCaptor.forClass(GameDataAction.class);
         verify(tableNotifier).notifyAllPlayers(captor.capture());
@@ -460,7 +460,7 @@ public class FirebaseServerAdapterTest {
         PokerPlayerStatus status = PokerPlayerStatus.SITIN;
 
         when(serverAdapter.state.isPlayerInHand(playerId)).thenReturn(inCurrentHand);
-        serverAdapter.notifyPlayerStatusChanged(playerId, status, inCurrentHand);
+        serverAdapter.notifyPlayerStatusChanged(playerId, status, inCurrentHand,false,false);
 
         ArgumentCaptor<GameDataAction> captor = ArgumentCaptor.forClass(GameDataAction.class);
         verify(tableNotifier).notifyAllPlayers(captor.capture());
@@ -488,7 +488,7 @@ public class FirebaseServerAdapterTest {
         PokerPlayerStatus status = PokerPlayerStatus.SITOUT;
 
         when(serverAdapter.state.isPlayerInHand(playerId)).thenReturn(inCurrentHand);
-        serverAdapter.notifyPlayerStatusChanged(playerId, status, inCurrentHand);
+        serverAdapter.notifyPlayerStatusChanged(playerId, status, inCurrentHand,true,false);
 
         ArgumentCaptor<GameDataAction> captor = ArgumentCaptor.forClass(GameDataAction.class);
         verify(tableNotifier).notifyAllPlayers(captor.capture());

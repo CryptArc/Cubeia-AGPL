@@ -40,7 +40,7 @@ public class TexasHoldemFutureActionsCalculator implements FutureActionsCalculat
         List<PokerActionType> options = new ArrayList<PokerActionType>();
 
         // Players who are all in or have folded do not have any future actions.
-        if (player.hasFolded() || player.isAllIn() || player.isSittingOut() || player.hasActed()) {
+        if (player.hasFolded() || player.isAllIn() || player.isSittingOut() || player.hasActed() || player.isAway()) {
             return options;
         }
 
