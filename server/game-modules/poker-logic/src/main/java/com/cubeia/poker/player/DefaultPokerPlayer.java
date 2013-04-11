@@ -102,6 +102,8 @@ public class DefaultPokerPlayer implements PokerPlayer {
      */
     private boolean canRaise = false;
 
+    private boolean away;
+
     public DefaultPokerPlayer(int id) {
         playerId = id;
     }
@@ -395,6 +397,16 @@ public class DefaultPokerPlayer implements PokerPlayer {
     @Override
     public void setSittingOutNextHand(boolean b) {
         sittingOutNextHand = b;
+    }
+
+    @Override
+    public boolean setAway(boolean away) {
+        return this.away = away;
+    }
+
+    @Override
+    public boolean isAway() {
+        return away;
     }
 
     @Override

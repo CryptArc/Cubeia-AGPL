@@ -237,6 +237,10 @@ Poker.MyActionsManager  = Class.extend({
         this.tableButtons.hideAll();
         this.tableButtons.show(Poker.ActionType.LEAVE);
     },
+    setSitOutNextHand : function(sitOut) {
+        console.log("setSitOutNextHand = " + sitOut);
+        this.sitOutNextHand.setEnabled(sitOut);
+    },
     onSitOut : function() {
         console.log("ON SIT OUT");
         this.blindsActions.onSitOut();

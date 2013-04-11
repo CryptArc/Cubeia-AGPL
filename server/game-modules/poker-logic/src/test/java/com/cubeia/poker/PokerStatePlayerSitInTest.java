@@ -65,7 +65,7 @@ public class PokerStatePlayerSitInTest {
         verify(player).sitIn();
         verify(player).setSittingOutNextHand(false);
         verify(player).setSitInAfterSuccessfulBuyIn(false);
-        verify(serverAdapter).notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITIN, false);
+        verify(serverAdapter).notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITIN, false,false,false);
         verify(serverAdapter, never()).notifyBuyInInfo(playerId, true);
     }
 
@@ -112,7 +112,8 @@ public class PokerStatePlayerSitInTest {
         state.playerIsSittingIn(playerId);
 
         verify(player, never()).sitIn();
-        verify(serverAdapter, never()).notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITIN, false);
+        verify(serverAdapter, never()).notifyPlayerStatusChanged(playerId, PokerPlayerStatus.SITIN, false,player.isAway(),
+                player.isSittingOutNextHand());
         verify(serverAdapter).notifyBuyInInfo(playerId, true);
     }
 

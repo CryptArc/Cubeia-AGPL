@@ -147,7 +147,7 @@ public class PokerState implements Serializable, IPokerState {
 
     @Override
     public void playerSitsOutNextHand(int playerId) {
-        getCurrentState().playerSitsOutNextHand(playerId);
+        getCurrentState().setPlayerSitOutNextHand(playerId);
     }
 
     public boolean isPlayerSeated(int playerId) {

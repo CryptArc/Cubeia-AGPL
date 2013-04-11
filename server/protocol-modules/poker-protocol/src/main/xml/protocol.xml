@@ -328,11 +328,15 @@
         <var name="player" type="int32"/>
         <var name="status" type="player_table_status"/>
         <var name="in_current_hand" type="bool"/>
+        <var name="sitOutNextHand" type="bool"/>
+        <var name="away" type="bool"/>
     </struct>
 
     <struct name="player_hand_start_status">
         <var name="player" type="int32"/>
         <var name="status" type="player_table_status"/>
+        <var name="away" type="bool"/>
+        <var name="sitOutNextHand" type="bool"/>
     </struct>
 
     <!-- A player has requested to sit in again (Client -> Server) -->

@@ -250,7 +250,7 @@ public class BettingRound implements Round, BettingRoundContext {
             p.setActionRequest(ar);
         }
 
-        if (p.isSittingOut()) {
+        if (p.isSittingOut() || p.isAway()) {
             performDefaultActionForPlayer(p);
         } else {
             roundHelper.requestAction(p.getActionRequest());
@@ -457,10 +457,13 @@ public class BettingRound implements Round, BettingRoundContext {
     }
 
     private void setPlayerSitOut(PokerPlayer player) {
-        if (context.isTournamentBlinds()) {
+        if (!context.isTournamentBlinds()) {
             player.setSitOutStatus(SitOutStatus.SITTING_OUT);
-            getServerAdapter().notifyPlayerStatusChanged(player.getId(), PokerPlayerStatus.SITOUT, false);
+        } else {
+            player.setAway(true);
+            player.setSittingOutNextHand(false);
         }
+        notifyPlayerStatusChanged(player);
     }
 
     private boolean check() {
@@ -493,15 +496,28 @@ public class BettingRound implements Round, BettingRoundContext {
             log.debug("Expected " + playerToAct + " to act, but that player can not be found at the table! I will assume everyone is all in");
             return;
         }
-        markPlayerForSittingOutNextHand(player);
+        markPlayerAsAwayAndSitOutNextHand(player);
         performDefaultActionForPlayer(player);
     }
 
-    private void markPlayerForSittingOutNextHand(PokerPlayer player) {
-        if (context.isTournamentTable()) {
-            return;
+    private void markPlayerAsAwayAndSitOutNextHand(PokerPlayer player) {
+        if (!context.isTournamentTable()) {
+            player.setSittingOutNextHand(true);
         }
-        player.setSittingOutNextHand(true);
+        player.setAway(true);
+
+        notifyPlayerStatusChanged(player);
+
+    }
+
+    private void notifyPlayerStatusChanged(PokerPlayer player) {
+        PokerPlayerStatus status = PokerPlayerStatus.SITIN;
+        if(player.getSitOutStatus() == SitOutStatus.SITTING_OUT) {
+            status = PokerPlayerStatus.SITOUT;
+        }
+        boolean inHand = context.isPlayerInHand(player.getId());
+        getServerAdapter().notifyPlayerStatusChanged(player.getId(), status, inHand,
+                player.isAway(), player.isSittingOutNextHand());
     }
 
     private void performDefaultActionForPlayer(PokerPlayer player) {

@@ -163,7 +163,8 @@ public interface ServerAdapter {
      */
     void notifyPotUpdates(Collection<Pot> pots, Collection<PotTransition> potTransitions);
 
-    void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status, boolean inCurrentHand);
+    void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status, boolean inCurrentHand, boolean away,
+                                   boolean sitOutNextHand);
 
     /**
      * Send information if the deck in use.
@@ -213,7 +214,7 @@ public interface ServerAdapter {
      * Send out a player status for a new hand starting
      *
      */
-    void notifyHandStartPlayerStatus(int playerId, PokerPlayerStatus status);
+    void notifyHandStartPlayerStatus(int playerId, PokerPlayerStatus status, boolean away, boolean sitOutNextHand);
 
     void notifyDisconnected(int playerId);
 

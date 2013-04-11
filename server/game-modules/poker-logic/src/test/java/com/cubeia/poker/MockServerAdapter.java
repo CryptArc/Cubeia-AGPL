@@ -244,12 +244,13 @@ public class MockServerAdapter implements ServerAdapter {
     }
 
     @Override
-    public void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status, boolean isInCurrentHand) {
+    public void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status, boolean isInCurrentHand, boolean away,
+                                          boolean sitOutNextHand) {
         playerStatus.put(playerId, status);
     }
 
     @Override
-    public void notifyHandStartPlayerStatus(int playerId, PokerPlayerStatus status) {
+    public void notifyHandStartPlayerStatus(int playerId, PokerPlayerStatus status, boolean away, boolean sitOutNextHand) {
         // TODO Auto-generated method stub
 
     }

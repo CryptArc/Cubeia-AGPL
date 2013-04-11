@@ -45,10 +45,7 @@ import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static com.cubeia.poker.action.PokerActionType.BET;
-import static com.cubeia.poker.action.PokerActionType.CALL;
-import static com.cubeia.poker.action.PokerActionType.FOLD;
-import static com.cubeia.poker.action.PokerActionType.RAISE;
+import static com.cubeia.poker.action.PokerActionType.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.eq;
@@ -411,6 +408,39 @@ public class BettingRoundTest extends TestCase {
         act(p[1], RAISE, 40);
         act(p[2], FOLD, 0);
         assertThat(requestedAction.isOptionEnabled(RAISE), is(false));
+    }
+
+
+    public void testDefaultActionWhenAway() {
+        MockPlayer[] p = TestUtils.createMockPlayers(3);
+        preparePlayers(new FixedLimitBetStrategy(10, false), p);
+
+        act(p[1], CHECK, 0);
+        act(p[2], CHECK, 20);
+
+        round.timeout();
+
+        assertTrue(p[0].isSittingOutNextHand());
+        assertTrue(p[0].isAway());
+        assertFalse(p[0].hasFolded());
+    }
+
+    public void testFoldWhenAwayWithUncalledAmount() {
+        MockPlayer[] p = TestUtils.createMockPlayers(3);
+        p[0].setBalance(30L);
+        p[1].setBalance(30L);
+        p[2].setBalance(30L);
+        preparePlayers(new FixedLimitBetStrategy(10, false), p);
+
+        act(p[1], BET, 10);
+        act(p[2], CALL, 10);
+        round.timeout();
+
+        assertTrue(p[0].isAway());
+        assertFalse(p[0].isSittingOutNextHand());
+        assertTrue("Player should have been folded", p[0].hasFolded());
+        assertTrue(p[0].isSittingOut());//when folded the player is set to sit out
+
     }
 
     public void testCompleteRaiseShouldIncreaseCompleteBetAllTheWayToTheNextLevel() {

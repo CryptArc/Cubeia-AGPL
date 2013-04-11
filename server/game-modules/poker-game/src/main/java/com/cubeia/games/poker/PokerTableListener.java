@@ -212,7 +212,6 @@ public class PokerTableListener implements TournamentTableListener {
                 backendPlayerSessionHandler.endPlayerSessionInBackend(table, pokerPlayer, getCurrentRoundNumber());
             }
         }
-
         state.removePlayer(playerId);
     }
 }

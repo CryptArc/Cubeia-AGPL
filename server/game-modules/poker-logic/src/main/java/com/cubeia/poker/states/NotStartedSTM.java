@@ -67,10 +67,10 @@ public class NotStartedSTM extends AbstractPokerGameSTM {
     }
 
     /*
-     * If we are not playing, a player who wants to sit out can do it straight away.
+     * If we are not playing, a player who wants to sit out can do it straight sittingOutNextHand.
      */
     @Override
-    public void playerSitsOutNextHand(int playerId) {
-        markPlayerAsSittingOut(context.getPlayer(playerId));
+    public void setPlayerSitOutNextHand(int playerId) {
+        markPlayerAsSittingOutOrAway(context.getPlayer(playerId));
     }
 }

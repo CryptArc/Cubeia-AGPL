@@ -89,9 +89,11 @@ public abstract class AbstractGameType implements GameType {
     public void notifyAllHandStartPlayerStatus() {
         for (PokerPlayer player : context.getSeatedPlayers()) {
             if (player.isSittingOut()) {
-                getServerAdapter().notifyHandStartPlayerStatus(player.getId(), PokerPlayerStatus.SITOUT);
+                getServerAdapter().notifyHandStartPlayerStatus(player.getId(), PokerPlayerStatus.SITOUT,player.isAway(),
+                        player.isSittingOutNextHand());
             } else {
-                getServerAdapter().notifyHandStartPlayerStatus(player.getId(), PokerPlayerStatus.SITIN);
+                getServerAdapter().notifyHandStartPlayerStatus(player.getId(), PokerPlayerStatus.SITIN, player.isAway(),
+                        player.isSittingOutNextHand());
             }
         }
     }

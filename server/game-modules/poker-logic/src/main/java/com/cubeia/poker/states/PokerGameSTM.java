@@ -71,7 +71,7 @@ public interface PokerGameSTM extends Serializable {
      */
     boolean isPlayerInHand(int playerId);
 
-    void playerSitsOutNextHand(int playerId);
+    void setPlayerSitOutNextHand(int playerId);
 
     void playerSitsIn(int playerId);
 

@@ -12,6 +12,8 @@ Poker.Player = Class.extend({
      * @type Poker.PlayerTableStatus
      */
     tableStatus : null,
+    away : false,
+    sitOutNextHand : false,
     lastActionType : null,
     init : function(id,name) {
         this.name = name;

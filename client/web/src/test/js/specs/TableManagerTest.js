@@ -43,7 +43,7 @@ describe("Poker.TableManager Test", function(){
 
     it("test remove player", function(){
         var mockTableLayoutManager = jasmine.createSpyObj('mockTableLayoutManager',
-            ['onTableCreated','onPlayerAdded','onPlayerRemoved']);
+            ['onTableCreated','onPlayerAdded','onPlayerRemoved','onPlayerStatusUpdated']);
 
         tableManager.createTable(1,10,"tableName", mockTableLayoutManager);
         tableManager.addPlayer(1,1,1,"name1");
@@ -62,7 +62,7 @@ describe("Poker.TableManager Test", function(){
 
     it("Update player status", function(){
         var mockTableLayoutManager = jasmine.createSpyObj('mockTableLayoutManager',
-            ['onTableCreated','onPlayerAdded','onPlayerRemoved','onPlayerUpdated']);
+            ['onTableCreated','onPlayerAdded','onPlayerRemoved','onPlayerUpdated','onPlayerStatusUpdated']);
 
         tableManager.createTable(1,10,"tableName", mockTableLayoutManager);
         tableManager.addPlayer(1,1,1,"name1");
@@ -75,13 +75,13 @@ describe("Poker.TableManager Test", function(){
         expect(table.getPlayerById(2).tableStatus.id).toEqual(Poker.PlayerTableStatus.SITTING_IN.id);
 
         expect(mockTableLayoutManager.onPlayerAdded).toHaveBeenCalled();
-        expect(mockTableLayoutManager.onPlayerUpdated).toHaveBeenCalled();
+        expect(mockTableLayoutManager.onPlayerStatusUpdated).toHaveBeenCalled();
 
     });
 
     it("Update player balance", function(){
         var mockTableLayoutManager = jasmine.createSpyObj('mockTableLayoutManager',
-            ['onTableCreated','onPlayerAdded','onPlayerRemoved','onPlayerUpdated']);
+            ['onTableCreated','onPlayerAdded','onPlayerRemoved','onPlayerUpdated','onPlayerStatusUpdated']);
 
         tableManager.createTable(1,10,"tableName", mockTableLayoutManager);
         tableManager.addPlayer(1,1,1,"name1");
@@ -100,7 +100,7 @@ describe("Poker.TableManager Test", function(){
 
     it("Deal cards", function(){
         var mockTableLayoutManager = jasmine.createSpyObj('mockTableLayoutManager',
-            ['onTableCreated','onPlayerAdded','onPlayerUpdated','onDealPlayerCard']);
+            ['onTableCreated','onPlayerAdded','onPlayerUpdated','onDealPlayerCard','onPlayerStatusUpdated']);
 
         tableManager.createTable(1,10,"tableName", mockTableLayoutManager);
         tableManager.addPlayer(1,1,1,"name1");
