@@ -305,7 +305,7 @@
 
         <div id="loadingView" class="loading-view">
             <div class="login-dialog">
-                <div class="logo-container"><img src="${cp}/skins/${skin}/images/lobby/poker-logo.png"/></div>
+                <div class="logo-container"></div>
                 <div class="loading-progressbar">
                     <div class="progress"></div>
                 </div>
@@ -313,7 +313,7 @@
         </div>
         <div id="loginView" class="login-view" style="display:none;">
             <div id="dialog1" class="login-dialog">
-                <div class="logo-container"><img src="${cp}/skins/${skin}/images/lobby/poker-logo.png"/></div>
+                <div class="logo-container"></div>
                 <div class="login-container">
                     <div class="login-input-container">
                         <input name="user" class="describe" id="user" type="text" title="Username" value="" />
@@ -332,7 +332,6 @@
 
                 <div class="left-column">
                     <div class="logo-container">
-                        <img src="${cp}/skins/${skin}/images/lobby/poker-logo.png"/>
                     </div>
                     <ul class="main-menu">
                             <li>
