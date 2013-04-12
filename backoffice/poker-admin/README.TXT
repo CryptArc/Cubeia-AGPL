@@ -1,0 +1,59 @@
+The Poker Admin Webapplication, used to create Tables and Tournaments
+
+To build: 
+mvn clean install
+
+To run:
+mvn jetty:run
+
+Access at localhost:8088/poker-admin/
+
+At this point you can see the functionality, but most of it is not usable. To
+make the Poker Admin fully functional, go on with...
+
+DATABASES
+=========
+
+Mandatory: create a mysql database.
+the default configuration is: db: poker, user: poker, pass: poker
+to change: src/test/resources/jetty-env.xml
+
+Optionally: for hand histories and tournament histories, create a mongodb
+the default configuration is: db: poker, user: poker, pass: poker
+to change: src/test/resources/admin.properties
+
+
+CUBEIA NETWORK
+==============
+
+The Poker Admin depends on Cubeia Network. 
+
+Install Cubeia Network, as described in the ../README (./backoffice/README.TXT)
+
+
+INTEGRATIONS
+============
+
+Τhe default build of the poker-server results in a system with mock-services
+(or mock-integrations). This means that the poker-admin does not influence the
+actual tables/tournaments, nor there is any real user and management.
+
+In order to build & start a poker system which integrates fully:
+
+a) build the poker-server with "-P use-integrations" option.
+
+b) set use-mock-integrations=false" in
+server\game-modules\poker-uar\src\test\resources\firebase\conf\cluster.props
+
+c) Start: Cubeia Network then the Poker Server (firebase) then the Poker Client
+
+You now login with the user credentials created within Cubeia Network.
+
+ADMIN DATA
+==========
+
+At this point, you create all the data needed within the Poker Admin:
+
+Timings, Payout, Blinds (use "Standard")
+
+After this you can start to create Tables, Sit&Go's and scheduled Tournaments
