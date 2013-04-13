@@ -20,12 +20,12 @@ machine running you Cubeia Network installations, and run:
 
 In order to see all options, run:
 
-  `java -jar <jav file>`
+  `java -jar <jar file>`
 
 SCRIPTING
 =========
 Finally, to create a batch of users you can use scripts. 
-For example, to create 100 bots on a Cubeia Network installation, 
+For example, to create 300 bots on a Cubeia Network installation, 
 you can run this (if you're on a Linux system):
 
-  `for i in {1..100}; do java -jar -<jar file> -u Bot_$i -p $i; done`
+  `for i in {1..300}; do java -jar <jar file> -u Bot_$i -p $i; done`
