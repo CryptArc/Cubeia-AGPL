@@ -30,6 +30,18 @@ The Poker Admin depends on Cubeia Network.
 
 Install Cubeia Network, as described in the ../README (./backoffice/README.TXT)
 
+This will start the Backoffice and the services at port 8080.
+
+CONFIG FILES
+============
+
+As Cubeia Nework is started outside the development environment, configuration
+starts.
+
+within ./backoffice/poker-admin/src/test/resources/admin.properties, change the
+ports of user/wallet/operator services to 8080.
+
+Build the Poker Admin again with "mvn clean install"
 
 INTEGRATIONS
 ============
@@ -54,6 +66,13 @@ ADMIN DATA
 
 At this point, you create all the data needed within the Poker Admin:
 
-Timings, Payout, Blinds (use "Standard")
+First create Timings and Rake Configurations (good name is "Standard")
 
-After this you can start to create Tables, Sit&Go's and scheduled Tournaments
+At this point you can create Table Templates, which should result in tables
+showing up in the lobby.
+
+Then Create Payout and Blinds Structures (again choose "Standard" as name).
+
+After this you can create a simple Sit&Go, which should show up in the lobby.
+
+Last, setup a Scheduled Tournament template.
