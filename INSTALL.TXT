@@ -43,6 +43,26 @@ your current setup with some poker-bots.
 Finally, see the README within ./backoffice/poker-admin to setup the 
 web-application that manages the poker-game (timings, tables, tournaments).
 
+ADVANCED STEPS
+==============
+
+* FIREBASE
+
+Firebase was fetched during the build. You can start the poker-server directly
+by starting firebase from within
+
+./server/game-modules/poker-uar/target/firebase-run/firebase-1.9.2-CE
+
+Once your poker-system runs fine, you can copy the firebase folder to another
+location. If you poker directory resides in e.g. mycubeia/poker, you could copy
+firebase to mycubeia/firebase.
+
+In this case, you either have to copy new versions of the poker-uar.uar into the
+firebase/game/deploy directory, or you have to make a symbolic link. Remember to
+verify the configuration files (new files or new configuration data).
+
+This would be the first step towards a production installation, a complex task,
+which is out of the scope of this document.
 
 
 FULL REBUILD
