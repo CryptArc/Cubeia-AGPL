@@ -19,14 +19,14 @@ Poker.Sounds = {
     "action-raise"               :{id:"RAISE"             ,  delay:400,   soundList:[{file:"chippile_6"  ,gain:0.4}]    },
     "action-small-blind"         :{id:"SMALL_BLIND"       ,  delay:600,   soundList:[{file:"chippile_1"  ,gain:0.12}]    },
     "action-big-blind"           :{id:"BIG_BLIND"         ,  delay:350,   soundList:[{file:"chippile_6"  ,gain:0.14}]    },
-    "action-join"                :{id:"JOIN"              ,  delay:0,     soundList:[{file:"metaltwang_1",gain:0.1}]    },
-    "action-leave"               :{id:"LEAVE"             ,  delay:0,     soundList:[{file:"woodtwang_1" ,gain:0.1}]    },
+    "action-join"                :{id:"JOIN"              ,  delay:0,     soundList:[{file:"metaltwang_1",gain:0.06}]    },
+    "action-leave"               :{id:"LEAVE"             ,  delay:0,     soundList:[{file:"woodtwang_1" ,gain:0.06}]    },
     "action-sit-out"             :{id:"SIT_OUT"           ,  delay:0,     soundList:[{file:"bellchord_4" ,gain:1}]    },
     "action-sit-in"              :{id:"SIT_IN"            ,  delay:0,     soundList:[{file:"bellchord_3" ,gain:1}]    },
     "entry-bet"                  :{id:"ENTRY_BET"         ,  delay:0,     soundList:[{file:"chipheavy_1" ,gain:1}]    },
-    "decline-entry-bet"          :{id:"DECLINE_ENTRY_BET" ,  delay:200,   soundList:[{file:"metaltwang_1",gain:1}]    },
+    "decline-entry-bet"          :{id:"DECLINE_ENTRY_BET" ,  delay:200,   soundList:[{file:"sweep_3"     ,gain:0.2}]    },
     "wait-for-big-blind"         :{id:"WAIT_FOR_BIG_BLIND",  delay:0,     soundList:[{file:"clocktick_1" ,gain:1}]    },
-    "ante"                       :{id:"ANTE"              ,  delay:0,     soundList:[{file:"chip_1"     ,gain:1}]    },
+    "ante"                       :{id:"ANTE"              ,  delay:0,     soundList:[{file:"chip_1"      ,gain:1}]    },
     "dead-small-blind"           :{id:"DEAD_SMALL_BLIND"  ,  delay:0,     soundList:[{file:"chip_2"      ,gain:1}]    },
 "big-blind-plus-dead-small-blind":{id:"BIG_BLIND_PLUS_DEAD_SMALL_BLIND", delay:0, soundList:[{file:"chippile_1" ,gain:1}] }
 
