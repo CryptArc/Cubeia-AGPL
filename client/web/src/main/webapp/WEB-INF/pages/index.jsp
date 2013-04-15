@@ -29,6 +29,7 @@
     <script type="text/javascript" src="${cp}/js/lib/jquery.ui.touch-punch.js"></script>
     <script type="text/javascript" src="${cp}/js/base/jquery-plugins/touch-click.js"></script>
     <script type="text/javascript" src="${cp}/js/base/jquery-plugins/relative-offset.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/jquery-plugins/jquery.ga.debug.js"></script>
 
     <script type="text/javascript" src="${cp}/js/lib/handlebars.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/json2.js"></script>
@@ -1139,6 +1140,19 @@
         <div class="dialog-content">
         </div>
     </div>
+</script>
+
+
+<script type="text/javascript">
+
+    var callback = function() {
+        $.ga.trackEvent("client_initiation", "index_loaded", "no_label_used", "no_value_used");
+    };
+
+    // TODO: Use Configuration for this id.
+    var id = "UA-39961215-2";
+    $(document).ready( function() { $.ga.load(id, callback); } );
+
 </script>
 
 </body>

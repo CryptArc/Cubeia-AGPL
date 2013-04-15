@@ -114,12 +114,14 @@ Poker.ViewManager = Class.extend({
     },
     checkMobileDevice : function() {
         if(window.matchMedia) {
-            var mq1 = window.matchMedia("(max-width:700px)")
+            var mq1 = window.matchMedia("(max-width:700px)");
             var mq2 = window.matchMedia("(max-height: 400px)");
             if(mq1.matches || mq2.matches) {
                 this.mobileDevice = true;
+                $.ga.trackEvent("client_initiation", "device_check", "is_mobile", "true");
             } else {
                 this.mobileDevice = false;
+                $.ga.trackEvent("client_initiation", "device_check", "is_mobile", "false");
             }
         } else {
             this.mobileDevice = false;
@@ -198,6 +200,8 @@ Poker.ViewManager = Class.extend({
             this.loginView.close();
             this.views.splice(0,1);
         }
+
+        $.ga.trackEvent("client_initiation", "login_success", "no_label_used", "no_value_used");
     },
     /**
      * Will change a views tab to get the users attention
