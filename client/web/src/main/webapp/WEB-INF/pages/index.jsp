@@ -231,10 +231,10 @@
     </script>
 
 
-    <!-- Basic Google Analytics -->
+    <!-- Basic Google Analytics CS id: UA-39961215-2
     <script type="text/javascript">
         var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', 'UA-39961215-2']);
+        _gaq.push(['_setAccount', 'id']);
         _gaq.push(['_trackPageview']);
         (function() {
             var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
@@ -242,7 +242,7 @@
             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
         })();
     </script>
-
+    -->
 
 </head>
 <body>
