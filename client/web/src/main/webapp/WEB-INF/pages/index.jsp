@@ -1145,12 +1145,15 @@
 
 <script type="text/javascript">
 
+
+
     var callback = function() {
-        $.ga.trackEvent("client_initiation", "index_loaded", "no_label_used", "no_value_used");
+    //    console.log($.ga)
+    //    $.ga.trackEvent("client_initiation", "index_loaded", "no_label_used", "no_value_used");
     };
 
-    // TODO: Use Configuration for this id.
-    var id = "UA-39961215-2";
+    var id = "${googleAnalyticsId}";
+    console.log("Analytics id: ", id);
     $(document).ready( function() { $.ga.load(id, callback); } );
 
 </script>

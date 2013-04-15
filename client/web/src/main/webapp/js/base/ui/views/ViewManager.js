@@ -118,10 +118,8 @@ Poker.ViewManager = Class.extend({
             var mq2 = window.matchMedia("(max-height: 400px)");
             if(mq1.matches || mq2.matches) {
                 this.mobileDevice = true;
-                $.ga.trackEvent("client_initiation", "device_check", "is_mobile", "true");
             } else {
                 this.mobileDevice = false;
-                $.ga.trackEvent("client_initiation", "device_check", "is_mobile", "false");
             }
         } else {
             this.mobileDevice = false;

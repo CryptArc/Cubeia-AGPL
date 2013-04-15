@@ -29,7 +29,9 @@ public class ClientController {
     @Value("${firebase.http-port:-1}")
     private int firebaseHttpPort;
 
-    
+    @Value("${google_analytics_id:UA-39961215-2}")
+    private String googleAnalyticsId;
+
     // @Value("${operator.config.cache-ttl}")
     // private Long configCacheTtl;
     
@@ -77,6 +79,9 @@ public class ClientController {
         }
         if(firebaseHttpPort != -1) {
         	modelMap.addAttribute("firebaseHttpPort", firebaseHttpPort);
+        }
+        if(googleAnalyticsId != null) {
+            modelMap.addAttribute("googleAnalyticsId", googleAnalyticsId);
         }
 	}
 
