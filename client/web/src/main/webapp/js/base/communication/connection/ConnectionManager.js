@@ -150,6 +150,7 @@ Poker.ConnectionManager = Class.extend({
         }
     },
     reconnect : function() {
+
         if(this.retryCount < this.MAX_RECONNECT_ATTEMPTS) {
             this.onUserReconnecting();
             Poker.AppCtx.getCommunicationManager().connect();

@@ -100,6 +100,7 @@ Poker.CommunicationManager = Class.extend({
             //this.connector.getIOAdapter().unregisterHandlers();
         }
         var self = this;
+        FIREBASE.ReconnectStrategy.MAX_ATTEMPTS = 0;
         this.connector = new FIREBASE.Connector(
             function(po) {
                 Poker.AppCtx.getConnectionManager().onPacketReceived();

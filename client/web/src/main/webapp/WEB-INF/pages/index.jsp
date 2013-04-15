@@ -180,7 +180,7 @@
                 Poker.Utils.removeStoredUser();
             }
 
-            less.watch(); //development only
+            //less.watch(); //development only
             $(".describe").describe();
 
             $("title").html(Poker.SkinConfiguration.title);

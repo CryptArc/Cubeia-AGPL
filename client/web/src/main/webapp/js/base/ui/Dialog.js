@@ -40,7 +40,11 @@ Poker.Dialog = Class.extend({
 
         content.css("top",top + "px");
 
-        this.dialogElement.height(this.parentContainer.height());
+        var height = this.parentContainer.height();
+        if(height === 0) {
+            height = $(window).height();
+        }
+        this.dialogElement.height();
         this.dialogElement.hide();
     },
     show : function() {

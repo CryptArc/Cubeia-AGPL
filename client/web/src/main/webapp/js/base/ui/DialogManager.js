@@ -158,6 +158,7 @@ Poker.DialogManager = Class.extend({
             }
         });
         dialog.show();
+
         this.currentDialog = dialog;
 
     }
