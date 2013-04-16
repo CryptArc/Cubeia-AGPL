@@ -25,6 +25,7 @@ Poker.CheckboxAction = Class.extend({
                 console.log("calling change function");
                 self.onChangeFunction(self.enabled);
             }
+            $.ga._trackEvent("use_checkbox", self.checkbox["selector"], self.enabled);
             console.log("enabled changed to " + self.enabled);
         });
     },

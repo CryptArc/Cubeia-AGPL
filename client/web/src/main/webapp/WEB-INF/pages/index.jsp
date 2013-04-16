@@ -1148,7 +1148,10 @@
 
     $.ga = {
         _trackEvent:function(event, action, label, value) {
+            if (label == undefined) label = null;
+            if (value == undefined) value = null;
             _gaq.push(['_trackEvent', event, action, label, value ])
+            console.log("----->>> TRACK ANALYTICS EVENT", event, action, label, value)
         }
     };
 

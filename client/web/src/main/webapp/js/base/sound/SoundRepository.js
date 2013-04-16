@@ -22,6 +22,7 @@ Poker.SoundRepository = Class.extend({
         var context = null;
 
         if(typeof(Audio)=="undefined") {
+            $.ga._trackEvent("audio_config", "no_Audio", codec);
             return;
         }
 
@@ -43,6 +44,7 @@ Poker.SoundRepository = Class.extend({
             this.sounds[Poker.Sounds[sound].id] = soundSources;
         }
         console.log(this.sounds)
+        $.ga._trackEvent("audio_config", audioModel, codec, Poker.MyPlayer.id);
     },
 
     getSound:function (soundId, selection) {
@@ -51,6 +53,11 @@ Poker.SoundRepository = Class.extend({
     },
 
     getCodec:function() {
+        if (!Audio in window) {
+            console.log("no supported audio codec found");
+            return "no_codec";
+        }
+
         var checkAudio = new Audio();
         if (checkAudio.canPlayType('audio/ogg; codecs="vorbis"')) {
             return "ogg";
@@ -61,8 +68,5 @@ Poker.SoundRepository = Class.extend({
         if (checkAudio.canPlayType('audio/wav; codecs="1"')) {
             return "wav";
         }
-        console.log("no supported audio codec found");
-        return "no_sounds";
     }
-
 });

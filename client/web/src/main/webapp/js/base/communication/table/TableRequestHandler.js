@@ -70,6 +70,7 @@ Poker.TableRequestHandler = Class.extend({
             chatPacket.message = message;
             chatPacket.tableid = this.tableId;
             Poker.AppCtx.getConnector().sendProtocolObject(chatPacket);
+            $.ga._trackEvent("table_chat", "send_message", Poker.MyPlayer.id);
         }
 
     }

@@ -40,12 +40,15 @@ Poker.Settings = {
     bindSettingToggle : function(checkbox,param) {
         var self = this;
         var enabled = this.isEnabled(param,null);
+
         checkbox.attr("checked",enabled);
         checkbox.change(function(){
             if(checkbox.is(":checked")) {
                 self.setProperty(param,true);
+                $.ga._trackEvent("toggle_setting", param, "true");
             } else {
                 self.setProperty(param,false);
+                $.ga._trackEvent("toggle_setting", param, "false");
             }
         });
     }
