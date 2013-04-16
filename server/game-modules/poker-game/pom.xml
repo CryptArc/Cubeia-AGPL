@@ -29,6 +29,11 @@
             <groupId>com.cubeia.games</groupId>
             <artifactId>poker-protocol</artifactId>
         </dependency>
+        
+        <dependency>
+			<groupId>com.cubeia.network.events</groupId>
+			<artifactId>events-api</artifactId>
+		</dependency>
 
         <dependency>
             <groupId>com.cubeia.games.common</groupId>
@@ -106,7 +111,6 @@
         <dependency>
             <groupId>com.cubeia.games.handhistory</groupId>
             <artifactId>hand-history-api</artifactId>
-            <version>${project.version}</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
@@ -133,6 +137,12 @@
         <dependency>
             <groupId>com.cubeia.games.shutdown</groupId>
             <artifactId>shutdown-service</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.cubeia.games.poker</groupId>
+			<artifactId>achievement-service</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>

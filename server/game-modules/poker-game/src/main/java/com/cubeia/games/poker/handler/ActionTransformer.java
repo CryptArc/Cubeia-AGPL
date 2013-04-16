@@ -17,6 +17,13 @@
 
 package com.cubeia.games.poker.handler;
 
+import static com.cubeia.games.poker.io.protocol.Enums.ActionType.DISCARD;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
 import com.cubeia.firebase.api.action.GameDataAction;
 import com.cubeia.games.poker.io.protocol.BestHand;
 import com.cubeia.games.poker.io.protocol.CardToDeal;
@@ -54,14 +61,6 @@ import com.cubeia.poker.pot.PotTransition;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Range;
 import com.google.common.primitives.Ints;
-import org.apache.log4j.Logger;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
-import static com.cubeia.games.poker.io.protocol.Enums.ActionType.DISCARD;
 
 /**
  * Translates poker-logic internal actions to the styx wire-protocol
@@ -70,8 +69,6 @@ import static com.cubeia.games.poker.io.protocol.Enums.ActionType.DISCARD;
  * @author Fredrik Johansson, Cubeia Ltd
  */
 public class ActionTransformer {
-
-    private static transient Logger log = Logger.getLogger(ActionTransformer.class);
 
     public RequestAction transform(ActionRequest request, int sequenceNumber) {
         RequestAction packet = new RequestAction();
@@ -280,7 +277,6 @@ public class ActionTransformer {
 
     public GameDataAction createPlayerBalanceAction(int balance, int pendingBalance, int playersContributionToPot, int playerId, int tableId) {
         PlayerBalance packet = new PlayerBalance(balance, pendingBalance, playerId, playersContributionToPot);
-        log.debug("Player balance packet created: " + packet);
         return new ProtocolFactory().createGameAction(packet, playerId, tableId);
     }
 

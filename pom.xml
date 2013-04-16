@@ -172,6 +172,19 @@
                 <version>${project.version}</version>
                 <type>firebase-sar</type>
             </dependency>
+            
+             <dependency>
+                <groupId>com.cubeia.games.poker</groupId>
+				<artifactId>achievement-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+               <groupId>com.cubeia.games.poker</groupId>
+				<artifactId>achievement-service</artifactId>
+                <version>${project.version}</version>
+                <type>firebase-sar</type>
+            </dependency>
 
             <dependency>
                 <groupId>com.cubeia.games.poker</groupId>
@@ -283,6 +296,18 @@
             		<artifactId>fb-user-service</artifactId>
                 <version>${cubeia.network.version}</version>
             </dependency>
+            
+			<dependency>
+				<groupId>com.cubeia.network.events</groupId>
+				<artifactId>events-client</artifactId>
+				 <version>${cubeia.network.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>com.cubeia.network.events</groupId>
+				<artifactId>events-api</artifactId>
+				 <version>${cubeia.network.version}</version>
+			</dependency>
 
             <dependency>
                 <groupId>com.cubeia.games</groupId>
