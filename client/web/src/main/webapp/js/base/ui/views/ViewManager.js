@@ -199,7 +199,7 @@ Poker.ViewManager = Class.extend({
             this.views.splice(0,1);
         }
 
-        $.ga.trackEvent("client_initiation", "login_success");
+
     },
     /**
      * Will change a views tab to get the users attention
