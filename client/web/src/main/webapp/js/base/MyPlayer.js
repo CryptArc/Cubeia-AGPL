@@ -43,6 +43,7 @@ Poker.MyPlayer = {
         Poker.MyPlayer.sessionToken = credentials;
         Poker.MyPlayer.id = playerId;
         Poker.MyPlayer.name = name;
+        $.ga.trackEvent("client_initiation", "login_success", playerId, Poker.OperatorConfig.operatorId);
     },
     clear : function() {
         Poker.MyPlayer.id = -1;

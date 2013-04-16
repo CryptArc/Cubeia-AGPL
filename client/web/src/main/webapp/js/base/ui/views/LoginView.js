@@ -10,7 +10,7 @@ Poker.LoginView = Poker.TabView.extend({
             if ($('#user').val() != "username" && $('#pwd').val() != "Password") {
                 var usr = $('#user').val();
                 var pwd = $('#pwd').val();
-                $.ga.trackEvent("client_initiation", "attempt_login");
+                $.ga.trackEvent("client_initiation", "attempt_login", usr);
                 Poker.AppCtx.getCommunicationManager().doLogin(usr,pwd);
             }
         });
