@@ -10,7 +10,7 @@ Poker.BuyInDialog = Class.extend({
         this.templateManager = Poker.AppCtx.getTemplateManager();
     },
     show : function(tableId,tableName, balanceInWallet, maxAmount, minAmount) {
-        $.ga.trackEvent("user_navigation", "open_buy_in_dialogue", "no_label_used", "no_value_used");
+        $.ga.trackEvent("user_navigation", "open_buy_in_dialogue");
         var data = {
             tableId : tableId,
             title : tableName,
