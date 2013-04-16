@@ -222,6 +222,7 @@ Poker.MyActionsManager  = Class.extend({
     onStartHand : function() {
         this.futureActions.clear();
         this.futureActions.hide();
+        $.ga._trackEvent("poker_table", "start_hand_participate", Poker.MyPlayer.id);
     },
     onTournamentOut : function(){
         this.tableButtons.hideAll();
