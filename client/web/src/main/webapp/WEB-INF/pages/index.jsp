@@ -29,7 +29,6 @@
     <script type="text/javascript" src="${cp}/js/lib/jquery.ui.touch-punch.js"></script>
     <script type="text/javascript" src="${cp}/js/base/jquery-plugins/touch-click.js"></script>
     <script type="text/javascript" src="${cp}/js/base/jquery-plugins/relative-offset.js"></script>
-    <script type="text/javascript" src="${cp}/js/base/jquery-plugins/jquery.ga.debug.js"></script>
 
     <script type="text/javascript" src="${cp}/js/lib/handlebars.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/json2.js"></script>
@@ -1130,18 +1129,28 @@
 
 <script type="text/javascript">
 
-    var callback = function() {
-    //    console.log($.ga)
-    //    $.ga.trackEvent("client_initiation", "index_loaded", "no_label_used", "no_value_used");
-    };
-
     var id = "${googleAnalyticsId}";
     console.log("Analytics id: ", id);
-    // $(document).ready( function() { $.ga.load(id, callback); } );
 
-    $.ga = { }
+    var _gaq = _gaq || [];
 
-    $.ga.trackEvent = function() { };
+    if (!id) {
+        console.log("No Analytics id, skipping analytics");
+    } else {
+        _gaq.push(['_setAccount', id]);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    }
+
+    $.ga = {
+        _trackEvent:function(event, action, label, value) {
+            _gaq.push(['_trackEvent', event, action, label, value ])
+        }
+    };
 
 </script>
 
