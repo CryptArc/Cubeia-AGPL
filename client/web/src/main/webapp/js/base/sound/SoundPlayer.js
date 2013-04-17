@@ -20,7 +20,6 @@ Poker.SoundPlayer = Class.extend({
 
     play:function (soundData, selection) {
         var sound = this.soundsRepository.getSound(soundData.id, selection);
-        console.log("Playing sound: ", soundData, selection, sound);
         if (sound) {
             sound.play();
         } else {

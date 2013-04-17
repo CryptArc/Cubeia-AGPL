@@ -48,7 +48,6 @@ Poker.SoundRepository = Class.extend({
     },
 
     getSound:function (soundId, selection) {
-        console.log(this.sounds[soundId][selection], soundId, this.sounds);
         return this.sounds[soundId][selection];
     },
 
