@@ -1148,8 +1148,8 @@
 
     $.ga = {
         _trackEvent:function(event, action, label, value) {
-            if (label == undefined) label = null;
-            if (value == undefined) value = null;
+            if (label == undefined) label = "";
+            if (value == undefined) value = 0;
             _gaq.push(['_trackEvent', event, action, label, value ]);
         }
     };
