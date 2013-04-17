@@ -15,8 +15,10 @@ Poker.TournamentBuyInDialog = Poker.BuyInDialog.extend({
         };
         var tournament = Poker.AppCtx.getTournamentManager().getTournamentById(tournamentId);
         var viewContainer = tournament.tournamentLayoutManager.viewElement;
+        $.ga._trackEvent("tournament_registration", "open_buy_in_dialogue");
         this.render(data, viewContainer ,function(){
             new Poker.TournamentRequestHandler(tournamentId).registerToTournament();
+            $.ga._trackEvent("tournament_registration", "buy_in_to_tournament");
             return true;
         });
     },

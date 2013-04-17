@@ -92,9 +92,9 @@ Poker.TableManager = Class.extend({
         if(status == com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.PENDING) {
            var table = this.getTable(tableId);
            table.getLayoutManager().onBuyInCompleted();
-            $.ga._trackEvent("poker_table", "buy_in_success", Poker.MyPlayer.id);
+            $.ga._trackEvent("poker_table", "buy_in_success");
         } else if(status != com.cubeia.games.poker.io.protocol.BuyInResultCodeEnum.OK){
-            $.ga._trackEvent("poker_table", "buy_in_error", Poker.MyPlayer.id);
+            $.ga._trackEvent("poker_table", "buy_in_error");
             this.handleBuyInError(tableId,status);
         }
     },

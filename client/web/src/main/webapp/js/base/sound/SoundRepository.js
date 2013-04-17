@@ -22,7 +22,7 @@ Poker.SoundRepository = Class.extend({
         var context = null;
 
         if(typeof(Audio)=="undefined") {
-            $.ga._trackEvent("audio_config", "no_Audio", codec);
+            $.ga._trackEvent("audio_config", "no_Audio");
             return;
         }
 
@@ -44,7 +44,7 @@ Poker.SoundRepository = Class.extend({
             this.sounds[Poker.Sounds[sound].id] = soundSources;
         }
         console.log(this.sounds)
-        $.ga._trackEvent("audio_config", audioModel, codec, Poker.MyPlayer.id);
+        $.ga._trackEvent("audio_config", audioModel);
     },
 
     getSound:function (soundId, selection) {

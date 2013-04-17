@@ -39,21 +39,21 @@ Poker.LobbyLayoutManager = Class.extend({
             $(this).addClass("selected");
             new Poker.LobbyRequestHandler().subscribeToCashGames();
 
-            $.ga._trackEvent("user_navigation", "click_cashGameMenu", Poker.MyPlayer.id);
+            $.ga._trackEvent("user_navigation", "click_cashGameMenu");
         });
         $("#sitAndGoMenu").click(function (e) {
             $(".main-menu .selected").removeClass("selected");
             $(this).addClass("selected");
             new Poker.LobbyRequestHandler().subscribeToSitAndGos();
             self.goToList();
-            $.ga._trackEvent("user_navigation", "click_sitAndGoMenu", Poker.MyPlayer.id);
+            $.ga._trackEvent("user_navigation", "click_sitAndGoMenu");
         });
         $("#tournamentMenu").click(function (e) {
             $(".main-menu .selected").removeClass("selected");
             $(this).addClass("selected");
             new Poker.LobbyRequestHandler().subscribeToTournaments();
             self.goToList();
-            $.ga._trackEvent("user_navigation", "click_tournamentMenu", Poker.MyPlayer.id);
+            $.ga._trackEvent("user_navigation", "click_tournamentMenu");
         });
 
         $(".show-filters").touchSafeClick(function () {

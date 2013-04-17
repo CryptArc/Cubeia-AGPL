@@ -7,11 +7,11 @@ Poker.SoundSettingsView = Poker.View.extend({
     activate : function() {
         this._super();
         Poker.Settings.bindSettingToggle($("#soundEnabled"),Poker.Settings.Param.SOUND_ENABLED);
-        $.ga._trackEvent("user_navigation", "open_sfx_page", Poker.MyPlayer.id);
+        $.ga._trackEvent("user_navigation", "open_sfx_page");
     },
     deactivate : function() {
         this._super();
         $("#soundEnabled").unbind();
-        $.ga._trackEvent("user_navigation", "close_sfx_page", Poker.MyPlayer.id);
+        $.ga._trackEvent("user_navigation", "close_sfx_page");
     }
 });

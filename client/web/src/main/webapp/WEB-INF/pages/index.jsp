@@ -1148,9 +1148,27 @@
 
     $.ga = {
         _trackEvent:function(event, action, label, value) {
-            if (label == undefined) label = "";
-            if (value == undefined) value = 0;
+            if (label == undefined) {
+                if (Poker.MyPlayer.id) {
+                    label = ""+Poker.MyPlayer.id;
+                } else {
+                    label = "";
+                }
+            } else {
+                label = ""+label;
+            }
+
+            if (value == undefined) {
+                if (Poker.OperatorConfig.operatorId) {
+                    value = Poker.OperatorConfig.operatorId;
+                } else {
+                    value = 0;
+                }
+            }
+
+        //    console.log('_trackEvent', event, action, label, value );
             _gaq.push(['_trackEvent', event, action, label, value ]);
+
         }
     };
 

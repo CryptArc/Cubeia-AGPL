@@ -57,7 +57,7 @@ Poker.AccountPageManager = Class.extend({
 
     },
     logout : function() {
-        $.ga._trackEvent("user_navigation", "clicked_logout", Poker.MyPlayer.id);
+        $.ga._trackEvent("user_navigation", "clicked_logout");
         Poker.AppCtx.getCommunicationManager().getConnector().logout(true);
         var logout_url = Poker.OperatorConfig.getLogoutUrl();
         if(!logout_url) {
@@ -107,7 +107,7 @@ Poker.AccountPageManager = Class.extend({
         });
     },
     openAccountFrame : function() {
-        $.ga._trackEvent("user_navigation", "open_account_frame", Poker.MyPlayer.id);
+        $.ga._trackEvent("user_navigation", "open_account_frame");
         var iframe = $("#accountIframe");
         var url = Poker.OperatorConfig.getAccountInfoUrl();
         iframe.attr("src",this.addToken(url));
