@@ -17,6 +17,26 @@
 
 package com.cubeia.games.poker.adapter;
 
+import static com.cubeia.firebase.api.game.player.PlayerStatus.DISCONNECTED;
+import static com.cubeia.firebase.api.game.player.PlayerStatus.LEAVING;
+import static com.cubeia.games.poker.common.money.MoneyFormatter.format;
+import static com.cubeia.games.poker.handler.BackendCallHandler.EXT_PROP_KEY_TABLE_ID;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static java.lang.Math.min;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import org.joda.time.DateTime;
+import org.joda.time.Seconds;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cubeia.backend.cashgame.TableId;
 import com.cubeia.backend.cashgame.dto.BalanceUpdate;
 import com.cubeia.backend.cashgame.dto.BatchHandRequest;
@@ -43,6 +63,7 @@ import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.firebase.service.random.api.RandomService;
 import com.cubeia.game.poker.config.api.PokerConfigurationService;
 import com.cubeia.games.poker.adapter.BuyInCalculator.MinAndMaxBuyInResult;
+import com.cubeia.games.poker.adapter.achievements.AchievementAdapter;
 import com.cubeia.games.poker.cache.ActionCache;
 import com.cubeia.games.poker.common.money.Money;
 import com.cubeia.games.poker.common.time.SystemTime;
@@ -119,25 +140,6 @@ import com.cubeia.poker.util.SitoutCalculator;
 import com.cubeia.poker.util.ThreadLocalProfiler;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
-import org.joda.time.DateTime;
-import org.joda.time.Seconds;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import static com.cubeia.firebase.api.game.player.PlayerStatus.DISCONNECTED;
-import static com.cubeia.firebase.api.game.player.PlayerStatus.LEAVING;
-import static com.cubeia.games.poker.common.money.MoneyFormatter.format;
-import static com.cubeia.games.poker.handler.BackendCallHandler.EXT_PROP_KEY_TABLE_ID;
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static java.lang.Math.min;
 
 /**
  * Firebase implementation of the poker logic's server adapter.
@@ -216,6 +218,9 @@ public class FirebaseServerAdapter implements ServerAdapter {
     @Inject
     @VisibleForTesting
     SystemTime dateFetcher;
+    
+    @Inject
+    AchievementAdapter achievements;
 
     /*------------------------------------------------
 
@@ -316,7 +321,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
         sendPublicPacket(new HandStartInfo(handId), -1);
 
-        log.debug("Starting new hand with ID '" + handId + "'. FBPlayers: " + table.getPlayerSet().getPlayerCount() + ", PokerPlayers: " + state.getSeatedPlayers().size());
+        log.trace("Starting new hand with ID '" + handId + "'. FBPlayers: " + table.getPlayerSet().getPlayerCount() + ", PokerPlayers: " + state.getSeatedPlayers().size());
 
         handHistory.notifyNewHand();
     }
@@ -338,7 +343,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
     public void notifyExternalSessionReferenceInfo(int playerId, String externalTableReference, String externalTableSessionReference) {
         ExternalSessionInfoPacket packet = new ExternalSessionInfoPacket(externalTableReference, externalTableSessionReference);
         GameDataAction action = protocolFactory.createGameAction(packet, playerId, table.getId());
-        log.debug("--> Send ExternalSessionInfoPacket[" + packet + "] to player: {}", playerId);
+        log.trace("--> Send ExternalSessionInfoPacket[" + packet + "] to player: {}", playerId);
         sendPrivatePacket(playerId, action);
     }
 
@@ -347,7 +352,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
         DealerButton packet = new DealerButton();
         packet.seat = (byte) seat;
         GameDataAction action = protocolFactory.createGameAction(packet, 0, table.getId());
-        log.debug("--> Send DealerButton[" + packet + "] to everyone");
+        log.trace("--> Send DealerButton[" + packet + "] to everyone");
         sendPublicPacket(action, -1);
     }
 
@@ -388,7 +393,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
     private void createAndSendActionRequest(ActionRequest request, int sequenceNumber) {
         RequestAction packet = actionTransformer.transform(request, sequenceNumber);
         GameDataAction action = protocolFactory.createGameAction(packet, request.getPlayerId(), table.getId());
-        log.debug("--> Send RequestAction[" + packet + "] to everyone");
+        log.trace("--> Send RequestAction[" + packet + "] to everyone");
         sendPublicPacket(action, -1);
     }
 
@@ -399,7 +404,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
     @Override
     public void scheduleTimeout(long millis) {
-        log.debug("Scheduling timeout in " + millis + " millis.");
+        log.trace("Scheduling timeout in " + millis + " millis.");
         GameObjectAction action = new GameObjectAction(table.getId());
         TriggerType type = TriggerType.TIMEOUT;
         Trigger timeout = new Trigger(type);
@@ -413,7 +418,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
     public void notifyActionPerformed(PokerAction pokerAction, PokerPlayer pokerPlayer) {
         PerformAction packet = actionTransformer.transform(pokerAction, pokerPlayer);
         GameDataAction action = protocolFactory.createGameAction(packet, pokerAction.getPlayerId(), table.getId());
-        log.debug("--> Send PerformAction[" + packet + "] to everyone");
+        log.trace("--> Send PerformAction[" + packet + "] to everyone");
         sendPublicPacket(action, -1);
         handHistory.notifyActionPerformed(pokerAction, pokerPlayer);
     }
@@ -437,7 +442,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
     public void notifyCommunityCards(List<Card> cards) {
         DealPublicCards packet = actionTransformer.createPublicCardsPacket(cards);
         GameDataAction action = protocolFactory.createGameAction(packet, 0, table.getId());
-        log.debug("--> Send DealPublicCards[" + packet + "] to everyone");
+        log.trace("--> Send DealPublicCards[" + packet + "] to everyone");
         sendPublicPacket(action, -1);
         handHistory.notifyCommunityCards(cards);
     }
@@ -447,13 +452,13 @@ public class FirebaseServerAdapter implements ServerAdapter {
         // Send the cards to the owner with proper rank & suit information
         DealPrivateCards packet = actionTransformer.createPrivateCardsPacket(playerId, cards, false);
         GameDataAction action = protocolFactory.createGameAction(packet, playerId, table.getId());
-        log.debug("--> Send DealPrivateCards[" + packet + "] to player[" + playerId + "]");
+        log.trace("--> Send DealPrivateCards[" + packet + "] to player[" + playerId + "]");
         sendPrivatePacket(playerId, action);
 
         // Send the cards as hidden to the other players
         DealPrivateCards hiddenCardsPacket = actionTransformer.createPrivateCardsPacket(playerId, cards, true);
         GameDataAction notifyAction = protocolFactory.createGameAction(hiddenCardsPacket, playerId, table.getId());
-        log.debug("--> Send DealPrivateCards(hidden)[" + hiddenCardsPacket + "] to everyone");
+        log.trace("--> Send DealPrivateCards(hidden)[" + hiddenCardsPacket + "] to everyone");
         sendPublicPacket(notifyAction, playerId);
 
         handHistory.notifyPrivateCards(playerId, cards);
@@ -468,7 +473,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
         }
         BestHand bestHandPacket = actionTransformer.createBestHandPacket(playerId, handType, cardsInHand);
         GameDataAction bestHandAction = protocolFactory.createGameAction(bestHandPacket, playerId, table.getId());
-        log.debug("--> Send BestHandPacket[" + bestHandPacket + "] to player[" + playerId + "]");
+        log.trace("--> Send BestHandPacket[" + bestHandPacket + "] to player[" + playerId + "]");
 
         if (publicHand) {
             sendPublicPacket(bestHandAction, -1);
@@ -482,7 +487,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
         // Send the cards as public to the other players
         DealPrivateCards hiddenCardsPacket = actionTransformer.createPrivateCardsPacket(playerId, cards, false);
         GameDataAction action = protocolFactory.createGameAction(hiddenCardsPacket, playerId, table.getId());
-        log.debug("--> Send DealPrivateCards(exposed)[" + hiddenCardsPacket + "] to everyone");
+        log.trace("--> Send DealPrivateCards(exposed)[" + hiddenCardsPacket + "] to everyone");
         sendPublicPacket(action, -1);
         handHistory.notifyPrivateExposedCards(playerId, cards);
     }
@@ -491,7 +496,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
     public void exposePrivateCards(ExposeCardsHolder holder) {
         ExposePrivateCards packet = actionTransformer.createExposeCardsPacket(holder);
         GameDataAction action = protocolFactory.createGameAction(packet, 0, table.getId());
-        log.debug("--> Send ExposePrivateCards[" + packet + "] to everyone");
+        log.trace("--> Send ExposePrivateCards[" + packet + "] to everyone");
         sendPublicPacket(action, -1);
         handHistory.exposePrivateCards(holder);
     }
@@ -507,7 +512,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
                                                                               player.getRequestedBuyInAmount());
 
                 if (amountToBuyIn > 0) {
-                    log.debug("sending reserve request to backend: player id = {}, amount = {}, amount requested by player = {}",
+                    log.trace("sending reserve request to backend: player id = {}, amount = {}, amount requested by player = {}",
                             new Object[]{player.getId(), amountToBuyIn, player.getRequestedBuyInAmount()});
 
                     // ReserveCallback callback = backend.getCallbackFactory().createReserveCallback(table);
@@ -517,7 +522,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
                     backend.reserveMoneyForTable(reserveRequest, new TableId(table.getMetaData().getGameId(), table.getId()));
                     player.buyInRequestActive();
                 } else {
-                    log.debug("Won't reserve money, max reached: player id = {}, amount wanted = {}", player.getId(), player.getRequestedBuyInAmount());
+                    log.trace("Won't reserve money, max reached: player id = {}, amount wanted = {}", player.getId(), player.getRequestedBuyInAmount());
                     player.clearRequestedBuyInAmountAndRequest();
                 }
             }
@@ -555,7 +560,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
                 resp.resultCode = buyInRange.isBuyInPossible() ? BuyInInfoResultCode.OK : BuyInInfoResultCode.MAX_LIMIT_REACHED;
             }
 
-            log.debug("Sending buyin information to player[" + playerId + "]: " + resp);
+            log.trace("Sending buyin information to player[" + playerId + "]: " + resp);
 
             GameDataAction gda = new GameDataAction(playerId, table.getId());
             StyxSerializer styx = new StyxSerializer(null);
@@ -576,14 +581,16 @@ public class FirebaseServerAdapter implements ServerAdapter {
             performBackEndTransactions(handResult, handEndStatus, tournamentTable);
             updateHandEndStatistics();
         } else {
-            log.info("The hand was cancelled on table: " + table.getId() + " - " + table.getMetaData().getName());
+            log.debug("The hand was cancelled on table: " + table.getId() + " - " + table.getMetaData().getName());
             cleanupPlayers(new SitoutCalculator());
             HandCanceled handCanceledPacket = new HandCanceled();
             GameDataAction action = protocolFactory.createGameAction(handCanceledPacket, -1, table.getId());
-            log.debug("--> Send HandCanceled[" + handCanceledPacket + "] to everyone");
+            log.trace("--> Send HandCanceled[" + handCanceledPacket + "] to everyone");
             sendPublicPacket(action, -1);
         }
 
+        achievements.notifyHandEnd(handResult, handEndStatus, tournamentTable);
+        
         clearActionCache();
         ThreadLocalProfiler.add("FirebaseServerAdapter.notifyHandEnd.stop");
 
@@ -596,7 +603,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
     }
 
     private void closeTable() {
-        log.debug("Closing table " + table.getId());
+        log.trace("Closing table " + table.getId());
         GameObjectAction action = new GameObjectAction(table.getId());
         action.setAttachment(new CloseTableRequest(true));
         table.getScheduler().scheduleAction(action, 200);
@@ -623,13 +630,13 @@ public class FirebaseServerAdapter implements ServerAdapter {
         PotTransfers potTransfers = new PotTransfers(false, transfers, null);
 
         for (PotTransition pt : handResult.getPotTransitions()) {
-            log.debug("--> sending winner pot transfer to client: {}", pt);
+            log.trace("--> sending winner pot transfer to client: {}", pt);
             transfers.add(actionTransformer.createPotTransferPacket(pt));
         }
         HandEnd packet = actionTransformer.createHandEndPacket(hands, potTransfers, handResult.getPlayerRevealOrder());
         GameDataAction action = protocolFactory.createGameAction(packet, 0, table.getId());
-        log.debug("--> Send HandEnd[" + packet + "] to everyone");
-        log.debug("--> handResult.getPlayerRevealOrder: {}", handResult.getPlayerRevealOrder());
+        log.trace("--> Send HandEnd[" + packet + "] to everyone");
+        log.trace("--> handResult.getPlayerRevealOrder: {}", handResult.getPlayerRevealOrder());
         sendPublicPacket(action, -1);
     }
 
@@ -716,7 +723,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
         // Then send private packet to the player.
         GameDataAction privateAction = actionTransformer.createPlayerBalanceAction(
                 (int) player.getBalance(), (int) player.getPendingBalanceSum(), (int) playersTotalContributionToPot, player.getId(), table.getId());
-        log.debug("Send private PBA: " + privateAction);
+        log.trace("Send private PBA: " + privateAction);
         sendPrivatePacket(player.getId(), privateAction);
     }
 
@@ -758,7 +765,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
         // notify return uncalled chips
         for (PotTransition potTransition : potTransitions) {
             if (potTransition.isFromBetStackToPlayer()) {
-                log.debug("--> sending takeBackUncalledChips to client: {}", potTransition);
+                log.trace("--> sending takeBackUncalledChips to client: {}", potTransition);
                 notifyTakeBackUncalledBet(potTransition.getPlayer().getId(), (int) potTransition.getAmount());
             }
         }
@@ -769,7 +776,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
         for (PotTransition potTransition : potTransitions) {
             if (!potTransition.isFromBetStackToPlayer()) {
-                log.debug("--> sending pot update to client: {}", potTransition);
+                log.trace("--> sending pot update to client: {}", potTransition);
                 transfers.add(actionTransformer.createPotTransferPacket(potTransition));
             }
         }
@@ -785,7 +792,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
     @Override
     public void notifyRakeInfo(RakeInfoContainer rakeInfoContainer) {
-        log.debug("--> sending rake info to client: {}", rakeInfoContainer);
+        log.trace("--> sending rake info to client: {}", rakeInfoContainer);
         RakeInfo rakeInfo = new RakeInfo((int) rakeInfoContainer.getTotalPot(), (int) rakeInfoContainer.getTotalRake());
         GameDataAction action = protocolFactory.createGameAction(rakeInfo, 0, table.getId());
         sendPublicPacket(action, -1);
@@ -793,7 +800,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
     @Override
     public void notifyTakeBackUncalledBet(int playerId, int amount) {
-        log.debug("--> Taking back uncalled bet: {}", playerId, amount);
+        log.trace("--> Taking back uncalled bet: {}", playerId, amount);
         ProtocolObject takeBackUncalledBet = new TakeBackUncalledBet(playerId, amount);
         GameDataAction action = protocolFactory.createGameAction(takeBackUncalledBet, playerId, table.getId());
         sendPublicPacket(action, -1);
@@ -801,7 +808,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
     @Override
     public void notifyHandStartPlayerStatus(int playerId, PokerPlayerStatus status, boolean away, boolean sitOutNextHand) {
-        log.debug("Notify hand start player status: " + playerId + " -> " + status);
+        log.trace("Notify hand start player status: " + playerId + " -> " + status);
         PlayerHandStartStatus packet = new PlayerHandStartStatus();
         packet.player = playerId;
         switch (status) {
@@ -821,7 +828,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
     @Override
     public void notifyPlayerStatusChanged(int playerId, PokerPlayerStatus status, boolean inCurrentHand,
                                           boolean away, boolean sitOutNextHand) {
-        log.debug("Notify player status changed: " + playerId + " -> " + status);
+        log.trace("Notify player status changed: " + playerId + " -> " + status);
         PlayerPokerStatus packet = new PlayerPokerStatus();
         packet.player = playerId;
         switch (status) {
@@ -962,11 +969,11 @@ public class FirebaseServerAdapter implements ServerAdapter {
         packet.playerId = playerId;
         packet.timebank = (int) timeout;
 
-        log.debug("Notify disconnect: {}", packet);
+        log.trace("Notify disconnect: {}", packet);
         GameDataAction action = protocolFactory.createGameAction(packet, playerId, table.getId());
         sendPublicPacket(action, -1);
 
-        log.debug("Schedule new timeout for player in {} ms", latencyTimeout);
+        log.trace("Schedule new timeout for player in {} ms", latencyTimeout);
         schedulePlayerTimeout(latencyTimeout, playerId, getFirebaseState().getCurrentRequestSequence());
     }
 

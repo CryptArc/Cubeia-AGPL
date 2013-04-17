@@ -76,6 +76,12 @@
             <artifactId>post-login-service</artifactId>
             <type>firebase-sar</type>
         </dependency>
+        
+        <dependency>
+			<groupId>com.cubeia.games.poker</groupId>
+			<artifactId>achievement-service</artifactId>
+			<type>firebase-sar</type>
+		</dependency>
 
     </dependencies>
 
