@@ -1,0 +1,9 @@
+MIGRATIONS:
+----------
+
+Date            Change                                                                  Recommended actions
+-----------------------------------------------------------------------------------------------------------------
+2013-04-05		Changes to operator table												Delete the following columns in operator_service schema, table Operator: email, changeDayIntervalInMinutes, currencyId, notes, timeZone
+2013-03-12      New protocol, rebuy related.                                            Clear your browser cache.
+2013-03-17      Tournament settings in back office to more logical denominations.       Check your tournament configs.
+2013-03-18      Protocol change (payout int -> string).                                 Clear your browser cache.
