@@ -5,6 +5,11 @@ describe("Poker.CheckboxAction Test", function(){
     /**
      * @type {Poker.CheckboxAction}
      */
+
+    $.ga = {
+        _trackEvent:function() {}
+    };
+
     var checkbox = null;
     beforeEach(function() {
 
