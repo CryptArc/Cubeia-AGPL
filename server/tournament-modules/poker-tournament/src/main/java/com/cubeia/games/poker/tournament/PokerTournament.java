@@ -180,7 +180,10 @@ public class PokerTournament implements TableNotifier, Serializable {
 
     public void handleRebuyTimeout(int tableId) {
         log.debug("Received rebuy timeout at table " + tableId);
-        if (rebuySupport.tableIsWaitingForRebuys(tableId)) {
+        /*if (isTournamentFinished()) {
+        	rebuySupport.removeRebuyRequestsForTable(tableId);
+        	log.debug("Received rebuy timeout for finished tournament; table: " + tableId);
+        } else*/ if (rebuySupport.tableIsWaitingForRebuys(tableId)) {
             Set<Integer> playersOut = newHashSet();
             for (Integer playerId : rebuySupport.getRebuyRequestsForTable(tableId)) {
                 long playerBalance = pokerState.getPlayerBalance(playerId);

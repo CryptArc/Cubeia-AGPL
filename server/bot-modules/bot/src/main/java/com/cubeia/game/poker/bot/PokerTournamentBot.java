@@ -29,6 +29,18 @@ public class PokerTournamentBot extends MttAI {
 	public void setHashPasswd(boolean hashPasswd) {
 		this.hashPasswd = hashPasswd;
 	}
+	
+	public void setOperatorId(int operatorId) {
+		this.operatorId = operatorId;
+	}
+	
+	public boolean isHashPasswd() {
+		return hashPasswd;
+	}
+	
+	public int getOperatorId() {
+		return operatorId;
+	}
 
 	@Override
 	public synchronized void handleGamePacket(GameTransportPacket packet) {

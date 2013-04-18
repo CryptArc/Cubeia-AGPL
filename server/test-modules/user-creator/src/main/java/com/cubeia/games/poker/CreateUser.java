@@ -83,6 +83,9 @@ public class CreateUser {
 	@Argument(alias="b", description="bank account for initial balance, defaults to -3000", required=false)
 	private Long bankaccount = -3000L;
 	
+	@Argument(alias="o", description="operator ID of the users, defaults to 0", required=false)
+	private Long operatorId = 0L;
+	
 	@Argument(alias="h", description="hash bot password with md5, defaults to false", required=false)
 	private Boolean hashPassword = false;
 	
