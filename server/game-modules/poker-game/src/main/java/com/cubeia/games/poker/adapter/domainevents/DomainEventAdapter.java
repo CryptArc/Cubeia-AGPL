@@ -5,7 +5,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.cubeia.bonus.firebase.api.AchievementsService;
 import com.cubeia.events.event.GameEvent;
 import com.cubeia.events.event.GameEventType;
 import com.cubeia.events.event.poker.PokerAttributes;
@@ -13,6 +12,7 @@ import com.cubeia.firebase.api.service.clientregistry.PublicClientRegistryServic
 import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.games.poker.common.money.Money;
 import com.cubeia.poker.adapter.HandEndStatus;
+import com.cubeia.poker.domainevents.api.DomainEventsService;
 import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.result.HandResult;
@@ -23,7 +23,7 @@ public class DomainEventAdapter {
 	Logger log = LoggerFactory.getLogger(getClass());
 
 	/** Service for sending and listening to bonus/achievement events to players */
-	@Service AchievementsService service;
+	@Service DomainEventsService service;
 	
 	@Service PublicClientRegistryService clientRegistry;
 	

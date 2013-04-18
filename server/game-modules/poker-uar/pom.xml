@@ -79,7 +79,7 @@
         
         <dependency>
 			<groupId>com.cubeia.games.poker</groupId>
-			<artifactId>achievement-service</artifactId>
+			<artifactId>domain-event-service</artifactId>
 			<type>firebase-sar</type>
 		</dependency>
 

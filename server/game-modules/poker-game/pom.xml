@@ -1,7 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.cubeia.games</groupId>
     <artifactId>poker-game</artifactId>
     <name>Poker Game</name>
     <packaging>firebase-gar</packaging>
@@ -142,7 +141,7 @@
         
         <dependency>
             <groupId>com.cubeia.games.poker</groupId>
-			<artifactId>achievement-service</artifactId>
+			<artifactId>domain-event-service</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>

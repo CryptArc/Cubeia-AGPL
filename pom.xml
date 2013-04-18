@@ -175,13 +175,13 @@
             
              <dependency>
                 <groupId>com.cubeia.games.poker</groupId>
-				<artifactId>achievement-service</artifactId>
+				<artifactId>domain-event-service</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-               <groupId>com.cubeia.games.poker</groupId>
-				<artifactId>achievement-service</artifactId>
+               	<groupId>com.cubeia.games.poker</groupId>
+				<artifactId>domain-event-service</artifactId>
                 <version>${project.version}</version>
                 <type>firebase-sar</type>
             </dependency>
