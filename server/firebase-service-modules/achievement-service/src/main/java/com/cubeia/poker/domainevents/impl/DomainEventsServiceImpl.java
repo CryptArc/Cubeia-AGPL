@@ -1,12 +1,10 @@
-package com.cubeia.bonus.firebase.impl;
+package com.cubeia.poker.domainevents.impl;
 
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 
-import com.cubeia.bonus.firebase.api.AchievementsService;
-import com.cubeia.bonus.firebase.api.BonusEventWrapper;
 import com.cubeia.events.client.EventClient;
 import com.cubeia.events.client.EventListener;
 import com.cubeia.events.event.GameEvent;
@@ -17,10 +15,12 @@ import com.cubeia.firebase.api.service.Service;
 import com.cubeia.firebase.api.service.ServiceContext;
 import com.cubeia.firebase.api.service.clientregistry.PublicClientRegistryService;
 import com.cubeia.firebase.api.service.router.RouterService;
+import com.cubeia.poker.domainevents.api.BonusEventWrapper;
+import com.cubeia.poker.domainevents.api.DomainEventsService;
 import com.google.inject.Singleton;
 
 @Singleton
-public class AchievementServiceImpl implements Service, AchievementsService, EventListener {
+public class DomainEventsServiceImpl implements Service, DomainEventsService, EventListener {
 	
 	Logger log = Logger.getLogger(getClass());
 	

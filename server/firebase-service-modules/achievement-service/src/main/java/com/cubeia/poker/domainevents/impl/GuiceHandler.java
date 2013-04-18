@@ -1,9 +1,9 @@
-package com.cubeia.bonus.firebase.impl;
+package com.cubeia.poker.domainevents.impl;
 
-import com.cubeia.bonus.firebase.api.AchievementsService;
 import com.cubeia.firebase.guice.service.Configuration;
 import com.cubeia.firebase.guice.service.ContractsConfig;
 import com.cubeia.firebase.guice.service.GuiceServiceHandler;
+import com.cubeia.poker.domainevents.api.DomainEventsService;
 
 public class GuiceHandler extends GuiceServiceHandler {
 
@@ -13,7 +13,7 @@ public class GuiceHandler extends GuiceServiceHandler {
 
             @Override
             public ContractsConfig getServiceContract() {
-                return new ContractsConfig(AchievementServiceImpl.class, AchievementsService.class);
+                return new ContractsConfig(DomainEventsServiceImpl.class, DomainEventsService.class);
             }
         };
     }

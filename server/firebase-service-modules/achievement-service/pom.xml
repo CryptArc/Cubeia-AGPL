@@ -3,9 +3,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.cubeia.games.poker</groupId>
-	<artifactId>achievement-service</artifactId>
+	<artifactId>domain-event-service</artifactId>
 	<packaging>firebase-sar</packaging>
-	<name>achievement-service (service)</name>
+	<name>domain-event-service (service)</name>
 
     <parent>
         <groupId>com.cubeia.games</groupId>

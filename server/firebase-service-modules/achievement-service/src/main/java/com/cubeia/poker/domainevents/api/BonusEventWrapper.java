@@ -1,4 +1,4 @@
-package com.cubeia.bonus.firebase.api;
+package com.cubeia.poker.domainevents.api;
 
 import java.io.Serializable;
 
