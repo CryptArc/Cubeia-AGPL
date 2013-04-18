@@ -1,4 +1,4 @@
-package com.cubeia.games.poker.adapter.achievements;
+package com.cubeia.games.poker.adapter.domainevents;
 
 import java.util.Map;
 
@@ -9,6 +9,7 @@ import com.cubeia.bonus.firebase.api.AchievementsService;
 import com.cubeia.events.event.GameEvent;
 import com.cubeia.events.event.GameEventType;
 import com.cubeia.events.event.poker.PokerAttributes;
+import com.cubeia.firebase.api.service.clientregistry.PublicClientRegistryService;
 import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.games.poker.common.money.Money;
 import com.cubeia.poker.adapter.HandEndStatus;
@@ -17,12 +18,14 @@ import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
 
-public class AchievementAdapter {
+public class DomainEventAdapter {
 	
 	Logger log = LoggerFactory.getLogger(getClass());
 
 	/** Service for sending and listening to bonus/achievement events to players */
 	@Service AchievementsService service;
+	
+	@Service PublicClientRegistryService clientRegistry;
 	
 	/**
 	 * Report hand end result to the achievment service
@@ -38,8 +41,11 @@ public class AchievementAdapter {
 	}
 	
 	
-	public void notifyEndPlayerSession(int playerId, int operatorId, String screenname, Money accountBalance) {
-		log.debug("Event Player Session ended. Player["+playerId+":"+screenname+"], Balance["+accountBalance+"]");
+	public void notifyEndPlayerSession(int playerId, Money accountBalance) {
+		log.debug("Event Player Session ended. Player["+playerId+"], Balance["+accountBalance+"]");
+		
+		String screenname = clientRegistry.getScreenname(playerId);
+		int operatorId = clientRegistry.getOperatorId(playerId);
 		
 		GameEvent event = new GameEvent();
 		event.game = PokerAttributes.poker.name();

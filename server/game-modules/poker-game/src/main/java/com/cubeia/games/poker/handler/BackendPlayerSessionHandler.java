@@ -31,10 +31,9 @@ import com.cubeia.backend.cashgame.exceptions.CloseSessionFailedException;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
 import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.firebase.api.game.table.Table;
-import com.cubeia.firebase.api.service.clientregistry.PublicClientRegistryService;
 import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.game.poker.config.api.PokerConfigurationService;
-import com.cubeia.games.poker.adapter.achievements.AchievementAdapter;
+import com.cubeia.games.poker.adapter.domainevents.DomainEventAdapter;
 import com.cubeia.games.poker.common.money.Money;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.poker.PokerState;
@@ -56,10 +55,8 @@ public class BackendPlayerSessionHandler {
     @Inject
     private TableCloseHandler closeHandler;
     
-    @Inject AchievementAdapter achievementAdapter;
+    @Inject DomainEventAdapter achievementAdapter;
 
-    @Service PublicClientRegistryService clientRegistry;
-    
     public AllowJoinResponse allowJoinTable(int playerId) {
         return cashGameBackend.allowJoinTable(playerId); 
     }
@@ -88,10 +85,8 @@ public class BackendPlayerSessionHandler {
         }
         
 		try {
-			String screenname = clientRegistry.getScreenname(playerId);
-			int operatorId = clientRegistry.getOperatorId(playerId);
 			Money accountBalance = cashGameBackend.getAccountBalance(playerId, state.getSettings().getCurrency());
-	        achievementAdapter.notifyEndPlayerSession(playerId, operatorId, screenname, accountBalance);
+	        achievementAdapter.notifyEndPlayerSession(playerId, accountBalance);
 		} catch (GetBalanceFailedException e) {
 			log.error("Failed to get player account balance", e);
 		}

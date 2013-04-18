@@ -63,7 +63,7 @@ import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.firebase.service.random.api.RandomService;
 import com.cubeia.game.poker.config.api.PokerConfigurationService;
 import com.cubeia.games.poker.adapter.BuyInCalculator.MinAndMaxBuyInResult;
-import com.cubeia.games.poker.adapter.achievements.AchievementAdapter;
+import com.cubeia.games.poker.adapter.domainevents.DomainEventAdapter;
 import com.cubeia.games.poker.cache.ActionCache;
 import com.cubeia.games.poker.common.money.Money;
 import com.cubeia.games.poker.common.time.SystemTime;
@@ -220,7 +220,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
     SystemTime dateFetcher;
     
     @Inject
-    AchievementAdapter achievements;
+    DomainEventAdapter achievements;
 
     /*------------------------------------------------
 

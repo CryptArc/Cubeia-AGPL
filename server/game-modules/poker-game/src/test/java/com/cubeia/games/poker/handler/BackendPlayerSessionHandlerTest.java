@@ -17,39 +17,36 @@
 
 package com.cubeia.games.poker.handler;
 
-import com.cubeia.backend.cashgame.PlayerSessionId;
-import com.cubeia.backend.cashgame.TableId;
-import com.cubeia.backend.cashgame.dto.CloseSessionRequest;
-import com.cubeia.backend.cashgame.dto.OpenTableSessionRequest;
-import com.cubeia.backend.cashgame.exceptions.CloseSessionFailedException;
-import com.cubeia.backend.firebase.CashGamesBackendService;
-import com.cubeia.firebase.api.game.player.GenericPlayer;
-import com.cubeia.firebase.api.game.table.Table;
-import com.cubeia.firebase.api.game.table.TablePlayerSet;
-import com.cubeia.firebase.api.service.clientregistry.PublicClientRegistryService;
-import com.cubeia.games.poker.PokerConfigServiceMock;
-import com.cubeia.games.poker.adapter.achievements.AchievementAdapter;
-import com.cubeia.games.poker.model.PokerPlayerImpl;
-import com.cubeia.poker.PokerState;
-import com.cubeia.poker.player.PokerPlayer;
-import com.cubeia.poker.settings.PokerSettings;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.Map;
-
 import static com.cubeia.games.poker.handler.BackendCallHandler.EXT_PROP_KEY_TABLE_ID;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.Map;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import com.cubeia.backend.cashgame.PlayerSessionId;
+import com.cubeia.backend.cashgame.TableId;
+import com.cubeia.backend.cashgame.dto.CloseSessionRequest;
+import com.cubeia.backend.cashgame.dto.OpenTableSessionRequest;
+import com.cubeia.backend.cashgame.exceptions.CloseSessionFailedException;
+import com.cubeia.backend.firebase.CashGamesBackendService;
+import com.cubeia.firebase.api.game.table.Table;
+import com.cubeia.games.poker.PokerConfigServiceMock;
+import com.cubeia.games.poker.adapter.domainevents.DomainEventAdapter;
+import com.cubeia.games.poker.model.PokerPlayerImpl;
+import com.cubeia.poker.PokerState;
+import com.cubeia.poker.player.PokerPlayer;
+import com.cubeia.poker.settings.PokerSettings;
 
 public class BackendPlayerSessionHandlerTest {
 
@@ -65,9 +62,7 @@ public class BackendPlayerSessionHandlerTest {
     @Mock
     private PokerSettings settings;
     
-    @Mock AchievementAdapter achievementAdapter;
-    
-    @Mock PublicClientRegistryService clientRegistry;
+    @Mock DomainEventAdapter achievementAdapter;
     
     private BackendPlayerSessionHandler backendPlayerSessionHandler;
 
@@ -78,12 +73,9 @@ public class BackendPlayerSessionHandlerTest {
         backendPlayerSessionHandler.cashGameBackend = cashGamesBackendContract;
         backendPlayerSessionHandler.configService = new PokerConfigServiceMock();
         backendPlayerSessionHandler.achievementAdapter = achievementAdapter;
-        backendPlayerSessionHandler.clientRegistry = clientRegistry;
         
         when(state.getSettings()).thenReturn(settings);
         when(settings.getCurrency()).thenReturn("EUR");
-        
-        when(clientRegistry.getScreenname(Mockito.anyInt())).thenReturn("testScreenname");
     }
 
     @Test
