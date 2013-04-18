@@ -17,23 +17,22 @@
 
 package com.cubeia.games.poker.tournament.payouts;
 
-import com.cubeia.games.poker.tournament.configuration.payouts.IntRange;
-import com.cubeia.games.poker.tournament.configuration.payouts.Payout;
-import com.cubeia.games.poker.tournament.configuration.payouts.Payouts;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import static com.google.common.collect.ImmutableMap.of;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import com.cubeia.games.poker.tournament.configuration.payouts.IntRange;
+import com.cubeia.games.poker.tournament.configuration.payouts.Payout;
+import com.cubeia.games.poker.tournament.configuration.payouts.Payouts;
+import com.google.common.collect.ImmutableSet;
 
 public class PayoutHandlerTest {
 

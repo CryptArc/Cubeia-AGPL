@@ -48,6 +48,7 @@ import com.cubeia.games.poker.tournament.rebuy.RebuySupport;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.util.PacketSender;
 import com.cubeia.network.users.firebase.api.UserServiceContract;
+import com.cubeia.poker.domainevents.api.DomainEventsService;
 import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
 import org.apache.log4j.Logger;
@@ -105,6 +106,7 @@ public class RebuyTournamentTests {
     private PlayerRegistry registry;
     @Mock(answer = RETURNS_DEEP_STUBS)
     private UserServiceContract userService;
+    @Mock DomainEventsService domainEventService;
     @Captor
     private ArgumentCaptor<MttObjectAction> actionCaptor;
     private RebuySupport rebuySupport;
@@ -289,7 +291,7 @@ public class RebuyTournamentTests {
         pokerState.setTournamentSessionId(new TournamentSessionId("4"));
         tournament = new PokerTournament(pokerState);
         tournament.injectTransientDependencies(instance, support, state, historyService, backend, new DefaultSystemTime(), shutdownService,
-                tournamentPlayerRegistry, sender, userService);
+                tournamentPlayerRegistry, sender, userService, domainEventService);
         return lifeCycle;
     }
 

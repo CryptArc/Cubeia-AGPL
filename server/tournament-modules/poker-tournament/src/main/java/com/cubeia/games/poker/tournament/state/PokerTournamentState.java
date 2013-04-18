@@ -17,6 +17,20 @@
 
 package com.cubeia.games.poker.tournament.state;
 
+import static com.google.common.collect.Maps.newHashMap;
+import static java.lang.Math.max;
+import static org.joda.time.Seconds.secondsBetween;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
+
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.TournamentSessionId;
 import com.cubeia.firebase.api.mtt.model.MttPlayer;
@@ -35,20 +49,6 @@ import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.tournament.history.api.HistoricPlayer;
-import org.apache.log4j.Logger;
-import org.joda.time.DateTime;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import static com.google.common.collect.Maps.newHashMap;
-import static java.lang.Math.max;
-import static org.joda.time.Seconds.secondsBetween;
 
 public class PokerTournamentState implements Serializable {
 

@@ -30,6 +30,11 @@
 			<artifactId>events-client</artifactId>
 		</dependency>
 		
+		<dependency>
+            <groupId>com.cubeia.games</groupId>
+            <artifactId>backend-service-contract</artifactId>
+        </dependency>
+		
 	</dependencies>
 
 

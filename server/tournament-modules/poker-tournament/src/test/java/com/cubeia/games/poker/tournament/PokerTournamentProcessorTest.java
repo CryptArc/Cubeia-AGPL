@@ -79,6 +79,7 @@ import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 import com.cubeia.games.poker.tournament.util.PacketSender;
 import com.cubeia.games.poker.tournament.util.PacketSenderFactory;
 import com.cubeia.network.users.firebase.api.UserServiceContract;
+import com.cubeia.poker.domainevents.api.DomainEventsService;
 import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
 
@@ -146,6 +147,8 @@ public class PokerTournamentProcessorTest extends TestCase {
     
     @Mock
     private UserServiceContract userService;
+    
+    @Mock DomainEventsService domainEventService;
 
     private SystemTime dateFetcher = new DefaultSystemTime();
 
@@ -172,6 +175,7 @@ public class PokerTournamentProcessorTest extends TestCase {
         tournamentProcessor.setSenderFactory(senderFactory);
         tournamentProcessor.setTournamentRegistryService(tournamentPlayerRegistry);
         tournamentProcessor.setUserService(userService);
+        tournamentProcessor.domainEventService = domainEventService;
         
         state = new MTTStateSupport(1, 1);
         when(configuration.getBlindsStructure()).thenReturn(BlindsStructureFactory.createDefaultBlindsStructure());

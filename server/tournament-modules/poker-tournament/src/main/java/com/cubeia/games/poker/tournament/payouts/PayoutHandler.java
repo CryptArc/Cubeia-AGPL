@@ -17,8 +17,8 @@
 
 package com.cubeia.games.poker.tournament.payouts;
 
-import com.cubeia.games.poker.tournament.configuration.payouts.Payouts;
-import org.apache.log4j.Logger;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newTreeMap;
 
 import java.io.Serializable;
 import java.util.List;
@@ -26,12 +26,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.newTreeMap;
+import org.apache.log4j.Logger;
+
+import com.cubeia.games.poker.tournament.configuration.payouts.Payouts;
 
 public class PayoutHandler implements Serializable {
 
-    private static final Logger log = Logger.getLogger(PayoutHandler.class);
+	private static final long serialVersionUID = 1L;
+
+	private static final Logger log = Logger.getLogger(PayoutHandler.class);
 
     private Payouts payouts;
 

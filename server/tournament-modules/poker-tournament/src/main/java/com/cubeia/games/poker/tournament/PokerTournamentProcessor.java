@@ -17,6 +17,9 @@
 
 package com.cubeia.games.poker.tournament;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.MDC;
+
 import com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse;
 import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
 import com.cubeia.backend.cashgame.dto.ReserveFailedResponse;
@@ -58,12 +61,11 @@ import com.cubeia.games.poker.tournament.messages.RebuyTimeout;
 import com.cubeia.games.poker.tournament.util.PacketSender;
 import com.cubeia.games.poker.tournament.util.PacketSenderFactory;
 import com.cubeia.network.users.firebase.api.UserServiceContract;
+import com.cubeia.poker.domainevents.api.DomainEventsService;
 import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
-import org.apache.log4j.Logger;
-import org.apache.log4j.MDC;
 
 /**
  * The responsibility of this class is to un-marshal incoming messages and pass them on to the PokerTournament or TournamentLobby.
@@ -104,6 +106,8 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
 
     @Service(proxy = true)
     private TournamentPlayerRegistry tournamentPlayerRegistry;
+
+    @Service DomainEventsService domainEventService;
 
     @Override
     public PlayerInterceptor getPlayerInterceptor(MTTStateSupport state) {
@@ -265,8 +269,9 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
         initializeServices(instance);
 
         PacketSender sender = senderFactory.create(instance.getMttNotifier(), instance);
+        log.debug(" ############################################## Inject Domain Event service: "+domainEventService);
         tournament.injectTransientDependencies(instance, support, util.getStateSupport(instance), historyService,
-                backend, dateFetcher, shutdownService, tournamentPlayerRegistry, sender, userService);
+                backend, dateFetcher, shutdownService, tournamentPlayerRegistry, sender, userService, domainEventService);
     }
 
     private void initializeServices(MttInstance instance) {
@@ -281,6 +286,9 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
         }
         if (tournamentPlayerRegistry == null) {
             tournamentPlayerRegistry = instance.getServiceRegistry().getServiceInstance(TournamentPlayerRegistry.class);
+        }
+        if (domainEventService == null) {
+        	domainEventService = instance.getServiceRegistry().getServiceInstance(DomainEventsService.class);
         }
     }
 

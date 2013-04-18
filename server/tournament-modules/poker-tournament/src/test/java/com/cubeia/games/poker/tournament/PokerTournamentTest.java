@@ -17,6 +17,46 @@
 
 package com.cubeia.games.poker.tournament;
 
+import static com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse.ErrorCode.UNSPECIFIED_ERROR;
+import static com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructureFactory.createDefaultBlindsStructure;
+import static com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructureParserTest.createTestStructure;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.ANNOUNCED;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.CANCELLED;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.ON_BREAK;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.PREPARING_BREAK;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.RUNNING;
+import static com.google.common.collect.ImmutableSet.of;
+import static junit.framework.Assert.assertEquals;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Answers.RETURNS_DEEP_STUBS;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Collections;
+
+import junit.framework.Assert;
+
+import org.joda.time.DateTime;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.TournamentSessionId;
 import com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse;
@@ -45,7 +85,6 @@ import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
 import com.cubeia.games.poker.tournament.configuration.blinds.Level;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.ScheduledTournamentLifeCycle;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.TournamentLifeCycle;
-import com.cubeia.games.poker.tournament.lobby.TournamentLobby;
 import com.cubeia.games.poker.tournament.messages.PokerTournamentRoundReport;
 import com.cubeia.games.poker.tournament.rebuy.RebuySupport;
 import com.cubeia.games.poker.tournament.state.PendingBackendRequests;
@@ -53,50 +92,9 @@ import com.cubeia.games.poker.tournament.state.PokerTournamentState;
 import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 import com.cubeia.games.poker.tournament.util.PacketSender;
 import com.cubeia.network.users.firebase.api.UserServiceContract;
+import com.cubeia.poker.domainevents.api.DomainEventsService;
 import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
-import com.google.common.collect.ImmutableMap;
-import org.joda.time.DateTime;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Answers;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InOrder;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-
-import junit.framework.Assert;
-
-import static com.cubeia.backend.cashgame.dto.OpenSessionFailedResponse.ErrorCode.UNSPECIFIED_ERROR;
-import static com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructureFactory.createDefaultBlindsStructure;
-import static com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructureParserTest.createTestStructure;
-import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.ANNOUNCED;
-import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.CANCELLED;
-import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.ON_BREAK;
-import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.PREPARING_BREAK;
-import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.RUNNING;
-import static com.google.common.collect.ImmutableSet.of;
-import static junit.framework.Assert.assertEquals;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Answers.RETURNS_DEEP_STUBS;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 public class PokerTournamentTest {
 
@@ -144,8 +142,8 @@ public class PokerTournamentTest {
     @Mock(answer = RETURNS_DEEP_STUBS)
     private PokerTournamentState mockPokerState;
 
-    @Mock
-    private TournamentLobby tournamentLobby;
+//    @Mock
+//    private TournamentLobby tournamentLobby;
     
     @Mock
     private UserServiceContract userService;
@@ -161,6 +159,8 @@ public class PokerTournamentTest {
 
     @Mock
     private PendingBackendRequests pendingRequests;
+    
+    @Mock DomainEventsService domainEventService;
 
     private PokerTournament tournament;
 
@@ -554,7 +554,7 @@ public class PokerTournamentTest {
         lifeCycle = new ScheduledTournamentLifeCycle(startTime, openRegistrationTime);
         pokerState.setLifecycle(lifeCycle);
         tournament = new PokerTournament(pokerState);
-        tournament.injectTransientDependencies(instance, support, state, historyService, backend, new DefaultSystemTime(), shutdownService, tournamentPlayerRegistry, sender, userService);
+        tournament.injectTransientDependencies(instance, support, state, historyService, backend, new DefaultSystemTime(), shutdownService, tournamentPlayerRegistry, sender, userService, domainEventService);
         return lifeCycle;
     }
 
@@ -564,21 +564,21 @@ public class PokerTournamentTest {
         lifeCycle = new ScheduledTournamentLifeCycle(startTime, openRegistrationTime);
         pokerState.setLifecycle(lifeCycle);
         tournament = new PokerTournament(pokerState);
-        tournament.injectTransientDependencies(instance, support, state, historyService, backend, dateFetcher, shutdownService, tournamentPlayerRegistry, sender, userService);
+        tournament.injectTransientDependencies(instance, support, state, historyService, backend, dateFetcher, shutdownService, tournamentPlayerRegistry, sender, userService, domainEventService);
         return lifeCycle;
     }
 
     private void prepareTournamentWithMockLifecycle() {
         pokerState.setLifecycle(mockLifeCycle);
         tournament = new PokerTournament(pokerState);
-        tournament.injectTransientDependencies(instance, support, state, historyService, backend, dateFetcher, shutdownService, tournamentPlayerRegistry, sender, userService);
+        tournament.injectTransientDependencies(instance, support, state, historyService, backend, dateFetcher, shutdownService, tournamentPlayerRegistry, sender, userService, domainEventService);
         pokerState.setBlindsStructure(createDefaultBlindsStructure());
     }
 
     private void prepareTournamentWithMockTournamentState() {
         tournament = new PokerTournament(mockPokerState);
         tournament.injectTransientDependencies(instance, support, state, historyService, backend, new DefaultSystemTime(), shutdownService,
-                tournamentPlayerRegistry, sender, userService);
+                tournamentPlayerRegistry, sender, userService, domainEventService);
         pokerState.setBlindsStructure(createDefaultBlindsStructure());
     }
 }

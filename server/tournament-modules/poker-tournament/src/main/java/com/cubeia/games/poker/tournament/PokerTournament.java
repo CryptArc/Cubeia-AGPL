@@ -106,6 +106,7 @@ import com.cubeia.games.poker.tournament.status.PokerTournamentStatus;
 import com.cubeia.games.poker.tournament.util.PacketSender;
 import com.cubeia.games.poker.tournament.util.TableNotifier;
 import com.cubeia.network.users.firebase.api.UserServiceContract;
+import com.cubeia.poker.domainevents.api.DomainEventsService;
 import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
 import com.cubeia.poker.tournament.history.api.HistoricPlayer;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
@@ -155,6 +156,8 @@ public class PokerTournament implements TableNotifier, Serializable {
     private transient TournamentPlayerRegistry tournamentPlayerRegistry;
 
     private transient RebuySupport rebuySupport = RebuySupport.NO_REBUYS;
+
+	private transient DomainEventsService domainEventService;
 
     public PokerTournament(PokerTournamentState pokerState) {
         this.pokerState = pokerState;
@@ -339,7 +342,7 @@ public class PokerTournament implements TableNotifier, Serializable {
     public void injectTransientDependencies(MttInstance instance, TournamentAssist support, MTTStateSupport state,
             TournamentHistoryPersistenceService historyService, CashGamesBackendService backend, SystemTime dateFetcher,
             ShutdownServiceContract shutdownService, TournamentPlayerRegistry tournamentPlayerRegistry, PacketSender sender,
-            UserServiceContract userService) {
+            UserServiceContract userService, DomainEventsService domainEventService) {
         this.instance = instance;
         this.mttSupport = support;
         this.state = state;
@@ -351,6 +354,7 @@ public class PokerTournament implements TableNotifier, Serializable {
         this.sender = sender;
         this.rebuySupport = pokerState.getRebuySupport();
         this.userService = userService;
+        this.domainEventService = domainEventService;
         rebuySupport.injectTransientDependencies(this, historyPersister);
     }
 
@@ -554,6 +558,8 @@ public class PokerTournament implements TableNotifier, Serializable {
             // Transfer the given amount of money from the tournament account to the player account.
             transferMoneyAndCloseSession(pokerState.getPlayerSession(payout.getPlayerId()), payout.getPayoutInCents());
             setPlayerOutInPosition(payout.getPlayerId(), payout.getPosition());
+            log.debug("Domain event service: "+domainEventService);
+            domainEventService.sendTournamentPayoutEvent(payout.getPlayerId(), payout.getPayoutInCents(), pokerState.getCurrencyCode(), payout.getPosition(), instance);
         }
         sendTournamentOutToPlayers(payouts);
     }

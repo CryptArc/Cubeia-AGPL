@@ -6,9 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cubeia.events.event.GameEvent;
-import com.cubeia.events.event.GameEventType;
-import com.cubeia.events.event.poker.PokerAttributes;
-import com.cubeia.firebase.api.service.clientregistry.PublicClientRegistryService;
 import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.games.poker.common.money.Money;
 import com.cubeia.poker.adapter.HandEndStatus;
@@ -25,8 +22,6 @@ public class DomainEventAdapter {
 	/** Service for sending and listening to bonus/achievement events to players */
 	@Service DomainEventsService service;
 	
-	@Service PublicClientRegistryService clientRegistry;
-	
 	/**
 	 * Report hand end result to the achievment service
 	 * @param handResult
@@ -42,24 +37,7 @@ public class DomainEventAdapter {
 	
 	
 	public void notifyEndPlayerSession(int playerId, Money accountBalance) {
-		log.debug("Event Player Session ended. Player["+playerId+"], Balance["+accountBalance+"]");
-		
-		String screenname = clientRegistry.getScreenname(playerId);
-		int operatorId = clientRegistry.getOperatorId(playerId);
-		
-		GameEvent event = new GameEvent();
-		event.game = PokerAttributes.poker.name();
-		event.player = playerId+"";
-		event.type = GameEventType.leaveTable.name();
-		event.operator = operatorId+"";
-		event.screenName = screenname;
-		
-		event.attributes.put(PokerAttributes.accountBalance.name(), accountBalance.getAmount()+"");
-		event.attributes.put(PokerAttributes.accountCurrency.name(), accountBalance.getCurrencyCode());
-		event.attributes.put(PokerAttributes.screenname.name(), screenname);
-		
-		log.debug("Send Player Session ended event: "+event);
-		service.sendEvent(event);
+		service.sendEndPlayerSessionEvent(playerId, accountBalance);
 	}
 	
 	
