@@ -42,6 +42,12 @@ public class DomainEventAdapter {
 	
 	
 	private void sendPlayerHandEnd(PokerPlayer player, Result result, HandResult handResult) {
+		// We don't want to push events for operator id 0 which is reserved for bots and internal users.
+		// TODO: Perhaps make excluded operators configurable
+		if (player.getOperatorId() == 0) {
+			return; 
+		}
+		
 		GameEvent event = new GameEvent();
 		event.game = "poker";
 		event.type = "roundEnd";

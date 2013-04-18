@@ -95,6 +95,12 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 		int operatorId = clientRegistry.getOperatorId(playerId);
 		String screenname = clientRegistry.getScreenname(playerId);
 		
+		// We don't want to push events for operator id 0 which is reserved for bots and internal users.
+		// TODO: Perhaps make excluded operators configurable
+		if (operatorId == 0) {
+			return; 
+		}
+		
 		Money accountBalance = new Money(-1, currencyCode, 2); 
 		try {
 			accountBalance = cashGameBackend.getAccountBalance(playerId, currencyCode);
@@ -127,6 +133,12 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 		
 		String screenname = clientRegistry.getScreenname(playerId);
 		int operatorId = clientRegistry.getOperatorId(playerId);
+		
+		// We don't want to push events for operator id 0 which is reserved for bots and internal users.
+		// TODO: Perhaps make excluded operators configurable
+		if (operatorId == 0) {
+			return; 
+		}
 		
 		GameEvent event = new GameEvent();
 		event.game = PokerAttributes.poker.name();
