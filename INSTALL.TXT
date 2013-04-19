@@ -1,0 +1,81 @@
+CUBEIA POKER SOURCE-CODE BASED INSTALLATION
+===========================================
+
+
+PREREQUISITES
+=============
+
+* Java SDK 1.7 (1.6 works, too)
+* Maven 3.0.4 or higher
+
+
+IMPORTANT
+=========
+
+Please follow this sequence strictly, otherwise you will run into a cascade of
+problems. If you ask for support on the forum, please mention which steps
+succeeded so far, and with which step you got the problem.
+
+You will need half an hour for the first steps, but  some hours (or days) to
+complete until the integration of Cubeia Network. Do yourself a favor and take
+the 10 min. to read through all the README's first. You won't regret.
+
+
+STEPS
+=====
+
+* SERVER
+Follow the README within ./server, in order to run the poker-server.
+
+* CLIENT
+Next follow the README within ./client/web. This will allow you to
+play poker with a web-browser. If you want to try or develop other clients,
+review the ./client/README.
+
+There is no user registration at this point. Use any name, and the password
+should be an integer (best: > 1000), it will be used as the playerId.
+
+* BOTS
+Follow the README within ./server/bot-modules/bot, in order to test
+your current setup with some poker-bots.
+
+* ADMIN
+Finally, see the README within ./backoffice/poker-admin to setup the 
+web-application that manages the poker-game (timings, tables, tournaments).
+
+ADVANCED STEPS
+==============
+
+* FIREBASE
+
+Firebase was fetched during the build. You can start the poker-server directly
+by starting firebase from within
+
+./server/game-modules/poker-uar/target/firebase-run/firebase-1.9.2-CE
+
+Once your poker-system runs fine, you can copy the firebase folder to another
+location. If you poker directory resides in e.g. mycubeia/poker, you could copy
+firebase to mycubeia/firebase.
+
+In this case, you either have to copy new versions of the poker-uar.uar into the
+firebase/game/deploy directory, or you have to make a symbolic link. Remember to
+verify the configuration files (new files or new configuration data).
+
+This would be the first step towards a production installation, a complex task,
+which is out of the scope of this document.
+
+
+FULL REBUILD
+============
+
+After source code updates, to build all relevant sources in one pass, go to the
+root directory (e.g. cubeia-poker) and execute
+
+mvn clean package install -U
+
+If you have integrated Cubeia Network, execute
+
+mvn clean package install -U -P use-integrations
+
+The "-U" flag ensures that dependencies are updated (important when sources are
+under development).
