@@ -548,7 +548,7 @@
     <div class="table-item tournament {{tableStatus}}" id="tournamentItem{{id}}">
         <div class="table-name">{{name}}</div>
         <div class="buy-in">{{buyIn}}+{{fee}}</div>
-        <div class="registered">{{registered}}</div>
+        <div class="registered">{{registered}}/{{capacity}}</div>
         <div class="group">
             <div class="start-time">{{startTime}}</div>
             <div class="status {{status}}">{{status}}</div>
@@ -1144,6 +1144,7 @@
             ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
         })();
+
     }
 
     $.ga = {
@@ -1165,10 +1166,7 @@
                     value = 0;
                 }
             }
-
-        //    console.log('_trackEvent', event, action, label, value );
             _gaq.push(['_trackEvent', event, action, label, value ]);
-
         }
     };
 
