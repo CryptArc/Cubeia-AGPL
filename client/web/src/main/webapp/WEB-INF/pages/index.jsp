@@ -445,12 +445,14 @@
 
 <script type="text/mustache" id="playerCardTemplate" style="display: none;">
     <div id="playerCard-{{domId}}" class="player-card-container">
-        <img src="${cp}/skins/${skin}/images/cards/{{cardString}}.svg" class="player-card"/>
+        <div class="card-image" id="playerCardImage-{{domId}}" style="background-image:{{backgroundImage}}">
+    <!--    <img src="${cp}/skins/${skin}/images/cards/{{cardString}}.svg" class="player-card"/> -->
     </div>
 </script>
 <script type="text/mustache" id="communityCardTemplate" style="display: none;">
     <div id="communityCard-{{domId}}" class="community-card-container">
-        <img src="${cp}/skins/${skin}/images/cards/{{cardString}}.svg" class="player-card"/>
+        <div class="card-image" id="communityCardImage-{{domId}}" style="background-image:{{backgroundImage}}">
+    <!--    <img src="${cp}/skins/${skin}/images/cards/{{cardString}}.svg" class="player-card"/>  -->
     </div>
 </script>
 <div id="mainPotTemplate" style="display: none;">
@@ -872,7 +874,8 @@
 </script>
 <script type="text/mustache" id="miniCardTemplate" style="display: none;">
     <div id="miniCard-{{domId}}" class="mini-card-container">
-        <img src="${cp}/skins/${skin}/images/cards/{{cardString}}.svg"/>
+        <div class="card-image" id="miniCardImage-{{domId}}" style="background-image:{{backgroundImage}}">
+    <!--    <img src="${cp}/skins/${skin}/images/cards/{{cardString}}.svg"/>  -->
     </div>
 </script>
 <script type="text/mustache" id="tournamentTemplate" style="display:none;">
