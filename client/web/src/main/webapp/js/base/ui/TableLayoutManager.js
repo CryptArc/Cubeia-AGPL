@@ -333,8 +333,20 @@ Poker.TableLayoutManager = Class.extend({
         if(cardString == card.cardString) {
             return;
         }
-        card.exposeCard(cardString);
-        new Poker.CSSClassAnimation(card.getJQElement()).addClass("exposed").start(this.animationManager);
+
+        var animManager = this.animationManager;
+
+        // callback to ensure that the image is loaded before firing the animation
+        var imageLoadedCallback = function() {
+            setTimeout(function() {
+                new Poker.CSSClassAnimation(card.getJQElement()).addClass("exposed").start(animManager);
+            }, 50)
+        };
+
+        card.exposeCard(cardString, imageLoadedCallback);
+
+
+
 
     },
     onMoveDealerButton : function(seatId) {
