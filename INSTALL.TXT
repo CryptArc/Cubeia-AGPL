@@ -5,7 +5,7 @@ CUBEIA POKER SOURCE-CODE BASED INSTALLATION
 PREREQUISITES
 =============
 
-* Java SDK 1.7 (1.6 works, too)
+* Java SDK 1.7
 * Maven 3.0.4 or higher
 
 
