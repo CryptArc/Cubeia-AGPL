@@ -589,7 +589,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
             sendPublicPacket(action, -1);
         }
 
-        achievements.notifyHandEnd(handResult, handEndStatus, tournamentTable);
+        achievements.notifyHandEnd(handResult, handEndStatus, tournamentTable, state.getSettings());
         
         clearActionCache();
         ThreadLocalProfiler.add("FirebaseServerAdapter.notifyHandEnd.stop");

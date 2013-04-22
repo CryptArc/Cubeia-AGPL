@@ -16,6 +16,7 @@ import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
+import com.cubeia.poker.settings.PokerSettings;
 
 public class DomainEventAdapter {
 	
@@ -32,10 +33,10 @@ public class DomainEventAdapter {
 	 * @param handEndStatus
 	 * @param tournamentTable
 	 */
-	public void notifyHandEnd(HandResult handResult, HandEndStatus handEndStatus, boolean tournamentTable) {
+	public void notifyHandEnd(HandResult handResult, HandEndStatus handEndStatus, boolean tournamentTable, PokerSettings pokerSettings) {
 		Map<PokerPlayer, Result> map = handResult.getResults();
 		for (PokerPlayer player : map.keySet()) {
-			sendPlayerHandEnd(player, map.get(player), handResult, tournamentTable);	
+			sendPlayerHandEnd(player, map.get(player), handResult, tournamentTable, pokerSettings);	
 		}
 	}
 	
@@ -45,7 +46,7 @@ public class DomainEventAdapter {
 	}
 	
 	
-	private void sendPlayerHandEnd(PokerPlayer player, Result result, HandResult handResult, boolean tournamentTable) {
+	private void sendPlayerHandEnd(PokerPlayer player, Result result, HandResult handResult, boolean tournamentTable, PokerSettings pokerSettings) {
 		int operatorId = clientRegistry.getOperatorId(player.getId());	
 		String screenname = clientRegistry.getScreenname(player.getId());
 		// We don't want to push events for operator id 0 which is reserved for bots and internal users.
@@ -66,6 +67,7 @@ public class DomainEventAdapter {
 		event.attributes.put(PokerAttributes.netResult.name(), result.getWinningsIncludingOwnBets()-stake+"");
 		event.attributes.put(PokerAttributes.screenname.name(), screenname);
 		event.attributes.put(PokerAttributes.tournament.name(), tournamentTable+"");
+		event.attributes.put(PokerAttributes.accountCurrency.name(), pokerSettings.getCurrency());
 		
 		boolean isWin = calculateIsWin(result);
 		if (isWin) {
