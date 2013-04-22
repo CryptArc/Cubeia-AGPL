@@ -874,8 +874,7 @@
 </script>
 <script type="text/mustache" id="miniCardTemplate" style="display: none;">
     <div id="miniCard-{{domId}}" class="mini-card-container">
-        <div class="card-image" id="miniCardImage-{{domId}}" style="background-image:{{backgroundImage}}">
-    <!--    <img src="${cp}/skins/${skin}/images/cards/{{cardString}}.svg"/>  -->
+         <img src="${cp}/skins/${skin}/images/cards/{{cardString}}.svg"/>
     </div>
 </script>
 <script type="text/mustache" id="tournamentTemplate" style="display:none;">

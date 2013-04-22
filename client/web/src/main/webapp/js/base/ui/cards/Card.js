@@ -29,11 +29,8 @@ Poker.Card = Class.extend({
      */
     render : function () {
         var t = this.getTemplate();
-
         var backfaceImageUrl = "url(" +contextPath+ "/skins/" + Poker.SkinConfiguration.name +"/images/cards/"+this.cardString+".svg)";
-    //    var output = this.templateManager.render(t, {domId:this.id + "-" + this.tableId, cardString:this.cardString});
         var output = this.templateManager.render(t, {domId:this.id + "-" + this.tableId, backgroundImage:backfaceImageUrl});
-    //    this.setCardImage("url(" +contextPath+ "/skins/" + Poker.SkinConfiguration.name +"/images/cards/back.svg)")
         return output;
     },
     /**
