@@ -68,6 +68,16 @@ public class TexasCalculatorTest {
         assertEquals(STRAIGHT, strength.getHandType());
         assertEquals(Rank.SIX, strength.getHighestRank());
         assertNull(strength.getSecondRank());
+        
+        hand = new Hand("AH 2C 3C 5C 4C");
+        strength = calc.checkStraight(hand, true);
+        assertEquals(STRAIGHT, strength.getHandType());
+        assertEquals(Rank.FIVE, strength.getHighestRank());
+        assertNull(strength.getSecondRank());
+        
+        hand = new Hand("AH 2C 3C 5C 4C");
+        strength = calc.checkStraight(hand, false);
+        assertNull(calc.checkStraight(hand));
     }
 
     @Test
