@@ -93,7 +93,7 @@ Start with the simpler poker-client. On success, you'll have it at:
 
 http://localhost:8080/poker-client
 
-Then go on with the poker-admin. On cussess, you'll have it at:
+Then go on with the poker-admin. On success, you'll have it at:
 
 http://localhost:8080/poker-admin
 
