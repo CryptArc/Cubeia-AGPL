@@ -91,4 +91,12 @@ public class HandCalculatorHandStrengthTest {
         assertEquals(5, strength.getKickerCards().size());
         assertEquals(KING, strength.getKickerCards().get(0).getRank());
     }
+    
+    @Test
+    public void testHandStrength_wheel() throws Exception {
+        Hand hand = new Hand("2C 4H 3D AC 5S");
+        HandStrength strength = calc.getHandStrength(hand);
+        assertEquals(STRAIGHT, strength.getHandType());
+        assertEquals(Rank.FIVE, strength.getHighestRank());
+    }
 }
