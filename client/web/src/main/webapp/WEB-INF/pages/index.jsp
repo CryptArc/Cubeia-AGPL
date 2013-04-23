@@ -1129,10 +1129,46 @@
     </div>
 </script>
 
+
+
+<!-- UserVoice JavaScript SDK (only needed once on a page) -->
+<script>
+    (function(){
+
+    var id = "${userVoiceId}";
+    if (!id) {
+        console.log("No UserVoiceID, skipping user voice");
+        return;
+    } else {
+        var uv=document.createElement('script');
+        uv.type='text/javascript';
+        uv.async=true;uv.src='//widget.uservoice.com/'+id+'.js';
+        var s=document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(uv,s)
+    }
+})();
+
+// A tab to launch the Classic Widget -->
+
+    UserVoice = window.UserVoice || [];
+    UserVoice.push(['showTab', 'classic_widget', {
+        mode: 'feedback',
+        primary_color: '#a01800',
+        link_color: '#670f00',
+        forum_id: 200038,
+        tab_label: 'Feedback',
+        tab_color: '#a01800',
+        tab_position: 'middle-right',
+        tab_inverted: false
+    }]);
+</script>
+
+
+
+<!-- Google Analytics -->
 <script type="text/javascript">
 
     var id = "${googleAnalyticsId}";
-    console.log("Analytics id: ", id);
 
     var _gaq = _gaq || [];
 
