@@ -70,7 +70,7 @@ public class HandHistory extends BasePage {
         super(parameters);
         log.debug("Params: " + parameters);
         handProvider = new HandProvider(parameters);
-        addForm();
+        addForms();
         addResultsTable();
         add(new FeedbackPanel("feedback"));
     }
@@ -138,7 +138,7 @@ public class HandHistory extends BasePage {
         return columns;
     }
 
-    private void addForm() {
+    private void addForms() {
         Form<HandHistorySearch> form = new Form<HandHistorySearch>("form",  new CompoundPropertyModel<HandHistorySearch>(new HandHistorySearch())) {
             @Override
             protected void onSubmit() {
@@ -155,11 +155,28 @@ public class HandHistory extends BasePage {
         form.add(new DateField("fromDate"));
         form.add(new DateField("toDate"));
         add(form);
+        Form<HandLookup> form2 = new Form<HandLookup>("lookup", new CompoundPropertyModel<HandLookup>(new HandLookup())) {
+
+			private static final long serialVersionUID = 3724547810754260078L;
+        	
+			@Override
+			protected void onSubmit() {
+				HandLookup str = getModel().getObject();
+				setResponsePage(ShowHand.class, ParamBuilder.params("handId", str.handId));
+			}
+        };
+        form2.add(new TextField<String>("handId").setRequired(true));
+        add(form2);
     }
 
     @Override
     public String getPageTitle() {
         return "Hand History";
+    }
+    
+    private class HandLookup implements IClusterable {
+    	private static final long serialVersionUID = -7138295119718739577L;
+		String handId;
     }
 
     private class HandProvider extends SortableDataProvider<HistoricHand,String> {

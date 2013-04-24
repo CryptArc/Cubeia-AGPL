@@ -9,6 +9,26 @@
     <span wicket:id="feedback" />
     <div class="row-fluid">
         <div class="span12">
+        	<div class="widget-box">
+                <div class="widget-title">
+                    <h5>Find Hand</h5>
+                </div>
+                <div class="widget-content nopadding">
+                    <form class="form-horizontal" wicket:id="lookup">
+                        <fieldset>
+                            <div class="control-group">
+                                <label class="control-label" for="handId">Hand id</label>
+                                <div class="controls">
+                                    <input type="text" class="input-xlarge" id="handId" wicket:id="handId"/>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <input type="submit" class="btn btn-primary" value="Lookup">
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
             <div class="widget-box">
                 <div class="widget-title">
                     <h5>Search</h5>
