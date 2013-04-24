@@ -5,7 +5,7 @@
     <groupId>com.cubeia.games.poker</groupId>
     <artifactId>domain-event-service</artifactId>
     <packaging>firebase-sar</packaging>
-    <name>domain-event-service (service)</name>
+    <name>Domain Event Service</name>
 
     <parent>
         <groupId>com.cubeia.games</groupId>
