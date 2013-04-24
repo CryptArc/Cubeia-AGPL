@@ -72,8 +72,6 @@ Poker.Seat = Class.extend({
         this.handlePlayerStatus();
     },
     handlePlayerStatus: function() {
-        console.log("HANDLE PLR STS  = ");
-        console.log(this.player);
         if (this.player.tableStatus == Poker.PlayerTableStatus.SITTING_OUT) {
             this.seatElement.addClass("seat-sit-out");
             this.seatElement.find(".player-status").html(this.player.tableStatus.text);
@@ -131,7 +129,6 @@ Poker.Seat = Class.extend({
     },
     dealCard: function(card) {
         this.cardsContainer.append(card.render());
-        console.log(card);
         this.onCardDealt(card);
     },
     onCardDealt: function(card) {
