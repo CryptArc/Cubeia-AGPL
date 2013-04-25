@@ -959,7 +959,7 @@
     <div class="stats-item">{{t "tournament-lobby.stats.min-stack" }} <span>{{chipStatistics.minStack}}</span></div>
     <div class="stats-item">{{t "tournament-lobby.stats.average-stack" }} <span>{{chipStatistics.averageStack}}</span></div>
     <div class="stats-item">{{t "tournament-lobby.stats.current-level" }} <span>{{levelInfo.currentLevel}}</span></div>
-    <div class="stats-item">{{t "tournament-lobby.stats.players-left" }}<span>{{playersLeft.remainingPlayers}}/{{playersLeft.registeredPlayers}}</span></div>
+    <div class="stats-item">{{t "tournament-lobby.stats.players-left" }} <span>{{playersLeft.remainingPlayers}}/{{playersLeft.registeredPlayers}}</span></div>
 </script>
 <script type="text/mustache" id="handHistoryViewTemplate">
 

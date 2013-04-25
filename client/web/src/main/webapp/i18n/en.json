@@ -159,7 +159,7 @@
             "min-stack" : "Min Stack:",
             "average-stack" : "Average Stack:",
             "current-level" : "Current Level:",
-            "players-left" : "Players Left"
+            "players-left" : "Players Left:"
         },
         "payouts" : {
             "title" : "Payouts",
