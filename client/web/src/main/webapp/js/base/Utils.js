@@ -4,7 +4,19 @@ var Poker = Poker || {};
 Poker.Utils = {
     currencySymbol : "",
     formatCurrency : function(amount) {
-        return parseFloat(amount/100).toFixed(2);
+        return Poker.Utils.formatAmount(amount);
+    },
+    _baseFormat : function(amount) {
+        var amount = ""+parseFloat(amount/100).toFixed(2);
+        amount = amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return amount;
+    },
+    formatAmount : function(amount) {
+        var str = Poker.Utils._baseFormat(amount);
+        if(str.charAt(str.length-1)=="0" && str.charAt(str.length-2)=="0") {
+            str = str.substr(0,str.length-3);
+        }
+        return str;
     },
     formatCurrencyString : function(amount) {
         return Poker.Utils.currencySymbol + Poker.Utils.formatCurrency(amount);
@@ -25,7 +37,7 @@ Poker.Utils = {
     	}
     },
     formatBlinds : function(amount) {
-        var str = ""+ Poker.Utils.formatCurrency(amount);
+        var str = Poker.Utils._baseFormat(amount);
         if(str.charAt(str.length-1)=="0") {
             str = str.substr(0,str.length-1);
             if(str.charAt(str.length-1)=="0"){

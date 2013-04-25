@@ -6,16 +6,23 @@ describe("Poker.Utils Test", function(){
 
     it("Format currency", function(){
         var c = Poker.Utils.formatCurrency(100);
-        expect(c).toEqual("1.00");
+        expect(c).toEqual("1");
 
         c = Poker.Utils.formatCurrency(12050);
         expect(c).toEqual("120.50");
+
+
+        c = Poker.Utils.formatCurrency(12000050);
+        expect(c).toEqual("120,000.50");
+
+        c = Poker.Utils.formatCurrency(12012000050);
+        expect(c).toEqual("120,120,000.50");
     });
 
     it("Format currency string", function(){
 
         var c = Poker.Utils.formatCurrencyString(100);
-        expect(c).toEqual("&euro;1.00");
+        expect(c).toEqual("&euro;1");
     });
 
     it("Format blinds", function(){

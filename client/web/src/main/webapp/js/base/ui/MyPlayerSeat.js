@@ -138,16 +138,24 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         console.log("player status update");
         console.log(this.player);
         if(this.player.tableStatus == Poker.PlayerTableStatus.SITTING_OUT) {
+            this.seatElement.addClass("seat-sit-out");
+            this.seatElement.find(".player-status").show().html(this.player.tableStatus.text);
             this.myActionsManager.onSitOut();
         } else if (this.player.tableStatus == Poker.PlayerTableStatus.TOURNAMENT_OUT){
             this.myActionsManager.onTournamentOut();
         } else if(this.player.tableStatus == Poker.PlayerTableStatus.SITTING_IN){
+            this.seatElement.find(".player-status").html("").hide();
+            this.seatElement.removeClass("seat-sit-out");
+            this.reset();
             if(this.player.away == true || this.player.sitOutNextHand == true) {
                 this.myActionsManager.setSitOutNextHand(true);
             } else {
                 this.myActionsManager.onSitIn();
             }
         }
+    },
+    hideActionText : function() {
+        this.actionText.html("").hide();
     },
     onCardDealt : function(card) {
         var div = card.getJQElement();
@@ -158,10 +166,15 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         Poker.AppCtx.getViewManager().updateTableInfo(this.tableId,{});
     },
     fold : function() {
+
         this.seatElement.addClass("seat-folded");
         this.seatElement.find(".player-card-container").addClass("seat-folded");
         this.myActionsManager.onFold();
         this.handStrength.visible = false;
+        if(this.player.tableStatus == Poker.PlayerTableStatus.SITTING_OUT) {
+            this.hideActionText();
+        }
+
     },
     clear : function() {
         this.seatElement.empty();

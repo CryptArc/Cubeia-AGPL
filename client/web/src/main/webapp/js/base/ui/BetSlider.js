@@ -152,7 +152,7 @@ Poker.BetSlider = Class.extend({
         var formattedValue = Poker.Utils.formatCurrency(value);
 
         if(source!=this.betInput) {
-            this.betInput.val(formattedValue);
+            this.betInput.val(formattedValue.replace(",",""));
         } else {
             this.triggerChange = false;
         }

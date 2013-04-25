@@ -38,10 +38,10 @@ public class MoneyFormatter {
         String format;
         Number value;
         if (moneyInCents % 100 == 0) {
-            format = "%s%d";
+            format = "%s%,d";
             value = moneyInCents / 100;
         } else {
-            format = "%s%.2f";
+            format = "%s%,.2f";
             value = moneyInCents / 100.0;
         }
         return String.format(Locale.US, format, currency, value);
