@@ -73,8 +73,9 @@ Poker.Seat = Class.extend({
     },
     handlePlayerStatus: function() {
         if (this.player.tableStatus == Poker.PlayerTableStatus.SITTING_OUT) {
+            this.reset();
             this.seatElement.addClass("seat-sit-out");
-            this.seatElement.find(".player-status").html(this.player.tableStatus.text);
+            this.seatElement.find(".player-status").show().html(this.player.tableStatus.text);
         } else {
             this.seatElement.find(".player-status").html("").hide();
             this.seatElement.removeClass("seat-sit-out");

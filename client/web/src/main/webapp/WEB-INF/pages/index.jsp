@@ -431,6 +431,7 @@
     <div class="player-status">
 
     </div>
+
     <div class="seat-balance balance">
 
     </div>
@@ -459,12 +460,13 @@
         <div class="balance pot-container-{{potId}}"><span class="pot-value pot-{{potId}}">{{amount}}</span></div>
 </div>
 <div id="myPlayerSeatTemplate" style="display:none;">
-        <div class="player-name">
-            {{name}}
-        </div>
-        <div class="seat-balance balance">
+    <div class="player-name">
+        {{name}}
+    </div>
 
-        </div>
+    <div class="seat-balance balance">
+
+    </div>
     <div class="avatar-base">
 
     </div>
@@ -477,6 +479,7 @@
     <div class="cards-container">
 
     </div>
+    <div class="player-status"></div>
     <div class="action-text">
 
     </div>
