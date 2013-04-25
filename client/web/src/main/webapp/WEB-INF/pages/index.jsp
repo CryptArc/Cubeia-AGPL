@@ -300,6 +300,7 @@
         </div>
     </div>
     <div class="view-container slidable">
+        <div class="beta-stamp">BETA</div>
         <div class="table-view-container" style="display:none;">
             <div class="multi-view-switch multi">
             </div>
