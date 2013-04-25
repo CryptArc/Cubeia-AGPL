@@ -31,5 +31,9 @@ public class MoneyFormatterTest {
         assertThat(format("$", 2000), is("$20"));
         assertThat(format("$", 2010), is("$20.10"));
         assertThat(format("$", 2012), is("$20.12"));
+        assertThat(format("$", 200012), is("$2,000.12"));
+        assertThat(format("$", 200000012), is("$2,000,000.12"));
+        assertThat(format("$", 200000000), is("$2,000,000"));
+
     }
 }

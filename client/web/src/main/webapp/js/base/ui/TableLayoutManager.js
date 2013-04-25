@@ -291,7 +291,7 @@ Poker.TableLayoutManager = Class.extend({
         if (level.smallBlind != null && level.bigBlind != null) {
             this.tableInfoElement.show();
             this.tableInfoElement.find(".table-blinds-value").html(level.smallBlind + "/" + level.bigBlind);
-            this.myActionsManager.setBigBlind(Math.floor(parseFloat(level.bigBlind)*100));
+            this.myActionsManager.setBigBlind(Math.floor(parseFloat(level.bigBlind.replace(",",""))*100));
             if (secondsToNextLevel >= 0){
                 this.clock.sync(secondsToNextLevel);
                 this.tableInfoElement.find(".time-to-next-level").show();
