@@ -65,7 +65,9 @@ Poker.MyActionsManager  = Class.extend({
         var self = this;
         this.actionCallback = actionCallback;
         this.tableId = tableId;
-        this.tableButtons = new Poker.TableButtons(view,actionCallback);
+        var tournamentTable = Poker.AppCtx.getTournamentManager().isTournamentTable(tableId);
+        console.log("tournament table ==" + tournamentTable);
+        this.tableButtons = new Poker.TableButtons(view,actionCallback,tournamentTable);
         this.currentActions = [];
         this.userActionsContainer = $(".user-actions",view);
         this.futureActions = new Poker.FutureActions($(".future-actions",view));
@@ -96,6 +98,9 @@ Poker.MyActionsManager  = Class.extend({
                 requestHandler.sitIn();
             }
         });
+        if(tournamentTable==true) {
+            this.sitOutNextHand.hide();
+        }
 
         this.onWatchingTable();
 
