@@ -250,6 +250,10 @@
         "leave-table" : {
             "header" : "Leave table",
             "message": "Are you sure you want to leave?"
+        },
+        "watch-table-failed" : {
+            "header" : "Table info",
+            "message" : "Unable to open table"
         }
     },
     "table-log" : {

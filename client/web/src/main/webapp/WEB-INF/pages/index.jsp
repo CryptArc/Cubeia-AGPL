@@ -119,6 +119,7 @@
     <script type="text/javascript" src="${cp}/js/base/ui/animation/AnimationManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/DealerButton.js"></script>
 
+    <script type="text/javascript" src="${cp}/js/base/Navigation.js"></script>
     <script type="text/javascript" src="${cp}/js/base/sound/SoundSource.js"></script>
     <script type="text/javascript" src="${cp}/js/base/sound/SoundPlayer.js"></script>
     <script type="text/javascript" src="${cp}/js/base/sound/SoundManager.js"></script>
@@ -880,7 +881,7 @@
 <script type="text/mustache" id="tournamentTemplate" style="display:none;">
     <div id="tournamentView{{tournamentId}}" class="tournament-view">
         <div class="top-row">
-            <h3>
+            <h3 class="tournament-name">
                 {{name}}
                 <span class="tournament-start-date"></span>
             </h3>

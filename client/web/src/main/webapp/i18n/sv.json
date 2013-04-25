@@ -240,6 +240,10 @@
         "leave-table" : {
             "header" : "Lämna bord",
             "message": "Är du säker på att du vill lämna bordet?"
+        },
+        "watch-table-failed" : {
+            "header" : "Bordsinformation",
+            "message" : "Det gick inte öppna bordet"
         }
 
     },
