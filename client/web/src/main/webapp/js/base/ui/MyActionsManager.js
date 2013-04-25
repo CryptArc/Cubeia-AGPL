@@ -66,7 +66,6 @@ Poker.MyActionsManager  = Class.extend({
         this.actionCallback = actionCallback;
         this.tableId = tableId;
         var tournamentTable = Poker.AppCtx.getTournamentManager().isTournamentTable(tableId);
-        console.log("tournament table ==" + tournamentTable);
         this.tableButtons = new Poker.TableButtons(view,actionCallback,tournamentTable);
         this.currentActions = [];
         this.userActionsContainer = $(".user-actions",view);
