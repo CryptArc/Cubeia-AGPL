@@ -52,7 +52,7 @@ Poker.LobbyData = Class.extend({
             console.log("No id in item, don't know what to do");
             return;
         }
-        if(item.showInLobby!=null && item.showInLobby == 0) {
+        if(this.validator.shouldRemoveItem(item)) {
             this.remove(item.id);
         } else {
             var current = this.items.get(item.id);
@@ -108,6 +108,9 @@ Poker.LobbyDataValidator = Class.extend({
      */
     validate : function(item) {
         return false;
+    },
+    shouldRemoveItem : function(item) {
+        return item.showInLobby!=null && item.showInLobby == 0;
     }
 });
 
@@ -135,6 +138,9 @@ Poker.TournamentLobbyDataValidator = Poker.LobbyDataValidator.extend({
     },
     validate : function(item) {
         return item.name!=null && item.capacity!=null && item.status!=null && item.buyIn!=null ;
+    },
+    shouldRemoveItem : function(item) {
+        return this._super(item) || (item.status!=null && item.status == "CLOSED");
     }
 
 });
