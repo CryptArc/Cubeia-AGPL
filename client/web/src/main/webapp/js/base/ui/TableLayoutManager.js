@@ -215,8 +215,14 @@ Poker.TableLayoutManager = Class.extend({
         var seat = this.getSeatByPlayerId(playerId);
         if (this.myPlayerSeatId == seat.seatId) {
             this.myPlayerSeatId = -1;
-            Poker.AppCtx.getDialogManager().displayGenericDialog(
-                {header: "Seating info", message : "You have been removed from table "});
+            var tournamentTable = Poker.AppCtx.getTournamentManager().isTournamentTable(this.tableId);
+            console.log("TOURNAMENT TABLE = " + tournamentTable);
+            console.log(Poker.AppCtx.getTournamentManager().tournamentTables);
+            if(tournamentTable==false) {
+                Poker.AppCtx.getDialogManager().displayGenericDialog(
+                    {header: "Seating info", message : "You have been removed from table "});
+            }
+
         }
         seat.clearSeat();
         this.seats.remove(seat.seatId);
