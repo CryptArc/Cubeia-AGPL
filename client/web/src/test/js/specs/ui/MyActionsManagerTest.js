@@ -8,7 +8,10 @@ describe("Poker.MyActionsManagerTest", function(){
     var myActionsManager = null;
     beforeEach(function() {
         var actionCallback = function(actionType,amount) {};
+        Poker.AppCtx = Poker.AppCtx || {};
+        Poker.AppCtx.getTournamentManager = Poker.AppCtx.getTournamentManager || function(){ return { isTournamentTable : function(){}}};
         myActionsManager = new Poker.MyActionsManager($("#myActionsManagerTest"),0, actionCallback);
+
     });
     afterEach(function(){
 

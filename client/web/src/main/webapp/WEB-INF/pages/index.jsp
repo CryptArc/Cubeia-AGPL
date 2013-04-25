@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
     <link rel="apple-touch-icon" href="${cp}/skins/${skin}/images/lobby/icon.png" />
 
     <link id="defaultSkinCss" rel="stylesheet/less" type="text/css" href="${cp}/skins/default/less/base.less" />
@@ -446,14 +447,12 @@
 
 <script type="text/mustache" id="playerCardTemplate" style="display: none;">
     <div id="playerCard-{{domId}}" class="player-card-container">
-        <div class="card-image" id="playerCardImage-{{domId}}" style="background-image:{{backgroundImage}}">
-    <!--    <img src="${cp}/skins/${skin}/images/cards/{{cardString}}.svg" class="player-card"/> -->
+        <div class="card-image" id="playerCardImage-{{domId}}" style="background-image:{{backgroundImage}}"></div>
     </div>
 </script>
 <script type="text/mustache" id="communityCardTemplate" style="display: none;">
     <div id="communityCard-{{domId}}" class="community-card-container">
-        <div class="card-image" id="communityCardImage-{{domId}}" style="background-image:{{backgroundImage}}">
-    <!--    <img src="${cp}/skins/${skin}/images/cards/{{cardString}}.svg" class="player-card"/>  -->
+        <div class="card-image" id="communityCardImage-{{domId}}" style="background-image:{{backgroundImage}}"></div>
     </div>
 </script>
 <div id="mainPotTemplate" style="display: none;">
