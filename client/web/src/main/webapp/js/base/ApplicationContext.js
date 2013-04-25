@@ -160,9 +160,10 @@ Poker.AppCtx = Class.extend({
             return handHistoryManager;
         }
 
-
-
-
+        var navigation = new Poker.Navigation();
+        this.getNavigation = function() {
+            return navigation;
+        }
 
 
     }

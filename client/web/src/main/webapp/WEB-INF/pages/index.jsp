@@ -119,6 +119,7 @@
     <script type="text/javascript" src="${cp}/js/base/ui/animation/AnimationManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/DealerButton.js"></script>
 
+    <script type="text/javascript" src="${cp}/js/base/Navigation.js"></script>
     <script type="text/javascript" src="${cp}/js/base/sound/SoundSource.js"></script>
     <script type="text/javascript" src="${cp}/js/base/sound/SoundPlayer.js"></script>
     <script type="text/javascript" src="${cp}/js/base/sound/SoundManager.js"></script>
@@ -445,12 +446,14 @@
 
 <script type="text/mustache" id="playerCardTemplate" style="display: none;">
     <div id="playerCard-{{domId}}" class="player-card-container">
-        <img src="${cp}/skins/${skin}/images/cards/{{cardString}}.svg" class="player-card"/>
+        <div class="card-image" id="playerCardImage-{{domId}}" style="background-image:{{backgroundImage}}">
+    <!--    <img src="${cp}/skins/${skin}/images/cards/{{cardString}}.svg" class="player-card"/> -->
     </div>
 </script>
 <script type="text/mustache" id="communityCardTemplate" style="display: none;">
     <div id="communityCard-{{domId}}" class="community-card-container">
-        <img src="${cp}/skins/${skin}/images/cards/{{cardString}}.svg" class="player-card"/>
+        <div class="card-image" id="communityCardImage-{{domId}}" style="background-image:{{backgroundImage}}">
+    <!--    <img src="${cp}/skins/${skin}/images/cards/{{cardString}}.svg" class="player-card"/>  -->
     </div>
 </script>
 <div id="mainPotTemplate" style="display: none;">
@@ -548,7 +551,7 @@
     <div class="table-item tournament {{tableStatus}}" id="tournamentItem{{id}}">
         <div class="table-name">{{name}}</div>
         <div class="buy-in">{{buyIn}}+{{fee}}</div>
-        <div class="registered">{{registered}}</div>
+        <div class="registered">{{registered}}/{{capacity}}</div>
         <div class="group">
             <div class="start-time">{{startTime}}</div>
             <div class="status {{status}}">{{status}}</div>
@@ -872,13 +875,13 @@
 </script>
 <script type="text/mustache" id="miniCardTemplate" style="display: none;">
     <div id="miniCard-{{domId}}" class="mini-card-container">
-        <img src="${cp}/skins/${skin}/images/cards/{{cardString}}.svg"/>
+         <img src="${cp}/skins/${skin}/images/cards/{{cardString}}.svg"/>
     </div>
 </script>
 <script type="text/mustache" id="tournamentTemplate" style="display:none;">
     <div id="tournamentView{{tournamentId}}" class="tournament-view">
         <div class="top-row">
-            <h3>
+            <h3 class="tournament-name">
                 {{name}}
                 <span class="tournament-start-date"></span>
             </h3>
@@ -956,7 +959,7 @@
     <div class="stats-item">{{t "tournament-lobby.stats.min-stack" }} <span>{{chipStatistics.minStack}}</span></div>
     <div class="stats-item">{{t "tournament-lobby.stats.average-stack" }} <span>{{chipStatistics.averageStack}}</span></div>
     <div class="stats-item">{{t "tournament-lobby.stats.current-level" }} <span>{{levelInfo.currentLevel}}</span></div>
-    <div class="stats-item">{{t "tournament-lobby.stats.players-left" }}<span>{{playersLeft.remainingPlayers}}/{{playersLeft.registeredPlayers}}</span></div>
+    <div class="stats-item">{{t "tournament-lobby.stats.players-left" }} <span>{{playersLeft.remainingPlayers}}/{{playersLeft.registeredPlayers}}</span></div>
 </script>
 <script type="text/mustache" id="handHistoryViewTemplate">
 
@@ -1127,10 +1130,46 @@
     </div>
 </script>
 
+
+
+<!-- UserVoice JavaScript SDK (only needed once on a page) -->
+<script>
+    (function(){
+
+    var id = "${userVoiceId}";
+    if (!id) {
+        console.log("No UserVoiceID, skipping user voice");
+        return;
+    } else {
+        var uv=document.createElement('script');
+        uv.type='text/javascript';
+        uv.async=true;uv.src='//widget.uservoice.com/'+id+'.js';
+        var s=document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(uv,s)
+    }
+})();
+
+// A tab to launch the Classic Widget -->
+
+    UserVoice = window.UserVoice || [];
+    UserVoice.push(['showTab', 'classic_widget', {
+        mode: 'feedback',
+        primary_color: '#a01800',
+        link_color: '#670f00',
+        forum_id: 200038,
+        tab_label: 'Feedback',
+        tab_color: '#a01800',
+        tab_position: 'middle-right',
+        tab_inverted: false
+    }]);
+</script>
+
+
+
+<!-- Google Analytics -->
 <script type="text/javascript">
 
     var id = "${googleAnalyticsId}";
-    console.log("Analytics id: ", id);
 
     var _gaq = _gaq || [];
 
@@ -1144,6 +1183,7 @@
             ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
         })();
+
     }
 
     $.ga = {
@@ -1165,10 +1205,7 @@
                     value = 0;
                 }
             }
-
-        //    console.log('_trackEvent', event, action, label, value );
             _gaq.push(['_trackEvent', event, action, label, value ]);
-
         }
     };
 

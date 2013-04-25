@@ -56,7 +56,7 @@ public class HandResultBatchFactory {
             Money startingBalanceMoney = configService.createSystemMoney(player.getStartingBalance());
             log.debug("Result for player " + player.getId() + " -> Bets: " + bets + "; Wins: " + wins + "; Rake: " + rake + "; Net: " + net);
             com.cubeia.backend.cashgame.dto.HandResult hr = new com.cubeia.backend.cashgame.dto.HandResult(
-                    player.getPlayerSessionId(), bets, wins, rake, player.getSeatId(), player.getOperatorId(), startingBalanceMoney); // TODO Add initial balance?
+                    player.getPlayerSessionId(), bets, wins, rake, player.getSeatId(), player.getOperatorId(), startingBalanceMoney); // TODO Add initial balance? // FIXME: Operator ID is hard coded to 0 in PokerPlayer!
             bhr.addHandResult(hr);
             totalBet += bets.getAmount();
             totalNet += net.getAmount(); 

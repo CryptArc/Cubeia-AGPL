@@ -269,7 +269,6 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
         initializeServices(instance);
 
         PacketSender sender = senderFactory.create(instance.getMttNotifier(), instance);
-        log.debug(" ############################################## Inject Domain Event service: "+domainEventService);
         tournament.injectTransientDependencies(instance, support, util.getStateSupport(instance), historyService,
                 backend, dateFetcher, shutdownService, tournamentPlayerRegistry, sender, userService, domainEventService);
     }

@@ -87,10 +87,6 @@ Poker.DialogManager = Class.extend({
     },
     getContainer : function(content) {
 
-        console.log("displaying dialog content = ");
-        console.log(content);
-        console.log("TABLE ID = " + content.tableId);
-
         var container = null;
 
         if(typeof(content.tableId)!="undefined") {

@@ -29,7 +29,8 @@ Poker.Card = Class.extend({
      */
     render : function () {
         var t = this.getTemplate();
-        var output = this.templateManager.render(t, {domId:this.id + "-" + this.tableId, cardString:this.cardString});
+        var backfaceImageUrl = "url(" +contextPath+ "/skins/" + Poker.SkinConfiguration.name +"/images/cards/"+this.cardString+".svg)";
+        var output = this.templateManager.render(t, {domId:this.id + "-" + this.tableId, backgroundImage:backfaceImageUrl});
         return output;
     },
     /**
@@ -37,10 +38,24 @@ Poker.Card = Class.extend({
      * updates DOM
      * @param cardString
      */
-    exposeCard : function(cardString) {
+    exposeCard : function(cardString, callback) {
         this.cardString = cardString;
-        this.cardImage.attr("src",contextPath + "/skins/" + Poker.SkinConfiguration.name +"/images/cards/"+this.cardString+".svg");
+        this.setCardImage("url(" +contextPath+ "/skins/" + Poker.SkinConfiguration.name +"/images/cards/"+this.cardString+".svg)");
+        callback();
     },
+
+    /**
+     * Sets the backgroundImage attribute on card image div.
+     * @param imageUrl
+     */
+
+    setCardImage : function(imageUrl) {
+        if (!this.cardImage) this.getJQElement();
+        // The img element is not suitable for animating elements. Replaced with backgroundImage.
+        this.cardImage.style.backgroundImage = imageUrl;
+    },
+
+
     /**
      * Returns the JQuery card element
      * @return {*}
@@ -48,7 +63,7 @@ Poker.Card = Class.extend({
     getJQElement:function () {
         if(this.cardImage==null) {
             this.cardElement =  $("#" + this.getCardDivId());
-            this.cardImage = this.cardElement.find("img");
+            this.cardImage = document.getElementById(this.getCardDivId()).children[0];
         }
         return $("#" + this.getCardDivId());
     },

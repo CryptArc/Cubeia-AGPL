@@ -17,16 +17,19 @@
 
 package com.cubeia.game.poker.bot;
 
+import com.cubeia.games.poker.io.protocol.Enums;
 import com.cubeia.games.poker.io.protocol.PlayerAction;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
 public class Strategy {
 
-    private static Random rng = new Random();
+    private Random rng = new Random();
 
-    public static PlayerAction getAction(List<PlayerAction> allowedActions) {
+    public PlayerAction getAction(List<PlayerAction> allowedActions) {
 
         // Always post blinds
         for (PlayerAction action : allowedActions) {
@@ -41,7 +44,15 @@ public class Strategy {
                     return action;
             }
         }
+        
+        // defensive copy
+        allowedActions = new ArrayList<PlayerAction>(allowedActions);
 
+        // first sanity check: never fold when you can check
+        if(canCheck(allowedActions)) {
+        	removeFold(allowedActions);
+        }
+        
         int optionCount = allowedActions.size();
         int optionIndex = rng.nextInt(optionCount);
         PlayerAction playerAction = allowedActions.get(optionIndex);
@@ -58,11 +69,32 @@ public class Strategy {
     }
 
 
-    /**
+    private void removeFold(List<PlayerAction> allowedActions) {
+		for (Iterator<PlayerAction> it = allowedActions.iterator(); it.hasNext(); ) {
+			PlayerAction a = it.next();
+			if(a.type == Enums.ActionType.FOLD) {
+				it.remove();
+				break;
+			}
+		}
+	}
+
+
+	private boolean canCheck(List<PlayerAction> allowedActions) {
+		for (PlayerAction p : allowedActions) {
+			if(p.type == Enums.ActionType.CHECK) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+	/**
      * @param allowedActions
      * @return true if the returned action should use an arbitrary delay.
      */
-    public static boolean useDelay(List<PlayerAction> allowedActions) {
+    public boolean useDelay(List<PlayerAction> allowedActions) {
         for (PlayerAction action : allowedActions) {
             switch (action.type) {
                 case BIG_BLIND:

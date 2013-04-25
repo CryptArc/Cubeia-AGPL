@@ -561,7 +561,6 @@ public class PokerTournament implements TableNotifier, Serializable {
             // Transfer the given amount of money from the tournament account to the player account.
             transferMoneyAndCloseSession(pokerState.getPlayerSession(payout.getPlayerId()), payout.getPayoutInCents());
             setPlayerOutInPosition(payout.getPlayerId(), payout.getPosition());
-            log.debug("Domain event service: "+domainEventService);
             domainEventService.sendTournamentPayoutEvent(payout.getPlayerId(), payout.getPayoutInCents(), pokerState.getCurrencyCode(), payout.getPosition(), instance);
         }
         sendTournamentOutToPlayers(payouts);
@@ -660,6 +659,8 @@ public class PokerTournament implements TableNotifier, Serializable {
 
         PlayerSessionId playerSession = pokerState.getPlayerSession(playerId);
         transferMoneyAndCloseSession(playerSession, payout);
+        
+        domainEventService.sendTournamentPayoutEvent(playerId, payout, pokerState.getCurrencyCode(), 1, instance);
     }
 
     private void setPlayerOutInPosition(int playerId, int position) {

@@ -1,5 +1,4 @@
 "use strict";
-var Poker = Poker || {};
 
 
 Poker.TablePacketHandler = Class.extend({
@@ -41,7 +40,7 @@ Poker.TablePacketHandler = Class.extend({
     handleNotifyJoin:function (notifyJoinPacket) {
         this.tableManager.addPlayer(notifyJoinPacket.tableid,notifyJoinPacket.seat, notifyJoinPacket.pid, notifyJoinPacket.nick);
     },
-    handleJoinResponse:function (joinResponsePacket) {
+    handleJoinResponse : function (joinResponsePacket) {
         console.log(joinResponsePacket);
         console.log("join response seat = " + joinResponsePacket.seat + " player id = " + Poker.MyPlayer.id);
         if (joinResponsePacket.status === FB_PROTOCOL.JoinResponseStatusEnum.OK) {
@@ -64,11 +63,16 @@ Poker.TablePacketHandler = Class.extend({
 
     },
     handleWatchResponse:function (watchResponse) {
-        console.log("WATCH RESPONSE = " + watchResponse);
+        var self = this;
         if (watchResponse.status == FB_PROTOCOL.WatchResponseStatusEnum.DENIED_ALREADY_SEATED) {
             new Poker.TableRequestHandler(this.tableId).joinTable();
         } else if (watchResponse.status == FB_PROTOCOL.WatchResponseStatusEnum.OK) {
             //this.tableManager.clearTable()
+        } else if(watchResponse.status == FB_PROTOCOL.WatchResponseStatusEnum.FAILED) {
+            Poker.AppCtx.getDialogManager().displayGenericDialog({tableId: this.tableId,
+                translationKey : "watch-table-failed"}, function(){
+                Poker.AppCtx.getTableManager().leaveTable(self.tableId);
+            });
         }
     },
     handleChatMessage : function(chatPacket) {

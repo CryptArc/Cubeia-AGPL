@@ -152,7 +152,7 @@ public class DefaultPokerPlayer implements PokerPlayer {
 
     @Override
     public int getOperatorId() {
-        //TODO implement
+        //FIXME implement
         return 0;
     }
 

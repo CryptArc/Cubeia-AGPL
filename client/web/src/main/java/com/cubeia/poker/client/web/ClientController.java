@@ -32,6 +32,9 @@ public class ClientController {
     @Value("${google.analytics.id}")
     private String googleAnalyticsId;
 
+    @Value("${uservoice.id}")
+    private String userVoiceId;
+
     // @Value("${operator.config.cache-ttl}")
     // private Long configCacheTtl;
     
@@ -82,6 +85,9 @@ public class ClientController {
         }
         if(googleAnalyticsId != null) {
             modelMap.addAttribute("googleAnalyticsId", googleAnalyticsId);
+        }
+        if(userVoiceId != null) {
+            modelMap.addAttribute("userVoiceId", userVoiceId);
         }
 	}
 

@@ -27,14 +27,16 @@ Poker.BetSlider = Class.extend({
     valueOutputs : null,
     containerId : null,
     tableId : 0,
-    init : function(tableId,containerId) {
+    betInput : null,
+    currentBetAmount : 0,
+    triggerChange : true,
+    betCallback : null,
+    init : function(tableId,containerId,betCallback) {
        this.markers = [];
        this.valueOutputs =  $(".slider-value");
        this.containerId = containerId + "-" + this.tableId;
        this.tableId = tableId;
-    },
-    displayOutput : function(value) {
-        this.valueOutputs.html("&euro;").append(Poker.Utils.formatCurrency(value));
+       this.betCallback = betCallback;
     },
     /**
      * Draws the bet slider in the container with the id
@@ -43,12 +45,35 @@ Poker.BetSlider = Class.extend({
      */
     draw : function() {
         var self = this;
-
+        this.currentBetAmount = this.minBet;
         var container = $("#"+this.containerId);
         container.remove();
         container = $("<div/>").attr("id",this.containerId).addClass("poker-slider");
+        var betInputId = "betInput"+this.tableId;
+        $("#"+betInputId).off().remove();
 
-        $("#tableView-"+this.tableId).append(container);
+        var betInput = $("<input/>").attr("id",betInputId).attr("type","text").addClass("bet-input");
+
+        $("#tableView-"+this.tableId).append(container).append(betInput);
+        this.betInput = $("#"+betInputId);
+        this.betInput.on("keyup",function(e){
+            var val = Math.floor(parseFloat($.trim($(this).val()))*100);
+            if(self.betAmountInRange(val)) {
+                self.handleChangeValue(self.betInput,val);
+                if(e.keyCode == 13) {
+                    self.betCallback();
+                }
+            }
+        });
+        this.betInput.on("blur",function(){
+            self.betInput.on("click",function(){
+                $(this).off("click");
+                $(this).select();
+            });
+        });
+        this.betInput.blur();
+
+
 
         var sliderMouseDown = function (e) { // disable clicks on track
             var sliderHandle =  self.slider.find('.ui-slider-handle');
@@ -62,15 +87,14 @@ Poker.BetSlider = Class.extend({
                 } else {
                     val = val + self.bigBlind;
                 }
+                self.handleChangeValue(null,val);
 
-                self.slider.slider("value",val);
             }
         };
 
         container.on('mousedown', sliderMouseDown).on('touchstart', sliderMouseDown);
 
-        this.slider = container.
-            slider({
+        this.slider = container.slider({
                 animate: true,
                 range: "min",
                 orientation: "vertical",
@@ -81,12 +105,18 @@ Poker.BetSlider = Class.extend({
 
                 //this gets a live reading of the value and prints it on the page
                 slide : function(event,ui) {
-                    self.handleChangeValue(ui.value);
+                    if(self.triggerChange == true) {
+                        self.handleChangeValue(self.slider,ui.value);
+                    }
                 },
 
                 //this updates the hidden form field so we can submit the data using a form
                 change: function(event, ui) {
-                    self.handleChangeValue(ui.value);
+                    if(self.triggerChange==true) {
+                        self.handleChangeValue(self.slider,ui.value);
+                    } else {
+                        self.triggerChange = true;
+                    }
                 }
 
             });
@@ -103,14 +133,33 @@ Poker.BetSlider = Class.extend({
                 self.slider.slider("value",value);
             });
         });
-        this.displayOutput(this.minBet);
+        this.handleChangeValue(null,this.minBet);
     },
-    handleChangeValue : function(value) {
+    betAmountInRange : function(value) {
+        return value>=this.minBet && value<=this.maxBet;
+    },
+    handleChangeValue : function(source,value) {
         if(value<this.minBet) {
-            this.slider.slider("value",this.minBet);
-        } else {
-            this.displayOutput(value);
+            value = this.minBet;
+        } else if(value>this.maxBet) {
+            value = this.maxBet;
         }
+        this.currentBetAmount = value;
+        this.updateBetAmountDisplays(source,value);
+
+    },
+    updateBetAmountDisplays : function(source,value) {
+        var formattedValue = Poker.Utils.formatCurrency(value);
+
+        if(source!=this.betInput) {
+            this.betInput.val(formattedValue);
+        } else {
+            this.triggerChange = false;
+        }
+        if(source!=this.slider) {
+            this.slider.slider("value",value);
+        }
+        this.valueOutputs.html("").append(formattedValue);
     },
     /**
      * Set min bet value of the slider
@@ -127,7 +176,7 @@ Poker.BetSlider = Class.extend({
         this.maxBet = maxBet;
     },
     getValue : function() {
-        return this.slider.slider("value");
+        return this.currentBetAmount;
     },
     setBigBlind : function(bigBlind) {
         this.bigBlind = bigBlind;
@@ -146,10 +195,17 @@ Poker.BetSlider = Class.extend({
           this.slider.slider("destroy");
           $("#"+this.containerId).remove();
       }
+      if(this.betInput) {
+          this.betInput.remove();
+          this.betInput = null;
+      }
     },
     hide : function() {
         if(this.slider) {
             this.slider.hide();
+        }
+        if(this.betInput) {
+            this.betInput.hide();
         }
     },
     closeValueExist : function(val) {

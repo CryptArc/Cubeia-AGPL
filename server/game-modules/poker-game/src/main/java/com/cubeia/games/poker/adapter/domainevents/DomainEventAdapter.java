@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cubeia.events.event.GameEvent;
+import com.cubeia.events.event.poker.PokerAttributes;
+import com.cubeia.firebase.api.service.clientregistry.PublicClientRegistryService;
 import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.games.poker.common.money.Money;
 import com.cubeia.poker.adapter.HandEndStatus;
@@ -14,6 +16,7 @@ import com.cubeia.poker.model.RatedPlayerHand;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.result.HandResult;
 import com.cubeia.poker.result.Result;
+import com.cubeia.poker.settings.PokerSettings;
 
 public class DomainEventAdapter {
 	
@@ -22,16 +25,18 @@ public class DomainEventAdapter {
 	/** Service for sending and listening to bonus/achievement events to players */
 	@Service DomainEventsService service;
 	
+	@Service PublicClientRegistryService clientRegistry;
+	
 	/**
 	 * Report hand end result to the achievment service
 	 * @param handResult
 	 * @param handEndStatus
 	 * @param tournamentTable
 	 */
-	public void notifyHandEnd(HandResult handResult, HandEndStatus handEndStatus, boolean tournamentTable) {
+	public void notifyHandEnd(HandResult handResult, HandEndStatus handEndStatus, boolean tournamentTable, PokerSettings pokerSettings) {
 		Map<PokerPlayer, Result> map = handResult.getResults();
 		for (PokerPlayer player : map.keySet()) {
-			sendPlayerHandEnd(player, map.get(player), handResult);	
+			sendPlayerHandEnd(player, map.get(player), handResult, tournamentTable, pokerSettings);	
 		}
 	}
 	
@@ -41,13 +46,28 @@ public class DomainEventAdapter {
 	}
 	
 	
-	private void sendPlayerHandEnd(PokerPlayer player, Result result, HandResult handResult) {
+	private void sendPlayerHandEnd(PokerPlayer player, Result result, HandResult handResult, boolean tournamentTable, PokerSettings pokerSettings) {
+		int operatorId = clientRegistry.getOperatorId(player.getId());	
+		String screenname = clientRegistry.getScreenname(player.getId());
+		// We don't want to push events for operator id 0 which is reserved for bots and internal users.
+		// TODO: Perhaps make excluded operators configurable
+		if (operatorId == 0) {
+			return; 
+		}
+		
+		long stake = calculateStake(result);
+		
 		GameEvent event = new GameEvent();
 		event.game = "poker";
 		event.type = "roundEnd";
 		event.player = player.getId()+"";
-		event.attributes.put("stake", calculateStake(result)+"");
-		event.attributes.put("winAmount", result.getWinningsIncludingOwnBets()+"");
+		event.operator = operatorId+"";
+		event.attributes.put(PokerAttributes.stake.name(), stake+"");
+		event.attributes.put(PokerAttributes.winAmount.name(), result.getWinningsIncludingOwnBets()+"");
+		event.attributes.put(PokerAttributes.netResult.name(), result.getWinningsIncludingOwnBets()-stake+"");
+		event.attributes.put(PokerAttributes.screenname.name(), screenname);
+		event.attributes.put(PokerAttributes.tournament.name(), tournamentTable+"");
+		event.attributes.put(PokerAttributes.accountCurrency.name(), pokerSettings.getCurrency());
 		
 		boolean isWin = calculateIsWin(result);
 		if (isWin) {

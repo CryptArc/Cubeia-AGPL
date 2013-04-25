@@ -62,7 +62,6 @@ Poker.TableLayoutManager = Class.extend({
 
         new Poker.ChatInput(this.tableView.find(".chat-input"),function(message){
             new Poker.TableRequestHandler(tableId).sendChatMessage(message);
-            console.log("Message : " + message);
         });
 
         this.tableId = tableId;
@@ -148,7 +147,6 @@ Poker.TableLayoutManager = Class.extend({
      * @param active - {boolean} boolean to indicate if the seat is active or not (active == occupied)
      */
     addEmptySeatContent : function(seatId,pos,active) {
-        console.log("addEmptySeatContent seatId="+seatId);
         var seat = $("#seat"+seatId+"-"+this.tableId);
         seat.addClass("seat-empty").html(this.templateManager.render("emptySeatTemplate",{}));
         seat.removeClass("seat-sit-out").removeClass("seat-folded");
@@ -333,8 +331,20 @@ Poker.TableLayoutManager = Class.extend({
         if(cardString == card.cardString) {
             return;
         }
-        card.exposeCard(cardString);
-        new Poker.CSSClassAnimation(card.getJQElement()).addClass("exposed").start(this.animationManager);
+
+        var animManager = this.animationManager;
+
+        // callback to ensure that the image is loaded before firing the animation
+        var imageLoadedCallback = function() {
+            setTimeout(function() {
+                new Poker.CSSClassAnimation(card.getJQElement()).addClass("exposed").start(animManager);
+            }, 50)
+        };
+
+        card.exposeCard(cardString, imageLoadedCallback);
+
+
+
 
     },
     onMoveDealerButton : function(seatId) {
@@ -404,8 +414,6 @@ Poker.TableLayoutManager = Class.extend({
      * @param {Poker.Pot[]} pots
      */
     onPotUpdate : function(pots) {
-        console.log("POTS:");
-        console.log(pots);
         for(var i = 0; i<pots.length; i++) {
             var potElement = this.mainPotContainer.find(".pot-"+pots[i].id);
             if(potElement.length>0) {
@@ -533,8 +541,6 @@ Poker.TableLayoutManager = Class.extend({
         var transferAnimator = new Poker.PotTransferAnimator(this.tableId, this.animationManager, $("#seatContainer-"+this.tableId),
             this.mainPotContainer);
 
-        console.log("POT TRANSFERS: ");
-        console.log(transfers);
         for(var i = 0; i<transfers.length; i++) {
             var trans = transfers[i];
             if(trans.amount<=0) {

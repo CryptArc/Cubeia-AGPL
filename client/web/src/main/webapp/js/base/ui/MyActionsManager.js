@@ -147,7 +147,10 @@ Poker.MyActionsManager  = Class.extend({
         this.bigBlindInCents = bigBlindInCents;
     },
     showSlider : function(minAmount,maxAmount,mainPot) {
-        this.slider = new Poker.BetSlider(this.tableId,"betSlider");
+        var self = this;
+        this.slider = new Poker.BetSlider(this.tableId,"betSlider", function(){
+            self.actionButtons.betOrRaise();
+        });
         this.slider.clear();
 
         this.slider.setMinBet(minAmount);

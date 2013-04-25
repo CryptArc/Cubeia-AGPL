@@ -42,6 +42,7 @@ Poker.ActionButtons = Poker.AbstractTableButtons.extend({
         this.fixedRaiseActionButton = new Poker.ActionButton($(".fixed-action-raise",view),Poker.ActionType.RAISE,actionCallback,true);
 
     },
+
     _addActionButton : function(elId, actionType, callback, showAmount){
         var button = null;
         if(actionType.id == Poker.ActionType.BET.id || actionType.id == Poker.ActionType.RAISE.id ) {
@@ -50,6 +51,13 @@ Poker.ActionButtons = Poker.AbstractTableButtons.extend({
             button = new Poker.ActionButton(elId, actionType, callback, showAmount);
         }
         this.buttons.put(actionType.id, button);
+    },
+    betOrRaise : function(){
+        if(this.doBetActionButton.isVisible()){
+            this.doBetActionButton.click();
+        } else {
+            this.doRaiseActionButton.click();
+        }
     },
     hideAll : function() {
         console.log("Hiding all buttons.")
