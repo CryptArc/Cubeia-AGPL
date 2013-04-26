@@ -51,8 +51,57 @@ public class SimpleTableConfigTemplateProvider implements TableConfigTemplatePro
         texasNoLimit.setRakeSettings(createDefaultRakeSettings(new BigDecimal(0.02)));
         texasNoLimit.setCurrency("EUR");
 
+        TableConfigTemplate texasNoLimit2Plrs = new TableConfigTemplate();
+        texasNoLimit2Plrs.setId(2);
+        texasNoLimit2Plrs.setSmallBlind(50);
+        texasNoLimit2Plrs.setBigBlind(100);
+        texasNoLimit2Plrs.setMinBuyIn(1000);
+        texasNoLimit2Plrs.setMaxBuyIn(10000);
+        texasNoLimit2Plrs.setSeats(2);
+        texasNoLimit2Plrs.setVariant(TEXAS_HOLDEM);
+        texasNoLimit2Plrs.setTiming(TimingFactory.getRegistry().getDefaultTimingProfile());
+        texasNoLimit2Plrs.setBetStrategy(BetStrategyType.NO_LIMIT);
+        texasNoLimit2Plrs.setTTL(60000);
+        texasNoLimit2Plrs.setMinEmptyTables(2);
+        texasNoLimit2Plrs.setMinTables(4);
+        texasNoLimit2Plrs.setRakeSettings(createDefaultRakeSettings(new BigDecimal(0.02)));
+        texasNoLimit2Plrs.setCurrency("EUR");
+
+        TableConfigTemplate texasNoLimit6Plrs = new TableConfigTemplate();
+        texasNoLimit6Plrs.setId(3);
+        texasNoLimit6Plrs.setSmallBlind(50);
+        texasNoLimit6Plrs.setBigBlind(100);
+        texasNoLimit6Plrs.setMinBuyIn(1000);
+        texasNoLimit6Plrs.setMaxBuyIn(10000);
+        texasNoLimit6Plrs.setSeats(6);
+        texasNoLimit6Plrs.setVariant(TEXAS_HOLDEM);
+        texasNoLimit6Plrs.setTiming(TimingFactory.getRegistry().getDefaultTimingProfile());
+        texasNoLimit6Plrs.setBetStrategy(BetStrategyType.NO_LIMIT);
+        texasNoLimit6Plrs.setTTL(60000);
+        texasNoLimit6Plrs.setMinEmptyTables(2);
+        texasNoLimit6Plrs.setMinTables(4);
+        texasNoLimit6Plrs.setRakeSettings(createDefaultRakeSettings(new BigDecimal(0.02)));
+        texasNoLimit6Plrs.setCurrency("EUR");
+
+        TableConfigTemplate texasNoLimit5Plrs = new TableConfigTemplate();
+        texasNoLimit5Plrs.setId(4);
+        texasNoLimit5Plrs.setSmallBlind(50);
+        texasNoLimit5Plrs.setBigBlind(100);
+        texasNoLimit5Plrs.setMinBuyIn(1000);
+        texasNoLimit5Plrs.setMaxBuyIn(10000);
+        texasNoLimit5Plrs.setSeats(5);
+        texasNoLimit5Plrs.setVariant(TEXAS_HOLDEM);
+        texasNoLimit5Plrs.setTiming(TimingFactory.getRegistry().getDefaultTimingProfile());
+        texasNoLimit5Plrs.setBetStrategy(BetStrategyType.NO_LIMIT);
+        texasNoLimit5Plrs.setTTL(60000);
+        texasNoLimit5Plrs.setMinEmptyTables(2);
+        texasNoLimit5Plrs.setMinTables(4);
+        texasNoLimit5Plrs.setRakeSettings(createDefaultRakeSettings(new BigDecimal(0.02)));
+        texasNoLimit5Plrs.setCurrency("EUR");
+
+
         TableConfigTemplate texasFixedLimit = new TableConfigTemplate();
-        texasFixedLimit.setId(1);
+        texasFixedLimit.setId(5);
         texasFixedLimit.setSmallBlind(50);
         texasFixedLimit.setBigBlind(100);
         texasFixedLimit.setMinBuyIn(1000);
@@ -68,7 +117,7 @@ public class SimpleTableConfigTemplateProvider implements TableConfigTemplatePro
         texasFixedLimit.setCurrency("EUR");
 
         TableConfigTemplate telesina = new TableConfigTemplate();
-        telesina.setId(2);
+        telesina.setId(6);
         telesina.setAnte(100);
         telesina.setSmallBlind(0);
         telesina.setBigBlind(0);
@@ -84,6 +133,6 @@ public class SimpleTableConfigTemplateProvider implements TableConfigTemplatePro
         telesina.setRakeSettings(createDefaultRakeSettings(new BigDecimal(0.02)));
         telesina.setCurrency("EUR");
 
-        return Arrays.asList(texasNoLimit, texasFixedLimit, telesina);
+        return Arrays.asList(texasNoLimit, texasFixedLimit, texasNoLimit2Plrs,texasNoLimit5Plrs,texasNoLimit6Plrs,telesina);
     }
 }
