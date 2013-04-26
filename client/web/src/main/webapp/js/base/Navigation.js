@@ -51,7 +51,8 @@ Poker.Navigation = Class.extend({
             return;
         }
         tableId = parseInt(tableId);
-        new Poker.TableRequestHandler(tableId).openTable(tableId)
+        //TODO: we need snapshot to get capacity
+        new Poker.TableRequestHandler(tableId).openTable(10);
 
     }
 
