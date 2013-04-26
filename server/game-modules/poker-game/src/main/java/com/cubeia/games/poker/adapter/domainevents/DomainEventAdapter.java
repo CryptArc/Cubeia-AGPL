@@ -49,6 +49,14 @@ public class DomainEventAdapter {
 	private void sendPlayerHandEnd(PokerPlayer player, Result result, HandResult handResult, boolean tournamentTable, PokerSettings pokerSettings) {
 		int operatorId = clientRegistry.getOperatorId(player.getId());	
 		String screenname = clientRegistry.getScreenname(player.getId());
+		
+		// if the screenname is null the player is logged out and 
+		// we can't continue
+		if (screenname == null) {
+			log.trace("Shortcuting event for player " + player.getId() + "; Is logged out.");
+			return;
+		}
+		
 		// We don't want to push events for operator id 0 which is reserved for bots and internal users.
 		// TODO: Perhaps make excluded operators configurable
 		if (operatorId == 0) {
