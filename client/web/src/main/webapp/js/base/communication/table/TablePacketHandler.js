@@ -35,7 +35,7 @@ Poker.TablePacketHandler = Class.extend({
         new Poker.TableRequestHandler(packet.tableid).joinTable();
         var data = Poker.ProtocolUtils.extractTableData(packet.snapshot);
         this.tableManager.tableNames.put(packet.tableid,Poker.ProtocolUtils.getTableName(data));
-        this.tableManager.handleOpenTableAccepted(packet.tableid, data.capacity); //TODO: FIX!
+        this.tableManager.handleOpenTableAccepted(packet.tableid, data.capacity);
     },
     handleNotifyJoin:function (notifyJoinPacket) {
         this.tableManager.addPlayer(notifyJoinPacket.tableid,notifyJoinPacket.seat, notifyJoinPacket.pid, notifyJoinPacket.nick);
