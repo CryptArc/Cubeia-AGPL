@@ -25,6 +25,7 @@ import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.firebase.io.protocol.GameTransportPacket;
 import com.cubeia.firebase.io.protocol.MttTransportPacket;
+import com.cubeia.game.poker.bot.ai.PokerGameHandler;
 import com.cubeia.games.poker.io.protocol.*;
 import com.cubeia.games.poker.io.protocol.Enums.PlayerTableStatus;
 
@@ -45,6 +46,8 @@ public class GameHandler implements PacketVisitor {
     private final Strategy strategy;
 
     private AtomicBoolean historicActionsAreBeingSent = new AtomicBoolean(false);
+    
+    private PokerGameHandler pokerHandler = new PokerGameHandler();
 
     public GameHandler(AbstractAI bot) {
     	this.strategy = new Strategy();
@@ -216,6 +219,7 @@ public class GameHandler implements PacketVisitor {
 
     @Override
     public void visit(HandEnd packet) {
+    	pokerHandler.clear();
     }
 
     @Override
