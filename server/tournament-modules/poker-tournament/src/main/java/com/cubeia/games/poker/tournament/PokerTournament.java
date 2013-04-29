@@ -950,7 +950,11 @@ public class PokerTournament implements TableNotifier, Serializable {
 
     public MttRegisterResponse checkRegistration(MttRegistrationRequest request) {
         log.info("Checking if " + request + " is allowed to register.");
-
+        
+        if (instance.getState().getCapacity() <= instance.getState().getRegisteredPlayersCount()) {
+        	return MttRegisterResponse.DENIED; 
+        }
+        
         if (isReRegistration(request)) {
             return MttRegisterResponse.ALLOWED;
         }
@@ -962,9 +966,9 @@ public class PokerTournament implements TableNotifier, Serializable {
         if (pokerState.getStatus() != REGISTERING) {
             return MttRegisterResponse.DENIED;
         } else {
-            backend.openTournamentPlayerSession(createOpenTournamentPlayerSessionRequest(request), pokerState.getTournamentSession());
-            pokerState.addPendingRegistration(request.getPlayer().getPlayerId());
-            return MttRegisterResponse.ALLOWED;
+    		backend.openTournamentPlayerSession(createOpenTournamentPlayerSessionRequest(request), pokerState.getTournamentSession());
+    		pokerState.addPendingRegistration(request.getPlayer().getPlayerId());
+    		return MttRegisterResponse.ALLOWED;
         }
     }
 
