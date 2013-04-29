@@ -155,6 +155,7 @@ public class PokerTableListener implements TournamentTableListener {
 
 
     public void playerStatusChanged(Table table, int playerId, PlayerStatus status) {
+    	log.debug("Player status changed: " + playerId+" -> "+status);
         stateInjector.injectAdapter(table);
         if (status.equals(DISCONNECTED) || status.equals(LEAVING) || status.equals(WAITING_REJOIN)) {
             log.debug("Player status changed will be set as sit out, tid[" + table.getId() + "] pid[" + playerId + "] status[" + status + "]");
@@ -208,10 +209,12 @@ public class PokerTableListener implements TournamentTableListener {
     private void removePlayer(Table table, int playerId, boolean tournamentPlayer) {
         if (!tournamentPlayer) {
             PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) state.getPokerPlayer(playerId);
+            log.debug("Close player session: "+pokerPlayer);
             if (pokerPlayer != null) { // Check if player was removed already
                 backendPlayerSessionHandler.endPlayerSessionInBackend(table, pokerPlayer, getCurrentRoundNumber(), state);
             }
         }
+        log.debug("Remove player from state : "+playerId);
         state.removePlayer(playerId);
     }
 }

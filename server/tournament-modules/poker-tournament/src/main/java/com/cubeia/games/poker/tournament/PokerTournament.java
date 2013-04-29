@@ -179,7 +179,6 @@ public class PokerTournament implements TableNotifier, Serializable {
     }
 
     public void handleRebuyTimeout(int tableId) {
-        log.debug("Received rebuy timeout at table " + tableId);
         /*if (isTournamentFinished()) {
         	rebuySupport.removeRebuyRequestsForTable(tableId);
         	log.debug("Received rebuy timeout for finished tournament; table: " + tableId);
@@ -204,9 +203,7 @@ public class PokerTournament implements TableNotifier, Serializable {
     public void handleRebuyResponse(RebuyResponse rebuyResponse) {
         int tableId = rebuyResponse.getTableId();
         int playerId = rebuyResponse.getPlayerId();
-        log.debug("Handling rebuy response on table " + tableId + " from player " + playerId);
         Set<Integer> rebuyRequests = rebuySupport.getRebuyRequestsForTable(tableId);
-        log.debug("Pending rebuy requests: " + rebuyRequests);
         if (rebuyRequests.contains(playerId)) {
             if (rebuyResponse.getAnswer()) {
                 performRebuy(playerId, tableId);
@@ -641,13 +638,13 @@ public class PokerTournament implements TableNotifier, Serializable {
     }
 
     private void scheduleTournamentClosing() {
-        log.debug("Scheduling tournament to be closed in " + pokerState.getMinutesVisibleAfterFinished() + " minutes.");
+        log.trace("Scheduling tournament to be closed in " + pokerState.getMinutesVisibleAfterFinished() + " minutes.");
         MttAction action = new MttObjectAction(instance.getId(), new CloseTournament());
         instance.getScheduler().scheduleAction(action, pokerState.getMinutesVisibleAfterFinished() * MILLIS_PER_MINUTE);
     }
 
     private void closeMainTournamentSession() {
-        log.debug("Closing tournament session " + pokerState.getTournamentSession() + " for tournament " + pokerState.getHistoricId());
+        log.trace("Closing tournament session " + pokerState.getTournamentSession() + " for tournament " + pokerState.getHistoricId());
         backend.closeTournamentSession(new CloseSessionRequest(pokerState.getTournamentSession()), createTournamentId());
     }
 
@@ -1018,8 +1015,8 @@ public class PokerTournament implements TableNotifier, Serializable {
     }
 
     public void tournamentCreated() {
-        log.debug("Tournament created. Historic id: " + pokerState.getHistoricId());
-        log.debug("Resurrecting players: " + pokerState.getResurrectingPlayers());
+        log.trace("Tournament created. Historic id: " + pokerState.getHistoricId());
+        log.trace("Resurrecting players: " + pokerState.getResurrectingPlayers());
         if (pokerState.isResurrectingTournament()) {
             reRegisterPlayers(pokerState.getResurrectingPlayers());
             pokerState.invalidatePlayerMap();
@@ -1127,12 +1124,10 @@ public class PokerTournament implements TableNotifier, Serializable {
     }
 
     private void openRegistration() {
-        log.debug("Opening registration.");
         setTournamentStatus(REGISTERING);
     }
 
     void cancelTournament() {
-        log.debug("Cancelling tournament " + pokerState.getHistoricId());
         setTournamentStatus(PokerTournamentStatus.CANCELLED);
         refundPlayers();
         closeMainTournamentSession();
@@ -1222,10 +1217,8 @@ public class PokerTournament implements TableNotifier, Serializable {
 
     private void checkIfTournamentShouldBeStartedOrCancelled() {
         if (tournamentShouldStart()) {
-            log.debug("Tournament should be started.");
             startTournament();
         } else if (tournamentShouldBeCancelled()) {
-            log.debug("Tournament should be cancelled.");
             cancelTournament();
         }
     }
@@ -1244,9 +1237,7 @@ public class PokerTournament implements TableNotifier, Serializable {
     }
 
     private void notifyTournamentClosed() {
-        log.debug("Notifying all tables that tournament is being destroyed.");
         for (Integer tableId : state.getTables()) {
-            log.debug("Notifying table " + tableId + " that tournament is being destroyed.");
             notifyTable(tableId, new TournamentDestroyed());
         }
     }
