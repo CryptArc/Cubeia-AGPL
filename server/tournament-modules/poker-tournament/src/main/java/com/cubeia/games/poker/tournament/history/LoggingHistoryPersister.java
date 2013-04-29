@@ -125,7 +125,7 @@ public class LoggingHistoryPersister implements TournamentHistoryPersistenceServ
 
     @Override
     public void statusChanged(String status, String historicId, long now) {
-        log.debug("Tournament[ " + historicId + "]. Status updated to " + status);
+        log.trace("Tournament[ " + historicId + "]. Status updated to " + status);
     }
 
     @Override

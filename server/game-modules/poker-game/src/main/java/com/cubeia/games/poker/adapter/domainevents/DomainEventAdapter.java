@@ -42,19 +42,20 @@ public class DomainEventAdapter {
 	
 	
 	public void notifyEndPlayerSession(int playerId, Money accountBalance) {
+		log.debug("Domain event service: "+service);
 		service.sendEndPlayerSessionEvent(playerId, accountBalance);
 	}
 	
 	
 	private void sendPlayerHandEnd(PokerPlayer player, Result result, HandResult handResult, boolean tournamentTable, PokerSettings pokerSettings) {
-		int operatorId = clientRegistry.getOperatorId(player.getId());	
-		String screenname = clientRegistry.getScreenname(player.getId());
-		
-		// if the screenname is null the player is logged out and 
-		// we can't continue
+		int playerId = player.getId();
+		String screenname = clientRegistry.getScreenname(playerId);
+		int operatorId = 0;
 		if (screenname == null) {
-			log.trace("Shortcuting event for player " + player.getId() + "; Is logged out.");
-			return;
+			log.error("Client registry returned null for screenname for player["+playerId+"]. This indicates that the player has disconnected before the hand is over. We will not send a player session event for this player!");
+			return; // FIXME: This early return is a serious bug!!
+		} else {
+			operatorId = clientRegistry.getOperatorId(playerId);
 		}
 		
 		// We don't want to push events for operator id 0 which is reserved for bots and internal users.

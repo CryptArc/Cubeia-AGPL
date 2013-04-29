@@ -121,7 +121,6 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
 
     @Override
     public void process(MttRoundReportAction action, MttInstance instance) {
-        log.debug("Date fetcher: " + dateFetcher);
         try {
             MDC.put(MDC_TAG, "Tournament[" + instance.getId() + "]");
             prepareTournament(instance).processRoundReport(action);
@@ -147,7 +146,6 @@ public class PokerTournamentProcessor implements TournamentHandler, PlayerInterc
             MDC.put(MDC_TAG, "Tournament[" + instance.getId() + "]");
             Object object = action.getAttachment();
             PokerTournament tournament = prepareTournament(instance);
-            log.debug("Received mtt object action: " + object);
             if (object instanceof TournamentTrigger) {
                 TournamentTrigger trigger = (TournamentTrigger) object;
                 tournament.handleTrigger(trigger);
