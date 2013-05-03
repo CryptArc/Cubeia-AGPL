@@ -30,6 +30,8 @@ import java.util.Set;
 
 public interface PokerPlayer extends BlindsPlayer, Serializable {
 
+	public String getScreenname();
+	
     /**
      * Returns the players pocket cards. Note that this might
      * be a defensive copy and should NOT be modified.
@@ -76,6 +78,8 @@ public interface PokerPlayer extends BlindsPlayer, Serializable {
     public int getSeatId();
 
     public int getOperatorId();
+    
+    public void setOperatorId(int operatorId);
 
     public long getBetStack();
 

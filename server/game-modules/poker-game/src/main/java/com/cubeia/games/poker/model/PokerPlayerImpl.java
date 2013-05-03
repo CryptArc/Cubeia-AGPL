@@ -52,6 +52,7 @@ public class PokerPlayerImpl extends DefaultPokerPlayer implements Serializable 
     public PokerPlayerImpl(GenericPlayer placeholder) {
         super(placeholder.getPlayerId());
         this.placeholder = placeholder;
+        setScreenname(placeholder.getName());
     }
 
     @Override

@@ -22,6 +22,8 @@ import com.cubeia.firebase.api.game.player.GenericPlayer;
 import com.cubeia.firebase.api.game.player.PlayerStatus;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TournamentTableListener;
+import com.cubeia.firebase.api.service.clientregistry.PublicClientRegistryService;
+import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.games.poker.adapter.DisconnectHandler;
 import com.cubeia.games.poker.cache.ActionCache;
 import com.cubeia.games.poker.handler.BackendPlayerSessionHandler;
@@ -76,6 +78,9 @@ public class PokerTableListener implements TournamentTableListener {
 
     @Inject
     DisconnectHandler disconnectHandler;
+    
+    @Service
+    PublicClientRegistryService clientRegistry;
 
     /**
      * A Player has joined our table. =)
@@ -191,6 +196,8 @@ public class PokerTableListener implements TournamentTableListener {
 
         sendGameStateToSittingInPlayerIfNeeded(table, player);
         PokerPlayer pokerPlayer = new PokerPlayerImpl(player);
+        int operatorId = clientRegistry.getOperatorId(player.getPlayerId());
+        pokerPlayer.setOperatorId(operatorId);
         state.addPlayer(pokerPlayer);
 
         if (!tournamentPlayer) {
