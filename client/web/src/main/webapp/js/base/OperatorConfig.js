@@ -29,10 +29,10 @@ Poker.OperatorConfig = Class.extend({
         this.populated = true;
     },
     getLogoutUrl : function() {
-    	return this.getValue("LOGOUT_PAGE_URL","http://www.cubeia.com");
+    	return this.getValue("LOGOUT_PAGE_URL","");
     },
     getClientHelpUrl : function() {
-        return this.getValue("CLIENT_HELP_URL","http://www.cubeia.com");
+        return this.getValue("CLIENT_HELP_URL","");
     },
 
     getProfilePageUrl:function() {
