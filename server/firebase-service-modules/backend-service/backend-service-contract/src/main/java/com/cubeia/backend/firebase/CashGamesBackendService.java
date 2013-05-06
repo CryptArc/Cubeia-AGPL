@@ -37,5 +37,4 @@ public interface CashGamesBackendService extends AsynchronousCashGamesBackend, C
 
     public static final String MARKET_TABLE_SESSION_REFERENCE_KEY = "MARKET_TABLE_SESSION_REFERENCE";
 
-    Currency getCurrency(String currencyCode);
 }

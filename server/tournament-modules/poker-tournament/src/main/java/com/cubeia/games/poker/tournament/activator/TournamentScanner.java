@@ -17,28 +17,16 @@
 
 package com.cubeia.games.poker.tournament.activator;
 
-import com.cubeia.backend.firebase.CashGamesBackendService;
-import com.cubeia.firebase.api.common.AttributeValue;
-import com.cubeia.firebase.api.mtt.MttFactory;
-import com.cubeia.firebase.api.mtt.activator.ActivatorContext;
-import com.cubeia.firebase.api.mtt.lobby.MttLobbyObject;
-import com.cubeia.firebase.api.server.SystemException;
-import com.cubeia.firebase.guice.inject.Service;
-import com.cubeia.game.poker.config.api.PokerSystemConfig;
-import com.cubeia.games.poker.common.time.SystemTime;
-import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
-import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentInstance;
-import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
-import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
-import com.cubeia.games.poker.tournament.configuration.provider.SitAndGoConfigurationProvider;
-import com.cubeia.games.poker.tournament.configuration.provider.TournamentScheduleProvider;
-import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
-import com.cubeia.poker.tournament.history.api.HistoricTournament;
-import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
-import com.google.common.collect.Maps;
-import com.google.inject.Inject;
-import org.apache.log4j.Logger;
-import org.joda.time.DateTime;
+import static com.cubeia.firebase.io.protocol.Enums.TournamentAttributes.NAME;
+import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.IDENTIFIER;
+import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.SIT_AND_GO;
+import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.STATUS;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.CANCELLED;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.CLOSED;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.REGISTERING;
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.collect.Sets.newHashSet;
+import static java.lang.Boolean.parseBoolean;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -51,16 +39,27 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import static com.cubeia.firebase.io.protocol.Enums.TournamentAttributes.NAME;
-import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.IDENTIFIER;
-import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.SIT_AND_GO;
-import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.STATUS;
-import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.CANCELLED;
-import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.CLOSED;
-import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.REGISTERING;
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static com.google.common.collect.Sets.newHashSet;
-import static java.lang.Boolean.parseBoolean;
+import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
+
+import com.cubeia.backend.firebase.CashGamesBackendService;
+import com.cubeia.firebase.api.common.AttributeValue;
+import com.cubeia.firebase.api.mtt.MttFactory;
+import com.cubeia.firebase.api.mtt.activator.ActivatorContext;
+import com.cubeia.firebase.api.mtt.lobby.MttLobbyObject;
+import com.cubeia.firebase.api.server.SystemException;
+import com.cubeia.games.poker.common.time.SystemTime;
+import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentConfiguration;
+import com.cubeia.games.poker.tournament.configuration.ScheduledTournamentInstance;
+import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
+import com.cubeia.games.poker.tournament.configuration.TournamentSchedule;
+import com.cubeia.games.poker.tournament.configuration.provider.SitAndGoConfigurationProvider;
+import com.cubeia.games.poker.tournament.configuration.provider.TournamentScheduleProvider;
+import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
+import com.cubeia.poker.tournament.history.api.HistoricTournament;
+import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
+import com.google.common.collect.Maps;
+import com.google.inject.Inject;
 
 public class TournamentScanner implements PokerActivator, Runnable {
 
@@ -96,18 +95,13 @@ public class TournamentScanner implements PokerActivator, Runnable {
 
     private ShutdownServiceContract shutdownService;
     
-    @Service
-    private PokerSystemConfig systemConfig;
-
     private CashGamesBackendService cashGamesBackendService;
 
     @Inject
-    public TournamentScanner(SitAndGoConfigurationProvider sitAndGoConfigurationProvider, TournamentScheduleProvider tournamentScheduleProvider, SystemTime dateFetcher,
-                             CashGamesBackendService cashGamesBackendService) {
+    public TournamentScanner(SitAndGoConfigurationProvider sitAndGoConfigurationProvider, TournamentScheduleProvider tournamentScheduleProvider, SystemTime dateFetcher) {
         this.sitAndGoConfigurationProvider = sitAndGoConfigurationProvider;
         this.tournamentScheduleProvider = tournamentScheduleProvider;
         this.dateFetcher = dateFetcher;
-        this.cashGamesBackendService = cashGamesBackendService;
     }
 
     /*------------------------------------------------
@@ -120,6 +114,7 @@ public class TournamentScanner implements PokerActivator, Runnable {
         this.context = context;
         this.databaseStorageService = context.getServices().getServiceInstance(TournamentHistoryPersistenceService.class);
         this.shutdownService = context.getServices().getServiceInstance(ShutdownServiceContract.class);
+        this.cashGamesBackendService = context.getServices().getServiceInstance(CashGamesBackendService.class);
         if (databaseStorageService == null) {
             log.info("No database storage service found, using mock.");
             databaseStorageService = new NullDatabaseStorageService();

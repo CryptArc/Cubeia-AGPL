@@ -18,6 +18,7 @@
 package com.cubeia.games.poker.client;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.util.regex.Pattern;
 
@@ -148,7 +149,7 @@ public class PokerTextClient extends SimpleTextClient {
                 PlayerAction type = new PlayerAction();
                 type.type = ActionType.BET;
                 packet.action = type;
-                packet.betAmount = Integer.parseInt(args[2]);
+                packet.betAmount = new BigDecimal(args[2]).toPlainString();
             } catch (Exception e) {
                 System.out.println("usage: bet <tid> <amount>");
             }
@@ -158,7 +159,7 @@ public class PokerTextClient extends SimpleTextClient {
                 PlayerAction type = new PlayerAction();
                 type.type = ActionType.RAISE;
                 packet.action = type;
-                packet.betAmount = Integer.parseInt(args[2]);
+                packet.betAmount = new BigDecimal(args[2]).toPlainString();
             } catch (Exception e) {
                 System.out.println("usage: raise <tid> <amount>");
             }

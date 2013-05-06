@@ -37,6 +37,7 @@ import com.cubeia.backend.cashgame.dto.TransferMoneyRequest;
 import com.cubeia.backend.cashgame.exceptions.BatchHandFailedException;
 import com.cubeia.backend.cashgame.exceptions.CloseSessionFailedException;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
+import com.cubeia.games.poker.common.money.Currency;
 import com.cubeia.games.poker.common.money.Money;
 
 public interface AsynchronousCashGamesBackend {
@@ -150,4 +151,6 @@ public interface AsynchronousCashGamesBackend {
      * See {@link CashGamesBackend#transferMoneyFromRakeAccount(PlayerSessionId, Money, String)} for documentation.
      */
     void transferMoneyFromRakeAccount(PlayerSessionId sessionAccountToTransferFrom, Money moneyToTransferToRakeAccount, String comment);
+    
+    Currency getCurrency(String currencyCode);
 }

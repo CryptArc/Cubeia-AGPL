@@ -99,13 +99,15 @@ public class TournamentScannerTest {
         initMocks(this);
         when(context.getServices()).thenReturn(serviceRegistry);
         when(serviceRegistry.getServiceInstance(ShutdownServiceContract.class)).thenReturn(shutdownService);
+        when(serviceRegistry.getServiceInstance(CashGamesBackendService.class)).thenReturn(cashGamesBackendService);
         originalTimeZone = TimeZone.getDefault();
         TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
         DateTimeZone.setDefault(DateTimeZone.forTimeZone(TimeZone.getTimeZone("GMT")));
-        scanner = new TournamentScanner(sitAndGoProvider, tournamentScheduleProvider, dateFetcher, cashGamesBackendService);
+        scanner = new TournamentScanner(sitAndGoProvider, tournamentScheduleProvider, dateFetcher);
         scanner.init(context);
         scanner.setMttFactory(factory);
-
+        
+        
         when(factory.listTournamentInstances()).thenReturn(new MttLobbyObject[]{});
     }
 

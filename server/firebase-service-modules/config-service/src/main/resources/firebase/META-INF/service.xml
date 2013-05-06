@@ -8,5 +8,6 @@
     <exported>
         <package>com.cubeia.game.poker.config.api.-</package>
         <class>com.cubeia.games.poker.common.money.Money</class>
+        <class>com.cubeia.games.poker.common.money.Currency</class>
     </exported>
 </service>
