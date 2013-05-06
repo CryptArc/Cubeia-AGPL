@@ -136,6 +136,7 @@ public class AccountDetails extends BasePage {
         add(new Label("gameId", cpm.bind("account.information.gameId")));
         add(new Label("objectId", cpm.bind("account.information.objectId")));
         add(new Label("type", cpm.bind("account.type")));
+        add(new Label("negativeAmountAllowed", cpm.bind("account.negativeAmountAllowed")));
         
         add(new LabelLinkPanel(
             "editUser", 
