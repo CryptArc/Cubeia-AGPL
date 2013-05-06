@@ -35,6 +35,7 @@ import java.util.Random;
 import static com.cubeia.poker.action.PokerActionType.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.endsWith;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -259,20 +260,25 @@ public class TelesinaHandsTest extends AbstractTelesinaHandTester {
         game.timeout();
 
         BigDecimal totalRake = game.getPotHolder().calculateRake().getTotalRake();
-        assertThat(totalRake, is(bd(2)));
+        assertThat(totalRake, is(bd("2.50")));
 
         game.timeout();
 
         // player 1 (1995583572) won, all other folded
-        assertThat(mp[1].getBalance(), is(bd(2 * 5)));     // winner of first pot (10)
+        assertThat(mp[1].getBalance(), is(bd("9.90")));    //  2 * 5 * 0.1 winner of first pot (10) - rake
 
         assertThat(mp[0].getBalance(), is(bd(88)));
-        assertThat(mp[2].getBalance(), is(bd(76 + 240 - 2)));        // winner of seconds pot (240), rake = 2
+        BigDecimal balance = bd(76).add(bd(240)).subtract(bd("2.4")).setScale(2);
+        assertThat(mp[2].getBalance(), is(balance));        // 76 + 240 - 2.4 winner of seconds pot (240), rake = 2
         assertThat(mp[3].getBalance(), is(bd(420)));
         assertThat(mp[4].getBalance(), is(bd(556)));
 
         BigDecimal resultingBalance = mp[0].getBalance().add(mp[1].getBalance()).add(mp[2].getBalance()).add(mp[3].getBalance()).add(mp[4].getBalance());
         assertThat(resultingBalance, is(initialBalance.subtract(totalRake)));
+    }
+
+    private BigDecimal bd(String s) {
+        return new BigDecimal(s);
     }
 
     private BigDecimal bd(int i) {
