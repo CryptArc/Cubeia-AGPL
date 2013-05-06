@@ -50,6 +50,7 @@ import com.cubeia.backend.cashgame.exceptions.ReserveFailedException;
 import com.cubeia.firebase.api.action.GameObjectAction;
 import com.cubeia.firebase.api.action.mtt.MttObjectAction;
 import com.cubeia.firebase.api.service.ServiceRouter;
+import com.cubeia.games.poker.common.money.Currency;
 import com.cubeia.games.poker.common.money.Money;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -234,6 +235,11 @@ public abstract class CashGamesBackendServiceBase implements CashGamesBackendSer
     @Override
     public Money getAccountBalance(int playerId, String currency) throws GetBalanceFailedException {
         return getCashGamesBackend().getAccountBalance(playerId, currency);
+    }
+
+    @Override
+    public Currency getCurrency(String currencyCode) {
+        return getCashGamesBackend().getCurrency(currencyCode);
     }
 
     @Override

@@ -138,8 +138,8 @@ public class PokerParticipant extends DefaultCreationParticipant {
         BigDecimal smallBlindAmount = template.getSmallBlind();
         BigDecimal bigBlindAmount = template.getBigBlind();
         BlindsLevel level = new BlindsLevel(smallBlindAmount, bigBlindAmount, template.getAnte());
-        String currency = template.getCurrency();
-        return new PokerSettings(level, template.getBetStrategy(), minBuyIn, maxBuyIn, template.getTiming(), seats, rake, new Currency(currency,2), attributes);
+        Currency currency = cashGameBackendService.getCurrency(template.getCurrency());
+        return new PokerSettings(level, template.getBetStrategy(), minBuyIn, maxBuyIn, template.getTiming(), seats, rake, currency, attributes);
     }
 
     @Override

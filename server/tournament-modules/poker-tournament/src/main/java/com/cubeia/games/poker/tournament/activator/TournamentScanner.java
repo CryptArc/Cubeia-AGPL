@@ -17,6 +17,7 @@
 
 package com.cubeia.games.poker.tournament.activator;
 
+import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.firebase.api.common.AttributeValue;
 import com.cubeia.firebase.api.mtt.MttFactory;
 import com.cubeia.firebase.api.mtt.activator.ActivatorContext;
@@ -98,11 +99,15 @@ public class TournamentScanner implements PokerActivator, Runnable {
     @Service
     private PokerSystemConfig systemConfig;
 
+    private CashGamesBackendService cashGamesBackendService;
+
     @Inject
-    public TournamentScanner(SitAndGoConfigurationProvider sitAndGoConfigurationProvider, TournamentScheduleProvider tournamentScheduleProvider, SystemTime dateFetcher) {
+    public TournamentScanner(SitAndGoConfigurationProvider sitAndGoConfigurationProvider, TournamentScheduleProvider tournamentScheduleProvider, SystemTime dateFetcher,
+                             CashGamesBackendService cashGamesBackendService) {
         this.sitAndGoConfigurationProvider = sitAndGoConfigurationProvider;
         this.tournamentScheduleProvider = tournamentScheduleProvider;
         this.dateFetcher = dateFetcher;
+        this.cashGamesBackendService = cashGamesBackendService;
     }
 
     /*------------------------------------------------
@@ -280,11 +285,11 @@ public class TournamentScanner implements PokerActivator, Runnable {
     }
 
     private SitAndGoCreationParticipant createParticipant(SitAndGoConfiguration configuration) {
-        return new SitAndGoCreationParticipant(configuration, databaseStorageService, dateFetcher);
+        return new SitAndGoCreationParticipant(configuration, databaseStorageService, dateFetcher, cashGamesBackendService);
     }
 
     private ScheduledTournamentCreationParticipant createParticipant(ScheduledTournamentInstance configuration) {
-        return new ScheduledTournamentCreationParticipant(configuration, databaseStorageService, dateFetcher);
+        return new ScheduledTournamentCreationParticipant(configuration, databaseStorageService, dateFetcher, cashGamesBackendService);
     }
 
     private void checkTournaments() {

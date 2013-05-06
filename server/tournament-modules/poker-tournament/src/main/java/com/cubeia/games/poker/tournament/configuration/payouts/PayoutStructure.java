@@ -17,6 +17,7 @@
 
 package com.cubeia.games.poker.tournament.configuration.payouts;
 
+import com.cubeia.games.poker.common.money.Currency;
 import org.apache.log4j.Logger;
 
 import javax.persistence.Entity;
@@ -25,6 +26,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 import static javax.persistence.CascadeType.ALL;
@@ -57,13 +59,13 @@ public class PayoutStructure implements Serializable {
         this.payoutsPerEntryRange = payouts;
     }
 
-    public Payouts getPayoutsForEntrantsAndPrizePool(int numberOfEntrants, long prizePool) {
+    public Payouts getPayoutsForEntrantsAndPrizePool(int numberOfEntrants, BigDecimal prizePool, Currency currency) {
         for (Payouts payout : payoutsPerEntryRange) {
             if (payout.inRange(numberOfEntrants)) {
-                return payout.withPrizePool(prizePool);
+                return payout.withPrizePool(prizePool, currency);
             }
         }
-        Payouts payouts = payoutsPerEntryRange.get(payoutsPerEntryRange.size() - 1).withPrizePool(prizePool);
+        Payouts payouts = payoutsPerEntryRange.get(payoutsPerEntryRange.size() - 1).withPrizePool(prizePool,currency);
         log.warn("No payouts defined for " + numberOfEntrants + " entrants. Using the last payouts: " + payouts);
         return payouts;
     }

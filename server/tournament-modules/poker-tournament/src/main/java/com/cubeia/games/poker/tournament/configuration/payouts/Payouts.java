@@ -17,6 +17,7 @@
 
 package com.cubeia.games.poker.tournament.configuration.payouts;
 
+import com.cubeia.games.poker.common.money.Currency;
 import org.apache.log4j.Logger;
 
 import javax.persistence.Entity;
@@ -27,6 +28,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,8 +53,10 @@ public class Payouts implements Serializable {
     @ManyToOne(fetch = EAGER, cascade = ALL)
     private IntRange entrantsRange;
 
-    /** The size of the prize pool, in cents. */
-    private long prizePool;
+    /** The size of the prize pool. */
+    private BigDecimal prizePool;
+
+    private Currency currency;
 
     /** A list of payouts, each payout defines a percentage for a range of positions in the tournament. */
     @OneToMany(fetch = EAGER, cascade = ALL)
@@ -62,28 +66,29 @@ public class Payouts implements Serializable {
     Payouts() {
     }
 
-    public Payouts(IntRange entrants, List<Payout> payouts, long prizePool) {
+    public Payouts(IntRange entrants, List<Payout> payouts, BigDecimal prizePool, Currency currency) {
         this.entrantsRange = entrants;
         this.payoutList = payouts;
         this.prizePool = prizePool;
+        this.currency = currency;
     }
 
     public Payouts(IntRange entrants, List<Payout> payouts) {
-        this(entrants, payouts, 0);
+        this(entrants, payouts, BigDecimal.ZERO,null);
     }
 
     public boolean inRange(int numberOfEntrants) {
         return entrantsRange.contains(numberOfEntrants);
     }
 
-    public Payouts withPrizePool(long prizePool) {
-        return new Payouts(entrantsRange, payoutList, prizePool);
+    public Payouts withPrizePool(BigDecimal prizePool, Currency currency) {
+        return new Payouts(entrantsRange, payoutList, prizePool, currency);
     }
 
     public BigDecimal getPayoutsForPosition(int position) {
         for (Payout payout : payoutList) {
             if (payout.getPositionRange().contains(position)) {
-                return payout.getPercentage().multiply(new BigDecimal(prizePool).divide(new BigDecimal(100)));
+                return payout.getPercentage().multiply(prizePool).divide(new BigDecimal(100),currency.getFractionalDigits(), RoundingMode.DOWN);
             }
         }
         return BigDecimal.ZERO;
@@ -97,11 +102,11 @@ public class Payouts implements Serializable {
         this.entrantsRange = entrantsRange;
     }
 
-    long getPrizePool() {
+    BigDecimal getPrizePool() {
         return prizePool;
     }
 
-    public void setPrizePool(long prizePool) {
+    public void setPrizePool(BigDecimal prizePool) {
         this.prizePool = prizePool;
     }
 
@@ -147,4 +152,9 @@ public class Payouts implements Serializable {
     private boolean between(double lower, double upper, BigDecimal sum) {
         return sum.compareTo(BigDecimal.valueOf(lower)) >= 0 && sum.compareTo(BigDecimal.valueOf(upper)) <= 0;
     }
+
+    public Currency getCurrency() {
+        return this.currency;
+    }
+
 }

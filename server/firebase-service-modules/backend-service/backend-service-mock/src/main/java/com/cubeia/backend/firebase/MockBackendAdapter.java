@@ -234,6 +234,11 @@ public class MockBackendAdapter implements CashGamesBackend {
         log.debug("Transferring " + money + " from rake account to " + toAccount + " with comment " + comment);
     }
 
+    @Override
+    public Currency getCurrency(String currencyCode) {
+        return new Currency(currencyCode,2);
+    }
+
     private void verifySessionsExist(PlayerSessionId ... sessions) {
         for (PlayerSessionId sessionId : sessions) {
             if (!sessionTransactions.containsKey(sessionId)) {

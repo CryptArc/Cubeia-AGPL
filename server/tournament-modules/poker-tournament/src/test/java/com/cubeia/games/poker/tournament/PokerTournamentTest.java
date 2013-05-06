@@ -39,6 +39,7 @@ import com.cubeia.firebase.api.mtt.support.registry.PlayerRegistry;
 import com.cubeia.firebase.api.scheduler.Scheduler;
 import com.cubeia.firebase.api.service.mttplayerreg.TournamentPlayerRegistry;
 import com.cubeia.firebase.guice.tournament.TournamentAssist;
+import com.cubeia.games.poker.common.money.Currency;
 import com.cubeia.games.poker.common.time.DefaultSystemTime;
 import com.cubeia.games.poker.common.time.SystemTime;
 import com.cubeia.games.poker.tournament.configuration.blinds.BlindsStructure;
@@ -163,6 +164,7 @@ public class PokerTournamentTest {
         pokerState.setFee(BigDecimal.valueOf(1));
         pokerState.setPayoutStructure(createTestStructure(), 10);
         pokerState.setLifecycle(mockLifeCycle);
+        pokerState.setCurrency(new Currency("EUR",2));
         when(instance.getScheduler()).thenReturn(scheduler);
         when(instance.getLobbyAccessor()).thenReturn(lobbyAccessor);
         when(instance.getState()).thenReturn(mttState);
@@ -221,7 +223,7 @@ public class PokerTournamentTest {
         verify(backend).openTournamentPlayerSession(captor.capture(), isA(TournamentSessionId.class));
         OpenTournamentSessionRequest request = captor.getValue();
         assertThat(request.getTournamentId().getInstanceId(), is(instance.getId()));
-        assertThat(request.getOpeningBalance().getAmount(), is(new BigDecimal(1100L)));
+        assertThat(request.getOpeningBalance().getAmount(), is(new BigDecimal(11)));
     }
 
     @Test

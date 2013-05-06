@@ -195,7 +195,7 @@ public class TelesinaHandsTest extends AbstractTelesinaHandTester {
                 new Card(18, "7D"), new Card(19, "8D"), new Card(20, "9D"),
                 new Card(21, "JD"), new Card(22, "QD"), new Card(23, "KD"), new Card(24, "AD"));
 
-        super.setUpTelesina(deckFactory, new BigDecimal(2), new RakeSettings(new BigDecimal("0.01"), new BigDecimal(500), new BigDecimal(150L)));
+        super.setUpTelesina(deckFactory, new BigDecimal(2), new RakeSettings(new BigDecimal("0.01"), new BigDecimal("5.00"), new BigDecimal("1.50")));
 
         MockPlayer[] mp = TestUtils.createMockPlayers(5);
         setBalanceAndPlayerId(0, mp, 1995583417, 170);

@@ -17,6 +17,7 @@
 
 package com.cubeia.games.poker.tournament.activator.scanner;
 
+import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.firebase.api.common.AttributeValue;
 import com.cubeia.firebase.api.mtt.MttFactory;
 import com.cubeia.firebase.api.mtt.activator.ActivatorContext;
@@ -86,6 +87,9 @@ public class TournamentScannerTest {
     @Mock
     private ShutdownServiceContract shutdownService;
 
+    @Mock
+    private CashGamesBackendService cashGamesBackendService;
+
     private TournamentScanner scanner;
 
     private TimeZone originalTimeZone;
@@ -98,7 +102,7 @@ public class TournamentScannerTest {
         originalTimeZone = TimeZone.getDefault();
         TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
         DateTimeZone.setDefault(DateTimeZone.forTimeZone(TimeZone.getTimeZone("GMT")));
-        scanner = new TournamentScanner(sitAndGoProvider, tournamentScheduleProvider, dateFetcher);
+        scanner = new TournamentScanner(sitAndGoProvider, tournamentScheduleProvider, dateFetcher, cashGamesBackendService);
         scanner.init(context);
         scanner.setMttFactory(factory);
 

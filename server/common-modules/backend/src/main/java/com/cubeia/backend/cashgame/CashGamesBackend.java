@@ -35,6 +35,7 @@ import com.cubeia.backend.cashgame.exceptions.CloseSessionFailedException;
 import com.cubeia.backend.cashgame.exceptions.GetBalanceFailedException;
 import com.cubeia.backend.cashgame.exceptions.OpenSessionFailedException;
 import com.cubeia.backend.cashgame.exceptions.ReserveFailedException;
+import com.cubeia.games.poker.common.money.Currency;
 import com.cubeia.games.poker.common.money.Money;
 
 /**
@@ -138,4 +139,12 @@ public interface CashGamesBackend {
      * @param comment
      */
     void transferMoneyFromRakeAccount(PlayerSessionId toAccount, Money money, String comment);
+
+
+    /**
+     * Retrieve the currency by currency code
+     * @param currencyCode
+     * @return
+     */
+    Currency getCurrency(String currencyCode);
 }

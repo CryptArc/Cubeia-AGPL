@@ -17,32 +17,6 @@
 
 package com.cubeia.games.poker.tournament;
 
-import static com.cubeia.firebase.api.mtt.model.MttPlayerStatus.OUT;
-import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.STATUS;
-import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.ANNOUNCED;
-import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.REGISTERING;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-
-import junit.framework.TestCase;
-
-import org.apache.log4j.Logger;
-import org.joda.time.DateTime;
-import org.mockito.Answers;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-
 import com.cubeia.backend.cashgame.PlayerSessionId;
 import com.cubeia.backend.cashgame.dto.OpenSessionResponse;
 import com.cubeia.backend.firebase.CashGamesBackendService;
@@ -62,6 +36,7 @@ import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.firebase.api.mtt.support.MttNotifierAdapter;
 import com.cubeia.firebase.api.scheduler.Scheduler;
 import com.cubeia.firebase.api.service.mttplayerreg.TournamentPlayerRegistry;
+import com.cubeia.games.poker.common.money.Currency;
 import com.cubeia.games.poker.common.time.DefaultSystemTime;
 import com.cubeia.games.poker.common.time.SystemTime;
 import com.cubeia.games.poker.tournament.activator.PokerTournamentCreationParticipant;
@@ -82,6 +57,26 @@ import com.cubeia.network.users.firebase.api.UserServiceContract;
 import com.cubeia.poker.domainevents.api.DomainEventsService;
 import com.cubeia.poker.shutdown.api.ShutdownServiceContract;
 import com.cubeia.poker.tournament.history.storage.api.TournamentHistoryPersistenceService;
+import junit.framework.TestCase;
+import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
+import org.mockito.Answers;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+
+import java.math.BigDecimal;
+import java.util.*;
+
+import static com.cubeia.firebase.api.mtt.model.MttPlayerStatus.OUT;
+import static com.cubeia.games.poker.tournament.PokerTournamentLobbyAttributes.STATUS;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.ANNOUNCED;
+import static com.cubeia.games.poker.tournament.status.PokerTournamentStatus.REGISTERING;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 /**
  * Tests a poker tournament.
@@ -150,6 +145,9 @@ public class PokerTournamentProcessorTest extends TestCase {
     
     @Mock DomainEventsService domainEventService;
 
+    @Mock
+    CashGamesBackendService cashGamesBackendService;
+
     private SystemTime dateFetcher = new DefaultSystemTime();
 
     private MockTournamentAssist support;
@@ -189,6 +187,7 @@ public class PokerTournamentProcessorTest extends TestCase {
         when(configuration.getBuyIn()).thenReturn(BigDecimal.valueOf(10));
         when(configuration.getPayoutStructure()).thenReturn(PayoutStructureParserTest.createTestStructure());
         when(senderFactory.create(Mockito.<MttNotifier>any(), Mockito.<MttInstance>any())).thenReturn(sender);
+        when(cashGamesBackendService.getCurrency(anyString())).thenReturn(new Currency("EUR",2));
 
         support.setTableCreator(new MockTableCreator(tournamentProcessor, instance));
         support.setMttNotifier(new MttNotifierAdapter());
@@ -200,7 +199,7 @@ public class PokerTournamentProcessorTest extends TestCase {
         config.getConfiguration().setBlindsStructure(BlindsStructureFactory.createDefaultBlindsStructure());
         config.getConfiguration().setPayoutStructure(PayoutStructureParserTest.createTestStructure());
         config.getConfiguration().setStartingChips(new BigDecimal(2000));
-        PokerTournamentCreationParticipant part = new SitAndGoCreationParticipant(config, historyService, systemTime);
+        PokerTournamentCreationParticipant part = new SitAndGoCreationParticipant(config, historyService, systemTime, cashGamesBackendService);
         part.tournamentCreated(state, instance.getLobbyAccessor());
 
         pokerState = new PokerTournamentUtil().getPokerState(instance);
@@ -252,7 +251,7 @@ public class PokerTournamentProcessorTest extends TestCase {
         when(instanceConfig.getIdentifier()).thenReturn("identifier");
 
 
-        PokerTournamentCreationParticipant participant = new ScheduledTournamentCreationParticipant(instanceConfig, historyService, systemTime);
+        PokerTournamentCreationParticipant participant = new ScheduledTournamentCreationParticipant(instanceConfig, historyService, systemTime, cashGamesBackendService);
         participant.tournamentCreated(state, instance.getLobbyAccessor());
         pokerState = new PokerTournamentUtil().getPokerState(instance);
         assertEquals(ANNOUNCED, pokerState.getStatus());
@@ -273,7 +272,7 @@ public class PokerTournamentProcessorTest extends TestCase {
 
     public void testStartingBalance() {
         fillTournament();
-        assertEquals(Long.valueOf(200000), pokerState.getPlayerBalance(1));
+        assertEquals(new BigDecimal(2000), pokerState.getPlayerBalance(1));
     }
 
     public void testBalanceAfterMove() {
@@ -288,7 +287,7 @@ public class PokerTournamentProcessorTest extends TestCase {
                 log.debug("Received action: " + action);
                 if (action instanceof SeatPlayersMttAction) {
                     SeatPlayersMttAction seat = (SeatPlayersMttAction) action;
-                    assertEquals(Long.valueOf(200000), seat.getPlayers().iterator().next().getPlayerData());
+                    assertEquals(new BigDecimal(2000), seat.getPlayers().iterator().next().getPlayerData());
                 }
             }
 

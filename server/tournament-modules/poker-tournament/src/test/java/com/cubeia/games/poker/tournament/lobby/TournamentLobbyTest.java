@@ -125,14 +125,16 @@ public class TournamentLobbyTest {
     public void testRounding() {
         when(state.getPlayerRegistry()).thenReturn(playerRegistry);
         when(playerRegistry.getPlayers()).thenReturn(players(1, 2, 3));
-        when(pokerState.getPlayerBalance(1)).thenReturn(bd(33));
-        when(pokerState.getPlayerBalance(2)).thenReturn(bd(33));
-        when(pokerState.getPlayerBalance(3)).thenReturn(bd(34));
+        when(pokerState.getPlayerBalance(1)).thenReturn(bd("33"));
+        when(pokerState.getPlayerBalance(2)).thenReturn(bd("33"));
+        when(pokerState.getPlayerBalance(3)).thenReturn(bd("33"));
         when(state.getRemainingPlayerCount()).thenReturn(3);
         ChipStatistics statistics = lobby.getChipStatistics();
-        assertThat(statistics.averageStack, is("0.33"));
+        assertThat(statistics.averageStack, is("33"));
     }
-
+    private BigDecimal bd(String s) {
+        return new BigDecimal(s);
+    }
     private BigDecimal bd(int i) {
         return new BigDecimal(i);
     }
@@ -141,12 +143,12 @@ public class TournamentLobbyTest {
     public void testExcludeZeroStacks() {
         when(state.getPlayerRegistry()).thenReturn(playerRegistry);
         when(playerRegistry.getPlayers()).thenReturn(players(1, 2, 3));
-        when(pokerState.getPlayerBalance(1)).thenReturn(bd(33));
-        when(pokerState.getPlayerBalance(2)).thenReturn(bd(0));
-        when(pokerState.getPlayerBalance(3)).thenReturn(bd(0));
+        when(pokerState.getPlayerBalance(1)).thenReturn(bd("33"));
+        when(pokerState.getPlayerBalance(2)).thenReturn(bd("33"));
+        when(pokerState.getPlayerBalance(3)).thenReturn(bd("33"));
         when(state.getRemainingPlayerCount()).thenReturn(3);
         ChipStatistics statistics = lobby.getChipStatistics();
-        assertThat(statistics.minStack, is("0.33"));
+        assertThat(statistics.minStack, is("33"));
     }
 
     @Test

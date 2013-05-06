@@ -18,6 +18,7 @@
 package com.cubeia.games.poker.tournament.activator;
 
 import com.cubeia.backend.cashgame.TournamentSessionId;
+import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.firebase.api.lobby.LobbyAttributeAccessor;
 import com.cubeia.firebase.api.lobby.LobbyPath;
 import com.cubeia.firebase.api.mtt.MTTState;
@@ -58,12 +59,15 @@ public abstract class PokerTournamentCreationParticipant implements CreationPart
     private SystemTime dateFetcher;
     private String tournamentSessionId;
     private String datePattern = "yyyy-MM-dd HH:mm";
+    private CashGamesBackendService cashGamesBackendService;
 
-    public PokerTournamentCreationParticipant(TournamentConfiguration config, TournamentHistoryPersistenceService storageService, SystemTime dateFetcher) {
+    public PokerTournamentCreationParticipant(TournamentConfiguration config, TournamentHistoryPersistenceService storageService,
+                                              SystemTime dateFetcher, CashGamesBackendService cashGamesBackendService) {
         log.debug("Creating tournament participant with config " + config);
         this.dateFetcher = dateFetcher;
         this.storageService = storageService;
         this.config = config;
+        this.cashGamesBackendService = cashGamesBackendService;
     }
 
     public LobbyPath getLobbyPathForTournament(MTTState mtt) {
@@ -94,7 +98,8 @@ public abstract class PokerTournamentCreationParticipant implements CreationPart
         pokerState.setBuyIn(config.getBuyIn());
         pokerState.setFee(config.getFee());
         pokerState.setPayoutStructure(config.getPayoutStructure(), config.getMinPlayers());
-        pokerState.setCurrencyCode(config.getCurrency());
+
+        pokerState.setCurrency(cashGamesBackendService.getCurrency(config.getCurrency()));
         pokerState.setStartingChips(config.getStartingChips());
         TournamentLifeCycle tournamentLifeCycle = getTournamentLifeCycle();
         pokerState.setLifecycle(tournamentLifeCycle);

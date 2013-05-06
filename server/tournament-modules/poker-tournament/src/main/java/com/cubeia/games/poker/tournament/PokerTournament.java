@@ -525,9 +525,9 @@ public class PokerTournament implements TableNotifier, Serializable {
         List<ConcretePayout> payouts = payoutHandler.calculatePayouts(playersOut, balancesAtStartOfHand(playersOut), state.getRemainingPlayerCount());
         for (ConcretePayout payout : payouts) {
             // Transfer the given amount of money from the tournament account to the player account.
-            transferMoneyAndCloseSession(pokerState.getPlayerSession(payout.getPlayerId()), payout.getPayoutInCents());
+            transferMoneyAndCloseSession(pokerState.getPlayerSession(payout.getPlayerId()), payout.getPayout());
             setPlayerOutInPosition(payout.getPlayerId(), payout.getPosition());
-            domainEventService.sendTournamentPayoutEvent(payout.getPlayerId(), payout.getPayoutInCents(), pokerState.getCurrencyCode(), payout.getPosition(), instance);
+            domainEventService.sendTournamentPayoutEvent(payout.getPlayerId(), payout.getPayout(), pokerState.getCurrency().getCode(), payout.getPosition(), instance);
         }
         sendTournamentOutToPlayers(payouts);
     }
@@ -585,7 +585,7 @@ public class PokerTournament implements TableNotifier, Serializable {
             packet.player = playerId;
             log.debug("Telling player " + playerId + " that he finished in position " + packet.position);
             sender.sendPacketToPlayer(packet, playerId);
-            historyPersister.playerOut(packet.player, packet.position, payout.getPayoutInCents());
+            historyPersister.playerOut(packet.player, packet.position, payout.getPayout());
         }
     }
 
@@ -626,7 +626,7 @@ public class PokerTournament implements TableNotifier, Serializable {
         PlayerSessionId playerSession = pokerState.getPlayerSession(playerId);
         transferMoneyAndCloseSession(playerSession, payout);
         
-        domainEventService.sendTournamentPayoutEvent(playerId, payout, pokerState.getCurrencyCode(), 1, instance);
+        domainEventService.sendTournamentPayoutEvent(playerId, payout, pokerState.getCurrency().getCode(), 1, instance);
     }
 
     private void setPlayerOutInPosition(int playerId, int position) {

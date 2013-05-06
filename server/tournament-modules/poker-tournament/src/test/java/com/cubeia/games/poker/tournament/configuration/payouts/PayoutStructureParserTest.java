@@ -17,6 +17,7 @@
 
 package com.cubeia.games.poker.tournament.configuration.payouts;
 
+import com.cubeia.games.poker.common.money.Currency;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 
@@ -29,17 +30,19 @@ public class PayoutStructureParserTest {
 
     private static final Logger log = Logger.getLogger(PayoutStructureParserTest.class);
 
+    Currency eur = new Currency("EUR",2);
+
     @Test
     public void testSimpleStructureHeadsUp() {
         // See simple.csv
         PayoutStructureParser parser = new PayoutStructureParser();
         PayoutStructure structure = parser.parsePayouts("simple.csv");
-        Payouts payouts = structure.getPayoutsForEntrantsAndPrizePool(2, 100);
+        Payouts payouts = structure.getPayoutsForEntrantsAndPrizePool(2, bd(100),eur);
         assertThat(payouts.getPayoutsForPosition(1), is(bd(100)));
     }
 
     private BigDecimal bd(int i) {
-        return new BigDecimal(i);
+        return new BigDecimal(i).setScale(2);
     }
 
     @Test
@@ -47,7 +50,7 @@ public class PayoutStructureParserTest {
         // See simple.csv
         PayoutStructureParser parser = new PayoutStructureParser();
         PayoutStructure structure = parser.parsePayouts("simple.csv");
-        Payouts payouts = structure.getPayoutsForEntrantsAndPrizePool(10, 10);
+        Payouts payouts = structure.getPayoutsForEntrantsAndPrizePool(10, bd(10),eur);
         assertThat(payouts.getPayoutsForPosition(1), is(bd(6)));
         assertThat(payouts.getPayoutsForPosition(2), is(bd(3)));
         assertThat(payouts.getPayoutsForPosition(3), is(bd(1)));
@@ -58,10 +61,10 @@ public class PayoutStructureParserTest {
         // See complex.csv
         PayoutStructureParser parser = new PayoutStructureParser();
         PayoutStructure structure = parser.parsePayouts("complex.csv");
-        Payouts payouts = structure.getPayoutsForEntrantsAndPrizePool(10, 10);
+        Payouts payouts = structure.getPayoutsForEntrantsAndPrizePool(10, bd(10),eur);
         log.debug("Payouts: " + payouts);
         structure.verify();
-        Payouts payoutsForLotsOfPlayers = structure.getPayoutsForEntrantsAndPrizePool(3502, 100);
+        Payouts payoutsForLotsOfPlayers = structure.getPayoutsForEntrantsAndPrizePool(3502, bd(100),eur);
         assertThat(payoutsForLotsOfPlayers.getPayoutList().get(18).getPercentage(), is(BigDecimal.valueOf(0.75)));
     }
 

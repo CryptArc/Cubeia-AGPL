@@ -22,11 +22,13 @@ import static com.google.common.collect.Maps.newTreeMap;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 
+import com.cubeia.games.poker.common.money.Currency;
 import org.apache.log4j.Logger;
 
 import com.cubeia.games.poker.tournament.configuration.payouts.Payouts;
@@ -86,7 +88,8 @@ public class PayoutHandler implements Serializable {
             totalPrizeToShare = totalPrizeToShare.add(payouts.getPayoutsForPosition(playersLeft--));
         }
         log.debug("Total prize to share: " + totalPrizeToShare);
-        BigDecimal prizePerPlayer = totalPrizeToShare.divide(new BigDecimal(players.size()));
+        BigDecimal prizePerPlayer = totalPrizeToShare.divide(new BigDecimal(players.size()),
+                payouts.getCurrency().getFractionalDigits(), RoundingMode.DOWN);
         log.debug("Prize per player: " + prizePerPlayer);
         int sharedPosition = playersLeft + 1;
         for (Integer playerId : players) {
@@ -94,21 +97,23 @@ public class PayoutHandler implements Serializable {
             playerIdToPrize.add(new ConcretePayout(playerId, sharedPosition, prizePerPlayer));
         }
         BigDecimal remainder = totalPrizeToShare.subtract(prizePerPlayer.multiply(new BigDecimal(players.size())));
-        //distributeRemainder(remainder, playerIdToPrize);
+        distributeRemainder(remainder, playerIdToPrize, payouts.getCurrency());
         return playerIdToPrize;
     }
 
-    //TODO FIX reminder distribution
-    /*
-    private void distributeRemainder(BigDecimal remainder, List<ConcretePayout> payouts) {
+
+    private void distributeRemainder(BigDecimal remainder, List<ConcretePayout> payouts, Currency currency) {
+        BigDecimal minFractionValue = BigDecimal.ONE.divide(BigDecimal.TEN.pow(currency.getFractionalDigits()),2,RoundingMode.DOWN);
+        int player = 0;
         while (remainder.compareTo(BigDecimal.ZERO) > 0) {
-            int index = (int) remainder % payouts.size();
-            log.debug("Player index to get part of the remainder: " + index);
+            int index =  player % payouts.size();
+            log.debug("Player index to get part of the remainder: " + minFractionValue);
             ConcretePayout payout = payouts.get(index);
-            payout.setPayoutInCents(payout.getPayoutInCents() + 1);
-            remainder--;
+            payout.setPayout(payout.getPayout().add(minFractionValue));
+            remainder =  remainder.subtract(minFractionValue);
+            player++;
         }
-    } */
+    }
 
     private SortedMap<BigDecimal, List<Integer>> groupPlayersByChipsAtStartOfHand(Map<Integer, BigDecimal> balancesAtStartOfHand) {
         SortedMap<BigDecimal, List<Integer>> chipsAtStartOfHandToListOfPlayers = newTreeMap();

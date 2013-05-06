@@ -88,8 +88,6 @@ public class PokerTournamentState implements Serializable {
 
     private BigDecimal guaranteedPrizePool = BigDecimal.ZERO;
 
-    private String currencyCode;
-
     /**  Maps playerId to PlayerSessionId */
     private Map<Integer, PlayerSessionId> playerSessions = newHashMap();
 
@@ -154,6 +152,8 @@ public class PokerTournamentState implements Serializable {
 
     private boolean inTheMoney = false;
 
+    private Currency currency;
+
     /**
      * @return True if this tournament is limited to one or more operators
      */
@@ -185,9 +185,6 @@ public class PokerTournamentState implements Serializable {
         return betStrategy;
     }
 
-    public String getCurrencyCode() {
-        return currencyCode;
-    }
 
     public PendingBackendRequests getPendingRequests() {
         return pendingRequests;
@@ -213,9 +210,7 @@ public class PokerTournamentState implements Serializable {
         this.betStrategy = betStrategy;
     }
 
-    public void setCurrencyCode(String currencyCode) {
-        this.currencyCode = currencyCode;
-    }
+
 
     public boolean inTheMoney() {
         return inTheMoney;
@@ -340,7 +335,7 @@ public class PokerTournamentState implements Serializable {
     }
 
     public Money convertToMoney(BigDecimal moneyInDecimalForm) {
-        return new Money(moneyInDecimalForm, new Currency(currencyCode, 2));
+        return new Money(moneyInDecimalForm, this.currency);
     }
 
     public void setBuyIn(BigDecimal buyIn) {
@@ -407,9 +402,9 @@ public class PokerTournamentState implements Serializable {
         log.debug("Calculating payouts, minPlayers: " + minPlayers + " registered players: " + registeredPlayersCount);
         BigDecimal minRegPrizePool = buyIn.multiply(BigDecimal.valueOf(minPlayers));
         // Total prize pool is the maximum of the current prize pool and the prize pool we will have if at least minPlayers players register.
-        long totalPrizePoolInCents = minRegPrizePool.max(getPrizePool()).movePointRight(2).longValue();
-        log.debug("Total prize pool as long: " + totalPrizePoolInCents);
-        this.payouts = payoutStructure.getPayoutsForEntrantsAndPrizePool(max(minPlayers, registeredPlayersCount), totalPrizePoolInCents);
+        BigDecimal totalPrizePool = minRegPrizePool.max(getPrizePool());
+        log.debug("Total prize pool as long: " + totalPrizePool);
+        this.payouts = payoutStructure.getPayoutsForEntrantsAndPrizePool(max(minPlayers, registeredPlayersCount), totalPrizePool, currency);
     }
 
     public void addBuyInToPrizePool() {
@@ -445,7 +440,7 @@ public class PokerTournamentState implements Serializable {
     }
 
     public Money createZeroMoney() {
-        return new Money(BigDecimal.ZERO, new Currency(currencyCode, 2));
+        return new Money(BigDecimal.ZERO, this.currency);
     }
 
     public void removePlayerSession(int playerId) {
@@ -651,5 +646,13 @@ public class PokerTournamentState implements Serializable {
     public Money getGuaranteedPrizePoolUsedAsMoney() {
         // The guaranteed prize pool used is GUARANTEED - PRIZE POOL, or zero if PRIZE POOL > GUARANTEED.
         return convertToMoney(BigDecimal.ZERO.max(guaranteedPrizePool.subtract(prizePool)));
+    }
+
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
+    }
+
+    public Currency getCurrency() {
+        return currency;
     }
 }

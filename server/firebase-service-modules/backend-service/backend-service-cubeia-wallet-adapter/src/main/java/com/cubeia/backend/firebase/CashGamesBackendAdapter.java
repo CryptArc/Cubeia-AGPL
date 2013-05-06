@@ -134,6 +134,8 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
         return response;
     }
 
+
+
     @Override
     public OpenSessionResponse openSession(final OpenSessionRequest request) throws OpenSessionFailedException {
         OpenSessionResponse response = null;
@@ -366,6 +368,12 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
         log.debug("sending tx request to wallet: {}", txRequest);
         TransactionResult txResult = walletService.doTransaction(txRequest);
         log.debug("Result: " + txResult);
+    }
+
+    @Override
+    public Currency getCurrency(String currencyCode) {
+        com.cubeia.backoffice.wallet.api.dto.Currency currency = walletService.getCurrency(currencyCode);
+        return new Currency(currency.getCode(),currency.getFractionalDigits());
     }
 
     @Override

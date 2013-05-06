@@ -22,12 +22,12 @@ import java.math.BigDecimal;
 public class ConcretePayout {
     private final int playerId;
     private final int position;
-    private BigDecimal payoutInCents;
+    private BigDecimal payout;
 
-    public ConcretePayout(int playerId, int position, BigDecimal payoutInCents) {
+    public ConcretePayout(int playerId, int position, BigDecimal payout) {
         this.playerId = playerId;
         this.position = position;
-        this.payoutInCents = payoutInCents;
+        this.payout = payout;
     }
 
     public int getPlayerId() {
@@ -38,11 +38,11 @@ public class ConcretePayout {
         return position;
     }
 
-    public BigDecimal getPayoutInCents() {
-        return payoutInCents;
+    public BigDecimal getPayout() {
+        return payout;
     }
 
-    public void setPayoutInCents(BigDecimal payoutInCents) {
-        this.payoutInCents = payoutInCents;
+    public void setPayout(BigDecimal payoutInCents) {
+        this.payout = payoutInCents;
     }
 }

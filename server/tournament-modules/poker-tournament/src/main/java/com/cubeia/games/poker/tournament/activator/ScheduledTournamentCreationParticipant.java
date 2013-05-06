@@ -17,6 +17,7 @@
 
 package com.cubeia.games.poker.tournament.activator;
 
+import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.firebase.api.lobby.LobbyAttributeAccessor;
 import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
 import com.cubeia.games.poker.common.time.SystemTime;
@@ -37,8 +38,9 @@ public class ScheduledTournamentCreationParticipant extends PokerTournamentCreat
     private ScheduledTournamentInstance instanceConfiguration;
 
 
-    public ScheduledTournamentCreationParticipant(ScheduledTournamentInstance config, TournamentHistoryPersistenceService storageService, SystemTime dateFetcher) {
-        super(config.getConfiguration(), storageService, dateFetcher);
+    public ScheduledTournamentCreationParticipant(ScheduledTournamentInstance config, TournamentHistoryPersistenceService storageService,
+                                                  SystemTime dateFetcher, CashGamesBackendService cashGamesBackendService) {
+        super(config.getConfiguration(), storageService, dateFetcher,cashGamesBackendService);
         instanceConfiguration = config;
     }
 

@@ -37,6 +37,7 @@ public class PokerTournamentStateTest {
     private PokerTournamentState state = new PokerTournamentState();
     @Mock
     private PayoutStructure prizeStricture;
+    private Currency eur  = new Currency("EUR",2);
 
     @Before
     public void setUp() throws Exception {
@@ -46,7 +47,7 @@ public class PokerTournamentStateTest {
     @Test
     public void testGuaranteedPrizePool() {
         // Given a tournament with $200 in guaranteed money.
-        state.setCurrencyCode("EUR");
+        state.setCurrency(eur);
         state.setBuyIn(BigDecimal.valueOf(10));
         state.setGuaranteedPrizePool(BigDecimal.valueOf(200));
         state.setPayoutStructure(prizeStricture, 10);
@@ -60,15 +61,15 @@ public class PokerTournamentStateTest {
         // Then the prize pool should be $200
         assertThat(state.getPrizePool(), is(BigDecimal.valueOf(200)));
         // And that prize pool should be used while calculating the payouts.
-        verify(prizeStricture, atLeastOnce()).getPayoutsForEntrantsAndPrizePool(12, 20000);
+        verify(prizeStricture, atLeastOnce()).getPayoutsForEntrantsAndPrizePool(12, new BigDecimal(200),eur);
         // And the guaranteed prize pool used should be eighty.
-        assertThat(state.getGuaranteedPrizePoolUsedAsMoney(), is(new Money(new BigDecimal(8000),new Currency( "EUR", 2))));
+        assertThat(state.getGuaranteedPrizePoolUsedAsMoney(), is(new Money(new BigDecimal(80),eur)));
     }
 
     @Test
     public void testGuaranteedPrizePoolNotUsedIfEnoughRegistrations() {
         // Given a tournament with $200 in guaranteed money.
-        state.setCurrencyCode("EUR");
+        state.setCurrency(eur);
         state.setBuyIn(BigDecimal.valueOf(10));
         state.setGuaranteedPrizePool(BigDecimal.valueOf(200));
         state.setPayoutStructure(prizeStricture, 10);
@@ -82,7 +83,7 @@ public class PokerTournamentStateTest {
         // Then the prize pool should be $200
         assertThat(state.getPrizePool(), is(BigDecimal.valueOf(210)));
         // And that prize pool should be used while calculating the payouts.
-        verify(prizeStricture, atLeastOnce()).getPayoutsForEntrantsAndPrizePool(21, 21000);
+        verify(prizeStricture, atLeastOnce()).getPayoutsForEntrantsAndPrizePool(21, new BigDecimal(210),eur);
         // And the guaranteed prize pool used should be zero.
         assertThat(state.getGuaranteedPrizePoolUsedAsMoney(), is(new Money(BigDecimal.ZERO, new Currency( "EUR", 2))));
     }

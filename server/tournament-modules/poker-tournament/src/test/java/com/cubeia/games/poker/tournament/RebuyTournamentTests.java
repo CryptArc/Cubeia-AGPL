@@ -119,6 +119,7 @@ public class RebuyTournamentTests {
         pokerState = new PokerTournamentState();
         pokerState.setStatus(RUNNING);
         pokerState.setBuyIn(BigDecimal.valueOf(10));
+        pokerState.setCurrency(new Currency("EUR",2));
         InputStream resourceAsStream = PayoutStructure.class.getResourceAsStream("simple.csv");
         PayoutStructure payouts = new PayoutStructureParser().parsePayouts(resourceAsStream);
         pokerState.setPayoutStructure(payouts, 2);

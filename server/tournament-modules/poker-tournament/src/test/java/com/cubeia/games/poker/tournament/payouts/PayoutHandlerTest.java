@@ -26,6 +26,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+import com.cubeia.games.poker.common.money.Currency;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,11 +38,12 @@ import com.google.common.collect.ImmutableSet;
 public class PayoutHandlerTest {
 
     private PayoutHandler payoutHandler;
+    private Currency eur = new Currency("EUR",2);
 
     @Before
     public void setup() {
         // Total prize pool is $200.
-        Payouts payouts = new Payouts(new IntRange(20, 25), list(45.45, 22.73, 15.15, 9.09, 7.58, 6.12), 20000);
+        Payouts payouts = new Payouts(new IntRange(20, 25), list(45.45, 22.73, 15.15, 9.09, 7.58, 6.12), bd(200),eur);
         payoutHandler = new PayoutHandler(payouts);
     }
 
@@ -49,19 +51,27 @@ public class PayoutHandlerTest {
     public void testSimpleCase() {
         // Simple case, player finishes in place 4.
         // 9.09% of $200 is $18.18
-        Map<Integer, BigDecimal> balanceAtStart = of(7, new BigDecimal(70));
+        Map<Integer, BigDecimal> balanceAtStart = of(7, bd(70));
         List<ConcretePayout> payouts = payoutHandler.calculatePayouts(ImmutableSet.<Integer>of(7), balanceAtStart, 4);
-        assertThat(payouts.get(0).getPayoutInCents(), is(new BigDecimal(1818)));
+        assertThat(payouts.get(0).getPayout(), is(bd("18.18")));
+    }
+
+    private BigDecimal bd(int i) {
+        return  new BigDecimal(i).setScale(2);
     }
 
     @Test
     public void testTwoPlayersOut() {
         // Two players are out and they had different amounts of chips when the hand started.
         // 15.15% of $200 is $30.30
-        Map<Integer, BigDecimal> balanceAtStart = of(7, new BigDecimal(70), 8, new BigDecimal(80));
+        Map<Integer, BigDecimal> balanceAtStart = of(7, bd(70), 8, bd(80));
         List<ConcretePayout> payouts = payoutHandler.calculatePayouts(ImmutableSet.<Integer>of(7, 8), balanceAtStart, 4);
-        assertThat(payouts.get(0).getPayoutInCents(), is(new BigDecimal(1818)));
-        assertThat(payouts.get(1).getPayoutInCents(), is(new BigDecimal(3030)));
+        assertThat(payouts.get(0).getPayout(), is(bd("18.18")));
+        assertThat(payouts.get(1).getPayout(), is(bd("30.30")));
+    }
+
+    private BigDecimal bd(String s) {
+        return new BigDecimal(s);
     }
 
     @Test
@@ -70,12 +80,12 @@ public class PayoutHandlerTest {
         // 7.58% of $200 is $15.16. 15.16 + 18.18 + 30.30 = 63.64
         // 63.64 / 3 = 21.21
         // 21.21 * 3 = 63.63 => 1 cent remainder
-        Map<Integer, BigDecimal> balanceAtStart = of(7, new BigDecimal(70), 8, new BigDecimal(70), 9, new BigDecimal(70));
+        Map<Integer, BigDecimal> balanceAtStart = of(7, bd(70), 8, bd(70), 9, bd(70));
         List<ConcretePayout> payouts = payoutHandler.calculatePayouts(ImmutableSet.<Integer>of(7, 8, 9), balanceAtStart, 5);
 
-        assertThat(payouts.get(0).getPayoutInCents(), is(new BigDecimal(2121)));
-        assertThat(payouts.get(1).getPayoutInCents(), is(new BigDecimal(2122)));
-        assertThat(payouts.get(2).getPayoutInCents(), is(new BigDecimal(2121)));
+        assertThat(payouts.get(0).getPayout(), is(bd("21.22")));
+        assertThat(payouts.get(1).getPayout(), is(bd("21.21")));
+        assertThat(payouts.get(2).getPayout(), is(bd("21.21")));
     }
 
     @Test
@@ -84,13 +94,13 @@ public class PayoutHandlerTest {
         // 15.16 + 18.18 = 33.34
         // 33.34 / 2 = 16.67
         // 6.12% of $200 = 12.24
-        Map<Integer, BigDecimal> balanceAtStart = of(7, new BigDecimal(70), 8, new BigDecimal(70), 9, new BigDecimal(80), 10, new BigDecimal(20));
+        Map<Integer, BigDecimal> balanceAtStart = of(7, bd(70), 8, bd(70), 9, bd(80), 10, bd(20));
         List<ConcretePayout> payouts = payoutHandler.calculatePayouts(ImmutableSet.<Integer>of(7, 8, 10), balanceAtStart, 6);
 
-        assertThat(payouts.get(0).getPayoutInCents(), is(new BigDecimal(1224)));
-        assertThat(payouts.get(1).getPayoutInCents(), is(new BigDecimal(1667)));
-        assertThat(payouts.get(2).getPayoutInCents(), is(new BigDecimal(1667)));
-        assertThat(payouts.get(3).getPayoutInCents(), is(new BigDecimal(3030)));
+        assertThat(payouts.get(0).getPayout(), is(bd("12.24")));
+        assertThat(payouts.get(1).getPayout(), is(bd("16.67")));
+        assertThat(payouts.get(2).getPayout(), is(bd("16.67")));
+        assertThat(payouts.get(3).getPayout(), is(bd("30.30")));
     }
 
     private List<Payout> list(double ... percentages) {

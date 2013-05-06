@@ -20,6 +20,7 @@ package com.cubeia.backend.firebase;
 import com.cubeia.backend.cashgame.Asynchronous;
 import com.cubeia.backend.cashgame.CashGamesBackend;
 import com.cubeia.firebase.api.service.Contract;
+import com.cubeia.games.poker.common.money.Currency;
 
 /**
  * This contract mimics the {@link CashGamesBackend} with 
@@ -36,4 +37,5 @@ public interface CashGamesBackendService extends AsynchronousCashGamesBackend, C
 
     public static final String MARKET_TABLE_SESSION_REFERENCE_KEY = "MARKET_TABLE_SESSION_REFERENCE";
 
+    Currency getCurrency(String currencyCode);
 }

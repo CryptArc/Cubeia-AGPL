@@ -24,21 +24,7 @@ import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.games.poker.common.money.Money;
 import com.cubeia.games.poker.common.time.SystemTime;
-import com.cubeia.games.poker.io.protocol.BlindsLevel;
-import com.cubeia.games.poker.io.protocol.BlindsStructure;
-import com.cubeia.games.poker.io.protocol.ChipStatistics;
-import com.cubeia.games.poker.io.protocol.Enums;
-import com.cubeia.games.poker.io.protocol.LevelInfo;
-import com.cubeia.games.poker.io.protocol.Payout;
-import com.cubeia.games.poker.io.protocol.PayoutInfo;
-import com.cubeia.games.poker.io.protocol.PlayersLeft;
-import com.cubeia.games.poker.io.protocol.TournamentInfo;
-import com.cubeia.games.poker.io.protocol.TournamentLobbyData;
-import com.cubeia.games.poker.io.protocol.TournamentPlayer;
-import com.cubeia.games.poker.io.protocol.TournamentPlayerList;
-import com.cubeia.games.poker.io.protocol.TournamentRegistrationInfo;
-import com.cubeia.games.poker.io.protocol.TournamentStatistics;
-import com.cubeia.games.poker.io.protocol.TournamentTable;
+import com.cubeia.games.poker.io.protocol.*;
 import com.cubeia.games.poker.tournament.configuration.blinds.Level;
 import com.cubeia.games.poker.tournament.configuration.payouts.Payouts;
 import com.cubeia.games.poker.tournament.state.PokerTournamentState;
@@ -50,6 +36,7 @@ import org.apache.log4j.Logger;
 
 import javax.inject.Inject;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collection;
 import java.util.List;
 
@@ -232,7 +219,7 @@ public class TournamentLobby {
             smallestStack = BigDecimal.ZERO;
         }
         if (state.getRemainingPlayerCount() > 0) {
-            averageStack = totalChips.divide(new BigDecimal(state.getRemainingPlayerCount()));
+            averageStack = totalChips.divide(new BigDecimal(state.getRemainingPlayerCount()),0, RoundingMode.DOWN);
         }
         log.debug("Total chips: " + totalChips + " Players still in: " + state.getRemainingPlayerCount() + " Average: " + averageStack);
         return new ChipStatistics(format(smallestStack), format(biggestStack), format(averageStack));
@@ -293,7 +280,7 @@ public class TournamentLobby {
     private Money getBalanceFor(int playerId) {
         Money balance = pokerState.createZeroMoney();
         try {
-            balance = backend.getAccountBalance(playerId, pokerState.getCurrencyCode());
+            balance = backend.getAccountBalance(playerId, pokerState.getCurrency().getCode());
         } catch (Exception e) {
             log.warn("Failed fetching balance for playerId: " + playerId);
         }
