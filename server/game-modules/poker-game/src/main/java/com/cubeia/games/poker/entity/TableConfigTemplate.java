@@ -150,7 +150,11 @@ public class TableConfigTemplate implements Serializable {
     }
 
     public BigDecimal getAnte() {
-        return ante;
+        if (ante != null) {
+        	return ante;
+        } else {
+        	return BigDecimal.ZERO;
+        }
     }
 
     public void setAnte(BigDecimal ante) {

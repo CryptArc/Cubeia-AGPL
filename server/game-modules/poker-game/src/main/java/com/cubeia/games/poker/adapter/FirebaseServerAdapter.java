@@ -650,7 +650,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
                 BigDecimal gameBalance = pokerPlayer.getBalance().add(pokerPlayer.getBalanceNotInHand());
                 BigDecimal backendBalance = bup.getBalance().getAmount();
 
-                if (gameBalance != backendBalance) {
+                if (gameBalance.compareTo(backendBalance) != 0) {
                     //log.error("backend balance: {} not equal to game balance: {}, will reset to backend value", backendBalance, gameBalance);
                     throw new IllegalStateException("backend balance: " + backendBalance + " not equal to game balance: " + gameBalance + ", will reset to backend value");
                 }

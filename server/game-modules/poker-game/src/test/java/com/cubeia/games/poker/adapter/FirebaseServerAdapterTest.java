@@ -372,7 +372,7 @@ public class FirebaseServerAdapterTest {
         Integer playerId = 1337;
         PokerPlayerImpl player = mock(PokerPlayerImpl.class);
         when(player.getId()).thenReturn(playerId);
-        BigDecimal playerBalance = bd(666);
+        BigDecimal playerBalance = new BigDecimal("666");
         when(player.getBalance()).thenReturn(playerBalance);
         when(player.getPlayerSessionId()).thenReturn(playerSessionId);
         when(player.getBalanceNotInHand()).thenReturn(BigDecimal.ZERO);

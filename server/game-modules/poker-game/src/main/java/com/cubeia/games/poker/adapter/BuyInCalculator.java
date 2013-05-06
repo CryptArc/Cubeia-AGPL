@@ -19,6 +19,9 @@ package com.cubeia.games.poker.adapter;
 
 import java.math.BigDecimal;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Calculates min and max buy ins depending on the player's balance and
  * the rules of the table.
@@ -27,6 +30,8 @@ import java.math.BigDecimal;
  */
 public class BuyInCalculator {
 
+	Logger log = LoggerFactory.getLogger(getClass());
+	
     /**
      * Calculates the possible buy in range.
      *
@@ -52,6 +57,7 @@ public class BuyInCalculator {
     }
 
     private BigDecimal calculateMinBuyIn(BigDecimal tableMinBuyIn, BigDecimal tableMaxBuyIn, BigDecimal anteLevel, BigDecimal playerBalance) {
+    	log.info("calculateMinBuyIn tableMinBuyIn["+tableMinBuyIn+"] tableMaxBuyIn["+tableMaxBuyIn+"] anteLevel["+anteLevel+"] playerBalance["+playerBalance+"]");
         if (playerBalance.compareTo(tableMinBuyIn) < 0) {
             return anteLevel.max(tableMinBuyIn.subtract(playerBalance));
         } else {

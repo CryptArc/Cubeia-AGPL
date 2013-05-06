@@ -105,7 +105,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
         acc.setIntAttribute(TABLE_TEMPLATE.name(), template.getId());
         acc.setIntAttribute(PokerLobbyAttributes.VISIBLE_IN_LOBBY.name(), 0);
         acc.setStringAttribute(PokerLobbyAttributes.SPEED.name(), template.getTiming().getName());
-        acc.setStringAttribute(PokerLobbyAttributes.ANTE.name(), template.getAnte() == null ? "0" : template.getAnte().toPlainString());
+        acc.setStringAttribute(PokerLobbyAttributes.ANTE.name(), template.getAnte().toPlainString());
         acc.setStringAttribute(PokerLobbyAttributes.SMALL_BLIND.name(), settings.getSmallBlindAmount().toPlainString());
         acc.setStringAttribute(PokerLobbyAttributes.BIG_BLIND.name(), settings.getBigBlindAmount().toPlainString());
         acc.setStringAttribute(PokerLobbyAttributes.BETTING_GAME_BETTING_MODEL.name(), settings.getBetStrategyType().name());

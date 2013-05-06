@@ -35,6 +35,8 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.eclipse.jetty.util.log.Log;
+
 import static com.cubeia.game.poker.util.Arithmetic.gaussianAverage;
 
 public class GameHandler implements PacketVisitor {
@@ -101,6 +103,7 @@ public class GameHandler implements PacketVisitor {
                         }
 
                         // bot.getBot().logInfo("Request("+request+") -> Response("+response+")");
+                        bot.getBot().logInfo("\n>>>>>>>>>>>>>>>>\n \t REQUEST: "+request+" \n \t RESPONSE: "+response+"\n>>>>>>>>>>>>>>>>>>>>>>");
                        bot.getBot().sendGameData(bot.getTable().getId(), bot.getBot().getPid(), response);
                     } catch (Throwable th) {
                         th.printStackTrace();
