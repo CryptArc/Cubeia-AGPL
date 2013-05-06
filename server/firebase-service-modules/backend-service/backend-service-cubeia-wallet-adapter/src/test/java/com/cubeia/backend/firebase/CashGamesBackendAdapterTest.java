@@ -147,7 +147,7 @@ public class CashGamesBackendAdapterTest {
 
         assertThat(response.getPlayerSessionId(), is(playerSessionId));
         assertThat(response.getAmountReserved().getAmount(), is(amount.getAmount()));
-        assertThat(response.getBalanceUpdate().getBalance().getAmount(), is(new BigDecimal(50000L)));
+        assertThat(response.getBalanceUpdate().getBalance().getAmount(), is(new BigDecimal("500.00")));
         assertThat(response.getReserveProperties().get(MARKET_TABLE_SESSION_REFERENCE_KEY), containsString("CUBEIA-MARKET-SID-"));
     }
 
@@ -167,8 +167,8 @@ public class CashGamesBackendAdapterTest {
         long session2Id = 2002L;
         PlayerSessionId playerSession2 = new PlayerSessionId(player2Id, "" + session2Id);
 
-        HandResult handResult1 = new HandResult(playerSession1, money(BigDecimal.valueOf(5000)), money(BigDecimal.valueOf(10000 - 1000)), money(BigDecimal.valueOf(1000)), 1, 0, money(BigDecimal.valueOf(5000)));
-        HandResult handResult2 = new HandResult(playerSession2, money(BigDecimal.valueOf(5000)), money(BigDecimal.ZERO), money(BigDecimal.ZERO), 2, 0, money(BigDecimal.valueOf(5000)));
+        HandResult handResult1 = new HandResult(playerSession1, money(new BigDecimal("50.00")), money(new BigDecimal("90.00")), money(new BigDecimal("10.00")), 1, 0, money(new BigDecimal("50.00")));
+        HandResult handResult2 = new HandResult(playerSession2, money(new BigDecimal("50.00")), money(BigDecimal.ZERO), money(BigDecimal.ZERO), 2, 0, money(new BigDecimal("50.00")));
 
         request.addHandResult(handResult1);
         request.addHandResult(handResult2);
@@ -193,9 +193,9 @@ public class CashGamesBackendAdapterTest {
 
         assertThat(batchHandResponse.getResultingBalances().size(), is(2));
         assertThat(batchHandResponse.getResultingBalances().get(0).getBalance().getPlayerSessionId(), is(playerSession1));
-        assertThat(batchHandResponse.getResultingBalances().get(0).getBalance().getBalance().getAmount(), is(BigDecimal.valueOf(1111L)));
+        assertThat(batchHandResponse.getResultingBalances().get(0).getBalance().getBalance().getAmount(), is(new BigDecimal("11.11")));
         assertThat(batchHandResponse.getResultingBalances().get(1).getBalance().getPlayerSessionId(), is(playerSession2));
-        assertThat(batchHandResponse.getResultingBalances().get(1).getBalance().getBalance().getAmount(), is(BigDecimal.valueOf(2222L)));
+        assertThat(batchHandResponse.getResultingBalances().get(1).getBalance().getBalance().getAmount(), is(new BigDecimal("22.22")));
     }
 
     private TransactionEntry findEntryByAccountId(Long accountId, Collection<TransactionEntry> entries) {
@@ -230,7 +230,7 @@ public class CashGamesBackendAdapterTest {
         when(walletService.getBalance(sessionId)).thenReturn(sessionBalance);
 
         BalanceUpdate balanceUpdate = backend.getSessionBalance(playerSessionId);
-        assertThat(balanceUpdate.getBalance(), is(new Money(BigDecimal.valueOf(34343400L), new com.cubeia.games.poker.common.money.Currency("SEK", 2))));
+        assertThat(balanceUpdate.getBalance(), is(new Money(new BigDecimal("343434.00"), new com.cubeia.games.poker.common.money.Currency("SEK", 2))));
         assertThat(balanceUpdate.getPlayerSessionId(), is(playerSessionId));
     }
 }
