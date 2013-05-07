@@ -287,11 +287,11 @@ Poker.TableLayoutManager = Class.extend({
      * @param {com.cubeia.games.poker.io.protocol.BlindsLevel} level
      * @param {Number} secondsToNextLevel
      */
-    onBlindsLevel : function(level, secondsToNextLevel) {
+    onBlindsLevel : function(level, currency, secondsToNextLevel) {
         if (level.smallBlind != null && level.bigBlind != null) {
             this.tableInfoElement.show();
             this.tableInfoElement.find(".table-blinds-value").html(level.smallBlind + "/" + level.bigBlind);
-            this.myActionsManager.setBigBlind(Math.floor(parseFloat(level.bigBlind.replace(",",""))*100));
+            this.myActionsManager.setBigBlind(Math.floor(parseFloat(level.bigBlind.replace(",",""))),currency);
             if (secondsToNextLevel >= 0){
                 this.clock.sync(secondsToNextLevel);
                 this.tableInfoElement.find(".time-to-next-level").show();

@@ -66,9 +66,8 @@ Poker.ActionUtils = Class.extend({
      */
     getAction : function(act) {
 
-
         var type = this.getActionType(act.type);
-        return new Poker.Action(type,act.minAmount, act.maxAmount);
+        return new Poker.Action(type,parseFloat(act.minAmount), parseFloat(act.maxAmount));
     },
     getPokerActions : function(allowedActions){
         var actions = [];
@@ -96,10 +95,10 @@ Poker.ActionUtils = Class.extend({
         performAction.player = Poker.MyPlayer.id;
         performAction.action = new com.cubeia.games.poker.io.protocol.PlayerAction();
         performAction.action.type = actionType;
-        performAction.action.minAmount = 0;
-        performAction.action.maxAmount = 0;
-        performAction.betAmount = betAmount;
-        performAction.raiseAmount = raiseAmount || 0;
+        performAction.action.minAmount = "0";
+        performAction.action.maxAmount = "0";
+        performAction.betAmount = ""+ betAmount;
+        performAction.raiseAmount = "" + (raiseAmount || 0);
         performAction.timeOut = 0;
         performAction.seq = seq;
         performAction.cardsToDiscard = [];

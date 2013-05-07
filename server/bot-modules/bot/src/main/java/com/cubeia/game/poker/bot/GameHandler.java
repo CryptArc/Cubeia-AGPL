@@ -483,4 +483,8 @@ public class GameHandler implements PacketVisitor {
     @Override
     public void visit(TournamentRegistrationInfo packet) {
     }
+
+    @Override
+    public void visit(Currency packet) {
+    }
 }

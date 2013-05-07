@@ -47,6 +47,7 @@ import com.cubeia.games.poker.handler.ActionTransformer;
 import com.cubeia.games.poker.handler.Trigger;
 import com.cubeia.games.poker.handler.TriggerType;
 import com.cubeia.games.poker.io.protocol.*;
+import com.cubeia.games.poker.io.protocol.Currency;
 import com.cubeia.games.poker.io.protocol.Enums.BuyInInfoResultCode;
 import com.cubeia.games.poker.jmx.PokerStats;
 import com.cubeia.games.poker.logic.TimeoutCache;
@@ -251,7 +252,8 @@ public class FirebaseServerAdapter implements ServerAdapter {
         HandStartInfo handStartInfo = new HandStartInfo(getIntegrationHandId());
         BlindsLevel blindsLevel = createBlindsLevelPacket(snapshot.getBlindsLevel());
         Enums.BetStrategy betStrategy = convertBetStrategy(state.getSettings().getBetStrategyType());
-        GameState state = new GameState(snapshot.getTournamentId(), handStartInfo, blindsLevel, secondsToNextLevel(snapshot.getBlindsLevel()), betStrategy);
+        Currency currency = new Currency(state.getSettings().getCurrency().getCode(),state.getSettings().getCurrency().getFractionalDigits());
+        GameState state = new GameState(snapshot.getTournamentId(), handStartInfo, blindsLevel, secondsToNextLevel(snapshot.getBlindsLevel()), betStrategy,currency);
         sendPrivatePacket(playerId, state);
     }
 
