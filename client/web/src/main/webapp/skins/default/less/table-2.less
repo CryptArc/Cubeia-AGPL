@@ -1,0 +1,63 @@
+.cards-container-pos(@top:0,@left:0) {
+    .cards-container {
+        top:@top;
+        left:@left;
+    }
+}
+.action-amount-pos(@top:0,@left:0,@align:center) {
+    div.action-amount {
+        top:@top;
+        left:@left;
+        text-align:@align;
+    }
+}
+
+.seat-defaults(@avatar-base-left:45%, @avatar-base-top:65%) {
+    .avatar-base {
+        left: @avatar-base-left;
+        top: @avatar-base-top;
+    }
+    .avatar {
+        left: @avatar-base-left;
+        top: @avatar-base-top;
+    }
+    .player-name {
+        left:@avatar-base-left + 18;
+        top: @avatar-base-top + 3;
+    }
+    .seat-balance {
+        left:@avatar-base-left + 18;
+        top: @avatar-base-top + 14;
+    }
+    .player-status, .action-text,  .hand-strength {
+        left:@avatar-base-left + 18;
+        top: @avatar-base-top + 22;
+    }
+}
+.table-2 {
+    .seat-pos-1 {
+        top:3%;
+        left:35.75%;
+        .seat-defaults(20%,0%);
+        .cards-container-pos(50%,40%);
+        .action-amount-pos(79%,10%,center);
+    }
+    .seat-pos-0 {
+        top:67%;
+        left:35.75%;
+        .seat-defaults(20%,65%);
+        .cards-container-pos(38%,40%);
+        .action-amount-pos(10%,10%,center);
+    }
+
+    .click-area-0 {
+        top: 85%;
+        left: 41%;
+        width: 17%;
+        height: 10%;
+        z-index: 100000;
+        position: absolute;
+
+    }
+}
+
