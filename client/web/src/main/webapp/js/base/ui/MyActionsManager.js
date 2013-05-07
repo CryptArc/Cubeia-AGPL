@@ -34,7 +34,9 @@ Poker.MyActionsManager  = Class.extend({
     /**
      * @type {Number}
      */
-    bigBlindInCents : 0,
+    bigBlind : 0,
+
+    currency : null,
 
     actionCallback : null,
 
@@ -147,19 +149,23 @@ Poker.MyActionsManager  = Class.extend({
             this.slider.hide();
         }
     },
-    setBigBlind : function(bigBlindInCents) {
-        this.bigBlindInCents = bigBlindInCents;
+    setBigBlind : function(bigBlind,currency) {
+        this.bigBlind = bigBlind;
+        this.currency = currency;
+    },
+    getMinSliderStep : function() {
+        return (1/Math.pow(10,this.currency.fractionalDigits));
     },
     showSlider : function(minAmount,maxAmount,mainPot) {
         var self = this;
         this.slider = new Poker.BetSlider(this.tableId,"betSlider", function(){
             self.actionButtons.betOrRaise();
-        });
+        }, this.getMinSliderStep());
         this.slider.clear();
 
         this.slider.setMinBet(minAmount);
         this.slider.setMaxBet(maxAmount);
-        this.slider.setBigBlind(this.bigBlindInCents);
+        this.slider.setBigBlind(this.bigBlind);
         this.slider.addMarker("Min", minAmount);
         this.slider.addMarker("All in", maxAmount);
         this.slider.addMarker("Pot",mainPot);

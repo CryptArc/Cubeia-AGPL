@@ -579,6 +579,33 @@ com.cubeia.games.poker.io.protocol.ChipStatistics = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.ChipStatistics.CLASSID = 55;
+com.cubeia.games.poker.io.protocol.Currency = function () {
+    this.classId = function () {
+        return com.cubeia.games.poker.io.protocol.Currency.CLASSID
+    };
+    this.code = {};
+    this.fractionalDigits = {};
+    this.save = function () {
+        var a = new FIREBASE.ByteArray();
+        a.writeString(this.code);
+        a.writeInt(this.fractionalDigits);
+        return a
+    };
+    this.load = function (a) {
+        this.code = a.readString();
+        this.fractionalDigits = a.readInt()
+    };
+    this.getNormalizedObject = function () {
+        var a = {};
+        var b;
+        a.summary = "com.cubeia.games.poker.io.protocol.Currency";
+        a.details = {};
+        a.details.code = this.code;
+        a.details.fractionalDigits = this.fractionalDigits;
+        return a
+    }
+};
+com.cubeia.games.poker.io.protocol.Currency.CLASSID = 74;
 com.cubeia.games.poker.io.protocol.DealPrivateCards = function () {
     this.classId = function () {
         return com.cubeia.games.poker.io.protocol.DealPrivateCards.CLASSID
@@ -892,6 +919,7 @@ com.cubeia.games.poker.io.protocol.GameState = function () {
     this.currentLevel = {};
     this.secondsToNextLevel = {};
     this.betStrategy = {};
+    this.currency = {};
     this.save = function () {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.tournamentId);
@@ -899,6 +927,7 @@ com.cubeia.games.poker.io.protocol.GameState = function () {
         a.writeArray(this.currentLevel.save());
         a.writeInt(this.secondsToNextLevel);
         a.writeUnsignedByte(this.betStrategy);
+        a.writeArray(this.currency.save());
         return a
     };
     this.load = function (a) {
@@ -908,7 +937,9 @@ com.cubeia.games.poker.io.protocol.GameState = function () {
         this.currentLevel = new com.cubeia.games.poker.io.protocol.BlindsLevel();
         this.currentLevel.load(a);
         this.secondsToNextLevel = a.readInt();
-        this.betStrategy = com.cubeia.games.poker.io.protocol.BetStrategyEnum.makeBetStrategyEnum(a.readUnsignedByte())
+        this.betStrategy = com.cubeia.games.poker.io.protocol.BetStrategyEnum.makeBetStrategyEnum(a.readUnsignedByte());
+        this.currency = new com.cubeia.games.poker.io.protocol.Currency();
+        this.currency.load(a)
     };
     this.getNormalizedObject = function () {
         var a = {};
@@ -920,6 +951,7 @@ com.cubeia.games.poker.io.protocol.GameState = function () {
         a.details.currentLevel = this.currentLevel.getNormalizedObject();
         a.details.secondsToNextLevel = this.secondsToNextLevel;
         a.details.betStrategy = com.cubeia.games.poker.io.protocol.BetStrategyEnum.toString(this.betStrategy);
+        a.details.currency = this.currency.getNormalizedObject();
         return a
     }
 };
@@ -1167,8 +1199,8 @@ com.cubeia.games.poker.io.protocol.InformFutureAllowedActions = function () {
         for (b = 0; b < this.actions.length; b++) {
             a.writeArray(this.actions[b].save())
         }
-        a.writeInt(this.callAmount);
-        a.writeInt(this.minBetAmount);
+        a.writeString(this.callAmount);
+        a.writeString(this.minBetAmount);
         return a
     };
     this.load = function (a) {
@@ -1181,8 +1213,8 @@ com.cubeia.games.poker.io.protocol.InformFutureAllowedActions = function () {
             b.load(a);
             this.actions.push(b)
         }
-        this.callAmount = a.readInt();
-        this.minBetAmount = a.readInt()
+        this.callAmount = a.readString();
+        this.minBetAmount = a.readString()
     };
     this.getNormalizedObject = function () {
         var a = {};
@@ -1312,9 +1344,9 @@ com.cubeia.games.poker.io.protocol.PerformAction = function () {
         a.writeInt(this.seq);
         a.writeInt(this.player);
         a.writeArray(this.action.save());
-        a.writeInt(this.betAmount);
-        a.writeInt(this.raiseAmount);
-        a.writeInt(this.stackAmount);
+        a.writeString(this.betAmount);
+        a.writeString(this.raiseAmount);
+        a.writeString(this.stackAmount);
         a.writeBoolean(this.timeout);
         a.writeInt(this.cardsToDiscard.length);
         var b;
@@ -1328,9 +1360,9 @@ com.cubeia.games.poker.io.protocol.PerformAction = function () {
         this.player = a.readInt();
         this.action = new com.cubeia.games.poker.io.protocol.PlayerAction();
         this.action.load(a);
-        this.betAmount = a.readInt();
-        this.raiseAmount = a.readInt();
-        this.stackAmount = a.readInt();
+        this.betAmount = a.readString();
+        this.raiseAmount = a.readString();
+        this.stackAmount = a.readString();
         this.timeout = a.readBoolean();
         var c;
         var b = a.readInt();
@@ -1415,14 +1447,14 @@ com.cubeia.games.poker.io.protocol.PlayerAction = function () {
     this.save = function () {
         var a = new FIREBASE.ByteArray();
         a.writeUnsignedByte(this.type);
-        a.writeInt(this.minAmount);
-        a.writeInt(this.maxAmount);
+        a.writeString(this.minAmount);
+        a.writeString(this.maxAmount);
         return a
     };
     this.load = function (a) {
         this.type = com.cubeia.games.poker.io.protocol.ActionTypeEnum.makeActionTypeEnum(a.readUnsignedByte());
-        this.minAmount = a.readInt();
-        this.maxAmount = a.readInt()
+        this.minAmount = a.readString();
+        this.maxAmount = a.readString()
     };
     this.getNormalizedObject = function () {
         var a = {};
@@ -1446,17 +1478,17 @@ com.cubeia.games.poker.io.protocol.PlayerBalance = function () {
     this.playersContributionToPot = {};
     this.save = function () {
         var a = new FIREBASE.ByteArray();
-        a.writeInt(this.balance);
-        a.writeInt(this.pendingBalance);
+        a.writeString(this.balance);
+        a.writeString(this.pendingBalance);
         a.writeInt(this.player);
-        a.writeInt(this.playersContributionToPot);
+        a.writeString(this.playersContributionToPot);
         return a
     };
     this.load = function (a) {
-        this.balance = a.readInt();
-        this.pendingBalance = a.readInt();
+        this.balance = a.readString();
+        this.pendingBalance = a.readString();
         this.player = a.readInt();
-        this.playersContributionToPot = a.readInt()
+        this.playersContributionToPot = a.readString()
     };
     this.getNormalizedObject = function () {
         var a = {};
@@ -1692,7 +1724,7 @@ com.cubeia.games.poker.io.protocol.PlayerState = function () {
         for (b = 0; b < this.cards.length; b++) {
             a.writeArray(this.cards[b].save())
         }
-        a.writeInt(this.balance);
+        a.writeString(this.balance);
         return a
     };
     this.load = function (a) {
@@ -1706,7 +1738,7 @@ com.cubeia.games.poker.io.protocol.PlayerState = function () {
             c.load(a);
             this.cards.push(c)
         }
-        this.balance = a.readInt()
+        this.balance = a.readString()
     };
     this.getNormalizedObject = function () {
         var a = {};
@@ -1806,13 +1838,13 @@ com.cubeia.games.poker.io.protocol.Pot = function () {
         var a = new FIREBASE.ByteArray();
         a.writeByte(this.id);
         a.writeUnsignedByte(this.type);
-        a.writeInt(this.amount);
+        a.writeString(this.amount);
         return a
     };
     this.load = function (a) {
         this.id = a.readByte();
         this.type = com.cubeia.games.poker.io.protocol.PotTypeEnum.makePotTypeEnum(a.readUnsignedByte());
-        this.amount = a.readInt()
+        this.amount = a.readString()
     };
     this.getNormalizedObject = function () {
         var a = {};
@@ -1837,13 +1869,13 @@ com.cubeia.games.poker.io.protocol.PotTransfer = function () {
         var a = new FIREBASE.ByteArray();
         a.writeByte(this.potId);
         a.writeInt(this.playerId);
-        a.writeInt(this.amount);
+        a.writeString(this.amount);
         return a
     };
     this.load = function (a) {
         this.potId = a.readByte();
         this.playerId = a.readInt();
-        this.amount = a.readInt()
+        this.amount = a.readString()
     };
     this.getNormalizedObject = function () {
         var a = {};
@@ -2233,6 +2265,10 @@ com.cubeia.games.poker.io.protocol.ProtocolObjectFactory.create = function (c, a
         case com.cubeia.games.poker.io.protocol.TournamentRegistrationInfo.CLASSID:
             b = new com.cubeia.games.poker.io.protocol.TournamentRegistrationInfo();
             b.load(a);
+            return b;
+        case com.cubeia.games.poker.io.protocol.Currency.CLASSID:
+            b = new com.cubeia.games.poker.io.protocol.Currency();
+            b.load(a);
             return b
     }
     return null
@@ -2245,13 +2281,13 @@ com.cubeia.games.poker.io.protocol.RakeInfo = function () {
     this.totalRake = {};
     this.save = function () {
         var a = new FIREBASE.ByteArray();
-        a.writeInt(this.totalPot);
-        a.writeInt(this.totalRake);
+        a.writeString(this.totalPot);
+        a.writeString(this.totalRake);
         return a
     };
     this.load = function (a) {
-        this.totalPot = a.readInt();
-        this.totalRake = a.readInt()
+        this.totalPot = a.readString();
+        this.totalRake = a.readString()
     };
     this.getNormalizedObject = function () {
         var a = {};
@@ -2407,7 +2443,7 @@ com.cubeia.games.poker.io.protocol.RequestAction = function () {
     this.timeToAct = {};
     this.save = function () {
         var a = new FIREBASE.ByteArray();
-        a.writeInt(this.currentPotSize);
+        a.writeString(this.currentPotSize);
         a.writeInt(this.seq);
         a.writeInt(this.player);
         a.writeInt(this.allowedActions.length);
@@ -2419,7 +2455,7 @@ com.cubeia.games.poker.io.protocol.RequestAction = function () {
         return a
     };
     this.load = function (b) {
-        this.currentPotSize = b.readInt();
+        this.currentPotSize = b.readString();
         this.seq = b.readInt();
         this.player = b.readInt();
         var c;
@@ -2658,12 +2694,12 @@ com.cubeia.games.poker.io.protocol.TakeBackUncalledBet = function () {
     this.save = function () {
         var a = new FIREBASE.ByteArray();
         a.writeInt(this.playerId);
-        a.writeInt(this.amount);
+        a.writeString(this.amount);
         return a
     };
     this.load = function (a) {
         this.playerId = a.readInt();
-        this.amount = a.readInt()
+        this.amount = a.readString()
     };
     this.getNormalizedObject = function () {
         var a = {};

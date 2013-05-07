@@ -133,6 +133,8 @@ public class HandResult implements Serializable {
             rakeContribs.put(player, rakeContrib);
         }
 
+        //Distribute the the remaining amount that was removed when rounding. Min fraction value example: For two fractions  1/10^2 = 0.01
+        //0.01 is distributed until the total rake is equal to the sum of rake contributions
         BigDecimal minFractionValue = BigDecimal.ONE.divide(BigDecimal.TEN.pow(currency.getFractionalDigits()),2,RoundingMode.DOWN);
         if(totalContribution.compareTo(rakeInfoContainer.getTotalRake())>0) {
             minFractionValue = minFractionValue.negate();
