@@ -122,6 +122,7 @@ public class CreateUser {
 		req.setUserId(userId);
 		req.setCurrencyCode(currency);
 		req.setType(STATIC_ACCOUNT);
+		req.setNegativeBalanceAllowed(true); // Bots are allowed negative amounts
 		MetaInformation inf = new MetaInformation();
 		inf.setName("User " + userId + " Main Account");
 		req.setInformation(inf);
@@ -136,7 +137,7 @@ public class CreateUser {
 		ui.setFirstName(firstname);
 		ui.setLastName(lastname);
 		u.setUserInformation(ui);
-		u.setOperatorId(0L);
+		u.setOperatorId(operatorId);
 		u.setExternalUserId("");
 		u.getAttributes().put("user.userName", username);
 		u.getAttributes().put("user.firstName", firstname);
