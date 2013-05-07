@@ -132,6 +132,7 @@
         <var name="current_level" type="blinds_level" />
         <var name="seconds_to_next_level" type="int32" />
         <var name="bet_strategy" type="bet_strategy" />
+        <var name="currency" type="currency"/>
         <!--<var name="current_player_in_turn" type="player_in_turn" />-->
         <!--<var name="dealer_seat_id" type="int32" />-->
     </struct>
@@ -557,6 +558,11 @@
         <var name="currency" type="string"/>
         <var name="balance_in_wallet" type="string"/>
         <var name="sufficient_funds" type="bool"/>
+    </struct>
+
+    <struct name="currency">
+        <var name="code" type="string"/>
+        <var name="fractional_digits" type="int32"/>
     </struct>
 
 </protocol>
