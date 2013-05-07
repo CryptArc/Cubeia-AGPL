@@ -33,6 +33,7 @@ Poker.ConnectionManager = Class.extend({
     },
     onUserLoggedIn : function(playerId, name, credentials) {
         Poker.MyPlayer.onLogin(playerId,name, credentials);
+        Poker.AppCtx.getNavigation().onLoginSuccess();
         $(".username").html(name);
         $(".user-id").html(playerId);
         $(".user-panel-avatar").addClass("avatar" + (playerId % 9))
@@ -150,7 +151,6 @@ Poker.ConnectionManager = Class.extend({
         }
     },
     reconnect : function() {
-
         if(this.retryCount < this.MAX_RECONNECT_ATTEMPTS) {
             this.onUserReconnecting();
             Poker.AppCtx.getCommunicationManager().connect();

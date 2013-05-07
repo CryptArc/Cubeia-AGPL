@@ -23,8 +23,6 @@ Poker.LobbyPacketHandler = Class.extend({
         this.lobbyManager.handleTournamentSnapshotList(snapshots);
     },
     handleTournamentUpdates : function(updates) {
-        console.log("UPDATE ===");
-        console.log(updates);
         this.lobbyManager.handleTournamentUpdates(updates);
     },
     handleTournamentRemoved : function(tournamentId) {

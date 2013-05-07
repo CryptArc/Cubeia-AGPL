@@ -17,19 +17,22 @@
 
 package com.cubeia.games.poker.client;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.regex.Pattern;
+
 import com.cubeia.firebase.clients.java.connector.text.Player;
 import com.cubeia.firebase.clients.java.connector.text.SimpleTextClient;
 import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.firebase.io.protocol.LoginRequestPacket;
 import com.cubeia.firebase.io.protocol.MttTransportPacket;
-import com.cubeia.games.poker.io.protocol.*;
+import com.cubeia.games.poker.io.protocol.BuyInRequest;
 import com.cubeia.games.poker.io.protocol.Enums.ActionType;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.regex.Pattern;
+import com.cubeia.games.poker.io.protocol.PerformAction;
+import com.cubeia.games.poker.io.protocol.PlayerAction;
+import com.cubeia.games.poker.io.protocol.RebuyResponse;
+import com.cubeia.games.poker.io.protocol.RequestTournamentLobbyData;
 
 public class PokerTextClient extends SimpleTextClient {
 
@@ -101,7 +104,7 @@ public class PokerTextClient extends SimpleTextClient {
         } else if (args[0].equals("rebuy")) {
             int tableId = Integer.parseInt(args[1]);
             System.out.println("Performing rebuy at table " + tableId);
-            RebuyResponse response = new RebuyResponse(tableId, true);
+            RebuyResponse response = new RebuyResponse(true);
             send(tableId, response);
         } else {
             return false;

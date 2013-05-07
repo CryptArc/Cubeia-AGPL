@@ -65,7 +65,8 @@ Poker.MyActionsManager  = Class.extend({
         var self = this;
         this.actionCallback = actionCallback;
         this.tableId = tableId;
-        this.tableButtons = new Poker.TableButtons(view,actionCallback);
+        var tournamentTable = Poker.AppCtx.getTournamentManager().isTournamentTable(tableId);
+        this.tableButtons = new Poker.TableButtons(view,actionCallback,tournamentTable);
         this.currentActions = [];
         this.userActionsContainer = $(".user-actions",view);
         this.futureActions = new Poker.FutureActions($(".future-actions",view));
@@ -96,6 +97,9 @@ Poker.MyActionsManager  = Class.extend({
                 requestHandler.sitIn();
             }
         });
+        if(tournamentTable==true) {
+            this.sitOutNextHand.hide();
+        }
 
         this.onWatchingTable();
 
@@ -147,7 +151,10 @@ Poker.MyActionsManager  = Class.extend({
         this.bigBlindInCents = bigBlindInCents;
     },
     showSlider : function(minAmount,maxAmount,mainPot) {
-        this.slider = new Poker.BetSlider(this.tableId,"betSlider");
+        var self = this;
+        this.slider = new Poker.BetSlider(this.tableId,"betSlider", function(){
+            self.actionButtons.betOrRaise();
+        });
         this.slider.clear();
 
         this.slider.setMinBet(minAmount);

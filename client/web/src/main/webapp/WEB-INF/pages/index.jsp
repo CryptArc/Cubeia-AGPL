@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
     <link rel="apple-touch-icon" href="${cp}/skins/${skin}/images/lobby/icon.png" />
 
     <link id="defaultSkinCss" rel="stylesheet/less" type="text/css" href="${cp}/skins/default/less/base.less" />
@@ -119,6 +120,7 @@
     <script type="text/javascript" src="${cp}/js/base/ui/animation/AnimationManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/DealerButton.js"></script>
 
+    <script type="text/javascript" src="${cp}/js/base/Navigation.js"></script>
     <script type="text/javascript" src="${cp}/js/base/sound/SoundSource.js"></script>
     <script type="text/javascript" src="${cp}/js/base/sound/SoundPlayer.js"></script>
     <script type="text/javascript" src="${cp}/js/base/sound/SoundManager.js"></script>
@@ -298,6 +300,7 @@
         </div>
     </div>
     <div class="view-container slidable">
+        <div class="beta-stamp">BETA</div>
         <div class="table-view-container" style="display:none;">
             <div class="multi-view-switch multi">
             </div>
@@ -429,6 +432,7 @@
     <div class="player-status">
 
     </div>
+
     <div class="seat-balance balance">
 
     </div>
@@ -445,26 +449,25 @@
 
 <script type="text/mustache" id="playerCardTemplate" style="display: none;">
     <div id="playerCard-{{domId}}" class="player-card-container">
-        <div class="card-image" id="playerCardImage-{{domId}}" style="background-image:{{backgroundImage}}">
-    <!--    <img src="${cp}/skins/${skin}/images/cards/{{cardString}}.svg" class="player-card"/> -->
+        <div class="card-image" id="playerCardImage-{{domId}}" style="background-image:{{backgroundImage}}"></div>
     </div>
 </script>
 <script type="text/mustache" id="communityCardTemplate" style="display: none;">
     <div id="communityCard-{{domId}}" class="community-card-container">
-        <div class="card-image" id="communityCardImage-{{domId}}" style="background-image:{{backgroundImage}}">
-    <!--    <img src="${cp}/skins/${skin}/images/cards/{{cardString}}.svg" class="player-card"/>  -->
+        <div class="card-image" id="communityCardImage-{{domId}}" style="background-image:{{backgroundImage}}"></div>
     </div>
 </script>
 <div id="mainPotTemplate" style="display: none;">
         <div class="balance pot-container-{{potId}}"><span class="pot-value pot-{{potId}}">{{amount}}</span></div>
 </div>
 <div id="myPlayerSeatTemplate" style="display:none;">
-        <div class="player-name">
-            {{name}}
-        </div>
-        <div class="seat-balance balance">
+    <div class="player-name">
+        {{name}}
+    </div>
 
-        </div>
+    <div class="seat-balance balance">
+
+    </div>
     <div class="avatar-base">
 
     </div>
@@ -477,6 +480,7 @@
     <div class="cards-container">
 
     </div>
+    <div class="player-status"></div>
     <div class="action-text">
 
     </div>
@@ -568,7 +572,7 @@
     <div id="tableView-{{tableId}}" class="table-container">
 
         <div class="table-logo"></div>
-        <div id="seatContainer-{{tableId}}" class="default-table table-10">
+        <div id="seatContainer-{{tableId}}" class="default-table table-{{capacity}}">
             <div class="seat" id="seat0-{{tableId}}">
 
             </div>
@@ -880,7 +884,7 @@
 <script type="text/mustache" id="tournamentTemplate" style="display:none;">
     <div id="tournamentView{{tournamentId}}" class="tournament-view">
         <div class="top-row">
-            <h3>
+            <h3 class="tournament-name">
                 {{name}}
                 <span class="tournament-start-date"></span>
             </h3>
@@ -958,7 +962,7 @@
     <div class="stats-item">{{t "tournament-lobby.stats.min-stack" }} <span>{{chipStatistics.minStack}}</span></div>
     <div class="stats-item">{{t "tournament-lobby.stats.average-stack" }} <span>{{chipStatistics.averageStack}}</span></div>
     <div class="stats-item">{{t "tournament-lobby.stats.current-level" }} <span>{{levelInfo.currentLevel}}</span></div>
-    <div class="stats-item">{{t "tournament-lobby.stats.players-left" }}<span>{{playersLeft.remainingPlayers}}/{{playersLeft.registeredPlayers}}</span></div>
+    <div class="stats-item">{{t "tournament-lobby.stats.players-left" }} <span>{{playersLeft.remainingPlayers}}/{{playersLeft.registeredPlayers}}</span></div>
 </script>
 <script type="text/mustache" id="handHistoryViewTemplate">
 

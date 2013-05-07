@@ -72,11 +72,10 @@ Poker.Seat = Class.extend({
         this.handlePlayerStatus();
     },
     handlePlayerStatus: function() {
-        console.log("HANDLE PLR STS  = ");
-        console.log(this.player);
         if (this.player.tableStatus == Poker.PlayerTableStatus.SITTING_OUT) {
+            this.reset();
             this.seatElement.addClass("seat-sit-out");
-            this.seatElement.find(".player-status").html(this.player.tableStatus.text);
+            this.seatElement.find(".player-status").show().html(this.player.tableStatus.text);
         } else {
             this.seatElement.find(".player-status").html("").hide();
             this.seatElement.removeClass("seat-sit-out");
@@ -114,7 +113,7 @@ Poker.Seat = Class.extend({
     showActionData: function(actionType, amount) {
         this.actionText.html(actionType.text).show();
         var icon = $("<div/>").addClass("player-action-icon").addClass(actionType.id + "-icon");
-        if (amount > 0) {
+        if (amount!="0") {
             this.actionAmount.removeClass("placed");
             this.actionAmount.empty().append($("<span/>").append(amount));
             this.actionAmount.append(icon).show();
@@ -131,7 +130,6 @@ Poker.Seat = Class.extend({
     },
     dealCard: function(card) {
         this.cardsContainer.append(card.render());
-        console.log(card);
         this.onCardDealt(card);
     },
     onCardDealt: function(card) {

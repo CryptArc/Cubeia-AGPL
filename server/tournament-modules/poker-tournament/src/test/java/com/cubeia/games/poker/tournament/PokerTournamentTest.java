@@ -178,6 +178,8 @@ public class PokerTournamentTest {
         when(instance.getLobbyAccessor()).thenReturn(lobbyAccessor);
         when(instance.getState()).thenReturn(mttState);
         when(instance.getMttNotifier()).thenReturn(notifier);
+        when(instance.getState().getCapacity()).thenReturn(10);
+        when(instance.getState().getRegisteredPlayersCount()).thenReturn(0);
         when(state.getSeats()).thenReturn(10);
         when(state.getPlayerRegistry()).thenReturn(playerRegistry);
     }
@@ -282,6 +284,19 @@ public class PokerTournamentTest {
     	pokerState.setStatus(PokerTournamentStatus.REGISTERING);
     	MttRegisterResponse resp = tournament.checkRegistration(new MttRegistrationRequest(new MttPlayer(1), null));
     	Assert.assertEquals(MttRegisterResponse.ALLOWED, resp);
+    }
+    
+    @Test
+    public void dontOpenNewSessionsIfTournamentIsFull() {
+    	prepareTournamentWithMockLifecycle();
+    	User user = mock(User.class);
+    	when(user.getOperatorId()).thenReturn(666L); // Tournament public, the operator ID shouldn't matter
+    	when(userService.getUserById(anyInt())).thenReturn(user);
+    	when(instance.getState().getCapacity()).thenReturn(10);
+    	when(instance.getState().getRegisteredPlayersCount()).thenReturn(10);
+    	pokerState.setStatus(PokerTournamentStatus.REGISTERING);
+    	MttRegisterResponse resp = tournament.checkRegistration(new MttRegistrationRequest(new MttPlayer(1), null));
+    	Assert.assertEquals(MttRegisterResponse.DENIED, resp);
     }
     
     @Test

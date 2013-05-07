@@ -23,6 +23,8 @@ import com.cubeia.games.poker.admin.wicket.util.DatePanel;
 import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
 import com.cubeia.games.poker.admin.wicket.util.ParamBuilder;
 import com.cubeia.poker.handhistory.api.HistoricHand;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.log4j.Logger;
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackDefaultDataTable;
@@ -70,7 +72,7 @@ public class HandHistory extends BasePage {
         super(parameters);
         log.debug("Params: " + parameters);
         handProvider = new HandProvider(parameters);
-        addForm();
+        addForms();
         addResultsTable();
         add(new FeedbackPanel("feedback"));
     }
@@ -138,7 +140,7 @@ public class HandHistory extends BasePage {
         return columns;
     }
 
-    private void addForm() {
+    private void addForms() {
         Form<HandHistorySearch> form = new Form<HandHistorySearch>("form",  new CompoundPropertyModel<HandHistorySearch>(new HandHistorySearch())) {
             @Override
             protected void onSubmit() {
@@ -155,11 +157,28 @@ public class HandHistory extends BasePage {
         form.add(new DateField("fromDate"));
         form.add(new DateField("toDate"));
         add(form);
+        Form<HandLookup> form2 = new Form<HandLookup>("lookup", new CompoundPropertyModel<HandLookup>(new HandLookup())) {
+
+			private static final long serialVersionUID = 3724547810754260078L;
+        	
+			@Override
+			protected void onSubmit() {
+				HandLookup str = getModel().getObject();
+				setResponsePage(ShowHand.class, ParamBuilder.params("handId", str.handId));
+			}
+        };
+        form2.add(new TextField<String>("handId").setRequired(true));
+        add(form2);
     }
 
     @Override
     public String getPageTitle() {
         return "Hand History";
+    }
+    
+    private class HandLookup implements IClusterable {
+    	private static final long serialVersionUID = -7138295119718739577L;
+		String handId;
     }
 
     private class HandProvider extends SortableDataProvider<HistoricHand,String> {
@@ -175,6 +194,9 @@ public class HandHistory extends BasePage {
                 search.tableId = toStringOrNull(parameters.get("tableId"));
                 search.fromDate = toDateOrNull(parameters.get("startDate"));
                 search.toDate = toDateOrNull(parameters.get("toDate"));
+                if(search.isEmpty()) {
+                	search.resetDates();
+                }
                 search(search);
             }
         }
@@ -202,11 +224,22 @@ public class HandHistory extends BasePage {
     private static class HandHistorySearch implements IClusterable {
         private static final long serialVersionUID = 7373912948187005605L;
 		Integer playerId;
-        Date fromDate = new DateTime().minusDays(7).toDate();
-        Date toDate = new DateTime().plusDays(1).toDate();
+        Date fromDate;
+        Date toDate;
         String tableId;
+        public HandHistorySearch() {
+        	resetDates();
+        }
 		public boolean isEmpty() {
 			return playerId == null && fromDate == null && toDate == null && tableId == null;
+		}
+		private void resetDates() {
+			fromDate = new DateTime().minusDays(7).toDate();
+	        toDate = new DateTime().plusDays(1).toDate();
+		}
+		@Override
+		public String toString() {
+			return ToStringBuilder.reflectionToString(this);
 		}
     }
 }

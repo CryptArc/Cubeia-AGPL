@@ -64,7 +64,8 @@ Poker.TableManager = Class.extend({
        var tables =  this.tables.values();
         for(var i = 0; i<tables.length; i++) {
             this.leaveTable(tables[i].id);
-            new Poker.TableRequestHandler(tables[i].id).openTable();
+            //TODO: we need snapshot to get capacity
+            new Poker.TableRequestHandler(tables[i].id).openTable(10);
         }
     },
     /**

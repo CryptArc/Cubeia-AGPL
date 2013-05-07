@@ -54,7 +54,7 @@ Poker.TableLayoutManager = Class.extend({
         this.tableViewContainer = tableViewContainer;
         this.seats = new Poker.Map();
         this.animationManager = new Poker.AnimationManager();
-        var tableViewHtml = templateManager.render("tableViewTemplate",{tableId : tableId});
+        var tableViewHtml = templateManager.render("tableViewTemplate",{tableId : tableId, capacity : capacity});
         this.viewContainerOffsetTop = tableViewContainer.offset().top;
         tableViewContainer.append(tableViewHtml);
         var viewId = "#tableView-"+tableId;
@@ -62,7 +62,6 @@ Poker.TableLayoutManager = Class.extend({
 
         new Poker.ChatInput(this.tableView.find(".chat-input"),function(message){
             new Poker.TableRequestHandler(tableId).sendChatMessage(message);
-            console.log("Message : " + message);
         });
 
         this.tableId = tableId;
@@ -148,7 +147,6 @@ Poker.TableLayoutManager = Class.extend({
      * @param active - {boolean} boolean to indicate if the seat is active or not (active == occupied)
      */
     addEmptySeatContent : function(seatId,pos,active) {
-        console.log("addEmptySeatContent seatId="+seatId);
         var seat = $("#seat"+seatId+"-"+this.tableId);
         seat.addClass("seat-empty").html(this.templateManager.render("emptySeatTemplate",{}));
         seat.removeClass("seat-sit-out").removeClass("seat-folded");
@@ -217,8 +215,14 @@ Poker.TableLayoutManager = Class.extend({
         var seat = this.getSeatByPlayerId(playerId);
         if (this.myPlayerSeatId == seat.seatId) {
             this.myPlayerSeatId = -1;
-            Poker.AppCtx.getDialogManager().displayGenericDialog(
-                {header: "Seating info", message : "You have been removed from table "});
+            var tournamentTable = Poker.AppCtx.getTournamentManager().isTournamentTable(this.tableId);
+            console.log("TOURNAMENT TABLE = " + tournamentTable);
+            console.log(Poker.AppCtx.getTournamentManager().tournamentTables);
+            if(tournamentTable==false) {
+                Poker.AppCtx.getDialogManager().displayGenericDialog(
+                    {header: "Seating info", message : "You have been removed from table "});
+            }
+
         }
         seat.clearSeat();
         this.seats.remove(seat.seatId);
@@ -287,7 +291,7 @@ Poker.TableLayoutManager = Class.extend({
         if (level.smallBlind != null && level.bigBlind != null) {
             this.tableInfoElement.show();
             this.tableInfoElement.find(".table-blinds-value").html(level.smallBlind + "/" + level.bigBlind);
-            this.myActionsManager.setBigBlind(Math.floor(parseFloat(level.bigBlind)*100));
+            this.myActionsManager.setBigBlind(Math.floor(parseFloat(level.bigBlind.replace(",",""))*100));
             if (secondsToNextLevel >= 0){
                 this.clock.sync(secondsToNextLevel);
                 this.tableInfoElement.find(".time-to-next-level").show();
@@ -416,8 +420,6 @@ Poker.TableLayoutManager = Class.extend({
      * @param {Poker.Pot[]} pots
      */
     onPotUpdate : function(pots) {
-        console.log("POTS:");
-        console.log(pots);
         for(var i = 0; i<pots.length; i++) {
             var potElement = this.mainPotContainer.find(".pot-"+pots[i].id);
             if(potElement.length>0) {
@@ -545,8 +547,6 @@ Poker.TableLayoutManager = Class.extend({
         var transferAnimator = new Poker.PotTransferAnimator(this.tableId, this.animationManager, $("#seatContainer-"+this.tableId),
             this.mainPotContainer);
 
-        console.log("POT TRANSFERS: ");
-        console.log(transfers);
         for(var i = 0; i<transfers.length; i++) {
             var trans = transfers[i];
             if(trans.amount<=0) {

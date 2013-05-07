@@ -60,6 +60,9 @@ Poker.ActionButton = Class.extend({
     },
     hide : function() {
         this.el.hide();
+    },
+    isVisible : function() {
+        return this.el.is(":visible");
     }
 });
 
@@ -79,7 +82,11 @@ Poker.BetAmountButton = Poker.ActionButton.extend({
         this.el.touchSafeClick(function(){
             self.callback(self.actionType, self.betAmountFunction());
         });
+    },
+    click : function() {
+        this.callback(this.actionType, this.betAmountFunction());
     }
+
 });
 
 /**

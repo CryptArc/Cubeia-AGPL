@@ -58,8 +58,7 @@ Poker.TournamentLayoutManager = Class.extend({
 
     },
     updateTournamentInfo : function(info) {
-        console.log("Tournament info");
-        console.log(info);
+        this.viewElement.find(".tournament-name").html(info.tournamentName);
         if(info.maxPlayers == info.minPlayers) {
             $.extend(info,{sitAndGo : true});
         }

@@ -17,15 +17,10 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.wallet;
 
-import com.cubeia.backoffice.wallet.api.dto.Account;
-import com.cubeia.backoffice.wallet.api.dto.Account.AccountStatus;
-import com.cubeia.backoffice.wallet.api.dto.Account.AccountType;
-import com.cubeia.backoffice.wallet.api.dto.CreateAccountResult;
-import com.cubeia.backoffice.wallet.api.dto.MetaInformation;
-import com.cubeia.backoffice.wallet.api.dto.request.CreateAccountRequest;
-import com.cubeia.backoffice.wallet.client.WalletServiceClient;
-import com.cubeia.games.poker.admin.wicket.BasePage;
+import java.util.Arrays;
+
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
@@ -37,7 +32,14 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
+import com.cubeia.backoffice.wallet.api.dto.Account;
+import com.cubeia.backoffice.wallet.api.dto.Account.AccountStatus;
+import com.cubeia.backoffice.wallet.api.dto.Account.AccountType;
+import com.cubeia.backoffice.wallet.api.dto.CreateAccountResult;
+import com.cubeia.backoffice.wallet.api.dto.MetaInformation;
+import com.cubeia.backoffice.wallet.api.dto.request.CreateAccountRequest;
+import com.cubeia.backoffice.wallet.client.WalletServiceClient;
+import com.cubeia.games.poker.admin.wicket.BasePage;
 
 @AuthorizeInstantiation({"SUPER_USER", "USER_ADMIN"})
 public class CreateAccount extends BasePage {
@@ -99,6 +101,7 @@ public class CreateAccount extends BasePage {
                 Arrays.asList(AccountStatus.values())).setRequired(true));
         accountForm.add(new RequiredTextField<String>("currency", cpm.<String>bind("currency")));
         accountForm.add(new TextField<String>("name", cpm.<String>bind("info.name")));
+        accountForm.add(new CheckBox("negativeAmountAllowed",  cpm.<Boolean>bind("account.negativeAmountAllowed")));
         
         
         add(accountForm);        

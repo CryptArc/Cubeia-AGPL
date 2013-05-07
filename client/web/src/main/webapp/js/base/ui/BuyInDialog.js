@@ -28,7 +28,7 @@ Poker.BuyInDialog = Class.extend({
             }
             return false; //don't close the dialog, need to wait for response
         });
-        this.dialog.getElement().find(".buyin-amount").val(data.maxAmount);
+        this.dialog.getElement().find(".buyin-amount").val(data.maxAmount.replace(",",""));
 
     },
     render : function(data, viewContainer,okFunction) {

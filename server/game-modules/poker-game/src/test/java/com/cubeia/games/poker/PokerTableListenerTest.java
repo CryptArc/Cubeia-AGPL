@@ -27,12 +27,17 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import com.cubeia.firebase.api.game.GameNotifier;
 import com.cubeia.firebase.api.game.player.GenericPlayer;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TableMetaData;
+import com.cubeia.firebase.api.service.clientregistry.PublicClientRegistryService;
 import com.cubeia.games.poker.handler.BackendPlayerSessionHandler;
 import com.cubeia.games.poker.model.PokerPlayerImpl;
 import com.cubeia.games.poker.state.FirebaseState;
@@ -42,11 +47,23 @@ import com.cubeia.poker.player.PokerPlayer;
 
 public class PokerTableListenerTest {
 
+	PokerTableListener ptl;
+	
+	@Mock PublicClientRegistryService clientRegistry;
+	
+	@Before
+	public void setup() {
+		MockitoAnnotations.initMocks(this);
+		when(clientRegistry.getOperatorId(Mockito.anyInt())).thenReturn(0);
+		
+		ptl = new PokerTableListener();
+        ptl.clientRegistry = clientRegistry;
+	}
+	
     @Test
     public void addPlayer() throws IOException {
         int tableId = 234;
         int playerId = 1337;
-        PokerTableListener ptl = new PokerTableListener();
 
         ptl.state = mock(PokerState.class);
         ptl.gameStateSender = mock(GameStateSender.class);

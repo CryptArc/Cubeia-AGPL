@@ -25,6 +25,7 @@ import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.firebase.io.protocol.GameTransportPacket;
 import com.cubeia.firebase.io.protocol.MttTransportPacket;
+import com.cubeia.game.poker.bot.ai.PokerGameHandler;
 import com.cubeia.games.poker.io.protocol.*;
 import com.cubeia.games.poker.io.protocol.Enums.PlayerTableStatus;
 
@@ -42,10 +43,14 @@ public class GameHandler implements PacketVisitor {
     private static Random rng = new Random();
 
     private final AbstractAI bot;
+    private final Strategy strategy;
 
     private AtomicBoolean historicActionsAreBeingSent = new AtomicBoolean(false);
+    
+    private PokerGameHandler pokerHandler = new PokerGameHandler();
 
     public GameHandler(AbstractAI bot) {
+    	this.strategy = new Strategy();
         this.bot = bot;
     }
 
@@ -80,7 +85,7 @@ public class GameHandler implements PacketVisitor {
             Action action = new Action(bot.getBot()) {
                 public void run() {
                     try {
-                        PlayerAction playerAction = Strategy.getAction(request.allowedActions);
+                        PlayerAction playerAction = strategy.getAction(request.allowedActions);
                         PerformAction response = new PerformAction();
                         response.seq = request.seq;
                         response.player = bot.getBot().getPid();
@@ -102,7 +107,7 @@ public class GameHandler implements PacketVisitor {
             };
 
             int wait = 0;
-            if (Strategy.useDelay(request.allowedActions)) {
+            if (strategy.useDelay(request.allowedActions)) {
                 int expected = request.timeToAct / 6;
                 int deviation = request.timeToAct / 3;
                 wait = gaussianAverage(expected, deviation);
@@ -214,6 +219,7 @@ public class GameHandler implements PacketVisitor {
 
     @Override
     public void visit(HandEnd packet) {
+    	pokerHandler.clear();
     }
 
     @Override

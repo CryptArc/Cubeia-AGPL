@@ -84,7 +84,7 @@ public class SiteMap {
         add(pages, "Accounting", AccountList.class, "icon-list-alt",
                 node("Account Details", AccountDetails.class, false),
                 node("List Accounts", AccountList.class),
-                node("Create Account", CreateAccount.class, false),
+                node("Create Account", CreateAccount.class),
                 node("Edit Account", EditAccount.class, false),
                 node("List Transactions", TransactionList.class),
                 node("Transaction Info", TransactionInfo.class, false),

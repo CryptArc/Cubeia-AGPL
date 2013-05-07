@@ -113,8 +113,7 @@ Poker.LobbyManager = Class.extend({
         this.cashGamesLobbyData.addOrUpdateItem({ id: tableId, showInLobby: 0});
     },
     handleTournamentRemoved : function(tournamentId) {
-        this.removeListItem(tournamentId);
-        this.lobbyLayoutManager.tournamentRemoved(tournamentId);
+        this.tournamentLobbyData.addOrUpdateItem({ id : tournamentId, showInLobby : 0});
     },
     clearLobby : function () {
         this.cashGamesLobbyData.clear();

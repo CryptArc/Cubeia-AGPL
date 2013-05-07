@@ -22,6 +22,8 @@ import com.cubeia.firebase.api.game.player.GenericPlayer;
 import com.cubeia.firebase.api.game.player.PlayerStatus;
 import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.api.game.table.TournamentTableListener;
+import com.cubeia.firebase.api.service.clientregistry.PublicClientRegistryService;
+import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.games.poker.adapter.DisconnectHandler;
 import com.cubeia.games.poker.cache.ActionCache;
 import com.cubeia.games.poker.handler.BackendPlayerSessionHandler;
@@ -76,6 +78,9 @@ public class PokerTableListener implements TournamentTableListener {
 
     @Inject
     DisconnectHandler disconnectHandler;
+    
+    @Service
+    PublicClientRegistryService clientRegistry;
 
     /**
      * A Player has joined our table. =)
@@ -155,6 +160,7 @@ public class PokerTableListener implements TournamentTableListener {
 
 
     public void playerStatusChanged(Table table, int playerId, PlayerStatus status) {
+    	log.debug("Player status changed: " + playerId+" -> "+status);
         stateInjector.injectAdapter(table);
         if (status.equals(DISCONNECTED) || status.equals(LEAVING) || status.equals(WAITING_REJOIN)) {
             log.debug("Player status changed will be set as sit out, tid[" + table.getId() + "] pid[" + playerId + "] status[" + status + "]");
@@ -190,6 +196,8 @@ public class PokerTableListener implements TournamentTableListener {
 
         sendGameStateToSittingInPlayerIfNeeded(table, player);
         PokerPlayer pokerPlayer = new PokerPlayerImpl(player);
+        int operatorId = clientRegistry.getOperatorId(player.getPlayerId());
+        pokerPlayer.setOperatorId(operatorId);
         state.addPlayer(pokerPlayer);
 
         if (!tournamentPlayer) {
@@ -208,10 +216,12 @@ public class PokerTableListener implements TournamentTableListener {
     private void removePlayer(Table table, int playerId, boolean tournamentPlayer) {
         if (!tournamentPlayer) {
             PokerPlayerImpl pokerPlayer = (PokerPlayerImpl) state.getPokerPlayer(playerId);
+            log.debug("Close player session: "+pokerPlayer);
             if (pokerPlayer != null) { // Check if player was removed already
                 backendPlayerSessionHandler.endPlayerSessionInBackend(table, pokerPlayer, getCurrentRoundNumber(), state);
             }
         }
+        log.debug("Remove player from state : "+playerId);
         state.removePlayer(playerId);
     }
 }

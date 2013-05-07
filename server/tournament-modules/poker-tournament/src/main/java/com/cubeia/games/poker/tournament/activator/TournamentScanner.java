@@ -41,6 +41,7 @@ import org.joda.time.DateTime;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -358,7 +359,7 @@ public class TournamentScanner implements PokerActivator, Runnable {
     private void checkSitAndGos() {
         log.trace("Checking sit and gos.");
         MttLobbyObject[] tournamentInstances = factory.listTournamentInstances();
-        Set<String> missingTournaments = new HashSet<String>();
+        Set<String> missingTournaments = new LinkedHashSet<String>();
         Map<String, SitAndGoConfiguration> requestedConfigurations = mapToName(sitAndGoConfigurationProvider.getConfigurations());
         missingTournaments.addAll(requestedConfigurations.keySet());
 
@@ -376,7 +377,7 @@ public class TournamentScanner implements PokerActivator, Runnable {
     }
 
     private Map<String, SitAndGoConfiguration> mapToName(Collection<SitAndGoConfiguration> configurations) {
-        Map<String, SitAndGoConfiguration> map = Maps.newHashMap();
+        Map<String, SitAndGoConfiguration> map = Maps.newLinkedHashMap();
         for (SitAndGoConfiguration sitAndGo : configurations) {
             map.put(sitAndGo.getConfiguration().getName(), sitAndGo);
         }

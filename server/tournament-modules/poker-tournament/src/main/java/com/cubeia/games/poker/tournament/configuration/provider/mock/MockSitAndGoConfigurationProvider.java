@@ -32,7 +32,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import static com.cubeia.poker.timing.TimingFactory.getRegistry;
-import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.newLinkedHashMap;
 
 
 /**
@@ -44,7 +44,7 @@ public class MockSitAndGoConfigurationProvider implements SitAndGoConfigurationP
 
     private static transient Logger log = Logger.getLogger(MockSitAndGoConfigurationProvider.class);
 
-    private Map<String, SitAndGoConfiguration> requestedTournaments = newHashMap();
+    private Map<String, SitAndGoConfiguration> requestedTournaments = newLinkedHashMap();
 
     /*------------------------------------------------
 

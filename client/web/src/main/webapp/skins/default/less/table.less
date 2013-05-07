@@ -161,14 +161,15 @@
 .community-cards {
     position: absolute;
     width: 40%;
-    height: 22%;
+    height: 17%;
     left: 30%;
     top: 40%;
 }
 
 .card-image {
-    background-size: 100% 100%;
-    bacground-repeat: no-repeat;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: top;
     height: 100%;
     width: 100%;
 }
@@ -211,3 +212,73 @@
     position: absolute;
 }
 
+
+.my-player-seat {
+
+    padding-bottom: 17%;
+    width:28.5%;
+    position: absolute;
+    top:67%;
+    left:35.75%;
+
+    .seat-defaults(20%,65%);
+    .cards-container-pos(28%,40%);
+    .action-amount-pos(5%,0,center);
+
+
+    .player-name, .seat-balance {
+        z-index: 100000;
+    }
+    .avatar-base {
+        width: 55%;
+    }
+    .progress-bar {
+        left:auto;
+        right:-10%;
+    }
+
+    .hand-strength {
+        top: 100%;
+        left: 8%;
+    }
+    .avatar, .player-status, .action-text, .avatar-base {
+        z-index: 10;
+    }
+
+    .cards-container {
+        width: 55%;
+        left: 31%;
+        top:30%;
+        z-index: 1;
+    }
+
+    .hand-strength {
+        left:0%;
+        top:100%;
+        font-size:100%;
+        width:95%;
+        text-align: right;
+        color: #fff;
+        font-weight: normal;
+        background-color: transparent;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .player-card-container {
+        width: 55%;
+        height: 200%;
+        left: 3%;
+        top:-10%;
+        margin-left:15%;
+        z-index: 0;
+
+        &:first-child {
+            margin-left: -15%;
+        }
+        &:last-child {
+            margin-top: 10%;
+        }
+    }
+
+}
