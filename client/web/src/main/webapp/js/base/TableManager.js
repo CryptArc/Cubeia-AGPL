@@ -401,15 +401,17 @@ Poker.TableManager = Class.extend({
      * @param {com.cubeia.games.poker.io.protocol.BlindsLevel} newBlinds
      * @param {Number} secondsToNextLevel
      * @param {com.cubeia.games.poker.io.protocol.BetStrategyEnum} betStrategy
+     * @param {com.cubeia.games.poker.io.protocol.Currency} currency
      */
-    notifyGameStateUpdate : function(tableId, newBlinds, secondsToNextLevel,betStrategy) {
+    notifyGameStateUpdate : function(tableId, newBlinds, secondsToNextLevel,betStrategy, currency) {
         console.log("Seconds to next level: " + secondsToNextLevel);
         console.log("notifyGameStateUpdate = " + betStrategy);
         var table = this.getTable(tableId);
         table.betStrategy = betStrategy;
-        this.notifyBlindsUpdated(tableId, newBlinds, secondsToNextLevel);
+        table.currency = currency;
+        this.notifyBlindsUpdated(tableId, newBlinds, currency, secondsToNextLevel);
     },
-    notifyBlindsUpdated : function(tableId, newBlinds, secondsToNextLevel) {
+    notifyBlindsUpdated : function(tableId, newBlinds, currency, secondsToNextLevel) {
         console.log("Seconds to next level: " + secondsToNextLevel);
         if (newBlinds.isBreak) {
             var dialogManager = Poker.AppCtx.getDialogManager();
@@ -420,7 +422,7 @@ Poker.TableManager = Class.extend({
             });
         }
         var table = this.getTable(tableId);
-        table.getLayoutManager().onBlindsLevel(newBlinds, secondsToNextLevel);
+        table.getLayoutManager().onBlindsLevel(newBlinds, currency, secondsToNextLevel);
     },
     notifyTournamentDestroyed : function(tableId) {
         var dialogManager = Poker.AppCtx.getDialogManager();

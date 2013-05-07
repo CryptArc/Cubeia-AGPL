@@ -31,12 +31,14 @@ Poker.BetSlider = Class.extend({
     currentBetAmount : 0,
     triggerChange : true,
     betCallback : null,
-    init : function(tableId,containerId,betCallback) {
+    step : 1,
+    init : function(tableId,containerId,betCallback,step) {
        this.markers = [];
        this.valueOutputs =  $(".slider-value");
        this.containerId = containerId + "-" + this.tableId;
        this.tableId = tableId;
        this.betCallback = betCallback;
+       this.step = step;
     },
     /**
      * Draws the bet slider in the container with the id
@@ -57,7 +59,7 @@ Poker.BetSlider = Class.extend({
         $("#tableView-"+this.tableId).append(container).append(betInput);
         this.betInput = $("#"+betInputId);
         this.betInput.on("keyup",function(e){
-            var val = Math.floor(parseFloat($.trim($(this).val()))*100);
+            var val = parseFloat($.trim($(this).val()));
             if(self.betAmountInRange(val)) {
                 self.handleChangeValue(self.betInput,val);
                 if(e.keyCode == 13) {
@@ -101,7 +103,7 @@ Poker.BetSlider = Class.extend({
                 value: self.minBet,
                 max: self.maxBet,
                 min: 0,
-                step: 1,
+                step: self.step,
 
                 //this gets a live reading of the value and prints it on the page
                 slide : function(event,ui) {
@@ -166,14 +168,14 @@ Poker.BetSlider = Class.extend({
      * @param minBet
      */
     setMinBet : function(minBet) {
-        this.minBet = minBet;
+        this.minBet = parseFloat(minBet);
     },
     /**
      * Set max bet value of the slider, used as the sliders max value
      * @param maxBet
      */
     setMaxBet : function(maxBet){
-        this.maxBet = maxBet;
+        this.maxBet = parseFloat(maxBet);
     },
     getValue : function() {
         return this.currentBetAmount;
@@ -210,7 +212,7 @@ Poker.BetSlider = Class.extend({
     },
     closeValueExist : function(val) {
       for(var x in this.markers) {
-          var mv = 100 * this.markers[x].value / this.maxBet;
+          var mv =  this.markers[x].value / this.maxBet;
           var valPercent = 100 * val / this.maxBet;
           if(mv<(valPercent+this.delta) && mv>(valPercent-this.delta)){
               return true;
@@ -226,6 +228,7 @@ Poker.BetSlider = Class.extend({
      * @param value - the value of the marker
      */
     addMarker : function(name, value) {
+        value = parseFloat(value);
         if(value<=this.maxBet && value>=this.minBet && !this.closeValueExist(value)) {
             this.markers.push({name : name, value  : value})
         }

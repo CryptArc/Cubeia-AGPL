@@ -107,14 +107,14 @@ Poker.LobbyLayoutManager = Class.extend({
         var fixedLimit = new Poker.PropertyStringFilter("fixedLimit", true, this, "type", "FL");
         this.filters.push(fixedLimit);
 
-        var highStakes = new Poker.PropertyMinMaxFilter("highStakes", true, this, "smallBlind", 1000, -1);
+        var highStakes = new Poker.PropertyMinMaxFilter("highStakes", true, this, "smallBlind", 10, -1);
 
         this.filters.push(highStakes);
 
-        var mediumStakes = new Poker.PropertyMinMaxFilter("mediumStakes", true, this, "smallBlind", 50, 999);
+        var mediumStakes = new Poker.PropertyMinMaxFilter("mediumStakes", true, this, "smallBlind", 5, 9.99);
         this.filters.push(mediumStakes);
 
-        var lowStakes = new Poker.PropertyMinMaxFilter("lowStakes", true, this, "smallBlind", -1, 49);
+        var lowStakes = new Poker.PropertyMinMaxFilter("lowStakes", true, this, "smallBlind", -1, 4.9);
         this.filters.push(lowStakes);
         
         this.requiredFilters.push(new Poker.PrivateTournamentFilter());

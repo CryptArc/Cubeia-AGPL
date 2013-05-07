@@ -68,7 +68,6 @@ Poker.PokerRequestHandler = Class.extend({
     buyIn : function(amount) {
         var buyInRequest = new com.cubeia.games.poker.io.protocol.BuyInRequest();
         buyInRequest.amount = amount;
-
         buyInRequest.sitInIfSuccessful = true;
         this.sendGameTransportPacket(buyInRequest);
     },

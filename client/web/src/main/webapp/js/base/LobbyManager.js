@@ -184,6 +184,7 @@ Poker.PropertyMinMaxFilter = Poker.LobbyFilter.extend({
     doFilter:function (enabled, lobbyData) {
         var p = lobbyData[this.property];
         if (typeof(p) != "undefined" && !this.enabled) {
+            p = parseFloat(p);
             if (this.max != -1 && this.min != -1) {
                 return p > this.max || p < this.min;
             } else if (this.max != -1) {

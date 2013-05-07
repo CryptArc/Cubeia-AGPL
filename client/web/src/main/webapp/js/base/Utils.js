@@ -7,7 +7,7 @@ Poker.Utils = {
         return Poker.Utils.formatAmount(amount);
     },
     _baseFormat : function(amount) {
-        var amount = ""+parseFloat(amount/100).toFixed(2);
+        var amount = ""+parseFloat(amount).toFixed(2);
         amount = amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         return amount;
     },

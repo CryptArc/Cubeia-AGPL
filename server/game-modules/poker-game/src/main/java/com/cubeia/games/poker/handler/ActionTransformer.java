@@ -36,6 +36,8 @@ import com.cubeia.poker.pot.PotTransition;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Range;
 import com.google.common.primitives.Ints;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -53,6 +55,8 @@ import static com.cubeia.games.poker.io.protocol.Enums.ActionType.DISCARD;
  * @author Fredrik Johansson, Cubeia Ltd
  */
 public class ActionTransformer {
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     public RequestAction transform(ActionRequest request, int sequenceNumber) {
         RequestAction packet = new RequestAction();
@@ -105,10 +109,19 @@ public class ActionTransformer {
             return convertDiscardAction(playerId, packet);
         } else {
             PokerAction converted = new PokerAction(playerId, transform(actionType));
-            converted.setBetAmount(new BigDecimal(packet.betAmount).
-                    setScale(currency.getFractionalDigits(), RoundingMode.DOWN));
+            converted.setBetAmount(transformAmount(packet.betAmount,currency));
             return converted;
         }
+    }
+
+    private BigDecimal transformAmount(String amount, Currency c) {
+        BigDecimal transformedAmount = BigDecimal.ZERO;
+        try {
+            transformedAmount  = new BigDecimal(amount).setScale(c.getFractionalDigits(), RoundingMode.DOWN);
+        } catch (NumberFormatException e) {
+            log.debug("Unable to transform amount in PokerAction " + amount);
+        }
+        return transformedAmount;
     }
 
     private PokerAction convertDiscardAction(int playerId, PerformAction action) {
