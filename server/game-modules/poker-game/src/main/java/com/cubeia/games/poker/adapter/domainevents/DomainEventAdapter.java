@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import com.cubeia.events.event.GameEvent;
 import com.cubeia.events.event.poker.PokerAttributes;
-import com.cubeia.firebase.api.service.clientregistry.PublicClientRegistryService;
 import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.games.poker.common.money.Money;
 import com.cubeia.poker.adapter.HandEndStatus;
@@ -26,8 +25,6 @@ public class DomainEventAdapter {
 	/** Service for sending and listening to bonus/achievement events to players */
 	@Service DomainEventsService service;
 	
-	@Service PublicClientRegistryService clientRegistry;
-	
 	/**
 	 * Report hand end result to the achievment service
 	 * @param handResult
@@ -42,22 +39,14 @@ public class DomainEventAdapter {
 	}
 	
 	
-	public void notifyEndPlayerSession(int playerId, Money accountBalance) {
+	public void notifyEndPlayerSession(int playerId, String screenname, int operatorId, Money accountBalance) {
 		log.debug("Domain event service: "+service);
-		service.sendEndPlayerSessionEvent(playerId, accountBalance);
+		service.sendEndPlayerSessionEvent(playerId, screenname, operatorId, accountBalance);
 	}
 	
 	
 	private void sendPlayerHandEnd(PokerPlayer player, Result result, HandResult handResult, boolean tournamentTable, PokerSettings pokerSettings) {
-		int playerId = player.getId();
-		String screenname = clientRegistry.getScreenname(playerId);
-		int operatorId = 0;
-		if (screenname == null) {
-			log.error("Client registry returned null for screenname for player["+playerId+"]. This indicates that the player has disconnected before the hand is over. We will not send a player session event for this player!");
-			return; // FIXME: This early return is a serious bug!!
-		} else {
-			operatorId = clientRegistry.getOperatorId(playerId);
-		}
+		int operatorId = player.getOperatorId();
 		
 		// We don't want to push events for operator id 0 which is reserved for bots and internal users.
 		// TODO: Perhaps make excluded operators configurable
@@ -75,7 +64,7 @@ public class DomainEventAdapter {
 		event.attributes.put(PokerAttributes.stake.name(), stake+"");
 		event.attributes.put(PokerAttributes.winAmount.name(), result.getWinningsIncludingOwnBets()+"");
 		event.attributes.put(PokerAttributes.netResult.name(), result.getWinningsIncludingOwnBets().subtract(stake).toPlainString());
-		event.attributes.put(PokerAttributes.screenname.name(), screenname);
+		event.attributes.put(PokerAttributes.screenname.name(), player.getScreenname());
 		event.attributes.put(PokerAttributes.tournament.name(), tournamentTable+"");
 		event.attributes.put(PokerAttributes.accountCurrency.name(), pokerSettings.getCurrency().getCode());
 		
@@ -115,7 +104,6 @@ public class DomainEventAdapter {
 	private BigDecimal calculateStake(Result result) {
 		return result.getWinningsIncludingOwnBets().subtract(result.getNetResult());
 	}
-
 
 	
 }

@@ -30,6 +30,7 @@ import com.cubeia.games.poker.io.protocol.BuyInRequest;
 import com.cubeia.games.poker.io.protocol.BuyInResponse;
 import com.cubeia.games.poker.io.protocol.CardToDeal;
 import com.cubeia.games.poker.io.protocol.ChipStatistics;
+import com.cubeia.games.poker.io.protocol.Currency;
 import com.cubeia.games.poker.io.protocol.DealPrivateCards;
 import com.cubeia.games.poker.io.protocol.DealPublicCards;
 import com.cubeia.games.poker.io.protocol.DealerButton;
@@ -449,8 +450,9 @@ public class ManualGameHandler implements PacketVisitor {
     }
 
     @Override
-    public void visit(TournamentInfo packet) {
-
-    }
+    public void visit(TournamentInfo packet) {}
+    
+	@Override
+	public void visit(Currency packet) {}
 
 }

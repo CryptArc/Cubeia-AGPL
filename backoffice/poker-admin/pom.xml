@@ -292,13 +292,12 @@
                     <connectors>
                         <connector
                                 implementation="org.eclipse.jetty.server.bio.SocketConnector">
-                            <port>8088</port>
+                            <port>9099</port>
                             <maxIdleTime>60000</maxIdleTime>
                         </connector>
                     </connectors>
 
-                    <stopKey>jetty-stop</stopKey>
-                    <stopPort>9966</stopPort>
+                    
                 </configuration>
             </plugin>
         </plugins>

@@ -277,7 +277,6 @@ public class CashGamesBackendAdapter implements CashGamesBackend {
             } catch (SystemException e) {
                 txBuilder.entry(getRakeAccount(rakeEntry.getValue().getCurrencyCode()), convertToWalletMoney(rakeEntry.getValue()).getAmount());
             }
-
         }
         txBuilder.comment("poker hand result");
         txBuilder.attribute("pokerTableId", String.valueOf((request.getTableId()).integrationId)).attribute("pokerGameId", String.valueOf(GAME_ID)).attribute(

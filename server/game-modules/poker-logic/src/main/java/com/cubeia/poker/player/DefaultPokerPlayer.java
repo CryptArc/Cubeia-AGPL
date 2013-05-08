@@ -42,6 +42,10 @@ public class DefaultPokerPlayer implements PokerPlayer {
     protected ActionRequest actionRequest;
 
     protected int playerId;
+    
+    protected String screenname;
+    
+    protected int operatorId;
 
     protected int seatId;
 
@@ -129,7 +133,16 @@ public class DefaultPokerPlayer implements PokerPlayer {
     public int getId() {
         return playerId;
     }
-
+    
+    @Override
+    public String getScreenname() {
+		return screenname;
+	}
+    
+    public void setScreenname(String screenname) {
+		this.screenname = screenname;
+	}
+    
     public Hand getPocketCards() {
         return new Hand(pocketCards);
     }
@@ -153,10 +166,14 @@ public class DefaultPokerPlayer implements PokerPlayer {
 
     @Override
     public int getOperatorId() {
-        //FIXME implement
-        return 0;
+        return operatorId;
     }
 
+    @Override
+    public void setOperatorId(int operatorId) {
+		this.operatorId = operatorId;
+	}
+    
     @Override
     public boolean isSittingIn() {
         return !isSittingOut();

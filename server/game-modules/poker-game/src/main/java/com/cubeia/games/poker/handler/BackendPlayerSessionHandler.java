@@ -89,7 +89,7 @@ public class BackendPlayerSessionHandler {
         
 		try {
 			Money accountBalance = cashGameBackend.getAccountBalance(playerId, state.getSettings().getCurrency().getCode());
-	        achievementAdapter.notifyEndPlayerSession(playerId, accountBalance);
+	        achievementAdapter.notifyEndPlayerSession(playerId, pokerPlayer.getScreenname(), pokerPlayer.getOperatorId(), accountBalance);
 		} catch (GetBalanceFailedException e) {
 			log.error("Failed to get player account balance", e);
 		}

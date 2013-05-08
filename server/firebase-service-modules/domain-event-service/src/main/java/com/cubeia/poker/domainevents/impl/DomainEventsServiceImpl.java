@@ -17,6 +17,7 @@ import com.cubeia.events.event.achievement.BonusEvent;
 import com.cubeia.events.event.poker.PokerAttributes;
 import com.cubeia.firebase.api.action.GameObjectAction;
 import com.cubeia.firebase.api.mtt.MttInstance;
+import com.cubeia.firebase.api.mtt.model.MttPlayer;
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.firebase.api.service.Service;
 import com.cubeia.firebase.api.service.ServiceContext;
@@ -90,18 +91,11 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 	public void onEvent(GameEvent event) {}
 
 	@Override
-	public void sendTournamentPayoutEvent(int playerId, BigDecimal payout, String currencyCode, int position, MttInstance instance) {
+	public void sendTournamentPayoutEvent(MttPlayer player, BigDecimal payout, String currencyCode, int position, MttInstance instance) {
 		int tournamentId = instance.getState().getId();
 		String tournamentName = instance.getState().getName();
-		
-		String screenname = clientRegistry.getScreenname(playerId);
-		int operatorId = 0;
-		if (screenname == null) {
-			log.error("Client registry returned null for screenname for player["+playerId+"]. This indicates that the player has disconnected before the hand is over. We will not send a player session event for this player!");
-			return; // FIXME: This early return is a serious bug!!
-		} else {
-			operatorId = clientRegistry.getOperatorId(playerId);
-		}
+		int playerId = player.getPlayerId();
+		int operatorId = clientRegistry.getOperatorId(playerId);
 		
 		// We don't want to push events for operator id 0 which is reserved for bots and internal users.
 		// TODO: Perhaps make excluded operators configurable
@@ -130,23 +124,14 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 		event.attributes.put(PokerAttributes.accountBalance.name(), accountBalance.getAmount()+"");
 		event.attributes.put(PokerAttributes.accountCurrency.name(), currencyCode);  
 		
-		event.attributes.put(PokerAttributes.screenname.name(), screenname);
+		event.attributes.put(PokerAttributes.screenname.name(), player.getScreenname());
 		
 		log.debug("Send Player Session ended event: "+event);
 		sendEvent(event);
 	}
 	
-	public void sendEndPlayerSessionEvent(int playerId, Money accountBalance) {
+	public void sendEndPlayerSessionEvent(int playerId, String screenname, int operatorId, Money accountBalance) {
 		log.debug("Event Player Session ended. Player["+playerId+"], Balance["+accountBalance+"]");
-		
-		String screenname = clientRegistry.getScreenname(playerId);
-		int operatorId = 0;
-		if (screenname == null) {
-			log.error("Client registry returned null for screenname for player["+playerId+"]. This indicates that the player has disconnected before the hand is over. We will not send a player session event for this player!");
-			return; // FIXME: This early return is a serious bug!!
-		} else {
-			operatorId = clientRegistry.getOperatorId(playerId);
-		}
 		
 		// We don't want to push events for operator id 0 which is reserved for bots and internal users.
 		// TODO: Perhaps make excluded operators configurable

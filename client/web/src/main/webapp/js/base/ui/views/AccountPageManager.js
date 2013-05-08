@@ -59,9 +59,9 @@ Poker.AccountPageManager = Class.extend({
     logout : function() {
         $.ga._trackEvent("user_navigation", "clicked_logout");
         Poker.AppCtx.getCommunicationManager().getConnector().logout(true);
+        Poker.Utils.removeStoredUser();
         var logout_url = Poker.OperatorConfig.getLogoutUrl();
         if(!logout_url) {
-            document.location = document.location.hash = "clear";
             document.location.reload();
         } else {
             var dialogManager = Poker.AppCtx.getDialogManager();
