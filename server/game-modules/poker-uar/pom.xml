@@ -12,12 +12,17 @@
     <packaging>firebase-uar</packaging>
 
     <dependencies>
+    	<!-- 
+    	This dependency is not working due to jboss.log version issues. 
+    	To recreate, uncomment this dependency and set use-mock-integrations to false
+    	
         <dependency>
           <groupId>com.cubeia.games.poker</groupId>
           <artifactId>bot-service</artifactId>
           <version>1.0-SNAPSHOT</version>
           <type>firebase-sar</type>
         </dependency>
+         -->
         <dependency>
             <groupId>com.cubeia.games</groupId>
             <artifactId>poker-protocol</artifactId>
@@ -165,14 +170,7 @@
                     <version>${cubeia.network.version}</version>
                     <type>firebase-sar</type>
                 </dependency>
-                <!-- 
-                <dependency>
-                    <groupId>com.cubeia.network.operator</groupId>
-                    <artifactId>fb-operator-service-mock</artifactId>
-                    <version>${cubeia.network.version}</version>
-                    <type>firebase-sar</type>
-                </dependency>
-                 -->
+                
             </dependencies>
         </profile>
         <profile>
