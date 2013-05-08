@@ -46,7 +46,7 @@ public class PayoutHandler implements Serializable {
     }
 
     /**
-     * Takes a set of players who are out and returns a map of playerId->payout (in cents).
+     * Takes a set of players who are out and returns a map of playerId->payout.
      *
      * If more than one player is out, the player with the most chips at the beginning of the hand will get the higher prize.
      *

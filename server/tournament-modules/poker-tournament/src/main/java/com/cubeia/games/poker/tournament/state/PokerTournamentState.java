@@ -108,7 +108,7 @@ public class PokerTournamentState implements Serializable {
 
     private int minutesVisibleAfterFinished;
 
-    /** Maps playerId to amount won, in cents. */
+    /** Maps playerId to amount won. */
     private Map<Integer, BigDecimal> winMap = newHashMap();
 
     // Maps playerId -> MttPlayer. Transient to reduce serialized size.

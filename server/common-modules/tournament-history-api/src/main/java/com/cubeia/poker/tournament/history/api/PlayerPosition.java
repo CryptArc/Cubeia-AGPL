@@ -26,15 +26,15 @@ import java.math.BigDecimal;
 public class PlayerPosition implements Serializable {
     private int playerId;
     private int position;
-    private BigDecimal payoutInCents;
+    private BigDecimal payout;
 
     public PlayerPosition() {
     }
 
-    public PlayerPosition(int playerId, int position, BigDecimal payoutInCents) {
+    public PlayerPosition(int playerId, int position, BigDecimal payout) {
         this.playerId = playerId;
         this.position = position;
-        this.payoutInCents = payoutInCents;
+        this.payout = payout;
     }
 
     public int getPlayerId() {
@@ -53,11 +53,11 @@ public class PlayerPosition implements Serializable {
         this.position = position;
     }
 
-    public BigDecimal getPayoutInCents() {
-        return payoutInCents;
+    public BigDecimal getPayout() {
+        return payout;
     }
 
-    public void setPayoutInCents(BigDecimal payoutInCents) {
-        this.payoutInCents = payoutInCents;
+    public void setPayout(BigDecimal payout) {
+        this.payout = payout;
     }
 }

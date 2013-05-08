@@ -218,7 +218,7 @@ public class PokerTournamentTest {
         // When we register a player
         tournament.checkRegistration(new MttRegistrationRequest(new MttPlayer(1), null));
 
-        // A call to the backend should be made with 1100 cents.
+        // A call to the backend should be made with 11.00.
         ArgumentCaptor<OpenTournamentSessionRequest> captor = ArgumentCaptor.forClass(OpenTournamentSessionRequest.class);
         verify(backend).openTournamentPlayerSession(captor.capture(), isA(TournamentSessionId.class));
         OpenTournamentSessionRequest request = captor.getValue();
@@ -235,7 +235,7 @@ public class PokerTournamentTest {
         // When we register a player
         tournament.checkRegistration(new MttRegistrationRequest(new MttPlayer(1), null));
 
-        // A call to the backend should be made with 1100 cents.
+        // A call to the backend should be made with 11.00.
         verify(backend, never()).openTournamentSession(Mockito.<OpenTournamentSessionRequest>any());
     }
 

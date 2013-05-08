@@ -282,10 +282,10 @@ public class PokerTournament implements TableNotifier, Serializable {
     /**
      * Adds chips to the given player, buy sending a message to the table where he sits.
      *
-     * @param chipsToAdd Chips to add, in number of chips (will be converted to cents). For 2000 chips, pass 2000 in.
+     * @param chipsToAdd Chips to add, in number of chips  For 2000 chips, pass 2000 in.
      */
     private void addChipsTo(int playerId, int tableId, BigDecimal chipsToAdd, PlayerAddedChips.Reason reason) {
-        log.debug("Adding " + chipsToAdd + " chips (" + chipsToAdd + " cents) to " + playerId + " who sits at table " + tableId);
+        log.debug("Adding " + chipsToAdd + " chips (" + chipsToAdd + ") to " + playerId + " who sits at table " + tableId);
         notifyTable(tableId, new PlayerAddedChips(playerId, chipsToAdd, reason));
     }
 

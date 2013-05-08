@@ -80,8 +80,8 @@ public class LoggingHistoryPersister implements TournamentHistoryPersistenceServ
     }
 
     @Override
-    public void playerOut(int playerId, int position, BigDecimal payoutInCents, String historicId, long now) {
-        log.debug("Tournament[ " + historicId + "]. Player " + playerId +  " finished in place " + position + " and won: " + payoutInCents + " cents.");
+    public void playerOut(int playerId, int position, BigDecimal payout, String historicId, long now) {
+        log.debug("Tournament[ " + historicId + "]. Player " + playerId +  " finished in place " + position + " and won: " + payout + ".");
     }
 
     @Override

@@ -42,7 +42,7 @@ public class ConcretePayout {
         return payout;
     }
 
-    public void setPayout(BigDecimal payoutInCents) {
-        this.payout = payoutInCents;
+    public void setPayout(BigDecimal payout) {
+        this.payout = payout;
     }
 }

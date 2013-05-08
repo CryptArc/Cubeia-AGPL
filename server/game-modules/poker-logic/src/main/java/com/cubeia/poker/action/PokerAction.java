@@ -39,19 +39,10 @@ public class PokerAction implements Serializable {
 
     private static final BigDecimal MINUS_ONE = new BigDecimal(-1) ;
 
-    /**
-     * Amount is in cents for money
-     */
     private BigDecimal betAmount = MINUS_ONE;
 
-    /**
-     * In cents for money
-     */
     private BigDecimal raiseAmount = MINUS_ONE;
 
-    /**
-     * In cents for money
-     */
     private BigDecimal stackAmount = MINUS_ONE;
 
 

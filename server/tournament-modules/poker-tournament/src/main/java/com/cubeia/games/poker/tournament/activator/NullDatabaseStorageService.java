@@ -77,7 +77,7 @@ public class NullDatabaseStorageService implements TournamentHistoryPersistenceS
     }
 
     @Override
-    public void playerOut(int playerId, int position, BigDecimal payoutInCents, String historicId, long now) {
+    public void playerOut(int playerId, int position, BigDecimal payout, String historicId, long now) {
 
     }
 

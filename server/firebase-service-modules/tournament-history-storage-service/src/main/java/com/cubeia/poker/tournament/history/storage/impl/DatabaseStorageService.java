@@ -56,9 +56,9 @@ public class DatabaseStorageService implements TournamentHistoryPersistenceServi
     }
 
     @Override
-    public void playerOut(int playerId, int position, BigDecimal payoutInCents, String historicId, long now) {
+    public void playerOut(int playerId, int position, BigDecimal payout, String historicId, long now) {
         addEvent(historicId, new TournamentEvent(now, "player " + playerId + " out", "" + position));
-        addPlayerPosition(historicId, playerId, position, payoutInCents);
+        addPlayerPosition(historicId, playerId, position, payout);
     }
 
     @Override
@@ -198,8 +198,8 @@ public class DatabaseStorageService implements TournamentHistoryPersistenceServi
         dao.addEvent(historicId, event);
     }
 
-    private void addPlayerPosition(String historicId, int playerId, int position, BigDecimal payoutInCents) {
-        dao.addPlayerPosition(historicId, new PlayerPosition(playerId, position, payoutInCents));
+    private void addPlayerPosition(String historicId, int playerId, int position, BigDecimal payout) {
+        dao.addPlayerPosition(historicId, new PlayerPosition(playerId, position, payout));
     }
 
     protected DatabaseStorageConfiguration getConfiguration(ServiceContext context) {
