@@ -403,7 +403,7 @@ public class PokerTournamentState implements Serializable {
         BigDecimal minRegPrizePool = buyIn.multiply(BigDecimal.valueOf(minPlayers));
         // Total prize pool is the maximum of the current prize pool and the prize pool we will have if at least minPlayers players register.
         BigDecimal totalPrizePool = minRegPrizePool.max(getPrizePool());
-        log.debug("Total prize pool as long: " + totalPrizePool);
+        log.debug("Total prize pool: " + totalPrizePool);
         this.payouts = payoutStructure.getPayoutsForEntrantsAndPrizePool(max(minPlayers, registeredPlayersCount), totalPrizePool, currency);
     }
 
