@@ -4,19 +4,31 @@ var Poker = Poker || {};
 Poker.Utils = {
     currencySymbol : "",
     formatCurrency : function(amount) {
-        return Poker.Utils.formatAmount(amount);
+        return Poker.Utils._baseFormat(amount);
     },
     _baseFormat : function(amount) {
-        var amount = ""+parseFloat(amount).toFixed(2);
-        amount = amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        return amount;
-    },
-    formatAmount : function(amount) {
-        var str = Poker.Utils._baseFormat(amount);
-        if(str.charAt(str.length-1)=="0" && str.charAt(str.length-2)=="0") {
-            str = str.substr(0,str.length-3);
+        var fractionalDigits = 10;
+        var amount = "" + parseFloat(amount).toFixed(10);
+
+        var result = "";
+        var split = amount.split(".");
+
+        //remove trailing zeros
+        var decimals = split[1];
+        for(var i = decimals.length-1; i>=0; i--) {
+            if(decimals.charAt(i)!='0') {
+                result = Poker.Utils.formatWholePart(split[0]) + "." + decimals.substr(0,i+1);
+                break;
+            }
+            if(i==0) {
+                result=Poker.Utils.formatWholePart(split[0]);
+            }
         }
-        return str;
+
+        return result;
+    },
+    formatWholePart : function(amount) {
+        return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
     formatCurrencyString : function(amount) {
         return Poker.Utils.currencySymbol + Poker.Utils.formatCurrency(amount);
@@ -35,16 +47,6 @@ Poker.Utils = {
 	            displayCancelButton: false
 	        });
     	}
-    },
-    formatBlinds : function(amount) {
-        var str = Poker.Utils._baseFormat(amount);
-        if(str.charAt(str.length-1)=="0") {
-            str = str.substr(0,str.length-1);
-            if(str.charAt(str.length-1)=="0"){
-                str = str.substr(0,str.length-2);
-            }
-        }
-        return str;
     },
     calculateDimensions : function(availableWidth, availableHeight, aspectRatio) {
         var width = availableHeight * aspectRatio;

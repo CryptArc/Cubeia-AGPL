@@ -543,7 +543,7 @@
 <div id="sitAndGoListItemTemplate" style="display: none;">
     <div class="table-item sit-and-go  {{tableStatus}}" id="sitAndGoItem{{id}}">
         <div class="table-name">{{name}}</div>
-        <div class="buy-in">{{buyIn}}+{{fee}}</div>
+        <div class="buy-in">{{currency buyIn}}+{{currency fee}}</div>
         <div class="seated">{{registered}}/{{capacity}}</div>
         <div class="type">{{type}}</div>
         <div class="status {{status}}">{{status}}</div>
@@ -553,7 +553,7 @@
 <div id="tournamentListItemTemplate" style="display: none;">
     <div class="table-item tournament {{tableStatus}}" id="tournamentItem{{id}}">
         <div class="table-name">{{name}}</div>
-        <div class="buy-in">{{buyIn}}+{{fee}}</div>
+        <div class="buy-in">{{currency buyIn}}+{{currency fee}}</div>
         <div class="registered">{{registered}}/{{capacity}}</div>
         <div class="group">
             <div class="start-time">{{startTime}}</div>
@@ -812,10 +812,10 @@
     <script type="text/mustache" id="tournamentBuyInContent">
         <h1>{{t "buy-in.buy-in-at"}} {{name}}</h1>
         <div class="buy-in-row">
-            <span class="desc">{{t "buy-in.your-balance" }}</span>  <span class="balance buyin-balance">{{balance}}</span>
+            <span class="desc">{{t "buy-in.your-balance" }}</span>  <span class="balance buyin-balance">{{currency balance}}</span>
         </div>
         <div class="buy-in-row">
-            <span class="desc">{{t "buy-in.buy-in" }}</span>  <span class="balance buyin-max-amount">{{buyIn}}+{{fee}}</span>
+            <span class="desc">{{t "buy-in.buy-in" }}</span>  <span class="balance buyin-max-amount">{{currency buyIn}}+{{currency fee}}</span>
         </div>
         <div class="buy-in-row">
             <span class="buyin-error" style="display: none;"></span>
@@ -832,13 +832,13 @@
 <script type="text/mustache" id="cashGamesBuyInContent">
     <h1>Buy-in at table <span class="buyin-table-name">{{title}}</span></h1>
     <div class="buy-in-row">
-        <span class="desc">{{t "buy-in.your-balance" }}</span>  <span class="balance buyin-balance">{{balance}}</span>
+        <span class="desc">{{t "buy-in.your-balance" }}</span>  <span class="balance buyin-balance">{{currency balance}}</span>
     </div>
     <div class="buy-in-row">
-        <span class="desc">{{t "buy-in.max-amount" }}</span>  <span class="balance buyin-max-amount">{{maxAmount}}</span>
+        <span class="desc">{{t "buy-in.max-amount" }}</span>  <span class="balance buyin-max-amount">{{currency maxAmount}}</span>
     </div>
     <div class="buy-in-row">
-        <span class="desc">{{t "buy-in.min-amount" }}</span>  <span class="balance buyin-min-amount">{{minAmount}}</span>
+        <span class="desc">{{t "buy-in.min-amount" }}</span>  <span class="balance buyin-min-amount">{{currency minAmount}}</span>
     </div>
     <div class="buy-in-row">
         <span class="desc">{{t "buy-in.buy-in-amount" }}</span>
@@ -931,7 +931,7 @@
 <script type="text/mustache" id="tournamentInfoTemplate">
     <h4>{{t "tournament-lobby.info.title" }}</h4>
     <div class="stats-item"><span>{{gameType}}</span></div>
-    <div class="stats-item">{{t "tournament-lobby.info.title" }} <span>{{buyIn}}+{{fee}}</span></div>
+    <div class="stats-item">{{t "tournament-lobby.info.title" }} <span>{{currency buyIn}}+{{currency fee}}</span></div>
     <div class="stats-item">
         {{t "tournament-lobby.info.status" }}
             <span class="status-container">
@@ -989,7 +989,7 @@
 </script>
 <script type="text/mustache" id="tournamentPayoutStructureTemplate" style="display:none;">
     <h4>{{t "tournament-lobby.payouts.title" }}</h4>
-    <div class="prize-pool">{{t "tournament-lobby.payouts.prize-pool" }} <span>{{prizePool}}</span></div>
+    <div class="prize-pool">{{t "tournament-lobby.payouts.prize-pool" }} <span>{{currency prizePool}}</span></div>
     <div class="payouts">
         <div class="payout info-list-item header">
             {{t "tournament-lobby.payouts.position" }} <span>{{t "tournament-lobby.payouts.amount" }}</span>
@@ -997,7 +997,7 @@
         <div class="info-list">
             {{#payouts}}
             <div class="payout info-list-item">
-                {{position}} <span>{{payoutAmount}}</span>
+                {{position}} <span>{{currency payoutAmount}}</span>
             </div>
             {{/payouts}}
         </div>
@@ -1088,7 +1088,7 @@
             {{t "tournament-lobby.blinds-structure.break" }}
             {{/isBreak}}
             {{^isBreak}}
-            {{smallBlind}}/{{bigBlind}}
+            {{currency smallBlind}}/{{currency bigBlind}}
             {{/isBreak}}
             <span>{{durationInMinutes}}</span>
         </div>
@@ -1100,13 +1100,13 @@
     <tr>
         <td>{{position}}</td>
         <td>{{name}}</td>
-        <td>{{stackSize}}</td>
-        <td>{{winnings}}</td>
+        <td>{{currency stackSize}}</td>
+        <td>{{currency winnings}}</td>
     </tr>
 </script>
 
 <script type="text/mustache" id="playerActionLogTemplate" style="display:none;">
-   <div>{{name}} {{action}} {{#showAmount}} {{amount}} {{/showAmount}}</div>
+   <div>{{name}} {{action}} {{#showAmount}} {{currency amount}} {{/showAmount}}</div>
 </script>
 <script type="text/mustache" id="communityCardsLogTemplate" style="display:none;">
     <div>{{t "table-log.community-cards"}} {{#cards}}&nbsp;{{cardString}}{{/cards}}</div>

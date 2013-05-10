@@ -93,7 +93,7 @@ Poker.ProtocolUtils = Class.extend({
     getBlinds : function(param) {
         var sb = param("SMALL_BLIND");
         if(sb!=null) {
-            return (Poker.Utils.formatBlinds(sb) + "/" + Poker.Utils.formatBlinds(param("BIG_BLIND")))
+            return (Poker.Utils.formatCurrency(sb) + "/" + Poker.Utils.formatCurrency(param("BIG_BLIND")))
         }
         return null;
     },
