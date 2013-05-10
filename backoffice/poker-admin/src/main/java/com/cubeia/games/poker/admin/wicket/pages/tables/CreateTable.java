@@ -30,6 +30,8 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.resource.JQueryResourceReference;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
+import java.math.BigDecimal;
+
 import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
 
 public class CreateTable extends BasePage {
@@ -51,6 +53,7 @@ public class CreateTable extends BasePage {
         table.setMinTables(1);
         table.setMinEmptyTables(1);
         table.setBetStrategy(BetStrategyType.NO_LIMIT);
+        table.setAnte(BigDecimal.ZERO);
 
         TableForm tableForm = new TableForm("tableForm", table) {
 
