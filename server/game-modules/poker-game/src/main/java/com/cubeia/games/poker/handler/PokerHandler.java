@@ -24,6 +24,8 @@ import com.cubeia.firebase.api.game.table.Table;
 import com.cubeia.firebase.guice.inject.Service;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.games.poker.cache.ActionCache;
+import com.cubeia.games.poker.common.money.*;
+import com.cubeia.games.poker.common.money.Currency;
 import com.cubeia.games.poker.io.protocol.*;
 import com.cubeia.games.poker.io.protocol.Enums.BuyInResultCode;
 import com.cubeia.games.poker.logic.TimeoutCache;
@@ -138,7 +140,8 @@ public class PokerHandler extends DefaultPokerHandler {
                 if (pokerPlayer.getPlayerSessionId() != null) {
 
                     // Check if the amount is allowed by the table
-                    BigDecimal buyInAmount = new BigDecimal(packet.amount);
+                    Currency currency = state.getSettings().getCurrency();
+                    BigDecimal buyInAmount = new BigDecimal(packet.amount).setScale(currency.getFractionalDigits(),BigDecimal.ROUND_DOWN);
                     BigDecimal sum = buyInAmount.add(pokerPlayer.getBalance()).add(pokerPlayer.getBalanceNotInHand());
 
                     if (sum.compareTo(state.getMaxBuyIn()) <= 0  && sum.compareTo(state.getMinBuyIn()) >= 0) {

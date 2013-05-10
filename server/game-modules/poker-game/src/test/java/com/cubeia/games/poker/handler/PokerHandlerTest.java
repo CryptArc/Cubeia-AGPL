@@ -199,8 +199,8 @@ public class PokerHandlerTest {
         when(pokerPlayer.getPendingBalanceSum()).thenReturn(pending);
         when(pokerPlayer.getBalanceNotInHand()).thenReturn(BigDecimal.ZERO);
 
-        String buyInAmountString = "40";
-        BigDecimal buyInAmount = new BigDecimal("40");
+        String buyInAmountString = "40.00";
+        BigDecimal buyInAmount = new BigDecimal("40.00");
         BuyInRequest buyInRequest = new BuyInRequest(buyInAmountString, true);
         // ReserveCallback reserveCallback = mock(ReserveCallback.class);
         // when(callbackFactory.createReserveCallback(table)).thenReturn(reserveCallback);
@@ -222,6 +222,31 @@ public class PokerHandlerTest {
         assertThat(buyInResponse.balance, is(format(balance)));
         assertThat(buyInResponse.pendingBalance, is(format(pending)));
         assertThat(buyInResponse.resultCode, is(BuyInResultCode.PENDING));
+    }
+
+
+    @Test
+    public void testVisitBuyInRequestScaleDown() throws IOException {
+        PlayerSessionId playerSessionId = new PlayerSessionId(playerId, null);
+        when(pokerPlayer.getPlayerSessionId()).thenReturn(playerSessionId);
+
+        BigDecimal balance = new BigDecimal("0.34");
+        when(pokerPlayer.getBalance()).thenReturn(balance);
+        BigDecimal pending = new BigDecimal("0.44");
+        when(pokerPlayer.getPendingBalanceSum()).thenReturn(pending);
+        when(pokerPlayer.getBalanceNotInHand()).thenReturn(BigDecimal.ZERO);
+
+        String buyInAmountString = "40.23342";
+        BigDecimal buyInAmount = new BigDecimal("40.23");
+        BuyInRequest buyInRequest = new BuyInRequest(buyInAmountString, true);
+        // ReserveCallback reserveCallback = mock(ReserveCallback.class);
+        // when(callbackFactory.createReserveCallback(table)).thenReturn(reserveCallback);
+
+        pokerHandler.visit(buyInRequest);
+
+        verify(backend, never()).reserveMoneyForTable(Mockito.any(ReserveRequest.class), Mockito.<TableId>any());
+        verify(state).handleBuyInRequest(pokerPlayer, buyInAmount);
+
     }
 
 
