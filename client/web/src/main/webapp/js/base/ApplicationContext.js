@@ -165,6 +165,9 @@ Poker.AppCtx = Class.extend({
             return navigation;
         }
 
+        Handlebars.registerHelper('currency',function(amount){
+            return Poker.Utils.formatCurrency(amount);
+        });
 
     }
 });

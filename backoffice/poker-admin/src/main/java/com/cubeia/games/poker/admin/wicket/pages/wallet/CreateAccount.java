@@ -74,6 +74,7 @@ public class CreateAccount extends BasePage {
             protected void onSubmit() {
                 CreateAccountRequest createUserData = new CreateAccountRequest(null, account.getUserId(),
                 		currency, account.getType(), info);
+                createUserData.setNegativeBalanceAllowed(account.getNegativeAmountAllowed());
                 
                 CreateAccountResult createResponse = null;
                 try {

@@ -290,7 +290,8 @@ Poker.TableLayoutManager = Class.extend({
     onBlindsLevel : function(level, currency, secondsToNextLevel) {
         if (level.smallBlind != null && level.bigBlind != null) {
             this.tableInfoElement.show();
-            this.tableInfoElement.find(".table-blinds-value").html(level.smallBlind + "/" + level.bigBlind);
+            this.tableInfoElement.find(".table-blinds-value").html(Poker.Utils.formatCurrency(level.smallBlind) +
+                "/" + Poker.Utils.formatCurrency(level.bigBlind));
             this.myActionsManager.setBigBlind(Math.floor(parseFloat(level.bigBlind.replace(",",""))),currency);
             if (secondsToNextLevel >= 0){
                 this.clock.sync(secondsToNextLevel);

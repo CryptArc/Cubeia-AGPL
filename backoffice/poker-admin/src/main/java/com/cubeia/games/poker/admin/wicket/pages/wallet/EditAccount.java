@@ -32,6 +32,7 @@ import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
 import com.cubeia.games.poker.admin.wicket.util.ParamBuilder;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
@@ -107,6 +108,7 @@ public class EditAccount extends BasePage {
         accountForm.add(new Label("closed", new DateDisplayModel(cpm.<Date>bind("closed"))));
         accountForm.add(new TextField<Long>("gameId", cpm.<Long>bind("information.gameId")));
         accountForm.add(new TextField<Long>("objectId", cpm.<Long>bind("information.objectId")));
+        accountForm.add(new CheckBox("negativeAmountAllowed",  cpm.<Boolean>bind("negativeAmountAllowed")));
         accountForm.add(new DropDownChoice<AccountType>(
             "type", 
             cpm.<AccountType>bind("type"),

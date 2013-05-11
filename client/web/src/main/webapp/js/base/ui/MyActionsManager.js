@@ -150,8 +150,13 @@ Poker.MyActionsManager  = Class.extend({
         }
     },
     setBigBlind : function(bigBlind,currency) {
+
+        console.log("SETTING BB AND CURRENCY ");
+        console.log(this.currency);
         this.bigBlind = bigBlind;
-        this.currency = currency;
+        if(typeof(currency)!="undefined") {
+            this.currency = currency;
+        }
     },
     getMinSliderStep : function() {
         return (1/Math.pow(10,this.currency.fractionalDigits));
