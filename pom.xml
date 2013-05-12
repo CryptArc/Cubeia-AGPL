@@ -205,9 +205,12 @@
                 <version>1.2.0</version>
             </dependency>
 
+            <!-- TODO: document why mt-random is provided as jar AND sar -->
+
             <dependency>
                 <groupId>com.cubeia.firebase.service</groupId>
                 <artifactId>mt-random</artifactId>
+                <type>jar</type>
                 <version>1.1-SNAPSHOT</version>
             </dependency>
 
@@ -215,7 +218,7 @@
                 <groupId>com.cubeia.firebase.service</groupId>
                 <artifactId>mt-random</artifactId>
                 <type>firebase-sar</type>
-                <version>1.0</version>
+                <version>1.1-SNAPSHOT</version>
             </dependency>
 
             <dependency>
