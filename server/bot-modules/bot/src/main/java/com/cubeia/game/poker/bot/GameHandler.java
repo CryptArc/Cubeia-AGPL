@@ -17,6 +17,12 @@
 
 package com.cubeia.game.poker.bot;
 
+import static com.cubeia.game.poker.util.Arithmetic.gaussianAverage;
+
+import java.nio.ByteBuffer;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import com.cubeia.firebase.bot.BotState;
 import com.cubeia.firebase.bot.action.Action;
 import com.cubeia.firebase.bot.ai.AbstractAI;
@@ -26,35 +32,99 @@ import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.firebase.io.protocol.GameTransportPacket;
 import com.cubeia.firebase.io.protocol.MttTransportPacket;
 import com.cubeia.game.poker.bot.ai.PokerGameHandler;
-import com.cubeia.games.poker.io.protocol.*;
+import com.cubeia.games.poker.io.protocol.AddOnOffer;
+import com.cubeia.games.poker.io.protocol.AddOnPeriodClosed;
+import com.cubeia.games.poker.io.protocol.BestHand;
+import com.cubeia.games.poker.io.protocol.BlindsAreUpdated;
+import com.cubeia.games.poker.io.protocol.BlindsLevel;
+import com.cubeia.games.poker.io.protocol.BlindsStructure;
+import com.cubeia.games.poker.io.protocol.BuyInInfoRequest;
+import com.cubeia.games.poker.io.protocol.BuyInInfoResponse;
+import com.cubeia.games.poker.io.protocol.BuyInRequest;
+import com.cubeia.games.poker.io.protocol.BuyInResponse;
+import com.cubeia.games.poker.io.protocol.CardToDeal;
+import com.cubeia.games.poker.io.protocol.ChipStatistics;
+import com.cubeia.games.poker.io.protocol.Currency;
+import com.cubeia.games.poker.io.protocol.DealPrivateCards;
+import com.cubeia.games.poker.io.protocol.DealPublicCards;
+import com.cubeia.games.poker.io.protocol.DealerButton;
+import com.cubeia.games.poker.io.protocol.DeckInfo;
 import com.cubeia.games.poker.io.protocol.Enums.PlayerTableStatus;
-
-import java.math.BigDecimal;
-import java.nio.ByteBuffer;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.eclipse.jetty.util.log.Log;
-
-import static com.cubeia.game.poker.util.Arithmetic.gaussianAverage;
+import com.cubeia.games.poker.io.protocol.ErrorPacket;
+import com.cubeia.games.poker.io.protocol.ExposePrivateCards;
+import com.cubeia.games.poker.io.protocol.ExternalSessionInfoPacket;
+import com.cubeia.games.poker.io.protocol.FuturePlayerAction;
+import com.cubeia.games.poker.io.protocol.GameCard;
+import com.cubeia.games.poker.io.protocol.GameState;
+import com.cubeia.games.poker.io.protocol.HandCanceled;
+import com.cubeia.games.poker.io.protocol.HandEnd;
+import com.cubeia.games.poker.io.protocol.HandStartInfo;
+import com.cubeia.games.poker.io.protocol.InformFutureAllowedActions;
+import com.cubeia.games.poker.io.protocol.LevelInfo;
+import com.cubeia.games.poker.io.protocol.PacketVisitor;
+import com.cubeia.games.poker.io.protocol.Payout;
+import com.cubeia.games.poker.io.protocol.PayoutInfo;
+import com.cubeia.games.poker.io.protocol.PerformAction;
+import com.cubeia.games.poker.io.protocol.PerformAddOn;
+import com.cubeia.games.poker.io.protocol.PingPacket;
+import com.cubeia.games.poker.io.protocol.PlayerAction;
+import com.cubeia.games.poker.io.protocol.PlayerBalance;
+import com.cubeia.games.poker.io.protocol.PlayerDisconnectedPacket;
+import com.cubeia.games.poker.io.protocol.PlayerHandStartStatus;
+import com.cubeia.games.poker.io.protocol.PlayerPerformedAddOn;
+import com.cubeia.games.poker.io.protocol.PlayerPerformedRebuy;
+import com.cubeia.games.poker.io.protocol.PlayerPokerStatus;
+import com.cubeia.games.poker.io.protocol.PlayerReconnectedPacket;
+import com.cubeia.games.poker.io.protocol.PlayerSitinRequest;
+import com.cubeia.games.poker.io.protocol.PlayerSitoutRequest;
+import com.cubeia.games.poker.io.protocol.PlayerState;
+import com.cubeia.games.poker.io.protocol.PlayersLeft;
+import com.cubeia.games.poker.io.protocol.PongPacket;
+import com.cubeia.games.poker.io.protocol.Pot;
+import com.cubeia.games.poker.io.protocol.PotTransfer;
+import com.cubeia.games.poker.io.protocol.PotTransfers;
+import com.cubeia.games.poker.io.protocol.ProtocolObjectFactory;
+import com.cubeia.games.poker.io.protocol.RakeInfo;
+import com.cubeia.games.poker.io.protocol.RebuyOffer;
+import com.cubeia.games.poker.io.protocol.RebuyResponse;
+import com.cubeia.games.poker.io.protocol.RequestAction;
+import com.cubeia.games.poker.io.protocol.RequestBlindsStructure;
+import com.cubeia.games.poker.io.protocol.RequestPayoutInfo;
+import com.cubeia.games.poker.io.protocol.RequestTournamentLobbyData;
+import com.cubeia.games.poker.io.protocol.RequestTournamentPlayerList;
+import com.cubeia.games.poker.io.protocol.RequestTournamentRegistrationInfo;
+import com.cubeia.games.poker.io.protocol.RequestTournamentStatistics;
+import com.cubeia.games.poker.io.protocol.RequestTournamentTable;
+import com.cubeia.games.poker.io.protocol.StartHandHistory;
+import com.cubeia.games.poker.io.protocol.StopHandHistory;
+import com.cubeia.games.poker.io.protocol.TakeBackUncalledBet;
+import com.cubeia.games.poker.io.protocol.TournamentDestroyed;
+import com.cubeia.games.poker.io.protocol.TournamentInfo;
+import com.cubeia.games.poker.io.protocol.TournamentLobbyData;
+import com.cubeia.games.poker.io.protocol.TournamentOut;
+import com.cubeia.games.poker.io.protocol.TournamentPlayer;
+import com.cubeia.games.poker.io.protocol.TournamentPlayerList;
+import com.cubeia.games.poker.io.protocol.TournamentRegistrationInfo;
+import com.cubeia.games.poker.io.protocol.TournamentStatistics;
+import com.cubeia.games.poker.io.protocol.TournamentTable;
+import com.cubeia.games.poker.io.protocol.WaitingForPlayers;
+import com.cubeia.games.poker.io.protocol.WaitingToStartBreak;
 
 public class GameHandler implements PacketVisitor {
 
     private static final StyxSerializer styxDecoder = new StyxSerializer(new ProtocolObjectFactory());
-
-    private static Random rng = new Random();
 
     private final AbstractAI bot;
     private final Strategy strategy;
 
     private AtomicBoolean historicActionsAreBeingSent = new AtomicBoolean(false);
     
-    private PokerGameHandler pokerHandler = new PokerGameHandler();
+    private PokerGameHandler pokerHandler;
 
     public GameHandler(AbstractAI bot) {
     	this.strategy = new Strategy();
         this.bot = bot;
+        pokerHandler = new PokerGameHandler(bot);
     }
 
     public void handleGamePacket(GameTransportPacket packet) {
@@ -85,32 +155,7 @@ public class GameHandler implements PacketVisitor {
     @SuppressWarnings("static-access")
     public void visit(final RequestAction request) {
         if (request.player == bot.getBot().getPid() && !historicActionsAreBeingSent.get()) {
-            Action action = new Action(bot.getBot()) {
-                public void run() {
-                    try {
-                        PlayerAction playerAction = strategy.getAction(request.allowedActions);
-                        PerformAction response = new PerformAction();
-                        response.seq = request.seq;
-                        response.player = bot.getBot().getPid();
-
-                        response.action = playerAction;
-                        BigDecimal betAmount = getRandomBetAmount(playerAction);
-                        response.betAmount =  betAmount.toPlainString();
-
-                        // Sanity check
-                        if (betAmount.compareTo(new BigDecimal(playerAction.maxAmount)) > 0) {
-                            bot.getBot().logWarn("I am betting too much. Max[" + playerAction.maxAmount + "] myBet[" + response.betAmount + "]");
-                        }
-
-                        // bot.getBot().logInfo("Request("+request+") -> Response("+response+")");
-                        bot.getBot().logInfo("\n>>>>>>>>>>>>>>>>\n \t REQUEST: "+request+" \n \t RESPONSE: "+response+"\n>>>>>>>>>>>>>>>>>>>>>>");
-                       bot.getBot().sendGameData(bot.getTable().getId(), bot.getBot().getPid(), response);
-                    } catch (Throwable th) {
-                        th.printStackTrace();
-                    }
-                }
-
-            };
+        	Action action = pokerHandler.onActionRequest(request);
 
             int wait = 0;
             if (strategy.useDelay(request.allowedActions)) {
@@ -122,38 +167,6 @@ public class GameHandler implements PacketVisitor {
 
             bot.executor.schedule(action, wait, TimeUnit.MILLISECONDS);
         }
-    }
-
-    private BigDecimal getRandomBetAmount(PlayerAction playerAction) {
-        BigDecimal maxAmount = new BigDecimal(playerAction.maxAmount);
-        if (maxAmount.compareTo(BigDecimal.ZERO) <= 0) {
-            return BigDecimal.ZERO;
-        }
-
-        BigDecimal minAmount = new BigDecimal(playerAction.minAmount);
-
-        //return playerAction.minAmount;
-
-        // 90% chance of min bet
-        if (rng.nextInt(100) < 90) {
-            return minAmount;
-        }
-
-        // 1% chance of all in
-        if (rng.nextInt(100) < 1) {
-            return maxAmount;
-        }
-
-        int maxLevel = 5;
-        // Randomize how many min amount bets we will bet
-        int bets = 1 + rng.nextInt(maxLevel);
-        BigDecimal betThis = minAmount.multiply(new BigDecimal(bets));
-        BigDecimal cappedBet = betThis.min(maxAmount);
-
-        if (cappedBet.compareTo(minAmount) < 0) {
-            cappedBet = minAmount;
-        }
-        return cappedBet;
     }
 
     @Override
@@ -217,10 +230,24 @@ public class GameHandler implements PacketVisitor {
 
     @Override
     public void visit(DealPublicCards packet) {
+    	for (GameCard card : packet.cards) {
+    		pokerHandler.addCommunityCard(card);
+    	}
     }
 
     @Override
     public void visit(DealPrivateCards packet) {
+    	for (CardToDeal deal : packet.cards) {
+    		visit(deal);
+    	}
+    }
+    
+    @Override
+    public void visit(CardToDeal packet) {
+    	if (packet.player == bot.getBot().getPid()) {
+    		bot.getBot().logDebug("I got a card: "+packet.card);
+    		pokerHandler.addPrivateCard(packet.card);
+    	}
     }
 
     @Override
@@ -262,10 +289,6 @@ public class GameHandler implements PacketVisitor {
 
     @Override
     public void visit(PlayerSitoutRequest arg0) {
-    }
-
-    @Override
-    public void visit(CardToDeal packet) {
     }
 
     @Override

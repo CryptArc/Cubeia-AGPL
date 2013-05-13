@@ -11,7 +11,7 @@ import com.cubeia.firebase.bot.ai.MttAI;
 import com.cubeia.firebase.io.protocol.GameTransportPacket;
 import com.cubeia.firebase.io.protocol.MttTransportPacket;
 
-public class PokerTournamentBot extends MttAI {
+public class PokerTournamentBot extends MttAI implements AiProvider {
 
 	private static transient Logger log = Logger.getLogger(PokerBot.class);
 
@@ -21,6 +21,8 @@ public class PokerTournamentBot extends MttAI {
 
 	private boolean hashPasswd = false;
 
+	private String pokerAi;
+	
 	public PokerTournamentBot(Bot bot) {
 		super(bot);
 		handler = new GameHandler(this);
@@ -40,6 +42,14 @@ public class PokerTournamentBot extends MttAI {
 	
 	public int getOperatorId() {
 		return operatorId;
+	}
+	
+	public String getPokerAi() {
+		return pokerAi;
+	}
+    
+    public void setPokerAi(String pokerAi) {
+		this.pokerAi = pokerAi;
 	}
 
 	@Override

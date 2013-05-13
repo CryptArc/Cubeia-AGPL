@@ -34,6 +34,11 @@
             <groupId>com.cubeia.games</groupId>
             <artifactId>poker-protocol</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>com.cubeia.games</groupId>
+            <artifactId>poker-logic</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.cubeia.firebase.bots</groupId>

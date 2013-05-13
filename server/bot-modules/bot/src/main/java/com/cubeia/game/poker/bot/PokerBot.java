@@ -36,13 +36,15 @@ import com.cubeia.games.poker.io.protocol.BuyInInfoRequest;
  *
  * @author Fredrik Johansson, Cubeia Ltd
  */
-public class PokerBot extends BasicAI {
+public class PokerBot extends BasicAI implements AiProvider {
 
     private static transient Logger log = Logger.getLogger(PokerBot.class);
 
     private GameHandler handler;
     private int operatorId = 0;
     private boolean hashPasswd = false;
+    
+    private String pokerAi;
 
     public PokerBot(Bot bot) {
         super(bot);
@@ -90,6 +92,14 @@ public class PokerBot extends BasicAI {
     public boolean trackTableState() {
         return true;
     }
+    
+    public String getPokerAi() {
+		return pokerAi;
+	}
+    
+    public void setPokerAi(String pokerAi) {
+		this.pokerAi = pokerAi;
+	}
     
     @Override
     public LoginCredentials getCredentials() {
