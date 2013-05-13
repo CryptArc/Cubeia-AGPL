@@ -281,4 +281,11 @@ public class RebuySupport implements Serializable {
         this.tableNotifier = tableNotifier;
         this.historyPersister = historyPersister;
     }
+
+    public void tournamentFinished() {
+        tablesWaitingForRebuys.clear();
+        rebuyRequestsPerTable.clear();
+        rebuysAvailable = false;
+        addOnPeriodActive = false;
+    }
 }
