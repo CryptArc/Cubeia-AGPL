@@ -149,10 +149,8 @@ public class PokerTournament implements TableNotifier, Serializable {
     }
 
     public void handleRebuyTimeout(int tableId) {
-        /*if (isTournamentFinished()) {
-        	rebuySupport.removeRebuyRequestsForTable(tableId);
-        	log.debug("Received rebuy timeout for finished tournament; table: " + tableId);
-        } else*/ if (rebuySupport.tableIsWaitingForRebuys(tableId)) {
+        if (rebuySupport.tableIsWaitingForRebuys(tableId)) {
+            log.debug("Handling rebuy timeout on table " + tableId);
             Set<Integer> playersOut = newHashSet();
             for (Integer playerId : rebuySupport.getRebuyRequestsForTable(tableId)) {
                 BigDecimal playerBalance = pokerState.getPlayerBalance(playerId);
@@ -176,9 +174,12 @@ public class PokerTournament implements TableNotifier, Serializable {
         Set<Integer> rebuyRequests = rebuySupport.getRebuyRequestsForTable(tableId);
         if (rebuyRequests.contains(playerId)) {
             if (rebuyResponse.getAnswer()) {
+                // Player wanted to do a rebuy.
                 performRebuy(playerId, tableId);
                 rebuyRequests.remove(playerId);
+                // Note, we are not checking if the hand is finished, because we need to complete the rebuy (which is asynchronous) first.
             } else {
+                // Player declined rebuy, he's out!
                 rebuyRequests.remove(playerId);
                 historyPersister.rebuyDeclined(playerId);
                 payAndRemovePlayers(tableId, singleton(playerId));
@@ -357,6 +358,9 @@ public class PokerTournament implements TableNotifier, Serializable {
         } else {
             if (!tableClosed) {
                 startNextRoundIfPossible(tableId);
+            } else {
+                // Table was closed, make sure we don't react to any rebuy timeouts on that table.
+                rebuySupport.removeTableWaitingForRebuys(tableId);
             }
             startBreakIfReady(tableId);
         }
@@ -592,6 +596,7 @@ public class PokerTournament implements TableNotifier, Serializable {
 
     private void handleFinishedTournament() {
         log.info("Tournament [" + instance.getId() + ":" + instance.getState().getName() + "] was finished.");
+        rebuySupport.tournamentFinished();
         historyPersister.tournamentFinished();
         setTournamentStatus(PokerTournamentStatus.FINISHED);
 
