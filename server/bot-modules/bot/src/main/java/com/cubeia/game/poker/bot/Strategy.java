@@ -17,13 +17,13 @@
 
 package com.cubeia.game.poker.bot;
 
-import com.cubeia.games.poker.io.protocol.Enums;
-import com.cubeia.games.poker.io.protocol.PlayerAction;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+
+import com.cubeia.games.poker.io.protocol.Enums;
+import com.cubeia.games.poker.io.protocol.PlayerAction;
 
 public class Strategy {
 
@@ -42,6 +42,8 @@ public class Strategy {
 
                 case ANTE:
                     return action;
+                    
+                default:
             }
         }
         
@@ -105,7 +107,8 @@ public class Strategy {
 
                 case ANTE:
                     return false;
-
+                   
+                default:
             }
         }
         return true;

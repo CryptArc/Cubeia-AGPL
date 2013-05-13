@@ -49,6 +49,7 @@ import com.cubeia.games.poker.io.protocol.DealPrivateCards;
 import com.cubeia.games.poker.io.protocol.DealPublicCards;
 import com.cubeia.games.poker.io.protocol.DealerButton;
 import com.cubeia.games.poker.io.protocol.DeckInfo;
+import com.cubeia.games.poker.io.protocol.Enums.HandPhaseHoldem;
 import com.cubeia.games.poker.io.protocol.Enums.PlayerTableStatus;
 import com.cubeia.games.poker.io.protocol.ErrorPacket;
 import com.cubeia.games.poker.io.protocol.ExposePrivateCards;
@@ -233,6 +234,7 @@ public class GameHandler implements PacketVisitor {
     	for (GameCard card : packet.cards) {
     		pokerHandler.addCommunityCard(card);
     	}
+    	pokerHandler.getState().advancePhase();
     }
 
     @Override
@@ -247,6 +249,7 @@ public class GameHandler implements PacketVisitor {
     	if (packet.player == bot.getBot().getPid()) {
     		bot.getBot().logDebug("I got a card: "+packet.card);
     		pokerHandler.addPrivateCard(packet.card);
+    		pokerHandler.getState().setPhase(HandPhaseHoldem.PREFLOP);
     	}
     }
 
@@ -280,8 +283,7 @@ public class GameHandler implements PacketVisitor {
     }
 
     @Override
-    public void visit(Pot packet) {
-    }
+    public void visit(Pot packet) {}
 
     @Override
     public void visit(PlayerSitinRequest packet) {

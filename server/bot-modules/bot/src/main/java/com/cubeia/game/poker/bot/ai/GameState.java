@@ -3,6 +3,7 @@ package com.cubeia.game.poker.bot.ai;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.cubeia.games.poker.io.protocol.Enums.HandPhaseHoldem;
 import com.cubeia.poker.hand.Card;
 
 public class GameState {
@@ -10,6 +11,8 @@ public class GameState {
 	private List<Card> privateCards = new ArrayList<Card>();
 	
 	private List<Card> communityCards = new ArrayList<Card>();
+
+	private HandPhaseHoldem phase;
 	
 	public void clear() {
 		privateCards.clear();
@@ -30,5 +33,27 @@ public class GameState {
 	
 	public List<Card> getCommunityCards() {
 		return communityCards;
+	}
+
+	public void setPhase(HandPhaseHoldem phase) {
+		this.phase = phase;
+	}
+	
+	public HandPhaseHoldem getPhase() {
+		return phase;
+	}
+
+	public void advancePhase() {
+		switch (phase) {
+		case PREFLOP:
+			phase = HandPhaseHoldem.FLOP;
+			break;
+		case FLOP:
+			phase = HandPhaseHoldem.TURN;
+			break;
+		default:
+			phase = HandPhaseHoldem.RIVER;
+			break;
+		}
 	}
 }
