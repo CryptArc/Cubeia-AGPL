@@ -13,21 +13,6 @@
 
     <dependencies>
     
-    <!-- 
-        <dependency>
-          <groupId>com.cubeia.games.poker</groupId>
-          <artifactId>bot-service</artifactId>
-          <version>1.0-SNAPSHOT</version>
-          <type>firebase-sar</type>
-        </dependency>
-        
-         -->
-        <dependency>
-          <groupId>com.cubeia.games.poker</groupId>
-          <artifactId>war-service</artifactId>
-          <version>1.0-SNAPSHOT</version>
-          <type>firebase-sar</type>
-        </dependency>
         <dependency>
             <groupId>com.cubeia.games</groupId>
             <artifactId>poker-protocol</artifactId>
@@ -210,6 +195,20 @@
                     <version>${cubeia.network.version}</version>
                     <type>firebase-sar</type>
                 </dependency>
+                
+                <dependency>
+		          <groupId>com.cubeia.games.poker</groupId>
+		          <artifactId>bot-service</artifactId>
+		          <version>1.0-SNAPSHOT</version>
+		          <type>firebase-sar</type>
+		        </dependency>
+		        
+		        <dependency>
+		          <groupId>com.cubeia.games.poker</groupId>
+		          <artifactId>war-service</artifactId>
+		          <version>1.0-SNAPSHOT</version>
+		          <type>firebase-sar</type>
+		        </dependency>
             </dependencies>
         </profile>
     </profiles>
