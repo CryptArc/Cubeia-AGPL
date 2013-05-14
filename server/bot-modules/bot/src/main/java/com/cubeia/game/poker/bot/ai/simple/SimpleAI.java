@@ -1,5 +1,8 @@
-package com.cubeia.game.poker.bot.ai.impl;
+package com.cubeia.game.poker.bot.ai.simple;
 
+import static com.cubeia.game.poker.bot.ai.simple.SimpleAI.Strategy.NEUTRAL;
+import static com.cubeia.game.poker.bot.ai.simple.SimpleAI.Strategy.STRONG;
+import static com.cubeia.game.poker.bot.ai.simple.SimpleAI.Strategy.WEAK_BLUFF;
 import static com.cubeia.games.poker.io.protocol.Enums.ActionType.BET;
 import static com.cubeia.games.poker.io.protocol.Enums.ActionType.CALL;
 import static com.cubeia.games.poker.io.protocol.Enums.ActionType.CHECK;
@@ -10,6 +13,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import javax.persistence.criteria.CriteriaBuilder.Case;
 
 import com.cubeia.firebase.bot.ai.AbstractAI;
 import com.cubeia.game.poker.bot.ai.GameState;
@@ -31,15 +36,21 @@ public class SimpleAI implements PokerAI {
 
 	private TexasHoldemHandCalculator handCalculator = new TexasHoldemHandCalculator();
 
-	private SimpleAiCalculator aiCalculator = new SimpleAiCalculator();
+	private StrengthCalculator strengthCalculator = new StrengthCalculator();
+	
+	/** Percent chance that the bot will bluff or act out of hand strength */
+	private int bluffProbability = 10;
 	
 	enum Strategy {
 		WEAK,
+		WEAK_BLUFF, 
 		NEUTRAL,
 		STRONG
 	}
 
-	public SimpleAI() {}
+	public SimpleAI() {
+		bluffProbability = bluffProbability + rng.nextInt(25);
+	}
 
 	@Override
 	public void setBot(AbstractAI bot) {
@@ -49,8 +60,6 @@ public class SimpleAI implements PokerAI {
 	@Override
 	public PerformAction onActionRequest(RequestAction request, GameState state) {
 		HandStrength handStrength = getHandStrength(state);
-
-		bot.getBot().logInfo("Simple AI. Hand "+handStrength.getHandType()+", Phase: "+state.getPhase()+", Pot Size: "+request.currentPotSize);
 
 		PerformAction response = new PerformAction();
 		response.seq = request.seq;
@@ -77,8 +86,23 @@ public class SimpleAI implements PokerAI {
 		}
 
 		// We need to act
-		Strategy strategy = aiCalculator.getStrategy(request, state, handStrength);
-		bot.getBot().logInfo("I got "+handStrength.getHandType().name()+" on "+state.getPhase()+" so I am feeling "+strategy);
+		Strategy strategy = strengthCalculator.getStrategy(request, state, handStrength);
+		
+		boolean bluff = false;
+		if (doBluff()) {
+			bluff = true;
+			switch (strategy) {
+			case WEAK:
+				strategy = STRONG;
+				break;
+			case NEUTRAL:
+				strategy = STRONG;
+				break;
+			case STRONG:
+				strategy = WEAK_BLUFF;
+				break;
+			}
+		}
 		
 		BigDecimal betAmount = BigDecimal.ZERO;
 		
@@ -90,14 +114,27 @@ public class SimpleAI implements PokerAI {
 			}
 		}
 		
+		if (strategy == Strategy.WEAK_BLUFF) {
+			if (hasPlayerAction(CHECK, request)) {
+				playerAction = new PlayerAction(CHECK, "0", "0");
+				
+			} else if (hasPlayerAction(CALL, request)) {
+				playerAction = getPlayerAction(CALL, request);
+				
+			} else {
+				playerAction = getPlayerAction(FOLD, request);
+				
+			}
+		}
+		
 		if (strategy == Strategy.NEUTRAL) {
 			if (hasPlayerAction(CALL, request)) {
 				playerAction = getPlayerAction(CALL, request);
-				betAmount = new BigDecimal(playerAction.minAmount);
+				betAmount = calculateBet(playerAction, request.currentPotSize, strategy);
 				
 			} else if (hasPlayerAction(BET, request)) {
 				playerAction = getPlayerAction(BET, request);
-				betAmount = new BigDecimal(playerAction.minAmount);
+				betAmount = calculateBet(playerAction, request.currentPotSize, strategy);
 				
 			} else if (hasPlayerAction(CHECK, request)) {
 				playerAction = getPlayerAction(CHECK, request);
@@ -111,15 +148,15 @@ public class SimpleAI implements PokerAI {
 		if (strategy == Strategy.STRONG) {
 			if (hasPlayerAction(RAISE, request)) {
 				playerAction = getPlayerAction(RAISE, request);
-				betAmount = new BigDecimal(playerAction.minAmount);
+				betAmount = calculateBet(playerAction, request.currentPotSize, strategy);
 				
 			} else if (hasPlayerAction(BET, request)) {
 				playerAction = getPlayerAction(BET, request);
-				betAmount = new BigDecimal(playerAction.minAmount);
+				betAmount = calculateBet(playerAction, request.currentPotSize, strategy);
 				
 			} else if (hasPlayerAction(CALL, request)) {
 				playerAction = getPlayerAction(CALL, request);
-				betAmount = new BigDecimal(playerAction.minAmount);
+				betAmount = calculateBet(playerAction, request.currentPotSize, strategy);
 				
 			} else if (hasPlayerAction(CHECK, request)) {
 				playerAction = getPlayerAction(CHECK, request);
@@ -133,12 +170,47 @@ public class SimpleAI implements PokerAI {
         response.action = playerAction;
         response.betAmount =  betAmount.toPlainString();
         
-        bot.getBot().logInfo("    Action: "+playerAction.type+", Bet: "+betAmount+" (TODO: always min bet now)");
+        if (!bluff) {
+        	bot.getBot().logInfo("Simple AI. I got "+handStrength.getHandType().name()+" "+handStrength.getHighestRank()+" on the "+state.getPhase()+". I am feeling "+strategy+". I will "+playerAction.type+", with bet amout "+betAmount);
+        } else {
+        	bot.getBot().logInfo("Simple AI. I got "+handStrength.getHandType().name()+" "+handStrength.getHighestRank()+" on the "+state.getPhase()+". I am bluffing as "+strategy+". I will "+playerAction.type+", with bet amout "+betAmount);
+        }
+		
         
 		return response;
 	}
 
+	private BigDecimal calculateBet(PlayerAction playerAction, String currentPotSize, Strategy strategy) {
+		BigDecimal minAmount = new BigDecimal(playerAction.minAmount);
+		BigDecimal maxAmount = new BigDecimal(playerAction.minAmount);
+		BigDecimal pot = new BigDecimal(currentPotSize);
+		
+		BigDecimal betAmount = minAmount;
+		
+		if (strategy == STRONG) {
+			int potMultipler = rng.nextInt(2)+1;
+			betAmount = pot.multiply(new BigDecimal(potMultipler));
+			
+		} else {
+			int minBetMultiplier = rng.nextInt(2)+1;
+			betAmount = pot.multiply(new BigDecimal(minBetMultiplier));
+		}
+		
+		// adjust if outside boundaries
+		if (betAmount.compareTo(minAmount) < 0) {
+			betAmount = minAmount;
+		} else if (betAmount.compareTo(maxAmount) > 0) {
+			betAmount = maxAmount;
+		}
+		
+		return betAmount;
+	}
+
 	
+	private boolean doBluff() {
+		return rng.nextInt(100) < bluffProbability;
+	}
+
 	private PlayerAction getPlayerAction(ActionType type, RequestAction request) {
 		for (PlayerAction action : request.allowedActions) {
 			if (action.type == type) {

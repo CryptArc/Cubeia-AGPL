@@ -3,7 +3,7 @@ package com.cubeia.game.poker.bot.ai;
 import com.cubeia.firebase.bot.action.Action;
 import com.cubeia.firebase.bot.ai.AbstractAI;
 import com.cubeia.game.poker.bot.AiProvider;
-import com.cubeia.game.poker.bot.ai.impl.RandomAI;
+import com.cubeia.game.poker.bot.ai.random.RandomAI;
 import com.cubeia.games.poker.io.protocol.GameCard;
 import com.cubeia.games.poker.io.protocol.PerformAction;
 import com.cubeia.games.poker.io.protocol.RequestAction;

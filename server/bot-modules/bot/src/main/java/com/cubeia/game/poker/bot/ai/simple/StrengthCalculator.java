@@ -1,12 +1,12 @@
-package com.cubeia.game.poker.bot.ai.impl;
+package com.cubeia.game.poker.bot.ai.simple;
 
 import com.cubeia.game.poker.bot.ai.GameState;
-import com.cubeia.game.poker.bot.ai.impl.SimpleAI.Strategy;
+import com.cubeia.game.poker.bot.ai.simple.SimpleAI.Strategy;
 import com.cubeia.games.poker.io.protocol.RequestAction;
 import com.cubeia.games.poker.io.protocol.Enums.HandPhaseHoldem;
 import com.cubeia.poker.hand.HandStrength;
 
-public class SimpleAiCalculator {
+public class StrengthCalculator {
 
 	public Strategy getStrategy(RequestAction request, GameState state, HandStrength handStrength) {
 
@@ -35,7 +35,11 @@ public class SimpleAiCalculator {
 				strategy = Strategy.WEAK;
 				break;
 			case PAIR:
-				strategy = Strategy.NEUTRAL;
+				if (handStrength.getHighestRank().ordinal() < 8) {
+					strategy = Strategy.NEUTRAL;
+				} else {
+					strategy = Strategy.STRONG;
+				}
 				break;
 			default: 
 				strategy = Strategy.STRONG;
@@ -50,7 +54,11 @@ public class SimpleAiCalculator {
 				strategy = Strategy.WEAK;
 				break;
 			case PAIR:
-				strategy = Strategy.NEUTRAL;
+				if (handStrength.getHighestRank().ordinal() < 9) {
+					strategy = Strategy.NEUTRAL;
+				} else {
+					strategy = Strategy.STRONG;
+				}
 				break;
 			default: 
 				strategy = Strategy.STRONG;
@@ -65,7 +73,11 @@ public class SimpleAiCalculator {
 				strategy = Strategy.WEAK;
 				break;
 			case PAIR:
-				strategy = Strategy.NEUTRAL;
+				if (handStrength.getHighestRank().ordinal() < 10) {
+					strategy = Strategy.NEUTRAL;
+				} else {
+					strategy = Strategy.STRONG;
+				}
 				break;
 			default: 
 				strategy = Strategy.STRONG;

@@ -1,4 +1,4 @@
-package com.cubeia.game.poker.bot.ai.impl;
+package com.cubeia.game.poker.bot.ai.random;
 
 import java.math.BigDecimal;
 import java.util.Random;
