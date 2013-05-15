@@ -50,8 +50,13 @@ public class WarServerService implements WarServerContract, Service {
             WebAppContext webapp = new WebAppContext();
             webapp.setContextPath("/");
             
+            //TODO copy client.properties to target/firebase/conf
+            
+            //TODO setup JSP handling to avoid "JSP support not configured" error
+            
             //TODO obtain the location of the war file
-            webapp.setWar("lib/poker-client-web-1.0-SNAPSHOT.war");
+            //the following manually entered location works, except for JSP
+            webapp.setWar("/cb/poker/client/web/target/poker-client.war");
             server.setHandler(webapp);
 
             server.start();       
