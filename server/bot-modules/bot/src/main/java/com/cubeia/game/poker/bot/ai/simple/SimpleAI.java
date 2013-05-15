@@ -184,12 +184,11 @@ public class SimpleAI implements PokerAI {
 		Rank highestRank = handStrength.getHighestRank();
 		ActionType playerActionType = playerAction.type;
 		
-//		if (!bluff) {
-//        	bot.getBot().logInfo("Simple AI. I got "+handType+" "+highestRank+" on the "+state.getPhase()+". I am feeling "+strategy+". I will "+playerActionType+", with bet amout "+betAmount);
-//        } else {
-//        	bot.getBot().logInfo("Simple AI. I got "+handType+" "+highestRank+" on the "+state.getPhase()+". I am bluffing as "+strategy+". I will "+playerActionType+", with bet amout "+betAmount);
-//        }
-		
+		if (!bluff) {
+        	bot.getBot().logInfo("Simple AI. I got "+handType+" "+highestRank+" on the "+state.getPhase()+". I am feeling "+strategy+". I will "+playerActionType+", with bet amout "+betAmount);
+        } else {
+        	bot.getBot().logInfo("Simple AI. I got "+handType+" "+highestRank+" on the "+state.getPhase()+". I am bluffing as "+strategy+". I will "+playerActionType+", with bet amout "+betAmount);
+        }
         
 		return response;
 	}
