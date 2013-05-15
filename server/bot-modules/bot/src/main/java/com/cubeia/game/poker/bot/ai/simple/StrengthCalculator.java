@@ -15,6 +15,8 @@ public class StrengthCalculator {
 		if (state.getPhase() == HandPhaseHoldem.PREFLOP) {
 			switch (handStrength.getHandType()) {
 			case NOT_RANKED:
+				strategy = Strategy.WEAK;
+				break;
 			case HIGH_CARD:
 				if (handStrength.getHighestRank().ordinal() < 6) {
 					strategy = Strategy.WEAK;
@@ -31,6 +33,8 @@ public class StrengthCalculator {
 		else if (state.getPhase() == HandPhaseHoldem.FLOP) {
 			switch (handStrength.getHandType()) {
 			case NOT_RANKED:
+				strategy = Strategy.WEAK;
+				break;
 			case HIGH_CARD:
 				strategy = Strategy.WEAK;
 				break;
@@ -50,6 +54,8 @@ public class StrengthCalculator {
 		else if (state.getPhase() == HandPhaseHoldem.TURN) {
 			switch (handStrength.getHandType()) {
 			case NOT_RANKED:
+				strategy = Strategy.WEAK;
+				break;
 			case HIGH_CARD:
 				strategy = Strategy.WEAK;
 				break;
@@ -69,6 +75,8 @@ public class StrengthCalculator {
 		else if (state.getPhase() == HandPhaseHoldem.RIVER) {
 			switch (handStrength.getHandType()) {
 			case NOT_RANKED:
+				strategy = Strategy.WEAK;
+				break;
 			case HIGH_CARD:
 				strategy = Strategy.WEAK;
 				break;

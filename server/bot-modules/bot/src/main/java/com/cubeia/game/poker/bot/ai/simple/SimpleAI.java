@@ -26,6 +26,8 @@ import com.cubeia.games.poker.io.protocol.RequestAction;
 import com.cubeia.poker.hand.Card;
 import com.cubeia.poker.hand.Hand;
 import com.cubeia.poker.hand.HandStrength;
+import com.cubeia.poker.hand.HandType;
+import com.cubeia.poker.hand.Rank;
 import com.cubeia.poker.variant.texasholdem.TexasHoldemHandCalculator;
 
 public class SimpleAI implements PokerAI {
@@ -73,6 +75,7 @@ public class SimpleAI implements PokerAI {
 			case BIG_BLIND:
 			case SMALL_BLIND:
 			case ANTE:
+			case ENTRY_BET:
 				playerAction = action;
 				break;
 			default:
@@ -166,15 +169,26 @@ public class SimpleAI implements PokerAI {
 				
 			}
 		}
+		
+		if (playerAction == null) {
+			bot.getBot().logWarn("Player Action was not set! Allowed Actions: "+request.allowedActions);
+			playerAction = getPlayerAction(FOLD, request);
+			 bot.getBot().logInfo("Simple AI. Hand Strength: "+handStrength+", State: "+state+", PA: "+playerAction);
+		}
+		
 
         response.action = playerAction;
         response.betAmount =  betAmount.toPlainString();
-        
-        if (!bluff) {
-        	bot.getBot().logInfo("Simple AI. I got "+handStrength.getHandType().name()+" "+handStrength.getHighestRank()+" on the "+state.getPhase()+". I am feeling "+strategy+". I will "+playerAction.type+", with bet amout "+betAmount);
-        } else {
-        	bot.getBot().logInfo("Simple AI. I got "+handStrength.getHandType().name()+" "+handStrength.getHighestRank()+" on the "+state.getPhase()+". I am bluffing as "+strategy+". I will "+playerAction.type+", with bet amout "+betAmount);
-        }
+       
+        HandType handType = handStrength.getHandType();
+		Rank highestRank = handStrength.getHighestRank();
+		ActionType playerActionType = playerAction.type;
+		
+//		if (!bluff) {
+//        	bot.getBot().logInfo("Simple AI. I got "+handType+" "+highestRank+" on the "+state.getPhase()+". I am feeling "+strategy+". I will "+playerActionType+", with bet amout "+betAmount);
+//        } else {
+//        	bot.getBot().logInfo("Simple AI. I got "+handType+" "+highestRank+" on the "+state.getPhase()+". I am bluffing as "+strategy+". I will "+playerActionType+", with bet amout "+betAmount);
+//        }
 		
         
 		return response;

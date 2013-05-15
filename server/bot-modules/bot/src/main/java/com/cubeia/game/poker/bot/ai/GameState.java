@@ -12,7 +12,7 @@ public class GameState {
 	
 	private List<Card> communityCards = new ArrayList<Card>();
 
-	private HandPhaseHoldem phase;
+	private HandPhaseHoldem phase = HandPhaseHoldem.PREFLOP;
 	
 	public void clear() {
 		privateCards.clear();
