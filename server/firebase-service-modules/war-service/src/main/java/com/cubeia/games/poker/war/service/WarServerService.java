@@ -54,9 +54,8 @@ public class WarServerService implements WarServerContract, Service {
             webapp.setWar("lib/poker-client-web-1.0-SNAPSHOT.war");
             server.setHandler(webapp);
 
-            //TODO jetty server is started, but not in background, so the startup stops
-            //server.start();       
-            //server.join();
+            server.start();       
+            //server.join(); // join waits until the thread exits
         } catch (Exception ex) {
             log.debug("WarService Exception");
             log.debug(ex, ex);
