@@ -172,7 +172,7 @@ public class SimpleAI implements PokerAI {
 		
 		if (playerAction == null) {
 			bot.getBot().logWarn("Player Action was not set! Allowed Actions: "+request.allowedActions);
-			playerAction = new PlayerAction(FOLD, "0", "0");
+			playerAction = request.allowedActions.get(0);
 			 bot.getBot().logInfo("Simple AI. Hand Strength: "+handStrength+", State: "+state+", PA: "+playerAction);
 		}
 		
