@@ -17,17 +17,16 @@
 
 package com.cubeia.poker.rounds.betting;
 
-import com.cubeia.poker.betting.BetStrategyType;
-import com.cubeia.poker.player.PokerPlayer;
-import org.apache.log4j.Logger;
+import static com.cubeia.poker.betting.BetStrategyType.FIXED_LIMIT;
 
 import java.math.BigDecimal;
 
-import static com.cubeia.poker.betting.BetStrategyType.FIXED_LIMIT;
+import com.cubeia.poker.betting.BetStrategyType;
+import com.cubeia.poker.player.PokerPlayer;
 
 public class FixedLimitBetStrategy implements BetStrategy {
 
-    private static final Logger log = Logger.getLogger(FixedLimitBetStrategy.class);
+	private static final long serialVersionUID = 1L;
 
     private int maxNumberOfBets = 4;
 
@@ -49,7 +48,6 @@ public class FixedLimitBetStrategy implements BetStrategy {
         }
         BigDecimal affordableCost = player.getBalance().min(costToRaise(context, player));
         BigDecimal minRaiseToAmount = player.getBetStack().add(affordableCost);
-        log.debug("Min raise to = " + minRaiseToAmount + ". costToRaise: " + costToRaise(context, player));
         return minRaiseToAmount;
     }
 
@@ -102,7 +100,6 @@ public class FixedLimitBetStrategy implements BetStrategy {
     }
 
     private BigDecimal costToRaise(BettingRoundContext context, PokerPlayer player) {
-        log.debug("Highest complete bet: " + context.getHighestCompleteBet());
         return context.getHighestCompleteBet().add(minBet).subtract(player.getBetStack());
     }
 

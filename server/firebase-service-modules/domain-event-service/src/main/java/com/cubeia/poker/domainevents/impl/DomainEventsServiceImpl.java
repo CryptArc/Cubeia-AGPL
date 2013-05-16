@@ -58,6 +58,7 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 
 	@Override
 	public void sendEvent(GameEvent event) {
+		log.info("DOMAINEVENTS Send GameEvent: "+event);
 		client.send(event);
 	}
 
@@ -99,7 +100,7 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 		
 		// We don't want to push events for operator id 0 which is reserved for bots and internal users.
 		// TODO: Perhaps make excluded operators configurable
-		if (operatorId == 0) {
+		if (operatorId == 0 && System.getProperty("events.bots") == null) {
 			return; 
 		}
 		
@@ -135,7 +136,7 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 		
 		// We don't want to push events for operator id 0 which is reserved for bots and internal users.
 		// TODO: Perhaps make excluded operators configurable
-		if (operatorId == 0) {
+		if (operatorId == 0 && System.getProperty("events.bots") == null) {
 			return; 
 		}
 		

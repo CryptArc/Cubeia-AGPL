@@ -50,7 +50,8 @@ public class DomainEventAdapter {
 		
 		// We don't want to push events for operator id 0 which is reserved for bots and internal users.
 		// TODO: Perhaps make excluded operators configurable
-		if (operatorId == 0) {
+		// You can override this by starting with the system property -Devent.bots 
+		if (operatorId == 0 && System.getProperty("events.bots") == null) {
 			return; 
 		}
 		
