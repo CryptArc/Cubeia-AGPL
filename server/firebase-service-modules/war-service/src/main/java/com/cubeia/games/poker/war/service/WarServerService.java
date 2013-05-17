@@ -30,9 +30,10 @@ public class WarServerService implements WarServerContract, Service {
 
     private static final Logger log = Logger.getLogger(WarServerService.class);
     
-    /** Takes a relative to the cwd (current work dir, poker-uar) path and 
+    /** 
+     * Takes a relative to the cwd (current work dir, poker-uar) path and 
      * creates the absolute path to the war file.
-     * \n
+     * <p>
      * TODO: this needs to be changed to use either java or firebase mechanics
      * to determine cwd and the war location in a more elegant (ideally 
      * generic) way.
@@ -45,6 +46,34 @@ public class WarServerService implements WarServerContract, Service {
         String warPath = FilenameUtils.concat(cwd, war);
         log.debug("warPath: " + warPath);
         return warPath;
+    }
+    
+
+    /**
+     * Creates a WebAppContext which can be added to the server
+     * 
+     * <p>
+     * TODO: error handling
+     *
+     * @param war - full path to the war file
+     * @param contextPath - context path to mount the war
+     * @return the webapp context 
+     */
+    public WebAppContext createWebAppContext(String war, String contextPath) {
+        WebAppContext webapp = new WebAppContext();
+        webapp.setContextPath(contextPath);
+
+        //TODO try to simplify the class-loader setup, based on next line
+        //webapp.setClassLoader(this.getClass().getClassLoader());
+
+        //TODO copy client.properties to target/firebase/conf
+
+        //TODO obtain the location of the war file
+        //"lib/poker-client-web-1.0-SNAPSHOT.war" should be obtained by code, 
+        //instead of giving manually the relative path
+        //the following manually entered location works fine
+        webapp.setWar(getWarPath("../../../client/web/target/poker-client.war"));    
+        return webapp;
     }
          
     @Override
@@ -65,19 +94,10 @@ public class WarServerService implements WarServerContract, Service {
             Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
             //TODO retrieve port-no from config file
             Server server = new Server(19999);
-            WebAppContext webapp = new WebAppContext();
-            webapp.setContextPath("/");
-            
-            //TODO try to simplify the class-loader setup, based on next line
-            //webapp.setClassLoader(this.getClass().getClassLoader());
-            
-            //TODO copy client.properties to target/firebase/conf
-            
-            //TODO obtain the location of the war file
-            //the following manually entered location works
-            //webapp.setWar("/cb/poker/server/game-modules/poker-uar/target/firebase-run/firebase-1.9.4-CE/work/_services/431332849_43/META-INF/lib/poker-client-web-1.0-SNAPSHOT.war");
-            webapp.setWar(getWarPath("../../../client/web/target/poker-client.war"));
-            server.setHandler(webapp);
+
+            WebAppContext client = createWebAppContext("../../../client/web/target/poker-client.war", "/");
+            server.setHandler(client);
+                    
             server.start();       
             //server.join(); // join waits until the thread exits
         } catch (Exception ex) {

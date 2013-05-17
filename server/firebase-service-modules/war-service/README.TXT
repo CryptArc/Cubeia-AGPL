@@ -6,10 +6,12 @@ Currently focusing to start the Web Client
 http://localhost:19999
 
 STATUS
+======
 
-Early Draft
+Alfa
 
 DEV DOC
+=======
 
 http://wiki.eclipse.org/Jetty/Tutorial/Embedding_Jetty#Setting_a_Web_Application_Context
 
