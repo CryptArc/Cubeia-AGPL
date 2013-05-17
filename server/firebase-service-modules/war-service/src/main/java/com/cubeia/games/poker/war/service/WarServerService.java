@@ -20,6 +20,7 @@ package com.cubeia.games.poker.war.service;
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.firebase.api.service.Service;
 import com.cubeia.firebase.api.service.ServiceContext;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
@@ -28,6 +29,23 @@ import org.eclipse.jetty.webapp.WebAppContext;
 public class WarServerService implements WarServerContract, Service {
 
     private static final Logger log = Logger.getLogger(WarServerService.class);
+    
+    /** Takes a relative to the cwd (current work dir, poker-uar) path and 
+     * creates the absolute path to the war file.
+     * \n
+     * TODO: this needs to be changed to use either java or firebase mechanics
+     * to determine cwd and the war location in a more elegant (ideally 
+     * generic) way.
+     *
+     * @param war the relative path to the war
+     * @return the absolute path to the war
+     */
+    public String getWarPath(String war) {
+        String cwd = System.getProperty("user.dir");
+        String warPath = FilenameUtils.concat(cwd, war);
+        log.debug("warPath: " + warPath);
+        return warPath;
+    }
          
     @Override
     public void init(ServiceContext con) throws SystemException {
@@ -50,17 +68,19 @@ public class WarServerService implements WarServerContract, Service {
             WebAppContext webapp = new WebAppContext();
             webapp.setContextPath("/");
             
+            //TODO try to simplify the class-loader setup, based on next line
+            //webapp.setClassLoader(this.getClass().getClassLoader());
+            
             //TODO copy client.properties to target/firebase/conf
             
             //TODO obtain the location of the war file
-            //the following manually entered location works, except for JSP
-            webapp.setWar("/cb/poker/server/game-modules/poker-uar/target/firebase-run/firebase-1.9.4-CE/work/_services/431332849_43/META-INF/lib/poker-client-web-1.0-SNAPSHOT.war");
+            //the following manually entered location works
+            //webapp.setWar("/cb/poker/server/game-modules/poker-uar/target/firebase-run/firebase-1.9.4-CE/work/_services/431332849_43/META-INF/lib/poker-client-web-1.0-SNAPSHOT.war");
+            webapp.setWar(getWarPath("../../../client/web/target/poker-client.war"));
             server.setHandler(webapp);
-
             server.start();       
             //server.join(); // join waits until the thread exits
         } catch (Exception ex) {
-            log.debug("WarService Exception");
             log.debug(ex, ex);
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
