@@ -26,13 +26,13 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
-import org.eclipse.jetty.xml.XmlConfiguration;
+import org.eclipse.jetty.plus.webapp.EnvConfiguration;
 //import org.eclipse.jetty.server.ServerConnector;
 
 public class WarServerService implements WarServerContract, Service {
 
     private static final Logger log = Logger.getLogger(WarServerService.class);
-    
+     
     /** 
      * Takes a relative to the cwd (current work dir, poker-uar) path and 
      * creates the absolute path to the war file.
@@ -102,14 +102,21 @@ public class WarServerService implements WarServerContract, Service {
             server.setHandler(client);
             server.start();
                         
+            /* after nearly 2 days of trial&error, disabling for now
             //TODO this has still problems with the jndi datasource configured in jetty-env.xml
+            //     closest solution within: https://gist.github.com/armhold/1539302
             Server adminServer = new Server(19998);
             WebAppContext admin = createWebAppContext("../../../backoffice/poker-admin/target/poker-admin.war", "/");
-            XmlConfiguration configuration = new XmlConfiguration("../../../backoffice/poker-admin/src/test/resources/jetty-env.xml");
+            
+            //System.setProperty("java.naming.factory.url.pkgs", "org.eclipse.jetty.jndi");
+            //System.setProperty("java.naming.factory.initial", "org.eclipse.jetty.jndi.InitialContextFactory");
+            EnvConfiguration  configuration = new EnvConfiguration();
+            configuration.setJettyEnvXml(new File("../../../backoffice/poker-admin/src/test/resources/jetty-env.xml").toURI().toURL());
             configuration.configure(admin);
             adminServer.setHandler(admin);
-            adminServer.start();
-
+//!!! server start is disabled
+            //adminServer.start();
+            */
             //server.join(); // join waits until the thread exits
         } catch (Exception ex) {
             log.debug(ex, ex);
