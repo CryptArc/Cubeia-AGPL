@@ -27,6 +27,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.eclipse.jetty.plus.webapp.EnvConfiguration;
+import org.eclipse.jetty.webapp.WebAppClassLoader;
 //import org.eclipse.jetty.server.ServerConnector;
 
 public class WarServerService implements WarServerContract, Service {
@@ -91,14 +92,13 @@ public class WarServerService implements WarServerContract, Service {
     @Override
     public void start() {
         log.debug("WarService START");
-        // this is "stolen" from the bot-service. 
-        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
-            Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
             //TODO retrieve port-no from config file
             Server server = new Server(19999);
 
             WebAppContext client = createWebAppContext("../../../client/web/target/poker-client.war", "/");
+            //http://wiki.eclipse.org/Jetty/Reference/Jetty_Classloading#Starting_Jetty_with_a_Custom_ClassLoader
+            client.setClassLoader(new WebAppClassLoader(this.getClass().getClassLoader(), client));
             server.setHandler(client);
             server.start();
                         
@@ -120,7 +120,6 @@ public class WarServerService implements WarServerContract, Service {
             //server.join(); // join waits until the thread exits
         } catch (Exception ex) {
             log.debug(ex, ex);
-            Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
        
     }
