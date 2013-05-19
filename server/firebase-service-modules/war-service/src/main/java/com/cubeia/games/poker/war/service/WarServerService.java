@@ -66,9 +66,13 @@ public class WarServerService implements WarServerContract, Service {
     public WebAppContext createWebAppContext(String war, String contextPath) {
         WebAppContext webapp = new WebAppContext();
         webapp.setContextPath(contextPath);
-
-        //TODO try to simplify the class-loader setup, based on next line
-        //webapp.setClassLoader(this.getClass().getClassLoader());
+        
+        try {
+            //http://wiki.eclipse.org/Jetty/Reference/Jetty_Classloading#Starting_Jetty_with_a_Custom_ClassLoader
+            webapp.setClassLoader(new WebAppClassLoader(this.getClass().getClassLoader(), webapp));
+        }catch(Exception ex) {
+            log.debug(ex, ex);
+        }
 
         //TODO copy client.properties to target/firebase/conf
 
@@ -97,8 +101,6 @@ public class WarServerService implements WarServerContract, Service {
             Server server = new Server(19999);
 
             WebAppContext client = createWebAppContext("../../../client/web/target/poker-client.war", "/");
-            //http://wiki.eclipse.org/Jetty/Reference/Jetty_Classloading#Starting_Jetty_with_a_Custom_ClassLoader
-            client.setClassLoader(new WebAppClassLoader(this.getClass().getClassLoader(), client));
             server.setHandler(client);
             server.start();
                         
@@ -117,7 +119,6 @@ public class WarServerService implements WarServerContract, Service {
 //!!! server start is disabled
             //adminServer.start();
             */
-            //server.join(); // join waits until the thread exits
         } catch (Exception ex) {
             log.debug(ex, ex);
         }
