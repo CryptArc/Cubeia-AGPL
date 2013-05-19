@@ -21,17 +21,20 @@ import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.firebase.api.service.Service;
 import com.cubeia.firebase.api.service.ServiceContext;
 import java.io.File;
-import java.io.FileInputStream;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.webapp.WebAppContext;
 import org.eclipse.jetty.plus.webapp.EnvConfiguration;
+import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppClassLoader;
+import org.eclipse.jetty.webapp.WebAppContext;
 //import org.eclipse.jetty.server.ServerConnector;
 
 public class WarServerService implements WarServerContract, Service {
 
+    //TODO retrieve port-no from config file
+    public static final int CLIENT_PORT = 19999;
+    public static final int ADMIN_PORT  = 19998;
+    
     private static final Logger log = Logger.getLogger(WarServerService.class);
      
     /** 
@@ -74,19 +77,47 @@ public class WarServerService implements WarServerContract, Service {
             log.debug(ex, ex);
         }
 
-        //TODO copy client.properties to target/firebase/conf
-
-        //TODO obtain the location of the war file
-        //"lib/poker-client-web-1.0-SNAPSHOT.war" should be obtained by code, 
+        //TODO "lib/poker-client-web-1.0-SNAPSHOT.war" should be obtained by code, 
         //instead of giving manually the relative path
-        //the following manually entered location works fine
         webapp.setWar(getWarPath(war));    
         return webapp;
+    }
+    
+    /**
+     * Creates an embedded server for the Poker-Admin.
+     * <p>
+     * Preliminary method to keep sources clean, will be removed later, as
+     * Server creation should become generic
+     * 
+     * @param port
+     * @return a server instance or null
+     */
+    private Server createAdminServer(int port){
+        try {
+            //TODO this has still problems with the jndi datasource configured in jetty-env.xml
+            //     closest solution within: https://gist.github.com/armhold/1539302
+            Server adminServer = new Server(port);
+            WebAppContext admin = createWebAppContext("../../../backoffice/poker-admin/target/poker-admin.war", "/");
+
+            //System.setProperty("java.naming.factory.url.pkgs", "org.eclipse.jetty.jndi");
+            //System.setProperty("java.naming.factory.initial", "org.eclipse.jetty.jndi.InitialContextFactory");
+            EnvConfiguration  configuration = new EnvConfiguration();
+            configuration.setJettyEnvXml(new File("../../../backoffice/poker-admin/src/test/resources/jetty-env.xml").toURI().toURL());
+            configuration.configure(admin);
+            adminServer.setHandler(admin);
+            
+            //TODO copy src/rest/resources to target/firebase/conf
+            
+            return adminServer;
+        } catch (Exception ex) {
+            log.debug(ex, ex);
+            return null;
+        }
+
     }
          
     @Override
     public void init(ServiceContext con) throws SystemException {
-        log.debug("WarService STARTED! ");
     }
 
     @Override
@@ -97,28 +128,17 @@ public class WarServerService implements WarServerContract, Service {
     public void start() {
         log.debug("WarService START");
         try {
-            //TODO retrieve port-no from config file
-            Server server = new Server(19999);
+            Server server = new Server(CLIENT_PORT);
 
+            //TODO copy client.properties to target/firebase/conf
             WebAppContext client = createWebAppContext("../../../client/web/target/poker-client.war", "/");
             server.setHandler(client);
             server.start();
                         
-            /* after nearly 2 days of trial&error, disabling for now
-            //TODO this has still problems with the jndi datasource configured in jetty-env.xml
-            //     closest solution within: https://gist.github.com/armhold/1539302
-            Server adminServer = new Server(19998);
-            WebAppContext admin = createWebAppContext("../../../backoffice/poker-admin/target/poker-admin.war", "/");
-            
-            //System.setProperty("java.naming.factory.url.pkgs", "org.eclipse.jetty.jndi");
-            //System.setProperty("java.naming.factory.initial", "org.eclipse.jetty.jndi.InitialContextFactory");
-            EnvConfiguration  configuration = new EnvConfiguration();
-            configuration.setJettyEnvXml(new File("../../../backoffice/poker-admin/src/test/resources/jetty-env.xml").toURI().toURL());
-            configuration.configure(admin);
-            adminServer.setHandler(admin);
+            Server adminServer = createAdminServer(ADMIN_PORT);
 //!!! server start is disabled
             //adminServer.start();
-            */
+            
         } catch (Exception ex) {
             log.debug(ex, ex);
         }
@@ -130,3 +150,15 @@ public class WarServerService implements WarServerContract, Service {
     }
 
 }
+
+/*
+ * To be Verified:
+ * 
+ * Applications should have an entry point where they can be launched with an
+ * embedded server (alternatively an executable jar with embedded jetty)
+ * 
+ * Firebase should be startable with a port-parameter. Client and Admin ports
+ * are then altered, relative to the firebase port (this way, multiple instances 
+ * of the game can be started)
+ * 
+ */
