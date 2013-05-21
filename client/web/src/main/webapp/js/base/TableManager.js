@@ -238,6 +238,7 @@ Poker.TableManager = Class.extend({
      * @param {String} playerName
      */
     addPlayer : function(tableId,seat,playerId, playerName) {
+        var self = this;
         console.log("adding player " + playerName + " at seat" + seat + " on table " + tableId);
         var table = this.tables.get(tableId);
         var p = new Poker.Player(playerId, playerName);
@@ -246,6 +247,26 @@ Poker.TableManager = Class.extend({
             table.myPlayerSeat = seat;
         }
         table.getLayoutManager().onPlayerAdded(seat,p);
+        if(Poker.MyPlayer.loginToken!=null) {
+            Poker.AppCtx.getPlayerApi().requestPlayerProfile(playerId,Poker.MyPlayer.loginToken,
+                function(profile) {
+                    self.updatePlayerAvatar(playerId,table,profile);
+                },
+                function() {
+                    self.updatePlayerAvatar(playerId,table,null);
+                }
+            );
+        } else {
+            self.updatePlayerAvatar(playerId,table,null);
+            console.log("No loginToken available to request player info from player api");
+        }
+    },
+    updatePlayerAvatar : function(playerId,table,profile) {
+        if(profile!=null) {
+            table.getLayoutManager().updateAvatar(playerId, profile.externalAvatarUrl);
+        } else {
+            table.getLayoutManager().updateAvatar(playerId, null);
+        }
     },
     /**
      * Removes a player from a table and notifies the table layout manager

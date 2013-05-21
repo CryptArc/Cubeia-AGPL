@@ -80,6 +80,9 @@
     <script type="text/javascript" src="${cp}/js/base/communication/table/TablePacketHandler.js"></script>
 
     <script src="${cp}/js/base/communication/CommunicationManager.js" type="text/javascript"></script>
+
+    <script type="text/javascript" src="${cp}/js/base/communication/player-api/PlayerApi.js"></script>
+
     <script type="text/javascript" src="${cp}/js/base/Settings.js"></script>
 
     <script type="text/javascript" src="${cp}/js/base/ui/BetSlider.js"></script>
@@ -214,7 +217,8 @@
                 Poker.AppCtx.wire({
                     webSocketUrl : webSocketUrl,
                     webSocketPort : webSocketPort,
-                    tournamentLobbyUpdateInterval : 10000
+                    tournamentLobbyUpdateInterval : 10000,
+                    playerApiBaseUrl : "${playerApiBaseUrl}"
                 });
 
             };
