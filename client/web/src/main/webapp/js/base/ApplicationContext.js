@@ -158,16 +158,21 @@ Poker.AppCtx = Class.extend({
          */
         this.getHandHistoryManager = function() {
             return handHistoryManager;
-        }
+        };
 
         var navigation = new Poker.Navigation();
         this.getNavigation = function() {
             return navigation;
-        }
+        };
 
         Handlebars.registerHelper('currency',function(amount){
             return Poker.Utils.formatCurrency(amount);
         });
+
+        var playerApi = new Poker.PlayerApi(settings.playerApiBaseUrl);
+        this.getPlayerApi = function() {
+            return playerApi;
+        };
 
     }
 });

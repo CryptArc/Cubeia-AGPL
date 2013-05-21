@@ -34,9 +34,7 @@ Poker.ConnectionManager = Class.extend({
     onUserLoggedIn : function(playerId, name, credentials) {
         Poker.MyPlayer.onLogin(playerId,name, credentials);
         Poker.AppCtx.getNavigation().onLoginSuccess();
-        $(".username").html(name);
-        $(".user-id").html(playerId);
-        $(".user-panel-avatar").addClass("avatar" + (playerId % 9))
+        Poker.AppCtx.getAccountPageManager().onLogin(playerId,name);
         $('#loginView').hide();
         $("#lobbyView").show();
         var viewManager = Poker.AppCtx.getViewManager();

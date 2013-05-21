@@ -12,11 +12,11 @@ Poker.FutureActions = Class.extend({
     init : function(container) {
         var self = this;
         this.container = container;
-
         this.allActions = new Poker.Map();
 
         $.each(this.getFutureActionTypes(),function(i,futureActionType){
-            var fa = new Poker.CheckboxAction(container,$("."+futureActionType.id),false);
+
+            var fa = new Poker.CheckboxAction(container,$("."+futureActionType.id,container),false);
             fa.onChange(function(enabled){
                 if(enabled===true) {
                     self.clear();
