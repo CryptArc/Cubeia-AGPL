@@ -140,7 +140,7 @@ Poker.Utils = {
     },
     filterMessage : function(message) {
         if(message!=null) {
-            return message.replace(/[<>;"'\(\)]*/gi,'');
+            return message.replace(/[<>"']*/gi,'');
         }
         return null;
     }
