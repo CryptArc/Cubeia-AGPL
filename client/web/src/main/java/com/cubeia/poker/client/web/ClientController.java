@@ -35,6 +35,9 @@ public class ClientController {
     @Value("${uservoice.id}")
     private String userVoiceId;
 
+    @Value("${player-api.service.url}")
+    private String playerApiBaseUrl;
+
     // @Value("${operator.config.cache-ttl}")
     // private Long configCacheTtl;
     
@@ -88,6 +91,9 @@ public class ClientController {
         }
         if(userVoiceId != null) {
             modelMap.addAttribute("userVoiceId", userVoiceId);
+        }
+        if(playerApiBaseUrl !=null) {
+            modelMap.addAttribute("playerApiBaseUrl",playerApiBaseUrl);
         }
 	}
 

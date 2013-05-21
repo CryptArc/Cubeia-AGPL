@@ -39,7 +39,6 @@ Poker.Seat = Class.extend({
         this.seatElement.html(output);
         this.progressBarElement = this.seatElement.find(".progress-bar");
         this.avatarElement = this.seatElement.find(".avatar");
-        this.avatarElement.addClass("avatar" + (this.player.id % 9));
         this.cardsContainer = this.seatElement.find(".cards-container");
         this.actionAmount = this.seatElement.find(".action-amount");
         this.actionText = this.seatElement.find(".action-text");
@@ -48,6 +47,16 @@ Poker.Seat = Class.extend({
         this.seatBase = this.seatElement.find(".avatar-base");
 
         this.reset();
+    },
+    updateAvatar : function(url) {
+        if(url!=null) {
+            this.avatarElement.css("backgroundImage","url('"+url+"')");
+            this.avatarElement.addClass("custom-avatar");
+        } else {
+            this.avatarElement.addClass("avatar" + (this.player.id % 9));
+        }
+
+
     },
     getDealerButtonOffsetElement: function() {
         return this.seatBase;
