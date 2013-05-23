@@ -21,22 +21,22 @@ import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.firebase.api.service.Service;
 import com.cubeia.firebase.api.service.ServiceContext;
 import java.io.File;
+import java.net.URISyntaxException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
-import org.eclipse.jetty.plus.webapp.EnvConfiguration;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppClassLoader;
 import org.eclipse.jetty.webapp.WebAppContext;
-//import org.eclipse.jetty.server.ServerConnector;
 
 public class WarServerService implements WarServerContract, Service {
 
     //TODO retrieve port-no from config file
     public static final int CLIENT_PORT = 19999;
-    public static final int ADMIN_PORT  = 19998;
+    //TODO retrieve war name from dependency or config
+    public static final String CLIENT_WAR = "poker-client-web-1.0-SNAPSHOT.war";
     
     private static final Logger log = Logger.getLogger(WarServerService.class);
-     
+    
     /** 
      * Takes a relative to the cwd (current work dir, poker-uar) path and 
      * creates the absolute path to the war file.
@@ -49,9 +49,18 @@ public class WarServerService implements WarServerContract, Service {
      * @return the absolute path to the war
      */
     public String getWarPath(String war) {
-        String cwd = System.getProperty("user.dir");
-        String warPath = FilenameUtils.concat(cwd, war);
-        log.debug("warPath: " + warPath);
+        File file;
+        String sarRoot;
+        try {
+            file = new File(getClass().getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+            sarRoot = file.getParent();
+        } catch (URISyntaxException ex) {
+            log.debug(null, ex);
+            sarRoot = "";
+        }
+        String libDir = FilenameUtils.concat(sarRoot, "META-INF/lib");
+        String warPath = FilenameUtils.concat(libDir, war);
+        log.debug("warPath : " + warPath);    
         return warPath;
     }
     
@@ -77,45 +86,11 @@ public class WarServerService implements WarServerContract, Service {
             log.debug(ex, ex);
         }
 
-        //TODO "lib/poker-client-web-1.0-SNAPSHOT.war" should be obtained by code, 
-        //instead of giving manually the relative path
         webapp.setWar(getWarPath(war));    
         return webapp;
     }
     
-    /**
-     * Creates an embedded server for the Poker-Admin.
-     * <p>
-     * Preliminary method to keep sources clean, will be removed later, as
-     * Server creation should become generic
-     * 
-     * @param port
-     * @return a server instance or null
-     */
-    private Server createAdminServer(int port){
-        try {
-            //TODO this has still problems with the jndi datasource configured in jetty-env.xml
-            //     closest solution within: https://gist.github.com/armhold/1539302
-            Server adminServer = new Server(port);
-            WebAppContext admin = createWebAppContext("../../../backoffice/poker-admin/target/poker-admin.war", "/");
-
-            //System.setProperty("java.naming.factory.url.pkgs", "org.eclipse.jetty.jndi");
-            //System.setProperty("java.naming.factory.initial", "org.eclipse.jetty.jndi.InitialContextFactory");
-            EnvConfiguration  configuration = new EnvConfiguration();
-            configuration.setJettyEnvXml(new File("../../../backoffice/poker-admin/src/test/resources/jetty-env.xml").toURI().toURL());
-            configuration.configure(admin);
-            adminServer.setHandler(admin);
-            
-            //TODO copy src/rest/resources to target/firebase/conf
-            
-            return adminServer;
-        } catch (Exception ex) {
-            log.debug(ex, ex);
-            return null;
-        }
-
-    }
-         
+        
     @Override
     public void init(ServiceContext con) throws SystemException {
     }
@@ -131,13 +106,9 @@ public class WarServerService implements WarServerContract, Service {
             Server server = new Server(CLIENT_PORT);
 
             //TODO copy client.properties to target/firebase/conf
-            WebAppContext client = createWebAppContext("../../../client/web/target/poker-client.war", "/");
+            WebAppContext client = createWebAppContext(CLIENT_WAR, "/");
             server.setHandler(client);
             server.start();
-                        
-            Server adminServer = createAdminServer(ADMIN_PORT);
-//!!! server start is disabled
-            //adminServer.start();
             
         } catch (Exception ex) {
             log.debug(ex, ex);
@@ -148,7 +119,6 @@ public class WarServerService implements WarServerContract, Service {
     @Override
     public void stop() {
     }
-
 }
 
 /*
