@@ -325,7 +325,7 @@ Poker.ViewManager = Class.extend({
                 return v;
             }
         }
-
+        return null;
     },
     /**
      * Adds a Poker.TableView and activates it

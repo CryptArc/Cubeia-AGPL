@@ -47,16 +47,21 @@ Poker.TableManager = Class.extend({
      * @param {Number} capacity
      */
     handleOpenTableAccepted : function (tableId, capacity) {
-        var name = this.tableNames.get(tableId);
-        if (name == null) {
-            name = "Table"; //TODO: fix
+        var viewManager = Poker.AppCtx.getViewManager();
+        if(viewManager.findViewByTableId(tableId)!=null) {
+            viewManager.activateViewByTableId(tableId);
+        } else {
+            var name = this.tableNames.get(tableId);
+            if (name == null) {
+                name = "Table"; //TODO: fix
+            }
+            var tableViewContainer = $(".table-view-container");
+            var templateManager = new Poker.TemplateManager();
+            var soundManager = new Poker.SoundManager(Poker.AppCtx.getSoundRepository(), tableId);
+            var tableLayoutManager = new Poker.TableLayoutManager(tableId, tableViewContainer, templateManager, capacity, soundManager);
+            this.createTable(tableId, capacity, name , tableLayoutManager);
+            Poker.AppCtx.getViewManager().addTableView(tableLayoutManager,name);
         }
-        var tableViewContainer = $(".table-view-container");
-        var templateManager = new Poker.TemplateManager();
-        var soundManager = new Poker.SoundManager(Poker.AppCtx.getSoundRepository(), tableId);
-        var tableLayoutManager = new Poker.TableLayoutManager(tableId, tableViewContainer, templateManager, capacity, soundManager);
-        this.createTable(tableId, capacity, name , tableLayoutManager);
-        Poker.AppCtx.getViewManager().addTableView(tableLayoutManager,name);
     },
 
     onPlayerLoggedIn : function() {
