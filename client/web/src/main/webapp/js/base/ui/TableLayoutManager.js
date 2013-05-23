@@ -117,6 +117,9 @@ Poker.TableLayoutManager = Class.extend({
         }
         new Poker.PokerRequestHandler(this.tableId).onMyPlayerAction(actionType,amount);
     },
+    updateAvatar : function(playerId,avatarUrl) {
+        this.getSeatByPlayerId(playerId).updateAvatar(avatarUrl);
+    },
     isConfirmLeave : function() {
         if(this.myPlayerSeatId!=-1) {
             var seat = this.seats.get(this.myPlayerSeatId);

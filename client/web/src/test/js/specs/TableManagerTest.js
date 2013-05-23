@@ -17,7 +17,7 @@ describe("Poker.TableManager Test", function(){
     });
 
     it("test add player", function(){
-        var mockTableLayoutManager = jasmine.createSpyObj('mockTableLayoutManager',['onTableCreated','onPlayerAdded']);
+        var mockTableLayoutManager = jasmine.createSpyObj('mockTableLayoutManager',['onTableCreated','onPlayerAdded','updateAvatar']);
         tableManager.createTable(1,10,"tableName", mockTableLayoutManager);
 
         tableManager.addPlayer(1,1,1,"name1");
@@ -43,7 +43,7 @@ describe("Poker.TableManager Test", function(){
 
     it("test remove player", function(){
         var mockTableLayoutManager = jasmine.createSpyObj('mockTableLayoutManager',
-            ['onTableCreated','onPlayerAdded','onPlayerRemoved','onPlayerStatusUpdated']);
+            ['onTableCreated','onPlayerAdded','onPlayerRemoved','onPlayerStatusUpdated','updateAvatar']);
 
         tableManager.createTable(1,10,"tableName", mockTableLayoutManager);
         tableManager.addPlayer(1,1,1,"name1");
@@ -62,7 +62,7 @@ describe("Poker.TableManager Test", function(){
 
     it("Update player status", function(){
         var mockTableLayoutManager = jasmine.createSpyObj('mockTableLayoutManager',
-            ['onTableCreated','onPlayerAdded','onPlayerRemoved','onPlayerUpdated','onPlayerStatusUpdated']);
+            ['onTableCreated','onPlayerAdded','onPlayerRemoved','onPlayerUpdated','onPlayerStatusUpdated','updateAvatar']);
 
         tableManager.createTable(1,10,"tableName", mockTableLayoutManager);
         tableManager.addPlayer(1,1,1,"name1");
@@ -81,7 +81,7 @@ describe("Poker.TableManager Test", function(){
 
     it("Update player balance", function(){
         var mockTableLayoutManager = jasmine.createSpyObj('mockTableLayoutManager',
-            ['onTableCreated','onPlayerAdded','onPlayerRemoved','onPlayerUpdated','onPlayerStatusUpdated']);
+            ['onTableCreated','onPlayerAdded','onPlayerRemoved','onPlayerUpdated','onPlayerStatusUpdated','updateAvatar']);
 
         tableManager.createTable(1,10,"tableName", mockTableLayoutManager);
         tableManager.addPlayer(1,1,1,"name1");
@@ -100,7 +100,7 @@ describe("Poker.TableManager Test", function(){
 
     it("Deal cards", function(){
         var mockTableLayoutManager = jasmine.createSpyObj('mockTableLayoutManager',
-            ['onTableCreated','onPlayerAdded','onPlayerUpdated','onDealPlayerCard','onPlayerStatusUpdated']);
+            ['onTableCreated','onPlayerAdded','onPlayerUpdated','onDealPlayerCard','onPlayerStatusUpdated','updateAvatar']);
 
         tableManager.createTable(1,10,"tableName", mockTableLayoutManager);
         tableManager.addPlayer(1,1,1,"name1");

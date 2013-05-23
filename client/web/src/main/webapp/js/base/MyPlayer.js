@@ -38,8 +38,7 @@ Poker.MyPlayer = {
 
 
     onLogin : function(playerId, name, credentials) {
-        console.log("credentials at MyPlayer: ", credentials);
-        if (!credentials) credentials = "No Token Here..."
+        if (!credentials) credentials = null;
         Poker.MyPlayer.sessionToken = credentials;
         Poker.MyPlayer.id = playerId;
         Poker.MyPlayer.name = name;

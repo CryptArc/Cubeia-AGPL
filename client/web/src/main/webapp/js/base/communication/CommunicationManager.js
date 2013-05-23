@@ -97,7 +97,7 @@ Poker.CommunicationManager = Class.extend({
      */
     connect : function () {
         if(this.connector!=null) {
-            //this.connector.getIOAdapter().unregisterHandlers();
+            this.connector.getIOAdapter().unregisterHandlers();
         }
         var self = this;
         FIREBASE.ReconnectStrategy.MAX_ATTEMPTS = 0;
@@ -429,8 +429,10 @@ Poker.CommunicationManager = Class.extend({
 
 FIREBASE.WebSocketAdapter.prototype.unregisterHandlers  = function() {
     var _socket = this.getSocket();
-    _socket.onopen = null;
-    _socket.onmessage = null;
-    _socket.onclose = null;
+    if(_socket!=null) {
+        _socket.onopen = null;
+        _socket.onmessage = null;
+        _socket.onclose = null;
+    }
 };
 

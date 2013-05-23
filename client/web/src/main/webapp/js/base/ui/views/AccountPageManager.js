@@ -56,6 +56,31 @@ Poker.AccountPageManager = Class.extend({
         });
 
     },
+    onLogin : function(playerId,name) {
+        var self = this;
+        $(".username").html(name);
+        $(".user-id").html(playerId);
+        if(Poker.MyPlayer.sessionToken!=null) {
+            Poker.AppCtx.getPlayerApi().requestPlayerProfile(playerId,Poker.MyPlayer.sessionToken,
+                function(profile){
+                    console.log("PROFILE");
+                    console.log(profile);
+                    if(profile!=null && profile.externalAvatarUrl!=null) {
+                        $(".user-panel-avatar").addClass("user-panel-custom-avatar").css("backgroundImage","url('"+profile.externalAvatarUrl+"')");
+                    } else {
+                        self.displayDefaultAvatar(playerId);
+                    }
+                },
+                function(){
+                    self.displayDefaultAvatar(playerId);
+                })
+        } else {
+            this.displayDefaultAvatar(playerId);
+        }
+    },
+    displayDefaultAvatar : function(playerId){
+        $(".user-panel-avatar").addClass("avatar" + (playerId % 9));
+    },
     logout : function() {
         $.ga._trackEvent("user_navigation", "clicked_logout");
         Poker.AppCtx.getCommunicationManager().getConnector().logout(true);
