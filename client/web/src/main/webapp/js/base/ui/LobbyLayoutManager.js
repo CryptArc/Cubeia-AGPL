@@ -193,7 +193,10 @@ Poker.LobbyLayoutManager = Class.extend({
         var self = this;
         var item = $("#" + settings.prefix + listItem.id);
         console.log(item);
+        console.log("UPDATING ITEM : ");
+        console.log(listItem);
         if (item.length > 0) {
+
             item.unbind().replaceWith(this.getTableItemHtml(settings.listItemTemplateId,listItem));
             var item = $("#" + settings.prefix + listItem.id);  //need to pick it up again to be able to bind to it
             item.touchSafeClick(function(){
@@ -229,6 +232,9 @@ Poker.LobbyLayoutManager = Class.extend({
         $.each(listItems, function (i, item) {
             if(self.includeData(item)) {
                 count++;
+                if(typeof(item.tableStatus)!="undefined") {
+                    item.tableStatus = Poker.ProtocolUtils.getTableStatus(item.seated,item.capacity);
+                }
                 var html = self.getTableItemHtml(settings.listItemTemplateId,item);
                 listContainer.append(html);
                 $("#" + settings.prefix + item.id).touchSafeClick(function(){
