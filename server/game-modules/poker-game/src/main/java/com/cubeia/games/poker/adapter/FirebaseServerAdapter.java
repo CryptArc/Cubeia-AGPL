@@ -473,7 +473,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
                             new Object[]{player.getId(), amountToBuyIn, player.getRequestedBuyInAmount()});
 
                     // ReserveCallback callback = backend.getCallbackFactory().createReserveCallback(table);
-                    Money amountToBuyInMoney = configService.createSystemMoney(amountToBuyIn);
+                    Money amountToBuyInMoney = new Money(amountToBuyIn,state.getSettings().getCurrency());
                     ReserveRequest reserveRequest = new ReserveRequest(pokerPlayer.getPlayerSessionId(), amountToBuyInMoney);
                     player.setRequestedBuyInAmount(amountToBuyIn);
                     backend.reserveMoneyForTable(reserveRequest, new TableId(table.getMetaData().getGameId(), table.getId()));

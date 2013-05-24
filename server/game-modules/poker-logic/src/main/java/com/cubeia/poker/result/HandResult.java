@@ -185,4 +185,10 @@ public class HandResult implements Serializable {
         }
         return sb.toString();
     }
+
+
+    public Currency getCurrency() {
+        return currency;
+    }
+
 }

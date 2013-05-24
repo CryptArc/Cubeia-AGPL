@@ -46,8 +46,4 @@ public class PokerConfigServiceMock implements PokerConfigurationService {
 		return null;
 	}
 
-	@Override
-	public Money createSystemMoney(BigDecimal amount) {
-		return new Money(amount, new Currency("EUR", 2));
-	}
 }

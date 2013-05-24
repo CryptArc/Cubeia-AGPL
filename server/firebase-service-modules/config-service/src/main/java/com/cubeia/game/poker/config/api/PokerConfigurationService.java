@@ -18,6 +18,7 @@
 package com.cubeia.game.poker.config.api;
 
 import com.cubeia.firebase.api.service.Contract;
+import com.cubeia.games.poker.common.money.Currency;
 import com.cubeia.games.poker.common.money.Money;
 
 import java.math.BigDecimal;
@@ -30,6 +31,5 @@ public interface PokerConfigurationService extends Contract {
 
     public PokerSystemConfig getSystemConfig();
 
-    public Money createSystemMoney(BigDecimal amount);
 
 }

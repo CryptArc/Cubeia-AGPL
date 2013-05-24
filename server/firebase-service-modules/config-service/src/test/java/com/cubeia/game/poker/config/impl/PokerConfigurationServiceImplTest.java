@@ -46,25 +46,14 @@ public class PokerConfigurationServiceImplTest {
 
     @Test
     public void checkSystemCurrency() {
-        Assert.assertEquals(new Money(new BigDecimal(100),new Currency( "SEK", 2)), service.createSystemMoney(new BigDecimal(100)));
+        Currency sek = new Currency("SEK", 2);
+        Assert.assertEquals(new Money(new BigDecimal(100), sek),new Money(new BigDecimal(100),sek));
     }
 
     private final class Registry extends ServiceRegistryAdapter {
 
         public Registry() {
             ClusterConfigProviderContractAdapter ad = new ClusterConfigProviderContractAdapter();
-            ad.addConfiguration(PokerSystemConfig.class, new PokerSystemConfig() {
-
-                @Override
-                public int getSystemCurrencyFractions() {
-                    return 2;
-                }
-
-                @Override
-                public String getSystemCurrencyCode() {
-                    return "SEK";
-                }
-            });
             super.addImplementation(ClusterConfigProviderContract.class, ad);
         }
     }

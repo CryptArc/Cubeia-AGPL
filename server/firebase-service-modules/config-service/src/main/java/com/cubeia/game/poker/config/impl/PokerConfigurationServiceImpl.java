@@ -44,8 +44,6 @@ public class PokerConfigurationServiceImpl implements com.cubeia.firebase.api.se
     @Service(proxy = true)
     private ClusterConfigProviderContract clusterConfig;
 
-    private final AtomicReference<Money> defZeroMoney = new AtomicReference<Money>();
-
     @Log4j
     private Logger log;
 
@@ -64,20 +62,6 @@ public class PokerConfigurationServiceImpl implements com.cubeia.firebase.api.se
     public PokerActivatorConfig getActivatorConfig() {
         return config(PokerActivatorConfig.class);
     }
-
-    @Override
-    public Money createSystemMoney(BigDecimal amount) {
-        Money m = defZeroMoney.get();
-        if (m != null) {
-            return m.add(amount);
-        } else {
-            PokerSystemConfig con = getSystemConfig();
-            m = new Money(BigDecimal.ZERO, new Currency(con.getSystemCurrencyCode(), con.getSystemCurrencyFractions()));
-            defZeroMoney.set(m);
-            return m.add(amount);
-        }
-    }
-
     @Override
     public PokerSystemConfig getSystemConfig() {
         return config(PokerSystemConfig.class);

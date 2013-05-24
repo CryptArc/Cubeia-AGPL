@@ -5,6 +5,3 @@ use-mock-integrations=true
 
 # Timeout for disconnected clients to reconnect. Default: 60000 (ms)
 node.client.client-reconnect-timeout=10000
-
-# System currency
-com.cubeia.game.poker.system-currency-code=EUR
