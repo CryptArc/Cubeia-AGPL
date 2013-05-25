@@ -1,3 +1,5 @@
-This is a Flex based client.
 
-It's not maintained anymore (as far as I (Viktor) know).
+!!! UNMAINTAINED - UNSUPPORTED !!!
+
+A Flex based client provided for as a foundation for your own work.
+
