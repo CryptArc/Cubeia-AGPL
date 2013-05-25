@@ -15,6 +15,7 @@
 
     <modules>
         <module>user-creator</module>
+        <module>java-textclient</module>
     </modules>
 
 </project>
