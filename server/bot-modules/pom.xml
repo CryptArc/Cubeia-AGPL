@@ -15,6 +15,7 @@
 
     <modules>
         <module>bot</module>
+        <module>bot-service</module>
     </modules>
 
 </project>
