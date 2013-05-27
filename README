@@ -1,0 +1,32 @@
+IMPORTANT
+=========
+
+Cubeia Poker is based on Cubeia Firebase and Cubeia Network. Both products are
+open sourced and in production.
+
+REQUIREMENTS
+=============
+Java: JDK 1.7
+Maven: 3.0.4+
+
+
+BUILD & START
+=============
+
+See INSTALL.TXT
+
+
+SOFTWARE SUBSYSTEMS
+===================
+
+For more information about the software subsystems, please review the 
+./doc/SUBSYSTEMS.TXT file.
+
+LINKS
+=====
+
+Info   :  https://bitbucket.org/cubeia/cubeia-poker/wiki/Home
+Repo   :  https://bitbucket.org/cubeia/cubeia-poker
+Forum  :  http://www.cubeia.org/index.php/forums
+Service:  http://www.cubeia.com/?page_id=251
+
