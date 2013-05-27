@@ -18,7 +18,6 @@
         <module>broadcast-service</module>
         <module>hand-history-collector-service</module>
         <module>hand-history-storage-service</module>
-        <module>tournament-history-storage-service</module>
         <module>config-service</module>
         <module>post-login-service</module>
         <module>hand-history-provider-service</module>

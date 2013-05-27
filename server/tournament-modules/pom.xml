@@ -16,6 +16,8 @@
     <modules>
         <module>poker-tournament</module>
         <module>tournament-messages</module>
+        <module>tournament-history-api</module>        
+        <module>tournament-history-storage-service</module>
     </modules>
 
 </project>
