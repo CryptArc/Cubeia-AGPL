@@ -816,10 +816,10 @@
     <script type="text/mustache" id="tournamentBuyInContent">
         <h1>{{t "buy-in.buy-in-at"}} {{name}}</h1>
         <div class="buy-in-row">
-            <span class="desc">{{t "buy-in.your-balance" }}</span>  <span class="balance buyin-balance">{{currency balance}}</span>
+            <span class="desc">{{t "buy-in.your-balance" }}</span>  <span class="balance buyin-balance">{{currency balance}} {{currencyCode}}</span>
         </div>
         <div class="buy-in-row">
-            <span class="desc">{{t "buy-in.buy-in" }}</span>  <span class="balance buyin-max-amount">{{currency buyIn}}+{{currency fee}}</span>
+            <span class="desc">{{t "buy-in.buy-in" }}</span>  <span class="balance buyin-max-amount">{{currency buyIn}}+{{currency fee}} {{currencyCode}}</span>
         </div>
         <div class="buy-in-row">
             <span class="buyin-error" style="display: none;"></span>
@@ -836,13 +836,13 @@
 <script type="text/mustache" id="cashGamesBuyInContent">
     <h1>Buy-in at table <span class="buyin-table-name">{{title}}</span></h1>
     <div class="buy-in-row">
-        <span class="desc">{{t "buy-in.your-balance" }}</span>  <span class="balance buyin-balance">{{currency balance}}</span>
+        <span class="desc">{{t "buy-in.your-balance" }}</span>  <span class="balance buyin-balance">{{currency balance}} {{currencyCode}}</span>
     </div>
     <div class="buy-in-row">
-        <span class="desc">{{t "buy-in.max-amount" }}</span>  <span class="balance buyin-max-amount">{{currency maxAmount}}</span>
+        <span class="desc">{{t "buy-in.max-amount" }}</span>  <span class="balance buyin-max-amount">{{currency maxAmount}} {{currencyCode}}</span>
     </div>
     <div class="buy-in-row">
-        <span class="desc">{{t "buy-in.min-amount" }}</span>  <span class="balance buyin-min-amount">{{currency minAmount}}</span>
+        <span class="desc">{{t "buy-in.min-amount" }}</span>  <span class="balance buyin-min-amount">{{currency minAmount}} {{currencyCode}}</span>
     </div>
     <div class="buy-in-row">
         <span class="desc">{{t "buy-in.buy-in-amount" }}</span>

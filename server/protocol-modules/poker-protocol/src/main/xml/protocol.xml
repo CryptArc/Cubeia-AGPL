@@ -272,6 +272,7 @@
         <var name="balance_on_table" type="string"/>
         <var name="mandatory_buyin" type="bool"/>
         <var name="result_code" type="buy_in_info_result_code"/>
+        <var name="currency_code" type="string"/>
     </struct>
 
     <struct name="buy_in_request">

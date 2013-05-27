@@ -62,7 +62,7 @@ Poker.PokerPacketHandler = Class.extend({
         var po = protocolObject;
         console.log("BUY-IN:");
         console.log(protocolObject);
-        this.tableManager.handleBuyInInfo(this.tableId,po.balanceInWallet, po.balanceOnTable, po.maxAmount, po.minAmount,po.mandatoryBuyin);
+        this.tableManager.handleBuyInInfo(this.tableId,po.balanceInWallet, po.balanceOnTable, po.maxAmount, po.minAmount,po.mandatoryBuyin, po.currencyCode);
     },
     handlePerformAction : function(performAction){
         var actionType = Poker.ActionUtils.getActionType(performAction.action.type);

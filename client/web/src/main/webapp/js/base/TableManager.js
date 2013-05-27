@@ -120,10 +120,11 @@ Poker.TableManager = Class.extend({
      * @param {Number} maxAmount
      * @param {Number} minAmount
      * @param {Boolean} mandatory
+     * @param {String} currencyCode
      */
-    handleBuyInInfo : function(tableId,balanceInWallet, balanceOnTable, maxAmount, minAmount,mandatory) {
+    handleBuyInInfo : function(tableId,balanceInWallet, balanceOnTable, maxAmount, minAmount,mandatory,currencyCode) {
         var table = this.getTable(tableId);
-        table.getLayoutManager().onBuyInInfo(table.name,balanceInWallet,balanceOnTable,maxAmount,minAmount,mandatory);
+        table.getLayoutManager().onBuyInInfo(table.name,balanceInWallet,balanceOnTable,maxAmount,minAmount,mandatory,currencyCode);
 
     },
     /**

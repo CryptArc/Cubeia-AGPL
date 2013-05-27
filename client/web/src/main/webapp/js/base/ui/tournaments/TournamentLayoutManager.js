@@ -139,7 +139,7 @@ Poker.TournamentLayoutManager = Class.extend({
     },
     showBuyInInfo : function(buyIn, fee, currency, balanceInWallet) {
         var buyInDialog = new Poker.TournamentBuyInDialog();
-        buyInDialog.show(this.tournamentId,this.name,buyIn,fee,balanceInWallet);
+        buyInDialog.show(this.tournamentId,this.name,buyIn,fee,balanceInWallet,currency);
     }
 
 });

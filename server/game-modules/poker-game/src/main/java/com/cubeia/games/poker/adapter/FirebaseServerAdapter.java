@@ -500,6 +500,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
             try {
                 String currency = state.getSettings().getCurrency().getCode();
                 balanceInWallet = backend.getAccountBalance(playerId, currency).getAmount();
+                resp.currencyCode = currency;
                 resp.balanceInWallet = format(balanceInWallet);
             } catch (GetBalanceFailedException e) {
                 log.error("error getting balance", e);
@@ -507,6 +508,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
                 resp.balanceInWallet = "N/A";
                 resp.minAmount = "0";
                 resp.maxAmount = "0";
+                resp.currencyCode = "";
             }
 
             if (resp.resultCode != BuyInInfoResultCode.UNSPECIFIED_ERROR) {

@@ -346,6 +346,7 @@ com.cubeia.games.poker.io.protocol.BuyInInfoResponse = function () {
     this.balanceOnTable = {};
     this.mandatoryBuyin = {};
     this.resultCode = {};
+    this.currencyCode = {};
     this.save = function () {
         var a = new FIREBASE.ByteArray();
         a.writeString(this.maxAmount);
@@ -354,6 +355,7 @@ com.cubeia.games.poker.io.protocol.BuyInInfoResponse = function () {
         a.writeString(this.balanceOnTable);
         a.writeBoolean(this.mandatoryBuyin);
         a.writeUnsignedByte(this.resultCode);
+        a.writeString(this.currencyCode);
         return a
     };
     this.load = function (a) {
@@ -362,7 +364,8 @@ com.cubeia.games.poker.io.protocol.BuyInInfoResponse = function () {
         this.balanceInWallet = a.readString();
         this.balanceOnTable = a.readString();
         this.mandatoryBuyin = a.readBoolean();
-        this.resultCode = com.cubeia.games.poker.io.protocol.BuyInInfoResultCodeEnum.makeBuyInInfoResultCodeEnum(a.readUnsignedByte())
+        this.resultCode = com.cubeia.games.poker.io.protocol.BuyInInfoResultCodeEnum.makeBuyInInfoResultCodeEnum(a.readUnsignedByte());
+        this.currencyCode = a.readString()
     };
     this.getNormalizedObject = function () {
         var a = {};
@@ -375,6 +378,7 @@ com.cubeia.games.poker.io.protocol.BuyInInfoResponse = function () {
         a.details.balanceOnTable = this.balanceOnTable;
         a.details.mandatoryBuyin = this.mandatoryBuyin;
         a.details.resultCode = com.cubeia.games.poker.io.protocol.BuyInInfoResultCodeEnum.toString(this.resultCode);
+        a.details.currencyCode = this.currencyCode;
         return a
     }
 };
