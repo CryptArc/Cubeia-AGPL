@@ -6,7 +6,7 @@ You *don't* need to install firebase separately, it is fetched by the build.
 == QUICK-START ==
 
 mvn install # or mvn clean install
-cd  game-modules/poker-uar
+cd  poker-uar
 mvn firebase:run
 
 You should be able to access the game at:

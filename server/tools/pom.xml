@@ -3,8 +3,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.cubeia.games</groupId>
-    <artifactId>test-modules</artifactId>
-    <name>Test Modules</name>
+    <artifactId>poker-tools</artifactId>
+    <name>Poker Tools</name>
     <packaging>pom</packaging>
 
     <parent>
@@ -15,6 +15,7 @@
 
     <modules>
         <module>user-creator</module>
+        <module>java-textclient</module>
     </modules>
 
 </project>
