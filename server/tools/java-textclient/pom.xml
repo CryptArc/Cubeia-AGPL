@@ -4,16 +4,10 @@
     <groupId>com.cubeia.games.poker</groupId>
     <artifactId>java-textclient</artifactId>
     <packaging>jar</packaging>
-    <version>1.0-SNAPSHOT</version>
     <name>java-textclient</name>
     <url>http://maven.apache.org</url>
-    
-    <parent>
-        <groupId>com.cubeia.games</groupId>
-        <artifactId>poker-root</artifactId>
-        <version>1.0-SNAPSHOT</version>
-    </parent>
-    
+    <version>1.0-SNAPSHOT</version>
+  
     <dependencies>
         
         <dependency>
@@ -24,11 +18,14 @@
         <dependency>
             <groupId>com.cubeia.firebase</groupId>
             <artifactId>firebase-protocol</artifactId>
+            <version>1.9.4-CE</version>
         </dependency>
         <dependency>
             <groupId>com.cubeia.games</groupId>
             <artifactId>poker-protocol</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
+        
     </dependencies>
 
     <build>
@@ -58,5 +55,56 @@
         </plugins>
     </build>
 
+    <repositories>
+        <repository>
+            <id>cubeia-nexus</id>
+            <name>Public Cubeia Nexus</name>
+            <url>http://m2.cubeia.com/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>cubeia-nexus</id>
+            <name>Public Cubeia Nexus</name>
+            <url>http://m2.cubeia.com/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+    <scm>
+        <connection>
+            scm:svn:https://212.63.204.145/svn/NEW_ROOT/game/java/trunk/poker/
+        </connection>
+        <developerConnection>
+            scm:svn:https://212.63.204.145/svn/NEW_ROOT/game/java/trunk/poker/
+        </developerConnection>
+    </scm>
+     <distributionManagement>
+        <repository>
+            <id>cubeia-nexus</id>
+            <name>Cubeia Internal Release Repo</name>
+            <url>http://m2.cubeia.com/nexus/content/repositories/foss-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>cubeia-nexus</id>
+            <name>Cubeia Snapshot Repo</name>
+            <url>http://m2.cubeia.com/nexus/content/repositories/foss-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
    
 </project>
