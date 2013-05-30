@@ -9,7 +9,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>bot-moduels</module>
+        <module>bots</module>
         <module>backoffice</module>
         <module>client/web</module>
         <module>server</module>
