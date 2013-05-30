@@ -336,7 +336,7 @@
             <version>${spring.version}</version>
         </dependency>
         
-                <dependency>
+        <dependency>
             <groupId>com.cubeia.network.operator</groupId>
             <artifactId>operator-client</artifactId>
             <version>1.4.0-RC2-SNAPSHOT</version>
@@ -365,6 +365,12 @@
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
             <version>1.2</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.16</version>
         </dependency>
 
     </dependencies>
