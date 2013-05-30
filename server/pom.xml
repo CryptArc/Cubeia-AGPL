@@ -13,7 +13,6 @@
     </parent>
 
     <modules>
-        <module>bot-modules</module>
         <module>common-modules</module>
         <module>firebase-service-modules</module>
         <module>game-modules</module>
