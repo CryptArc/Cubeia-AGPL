@@ -19,7 +19,6 @@
         <module>protocol-modules</module>
         <module>tournament-modules</module>
         <module>hand-history</module>
-        <module>tools</module>
         <module>uar</module>
     </modules>
 
