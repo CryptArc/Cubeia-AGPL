@@ -253,7 +253,11 @@ public class FirebaseServerAdapter implements ServerAdapter {
         BlindsLevel blindsLevel = createBlindsLevelPacket(snapshot.getBlindsLevel());
         Enums.BetStrategy betStrategy = convertBetStrategy(state.getSettings().getBetStrategyType());
         Currency currency = new Currency(state.getSettings().getCurrency().getCode(),state.getSettings().getCurrency().getFractionalDigits());
-        GameState state = new GameState(snapshot.getTournamentId(), handStartInfo, blindsLevel, secondsToNextLevel(snapshot.getBlindsLevel()), betStrategy,currency);
+        int tournamentId = snapshot.getTournamentId();
+        int secondsToNextLevel = secondsToNextLevel(snapshot.getBlindsLevel());
+        String name = table.getMetaData().getName();
+        int capacity = state.getSettings().getTableSize();
+        GameState state = new GameState(name, capacity, tournamentId, handStartInfo, blindsLevel, secondsToNextLevel, betStrategy,currency);
         sendPrivatePacket(playerId, state);
     }
 
