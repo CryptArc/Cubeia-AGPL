@@ -46,5 +46,6 @@ public enum PokerLobbyAttributes {
     MAX_BUY_IN,
     DECK_SIZE,
     TABLE_TEMPLATE, // table template ID
-    TABLE_EXTERNAL_ID
+    TABLE_EXTERNAL_ID,
+    CURRENCY_CODE
 }

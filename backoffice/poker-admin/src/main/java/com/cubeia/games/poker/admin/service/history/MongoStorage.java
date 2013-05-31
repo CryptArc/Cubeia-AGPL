@@ -1,5 +1,6 @@
 package com.cubeia.games.poker.admin.service.history;
 
+import com.cubeia.games.poker.common.mongo.BigDecimalConverter;
 import com.cubeia.poker.handhistory.api.HistoricHand;
 import com.cubeia.poker.tournament.history.api.HistoricTournament;
 import com.google.code.morphia.Datastore;
@@ -43,6 +44,7 @@ public class MongoStorage {
 
     private void connectToMongo(Mongo mongo, String databaseName) throws UnknownHostException {
         morphia = new Morphia();
+        morphia.getMapper().getConverters().addConverter(BigDecimalConverter.class);
         datastore = morphia.createDatastore(mongo, databaseName);
     }
 

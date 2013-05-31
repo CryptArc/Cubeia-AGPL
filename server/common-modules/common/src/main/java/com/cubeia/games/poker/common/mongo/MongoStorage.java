@@ -78,6 +78,7 @@ public class MongoStorage {
 
     private void connectToMongo() throws UnknownHostException {
         morphia = new Morphia();
+        morphia.getMapper().getConverters().addConverter(BigDecimalConverter.class);
         datastore = morphia.createDatastore(new Mongo(host.trim(), port), databaseName);
     }
 

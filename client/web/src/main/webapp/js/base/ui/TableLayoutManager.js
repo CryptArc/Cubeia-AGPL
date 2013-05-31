@@ -166,8 +166,8 @@ Poker.TableLayoutManager = Class.extend({
     onBuyInError : function(msg) {
         this.buyInDialog.onError(msg);
     },
-    onBuyInInfo : function(tableName,balanceInWallet, balanceOnTable, maxAmount, minAmount, mandatory) {
-        this.buyInDialog.show(this.tableId,tableName,balanceInWallet,maxAmount,minAmount);
+    onBuyInInfo : function(tableName,balanceInWallet, balanceOnTable, maxAmount, minAmount, mandatory,currencyCode) {
+        this.buyInDialog.show(this.tableId,tableName,balanceInWallet,maxAmount,minAmount,currencyCode);
     },
     /**
      * Called when a player is added to the table

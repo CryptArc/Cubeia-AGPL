@@ -538,7 +538,7 @@
     <div class="table-item  {{tableStatus}}" id="tableItem{{id}}">
         <div class="table-name">{{name}}</div>
         <div class="seated">{{seated}}/{{capacity}}</div>
-        <div class="blinds">{{blinds}}</div>
+        <div class="blinds">{{blinds}} {{currencyCode}}</div>
         <div class="type">{{type}}</div>
         <div class="play-text">&raquo;</div>
         <div class="full-text">Full</div>
@@ -547,7 +547,7 @@
 <div id="sitAndGoListItemTemplate" style="display: none;">
     <div class="table-item sit-and-go  {{tableStatus}}" id="sitAndGoItem{{id}}">
         <div class="table-name">{{name}}</div>
-        <div class="buy-in">{{currency buyIn}}+{{currency fee}}</div>
+        <div class="buy-in">{{currency buyIn}}+{{currency fee}} {{buyInCurrencyCode}}</div>
         <div class="seated">{{registered}}/{{capacity}}</div>
         <div class="type">{{type}}</div>
         <div class="status {{status}}">{{status}}</div>
@@ -557,7 +557,7 @@
 <div id="tournamentListItemTemplate" style="display: none;">
     <div class="table-item tournament {{tableStatus}}" id="tournamentItem{{id}}">
         <div class="table-name">{{name}}</div>
-        <div class="buy-in">{{currency buyIn}}+{{currency fee}}</div>
+        <div class="buy-in">{{currency buyIn}}+{{currency fee}} {{buyInCurrencyCode}}</div>
         <div class="registered">{{registered}}/{{capacity}}</div>
         <div class="group">
             <div class="start-time">{{startTime}}</div>
@@ -816,10 +816,10 @@
     <script type="text/mustache" id="tournamentBuyInContent">
         <h1>{{t "buy-in.buy-in-at"}} {{name}}</h1>
         <div class="buy-in-row">
-            <span class="desc">{{t "buy-in.your-balance" }}</span>  <span class="balance buyin-balance">{{currency balance}}</span>
+            <span class="desc">{{t "buy-in.your-balance" }}</span>  <span class="balance buyin-balance">{{currency balance}} {{currencyCode}}</span>
         </div>
         <div class="buy-in-row">
-            <span class="desc">{{t "buy-in.buy-in" }}</span>  <span class="balance buyin-max-amount">{{currency buyIn}}+{{currency fee}}</span>
+            <span class="desc">{{t "buy-in.buy-in" }}</span>  <span class="balance buyin-max-amount">{{currency buyIn}}+{{currency fee}} {{currencyCode}}</span>
         </div>
         <div class="buy-in-row">
             <span class="buyin-error" style="display: none;"></span>
@@ -836,13 +836,13 @@
 <script type="text/mustache" id="cashGamesBuyInContent">
     <h1>Buy-in at table <span class="buyin-table-name">{{title}}</span></h1>
     <div class="buy-in-row">
-        <span class="desc">{{t "buy-in.your-balance" }}</span>  <span class="balance buyin-balance">{{currency balance}}</span>
+        <span class="desc">{{t "buy-in.your-balance" }}</span>  <span class="balance buyin-balance">{{currency balance}} {{currencyCode}}</span>
     </div>
     <div class="buy-in-row">
-        <span class="desc">{{t "buy-in.max-amount" }}</span>  <span class="balance buyin-max-amount">{{currency maxAmount}}</span>
+        <span class="desc">{{t "buy-in.max-amount" }}</span>  <span class="balance buyin-max-amount">{{currency maxAmount}} {{currencyCode}}</span>
     </div>
     <div class="buy-in-row">
-        <span class="desc">{{t "buy-in.min-amount" }}</span>  <span class="balance buyin-min-amount">{{currency minAmount}}</span>
+        <span class="desc">{{t "buy-in.min-amount" }}</span>  <span class="balance buyin-min-amount">{{currency minAmount}} {{currencyCode}}</span>
     </div>
     <div class="buy-in-row">
         <span class="desc">{{t "buy-in.buy-in-amount" }}</span>
@@ -935,7 +935,7 @@
 <script type="text/mustache" id="tournamentInfoTemplate">
     <h4>{{t "tournament-lobby.info.title" }}</h4>
     <div class="stats-item"><span>{{gameType}}</span></div>
-    <div class="stats-item">{{t "tournament-lobby.info.title" }} <span>{{currency buyIn}}+{{currency fee}}</span></div>
+    <div class="stats-item">{{t "tournament-lobby.info.title" }} <span>{{currency buyIn}}+{{currency fee}} {{buyInCurrencyCode}}</span></div>
     <div class="stats-item">
         {{t "tournament-lobby.info.status" }}
             <span class="status-container">

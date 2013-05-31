@@ -5,13 +5,14 @@ Poker.TournamentBuyInDialog = Poker.BuyInDialog.extend({
     init : function() {
         this._super();
     },
-    show : function(tournamentId,name,buyIn,fee,balance) {
+    show : function(tournamentId,name,buyIn,fee,balance,currencyCode) {
         var data = {
             tournamentId : tournamentId,
             buyIn : buyIn,
             fee : fee,
             balance : balance,
-            name : name
+            name : name,
+            currencyCode : currencyCode
         };
         var tournament = Poker.AppCtx.getTournamentManager().getTournamentById(tournamentId);
         var viewContainer = tournament.tournamentLayoutManager.viewElement;

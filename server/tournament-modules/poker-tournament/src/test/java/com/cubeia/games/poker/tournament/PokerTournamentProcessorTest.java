@@ -186,6 +186,7 @@ public class PokerTournamentProcessorTest extends TestCase {
         when(instanceConfig.getConfiguration()).thenReturn(configuration);
         when(configuration.getBuyIn()).thenReturn(BigDecimal.valueOf(10));
         when(configuration.getPayoutStructure()).thenReturn(PayoutStructureParserTest.createTestStructure());
+        when(configuration.getCurrency()).thenReturn("EUR");
         when(senderFactory.create(Mockito.<MttNotifier>any(), Mockito.<MttInstance>any())).thenReturn(sender);
         when(cashGamesBackendService.getCurrency(anyString())).thenReturn(new Currency("EUR",2));
 
@@ -199,6 +200,7 @@ public class PokerTournamentProcessorTest extends TestCase {
         config.getConfiguration().setBlindsStructure(BlindsStructureFactory.createDefaultBlindsStructure());
         config.getConfiguration().setPayoutStructure(PayoutStructureParserTest.createTestStructure());
         config.getConfiguration().setStartingChips(new BigDecimal(2000));
+        config.getConfiguration().setCurrency("EUR");
         PokerTournamentCreationParticipant part = new SitAndGoCreationParticipant(config, historyService, systemTime, cashGamesBackendService);
         part.tournamentCreated(state, instance.getLobbyAccessor());
 

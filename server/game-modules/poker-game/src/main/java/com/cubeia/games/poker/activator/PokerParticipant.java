@@ -109,6 +109,7 @@ public class PokerParticipant extends DefaultCreationParticipant {
         acc.setStringAttribute(PokerLobbyAttributes.SMALL_BLIND.name(), settings.getSmallBlindAmount().toPlainString());
         acc.setStringAttribute(PokerLobbyAttributes.BIG_BLIND.name(), settings.getBigBlindAmount().toPlainString());
         acc.setStringAttribute(PokerLobbyAttributes.BETTING_GAME_BETTING_MODEL.name(), settings.getBetStrategyType().name());
+        acc.setStringAttribute(PokerLobbyAttributes.CURRENCY_CODE.name(),settings.getCurrency().getCode());
         acc.setStringAttribute(PokerLobbyAttributes.MONETARY_TYPE.name(), "REAL_MONEY");
         acc.setStringAttribute(PokerLobbyAttributes.VARIANT.name(), variant.name());
         acc.setStringAttribute(PokerLobbyAttributes.MIN_BUY_IN.name(), pokerState.getMinBuyIn().toPlainString());

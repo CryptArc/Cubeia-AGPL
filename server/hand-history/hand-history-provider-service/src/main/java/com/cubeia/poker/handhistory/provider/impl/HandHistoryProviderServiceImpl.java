@@ -43,14 +43,11 @@ import com.cubeia.poker.handhistory.api.PlayerCardsDealt;
 import com.cubeia.poker.handhistory.provider.api.HandHistoryProviderService;
 import com.google.code.morphia.Key;
 import com.google.code.morphia.query.Query;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import com.google.gson.*;
 import com.mongodb.BasicDBObject;
 import org.apache.log4j.Logger;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.util.List;
 
@@ -244,6 +241,7 @@ public class HandHistoryProviderServiceImpl implements HandHistoryProviderServic
 
     private String convertToJson(List hands) {
         Gson gson = createGson();
+
         return gson.toJson(hands);
     }
 
