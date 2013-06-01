@@ -7,7 +7,7 @@
     <packaging>jar</packaging>
 
     <parent>
-        <artifactId>common-modules</artifactId>
+        <artifactId>hand-history</artifactId>
         <groupId>com.cubeia.games</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
