@@ -7,7 +7,7 @@
     <packaging>firebase-sar</packaging>
 
     <parent>
-        <artifactId>firebase-service-modules</artifactId>
+        <artifactId>hand-history</artifactId>
         <groupId>com.cubeia.games</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
