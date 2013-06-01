@@ -65,7 +65,7 @@ Poker.TableManager = Class.extend({
     },
 
     onPlayerLoggedIn : function() {
-       console.log("Checking if there's open tables to reconnect to");
+       console.log("Checking if there are open tables to reconnect to");
        var tables =  this.tables.values();
         for(var i = 0; i<tables.length; i++) {
             this.leaveTable(tables[i].id);

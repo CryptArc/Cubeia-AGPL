@@ -1134,16 +1134,16 @@ public class PokerTournament implements TableNotifier, Serializable {
         if (sessionId.playerId == -1) {
             setTournamentSessionId(sessionId);
         } else if(tournamentPlayer == null) {
-        	// we can't find the player, so this session needs to be closed 
-        	log.warn("Cannot find player object for opened session; player ID: " + sessionId.playerId);
-        	try {
-				resetPlayerSession(sessionId);
-			} catch (CloseSessionFailedException e) {
-				log.error("Failed to close tournament session", e);
-			}
+            // we can't find the player, so this session needs to be closed
+            log.warn("Cannot find player object for opened session; player ID: " + sessionId.playerId);
+            try {
+                resetPlayerSession(sessionId);
+            } catch (CloseSessionFailedException e) {
+                log.error("Failed to close tournament session", e);
+            }
         } else {
             // The player has now reserved money, transfer it to the tournament session.
-        	transferMoneyFromPlayerSessionToTournamentSession(sessionId);
+            transferMoneyFromPlayerSessionToTournamentSession(sessionId);
             transferFeeToRakeAccount(response.getSessionId());
             pokerState.addBuyInToPrizePool();
             updatePayouts();

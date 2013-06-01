@@ -127,6 +127,8 @@
     <!-- ==========  Game Structs ========== -->
 
     <struct name="game_state">
+        <var name="name" type="string" />
+        <var name="capacity" type="int32" />
         <var name="tournament_id" type="int32" />
         <var name="hand_info" type="hand_start_info" />
         <var name="current_level" type="blinds_level" />
