@@ -13,8 +13,8 @@
     </parent>
 
     <modules>
-        <module>common-modules</module>
-        <module>firebase-service-modules</module>
+        <module>common</module>
+        <module>service</module>
         <module>game</module>
         <module>protocol</module>
         <module>tournament</module>
