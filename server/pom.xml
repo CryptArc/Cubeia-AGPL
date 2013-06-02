@@ -15,7 +15,7 @@
     <modules>
         <module>common-modules</module>
         <module>firebase-service-modules</module>
-        <module>game-modules</module>
+        <module>game</module>
         <module>protocol</module>
         <module>tournament</module>
         <module>hand-history</module>
