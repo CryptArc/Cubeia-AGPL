@@ -12,6 +12,7 @@
         <module>bots</module>
         <module>backoffice</module>
         <module>client/web</module>
+        <module>client/war-service</module>
         <module>tools</module>
         <module>server</module>
         <module>uar</module>

@@ -14,7 +14,6 @@
 
     <modules>
         <module>backend-service</module>
-        <module>war-service</module>
         <module>broadcast-service</module>
         <module>config-service</module>
         <module>post-login-service</module>
