@@ -33,7 +33,7 @@ public class WarServerService implements WarServerContract, Service {
     //TODO retrieve port-no from config file
     public static final int CLIENT_PORT = 19999;
     //TODO retrieve war name from dependency or config
-    public static final String CLIENT_WAR = "poker-client-web-1.0-SNAPSHOT.war";
+    public static final String CLIENT_WAR = "poker-client.war";
     
     private static final Logger log = Logger.getLogger(WarServerService.class);
     

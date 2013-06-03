@@ -20,8 +20,9 @@ MAVEN
 =====
 
 * Use package, install and assembly in a standard way.
+* Avoid the usage of "war-name", specifying alternate war-names.
 * Avoid excessive usage of plugins.
-* Keep builds free of warning messages
+* Keep builds free of warning messages (solve early)
 * Keep projects free of dependency problems (solve early)
 
 

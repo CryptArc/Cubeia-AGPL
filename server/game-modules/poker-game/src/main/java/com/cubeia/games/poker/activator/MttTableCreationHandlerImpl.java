@@ -84,7 +84,8 @@ public class MttTableCreationHandlerImpl implements MttTableCreationHandler {
         BlindsLevel level = new BlindsLevel(new BigDecimal(-1), new BigDecimal(-1), new BigDecimal(-1)); // Blinds will be sent later.
         Map<Serializable, Serializable> attributes = Collections.<Serializable, Serializable>singletonMap(TABLE_EXTERNAL_ID.name(), externalTableId);
         BetStrategyType betStrategy = settings.getBetStrategyType();
-        return new PokerSettings(level, betStrategy, new BigDecimal(-1), new BigDecimal(-1), settings.getTimingProfile(), numberOfSeats, rakeSettings, new Currency("TRM",2), attributes);
+        return new PokerSettings(level, betStrategy, new BigDecimal(-1), new BigDecimal(-1), settings.getTimingProfile(), numberOfSeats, rakeSettings,
+                new Currency("TRM", 0), attributes);
     }
 
     private TournamentTableSettings getTournamentSettings(Object commandAttachment) {
