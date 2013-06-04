@@ -30,7 +30,23 @@ Poker.BuyInDialog = Class.extend({
             return false; //don't close the dialog, need to wait for response
         });
         this.dialog.getElement().find(".buyin-amount").val(Poker.Utils.formatCurrency(data.maxAmount).replace(",",""));
-
+        this.dialog.getElement().find(".buy-in-amount-errors span").hide();
+        if(parseFloat(maxAmount) <=0) {
+            this.dialog.getElement().find(".too-much-funds").show();
+            this.hideInputAndBuyIn();
+        } else if(parseFloat(balanceInWallet)<parseFloat(minAmount)){
+            this.dialog.getElement().find(".max-amount-container").hide();
+            this.dialog.getElement().find(".insufficient-funds").show();
+            this.hideInputAndBuyIn();
+        } else {
+            this.dialog.getElement().find("max-amount-container").show();
+            this.dialog.getElement().find(".input-container").show();
+            this.dialog.getElement().find(".dialog-ok-button").show();
+        }
+    },
+    hideInputAndBuyIn : function() {
+        this.dialog.getElement().find(".input-container").hide();
+        this.dialog.getElement().find(".dialog-ok-button").hide();
     },
     render : function(data, viewContainer,okFunction) {
         var self = this;

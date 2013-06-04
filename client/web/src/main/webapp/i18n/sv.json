@@ -118,7 +118,9 @@
         "max-amount" : "Max belopp:",
         "min-amount" : "Min belopp:",
         "buy-in-amount" : "Buy-in belopp:",
-        "error" : "Buy-in misslyckades"
+        "error" : "Buy-in misslyckades",
+        "insufficient-funds" : "Du har inte tillräckligt med pengar för att köpa in",
+        "too-much-funds" : "Du har för mycket pengar vid bordet"
 
     },
     "tournament-lobby" : {

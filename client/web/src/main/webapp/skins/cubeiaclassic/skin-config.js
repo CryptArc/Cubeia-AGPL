@@ -1,7 +1,7 @@
 "use strict"
 var Poker = Poker || {};
 Poker.SkinConfiguration = {
-    operatorId : 1,
+    operatorId : 0,
     name : "cubeiaclassic",
     preLoadImages : null,
     title : "Cubeia Poker"

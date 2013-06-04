@@ -838,15 +838,24 @@
     <div class="buy-in-row">
         <span class="desc">{{t "buy-in.your-balance" }}</span>  <span class="balance buyin-balance">{{currency balance}} {{currencyCode}}</span>
     </div>
-    <div class="buy-in-row">
+    <div class="buy-in-row max-amount-container">
         <span class="desc">{{t "buy-in.max-amount" }}</span>  <span class="balance buyin-max-amount">{{currency maxAmount}} {{currencyCode}}</span>
     </div>
     <div class="buy-in-row">
         <span class="desc">{{t "buy-in.min-amount" }}</span>  <span class="balance buyin-min-amount">{{currency minAmount}} {{currencyCode}}</span>
     </div>
-    <div class="buy-in-row">
+
+    <div class="buy-in-row input-container">
         <span class="desc">{{t "buy-in.buy-in-amount" }}</span>
         <input type="text" class="buyin-amount dialog-input" value="" />
+    </div>
+    <div class="buy-in-row buy-in-amount-errors">
+        <span class="insufficient-funds" style="display: none;">
+            {{t "buy-in.insufficient-funds"}}
+        </span>
+        <span class="too-much-funds" style="display: none;">
+            {{t "buy-in.too-much-funds"}}
+        </span>
     </div>
     <div class="buy-in-row">
         <span class="buyin-error" style="display: none;"></span>

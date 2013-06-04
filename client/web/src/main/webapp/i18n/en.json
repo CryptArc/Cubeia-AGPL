@@ -119,7 +119,9 @@
         "max-amount" : "Max amount:",
         "min-amount" : "Min amount:",
         "buy-in-amount" : "Buy-in amount:",
-        "error" : "Unable to buy in"
+        "error" : "Unable to buy in",
+        "insufficient-funds" : "You don't have enough money to buy in",
+        "too-much-funds" : "You have too much money at the table to buy in"
 
     },
     "tournament-lobby" : {
