@@ -33,12 +33,15 @@ Poker.TournamentLayoutManager = Class.extend({
         var viewHTML = this.templateManager.render("tournamentTemplate",{tournamentId : tournamentId, name : name});
 
         viewContainer.append(viewHTML);
-        this.viewElement = $("#tournamentView"+tournamentId);
+
+        var viewId = "#tournamentView"+tournamentId;
+        this.viewElement = $(viewId);
         this.playerListBody = this.viewElement.find(".player-list tbody");
         this.initActions();
         if(registered==true) {
             this.setPlayerRegisteredState();
         }
+        Poker.Sharing.bindShareTournament(this.viewElement.find(".share-button")[0],tournamentId,name);
     },
     updatePlayerList : function(players) {
         var template = this.templateManager.getRenderTemplate("tournamentPlayerListItem");

@@ -43,6 +43,8 @@
     <script src="${cp}/js/lib/quo.js" type="text/javascript"></script>
     <script src="${cp}/js/lib/i18next-1.6.0.js" type="text/javascript"></script>
 
+
+
     <script type="text/javascript" src="${cp}/js/lib/PxLoader-0.1.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/PxLoaderImage-0.1.js"></script>
 
@@ -152,6 +154,7 @@
     <script type="text/javascript" src="${cp}/js/base/ApplicationContext.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/ViewSwiper.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/ContextMenu.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/Sharing.js"></script>
     <script type="text/javascript" src="${cp}/js/base/tournaments/Tournament.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/tournaments/TournamentLayoutManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/tournaments/TournamentManager.js"></script>
@@ -163,6 +166,10 @@
     <script type="text/javascript" src="${cp}/js/base/dev/MockEventManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/dev/PositionEditor.js"></script>
     <script type="text/javascript" src="${cp}/js/base/dev/DevTools.js"></script>
+
+    <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-51aded884ef3ecdf"></script>
+
+
 
     <c:if test="${not empty operatorId}">
         <script type="text/javascript">
@@ -177,6 +184,7 @@
     </c:if>
 
     <script type="text/javascript">
+
         var contextPath = "${cp}";
 
         $(document).ready(function(){
@@ -610,6 +618,7 @@
             <div class="action-button action-leave" style="display: none;">
                 <span>{{t "table.buttons.leave"}}</span>
             </div>
+            <a class="share-button">+Share</a>
             <div class="my-player-seat" id="myPlayerSeat-{{tableId}}">
 
             </div>
@@ -901,6 +910,8 @@
                 {{name}}
                 <span class="tournament-start-date"></span>
             </h3>
+            <a class="share-button">+Share</a>
+
             <a class="register-button leave-action">{{t "tournament-lobby.close" }}</a>
             <a class="register-button register-action">{{t "tournament-lobby.register" }}</a>
             <a class="register-button unregister-action">{{t "tournament-lobby.unregister" }}</a>
@@ -1146,8 +1157,6 @@
     </div>
 </script>
 
-
-
 <!-- UserVoice JavaScript SDK (only needed once on a page) -->
 <script>
     (function(){
@@ -1226,6 +1235,7 @@
     };
 
 </script>
+
 
 </body>
 </html>

@@ -85,7 +85,7 @@ Poker.TableManager = Class.extend({
         var table = new Poker.Table(tableId,capacity,name);
         table.layoutManager = tableLayoutManager;
         this.tables.put(tableId,table);
-        tableLayoutManager.onTableCreated();
+        tableLayoutManager.onTableCreated(table);
 
         console.log("Nr of tables open = " + this.tables.size());
     },
