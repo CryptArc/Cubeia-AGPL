@@ -263,10 +263,11 @@ Poker.TableLayoutManager = Class.extend({
         }
         seat.updatePlayerStatus(p);
     },
-    onTableCreated : function() {
+    onTableCreated : function(table) {
         this.currentDealer = -1;
         this.dealerButton.move(0,0);
         this.dealerButton.hide();
+        Poker.Sharing.bindShareTable(this.tableView.find(".share-button")[0],table.id,table.name);
     },
     /**
      *

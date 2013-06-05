@@ -44,6 +44,9 @@ Poker.OperatorConfig = Class.extend({
     getAccountInfoUrl : function() {
         return this.getValue("ACCOUNT_INFO_URL", "http://localhost:8083/player-api/html/");
     },
+    getShareUrl : function() {
+        return this.getValue("SHARE_URL",null);
+    },
     getValue : function(param,def) {
         var value =  this.configMap.get(param);
         if(value==null) {
