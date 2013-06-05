@@ -38,6 +38,9 @@ public class ClientController {
     @Value("${player-api.service.url}")
     private String playerApiBaseUrl;
 
+    @Value("${addthis.pubid}")
+    private String addThisPubId;
+
     // @Value("${operator.config.cache-ttl}")
     // private Long configCacheTtl;
     
@@ -94,6 +97,9 @@ public class ClientController {
         }
         if(playerApiBaseUrl !=null) {
             modelMap.addAttribute("playerApiBaseUrl",playerApiBaseUrl);
+        }
+        if(addThisPubId!=null) {
+            modelMap.addAttribute("addThisPubId",addThisPubId);
         }
 	}
 

@@ -167,7 +167,7 @@
     <script type="text/javascript" src="${cp}/js/base/dev/PositionEditor.js"></script>
     <script type="text/javascript" src="${cp}/js/base/dev/DevTools.js"></script>
 
-    <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-51aded884ef3ecdf"></script>
+    <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=${addThisPubId}"></script>
 
 
 
