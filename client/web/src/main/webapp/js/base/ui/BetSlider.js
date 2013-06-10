@@ -3,7 +3,6 @@ var Poker = Poker || {};
 
 /**
  * BetSlider used to select the bet/raise amount
- * When a new value is set by this slider it will be stored in Poker.MyPlayer.betAmount
  *
  * You have to set minBet and maxBet. As default start value of the slider is 0
  * you can however not select a value less then minBet, it starts at 0 to give the
