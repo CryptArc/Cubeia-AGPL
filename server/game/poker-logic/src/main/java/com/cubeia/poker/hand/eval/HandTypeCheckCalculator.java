@@ -142,6 +142,19 @@ public class HandTypeCheckCalculator implements Serializable {
         return checkStraight(hand, false);
     }
 
+
+    /**
+     * Checks if all cards are a straight, checks using aces as both low and high
+     * @param hand
+     * @return
+     */
+    public HandStrength checkAcesHighAndLowStraight(Hand hand){
+        HandStrength strength = checkStraight(hand,false);
+        if(strength==null) {
+            strength = checkStraight(hand,true);
+        }
+        return strength;
+    }
     /**
      * Check for straights. Hands with only cards will never be reported
      * as a straight.

@@ -110,7 +110,7 @@ public class TexasHoldemHandCalculator implements HandCalculator, HandTypeEvalua
 
         // STRAIGHT
         if (strength == null) {
-            strength = typeCalculator.checkStraight(hand, true);
+            strength = typeCalculator.checkAcesHighAndLowStraight(hand);
         }
 
         // THREE_OF_A_KIND

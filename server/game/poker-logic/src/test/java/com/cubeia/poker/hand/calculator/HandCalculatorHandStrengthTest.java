@@ -99,4 +99,12 @@ public class HandCalculatorHandStrengthTest {
         assertEquals(STRAIGHT, strength.getHandType());
         assertEquals(Rank.FIVE, strength.getHighestRank());
     }
+
+    @Test
+    public void testHandStrengthStraight() throws Exception {
+        Hand hand = new Hand("AS KD QC JH TD");
+        HandStrength strength = calc.getHandStrength(hand);
+        assertEquals(STRAIGHT, strength.getHandType());
+        assertEquals(Rank.ACE, strength.getHighestRank());
+    }
 }
