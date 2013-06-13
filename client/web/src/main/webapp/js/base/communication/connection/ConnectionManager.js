@@ -134,7 +134,7 @@ Poker.ConnectionManager = Class.extend({
             self.sendVersionPacket();
             self.startReconnectingGraceTimeout = setTimeout(function(){
                 self.handleDisconnect();
-            },2000);
+            },5000);
         },10000);
     },
     clearTimeouts : function() {
@@ -156,10 +156,6 @@ Poker.ConnectionManager = Class.extend({
         } else {
             this.disconnectDialog.stoppedReconnecting();
         }
-    },
-    onLogout : function() {
-        document.location = document.location.hash = "clear";
-        document.location.reload();
     },
     scheduleReconnect : function() {
         if(this.reconnectRetryTimeout) {
