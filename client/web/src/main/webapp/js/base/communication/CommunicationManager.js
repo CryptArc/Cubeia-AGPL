@@ -69,6 +69,7 @@ Poker.CommunicationManager = Class.extend({
     },
     forceLogout : function(packet) {
         console.log("Forcing log out");
+        console.log(packet);
         new Poker.ConnectionPacketHandler().handleForceLogout(packet.code,packet.message);
         this.getConnector().getIOAdapter().unregisterHandlers();
     },
@@ -96,7 +97,9 @@ Poker.CommunicationManager = Class.extend({
      * Sets up callbacks and connects to Firebase
      */
     connect : function () {
+        console.log("Connecting");
         if(this.connector!=null) {
+            console.log("Unregistering handlers");
             this.connector.getIOAdapter().unregisterHandlers();
         }
         var self = this;

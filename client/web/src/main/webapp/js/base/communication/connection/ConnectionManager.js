@@ -132,7 +132,9 @@ Poker.ConnectionManager = Class.extend({
         var self = this;
         this.disconnectCheckTimeout = setTimeout(function(){
             self.sendVersionPacket();
+            console.log("Starting reconnect grace timeout");
             self.startReconnectingGraceTimeout = setTimeout(function(){
+                console.log("version packet not received, handle disconnect");
                 self.handleDisconnect();
             },5000);
         },10000);
@@ -149,7 +151,9 @@ Poker.ConnectionManager = Class.extend({
         }
     },
     reconnect : function() {
+
         if(this.retryCount < this.MAX_RECONNECT_ATTEMPTS) {
+            console.log("Reconnecting");
             this.onUserReconnecting();
             Poker.AppCtx.getCommunicationManager().connect();
             this.scheduleReconnect();
