@@ -48,13 +48,64 @@ public class TexasHoldemHandCalculatorTest {
     }
 
     @Test
-    public void testCheckStraightFlush() {
+    public void testCheckTranslate() {
         Hand hand = new Hand("KC QC JC TC 9C");
-        HandStrength straight = calculator.getHandStrength(hand);
-        assertThat(straight.getHandType(), is(HandType.STRAIGHT_FLUSH));
-        assertThat(straight.getCards().size(), is(5));
+        HandStrength hs = calculator.getHandStrength(hand);
+        assertThat(hs.getHandType(), is(HandType.STRAIGHT_FLUSH));
+        assertThat(hs.getCards().size(), is(5));
 
-        HandStrengthCommon translate = straight.translate();
+        HandStrengthCommon translate = hs.translate();
+
+
+        hand = new Hand("KC QC JC TC 8C");
+        hs = calculator.getHandStrength(hand);
+        assertThat(hs.getHandType(), is(HandType.FLUSH));
+        assertThat(hs.getCards().size(), is(5));
+
+        translate = hs.translate();
+
+        hand = new Hand("KC QC JC TC 9H");
+        hs = calculator.getHandStrength(hand);
+        assertThat(hs.getHandType(), is(HandType.STRAIGHT));
+        assertThat(hs.getCards().size(), is(5));
+
+        translate = hs.translate();
+
+        hand = new Hand("KC KH KD TC TH");
+        hs = calculator.getHandStrength(hand);
+        assertThat(hs.getHandType(), is(HandType.FULL_HOUSE));
+        assertThat(hs.getCards().size(), is(5));
+
+        translate = hs.translate();
+
+        hand = new Hand("KC KH KD 9C TH");
+        hs = calculator.getHandStrength(hand);
+        assertThat(hs.getHandType(), is(HandType.THREE_OF_A_KIND));
+        assertThat(hs.getCards().size(), is(5));
+
+        translate = hs.translate();
+
+        hand = new Hand("KC KH 9D 9C TH");
+        hs = calculator.getHandStrength(hand);
+        assertThat(hs.getHandType(), is(HandType.TWO_PAIRS));
+        assertThat(hs.getCards().size(), is(5));
+
+        translate = hs.translate();
+
+        hand = new Hand("KC KH 8D 9C 2H");
+        hs = calculator.getHandStrength(hand);
+        assertThat(hs.getHandType(), is(HandType.PAIR));
+        assertThat(hs.getCards().size(), is(5));
+
+        translate = hs.translate();
+
+        hand = new Hand("KC 3H 7D 4C TH");
+        hs = calculator.getHandStrength(hand);
+        assertThat(hs.getHandType(), is(HandType.HIGH_CARD));
+        assertThat(hs.getCards().size(), is(5));
+
+        translate = hs.translate();
+
 
 
 
