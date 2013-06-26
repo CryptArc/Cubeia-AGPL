@@ -432,6 +432,15 @@
         <div class="open-seat">{{t "table.open"}}</div>
     </div>
 </div>
+
+<div id="achievementNotificationTemplate" style="display: none;">
+    <div class="achievement-notification">
+        <h3>{{name}}</h3>
+        <div class="achievement-image" style="background-image: url('{{achievement.imageUrl}}');"></div>
+        <p>{{achievement.description}}</p>
+    </div>
+</div>
+
 <div id="seatTemplate" style="display: none;">
 
     <div class="avatar-base">

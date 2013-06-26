@@ -7,7 +7,10 @@ Poker.AchievementManager = Class.extend({
 
     },
     handleAchievement : function(tableId, playerId, message) {
-        //Poker.AppCtx.getNotificationsManager().notify(new Poker.Notification("test title", message));
         console.log("player " + playerId + " received", message);
+        if(message.type=="achievement") {
+            var n = new Poker.TextNotifcation(message.name,message.achievement.description,message.achievement.imageUrl);
+            Poker.AppCtx.getNotificationsManager().notify(n);
+        }
     }
 });
