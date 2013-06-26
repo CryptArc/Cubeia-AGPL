@@ -182,6 +182,14 @@ Poker.AppCtx = Class.extend({
             return notificationsManager;
         }
 
+        var achievementManager = new Poker.AchievementManager();
+        /**
+         * @return {Poker.AchievementManager}
+         */
+        this.getAchievementManager = function() {
+            return achievementManager;
+        }
+
     }
 });
 Poker.AppCtx = new Poker.AppCtx();

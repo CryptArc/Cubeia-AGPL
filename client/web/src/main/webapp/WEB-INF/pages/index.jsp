@@ -60,6 +60,9 @@
     <script type="text/javascript" src="${cp}/js/base/MyPlayer.js"></script>
     <script type="text/javascript" src="${cp}/js/base/PlayerTableStatus.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/NotificationsManager.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/AchievementManager.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/communication/achievement/AchievementPacketHandler.js"></script>
+
 
     <script src="${cp}/js/base/communication/poker-game/ActionUtils.js" type="text/javascript"></script>
     <script src="${cp}/js/base/communication/poker-game/PokerPacketHandler.js" type="text/javascript"></script>
