@@ -180,11 +180,14 @@
         <script type="text/javascript">
             Poker.OperatorConfig.operatorId = ${operatorId};
             Poker.SkinConfiguration.operatorId = ${operatorId};
+        </script>
+    </c:if>
+    <c:if test="${not empty token}">
+        <script type="text/javascript">
             Poker.MyPlayer.loginToken = "${token}";
             $(document).ready(function(){
                 $(".login-container").hide();
             });
-
         </script>
     </c:if>
 
@@ -233,6 +236,7 @@
                     tournamentLobbyUpdateInterval : 10000,
                     playerApiBaseUrl : "${playerApiBaseUrl}"
                 });
+
             };
             Handlebars.registerHelper('t', function(i18n_key) {
                 var result = i18n.t(i18n_key);
