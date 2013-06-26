@@ -171,6 +171,15 @@
         <appender-ref ref="SERVER_LOG"/>
         <appender-ref ref="ERROR_LOG"/>
     </category>
+    
+    <category name="com.cubeia.firebase.server.login" additivity="false">
+        <priority value="debug"/>
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="SERVER_LOG"/>
+        <appender-ref ref="ERROR_LOG"/>
+    </category>
+    
+    
 
     <!-- ****** LIBRARY CATEGORIES ****** -->
 
