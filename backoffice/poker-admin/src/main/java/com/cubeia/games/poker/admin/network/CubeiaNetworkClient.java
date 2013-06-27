@@ -40,7 +40,18 @@ public class CubeiaNetworkClient implements NetworkClient {
 
     @Override
     public List<OperatorDTO> getOperators() {
-    	return operatorService.getOperators();
+        List<OperatorDTO> ops;
+        
+        try {
+            log.info("Retrieve Operators");
+            ops = operatorService.getOperators();
+        } catch (Exception e) {
+            log.warn("Failed to retrieve operators from operator-service. The Exeption was:\n", e);    
+            ops = newArrayList();
+            log.info("Continuing with default operators (no operators).");
+        }
+        
+    	return ops;
     }
     
     @Override
