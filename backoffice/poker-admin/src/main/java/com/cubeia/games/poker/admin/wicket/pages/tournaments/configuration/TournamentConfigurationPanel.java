@@ -76,6 +76,7 @@ public class TournamentConfigurationPanel extends Panel {
         add(strategy);
         form.add(new TournamentPlayersValidator(minPlayers,maxPlayers));
 
+        /*
         add(new ListMultipleChoice<Long>("operatorIds", model("operatorIds"), getOperatorIds(), new IChoiceRenderer<Long>() {
 
             @Override
@@ -88,7 +89,8 @@ public class TournamentConfigurationPanel extends Panel {
                 return object.toString();
             }
         }));
-
+        */
+        
         DropDownChoice<String> currency = new DropDownChoice<String>("currency", model("currency"), networkClient.getCurrencies(), new ChoiceRenderer<String>());
         currency.setRequired(true);
         add(currency);
