@@ -320,7 +320,6 @@
         </div>
     </div>
     <div class="view-container slidable">
-        <div class="beta-stamp">BETA</div>
         <div class="table-view-container" style="display:none;">
             <div class="multi-view-switch multi">
             </div>
@@ -430,14 +429,6 @@
 <div id="emptySeatTemplate" style="display: none;">
     <div class="avatar-base">
         <div class="open-seat">{{t "table.open"}}</div>
-    </div>
-</div>
-
-<div id="achievementNotificationTemplate" style="display: none;">
-    <div class="achievement-notification">
-        <h3>{{name}}</h3>
-        <div class="achievement-image" style="background-image: url('{{achievement.imageUrl}}');"></div>
-        <p>{{achievement.description}}</p>
     </div>
 </div>
 
