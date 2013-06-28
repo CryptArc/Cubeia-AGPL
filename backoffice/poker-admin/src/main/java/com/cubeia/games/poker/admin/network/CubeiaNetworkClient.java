@@ -28,8 +28,11 @@ import java.util.List;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import static com.google.common.collect.Lists.newArrayList;
+import org.apache.log4j.Logger;
 
 public class CubeiaNetworkClient implements NetworkClient {
+    
+    private static final Logger log = Logger.getLogger(CubeiaNetworkClient.class);
 
     private WalletServiceClientHTTP walletClient;
     
@@ -37,15 +40,34 @@ public class CubeiaNetworkClient implements NetworkClient {
 
     @Override
     public List<OperatorDTO> getOperators() {
-    	return operatorService.getOperators();
+        List<OperatorDTO> ops;
+        
+        try {
+            log.info("Retrieve Operators");
+            ops = operatorService.getOperators();
+        } catch (Exception e) {
+            log.warn("Failed to retrieve operators from operator-service. The Exeption was:\n", e);    
+            ops = newArrayList();
+            log.info("Continuing with default operators (no operators).");
+        }
+        
+    	return ops;
     }
     
     @Override
     public List<String> getCurrencies() {
     	List<String> currencies = newArrayList();
-        CurrencyListResult supportedCurrencies = walletClient.getSupportedCurrencies();
-        for (Currency currency : supportedCurrencies.getCurrencies()) {
-            currencies.add(currency.getCode());
+        try {
+            log.info("Retrieve Supported Currencies");
+            CurrencyListResult supportedCurrencies = walletClient.getSupportedCurrencies();
+            for (Currency currency : supportedCurrencies.getCurrencies()) {
+                currencies.add(currency.getCode());
+            }
+        } catch(Exception e) {
+            log.warn("Failed to retrieve supported currencies from wallet service. The Exeption was:\n", e);
+            //TODO: possibly fetch defaultsfrom system-wide config-file            
+            currencies.add("EUR");
+            log.info("Continuing with default currencies.");
         }
         return currencies;
     }
