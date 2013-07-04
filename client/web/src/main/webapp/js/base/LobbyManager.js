@@ -41,7 +41,11 @@ Poker.LobbyManager = Class.extend({
 
         this.tournamentLobbyData = new Poker.LobbyData(new Poker.TournamentLobbyDataValidator(),
             function(items) {
-                self.lobbyLayoutManager.createTournamentList(items);
+                if(self.lobbyLayoutManager.state == Poker.LobbyLayoutManager.TOURNAMENT_STATE) {
+                    self.lobbyLayoutManager.createTournamentList(items);
+                } else {
+                    self.lobbyLayoutManager.createSitAndGoList(items);
+                }
             },
             function(itemId) {
                 self.lobbyLayoutManager.tournamentRemoved(itemId);
@@ -60,9 +64,9 @@ Poker.LobbyManager = Class.extend({
     handleTournamentSnapshotList : function (tournamentSnapshotList) {
         var self = this;
         if(tournamentSnapshotList.length>0 && tournamentSnapshotList[0].address.indexOf("/sitandgo")!=-1) {
-            this.sitAndGoState = true;
+            this.lobbyLayoutManager.state = Poker.LobbyLayoutManager.SIT_AND_GO_STATE;
         } else {
-            this.sitAndGoState = false;
+            this.lobbyLayoutManager.state = Poker.LobbyLayoutManager.TOURNAMENT_STATE;
         }
 
         var items = [];
