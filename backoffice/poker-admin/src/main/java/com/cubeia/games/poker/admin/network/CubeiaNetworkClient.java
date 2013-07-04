@@ -22,13 +22,11 @@ import com.cubeia.backoffice.operator.client.OperatorServiceClient;
 import com.cubeia.backoffice.wallet.api.dto.Currency;
 import com.cubeia.backoffice.wallet.api.dto.CurrencyListResult;
 import com.cubeia.backoffice.wallet.client.WalletServiceClientHTTP;
+import org.apache.log4j.Logger;
 
 import java.util.List;
 
-import org.apache.wicket.spring.injection.annot.SpringBean;
-
 import static com.google.common.collect.Lists.newArrayList;
-import org.apache.log4j.Logger;
 
 public class CubeiaNetworkClient implements NetworkClient {
     
@@ -51,12 +49,12 @@ public class CubeiaNetworkClient implements NetworkClient {
             log.info("Continuing with default operators (no operators).");
         }
         
-    	return ops;
+        return ops;
     }
     
     @Override
     public List<String> getCurrencies() {
-    	List<String> currencies = newArrayList();
+        List<String> currencies = newArrayList();
         try {
             log.info("Retrieve Supported Currencies");
             CurrencyListResult supportedCurrencies = walletClient.getSupportedCurrencies();
@@ -65,7 +63,7 @@ public class CubeiaNetworkClient implements NetworkClient {
             }
         } catch(Exception e) {
             log.warn("Failed to retrieve supported currencies from wallet service. The Exeption was:\n", e);
-            //TODO: possibly fetch defaultsfrom system-wide config-file            
+            //TODO: possibly fetch defaults from system-wide config-file
             currencies.add("EUR");
             log.info("Continuing with default currencies.");
         }
@@ -73,8 +71,8 @@ public class CubeiaNetworkClient implements NetworkClient {
     }
     
     public void setOperatorService(OperatorServiceClient operatorService) {
-		this.operatorService = operatorService;
-	}
+        this.operatorService = operatorService;
+    }
 
     public void setWalletClient(WalletServiceClientHTTP walletClient) {
         this.walletClient = walletClient;
