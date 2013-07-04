@@ -65,15 +65,15 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
         client.send(event);
     }
 
-    /**
-     * A bonus event has been triggered by the achievement service
-     */
     @Override
     public void onEvent(GameEvent event) {
     }
 
+    /**
+     * A bonus event has been triggered by the achievement service
+     */
     @Override
-    public void onBonusEvent(BonusEvent event) {
+    public void onEvent(BonusEvent event) {
         log.info("On Bonus Event (" + event.hashCode() + "): " + event);
         try {
             int playerId = Integer.parseInt(event.player);
