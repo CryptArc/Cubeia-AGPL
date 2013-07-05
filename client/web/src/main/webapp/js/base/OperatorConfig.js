@@ -5,8 +5,8 @@ var Poker = Poker || {};
  * @type {Poker.OperatorConfig}
  */
 Poker.OperatorConfig = Class.extend({
-	operatorId : null,
-	
+    operatorId : null,
+
     /**
      * @type Poker.Map
      */

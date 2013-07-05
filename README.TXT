@@ -2,7 +2,7 @@ IMPORTANT
 =========
 
 Cubeia Poker is based on Cubeia Firebase and Cubeia Network. Both products are
-open sourced and in production.
+open source and in production.
 
 REQUIREMENTS
 =============
@@ -21,14 +21,13 @@ You should be able to access the game at:
 
 http://localhost:19999
 
-There is no user registration at this point. Use any name, and the password
-should be an integer > 1000.
+There is no user registration at this point. Use any name, and the password should be an integer. (Use > 1000 if you don't want to clash with bots).
 
 In order to get some opponents, go to the bots at:
 
 http://localhost:19090
 
-The default values will create 100 bots, just press OK button.
+The default values will create 100 bots, just press the OK button.
 
 You should see now within the lobby that tables are getting players. 
 
