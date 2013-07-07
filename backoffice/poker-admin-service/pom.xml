@@ -70,5 +70,11 @@
             <version>8.1.4.v20120524</version>
             <type>jar</type>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-jndi</artifactId>
+            <version>8.1.4.v20120524</version>
+            <type>jar</type>
+        </dependency>        
     </dependencies>
 </project>

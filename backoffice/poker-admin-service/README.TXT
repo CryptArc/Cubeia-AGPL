@@ -3,7 +3,7 @@ serving web-applications packaged as wars (like Web Client, Admin).
 
 This starts the poker-admin at
 
-http://localhost:8088
+http://localhost:18088
 
 STATUS
 ======
