@@ -22,11 +22,15 @@ import com.cubeia.firebase.api.service.Service;
 import com.cubeia.firebase.api.service.ServiceContext;
 import java.io.File;
 import java.net.URISyntaxException;
+import java.net.URL;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppClassLoader;
 import org.eclipse.jetty.webapp.WebAppContext;
+
+import org.eclipse.jetty.plus.webapp.EnvConfiguration;
+import org.eclipse.jetty.webapp.*;
 
 public class AdminServerService implements AdminServerContract, Service {
 
@@ -107,6 +111,22 @@ public class AdminServerService implements AdminServerContract, Service {
 
             WebAppContext context = createWebAppContext(WAR_FILE, "/");
             server.setHandler(context);
+
+            //TODO: setting jetty-env.xml to activate the jndi data-source
+            //Not sure if this works, as the admin currently does not start as
+            //as service
+            System.setProperty("java.naming.factory.url.pkgs", "org.eclipse.jetty.jndi");
+            System.setProperty("java.naming.factory.initial", "org.eclipse.jetty.jndi.InitialContextFactory");
+
+            EnvConfiguration envConfiguration = new EnvConfiguration();
+            
+            URL url = new File("src/test/resources/firebase/conf/jetty-env.xml").toURI().toURL();
+            envConfiguration.setJettyEnvXml(url);
+                    log.debug("url:" + url );
+
+            context.setConfigurations(new Configuration[]{ new WebInfConfiguration(), envConfiguration, new WebXmlConfiguration() });    
+            //End jetty-env
+            
             server.start();
             
         } catch (Exception ex) {
