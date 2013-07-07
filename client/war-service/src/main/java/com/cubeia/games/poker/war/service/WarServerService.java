@@ -31,7 +31,7 @@ import org.eclipse.jetty.webapp.WebAppContext;
 public class WarServerService implements WarServerContract, Service {
 
     //TODO retrieve port-no from config file
-    public static final int CLIENT_PORT = 19999;
+    public static final int CLIENT_PORT = 18181;
     //TODO retrieve war name from dependency or config
     public static final String CLIENT_WAR = "poker-client.war";
     
