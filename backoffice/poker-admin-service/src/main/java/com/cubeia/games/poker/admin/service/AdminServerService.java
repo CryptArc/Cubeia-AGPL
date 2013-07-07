@@ -118,6 +118,10 @@ public class AdminServerService implements AdminServerContract, Service {
             //as service
             System.setProperty("java.naming.factory.url.pkgs", "org.eclipse.jetty.jndi");
             System.setProperty("java.naming.factory.initial", "org.eclipse.jetty.jndi.InitialContextFactory");
+            
+            //added dummy, thus library is added
+            InitialContextFactory dummy = new InitialContextFactory();
+            log.debug("InitialContextFactory:" + dummy.toString() );
 
             EnvConfiguration envConfiguration = new EnvConfiguration();
             
