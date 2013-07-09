@@ -11,14 +11,14 @@ mvn firebase:run
 
 You should be able to access the game at:
 
-http://localhost:19999
+http://localhost:18181
 
 There is no user registration at this point. Use any name, and the password
 should be an integer > 1000.
 
 In order to get some opponents, go to the bots at:
 
-http://localhost:19090
+http://localhost:18081
 
 The default values will create 100 bots, just press OK button.
 
