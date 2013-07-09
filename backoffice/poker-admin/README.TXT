@@ -54,7 +54,7 @@ In order to build & start a poker system which integrates fully:
 
 a) build the poker-server with "-P use-integrations" option.
 
-b) server\game-modules\poker-uar\src\test\resources\firebase\conf\cluster.props
+b) uar\src\test\resources\firebase\conf\cluster.props
    - set use-mock-integrations=false"
    - change the ports of user/wallet/operator services to 8080
      (http://localhost:8080)

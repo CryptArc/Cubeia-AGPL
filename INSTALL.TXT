@@ -57,7 +57,7 @@ ADVANCED STEPS
 Firebase was fetched during the build. You can start the poker-server directly
 by starting firebase from within
 
-./server/game-modules/poker-uar/target/firebase-run/firebase-<version>-CE
+./uar/target/firebase-run/firebase-<version>-CE
 
 This location (the "target" folder) is overwritten by a clean build (mvn clean).
 
@@ -70,11 +70,10 @@ firebase/game/deploy directory, or you have to make a symbolic link. Remember to
 verify the configuration files (new files or new configuration data).
 
 * CLIENT
-To start the client standalone follow ./client/web/README. If you want to try or
-develop other clients, review the ./client/README.
+To start the client standalone follow ./client/web/README.
 
 * BOTS
-Follow ./server/bot-modules/bot/README to start the Bots in standalone.
+Follow ./bots/bot/README to start the Bots in standalone.
 
 * DEPLOY TO TOMCAT
 
