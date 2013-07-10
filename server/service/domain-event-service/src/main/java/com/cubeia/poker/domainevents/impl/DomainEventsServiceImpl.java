@@ -101,6 +101,9 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 		try {
 			int tournamentId = instance.getState().getId();
 			String tournamentName = instance.getState().getName();
+			// Replace spaces with underscores because the achievement system does not like spaces.
+			tournamentName.replace(" ", "_");
+			
 			int playerId = player.getPlayerId();
 				Integer operatorId = clientRegistry.getOperatorId(playerId);
 			

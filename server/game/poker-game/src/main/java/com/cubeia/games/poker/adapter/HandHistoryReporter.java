@@ -124,6 +124,7 @@ public class HandHistoryReporter {
             }
             res.setTotalRake(handResult.getTotalRake());
 
+            ThreadLocalProfiler.add("HandHistoryReportAdapter.notifyHandEnd.postHands");
             //empty ShowDownSummary event (looks like separator at this moment)
             post(new ShowDownSummary());
 
@@ -133,7 +134,9 @@ public class HandHistoryReporter {
                 post(hand.translate());
             }
 
+            ThreadLocalProfiler.add("HandHistoryReportAdapter.notifyHandEnd.reportResults");
             service.reportResults(table.getId(), res);
+            ThreadLocalProfiler.add("HandHistoryReportAdapter.notifyHandEnd.stopHand");
             service.stopHand(table.getId());
         }
         ThreadLocalProfiler.add("HandHistoryReportAdapter.notifyHandEnd.stop");

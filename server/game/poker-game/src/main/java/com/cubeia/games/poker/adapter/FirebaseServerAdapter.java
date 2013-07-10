@@ -552,6 +552,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
             sendPublicPacket(action, -1);
         }
 
+        ThreadLocalProfiler.add("FirebaseServerAdapter.notifyHandEnd.notifyAchievements");
         achievements.notifyHandEnd(handResult, handEndStatus, tournamentTable, state.getSettings());
         
         clearActionCache();
@@ -604,6 +605,7 @@ public class FirebaseServerAdapter implements ServerAdapter {
     }
 
     private void performBackEndTransactions(HandResult handResult, HandEndStatus handEndStatus, boolean isTournament) {
+    	ThreadLocalProfiler.add("FirebaseServerAdapter.performBackEndTransactions");
         String handId = getIntegrationHandId();
         TableId externalTableId = getIntegrationTableId();
         Map<Integer, String> transactionIds = new HashMap<Integer, String>();
