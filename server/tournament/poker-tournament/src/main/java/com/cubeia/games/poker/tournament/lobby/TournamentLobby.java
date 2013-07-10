@@ -255,6 +255,8 @@ public class TournamentLobby {
         tournamentInfo.tournamentName = state.getName();
         tournamentInfo.tournamentStatus = convertTournamentStatus(pokerState.getStatus());
         tournamentInfo.buyInCurrencyCode = pokerState.getCurrency().getCode();
+        tournamentInfo.description = pokerState.getDescription();
+
         return tournamentInfo;
     }
 

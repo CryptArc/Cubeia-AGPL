@@ -31,7 +31,9 @@ import org.apache.wicket.markup.html.form.*;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.apache.wicket.validation.IValidator;
 import org.apache.wicket.validation.validator.RangeValidator;
+import org.apache.wicket.validation.validator.StringValidator;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -103,6 +105,10 @@ public class TournamentConfigurationPanel extends Panel {
         if (sitAndGo) {
             maxPlayers.setVisible(false);
         }
+
+        TextArea<String> description = new TextArea<String>("description", new PropertyModel(model, "description"));
+        description.add(StringValidator.maximumLength(1000));
+        add(description);
     }
 
 	private List<Long> getOperatorIds(List<OperatorDTO> operators) {

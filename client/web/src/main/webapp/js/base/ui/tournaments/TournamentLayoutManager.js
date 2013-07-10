@@ -75,7 +75,13 @@ Poker.TournamentLayoutManager = Class.extend({
             console.log(this.viewElement.find(".tournament-start-date"));
             var m = moment(parseInt(info.startTime));
             this.viewElement.find(".tournament-start-date").html(m.format("lll") + " ("+ m.fromNow()+")");
+        }
 
+        console.log("INFO", info);
+        if(info.description!=null && info.description!=""){
+            this.viewElement.find(".tournament-description").html(info.description);
+        } else {
+            this.viewElement.find(".tournament-description").hide();
         }
 
     },

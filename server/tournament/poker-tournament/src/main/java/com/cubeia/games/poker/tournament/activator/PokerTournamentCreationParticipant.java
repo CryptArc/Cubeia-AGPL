@@ -108,6 +108,7 @@ public abstract class PokerTournamentCreationParticipant implements CreationPart
         pokerState.setRebuySupport(createRebuySupport(config.getRebuyConfiguration()));
         pokerState.setGuaranteedPrizePool(config.getGuaranteedPrizePool());
         pokerState.getAllowedOperators().addAll(config.getOperatorIds());
+        pokerState.setDescription(config.getDescription());
 
         PokerTournament tournament = new PokerTournament(pokerState);
         stateSupport.setState(tournament);

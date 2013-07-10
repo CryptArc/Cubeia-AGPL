@@ -154,6 +154,8 @@ public class PokerTournamentState implements Serializable {
 
     private Currency currency;
 
+    private String description;
+
     /**
      * @return True if this tournament is limited to one or more operators
      */
@@ -654,5 +656,13 @@ public class PokerTournamentState implements Serializable {
 
     public Currency getCurrency() {
         return currency;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

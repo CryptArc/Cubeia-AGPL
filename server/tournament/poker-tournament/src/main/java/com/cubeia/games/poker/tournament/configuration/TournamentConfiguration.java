@@ -26,12 +26,7 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 import org.apache.log4j.Logger;
 
@@ -95,6 +90,9 @@ public class TournamentConfiguration implements Serializable {
      * if the prize pool from registration entries does not reach that level.
      */
     private BigDecimal guaranteedPrizePool = BigDecimal.ZERO;
+
+    @Column(length = 1000, nullable = true)
+    private String description;
 
     public TournamentConfiguration() {
     }
@@ -241,5 +239,13 @@ public class TournamentConfiguration implements Serializable {
 
     public void setStartingChips(BigDecimal startingChips) {
         this.startingChips = startingChips;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

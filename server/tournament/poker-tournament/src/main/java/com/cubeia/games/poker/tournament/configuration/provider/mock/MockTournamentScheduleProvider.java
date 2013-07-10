@@ -59,6 +59,7 @@ public class MockTournamentScheduleProvider implements TournamentScheduleProvide
         configuration.setStartingChips(new BigDecimal(100000));
         configuration.setTimingType(TimingFactory.getRegistry().getTimingProfile(Timings.EXPRESS.name()));
         configuration.setId(1);
+        configuration.setDescription("This is MTT tournament that starts every five minutes");
         // configuration.getOperatorIds().add(666L);
         tournamentConfigurations.add(everyFiveMinutes);
         
@@ -74,6 +75,7 @@ public class MockTournamentScheduleProvider implements TournamentScheduleProvide
         speedCfg.setTimingType(TimingFactory.getRegistry().getTimingProfile(Timings.SUPER_EXPRESS.name()));
         speedCfg.setStartingChips(new BigDecimal(100000));
         speedCfg.setId(2);
+        speedCfg.setDescription("This is a massive speed tournament!");
         
         tournamentConfigurations.add(massiveQuickTourny);
         

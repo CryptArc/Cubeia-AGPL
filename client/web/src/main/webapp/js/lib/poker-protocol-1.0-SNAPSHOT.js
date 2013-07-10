@@ -2787,6 +2787,7 @@ com.cubeia.games.poker.io.protocol.TournamentInfo = function () {
     this.maxPlayers = {};
     this.tournamentStatus = {};
     this.buyInCurrencyCode = {};
+    this.description = {};
     this.save = function () {
         var a = new FIREBASE.ByteArray();
         a.writeString(this.tournamentName);
@@ -2799,6 +2800,7 @@ com.cubeia.games.poker.io.protocol.TournamentInfo = function () {
         a.writeInt(this.maxPlayers);
         a.writeUnsignedByte(this.tournamentStatus);
         a.writeString(this.buyInCurrencyCode);
+        a.writeString(this.description);
         return a
     };
     this.load = function (a) {
@@ -2811,7 +2813,8 @@ com.cubeia.games.poker.io.protocol.TournamentInfo = function () {
         this.minPlayers = a.readInt();
         this.maxPlayers = a.readInt();
         this.tournamentStatus = com.cubeia.games.poker.io.protocol.TournamentStatusEnum.makeTournamentStatusEnum(a.readUnsignedByte());
-        this.buyInCurrencyCode = a.readString()
+        this.buyInCurrencyCode = a.readString();
+        this.description = a.readString()
     };
     this.getNormalizedObject = function () {
         var a = {};
@@ -2828,6 +2831,7 @@ com.cubeia.games.poker.io.protocol.TournamentInfo = function () {
         a.details.maxPlayers = this.maxPlayers;
         a.details.tournamentStatus = com.cubeia.games.poker.io.protocol.TournamentStatusEnum.toString(this.tournamentStatus);
         a.details.buyInCurrencyCode = this.buyInCurrencyCode;
+        a.details.description = this.description;
         return a
     }
 };

@@ -491,6 +491,7 @@
         <var name="max_players" type="int32" />
         <var name="tournament_status" type="tournament_status" />
         <var name="buy_in_currency_code" type="string"/>
+        <var name="description" type="string"/>
     </struct>
 
     <!-- Used for requesting all tournament lobby data at once. -->
