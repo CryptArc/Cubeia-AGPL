@@ -10,7 +10,7 @@ Poker.Sharing = Class.extend({
         if(url==null) {
             $(targetElement).hide();
         } else {
-            this.bindShareButton(targetElement,url,tournamentName,"tournament",tournamentName.toLowerCase().replace(/ /,""));
+            this.bindShareButton(targetElement,url,tournamentName,"tournament",tournamentName.toLowerCase().replace(/ /g,""));
         }
     },
     bindShareTable : function(targetElement,tableId, title){

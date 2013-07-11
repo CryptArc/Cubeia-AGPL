@@ -41,7 +41,7 @@ Poker.TournamentLayoutManager = Class.extend({
         if(registered==true) {
             this.setPlayerRegisteredState();
         }
-        Poker.Sharing.bindShareTournament(this.viewElement.find(".share-button")[0],name);
+
     },
     updatePlayerList : function(players) {
         var template = this.templateManager.getRenderTemplate("tournamentPlayerListItem");
@@ -83,6 +83,8 @@ Poker.TournamentLayoutManager = Class.extend({
         } else {
             this.viewElement.find(".tournament-description").hide();
         }
+
+        Poker.Sharing.bindShareTournament(this.viewElement.find(".share-button")[0],name);
 
     },
     updateTournamentStatistics : function(statistics) {

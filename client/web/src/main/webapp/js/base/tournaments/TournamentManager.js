@@ -37,6 +37,8 @@ Poker.TournamentManager = Class.extend({
      */
     tableManager : null,
 
+    lastTournamentName : null,
+
     /**
      *
      * @param {Number} tournamentLobbyUpdateInterval
@@ -281,7 +283,7 @@ Poker.TournamentManager = Class.extend({
     },
     handleTournamentId : function(id) {
         if(id!=-1) {
-            this.createTournament(id,"Tournament");
+            this.createTournament(id, this.lastTournamentName);
         }  else {
             this.dialogManager.displayGenericDialog({
                 translationKey : "tournament-not-found"
@@ -289,6 +291,7 @@ Poker.TournamentManager = Class.extend({
         }
     },
     openTournamentLobbyByName : function(name) {
+        this.lastTournamentName = name;
         console.log("open tournament with name",name);
         var request = new com.cubeia.games.poker.routing.service.io.protocol.TournamentIdRequest();
         request.name = name;
