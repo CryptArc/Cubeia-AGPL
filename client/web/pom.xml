@@ -143,6 +143,10 @@
                             <value>js/base/$1\.js?v=${maven.build.timestamp}"</value>
                         </replacement>
                         <replacement>
+                            <token>js/lib/([a-zA-Z0-9_\-/]*)\.js"</token>
+                            <value>js/lib/$1\.js?v=${maven.build.timestamp}"</value>
+                        </replacement>
+                        <replacement>
                             <token>lcss/([a-zA-Z0-9_\-/]*)\.css"</token>
                             <value>lcss/$1\.css?v=${maven.build.timestamp}"</value>
                         </replacement>

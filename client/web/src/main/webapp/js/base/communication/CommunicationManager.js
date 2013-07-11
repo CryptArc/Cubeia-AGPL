@@ -246,6 +246,9 @@ Poker.CommunicationManager = Class.extend({
             case com.cubeia.games.poker.routing.service.io.protocol.HandHistoryProviderResponseHand.CLASSID:
                 new Poker.ServicePacketHandler().handleHand(protocolObject.hand);
                 break;
+            case com.cubeia.games.poker.routing.service.io.protocol.TournamentIdResponse.CLASSID:
+                Poker.AppCtx.getTournamentManager().handleTournamentId(protocolObject.id);
+                break;
         }
     },
 

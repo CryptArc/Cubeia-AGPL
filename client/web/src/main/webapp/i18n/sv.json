@@ -202,6 +202,10 @@
         "title" : "Handhistorik"
     },
     "dialogs" : {
+        "tournament-not-found" : {
+            "header" : "Turneringen kunde inte hittas",
+            "message" : "Turneringen med det angivna namnet kunde inte hittas"
+        },
         "tournament-won" : {
             "header" : "Turneringsinfo",
             "message" : "Grattis, du vann turneringen!"

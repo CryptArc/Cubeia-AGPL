@@ -278,5 +278,26 @@ Poker.TournamentManager = Class.extend({
         if (sufficientFunds == true) {
             tournament.tournamentLayoutManager.showBuyInInfo(buyIn,fee,currency,balanceInWallet);
         }
+    },
+    handleTournamentId : function(id) {
+        if(id!=-1) {
+            this.createTournament(id,"Tournament");
+        }  else {
+            this.dialogManager.displayGenericDialog({
+                translationKey : "tournament-not-found"
+            });
+        }
+    },
+    openTournamentLobbyByName : function(name) {
+        console.log("open tournament with name",name);
+        var request = new com.cubeia.games.poker.routing.service.io.protocol.TournamentIdRequest();
+        request.name = name;
+        var packet = new FB_PROTOCOL.ServiceTransportPacket();
+        packet.pid = Poker.MyPlayer.id;
+        packet.seq = 0;
+        packet.idtype = 0; // namespace
+        packet.service = "com.cubeia.poker:player-service";
+        packet.servicedata = FIREBASE.ByteArray.toBase64String(request.save().createServiceDataArray(request.classId()));
+        Poker.AppCtx.getConnector().sendProtocolObject(packet);
     }
 });

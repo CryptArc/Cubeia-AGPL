@@ -28,22 +28,23 @@ Poker.Navigation = Class.extend({
         if(viewName!=null) {
             var handler = this.views.get(viewName);
             if(handler!=null) {
-                if(args.length>0) {
+                if(args.length==1){
+                    handler.call(this,args[0]);
+                } else if(args.length>0) {
                     handler.call(this,args);
-                } else {
+                } else  {
                     handler.call(this);
                 }
                 document.location.hash="";
             }
         }
     },
-    handleTournament : function(tournamentId) {
-        if(typeof(tournamentId)=="undefined") {
+    handleTournament : function(name) {
+        if(typeof(name)=="undefined") {
             return;
         }
-        tournamentId = parseInt(tournamentId);
         var tournamentManager = Poker.AppCtx.getTournamentManager();
-        tournamentManager.createTournament(tournamentId,"tournament");
+        tournamentManager.openTournamentLobbyByName(name);
     },
     handleTable : function(tableId) {
 

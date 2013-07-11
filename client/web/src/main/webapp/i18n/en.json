@@ -204,6 +204,10 @@
         "title" : "Hand History"
     },
     "dialogs" : {
+        "tournament-not-found" : {
+            "header" : "Unable to find tournament",
+            "message" : "Unable to find the specified tournament"
+        },
         "deposit-cancel" : {
             "header" : "Deposit Failed",
             "message" : "Your deposit failed, please try again."

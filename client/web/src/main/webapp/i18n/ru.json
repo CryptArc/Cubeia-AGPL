@@ -201,6 +201,10 @@
         "title" : "История раздач"
     },
     "dialogs" : {
+        "tournament-not-found" : {
+            "header" : "Unable to find tournament",
+            "message" : "Unable to find the specified tournament"
+        },
         "deposit-cancel" : {
             "header" : "Депозит не внесен",
             "message" : "Ваш Депозит не был принят. Пожалуйста, повторите снова."
