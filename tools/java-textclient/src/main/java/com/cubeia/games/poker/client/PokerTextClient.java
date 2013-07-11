@@ -28,12 +28,15 @@ import com.cubeia.firebase.io.ProtocolObject;
 import com.cubeia.firebase.io.StyxSerializer;
 import com.cubeia.firebase.io.protocol.LoginRequestPacket;
 import com.cubeia.firebase.io.protocol.MttTransportPacket;
+import com.cubeia.firebase.io.protocol.ServiceTransportPacket;
+import com.cubeia.firebase.io.protocol.Enums.ServiceIdentifier;
 import com.cubeia.games.poker.io.protocol.BuyInRequest;
 import com.cubeia.games.poker.io.protocol.Enums.ActionType;
 import com.cubeia.games.poker.io.protocol.PerformAction;
 import com.cubeia.games.poker.io.protocol.PlayerAction;
 import com.cubeia.games.poker.io.protocol.RebuyResponse;
 import com.cubeia.games.poker.io.protocol.RequestTournamentLobbyData;
+import com.cubeia.games.poker.routing.service.io.protocol.TournamentIdRequest;
 
 public class PokerTextClient extends SimpleTextClient {
 
@@ -66,22 +69,23 @@ public class PokerTextClient extends SimpleTextClient {
                 return;
             }
 
-            if (args[0].equalsIgnoreCase("help")) {
+            if (args[0].equalsIgnoreCase("poker") || args[0].equalsIgnoreCase("pokerhelp") || args[0].equalsIgnoreCase("helppoker")) {
                 printHelp();
             } else {
 
-                if (!handleGenericPokerCommand(args)) {
+                if (!handleGenericPokerCommand(args, command)) {
                     handlePokerCommand(args);
                 }
             }
 
 
         } catch (Exception e) {
+        	e.printStackTrace();
             reportBadCommand(e.toString());
         }
     }
 
-    private boolean handleGenericPokerCommand(String[] args) throws IOException {
+    private boolean handleGenericPokerCommand(String[] args, String command) throws IOException {
         if (args[0].equals("ologin")) {
             String username = args[1];
             String password = args[2];
@@ -92,21 +96,31 @@ public class PokerTextClient extends SimpleTextClient {
             loginRequest.password = password;
             send(loginRequest);
             context.setPlayer(new Player(username, -1));
+            
         } else if (args[0].equals("buyin")) {
             int tableId = Integer.parseInt(args[1]);
             BuyInRequest packet = new BuyInRequest();
             packet.amount = "" + Integer.parseInt(args[2]);
             packet.sitInIfSuccessful = true;
             send(tableId, packet);
+            
         } else if (args[0].equals("tourlobby")) {
             int tournamentId = Integer.parseInt(args[1]);
             RequestTournamentLobbyData request = new RequestTournamentLobbyData();
             sendTournamentDataPacket(tournamentId, context.getPlayerId(), styxEncoder.pack(request));
+            
         } else if (args[0].equals("rebuy")) {
             int tableId = Integer.parseInt(args[1]);
             System.out.println("Performing rebuy at table " + tableId);
             RebuyResponse response = new RebuyResponse(true);
             send(tableId, response);
+            
+        }  else if (args[0].equals("tournid")) {
+        	String name = command.substring("tournid ".length());
+            System.out.println("Find tournament id for name " + name);
+            TournamentIdRequest request = new TournamentIdRequest(name, new String[0]);
+            sendServiceTransportPacket("com.cubeia.poker:player-service", request);
+            
         } else {
             return false;
         }
@@ -169,6 +183,7 @@ public class PokerTextClient extends SimpleTextClient {
             type.type = ActionType.FOLD;
             packet.action = type;
         }
+        
 
         int tableId = Integer.parseInt(args[1]);
         send(tableId, packet);
@@ -198,6 +213,16 @@ public class PokerTextClient extends SimpleTextClient {
         context.getConnector().sendPacket(packet);
     }
 
+    private void sendServiceTransportPacket(String service, ProtocolObject payload) {
+    	ByteBuffer buffer = styxEncoder.pack(payload);
+    	ServiceTransportPacket packet = new ServiceTransportPacket();
+    	packet.pid = context.getPlayerId();
+    	packet.service = service;
+    	packet.servicedata = buffer.array();
+    	packet.idtype = (byte)ServiceIdentifier.NAMESPACE.ordinal();
+    	context.getConnector().sendPacket(packet);
+    }
+    
     /**
      * @param args
      */
@@ -243,5 +268,7 @@ public class PokerTextClient extends SimpleTextClient {
         System.out.println("\t call TID         \t : Call");
         System.out.println("\t bet TID <amount> \t : Bet");
         System.out.println("\t fold TID         \t : Fold");
+        
+        System.out.println("\t tournid NAME         \t : Find tournament ID from name");
     }
 }

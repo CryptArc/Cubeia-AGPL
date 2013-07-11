@@ -25,6 +25,11 @@
             <groupId>com.cubeia.games</groupId>
             <artifactId>poker-protocol</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.cubeia.games</groupId>
+            <artifactId>routing-service-protocol</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         
     </dependencies>
   

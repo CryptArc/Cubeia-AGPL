@@ -18,6 +18,7 @@
 package com.cubeia.games.poker.client;
 
 import com.cubeia.firebase.clients.java.connector.text.IOContext;
+import com.cubeia.games.poker.io.protocol.AchievementNotificationPacket;
 import com.cubeia.games.poker.io.protocol.AddOnOffer;
 import com.cubeia.games.poker.io.protocol.AddOnPeriodClosed;
 import com.cubeia.games.poker.io.protocol.BestHand;
@@ -405,14 +406,10 @@ public class ManualGameHandler implements PacketVisitor {
     }
 
     @Override
-    public void visit(PlayerPerformedRebuy packet) {
-
-    }
+    public void visit(PlayerPerformedRebuy packet) {}
 
     @Override
-    public void visit(PlayerPerformedAddOn packet) {
-
-    }
+    public void visit(PlayerPerformedAddOn packet) {}
 
     @Override
     public void visit(AddOnPeriodClosed packet) {
@@ -454,5 +451,8 @@ public class ManualGameHandler implements PacketVisitor {
     
 	@Override
 	public void visit(Currency packet) {}
+
+	@Override
+	public void visit(AchievementNotificationPacket packet) {}
 
 }

@@ -95,6 +95,8 @@ public class ManualPacketHandler extends AbstractClientPacketHandler {
     private ManualGameHandler gameHandler;
 
     private StyxSerializer styxDecoder = new StyxSerializer(new ProtocolObjectFactory());
+    
+    private StyxSerializer styxServiceDecoder = new StyxSerializer(new com.cubeia.games.poker.routing.service.io.protocol.ProtocolObjectFactory());
 
     public ManualPacketHandler() {
     }
@@ -200,6 +202,8 @@ public class ManualPacketHandler extends AbstractClientPacketHandler {
 
     @Override
     public void visit(ServiceTransportPacket packet) {
+    	ProtocolObject protocol = styxServiceDecoder.unpack(ByteBuffer.wrap(packet.servicedata));
+    	System.out.println("Packet from Service["+packet.service+"]: "+protocol);
     }
 
     @Override

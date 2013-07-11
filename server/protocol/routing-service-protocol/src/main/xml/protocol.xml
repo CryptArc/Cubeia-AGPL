@@ -47,5 +47,15 @@
     <struct name="balance_info_response">
         <var name="balance_in_wallet" type="string"/>
     </struct>
+    
+    <struct name="tournament_id_request">
+        <var name="name" type="string" />
+        <list name="tags" type="string" />
+    </struct>
+
+    <!-- ID will be -1 if not found or not allowed status -->
+    <struct name="tournament_id_response">
+        <var name="id" type="int32"/>
+    </struct>
 
 </protocol>

@@ -202,6 +202,13 @@
                 <version>${project.version}</version>
                 <type>firebase-sar</type>
             </dependency>
+            
+            <dependency>
+                <groupId>com.cubeia.games.poker</groupId>
+                <artifactId>player-service</artifactId>
+                <version>${project.version}</version>
+                <type>firebase-sar</type>
+            </dependency>
 
             <dependency>
                 <groupId>com.cubeia</groupId>

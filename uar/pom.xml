@@ -86,6 +86,12 @@
 			<artifactId>domain-event-service</artifactId>
 			<type>firebase-sar</type>
 		</dependency>
+		
+		<dependency>
+            <groupId>com.cubeia.games.poker</groupId>
+            <artifactId>player-service</artifactId>
+            <type>firebase-sar</type>
+        </dependency>
 
     </dependencies>
 
