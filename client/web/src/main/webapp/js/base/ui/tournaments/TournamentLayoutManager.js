@@ -41,7 +41,7 @@ Poker.TournamentLayoutManager = Class.extend({
         if(registered==true) {
             this.setPlayerRegisteredState();
         }
-        Poker.Sharing.bindShareTournament(this.viewElement.find(".share-button")[0],tournamentId,name);
+        Poker.Sharing.bindShareTournament(this.viewElement.find(".share-button")[0],name);
     },
     updatePlayerList : function(players) {
         var template = this.templateManager.getRenderTemplate("tournamentPlayerListItem");

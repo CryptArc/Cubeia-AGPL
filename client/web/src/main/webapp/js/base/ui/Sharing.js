@@ -5,12 +5,12 @@ var Poker = Poker || {};
 Poker.Sharing = Class.extend({
     init : function() {
     },
-    bindShareTournament : function(targetElement,tournamentId, title){
+    bindShareTournament : function(targetElement,tournamentName){
         var url = Poker.OperatorConfig.getShareUrl();
         if(url==null) {
             $(targetElement).hide();
         } else {
-            this.bindShareButton(targetElement,url,title,"tournament",tournamentId);
+            this.bindShareButton(targetElement,url,tournamentName,"tournament",tournamentName.toLowerCase().replace(/ /,""));
         }
     },
     bindShareTable : function(targetElement,tableId, title){
