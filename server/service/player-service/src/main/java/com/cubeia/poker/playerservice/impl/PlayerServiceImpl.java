@@ -102,7 +102,6 @@ public class PlayerServiceImpl implements com.cubeia.firebase.api.service.Servic
 	}
 	
 	private int inspectFqn(String parent, String name) {
-		log.debug("Check node: "+parent);
 		int resultTournamentId = -1;
 		Set<String> nodes = systemState.getChildren(parent);
 		for (String node : nodes) {
@@ -113,16 +112,18 @@ public class PlayerServiceImpl implements com.cubeia.firebase.api.service.Servic
 				int tournamentId = attribute.getIntValue();
 				String tournamentName = systemState.getAttribute(fqn, "NAME").getStringValue();
 				String tournamentNameNoSpaces = tournamentName.replaceAll("\\s", "");
-				log.debug("Check name["+name+"] against ["+tournamentName+"] and ["+tournamentNameNoSpaces+"]");
+				// log.debug("Check name["+name+"] against ["+tournamentName+"] and ["+tournamentNameNoSpaces+"]");
 				if (tournamentName.equalsIgnoreCase(name) || tournamentNameNoSpaces.equalsIgnoreCase(name)) {
 					resultTournamentId = checkTournamentStatus(name,resultTournamentId, fqn, tournamentId);
 				}
 				
 			} else {
-				log.debug("    No _ID attribute. Will check children");
 				Set<String> children = systemState.getChildren(fqn);
 				for (String childNode : children) {
-					return inspectFqn(fqn+"/"+childNode, name);
+					resultTournamentId = inspectFqn(fqn+"/"+childNode, name);
+					if (resultTournamentId > 0) {
+						return resultTournamentId;
+					}
 				}
 			}
 		}

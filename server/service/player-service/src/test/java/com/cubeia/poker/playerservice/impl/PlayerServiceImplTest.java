@@ -47,7 +47,7 @@ public class PlayerServiceImplTest {
 		Set<String> level_1 = new HashSet<String>(Arrays.asList(new String[]{"1"}));
 		Set<String> level_2 = new HashSet<String>(Arrays.asList(new String[]{"scheduled", "sitandgo"}));
 		Set<String> level_2_sitandgo = new HashSet<String>(Arrays.asList(new String[]{"10"}));
-		Set<String> level_2_scheduled = new HashSet<String>(Arrays.asList(new String[]{"1", "7", "8"}));
+		Set<String> level_2_scheduled = new HashSet<String>(Arrays.asList(new String[]{"1", "7", "8", "11"}));
 		
 		String root = "/tournament";
 		when(systemState.getChildren(root)).thenReturn(level_1);
@@ -64,6 +64,14 @@ public class PlayerServiceImplTest {
 		when(systemState.getAttribute("/tournament/1/scheduled/8", "_ID")).thenReturn(AttributeValue.wrap(8));
 		when(systemState.getAttribute("/tournament/1/scheduled/8", "NAME")).thenReturn(AttributeValue.wrap("Tournament Eight"));
 		when(systemState.getAttribute("/tournament/1/scheduled/8", "STATUS")).thenReturn(AttributeValue.wrap(Enums.TournamentStatus.CANCELLED.name()));
+		
+		when(systemState.getAttribute("/tournament/1/scheduled/11", "_ID")).thenReturn(AttributeValue.wrap(11));
+		when(systemState.getAttribute("/tournament/1/scheduled/11", "NAME")).thenReturn(AttributeValue.wrap("Tournament Eleven"));
+		when(systemState.getAttribute("/tournament/1/scheduled/11", "STATUS")).thenReturn(AttributeValue.wrap(Enums.TournamentStatus.REGISTERING.name()));
+		
+		when(systemState.getAttribute("/tournament/1/sitandgo/10", "_ID")).thenReturn(AttributeValue.wrap(10));
+		when(systemState.getAttribute("/tournament/1/sitandgo/10", "NAME")).thenReturn(AttributeValue.wrap("Heads Up PM 100"));
+		when(systemState.getAttribute("/tournament/1/sitandgo/10", "STATUS")).thenReturn(AttributeValue.wrap(Enums.TournamentStatus.REGISTERING.name()));
 	}
 	
 	@Test
@@ -73,12 +81,32 @@ public class PlayerServiceImplTest {
 		assertThat(id, is(1));
 	}
 	
+	@Test
+	public void testFindTournament11() {
+		TournamentIdRequest request = new TournamentIdRequest("Tournament Eleven", new String[0]);
+		int id = service.findTournamentId(request);
+		assertThat(id, is(11));
+	}
 	
 	@Test
 	public void testFindTournamentNoSpaces() {
 		TournamentIdRequest request = new TournamentIdRequest("TestTournament", new String[0]);
 		int id = service.findTournamentId(request);
 		assertThat(id, is(1));
+	}
+	
+	@Test
+	public void testFindSitAndGoTournament() {
+		TournamentIdRequest request = new TournamentIdRequest("headsuppm100", new String[0]);
+		int id = service.findTournamentId(request);
+		assertThat(id, is(10));
+	}
+	
+	@Test
+	public void testFindTournament11NoSpaceSmallChars() {
+		TournamentIdRequest request = new TournamentIdRequest("tournamenteleven", new String[0]);
+		int id = service.findTournamentId(request);
+		assertThat(id, is(11));
 	}
 	
 	@Test
@@ -105,5 +133,5 @@ public class PlayerServiceImplTest {
 		}
 		
 	}
-
+	
 }
