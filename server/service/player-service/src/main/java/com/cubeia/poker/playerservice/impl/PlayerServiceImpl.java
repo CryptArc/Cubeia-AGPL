@@ -90,6 +90,15 @@ public class PlayerServiceImpl implements com.cubeia.firebase.api.service.Servic
         }
 	}
 
+	/**
+	 * Find a tournament that matches name and has a valid status. The first matching tournament
+	 * will be returned.
+	 * 
+	 * Name can be with or without spaces, e.g. 'Test Tournament' and 'TestTournament' are equal.
+	 * 
+	 * @param request
+	 * @return
+	 */
 	protected int findTournamentId(TournamentIdRequest request) {
 		return inspectFqn(TOURNAMENT_ROOT, request.name);
 	}
@@ -104,7 +113,8 @@ public class PlayerServiceImpl implements com.cubeia.firebase.api.service.Servic
 			if (attribute != null) {
 				int tournamentId = attribute.getIntValue();
 				String tournamentName = systemState.getAttribute(fqn, "NAME").getStringValue();
-				if (tournamentName.equalsIgnoreCase(name)) {
+				String tournamentNameNoSpaces = tournamentName.replaceAll("\\s", "");
+				if (tournamentName.equalsIgnoreCase(name) || tournamentNameNoSpaces.equalsIgnoreCase(name)) {
 					resultTournamentId = checkTournamentStatus(name,resultTournamentId, fqn, tournamentId);
 				}
 				

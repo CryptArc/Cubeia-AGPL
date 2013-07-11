@@ -73,6 +73,14 @@ public class PlayerServiceImplTest {
 		assertThat(id, is(1));
 	}
 	
+	
+	@Test
+	public void testFindTournamentNoSpaces() {
+		TournamentIdRequest request = new TournamentIdRequest("TestTournament", new String[0]);
+		int id = service.findTournamentId(request);
+		assertThat(id, is(1));
+	}
+	
 	@Test
 	public void testFindCancelledTournament() {
 		TournamentIdRequest request = new TournamentIdRequest("Tournament Eight", new String[0]);
