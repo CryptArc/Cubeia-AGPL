@@ -23,7 +23,7 @@ Poker.TournamentLayoutManager = Class.extend({
     leaveFunction : null,
     takeSeatButton : null,
     name : null,
-
+    shareDone : false,
     init : function(tournamentId, name, registered, viewContainer,leaveFunction) {
         this.leaveFunction = leaveFunction;
         this.tournamentId = tournamentId;
@@ -83,8 +83,10 @@ Poker.TournamentLayoutManager = Class.extend({
         } else {
             this.viewElement.find(".tournament-description").hide();
         }
-
-        Poker.Sharing.bindShareTournament(this.viewElement.find(".share-button")[0],name);
+        if(this.shareDone==false) {
+            Poker.Sharing.bindShareTournament(this.viewElement.find(".share-button")[0],info.tournamentName);
+            this.shareDone=true;
+        }
 
     },
     updateTournamentStatistics : function(statistics) {
