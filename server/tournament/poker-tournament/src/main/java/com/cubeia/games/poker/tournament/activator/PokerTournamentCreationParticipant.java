@@ -160,7 +160,7 @@ public abstract class PokerTournamentCreationParticipant implements CreationPart
 
     protected void tournamentCreated(MTTStateSupport state, PokerTournamentState pokerState, LobbyAttributeAccessor lobbyAttributeAccessor) {
         pokerState.setResurrectingTournament(isResurrection);
-        log.debug("Tournament created " + pokerState.getHistoricId() + " is resurrections? " + isResurrection);
+        log.debug("Tournament created " + pokerState.getHistoricId() + " is resurrection " + isResurrection);
         if (isResurrection) {
             pokerState.setResurrectingPlayers(resurrectingPlayers);
             pokerState.setTournamentSessionId(new TournamentSessionId(tournamentSessionId));

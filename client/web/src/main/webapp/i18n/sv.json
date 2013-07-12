@@ -36,7 +36,10 @@
             "stakes" : "Insatser:",
             "low" : "Låg",
             "mid" : "Med",
-            "high" : "Hög"
+            "high" : "Hög",
+            "currency" : "Valuta",
+            "xcc" : "XCC",
+            "xoc" : "XOC"
         },
         "list" : {
             "name" : "Namn",

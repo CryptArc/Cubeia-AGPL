@@ -135,20 +135,22 @@ Poker.LobbyFilter = Class.extend({
     id:null,
     filterFunction:null,
     lobbyLayoutManager:null,
+    /**
+     * A list of filters that should be treated as a group of radio buttons.
+     * That is, when one of the filters is enabled, all other filters should be
+     * disabled.
+     */
+    radioButtonGroup:null,
     init : function (id, enabled, filterFunction, lobbyLayoutManager) {
-        this.enabled = Poker.Utils.loadBoolean(id, true);
+        var userSetting = Poker.Utils.loadBoolean(id, enabled);
+        this.enabled = userSetting;
+        this.enabled = enabled;
         this.id = id;
         this.filterFunction = filterFunction;
         this.lobbyLayoutManager = lobbyLayoutManager;
         var self = this;
 
-        $("#" + id).touchSafeClick(function () {
-            self.enabled = !self.enabled;
-            $(this).toggleClass("active");
-            Poker.Utils.store(self.id, self.enabled);
-            self.filterUpdated();
-
-        });
+        $("#" + id).touchSafeClick(this.clickHandler(self));
         if (this.enabled == true) {
             $("#" + this.id).addClass("active");
         } else {
@@ -156,7 +158,7 @@ Poker.LobbyFilter = Class.extend({
         }
     },
     filterUpdated : function () {
-        this.lobbyLayoutManager.filterUpdated(Poker.AppCtx.getLobbyManager().cashGamesLobbyData.getFilteredItems());
+        this.lobbyLayoutManager.filterUpdated();
     },
     /**
      * Returns true if it should be included in the lobby and
@@ -164,8 +166,41 @@ Poker.LobbyFilter = Class.extend({
      * @param lobbyData
      * @return {boolean} if it should be included
      */
-    filter:function (lobbyData) {
+    filter: function (lobbyData) {
         return this.filterFunction(this.enabled, lobbyData);
+    },
+    setRadioButtonGroup: function (radioButtons) {
+        this.radioButtonGroup = radioButtons;
+    },
+    handleRadioButtonBehavior: function () {
+        if (!this.isRadioButtonFilter()) {
+            return;
+        }
+
+        // Assume that this filter was toggled on (toggling off an active filter should not be possible for a radio button).
+        for (var i = 0; i < this.radioButtonGroup.length; i++) {
+            var current = this.radioButtonGroup[i];
+            if (current != this) {
+                $("#" + current.id).removeClass("active");
+                current.enabled = false;
+            }
+        }
+    },
+    clickHandler : function (self) {
+        return function () {
+            if (self.isRadioButtonFilter() && self.enabled) {
+                // Radio button can only be disabled by pressing another button in the group.
+                return;
+            }
+            self.enabled = !self.enabled;
+            $(this).toggleClass("active");
+            Poker.Utils.store(self.id, self.enabled);
+            self.handleRadioButtonBehavior();
+            self.filterUpdated();
+        }
+    },
+    isRadioButtonFilter : function() {
+        return this.radioButtonGroup != null;
     }
 });
 

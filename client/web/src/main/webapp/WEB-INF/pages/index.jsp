@@ -377,7 +377,7 @@
                         <div class="show-filters">
                             <a data-i18n="lobby.filters.show-filters">Show filters</a>
                         </div>
-                        <div class="table-filter hidden cash-game">
+                        <div class="table-filters">
                             <div class="filter-group tables">
                                 <div class="filter-label" data-i18n="lobby.filters.show-tables">Show tables:</div>
                                 <div class="filter-button" id="fullTables" data-i18n="lobby.filters.full">Full</div>
@@ -394,6 +394,18 @@
                                 <div class="filter-button" id="lowStakes" data-i18n="lobby.filters.low">Low</div>
                                 <div class="filter-button" id="mediumStakes" data-i18n="lobby.filters.mid">Mid</div>
                                 <div class="filter-button" id="highStakes" data-i18n="lobby.filters.high">High</div>
+                            </div>
+                            <div class="filter-group currencies">
+                                <div class="filter-label" data-i18n="lobby.filters.currency">Currency:</div>
+                                <div class="filter-button" id="cash-xcc" data-i18n="lobby.filters.xcc">XCC</div>
+                                <div class="filter-button" id="cash-xoc" data-i18n="lobby.filters.xoc">XOC</div>
+                            </div>
+                        </div>
+                        <div class="tournament-filters" style="display: none;">
+                            <div class="filter-group currencies">
+                                <div class="filter-label" data-i18n="lobby.filters.currency">Currency:</div>
+                                <div class="filter-button" id="xcc" data-i18n="lobby.filters.xcc">XCC</div>
+                                <div class="filter-button" id="xoc" data-i18n="lobby.filters.xoc">XOC</div>
                             </div>
                         </div>
                     </div>

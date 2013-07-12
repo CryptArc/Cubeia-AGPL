@@ -26,17 +26,20 @@
         },
         "filters" : {
             "show-filters" : "Show filters",
-            "show-tables" : "Show Tables:",
+            "show-tables" : "Show Tables",
             "full" : "Full",
             "empty" : "Empty",
             "show-limits" : "Show limits",
             "no-limit" : "NL",
             "fixed-limit" : "FL",
             "pot-limit" : "PL",
-            "stakes" : "Stakes:",
+            "stakes" : "Stakes",
             "low" : "Low",
             "mid" : "Mid",
-            "high" : "High"
+            "high" : "High",
+            "currency" : "Currency",
+            "xcc" : "XCC",
+            "xoc" : "XOC"
         },
         "list" : {
             "name" : "Name",
