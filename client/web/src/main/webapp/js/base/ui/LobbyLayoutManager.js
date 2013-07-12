@@ -129,14 +129,14 @@ Poker.LobbyLayoutManager = Class.extend({
          this.cashGameFilters.push(lowStakes);
 
         // Currency filter for cash games (slightly different from tournament currency filter because the property is different)
-        var xccFilter = new Poker.PropertyStringFilter("cash-xcc", true, this, "currencyCode", "PLN");
+        var xccFilter = new Poker.PropertyStringFilter("cash-xcc", true, this, "currencyCode", "XCC");
         if (!xccFilter.enabled) {
             $('#xcc').addClass("active");
         }
         this.cashGameFilters.push(xccFilter);
 
         // Set XOC to disabled, the default needs to be configurable though.
-        var xocFilter = new Poker.PropertyStringFilter("cash-xoc", false, this, "currencyCode", "EUR");
+        var xocFilter = new Poker.PropertyStringFilter("cash-xoc", false, this, "currencyCode", "XOC");
         if (!xocFilter.enabled) {
             $('#xoc').removeClass("active");
         }
