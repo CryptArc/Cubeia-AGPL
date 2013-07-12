@@ -28,10 +28,8 @@ Poker.Navigation = Class.extend({
         if(viewName!=null) {
             var handler = this.views.get(viewName);
             if(handler!=null) {
-                if(args.length==1){
-                    handler.call(this,args[0]);
-                } else if(args.length>0) {
-                    handler.call(this,args);
+                if(args.length>0) {
+                    handler.apply(this,args);
                 } else  {
                     handler.call(this);
                 }
