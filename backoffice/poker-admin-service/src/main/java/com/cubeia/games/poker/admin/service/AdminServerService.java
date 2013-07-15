@@ -20,9 +20,13 @@ package com.cubeia.games.poker.admin.service;
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.firebase.api.service.Service;
 import com.cubeia.firebase.api.service.ServiceContext;
+import com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Server;
@@ -32,6 +36,12 @@ import org.eclipse.jetty.webapp.WebAppContext;
 import org.eclipse.jetty.plus.webapp.EnvConfiguration;
 import org.eclipse.jetty.webapp.*;
 import org.eclipse.jetty.jndi.InitialContextFactory;
+import org.eclipse.jetty.plus.jndi.Resource;
+
+//import org.eclipse.xml.XmlConfiguration;
+import org.eclipse.jetty.plus.webapp.EnvConfiguration;
+import org.eclipse.jetty.plus.webapp.PlusConfiguration;
+import javax.sql.DataSource;
 
 public class AdminServerService implements AdminServerContract, Service {
 
@@ -83,7 +93,7 @@ public class AdminServerService implements AdminServerContract, Service {
     public WebAppContext createWebAppContext(String war, String contextPath) {
         WebAppContext webapp = new WebAppContext();
         webapp.setContextPath(contextPath);
-        
+
         try {
             //http://wiki.eclipse.org/Jetty/Reference/Jetty_Classloading#Starting_Jetty_with_a_Custom_ClassLoader
             webapp.setClassLoader(new WebAppClassLoader(this.getClass().getClassLoader(), webapp));
@@ -106,34 +116,43 @@ public class AdminServerService implements AdminServerContract, Service {
 
     @Override
     public void start() {
-        log.debug("WarService START");
+        log.debug("PokerAdminService START (V15) on port: " + WAR_PORT);
         try {
             Server server = new Server(WAR_PORT);
 
             WebAppContext context = createWebAppContext(WAR_FILE, "/");
             server.setHandler(context);
+            context.setServer(server);
 
-            //TODO: setting jetty-env.xml to activate the jndi data-source
-            //Not sure if this works, as the admin currently does not start as
-            //as service
-            System.setProperty("java.naming.factory.url.pkgs", "org.eclipse.jetty.jndi");
-            System.setProperty("java.naming.factory.initial", "org.eclipse.jetty.jndi.InitialContextFactory");
-            
-            //added dummy, thus library is added
-            InitialContextFactory dummy = new InitialContextFactory();
-            log.debug("InitialContextFactory:" + dummy.toString() );
-
-            EnvConfiguration envConfiguration = new EnvConfiguration();
-            
-            URL url = new File("src/test/resources/firebase/conf/jetty-env.xml").toURI().toURL();
+            //Standard method, using jetty-env.xml
+            EnvConfiguration envConfiguration = new EnvConfiguration();// {        
+            URL url = new File("src/test/resources/firebase/conf/poker-admin-jetty-env.xml").toURI().toURL();
             envConfiguration.setJettyEnvXml(url);
-                    log.debug("url:" + url );
+            log.debug("jetty-env url:" + url );
 
-            context.setConfigurations(new Configuration[]{ new WebInfConfiguration(), envConfiguration, new WebXmlConfiguration() });    
-            //End jetty-env
+            //apply configuration
+            //this fails with javax.naming.NameAlreadyBoundException exception
+            //the same code works, if started standalon (not in a SAR)
+            context.setConfigurations(new Configuration[]{ envConfiguration});
             
+              //although "alreay bound", looking up the datasource entry manually, fails too
+//            InitialContext ic = new InitialContext()
+//            DataSource myds = (DataSource)ic.lookup("java:comp/env/jdbc/pokerDS");   
+            
+            
+            
+              //Attemp to create a new entry manually, fails at new Resource
+//            MysqlConnectionPoolDataSource ds = new MysqlConnectionPoolDataSource();
+//            ds.setDatabaseName("poker");
+//            ds.setUser("poker");
+//            ds.setPassword("poker");
+//            Resource resource = new Resource("java:comp/env/pokerDS", ds);
+//            server.setAttribute("pokerDS", resource);
+                      
+//            End jetty-env
+        
             server.start();
-            
+
         } catch (Exception ex) {
             log.debug(ex, ex);
         }
@@ -144,15 +163,3 @@ public class AdminServerService implements AdminServerContract, Service {
     public void stop() {
     }
 }
-
-/*
- * To be Verified:
- * 
- * Applications should have an entry point where they can be launched with an
- * embedded server (alternatively an executable jar with embedded jetty)
- * 
- * Firebase should be startable with a port-parameter. Client and Admin ports
- * are then altered, relative to the firebase port (this way, multiple instances 
- * of the game can be started)
- * 
- */
