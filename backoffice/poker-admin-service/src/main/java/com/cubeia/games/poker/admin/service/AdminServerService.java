@@ -126,7 +126,7 @@ public class AdminServerService implements AdminServerContract, Service {
 
             //Standard method, using jetty-env.xml
             EnvConfiguration envConfiguration = new EnvConfiguration();// {        
-            URL url = new File("src/test/resources/firebase/conf/poker-admin-jetty-env.xml").toURI().toURL();
+            URL url = new File("src/test/resources/firebase/conf/jetty-env.xml").toURI().toURL();
             envConfiguration.setJettyEnvXml(url);
             log.debug("jetty-env url:" + url );
 
