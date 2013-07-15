@@ -235,13 +235,7 @@
 		          <version>1.0-SNAPSHOT</version>
 		          <type>firebase-sar</type>
 		        </dependency>
-                
-		        <!--dependency>
-		          <groupId>com.cubeia.games.poker</groupId>
-		          <artifactId>poker-admin-service</artifactId>
-		          <version>1.0-SNAPSHOT</version>
-		          <type>firebase-sar</type>
-		        </dependency-->                
+          
             </dependencies>
             
             <build>
@@ -273,12 +267,37 @@
                                 </configuration>
                             </execution>
                         </executions>
-                    </plugin>
+                    </plugin>                  
                     
+                </plugins>
+            </build>
+        </profile>
+        
+        <profile>
+            <id>admin</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>admin</name>
+                </property>
+            </activation>
+            <dependencies>
+             
+                <dependency>
+                    <groupId>com.cubeia.games.poker</groupId>
+                    <artifactId>poker-admin-service</artifactId>
+                    <version>1.0-SNAPSHOT</version>
+                    <type>firebase-sar</type>
+                </dependency>                
+            </dependencies>
+            
+            <build>
+                
+                <plugins>  
                     <plugin>
                         <!-- Quick solution to get the property-file to the
-                             firebase directory. Hard-coded paths non-critical,
-                             as they affect the dev-environment quick-start -->
+                        firebase directory. Hard-coded paths non-critical,
+                        as they affect the dev-environment quick-start -->
 
                         <artifactId>maven-resources-plugin</artifactId>
                         <executions>
