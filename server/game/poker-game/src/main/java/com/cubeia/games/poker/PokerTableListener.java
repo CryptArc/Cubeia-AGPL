@@ -197,8 +197,12 @@ public class PokerTableListener implements TournamentTableListener {
 
         sendGameStateToSittingInPlayerIfNeeded(table, player);
         PokerPlayer pokerPlayer = new PokerPlayerImpl(player);
-        int operatorId = clientRegistry.getOperatorId(player.getPlayerId());
-        pokerPlayer.setOperatorId(operatorId);
+        Integer operatorId = clientRegistry.getOperatorId(player.getPlayerId());
+        if(operatorId!=null) {
+            pokerPlayer.setOperatorId(operatorId);
+        } else {
+            log.info("Operator id was null when adding player to table player {}", player.getPlayerId());
+        }
         state.addPlayer(pokerPlayer);
 
         if (!tournamentPlayer) {

@@ -33,13 +33,16 @@
     <script type="text/javascript" src="${cp}/js/base/jquery-plugins/relative-offset.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/moment.js"></script>
 
+    <script type="text/javascript" src="${cp}/js/lib/purl.js"></script>
+
     <script type="text/javascript" src="${cp}/js/lib/handlebars.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/json2.js"></script>
 
     <script type="text/javascript" src="${cp}/js/base/ui/CircularProgressBar.js"></script>
 
-    <script src="${cp}/js/lib/cubeia/firebase-js-api-1.9.2-CE-javascript.js" type="text/javascript"></script>
-    <script src="${cp}/js/lib/cubeia/firebase-protocol-1.9.2-CE-javascript.js" type="text/javascript"></script>
+
+    <script src="${cp}/js/lib/cubeia/firebase-js-api-1.9.17-javascript.js" type="text/javascript"></script>
+    <script src="${cp}/js/lib/cubeia/firebase-protocol-1.9.17-javascript.js" type="text/javascript"></script>
     <script src="${cp}/js/lib/poker-protocol-1.0-SNAPSHOT.js" type="text/javascript"></script>
     <script src="${cp}/js/lib/routing-service-protocol-1.0-SNAPSHOT.js" type="text/javascript"></script>
     <script src="${cp}/js/lib/quo.js" type="text/javascript"></script>
@@ -50,7 +53,7 @@
     <script type="text/javascript" src="${cp}/js/lib/PxLoader-0.1.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/PxLoaderImage-0.1.js"></script>
 
-    <script type="text/javascript" src="${cp}/js/lib/purl.js"></script>
+
 
     <script src="${cp}/js/base/Utils.js" type="text/javascript"></script>
     <script src="${cp}/js/base/ProtocolUtils.js" type="text/javascript"></script>
@@ -395,12 +398,14 @@
                                 <div class="filter-button" id="mediumStakes" data-i18n="lobby.filters.mid">Mid</div>
                                 <div class="filter-button" id="highStakes" data-i18n="lobby.filters.high">High</div>
                             </div>
+                            <!--
                             <div class="filter-group currencies">
                                 <div class="filter-label" data-i18n="lobby.filters.currency">Currency:</div>
                                 <div class="filter-button" id="cash-xcc" data-i18n="lobby.filters.xcc">XCC</div>
                                 <div class="filter-button" id="cash-xoc" data-i18n="lobby.filters.xoc">XOC</div>
-                            </div>
+                            </div>-->
                         </div>
+                        <!--
                         <div class="tournament-filters" style="display: none;">
                             <div class="filter-group currencies">
                                 <div class="filter-label" data-i18n="lobby.filters.currency">Currency:</div>
@@ -408,6 +413,7 @@
                                 <div class="filter-button" id="xoc" data-i18n="lobby.filters.xoc">XOC</div>
                             </div>
                         </div>
+                        -->
                     </div>
                         <div class="lobby-tab"  id="tableListAnchor">
                         <div id="tableListContainer">
