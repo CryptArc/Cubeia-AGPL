@@ -20,28 +20,28 @@ package com.cubeia.games.poker.admin.service;
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.firebase.api.service.Service;
 import com.cubeia.firebase.api.service.ServiceContext;
-import com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource;
+//import com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+//import javax.naming.Context;
+//import javax.naming.InitialContext;
+//import javax.naming.NamingException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppClassLoader;
 import org.eclipse.jetty.webapp.WebAppContext;
 
-import org.eclipse.jetty.plus.webapp.EnvConfiguration;
+//import org.eclipse.jetty.plus.webapp.EnvConfiguration;
 import org.eclipse.jetty.webapp.*;
-import org.eclipse.jetty.jndi.InitialContextFactory;
-import org.eclipse.jetty.plus.jndi.Resource;
+//import org.eclipse.jetty.jndi.InitialContextFactory;
+//import org.eclipse.jetty.plus.jndi.Resource;
 
 //import org.eclipse.xml.XmlConfiguration;
 import org.eclipse.jetty.plus.webapp.EnvConfiguration;
-import org.eclipse.jetty.plus.webapp.PlusConfiguration;
-import javax.sql.DataSource;
+//import org.eclipse.jetty.plus.webapp.PlusConfiguration;
+//import javax.sql.DataSource;
 
 public class AdminServerService implements AdminServerContract, Service {
 
