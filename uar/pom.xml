@@ -274,6 +274,38 @@
                             </execution>
                         </executions>
                     </plugin>
+                    
+                    <plugin>
+                        <!-- Quick solution to get the property-file to the
+                             firebase directory. Hard-coded paths non-critical,
+                             as they affect the dev-environment quick-start -->
+
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-admin-service-config-files</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/firebase-run/firebase-${firebase.version}/conf</outputDirectory>
+                                    <overwrite>true</overwrite>
+                                    <resources>
+                                        <resource>
+                                            <directory>../backoffice/poker-admin/src/test/resources/</directory>
+                                            <includes>
+                                                <include>*.properties</include>
+                                                <include>jetty-env.xml</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    
+                    
                 </plugins>
             </build>
         </profile>
