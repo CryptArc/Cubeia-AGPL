@@ -12,13 +12,12 @@ PREREQUISITES
 IMPORTANT
 =========
 
-Please follow this sequence strictly, otherwise you will run into a cascade of
+Please follow this sequence *strictly*, otherwise you will run into a cascade of
 problems. If you ask for support on the forum, please mention which steps
 succeeded so far, and with which step you got the problem.
 
-You will need half an hour for the first steps, but  some hours (or days) to
-complete until the integration of Cubeia Network. Do yourself a favor and take
-the 10 min. to read through all the README's first. You won't regret.
+You will need half an hour for the first steps, but some hours (or days) to
+complete until the integration of Cubeia Network.
 
 Finally: don't forget that Cubeia Poker is under development. This alone makes
 things sometimes very difficult, especially when updating to newer versions.
@@ -35,19 +34,38 @@ export MAVEN_OPTS="-Xmx512m -XX:MaxPermSize=512m";
 * Avoid using an IDE if you are not familiar with one, as this can introduce
 additional barriers. Use the command-line and simple editors. Later, when you
 feel safer with the sources, you can go on to use an IDE (eclipse, netbeans,
-IntelliJ, etc.). 
+IntelliJ, etc.).
+
+== QUICK-START ==
+
+mvn clean package install
+cd  uar
+mvn firebase:run
+
+You should be able to access the game at:
+
+http://localhost:18181
+
+There is no user registration at this point. Use any name, and the password
+should be an integer > 1000 (e.g.: test/1001).
+
+In order to get some opponents, go to the bots at:
+
+http://localhost:18081
+
+The default values will create 100 bots, just press OK button. You should see
+now within the lobby that tables are getting players. Join one or more tables
+and check the game.
+
+After this, you can start tournament bots, and join a tournament.
  
 
-STEPS
+ADMIN
 =====
 
-* SERVER
-Follow ./server/README in order to run the poker-server and play poker, ideally
-within around 10 minutes.
+Follow ./backoffice/poker-admin/README.TXT to setup a web-application
+that manages the poker-game (timings, tables, tournaments).
 
-* ADMIN
-Follow ./backoffice/poker-admin/README to setup a web-application that manages
-the poker-game (timings, tables, tournaments).
 
 ADVANCED STEPS
 ==============
@@ -103,22 +121,6 @@ which is out of the scope of this document.
 
 Note that at this point, there is not user registration available. This is be-
 cause Cubeia has decided to not provide any public-facing websites / code.
-
-
-COMMERCIAL SUPPORT
-==================
-
-Support for Production Setup and Integration is provided by Cubeia, usually in
-context of commercial customer services.
-
-
-REFERENCE SYSTEM
-================
-
-You can find a running instance at:
-
-http://cubeiasocial.com
-http://cubeiapoker.com
 
 
 FULL REBUILD

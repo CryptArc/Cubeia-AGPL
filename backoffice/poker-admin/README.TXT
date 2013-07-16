@@ -22,46 +22,20 @@ Optionally: for hand histories and tournament histories, create a mongodb
 the default configuration is: db: poker, user: poker, pass: poker
 to change: src/test/resources/admin.properties
 
+Stop & start the poker admin again so it picks up the database.
 
-CUBEIA NETWORK
-==============
 
-The Poker Admin depends on Cubeia Network. 
+CONFIG
+======
 
-Install Cubeia Network, as described in the ../README (./backoffice/README.TXT)
+within file:
 
-This will start the Backoffice and the services at port 8080.
+./uar/src/test/resources/firebase/conf/cluster.props
 
-CONFIG FILES
-============
+change "use-mock-integrations=true" to "use-mock-integrations=false"
 
-As Cubeia Nework is started outside the development environment, configuration
-starts.
-
-within ./backoffice/poker-admin/src/test/resources/admin.properties, change the
-ports of user/wallet/operator services to 8080.
-
-Build the Poker Admin again with "mvn clean install"
-
-INTEGRATIONS
-============
-
-Τhe default build of the poker-server results in a system with mock-services
-(or mock-integrations). This means that the poker-admin does not influence the
-actual tables/tournaments, nor there is any real user and management.
-
-In order to build & start a poker system which integrates fully:
-
-a) build the poker-server with "-P use-integrations" option.
-
-b) uar\src\test\resources\firebase\conf\cluster.props
-   - set use-mock-integrations=false"
-   - change the ports of user/wallet/operator services to 8080
-     (http://localhost:8080)
-
-c) Start: Cubeia Network then the Poker Server (firebase) then the Poker Client
-
-You now login with the user credentials created within Cubeia Network.
+This will disable the use of the predefined test (mock) tables and tournaments,
+thus you can use your own. Close and start the poker game with firebase:run.
 
 ADMIN DATA
 ==========
@@ -78,3 +52,44 @@ Then Create Payout and Blinds Structures (again choose "Standard" as name).
 After this you can create a simple Sit&Go, which should show up in the lobby.
 
 Last, setup a Scheduled Tournament template.
+
+
+CUBEIA NETWORK
+==============
+
+The full functionality of Poker Admin depends on Cubeia Network. 
+
+Install Cubeia Network, as described in the ../README (./backoffice/README.TXT)
+
+This will start the Backoffice and the services at port 8080.
+
+CONFIG FILES
+============
+
+As Cubeia Nework is started outside the development environment, configuration
+starts.
+
+within ./backoffice/poker-admin/src/test/resources/admin.properties, change the
+ports of user/wallet/operator services to 8080.
+
+
+INTEGRATIONS
+============
+
+Τhe default build of the poker-server results in a system with mock-services
+(or mock-integrations). This means that the poker-admin does not influence the
+actual tables/tournaments, nor there is any real user and management.
+
+In order to build & start a poker system which integrates fully:
+
+a) build the poker code with "-P use-integrations" option.
+
+b) ./uar/src/test/resources/firebase/conf/cluster.props
+   - set use-mock-integrations=false"
+   - change the ports of user/wallet/operator services to 8080
+     (http://localhost:8080)
+
+c) Start: Cubeia Network then the Poker Server (firebase) then the Poker Client
+
+You now login with the user credentials created within Cubeia Network.
+

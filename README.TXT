@@ -4,47 +4,44 @@ IMPORTANT
 Cubeia Poker is based on Cubeia Firebase and Cubeia Network. Both products are
 open source and in production.
 
-REQUIREMENTS
-=============
-Java: JDK 1.7
-Maven: 3.0.4+
 
+INTRO
+=====
 
-QUICK-START
-===========
-
-mvn clean package install
-cd  uar
-mvn firebase:run
-
-You should be able to access the game at:
-
-http://localhost:18181
-
-There is no user registration at this point. Use any name, and the password should be an integer. (Use > 1000 if you don't want to clash with bots).
-
-In order to get some opponents, go to the bots at:
-
-http://localhost:18081
-
-The default values will create 100 bots, just press the OK button.
-
-You should see now within the lobby that tables are getting players. 
-
-Join one or more tables and check the game.
+Cubeia Poker is an Open Source poker system which can scale up from a simple
+single server setup up to a services oriented distributed cluster system. It is
+mainly implemented in java.
 
 
 BUILD & START
 =============
 
-See INSTALL.TXT
+See INSTALL.TXT, which contains a quick-start and some more advanced options.
 
 
-SOFTWARE SUBSYSTEMS
-===================
+DEVELOPMENT
+===========
 
-For more information about the software subsystems, please review the 
+Some information subjecting development is contained within the modules.
+
+For an overview about the software subsystems, please review the 
 ./doc/SUBSYSTEMS.TXT file.
+
+
+COMMERCIAL SUPPORT
+==================
+
+Support for Production Setup and Integration is provided by Cubeia, usually in
+context of commercial customer services.
+
+
+REFERENCE SYSTEM
+================
+
+You can find a running instance at:
+
+http://cubeiasocial.com
+http://cubeiapoker.com
 
 
 LINKS
