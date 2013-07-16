@@ -241,13 +241,7 @@
 		          <version>1.0-SNAPSHOT</version>
 		          <type>firebase-sar</type>
 		        </dependency>
-                
-		        <!--dependency>
-		          <groupId>com.cubeia.games.poker</groupId>
-		          <artifactId>poker-admin-service</artifactId>
-		          <version>1.0-SNAPSHOT</version>
-		          <type>firebase-sar</type>
-		        </dependency-->                
+          
             </dependencies>
             
             <build>
@@ -279,7 +273,64 @@
                                 </configuration>
                             </execution>
                         </executions>
+                    </plugin>                  
+                    
+                </plugins>
+            </build>
+        </profile>
+        
+        <profile>
+            <id>admin</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>admin</name>
+                </property>
+            </activation>
+            <dependencies>
+             
+                <dependency>
+                    <groupId>com.cubeia.games.poker</groupId>
+                    <artifactId>poker-admin-service</artifactId>
+                    <version>1.0-SNAPSHOT</version>
+                    <type>firebase-sar</type>
+                </dependency>                
+            </dependencies>
+            
+            <build>
+                
+                <plugins>  
+                    <plugin>
+                        <!-- Quick solution to get the property-file to the
+                        firebase directory. Hard-coded paths non-critical,
+                        as they affect the dev-environment quick-start -->
+
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-admin-service-config-files</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/firebase-run/firebase-${firebase.version}/conf</outputDirectory>
+                                    <overwrite>true</overwrite>
+                                    <resources>
+                                        <resource>
+                                            <directory>../backoffice/poker-admin/src/test/resources/</directory>
+                                            <includes>
+                                                <include>*.properties</include>
+                                                <include>jetty-env.xml</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
+                    
+                    
                 </plugins>
             </build>
         </profile>
