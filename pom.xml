@@ -496,27 +496,27 @@
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-server</artifactId>
-                <version>8.1.4.v20120524</version>
+                <version>${jetty-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-webapp</artifactId>
-                <version>8.1.4.v20120524</version>
+                <version>${jetty-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-jsp</artifactId>
-                <version>8.1.4.v20120524</version>
+                <version>${jetty-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-plus</artifactId>
-                <version>8.1.4.v20120524</version>
+                <version>${jetty-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-jndi</artifactId>
-                <version>8.1.4.v20120524</version>
+                <version>${jetty-version}</version>
             </dependency> 
                     
         </dependencies>           
