@@ -17,7 +17,8 @@ Poker.ConnectionPacketHandler = Class.extend({
         if (status == FB_PROTOCOL.ResponseStatusEnum.OK) {
             var token = null;
             if(typeof(credentials)!="undefined") {
-                token = FIREBASE.ByteArray.fromBase64String(credentials);
+                var data = FIREBASE.ByteArray.fromBase64String(credentials);
+                token = utf8.fromByteArray(data);
             }
             this.connectionManager.onUserLoggedIn(playerId,name,token);
         } else {
