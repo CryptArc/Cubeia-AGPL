@@ -11,18 +11,29 @@ Access at localhost:8088/poker-admin/
 At this point you can see the functionality, but most of it is not usable. To
 make the Poker Admin fully functional, go on with...
 
-DATABASES
-=========
+MYSQL DB
+========
 
 Mandatory: create a mysql database.
 the default configuration is: db: poker, user: poker, pass: poker
 to change: src/test/resources/jetty-env.xml
 
+A simple way is to use the "initdb.sql" script file, use your mysql command-line
+to execute it, giving the full path, e.g. 
+
+mysql> source ./backoffice/poker-admin/initdb.sql
+
+Restart the poker admin so it picks up the database.
+
+
+MONGO DB
+========
+
 Optionally: for hand histories and tournament histories, create a mongodb
 the default configuration is: db: poker, user: poker, pass: poker
 to change: src/test/resources/admin.properties
 
-Stop & start the poker admin again so it picks up the database.
+Restart the poker admin so it picks up the database.
 
 
 CONFIG
@@ -32,7 +43,8 @@ within file:
 
 ./uar/src/test/resources/firebase/conf/cluster.props
 
-change "use-mock-integrations=true" to "use-mock-integrations=false"
+change "use-mock-integrations=true"
+to     "use-mock-integrations=false"
 
 This will disable the use of the predefined test (mock) tables and tournaments,
 thus you can use your own. Close and start the poker game with firebase:run.
@@ -77,8 +89,8 @@ INTEGRATIONS
 ============
 
 Τhe default build of the poker-server results in a system with mock-services
-(or mock-integrations). This means that the poker-admin does not influence the
-actual tables/tournaments, nor there is any real user and management.
+(or mock-integrations). This means that there is not real user and account
+management.
 
 In order to build & start a poker system which integrates fully:
 
