@@ -358,9 +358,6 @@ Poker.TableLayoutManager = Class.extend({
 
         card.exposeCard(cardString, imageLoadedCallback);
 
-
-
-
     },
     onMoveDealerButton : function(seatId) {
         var newDealer = this.currentDealer!=seatId;
@@ -376,6 +373,10 @@ Poker.TableLayoutManager = Class.extend({
             newDealer = false;
         }
         var seat = this.seats.get(this.currentDealer);
+        if(seat==null) {
+            console.log("Seat for current dealer player id" + this.currentDealer + " not found");
+            return null;
+        }
         var off = seat.getDealerButtonOffsetElement().relativeOffset(this.tableView);
 
         var pos = {
