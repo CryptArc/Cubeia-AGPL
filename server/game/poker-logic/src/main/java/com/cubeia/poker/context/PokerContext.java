@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -284,7 +285,7 @@ public class PokerContext implements Serializable {
         BigDecimal totalPot = potHolder.getTotalPotSize();
 
         for (PokerPlayer player : getCurrentHandPlayerMap().values()) {
-            totalPot = totalPot.add(player.getBetStack());
+            totalPot = totalPot.add(player.getBetStack()).setScale(settings.getCurrency().getFractionalDigits(), RoundingMode.DOWN);
         }
 
         return totalPot;
