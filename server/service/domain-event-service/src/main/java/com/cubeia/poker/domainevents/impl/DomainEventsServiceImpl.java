@@ -105,10 +105,17 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 			tournamentName.replace(" ", "_");
 			
 			int playerId = player.getPlayerId();
-				Integer operatorId = clientRegistry.getOperatorId(playerId);
+			Integer operatorId = clientRegistry.getOperatorId(playerId);
+			
+			log.debug("Tournament payout event. Operator id: "+operatorId);
+			
+			if (operatorId == null) {
+				log.error("Failed to send domain event for tournament payout. Client registry returned null as the OperatorId. Player["+player.getPlayerId()+":"+player.getScreenname()+"] MTT["+instance.getId()+":"+instance.getState().getName()+"]");
+				return; 
+			}
 			
 			// We don't want to push events for operator id 0 which is reserved for bots and internal users.
-			// TODO: Perhaps make excluded operators configurable
+			// You can disable this by setting an system property events.bots to anything, e.g. -Devents.bots = true.
 			if (operatorId == 0 && System.getProperty("events.bots") == null) {
 				return; 
 			}
