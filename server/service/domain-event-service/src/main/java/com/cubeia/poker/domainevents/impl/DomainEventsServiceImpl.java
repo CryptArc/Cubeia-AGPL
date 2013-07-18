@@ -122,6 +122,7 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 			
 			Money accountBalance = new Money(new BigDecimal(-1), new Currency(currencyCode, 2));
 			try {
+				log.info("sendTournamentPayoutEvent - Cash game backend: "+cashGameBackend);
 				accountBalance = cashGameBackend.getAccountBalance(playerId, currencyCode);
 			} catch (GetBalanceFailedException e) {
 				log.error("Failed to get balance for player["+playerId+"] and currency["+currencyCode+"]", e);
