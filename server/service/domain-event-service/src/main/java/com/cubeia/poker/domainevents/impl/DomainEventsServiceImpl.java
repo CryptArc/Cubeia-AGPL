@@ -152,26 +152,30 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 	}
 	
 	public void sendEndPlayerSessionEvent(int playerId, String screenname, int operatorId, Money accountBalance) {
-		log.debug("Event Player Session ended. Player["+playerId+"], Balance["+accountBalance+"]");
-		
-		// We don't want to push events for operator id 0 which is reserved for bots and internal users.
-		// TODO: Perhaps make excluded operators configurable
-		if (operatorId == 0 && System.getProperty("events.bots") == null) {
-			return; 
+		try {
+			log.debug("Event Player Session ended. Player["+playerId+"], Balance["+accountBalance+"]");
+			
+			// We don't want to push events for operator id 0 which is reserved for bots and internal users.
+			// TODO: Perhaps make excluded operators configurable
+			if (operatorId == 0 && System.getProperty("events.bots") == null) {
+				return; 
+			}
+			
+			GameEvent event = new GameEvent();
+			event.game = PokerAttributes.poker.name();
+			event.player = playerId+"";
+			event.type = GameEventType.leaveTable.name();
+			event.operator = operatorId+"";
+			
+			event.attributes.put(PokerAttributes.accountBalance.name(), accountBalance.getAmount()+"");
+			event.attributes.put(PokerAttributes.accountCurrency.name(), accountBalance.getCurrencyCode());
+			event.attributes.put(PokerAttributes.screenname.name(), screenname);
+			
+			log.debug("Send Player Session ended event: "+event);
+			sendEvent(event);
+		} catch (Exception e) {
+			log.warn("Failed to send domain event for end player session event. Player["+playerId+":"+screenname+"] operatorId["+operatorId+"] accountBalance["+accountBalance+"]");
 		}
-		
-		GameEvent event = new GameEvent();
-		event.game = PokerAttributes.poker.name();
-		event.player = playerId+"";
-		event.type = GameEventType.leaveTable.name();
-		event.operator = operatorId+"";
-		
-		event.attributes.put(PokerAttributes.accountBalance.name(), accountBalance.getAmount()+"");
-		event.attributes.put(PokerAttributes.accountCurrency.name(), accountBalance.getCurrencyCode());
-		event.attributes.put(PokerAttributes.screenname.name(), screenname);
-		
-		log.debug("Send Player Session ended event: "+event);
-		sendEvent(event);
 	}
 	
 }
