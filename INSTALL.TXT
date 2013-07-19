@@ -38,7 +38,7 @@ IntelliJ, etc.).
 
 == QUICK-START ==
 
-mvn clean package install
+mvn package -Pclient,bots,no-integrations
 cd  uar
 mvn firebase:run
 
