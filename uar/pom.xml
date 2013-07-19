@@ -227,23 +227,45 @@
                     <version>${cubeia.network.version}</version>
                     <type>firebase-sar</type>
                 </dependency>
-                
+                		                 
+            </dependencies>           
+        </profile>
+
+        <profile>
+            <id>bots</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>bots</name>
+                </property>
+            </activation>
+            <dependencies>             
                 <dependency>
 		          <groupId>com.cubeia.games.poker</groupId>
 		          <artifactId>bot-service</artifactId>
 		          <version>1.0-SNAPSHOT</version>
 		          <type>firebase-sar</type>
-		        </dependency>
-		        
+		        </dependency>         
+            </dependencies>
+        </profile>
+                                
+        <profile>
+            <id>client</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>client</name>
+                </property>
+            </activation>
+            <dependencies>             
 		        <dependency>
 		          <groupId>com.cubeia.games.poker</groupId>
 		          <artifactId>war-service</artifactId>
 		          <version>1.0-SNAPSHOT</version>
 		          <type>firebase-sar</type>
-		        </dependency>
-          
+		        </dependency>              
             </dependencies>
-            
+
             <build>
                 <plugins>
                     <plugin>
@@ -273,11 +295,10 @@
                                 </configuration>
                             </execution>
                         </executions>
-                    </plugin>                  
-                    
+                    </plugin>                                      
                 </plugins>
-            </build>
-        </profile>
+            </build>                        
+         </profile>        
         
         <profile>
             <id>admin</id>
