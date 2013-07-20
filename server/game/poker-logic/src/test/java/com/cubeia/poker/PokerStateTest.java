@@ -88,6 +88,7 @@ public class PokerStateTest {
         anteLevel = new BigDecimal(100);
         when(settings.getRakeSettings()).thenReturn(TestUtils.createOnePercentRakeSettings());
         when(settings.getAnteAmount()).thenReturn(anteLevel);
+        when(settings.getCurrency()).thenReturn(new Currency("EUR",2));
         when(settings.getTiming()).thenReturn(TimingFactory.getRegistry().getDefaultTimingProfile());
         when(gameType.canPlayerAffordEntryBet(Mockito.any(PokerPlayer.class), Mockito.any(PokerSettings.class), Mockito.eq(false))).thenReturn(true);
 
@@ -219,8 +220,12 @@ public class PokerStateTest {
 
         state.pokerContext.currentHandPlayerMap = playerMap;
 
-        assertThat(state.pokerContext.getTotalPotSize(), is(bd(520)));
+        assertThat(state.pokerContext.getTotalPotSize(), is(bd(520,2)));
 
+    }
+
+    private BigDecimal bd(int val, int scale) {
+        return new BigDecimal(val).setScale(2);
     }
 
     private BigDecimal bd(int i) {

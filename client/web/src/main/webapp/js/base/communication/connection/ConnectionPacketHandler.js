@@ -13,8 +13,14 @@ Poker.ConnectionPacketHandler = Class.extend({
         this.connectionManager = Poker.AppCtx.getConnectionManager();
     },
     handleLogin : function(status,playerId,name, credentials) {
+
         if (status == FB_PROTOCOL.ResponseStatusEnum.OK) {
-            this.connectionManager.onUserLoggedIn(playerId,name,credentials);
+            var token = null;
+            if(credentials!=null) {
+                var data = FIREBASE.ByteArray.fromBase64String(credentials);
+                token = utf8.fromByteArray(data);
+            }
+            this.connectionManager.onUserLoggedIn(playerId,name,token);
         } else {
             this.connectionManager.showConnectStatus(
                     i18n.t("login.login-failed", {sprintf : [status]})

@@ -18,6 +18,7 @@
 package com.cubeia.games.poker.common.money;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Locale;
 
 public class MoneyFormatter {
@@ -51,16 +52,17 @@ public class MoneyFormatter {
         return format("", moneyInCents);
     }
 
+    public static String format(BigDecimal valueInCurrency,Currency currency) {
+        if (valueInCurrency == null) return "";
+        return valueInCurrency.setScale(currency.getFractionalDigits(), RoundingMode.DOWN).toPlainString();
+    }
     public static String format(BigDecimal valueInCurrency) {
         if (valueInCurrency == null) return "";
         return valueInCurrency.toPlainString();
     }
 
-    public static String format(double amountInCents) {
-        return format(BigDecimal.valueOf(amountInCents).movePointLeft(2));
-    }
 
     public static String format(Money money) {
-        return format(money.getAmount());
+        return format(money.getAmount(),money.getCurrency());
     }
 }

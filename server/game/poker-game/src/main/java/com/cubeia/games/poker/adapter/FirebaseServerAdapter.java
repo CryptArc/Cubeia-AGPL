@@ -498,14 +498,15 @@ public class FirebaseServerAdapter implements ServerAdapter {
 
             BigDecimal playerBalance = player == null ? BigDecimal.ZERO : (player.getBalance().add(player.getPendingBalanceSum()));
             BigDecimal balanceInWallet = BigDecimal.ZERO;
-            resp.balanceOnTable = format(playerBalance);
+            com.cubeia.games.poker.common.money.Currency currency = state.getSettings().getCurrency();
+            resp.balanceOnTable = format(playerBalance, currency);
             resp.mandatoryBuyin = mandatoryBuyin;
 
             try {
-                String currency = state.getSettings().getCurrency().getCode();
-                balanceInWallet = backend.getAccountBalance(playerId, currency).getAmount();
-                resp.currencyCode = currency;
-                resp.balanceInWallet = format(balanceInWallet);
+                String currencyCode = currency.getCode();
+                balanceInWallet = backend.getAccountBalance(playerId, currencyCode).getAmount();
+                resp.currencyCode = currencyCode;
+                resp.balanceInWallet = format(balanceInWallet, currency);
             } catch (GetBalanceFailedException e) {
                 log.error("error getting balance", e);
                 resp.resultCode = BuyInInfoResultCode.UNSPECIFIED_ERROR;
@@ -518,8 +519,8 @@ public class FirebaseServerAdapter implements ServerAdapter {
             if (resp.resultCode != BuyInInfoResultCode.UNSPECIFIED_ERROR) {
                 MinAndMaxBuyInResult buyInRange = buyInCalculator.calculateBuyInLimits(state.getMinBuyIn(), state.getMaxBuyIn(),
                         state.getAnteLevel(), playerBalance);
-                resp.minAmount = format(buyInRange.getMinBuyIn());
-                resp.maxAmount = format(balanceInWallet.min(buyInRange.getMaxBuyIn()));
+                resp.minAmount = format(buyInRange.getMinBuyIn(),currency);
+                resp.maxAmount = format(balanceInWallet.min(buyInRange.getMaxBuyIn()),currency);
                 resp.resultCode = buyInRange.isBuyInPossible() ? BuyInInfoResultCode.OK : BuyInInfoResultCode.MAX_LIMIT_REACHED;
             }
 

@@ -105,16 +105,24 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 			tournamentName.replace(" ", "_");
 			
 			int playerId = player.getPlayerId();
-				Integer operatorId = clientRegistry.getOperatorId(playerId);
+			Integer operatorId = clientRegistry.getOperatorId(playerId);
+			
+			log.debug("Tournament payout event. Operator id: "+operatorId);
+			
+			if (operatorId == null) {
+				log.error("Failed to send domain event for tournament payout. Client registry returned null as the OperatorId. Player["+player.getPlayerId()+":"+player.getScreenname()+"] MTT["+instance.getId()+":"+instance.getState().getName()+"]");
+				return; 
+			}
 			
 			// We don't want to push events for operator id 0 which is reserved for bots and internal users.
-			// TODO: Perhaps make excluded operators configurable
+			// You can disable this by setting an system property events.bots to anything, e.g. -Devents.bots = true.
 			if (operatorId == 0 && System.getProperty("events.bots") == null) {
 				return; 
 			}
 			
 			Money accountBalance = new Money(new BigDecimal(-1), new Currency(currencyCode, 2));
 			try {
+				log.info("sendTournamentPayoutEvent - Cash game backend: "+cashGameBackend);
 				accountBalance = cashGameBackend.getAccountBalance(playerId, currencyCode);
 			} catch (GetBalanceFailedException e) {
 				log.error("Failed to get balance for player["+playerId+"] and currency["+currencyCode+"]", e);
@@ -144,26 +152,30 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 	}
 	
 	public void sendEndPlayerSessionEvent(int playerId, String screenname, int operatorId, Money accountBalance) {
-		log.debug("Event Player Session ended. Player["+playerId+"], Balance["+accountBalance+"]");
-		
-		// We don't want to push events for operator id 0 which is reserved for bots and internal users.
-		// TODO: Perhaps make excluded operators configurable
-		if (operatorId == 0 && System.getProperty("events.bots") == null) {
-			return; 
+		try {
+			log.debug("Event Player Session ended. Player["+playerId+"], Balance["+accountBalance+"]");
+			
+			// We don't want to push events for operator id 0 which is reserved for bots and internal users.
+			// TODO: Perhaps make excluded operators configurable
+			if (operatorId == 0 && System.getProperty("events.bots") == null) {
+				return; 
+			}
+			
+			GameEvent event = new GameEvent();
+			event.game = PokerAttributes.poker.name();
+			event.player = playerId+"";
+			event.type = GameEventType.leaveTable.name();
+			event.operator = operatorId+"";
+			
+			event.attributes.put(PokerAttributes.accountBalance.name(), accountBalance.getAmount()+"");
+			event.attributes.put(PokerAttributes.accountCurrency.name(), accountBalance.getCurrencyCode());
+			event.attributes.put(PokerAttributes.screenname.name(), screenname);
+			
+			log.debug("Send Player Session ended event: "+event);
+			sendEvent(event);
+		} catch (Exception e) {
+			log.warn("Failed to send domain event for end player session event. Player["+playerId+":"+screenname+"] operatorId["+operatorId+"] accountBalance["+accountBalance+"]");
 		}
-		
-		GameEvent event = new GameEvent();
-		event.game = PokerAttributes.poker.name();
-		event.player = playerId+"";
-		event.type = GameEventType.leaveTable.name();
-		event.operator = operatorId+"";
-		
-		event.attributes.put(PokerAttributes.accountBalance.name(), accountBalance.getAmount()+"");
-		event.attributes.put(PokerAttributes.accountCurrency.name(), accountBalance.getCurrencyCode());
-		event.attributes.put(PokerAttributes.screenname.name(), screenname);
-		
-		log.debug("Send Player Session ended event: "+event);
-		sendEvent(event);
 	}
 	
 }

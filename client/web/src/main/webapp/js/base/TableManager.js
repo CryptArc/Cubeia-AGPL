@@ -158,8 +158,6 @@ Poker.TableManager = Class.extend({
             this.updateHandStrength(tableId,hands[i],true);
         }
         var table = this.tables.get(tableId);
-        console.log("pot transfers:");
-        console.log(potTransfers);
         var count = table.handCount;
         var self = this;
 
@@ -350,10 +348,8 @@ Poker.TableManager = Class.extend({
         table.getLayoutManager().onRequestRebuy(player, rebuyCost, chipsForRebuy, timeToAct);
     },
     hideRebuyButtons : function(tableId, playerId) {
-        console.log("Getting table " + tableId);
         var table = this.tables.get(tableId);
         var player = table.getPlayerById(playerId);
-        console.log("Player " + player);
         table.getLayoutManager().hideRebuyButtons(player);
     },
     handleAddOnOffer : function(tableId, playerId, addOnCost, chipsForAddOn) {
@@ -449,7 +445,10 @@ Poker.TableManager = Class.extend({
             });
         }
         var table = this.getTable(tableId);
-        table.getLayoutManager().onBlindsLevel(newBlinds, currency, secondsToNextLevel);
+        table.getLayoutManager().onBlindsLevel(newBlinds, currency);
+        if(typeof(secondsToNextLevel)!="undefined" && secondsToNextLevel>=-1) {
+            table.getLayoutManager().updateTimeToNextLevel(secondsToNextLevel);
+        }
     },
     notifyTournamentDestroyed : function(tableId) {
         var dialogManager = Poker.AppCtx.getDialogManager();

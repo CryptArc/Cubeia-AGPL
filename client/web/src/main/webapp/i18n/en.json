@@ -87,7 +87,7 @@
         "wait-for-big-blind" : "Wait for Big Blind",
         "wait-for-big-blind-description" : "Uncheck to post the Big Blind and be dealt in next hand",
         "blinds" : "Blinds:",
-        "level" : "Time to next level:",
+        "level" : "Next level:",
         "pot" : "Pot:",
         "hand-history" : "Hand History",
         "open" : "Open",

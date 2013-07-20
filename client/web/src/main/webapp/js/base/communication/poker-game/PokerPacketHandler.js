@@ -60,8 +60,6 @@ Poker.PokerPacketHandler = Class.extend({
      */
     handleBuyIn : function(protocolObject) {
         var po = protocolObject;
-        console.log("BUY-IN:");
-        console.log(protocolObject);
         this.tableManager.handleBuyInInfo(this.tableId,po.balanceInWallet, po.balanceOnTable, po.maxAmount, po.minAmount,po.mandatoryBuyin, po.currencyCode);
     },
     handlePerformAction : function(performAction){
@@ -119,8 +117,6 @@ Poker.PokerPacketHandler = Class.extend({
     handleFuturePlayerAction : function(packet) {
         var futureActions = [];
         var actions = packet.actions;
-        console.log("packet handler ACTIONS:");
-        console.log(actions);
         for(var i = 0; i<actions.length; i++) {
             var act = Poker.ActionUtils.getActionType(actions[i].action);
             futureActions.push(act);

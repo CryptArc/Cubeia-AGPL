@@ -58,13 +58,11 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         $("#myPlayerName-"+this.tableId).html(this.player.name);
     },
     activateSeat : function(allowedActions, timeToAct,mainPot,fixedLimit) {
-        console.log("ON REQUEST ACTION FOR table = " + this.tableId);
         this.showTimer(timeToAct);
         this.myActionsManager.onRequestPlayerAction(allowedActions, mainPot, fixedLimit, this.circularProgressBar);
         Poker.AppCtx.getViewManager().requestTableFocus(this.tableId);
     },
     rebuyRequested : function(rebuyCost, chipsForRebuy, timeToAct) {
-        console.log("Showing rebuy timer for " + timeToAct + " millis");
         this.showTimer(timeToAct);
         this.circularProgressBar.show();
         this.circularProgressBar.render();
@@ -114,8 +112,6 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         }
     },
     updatePlayer : function(player) {
-        console.log("UPDATE MY PLAYER ");
-        console.log(player);
         var updated = false;
         if(player.tableStatus.id != this.player.tableStatus.id || player.away != this.player.away ||
             player.sitOutNextHand != this.player.sitOutNextHand) {
@@ -134,8 +130,6 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.handlePlayerStatus();
     },
     handlePlayerStatus : function() {
-        console.log("player status update");
-        console.log(this.player);
         if(this.player.tableStatus == Poker.PlayerTableStatus.SITTING_OUT) {
             this.seatElement.addClass("seat-sit-out");
             this.seatElement.find(".player-status").show().html(this.player.tableStatus.text);

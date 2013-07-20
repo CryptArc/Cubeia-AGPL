@@ -60,7 +60,6 @@ Poker.ActionButtons = Poker.AbstractTableButtons.extend({
         }
     },
     hideAll : function() {
-        console.log("Hiding all buttons.")
         var buttons = this.buttons.values();
         for (var a in buttons) {
             if (buttons[a].actionType === Poker.ActionType.ADD_ON) {
@@ -78,8 +77,6 @@ Poker.ActionButtons = Poker.AbstractTableButtons.extend({
     showButtons : function(actions, mainPot, fixedLimit) {
         for (var a in actions) {
             var act = actions[a];
-            console.log("Action:");
-            console.log(act);
             if (fixedLimit && act.type.id == Poker.ActionType.BET.id) {
                 if (act.minAmount > 0) {
                     this.fixedBetActionButton.setAmount(act.minAmount);
