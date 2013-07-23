@@ -450,7 +450,7 @@ public class PokerTournament implements TableNotifier, Serializable {
     }
 
     private void increaseBlindsIfNeeded(PokerTournamentRoundReport.Level currentBlindsLevel, int tableId) {
-        if (currentBlindsLevel.getBigBlindAmount().compareTo(pokerState.getSmallBlindAmount()) < 0 && !pokerState.getCurrentBlindsLevel().isBreak()) {
+        if (currentBlindsLevel.getSmallBlindAmount().compareTo(pokerState.getSmallBlindAmount()) != 0 && !pokerState.getCurrentBlindsLevel().isBreak()) {
             notifyTable(tableId, createBlindsWithDeadline());
         }
     }

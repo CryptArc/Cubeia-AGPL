@@ -289,20 +289,24 @@ Poker.TableLayoutManager = Class.extend({
      * Updates the blinds info given a new level.
      *
      * @param {com.cubeia.games.poker.io.protocol.BlindsLevel} level
-     * @param {Number} secondsToNextLevel
      */
-    onBlindsLevel : function(level, currency, secondsToNextLevel) {
+    onBlindsLevel : function(level, currency) {
+
         if (level.smallBlind != null && level.bigBlind != null) {
             this.tableInfoElement.show();
             this.tableInfoElement.find(".table-blinds-value").html(Poker.Utils.formatCurrency(level.smallBlind) +
                 "/" + Poker.Utils.formatCurrency(level.bigBlind));
             this.myActionsManager.setBigBlind(Math.floor(parseFloat(level.bigBlind.replace(",",""))),currency);
-            if (secondsToNextLevel >= 0){
-                this.clock.sync(secondsToNextLevel);
-                this.tableInfoElement.find(".time-to-next-level").show();
-            } else {
-                this.tableInfoElement.find(".time-to-next-level").hide();
-            }
+
+        }
+    },
+    updateTimeToNextLevel : function(secondsToNextLevel) {
+        console.log("Seconds to next level = ", secondsToNextLevel);
+        if (secondsToNextLevel >= 0){
+            this.clock.sync(secondsToNextLevel);
+            this.tableInfoElement.find(".time-to-next-level").show();
+        } else {
+            this.tableInfoElement.find(".time-to-next-level").hide();
         }
     },
     onPlayerActed : function(player,actionType,amount) {
@@ -354,9 +358,6 @@ Poker.TableLayoutManager = Class.extend({
 
         card.exposeCard(cardString, imageLoadedCallback);
 
-
-
-
     },
     onMoveDealerButton : function(seatId) {
         var newDealer = this.currentDealer!=seatId;
@@ -372,6 +373,10 @@ Poker.TableLayoutManager = Class.extend({
             newDealer = false;
         }
         var seat = this.seats.get(this.currentDealer);
+        if(seat==null) {
+            console.log("Seat for current dealer player id" + this.currentDealer + " not found");
+            return null;
+        }
         var off = seat.getDealerButtonOffsetElement().relativeOffset(this.tableView);
 
         var pos = {

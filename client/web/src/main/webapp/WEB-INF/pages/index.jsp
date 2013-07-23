@@ -663,8 +663,8 @@
                     {{t "table.blinds" }} <span class="table-blinds-value value">10/20</span>
                 </div>
                 <div class="tournament-info">
-                    <div class="time-to-next-level">
-                        {{t "table.level"}} <span class="time-to-next-level-value time">10:00</span>
+                    <div class="time-to-next-level" style="display:none;">
+                        {{t "table.level"}} <span class="time-to-next-level-value time"></span>
                     </div>
                 </div>
             </div>

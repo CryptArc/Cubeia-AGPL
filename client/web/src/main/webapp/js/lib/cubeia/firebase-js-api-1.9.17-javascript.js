@@ -491,6 +491,7 @@ FIREBASE.Connector = function (packetCallback, lobbyCallback, loginCallback, sta
     };
     var _handlePacket = function (protocolObject) {
         switch (protocolObject.classId) {
+            /*
             case FB_PROTOCOL.ForcedLogoutPacket.CLASSID:
                 if (_cometd === true) {
                     _ioAdapter.close();
@@ -504,6 +505,7 @@ FIREBASE.Connector = function (packetCallback, lobbyCallback, loginCallback, sta
                     _cancelled = true
                 }
                 break;
+            */
             case FB_PROTOCOL.PingPacket.CLASSID:
                 console.log("received ping from firebase");
                 _ioAdapter.send(protocolObject);

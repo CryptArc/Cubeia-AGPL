@@ -73,7 +73,7 @@ Poker.MyActionsManager  = Class.extend({
         this.userActionsContainer = $(".user-actions",view);
         this.futureActions = new Poker.FutureActions($(".future-actions",view));
         this.blindsActions = new Poker.BlindsActions(view,tableId,actionCallback);
-
+        this.currency = { code : "", fractionalDigits : 0};
         var betCallback = function(minAmount,maxAmount,mainPot){
             self.onClickBetButton(minAmount,maxAmount,mainPot);
         };
@@ -150,11 +150,9 @@ Poker.MyActionsManager  = Class.extend({
         }
     },
     setBigBlind : function(bigBlind,currency) {
-
-        console.log("SETTING BB");
         this.bigBlind = bigBlind;
-        if(typeof(currency)!="undefined") {
-            console.log("setting currency ", this.currency);
+        if(typeof(currency)!="undefined" && currency!=null) {
+            console.log("Setting currency ", currency);
             this.currency = currency;
         }
     },
@@ -304,8 +302,6 @@ Poker.MyActionsManager  = Class.extend({
      * @param {Poker.FutureActionType[]} actions
      */
     displayFutureActions : function(actions, callAmount, minBetAmount) {
-        console.log("DISPLAY FUTURE ACTIONS");
-        console.log(actions);
         this.futureActions.setFutureActions(actions,callAmount,minBetAmount);
         this.blindsActions.entryBetPosted();
         this.userActionsContainer.hide();
