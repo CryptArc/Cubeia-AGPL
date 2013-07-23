@@ -15,10 +15,7 @@
 
     <modules>
         <module>user-creator</module>
-        <!-- TODO: java-textclient should work "mvn package", thus full build works
-                   excluding till then
         <module>java-textclient</module>
-        -->
     </modules>
 
 </project>

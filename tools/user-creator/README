@@ -5,7 +5,7 @@ BUILDING
 ========
 Run this command from the module root:
 
-  `mvn clean package assembly:single`
+  `mvn clean package`
 
 This will create a JAR file in "target/" which is runnable
 and contains all dependencies. 

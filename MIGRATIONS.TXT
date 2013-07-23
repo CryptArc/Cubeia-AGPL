@@ -4,6 +4,7 @@ MIGRATIONS:
 Date        Change                                                                  
             Recommended actions
 --------------------------------------------------------------------------------
+2013-07-23  tools/user-creator "mvn package" creates the jar-with-dependencies
 2013-05-25  changed source-code structure (name and location, e.g. clients)
             just locate the new locations in source
 2013-05-23	warName poker-client.war deleted, using default
