@@ -9,8 +9,9 @@ Poker.Navigation = Class.extend({
     views : null,
     init : function() {
         this.views = new Poker.Map();
-        this.mountHandler("tournament",this.handleTournament);
-        this.mountHandler("table",this.handleTable);
+        this.mountHandler("tournament", this.handleTournament);
+        this.mountHandler("table", this.handleTable);
+        this.mountHandler("section", this.handleSection);
     },
     mountHandler : function(id,handler) {
         this.views.put(id,handler);
@@ -20,6 +21,7 @@ Poker.Navigation = Class.extend({
     },
     navigate : function() {
         var segments = purl().fsegment();
+        alert(segments);
         if(segments.length==0) {
             return;
         }
@@ -52,7 +54,15 @@ Poker.Navigation = Class.extend({
         tableId = parseInt(tableId);
         //TODO: we need snapshot to get capacity
         new Poker.TableRequestHandler(tableId).openTable(10);
-
+    },
+    handleSection : function(sectionName) {
+        alert("Section: " + sectionName);
+        if(typeof(sectionName)=="undefined") {
+            return;
+        }
+        if (sectionName == "sitandgo") {
+            $("#sitAndGoMenu").click();
+        }
     }
 
 });

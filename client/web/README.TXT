@@ -12,8 +12,8 @@ http://localhost:8181
 LOGIN
 =====
 
-Use any username and any integer as password (best: user integers > 1000 to not 
-collide with test bots).
+Use any username and any integer as password (note: use integers > 1000 to not
+collide with test bots, it's used as the player id).
 
 If you have already integrated with Cubeia Network, use the credentials provided
 at Cubeia Network.

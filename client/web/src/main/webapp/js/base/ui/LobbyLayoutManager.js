@@ -144,8 +144,6 @@ Poker.LobbyLayoutManager = Class.extend({
 
          var lowStakes = new Poker.PropertyMinMaxFilter("lowStakes", true, this, "smallBlind", -1, 4.9);
          this.cashGameFilters.push(lowStakes);
-
-
     },
     initTournamentFilters : function () {
         this.tournamentFilters.push(new Poker.PrivateTournamentFilter());
