@@ -1,5 +1,6 @@
-CUBEIA POKER SOURCE-CODE BASED INSTALLATION
-===========================================
+=================================================================================
+               CUBEIA POKER SOURCE-CODE BASED INSTALLATION
+================================================================================
 
 
 PREREQUISITES
@@ -36,20 +37,21 @@ additional barriers. Use the command-line and simple editors. Later, when you
 feel safer with the sources, you can go on to use an IDE (eclipse, netbeans,
 IntelliJ, etc.).
 
-== QUICK-START ==
+QUICK-START
+================================================================================
 
-mvn package -Pclient,bots,no-integrations
+mvn clean package -Pclient,bots,admin,no-integrations
 cd  uar
 mvn firebase:run
 
-You should be able to access the game at:
+CLIENT: you should be able to access the game at:
 
 http://localhost:18181
 
 There is no user registration at this point. Use any name, and the password
 should be an integer > 1000 (e.g.: test/1001).
 
-In order to get some opponents, go to the bots at:
+BOTS: in order to get some opponents, go to the bots at:
 
 http://localhost:18081
 
@@ -58,17 +60,108 @@ now within the lobby that tables are getting players. Join one or more tables
 and check the game.
 
 After this, you can start tournament bots, and join a tournament.
- 
 
-ADMIN
-=====
+ADMIN: 
 
-Follow ./backoffice/poker-admin/README.TXT to setup a web-application
-that manages the poker-game (timings, tables, tournaments).
+http://localhost:18088
+
+At this point you can see the functionality, but most of it is not usable. To
+make the Poker Admin functional, go on with the next steps, which will allow you
+to manages the poker-game (timings, tables, tournaments etc.).
+
+
+DATABASES
+================================================================================
+
+MYSQL DB:
+
+Mandatory: create a mysql database.
+the default configuration is: db: poker, user: poker, pass: poker
+to change: ./backoffice/poker-admin/src/test/resources/jetty-env.xml
+
+A simple way is to use the "initdb.sql" script file. Just copy&paste it to the
+mysql command-lin, or execute it, giving the full path, e.g. 
+
+mysql> source ./backoffice/poker-admin/initdb.sql
+
+
+MONGO DB:
+
+Optionally: for hand histories and tournament histories, create a mongodb
+the default configuration is: db: poker, user: poker, pass: poker
+to change: ./backoffice/poker-admin/src/test/resources/admin.properties
+
+
+CONFIG:
+
+within file:
+
+./uar/src/test/resources/firebase/conf/cluster.props
+
+change "use-mock-integrations=true"
+to     "use-mock-integrations=false"
+
+This will disable the use of the predefined test (mock) tables and tournaments,
+thus you can use your own.
+
+Stop and start the poker game with firebase:run, then go on with the next step.
+
+
+ADMIN DATA:
+
+At this point, you create all the data needed within the Poker Admin:
+
+ * First create Timings and Rake Configurations (good name is "Standard")
+
+ * You can now create Table Templates, which should result in tables showing up
+   in the lobby.
+
+ * Create Payout and Blinds Structures (again choose "Standard" as name).
+
+ * Now you can create a simple Sit&Go, which should show up in the lobby.
+
+ * Last, setup a Scheduled Tournament template.
+
+
+CUBEIA NETWORK
+================================================================================
+
+The full functionality of Poker Admin depends on Cubeia Network. 
+
+Install Cubeia Network, as described in the ../README (./backoffice/README.TXT)
+
+This will start the Backoffice and the services at port 8080.
+
+CONFIG FILES:
+
+As Cubeia Nework is started outside the development environment, configuration
+starts.
+
+within ./backoffice/poker-admin/src/test/resources/admin.properties, change the
+ports of user/wallet/operator services to 8080.
+
+within ./uar/src/test/resources/firebase/conf/cluster.props
+   - set use-mock-integrations=false"
+   - change the ports of user, wallet and operator services to 8080
+     (http://localhost:8080)
+
+
+INTEGRATIONS:
+
+Τhe default build of the poker-server results in a system with mock-services
+(or mock-integrations). This means that there is not real user and account
+management.
+
+In order to build & start a poker system which integrates fully:
+
+* build the poker code with "-P use-integrations" option.
+* Start: Cubeia Network then the Poker Game with firebase:run
+
+You now login with the user credentials created within Cubeia Network.
 
 
 ADVANCED STEPS
-==============
+================================================================================
 
 * FIREBASE
 

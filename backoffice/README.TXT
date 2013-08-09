@@ -44,7 +44,8 @@ USER
 
 Create some users. Username, password and Operator ID (1) is enough data.
 
-Alternatively, you can use the user-creator tool (see next step).
+Alternatively, you can use the user-creator tool (see next step), which will
+add an account with some cash for the created user.
 
 BOTS
 ====
