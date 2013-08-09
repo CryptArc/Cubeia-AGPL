@@ -20,28 +20,13 @@ package com.cubeia.games.poker.admin.service;
 import com.cubeia.firebase.api.server.SystemException;
 import com.cubeia.firebase.api.service.Service;
 import com.cubeia.firebase.api.service.ServiceContext;
-//import com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource;
 import java.io.File;
 import java.net.URISyntaxException;
-import java.net.URL;
-//import javax.naming.Context;
-//import javax.naming.InitialContext;
-//import javax.naming.NamingException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppClassLoader;
 import org.eclipse.jetty.webapp.WebAppContext;
-
-//import org.eclipse.jetty.plus.webapp.EnvConfiguration;
-import org.eclipse.jetty.webapp.*;
-//import org.eclipse.jetty.jndi.InitialContextFactory;
-//import org.eclipse.jetty.plus.jndi.Resource;
-
-//import org.eclipse.xml.XmlConfiguration;
-import org.eclipse.jetty.plus.webapp.EnvConfiguration;
-//import org.eclipse.jetty.plus.webapp.PlusConfiguration;
-//import javax.sql.DataSource;
 
 public class AdminServerService implements AdminServerContract, Service {
 
@@ -116,40 +101,18 @@ public class AdminServerService implements AdminServerContract, Service {
 
     @Override
     public void start() {
-        log.debug("PokerAdminService START (V15) on port: " + WAR_PORT);
+        log.debug("PokerAdminService START (V25) on port: " + WAR_PORT);
         try {
             Server server = new Server(WAR_PORT);
 
             WebAppContext context = createWebAppContext(WAR_FILE, "/");
             server.setHandler(context);
             context.setServer(server);
-
-            //Standard method, using jetty-env.xml
-            EnvConfiguration envConfiguration = new EnvConfiguration();// {        
-            URL url = new File("src/test/resources/firebase/conf/jetty-env.xml").toURI().toURL();
-            envConfiguration.setJettyEnvXml(url);
-            log.debug("jetty-env url:" + url );
-
-            //apply configuration
-            //this fails with javax.naming.NameAlreadyBoundException exception
-            //the same code works, if started standalon (not in a SAR)
-            context.setConfigurations(new Configuration[]{ envConfiguration});
             
-              //although "alreay bound", looking up the datasource entry manually, fails too
-//            InitialContext ic = new InitialContext()
-//            DataSource myds = (DataSource)ic.lookup("java:comp/env/jdbc/pokerDS");   
-            
-            
-            
-              //Attemp to create a new entry manually, fails at new Resource
-//            MysqlConnectionPoolDataSource ds = new MysqlConnectionPoolDataSource();
-//            ds.setDatabaseName("poker");
-//            ds.setUser("poker");
-//            ds.setPassword("poker");
-//            Resource resource = new Resource("java:comp/env/pokerDS", ds);
-//            server.setAttribute("pokerDS", resource);
-                      
-//            End jetty-env
+            //ATTN: do not use jetty-env.xml here to provice the datasource
+            //datasource is provided by firebase, using this additional file
+            //within uar/.../firebase/conf/game/deploy/pokerDS-ds.xml
+            //which makes it available on jndi as pokerDS
         
             server.start();
 
