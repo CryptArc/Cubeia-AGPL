@@ -52,12 +52,6 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-jsp</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>javax.servlet.jsp</artifactId>
-                    <groupId>org.eclipse.jetty.orbit</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
