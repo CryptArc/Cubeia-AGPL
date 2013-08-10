@@ -37,6 +37,8 @@ additional barriers. Use the command-line and simple editors. Later, when you
 feel safer with the sources, you can go on to use an IDE (eclipse, netbeans,
 IntelliJ, etc.).
 
+
+
 QUICK-START
 ================================================================================
 
@@ -61,11 +63,11 @@ and check the game.
 
 After this, you can start tournament bots, and join a tournament.
 
-ADMIN: 
+ADMIN
 
 http://localhost:18088
 
-At this point you can see the functionality, but most of it is not usable. To
+You can see the functionality, but most of it is not usable. To
 make the Poker Admin functional, go on with the next steps, which will allow you
 to manages the poker-game (timings, tables, tournaments etc.).
 
@@ -73,7 +75,8 @@ to manages the poker-game (timings, tables, tournaments etc.).
 DATABASES
 ================================================================================
 
-MYSQL DB:
+MYSQL DB
+========
 
 Mandatory: create a mysql database.
 the default configuration is: db: poker, user: poker, pass: poker
@@ -85,14 +88,16 @@ mysql command-lin, or execute it, giving the full path, e.g.
 mysql> source ./backoffice/poker-admin/initdb.sql
 
 
-MONGO DB:
+MONGO DB
+========
 
 Optionally: for hand histories and tournament histories, create a mongodb
 the default configuration is: db: poker, user: poker, pass: poker
 to change: ./backoffice/poker-admin/src/test/resources/admin.properties
 
 
-CONFIG:
+CONFIG
+======
 
 within file:
 
@@ -107,7 +112,8 @@ thus you can use your own.
 Stop and start the poker game with firebase:run, then go on with the next step.
 
 
-ADMIN DATA:
+ADMIN DATA
+==========
 
 At this point, you create all the data needed within the Poker Admin:
 
@@ -128,11 +134,55 @@ CUBEIA NETWORK
 
 The full functionality of Poker Admin depends on Cubeia Network. 
 
-Install Cubeia Network, as described in the ../README (./backoffice/README.TXT)
+The full backoffice functionality, like User, Wallet and Accounting Service, is
+provided by Cubeia Network.
 
-This will start the Backoffice and the services at port 8080.
+Retrieve the code and follow the contained instructions to setup:
 
-CONFIG FILES:
+https://bitbucket.org/cubeia/cubeia-network
+
+Once you have access to the Cubeia Network Webapplication, you have to create
+some basic data, thus the Poker Admin and the Poker Game works.
+
+OPERATOR
+========
+
+Create an Operator with the ID 1
+
+CURRENCY
+========
+
+Add one currency, e.g. EUR. Avoid creating multiple currencies at this
+point.
+
+
+ACCOUNTS
+========
+
+Create 3 different wallet accounts. The accounts use dummy user ID's:
+
+ * Dummy User -1000 is the system rake account
+ * Dummy User -2000 is for promotions (such as free-rolls etc)
+ * Dummy User -3000 is a general bank for internal transfers
+
+The type is SYSTEM_ACCOUNT and enable to option "negative balance allowed".
+
+ * SYSTEM_ACCOUNT | EUR | OPEN | UserID -1000 | Rake
+ * SYSTEM_ACCOUNT | EUR | OPEN | UserID -2000 | Promotions
+ * SYSTEM_ACCOUNT | EUR | OPEN | UserID -3000 | General 
+
+Important: if you create more currencies later, you have to create those 3
+accounts for the currencies, too.
+
+
+
+INTEGRATE POKER WITH CUBEIA NETWORK
+================================================================================
+
+CONFIGURATION
+=============
+
+Cubeia Network should be running now ( backoffice & services on port 8080).
 
 As Cubeia Nework is started outside the development environment, configuration
 starts.
@@ -145,8 +195,26 @@ within ./uar/src/test/resources/firebase/conf/cluster.props
    - change the ports of user, wallet and operator services to 8080
      (http://localhost:8080)
 
+CREATE USERS & BOTS
+===================
 
-INTEGRATIONS:
+Create some users. Username, password and Operator ID (1) is enough data.
+
+Alternatively, you can use the user-creator tool (see next step), which will
+add an account with some cash for the created user.
+
+BOTS
+====
+
+Bots are like other users, so if you want to use the bots, you have to create
+accounts for them, too. The user-creator tool simplifies this:
+
+./tools/user-creator/README
+
+
+
+INTEGRATION BUILD
+=================
 
 Τhe default build of the poker-server results in a system with mock-services
 (or mock-integrations). This means that there is not real user and account
@@ -154,10 +222,11 @@ management.
 
 In order to build & start a poker system which integrates fully:
 
-* build the poker code with "-P use-integrations" option.
+* build the poker code with "use-integrations" (instead of "no-integrations).
 * Start: Cubeia Network then the Poker Game with firebase:run
 
 You now login with the user credentials created within Cubeia Network.
+
 
 
 ADVANCED STEPS
@@ -214,6 +283,7 @@ which is out of the scope of this document.
 
 Note that at this point, there is not user registration available. This is be-
 cause Cubeia has decided to not provide any public-facing websites / code.
+
 
 
 FULL REBUILD
