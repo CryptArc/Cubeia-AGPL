@@ -17,6 +17,7 @@
 
 package com.cubeia.poker.rounds.betting;
 
+import com.cubeia.games.poker.common.money.Currency;
 import com.cubeia.poker.MockPlayer;
 import com.cubeia.poker.adapter.ServerAdapterHolder;
 import com.cubeia.poker.context.PokerContext;
@@ -62,7 +63,7 @@ public class AllInTest extends TestCase  {
     protected void setUp() throws Exception {
         super.setUp();
         initMocks(this);
-
+        when(settings.getCurrency()).thenReturn(new Currency("EUR",2));
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
         when(settings.getTiming()).thenReturn(new DefaultTimingProfile());
         context = new PokerContext(settings);

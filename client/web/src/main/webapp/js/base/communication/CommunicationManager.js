@@ -376,8 +376,6 @@ Poker.CommunicationManager = Class.extend({
                 pokerPacketHandler.handlePotTransfers(protocolObject);
                 break;
             case com.cubeia.games.poker.io.protocol.RakeInfo.CLASSID:
-                console.log("UNHANDLED PO RakeInfo");
-                console.log(protocolObject);
                 break;
             case com.cubeia.games.poker.io.protocol.RequestAction.CLASSID:
                 pokerPacketHandler.handleRequestAction(protocolObject);
@@ -402,25 +400,22 @@ Poker.CommunicationManager = Class.extend({
                 pokerPacketHandler.handleAddOnPerformed(playerId);
                 break;
             case com.cubeia.games.poker.io.protocol.StartHandHistory.CLASSID:
-                console.log("UNHANDLED PO StartHandHistory");
-                console.log(protocolObject);
+
                 break;
             case com.cubeia.games.poker.io.protocol.HandStartInfo.CLASSID:
                 this.tableManager.startNewHand(tableId, protocolObject.handId);
                 break;
             case com.cubeia.games.poker.io.protocol.StopHandHistory.CLASSID:
-                console.log("UNHANDLED PO StopHandHistory");
-                console.log(protocolObject);
                 break;
             case com.cubeia.games.poker.io.protocol.TakeBackUncalledBet.CLASSID:
-                console.log("UNHANDLED PO TakeBackUncalledBet");
-                console.log(protocolObject);
+
                 break;
             case com.cubeia.games.poker.io.protocol.WaitingToStartBreak:
                 this.tableManager.notifyWaitingToStartBreak(tableId);
                 break;
             case com.cubeia.games.poker.io.protocol.BlindsAreUpdated.CLASSID:
-                this.tableManager.notifyBlindsUpdated(tableId, protocolObject.level, protocolObject.secondsToNextLevel);
+                console.log("Blinds updated seconds to next", protocolObject);
+                this.tableManager.notifyBlindsUpdated(tableId, protocolObject.level, null, protocolObject.secondsToNextLevel);
                 break;
             case com.cubeia.games.poker.io.protocol.TournamentDestroyed.CLASSID:
                 this.tableManager.notifyTournamentDestroyed(tableId);

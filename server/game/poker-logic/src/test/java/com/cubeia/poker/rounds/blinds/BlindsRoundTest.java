@@ -17,6 +17,7 @@
 
 package com.cubeia.poker.rounds.blinds;
 
+import com.cubeia.games.poker.common.money.Currency;
 import com.cubeia.poker.*;
 import com.cubeia.poker.action.ActionRequest;
 import com.cubeia.poker.action.PokerAction;
@@ -83,6 +84,7 @@ public class BlindsRoundTest extends TestCase {
     protected void setUp() throws Exception {
         initMocks(this);
         when(serverAdapterHolder.get()).thenReturn(serverAdapter);
+        when(settings.getCurrency()).thenReturn(new Currency("EUR",2));
         when(settings.getTiming()).thenReturn(new DefaultTimingProfile());
         context = new PokerContext(settings);
         context.setPotHolder(new PotHolder(rakeCalculator));

@@ -62,8 +62,6 @@ Poker.PokerRequestHandler = Class.extend({
     sendGameTransportPacket : function(gamedata) {
         var connector = Poker.AppCtx.getConnector();
         connector.sendStyxGameData(0, this.tableId, gamedata);
-        console.log("package sent to table " + this.tableId);
-        console.log(gamedata);
     },
     buyIn : function(amount) {
         var buyInRequest = new com.cubeia.games.poker.io.protocol.BuyInRequest();

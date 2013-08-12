@@ -161,21 +161,21 @@ public class FirebaseServerAdapterTest {
 
         when(pokerState.getPokerPlayer(playerId)).thenReturn(pokerPlayer);
 
-        BigDecimal minBuyIn = new BigDecimal(100);
+        BigDecimal minBuyIn = new BigDecimal(100).setScale(2);
         when(pokerState.getMinBuyIn()).thenReturn(minBuyIn);
 
         BigDecimal maxBuyIn = new BigDecimal(45000);
         when(pokerState.getMaxBuyIn()).thenReturn(maxBuyIn);
         when(pokerState.getAnteLevel()).thenReturn(BigDecimal.ZERO);
 
-        BigDecimal playerBalanceOnTable = bd(100);
-        BigDecimal playerBalanceOnTableOutsideHand = bd(100);
-        BigDecimal playerRequestedBalance = bd(50);
+        BigDecimal playerBalanceOnTable = bd(100,2);
+        BigDecimal playerBalanceOnTableOutsideHand = bd(100,2);
+        BigDecimal playerRequestedBalance = bd(50,2);
         BigDecimal playerTotalBalanceOnTable = playerBalanceOnTable.add(playerBalanceOnTableOutsideHand).add(playerRequestedBalance);
 
         when(pokerPlayer.getBalance()).thenReturn(playerBalanceOnTable);
         when(pokerPlayer.getPendingBalanceSum()).thenReturn(playerBalanceOnTableOutsideHand.add(playerRequestedBalance));
-        BigDecimal mainAccountBalance = bd(500000);
+        BigDecimal mainAccountBalance = bd(500000,2);
         when(backend.getAccountBalance(playerId, "EUR")).thenReturn(new Money(mainAccountBalance,eur));
 
         adapter.notifyBuyInInfo(pokerPlayer.getId(), true);
@@ -188,7 +188,7 @@ public class FirebaseServerAdapterTest {
         assertThat(buyInInfoRespPacket.balanceInWallet, is(format(mainAccountBalance)));
 
         assertThat(buyInInfoRespPacket.balanceOnTable, is((format(playerTotalBalanceOnTable))));
-        assertThat(buyInInfoRespPacket.minAmount, is("0"));
+        assertThat(buyInInfoRespPacket.minAmount, is("0.00"));
         assertThat(buyInInfoRespPacket.maxAmount, is(format((maxBuyIn.subtract(playerTotalBalanceOnTable)))));
         assertThat(buyInInfoRespPacket.mandatoryBuyin, is(true));
         assertThat(buyInInfoRespPacket.resultCode, is(BuyInInfoResultCode.OK));
@@ -197,6 +197,9 @@ public class FirebaseServerAdapterTest {
 
     private BigDecimal bd(int i) {
         return new BigDecimal(i);
+    }
+    private BigDecimal bd(int i, int scale) {
+        return new BigDecimal(i).setScale(scale);
     }
 
     @Test
@@ -207,20 +210,20 @@ public class FirebaseServerAdapterTest {
 
         when(pokerState.getPokerPlayer(playerId)).thenReturn(pokerPlayer);
 
-        BigDecimal minBuyIn = bd(100);
+        BigDecimal minBuyIn = bd(100,2);
         when(pokerState.getMinBuyIn()).thenReturn(minBuyIn);
 
-        BigDecimal maxBuyIn = bd(150);
+        BigDecimal maxBuyIn = bd(150,2);
         when(pokerState.getMaxBuyIn()).thenReturn(maxBuyIn);
 
-        BigDecimal playerBalanceOnTable = bd(100);
-        BigDecimal playerBalanceOnTableOutsideHand = bd(100);
-        BigDecimal playerRequestedBalance = bd(100);
+        BigDecimal playerBalanceOnTable = bd(100,2);
+        BigDecimal playerBalanceOnTableOutsideHand = bd(100,2);
+        BigDecimal playerRequestedBalance = bd(100,2);
         BigDecimal playerTotalBalanceOnTable = playerBalanceOnTable.add(playerBalanceOnTableOutsideHand).add(playerRequestedBalance);
 
         when(pokerPlayer.getBalance()).thenReturn(playerBalanceOnTable);
         when(pokerPlayer.getPendingBalanceSum()).thenReturn(playerBalanceOnTableOutsideHand.add(playerRequestedBalance));
-        BigDecimal mainAccountBalance = bd(500000);
+        BigDecimal mainAccountBalance = bd(500000,2);
         when(backend.getAccountBalance(playerId, "EUR")).thenReturn(new Money(mainAccountBalance, eur));
 
         adapter.notifyBuyInInfo(pokerPlayer.getId(), true);
@@ -233,8 +236,8 @@ public class FirebaseServerAdapterTest {
         assertThat(buyInInfoRespPacket.balanceInWallet, is((format(mainAccountBalance))));
 
         assertThat(buyInInfoRespPacket.balanceOnTable, is(format(playerTotalBalanceOnTable)));
-        assertThat(buyInInfoRespPacket.maxAmount, is("0"));
-        assertThat(buyInInfoRespPacket.minAmount, is("0"));
+        assertThat(buyInInfoRespPacket.maxAmount, is("0.00"));
+        assertThat(buyInInfoRespPacket.minAmount, is("0.00"));
         assertThat(buyInInfoRespPacket.mandatoryBuyin, is(true));
         assertThat(buyInInfoRespPacket.resultCode, is(BuyInInfoResultCode.MAX_LIMIT_REACHED));
     }
@@ -320,20 +323,20 @@ public class FirebaseServerAdapterTest {
 
         when(pokerState.getPokerPlayer(playerId)).thenReturn(pokerPlayer);
 
-        BigDecimal minBuyIn = bd(200);
+        BigDecimal minBuyIn = bd(200,2);
         when(pokerState.getMinBuyIn()).thenReturn(minBuyIn);
 
-        BigDecimal maxBuyIn = bd(300);
+        BigDecimal maxBuyIn = bd(300,2);
         when(pokerState.getMaxBuyIn()).thenReturn(maxBuyIn);
 
 
-        BigDecimal playerBalanceOnTable = bd(250);
-        BigDecimal playerPendingBalanceOnTable = bd(0);
+        BigDecimal playerBalanceOnTable = bd(250,2);
+        BigDecimal playerPendingBalanceOnTable = bd(0,2);
         BigDecimal playerTotalBalanceOnTable = playerBalanceOnTable.add(playerPendingBalanceOnTable);
 
         when(pokerPlayer.getBalance()).thenReturn(playerBalanceOnTable);
         when(pokerPlayer.getBalanceNotInHand()).thenReturn(playerPendingBalanceOnTable);
-        BigDecimal mainAccountBalance = bd(500000);
+        BigDecimal mainAccountBalance = bd(500000,2);
         when(backend.getAccountBalance(playerId, "EUR")).thenReturn(new Money(mainAccountBalance, eur));
 
         adapter.notifyBuyInInfo(pokerPlayer.getId(), true);
@@ -345,8 +348,8 @@ public class FirebaseServerAdapterTest {
         BuyInInfoResponse buyInInfoRespPacket = (BuyInInfoResponse) new StyxSerializer(new ProtocolObjectFactory()).unpack(gda.getData());
         assertThat(buyInInfoRespPacket.balanceInWallet, is(format(mainAccountBalance)));
         assertThat(buyInInfoRespPacket.balanceOnTable, is(format(playerTotalBalanceOnTable)));
-        assertThat(buyInInfoRespPacket.maxAmount, is("50"));
-        assertThat(buyInInfoRespPacket.minAmount, is("0"));
+        assertThat(buyInInfoRespPacket.maxAmount, is("50.00"));
+        assertThat(buyInInfoRespPacket.minAmount, is("0.00"));
         assertThat(buyInInfoRespPacket.mandatoryBuyin, is(true));
         assertThat(buyInInfoRespPacket.resultCode, is(BuyInInfoResultCode.OK));
     }
