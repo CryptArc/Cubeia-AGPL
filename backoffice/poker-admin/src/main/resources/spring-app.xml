@@ -18,10 +18,11 @@
 
     <mongo:mongo host="${mongo.host}" port="${mongo.port}" />
     
-    <!-- see com.cubeia.games.poker.admin.CustomPersistenceUnitManager.java -->
+    <!-- see com.cubeia.games.poker.admin.CustomPersistenceUnitManager.java
     <bean id="persistenceUnitManager" class="com.cubeia.games.poker.admin.CustomPersistenceUnitManager">
         <property name="defaultDataSource" ref="jndi.dataSource" />
     </bean>
+    -->
 
     <bean id="mongoStorage" class="com.cubeia.games.poker.admin.service.history.MongoStorage">
         <constructor-arg ref="mongo"/>
@@ -69,7 +70,9 @@
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="jndi.dataSource"/>
         <property name="persistenceUnitName" value="adminPersistenceUnit"/>
+        <!--
         <property name="persistenceUnitManager" ref="persistenceUnitManager"></property>
+        -->
         <property name="jpaVendorAdapter">
            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
                <property name="showSql" value="false" />
