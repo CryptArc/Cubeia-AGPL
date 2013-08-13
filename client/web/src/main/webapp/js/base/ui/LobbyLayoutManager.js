@@ -34,6 +34,8 @@ Poker.LobbyLayoutManager = Class.extend({
         this.cashGameFilters = [];
         this.tournamentFilters = [];
         this.requiredFilters = [];
+
+
         var self = this;
         $("#cashGameMenu").click(function (e) {
             self.goToList();
@@ -66,6 +68,20 @@ Poker.LobbyLayoutManager = Class.extend({
         });
         this.initFilters();
     },
+    addCurrencyFilters : function() {
+        var currencies = Poker.OperatorConfig.getEnabledCurrencies();
+        if(currencies.length>1) {
+            $(".filter-group.currencies").show();
+            var t = this.templateManager.getRenderTemplate("filterButtonTemplate");
+            for(var i = 0; i<currencies.length; i++) {
+                $(".filter-group.currencies").append(t.render(currencies[i]));
+            }
+            var currencyFilter = new Poker.RadioGroupFilter(currencies, this,["currencyCode","buyInCurrencyCode"]);
+            this.requiredFilters.push(currencyFilter);
+        } else {
+            $(".filter-group.currencies").hide();
+        }
+    },
     goToList : function() {
         if(Poker.AppCtx.getViewManager().mobileDevice==true) {
             $('html, body').scrollTop($("#tableListAnchor").offset().top + 50);
@@ -86,6 +102,7 @@ Poker.LobbyLayoutManager = Class.extend({
     initFilters:function () {
         this.initCashGameFilters();
         this.initTournamentFilters();
+
     },
     initCashGameFilters: function() {
          var fullTablesFilter = new Poker.LobbyFilter("fullTables", true,
@@ -128,41 +145,11 @@ Poker.LobbyLayoutManager = Class.extend({
          var lowStakes = new Poker.PropertyMinMaxFilter("lowStakes", true, this, "smallBlind", -1, 4.9);
          this.cashGameFilters.push(lowStakes);
 
-        // Currency filter for cash games (slightly different from tournament currency filter because the property is different)
-        var xccFilter = new Poker.PropertyStringFilter("cash-xcc", true, this, "currencyCode", "XCC");
-        if (!xccFilter.enabled) {
-            $('#xcc').addClass("active");
-        }
-        this.cashGameFilters.push(xccFilter);
 
-        // Set XOC to disabled, the default needs to be configurable though.
-        var xocFilter = new Poker.PropertyStringFilter("cash-xoc", false, this, "currencyCode", "XOC");
-        if (!xocFilter.enabled) {
-            $('#xoc').removeClass("active");
-        }
-        this.cashGameFilters.push(xocFilter);
-
-        var radioGroup = [xccFilter, xocFilter];
-        xccFilter.setRadioButtonGroup(radioGroup);
-        xocFilter.setRadioButtonGroup(radioGroup);
     },
     initTournamentFilters : function () {
-        // Currency filters (should be generalized to handle currencies dynamically)
-        var xccFilter = new Poker.PropertyStringFilter("xcc", true, this, "buyInCurrencyCode", "XCC");
-        this.tournamentFilters.push(xccFilter);
-
-        // Set XOC to disabled, the default needs to be configurable though.
-        var xocFilter = new Poker.PropertyStringFilter("xoc", false, this, "buyInCurrencyCode", "XOC");
-        if (!xocFilter.enabled) {
-            $('#xoc').removeClass("active");
-        }
-        this.tournamentFilters.push(xocFilter);
-
-        var radioGroup = [xccFilter, xocFilter];
-        xccFilter.setRadioButtonGroup(radioGroup);
-        xocFilter.setRadioButtonGroup(radioGroup);
-
         this.tournamentFilters.push(new Poker.PrivateTournamentFilter());
+
     },
     isAllowedByFilters : function (data, filters) {
         for (var i = 0; i < filters.length; i++) {

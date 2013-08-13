@@ -38,6 +38,7 @@ Poker.ConnectionManager = Class.extend({
         Poker.AppCtx.getAccountPageManager().onLogin(playerId,name);
         $('#loginView').hide();
         $("#lobbyView").show();
+        Poker.AppCtx.getLobbyLayoutManager().addCurrencyFilters();
         var viewManager = Poker.AppCtx.getViewManager();
         viewManager.onLogin();
         new Poker.LobbyRequestHandler().subscribeToCashGames();

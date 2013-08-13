@@ -47,6 +47,16 @@ Poker.OperatorConfig = Class.extend({
     getShareUrl : function() {
         return this.getValue("SHARE_URL",null);
     },
+    getEnabledCurrencies : function() {
+        var property = this.getValue("CURRENCIES","");
+        var currencies = property.split(",");
+        var c = [];
+        for(var i = 0; i<currencies.length; i++) {
+            var keyValuePair = currencies[i].split("=");
+            c.push({id : keyValuePair[0], name : keyValuePair[1]});
+        }
+        return c;
+    },
     getValue : function(param,def) {
         var value =  this.configMap.get(param);
         if(value==null) {

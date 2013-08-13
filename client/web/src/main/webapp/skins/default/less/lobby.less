@@ -28,6 +28,14 @@
     }
 }*/
 
+.filter-group.currencies {
+    width:100%;
+    margin-bottom:2%;
+    &:first-child {
+        margin-left:0;
+    }
+}
+
 .logo-container {
     width: 100%;
     height: auto;
@@ -303,13 +311,14 @@
 }
 .filter-button {
     display: block;
+    .user-select(none);
     background-color: @buttonGrayBg;
     padding: 0.5em;
     font-size: 1.6em;
     .border-radius(4px);
     cursor: pointer;
     float: left;
-    margin-left: 2%;
+    margin-left: 0.2em;
 
     //both active state and class
     &.active, &:active {

@@ -130,17 +130,28 @@ Poker.LobbyManager = Class.extend({
 
 });
 
-Poker.LobbyFilter = Class.extend({
+Poker.Filter = Class.extend({
+    init : function () {
+    },
+    filterUpdated : function () {
+
+    },
+    /**
+     * Returns true if it should be included in the lobby and
+     * false if it shouldn't
+     * @param lobbyData
+     * @return {boolean} if it should be included
+     */
+    filter: function (lobbyData) {
+        return false;
+    }
+});
+Poker.LobbyFilter = Poker.Filter.extend({
     enabled:false,
     id:null,
     filterFunction:null,
     lobbyLayoutManager:null,
-    /**
-     * A list of filters that should be treated as a group of radio buttons.
-     * That is, when one of the filters is enabled, all other filters should be
-     * disabled.
-     */
-    radioButtonGroup:null,
+
     init : function (id, enabled, filterFunction, lobbyLayoutManager) {
         var userSetting = Poker.Utils.loadBoolean(id, enabled);
         this.enabled = userSetting;
@@ -148,9 +159,9 @@ Poker.LobbyFilter = Class.extend({
         this.id = id;
         this.filterFunction = filterFunction;
         this.lobbyLayoutManager = lobbyLayoutManager;
-        var self = this;
 
-        $("#" + id).touchSafeClick(this.clickHandler(self));
+        var self = this;
+        $("#" + this.id).touchSafeClick(this.clickHandler(self));
         if (this.enabled == true) {
             $("#" + this.id).addClass("active");
         } else {
@@ -169,38 +180,13 @@ Poker.LobbyFilter = Class.extend({
     filter: function (lobbyData) {
         return this.filterFunction(this.enabled, lobbyData);
     },
-    setRadioButtonGroup: function (radioButtons) {
-        this.radioButtonGroup = radioButtons;
-    },
-    handleRadioButtonBehavior: function () {
-        if (!this.isRadioButtonFilter()) {
-            return;
-        }
-
-        // Assume that this filter was toggled on (toggling off an active filter should not be possible for a radio button).
-        for (var i = 0; i < this.radioButtonGroup.length; i++) {
-            var current = this.radioButtonGroup[i];
-            if (current != this) {
-                $("#" + current.id).removeClass("active");
-                current.enabled = false;
-            }
-        }
-    },
     clickHandler : function (self) {
         return function () {
-            if (self.isRadioButtonFilter() && self.enabled) {
-                // Radio button can only be disabled by pressing another button in the group.
-                return;
-            }
             self.enabled = !self.enabled;
             $(this).toggleClass("active");
             Poker.Utils.store(self.id, self.enabled);
-            self.handleRadioButtonBehavior();
             self.filterUpdated();
         }
-    },
-    isRadioButtonFilter : function() {
-        return this.radioButtonGroup != null;
     }
 });
 
@@ -258,6 +244,66 @@ Poker.PropertyStringFilter = Poker.LobbyFilter.extend({
             return true;
         }
     }
+});
+
+Poker.RadioGroupFilter = Poker.Filter.extend({
+    /**
+     * A list of filters that should be treated as a group of radio buttons.
+     * That is, when one of the filters is enabled, all other filters should be
+     * disabled.
+     */
+    radioGroup : null,
+    lobbyLayoutManager : null,
+    properties : null,
+    prefix : "filterButton",
+    currentFilter : null,
+
+    init : function(group, lobbyLayoutManager, properties) {
+        var self = this;
+
+        this.radioGroup = group;
+        this.lobbyLayoutManager = lobbyLayoutManager;
+        this.properties = properties;
+        var prefix = this.prefix;
+        this.currentFilter = group[0].id;
+        $("#" + prefix + this.currentFilter).addClass("active");
+        $.each(group,function(i,el){
+            $("#" + prefix + el.id).touchSafeClick(function(e){
+                self.deselectButtons();
+                self.currentFilter = el.id;
+                $(this).addClass("active");
+                self.filterUpdated();
+            });
+        });
+
+    },
+    deselectButtons : function() {
+        var self = this;
+        $.each(this.radioGroup, function(i,el){
+            $("#" + self.prefix + el.id).removeClass("active");
+        });
+    },
+    filter : function(lobbyData) {
+        for(var i = 0; i<this.properties.length; i++) {
+            if(this.filterSingle(this.properties[i],lobbyData) == false) {
+                return false;
+            }
+        }
+        return true;
+    },
+    filterSingle : function(property,lobbyData) {
+        var p = lobbyData[property];
+        if (typeof(p) != "undefined" && !this.enabled) {
+            return (p == this.currentFilter);
+        } else {
+            return true;
+        }
+    },
+    filterUpdated : function () {
+        this.lobbyLayoutManager.filterUpdated();
+    }
+
+
 });
 
 Poker.PrivateTournamentFilter = Class.extend({

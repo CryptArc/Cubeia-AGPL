@@ -380,6 +380,9 @@
                         <div class="show-filters">
                             <a data-i18n="lobby.filters.show-filters">Show filters</a>
                         </div>
+                        <div class="filter-group currencies">
+                            <div class="filter-label" data-i18n="lobby.filters.currency">Currency:</div>
+                        </div>
                         <div class="table-filters">
                             <div class="filter-group tables">
                                 <div class="filter-label" data-i18n="lobby.filters.show-tables">Show tables:</div>
@@ -398,22 +401,7 @@
                                 <div class="filter-button" id="mediumStakes" data-i18n="lobby.filters.mid">Mid</div>
                                 <div class="filter-button" id="highStakes" data-i18n="lobby.filters.high">High</div>
                             </div>
-                            <!--
-                            <div class="filter-group currencies">
-                                <div class="filter-label" data-i18n="lobby.filters.currency">Currency:</div>
-                                <div class="filter-button" id="cash-xcc" data-i18n="lobby.filters.xcc">XCC</div>
-                                <div class="filter-button" id="cash-xoc" data-i18n="lobby.filters.xoc">XOC</div>
-                            </div>-->
                         </div>
-                        <!--
-                        <div class="tournament-filters" style="display: none;">
-                            <div class="filter-group currencies">
-                                <div class="filter-label" data-i18n="lobby.filters.currency">Currency:</div>
-                                <div class="filter-button" id="xcc" data-i18n="lobby.filters.xcc">XCC</div>
-                                <div class="filter-button" id="xoc" data-i18n="lobby.filters.xoc">XOC</div>
-                            </div>
-                        </div>
-                        -->
                     </div>
                         <div class="lobby-tab"  id="tableListAnchor">
                         <div id="tableListContainer">
@@ -492,6 +480,9 @@
     </div>
 </div>
 
+<script type="text/mustache" id="filterButtonTemplate">
+    <div class="filter-button" id="filterButton{{id}}">{{name}}</div>
+</script>
 <script type="text/mustache" id="playerCardTemplate" style="display: none;">
     <div id="playerCard-{{domId}}" class="player-card-container">
         <div class="card-image" id="playerCardImage-{{domId}}" style="background-image:{{backgroundImage}}"></div>
