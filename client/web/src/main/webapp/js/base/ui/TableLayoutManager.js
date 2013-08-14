@@ -96,6 +96,17 @@ Poker.TableLayoutManager = Class.extend({
 
         $(".future-action").show();
     },
+    updateVariant : function(variant) {
+        console.log("UPDATING VARIANT",variant);
+        this.tableView.removeClass (function (index, css) {
+            return (css.match (/\variant-\S+/g) || []).join(' ');
+        });
+        if(variant == com.cubeia.games.poker.io.protocol.VariantEnum.TEXAS_HOLDEM) {
+            this.tableView.addClass("variant-texas-holdem");
+        } else {
+            this.tableView.addClass("variant-telesina");
+        }
+    },
     onChatMessage : function(player, message) {
         this.tableLog.appendChatMessage(player,message);
     },

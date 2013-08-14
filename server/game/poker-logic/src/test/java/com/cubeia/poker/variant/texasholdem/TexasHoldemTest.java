@@ -46,6 +46,7 @@ import com.cubeia.poker.timing.impl.DefaultTimingProfile;
 import com.cubeia.poker.variant.GameTypes;
 import com.cubeia.poker.variant.GenericPokerGame;
 import com.cubeia.poker.variant.HandFinishedListener;
+import com.cubeia.poker.variant.PokerVariant;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
@@ -626,7 +627,7 @@ public class TexasHoldemTest {
     private PokerContext prepareContext(int numberOfPlayers) {
         BlindsLevel level = new BlindsLevel(bd(10), bd(20), bd(0));
         BetStrategyType betStrategy = BetStrategyType.NO_LIMIT;
-        PokerSettings settings = new PokerSettings(level, betStrategy, bd(100), bd(5000), new DefaultTimingProfile(), 6, rakeSettings, new Currency("EUR",2), null);
+        PokerSettings settings = new PokerSettings(PokerVariant.TEXAS_HOLDEM,level, betStrategy, bd(100), bd(5000), new DefaultTimingProfile(), 6, rakeSettings, new Currency("EUR",2), null);
         PokerContext context = new PokerContext(settings);
         texas.setPokerContextAndServerAdapter(context, serverAdapterHolder);
         p = TestUtils.createMockPlayers(numberOfPlayers);

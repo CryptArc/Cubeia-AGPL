@@ -3,8 +3,10 @@ package com.cubeia.games.poker.admin.wicket.pages.tables;
 import static java.util.Arrays.asList;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Collections;
 
+import com.cubeia.poker.variant.PokerVariant;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -58,6 +60,7 @@ public abstract class TableForm extends Panel {
         final FormComponent<BigDecimal> maxBuyIn = new RequiredTextField<BigDecimal>("maxBuyIn").setRequired(true);
 
         tableForm.add(new RequiredTextField<String>("name"));
+        tableForm.add(new DropDownChoice("variant", Arrays.asList(PokerVariant.values())).setRequired(true));
         tableForm.add(anteField);
         tableForm.add(smallBlindField);
         tableForm.add(bigBlindField);

@@ -23,6 +23,7 @@ import com.cubeia.poker.model.BlindsLevel;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.variant.GameType;
+import com.cubeia.poker.variant.PokerVariant;
 import com.cubeia.poker.variant.factory.GameTypeFactory;
 import com.cubeia.poker.variant.telesina.Telesina;
 import com.cubeia.poker.variant.texasholdem.TexasHoldem;
@@ -62,7 +63,7 @@ public class GameStateInitialization {
         BigDecimal anteLevel = new BigDecimal(1234);
         BlindsLevel level = new BlindsLevel(anteLevel, anteLevel.multiply(new BigDecimal(2)), anteLevel);
         BetStrategyType betStrategy = BetStrategyType.NO_LIMIT;
-        PokerSettings settings = new PokerSettings(level, betStrategy, new BigDecimal(100), new BigDecimal(1000), timing, 6, createOnePercentRakeSettings(), new Currency("EUR",2), null);
+        PokerSettings settings = new PokerSettings(PokerVariant.TEXAS_HOLDEM,level, betStrategy, new BigDecimal(100), new BigDecimal(1000), timing, 6, createOnePercentRakeSettings(), new Currency("EUR",2), null);
         PokerState state = new PokerState();
         GameType gt = GameTypeFactory.createGameType(TELESINA);
         state.init(gt, settings);

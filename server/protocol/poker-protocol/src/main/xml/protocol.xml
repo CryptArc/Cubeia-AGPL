@@ -135,9 +135,13 @@
         <var name="seconds_to_next_level" type="int32" />
         <var name="bet_strategy" type="bet_strategy" />
         <var name="currency" type="currency"/>
-        <!--<var name="current_player_in_turn" type="player_in_turn" />-->
-        <!--<var name="dealer_seat_id" type="int32" />-->
+        <var name="variant" type="variant"/>
     </struct>
+
+    <enum name="variant">
+        <value>TEXAS_HOLDEM</value>
+        <value>TELESINA</value>
+    </enum>
 
     <enum name="bet_strategy">
         <value>FIXED_LIMIT</value>

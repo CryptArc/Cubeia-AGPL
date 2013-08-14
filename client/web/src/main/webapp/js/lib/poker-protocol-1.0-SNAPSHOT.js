@@ -953,6 +953,7 @@ com.cubeia.games.poker.io.protocol.GameState = function () {
     this.secondsToNextLevel = {};
     this.betStrategy = {};
     this.currency = {};
+    this.variant = {};
     this.save = function () {
         var a = new FIREBASE.ByteArray();
         a.writeString(this.name);
@@ -963,6 +964,7 @@ com.cubeia.games.poker.io.protocol.GameState = function () {
         a.writeInt(this.secondsToNextLevel);
         a.writeUnsignedByte(this.betStrategy);
         a.writeArray(this.currency.save());
+        a.writeUnsignedByte(this.variant);
         return a
     };
     this.load = function (a) {
@@ -976,7 +978,8 @@ com.cubeia.games.poker.io.protocol.GameState = function () {
         this.secondsToNextLevel = a.readInt();
         this.betStrategy = com.cubeia.games.poker.io.protocol.BetStrategyEnum.makeBetStrategyEnum(a.readUnsignedByte());
         this.currency = new com.cubeia.games.poker.io.protocol.Currency();
-        this.currency.load(a)
+        this.currency.load(a);
+        this.variant = com.cubeia.games.poker.io.protocol.VariantEnum.makeVariantEnum(a.readUnsignedByte())
     };
     this.getNormalizedObject = function () {
         var a = {};
@@ -991,6 +994,7 @@ com.cubeia.games.poker.io.protocol.GameState = function () {
         a.details.secondsToNextLevel = this.secondsToNextLevel;
         a.details.betStrategy = com.cubeia.games.poker.io.protocol.BetStrategyEnum.toString(this.betStrategy);
         a.details.currency = this.currency.getNormalizedObject();
+        a.details.variant = com.cubeia.games.poker.io.protocol.VariantEnum.toString(this.variant);
         return a
     }
 };
@@ -3132,6 +3136,28 @@ com.cubeia.games.poker.io.protocol.TournamentTable = function () {
     }
 };
 com.cubeia.games.poker.io.protocol.TournamentTable.CLASSID = 63;
+com.cubeia.games.poker.io.protocol.VariantEnum = function () {
+};
+com.cubeia.games.poker.io.protocol.VariantEnum.TEXAS_HOLDEM = 0;
+com.cubeia.games.poker.io.protocol.VariantEnum.TELESINA = 1;
+com.cubeia.games.poker.io.protocol.VariantEnum.makeVariantEnum = function (a) {
+    switch (a) {
+        case 0:
+            return com.cubeia.games.poker.io.protocol.VariantEnum.TEXAS_HOLDEM;
+        case 1:
+            return com.cubeia.games.poker.io.protocol.VariantEnum.TELESINA
+    }
+    return -1
+};
+com.cubeia.games.poker.io.protocol.VariantEnum.toString = function (a) {
+    switch (a) {
+        case 0:
+            return"TEXAS_HOLDEM";
+        case 1:
+            return"TELESINA"
+    }
+    return"INVALID_ENUM_VALUE"
+};
 com.cubeia.games.poker.io.protocol.WaitingForPlayers = function () {
     this.classId = function () {
         return com.cubeia.games.poker.io.protocol.WaitingForPlayers.CLASSID

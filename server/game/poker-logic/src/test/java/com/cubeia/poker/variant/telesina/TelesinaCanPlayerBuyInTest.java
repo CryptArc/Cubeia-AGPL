@@ -21,6 +21,7 @@ import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.model.BlindsLevel;
 import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.settings.PokerSettings;
+import com.cubeia.poker.variant.PokerVariant;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -41,7 +42,7 @@ public class TelesinaCanPlayerBuyInTest {
         int anteLevel = 20;
         BlindsLevel level = new BlindsLevel(bd(anteLevel), bd(anteLevel * 2), bd(anteLevel));
         BetStrategyType betStrategy = BetStrategyType.NO_LIMIT;
-        PokerSettings settings = new PokerSettings(level, betStrategy, bd(0), bd(0), null, 0, null, null, null);
+        PokerSettings settings = new PokerSettings(PokerVariant.TELESINA,level, betStrategy, bd(0), bd(0), null, 0, null, null, null);
 
         when(player.getBalance()).thenReturn(bd(anteLevel + 1));
         when(player.getPendingBalanceSum()).thenReturn(BigDecimal.ZERO);
@@ -69,7 +70,7 @@ public class TelesinaCanPlayerBuyInTest {
         int anteLevel = 20;
         BlindsLevel level = new BlindsLevel(bd(anteLevel), bd(anteLevel * 2), bd(anteLevel));
         BetStrategyType betStrategy = BetStrategyType.NO_LIMIT;
-        PokerSettings settings = new PokerSettings(level, betStrategy, bd(0), bd(0), null, 0, null, null, null);
+        PokerSettings settings = new PokerSettings(PokerVariant.TELESINA,level, betStrategy, bd(0), bd(0), null, 0, null, null, null);
 
         when(player.getBalance()).thenReturn(BigDecimal.ZERO);
         when(player.getPendingBalanceSum()).thenReturn(bd(anteLevel + 1));
@@ -97,7 +98,7 @@ public class TelesinaCanPlayerBuyInTest {
         int anteLevel = 20;
         BlindsLevel level = new BlindsLevel(bd(anteLevel), bd(anteLevel * 2), bd(anteLevel));
         BetStrategyType betStrategy = BetStrategyType.NO_LIMIT;
-        PokerSettings settings = new PokerSettings(level, betStrategy, bd(0), bd(0), null, 0, null, null, null);
+        PokerSettings settings = new PokerSettings(PokerVariant.TELESINA,level, betStrategy, bd(0), bd(0), null, 0, null, null, null);
 
         when(player.getBalance()).thenReturn(bd(anteLevel / 2));
         when(player.getPendingBalanceSum()).thenReturn(bd(anteLevel / 2));

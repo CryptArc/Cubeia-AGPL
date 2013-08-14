@@ -80,6 +80,7 @@ import com.cubeia.poker.timing.Periods;
 import com.cubeia.poker.tournament.RoundReport;
 import com.cubeia.poker.util.SitoutCalculator;
 import com.cubeia.poker.util.ThreadLocalProfiler;
+import com.cubeia.poker.variant.PokerVariant;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import org.joda.time.DateTime;
@@ -257,12 +258,17 @@ public class FirebaseServerAdapter implements ServerAdapter {
         int secondsToNextLevel = secondsToNextLevel(snapshot.getBlindsLevel());
         String name = table.getMetaData().getName();
         int capacity = state.getSettings().getTableSize();
-        GameState state = new GameState(name, capacity, tournamentId, handStartInfo, blindsLevel, secondsToNextLevel, betStrategy,currency);
-        sendPrivatePacket(playerId, state);
+        Enums.Variant variant = convertVariant(state.getSettings().getVariant());
+        GameState gs = new GameState(name, capacity, tournamentId, handStartInfo, blindsLevel, secondsToNextLevel, betStrategy,currency,variant);
+        sendPrivatePacket(playerId, gs);
     }
 
     private Enums.BetStrategy convertBetStrategy(BetStrategyType betStrategyType) {
         return Enums.BetStrategy.valueOf(betStrategyType.name());
+    }
+
+    private Enums.Variant convertVariant(PokerVariant variant) {
+        return Enums.Variant.valueOf(variant.name());
     }
 
     @Override

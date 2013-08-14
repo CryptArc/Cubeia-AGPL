@@ -33,6 +33,7 @@ import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.variant.GameType;
+import com.cubeia.poker.variant.PokerVariant;
 import com.cubeia.poker.variant.factory.GameTypeFactory;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -65,7 +66,7 @@ public class MttTableCreationHandlerImpl implements MttTableCreationHandler {
     }
 
     private PokerState createGameState(Table table, int mttId, Object commandAttachment, String externalTableId) {
-        PokerSettings settings = createSettings(table, commandAttachment, externalTableId);
+        PokerSettings settings = createSettings(table, commandAttachment, externalTableId,TEXAS_HOLDEM);
 
         PokerState pokerState = stateCreator.newPokerState();
         GameType gameType = GameTypeFactory.createGameType(TEXAS_HOLDEM);
@@ -77,14 +78,14 @@ public class MttTableCreationHandlerImpl implements MttTableCreationHandler {
         return pokerState;
     }
 
-    private PokerSettings createSettings(Table table, Object commandAttachment, String externalTableId) {
+    private PokerSettings createSettings(Table table, Object commandAttachment, String externalTableId, PokerVariant variant) {
         TournamentTableSettings settings = getTournamentSettings(commandAttachment);
         int numberOfSeats = table.getPlayerSet().getSeatingMap().getNumberOfSeats();
         RakeSettings rakeSettings = new RakeSettings(new BigDecimal(0), BigDecimal.ZERO, BigDecimal.ZERO); // No rake in tournaments.
         BlindsLevel level = new BlindsLevel(new BigDecimal(-1), new BigDecimal(-1), new BigDecimal(-1)); // Blinds will be sent later.
         Map<Serializable, Serializable> attributes = Collections.<Serializable, Serializable>singletonMap(TABLE_EXTERNAL_ID.name(), externalTableId);
         BetStrategyType betStrategy = settings.getBetStrategyType();
-        return new PokerSettings(level, betStrategy, new BigDecimal(-1), new BigDecimal(-1), settings.getTimingProfile(), numberOfSeats, rakeSettings,
+        return new PokerSettings(variant,level, betStrategy, new BigDecimal(-1), new BigDecimal(-1), settings.getTimingProfile(), numberOfSeats, rakeSettings,
                 new Currency("TRM", 0), attributes);
     }
 

@@ -34,6 +34,7 @@ import com.cubeia.poker.states.StateChanger;
 import com.cubeia.poker.timing.TimingFactory;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.variant.GameType;
+import com.cubeia.poker.variant.PokerVariant;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -258,7 +259,7 @@ public class PokerStateTest {
         RakeSettings rakeSettings = TestUtils.createOnePercentRakeSettings();
         BlindsLevel level = new BlindsLevel(bd(0),bd(0), bd(0));
         BetStrategyType betStrategy = BetStrategyType.NO_LIMIT;
-        state.pokerContext.settings = new PokerSettings(level, betStrategy, bd(0), bd(0), null, 4, rakeSettings, new Currency("EUR",2), null);
+        state.pokerContext.settings = new PokerSettings(PokerVariant.TEXAS_HOLDEM,level, betStrategy, bd(0), bd(0), null, 4, rakeSettings, new Currency("EUR",2), null);
 
         state.pokerContext.playerMap = new HashMap<Integer, PokerPlayer>();
         PokerPlayer player1 = mock(PokerPlayer.class);

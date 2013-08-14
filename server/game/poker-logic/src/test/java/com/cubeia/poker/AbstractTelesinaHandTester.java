@@ -26,6 +26,7 @@ import com.cubeia.poker.player.PokerPlayer;
 import com.cubeia.poker.settings.PokerSettings;
 import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.timing.TimingFactory;
+import com.cubeia.poker.variant.PokerVariant;
 import com.cubeia.poker.variant.telesina.Telesina;
 import com.cubeia.poker.variant.telesina.TelesinaDealerButtonCalculator;
 import com.cubeia.poker.variant.telesina.TelesinaDeckFactory;
@@ -82,7 +83,7 @@ public abstract class AbstractTelesinaHandTester extends TestCase {
     protected PokerSettings createPokerSettings(BigDecimal anteLevel, RakeSettings rakeSettings) {
         BlindsLevel level = new BlindsLevel(anteLevel, anteLevel.multiply(new BigDecimal(2)), anteLevel);
         BetStrategyType betStrategy = BetStrategyType.NO_LIMIT;
-        PokerSettings settings = new PokerSettings(level, betStrategy, new BigDecimal(1000), new BigDecimal(10000),
+        PokerSettings settings = new PokerSettings(PokerVariant.TELESINA,level, betStrategy, new BigDecimal(1000), new BigDecimal(10000),
                 TimingFactory.getRegistry().getTimingProfile("MINIMUM_DELAY"), 6, rakeSettings, new Currency("EUR",2),
                 Collections.<Serializable, Serializable>singletonMap("EXTERNAL_TABLE_ID", "xyz"));
 

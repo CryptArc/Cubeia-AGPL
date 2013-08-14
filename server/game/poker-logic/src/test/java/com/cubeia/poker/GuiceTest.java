@@ -72,7 +72,7 @@ public abstract class GuiceTest extends TestCase {
     protected PokerSettings createPokerSettings(BigDecimal anteLevel) {
         BlindsLevel blinds = new BlindsLevel(anteLevel.divide(new BigDecimal(2)), anteLevel, anteLevel);
         BetStrategyType betStrategy = BetStrategyType.NO_LIMIT;
-        PokerSettings settings = new PokerSettings(blinds, betStrategy, new BigDecimal(1000), new BigDecimal(10000),
+        PokerSettings settings = new PokerSettings(PokerVariant.TEXAS_HOLDEM,blinds, betStrategy, new BigDecimal(1000), new BigDecimal(10000),
                 TimingFactory.getRegistry().getTimingProfile("MINIMUM_DELAY"), 6, TestUtils.createZeroRakeSettings(), new Currency("EUR",2), null);
 
         settings.setSitoutTimeLimitMilliseconds(sitoutTimeLimitMilliseconds);

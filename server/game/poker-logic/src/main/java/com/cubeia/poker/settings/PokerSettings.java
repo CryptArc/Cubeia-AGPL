@@ -21,6 +21,7 @@ import com.cubeia.games.poker.common.money.Currency;
 import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.model.BlindsLevel;
 import com.cubeia.poker.timing.TimingProfile;
+import com.cubeia.poker.variant.PokerVariant;
 
 
 import java.io.Serializable;
@@ -49,10 +50,13 @@ public class PokerSettings implements Serializable {
 
     private final Currency currency;
 
+    private final PokerVariant variant;
+
     private long sitoutTimeLimitMilliseconds = 5 * 60 * 1000;
 
-    public PokerSettings(BlindsLevel blindsLevel, BetStrategyType betStrategyType, BigDecimal minBuyIn, BigDecimal maxBuyIn, TimingProfile timing,
+    public PokerSettings(PokerVariant variant, BlindsLevel blindsLevel, BetStrategyType betStrategyType, BigDecimal minBuyIn, BigDecimal maxBuyIn, TimingProfile timing,
             int tableSize, RakeSettings rakeSettings, Currency currency, Map<Serializable, Serializable> attributes) {
+        this.variant = variant;
         this.blindsLevel = blindsLevel;
         this.minBuyIn = minBuyIn;
         this.maxBuyIn = maxBuyIn;
@@ -122,5 +126,9 @@ public class PokerSettings implements Serializable {
 
     public Currency getCurrency() {
         return currency;
+    }
+
+    public PokerVariant getVariant() {
+        return variant;
     }
 }
