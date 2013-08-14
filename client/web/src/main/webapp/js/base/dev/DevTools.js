@@ -232,6 +232,9 @@ Poker.DevTools = Class.extend({
     dealCards : function(seat,playerId) {
         this.tableManager.dealPlayerCard(this.tableId,playerId,this.cardIdSeq++,"  ");
         this.tableManager.dealPlayerCard(this.tableId,playerId,this.cardIdSeq++,"  ");
+        this.tableManager.dealPlayerCard(this.tableId,playerId,this.cardIdSeq++,"  ");
+        this.tableManager.dealPlayerCard(this.tableId,playerId,this.cardIdSeq++,"  ");
+        this.tableManager.dealPlayerCard(this.tableId,playerId,this.cardIdSeq++,"  ");
     },
     playerAction : function(playerId,action,amount) {
         if(!amount) {

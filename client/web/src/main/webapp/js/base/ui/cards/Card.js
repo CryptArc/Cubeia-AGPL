@@ -27,10 +27,10 @@ Poker.Card = Class.extend({
      * to the DOM
      * @return {*}
      */
-    render : function () {
+    render : function (cardNum) {
         var t = this.getTemplate();
         var backfaceImageUrl = "url(" +contextPath+ "/skins/" + Poker.SkinConfiguration.name +"/images/cards/"+this.cardString+".svg)";
-        var output = this.templateManager.render(t, {domId:this.id + "-" + this.tableId, backgroundImage:backfaceImageUrl});
+        var output = this.templateManager.render(t, {domId:this.id + "-" + this.tableId, backgroundImage:backfaceImageUrl, cardNum : cardNum});
         return output;
     },
     /**

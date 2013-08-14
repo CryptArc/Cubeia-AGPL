@@ -138,7 +138,7 @@ Poker.Seat = Class.extend({
         this.seatElement.find(".player-card-container img").attr("src", contextPath + "/skins/" + Poker.SkinConfiguration.name + "/images/cards/gray-back.svg");
     },
     dealCard: function(card) {
-        this.cardsContainer.append(card.render());
+        this.cardsContainer.append(card.render(this.cardsContainer.children().length));
         this.onCardDealt(card);
     },
     onCardDealt: function(card) {

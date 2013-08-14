@@ -484,7 +484,7 @@
     <div class="filter-button" id="filterButton{{id}}">{{name}}</div>
 </script>
 <script type="text/mustache" id="playerCardTemplate" style="display: none;">
-    <div id="playerCard-{{domId}}" class="player-card-container">
+    <div id="playerCard-{{domId}}" class="player-card-container number-{{cardNum}}">
         <div class="card-image" id="playerCardImage-{{domId}}" style="background-image:{{backgroundImage}}"></div>
     </div>
 </script>
