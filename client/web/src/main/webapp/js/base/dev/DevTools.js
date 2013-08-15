@@ -26,7 +26,7 @@ Poker.DevTools = Class.extend({
 
     createTable : function() {
         var self = this;
-
+        var capacity = 10;
         var tableName = "Dev Table";
         this.tableManager = Poker.AppCtx.getTableManager();
         var tableViewContainer = $(".table-view-container");
@@ -35,9 +35,9 @@ Poker.DevTools = Class.extend({
 
         var beforeFunction = function() {
             var tableLayoutManager = new Poker.TableLayoutManager(self.tableId, tableViewContainer,
-                templateManager,10,new Poker.SoundManager());
+                templateManager,capacity,new Poker.SoundManager());
 
-            self.tableManager.createTable(self.tableId, 10, tableName , tableLayoutManager);
+            self.tableManager.createTable(self.tableId, capacity, tableName , tableLayoutManager);
             Poker.AppCtx.getViewManager().addTableView(tableLayoutManager,tableName);
             new Poker.PositionEditor("#tableView-"+self.tableId);
         };
@@ -52,12 +52,12 @@ Poker.DevTools = Class.extend({
         var mockEvent = function(name,func,delay) {
             return new Poker.MockEvent(name,func,delay);
         };
-        Poker.MyPlayer.id = 0;
+        Poker.MyPlayer.id = 99;
         Poker.MyPlayer.name= "test";
         $(".table-view-container").show();
         this.mockEventManager.addEvent(
             mockEvent("Add players",function(){
-                for(var i = 0; i<10; i++) {
+                for(var i = 0; i<capacity; i++) {
                     self.addPlayer(i,i,"CoolPlayer"+i);
                 }
             })
@@ -73,7 +73,7 @@ Poker.DevTools = Class.extend({
         }));
         this.mockEventManager.addEvent(
             mockEvent("Deal cards",function(){
-                for(var i = 0; i<10; i++) {
+                for(var i = 0; i<capacity; i++) {
                     self.dealCards(i,i);
                 }
             })
@@ -130,14 +130,14 @@ Poker.DevTools = Class.extend({
         );
         this.mockEventManager.addEvent(
             mockEvent("All players call",function(){
-                self.playerAction(6,Poker.ActionType.CALL);
-                self.playerAction(7,Poker.ActionType.CALL);
-                self.playerAction(8,Poker.ActionType.CALL);
-                self.playerAction(9,Poker.ActionType.CALL);
+                //self.playerAction(6,Poker.ActionType.CALL);
+                //self.playerAction(7,Poker.ActionType.CALL);
+                //self.playerAction(8,Poker.ActionType.CALL);
+                //self.playerAction(9,Poker.ActionType.CALL);
                 self.playerAction(0,Poker.ActionType.CALL);
                 self.playerAction(1,Poker.ActionType.CALL);
                 self.playerAction(2,Poker.ActionType.CALL);
-                self.playerAction(4,Poker.ActionType.CALL);
+                //self.playerAction(4,Poker.ActionType.CALL);
             })
         );
 

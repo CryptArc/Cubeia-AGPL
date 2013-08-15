@@ -3,24 +3,29 @@
     position: absolute;
     width:19%;
     width:28.5%;
+
     .avatar {
         top:0;
         left:0;
+        z-index: 2;
     }
 
     .player-name {
         left:38%;
         top:55%;
+        z-index: 2;
     }
 
     .seat-balance {
         left:38%;
         top:66%;
+        z-index: 2;
     }
     .action-amount {
         top:10%;
         left:-28%;
         width:85%;
+        z-index: 2;
     }
 
     .progress-bar {
@@ -31,13 +36,16 @@
         width:55%;
         top:0;
         left:0;
+        z-index: 2;
     }
     .cards-container {
-        width:24%;
+        width:30%;
+        z-index: 1;
     }
     .player-status, .action-text,  .hand-strength {
         top:74%;
         left:40%;
+        z-index: 2;
     }
 }
 
@@ -54,11 +62,8 @@
     white-space: nowrap;
     overflow: hidden;
     font-weight: bold;
-
-
 }
 .avatar-base {
-
     .linear-gradient(top, #3e3d3e 0%, #111 100%);
     width:80%;
     height: 35%;
@@ -68,6 +73,8 @@
     border: 2px solid #b4b8ba;
     position: absolute;
     display: block;
+    z-index: 2;
+
 }
 
 .active-seat .avatar-base {
@@ -82,13 +89,14 @@
     height:100%;
     top:-45%;
     left:0;
+    z-index: 1;
 
 }
 .cards-container-player .player-card-container {
     position:absolute;
     left:0;
     width:60%;
-    height:150%;
+    height:100%;
     top:0;
 }
 
@@ -135,6 +143,7 @@ img.player-card {
     font-size:90%;
     text-transform: uppercase;
     padding:2% 0;
+    z-index: 1;
 }
 
 .hand-strength {
@@ -154,6 +163,7 @@ div.seat-balance {
     &:first-letter {
         color:#ababab;
     }
+    z-index: 1;
 
 }
 
