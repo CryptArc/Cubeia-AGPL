@@ -3,4 +3,4 @@ serving bots.
 
 After starting the poker game server, the bot-server can be reached at:
 
-http://localhost:19090
+http://localhost:8081

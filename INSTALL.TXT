@@ -48,14 +48,14 @@ mvn firebase:run
 
 CLIENT: you should be able to access the game at:
 
-http://localhost:18181
+http://localhost:8181
 
 There is no user registration at this point. Use any name, and the password
 should be an integer > 1000 (e.g.: test/1001).
 
 BOTS: in order to get some opponents, go to the bots at:
 
-http://localhost:18081
+http://localhost:8081
 
 The default values will create 100 bots, just press OK button. You should see
 now within the lobby that tables are getting players. Join one or more tables
@@ -65,7 +65,7 @@ After this, you can start tournament bots, and join a tournament.
 
 ADMIN
 
-http://localhost:18088
+http://localhost:8088
 
 You can see the functionality, but most of it is not usable. To
 make the Poker Admin functional, go on with the next steps, which will allow you

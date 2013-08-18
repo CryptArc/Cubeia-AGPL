@@ -31,7 +31,7 @@ import org.eclipse.jetty.webapp.WebAppContext;
 public class AdminServerService implements AdminServerContract, Service {
 
     //TODO retrieve port-no from config file
-    public static final int WAR_PORT = 18088;
+    public static final int WAR_PORT = 8088;
     //TODO retrieve war name from dependency or config
     public static final String WAR_FILE = "poker-admin.war";
     

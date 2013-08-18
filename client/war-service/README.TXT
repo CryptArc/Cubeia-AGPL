@@ -1,18 +1,6 @@
-This is a service that will start an embedded (within Firebase) jetty for
-serving web-applications packaged as wars (like Web Client, Admin).
+The Poker Html5 Client packaged as a sar (firebase service), with an embedded jetty.
 
-Currently focusing on starting the Web Client
+This starts the Poker Client at
 
-http://localhost:19999
+http://localhost:8181
 
-STATUS
-======
-
-Alpha
-
-DEV DOC
-=======
-
-http://wiki.eclipse.org/Jetty/Tutorial/Embedding_Jetty#Setting_a_Web_Application_Context
-
-Additional reference code: Bot-Service
