@@ -315,9 +315,9 @@
                     <artifactId>poker-admin-service</artifactId>
                     <version>1.0-SNAPSHOT</version>
                     <type>firebase-sar</type>
-                </dependency>                
+                </dependency>           
             </dependencies>
-            
+                
             <build>
                 
                 <plugins>  
@@ -344,7 +344,7 @@
                                                 <include>*.properties</include>
                                                 <include>jetty-env.xml</include>
                                             </includes>
-                                        </resource>
+                                        </resource>                                                                           
                                     </resources>
                                 </configuration>
                             </execution>
@@ -355,6 +355,75 @@
                 </plugins>
             </build>
         </profile>
+        
+        <profile>
+            <id>network</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>network</name>
+                </property>
+            </activation>
+            
+            <dependencies>
+             
+                <dependency>
+                    <groupId>com.cubeia.network.wallet</groupId>
+                    <artifactId>wallet-embed-service</artifactId>
+                    <version>1.0-SNAPSHOT</version>
+                    <type>firebase-sar</type>
+                </dependency>
+                
+                <dependency>
+                    <groupId>com.cubeia.network.users</groupId>
+                    <artifactId>user-embed-service</artifactId>
+                    <version>1.0-SNAPSHOT</version>
+                    <type>firebase-sar</type>
+                </dependency>
+                
+                <dependency>
+                    <groupId>com.cubeia.network.operator</groupId>
+                    <artifactId>operator-embed-service</artifactId>
+                    <type>firebase-sar</type>
+                    <version>1.0-SNAPSHOT</version>
+                </dependency>
+                
+            </dependencies>
+
+            <build>               
+                <plugins>  
+                    <plugin>
+                        <!-- copy the datasources for deployment -->
+
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-network-datasources</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/firebase-run/firebase-${firebase.version}/game/deploy</outputDirectory>
+                                    <overwrite>true</overwrite>
+                                    <resources>
+                                        <resource>
+                                            <directory>../backoffice/network/resources/</directory>
+                                            <includes>
+                                                <include>*-ds.xml</include>
+                                            </includes>
+                                        </resource>                                                                           
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    
+                    
+                </plugins>
+            </build>                
+         </profile>
+        
     </profiles>
 
 </project>
