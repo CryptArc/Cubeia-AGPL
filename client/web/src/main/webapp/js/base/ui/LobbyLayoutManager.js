@@ -184,7 +184,6 @@ Poker.LobbyLayoutManager = Class.extend({
             var xccFilter = new Poker.PropertyStringFilter(prefix + "-xcc", true, this, "buyInCurrencyCode", "XCC");
             filterList.push(xccFilter);
 
-            // Set XOC to disabled, the default needs to be configurable though.
             var xocFilter = new Poker.PropertyStringFilter(prefix + "-xoc", false, this, "buyInCurrencyCode", xocName);
             if (!xocFilter.enabled) {
                 $('#' + prefix + '-xoc').removeClass("active");
@@ -356,10 +355,6 @@ Poker.LobbyLayoutManager = Class.extend({
         }
     },
     getTableItemHtml : function (templateId, data) {
-//        var copy = jQuery.extend({}, data);
-        if (data.buyInCurrencyCode == "XOC") {
-            data.buyInCurrencyCode = Poker.OperatorConfig.getXOCName("XOC");
-        }
         var item = this.templateManager.render(templateId, data);
         return item;
     }

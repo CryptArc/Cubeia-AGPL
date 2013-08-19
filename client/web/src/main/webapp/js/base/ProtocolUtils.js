@@ -56,6 +56,11 @@ Poker.ProtocolUtils = Class.extend({
             buyInCurrencyCode : param("BUY_IN_CURRENCY_CODE")
         };
 
+        // If the currency code is XOC, exchange it with the operator specified name for the XOC currency.
+        if (data.buyInCurrencyCode == "XOC") {
+            data.buyInCurrencyCode = Poker.OperatorConfig.getXOCName("XOC");
+        }
+
         return data;
     },
     extractTableData : function(snapshot) {
