@@ -402,6 +402,20 @@
                                 <div class="filter-button" id="highStakes" data-i18n="lobby.filters.high">High</div>
                             </div>
                         </div>
+                        <div class="tournament-filters" style="display: none;">
+                            <div class="filter-group currencies">
+                                <div class="filter-label" data-i18n="lobby.filters.currency">Currency:</div>
+                                <div class="filter-button" id="tournament-xcc">XCC</div>
+                                <div class="filter-button" id="tournament-xoc">XOC</div>
+                            </div>
+                        </div>
+                        <div class="sit-and-go-filters" style="display: none;">
+                            <div class="filter-group currencies">
+                                <div class="filter-label" data-i18n="lobby.filters.currency">Currency:</div>
+                                <div class="filter-button" id="sit-and-go-xcc">XCC</div>
+                                <div class="filter-button" id="sit-and-go-xoc">XOC</div>
+                            </div>
+                        </div>
                     </div>
                         <div class="lobby-tab"  id="tableListAnchor">
                         <div id="tableListContainer">
