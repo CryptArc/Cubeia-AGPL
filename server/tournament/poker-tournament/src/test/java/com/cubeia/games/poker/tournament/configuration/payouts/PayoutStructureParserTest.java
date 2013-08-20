@@ -41,7 +41,12 @@ public class PayoutStructureParserTest {
         assertThat(payouts.getPayoutsForPosition(1), is(bd(100)));
     }
 
+    // bd = BigDecimal
     private BigDecimal bd(int i) {
+        return new BigDecimal(i).setScale(2);
+    }
+
+    private BigDecimal bd(String i) {
         return new BigDecimal(i).setScale(2);
     }
 
@@ -54,6 +59,17 @@ public class PayoutStructureParserTest {
         assertThat(payouts.getPayoutsForPosition(1), is(bd(6)));
         assertThat(payouts.getPayoutsForPosition(2), is(bd(3)));
         assertThat(payouts.getPayoutsForPosition(3), is(bd(1)));
+    }
+
+    @Test
+    public void test6PlayersWithDecimals() {
+        // See simple.csv
+        PayoutStructureParser parser = new PayoutStructureParser();
+        PayoutStructure structure = parser.parsePayouts("complex.csv");
+        Payouts payouts = structure.getPayoutsForEntrantsAndPrizePool(6, bd("1.20"),eur);
+        assertThat(payouts.getPayoutsForPosition(1), is(bd("0.8")));
+        assertThat(payouts.getPayoutsForPosition(2), is(bd("0.4")));
+        assertThat(payouts.getPayoutsForPosition(3), is(bd("0")));
     }
 
     @Test

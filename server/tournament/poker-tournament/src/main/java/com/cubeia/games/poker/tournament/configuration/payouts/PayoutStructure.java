@@ -34,7 +34,7 @@ import static javax.persistence.FetchType.LAZY;
 
 /**
  * A PayoutStructure holds information about how much of the pot each player should get, given how may players were in the tournament.
- * Note that the structure holds the entire table of payouts, so when a tournament starts, we get they payouts to use in that specific tournament
+ * Note that the structure holds the entire table of payouts, so when a tournament starts, we get the payouts to use in that specific tournament
  * depending on the number of entrants.
  */
 @Entity
