@@ -49,7 +49,6 @@ public class JettyEmbed  {
      * to determine cwd and the war location in a more elegant (ideally 
      * generic) way.
      *
-     * @param war the relative path to the war
      * @return the absolute path to the war
      */
     public String getWarPath() {
@@ -71,9 +70,6 @@ public class JettyEmbed  {
 
     /**
      * Creates a WebAppContext which can be added to the server
-     * 
-     * <p>
-     * TODO: error handling
      *
      * @return the webapp context 
      */
