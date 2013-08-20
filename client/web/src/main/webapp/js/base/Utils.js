@@ -33,6 +33,14 @@ Poker.Utils = {
     formatCurrencyString: function(amount) {
         return Poker.Utils.currencySymbol + Poker.Utils.formatCurrency(amount);
     },
+    translateCurrencyCode: function(currencyCode) {
+        var map = Poker.OperatorConfig.getCurrencyMap();
+        if (typeof(map[currencyCode]) !== "undefined") {
+            return map[currencyCode];
+        } else {
+            return currencyCode;
+        }
+    },
     getCardString: function(gamecard) {
         var ranks = "23456789tjqka ";
         var suits = "cdhs ";

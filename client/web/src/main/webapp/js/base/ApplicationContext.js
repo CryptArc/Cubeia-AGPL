@@ -165,6 +165,10 @@ Poker.AppCtx = Class.extend({
             return navigation;
         };
 
+        Handlebars.registerHelper('translateCurrencyCode',function(currencyCode){
+            return Poker.Utils.translateCurrencyCode(currencyCode);
+        });
+
         Handlebars.registerHelper('currency',function(amount){
             return Poker.Utils.formatCurrency(amount);
         });
