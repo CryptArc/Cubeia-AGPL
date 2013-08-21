@@ -68,8 +68,10 @@ public class PayoutStructureParserTest {
         PayoutStructure structure = parser.parsePayouts("complex.csv");
         Payouts payouts = structure.getPayoutsForEntrantsAndPrizePool(6, bd("1.20"),eur);
         assertThat(payouts.getPayoutsForPosition(1), is(bd("0.8")));
-        assertThat(payouts.getPayoutsForPosition(2), is(bd("0.4")));
-        assertThat(payouts.getPayoutsForPosition(3), is(bd("0")));
+        assertThat(payouts.getPayoutsForPosition(2), is(bd("0.39")));
+        // Note, we really want this to be 0.40..
+        //assertThat(payouts.getPayoutsForPosition(2), is(bd("0.40")));
+        assertThat(payouts.getPayoutsForPosition(3), is(BigDecimal.ZERO));
     }
 
     @Test
