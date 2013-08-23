@@ -37,7 +37,7 @@
             "low" : "Low",
             "mid" : "Mid",
             "high" : "High",
-            "currency" : "Currency",
+            "currency" : "Select Currency:",
             "xcc" : "XCC",
             "xoc" : "XOC"
         },

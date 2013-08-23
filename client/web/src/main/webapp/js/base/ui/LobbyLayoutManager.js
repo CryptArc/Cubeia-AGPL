@@ -45,12 +45,14 @@ Poker.LobbyLayoutManager = Class.extend({
             $(this).addClass("active");
             $(".navbar-variant .active").removeClass("active");
             $("#variantTexas").addClass("active");
-            $("#cashGameFilters").show();
+            $(".filter").hide();
+            $(".cashgame-filter").show();
             new Poker.LobbyRequestHandler().subscribeToCashGames("texas");
             $.ga._trackEvent("user_navigation", "click_cashGameMenu");
         });
         $("#sitAndGoMenu").click(function (e) {
-            $("#cashGameFilters").show();
+            $(".filter").hide();
+            $(".sitandgo-filter").show();
             $(".navbar-top .active").removeClass("active");
             $(this).addClass("active");
             this.state = Poker.LobbyLayoutManager.SIT_AND_GO_STATE;
@@ -59,7 +61,8 @@ Poker.LobbyLayoutManager = Class.extend({
             $.ga._trackEvent("user_navigation", "click_sitAndGoMenu");
         });
         $("#tournamentMenu").click(function (e) {
-            $("#cashGameFilters").hide();
+
+            $(".filter").hide();
             $(".navbar-top .active").removeClass("active");
             $(this).addClass("active");
             this.state = Poker.LobbyLayoutManager.TOURNAMENT_STATE;
@@ -88,9 +91,9 @@ Poker.LobbyLayoutManager = Class.extend({
         var currencies = Poker.OperatorConfig.getEnabledCurrencies();
         if(currencies.length>1) {
             $(".filter-group.currencies").show();
-            var t = this.templateManager.getRenderTemplate("filterButtonTemplate");
+            var t = this.templateManager.getRenderTemplate("currencyFilterTemplate");
             for(var i = 0; i<currencies.length; i++) {
-                $(".filter-group.currencies").append(t.render(currencies[i]));
+                $("#currencyMenu").append(t.render(currencies[i]));
             }
             var currencyFilter = new Poker.RadioGroupFilter(currencies, this,["currencyCode","buyInCurrencyCode"]);
             this.requiredFilters.push(currencyFilter);

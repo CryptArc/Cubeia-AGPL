@@ -39,7 +39,7 @@ Poker.OperatorConfig = Class.extend({
         for(var p in params) {
           this.configMap.put(p,params[p]);
         }
-        this.createCurrencyMap(this.getValue("CURRENCIES",""));
+        this.createCurrencyMap("EUR=Euro,XCC=XCC");
         this.populated = true;
     },
     getLogoutUrl : function() {

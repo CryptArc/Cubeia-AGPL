@@ -367,8 +367,18 @@
 
                 <div class="row">
                     <div class="col-sm-8">
+                        <nav class="navbar-inverse currencies">
+                            <div class="filter-group currencies">
+                                <ul id="currencyMenu" class="nav nav-pills">
+                                    <li class="filter-button" >
+                                        <a data-i18n="lobby.filters.currency" class="description">Select Currency:</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </nav>
                         <div class="logo-container">
                         </div>
+
                         <nav class="navbar-inverse navbar-top">
                             <ul class="nav nav-pills">
                                 <li class="active" id="cashGameMenu">
@@ -380,22 +390,22 @@
                                 <li id="tournamentMenu"><a class="lobby-link" data-i18n="lobby.menu.tournaments">[Tournaments]</a></li>
                             </ul>
                         </nav>
-                        <div id="cashGameFilters">
-                            <nav class="navbar-inverse navbar-variant">
-                                <ul class="nav nav-pills">
-                                    <li id="variantTexas" class="active"><a>Texas Hold'em</a></li>
-                                    <li id="variantTelesina"><a>Telesina</a></li>
-                                    <li><a>&nbsp;</a></li>
-                                </ul>
-                            </nav>
-                            <nav class="navbar-inverse navbar-limits">
-                                <ul class="nav nav-pills">
-                                    <li id="limitsNL"><a>No Limit</a></li>
-                                    <li id="limitsPL"><a>Pot Limit</a></li>
-                                    <li id="limitsFL"><a>Fixed Limit</a></li>
-                                </ul>
-                            </nav>
-                        </div>
+
+                        <nav class="navbar-inverse navbar-variant filter cashgame-filter">
+                            <ul class="nav nav-pills">
+                                <li id="variantTexas" class="active"><a>Texas Hold'em</a></li>
+                                <li id="variantTelesina"><a>Telesina</a></li>
+                                <li><a>&nbsp;</a></li>
+                            </ul>
+                        </nav>
+                        <nav class="navbar-inverse navbar-limits filter cashgame-filter sitandgo-filter">
+                            <ul class="nav nav-pills">
+                                <li id="limitsNL"><a>No Limit</a></li>
+                                <li id="limitsPL"><a>Pot Limit</a></li>
+                                <li id="limitsFL"><a>Fixed Limit</a></li>
+                            </ul>
+                        </nav>
+
                     </div>
                     <div class="col-sm-4">
 
@@ -409,17 +419,6 @@
 
                     </div>
                 </div>
-                <div id="lobby" class="lobby-list">
-
-
-                    <div class="top-panel" id="table-list">
-
-                        <div class="filter-group currencies">
-                            <div class="filter-label" data-i18n="lobby.filters.currency">Currency:</div>
-                        </div>
-                    </div>
-
-            </div>
 
         </div>
 
@@ -492,8 +491,8 @@
     </div>
 </div>
 
-<script type="text/mustache" id="filterButtonTemplate">
-    <div class="filter-button" id="filterButton{{id}}">{{name}}</div>
+<script type="text/mustache" id="currencyFilterTemplate">
+    <li class="filter-button" id="filterButton{{id}}"><a>{{name}}</a></li>
 </script>
 <script type="text/mustache" id="playerCardTemplate" style="display: none;">
     <div id="playerCard-{{domId}}" class="player-card-container number-{{cardNum}}">
@@ -558,8 +557,8 @@
         <thead class="table-item-header">
             <th class="table-name">{{t "lobby.list.name"}}</th>
             <th class="buy-in">{{t "lobby.list.buy-in"}}</th>
-            <th class="registered">{{t "lobby.list.registered"}}</th>
-            <th class="group">{{t "lobby.list.starting"}}</th>
+            <th class="seated">{{t "lobby.list.players"}}</th>
+            <th></th>
         </thead>
         <tbody class="table-list-item-container">
 
@@ -602,14 +601,14 @@
 </script>
 <script type="text/mustache" id="tournamentListItemTemplate" style="display: none;">
     <tr class="table-item tournament {{tableStatus}}" id="tournamentItem{{id}}">
-        <td class="table-name">{{name}}</td>
+        <td class="table-name">
+            {{name}}
+            <div class="start-time">{{date startTime}}</div>
+        </td>
         <td class="buy-in">{{currency buyIn}}+{{currency fee}} {{translateCurrencyCode buyInCurrencyCode}}</td>
         <td class="registered">{{registered}}/{{capacity}}</td>
-        <td class="group">
-            <div class="start-time">{{date startTime}}</div>
-            <div class="status {{status}}">{{status}}</div>
-        </td>
-        <td class="play-text">&raquo;</td>
+        <td> <div class="status {{status}}">{{status}}</div></td>
+        <td class="play-text"><a class="btn btn-lobby">Go to lobby</a></td>
     </tr>
 </script>
 <div id="potTransferTemplate" style="display: none;">
@@ -958,6 +957,7 @@
                         <div  style="display:inline-block;" class="tournament-name-title">{{name}}</div>
                     </h3>
                     <h4 class="tournament-start-date"></h4>
+
                     <p class="tournament-description"></p>
                     <a class="register-button register-action">{{t "tournament-lobby.register" }}</a>
                     <a class="register-button unregister-action">{{t "tournament-lobby.unregister" }}</a>
@@ -997,9 +997,7 @@
                         </tbody>
                     </table>
                 </div>
-
             </div>
-
         </div>
         <a class="share-button">+Share</a>
 
@@ -1028,7 +1026,7 @@
     <div class="stats-item">{{t "tournament-lobby.info.registration-starts" }} <span>{{date registrationStartTime}}</span></div>
     {{/sitAndGo}}
     <div class="stats-item">{{t "tournament-lobby.info.game-type" }} <span>{{gameType}}</span></div>
-    <div class="stats-item">{{t "tournament-lobby.info.title" }} <span>{{currency buyIn}}+{{currency fee}} {{translateCurrencyCode buyInCurrencyCode}}</span></div>
+    <div class="stats-item">{{t "tournament-lobby.info.buy-in" }} <span>{{currency buyIn}}+{{currency fee}} {{translateCurrencyCode buyInCurrencyCode}}</span></div>
     <div class="stats-item">
         {{t "tournament-lobby.info.status" }}
             <span class="status-container">

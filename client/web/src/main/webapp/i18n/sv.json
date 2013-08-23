@@ -37,7 +37,7 @@
             "low" : "Låg",
             "mid" : "Med",
             "high" : "Hög",
-            "currency" : "Valuta",
+            "currency" : "Välj valuta:",
             "xcc" : "XCC",
             "xoc" : "XOC"
         },
