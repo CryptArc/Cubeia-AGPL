@@ -625,7 +625,7 @@ public class PokerTournament implements TableNotifier, Serializable {
 
     private void payWinner(Integer playerId) {
         log.debug("Paying winner: " + playerId);
-        BigDecimal payout = pokerState.getPayouts().getPayoutsForPosition(1);
+        BigDecimal payout = pokerState.getPayouts().getPayoutForPosition(1);
         setPlayerOutInPosition(playerId, 1);
         sendTournamentOutToPlayers(singletonList(new ConcretePayout(playerId, 1, payout)));
 

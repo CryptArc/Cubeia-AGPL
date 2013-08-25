@@ -68,7 +68,7 @@ public class PayoutHandler implements Serializable {
             List<Integer> players = playersWithBalance.getValue();
 
             if (players.size() == 1) {
-                BigDecimal payoutsForPosition = payouts.getPayoutsForPosition(playersLeft);
+                BigDecimal payoutsForPosition = payouts.getPayoutForPosition(playersLeft);
                 Integer playerId = players.iterator().next();
                 log.debug("Player " + playerId + " finished in position " + playersLeft + " and won " + payoutsForPosition);
                 concretePayouts.add(new ConcretePayout(playerId, playersLeft, payoutsForPosition));
@@ -85,7 +85,7 @@ public class PayoutHandler implements Serializable {
         List<ConcretePayout> playerIdToPrize = newArrayList();
         BigDecimal totalPrizeToShare = BigDecimal.ZERO;
         for (int i = 0; i < players.size(); i++) {
-            totalPrizeToShare = totalPrizeToShare.add(payouts.getPayoutsForPosition(playersLeft--));
+            totalPrizeToShare = totalPrizeToShare.add(payouts.getPayoutForPosition(playersLeft--));
         }
         log.debug("Total prize to share: " + totalPrizeToShare);
         BigDecimal prizePerPlayer = totalPrizeToShare.divide(new BigDecimal(players.size()),

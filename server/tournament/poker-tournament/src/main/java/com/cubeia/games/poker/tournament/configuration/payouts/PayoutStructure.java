@@ -59,13 +59,13 @@ public class PayoutStructure implements Serializable {
         this.payoutsPerEntryRange = payouts;
     }
 
-    public Payouts getPayoutsForEntrantsAndPrizePool(int numberOfEntrants, BigDecimal prizePool, Currency currency) {
+    public Payouts getPayoutsForEntrantsAndPrizePool(int numberOfEntrants, BigDecimal prizePool, Currency currency, BigDecimal buyIn) {
         for (Payouts payout : payoutsPerEntryRange) {
             if (payout.inRange(numberOfEntrants)) {
-                return payout.withPrizePool(prizePool, currency);
+                return payout.withPrizePool(prizePool, currency, buyIn);
             }
         }
-        Payouts payouts = payoutsPerEntryRange.get(payoutsPerEntryRange.size() - 1).withPrizePool(prizePool,currency);
+        Payouts payouts = payoutsPerEntryRange.get(payoutsPerEntryRange.size() - 1).withPrizePool(prizePool,currency, buyIn);
         log.warn("No payouts defined for " + numberOfEntrants + " entrants. Using the last payouts: " + payouts);
         return payouts;
     }

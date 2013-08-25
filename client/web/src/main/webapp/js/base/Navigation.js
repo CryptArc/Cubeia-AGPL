@@ -71,7 +71,7 @@ Poker.Navigation = Class.extend({
     handleFilter : function(filter) {
         if (filter == 'xoc') {
             // Note, just doing this because I had problems with scoping the filter variable within the setTimeout call, feel free to improve.
-            setTimeout("$('#filterButtonXOC').click()", 300);
+            setTimeout0("$('#filterButtonXOC').click()", 300);
         }
     }
 
