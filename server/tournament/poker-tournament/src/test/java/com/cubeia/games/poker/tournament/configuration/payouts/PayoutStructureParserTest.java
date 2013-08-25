@@ -30,15 +30,15 @@ public class PayoutStructureParserTest {
 
     private static final Logger log = Logger.getLogger(PayoutStructureParserTest.class);
 
-    Currency eur = new Currency("EUR",2);
+    Currency eur = new Currency("EUR", 2);
 
     @Test
     public void testSimpleStructureHeadsUp() {
         // See simple.csv
         PayoutStructureParser parser = new PayoutStructureParser();
         PayoutStructure structure = parser.parsePayouts("simple.csv");
-        Payouts payouts = structure.getPayoutsForEntrantsAndPrizePool(2, bd(100),eur);
-        assertThat(payouts.getPayoutsForPosition(1), is(bd(100)));
+        Payouts payouts = structure.getPayoutsForEntrantsAndPrizePool(2, bd(100), eur, bd(50));
+        assertThat(payouts.getPayoutForPosition(1), is(bd(100)));
     }
 
     // bd = BigDecimal
@@ -55,10 +55,10 @@ public class PayoutStructureParserTest {
         // See simple.csv
         PayoutStructureParser parser = new PayoutStructureParser();
         PayoutStructure structure = parser.parsePayouts("simple.csv");
-        Payouts payouts = structure.getPayoutsForEntrantsAndPrizePool(10, bd(10),eur);
-        assertThat(payouts.getPayoutsForPosition(1), is(bd(6)));
-        assertThat(payouts.getPayoutsForPosition(2), is(bd(3)));
-        assertThat(payouts.getPayoutsForPosition(3), is(bd(1)));
+        Payouts payouts = structure.getPayoutsForEntrantsAndPrizePool(10, bd(10), eur, bd(1));
+        assertThat(payouts.getPayoutForPosition(1), is(bd(6)));
+        assertThat(payouts.getPayoutForPosition(2), is(bd(3)));
+        assertThat(payouts.getPayoutForPosition(3), is(bd(1)));
     }
 
     @Test
@@ -66,12 +66,10 @@ public class PayoutStructureParserTest {
         // See simple.csv
         PayoutStructureParser parser = new PayoutStructureParser();
         PayoutStructure structure = parser.parsePayouts("complex.csv");
-        Payouts payouts = structure.getPayoutsForEntrantsAndPrizePool(6, bd("1.20"),eur);
-        assertThat(payouts.getPayoutsForPosition(1), is(bd("0.8")));
-        assertThat(payouts.getPayoutsForPosition(2), is(bd("0.39")));
-        // Note, we really want this to be 0.40..
-        //assertThat(payouts.getPayoutsForPosition(2), is(bd("0.40")));
-        assertThat(payouts.getPayoutsForPosition(3), is(BigDecimal.ZERO));
+        Payouts payouts = structure.getPayoutsForEntrantsAndPrizePool(6, bd("1.20"), eur, bd("0.20"));
+        assertThat(payouts.getPayoutForPosition(1), is(bd("0.80")));
+        assertThat(payouts.getPayoutForPosition(2), is(bd("0.40")));
+        assertThat(payouts.getPayoutForPosition(3), is(BigDecimal.ZERO));
     }
 
     @Test
@@ -79,10 +77,10 @@ public class PayoutStructureParserTest {
         // See complex.csv
         PayoutStructureParser parser = new PayoutStructureParser();
         PayoutStructure structure = parser.parsePayouts("complex.csv");
-        Payouts payouts = structure.getPayoutsForEntrantsAndPrizePool(10, bd(10),eur);
+        Payouts payouts = structure.getPayoutsForEntrantsAndPrizePool(10, bd(10), eur, bd(1));
         log.debug("Payouts: " + payouts);
         structure.verify();
-        Payouts payoutsForLotsOfPlayers = structure.getPayoutsForEntrantsAndPrizePool(3502, bd(100),eur);
+        Payouts payoutsForLotsOfPlayers = structure.getPayoutsForEntrantsAndPrizePool(3502, bd(100), eur, bd(35));
         assertThat(payoutsForLotsOfPlayers.getPayoutList().get(18).getPercentage(), is(BigDecimal.valueOf(0.75)));
     }
 

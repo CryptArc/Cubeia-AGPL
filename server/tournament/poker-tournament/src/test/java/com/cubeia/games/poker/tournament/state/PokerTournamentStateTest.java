@@ -61,7 +61,7 @@ public class PokerTournamentStateTest {
         // Then the prize pool should be $200
         assertThat(state.getPrizePool(), is(BigDecimal.valueOf(200)));
         // And that prize pool should be used while calculating the payouts.
-        verify(prizeStricture, atLeastOnce()).getPayoutsForEntrantsAndPrizePool(12, new BigDecimal(200),eur);
+        verify(prizeStricture, atLeastOnce()).getPayoutsForEntrantsAndPrizePool(12, new BigDecimal(200),eur, new BigDecimal(10));
         // And the guaranteed prize pool used should be eighty.
         assertThat(state.getGuaranteedPrizePoolUsedAsMoney(), is(new Money(new BigDecimal(80),eur)));
     }
@@ -83,7 +83,7 @@ public class PokerTournamentStateTest {
         // Then the prize pool should be $200
         assertThat(state.getPrizePool(), is(BigDecimal.valueOf(210)));
         // And that prize pool should be used while calculating the payouts.
-        verify(prizeStricture, atLeastOnce()).getPayoutsForEntrantsAndPrizePool(21, new BigDecimal(210),eur);
+        verify(prizeStricture, atLeastOnce()).getPayoutsForEntrantsAndPrizePool(21, new BigDecimal(210),eur, new BigDecimal(10));
         // And the guaranteed prize pool used should be zero.
         assertThat(state.getGuaranteedPrizePoolUsedAsMoney(), is(new Money(BigDecimal.ZERO, new Currency( "EUR", 2))));
     }

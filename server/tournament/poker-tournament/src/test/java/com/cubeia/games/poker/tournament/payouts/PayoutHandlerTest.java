@@ -43,7 +43,7 @@ public class PayoutHandlerTest {
     @Before
     public void setup() {
         // Total prize pool is $200.
-        Payouts payouts = new Payouts(new IntRange(20, 25), list(45.45, 22.73, 15.15, 9.09, 7.58, 6.12), bd(200),eur);
+        Payouts payouts = new Payouts(new IntRange(20, 25), list(45.45, 22.73, 15.15, 9.09, 7.58, 6.12)).withPrizePool(bd(200), eur, bd(1));
         payoutHandler = new PayoutHandler(payouts);
     }
 

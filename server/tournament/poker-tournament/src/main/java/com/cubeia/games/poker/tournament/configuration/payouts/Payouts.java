@@ -30,7 +30,9 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.EAGER;
@@ -63,6 +65,11 @@ public class Payouts implements Serializable {
     @OrderColumn
     private List<Payout> payoutList = new ArrayList<Payout>();
 
+    /**
+     * Maps position to payout. Does not need to be stored in the database as this is only calculated during runtime.
+     */
+    private Map<Integer, BigDecimal> positionToPayout = new HashMap<Integer, BigDecimal>();
+
     Payouts() {
     }
 
@@ -81,15 +88,108 @@ public class Payouts implements Serializable {
         return entrantsRange.contains(numberOfEntrants);
     }
 
-    public Payouts withPrizePool(BigDecimal prizePool, Currency currency) {
-        return new Payouts(entrantsRange, payoutList, prizePool, currency);
+    public Payouts withPrizePool(BigDecimal prizePool, Currency currency, BigDecimal buyIn) {
+        Payouts payouts = new Payouts(entrantsRange, payoutList, prizePool, currency);
+        payouts.calculatePayouts(buyIn);
+        return payouts;
     }
 
-    public BigDecimal getPayoutsForPosition(int position) {
+    private void calculatePayouts(BigDecimal buyIn) {
+        // First try rounding to closest buy-in
+        BigDecimal totalPayouts = calculatePayoutsRoundingToClosestBuyIn(buyIn);
+        // If that doesn't add up, fall back to normal rounding.
+        if (totalPayouts.compareTo(prizePool) != 0) {
+            log.debug("Total payouts " + totalPayouts + " didn't equal the prize pool " + prizePool + ", falling back to normal rounding.");
+            positionToPayout.clear();
+            calculatePayoutsWithNormalRounding(buyIn);
+        }
+    }
+
+    private void calculatePayoutsWithNormalRounding(BigDecimal buyIn) {
+        BigDecimal totalPayouts = BigDecimal.ZERO;
+        int inTheMoney = 0;
+        for (int i = 1; i < entrantsRange.getStop(); i++) {
+            BigDecimal payout = calculatePayoutForPosition(i);
+            if (payout.equals(BigDecimal.ZERO)) {
+                // Reached the end of in-the-money.
+                break;
+            }
+            inTheMoney++;
+            positionToPayout.put(i, payout);
+            totalPayouts = totalPayouts.add(payout);
+        }
+        // Check remaining cents.
+        if (totalPayouts.compareTo(prizePool) < 0) {
+            distributeRemainingCents(totalPayouts, inTheMoney);
+        } else if (totalPayouts.compareTo(prizePool) < 0) {
+            log.fatal("Total payouts " + totalPayouts + " > prize pool " + prizePool + ", something is very wrong! buyIn " + buyIn + " entrantsRange " + entrantsRange);
+        }
+    }
+
+    private void distributeRemainingCents(BigDecimal totalPayouts, int inTheMoney) {
+        log.debug("We have some remaining cents, distributing them round robin style.");
+        BigDecimal cent = BigDecimal.ONE.movePointLeft(currency.getFractionalDigits());
+        if (inTheMoney < 2) {
+            // Only one (or zero, which is weird) winner, he gets all the remaining cents.
+            log.debug("Only " + inTheMoney + " players in the money, giving all remaining cents to the winner.");
+            BigDecimal remainingCents = prizePool.subtract(totalPayouts);
+            log.debug("Increasing payout for winner by " + remainingCents);
+            increasePositionBy(1, remainingCents);
+        } else {
+            int position = 0;
+            while (totalPayouts.compareTo(prizePool) < 0) {
+                log.debug("Increasing payout for position " + (position + 1) + " by " + cent);
+                increasePositionBy(position + 1, cent);
+                position = (position + 1) % inTheMoney;
+                totalPayouts = totalPayouts.add(cent);
+            }
+        }
+    }
+
+    private void increasePositionBy(int position, BigDecimal increment) {
+        BigDecimal payout = positionToPayout.get(position);
+        payout = payout.add(increment);
+        positionToPayout.put(position, payout);
+    }
+
+    private BigDecimal calculatePayoutsRoundingToClosestBuyIn(BigDecimal buyIn) {
+        BigDecimal totalPayouts = BigDecimal.ZERO;
+        for (int i = 1; i < entrantsRange.getStop(); i++) {
+            BigDecimal payout = calculatePayoutRoundedToClosestBuyIn(i, buyIn);
+            if (payout.compareTo(BigDecimal.ZERO) == 0) {
+                // We've reached the end of the money.
+                break;
+            }
+            positionToPayout.put(i, payout);
+            totalPayouts = totalPayouts.add(payout);
+        }
+        return totalPayouts;
+    }
+
+    private BigDecimal calculatePayoutRoundedToClosestBuyIn(int position, BigDecimal buyIn) {
+        BigDecimal percentageForPosition = getPercentageForPosition(position);
+        BigDecimal unRounded = percentageForPosition.multiply(prizePool).divide(new BigDecimal(100));
+        BigDecimal numberOfBuyIns = unRounded.divide(buyIn, 0, RoundingMode.HALF_UP);
+        return numberOfBuyIns.multiply(buyIn);
+    }
+
+    public BigDecimal calculatePayoutForPosition(int position) {
+        return getPercentageForPosition(position).multiply(prizePool).divide(new BigDecimal(100),currency.getFractionalDigits(), RoundingMode.DOWN);
+    }
+
+    private BigDecimal getPercentageForPosition(int position) {
         for (Payout payout : payoutList) {
             if (payout.getPositionRange().contains(position)) {
-                return payout.getPercentage().multiply(prizePool).divide(new BigDecimal(100),currency.getFractionalDigits(), RoundingMode.DOWN);
+                return payout.getPercentage();
             }
+        }
+        return BigDecimal.ZERO;
+    }
+
+    public BigDecimal getPayoutForPosition(int position) {
+        BigDecimal payout = positionToPayout.get(position);
+        if (payout != null) {
+            return payout;
         }
         return BigDecimal.ZERO;
     }
