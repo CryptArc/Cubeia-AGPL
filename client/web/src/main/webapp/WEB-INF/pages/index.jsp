@@ -11,7 +11,7 @@
     <link rel="apple-touch-icon" href="${cp}/skins/${skin}/images/lobby/icon.png" />
     <link rel="stylesheet" type="text/css" href="${cp}/skins/default/css/gritter/css/jquery.gritter.css"/>
 
-    <link rel="stylesheet" href="${cp}/js/lib/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet/less" type="text/css" href="${cp}/js/lib/bootstrap/less/bootstrap.less"/>
 
     <link id="defaultSkinCss" rel="stylesheet/less" type="text/css" href="${cp}/skins/default/less/base.less" />
 
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="${cp}/skins/${skin}/skin-config.js"></script>
     <script type="text/javascript" src="${cp}/skins/${skin}/preload-images.js"></script>
 
-    <script type="text/javascript"  src="${cp}/js/lib/less-1.3.0.min.js"></script>
+    <script type="text/javascript"  src="${cp}/js/lib/less-1.4.1.min.js"></script>
 
     <script type="text/javascript" src="${cp}/js/lib/classjs.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/jquery-1.7.2.min.js"></script>
@@ -34,7 +34,7 @@
     <script type="text/javascript" src="${cp}/js/base/jquery-plugins/touch-click.js"></script>
     <script type="text/javascript" src="${cp}/js/base/jquery-plugins/relative-offset.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/moment.js"></script>
-
+    <script type="text/javascript" src="${cp}/js/lib/bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/purl.js"></script>
 
     <script type="text/javascript" src="${cp}/js/lib/handlebars.js"></script>
@@ -379,16 +379,28 @@
                         <div class="logo-container">
                         </div>
 
-                        <nav class="navbar-inverse navbar-top">
-                            <ul class="nav nav-pills">
-                                <li class="active" id="cashGameMenu">
-                                    <a class="lobby-link"  data-i18n="lobby.menu.cash-games">
-                                        [Cash Games]
-                                    </a>
-                                </li>
-                                <li id="sitAndGoMenu" ><a class="lobby-link" data-i18n="lobby.menu.sit-n-gos">[Sit &amp; Go's]</a></li>
-                                <li id="tournamentMenu"><a class="lobby-link" data-i18n="lobby.menu.tournaments">[Tournaments]</a></li>
-                            </ul>
+                        <nav class="navbar-inverse navbar-top" role="navigation">
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-top-collapse">
+                                    <span class="sr-only">Toggle navigation</span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                                <a class="lobby-link" style="display:none;">Cash Games</a>
+                            </div>
+                            <div class="navbar-collapse navbar-top-collapse collapse">
+                                <ul class="nav nav-pills">
+                                    <li class="active" id="cashGameMenu">
+                                        <a class="lobby-link"  data-i18n="lobby.menu.cash-games">
+                                            [Cash Games]
+                                        </a>
+                                    </li>
+                                    <li id="sitAndGoMenu" ><a class="lobby-link" data-i18n="lobby.menu.sit-n-gos">[Sit &amp; Go's]</a></li>
+                                    <li id="tournamentMenu"><a class="lobby-link" data-i18n="lobby.menu.tournaments">[Tournaments]</a></li>
+                                </ul>
+                            </div>
+
                         </nav>
 
                         <nav class="navbar-inverse navbar-variant filter cashgame-filter">
@@ -952,7 +964,7 @@
                 <a class="register-button leave-action">{{t "tournament-lobby.close" }}</a>
             </div>
             <div class="row">
-                <div class="col-sm-7">
+                <div class="col-sm-6">
                     <h3 class="tournament-name">
                         <div  style="display:inline-block;" class="tournament-name-title">{{name}}</div>
                     </h3>
@@ -964,7 +976,7 @@
                     <a class="register-button take-seat-action">{{t "tournament-lobby.go-to-table" }}</a>
                     <a class="register-button loading-action">{{t "tournament-lobby.please-wait" }}</a>
                 </div>
-                <div class="col-sm-5">
+                <div class="col-sm-6">
                     <div class="info-section tournament-info"></div>
                 </div>
             </div>
@@ -972,15 +984,14 @@
                 <div class="col-sm-12">
                     <nav class="navbar-inverse tournament-navbar">
                         <ul class="nav nav-pills">
-                            <li class="active"><a>Players</a></li>
-                            <li><a>Payouts</a></li>
-                            <li><a>Blinds Structure</a></li>
+                            <li class="players-link active"><a>Players</a></li>
+                            <li class="payouts-link"><a>Payouts</a></li>
+                            <li class="blinds-link"><a>Blinds Structure</a></li>
                         </ul>
                     </nav>
-
                 </div>
             </div>
-            <div class="row players-row">
+            <div class="row players-row tournament-section">
                 <div class="col-sm-7">
                     <table class="table default-table player-list">
                         <thead>
@@ -998,6 +1009,19 @@
                     </table>
                 </div>
             </div>
+
+            <div class="row payouts-row tournament-section" style="display:none;">
+                <div class="col-sm-7 payout-structure">
+
+                </div>
+            </div>
+
+            <div class="row blinds-row tournament-section"  style="display:none;">
+                <div class="col-sm-7 blinds-structure">
+
+                </div>
+            </div>
+
         </div>
         <a class="share-button">+Share</a>
 
@@ -1006,8 +1030,6 @@
                 <div class="tournament-info-container">
 
                     <div class="info-section tournament-stats"></div>
-                    <div class="info-section payout-structure"></div>
-                    <div class="info-section blinds-structure"></div>
 
                 </div>
             </div>
@@ -1046,6 +1068,7 @@
     {{^sitAndGo}}
     <div class="stats-item">{{t "tournament-lobby.info.max-players" }} <span>{{maxPlayers}}</span> {{t "tournament-lobby.info.min-players" }} <span>{{minPlayers}}</span> </div>
     {{/sitAndGo}}
+    <div class="stats-item">{{t "tournament-lobby.payouts.prize-pool" }}  <span>{{currency prizePool}}</span></div>
 
 
 </script>
@@ -1081,20 +1104,24 @@
 
 </script>
 <script type="text/mustache" id="tournamentPayoutStructureTemplate" style="display:none;">
-    <h4>{{t "tournament-lobby.payouts.title" }}</h4>
-    <div class="prize-pool">{{t "tournament-lobby.payouts.prize-pool" }} <span>{{currency prizePool}}</span></div>
-    <div class="payouts">
-        <div class="payout info-list-item header">
-            {{t "tournament-lobby.payouts.position" }} <span>{{t "tournament-lobby.payouts.amount" }}</span>
-        </div>
-        <div class="info-list">
+
+    <table class="table default-table player-list">
+        <thead>
+            <tr>
+                <th> {{t "tournament-lobby.payouts.position" }}</th>
+                <th>{{t "tournament-lobby.payouts.amount" }}</th>
+            </tr>
+        </thead>
+        <tbody class="">
             {{#payouts}}
-            <div class="payout info-list-item">
-                {{position}} <span>{{currency payoutAmount}}</span>
-            </div>
+            <tr class="payout info-list-item">
+                <td>{{position}}</td>
+                <td>{{currency payoutAmount}}</td>
+            </tr>
             {{/payouts}}
-        </div>
-    </div>
+        </tbody>
+    </table>
+
 </script>
 <script type="text/mustache" id="handHistoryIdsTemplate" style="display:none;">
    <p class="no-hands" style="display:none;">
@@ -1169,24 +1196,29 @@
 
 </script>
 <script type="text/mustache" id="tournamentBlindsStructureTemplate" style="display:none;">
-    <h4>{{t "tournament-lobby.blinds-structure.title" }}</h4>
-    <div class="blinds-level info-list-item header">
-        {{t "tournament-lobby.blinds-structure.blinds" }}
-        <span>{{t "tournament-lobby.blinds-structure.duration" }}</span>
-    </div>
-    <div class="info-list">
-        {{#blindsLevels}}
-        <div class="blinds-level info-list-item">
-            {{#isBreak}}
-            {{t "tournament-lobby.blinds-structure.break" }}
-            {{/isBreak}}
-            {{^isBreak}}
-            {{currency smallBlind}}/{{currency bigBlind}}
-            {{/isBreak}}
-            <span>{{durationInMinutes}}</span>
-        </div>
-        {{/blindsLevels}}
-    </div>
+    <table class="table default-table">
+        <thead>
+            <tr>
+                <th>{{t "tournament-lobby.blinds-structure.blinds" }}</th>
+                <th>{{t "tournament-lobby.blinds-structure.duration" }}</th>
+            </tr>
+        </thead>
+        <tbody>
+         {{#blindsLevels}}
+            <tr>
+                <td>
+                    {{#isBreak}}
+                        {{t "tournament-lobby.blinds-structure.break" }}
+                    {{/isBreak}}
+                    {{^isBreak}}
+                        {{currency smallBlind}}/{{currency bigBlind}}
+                    {{/isBreak}}
+                </td>
+                <td>{{durationInMinutes}}</td>
+            </tr>
+         {{/blindsLevels}}
+        </tbody>
+    </table>
 </script>
 
 <script type="text/mustache" id="tournamentPlayerListItem" style="display:none;">

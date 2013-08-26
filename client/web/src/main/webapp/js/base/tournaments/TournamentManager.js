@@ -128,6 +128,7 @@ Poker.TournamentManager = Class.extend({
         this.handlePlayerList(tournament,tournamentData.players);
         this.handleBlindsStructure(tournament,tournamentData.blindsStructure);
         this.handlePayoutInfo(tournament,tournamentData.payoutInfo);
+        $.extend(tournamentData.tournamentInfo, { prizePool: tournamentData.payoutInfo.prizePool });
         this.handleTournamentInfo(tournament, tournamentData.tournamentInfo);
         if (this.isTournamentRunning(tournamentData.tournamentInfo.tournamentStatus)) {
             this.handleTournamentStatistics(tournament, tournamentData.tournamentStatistics);

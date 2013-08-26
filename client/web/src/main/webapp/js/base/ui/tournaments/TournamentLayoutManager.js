@@ -41,6 +41,25 @@ Poker.TournamentLayoutManager = Class.extend({
         if(registered==true) {
             this.setPlayerRegisteredState();
         }
+        var self = this;
+       this.viewElement.find(".players-link").click(function(e){
+           self.viewElement.find(".tournament-navbar .active").removeClass("active");
+           $(this).addClass("active");
+           self.viewElement.find(".tournament-section").hide();
+           self.viewElement.find(".players-row").show();
+       });
+        this.viewElement.find(".payouts-link").click(function(e){
+            self.viewElement.find(".tournament-navbar .active").removeClass("active");
+            $(this).addClass("active");
+            self.viewElement.find(".tournament-section").hide();
+            self.viewElement.find(".payouts-row").show();
+        });
+        this.viewElement.find(".blinds-link").click(function(e){
+            self.viewElement.find(".tournament-navbar .active").removeClass("active");
+            $(this).addClass("active");
+            self.viewElement.find(".tournament-section").hide();
+            self.viewElement.find(".blinds-row").show();
+        });
 
     },
     updatePlayerList : function(players) {
