@@ -18,6 +18,7 @@
 package com.cubeia.games.poker.tournament.configuration.payouts;
 
 import com.cubeia.games.poker.common.money.Currency;
+import com.google.code.morphia.annotations.Transient;
 import org.apache.log4j.Logger;
 
 import javax.persistence.Entity;
@@ -66,9 +67,10 @@ public class Payouts implements Serializable {
     private List<Payout> payoutList = new ArrayList<Payout>();
 
     /**
-     * Maps position to payout. Does not need to be stored in the database as this is only calculated during runtime.
+     * Maps positions to payouts. Does not need to be stored in the database as this is only calculated during runtime.
      */
-    private Map<Integer, BigDecimal> positionToPayout = new HashMap<Integer, BigDecimal>();
+    @Transient
+    private transient Map<Integer, BigDecimal> positionsToPayouts = new HashMap<Integer, BigDecimal>();
 
     Payouts() {
     }
@@ -100,7 +102,7 @@ public class Payouts implements Serializable {
         // If that doesn't add up, fall back to normal rounding.
         if (totalPayouts.compareTo(prizePool) != 0) {
             log.debug("Total payouts " + totalPayouts + " didn't equal the prize pool " + prizePool + ", falling back to normal rounding.");
-            positionToPayout.clear();
+            positionsToPayouts.clear();
             calculatePayoutsWithNormalRounding(buyIn);
         }
     }
@@ -115,7 +117,7 @@ public class Payouts implements Serializable {
                 break;
             }
             inTheMoney++;
-            positionToPayout.put(i, payout);
+            positionsToPayouts.put(i, payout);
             totalPayouts = totalPayouts.add(payout);
         }
         // Check remaining cents.
@@ -147,9 +149,9 @@ public class Payouts implements Serializable {
     }
 
     private void increasePositionBy(int position, BigDecimal increment) {
-        BigDecimal payout = positionToPayout.get(position);
+        BigDecimal payout = positionsToPayouts.get(position);
         payout = payout.add(increment);
-        positionToPayout.put(position, payout);
+        positionsToPayouts.put(position, payout);
     }
 
     private BigDecimal calculatePayoutsRoundingToClosestBuyIn(BigDecimal buyIn) {
@@ -160,7 +162,7 @@ public class Payouts implements Serializable {
                 // We've reached the end of the money.
                 break;
             }
-            positionToPayout.put(i, payout);
+            positionsToPayouts.put(i, payout);
             totalPayouts = totalPayouts.add(payout);
         }
         return totalPayouts;
@@ -187,7 +189,7 @@ public class Payouts implements Serializable {
     }
 
     public BigDecimal getPayoutForPosition(int position) {
-        BigDecimal payout = positionToPayout.get(position);
+        BigDecimal payout = positionsToPayouts.get(position);
         if (payout != null) {
             return payout;
         }
