@@ -283,6 +283,8 @@ public class Telesina extends AbstractGameType implements RoundVisitor {
         Map<Integer, PokerPlayer> players = context.getCurrentHandPlayerMap();
         Set<PokerPlayer> muckingPlayers = context.getMuckingPlayers();
 
+        currentRound = new ExposePrivateCardsRound(context, serverAdapterHolder, new RevealOrderCalculator());
+
         HandResult handResult = resultCreator.createHandResult(context.getCommunityCards(), resultCalculator,
                 context.getPotHolder(), players, playerRevealOrder, muckingPlayers, context.getSettings().getCurrency());
 
