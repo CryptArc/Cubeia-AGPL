@@ -34,7 +34,7 @@ import static javax.persistence.FetchType.LAZY;
 
 /**
  * A PayoutStructure holds information about how much of the pot each player should get, given how may players were in the tournament.
- * Note that the structure holds the entire table of payouts, so when a tournament starts, we get they payouts to use in that specific tournament
+ * Note that the structure holds the entire table of payouts, so when a tournament starts, we get the payouts to use in that specific tournament
  * depending on the number of entrants.
  */
 @Entity
@@ -59,13 +59,13 @@ public class PayoutStructure implements Serializable {
         this.payoutsPerEntryRange = payouts;
     }
 
-    public Payouts getPayoutsForEntrantsAndPrizePool(int numberOfEntrants, BigDecimal prizePool, Currency currency) {
+    public Payouts getPayoutsForEntrantsAndPrizePool(int numberOfEntrants, BigDecimal prizePool, Currency currency, BigDecimal buyIn) {
         for (Payouts payout : payoutsPerEntryRange) {
             if (payout.inRange(numberOfEntrants)) {
-                return payout.withPrizePool(prizePool, currency);
+                return payout.withPrizePool(prizePool, currency, buyIn);
             }
         }
-        Payouts payouts = payoutsPerEntryRange.get(payoutsPerEntryRange.size() - 1).withPrizePool(prizePool,currency);
+        Payouts payouts = payoutsPerEntryRange.get(payoutsPerEntryRange.size() - 1).withPrizePool(prizePool,currency, buyIn);
         log.warn("No payouts defined for " + numberOfEntrants + " entrants. Using the last payouts: " + payouts);
         return payouts;
     }
