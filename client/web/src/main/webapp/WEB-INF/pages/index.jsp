@@ -109,6 +109,7 @@
 
     <script type="text/javascript" src="${cp}/js/base/ui/MyActionsManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/data/LobbyData.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/BasicMenu.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/LobbyLayoutManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/LobbyManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/Player.js"></script>
@@ -387,7 +388,7 @@
                                     <span class="icon-bar"></span>
                                     <span class="icon-bar"></span>
                                 </button>
-                                <a class="lobby-link" style="display:none;">Cash Games</a>
+                                <a class="nav-active-item">Cash Games</a>
                             </div>
                             <div class="navbar-collapse navbar-top-collapse collapse">
                                 <ul class="nav nav-pills">
@@ -403,12 +404,23 @@
 
                         </nav>
 
-                        <nav class="navbar-inverse navbar-variant filter cashgame-filter">
-                            <ul class="nav nav-pills">
-                                <li id="variantTexas" class="active"><a>Texas Hold'em</a></li>
-                                <li id="variantTelesina"><a>Telesina</a></li>
-                                <li><a>&nbsp;</a></li>
-                            </ul>
+                        <nav class="navbar-inverse navbar-variant filter cashgame-filter" role="navigation">
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-variant-collapse">
+                                    <span class="sr-only">Toggle navigation</span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                                <a class="nav-active-item">Cash Games</a>
+                            </div>
+                            <div class="navbar-collapse navbar-variant-collapse collapse">
+                                <ul class="nav nav-pills">
+                                    <li id="variantTexas" class="active"><a>Texas Hold'em</a></li>
+                                    <li id="variantTelesina"><a>Telesina</a></li>
+                                    <li><a>&nbsp;</a></li>
+                                </ul>
+                            </div>
                         </nav>
                         <nav class="navbar-inverse navbar-limits filter cashgame-filter sitandgo-filter">
                             <ul class="nav nav-pills">
@@ -568,8 +580,7 @@
     <table class="table lobby-list-table">
         <thead class="table-item-header">
             <th class="table-name">{{t "lobby.list.name"}}</th>
-            <th class="buy-in">{{t "lobby.list.buy-in"}}</th>
-            <th class="seated">{{t "lobby.list.players"}}</th>
+
             <th></th>
         </thead>
         <tbody class="table-list-item-container">
@@ -585,7 +596,7 @@
                 <th class="table-name">{{t "lobby.list.name"}}</th>
                 <th class="seated">{{t "lobby.list.seated"}}</th>
                 <th class="blinds">{{t "lobby.list.blinds"}}</th>
-                <th class="play"></th>
+                <th class="play-text"></th>
             </tr>
         </thead>
         <tbody class="table-list-item-container">
@@ -614,12 +625,13 @@
 <script type="text/mustache" id="tournamentListItemTemplate" style="display: none;">
     <tr class="table-item tournament {{tableStatus}}" id="tournamentItem{{id}}">
         <td class="table-name">
-            {{name}}
-            <div class="start-time">{{date startTime}}</div>
+            <div class="list-item-name">{{name}}</div>
+            <div class="list-item">{{currency buyIn}}+{{currency fee}} {{translateCurrencyCode buyInCurrencyCode}}</div>
+            <div class="list-item">{{registered}}/{{capacity}}</div>
+            <div class="list-item">{{date startTime}}</div>
+            <div class="list-item status {{status}}">{{status}}</div>
         </td>
-        <td class="buy-in">{{currency buyIn}}+{{currency fee}} {{translateCurrencyCode buyInCurrencyCode}}</td>
-        <td class="registered">{{registered}}/{{capacity}}</td>
-        <td> <div class="status {{status}}">{{status}}</div></td>
+
         <td class="play-text"><a class="btn btn-lobby">Go to lobby</a></td>
     </tr>
 </script>
@@ -633,7 +645,7 @@
     <div id="tableView-{{tableId}}" class="table-container">
 
         <div class="table-logo"></div>
-        <div id="seatContainer-{{tableId}}" class="default-table table-{{capacity}}">
+        <div id="seatContainer-{{tableId}}" class="default-poker-table table-{{capacity}}">
             <div class="seat" id="seat0-{{tableId}}">
 
             </div>
@@ -958,10 +970,11 @@
     </div>
 </script>
 <script type="text/mustache" id="tournamentTemplate" style="display:none;">
-    <div id="tournamentView{{tournamentId}}" class="tournament-view">
+    <div id="tournamentView{{tournamentId}}" class="tournament-view responsive-view">
         <div class="container">
             <div class="row">
                 <a class="register-button leave-action">{{t "tournament-lobby.close" }}</a>
+                <a class="share-button">+Share</a>
             </div>
             <div class="row">
                 <div class="col-sm-6">
@@ -982,12 +995,24 @@
             </div>
             <div class="row players-row">
                 <div class="col-sm-12">
-                    <nav class="navbar-inverse tournament-navbar">
+                <nav class="navbar-inverse tournament-navbar">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-tournament-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="nav-active-item"></a>
+                    </div>
+                    <div class="navbar-collapse navbar-tournament-collapse collapse">
                         <ul class="nav nav-pills">
                             <li class="players-link active"><a>Players</a></li>
                             <li class="payouts-link"><a>Payouts</a></li>
                             <li class="blinds-link"><a>Blinds Structure</a></li>
                         </ul>
+                    </div>
+
                     </nav>
                 </div>
             </div>
@@ -1023,24 +1048,9 @@
             </div>
 
         </div>
-        <a class="share-button">+Share</a>
 
-        <div class="lobby-data-container" style="display:none;">
-            <div class="column column-3">
-                <div class="tournament-info-container">
 
-                    <div class="info-section tournament-stats"></div>
 
-                </div>
-            </div>
-            <div class="column column-3-2">
-                <div class="tournament-info-container">
-                    <div class="info-section registered-players">
-
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 </script>
 <script type="text/mustache" id="tournamentInfoTemplate">

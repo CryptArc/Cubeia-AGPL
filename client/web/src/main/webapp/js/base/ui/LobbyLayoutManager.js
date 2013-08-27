@@ -12,6 +12,7 @@ Poker.LobbyLayoutManager = Class.extend({
     requiredFilters : null,
     filtersEnabled : true,
     state : null,
+    topMenu : null,
 
     tournamentListSettings : {
         prefix : "tournamentItem",
@@ -37,55 +38,49 @@ Poker.LobbyLayoutManager = Class.extend({
         this.sitAndGoFilters = [];
         this.requiredFilters = [];
 
-
         var self = this;
-        $("#cashGameMenu").click(function (e) {
-            self.goToList();
-            $(".navbar-top .active").removeClass("active");
-            $(this).addClass("active");
-            $(".navbar-variant .active").removeClass("active");
-            $("#variantTexas").addClass("active");
-            $(".filter").hide();
-            $(".cashgame-filter").show();
-            new Poker.LobbyRequestHandler().subscribeToCashGames("texas");
-            $.ga._trackEvent("user_navigation", "click_cashGameMenu");
-        });
-        $("#sitAndGoMenu").click(function (e) {
-            $(".filter").hide();
-            $(".sitandgo-filter").show();
-            $(".navbar-top .active").removeClass("active");
-            $(this).addClass("active");
-            this.state = Poker.LobbyLayoutManager.SIT_AND_GO_STATE;
-            new Poker.LobbyRequestHandler().subscribeToSitAndGos();
-            self.goToList();
-            $.ga._trackEvent("user_navigation", "click_sitAndGoMenu");
-        });
-        $("#tournamentMenu").click(function (e) {
 
-            $(".filter").hide();
-            $(".navbar-top .active").removeClass("active");
-            $(this).addClass("active");
-            this.state = Poker.LobbyLayoutManager.TOURNAMENT_STATE;
-            new Poker.LobbyRequestHandler().subscribeToTournaments();
-            self.goToList();
-            $.ga._trackEvent("user_navigation", "click_tournamentMenu");
-        });
-        $("#variantTexas").click(function (e) {
-            $(".navbar-variant .active").removeClass("active");
-            $(this).addClass("active");
+        var variantMenu = new Poker.BasicMenu(".navbar-variant");
+        variantMenu.addItem("#variantTexas",function(){
             new Poker.LobbyRequestHandler().subscribeToCashGames("texas");
         });
-        $("#variantTelesina").click(function (e) {
-            $(".navbar-variant .active").removeClass("active");
-            $(this).addClass("active");
+        variantMenu.addItem("#variantTelesina",function(){
             new Poker.LobbyRequestHandler().subscribeToCashGames("telesina");
         });
+        variantMenu.activateItem("#variantTexas");
+
+        this.topMenu = new Poker.BasicMenu(".navbar-top");
+        this.topMenu.addItem("#cashGameMenu", function(){
+            variantMenu.activateItem("#variantTexas");
+            new Poker.LobbyRequestHandler().subscribeToCashGames("texas");
+            $.ga._trackEvent("user_navigation", "click_cashGameMenu");
+            self.state = Poker.LobbyLayoutManager.CASH_STATE;
+        });
+
+        this.topMenu.addItem("#sitAndGoMenu",function (e) {
+            variantMenu.hide();
+            self.state = Poker.LobbyLayoutManager.SIT_AND_GO_STATE;
+            new Poker.LobbyRequestHandler().subscribeToSitAndGos();
+            $.ga._trackEvent("user_navigation", "click_sitAndGoMenu");
+        });
+        this.topMenu.addItem("#tournamentMenu",function (e) {
+            variantMenu.hide();
+            self.state = Poker.LobbyLayoutManager.TOURNAMENT_STATE;
+            new Poker.LobbyRequestHandler().subscribeToTournaments();
+            $.ga._trackEvent("user_navigation", "click_tournamentMenu");
+        });
+
 
         $(".show-filters").touchSafeClick(function () {
             $(this).toggleClass("selected");
             $(".table-filter").toggleClass("hidden");
         });
         this.initFilters();
+    },
+    onLogin : function() {
+      this.addCurrencyFilters();
+      this.topMenu.selectItem("#cashGameMenu");
+
     },
     addCurrencyFilters : function() {
         var currencies = Poker.OperatorConfig.getEnabledCurrencies();
@@ -99,12 +94,6 @@ Poker.LobbyLayoutManager = Class.extend({
             this.requiredFilters.push(currencyFilter);
         } else {
             $(".filter-group.currencies").hide();
-        }
-    },
-    goToList : function() {
-        return;
-        if(Poker.AppCtx.getViewManager().mobileDevice==true) {
-            $('html, body').scrollTop($("#tableListAnchor").offset().top + 50);
         }
     },
     filterUpdated : function() {

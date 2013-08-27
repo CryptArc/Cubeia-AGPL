@@ -42,24 +42,21 @@ Poker.TournamentLayoutManager = Class.extend({
             this.setPlayerRegisteredState();
         }
         var self = this;
-       this.viewElement.find(".players-link").click(function(e){
-           self.viewElement.find(".tournament-navbar .active").removeClass("active");
-           $(this).addClass("active");
-           self.viewElement.find(".tournament-section").hide();
-           self.viewElement.find(".players-row").show();
-       });
-        this.viewElement.find(".payouts-link").click(function(e){
-            self.viewElement.find(".tournament-navbar .active").removeClass("active");
-            $(this).addClass("active");
+
+        var menu = new Poker.BasicMenu(this.viewElement.find(".tournament-navbar"));
+        menu.addItem(".players-link", function(){
+            self.viewElement.find(".tournament-section").hide();
+            self.viewElement.find(".players-row").show();
+        });
+        menu.addItem(".payouts-link", function(){
             self.viewElement.find(".tournament-section").hide();
             self.viewElement.find(".payouts-row").show();
         });
-        this.viewElement.find(".blinds-link").click(function(e){
-            self.viewElement.find(".tournament-navbar .active").removeClass("active");
-            $(this).addClass("active");
+        menu.addItem(".blinds-link", function(){
             self.viewElement.find(".tournament-section").hide();
             self.viewElement.find(".blinds-row").show();
         });
+        menu.activateItem(".players-link");
 
     },
     updatePlayerList : function(players) {

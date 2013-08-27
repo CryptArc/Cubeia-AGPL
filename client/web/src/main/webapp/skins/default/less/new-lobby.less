@@ -102,6 +102,29 @@
 
 .lobby-list-table {
     .default-table;
+
+    tbody {
+        tr {
+            cursor: pointer;
+            td {
+                line-height: 1.4;
+
+                &.play-text {
+                    vertical-align: middle;
+                }
+            }
+        }
+    }
+    .list-item-name {
+        clear: both;
+
+    }
+    .list-item {
+        display: inline-block;
+        color:#ccc;
+        font-size: 70%;
+        padding-right: 8px;
+    }
 }
 .status {
     &.REGISTERING {
@@ -115,4 +138,13 @@ td.table-name {
 .start-time {
     font-size: 80%;
     color:#bbb;
+}
+.nav-active-item {
+    display:none;
+}
+.navbar-top-collapse {
+    padding-left: 0;
+}
+.navbar-variant-collapse {
+    padding-left: 0;
 }
