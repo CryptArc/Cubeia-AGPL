@@ -38,6 +38,7 @@ Poker.TablePacketHandler = Class.extend({
         this.tableManager.handleOpenTableAccepted(packet.tableid, data.capacity);
     },
     handleNotifyJoin:function (notifyJoinPacket) {
+        console.log("handle notify join");
         this.tableManager.addPlayer(notifyJoinPacket.tableid,notifyJoinPacket.seat, notifyJoinPacket.pid, notifyJoinPacket.nick);
     },
     handleJoinResponse : function (joinResponsePacket) {
