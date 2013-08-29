@@ -13,6 +13,7 @@ Poker.LobbyData = Class.extend({
     notifyUpdate : false,
     onUpdate : null,
     onItemRemoved : null,
+    sorters : null,
     /**
      *
      * @param {Poker.LobbyDataValidator} validator
@@ -25,6 +26,7 @@ Poker.LobbyData = Class.extend({
         this.validator = validator;
         this.onUpdate = onUpdate;
         this.onItemRemoved = onItemRemoved;
+        this.sorters = [];
     },
     addOrUpdateItems : function(items) {
         for(var i = 0; i<items.length; i++) {
@@ -91,10 +93,51 @@ Poker.LobbyData = Class.extend({
                 filtered.push(items[i]);
             }
         }
+        if(this.sorters.length>0) {
+            filtered = this.sort(filtered);
+        }
         return filtered;
+    },
+    sort : function(items) {
+        var sorters = this.sorters;
+        items = items.sort(function(a,b){
+            for(var i = sorters.length-1; i>=0; i--) {
+                var res = sorters[i].sort(a,b);
+                if(res < 0 || res > 0) {
+                    return res;
+                }
+            }
+            return 0;
+        });
+        return items;
+
+    },
+    setSortBy : function(attribute,asc) {
+        console.log("setting sort, ", this.sorters);
+        var last = this.sorters.length-1;
+        if(attribute == this.sorters[last].attribute) {
+            this.sorters[last].ascending = asc;
+        } else {
+            for(var i = 0; i<this.sorters.length-1; i++) {
+                if(this.sorters[i].attribute == attribute) {
+                    this.sorters.push(this.sorters.splice(i,1)[0]);
+                    this.sorters[last].ascending = asc;
+                    break;
+                }
+            }
+        }
+
+        this.onUpdate(this.getFilteredItems());
+
     },
     getItem : function(id) {
         return this.items.get(id);
+    },
+    addSort : function(sort) {
+        this.sorters.push(sort);
+    },
+    getCurrentSort : function() {
+        return this.sorters[this.sorters.length-1];
     }
 });
 
@@ -107,7 +150,7 @@ Poker.LobbyDataValidator = Class.extend({
      * @return {Boolean}
      */
     validate : function(item) {
-        return false;
+        return true;
     },
     shouldRemoveItem : function(item) {
         return item.showInLobby!=null && item.showInLobby == 0;
@@ -143,4 +186,54 @@ Poker.TournamentLobbyDataValidator = Poker.LobbyDataValidator.extend({
         return this._super(item) || (item.status!=null && item.status == "CLOSED");
     }
 
+});
+
+Poker.SortFunction = Class.extend({
+    attribute : null,
+    ascending : false,
+    init : function(attribute, ascending) {
+        this.ascending = ascending;
+        this.attribute = attribute;
+    },
+    sort : function(a,b) {
+    },
+    isAscending : function() {
+        return this.ascending==true ? 1 : -1;
+    }
+});
+Poker.CapacitySort = Poker.SortFunction.extend({
+    init : function(ascending) {
+        this._super("capacity",ascending);
+    },
+    sort : function(a,b) {
+        if(a.capacity == b.capacity) {
+            if(typeof(a.seated)!="undefined") {
+                return -(a.seated - b.seated);
+            } else {
+                return -(a.registered - b.registered)
+            }
+
+        }
+        return this.isAscending() * (a.capacity - b.capacity);
+    }
+});
+
+
+
+Poker.BlindsSort = Poker.SortFunction.extend({
+    init : function(ascending) {
+        this._super("blinds",ascending);
+    },
+    sort : function(a,b) {
+        return this.isAscending() * (parseFloat(a.smallBlind) - parseFloat(b.smallBlind));
+    }
+});
+
+Poker.BuyInSort = Poker.SortFunction.extend({
+    init : function(ascending) {
+        this._super("buy-in",ascending);
+    },
+    sort : function(a,b) {
+        return this.isAscending() * (parseFloat(a.buyIn) - parseFloat(b.buyIn));
+    }
 });

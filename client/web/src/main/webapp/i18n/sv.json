@@ -50,7 +50,9 @@
             "starting" : "Startar",
             "seated" : "Seated",
             "blinds" : "Blinds",
-            "type" : "Typ"
+            "type" : "Typ",
+            "go-to-table" : "Öppna bordet",
+            "go-to-lobby" : "Öppna lobbyn"
         }
     },
     "table" : {

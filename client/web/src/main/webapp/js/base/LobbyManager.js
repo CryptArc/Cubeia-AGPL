@@ -13,6 +13,8 @@ Poker.LobbyManager = Class.extend({
 
     tournamentLobbyData : null,
 
+    sitAndGoLobbyData : null,
+
     listItemTemplate:null,
 
     currentScroll:null,
@@ -32,25 +34,47 @@ Poker.LobbyManager = Class.extend({
         this.lobbyLayoutManager = Poker.AppCtx.getLobbyLayoutManager();
         this.cashGamesLobbyData = new Poker.LobbyData(new Poker.TableLobbyDataValidator(),
             function(items) {
+                var sort = self.cashGamesLobbyData.getCurrentSort();
+                self.lobbyLayoutManager.setCurrentSorting(sort.attribute,sort.isAscending());
                 self.lobbyLayoutManager.createTableList(items);
             },
             function(itemId) {
                 self.lobbyLayoutManager.tableRemoved(itemId);
             });
 
+        this.cashGamesLobbyData.addSort(new Poker.CapacitySort(false));
+        this.cashGamesLobbyData.addSort(new Poker.BlindsSort(false));
+
+        this.lobbyLayoutManager.setCashGameSortingFunction(function(attribute,asc){
+            self.cashGamesLobbyData.setSortBy(attribute,asc);
+        });
+
 
         this.tournamentLobbyData = new Poker.LobbyData(new Poker.TournamentLobbyDataValidator(),
             function(items) {
-                if(self.lobbyLayoutManager.state == Poker.LobbyLayoutManager.TOURNAMENT_STATE) {
-                    self.lobbyLayoutManager.createTournamentList(items);
-                } else {
-                    self.lobbyLayoutManager.createSitAndGoList(items);
-                }
+                self.lobbyLayoutManager.createTournamentList(items);
             },
             function(itemId) {
                 self.lobbyLayoutManager.tournamentRemoved(itemId);
             });
 
+        this.sitAndGoLobbyData = new Poker.LobbyData(new Poker.TournamentLobbyDataValidator(),
+            function(items) {
+                var sort = self.sitAndGoLobbyData.getCurrentSort();
+                self.lobbyLayoutManager.setCurrentSorting(sort.attribute,sort.isAscending());
+                self.lobbyLayoutManager.createSitAndGoList(items);
+
+            },
+            function(itemId) {
+                self.lobbyLayoutManager.tournamentRemoved(itemId);
+            });
+
+        this.sitAndGoLobbyData.addSort(new Poker.CapacitySort(false));
+        this.sitAndGoLobbyData.addSort(new Poker.BuyInSort(false));
+
+        this.lobbyLayoutManager.setSitAndGoSortingFunction(function(attribute,asc){
+            self.sitAndGoLobbyData.setSortBy(attribute,asc);
+        })
     },
 
     handleTableSnapshotList : function (tableSnapshotList) {
@@ -71,9 +95,11 @@ Poker.LobbyManager = Class.extend({
         for (var i = 0; i < tournamentSnapshotList.length; i++) {
             items.push(Poker.ProtocolUtils.extractTournamentData(tournamentSnapshotList[i]));
         }
-        this.tournamentLobbyData.addOrUpdateItems(items);
-
-
+        if(this.lobbyLayoutManager.state == Poker.LobbyLayoutManager.SIT_AND_GO_STATE) {
+            this.sitAndGoLobbyData.addOrUpdateItems(items);
+        } else {
+            this.tournamentLobbyData.addOrUpdateItems(items);
+        }
     },
 
     /**
@@ -85,7 +111,12 @@ Poker.LobbyManager = Class.extend({
         for (var i = 0; i < tournamentUpdateList.length; i++) {
             items.push(Poker.ProtocolUtils.extractTournamentData(tournamentUpdateList[i]));
         }
-        this.tournamentLobbyData.addOrUpdateItems(items);
+        if(this.lobbyLayoutManager.state == Poker.LobbyLayoutManager.SIT_AND_GO_STATE) {
+            this.sitAndGoLobbyData.addOrUpdateItems(items);
+        } else {
+            this.tournamentLobbyData.addOrUpdateItems(items);
+        }
+
     },
 
     getTableStatus:function (seated, capacity) {
@@ -115,7 +146,11 @@ Poker.LobbyManager = Class.extend({
         this.cashGamesLobbyData.addOrUpdateItem({ id: tableId, showInLobby: 0});
     },
     handleTournamentRemoved : function(tournamentId) {
-        this.tournamentLobbyData.addOrUpdateItem({ id : tournamentId, showInLobby : 0});
+        if(this.lobbyLayoutManager.state = Poker.LobbyLayoutManager.SIT_AND_GO_STATE) {
+            this.sitAndGoLobbyData.addOrUpdateItem({ id : tournamentId, showInLobby : 0});
+        } else {
+            this.tournamentLobbyData.addOrUpdateItem({ id : tournamentId, showInLobby : 0});
+        }
     },
     clearLobby : function () {
         this.cashGamesLobbyData.clear();

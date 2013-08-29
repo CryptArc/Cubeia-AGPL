@@ -566,8 +566,8 @@
         <thead class="table-item-header">
             <tr>
                 <th class="table-name">{{t "lobby.list.name"}}</th>
-                <th class="buy-in">{{t "lobby.list.buy-in"}}</th>
-                <th class="seated">{{t "lobby.list.players"}}</th>
+                <th class="buy-in buy-in-sort sorting">{{t "lobby.list.buy-in"}}</th>
+                <th class="seated capacity-sort sorting">{{t "lobby.list.players"}}</th>
                 <th class="status">{{t "lobby.list.status"}}</th>
             </tr>
         </thead>
@@ -590,12 +590,12 @@
 </script>
 
 <script type="text/mustache" id="tableLobbyListTemplate">
-    <table class="table lobby-list-table">
+    <table class="table lobby-list-table dataTable">
         <thead class="table-item-header">
             <tr>
                 <th class="table-name">{{t "lobby.list.name"}}</th>
-                <th class="seated">{{t "lobby.list.seated"}}</th>
-                <th class="blinds">{{t "lobby.list.blinds"}}</th>
+                <th class="seated capacity-sort sorting">{{t "lobby.list.seated"}}</th>
+                <th class="blinds blinds-sort sorting">{{t "lobby.list.blinds"}}</th>
                 <th class="play-text"></th>
             </tr>
         </thead>
@@ -610,7 +610,7 @@
         <td class="table-name">{{name}}</td>
         <td class="seated">{{seated}}/{{capacity}}</td>
         <td class="blinds">{{blinds}} {{translateCurrencyCode currencyCode}}</td>
-        <td class="play-text hidden-phone" ><a class="btn btn-lobby">Go to table</a></td>
+        <td class="play-text hidden-phone" ><a class="btn btn-lobby" >{{t "lobby.list.go-to-table"}}</a></td>
     </tr>
 </script>
 <script  type="text/mustache" id="sitAndGoListItemTemplate" style="display: none;">
@@ -619,7 +619,7 @@
         <td class="buy-in">{{currency buyIn}}+{{currency fee}} {{translateCurrencyCode buyInCurrencyCode}}</td>
         <td class="seated">{{registered}}/{{capacity}}</td>
         <td class="status {{status}}">{{status}}</td>
-        <td class="play-text"><a class="btn btn-lobby">Go to lobby</a></td>
+        <td class="play-text"><a class="btn btn-lobby">{{t "lobby.list.go-to-lobby"}}</a></td>
     </tr>
 </script>
 <script type="text/mustache" id="tournamentListItemTemplate" style="display: none;">
@@ -632,7 +632,7 @@
             <div class="list-item status {{status}}">{{status}}</div>
         </td>
 
-        <td class="play-text"><a class="btn btn-lobby">Go to lobby</a></td>
+        <td class="play-text"><a class="btn btn-lobby">{{t "lobby.list.go-to-lobby"}}</a></td>
     </tr>
 </script>
 <div id="potTransferTemplate" style="display: none;">

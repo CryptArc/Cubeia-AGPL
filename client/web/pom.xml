@@ -242,6 +242,7 @@
                         <source>${js.dir}/base/ui/actions/TableButtons.js</source>
                         <source>${js.dir}/base/tournaments/TournamentManager.js</source>
                         <source>${js.dir}/base/ui/MyActionsManager.js</source>
+                        <source>${js.dir}/base/data/LobbyData.js</source>
                     </preloadSources>
                     <jsTestSrcDir>${project.basedir}/src/test/js</jsTestSrcDir>
                     <specIncludes>

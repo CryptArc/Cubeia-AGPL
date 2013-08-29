@@ -50,7 +50,9 @@
             "starting" : "Starting",
             "seated" : "Seated",
             "blinds" : "Blinds",
-            "type" : "Type"
+            "type" : "Type",
+            "go-to-table" : "Go to table",
+            "go-to-lobby" : "Go to lobby"
         }
     },
     "table" : {
