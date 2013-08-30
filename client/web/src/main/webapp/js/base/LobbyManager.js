@@ -42,6 +42,7 @@ Poker.LobbyManager = Class.extend({
                 self.lobbyLayoutManager.tableRemoved(itemId);
             });
 
+        this.cashGamesLobbyData.addSort(new Poker.NameSort(false));
         this.cashGamesLobbyData.addSort(new Poker.CapacitySort(false));
         this.cashGamesLobbyData.addSort(new Poker.BlindsSort(false));
 
@@ -71,6 +72,7 @@ Poker.LobbyManager = Class.extend({
 
         this.sitAndGoLobbyData.addSort(new Poker.CapacitySort(false));
         this.sitAndGoLobbyData.addSort(new Poker.BuyInSort(false));
+
 
         this.lobbyLayoutManager.setSitAndGoSortingFunction(function(attribute,asc){
             self.sitAndGoLobbyData.setSortBy(attribute,asc);

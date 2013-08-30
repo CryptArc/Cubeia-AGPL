@@ -237,3 +237,16 @@ Poker.BuyInSort = Poker.SortFunction.extend({
         return this.isAscending() * (parseFloat(a.buyIn) - parseFloat(b.buyIn));
     }
 });
+Poker.NameSort = Poker.SortFunction.extend({
+    init : function(ascending) {
+        this._super("name",ascending);
+    },
+    sort : function(a,b) {
+        if(a.name < b.name) {
+            return this.isAscending() * 1;
+        } else if(a.name > b.name) {
+            return this.isAscending() * -1
+        }
+        return 0;
+    }
+});

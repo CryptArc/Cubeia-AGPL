@@ -593,7 +593,7 @@
     <table class="table lobby-list-table dataTable">
         <thead class="table-item-header">
             <tr>
-                <th class="table-name">{{t "lobby.list.name"}}</th>
+                <th class="table-name name-sort sorting">{{t "lobby.list.name"}}</th>
                 <th class="seated capacity-sort sorting">{{t "lobby.list.seated"}}</th>
                 <th class="blinds blinds-sort sorting">{{t "lobby.list.blinds"}}</th>
                 <th class="play-text"></th>

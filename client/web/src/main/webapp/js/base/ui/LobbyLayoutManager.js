@@ -205,6 +205,9 @@ Poker.LobbyLayoutManager = Class.extend({
         } else {
             sortElement.addClass("sorting-desc");
         }
+        $("#lobbyView .name-sort").click(function(e){
+            self.cashGameSortingFunction("name",!$(this).hasClass("sorting-asc"));
+        });
         $("#lobbyView .blinds-sort").click(function(e){
             self.cashGameSortingFunction("blinds",!$(this).hasClass("sorting-asc"));
         });
