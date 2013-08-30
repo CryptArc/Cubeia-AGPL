@@ -34,6 +34,8 @@
                                 //compiles less files for each skin
 
                                 def skinsDir = project.properties['skins.dir'];
+                                def bootstrapDir = project.properties['bootstrap.dir'];
+                                def bootstrapTargetDir = project.properties['bootstrap.build.dir'];
                                 def skinsBuildDir = project.properties['skins.build.dir'];
                                 def rhinoJar = project.properties['rhino.path'];
 
@@ -43,6 +45,7 @@
                                 //create a list of the skins
                                 def skins = new File(skinsDir).list()
 
+                                def lessScriptFile = project.basedir.toString() + "/src/main/resources/less-rhino-1.4.0.js";
 
                                 //do for each skin
                                 skins.eachWithIndex() { obj, i ->
@@ -51,7 +54,7 @@
 
                                         def targetDir =  skinsBuildDir + "/${obj}/lcss";
                                         def skinLessDir = skinsDir + "/${obj}/less"
-                                        def lessScriptFile = project.basedir.toString() + "/src/main/resources/less-rhino-1.4.0.js";
+
 
                                         //create skin directory
                                         ant.mkdir(dir : targetDir)
@@ -67,6 +70,17 @@
                                     }
 
                                 };
+
+                                def targetBootstrapCssDir =  bootstrapTargetDir + "/lcss"
+                                ant.mkdir(dir : targetBootstrapCssDir);
+                                ant.exec(dir : bootstrapDir + "/less/", executable : 'java', failonerror : 'true') {
+                                    arg( value : '-jar')
+                                    arg( value : rhinoJar)
+                                    arg( value : lessScriptFile )
+                                    arg( value : 'bootstrap.less')
+                                    arg( value : targetBootstrapCssDir  + '/bootstrap.css')
+                                };
+
 
                                 //create a list of all images to be used in preloading
 
@@ -388,6 +402,8 @@
         <rhino.verion>1.7R4</rhino.verion>
         <rhino.path>${settings.localRepository}/org/mozilla/rhino/${rhino.verion}/rhino-${rhino.verion}.jar</rhino.path>
         <skins.dir>${project.basedir}/src/main/webapp/skins</skins.dir>
+        <bootstrap.dir>${project.basedir}/src/main/webapp/js/lib/bootstrap/</bootstrap.dir>
+        <bootstrap.build.dir>${project.build.directory}/${project.artifactId}-${project.version}/js/lib/bootstrap</bootstrap.build.dir>
         <skins.build.dir>${project.build.directory}/${project.artifactId}-${project.version}/skins</skins.build.dir>
     </properties>
 
