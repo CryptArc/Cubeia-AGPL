@@ -275,7 +275,7 @@ public class TournamentLobby {
         Money balance = getBalanceFor(playerId);
         Money buyIn = pokerState.getBuyInAsMoney();
         Money fee = pokerState.getFeeAsMoney();
-        boolean sufficient = balance.getAmount().compareTo(buyIn.getAmount().add(fee.getAmount())) > 0;
+        boolean sufficient = balance.getAmount().compareTo(buyIn.getAmount().add(fee.getAmount())) >= 0;
         TournamentRegistrationInfo registrationInfo = new TournamentRegistrationInfo(format(buyIn), format(fee), pokerState.getCurrency().getCode(), format(balance), sufficient);
         sender.sendPacketToPlayer(registrationInfo, playerId);
     }

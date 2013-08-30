@@ -278,6 +278,10 @@ Poker.TournamentManager = Class.extend({
         console.log(tournament);
         if (sufficientFunds == true) {
             tournament.tournamentLayoutManager.showBuyInInfo(buyIn,fee,currency,balanceInWallet);
+        } else {
+            this.dialogManager.displayGenericDialog({
+                translationKey : "not-enough-funds"
+            })
         }
     },
     handleTournamentId : function(id) {

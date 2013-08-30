@@ -259,6 +259,10 @@
         "watch-table-failed" : {
             "header" : "Bordsinformation",
             "message" : "Det gick inte öppna bordet"
+        },
+        "not-enough-funds" : {
+            "header" : "Registreringen misslyckades",
+            "message" : "Du har inte tillräckligt med pengar för att köpa in."
         }
 
     },

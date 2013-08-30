@@ -269,6 +269,10 @@
         "watch-table-failed" : {
             "header" : "Table info",
             "message" : "Unable to open table"
+        },
+        "not-enough-funds" : {
+            "header" : "Insufficient funds",
+            "message" : "You don't have enough funds to buy in."
         }
     },
     "table-log" : {
