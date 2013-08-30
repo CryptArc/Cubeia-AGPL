@@ -163,6 +163,7 @@ Poker.LobbyLayoutManager = Class.extend({
          this.cashGameFilters.push(lowStakes);
 
          this.sitAndGoFilters.push(limitFilters);
+         this.sitAndGoFilters.push(new Poker.PrivateTournamentFilter());
     },
 
     initTournamentFilters : function () {
