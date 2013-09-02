@@ -29,12 +29,22 @@ div.seat-balance {
     &:first-letter {
         color:#ababab;
     }
-
 }
 
 .action-amount {
-    span {
+    div.value {
         background-image: url("../images/global/opacity40.png");
+        .border-radius(0.9em);
+        display: inline-block;
+
+        span {
+            background-image: url("../images/table/chip.png");
+            background-repeat: no-repeat;
+            padding: 0.5em 0.8em 0.5em 1.9em;
+            background-size: 1.5em;
+            background-position: 0.2em center;
+            display: block;
+        }
     }
 }
 
