@@ -23,6 +23,7 @@ Poker.Seat = Class.extend({
     seatBase: null,
     animationManager: null,
     currentProgressBarAnimation: null,
+    dealerButtonTarget : null,
     init: function(elementId, seatId, player, animationManager) {
         this.animationManager = animationManager;
         this.seatId = seatId;
@@ -45,6 +46,7 @@ Poker.Seat = Class.extend({
         this.seatBalance = this.seatElement.find(".seat-balance");
         this.handStrength = this.seatElement.find(".hand-strength");
         this.seatBase = this.seatElement.find(".avatar-base");
+        this.dealerButtonTarget = this.seatElement.find(".dealer-button-target");
 
         this.reset();
     },

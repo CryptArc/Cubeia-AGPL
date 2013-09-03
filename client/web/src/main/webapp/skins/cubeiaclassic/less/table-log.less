@@ -1,17 +1,17 @@
 .table-log-container {
 
     .table-event-log {
-        border:1px solid #999;
-        background-color: #ddd;
-        .box-shadow(inset 0px 2px 3px #999);
+        border:1px solid @event-log-border-color;
+        background: @event-log-background;
+        .box-shadow(inset 0px 2px 3px @event-log-inner-shadow-color);
 
         div {
-            color:#333;
+            color: @event-log-text-color;
             &.hand-started {
-                background-color: #aaa;
+                background-color: @event-log-hand-started-background-color;
             }
             &:nth-child(even) {
-                background-color: #ccc;
+                background-color: @event-log-even-row-background-color;
             }
         }
     }

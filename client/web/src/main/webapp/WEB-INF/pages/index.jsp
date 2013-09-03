@@ -481,7 +481,6 @@
 </div>
 
 <div id="seatTemplate" style="display: none;">
-
     <div class="avatar-base">
         <div class="progress-bar">
 

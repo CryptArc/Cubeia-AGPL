@@ -1,21 +1,21 @@
 .button-gradient {
     background: #1e5799; /* Old browsers */
-    .linear-gradient(top, #a3a6ad 0%, #797c86 100%);
+    .linear-gradient(top, @action-button-gradient-start 0%, @action-button-gradient-end  100%);
 }
 
 
 .action-button, .user-actions .action-button {
     .box-shadow(0 2px 2px #111);
-    color:#282d35;
+    color:@action-button-color;
     span {
-        text-shadow: 0px 1px 1px #bbb;
+        text-shadow: 0px 1px 1px @action-button-secondary-color;
     }
 
 }
 
 .action-button {
     .button-gradient;
-    border:2px solid #d3d5d8;
+    border:2px solid @action-button-border-color;
 }
 .action-leave {
     .button-gradient;
@@ -23,7 +23,7 @@
 
 .future-actions {
     .future-action {
-        background-color: #797c86;
+        background-color: @fututre-action-background-color;
     }
 }
 label.checkbox-icon-label {

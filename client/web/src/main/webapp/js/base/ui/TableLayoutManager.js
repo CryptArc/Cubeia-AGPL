@@ -391,7 +391,7 @@ Poker.TableLayoutManager = Class.extend({
         var off = seat.getDealerButtonOffsetElement().relativeOffset(this.tableView);
 
         var pos = {
-            left : Math.round(off.left + seat.getDealerButtonOffsetElement().width()*0.95),
+            left : Math.round(off.left + seat.getDealerButtonOffsetElement().width()*0.90),
             top : Math.round(off.top)
         };
         if(newDealer==true) {

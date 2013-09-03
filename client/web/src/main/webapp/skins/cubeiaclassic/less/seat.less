@@ -1,33 +1,32 @@
 
 
 .player-name {
-    color:#fff;
+    color:@player-name-color;
 }
 .avatar-base {
-    .linear-gradient(top, #3e3d3e 0%, #111 100%);
-    border: 2px solid #b4b8ba;
+    .linear-gradient(top, @avatar-base-gradient-start 0%, @avatar-base-gradient-end 100%);
+    border: 2px solid @avatar-base-border-color;
 
 }
 
 .active-seat .avatar-base {
-    border: 4px solid #b3d800;
+    border: 4px solid @avatar-base-border-active-color;
 }
 
 .action-text, .player-status, .hand-strength {
-    color:@mainGreen;
-    color:#d6b91a;
+    color:@seat-action-text;
 }
 
 .hand-strength {
-    color:#fff;
+    color:@hand-strength-color;
     &.won {
-        color: #eecc00;
+        color: @hand-strength-winner-color;
     }
 }
 div.seat-balance {
-    color:#ababab;
+    color:@seat-balance-color;
     &:first-letter {
-        color:#ababab;
+        color:@seat-balance-color;
     }
 }
 
@@ -62,10 +61,10 @@ div.seat-balance {
 }
 
 .open-seat {
-    color:#555;
+    color: @seat-open-text-color;
 }
 .progress-bar {
-    background:#b3d800;
+    background: @seat-progressbar-background;
 }
 .seat-empty {
     .avatar-base {

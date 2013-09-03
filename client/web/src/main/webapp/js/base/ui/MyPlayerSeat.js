@@ -29,7 +29,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
     avatarElement : null,
 
     infoElement : null,
-
+    seatBase : null,
     init : function(tableId,elementId, seatId, player, myActionsManager, animationManager) {
         this._super(elementId,seatId, player,animationManager);
         this.tableId = tableId;
@@ -41,6 +41,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.circularProgressBar.hide();
         this.seatBalance = this.seatElement.find(".seat-balance");
         this.myActionsManager.onSatDown();
+        this.seatBase = this.seatElement.find(".avatar-base");
     },
     setSeatPos : function(prev,pos) {
         //do nothing
@@ -174,7 +175,7 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         this.circularProgressBar.detach();
     },
     getDealerButtonOffsetElement : function() {
-        return this.cardsContainer;
+        return this.seatBase;
     },
     isMySeat : function() {
         return true;

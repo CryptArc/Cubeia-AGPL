@@ -1,26 +1,8 @@
-/* global colors definitions */
-@mainGreen: #971502;
-@grayText: #999;
-@buttonGrayBg:#2f3234;
-@main-background-color: #252525;
-
-.default-btn {
-
-    .border-radius(6px);
-    background-color: #e8422a;
-    color:#fff;
-    text-shadow:1px 2px #912919;
-    .box-shadow(0px 1px 3px #222);
-    &:hover,&:focus {
-        color:#fff;
-        text-decoration: none;
-    }
-    .linear-gradient(top,#dc3b3b 0%, #a81010 100%);
-}
-
+@import "constants.less";
 @import "../../default/less/compatability.less";
+@import "global.less";
 @import "action-buttons.less";
-@import "new-lobby.less";
+@import "lobby.less";
 @import "login.less";
 @import "seat.less";
 @import "table.less";
@@ -33,7 +15,7 @@
 @import "main-menu.less";
 @import "toggle-switch.less";
 @import "circular-progressbar.less";
-@import "tournament-lobby-new.less";
+@import "tournament-lobby.less";
 @import "table-log.less";
 @import "hand-history.less";
 
