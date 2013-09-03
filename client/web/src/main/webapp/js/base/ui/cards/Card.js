@@ -12,13 +12,16 @@ Poker.Card = Class.extend({
     templateManager:null,
     cardImage : null,
     cardElement : null,
+    type : null,
 
     init:function (id, tableId, cardString, templateManager) {
         this.templateManager = templateManager;
         this.id = id;
         this.tableId = tableId;
+        this.type="svg";
         if (cardString == "  ") {
             cardString = "back";
+            this.type = "png";
         }
         this.cardString = cardString;
     },
@@ -29,7 +32,7 @@ Poker.Card = Class.extend({
      */
     render : function (cardNum) {
         var t = this.getTemplate();
-        var backfaceImageUrl = "url(" +contextPath+ "/skins/" + Poker.SkinConfiguration.name +"/images/cards/"+this.cardString+".svg)";
+        var backfaceImageUrl = "url(" +contextPath+ "/skins/" + Poker.SkinConfiguration.name +"/images/cards/"+this.cardString+"."+this.type+")";
         var output = this.templateManager.render(t, {domId:this.id + "-" + this.tableId, backgroundImage:backfaceImageUrl, cardNum : cardNum});
         return output;
     },

@@ -136,7 +136,7 @@ Poker.Seat = Class.extend({
     fold: function() {
         this.seatElement.addClass("seat-folded");
         this.seatElement.removeClass("active-seat");
-        this.seatElement.find(".player-card-container img").attr("src", contextPath + "/skins/" + Poker.SkinConfiguration.name + "/images/cards/gray-back.svg");
+        this.seatElement.find(".player-card-container img").attr("src", contextPath + "/skins/" + Poker.SkinConfiguration.name + "/images/cards/back.png");
     },
     dealCard: function(card) {
         this.cardsContainer.append(card.render(this.cardsContainer.children().length));

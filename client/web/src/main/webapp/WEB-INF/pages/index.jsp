@@ -706,7 +706,7 @@
 
             </div>
             <div class="dealer-button" style="display:none;">
-                <img src="${cp}/skins/${skin}/images/table/dealer-button.svg"/>
+                <img src="${cp}/skins/${skin}/images/table/dealer-button.png"/>
             </div>
         </div>
         <div class="hand-history" style="display:none;">
