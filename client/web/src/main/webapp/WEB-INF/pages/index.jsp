@@ -528,7 +528,9 @@
     </div>
 </script>
 <div id="mainPotTemplate" style="display: none;">
-        <div class="balance pot-container-{{potId}}"><span class="pot-value pot-{{potId}}">{{amount}}</span></div>
+        <div class="balance pot-container pot-container-{{potId}}">
+            <div class="value"><span class="pot-value pot-{{potId}}">{{amount}}</span></div>
+        </div>
 </div>
 <div id="myPlayerSeatTemplate" style="display:none;">
     <div class="player-name">
@@ -636,7 +638,7 @@
 </script>
 <div id="potTransferTemplate" style="display: none;">
         <div id="{{ptId}}" class="pot-transfer" style="visibility: hidden;">
-        <div class="balance">{{amount}}</div>
+        <div class="balance pot-container"><div class="value"><span>{{amount}}</span></div></div>
     </div>
 </div>
 
