@@ -256,6 +256,10 @@
             Handlebars.registerHelper('date', function(date) {
                 return moment(parseInt(date)).format("lll");
             });
+            Handlebars.registerHelper('cardIcon',function(cardStr){
+                var res = cardStr.charAt(0).toUpperCase() + '<span class="suit-icon-'+cardStr.charAt(1)+'"></span>';
+                return new Handlebars.SafeString(res);
+            });
 
             i18n.init({ fallbackLng: 'en', postProcess: 'sprintf', resGetPath: '${cp}/i18n/__lng__.json' }, function(){
                 $("body").i18n();
@@ -1245,13 +1249,13 @@
    <div>{{name}} {{action}} {{#showAmount}} {{currency amount}} {{/showAmount}}</div>
 </script>
 <script type="text/mustache" id="communityCardsLogTemplate" style="display:none;">
-    <div>{{t "table-log.community-cards"}} {{#cards}}&nbsp;{{cardString}}{{/cards}}</div>
+    <div>{{t "table-log.community-cards"}} {{#cards}}&nbsp;{{cardIcon cardString}}{{/cards}}</div>
 </script>
 <script type="text/mustache" id="playerCardsExposedLogTemplate" style="display:none;">
-    <div>{{player.name}} {{t "table-log.shows"}} {{#cards}}&nbsp;{{cardString}}{{/cards}}</div>
+    <div>{{player.name}} {{t "table-log.shows"}} {{#cards}}&nbsp;{{cardIcon cardString}}{{/cards}}</div>
 </script>
 <script type="text/mustache" id="playerHandStrengthLogTemplate" style="display:none;">
-    <div>{{player.name}} {{t "table-log.has"}} {{#hand}}&nbsp;{{text}}{{/hand}} ({{#cardStrings}}&nbsp;{{.}}{{/cardStrings}}&nbsp;)</div>
+    <div>{{player.name}} {{t "table-log.has"}} {{#hand}}&nbsp;{{text}}{{/hand}} ({{#cardStrings}}&nbsp;{{cardIcon .}}{{/cardStrings}}&nbsp;)</div>
 </script>
 <script type="text/mustache" id="potTransferLogTemplate" style="display:none;">
     <div>{{player.name}} {{t "table-log.wins"}} {{amount}}</div>
