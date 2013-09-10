@@ -32,6 +32,7 @@ Poker.TableLayoutManager = Class.extend({
     viewContainerOffsetTop : 0,
 
     tableLog : null,
+    chatLog : null,
 
     /**
      * @type Poker.Clock
@@ -92,10 +93,29 @@ Poker.TableLayoutManager = Class.extend({
         this.cardElements = new Poker.Map();
         this.clock = new Poker.Clock(this.tableInfoElement.find(".time-to-next-level-value"));
 
-        this.tableLog = new Poker.TableEventLog(this.tableView.find(".table-log-container"));
+        this.tableLog = new Poker.TableEventLog(this.tableView.find(".table-event-log-container"));
+        this.chatLog = new Poker.TableEventLog(this.tableView.find(".table-chat-container"));
+
+        this.tableView.find(".show-log-tab").click(function(e){
+            self.tableView.find(".table-chat-container").hide();
+            self.tableView.find(".table-event-log-container").show();
+            $(this).addClass("active");
+            self.tableView.find(".show-chat-tab").removeClass("active");
+            self.tableLog.scrollDown();
+
+        });
+        this.tableView.find(".show-chat-tab").click(function(e){
+            self.tableView.find(".table-chat-container").show();
+            self.tableView.find(".table-event-log-container").hide();
+            $(this).addClass("active");
+            self.tableView.find(".show-log-tab").removeClass("active");
+            self.chatLog.scrollDown();
+
+        });
 
         $(".future-action").show();
     },
+
     updateVariant : function(variant) {
         console.log("UPDATING VARIANT",variant);
         this.tableView.removeClass (function (index, css) {
@@ -108,7 +128,7 @@ Poker.TableLayoutManager = Class.extend({
         }
     },
     onChatMessage : function(player, message) {
-        this.tableLog.appendChatMessage(player,message);
+        this.chatLog.appendChatMessage(player,message);
     },
     handleAction : function(actionType,amount) {
         var self = this;

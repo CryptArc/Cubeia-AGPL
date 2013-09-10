@@ -718,11 +718,21 @@
             {{t "table.hand-history" }}
         </div>
         <div class="bottom-bar">
+            <ul class="table-log-tabs">
+                <li class="show-log-tab active"><a>Log</a></li>
+                <li class="show-chat-tab"><a>Chat</a></li>
+            </ul>
             <div class="table-log-container">
-                <div class="table-event-log-settings"></div>
-                <div class="table-event-log">
+                <div class="table-event-log-settings" style="display:none;"></div>
+                <div class="table-event-log-container">
+                    <div class="table-event-log">
+                    </div>
                 </div>
-                <input type="text" class="chat-input describe" title="{{t 'table.log.chat-input-desc'}}"/>
+                <div class="table-chat-container" style="display:none;">
+                    <div class="table-event-log">
+                    </div>
+                    <input type="text" class="chat-input describe" title="{{t 'table.log.chat-input-desc'}}"/>
+                </div>
 
             </div>
             <div class="own-player" id="myPlayerSeat-{{tableId}}Info" style="display:none;">
