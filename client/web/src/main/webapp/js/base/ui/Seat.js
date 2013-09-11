@@ -23,6 +23,7 @@ Poker.Seat = Class.extend({
     seatBase: null,
     animationManager: null,
     currentProgressBarAnimation: null,
+    dealerButtonTarget : null,
     init: function(elementId, seatId, player, animationManager) {
         this.animationManager = animationManager;
         this.seatId = seatId;
@@ -45,6 +46,7 @@ Poker.Seat = Class.extend({
         this.seatBalance = this.seatElement.find(".seat-balance");
         this.handStrength = this.seatElement.find(".hand-strength");
         this.seatBase = this.seatElement.find(".avatar-base");
+        this.dealerButtonTarget = this.seatElement.find(".dealer-button-target");
 
         this.reset();
     },
@@ -124,7 +126,8 @@ Poker.Seat = Class.extend({
         var icon = $("<div/>").addClass("player-action-icon").addClass(actionType.id + "-icon");
         if (amount!="0") {
             this.actionAmount.removeClass("placed");
-            this.actionAmount.empty().append($("<span/>").append(amount));
+            var cont = $("<div/>").addClass("value").append($("<span/>").append(amount));
+            this.actionAmount.empty().append(cont);
             this.actionAmount.append(icon).show();
             this.animateActionAmount();
         }
@@ -135,7 +138,7 @@ Poker.Seat = Class.extend({
     fold: function() {
         this.seatElement.addClass("seat-folded");
         this.seatElement.removeClass("active-seat");
-        this.seatElement.find(".player-card-container img").attr("src", contextPath + "/skins/" + Poker.SkinConfiguration.name + "/images/cards/gray-back.svg");
+        this.seatElement.find(".player-card-container img").attr("src", contextPath + "/skins/" + Poker.SkinConfiguration.name + "/images/cards/back.png");
     },
     dealCard: function(card) {
         this.cardsContainer.append(card.render(this.cardsContainer.children().length));

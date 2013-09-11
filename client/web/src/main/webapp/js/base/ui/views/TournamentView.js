@@ -1,5 +1,5 @@
 var Poker = Poker || {};
-Poker.TournamentView = Poker.TabView.extend({
+Poker.TournamentView = Poker.ResponsiveTabView.extend({
     layoutManager : null,
     init :function(viewElementId,name,layoutManager) {
         this._super(viewElementId,name, "T");

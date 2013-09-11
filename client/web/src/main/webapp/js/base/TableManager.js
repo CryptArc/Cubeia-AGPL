@@ -245,6 +245,10 @@ Poker.TableManager = Class.extend({
         var self = this;
         console.log("adding player " + playerName + " at seat" + seat + " on table " + tableId);
         var table = this.tables.get(tableId);
+        if(table.getPlayerById(playerId)!=null) {
+            console.log("player " + playerId + " already at the table");
+            return;
+        }
         var p = new Poker.Player(playerId, playerName);
         table.addPlayer(seat,p);
         if(playerId == Poker.MyPlayer.id) {

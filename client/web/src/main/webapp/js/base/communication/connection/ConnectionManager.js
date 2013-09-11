@@ -38,13 +38,11 @@ Poker.ConnectionManager = Class.extend({
         Poker.AppCtx.getAccountPageManager().onLogin(playerId,name);
         $('#loginView').hide();
         $("#lobbyView").show();
-        Poker.AppCtx.getLobbyLayoutManager().addCurrencyFilters();
+        Poker.AppCtx.getLobbyLayoutManager().onLogin();
         var viewManager = Poker.AppCtx.getViewManager();
         viewManager.onLogin();
-        new Poker.LobbyRequestHandler().subscribeToCashGames();
         Poker.AppCtx.getTableManager().onPlayerLoggedIn();
         Poker.AppCtx.getTournamentManager().onPlayerLoggedIn();
-
         Poker.Utils.storeUser(name,Poker.MyPlayer.password);
         
         // check deposit return...
@@ -60,7 +58,8 @@ Poker.ConnectionManager = Class.extend({
         this.retryCount = 0;
         this.disconnectDialog.close();
         this.showConnectStatus(i18n.t("login.connected"));
-
+    },
+    onClientReady : function() {
         if(Poker.MyPlayer.loginToken!=null) {
             this.handleTokenLogin();
         } else {
@@ -69,8 +68,6 @@ Poker.ConnectionManager = Class.extend({
                 this.handlePersistedLogin();
             }
         }
-
-
     },
     handleTokenLogin : function() {
         var token = Poker.MyPlayer.loginToken;

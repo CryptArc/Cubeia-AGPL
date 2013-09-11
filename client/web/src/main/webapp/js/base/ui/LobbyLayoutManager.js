@@ -8,9 +8,14 @@ Poker.LobbyLayoutManager = Class.extend({
     templateManager : null,
     cashGameFilters: null,
     tournamentFilters: null,
+    sitAndGoFilters : null,
     requiredFilters : null,
     filtersEnabled : true,
     state : null,
+    topMenu : null,
+
+    cashGameSortingFunction : null,
+    sitAndGoSortingFunction : null,
 
     tournamentListSettings : {
         prefix : "tournamentItem",
@@ -33,32 +38,38 @@ Poker.LobbyLayoutManager = Class.extend({
         this.templateManager = Poker.AppCtx.getTemplateManager();
         this.cashGameFilters = [];
         this.tournamentFilters = [];
+        this.sitAndGoFilters = [];
         this.requiredFilters = [];
 
-
         var self = this;
-        $("#cashGameMenu").click(function (e) {
-            self.goToList();
-            $(".main-menu a.selected").removeClass("selected");
-            $(this).addClass("selected");
-            new Poker.LobbyRequestHandler().subscribeToCashGames();
 
+        var variantMenu = new Poker.BasicMenu(".navbar-variant");
+        variantMenu.addItem("#variantTexas",function(){
+            new Poker.LobbyRequestHandler().subscribeToCashGames("texas");
+        });
+        variantMenu.addItem("#variantTelesina",function(){
+            new Poker.LobbyRequestHandler().subscribeToCashGames("telesina");
+        });
+        variantMenu.activateItem("#variantTexas");
+
+        this.topMenu = new Poker.BasicMenu(".navbar-top");
+        this.topMenu.addItem("#cashGameMenu", function(){
+            self.state = Poker.LobbyLayoutManager.CASH_STATE;
+            variantMenu.activateItem("#variantTexas");
+            new Poker.LobbyRequestHandler().subscribeToCashGames("texas");
             $.ga._trackEvent("user_navigation", "click_cashGameMenu");
         });
-        $("#sitAndGoMenu").click(function (e) {
-            $(".main-menu .selected").removeClass("selected");
-            $(this).addClass("selected");
-            this.state = Poker.LobbyLayoutManager.SIT_AND_GO_STATE;
+
+        this.topMenu.addItem("#sitAndGoMenu",function (e) {
+            self.state = Poker.LobbyLayoutManager.SIT_AND_GO_STATE;
+            variantMenu.hide();
             new Poker.LobbyRequestHandler().subscribeToSitAndGos();
-            self.goToList();
             $.ga._trackEvent("user_navigation", "click_sitAndGoMenu");
         });
-        $("#tournamentMenu").click(function (e) {
-            $(".main-menu .selected").removeClass("selected");
-            $(this).addClass("selected");
-            this.state = Poker.LobbyLayoutManager.TOURNAMENT_STATE;
+        this.topMenu.addItem("#tournamentMenu",function (e) {
+            self.state = Poker.LobbyLayoutManager.TOURNAMENT_STATE;
+            variantMenu.hide();
             new Poker.LobbyRequestHandler().subscribeToTournaments();
-            self.goToList();
             $.ga._trackEvent("user_navigation", "click_tournamentMenu");
         });
 
@@ -66,15 +77,27 @@ Poker.LobbyLayoutManager = Class.extend({
             $(this).toggleClass("selected");
             $(".table-filter").toggleClass("hidden");
         });
+
         this.initFilters();
+    },
+    setCashGameSortingFunction : function(func) {
+        this.cashGameSortingFunction = func;
+    },
+    setSitAndGoSortingFunction : function(func) {
+        this.sitAndGoSortingFunction = func;
+    },
+    onLogin : function() {
+      this.addCurrencyFilters();
+      this.topMenu.selectItem("#cashGameMenu");
+
     },
     addCurrencyFilters : function() {
         var currencies = Poker.OperatorConfig.getEnabledCurrencies();
         if(currencies.length>1) {
             $(".filter-group.currencies").show();
-            var t = this.templateManager.getRenderTemplate("filterButtonTemplate");
+            var t = this.templateManager.getRenderTemplate("currencyFilterTemplate");
             for(var i = 0; i<currencies.length; i++) {
-                $(".filter-group.currencies").append(t.render(currencies[i]));
+                $("#currencyMenu").append(t.render(currencies[i]));
             }
             var currencyFilter = new Poker.RadioGroupFilter(currencies, this,["currencyCode","buyInCurrencyCode"]);
             this.requiredFilters.push(currencyFilter);
@@ -82,14 +105,9 @@ Poker.LobbyLayoutManager = Class.extend({
             $(".filter-group.currencies").hide();
         }
     },
-    goToList : function() {
-        if(Poker.AppCtx.getViewManager().mobileDevice==true) {
-            $('html, body').scrollTop($("#tableListAnchor").offset().top + 50);
-        }
-    },
     filterUpdated : function() {
         if(this.state == Poker.LobbyLayoutManager.SIT_AND_GO_STATE) {
-            var filteredTournaments = Poker.AppCtx.getLobbyManager().tournamentLobbyData.getFilteredItems();
+            var filteredTournaments = Poker.AppCtx.getLobbyManager().sitAndGoLobbyData.getFilteredItems();
             this.createSitAndGoList(filteredTournaments);
         } else if(this.state == Poker.LobbyLayoutManager.TOURNAMENT_STATE) {
             var filteredTournaments = Poker.AppCtx.getLobbyManager().tournamentLobbyData.getFilteredItems();
@@ -126,14 +144,13 @@ Poker.LobbyLayoutManager = Class.extend({
 
          this.cashGameFilters.push(emptyTablesFilter);
 
-         var noLimit = new Poker.PropertyStringFilter("noLimit", true, this, "type", "NL");
-         this.cashGameFilters.push(noLimit);
-
-         var potLimit = new Poker.PropertyStringFilter("potLimit", true, this, "type", "PL");
-         this.cashGameFilters.push(potLimit);
-
-         var fixedLimit = new Poker.PropertyStringFilter("fixedLimit", true, this, "type", "FL");
-         this.cashGameFilters.push(fixedLimit);
+         var items = [
+              { id : "NL", name: "No Limit"},
+              { id : "PL", name: "Pot Limit"},
+              { id : "FL", name: "Fixed Limit"}
+          ];
+         var limitFilters = new Poker.RadioGroupFilter(items, this,["type"],"limits");
+         this.cashGameFilters.push(limitFilters);
 
          var highStakes = new Poker.PropertyMinMaxFilter("highStakes", true, this, "smallBlind", 10, -1);
 
@@ -145,11 +162,12 @@ Poker.LobbyLayoutManager = Class.extend({
          var lowStakes = new Poker.PropertyMinMaxFilter("lowStakes", true, this, "smallBlind", -1, 4.9);
          this.cashGameFilters.push(lowStakes);
 
-
+         this.sitAndGoFilters.push(limitFilters);
+         this.sitAndGoFilters.push(new Poker.PrivateTournamentFilter());
     },
+
     initTournamentFilters : function () {
         this.tournamentFilters.push(new Poker.PrivateTournamentFilter());
-
     },
     isAllowedByFilters : function (data, filters) {
         for (var i = 0; i < filters.length; i++) {
@@ -167,6 +185,8 @@ Poker.LobbyLayoutManager = Class.extend({
 
         return true;
     },
+    sortAttribute : null,
+    sortAscending : false,
     createTableList : function(tables) {
         this.state = Poker.LobbyLayoutManager.CASH_STATE;
         this.filtersEnabled = true;
@@ -178,6 +198,28 @@ Poker.LobbyLayoutManager = Class.extend({
             $(".show-filters").removeClass("selected");
         }
         this.createLobbyList(tables,this.tableListSettings, this.getTableItemCallback(), this.cashGameFilters);
+        var self = this;
+
+        var sortElement = $("#lobbyView ." +  this.sortAttribute + "-sort");
+        if(this.sortAscending==true) {
+            sortElement.addClass("sorting-asc");
+        } else {
+            sortElement.addClass("sorting-desc");
+        }
+        $("#lobbyView .name-sort").click(function(e){
+            self.cashGameSortingFunction("name",!$(this).hasClass("sorting-asc"));
+        });
+        $("#lobbyView .blinds-sort").click(function(e){
+            self.cashGameSortingFunction("blinds",!$(this).hasClass("sorting-asc"));
+        });
+        $("#lobbyView  .capacity-sort").click(function(e){
+            self.cashGameSortingFunction("capacity",!$(this).hasClass("sorting-asc"));
+        });
+    },
+
+    setCurrentSorting : function(attribute,asc) {
+        this.sortAttribute = attribute;
+        this.sortAscending = asc;
     },
     createTournamentList : function(tournaments) {
         this.state = Poker.LobbyLayoutManager.TOURNAMENT_STATE;
@@ -190,7 +232,21 @@ Poker.LobbyLayoutManager = Class.extend({
         this.filtersEnabled = true;
         $(".table-filters").hide();
         $(".tournament-filters").show();
-        this.createLobbyList(sitAndGos, this.sitAndGoListSettings, this.getTournamentItemCallback(), this.tournamentFilters);
+        this.createLobbyList(sitAndGos, this.sitAndGoListSettings, this.getTournamentItemCallback(), this.sitAndGoFilters);
+
+        var self = this;
+        var sortElement = $("#lobbyView ." +  this.sortAttribute + "-sort");
+        if(this.sortAscending==true) {
+            sortElement.addClass("sorting-asc");
+        } else {
+            sortElement.addClass("sorting-desc");
+        }
+        $("#lobbyView .buy-in-sort").click(function(e){
+            self.sitAndGoSortingFunction("buy-in",!$(this).hasClass("sorting-asc"));
+        });
+        $("#lobbyView  .capacity-sort").click(function(e){
+            self.sitAndGoSortingFunction("capacity",!$(this).hasClass("sorting-asc"));
+        });
     },
     getTableItemCallback : function() {
         var self = this;
@@ -264,7 +320,7 @@ Poker.LobbyLayoutManager = Class.extend({
                 if (typeof(item.tableStatus)!="undefined") {
                     item.tableStatus = Poker.ProtocolUtils.getTableStatus(item.seated,item.capacity);
                 }
-                var html = self.getTableItemHtml(settings.listItemTemplateId,item);
+                var html = self.getTableItemHtml(settings.listItemTemplateId, item);
                 listContainer.append(html);
                 $("#" + settings.prefix + item.id).touchSafeClick(function(){
                     listItemCallback(item);

@@ -5,8 +5,9 @@
         top:9%;
         .border-radius(0.2em);
         padding:0.4em 0.7em;
-        font-size: 90%;
+        font-size: 110%;
         z-index: 9999999;
+        color:#fff;
     }
 }
 
@@ -14,6 +15,10 @@
     .cards-container {
         top:@top;
         left:@left;
+    }
+    .dealer-button-target {
+        top:@top - 10;
+        left:@left - 10;
     }
 }
 .action-amount-pos(@top:0,@left:0,@align:center) {
@@ -39,7 +44,7 @@
     }
     .player-name {
         left:@avatar-base-left + 18;
-        top: @avatar-base-top + 3;
+        top: @avatar-base-top + 4;
     }
     .seat-balance {
         left:@avatar-base-left + 18;
@@ -104,7 +109,7 @@
     background-repeat: no-repeat;
     background-size: 85% auto;
 }
-.default-table {
+.default-poker-table {
     width:100%;
     height:80%;
     position: absolute;
@@ -123,9 +128,9 @@
     z-index: 10;
     position:absolute;
     left:0%;
-    top:-10%;
+    top:-30%;
     width:30%;
-    height:40%;
+    height:30%;
     display: inline-block;
 
 
@@ -219,7 +224,7 @@
 }
 
 .card-image {
-    background-size: 100%;
+    background-size: auto 100%;
     background-repeat: no-repeat;
     background-position: top;
     height: 100%;
@@ -228,7 +233,7 @@
 
 .community-card-container {
     position: relative;
-    height: 100%;
+    height: 90%;
     width: 18%;
     display: inline-block;
     margin-right: 1%;
@@ -248,7 +253,6 @@
     z-index: 100;
     background-size:100%;
     .transition-transform(1s ease-out);
-
     img {
       max-width: 100%;
     }
@@ -258,7 +262,7 @@
 .hand-history {
     cursor: pointer;
     width: 25%;
-    top: 77%;
+    top: 72%;
     left: 3%;
     height: 3%;
     position: absolute;
@@ -272,6 +276,7 @@
     position: absolute;
     top:67%;
     left:35.75%;
+    font-size:120%;
 
     .seat-defaults(20%,65%);
     .cards-container-pos(28%,40%);
@@ -288,7 +293,9 @@
         left:auto;
         right:-10%;
     }
-
+    .action-amount {
+        font-size: 90%;
+    }
     .hand-strength {
         top: 100%;
         left: 8%;
@@ -325,12 +332,6 @@
         margin-left:15%;
         z-index: 0;
 
-        &:first-child {
-            margin-left: -15%;
-        }
-        &:last-child {
-            margin-top: 10%;
-        }
     }
 
 }

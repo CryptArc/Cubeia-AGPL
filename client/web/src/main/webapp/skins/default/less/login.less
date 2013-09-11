@@ -2,16 +2,19 @@
 .login-container {
     width:80%;
     display:block;
+    font-size: 120%;
+
 
 }
 .login-input-container {
-    width:64%;
+    width:100%;
     display:block;
     float:left;
+    margin-bottom: 0.5em;
 
     input {
         .basic-input;
-        width:90%;
+        width:100%;
         margin-bottom:3%;
 
         &:last-child {
@@ -20,25 +23,20 @@
     }
 }
 .login-button {
-    .border-radius(10%);
-    background-color:@mainGreen;
-    width:33%;
-    height: auto;
-    float:right;
-    cursor: pointer;
-    span {
-        display: block;
-        margin: 60% 0 10% 35%;
-        font-size: 130%;
-        font-weight: bold;
-    }
+   padding: 0.8em;
+    width:100%;
+   font-size: 180%;
+    text-align: center;
+    clear: both;
+    margin-bottom:3%;
+
 }
 .describe {
     color:@grayText;
     font-style: italic;
 }
 .login-view {
-    width:400px;
+    width:300px;
     margin:0 auto;
     margin-top:15%;
 }
@@ -46,4 +44,12 @@
 .login-dialog {
     width:100%;
     margin-left:15%;
+}
+.status-label {
+    font-size: 150%;
+}
+.loading-view {
+    width:400px;
+    margin:0 auto;
+    margin-top:15%;
 }

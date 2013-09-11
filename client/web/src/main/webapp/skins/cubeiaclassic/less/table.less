@@ -18,41 +18,35 @@
 }
 
 .table-container {
-    background-image: url("../images/table/red-table.png");
-    background-position: center 20%;
+    background-image: url("../images/table/table.png");
+    background-position: center -80%;
     background-repeat: no-repeat;
-    background-size: 85% auto;
+    background-size: 98% auto;
 }
 
 .own-player {
   .balance {
-        color:#ababab;
-        &:first-letter {
-            color:#ababab;
-        }
+        color:@seat-balance-color;
     }
     .name {
-        color:#fff;
+        color:@player-name-color;
     }
-}
-.balance:first-letter {
-    color:@mainGreen;
 }
 
 .user-actions {
 }
 .total-pot {
-    color:#d46553;
+    color:@main-pot-description-color;
     span {
-        color:#fff;
+        color:@main-pot-text-color;
     }
 }
 .main-pot, .pot-transfer {
     span {
-        color:#fff;
+        color:@main-pot-text-color;
     }
     .balance:first-letter {
-        color:#fff;
+        color:@main-pot-text-color;
 
     }
 }

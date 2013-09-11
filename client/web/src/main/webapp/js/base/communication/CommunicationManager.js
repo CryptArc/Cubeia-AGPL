@@ -224,6 +224,7 @@ Poker.CommunicationManager = Class.extend({
         var config = JSON.parse(message);
         Poker.OperatorConfig.populate(config);
         console.log(config);
+        Poker.AppCtx.getConnectionManager().onClientReady();
     },
 
     handleServicePacket:function (servicePacket) {

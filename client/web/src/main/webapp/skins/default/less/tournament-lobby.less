@@ -1,220 +1,103 @@
-
-/* tournament lobby */
 .tournament-view {
-    padding:1% 5%;
-    width:90%;
-    height:auto;
-    .top-row {
-        display:table;
-        width:100%;
+    min-height: 100%;
+
+    .row {
+        margin-top: 10px;
+        &.players-row, &.payouts-row, &.blinds-row {
+            margin-top: 40px;
+        }
     }
-    .share-button {
-        float: left;
-        margin-top: 3.3%;
-        margin-left: 1%;
-        .border-radius(0.2em);
-        padding:0.5em 0.8em;
+
+    * {
+        box-sizing: border-box;
     }
+    h3 {
+        font-size: 200%;
+        margin-bottom: 5px;
+    }
+    h4 {
+        margin-top: 0px;
+        font-size: 110%;
+        color:#7b7b7b;
+    }
+    .container {
+        p {
+            margin:20px 0;
+            font-size: 120%;
+
+        }
+    }
+
     .register-button {
-        background-color:@mainGreen;
-        padding:0.7em 0.8em;
-        .border-radius(0.2em);
-        font-size:180%;
-        cursor: pointer;
-        display:inline-block;
-        float:right;
-        margin:1em 0 0 0.5em;
+        padding: 15px 20px;
+        font-size: 130%;
+        display: inline-block;
     }
     .leave-action {
-        background-color: #464645;
+        float: right;
+        padding: 15px 20px;
+        margin-right: 15px;
+    }
+    .share-button {
+        padding: 15px 20px;
+        font-size: 130%;
+        margin-right: 5px;
+        float:right;
     }
 
-
-    h3 {
-        font-weight: normal;
-        font-size:220%;
-        width:auto;
-        float:left;
+    .tournament-navbar {
+        .navbar-variant;
+    }
+    .stats-item {
+        font-size: 110%;
+        color: #909090;
+        line-height: 1.5;
         span {
-            display: block;
-            font-size: 70%;
-            color:#999;
+            color: #fff;
         }
     }
-
-    .tournament-description {
-        clear:both;
-        background-color: #353434;
-        padding: 2%;
-        width:96%;
-        .border-radius(0.5em);
-        margin-bottom: 1%;
-        font-size:120%;
+    .info-section {
+        background-color: #333333;
+        padding: 25px;
     }
-
-    .lobby-data-container {
-        background-color: #353434;
-        .border-radius(0.5em);
-        display: table;
-        width:100%;
-        height: 100%;
-    }
-    .tournament-info-container {
-        width:100%;
-        padding:1em;
-
-        .info-section {
-            margin-bottom: 1em;
-            padding:1em;
-            line-height: 1.6;
-            background-color:#2c2c2c;
-            .border-radius(0.4em);
-            font-size:120%;
-            .box-shadow(inset 2px 2px 6px #252525);
-            border:2px solid #404040;
-            h4 {
-                color:#c34634;
-                margin:-0.3em 0 0em 0;
-                padding:0;
-                font-size: 130%;
-                font-weight: normal;
-            }
-            .stats-item {
-                color:#bbb;
-
-                span {
-                    font-weight: bold;
-                    color:#fff;
-                }
-                /*
-                * Mapping to TournamentStatusEnum
-                */
-                span.status-container {
-                    span {
-                        display:none;
-                    }
-                    span.status-0-0 {
-                        display: inline-block;
-                    }
-                    span.status-1-1 {
-                        color: @mainGreen;
-                        display: inline-block;
-                    }
-                    span.status-2-2 {
-                        display: inline-block;
-                    }
-                    span.status-3-3 {
-                        display: inline-block;
-                    }
-                    span.status-4-4 {
-                        display: inline-block;
-                    }
-                    span.status-5-5 {
-                        display: inline-block;
-                    }
-                    span.status-6-6 {
-                        display: inline-block;
-                    }
-                    span.status-7-7 {
-                        display: inline-block;
-                    }
-                }
-                .status-registering {
-                    color:#a6cf0b;
-                }
-
-            }
+    span.status-container {
+        span {
+            display:none;
         }
-        .header {
-            font-weight: bold;
+        span.status-0-0 {
+            display: inline-block;
         }
-
-        .prize-pool {
-            font-weight: bold;
-            span {
-                font-weight: normal;
-            }
+        span.status-1-1 {
+            color: #a6d888;
+            display: inline-block;
         }
-        .info-list {
-            .info-list-item {
-                &:nth-child(odd) {
-                    background-color:#353535;
-                }
-            }
+        span.status-2-2 {
+            display: inline-block;
         }
-        .info-list-item  {
-            width:85%;
-            padding: 2% 5%;
-            span {
-                float:right;
-            }
-
-
+        span.status-3-3 {
+            display: inline-block;
         }
-
-
-    }
-
-    @margin:2%;
-    @columnWidth:(100/3)-@margin;
-
-    .column {
-        vertical-align: top;
-        margin-right:@margin;
-        &:last-child {
-            margin-right: 0;
+        span.status-4-4 {
+            display: inline-block;
+        }
+        span.status-5-5 {
+            display: inline-block;
+        }
+        span.status-6-6 {
+            display: inline-block;
+        }
+        span.status-7-7 {
+            display: inline-block;
         }
     }
-    .column-3 {
-        width:@columnWidth;
-        display: inline-block;
+    .status-registering {
+        color:#a6cf0b;
     }
-    .column-3-2 {
-        width:@columnWidth*2%;
-        display: inline-block;
-    }
-    .registered-players {
-        min-height: 500px;
-    }
-    .player-list {
-        padding:0;
-        border-spacing:0px 1px;
-        border-collapse:separate;
-        width:100%;
 
 
-        th {
-
-            &:nth-child(1) {
-                text-align: left;
-            }
-        }
-        tbody {
-            tr {
-                td {
-                    font-size:90%;
-                    padding:10px 4px;
-                    background-color:#353535;
-                    margin-bottom: 1px;
-                    &:first-child {
-                        text-align: center;
-                    }
-                    &:nth-child(3), &:nth-child(4) {
-                        text-align: right;
-                        padding-right: 1em;
-                    }
-                }
-                &:nth-child(even) {
-                    td {
-                        background-color: transparent;
-                    }
-                }
-            }
-
-        }
-    }
 }
 
-
-
-/* tournament lobby end*/
+.navbar-tournament-collapse {
+    padding-left: 0;
+    padding-right: 0;
+}

@@ -41,6 +41,22 @@ Poker.TournamentLayoutManager = Class.extend({
         if(registered==true) {
             this.setPlayerRegisteredState();
         }
+        var self = this;
+
+        var menu = new Poker.BasicMenu(this.viewElement.find(".tournament-navbar"));
+        menu.addItem(".players-link", function(){
+            self.viewElement.find(".tournament-section").hide();
+            self.viewElement.find(".players-row").show();
+        });
+        menu.addItem(".payouts-link", function(){
+            self.viewElement.find(".tournament-section").hide();
+            self.viewElement.find(".payouts-row").show();
+        });
+        menu.addItem(".blinds-link", function(){
+            self.viewElement.find(".tournament-section").hide();
+            self.viewElement.find(".blinds-row").show();
+        });
+        menu.activateItem(".players-link");
 
     },
     updatePlayerList : function(players) {

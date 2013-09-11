@@ -11,6 +11,8 @@
     <link rel="apple-touch-icon" href="${cp}/skins/${skin}/images/lobby/icon.png" />
     <link rel="stylesheet" type="text/css" href="${cp}/skins/default/css/gritter/css/jquery.gritter.css"/>
 
+    <link rel="stylesheet/less" type="text/css" href="${cp}/js/lib/bootstrap/less/bootstrap.less"/>
+
     <link id="defaultSkinCss" rel="stylesheet/less" type="text/css" href="${cp}/skins/default/less/base.less" />
 
     <!-- All less files are imported in this base.less-->
@@ -23,7 +25,7 @@
     <script type="text/javascript" src="${cp}/skins/${skin}/skin-config.js"></script>
     <script type="text/javascript" src="${cp}/skins/${skin}/preload-images.js"></script>
 
-    <script type="text/javascript"  src="${cp}/js/lib/less-1.3.0.min.js"></script>
+    <script type="text/javascript"  src="${cp}/js/lib/less-1.4.1.min.js"></script>
 
     <script type="text/javascript" src="${cp}/js/lib/classjs.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/jquery-1.7.2.min.js"></script>
@@ -32,7 +34,7 @@
     <script type="text/javascript" src="${cp}/js/base/jquery-plugins/touch-click.js"></script>
     <script type="text/javascript" src="${cp}/js/base/jquery-plugins/relative-offset.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/moment.js"></script>
-
+    <script type="text/javascript" src="${cp}/js/lib/bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/purl.js"></script>
 
     <script type="text/javascript" src="${cp}/js/lib/handlebars.js"></script>
@@ -107,6 +109,7 @@
 
     <script type="text/javascript" src="${cp}/js/base/ui/MyActionsManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/data/LobbyData.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/BasicMenu.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/LobbyLayoutManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/LobbyManager.js"></script>
     <script type="text/javascript" src="${cp}/js/base/Player.js"></script>
@@ -149,6 +152,7 @@
     <script type="text/javascript" src="${cp}/js/base/ui/TournamentBuyInDialog.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/View.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/TabView.js"></script>
+    <script type="text/javascript" src="${cp}/js/base/ui/views/ResponsiveTabView.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/LoginView.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/TableView.js"></script>
     <script type="text/javascript" src="${cp}/js/base/ui/views/MultiTableView.js"></script>
@@ -251,6 +255,10 @@
             });
             Handlebars.registerHelper('date', function(date) {
                 return moment(parseInt(date)).format("lll");
+            });
+            Handlebars.registerHelper('cardIcon',function(cardStr){
+                var res = cardStr.charAt(0).toUpperCase() + '<span class="suit-icon-'+cardStr.charAt(1)+'"></span>';
+                return new Handlebars.SafeString(res);
             });
 
             i18n.init({ fallbackLng: 'en', postProcess: 'sprintf', resGetPath: '${cp}/i18n/__lng__.json' }, function(){
@@ -360,56 +368,87 @@
         </div>
 
         <div id="lobbyView" class="lobby-container"  style="display:none;">
-            <div id="lobby" class="lobby-list">
+            <div class="container">
 
-                <div class="left-column">
-                    <div class="logo-container">
-                    </div>
-                    <ul class="main-menu">
-                            <li>
-                                <a class="selected lobby-link" id="cashGameMenu" data-i18n="lobby.menu.cash-games">
-                                    [Cash Games]
-                                </a>
-                            </li>
-                            <li><a id="sitAndGoMenu" class="lobby-link" data-i18n="lobby.menu.sit-n-gos">[Sit &amp; Go's]</a></li>
-                            <li><a  id="tournamentMenu" class="lobby-link" data-i18n="lobby.menu.tournaments">[Tournaments]</a></li>
-                    </ul>
-                </div>
-                <div class="right-column">
-                    <div class="top-panel" id="table-list">
-                        <div class="show-filters">
-                            <a data-i18n="lobby.filters.show-filters">Show filters</a>
-                        </div>
-                        <div class="filter-group currencies">
-                            <div class="filter-label" data-i18n="lobby.filters.currency">Currency:</div>
-                        </div>
-                        <div class="table-filters">
-                            <div class="filter-group tables">
-                                <div class="filter-label" data-i18n="lobby.filters.show-tables">Show tables:</div>
-                                <div class="filter-button" id="fullTables" data-i18n="lobby.filters.full">Full</div>
-                                <div class="filter-button" id="emptyTables" data-i18n="lobby.filters.empty">Empty</div>
+                <div class="row">
+                    <div class="col-sm-8">
+                        <nav class="navbar-inverse currencies">
+                            <div class="filter-group currencies">
+                                <ul id="currencyMenu" class="nav nav-pills">
+                                    <li class="filter-button" >
+                                        <a data-i18n="lobby.filters.currency" class="description">Select Currency:</a>
+                                    </li>
+                                </ul>
                             </div>
-                            <div class="filter-group limits">
-                                <div class="filter-label" data-i18n="lobby.filters.show-limits">Show Limits:</div>
-                                <div class="filter-button" id="noLimit" data-i18n="lobby.filters.no-limit">NL</div>
-                                <div class="filter-button" id="potLimit" data-i18n="lobby.filters.pot-limit">PL</div>
-                                <div class="filter-button" id="fixedLimit" data-i18n="lobby.filters.fixed-limit">FL</div>
-                            </div>
-                            <div class="filter-group stakes">
-                                <div class="filter-label" data-i18n="lobby.filters.stakes">Stakes:</div>
-                                <div class="filter-button" id="lowStakes" data-i18n="lobby.filters.low">Low</div>
-                                <div class="filter-button" id="mediumStakes" data-i18n="lobby.filters.mid">Mid</div>
-                                <div class="filter-button" id="highStakes" data-i18n="lobby.filters.high">High</div>
-                            </div>
+                        </nav>
+                        <div class="logo-container">
                         </div>
-                    </div>
-                        <div class="lobby-tab"  id="tableListAnchor">
-                        <div id="tableListContainer">
 
-                        </div>
+                        <nav class="navbar-inverse navbar-top" role="navigation">
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-top-collapse">
+                                    <span class="sr-only">Toggle navigation</span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                                <a class="nav-active-item">Cash Games</a>
+                            </div>
+                            <div class="navbar-collapse navbar-top-collapse collapse">
+                                <ul class="nav nav-pills">
+                                    <li class="active" id="cashGameMenu">
+                                        <a class="lobby-link"  data-i18n="lobby.menu.cash-games">
+                                            [Cash Games]
+                                        </a>
+                                    </li>
+                                    <li id="sitAndGoMenu" ><a class="lobby-link" data-i18n="lobby.menu.sit-n-gos">[Sit &amp; Go's]</a></li>
+                                    <li id="tournamentMenu"><a class="lobby-link" data-i18n="lobby.menu.tournaments">[Tournaments]</a></li>
+                                </ul>
+                            </div>
+
+                        </nav>
+
+                        <nav class="navbar-inverse navbar-variant filter cashgame-filter" role="navigation">
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-variant-collapse">
+                                    <span class="sr-only">Toggle navigation</span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                                <a class="nav-active-item">Cash Games</a>
+                            </div>
+                            <div class="navbar-collapse navbar-variant-collapse collapse">
+                                <ul class="nav nav-pills">
+                                    <li id="variantTexas" class="active"><a>Texas Hold'em</a></li>
+                                    <li id="variantTelesina"><a>Telesina</a></li>
+                                    <li><a>&nbsp;</a></li>
+                                </ul>
+                            </div>
+                        </nav>
+                        <nav class="navbar-inverse navbar-limits filter cashgame-filter sitandgo-filter">
+                            <ul class="nav nav-pills">
+                                <li id="limitsNL"><a>No Limit</a></li>
+                                <li id="limitsPL"><a>Pot Limit</a></li>
+                                <li id="limitsFL"><a>Fixed Limit</a></li>
+                            </ul>
+                        </nav>
+
+                    </div>
+                    <div class="col-sm-4">
+
                     </div>
                 </div>
-            </div>
+                <div class="row">
+                    <div class="col-sm-8" id="tableListContainer">
+
+                    </div>
+                    <div class="col-sm-4">
+
+                    </div>
+                </div>
+
+        </div>
 
         </div>
         <div class="user-overlay-container" style="display: none;">
@@ -446,7 +485,6 @@
 </div>
 
 <div id="seatTemplate" style="display: none;">
-
     <div class="avatar-base">
         <div class="progress-bar">
 
@@ -480,8 +518,8 @@
     </div>
 </div>
 
-<script type="text/mustache" id="filterButtonTemplate">
-    <div class="filter-button" id="filterButton{{id}}">{{name}}</div>
+<script type="text/mustache" id="currencyFilterTemplate">
+    <li class="filter-button" id="filterButton{{id}}"><a>{{name}}</a></li>
 </script>
 <script type="text/mustache" id="playerCardTemplate" style="display: none;">
     <div id="playerCard-{{domId}}" class="player-card-container number-{{cardNum}}">
@@ -494,7 +532,9 @@
     </div>
 </script>
 <div id="mainPotTemplate" style="display: none;">
-        <div class="balance pot-container-{{potId}}"><span class="pot-value pot-{{potId}}">{{amount}}</span></div>
+        <div class="balance pot-container pot-container-{{potId}}">
+            <div class="value"><span class="pot-value pot-{{potId}}">{{amount}}</span></div>
+        </div>
 </div>
 <div id="myPlayerSeatTemplate" style="display:none;">
     <div class="player-name">
@@ -527,80 +567,82 @@
 
 
 <script type="text/mustache" id="sitAndGoLobbyListTemplate">
-    <div class="table-item-header sit-and-go">
-        <div class="table-name">{{t "lobby.list.name"}}</div>
-        <div class="buy-in">{{t "lobby.list.buy-in"}}</div>
-        <div class="seated">{{t "lobby.list.players"}}</div>
-        <div class="status">{{t "lobby.list.status"}}</div>
-    </div>
-
-    <div class="table-list-item-container">
-
-    </div>
+    <table class="table lobby-list-table">
+        <thead class="table-item-header">
+            <tr>
+                <th class="table-name">{{t "lobby.list.name"}}</th>
+                <th class="buy-in buy-in-sort sorting">{{t "lobby.list.buy-in"}}</th>
+                <th class="seated capacity-sort sorting">{{t "lobby.list.players"}}</th>
+                <th class="status">{{t "lobby.list.status"}}</th>
+            </tr>
+        </thead>
+        <tbody class="table-list-item-container">
+        </tbody>
+    </table>
 </script>
 
 <script type="text/mustache" id="tournamentLobbyListTemplate">
-    <div class="table-item-header tournament">
-        <div class="table-name">{{t "lobby.list.name"}}</div>
-        <div class="buy-in">{{t "lobby.list.buy-in"}}</div>
-        <div class="registered">{{t "lobby.list.registered"}}</div>
-        <div class="group">{{t "lobby.list.starting"}}</div>
-    </div>
+    <table class="table lobby-list-table">
+        <thead class="table-item-header">
+            <th class="table-name">{{t "lobby.list.name"}}</th>
 
-    <div class="table-list-item-container">
+            <th></th>
+        </thead>
+        <tbody class="table-list-item-container">
 
-    </div>
+        </tbody>
+    </table>
 </script>
 
 <script type="text/mustache" id="tableLobbyListTemplate">
-    <div class="table-item-header">
-        <div class="table-name">{{t "lobby.list.name"}}</div>
-        <div class="seated">{{t "lobby.list.seated"}}</div>
-        <div class="blinds">{{t "lobby.list.blinds"}}</div>
-        <div class="type">{{t "lobby.list.type"}}</div>
-        <div class="play"></div>
-    </div>
+    <table class="table lobby-list-table dataTable">
+        <thead class="table-item-header">
+            <tr>
+                <th class="table-name name-sort sorting">{{t "lobby.list.name"}}</th>
+                <th class="seated capacity-sort sorting">{{t "lobby.list.seated"}}</th>
+                <th class="blinds blinds-sort sorting">{{t "lobby.list.blinds"}}</th>
+                <th class="play-text"></th>
+            </tr>
+        </thead>
+        <tbody class="table-list-item-container">
 
-    <div class="table-list-item-container">
-
-    </div>
+        </tbody>
+    </table>
 </script>
 
-<div id="tableListItemTemplate" style="display: none;">
-    <div class="table-item  {{tableStatus}}" id="tableItem{{id}}">
-        <div class="table-name">{{name}}</div>
-        <div class="seated">{{seated}}/{{capacity}}</div>
-        <div class="blinds">{{blinds}} {{currencyCode}}</div>
-        <div class="type">{{type}}</div>
-        <div class="play-text">&raquo;</div>
-        <div class="full-text">Full</div>
-    </div>
-</div>
-<div id="sitAndGoListItemTemplate" style="display: none;">
-    <div class="table-item sit-and-go  {{tableStatus}}" id="sitAndGoItem{{id}}">
-        <div class="table-name">{{name}}</div>
-        <div class="buy-in">{{currency buyIn}}+{{currency fee}} {{buyInCurrencyCode}}</div>
-        <div class="seated">{{registered}}/{{capacity}}</div>
-        <div class="type">{{type}}</div>
-        <div class="status {{status}}">{{status}}</div>
-        <div class="play-text">&raquo;</div>
-    </div>
-</div>
-<div id="tournamentListItemTemplate" style="display: none;">
-    <div class="table-item tournament {{tableStatus}}" id="tournamentItem{{id}}">
-        <div class="table-name">{{name}}</div>
-        <div class="buy-in">{{currency buyIn}}+{{currency fee}} {{buyInCurrencyCode}}</div>
-        <div class="registered">{{registered}}/{{capacity}}</div>
-        <div class="group">
-            <div class="start-time">{{date startTime}}</div>
-            <div class="status {{status}}">{{status}}</div>
-        </div>
-        <div class="play-text">&raquo;</div>
-    </div>
-</div>
+<script type="text/mustache" id="tableListItemTemplate" style="display: none;">
+    <tr class="table-item  {{tableStatus}}" id="tableItem{{id}}">
+        <td class="table-name">{{name}}</td>
+        <td class="seated">{{seated}}/{{capacity}}</td>
+        <td class="blinds">{{blinds}} {{translateCurrencyCode currencyCode}}</td>
+        <td class="play-text hidden-phone" ><a class="btn btn-lobby" >{{t "lobby.list.go-to-table"}}</a></td>
+    </tr>
+</script>
+<script  type="text/mustache" id="sitAndGoListItemTemplate" style="display: none;">
+    <tr class="table-item sit-and-go  {{tableStatus}}" id="sitAndGoItem{{id}}">
+        <td class="table-name">{{name}}</td>
+        <td class="buy-in">{{currency buyIn}}+{{currency fee}} {{translateCurrencyCode buyInCurrencyCode}}</td>
+        <td class="seated">{{registered}}/{{capacity}}</td>
+        <td class="status {{status}}">{{status}}</td>
+        <td class="play-text"><a class="btn btn-lobby">{{t "lobby.list.go-to-lobby"}}</a></td>
+    </tr>
+</script>
+<script type="text/mustache" id="tournamentListItemTemplate" style="display: none;">
+    <tr class="table-item tournament {{tableStatus}}" id="tournamentItem{{id}}">
+        <td class="table-name">
+            <div class="list-item-name">{{name}}</div>
+            <div class="list-item">{{currency buyIn}}+{{currency fee}} {{translateCurrencyCode buyInCurrencyCode}}</div>
+            <div class="list-item">{{registered}}/{{capacity}}</div>
+            <div class="list-item">{{date startTime}}</div>
+            <div class="list-item status {{status}}">{{status}}</div>
+        </td>
+
+        <td class="play-text"><a class="btn btn-lobby">{{t "lobby.list.go-to-lobby"}}</a></td>
+    </tr>
+</script>
 <div id="potTransferTemplate" style="display: none;">
         <div id="{{ptId}}" class="pot-transfer" style="visibility: hidden;">
-        <div class="balance">{{amount}}</div>
+        <div class="balance pot-container"><div class="value"><span>{{amount}}</span></div></div>
     </div>
 </div>
 
@@ -608,7 +650,7 @@
     <div id="tableView-{{tableId}}" class="table-container">
 
         <div class="table-logo"></div>
-        <div id="seatContainer-{{tableId}}" class="default-table table-{{capacity}}">
+        <div id="seatContainer-{{tableId}}" class="default-poker-table table-{{capacity}}">
             <div class="seat" id="seat0-{{tableId}}">
 
             </div>
@@ -669,18 +711,28 @@
 
             </div>
             <div class="dealer-button" style="display:none;">
-                <img src="${cp}/skins/${skin}/images/table/dealer-button.svg"/>
+                <img src="${cp}/skins/${skin}/images/table/dealer-button.png"/>
             </div>
         </div>
         <div class="hand-history" style="display:none;">
             {{t "table.hand-history" }}
         </div>
         <div class="bottom-bar">
+            <ul class="table-log-tabs">
+                <li class="show-log-tab active"><a>Log</a></li>
+                <li class="show-chat-tab"><a>Chat</a></li>
+            </ul>
             <div class="table-log-container">
-                <div class="table-event-log-settings"></div>
-                <div class="table-event-log">
+                <div class="table-event-log-settings" style="display:none;"></div>
+                <div class="table-event-log-container">
+                    <div class="table-event-log">
+                    </div>
                 </div>
-                <input type="text" class="chat-input describe" title="{{t 'table.log.chat-input-desc'}}"/>
+                <div class="table-chat-container" style="display:none;">
+                    <div class="table-event-log">
+                    </div>
+                    <input type="text" class="chat-input describe" title="{{t 'table.log.chat-input-desc'}}"/>
+                </div>
 
             </div>
             <div class="own-player" id="myPlayerSeat-{{tableId}}Info" style="display:none;">
@@ -854,10 +906,10 @@
     <script type="text/mustache" id="tournamentBuyInContent">
         <h1>{{t "buy-in.buy-in-at"}} {{name}}</h1>
         <div class="buy-in-row">
-            <span class="desc">{{t "buy-in.your-balance" }}</span>  <span class="balance buyin-balance">{{currency balance}} {{currencyCode}}</span>
+            <span class="desc">{{t "buy-in.your-balance" }}</span>  <span class="balance buyin-balance">{{currency balance}} {{translateCurrencyCode currencyCode}}</span>
         </div>
         <div class="buy-in-row">
-            <span class="desc">{{t "buy-in.buy-in" }}</span>  <span class="balance buyin-max-amount">{{currency buyIn}}+{{currency fee}} {{currencyCode}}</span>
+            <span class="desc">{{t "buy-in.buy-in" }}</span>  <span class="balance buyin-max-amount">{{currency buyIn}}+{{currency fee}} {{translateCurrencyCode currencyCode}}</span>
         </div>
         <div class="buy-in-row">
             <span class="buyin-error" style="display: none;"></span>
@@ -866,7 +918,7 @@
             <a class="dialog-cancel-button">
                 {{t "buy-in.cancel" }}
         </a>
-            <a class="dialog-ok-button">
+        <a class="dialog-ok-button">
                 {{t "buy-in.ok-button" }}
         </a>
     </p>
@@ -874,13 +926,13 @@
 <script type="text/mustache" id="cashGamesBuyInContent">
     <h1>Buy-in at table <span class="buyin-table-name">{{title}}</span></h1>
     <div class="buy-in-row">
-        <span class="desc">{{t "buy-in.your-balance" }}</span>  <span class="balance buyin-balance">{{currency balance}} {{currencyCode}}</span>
+        <span class="desc">{{t "buy-in.your-balance" }}</span>  <span class="balance buyin-balance">{{currency balance}} {{translateCurrencyCode currencyCode}}</span>
     </div>
     <div class="buy-in-row max-amount-container">
-        <span class="desc">{{t "buy-in.max-amount" }}</span>  <span class="balance buyin-max-amount">{{currency maxAmount}} {{currencyCode}}</span>
+        <span class="desc">{{t "buy-in.max-amount" }}</span>  <span class="balance buyin-max-amount">{{currency maxAmount}} {{translateCurrencyCode currencyCode}}</span>
     </div>
     <div class="buy-in-row">
-        <span class="desc">{{t "buy-in.min-amount" }}</span>  <span class="balance buyin-min-amount">{{currency minAmount}} {{currencyCode}}</span>
+        <span class="desc">{{t "buy-in.min-amount" }}</span>  <span class="balance buyin-min-amount">{{currency minAmount}} {{translateCurrencyCode currencyCode}}</span>
     </div>
 
     <div class="buy-in-row input-container">
@@ -933,60 +985,95 @@
     </div>
 </script>
 <script type="text/mustache" id="tournamentTemplate" style="display:none;">
-    <div id="tournamentView{{tournamentId}}" class="tournament-view">
-        <div class="top-row">
-            <h3 class="tournament-name">
-                <div  style="display:inline-block;" class="tournament-name-title">{{name}}</div>
-                <span class="tournament-start-date"></span>
-            </h3>
-            <a class="share-button">+Share</a>
+    <div id="tournamentView{{tournamentId}}" class="tournament-view responsive-view">
+        <div class="container">
+            <div class="row">
+                <a class="register-button leave-action">{{t "tournament-lobby.close" }}</a>
+                <a class="share-button">+Share</a>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <h3 class="tournament-name">
+                        <div  style="display:inline-block;" class="tournament-name-title">{{name}}</div>
+                    </h3>
+                    <h4 class="tournament-start-date"></h4>
 
-            <a class="register-button leave-action">{{t "tournament-lobby.close" }}</a>
-            <a class="register-button register-action">{{t "tournament-lobby.register" }}</a>
-            <a class="register-button unregister-action">{{t "tournament-lobby.unregister" }}</a>
-            <a class="register-button take-seat-action">{{t "tournament-lobby.go-to-table" }}</a>
-            <a class="register-button loading-action">{{t "tournament-lobby.please-wait" }}</a>
-
-            <div class="tournament-description"></div>
-        </div>
-        <div class="lobby-data-container">
-            <div class="column column-3">
-                <div class="tournament-info-container">
+                    <p class="tournament-description"></p>
+                    <a class="register-button register-action">{{t "tournament-lobby.register" }}</a>
+                    <a class="register-button unregister-action">{{t "tournament-lobby.unregister" }}</a>
+                    <a class="register-button take-seat-action">{{t "tournament-lobby.go-to-table" }}</a>
+                    <a class="register-button loading-action">{{t "tournament-lobby.please-wait" }}</a>
+                </div>
+                <div class="col-sm-6">
                     <div class="info-section tournament-info"></div>
-                    <div class="info-section tournament-stats"></div>
-                    <div class="info-section payout-structure"></div>
-                    <div class="info-section blinds-structure"></div>
+                </div>
+            </div>
+            <div class="row players-row">
+                <div class="col-sm-12">
+                <nav class="navbar-inverse tournament-navbar">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-tournament-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="nav-active-item"></a>
+                    </div>
+                    <div class="navbar-collapse navbar-tournament-collapse collapse">
+                        <ul class="nav nav-pills">
+                            <li class="players-link active"><a>Players</a></li>
+                            <li class="payouts-link"><a>Payouts</a></li>
+                            <li class="blinds-link"><a>Blinds Structure</a></li>
+                        </ul>
+                    </div>
+
+                    </nav>
+                </div>
+            </div>
+            <div class="row players-row tournament-section">
+                <div class="col-sm-7">
+                    <table class="table default-table player-list">
+                        <thead>
+                        <tr>
+                            <th colspan="2">{{t "tournament-lobby.players.player" }}</th>
+                            <th>{{t "tournament-lobby.players.stack" }}</th>
+                            <th>{{t "tournament-lobby.players.winnings" }}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td colspan="4">{{t "tournament-lobby.players.loading" }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row payouts-row tournament-section" style="display:none;">
+                <div class="col-sm-7 payout-structure">
 
                 </div>
             </div>
-            <div class="column column-3-2">
-                <div class="tournament-info-container">
-                    <div class="info-section registered-players">
-                        <h4>{{t "tournament-lobby.players.players" }}</h4>
-                        <table class="player-list">
-                            <thead>
-                            <tr>
-                                <th colspan="2">{{t "tournament-lobby.players.player" }}</th>
-                                <th>{{t "tournament-lobby.players.stack" }}</th>
-                                <th>{{t "tournament-lobby.players.winnings" }}</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td colspan="4">{{t "tournament-lobby.players.loading" }}</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
+
+            <div class="row blinds-row tournament-section"  style="display:none;">
+                <div class="col-sm-7 blinds-structure">
+
                 </div>
             </div>
+
         </div>
+
+
+
     </div>
 </script>
 <script type="text/mustache" id="tournamentInfoTemplate">
-    <h4>{{t "tournament-lobby.info.title" }}</h4>
-    <div class="stats-item"><span>{{gameType}}</span></div>
-    <div class="stats-item">{{t "tournament-lobby.info.title" }} <span>{{currency buyIn}}+{{currency fee}} {{buyInCurrencyCode}}</span></div>
+    {{^sitAndGo}}
+    <div class="stats-item">{{t "tournament-lobby.info.registration-starts" }} <span>{{date registrationStartTime}}</span></div>
+    {{/sitAndGo}}
+    <div class="stats-item">{{t "tournament-lobby.info.game-type" }} <span>{{gameType}}</span></div>
+    <div class="stats-item">{{t "tournament-lobby.info.buy-in" }} <span>{{currency buyIn}}+{{currency fee}} {{translateCurrencyCode buyInCurrencyCode}}</span></div>
     <div class="stats-item">
         {{t "tournament-lobby.info.status" }}
             <span class="status-container">
@@ -1004,10 +1091,9 @@
     <div class="stats-item">{{t "tournament-lobby.info.players" }} <span>{{minPlayers}}</span></div>
     {{/sitAndGo}}
     {{^sitAndGo}}
-    <div class="stats-item">{{t "tournament-lobby.info.max-players" }} <span>{{maxPlayers}}</span></div>
-    <div class="stats-item">{{t "tournament-lobby.info.min-players" }} <span>{{minPlayers}}</span></div>
-    <div class="stats-item">{{t "tournament-lobby.info.registration-starts" }} <span><br/>{{date registrationStartTime}}</span></div>
+    <div class="stats-item">{{t "tournament-lobby.info.max-players" }} <span>{{maxPlayers}}</span> {{t "tournament-lobby.info.min-players" }} <span>{{minPlayers}}</span> </div>
     {{/sitAndGo}}
+    <div class="stats-item">{{t "tournament-lobby.payouts.prize-pool" }}  <span>{{currency prizePool}}</span></div>
 
 
 </script>
@@ -1043,20 +1129,24 @@
 
 </script>
 <script type="text/mustache" id="tournamentPayoutStructureTemplate" style="display:none;">
-    <h4>{{t "tournament-lobby.payouts.title" }}</h4>
-    <div class="prize-pool">{{t "tournament-lobby.payouts.prize-pool" }} <span>{{currency prizePool}}</span></div>
-    <div class="payouts">
-        <div class="payout info-list-item header">
-            {{t "tournament-lobby.payouts.position" }} <span>{{t "tournament-lobby.payouts.amount" }}</span>
-        </div>
-        <div class="info-list">
+
+    <table class="table default-table player-list">
+        <thead>
+            <tr>
+                <th> {{t "tournament-lobby.payouts.position" }}</th>
+                <th>{{t "tournament-lobby.payouts.amount" }}</th>
+            </tr>
+        </thead>
+        <tbody class="">
             {{#payouts}}
-            <div class="payout info-list-item">
-                {{position}} <span>{{currency payoutAmount}}</span>
-            </div>
+            <tr class="payout info-list-item">
+                <td>{{position}}</td>
+                <td>{{currency payoutAmount}}</td>
+            </tr>
             {{/payouts}}
-        </div>
-    </div>
+        </tbody>
+    </table>
+
 </script>
 <script type="text/mustache" id="handHistoryIdsTemplate" style="display:none;">
    <p class="no-hands" style="display:none;">
@@ -1131,24 +1221,29 @@
 
 </script>
 <script type="text/mustache" id="tournamentBlindsStructureTemplate" style="display:none;">
-    <h4>{{t "tournament-lobby.blinds-structure.title" }}</h4>
-    <div class="blinds-level info-list-item header">
-        {{t "tournament-lobby.blinds-structure.blinds" }}
-        <span>{{t "tournament-lobby.blinds-structure.duration" }}</span>
-    </div>
-    <div class="info-list">
-        {{#blindsLevels}}
-        <div class="blinds-level info-list-item">
-            {{#isBreak}}
-            {{t "tournament-lobby.blinds-structure.break" }}
-            {{/isBreak}}
-            {{^isBreak}}
-            {{currency smallBlind}}/{{currency bigBlind}}
-            {{/isBreak}}
-            <span>{{durationInMinutes}}</span>
-        </div>
-        {{/blindsLevels}}
-    </div>
+    <table class="table default-table">
+        <thead>
+            <tr>
+                <th>{{t "tournament-lobby.blinds-structure.blinds" }}</th>
+                <th>{{t "tournament-lobby.blinds-structure.duration" }}</th>
+            </tr>
+        </thead>
+        <tbody>
+         {{#blindsLevels}}
+            <tr>
+                <td>
+                    {{#isBreak}}
+                        {{t "tournament-lobby.blinds-structure.break" }}
+                    {{/isBreak}}
+                    {{^isBreak}}
+                        {{currency smallBlind}}/{{currency bigBlind}}
+                    {{/isBreak}}
+                </td>
+                <td>{{durationInMinutes}}</td>
+            </tr>
+         {{/blindsLevels}}
+        </tbody>
+    </table>
 </script>
 
 <script type="text/mustache" id="tournamentPlayerListItem" style="display:none;">
@@ -1164,13 +1259,13 @@
    <div>{{name}} {{action}} {{#showAmount}} {{currency amount}} {{/showAmount}}</div>
 </script>
 <script type="text/mustache" id="communityCardsLogTemplate" style="display:none;">
-    <div>{{t "table-log.community-cards"}} {{#cards}}&nbsp;{{cardString}}{{/cards}}</div>
+    <div>{{t "table-log.community-cards"}} {{#cards}}&nbsp;{{cardIcon cardString}}{{/cards}}</div>
 </script>
 <script type="text/mustache" id="playerCardsExposedLogTemplate" style="display:none;">
-    <div>{{player.name}} {{t "table-log.shows"}} {{#cards}}&nbsp;{{cardString}}{{/cards}}</div>
+    <div>{{player.name}} {{t "table-log.shows"}} {{#cards}}&nbsp;{{cardIcon cardString}}{{/cards}}</div>
 </script>
 <script type="text/mustache" id="playerHandStrengthLogTemplate" style="display:none;">
-    <div>{{player.name}} {{t "table-log.has"}} {{#hand}}&nbsp;{{text}}{{/hand}} ({{#cardStrings}}&nbsp;{{.}}{{/cardStrings}}&nbsp;)</div>
+    <div>{{player.name}} {{t "table-log.has"}} {{#hand}}&nbsp;{{text}}{{/hand}} ({{#cardStrings}}&nbsp;{{cardIcon .}}{{/cardStrings}}&nbsp;)</div>
 </script>
 <script type="text/mustache" id="potTransferLogTemplate" style="display:none;">
     <div>{{player.name}} {{t "table-log.wins"}} {{amount}}</div>

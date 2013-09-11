@@ -54,7 +54,7 @@ Poker.PotTransferAnimator = Class.extend({
             this.potContainer.find(".pot-container-" + this.transfers[i].potId).hide();
         }
         for(var i = 0; i<animations.length; i++) {
-            var delay = i*300;
+            var delay = i*500;
             this.animationManager.animate(animations[i], delay)
         }
     }

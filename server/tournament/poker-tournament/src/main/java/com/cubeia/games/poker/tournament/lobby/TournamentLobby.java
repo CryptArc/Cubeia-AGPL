@@ -103,7 +103,7 @@ public class TournamentLobby {
         List<Payout> payouts = newArrayList();
         Payouts payoutStructure = pokerState.getPayouts();
         for (int i = 1; i <= payoutStructure.getNumberOfPlacesInTheMoney(); i++) {
-            payouts.add(new Payout(i, format(payoutStructure.getPayoutsForPosition(i))));
+            payouts.add(new Payout(i, format(payoutStructure.getPayoutForPosition(i))));
         }
         payoutInfo.payouts = payouts;
         payoutInfo.prizePool = pokerState.getPrizePool().toString();
@@ -275,7 +275,7 @@ public class TournamentLobby {
         Money balance = getBalanceFor(playerId);
         Money buyIn = pokerState.getBuyInAsMoney();
         Money fee = pokerState.getFeeAsMoney();
-        boolean sufficient = balance.getAmount().compareTo(buyIn.getAmount().add(fee.getAmount())) > 0;
+        boolean sufficient = balance.getAmount().compareTo(buyIn.getAmount().add(fee.getAmount())) >= 0;
         TournamentRegistrationInfo registrationInfo = new TournamentRegistrationInfo(format(buyIn), format(fee), pokerState.getCurrency().getCode(), format(balance), sufficient);
         sender.sendPacketToPlayer(registrationInfo, playerId);
     }

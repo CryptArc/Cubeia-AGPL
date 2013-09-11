@@ -37,7 +37,7 @@
             "low" : "Låg",
             "mid" : "Med",
             "high" : "Hög",
-            "currency" : "Valuta",
+            "currency" : "Välj valuta:",
             "xcc" : "XCC",
             "xoc" : "XOC"
         },
@@ -50,7 +50,9 @@
             "starting" : "Startar",
             "seated" : "Seated",
             "blinds" : "Blinds",
-            "type" : "Typ"
+            "type" : "Typ",
+            "go-to-table" : "Öppna bordet",
+            "go-to-lobby" : "Öppna lobbyn"
         }
     },
     "table" : {
@@ -157,7 +159,8 @@
             "players" : "Spelare:",
             "min-players" : "Min spelare:",
             "max-players" : "Max spelare:",
-            "registration-starts" : "Registering börjar:"
+            "registration-starts" : "Registering börjar:" ,
+            "game-type" : "Speltyp:"
         },
         "stats" : {
             "title" : "Statistics",
@@ -256,6 +259,10 @@
         "watch-table-failed" : {
             "header" : "Bordsinformation",
             "message" : "Det gick inte öppna bordet"
+        },
+        "not-enough-funds" : {
+            "header" : "Registreringen misslyckades",
+            "message" : "Du har inte tillräckligt med pengar för att köpa in."
         }
 
     },

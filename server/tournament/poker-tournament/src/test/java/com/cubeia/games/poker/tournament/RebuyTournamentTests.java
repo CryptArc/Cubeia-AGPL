@@ -147,6 +147,7 @@ public class RebuyTournamentTests {
         // Given a tournament that is waiting for a rebuy and about to go on a break.
         when(state.getTables()).thenReturn(of(1, 2));
         when(state.getPlayersAtTable(1)).thenReturn(of(1, 2, 3));
+        when(state.getMinPlayers()).thenReturn(10);
         prepareTournament();
         blindsStructure.insertLevel(1, new Level(new BigDecimal(80), new BigDecimal(120), BigDecimal.ZERO, 2, true));
         pokerState.increaseBlindsLevel();
@@ -230,7 +231,7 @@ public class RebuyTournamentTests {
         pokerState.addBuyInToPrizePool();
         pokerState.addBuyInToPrizePool();
         BigDecimal prizePoolBeforeRebuy = pokerState.getPrizePool();
-        BigDecimal firstPrize = pokerState.getPayouts().getPayoutsForPosition(1);
+        BigDecimal firstPrize = pokerState.getPayouts().getPayoutForPosition(1);
 
         // When someone performs a rebuy.
         tournament.handleRebuyResponse(new RebuyResponse(1, 2, new BigDecimal(50), true));
@@ -239,7 +240,7 @@ public class RebuyTournamentTests {
         // The prize pool should be updated.
         BigDecimal prizePoolAfterRebuy = pokerState.getPrizePool();
         assertThat(prizePoolAfterRebuy.compareTo(prizePoolBeforeRebuy) > 0, is(true));
-        assertThat(pokerState.getPayouts().getPayoutsForPosition(1).compareTo(firstPrize) > 0, is(true));
+        assertThat(pokerState.getPayouts().getPayoutForPosition(1).compareTo(firstPrize) > 0, is(true));
     }
 
     @Test
@@ -252,7 +253,7 @@ public class RebuyTournamentTests {
         pokerState.addBuyInToPrizePool();
         pokerState.addBuyInToPrizePool();
         BigDecimal prizePoolBeforeRebuy = pokerState.getPrizePool();
-        BigDecimal firstPrize = pokerState.getPayouts().getPayoutsForPosition(1);
+        BigDecimal firstPrize = pokerState.getPayouts().getPayoutForPosition(1);
 
         // When someone performs a rebuy.
         tournament.handleAddOnRequest(new AddOnRequest(1, 1));
@@ -261,7 +262,7 @@ public class RebuyTournamentTests {
         // The prize pool should be updated.
         BigDecimal prizePoolAfterRebuy = pokerState.getPrizePool();
         assertThat(prizePoolAfterRebuy.compareTo(prizePoolBeforeRebuy) > 0, is(true));
-        assertThat(pokerState.getPayouts().getPayoutsForPosition(1).compareTo(firstPrize) > 0, is(true));
+        assertThat(pokerState.getPayouts().getPayoutForPosition(1).compareTo(firstPrize) > 0, is(true));
     }
 
     private ReserveResponse createReserveResponse(int playerId) {

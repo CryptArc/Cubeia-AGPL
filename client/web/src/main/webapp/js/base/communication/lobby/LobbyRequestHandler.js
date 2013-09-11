@@ -22,17 +22,17 @@ Poker.LobbyRequestHandler = Class.extend({
             console.log("No unsubscribe function defined.");
         }
     },
-    subscribeToCashGames : function() {
+    subscribeToCashGames : function(variant) {
         this.unsubscribe();
 
-        this.connector.lobbySubscribe(1, "/texas");
+        this.connector.lobbySubscribe(1, "/"+variant);
         Poker.AppCtx.getLobbyManager().clearLobby();
         Poker.Unsubscribe  = function() {
             console.log("Unsubscribing from cash games.");
             var unsubscribeRequest = new FB_PROTOCOL.LobbyUnsubscribePacket();
             unsubscribeRequest.type = FB_PROTOCOL.LobbyTypeEnum.REGULAR;
             unsubscribeRequest.gameid = 1;
-            unsubscribeRequest.address = "/texas";
+            unsubscribeRequest.address = "/"+variant;
             Poker.AppCtx.getConnector().sendProtocolObject(unsubscribeRequest);
         }
     },

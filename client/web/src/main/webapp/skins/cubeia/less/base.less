@@ -4,6 +4,19 @@
 @buttonGrayBg:#2f3234;
 @main-background-color:#09090b;
 
+.default-btn {
+
+    .border-radius(6px);
+    background-color: @mainGreen;
+    color:#fff;
+
+    &:hover,&:focus {
+        color:#fff;
+        text-decoration: none;
+    }
+
+}
+
 @import "compatability.less";
 @import "action-buttons.less";
 @import "lobby.less";
@@ -96,7 +109,7 @@ body {
     font-family: Arial, san-serif;
     width: 100%;
     height:100%;
-    background: @main-background-color; // url("../images/lobby/fabric-small.png") center no-repeat fixed;
+    background: @main-background-color;
     background-size: 100% 100%;
 }
 .view-port {

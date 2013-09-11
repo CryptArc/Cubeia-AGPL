@@ -20,6 +20,7 @@ package com.cubeia.games.poker.tournament.activator;
 import com.cubeia.backend.firebase.CashGamesBackendService;
 import com.cubeia.firebase.api.lobby.LobbyAttributeAccessor;
 import com.cubeia.firebase.api.mtt.support.MTTStateSupport;
+import com.cubeia.games.poker.common.lobby.PokerLobbyAttributes;
 import com.cubeia.games.poker.common.time.SystemTime;
 import com.cubeia.games.poker.tournament.configuration.SitAndGoConfiguration;
 import com.cubeia.games.poker.tournament.configuration.lifecycle.SitAndGoLifeCycle;
@@ -52,6 +53,7 @@ public class SitAndGoCreationParticipant extends PokerTournamentCreationParticip
     protected void tournamentCreated(MTTStateSupport stateSupport, PokerTournamentState pokerState, LobbyAttributeAccessor lobbyAttributeAccessor) {
         super.tournamentCreated(stateSupport, pokerState, lobbyAttributeAccessor);
         // Sit and go tournaments start in registering mode.
+        lobbyAttributeAccessor.setStringAttribute(PokerLobbyAttributes.BETTING_GAME_BETTING_MODEL.name(),pokerState.getBetStrategy().name());
         setStatus(pokerState, lobbyAttributeAccessor, PokerTournamentStatus.REGISTERING);
     }
 

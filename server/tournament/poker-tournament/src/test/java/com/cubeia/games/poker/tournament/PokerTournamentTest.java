@@ -314,6 +314,7 @@ public class PokerTournamentTest {
         tournament.handleTrigger(TournamentTrigger.START_TOURNAMENT);
         when(mockLifeCycle.shouldStartTournament(Mockito.<DateTime>any(), anyInt(), anyInt())).thenReturn(true);
         when(state.getPlayerRegistry()).thenReturn(mockRegistry);
+        when(state.getMinPlayers()).thenReturn(10);
         when(mockRegistry.getPlayers()).thenReturn(Collections.singleton(tournamentPlayer));
 
         // When the registration is resolved.

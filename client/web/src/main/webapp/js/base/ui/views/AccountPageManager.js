@@ -131,11 +131,22 @@ Poker.AccountPageManager = Class.extend({
             });
         });
     },
+    createParametersFromCurrencies: function(currencies) {
+        var parameters = "";
+        for (var i = 0; i < currencies.length; i++) {
+            var currency = currencies[i];
+            parameters += "&" + currency.id + "=" + currency.name;
+        }
+        return parameters;
+    },
     openAccountFrame : function() {
         $.ga._trackEvent("user_navigation", "open_account_frame");
         var iframe = $("#accountIframe");
         var url = Poker.OperatorConfig.getAccountInfoUrl();
-        iframe.attr("src",this.addToken(url));
+        var urlWithParams = this.addToken(url);
+        // Add currency params so we can show currencies in the way specified by the operator.
+        urlWithParams += this.createParametersFromCurrencies(Poker.OperatorConfig.getEnabledCurrencies());
+        iframe.attr("src", urlWithParams);
     }
 });
 
