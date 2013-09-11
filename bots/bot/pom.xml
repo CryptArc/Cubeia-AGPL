@@ -16,7 +16,6 @@
         <dependency>
             <groupId>com.cubeia.firebase</groupId>
             <artifactId>firebase-protocol</artifactId>
-            <version>1.9.4-CE</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
