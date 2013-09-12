@@ -1,5 +1,7 @@
 package com.cubeia.games.poker.admin.wicket;
 
+import java.util.Collection;
+
 import org.apache.log4j.Logger;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
@@ -11,17 +13,18 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 public class SecureWicketAuthenticatedWebSession extends AuthenticatedWebSession {
 	private static final long serialVersionUID = 3355101222374558750L;
 
 	private static final Logger log = Logger.getLogger(SecureWicketAuthenticatedWebSession.class);
 
-	 @SpringBean(name = "authenticationManager")
+	@SpringBean(name = "authenticationManager")
 	private AuthenticationManager authenticationManager;
 
 	private String username;
+
+	private Collection<? extends GrantedAuthority> authorities;
 
 	public SecureWicketAuthenticatedWebSession(Request request) {
 		super(request);
@@ -49,8 +52,8 @@ public class SecureWicketAuthenticatedWebSession extends AuthenticatedWebSession
 		boolean authenticated = false;
 		try {
 			Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-			SecurityContextHolder.getContext().setAuthentication(authentication);
 			authenticated = authentication.isAuthenticated();
+			authorities = authentication.getAuthorities();
 		} catch (AuthenticationException e) {
 			log.warn(String.format("User '%s' failed to login. Reason: %s", username, e.getMessage()));
 			authenticated = false;
@@ -67,18 +70,10 @@ public class SecureWicketAuthenticatedWebSession extends AuthenticatedWebSession
 
 	private void getRolesIfSignedIn(Roles roles) {
 		if (isSignedIn()) {
-			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-			if (authentication != null) {
-				addRolesFromAuthentication(roles, authentication);
-			} else {
-				log.warn("Authentication is now null for user");
+			for (GrantedAuthority authority : authorities) {
+				roles.add(authority.getAuthority());
 			}
 		}
 	}
 
-	private void addRolesFromAuthentication(Roles roles, Authentication authentication) {
-		for (GrantedAuthority authority : authentication.getAuthorities()) {
-			roles.add(authority.getAuthority());
-		}
-	}
 }

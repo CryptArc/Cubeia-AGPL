@@ -15,7 +15,6 @@ For more installation instructions, see the root INSTALL.TXT
 Default logins are admin/admin and user/user. To override with more/other accounts create a file in 
 classpath named poker-admin-user-list.xml which contains users and roles as in the example below.
 
-<pre>
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <users>
     <user userName="admin" password="admin">
@@ -26,4 +25,3 @@ classpath named poker-admin-user-list.xml which contains users and roles as in t
         <role>ROLE_USER</role>
     </user>
 </users>
-</pre>
