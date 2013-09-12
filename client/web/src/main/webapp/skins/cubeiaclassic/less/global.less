@@ -1,0 +1,17 @@
+.default-btn {
+    .border-radius(6px);
+    background-color: @lobby-button-default-bg-color;
+    color:#fff;
+    text-shadow:1px 2px @lobby-button-text-shadow;
+    .box-shadow(0px 1px 3px @lobby-button-box-shadow);
+    &:hover,&:focus {
+        color:@lobby-button-text-color;
+        text-decoration: none;
+    }
+    .linear-gradient(top,#dc3b3b 0%, #a81010 100%);
+}
+.secondary-button {
+    .default-btn;
+    text-shadow:1px 2px @leave-lobby-text-shadow;
+    .linear-gradient(top,@action-button-gradient-start 0%, @action-button-gradient-end 100%);
+}
