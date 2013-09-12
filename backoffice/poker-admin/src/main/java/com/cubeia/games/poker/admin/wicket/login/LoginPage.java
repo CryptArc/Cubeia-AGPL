@@ -31,7 +31,7 @@ public class LoginPage extends BasePage {
     
     @Override
     public String getPageTitle() {
-        return "Sign in";
+        return "Authorization Required";
     }
 
 }

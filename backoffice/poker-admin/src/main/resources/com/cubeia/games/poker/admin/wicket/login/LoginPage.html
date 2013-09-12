@@ -3,13 +3,35 @@
 </head>
 <body>
   <wicket:extend>
-    <h3>You are not authorized to view that page</h3>
-    <p>Login below with proper credentials for access</p>
-  	<div class="containerSmall" style="min-height: 50px;">
-    	<span wicket:id="signInPanel"/>
+    <div class="container-fluid">
+		<div class="row-fluid">
+			<div class="span6">
+			
+				<div class="widget-box">
+					<div class="widget-title">
+						<span class="icon">
+							<i class="icon-align-justify"></i>									
+						</span>
+						<h5>Login as new user</h5>
+					</div>
+					
+					<div class="widget-content">
+						<div class="control-group">
+							<label class="control-label"></label>
+							<div class="controls">
+								<span wicket:id="signInPanel"/>
+								<br/><span class="help-block">Default login is admin/admin and user/user</span>
+							</div>
+						</div>
+					</div>
+					
+				</div>	
+									
+			</div>
+		</div>
+    
     </div>
-    <br/><br/>
-    <small><em>Default login is admin/admin and user/user</em></small>
+    
   </wicket:extend>
 </body>
 </html>
