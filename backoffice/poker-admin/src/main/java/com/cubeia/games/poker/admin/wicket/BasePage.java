@@ -66,23 +66,6 @@ public abstract class BasePage extends WebPage {
         }
 	}
 	
-	public boolean isSignedIn() {
-		SecureWicketAuthenticatedWebSession session = getSecureWebSession();
-		if (session != null && session.isSignedIn()) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	public String getSignedInUsername() {
-		if (isSignedIn()) {
-        	return getSecureWebSession().getUsername();
-        } else {
-        	return null;
-        }
-    }
-	
     @Override
     protected void onBeforeRender() {
         super.onBeforeRender();
@@ -96,4 +79,35 @@ public abstract class BasePage extends WebPage {
     }
 
     public abstract String getPageTitle();
+    
+    public boolean isSignedIn() {
+		SecureWicketAuthenticatedWebSession session = getSecureWebSession();
+		if (session != null && session.isSignedIn()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * @return Signed in username or null if not signed in.
+	 */
+	public String getSignedInUsername() {
+		if (isSignedIn()) {
+        	return getSecureWebSession().getUsername();
+        } else {
+        	return null;
+        }
+    }
+	
+	/**
+	 * @return Signed in remote ip address as String or null if not signed in.
+	 */
+	public String getSignedInRemoteIPAddress() {
+		if (isSignedIn()) {
+        	return getSecureWebSession().getClientInfo().getProperties().getRemoteAddress();
+        } else {
+        	return null;
+        }
+	}
 }
