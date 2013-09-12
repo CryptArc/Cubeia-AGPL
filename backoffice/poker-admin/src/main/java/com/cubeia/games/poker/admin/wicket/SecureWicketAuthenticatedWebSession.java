@@ -21,6 +21,8 @@ public class SecureWicketAuthenticatedWebSession extends AuthenticatedWebSession
 	 @SpringBean(name = "authenticationManager")
 	private AuthenticationManager authenticationManager;
 
+	private String username;
+
 	public SecureWicketAuthenticatedWebSession(Request request) {
 		super(request);
 		injectDependencies();
@@ -37,8 +39,13 @@ public class SecureWicketAuthenticatedWebSession extends AuthenticatedWebSession
 		Injector.get().inject(this);
 	}
 	
+	public String getUsername() {
+		return username;
+	}
+	
 	@Override
 	public boolean authenticate(String username, String password) {
+		this.username = username;
 		boolean authenticated = false;
 		try {
 			Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));

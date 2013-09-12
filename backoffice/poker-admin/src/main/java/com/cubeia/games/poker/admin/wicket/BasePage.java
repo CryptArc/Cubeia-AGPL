@@ -17,14 +17,17 @@
 
 package com.cubeia.games.poker.admin.wicket;
 
-import com.cubeia.network.shared.web.wicket.navigation.Breadcrumbs;
-import com.cubeia.network.shared.web.wicket.navigation.MenuPanel;
+import org.apache.wicket.Session;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+
+import com.cubeia.network.shared.web.wicket.navigation.Breadcrumbs;
+import com.cubeia.network.shared.web.wicket.navigation.MenuPanel;
 
 public abstract class BasePage extends WebPage {
 
@@ -39,8 +42,47 @@ public abstract class BasePage extends WebPage {
         add(new Breadcrumbs("breadcrumb", SiteMap.getPages(), this.getClass()));
         // defer setting the title model object as the title may not be generated now
         add(new Label("title", new Model<String>()));
+        setLoggedInUsername();
     }
 
+	private void setLoggedInUsername() {
+		if (isSignedIn()) {
+        	add(new Label("username", getSignedInUsername()));
+        } else {
+        	add(new Label("username", "Not logged in"));
+        }
+	}
+
+	/**
+	 * 
+	 * @return SecureWicketAuthenticatedWebSession or null if not applicable
+	 */
+	public SecureWicketAuthenticatedWebSession getSecureWebSession() {
+		WebSession session = (WebSession)Session.get();
+        if (session instanceof SecureWicketAuthenticatedWebSession) {
+			return (SecureWicketAuthenticatedWebSession) session;
+		} else {
+        	return null;
+        }
+	}
+	
+	public boolean isSignedIn() {
+		SecureWicketAuthenticatedWebSession session = getSecureWebSession();
+		if (session != null && session.isSignedIn()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public String getSignedInUsername() {
+		if (isSignedIn()) {
+        	return getSecureWebSession().getUsername();
+        } else {
+        	return null;
+        }
+    }
+	
     @Override
     protected void onBeforeRender() {
         super.onBeforeRender();
