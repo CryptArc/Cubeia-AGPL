@@ -37,6 +37,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Component;
 
 import com.cubeia.games.poker.admin.wicket.login.LoginPage;
+import com.cubeia.games.poker.admin.wicket.login.LogoutPage;
 import com.cubeia.games.poker.admin.wicket.pages.history.HandHistory;
 import com.cubeia.games.poker.admin.wicket.pages.operator.OperatorList;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled.ListTournaments;
@@ -78,6 +79,7 @@ public class PokerAdminWebApplication extends AuthenticatedWebApplication {
 	private void mountPages() {
 		mountPage("/home", HomePage.class);
 		mountPage("/login", LoginPage.class);
+		mountPage("/logout", LogoutPage.class);
 		mountPage("/hand-history", HandHistory.class);
 		mountPage("/tournament", ListTournaments.class);
 		mountPage("/operator", OperatorList.class);
