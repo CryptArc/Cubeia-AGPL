@@ -23,6 +23,7 @@ import com.cubeia.games.poker.admin.wicket.pages.tournaments.blinds.ListBlindsSt
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.history.SearchTournamentHistory;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.payouts.CreateOrEditPayoutStructure;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.payouts.ListPayoutStructures;
+import com.cubeia.games.poker.admin.wicket.pages.tournaments.payouts.ViewPayoutStructure;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled.CreateTournament;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled.EditTournament;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled.ListTournaments;
@@ -63,7 +64,8 @@ public class SiteMap {
                 nodeWithChildren("Blinds Structures", ListBlindsStructures.class, "icon-list-alt",
                         node("Create/Edit Blinds Structure", CreateOrEditBlindsStructure.class, false)),
                 nodeWithChildren("Payout Structures", ListPayoutStructures.class, "icon-gift",
-                        node("Create/Edit Payout Structure", CreateOrEditPayoutStructure.class, false)),
+                        node("Create/Edit Payout Structure", CreateOrEditPayoutStructure.class, false),
+                        node("View Payout Structure", ViewPayoutStructure.class, false)),
                 node("Tournament History", SearchTournamentHistory.class, "icon-book")
                 );
 
@@ -82,7 +84,7 @@ public class SiteMap {
         add(pages, "Users", UserList.class, "icon-list-alt",
                 node("User Summary", UserSummary.class, false),
                 node("Edit User", EditUser.class, false),
-                node("Create User", CreateUser.class, false));
+                node("Create User", CreateUser.class, true));
 
         add(pages, "Accounting", AccountList.class, "icon-list-alt",
                 node("Account Details", AccountDetails.class, false),
@@ -96,7 +98,7 @@ public class SiteMap {
 
         add(pages, "Operators", OperatorList.class, "icon-list-alt",
                 node("Edit Operator", EditOperator.class, false),
-        		node("Create Operator", CreateOperator.class, false));
+        		node("Create Operator", CreateOperator.class, true));
 
         add(pages,"System Management", SystemManagement.class, "icon-hdd",
                 node("Shutdown Management", SystemManagement.class, "icon-off"),
