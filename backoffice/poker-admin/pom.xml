@@ -11,6 +11,13 @@
         <artifactId>poker-backoffice</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
+    
+    <properties>
+        <jetty.version>8.1.7.v20120910</jetty.version>
+        <hibernate.version>4.1.4.Final</hibernate.version>
+        <wicket.version>6.2.0</wicket.version>
+        <spring.version>3.1.4.RELEASE</spring.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -86,36 +93,188 @@
         <!-- Spring -->
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
             <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aop</artifactId>
-            <version>${spring.version}</version>
+            <exclusions>
+            	<exclusion>
+            		<artifactId>spring-core</artifactId>
+            		<groupId>org.springframework</groupId>
+            	</exclusion>
+            	<exclusion>
+            		<artifactId>spring-jdbc</artifactId>
+            		<groupId>org.springframework</groupId>
+            	</exclusion>
+            	<exclusion>
+            		<artifactId>spring-aop</artifactId>
+            		<groupId>org.springframework</groupId>
+            	</exclusion>
+            	<exclusion>
+            		<artifactId>spring-tx</artifactId>
+            		<groupId>org.springframework</groupId>
+            	</exclusion>
+            	<exclusion>
+            		<artifactId>spring-beans</artifactId>
+            		<groupId>org.springframework</groupId>
+            	</exclusion>
+            	<exclusion>
+            		<artifactId>spring-context</artifactId>
+            		<groupId>org.springframework</groupId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
             <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>${spring.version}</version>
+            <exclusions>
+            	<exclusion>
+            		<artifactId>spring-core</artifactId>
+            		<groupId>org.springframework</groupId>
+            	</exclusion>
+            	<exclusion>
+            		<artifactId>spring-expression</artifactId>
+            		<groupId>org.springframework</groupId>
+            	</exclusion>
+            	<exclusion>
+            		<artifactId>spring-aop</artifactId>
+            		<groupId>org.springframework</groupId>
+            	</exclusion>
+            	<exclusion>
+            		<artifactId>spring-beans</artifactId>
+            		<groupId>org.springframework</groupId>
+            	</exclusion>
+            	<exclusion>
+            		<artifactId>spring-context</artifactId>
+            		<groupId>org.springframework</groupId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <version>${spring.version}</version>
         </dependency>
+        
+        <!-- Spring Security -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-taglibs</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>${spring.version}</version>
+            <exclusions>
+            	<exclusion>
+            		<artifactId>spring-core</artifactId>
+            		<groupId>org.springframework</groupId>
+            	</exclusion>
+            	<exclusion>
+            		<artifactId>spring-expression</artifactId>
+            		<groupId>org.springframework</groupId>
+            	</exclusion>
+            	<exclusion>
+            		<artifactId>spring-aop</artifactId>
+            		<groupId>org.springframework</groupId>
+            	</exclusion>
+            	<exclusion>
+            		<artifactId>spring-beans</artifactId>
+            		<groupId>org.springframework</groupId>
+            	</exclusion>
+            	<exclusion>
+            		<artifactId>spring-context</artifactId>
+            		<groupId>org.springframework</groupId>
+            	</exclusion>
+            </exclusions>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-taglibs</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        
+        
+        
+        
+        <!-- Spring Security transitive dependencies needed to be specified with version -->
+        <dependency>
+            <artifactId>spring-jdbc</artifactId>
+            <groupId>org.springframework</groupId>
+            <version>${spring.version}</version>
+        </dependency>
+        
+        <dependency>
+            <artifactId>spring-expression</artifactId>
+            <groupId>org.springframework</groupId>
+            <version>${spring.version}</version>
+        </dependency>
+        
+        <dependency>
+            <artifactId>spring-aop</artifactId>
+            <groupId>org.springframework</groupId>
+            <version>${spring.version}</version>
+        </dependency>
+        
+        <dependency>
+            <artifactId>spring-jdbc</artifactId>
+            <groupId>org.springframework</groupId>
+            <version>${spring.version}</version>
+        </dependency>
+        
+        <dependency>
+            <artifactId>spring-beans</artifactId>
+            <groupId>org.springframework</groupId>
+            <version>${spring.version}</version>
+        </dependency>
+        
+        <dependency>
+            <artifactId>spring-context</artifactId>
+            <groupId>org.springframework</groupId>
+            <version>${spring.version}</version>
+        </dependency>
+        
+        <dependency>
+            <artifactId>spring-core</artifactId>
+            <groupId>org.springframework</groupId>
+            <version>${spring.version}</version>
+        </dependency>
+        
+        <dependency>
+            <artifactId>spring-tx</artifactId>
+            <groupId>org.springframework</groupId>
+            <version>${spring.version}</version>
+        </dependency>
+        
+        <dependency>
+            <artifactId>spring-web</artifactId>
+            <groupId>org.springframework</groupId>
+            <version>${spring.version}</version>
+        </dependency>
 
-
+        
+        
+        
         <dependency>
             <groupId>oswego-concurrent</groupId>
             <artifactId>concurrent</artifactId>
@@ -128,12 +287,12 @@
             <version>1.0.72</version>
             <scope>test</scope>
         </dependency>
+        
         <dependency>
             <groupId>commons-dbcp</groupId>
             <artifactId>commons-dbcp</artifactId>
             <version>1.2.2</version>
         </dependency>
-
 
         <dependency>
             <groupId>hsqldb</groupId>
@@ -169,12 +328,39 @@
             <artifactId>wicket-datetime</artifactId>
             <version>${wicket.version}</version>
         </dependency>
+		<dependency>
+		    <groupId>org.apache.wicket</groupId>
+		    <artifactId>wicket-auth-roles</artifactId>
+		    <version>${wicket.version}</version>
+		</dependency>
 
         <!-- Mongo -->
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-mongodb</artifactId>
             <version>1.0.2.RELEASE</version>
+        </dependency>
+
+        <!-- WICKET DEPENDENCIES -->
+        <dependency>
+            <groupId>org.apache.wicket</groupId>
+            <artifactId>wicket-core</artifactId>
+            <version>${wicket.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.wicket</groupId>
+            <artifactId>wicket-extensions</artifactId>
+            <version>${wicket.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.wicket</groupId>
+            <artifactId>wicket-spring</artifactId>
+            <version>${wicket.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.wicket</groupId>
+            <artifactId>wicket-datetime</artifactId>
+            <version>${wicket.version}</version>
         </dependency>
 
         <!-- Hibernate -->
@@ -359,13 +545,5 @@
             </build>
         </profile>
     </profiles>
-
-
-    <properties>
-        <jetty.version>8.1.7.v20120910</jetty.version>
-        <hibernate.version>4.1.4.Final</hibernate.version>
-        <wicket.version>6.2.0</wicket.version>
-        <spring.version>3.1.2.RELEASE</spring.version>
-    </properties>
 
 </project>

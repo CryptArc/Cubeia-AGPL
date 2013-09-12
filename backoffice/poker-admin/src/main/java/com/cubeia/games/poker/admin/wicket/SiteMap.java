@@ -1,6 +1,7 @@
 package com.cubeia.games.poker.admin.wicket;
 
 
+import com.cubeia.games.poker.admin.wicket.pages.operator.CreateOperator;
 import com.cubeia.games.poker.admin.wicket.pages.operator.EditOperator;
 import com.cubeia.games.poker.admin.wicket.pages.operator.OperatorList;
 import com.cubeia.games.poker.admin.wicket.pages.system.BroadcastMessage;
@@ -22,12 +23,14 @@ import com.cubeia.games.poker.admin.wicket.pages.tournaments.blinds.ListBlindsSt
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.history.SearchTournamentHistory;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.payouts.CreateOrEditPayoutStructure;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.payouts.ListPayoutStructures;
+import com.cubeia.games.poker.admin.wicket.pages.tournaments.payouts.ViewPayoutStructure;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled.CreateTournament;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled.EditTournament;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled.ListTournaments;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo.CreateSitAndGo;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo.EditSitAndGo;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo.ListSitAndGoTournaments;
+import com.cubeia.games.poker.admin.wicket.pages.user.CreateUser;
 import com.cubeia.games.poker.admin.wicket.pages.user.EditUser;
 import com.cubeia.games.poker.admin.wicket.pages.user.UserList;
 import com.cubeia.games.poker.admin.wicket.pages.user.UserSummary;
@@ -61,7 +64,8 @@ public class SiteMap {
                 nodeWithChildren("Blinds Structures", ListBlindsStructures.class, "icon-list-alt",
                         node("Create/Edit Blinds Structure", CreateOrEditBlindsStructure.class, false)),
                 nodeWithChildren("Payout Structures", ListPayoutStructures.class, "icon-gift",
-                        node("Create/Edit Payout Structure", CreateOrEditPayoutStructure.class, false)),
+                        node("Create/Edit Payout Structure", CreateOrEditPayoutStructure.class, false),
+                        node("View Payout Structure", ViewPayoutStructure.class, false)),
                 node("Tournament History", SearchTournamentHistory.class, "icon-book")
                 );
 
@@ -79,7 +83,8 @@ public class SiteMap {
 //TODO: define which pages should be visible
         add(pages, "Users", UserList.class, "icon-list-alt",
                 node("User Summary", UserSummary.class, false),
-                node("Edit User", EditUser.class, false));
+                node("Edit User", EditUser.class, false),
+                node("Create User", CreateUser.class, true));
 
         add(pages, "Accounting", AccountList.class, "icon-list-alt",
                 node("Account Details", AccountDetails.class, false),
@@ -92,7 +97,8 @@ public class SiteMap {
                 node("Supported Currencies", EditCurrencies.class));
 
         add(pages, "Operators", OperatorList.class, "icon-list-alt",
-                node("Edit Operator", EditOperator.class, false));
+                node("Edit Operator", EditOperator.class, false),
+        		node("Create Operator", CreateOperator.class, true));
 
         add(pages,"System Management", SystemManagement.class, "icon-hdd",
                 node("Shutdown Management", SystemManagement.class, "icon-off"),

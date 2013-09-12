@@ -17,6 +17,8 @@
 
 package com.cubeia.games.poker.admin.wicket;
 
+import org.apache.wicket.authroles.authentication.panel.SignInPanel;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**
@@ -36,6 +38,11 @@ public class HomePage extends BasePage {
      */
     public HomePage(final PageParameters parameters) {
         super(parameters);
+        if (isSignedIn()) {
+        	add(new Label("signInPanel", "You are signed in as '"+getSignedInUsername()+"'. Your roles are: "+getSecureWebSession().getRoles()+". Your IP is logged as: "+getSecureWebSession().getClientInfo().getProperties().getRemoteAddress()));
+        } else {
+        	add(new SignInPanel("signInPanel"));
+        }
     }
 
     @Override

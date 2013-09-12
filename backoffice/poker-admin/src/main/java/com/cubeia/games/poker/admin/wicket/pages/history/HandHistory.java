@@ -27,6 +27,7 @@ import com.cubeia.poker.handhistory.api.HistoricHand;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.log4j.Logger;
 import org.apache.wicket.Component;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackDefaultDataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
@@ -57,6 +58,7 @@ import static com.google.common.collect.Lists.newArrayList;
 /**
  * Page for searching for and viewing hand histories.
  */
+@AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
 public class HandHistory extends BasePage {
 
     private static final Logger log = Logger.getLogger(HandHistory.class);

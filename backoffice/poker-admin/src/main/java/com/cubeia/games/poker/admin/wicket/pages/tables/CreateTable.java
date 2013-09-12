@@ -23,6 +23,8 @@ import com.cubeia.games.poker.entity.TableConfigTemplate;
 import com.cubeia.poker.betting.BetStrategyType;
 import com.cubeia.poker.settings.RakeSettings;
 import com.cubeia.poker.timing.TimingFactory;
+
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -34,6 +36,7 @@ import java.math.BigDecimal;
 
 import static com.cubeia.poker.variant.PokerVariant.TEXAS_HOLDEM;
 
+@AuthorizeInstantiation({"ROLE_ADMIN"})
 public class CreateTable extends BasePage {
 
     private static final long serialVersionUID = 6896786450236805072L;

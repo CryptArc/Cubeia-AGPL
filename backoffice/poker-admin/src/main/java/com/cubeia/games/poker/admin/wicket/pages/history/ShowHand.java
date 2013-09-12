@@ -23,6 +23,8 @@ import java.util.Date;
 import java.util.List;
 
 import com.cubeia.poker.handhistory.api.*;
+
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.ContextImage;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -39,6 +41,7 @@ import com.cubeia.games.poker.admin.service.history.HistoryService;
 import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.games.poker.admin.wicket.util.ExternalLinkPanel;
 
+@AuthorizeInstantiation({"ROLE_ADMIN"})
 public class ShowHand extends BasePage {
 
     private static final long serialVersionUID = -3963453168151993944L;

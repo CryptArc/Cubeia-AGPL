@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
-@AuthorizeInstantiation({"SUPER_USER", "USER_ADMIN"})
+@AuthorizeInstantiation({"ROLE_ADMIN"})
 public class CreateTransaction extends BasePage {
     private static final long serialVersionUID = 1L;
     

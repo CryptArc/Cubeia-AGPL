@@ -19,13 +19,18 @@ package com.cubeia.games.poker.admin.wicket.pages.tournaments.payouts;
 
 import com.cubeia.games.poker.admin.service.PayoutStructureViewHelper;
 import com.cubeia.games.poker.admin.wicket.BasePage;
+
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
+@AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
 public class ViewPayoutStructure extends BasePage {
 
-    @SpringBean
+	private static final long serialVersionUID = 1L;
+	
+	@SpringBean
     private PayoutStructureViewHelper payoutStructureService;
 
     public ViewPayoutStructure(PageParameters p) {
