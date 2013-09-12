@@ -17,15 +17,16 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.rakes;
 
+import java.io.Serializable;
+
 import com.cubeia.games.poker.admin.wicket.util.Archiver;
 import com.cubeia.poker.settings.RakeSettings;
-import com.cubeia.poker.timing.TimingProfile;
-
-import java.io.Serializable;
 
 public class RakeArchiver implements Archiver, Serializable {
 
-    private final RakeSettings settings;
+	private static final long serialVersionUID = 1L;
+	
+	private final RakeSettings settings;
 
     public RakeArchiver(RakeSettings settings) {
         this.settings = settings;

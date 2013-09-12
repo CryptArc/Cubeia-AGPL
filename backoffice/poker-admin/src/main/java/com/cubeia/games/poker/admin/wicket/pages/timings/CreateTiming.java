@@ -8,6 +8,8 @@ import com.cubeia.games.poker.admin.db.AdminDAO;
 import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.poker.timing.TimingProfile;
 import com.cubeia.poker.timing.TimingProfile;
+
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -15,9 +17,12 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
+@AuthorizeInstantiation({"ROLE_ADMIN"})
 public class CreateTiming extends BasePage {
 
-    @SpringBean(name="adminDAO")
+	private static final long serialVersionUID = 1L;
+
+	@SpringBean(name="adminDAO")
     private AdminDAO adminDAO;
 
     private TimingProfile timing;

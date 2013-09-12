@@ -19,6 +19,7 @@ package com.cubeia.games.poker.admin.wicket.pages.user;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.Radio;
@@ -27,6 +28,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 
+@AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
 public class UserReportPanel extends Panel {
 
 	private static final long serialVersionUID = 1L;

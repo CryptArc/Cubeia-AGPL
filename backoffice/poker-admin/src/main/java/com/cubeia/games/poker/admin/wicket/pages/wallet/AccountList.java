@@ -63,7 +63,7 @@ import java.util.Iterator;
 import static com.cubeia.games.poker.admin.wicket.util.ParamBuilder.params;
 import static java.util.Arrays.asList;
 
-@AuthorizeInstantiation({"SUPER_USER", "WALLET_ADMIN"})
+@AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
 public class AccountList extends BasePage {
     private static final long serialVersionUID = 1L;
     
@@ -110,7 +110,6 @@ public class AccountList extends BasePage {
         @Override
         public long size() {
 	    	AccountQueryResult result = getAccountList(0, 0, null, getIncludeStatuses(), getIncludeTypes(), true);
-	    	System.err.println("RES: " + result);
 	    	return result == null ? 0 : result.getTotalQueryResultSize(); 
         }
     }

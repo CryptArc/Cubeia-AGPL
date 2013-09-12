@@ -51,7 +51,7 @@ import java.util.Date;
 
 import static com.cubeia.games.poker.admin.wicket.util.ParamBuilder.params;
 
-@AuthorizeInstantiation({"SUPER_USER", "WALLET_ADMIN"})
+@AuthorizeInstantiation({"ROLE_ADMIN"})
 public class EditAccount extends BasePage {
     private static final long serialVersionUID = 1L;
 

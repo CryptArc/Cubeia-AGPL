@@ -30,6 +30,10 @@ public abstract class BasePage extends WebPage {
 
     private static final long serialVersionUID = -913606276144395037L;
 
+    public BasePage() {
+        this(null);
+    }
+    
     public BasePage(PageParameters p) {
         add(new MenuPanel("menuPanel", SiteMap.getPages(), this.getClass()));
         add(new Breadcrumbs("breadcrumb", SiteMap.getPages(), this.getClass()));

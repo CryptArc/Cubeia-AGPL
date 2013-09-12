@@ -50,7 +50,7 @@ import com.cubeia.backoffice.wallet.client.WalletServiceClient;
 import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.games.poker.admin.wicket.pages.util.ConfirmOnclickAttributeModifier;
 
-@AuthorizeInstantiation({"SUPER_USER", "WALLET_ADMIN"})
+@AuthorizeInstantiation({"ROLE_ADMIN"})
 public class EditCurrencies extends BasePage {
     private static final long serialVersionUID = 1L;
 

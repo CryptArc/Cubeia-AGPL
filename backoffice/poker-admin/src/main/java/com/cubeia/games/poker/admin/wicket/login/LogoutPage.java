@@ -15,29 +15,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.admin.wicket.pages.wallet;
+package com.cubeia.games.poker.admin.wicket.login;
 
-import com.cubeia.games.poker.admin.wicket.BasePage;
-import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
-import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.authroles.authentication.pages.SignOutPage;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
-@SuppressWarnings("serial")
-@AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
-public class InvalidAccount extends BasePage {
-    public static final String PARAM_ACCOUNT_ID = "accountId";  
+import com.cubeia.games.poker.admin.wicket.PokerAdminWebApplication;
 
-    private long accountId;
+public class LogoutPage extends SignOutPage {
 
-    public InvalidAccount(PageParameters parameters) {
-        super(parameters);
-        accountId = parameters.get(PARAM_ACCOUNT_ID).toLong();
-        add(new Label("accountId", "" + accountId));
+	private static final long serialVersionUID = 1L;
+
+	public LogoutPage() {
+        this(null);
     }
     
-    @Override
-    public String getPageTitle() {
-        return "Invalid account (" + accountId + ")";
+    public LogoutPage(PageParameters params) {
+        super(params);
+        setResponsePage(PokerAdminWebApplication.get().getHomePage());
     }
-
+    
 }
