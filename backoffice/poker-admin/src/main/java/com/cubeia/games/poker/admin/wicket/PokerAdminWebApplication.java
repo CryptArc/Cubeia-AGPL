@@ -32,8 +32,6 @@ import org.apache.wicket.authroles.authorization.strategies.role.annotations.Ann
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.apache.wicket.util.time.Duration;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Component;
 
 import com.cubeia.games.poker.admin.wicket.login.LoginPage;
@@ -55,8 +53,6 @@ import com.cubeia.games.poker.admin.wicket.pages.user.UserSummary;
 public class PokerAdminWebApplication extends AuthenticatedWebApplication {
 
 	private static final Logger log = Logger.getLogger(AuthenticatedWebApplication.class);
-
-	private AuthenticationManager authenticationManager;
 
 	/**
 	 * Constructor
@@ -132,16 +128,6 @@ public class PokerAdminWebApplication extends AuthenticatedWebApplication {
 	protected Class<? extends AbstractAuthenticatedWebSession> getWebSessionClass() {
 		log.debug("Get authenticated web session");
 		return SecureWicketAuthenticatedWebSession.class;
-	}
-
-	public AuthenticationManager getAuthenticationManager() {
-		return authenticationManager;
-	}
-
-	@Autowired
-	public void setAuthenticationManager(AuthenticationManager authenticationManager) {
-		log.debug("injecting auth mgr: "+ authenticationManager);
-		this.authenticationManager = authenticationManager;
 	}
 
 }
