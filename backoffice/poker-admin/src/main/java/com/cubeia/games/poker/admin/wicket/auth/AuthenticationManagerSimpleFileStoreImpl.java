@@ -83,7 +83,6 @@ public class AuthenticationManagerSimpleFileStoreImpl implements AuthenticationP
 
 			BackofficeUserListDTO userList = (BackofficeUserListDTO) unmarshaller.unmarshal(is);
 			for (BackofficeUserDTO u : userList.getUsers()) {
-				log.debug("Found user: {}/{}", u.getUserName(), u.getPassword());
 				userMap.put(u.getUserName(), u);
 			}
 
@@ -115,7 +114,6 @@ public class AuthenticationManagerSimpleFileStoreImpl implements AuthenticationP
 
 	@Override
 	public boolean supports(Class<?> authentication) {
-		log.debug("Authentication supports: "+authentication);
 		return true;
 	}
 
