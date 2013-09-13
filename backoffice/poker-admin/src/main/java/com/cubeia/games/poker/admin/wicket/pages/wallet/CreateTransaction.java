@@ -17,14 +17,9 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.wallet;
 
-import com.cubeia.backoffice.accounting.api.Money;
-import com.cubeia.backoffice.wallet.api.dto.Account;
-import com.cubeia.backoffice.wallet.api.dto.Currency;
-import com.cubeia.backoffice.wallet.api.dto.report.TransactionEntry;
-import com.cubeia.backoffice.wallet.api.dto.report.TransactionRequest;
-import com.cubeia.backoffice.wallet.api.dto.report.TransactionResult;
-import com.cubeia.backoffice.wallet.client.WalletServiceClient;
-import com.cubeia.games.poker.admin.wicket.BasePage;
+import java.math.BigDecimal;
+import java.util.Arrays;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.ThrottlingSettings;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
@@ -42,8 +37,14 @@ import org.apache.wicket.util.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
+import com.cubeia.backoffice.accounting.api.Money;
+import com.cubeia.backoffice.wallet.api.dto.Account;
+import com.cubeia.backoffice.wallet.api.dto.Currency;
+import com.cubeia.backoffice.wallet.api.dto.report.TransactionEntry;
+import com.cubeia.backoffice.wallet.api.dto.report.TransactionRequest;
+import com.cubeia.backoffice.wallet.api.dto.report.TransactionResult;
+import com.cubeia.backoffice.wallet.client.WalletServiceClient;
+import com.cubeia.games.poker.admin.wicket.BasePage;
 
 @AuthorizeInstantiation({"ROLE_ADMIN"})
 public class CreateTransaction extends BasePage {
@@ -93,6 +94,8 @@ public class CreateTransaction extends BasePage {
                 TransactionRequest tx = new TransactionRequest();
                 tx.setComment(getComment());
                 
+                applyAdminAudit(tx);
+                
                 TransactionEntry fromEntry = new TransactionEntry(fromAccountId, new Money(currencyCode, currency.getFractionalDigits(), getAmount().negate()));
                 TransactionEntry toEntry = new TransactionEntry(toAccountId, new Money(currencyCode, currency.getFractionalDigits(), getAmount()));
                 tx.setEntries(Arrays.asList(fromEntry, toEntry));
@@ -104,6 +107,16 @@ public class CreateTransaction extends BasePage {
 
                 feedback.info("created transaction: " + txResponse.getTransactionId());
             }
+
+			private void applyAdminAudit(TransactionRequest tx) {
+				// make sure we are signed in
+				if (!isSignedIn()) {
+					throw new RuntimeException("You must be signed in to do that.");
+				}
+				tx.getAttributes().put("adminUser", getSignedInUsername());
+				tx.getAttributes().put("adminIp", getSignedInRemoteIPAddress());
+				tx.getAttributes().put("adminBrowser", getSignedInUserAgent());
+			}
             
             public Long getFromAccountId() {
                 return fromAccountId;

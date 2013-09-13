@@ -110,4 +110,15 @@ public abstract class BasePage extends WebPage {
         	return null;
         }
 	}
+	
+	/**
+	 * @return Signed in remote ip address as String or null if not signed in.
+	 */
+	public String getSignedInUserAgent() {
+		if (isSignedIn()) {
+        	return getSecureWebSession().getClientInfo().getUserAgent();
+        } else {
+        	return null;
+        }
+	}
 }

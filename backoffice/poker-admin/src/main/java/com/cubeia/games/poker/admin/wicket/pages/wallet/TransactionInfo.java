@@ -154,6 +154,6 @@ public class TransactionInfo extends BasePage {
 
     @Override
     public String getPageTitle() {
-        return "Transaction information: " + transactionId;
+        return "Transaction Information: " + transactionId;
     }
 }
