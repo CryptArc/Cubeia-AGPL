@@ -35,6 +35,8 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -48,6 +50,8 @@ public class SearchPage extends BasePage {
 
     private static final long serialVersionUID = 1L;
 
+    Logger log = LoggerFactory.getLogger(getClass());
+    
     // TODO Add any page properties or variables here
 
     @SpringBean(name = "webConfig")
@@ -68,6 +72,8 @@ public class SearchPage extends BasePage {
         // TODO Fix config
         Client client = new TransportClient().addTransportAddress(new InetSocketTransportAddress("localhost", 9300));
 
+        log.debug("Elastic search client: "+client);
+        
         StringValue value = parameters.get("query");
         String[] parts = (value.isEmpty() ? new String[0] : value.toString().split(" "));
 
@@ -104,6 +110,7 @@ public class SearchPage extends BasePage {
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
 

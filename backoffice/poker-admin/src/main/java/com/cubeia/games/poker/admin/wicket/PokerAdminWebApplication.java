@@ -48,6 +48,13 @@ import com.cubeia.games.poker.admin.wicket.pages.user.CreateUser;
 import com.cubeia.games.poker.admin.wicket.pages.user.EditUser;
 import com.cubeia.games.poker.admin.wicket.pages.user.UserList;
 import com.cubeia.games.poker.admin.wicket.pages.user.UserSummary;
+import com.cubeia.games.poker.admin.wicket.pages.wallet.AccountDetails;
+import com.cubeia.games.poker.admin.wicket.pages.wallet.AccountList;
+import com.cubeia.games.poker.admin.wicket.pages.wallet.CreateAccount;
+import com.cubeia.games.poker.admin.wicket.pages.wallet.CreateTransaction;
+import com.cubeia.games.poker.admin.wicket.pages.wallet.EditCurrencies;
+import com.cubeia.games.poker.admin.wicket.pages.wallet.TransactionInfo;
+import com.cubeia.games.poker.admin.wicket.pages.wallet.TransactionList;
 
 @Component("wicketApplication")
 public class PokerAdminWebApplication extends AuthenticatedWebApplication {
@@ -85,6 +92,8 @@ public class PokerAdminWebApplication extends AuthenticatedWebApplication {
 		mountPage("/home", HomePage.class);
 		mountPage("/login", LoginPage.class);
 		mountPage("/logout", LogoutPage.class);
+		mountPage("/search", SearchPage.class);
+		
 		mountPage("/hand-history", HandHistory.class);
 		
 		mountPage("/tournament", ListTournaments.class);
@@ -101,6 +110,18 @@ public class PokerAdminWebApplication extends AuthenticatedWebApplication {
 		mountPage("/user/edit", EditUser.class);
 		mountPage("/user/create", CreateUser.class);
 		mountPage("/user/details", UserSummary.class);
+		
+		mountPage("/account", AccountList.class);
+		mountPage("/account/detail", AccountDetails.class);
+		mountPage("/account/create", CreateAccount.class);
+		
+		mountPage("/currency", EditCurrencies.class);
+		
+		mountPage("/transaction", TransactionList.class);
+		mountPage("/transaction/create", CreateTransaction.class);
+		mountPage("/transaction/info", TransactionInfo.class);
+		
+		
 	}
 
 	@Override
