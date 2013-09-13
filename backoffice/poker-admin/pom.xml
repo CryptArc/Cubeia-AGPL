@@ -15,7 +15,7 @@
     <properties>
         <jetty.version>8.1.7.v20120910</jetty.version>
         <hibernate.version>4.1.4.Final</hibernate.version>
-        <wicket.version>6.2.0</wicket.version>
+        <wicket.version>6.10.0</wicket.version>
         <spring.version>3.1.4.RELEASE</spring.version>
     </properties>
 
