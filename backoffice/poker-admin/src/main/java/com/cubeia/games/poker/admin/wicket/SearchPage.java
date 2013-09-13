@@ -26,6 +26,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.RequiredTextField;
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
@@ -66,7 +70,8 @@ public class SearchPage extends BasePage {
      *
      * @param parameters Page parameters
      */
-    public SearchPage(PageParameters parameters) {
+    @SuppressWarnings("serial")
+	public SearchPage(PageParameters parameters) {
         super(parameters);
 
         String clusterName = config.getSearchClusterName();
@@ -126,7 +131,28 @@ public class SearchPage extends BasePage {
 
         client.close();
 
+        
+        
+        
+        
+        
+        
+        
+        
+        final Model<String> searchInputModel = new Model<String>();
+        
+        Form<String> form = new Form<String>("searchForm") {
+        	protected void onSubmit() {
+        		log.debug("search query: '{}'", searchInputModel.getObject());
+        	};
+        };
+        form.add(new FeedbackPanel("feedback"));
+        
+        RequiredTextField<String> searchInput = new RequiredTextField<String>("searchInput", searchInputModel);
+        form.add(searchInput);
+        add(form);
     }
+    
 
     @Override
     public String getPageTitle() {
