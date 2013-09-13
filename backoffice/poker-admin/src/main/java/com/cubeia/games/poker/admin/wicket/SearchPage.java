@@ -17,7 +17,14 @@
 
 package com.cubeia.games.poker.admin.wicket;
 
-import com.cubeia.games.poker.admin.Configuration;
+import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
@@ -31,6 +38,8 @@ import org.apache.wicket.util.string.StringValue;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -38,22 +47,17 @@ import org.elasticsearch.search.SearchHit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import com.cubeia.games.poker.admin.Configuration;
 
 public class SearchPage extends BasePage {
 
-    private static final String APPLICATION_JSON = "application/json";
+    @SuppressWarnings("unused")
+	private static final String APPLICATION_JSON = "application/json";
 
     private static final long serialVersionUID = 1L;
 
     Logger log = LoggerFactory.getLogger(getClass());
     
-    // TODO Add any page properties or variables here
-
     @SpringBean(name = "webConfig")
     private Configuration config;
 
@@ -65,15 +69,21 @@ public class SearchPage extends BasePage {
     public SearchPage(PageParameters parameters) {
         super(parameters);
 
-        // Builder b = ImmutableSettings.settingsBuilder();
-        // Settings s = b.put("compress.default.type", "lzf").build();
-
-
-        // TODO Fix config
-        Client client = new TransportClient().addTransportAddress(new InetSocketTransportAddress("localhost", 9300));
-
-        log.debug("Elastic search client: "+client);
+        String clusterName = config.getSearchClusterName();
         
+        URL searchUrl;
+        try {
+			searchUrl = new URL(config.getSearchUrl());
+		} catch (MalformedURLException e1) {
+			throw new RuntimeException("error getting/parsing search base url from config, found: " + config.getSearchUrl());
+		}
+        String indexName = searchUrl.getPath().replace("/", "");
+        
+        log.debug("search base url: {}, index name = {}", searchUrl, indexName);
+        
+        Settings settings = ImmutableSettings.settingsBuilder().put("cluster.name", clusterName).build();
+        Client client = new TransportClient(settings).addTransportAddress(new InetSocketTransportAddress(searchUrl.getHost(), searchUrl.getPort()));
+
         StringValue value = parameters.get("query");
         String[] parts = (value.isEmpty() ? new String[0] : value.toString().split(" "));
 
@@ -90,7 +100,7 @@ public class SearchPage extends BasePage {
 
         SearchResponse resp;
         try {
-            resp = client.prepareSearch("network").setQuery(root).execute().get();
+            resp = client.prepareSearch(indexName).setQuery(root).execute().get();
             List<User> users = new ArrayList<SearchPage.User>();
 
             for (SearchHit h : resp.getHits().getHits()) {
@@ -122,11 +132,6 @@ public class SearchPage extends BasePage {
     public String getPageTitle() {
         return "Search";
     }
-
-    // --- PRIVATE METHODS --- //
-
-
-    // --- PRIVATE CLASSES --- //
 
     private static class UserView extends DataView<User> {
 
