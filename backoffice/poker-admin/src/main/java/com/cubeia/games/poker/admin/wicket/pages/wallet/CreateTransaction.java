@@ -67,7 +67,6 @@ public class CreateTransaction extends BasePage {
         final FeedbackPanel feedback = new FeedbackPanel("feedback");
         add(feedback);
         
-        
         @SuppressWarnings("unused")
         Form<Void> txForm = new Form<Void>("txForm") {
             private static final long serialVersionUID = 1L;
@@ -171,7 +170,10 @@ public class CreateTransaction extends BasePage {
         
         txForm.add(new RequiredTextField<BigDecimal>("amountField", txFormModel.<BigDecimal>bind("amount")));
         
-        txForm.add(new TextField<String>("commentField", txFormModel.<String>bind("comment")));
+        txForm.add(new RequiredTextField<String>("commentField", txFormModel.<String>bind("comment")));
+        
+        txForm.add(new Label("adminUsername", getSignedInUsername()));
+        txForm.add(new Label("adminIpAddress", getSignedInRemoteIPAddress()));
         
         add(txForm);        
     }
