@@ -55,6 +55,7 @@ import com.cubeia.games.poker.admin.wicket.pages.wallet.CreateTransaction;
 import com.cubeia.games.poker.admin.wicket.pages.wallet.EditCurrencies;
 import com.cubeia.games.poker.admin.wicket.pages.wallet.TransactionInfo;
 import com.cubeia.games.poker.admin.wicket.pages.wallet.TransactionList;
+import com.cubeia.games.poker.admin.wicket.search.SearchPage;
 
 @Component("wicketApplication")
 public class PokerAdminWebApplication extends AuthenticatedWebApplication {
