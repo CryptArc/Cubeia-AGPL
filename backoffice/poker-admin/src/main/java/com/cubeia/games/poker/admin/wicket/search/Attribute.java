@@ -1,9 +1,12 @@
 package com.cubeia.games.poker.admin.wicket.search;
 
+import java.io.Serializable;
+
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
+@SuppressWarnings("serial")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Attribute {
+public class Attribute implements Serializable {
 	private String value;
 	
 	public String getValue() {

@@ -102,7 +102,17 @@ public class SearchPage extends BasePage {
         DataView<Serializable> dataView = new DataView<Serializable>("searchResult", dataProvider, 20) {
 			@Override
 			protected void populateItem(Item<Serializable> item) {
-				item.add(new Label("value", item.getModelObject().toString()));
+				Serializable hit = item.getModelObject();
+				
+				if (hit instanceof Account) {
+					item.add(new AccountPanel("value", Model.of((Account) hit)));
+				} else if (hit instanceof User) {
+					item.add(new UserPanel("value", Model.of((User) hit)));
+				} else if (hit instanceof Transaction) {
+					item.add(new TransactionPanel("value", Model.of((Transaction) hit)));
+				} else {
+					item.add(new Label("value", hit.toString()));
+				}
 			}
 		};
         add(dataView);
@@ -143,10 +153,13 @@ public class SearchPage extends BasePage {
 				String type = h.getType();
 				if (type.equals("user")) {
 					User u = jsonMapper.readValue(h.getSourceAsString(), User.class);
-					hits.add(u.toString());
+					hits.add(u);
 				} else if (type.equals("account")) {
 					Account a = jsonMapper.readValue(h.getSourceAsString(), Account.class);
-					hits.add(a.toString());
+					hits.add(a);
+				} else if (type.equals("transaction")) {
+					Transaction t = jsonMapper.readValue(h.getSourceAsString(), Transaction.class);
+					hits.add(t);
 				} else {
 					log.warn("unmapped hit type: {}", type);
 				}
