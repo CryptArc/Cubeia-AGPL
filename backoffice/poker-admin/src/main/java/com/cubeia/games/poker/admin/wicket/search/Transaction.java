@@ -12,8 +12,9 @@ import org.codehaus.jackson.map.annotate.JsonDeserialize;
 class Transaction implements Serializable {
 	private static final long serialVersionUID = -6036782208928311686L;
 	
-	@JsonIgnoreProperties(ignoreUnknown = true)
-	public static class Entry {
+	@SuppressWarnings("serial")
+    @JsonIgnoreProperties(ignoreUnknown = true)
+	public static class Entry implements Serializable {
 		@JsonProperty("id")
 		private Long entryId;
 		private Long amount;

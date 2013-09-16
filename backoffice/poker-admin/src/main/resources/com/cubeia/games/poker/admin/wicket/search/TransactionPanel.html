@@ -1,6 +1,6 @@
 <wicket:panel>
 
-  <b class="text-info">Transaction</b> - 
+  <a wicket:id="transactionLink"><h5>Transaction</h5></a>
   <b>Id:</b> <span wicket:id="transactionId"></span>,
   <b>External Id:</b> <span wicket:id="externalId"></span>,
   <b>Timestamp:</b> <span wicket:id="timestamp"></span>,
@@ -8,8 +8,8 @@
 
   <ul class="unstyled">
     <li wicket:id="entries">
-      <b>Account Id:</b> <span wicket:id="account.accountId"></span>,
-      <b>User Id:</b> <span wicket:id="account.userId"></span>,
+      <b>Account Id:</b> <a wicket:id="accountLink"><span wicket:id="account.accountId"></span></a>,
+      <b>User Id:</b> <a wicket:id="userLink"><span wicket:id="account.userId"></span></a>,
       <b>Amount:</b> <span wicket:id="amount"></span>,
     </li>
   </ul>

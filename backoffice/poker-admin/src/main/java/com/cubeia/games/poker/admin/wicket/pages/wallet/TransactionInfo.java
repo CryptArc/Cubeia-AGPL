@@ -24,6 +24,7 @@ import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.games.poker.admin.wicket.pages.util.OddEvenRowsAttributeModifier;
 import com.cubeia.games.poker.admin.wicket.util.ExternalLinkPanel;
 import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
+
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -46,6 +47,8 @@ import static org.apache.commons.httpclient.util.DateUtil.formatDate;
  */
 @AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
 public class TransactionInfo extends BasePage {
+    public static final String PARAM_TX_ID = "transactionId";
+
     private static final long serialVersionUID = 1L;
     
     @SuppressWarnings("unused")
@@ -68,7 +71,7 @@ public class TransactionInfo extends BasePage {
     @SuppressWarnings("serial")
     public TransactionInfo(PageParameters parameters) {
         super(parameters);
-        transactionId = parameters.get("transactionId").toLongObject();
+        transactionId = parameters.get(PARAM_TX_ID).toLongObject();
         Transaction tx = walletService.getTransactionById(transactionId);
 
         if (tx == null) {
@@ -148,7 +151,7 @@ public class TransactionInfo extends BasePage {
     
     private void setInvalidTransactionResponsePage(final Long accountId) {
         PageParameters pageParams = new PageParameters();
-        pageParams.set("transactionId", accountId);
+        pageParams.set(PARAM_TX_ID, accountId);
         setResponsePage(InvalidTransaction.class, pageParams);
     }
 
