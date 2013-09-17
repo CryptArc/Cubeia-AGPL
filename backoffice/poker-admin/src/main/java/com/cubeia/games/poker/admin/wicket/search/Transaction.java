@@ -1,6 +1,7 @@
 package com.cubeia.games.poker.admin.wicket.search;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +48,7 @@ class Transaction implements Serializable {
 	@JsonProperty("id")
     private Long transactionId;
 
-	private Long timestamp;
+	private Date timestamp;
     private String comment;
     private String externalId;
 
@@ -64,11 +65,11 @@ class Transaction implements Serializable {
 		this.transactionId = transactionId;
 	}
 
-	public Long getTimestamp() {
+	public Date getTimestamp() {
 		return timestamp;
 	}
 
-	public void setTimestamp(Long timestamp) {
+	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
 	}
 

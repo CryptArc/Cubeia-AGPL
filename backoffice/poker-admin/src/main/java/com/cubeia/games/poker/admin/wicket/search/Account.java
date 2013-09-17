@@ -1,6 +1,7 @@
 package com.cubeia.games.poker.admin.wicket.search;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Map;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -18,8 +19,8 @@ class Account implements Serializable {
     private String name;
     private String status;
     private String type;
-    private Long created;
-    private Long closed;
+    private Date created;
+    private Date closed;
     private String currencyCode;
     private int fractionalDigits;
 
@@ -74,19 +75,19 @@ class Account implements Serializable {
 		this.type = type;
 	}
 	
-	public Long getCreated() {
+	public Date getCreated() {
 		return created;
 	}
 	
-	public void setCreated(Long created) {
+	public void setCreated(Date created) {
 		this.created = created;
 	}
 	
-	public Long getClosed() {
+	public Date getClosed() {
 		return closed;
 	}
 	
-	public void setClosed(Long closed) {
+	public void setClosed(Date closed) {
 		this.closed = closed;
 	}
 	

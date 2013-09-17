@@ -22,7 +22,7 @@ public class TransactionTest {
 		Transaction tx = mapper.readValue(getClass().getResourceAsStream("/json/search/tx1.json"), Transaction.class);
 		
 		assertThat(tx.getTransactionId(), is(15L));
-		assertThat(tx.getTimestamp(), is(1379331521215L));
+		assertThat(tx.getTimestamp().getTime(), is(1379331521215L));
 		assertThat(tx.getExternalId(), is("tx123"));
 		
 		assertThat(tx.getAttributes().get("adminUser").getValue(), is("admin"));

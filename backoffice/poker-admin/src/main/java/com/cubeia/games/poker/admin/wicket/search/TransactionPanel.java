@@ -11,6 +11,7 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
+import com.cubeia.games.poker.admin.wicket.pages.util.DateDisplayModel;
 import com.cubeia.games.poker.admin.wicket.pages.util.LinkFactory;
 import com.cubeia.games.poker.admin.wicket.search.Transaction.Entry;
 
@@ -24,7 +25,7 @@ public class TransactionPanel extends Panel {
 		
 		add(new Label("transactionId"));
 		add(new Label("externalId"));
-		add(new Label("timestamp"));
+		add(new Label("timestamp", new DateDisplayModel(model, "timestamp")));
 		add(new Label("comment"));
 		
 		ListView<Entry> entries = new ListView<Entry>("entries", model.getObject().getEntries()) {
