@@ -22,7 +22,7 @@ public class AccountTest {
 		assertThat(account.getAccountId(), is(5L));
 		assertThat(account.getUserId(), is(50L));
 		assertThat(account.getClosed(), nullValue());
-		assertThat(account.getCreated(), is(1379335535922L));
+		assertThat(account.getCreated().getTime(), is(1379335535922L));
 		assertThat(account.getCurrencyCode(), is("EUR"));
 		assertThat(account.getFractionalDigits(), is(2));
 		assertThat(account.getName(), is("test"));
