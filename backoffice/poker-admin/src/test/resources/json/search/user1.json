@@ -29,16 +29,8 @@
         "avatarId": null
     },
 	"attributes": {
-		"attr1": {
-			"id": 1,
-			"key": "attr1",
-			"value": "value1"
-		},
-		"attr2": {
-			"id": 2,
-			"key": "attr2",
-			"value": "value2"
-		}
+		"attr1": "value1",
+		"attr2": "value2"
 	}, 
     "creationDate": null,
     "lastLoginDate": null,

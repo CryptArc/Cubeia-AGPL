@@ -9,6 +9,7 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 
 import com.cubeia.games.poker.admin.wicket.pages.util.LinkFactory;
 import com.cubeia.games.poker.admin.wicket.search.Transaction.Entry;
@@ -41,8 +42,10 @@ public class TransactionPanel extends Panel {
 				item.add(new Label("amount"));
 			}
 		};
-		
 		add(entries);
+		
+		add(new AttributesPanel("attributes", Model.ofMap(model.getObject().getAttributes())));
+		
 	}
 
 }

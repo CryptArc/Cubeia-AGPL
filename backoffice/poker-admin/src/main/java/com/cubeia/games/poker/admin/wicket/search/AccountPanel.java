@@ -4,6 +4,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 
 import com.cubeia.games.poker.admin.wicket.pages.util.LinkFactory;
 
@@ -25,6 +26,8 @@ public class AccountPanel extends Panel {
         add(new Label("status"));
         add(new Label("type"));
         add(new Label("currencyCode"));
+        
+        add(new AttributesPanel("attributes", Model.ofMap(model.getObject().getAttributes())));
     }
 
 }

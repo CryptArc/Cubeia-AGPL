@@ -1,6 +1,8 @@
 package com.cubeia.games.poker.admin.wicket.search;
 
+import java.beans.Transient;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -59,8 +61,8 @@ class User implements Serializable {
     private String userType;
     private UserInformation userInformation;
     
-    @JsonDeserialize(keyAs = String.class, contentAs = Attribute.class)
-    private Map<String, Attribute> attributes;
+    @JsonDeserialize(keyAs = String.class, contentAs = String.class)
+    private Map<String, String> attributes;
     
 	public long getUserId() {
 		return userId;
@@ -118,13 +120,20 @@ class User implements Serializable {
 		this.userInformation = userInformation;
 	}
 	
+	@Transient
 	public Map<String, Attribute> getAttributes() {
-		return attributes;
+	    HashMap<String, Attribute> am = new HashMap<String, Attribute>();
+	    for (Map.Entry<String, String> entry : attributes.entrySet()) {
+	        am.put(entry.getKey(), new Attribute(entry.getKey(), entry.getValue()));
+	    }
+		return am;
 	}
 	
-	public void setAttributes(Map<String, Attribute> attributes) {
+	public void setAttributes(Map<String, String> attributes) {
 		this.attributes = attributes;
 	}
+	
+	
 	
 	@Override
 	public String toString() {

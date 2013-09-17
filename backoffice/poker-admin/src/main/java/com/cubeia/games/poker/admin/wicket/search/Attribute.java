@@ -7,7 +7,24 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 @SuppressWarnings("serial")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Attribute implements Serializable {
+    private String key;
 	private String value;
+	
+    public Attribute() {}
+	
+	public Attribute(String key, String value) {
+        super();
+        this.key = key;
+        this.value = value;
+    }
+
+    public String getKey() {
+        return key;
+    }
+	
+	public void setKey(String key) {
+        this.key = key;
+    }
 	
 	public String getValue() {
 		return value;
@@ -18,7 +35,7 @@ public class Attribute implements Serializable {
 	}
 	
 	@Override
-	public String toString() {
-		return "Attribute [value=" + value + "]";
-	}
+    public String toString() {
+        return "Attribute [key=" + key + ", value=" + value + "]";
+    }
 }

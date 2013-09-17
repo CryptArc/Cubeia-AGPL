@@ -19,8 +19,6 @@ public class UserTest {
 		
 		User user = mapper.readValue(getClass().getResourceAsStream("/json/search/user1.json"), User.class);
 		
-//		System.err.println(user);
-		
 		assertThat(user.getUserId(), CoreMatchers.is(1L));
 		assertThat(user.getExternalUserId(), CoreMatchers.is("abc123"));
 		assertThat(user.getUserName(), CoreMatchers.is("smaxxor1"));

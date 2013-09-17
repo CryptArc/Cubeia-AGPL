@@ -45,6 +45,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.QueryStringQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -123,19 +124,20 @@ public class SearchPage extends BasePage {
     private void doSearch(String query) {
         Client client = createClient();
 
-//        String value = parameters.get("query");
-        String[] parts = (query.isEmpty() ? new String[0] : query.toString().split(" "));
-
-        BoolQueryBuilder root = QueryBuilders.boolQuery();
-
-        for (String s : parts) {
-            if (s.endsWith("*")) {
-                s = s.substring(0, s.length() - 1).toLowerCase();
-                root.must(QueryBuilders.prefixQuery("_all", s));
-            } else {
-                root.must(QueryBuilders.matchQuery("_all", s));
-            }
-        }
+//        String[] parts = (query.isEmpty() ? new String[0] : query.toString().split(" "));
+//
+//        BoolQueryBuilder root = QueryBuilders.boolQuery();
+//
+//        for (String s : parts) {
+//            if (s.endsWith("*")) {
+//                s = s.substring(0, s.length() - 1).toLowerCase();
+//                root.must(QueryBuilders.prefixQuery("_all", s));
+//            } else {
+//                root.must(QueryBuilders.matchQuery("_all", s));
+//            }
+//        }
+        
+        QueryStringQueryBuilder root = QueryBuilders.queryString(query);
 
         SearchResponse resp;
         try {
