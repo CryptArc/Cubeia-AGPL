@@ -1,0 +1,302 @@
+=================================================================================
+               CUBEIA POKER SOURCE-CODE BASED INSTALLATION
+================================================================================
+
+
+PREREQUISITES
+=============
+
+* Java SDK 1.7
+* Maven 3.0.4 or higher
+
+
+IMPORTANT
+=========
+
+Please follow this sequence *strictly*, otherwise you will run into a cascade of
+problems. If you ask for support on the forum, please mention which steps
+succeeded so far, and with which step you got the problem.
+
+You will need half an hour for the first steps, but some hours (or days) to
+complete until the integration of Cubeia Network.
+
+Finally: don't forget that Cubeia Poker is under development. This alone makes
+things sometimes very difficult, especially when updating to newer versions.
+
+
+BASICS
+======
+
+* Ensure that maven has enough memory reserved, otherwise you will possibly run
+into annoying "java.lang.OutOfMemoryError: PermGen space". On linux just do:
+
+export MAVEN_OPTS="-Xmx512m -XX:MaxPermSize=512m";
+
+* Avoid using an IDE if you are not familiar with one, as this can introduce
+additional barriers. Use the command-line and simple editors. Later, when you
+feel safer with the sources, you can go on to use an IDE (eclipse, netbeans,
+IntelliJ, etc.).
+
+
+
+QUICK-START
+================================================================================
+
+mvn clean package -Pclient,bots,admin,no-integrations
+cd  uar
+mvn firebase:run
+
+CLIENT: you should be able to access the game at:
+
+http://localhost:18181
+
+There is no user registration at this point. Use any name, and the password
+should be an integer > 1000 (e.g.: test/1001).
+
+BOTS: in order to get some opponents, go to the bots at:
+
+http://localhost:18081
+
+The default values will create 100 bots, just press OK button. You should see
+now within the lobby that tables are getting players. Join one or more tables
+and check the game.
+
+After this, you can start tournament bots, and join a tournament.
+
+ADMIN
+
+http://localhost:18088
+
+You can see the functionality, but most of it is not usable. To
+make the Poker Admin functional, go on with the next steps, which will allow you
+to manages the poker-game (timings, tables, tournaments etc.).
+
+
+DATABASES
+================================================================================
+
+MYSQL DB
+========
+
+Mandatory: create a mysql database.
+the default configuration is: db: poker, user: poker, pass: poker
+to change: ./backoffice/poker-admin/src/test/resources/jetty-env.xml
+
+A simple way is to use the "initdb.sql" script file. Just copy&paste it to the
+mysql command-lin, or execute it, giving the full path, e.g. 
+
+mysql> source ./backoffice/poker-admin/initdb.sql
+
+
+MONGO DB
+========
+
+Optionally: for hand histories and tournament histories, create a mongodb
+the default configuration is: db: poker, user: poker, pass: poker
+to change: ./backoffice/poker-admin/src/test/resources/admin.properties
+
+
+CONFIG
+======
+
+within file:
+
+./uar/src/test/resources/firebase/conf/cluster.props
+
+change "use-mock-integrations=true"
+to     "use-mock-integrations=false"
+
+This will disable the use of the predefined test (mock) tables and tournaments,
+thus you can use your own.
+
+Stop and start the poker game with firebase:run, then go on with the next step.
+
+
+ADMIN DATA
+==========
+
+At this point, you create all the data needed within the Poker Admin:
+
+ * First create Timings and Rake Configurations (good name is "Standard")
+
+ * You can now create Table Templates, which should result in tables showing up
+   in the lobby.
+
+ * Create Payout and Blinds Structures (again choose "Standard" as name).
+
+ * Now you can create a simple Sit&Go, which should show up in the lobby.
+
+ * Last, setup a Scheduled Tournament template.
+
+
+CUBEIA NETWORK
+================================================================================
+
+The full functionality of Poker Admin depends on Cubeia Network. 
+
+The full backoffice functionality, like User, Wallet and Accounting Service, is
+provided by Cubeia Network.
+
+Retrieve the code and follow the contained instructions to setup:
+
+https://bitbucket.org/cubeia/cubeia-network
+
+Once you have access to the Cubeia Network Webapplication, you have to create
+some basic data, thus the Poker Admin and the Poker Game works.
+
+OPERATOR
+========
+
+Create an Operator with the ID 1
+
+CURRENCY
+========
+
+Add one currency, e.g. EUR. Avoid creating multiple currencies at this
+point.
+
+
+ACCOUNTS
+========
+
+Create 3 different wallet accounts. The accounts use dummy user ID's:
+
+ * Dummy User -1000 is the system rake account
+ * Dummy User -2000 is for promotions (such as free-rolls etc)
+ * Dummy User -3000 is a general bank for internal transfers
+
+The type is SYSTEM_ACCOUNT and enable to option "negative balance allowed".
+
+ * SYSTEM_ACCOUNT | EUR | OPEN | UserID -1000 | Rake
+ * SYSTEM_ACCOUNT | EUR | OPEN | UserID -2000 | Promotions
+ * SYSTEM_ACCOUNT | EUR | OPEN | UserID -3000 | General 
+
+Important: if you create more currencies later, you have to create those 3
+accounts for the currencies, too.
+
+
+
+INTEGRATE POKER WITH CUBEIA NETWORK
+================================================================================
+
+CONFIGURATION
+=============
+
+Cubeia Network should be running now ( backoffice & services on port 8080).
+
+As Cubeia Nework is started outside the development environment, configuration
+starts.
+
+within ./backoffice/poker-admin/src/test/resources/admin.properties, change the
+ports of user/wallet/operator services to 8080.
+
+within ./uar/src/test/resources/firebase/conf/cluster.props
+   - set use-mock-integrations=false"
+   - change the ports of user, wallet and operator services to 8080
+     (http://localhost:8080)
+
+CREATE USERS & BOTS
+===================
+
+Create some users. Username, password and Operator ID (1) is enough data.
+
+Alternatively, you can use the user-creator tool (see next step), which will
+add an account with some cash for the created user.
+
+BOTS
+====
+
+Bots are like other users, so if you want to use the bots, you have to create
+accounts for them, too. The user-creator tool simplifies this:
+
+./tools/user-creator/README
+
+
+
+INTEGRATION BUILD
+=================
+
+Τhe default build of the poker-server results in a system with mock-services
+(or mock-integrations). This means that there is not real user and account
+management.
+
+In order to build & start a poker system which integrates fully:
+
+* build the poker code with "use-integrations" (instead of "no-integrations).
+* Start: Cubeia Network then the Poker Game with firebase:run
+
+You now login with the user credentials created within Cubeia Network.
+
+
+
+ADVANCED STEPS
+================================================================================
+
+* FIREBASE
+
+Firebase was fetched during the build. You can start the poker-server directly
+by starting firebase from within
+
+./uar/target/firebase-run/firebase-<version>-CE
+
+This location (the "target" folder) is overwritten by a clean build (mvn clean).
+
+Once your poker-system runs fine, you can copy the firebase folder to another
+location. If your poker directory resides in e.g. mycubeia/poker, you could copy
+firebase to mycubeia/firebase.
+
+In this case, you either have to copy new versions of the poker-uar.uar into the
+firebase/game/deploy directory, or you have to make a symbolic link. Remember to
+verify the configuration files (new files or new configuration data).
+
+* CLIENT
+To start the client standalone follow ./client/web/README.
+
+* BOTS
+Follow ./bots/bot/README to start the Bots in standalone.
+
+* DEPLOY TO TOMCAT
+
+The Cubeia Network bundle contains a tomcat. You can use it to deploy your wars
+there, namely the "poker-client.war" and the "poker-admin.war".
+
+The process for war deployment is usually:
+
+* copy (or symlink) the war to tomcat/webapps
+* copy (or symlink) the relevant config files to tomcat/lib
+* copy (or symlink) database deploy-files to relevant location
+
+Start with the simpler poker-client. On success, you'll have it at:
+
+http://localhost:8080/poker-client
+
+Then go on with the poker-admin. On success, you'll have it at:
+
+http://localhost:8080/poker-admin
+
+If things fail, just fall-back to your command-line started versions.
+
+* PRODUCTION SETUP
+
+The above are the first steps towards a production installation, a complex task,
+which is out of the scope of this document.
+
+Note that at this point, there is not user registration available. This is be-
+cause Cubeia has decided to not provide any public-facing websites / code.
+
+
+
+FULL REBUILD
+============
+
+After source code updates, to build all relevant sources in one pass, go to the
+root directory (e.g. cubeia-poker) and execute
+
+mvn clean package install -U
+
+If you have integrated Cubeia Network, execute
+
+mvn clean package install -U -P use-integrations
+
+The "-U" flag ensures that dependencies are updated (important when sources are
+under development).
