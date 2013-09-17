@@ -46,7 +46,7 @@ import static com.cubeia.backoffice.users.api.dto.UserStatus.ENABLED;
 import static com.cubeia.games.poker.admin.wicket.util.ParamBuilder.params;
 /**
  */
-@AuthorizeInstantiation({"SUPER_USER", "USER_ADMIN"})
+@AuthorizeInstantiation({"ROLE_ADMIN"})
 public class EditUser extends BasePage {
     public static final String PARAM_USER_ID = "userId";
 

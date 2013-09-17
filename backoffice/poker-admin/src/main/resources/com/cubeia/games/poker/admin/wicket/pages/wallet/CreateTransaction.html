@@ -12,10 +12,24 @@
                   <form wicket:id="txForm" class="form-horizontal">
 
                       <div class="control-group">
+                          <label class="control-label" for="adminIpAddress">Your IP address</label>
+                          <div class="controls">
+                              <span wicket:id="adminIpAddress" id="adminIpAddress" type="text" size="4"/>
+                          </div>
+                      </div>
+                      
+                      <div class="control-group">
+                          <label class="control-label" for="adminUsername">Logged in As</label>
+                          <div class="controls">
+                              <span wicket:id="adminUsername" id="adminUsername" type="text" size="4"/>
+                          </div>
+                      </div>
+
+                      <div class="control-group">
                           <label class="control-label" for="fromAccountIdField">From account Id (debit)</label>
                           <div class="controls">
                               <input wicket:id="fromAccountIdField" id="fromAccountIdField" type="text" size="4"/>
-                              <span wicket:id="fromAccountInfo"></span>
+                              <span class="help-block" wicket:id="fromAccountInfo"></span>
                           </div>
                       </div>
 
@@ -23,7 +37,7 @@
                           <label class="control-label" for="toAccountIdField">To account Id (credit)</label>
                           <div class="controls">
                               <input wicket:id="toAccountIdField" id="toAccountIdField" type="text" size="4"/>
-                              <span wicket:id="toAccountInfo"></span>
+                              <span class="help-block" wicket:id="toAccountInfo"></span>
                           </div>
                       </div>
 
@@ -35,7 +49,7 @@
                       </div>
 
                       <div class="control-group">
-                          <label class="control-label" for="commentField">Comment (optional)</label>
+                          <label class="control-label" for="commentField">Comment</label>
                           <div class="controls">
                               <input wicket:id="commentField" id="commentField" type="text" size="20"/>
                           </div>

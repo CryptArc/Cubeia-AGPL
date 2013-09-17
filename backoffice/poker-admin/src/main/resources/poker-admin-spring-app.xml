@@ -79,10 +79,6 @@
         </property>
     </bean>
 
-    <bean id="jndi.dataSource" class="org.springframework.jndi.JndiObjectFactoryBean" lazy-init="true">
-      <property name="jndiName" value="java:comp/env/jdbc/pokerDS" />
-    </bean>
-
     <!-- Transaction manager -->
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>

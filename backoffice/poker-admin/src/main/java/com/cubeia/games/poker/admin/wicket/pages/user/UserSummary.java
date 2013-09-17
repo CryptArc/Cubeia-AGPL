@@ -51,10 +51,7 @@ import java.util.*;
 
 import static com.cubeia.games.poker.admin.wicket.util.ParamBuilder.params;
 
-
-/**
- */
-@AuthorizeInstantiation({"SUPER_USER", "USER_ADMIN"})
+@AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
 public class UserSummary extends BasePage {
     private static final long serialVersionUID = 1L;
 

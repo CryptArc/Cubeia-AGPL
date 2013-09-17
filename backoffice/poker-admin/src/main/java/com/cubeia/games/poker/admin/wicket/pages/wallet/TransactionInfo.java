@@ -44,7 +44,7 @@ import static org.apache.commons.httpclient.util.DateUtil.formatDate;
 
 /**
  */
-@AuthorizeInstantiation({"SUPER_USER", "WALLET_ADMIN"})
+@AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
 public class TransactionInfo extends BasePage {
     private static final long serialVersionUID = 1L;
     
@@ -154,6 +154,6 @@ public class TransactionInfo extends BasePage {
 
     @Override
     public String getPageTitle() {
-        return "Transaction information: " + transactionId;
+        return "Transaction Information: " + transactionId;
     }
 }

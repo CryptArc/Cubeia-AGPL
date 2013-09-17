@@ -37,7 +37,7 @@ import java.util.Locale;
 import static com.cubeia.backoffice.users.api.dto.CreationStatus.OK;
 import static com.cubeia.games.poker.admin.wicket.util.ParamBuilder.params;
 
-@AuthorizeInstantiation({"SUPER_USER", "USER_ADMIN"})
+@AuthorizeInstantiation({"ROLE_ADMIN"})
 public class CreateUser extends BasePage {
     private static final long serialVersionUID = 1L;
     
