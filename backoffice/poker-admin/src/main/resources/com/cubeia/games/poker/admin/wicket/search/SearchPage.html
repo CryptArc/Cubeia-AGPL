@@ -9,25 +9,75 @@
 		
         <div class="row-fluid">
           <div class="span12">
+            <p>
             <form class="form-search" wicket:id="searchForm">
               <input wicket:id="searchInput" type="text" placeholder="search..." class="input-medium search-query span6">
               <button type="submit" class="btn btn-primary"><i class="icon-search icon-white"></i></button>
               
               <span wicket:id="feedback"></span>
             </form>
+            </p>
+          </div>
+        </div>
+
+
+        <a id="showTemplates" href="#">show search templates</a>
+        <a id="hideTemplates" href="#" style="display:none;">hide search templates</a>
+
+        <div id="templatesContainer" class="row-fluid" style="display:none;">
+          <div class="span12">
+            <h5>Search templates</h5>
+          
+            <p>
+            <ul class="unstyled">
+              <li>Admin transactions</li>
+              <li>a</li>
+              <li>a</li>
+              <li>a</li>
+              <li>a</li>
+              <li>a</li>
+            </ul>
+            </p>
           </div>
         </div>
 
         <hr/>
     
-        <span wicket:id="navigator">[dataview navigator]</span>
-        <table class="table table-striped">
-          <tr wicket:id="searchResult">
-            <td >
-              <span wicket:id="value"></span>
-            </td>
-          </tr>
-        </table>         
+      <div class="row-fluid">
+        <p>
+          <span wicket:id="resultsCount"></span> results
+        </p>
+      </div>
+    
+      <div wicket:id="resultsContainer" class="row-fluid">
+        <div class="span12">
+    
+          <span wicket:id="navigator">[dataview navigator]</span>
+          <table class="table table-striped">
+            <tr wicket:id="searchResult">
+              <td >
+                <span wicket:id="value"></span>
+              </td>
+            </tr>
+          </table>         
+          <span wicket:id="navigator2">[dataview navigator]</span>
+
+        </div>
+      </div>
+
+      <script>
+      	$("#showTemplates").click(function() {
+      		$("#hideTemplates").show();
+      		$("#templatesContainer").slideDown();
+      		$("#showTemplates").hide();
+      	});
+      
+      	$("#hideTemplates").click(function() {
+      		$("#hideTemplates").hide();
+      		$("#templatesContainer").slideUp();
+      		$("#showTemplates").show();
+      	});
+      </script>
 
 	</wicket:extend>
 </body>

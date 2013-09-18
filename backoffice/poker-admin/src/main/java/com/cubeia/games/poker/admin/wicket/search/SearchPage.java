@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
@@ -28,6 +29,7 @@ import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -78,6 +80,20 @@ public class SearchPage extends BasePage {
         add(form);
         
         
+        WebMarkupContainer resultsContainer = new WebMarkupContainer("resultsContainer") {
+            @Override protected void onConfigure() {
+                super.onConfigure();
+                setVisible(dataProvider.size() > 0);
+            }
+        };
+        resultsContainer.setOutputMarkupId(true);
+        add(resultsContainer);
+        
+        add(new Label("resultsCount", new AbstractReadOnlyModel<Long>() {
+            @Override public Long getObject() { return dataProvider.size(); }
+        }));
+        
+        
         DataView<Serializable> dataView = new DataView<Serializable>("searchResult", dataProvider, HIT_LIMIT) {
 			@Override
 			protected void populateItem(Item<Serializable> item) {
@@ -94,9 +110,10 @@ public class SearchPage extends BasePage {
 				}
 			}
 		};
-        add(dataView);
+        resultsContainer.add(dataView);
         
-        add(new PagingNavigator("navigator", dataView));
+        resultsContainer.add(new PagingNavigator("navigator", dataView));
+        resultsContainer.add(new PagingNavigator("navigator2", dataView));
     }
     
 	private HitProvider createHitProvider() {
