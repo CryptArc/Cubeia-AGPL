@@ -473,6 +473,7 @@
                     <webAppConfig>
                         <contextPath>/poker-admin</contextPath>
                         <jettyEnvXml>${basedir}/src/test/resources/jetty-env.xml</jettyEnvXml>
+                        <webInfIncludeJarPattern>do_not_scan_web-inf_lib_because_it_is_sooooo_slooooow.jar</webInfIncludeJarPattern>
                     </webAppConfig>
                     <connectors>
                         <connector
