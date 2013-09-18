@@ -93,7 +93,6 @@ public class SearchPage extends BasePage {
             @Override public Long getObject() { return dataProvider.size(); }
         }));
         
-        
         DataView<Serializable> dataView = new DataView<Serializable>("searchResult", dataProvider, HIT_LIMIT) {
 			@Override
 			protected void populateItem(Item<Serializable> item) {
