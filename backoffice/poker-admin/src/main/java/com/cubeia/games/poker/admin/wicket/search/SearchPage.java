@@ -24,6 +24,7 @@ import java.net.URL;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -66,18 +67,25 @@ public class SearchPage extends BasePage {
         
         final Model<String> searchInputModel = new Model<String>();
         dataProvider = createHitProvider();
+        final HiddenField<String> sortFieldInput = new HiddenField<>("sortField", new Model<String>("timestamp"));
+        final HiddenField<Boolean> sortAscendingInput = new HiddenField<>("sortAscending", new Model<Boolean>(false));
         
         Form<String> form = new Form<String>("searchForm") {
         	protected void onSubmit() {
         		log.debug("search query: '{}'", searchInputModel.getObject());
+                log.debug("sortField: {}", sortFieldInput.getModelObject());
+                log.debug("sortOrder: {}", sortAscendingInput.getModelObject());
         		dataProvider.setQuery(searchInputModel.getObject());
         	};
         };
-        form.add(new FeedbackPanel("feedback"));
-        
-        RequiredTextField<String> searchInput = new RequiredTextField<String>("searchInput", searchInputModel);
-        form.add(searchInput);
         add(form);
+        
+        form.add(sortFieldInput);
+        form.add(sortAscendingInput);
+        form.add(new RequiredTextField<String>("searchInput", searchInputModel));
+        
+        
+        form.add(new FeedbackPanel("feedback"));
         
         
         WebMarkupContainer resultsContainer = new WebMarkupContainer("resultsContainer") {
