@@ -1,10 +1,15 @@
 package com.cubeia.games.poker.admin.wicket.search;
 
+import static org.elasticsearch.search.sort.SortOrder.ASC;
+import static org.elasticsearch.search.sort.SortOrder.DESC;
+
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
@@ -28,6 +33,27 @@ import org.slf4j.LoggerFactory;
 public class HitProvider implements IDataProvider<Serializable> {
     Logger log = LoggerFactory.getLogger(getClass());
     
+    class Sort {
+        String field;
+        boolean ascending;
+        public Sort(String field, boolean ascending) {
+            this.field = field;
+            this.ascending = ascending;
+        }
+        
+        public String getField() {
+            return field;
+        }
+        
+        public boolean isAscending() {
+            return ascending;
+        }
+        
+        public boolean isNonEmpty() {
+            return field != null;
+        }
+    }
+    
     private String indexName;
     private URL searchUrl;
     private String clusterName;
@@ -38,8 +64,9 @@ public class HitProvider implements IDataProvider<Serializable> {
     private long totalHits;
     private int limit;
 
-    private String sortField;
-    private boolean ascending;
+//    private String sortField;
+//    private boolean ascending;
+    private Sort sort = new Sort(null, true);
     
     HitProvider(String clusterName, URL searchUrl, String indexName, int limit) {
         this.clusterName = clusterName;
@@ -48,10 +75,11 @@ public class HitProvider implements IDataProvider<Serializable> {
         this.limit = limit;
     }
     
-    public void setQuery(String queryString, String sortField, boolean ascending) {
+    public void setQuery(String queryString) {
         this.queryString = queryString;
-        this.sortField = sortField;
-        this.ascending = ascending;
+
+        sort = parseSort(queryString);
+        
         offset = 0;
         totalHits = 0;
         hits = null;
@@ -59,6 +87,23 @@ public class HitProvider implements IDataProvider<Serializable> {
         doSearch((int) offset, (int) limit);
     }
     
+    protected Sort parseSort(String query) {
+        Pattern datePatt = Pattern.compile(".* +_sort\\:([a-zA-Z]+),?(asc|desc)? +.*");
+        Matcher m = datePatt.matcher(" " + query + " ");
+        
+        String sortField = null;
+        boolean asc = true;
+        
+        if (m.matches()) {
+            sortField = m.group(1);
+            if ("desc".equals(m.group(2))) {
+                asc = false;
+            }
+        }
+        
+        return new Sort(sortField, asc);
+    }
+
     private Client createClient() {
         Settings settings = ImmutableSettings.settingsBuilder().put("cluster.name", clusterName).build();
 
@@ -77,8 +122,8 @@ public class HitProvider implements IDataProvider<Serializable> {
         try {
             SearchRequestBuilder searchRequestBuilder = client.prepareSearch(indexName).setQuery(root).setFrom(offset).setSize(limit);
             
-            if (sortField != null  &&  !sortField.isEmpty()) {
-                searchRequestBuilder.addSort(sortField, ascending ? SortOrder.ASC : SortOrder.DESC);
+            if (sort.isNonEmpty()) {
+                searchRequestBuilder.addSort(sort.getField(), sort.isAscending() ? ASC : DESC);
             }
             
             log.debug("ES query: {}", searchRequestBuilder);
@@ -142,6 +187,18 @@ public class HitProvider implements IDataProvider<Serializable> {
     @Override
     public IModel<Serializable> model(Serializable object) {
         return Model.of(object);
+    }
+
+    public boolean isSorting() {
+        return sort.isNonEmpty();
+    }
+
+    public String getSortField() {
+        return sort.getField();
+    }
+
+    public boolean isAscending() {
+        return sort.isAscending();
     }
 	
 }

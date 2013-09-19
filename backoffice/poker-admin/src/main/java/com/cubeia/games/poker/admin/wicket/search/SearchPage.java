@@ -23,12 +23,12 @@ import java.net.URL;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.RequiredTextField;
-import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
@@ -69,10 +69,23 @@ public class SearchPage extends BasePage {
         
         final Model<String> searchInputModel = new Model<String>();
         dataProvider = createHitProvider();
-        final HiddenField<String> sortFieldInput = new HiddenField<>("sortField", new Model<String>());
-        sortFieldInput.setMarkupId("sortField");
-        final HiddenField<String> sortAscendingInput = new HiddenField<>("sortAscending", new Model<String>());
-        sortAscendingInput.setMarkupId("sortAscending");
+        
+        final Label resultsCount = new Label("resultsCount", new AbstractReadOnlyModel<String>() {
+            @Override public String getObject() { 
+                String str = "" + dataProvider.size() + " results. ";
+                
+                if (dataProvider.isSorting()) {
+                    str += "Sorted by " + (dataProvider.isAscending() ? "ascending" : "descending") + " <i>" + dataProvider.getSortField() + "</i>.";
+                } else {
+                    str += "Sorted by rank.";
+                }
+
+                return str;
+            }
+        });
+        resultsCount.setEscapeModelStrings(false);
+        resultsCount.setOutputMarkupId(true);
+        add(resultsCount);
         
         final WebMarkupContainer resultsContainer = new WebMarkupContainer("resultsContainer") {
             @Override protected void onConfigure() {
@@ -87,31 +100,19 @@ public class SearchPage extends BasePage {
         Form<String> form = new Form<String>("searchForm");
         add(form);
         
-        form.add(sortFieldInput);
-        form.add(sortAscendingInput);
         form.add(new RequiredTextField<String>("searchInput", searchInputModel));
         form.add(new AjaxButton("searchButton") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 log.debug("search query: '{}'", searchInputModel.getObject());
-                log.debug("sortField: {}", sortFieldInput.getModelObject());
-                log.debug("sortOrder: {}", sortAscendingInput.getModelObject());
                 
-                boolean ascending = sortAscendingInput.getModelObject() == null ? false : Boolean.valueOf(sortAscendingInput.getModelObject());
-                
-                dataProvider.setQuery(searchInputModel.getObject(), sortFieldInput.getModelObject(), ascending);
+                dataProvider.setQuery(searchInputModel.getObject());
                 target.add(resultsContainer);
+                target.add(resultsCount);
             }
         });
         
-        
         form.add(new FeedbackPanel("feedback"));
-        
-        
-        
-        add(new Label("resultsCount", new AbstractReadOnlyModel<Long>() {
-            @Override public Long getObject() { return dataProvider.size(); }
-        }));
         
         DataView<Serializable> dataView = new DataView<Serializable>("searchResult", dataProvider, HIT_LIMIT) {
 			@Override
@@ -131,8 +132,8 @@ public class SearchPage extends BasePage {
 		};
         resultsContainer.add(dataView);
         
-        resultsContainer.add(new PagingNavigator("navigator", dataView));
-        resultsContainer.add(new PagingNavigator("navigator2", dataView));
+        resultsContainer.add(new AjaxPagingNavigator("navigator", dataView));
+        resultsContainer.add(new AjaxPagingNavigator("navigator2", dataView));
     }
     
 	private HitProvider createHitProvider() {

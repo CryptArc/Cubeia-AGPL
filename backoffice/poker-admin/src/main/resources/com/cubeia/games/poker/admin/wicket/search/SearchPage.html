@@ -12,8 +12,6 @@
             <p>
             <form id="searchForm" class="form-search" wicket:id="searchForm">
               <input wicket:id="searchInput" type="text" placeholder="search..." class="input-medium search-query span6"></input>
-              <input wicket:id="sortField" type="hidden" value="timestamp"></input>
-              <input wicket:id="sortAscending" type="hidden" value="descending"></input>
               <button wicket:id="searchButton" class="btn btn-primary"><i class="icon-search icon-white"></i></button>
               
               <span wicket:id="feedback"></span>
@@ -32,16 +30,14 @@
           
             <p>
                 <form class="form-inline" 
-                	data-template="_type:transaction AND adminUser AND {userName}" 
-                	data-sort-field="timestamp" data-sort-ascending="false">
+                	data-template="_type:transaction AND adminUser AND {userName} _sort:timestamp,desc">
                   Transactions made by an administrator <input type="text" placeholder="admin username" data-key="userName"></input>
                   <button type="button" class="btn"><i class="icon-search"></i></button>  
                 </form>
             </p>
             <p>
                 <form class="form-inline" 
-                	data-template="_type:transaction AND adminUser AND {userName} AND transaction.attributesAsStrings.adminIp:{ipAddress}"
-                	data-sort-field="timestamp" data-sort-ascending="false">
+                	data-template="_type:transaction AND adminUser AND {userName} AND transaction.attributesAsStrings.adminIp:{ipAddress} _sort:timestamp,desc">
                   Transactions made by an administrator from ip address 
                   <input type="text" placeholder="admin username" data-key="userName"></input>
                   <input type="text" placeholder="ip address" data-key="ipAddress"></input>
@@ -61,7 +57,7 @@
     
       <div class="row-fluid">
         <p>
-          <span wicket:id="resultsCount"></span> results
+          <span wicket:id="resultsCount"></span>
         </p>
       </div>
     
@@ -113,17 +109,7 @@
             	  
             	var searchForm = $("#searchForm");
             	searchForm.find("input[type=text]").val(template);
-            	
-            	var sortField = form.data("sort-field");
-            	var sortAscending = form.data("sort-ascending");
-            	
-            	searchForm.find("input#sortField").val(sortField);
-            	searchForm.find("input#sortAscending").val(sortAscending);
-            	
             	console.log("template: ", template);
-            	console.log("sort field: ", sortField);
-            	console.log("sort ascending: ", sortAscending);
-            	
              	searchForm.find("button").trigger("click");
       		});
       	});
