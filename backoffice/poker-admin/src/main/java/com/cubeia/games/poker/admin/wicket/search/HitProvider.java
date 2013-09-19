@@ -10,6 +10,7 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
@@ -19,6 +20,7 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.QueryStringQueryBuilder;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +37,9 @@ public class HitProvider implements IDataProvider<Serializable> {
     private long offset;
     private long totalHits;
     private int limit;
+
+    private String sortField;
+    private boolean ascending;
     
     HitProvider(String clusterName, URL searchUrl, String indexName, int limit) {
         this.clusterName = clusterName;
@@ -43,11 +48,14 @@ public class HitProvider implements IDataProvider<Serializable> {
         this.limit = limit;
     }
     
-    public void setQuery(String queryString) {
+    public void setQuery(String queryString, String sortField, boolean ascending) {
         this.queryString = queryString;
+        this.sortField = sortField;
+        this.ascending = ascending;
         offset = 0;
         totalHits = 0;
         hits = null;
+        
         doSearch((int) offset, (int) limit);
     }
     
@@ -67,7 +75,15 @@ public class HitProvider implements IDataProvider<Serializable> {
 
         SearchResponse resp;
         try {
-            resp = client.prepareSearch(indexName).setQuery(root).setFrom(offset).setSize(limit).execute().get();
+            SearchRequestBuilder searchRequestBuilder = client.prepareSearch(indexName).setQuery(root).setFrom(offset).setSize(limit);
+            
+            if (sortField != null  &&  !sortField.isEmpty()) {
+                searchRequestBuilder.addSort(sortField, ascending ? SortOrder.ASC : SortOrder.DESC);
+            }
+            
+            log.debug("ES query: {}", searchRequestBuilder);
+            
+            resp = searchRequestBuilder.execute().get();
             
             totalHits = resp.getHits().getTotalHits();
             

@@ -21,6 +21,8 @@ import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -67,35 +69,45 @@ public class SearchPage extends BasePage {
         
         final Model<String> searchInputModel = new Model<String>();
         dataProvider = createHitProvider();
-        final HiddenField<String> sortFieldInput = new HiddenField<>("sortField", new Model<String>("timestamp"));
-        final HiddenField<Boolean> sortAscendingInput = new HiddenField<>("sortAscending", new Model<Boolean>(false));
+        final HiddenField<String> sortFieldInput = new HiddenField<>("sortField", new Model<String>());
+        sortFieldInput.setMarkupId("sortField");
+        final HiddenField<String> sortAscendingInput = new HiddenField<>("sortAscending", new Model<String>());
+        sortAscendingInput.setMarkupId("sortAscending");
         
-        Form<String> form = new Form<String>("searchForm") {
-        	protected void onSubmit() {
-        		log.debug("search query: '{}'", searchInputModel.getObject());
-                log.debug("sortField: {}", sortFieldInput.getModelObject());
-                log.debug("sortOrder: {}", sortAscendingInput.getModelObject());
-        		dataProvider.setQuery(searchInputModel.getObject());
-        	};
-        };
-        add(form);
-        
-        form.add(sortFieldInput);
-        form.add(sortAscendingInput);
-        form.add(new RequiredTextField<String>("searchInput", searchInputModel));
-        
-        
-        form.add(new FeedbackPanel("feedback"));
-        
-        
-        WebMarkupContainer resultsContainer = new WebMarkupContainer("resultsContainer") {
+        final WebMarkupContainer resultsContainer = new WebMarkupContainer("resultsContainer") {
             @Override protected void onConfigure() {
                 super.onConfigure();
                 setVisible(dataProvider.size() > 0);
             }
         };
+        resultsContainer.setOutputMarkupPlaceholderTag(true);
         resultsContainer.setOutputMarkupId(true);
         add(resultsContainer);
+        
+        Form<String> form = new Form<String>("searchForm");
+        add(form);
+        
+        form.add(sortFieldInput);
+        form.add(sortAscendingInput);
+        form.add(new RequiredTextField<String>("searchInput", searchInputModel));
+        form.add(new AjaxButton("searchButton") {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                log.debug("search query: '{}'", searchInputModel.getObject());
+                log.debug("sortField: {}", sortFieldInput.getModelObject());
+                log.debug("sortOrder: {}", sortAscendingInput.getModelObject());
+                
+                boolean ascending = sortAscendingInput.getModelObject() == null ? false : Boolean.valueOf(sortAscendingInput.getModelObject());
+                
+                dataProvider.setQuery(searchInputModel.getObject(), sortFieldInput.getModelObject(), ascending);
+                target.add(resultsContainer);
+            }
+        });
+        
+        
+        form.add(new FeedbackPanel("feedback"));
+        
+        
         
         add(new Label("resultsCount", new AbstractReadOnlyModel<Long>() {
             @Override public Long getObject() { return dataProvider.size(); }
