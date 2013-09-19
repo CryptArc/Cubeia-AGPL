@@ -18,10 +18,12 @@
         </h1>
     </div>
     <div id="search">
-        <input type="text" placeholder="Search here..."/>
+        <form wicket:id="globalSearchForm">
+	        <input wicket:id="globalSearchInput" type="text" placeholder="Search here..."/>
             <button type="submit" class="tip-right" title="Search">
                 <i class="icon-search icon-white"></i>
             </button>
+        </form>
     </div>
     <div id="user-nav" class="navbar navbar-inverse">
         <ul class="nav btn-group" style="width: auto; margin: 0px; ">

@@ -25,7 +25,6 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.QueryStringQueryBuilder;
 import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +32,7 @@ import org.slf4j.LoggerFactory;
 public class HitProvider implements IDataProvider<Serializable> {
     Logger log = LoggerFactory.getLogger(getClass());
     
-    class Sort {
+    class Sort implements Serializable {
         String field;
         boolean ascending;
         public Sort(String field, boolean ascending) {
@@ -64,8 +63,6 @@ public class HitProvider implements IDataProvider<Serializable> {
     private long totalHits;
     private int limit;
 
-//    private String sortField;
-//    private boolean ascending;
     private Sort sort = new Sort(null, true);
     
     HitProvider(String clusterName, URL searchUrl, String indexName, int limit) {
@@ -159,6 +156,8 @@ public class HitProvider implements IDataProvider<Serializable> {
             this.hits = hits;
         } catch (Exception e) {
             log.error("error searching", e);
+            this.hits = null;
+            this.totalHits = 0;
             throw new RuntimeException(e);
         } finally {
             client.close();
@@ -200,5 +199,5 @@ public class HitProvider implements IDataProvider<Serializable> {
     public boolean isAscending() {
         return sort.isAscending();
     }
-	
+    
 }

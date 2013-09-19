@@ -27,7 +27,6 @@ import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
@@ -43,6 +42,8 @@ import com.cubeia.games.poker.admin.Configuration;
 import com.cubeia.games.poker.admin.wicket.BasePage;
 
 public class SearchPage extends BasePage {
+
+    public static final String PARAM_QUERY = "q";
 
     private static final int HIT_LIMIT = 5;
 
@@ -68,6 +69,7 @@ public class SearchPage extends BasePage {
         super(parameters);
         
         final Model<String> searchInputModel = new Model<String>();
+        
         dataProvider = createHitProvider();
         
         final Label resultsCount = new Label("resultsCount", new AbstractReadOnlyModel<String>() {
@@ -99,20 +101,25 @@ public class SearchPage extends BasePage {
         
         Form<String> form = new Form<String>("searchForm");
         add(form);
+        final FeedbackPanel feedback = new FeedbackPanel("feedback");
+        feedback.setOutputMarkupId(true);
+        form.add(feedback);
         
         form.add(new RequiredTextField<String>("searchInput", searchInputModel));
         form.add(new AjaxButton("searchButton") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                log.debug("search query: '{}'", searchInputModel.getObject());
+                String query = searchInputModel.getObject();
+                log.debug("search query: '{}'", query);
                 
-                dataProvider.setQuery(searchInputModel.getObject());
+                sendQuery(query);
+                
+                target.add(feedback);
                 target.add(resultsContainer);
                 target.add(resultsCount);
             }
         });
         
-        form.add(new FeedbackPanel("feedback"));
         
         DataView<Serializable> dataView = new DataView<Serializable>("searchResult", dataProvider, HIT_LIMIT) {
 			@Override
@@ -129,12 +136,30 @@ public class SearchPage extends BasePage {
 					item.add(new Label("value", hit.toString()));
 				}
 			}
+			
 		};
         resultsContainer.add(dataView);
         
         resultsContainer.add(new AjaxPagingNavigator("navigator", dataView));
         resultsContainer.add(new AjaxPagingNavigator("navigator2", dataView));
+        
+        
+        if (!parameters.get(PARAM_QUERY).isNull()) {
+            String query = parameters.get(PARAM_QUERY).toString();
+            searchInputModel.setObject(query);
+            sendQuery(query);
+        }
     }
+    
+
+    private void sendQuery(String query) {
+        try {
+            dataProvider.setQuery(query);
+        } catch (Exception e) {
+            error("Query syntax error or couldn't contact search engine.");
+        }
+    }
+    
     
 	private HitProvider createHitProvider() {
 		String clusterName = config.getSearchClusterName();
