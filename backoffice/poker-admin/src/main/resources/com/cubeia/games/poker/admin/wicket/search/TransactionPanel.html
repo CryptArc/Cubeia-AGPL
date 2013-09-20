@@ -1,0 +1,19 @@
+<wicket:panel>
+
+  <a wicket:id="transactionLink"><h5>Transaction</h5></a>
+  <span>Id:</span> <span wicket:id="transactionId"></span>,
+  <span>External Id:</span> <span wicket:id="externalId"></span>,
+  <span>Timestamp:</span> <span wicket:id="timestamp"></span>,
+  <span>Comment:</span> <span wicket:id="comment"></span>
+
+  <ul class="unstyled">
+    <li wicket:id="entries">
+      <span>Account Id:</span> <a wicket:id="accountLink"><span wicket:id="account.accountId"></span></a>,
+      <span>User Id:</span> <a wicket:id="userLink"><span wicket:id="account.userId"></span></a>,
+      <span>Amount:</span> <span wicket:id="amount"></span>
+    </li>
+  </ul>
+  
+  <span wicket:id="attributes"></span>
+  
+</wicket:panel>
