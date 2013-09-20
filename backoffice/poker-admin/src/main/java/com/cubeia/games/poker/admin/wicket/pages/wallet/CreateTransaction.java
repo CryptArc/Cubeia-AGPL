@@ -191,10 +191,11 @@ public class CreateTransaction extends BasePage {
         private final RequiredTextField<Long> accountIdField;
 
         private AccountInfoLoader(Label infoLabel, RequiredTextField<Long> accountIdField) {
+
             this.accountInfoLabel = infoLabel;
             this.accountIdField = accountIdField;
             //setThrottleDelay(Duration.seconds(0.5));
-            getAttributes().setThrottlingSettings(new ThrottlingSettings("test",Duration.seconds(0.5),true));
+            //getAttributes().setThrottlingSettings(new ThrottlingSettings("test",Duration.seconds(0.5),true));
         }
 
         @Override
