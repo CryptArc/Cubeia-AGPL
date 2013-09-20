@@ -80,7 +80,7 @@ public class SiteMap {
                 node("Create Rake Configuration", CreateRake.class),
                 node("Edit Rake Configuration", EditRake.class, false));
 
-//TODO: define which pages should be visible
+        //TODO: define which pages should be visible
         add(pages, "Users", UserList.class, "icon-list-alt",
                 node("User Summary", UserSummary.class, false),
                 node("Edit User", EditUser.class, false),
