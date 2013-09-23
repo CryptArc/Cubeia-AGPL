@@ -3,7 +3,9 @@
     <public-id>com.cubeia.poker.domainevents:achievement-service</public-id>
     <contract>com.cubeia.poker.domainevents.api.DomainEventsService</contract>
     <invocation-handler>com.cubeia.poker.domainevents.impl.GuiceHandler</invocation-handler>
-    <dependencies />
+    <dependencies>
+        <contract>com.cubeia.backend.firebase.CashGamesBackendService</contract>
+    </dependencies>
     <description />
     <exported>
         <package>com.cubeia.poker.domainevents.api.-</package>
