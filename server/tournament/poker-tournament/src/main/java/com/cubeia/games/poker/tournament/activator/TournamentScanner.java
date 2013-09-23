@@ -159,8 +159,9 @@ public class TournamentScanner implements PokerActivator, Runnable {
         if (configuration != null) {
             ScheduledTournamentInstance instance = configuration.createInstanceWithStartTime(new DateTime(historicTournament.getScheduledStartTime()));
             ScheduledTournamentCreationParticipant participant = createParticipant(instance);
-            setResurrectionParameters(historicTournament, participant);
+            setResurrectionParameters(historicTournament, participant, configuration.getConfiguration().isArchived());
             factory.createMtt(context.getMttId(), configuration.getConfiguration().getName(), participant);
+
         } else {
             log.fatal("Cannot resurrect historic tournament " + historicTournament.getId() + " because no template with id "
                               + tournamentTemplateId + " could be found.");
@@ -176,7 +177,8 @@ public class TournamentScanner implements PokerActivator, Runnable {
         SitAndGoConfiguration configuration = tournamentScheduleProvider.getSitAndGoTournamentConfiguration(historicTournament.getTournamentTemplateId());
         if (configuration != null) {
             SitAndGoCreationParticipant participant = createParticipant(configuration);
-            setResurrectionParameters(historicTournament, participant);
+            setResurrectionParameters(historicTournament, participant,configuration.getConfiguration().isArchived());
+
             factory.createMtt(context.getMttId(), configuration.getConfiguration().getName(), participant);
         } else {
             log.fatal("Cannot resurrect historic tournament " + historicTournament.getId() + " because no template with id "
@@ -184,10 +186,11 @@ public class TournamentScanner implements PokerActivator, Runnable {
         }
     }
 
-    private void setResurrectionParameters(HistoricTournament historicTournament, PokerTournamentCreationParticipant participant) {
+    private void setResurrectionParameters(HistoricTournament historicTournament, PokerTournamentCreationParticipant participant,boolean shouldCancel) {
         participant.setResurrectingPlayers(historicTournament.getRegisteredPlayers());
         participant.setHistoricId(historicTournament.getId());
         participant.setTournamentSessionId(historicTournament.getTournamentSessionId());
+        participant.setShouldCancelResurrectingTournament(shouldCancel);
     }
 
     public void setMttFactory(MttFactory factory) {
