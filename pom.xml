@@ -37,7 +37,7 @@
     <properties>
         <firebase.version>1.9.19</firebase.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <cubeia.network.version>1.4.0-RC2-SNAPSHOT</cubeia.network.version>
+        <cubeia.network.version>1.5.1-SNAPSHOT</cubeia.network.version>
         <jetty-version>8.1.4.v20120524</jetty-version> 
     </properties>
 
