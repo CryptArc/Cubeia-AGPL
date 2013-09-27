@@ -151,10 +151,12 @@ public class EditUser extends BasePage {
             "gender", 
             cpm.<Gender>bind("user.userInformation.gender"), 
             Arrays.asList(Gender.values())));
-        userForm.add(createAttributesListView());
         add(userForm);
         
         
+        
+        
+        add(createAttributesListView());
         Form<?> addAttributeForm = new Form<Void>("addAttrForm") {
             private static final long serialVersionUID = 1L;
 
@@ -173,7 +175,11 @@ public class EditUser extends BasePage {
         addAttributeForm.add(new SubmitLink("addAttrLink").add(new Label("addAttrLabel", "Add attribute")));
         addAttributeForm.add(new TextField<String>("newAttrKey", cpm.<String>bind("newAttributeKey")));
         addAttributeForm.add(new TextField<String>("newAttrValue", cpm.<String>bind("newAttributeValue")));
-        userForm.add(addAttributeForm);
+        add(addAttributeForm);
+        
+        
+        
+        
         
         Form<?> pwdForm = new Form<Void>("changePasswordForm") {
             private static final long serialVersionUID = 1L;
