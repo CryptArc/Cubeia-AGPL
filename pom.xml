@@ -55,8 +55,24 @@
     </dependencies>
 
     <dependencyManagement>
-
         <dependencies>
+        
+            <dependency>
+                <groupId>com.cubeia.network</groupId>
+                <artifactId>backoffice-shared-web</artifactId>
+                <version>${cubeia.network.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.cubeia.network.users</groupId>
+                <artifactId>user-client</artifactId>
+                <version>${cubeia.network.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.cubeia.network.operator</groupId>
+                <artifactId>operator-client</artifactId>
+                <version>${cubeia.network.version}</version>
+            </dependency>
+        
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
