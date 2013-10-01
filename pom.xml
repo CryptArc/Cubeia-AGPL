@@ -58,6 +58,26 @@
         <dependencies>
         
             <dependency>
+                <groupId>com.cubeia.network.users</groupId>
+                <artifactId>user-service-rest</artifactId>
+                <version>${cubeia.network.version}</version>
+                <type>war</type>
+            </dependency>
+            <dependency>
+                <groupId>com.cubeia.network.wallet</groupId>
+                <artifactId>wallet-service-rest</artifactId>
+                <version>${cubeia.network.version}</version>
+                <type>war</type>
+            </dependency>
+            <dependency>
+                <groupId>com.cubeia.network.operator</groupId>
+                <artifactId>operator-service-rest</artifactId>
+                <version>${cubeia.network.version}</version>
+                <type>war</type>
+            </dependency>
+        
+        
+            <dependency>
                 <groupId>com.cubeia.network</groupId>
                 <artifactId>backoffice-shared-web</artifactId>
                 <version>${cubeia.network.version}</version>
@@ -65,6 +85,11 @@
             <dependency>
                 <groupId>com.cubeia.network.users</groupId>
                 <artifactId>user-client</artifactId>
+                <version>${cubeia.network.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.cubeia.network.wallet</groupId>
+                <artifactId>wallet-client</artifactId>
                 <version>${cubeia.network.version}</version>
             </dependency>
             <dependency>

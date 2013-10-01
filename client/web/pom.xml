@@ -359,7 +359,6 @@
         <dependency>
             <groupId>com.cubeia.network.operator</groupId>
             <artifactId>operator-client</artifactId>
-            <version>1.4.0-RC2-SNAPSHOT</version>
         </dependency>
 
         <dependency>
