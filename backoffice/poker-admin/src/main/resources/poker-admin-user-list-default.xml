@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<users>
+    <user userName="admin" password="admin"><role>ROLE_ADMIN</role></user>
+    <user userName="root" password="root"><role>ROLE_ADMIN</role></user>
+    <user userName="sysop" password="sysop"><role>ROLE_ADMIN</role></user>
+    
+    <user userName="user" password="user"><role>ROLE_USER</role></user>
+    <user userName="user2" password="user2"><role>ROLE_USER</role></user>
+</users>

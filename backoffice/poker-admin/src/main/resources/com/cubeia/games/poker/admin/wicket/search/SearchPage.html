@@ -1,0 +1,131 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+<head>
+<script language="JavaScript" src="/service/charts/FusionCharts.js"></script>
+</head>
+<body>
+	<wicket:extend>
+
+		
+		
+        <div class="row-fluid">
+          <div class="span12">
+            <p>
+            <form id="searchForm" class="form-search" wicket:id="searchForm">
+              <input wicket:id="searchInput" type="text" placeholder="search..." class="input-medium search-query span6"></input>
+              <button wicket:id="searchButton" class="btn btn-primary"><i class="icon-search icon-white"></i></button>
+              
+              <p>
+                <span wicket:id="feedback"></span>
+              </p>
+            </form>
+            </p>
+          </div>
+        </div>
+
+
+        <a id="showTemplates" href="#">show search templates</a>
+        <a id="hideTemplates" href="#" style="display:none;">hide search templates</a>
+
+        <div id="templatesContainer" class="row-fluid" style="display:none;">
+          <div class="span12">
+            <h5>Search templates</h5>
+          
+            <p>
+                <form class="form-inline" 
+                	data-template="_type:transaction AND adminUser AND {userName} _sort:timestamp,desc">
+                  Transactions made by an administrator <input type="text" placeholder="admin username" data-key="userName"></input>
+                  <button type="button" class="btn"><i class="icon-search"></i></button>  
+                </form>
+            </p>
+            <p>
+                <form class="form-inline" 
+                	data-template="_type:transaction AND adminUser AND {userName} AND transaction.attributesAsStrings.adminIp:{ipAddress} _sort:timestamp,desc">
+                  Transactions made by an administrator from ip address 
+                  <input type="text" placeholder="admin username" data-key="userName"></input>
+                  <input type="text" placeholder="ip address" data-key="ipAddress"></input>
+                  <button type="button" class="btn"><i class="icon-search"></i></button>  
+                </form>
+            </p>
+            <p>
+                <form class="form-inline" data-template="_type:account AND account.type:SYSTEM_ACCOUNT AND account.currencyCode:{currencyCode}">
+                  System accounts for currency <input type="text" placeholder="currency code" data-key="currencyCode"></input>
+                  <button type="button" class="btn"><i class="icon-search"></i></button>  
+                </form>
+            </p>
+          </div>
+        </div>
+
+        <hr/>
+    
+      <div class="row-fluid">
+        <p>
+          <span wicket:id="resultsCount"></span>
+        </p>
+      </div>
+    
+      <div wicket:id="resultsContainer" class="row-fluid">
+        <div class="span12">
+    
+          <span wicket:id="navigator">[dataview navigator]</span>
+          <table class="table table-striped">
+            <tr wicket:id="searchResult">
+              <td >
+                <span wicket:id="value"></span>
+              </td>
+            </tr>
+          </table>         
+          <span wicket:id="navigator2">[dataview navigator]</span>
+
+        </div>
+      </div>
+
+      <script>
+        /* search template panel show/hide */
+      	$("#showTemplates").click(function() {
+      		$("#hideTemplates").show();
+      		$("#templatesContainer").slideDown();
+      		$("#showTemplates").hide();
+      	});
+      
+      	$("#hideTemplates").click(function() {
+      		$("#hideTemplates").hide();
+      		$("#templatesContainer").slideUp();
+      		$("#showTemplates").show();
+      	});
+      	
+      	
+      	/* search templates */
+      	$("#templatesContainer form").each(function() {
+      		var form = $(this);
+      		
+      		$(this).find("button").click(function() {
+	      		var template = form.data("template");
+            	$(form).find("input[type=text]").each(function() {
+            		var input = $(this);
+            		var key = input.data("key");
+            		var val = input.val().trim();
+            		val = val == "" ? "*" : val;
+            		
+            		template = template.replace("{" + key + "}", val);
+            	});
+            	  
+            	var searchForm = $("#searchForm");
+            	searchForm.find("input[type=text]").val(template);
+            	console.log("template: ", template);
+             	searchForm.find("button").trigger("click");
+      		});
+      	});
+      	
+      	/* make enter in template fields submit that form instead of main search form */
+      	$("#templatesContainer input[type=text]").keydown(function(e) {
+            if (e.keyCode == 13) {
+                $(this).closest("form").find("button").trigger("click");
+                e.preventDefault();
+            }
+        });     	
+      	
+      </script>
+
+	</wicket:extend>
+</body>
+</html>

@@ -1,0 +1,63 @@
+{
+    "id": 15,
+    "entries": [
+        {
+            "id": 27,
+            "account": {
+                "id": 1,
+                "userId": 1,
+                "walletId": null,
+                "name": null,
+                "status": "OPEN",
+                "type": "SYSTEM_ACCOUNT",
+                "created": 1378207490000,
+                "lastModified": null,
+                "closed": null,
+                "currencyCode": "EUR",
+                "fractionalDigits": 2,
+                "negativeBalanceAllowed": true,
+                "attributes": {}
+            },
+            "amount": -123456
+        },
+        {
+            "id": 28,
+            "account": {
+                "id": 3,
+                "userId": 200,
+                "walletId": null,
+                "name": null,
+                "status": "OPEN",
+                "type": "STATIC_ACCOUNT",
+                "created": 1378208769000,
+                "lastModified": null,
+                "closed": null,
+                "currencyCode": "EUR",
+                "fractionalDigits": 2,
+                "negativeBalanceAllowed": false,
+                "attributes": {}
+            },
+            "amount": 123456
+        }
+    ],
+    "timestamp": 1379331521215,
+    "comment": "test2",
+    "externalId": "tx123",
+    "attributes": {
+        "adminUser": {
+            "id": 7,
+            "key": "adminUser",
+            "value": "admin"
+        },
+        "adminBrowser": {
+            "id": 8,
+            "key": "adminBrowser",
+            "value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.71 Safari/537.36"
+        },
+        "adminIp": {
+            "id": 9,
+            "key": "adminIp",
+            "value": "127.0.0.1"
+        }
+    }
+}
