@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-@AuthorizeInstantiation({"SUPER_USER", "WALLET_ADMIN"})
+@AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
 public class TransactionList extends BasePage {
     private static final long serialVersionUID = 1L;
 

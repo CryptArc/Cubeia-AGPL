@@ -10,9 +10,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.cubeia.games.poker.admin.wicket.util.ArchiveLinkPanel;
-import com.cubeia.poker.timing.TimingProfile;
 import org.apache.wicket.Component;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
@@ -28,15 +27,19 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import com.cubeia.games.poker.admin.db.AdminDAO;
 import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.games.poker.admin.wicket.util.DeleteLinkPanel;
+import com.cubeia.games.poker.admin.wicket.util.ArchiveLinkPanel;
 import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
+import com.cubeia.poker.timing.TimingProfile;
 
 /**
  * Page for listing all timing configurations.
  */
+@AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
 public class ListTimings extends BasePage {
 
-    @SpringBean(name = "adminDAO")
+	private static final long serialVersionUID = 1L;
+	
+	@SpringBean(name = "adminDAO")
     private AdminDAO adminDAO;
 
 
@@ -51,7 +54,9 @@ public class ListTimings extends BasePage {
         ArrayList<AbstractColumn<TimingProfile,String>> columns = new ArrayList<AbstractColumn<TimingProfile,String>>();
         columns.add(new AbstractColumn<TimingProfile,String>(new Model<String>("Id")) {
 
-            @Override
+			private static final long serialVersionUID = 1L;
+
+			@Override
             public void populateItem(Item<ICellPopulator<TimingProfile>> item, String componentId, IModel<TimingProfile> model) {
                 TimingProfile timing = model.getObject();
                 Component panel = new LabelLinkPanel(

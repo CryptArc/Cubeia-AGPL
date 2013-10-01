@@ -24,6 +24,7 @@ import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.games.poker.admin.wicket.pages.util.OddEvenRowsAttributeModifier;
 import com.cubeia.games.poker.admin.wicket.util.ExternalLinkPanel;
 import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
+
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -34,9 +35,11 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 import static com.cubeia.games.poker.admin.wicket.util.ParamBuilder.params;
@@ -44,8 +47,10 @@ import static org.apache.commons.httpclient.util.DateUtil.formatDate;
 
 /**
  */
-@AuthorizeInstantiation({"SUPER_USER", "WALLET_ADMIN"})
+@AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
 public class TransactionInfo extends BasePage {
+    public static final String PARAM_TX_ID = "transactionId";
+
     private static final long serialVersionUID = 1L;
     
     @SuppressWarnings("unused")
@@ -59,6 +64,26 @@ public class TransactionInfo extends BasePage {
     @SpringBean(name="transaction-attribute-link-props", required=false)
     private Map<String, String> transactionLinkTemplates;
     
+    @SuppressWarnings("serial")
+    private static class Attrib implements Serializable {
+        private String key;
+        private String value;
+        
+        public Attrib(String key, String value) {
+            super();
+            this.key = key;
+            this.value = value;
+        }
+        
+        public String getKey() {
+            return key;
+        }
+        public String getValue() {
+            return value;
+        }
+    }
+    
+    
     /**
 	 * Constructor that is invoked when page is invoked without a session.
 	 * 
@@ -68,7 +93,7 @@ public class TransactionInfo extends BasePage {
     @SuppressWarnings("serial")
     public TransactionInfo(PageParameters parameters) {
         super(parameters);
-        transactionId = parameters.get("transactionId").toLongObject();
+        transactionId = parameters.get(PARAM_TX_ID).toLongObject();
         Transaction tx = walletService.getTransactionById(transactionId);
 
         if (tx == null) {
@@ -81,17 +106,17 @@ public class TransactionInfo extends BasePage {
         add(new Label("timestamp", "" + formatDate(tx.getTimestamp())));
         add(new Label("comment", "" + tx.getComment()));
         
-        ArrayList<Map.Entry<String, String>> attribs;
+        List<Attrib> attribs = new ArrayList<Attrib>();
 
         if (tx.getAttributes() != null) {
-            attribs = new ArrayList<Map.Entry<String, String>>(tx.getAttributes().entrySet());
-        } else {
-            attribs = new ArrayList<Map.Entry<String,String>>();
+            for (Map.Entry<String, String> a : tx.getAttributes().entrySet()) {
+                attribs.add(new Attrib(a.getKey(), a.getValue()));
+            }
         }
 
-        ListView<Map.Entry<String, String>> attribList = new ListView<Map.Entry<String, String>>("attributeList", attribs) {
+        ListView<Attrib> attribList = new ListView<Attrib>("attributeList", attribs) {
             @Override
-            protected void populateItem(ListItem<Map.Entry<String, String>> item) {
+            protected void populateItem(ListItem<Attrib> item) {
                 String key = item.getModelObject().getKey();
                 String value = item.getModelObject().getValue();
                 item.add(new Label("key", Model.of(key)));
@@ -148,12 +173,12 @@ public class TransactionInfo extends BasePage {
     
     private void setInvalidTransactionResponsePage(final Long accountId) {
         PageParameters pageParams = new PageParameters();
-        pageParams.set("transactionId", accountId);
+        pageParams.set(PARAM_TX_ID, accountId);
         setResponsePage(InvalidTransaction.class, pageParams);
     }
 
     @Override
     public String getPageTitle() {
-        return "Transaction information: " + transactionId;
+        return "Transaction Information: " + transactionId;
     }
 }

@@ -49,6 +49,7 @@ public class EditTournament extends BasePage {
     private ScheduledTournamentConfiguration tournament;
     private RebuyConfigurationPanel rebuyConfigurationPanel;
     private final Model<Boolean> rebuysEnabled = Model.of(Boolean.FALSE);
+    private TournamentConfigurationPanel configPanel;
 
     public EditTournament(final PageParameters parameters) {
         super(parameters);
@@ -68,7 +69,8 @@ public class EditTournament extends BasePage {
             }
         };
 
-        tournamentForm.add(new TournamentConfigurationPanel("configuration", tournamentForm,new PropertyModel<TournamentConfiguration>(tournament, "configuration"), false));
+        configPanel = new TournamentConfigurationPanel("configuration", tournamentForm, new PropertyModel<TournamentConfiguration>(tournament, "configuration"), false);
+        tournamentForm.add(configPanel);
         tournamentForm.add(new DateField("startDate", new PropertyModel(this, "tournament.schedule.startDate")));
         tournamentForm.add(new DateField("endDate", new PropertyModel(this, "tournament.schedule.endDate")));
         tournamentForm.add(new RequiredTextField("schedule", new PropertyModel(this, "tournament.schedule.cronSchedule")));

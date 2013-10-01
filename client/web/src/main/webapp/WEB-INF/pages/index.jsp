@@ -33,6 +33,7 @@
     <script type="text/javascript" src="${cp}/js/lib/jquery.ui.touch-punch.js"></script>
     <script type="text/javascript" src="${cp}/js/base/jquery-plugins/touch-click.js"></script>
     <script type="text/javascript" src="${cp}/js/base/jquery-plugins/relative-offset.js"></script>
+    <script type="text/javascript" src="${cp}/js/lib/jquery.nicescroll.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/moment.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/purl.js"></script>
@@ -43,8 +44,8 @@
     <script type="text/javascript" src="${cp}/js/base/ui/CircularProgressBar.js"></script>
 
 
-    <script src="${cp}/js/lib/cubeia/firebase-js-api-1.9.17-javascript.js" type="text/javascript"></script>
-    <script src="${cp}/js/lib/cubeia/firebase-protocol-1.9.17-javascript.js" type="text/javascript"></script>
+    <script src="${cp}/js/lib/cubeia/firebase-js-api-1.9.19-javascript.js" type="text/javascript"></script>
+    <script src="${cp}/js/lib/cubeia/firebase-protocol-1.9.19-javascript.js" type="text/javascript"></script>
     <script src="${cp}/js/lib/poker-protocol-1.0-SNAPSHOT.js" type="text/javascript"></script>
     <script src="${cp}/js/lib/routing-service-protocol-1.0-SNAPSHOT.js" type="text/javascript"></script>
     <script src="${cp}/js/lib/quo.js" type="text/javascript"></script>
@@ -209,6 +210,11 @@
                 Poker.Utils.removeStoredUser();
             }
 
+            if(Poker.SkinConfiguration.onLoad) {
+                console.log("SkinConfig onLoad");
+                Poker.SkinConfiguration.onLoad();
+            }
+
             //less.watch(); //development only
             $(".describe").describe();
 
@@ -257,7 +263,7 @@
                 return moment(parseInt(date)).format("lll");
             });
             Handlebars.registerHelper('cardIcon',function(cardStr){
-                var res = cardStr.charAt(0).toUpperCase() + '<span class="suit-icon-'+cardStr.charAt(1)+'"></span>';
+                var res = '<span class="card-str">' + cardStr.charAt(0).toUpperCase()  + '</span><span class="suit-icon-'+cardStr.charAt(1)+'"></span>';
                 return new Handlebars.SafeString(res);
             });
 
@@ -287,6 +293,9 @@
     </div>
 
     <div class="toolbar-background"></div>
+
+
+
 
     <div class="main-menu-container" style="">
         <ul id="mainMenuList">
@@ -340,6 +349,158 @@
     <div class="view-container slidable">
         <div class="table-view-container" style="display:none;">
             <div class="multi-view-switch multi">
+            </div>
+            <div class="hand-ranking-icon"></div>
+            <div id="handRankingsView" class="rankings-view" style="display:none;">
+                <a id="closeHandRankings">Close</a>
+                <div class="scroll-container nice-scroll">
+                    <div class="hand">
+                        <div class="cards">
+                            <img src="${cp}/skins/${skin}/images/cards/as.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/ks.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/qs.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/js.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/ts.svg"/>
+                        </div>
+                        <div class="description">
+                            <h4 class="hand-name">1. Royal flush</h4>
+                            <p> Ace, King, Queen, Jack, Ten all of the same suit.</p>
+                        </div>
+                    </div>
+
+                    <div class="hand">
+
+                        <div class="cards">
+                            <img src="${cp}/skins/${skin}/images/cards/9s.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/8s.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/7s.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/6s.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/5s.svg"/>
+                        </div>
+                        <div class="description">
+                            <h4 class="hand-name">2. Straight flush</h4>
+                            <p>Any five card sequence in the same suit.</p>
+                        </div>
+
+                    </div>
+
+                    <div class="hand">
+
+                        <div class="cards">
+                            <img src="${cp}/skins/${skin}/images/cards/ks.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/kh.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/kc.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/kd.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/5s.svg"/>
+                        </div>
+                        <div class="description">
+                            <h4 class="hand-name">3. Four of a kind</h4>
+                            <p>Four cards of the same index.</p>
+                        </div>
+                    </div>
+
+                    <div class="hand">
+
+                        <div class="cards">
+                            <img src="${cp}/skins/${skin}/images/cards/qs.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/qh.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/qc.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/5d.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/5s.svg"/>
+                        </div>
+                        <div class="description">
+                            <h4 class="hand-name">4. Full house</h4>
+                            <p>Three of a kind combined with a pair</p>
+                        </div>
+                    </div>
+
+                    <div class="hand">
+
+                        <div class="cards">
+                            <img src="${cp}/skins/${skin}/images/cards/qh.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/8h.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/5h.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/3h.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/2h.svg"/>
+                        </div>
+                        <div class="description">
+                            <h4 class="hand-name">5. Flush</h4>
+                            <p>Five cards of the same suit</p>
+                        </div>
+                    </div>
+
+                    <div class="hand">
+
+                        <div class="cards">
+                            <img src="${cp}/skins/${skin}/images/cards/as.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/kd.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/qh.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/jc.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/ts.svg"/>
+                        </div>
+
+                        <div class="description">
+                            <h4 class="hand-name">6. Straight</h4>
+                            <p>Five cards in sequence</p>
+                        </div>
+                    </div>
+                    <div class="hand">
+
+                        <div class="cards">
+                            <img src="${cp}/skins/${skin}/images/cards/as.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/ad.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/ah.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/jc.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/ts.svg"/>
+                        </div>
+                        <div class="description">
+                            <h4 class="hand-name">7. Three of a kind</h4>
+                            <p>Three cards of the same index</p>
+                        </div>
+                    </div>
+
+                    <div class="hand">
+
+                        <div class="cards">
+                            <img src="${cp}/skins/${skin}/images/cards/as.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/ad.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/jh.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/jc.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/ts.svg"/>
+                        </div>
+                        <div class="description">
+                            <h4 class="hand-name">8. Two pair</h4>
+                        </div>
+                    </div>
+
+                    <div class="hand">
+
+                        <div class="cards">
+                            <img src="${cp}/skins/${skin}/images/cards/as.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/ad.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/9h.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/4c.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/3s.svg"/>
+                        </div>
+                        <div class="description">
+                            <h4 class="hand-name">9. Pair</h4>
+                        </div>
+                    </div>
+
+                    <div class="hand">
+
+                        <div class="cards">
+                            <img src="${cp}/skins/${skin}/images/cards/as.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/jd.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/9h.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/4c.svg"/>
+                            <img src="${cp}/skins/${skin}/images/cards/3s.svg"/>
+                        </div>
+                        <div class="description">
+                            <h4 class="hand-name">10. High Card</h4>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -717,9 +878,10 @@
         <div class="hand-history" style="display:none;">
             {{t "table.hand-history" }}
         </div>
+
         <div class="bottom-bar">
             <ul class="table-log-tabs">
-                <li class="show-log-tab active"><a>Log</a></li>
+                <li class="show-log-tab active"><a>Dealer</a></li>
                 <li class="show-chat-tab"><a>Chat</a></li>
             </ul>
             <div class="table-log-container">
@@ -1256,7 +1418,7 @@
 </script>
 
 <script type="text/mustache" id="playerActionLogTemplate" style="display:none;">
-   <div>{{name}} {{action}} {{#showAmount}} {{currency amount}} {{/showAmount}}</div>
+   <div>{{name}} {{action}} {{#showAmount}} {{amount}} {{/showAmount}}</div>
 </script>
 <script type="text/mustache" id="communityCardsLogTemplate" style="display:none;">
     <div>{{t "table-log.community-cards"}} {{#cards}}&nbsp;{{cardIcon cardString}}{{/cards}}</div>
@@ -1265,7 +1427,7 @@
     <div>{{player.name}} {{t "table-log.shows"}} {{#cards}}&nbsp;{{cardIcon cardString}}{{/cards}}</div>
 </script>
 <script type="text/mustache" id="playerHandStrengthLogTemplate" style="display:none;">
-    <div>{{player.name}} {{t "table-log.has"}} {{#hand}}&nbsp;{{text}}{{/hand}} ({{#cardStrings}}&nbsp;{{cardIcon .}}{{/cardStrings}}&nbsp;)</div>
+    <div>{{player.name}} {{t "table-log.has"}} {{#hand}}&nbsp;{{text}}{{/hand}} {{#cardStrings}}&nbsp;{{cardIcon .}}{{/cardStrings}}</div>
 </script>
 <script type="text/mustache" id="potTransferLogTemplate" style="display:none;">
     <div>{{player.name}} {{t "table-log.wins"}} {{amount}}</div>

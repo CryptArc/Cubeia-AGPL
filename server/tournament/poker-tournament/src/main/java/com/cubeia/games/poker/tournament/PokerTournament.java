@@ -1017,10 +1017,10 @@ public class PokerTournament implements TableNotifier, Serializable {
     private void reRegisterPlayers(Set<HistoricPlayer> resurrectingPlayers) {
         for (HistoricPlayer resurrectingPlayer : resurrectingPlayers) {
             reRegisterPlayer(resurrectingPlayer);
+            pokerState.addBuyInToPrizePool();
         }
         updatePayouts();
         pokerState.getResurrectingPlayers().clear();
-        pokerState.addBuyInToPrizePool();
     }
 
     private void reRegisterPlayer(HistoricPlayer resurrectingPlayer) {

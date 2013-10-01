@@ -25,7 +25,9 @@ import java.io.Serializable;
 
 public class TimingArchiver implements Archiver, Serializable {
 
-    private final TimingProfile profile;
+	private static final long serialVersionUID = 1L;
+	
+	private final TimingProfile profile;
 
     public TimingArchiver(TimingProfile profile) {
         this.profile = profile;

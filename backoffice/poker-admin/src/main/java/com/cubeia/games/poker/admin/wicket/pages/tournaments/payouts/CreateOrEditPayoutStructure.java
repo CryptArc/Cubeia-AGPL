@@ -22,6 +22,7 @@ import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
 import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructureParser;
 import org.apache.log4j.Logger;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
@@ -38,6 +39,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+@AuthorizeInstantiation({"ROLE_ADMIN"})
 public class CreateOrEditPayoutStructure extends BasePage {
 
     private static final Logger log = Logger.getLogger(CreateOrEditPayoutStructure.class);

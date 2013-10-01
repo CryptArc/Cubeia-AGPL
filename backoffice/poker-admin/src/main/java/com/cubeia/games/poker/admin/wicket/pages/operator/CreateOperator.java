@@ -19,6 +19,8 @@ package com.cubeia.games.poker.admin.wicket.pages.operator;
 import com.cubeia.backoffice.operator.api.OperatorDTO;
 import com.cubeia.backoffice.operator.client.OperatorServiceClient;
 import com.cubeia.games.poker.admin.wicket.BasePage;
+
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
@@ -26,6 +28,7 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
+@AuthorizeInstantiation({"ROLE_ADMIN"})
 public class CreateOperator extends BasePage {
 
     @SpringBean(name="operatorClient")

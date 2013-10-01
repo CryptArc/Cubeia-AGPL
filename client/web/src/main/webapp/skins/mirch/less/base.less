@@ -1,8 +1,7 @@
 @import "../../default/less/compatability.less";
 @import "../../cubeiaclassic/less/base.less";
 
-
-
+@import "hand-rankings.less";
 
 .logo-container {
     background-image: url("../images/lobby/poker-logo.png");
@@ -18,6 +17,56 @@
   background-position: center 35%;
 }
 
+.future-actions {
+    .future-action {
+        background:none;
+        input:checked + .checkbox-icon-label {
+            .default-btn;
+        }
+        .checkbox-icon-label {
+            vertical-align: top;
+            background-position: top;
+            display: inline-block;
+            clear: both;
+            padding: 0.5em;
+            .secondary-button;
+            span {
+                vertical-align: top;
+            }
+            &:hover {
+                color:@action-button-color;
+            }
+        }
+    }
+}
+.no-more-blinds, .sit-out-next-hand, .wait-for-big-blind  {
+    display:inline-block;
+    font-size:90¤;
+    input:checked + .checkbox-icon-label {
+        .default-btn;
+
+    }
+    .checkbox-icon-label {
+
+        display: inline-block;
+        clear: both;
+        padding: 0.5em;
+        .secondary-button;
+        vertical-align: top;
+
+        &:hover {
+            color:@action-button-color;
+        }
+    }
+}
+.hand-history {
+    top:74%;
+}
+.own-player {
+    top:-26%;
+    height: 21%;
+    font-size: 90%;
+}
 @media (max-width:480px){
   .logo-container {
       background-size: 100%;

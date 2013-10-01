@@ -20,6 +20,7 @@ package com.cubeia.games.poker.admin.wicket.pages.wallet;
 import com.cubeia.backoffice.wallet.api.dto.Entry;
 import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -33,6 +34,7 @@ import java.util.Comparator;
 
 import static com.cubeia.games.poker.admin.wicket.util.ParamBuilder.params;
 
+@AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
 public class EntriesPanel extends Panel {
     private static final long serialVersionUID = 1L;
 

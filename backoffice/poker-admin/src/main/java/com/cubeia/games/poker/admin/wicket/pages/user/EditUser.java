@@ -22,7 +22,15 @@ import com.cubeia.backoffice.users.api.dto.User;
 import com.cubeia.backoffice.users.api.dto.UserStatus;
 import com.cubeia.backoffice.users.client.UserServiceClient;
 import com.cubeia.games.poker.admin.wicket.BasePage;
+
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.*;
 import org.apache.wicket.markup.html.form.validation.EqualPasswordInputValidator;
@@ -46,7 +54,7 @@ import static com.cubeia.backoffice.users.api.dto.UserStatus.ENABLED;
 import static com.cubeia.games.poker.admin.wicket.util.ParamBuilder.params;
 /**
  */
-@AuthorizeInstantiation({"SUPER_USER", "USER_ADMIN"})
+@AuthorizeInstantiation({"ROLE_ADMIN"})
 public class EditUser extends BasePage {
     public static final String PARAM_USER_ID = "userId";
 
@@ -62,8 +70,6 @@ public class EditUser extends BasePage {
     private String password1;
     private String password2;
     
-    private String newAttributeKey;
-    private String newAttributeValue;
     
     /**
 	 * Constructor that is invoked when page is invoked without a session.
@@ -71,6 +77,7 @@ public class EditUser extends BasePage {
 	 * @param parameters
 	 *            Page parameters
 	 */
+    @SuppressWarnings("serial")
     public EditUser(PageParameters parameters) {
         super(parameters);
     	if (!assertValidUserid(parameters)) {
@@ -151,29 +158,59 @@ public class EditUser extends BasePage {
             "gender", 
             cpm.<Gender>bind("user.userInformation.gender"), 
             Arrays.asList(Gender.values())));
-        userForm.add(createAttributesListView());
         add(userForm);
         
         
-        Form<?> addAttributeForm = new Form<Void>("addAttrForm") {
-            private static final long serialVersionUID = 1L;
-
+        
+        
+        final WebMarkupContainer attribsContainer = new WebMarkupContainer("attributesContainer");
+        attribsContainer.setOutputMarkupId(true);
+        add(attribsContainer);
+        attribsContainer.add(createAttributesListView(attribsContainer));
+        
+        
+        Form<?> addAttributeForm = new Form<Void>("addAttrForm");
+        addAttributeForm.setOutputMarkupId(true);
+        final Model<String> newAttribKeyModel = new Model<String>();
+        final Model<String> newAttribValueModel = new Model<String>();
+        final FeedbackPanel addAttribFeedback = new FeedbackPanel("addAttrFeedback");
+        addAttribFeedback.setOutputMarkupId(true);
+        addAttributeForm.add(addAttribFeedback);
+        
+        addAttributeForm.add(new AjaxSubmitLink("addAttrLink", addAttributeForm) {
             @Override
-            protected void onSubmit() {
-            	if(user.getAttributes() == null) {
-            		user.setAttributes(new HashMap<String, String>());
-            	}
-            	if(getNewAttributeKey() != null) {
-            		user.getAttributes().put(""+getNewAttributeKey(), ""+getNewAttributeValue());
-            	}
-                setNewAttributeKey(null);
-                setNewAttributeValue(null);
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                super.onSubmit(target, form);
+                if(user.getAttributes() == null) {
+                    user.setAttributes(new HashMap<String, String>());
+                }
+                if(newAttribKeyModel.getObject() != null) {
+                    user.getAttributes().put(newAttribKeyModel.getObject(), newAttribValueModel.getObject());
+                    userService.updateUser(user);
+                    info("Added or updated attribute");
+                    newAttribKeyModel.setObject(null);
+                    newAttribValueModel.setObject(null);
+                }
+                target.add(attribsContainer);
+                target.add(addAttribFeedback);
+                target.add(form);
             }
-        };
-        addAttributeForm.add(new SubmitLink("addAttrLink").add(new Label("addAttrLabel", "Add attribute")));
-        addAttributeForm.add(new TextField<String>("newAttrKey", cpm.<String>bind("newAttributeKey")));
-        addAttributeForm.add(new TextField<String>("newAttrValue", cpm.<String>bind("newAttributeValue")));
-        userForm.add(addAttributeForm);
+            
+            @Override
+            protected void onError(AjaxRequestTarget target, Form<?> form) {
+                super.onError(target, form);
+                target.add(addAttribFeedback);
+            }
+            
+        });
+        addAttributeForm.add(new RequiredTextField<String>("newAttrKey", newAttribKeyModel).setLabel(Model.of("Attribute Key")));
+        addAttributeForm.add(new TextField<String>("newAttrValue", newAttribValueModel));
+        
+        add(addAttributeForm);
+        
+        
+        
+        
         
         Form<?> pwdForm = new Form<Void>("changePasswordForm") {
             private static final long serialVersionUID = 1L;
@@ -275,7 +312,7 @@ public class EditUser extends BasePage {
         return "Edit user: " + user.getUserName() + " (" + user.getUserId() + ")";
     }
     
-    private ListView<String[]> createAttributesListView() {
+    private ListView<String[]> createAttributesListView(final WebMarkupContainer attribsContainer) {
         Model<ArrayList<String[]>> attributeModel = new Model<ArrayList<String[]>>() {
             private static final long serialVersionUID = 1L;
             
@@ -299,32 +336,38 @@ public class EditUser extends BasePage {
         return new ListView<String[]>("attributes", attributeModel) {
             private static final long serialVersionUID = 1L;
 
-			@Override 
+			@SuppressWarnings({ "serial", "rawtypes" })
+            @Override 
 			protected void populateItem(ListItem<String[]> item) {
-				String[] keyValue = item.getModelObject();
-				if(keyValue[0] != null){
-					item.add(new Label("key", keyValue[0]));
-                	item.add(new TextField<String>("value", new PropertyModel<String>(EditUser.this, "user.attributes["+ keyValue[0] + "]")));
+				final String[] keyValue = item.getModelObject();
+				final String key = keyValue[0];
+                if(key != null){
+				    Form form = new Form("attribLineForm");
+				    item.add(form);
+				    
+				    form.add(new Label("key", key));
+				    final TextField<String> valueField = new TextField<String>("value", new PropertyModel<String>(EditUser.this, "user.attributes["+ key + "]"));
+                    form.add(valueField);
+                	
+				    form.add(new AjaxButton("saveAttributeButton") {
+				        protected void onSubmit(AjaxRequestTarget target, org.apache.wicket.markup.html.form.Form<?> form) {
+                            user.getAttributes().put(key, valueField.getModelObject());
+                            userService.updateUser(user);
+                            target.add(attribsContainer);
+				        };
+                	});
+				    form.add(new AjaxButton("deleteAttributeButton") {
+                        @Override
+                        protected void onSubmit(AjaxRequestTarget target, org.apache.wicket.markup.html.form.Form<?> form) {
+                            user.getAttributes().remove(key);
+                            userService.updateUser(user);
+                            target.add(attribsContainer);
+                        }
+                    });
 				}
 			}	
         };
     }
 
-	public String getNewAttributeKey() {
-		return newAttributeKey;
-	}
-
-	public void setNewAttributeKey(String newAttributeKey) {
-		this.newAttributeKey = newAttributeKey;
-	}
-
-	public String getNewAttributeValue() {
-		return newAttributeValue;
-	}
-
-	public void setNewAttributeValue(String newAttributeValue) {
-		this.newAttributeValue = newAttributeValue;
-	}
-    
     
 }

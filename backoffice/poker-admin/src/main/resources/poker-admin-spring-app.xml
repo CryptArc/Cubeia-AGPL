@@ -31,7 +31,13 @@
     <bean id="webConfig" class="com.cubeia.games.poker.admin.Configuration">
         <property name="networkUrl" value="${network.bo-base-url}" />
         <property name="searchUrl" value="${network.search-base-url}" />
+        <property name="searchClusterName" value="${network.search-cluster-name}" />
+        <property name="userServiceUrl" value="${network.user-base-url}" />
+        <property name="walletServiceUrl" value="${network.wallet-base-url}" />
+        <property name="operatorServiceUrl" value="${network.operator-base-url}" />
+        <property name="backofficeUrl" value="${network.bo-base-url}" />
     </bean>
+    
 
     <bean id="adminDAO" class="com.cubeia.games.poker.admin.db.AbstractDAO">
       <property name="entityManagerFactory" ref="entityManagerFactory"/>
@@ -77,10 +83,6 @@
                <property name="databasePlatform" value="org.hibernate.dialect.MySQL5Dialect" />
            </bean>
         </property>
-    </bean>
-
-    <bean id="jndi.dataSource" class="org.springframework.jndi.JndiObjectFactoryBean" lazy-init="true">
-      <property name="jndiName" value="java:comp/env/jdbc/pokerDS" />
     </bean>
 
     <!-- Transaction manager -->

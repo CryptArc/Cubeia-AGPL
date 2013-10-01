@@ -12,7 +12,6 @@ Poker.BasicMenu = Class.extend({
     addItem : function(item,clickFunction) {
         var self = this;
         this.items.put(item,clickFunction);
-        console.log("find===",this.container.find(item));
         this.container.find(item).click(function(evt){
             self.selectItem(item);
         });
@@ -26,7 +25,6 @@ Poker.BasicMenu = Class.extend({
         this.container.show();
         this.container.find(".active").removeClass("active");
         var activeItem = this.container.find(item);
-        console.log("active item : ", activeItem);
         activeItem.addClass("active");
         this.container.find(".nav-active-item").html(activeItem.find("a").html());
     },

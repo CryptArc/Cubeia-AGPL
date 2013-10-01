@@ -7,6 +7,8 @@ package com.cubeia.games.poker.admin.wicket.pages.rakes;
 import com.cubeia.games.poker.admin.db.AdminDAO;
 import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.poker.settings.RakeSettings;
+
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -16,9 +18,12 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import java.math.BigDecimal;
 
+@AuthorizeInstantiation({"ROLE_ADMIN"})
 public class CreateRake extends BasePage {
 
-    @SpringBean(name="adminDAO")
+	private static final long serialVersionUID = 1L;
+
+	@SpringBean(name="adminDAO")
     private AdminDAO adminDAO;
 
     private RakeSettings rake;

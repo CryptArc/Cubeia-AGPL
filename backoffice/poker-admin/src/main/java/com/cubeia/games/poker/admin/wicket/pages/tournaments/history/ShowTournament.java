@@ -28,6 +28,7 @@ import com.cubeia.poker.tournament.history.api.PlayerPosition;
 import com.cubeia.poker.tournament.history.api.TournamentEvent;
 import org.apache.log4j.Logger;
 import org.apache.wicket.Component;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackDefaultDataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
@@ -49,6 +50,7 @@ import java.util.List;
 
 import static com.cubeia.games.poker.admin.wicket.util.ExternalLinkPanel.externalLinkForPlayer;
 
+@AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
 public class ShowTournament extends BasePage {
 
     private static final Logger log = Logger.getLogger(ShowTournament.class);

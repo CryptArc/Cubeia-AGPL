@@ -24,8 +24,11 @@ public class Configuration {
 
 	private String networkUrl;
 	private String searchUrl;
+	private String searchClusterName;
 	private String walletServiceUrl;
     private String operatorServiceUrl;
+    private String userServiceUrl;
+    private String backofficeUrl;
 
 	public void setWalletServiceUrl(String walletServiceUrl) {
 		this.walletServiceUrl = walletServiceUrl;
@@ -59,9 +62,35 @@ public class Configuration {
 		this.networkUrl = networkUrl;
 	}
 
+	public String getSearchClusterName() {
+		return searchClusterName;
+	}
+	
+	public void setSearchClusterName(String searchClusterName) {
+		this.searchClusterName = searchClusterName;
+	}
+	
+	public String getUserServiceUrl() {
+		return userServiceUrl;
+	}
+
+	public void setUserServiceUrl(String userServiceUrl) {
+		this.userServiceUrl = userServiceUrl;
+	}
+
+	public String getBackofficeUrl() {
+		return backofficeUrl;
+	}
+
+	public void setBackofficeUrl(String backofficeUrl) {
+		this.backofficeUrl = backofficeUrl;
+	}
+
 	@Override
 	public String toString() {
 		return "Configuration [networkUrl=" + networkUrl + ", searchUrl="
-				+ searchUrl + "]";
+				+ searchUrl + ", searchClusterName=" + searchClusterName
+				+ ", walletServiceUrl=" + walletServiceUrl
+				+ ", operatorServiceUrl=" + operatorServiceUrl + "]";
 	}
 }

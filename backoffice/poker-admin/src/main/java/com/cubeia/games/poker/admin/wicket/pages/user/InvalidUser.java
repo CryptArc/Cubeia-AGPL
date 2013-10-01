@@ -23,7 +23,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 @SuppressWarnings("serial")
-@AuthorizeInstantiation({"SUPER_USER", "USER_ADMIN"})
+@AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
 public class InvalidUser extends BasePage {
 	public static final String PARAM_USER_ID = "userId";
 	

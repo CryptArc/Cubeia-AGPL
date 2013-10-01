@@ -41,7 +41,7 @@ import com.cubeia.backoffice.wallet.api.dto.request.CreateAccountRequest;
 import com.cubeia.backoffice.wallet.client.WalletServiceClient;
 import com.cubeia.games.poker.admin.wicket.BasePage;
 
-@AuthorizeInstantiation({"SUPER_USER", "USER_ADMIN"})
+@AuthorizeInstantiation({"ROLE_ADMIN"})
 public class CreateAccount extends BasePage {
     private static final long serialVersionUID = 1L;
     

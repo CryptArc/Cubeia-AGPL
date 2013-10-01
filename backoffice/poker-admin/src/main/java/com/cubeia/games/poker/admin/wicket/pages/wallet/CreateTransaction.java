@@ -17,14 +17,10 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.wallet;
 
-import com.cubeia.backoffice.accounting.api.Money;
-import com.cubeia.backoffice.wallet.api.dto.Account;
-import com.cubeia.backoffice.wallet.api.dto.Currency;
-import com.cubeia.backoffice.wallet.api.dto.report.TransactionEntry;
-import com.cubeia.backoffice.wallet.api.dto.report.TransactionRequest;
-import com.cubeia.backoffice.wallet.api.dto.report.TransactionResult;
-import com.cubeia.backoffice.wallet.client.WalletServiceClient;
-import com.cubeia.games.poker.admin.wicket.BasePage;
+import java.math.BigDecimal;
+import java.util.Arrays;
+
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.ThrottlingSettings;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
@@ -42,10 +38,16 @@ import org.apache.wicket.util.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
+import com.cubeia.backoffice.accounting.api.Money;
+import com.cubeia.backoffice.wallet.api.dto.Account;
+import com.cubeia.backoffice.wallet.api.dto.Currency;
+import com.cubeia.backoffice.wallet.api.dto.report.TransactionEntry;
+import com.cubeia.backoffice.wallet.api.dto.report.TransactionRequest;
+import com.cubeia.backoffice.wallet.api.dto.report.TransactionResult;
+import com.cubeia.backoffice.wallet.client.WalletServiceClient;
+import com.cubeia.games.poker.admin.wicket.BasePage;
 
-@AuthorizeInstantiation({"SUPER_USER", "USER_ADMIN"})
+@AuthorizeInstantiation({"ROLE_ADMIN"})
 public class CreateTransaction extends BasePage {
     private static final long serialVersionUID = 1L;
     
@@ -65,7 +67,6 @@ public class CreateTransaction extends BasePage {
 //        resetFormData();
         final FeedbackPanel feedback = new FeedbackPanel("feedback");
         add(feedback);
-        
         
         @SuppressWarnings("unused")
         Form<Void> txForm = new Form<Void>("txForm") {
@@ -93,6 +94,8 @@ public class CreateTransaction extends BasePage {
                 TransactionRequest tx = new TransactionRequest();
                 tx.setComment(getComment());
                 
+                applyAdminAudit(tx);
+                
                 TransactionEntry fromEntry = new TransactionEntry(fromAccountId, new Money(currencyCode, currency.getFractionalDigits(), getAmount().negate()));
                 TransactionEntry toEntry = new TransactionEntry(toAccountId, new Money(currencyCode, currency.getFractionalDigits(), getAmount()));
                 tx.setEntries(Arrays.asList(fromEntry, toEntry));
@@ -104,6 +107,16 @@ public class CreateTransaction extends BasePage {
 
                 feedback.info("created transaction: " + txResponse.getTransactionId());
             }
+
+			private void applyAdminAudit(TransactionRequest tx) {
+				// make sure we are signed in
+				if (!isSignedIn()) {
+					throw new RuntimeException("You must be signed in to do that.");
+				}
+				tx.getAttributes().put("adminUser", getSignedInUsername());
+				tx.getAttributes().put("adminIp", getSignedInRemoteIPAddress());
+				tx.getAttributes().put("adminBrowser", getSignedInUserAgent());
+			}
             
             public Long getFromAccountId() {
                 return fromAccountId;
@@ -158,7 +171,10 @@ public class CreateTransaction extends BasePage {
         
         txForm.add(new RequiredTextField<BigDecimal>("amountField", txFormModel.<BigDecimal>bind("amount")));
         
-        txForm.add(new TextField<String>("commentField", txFormModel.<String>bind("comment")));
+        txForm.add(new RequiredTextField<String>("commentField", txFormModel.<String>bind("comment")));
+        
+        txForm.add(new Label("adminUsername", getSignedInUsername()));
+        txForm.add(new Label("adminIpAddress", getSignedInRemoteIPAddress()));
         
         add(txForm);        
     }
@@ -178,9 +194,14 @@ public class CreateTransaction extends BasePage {
         private AccountInfoLoader(Label infoLabel, RequiredTextField<Long> accountIdField) {
             this.accountInfoLabel = infoLabel;
             this.accountIdField = accountIdField;
-            //setThrottleDelay(Duration.seconds(0.5));
+        }
+        
+        @Override
+        public void onConfigure(Component c) {
+        	super.onConfigure(c);
             getAttributes().setThrottlingSettings(new ThrottlingSettings("test",Duration.seconds(0.5),true));
         }
+        
 
         @Override
         protected void onUpdate(AjaxRequestTarget target) {

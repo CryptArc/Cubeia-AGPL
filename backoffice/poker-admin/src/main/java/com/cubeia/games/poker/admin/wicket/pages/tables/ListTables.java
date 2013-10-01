@@ -23,6 +23,7 @@ import com.cubeia.games.poker.admin.wicket.util.DeleteLinkPanel;
 import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
 import com.cubeia.games.poker.entity.TableConfigTemplate;
 import org.apache.wicket.Component;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
@@ -45,6 +46,7 @@ import static com.cubeia.games.poker.admin.wicket.util.ParamBuilder.params;
 /**
  * Page for listing all tournaments. Currently lists sit&go tournaments.
  */
+@AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
 public class ListTables extends BasePage {
 
     private static final long serialVersionUID = 1L;

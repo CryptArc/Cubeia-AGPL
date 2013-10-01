@@ -52,6 +52,8 @@ public abstract class PokerTournamentCreationParticipant implements CreationPart
     private Timings timing = Timings.DEFAULT;
     private Set<HistoricPlayer> resurrectingPlayers = new HashSet<HistoricPlayer>();
     private boolean isResurrection = false;
+    //if the tournament should be canceled when resurrecte, for example when config have been archived
+    private boolean shouldCancelResurrectingTournament = false;
     private String historicId = null;
     private SystemTime dateFetcher;
     private String tournamentSessionId;
@@ -162,6 +164,7 @@ public abstract class PokerTournamentCreationParticipant implements CreationPart
         pokerState.setResurrectingTournament(isResurrection);
         log.debug("Tournament created " + pokerState.getHistoricId() + " is resurrection " + isResurrection);
         if (isResurrection) {
+            pokerState.setShouldCancel(shouldCancelResurrectingTournament);
             pokerState.setResurrectingPlayers(resurrectingPlayers);
             pokerState.setTournamentSessionId(new TournamentSessionId(tournamentSessionId));
             log.debug("Tournament session id: " + tournamentSessionId);
@@ -196,4 +199,12 @@ public abstract class PokerTournamentCreationParticipant implements CreationPart
     protected abstract String getType();
 
     protected abstract boolean isSitAndGo();
+
+    public boolean isShouldCancelResurrectingTournament() {
+        return shouldCancelResurrectingTournament;
+    }
+
+    public void setShouldCancelResurrectingTournament(boolean shouldCancelResurrectingTournament) {
+        this.shouldCancelResurrectingTournament = shouldCancelResurrectingTournament;
+    }
 }

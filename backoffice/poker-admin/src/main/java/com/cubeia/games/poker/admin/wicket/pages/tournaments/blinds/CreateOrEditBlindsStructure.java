@@ -24,6 +24,8 @@ import com.cubeia.games.poker.tournament.configuration.blinds.Level;
 import com.cubeia.network.shared.web.wicket.list.EditableListItem;
 import com.cubeia.network.shared.web.wicket.list.ListEditor;
 import com.cubeia.network.shared.web.wicket.list.RemoveButton;
+
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
@@ -43,6 +45,7 @@ import java.util.Iterator;
 
 import static com.cubeia.games.poker.admin.wicket.util.WicketHelpers.isEmpty;
 
+@AuthorizeInstantiation({"ROLE_ADMIN"})
 public class CreateOrEditBlindsStructure extends BasePage {
 
     @SpringBean(name = "adminDAO")

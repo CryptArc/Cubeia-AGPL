@@ -20,10 +20,13 @@ package com.cubeia.games.poker.admin.wicket.pages.tables;
 import com.cubeia.games.poker.admin.db.AdminDAO;
 import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.games.poker.entity.TableConfigTemplate;
+
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
+@AuthorizeInstantiation({"ROLE_ADMIN"})
 public class EditTable extends BasePage {
 
     private static final long serialVersionUID = 6896786450236805072L;

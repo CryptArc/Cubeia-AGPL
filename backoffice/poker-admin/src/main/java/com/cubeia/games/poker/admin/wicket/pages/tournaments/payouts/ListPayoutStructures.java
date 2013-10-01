@@ -24,6 +24,7 @@ import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
 import com.cubeia.games.poker.admin.wicket.util.ParamBuilder;
 import com.cubeia.games.poker.tournament.configuration.payouts.PayoutStructure;
 import org.apache.wicket.Component;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
@@ -40,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+@AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
 public class ListPayoutStructures extends BasePage {
 
     @SpringBean(name = "adminDAO")

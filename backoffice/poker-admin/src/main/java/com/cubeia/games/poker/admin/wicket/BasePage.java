@@ -17,26 +17,71 @@
 
 package com.cubeia.games.poker.admin.wicket;
 
-import com.cubeia.network.shared.web.wicket.navigation.Breadcrumbs;
-import com.cubeia.network.shared.web.wicket.navigation.MenuPanel;
+import org.apache.wicket.Session;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+
+import com.cubeia.games.poker.admin.wicket.search.SearchPage;
+import com.cubeia.network.shared.web.wicket.navigation.Breadcrumbs;
+import com.cubeia.network.shared.web.wicket.navigation.MenuPanel;
 
 public abstract class BasePage extends WebPage {
 
     private static final long serialVersionUID = -913606276144395037L;
 
+    public BasePage() {
+        this(null);
+    }
+    
+    @SuppressWarnings("serial")
     public BasePage(PageParameters p) {
         add(new MenuPanel("menuPanel", SiteMap.getPages(), this.getClass()));
         add(new Breadcrumbs("breadcrumb", SiteMap.getPages(), this.getClass()));
         // defer setting the title model object as the title may not be generated now
         add(new Label("title", new Model<String>()));
+        setLoggedInUsername();
+        
+        
+        final TextField<String> searchField = new TextField<String>("globalSearchInput", new Model<String>());
+        Form<Void> searchForm = new Form<Void>("globalSearchForm") {
+            @Override
+            protected void onSubmit() {
+                super.onSubmit();
+                setResponsePage(SearchPage.class, new PageParameters().add(SearchPage.PARAM_QUERY, searchField.getModelObject()));
+            }
+        };
+        add(searchForm);
+        searchForm.add(searchField);
     }
 
+	private void setLoggedInUsername() {
+		if (isSignedIn()) {
+        	add(new Label("username", getSignedInUsername()));
+        } else {
+        	add(new Label("username", "Not logged in"));
+        }
+	}
+
+	/**
+	 * 
+	 * @return SecureWicketAuthenticatedWebSession or null if not applicable
+	 */
+	public SecureWicketAuthenticatedWebSession getSecureWebSession() {
+		WebSession session = (WebSession)Session.get();
+        if (session instanceof SecureWicketAuthenticatedWebSession) {
+			return (SecureWicketAuthenticatedWebSession) session;
+		} else {
+        	return null;
+        }
+	}
+	
     @Override
     protected void onBeforeRender() {
         super.onBeforeRender();
@@ -50,4 +95,46 @@ public abstract class BasePage extends WebPage {
     }
 
     public abstract String getPageTitle();
+    
+    public boolean isSignedIn() {
+		SecureWicketAuthenticatedWebSession session = getSecureWebSession();
+		if (session != null && session.isSignedIn()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * @return Signed in username or null if not signed in.
+	 */
+	public String getSignedInUsername() {
+		if (isSignedIn()) {
+        	return getSecureWebSession().getUsername();
+        } else {
+        	return null;
+        }
+    }
+	
+	/**
+	 * @return Signed in remote ip address as String or null if not signed in.
+	 */
+	public String getSignedInRemoteIPAddress() {
+		if (isSignedIn()) {
+        	return getSecureWebSession().getClientInfo().getProperties().getRemoteAddress();
+        } else {
+        	return null;
+        }
+	}
+	
+	/**
+	 * @return Signed in remote ip address as String or null if not signed in.
+	 */
+	public String getSignedInUserAgent() {
+		if (isSignedIn()) {
+        	return getSecureWebSession().getClientInfo().getUserAgent();
+        } else {
+        	return null;
+        }
+	}
 }
