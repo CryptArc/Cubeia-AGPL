@@ -26,7 +26,7 @@ import com.cubeia.jetty.JettyEmbed;
 public class OperatorEmbedService implements OperatorEmbedContract, Service {
 
     public static final int WAR_PORT = 9092;
-    public static final String WAR_FILE = "operator-service-rest-1.4.0-RC2-SNAPSHOT.war";
+    public static final String WAR_FILE = "operator-service-rest-1.5.0-SNAPSHOT.war";
     public static final String WAR_PATH = "/operator-service-rest";    
     
     private static final Logger log = Logger.getLogger(OperatorEmbedService.class);
