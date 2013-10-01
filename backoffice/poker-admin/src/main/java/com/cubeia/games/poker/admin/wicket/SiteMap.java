@@ -35,6 +35,7 @@ import com.cubeia.games.poker.admin.wicket.pages.user.EditUser;
 import com.cubeia.games.poker.admin.wicket.pages.user.UserList;
 import com.cubeia.games.poker.admin.wicket.pages.user.UserSummary;
 import com.cubeia.games.poker.admin.wicket.pages.wallet.*;
+import com.cubeia.games.poker.admin.wicket.search.SearchPage;
 import com.cubeia.network.shared.web.wicket.navigation.PageNode;
 
 import java.util.ArrayList;
@@ -51,6 +52,8 @@ public class SiteMap {
     static {
         add(pages, "Home", HomePage.class, "icon-home");
 
+        add(pages, "Search", SearchPage.class, "icon-search");
+        
         add(pages,"Hand History", HandHistory.class, "icon-signal",
                 node("Show Hand", ShowHand.class,false));
 
