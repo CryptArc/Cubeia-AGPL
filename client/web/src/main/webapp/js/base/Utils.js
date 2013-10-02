@@ -35,11 +35,12 @@ Poker.Utils = {
     },
     translateCurrencyCode: function(currencyCode) {
         var map = Poker.OperatorConfig.getCurrencyMap();
-        if (typeof(map[currencyCode]) !== "undefined") {
-            return map[currencyCode];
+        if(map.contains(currencyCode)){
+            return map.get(currencyCode).name;
         } else {
             return currencyCode;
         }
+
     },
     getCardString: function(gamecard) {
         var ranks = "23456789tjqka ";
