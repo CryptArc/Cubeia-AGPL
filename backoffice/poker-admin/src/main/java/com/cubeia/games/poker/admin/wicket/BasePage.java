@@ -22,10 +22,13 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
+import com.cubeia.games.poker.admin.wicket.search.SearchPage;
 import com.cubeia.network.shared.web.wicket.navigation.Breadcrumbs;
 import com.cubeia.network.shared.web.wicket.navigation.MenuPanel;
 
@@ -37,12 +40,25 @@ public abstract class BasePage extends WebPage {
         this(null);
     }
     
+    @SuppressWarnings("serial")
     public BasePage(PageParameters p) {
         add(new MenuPanel("menuPanel", SiteMap.getPages(), this.getClass()));
         add(new Breadcrumbs("breadcrumb", SiteMap.getPages(), this.getClass()));
         // defer setting the title model object as the title may not be generated now
         add(new Label("title", new Model<String>()));
         setLoggedInUsername();
+        
+        
+        final TextField<String> searchField = new TextField<String>("globalSearchInput", new Model<String>());
+        Form<Void> searchForm = new Form<Void>("globalSearchForm") {
+            @Override
+            protected void onSubmit() {
+                super.onSubmit();
+                setResponsePage(SearchPage.class, new PageParameters().add(SearchPage.PARAM_QUERY, searchField.getModelObject()));
+            }
+        };
+        add(searchForm);
+        searchForm.add(searchField);
     }
 
 	private void setLoggedInUsername() {

@@ -1,0 +1,31 @@
+{
+		"id": 5,
+		"userId": 50,
+		"walletId": null,
+		"name": "test",
+		"status": "OPEN",
+		"type": "STATIC_ACCOUNT",
+		"created": 1379335535922,
+		"lastModified": null,
+		"closed": null,
+		"currencyCode": "EUR",
+		"fractionalDigits": 2,
+		"negativeBalanceAllowed": true,
+		"attributes": {
+			"objectId": {
+				"id": 1,
+				"key": "objectId",
+				"value": "obj"
+			},
+			"gameId": {
+				"id": 2,
+				"key": "gameId",
+				"value": "g123"
+			},
+			"gameName": {
+				"id": 3,
+				"key": "gameName",
+				"value": "test game"
+			}
+		}
+	}

@@ -54,14 +54,16 @@ Poker.MainMenuManager = Class.extend({
     },
     toggle : function() {
         $(".view-container").toggleClass("no-overflow");
-        $(".view-port").toggleClass("no-overflow-x")
+        $(".view-port").toggleClass("no-overflow-x");
         $('.main-menu-container').toggleClass('visible');
         $(".view-container").toggleClass("slided");
         $(".menu-overlay").toggle();
-        $("#mainMenuList").find("li").removeClass("active");
+
         if(this.activeView!=null){
             this.activeView.deactivate();
         }
+
+        $("#mainMenuList").find("li").removeClass("active");
     }
 });
 

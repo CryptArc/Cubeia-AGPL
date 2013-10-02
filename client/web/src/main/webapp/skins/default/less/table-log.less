@@ -1,7 +1,7 @@
 ul.table-log-tabs {
     list-style-type:none;
     position:absolute;
-    top:0;
+    top:-5%;
     left:0;
     padding:0;
     li {
@@ -15,9 +15,9 @@ ul.table-log-tabs {
 .table-log-container {
     position: absolute;
     left:0;
-    top:20%;
-    width:30%;
-    height:65%;
+    top:15%;
+    width:35%;
+    height:75%;
     z-index:1000;
     .user-select(text);
 
@@ -56,7 +56,7 @@ ul.table-log-tabs {
         div {
             width:96%;
             padding:1% 2%;
-            font-size:80%;
+            font-size:100%;
             color:#333;
             &.hand-started {
                 background-color: #aaa;
@@ -84,8 +84,12 @@ ul.table-log-tabs {
 
     }
 }
+.card-str {
+    font-weight: bold;
+}
 .suit-icon-s, .suit-icon-h, .suit-icon-d, .suit-icon-c {
     display: inline-block;
+    background-position: center;
     background-size: 100%;
     background-repeat: no-repeat;
     width: 1em;

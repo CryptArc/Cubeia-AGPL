@@ -36,7 +36,7 @@
     <properties>
         <firebase.version>1.9.19</firebase.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <cubeia.network.version>1.4.0-RC2-SNAPSHOT</cubeia.network.version>
+        <cubeia.network.version>1.5.1-SNAPSHOT</cubeia.network.version>
         <jetty-version>8.1.4.v20120524</jetty-version> 
     </properties>
 
@@ -55,8 +55,49 @@
     </dependencies>
 
     <dependencyManagement>
-
         <dependencies>
+        
+            <dependency>
+                <groupId>com.cubeia.network.users</groupId>
+                <artifactId>user-service-rest</artifactId>
+                <version>${cubeia.network.version}</version>
+                <type>war</type>
+            </dependency>
+            <dependency>
+                <groupId>com.cubeia.network.wallet</groupId>
+                <artifactId>wallet-service-rest</artifactId>
+                <version>${cubeia.network.version}</version>
+                <type>war</type>
+            </dependency>
+            <dependency>
+                <groupId>com.cubeia.network.operator</groupId>
+                <artifactId>operator-service-rest</artifactId>
+                <version>${cubeia.network.version}</version>
+                <type>war</type>
+            </dependency>
+        
+        
+            <dependency>
+                <groupId>com.cubeia.network</groupId>
+                <artifactId>backoffice-shared-web</artifactId>
+                <version>${cubeia.network.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.cubeia.network.users</groupId>
+                <artifactId>user-client</artifactId>
+                <version>${cubeia.network.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.cubeia.network.wallet</groupId>
+                <artifactId>wallet-client</artifactId>
+                <version>${cubeia.network.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.cubeia.network.operator</groupId>
+                <artifactId>operator-client</artifactId>
+                <version>${cubeia.network.version}</version>
+            </dependency>
+        
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>

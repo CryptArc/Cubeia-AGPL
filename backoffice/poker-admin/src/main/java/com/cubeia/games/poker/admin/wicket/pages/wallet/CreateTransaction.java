@@ -20,6 +20,7 @@ package com.cubeia.games.poker.admin.wicket.pages.wallet;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.ThrottlingSettings;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
@@ -193,9 +194,14 @@ public class CreateTransaction extends BasePage {
         private AccountInfoLoader(Label infoLabel, RequiredTextField<Long> accountIdField) {
             this.accountInfoLabel = infoLabel;
             this.accountIdField = accountIdField;
-            //setThrottleDelay(Duration.seconds(0.5));
+        }
+        
+        @Override
+        public void onConfigure(Component c) {
+        	super.onConfigure(c);
             getAttributes().setThrottlingSettings(new ThrottlingSettings("test",Duration.seconds(0.5),true));
         }
+        
 
         @Override
         protected void onUpdate(AjaxRequestTarget target) {

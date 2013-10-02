@@ -33,17 +33,14 @@
         <dependency>
             <groupId>com.cubeia.network</groupId>
             <artifactId>backoffice-shared-web</artifactId>
-            <version>1.4.0-RC2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.cubeia.network.users</groupId>
             <artifactId>user-client</artifactId>
-            <version>1.4.0-RC2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.cubeia.network.operator</groupId>
             <artifactId>operator-client</artifactId>
-            <version>1.4.0-RC2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.cubeia.games</groupId>
@@ -162,12 +159,6 @@
         
         <dependency>
             <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-core</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-taglibs</artifactId>
             <version>${spring.version}</version>
         </dependency>
@@ -202,12 +193,6 @@
         
         <dependency>
             <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-taglibs</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-config</artifactId>
             <version>${spring.version}</version>
         </dependency>
@@ -230,12 +215,6 @@
         
         <dependency>
             <artifactId>spring-aop</artifactId>
-            <groupId>org.springframework</groupId>
-            <version>${spring.version}</version>
-        </dependency>
-        
-        <dependency>
-            <artifactId>spring-jdbc</artifactId>
             <groupId>org.springframework</groupId>
             <version>${spring.version}</version>
         </dependency>
@@ -305,33 +284,6 @@
             <version>1.4</version>
         </dependency>
 
-        <!-- WICKET DEPENDENCIES -->
-        <dependency>
-            <groupId>org.apache.wicket</groupId>
-            <artifactId>wicket-core</artifactId>
-            <version>${wicket.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.wicket</groupId>
-            <artifactId>wicket-extensions</artifactId>
-            <version>${wicket.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.wicket</groupId>
-            <artifactId>wicket-spring</artifactId>
-            <version>${wicket.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.wicket</groupId>
-            <artifactId>wicket-datetime</artifactId>
-            <version>${wicket.version}</version>
-        </dependency>
-		<dependency>
-		    <groupId>org.apache.wicket</groupId>
-		    <artifactId>wicket-auth-roles</artifactId>
-		    <version>${wicket.version}</version>
-		</dependency>
-
         <!-- Mongo -->
         <dependency>
             <groupId>org.springframework.data</groupId>
@@ -360,6 +312,12 @@
             <artifactId>wicket-datetime</artifactId>
             <version>${wicket.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.wicket</groupId>
+            <artifactId>wicket-auth-roles</artifactId>
+            <version>${wicket.version}</version>
+        </dependency>
+
 
         <!-- Hibernate -->
         <dependency>
@@ -411,7 +369,6 @@
         <dependency>
             <groupId>com.cubeia.network.wallet</groupId>
             <artifactId>wallet-client</artifactId>
-            <version>1.4.0-RC2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.cubeia.games.common</groupId>
@@ -471,6 +428,8 @@
                     <webAppConfig>
                         <contextPath>/poker-admin</contextPath>
                         <jettyEnvXml>${basedir}/src/test/resources/jetty-env.xml</jettyEnvXml>
+                        <!-- turn off scanning of WEB-INF/lib jars for servlet 3.0 annotations, takes a looong time... -->
+                        <webInfIncludeJarPattern>do_not_scan_web-inf_lib_because_it_is_sooooo_slooooow.jar</webInfIncludeJarPattern>
                     </webAppConfig>
                     <connectors>
                         <connector

@@ -70,7 +70,7 @@ public class TournamentConfiguration implements Serializable {
 
     private BetStrategyType betStrategy = NO_LIMIT;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private PayoutStructure payoutStructure;
 
     private String currency;

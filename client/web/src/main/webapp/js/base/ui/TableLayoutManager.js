@@ -114,6 +114,7 @@ Poker.TableLayoutManager = Class.extend({
         });
 
         $(".future-action").show();
+        this.updateVariant(com.cubeia.games.poker.io.protocol.VariantEnum.TEXAS_HOLDEM);
     },
 
     updateVariant : function(variant) {

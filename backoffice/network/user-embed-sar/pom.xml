@@ -39,7 +39,6 @@
             <groupId>com.cubeia.network.users</groupId>
             <artifactId>user-service-rest</artifactId>
             <type>war</type>
-            <version>1.4.0-RC2-SNAPSHOT</version>  
         </dependency>   
  
         <dependency>

@@ -145,40 +145,48 @@
                       <div class="form-actions">
                           <input type="submit" class="btn btn-primary" value="Save"/>
                       </div>
-
-                      <table class="table table-bordered table-striped">
-
-                          <tr>
-                              <td>
-                                  <strong>Attributes</strong>
-                              </td>
-                              <td>
-                              </td>
-                          </tr>
-
-                          <tr wicket:id="attributes">
-                              <td>
-                                  &nbsp;&nbsp;&nbsp;<span wicket:id="key" style="font-style: italic;"/>
-                              </td>
-                              <td>
-                                  <input wicket:id="value"/>
-                              </td>
-                          </tr>
-
-
-                      </table>
-                      <h5>Add new attributes</h5>
-                      <form wicket:id="addAttrForm">
-                          <input wicket:id="newAttrKey"/>&nbsp;<input wicket:id="newAttrValue"/>
-                          <a wicket:id="addAttrLink" class="btn"><span wicket:id="addAttrLabel"/></a>
-                      </form>
-
-                      <input type="submit" value="Save" class="btn btn-primary"/>
-
-
                   </form>
               </div>
           </div>
+          
+          
+          <div class="widget-box">
+              <div class="widget-title"><h5>User Attributes</h5></div>
+              <div class="widget-content">
+              
+                  <div wicket:id="attributesContainer" class="form-horizontal">
+                      <div wicket:id="attributes" class="control-group">
+                        <form wicket:id="attribLineForm">
+                          <label class="control-label" wicket:id="key">dummyAttributeKey</label>
+                          <div class="controls">
+	                          	<input wicket:id="value" type="text"/>
+	                          	
+	                          	<button wicket:id="saveAttributeButton" class="btn btn-primary">Save</button>
+	                          	<button wicket:id="deleteAttributeButton" class="btn btn-danger">Delete</button>
+                          </div>
+                        </form>
+                      </div>
+ 				  </div>              
+              
+              
+                  
+                  <h5>Add new attribute</h5>
+                  <form wicket:id="addAttrForm" class="form-inline">
+                      <input wicket:id="newAttrKey" type="text"/>
+                      <input wicket:id="newAttrValue" type="text"/>
+                      <a wicket:id="addAttrLink" class="btn">Add Attribute</a>
+                      <p>
+		                  <span wicket:id="addAttrFeedback"></span>
+		              </p>
+                  </form>
+
+              
+
+			  </div>
+		  </div>
+          
+          
+          
           <div class="widget-box">
               <div class="widget-title"><h5>Change Password</h5></div>
               <div class="widget-content">
