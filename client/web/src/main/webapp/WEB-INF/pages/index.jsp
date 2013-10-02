@@ -680,7 +680,7 @@
 </div>
 
 <script type="text/mustache" id="currencyFilterTemplate">
-    <li class="filter-button" id="filterButton{{id}}"><a>{{name}}</a></li>
+    <li class="filter-button" id="filterButton{{code}}"><a>{{longName}}</a></li>
 </script>
 <script type="text/mustache" id="playerCardTemplate" style="display: none;">
     <div id="playerCard-{{domId}}" class="player-card-container number-{{cardNum}}">
