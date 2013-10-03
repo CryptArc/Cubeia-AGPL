@@ -26,7 +26,7 @@ import com.cubeia.jetty.JettyEmbed;
 public class WarServerService implements WarServerContract, Service {
 
     public static final int WAR_PORT = 8181;
-    public static final String WAR_FILE = "poker-client.war";
+    public static final String WAR_FILE = "poker-client*.war";
     
     private static final Logger log = Logger.getLogger(WarServerService.class);  
         

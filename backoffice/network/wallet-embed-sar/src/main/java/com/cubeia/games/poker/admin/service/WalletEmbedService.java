@@ -26,7 +26,7 @@ import com.cubeia.jetty.JettyEmbed;
 public class WalletEmbedService implements WalletEmbedContract, Service {
 
     public static final int WAR_PORT = 9091;
-    public static final String WAR_FILE = "wallet-service-rest-1.5.0-SNAPSHOT.war";
+    public static final String WAR_FILE = "wallet-service-rest*.war";
     public static final String WAR_PATH = "/wallet-service-rest";        
     
     private static final Logger log = Logger.getLogger(WalletEmbedService.class);

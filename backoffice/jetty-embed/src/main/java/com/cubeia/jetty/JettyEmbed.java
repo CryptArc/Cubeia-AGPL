@@ -18,8 +18,10 @@
 package com.cubeia.jetty;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.net.URISyntaxException;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppClassLoader;
@@ -40,6 +42,13 @@ public class JettyEmbed  {
     }
     
     private static final Logger log = Logger.getLogger(JettyEmbed.class);
+    
+    public String finalFileName(String libDir) {
+        File dir = new File(libDir);
+        FileFilter fileFilter = new WildcardFileFilter(warFile);
+        File[] files = dir.listFiles(fileFilter);
+        return files[0].getName();
+    }
     
     /** 
      * Takes a relative to the cwd (current work dir, poker-uar) path and 
@@ -62,7 +71,8 @@ public class JettyEmbed  {
             sarRoot = "";
         }
         String libDir = FilenameUtils.concat(sarRoot, "META-INF/lib");
-        String warPath = FilenameUtils.concat(libDir, warFile);
+        String filename = this.finalFileName(libDir);
+        String warPath = FilenameUtils.concat(libDir, filename);
         log.debug("warPath : " + warPath);    
         return warPath;
     }
