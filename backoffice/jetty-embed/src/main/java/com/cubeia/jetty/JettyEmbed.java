@@ -47,6 +47,7 @@ public class JettyEmbed  {
         File dir = new File(libDir);
         FileFilter fileFilter = new WildcardFileFilter(warFile);
         File[] files = dir.listFiles(fileFilter);
+        log.debug("warFile : " + warFile + " - finalFileName: " + files[0].getName());
         return files[0].getName();
     }
     
