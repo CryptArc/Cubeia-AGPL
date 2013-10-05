@@ -33,15 +33,15 @@ public class JettyEmbed  {
     public final int port;
     public final String warFile;
     public final String warContextPath;
+    private static  Logger log;
 
     public JettyEmbed(Object caller, int port, String warFile, String warContextPath) {
         this.caller = caller;
         this.port = port;
         this.warFile = warFile;
-        this.warContextPath = warContextPath;   
+        this.warContextPath = warContextPath;
+        this.log =  Logger.getLogger(caller.getClass());
     }
-    
-    private static final Logger log = Logger.getLogger(JettyEmbed.class);
     
     public String finalFileName(String libDir) {
         File dir = new File(libDir);
@@ -90,7 +90,7 @@ public class JettyEmbed  {
 
         try {
             //http://wiki.eclipse.org/Jetty/Reference/Jetty_Classloading#Starting_Jetty_with_a_Custom_ClassLoader
-            webapp.setClassLoader(new WebAppClassLoader(this.getClass().getClassLoader(), webapp));
+            webapp.setClassLoader(new WebAppClassLoader(caller.getClass().getClassLoader(), webapp));
         }catch(Exception ex) {
             log.debug(ex, ex);
         }
