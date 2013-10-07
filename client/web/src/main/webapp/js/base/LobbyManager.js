@@ -294,25 +294,29 @@ Poker.RadioGroupFilter = Poker.Filter.extend({
     properties : null,
     prefix : null,
     currentFilter : null,
+    idProperty : "id",
 
-    init : function(group, lobbyLayoutManager, properties,prefix) {
+    init : function(group, lobbyLayoutManager, properties,prefix,idProperty) {
         var self = this;
         if(typeof(prefix)!="undefined") {
             this.prefix = prefix;
         } else {
             this.prefix = "filterButton";
         }
+        if(typeof(idProperty)!="undefined"){
+            this.idProperty = idProperty;
+        }
 
         this.radioGroup = group;
         this.lobbyLayoutManager = lobbyLayoutManager;
         this.properties = properties;
         var prefix = this.prefix;
-        this.currentFilter = group[0].id;
+        this.currentFilter = group[0][this.idProperty];
         $("#" + prefix + this.currentFilter).addClass("active");
         $.each(group,function(i,el){
-            $("#" + prefix + el.id).touchSafeClick(function(e){
+            $("#" + prefix + el[self.idProperty]).touchSafeClick(function(e){
                 self.deselectButtons();
-                self.currentFilter = el.id;
+                self.currentFilter = el[self.idProperty];
                 $(this).addClass("active");
                 self.filterUpdated();
             });
@@ -322,7 +326,7 @@ Poker.RadioGroupFilter = Poker.Filter.extend({
     deselectButtons : function() {
         var self = this;
         $.each(this.radioGroup, function(i,el){
-            $("#" + self.prefix + el.id).removeClass("active");
+            $("#" + self.prefix + el[self.idProperty]).removeClass("active");
         });
     },
     filter : function(lobbyData) {

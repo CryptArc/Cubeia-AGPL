@@ -99,7 +99,7 @@ Poker.LobbyLayoutManager = Class.extend({
             for(var i = 0; i<currencies.length; i++) {
                 $("#currencyMenu").append(t.render(currencies[i]));
             }
-            var currencyFilter = new Poker.RadioGroupFilter(currencies, this,["currencyCode","buyInCurrencyCode"]);
+            var currencyFilter = new Poker.RadioGroupFilter(currencies, this,["currencyCode","buyInCurrencyCode"],"filterButton","code");
             this.requiredFilters.push(currencyFilter);
         } else {
             $(".filter-group.currencies").hide();

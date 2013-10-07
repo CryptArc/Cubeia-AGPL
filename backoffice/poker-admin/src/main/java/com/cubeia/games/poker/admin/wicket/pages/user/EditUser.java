@@ -17,22 +17,29 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.user;
 
-import com.cubeia.backoffice.users.api.dto.Gender;
-import com.cubeia.backoffice.users.api.dto.User;
-import com.cubeia.backoffice.users.api.dto.UserStatus;
-import com.cubeia.backoffice.users.client.UserServiceClient;
-import com.cubeia.games.poker.admin.wicket.BasePage;
+import static com.cubeia.backoffice.users.api.dto.UserStatus.BLOCKED;
+import static com.cubeia.backoffice.users.api.dto.UserStatus.ENABLED;
+import static com.cubeia.games.poker.admin.wicket.util.ParamBuilder.params;
 
-import org.apache.wicket.Component;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Locale;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
-import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.*;
+import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.IChoiceRenderer;
+import org.apache.wicket.markup.html.form.PasswordTextField;
+import org.apache.wicket.markup.html.form.RequiredTextField;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.form.validation.EqualPasswordInputValidator;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -47,11 +54,11 @@ import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
-
-import static com.cubeia.backoffice.users.api.dto.UserStatus.BLOCKED;
-import static com.cubeia.backoffice.users.api.dto.UserStatus.ENABLED;
-import static com.cubeia.games.poker.admin.wicket.util.ParamBuilder.params;
+import com.cubeia.backoffice.users.api.dto.Gender;
+import com.cubeia.backoffice.users.api.dto.User;
+import com.cubeia.backoffice.users.api.dto.UserStatus;
+import com.cubeia.backoffice.users.client.UserServiceClient;
+import com.cubeia.games.poker.admin.wicket.BasePage;
 /**
  */
 @AuthorizeInstantiation({"ROLE_ADMIN"})
@@ -77,7 +84,6 @@ public class EditUser extends BasePage {
 	 * @param parameters
 	 *            Page parameters
 	 */
-    @SuppressWarnings("serial")
     public EditUser(PageParameters parameters) {
         super(parameters);
     	if (!assertValidUserid(parameters)) {
@@ -161,21 +167,52 @@ public class EditUser extends BasePage {
         add(userForm);
         
         
+        initializeAttributeEditor();
         
         
-        final WebMarkupContainer attribsContainer = new WebMarkupContainer("attributesContainer");
-        attribsContainer.setOutputMarkupId(true);
-        add(attribsContainer);
-        attribsContainer.add(createAttributesListView(attribsContainer));
+        Form<?> pwdForm = new Form<Void>("changePasswordForm") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onSubmit() {
+                userService.updatePassword(user.getUserId(), getPassword1());
+                setPassword1(null);
+                setPassword2(null);
+                info("Password updated");
+            }
+        };
+        PasswordTextField pwd1 = new PasswordTextField("password1", cpm.<String>bind("password1"));
+        PasswordTextField pwd2 = new PasswordTextField("password2", cpm.<String>bind("password2"));
+        pwdForm.add(new EqualPasswordInputValidator(pwd1, pwd2));
+        pwdForm.add(pwd1);
+        pwdForm.add(pwd2);
+        add(pwdForm);
         
+        
+        
+        add(new FeedbackPanel("feedback"));
+    }
+
+    @SuppressWarnings("serial")
+    private void initializeAttributeEditor() {
+        final WebMarkupContainer container = new WebMarkupContainer("attributeEditContainer");
+        container.setOutputMarkupId(true);
+        add(container);
+        
+        final FeedbackPanel attribFeedback = new FeedbackPanel("attrFeedback", new ContainerFeedbackMessageFilter(container));
+        attribFeedback.setOutputMarkupId(true);
+        container.add(attribFeedback);
+        
+        final WebMarkupContainer attributeListContainer = new WebMarkupContainer("attributeListContainer");
+        attributeListContainer.setOutputMarkupId(true);
+        container.add(attributeListContainer);
+        attributeListContainer.add(createAttributesListView(container, attribFeedback));
         
         Form<?> addAttributeForm = new Form<Void>("addAttrForm");
         addAttributeForm.setOutputMarkupId(true);
         final Model<String> newAttribKeyModel = new Model<String>();
         final Model<String> newAttribValueModel = new Model<String>();
-        final FeedbackPanel addAttribFeedback = new FeedbackPanel("addAttrFeedback");
-        addAttribFeedback.setOutputMarkupId(true);
-        addAttributeForm.add(addAttribFeedback);
+        
         
         addAttributeForm.add(new AjaxSubmitLink("addAttrLink", addAttributeForm) {
             @Override
@@ -191,47 +228,20 @@ public class EditUser extends BasePage {
                     newAttribKeyModel.setObject(null);
                     newAttribValueModel.setObject(null);
                 }
-                target.add(attribsContainer);
-                target.add(addAttribFeedback);
-                target.add(form);
+                target.add(container);
             }
             
             @Override
             protected void onError(AjaxRequestTarget target, Form<?> form) {
                 super.onError(target, form);
-                target.add(addAttribFeedback);
+                target.add(container);
             }
             
         });
         addAttributeForm.add(new RequiredTextField<String>("newAttrKey", newAttribKeyModel).setLabel(Model.of("Attribute Key")));
         addAttributeForm.add(new TextField<String>("newAttrValue", newAttribValueModel));
         
-        add(addAttributeForm);
-        
-        
-        
-        
-        
-        Form<?> pwdForm = new Form<Void>("changePasswordForm") {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onSubmit() {
-                userService.updatePassword(user.getUserId(), getPassword1());
-                setPassword1(null);
-                setPassword2(null);
-            }
-        };
-        PasswordTextField pwd1 = new PasswordTextField("password1", cpm.<String>bind("password1"));
-        PasswordTextField pwd2 = new PasswordTextField("password2", cpm.<String>bind("password2"));
-        pwdForm.add(new EqualPasswordInputValidator(pwd1, pwd2));
-        pwdForm.add(pwd1);
-        pwdForm.add(pwd2);
-        add(pwdForm);
-        
-        
-        
-        add(new FeedbackPanel("feedback"));
+        container.add(addAttributeForm);
     }
 
     private boolean assertValidUserid(PageParameters params) {
@@ -254,8 +264,10 @@ public class EditUser extends BasePage {
             @Override
             public void onClick() {
                 if ((user.getStatus() == ENABLED)) {
+                    info("User blocked");
                     userService.setUserStatus(userId, BLOCKED);
                 } else if ((user.getStatus() == BLOCKED)) {
+                    info("User unblocked");
                     userService.setUserStatus(userId, ENABLED);
                 }
                 
@@ -312,7 +324,7 @@ public class EditUser extends BasePage {
         return "Edit user: " + user.getUserName() + " (" + user.getUserId() + ")";
     }
     
-    private ListView<String[]> createAttributesListView(final WebMarkupContainer attribsContainer) {
+    private ListView<String[]> createAttributesListView(final WebMarkupContainer container, final FeedbackPanel attribFeedback) {
         Model<ArrayList<String[]>> attributeModel = new Model<ArrayList<String[]>>() {
             private static final long serialVersionUID = 1L;
             
@@ -353,7 +365,8 @@ public class EditUser extends BasePage {
 				        protected void onSubmit(AjaxRequestTarget target, org.apache.wicket.markup.html.form.Form<?> form) {
                             user.getAttributes().put(key, valueField.getModelObject());
                             userService.updateUser(user);
-                            target.add(attribsContainer);
+                            container.info("Attribute updated");
+                            target.add(container);
 				        };
                 	});
 				    form.add(new AjaxButton("deleteAttributeButton") {
@@ -361,7 +374,8 @@ public class EditUser extends BasePage {
                         protected void onSubmit(AjaxRequestTarget target, org.apache.wicket.markup.html.form.Form<?> form) {
                             user.getAttributes().remove(key);
                             userService.updateUser(user);
-                            target.add(attribsContainer);
+                            container.info("Attribute deleted");
+                            target.add(container);
                         }
                     });
 				}

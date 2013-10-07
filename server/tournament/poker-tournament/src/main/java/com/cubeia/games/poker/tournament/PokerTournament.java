@@ -927,7 +927,11 @@ public class PokerTournament implements TableNotifier, Serializable {
 
     public MttRegisterResponse checkRegistration(MttRegistrationRequest request) {
         log.info("Checking if " + request + " is allowed to register.");
-        
+
+
+        if(pokerState.getPlayerSession(request.getPlayer().getPlayerId())!=null) {
+            return MttRegisterResponse.DENIED_ALREADY_REGISTERED;
+        }
         if (instance.getState().getCapacity() <= instance.getState().getRegisteredPlayersCount()) {
         	return MttRegisterResponse.DENIED; 
         }

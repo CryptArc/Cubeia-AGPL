@@ -168,9 +168,35 @@ Poker.AppCtx = Class.extend({
         Handlebars.registerHelper('translateCurrencyCode',function(currencyCode){
             return Poker.Utils.translateCurrencyCode(currencyCode);
         });
-
+        Handlebars.registerHelper("currencySymbol",function(amount,code){
+            return new Handlebars.SafeString(Poker.Utils.formatWithSymbol(amount,code));
+        });
+        Handlebars.registerHelper("currencyAmountSymbol",function(amount,code){
+            return new Handlebars.SafeString(Poker.Utils.formatWithSymbol(Poker.Utils.formatCurrency(amount),code));
+        });
+        Handlebars.registerHelper("currencyMultiple",function(amount1,amount2,separator,code){
+            return new Handlebars.SafeString(Poker.Utils.formatMultipleAmounts(amount1,amount2,separator,code));
+        });
         Handlebars.registerHelper('currency',function(amount){
             return Poker.Utils.formatCurrency(amount);
+        });
+
+        Handlebars.registerHelper('t', function(i18n_key) {
+            var result = i18n.t(i18n_key);
+            return new Handlebars.SafeString(result);
+        });
+
+        Handlebars.registerHelper('fromNow',function(date){
+            return moment(parseInt(date)).fromNow();
+        });
+
+        Handlebars.registerHelper('date', function(date) {
+            return moment(parseInt(date)).format("lll");
+        });
+
+        Handlebars.registerHelper('cardIcon',function(cardStr){
+            var res = '<span class="card-str">' + cardStr.charAt(0).toUpperCase()  + '</span><span class="suit-icon-'+cardStr.charAt(1)+'"></span>';
+            return new Handlebars.SafeString(res);
         });
 
         var playerApi = new Poker.PlayerApi(settings.playerApiBaseUrl);

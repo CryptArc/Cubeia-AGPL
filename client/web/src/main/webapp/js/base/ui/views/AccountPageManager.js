@@ -135,7 +135,7 @@ Poker.AccountPageManager = Class.extend({
         var parameters = "";
         for (var i = 0; i < currencies.length; i++) {
             var currency = currencies[i];
-            parameters += "&" + currency.id + "=" + currency.name;
+            parameters += "&" + currency.code + "=" + currency.name;
         }
         return parameters;
     },

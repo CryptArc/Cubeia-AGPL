@@ -26,20 +26,23 @@ Poker.OperatorConfig = Class.extend({
         return this.populated;
     },
     createCurrencyMap: function(currencyParam) {
-        this.currencyMap = [];
-        this.enabledCurrencies = [];
-        var currencies = currencyParam.split(",");
-        for (var i = 0; i < currencies.length; i++) {
-            var keyValuePair = currencies[i].split("=");
-            this.currencyMap[keyValuePair[0]] = keyValuePair[1];
-            this.enabledCurrencies.push({id : keyValuePair[0], name : keyValuePair[1]});
+        this.currencyMap = new Poker.Map();
+        if(typeof(currencyParam)!="undefined" && currencyParam!=null) {
+            currencyParam = $.trim(currencyParam);
+            if(currencyParam.length>0) {
+                var currencies = JSON.parse(currencyParam);
+                for(var i = 0; i<currencies.length; i++) {
+                    this.currencyMap.put(currencies[i].code,currencies[i]);
+                }
+            }
+
         }
     },
     populate : function(params) {
         for(var p in params) {
           this.configMap.put(p,params[p]);
         }
-        this.createCurrencyMap(this.getValue("CURRENCIES",""));
+        this.createCurrencyMap(this.getValue("CURRENCIES",''));
         this.populated = true;
     },
     getLogoutUrl : function() {
@@ -62,7 +65,7 @@ Poker.OperatorConfig = Class.extend({
         return this.getValue("SHARE_URL", null);
     },
     getEnabledCurrencies : function() {
-        return this.enabledCurrencies;
+        return this.currencyMap.values();
     },
     getCurrencyMap : function() {
         return this.currencyMap;

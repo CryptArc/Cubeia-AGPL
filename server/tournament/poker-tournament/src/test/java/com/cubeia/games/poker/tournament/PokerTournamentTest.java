@@ -66,6 +66,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -173,6 +174,7 @@ public class PokerTournamentTest {
         when(instance.getState().getRegisteredPlayersCount()).thenReturn(0);
         when(state.getSeats()).thenReturn(10);
         when(state.getPlayerRegistry()).thenReturn(playerRegistry);
+
     }
 
     @Test
@@ -275,6 +277,29 @@ public class PokerTournamentTest {
     	pokerState.setStatus(PokerTournamentStatus.REGISTERING);
     	MttRegisterResponse resp = tournament.checkRegistration(new MttRegistrationRequest(new MttPlayer(1), null));
     	Assert.assertEquals(MttRegisterResponse.ALLOWED, resp);
+    }
+
+    @Test
+    public void denyPlayerAlreadyRegistered() {
+        prepareTournamentWithMockLifecycle();
+        when(playerRegistry.getPlayers()).thenReturn(Arrays.asList(new MttPlayer(1,"name")));
+        User user = mock(User.class);
+
+        when(user.getOperatorId()).thenReturn(666L); // Tournament public, the operator ID shouldn't matter
+        when(userService.getUserById(anyInt())).thenReturn(user);
+        pokerState.setStatus(PokerTournamentStatus.REGISTERING);
+
+        MttRegisterResponse resp = tournament.checkRegistration(new MttRegistrationRequest(new MttPlayer(1), null));
+        Assert.assertEquals(MttRegisterResponse.ALLOWED, resp);
+
+        OpenSessionResponse response = new OpenSessionResponse(new PlayerSessionId(1,"session"),null);
+        tournament.handleOpenSessionResponse(response);
+
+        resp = tournament.checkRegistration(new MttRegistrationRequest(new MttPlayer(1), null));
+        Assert.assertEquals(MttRegisterResponse.DENIED_ALREADY_REGISTERED, resp);
+
+        verify(backend,times(1)).openTournamentPlayerSession(any(OpenTournamentSessionRequest.class),any(TournamentSessionId.class));
+
     }
     
     @Test

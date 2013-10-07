@@ -252,20 +252,7 @@
                 });
 
             };
-            Handlebars.registerHelper('t', function(i18n_key) {
-                var result = i18n.t(i18n_key);
-                return new Handlebars.SafeString(result);
-            });
-            Handlebars.registerHelper('fromNow',function(date){
-                return moment(parseInt(date)).fromNow();
-            });
-            Handlebars.registerHelper('date', function(date) {
-                return moment(parseInt(date)).format("lll");
-            });
-            Handlebars.registerHelper('cardIcon',function(cardStr){
-                var res = '<span class="card-str">' + cardStr.charAt(0).toUpperCase()  + '</span><span class="suit-icon-'+cardStr.charAt(1)+'"></span>';
-                return new Handlebars.SafeString(res);
-            });
+
 
             i18n.init({ fallbackLng: 'en', postProcess: 'sprintf', resGetPath: '${cp}/i18n/__lng__.json' }, function(){
                 $("body").i18n();
@@ -680,7 +667,7 @@
 </div>
 
 <script type="text/mustache" id="currencyFilterTemplate">
-    <li class="filter-button" id="filterButton{{id}}"><a>{{name}}</a></li>
+    <li class="filter-button" id="filterButton{{code}}"><a>{{longName}}</a></li>
 </script>
 <script type="text/mustache" id="playerCardTemplate" style="display: none;">
     <div id="playerCard-{{domId}}" class="player-card-container number-{{cardNum}}">
@@ -775,14 +762,14 @@
     <tr class="table-item  {{tableStatus}}" id="tableItem{{id}}">
         <td class="table-name">{{name}}</td>
         <td class="seated">{{seated}}/{{capacity}}</td>
-        <td class="blinds">{{blinds}} {{translateCurrencyCode currencyCode}}</td>
+        <td class="blinds">{{currencyMultiple smallBlind bigBlind '/' currencyCode}}</td>
         <td class="play-text hidden-phone" ><a class="btn btn-lobby" >{{t "lobby.list.go-to-table"}}</a></td>
     </tr>
 </script>
 <script  type="text/mustache" id="sitAndGoListItemTemplate" style="display: none;">
     <tr class="table-item sit-and-go  {{tableStatus}}" id="sitAndGoItem{{id}}">
         <td class="table-name">{{name}}</td>
-        <td class="buy-in">{{currency buyIn}}+{{currency fee}} {{translateCurrencyCode buyInCurrencyCode}}</td>
+        <td class="buy-in">{{currencyMultiple buyIn fee '+' buyInCurrencyCode}}</td>
         <td class="seated">{{registered}}/{{capacity}}</td>
         <td class="status {{status}}">{{status}}</td>
         <td class="play-text"><a class="btn btn-lobby">{{t "lobby.list.go-to-lobby"}}</a></td>
@@ -792,7 +779,7 @@
     <tr class="table-item tournament {{tableStatus}}" id="tournamentItem{{id}}">
         <td class="table-name">
             <div class="list-item-name">{{name}}</div>
-            <div class="list-item">{{currency buyIn}}+{{currency fee}} {{translateCurrencyCode buyInCurrencyCode}}</div>
+            <div class="list-item">{{currencyMultiple buyIn fee '+' buyInCurrencyCode}}</div>
             <div class="list-item">{{registered}}/{{capacity}}</div>
             <div class="list-item">{{date startTime}}</div>
             <div class="list-item status {{status}}">{{status}}</div>
@@ -1068,10 +1055,10 @@
     <script type="text/mustache" id="tournamentBuyInContent">
         <h1>{{t "buy-in.buy-in-at"}} {{name}}</h1>
         <div class="buy-in-row">
-            <span class="desc">{{t "buy-in.your-balance" }}</span>  <span class="balance buyin-balance">{{currency balance}} {{translateCurrencyCode currencyCode}}</span>
+            <span class="desc">{{t "buy-in.your-balance" }}</span>  <span class="balance buyin-balance">{{currencySymbol balance currencyCode}}</span>
         </div>
         <div class="buy-in-row">
-            <span class="desc">{{t "buy-in.buy-in" }}</span>  <span class="balance buyin-max-amount">{{currency buyIn}}+{{currency fee}} {{translateCurrencyCode currencyCode}}</span>
+            <span class="desc">{{t "buy-in.buy-in" }}</span>  <span class="balance buyin-max-amount">{{currencyMultiple buyIn fee '+' currencyCode}}</span>
         </div>
         <div class="buy-in-row">
             <span class="buyin-error" style="display: none;"></span>
@@ -1088,13 +1075,13 @@
 <script type="text/mustache" id="cashGamesBuyInContent">
     <h1>Buy-in at table <span class="buyin-table-name">{{title}}</span></h1>
     <div class="buy-in-row">
-        <span class="desc">{{t "buy-in.your-balance" }}</span>  <span class="balance buyin-balance">{{currency balance}} {{translateCurrencyCode currencyCode}}</span>
+        <span class="desc">{{t "buy-in.your-balance" }}</span>  <span class="balance buyin-balance">{{currencyAmountSymbol balance currencyCode}}</span>
     </div>
     <div class="buy-in-row max-amount-container">
-        <span class="desc">{{t "buy-in.max-amount" }}</span>  <span class="balance buyin-max-amount">{{currency maxAmount}} {{translateCurrencyCode currencyCode}}</span>
+        <span class="desc">{{t "buy-in.max-amount" }}</span>  <span class="balance buyin-max-amount">{{currencyAmountSymbol maxAmount currencyCode}}</span>
     </div>
     <div class="buy-in-row">
-        <span class="desc">{{t "buy-in.min-amount" }}</span>  <span class="balance buyin-min-amount">{{currency minAmount}} {{translateCurrencyCode currencyCode}}</span>
+        <span class="desc">{{t "buy-in.min-amount" }}</span>  <span class="balance buyin-min-amount">{{currencyAmountSymbol minAmount currencyCode}}</span>
     </div>
 
     <div class="buy-in-row input-container">
@@ -1235,7 +1222,7 @@
     <div class="stats-item">{{t "tournament-lobby.info.registration-starts" }} <span>{{date registrationStartTime}}</span></div>
     {{/sitAndGo}}
     <div class="stats-item">{{t "tournament-lobby.info.game-type" }} <span>{{gameType}}</span></div>
-    <div class="stats-item">{{t "tournament-lobby.info.buy-in" }} <span>{{currency buyIn}}+{{currency fee}} {{translateCurrencyCode buyInCurrencyCode}}</span></div>
+    <div class="stats-item">{{t "tournament-lobby.info.buy-in" }} <span>{{currencyMultiple buyIn fee '+' buyInCurrencyCode}}</span></div>
     <div class="stats-item">
         {{t "tournament-lobby.info.status" }}
             <span class="status-container">

@@ -4,8 +4,9 @@
 <body>
   <wicket:extend>
 
-
-  <span wicket:id="feedback">feedback messages will be put here</span>
+  <p>
+    <span wicket:id="feedback">feedback messages will be put here</span>
+  </p>
   <div class="row-fluid">
       <div class="span12">
           <div class="widget-box">
@@ -153,8 +154,8 @@
           <div class="widget-box">
               <div class="widget-title"><h5>User Attributes</h5></div>
               <div class="widget-content">
-              
-                  <div wicket:id="attributesContainer" class="form-horizontal">
+                <div wicket:id="attributeEditContainer">
+                  <div wicket:id="attributeListContainer" class="form-horizontal">
                       <div wicket:id="attributes" class="control-group">
                         <form wicket:id="attribLineForm">
                           <label class="control-label" wicket:id="key">dummyAttributeKey</label>
@@ -175,13 +176,12 @@
                       <input wicket:id="newAttrKey" type="text"/>
                       <input wicket:id="newAttrValue" type="text"/>
                       <a wicket:id="addAttrLink" class="btn">Add Attribute</a>
-                      <p>
-		                  <span wicket:id="addAttrFeedback"></span>
-		              </p>
                   </form>
+                  <p>
+	                  <p wicket:id="attrFeedback"></p>
+	              </p>
 
-              
-
+                </div>
 			  </div>
 		  </div>
           
