@@ -18,8 +18,10 @@
 package com.cubeia.jetty;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.net.URISyntaxException;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppClassLoader;
@@ -31,15 +33,23 @@ public class JettyEmbed  {
     public final int port;
     public final String warFile;
     public final String warContextPath;
+    private static  Logger log;
 
     public JettyEmbed(Object caller, int port, String warFile, String warContextPath) {
         this.caller = caller;
         this.port = port;
         this.warFile = warFile;
-        this.warContextPath = warContextPath;   
+        this.warContextPath = warContextPath;
+        this.log =  Logger.getLogger(caller.getClass());
     }
     
-    private static final Logger log = Logger.getLogger(JettyEmbed.class);
+    public String finalFileName(String libDir) {
+        File dir = new File(libDir);
+        FileFilter fileFilter = new WildcardFileFilter(warFile);
+        File[] files = dir.listFiles(fileFilter);
+        log.debug("warFile : " + warFile + " - finalFileName: " + files[0].getName());
+        return files[0].getName();
+    }
     
     /** 
      * Takes a relative to the cwd (current work dir, poker-uar) path and 
@@ -62,7 +72,8 @@ public class JettyEmbed  {
             sarRoot = "";
         }
         String libDir = FilenameUtils.concat(sarRoot, "META-INF/lib");
-        String warPath = FilenameUtils.concat(libDir, warFile);
+        String filename = this.finalFileName(libDir);
+        String warPath = FilenameUtils.concat(libDir, filename);
         log.debug("warPath : " + warPath);    
         return warPath;
     }
@@ -79,7 +90,7 @@ public class JettyEmbed  {
 
         try {
             //http://wiki.eclipse.org/Jetty/Reference/Jetty_Classloading#Starting_Jetty_with_a_Custom_ClassLoader
-            webapp.setClassLoader(new WebAppClassLoader(this.getClass().getClassLoader(), webapp));
+            webapp.setClassLoader(new WebAppClassLoader(caller.getClass().getClassLoader(), webapp));
         }catch(Exception ex) {
             log.debug(ex, ex);
         }

@@ -26,7 +26,7 @@ import com.cubeia.jetty.JettyEmbed;
 public class UserEmbedService implements UserEmbedContract, Service {
 
     public static final int WAR_PORT = 9090;
-    public static final String WAR_FILE = "user-service-rest-1.5.0-SNAPSHOT.war";
+    public static final String WAR_FILE = "user-service-rest*.war";
     public static final String WAR_PATH = "/user-service-rest";    
     
     private static final Logger log = Logger.getLogger(UserEmbedService.class);

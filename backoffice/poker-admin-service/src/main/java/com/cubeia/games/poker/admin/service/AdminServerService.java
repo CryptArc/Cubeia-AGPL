@@ -26,7 +26,7 @@ import com.cubeia.jetty.JettyEmbed;
 public class AdminServerService implements AdminServerContract, Service {
 
     public static final int WAR_PORT = 8088;
-    public static final String WAR_FILE = "poker-admin.war";
+    public static final String WAR_FILE = "poker-admin*.war";
     
     private static final Logger log = Logger.getLogger(AdminServerService.class);   
         
