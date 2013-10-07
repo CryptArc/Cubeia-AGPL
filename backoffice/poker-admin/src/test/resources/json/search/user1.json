@@ -1,0 +1,38 @@
+{
+    "userId": 1,
+    "externalUserId": "abc123",
+    "userName": "smaxxor1",
+    "password": "xxxlLU8zQWt+Z/4S9D7iQ==\r\n",
+    "operatorId": 10,
+    "status": "ENABLED",
+    "userInformation": {
+        "id": 1,
+        "firstName": "Tobias",
+        "lastName": "Testerblom",
+        "middleName": null,
+        "nickName": null,
+        "email": "a@example.com",
+        "title": null,
+        "city": "ENSKEDE",
+        "billingAddress": "Vägen 242",
+        "fax": null,
+        "cellphone": null,
+        "country": null,
+        "currency": null,
+        "timeZone": null,
+        "zipcode": "12345",
+        "state": "sverige",
+        "phone": null,
+        "workphone": null,
+        "gender": "MALE",
+        "dateOfBirth": null,
+        "avatarId": null
+    },
+	"attributes": {
+		"attr1": "value1",
+		"attr2": "value2"
+	}, 
+    "creationDate": null,
+    "lastLoginDate": null,
+    "userType": "USER"
+}
