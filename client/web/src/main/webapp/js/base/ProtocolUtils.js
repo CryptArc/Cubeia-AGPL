@@ -87,6 +87,7 @@ Poker.ProtocolUtils = Class.extend({
             type: this.getBettingModel(param("BETTING_GAME_BETTING_MODEL")),
             tableStatus: this.getTableStatus(snapshot.seated, snapshot.capacity),
             smallBlind: param("SMALL_BLIND"),
+            bigBlind : param("BIG_BLIND"),
             showInLobby : param("VISIBLE_IN_LOBBY"),
             currencyCode : param("CURRENCY_CODE")
         };
