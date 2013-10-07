@@ -27,7 +27,6 @@ Poker.OperatorConfig = Class.extend({
     },
     createCurrencyMap: function(currencyParam) {
         this.currencyMap = new Poker.Map();
-
         if(typeof(currencyParam)!="undefined" && currencyParam!=null) {
             currencyParam = $.trim(currencyParam);
             if(currencyParam.length>0) {
@@ -38,8 +37,6 @@ Poker.OperatorConfig = Class.extend({
             }
 
         }
-
-
     },
     populate : function(params) {
         for(var p in params) {

@@ -3,6 +3,33 @@ var Poker = Poker || {};
 
 Poker.Utils = {
     currencySymbol: "",
+
+    formatMultipleAmounts : function(amount1,amount2,separator,code) {
+        amount1 = Poker.Utils.formatCurrency(amount1);
+        amount2 = Poker.Utils.formatCurrency(amount2);
+        var result = amount1 + separator + amount2 + " " + code;
+        var currency = Poker.OperatorConfig.getCurrencyMap().get(code);
+        if(currency!=null) {
+            if(currency.symbol!=null && currency.symbol.length>0){
+                result = currency.symbol + amount1 + separator + currency.symbol + amount2;
+            } else {
+                result = amount1 + separator + amount2 + " " + currency.name;
+            }
+        }
+        return result;
+    },
+    formatWithSymbol :  function(amount,code) {
+        var result = amount + " " + code;
+        var currency = Poker.OperatorConfig.getCurrencyMap().get(code);
+        if(currency!=null) {
+            if(currency.symbol!=null && currency.symbol.length>0){
+                result = currency.symbol+amount;
+            } else {
+                result = amount + " " + currency.name;
+            }
+        }
+        return result;
+    },
     formatCurrency: function(amount) {
         return Poker.Utils._baseFormat(amount);
     },
