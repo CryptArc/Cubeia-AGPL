@@ -32,7 +32,7 @@ Poker.Card = Class.extend({
      */
     render : function (cardNum) {
         var t = this.getTemplate();
-        var backfaceImageUrl = "url(" +contextPath+ "/skins/" + Poker.SkinConfiguration.name +"/images/cards/"+this.cardString+"."+this.type+")";
+        var backfaceImageUrl = contextPath+ "/skins/" + Poker.SkinConfiguration.name +"/images/cards/"+this.cardString+"."+this.type;
         var output = this.templateManager.render(t, {domId:this.id + "-" + this.tableId, backgroundImage:backfaceImageUrl, cardNum : cardNum});
         return output;
     },

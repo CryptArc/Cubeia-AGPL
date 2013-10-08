@@ -256,7 +256,7 @@
 
             i18n.init({ fallbackLng: 'en', postProcess: 'sprintf', resGetPath: '${cp}/i18n/__lng__.json' }, function(){
                 $("body").i18n();
-                new Poker.ResourcePreloader('${cp}',onPreLoadComplete,  Poker.SkinConfiguration.preLoadImages);
+                new Poker.ResourcePreloader('${cp}',onPreLoadComplete,  Poker.SkinConfiguration.preLoadImages, Poker.SkinConfiguration.name);
             });
 
         });
@@ -265,6 +265,7 @@
 
 </head>
 <body>
+
 <div class="view-port">
     <div id="toolbar" style="display:none;">
         <div class="main-menu-button">
@@ -671,12 +672,12 @@
 </script>
 <script type="text/mustache" id="playerCardTemplate" style="display: none;">
     <div id="playerCard-{{domId}}" class="player-card-container number-{{cardNum}}">
-        <div class="card-image" id="playerCardImage-{{domId}}" style="background-image:{{backgroundImage}}"></div>
+        <img class="card-image" src="{{backgroundImage}}" id="playerCardImage-{{domId}}" style=""/>
     </div>
 </script>
 <script type="text/mustache" id="communityCardTemplate" style="display: none;">
     <div id="communityCard-{{domId}}" class="community-card-container">
-        <div class="card-image" id="communityCardImage-{{domId}}" style="background-image:{{backgroundImage}}"></div>
+        <img class="card-image" src="{{backgroundImage}}" id="communityCardImage-{{domId}}"/>
     </div>
 </script>
 <div id="mainPotTemplate" style="display: none;">
