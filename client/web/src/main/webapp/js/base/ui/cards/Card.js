@@ -43,7 +43,7 @@ Poker.Card = Class.extend({
      */
     exposeCard : function(cardString, callback) {
         this.cardString = cardString;
-        this.setCardImage("url(" +contextPath+ "/skins/" + Poker.SkinConfiguration.name +"/images/cards/"+this.cardString+".svg)");
+        this.setCardImage(contextPath + "/skins/" + Poker.SkinConfiguration.name +"/images/cards/"+this.cardString+".svg");
         callback();
     },
 
@@ -54,8 +54,7 @@ Poker.Card = Class.extend({
 
     setCardImage : function(imageUrl) {
         if (!this.cardImage) this.getJQElement();
-        // The img element is not suitable for animating elements. Replaced with backgroundImage.
-        this.cardImage.style.backgroundImage = imageUrl;
+        $(this.cardImage).attr("src",imageUrl);
     },
 
 
