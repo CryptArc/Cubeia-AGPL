@@ -72,12 +72,16 @@ Poker.TournamentPacketHandler = Class.extend({
     handleTournamentOut: function (packet) {
         var dialogManager = Poker.AppCtx.getDialogManager();
         if (packet.position == 1) {
-            dialogManager.displayGenericDialog(
-                {header: i18n.t("dialogs.tournament-won.header"), message: i18n.t("dialogs.tournament-won.message")}
-            );
+            setTimeout(function(){
+                dialogManager.displayGenericDialog(
+                    {header: i18n.t("dialogs.tournament-won.header"), message: i18n.t("dialogs.tournament-won.message")}
+                );
+            },2000);
         } else {
-            dialogManager.displayGenericDialog({header: i18n.t("dialogs.tournament-out.header"),
-                message: i18n.t("dialogs.tournament-out.message", { sprintf : [packet.position]})});
+           setTimeout(function(){
+               dialogManager.displayGenericDialog({header: i18n.t("dialogs.tournament-out.header"),
+                   message: i18n.t("dialogs.tournament-out.message", { sprintf : [packet.position]})});
+           },2000);
         }
 
     },

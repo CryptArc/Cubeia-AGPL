@@ -93,9 +93,9 @@ Poker.ConnectionManager = Class.extend({
         }
 
     },
-    onForcedLogout : function() {
+    onForcedLogout : function(code,message) {
         this.clearTimeouts();
-        Poker.AppCtx.getViewManager().onForceLogout();
+        Poker.AppCtx.getViewManager().onForceLogout(code,message);
     },
     onUserDisconnected : function() {
         if(this.connected==true) {

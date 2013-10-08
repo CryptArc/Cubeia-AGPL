@@ -83,10 +83,11 @@ Poker.AccountPageManager = Class.extend({
     },
     logout : function() {
         $.ga._trackEvent("user_navigation", "clicked_logout");
-        Poker.AppCtx.getCommunicationManager().getConnector().logout(true);
         Poker.Utils.removeStoredUser();
         var logout_url = Poker.OperatorConfig.getLogoutUrl();
         if(!logout_url) {
+            Poker.AppCtx.getCommunicationManager().setIgnoreNextForceLogout();
+            Poker.AppCtx.getCommunicationManager().getConnector().logout(true);
             document.location.reload();
         } else {
             var dialogManager = Poker.AppCtx.getDialogManager();
@@ -96,6 +97,8 @@ Poker.AccountPageManager = Class.extend({
                 message: i18n.t("account.logout-warning"),
                 displayCancelButton: true
             }, function() {
+                Poker.AppCtx.getCommunicationManager().setIgnoreNextForceLogout();
+                Poker.AppCtx.getCommunicationManager().getConnector().logout(true);
                 document.location = logout_url;
             });
         }
