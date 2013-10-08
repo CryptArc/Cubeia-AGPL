@@ -148,14 +148,24 @@ Poker.ViewManager = Class.extend({
     nextView : function() {
         this.activateView(this.getNextView());
     },
-    onForceLogout : function() {
+    onForceLogout : function(code,message) {
         $(".view-container").hide();
         $("#toolbar").hide();
-        Poker.AppCtx.getDialogManager().displayGenericDialog(
-            {   translationKey : "force-logged-out",
-                okButtonText:"Reload" }, function(){
-                document.location.reload();
-            });
+        if(code == 1) {
+            Poker.AppCtx.getDialogManager().displayGenericDialog(
+                {   translationKey : "force-logged-out",
+                    okButtonText:"Reload" }, function(){
+                    document.location.reload();
+                });
+        } else {
+            Poker.AppCtx.getDialogManager().displayGenericDialog(
+                {   header : "You have been logged out (" +code+ ")",
+                    message : message,
+                    okButtonText:"Reload" }, function(){
+                    document.location.reload();
+                });
+        }
+
     },
     /**
      * Gets the previous view, null if there are no previous view

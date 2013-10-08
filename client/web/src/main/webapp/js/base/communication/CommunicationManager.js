@@ -15,6 +15,7 @@ Poker.CommunicationManager = Class.extend({
 
     webSocketUrl : null,
     webSocketPort : null,
+    ignoreNextForceLogout : false,
 
     /**
      * @type Poker.TableManager
@@ -67,11 +68,20 @@ Poker.CommunicationManager = Class.extend({
                 break;
         }
     },
+    setIgnoreNextForceLogout : function() {
+        this.ignoreNextForceLogout = true;
+    },
     forceLogout : function(packet) {
         console.log("Forcing log out");
         console.log(packet);
-        new Poker.ConnectionPacketHandler().handleForceLogout(packet.code,packet.message);
-        this.getConnector().getIOAdapter().unregisterHandlers();
+        if(this.ignoreNextForceLogout == true) {
+            console.log("ignoring taking action on force logout");
+            this.ignoreNextForceLogout = false;
+        } else {
+            new Poker.ConnectionPacketHandler().handleForceLogout(packet.code,packet.message);
+            this.getConnector().getIOAdapter().unregisterHandlers();
+        }
+
     },
     /**
      * Login callback

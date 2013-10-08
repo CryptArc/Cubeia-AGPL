@@ -427,8 +427,9 @@ Poker.TableManager = Class.extend({
      * @param {Number} tableId
      * @param {com.cubeia.games.poker.io.protocol.BlindsLevel} newBlinds
      * @param {Number} secondsToNextLevel
-     * @param {com.cubeia.games.poker.io.protocol.BetStrategyEnum} betStrategy
-     * @param {com.cubeia.games.poker.io.protocol.Currency} currency
+     * @param  betStrategy
+     * @param variant
+     * @param  currency
      */
     notifyGameStateUpdate : function(tableId, newBlinds, secondsToNextLevel,betStrategy, variant, currency) {
         console.log("Seconds to next level: " + secondsToNextLevel);

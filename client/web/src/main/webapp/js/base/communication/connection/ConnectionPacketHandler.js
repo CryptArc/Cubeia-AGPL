@@ -47,7 +47,7 @@ Poker.ConnectionPacketHandler = Class.extend({
     handleForceLogout : function(code,message) {
         console.log(message);
         //logged in somewhere else
-        this.connectionManager.onForcedLogout();
+        this.connectionManager.onForcedLogout(code,message);
     },
     initOperatorConfig : function() {
         if(!Poker.OperatorConfig.isPopulated()) {

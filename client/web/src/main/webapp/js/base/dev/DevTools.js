@@ -40,6 +40,7 @@ Poker.DevTools = Class.extend({
             self.tableManager.createTable(self.tableId, capacity, tableName , tableLayoutManager);
             Poker.AppCtx.getViewManager().addTableView(tableLayoutManager,tableName);
             new Poker.PositionEditor("#tableView-"+self.tableId);
+            tableLayoutManager.updateVariant(0);
         };
 
         var cleanUpFunction = function() {
@@ -52,7 +53,7 @@ Poker.DevTools = Class.extend({
         var mockEvent = function(name,func,delay) {
             return new Poker.MockEvent(name,func,delay);
         };
-        Poker.MyPlayer.id = 99;
+        Poker.MyPlayer.id = 0;
         Poker.MyPlayer.name= "test";
         $(".table-view-container").show();
         this.mockEventManager.addEvent(
@@ -69,7 +70,7 @@ Poker.DevTools = Class.extend({
                 bl.smallBlind = "0.5";
                 bl.isBreak = false;
                 var bs =
-                self.tableManager.notifyGameStateUpdate(self.tableId, bl ,0,com.cubeia.games.poker.io.protocol.BetStrategyEnum.FIXED_LIMIT);
+                self.tableManager.notifyGameStateUpdate(self.tableId, bl ,0,0,com.cubeia.games.poker.io.protocol.BetStrategyEnum.FIXED_LIMIT);
         }));
         this.mockEventManager.addEvent(
             mockEvent("Deal cards",function(){
@@ -230,11 +231,14 @@ Poker.DevTools = Class.extend({
         this.tableManager.updatePlayerBalance(this.tableId,playerId, 100000);
     },
     dealCards : function(seat,playerId) {
-        this.tableManager.dealPlayerCard(this.tableId,playerId,this.cardIdSeq++,"  ");
-        this.tableManager.dealPlayerCard(this.tableId,playerId,this.cardIdSeq++,"  ");
-        this.tableManager.dealPlayerCard(this.tableId,playerId,this.cardIdSeq++,"  ");
-        this.tableManager.dealPlayerCard(this.tableId,playerId,this.cardIdSeq++,"  ");
-        this.tableManager.dealPlayerCard(this.tableId,playerId,this.cardIdSeq++,"  ");
+        if(playerId == Poker.MyPlayer.id) {
+            this.tableManager.dealPlayerCard(this.tableId,playerId,this.cardIdSeq++,"as");
+            this.tableManager.dealPlayerCard(this.tableId,playerId,this.cardIdSeq++,"kd")
+        } else {
+            this.tableManager.dealPlayerCard(this.tableId,playerId,this.cardIdSeq++,"  ");
+            this.tableManager.dealPlayerCard(this.tableId,playerId,this.cardIdSeq++,"  ");
+        }
+
     },
     playerAction : function(playerId,action,amount) {
         if(!amount) {
