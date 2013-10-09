@@ -10,7 +10,7 @@
 
     <link rel="apple-touch-icon" href="${cp}/skins/${skin}/images/lobby/icon.png" />
     <link rel="stylesheet" type="text/css" href="${cp}/skins/default/css/gritter/css/jquery.gritter.css"/>
-
+    <link rel="stylesheet" type="text/css" href="${cp}/skins/default/css/browser-support.css"/>
     <link rel="stylesheet/less" type="text/css" href="${cp}/js/lib/bootstrap/less/bootstrap.less"/>
 
     <link id="defaultSkinCss" rel="stylesheet/less" type="text/css" href="${cp}/skins/default/less/base.less" />
@@ -29,6 +29,7 @@
 
     <script type="text/javascript" src="${cp}/js/lib/classjs.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="${cp}/js/lib/modernizr-2.6.2-custom.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/jquery-ui-1.8.21.custom.min.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/jquery.ui.touch-punch.js"></script>
     <script type="text/javascript" src="${cp}/js/base/jquery-plugins/touch-click.js"></script>
@@ -205,59 +206,80 @@
         var contextPath = "${cp}";
 
         $(document).ready(function(){
-            //to clear the stored user add #clear to the url
-            if(document.location.hash.indexOf("clear") != -1){
-                Poker.Utils.removeStoredUser();
+
+
+            var browserSupported =  function() {
+                if(Modernizr.websockets && Modernizr.csstransitions) {
+                    console.log("browser supported");
+                    return true;
+                } else {
+                    console.log("browser not supported");
+                    console.log ("Websockets: " + Modernizr.websockets);
+                    console.log ("CSS transitions: " + Modernizr.csstransitions);
+                    console.log ("CSS transforms 3d: " + Modernizr.csstransforms3d);
+                    document.getElementById("loadingView").style.display = "none";
+                    document.getElementById("mainMenuContainer").style.display = "none";
+                    document.getElementById("viewPort").style.display = "none";
+                    document.getElementById("browserNotSupported").style.display = "";
+                    return false;
+                }
+
             }
+            if(browserSupported()) {
+                //to clear the stored user add #clear to the url
+                if(document.location.hash.indexOf("clear") != -1){
+                    Poker.Utils.removeStoredUser();
+                }
 
-            if(Poker.SkinConfiguration.onLoad) {
-                console.log("SkinConfig onLoad");
-                Poker.SkinConfiguration.onLoad();
-            }
+                if(Poker.SkinConfiguration.onLoad) {
+                    console.log("SkinConfig onLoad");
+                    Poker.SkinConfiguration.onLoad();
+                }
 
-            //less.watch(); //development only
-            $(".describe").describe();
+                //less.watch(); //development only
+                $(".describe").describe();
 
-            $("title").html(Poker.SkinConfiguration.title);
+                $("title").html(Poker.SkinConfiguration.title);
 
 
-            var onPreLoadComplete = function() {
-                <c:choose>
+                var onPreLoadComplete = function() {
+                    <c:choose>
                     <c:when test="${not empty firebaseHost}">
-                        var requestHost = "${firebaseHost}";
+                    var requestHost = "${firebaseHost}";
                     </c:when>
                     <c:otherwise>
-                        var requestHost = window.location.hostname;
+                    var requestHost = window.location.hostname;
                     </c:otherwise>
-                </c:choose>
-                <c:choose>
+                    </c:choose>
+                    <c:choose>
                     <c:when test="${not empty firebaseHttpPort}">
-                        var webSocketPort = ${firebaseHttpPort};
+                    var webSocketPort = ${firebaseHttpPort};
                     </c:when>
                     <c:otherwise>
-                        var webSocketPort = 9191;
+                    var webSocketPort = 9191;
                     </c:otherwise>
-                </c:choose>
-                
-                var webSocketUrl = requestHost ? requestHost : "localhost";
+                    </c:choose>
 
-                console.log("connecting to WS: " + webSocketUrl + ":" + webSocketPort);
+                    var webSocketUrl = requestHost ? requestHost : "localhost";
 
-                //handles the lobby UI
-                Poker.AppCtx.wire({
-                    webSocketUrl : webSocketUrl,
-                    webSocketPort : webSocketPort,
-                    tournamentLobbyUpdateInterval : 10000,
-                    playerApiBaseUrl : "${playerApiBaseUrl}"
+                    console.log("connecting to WS: " + webSocketUrl + ":" + webSocketPort);
+
+                    //handles the lobby UI
+                    Poker.AppCtx.wire({
+                        webSocketUrl : webSocketUrl,
+                        webSocketPort : webSocketPort,
+                        tournamentLobbyUpdateInterval : 10000,
+                        playerApiBaseUrl : "${playerApiBaseUrl}"
+                    });
+
+                };
+
+                i18n.init({ fallbackLng: 'en', postProcess: 'sprintf', resGetPath: '${cp}/i18n/__lng__.json' }, function(){
+                    $("body").i18n();
+                    new Poker.ResourcePreloader('${cp}',onPreLoadComplete, browserNotSupported, Poker.SkinConfiguration.preLoadImages, Poker.SkinConfiguration.name);
                 });
+            }
 
-            };
-
-
-            i18n.init({ fallbackLng: 'en', postProcess: 'sprintf', resGetPath: '${cp}/i18n/__lng__.json' }, function(){
-                $("body").i18n();
-                new Poker.ResourcePreloader('${cp}',onPreLoadComplete,  Poker.SkinConfiguration.preLoadImages, Poker.SkinConfiguration.name);
-            });
 
         });
 
@@ -265,8 +287,26 @@
 
 </head>
 <body>
-
-<div class="view-port">
+<div id="browserNotSupported" class="browser-not-supported" style="display:none;">
+    <h2>Browser not supported</h2>
+    <p>It seems like you are using an outdated browser. To be able to play you need to upgrade your browser.</p>
+    <p>Click on the icons below to download a new browser or upgrade your current one.</p>
+    <div class="browser-list">
+        <div class="browser">
+            <a target="_blank" href="http://www.google.com/chrome/"><img src="${cp}/skins/default/images/chrome-icon.png"/></a>
+        </div>
+        <div class="browser">
+            <a target="_blank" href="http://www.mozilla.org/firefox/"><img src="${cp}/skins/default/images/firefox-icon.png"/></a>
+        </div>
+        <div class="browser">
+            <a target="_blank" href="http://www.apple.com/safari/"><img src="${cp}/skins/default/images/safari-icon.png"/></a>
+        </div>
+        <div class="browser">
+            <a target="_blank" href="http://windows.microsoft.com/en-us/internet-explorer/download-ie"><img src="${cp}/skins/default/images/ie-icon.png"/></a>
+        </div>
+    </div>
+</div>
+<div class="view-port" id="viewPort">
     <div id="toolbar" style="display:none;">
         <div class="main-menu-button">
         </div>
@@ -285,7 +325,7 @@
 
 
 
-    <div class="main-menu-container" style="">
+    <div id="mainMenuContainer" class="main-menu-container" style="">
         <ul id="mainMenuList">
 
         </ul>
@@ -334,6 +374,7 @@
             </div>
         </div>
     </div>
+
     <div class="view-container slidable">
         <div class="table-view-container" style="display:none;">
             <div class="multi-view-switch multi">

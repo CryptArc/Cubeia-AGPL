@@ -2,8 +2,9 @@
 var Poker = Poker || {};
 Poker.ResourcePreloader = Class.extend({
     completionListener : null,
-    init : function(contextPath, completionListener, images,skin) {
+    init : function(contextPath, completionListener, browserNotSupportedListener,images,skin) {
         this.completionListener = completionListener;
+
         var loader = new PxLoader();
         if(images!=null && images.length > 0) {
             for(var i = 0; i<images.length; i++) {
