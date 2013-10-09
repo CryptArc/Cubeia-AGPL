@@ -209,14 +209,10 @@
 
 
             var browserSupported =  function() {
-                if(Modernizr.websockets && Modernizr.csstransitions) {
+                if(Modernizr && Modernizr.websockets && Modernizr.csstransitions) {
                     console.log("browser supported");
                     return true;
                 } else {
-                    console.log("browser not supported");
-                    console.log ("Websockets: " + Modernizr.websockets);
-                    console.log ("CSS transitions: " + Modernizr.csstransitions);
-                    console.log ("CSS transforms 3d: " + Modernizr.csstransforms3d);
                     document.getElementById("loadingView").style.display = "none";
                     document.getElementById("mainMenuContainer").style.display = "none";
                     document.getElementById("viewPort").style.display = "none";
