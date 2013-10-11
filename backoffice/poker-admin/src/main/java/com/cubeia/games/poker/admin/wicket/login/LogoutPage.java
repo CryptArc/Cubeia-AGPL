@@ -17,14 +17,13 @@
 
 package com.cubeia.games.poker.admin.wicket.login;
 
+import com.cubeia.games.poker.admin.wicket.PokerAdminWebApplication;
+import com.cubeia.network.shared.web.wicket.SecureWicketAuthenticatedWebSession;
 import org.apache.wicket.Session;
 import org.apache.wicket.authroles.authentication.pages.SignOutPage;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.cubeia.games.poker.admin.wicket.PokerAdminWebApplication;
-import com.cubeia.games.poker.admin.wicket.SecureWicketAuthenticatedWebSession;
 
 public class LogoutPage extends SignOutPage {
 
@@ -43,7 +42,7 @@ public class LogoutPage extends SignOutPage {
     }
 
 	private void logout() {
-		SecureWicketAuthenticatedWebSession session = (SecureWicketAuthenticatedWebSession)Session.get(); 
+		SecureWicketAuthenticatedWebSession session = (SecureWicketAuthenticatedWebSession)Session.get();
 		log.info("Logging out user: "+session.getId()+" "+session.getClientInfo().getProperties()+" "+session.getClientInfo());
         session.signOut();
 	}

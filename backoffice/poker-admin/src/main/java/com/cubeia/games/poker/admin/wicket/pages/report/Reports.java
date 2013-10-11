@@ -28,7 +28,7 @@ import com.cubeia.backoffice.wallet.api.dto.exception.AccountNotFoundException;
 import com.cubeia.backoffice.wallet.api.dto.request.ListAccountsRequest;
 import com.cubeia.backoffice.wallet.client.WalletServiceClient;
 import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.games.poker.admin.wicket.report.ReportServlet;
+import com.cubeia.network.shared.web.wicket.report.ReportServlet;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;

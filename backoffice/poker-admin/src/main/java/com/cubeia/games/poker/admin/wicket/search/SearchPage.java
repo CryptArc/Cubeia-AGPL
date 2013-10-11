@@ -21,6 +21,9 @@ import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import com.cubeia.network.shared.web.wicket.module.AdminWebModules;
+import com.cubeia.network.shared.web.wicket.search.SearchEntity;
+import com.cubeia.network.shared.web.wicket.search.SearchResultPanel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
@@ -56,6 +59,9 @@ public class SearchPage extends BasePage {
     
     @SpringBean(name = "webConfig")
     private Configuration config;
+
+    @SpringBean
+    private AdminWebModules modules;
 
 	private HitProvider dataProvider;
 
@@ -121,20 +127,17 @@ public class SearchPage extends BasePage {
         });
         
         
-        DataView<Serializable> dataView = new DataView<Serializable>("searchResult", dataProvider, HIT_LIMIT) {
+        DataView<SearchEntity> dataView = new DataView<SearchEntity>("searchResult", dataProvider, HIT_LIMIT) {
 			@Override
-			protected void populateItem(Item<Serializable> item) {
-				Serializable hit = item.getModelObject();
-				
-				if (hit instanceof Account) {
-					item.add(new AccountPanel("value", Model.of((Account) hit)));
-				} else if (hit instanceof User) {
-					item.add(new UserPanel("value", Model.of((User) hit)));
-				} else if (hit instanceof Transaction) {
-					item.add(new TransactionPanel("value", Model.of((Transaction) hit)));
-				} else {
-					item.add(new Label("value", hit.toString()));
-				}
+			protected void populateItem(Item<SearchEntity> item) {
+                SearchEntity hit = item.getModelObject();
+
+                SearchResultPanel<?> panel = modules.createResultPanel("value",hit);
+                if(panel!=null){
+                    item.add(panel);
+                }  else {
+                    item.add(new Label("value", hit.toString()));
+                }
 			}
 			
 		};
@@ -174,7 +177,7 @@ public class SearchPage extends BasePage {
         
         log.debug("search base url: {}, index name = {}", searchUrl, indexName);
         
-        return new HitProvider(clusterName, searchUrl, indexName, HIT_LIMIT);
+        return new HitProvider(clusterName, searchUrl, indexName, HIT_LIMIT, modules);
 	}
 
     @Override

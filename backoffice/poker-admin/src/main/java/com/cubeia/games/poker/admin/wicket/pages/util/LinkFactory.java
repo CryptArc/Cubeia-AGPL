@@ -1,14 +1,14 @@
 package com.cubeia.games.poker.admin.wicket.pages.util;
 
-import static com.cubeia.games.poker.admin.wicket.pages.wallet.AccountDetails.PARAM_ACCOUNT_ID;
-import static com.cubeia.games.poker.admin.wicket.pages.wallet.TransactionInfo.PARAM_TX_ID;
+import static com.cubeia.network.web.wallet.AccountDetails.PARAM_ACCOUNT_ID;
+import static com.cubeia.network.web.wallet.TransactionInfo.PARAM_TX_ID;
 
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
-import com.cubeia.games.poker.admin.wicket.pages.user.UserSummary;
-import com.cubeia.games.poker.admin.wicket.pages.wallet.AccountDetails;
-import com.cubeia.games.poker.admin.wicket.pages.wallet.TransactionInfo;
+import com.cubeia.network.web.user.UserSummary;
+import com.cubeia.network.web.wallet.AccountDetails;
+import com.cubeia.network.web.wallet.TransactionInfo;
 
 public class LinkFactory {
 

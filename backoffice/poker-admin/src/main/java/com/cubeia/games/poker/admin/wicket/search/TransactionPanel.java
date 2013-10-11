@@ -3,20 +3,20 @@ package com.cubeia.games.poker.admin.wicket.search;
 import static com.cubeia.games.poker.admin.wicket.pages.util.LinkFactory.accountDetailsLink;
 import static com.cubeia.games.poker.admin.wicket.pages.util.LinkFactory.transactionDetailsLink;
 
+import com.cubeia.network.shared.web.wicket.search.SearchResultPanel;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
-import com.cubeia.games.poker.admin.wicket.pages.util.DateDisplayModel;
+import com.cubeia.network.shared.web.wicket.util.DateDisplayModel;
 import com.cubeia.games.poker.admin.wicket.pages.util.LinkFactory;
 import com.cubeia.games.poker.admin.wicket.search.Transaction.Entry;
 
 @SuppressWarnings("serial")
-public class TransactionPanel extends Panel {
+public class TransactionPanel extends SearchResultPanel<Transaction> {
 
 	public TransactionPanel(String id, IModel<Transaction> model) {
 		super(id, new CompoundPropertyModel<>(model.getObject()));

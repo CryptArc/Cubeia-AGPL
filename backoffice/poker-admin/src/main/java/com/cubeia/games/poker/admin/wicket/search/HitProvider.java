@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.cubeia.network.shared.web.wicket.module.AdminWebModules;
+import com.cubeia.network.shared.web.wicket.search.SearchEntity;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -29,9 +31,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("serial") 
-public class HitProvider implements IDataProvider<Serializable> {
+public class HitProvider implements IDataProvider<SearchEntity> {
     Logger log = LoggerFactory.getLogger(getClass());
-    
+
+
     class Sort implements Serializable {
         String field;
         boolean ascending;
@@ -56,8 +59,8 @@ public class HitProvider implements IDataProvider<Serializable> {
     private String indexName;
     private URL searchUrl;
     private String clusterName;
-    
-    private List<Serializable> hits = new ArrayList<>();
+    private AdminWebModules modules;
+    private List<SearchEntity> hits = new ArrayList<>();
     private String queryString;
     private long offset;
     private long totalHits;
@@ -65,7 +68,8 @@ public class HitProvider implements IDataProvider<Serializable> {
 
     private Sort sort = new Sort(null, true);
     
-    HitProvider(String clusterName, URL searchUrl, String indexName, int limit) {
+    HitProvider(String clusterName, URL searchUrl, String indexName, int limit,AdminWebModules modules) {
+        this.modules = modules;
         this.clusterName = clusterName;
         this.searchUrl = searchUrl;
         this.indexName = indexName;
@@ -131,7 +135,7 @@ public class HitProvider implements IDataProvider<Serializable> {
             
             ObjectMapper jsonMapper = new ObjectMapper();
             
-            List<Serializable> hits = new ArrayList<>();
+            List<SearchEntity> hits = new ArrayList<>();
             
             for (SearchHit h : resp.getHits().getHits()) {
                 log.trace(">>>>>>>>> ");
@@ -139,18 +143,9 @@ public class HitProvider implements IDataProvider<Serializable> {
                 log.trace(">>>>>>>>> ");
                 
                 String type = h.getType();
-                if (type.equals("user")) {
-                    User u = jsonMapper.readValue(h.getSourceAsString(), User.class);
-                    hits.add(u);
-                } else if (type.equals("account")) {
-                    Account a = jsonMapper.readValue(h.getSourceAsString(), Account.class);
-                    hits.add(a);
-                } else if (type.equals("transaction")) {
-                    Transaction t = jsonMapper.readValue(h.getSourceAsString(), Transaction.class);
-                    hits.add(t);
-                } else {
-                    log.warn("unmapped hit type: {}", type);
-                }
+
+                modules.createSearchEntity(h.getType(),h.getSourceAsString());
+
             }  
             
             this.hits = hits;
@@ -170,7 +165,7 @@ public class HitProvider implements IDataProvider<Serializable> {
     }
 
     @Override
-    public Iterator<Serializable> iterator(long first, long count) {
+    public Iterator<SearchEntity> iterator(long first, long count) {
         if (hits == null  ||  first != offset) {
             offset = first;
             doSearch((int) offset, (int) count);
@@ -184,7 +179,7 @@ public class HitProvider implements IDataProvider<Serializable> {
     }
 
     @Override
-    public IModel<Serializable> model(Serializable object) {
+    public IModel<SearchEntity> model(SearchEntity object) {
         return Model.of(object);
     }
 

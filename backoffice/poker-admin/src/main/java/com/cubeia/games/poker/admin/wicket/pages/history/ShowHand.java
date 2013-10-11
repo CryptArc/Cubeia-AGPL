@@ -39,7 +39,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import com.cubeia.games.poker.admin.Configuration;
 import com.cubeia.games.poker.admin.service.history.HistoryService;
 import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.games.poker.admin.wicket.util.ExternalLinkPanel;
+import com.cubeia.network.shared.web.wicket.util.ExternalLinkPanel;
 
 @AuthorizeInstantiation({"ROLE_ADMIN"})
 public class ShowHand extends BasePage {

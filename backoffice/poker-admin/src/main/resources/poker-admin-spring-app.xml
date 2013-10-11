@@ -12,6 +12,8 @@
    http://www.springframework.org/schema/data/mongo
    http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd">
 
+    <import resource="classpath:spring-admin-base.xml"/>
+
     <context:component-scan base-package="com.cubeia.games.poker.admin"/>
     <context:property-placeholder location="classpath:/admin.properties"/>
     <!--<util:properties id="adminProperties" location="classpath:/admin.properties"/>-->

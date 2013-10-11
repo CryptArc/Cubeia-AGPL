@@ -39,6 +39,14 @@
             <artifactId>user-client</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.cubeia.network</groupId>
+            <artifactId>operator-admin-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.cubeia.network</groupId>
+            <artifactId>user-accounting-admin-web</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.cubeia.network.operator</groupId>
             <artifactId>operator-client</artifactId>
         </dependency>
@@ -378,11 +386,6 @@
         <dependency>
             <groupId>com.cubeia.games.shutdown</groupId>
             <artifactId>shutdown-service</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>jasperreports</groupId>
-            <artifactId>jasperreports</artifactId>
-            <version>3.5.3</version>
         </dependency>
         <dependency>
             <groupId>com.googlecode.wicket-jquery-ui</groupId>

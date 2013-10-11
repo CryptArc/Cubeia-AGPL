@@ -9,7 +9,7 @@
   <context-param>
     <param-name>contextConfigLocation</param-name>
     <param-value>
-      classpath:poker-admin-spring-app.xml classpath:poker-admin-spring-ds.xml classpath:poker-admin-spring-security.xml
+        classpath:poker-admin-spring-app.xml classpath:poker-admin-spring-ds.xml
     </param-value>
   </context-param>
   <listener>

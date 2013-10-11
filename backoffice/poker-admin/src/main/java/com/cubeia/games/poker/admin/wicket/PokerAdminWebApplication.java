@@ -17,125 +17,73 @@
 
 package com.cubeia.games.poker.admin.wicket;
 
-import java.math.BigDecimal;
-
+import com.cubeia.games.poker.admin.wicket.login.LoginPage;
+import com.cubeia.network.shared.web.wicket.BaseApplication;
 import org.apache.log4j.Logger;
-import org.apache.wicket.ConverterLocator;
-import org.apache.wicket.IConverterLocator;
 import org.apache.wicket.Page;
-import org.apache.wicket.RestartResponseAtInterceptPageException;
-import org.apache.wicket.authorization.IUnauthorizedComponentInstantiationListener;
-import org.apache.wicket.authorization.UnauthorizedInstantiationException;
-import org.apache.wicket.authroles.authentication.AbstractAuthenticatedWebSession;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebApplication;
-import org.apache.wicket.authroles.authorization.strategies.role.annotations.AnnotationsRoleAuthorizationStrategy;
 import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
-import org.apache.wicket.util.time.Duration;
 import org.springframework.stereotype.Component;
 
-import com.cubeia.games.poker.admin.wicket.login.LoginPage;
-import com.cubeia.games.poker.admin.wicket.login.LogoutPage;
-import com.cubeia.games.poker.admin.wicket.pages.history.HandHistory;
-import com.cubeia.games.poker.admin.wicket.pages.operator.OperatorList;
-import com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled.CreateTournament;
-import com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled.EditTournament;
-import com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled.ListTournaments;
-import com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo.CreateSitAndGo;
-import com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo.EditSitAndGo;
-import com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo.ListSitAndGoTournaments;
-import com.cubeia.games.poker.admin.wicket.pages.user.CreateUser;
-import com.cubeia.games.poker.admin.wicket.pages.user.EditUser;
-import com.cubeia.games.poker.admin.wicket.pages.user.UserList;
-import com.cubeia.games.poker.admin.wicket.pages.user.UserSummary;
-import com.cubeia.games.poker.admin.wicket.pages.wallet.AccountDetails;
-import com.cubeia.games.poker.admin.wicket.pages.wallet.AccountList;
-import com.cubeia.games.poker.admin.wicket.pages.wallet.CreateAccount;
-import com.cubeia.games.poker.admin.wicket.pages.wallet.CreateTransaction;
-import com.cubeia.games.poker.admin.wicket.pages.wallet.EditCurrencies;
-import com.cubeia.games.poker.admin.wicket.pages.wallet.TransactionInfo;
-import com.cubeia.games.poker.admin.wicket.pages.wallet.TransactionList;
-import com.cubeia.games.poker.admin.wicket.search.SearchPage;
-
 @Component("wicketApplication")
-public class PokerAdminWebApplication extends AuthenticatedWebApplication {
+public class PokerAdminWebApplication extends BaseApplication {
+
+    /**
+     * Constructor
+     */
+    public PokerAdminWebApplication() {}
 
 	private static final Logger log = Logger.getLogger(AuthenticatedWebApplication.class);
+    /*
+     private void mountPages() {
 
-	/**
-	 * Constructor
-	 */
-	public PokerAdminWebApplication() {}
+         for(AdminWebModule module : modules) {
+             List<PageNode> pages = module.getPages();
+             mountPages("", pages);
+         }
 
-	@Override
-	protected void init() {
-		getResourceSettings().setResourcePollFrequency(Duration.ONE_SECOND); // For dev only, delete when ready for production.
-		getMarkupSettings().setStripWicketTags(true);
-		getSecuritySettings().setAuthorizationStrategy(new AnnotationsRoleAuthorizationStrategy(this));
-		getSecuritySettings().setUnauthorizedComponentInstantiationListener(new IUnauthorizedComponentInstantiationListener() {
+         mountPage("/home", HomePage.class);
+         mountPage("/login", LoginPage.class);
+         mountPage("/logout", LogoutPage.class);
+         mountPage("/search", SearchPage.class);
 
-			@Override
-			public void onUnauthorizedInstantiation(org.apache.wicket.Component component) {
-				if (component instanceof Page) {
-					throw new RestartResponseAtInterceptPageException(LoginPage.class);
-				} else {
-					throw new UnauthorizedInstantiationException(component.getClass());
-				}
+         mountPage("/hand-history", HandHistory.class);
 
-			}
-		});
-		// Initialize Spring
-		getComponentInstantiationListeners().add(new SpringComponentInjector(this));
-		mountPages();
-	}
+         mountPage("/tournament", ListTournaments.class);
+         mountPage("/tournament/create", CreateTournament.class);
+         mountPage("/tournament/edit", EditTournament.class);
 
-	private void mountPages() {
-		mountPage("/home", HomePage.class);
-		mountPage("/login", LoginPage.class);
-		mountPage("/logout", LogoutPage.class);
-		mountPage("/search", SearchPage.class);
-		
-		mountPage("/hand-history", HandHistory.class);
-		
-		mountPage("/tournament", ListTournaments.class);
-		mountPage("/tournament/create", CreateTournament.class);
-		mountPage("/tournament/edit", EditTournament.class);
-		
-		mountPage("/sitandgo", ListSitAndGoTournaments.class);
-		mountPage("/sitandgo/create", CreateSitAndGo.class);
-		mountPage("/sitandgo/edit", EditSitAndGo.class);
-		
-		mountPage("/operator", OperatorList.class);
-		
-		mountPage("/user", UserList.class);
-		mountPage("/user/edit", EditUser.class);
-		mountPage("/user/create", CreateUser.class);
-		mountPage("/user/details", UserSummary.class);
-		
-		mountPage("/account", AccountList.class);
-		mountPage("/account/detail", AccountDetails.class);
-		mountPage("/account/create", CreateAccount.class);
-		
-		mountPage("/currency", EditCurrencies.class);
-		
-		mountPage("/transaction", TransactionList.class);
-		mountPage("/transaction/create", CreateTransaction.class);
-		mountPage("/transaction/info", TransactionInfo.class);
-		
+         mountPage("/sitandgo", ListSitAndGoTournaments.class);
+         mountPage("/sitandgo/create", CreateSitAndGo.class);
+         mountPage("/sitandgo/edit", EditSitAndGo.class);
+
+
+
+         mountPage("/user", UserList.class);
+         mountPage("/user/edit", EditUser.class);
+         mountPage("/user/create", CreateUser.class);
+         mountPage("/user/details", UserSummary.class);
+
+         mountPage("/account", AccountList.class);
+         mountPage("/account/detail", AccountDetails.class);
+         mountPage("/account/create", CreateAccount.class);
+
+         mountPage("/currency", EditCurrencies.class);
+
+         mountPage("/transaction", TransactionList.class);
+         mountPage("/transaction/create", CreateTransaction.class);
+         mountPage("/transaction/info", TransactionInfo.class);
+
 		
 	}
+        */
 
-	@Override
+    @Override
 	public Class<? extends Page> getHomePage() {
 		return HomePage.class;
 	}
 
-	@Override
-	protected IConverterLocator newConverterLocator() {
-		ConverterLocator converterLocator = new ConverterLocator();
-		converterLocator.set(BigDecimal.class, new CustomBigDecimalConverter());
-		return converterLocator;
-	}
+
 
 	/**
 	 * NOTE: this methods is never called for some reason. I have applied a unauthorized listener above
@@ -146,10 +94,5 @@ public class PokerAdminWebApplication extends AuthenticatedWebApplication {
 		return LoginPage.class;
 	}
 
-	@Override
-	protected Class<? extends AbstractAuthenticatedWebSession> getWebSessionClass() {
-		log.debug("Get authenticated web session");
-		return SecureWicketAuthenticatedWebSession.class;
-	}
 
 }

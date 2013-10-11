@@ -21,8 +21,8 @@ import com.cubeia.games.poker.admin.Configuration;
 import com.cubeia.games.poker.admin.service.history.HistoryService;
 import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.games.poker.admin.wicket.pages.history.HandHistory;
-import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
-import com.cubeia.games.poker.admin.wicket.util.ParamBuilder;
+import com.cubeia.network.shared.web.wicket.util.LabelLinkPanel;
+import com.cubeia.network.shared.web.wicket.util.ParamBuilder;
 import com.cubeia.poker.tournament.history.api.HistoricTournament;
 import com.cubeia.poker.tournament.history.api.PlayerPosition;
 import com.cubeia.poker.tournament.history.api.TournamentEvent;
@@ -48,7 +48,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.cubeia.games.poker.admin.wicket.util.ExternalLinkPanel.externalLinkForPlayer;
+import static com.cubeia.network.shared.web.wicket.util.ExternalLinkPanel.externalLinkForPlayer;
 
 @AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
 public class ShowTournament extends BasePage {

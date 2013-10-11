@@ -5,12 +5,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.cubeia.network.shared.web.wicket.search.SearchEntity;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-class Transaction implements Serializable {
+class Transaction extends SearchEntity {
 	private static final long serialVersionUID = -6036782208928311686L;
 	
 	@SuppressWarnings("serial")

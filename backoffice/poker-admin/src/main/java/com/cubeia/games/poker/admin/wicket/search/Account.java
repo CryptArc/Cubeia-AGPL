@@ -1,15 +1,15 @@
 package com.cubeia.games.poker.admin.wicket.search;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
+import com.cubeia.network.shared.web.wicket.search.SearchEntity;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-class Account implements Serializable {
+class Account extends SearchEntity {
 	private static final long serialVersionUID = -6036782208928311686L;
 	
 	@JsonProperty("id")
