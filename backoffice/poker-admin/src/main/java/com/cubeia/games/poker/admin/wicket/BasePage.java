@@ -1,6 +1,6 @@
 package com.cubeia.games.poker.admin.wicket;
 
-import com.cubeia.games.poker.admin.wicket.search.SearchPage;
+import com.cubeia.network.shared.web.wicket.pages.search.SearchPage;
 import com.cubeia.network.shared.web.wicket.navigation.PageNode;
 import com.cubeia.network.shared.web.wicket.navigation.PageNodeUtils;
 import org.apache.wicket.markup.html.form.Form;
@@ -18,16 +18,7 @@ public abstract class BasePage extends com.cubeia.network.shared.web.wicket.Base
 
     public BasePage(PageParameters p) {
         super();
-        final TextField<String> searchField = new TextField<String>("globalSearchInput", new Model<String>());
-        Form<Void> searchForm = new Form<Void>("globalSearchForm") {
-            @Override
-            protected void onSubmit() {
-                super.onSubmit();
-                setResponsePage(SearchPage.class, new PageParameters().add(SearchPage.PARAM_QUERY, searchField.getModelObject()));
-            }
-        };
-        add(searchForm);
-        searchForm.add(searchField);
+
     }
 
     @Override

@@ -23,7 +23,7 @@ import com.cubeia.games.poker.admin.wicket.pages.tournaments.scheduled.ListTourn
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo.CreateSitAndGo;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo.EditSitAndGo;
 import com.cubeia.games.poker.admin.wicket.pages.tournaments.sitandgo.ListSitAndGoTournaments;
-import com.cubeia.games.poker.admin.wicket.search.SearchPage;
+import com.cubeia.network.shared.web.wicket.pages.search.SearchPage;
 import com.cubeia.network.shared.web.wicket.module.AdminWebModule;
 import com.cubeia.network.shared.web.wicket.navigation.PageNode;
 import org.springframework.stereotype.Component;
@@ -34,7 +34,7 @@ import java.util.List;
 import static com.cubeia.network.shared.web.wicket.navigation.PageNodeUtils.*;
 
 @Component
-public class PokerAdminModule implements AdminWebModule {
+public class PokerAdminModule extends AdminWebModule {
 
     private static final List<PageNode> pages = new ArrayList<>();
 
