@@ -40,19 +40,18 @@ public class PokerAdminModule extends AdminWebModule {
 
     static {
 
+        add(pages, "Search","search", SearchPage.class, "icon-search");
 
-        add(pages, "Search", SearchPage.class, "icon-search");
-
-        add(pages,"Hand History", HandHistory.class, "icon-signal",
+        add(pages,"Hand History","hand-history", HandHistory.class, "icon-signal",
                 node("Show Hand", ShowHand.class,false));
 
-        add(pages,"Tournaments", ListTournaments.class, "icon-list-alt",
-                nodeWithChildren("Scheduled Tournaments", ListTournaments.class, "icon-calendar",
-                        node("Create tournament", CreateTournament.class, false),
-                        node("Edit Tournament", EditTournament.class, false)),
-                nodeWithChildren("Sit & Go Tournaments", ListSitAndGoTournaments.class, "icon-tags",
-                        node("Create Sit & Go", CreateSitAndGo.class, false),
-                        node("Edit Sit & Go", EditSitAndGo.class, false)),
+        add(pages,"Tournaments", "", ListTournaments.class, "icon-list-alt",
+                nodeWithChildren("Scheduled Tournaments", "tournament", ListTournaments.class, "icon-calendar",
+                        node("Create tournament", "create",CreateTournament.class, false),
+                        node("Edit Tournament", "edit",EditTournament.class, false)),
+                nodeWithChildren("Sit & Go Tournaments", "sitandgo",ListSitAndGoTournaments.class, "icon-tags",
+                        node("Create Sit & Go", "create",CreateSitAndGo.class, false),
+                        node("Edit Sit & Go", "edit", EditSitAndGo.class, false)),
                 nodeWithChildren("Blinds Structures", ListBlindsStructures.class, "icon-list-alt",
                         node("Create/Edit Blinds Structure", CreateOrEditBlindsStructure.class, false)),
                 nodeWithChildren("Payout Structures", ListPayoutStructures.class, "icon-gift",

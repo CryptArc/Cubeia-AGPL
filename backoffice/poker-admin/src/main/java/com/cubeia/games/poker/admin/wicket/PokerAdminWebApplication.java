@@ -17,7 +17,7 @@
 
 package com.cubeia.games.poker.admin.wicket;
 
-import com.cubeia.games.poker.admin.wicket.login.LoginPage;
+import com.cubeia.network.shared.web.wicket.pages.login.LoginPage;
 import com.cubeia.network.shared.web.wicket.BaseApplication;
 import org.apache.log4j.Logger;
 import org.apache.wicket.Page;
@@ -34,56 +34,11 @@ public class PokerAdminWebApplication extends BaseApplication {
     public PokerAdminWebApplication() {}
 
 	private static final Logger log = Logger.getLogger(AuthenticatedWebApplication.class);
-    /*
-     private void mountPages() {
-
-         for(AdminWebModule module : modules) {
-             List<PageNode> pages = module.getPages();
-             mountPages("", pages);
-         }
-
-         mountPage("/home", HomePage.class);
-         mountPage("/login", LoginPage.class);
-         mountPage("/logout", LogoutPage.class);
-         mountPage("/search", SearchPage.class);
-
-         mountPage("/hand-history", HandHistory.class);
-
-         mountPage("/tournament", ListTournaments.class);
-         mountPage("/tournament/create", CreateTournament.class);
-         mountPage("/tournament/edit", EditTournament.class);
-
-         mountPage("/sitandgo", ListSitAndGoTournaments.class);
-         mountPage("/sitandgo/create", CreateSitAndGo.class);
-         mountPage("/sitandgo/edit", EditSitAndGo.class);
-
-
-
-         mountPage("/user", UserList.class);
-         mountPage("/user/edit", EditUser.class);
-         mountPage("/user/create", CreateUser.class);
-         mountPage("/user/details", UserSummary.class);
-
-         mountPage("/account", AccountList.class);
-         mountPage("/account/detail", AccountDetails.class);
-         mountPage("/account/create", CreateAccount.class);
-
-         mountPage("/currency", EditCurrencies.class);
-
-         mountPage("/transaction", TransactionList.class);
-         mountPage("/transaction/create", CreateTransaction.class);
-         mountPage("/transaction/info", TransactionInfo.class);
-
-		
-	}
-        */
 
     @Override
 	public Class<? extends Page> getHomePage() {
 		return HomePage.class;
 	}
-
-
 
 	/**
 	 * NOTE: this methods is never called for some reason. I have applied a unauthorized listener above
