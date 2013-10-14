@@ -50,4 +50,8 @@ public class PokerAdminWebApplication extends BaseApplication {
 	}
 
 
+    @Override
+    public String getApplicationTitle() {
+        return "Poker Admin";
+    }
 }

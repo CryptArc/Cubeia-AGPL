@@ -102,25 +102,6 @@ public class ShowHand extends BasePage {
                 }
             }
 
-            private String createTransactionLink(HandResult handResult) {
-                String tmp = normalizeBaseUrl();
-                tmp += "wicket/bookmarkable/com.cubeia.backoffice.web.wallet.TransactionInfo?transactionId=" + handResult.getTransactionId();
-                return tmp;
-            }
-
-            private String createPlayerLink(Player player) {
-                String tmp = normalizeBaseUrl();
-                tmp += "wicket/bookmarkable/com.cubeia.backoffice.web.user.UserSummary?userId=" + player.getPlayerId();
-                return tmp;
-            }
-
-            private String normalizeBaseUrl() {
-                String tmp = config.getNetworkUrl();
-                if (!tmp.endsWith("/")) {
-                    tmp += "/";
-                }
-                return tmp;
-            }
         };
         add(players);
     }
