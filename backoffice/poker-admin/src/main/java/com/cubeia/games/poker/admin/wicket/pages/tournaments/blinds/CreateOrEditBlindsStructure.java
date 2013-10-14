@@ -43,7 +43,7 @@ import org.apache.wicket.util.string.StringValue;
 import java.math.BigDecimal;
 import java.util.Iterator;
 
-import static com.cubeia.games.poker.admin.wicket.util.WicketHelpers.isEmpty;
+import static com.cubeia.network.shared.web.wicket.util.WicketHelpers.isEmpty;
 
 @AuthorizeInstantiation({"ROLE_ADMIN"})
 public class CreateOrEditBlindsStructure extends BasePage {

@@ -284,6 +284,7 @@ Poker.CommunicationManager = Class.extend({
 
         switch (protocolObject.classId() ) {
             case com.cubeia.games.poker.io.protocol.GameState.CLASSID:
+                console.log(protocolObject.capacity);
                 this.tableManager.notifyGameStateUpdate(tableId, protocolObject.currentLevel, protocolObject.secondsToNextLevel,protocolObject.betStrategy, protocolObject.variant,protocolObject.currency);
                 break;
             case com.cubeia.games.poker.io.protocol.BestHand.CLASSID:

@@ -20,8 +20,8 @@ package com.cubeia.games.poker.admin.wicket.pages.history;
 import com.cubeia.games.poker.admin.service.history.HistoryService;
 import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.games.poker.admin.wicket.util.DatePanel;
-import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
-import com.cubeia.games.poker.admin.wicket.util.ParamBuilder;
+import com.cubeia.network.shared.web.wicket.util.LabelLinkPanel;
+import com.cubeia.network.shared.web.wicket.util.ParamBuilder;
 import com.cubeia.poker.handhistory.api.HistoricHand;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -52,7 +52,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.cubeia.games.poker.admin.wicket.util.WicketHelpers.*;
+import static com.cubeia.network.shared.web.wicket.util.WicketHelpers.*;
 import static com.google.common.collect.Lists.newArrayList;
 
 /**

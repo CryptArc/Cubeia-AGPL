@@ -4,7 +4,7 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.rakes;
 
-import static com.cubeia.games.poker.admin.wicket.util.ParamBuilder.params;
+import static com.cubeia.network.shared.web.wicket.util.ParamBuilder.params;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -28,7 +28,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import com.cubeia.games.poker.admin.db.AdminDAO;
 import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.games.poker.admin.wicket.util.ArchiveLinkPanel;
-import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
+import com.cubeia.network.shared.web.wicket.util.LabelLinkPanel;
 import com.cubeia.poker.settings.RakeSettings;
 
 /**

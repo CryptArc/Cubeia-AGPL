@@ -117,7 +117,7 @@ public abstract class PokerTournamentCreationParticipant implements CreationPart
 
         acc.setStringAttribute("SPEED", timing.name());
         // TODO: Table size should be configurable.
-        acc.setIntAttribute(PokerTournamentLobbyAttributes.TABLE_SIZE.name(), 10);
+        acc.setIntAttribute(PokerTournamentLobbyAttributes.TABLE_SIZE.name(), config.getSeatsPerTable());
         String opString = getOperatorLobbyIdString();
         acc.setStringAttribute(OPERATOR_IDS.name(), opString);
         createHistoricTournament(stateSupport, pokerState);

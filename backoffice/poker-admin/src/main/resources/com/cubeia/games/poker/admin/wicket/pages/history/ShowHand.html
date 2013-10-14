@@ -56,11 +56,14 @@
                             <th>Final balance</th>
                         </tr>
                         <tr wicket:id="players">
-                            <td wicket:id="playerName">[player name]</td>
+                            <td><a wicket:id="playerNameLink"><span wicket:id="playerName"></span></a></td>
                             <td wicket:id="playerId">[playerId]</td>
                             <td wicket:id="seat">[seat]</td>
                             <td wicket:id="bet">[bet]</td>
-                            <td wicket:id="net">[net]</td>
+                            <td>
+                                <span wicket:id="net"></span>
+                                <a wicket:id="netLink"><spam wicket:id="netText"></spam></a>
+                            </td>
                             <td wicket:id="initialBalance">[initialBalance]</td>
                             <td wicket:id="finalBalance">[finalBalance]</td>
                         </tr>

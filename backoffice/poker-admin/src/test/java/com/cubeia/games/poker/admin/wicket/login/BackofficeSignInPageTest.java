@@ -1,5 +1,6 @@
 package com.cubeia.games.poker.admin.wicket.login;
 
+import com.cubeia.network.shared.web.wicket.pages.login.LoginPage;
 import org.junit.Ignore;
 import org.junit.Test;
 

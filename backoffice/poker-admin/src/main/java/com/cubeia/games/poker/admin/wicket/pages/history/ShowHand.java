@@ -17,16 +17,17 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.history;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
+import com.cubeia.games.poker.admin.Configuration;
+import com.cubeia.games.poker.admin.service.history.HistoryService;
+import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.network.web.user.UserSummary;
+import com.cubeia.network.web.wallet.TransactionInfo;
 import com.cubeia.poker.handhistory.api.*;
-
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.ContextImage;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.repeater.Item;
@@ -36,10 +37,10 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import com.cubeia.games.poker.admin.Configuration;
-import com.cubeia.games.poker.admin.service.history.HistoryService;
-import com.cubeia.games.poker.admin.wicket.BasePage;
-import com.cubeia.games.poker.admin.wicket.util.ExternalLinkPanel;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @AuthorizeInstantiation({"ROLE_ADMIN"})
 public class ShowHand extends BasePage {
@@ -71,7 +72,10 @@ public class ShowHand extends BasePage {
                 Player player = item.getModelObject();
                 Results results = hand.getResults();
                 HandResult resultsForPlayer = results.getResults().get(player.getPlayerId());
-                item.add(new ExternalLinkPanel("playerName", player.getName(), createPlayerLink(player)));
+
+                BookmarkablePageLink<String> link = new BookmarkablePageLink<>("playerNameLink", UserSummary.class, createParam("userId", player.getPlayerId()));
+                link.add(new Label("playerName",player.getName()));
+                item.add(link);
                 item.add(new Label("playerId", String.valueOf(player.getPlayerId())));
                 if (resultsForPlayer == null) {
                     item.add(new Label("seat", String.valueOf(player.getSeatId()) + " (waiting)"));
@@ -85,8 +89,12 @@ public class ShowHand extends BasePage {
                     item.add(new Label("bet", formatAmount(resultsForPlayer.getTotalBet())));
                     String net = formatAmount(resultsForPlayer.getNetWin());
                     if (resultsForPlayer.getTransactionId() != null) {
-                        item.add(new ExternalLinkPanel("net", net, createTransactionLink(resultsForPlayer)));
+                        item.add(new WebMarkupContainer("net"));
+                        BookmarkablePageLink<String> netLink = new BookmarkablePageLink("netLink", TransactionInfo.class,createParam("transactionId",resultsForPlayer.getTransactionId()));
+                        netLink.add(new Label("netText",net));
+                        item.add(netLink);
                     } else {
+                        item.add(new WebMarkupContainer("netLink").add(new WebMarkupContainer("netText")));
                         item.add(new Label("net", net));
                     }
                     item.add(new Label("initialBalance", formatAmount(player.getInitialBalance())));
@@ -94,27 +102,15 @@ public class ShowHand extends BasePage {
                 }
             }
 
-            private String createTransactionLink(HandResult handResult) {
-                String tmp = normalizeBaseUrl();
-                tmp += "wicket/bookmarkable/com.cubeia.backoffice.web.wallet.TransactionInfo?transactionId=" + handResult.getTransactionId();
-                return tmp;
-            }
-
-            private String createPlayerLink(Player player) {
-                String tmp = normalizeBaseUrl();
-                tmp += "wicket/bookmarkable/com.cubeia.backoffice.web.user.UserSummary?userId=" + player.getPlayerId();
-                return tmp;
-            }
-
-            private String normalizeBaseUrl() {
-                String tmp = config.getNetworkUrl();
-                if (!tmp.endsWith("/")) {
-                    tmp += "/";
-                }
-                return tmp;
-            }
         };
         add(players);
+    }
+
+    private PageParameters createParam(String name, Integer val) {
+        return new PageParameters().add(name,val);
+    }
+    private PageParameters createParam(String name, String val) {
+        return new PageParameters().add(name,val);
     }
 
     private void addSummary(HistoricHand hand) {
