@@ -17,7 +17,6 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.tournaments.history;
 
-import com.cubeia.games.poker.admin.Configuration;
 import com.cubeia.games.poker.admin.service.history.HistoryService;
 import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.games.poker.admin.wicket.pages.history.HandHistory;
@@ -57,9 +56,6 @@ public class ShowTournament extends BasePage {
 
     @SpringBean
     private HistoryService historyService;
-
-    @SpringBean(name = "webConfig")
-    private Configuration config;
 
     public ShowTournament(PageParameters parameters) {
         super(parameters);

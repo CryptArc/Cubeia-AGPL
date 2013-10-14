@@ -17,7 +17,6 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.history;
 
-import com.cubeia.games.poker.admin.Configuration;
 import com.cubeia.games.poker.admin.service.history.HistoryService;
 import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.network.web.user.UserSummary;
@@ -50,8 +49,6 @@ public class ShowHand extends BasePage {
     @SpringBean
     private HistoryService historyService;
 
-    @SpringBean(name = "webConfig")
-    private Configuration config;
 
     public ShowHand(PageParameters parameters) {
         super(parameters);
