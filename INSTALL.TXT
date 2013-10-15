@@ -115,18 +115,12 @@ Stop and start the poker game with firebase:run, then go on with the next step.
 ADMIN DATA
 ==========
 
-At this point, you create all the data needed within the Poker Admin:
+Create a Table Templates, which should result in tables showing up in the lobby.
+The names for the tables are picked up from a list.
 
- * First create Timings and Rake Configurations (good name is "Standard")
+Now you can create a simple Sit&Go, which should show up in the lobby.
 
- * You can now create Table Templates, which should result in tables showing up
-   in the lobby.
-
- * Create Payout and Blinds Structures (again choose "Standard" as name).
-
- * Now you can create a simple Sit&Go, which should show up in the lobby.
-
- * Last, setup a Scheduled Tournament template.
+Last, create a Scheduled Tournament template.
 
 
 
@@ -188,13 +182,16 @@ INTEGRATION BUILD
 =================
 
 Τhe default build of the poker-server results in a system with mock-services
-(or mock-integrations). This means that there is not real user and account
+(or mock-integrations). This means that there is no reall user and account
 management.
 
 In order to build & start a poker system which integrates fully:
 
 * build the poker code with "use-integrations" (instead of "no-integrations").
-* Start the Poker Game with firebase:run
+
+mvn clean package -Pclient,bots,admin,network,use-integrations
+cd  uar
+mvn firebase:run
 
 You now login with the user credentials created earlier.
 
@@ -205,7 +202,7 @@ FULL REBUILD
 After source code updates, to build all relevant sources in one pass, go to the
 root directory (e.g. cubeia-poker) and execute
 
-mvn clean package install -U -Pclient,bots,admin,network,no-integrations
+mvn clean package install -U -Pclient,bots,admin,network,use-integrations
 
 The "-U" flag ensures that dependencies are updated (important when sources are
 under development).
