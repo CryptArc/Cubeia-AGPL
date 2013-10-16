@@ -23,10 +23,10 @@
 
        <properties>
            <property name="hibernate.hbm2ddl.auto" value="create"/>
-           <property name="hibernate.hbm2ddl.import_files" 
+           <!--property name="hibernate.hbm2ddl.import_files" 
                      value="/META-INF/sql/rake-timing.sql,
                             /META-INF/sql/payouts.sql,
-                            /META-INF/sql/blinds.sql"/>      
+                            /META-INF/sql/blinds.sql"/-->      
       </properties>
    </persistence-unit>
 </persistence>
