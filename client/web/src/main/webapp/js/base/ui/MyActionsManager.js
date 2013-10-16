@@ -214,8 +214,6 @@ Poker.MyActionsManager  = Class.extend({
         //to avoid users clicking the action buttons by mistake
         setTimeout(function(){
             self.showActionButtons(actions, mainPot, fixedLimit);
-            progressBar.show();
-            progressBar.render();
         }, 500);
         return false;
     },

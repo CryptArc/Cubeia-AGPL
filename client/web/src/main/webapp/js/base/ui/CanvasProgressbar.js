@@ -1,0 +1,102 @@
+"use strict";
+var Poker = Poker || {};
+Poker.CanvasProgressbar = Class.extend({
+    canvas : null,
+    context : null,
+    startTime: 0,
+    progressTime : null,
+    timer : null,
+
+    init : function(canvas) {
+        var self = this;
+        this.canvas = $(canvas);
+        self.setHeight();
+        $(window).resize(function(){
+            self.setHeight();
+        });
+        this.canvas.parent().hide();
+    },
+    setHeight : function(){
+        var w = this.canvas.parent().width();
+        var h = this.canvas.parent().height();
+        this.canvas.attr("width",w);
+        this.canvas.attr("height",h);
+        this.draw();
+    },
+    getProgressAngle : function(progress) {
+        return (2 * Math.PI * progress) - Math.PI/2;
+    },
+    getProgress : function() {
+        if(this.startTime==0) {
+            return 0;
+        }
+        var currentTime = new Date().getTime();
+        var timeElapsed = currentTime - this.startTime;
+        var progress = timeElapsed / this.progressTime;
+        return progress > 1 ? 1 : progress;
+    },
+    getColor : function(progress) {
+        if(progress > 0.8) {
+            return "#c42e05";
+        } else if(progress > 0.5) {
+            return "#ffaa16";
+        }
+        return '#88C425';
+    },
+    start : function(progressTime) {
+        this.canvas.parent().show();
+        this.startTime = new Date().getTime();
+        this.progressTime = progressTime;
+        var self = this;
+        this.interval = setInterval(function(){
+            self.draw();
+        },50);
+    },
+    stop : function() {
+        this.startTime = 0;
+        this.canvas.parent().hide();
+        if(this.interval!=null) {
+            clearInterval(this.interval);
+        }
+        var ctx = this.getContext();
+        ctx.clearRect(0,0,this.canvas.width(),this.canvas.height());
+    },
+    draw : function() {
+        var ctx = this.getContext();
+        var point = this.getCenter();
+        var progress = this.getProgress();
+
+        ctx.clearRect(0,0,this.canvas.width(),this.canvas.height());
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.beginPath();
+        ctx.moveTo(point.left,point.top);
+        ctx.arc(point.left, point.top, this.getRadius(), -Math.PI/2, this.getProgressAngle(progress), false);
+        ctx.lineTo(point.left,point.top);
+        ctx.fillStyle = this.getColor(progress);
+        ctx.fill();
+
+        var r = this.getRadius() * 0.4;
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.beginPath();
+        ctx.arc(point.left,point.top,r,0, 2 * Math.PI,false);
+        ctx.fill();
+        if(progress>=1) {
+            clearInterval(this.interval);
+        }
+
+    },
+    getRadius : function() {
+        return Math.floor(this.canvas.height()/2);
+    },
+    getCenter : function() {
+        var height = this.canvas.height();
+        var width = this.canvas.width();
+        return { top : Math.floor(height/2), left : Math.floor(width/2) };
+    },
+    getContext : function() {
+        if(this.context==null) {
+            this.context= this.canvas.get(0).getContext("2d");
+        }
+        return this.context;
+    }
+});

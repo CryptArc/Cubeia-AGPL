@@ -42,8 +42,7 @@
     <script type="text/javascript" src="${cp}/js/lib/handlebars.js"></script>
     <script type="text/javascript" src="${cp}/js/lib/json2.js"></script>
 
-    <script type="text/javascript" src="${cp}/js/base/ui/CircularProgressBar.js"></script>
-
+    <script type="text/javascript" src="${cp}/js/base/ui/CanvasProgressbar.js"></script>
 
     <script src="${cp}/js/lib/cubeia/firebase-js-api-1.9.19-javascript.js" type="text/javascript"></script>
     <script src="${cp}/js/lib/cubeia/firebase-protocol-1.9.19-javascript.js" type="text/javascript"></script>
@@ -1049,8 +1048,8 @@
                 <label class="checkbox-icon-label" for="wait-for-big-blind-cb-{{tableId}}">{{t "table.wait-for-big-blind"}}</label>
                 <div>{{t "table.wait-for-big-blind-description"}}</div>
             </div>
-        <div id="myPlayerSeat-{{tableId}}Progressbar" class="circular-progress-bar">
-
+        <div id="myPlayerSeat-{{tableId}}Progressbar" class="canvas-progress-bar">
+            <canvas></canvas>
         </div>
 
     </div>

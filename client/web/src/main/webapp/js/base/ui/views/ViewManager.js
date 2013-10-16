@@ -114,8 +114,8 @@ Poker.ViewManager = Class.extend({
     },
     checkMobileDevice : function() {
         if(window.matchMedia) {
-            var mq1 = window.matchMedia("(max-width:700px)");
-            var mq2 = window.matchMedia("(max-height: 400px)");
+            var mq1 = window.matchMedia("(max-height:480px)");
+            var mq2 = window.matchMedia("(max-width:480px)");
             if(mq1.matches || mq2.matches) {
                 this.mobileDevice = true;
             } else {
@@ -396,7 +396,9 @@ Poker.ViewManager = Class.extend({
             leftMargin = 40;
             topMargin = 0;
             $("body").addClass("portrait");
+            console.log("Mobile & portrait");
         } else {
+            console.log("Not portrait");
             $("body").removeClass("portrait");
         }
 
