@@ -528,11 +528,12 @@ public class PokerTournament implements TableNotifier, Serializable {
         PayoutHandler payoutHandler = new PayoutHandler(pokerState.getPayouts());
         List<ConcretePayout> payouts = payoutHandler.calculatePayouts(playersOut, balancesAtStartOfHand(playersOut), state.getRemainingPlayerCount());
         for (ConcretePayout payout : payouts) {
+            MttPlayer tournamentPlayer = pokerState.getTournamentPlayer(payout.getPlayerId(), state);
+            domainEventService.sendTournamentPayoutEvent(tournamentPlayer, payout.getPayout(), pokerState.getCurrency().getCode(), payout.getPosition(), instance);
             // Transfer the given amount of money from the tournament account to the player account.
             transferMoneyAndCloseSession(pokerState.getPlayerSession(payout.getPlayerId()), payout.getPayout());
             setPlayerOutInPosition(payout.getPlayerId(), payout.getPosition());
-            MttPlayer tournamentPlayer = pokerState.getTournamentPlayer(payout.getPlayerId(), state);
-            domainEventService.sendTournamentPayoutEvent(tournamentPlayer, payout.getPayout(), pokerState.getCurrency().getCode(), payout.getPosition(), instance);
+
         }
         sendTournamentOutToPlayers(payouts);
     }
@@ -630,11 +631,11 @@ public class PokerTournament implements TableNotifier, Serializable {
         sendTournamentOutToPlayers(singletonList(new ConcretePayout(playerId, 1, payout)));
 
         PlayerSessionId playerSession = pokerState.getPlayerSession(playerId);
-        transferMoneyAndCloseSession(playerSession, payout);
-        
+
         MttPlayer tournamentPlayer = pokerState.getTournamentPlayer(playerId, state);
-        
         domainEventService.sendTournamentPayoutEvent(tournamentPlayer, payout, pokerState.getCurrency().getCode(), 1, instance);
+
+        transferMoneyAndCloseSession(playerSession, payout);
     }
 
     private void setPlayerOutInPosition(int playerId, int position) {

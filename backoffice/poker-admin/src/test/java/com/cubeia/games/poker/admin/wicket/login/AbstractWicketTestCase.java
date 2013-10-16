@@ -1,9 +1,6 @@
 package com.cubeia.games.poker.admin.wicket.login;
 
-import javax.inject.Inject;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
-
+import com.cubeia.games.poker.admin.wicket.PokerAdminWebApplication;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -14,7 +11,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cubeia.games.poker.admin.wicket.PokerAdminWebApplication;
+import javax.inject.Inject;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 
 @RunWith(SpringJUnit4ClassRunner.class) 
 @ContextConfiguration(locations={"classpath:poker-admin-spring-app.xml","classpath:poker-admin-spring-test.xml"}) 

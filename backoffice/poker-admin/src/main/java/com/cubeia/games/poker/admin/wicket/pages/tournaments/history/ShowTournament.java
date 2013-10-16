@@ -17,12 +17,12 @@
 
 package com.cubeia.games.poker.admin.wicket.pages.tournaments.history;
 
-import com.cubeia.games.poker.admin.Configuration;
 import com.cubeia.games.poker.admin.service.history.HistoryService;
 import com.cubeia.games.poker.admin.wicket.BasePage;
 import com.cubeia.games.poker.admin.wicket.pages.history.HandHistory;
-import com.cubeia.games.poker.admin.wicket.util.LabelLinkPanel;
-import com.cubeia.games.poker.admin.wicket.util.ParamBuilder;
+import com.cubeia.network.shared.web.wicket.util.LabelLinkPanel;
+import com.cubeia.network.shared.web.wicket.util.ParamBuilder;
+import com.cubeia.network.web.user.UserSummary;
 import com.cubeia.poker.tournament.history.api.HistoricTournament;
 import com.cubeia.poker.tournament.history.api.PlayerPosition;
 import com.cubeia.poker.tournament.history.api.TournamentEvent;
@@ -35,6 +35,7 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColu
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
@@ -48,8 +49,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.cubeia.games.poker.admin.wicket.util.ExternalLinkPanel.externalLinkForPlayer;
-
 @AuthorizeInstantiation({"ROLE_ADMIN", "ROLE_USER"})
 public class ShowTournament extends BasePage {
 
@@ -57,9 +56,6 @@ public class ShowTournament extends BasePage {
 
     @SpringBean
     private HistoryService historyService;
-
-    @SpringBean(name = "webConfig")
-    private Configuration config;
 
     public ShowTournament(PageParameters parameters) {
         super(parameters);
@@ -80,7 +76,7 @@ public class ShowTournament extends BasePage {
             @Override
             protected void populateItem(Item<PlayerPosition> item) {
                 PlayerPosition position = item.getModelObject();
-                item.add(externalLinkForPlayer(position.getPlayerId(), config.getNetworkUrl()));
+                item.add(new BookmarkablePageLink<>("player", UserSummary.class));
                 item.add(new Label("position", String.valueOf(position.getPosition())));
                 item.add(new Label("payout",position.getPayout().toPlainString()));
             }

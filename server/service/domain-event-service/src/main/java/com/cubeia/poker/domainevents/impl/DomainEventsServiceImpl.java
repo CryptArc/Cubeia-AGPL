@@ -139,7 +139,7 @@ public class DomainEventsServiceImpl implements Service, DomainEventsService, Ev
 			event.attributes.put(PokerAttributes.tournamentName.name(), tournamentName);
 			event.attributes.put(PokerAttributes.tournamentPosition.name(), position+"");
 			
-			event.attributes.put(PokerAttributes.accountBalance.name(), accountBalance.getAmount()+"");
+			event.attributes.put(PokerAttributes.accountBalance.name(), accountBalance.getAmount().add(payout)+"");
 			event.attributes.put(PokerAttributes.accountCurrency.name(), currencyCode);  
 			
 			event.attributes.put(PokerAttributes.screenname.name(), player.getScreenname());

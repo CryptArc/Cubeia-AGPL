@@ -15,23 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.cubeia.games.poker.admin.wicket.auth;
+package com.cubeia.poker;
 
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
-@XmlRootElement(name="users")
-public class BackofficeUserListDTO {
-    private List<BackofficeUserDTO> users;
-
-    @XmlElement(name="user")
-    public List<BackofficeUserDTO> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<BackofficeUserDTO> users) {
-        this.users = users;
-    }
+public enum PokerVariant {
+    TEXAS_HOLDEM,
+    TELESINA;
 }

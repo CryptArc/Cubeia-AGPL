@@ -191,12 +191,6 @@
         }
     }
 
-    .my-player-seat .player-card-container.dealt {
-        .transform(translate3d(0,0,0) rotate(0deg));
-        &:first-child {
-            .transform(translate3d(0,0,0) rotate(0deg));
-        }
-    }
     .seat-pos-0, .seat-pos-1, .seat-pos-2, .seat-pos-3, .seat-pos-4,
     .seat-pos-5, .seat-pos-6, .seat-pos-7, .seat-pos-8, .seat-pos-9 {
         .cards-container-player .player-card-container.exposed {
@@ -214,6 +208,8 @@
     .my-player-seat .cards-container {
         width:60%;
         left:27%;
+        top:32%;
+
 
         .player-card-container {
             &.number {
@@ -226,7 +222,7 @@
         }
     }
     .player-card-container {
-        top:-10%;
+
         margin-left:0%;
         width: 48%;
         z-index: 0;
@@ -238,6 +234,22 @@
         }
 
     }
+
+    .my-player-seat .player-card-container {
+        .transition-transform(0.5s ease-out);
+        .transform(translate3d(0,30%,0));
+        &.dealt {
+            .transform(translate3d(0,0%,0));
+        }
+    }
+/*
+.my-player-seat .player-card-container.dealt {
+    .transform(translate3d(0,0,0) rotate(10deg));
+    &:first-child {
+        .transform(translate3d(0,0,0) rotate(-10deg));
+    }
+}*/
+
 }
 
 /* TRANSITIONS */
@@ -263,17 +275,7 @@
     .transform(scale3d(1,1,1) translate3d(0,-30%,0));
 }
 
-.my-player-seat .player-card-container {
-    .transition-transform(0.5s ease-out);
-    .transform(translate3d(0,30%,0));
-}
 
-.my-player-seat .player-card-container.dealt {
-    .transform(translate3d(0,0,0) rotate(10deg));
-    &:first-child {
-        .transform(translate3d(0,0,0) rotate(-10deg));
-    }
-}
 .my-player-seat .action-amount {
     .transition-transform(0.6s ease-out);
     .transform(translate3d(0,50%,0));

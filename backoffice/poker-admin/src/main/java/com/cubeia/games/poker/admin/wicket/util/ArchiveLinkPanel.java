@@ -18,7 +18,7 @@
 package com.cubeia.games.poker.admin.wicket.util;
 
 import com.cubeia.games.poker.admin.db.AdminDAO;
-import com.cubeia.games.poker.admin.wicket.BasePage;
+import com.cubeia.network.shared.web.wicket.BasePage;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
