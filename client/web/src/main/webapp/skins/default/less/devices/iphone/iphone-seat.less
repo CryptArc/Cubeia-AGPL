@@ -35,8 +35,18 @@
     .action-text, .player-status, .hand-strength {
         z-index: 14;
     }
+    .seat-progressbar {
+        z-index: 99999999999999;
+        width:40%;
+        height:40%;
+        position: absolute;
+    }
+    &.active-seat   {
+        .avatar-base {
+            border: 2px solid #b3d800;
+        }
+    }
 }
-
 
 .my-player-seat {
     position: absolute;

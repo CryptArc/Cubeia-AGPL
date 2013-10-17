@@ -671,9 +671,7 @@
 
 <div id="seatTemplate" style="display: none;">
     <div class="avatar-base">
-        <div class="progress-bar">
 
-        </div>
     </div>
     <div class="player-name">
         {{name}}
@@ -700,6 +698,9 @@
     </div>
     <div class="hand-strength">
 
+    </div>
+    <div class="seat-progressbar">
+        <canvas width="20" height="20"></canvas>
     </div>
 </div>
 
@@ -1049,7 +1050,7 @@
                 <div>{{t "table.wait-for-big-blind-description"}}</div>
             </div>
         <div id="myPlayerSeat-{{tableId}}Progressbar" class="canvas-progress-bar">
-            <canvas></canvas>
+            <canvas width="20" height="20"></canvas>
         </div>
 
     </div>

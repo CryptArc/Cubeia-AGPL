@@ -58,12 +58,15 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
         $("#myPlayerName-"+this.tableId).html(this.player.name);
     },
     activateSeat : function(allowedActions, timeToAct,mainPot,fixedLimit) {
-        this.showTimer(timeToAct);
-        this.myActionsManager.onRequestPlayerAction(allowedActions, mainPot, fixedLimit, this.progressbar);
+        var self = this;
+        this.myActionsManager.onRequestPlayerAction(allowedActions, mainPot, fixedLimit, function(){
+            var time = timeToAct;
+            self.progressbar.start(time);
+        });
         Poker.AppCtx.getViewManager().requestTableFocus(this.tableId);
     },
     rebuyRequested : function(rebuyCost, chipsForRebuy, timeToAct) {
-        this.showTimer(timeToAct);
+        this.progressbar.start(timeToAct);
         this.myActionsManager.showRebuyButtons(rebuyCost, chipsForRebuy);
     },
     addOnRequested : function(addOnCost, chipsForAddOn) {
@@ -76,15 +79,12 @@ Poker.MyPlayerSeat = Poker.Seat.extend({
     hideAddOnButton : function() {
         this.myActionsManager.hideAddOnButton();
     },
-    showTimer: function(timeToAct) {
-        this.progressbar.start(timeToAct);
-    },
+
     onAction : function(actionType,amount){
         this.running = false;
         this.progressbar.stop();
         this.showActionData(actionType,amount);
         this.myActionsManager.hideActionElements();
-        this.clearProgressBar();
         if(actionType.id == Poker.ActionType.FOLD.id) {
             this.fold();
             Poker.AppCtx.getViewManager().updateTableInfo(this.tableId,{});

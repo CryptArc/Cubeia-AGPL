@@ -38,7 +38,17 @@ Poker.ViewManager = Class.extend({
         this.toolbar = $("#toolbar");
         this.activateView(this.loginView);
 
+        var timer = null;
         $(window).resize(function(){
+            if(timer!=null) {
+                clearTimeout(timer);
+            }
+            timer = setTimeout(function(){
+                $(window).trigger("resizeEnd");
+                timer = null;
+            },300);
+        });
+        $(window).on("resizeEnd",function(){
             self.setViewDimensions();
         });
         $(document).ready(function(){

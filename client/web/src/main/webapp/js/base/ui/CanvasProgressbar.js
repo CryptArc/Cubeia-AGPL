@@ -6,17 +6,24 @@ Poker.CanvasProgressbar = Class.extend({
     startTime: 0,
     progressTime : null,
     timer : null,
+    settings : null,
+    defaultSettings : { border : false },
 
-    init : function(canvas) {
+    init : function(canvas,settings) {
         var self = this;
+        this.settings = $.extend({},this.defaultSettings , settings);
         this.canvas = $(canvas);
-        self.setHeight();
-        $(window).resize(function(){
-            self.setHeight();
+        self.setSize();
+        setTimeout(function(){
+            self.setSize();
+        },500);
+
+        $(window).on("resizeEnd",function(){
+            self.setSize();
         });
         this.canvas.parent().hide();
     },
-    setHeight : function(){
+    setSize : function(){
         var w = this.canvas.parent().width();
         var h = this.canvas.parent().height();
         this.canvas.attr("width",w);
@@ -41,9 +48,10 @@ Poker.CanvasProgressbar = Class.extend({
         } else if(progress > 0.5) {
             return "#ffaa16";
         }
-        return '#88C425';
+        return '#b3d800';
     },
     start : function(progressTime) {
+        this.setSize();
         this.canvas.parent().show();
         this.startTime = new Date().getTime();
         this.progressTime = progressTime;
@@ -59,7 +67,7 @@ Poker.CanvasProgressbar = Class.extend({
             clearInterval(this.interval);
         }
         var ctx = this.getContext();
-        ctx.clearRect(0,0,this.canvas.width(),this.canvas.height());
+        ctx.clearRect(0,0,this.canvas.width()*2,this.canvas.height()*2);
     },
     draw : function() {
         var ctx = this.getContext();
@@ -68,9 +76,21 @@ Poker.CanvasProgressbar = Class.extend({
 
         ctx.clearRect(0,0,this.canvas.width(),this.canvas.height());
         ctx.globalCompositeOperation = 'source-over';
+
+        if(this.settings.border == true) {
+            ctx.beginPath();
+            ctx.arc(point.left, point.top, this.getRadius(), 0,2*Math.PI, false);
+            ctx.fillStyle = this.getColor(progress);
+            ctx.fill();
+        }
+        ctx.beginPath();
+        ctx.arc(point.left, point.top, this.getRadius()*0.9, 0,2*Math.PI, false);
+        ctx.fillStyle = "#444";
+        ctx.fill();
+
         ctx.beginPath();
         ctx.moveTo(point.left,point.top);
-        ctx.arc(point.left, point.top, this.getRadius(), -Math.PI/2, this.getProgressAngle(progress), false);
+        ctx.arc(point.left, point.top, this.getRadius()*0.9, -Math.PI/2, this.getProgressAngle(progress), false);
         ctx.lineTo(point.left,point.top);
         ctx.fillStyle = this.getColor(progress);
         ctx.fill();
@@ -80,6 +100,13 @@ Poker.CanvasProgressbar = Class.extend({
         ctx.beginPath();
         ctx.arc(point.left,point.top,r,0, 2 * Math.PI,false);
         ctx.fill();
+
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.beginPath();
+        ctx.arc(point.left, point.top, this.getRadius()*0.2, 0,2*Math.PI, false);
+        ctx.fillStyle = this.getColor(progress);
+        ctx.fill();
+
         if(progress>=1) {
             clearInterval(this.interval);
         }
@@ -95,7 +122,7 @@ Poker.CanvasProgressbar = Class.extend({
     },
     getContext : function() {
         if(this.context==null) {
-            this.context= this.canvas.get(0).getContext("2d");
+            this.context=this.canvas.get(0).getContext("2d");
         }
         return this.context;
     }
